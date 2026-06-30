@@ -165,7 +165,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   return (
     <SafeAreaView
       isFlex
-      edges={["bottom"]}
+      edges={["left", "right", "bottom"]}
       style={[styles.root, { backgroundColor: colors.background }]}
     >
       <TrackScreen

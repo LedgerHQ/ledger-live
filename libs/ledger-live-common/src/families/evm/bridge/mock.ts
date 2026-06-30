@@ -17,7 +17,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getGasLimit, isEthAddress } from "@ledgerhq/coin-evm/utils";
-import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
+import { getTypedTransaction } from "../transaction";
 import { getCurrencyConfiguration } from "../../../config";
 import { EvmConfigInfo, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { validateAddress } from "../../../bridge/validateAddress";

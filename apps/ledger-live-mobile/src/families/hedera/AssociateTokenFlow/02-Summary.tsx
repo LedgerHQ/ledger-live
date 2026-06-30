@@ -4,7 +4,8 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import { Transaction } from "@ledgerhq/live-common/families/hedera/types";
-import { View, SafeAreaView, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
@@ -66,7 +67,7 @@ export default function Summary({ navigation, route }: Props) {
   const error = status.errors[Object.keys(status.errors)[0]];
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView edges={["left", "right", "bottom"]} style={styles.root}>
       <TrackScreen category="AssociateTokenFlow" name="Summary" currency="hedera" />
       <NavigationScrollView style={styles.body}>
         <SummaryFromSection token={token} />

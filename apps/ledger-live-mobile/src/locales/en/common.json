@@ -1867,12 +1867,6 @@
     "postWelcomeStep": {
       "title": "Let’s get started",
       "noLedgerYet": "I don’t have a Ledger yet",
-      "noLedgerYetModal": {
-        "title": "Millions of users. 0 hacks.",
-        "desc": "Experience peace of mind with a Ledger securing your digital assets.",
-        "buy": "Buy a Ledger",
-        "explore": "Explore this app"
-      },
       "setupLedger": {
         "title": "Set up your Ledger",
         "subtitle": "Select if your Ledger is new or was reset."
@@ -1880,18 +1874,6 @@
       "accessWallet": {
         "title": "Access your wallet",
         "subtitle": "Select if your Ledger is already set up."
-      },
-      "buyNano": {
-        "title": "Buy a Ledger Nano X",
-        "subtitle": "A Ledger device is the only way to ensure your assets are secure "
-      },
-      "discoverLedger": {
-        "title": "Explore Ledger Wallet",
-        "subtitle": "Explore the app and learn about its benefits "
-      },
-      "desktopSync": {
-        "title": "Sync with desktop app",
-        "subtitle": "Sync your assets from Ledger Wallet desktop with your mobile."
       }
     },
     "welcomeBackStep": {
@@ -3059,7 +3041,13 @@
   "operationsList": {
     "to": "To",
     "from": "From",
-    "pending": "Pending"
+    "pending": "Pending",
+    "options": {
+      "more": "Transaction history options",
+      "hideDustTransactions": "Hide dust transactions",
+      "showDustTransactions": "Show dust transactions",
+      "dustTransactionsDescription": "Transactions below {{threshold}} in your main currency will be hidden."
+    }
   },
   "operationDetails": {
     "title": "Transaction details",
@@ -3132,7 +3120,8 @@
       "targetStakingNodeId": "Target node ID",
       "previousStakingNodeId": "Previous node ID",
       "gasConsumed": "Gas consumed",
-      "gasUsed": "Gas used"
+      "gasUsed": "Gas used",
+      "functionId": "Function ID"
     },
     "multipleAddresses": "Why multiple addresses?"
   },
@@ -4456,6 +4445,7 @@
     "newSendFlow": {
       "title": "Send {{currency}}",
       "available": "Available {{amount}}",
+      "to": "To:",
       "placeholder": "Enter address or ENS",
       "placeholderNoENS": "Enter address",
       "pasteFromClipboard": {
@@ -9788,29 +9778,21 @@
     }
   },
   "concordium": {
-    "receive": {
-      "messageIfSkipped": "It is not possible to verify your Concordium Address at the moment. Please make sure to double-check by pasting your address in the Concordium explorer.",
-      "verifyLink": "Verify"
-    },
     "onboard": {
       "title": "Concordium Onboarding",
       "acknowledge": {
         "title": "Acknowledgement",
         "description": "Concordium requires external identity verification. Please read these important security warnings:",
         "list": {
-          "1": {
-            "title": "No address verification",
-            "description": "Your Ledger cannot verify Concordium receive addresses. Manually verify addresses before receiving funds."
-          },
-          "2": {
+          "separateSeed": {
             "title": "Concordium ID App uses a separate seed",
             "description": "You'll create NEW 24 words in Concordium app. NEVER use your Ledger seed."
           },
-          "3": {
+          "outsideLedgerLive": {
             "title": "You'll be redirected outside Ledger Live",
             "description": "Identity verification happens in the external Concordium Wallet app. This is required by Concordium's blockchain protocol."
           },
-          "4": {
+          "signingSecure": {
             "title": "Transaction signing stays secure",
             "description": "Only your Ledger device can sign transactions and create accounts."
           }
@@ -10023,6 +10005,11 @@
       "available": "Available",
       "unavailable": "Not connected",
       "menuAccessibilityLabel": "Device options"
+    }
+  },
+  "aleo": {
+    "accountActions": {
+      "publicToPrivate": "Self transfer"
     }
   }
 }

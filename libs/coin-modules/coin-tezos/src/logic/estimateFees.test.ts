@@ -758,8 +758,9 @@ describe("estimateFees", () => {
     });
 
     expect(result.fees).toBe(BigInt(minFees));
-    expect(result.amount).not.toBeUndefined();
-    expect(result.amount!).toBeLessThanOrEqual(BigInt(balance));
+    // max = spendable(10000) - suggestedFee(100) - (DUST_MARGIN(500) - (DUST_MARGIN*0.1 + opSize(200)))
+    //     = 9900 - (500 - 250) = 9650
+    expect(result.amount).toBe(9650n);
   });
 
   it("useAllAmount send excludes staked and unstaked funds from the max", async () => {
@@ -787,8 +788,9 @@ describe("estimateFees", () => {
       },
     });
 
-    expect(result.amount).not.toBeUndefined();
-    expect(result.amount!).toBeLessThanOrEqual(6000n);
-    expect(result.amount!).toBeGreaterThan(5000n);
+    // spendable = balance(10000) - staked(3000) - unstaked(1000) = 6000
+    // max = 6000 - suggestedFee(100) - (DUST_MARGIN(500) - (DUST_MARGIN*0.1 + opSize(200)))
+    //     = 5900 - (500 - 250) = 5650
+    expect(result.amount).toBe(5650n);
   });
 });

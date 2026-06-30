@@ -1,4 +1,9 @@
-import { parseOrder, sanitizeExtras } from "./contentCardExtras";
+import {
+  parseOrder,
+  sanitizeExtras,
+  buildContentCardTrackingProperties,
+  isCategoryContentCardExtras,
+} from "./contentCardExtras";
 
 describe("parseOrder", () => {
   it("should parse a valid numeric string", () => {
@@ -82,5 +87,100 @@ describe("sanitizeExtras", () => {
   it("should handle order of zero", () => {
     const result = sanitizeExtras({ order: "0" });
     expect(result).toEqual({ order: 0 });
+  });
+});
+
+describe("buildContentCardTrackingProperties", () => {
+  it("should inherit canvas_name from category and keep child canvas_step_name", () => {
+    expect(
+      buildContentCardTrackingProperties({
+        cardExtras: {
+          title: "Buy",
+          canvas_step_name: "Buy step",
+          categoryId: "alwayson",
+        },
+        categoryExtras: {
+          id: "alwayson",
+          type: "category",
+          canvas_name: "Wallet canvas",
+          canvas_step_name: "Category step",
+        },
+        categoryLocation: "top_wallet",
+      }),
+    ).toEqual({
+      title: "Buy",
+      categoryId: "alwayson",
+      page: "top_wallet",
+      location: "top_wallet",
+      canvas_name: "Wallet canvas",
+      canvas_step_name: "Buy step",
+    });
+  });
+
+  it("should not use category canvas_step_name when child has none", () => {
+    expect(
+      buildContentCardTrackingProperties({
+        cardExtras: { title: "Buy", categoryId: "alwayson" },
+        categoryExtras: {
+          id: "alwayson",
+          type: "category",
+          canvas_name: "Wallet canvas",
+          canvas_step_name: "Category step",
+        },
+        categoryLocation: "top_wallet",
+      }),
+    ).toEqual({
+      title: "Buy",
+      categoryId: "alwayson",
+      page: "top_wallet",
+      location: "top_wallet",
+      canvas_name: "Wallet canvas",
+    });
+  });
+
+  it("should resolve alwayson category to top_wallet when categoryLocation is omitted", () => {
+    expect(
+      buildContentCardTrackingProperties({
+        cardExtras: { title: "Buy", categoryId: "alwayson" },
+        categoryExtras: {
+          id: "alwayson",
+          type: "category",
+          canvas_name: "Wallet canvas",
+        },
+      }),
+    ).toEqual({
+      title: "Buy",
+      categoryId: "alwayson",
+      page: "top_wallet",
+      location: "top_wallet",
+      canvas_name: "Wallet canvas",
+    });
+  });
+
+  it("should fall back to categoryExtras.location when categoryLocation is omitted", () => {
+    expect(
+      buildContentCardTrackingProperties({
+        cardExtras: { title: "Promo", categoryId: "earn" },
+        categoryExtras: {
+          id: "earn",
+          type: "category",
+          location: "portfolio",
+          canvas_name: "Earn canvas",
+        },
+      }),
+    ).toEqual({
+      title: "Promo",
+      categoryId: "earn",
+      page: "portfolio",
+      location: "portfolio",
+      canvas_name: "Earn canvas",
+    });
+  });
+});
+
+describe("isCategoryContentCardExtras", () => {
+  it("should detect category cards", () => {
+    expect(isCategoryContentCardExtras({ type: "category" })).toBe(true);
+    expect(isCategoryContentCardExtras({ type: "action" })).toBe(false);
   });
 });

@@ -2,7 +2,11 @@ import type { ConnectedDevice, TransportIdentifier } from "@ledgerhq/device-mana
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { dmkToLedgerDeviceIdMap, type KnownDevice } from "@ledgerhq/live-dmk-shared";
-import { ConnectionErrorTypes, DiscoveryErrorTypes } from "@ledgerhq/live-dmk-mobile";
+import {
+  BaseDiscoveryErrorTypes,
+  ConnectionErrorTypes,
+  DiscoveryErrorTypes,
+} from "@ledgerhq/live-dmk-mobile";
 import { track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import type { SourceFlow } from "./SourceFlowContext";
@@ -87,7 +91,7 @@ export const DEVICE_ACTION_BUTTON = {
 let isInTerminalConnectDeviceError = false;
 
 export type TrackingTransport = "ble" | "usb";
-type ConnectDeviceErrorType = ConnectionErrorTypes | DiscoveryErrorTypes;
+type ConnectDeviceErrorType = ConnectionErrorTypes | DiscoveryErrorTypes | "unknown";
 
 const TRACKING_SUB_ERRORS: Record<ConnectDeviceErrorType, string> = {
   [DiscoveryErrorTypes.BluetoothPermissionDeniedPromptable]: "BluetoothPermissionDeniedPromptable",
@@ -105,7 +109,7 @@ const TRACKING_SUB_ERRORS: Record<ConnectDeviceErrorType, string> = {
   [DiscoveryErrorTypes.LocationDisabledPromptable]: "LocationDisabledPromptable",
   [DiscoveryErrorTypes.LocationDisabledManualAction]: "LocationDisabledManualAction",
   [DiscoveryErrorTypes.LocationServicePermissionMissing]: "LocationServicePermissionMissing",
-  [DiscoveryErrorTypes.Unknown]: "Unknown",
+  [BaseDiscoveryErrorTypes.Unknown]: "Unknown",
   [ConnectionErrorTypes.BlePairingRefused]: "BlePairingRefused",
   [ConnectionErrorTypes.BlePairingPeerRemovedPairing]: "BlePairingPeerRemovedPairing",
 };

@@ -1,4 +1,5 @@
 import { FullConfig } from "@playwright/test";
+import { execFileSync } from "child_process";
 import { responseLogfilePath } from "./networkResponseLogger";
 import { mkdirSync, promises as fs, unlink, writeFileSync } from "fs";
 import {
@@ -12,6 +13,7 @@ import { NANO_APP_CATALOG_PATH } from "./fileUtils";
 const environmentFilePath = "allure-results/environment.properties";
 
 export default async function globalSetup(_config: FullConfig) {
+  ensureElectronBinary();
   await cleanupPreviousNanoAppJsonFile();
   if (responseLogfilePath) {
     unlink(responseLogfilePath, error => {
@@ -40,6 +42,11 @@ export default async function globalSetup(_config: FullConfig) {
     ].join("\n"),
     { encoding: "utf8", flag: "w" },
   );
+}
+
+// Electron 42+ downloads its binary on first run rather than at install time; do it once here so parallel workers don't race extracting into dist/.
+function ensureElectronBinary() {
+  execFileSync(process.execPath, [require.resolve("electron/install.js")], { stdio: "inherit" });
 }
 
 async function cleanupPreviousNanoAppJsonFile() {

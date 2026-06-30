@@ -3,20 +3,18 @@ export { DeviceManagementKitHIDTransport } from "./transport/DeviceManagementKit
 export { DeviceManagementKitHTTPProxyTransport } from "./transport/DeviceManagementKitHTTPProxyTransport";
 export { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
 export { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
-export { DefaultDeviceDiscoveryService } from "./connectDevice/discoveryService/DefaultDeviceDiscoveryService";
 export {
+  BaseConnectionErrorTypes,
+  BaseDiscoveryErrorTypes,
   ConnectDeviceUIStateTypes,
   ConnectionErrorTypes,
   DiscoveryErrorTypes,
-  type DeviceDiscoveryService,
-  type DeviceDiscoveryStartArgs,
-  type DiscoveryError,
-  type DiscoveryErrorResolution,
-  type DisplayedDevice,
-  type ConnectDeviceUIState,
-  type ConnectionError,
+  type MobileConnectionError as ConnectionError,
+  type MobileDiscoveryError as DiscoveryError,
+  type MobileConnectDeviceUIState as ConnectDeviceUIState,
 } from "./connectDevice/types";
-export { connectDeviceUseCase, type ConnectDeviceUseCaseInput } from "./connectDevice/connectDeviceUseCase";
+export type { DisplayedDevice } from "@ledgerhq/live-dmk-shared";
+export { connectDevice, type ConnectDeviceInput } from "./connectDevice/connectDevice";
 export * from "./errors";
 export * from "./hooks";
 export * from "./utils/matchDevicesByNameOrId";

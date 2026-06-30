@@ -254,9 +254,43 @@ function convertNativeOps(
   address: string,
   stakingBlockHashes: Map<number, string>,
 ): Operation[] {
+  // Accumulate fees from internal sub-txs that will be filtered out.
+  // On Tezos, when an account initiates a contract call, internal sub-operations
+  // may incur storage/baker fees charged to the initiator. These sub-txs are
+  // filtered by keepNativeOp (account is neither sender nor target), but their
+  // fees still impact the initiator's balance and must be attributed to the
+  // top-level operation.
+  const internalFeesByHash = new Map<string, bigint>();
+  for (const op of ops) {
+    if (
+      isAPITransactionType(op) &&
+      op.initiator?.address === address &&
+      op.sender?.address !== address &&
+      op.target?.address !== address
+    ) {
+      const hash = op.hash;
+      if (!hash) continue;
+      const fee =
+        BigInt(op.storageFee ?? 0) + BigInt(op.bakerFee ?? 0) + BigInt(op.allocationFee ?? 0);
+      if (fee > 0n) {
+        internalFeesByHash.set(hash, (internalFeesByHash.get(hash) ?? 0n) + fee);
+      }
+    }
+  }
+
   return ops
     .filter((op): op is ConvertibleOperation => keepNativeOp(op, address))
-    .map(op => convertOperation(address, op, stakingBlockHashes));
+    .map(op => {
+      const converted = convertOperation(address, op, stakingBlockHashes);
+      const extraFee = internalFeesByHash.get(converted.tx.hash);
+      if (extraFee) {
+        // Add internal sub-tx fees to the parent operation, then clear to avoid
+        // attributing the same fees to multiple ops sharing the same hash.
+        internalFeesByHash.delete(converted.tx.hash);
+        return { ...converted, tx: { ...converted.tx, fees: converted.tx.fees + extraFee } };
+      }
+      return converted;
+    });
 }
 
 function convertTokenOps(

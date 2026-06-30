@@ -61,7 +61,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
     shouldDisplayBorrowSection,
-    shouldDisplayMarketBanner,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
@@ -142,13 +141,11 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       </Box>,
     );
 
-    if (shouldDisplayMarketBanner) {
-      sections.push(
-        <Box key="marketBanner" px={6}>
-          <MarketBanner />
-        </Box>,
-      );
-    }
+    sections.push(
+      <Box key="marketBanner" px={6}>
+        <MarketBanner />
+      </Box>,
+    );
 
     sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
 
@@ -195,7 +192,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     shouldDisplayGraphRework,
     shouldDisplayAssetSection,
     shouldDisplayBorrowSection,
-    shouldDisplayMarketBanner,
     onBackFromUpdate,
     isLNSUpsellBannerShown,
     shouldDisplayQuickActionCtas,

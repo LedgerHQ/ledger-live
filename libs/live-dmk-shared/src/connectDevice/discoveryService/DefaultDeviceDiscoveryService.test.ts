@@ -1,0 +1,246 @@
+import type { DiscoveredDevice, TransportIdentifier } from "@ledgerhq/device-management-kit";
+import { Subject, type Observable } from "rxjs";
+import { BaseDiscoveryErrorTypes, type UnknownDiscoveryError } from "../types";
+import { DefaultDeviceDiscoveryService } from "./DefaultDeviceDiscoveryService";
+import type {
+  DeviceDiscoverySource,
+  DeviceDiscoverySourceEvent,
+} from "./sources/DeviceDiscoverySource";
+
+const createDiscoveredDevice = (id: string, transport: TransportIdentifier): DiscoveredDevice =>
+  ({
+    id,
+    name: id,
+    deviceModel: { id: "model", model: "model", name: "model" },
+    transport,
+  }) as unknown as DiscoveredDevice;
+
+const createSource = (
+  transportId: TransportIdentifier,
+  subject: Subject<DeviceDiscoverySourceEvent<UnknownDiscoveryError>> = new Subject<
+    DeviceDiscoverySourceEvent<UnknownDiscoveryError>
+  >(),
+): DeviceDiscoverySource<UnknownDiscoveryError> & {
+  subject: Subject<DeviceDiscoverySourceEvent<UnknownDiscoveryError>>;
+  listen: jest.Mock;
+} => ({
+  transportId,
+  subject,
+  listen: jest.fn(
+    (): Observable<DeviceDiscoverySourceEvent<UnknownDiscoveryError>> => subject.asObservable(),
+  ),
+});
+
+const unknownErrorFor = (
+  transportId: TransportIdentifier,
+  error: unknown,
+): UnknownDiscoveryError => ({
+  type: BaseDiscoveryErrorTypes.Unknown,
+  transportId,
+  error,
+});
+
+describe("DefaultDeviceDiscoveryService", () => {
+  it("GIVEN discovery has not started, WHEN subscribing to discovered devices, THEN it should emit an empty list", () => {
+    // GIVEN
+    const source = createSource("transport-1");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([[source.transportId, source]]),
+    );
+    const discoveredDevices: DiscoveredDevice[][] = [];
+
+    // WHEN
+    const subscription = service.discoveredDevices.subscribe(devices =>
+      discoveredDevices.push(devices),
+    );
+
+    // THEN
+    expect(discoveredDevices).toEqual([[]]);
+    subscription.unsubscribe();
+  });
+
+  it("GIVEN all sources are started, WHEN they emit devices, THEN it should aggregate discovered devices", () => {
+    // GIVEN
+    const sourceA = createSource("transport-a");
+    const sourceB = createSource("transport-b");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([
+        [sourceA.transportId, sourceA],
+        [sourceB.transportId, sourceB],
+      ]),
+    );
+    const discoveredDevices: DiscoveredDevice[][] = [];
+    service.discoveredDevices.subscribe(devices => discoveredDevices.push(devices));
+    const deviceA = createDiscoveredDevice("a", sourceA.transportId);
+    const deviceB = createDiscoveredDevice("b", sourceB.transportId);
+
+    // WHEN
+    service.start();
+    sourceA.subject.next({ type: "devices", devices: [deviceA] });
+    sourceB.subject.next({ type: "devices", devices: [deviceB] });
+
+    // THEN
+    expect(discoveredDevices).toEqual([[], [], [deviceA], [deviceA, deviceB]]);
+  });
+
+  it("GIVEN transports are ignored, WHEN discovery starts, THEN it should not listen to ignored sources", () => {
+    // GIVEN
+    const sourceA = createSource("transport-a");
+    const sourceB = createSource("transport-b");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([
+        [sourceA.transportId, sourceA],
+        [sourceB.transportId, sourceB],
+      ]),
+    );
+
+    // WHEN
+    service.start({ ignoreTransportIdentifiers: [sourceB.transportId] });
+
+    // THEN
+    expect(sourceA.listen).toHaveBeenCalledTimes(1);
+    expect(sourceB.listen).not.toHaveBeenCalled();
+  });
+
+  it("GIVEN a source has devices, WHEN it emits an error, THEN it should clear that source and emit the error", () => {
+    // GIVEN
+    const sourceA = createSource("transport-a");
+    const sourceB = createSource("transport-b");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([
+        [sourceA.transportId, sourceA],
+        [sourceB.transportId, sourceB],
+      ]),
+    );
+    const discoveredDevices: DiscoveredDevice[][] = [];
+    const errors: UnknownDiscoveryError[] = [];
+    service.discoveredDevices.subscribe(devices => discoveredDevices.push(devices));
+    service.errors.subscribe(error => errors.push(error));
+    const deviceA = createDiscoveredDevice("a", sourceA.transportId);
+    const deviceB = createDiscoveredDevice("b", sourceB.transportId);
+    const discoveryError = unknownErrorFor(sourceA.transportId, new Error("source error"));
+
+    // WHEN
+    service.start();
+    sourceA.subject.next({ type: "devices", devices: [deviceA] });
+    sourceB.subject.next({ type: "devices", devices: [deviceB] });
+    sourceA.subject.next({ type: "error", error: discoveryError });
+
+    // THEN
+    expect(errors).toEqual([discoveryError]);
+    expect(discoveredDevices[discoveredDevices.length - 1]).toEqual([deviceB]);
+  });
+
+  it("GIVEN a source observable throws, WHEN discovery is running, THEN it should emit an unknown discovery error", () => {
+    // GIVEN
+    const source = createSource("transport-a");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([[source.transportId, source]]),
+    );
+    const errors: UnknownDiscoveryError[] = [];
+    service.errors.subscribe(error => errors.push(error));
+    const error = new Error("observable error");
+
+    // WHEN
+    service.start();
+    source.subject.error(error);
+
+    // THEN
+    expect(errors).toEqual([unknownErrorFor(source.transportId, error)]);
+  });
+
+  it("GIVEN a source emits a retryable error, WHEN retry rejects, THEN it should preserve the source error retry behavior", async () => {
+    // GIVEN
+    const source = createSource("transport-a");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([[source.transportId, source]]),
+    );
+    const errors: UnknownDiscoveryError[] = [];
+    service.errors.subscribe(error => errors.push(error));
+    const error = new Error("retry error");
+    const discoveryError: UnknownDiscoveryError = {
+      type: BaseDiscoveryErrorTypes.Unknown,
+      transportId: source.transportId,
+      resolution: { type: "prompt", retry: jest.fn().mockRejectedValue(error) },
+    };
+
+    // WHEN
+    service.start();
+    source.subject.next({ type: "error", error: discoveryError });
+
+    // THEN
+    const emittedError = errors[0];
+    if (emittedError.resolution?.type === "none" || !emittedError.resolution) {
+      throw new Error("Expected a retryable discovery error");
+    }
+    expect(emittedError).toBe(discoveryError);
+    await expect(emittedError.resolution.retry()).rejects.toBe(error);
+  });
+
+  it("GIVEN a source has devices, WHEN it completes, THEN it should clear that source devices", () => {
+    // GIVEN
+    const source = createSource("transport-a");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([[source.transportId, source]]),
+    );
+    const discoveredDevices: DiscoveredDevice[][] = [];
+    service.discoveredDevices.subscribe(devices => discoveredDevices.push(devices));
+    const device = createDiscoveredDevice("a", source.transportId);
+
+    // WHEN
+    service.start();
+    source.subject.next({ type: "devices", devices: [device] });
+    source.subject.complete();
+
+    // THEN
+    expect(discoveredDevices[discoveredDevices.length - 1]).toEqual([]);
+  });
+
+  it("GIVEN discovery is already started, WHEN starting again before stop, THEN it should not subscribe twice", () => {
+    // GIVEN
+    const source = createSource("transport-a");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([[source.transportId, source]]),
+    );
+
+    // WHEN
+    service.start();
+    service.start();
+
+    // THEN
+    expect(source.listen).toHaveBeenCalledTimes(1);
+  });
+
+  it("GIVEN discovery has devices from multiple sources, WHEN stopping discovery, THEN it should unsubscribe all sources and emit an empty list", () => {
+    // GIVEN
+    const sourceA = createSource("transport-a");
+    const sourceB = createSource("transport-b");
+    const service = new DefaultDeviceDiscoveryService<UnknownDiscoveryError>(
+      new Map([
+        [sourceA.transportId, sourceA],
+        [sourceB.transportId, sourceB],
+      ]),
+    );
+    const discoveredDevices: DiscoveredDevice[][] = [];
+    service.discoveredDevices.subscribe(devices => discoveredDevices.push(devices));
+    const deviceA = createDiscoveredDevice("a", sourceA.transportId);
+    const deviceB = createDiscoveredDevice("b", sourceB.transportId);
+
+    // WHEN
+    service.start();
+    sourceA.subject.next({ type: "devices", devices: [deviceA] });
+    sourceB.subject.next({ type: "devices", devices: [deviceB] });
+    service.stop();
+    sourceA.subject.next({
+      type: "devices",
+      devices: [createDiscoveredDevice("c", sourceA.transportId)],
+    });
+    sourceB.subject.next({
+      type: "devices",
+      devices: [createDiscoveredDevice("d", sourceB.transportId)],
+    });
+
+    // THEN
+    expect(discoveredDevices).toEqual([[], [], [deviceA], [deviceA, deviceB], []]);
+  });
+});

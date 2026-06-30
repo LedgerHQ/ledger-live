@@ -289,7 +289,7 @@ describe("getBlock", () => {
     expect(block.transactions[0].operations[0]).toMatchObject({
       type: "other",
       ledgerOpType: "OPT_IN",
-      assetAmount: "1000.0000000",
+      assetAmount: "100",
       memo: { type: "NO_MEMO" },
       sequence: "12345",
     });

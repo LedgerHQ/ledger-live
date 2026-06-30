@@ -322,7 +322,6 @@ export type Features = CurrencyFeatures & {
   newSendFlow: Feature_NewSendFlow;
   zcashShielded: DefaultFeature;
   llmNanoOnboardingFundWallet: DefaultFeature;
-  llmRebornABtest: DefaultFeature;
   lifiSolana: DefaultFeature;
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
   lldOnboardingEnableSync: Feature_OnboardingEnableSync;
@@ -339,7 +338,6 @@ export type Features = CurrencyFeatures & {
   lwdWallet40: Feature_LwdWallet40;
   addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
   concordiumIdAppLinks: Feature_ConcordiumIdAppLinks;
-  concordiumVerifyAddress: DefaultFeature;
   lldHideSmallValueTokenOperations: Feature_LldHideSmallValueTokenOperations;
   llmTransferButtonCopyVariant: Feature_LlmTransferButtonCopyVariant;
   lldTezosStaking: DefaultFeature;
@@ -947,9 +945,7 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 }>;
 
 type Feature_Wallet40_Params = {
-  marketBanner: boolean;
   graphRework: boolean;
-  quickActionCtas: boolean;
   mainNavigation: boolean;
   tour: boolean;
   lazyOnboarding: boolean;
@@ -965,6 +961,7 @@ type Feature_Wallet40_Params = {
   earnUpselling?: boolean;
   earnSimulator?: boolean;
   q2Tour?: boolean;
+  quickActionCtas?: boolean;
 };
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwmWallet40"]` from `@shared/feature-flags` instead. */

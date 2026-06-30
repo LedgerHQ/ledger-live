@@ -12,17 +12,7 @@ export default defineConfig({
       root: "lib",
     },
     cleanDistPath: true,
-    externals: [
-      "@ledgerhq/hw-transport-node-hid",
-      "bigint-buffer",
-      "usb",
-      "node-hid",
-      "qrcode-terminal",
-      /^readable-stream/,
-      "winston",
-      "winston-transport",
-      "superagent",
-    ],
+    externals: ["bigint-buffer", /^readable-stream/],
     minify: false,
   },
   lib: [

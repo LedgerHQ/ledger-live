@@ -8,6 +8,7 @@ async function beforeAllFunction(options: ApplicationOptions) {
     userdata: options.userdata,
     speculosApp: options.speculosApp,
     cliCommands: options.cliCommands,
+    speculosForSetupOnly: true,
   });
   await app.mainNavigation.waitForWallet40Ready();
 }

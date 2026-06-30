@@ -319,8 +319,8 @@ catalogs:
       specifier: 20.51.3
       version: 20.51.3
     electron:
-      specifier: 40.6.0
-      version: 40.6.0
+      specifier: 42.5.0
+      version: 42.5.0
     eslint-plugin-better-tailwindcss:
       specifier: 4.0.0-beta.3
       version: 4.0.0-beta.3
@@ -339,6 +339,9 @@ catalogs:
     expo-crypto:
       specifier: 15.0.8
       version: 15.0.8
+    expo-document-picker:
+      specifier: 13.1.6
+      version: 13.1.6
     expo-file-system:
       specifier: 19.0.21
       version: 19.0.21
@@ -673,48 +676,18 @@ importers:
 
   apps/cli:
     dependencies:
-      '@ledgerhq/coin-bitcoin':
+      '@domain/entity-currency-crypto':
         specifier: workspace:^
-        version: link:../../libs/coin-modules/coin-bitcoin
-      '@ledgerhq/coin-module-framework':
-        specifier: 'catalog:'
-        version: 3.5.1(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: link:../../domain/entity/currency-crypto
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/cryptoassets
-      '@ledgerhq/device-core':
-        specifier: workspace:^
-        version: link:../../libs/device-core
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../libs/ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/errors
-      '@ledgerhq/hw-app-btc':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/hw-app-btc
-      '@ledgerhq/hw-ledger-key-ring-protocol':
-        specifier: workspace:^
-        version: link:../../libs/hw-ledger-key-ring-protocol
-      '@ledgerhq/hw-transport':
-        specifier: workspace:*
-        version: link:../../libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/hw-transport-http':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/hw-transport-http
-      '@ledgerhq/hw-transport-mocker':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/hw-transport-mocker
-      '@ledgerhq/hw-transport-node-hid':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/hw-transport-node-hid
       '@ledgerhq/hw-transport-node-speculos':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-node-speculos
-      '@ledgerhq/ledger-key-ring-protocol':
-        specifier: workspace:^
-        version: link:../../libs/ledger-key-ring-protocol
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../libs/ledger-wallet-framework
@@ -733,96 +706,33 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
-      '@ledgerhq/live-network':
-        specifier: workspace:^
-        version: link:../../libs/live-network
-      '@ledgerhq/live-wallet':
-        specifier: workspace:^
-        version: link:../../libs/live-wallet
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/logs
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-cryptoassets
-      '@ledgerhq/types-devices':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/types-devices
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
-      '@zondax/ledger-live-icp':
-        specifier: 1.4.2
-        version: 1.4.2
-      asciichart:
-        specifier: 1.5.25
-        version: 1.5.25
       bigint-buffer:
         specifier: '*'
         version: 1.1.5(patch_hash=8b68e3a6ff85b08428e730e15c185b6ef716497a858ca1f30f6e628828bac536)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      bip39:
-        specifier: 3.1.0
-        version: 3.1.0
-      body-parser:
-        specifier: 2.2.2
-        version: 2.2.2
       command-line-args:
         specifier: 5.2.1
         version: 5.2.1
-      cors:
-        specifier: 2.8.5
-        version: 2.8.5
-      express:
-        specifier: 5.2.1
-        version: 5.2.1
-      got:
-        specifier: 14.4.7
-        version: 14.4.7
-      invariant:
-        specifier: 2.2.4
-        version: 2.2.4
       lodash:
         specifier: 4.17.21
         version: 4.17.21
-      node-hid:
-        specifier: 2.1.2
-        version: 2.1.2
-      pako:
-        specifier: 2.1.0
-        version: 2.1.0
-      purify-ts:
-        specifier: 2.1.0
-        version: 2.1.0
-      qrcode-terminal:
-        specifier: 0.12.0
-        version: 0.12.0
-      react:
-        specifier: 19.1.4
-        version: 19.1.4
-      react-dom:
-        specifier: 19.1.4
-        version: 19.1.4(react@19.1.4)
       readable-stream:
         specifier: ^4.7.0
         version: 4.7.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
-      superagent:
-        specifier: ^10.3.0
-        version: 10.3.0
-      usb:
-        specifier: '*'
-        version: 2.9.0(patch_hash=4b177e2b898217b7d3148dc43c0ed8922eb1fa940c3998e9c82e644d534127b5)
-      winston:
-        specifier: 3.13.0
-        version: 3.13.0
-      ws:
-        specifier: 'catalog:'
-        version: 8.18.3
     devDependencies:
       '@pnpm/exportable-manifest':
         specifier: 1000.0.7
@@ -833,39 +743,15 @@ importers:
       '@rslib/core':
         specifier: 'catalog:'
         version: 0.22.0(typescript@6.0.2)
-      '@types/asciichart':
-        specifier: 1.5.8
-        version: 1.5.8
-      '@types/body-parser':
-        specifier: 1.19.5
-        version: 1.19.5
       '@types/command-line-args':
         specifier: 5.2.3
         version: 5.2.3
-      '@types/cors':
-        specifier: 2.8.17
-        version: 2.8.17
-      '@types/express':
-        specifier: 4.17.21
-        version: 4.17.21
-      '@types/invariant':
-        specifier: 2.2.37
-        version: 2.2.37
       '@types/lodash':
         specifier: 4.17.7
         version: 4.17.7
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/pako':
-        specifier: 2.0.3
-        version: 2.0.3
-      '@types/qrcode-terminal':
-        specifier: 0.12.2
-        version: 0.12.2
-      '@types/ws':
-        specifier: 8.5.10
-        version: 8.5.10
       oxfmt:
         specifier: 'catalog:'
         version: 0.36.0
@@ -904,6 +790,9 @@ importers:
       '@datadog/browser-rum':
         specifier: 6.30.1
         version: 6.30.1(@datadog/browser-logs@6.30.1)
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency-crypto
       '@electron/fuses':
         specifier: 2.0.0
         version: 2.0.0
@@ -955,6 +844,9 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/cryptoassets
+      '@ledgerhq/device-intent':
+        specifier: workspace:^
+        version: link:../../libs/device-intent
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -1450,7 +1342,7 @@ importers:
         version: 26.0.1(lodash@4.17.21)
       electron:
         specifier: 'catalog:'
-        version: 40.6.0
+        version: 42.5.0
       electron-builder:
         specifier: 26.0.1
         version: 26.0.1(lodash@4.17.21)
@@ -1560,6 +1452,9 @@ importers:
       '@datadog/mobile-react-navigation':
         specifier: 2.8.2
         version: 2.8.2(@datadog/mobile-react-native@2.8.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency-crypto
       '@features/platform-feature-flags':
         specifier: workspace:^
         version: link:../../features/platform/feature-flags
@@ -2326,6 +2221,9 @@ importers:
       '@bunli/utils':
         specifier: 0.6.0
         version: 0.6.0
+      '@domain/entity-currency-crypto':
+        specifier: workspace:^
+        version: link:../../domain/entity/currency-crypto
       '@ledgerhq/coin-bitcoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-bitcoin
@@ -2395,6 +2293,9 @@ importers:
       '@oxlint/binding-win32-x64-msvc':
         specifier: 1.51.0
         version: 1.51.0
+      '@segment/analytics-node':
+        specifier: 3.1.0
+        version: 3.1.0
       '@shared/schema-primitives':
         specifier: workspace:^
         version: link:../../shared/schema-primitives
@@ -2479,6 +2380,9 @@ importers:
       '@devtools/shell':
         specifier: workspace:*
         version: link:../../devtools/shell
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency-crypto
       '@features/platform-feature-flags':
         specifier: workspace:*
         version: link:../../features/platform/feature-flags
@@ -2760,15 +2664,21 @@ importers:
         specifier: workspace:^
         version: link:../../shared/feature-flags
     devDependencies:
+      '@babel/plugin-transform-export-namespace-from':
+        specifier: 7.27.1
+        version: 7.27.1
+      '@gorhom/bottom-sheet':
+        specifier: 'catalog:'
+        version: 5.2.6(@types/react@19.0.14)(react-native-reanimated@4.3.0(react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.17
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.41(@ledgerhq/lumen-design-core@0.1.17)(@radix-ui/react-checkbox@1.3.2(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.41(@ledgerhq/lumen-design-core@0.1.17)(@radix-ui/react-checkbox@1.3.2(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.46(@ledgerhq/lumen-design-core@0.1.17)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 0.1.46(4c5303e962296208615741b8f556ff5a)
       '@ledgerhq/lumen-utils-shared':
         specifier: 0.1.4
         version: 0.1.4(react@19.1.4)
@@ -2790,6 +2700,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: 'catalog:'
         version: 1.2.8(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@react-native/babel-preset':
+        specifier: 'catalog:'
+        version: 0.81.6
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -2808,6 +2721,9 @@ importers:
       '@testing-library/react':
         specifier: 'catalog:'
         version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@testing-library/react-native':
+        specifier: 'catalog:'
+        version: 13.3.3(patch_hash=4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76)(jest@30.2.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react-test-renderer@19.1.4(react@19.1.4))(react@19.1.4)
       '@testing-library/user-event':
         specifier: 'catalog:'
         version: 14.6.1(@testing-library/dom@10.4.1)
@@ -2817,23 +2733,59 @@ importers:
       '@types/react':
         specifier: 'catalog:'
         version: 19.0.14
+      babel-jest:
+        specifier: 'catalog:'
+        version: 30.2.0
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
+      expo-document-picker:
+        specifier: 'catalog:'
+        version: 13.1.6(expo-modules-core@3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      expo-file-system:
+        specifier: 'catalog:'
+        version: 19.0.21(expo-modules-core@3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      expo-haptics:
+        specifier: 'catalog:'
+        version: 15.0.8(expo-modules-core@3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      expo-modules-core:
+        specifier: 'catalog:'
+        version: 3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       jest:
         specifier: 'catalog:'
         version: 30.2.0
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.2.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       react:
         specifier: 19.1.4
         version: 19.1.4
       react-dom:
         specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-native:
+        specifier: 'catalog:'
+        version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)
+      react-native-reanimated:
+        specifier: 'catalog:'
+        version: 4.3.0(react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native-safe-area-context:
+        specifier: 'catalog:'
+        version: 5.6.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native-svg:
+        specifier: 'catalog:'
+        version: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native-worklets:
+        specifier: 'catalog:'
+        version: 0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-test-renderer:
+        specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
       tailwind-merge:
         specifier: 'catalog:'
@@ -2999,6 +2951,98 @@ importers:
       tailwind-merge:
         specifier: 'catalog:'
         version: 3.4.0
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+
+  domain/api/currency-fiat:
+    dependencies:
+      '@domain/entity-currency-fiat':
+        specifier: workspace:*
+        version: link:../../entity/currency-fiat
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+
+  domain/api/currency-token:
+    dependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../entity/currency-crypto
+      '@domain/entity-currency-token':
+        specifier: workspace:*
+        version: link:../../entity/currency-token
+      '@domain/entity-currency-unit':
+        specifier: workspace:*
+        version: link:../../entity/currency-unit
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.17.21
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(react@19.1.4)
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
@@ -3223,7 +3267,7 @@ importers:
         version: 4.17.16
       electron:
         specifier: 'catalog:'
-        version: 40.6.0
+        version: 42.5.0
       oxfmt:
         specifier: 'catalog:'
         version: 0.36.0
@@ -4810,12 +4854,6 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/domain-service':
-        specifier: workspace:^
-        version: link:../../domain-service
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -4849,31 +4887,19 @@ importers:
       ethers:
         specifier: 6.15.0
         version: 6.15.0
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       imurmurhash:
         specifier: ^0.1.4
         version: 0.1.4
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       react-native-get-random-values:
         specifier: ^1.8.0
         version: 1.11.0
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
     devDependencies:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/hw-app-eth':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/hw-app-eth
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-cryptoassets
@@ -4895,9 +4921,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: ^4.14.191
-        version: 4.17.7
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -5307,6 +5330,9 @@ importers:
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
+      '@ledgerhq/live-promise':
+        specifier: workspace:^
+        version: link:../../promise
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
@@ -6780,6 +6806,82 @@ importers:
         specifier: 'catalog:'
         version: 6.0.2
 
+  libs/coin-tester-modules/coin-tester-cosmos:
+    dependencies:
+      '@cosmjs/amino':
+        specifier: ^0.36.0
+        version: 0.36.2
+      '@cosmjs/crypto':
+        specifier: ^0.36.1
+        version: 0.36.2
+      '@cosmjs/encoding':
+        specifier: ^0.36.0
+        version: 0.36.2
+      '@ledgerhq/coin-cosmos':
+        specifier: workspace:^
+        version: link:../../coin-modules/coin-cosmos
+      '@ledgerhq/coin-module-framework':
+        specifier: 'catalog:'
+        version: 3.5.1
+      '@ledgerhq/coin-tester':
+        specifier: workspace:^
+        version: link:../../coin-tester
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      bignumber.js:
+        specifier: 9.1.2
+        version: 9.1.2
+      chalk:
+        specifier: ^4.1.2
+        version: 4.1.2
+      docker-compose:
+        specifier: ^1.1.0
+        version: 1.1.0
+      expect:
+        specifier: 'catalog:'
+        version: 30.2.0
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
+      rimraf:
+        specifier: ^5
+        version: 5.0.10
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+
   libs/coin-tester-modules/coin-tester-evm:
     dependencies:
       '@ledgerhq/coin-evm':
@@ -6800,6 +6902,9 @@ importers:
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../live-config
+      '@ledgerhq/live-signer-evm':
+        specifier: workspace:^
+        version: link:../../live-signer-evm
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-cryptoassets
@@ -8108,9 +8213,15 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
+      '@ledgerhq/domain-service':
+        specifier: workspace:^
+        version: link:../domain-service
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
+      '@ledgerhq/evm-tools':
+        specifier: workspace:^
+        version: link:../evm-tools
       '@ledgerhq/hw-app-algorand':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-algorand
@@ -11249,9 +11360,6 @@ importers:
       purify-ts:
         specifier: ^2.1.0
         version: 2.1.0
-      xstate:
-        specifier: 'catalog:'
-        version: 5.19.2
     devDependencies:
       '@ledgerhq/device-transport-kit-react-native-hid':
         specifier: 'catalog:'
@@ -11756,9 +11864,6 @@ importers:
 
   libs/live-signer-evm:
     dependencies:
-      '@ledgerhq/coin-evm':
-        specifier: workspace:^
-        version: link:../coin-modules/coin-evm
       '@ledgerhq/context-module':
         specifier: 2.1.0
         version: 2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
@@ -15632,6 +15737,10 @@ packages:
     resolution: {integrity: sha512-XQsZgjm2EcVUiZQf11UBJQfmZeEmOW8DpI1gsFeln6w0ae0ii4dMQEQ0kjl6DspdWX1aGY1/loyXnP0JS06e/A==}
     engines: {node: '>=0.8.0'}
 
+  '@electron-internal/extract-zip@1.0.4':
+    resolution: {integrity: sha512-Zr1Vs7E9tpCNhZHDAbFVXc2gEVCG9RqPDjrno5+bdgB6LRAuvgyMHJut4NCVyYwtAieapMzc3fiQ3CSTi75ARg==}
+    engines: {node: '>=22.12.0'}
+
   '@electron/asar@3.2.18':
     resolution: {integrity: sha512-2XyvMe3N3Nrs8cV39IKELRHTYUWFKrmqqSY1U+GMlc0jvqjIVnoxhNd2H4JolWQncbJi1DCvb5TNxZuI2fEjWg==}
     engines: {node: '>=10.12.0'}
@@ -15654,6 +15763,10 @@ packages:
   '@electron/get@2.0.3':
     resolution: {integrity: sha512-Qkzpg2s9GnVV2I2BjRksUi43U5e6+zaQMcjoJy0C+C5oxaKl+fmckGDQFtRpZpZV0NQekuZZ+tGz7EA9TVnQtQ==}
     engines: {node: '>=12'}
+
+  '@electron/get@5.0.0':
+    resolution: {integrity: sha512-pjoBpru1KdEtcExBnuHAP1cAc/5faoedw0hzJkL3o4/IJp7HNF1+fbrdxT3gMYRX2oJfvnA/WXeCTVQpYYxyJA==}
+    engines: {node: '>=22.12.0'}
 
   '@electron/node-gyp@https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2':
     resolution: {tarball: https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2}
@@ -18947,9 +19060,6 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@paralleldrive/cuid2@2.3.1':
-    resolution: {integrity: sha512-XO7cAxhnTZl0Yggq6jOgjiOHhbgcO4NqFqwSmQpjK3b6TEE6Uj/jfSk6wzYyemh3+I0sHirKSetjQwn5cZktFw==}
-
   '@pinojs/redact@0.4.0':
     resolution: {integrity: sha512-k2ENnmBugE/rzQfEcdWHcCY+/FM3VLzH9cYEsbdsoqrvzAKRhUZeRNhAZvB8OitQJ1TBed3yqWtdjzS6wJKBwg==}
 
@@ -20536,11 +20646,18 @@ packages:
   '@segment/analytics-core@1.8.2':
     resolution: {integrity: sha512-5FDy6l8chpzUfJcNlIcyqYQq4+JTUynlVoCeCUuVz+l+6W0PXg+ljKp34R4yLVCcY5VVZohuW+HH0VLWdwYVAg==}
 
+  '@segment/analytics-core@1.8.3':
+    resolution: {integrity: sha512-63X8e2DWb2ZnJ9S3H8iSOFnbeDXMkTGhA8kZG4eFAO07QBwBVyWo5BCpv6vmuOMEkv2le6t2FMg1p6ZeJQA/4A==}
+
   '@segment/analytics-generic-utils@1.2.0':
     resolution: {integrity: sha512-DfnW6mW3YQOLlDQQdR89k4EqfHb0g/3XvBXkovH1FstUN93eL1kfW9CsDcVQyH3bAC5ZsFyjA/o/1Q2j0QeoWw==}
 
   '@segment/analytics-next@1.81.1':
     resolution: {integrity: sha512-nVHNhriViptjkp4004qBbvmnW9/3brjhBv2P5Cvcg7iWW41fBzUY8FbLi+8wkmSbycT9fH1pTM3TUxB6+h0Fcg==}
+
+  '@segment/analytics-node@3.1.0':
+    resolution: {integrity: sha512-F3pJmzUxmWZFV2wxJfuGvjLViCrQBFpxLLp4++fkoDsohWwS89T7n0M5nW1zxeYc2X2rA/v7q5ou3JZIw9bl3g==}
+    engines: {node: '>=20'}
 
   '@segment/analytics-page-tools@1.0.0':
     resolution: {integrity: sha512-o9OVB91qLB9qb0Bw1HfjmWm5AnrMNULRjx++4lBqLt8InKRX1urrRBparVlpj+yJA0sckN5ZcsfazRLuPgBYDQ==}
@@ -20723,10 +20840,6 @@ packages:
   '@sindresorhus/is@4.6.0':
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
     engines: {node: '>=10'}
-
-  '@sindresorhus/is@7.0.2':
-    resolution: {integrity: sha512-d9xRovfKNz1SKieM0qJdO+PQonjnnIfSNWfHYnBSJ9hkjm0ZPw6HlxscDXYstp3z+7V2GOFHc+J0CYrYTjqCJw==}
-    engines: {node: '>=18'}
 
   '@sindresorhus/merge-streams@4.0.0':
     resolution: {integrity: sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==}
@@ -22458,10 +22571,6 @@ packages:
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
     engines: {node: '>=10'}
 
-  '@szmarczak/http-timer@5.0.1':
-    resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
-    engines: {node: '>=14.16'}
-
   '@tailwindcss/node@4.1.18':
     resolution: {integrity: sha512-DoR7U1P7iYhw16qJ49fgXUlry1t4CpXeErJHnQ44JgTSKMaZUdf17cfn5mHchfJ4KRBZRFA/Coo+MUF5+gOaCQ==}
 
@@ -22795,9 +22904,6 @@ packages:
 
   '@types/aria-query@5.0.4':
     resolution: {integrity: sha512-rfT93uj5s0PRL7EzccGMs3brplhcrghnDoV26NqKhCAS1hVo+WdNsPvE/yb6ilfr5hi2MEk6d5EWJTKdxg8jVw==}
-
-  '@types/asciichart@1.5.8':
-    resolution: {integrity: sha512-8yzgCUybv8/yUfj4WeTh7G+V+AxU7AzwsF2CrkTtARKHdrxE/EiByF2efUMj6qdm87tENucNu6pLs22RWU0H7g==}
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -23245,9 +23351,6 @@ packages:
 
   '@types/q@1.5.8':
     resolution: {integrity: sha512-hroOstUScF6zhIi+5+x0dzqrHA1EJi+Irri6b1fxolMTqqHIV/Cg77EtnQcZqZCu8hR3mX2BzIxN4/GzI68Kfw==}
-
-  '@types/qrcode-terminal@0.12.2':
-    resolution: {integrity: sha512-v+RcIEJ+Uhd6ygSQ0u5YYY7ZM+la7GgPbs0V/7l/kFs2uO4S8BcIUEMoP7za4DNIqNnUD5npf0A/7kBhrCKG5Q==}
 
   '@types/qrcode@1.5.5':
     resolution: {integrity: sha512-CdfBi/e3Qk+3Z/fXYShipBT13OJ2fDO2Q2w5CIP5anLTLIndQG9z6P1cnm+8zCWSpm5dnxMFd/uREtb0EXuQzg==}
@@ -24036,7 +24139,7 @@ packages:
   '@xmldom/xmldom@0.7.13':
     resolution: {integrity: sha512-lm2GW5PkosIzccsaZIz7tp8cPADSIlIHWDFTR1N0SzfinhhYgeIQjFMz4rYzanCScr3DqQLeomUDArp6MWKm+g==}
     engines: {node: '>=10.0.0'}
-    deprecated: this version has critical issues, please update to the latest version
+    deprecated: this version is no longer supported, please update to at least 0.8.*
 
   '@xmldom/xmldom@0.8.10':
     resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
@@ -24385,7 +24488,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -24522,9 +24625,6 @@ packages:
 
   asap@2.0.6:
     resolution: {integrity: sha512-BSHWgDSAiKs50o2Re8ppvp3seVHXSRM44cdSsT9FfNEUUZLOGWVCsiWaRPWM1Znn+mqZ1OfVZ3z3DWEzSp7hRA==}
-
-  asciichart@1.5.25:
-    resolution: {integrity: sha512-PNxzXIPPOtWq8T7bgzBtk9cI2lgS4SJZthUHEiQ1aoIc3lNzGfUvIvo9LiAnq26TACo9t1/4qP6KTGAUbzX9Xg==}
 
   asn1-ts@11.0.6:
     resolution: {integrity: sha512-DZvnRuOBGjT38jmYCHPGdp784X97n8UH912J89x2385bKslQkbNWtGfZEXNY69ebymK7h31TI1oG3SpkzlsLwA==}
@@ -25325,14 +25425,6 @@ packages:
     resolution: {integrity: sha512-2/kNscPhpcxrOigMZzbiWF7dz8ilhb/nIHU3EyZiXWXpeq/au8qJ8VhdftMkty3n7Gj6HIGalQG8oiBNB3AJgA==}
     engines: {node: '>=10.6.0'}
 
-  cacheable-lookup@7.0.0:
-    resolution: {integrity: sha512-+qJyx4xiKra8mZrcwhjMRMUhD5NR1R8esPkzIYxX96JiecFoxAXFuz/GpR3+ev4PE1WamHip78wV0vcmPQtp8w==}
-    engines: {node: '>=14.16'}
-
-  cacheable-request@12.0.1:
-    resolution: {integrity: sha512-Yo9wGIQUaAfIbk+qY0X4cDQgCosecfBe3V9NSyeY4qPC2SAkbCS4Xj79VP8WOzitpJUZKc/wsRCYF5ariDIwkg==}
-    engines: {node: '>=18'}
-
   cacheable-request@7.0.4:
     resolution: {integrity: sha512-v+p6ongsrp0yTGbJXjgxPow2+DL93DASP4kXCDKb8/bwRtt9OEF3whggkkDkGNzgcWy2XaF4a8nZglC7uElscg==}
     engines: {node: '>=8'}
@@ -25847,9 +25939,6 @@ packages:
     resolution: {integrity: sha512-pJDh5/4wrEnXX/VWRZvruAGHkzKdr46z11OlTPN+VrATlWWhSKewNCJ1futCO5C7eJB3nPMFZA1LeYtcFboZ2A==}
     engines: {node: '>=0.10.0'}
 
-  component-emitter@1.3.1:
-    resolution: {integrity: sha512-T0+barUSQRTUQASh8bx02dl+DhF54GtIDY13Y3m9oWTklKbb3Wv974meRpeZ3lp1JpLVECWWNHC4vaG2XHXouQ==}
-
   compress-commons@5.0.3:
     resolution: {integrity: sha512-/UIcLWvwAQyVibgpQDPtfNM3SvqN7G9elAPAV7GM0L53EbNWwWiCsWtK8Fwed/APEbptPHXs5PuW+y8Bq8lFTA==}
     engines: {node: '>= 12.0.0'}
@@ -26132,9 +26221,6 @@ packages:
   cookie@1.1.1:
     resolution: {integrity: sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==}
     engines: {node: '>=18'}
-
-  cookiejar@2.1.4:
-    resolution: {integrity: sha512-LDx6oHrK+PhzLKJU9j5S7/Y3jM/mUHvD/DeI1WQmJn652iPC5Y4TBzC9l+5OMOXlyTTA+SmVUPm0HQUwpD5Jqw==}
 
   cookies@0.9.1:
     resolution: {integrity: sha512-TG2hpqe4ELx54QER/S3HQ9SRVnQnGBtKUz5bLQWtYAQ+o6GpgMs6sYUvaiJjVxb+UXwhRhAEP3m7LbsIZ77Hmw==}
@@ -26933,9 +27019,6 @@ packages:
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
 
-  dezalgo@1.0.4:
-    resolution: {integrity: sha512-rXSP0bf+5n0Qonsb+SVVfNfIsimO4HEtmnIpPHY8Q1UCzKlQrDMfdobr8nJOOsRgWCyMRqeSBQzmWUMq7zvVig==}
-
   diff-sequences@28.1.1:
     resolution: {integrity: sha512-FU0iFaH/E23a+a718l8Qa/19bF9p06kgE0KipMOMadwa3SjnaElKzPaUC0vnibs6/B/9ni97s61mcejk8W1fQw==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -27197,9 +27280,9 @@ packages:
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
-  electron@40.6.0:
-    resolution: {integrity: sha512-ett8W+yOFGDuM0vhJMamYSkrbV3LoaffzJd9GfjI96zRAxyrNqUSKqBpf/WGbQCweDxX2pkUCUfrv4wwKpsFZA==}
-    engines: {node: '>= 12.20.55'}
+  electron@42.5.0:
+    resolution: {integrity: sha512-cYEKS9XFz+c9fAB4jI0x49yz1FFzB55r3q96wu9YkwwJMv7t9202IE/ltlgy6yitl/J4M7C8JQcmUqdzDvPl/w==}
+    engines: {node: '>= 22.12.0'}
     hasBin: true
 
   elegant-spinner@1.0.1:
@@ -27674,6 +27757,24 @@ packages:
 
   expo-crypto@15.0.8:
     resolution: {integrity: sha512-aF7A914TB66WIlTJvl5J6/itejfY78O7dq3ibvFltL9vnTALJ/7LYHvLT4fwmx9yUNS6ekLBtDGWivFWnj2Fcw==}
+    peerDependencies:
+      expo: '*'
+      expo-constants: '*'
+      expo-modules-core: '*'
+      react: 19.1.4
+      react-native: '*'
+    peerDependenciesMeta:
+      expo-constants:
+        optional: true
+      expo-modules-core:
+        optional: true
+      react:
+        optional: true
+      react-native:
+        optional: true
+
+  expo-document-picker@13.1.6:
+    resolution: {integrity: sha512-8FTQPDOkyCvFN/i4xyqzH7ELW4AsB6B3XBZQjn1FEdqpozo6rpNJRr7sWFU/93WrLgA9FJEKpKbyr6XxczK6BA==}
     peerDependencies:
       expo: '*'
       expo-constants: '*'
@@ -28255,10 +28356,6 @@ packages:
       vue-template-compiler:
         optional: true
 
-  form-data-encoder@4.1.0:
-    resolution: {integrity: sha512-G6NsmEW15s0Uw9XnCg+33H3ViYRyiM0hMrMhhqQOR8NFc5GhYrI+6I3u7OTw7b91J2g8rtvMBZJDbcGb2YUniw==}
-    engines: {node: '>= 18'}
-
   form-data@2.3.3:
     resolution: {integrity: sha512-1lLKB2Mu3aGP1Q/2eCOx0fNbRMe7XdwktwOruhfqqd0rIJWwN4Dh+E3hrPSlDCXnSR7UtZ1N38rVXm+6+MEhJQ==}
     engines: {node: '>= 0.12'}
@@ -28282,10 +28379,6 @@ packages:
   formdata-polyfill@4.0.10:
     resolution: {integrity: sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==}
     engines: {node: '>=12.20.0'}
-
-  formidable@3.5.4:
-    resolution: {integrity: sha512-YikH+7CUTOtP44ZTnUhR7Ic2UASBPOqmaRkRKxRbywPTe5VxF7RRCck4af9wutiZ/QKM5nME9Bie2fFaPz5Gug==}
-    engines: {node: '>=14.0.0'}
 
   forwarded@0.2.0:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
@@ -28678,10 +28771,6 @@ packages:
     resolution: {integrity: sha512-o0Je4NvQObAuZPHLFoRSkdG2lTgtcynqymzg2Vupdx6PorhaT5MCbIyXG6d4D94kk8ZG57QeosgdiqfJWhEhlQ==}
     engines: {node: '>=10.19.0'}
 
-  got@14.4.7:
-    resolution: {integrity: sha512-DI8zV1231tqiGzOiOzQWDhsBmncFW7oQDH6Zgy6pDPrqJuVZMtoSgPLLsBZQj8Jg4JFfwoOsDA8NGtLQLnIx2g==}
-    engines: {node: '>=20'}
-
   gql.tada@1.9.2:
     resolution: {integrity: sha512-QxRHVpxtrOVdYXz6oavq0lBM+Zdp0swapLGJcD4SLpXDcsD337BHDFrzqqjfkbepv0sSAiO0LGabu1kI5D5Gyg==}
     hasBin: true
@@ -29046,10 +29135,6 @@ packages:
 
   http2-wrapper@1.0.3:
     resolution: {integrity: sha512-V+23sDMr12Wnz7iTcDeJr3O6AIxlnvT/bmaAAAP/Xda35C90p9599p0F1eHR/N1KILWSoWVAiOMFjBBXaXSMxg==}
-    engines: {node: '>=10.19.0'}
-
-  http2-wrapper@2.2.1:
-    resolution: {integrity: sha512-V5nVw1PAOgfI3Lmeaj2Exmeg7fenjhRUgz1lPSezy1CuhPYbgQtbQj4jZfEAEMlaL+vupsvhjqCyjzob0yxsmQ==}
     engines: {node: '>=10.19.0'}
 
   https-browserify@1.0.0:
@@ -30066,6 +30151,9 @@ packages:
   joi@17.12.2:
     resolution: {integrity: sha512-RonXAIzCiHLc8ss3Ibuz45u28GOsWE1UpfDXLbN/9NKbL4tCJf8TWYVKsoYuuh+sAUt7fsSNpA+r2+TBA6Wjmw==}
 
+  jose@5.10.0:
+    resolution: {integrity: sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg==}
+
   jotai-family@1.0.1:
     resolution: {integrity: sha512-Zb/79GNDhC/z82R+6qTTpeKW4l4H6ZCApfF5W8G4SH37E4mhbysU7r8DkP0KX94hWvjB/6lt/97nSr3wB+64Zg==}
     engines: {node: '>=12.20.0'}
@@ -30962,10 +31050,6 @@ packages:
     resolution: {integrity: sha512-tqNXrS78oMOE73NMxK4EMLQsQowWf8jKooH9g7xPavRT706R6bkQJ6DY2Te7QukaZsulxa30wQ7bk0pm4XiHmA==}
     engines: {node: '>=8'}
 
-  lowercase-keys@3.0.0:
-    resolution: {integrity: sha512-ozCC6gdQ+glXOQsveKD0YsDy8DSQFjDTz4zyzEHNV5+JP5D62LmfDZ6o1cycFx9ouG940M5dE8C8CTewdj2YWQ==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
@@ -31725,10 +31809,6 @@ packages:
     resolution: {integrity: sha512-z0yWI+4FDrrweS8Zmt4Ej5HdJmky15+L2e6Wgn3+iK5fWzb6T3fhNFq2+MeTRb064c6Wr4N/wv0DzQTjNzHNGQ==}
     engines: {node: '>=10'}
 
-  mimic-response@4.0.0:
-    resolution: {integrity: sha512-e5ISH9xMYU0DzrT+jl8q2ze9D6eWBto+I8CNpe+VI+K2J/F/k3PdkdTdz4wvGVH4NTpo+NRYTVIuMQEMMcsLqg==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-
   min-indent@1.0.1:
     resolution: {integrity: sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==}
     engines: {node: '>=4'}
@@ -32212,10 +32292,6 @@ packages:
     resolution: {integrity: sha512-DlL+XwOy3NxAQ8xuC0okPgK46iuVNAK01YN7RueYBqqFeGsBjV9XmCAzAdgt+667bCl5kPh9EqKKDwnaPG1I7A==}
     engines: {node: '>=10'}
 
-  normalize-url@8.0.2:
-    resolution: {integrity: sha512-Ee/R3SyN4BuynXcnTaekmaVdbDAEiNrHqjQIA37mHU8G9pf7aaAD4ZX3XjBLo6rsdcxA/gtkcNYZLt30ACgynw==}
-    engines: {node: '>=14.16'}
-
   normalize-wheel@1.0.1:
     resolution: {integrity: sha512-1OnlAPZ3zgrk8B91HyRj+eVv+kS5u+Z0SCsak6Xil/kmgEia50ga7zfkumayonZrImffAxPU/5WcyGhzetHNPA==}
 
@@ -32499,10 +32575,6 @@ packages:
   p-cancelable@2.1.1:
     resolution: {integrity: sha512-BZOr3nRQHOntUjTrH8+Lh54smKHoHyur8We1V8DSMVrl5A2malOOwuJRnKRDjSnkoeBh4at6BwEnb5I7Jl31wg==}
     engines: {node: '>=8'}
-
-  p-cancelable@4.0.1:
-    resolution: {integrity: sha512-wBowNApzd45EIKdO1LaU+LrMBwAcjfPaYtVzV3lmfM3gf8Z4CHZsiIqlM8TZZ8okYvh5A1cP6gTfCRQtwUpaUg==}
-    engines: {node: '>=14.16'}
 
   p-filter@2.1.0:
     resolution: {integrity: sha512-ZBxxZ5sL2HghephhpGAQdoskxplTwr7ICaehZwLIlfL6acuVgZPm8yBNuRAFBGEqtD/hmUeq9eqLg2ys9Xr/yw==}
@@ -33624,6 +33696,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -33967,12 +34040,6 @@ packages:
 
   react-native-image-picker@8.2.0:
     resolution: {integrity: sha512-jIGllQJuJIn0YKss/JEeb0Kos1HSsnIpU+i3bYxR27sOxSyDZQyP9dKR22olssQPlfH+rGNR/Jc6xKRkhm48vw==}
-    peerDependencies:
-      react: 19.1.4
-      react-native: '*'
-
-  react-native-is-edge-to-edge@1.2.1:
-    resolution: {integrity: sha512-FLbPWl/MyYQWz+KwqOZsSyj2JmLKglHatd3xLZWskXOpRaio4LfEDEz8E/A6uD8QoTHW6Aobw1jbEwK7KMgR7Q==}
     peerDependencies:
       react: 19.1.4
       react-native: '*'
@@ -34622,10 +34689,6 @@ packages:
 
   responselike@2.0.1:
     resolution: {integrity: sha512-4gl03wn3hj1HP3yzgdI7d3lCkF95F21Pz4BPGvKHinyQzALR5CapwC8yIi0Rh58DEMQ/SguC03wFj2k0M/mHhw==}
-
-  responselike@3.0.0:
-    resolution: {integrity: sha512-40yHxbNcl2+rzXvZuVkrYohathsSJlMTXKryG5y8uciHv1+xDLHQpgjG64JUO9nrEq2jGLH6IZ8BcZyw3wrweg==}
-    engines: {node: '>=14.16'}
 
   restore-cursor@2.0.0:
     resolution: {integrity: sha512-6IzJLuGi4+R14vwagDHX+JrXmPVtPpn4mffDJ1UdR7/Edm87fl6yi8mMBIVvFtJaNTUvjughmW4hwLhRG7gC1Q==}
@@ -35734,10 +35797,6 @@ packages:
   summary@2.1.0:
     resolution: {integrity: sha512-nMIjMrd5Z2nuB2RZCKJfFMjgS3fygbeyGk9PxPPaJR1RIcyN9yn4A63Isovzm3ZtQuEkLBVgMdPup8UeLH7aQw==}
 
-  superagent@10.3.0:
-    resolution: {integrity: sha512-B+4Ik7ROgVKrQsXTV0Jwp2u+PXYLSlqtDAhYnkkD+zn3yg8s/zjA2MeGayPoY/KICrbitwneDHrjSotxKL+0XQ==}
-    engines: {node: '>=14.18.0'}
-
   superstruct@0.16.7:
     resolution: {integrity: sha512-4ZZTrXlP4XzCrgh4vOfPDL6dL7zZm5aPl78eczwFSrwvxtsEnKRrSGID6Sbt0agycUoo4auRdWSNTX+oQ3KFyA==}
     engines: {node: '>=14.0.0'}
@@ -36517,6 +36576,10 @@ packages:
 
   undici@7.18.2:
     resolution: {integrity: sha512-y+8YjDFzWdQlSE9N5nzKMT3g4a5UBX1HKowfdXh0uvAnTaqqwqB92Jt4UXBAeKekDs5IaDKyJFR4X1gYVCgXcw==}
+    engines: {node: '>=20.18.1'}
+
+  undici@7.28.0:
+    resolution: {integrity: sha512-cRZYrTDwWznlnRiPjggAGxZXanty6M8RV1ff8Wm4LWXBp7/IG8v5DnOm74DtUBp9OONpK75YlPnIjQqX0dBDtA==}
     engines: {node: '>=20.18.1'}
 
   unfetch@3.1.2:
@@ -42297,6 +42360,8 @@ snapshots:
     dependencies:
       '@types/hammerjs': 2.0.45
 
+  '@electron-internal/extract-zip@1.0.4': {}
+
   '@electron/asar@3.2.18':
     dependencies:
       commander: 5.1.0
@@ -42328,6 +42393,19 @@ snapshots:
       sumchecker: 3.0.1
     optionalDependencies:
       global-agent: 3.0.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@electron/get@5.0.0':
+    dependencies:
+      debug: 4.4.3
+      env-paths: 3.0.0
+      graceful-fs: 4.2.11
+      progress: 2.0.3
+      semver: 7.8.1
+      sumchecker: 3.0.1
+    optionalDependencies:
+      undici: 7.28.0
     transitivePeerDependencies:
       - supports-color
 
@@ -43025,7 +43103,7 @@ snapshots:
       '@expo/devcert': 1.2.1
       '@expo/env': 2.0.11
       '@expo/image-utils': 0.8.14(typescript@6.0.2)
-      '@expo/json-file': 10.0.8
+      '@expo/json-file': 10.2.0
       '@expo/metro': 54.2.0
       '@expo/metro-config': 54.0.14(expo@54.0.33(e3d4ca1b992720cacd23f6b729602745))
       '@expo/osascript': 2.3.8
@@ -43033,7 +43111,7 @@ snapshots:
       '@expo/plist': 0.4.9
       '@expo/prebuild-config': 54.0.8(expo@54.0.33(e3d4ca1b992720cacd23f6b729602745))(typescript@6.0.2)
       '@expo/schema-utils': 0.1.8
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       '@expo/ws-tunnel': 1.0.6
       '@expo/xcpretty': 4.3.1
       '@react-native/dev-middleware': 0.81.5
@@ -43103,7 +43181,7 @@ snapshots:
       '@expo/devcert': 1.2.1
       '@expo/env': 2.0.11
       '@expo/image-utils': 0.8.14(typescript@6.0.2)
-      '@expo/json-file': 10.0.8
+      '@expo/json-file': 10.2.0
       '@expo/metro': 54.2.0
       '@expo/metro-config': 54.0.14(expo@54.0.33(@babel/core@7.28.5)(expo-modules-core@3.0.29)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)(typescript@6.0.2))
       '@expo/osascript': 2.3.8
@@ -43111,7 +43189,7 @@ snapshots:
       '@expo/plist': 0.4.9
       '@expo/prebuild-config': 54.0.8(expo@54.0.33(@babel/core@7.28.5)(expo-modules-core@3.0.29)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)(typescript@6.0.2))(typescript@6.0.2)
       '@expo/schema-utils': 0.1.8
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       '@expo/ws-tunnel': 1.0.6
       '@expo/xcpretty': 4.3.1
       '@react-native/dev-middleware': 0.81.5
@@ -43322,7 +43400,7 @@ snapshots:
       '@babel/code-frame': 7.10.4
       '@expo/config-plugins': 54.0.4
       '@expo/config-types': 54.0.10
-      '@expo/json-file': 10.0.8
+      '@expo/json-file': 10.2.0
       deepmerge: 4.3.1
       getenv: 2.0.0
       glob: 13.0.6
@@ -43415,7 +43493,7 @@ snapshots:
 
   '@expo/fingerprint@0.15.4':
     dependencies:
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       arg: 5.0.2
       chalk: 4.1.2
       debug: 4.4.3
@@ -43431,7 +43509,7 @@ snapshots:
 
   '@expo/image-utils@0.7.4':
     dependencies:
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       chalk: 4.1.2
       getenv: 1.0.0
       jimp-compact: 0.16.1
@@ -43443,7 +43521,7 @@ snapshots:
 
   '@expo/image-utils@0.7.6':
     dependencies:
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       chalk: 4.1.2
       getenv: 2.0.0
       jimp-compact: 0.16.1
@@ -43456,7 +43534,7 @@ snapshots:
   '@expo/image-utils@0.8.14(typescript@6.0.2)':
     dependencies:
       '@expo/require-utils': 55.0.5(typescript@6.0.2)
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       chalk: 4.1.2
       getenv: 2.0.0
       jimp-compact: 0.16.1
@@ -43524,7 +43602,7 @@ snapshots:
       '@expo/config': 11.0.13
       '@expo/env': 1.0.7
       '@expo/json-file': 9.1.5
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       chalk: 4.1.2
       debug: 4.4.3
       dotenv: 16.4.7
@@ -43548,7 +43626,7 @@ snapshots:
       '@expo/env': 2.0.11
       '@expo/json-file': 10.0.8
       '@expo/metro': 54.2.0
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       browserslist: 4.28.2
       chalk: 4.1.2
       debug: 4.4.3
@@ -43578,7 +43656,7 @@ snapshots:
       '@expo/env': 2.0.11
       '@expo/json-file': 10.0.8
       '@expo/metro': 54.2.0
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       browserslist: 4.28.2
       chalk: 4.1.2
       debug: 4.4.3
@@ -43622,12 +43700,12 @@ snapshots:
 
   '@expo/osascript@2.2.4':
     dependencies:
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       exec-async: 2.2.0
 
   '@expo/osascript@2.3.8':
     dependencies:
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       exec-async: 2.2.0
 
   '@expo/package-manager@1.12.1':
@@ -43642,7 +43720,7 @@ snapshots:
   '@expo/package-manager@1.8.4':
     dependencies:
       '@expo/json-file': 9.1.5
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       chalk: 4.1.2
       npm-package-arg: 11.0.3
       ora: 3.4.0
@@ -43678,7 +43756,7 @@ snapshots:
       '@expo/config-plugins': 54.0.4
       '@expo/config-types': 54.0.10
       '@expo/image-utils': 0.8.14(typescript@6.0.2)
-      '@expo/json-file': 10.0.8
+      '@expo/json-file': 10.2.0
       '@react-native/normalize-colors': 0.81.5
       debug: 4.4.3
       expo: 54.0.33(@babel/core@7.28.5)(expo-modules-core@3.0.29)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)(typescript@6.0.2)
@@ -43695,7 +43773,7 @@ snapshots:
       '@expo/config-plugins': 54.0.4
       '@expo/config-types': 54.0.10
       '@expo/image-utils': 0.8.14(typescript@6.0.2)
-      '@expo/json-file': 10.0.8
+      '@expo/json-file': 10.2.0
       '@react-native/normalize-colors': 0.81.5
       debug: 4.4.3
       expo: 54.0.33(e3d4ca1b992720cacd23f6b729602745)
@@ -46191,7 +46269,7 @@ snapshots:
     transitivePeerDependencies:
       - react-native
 
-  '@ledgerhq/lumen-ui-react@0.1.41(@ledgerhq/lumen-design-core@0.1.17)(@radix-ui/react-checkbox@1.3.2(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)':
+  '@ledgerhq/lumen-ui-react@0.1.41(@ledgerhq/lumen-design-core@0.1.17)(@radix-ui/react-checkbox@1.3.2(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)':
     dependencies:
       '@ledgerhq/lumen-design-core': 0.1.17
       '@ledgerhq/lumen-utils-shared': 0.1.5(react@19.1.4)
@@ -46206,7 +46284,7 @@ snapshots:
       i18next: 23.10.1
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
-      react-i18next: 14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      react-i18next: 14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       tailwind-merge: 3.4.0
     transitivePeerDependencies:
       - react-native
@@ -46275,6 +46353,23 @@ snapshots:
     transitivePeerDependencies:
       - react-dom
 
+  '@ledgerhq/lumen-ui-rnative@0.1.46(4c5303e962296208615741b8f556ff5a)':
+    dependencies:
+      '@gorhom/bottom-sheet': 5.2.6(@types/react@19.0.14)(react-native-reanimated@4.3.0(react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@ledgerhq/lumen-design-core': 0.1.17
+      '@ledgerhq/lumen-utils-shared': 0.1.6(react@19.1.4)
+      '@types/react': 19.0.14
+      expo-haptics: 15.0.8(expo-modules-core@3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      i18next: 23.10.1
+      react: 19.1.4
+      react-i18next: 14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)
+      react-native-reanimated: 4.3.0(react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native-safe-area-context: 5.6.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native-svg: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+    transitivePeerDependencies:
+      - react-dom
+
   '@ledgerhq/lumen-ui-rnative@0.1.46(900891a7f94118d0f53b33779bbc3bd0)':
     dependencies:
       '@ledgerhq/lumen-design-core': 0.1.17
@@ -46288,17 +46383,6 @@ snapshots:
       react-native-reanimated: 4.3.0(react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)
       react-native-safe-area-context: 5.6.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)
       react-native-svg: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)
-    transitivePeerDependencies:
-      - react-dom
-
-  '@ledgerhq/lumen-ui-rnative@0.1.46(@ledgerhq/lumen-design-core@0.1.17)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
-    dependencies:
-      '@ledgerhq/lumen-design-core': 0.1.17
-      '@ledgerhq/lumen-utils-shared': 0.1.6(react@19.1.4)
-      '@types/react': 19.0.14
-      i18next: 23.10.1
-      react: 19.1.4
-      react-i18next: 14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
     transitivePeerDependencies:
       - react-dom
 
@@ -47497,10 +47581,6 @@ snapshots:
     optional: true
 
   '@oxlint/binding-win32-x64-msvc@1.51.0': {}
-
-  '@paralleldrive/cuid2@2.3.1':
-    dependencies:
-      '@noble/hashes': 1.8.0
 
   '@pinojs/redact@0.4.0': {}
 
@@ -49574,7 +49654,7 @@ snapshots:
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
       react-icons: 5.5.0(react@19.1.4)
-      react-is: 19.1.1
+      react-is: 19.2.7
       react-redux: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
       redux: 5.0.1
       redux-persist: 6.0.0(react@19.1.4)(redux@5.0.1)
@@ -49636,7 +49716,7 @@ snapshots:
       open: 10.2.0
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
-      react-is: 19.1.1
+      react-is: 19.2.7
       semver: 7.8.1
       socketcluster-server: 19.2.1
       sqlite3: 5.1.7
@@ -49870,6 +49950,18 @@ snapshots:
     optionalDependencies:
       react: 19.1.4
       react-redux: 9.2.0(@types/react@19.0.14)(react@19.1.4)
+
+  '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)':
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+      '@standard-schema/utils': 0.3.0
+      immer: 11.1.3
+      redux: 5.0.1
+      redux-thunk: 3.1.0(redux@5.0.1)
+      reselect: 5.1.1
+    optionalDependencies:
+      react: 19.1.4
+      react-redux: 9.2.0(react@19.1.4)
 
   '@remix-run/router@1.23.2': {}
 
@@ -50505,6 +50597,13 @@ snapshots:
       dset: 3.1.4
       tslib: 2.6.2
 
+  '@segment/analytics-core@1.8.3':
+    dependencies:
+      '@lukeed/uuid': 2.0.1
+      '@segment/analytics-generic-utils': 1.2.0
+      dset: 3.1.4
+      tslib: 2.6.2
+
   '@segment/analytics-generic-utils@1.2.0':
     dependencies:
       tslib: 2.6.2
@@ -50524,6 +50623,15 @@ snapshots:
       unfetch: 4.2.0
     transitivePeerDependencies:
       - encoding
+
+  '@segment/analytics-node@3.1.0':
+    dependencies:
+      '@lukeed/uuid': 2.0.1
+      '@segment/analytics-core': 1.8.3
+      '@segment/analytics-generic-utils': 1.2.0
+      buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
+      jose: 5.10.0
+      tslib: 2.6.2
 
   '@segment/analytics-page-tools@1.0.0':
     dependencies:
@@ -50766,8 +50874,6 @@ snapshots:
   '@sinclair/typebox@0.34.41': {}
 
   '@sindresorhus/is@4.6.0': {}
-
-  '@sindresorhus/is@7.0.2': {}
 
   '@sindresorhus/merge-streams@4.0.0': {}
 
@@ -53207,10 +53313,6 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
-  '@szmarczak/http-timer@5.0.1':
-    dependencies:
-      defer-to-connect: 2.0.1
-
   '@tailwindcss/node@4.1.18':
     dependencies:
       '@jridgewell/remapping': 2.3.5
@@ -53659,8 +53761,6 @@ snapshots:
       '@types/node': 24.12.0
 
   '@types/aria-query@5.0.4': {}
-
-  '@types/asciichart@1.5.8': {}
 
   '@types/babel__core@7.20.5':
     dependencies:
@@ -54165,8 +54265,6 @@ snapshots:
   '@types/prop-types@15.7.12': {}
 
   '@types/q@1.5.8': {}
-
-  '@types/qrcode-terminal@0.12.2': {}
 
   '@types/qrcode@1.5.5':
     dependencies:
@@ -56069,8 +56167,6 @@ snapshots:
 
   asap@2.0.6: {}
 
-  asciichart@1.5.25: {}
-
   asn1-ts@11.0.6: {}
 
   asn1.js@4.10.1:
@@ -57321,18 +57417,6 @@ snapshots:
 
   cacheable-lookup@5.0.4: {}
 
-  cacheable-lookup@7.0.0: {}
-
-  cacheable-request@12.0.1:
-    dependencies:
-      '@types/http-cache-semantics': 4.0.4
-      get-stream: 9.0.1
-      http-cache-semantics: 4.1.1
-      keyv: 4.5.4
-      mimic-response: 4.0.0
-      normalize-url: 8.0.2
-      responselike: 3.0.0
-
   cacheable-request@7.0.4:
     dependencies:
       clone-response: 1.0.3
@@ -57889,8 +57973,6 @@ snapshots:
 
   compare-version@0.1.2: {}
 
-  component-emitter@1.3.1: {}
-
   compress-commons@5.0.3:
     dependencies:
       crc-32: 1.2.2
@@ -58044,8 +58126,6 @@ snapshots:
   cookie@0.7.2: {}
 
   cookie@1.1.1: {}
-
-  cookiejar@2.1.4: {}
 
   cookies@0.9.1:
     dependencies:
@@ -59011,11 +59091,6 @@ snapshots:
     dependencies:
       dequal: 2.0.3
 
-  dezalgo@1.0.4:
-    dependencies:
-      asap: 2.0.6
-      wrappy: 1.0.2
-
   diff-sequences@28.1.1: {}
 
   diff-sequences@29.6.3: {}
@@ -59396,11 +59471,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@40.6.0:
+  electron@42.5.0:
     dependencies:
-      '@electron/get': 2.0.3
+      '@electron-internal/extract-zip': 1.0.4
+      '@electron/get': 5.0.0
       '@types/node': 24.12.0
-      extract-zip: 2.0.1
     transitivePeerDependencies:
       - supports-color
 
@@ -60065,6 +60140,12 @@ snapshots:
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)
 
+  expo-document-picker@13.1.6(expo-modules-core@3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
+    optionalDependencies:
+      expo-modules-core: 3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react: 19.1.4
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)
+
   expo-file-system@19.0.21(99443ef9edd0bb18e35d575cacf7a5e1):
     dependencies:
       expo: 54.0.33(e3d4ca1b992720cacd23f6b729602745)
@@ -60089,6 +60170,13 @@ snapshots:
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)
     optionalDependencies:
       expo-modules-core: 3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react: 19.1.4
+
+  expo-file-system@19.0.21(expo-modules-core@3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
+    dependencies:
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)
+    optionalDependencies:
+      expo-modules-core: 3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       react: 19.1.4
 
   expo-font@14.0.11(expo-constants@18.0.13)(expo-modules-core@3.0.29)(expo@54.0.33(@babel/core@7.28.5)(expo-modules-core@3.0.29)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)(typescript@6.0.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4):
@@ -60128,6 +60216,12 @@ snapshots:
       expo-modules-core: 3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)
+
+  expo-haptics@15.0.8(expo-modules-core@3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
+    optionalDependencies:
+      expo-modules-core: 3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react: 19.1.4
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)
 
   expo-haptics@15.0.8(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
     optionalDependencies:
@@ -60179,7 +60273,7 @@ snapshots:
 
   expo-modules-autolinking@3.0.24(expo-modules-core@3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
     dependencies:
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       chalk: 4.1.2
       commander: 7.2.0
       require-from-string: 2.0.2
@@ -60202,6 +60296,12 @@ snapshots:
       invariant: 2.2.4
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)
+
+  expo-modules-core@3.0.29(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
+    dependencies:
+      invariant: 2.2.4
+      react: 19.1.4
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)
 
   expo-server@1.0.7(552ea824fb5a2dc5f9e33c176965c810):
     optionalDependencies:
@@ -60838,8 +60938,6 @@ snapshots:
       eslint: 8.57.0
       vue-template-compiler: 2.7.16
 
-  form-data-encoder@4.1.0: {}
-
   form-data@2.3.3:
     dependencies:
       asynckit: 0.4.0
@@ -60879,12 +60977,6 @@ snapshots:
   formdata-polyfill@4.0.10:
     dependencies:
       fetch-blob: 3.2.0
-
-  formidable@3.5.4:
-    dependencies:
-      '@paralleldrive/cuid2': 2.3.1
-      dezalgo: 1.0.4
-      once: 1.4.0
 
   forwarded@0.2.0: {}
 
@@ -61364,20 +61456,6 @@ snapshots:
       p-cancelable: 2.1.1
       responselike: 2.0.1
 
-  got@14.4.7:
-    dependencies:
-      '@sindresorhus/is': 7.0.2
-      '@szmarczak/http-timer': 5.0.1
-      cacheable-lookup: 7.0.0
-      cacheable-request: 12.0.1
-      decompress-response: 6.0.0
-      form-data-encoder: 4.1.0
-      http2-wrapper: 2.2.1
-      lowercase-keys: 3.0.0
-      p-cancelable: 4.0.1
-      responselike: 3.0.0
-      type-fest: 4.40.0
-
   gql.tada@1.9.2(graphql@16.13.2)(typescript@6.0.2):
     dependencies:
       '@0no-co/graphql.web': 1.0.11(graphql@16.13.2)
@@ -61855,11 +61933,6 @@ snapshots:
       sshpk: 1.18.0
 
   http2-wrapper@1.0.3:
-    dependencies:
-      quick-lru: 5.1.1
-      resolve-alpn: 1.2.1
-
-  http2-wrapper@2.2.1:
     dependencies:
       quick-lru: 5.1.1
       resolve-alpn: 1.2.1
@@ -63562,6 +63635,8 @@ snapshots:
       '@sideway/formula': 3.0.1
       '@sideway/pinpoint': 2.0.0
 
+  jose@5.10.0: {}
+
   jotai-family@1.0.1(jotai@2.17.0(@types/react@19.0.14)(react@19.1.4)):
     dependencies:
       jotai: 2.17.0(@types/react@19.0.14)(react@19.1.4)
@@ -64543,8 +64618,6 @@ snapshots:
       tslib: 2.6.2
 
   lowercase-keys@2.0.0: {}
-
-  lowercase-keys@3.0.0: {}
 
   lru-cache@10.4.3: {}
 
@@ -66038,8 +66111,6 @@ snapshots:
 
   mimic-response@3.1.0: {}
 
-  mimic-response@4.0.0: {}
-
   min-indent@1.0.1: {}
 
   mina-signer@4.0.0:
@@ -66539,8 +66610,6 @@ snapshots:
 
   normalize-url@6.1.0: {}
 
-  normalize-url@8.0.2: {}
-
   normalize-wheel@1.0.1: {}
 
   npm-package-arg@11.0.3:
@@ -67008,8 +67077,6 @@ snapshots:
       '@oxlint/binding-win32-x64-msvc': 1.51.0
 
   p-cancelable@2.1.1: {}
-
-  p-cancelable@4.0.1: {}
 
   p-filter@2.1.0:
     dependencies:
@@ -68645,16 +68712,6 @@ snapshots:
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)
 
-  react-native-is-edge-to-edge@1.2.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
-    dependencies:
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)
-
-  react-native-is-edge-to-edge@1.2.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
-    dependencies:
-      react: 19.1.4
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)
-
   react-native-is-edge-to-edge@1.3.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4):
     dependencies:
       react: 19.1.4
@@ -68784,7 +68841,7 @@ snapshots:
       react: 19.1.4
       react-freeze: 1.0.4(react@19.1.4)
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)
-      react-native-is-edge-to-edge: 1.2.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native-is-edge-to-edge: 1.3.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       warn-once: 0.1.1
 
   react-native-screens@4.15.4(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
@@ -68792,7 +68849,7 @@ snapshots:
       react: 19.1.4
       react-freeze: 1.0.4(react@19.1.4)
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)
-      react-native-is-edge-to-edge: 1.2.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native-is-edge-to-edge: 1.3.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       warn-once: 0.1.1
 
   react-native-share@12.2.0: {}
@@ -69178,6 +69235,12 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.14
       redux: 5.0.1
+
+  react-redux@9.2.0(react@19.1.4):
+    dependencies:
+      '@types/use-sync-external-store': 0.0.6
+      react: 19.1.4
+      use-sync-external-store: 1.6.0(react@19.1.4)
 
   react-refresh@0.14.2: {}
 
@@ -69692,10 +69755,6 @@ snapshots:
   responselike@2.0.1:
     dependencies:
       lowercase-keys: 2.0.0
-
-  responselike@3.0.0:
-    dependencies:
-      lowercase-keys: 3.0.0
 
   restore-cursor@2.0.0:
     dependencies:
@@ -71269,20 +71328,6 @@ snapshots:
 
   summary@2.1.0: {}
 
-  superagent@10.3.0:
-    dependencies:
-      component-emitter: 1.3.1
-      cookiejar: 2.1.4
-      debug: 4.4.3
-      fast-safe-stringify: 2.1.1
-      form-data: 4.0.5
-      formidable: 3.5.4
-      methods: 1.1.2
-      mime: 2.6.0
-      qs: 6.14.1
-    transitivePeerDependencies:
-      - supports-color
-
   superstruct@0.16.7: {}
 
   superstruct@2.0.2: {}
@@ -72164,6 +72209,9 @@ snapshots:
   undici@6.19.2: {}
 
   undici@7.18.2: {}
+
+  undici@7.28.0:
+    optional: true
 
   unfetch@3.1.2: {}
 

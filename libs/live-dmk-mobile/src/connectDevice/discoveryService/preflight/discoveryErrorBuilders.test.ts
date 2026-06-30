@@ -1,7 +1,11 @@
 import { PermissionsAndroid } from "react-native";
 import { State as BlePlxState } from "react-native-ble-plx";
 import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
-import { DiscoveryErrorTypes, type DiscoveryError } from "../../types";
+import {
+  BaseDiscoveryErrorTypes,
+  DiscoveryErrorTypes,
+  type MobileDiscoveryError,
+} from "../../types";
 import {
   buildBluetoothDisabledManualActionError,
   buildBluetoothDisabledPromptableError,
@@ -37,7 +41,7 @@ jest.mock("react-native-ble-plx", () => ({
   },
 }));
 
-const retry = jest.fn<Promise<true | DiscoveryError>, []>();
+const retry = jest.fn<Promise<true | MobileDiscoveryError>, []>();
 const { PERMISSIONS } = PermissionsAndroid;
 
 describe("discoveryErrorBuilders", () => {
@@ -223,7 +227,7 @@ describe("discoveryErrorBuilders", () => {
 
     // THEN
     expect(error).toEqual({
-      type: DiscoveryErrorTypes.Unknown,
+      type: BaseDiscoveryErrorTypes.Unknown,
       transportId: rnBleTransportIdentifier,
       error: unknownError,
       resolution: { type: "check-only", retry },

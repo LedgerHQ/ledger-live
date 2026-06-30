@@ -23,7 +23,7 @@ import {
   LockedDeviceError,
   UserRefusedOnDevice,
 } from "@ledgerhq/errors";
-import { EvmAddress, EvmSigner, EvmSignerEvent } from "@ledgerhq/coin-evm/types/signer";
+import type { EvmAddress, EvmSigner, EvmSignerEvent } from "./types";
 import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/services/types";
 import {
   buildDefaultHttpBlindSigningReporter,
@@ -49,7 +49,11 @@ export class DmkSignerEth implements EvmSigner {
   ) {
     const originToken = "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5"; // gitleaks:allow
     liveBlindSigningReporter.setInner(
-      buildDefaultHttpBlindSigningReporter(originToken, ContextModuleChainID.Ethereum, "ledger-wallet"),
+      buildDefaultHttpBlindSigningReporter(
+        originToken,
+        ContextModuleChainID.Ethereum,
+        "ledger-wallet",
+      ),
     );
     liveBlindSigningReporter.setContext({ sessionId });
     const contextModule = new ContextModuleBuilder({ originToken })

@@ -1,7 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { isWallet40, openDeeplink } from "../../helpers/commonHelpers";
-import { getFlags } from "../../bridge/server";
-import type { Features } from "@shared/feature-flags";
+import { DEFAULT_TIMEOUT } from "../../helpers/elementHelpers";
 export default class PortfolioPage {
   addNewOrExistingAccount = "add-new-account-button";
   assetsListId = "AssetsList";
@@ -16,8 +15,6 @@ export default class PortfolioPage {
   accountsListView = "PortfolioAccountsList";
   emptyPortfolioListId = "PortfolioEmptyList";
   portfolioSettingsId = "topbar-settings";
-  myWalletHeaderSettingsButtonId = "my-wallet-header-settings-button";
-  topBarMyWalletId = "topbar-mywallet";
   portfolioListIdRegex = new RegExp(`portfolio-screen|${this.readOnlyItemsId}`);
   addAccountCta = "add-account-cta";
   allocationSectionTitleId = "portfolio-allocation-section";
@@ -60,6 +57,12 @@ export default class PortfolioPage {
   stablecoinListId = "StablecoinList";
   cryptosSectionHeaderId = "portfolio-cryptos-section-header";
   stablecoinsSectionHeaderId = "portfolio-stablecoins-section-header";
+  portfolioStocksListId = "PortfolioStocksList";
+  stocksListId = "StocksList";
+  stocksSectionHeaderId = "portfolio-stocks-section-header";
+  stocksDiscoveryId = "portfolio-stocks-discovery";
+  stocksDiscoveryHeaderId = "portfolio-stocks-discovery-header";
+  sectionAssetItemRegExp = (sectionId: string) => new RegExp(String.raw`^${sectionId}-item-\d+$`);
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
@@ -71,27 +74,6 @@ export default class PortfolioPage {
     accountName
       ? getElementByIdWithDescendantTexts(this.operationRowBody, accountName, operationType)
       : getElementByIdWithDescendantTexts(this.operationRowBody, operationType);
-
-  private flags: Features["noah"] | null = null;
-
-  private async loadFlags(): Promise<void> {
-    this.flags ??= JSON.parse(await getFlags()).noah;
-  }
-
-  async isNoahEnabled(): Promise<boolean> {
-    await this.loadFlags();
-    return this.flags!.enabled;
-  }
-
-  @Step("Navigate to Settings")
-  async navigateToSettings() {
-    if (isWallet40) {
-      await tapById(this.topBarMyWalletId);
-      await tapById(this.myWalletHeaderSettingsButtonId);
-    } else {
-      await tapByElement(await this.portfolioSettingsButton());
-    }
-  }
 
   @Step("Wait for portfolio page to load")
   async waitForPortfolioPageToLoad(timeout = 120000) {
@@ -452,11 +434,22 @@ export default class PortfolioPage {
     jestExpect(count).toBe(expected);
   }
 
+  private async checkSectionAssetItemCount(sectionId: string, expected: number) {
+    const count = await countElementsById(this.sectionAssetItemRegExp(sectionId));
+    jestExpect(count).toBe(expected);
+  }
+
+  @Step("Check cryptos section asset item count")
+  async checkCryptosSectionAssetItemCount(expected: number) {
+    await this.checkSectionAssetItemCount(this.portfolioCryptosListId, expected);
+  }
+
   @Step("Tap first asset item (wallet 4.0) and return its currency name")
   async tapFirstAssetItemW40(): Promise<string> {
     const testId = await getIdByRegexp(this.assetItemRegExp, 0);
     const currencyName = testId.replace("assetItem-", "");
-    await tapByElement(getElementById(this.assetItemRegExp, 0));
+    await scrollToId(testId, this.emptyPortfolioListId);
+    await tapById(testId);
     return currencyName;
   }
 
@@ -495,5 +488,41 @@ export default class PortfolioPage {
   @Step("Scroll to the top of the portfolio page")
   async scrollToTopOfPortfolioPage() {
     await scrollToId(this.portfolioBalanceNormal, this.accountsListView, 1000, "up");
+  }
+
+  private async scrollToStocksHeader(headerId: string) {
+    await waitForElementById(headerId, DEFAULT_TIMEOUT, { checkVisibility: false });
+    await scrollToId(headerId, this.accountsListView);
+  }
+
+  @Step("Check stocks discovery (empty) section is visible")
+  async checkStocksDiscoverySectionVisible() {
+    await this.scrollToStocksHeader(this.stocksDiscoveryHeaderId);
+    await detoxExpect(getElementById(this.stocksDiscoveryId)).toExist();
+    await detoxExpect(getElementById(this.stocksDiscoveryHeaderId)).toBeVisible();
+  }
+
+  @Step("Tap 'Explore all' in the stocks discovery section")
+  async tapStocksExploreAll() {
+    await this.scrollToStocksHeader(this.stocksDiscoveryHeaderId);
+    await tapById(this.stocksDiscoveryHeaderId);
+  }
+
+  @Step("Check stocks holdings section is visible")
+  async checkStocksHoldingsSectionVisible() {
+    await this.scrollToStocksHeader(this.stocksSectionHeaderId);
+    await detoxExpect(getElementById(this.stocksSectionHeaderId)).toBeVisible();
+    await detoxExpect(getElementById(this.portfolioStocksListId)).toExist();
+  }
+
+  @Step("Tap stocks section title")
+  async tapStocksSectionTitle() {
+    await this.scrollToStocksHeader(this.stocksSectionHeaderId);
+    await tapById(this.stocksSectionHeaderId);
+  }
+
+  @Step("Check full stocks list page is visible")
+  async checkStocksListPageVisible() {
+    await this.checkListPageVisible(this.stocksListId);
   }
 }

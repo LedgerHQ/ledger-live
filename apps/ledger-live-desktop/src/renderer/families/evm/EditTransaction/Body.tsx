@@ -4,7 +4,7 @@ import {
   hasMinimumFundsToSpeedUp,
   isTransactionConfirmed,
 } from "@ledgerhq/coin-evm/editTransaction/index";
-import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
+import { fromTransactionRaw } from "@ledgerhq/live-common/families/evm/transaction";
 import { Transaction, TransactionRaw, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";

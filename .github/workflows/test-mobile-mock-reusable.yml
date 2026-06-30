@@ -136,8 +136,9 @@ jobs:
           fi
           echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-3" >> $GITHUB_OUTPUT
           echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json') }}-detox-native-android-3" >> $GITHUB_OUTPUT
-          echo "ios_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
-          echo "android_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
+          HEAD_SHA=$(git rev-parse HEAD)
+          echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios" >> $GITHUB_OUTPUT
+          echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=${PREFIX}android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards" >> $GITHUB_OUTPUT
           echo "ios_timing_cache_key=${PREFIX}ios-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards-${{ inputs.macos-specificity-runner-label }}" >> $GITHUB_OUTPUT
           echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'pnpm-lock.yaml') }}-pod-lockfile-validated" >> $GITHUB_OUTPUT
@@ -704,6 +705,8 @@ jobs:
       SPECULOS_FIRMWARE_VERSION: 2.7.1
       SPECULOS_DEVICE: nanoX
       COINAPPS: ${{ github.workspace }}/coin-apps
+      USERDATA_CACHE_ENABLED: "true"
+      E2E_GENERATED_USERDATA_DIR: ${{ format('{0}/e2e/userdata/generated', github.workspace) }}
     outputs:
       status: ${{ steps.detox.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -895,6 +898,28 @@ jobs:
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
+      - name: Compute userdata cache key date
+        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
+        id: userdata-meta
+        shell: bash
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore pre-generated E2E userdata (app.json) from S3 cache
+        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
+        continue-on-error: true
+        uses: tespkg/actions-cache/restore@v1.9.0
+        with:
+          path: e2e/userdata/generated
+          key: develop/e2e-userdata-mobile-${{ steps.userdata-meta.outputs.date }}
+          restore-keys: |
+            develop/e2e-userdata-mobile-
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
       - name: Set DISABLE_TRANSACTION_BROADCAST
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
@@ -957,6 +982,8 @@ jobs:
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:latest
       SPECULOS_FIRMWARE_VERSION: 2.7.1
       SPECULOS_DEVICE: nanoX
+      USERDATA_CACHE_ENABLED: "true"
+      E2E_GENERATED_USERDATA_DIR: ${{ format('{0}/e2e/userdata/generated', github.workspace) }}
     outputs:
       status: ${{ steps.detox.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -1034,6 +1061,28 @@ jobs:
         with:
           command: pnpm exec nx run @ledgerhq/live-cli:build
           disable_cache: ${{ inputs.disable-nx-cache || false }}
+
+      - name: Compute userdata cache key date
+        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
+        id: userdata-meta
+        shell: bash
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore pre-generated E2E userdata (app.json) from S3 cache
+        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
+        continue-on-error: true
+        uses: tespkg/actions-cache/restore@v1.9.0
+        with:
+          path: e2e/userdata/generated
+          key: develop/e2e-userdata-mobile-${{ steps.userdata-meta.outputs.date }}
+          restore-keys: |
+            develop/e2e-userdata-mobile-
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop

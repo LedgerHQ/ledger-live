@@ -25,14 +25,8 @@ describe("Wallet Page", () => {
     await app.portfolio.tapTabSelector("Accounts");
     await app.portfolio.tapAddNewOrExistingAccountButton();
     await app.addAccount.importWithYourLedger();
-    const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
-    if (isModularDrawer) {
-      await app.modularDrawer.checkSelectAssetPage();
-      await app.modularDrawer.tapDrawerCloseButton();
-    } else {
-      await app.portfolio.checkSelectAssetPage();
-      await app.common.goToPreviousPage();
-    }
+    await app.modularDrawer.checkSelectAssetPage();
+    await app.modularDrawer.tapDrawerCloseButton();
     await app.portfolio.expectPortfolioWithAccounts();
   });
 
@@ -41,11 +35,6 @@ describe("Wallet Page", () => {
   it("Portfolio Accounts Tab - LLM", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
     await app.portfolio.checkAccountsSection();
-    const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
-    if (isModularDrawer) {
-      await app.modularDrawer.checkSelectAssetPage();
-    } else {
-      await app.portfolio.checkSelectAssetPage();
-    }
+    await app.modularDrawer.checkSelectAssetPage();
   });
 });

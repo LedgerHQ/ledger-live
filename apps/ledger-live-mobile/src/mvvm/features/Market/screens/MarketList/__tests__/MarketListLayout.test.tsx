@@ -36,7 +36,7 @@ const MarketListTest = () => (
   </Stack.Navigator>
 );
 
-describe("MarketList Layout based on Feature Flag", () => {
+describe("MarketList Layout", () => {
   beforeEach(() => {
     setNetInfoState({ isConnected: true });
     server.use(
@@ -44,80 +44,24 @@ describe("MarketList Layout based on Feature Flag", () => {
     );
   });
 
-  describe("When marketBanner feature flag is enabled (standalone mode)", () => {
-    it("should render MarketList with SafeAreaView for top edge", async () => {
-      renderWithReactQuery(<MarketListTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
-        }),
-      });
+  it("should render MarketList with its search box", async () => {
+    renderWithReactQuery(<MarketListTest />);
 
-      await waitFor(() => {
-        expect(screen.getByTestId("market-list")).toBeVisible();
-      });
-
-      expect(screen.getByTestId("search-box")).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByTestId("market-list")).toBeVisible();
     });
 
-    it("should display market data correctly in standalone mode", async () => {
-      renderWithReactQuery(<MarketListTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
-        }),
-      });
-
-      await waitFor(() => {
-        expect(screen.getByText(/Bitcoin/i)).toBeVisible();
-      });
-
-      expect(screen.getByText(/Ethereum/i)).toBeVisible();
-    });
+    expect(screen.getByTestId("search-box")).toBeVisible();
   });
 
-  describe("When marketBanner feature flag is disabled (tabs mode)", () => {
-    it("should render MarketList with WalletTabSafeAreaView", async () => {
-      renderWithReactQuery(<MarketListTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: false } },
-        }),
-      });
+  it("should display market data correctly", async () => {
+    renderWithReactQuery(<MarketListTest />);
 
-      await waitFor(() => {
-        expect(screen.getByTestId("market-list")).toBeVisible();
-      });
-
-      // The search box should be visible
-      expect(screen.getByTestId("search-box")).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByText(/Bitcoin/i)).toBeVisible();
     });
 
-    it("should display market data correctly in tabs mode", async () => {
-      renderWithReactQuery(<MarketListTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: false, params: { marketBanner: false } },
-        }),
-      });
-
-      await waitFor(() => {
-        expect(screen.getByText(/Bitcoin/i)).toBeVisible();
-      });
-
-      expect(screen.getByText(/Ethereum/i)).toBeVisible();
-    });
-  });
-
-  describe("Feature flag transitions", () => {
-    it("should handle lwmWallet40 disabled state correctly", async () => {
-      renderWithReactQuery(<MarketListTest />, {
-        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: false } }),
-      });
-
-      await waitFor(() => {
-        expect(screen.getByTestId("market-list")).toBeVisible();
-      });
-
-      // Should use default tabs mode layout
-      expect(screen.getByTestId("search-box")).toBeVisible();
-    });
+    expect(screen.getByText(/Ethereum/i)).toBeVisible();
   });
 
   describe("When internet seems to be down", () => {
@@ -125,11 +69,7 @@ describe("MarketList Layout based on Feature Flag", () => {
       setNetInfoState({ isConnected: false });
       server.use(http.get(`${COUNTERVALUES_API}/v3/markets`, () => HttpResponse.json([])));
 
-      renderWithReactQuery(<MarketListTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { marketBanner: true } },
-        }),
-      });
+      renderWithReactQuery(<MarketListTest />);
 
       await waitFor(() => {
         expect(screen.getByTestId("market-list")).toBeVisible();
@@ -150,7 +90,7 @@ describe("MarketList Layout based on Feature Flag", () => {
 
       renderWithReactQuery(<MarketListTest />, {
         overrideInitialState: withFlagOverrides(
-          { lwmWallet40: { enabled: true, params: { marketBanner: true } } },
+          { lwmWallet40: { enabled: true } },
           withEmptyStarredFilter,
         ),
       });
@@ -168,7 +108,7 @@ describe("MarketList Layout based on Feature Flag", () => {
 
       renderWithReactQuery(<MarketListTest />, {
         overrideInitialState: withFlagOverrides(
-          { lwmWallet40: { enabled: true, params: { marketBanner: true } } },
+          { lwmWallet40: { enabled: true } },
           withEmptyStarredFilter,
         ),
       });

@@ -274,6 +274,7 @@ export enum SettingsActionTypes {
   SETTINGS_SWITCH_COUNTERVALUE_FIRST = "SETTINGS_SWITCH_COUNTERVALUE_FIRST",
   SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS = "SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS",
   SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT = "SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT",
+  SETTINGS_HIDE_SMALL_VALUE_TOKEN_OPERATIONS = "SETTINGS_HIDE_SMALL_VALUE_TOKEN_OPERATIONS",
   SHOW_TOKEN = "SHOW_TOKEN",
   BLACKLIST_TOKEN = "BLACKLIST_TOKEN",
   SETTINGS_DISMISS_BANNER = "SETTINGS_DISMISS_BANNER",
@@ -296,7 +297,6 @@ export enum SettingsActionTypes {
   SET_ONBOARDING_HAS_DEVICE = "SET_ONBOARDING_HAS_DEVICE",
   SET_IS_REBORN = "SET_IS_REBORN",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
-  WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
   SET_DEBUG_APP_LEVEL_DRAWER_OPENED = "SET_DEBUG_APP_LEVEL_DRAWER_OPENED",
   /* NB: Protect is the former codename for Ledger Recover */
   SET_HAS_BEEN_UPSOLD_PROTECT = "SET_HAS_BEEN_UPSOLD_PROTECT",
@@ -345,6 +345,8 @@ export type SettingsSetReadOnlyModePayload = SettingsState["readOnlyModeEnabled"
 export type SettingsHideEmptyTokenAccountsPayload = SettingsState["hideEmptyTokenAccounts"];
 export type SettingsFilterTokenOperationsZeroAmountPayload =
   SettingsState["filterTokenOperationsZeroAmount"];
+export type SettingsHideSmallValueTokenOperationsPayload =
+  SettingsState["hideSmallValueTokenOperations"];
 export type SettingsShowTokenPayload = string;
 export type SettingsBlacklistTokenPayload = string;
 export type SettingsDismissBannerPayload = string;
@@ -379,8 +381,6 @@ export type SettingsSetOnboardingTypePayload = SettingsState["onboardingType"];
 export type SettingsSetClosedWithdrawBannerPayload = boolean;
 
 export type SettingsSetNotificationsPayload = Partial<SettingsState["notifications"]>;
-export type SettingsSetWalletTabNavigatorLastVisitedTabPayload =
-  SettingsState["walletTabNavigatorLastVisitedTab"];
 export type SettingsSetDateFormatPayload = SettingsState["dateFormat"];
 export type SettingsDangerouslyOverrideStatePayload = State;
 export type DangerouslyOverrideStatePayload = Partial<State>;
@@ -435,6 +435,8 @@ export type SettingsPayload =
   | SettingsSetHasInstalledAnyAppPayload
   | SettingsSetReadOnlyModePayload
   | SettingsHideEmptyTokenAccountsPayload
+  | SettingsFilterTokenOperationsZeroAmountPayload
+  | SettingsHideSmallValueTokenOperationsPayload
   | SettingsShowTokenPayload
   | SettingsBlacklistTokenPayload
   | SettingsDismissBannerPayload

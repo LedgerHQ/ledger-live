@@ -1,7 +1,7 @@
 import type { DeviceManagementKit, DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { firstValueFrom, of, throwError } from "rxjs";
-import { DiscoveryErrorTypes } from "../../types";
+import { BaseDiscoveryErrorTypes } from "../../types";
 import { RnHidDeviceDiscoverySource } from "./RnHidDeviceDiscoverySource";
 
 const createMockDMK = (listenToAvailableDevices: jest.Mock): DeviceManagementKit =>
@@ -46,7 +46,7 @@ describe("RnHidDeviceDiscoverySource", () => {
     await expect(event).resolves.toEqual({
       type: "error",
       error: {
-        type: DiscoveryErrorTypes.Unknown,
+        type: BaseDiscoveryErrorTypes.Unknown,
         transportId: rnHidTransportIdentifier,
         error,
       },

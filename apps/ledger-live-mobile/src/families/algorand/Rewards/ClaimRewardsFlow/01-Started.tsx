@@ -1,6 +1,7 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { View, StyleSheet, SafeAreaView } from "react-native";
+import { View, StyleSheet } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "~/context/Locale";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -65,6 +66,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
     status.warnings && Object.keys(status.warnings).length > 0 && Object.values(status.warnings)[0];
   return (
     <SafeAreaView
+      edges={["left", "right", "bottom"]}
       style={[
         styles.root,
         {

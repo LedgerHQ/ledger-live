@@ -1,4 +1,5 @@
 tests/artifacts/*
 !tests/artifacts/.gitkeep
+tests/userdata/generated/
 node_modules/
 allure-*

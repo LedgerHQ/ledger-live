@@ -23,7 +23,6 @@ export default class OnboardingStepsPage {
   onboardingGetStartedButton = () => getElementById(this.getStartedButtonId);
   acceptAnalyticsButton = () => getElementById(this.acceptAnalyticsButtonId);
   noLedgerYetButton = () => getElementById("onboarding-noLedgerYet");
-  exploreAppButton = () => getElementById("onboarding-noLedgerYetModal-explore");
   setupLedgerButton = () => getElementById(this.setupLedger);
   accessWalletButton = () => getElementById(this.accessWallet);
   deviceCardHeader = (title: string) => getElementById(`${this.deviceCardId(title)}-header`);
@@ -142,11 +141,7 @@ export default class OnboardingStepsPage {
 
   @Step("Choose to explore app")
   async chooseToExploreApp(): Promise<void> {
-    await tapByElement(this.exploreAppButton());
-    // In test mode, the carousel is skipped and only the last slide
-    // is shown. This avoids all carousel animation/clipping issues
-    // with the new React Native New Architecture. Just wait for the
-    // final slide and tap the explore button.
+    // DETOX: chooseNoLedgerYet navigates straight to discover live (no upsell modal).
     await waitForElementById(this.discoverLiveTitle(3));
     await waitForElementById(this.exploreWithoutDeviceButtonId);
     await tapById(this.exploreWithoutDeviceButtonId);

@@ -108,8 +108,8 @@ export default function UndelegationSummary({ navigation, route }: Props) {
 
   return (
     <SafeAreaView
+      edges={["left", "right", "bottom"]}
       style={[styles.root, { backgroundColor: colors.background }]}
-      edges={["bottom"]}
       testID="Cardano-Undelegation-Summary"
     >
       <TrackScreen category="DelegationFlow" name="Summary" />

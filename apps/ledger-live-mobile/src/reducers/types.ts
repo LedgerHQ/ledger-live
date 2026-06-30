@@ -9,7 +9,6 @@ import type { MarketListCategory } from "@ledgerhq/live-common/market/utils/cate
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import type { DataOfUser, NotificationPromptTarget } from "LLM/features/NotificationsPrompt/types";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
-import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 import {
   WalletContentCard,
   AssetContentCard,
@@ -254,6 +253,7 @@ export type SettingsState = {
   graphCountervalueFirst: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
+  hideSmallValueTokenOperations: boolean;
   blacklistedTokenIds: string[];
   dismissedBanners: string[];
   hasAvailableUpdate: boolean;
@@ -286,7 +286,6 @@ export type SettingsState = {
   notifications: NotificationsSettings;
   /** True if user never clicked on the AllowNotifications button in the notifications settings */
   neverClickedOnAllowNotificationsButton: boolean;
-  walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
   debugAppLevelDrawerOpened: boolean;
   dateFormat: string;
   /* NB: Protect is the former codename for Ledger Recover */

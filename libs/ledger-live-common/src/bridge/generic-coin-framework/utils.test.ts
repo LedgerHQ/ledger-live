@@ -10,6 +10,7 @@ import {
   toGasOptionsFromUnknown,
   transactionToIntent,
 } from "./utils";
+import { addPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/index";
 import BigNumber from "bignumber.js";
 import type { Operation as CoreOperation } from "@ledgerhq/coin-module-framework/api/types";
 import { Account } from "@ledgerhq/types-live";
@@ -829,6 +830,358 @@ describe("coin-framework utils", () => {
         },
       ]);
     });
+
+    it("locks native funds committed by a pending send (value + fee)", () => {
+      // Balance 10, a pending native send already commits amount 4 + fee 1.
+      // Spendable must drop to 5, not stay at 10.
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(10),
+          balance: BigNumber(10),
+          pendingOperations: [{ type: "OUT", value: BigNumber(4), fee: BigNumber(1) }],
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 5n, asset: { type: "native" } }]);
+    });
+
+    it("stacks the chain reserve and pending spend, capped at balance", () => {
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(8),
+          balance: BigNumber(10),
+          pendingOperations: [
+            { type: "OUT", value: BigNumber(3), fee: BigNumber(1) },
+          ],
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 6n, asset: { type: "native" } }]);
+
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(10),
+          balance: BigNumber(10),
+          pendingOperations: [{ type: "OUT", value: BigNumber(20), fee: BigNumber(1) }],
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 10n, asset: { type: "native" } }]);
+    });
+
+    it("locks value + fee for any outgoing (OUT-family) pending op, e.g. DELEGATE", () => {
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(10),
+          balance: BigNumber(10),
+          pendingOperations: [{ type: "DELEGATE", value: BigNumber(4), fee: BigNumber(1) }],
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 5n, asset: { type: "native" } }]);
+    });
+
+    it("locks the fee even for a zero-value outgoing pending op (e.g. OPT_IN)", () => {
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(10),
+          balance: BigNumber(10),
+          pendingOperations: [{ type: "OPT_IN", value: BigNumber(0), fee: BigNumber(1) }],
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 1n, asset: { type: "native" } }]);
+    });
+
+    it("locks only the fee on native for staking-family ops (e.g. STAKE)", () => {
+      // STAKE is not in OPERATION_TYPE_OUT_FAMILY; only the gas fee leaves the
+      // (total) native balance, the value stays staked.
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(10),
+          balance: BigNumber(10),
+          pendingOperations: [{ type: "STAKE", value: BigNumber(4), fee: BigNumber(1) }],
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 1n, asset: { type: "native" } }]);
+    });
+
+    it("locks the fee for a self-initiated incoming-family op (e.g. claim REWARD)", () => {
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(10),
+          balance: BigNumber(10),
+          pendingOperations: [{ type: "REWARD", value: BigNumber(0), fee: BigNumber(1) }],
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 1n, asset: { type: "native" } }]);
+
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(10),
+          balance: BigNumber(10),
+          pendingOperations: [{ type: "REWARD", value: BigNumber(4), fee: BigNumber(1) }],
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 1n, asset: { type: "native" } }]);
+    });
+
+    it("locks only the fee on native for a pending token send (FEES op)", () => {
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(10),
+          balance: BigNumber(10),
+          pendingOperations: [{ type: "FEES", value: BigNumber(1), fee: BigNumber(1) }],
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 1n, asset: { type: "native" } }]);
+    });
+
+    it("locks token funds committed by a pending token send (value only, fee is native)", () => {
+      expect(
+        extractBalances(
+          {
+            spendableBalance: BigNumber(10),
+            balance: BigNumber(10),
+            subAccounts: [
+              {
+                spendableBalance: BigNumber(20),
+                balance: BigNumber(20),
+                pendingOperations: [{ type: "OUT", value: BigNumber(5), fee: BigNumber(1) }],
+                token: {
+                  tokenType: "erc20",
+                  contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                },
+              },
+            ],
+          } as unknown as Account,
+          token => ({
+            type: token.tokenType,
+            assetReference: token.contractAddress,
+          }),
+        ),
+      ).toEqual([
+        { value: 10n, locked: 0n, asset: { type: "native" } },
+        {
+          asset: {
+            assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+            type: "erc20",
+          },
+          locked: 5n,
+          value: 20n,
+        },
+      ]);
+    });
+
+    it("locks token value for staking-family sub-ops (e.g. STAKE)", () => {
+      expect(
+        extractBalances(
+          {
+            spendableBalance: BigNumber(10),
+            balance: BigNumber(10),
+            subAccounts: [
+              {
+                spendableBalance: BigNumber(20),
+                balance: BigNumber(20),
+                pendingOperations: [{ type: "STAKE", value: BigNumber(8), fee: BigNumber(1) }],
+                token: {
+                  tokenType: "erc20",
+                  contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                },
+              },
+            ],
+          } as unknown as Account,
+          token => ({
+            type: token.tokenType,
+            assetReference: token.contractAddress,
+          }),
+        ),
+      ).toEqual([
+        { value: 10n, locked: 0n, asset: { type: "native" } },
+        {
+          asset: {
+            assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+            type: "erc20",
+          },
+          locked: 8n,
+          value: 20n,
+        },
+      ]);
+    });
+
+    it("locks token value for non-OUT outgoing sub-ops (e.g. DELEGATE), fee stays native", () => {
+      expect(
+        extractBalances(
+          {
+            spendableBalance: BigNumber(10),
+            balance: BigNumber(10),
+            subAccounts: [
+              {
+                spendableBalance: BigNumber(20),
+                balance: BigNumber(20),
+                // buildOptimisticOperation appends the mode's type to the token sub-account.
+                pendingOperations: [{ type: "DELEGATE", value: BigNumber(7), fee: BigNumber(1) }],
+                token: {
+                  tokenType: "erc20",
+                  contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                },
+              },
+            ],
+          } as unknown as Account,
+          token => ({
+            type: token.tokenType,
+            assetReference: token.contractAddress,
+          }),
+        ),
+      ).toEqual([
+        { value: 10n, locked: 0n, asset: { type: "native" } },
+        {
+          asset: {
+            assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+            type: "erc20",
+          },
+          locked: 7n,
+          value: 20n,
+        },
+      ]);
+    });
+
+    it("ignores pending incoming operations", () => {
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(10),
+          balance: BigNumber(10),
+          pendingOperations: [{ type: "IN", value: BigNumber(5), fee: BigNumber(0) }],
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 0n, asset: { type: "native" } }]);
+    });
+
+    it("does not lock the fee for a sponsored (gasless) pending send, only the value", () => {
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(10),
+          balance: BigNumber(10),
+          pendingOperations: [
+            {
+              type: "OUT",
+              value: BigNumber(4),
+              fee: BigNumber(1),
+              transactionRaw: { sponsored: true },
+            },
+          ],
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 4n, asset: { type: "native" } }]);
+    });
+
+    it("locks nothing on native for a sponsored pending token send (FEES op)", () => {
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(10),
+          balance: BigNumber(10),
+          pendingOperations: [
+            {
+              type: "FEES",
+              value: BigNumber(1),
+              fee: BigNumber(1),
+              transactionRaw: { sponsored: true },
+            },
+          ],
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 0n, asset: { type: "native" } }]);
+    });
+
+    it("locks nothing on native for a sponsored staking-family pending op (e.g. STAKE)", () => {
+      expect(
+        extractBalances({
+          spendableBalance: BigNumber(10),
+          balance: BigNumber(10),
+          pendingOperations: [
+            {
+              type: "STAKE",
+              value: BigNumber(4),
+              fee: BigNumber(1),
+              transactionRaw: { sponsored: true },
+            },
+          ],
+        } as unknown as Account),
+      ).toEqual([{ value: 10n, locked: 0n, asset: { type: "native" } }]);
+    });
+  });
+
+  // Copilot warned that getPendingTokenSpent could lock native fees as token amount,
+  // because "FEES" is in OPERATION_TYPE_OUT_FAMILY and some fixtures/source data can
+  // attach a pending FEES op to a token sub-account.
+  // For optimistic ops produced via buildOptimisticOperation, addPendingOperation routes
+  // the FEES *parent* op to the native account and the OUT *sub*-op to the token account.
+  describe("real pending-op distribution (buildOptimisticOperation + addPendingOperation)", () => {
+    const subAccountId = "sub-account-id";
+    const buildAccount = (): Account =>
+      ({
+        id: "parent-account-id",
+        freshAddress: "account-address",
+        balance: BigNumber(100),
+        spendableBalance: BigNumber(100),
+        pendingOperations: [],
+        subAccounts: [
+          {
+            id: subAccountId,
+            balance: BigNumber(20),
+            spendableBalance: BigNumber(20),
+            pendingOperations: [],
+            token: {
+              tokenType: "erc20",
+              contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+            },
+          },
+        ],
+      }) as unknown as Account;
+
+    it("routes the FEES op to the native account and the OUT op to the token sub-account", () => {
+      const account = buildAccount();
+      const optimistic = buildOptimisticOperation(
+        account,
+        {
+          mode: "send",
+          subAccountId,
+          amount: BigNumber(5),
+          fees: BigNumber(2),
+          recipient: "recipient-address",
+        } as unknown as GenericTransaction,
+        7n,
+      );
+
+      const updated = addPendingOperation(account, optimistic);
+
+      // Parent (native) account holds the FEES op, NOT the sub-account.
+      expect(updated.pendingOperations).toEqual([
+        expect.objectContaining({ type: "FEES", accountId: "parent-account-id" }),
+      ]);
+      // The token sub-account holds the OUT sub-op with the token value, no FEES op.
+      const subPending = updated.subAccounts![0].pendingOperations;
+      expect(subPending).toEqual([
+        expect.objectContaining({ type: "OUT", accountId: subAccountId, value: BigNumber(5) }),
+      ]);
+      expect(subPending.some(op => op.type === "FEES")).toBe(false);
+    });
+
+    it("locks only the token amount on the sub-account (native fee is not locked as token)", () => {
+      const account = buildAccount();
+      const optimistic = buildOptimisticOperation(
+        account,
+        {
+          mode: "send",
+          subAccountId,
+          amount: BigNumber(5),
+          fees: BigNumber(2),
+          recipient: "recipient-address",
+        } as unknown as GenericTransaction,
+        7n,
+      );
+
+      const updated = addPendingOperation(account, optimistic);
+
+      expect(
+        extractBalances(updated, token => ({
+          type: token.tokenType,
+          assetReference: token.contractAddress,
+        })),
+      ).toEqual([
+        // Native balance locks the pending fee only (2).
+        { value: 100n, locked: 2n, asset: { type: "native" } },
+        // Token balance locks the token amount only (5) — the fee (2) is NOT locked here.
+        {
+          asset: { assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", type: "erc20" },
+          locked: 5n,
+          value: 20n,
+        },
+      ]);
+    });
   });
 
   describe("extractBalance", () => {
@@ -847,9 +1200,7 @@ describe("coin-framework utils", () => {
     });
   });
 
-  jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => ({
-    encodeOperationId: jest.fn((accountId, txHash, opType) => `${accountId}-${txHash}-${opType}`),
-  }));
+  // No module mock needed: encodeOperationId is deterministic in @ledgerhq/ledger-wallet-framework/operation.
 
   describe("adaptCoreOperationToLiveOperation", () => {
     const accountId = "acc_123";

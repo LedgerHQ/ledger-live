@@ -75,7 +75,7 @@ test.describe("Swap flow from different entry point", () => {
       await app.portfolio.clickOnSelectedAssetRow(swapEntryPoint.swap.accountToDebit.currency.name);
 
       await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow());
-      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.name);
+      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
     },
   );
 
@@ -105,8 +105,8 @@ test.describe("Swap flow from different entry point", () => {
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.market.startSwapForSelectedTicker(swapEntryPoint.swap.accountToDebit.currency.ticker),
       );
-      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.name);
-      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.accountName);
+      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
+      await app.swap.checkAssetToAccountNameContains(swapEntryPoint.swap.accountToDebit.accountName);
     },
   );
 
@@ -135,7 +135,7 @@ test.describe("Swap flow from different entry point", () => {
       await app.marketBanner.clickExploreMarketHeader();
       await app.market.openCoinPage(swapEntryPoint.swap.accountToDebit.currency.ticker);
       await app.swap.goAndWaitForSwapToBeReady(() => app.market.clickOnSwapButtonOnAsset());
-      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.name);
+      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
     },
   );
 
@@ -166,8 +166,8 @@ test.describe("Swap flow from different entry point", () => {
         getParentAccountName(swapEntryPoint.swap.accountToDebit),
       );
       await app.swap.goAndWaitForSwapToBeReady(() => app.account.navigateToSwap());
-      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.name);
-      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.accountName);
+      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
+      await app.swap.checkAssetToAccountNameContains(swapEntryPoint.swap.accountToDebit.accountName);
     },
   );
 

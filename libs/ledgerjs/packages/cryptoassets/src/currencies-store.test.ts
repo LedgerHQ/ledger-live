@@ -94,3 +94,24 @@ describe("currencies-store: store injected", () => {
     expect(getCryptoCurrencyById("bitcoin")).toMatchObject({ id: "bitcoin" });
   });
 });
+
+describe("currencies-store: alias keys", () => {
+  afterEach(clearInjectedStore);
+
+  it("registers a valid alias so getCryptoCurrencyById resolves it to the canonical currency", () => {
+    setCryptoCurrenciesStore(injectedCurrencies, { [`${prodActive.id}_alias`]: prodActive.id });
+    expect(getCryptoCurrencyById(`${prodActive.id}_alias`)).toBe(prodActive);
+  });
+
+  it("throws when an alias points to an unknown currency id (fail fast)", () => {
+    expect(() => setCryptoCurrenciesStore(injectedCurrencies, { foo: "does_not_exist" })).toThrow(
+      'alias "foo" points to unknown currency id "does_not_exist"',
+    );
+  });
+
+  it("throws when an alias collides with an existing currency id", () => {
+    expect(() =>
+      setCryptoCurrenciesStore(injectedCurrencies, { [prodActive.id]: prodActive2.id }),
+    ).toThrow(`alias "${prodActive.id}" collides with an existing currency id`);
+  });
+});

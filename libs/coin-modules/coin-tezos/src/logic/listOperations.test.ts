@@ -420,6 +420,55 @@ describe("listOperations", () => {
     expect(results[0].value).toEqual(100000n);
   });
 
+  it("accumulates fees from filtered internal sub-txs onto the parent operation", async () => {
+    const contractAddress = "KT1WPEis2WhAc2FciM2tZVn8qe6pCBe9HkDp";
+    const thirdPartyAddress = "tz1Pci9FqMTqADRXqgD3ZDsdfEFcPqMTqA8D";
+
+    // Top-level: user sends to contract (bakerFee = 4749)
+    const topLevelTx: APITransactionType = {
+      ...transfer,
+      id: 800,
+      amount: 1000,
+      bakerFee: 4749,
+      storageFee: 0,
+      allocationFee: 0,
+      target: { address: contractAddress },
+    };
+
+    // Internal sub-tx 1: contract calls another contract, storage charged to initiator
+    const internalTx1: APITransactionType = {
+      ...transfer,
+      id: 801,
+      amount: 0,
+      bakerFee: 0,
+      storageFee: 17000,
+      allocationFee: 0,
+      initiator: { address: someSenderAddress },
+      sender: { address: contractAddress },
+      target: { address: thirdPartyAddress },
+    };
+
+    // Internal sub-tx 2: another internal call with storage fee
+    const internalTx2: APITransactionType = {
+      ...transfer,
+      id: 802,
+      amount: 0,
+      bakerFee: 0,
+      storageFee: 500,
+      allocationFee: 0,
+      initiator: { address: someSenderAddress },
+      sender: { address: contractAddress },
+      target: { address: thirdPartyAddress },
+    };
+
+    mockGetAccountOperations.mockResolvedValue([topLevelTx, internalTx1, internalTx2]);
+    const [results] = await listOperations(someSenderAddress, options);
+
+    // Only top-level tx kept, but fees include internal sub-tx storage costs
+    expect(results).toHaveLength(1);
+    expect(results[0].tx.fees).toEqual(4749n + 17000n + 500n);
+  });
+
   it("FA2 token transfers (tokenId 0), attributes fees from parent tx", async () => {
     const fa2: APITokenTransfer & { hash: string } = {
       id: 9001,

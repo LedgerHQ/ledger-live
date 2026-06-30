@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { firstValueFrom } from "rxjs";
 import { Account } from "@ledgerhq/types-live";
 import { ConcordiumTrustedMetadataServiceError, DisconnectedDevice } from "@ledgerhq/errors";
-import { useFeature } from "@features/platform-feature-flags";
 import { getEnv } from "@ledgerhq/live-env";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -127,8 +126,6 @@ const StepReceiveFunds = ({
   const hideQRCodeModal = useCallback(() => setModalVisible(false), []);
   const showQRCodeModal = useCallback(() => setModalVisible(true), []);
 
-  const isVerifyEnabled = useFeature("concordiumVerifyAddress")?.enabled === true;
-
   const confirmAddress = useCallback(async () => {
     if (getEnv("MOCK")) {
       setTimeout(() => {
@@ -163,20 +160,14 @@ const StepReceiveFunds = ({
 
   useEffect(() => {
     if (isAddressVerified !== null) return;
-    if (isVerifyEnabled) {
-      confirmAddress();
-    } else {
-      onChangeAddressVerified(false, null);
-    }
-  }, [isVerifyEnabled, isAddressVerified, confirmAddress, onChangeAddressVerified]);
+    confirmAddress();
+  }, [isAddressVerified, confirmAddress]);
 
   const onVerify = useCallback(() => {
     onChangeAddressVerified(null);
     onResetSkip();
     transitionTo("device");
   }, [onChangeAddressVerified, onResetSkip, transitionTo]);
-
-  const effectiveIsAddressVerified = isVerifyEnabled ? isAddressVerified : false;
 
   const category = eventType ? `Receive Flow (${eventType})` : "Receive Flow";
 
@@ -185,7 +176,7 @@ const StepReceiveFunds = ({
       return <ErrorDisplay error={verifyAddressError} onRetry={onVerify} />;
     }
 
-    if (effectiveIsAddressVerified) {
+    if (isAddressVerified) {
       return (
         <Box alignItems="center">
           <SuccessDisplay
@@ -211,7 +202,7 @@ const StepReceiveFunds = ({
       );
     }
 
-    if (effectiveIsAddressVerified === false) {
+    if (isAddressVerified === false) {
       return (
         <>
           <ShareAddress
@@ -230,7 +221,7 @@ const StepReceiveFunds = ({
           </Alert>
           <Box horizontal justifyContent="flex-end" pt={4}>
             <Button data-testid="modal-continue-button" primary onClick={onClose}>
-              <Trans i18nKey={isVerifyEnabled ? "common.continue" : "common.done"} />
+              <Trans i18nKey="common.continue" />
             </Button>
           </Box>
         </>
