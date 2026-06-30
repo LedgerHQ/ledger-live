@@ -3,8 +3,9 @@ import type { Feature } from "@shared/feature-flags";
 import { useFeature } from "@features/platform-feature-flags";
 
 /**
- * Map of currency id -> its gating feature flag (or `null`/`undefined` when the
- * flag is absent). Currencies without an entry are never gated.
+ * Map of flag-gated currency id -> its resolved gating feature flag. A currency is
+ * gated off when its flag is disabled (or its value is `null`); ids absent from this
+ * map have no gating flag and are never gated.
  */
 export type FeatureFlaggedCurrencies = Partial<Record<string, Feature<unknown> | null>>;
 

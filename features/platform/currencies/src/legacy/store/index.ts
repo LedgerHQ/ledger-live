@@ -1,2 +1,6 @@
-export * from "./port";
-export * from "./buildCryptoAssetsStore";
+export type { CryptoAssetsStore } from "./port";
+export {
+  buildCryptoAssetsStore,
+  type BuildCryptoAssetsStoreConfig,
+  type CryptoAssetsStoreDispatch,
+} from "./buildCryptoAssetsStore";

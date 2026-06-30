@@ -48,7 +48,7 @@ describe("useTokensData", () => {
 
   it("has no loadNext on the last page", () => {
     mockResult({
-      data: { pages: [{ tokens: [token("a")], pagination: { nextCursor: "" } }] },
+      data: { pages: [{ tokens: [token("a")], pagination: {} }] },
     });
     const { result } = renderHook(() => useTokensData({}));
     expect(result.current.loadNext).toBeUndefined();
