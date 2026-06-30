@@ -13,6 +13,7 @@ export function getInfoStateSheetTone(
       return "success";
     case "illustration":
     case "spot":
+    case "loader":
     case "text":
       return undefined;
     default:

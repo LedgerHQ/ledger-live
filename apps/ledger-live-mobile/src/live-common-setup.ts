@@ -42,6 +42,10 @@ liveBlindSigningReporter.setContext({
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))
   setEnv("FORCE_PROVIDER", parseInt(Config.FORCE_PROVIDER, 10));
 
+if (__DEV__) {
+  setEnv("SWAP_API_BASE", "https://swap-stg.ledger-test.com/v5");
+}
+
 let ledgerClientVersion =
   Platform.OS === "ios"
     ? `llm-ios/${VersionNumber.appVersion}`
