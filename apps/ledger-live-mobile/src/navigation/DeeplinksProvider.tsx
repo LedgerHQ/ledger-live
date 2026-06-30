@@ -448,19 +448,7 @@ export const DeeplinksProvider = ({
                                   },
                                 },
                               }),
-                              [NavigatorName.WalletTab]: {
-                                screens: {
-                                  [ScreenName.Portfolio]: "portfolio",
-                                  [NavigatorName.Market]: {
-                                    screens: {
-                                      /**
-                                       * ie: "ledgerlive://market" will open the market screen
-                                       */
-                                      [ScreenName.MarketList]: "market",
-                                    },
-                                  },
-                                },
-                              },
+                              [ScreenName.Portfolio]: "portfolio",
                             },
                           },
 
@@ -686,7 +674,7 @@ export const DeeplinksProvider = ({
               url.searchParams.delete("ledgerIds");
               url.searchParams.set("currencyIds", validatedCurrencyIds);
             } else {
-              return getStateFromPath("market", config);
+              return handleMarketBannerDeeplink();
             }
             return getStateFromPath(url.href?.split("://")[1], config);
           }
@@ -697,7 +685,7 @@ export const DeeplinksProvider = ({
               const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
 
               if (!validatedCurrencyId) {
-                return getStateFromPath("market", config);
+                return handleMarketBannerDeeplink();
               }
 
               if (shouldDisplayAggregatedAssets) {
