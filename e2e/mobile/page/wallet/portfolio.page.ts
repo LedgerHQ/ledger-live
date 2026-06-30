@@ -2,6 +2,10 @@ import { Step } from "jest-allure2-reporter/api";
 import { isWallet40, openDeeplink } from "../../helpers/commonHelpers";
 import { getFlags } from "../../bridge/server";
 import type { Features } from "@shared/feature-flags";
+
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const DEFAULT_TIMEOUT = 60000;
+
 export default class PortfolioPage {
   addNewOrExistingAccount = "add-new-account-button";
   assetsListId = "AssetsList";
@@ -58,6 +62,14 @@ export default class PortfolioPage {
   stablecoinListId = "StablecoinList";
   cryptosSectionHeaderId = "portfolio-cryptos-section-header";
   stablecoinsSectionHeaderId = "portfolio-stablecoins-section-header";
+  portfolioStocksListId = "PortfolioStocksList";
+  stocksListId = "StocksList";
+  stocksSectionHeaderId = "portfolio-stocks-section-header";
+  stocksDiscoveryId = "portfolio-stocks-discovery";
+  stocksDiscoveryHeaderId = "portfolio-stocks-discovery-header";
+  sectionAssetItemRegExp = (sectionId: string) => new RegExp(String.raw`^${sectionId}-item-\d+$`);
+  assetItemIdRegExp = (currencyName: string) =>
+    new RegExp(`^${this.baseAssetItem}${escapeRegExp(currencyName)}$`, "i");
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
@@ -440,6 +452,16 @@ export default class PortfolioPage {
     jestExpect(count).toBe(expected);
   }
 
+  private async checkSectionAssetItemCount(sectionId: string, expected: number) {
+    const count = await countElementsById(this.sectionAssetItemRegExp(sectionId));
+    jestExpect(count).toBe(expected);
+  }
+
+  @Step("Check cryptos section asset item count")
+  async checkCryptosSectionAssetItemCount(expected: number) {
+    await this.checkSectionAssetItemCount(this.portfolioCryptosListId, expected);
+  }
+
   @Step("Tap first asset item (wallet 4.0) and return its currency name")
   async tapFirstAssetItemW40(): Promise<string> {
     const testId = await getIdByRegexp(this.assetItemRegExp, 0);
@@ -450,7 +472,14 @@ export default class PortfolioPage {
 
   @Step("Check asset is visible on page")
   async checkAssetVisible(currencyName: string) {
-    await detoxExpect(getElementById(`assetItem-${currencyName}`)).toExist();
+    await detoxExpect(getElementById(this.assetItemIdRegExp(currencyName))).toExist();
+  }
+
+  @Step("Open asset detail from portfolio")
+  async openAssetDetail(currencyName: string, direction: "up" | "down" = "down") {
+    const assetItemId = this.assetItemIdRegExp(currencyName);
+    await scrollToId(assetItemId, this.accountsListView, undefined, direction);
+    await tapById(assetItemId);
   }
 
   @Step("Tap cryptos section title")
@@ -483,5 +512,43 @@ export default class PortfolioPage {
   @Step("Scroll to the top of the portfolio page")
   async scrollToTopOfPortfolioPage() {
     await scrollToId(this.portfolioBalanceNormal, this.accountsListView, 1000, "up");
+  }
+
+  private async scrollToStocksHeader(headerId: string) {
+    await waitForElementById(headerId, DEFAULT_TIMEOUT, {
+      checkVisibility: false,
+    });
+    await scrollToId(headerId, this.accountsListView);
+  }
+
+  @Step("Check stocks discovery (empty) section is visible")
+  async checkStocksDiscoverySectionVisible() {
+    await this.scrollToStocksHeader(this.stocksDiscoveryHeaderId);
+    await detoxExpect(getElementById(this.stocksDiscoveryId)).toExist();
+    await detoxExpect(getElementById(this.stocksDiscoveryHeaderId)).toBeVisible();
+  }
+
+  @Step("Tap 'Explore all' in the stocks discovery section")
+  async tapStocksExploreAll() {
+    await this.scrollToStocksHeader(this.stocksDiscoveryHeaderId);
+    await tapById(this.stocksDiscoveryHeaderId);
+  }
+
+  @Step("Check stocks holdings section is visible")
+  async checkStocksHoldingsSectionVisible() {
+    await this.scrollToStocksHeader(this.stocksSectionHeaderId);
+    await detoxExpect(getElementById(this.stocksSectionHeaderId)).toBeVisible();
+    await detoxExpect(getElementById(this.portfolioStocksListId)).toExist();
+  }
+
+  @Step("Tap stocks section title")
+  async tapStocksSectionTitle() {
+    await this.scrollToStocksHeader(this.stocksSectionHeaderId);
+    await tapById(this.stocksSectionHeaderId);
+  }
+
+  @Step("Check full stocks list page is visible")
+  async checkStocksListPageVisible() {
+    await this.checkListPageVisible(this.stocksListId);
   }
 }

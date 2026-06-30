@@ -35,6 +35,7 @@ export function TotalBalanceView({
             formatter={counterValueFormatter}
             hidden={discreet}
             size="sm"
+            testID={ASSET_DETAIL_TEST_IDS.totalBalanceAmount}
           />
         )}
         <Text typography="body3" lx={{ color: "muted" }}>

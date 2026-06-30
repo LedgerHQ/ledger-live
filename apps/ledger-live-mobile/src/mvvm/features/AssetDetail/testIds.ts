@@ -6,6 +6,7 @@ export const ASSET_DETAIL_TEST_IDS = {
   receiveButton: "asset-detail-receive-button",
   balanceDetails: "asset-detail-balance-details",
   totalBalance: "asset-detail-total-balance",
+  totalBalanceAmount: "asset-detail-total-balance-amount",
   transferButton: "asset-detail-transfer-button",
   earnBanner: "asset-detail-earn-banner",
   availableBalance: "asset-detail-available-balance",

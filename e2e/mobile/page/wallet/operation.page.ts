@@ -1,11 +1,13 @@
 import { element, by } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 
+export const OPERATION_ITEM_ID = "operations-list-item";
+
 export default class OperationPage {
   // MVVM OperationsList screen
   operationsListId = "operations-list-section-list";
   sectionHeaderId = "operations-section-header";
-  operationItemId = "operations-list-item";
+  operationItemId = OPERATION_ITEM_ID;
   emptyStateId = "operations-empty-state";
 
   @Step("Expect Operations List to be visible")

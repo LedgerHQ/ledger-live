@@ -1,15 +1,22 @@
 import { CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { getMergedFeatureFlags } from "../../utils/constants";
 
 const BST_ADD_ACCOUNT_CURRENCIES = new Set(["ton", "aptos", "cardano", "tezos"]);
 
 export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], tags: string[]) {
   describe("Add accounts - Network Based", () => {
+    let isAssetSectionEnabled = false;
+
     beforeAll(async () => {
+      const featureFlags = getMergedFeatureFlags();
+      isAssetSectionEnabled = featureFlags.lwmWallet40?.params?.assetSection === true;
+
       await app.init({
         userdata: "skip-onboarding",
         speculosApp: currency.speculosApp,
+        featureFlags,
       });
       await app.mainNavigation.waitForWallet40Ready();
     });
@@ -39,6 +46,15 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], ta
       );
 
       await app.addAccount.tapCloseAddAccountCta();
+
+      if (isAssetSectionEnabled) {
+        await app.portfolio.checkAssetVisible(currency.name);
+        await app.portfolio.openAssetDetail(currency.name, "up");
+        await app.assetDetail.expectTotalBalanceVisible();
+        await app.assetDetail.expectMarketPriceVisible();
+        await app.assetDetail.expectOperationItemVisible();
+        return;
+      }
 
       await app.portfolio.goToAccounts(currency.name);
 
