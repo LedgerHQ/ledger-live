@@ -31,6 +31,7 @@ type BuildAccountTxParams = {
   originalTxId?: string;
   /** Pending operations (hash + extra.inputs) to detect conflicting txs; when set with originalTxId, min fee is max over all conflicting */
   pendingOperations?: Array<{ hash: string; extra?: { inputs?: string[] } }>;
+  relayFeePerByteSatVb?: BigNumber;
 };
 
 const hasExportedTxs = (value: unknown): value is { txs: TX[] } => {
@@ -314,6 +315,9 @@ class BitcoinLikeWallet {
       opReturnData: params.opReturnData,
       ...(params.originalTxId === undefined ? {} : { originalTxId: params.originalTxId }),
       ...(minReplacementFeeSat === undefined ? {} : { minReplacementFeeSat }),
+      ...(params.relayFeePerByteSatVb === undefined
+        ? {}
+        : { relayFeePerByteSatVb: params.relayFeePerByteSatVb }),
     });
 
     return txInfo;
