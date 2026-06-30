@@ -175,6 +175,24 @@ describe("buildSignRawOperation", () => {
     ).rejects.toBeInstanceOf(ExpertModeRequired);
   });
 
+  it("throws a clear error when the device returns no signature on an unhandled return_code", async () => {
+    const signer = {
+      sign: jest.fn(async () => ({ signature: null, return_code: 0x6e00 })),
+    } as unknown as CosmosSigner;
+    const signRawOperation = buildSignRawOperation(signerContextOf(signer));
+
+    await expect(
+      firstValueFrom(
+        signRawOperation({
+          account: makeAccount(),
+          deviceId: "mock",
+          transaction: makeSignDocJson(MSG_SEND),
+        }).pipe(toArray()),
+      ),
+    ).rejects.toThrow("device returned no signature");
+    expect(signer.sign).toHaveBeenCalledTimes(1);
+  });
+
   it("rejects malformed JSON before any device interaction", async () => {
     const signer = makeRealSigner();
     const signRawOperation = buildSignRawOperation(signerContextOf(signer));
