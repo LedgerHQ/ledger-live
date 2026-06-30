@@ -15,7 +15,6 @@ import { DistributionItem } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { hideEmptyTokenAccountsSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 type ItemShape = {
   key: string;
@@ -25,7 +24,6 @@ type ItemShape = {
 
 export default function AssetCrumb() {
   const { t } = useTranslation();
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
   const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
   const distribution = useDistribution({ hideEmptyTokenAccount });
   const navigate = useNavigate();
@@ -84,7 +82,7 @@ export default function AssetCrumb() {
             navigate("/");
           }}
         >
-          {shouldDisplayWallet40MainNav ? t("sidebar.home") : t("dashboard.title")}
+          {t("sidebar.home")}
         </Button>
       </TextLink>
       <Separator />

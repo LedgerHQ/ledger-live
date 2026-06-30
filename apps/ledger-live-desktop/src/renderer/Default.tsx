@@ -18,7 +18,6 @@ import IsNewVersion from "~/renderer/components/IsNewVersion";
 import IsSystemLanguageAvailable from "~/renderer/components/IsSystemLanguageAvailable";
 import IsTermOfUseUpdated from "./components/IsTermOfUseUpdated";
 import KeyboardContent from "~/renderer/components/KeyboardContent";
-import MainSideBar from "~/renderer/components/MainSideBar";
 import SideBar from "LLD/components/SideBar";
 import TriggerAppReady from "~/renderer/components/TriggerAppReady";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
@@ -37,7 +36,6 @@ import useUSBTroubleshooting from "~/renderer/hooks/useUSBTroubleshooting";
 import ModalsLayer from "./ModalsLayer";
 import { ToastOverlay } from "~/renderer/components/ToastOverlay";
 import Drawer from "~/renderer/drawers/Drawer";
-import UpdateBanner from "~/renderer/components/Updater/Banner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { updateIdentify } from "./analytics/segment";
 import {
@@ -76,7 +74,6 @@ import {
   BACKGROUND_SIZE,
   preloadBackgrounds,
 } from "LLD/components/Page/backgrounds";
-import FirmwareUpdateBanner from "./components/FirmwareUpdateBanner";
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
 const Settings = lazy(() => import("~/renderer/screens/settings"));
@@ -254,11 +251,9 @@ const RecoverPlayerWithFeatureToggle = () => {
 
 // Shared content for the main app layout
 const MainAppContent = ({
-  shouldDisplayWallet40MainNav,
   shouldDisplayAssetSection,
   shouldDisplayAggregatedAssets,
 }: {
-  shouldDisplayWallet40MainNav: boolean;
   shouldDisplayAssetSection: boolean;
   shouldDisplayAggregatedAssets: boolean;
 }) => (
@@ -267,12 +262,10 @@ const MainAppContent = ({
       <Route path="/recover/:appId" element={<RecoverPlayerWithFeatureToggle />} />
       <Route path="/perps/*" element={withFullscreenSuspense(Perps)({})} />
     </Routes>
-    {shouldDisplayWallet40MainNav ? <SideBar /> : <MainSideBar />}
+    <SideBar />
 
     <Page>
       <TopBannerContainer>
-        {shouldDisplayWallet40MainNav ? null : <FirmwareUpdateBanner />}
-        {!shouldDisplayWallet40MainNav && <UpdateBanner />}
         <VaultSignerBanner />
       </TopBannerContainer>
       <Routes>
@@ -340,22 +333,19 @@ export const MainAppLayout = () => {
   const styledComponentsTheme = useTheme();
   const {
     isEnabled: isWallet40Enabled,
-    shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayAggregatedAssets,
   } = useWalletFeaturesConfig("desktop");
   const shouldShowDeferredModals = useShouldShowDeferredModals();
 
-  const backgroundImage = shouldDisplayWallet40MainNav
-    ? getPageBackground(pathname, theme)
-    : undefined;
+  const backgroundImage = getPageBackground(pathname, theme);
 
   const useWallet40Layout =
     isWallet40Enabled && isWallet40Page(pathname, { shouldDisplayAggregatedAssets });
 
   useEffect(() => {
-    if (shouldDisplayWallet40MainNav) preloadBackgrounds();
-  }, [shouldDisplayWallet40MainNav]);
+    preloadBackgrounds();
+  }, []);
 
   return (
     <>
@@ -387,7 +377,6 @@ export const MainAppLayout = () => {
         }
       >
         <MainAppContent
-          shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
           shouldDisplayAssetSection={shouldDisplayAssetSection}
           shouldDisplayAggregatedAssets={shouldDisplayAggregatedAssets}
         />

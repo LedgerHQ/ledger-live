@@ -1,9 +1,8 @@
 import React, { memo } from "react";
-import ClassicTopBar from "~/renderer/components/TopBar";
 import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { PageViewModelResult } from "./usePageViewModel";
-import { ClassicLayout, Wallet40Layout, ScrollUpButton } from "./components";
+import { ClassicLayout, Wallet40Layout } from "./components";
 import RightPanel from "LLD/components/RightPanel";
 import Wallet40TopBar from "LLD/components/TopBar";
 
@@ -19,18 +18,15 @@ type PageViewProps = PageViewModelResult & {
 export const PageView = memo(function PageView({
   children,
   pageScrollerRef,
-  isScrollUpButtonVisible,
   isScrollAtUpperBound,
   isWallet40Enabled,
-  shouldDisplayWallet40MainNav,
   shouldDisplayBrazePlacement,
   pathname,
-  onClickScrollUp,
   shouldRenderRightPanel,
 }: PageViewProps) {
   return (
     <div className="relative flex flex-1 flex-col min-w-0">
-      {shouldDisplayWallet40MainNav ? <Wallet40TopBar /> : <ClassicTopBar />}
+      <Wallet40TopBar />
       {isWallet40Enabled ? (
         <Wallet40Layout
           scrollerRef={pageScrollerRef}
@@ -42,9 +38,6 @@ export const PageView = memo(function PageView({
         <ClassicLayout scrollerRef={pageScrollerRef} isScrollAtUpperBound={isScrollAtUpperBound}>
           {children}
         </ClassicLayout>
-      )}
-      {!shouldDisplayWallet40MainNav && (
-        <ScrollUpButton isVisible={isScrollUpButtonVisible} onClick={onClickScrollUp} />
       )}
       {/* Only on dashboard; hide sticky variant when Braze placement (cards shown in banner only) */}
       {pathname === "/" && !shouldDisplayBrazePlacement && (

@@ -1,31 +1,26 @@
 import { useCallback, useLayoutEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { SCROLL_UP_BUTTON_THRESHOLD, SCROLL_TO_TOP_EVENT } from "./constants";
+import { SCROLL_TO_TOP_EVENT } from "./constants";
 import { shouldDisplayRightPanel as isRightPanelPage } from "./utils";
 import { useRightPanelVisibility } from "LLD/components/RightPanel/useRightPanelVisibility";
 import { useRightPanelSwapAvailability } from "LLD/components/RightPanel/useRightPanelSwapAvailability";
 
 export interface PageViewModelResult {
   readonly pageScrollerRef: (node: HTMLDivElement | null) => void;
-  readonly isScrollUpButtonVisible: boolean;
   readonly isScrollAtUpperBound: boolean;
   readonly isWallet40Enabled: boolean;
-  readonly shouldDisplayWallet40MainNav: boolean;
   readonly shouldDisplayBrazePlacement: boolean;
   readonly pathname: string;
-  readonly onClickScrollUp: () => void;
   readonly shouldRenderRightPanel: boolean;
 }
 
 export const usePageViewModel = (): PageViewModelResult => {
   const [scrollerElement, setScrollerElement] = useState<HTMLDivElement | null>(null);
-  const [isScrollUpButtonVisible, setScrollUpButtonVisibility] = useState(false);
   const [isScrollAtUpperBound, setScrollAtUpperBound] = useState(true);
   const { pathname } = useLocation();
   const {
     isEnabled: isWallet40Enabled,
-    shouldDisplayWallet40MainNav,
     shouldDisplayBrazePlacement,
     shouldDisplayAggregatedAssets,
   } = useWalletFeaturesConfig("desktop");
@@ -54,8 +49,6 @@ export const usePageViewModel = (): PageViewModelResult => {
     [scrollerElement],
   );
 
-  const onClickScrollUp = useCallback(() => scrollToTop(), [scrollToTop]);
-
   // When sidebar (or elsewhere) dispatches SCROLL_TO_TOP_EVENT, scroll the page scroller to top
   useLayoutEffect(() => {
     const handler = () => scrollToTop(true);
@@ -74,7 +67,6 @@ export const usePageViewModel = (): PageViewModelResult => {
 
     const listener = () => {
       setScrollAtUpperBound(scrollerElement.scrollTop === 0);
-      setScrollUpButtonVisibility(scrollerElement.scrollTop > SCROLL_UP_BUTTON_THRESHOLD);
     };
 
     // Check initial scroll position
@@ -89,13 +81,10 @@ export const usePageViewModel = (): PageViewModelResult => {
 
   return {
     pageScrollerRef,
-    isScrollUpButtonVisible,
     isScrollAtUpperBound,
     isWallet40Enabled,
-    shouldDisplayWallet40MainNav,
     shouldDisplayBrazePlacement,
     pathname,
-    onClickScrollUp,
     shouldRenderRightPanel,
   };
 };

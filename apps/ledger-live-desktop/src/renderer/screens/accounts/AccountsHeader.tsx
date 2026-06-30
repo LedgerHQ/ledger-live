@@ -11,12 +11,11 @@ import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums
 import { MAD_SOURCE_PAGES } from "LLD/features/ModularDialog/analytics/modularDialog.types";
 import useAddAccountAnalytics from "LLD/features/AddAccountDrawer/analytics/useAddAccountAnalytics";
 import { ADD_ACCOUNT_EVENTS_NAME } from "LLD/features/AddAccountDrawer/analytics/addAccount.types";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import PageHeader from "LLD/components/PageHeader";
 
 const AccountsHeader = () => {
   const { t } = useTranslation();
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
   const { trackAddAccountEvent } = useAddAccountAnalytics();
   const ledgerSyncOptimisationFlag = useFeature("lwdLedgerSyncOptimisation");
   const { openAssetFlow } = useOpenAssetFlow(
@@ -31,42 +30,11 @@ const AccountsHeader = () => {
     });
     openAssetFlow();
   };
-  if (shouldDisplayWallet40MainNav) {
-    return (
-      <div className="flex items-start justify-between pb-24">
-        <PageHeader title={t("accounts.title")} />
-        <div className="flex items-center gap-8">
-          {!ledgerSyncOptimisationFlag?.enabled && (
-            <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} />
-          )}
-          <Button
-            small
-            primary
-            onClick={handleAddAccountClick}
-            data-testid="accounts-add-account-button"
-          >
-            <Box horizontal flow={1} alignItems="center">
-              <IconPlus size={12} />
-              <Box>{t("addAccounts.cta.add")}</Box>
-            </Box>
-          </Button>
-          <OptionsButton />
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <Box
-      horizontal
-      style={{
-        paddingBottom: 32,
-      }}
-    >
-      <Box grow ff="Inter|SemiBold" fontSize={7} color="neutral.c100" id="accounts-title">
-        {t("accounts.title")}
-      </Box>
-      <Box horizontal flow={2} alignItems="center" justifyContent="flex-end">
+    <div className="flex items-start justify-between pb-24">
+      <PageHeader title={t("accounts.title")} />
+      <div className="flex items-center gap-8">
         {!ledgerSyncOptimisationFlag?.enabled && (
           <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} />
         )}
@@ -82,8 +50,8 @@ const AccountsHeader = () => {
           </Box>
         </Button>
         <OptionsButton />
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 export default React.memo(AccountsHeader);
