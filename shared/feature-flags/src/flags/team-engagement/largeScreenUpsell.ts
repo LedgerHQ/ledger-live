@@ -1,15 +1,12 @@
 import { z } from "zod";
 import { flagWith } from "../../define";
 
-// Target Ledger devices for the large-screen upsell.
 const audienceModelsSchema = z.object({
   nanoS: z.boolean(),
   nanoSP: z.boolean(),
   nanoX: z.boolean(),
 });
 
-// Per-model cooldown between upsell appearances. `default` applies to every
-// model; per-model keys override it (e.g. `nanoS: 0` shows from day 0).
 const cooldownDaysSchema = z.object({
   default: z.number(),
   nanoS: z.number().optional(),
