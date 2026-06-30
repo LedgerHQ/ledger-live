@@ -41,7 +41,7 @@ const portfolioBaseScreen: NavigatorScreenParams<BaseNavigatorStackParamList> = 
   params: {
     screen: NavigatorName.Portfolio,
     params: {
-      screen: NavigatorName.WalletTab,
+      screen: ScreenName.Portfolio,
     },
   },
 };

@@ -1,0 +1,56 @@
+import { renderHook } from "tests/testSetup";
+import { mockPortfolioBalanceInfo } from "LLD/hooks/__tests__/fixtures";
+import { useChartSectionHeaderViewModel } from "../useChartSectionHeaderViewModel";
+import { chartSectionHeaderInitialState } from "../../__tests__/fixtures";
+
+describe("useChartSectionHeaderViewModel", () => {
+  it("formats balance, trend, and range label for the selected portfolio range", () => {
+    const { result } = renderHook(
+      () =>
+        useChartSectionHeaderViewModel({
+          balanceInfo: {
+            ...mockPortfolioBalanceInfo,
+            valueChange: { percentage: 0.1234, value: 567 },
+          },
+          hoveredBalance: null,
+          isLoading: false,
+          shouldDisplayBalanceRefreshRework: true,
+        }),
+      { initialState: chartSectionHeaderInitialState },
+    );
+
+    expect(result.current.balance).toBe(mockPortfolioBalanceInfo.totalBalance);
+    expect(result.current.rangeLabel).toBe("1 week");
+    expect(result.current.percentageValue).toBe(12.34);
+  });
+
+  it("uses the hovered balance when scrubbing the chart", () => {
+    const { result } = renderHook(
+      () =>
+        useChartSectionHeaderViewModel({
+          balanceInfo: mockPortfolioBalanceInfo,
+          hoveredBalance: 1000,
+          isLoading: false,
+          shouldDisplayBalanceRefreshRework: true,
+        }),
+      { initialState: chartSectionHeaderInitialState },
+    );
+
+    expect(result.current.balance).toBe(1000);
+  });
+
+  it("exposes the loading state passed from the parent view model", () => {
+    const { result } = renderHook(
+      () =>
+        useChartSectionHeaderViewModel({
+          balanceInfo: mockPortfolioBalanceInfo,
+          hoveredBalance: null,
+          isLoading: true,
+          shouldDisplayBalanceRefreshRework: true,
+        }),
+      { initialState: chartSectionHeaderInitialState },
+    );
+
+    expect(result.current.isLoading).toBe(true);
+  });
+});

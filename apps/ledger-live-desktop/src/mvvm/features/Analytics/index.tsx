@@ -7,6 +7,8 @@ import useAnalyticsViewModel from "./useAnalyticsViewModel";
 import type { AnalyticsViewModel } from "./types";
 import { AllocationSection } from "./components/Allocation/AllocationSection";
 import { PnLSection } from "./components/PnL";
+import { ChartSection } from "./components/ChartSection";
+import { cn } from "LLD/utils/cn";
 import { useTranslation } from "react-i18next";
 
 export default function Analytics() {
@@ -21,7 +23,11 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
     navigateToDashboard,
     shouldDisplayGraphRework,
     shouldDisplayAssetSection,
+    shouldDisplayPnl,
     balanceInfo,
+    portfolio,
+    isLoading,
+    shouldDisplayBalanceRefreshRework,
   } = viewModel;
 
   const { t } = useTranslation();
@@ -31,15 +37,27 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
       <TrackPage category="Analytics" range={selectedTimeRange} countervalue={counterValue} />
       <PageHeader title={t("analytics.title")} onBack={navigateToDashboard} />
 
-      <div className="overflow-hidden rounded-md bg-surface" data-testid="analytics-chart">
-        <PortfolioBalanceSummary
-          counterValue={counterValue}
-          chartColor={colors.wallet}
-          range={selectedTimeRange}
-          isWallet40
-          shouldDisplayGraphRework={shouldDisplayGraphRework}
-          balanceInfo={balanceInfo}
-        />
+      <div
+        className={cn("overflow-hidden", !shouldDisplayPnl && "rounded-md bg-surface")}
+        data-testid="analytics-chart"
+      >
+        {shouldDisplayPnl ? (
+          <ChartSection
+            balanceInfo={balanceInfo}
+            portfolio={portfolio}
+            isLoading={isLoading}
+            shouldDisplayBalanceRefreshRework={shouldDisplayBalanceRefreshRework}
+          />
+        ) : (
+          <PortfolioBalanceSummary
+            counterValue={counterValue}
+            chartColor={colors.wallet}
+            range={selectedTimeRange}
+            isWallet40
+            shouldDisplayGraphRework={shouldDisplayGraphRework}
+            balanceInfo={balanceInfo}
+          />
+        )}
       </div>
 
       <PnLSection />

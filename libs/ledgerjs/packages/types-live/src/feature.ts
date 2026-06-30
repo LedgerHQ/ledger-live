@@ -316,7 +316,6 @@ export type Features = CurrencyFeatures & {
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
   supportDeviceApex: DefaultFeature;
   llmSyncOnboardingIncr1: DefaultFeature;
-  lldSyncOnboardingIncr1: DefaultFeature;
   onboardingWidget: DefaultFeature;
   noah: Feature_Noah;
   newSendFlow: Feature_NewSendFlow;

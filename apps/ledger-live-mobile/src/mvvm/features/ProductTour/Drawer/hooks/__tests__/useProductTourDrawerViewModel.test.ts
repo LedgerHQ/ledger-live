@@ -305,7 +305,7 @@ describe("useProductTourDrawerViewModel", () => {
       expect(result.current.isDrawerOpen).toBe(false);
       expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Main, {
         screen: NavigatorName.Portfolio,
-        params: { screen: NavigatorName.WalletTab },
+        params: { screen: ScreenName.Portfolio },
       });
     });
   });
