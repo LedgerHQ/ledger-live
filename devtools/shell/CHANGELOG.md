@@ -1,5 +1,16 @@
 # @devtools/shell
 
+## 0.4.0
+
+### Minor Changes
+
+- [#18547](https://github.com/LedgerHQ/ledger-live/pull/18547) [`4973a36`](https://github.com/LedgerHQ/ledger-live/commit/4973a3648b64c9110f42dcacfdc559f4e7186885) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add mobile ui for devtools/shell. A screen to choose a tool category, one for tools and one for the tool itself
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/registry@0.1.4
+
 ## 0.4.0-next.2
 
 ### Patch Changes

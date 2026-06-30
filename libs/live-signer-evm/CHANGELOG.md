@@ -1,5 +1,19 @@
 # @ledgerhq/live-signer-evm
 
+## 0.20.0
+
+### Minor Changes
+
+- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump Device Management Kit to 1.7.1
+
+### Patch Changes
+
+- Updated dependencies [[`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6), [`636a4cb`](https://github.com/LedgerHQ/ledger-live/commit/636a4cbc5ae01364af425e3837cecf1ce4d3f3bc), [`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2), [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292)]:
+  - @ledgerhq/live-dmk-shared@0.27.0
+  - @ledgerhq/coin-evm@4.4.0
+  - @ledgerhq/errors@6.37.0
+  - @ledgerhq/hw-app-eth@7.8.8
+
 ## 0.20.0-next.0
 
 ### Minor Changes

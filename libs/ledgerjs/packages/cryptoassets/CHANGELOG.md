@@ -1,5 +1,30 @@
 # @ledgerhq/cryptoassets
 
+## 13.53.0
+
+### Minor Changes
+
+- [#18766](https://github.com/LedgerHQ/ledger-live/pull/18766) [`b8a0765`](https://github.com/LedgerHQ/ledger-live/commit/b8a0765d7ac1ac1a60456f9c604e7a694e38bd84) Thanks [@ysitbon](https://github.com/ysitbon)! - Make the crypto-currency registry injectable via a service-locator with graceful fallback.
+
+  A new `setCryptoCurrenciesStore(currencies)` lets the host application supply the canonical `CryptoCurrency[]`; the by-id/ticker/scheme indices and the dev/terminated arrays are derived internally, so they stay consistent by construction and the derived shape is not part of the public interface. All registry accessors — `getCryptoCurrencyById`, `findCryptoCurrencyById`, `findCryptoCurrencyByTicker`, `findCryptoCurrencyByScheme`, `findCryptoCurrencyByKeyword`, `findCryptoCurrencyByManagerAppName`, `findCryptoCurrency`, `hasCryptoCurrencyId` and `listCryptoCurrencies` — now read from the injected store when present, falling back to the bundled data otherwise.
+
+  With no store injected the behaviour is identical to before (the bundled registry), so existing call sites are unaffected and the fallback never throws (accessors invoked at module-evaluation time stay safe).
+
+  The previously exported `registerCryptoCurrency` is removed: registering a single currency onto the bundled registry is superseded by injecting the full registry with `setCryptoCurrenciesStore(currencies)`.
+
+- [#18572](https://github.com/LedgerHQ/ledger-live/pull/18572) [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - feat: add new evm chain
+
+- [#18520](https://github.com/LedgerHQ/ledger-live/pull/18520) [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Move the dummy fee-estimation recipient out of `@ledgerhq/cryptoassets` (`abandonseed.ts`, now deleted) into each coin family. Every account bridge now exposes a required `getEstimationRecipient(account)` returning a valid recipient (or throwing for an unmapped currency, like the former `getAbandonSeedAddress`), and the swap layer dispatches through it instead of the central address map.
+
+- [#18847](https://github.com/LedgerHQ/ledger-live/pull/18847) [`37eba10`](https://github.com/LedgerHQ/ledger-live/commit/37eba10db15542fb7859bafac772e6d280650872) Thanks [@semeano](https://github.com/semeano)! - Rename the native TON cryptocurrency to Gram
+
+### Patch Changes
+
+- Updated dependencies [[`636a4cb`](https://github.com/LedgerHQ/ledger-live/commit/636a4cbc5ae01364af425e3837cecf1ce4d3f3bc), [`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2), [`ad68778`](https://github.com/LedgerHQ/ledger-live/commit/ad68778ad71686c9e4f397276917e606a099f573), [`13aeeb6`](https://github.com/LedgerHQ/ledger-live/commit/13aeeb6186997b433785e542ed1dafa6afde2267), [`1f41eee`](https://github.com/LedgerHQ/ledger-live/commit/1f41eee5b4dc6aa50accd94e5a0d6c98fcf76e23), [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934), [`798081d`](https://github.com/LedgerHQ/ledger-live/commit/798081db3e427c8d2d09930ceb836703146ca1ba), [`1f11587`](https://github.com/LedgerHQ/ledger-live/commit/1f11587b4681429aa9be2dc50035f292e0394108), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292), [`ca20506`](https://github.com/LedgerHQ/ledger-live/commit/ca20506c138a1cfb9c254f61e6bb930aea4c6ab8)]:
+  - @ledgerhq/types-live@6.113.0
+  - @ledgerhq/errors@6.37.0
+  - @ledgerhq/live-env@2.40.0
+
 ## 13.53.0-next.0
 
 ### Minor Changes

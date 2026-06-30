@@ -1,5 +1,24 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.27.0
+
+### Minor Changes
+
+- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump Device Management Kit to 1.7.1
+
+- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump React Native HID transport to 1.0.4
+
+- [#18675](https://github.com/LedgerHQ/ledger-live/pull/18675) [`84837e9`](https://github.com/LedgerHQ/ledger-live/commit/84837e91604e24a2c1a92a85c148f39f8767844b) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Fix HTTP proxy device IDs so legacy transport resolution uses the proxy transport.
+
+### Patch Changes
+
+- Updated dependencies [[`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6), [`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2), [`13aeeb6`](https://github.com/LedgerHQ/ledger-live/commit/13aeeb6186997b433785e542ed1dafa6afde2267), [`798081d`](https://github.com/LedgerHQ/ledger-live/commit/798081db3e427c8d2d09930ceb836703146ca1ba), [`ebda9d8`](https://github.com/LedgerHQ/ledger-live/commit/ebda9d88805501f4c2c03fef0fe24f116a8a2a6c)]:
+  - @ledgerhq/live-dmk-shared@0.27.0
+  - @ledgerhq/errors@6.37.0
+  - @ledgerhq/live-env@2.40.0
+  - @ledgerhq/devices@8.16.0
+  - @ledgerhq/hw-transport@6.35.5
+
 ## 0.27.0-next.0
 
 ### Minor Changes

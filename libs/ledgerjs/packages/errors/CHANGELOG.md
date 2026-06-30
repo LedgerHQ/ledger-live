@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.37.0
+
+### Minor Changes
+
+- [#18772](https://github.com/LedgerHQ/ledger-live/pull/18772) [`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Document the package as deprecated: add a frozen-lib banner, `@deprecated` JSDoc on `createCustomErrorClass` and the serialize/deserialize helpers, a DEPRECATED.md, and a README notice. No runtime change.
+
 ## 6.37.0-next.0
 
 ### Minor Changes

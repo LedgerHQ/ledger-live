@@ -1,5 +1,25 @@
 # @ledgerhq/live-countervalues
 
+## 0.21.0
+
+### Minor Changes
+
+- [#18757](https://github.com/LedgerHQ/ledger-live/pull/18757) [`36200f9`](https://github.com/LedgerHQ/ledger-live/commit/36200f969272f31c6737146b154b7dca8139d4cc) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix zero-balance asset trend display
+
+- [#18773](https://github.com/LedgerHQ/ledger-live/pull/18773) [`b383bd5`](https://github.com/LedgerHQ/ledger-live/commit/b383bd51879861ab707bbf4795ac1b76393acb98) Thanks [@deepyjr](https://github.com/deepyjr)! - Filter unsupported countervalue tracking pairs before polling.
+
+- [#18654](https://github.com/LedgerHQ/ledger-live/pull/18654) [`25101e2`](https://github.com/LedgerHQ/ledger-live/commit/25101e2991ea7c9ab54c7f3e4e5bc0bda8056d0b) Thanks [@deepyjr](https://github.com/deepyjr)! - Display a 1D variation for held assets instead of "-": when an asset's 24h portfolio value change is unavailable (e.g. freshly-acquired positions whose 24h-ago balance was zero), fall back to the asset's 1D price change computed locally from countervalues, expressed in the user's counter-value currency. This applies uniformly to crypto, stablecoins and stocks, and is handled in the shared trend hooks so generic display components stay decoupled from any asset category. A flat price now renders a real 0% (instead of "-"), and the fallback stays neutral when a rate is missing.
+
+- [#18847](https://github.com/LedgerHQ/ledger-live/pull/18847) [`37eba10`](https://github.com/LedgerHQ/ledger-live/commit/37eba10db15542fb7859bafac772e6d280650872) Thanks [@semeano](https://github.com/semeano)! - Rename the native TON cryptocurrency to Gram
+
+### Patch Changes
+
+- Updated dependencies [[`636a4cb`](https://github.com/LedgerHQ/ledger-live/commit/636a4cbc5ae01364af425e3837cecf1ce4d3f3bc), [`ad68778`](https://github.com/LedgerHQ/ledger-live/commit/ad68778ad71686c9e4f397276917e606a099f573), [`13aeeb6`](https://github.com/LedgerHQ/ledger-live/commit/13aeeb6186997b433785e542ed1dafa6afde2267), [`1f41eee`](https://github.com/LedgerHQ/ledger-live/commit/1f41eee5b4dc6aa50accd94e5a0d6c98fcf76e23), [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934), [`798081d`](https://github.com/LedgerHQ/ledger-live/commit/798081db3e427c8d2d09930ceb836703146ca1ba), [`1f11587`](https://github.com/LedgerHQ/ledger-live/commit/1f11587b4681429aa9be2dc50035f292e0394108), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292), [`ca20506`](https://github.com/LedgerHQ/ledger-live/commit/ca20506c138a1cfb9c254f61e6bb930aea4c6ab8)]:
+  - @ledgerhq/types-live@6.113.0
+  - @ledgerhq/live-env@2.40.0
+  - @ledgerhq/ledger-wallet-framework@2.2.1
+  - @ledgerhq/live-network@2.6.6
+
 ## 0.21.0-next.0
 
 ### Minor Changes

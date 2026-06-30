@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-canton
 
+## 0.12.4
+
+### Patch Changes
+
+- Updated dependencies [[`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2)]:
+  - @ledgerhq/errors@6.37.0
+  - @ledgerhq/hw-transport@6.35.5
+
 ## 0.12.4-next.0
 
 ### Patch Changes

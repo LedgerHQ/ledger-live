@@ -1,5 +1,19 @@
 # @ledgerhq/live-dmk-speculos
 
+## 0.10.0
+
+### Minor Changes
+
+- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump Device Management Kit to 1.7.1
+
+- [#18853](https://github.com/LedgerHQ/ledger-live/pull/18853) [`e369e66`](https://github.com/LedgerHQ/ledger-live/commit/e369e66e9f4263229cd4b158e67ef9d66acd22d3) Thanks [@henri-ly](https://github.com/henri-ly)! - Allow passing an explicit device model to the Speculos DMK transport. The underlying transport cannot infer the emulated device and defaults to Stax, so the e2e setups now forward the real model (e.g. nanoX) when opening the transport.
+
+### Patch Changes
+
+- Updated dependencies [[`13aeeb6`](https://github.com/LedgerHQ/ledger-live/commit/13aeeb6186997b433785e542ed1dafa6afde2267), [`798081d`](https://github.com/LedgerHQ/ledger-live/commit/798081db3e427c8d2d09930ceb836703146ca1ba)]:
+  - @ledgerhq/live-env@2.40.0
+  - @ledgerhq/hw-transport@6.35.5
+
 ## 0.10.0-next.0
 
 ### Minor Changes

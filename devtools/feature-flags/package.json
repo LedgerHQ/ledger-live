@@ -1,6 +1,6 @@
 {
   "name": "@devtools/feature-flags",
-  "version": "0.5.1-next.2",
+  "version": "0.5.1",
   "private": true,
   "description": "Ledger Live feature flags' Devtools",
   "main": "src/index.ts",

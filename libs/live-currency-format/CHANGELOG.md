@@ -1,5 +1,20 @@
 # @ledgerhq/live-currency-format
 
+## 0.11.0
+
+### Minor Changes
+
+- [#18610](https://github.com/LedgerHQ/ledger-live/pull/18610) [`9bf46c3`](https://github.com/LedgerHQ/ledger-live/commit/9bf46c38e84f6b8caf5bf26ba6afe48a40a01711) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix: LWD PnL detail modal now prefixes positive values with `+` (and negatives with `-`), matching Ledger Live Mobile. `formatPrice` gains an optional `alwaysShowSign` option that is forwarded to `formatCurrencyUnit`.
+
+- [#18572](https://github.com/LedgerHQ/ledger-live/pull/18572) [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - feat: add new evm chain
+
+- [#18847](https://github.com/LedgerHQ/ledger-live/pull/18847) [`37eba10`](https://github.com/LedgerHQ/ledger-live/commit/37eba10db15542fb7859bafac772e6d280650872) Thanks [@semeano](https://github.com/semeano)! - Rename the native TON cryptocurrency to Gram
+
+### Patch Changes
+
+- Updated dependencies [[`13aeeb6`](https://github.com/LedgerHQ/ledger-live/commit/13aeeb6186997b433785e542ed1dafa6afde2267), [`798081d`](https://github.com/LedgerHQ/ledger-live/commit/798081db3e427c8d2d09930ceb836703146ca1ba)]:
+  - @ledgerhq/live-env@2.40.0
+
 ## 0.11.0-next.0
 
 ### Minor Changes
