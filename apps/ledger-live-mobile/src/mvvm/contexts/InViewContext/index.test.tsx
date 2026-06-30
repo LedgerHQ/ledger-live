@@ -28,6 +28,7 @@ function Consumer({
 }) {
   const ref = useRef<View | null>(null);
   // Inline callback like the real carousel; changing `depValue` forces a re-subscription.
+  // oxlint-disable-next-line react-hooks/exhaustive-deps -- depValue intentionally drives re-subscription
   useInViewContext(entry => onUpdate(entry), [onUpdate, depValue], ref);
   return <View ref={ref} />;
 }
