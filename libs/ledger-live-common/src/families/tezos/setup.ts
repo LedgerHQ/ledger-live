@@ -1,7 +1,5 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import makeCliTools from "./cli";
-import type { CliTools } from "./cli";
 import type { TezosSigner } from "./types";
 import { signMessage } from "./hw-signMessage";
 import tezosResolver from "./getAddress";
@@ -38,6 +36,4 @@ const messageSigner = {
   signMessage: createMessageSigner(createSigner, signMessage),
 };
 
-const cliTools: CliTools = makeCliTools();
-
-export { cliTools, messageSigner, resolver };
+export { messageSigner, resolver };

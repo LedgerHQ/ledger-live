@@ -4,7 +4,6 @@
     "src/api/index.ts",
     "src/bridge/js.ts",
     "src/bridge.integration.ts",
-    "src/cli-transaction.ts",
     "src/wallet-btc/crypto/secp256k1.ts",
     "src/crypto-util.ts",
     "src/datasets/bitcoin_cash.ts",

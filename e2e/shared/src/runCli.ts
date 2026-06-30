@@ -1,5 +1,5 @@
-import path from "path";
-import { spawn } from "child_process";
+import path from "node:path";
+import { spawn } from "node:child_process";
 import type { GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { sanitizeError, sleep } from "./index";
 
@@ -234,7 +234,7 @@ export async function runCliGetAddress(opts: GetAddressOpts): Promise<GetAddress
 }
 
 export function runCliTokenApproval(opts: TokenApprovalOpts): Promise<string> {
-  const cliOpts = ["send"];
+  const cliOpts = ["tokenApproval"];
   cliOpts.push(`--currency+${opts.currency}`);
   cliOpts.push(`--mode+${opts.mode}`);
   cliOpts.push(`--token+${opts.token}`);

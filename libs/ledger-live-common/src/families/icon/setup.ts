@@ -1,7 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
 import { createBridges } from "@ledgerhq/coin-icon/bridge/index";
-import makeCliTools from "@ledgerhq/coin-icon/cli-transaction";
 import iconResolver from "@ledgerhq/coin-icon/hw-getAddress";
 import { Transaction } from "@ledgerhq/coin-icon/types/index";
 import Icon from "@ledgerhq/hw-app-icon";
@@ -39,6 +38,4 @@ const bridge: Bridge<Transaction> = createBridges(
 
 const resolver: Resolver = createResolver(createSigner, iconResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, resolver };
+export { bridge, resolver };

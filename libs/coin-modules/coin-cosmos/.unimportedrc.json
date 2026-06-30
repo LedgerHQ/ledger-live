@@ -2,7 +2,6 @@
   "entry": [
     "src/account.ts",
     "src/bridge/index.ts",
-    "src/cli.ts",
     "src/deviceTransactionConfig.ts",
     "src/CosmosValidatorsManager.ts",
     "src/errors.ts",
@@ -30,7 +29,6 @@
     "src/broadcast.ts",
     "src/buildOptimisticOperation.ts",
     "src/buildTransaction.ts",
-    "src/cli.ts",
     "src/config.ts",
     "src/createTransaction.ts",
     "src/estimateMaxSpendable.ts",

@@ -3,11 +3,6 @@ import { from } from "rxjs";
 import commandLineArgs from "command-line-args";
 import { closeAllDevices } from "./live-common-setup";
 import commandsMain from "./commands-index";
-// TODO cli-transaction.js => cli.js
-import {
-  getRegisteredFamilies,
-  loadSetupForFamily,
-} from "@ledgerhq/live-common/coin-modules/registry";
 
 let sigIntSent: number | undefined;
 process.on("SIGINT", () => {
@@ -23,17 +18,8 @@ process.on("SIGINT", () => {
 });
 
 (async () => {
-  const familySetups = await Promise.all(
-    getRegisteredFamilies().map(family => loadSetupForFamily(family)),
-  );
-
-  const commands = {
-    ...familySetups
-      .map(setup => setup?.cliTools)
-      .map((m: any) => typeof m === "object" && m && m.commands)
-      .reduce((acc: Record<string, unknown>, c) => ({ ...acc, ...c }), {}),
-    ...commandsMain,
-  };
+  const commands: Record<string, { description?: string; args: any; job: (opts: any) => any }> =
+    commandsMain;
 
   const mainOptions = commandLineArgs(
     [

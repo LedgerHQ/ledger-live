@@ -4033,9 +4033,6 @@ importers:
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -4058,9 +4055,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: ^4.14.191
-        version: 4.17.21
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -5339,9 +5333,6 @@ importers:
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       prando:
         specifier: ^6.0.1
         version: 6.0.1
@@ -5364,9 +5355,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: ^4.14.191
-        version: 4.17.7
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -5873,9 +5861,6 @@ importers:
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       near-api-js:
         specifier: ^3.0.2
         version: 3.0.2
@@ -5898,9 +5883,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: ^4.14.191
-        version: 4.17.7
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -6197,9 +6179,6 @@ importers:
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       ripple-address-codec:
         specifier: ^5.0.0
         version: 5.0.0
@@ -6225,9 +6204,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: ^4.14.191
-        version: 4.17.7
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0

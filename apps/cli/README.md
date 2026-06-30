@@ -67,15 +67,15 @@ pnpm build:cli
 
 # Documentation
 
-The CLI exposes a small, fixed set of commands consumed by e2e and CI, plus the
-per-family commands contributed by coin modules (e.g. `cosmosValidators`,
-`polkadotValidators`). Run `ledger-live --help` for the up-to-date list and options.
+The CLI exposes a small, fixed set of commands consumed by e2e and CI. Run
+`ledger-live --help` for the up-to-date list and options.
 
 | Command | Used by |
 | --- | --- |
 | `getAddress` | e2e — reads an on-device address / public key |
 | `liveData` | e2e — generates/adds accounts into the app dataset |
-| `send` | e2e — token-approval / send flow |
+| `send` | generic send flow (recipient/amount) |
+| `tokenApproval` | e2e — sets/revokes an ERC-20 allowance |
 | `tokenAllowance` | e2e — reads an ERC-20 allowance |
 | `generateAddresses` | e2e (`generate-e2e-userdata.yml`) — generates the address cache for account-based coins |
 | `generateUtxoAddresses` | e2e (`generate-e2e-userdata.yml`) — generates the address cache for UTXO-based coins |

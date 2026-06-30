@@ -62,7 +62,6 @@
     "src/network/index.ts",
     "src/network/submitTransaction.ts",
     "src/test/bridgeDatasetTest.ts",
-    "src/test/cli.ts",
     "src/test/index.ts",
     "src/transaction.ts",
     "src/supportedFeatures.ts"
