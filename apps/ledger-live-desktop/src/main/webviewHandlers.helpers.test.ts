@@ -157,9 +157,10 @@ describe("mergeCspHeaders", () => {
 });
 
 describe("WEBVIEW_GUEST_CSP", () => {
-  it("contains frame-src, child-src and form-action directives", () => {
+  it("contains frame-src, child-src, worker-src and form-action directives", () => {
     expect(WEBVIEW_GUEST_CSP).toContain("frame-src");
     expect(WEBVIEW_GUEST_CSP).toContain("child-src");
+    expect(WEBVIEW_GUEST_CSP).toContain("worker-src");
     expect(WEBVIEW_GUEST_CSP).toContain("form-action");
   });
 
