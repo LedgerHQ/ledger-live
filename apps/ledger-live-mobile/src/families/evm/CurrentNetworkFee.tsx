@@ -1,5 +1,5 @@
 import { getFormattedFeeFields } from "@ledgerhq/coin-evm/editTransaction/index";
-import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
+import { fromTransactionRaw } from "@ledgerhq/live-common/families/evm/transaction";
 import { TransactionRaw } from "@ledgerhq/coin-evm/types/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { log } from "@ledgerhq/logs";

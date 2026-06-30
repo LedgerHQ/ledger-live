@@ -52,7 +52,8 @@ const walletCliLoaders: CoinModuleLoader[] = [
     family: "evm",
     supportedCoins: ["ethereum"],
     loadSetup: () => import("@ledgerhq/live-common/families/evm/setup"),
-    loadTransaction: () => import("@ledgerhq/coin-evm/transaction").then(m => m.default),
+    loadTransaction: () =>
+      import("@ledgerhq/live-common/families/evm/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-evm/deviceTransactionConfig").then(m => m.default),
     loadWalletApiAdapter: () =>

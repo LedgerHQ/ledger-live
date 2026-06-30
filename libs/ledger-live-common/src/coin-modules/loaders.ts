@@ -212,7 +212,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     ],
     loadSetup: () => import("../families/evm/setup"),
     loadLocalApi: () => import("../families/evm/coinModuleApi").then(m => m.createLocalEvmApi),
-    loadTransaction: () => import("@ledgerhq/coin-evm/transaction").then(m => m.default),
+    loadTransaction: () => import("../families/evm/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-evm/deviceTransactionConfig").then(m => m.default),
     loadWalletApiAdapter: () => import("../families/evm/walletApiAdapter").then(m => m.default),
