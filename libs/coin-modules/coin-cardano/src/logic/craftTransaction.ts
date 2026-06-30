@@ -357,21 +357,45 @@ export async function buildUnsignedTransaction(
   // inputs (smaller tx, lower fee) — mirrors the legacy builder's largest-first ordering.
   inputs.sort((a, b) => b.amount.comparedTo(a.amount));
 
-  // A max-ADA native send must spend the ENTIRE UTXO set. Typhon's prepareTransaction does
-  // minimal coin selection over the inputs it is given (it stops as soon as the outputs + fee are
-  // covered), so for a sweep we force every UTXO as a mandatory input and hand it nothing to
-  // select — all remaining ADA then lands in the change output (whose address is the recipient).
-  // Every other intent lets Typhon select the minimal set from the available inputs.
   const sweepAll = intent.intentType === "transaction" && !isTokenTransfer && !!intent.useAllAmount;
-  if (sweepAll) {
-    inputs.forEach(input => typhonTx.addInput(input));
-  }
-
   const baseOutputCount = typhonTx.getOutputs().length;
-  const prepared = typhonTx.prepareTransaction({
-    inputs: sweepAll ? [] : inputs,
-    changeAddress,
-  });
+
+  let prepared: TyphonTransaction;
+  if (sweepAll) {
+    // A max-ADA send must spend the ENTIRE UTXO set and route everything (minus fee) to the
+    // recipient. We add all inputs and compute the fee + recipient amount explicitly rather than
+    // letting Typhon's change mechanism handle it (`changeAddress` is the recipient here): its
+    // <2 ADA dust guard would otherwise fold the whole remaining balance into the fee on a
+    // low-balance account, showing a ~10× inflated fee and stranding the funds (LIVE-33176).
+    // Mirrors the legacy bridge fix in buildSendAdaTransaction.
+    inputs.forEach(input => typhonTx.addInput(input));
+
+    const availableAda = typhonTx.getInputAmount().ada.plus(typhonTx.getAdditionalInputAda());
+    const committedAda = typhonTx.getOutputAmount().ada.plus(typhonTx.getAdditionalOutputAda());
+    const spendableAda = availableAda.minus(committedAda);
+
+    const fee = typhonTx.calculateFee([{ address: changeAddress, amount: spendableAda, tokens: [] }]);
+    const recipientAmount = spendableAda.minus(fee);
+
+    const minRecipientUtxo = typhonTx.calculateMinUtxoAmountBabbage({
+      address: changeAddress,
+      amount: new BigNumber(CARDANO_MAX_SUPPLY),
+      tokens: [],
+    });
+    if (recipientAmount.lt(minRecipientUtxo)) {
+      // After fees the balance can't fund an output above the Babbage min-UTXO floor — the funds
+      // are below the network's economic dust threshold and cannot be sent (not lost to fee).
+      throw new Error("Transaction amount is below the minimum required for an output");
+    }
+
+    typhonTx.setFee(fee);
+    typhonTx.addOutput({ address: changeAddress, amount: recipientAmount, tokens: [] });
+    prepared = typhonTx;
+  } else {
+    // Typhon selects the minimal input set from the available inputs and returns change to the
+    // sender (or, for a token send-all, sweeps token-bearing UTXOs — see addTokenOutput).
+    prepared = typhonTx.prepareTransaction({ inputs, changeAddress });
+  }
 
   if (customFees) {
     applyCustomFee(prepared, baseOutputCount, new BigNumber(customFees.value.toString()));

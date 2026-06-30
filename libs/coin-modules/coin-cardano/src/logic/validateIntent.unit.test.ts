@@ -62,7 +62,7 @@ describe("validateIntent", () => {
     expect(res.errors.recipient?.name).toBe(name);
   });
 
-  it("allows a self-send (sender === recipient)", async () => {
+  it("warns (without blocking) on a self-send (sender === recipient)", async () => {
     const res = await validateIntent(
       currency,
       intent({ recipient: SENDER }),
@@ -71,7 +71,10 @@ describe("validateIntent", () => {
         value: 200_000n,
       },
     );
+    // Self-send is valid on-chain, so it is a non-blocking warning, not an error (LIVE-33176).
+    // Reuses the shared, already-localized error class (as VeChain does for its self-send warning).
     expect(res.errors.recipient).toBeUndefined();
+    expect(res.warnings.recipient?.name).toBe("InvalidAddressBecauseDestinationIsAlsoSource");
   });
 
   it("flags a zero amount", async () => {

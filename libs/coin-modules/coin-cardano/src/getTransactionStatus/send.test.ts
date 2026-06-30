@@ -1,7 +1,9 @@
+import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { BigNumber } from "bignumber.js";
 import { getProtocolParamsFixture } from "../fixtures/protocolParams";
 import { getCardanoAccountFixture } from "../fixtures/accounts";
 import { buildTransaction } from "../buildTransaction";
+import { CardanoMinAmountError } from "../errors";
 import type { Transaction } from "../types";
 import { getSendTransactionStatus } from "./send";
 
@@ -45,11 +47,36 @@ describe("getSendTransactionStatus", () => {
     expect(status.errors.amount?.name).toBe("CardanoNotEnoughFunds");
   });
 
+  it("maps a thrown CardanoMinAmountError to an amount error instead of re-throwing", async () => {
+    mockedBuildTransaction.mockRejectedValueOnce(new CardanoMinAmountError("", { amount: "1" }));
+
+    const status = await getSendTransactionStatus(account, buildTransactionInput());
+
+    expect(status.errors.amount?.name).toBe("CardanoNotEnoughFunds");
+  });
+
   it("re-throws unexpected build errors", async () => {
     mockedBuildTransaction.mockRejectedValueOnce(new Error("Unexpected programming error"));
 
     await expect(getSendTransactionStatus(account, buildTransactionInput())).rejects.toThrow(
       "Unexpected programming error",
     );
+  });
+
+  it("warns (without blocking) when the recipient is one of the account's own addresses", async () => {
+    mockedBuildTransaction.mockResolvedValueOnce({} as never);
+    // The fixture's only UTXO is paid to the account's own external credential; its bech32 form is
+    // therefore one of the account's own addresses (a self-send).
+    const ownAddress = TyphonUtils.getAddressFromHex(
+      Buffer.from(account.cardanoResources.utxos[0].address, "hex"),
+    ).getBech32();
+
+    const status = await getSendTransactionStatus(account, {
+      ...buildTransactionInput(),
+      recipient: ownAddress,
+    });
+
+    expect(status.errors.recipient).toBeUndefined();
+    expect(status.warnings.recipient?.name).toBe("InvalidAddressBecauseDestinationIsAlsoSource");
   });
 });

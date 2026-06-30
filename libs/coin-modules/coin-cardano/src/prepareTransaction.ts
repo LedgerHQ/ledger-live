@@ -28,7 +28,6 @@ export const prepareTransaction: AccountBridge<
 
   try {
     const cardanoTransaction = await buildTransaction(account, transaction);
-    const transactionFees = cardanoTransaction.getFee();
     const transactionAmount = transaction.subAccountId
       ? transaction.amount
       : cardanoTransaction
@@ -40,6 +39,17 @@ export const prepareTransaction: AccountBridge<
               o.address.paymentCredential.bipPath === undefined,
           )
           .reduce((total, o) => total.plus(o.amount), new BigNumber(0));
+
+    // Typhon's <2 ADA dust guard folds the entire balance into the fee when no spendable output
+    // can be formed — a low-balance account, or simply before an amount is entered (amount 0). That
+    // donation is not a real network fee and the send is blocked anyway (AmountRequired / below
+    // min-UTXO), so report the protocol-minimum fee rather than the inflated ~whole-balance value
+    // (LIVE-33176). A real send (amount > 0) keeps getFee(), which legitimately includes any dust
+    // folded into the fee of an otherwise-valid transaction — so we never under-disclose.
+    const transactionFees =
+      !transaction.subAccountId && transactionAmount.isZero()
+        ? cardanoTransaction.calculateFee()
+        : cardanoTransaction.getFee();
 
     patch = { fees: transactionFees, amount: transactionAmount };
   } catch {

@@ -167,6 +167,28 @@ describe("buildUnsignedTransaction — native ADA", () => {
     expect(recipientOutput?.tokens).toEqual([]);
   });
 
+  it("send-all charges a realistic fee, not the whole balance (LIVE-33176)", async () => {
+    // A ~1.5 ADA balance is above the dust floor but inside the range where Typhon's change path
+    // would fold the leftover into the fee. The recipient must still receive balance − a real fee.
+    mockFetchTxs.mockResolvedValue(paged([makeTx({ hash: "a", outputs: [output("1500000")] })]));
+
+    const tx = await buildUnsignedTransaction(currency, sendIntent({ useAllAmount: true }));
+
+    expect(tx.getFee().lt(1e6)).toBe(true);
+    expect(tx.getOutputs()).toHaveLength(1);
+    expect(tx.getOutputs()[0].amount.plus(tx.getFee()).toFixed()).toBe((1_500_000).toString());
+  });
+
+  it("rejects a send-all below the dust threshold instead of folding the balance into the fee", async () => {
+    // ~1 ADA: after fees the leftover is below the Babbage min-UTXO floor, so no valid output can
+    // be made. Surface a clear error rather than the dust-guard's ~10× inflated fee (LIVE-33176).
+    mockFetchTxs.mockResolvedValue(paged([makeTx({ hash: "a", outputs: [output("1000000")] })]));
+
+    await expect(
+      buildUnsignedTransaction(currency, sendIntent({ useAllAmount: true })),
+    ).rejects.toThrow("below the minimum required for an output");
+  });
+
   it("rejects a non-positive amount", async () => {
     await expect(buildUnsignedTransaction(currency, sendIntent({ amount: 0n }))).rejects.toThrow(
       "Transaction amount must be positive",

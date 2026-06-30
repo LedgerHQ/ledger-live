@@ -2,6 +2,7 @@ import {
   AmountRequired,
   FeeNotLoaded,
   InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
@@ -12,7 +13,7 @@ import { buildTransaction } from "../buildTransaction";
 import { CARDANO_MAX_SUPPLY } from "../constants";
 import { CardanoMinAmountError, CardanoNotEnoughFunds } from "../errors";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
-import { isValidAddress } from "../logic";
+import { getPaymentCredentialKeyHash, isValidAddress } from "../logic";
 import { getNetworkParameters } from "../networks";
 import type { CardanoAccount, Token, Transaction, TransactionStatus } from "../types";
 import { isRecoverableBuildError } from "./buildErrors";
@@ -78,6 +79,21 @@ export async function getSendTransactionStatus(
       currencyName: account.currency.name,
     });
   } else {
+    // Self-send: comparing the recipient's payment-credential hash to the account's own
+    // credentials (external + internal/change) flags sending to any of the account's addresses,
+    // not just the displayed one. Valid on-chain but almost always a mistake, so warn without
+    // blocking (LIVE-33176).
+    const recipientKeyHash = getPaymentCredentialKeyHash(transaction.recipient);
+    if (recipientKeyHash) {
+      const ownKeyHashes = new Set([
+        ...cardanoResources.externalCredentials.map(c => c.key),
+        ...cardanoResources.internalCredentials.map(c => c.key),
+      ]);
+      if (ownKeyHashes.has(recipientKeyHash)) {
+        warnings.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+      }
+    }
+
     // minTransactionAmount can only be calculated with valid recipient
     const recipient = TyphonUtils.getAddressFromString(transaction.recipient);
     minTransactionAmount = TyphonUtils.calculateMinUtxoAmountBabbage(
