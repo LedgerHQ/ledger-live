@@ -1,5 +1,5 @@
 import { act } from "@testing-library/react-native";
-import { renderHook } from "@tests/test-renderer";
+import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { usdcToken, maticEth } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
@@ -69,6 +69,79 @@ describe("useOperationsListViewModel", () => {
       });
 
       expect(store.getState().history.lastSeenOperationDate).not.toBeNull();
+    });
+  });
+
+  describe("dust filtering options", () => {
+    it("hides and disables the dust filter option when the feature flag is disabled", () => {
+      const { result, store } = renderHook(() => useOperationsListViewModel(), {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            hideSmallValueTokenOperations: true,
+          },
+        }),
+      });
+
+      expect(result.current.hideSmallValueTokenOperations).toBe(false);
+      expect(result.current.isDustFilterFeatureEnabled).toBe(false);
+      expect(result.current.dustFilterOption).toBeUndefined();
+
+      act(() => {
+        result.current.openOptionsSheet();
+      });
+
+      expect(result.current.isOptionsSheetOpen).toBe(false);
+
+      act(() => {
+        result.current.onToggleHideSmallValueTokenOperations();
+      });
+
+      expect(store.getState().settings.hideSmallValueTokenOperations).toBe(true);
+    });
+
+    it("starts disabled and toggles the setting from the options sheet when the feature flag is enabled", () => {
+      const { result, store } = renderHook(() => useOperationsListViewModel(), {
+        overrideInitialState: withFlagOverrides({
+          lwmDustFiltering: {
+            enabled: true,
+          },
+        }),
+      });
+
+      expect(result.current.isDustFilterFeatureEnabled).toBe(true);
+      expect(result.current.hideSmallValueTokenOperations).toBe(false);
+      expect(result.current.isOptionsSheetOpen).toBe(false);
+      expect(result.current.dustFilterOption?.title).toBe("Hide dust transactions");
+
+      act(() => {
+        result.current.openOptionsSheet();
+      });
+
+      expect(result.current.isOptionsSheetOpen).toBe(true);
+
+      act(() => {
+        result.current.onToggleHideSmallValueTokenOperations();
+      });
+
+      expect(store.getState().settings.hideSmallValueTokenOperations).toBe(true);
+      expect(result.current.isOptionsSheetOpen).toBe(false);
+      expect(result.current.dustFilterOption?.title).toBe("Show dust transactions");
+    });
+
+    it("hides and disables the dust filter option when only the desktop flag param is enabled", () => {
+      const { result } = renderHook(() => useOperationsListViewModel(), {
+        overrideInitialState: withFlagOverrides({
+          lwdDustFiltering: {
+            enabled: true,
+          },
+        }),
+      });
+
+      expect(result.current.hideSmallValueTokenOperations).toBe(false);
+      expect(result.current.isDustFilterFeatureEnabled).toBe(false);
+      expect(result.current.dustFilterOption).toBeUndefined();
     });
   });
 

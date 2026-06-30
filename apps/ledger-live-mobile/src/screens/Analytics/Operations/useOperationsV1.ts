@@ -1,10 +1,17 @@
 import { groupAccountsOperationsByDay } from "@ledgerhq/ledger-wallet-framework/account/groupOperations";
 import { isAddressPoisoningOperation } from "@ledgerhq/ledger-wallet-framework/operation";
+import { isSmallValueTokenOperation } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useSelector } from "~/context/hooks";
-import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
+import {
+  counterValueCurrencySelector,
+  filterTokenOperationsZeroAmountEnabledSelector,
+  hideSmallValueTokenOperationsEffectiveSelector,
+} from "~/reducers/settings";
+import { countervaluesStateSelector } from "~/reducers/countervalues";
 import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
+import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "LLM/features/OperationsHistory/constants";
 
 export type UseOperationsV1Options = {
   filterOperation?: (operation: Operation, account: AccountLike) => boolean;
@@ -17,6 +24,15 @@ export function useOperationsV1(
 ) {
   const shouldFilterTokenOpsZeroAmount = useSelector(
     filterTokenOperationsZeroAmountEnabledSelector,
+  );
+  const shouldHideSmallValueTokenOperations = useSelector(
+    hideSmallValueTokenOperationsEffectiveSelector,
+  );
+  const countervaluesState = useSelector(state =>
+    shouldHideSmallValueTokenOperations ? countervaluesStateSelector(state) : undefined,
+  );
+  const userCounterValueCurrency = useSelector(state =>
+    shouldHideSmallValueTokenOperations ? counterValueCurrencySelector(state) : undefined,
   );
 
   const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
@@ -39,9 +55,33 @@ export function useOperationsV1(
 
       const shouldFilterOperation = !(shouldFilterTokenOpsZeroAmount && isOperationPoisoned);
 
-      return shouldFilterOperation;
+      if (!shouldFilterOperation) return false;
+
+      if (
+        shouldHideSmallValueTokenOperations &&
+        countervaluesState &&
+        userCounterValueCurrency &&
+        isSmallValueTokenOperation({
+          operation,
+          account,
+          countervaluesState,
+          userCounterValueCurrency,
+          thresholdUsd: HISTORY_DUST_FILTER_THRESHOLD_USD,
+        })
+      ) {
+        return false;
+      }
+
+      return true;
     },
-    [shouldFilterTokenOpsZeroAmount, addressPoisoningFamilies, externalFilter],
+    [
+      shouldFilterTokenOpsZeroAmount,
+      addressPoisoningFamilies,
+      externalFilter,
+      shouldHideSmallValueTokenOperations,
+      countervaluesState,
+      userCounterValueCurrency,
+    ],
   );
 
   const { sections, completed } = groupAccountsOperationsByDay(accounts, {
