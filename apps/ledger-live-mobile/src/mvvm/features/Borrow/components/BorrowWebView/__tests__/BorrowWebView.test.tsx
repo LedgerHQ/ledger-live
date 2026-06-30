@@ -32,6 +32,10 @@ const defaultInputs: BorrowWebviewInputs = {
   currencyTicker: "USD",
   OS: "ios",
   platform: "LLM",
+  safeAreaTop: "0",
+  safeAreaBottom: "0",
+  safeAreaLeft: "0",
+  safeAreaRight: "0",
 };
 
 describe("BorrowWebView", () => {

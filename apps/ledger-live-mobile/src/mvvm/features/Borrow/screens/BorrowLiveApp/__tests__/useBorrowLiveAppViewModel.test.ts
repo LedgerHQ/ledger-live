@@ -149,6 +149,19 @@ describe("useBorrowLiveAppViewModel", () => {
     );
   });
 
+  it("should expose safe-area insets as strings", () => {
+    const { result } = renderHook(() => useBorrowLiveAppViewModel());
+
+    expect(result.current.webviewInputs).toEqual(
+      expect.objectContaining({
+        safeAreaTop: "0",
+        safeAreaBottom: "0",
+        safeAreaLeft: "0",
+        safeAreaRight: "0",
+      }),
+    );
+  });
+
   it("should expose a webviewRef", () => {
     const { result } = renderHook(() => useBorrowLiveAppViewModel());
     expect(result.current.webviewRef).toBeDefined();
