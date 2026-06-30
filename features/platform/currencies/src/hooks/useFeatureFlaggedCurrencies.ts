@@ -13,7 +13,7 @@ export interface FeatureFlaggedCurrenciesResult {
   /** Currency id -> gating feature flag. */
   featureFlaggedCurrencies: FeatureFlaggedCurrencies;
   /** Ids whose gating flag is currently disabled. Empty in mock mode. */
-  deactivatedCurrencyIds: Set<string>;
+  deactivatedCurrencyIds: ReadonlySet<string>;
 }
 
 /**
