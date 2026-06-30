@@ -1,6 +1,7 @@
 import { Linking } from "react-native";
 
 import { act, renderHook } from "@tests/test-renderer";
+import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { ContentCardLocation, WalletContentCard } from "~/dynamicContent/types";
 import { useCarouselCardModel } from "./useCarouselCardModel";
 
@@ -37,16 +38,16 @@ describe("useCarouselCardModel", () => {
       result.current.handleHide();
     });
 
-    expect(trackContentCardEvent).toHaveBeenCalledWith("contentcard_clicked", {
+    expect(trackContentCardEvent).toHaveBeenCalledWith(ContentCardEvent.Clicked, {
       location: ContentCardLocation.Wallet,
-      order: "1",
+      order: 1,
       screen: ContentCardLocation.Wallet,
       campaign: "wallet-card-1",
       displayedPosition: 2,
     });
-    expect(trackContentCardEvent).toHaveBeenCalledWith("contentcard_dismissed", {
+    expect(trackContentCardEvent).toHaveBeenCalledWith(ContentCardEvent.Dismissed, {
       location: ContentCardLocation.Wallet,
-      order: "1",
+      order: 1,
       screen: ContentCardLocation.Wallet,
       campaign: "wallet-card-1",
       displayedPosition: 2,
@@ -56,5 +57,35 @@ describe("useCarouselCardModel", () => {
     expect(dismissCard).toHaveBeenCalledWith("wallet-card-1");
 
     openURLSpy.mockRestore();
+  });
+
+  it("should ignore displayedPosition from Braze extras", async () => {
+    const trackContentCardEvent = jest.fn().mockResolvedValue(undefined);
+
+    const { result } = renderHook(() =>
+      useCarouselCardModel({
+        cardProps: {
+          ...cardProps,
+          extras: { ...cardProps.extras, displayedPosition: "invalid" },
+        },
+        displayedPosition: 1,
+        logClickCard: jest.fn(),
+        dismissCard: jest.fn(),
+        trackContentCardEvent,
+      }),
+    );
+
+    await act(async () => {
+      await result.current.handlePress();
+    });
+
+    expect(trackContentCardEvent).toHaveBeenCalledWith(
+      ContentCardEvent.Clicked,
+      expect.objectContaining({ displayedPosition: 1 }),
+    );
+    expect(trackContentCardEvent).toHaveBeenCalledWith(
+      ContentCardEvent.Clicked,
+      expect.not.objectContaining({ displayedPosition: "invalid" }),
+    );
   });
 });

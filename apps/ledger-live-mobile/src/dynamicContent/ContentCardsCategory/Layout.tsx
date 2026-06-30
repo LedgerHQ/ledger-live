@@ -13,7 +13,10 @@ import {
 } from "../types";
 import { Flex } from "@ledgerhq/native-ui";
 import { ContentCardMetadata, ContentCardProps } from "~/contentCards/cards/types";
-import { buildContentCardTrackingProperties } from "@ledgerhq/live-common/braze/contentCardExtras";
+import {
+  buildContentCardTrackingProperties,
+  ContentCardEvent,
+} from "@ledgerhq/live-common/braze/contentCardExtras";
 import { contentCardItem } from "~/contentCards/cards/utils";
 import {
   compareCards,
@@ -87,8 +90,8 @@ const Layout = ({ category, cards }: LayoutProps) => {
     ? ContentBannerActionCard
     : contentCardsType.contentCardComponent;
 
-  const onCardClick = async (card: AnyContentCard, displayedPosition?: number) => {
-    await trackContentCardEvent("contentcard_clicked", {
+  const onCardClick = async (card: AnyContentCard, displayedPosition: number) => {
+    await trackContentCardEvent(ContentCardEvent.Clicked, {
       ...buildContentCardTrackingProperties({
         cardExtras: card.extras,
         categoryExtras: category.extras,
@@ -110,8 +113,8 @@ const Layout = ({ category, cards }: LayoutProps) => {
     }
   };
 
-  const onCardDismiss = (card: AnyContentCard, displayedPosition?: number) => {
-    trackContentCardEvent("contentcard_dismissed", {
+  const onCardDismiss = (card: AnyContentCard, displayedPosition: number) => {
+    trackContentCardEvent(ContentCardEvent.Dismissed, {
       ...buildContentCardTrackingProperties({
         cardExtras: card.extras,
         categoryExtras: category.extras,

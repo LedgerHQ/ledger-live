@@ -7,6 +7,8 @@ import { trackingEnabledSelector } from "~/reducers/settings";
 import { localMobileCardsSelector, localWalletCardsSelector } from "~/reducers/dynamicContent";
 import {
   buildContentCardTrackingProperties,
+  ContentCardEvent,
+  finalizeContentCardEventProperties,
   isCategoryContentCardExtras,
 } from "@ledgerhq/live-common/braze/contentCardExtras";
 
@@ -74,10 +76,13 @@ export const useBrazeContentCard = (mobileCards: Braze.ContentCard[]) => {
       const categoryExtras = card.extras.categoryId
         ? cardIndexRef.current.categoryExtrasById.get(card.extras.categoryId)
         : undefined;
-      track("contentcard_impression", {
-        ...buildContentCardTrackingProperties({ cardExtras: card.extras, categoryExtras }),
-        displayedPosition,
-      });
+      track(
+        ContentCardEvent.Impression,
+        finalizeContentCardEventProperties({
+          ...buildContentCardTrackingProperties({ cardExtras: card.extras, categoryExtras }),
+          displayedPosition,
+        }),
+      );
     },
     [isTrackedUser, localMobileCards, localWalletCardIds],
   );

@@ -6,11 +6,13 @@ import {
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
 import { desktopContentCardSelector } from "~/renderer/reducers/dynamicContent";
-import { track } from "~/renderer/analytics/segment";
+import { trackContentCard } from "LLD/features/DynamicContent/utils/trackContentCard";
+import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { Box } from "@ledgerhq/react-ui";
 import { updateAnonymousUserNotifications } from "~/renderer/actions/settings";
 import { OFFLINE_SEEN_DELAY } from "../utils/constants";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { track } from "~/renderer/analytics/segment";
 import { sanitizeExtras } from "~/renderer/hooks/useBraze";
 
 interface LogContentCardWrapperProps {
@@ -55,7 +57,7 @@ const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
         if (isContentCardNowVisible && !isContentCardVisibleRef.current) {
           if (isTrackedUser) {
             braze.logContentCardImpressions([currentCard]);
-            track("contentcard_impression", {
+            trackContentCard(ContentCardEvent.Impression, {
               id: currentCard.id,
               ...sanitizeExtras(currentCard.extras),
               ...additionalProps,

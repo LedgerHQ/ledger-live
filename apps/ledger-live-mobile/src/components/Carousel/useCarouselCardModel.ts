@@ -1,6 +1,12 @@
 import { useCallback, useMemo } from "react";
 import { Linking } from "react-native";
 
+import {
+  sanitizeExtras,
+  ContentCardEvent,
+  type ContentCardEventProperties,
+  type ContentCardInteractionEvent,
+} from "@ledgerhq/live-common/braze/contentCardExtras";
 import type { WalletContentCard } from "~/dynamicContent/types";
 
 export type WalletCarouselMediaHeader =
@@ -9,8 +15,8 @@ export type WalletCarouselMediaHeader =
   | null;
 
 type TrackContentCardEvent = (
-  event: "contentcard_clicked" | "contentcard_dismissed",
-  params: Record<string, string | number | undefined>,
+  event: ContentCardInteractionEvent,
+  params: ContentCardEventProperties,
 ) => Promise<void>;
 
 type Args = {
@@ -28,29 +34,41 @@ export function useCarouselCardModel({
   dismissCard,
   trackContentCardEvent,
 }: Args) {
+  const trackingBase = useMemo(
+    () => ({
+      ...sanitizeExtras(cardProps.extras),
+      screen: cardProps.location,
+      campaign: cardProps.id,
+    }),
+    [cardProps.extras, cardProps.id, cardProps.location],
+  );
+
   const handlePress = useCallback(async () => {
     if (!cardProps.link) return;
 
-    await trackContentCardEvent("contentcard_clicked", {
-      ...cardProps.extras,
-      screen: cardProps.location,
-      campaign: cardProps.id,
+    await trackContentCardEvent(ContentCardEvent.Clicked, {
+      ...trackingBase,
       displayedPosition,
     });
 
     logClickCard(cardProps.id);
     await Linking.openURL(cardProps.link);
-  }, [cardProps, displayedPosition, logClickCard, trackContentCardEvent]);
+  }, [
+    cardProps.id,
+    cardProps.link,
+    displayedPosition,
+    logClickCard,
+    trackContentCardEvent,
+    trackingBase,
+  ]);
 
   const handleHide = useCallback(() => {
-    trackContentCardEvent("contentcard_dismissed", {
-      ...cardProps.extras,
-      screen: cardProps.location,
-      campaign: cardProps.id,
+    trackContentCardEvent(ContentCardEvent.Dismissed, {
+      ...trackingBase,
       displayedPosition,
     });
     dismissCard(cardProps.id);
-  }, [cardProps, displayedPosition, dismissCard, trackContentCardEvent]);
+  }, [cardProps.id, dismissCard, displayedPosition, trackContentCardEvent, trackingBase]);
 
   const mediaHeader = useMemo((): WalletCarouselMediaHeader => {
     if (cardProps.picto != null && cardProps.picto !== "") {

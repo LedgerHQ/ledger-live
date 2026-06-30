@@ -4,6 +4,7 @@ import type { ContentCard } from "@braze/react-native-sdk";
 import type { WalletFeaturesConfig } from "@features/platform-feature-flags";
 import * as useWalletFeaturesConfigModule from "@features/platform-feature-flags";
 import { render, screen } from "@tests/test-renderer";
+import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import {
   CategoryContentCard,
   ContentCardLocation,
@@ -141,7 +142,10 @@ describe("ContentCardsCategory Layout", () => {
 
     await user.press(screen.getByTestId("card-click"));
 
-    expect(trackContentCardEvent).toHaveBeenCalledWith("contentcard_clicked", expectedTrackingBase);
+    expect(trackContentCardEvent).toHaveBeenCalledWith(
+      ContentCardEvent.Clicked,
+      expectedTrackingBase,
+    );
     expect(logClickCard).toHaveBeenCalledWith("card-1");
     expect(openURLSpy).toHaveBeenCalledWith("https://example.com");
   });
@@ -154,7 +158,7 @@ describe("ContentCardsCategory Layout", () => {
     await user.press(screen.getByTestId("card-dismiss"));
 
     expect(trackContentCardEvent).toHaveBeenCalledWith(
-      "contentcard_dismissed",
+      ContentCardEvent.Dismissed,
       expectedTrackingBase,
     );
     expect(dismissCard).toHaveBeenCalledWith("card-1");

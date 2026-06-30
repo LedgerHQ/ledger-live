@@ -76,7 +76,13 @@ const Carousel = ContentLayoutBuilder<Props>(
     const visibleCardsRef = useRef<string[]>([]);
     const { logImpressionCard } = useDynamicContent();
     const findDisplayedPosition = useCallback(
-      (id: string) => items.find(i => i.props.metadata.id === id)?.props.metadata.displayedPosition,
+      (id: string) => {
+        const fromMetadata = items.find(i => i.props.metadata.id === id)?.props.metadata
+          .displayedPosition;
+        if (fromMetadata !== undefined) return fromMetadata;
+        const index = items.findIndex(i => i.props.metadata.id === id);
+        return index >= 0 ? index : undefined;
+      },
       [items],
     );
 
