@@ -16,8 +16,6 @@ export default class PortfolioPage {
   accountsListView = "PortfolioAccountsList";
   emptyPortfolioListId = "PortfolioEmptyList";
   portfolioSettingsId = "topbar-settings";
-  myWalletHeaderSettingsButtonId = "my-wallet-header-settings-button";
-  topBarMyWalletId = "topbar-mywallet";
   portfolioListIdRegex = new RegExp(`portfolio-screen|${this.readOnlyItemsId}`);
   addAccountCta = "add-account-cta";
   allocationSectionTitleId = "portfolio-allocation-section";
@@ -81,16 +79,6 @@ export default class PortfolioPage {
   async isNoahEnabled(): Promise<boolean> {
     await this.loadFlags();
     return this.flags!.enabled;
-  }
-
-  @Step("Navigate to Settings")
-  async navigateToSettings() {
-    if (isWallet40) {
-      await tapById(this.topBarMyWalletId);
-      await tapById(this.myWalletHeaderSettingsButtonId);
-    } else {
-      await tapByElement(await this.portfolioSettingsButton());
-    }
   }
 
   @Step("Wait for portfolio page to load")

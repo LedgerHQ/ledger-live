@@ -63,7 +63,7 @@ describe("Change Language", () => {
   });
 
   it("should go to General Settings", async () => {
-    await app.portfolio.navigateToSettings();
+    await app.mainNavigation.navigateToSettings();
     await app.settings.navigateToGeneralSettings();
   });
 

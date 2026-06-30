@@ -27,6 +27,8 @@ type CliCommand = (
   speculosAddress?: string,
 ) => Observable<unknown> | Promise<unknown> | string;
 
+export let isMyWalletEnabled = false;
+
 export type InitOptions = {
   speculosApp?: SpeculosAppType;
   cliCommands?: CliCommand[];
@@ -395,6 +397,9 @@ export class InitializationManager {
       ...extraFeatureFlags,
       ...featureFlags,
     };
+    const wallet40 = mergedFeatureFlags.lwmWallet40;
+    isMyWalletEnabled = Boolean(wallet40?.enabled && wallet40?.params?.myWallet);
+
     await allure.attachment(
       "Merged Feature Flags",
       JSON.stringify(mergedFeatureFlags, null, 2),
