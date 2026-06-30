@@ -77,6 +77,9 @@ per-family commands contributed by coin modules (e.g. `cosmosValidators`,
 | `liveData` | e2e — generates/adds accounts into the app dataset |
 | `send` | e2e — token-approval / send flow |
 | `tokenAllowance` | e2e — reads an ERC-20 allowance |
+| `generateAddresses` | e2e (`generate-e2e-userdata.yml`) — generates the address cache for account-based coins |
+| `generateUtxoAddresses` | e2e (`generate-e2e-userdata.yml`) — generates the address cache for UTXO-based coins |
+| `generateAppJson` | e2e (`generate-e2e-userdata.yml`) — generates the app dataset (userdata) for the desktop/mobile e2e suites |
 | `botTransfer` | CI (`bot-transfer.yml`) — transfers funds between Speculos seeds |
 | `version` | the package's own smoke test |
 
