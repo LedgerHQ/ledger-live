@@ -13,9 +13,9 @@ beforeAll(() => {
       tokenIdentifier?: string,
     ) => {
       if (
-        (address === "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o") &&
+        address === "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o" &&
         currencyId === "tezos" &&
-        (tokenIdentifier === "0" || tokenIdentifier === undefined)
+        tokenIdentifier === "0"
       ) {
         const usdt: TokenCurrency = {
           type: "TokenCurrency",
@@ -40,7 +40,7 @@ beforeAll(() => {
           type: "TokenCurrency",
           id: "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
           contractAddress: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ",
-          parentCurrency: tezos,
+          parentCurrencyId: "tezos",
           tokenType: "fa2",
           name: "Wrapped USDC",
           ticker: "wUSDC",
@@ -151,12 +151,11 @@ describe("generic-coin-framework Tezos token", () => {
     });
 
     it("produces assetReference with :tokenId for multi-asset tokens", () => {
-      const tezos = getCryptoCurrencyById("tezos");
       const token: TokenCurrency = {
         type: "TokenCurrency",
         id: "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
         contractAddress: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ",
-        parentCurrency: tezos,
+        parentCurrencyId: "tezos",
         tokenType: "fa2",
         name: "Wrapped USDC",
         ticker: "wUSDC",
@@ -175,12 +174,11 @@ describe("generic-coin-framework Tezos token", () => {
     });
 
     it("round-trips: getAssetFromToken → getTokenFromAsset", async () => {
-      const tezos = getCryptoCurrencyById("tezos");
       const token: TokenCurrency = {
         type: "TokenCurrency",
         id: "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
         contractAddress: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ",
-        parentCurrency: tezos,
+        parentCurrencyId: "tezos",
         tokenType: "fa2",
         name: "Wrapped USDC",
         ticker: "wUSDC",

@@ -9,11 +9,7 @@ export async function getTokenFromAsset(asset: AssetInfo): Promise<TokenCurrency
   }
   const [contractAddress, tokenIdentifier] = asset.assetReference.split(":");
   const store = getCryptoAssetsStore();
-  const token = await store.findTokenByAddressInCurrency(contractAddress, "tezos", tokenIdentifier);
-  if (token || tokenIdentifier !== "0") return token;
-  // Fallback: retry without tokenIdentifier for backward compatibility with CAL entries
-  // that do not yet carry token_identifier=0.
-  return store.findTokenByAddressInCurrency(contractAddress, "tezos");
+  return store.findTokenByAddressInCurrency(contractAddress, "tezos", tokenIdentifier);
 }
 
 /**
