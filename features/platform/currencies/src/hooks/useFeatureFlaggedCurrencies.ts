@@ -1,0 +1,330 @@
+import { useMemo } from "react";
+import type { Feature } from "@shared/feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
+
+/**
+ * Map of flag-gated currency id -> its resolved gating feature flag. A currency is
+ * gated off when its flag is disabled (or its value is `null`); ids absent from this
+ * map have no gating flag and are never gated.
+ */
+export type FeatureFlaggedCurrencies = Partial<Record<string, Feature<unknown> | null>>;
+
+export interface FeatureFlaggedCurrenciesResult {
+  /** Currency id -> gating feature flag. */
+  featureFlaggedCurrencies: FeatureFlaggedCurrencies;
+  /** Ids whose gating flag is currently disabled. Empty in mock mode. */
+  deactivatedCurrencyIds: ReadonlySet<string>;
+}
+
+/**
+ * Resolves the feature-flag gate for every flag-gated currency.
+ *
+ * Boundary-clean relocation of live-common's `useCurrenciesUnderFeatureFlag`:
+ * `CryptoCurrencyId` is replaced by plain currency-id strings and the `MOCK`
+ * env read is lifted to the `mock` parameter (the feature layer cannot import
+ * live-common's `useEnv`).
+ *
+ * @param mock When true (e.g. Playwright runs) no currency is deactivated.
+ */
+export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenciesResult {
+  const adi = useFeature("currencyAdi");
+  const aleo = useFeature("currencyAleo");
+  const aleoTestnet = useFeature("currencyAleoTestnet");
+  const aptos = useFeature("currencyAptos");
+  const aptosTestnet = useFeature("currencyAptosTestnet");
+  const axelar = useFeature("currencyAxelar");
+  const stargaze = useFeature("currencyStargaze");
+  const secretNetwork = useFeature("currencySecretNetwork");
+  const umee = useFeature("currencyUmee");
+  const desmos = useFeature("currencyDesmos");
+  const dydx = useFeature("currencyDydx");
+  const quicksilver = useFeature("currencyQuicksilver");
+  const persistence = useFeature("currencyPersistence");
+  const avaxCChain = useFeature("currencyAvalancheCChain");
+  const avaxCChainFuji = useFeature("currencyAvalancheCChainFuji");
+  const stacks = useFeature("currencyStacks");
+  const optimism = useFeature("currencyOptimism");
+  const optimismSepolia = useFeature("currencyOptimismSepolia");
+  const arbitrum = useFeature("currencyArbitrum");
+  const arbitrumSepolia = useFeature("currencyArbitrumSepolia");
+  const rsk = useFeature("currencyRsk");
+  const bittorrent = useFeature("currencyBittorrent");
+  const energyWeb = useFeature("currencyEnergyWeb");
+  const astar = useFeature("currencyAstar");
+  const metis = useFeature("currencyMetis");
+  const mantle = useFeature("currencyMantle");
+  const mantleSepolia = useFeature("currencyMantleSepolia");
+  const boba = useFeature("currencyBoba");
+  const moonriver = useFeature("currencyMoonriver");
+  const velasEvm = useFeature("currencyVelasEvm");
+  const syscoin = useFeature("currencySyscoin");
+  const internetComputer = useFeature("currencyInternetComputer");
+  const telosEvm = useFeature("currencyTelosEvm");
+  const coreum = useFeature("currencyCoreum");
+  const polygonAmoy = useFeature("currencyPolygonAmoy");
+  const polygonZkEvm = useFeature("currencyPolygonZkEvm");
+  const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
+  const base = useFeature("currencyBase");
+  const baseSepolia = useFeature("currencyBaseSepolia");
+  const bitlayer = useFeature("currencyBitlayer");
+  const klaytn = useFeature("currencyKlaytn");
+  const klaytnBaobab = useFeature("currencyKlaytnBaobab");
+  const injective = useFeature("currencyInjective");
+  const vechain = useFeature("currencyVechain");
+  const casper = useFeature("currencyCasper");
+  const neonEvm = useFeature("currencyNeonEvm");
+  const lukso = useFeature("currencyLukso");
+  const linea = useFeature("currencyLinea");
+  const lineaSepolia = useFeature("currencyLineaSepolia");
+  const blast = useFeature("currencyBlast");
+  const blastSepolia = useFeature("currencyBlastSepolia");
+  const scroll = useFeature("currencyScroll");
+  const scrollSepolia = useFeature("currencyScrollSepolia");
+  const shape = useFeature("currencyShape");
+  const story = useFeature("currencyStory");
+  const icon = useFeature("currencyIcon");
+  const ton = useFeature("currencyTon");
+  const etherlink = useFeature("currencyEtherlink");
+  const zksync = useFeature("currencyZkSync");
+  const zksyncSepolia = useFeature("currencyZkSyncSepolia");
+  const mantra = useFeature("currencyMantra");
+  const xion = useFeature("currencyXion");
+  const zenrock = useFeature("currencyZenrock");
+  const sonic = useFeature("currencySonic");
+  const sui = useFeature("currencySui");
+  const suiTestnet = useFeature("currencySuiTestnet");
+  const mina = useFeature("currencyMina");
+  const babylon = useFeature("currencyBabylon");
+  const seiNetworkEvm = useFeature("currencySeiNetworkEvm");
+  const berachain = useFeature("currencyBerachain");
+  const hyperevm = useFeature("currencyHyperevm");
+  const canton = useFeature("currencyCantonNetwork");
+  const cantonDevnet = useFeature("currencyCantonNetworkDevnet");
+  const cantonTestnet = useFeature("currencyCantonNetworkTestnet");
+  const kaspa = useFeature("currencyKaspa");
+  const core = useFeature("currencyCore");
+  const ethereumHoodi = useFeature("currencyEthereumHoodi");
+  const westend = useFeature("currencyWestend");
+  const assetHubWestend = useFeature("currencyAssetHubWestend");
+  const assetHubPolkadot = useFeature("currencyAssetHubPolkadot");
+  const polkadot = useFeature("currencyPolkadot");
+  const monad = useFeature("currencyMonad");
+  const monadTestnet = useFeature("currencyMonadTestnet");
+  const somnia = useFeature("currencySomnia");
+  const zeroGravity = useFeature("currencyZeroGravity");
+  const concordium = useFeature("currencyConcordium");
+  const concordiumTestnet = useFeature("currencyConcordiumTestnet");
+  const unichain = useFeature("currencyUnichain");
+  const unichainSepolia = useFeature("currencyUnichainSepolia");
+  const arc = useFeature("currencyArc");
+  const arcTestnet = useFeature("currencyArcTestnet");
+  const robinhood = useFeature("currencyRobinhood");
+  const robinhoodTestnet = useFeature("currencyRobinhoodTestnet");
+
+  const featureFlaggedCurrencies = useMemo(
+    (): FeatureFlaggedCurrencies => ({
+      adi,
+      aleo,
+      aleo_testnet: aleoTestnet,
+      aptos,
+      aptos_testnet: aptosTestnet,
+      axelar,
+      stargaze,
+      secret_network: secretNetwork,
+      umee,
+      desmos,
+      dydx,
+      quicksilver,
+      persistence,
+      avalanche_c_chain: avaxCChain,
+      avalanche_c_chain_fuji: avaxCChainFuji,
+      stacks,
+      optimism,
+      optimism_sepolia: optimismSepolia,
+      arbitrum,
+      arbitrum_sepolia: arbitrumSepolia,
+      rsk,
+      bittorrent,
+      energy_web: energyWeb,
+      astar,
+      metis,
+      mantle,
+      mantle_sepolia: mantleSepolia,
+      boba,
+      moonriver,
+      velas_evm: velasEvm,
+      syscoin,
+      internet_computer: internetComputer,
+      telos_evm: telosEvm,
+      sei_evm: seiNetworkEvm,
+      berachain: berachain,
+      hyperevm: hyperevm,
+      coreum,
+      polygon_amoy: polygonAmoy,
+      polygon_zk_evm: polygonZkEvm,
+      polygon_zk_evm_testnet: polygonZkEvmTestnet,
+      base,
+      base_sepolia: baseSepolia,
+      bitlayer,
+      klaytn,
+      klaytn_baobab: klaytnBaobab,
+      injective,
+      vechain,
+      casper,
+      neon_evm: neonEvm,
+      lukso,
+      linea,
+      ton,
+      linea_sepolia: lineaSepolia,
+      blast,
+      blast_sepolia: blastSepolia,
+      scroll,
+      scroll_sepolia: scrollSepolia,
+      shape,
+      story,
+      icon,
+      etherlink,
+      zksync,
+      zksync_sepolia: zksyncSepolia,
+      mantra,
+      xion,
+      zenrock,
+      sonic,
+      sui,
+      sui_testnet: suiTestnet,
+      mina,
+      babylon,
+      canton_network: canton,
+      canton_network_devnet: cantonDevnet,
+      canton_network_testnet: cantonTestnet,
+      kaspa,
+      core,
+      ethereum_hoodi: ethereumHoodi,
+      westend,
+      assethub_westend: assetHubWestend,
+      assethub_polkadot: assetHubPolkadot,
+      polkadot,
+      monad,
+      monad_testnet: monadTestnet,
+      somnia,
+      zero_gravity: zeroGravity,
+      concordium,
+      concordium_testnet: concordiumTestnet,
+      unichain,
+      unichain_sepolia: unichainSepolia,
+      arc,
+      arc_testnet: arcTestnet,
+      robinhood,
+      robinhood_testnet: robinhoodTestnet,
+    }),
+    [
+      adi,
+      aleo,
+      aleoTestnet,
+      aptos,
+      aptosTestnet,
+      axelar,
+      stargaze,
+      secretNetwork,
+      umee,
+      desmos,
+      dydx,
+      quicksilver,
+      persistence,
+      avaxCChain,
+      avaxCChainFuji,
+      stacks,
+      optimism,
+      optimismSepolia,
+      arbitrum,
+      arbitrumSepolia,
+      rsk,
+      bittorrent,
+      energyWeb,
+      astar,
+      metis,
+      mantle,
+      mantleSepolia,
+      boba,
+      moonriver,
+      velasEvm,
+      syscoin,
+      internetComputer,
+      telosEvm,
+      seiNetworkEvm,
+      berachain,
+      hyperevm,
+      coreum,
+      polygonAmoy,
+      polygonZkEvm,
+      polygonZkEvmTestnet,
+      base,
+      baseSepolia,
+      bitlayer,
+      klaytn,
+      klaytnBaobab,
+      injective,
+      vechain,
+      casper,
+      neonEvm,
+      lukso,
+      linea,
+      ton,
+      lineaSepolia,
+      blast,
+      blastSepolia,
+      scroll,
+      scrollSepolia,
+      shape,
+      story,
+      icon,
+      etherlink,
+      zksync,
+      zksyncSepolia,
+      mantra,
+      xion,
+      zenrock,
+      sonic,
+      sui,
+      suiTestnet,
+      mina,
+      babylon,
+      canton,
+      cantonDevnet,
+      cantonTestnet,
+      kaspa,
+      core,
+      ethereumHoodi,
+      westend,
+      assetHubWestend,
+      assetHubPolkadot,
+      polkadot,
+      monad,
+      monadTestnet,
+      somnia,
+      zeroGravity,
+      concordium,
+      concordiumTestnet,
+      unichain,
+      unichainSepolia,
+      arc,
+      arcTestnet,
+      robinhood,
+      robinhoodTestnet,
+    ],
+  );
+
+  const deactivatedCurrencyIds = useMemo(
+    () =>
+      new Set(
+        mock
+          ? [] // mock mode: all currencies are available for Playwright tests
+          : Object.entries(featureFlaggedCurrencies)
+              .filter(([, feature]) => !feature?.enabled)
+              .map(([id]) => id),
+      ),
+    [mock, featureFlaggedCurrencies],
+  );
+
+  return { featureFlaggedCurrencies, deactivatedCurrencyIds };
+}
