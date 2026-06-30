@@ -4,6 +4,7 @@ import type { RawQuote } from "../service/types";
 import {
   APPROVAL_GAS_LIMIT,
   computeFeeEstimate,
+  computeProviderFeeEstimate,
   type NetworkFeeContext,
 } from "./networkFeeEstimate";
 
@@ -173,7 +174,10 @@ describe("computeFeeEstimate — non-EVM fallback (no override)", () => {
       }),
     );
 
-    expect(result.estimatedNetworkFee).toEqual({ amount: "7777", currencyId: "cosmos" });
+    expect(result.estimatedNetworkFee).toEqual({
+      amount: "7777",
+      currencyId: "cosmos",
+    });
     expect(result.approvalNetworkFee).toBeUndefined();
   });
 
@@ -190,12 +194,18 @@ describe("computeFeeEstimate — non-EVM fallback (no override)", () => {
       }),
     );
 
-    expect(result.estimatedNetworkFee).toEqual({ amount: "1000", currencyId: "bitcoin" });
+    expect(result.estimatedNetworkFee).toEqual({
+      amount: "1000",
+      currencyId: "bitcoin",
+    });
   });
 
   it("emits nothing for a gasless quote on a non-EVM chain without gas config", () => {
     const result = computeFeeEstimate(
-      makeRawQuote({ provider: "oneinchfusion", networkFees: { currency: "cosmos" } }),
+      makeRawQuote({
+        provider: "oneinchfusion",
+        networkFees: { currency: "cosmos" },
+      }),
       makeEvmContext({
         maxFeePerGas: undefined,
         gasPrice: undefined,
@@ -225,7 +235,10 @@ describe("computeFeeEstimate — per-chain overrides", () => {
     );
 
     // 0.003 SOL * 10^9 = 3_000_000 lamports — overrides the bridge-reported 999.
-    expect(result.estimatedNetworkFee).toEqual({ amount: "3000000", currencyId: "solana" });
+    expect(result.estimatedNetworkFee).toEqual({
+      amount: "3000000",
+      currencyId: "solana",
+    });
     expect(result.approvalNetworkFee).toBeUndefined();
   });
 
@@ -321,5 +334,69 @@ describe("computeFeeEstimate — notEnoughBalance gating", () => {
 describe("computeFeeEstimate — constants", () => {
   it("uses 60_000 as the default approval gas limit", () => {
     expect(APPROVAL_GAS_LIMIT).toBe(60_000);
+  });
+});
+
+describe("computeProviderFeeEstimate — bridge-less fallback", () => {
+  const ethFeeCurrency = { id: "ethereum", magnitude: 18 };
+
+  it("shifts the provider-reported fee to atomic units of the fee currency", () => {
+    const result = computeProviderFeeEstimate(
+      makeRawQuote({ networkFees: { currency: "ethereum", value: 0.005 } }),
+      ethFeeCurrency,
+    );
+
+    expect(result.estimatedNetworkFee).toEqual({
+      amount: "5000000000000000", // 0.005 ETH
+      currencyId: "ethereum",
+    });
+    expect(result.approvalNetworkFee).toBeUndefined();
+    expect(result.notEnoughBalance).toBe(false);
+  });
+
+  it("returns no fee for gasless (RFQ) quotes", () => {
+    const result = computeProviderFeeEstimate(
+      makeRawQuote({
+        provider: "oneinchfusion",
+        networkFees: { currency: "ethereum", value: 0.005 },
+      }),
+      ethFeeCurrency,
+    );
+
+    expect(result.estimatedNetworkFee).toBeUndefined();
+  });
+
+  it("ignores the provider fee when it is denominated in another currency", () => {
+    const result = computeProviderFeeEstimate(
+      makeRawQuote({ networkFees: { currency: "matic", value: 0.005 } }),
+      ethFeeCurrency,
+    );
+
+    expect(result.estimatedNetworkFee).toBeUndefined();
+  });
+
+  it("returns no fee when the provider omits or zeroes the value", () => {
+    expect(
+      computeProviderFeeEstimate(
+        makeRawQuote({ networkFees: { currency: "ethereum" } }),
+        ethFeeCurrency,
+      ).estimatedNetworkFee,
+    ).toBeUndefined();
+
+    expect(
+      computeProviderFeeEstimate(
+        makeRawQuote({ networkFees: { currency: "ethereum", value: 0 } }),
+        ethFeeCurrency,
+      ).estimatedNetworkFee,
+    ).toBeUndefined();
+  });
+
+  it("never blocks a quote on balance (unknown without a bridge)", () => {
+    const result = computeProviderFeeEstimate(
+      makeRawQuote({ networkFees: { currency: "ethereum", value: 999 } }),
+      ethFeeCurrency,
+    );
+
+    expect(result.notEnoughBalance).toBe(false);
   });
 });

@@ -9,8 +9,9 @@ import { computeQuotesErrors } from "./computeQuotesErrors";
 import { computeQuotesWarnings } from "./computeQuotesWarnings";
 import { fetchNetworkFeeContext } from "./fetchNetworkFeeContext";
 import { fetchQuotes } from "./service/fetchQuotes";
-import { computeFeeEstimate } from "./normalizer/networkFeeEstimate";
+import { computeFeeEstimate, computeProviderFeeEstimate } from "./normalizer/networkFeeEstimate";
 import { buildFormatContext } from "./normalizer/buildFormatContext";
+import { findCryptoCurrencyById } from "../../../currencies";
 import { normalizeQuote } from "./normalizer";
 import { sortQuotes } from "./sorting/sortQuotes";
 import {
@@ -70,6 +71,25 @@ export type GetQuotesContext = {
   };
   highValueLossThreshold?: number;
 };
+
+/**
+ * Resolve the degraded fee currency used when `fetchNetworkFeeContext`
+ * returns `null`. Reads the magnitude from the currency registry so the
+ * provider-reported fee can still be shifted to atomic units, displayed,
+ * and weighed in the net-countervalue sort.
+ */
+function resolveFallbackFeeCurrency(
+  networkFeesCurrencyId: string | undefined,
+): { id: string; magnitude: number } | undefined {
+  if (!networkFeesCurrencyId) {
+    return undefined;
+  }
+  const magnitude = findCryptoCurrencyById(networkFeesCurrencyId)?.units[0]?.magnitude;
+  if (magnitude === undefined) {
+    return undefined;
+  }
+  return { id: networkFeesCurrencyId, magnitude };
+}
 
 function getParentCurrencyId(accounts: AccountLike[], walletAccountId: string): string | undefined {
   const accountId = getAccountIdFromWalletAccountId(walletAccountId);
@@ -178,24 +198,36 @@ export async function getQuotes(
     spotPrices: context.spotPrices,
   };
 
+  // When the bridge could not produce a fee context, fall back to the
+  // provider-reported fee so the displayed fee and the sort stay
+  // fee-aware instead of collapsing every quote's fee to zero.
+  const fallbackFeeCurrency = feeContext
+    ? undefined
+    : resolveFallbackFeeCurrency(quotesInput.networkFeesCurrencyId);
+
   const formatContext = buildFormatContext({
     args: resolvedArgs,
     accounts: context.accounts,
     spotPrices: context.spotPrices,
     feeContext,
+    networkFeesCurrencyId: quotesInput.networkFeesCurrencyId,
     locale: context.locale,
     counterValueCurrency: context.counterValueCurrency,
   });
 
   const quotes = rawQuotes.map(raw => {
-    const feeEstimate = feeContext ? computeFeeEstimate(raw, feeContext) : undefined;
+    const feeEstimate = feeContext
+      ? computeFeeEstimate(raw, feeContext)
+      : fallbackFeeCurrency
+        ? computeProviderFeeEstimate(raw, fallbackFeeCurrency)
+        : undefined;
     return normalizeQuote(raw, providerData, normalizationContext, feeEstimate, formatContext);
   });
   const sortedQuotes = sortQuotes(quotes, {
     sortBy: args.sortBy,
     receiveCurrencyId: quotesInput.receiveCurrencyId,
     spotPrices: context.spotPrices,
-    feeCurrencyMagnitude: feeContext?.feeCurrencyMagnitude,
+    feeCurrencyMagnitude: feeContext?.feeCurrencyMagnitude ?? fallbackFeeCurrency?.magnitude,
   });
 
   return {

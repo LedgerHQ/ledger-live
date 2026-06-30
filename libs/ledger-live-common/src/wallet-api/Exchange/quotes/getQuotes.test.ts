@@ -229,7 +229,10 @@ describe("getQuotes", () => {
   });
 
   it("skips the provider-data fetch when the pair is unsupported", async () => {
-    fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], providerErrors: [] });
+    fetchQuotesMock.mockResolvedValue({
+      rawQuotes: [makeRawQuote()],
+      providerErrors: [],
+    });
 
     await getQuotes(makeArgs("near", "stellar"), emptyContext);
 
@@ -237,7 +240,10 @@ describe("getQuotes", () => {
   });
 
   it("forwards providerErrors and skips the provider-data + fee-context fetches when no rawQuotes are returned", async () => {
-    fetchQuotesMock.mockResolvedValue({ rawQuotes: [], providerErrors: [aggregatorError] });
+    fetchQuotesMock.mockResolvedValue({
+      rawQuotes: [],
+      providerErrors: [aggregatorError],
+    });
 
     const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
 
@@ -303,8 +309,14 @@ describe("getQuotes", () => {
     computeFeeEstimateMock.mockImplementation(raw => {
       if (raw.key === "higher-receive-with-fees") {
         return {
-          estimatedNetworkFee: { amount: "100000000000000000", currencyId: "ethereum" },
-          approvalNetworkFee: { amount: "100000000000000000", currencyId: "ethereum" },
+          estimatedNetworkFee: {
+            amount: "100000000000000000",
+            currencyId: "ethereum",
+          },
+          approvalNetworkFee: {
+            amount: "100000000000000000",
+            currencyId: "ethereum",
+          },
           notEnoughBalance: false,
         };
       }
@@ -469,7 +481,10 @@ describe("getQuotes", () => {
     };
 
     it("forwards fromAccountId and amountFrom to fetchNetworkFeeContext", async () => {
-      fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], providerErrors: [] });
+      fetchQuotesMock.mockResolvedValue({
+        rawQuotes: [makeRawQuote()],
+        providerErrors: [],
+      });
 
       await getQuotes(makeArgs("ethereum", "bitcoin", { amount: "1.5" }), {
         accounts: [],
@@ -489,7 +504,10 @@ describe("getQuotes", () => {
     it("threads the fee estimate through normalizeQuote when context resolves", async () => {
       fetchNetworkFeeContextMock.mockResolvedValue(feeContext);
       computeFeeEstimateMock.mockReturnValue({
-        estimatedNetworkFee: { amount: "420000000000000", currencyId: "ethereum" },
+        estimatedNetworkFee: {
+          amount: "420000000000000",
+          currencyId: "ethereum",
+        },
         approvalNetworkFee: undefined,
         notEnoughBalance: false,
       });
@@ -515,7 +533,10 @@ describe("getQuotes", () => {
         approvalNetworkFee: undefined,
         notEnoughBalance: true,
       });
-      fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], providerErrors: [] });
+      fetchQuotesMock.mockResolvedValue({
+        rawQuotes: [makeRawQuote()],
+        providerErrors: [],
+      });
 
       const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
 
@@ -524,9 +545,12 @@ describe("getQuotes", () => {
       ]);
     });
 
-    it("skips computeFeeEstimate and emits no fee fields when context is null", async () => {
+    it("skips computeFeeEstimate and emits no fee fields when context is null and no fee currency resolves", async () => {
       fetchNetworkFeeContextMock.mockResolvedValue(null);
-      fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], providerErrors: [] });
+      fetchQuotesMock.mockResolvedValue({
+        rawQuotes: [makeRawQuote()],
+        providerErrors: [],
+      });
 
       const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
 
@@ -534,6 +558,27 @@ describe("getQuotes", () => {
       expect(response.quotes[0].quoteDetails.estimatedNetworkFee).toBeUndefined();
       expect(response.quotes[0].quoteDetails.approvalNetworkFee).toBeUndefined();
       expect(response.quotes[0].errors).toEqual([]);
+    });
+
+    it("falls back to the provider-reported fee when context is null but the fee currency resolves", async () => {
+      fetchNetworkFeeContextMock.mockResolvedValue(null);
+      fetchQuotesMock.mockResolvedValue({
+        rawQuotes: [makeRawQuote({ networkFees: { currency: "ethereum", value: 0.004 } })],
+        providerErrors: [],
+      });
+
+      const response = await getQuotes(
+        makeArgs("ethereum", "bitcoin", { networkFeesCurrencyId: "ethereum" }),
+        emptyContext,
+      );
+
+      // No bridge context, so the dedicated computeFeeEstimate is not used;
+      // the provider fee keeps the quote fee-aware instead of zeroing it.
+      expect(computeFeeEstimateMock).not.toHaveBeenCalled();
+      expect(response.quotes[0].quoteDetails.totalNetworkFee).toEqual({
+        amount: "4000000000000000", // 0.004 ETH in wei
+        currencyId: "ethereum",
+      });
     });
 
     it("does not drop `oneinchfusion` rows on Ethereum source", async () => {

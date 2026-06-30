@@ -109,6 +109,37 @@ function computeOverrideFeeEstimate(
   };
 }
 
+/**
+ * Last-resort fee estimate built only from the provider-reported
+ * `networkFees.value`. Used when {@link fetchNetworkFeeContext} could not
+ * produce a {@link NetworkFeeContext} (account lookup / bridge failure,
+ * unsupported chain) so the displayed fee and the net-countervalue sort
+ * stay fee-aware instead of silently collapsing to zero.
+ *
+ * The provider value is only trusted when the quote is not gasless, the
+ * value is positive, and it is denominated in the resolved fee currency.
+ * Balance is unknown without a bridge, so `notEnoughBalance` is always
+ * `false` — a degraded estimate must never block a quote on a guess.
+ */
+export function computeProviderFeeEstimate(
+  quote: RawQuote,
+  feeCurrency: { id: string; magnitude: number },
+): FeeEstimate {
+  const gasLess = isGasLess(quote);
+  const providerValue = new BigNumber(quote.networkFees.value ?? 0);
+  const usable = !gasLess && providerValue.gt(0) && quote.networkFees.currency === feeCurrency.id;
+
+  const baseFeeAtomic = usable
+    ? providerValue.shiftedBy(feeCurrency.magnitude).integerValue(BigNumber.ROUND_DOWN)
+    : new BigNumber(0);
+
+  return {
+    estimatedNetworkFee: toAtomicFeeField(baseFeeAtomic, feeCurrency.id),
+    approvalNetworkFee: undefined,
+    notEnoughBalance: false,
+  };
+}
+
 function pickGasPrice(context: NetworkFeeContext): BigNumber | undefined {
   if (context.maxFeePerGas?.gt(0)) {
     return context.maxFeePerGas;

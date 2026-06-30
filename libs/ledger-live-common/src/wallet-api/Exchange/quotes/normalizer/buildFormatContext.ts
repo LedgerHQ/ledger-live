@@ -44,27 +44,41 @@ function resolveCurrencyMetaFromAccount(
 }
 
 /**
- * Derive the fee currency metadata from the {@link NetworkFeeContext}.
- * Fees are always paid in the parent chain's native currency, so the
- * synchronous `findCryptoCurrencyById` suffices (no CAL roundtrip).
+ * Derive the fee currency metadata. Fees are always paid in the parent
+ * chain's native currency, so the synchronous `findCryptoCurrencyById`
+ * suffices (no CAL roundtrip).
  *
- * @param feeContext - Context built once per request by `fetchNetworkFeeContext`.
- * @returns The fee currency meta, or `undefined` when the bridge
- *   produced no context or the currency id is unknown.
+ * Prefers the bridge-provided magnitude from {@link NetworkFeeContext}, but
+ * falls back to the resolved `networkFeesCurrencyId` (and the registry's
+ * magnitude) when the bridge produced no context — so the displayed fee
+ * stays denominated even when `fetchNetworkFeeContext` fails and the
+ * provider-reported fee is used instead.
+ *
+ * @param feeCurrencyId - Fee currency id (`feeContext.feeCurrencyId` when
+ *   the bridge succeeded, else the resolved `networkFeesCurrencyId`).
+ * @param magnitude - Authoritative magnitude from the bridge context, or
+ *   `undefined` to read it from the currency registry.
+ * @returns The fee currency meta, or `undefined` when no currency id is
+ *   available or it does not resolve to a known currency.
  */
 function resolveFeeCurrencyMeta(
-  feeContext: NetworkFeeContext | null | undefined,
+  feeCurrencyId: string | undefined,
+  magnitude: number | undefined,
 ): CurrencyMeta | undefined {
-  if (!feeContext) {
+  if (!feeCurrencyId) {
     return undefined;
   }
-  const currency = findCryptoCurrencyById(feeContext.feeCurrencyId);
+  const currency = findCryptoCurrencyById(feeCurrencyId);
   if (!currency) {
     return undefined;
   }
+  const decimals = magnitude ?? currency.units[0]?.magnitude;
+  if (decimals === undefined) {
+    return undefined;
+  }
   return {
-    id: feeContext.feeCurrencyId,
-    decimals: feeContext.feeCurrencyMagnitude,
+    id: feeCurrencyId,
+    decimals,
     ticker: currency.ticker,
   };
 }
@@ -118,10 +132,19 @@ export function buildFormatContext(params: {
   accounts: AccountLike[];
   spotPrices: Record<string, number>;
   feeContext: NetworkFeeContext | null | undefined;
+  networkFeesCurrencyId?: string;
   locale?: string;
   counterValueCurrency?: string;
 }): FormatContext | undefined {
-  const { args, accounts, spotPrices, feeContext, locale, counterValueCurrency } = params;
+  const {
+    args,
+    accounts,
+    spotPrices,
+    feeContext,
+    networkFeesCurrencyId,
+    locale,
+    counterValueCurrency,
+  } = params;
 
   if (!locale || !counterValueCurrency) {
     return undefined;
@@ -138,6 +161,9 @@ export function buildFormatContext(params: {
     spotPrices,
     sendCurrency: resolveCurrencyMetaFromAccount(accounts, args.data.sendAccountId),
     receiveCurrency: resolveCurrencyMetaFromAccount(accounts, args.data.receiveAccountId),
-    networkFeesCurrency: resolveFeeCurrencyMeta(feeContext),
+    networkFeesCurrency: resolveFeeCurrencyMeta(
+      feeContext?.feeCurrencyId ?? networkFeesCurrencyId,
+      feeContext?.feeCurrencyMagnitude,
+    ),
   };
 }
