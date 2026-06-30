@@ -5,6 +5,7 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { createTestStore } from "@tests/test-helpers/testUtils";
 import { marketApi } from "./marketApi";
+import { createMockMarketItemResponse } from "../utils/fixtures";
 
 let store: ReturnType<typeof createTestStore>;
 const server = setupServer();
@@ -236,6 +237,83 @@ describe("marketApi", () => {
       server.use(http.get("*/v3/categories/trending", () => HttpResponse.json([{ id: "x" }])));
 
       const result = await store.dispatch(getTrendingCategories.initiate());
+
+      expect(result.isError).toBe(true);
+      expect(result.data).toBeUndefined();
+      consoleErrorSpy.mockRestore();
+    });
+  });
+
+  describe("[endpoint] getTrendingPerformers", () => {
+    const { getTrendingPerformers } = marketApi.endpoints;
+
+    const trending = (id: string, supported: boolean) => ({ id, supported });
+
+    it("hydrates only the supported trending ids and preserves the trending order", async () => {
+      const seenMarketsUrls: string[] = [];
+      server.use(
+        http.get("*/v3/currencies/trending", () =>
+          HttpResponse.json([
+            trending("solana", true),
+            trending("autonomi", false),
+            trending("bitcoin", true),
+            trending("ethereum", true),
+          ]),
+        ),
+        // Markets is returned in a different order than the trending list to prove re-ordering.
+        http.get("*/v3/markets", ({ request }) => {
+          seenMarketsUrls.push(request.url);
+          return HttpResponse.json([
+            createMockMarketItemResponse({ id: "ethereum", ticker: "ETH" }),
+            createMockMarketItemResponse({ id: "bitcoin", ticker: "BTC" }),
+            createMockMarketItemResponse({ id: "solana", ticker: "SOL" }),
+          ]);
+        }),
+      );
+
+      const result = await store.dispatch(
+        getTrendingPerformers.initiate({ counterCurrency: "usd" }),
+      );
+
+      expect(result.isSuccess).toBe(true);
+      expect(result.data?.map(item => item.id)).toEqual(["solana", "bitcoin", "ethereum"]);
+
+      expect(seenMarketsUrls).toHaveLength(1);
+      const url = new URL(seenMarketsUrls[0]);
+      expect(url.searchParams.get("to")).toBe("usd");
+      expect(url.searchParams.get("ids")).toBe("solana,bitcoin,ethereum");
+      // pageSize must be one of the discrete values the API accepts (1/5/20/50).
+      expect(url.searchParams.get("pageSize")).toBe("50");
+    });
+
+    it("returns an empty list and skips the markets call when no trending id is supported", async () => {
+      let marketsCalled = false;
+      server.use(
+        http.get("*/v3/currencies/trending", () =>
+          HttpResponse.json([trending("autonomi", false), trending("meteora", false)]),
+        ),
+        http.get("*/v3/markets", () => {
+          marketsCalled = true;
+          return HttpResponse.json([]);
+        }),
+      );
+
+      const result = await store.dispatch(
+        getTrendingPerformers.initiate({ counterCurrency: "usd" }),
+      );
+
+      expect(result.isSuccess).toBe(true);
+      expect(result.data).toEqual([]);
+      expect(marketsCalled).toBe(false);
+    });
+
+    it("returns isError when the trending response schema is invalid", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+      server.use(http.get("*/v3/currencies/trending", () => HttpResponse.json([{ id: "x" }])));
+
+      const result = await store.dispatch(
+        getTrendingPerformers.initiate({ counterCurrency: "usd" }),
+      );
 
       expect(result.isError).toBe(true);
       expect(result.data).toBeUndefined();

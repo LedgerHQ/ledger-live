@@ -9,6 +9,7 @@ import { useStake } from "LLM/hooks/useStake/useStake";
 import { getAccountSpendableBalance } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { useFeature } from "@features/platform-feature-flags";
 
 /** Open the family main actions stake flow for a given account from any navigator. Returns to parent route on completion. */
 export function useStakingDrawer({
@@ -23,11 +24,12 @@ export function useStakingDrawer({
   entryPoint?: "get-funds" | undefined;
 }) {
   const walletState = useSelector(walletSelector);
-
   const { getRouteParamsForPlatformApp } = useStake();
+  const swapToEarnFlag = useFeature("swapToEarn");
+  const isSwapToEarnEnabled = swapToEarnFlag?.enabled ?? false;
 
   return useCallback(
-    async (account: AccountLike, parentAccount?: Account) => {
+    async (account: AccountLike, parentAccount?: Account, currencyId?: string) => {
       if (alwaysShowNoFunds || getAccountSpendableBalance(account).isZero()) {
         // get funds to stake with
         navigation.navigate(NavigatorName.Base, {
@@ -46,10 +48,15 @@ export function useStakingDrawer({
         return;
       }
 
-      const redirectionParams = getRouteParamsForPlatformApp(account, walletState, parentAccount);
+      const cryptoAssetId = isSwapToEarnEnabled ? currencyId : undefined;
+      const redirectionParams = getRouteParamsForPlatformApp(
+        account,
+        walletState,
+        parentAccount,
+        cryptoAssetId,
+      );
 
       if (redirectionParams) {
-        // called onSuccess in the SelectAccount flow
         navigation.navigate(NavigatorName.Base, redirectionParams);
         return;
       }
@@ -116,6 +123,7 @@ export function useStakingDrawer({
     [
       alwaysShowNoFunds,
       getRouteParamsForPlatformApp,
+      isSwapToEarnEnabled,
       walletState,
       parentRoute,
       navigation,

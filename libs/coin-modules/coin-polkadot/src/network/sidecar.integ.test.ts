@@ -23,7 +23,7 @@ const CURRENCY_CONFIGS = {
     config: {
       status: { type: "active" as const },
       node: { url: "https://polkadot-rpc.publicnode.com" },
-      sidecar: { url: "https://polkadot-sidecar.coin.ledger.com" },
+      sidecar: { url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1/rc" },
       indexer: { url: "https://polkadot.coin.ledger.com" },
       staking: { electionStatusThreshold: 25 },
     },
@@ -33,19 +33,20 @@ const CURRENCY_CONFIGS = {
     currency: getCryptoCurrencyById("assethub_polkadot"),
     config: {
       status: { type: "active" as const },
-      sidecar: { url: "https://polkadot-asset-hub-sidecar.coin.ledger.com" },
+      sidecar: { url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1" },
       node: { url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com" },
       indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub" },
       staking: { electionStatusThreshold: 25 },
       hasBeenMigrated: true,
     },
-    testAddress: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+    // Asset Hub Polkadot uses SS58 prefix 0, so a polkadot-format address is required.
+    testAddress: "163WJAxWrQzsAVEZdn2w6mq4gmT4FmEgvCfex3uEEUHTE9GL",
   },
   westend: {
     currency: getCryptoCurrencyById("westend"),
     config: {
       status: { type: "active" as const },
-      sidecar: { url: "https://polkadot-westend-sidecar.coin.ledger.com/rc" },
+      sidecar: { url: "https://polkadot-westend-rest-api.coin.ledger.com/v1/rc" },
       node: { url: "https://polkadot-westend-fullnodes.api.live.ledger.com" },
       indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_westend" },
     },
@@ -55,7 +56,7 @@ const CURRENCY_CONFIGS = {
     currency: getCryptoCurrencyById("assethub_westend"),
     config: {
       status: { type: "active" as const },
-      sidecar: { url: "https://polkadot-westend-sidecar.coin.ledger.com" },
+      sidecar: { url: "https://polkadot-westend-rest-api.coin.ledger.com/v1" },
       node: { url: "https://polkadot-westend-asset-hub-fullnodes.api.live.ledger.com" },
       indexer: { url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub_westend" },
     },

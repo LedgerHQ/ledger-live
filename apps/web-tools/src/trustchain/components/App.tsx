@@ -154,10 +154,10 @@ const App = () => {
   );
 
   return (
-    <ThemeProvider colorScheme="light">
+    <ThemeProvider colorScheme="system">
       <TrustchainSDKContext.Provider value={sdk}>
         <DeviceInteractionVisibleContext.Provider value={deviceInteractionVisible}>
-          <div className="mx-auto flex w-full max-w-6xl flex-col bg-canvas px-10 pb-48 min-h-screen">
+          <div className="mx-auto flex min-h-screen w-full max-w-960 flex-col bg-canvas px-16 pb-48 body-2 text-base">
             <DeviceInteractionLayer visible={deviceInteractionVisible} />
 
             <h2 className="heading-3 my-24 text-base">Wallet Sync Trustchain Playground</h2>

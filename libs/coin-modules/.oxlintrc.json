@@ -57,6 +57,31 @@
   },
   "overrides": [
     {
+      "files": ["**/src/api/**", "**/src/logic/**", "**/src/network/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "warn",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "@ledgerhq/**",
+                  "!@ledgerhq/errors",
+                  "!@ledgerhq/errors/**",
+                  "!@ledgerhq/logs",
+                  "!@ledgerhq/logs/**",
+                  "!@ledgerhq/live-network",
+                  "!@ledgerhq/live-network/**",
+                  "!@ledgerhq/coin-module-framework",
+                  "!@ledgerhq/coin-module-framework/**"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "files": [
         "**/src/**/*.test.{ts,tsx}",
         "**/src/**/__tests__/**",

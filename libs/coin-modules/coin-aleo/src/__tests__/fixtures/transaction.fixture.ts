@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { TRANSACTION_TYPE } from "../../constants";
 import type { AleoTransactionIntent, Transaction, TransactionRaw } from "../../types";
 import { mockUnspentRecord1, mockUnspentRecord2 } from "./account.fixture";
+import { MOCK_TOKEN_PROGRAM_ID } from "./currency.fixture";
 
 export const getMockedTransaction = (overrides?: Partial<Transaction>): Transaction => {
   return {
@@ -108,5 +109,25 @@ export const mockTxIntentFeePrivate: AleoTransactionIntent = {
       "7287422539927885800585937944314327552710698933416219800491628782750554575326field",
     priorityFee: 6000n,
     record: mockUnspentRecord2.decryptedData,
+  },
+};
+
+export const mockTxIntentTransferTokenPublic: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 100n,
+  type: TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC,
+  data: {
+    type: TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC,
+    programId: MOCK_TOKEN_PROGRAM_ID,
+  },
+};
+
+export const mockTxIntentConvertTokenPublicToPrivate: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 300n,
+  type: TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE,
+  data: {
+    type: TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE,
+    programId: MOCK_TOKEN_PROGRAM_ID,
   },
 };

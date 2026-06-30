@@ -25,6 +25,22 @@ export function getAccountUnit(account: AccountLike): {
 }
 
 /**
+ * SIP-58 spend cap: when the account's real coin objects can't cover the gas budget, gas is
+ * withdrawn from the address balance alongside the transfer, so a native-SUI spend is bounded by
+ * `addressBalance − gasBudget` (not the total minus gas). Returns `null` when real coins cover the
+ * gas budget — then gas is paid from them and the full balance is spendable, so no extra bound.
+ * Shared by `calculateMaxSend`, `estimateMaxSpendable`, and `getTransactionStatus`.
+ */
+export const addressBalanceSpendCap = (
+  account: SuiAccount,
+  gasBudget: BigNumber,
+): BigNumber | null => {
+  const addressBalance = account.suiResources?.fundsInAddressBalance ?? new BigNumber(0);
+  if (account.spendableBalance.minus(addressBalance).gte(gasBudget)) return null;
+  return addressBalance.minus(gasBudget);
+};
+
+/**
  * Calculate the maximum amount that can be sent from the account after deducting fees.
  *
  * @param {SuiAccount} account - The account from which the amount is being sent.
@@ -32,7 +48,12 @@ export function getAccountUnit(account: AccountLike): {
  * @returns {BigNumber} - The maximum amount that can be sent, or 0 if insufficient balance.
  */
 const calculateMaxSend = (account: SuiAccount, transaction: Transaction): BigNumber => {
-  const amount = account.spendableBalance.minus(transaction.fees || 0);
+  // Reserve the gas BUDGET (not the smaller actual fee) so a max-send leaves enough to cover the
+  // network's gas reservation — otherwise the send could fail at execution.
+  const gasBudget = new BigNumber(transaction.gasBudget || transaction.fees || 0);
+  let amount = account.spendableBalance.minus(gasBudget);
+  const cap = addressBalanceSpendCap(account, gasBudget);
+  if (cap !== null) amount = BigNumber.min(amount, cap);
   return amount.lt(0) ? new BigNumber(0) : amount;
 };
 
@@ -75,7 +96,7 @@ export const calculateAmount = ({
         break;
       case "token.send":
         amount =
-          findSubAccountById(account, transaction.subAccountId!)?.spendableBalance ??
+          findSubAccountById(account, transaction.subAccountId ?? "")?.spendableBalance ??
           new BigNumber(0);
         break;
       case "delegate":

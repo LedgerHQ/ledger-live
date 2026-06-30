@@ -1,5 +1,10 @@
 import { useCallback } from "react";
-import { StackActions, useNavigation } from "@react-navigation/native";
+import {
+  CommonActions,
+  StackActions,
+  type NavigatorScreenParams,
+  useNavigation,
+} from "@react-navigation/native";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
 import { useDispatch, useSelector } from "~/context/hooks";
@@ -18,6 +23,7 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 import { useCompleteLazyOnboarding } from "LLM/features/NotificationsOptIn";
 
@@ -28,6 +34,16 @@ type NavigationProp = RootNavigationComposite<
 const trackingKeysByFlow: Record<EntryPoint, string> = {
   Onboarding: "consent onboarding",
   Portfolio: "consent existing users",
+};
+
+const portfolioBaseScreen: NavigatorScreenParams<BaseNavigatorStackParamList> = {
+  screen: NavigatorName.Main,
+  params: {
+    screen: NavigatorName.Portfolio,
+    params: {
+      screen: NavigatorName.WalletTab,
+    },
+  },
 };
 
 type Props = {
@@ -75,15 +91,18 @@ const useAnalyticsConsentLogic = ({ entryPoint }: Props): UseAnalyticsConsentLog
 
     switch (entryPoint) {
       case "Portfolio":
-        navigation.navigate(NavigatorName.Base, {
-          screen: NavigatorName.Main,
-          params: {
-            screen: NavigatorName.Portfolio,
-            params: {
-              screen: NavigatorName.WalletTab,
-            },
-          },
-        });
+        // Reset clears the Analytics opt-in prompt from the native back stack.
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: NavigatorName.Base,
+                params: portfolioBaseScreen,
+              },
+            ],
+          }),
+        );
         break;
       case "Onboarding":
         if (shouldUseLazyOnboarding) {

@@ -8,6 +8,7 @@ import type {
   Transaction,
 } from "@ledgerhq/coin-algorand/types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { ALGORAND_DUMMY_ADDRESS } from "@ledgerhq/coin-algorand/constants";
 import {
   makeAccountBridgeReceive,
   scanAccounts,
@@ -112,6 +113,7 @@ const accountBridge: AccountBridge<AlgorandTransaction, any> = {
   broadcast,
   getSerializedAddressParameters,
   validateAddress,
+  getEstimationRecipient: () => ALGORAND_DUMMY_ADDRESS,
 };
 const currencyBridge: CurrencyBridge = {
   scanAccounts,

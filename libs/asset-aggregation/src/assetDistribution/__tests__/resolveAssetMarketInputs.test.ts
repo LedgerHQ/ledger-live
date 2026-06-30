@@ -87,13 +87,25 @@ describe("resolveAssetMarketInputs", () => {
     expect(result.knownLedgerIds).toEqual(["bsc"]);
   });
 
-  it("falls back to currency.id for knownLedgerIds when no distributionItem", () => {
+  it("falls back to currency.id for knownLedgerIds when no distributionItem and no marketState ledger ids", () => {
     const result = resolveAssetMarketInputs({
-      marketState: { id: "binancecoin", ledgerIds: ["bsc"] },
+      marketState: { id: "binancecoin" },
       currency: cryptoCurrency("bsc"),
     });
 
     expect(result.knownLedgerIds).toEqual(["bsc"]);
+  });
+
+  it("prefers marketState.ledgerIds over currency.id when navigating from Market", () => {
+    const result = resolveAssetMarketInputs({
+      marketState: {
+        id: "shiba-inu",
+        ledgerIds: ["ethereum/erc20/shiba_inu", "solana/spl/shiba"],
+      },
+      currency: cryptoCurrency("ethereum/erc20/shiba_inu"),
+    });
+
+    expect(result.knownLedgerIds).toEqual(["ethereum/erc20/shiba_inu", "solana/spl/shiba"]);
   });
 
   it("uses marketState.ledgerIds when no distributionItem and no currency", () => {

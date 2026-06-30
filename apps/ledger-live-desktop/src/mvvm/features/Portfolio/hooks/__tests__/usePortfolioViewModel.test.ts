@@ -6,6 +6,13 @@ import { BigNumber } from "bignumber.js";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { usePortfolioViewModel } from "../usePortfolioViewModel";
 
+// usePortfolioViewModel consumes useResumeAddAccountAfterOnboarding, which pulls in the Add Account
+// flow (useOpenAssetFlow). Mock it so this suite stays focused on the portfolio view-model.
+// The resume behaviour itself is covered by useResumeAddAccountAfterOnboarding.test.ts.
+jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow", () => ({
+  useOpenAssetFlow: () => ({ openAssetFlow: jest.fn(), openAddAccountFlow: jest.fn() }),
+}));
+
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
 const ethereumCurrency = getCryptoCurrencyById("ethereum");
 const wallet40AndExchangeFeatureFlags = withFlagOverrides({

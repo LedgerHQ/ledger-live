@@ -1,9 +1,27 @@
-import { useTrackingPairForAccounts } from ".";
+import React from "react";
+import {
+  CountervaluesProvider,
+  useTrackingPairForAccounts,
+  type CountervaluesBridge,
+} from ".";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { renderHook, act } from "@testing-library/react";
-import { inferTrackingPairForAccounts } from "@ledgerhq/live-countervalues/logic";
-import { TrackingPair } from "@ledgerhq/live-countervalues/types";
-import type { FiatCurrency } from "@ledgerhq/types-cryptoassets";
+import { renderHook, act, render, waitFor } from "@testing-library/react";
+import {
+  inferTrackingPairForAccounts,
+  initialState,
+  loadCountervalues,
+} from "@ledgerhq/live-countervalues/logic";
+import type {
+  CountervaluesSettings,
+  CounterValuesState,
+  TrackingPair,
+} from "@ledgerhq/live-countervalues/types";
+import type { Currency, FiatCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+
+jest.mock("@ledgerhq/live-countervalues/logic", () => ({
+  ...jest.requireActual("@ledgerhq/live-countervalues/logic"),
+  loadCountervalues: jest.fn(),
+}));
 
 const usd: FiatCurrency = {
   type: "FiatCurrency",
@@ -128,3 +146,85 @@ describe("useTrackingPairForAccounts", () => {
     });
   });
 });
+
+describe("CountervaluesProvider", () => {
+  const bitcoin = genAccount("bitcoin").currency;
+  const unsupportedToken: TokenCurrency = {
+    type: "TokenCurrency",
+    id: "ethereum/erc20/lc_staked_shared_eth_0xc4dcb059dd98b45b090da8982234c61d0b9e84f9",
+    contractAddress: "0xc4dcb059dd98b45b090da8982234c61d0b9e84f9",
+    parentCurrencyId: "ethereum",
+    tokenType: "erc20",
+    name: "Ledger Staked Shared ETH",
+    ticker: "osETH",
+    delisted: false,
+    disableCountervalue: false,
+    units: [{ name: "osETH", code: "osETH", magnitude: 18 }],
+  };
+  const supportedPair = trackingPair(bitcoin);
+  const unsupportedPair = trackingPair(unsupportedToken);
+  const mockLoadCountervalues = jest.mocked(loadCountervalues);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockLoadCountervalues.mockResolvedValue(initialState);
+  });
+
+  it("should filter unsupported tracking pairs before polling when marketcap ids are loaded", async () => {
+    const bridge = createBridge({
+      marketcapIds: [bitcoin.id],
+      trackingPairs: [supportedPair, unsupportedPair],
+    });
+
+    render(React.createElement(CountervaluesProvider, { bridge, children: null }));
+
+    await waitFor(() => expect(mockLoadCountervalues).toHaveBeenCalledTimes(1));
+    expect(mockLoadCountervalues.mock.calls[0][1].trackingPairs).toEqual([supportedPair]);
+  });
+
+  it("should keep tracking pairs unchanged before marketcap ids are loaded", async () => {
+    const trackingPairs = [supportedPair, unsupportedPair];
+    const bridge = createBridge({ marketcapIds: [], trackingPairs });
+
+    render(React.createElement(CountervaluesProvider, { bridge, children: null }));
+
+    await waitFor(() => expect(mockLoadCountervalues).toHaveBeenCalledTimes(1));
+    expect(mockLoadCountervalues.mock.calls[0][1].trackingPairs).toBe(trackingPairs);
+  });
+});
+
+function trackingPair(from: Currency): TrackingPair {
+  return { from, to: usd, startDate: new Date("2026-06-19T00:00:00.000Z") };
+}
+
+function createBridge({
+  marketcapIds,
+  trackingPairs,
+}: {
+  marketcapIds: string[];
+  trackingPairs: TrackingPair[];
+}): CountervaluesBridge {
+  const settings: CountervaluesSettings = {
+    trackingPairs,
+    autofillGaps: true,
+    refreshRate: 60_000,
+    marketCapBatchingAfterRank: 20,
+  };
+  const state: CounterValuesState = initialState;
+
+  return {
+    setPollingIsPolling: jest.fn(),
+    setPollingTriggerLoad: jest.fn(),
+    setState: jest.fn(),
+    setStateError: jest.fn(),
+    setStatePending: jest.fn(),
+    useMarketcapIds: () => marketcapIds,
+    usePollingIsPolling: () => false,
+    usePollingTriggerLoad: () => true,
+    useStateError: () => null,
+    useStatePending: () => false,
+    useState: () => state,
+    useUserSettings: () => settings,
+    wipe: jest.fn(),
+  };
+}

@@ -4,6 +4,7 @@ import range from "lodash/range";
 import some from "lodash/some";
 import BigNumber from "bignumber.js";
 import { NotEnoughBalance } from "@ledgerhq/errors";
+import { RbfBuildError } from "../errors";
 import { TX, Address, IStorage } from "./storage/types";
 import { IExplorer } from "./explorer/types";
 import { ICrypto } from "./crypto/types";
@@ -235,7 +236,9 @@ class Xpub {
         txSelection = rbfSelection;
         originalTxObj = rbfSelection.originalTxObj;
       } catch (error) {
-        throw new Error("Failed to build RBF transaction: " + error);
+        throw new RbfBuildError(
+          "Failed to build RBF transaction: " + (error instanceof Error ? error.message : error),
+        );
       }
     } else {
       txSelection = await this.buildRegularSelection({
@@ -289,7 +292,9 @@ class Xpub {
           fallbackReducibleAddress: changeAddress.address,
         });
       } catch (error) {
-        throw new Error("Failed to build RBF transaction: " + error);
+        throw new RbfBuildError(
+          "Failed to build RBF transaction: " + (error instanceof Error ? error.message : error),
+        );
       }
     }
     const result = {

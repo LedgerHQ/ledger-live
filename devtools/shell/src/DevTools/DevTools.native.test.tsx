@@ -1,62 +1,71 @@
-import { render, screen, userEvent } from "jest/render.native";
+import { renderWithNavigation, screen, userEvent } from "jest/render.native";
+import { mockDevToolsConfig } from "../../jest/test-utils";
 import { DevTools } from "./DevTools.native";
-import { mockDevToolsConfig } from "jest/test-utils";
 
 jest.mock("@devtools/registry", () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const actual = jest.requireActual("@devtools/registry");
   return {
     ...actual,
     tools: {
-      "test-tool": {
-        label: "Test Tool",
+      "feature-flags": {
+        label: "Feature Flags",
+        owner: "wallet",
         category: actual.Category.CONFIGURATION,
+        loader: () => Promise.resolve({ default: () => null }),
+      },
+      "env-editor": {
+        label: "Env Editor",
+        owner: "platform",
+        category: actual.Category.CONFIGURATION,
+        loader: () => Promise.resolve({ default: () => null }),
+      },
+      "network-inspector": {
+        label: "Network Inspector",
+        owner: "connectivity",
+        category: actual.Category.DEBUGGING,
         loader: () => Promise.resolve({ default: () => null }),
       },
     },
   };
 });
 
-const config = mockDevToolsConfig([{ id: "test-tool", config: { value: "x" } }]);
+const config = mockDevToolsConfig([
+  { id: "feature-flags", config: {} },
+  { id: "env-editor", config: {} },
+  { id: "network-inspector", config: {} },
+]);
 
-describe("DevTools (native)", () => {
-  it("renders the shell", () => {
-    render(<DevTools config={config} />);
-    expect(screen.getByTestId("devtools")).toBeOnTheScreen();
-  });
-
-  it("shows category list on the home screen", () => {
-    render(<DevTools config={config} />);
-    expect(screen.getByTestId("devtools-home")).toBeOnTheScreen();
+describe("DevTools (native) — navigation", () => {
+  it("lists tool categories on the root screen", () => {
+    renderWithNavigation(<DevTools config={config} />);
     expect(screen.getByRole("button", { name: "Configuration" })).toBeOnTheScreen();
+    expect(screen.getByRole("button", { name: "Debugging" })).toBeOnTheScreen();
   });
 
-  it("shows no tool screen when on home", () => {
-    render(<DevTools config={config} />);
-    expect(screen.queryByTestId("devtools-content")).toBeNull();
-  });
-
-  it("tapping a category shows its tools", async () => {
+  it("drills into a category to reveal its tools", async () => {
     const user = userEvent.setup();
-    render(<DevTools config={config} />);
+    renderWithNavigation(<DevTools config={config} />);
     await user.press(screen.getByRole("button", { name: "Configuration" }));
-    expect(screen.getByRole("button", { name: "Test Tool" })).toBeOnTheScreen();
+    expect(screen.getByRole("button", { name: "Feature Flags" })).toBeOnTheScreen();
+    expect(screen.getByRole("button", { name: "Env Editor" })).toBeOnTheScreen();
+  });
+});
+
+describe("DevTools (native) — search", () => {
+  it("filters categories down to those with a matching tool", async () => {
+    const user = userEvent.setup();
+    renderWithNavigation(<DevTools config={config} />);
+    await user.type(screen.getByPlaceholderText("Search tools"), "Feature");
+    expect(screen.getByRole("button", { name: "Configuration" })).toBeOnTheScreen();
+    expect(screen.queryByRole("button", { name: "Debugging" })).toBeNull();
   });
 
-  it("tapping back from category returns to home", async () => {
+  it("carries the query into the category screen and filters its tools", async () => {
     const user = userEvent.setup();
-    render(<DevTools config={config} />);
+    renderWithNavigation(<DevTools config={config} />);
+    await user.type(screen.getByPlaceholderText("Search tools"), "Feature");
     await user.press(screen.getByRole("button", { name: "Configuration" }));
-    await user.press(screen.getByRole("button", { name: "Back" }));
-    expect(screen.getByTestId("devtools-home")).toBeOnTheScreen();
-  });
-
-  it("tapping a tool shows the tool screen", async () => {
-    const user = userEvent.setup();
-    render(<DevTools config={config} />);
-    await user.press(screen.getByRole("button", { name: "Configuration" }));
-    await user.press(screen.getByRole("button", { name: "Test Tool" }));
-    expect(screen.getByTestId("devtools-content")).toBeOnTheScreen();
-    expect(screen.getByTestId("devtools-content")).toHaveTextContent(/Test Tool/);
+    expect(screen.getByRole("button", { name: "Feature Flags" })).toBeOnTheScreen();
+    expect(screen.queryByRole("button", { name: "Env Editor" })).toBeNull();
   });
 });

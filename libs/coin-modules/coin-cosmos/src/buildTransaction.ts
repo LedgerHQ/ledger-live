@@ -1,10 +1,9 @@
+import { AminoMsgSend, AminoMsgWithdrawDelegatorReward } from "@cosmjs/stargate";
 import {
-  AminoMsgBeginRedelegate,
-  AminoMsgDelegate,
-  AminoMsgSend,
-  AminoMsgUndelegate,
-  AminoMsgWithdrawDelegatorReward,
-} from "@cosmjs/stargate";
+  MsgWrappedBeginRedelegate,
+  MsgWrappedDelegate,
+  MsgWrappedUndelegate,
+} from "@keplr-wallet/proto-types/babylon/epoching/v1/tx";
 import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
 import { AuthInfo, Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 import type { Account } from "@ledgerhq/types-live";
@@ -17,6 +16,7 @@ import {
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import CosmosBase, { StakingMessageType } from "./chain/cosmosBase";
 import { Transaction } from "./types";
 
 type ProtoMsg = {
@@ -29,24 +29,34 @@ type AminoMsg = {
   readonly value: any;
 };
 
-export interface AminoZenrockMsgDelegate extends Omit<AminoMsgDelegate, "type"> {
-  readonly type: "zrchain/MsgDelegate";
-}
-
-export interface AminoZenrockMsgBeginRedelegate extends Omit<AminoMsgBeginRedelegate, "type"> {
-  readonly type: "zrchain/MsgBeginRedelegate";
-}
-
-export interface AminoZenrockMsgUndelegate extends Omit<AminoMsgUndelegate, "type"> {
-  readonly type: "zrchain/MsgUndelegate";
-}
-
 export const txToMessages = (
   account: Account,
   transaction: Transaction,
+  chain: CosmosBase,
 ): { aminoMsgs: AminoMsg[]; protoMsgs: ProtoMsg[] } => {
   const aminoMsgs: Array<AminoMsg> = [];
   const protoMsgs: Array<ProtoMsg> = [];
+  const { stakingMessages } = chain;
+
+  const pushStakingMsg = <T>(
+    { aminoType, protoTypeUrl }: StakingMessageType,
+    aminoValue: object,
+    protoValue: T,
+    encodeInner: (value: T) => { finish: () => Uint8Array },
+    encodeWrapped: (value: { msg: T }) => { finish: () => Uint8Array },
+  ): void => {
+    aminoMsgs.push({
+      type: aminoType,
+      value: stakingMessages.wrapped ? { msg: aminoValue } : aminoValue,
+    });
+    protoMsgs.push({
+      typeUrl: protoTypeUrl,
+      value: stakingMessages.wrapped
+        ? encodeWrapped({ msg: protoValue }).finish()
+        : encodeInner(protoValue).finish(),
+    });
+  };
+
   switch (transaction.mode) {
     case "send":
       if (transaction.recipient && transaction.amount.gt(0)) {
@@ -85,35 +95,25 @@ export const txToMessages = (
       if (transaction.validators && transaction.validators.length > 0) {
         const validator = transaction.validators[0];
         if (validator && validator.address && transaction.amount.gt(0)) {
-          const aminoMsg: AminoMsgDelegate | AminoZenrockMsgDelegate = {
-            type:
-              account.currency.id === "zenrock" ? "zrchain/MsgDelegate" : "cosmos-sdk/MsgDelegate",
-            value: {
+          const amount = {
+            denom: account.currency.units[1].code,
+            amount: transaction.amount.toFixed(),
+          };
+          pushStakingMsg(
+            stakingMessages.delegate,
+            {
               delegator_address: account.freshAddress,
               validator_address: validator.address,
-              amount: {
-                denom: account.currency.units[1].code,
-                amount: transaction.amount.toFixed(),
-              },
+              amount,
             },
-          };
-          aminoMsgs.push(aminoMsg);
-
-          // PROTO MESSAGE
-          protoMsgs.push({
-            typeUrl:
-              account.currency.id === "zenrock"
-                ? "/zrchain.validation.MsgDelegate"
-                : "/cosmos.staking.v1beta1.MsgDelegate",
-            value: MsgDelegate.encode({
+            {
               delegatorAddress: account.freshAddress,
               validatorAddress: validator.address,
-              amount: {
-                denom: account.currency.units[1].code,
-                amount: transaction.amount.toFixed(),
-              },
-            }).finish(),
-          });
+              amount,
+            },
+            MsgDelegate.encode,
+            MsgWrappedDelegate.encode,
+          );
         }
       }
       break;
@@ -127,39 +127,27 @@ export const txToMessages = (
         transaction.validators[0].amount.gt(0)
       ) {
         const validator = transaction.validators[0];
-        const aminoMsg: AminoMsgBeginRedelegate | AminoZenrockMsgBeginRedelegate = {
-          type:
-            account.currency.id === "zenrock"
-              ? "zrchain/MsgBeginRedelegate"
-              : "cosmos-sdk/MsgBeginRedelegate",
-          value: {
+        const amount = {
+          denom: account.currency.units[1].code,
+          amount: validator.amount.toFixed(),
+        };
+        pushStakingMsg(
+          stakingMessages.beginRedelegate,
+          {
             delegator_address: account.freshAddress,
             validator_src_address: transaction.sourceValidator,
             validator_dst_address: validator.address,
-            amount: {
-              denom: account.currency.units[1].code,
-              amount: validator.amount.toFixed(),
-            },
+            amount,
           },
-        };
-        aminoMsgs.push(aminoMsg);
-
-        // PROTO MESSAGE
-        protoMsgs.push({
-          typeUrl:
-            account.currency.id === "zenrock"
-              ? "/zrchain.validation.MsgBeginRedelegate"
-              : "/cosmos.staking.v1beta1.MsgBeginRedelegate",
-          value: MsgBeginRedelegate.encode({
+          {
             delegatorAddress: account.freshAddress,
             validatorSrcAddress: transaction.sourceValidator,
             validatorDstAddress: validator.address,
-            amount: {
-              denom: account.currency.units[1].code,
-              amount: validator.amount.toFixed(),
-            },
-          }).finish(),
-        });
+            amount,
+          },
+          MsgBeginRedelegate.encode,
+          MsgWrappedBeginRedelegate.encode,
+        );
       }
       break;
 
@@ -167,37 +155,25 @@ export const txToMessages = (
       if (transaction.validators && transaction.validators.length > 0) {
         const validator = transaction.validators[0];
         if (validator && validator.address && validator.amount.gt(0)) {
-          const aminoMsg: AminoMsgUndelegate | AminoZenrockMsgUndelegate = {
-            type:
-              account.currency.id === "zenrock"
-                ? "zrchain/MsgUndelegate"
-                : "cosmos-sdk/MsgUndelegate",
-            value: {
+          const amount = {
+            denom: account.currency.units[1].code,
+            amount: validator.amount.toFixed(),
+          };
+          pushStakingMsg(
+            stakingMessages.undelegate,
+            {
               delegator_address: account.freshAddress,
               validator_address: validator.address,
-              amount: {
-                denom: account.currency.units[1].code,
-                amount: validator.amount.toFixed(),
-              },
+              amount,
             },
-          };
-          aminoMsgs.push(aminoMsg);
-
-          // PROTO MESSAGE
-          protoMsgs.push({
-            typeUrl:
-              account.currency.id === "zenrock"
-                ? "/zrchain.validation.MsgUndelegate"
-                : "/cosmos.staking.v1beta1.MsgUndelegate",
-            value: MsgUndelegate.encode({
+            {
               delegatorAddress: account.freshAddress,
               validatorAddress: validator.address,
-              amount: {
-                denom: account.currency.units[1].code,
-                amount: validator.amount.toFixed(),
-              },
-            }).finish(),
-          });
+              amount,
+            },
+            MsgUndelegate.encode,
+            MsgWrappedUndelegate.encode,
+          );
         }
       }
       break;
@@ -235,6 +211,11 @@ export const txToMessages = (
         transaction.validators[0].amount.gt(0)
       ) {
         const validator = transaction.validators[0];
+        if (stakingMessages.wrapped) {
+          // compound's embedded delegate isn't epoching-wrapped yet (LIVE-31837); fail fast on
+          // babylon rather than sign a bare cosmos-sdk delegate the chain rejects.
+          throw new Error(`claimRewardCompound is not supported on ${account.currency.id}`);
+        }
         // AMINO MESSAGES
         const aminoWithdrawRewardMsg: AminoMsgWithdrawDelegatorReward = {
           type: "cosmos-sdk/MsgWithdrawDelegationReward",
@@ -243,9 +224,8 @@ export const txToMessages = (
             validator_address: validator.address,
           },
         };
-        const aminoDelegateMsg: AminoMsgDelegate | AminoZenrockMsgDelegate = {
-          type:
-            account.currency.id === "zenrock" ? "zrchain/MsgDelegate" : "cosmos-sdk/MsgDelegate",
+        const aminoDelegateMsg: AminoMsg = {
+          type: stakingMessages.delegate.aminoType,
           value: {
             delegator_address: account.freshAddress,
             validator_address: validator.address,
@@ -266,10 +246,7 @@ export const txToMessages = (
           }).finish(),
         });
         protoMsgs.push({
-          typeUrl:
-            account.currency.id === "zenrock"
-              ? "/zrchain.validation.MsgDelegate"
-              : "/cosmos.staking.v1beta1.MsgDelegate",
+          typeUrl: stakingMessages.delegate.protoTypeUrl,
           value: MsgDelegate.encode({
             delegatorAddress: account.freshAddress,
             validatorAddress: validator.address,

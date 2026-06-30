@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { CELO_DUMMY_ADDRESS } from "../constants";
 import resolver from "../signer/hw-getAddress";
 import { CeloSigner } from "../signer/signer";
 import type { CeloAccount, Transaction, TransactionStatus } from "../types";
@@ -70,6 +71,7 @@ export function buildAccountBridge(
     toOperationExtraRaw,
     fromOperationExtraRaw,
     validateAddress,
+    getEstimationRecipient: () => CELO_DUMMY_ADDRESS,
   };
 }
 

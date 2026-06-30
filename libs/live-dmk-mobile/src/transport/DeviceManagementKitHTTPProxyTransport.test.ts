@@ -12,7 +12,11 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { DisconnectedDevice } from "@ledgerhq/errors";
 import { DeviceManagementKitHTTPProxyTransport } from "./DeviceManagementKitHTTPProxyTransport";
-import { HTTP_PROXY_TRANSPORT_IDENTIFIER, httpProxyUrlSubject } from "./HttpProxyDmkTransport";
+import {
+  buildHttpProxyLegacyDeviceId,
+  HTTP_PROXY_TRANSPORT_IDENTIFIER,
+  httpProxyUrlSubject,
+} from "./HttpProxyDmkTransport";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 
 jest.mock("../hooks/useDeviceManagementKit", () => ({
@@ -26,7 +30,7 @@ const aMockedDeviceSessionState: DeviceSessionState = {
 };
 
 const mockDiscoveredDevice: DiscoveredDevice = {
-  id: "http-proxy-device",
+  id: buildHttpProxyLegacyDeviceId("http://localhost:8435"),
   name: "HTTP Proxy",
   deviceModel: {
     model: DMKDeviceModelId.NANO_X,

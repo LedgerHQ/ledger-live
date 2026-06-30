@@ -57,15 +57,21 @@ function mockAssetsData({
   data,
   isLoading = false,
   isError = false,
+  loadNext,
+  isFetchingNextPage = false,
 }: {
   data?: AssetDescriptor[];
   isLoading?: boolean;
   isError?: boolean;
+  loadNext?: () => void;
+  isFetchingNextPage?: boolean;
 }) {
   mockedUseAssetsData.mockReturnValue({
     data: data ? buildAssetsData(data) : undefined,
     isLoading,
     isError,
+    loadNext,
+    isFetchingNextPage,
   } as unknown as ReturnType<typeof useAssetsData>);
 }
 
@@ -85,9 +91,7 @@ describe("search results integration", () => {
       mockAssetsData({ data: [BTC] });
       mockedUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 0.9 });
 
-      const { result } = renderHook(() =>
-        useAssetSearchResultsViewModel({ search: "bit", limit: 10 }),
-      );
+      const { result } = renderHook(() => useAssetSearchResultsViewModel({ search: "bit" }));
 
       expect(result.current.data).toHaveLength(1);
       expect(result.current.data[0].price).toBeCloseTo(90);
@@ -95,7 +99,7 @@ describe("search results integration", () => {
       expect(result.current.isError).toBe(false);
     });
 
-    it("caps results to the requested limit", () => {
+    it("returns every result (pagination handles the rest via infinite scroll)", () => {
       const assets = Array.from({ length: 5 }, (_, i) => ({
         id: `coin-${i}`,
         name: `Coin ${i}`,
@@ -106,20 +110,38 @@ describe("search results integration", () => {
       mockAssetsData({ data: assets });
       mockedUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 1 });
 
-      const { result } = renderHook(() =>
-        useAssetSearchResultsViewModel({ search: "c", limit: 3 }),
-      );
+      const { result } = renderHook(() => useAssetSearchResultsViewModel({ search: "c" }));
 
-      expect(result.current.data).toHaveLength(3);
+      expect(result.current.data).toHaveLength(5);
+    });
+
+    it("surfaces pagination so the list can load more on scroll", () => {
+      const loadNext = jest.fn();
+      mockAssetsData({ data: [BTC], loadNext, isFetchingNextPage: true });
+      mockedUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 1 });
+
+      const { result } = renderHook(() => useAssetSearchResultsViewModel({ search: "bit" }));
+
+      expect(result.current.loadNext).toBe(loadNext);
+      expect(result.current.hasNextPage).toBe(true);
+      expect(result.current.isFetchingNextPage).toBe(true);
+    });
+
+    it("reports no next page when pagination is exhausted", () => {
+      mockAssetsData({ data: [BTC] });
+      mockedUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 1 });
+
+      const { result } = renderHook(() => useAssetSearchResultsViewModel({ search: "bit" }));
+
+      expect(result.current.loadNext).toBeUndefined();
+      expect(result.current.hasNextPage).toBe(false);
     });
 
     it("stays loading and shows the unconverted USD price while the rate resolves", () => {
       mockAssetsData({ data: [BTC] });
       mockedUseUsdToFiatRate.mockReturnValue({ status: "loading", rate: null });
 
-      const { result } = renderHook(() =>
-        useAssetSearchResultsViewModel({ search: "bit", limit: 10 }),
-      );
+      const { result } = renderHook(() => useAssetSearchResultsViewModel({ search: "bit" }));
 
       expect(result.current.isLoading).toBe(true);
       expect(result.current.data[0].price).toBe(100);
@@ -129,9 +151,7 @@ describe("search results integration", () => {
       mockAssetsData({ data: [BTC] });
       mockedUseUsdToFiatRate.mockReturnValue({ status: "error", rate: null });
 
-      const { result } = renderHook(() =>
-        useAssetSearchResultsViewModel({ search: "bit", limit: 10 }),
-      );
+      const { result } = renderHook(() => useAssetSearchResultsViewModel({ search: "bit" }));
 
       expect(result.current.isError).toBe(true);
     });

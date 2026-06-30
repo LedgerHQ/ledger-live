@@ -341,3 +341,44 @@ describe("listOperations — Shadownet Paris staking ops", () => {
     expect(match).toEqual(expected);
   });
 });
+
+describe("listOperations — mainnet origination ops", () => {
+  // This account deployed 4 contracts — origination ops were previously silently dropped.
+  const ORIGINATOR = "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb";
+
+  let originalGetCoinConfig: () => TezosCoinConfig;
+
+  beforeAll(() => {
+    originalGetCoinConfig = coinConfig.getCoinConfig;
+    coinConfig.setCoinConfig(mainnetConfig);
+  });
+
+  afterAll(() => {
+    if (originalGetCoinConfig) {
+      coinConfig.setCoinConfig(originalGetCoinConfig);
+    }
+  });
+
+  it("surfaces origination operations with correct fees and ledgerOpType", async () => {
+    // Fetch with a high limit to get all ops in one page (account has ~234 ops)
+    const [operations] = await listOperations(ORIGINATOR, {
+      sort: "Ascending",
+      minHeight: 0,
+      limit: 500,
+    });
+
+    const originations = operations.filter(op => op.details?.ledgerOpType === "ORIGINATION");
+    expect(originations.length).toBeGreaterThanOrEqual(4);
+    for (const op of originations) {
+      expect(op.type).toBe("FEES");
+      expect(op.value).toBe(0n);
+      expect(op.tx.fees).toBeGreaterThan(0n);
+      expect(op.tx.feesPayer).toBe(ORIGINATOR);
+      expect(op.senders).toContain(ORIGINATOR);
+    }
+
+    // Total origination fees should be at least the known historical balance gap (~5.48M mutez)
+    const totalFees = originations.reduce((sum, op) => sum + op.tx.fees, 0n);
+    expect(totalFees).toBeGreaterThanOrEqual(5_480_510n);
+  });
+});

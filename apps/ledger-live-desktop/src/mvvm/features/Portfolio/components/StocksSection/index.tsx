@@ -5,7 +5,7 @@ import { AssetSection } from "LLD/features/Assets/components/AssetsSection";
 import { useStocksSectionViewModel } from "./useStocksSectionViewModel";
 import { usePortfolioStocksViewModel } from "./usePortfolioStocksViewModel";
 
-const STOCKS_PORTFOLIO_LIMIT = 20;
+const STOCKS_PORTFOLIO_LIMIT = 40;
 
 export const StocksSection = () => {
   const { navigateToAsset, onSeeAll } = useStocksSectionViewModel();

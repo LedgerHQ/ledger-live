@@ -24,6 +24,7 @@ export {
   getMaxDelegationAvailable,
   getMaxEstimatedBalance,
   canUndelegate,
+  canWithdraw,
   canDelegate,
   canRedelegate,
   canCompound,

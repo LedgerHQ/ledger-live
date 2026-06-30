@@ -9,12 +9,14 @@ import {
   FeatureFlagPreview,
   MainFeatureToggle,
   TourSection,
+  Q2TourSection,
 } from "./components";
 import { Divider } from "@ledgerhq/lumen-ui-react";
 import {
   useWalletV4TourDrawerViewModel,
   WalletV4TourDialog,
 } from "LLD/features/WalletV4Tour/Drawer";
+import { Q2TourDialog, useQ2TourDrawerViewModel } from "LLD/features/Q2Tour";
 export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevToolContentProps) => {
   const { t } = useTranslation();
   const {
@@ -23,13 +25,24 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
     params,
     allEnabled,
     hasSeenWalletV4Tour,
+    hasSeenQ2Tour,
     handleToggleAll,
     handleToggleEnabled,
     handleToggleParam,
     handleToggleHasSeenTour,
+    handleToggleQ2TourHasSeen,
   } = useWalletFeaturesDevToolViewModel();
   const { isDialogOpen, handleOpenDialog, closeDrawer, completeDrawer, onSlideChange } =
     useWalletV4TourDrawerViewModel();
+  const {
+    isDialogOpen: isQ2TourOpen,
+    handleOpenDialog: handleOpenQ2Tour,
+    closeDrawer: closeQ2Tour,
+    dismissDrawer: dismissQ2Tour,
+    completeDrawer: completeQ2Tour,
+    onSlideChange: onQ2TourSlideChange,
+    onContinueClick: onQ2TourContinueClick,
+  } = useQ2TourDrawerViewModel();
 
   return (
     <div className="flex flex-col gap-2 pt-2">
@@ -65,6 +78,12 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
             </div>
           </div>
 
+          <Q2TourSection
+            hasSeen={hasSeenQ2Tour}
+            onToggleHasSeen={handleToggleQ2TourHasSeen}
+            onOpenDrawer={handleOpenQ2Tour}
+          />
+
           <TourSection
             hasSeenTour={hasSeenWalletV4Tour}
             onToggleHasSeenTour={handleToggleHasSeenTour}
@@ -76,6 +95,15 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
             onClose={closeDrawer}
             onComplete={completeDrawer}
             onSlideChange={onSlideChange}
+          />
+
+          <Q2TourDialog
+            isOpen={isQ2TourOpen}
+            onHeaderClose={closeQ2Tour}
+            onDismiss={dismissQ2Tour}
+            onContinueClick={onQ2TourContinueClick}
+            onComplete={completeQ2Tour}
+            onSlideChange={onQ2TourSlideChange}
           />
 
           <div className="flex gap-4">

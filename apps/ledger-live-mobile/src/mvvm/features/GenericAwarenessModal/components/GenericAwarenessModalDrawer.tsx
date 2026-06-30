@@ -1,9 +1,10 @@
 import React from "react";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { StyleSheet } from "react-native";
+import { FeatureIntroLayout } from "LLM/components/FeatureIntroLayout";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
 import { CarouselLayout } from "./CarouselLayout";
-import { FeatureIntroLayout } from "./FeatureIntroLayout";
 import { PromptLayout } from "./PromptLayout";
 import {
   GenericAwarenessModalLayout,
@@ -11,7 +12,6 @@ import {
 } from "@ledgerhq/live-common/genericAwarenessModal";
 import type {
   CarouselViewModel,
-  FeatureIntroViewModel,
   PromptViewModel,
 } from "../screens/useGenericAwarenessModalDrawerViewModel";
 

@@ -8,6 +8,7 @@ import {
   canDelegate,
   canRedelegate,
   canUndelegate,
+  canWithdraw,
   getRedelegation,
   getValidatorExplorerUrl,
   mapDelegations,
@@ -352,11 +353,8 @@ function Delegations({ account }: { account: StakingAccount }) {
 
     // Withdraw only applies to chains with an explicit finalization slot (Monad carries a
     // withdrawId); other EVM chains auto-return funds once the timelock completes.
-    const canWithdraw =
-      !delegation &&
-      undelegation?.withdrawId !== undefined &&
-      new Date(undelegation.completionDate).getTime() <= Date.now();
-    if (canWithdraw) {
+    const withdrawable = !delegation && !!undelegation && canWithdraw(undelegation);
+    if (withdrawable) {
       result.push({
         label: t("delegation.actions.withdraw"),
         Icon: (props: IconProps) => (

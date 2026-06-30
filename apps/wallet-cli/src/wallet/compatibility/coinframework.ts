@@ -3,8 +3,8 @@
 
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { createLocalEvmApi } from "@ledgerhq/live-common/bridge/generic-coin-framework/api/local/evm";
-import evmBridge from "@ledgerhq/live-common/bridge/generic-coin-framework/families/evm/bridge";
+import { createLocalEvmApi } from "@ledgerhq/live-common/families/evm/coinModuleApi";
+import evmBridge from "@ledgerhq/live-common/families/evm/bridge/api";
 import type { Operation as CoreOperation } from "@ledgerhq/coin-module-framework/api/types";
 import {
   extractBalance,

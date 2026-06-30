@@ -58,6 +58,8 @@ import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError"
 import { urls } from "~/config/urls";
 import { closeAllModal } from "~/renderer/actions/modals";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
+import { setShouldResumeAddAccountAfterOnboarding } from "~/renderer/reducers/onboarding";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Animation from "~/renderer/animations";
@@ -748,7 +750,15 @@ export const renderAlreadySendingApduError = ({
 };
 
 export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
-  ({ t, device }: { t: TFunction; device?: Device | null }) => {
+  ({
+    t,
+    device,
+    location,
+  }: {
+    t: TFunction;
+    device?: Device | null;
+    location?: HOOKS_TRACKING_LOCATIONS;
+  }) => {
     const productName = device ? getDeviceModel(device.modelId).productName : null;
     const navigate = useNavigate();
     const { setDrawer } = useContext(context);
@@ -756,6 +766,11 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
 
     const redirectToOnboarding = useCallback(() => {
       setTrackingSource("device action open onboarding button");
+      // The Add Account flow brought the user here without a usable device. Remember the
+      // intent so we can resume it once the user lands back on the portfolio after onboarding.
+      if (location === HOOKS_TRACKING_LOCATIONS.addAccountModal) {
+        dispatch(setShouldResumeAddAccountAfterOnboarding(true));
+      }
       dispatch(closeAllModal());
       setDrawer(undefined);
       if (!device?.modelId) {
@@ -767,7 +782,7 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
             : "/onboarding",
         );
       }
-    }, [device?.modelId, dispatch, navigate, setDrawer]);
+    }, [device?.modelId, dispatch, location, navigate, setDrawer]);
 
     return (
       <Wrapper id="error-device-not-onboarded">

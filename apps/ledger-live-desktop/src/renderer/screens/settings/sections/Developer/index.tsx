@@ -42,6 +42,8 @@ import AnalyticsConsentOptInDevTool from "./AnalyticsConsentOptInDevTool";
 import { AnalyticsConsentOptInDevScreen } from "./AnalyticsConsentOptInDevTool/AnalyticsConsentOptInDevScreen";
 import GenericAwarenessModalDevTool from "./GenericAwarenessModalDevTool";
 import GenericAwarenessModalDevScreen from "./GenericAwarenessModalDevTool/screens/GenericAwarenessModalDevScreen";
+import InfoStateDevTool from "./InfoStateDevTool";
+import InfoStateDevScreen from "./InfoStateDevTool/screens/InfoStateDevScreen";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -147,6 +149,7 @@ const Default = () => {
       <FeaturesAndFlowsDevTool />
       <AnalyticsConsentOptInDevTool />
       <GenericAwarenessModalDevTool />
+      <InfoStateDevTool />
       <ModularDrawerDevTool />
       <CryptoAssetsListDevTool />
       <MockAccountGeneratorSection />
@@ -161,6 +164,7 @@ const SectionDeveloper = () => (
       <Route path="custom-locksscreen-assets" element={<CustomLockScreenAssets />} />
       <Route path="analytics-consent-opt-in-qa" element={<AnalyticsConsentOptInDevScreen />} />
       <Route path="generic-awareness-modal-qa" element={<GenericAwarenessModalDevScreen />} />
+      <Route path="info-state-qa" element={<InfoStateDevScreen />} />
       <Route path="*" element={<Default />} />
     </Routes>
   </>

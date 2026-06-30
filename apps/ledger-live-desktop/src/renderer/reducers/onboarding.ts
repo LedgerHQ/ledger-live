@@ -9,6 +9,7 @@ export interface OnboardingState {
   isOnboardingReceiveFlow: boolean;
   isOnboardingReceiveSuccess: boolean;
   isSkipDrawerOpen: boolean;
+  shouldResumeAddAccountAfterOnboarding: boolean;
 }
 
 /*
@@ -20,6 +21,7 @@ const initialState: OnboardingState = {
   isOnboardingReceiveFlow: false,
   isOnboardingReceiveSuccess: false,
   isSkipDrawerOpen: false,
+  shouldResumeAddAccountAfterOnboarding: false,
 };
 
 const onboardingSlice = createSlice({
@@ -39,6 +41,9 @@ const onboardingSlice = createSlice({
     setSkipDrawerVisibility: (state, action: PayloadAction<boolean>) => {
       state.isSkipDrawerOpen = action.payload;
     },
+    setShouldResumeAddAccountAfterOnboarding: (state, action: PayloadAction<boolean>) => {
+      state.shouldResumeAddAccountAfterOnboarding = action.payload;
+    },
   },
 });
 
@@ -52,8 +57,14 @@ export const onboardingReceiveFlowSelector = (state: State) =>
   state.onboarding.isOnboardingReceiveFlow;
 export const onboardingReceiveSuccessSelector = (state: State) =>
   state.onboarding.isOnboardingReceiveSuccess;
+export const shouldResumeAddAccountAfterOnboardingSelector = (state: State) =>
+  state.onboarding.shouldResumeAddAccountAfterOnboarding;
 
-export const { setIsOnboardingReceiveFlow, setOnboardingSyncFlow, setSkipDrawerVisibility } =
-  onboardingSlice.actions;
+export const {
+  setIsOnboardingReceiveFlow,
+  setOnboardingSyncFlow,
+  setSkipDrawerVisibility,
+  setShouldResumeAddAccountAfterOnboarding,
+} = onboardingSlice.actions;
 
 export default onboardingSlice.reducer;

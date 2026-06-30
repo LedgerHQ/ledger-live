@@ -9,9 +9,19 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { validateIntent } from "../validateIntent";
+import type { ChainAPI } from "../../network";
+import { getMaybeTokenMint } from "../../network/chain/web3";
+
+jest.mock("../../network/chain/web3", () => ({
+  __esModule: true,
+  getMaybeTokenMint: jest.fn(),
+}));
+
+const mockedGetMaybeTokenMint = getMaybeTokenMint as jest.MockedFunction<typeof getMaybeTokenMint>;
 
 const SENDER = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 const RECIPIENT = "7VHUFJHWu2CuExkJcJrzhQPJ2oygupTWkL2A2For4BmE";
@@ -390,6 +400,179 @@ describe("validateIntent", () => {
       );
 
       expect(result.amount).toBe(0n);
+    });
+
+    describe("native SOL coverage for ATA rent + fee (via api)", () => {
+      const FEE = 5000n;
+      const CLASSIC_ATA_RENT = 2_039_280n;
+      const TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE = 2_157_600n;
+
+      function makeFakeApi(opts: {
+        ataExists: boolean;
+        rentLamports?: number;
+        rentByDataLength?: Record<number, number>;
+      }): ChainAPI {
+        return {
+          findAssocTokenAccAddress: jest.fn(async () => "FakeAtaAddress"),
+          getBalance: jest.fn(async () => (opts.ataExists ? 1n : 0n)),
+          getMinimumBalanceForRentExemption: jest.fn(async (dataLength: number) => {
+            if (opts.rentByDataLength && dataLength in opts.rentByDataLength) {
+              return opts.rentByDataLength[dataLength];
+            }
+            if (opts.rentLamports !== undefined) return opts.rentLamports;
+            throw new Error(`unexpected dataLength ${dataLength} in test`);
+          }),
+        } as unknown as ChainAPI;
+      }
+
+      function makeMint(program: "spl-token" | "spl-token-2022", extensions: string[] = []) {
+        return {
+          onChainAcc: { data: { program } },
+          info: { extensions: extensions.map(extension => ({ extension })) },
+        } as Awaited<ReturnType<typeof getMaybeTokenMint>>;
+      }
+
+      function balancesWithNative(nativeValue: bigint, locked: bigint = 890_880n): Balance[] {
+        return [
+          { value: nativeValue, asset: { type: "native" }, locked },
+          { value: 10_000_000n, asset: { type: "spl-token", assetReference: USDC_MINT } },
+        ];
+      }
+
+      beforeEach(() => {
+        mockedGetMaybeTokenMint.mockReset();
+      });
+
+      it("packs NotEnoughGas when spendable equals classic ATA rent + fee but the Token-2022 ATA needs more SOL", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(
+          makeMint("spl-token-2022", ["transferFeeConfig"]),
+        );
+        const api = makeFakeApi({
+          ataExists: false,
+          rentLamports: Number(TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE),
+        });
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(2_935_160n),
+          { value: FEE },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
+        expect((result.errors.gasPrice as Error & { fees?: string }).fees).toBe(
+          (TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE + FEE).toString(),
+        );
+      });
+
+      it("does not pack NotEnoughGas when spendable covers mint-aware ATA rent + fee", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(
+          makeMint("spl-token-2022", ["transferFeeConfig"]),
+        );
+        const api = makeFakeApi({
+          ataExists: false,
+          rentLamports: Number(TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE),
+        });
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(TOKEN_2022_ATA_RENT_WITH_TRANSFER_FEE + FEE + 890_880n),
+          { value: FEE },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toBeUndefined();
+      });
+
+      it("packs NotEnoughGas when classic SPL ATA needs to be created and spendable can't cover rent + fee", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(makeMint("spl-token"));
+        const api = makeFakeApi({
+          ataExists: false,
+          rentLamports: Number(CLASSIC_ATA_RENT),
+        });
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(CLASSIC_ATA_RENT + FEE - 1n + 890_880n),
+          { value: FEE },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
+      });
+
+      it("does not require ATA rent when the recipient's ATA already exists", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(makeMint("spl-token"));
+        const api = makeFakeApi({
+          ataExists: true,
+          rentByDataLength: {},
+        });
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(FEE + 890_880n),
+          { value: FEE },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toBeUndefined();
+        expect(api.getMinimumBalanceForRentExemption).not.toHaveBeenCalled();
+      });
+
+      it("packs NotEnoughGas when spendable is zero, regardless of fee value", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(makeMint("spl-token"));
+        const api = makeFakeApi({
+          ataExists: true,
+          rentByDataLength: {},
+        });
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(890_880n),
+          { value: 0n },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toBeInstanceOf(NotEnoughGas);
+      });
+
+      it("skips the native coverage check when api is not provided (back-compat)", async () => {
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(0n),
+          { value: FEE },
+        );
+
+        expect(result.errors.gasPrice).toBeUndefined();
+        expect(mockedGetMaybeTokenMint).not.toHaveBeenCalled();
+      });
+
+      it("skips the native coverage check when recipient address is invalid", async () => {
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n, recipient: "not-a-valid-address" }),
+          balancesWithNative(0n),
+          { value: FEE },
+          makeFakeApi({ ataExists: false, rentByDataLength: {} }),
+        );
+
+        expect(result.errors.recipient).toBeInstanceOf(InvalidAddress);
+        expect(result.errors.gasPrice).toBeUndefined();
+        expect(mockedGetMaybeTokenMint).not.toHaveBeenCalled();
+      });
+
+      it("bails out silently when getMaybeTokenMint returns an Error (no gasPrice noise)", async () => {
+        mockedGetMaybeTokenMint.mockResolvedValueOnce(new Error("network failed") as any);
+        const api = makeFakeApi({ ataExists: false, rentByDataLength: {} });
+
+        const result = await validateIntent(
+          makeTokenIntent({ amount: 1n }),
+          balancesWithNative(0n),
+          { value: FEE },
+          api,
+        );
+
+        expect(result.errors.gasPrice).toBeUndefined();
+      });
     });
   });
 });

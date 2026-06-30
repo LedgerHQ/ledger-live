@@ -17,12 +17,22 @@ jest.mock("react-router", () => ({
   useLocation: () => ({ pathname: "/asset/bitcoin" }),
 }));
 
+const mockOpenAddAccountFlow = jest.fn();
+const mockOpenAssetFlow = jest.fn();
+
 /** Stubs the add-account flow so this suite does not load the full drawer/modal dependency graph. */
 jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow", () => ({
   useOpenAssetFlow: () => ({
-    openAddAccountFlow: jest.fn(),
-    openAssetFlow: jest.fn(),
+    openAddAccountFlow: mockOpenAddAccountFlow,
+    openAssetFlow: mockOpenAssetFlow,
   }),
+}));
+
+const mockNetworkLedgerIds = jest.fn<string[], []>(() => []);
+
+/** Stubs the DADA network resolution so this suite does not hit the assets catalog. */
+jest.mock("LLD/features/AssetDetail/hooks/useReceiveNetworkLedgerIds", () => ({
+  useReceiveNetworkLedgerIds: () => mockNetworkLedgerIds(),
 }));
 
 describe("useAddressListViewModel", () => {
@@ -30,6 +40,9 @@ describe("useAddressListViewModel", () => {
 
   beforeEach(() => {
     mockNavigate.mockClear();
+    mockOpenAddAccountFlow.mockClear();
+    mockOpenAssetFlow.mockClear();
+    mockNetworkLedgerIds.mockReturnValue([]);
   });
 
   it("exposes address section labels", () => {
@@ -112,4 +125,39 @@ describe("useAddressListViewModel", () => {
       expect(mockNavigate).toHaveBeenCalledWith(getAccountsSidebarPath(shouldDisplayAssetSection));
     },
   );
+
+  it("opens the network-aware asset flow with the resolved network ledger ids", () => {
+    mockNetworkLedgerIds.mockReturnValue(["ethereum", "base", "arbitrum", "optimism"]);
+
+    const { result } = renderHook(() =>
+      useAddressListViewModel(buildDistributionItem({ currency: btc, accounts: [] })),
+    );
+
+    act(() => {
+      result.current.onAddAddress();
+    });
+
+    expect(mockOpenAssetFlow).toHaveBeenCalledWith(undefined, [
+      "ethereum",
+      "base",
+      "arbitrum",
+      "optimism",
+    ]);
+    expect(mockOpenAddAccountFlow).not.toHaveBeenCalled();
+  });
+
+  it("falls back to the single-currency add-account flow when no networks are resolved", () => {
+    mockNetworkLedgerIds.mockReturnValue([]);
+
+    const { result } = renderHook(() =>
+      useAddressListViewModel(buildDistributionItem({ currency: btc, accounts: [] })),
+    );
+
+    act(() => {
+      result.current.onAddAddress();
+    });
+
+    expect(mockOpenAddAccountFlow).toHaveBeenCalledWith(btc);
+    expect(mockOpenAssetFlow).not.toHaveBeenCalled();
+  });
 });

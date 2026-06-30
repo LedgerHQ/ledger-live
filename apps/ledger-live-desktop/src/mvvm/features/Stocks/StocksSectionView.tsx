@@ -7,10 +7,12 @@ import {
   SubheaderTitle,
   SubheaderShowMore,
 } from "@ledgerhq/lumen-ui-react";
+import { HorizontalScroll } from "LLD/components/HorizontalScroll";
 import { StockPill } from "./components/StockPill";
 import { StocksSkeleton } from "./components/StocksSkeleton";
 import { splitIntoTwoRows } from "./utils/splitIntoTwoRows";
-import { StocksHeaderVariant, StocksSectionViewProps } from "./types";
+import type { AssetNavigationMarketState } from "LLD/features/Assets/types";
+import type { StockSuggestion, StocksHeaderVariant, StocksSectionViewProps } from "./types";
 
 function StocksHeader({
   variant,
@@ -57,6 +59,46 @@ function StocksHeader({
   );
 }
 
+function StocksList({
+  data,
+  navigateToAsset,
+  listClassName,
+  scrollContainerClassName,
+  hideListGradient,
+}: Readonly<{
+  data: StockSuggestion[];
+  navigateToAsset: (currencyId: string, marketState?: AssetNavigationMarketState) => void;
+  listClassName?: string;
+  scrollContainerClassName?: string;
+  hideListGradient?: boolean;
+}>) {
+  const rows = splitIntoTwoRows(data);
+
+  return (
+    <HorizontalScroll
+      data-testid="stocks-list"
+      scrollContainerTestId="stocks-scroll-container"
+      className={listClassName}
+      scrollContainerClassName={scrollContainerClassName}
+      hideGradient={hideListGradient}
+    >
+      <div className="flex w-max flex-col gap-8">
+        {rows.map((rowStocks, rowIndex) => (
+          <div
+            key={rowIndex === 0 ? "top" : "bottom"}
+            className="flex gap-8"
+            data-testid="stocks-row"
+          >
+            {rowStocks.map(stock => (
+              <StockPill key={stock.id} stock={stock} onClick={navigateToAsset} />
+            ))}
+          </div>
+        ))}
+      </div>
+    </HorizontalScroll>
+  );
+}
+
 export function StocksSectionView({
   data,
   isLoading,
@@ -64,30 +106,31 @@ export function StocksSectionView({
   navigateToAsset,
   onSeeAll,
   headerVariant = "showMore",
+  listClassName,
+  scrollContainerClassName,
+  hideListGradient,
 }: Readonly<StocksSectionViewProps>) {
   if (!isLoading && data.length === 0) {
     return null;
   }
 
-  const rows = splitIntoTwoRows(data);
-
   return (
     <div className="flex flex-col gap-8" data-testid="stocks-section">
       <StocksHeader variant={headerVariant} onSeeAll={onSeeAll} />
       {isLoading ? (
-        <StocksSkeleton count={limit} />
+        <StocksSkeleton
+          count={limit}
+          className={listClassName}
+          contentClassName={scrollContainerClassName}
+        />
       ) : (
-        <div className="scrollbar-none overflow-x-auto" data-testid="stocks-list">
-          <div className="flex w-max flex-col gap-8">
-            {rows.map((rowStocks, rowIndex) => (
-              <div key={`${rowStocks.join("-")}-${rowIndex}`} className="flex gap-8">
-                {rowStocks.map(stock => (
-                  <StockPill key={stock.id} stock={stock} onClick={navigateToAsset} />
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
+        <StocksList
+          data={data}
+          navigateToAsset={navigateToAsset}
+          listClassName={listClassName}
+          scrollContainerClassName={scrollContainerClassName}
+          hideListGradient={hideListGradient}
+        />
       )}
     </div>
   );

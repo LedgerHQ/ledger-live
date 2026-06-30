@@ -38,7 +38,7 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         ],
       },
       sidecar: {
-        url: "https://polkadot-asset-hub-sidecar.coin.ledger.com",
+        url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
       },
       node: {
         url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com",
@@ -63,7 +63,7 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         ],
       },
       sidecar: {
-        url: "https://polkadot-westend-sidecar.coin.ledger.com/rc",
+        url: "https://polkadot-westend-rest-api.coin.ledger.com/v1/rc",
       },
       node: {
         url: "https://polkadot-westend-fullnodes.api.live.ledger.com",
@@ -84,7 +84,7 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         ],
       },
       sidecar: {
-        url: "https://polkadot-westend-sidecar.coin.ledger.com",
+        url: "https://polkadot-westend-rest-api.coin.ledger.com/v1",
       },
       node: {
         url: "https://polkadot-westend-asset-hub-fullnodes.api.live.ledger.com",

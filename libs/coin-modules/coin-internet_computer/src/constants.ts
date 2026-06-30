@@ -1,0 +1,1 @@
+export const ICP_DUMMY_ADDRESS = "454109defbdd79d7283cdde63b8dab4d48f590b8b2923574cca0356ab6958b2b";

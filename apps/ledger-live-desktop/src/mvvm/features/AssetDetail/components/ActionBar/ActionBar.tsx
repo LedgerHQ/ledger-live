@@ -21,17 +21,18 @@ export function ActionBarView({ viewModel }: ActionBarViewProps) {
         {viewModel.receiveLabel}
       </Button>
 
-      <Button
-        appearance="transparent"
-        size="sm"
-        icon={Plus}
-        onClick={viewModel.onBuy}
-        disabled={!viewModel.isBuyEnabled}
-        className="rounded-full"
-        data-testid="asset-detail-action-buy"
-      >
-        {viewModel.buyLabel}
-      </Button>
+      {viewModel.isBuyEnabled && (
+        <Button
+          appearance="transparent"
+          size="sm"
+          icon={Plus}
+          onClick={viewModel.onBuy}
+          className="rounded-full"
+          data-testid="asset-detail-action-buy"
+        >
+          {viewModel.buyLabel}
+        </Button>
+      )}
 
       <Button
         appearance="transparent"

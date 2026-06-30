@@ -100,6 +100,18 @@ describe("resolveDistributionItem", () => {
     expect(result).toBe(usdc);
   });
 
+  it("matches an uppercase currency.id from a lowercased decoded route param", () => {
+    const lbry = item(cryptoCurrency("LBRY"));
+    const result = resolveDistributionItem(
+      base({
+        routeAssetId: "LBRY",
+        decodedAssetId: "lbry",
+        distribution: { list: [lbry] },
+      }),
+    );
+    expect(result).toBe(lbry);
+  });
+
   it("matches via the item's networks list when only a network-specific id is given", () => {
     const usdt = item(cryptoCurrency("usdt"), [
       "ethereum/erc20/usd_tether__erc20_",

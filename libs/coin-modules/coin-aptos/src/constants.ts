@@ -115,3 +115,5 @@ export enum TOKEN_TYPE {
 
 export const DEFAULT_GAS = new BigNumber(200);
 export const DEFAULT_GAS_PRICE = new BigNumber(100);
+
+export const APTOS_DUMMY_ADDRESS = "0x000000000000000000000000000000000000dEaD";

@@ -5,12 +5,14 @@ import { tzkt } from "../network";
 import {
   type APIDelegationType,
   type APIOperation,
+  type APIOriginationType,
   type APIRevealType,
   type APIStakingType,
   type APITokenTransfer,
   type APITransactionType,
   AccountsGetOperationsOptions,
   isAPIDelegationType,
+  isAPIOriginationType,
   isAPIRevealType,
   isAPIStakingType,
   isAPITransactionType,
@@ -216,13 +218,14 @@ function buildParentMap(ops: APIOperation[]): Map<number, APITransactionType> {
 function keepNativeOp(
   op: APIOperation,
   address: string,
-): op is APITransactionType | APIDelegationType | APIRevealType | APIStakingType {
+): op is ConvertibleOperation {
   if (
     !(
       isAPITransactionType(op) ||
       isAPIDelegationType(op) ||
       isAPIRevealType(op) ||
-      isAPIStakingType(op)
+      isAPIStakingType(op) ||
+      isAPIOriginationType(op)
     )
   ) {
     return false;
@@ -242,9 +245,7 @@ function convertNativeOps(
   stakingBlockHashes: Map<number, string>,
 ): Operation[] {
   return ops
-    .filter((op): op is APITransactionType | APIDelegationType | APIRevealType | APIStakingType =>
-      keepNativeOp(op, address),
-    )
+    .filter((op): op is ConvertibleOperation => keepNativeOp(op, address))
     .map(op => convertOperation(address, op, stakingBlockHashes));
 }
 
@@ -361,7 +362,7 @@ export async function listOperations(
   return [sortedOperations, nextToken];
 }
 
-type ConvertibleOperation = APITransactionType | APIDelegationType | APIRevealType | APIStakingType;
+type ConvertibleOperation = APITransactionType | APIDelegationType | APIRevealType | APIStakingType | APIOriginationType;
 
 /**
  * TzKT omits `block` on staking ops returned by /accounts/{addr}/operations.
@@ -397,6 +398,7 @@ function resolveBlockHash(
 
 function resolveTargetAddress(operation: ConvertibleOperation): string | undefined {
   if (isAPITransactionType(operation)) return operation.target?.address;
+  if (isAPIOriginationType(operation)) return operation.originatedContract?.address;
   if (isAPIDelegationType(operation)) {
     return operation.newDelegate?.address || operation.prevDelegate?.address;
   }
@@ -423,6 +425,7 @@ function resolveStakingAddresses(op: APIStakingType): {
 // `BigInt(undefined)` throws and breaks sync. Fall back per-shape.
 function resolveAmount(operation: ConvertibleOperation): bigint {
   if (isAPIRevealType(operation) || isAPIDelegationType(operation)) return 0n;
+  if (isAPIOriginationType(operation)) return BigInt(operation.contractBalance ?? 0);
   if (isAPIStakingType(operation)) {
     return BigInt(operation.amount ?? operation.requestedAmount ?? 0);
   }
@@ -440,6 +443,7 @@ function resolveNormalizedType(
   }
   if (isAPIStakingType(operation)) return STAKING_ACTION_TO_OP_TYPE[operation.action];
   if (isAPIRevealType(operation)) return "REVEAL";
+  if (isAPIOriginationType(operation)) return operation.contractBalance > 0 ? "OUT" : "FEES";
   if (!isAPITransactionType(operation)) {
     log("coin:tezos", "(logic/operations): Unknown operation type, defaulting to OUT");
     return "OUT";
@@ -460,6 +464,8 @@ function getLedgerOpType(
     return operation.newDelegate?.address ? "DELEGATE" : "UNDELEGATE";
   } else if (isAPIRevealType(operation)) {
     return "REVEAL";
+  } else if (isAPIOriginationType(operation)) {
+    return "ORIGINATION";
   } else if (isAPIStakingType(operation)) {
     return STAKING_ACTION_TO_OP_TYPE[operation.action];
   } else if (normalizedType === "FEES") {
@@ -482,7 +488,7 @@ function convertOperation(
     : sender?.address;
 
   const targetAddress = resolveTargetAddress(operation);
-  // reveal has no target by design; staking resolves senders/recipients separately.
+  // reveal has no meaningful target; staking resolves senders/recipients separately.
   if (!targetAddress && !isAPIRevealType(operation) && !isAPIStakingType(operation)) {
     log("coin:tezos", "(logic/operations): No target address found for operation", operation);
   }

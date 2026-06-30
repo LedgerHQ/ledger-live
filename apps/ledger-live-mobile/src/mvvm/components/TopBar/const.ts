@@ -24,5 +24,9 @@ export const expectedNavigationParams: TopBarNavigationParams = {
   },
   search: {
     name: NavigatorName.GlobalSearch,
+    params: {
+      screen: ScreenName.GlobalSearch,
+      params: { source: ScreenName.Portfolio },
+    },
   },
 };

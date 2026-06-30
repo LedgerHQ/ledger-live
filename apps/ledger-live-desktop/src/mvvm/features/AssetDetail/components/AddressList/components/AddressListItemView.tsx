@@ -29,7 +29,9 @@ export function AddressListItemView({ vm }: AddressListItemViewProps) {
       <ListItemTrailing>
         <ListItemContent className="items-end text-end">
           <ListItemTitle>{vm.formattedCounterValue}</ListItemTitle>
-          <ListItemDescription>{vm.cryptoFormatted}</ListItemDescription>
+          <ListItemDescription data-testid={vm.balanceTestId}>
+            {vm.cryptoFormatted}
+          </ListItemDescription>
         </ListItemContent>
       </ListItemTrailing>
     </ListItem>

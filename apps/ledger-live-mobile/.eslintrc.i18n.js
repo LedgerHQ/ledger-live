@@ -31,6 +31,7 @@ module.exports = {
       files: [
         "src/**/*.test.{ts,tsx}",
         "src/screens/Settings/Debug/**/*",
+        "src/mvvm/features/**/Debug/**/*",
         "src/screens/FeatureFlagsSettings/**/*",
         "src/components/AnalyticsConsole/**/*",
         "src/screens/Settings/Experimental/**/*",

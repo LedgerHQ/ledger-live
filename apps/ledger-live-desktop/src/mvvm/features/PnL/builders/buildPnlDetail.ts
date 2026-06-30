@@ -8,7 +8,7 @@ export type BuildPnlDetailInput = {
   totalPnL: BigNumber;
   unrealisedPnL: BigNumber;
   realisedPnL: BigNumber;
-  formatFiat: (value: BigNumber) => string;
+  formatFiat: (value: BigNumber, alwaysShowSign?: boolean) => string;
   t: TFunction;
 };
 
@@ -36,17 +36,17 @@ export function buildPnlDetail({
       {
         title: t(key("unrealisedReturn.title")),
         description: t(key("unrealisedReturn.description")),
-        value: formatFiat(unrealisedPnL),
+        value: formatFiat(unrealisedPnL, true),
       },
       {
         title: t(key("realisedReturn.title")),
         description: t(key("realisedReturn.description")),
-        value: formatFiat(realisedPnL),
+        value: formatFiat(realisedPnL, true),
       },
       {
         title: t(key("totalReturn.title")),
         description: t(key("totalReturn.description")),
-        value: formatFiat(totalPnL),
+        value: formatFiat(totalPnL, true),
       },
     ],
   };

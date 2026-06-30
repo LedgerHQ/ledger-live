@@ -1,5 +1,5 @@
 import type { LineChartColor, LineChartPointMarker } from "LLM/components/LineChart";
-import type { TransactionChartGroup } from "./getTransactionPointMarkers";
+import type { TransactionChartGroup } from "@ledgerhq/asset-detail";
 
 type TranslateFn = (key: string, options?: { count: number }) => string;
 

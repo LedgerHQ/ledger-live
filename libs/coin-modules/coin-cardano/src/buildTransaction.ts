@@ -16,6 +16,7 @@ import {
   mergeTokens,
   isProtocolParamsValid,
   isTestnet,
+  toTyphonProtocolParams,
 } from "./logic";
 import { getNetworkParameters } from "./networks";
 import {
@@ -116,13 +117,13 @@ const buildSendTokenTransaction = async ({
       otherUtxos.push(u);
     }
   });
-  const sortedTokenUtxo = tokenUtxos.sort((a, b) => {
+  const sortedTokenUtxo = [...tokenUtxos].sort((a, b) => {
     const sendingTokenA = a.tokens.find(t => getTokenAssetId(t) === assetId) as Token;
     const sendingTokenB = b.tokens.find(t => getTokenAssetId(t) === assetId) as Token;
     const diff = sendingTokenB.amount.minus(sendingTokenA.amount);
     return diff.eq(0) ? 0 : diff.lt(0) ? -1 : 1;
   });
-  const sortedOtherUtxos = otherUtxos.sort(sortByAdaDesc);
+  const sortedOtherUtxos = [...otherUtxos].sort(sortByAdaDesc);
 
   let totalAddedTokenAmount = new BigNumber(0);
   const requiredMinAdaForTokens = TyphonUtils.calculateMinUtxoAmountBabbage(
@@ -222,8 +223,8 @@ const buildSendAdaTransaction = async ({
   const pureAdaUtxos = cardanoResources.utxos.filter(u => u.tokens.length === 0);
   const tokenBearingUtxos = cardanoResources.utxos.filter(u => u.tokens.length > 0);
 
-  const sortedPureAdaUtxos = pureAdaUtxos.sort(sortByAdaDesc);
-  const sortedTokenBearingUtxos = tokenBearingUtxos.sort(sortByAdaDesc);
+  const sortedPureAdaUtxos = [...pureAdaUtxos].sort(sortByAdaDesc);
+  const sortedTokenBearingUtxos = [...tokenBearingUtxos].sort(sortByAdaDesc);
   const sortedUtxos = [...sortedPureAdaUtxos, ...sortedTokenBearingUtxos];
 
   const selectedUtxos: Array<CardanoOutput> = [];
@@ -317,7 +318,7 @@ const buildDelegateTransaction = async ({
   };
   typhonTx.addCertificate(delegationCert);
 
-  const sortedUtxos = cardanoResources.utxos.sort(sortByAdaDesc);
+  const sortedUtxos = [...cardanoResources.utxos].sort(sortByAdaDesc);
 
   const transactionInputs: Array<TyphonTypes.Input> = [];
   let usedUtxoAdaAmount = new BigNumber(0);
@@ -375,7 +376,7 @@ const buildUndelegateTransaction = async ({
   };
   typhonTx.addCertificate(stakeKeyDeRegistrationCertificate);
 
-  const sortedUtxos = cardanoResources.utxos.sort(sortByAdaDesc);
+  const sortedUtxos = [...cardanoResources.utxos].sort(sortByAdaDesc);
 
   const transactionInputs: Array<TyphonTypes.Input> = [];
   let usedUtxoAdaAmount = new BigNumber(0);
@@ -413,28 +414,14 @@ export const buildTransaction = async (
   }
 
   const typhonTx = new TyphonTransaction({
-    protocolParams: {
-      minFeeA: new BigNumber(protocolParams.minFeeA),
-      minFeeB: new BigNumber(protocolParams.minFeeB),
-      stakeKeyDeposit: new BigNumber(protocolParams.stakeKeyDeposit),
-      lovelacePerUtxoWord: new BigNumber(protocolParams.lovelacePerUtxoWord),
-      collateralPercent: new BigNumber(protocolParams.collateralPercent),
-      priceSteps: new BigNumber(protocolParams.priceSteps),
-      priceMem: new BigNumber(protocolParams.priceMem),
-      languageView: protocolParams.languageView,
-      maxTxSize: Number(protocolParams.maxTxSize),
-      maxValueSize: Number(protocolParams.maxValueSize),
-      utxoCostPerByte: new BigNumber(protocolParams.utxoCostPerByte),
-      minFeeRefScriptCostPerByte: new BigNumber(protocolParams.minFeeRefScriptCostPerByte),
-    },
+    protocolParams: toTyphonProtocolParams(protocolParams),
   });
   const ttl = getTTL(account.currency.id);
   typhonTx.setTTL(ttl);
 
   // add ABSTAIN vote certificate when account has rewards but not the vote delegation
   if (
-    account.cardanoResources.delegation &&
-    account.cardanoResources.delegation.rewards.gt(0) &&
+    account.cardanoResources.delegation?.rewards.gt(0) &&
     !account.cardanoResources.delegation.dRepHex
   ) {
     const stakeCred = getAccountStakeCredential(account.xpub as string, account.index);

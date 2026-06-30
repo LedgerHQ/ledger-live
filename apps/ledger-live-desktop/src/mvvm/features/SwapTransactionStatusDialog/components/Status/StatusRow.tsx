@@ -13,6 +13,7 @@ type StatusRowProps = Readonly<{
   value: React.ReactNode;
   isLoading: boolean;
   lineStatus?: DisplayStatus;
+  testId?: string;
 }>;
 
 type StatusIconProps = Readonly<{
@@ -38,12 +39,16 @@ export function StatusRow({
   value,
   isLoading,
   lineStatus,
+  testId,
 }: StatusRowProps) {
   const titleContent = isLoading ? <Skeleton className="h-16 w-112 rounded-sm" /> : title;
   const subtitleContent = isLoading ? <Skeleton className="h-14 w-72 rounded-sm" /> : subtitle;
 
   return (
-    <div className="group/status-row grid grid-cols-[20px_minmax(0,1fr)_auto] grid-rows-2 gap-x-4 gap-y-4">
+    <div
+      data-testid={testId ? `${testId}-row` : undefined}
+      className="group/status-row grid grid-cols-[20px_minmax(0,1fr)_auto] grid-rows-2 gap-x-4 gap-y-4"
+    >
       <div
         className={cn("col-start-1 row-start-1 flex text-muted", {
           "text-success": status === "success",
@@ -53,7 +58,12 @@ export function StatusRow({
         <StatusIcon status={status} />
       </div>
       <span className="col-start-2 row-start-1 body-2-semi-bold text-base">{titleContent}</span>
-      <span className="col-start-3 row-start-1 body-2-semi-bold text-base">{value}</span>
+      <span
+        data-testid={testId ? `${testId}-amount` : undefined}
+        className="col-start-3 row-start-1 body-2-semi-bold text-base"
+      >
+        {value}
+      </span>
       <div className="col-start-1 row-start-2 flex justify-center group-last/status-row:hidden">
         <StatusLine status={lineStatus ?? status} />
       </div>

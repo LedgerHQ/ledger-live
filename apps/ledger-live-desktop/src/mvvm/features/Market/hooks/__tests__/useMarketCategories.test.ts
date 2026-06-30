@@ -1,7 +1,7 @@
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { useGetTrendingCategoriesQuery } from "@ledgerhq/live-common/market/state-manager/api";
-import type { MarketListCategory } from "~/renderer/reducers/market";
+import type { MarketListCategory, MarketState } from "~/renderer/reducers/market";
 import { track } from "~/renderer/analytics/segment";
 import { useMarketCategories } from "../useMarketCategories";
 
@@ -20,27 +20,40 @@ const assetDiscoverabilityOff = withFlagOverrides({
   lwdWallet40: { enabled: false },
 });
 
-const createMarketState = (category: MarketListCategory = "all") => ({
-  marketParams: {
-    range: "24h",
-    limit: 50,
-    starred: [],
-    order: Order.MarketCapDesc,
-    search: "",
-    liveCompatible: false,
-    page: 1,
-    counterCurrency: "USD",
-  },
-  currentPage: 1,
-  hideTransactionsOnChart: false,
-  category,
-});
+const createMarketState = (
+  category: MarketListCategory = "all",
+  overrides: Partial<MarketState> = {},
+): MarketState => {
+  const { marketParams: marketParamsOverrides, ...restOverrides } = overrides;
 
-const renderCategories = (category: MarketListCategory = "all", flags = assetDiscoverabilityOn) =>
+  return {
+    marketParams: {
+      range: "24h",
+      limit: 50,
+      starred: [],
+      order: Order.MarketCapDesc,
+      search: "",
+      liveCompatible: false,
+      page: 1,
+      counterCurrency: "USD",
+      ...marketParamsOverrides,
+    },
+    currentPage: 1,
+    hideTransactionsOnChart: false,
+    category,
+    ...restOverrides,
+  };
+};
+
+const renderCategories = (
+  category: MarketListCategory = "all",
+  flags = assetDiscoverabilityOn,
+  marketOverrides: Partial<MarketState> = {},
+) =>
   renderHook(() => useMarketCategories(), {
     initialState: {
       ...flags,
-      market: createMarketState(category),
+      market: createMarketState(category, marketOverrides),
     },
   });
 
@@ -68,6 +81,32 @@ describe("useMarketCategories", () => {
       category: "stocks",
       page: "Market",
     });
+  });
+
+  it("resets pagination when switching categories", () => {
+    const { result, store } = renderCategories("all", assetDiscoverabilityOn, {
+      marketParams: { page: 3 },
+      currentPage: 3,
+    });
+
+    act(() => result.current.onSelectCategory("stocks"));
+
+    expect(store.getState().market.marketParams.page).toBe(1);
+    expect(store.getState().market.currentPage).toBe(1);
+  });
+
+  it("resets sort to default when switching categories", () => {
+    const { result, store } = renderCategories("all", assetDiscoverabilityOn, {
+      marketParams: { order: Order.VolumeDesc },
+    });
+
+    act(() => result.current.onSelectCategory("stocks"));
+
+    expect(store.getState().market.marketParams.order).toBe(Order.MarketCapDesc);
+
+    act(() => result.current.onSelectCategory("all"));
+
+    expect(store.getState().market.marketParams.order).toBe(Order.MarketCapDesc);
   });
 
   it("does not change state when re-selecting the active category", () => {

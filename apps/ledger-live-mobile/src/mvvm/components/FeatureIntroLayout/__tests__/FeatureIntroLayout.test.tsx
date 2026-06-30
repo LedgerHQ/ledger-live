@@ -1,0 +1,114 @@
+import React from "react";
+import { render, screen } from "@tests/test-renderer";
+import { FeatureIntroLayout } from "..";
+import {
+  GenericAwarenessModalLayout,
+  type GenericAwarenessModalFeatureIntro,
+} from "@ledgerhq/live-common/genericAwarenessModal";
+import type { FeatureIntroViewModel } from "../types";
+
+const content: GenericAwarenessModalFeatureIntro = {
+  id: "featureIntro",
+  layout: GenericAwarenessModalLayout.FeatureIntro,
+  imageUrlLight: "https://example.com/feature-intro.png",
+  imageUrlDark: "",
+  title: "Connect a Ledger device",
+  subtitle: "Connect a device to unlock Ledger Wallet features.",
+  primaryButtonLabel: "Connect",
+  primaryButtonLink: "",
+  secondaryButtonLabel: "Buy your Ledger device",
+  secondaryButtonLink: "",
+  items: [
+    {
+      icon: "HandCoins",
+      title: "Full ownership",
+      subtitle: "Your private keys never leave the device.",
+    },
+    {
+      icon: "ShieldLock",
+      title: "Trade securely",
+      subtitle: "Verify transactions on a secure screen.",
+    },
+  ],
+  isReady: true,
+};
+
+describe("FeatureIntroLayout", () => {
+  const renderFeatureIntroLayout = (props?: {
+    readonly onClose?: () => void;
+    readonly onPrimaryPress?: () => void;
+    readonly onSecondaryPress?: () => void;
+    readonly content?: GenericAwarenessModalFeatureIntro;
+  }) => {
+    const viewModel: FeatureIntroViewModel = {
+      content: props?.content ?? content,
+      onPrimaryPress: props?.onPrimaryPress ?? jest.fn(),
+      onSecondaryPress: props?.onSecondaryPress ?? jest.fn(),
+    };
+
+    return render(
+      <FeatureIntroLayout onClose={props?.onClose ?? jest.fn()} viewModel={viewModel} />,
+    );
+  };
+
+  it("should render the feature intro layout", () => {
+    renderFeatureIntroLayout();
+
+    expect(screen.getByText("Connect a Ledger device")).toBeOnTheScreen();
+    expect(
+      screen.getByText("Connect a device to unlock Ledger Wallet features."),
+    ).toBeOnTheScreen();
+    expect(screen.getByText("Full ownership")).toBeOnTheScreen();
+    expect(screen.getByText("Your private keys never leave the device.")).toBeOnTheScreen();
+    expect(screen.getByText("Trade securely")).toBeOnTheScreen();
+    expect(screen.getByText("Verify transactions on a secure screen.")).toBeOnTheScreen();
+  });
+
+  it("should call onClose when action buttons are pressed", async () => {
+    const onClose = jest.fn();
+    const { user } = renderFeatureIntroLayout({ onClose });
+
+    await user.press(screen.getByText("Connect"));
+    await user.press(screen.getByText("Buy your Ledger device"));
+
+    expect(onClose).toHaveBeenCalledTimes(2);
+  });
+
+  it("should render the hero image container when themed urls are provided", () => {
+    renderFeatureIntroLayout();
+
+    expect(screen.getByTestId("generic-awareness-modal-feature-intro-hero")).toBeOnTheScreen();
+  });
+
+  it("should not render the hero image when no image is provided", () => {
+    renderFeatureIntroLayout({
+      content: {
+        ...content,
+        imageUrlLight: "",
+        imageUrlDark: "",
+      },
+    });
+
+    expect(
+      screen.queryByTestId("generic-awareness-modal-feature-intro-hero"),
+    ).not.toBeOnTheScreen();
+  });
+
+  it("should render with fallback icon when icon name is invalid", () => {
+    const contentWithInvalidIcon: GenericAwarenessModalFeatureIntro = {
+      ...content,
+      items: [
+        {
+          icon: "InvalidIcon",
+          title: "Fallback icon item",
+          subtitle: "This item still renders.",
+        },
+      ],
+    };
+
+    renderFeatureIntroLayout({ content: contentWithInvalidIcon });
+
+    expect(screen.getByText("Fallback icon item")).toBeOnTheScreen();
+    expect(screen.getByText("This item still renders.")).toBeOnTheScreen();
+  });
+});

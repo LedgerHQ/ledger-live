@@ -1,4 +1,4 @@
-## ledger key ring protocol
+# @ledgerhq/ledger-key-ring-protocol
 
 Ledger Key Ring Protocol layer.
 
@@ -18,6 +18,7 @@ and no network needed in CI.
 
 - **Snapshots** — `mocks/scenarios/<slug>.json`. Recorded once per scenario, they capture
   everything needed to replay it deterministically:
+
   - `apdus` — the device APDU exchanges (replayed via `openTransportReplayer`),
   - `http.transactions` — the trustchain-backend HTTP traffic (request + response),
   - `crypto` — the random bytes / keypairs generated, so the run is reproducible.
@@ -56,3 +57,16 @@ Set `RUN_EVEN_IF_SNAPSHOT_EXISTS=1` to run a scenario live without overwriting i
 (handy to check it still passes against staging). Speculos loopback traffic is filtered out
 of the snapshot, and compressed response bodies are decoded before being stored, so the
 replay can serve them as plain JSON.
+
+The hardware-specific integration lives in
+[../hw-ledger-key-ring-protocol](../hw-ledger-key-ring-protocol/README.md), and
+the deterministic E2E replay script is documented in
+[scripts/README.md](scripts/README.md).
+
+Run package commands from the repository root:
+
+```bash
+pnpm lkrp build
+pnpm lkrp test
+pnpm lkrp typecheck
+```

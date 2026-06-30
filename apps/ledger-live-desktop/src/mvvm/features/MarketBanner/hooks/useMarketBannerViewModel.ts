@@ -1,5 +1,6 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useMarketPerformers } from "@ledgerhq/live-common/market/hooks/useMarketPerformers";
+import { useTrendingPerformers } from "@ledgerhq/live-common/market/hooks/useTrendingPerformers";
 import { useMarketData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { filterMarketPerformersByAvailability } from "@ledgerhq/live-common/market/utils/index";
 import {
@@ -16,13 +17,14 @@ import {
   MARKET_PERFORMERS_SUPPORTED,
   MARKET_BANNER_REFRESH_RATE,
 } from "@ledgerhq/live-common/market/constants";
-import { useSelector } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import {
   counterValueCurrencySelector,
   starredMarketCoinsSelector,
 } from "~/renderer/reducers/settings";
 import {
   selectMarketBannerRanking,
+  setMarketBannerRanking,
   type MarketBannerRanking,
 } from "~/renderer/reducers/marketBanner";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
@@ -106,6 +108,29 @@ export function usePerformersBannerItems(
   };
 }
 
+// Trending is backed by the dedicated `/v3/currencies/trending` endpoint, which already returns a
+// curated, ordered list. Availability filtering is intentionally not applied so the banner mirrors
+// what is trending in the market.
+export function useTrendingBannerItems(options?: { skip?: boolean }): MarketBannerItems {
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+
+  const { data, isError, isLoading, isFetching } = useTrendingPerformers(
+    {
+      counterCurrency: counterValueCurrency.ticker,
+      refreshRate: MARKET_BANNER_REFRESH_RATE,
+    },
+    { skip: options?.skip },
+  );
+
+  const items = useMemo(() => (data ?? []).slice(0, MARKET_BANNER_ITEMS_COUNT), [data]);
+
+  return {
+    items,
+    isLoading: isLoading || (isFetching && !data),
+    isError: isError && !isFetching,
+  };
+}
+
 // Availability filtering is bypassed so a starred coin shows even when not swap-available.
 // The endpoint returns the whole market when no `ids` are sent, so the query is disabled when
 // there are no starred coins (or favorites is not active).
@@ -139,15 +164,37 @@ export function useFavoritesBannerItems(options?: { skip?: boolean }): MarketBan
 }
 
 export function useMarketBannerViewModel(): MarketBannerItems {
+  const dispatch = useDispatch();
   const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
   const persistedRanking = useSelector(selectMarketBannerRanking);
+  const hasStarred = useSelector(starredMarketCoinsSelector).length > 0;
   const ranking = shouldDisplayAssetDiscoverability
     ? persistedRanking
     : DEFAULT_RANKING_WITHOUT_DISCOVERABILITY;
-  const isFavorites = ranking === "favorites";
 
-  const performers = usePerformersBannerItems(ranking, { skip: isFavorites });
+  // A persisted "favorites" ranking is only valid while the user has starred coins; once the
+  // last one is removed, fall back to trending performers (and reset the stale value below).
+  const effectiveRanking: MarketBannerRanking =
+    ranking === "favorites" && !hasStarred ? "trending" : ranking;
+  const isFavorites = effectiveRanking === "favorites";
+  const isTrending = effectiveRanking === "trending";
+
+  // Reset the stale persisted "favorites" so the persisted state and the dropdown match the UI.
+  useEffect(() => {
+    if (ranking === "favorites" && !hasStarred) {
+      dispatch(setMarketBannerRanking("trending"));
+    }
+  }, [dispatch, ranking, hasStarred]);
+
+  const trending = useTrendingBannerItems({ skip: !isTrending });
+  // If the trending endpoint fails, fall back to gainers (sort "asc") so the banner never breaks.
+  const trendingFailed = isTrending && trending.isError;
+  const performers = usePerformersBannerItems(effectiveRanking, {
+    skip: isFavorites || (isTrending && !trendingFailed),
+  });
   const favorites = useFavoritesBannerItems({ skip: !isFavorites });
 
-  return isFavorites ? favorites : performers;
+  if (isFavorites) return favorites;
+  if (isTrending) return trendingFailed ? performers : trending;
+  return performers;
 }

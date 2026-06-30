@@ -9,8 +9,7 @@ import GenericError from "./GenericError";
 import { track } from "~/renderer/analytics/segment";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import FearAndGreed from "LLD/features/FearAndGreed";
-import { useHorizontalScroll } from "../hooks/useHorizontalScroll";
-import { ScrollArrowButton } from "./ScrollArrowButton";
+import { HorizontalScroll } from "LLD/components/HorizontalScroll";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 import { getMarketOrAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 import { MARKET_BANNER_TRACKING_SOURCE } from "../utils/constants";
@@ -24,7 +23,6 @@ type TrendingAssetsListProps = {
 export const TrendingAssetsList = ({ items, isLoading, isError }: TrendingAssetsListProps) => {
   const navigate = useNavigate();
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
-  const { scrollContainerRef, isAtStart, isAtEnd, scrollLeft, scrollRight } = useHorizontalScroll();
 
   const onAssetClick = useCallback(
     (id: string) => () => {
@@ -56,19 +54,15 @@ export const TrendingAssetsList = ({ items, isLoading, isError }: TrendingAssets
   }
 
   return (
-    <div className="group relative" data-testid="market-banner-carousel">
-      {!isAtStart && <ScrollArrowButton direction="left" onClick={scrollLeft} />}
-      <div
-        ref={scrollContainerRef}
-        data-testid="scroll-container"
-        className="scrollbar-none flex flex-col overflow-x-scroll py-2"
-      >
-        <div className="flex w-max items-stretch gap-8">
-          <FearAndGreed />
-          {assets}
-        </div>
+    <HorizontalScroll
+      data-testid="market-banner-carousel"
+      scrollContainerTestId="scroll-container"
+      scrollContainerClassName="flex flex-col py-2"
+    >
+      <div className="flex w-max items-stretch gap-8">
+        <FearAndGreed />
+        {assets}
       </div>
-      {!isAtEnd && <ScrollArrowButton direction="right" onClick={scrollRight} />}
-    </div>
+    </HorizontalScroll>
   );
 };

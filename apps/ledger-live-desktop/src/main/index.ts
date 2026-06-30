@@ -16,7 +16,6 @@ import db from "./db";
 import { UserDataCleanup } from "./cleanupUserData";
 import debounce from "lodash/debounce";
 import sentry, { setTags } from "~/sentry/main";
-import { initDatadogMain, installDatadogMainErrorHandlers } from "~/datadog/main";
 import type { SettingsState } from "~/renderer/reducers/settings";
 import {
   installExtension,
@@ -113,22 +112,13 @@ app.on("ready", async () => {
   // Measure database initialization and first reads
   console.time("T-db");
   const settings = (await db.getKey("app", "settings")) as SettingsState;
-  const identities = (await db.getKey("app", "identities")) as
-    | { userId?: string; datadogId?: string }
-    | undefined;
+  const identities = (await db.getKey("app", "identities")) as { userId?: string } | undefined;
   const user = (await db.getKey("app", "user")) as { id?: string } | undefined;
   console.timeEnd("T-db");
   const userId = identities?.userId ?? user?.id;
   if (userId) {
     sentry(() => settings?.sentryLogs, userId);
   }
-
-  const shouldSendDatadog = () => settings?.sentryLogs === true;
-  initDatadogMain(shouldSendDatadog, {
-    ...(identities?.datadogId ? { usr_id: identities.datadogId } : {}),
-  }).then(ok => {
-    if (ok) installDatadogMainErrorHandlers(app);
-  });
 
   // Set up transport handlers for Speculos and HTTP proxy in main process
   setupTransportHandlers();

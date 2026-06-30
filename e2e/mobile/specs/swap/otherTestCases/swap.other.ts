@@ -170,7 +170,7 @@ export function runSwapLandingPageTest(
       await app.swapLiveApp.checkFirstQuoteContainerInfos(providerList);
       await app.swapLiveApp.checkBestOffer(providerList);
 
-      await app.portfolio.openViaDeeplink();
+      await app.mainNavigation.openPortfolioViaDeeplink();
       await app.swap.openViaDeeplink();
       await app.swapLiveApp.expectSwapLiveAppForm();
       await app.swapLiveApp.checkAssetFromMatchesAccount(fromAccount);
@@ -527,7 +527,7 @@ async function validateSwapAssetsPage(accountFrom: string, accountTo: string) {
 }
 
 async function openSwapFromPortfolioEntryPoint() {
-  await app.portfolio.openViaDeeplink();
+  await app.mainNavigation.openPortfolioViaDeeplink();
   if (isWallet40) {
     await app.mainNavigation.tapWallet40Tab("swap");
   } else {
@@ -557,7 +557,7 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
       await app.account.tapSwap();
       await validateSwapAssetsPage("", account.currency.ticker);
 
-      await app.portfolio.openViaDeeplink();
+      await app.mainNavigation.openPortfolioViaDeeplink();
       await app.portfolio.goToSpecificAsset(account.currency.name);
       await app.assetAccountsPage.tapOnAssetQuickActionButton("swap");
       await validateSwapAssetsPage("", account.currency.ticker);

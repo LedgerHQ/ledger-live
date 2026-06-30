@@ -11,6 +11,8 @@ export const CONCORDIUM_CHAIN_IDS = {
 
 export const CONCORDIUM_ID_APP_MOBILE_HOST = "concordiumidapp://";
 
+export const CONCORDIUM_DUMMY_ADDRESS = "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w";
+
 /**
  * Energy costs for Concordium transactions.
  * Based on: https://docs.concordium.com/en/mainnet/docs/protocol/transaction-fees.html

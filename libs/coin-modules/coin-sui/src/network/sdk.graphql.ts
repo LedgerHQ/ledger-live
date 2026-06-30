@@ -26,7 +26,7 @@ import {
   TRANSACTIONS_BY_AFFECTED_ADDRESS,
   type SuiSystemStateResult,
 } from "./graphql/queries";
-import { graphqlTxToJsonRpcResponse } from "./graphql/transactions";
+import { graphqlTxToJsonRpcResponse, isFinalizedTxNode } from "./graphql/transactions";
 import {
   assertSystemStateJson,
   computeApy,
@@ -700,13 +700,18 @@ export const getTransactionsByAddressGraphQL = async (
     });
     const conn = unwrapGraphQL("TransactionsByAffectedAddress", res).transactions;
     if (!conn) break;
-    // `last/before` returns ascending-within-page; reverse so the accumulated array
-    // stays newest-first across pages, matching the JSON-RPC contract.
-    const nodes = (conn.nodes ?? []).slice().reverse();
-    for (const node of nodes) {
-      accumulated.push(graphqlTxToJsonRpcResponse(node));
-      if (accumulated.length >= limit) break;
-    }
+    // `last/before` returns ascending-within-page; reverse so the accumulated array stays
+    // newest-first across pages, matching the JSON-RPC contract. Skip not-yet-finalized nodes
+    // (indexing lag right after broadcast) — mapping them yields bogus Failed/1970 ops; they
+    // reappear, complete, on a later sync. Then cap the accumulator at `limit`.
+    accumulated.push(
+      ...(conn.nodes ?? [])
+        .slice()
+        .reverse()
+        .filter(isFinalizedTxNode)
+        .map(graphqlTxToJsonRpcResponse),
+    );
+    if (accumulated.length > limit) accumulated.length = limit;
     if (!conn.pageInfo.hasPreviousPage || !conn.pageInfo.startCursor) {
       nextBefore = null;
       break;
@@ -763,7 +768,8 @@ export const getTransactionsWithCheckpointDigestsGraphQL = async (
   });
   const conn = unwrapGraphQL("TransactionsByAffectedAddress", res).transactions;
   const nodes = (conn?.nodes ?? []).slice().reverse(); // newest-first across the page
-  return nodes.map(node => ({
+  // Skip not-yet-finalized nodes (indexing lag) — they'd map to bogus Failed/1970 ops.
+  return nodes.filter(isFinalizedTxNode).map(node => ({
     tx: graphqlTxToJsonRpcResponse(node),
     checkpointDigest: node.effects?.checkpoint?.digest ?? undefined,
   }));

@@ -56,6 +56,10 @@ export class PortfolioPage extends AppPage {
   );
   private readonly noDeviceTitle = this.page.getByTestId("no-device-title");
 
+  private readonly stocksSection = this.page.getByTestId("stocks-section");
+  private readonly stocksExploreCta = this.page.getByTestId("stocks-explore");
+  private readonly stocksSectionHeader = this.page.getByTestId("stocks-section-header-button");
+
   private getExpectedCounterValuePattern(counterValue: string): RegExp {
     const countervalueAliases: Record<string, RegExp> = {
       "€": /€|EUR/,
@@ -334,5 +338,28 @@ export class PortfolioPage extends AppPage {
   @step("Click buy button")
   async clickBuyButton() {
     await this.quickActionButton("buy").click();
+  }
+
+  @step("Expect Stocks discovery (empty) section to be visible")
+  async expectStocksDiscoveryVisible() {
+    await expect(this.stocksSection).toBeVisible();
+    await expect(this.stocksExploreCta).toBeVisible();
+  }
+
+  @step("Click 'Explore all' in the Stocks discovery section")
+  async clickStocksExploreAll() {
+    await this.stocksExploreCta.click();
+  }
+
+  @step("Expect Stocks holdings section to be visible")
+  async expectStocksHoldingsVisible() {
+    await this.stocksSection.scrollIntoViewIfNeeded();
+    await expect(this.stocksSection).toBeVisible();
+    await expect(this.stocksExploreCta).not.toBeVisible();
+  }
+
+  @step("Click the Stocks category title")
+  async clickStocksSectionTitle() {
+    await this.stocksSectionHeader.click();
   }
 }

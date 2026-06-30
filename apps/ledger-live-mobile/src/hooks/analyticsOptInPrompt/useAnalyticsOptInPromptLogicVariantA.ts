@@ -4,14 +4,12 @@ import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import useAnalyticsOptInPromptLogic from "./useAnalyticsOptInPromptLogic";
-import { ABTestingVariants } from "@ledgerhq/types-live";
 
 type Props = {
   entryPoint: EntryPoint;
 };
 
 const useAnalyticsOptInPromptLogicVariantA = ({ entryPoint }: Props) => {
-  const variant = ABTestingVariants.variantA;
   const dispatch = useDispatch();
   const {
     continueOnboarding,
@@ -21,7 +19,7 @@ const useAnalyticsOptInPromptLogicVariantA = ({ entryPoint }: Props) => {
     clickOnLearnMore,
     handleAcceptAll,
     handleRefuseAll,
-  } = useAnalyticsOptInPromptLogic({ entryPoint, variant });
+  } = useAnalyticsOptInPromptLogic({ entryPoint });
 
   const clickOnAcceptAll = () => {
     handleAcceptAll();
@@ -29,7 +27,6 @@ const useAnalyticsOptInPromptLogicVariantA = ({ entryPoint }: Props) => {
       "button_clicked",
       {
         button: "Accept All",
-        variant,
         flow,
         page: "Analytics Opt In Prompt Main",
       },
@@ -42,7 +39,6 @@ const useAnalyticsOptInPromptLogicVariantA = ({ entryPoint }: Props) => {
       "button_clicked",
       {
         button: "Refuse All",
-        variant,
         flow,
         page: "Analytics Opt In Prompt Main",
       },
@@ -60,7 +56,6 @@ const useAnalyticsOptInPromptLogicVariantA = ({ entryPoint }: Props) => {
       "button_clicked",
       {
         button: "Manage Preferences",
-        variant,
         flow,
         page: "Analytics Opt In Prompt Main",
       },
@@ -78,7 +73,6 @@ const useAnalyticsOptInPromptLogicVariantA = ({ entryPoint }: Props) => {
       "button_clicked",
       {
         button: "Share",
-        variant,
         flow,
         page: "Analytics Opt In Prompt Preferences",
       },

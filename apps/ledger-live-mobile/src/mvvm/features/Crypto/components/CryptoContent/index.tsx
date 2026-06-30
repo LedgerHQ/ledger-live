@@ -4,6 +4,7 @@ import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Asset } from "~/types/asset";
 import { useTranslation } from "~/context/Locale";
 import { AssetLoadingState, AssetStatusState } from "LLM/components/AssetListItem";
+import { BottomFadeGradient } from "LLM/components/BottomFadeGradient";
 import { CryptoAssetList } from "../CryptoAssetList";
 
 interface CryptoContentProps {
@@ -52,6 +53,7 @@ export const CryptoContent: React.FC<CryptoContentProps> = ({
   return (
     <Box lx={listContainerStyle}>
       <CryptoAssetList assets={assetsToDisplay} onItemPress={onItemPress} testID={listTestID} />
+      <BottomFadeGradient />
     </Box>
   );
 };

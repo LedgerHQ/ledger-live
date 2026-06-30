@@ -31,6 +31,7 @@ import AmountInput from "~/screens/SendFunds/AmountInput";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import { ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
+import { useKeyboardVisible } from "~/logic/keyboardVisible";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { TezosStakeFlowParamList } from "./types";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
@@ -48,6 +49,7 @@ export default function StakeAmount() {
   const route = useRoute<Props["route"]>();
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const { isKeyboardVisible } = useKeyboardVisible();
   const { account, parentAccount } = useAccountScreen(route);
 
   invariant(account?.type === "Account", "tezos account required");
@@ -193,11 +195,13 @@ export default function StakeAmount() {
         currency="xtz"
       />
       <KeyboardView style={styles.container}>
-        <Alert
-          type="primary"
-          title={t("tezos.stake.flow.amount.disclaimer")}
-          onLearnMore={learnMore}
-        />
+        {!isKeyboardVisible && (
+          <Alert
+            type="primary"
+            title={t("tezos.stake.flow.amount.disclaimer")}
+            onLearnMore={learnMore}
+          />
+        )}
         <TouchableWithoutFeedback onPress={blur}>
           <View style={styles.amountWrapper}>
             <AmountInput

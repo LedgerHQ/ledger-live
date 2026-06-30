@@ -4,7 +4,7 @@ import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { getCoinFrameworkCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-coin-framework/currencyBridge";
 import { getCoinFrameworkAccountBridge } from "@ledgerhq/live-common/bridge/generic-coin-framework/accountBridge";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
-import { tezosGetAddress } from "@ledgerhq/live-common/bridge/generic-coin-framework/families/tezos/signer";
+import { tezosGetAddress } from "@ledgerhq/live-common/families/tezos/signer";
 import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry";
 import { coinModuleLoaders } from "@ledgerhq/live-common/coin-modules/loaders";
 import type { TezosTestSigner } from "./signer";

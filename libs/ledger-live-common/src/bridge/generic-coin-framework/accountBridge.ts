@@ -26,7 +26,7 @@ export async function getCoinFrameworkAccountBridge(
   customSigner?: CoinFrameworkSigner,
 ): Promise<AccountBridge<GenericTransaction>> {
   const signer = customSigner ?? (await getSigner(network));
-  const { assignFromAccountRaw, assignToAccountRaw } = getAccountRawAssignHooks(network);
+  const { assignFromAccountRaw, assignToAccountRaw } = await getAccountRawAssignHooks(network);
   const validateAddress = await getValidateAddress(network);
   return {
     sync: makeSync({ getAccountShape: genericGetAccountShape(network, kind), postSync }),

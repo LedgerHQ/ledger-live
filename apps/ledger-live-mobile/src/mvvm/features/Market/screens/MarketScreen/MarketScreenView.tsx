@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import { useIsFocused } from "@react-navigation/native";
 import { Box, SearchInput } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
-import { TrackScreen } from "~/analytics";
+import { screen } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import { MarketAssetsList } from "./components/MarketAssetsList";
 import { MarketHighlights } from "./components/MarketHighlights";
@@ -10,12 +11,27 @@ import type { MarketScreenViewModel } from "./useMarketScreenViewModel";
 
 type Props = Readonly<MarketScreenViewModel>;
 
-export function MarketScreenView({ search, highlights, assetsList, isSearchActive }: Props) {
+export function MarketScreenView({
+  search,
+  highlights,
+  assetsList,
+  isSearchActive,
+  pageTracking,
+}: Props) {
   const { t } = useTranslation();
+  const isFocused = useIsFocused();
+  const wasFocused = useRef(false);
+
+  useEffect(() => {
+    if (wasFocused.current === isFocused) return;
+    wasFocused.current = isFocused;
+    if (isFocused) {
+      screen("Market", undefined, pageTracking, true, true);
+    }
+  }, [isFocused, pageTracking]);
 
   return (
     <Box testID={MARKET_SCREEN_TEST_IDS.screen} lx={screenStyle}>
-      <TrackScreen category="Page" name="Market" access />
       <Box lx={searchBarStyle}>
         <SearchInput
           testID={MARKET_SCREEN_TEST_IDS.searchBar}
@@ -31,6 +47,7 @@ export function MarketScreenView({ search, highlights, assetsList, isSearchActiv
       <MarketAssetsList
         assets={assetsList.assets}
         loading={assetsList.assetsLoading}
+        fetchingNextPage={assetsList.assetsFetchingNextPage}
         error={assetsList.assetsError}
         emptyState={assetsList.assetsEmptyState}
         selectedCategory={assetsList.categories.selectedCategory}

@@ -13,6 +13,7 @@ import deeplinkInstallApp from "./deeplinkInstallApp";
 import dynamicContent from "./dynamicContent";
 import earn from "./earn";
 import genericAwarenessModal from "./genericAwarenessModal";
+import backupHubFeatureIntro from "./backupHubFeatureIntro";
 import history from "./history";
 import inView from "./inView";
 import knownDevices from "./knownDevices";
@@ -55,6 +56,7 @@ const appReducer = combineReducers({
   earn,
   featureFlags,
   genericAwarenessModal,
+  backupHubFeatureIntro,
   history,
   identities: identitiesSlice.reducer,
   inView,

@@ -19,6 +19,7 @@ export type AddressListItemViewModel = Readonly<{
   networkTicker: string;
   onClick: () => void;
   rowTestId: string;
+  balanceTestId: string;
 }>;
 
 export function useAddressListItemViewModel(
@@ -63,5 +64,6 @@ export function useAddressListItemViewModel(
     networkTicker: networkCurrency.ticker,
     onClick,
     rowTestId: `asset-detail-address-row-${account.id}`,
+    balanceTestId: `asset-detail-address-balance-${account.id}`,
   };
 }

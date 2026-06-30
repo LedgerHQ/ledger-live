@@ -466,48 +466,30 @@ export async function fetchOperations({
   }
 
   const requestedLimit = limit ?? coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT;
-  const MAX_SKIP_PAGES = 50;
-  let currentCursor = cursor;
-  let lastNextCursor = "";
 
   try {
-    for (let skip = 0; skip < MAX_SKIP_PAGES; skip++) {
-      const rawOperations = await getServer()
-        .operations()
-        .forAccount(addr)
-        .limit(requestedLimit)
-        .order(order)
-        .cursor(currentCursor ?? "")
-        .includeFailed(true)
-        .join("transactions")
-        .call();
+    const rawOperations = await getServer()
+      .operations()
+      .forAccount(addr)
+      .limit(requestedLimit)
+      .order(order)
+      .cursor(cursor ?? "")
+      .includeFailed(true)
+      .join("transactions")
+      .call();
 
-      if (!rawOperations || !rawOperations.records.length) {
-        return noResult;
-      }
-
-      const rawOps = rawOperations.records as RawOperation[];
-      const filteredOps = await rawOperationsToOperations(rawOps, addr, accountId, minHeight);
-
-      // Stop only when Horizon returns fewer records than requested (end of history).
-      // Don't use filteredOps.length — ops can be filtered by type, not just minHeight.
-      const isLastPage = rawOps.length < requestedLimit;
-      const nextCursor = isLastPage ? "" : rawOps[rawOps.length - 1].paging_token;
-      lastNextCursor = nextCursor;
-
-      // If a full page produced zero items (all filtered by unsupported type or minHeight),
-      // skip ahead to the next page instead of returning empty results.
-      if (filteredOps.length === 0 && !isLastPage) {
-        currentCursor = nextCursor;
-        continue;
-      }
-
-      return { items: filteredOps, next: nextCursor };
+    if (!rawOperations || !rawOperations.records.length) {
+      return noResult;
     }
 
-    // Safety: bail out after MAX_SKIP_PAGES consecutive empty pages.
-    // The caller's pagination loop will pick up from the returned cursor.
-    return { items: [], next: lastNextCursor };
+    const rawOps = rawOperations.records as RawOperation[];
+    const filteredOps = await rawOperationsToOperations(rawOps, addr, accountId, minHeight);
+
+    // Always return the cursor so the caller can continue pagination,
+    // even when filteredOps is empty (e.g. page of unsupported types).
+    const nextCursor = rawOps.length < requestedLimit ? "" : rawOps[rawOps.length - 1].paging_token;
+
+    return { items: filteredOps, next: nextCursor };
   } catch (e: unknown) {
     // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
     // (https://github.com/stellar/js-stellar-sdk/issues/638)

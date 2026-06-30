@@ -22,6 +22,9 @@ jest.mock("react-i18next", () => ({
       if (key === "newSendFlow.customFees.belowMinimum") {
         return `Minimum is ${params?.min}`;
       }
+      if (key === "newSendFlow.customFees.feePerByte") {
+        return `Fee amount (${params?.unit})`;
+      }
       return key;
     },
   }),
@@ -76,6 +79,22 @@ const mockCustomFeeConfigs: Record<string, ReturnType<() => unknown>> = {
       fees: new BigNumber(values.fees).times("1e9"),
     }),
   },
+  litecoin: {
+    inputs: [
+      {
+        key: "feePerByte",
+        type: "number",
+        unitLabel: (currency: CryptoOrTokenCurrency) =>
+          `${currency.units.find(unit => unit.magnitude === 0)?.code}/vbyte`,
+      },
+    ],
+    getInitialValues: () => ({
+      feePerByte: "2",
+    }),
+    buildTransactionPatch: (values: Record<string, string>) => ({
+      feePerByte: new BigNumber(values.feePerByte),
+    }),
+  },
 };
 
 const mockCustomAssetsConfigs: Record<string, ReturnType<() => unknown>> = {
@@ -89,6 +108,16 @@ const mockCustomAssetsConfigs: Record<string, ReturnType<() => unknown>> = {
 };
 
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
+  resolveFeeUnitLabel: (
+    unitLabel: string | ((currency: CryptoOrTokenCurrency) => string | undefined) | undefined,
+    currency: CryptoOrTokenCurrency | undefined,
+  ) => {
+    if (typeof unitLabel === "function") {
+      return currency ? unitLabel(currency) : undefined;
+    }
+
+    return unitLabel;
+  },
   sendFeatures: {
     getCustomFeeConfig: (currency: CryptoOrTokenCurrency) =>
       mockCustomFeeConfigs[currency.id] ?? null,
@@ -191,6 +220,36 @@ describe("useCustomFeesViewModel - EIP-1559 Validation", () => {
     expect(result.current.hasCustomAssets).toBe(true);
     expect(result.current.selectedAssetId).toBe("celo");
     expect(result.current.assetOptions.map(option => option.id)).toEqual(["celo", "cusd"]);
+  });
+
+  it("should resolve dynamic custom fee unit labels from the selected currency", () => {
+    const account = createMockAccount();
+    const transaction = createMockTransaction();
+    const status = createMockStatus();
+    const currency = {
+      id: "litecoin",
+      name: "Litecoin",
+      type: "CryptoCurrency",
+      units: [
+        { code: "LTC", magnitude: 8, name: "Litecoin" },
+        { code: "litoshi", magnitude: 0, name: "litoshi" },
+      ],
+    } as unknown as CryptoOrTokenCurrency;
+    const transactionActions = createMockTransactionActions();
+
+    const { result } = renderHook(() =>
+      useCustomFeesViewModel({
+        account,
+        parentAccount: null,
+        transaction,
+        status,
+        currency,
+        transactionActions,
+        onConfirm: jest.fn(),
+      }),
+    );
+
+    expect(result.current.inputs[0].label).toBe("Fee amount (litoshi/vbyte)");
   });
 
   it("should disable confirm when maxFeePerGas is less than maxPriorityFeePerGas", () => {

@@ -1,8 +1,11 @@
 import { renderHook } from "tests/testSetup";
 import { useBuyDeviceIntercept } from "./useBuyDeviceIntercept";
 import { AFTER_ONBOARDING_STATE, INITIAL_STATE } from "~/renderer/reducers/settings";
+import * as originFlow from "~/renderer/analytics/originFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 const mockOpenBuyDeviceModal = jest.fn();
+const mockSetOriginFlow = jest.mocked(originFlow.setOriginFlow);
 
 let mockPathname = "/manager";
 jest.mock("react-router", () => ({
@@ -51,5 +54,25 @@ describe("useBuyDeviceIntercept", () => {
 
     expect(result.current).toBe(false);
     expect(mockOpenBuyDeviceModal).toHaveBeenCalled();
+  });
+
+  it("records the provided location as origin flow when opening the Buy Device modal", () => {
+    renderHook(() => useBuyDeviceIntercept(HOOKS_TRACKING_LOCATIONS.addAccountModal), {
+      initialState: { settings: INITIAL_STATE },
+      minimal: false,
+    });
+
+    expect(mockOpenBuyDeviceModal).toHaveBeenCalled();
+    expect(mockSetOriginFlow).toHaveBeenCalledWith(HOOKS_TRACKING_LOCATIONS.addAccountModal);
+  });
+
+  it("does not record an origin flow when no location is provided", () => {
+    renderHook(() => useBuyDeviceIntercept(), {
+      initialState: { settings: INITIAL_STATE },
+      minimal: false,
+    });
+
+    expect(mockOpenBuyDeviceModal).toHaveBeenCalled();
+    expect(mockSetOriginFlow).not.toHaveBeenCalled();
   });
 });

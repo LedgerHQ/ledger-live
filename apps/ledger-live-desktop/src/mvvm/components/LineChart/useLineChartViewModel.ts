@@ -26,8 +26,7 @@ export type LineChartViewModelResult = Readonly<{
   chartSeries: LineChartSeries[];
   height: number;
   isLoading: boolean;
-  isError: boolean;
-  errorMessage?: string;
+  emptyLabel: string;
   selectedRange: LineChartRange;
   handleSelectedChange: (value: string) => void;
   rangeSelectorLabel: string;
@@ -54,8 +53,7 @@ export function useLineChartViewModel({
   onRangeChange,
   color = "muted",
   isLoading = false,
-  isError = false,
-  errorMessage,
+  emptyLabel,
   height = DEFAULT_LINE_CHART_HEIGHT,
   points,
   enableScrubber = true,
@@ -112,8 +110,7 @@ export function useLineChartViewModel({
     chartSeries,
     height,
     isLoading,
-    isError,
-    errorMessage,
+    emptyLabel: emptyLabel ?? t("lineChart.error"),
     selectedRange,
     handleSelectedChange,
     rangeSelectorLabel: t("lineChart.rangeSelectorLabel"),

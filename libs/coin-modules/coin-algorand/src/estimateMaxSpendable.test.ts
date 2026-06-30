@@ -5,9 +5,6 @@ import * as getFeesModule from "./getFeesForTransaction";
 import type { AlgorandAccount, AlgorandTransaction } from "./types";
 
 jest.mock("./getFeesForTransaction");
-jest.mock("@ledgerhq/cryptoassets", () => ({
-  getAbandonSeedAddress: jest.fn().mockReturnValue("ABANDON_SEED_ADDRESS"),
-}));
 
 const mockGetEstimatedFees = getFeesModule.getEstimatedFees as jest.MockedFunction<
   typeof getFeesModule.getEstimatedFees

@@ -3,7 +3,7 @@ import { render, screen } from "tests/testSetup";
 import { TrendingAssetsList } from "../components/TrendingAssetsList";
 import { useNavigate } from "react-router";
 import { MOCK_MARKET_PERFORMERS } from "@ledgerhq/live-common/market/utils/fixtures";
-import { useHorizontalScroll } from "../hooks/useHorizontalScroll";
+import { useHorizontalScroll } from "LLD/components/HorizontalScroll/hooks/useHorizontalScroll";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { MARKET_BANNER_TRACKING_SOURCE } from "../utils/constants";
 
@@ -16,7 +16,7 @@ jest.mock("~/renderer/analytics/TrackPage", () => ({
   setTrackingSource: jest.fn(),
 }));
 
-jest.mock("../hooks/useHorizontalScroll");
+jest.mock("LLD/components/HorizontalScroll/hooks/useHorizontalScroll");
 
 const mockSetTrackingSource = jest.mocked(setTrackingSource);
 

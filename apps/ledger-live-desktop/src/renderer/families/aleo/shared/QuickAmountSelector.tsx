@@ -126,10 +126,12 @@ const QuickAmountSelector = ({ account, transaction, updateTransaction, onSelect
       .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
       .sort((a, b) => new BigNumber(b.microcredits).comparedTo(a.microcredits));
   }, [account]);
+
   const spendableRecords = useMemo(
     () => sortedRecords.slice(0, MAX_PRIVATE_RECORDS_PER_TRANSACTION),
     [sortedRecords],
   );
+
   const totalSpendableBalance = sumPrivateRecords(spendableRecords);
   const totalRecords = sortedRecords.length;
   const selectedRecordsCount =

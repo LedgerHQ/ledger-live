@@ -20,6 +20,7 @@ type SearchOverlayViewProps = Readonly<{
   onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
   mode: SearchMode;
   contextValue: SearchOverlayContextValue;
+  animatedTitle: boolean;
 }>;
 
 type SearchOverlayContentProps = Readonly<{
@@ -48,6 +49,7 @@ export function SearchOverlayView({
   onKeyDown,
   mode,
   contextValue,
+  animatedTitle,
 }: SearchOverlayViewProps) {
   const { t } = useTranslation();
 
@@ -61,6 +63,7 @@ export function SearchOverlayView({
             onChange={onChangeQuery}
             onKeyDown={onKeyDown}
             isOpen={open}
+            animatedTitle={animatedTitle}
             testId="topbar-search-input"
           />
         }

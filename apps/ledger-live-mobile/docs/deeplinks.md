@@ -16,6 +16,12 @@ When working on deeplinks, please update the **Wiki** accordingly.
 
   If onboarding is not finished or `lwmProductTour` is off, the link is ignored (no navigation, no tick).
 
+- **_backup-hub_** 🠒 Portfolio + Ledger Recover Feature Intro bottom-sheet (when `lwmBackupHub` is on and onboarding is complete)
+
+  `ledgerlive://backup-hub`
+
+  If onboarding is not finished or `lwmBackupHub` is off, the link is ignored (no navigation, no sheet).
+
 - **_accounts?id_** 🠒 Accounts page
 
   `ledgerlive://accounts` will redirect to portfolio of accounts page

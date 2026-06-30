@@ -1,11 +1,17 @@
 import * as React from "react";
 import { renderWithReactQuery, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { screen as trackScreen } from "~/analytics";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
 import MarketNavigator from "../Navigator";
 import MarketWalletTabNavigator from "../WalletTabNavigator";
 import { MARKET_SCREEN_TEST_IDS } from "../screens/MarketScreen/testIds";
+
+jest.mock("~/analytics", () => ({
+  ...jest.requireActual("~/analytics"),
+  screen: jest.fn(),
+}));
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 
@@ -42,6 +48,32 @@ describe("Market screen navigator switch", () => {
     expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.list)).toBeVisible();
     expect(screen.getAllByTestId(MARKET_SCREEN_TEST_IDS.highlightCard).length).toBeGreaterThan(0);
     expect(screen.queryByTestId("market-list")).toBeNull();
+  });
+
+  it("emits the Page Market screen event with the category as a property", async () => {
+    renderWithReactQuery(<NavigatorWrapper />, {
+      overrideInitialState: enableAssetDiscoverability,
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.screen)).toBeVisible();
+    });
+
+    await waitFor(() => {
+      expect(trackScreen).toHaveBeenCalledWith(
+        "Market",
+        undefined,
+        expect.objectContaining({
+          category: "all",
+          sortVolume: "desc",
+          sortMarketCap: "desc",
+          sortChange: "desc",
+          timeframe: "1D",
+        }),
+        true,
+        true,
+      );
+    });
   });
 
   it("should render the new MarketScreen from the wallet tab navigator when asset discoverability is on", async () => {

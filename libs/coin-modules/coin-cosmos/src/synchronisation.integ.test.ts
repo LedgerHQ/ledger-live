@@ -22,6 +22,7 @@ const testAccounts = [
     address: "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq",
     lcd: "https://cosmoshub4.coin.ledger.com",
     version: "v1beta1",
+    epochedStaking: false,
   },
   {
     id: "injective",
@@ -29,10 +30,20 @@ const testAccounts = [
     address: "inj1vmzrwxhgllkjaswzawaue7m7f9qcrc0rfth2v2",
     lcd: "https://injective-rest.publicnode.com",
     version: "v1beta1",
+    epochedStaking: false,
+  },
+  {
+    id: "babylon",
+    unit: "ubbn",
+    address: "bbn1uwpws077a0a9pclapv3f2fyj5u0mlh6ewmds8n",
+    lcd: "https://babylon.coin.ledger.com",
+    version: "v1beta1",
+    epochedStaking: true,
   },
 ];
 
-describe.each(testAccounts)("Testing synchronisation", ({ id, unit, address, lcd, version }) => {
+describe.each(testAccounts)("Testing synchronisation", testAccount => {
+  const { id, unit, address, lcd, version, epochedStaking } = testAccount;
   let result: Partial<CosmosAccount>;
 
   beforeEach(async () => {
@@ -47,6 +58,7 @@ describe.each(testAccounts)("Testing synchronisation", ({ id, unit, address, lcd
       defaultGas: 0,
       minGasPrice: 0,
       version,
+      epochedStaking,
     } as any);
     result = await getAccountShape(
       {

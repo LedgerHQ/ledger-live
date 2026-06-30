@@ -697,4 +697,125 @@ describe("getAccountShape", () => {
     const account = await getAccountShape(infoMock, syncConfig);
     expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(5));
   });
+
+  it("should parse a wrapped (babylon) delegate operation", async () => {
+    mockAccountInfo({
+      txs: [
+        mockCosmosTx({
+          tx: {
+            body: {
+              memo: "memo",
+              messages: [
+                {
+                  "@type": "/babylon.epoching.v1.MsgWrappedDelegate",
+                  msg: {
+                    delegator_address: "address",
+                    validator_address: "address1",
+                    amount: { denom: "uatom", amount: "5" },
+                  },
+                },
+              ],
+            },
+            auth_info: baseTxMock.tx.auth_info,
+          },
+        } as Partial<CosmosTx>),
+      ],
+    });
+    const account = await getAccountShape(infoMock, syncConfig);
+    expect((account.operations as CosmosOperation[])[0].type).toEqual("DELEGATE");
+    expect((account.operations as CosmosOperation[])[0].extra.validators).toEqual([
+      { address: "address1", amount: new BigNumber(5) },
+    ]);
+  });
+
+  it("should parse a wrapped (babylon) undelegate operation", async () => {
+    mockAccountInfo({
+      txs: [
+        mockCosmosTx({
+          tx: {
+            body: {
+              memo: "memo",
+              messages: [
+                {
+                  "@type": "/babylon.epoching.v1.MsgWrappedUndelegate",
+                  msg: {
+                    delegator_address: "address",
+                    validator_address: "address1",
+                    amount: { denom: "uatom", amount: "5" },
+                  },
+                },
+              ],
+            },
+            auth_info: baseTxMock.tx.auth_info,
+          },
+        } as Partial<CosmosTx>),
+      ],
+    });
+    const account = await getAccountShape(infoMock, syncConfig);
+    expect((account.operations as CosmosOperation[])[0].type).toEqual("UNDELEGATE");
+    expect((account.operations as CosmosOperation[])[0].extra.validators).toEqual([
+      { address: "address1", amount: new BigNumber(5) },
+    ]);
+  });
+
+  it("should parse a wrapped (babylon) redelegate operation", async () => {
+    mockAccountInfo({
+      txs: [
+        mockCosmosTx({
+          tx: {
+            body: {
+              memo: "memo",
+              messages: [
+                {
+                  "@type": "/babylon.epoching.v1.MsgWrappedBeginRedelegate",
+                  msg: {
+                    delegator_address: "address",
+                    validator_src_address: "address_src",
+                    validator_dst_address: "address1",
+                    amount: { denom: "uatom", amount: "5" },
+                  },
+                },
+              ],
+            },
+            auth_info: baseTxMock.tx.auth_info,
+          },
+        } as Partial<CosmosTx>),
+      ],
+    });
+    const account = await getAccountShape(infoMock, syncConfig);
+    expect((account.operations as CosmosOperation[])[0].type).toEqual("REDELEGATE");
+    expect((account.operations as CosmosOperation[])[0].extra.sourceValidator).toEqual(
+      "address_src",
+    );
+    expect((account.operations as CosmosOperation[])[0].extra.validators).toEqual([
+      { address: "address1", amount: new BigNumber(5) },
+    ]);
+  });
+
+  it("should ignore a wrapped (babylon) cancel-unbonding message (unsupported)", async () => {
+    mockAccountInfo({
+      txs: [
+        mockCosmosTx({
+          tx: {
+            body: {
+              memo: "memo",
+              messages: [
+                {
+                  "@type": "/babylon.epoching.v1.MsgWrappedCancelUnbondingDelegation",
+                  msg: {
+                    delegator_address: "address",
+                    validator_address: "address1",
+                    amount: { denom: "uatom", amount: "5" },
+                  },
+                },
+              ],
+            },
+            auth_info: baseTxMock.tx.auth_info,
+          },
+        } as Partial<CosmosTx>),
+      ],
+    });
+    const account = await getAccountShape(infoMock, syncConfig);
+    expect(account.operations).toEqual([]);
+  });
 });

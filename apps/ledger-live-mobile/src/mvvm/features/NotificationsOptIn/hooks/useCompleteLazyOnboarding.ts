@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { NavigatorScreenParams, useNavigation } from "@react-navigation/native";
+import { NavigatorScreenParams, useNavigation, CommonActions } from "@react-navigation/native";
 import { useDispatch } from "~/context/hooks";
 import {
   completeOnboarding,
@@ -29,13 +29,7 @@ export function useCompleteLazyOnboarding() {
 
   return useCallback(
     ({ triggerNotificationsPrompt, initialBaseScreen }: CompleteLazyOnboardingParams = {}) => {
-      dispatch(completeOnboarding());
-      dispatch(setOnboardingHasDevice(false));
-      dispatch(setReadOnlyMode(true));
-      dispatch(setIsReborn(true));
-
-      navigation.navigate(
-        NavigatorName.Base,
+      const targetBaseScreen: NavigatorScreenParams<BaseNavigatorStackParamList> =
         initialBaseScreen ?? {
           screen: NavigatorName.Main,
           params: {
@@ -44,7 +38,24 @@ export function useCompleteLazyOnboarding() {
               screen: NavigatorName.WalletTab,
             },
           },
-        },
+        };
+
+      dispatch(completeOnboarding());
+      dispatch(setOnboardingHasDevice(false));
+      dispatch(setReadOnlyMode(true));
+      dispatch(setIsReborn(true));
+
+      // Reset clears onboarding from the native back stack.
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: NavigatorName.Base,
+              params: targetBaseScreen,
+            },
+          ],
+        }),
       );
 
       triggerNotificationsPrompt?.();

@@ -1,5 +1,29 @@
 # @ledgerhq/live-signer-concordium
 
+## 0.5.0
+
+### Minor Changes
+
+- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump Device Management Kit to 1.7.1
+
+### Patch Changes
+
+- Updated dependencies [[`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292)]:
+  - @ledgerhq/errors@6.37.0
+  - @ledgerhq/coin-concordium@0.14.0
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump Device Management Kit to 1.7.1
+
+### Patch Changes
+
+- Updated dependencies [[`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292)]:
+  - @ledgerhq/errors@6.37.0-next.0
+  - @ledgerhq/coin-concordium@0.14.0-next.0
+
 ## 0.4.1
 
 ### Patch Changes

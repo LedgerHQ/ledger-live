@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "customConditions": [],
+    "types": []
+  },
+  "exclude": [
+    "**/__tests__/**/*"
+  ]
+}

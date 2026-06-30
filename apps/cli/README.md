@@ -14,7 +14,7 @@ npm i --global @ledgerhq/live-cli
 
 ## Run commands
 
-Jump to the [documentation](#Documentation) for more informations on the available commands
+Jump to the [documentation](#documentation) for more information about the available commands.
 
 ```bash
 ledger-live <commands>
@@ -26,14 +26,17 @@ ledger-live <commands>
 
 ### Requirements
 
-- [NodeJS](https://nodejs.org) `lts/fermium` (v14.x)
-- [PnPm](https://pnpm.io) (v7.x)
-- [Python](https://www.python.org/) (v3.5+)
+- Toolchain installed from the repository root with `mise install`
+- Dependencies installed with `pnpm i`
 - On Linux: `sudo apt-get update && sudo apt-get install libudev-dev libusb-1.0-0-dev`
+
+The pinned Node and pnpm versions live in the root [`mise.toml`](../../mise.toml).
+See [repo commands](../../docs/repo-commands.md) for maintained setup,
+build, and test commands.
 
 ## Install
 
-> Reminder: all commands should be run at the root of the monorepository
+> Reminder: all commands should be run from the repository root.
 
 ```bash
 # install dependencies

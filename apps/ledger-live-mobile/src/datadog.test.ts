@@ -47,10 +47,21 @@ describe("broadcastLogger", () => {
       appVersion: "1.0.0",
       currencyId: "bitcoin",
       family: "family",
+      isTestnet: false,
+      isSendMax: true,
+      source: { type: "coin-module", name: "ledger-live-mobile", flags: { newSendFlow: true } },
     });
 
     expect(infoSpy).toHaveBeenCalledWith("broadcast_success", {
-      event: { status: "success", appVersion: "1.0.0", currencyId: "bitcoin", family: "family" },
+      event: {
+        status: "success",
+        appVersion: "1.0.0",
+        currencyId: "bitcoin",
+        family: "family",
+        isTestnet: false,
+        isSendMax: true,
+        source: { type: "coin-module", name: "ledger-live-mobile", flags: { newSendFlow: true } },
+      },
     });
   });
 
@@ -66,6 +77,9 @@ describe("broadcastLogger", () => {
       appVersion: "1.0.0",
       currencyId: "ethereum",
       family: "family",
+      isTestnet: false,
+      isSendMax: false,
+      source: { type: "coin-module", name: "ledger-live-mobile", flags: { newSendFlow: false } },
     });
 
     expect(errorSpy).toHaveBeenCalledWith(
@@ -80,6 +94,13 @@ describe("broadcastLogger", () => {
           appVersion: "1.0.0",
           currencyId: "ethereum",
           family: "family",
+          isTestnet: false,
+          isSendMax: false,
+          source: {
+            type: "coin-module",
+            name: "ledger-live-mobile",
+            flags: { newSendFlow: false },
+          },
         },
       },
     );

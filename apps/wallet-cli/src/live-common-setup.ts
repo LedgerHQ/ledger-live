@@ -56,10 +56,13 @@ const walletCliLoaders: CoinModuleLoader[] = [
       import("@ledgerhq/live-common/families/evm/platformAdapter").then(m => m.default),
     loadValidateAddress: () =>
       import("@ledgerhq/coin-evm/logic/validateAddress").then(m => m.validateAddress),
-    loadSigner: () =>
-      import("@ledgerhq/live-common/bridge/generic-coin-framework/families/evm/signer").then(
-        m => m.default,
-      ),
+    loadSigner: () => import("@ledgerhq/live-common/families/evm/signer").then(m => m.default),
+    loadBridgeApi: () =>
+      import("@ledgerhq/live-common/families/evm/bridge/api").then(m => m.default),
+    loadAccountRawAssign: () =>
+      import("@ledgerhq/live-common/families/evm/accountRawAssign").then(m => m.default),
+    loadLocalApi: () =>
+      import("@ledgerhq/live-common/families/evm/coinModuleApi").then(m => m.createLocalEvmApi),
   },
   {
     family: "solana",
@@ -77,9 +80,12 @@ const walletCliLoaders: CoinModuleLoader[] = [
       import("@ledgerhq/coin-solana/deviceTransactionConfig").then(m => m.default),
     loadWalletApiAdapter: () =>
       import("@ledgerhq/live-common/families/solana/walletApiAdapter").then(m => m.default),
-    loadSigner: () =>
-      import("@ledgerhq/live-common/bridge/generic-coin-framework/families/solana/signer").then(
-        m => m.default,
+    loadSigner: () => import("@ledgerhq/live-common/families/solana/signer").then(m => m.default),
+    loadBridgeApi: () =>
+      import("@ledgerhq/live-common/families/solana/bridge/api").then(m => m.default),
+    loadLocalApi: () =>
+      import("@ledgerhq/live-common/families/solana/coinModuleApi").then(
+        m => m.createLocalSolanaApi,
       ),
   },
 ];

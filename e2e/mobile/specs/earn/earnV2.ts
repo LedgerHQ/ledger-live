@@ -59,7 +59,7 @@ async function navigateToEarn() {
 
 async function beforeAllFunction(options: ApplicationOptions) {
   await app.init(options);
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.mainNavigation.waitForWallet40Ready();
   earnReady = waitEarnReady();
 }
 

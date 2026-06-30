@@ -9,6 +9,7 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
 import { NearCoinConfig, setCoinConfig } from "../config";
+import { NEAR_DUMMY_ADDRESS } from "../constants";
 import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getTransactionStatus } from "../getTransactionStatus";
@@ -63,6 +64,7 @@ export function buildAccountBridge(
     assignFromAccountRaw,
     getSerializedAddressParameters,
     validateAddress,
+    getEstimationRecipient: () => NEAR_DUMMY_ADDRESS,
   };
 }
 

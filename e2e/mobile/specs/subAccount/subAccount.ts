@@ -32,7 +32,7 @@ const beforeAllFunction = async (transaction: TransactionType, setAccountToCredi
     ],
   });
 
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.mainNavigation.waitForWallet40Ready();
 };
 
 export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
@@ -141,7 +141,7 @@ export function runAddSubAccountTest(testConfig: {
         userdata: "skip-onboarding",
         speculosApp: asset.currency.speculosApp,
       });
-      await app.portfolio.waitForPortfolioPageToLoad();
+      await app.mainNavigation.waitForWallet40Ready();
     });
 
     setTeamOwner(Team.COIN_INTEGRATION);

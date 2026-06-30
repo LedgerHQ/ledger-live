@@ -14,8 +14,8 @@ function getEventMessage(ev: Record<string, unknown>): string {
 
 // Datadog matches source maps by service+version+file under the "app.asar" domain and only
 // unminifies https://{domain}{file} frames, so rewrite the local asar prefix to "https://app.asar/".
-// ASAR_FILE_URL: renderer (Browser SDK) file:// URLs; ASAR_RAW_PATH: main (Electron SDK) raw paths,
-// which may contain spaces, hence anchoring on the "(" / "at " frame delimiter.
+// ASAR_FILE_URL: renderer (Browser SDK) file:// URLs; ASAR_RAW_PATH: raw filesystem paths, which may
+// contain spaces, hence anchoring on the "(" / "at " frame delimiter.
 const ASAR_FILE_URL = /file:\/\/\/?[^\s'"()]*?app\.asar\//g;
 const ASAR_RAW_PATH = /(\(|\bat )((?:\/|[A-Za-z]:[\\/])[^()\n]*?)app\.asar\//g;
 
@@ -23,29 +23,6 @@ export function rewriteAsarUrls(text: string): string {
   return text
     .replace(ASAR_FILE_URL, "https://app.asar/")
     .replace(ASAR_RAW_PATH, "$1https://app.asar/");
-}
-
-// Datadog only unminifies the Browser SDK frame shape `at {fn} @ {url}:{line}:{col}`. The Electron
-// SDK forwards a raw V8 stack (`at {fn} ({url})`, or bare `at {url}`), so reshape each frame line to
-// match. Plain string ops (no regex) keep this linear; frames already in `@` form are left as-is.
-export function toDatadogStackFrames(stack: string): string {
-  return stack.split("\n").map(reshapeStackFrame).join("\n");
-}
-
-function reshapeStackFrame(line: string): string {
-  const afterIndent = line.trimStart();
-  if (!afterIndent.startsWith("at ")) return line;
-  const body = afterIndent.slice(3);
-  if (body.includes(" @ ")) return line;
-  const indent = line.slice(0, line.length - afterIndent.length);
-  const frame = body.trimEnd();
-  if (frame.length === 0) return line;
-  const open = frame.indexOf(" (");
-  if (open >= 1 && frame.endsWith(")")) {
-    const loc = frame.slice(open + 2, -1);
-    if (loc.length > 0) return `${indent}at ${frame.slice(0, open)} @ ${loc}`;
-  }
-  return `${indent}at <anonymous> @ ${frame}`;
 }
 
 function rewriteAsarUrlsRecursive(value: unknown, seen: Set<object>): void {

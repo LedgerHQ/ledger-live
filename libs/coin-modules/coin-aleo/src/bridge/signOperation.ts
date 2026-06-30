@@ -66,11 +66,13 @@ async function getTvks({
   signer,
   path,
   txIntent,
+  isCancelled,
   onDeviceStreaming,
 }: {
   signer: AleoSigner;
   path: string;
   txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>;
+  isCancelled: () => boolean;
   onDeviceStreaming: DeviceStreamingCallback;
 }): Promise<{
   rootTvk: string;
@@ -92,11 +94,14 @@ async function getTvks({
 
   streamingReporter.reportInitialStep();
 
+  if (isCancelled()) return null;
+
   const rootResult = await signer.getTvk(path);
   const rootTvk = Buffer.from(rootResult.tvk).toString("hex");
   streamingReporter.reportStepCompleted();
 
   for (let transitionIndex = 1; transitionIndex < tvksToFetch; transitionIndex++) {
+    if (isCancelled()) return null;
     const nestedResult = await signer.getTvk(path, transitionIndex);
     nestedTvks.push(Buffer.from(nestedResult.tvk).toString("hex"));
     streamingReporter.reportStepCompleted();
@@ -233,11 +238,12 @@ export const buildSignOperation =
             max_priority_fee: priorityFee.toString(),
           };
 
-          const signedTx = await signerContext(deviceId, async signer => {
+          const signature = await signerContext(deviceId, async signer => {
             const tvks = await getTvks({
               signer,
               path: account.freshAddressPath,
               txIntent,
+              isCancelled: () => o.closed,
               onDeviceStreaming: ({ progress, index, total }) => {
                 o.next({
                   type: "device-streaming",
@@ -248,6 +254,8 @@ export const buildSignOperation =
               },
             });
 
+            if (o.closed) return;
+
             const craftedRequest = await craftTransaction({
               currency: account.currency,
               viewKey,
@@ -257,6 +265,8 @@ export const buildSignOperation =
             });
 
             const request = fromHex<PreparedRequestResponse>(craftedRequest.transaction);
+
+            if (o.closed) return;
 
             o.next({
               type: "device-signature-requested",
@@ -277,6 +287,8 @@ export const buildSignOperation =
             });
           });
 
+          if (!signature) return;
+
           const operation = buildOptimisticOperation({
             account,
             transaction,
@@ -286,7 +298,7 @@ export const buildSignOperation =
             type: "signed",
             signedOperation: {
               operation,
-              signature: signedTx,
+              signature,
             },
           });
 

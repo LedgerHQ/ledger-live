@@ -1,14 +1,15 @@
 import { useRef } from "react";
 import isEqual from "lodash/isEqual";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { GasOptions, Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import type { GasOptions } from "@ledgerhq/coin-evm/types/index";
 import { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import type { EvmGasOptionsSyncTransaction } from "../../../../utils/isEvmTransaction";
 
 type EvmGasOptionsSyncProps = Readonly<{
   account: AccountLike;
   parentAccount: Account | null;
-  transaction: EvmTransaction;
+  transaction: EvmGasOptionsSyncTransaction;
   transactionActions: SendFlowTransactionActions;
   evmGasOptions: GasOptions | undefined;
 }>;

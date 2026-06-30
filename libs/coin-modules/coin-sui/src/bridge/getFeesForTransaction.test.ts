@@ -21,7 +21,8 @@ describe("getEstimatedFees", () => {
     // GIVEN
     const account = createFixtureAccount();
     const gasBudget = BigInt("3976000");
-    estimateFees.mockResolvedValue(gasBudget);
+    const fees = BigInt("850000");
+    estimateFees.mockResolvedValue({ fees, gasBudget });
 
     // WHEN
     const result = await getEstimatedFees({
@@ -32,7 +33,8 @@ describe("getEstimatedFees", () => {
     // THEN
     expect(estimateFees).toHaveBeenCalledTimes(1);
     expect(estimateFees.mock.lastCall).not.toBeNull();
-    expect(result.toString()).toEqual(gasBudget.toString());
+    expect(result.fees.toString()).toEqual(fees.toString());
+    expect(result.gasBudget.toString()).toEqual(gasBudget.toString());
   });
 
   it("forwards stakedSuiId and useAllAmount when mode is undelegate", async () => {
@@ -45,7 +47,7 @@ describe("getEstimatedFees", () => {
       useAllAmount: true,
       amount: BigNumber(1000000000),
     });
-    estimateFees.mockResolvedValue(BigInt("3976000"));
+    estimateFees.mockResolvedValue({ fees: BigInt("3976000"), gasBudget: BigInt("3976000") });
 
     // WHEN
     await getEstimatedFees({ account, transaction: undelegateTransaction });
@@ -64,7 +66,7 @@ describe("getEstimatedFees", () => {
     // GIVEN
     const account = createFixtureAccount();
     const sendTransaction = createFixtureTransaction(); // mode: "send", no stakedSuiId
-    estimateFees.mockResolvedValue(BigInt("3976000"));
+    estimateFees.mockResolvedValue({ fees: BigInt("3976000"), gasBudget: BigInt("3976000") });
 
     // WHEN
     await getEstimatedFees({ account, transaction: sendTransaction });

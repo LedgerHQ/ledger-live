@@ -21,6 +21,7 @@ import {
 } from "../errors";
 import type { SuiAccount, Transaction, TransactionStatus } from "../types";
 import { ensureAddressFormat } from "../utils";
+import { addressBalanceSpendCap } from "./utils";
 /**
  * Get the status of a transaction.
  * @function getTransactionStatus
@@ -36,7 +37,20 @@ export const getTransactionStatus: AccountBridge<
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const amount = new BigNumber(transaction?.amount || 0);
-  let estimatedFees = new BigNumber(transaction?.fees || 0);
+  // The fee declared to the device's Exchange app (swap/sell) and shown at confirmation MUST equal
+  // the gas BUDGET committed in the signed tx — the value the network reserves and the Sui app
+  // verifies on a swap (check_tx_params: expected.fee == received.fee). Declaring the smaller net
+  // dry-run gas instead made the device reject swaps with UNKNOWN_ERROR (0x6e05). The accurate net
+  // gas (`transaction.fees`) is used only for the optimistic op (see signOperation), so the pending
+  // op still matches the eventually-synced confirmed op. Staking reserves a fixed ONE_SUI/10 until a
+  // dry-run budget is available.
+  //
+  // Fall back to the net fee only when the budget is missing/zero: the GraphQL dry-run can return
+  // budget "0" (sdk.graphql.ts) and a BigNumber(0) is truthy, so a `||` pick would keep the zero
+  // budget over a non-zero fee — compare numerically instead.
+  let estimatedFees = new BigNumber(transaction?.gasBudget || 0);
+  const netFee = new BigNumber(transaction?.fees || 0);
+  if (estimatedFees.lt(netFee)) estimatedFees = netFee;
   if (estimatedFees.eq(0) && transaction.mode === "delegate") {
     estimatedFees = BigNumber(ONE_SUI).div(10);
   }
@@ -93,6 +107,17 @@ export const getTransactionStatus: AccountBridge<
 
     if (totalSpent.gt(accountBalance) && !errors.amount) {
       errors.amount = new NotEnoughBalance();
+    }
+
+    // SIP-58 safety net: when real coin objects can't cover the gas budget, gas is withdrawn from
+    // the address balance together with the transfer — so the address balance, not the total, must
+    // cover `amount + estimatedFees` (the gas budget). Without this the tx builds and dry-runs fine
+    // but the node rejects the withdrawal reservation at broadcast ("Invalid withdraw reservation").
+    if (!transaction.subAccountId && !errors.amount) {
+      const cap = addressBalanceSpendCap(account, estimatedFees);
+      if (cap !== null && amount.gt(cap)) {
+        errors.amount = new NotEnoughBalance();
+      }
     }
   }
   if (transaction.mode === "delegate") {

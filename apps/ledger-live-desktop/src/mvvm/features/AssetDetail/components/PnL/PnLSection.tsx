@@ -17,7 +17,11 @@ export function PnLSection({ distributionItem }: PnLSectionProps) {
   return (
     <>
       {viewModel.items.map(item => (
-        <div key={item.id} className={METRICS_ROW_CARD_CLASS_NAME}>
+        <div
+          key={item.id}
+          className={METRICS_ROW_CARD_CLASS_NAME}
+          data-testid={`asset-detail-pnl-card-${item.id}`}
+        >
           <PnLCard {...item} />
         </div>
       ))}

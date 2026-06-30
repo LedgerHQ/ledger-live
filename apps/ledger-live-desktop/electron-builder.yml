@@ -91,14 +91,6 @@ files:
       # Custom inclusion list
       - "**/build/**/*.{js,cjs,mjs}"
       - "**/*.node"
-  # @datadog/electron-sdk + dd-trace runtime tree, copied into .webpack/node_modules
-  # by DatadogWebpackPlugin. electron-builder skips nested node_modules in glob
-  # filesets, so we remap it explicitly into the asar's node_modules.
-  - from: ".webpack/node_modules"
-    to: "node_modules"
-    filter:
-      - "**/*"
-      - "!**/*.js.map"
   # Exclude files
   - "!node_modules"
 

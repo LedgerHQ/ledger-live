@@ -4,6 +4,7 @@ import { AnalyticsPage } from "./analytics.page";
 import { AssetsPage } from "./assets.page";
 import { AddAccountModal } from "./modal/add.account.modal";
 import { AssetDrawer } from "./drawer/asset.drawer";
+import { AssetDetailPage } from "./assetDetail.page";
 import { AssetPage } from "./asset.page";
 import { BuyAndSellPage } from "./buyAndSell.page";
 import { DelegateDrawer } from "./drawer/delegate.drawer";
@@ -39,6 +40,8 @@ import { NewSendModal } from "./modal/new.send.modal";
 import { PrivateBalanceModal } from "./modal/private.balance.modal";
 import { HistoryPage } from "./history.page";
 import { MainNavigationPage } from "./mainNavigation.page";
+import { SwapTransactionStatusDialog } from "./dialog/swap.transaction.status.dialog";
+import { TopBarSearch } from "./topBarSearch.page";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -46,6 +49,7 @@ export class Application extends PageHolder {
   public analytics = new AnalyticsPage(this.page);
   public addAccount = new AddAccountModal(this.page);
   public assetDrawer = new AssetDrawer(this.page);
+  public assetDetail = new AssetDetailPage(this.page);
   public assetPage = new AssetPage(this.page);
   public buyAndSell = new BuyAndSellPage(this.page, this.electronApp);
   public delegate = new DelegateModal(this.page);
@@ -78,7 +82,9 @@ export class Application extends PageHolder {
   public marketBanner = new MarketBannerPage(this.page);
   public myWallet = new MyWalletPage(this.page);
   public fearAndGreedDialog = new FearAndGreedDialog(this.page);
+  public swapTransactionStatusDialog = new SwapTransactionStatusDialog(this.page);
   public history = new HistoryPage(this.page);
   public mainNavigation = new MainNavigationPage(this.page);
   public assets = new AssetsPage(this.page);
+  public topBarSearch = new TopBarSearch(this.page);
 }

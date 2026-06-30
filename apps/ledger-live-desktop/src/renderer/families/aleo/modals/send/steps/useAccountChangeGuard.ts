@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import {
-  isSelfTransferTransaction,
+  derivePublicTransactionMode,
   isPrivateTransaction,
+  isSelfTransferTransaction,
 } from "@ledgerhq/live-common/families/aleo/utils";
-import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import type { StepProps } from "~/renderer/modals/Send/types";
 
 /**
@@ -24,11 +24,14 @@ export const useAccountChangeGuard = (
       onChangeAccount(nextAccount, nextParentAccount);
       updateTransaction(tx => {
         if (tx.family !== "aleo" || !isPrivateTransaction(tx)) return tx;
-        const defaultMode = isSelfTransferTransaction(tx)
-          ? TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE
-          : TRANSACTION_TYPE.TRANSFER_PUBLIC;
+
+        const publicMode = derivePublicTransactionMode({
+          isTokenTx: !!tx.subAccountId,
+          isSelfTransfer: isSelfTransferTransaction(tx),
+        });
         const { properties: _drop, ...publicTx } = tx;
-        return { ...publicTx, mode: defaultMode };
+
+        return { ...publicTx, mode: publicMode };
       });
     },
     [onChangeAccount, updateTransaction],

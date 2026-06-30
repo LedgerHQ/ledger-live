@@ -4,6 +4,7 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { Icon } from "@ledgerhq/native-ui";
 import type { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import LText from "~/components/LText";
+import SafeAreaView from "~/components/SafeAreaView";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { SwapStatusIndicator } from "../SwapStatusIndicator";
 import { ScreenName } from "~/const";
@@ -41,7 +42,8 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
       onPress={onOpenOperationDetails}
       testID={`swap-operation-row-${swapId}`}
     >
-      <View
+      <SafeAreaView
+        edges={["left", "right", "bottom"]}
         style={[styles.root, { backgroundColor: colors.card, borderBottomColor: colors.lightFog }]}
       >
         <SwapStatusIndicator small status={status} />
@@ -74,7 +76,7 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
             <CurrencyUnitValue showCode unit={unitTo} value={displayToAmount} />
           </LText>
         </View>
-      </View>
+      </SafeAreaView>
     </TouchableOpacity>
   );
 };

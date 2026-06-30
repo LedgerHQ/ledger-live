@@ -25,10 +25,10 @@ function renderComponent({
   }
 
   function TestProgressIndicator() {
-    const { currentIndex, totalSlides } = useSlidesContext();
+    const { displayedIndex, totalSlides } = useSlidesContext();
     return (
       <div>
-        {currentIndex + 1} / {totalSlides}
+        {displayedIndex + 1} / {totalSlides}
       </div>
     );
   }

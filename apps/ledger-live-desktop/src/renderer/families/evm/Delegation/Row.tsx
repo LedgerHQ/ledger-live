@@ -11,6 +11,7 @@ import type {
 import {
   canRedelegate,
   canUndelegate,
+  canWithdraw,
   getRedelegationCompletionDate,
   hasRedelegation,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
@@ -282,7 +283,12 @@ export function Row({
 
 type UnbondingRowProps = Readonly<{
   delegation: StakingMappedUnbonding;
-  onWithdraw: (validatorAddress: string, amount: BigNumber, withdrawId?: number) => void;
+  onWithdraw: (
+    validatorAddress: string,
+    amount: BigNumber,
+    withdrawId?: number,
+    validatorId?: string,
+  ) => void;
   onExternalLink: (address: string) => void;
 }>;
 
@@ -291,26 +297,53 @@ export function UnbondingRow({
     validator,
     formattedAmount,
     validatorAddress,
+    validatorId,
     validatorName,
     completionDate,
     amount,
     withdrawId,
+    status,
   },
   onWithdraw,
   onExternalLink,
 }: UnbondingRowProps) {
   const date = useDateFromNow(completionDate) || "N/A";
   const name = validator?.name ?? validatorName ?? validatorAddress;
-  // Withdraw only applies to chains with an explicit finalization slot (Monad carries a
-  // withdrawId); other EVM chains auto-return funds, so no CTA there.
-  const canWithdraw = typeof withdrawId === "number" && completionDate.getTime() <= Date.now();
+  const withdrawable = canWithdraw({ withdrawId, status });
   const onExternalLinkClick = useCallback(
     () => onExternalLink(validatorAddress),
     [onExternalLink, validatorAddress],
   );
   const onWithdrawClick = useCallback(
-    () => onWithdraw(validatorAddress, amount, withdrawId),
-    [onWithdraw, validatorAddress, amount, withdrawId],
+    () => onWithdraw(validatorAddress, amount, withdrawId, validatorId),
+    [onWithdraw, validatorAddress, amount, withdrawId, validatorId],
+  );
+
+  type UnbondingDropDownItem = {
+    key: "WITHDRAW";
+    label: React.JSX.Element;
+    disabled?: boolean;
+    tooltip?: React.ReactNode | null;
+  };
+
+  const dropDownItems = useMemo<UnbondingDropDownItem[]>(
+    () => [
+      {
+        key: "WITHDRAW",
+        label: <Trans i18nKey="ethereum.evmStaking.withdraw.cta" />,
+        disabled: !withdrawable,
+        tooltip: withdrawable ? null : (
+          <Trans i18nKey="ethereum.evmStaking.undelegation.timelockTooltip" />
+        ),
+      },
+    ],
+    [withdrawable],
+  );
+  const onSelect = useCallback(
+    (action: UnbondingDropDownItem) => {
+      if (action.key === "WITHDRAW") onWithdrawClick();
+    },
+    [onWithdrawClick],
   );
   return (
     <Wrapper>
@@ -321,18 +354,43 @@ export function UnbondingRow({
         <Ellipsis>{name}</Ellipsis>
       </Column>
       <Column>
-        <Box color="alertRed" pl={2}>
-          <ToolTip content={<Trans i18nKey="ethereum.evmStaking.undelegation.inactiveTooltip" />}>
-            <ExclamationCircleThin size={14} />
-          </ToolTip>
-        </Box>
+        {status === "withdrawable" ? (
+          <Box color="positiveGreen" pl={2}>
+            <ToolTip content={<Trans i18nKey="ethereum.evmStaking.undelegation.readyTooltip" />}>
+              <CheckCircle size={14} />
+            </ToolTip>
+          </Box>
+        ) : (
+          <Box color="orange" pl={2}>
+            <ToolTip content={<Trans i18nKey="ethereum.evmStaking.undelegation.timelockTooltip" />}>
+              <Clock size={14} />
+            </ToolTip>
+          </Box>
+        )}
       </Column>
       <Column>
         <Discreet>{formattedAmount}</Discreet>
       </Column>
       <Column>{date}</Column>
-      <Column clickable={canWithdraw} onClick={canWithdraw ? onWithdrawClick : undefined}>
-        {canWithdraw ? <Trans i18nKey="ethereum.evmStaking.withdraw.cta" /> : null}
+      <Column>
+        {typeof withdrawId === "number" ? (
+          <DropDown
+            items={dropDownItems}
+            renderItem={({ item, isActive }) => (
+              <ManageDropDownItem item={item} isActive={isActive} />
+            )}
+            onChange={onSelect}
+          >
+            {() => (
+              <Box flex={1} horizontal alignItems="center">
+                <Trans i18nKey="common.manage" />
+                <div style={{ transform: "rotate(90deg)" }}>
+                  <ChevronRight size={16} />
+                </div>
+              </Box>
+            )}
+          </DropDown>
+        ) : null}
       </Column>
     </Wrapper>
   );

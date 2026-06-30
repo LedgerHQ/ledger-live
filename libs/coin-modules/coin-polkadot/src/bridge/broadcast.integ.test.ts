@@ -18,7 +18,7 @@ describe("broadcast", () => {
         url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com",
       },
       sidecar: {
-        url: "https://polkadot-asset-hub-sidecar.coin.ledger.com",
+        url: "https://polkadot-mainnet-rest-api.coin.ledger.com/v1",
       },
       indexer: {
         url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",

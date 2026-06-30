@@ -15,6 +15,7 @@ import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import formatters from "../formatters";
 import getTransactionStatus from "../getTransactionStatus";
 import resolver from "../hw-getAddress";
+import { getCosmosDummyRecipient } from "../logic";
 import { CosmosAPI } from "../network/Cosmos";
 import { prepareTransaction } from "../prepareTransaction";
 import {
@@ -82,6 +83,7 @@ function buildAccountBridge(
     formatOperationSpecifics: formatters.formatOperationSpecifics,
     getSerializedAddressParameters,
     validateAddress,
+    getEstimationRecipient: account => getCosmosDummyRecipient(account.currency.id),
   };
 }
 

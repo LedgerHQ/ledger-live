@@ -113,13 +113,19 @@ export default function AccountsNavigator() {
       route: cryptoRoute,
     }: {
       route: RouteProp<AccountsNavigatorParamList, ScreenName.Crypto>;
-    }): V4AccountsScreenOptions => ({
-      ...stackNavConfigV4Expanded,
-      title:
-        (cryptoRoute.params?.variant ?? "all") === "stablecoin"
-          ? t("crypto.stablecoinTitle")
-          : t("crypto.title"),
-    }),
+    }): V4AccountsScreenOptions => {
+      const variant = cryptoRoute.params?.variant ?? "all";
+      const titleByVariant: Record<typeof variant, string> = {
+        stablecoin: t("crypto.stablecoinTitle"),
+        stocks: t("crypto.stocksTitle"),
+        crypto: t("crypto.title"),
+        all: t("crypto.title"),
+      };
+      return {
+        ...stackNavConfigV4Expanded,
+        title: titleByVariant[variant],
+      };
+    },
     [stackNavConfigV4Expanded, t],
   );
 

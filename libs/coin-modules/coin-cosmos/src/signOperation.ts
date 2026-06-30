@@ -28,7 +28,7 @@ export const buildSignOperation =
           account.freshAddress,
         );
         o.next({ type: "device-signature-requested" });
-        const { aminoMsgs, protoMsgs } = txToMessages(account, transaction);
+        const { aminoMsgs, protoMsgs } = txToMessages(account, transaction, chainInstance);
         if (!BigNumber.isBigNumber(transaction.fees) || !BigNumber.isBigNumber(transaction.gas)) {
           throw new Error("Transaction misses gas information");
         }

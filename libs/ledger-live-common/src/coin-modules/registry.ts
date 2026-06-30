@@ -156,6 +156,18 @@ export const loadValidateAddressForFamily = makeLoaderCache(family =>
 
 export const loadSignerForFamily = makeLoaderCache(family => loaders.get(family)?.loadSigner?.());
 
+export const loadBridgeApiForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadBridgeApi?.(),
+);
+
+export const loadAccountRawAssignForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadAccountRawAssign?.(),
+);
+
+export const loadLocalApiForFamily = makeLoaderCache(family =>
+  loaders.get(family)?.loadLocalApi?.(),
+);
+
 const cachedLoadBridgeExtensions = makeLoaderCache(family =>
   loaders.get(family)?.loadBridgeExtensions?.(),
 );

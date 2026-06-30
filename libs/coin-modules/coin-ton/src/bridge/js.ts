@@ -10,6 +10,7 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import broadcast from "../broadcast";
 import { TonCoinConfig, setCoinConfig } from "../config";
+import { TON_DUMMY_ADDRESS } from "../constants";
 import createTransaction from "../createTransaction";
 import estimateMaxSpendable from "../estimateMaxSpendable";
 import getTransactionStatus from "../getTransactionStatus";
@@ -46,6 +47,7 @@ export function buildAccountBridge(
 
   return {
     estimateMaxSpendable,
+    getEstimationRecipient: () => TON_DUMMY_ADDRESS,
     createTransaction,
     updateTransaction,
     getTransactionStatus,

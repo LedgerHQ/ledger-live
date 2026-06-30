@@ -75,6 +75,7 @@ export default function StepConnectDevice({
   const broadcast = useBroadcast({
     account,
     parentAccount,
+    transaction,
     broadcastConfig,
     logger: broadcastLogger,
   });

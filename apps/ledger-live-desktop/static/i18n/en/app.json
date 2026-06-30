@@ -74,6 +74,8 @@
   "common": {
     "never": "Never",
     "new": "New",
+    "scrollLeft": "Scroll left",
+    "scrollRight": "Scroll right",
     "skip": "Skip",
     "apply": "Apply",
     "done": "Done",
@@ -503,10 +505,10 @@
       "changeProvider": "Swap with another provider"
     },
     "incompatibility": {
-      "ton_title": "Ledger Nano S™ does not support swapping Ton",
-      "ton_description": "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "ton_tokens_title": "Ledger Nano S™ does not support swapping Ton Tokens",
-      "ton_tokens_description": "To swap Ton Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "ton_title": "Ledger Nano S™ does not support swapping Gram",
+      "ton_description": "To swap Gram, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "ton_tokens_title": "Ledger Nano S™ does not support swapping Gram Tokens",
+      "ton_tokens_description": "To swap Gram Tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens",
       "spl_tokens_description": "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "sui_tokens_title": "Ledger Nano S™ does not support swapping Sui tokens",
@@ -1704,7 +1706,11 @@
         "stocks": "Stocks",
         "favorites": "Favorites"
       },
-      "emptyFavorites": "No favorites yet"
+      "emptyFavorites": "No favorites yet",
+      "noAssets": {
+        "title": "No assets available",
+        "description": "Sorry, there are no assets available in this category."
+      }
     },
     "detailsPage": {
       "priceStatistics": "Price stats",
@@ -4454,6 +4460,8 @@
         "header": "Undelegation(s)",
         "headerTooltip": "Available after the {{numberOfDays}}-day timelock",
         "inactiveTooltip": "Undelegated amounts do not generate rewards.",
+        "timelockTooltip": "Still within the timelock. These funds are not yet available to withdraw.",
+        "readyTooltip": "The timelock has ended. These funds are ready to withdraw.",
         "flow": {
           "title": "Stop staking",
           "steps": {
@@ -7545,6 +7553,10 @@
     "TaprootNotActivated": {
       "title": "Sending to a taproot address is unsafe before mainnet activation"
     },
+    "RbfBuildError": {
+      "title": "Cannot replace this transaction",
+      "description": "The fee increase required to replace this transaction can't be applied with the current parameters. Try a different fee amount or cancel the operation."
+    },
     "SolanaAccountNotFunded": {
       "title": "Account not funded"
     },
@@ -7817,13 +7829,13 @@
       "title": "We are experiencing an issue with our Bitcoin infrastructure. Please try again later."
     },
     "TonExcessFee": {
-      "title": "It constitutes a token transfer. You will pay 0.1 TON in fees, and any extra will be returned to you."
+      "title": "It constitutes a token transfer. You will pay 0.1 GRAM in fees, and any extra will be returned to you."
     },
     "TonNotEnoughBalanceInParentAccount": {
-      "title": "Insufficient funds in main account (TON) to calculate fees. The minimum required balance is 0.1 TON."
+      "title": "Insufficient funds in main account (GRAM) to calculate fees. The minimum required balance is 0.1 GRAM."
     },
     "TonMinimumRequired": {
-      "title": "Insufficient funds. The minimum required balance is 0.02 TON."
+      "title": "Insufficient funds. The minimum required balance is 0.02 GRAM."
     },
     "AleoAmountRecordRequired": {
       "title": "Select a valid private record for the amount.",
@@ -8395,7 +8407,7 @@
     }
   },
   "analyticsOptInPrompt": {
-    "variantA": {
+    "screen": {
       "description": "Sharing your Ledger Wallet data helps us understand your preferences and show content that's relevant to you.",
       "whatWeTrack": "With your consent, Ledger will be able to collect data about how you use Ledger Wallet (including page visits and clicks):",
       "whatWeTrackList": {
@@ -8420,26 +8432,6 @@
         "description": "To receive personalized recommendations and content that match your preferences and to help us measure the performance of our marketing campaigns, we share app usage data, including clicks, page visits, and conversion data."
       },
       "validate": "Validate"
-    },
-    "variantB": {
-      "accept": "Accept",
-      "refuse": "Refuse",
-      "analytics": {
-        "description": "Sharing your Ledger Wallet analytics data helps us understand how people use Ledger Wallet, fix bugs, and offer an improved user experience.",
-        "details": {
-          "1": "Analytics data includes page visits, clicks.",
-          "2": "We won’t collect or see any information regarding your balance, accounts, and portfolio.",
-          "3": "Analytics are completely anonymous. We can’t see or collect your personal information."
-        }
-      },
-      "personalRecommendations": {
-        "title": "Get a personalized experience",
-        "description": "Sharing your Ledger Wallet personalization data lets us display content that matches your preferences",
-        "details": {
-          "1": "Personalization data includes conversion data, clicks, page visits.",
-          "2": "We cannot track or collect any of your personal or portfolio information."
-        }
-      }
     },
     "common": {
       "title": "Help us improve and personalize your experience",
@@ -8787,8 +8779,6 @@
     "title": "Market",
     "genericError": "Connection failed",
     "cta": "View all",
-    "scrollLeft": "Scroll left",
-    "scrollRight": "Scroll right",
     "ranking": {
       "trending": "Trending",
       "gainers": "Gainers",
@@ -8899,10 +8889,16 @@
   },
   "topBar": {
     "searchPlaceholder": "Search assets",
+    "searchPlaceholders": {
+      "crypto": "Search crypto",
+      "stablecoins": "Search stablecoins",
+      "stocks": "Search stocks",
+      "addresses": "Search addresses"
+    },
     "search": {
       "noAssetFound": "No asset found",
       "error": "Connection failed",
-      "cryptos": "Cryptos",
+      "cryptos": "Crypto",
       "stocks": "Stocks"
     },
     "history": {
@@ -8946,6 +8942,20 @@
       "privateBalanceTooltip": "Balance that is hidden from the public"
     },
     "shielded": {
+      "send": {
+        "transferFrom": {
+          "label": "Transfer from",
+          "public": {
+            "title": "Public balance",
+            "subtitle": "Transparent"
+          },
+          "private": {
+            "title": "Private balance",
+            "subtitle": "Shielded",
+            "unavailable": "Private balance unavailable"
+          }
+        }
+      },
       "state": {
         "showBalance": "Show balance",
         "startSync": "Start sync",
@@ -9145,6 +9155,35 @@
       "explore": "Explore my new portfolio"
     }
   },
+  "q2Tour": {
+    "slides": {
+      "welcome": {
+        "title": "Smarter portfolio management. Clearer paths to growth",
+        "description": ""
+      },
+      "aggregatedBalance": {
+        "title": "One balance for each asset",
+        "description": "Multi-chain assets like USDT are now shown as one total. Simple, accurate, clear."
+      },
+      "pnl": {
+        "title": "Your returns, front and center",
+        "description": "See profit and loss on every asset, across your portfolio and analytics page."
+      },
+      "earnSimulator": {
+        "title": "Test your earn potential",
+        "description": "Simulate what rewards you can earn and build a growth plan that fits your goals."
+      },
+      "earnUpselling": {
+        "title": "More protocols, more rewards",
+        "description": "Stablecoins and top picks, surfaced right in your wallet. Less searching. More deciding."
+      }
+    },
+    "cta": {
+      "seeWhatsNew": "See what's new",
+      "next": "Next",
+      "gotIt": "Got it"
+    }
+  },
   "productTour": {
     "cta": {
       "continue": "Continue",
@@ -9228,23 +9267,23 @@
       "refer": "Referral"
     },
     "backupHub": {
-      "title": "Wallet backups",
-      "description": "Protect your assets with a combination of backup solutions for your Seed Phrase Recovery.",
+      "title": "Backups",
+      "description": "Don't lose access to your assets — back up your secret recovery phrase across multiple formats.",
       "back": "Back",
       "sections": {
-        "digital": "Digital ID-based backups",
+        "digital": "ID-linked digital backup",
         "physical": "Physical backups"
       },
       "recover": {
         "title": "Ledger Recover",
-        "notSubscribed": "Create a backup you can't lose",
+        "notSubscribed": "Restore access by verifying your ID.",
         "inProgress": "Complete activation",
         "done": "Manage your backup",
         "discover": "Discover"
       },
       "recoveryKey": {
         "title": "Ledger Recovery Key",
-        "description": "A PIN-protected smart card"
+        "description": "A PIN-protected smart card."
       },
       "secretRecoveryPhrase": {
         "title": "24-word metal storage",
@@ -9293,6 +9332,9 @@
     "tradingVolume24h": "24h trading volume",
     "tradingVolume24hTooltip": "The total amount traded in the last 24 hours.",
     "marketStatsDisclaimer": "Market stats sourced from CoinGecko",
+    "fallbackBanner": {
+      "title": "Swap and Buy are not supported for this asset."
+    },
     "day": "1 day",
     "week": "1 week",
     "month": "1 month",

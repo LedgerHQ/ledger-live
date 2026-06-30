@@ -7,6 +7,7 @@ import type {
   Account,
   BroadcastConfig,
   TransactionSource,
+  TransactionCommon,
 } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 import { formatOperation, getMainAccount } from "../account/index";
@@ -19,6 +20,8 @@ type CommonLogEvent = {
   currencyId: string;
   family: string;
   tokenId?: string;
+  isTestnet: boolean;
+  isSendMax: boolean;
 };
 
 type ErrorLogEvent = {
@@ -39,6 +42,7 @@ export type SignTransactionArgs = {
   parentAccount?: Account | null;
   broadcastConfig?: BroadcastConfig;
   logger?: (event: LogEvent) => void;
+  transaction?: TransactionCommon | null;
 };
 
 function toError(err: unknown): Error {
@@ -56,6 +60,7 @@ export const useBroadcast = ({
   parentAccount,
   broadcastConfig,
   logger,
+  transaction,
 }: SignTransactionArgs) => {
   const broadcast = useCallback(
     async (signedOperation: SignedOperation): Promise<Operation> => {
@@ -72,6 +77,8 @@ export const useBroadcast = ({
         source: broadcastConfig?.source,
         currencyId: mainAccount.currency.id,
         family: mainAccount.currency.family,
+        isTestnet: Boolean(mainAccount.currency.isTestnetFor),
+        isSendMax: Boolean(transaction?.useAllAmount),
         ...(account.type === "TokenAccount" ? { tokenId: account.token.id } : {}),
       };
 
@@ -110,7 +117,7 @@ export const useBroadcast = ({
         }
       });
     },
-    [account, parentAccount, broadcastConfig, logger],
+    [account, parentAccount, broadcastConfig, logger, transaction],
   );
 
   return broadcast;

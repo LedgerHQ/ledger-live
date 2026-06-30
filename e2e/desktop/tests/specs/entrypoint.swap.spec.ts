@@ -319,6 +319,13 @@ test.describe("Swap history", () => {
     swapId: "wQ90NrWdvJz5dA4",
     addressFrom: Addresses.SWAP_HISTORY_SOL_FROM,
     addressTo: Addresses.SWAP_HISTORY_ETH_TO,
+    details: {
+      date: "July 15, 2025",
+      sentAmount: "0.07 SOL",
+      receivedAmount: "751.0672 ETH",
+      networkFees: "0.000005 SOL",
+      receiveAccount: "Ethereum 1",
+    },
   };
 
   setupEnv(true);
@@ -398,10 +405,10 @@ test.describe("Swap history", () => {
       await app.swap.goToSwapHistory();
       await app.swap.checkSwapOperation(swapHistory.swapId, swapHistory.provider, swapHistory.swap);
       await app.swap.openSelectedOperation(swapHistory.swapId);
-      await app.operationDrawer.expectSwapDrawerInfos(
-        swapHistory.swapId,
-        swapHistory.swap,
+      await app.swapTransactionStatusDialog.expectSwapTransactionStatusDialogInfos(
+        swapHistory.swapId.slice(0, 6),
         swapHistory.provider,
+        swapHistory.details,
       );
     },
   );

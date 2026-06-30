@@ -1,3 +1,18 @@
+/*
+ * ⚠️ DEPRECATED LIBRARY — DO NOT ADD NEW ERRORS HERE.
+ *
+ * `@ledgerhq/errors` is frozen and being sunset. Do not add new error classes,
+ * and do not use `createCustomErrorClass` or the serialize/deserialize stack in
+ * new code.
+ *
+ * Instead, define errors as plain native classes in your own package's
+ * `src/errors.ts`, and check types with `error.name === "X"` (survives
+ * serialization) rather than `instanceof`.
+ *
+ * The existing exports below stay for backward compatibility (this lib is
+ * published and consumed externally), but must not grow.
+ */
+
 import {
   serializeError,
   deserializeError,

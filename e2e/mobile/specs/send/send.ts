@@ -37,7 +37,7 @@ const beforeAllFunction = async (transaction: TransactionType, options?: SendTes
     ],
   });
 
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.mainNavigation.waitForWallet40Ready();
 };
 
 const beforeAllInvalidAddressFunction = async (
@@ -69,7 +69,7 @@ const beforeAllInvalidAddressFunction = async (
     ],
   });
 
-  await app.portfolio.waitForPortfolioPageToLoad();
+  await app.mainNavigation.waitForWallet40Ready();
 };
 
 export async function verifySendAndOperationDetails(

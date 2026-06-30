@@ -238,4 +238,48 @@ describe("getResourceAddress", () => {
     const result = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
     expect(result).toEqual(null);
   });
+
+  it("should skip non-write_resource changes (write_table_item with null data)", () => {
+    const nullDataChange = {
+      type: "write_table_item",
+      data: null,
+    } as unknown as WriteSetChange;
+
+    const validChange = {
+      type: "write_resource",
+      data: {
+        type: APTOS_COIN_CHANGE,
+        data: {
+          withdraw_events: {
+            guid: {
+              id: {
+                addr: "0x11",
+                creation_num: "2",
+              },
+            },
+          },
+        },
+      },
+    } as unknown as WriteSetChange;
+
+    const tx: AptosTransaction = {
+      hash: "0x123",
+      block: { hash: "0xabc", height: 1 },
+      timestamp: "1000000",
+      sequence_number: "1",
+      version: "1",
+      changes: [nullDataChange, validChange],
+    } as unknown as AptosTransaction;
+
+    const event = {
+      guid: {
+        account_address: "0x11",
+        creation_number: "2",
+      },
+      type: "0x1::coin::WithdrawEvent",
+    } as Event;
+
+    const result = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
+    expect(result).toEqual(APTOS_ASSET_ID);
+  });
 });

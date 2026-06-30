@@ -49,7 +49,13 @@ export function createFeatureFlagsMiddleware<S = unknown>(
     let lastLang = readLang();
     if (fetchRemoteFlags) {
       let readyDispatched = false;
-      const dispatchSync = () => dispatch(syncRemoteConfig());
+      let initialSyncDone = false;
+      const dispatchSync = (didFetch: boolean) => {
+        if (didFetch || !initialSyncDone) {
+          initialSyncDone = true;
+          dispatch(syncRemoteConfig());
+        }
+      };
       const dispatchReady = () => {
         if (readyDispatched) return;
         readyDispatched = true;
@@ -124,8 +130,9 @@ function getMeta(action: Action<string>) {
  * middleware when injecting `action.meta.remoteFlags`.
  *
  * @param dispatchSync
- * Callback fired after each *successful* fetch — used to dispatch
- * `syncRemoteConfig()` so reducers re-resolve.
+ * Callback fired after each *settled* fetch, told whether the fetch succeeded. It
+ * re-resolves (`syncRemoteConfig()`) on every success and once on the first settle
+ * even if it failed, so env/default resolution runs at boot.
  *
  * @param dispatchReady
  * Callback fired after each *settled* fetch (resolved or rejected) — used to
@@ -139,15 +146,15 @@ function getMeta(action: Action<string>) {
 async function pollRemoteFlags(
   fetch: () => Promise<PartialFeatures>,
   ref: RemoteFlagsRef,
-  dispatchSync: () => void,
+  dispatchSync: (didFetch: boolean) => void,
   dispatchReady: () => void,
   ms: number = FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS,
 ) {
   const remote = await fetch().catch(() => null);
   if (remote !== null) {
     ref.current = remote;
-    dispatchSync();
   }
+  dispatchSync(remote !== null);
   dispatchReady();
   setTimeout(pollRemoteFlags, ms, fetch, ref, dispatchSync, dispatchReady, ms);
 }

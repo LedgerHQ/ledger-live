@@ -1,4 +1,3 @@
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { stringCamelCase } from "@polkadot/util";
 import { hexToU8a } from "@polkadot/util";
@@ -10,6 +9,7 @@ import {
   PolkadotOperationMode,
   TransactionPayloadInfo,
 } from "../types";
+import { POLKADOT_NULL_ADDRESS } from "../constants";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 
 const EXTRINSIC_VERSION = 4;
@@ -241,11 +241,7 @@ export async function craftEstimationTransaction(
   account: string,
   amount: bigint,
 ): Promise<CoreTransaction> {
-  return await craftTransaction(
-    account,
-    0,
-    defaultExtrinsicArg(amount, getAbandonSeedAddress("polkadot")),
-  );
+  return await craftTransaction(account, 0, defaultExtrinsicArg(amount, POLKADOT_NULL_ADDRESS));
 }
 
 /**

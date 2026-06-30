@@ -4,6 +4,7 @@ import { server, http, HttpResponse } from "tests/server";
 import { GlobalMarketCapCard } from "..";
 
 const GLOBAL_MARKET_URL = "https://countervalues.live.ledger.com/v3/markets/global";
+const SPOT_SIMPLE_URL = "https://countervalues.live.ledger.com/v3/spot/simple";
 
 describe("GlobalMarketCapCard", () => {
   it("shows a loading placeholder before the query resolves, then the card", async () => {
@@ -19,6 +20,18 @@ describe("GlobalMarketCapCard", () => {
 
     expect(await screen.findByText("Total market cap")).toBeVisible();
     expect(screen.getByText("2.14%")).toBeVisible();
+  });
+
+  it("rescales the USD global market cap into a crypto countervalue", async () => {
+    server.use(http.get(SPOT_SIMPLE_URL, () => HttpResponse.json({ USD: 0.00001 })));
+
+    render(<GlobalMarketCapCard />, {
+      initialState: {
+        settings: { counterValue: "BTC" },
+      },
+    });
+
+    expect(await screen.findByText("₿25M")).toBeVisible();
   });
 
   it("opens the definition dialog when the card is clicked", async () => {

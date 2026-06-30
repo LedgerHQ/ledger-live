@@ -8,7 +8,6 @@ import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -224,9 +223,8 @@ const Body = ({
   const [signed, setSigned] = useState(false);
   const currency = account ? getAccountCurrency(account) : undefined;
   const currencyName = currency ? currency.name : undefined;
-  const specific = useLLDCoinFamily(
-    currency && isCryptoCurrency(currency) ? currency.family : undefined,
-  );
+  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const specific = useLLDCoinFamily(mainAccount?.currency.family);
 
   const [defaultSteps] = useState(() => defaultCreateSteps(params.disableBacks));
   const customSteps = useMemo(() => {

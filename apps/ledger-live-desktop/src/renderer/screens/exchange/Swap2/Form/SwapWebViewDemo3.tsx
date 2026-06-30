@@ -7,7 +7,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
-import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
 import {
   convertToAtomicUnit,
   convertToNonAtomicUnit,
@@ -99,6 +98,8 @@ export type SwapProps = {
   status?: string;
 };
 
+type SwapEntryPoint = "main_page" | "portfolio_embed" | "asset_embed";
+
 export type SwapWebProps = {
   manifest: LiveAppManifest;
   isEmbedded?: boolean;
@@ -126,6 +127,12 @@ type SwapLocationState = {
 const isSwapLocationState = (value: unknown): value is SwapLocationState =>
   typeof value === "object" && value !== null;
 
+const deriveSwapEntryPoint = (pathname: string): SwapEntryPoint => {
+  if (pathname === "/") return "portfolio_embed";
+  if (pathname.startsWith("/asset/")) return "asset_embed";
+  return "main_page";
+};
+
 const SwapWebAppWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -140,7 +147,6 @@ function simplifyFromPath(path: string): string {
 
 const SWAP_API_BASE = getEnv("SWAP_API_BASE");
 const SWAP_USER_IP = getEnv("SWAP_USER_IP");
-const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
 const SwapWebView = ({
   manifest,
@@ -185,6 +191,7 @@ const SwapWebView = ({
   // Remove after KYC AB Testing
   const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning")?.enabled;
   const ptxSwapLiveAppOnPortfolio = useFeature("ptxSwapLiveAppOnPortfolio")?.enabled;
+  const ptxSwapLiveAppOnAsset = useFeature("ptxSwapLiveAppOnAsset")?.enabled;
   const lldModularDrawerFF = useFeature("lldModularDrawer");
   const isLldModularDrawer = lldModularDrawerFF?.enabled && lldModularDrawerFF?.params?.live_app;
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
@@ -254,11 +261,7 @@ const SwapWebView = ({
         const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
           ...transaction,
           subAccountId,
-          recipient:
-            params.recipient ||
-            (mainAccount.currency.id === "bitcoin"
-              ? getSegWitAbandonSeedAddress()
-              : getAbandonSeedAddress(mainAccount.currency.id)),
+          recipient: params.recipient || bridge.getEstimationRecipient(mainAccount),
           amount: convertToAtomicUnit({
             amount: new BigNumber(params.fromAmount),
             account: fromAccount,
@@ -574,6 +577,9 @@ const SwapWebView = ({
     return currentRouteNameRef.current || "";
   }, []);
 
+  const { pathname } = location;
+  const swapEntryPoint = deriveSwapEntryPoint(pathname);
+
   return (
     <>
       {enablePlatformDevTools && (
@@ -602,10 +608,12 @@ const SwapWebView = ({
             hasSeenAnalyticsOptInPrompt,
             ptxSwapLiveAppKycWarning,
             ptxSwapLiveAppOnPortfolio: ptxSwapLiveAppOnPortfolio ? "true" : "false",
+            ptxSwapLiveAppOnAsset: ptxSwapLiveAppOnAsset ? "true" : "false",
             isModularDrawer: isLldModularDrawer ? "true" : "false",
             isEmbedded: isEmbedded ? "true" : "false",
             discreetMode: discreetMode ? "true" : "false",
             lwd40enabled: "true",
+            swapEntryPoint,
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}

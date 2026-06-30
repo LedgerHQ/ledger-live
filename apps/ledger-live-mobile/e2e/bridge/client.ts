@@ -24,6 +24,7 @@ import Config from "react-native-config";
 import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
 import { bleDevicesSelector } from "~/reducers/ble";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
+import { setSpeculosDeviceModel } from "~/services/registerTransports";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -162,6 +163,7 @@ async function onMessage(event: WebSocketMessageEvent) {
       }
       case "addKnownSpeculos": {
         const { address, model } = JSON.parse(msg.payload);
+        setSpeculosDeviceModel(model);
         await disconnectAllSpeculosSessions();
         const knownSpeculosIds = bleDevicesSelector(store.getState())
           .map(device => device.id)
@@ -189,6 +191,7 @@ async function onMessage(event: WebSocketMessageEvent) {
       }
       case "removeKnownSpeculos": {
         const address = msg.payload;
+        setSpeculosDeviceModel(undefined);
         await disconnectAllSpeculosSessions();
         store.dispatch(removeKnownBleDevice(`speculos|${address}`));
         setEnv("DEVICE_PROXY_URL", "");

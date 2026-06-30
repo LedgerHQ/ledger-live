@@ -23,6 +23,9 @@ export function toAleoResourcesRaw(resources: AleoResources): AleoResourcesRaw {
     ...(typeof resources.hasMigratedPublicTokens === "boolean" && {
       hasMigratedPublicTokens: resources.hasMigratedPublicTokens,
     }),
+    ...(typeof resources.hasMigratedPrivateTokens === "boolean" && {
+      hasMigratedPrivateTokens: resources.hasMigratedPrivateTokens,
+    }),
   };
 }
 
@@ -39,6 +42,9 @@ export function fromAleoResourcesRaw(rawResources: AleoResourcesRaw): AleoResour
       : null,
     ...(typeof rawResources.hasMigratedPublicTokens === "boolean" && {
       hasMigratedPublicTokens: rawResources.hasMigratedPublicTokens,
+    }),
+    ...(typeof rawResources.hasMigratedPrivateTokens === "boolean" && {
+      hasMigratedPrivateTokens: rawResources.hasMigratedPrivateTokens,
     }),
   };
 }

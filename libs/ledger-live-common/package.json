@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "36.2.0",
+  "version": "36.3.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -61,6 +61,16 @@
     "./device-action/*": {
       "@ledgerhq/source": "./src/device-action/*.ts",
       "default": "./lib-es/device-action/*.js"
+    },
+    "./intents/signTransactionIntent": {
+      "@ledgerhq/source": "./src/intents/signTransactionIntent.ts",
+      "types": "./lib-es/intents/signTransactionIntent.d.ts",
+      "default": "./lib-es/intents/signTransactionIntent.js"
+    },
+    "./intents/*": {
+      "@ledgerhq/source": "./src/intents/*/index.ts",
+      "types": "./lib-es/intents/*/index.d.ts",
+      "default": "./lib-es/intents/*/index.js"
     },
     "./hooks": {
       "default": "./lib-es/hooks/index.js"
@@ -206,6 +216,7 @@
     "@ledgerhq/coin-xrp": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
+    "@ledgerhq/device-intent": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",

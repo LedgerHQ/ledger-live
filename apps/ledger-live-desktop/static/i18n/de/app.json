@@ -74,6 +74,8 @@
   "common" : {
     "never" : "Nie",
     "new" : "Neu",
+    "scrollLeft" : "Nach links scrollen",
+    "scrollRight" : "Nach rechts scrollen",
     "skip" : "Überspringen",
     "apply" : "Anwenden",
     "done" : "Fertig",
@@ -503,10 +505,10 @@
       "changeProvider" : "Bei anderem Anbieter swappen"
     },
     "incompatibility" : {
-      "ton_title" : "Die Ledger Nano S™ unterstützt das Swappen von Ton nicht",
-      "ton_description" : "Zum Swappen von Ton kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
-      "ton_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Ton-Token nicht",
-      "ton_tokens_description" : "Zum Swappen von Ton-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "ton_title" : "Ledger Nano S™ unterstützt das Swappen von Gram nicht",
+      "ton_description" : "Zum Swappen von Gram musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. einen Ledger Nano S Plus™, einen Ledger Nano X™, einen Ledger Flex™ oder einen Ledger Stax™.",
+      "ton_tokens_title" : "Der Ledger Nano S™ unterstützt das Swappen von Gram-Token nicht",
+      "ton_tokens_description" : "Zum Swappen von Gram-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. einen Ledger Nano S Plus™, einen Ledger Nano X™, einen Ledger Flex™ oder einen Ledger Stax™.",
       "spl_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Solana-Token nicht",
       "spl_tokens_description" : "Zum Swappen von Solana-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
       "sui_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Sui-Token nicht",
@@ -1704,7 +1706,11 @@
         "stocks" : "Aktien",
         "favorites" : "Favoriten"
       },
-      "emptyFavorites" : "Noch keine Favoriten"
+      "emptyFavorites" : "Noch keine Favoriten",
+      "noAssets" : {
+        "title" : "Keine Assets verfügbar",
+        "description" : "Leider sind in dieser Kategorie keine Assets verfügbar."
+      }
     },
     "detailsPage" : {
       "priceStatistics" : "Preisstatistik",
@@ -4425,6 +4431,8 @@
         "header" : "Aufgehobene Delegierung(en)",
         "headerTooltip" : "Verfügbar nach der {{numberOfDays}}-tägigen Sperrzeit",
         "inactiveTooltip" : "Beträge mit aufgehobener Delegierung generieren keine Prämien.",
+        "timelockTooltip" : "Noch in der Zeitsperre. Diese Assets sind noch nicht zur Auszahlung verfügbar.",
+        "readyTooltip" : "Die Zeitsperre ist abgelaufen. Diese Guthaben sind abrufbar.",
         "flow" : {
           "title" : "Staking beenden",
           "steps" : {
@@ -7509,6 +7517,10 @@
     "TaprootNotActivated" : {
       "title" : "Das Senden an eine taproot-Adresse ist vor der Aktivierung des Netzwerks (mainnet) unsicher"
     },
+    "RbfBuildError" : {
+      "title" : "Diese Transaktion kann nicht ersetzt werden",
+      "description" : "Die für das Ersetzen dieser Transaktion erforderliche Gebührenerhöhung kann mit den aktuellen Parametern nicht angewendet werden. Versuche es mit einem anderen Gebührenbetrag oder breche den Vorgang ab."
+    },
     "SolanaAccountNotFunded" : {
       "title" : "Konto nicht gedeckt"
     },
@@ -7781,13 +7793,13 @@
       "title" : "Bei unserer Bitcoin-Infrastruktur ist ein Problem aufgetreten. Versuche es bitte später noch einmal."
     },
     "TonExcessFee" : {
-      "title" : "Hierbei erfolgt eine Tokenübertragung. Du zahlst 0,1 TON Gebühren, und alles, was darüber hinausgeht, wird dir zurückerstattet."
+      "title" : "Hierbei erfolgt eine Tokenübertragung. Du zahlst 0,1 GRAM Gebühren, und alles, was darüber hinausgeht, wird dir zurückerstattet."
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "Unzureichendes Guthaben auf dem Hauptkonto (TON) zur Berechnung der Gebühren. Das erforderliche Mindestguthaben beträgt 0,1 TON."
+      "title" : "Unzureichendes Guthaben auf dem Hauptkonto (GRAM) zur Berechnung der Gebühren. Das erforderliche Mindestguthaben beträgt 0,1 GRAM."
     },
     "TonMinimumRequired" : {
-      "title" : "Unzureichendes Guthaben. Das erforderliche Mindestguthaben beträgt 0,02 TON."
+      "title" : "Unzureichendes Guthaben. Das erforderliche Mindestguthaben beträgt 0,02 GRAM."
     },
     "AleoAmountRecordRequired" : {
       "title" : "Wähle einen gültigen privaten Eintrag für den Betrag aus.",
@@ -8215,11 +8227,11 @@
   },
   "drawers" : {
     "selectCurrency" : {
-      "title" : "Vermögenswert auswählen"
+      "title" : "Asset auswählen"
     },
     "selectAccount" : {
       "title" : "Konto auswählen",
-      "addAccount" : "Neues oder bestehendes Konto hinzufügen",
+      "addAccount" : "Neues/bestehendes Konto hinzufügen",
       "perpetualsBanner" : "Derzeit nur mit USD Coin (USDC) auf der Arbitrum-Chain unterstützt."
     }
   },
@@ -8359,7 +8371,7 @@
     }
   },
   "analyticsOptInPrompt" : {
-    "variantA" : {
+    "screen" : {
       "description" : "Die Weitergabe deiner Ledger Wallet-Daten hilft uns, deine Vorlieben zu verstehen und Inhalte anzuzeigen, die für dich relevant sind.",
       "whatWeTrack" : "Mit deiner Einwilligung kann Ledger zu folgenden Zwecken Daten über dein Nutzungsverhalten in Ledger Wallet (einschließlich Seitenaufrufen und Klicks) erfassen:",
       "whatWeTrackList" : {
@@ -8384,26 +8396,6 @@
         "description" : "Damit wir dir personalisierte Empfehlungen und Inhalte anzeigen können, die deinen Vorlieben entsprechen, und um die Leistung unserer Marketingkampagnen zu messen, geben wir Daten zur App-Nutzung (Klicks, Seitenbesuche und Konversionsdaten) weiter."
       },
       "validate" : "Validieren"
-    },
-    "variantB" : {
-      "accept" : "Akzeptieren",
-      "refuse" : "Ablehnen",
-      "analytics" : {
-        "description" : "Die Freigabe deiner Ledger Wallet-Analysedaten hilft uns nachzuvollziehen, wie die Nutzer Ledger Wallet verwenden, Fehler zu beheben und die Nutzungserfahrung zu optimieren.",
-        "details" : {
-          "1" : "Zu den Analysedaten gehören Seitenaufrufe und Klicks.",
-          "2" : "Wir werden Informationen über deinen Kontostand, deine Konten und dein Portfolio weder erheben noch einsehen.",
-          "3" : "Die Analysen erfolgen völlig anonym. Wir können deine persönlichen Daten weder einsehen noch erheben."
-        }
-      },
-      "personalRecommendations" : {
-        "title" : "Nutzungserlebnis personalisieren",
-        "description" : "Durch die Weitergabe deiner Ledger Wallet-Personalisierungsdaten können wir dir Inhalte anzeigen, die deinen Vorlieben entsprechen.",
-        "details" : {
-          "1" : "Zu den Personalisierungsdaten gehören Konversionsdaten, Klicks und Seitenaufrufe.",
-          "2" : "Wir können weder deine personenbezogenen Daten noch Daten zu deinem Portfolio verfolgen oder erfassen."
-        }
-      }
     },
     "common" : {
       "title" : "Hilf mit, dein Nutzungserlebnis zu verbessern und zu personalisieren",
@@ -8695,7 +8687,7 @@
     },
     "searchPlaceholder" : "Nach Name oder Adresse suchen",
     "emptyAssetList" : "Keine Assets gefunden",
-    "selectAsset" : "Vermögenswert auswählen",
+    "selectAsset" : "Asset auswählen",
     "selectNetwork" : "Netzwerk auswählen",
     "selectAccount" : "Konto auswählen",
     "accountCount_one" : "{{count}} Konto",
@@ -8751,8 +8743,6 @@
     "title" : "Markt",
     "genericError" : "Verbindung fehlgeschlagen",
     "cta" : "Alles anzeigen",
-    "scrollLeft" : "Nach links scrollen",
-    "scrollRight" : "Nach rechts scrollen",
     "ranking" : {
       "trending" : "Im Trend",
       "gainers" : "Gewinner",
@@ -8863,10 +8853,16 @@
   },
   "topBar" : {
     "searchPlaceholder" : "Asset suchen",
+    "searchPlaceholders" : {
+      "crypto" : "Krypto suchen",
+      "stablecoins" : "Stablecoin suchen",
+      "stocks" : "Aktie suchen",
+      "addresses" : "Adressen suchen"
+    },
     "search" : {
       "noAssetFound" : "Kein Wert gefunden",
       "error" : "Verbindung fehlgeschlagen",
-      "cryptos" : "Kryptos",
+      "cryptos" : "Krypto",
       "stocks" : "Aktien"
     },
     "history" : {
@@ -8910,6 +8906,20 @@
       "privateBalanceTooltip" : "Guthaben, das nicht öffentlich einsehbar ist"
     },
     "shielded" : {
+      "send" : {
+        "transferFrom" : {
+          "label" : "Übertragung von",
+          "public" : {
+            "title" : "Öffentlicher Saldo",
+            "subtitle" : "Transparent"
+          },
+          "private" : {
+            "title" : "Privater Saldo",
+            "subtitle" : "Abgeschirmt",
+            "unavailable" : "Privater Kontostand nicht verfügbar"
+          }
+        }
+      },
       "state" : {
         "showBalance" : "Saldo zeigen",
         "startSync" : "Synchronisierung starten",
@@ -9103,6 +9113,35 @@
       "explore" : "Mein neues Portfolio entdecken"
     }
   },
+  "q2Tour" : {
+    "slides" : {
+      "welcome" : {
+        "title" : "Cleveres Portfoliomanagement: Der richtige Weg zum Wachstum",
+        "description" : ""
+      },
+      "aggregatedBalance" : {
+        "title" : "Ein Saldo für jedes Asset",
+        "description" : "Multi-Chain-Assets wie USD Coin (USDC) erscheinen als Gesamtbetrag. Einfach, präzise, klar."
+      },
+      "pnl" : {
+        "title" : "Deine Rendite – klipp und klar",
+        "description" : "Auf deiner Portfolio- und Analyseseite erscheinen Gewinne und Verluste für jedes Asset."
+      },
+      "earnSimulator" : {
+        "title" : "Teste dein Ertragspotenzial aus",
+        "description" : "Simuliere mögliche Prämien und entwickle einen Wachstumsplan, der zu deinen Zielen passt."
+      },
+      "earnUpselling" : {
+        "title" : "Mehr Protokolle, mehr Prämien",
+        "description" : "Stablecoins und Empfehlungen – direkt in deiner Wallet. Weniger suchen. Mehr entscheiden."
+      }
+    },
+    "cta" : {
+      "seeWhatsNew" : "Neuigkeiten anzeigen",
+      "next" : "Weiter",
+      "gotIt" : "Verstanden"
+    }
+  },
   "productTour" : {
     "cta" : {
       "continue" : "Weiter",
@@ -9186,16 +9225,16 @@
       "refer" : "Empfehlung"
     },
     "backupHub" : {
-      "title" : "Wallet-Backups",
-      "description" : "Schütze deine Assets mit einer Kombination aus Backup-Lösungen für die Wiederherstellung deiner Seed-Phrase.",
+      "title" : "Backups",
+      "description" : "Verliere nicht den Zugriff auf deine Assets — sichere deine geheime Wiederherstellungsphrase in mehreren Formaten.",
       "back" : "Zurück",
       "sections" : {
-        "digital" : "Digitale ID-basierte Backups",
+        "digital" : "ID-verknüpftes digitales Backup",
         "physical" : "Physische Backups"
       },
       "recover" : {
         "title" : "Ledger Recover",
-        "notSubscribed" : "Ein verlustsicheres Backup erstellen",
+        "notSubscribed" : "Zugriff durch Bestätigen deiner ID wiederherstellen.",
         "inProgress" : "Aktivierung abschließen",
         "done" : "Sicherheitskopie verwalten",
         "discover" : "Neues entdecken"
@@ -9251,6 +9290,9 @@
     "tradingVolume24h" : "24h Handelsvolumen",
     "tradingVolume24hTooltip" : "Der in den letzten 24 Stunden gehandelte Gesamtbetrag.",
     "marketStatsDisclaimer" : "Marktstatistiken von CoinGecko",
+    "fallbackBanner" : {
+      "title" : "Swappen und Kaufen werden für dieses Asset nicht unterstützt."
+    },
     "day" : "1 Tag",
     "week" : "1 Woche",
     "month" : "1 Monat",

@@ -1,57 +1,44 @@
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { getPriceChangeKeyForRange as getSharedPriceChangeKeyForRange } from "@ledgerhq/live-common/market/utils/rangePriceChangeKey";
+import {
+  resolveRangePriceChange as resolveSharedRangePriceChange,
+  type RangePriceChange,
+} from "@ledgerhq/live-common/market/utils/resolveRangePriceChange";
 import type { LineChartRange } from "LLD/components/LineChart";
-
-export const DAY_CHANGE_PERCENT_NEAR_ZERO_EPSILON = 0.01;
 
 export type TrendVariant = "positive" | "negative" | "neutral";
 
-const RANGE_TO_PRICE_CHANGE_KEY: Record<LineChartRange, KeysPriceChange> = {
-  "1d": KeysPriceChange.day,
-  "1w": KeysPriceChange.week,
-  "1m": KeysPriceChange.month,
-  "6m": KeysPriceChange.year,
-  "1y": KeysPriceChange.year,
+const DESKTOP_PRICE_CHANGE_KEY_EXTENSIONS: Partial<Record<LineChartRange, KeysPriceChange>> = {
+  "6m": KeysPriceChange.sixMonths,
   "5y": KeysPriceChange.year,
-  all: KeysPriceChange.year,
 };
 
-export function getPriceChangeKeyForRange(range: LineChartRange): KeysPriceChange {
-  return RANGE_TO_PRICE_CHANGE_KEY[range];
+export type { RangePriceChange };
+
+export function getPriceChangeKeyForRange(range: LineChartRange): KeysPriceChange | undefined {
+  return getSharedPriceChangeKeyForRange(range, DESKTOP_PRICE_CHANGE_KEY_EXTENSIONS);
 }
 
-/** Implied fiat delta from current spot price and a percent change (e.g. 24h %) in percent points. */
-export function getFiatPriceVariationFromPercentChange(
-  price?: number,
-  dayPercentage?: number | null,
-): number | undefined {
-  if (price == null || dayPercentage == null) return undefined;
-  const denominator = 1 + dayPercentage / 100;
-  if (denominator === 0) return undefined;
-  const previousPrice = price / denominator;
-  const variation = price - previousPrice;
-  if (Number.isNaN(variation)) return undefined;
-  return variation;
-}
+type ResolveRangePriceChangeParams = Readonly<{
+  selectedRange: LineChartRange;
+  chartPrices: readonly number[];
+  price?: number;
+  priceChangePercentage?: Record<KeysPriceChange, number>;
+}>;
 
-export function clampDayChangePercentPointsNearZero(
-  dayPercentage: number | null | undefined,
-  epsilon = DAY_CHANGE_PERCENT_NEAR_ZERO_EPSILON,
-): number | null | undefined {
-  if (dayPercentage == null) return dayPercentage;
-  return Math.abs(dayPercentage) < epsilon ? 0 : dayPercentage;
-}
-
-/**
- * Variation between the start of the selected range and a scrubbed point.
- * `percentage` is a fraction (e.g. 0.05 = +5%); `variationFiat` is the raw delta.
- */
-export function getScrubVariation(
-  baselinePrice: number,
-  scrubbedPrice: number,
-): { percentage: number; variationFiat: number } {
-  const variationFiat = scrubbedPrice - baselinePrice;
-  const percentage = baselinePrice !== 0 ? variationFiat / baselinePrice : 0;
-  return { percentage, variationFiat };
+export function resolveRangePriceChange({
+  selectedRange,
+  chartPrices,
+  price,
+  priceChangePercentage,
+}: ResolveRangePriceChangeParams): RangePriceChange {
+  return resolveSharedRangePriceChange({
+    selectedRange,
+    chartPrices,
+    price,
+    priceChangePercentage,
+    priceChangeKeyExtensions: DESKTOP_PRICE_CHANGE_KEY_EXTENSIONS,
+  });
 }
 
 export function resolveTrendPercentAndVariant(options: {

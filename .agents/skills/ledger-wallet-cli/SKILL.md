@@ -148,22 +148,20 @@ Ticker is **mandatory** in `--amount`. No `--token` flag — ticker drives asset
 
 ### swap quote
 
-Fetches quotes in parallel from the built-in provider list (no device when addresses are supplied via flags below).
+Fetches quotes in parallel from the built-in provider list (no device required; addresses are resolved from session accounts).
 
-**Currencies:** `--from` / `-f` and `--to` / `-t` are Ledger **currency IDs** — native assets (e.g. `ethereum`, `bitcoin`, `solana`) **or token IDs** when the token’s parent chain is a supported native swap currency (same IDs the CLI allows for swap). They are **not** session account labels — use `--from-account` / `--to-account` (or fresh addresses) for accounts.
+**Currencies:** `--from` / `-f` and `--to` / `-t` are Ledger **currency IDs** — native assets (e.g. `ethereum`, `bitcoin`, `solana`) **or token IDs** when the token’s parent chain is a supported native swap currency (same IDs the CLI allows for swap). They are **not** session account labels — use `--from-account` / `--to-account` for accounts.
 
 **Default providers queried by `swap quote` and usable by `swap execute`:** `changelly`, `cic`, `exodus`, `nearintents`, `swapsxyz`.
 
-**Addresses (pick one per side):** `--from-fresh-address` or `--from-account`; `--to-fresh-address` or `--to-account`. Account flags accept a session label only; the CLI resolves a fresh receive address like `receive`.
+**Accounts:** `--from-account` and `--to-account` accept a session label only; the CLI resolves a fresh receive address from the account like `receive`.
 
 ```bash
-pnpm --silent wallet-cli start swap quote --from ethereum --to bitcoin --amount 0.1 --from-fresh-address 0xABC... --to-fresh-address bc1q...
-pnpm --silent wallet-cli start swap quote -f ethereum -t bitcoin --amount 0.1 --from-fresh-address 0xABC... --to-fresh-address bc1q... --output json
 pnpm --silent wallet-cli start swap quote --from ethereum --to bitcoin --amount 0.1 --from-account ethereum-1 --to-account bitcoin-native-1
-pnpm --silent wallet-cli start swap quote --from ethereum --to bitcoin --amount 0.1 --from-account ethereum-1 --to-account bitcoin-native-1 --output json
+pnpm --silent wallet-cli start swap quote -f ethereum -t bitcoin --amount 0.1 --from-account ethereum-1 --to-account bitcoin-native-1 --output json
 ```
 
-Required: `--from`, `--to`, `--amount`, and both sides covered by the address flags above.
+Required: `--from`, `--to`, `--from-account`, `--to-account`, `--amount`.
 
 ### swap execute
 

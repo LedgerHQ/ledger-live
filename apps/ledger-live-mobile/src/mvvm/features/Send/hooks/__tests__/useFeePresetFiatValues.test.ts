@@ -72,6 +72,7 @@ describe("useFeePresetFiatValues", () => {
     locale: "en",
     enabled: true,
     shouldEstimateWithBridge: false,
+    allowZeroAmountEstimation: false,
   };
 
   beforeEach(() => {

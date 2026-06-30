@@ -1,7 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
@@ -12,6 +11,7 @@ import type { StepProps } from "~/renderer/modals/Send/types";
 import RecipientField from "~/renderer/modals/Send/fields/RecipientField";
 import SendRecipientFields from "~/renderer/modals/Send/SendRecipientFields";
 import BalanceSelector from "../shared/BalanceSelector";
+import { applyAleoBalanceSourceChange, getAleoCurrencyConfig } from "../shared/utils";
 
 export const AleoSendStepRecipient = ({
   t,
@@ -32,7 +32,9 @@ export const AleoSendStepRecipient = ({
     return null;
   }
 
+  const isTokenAccount = account.type === "TokenAccount";
   const mainAccount = getMainAccount(account, parentAccount);
+  const config = getAleoCurrencyConfig(mainAccount.currency);
 
   return (
     <Box flow={4}>
@@ -52,6 +54,11 @@ export const AleoSendStepRecipient = ({
             autoFocus={!openedFromAccount}
             onChange={onChangeAccount}
             value={account}
+            {...(config?.enableTokens && {
+              withSubAccounts: true,
+              enforceHideEmptySubAccounts: true,
+              subAccountFilter: a => !a.balance.isZero(),
+            })}
           />
         </Box>
         <Box>
@@ -61,26 +68,11 @@ export const AleoSendStepRecipient = ({
           <BalanceSelector
             transaction={transaction}
             mainAccount={mainAccount}
+            subAccount={isTokenAccount ? account : undefined}
             onChange={value => {
-              updateTransaction(t => {
-                if (t.family !== "aleo") return t;
-
-                if (value === "public") {
-                  const { properties: _ignoredProperties, ...txWithoutProperties } = t;
-                  return {
-                    ...txWithoutProperties,
-                    mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
-                  };
-                }
-
-                return {
-                  ...t,
-                  mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
-                  properties: {
-                    amountRecordCommitments: [],
-                    feeRecordCommitment: null,
-                  },
-                };
+              updateTransaction(tx => {
+                if (tx.family !== "aleo") return tx;
+                return applyAleoBalanceSourceChange(tx, value);
               });
             }}
           />

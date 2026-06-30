@@ -30,7 +30,12 @@ describe("DeepLinks Tests", () => {
         },
       },
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
+  });
+
+  beforeEach(async () => {
+    // workaround: modular drawer blocks deeplink
+    await app.modularDrawer.tapDrawerCloseButton({ onlyIfVisible: true });
   });
 
   beforeEach(async () => {
@@ -111,8 +116,7 @@ describe("DeepLinks Tests", () => {
   (isSmokeTestRun ? it.skip : it)("should open Send pages", async () => {
     await app.send.openViaDeeplink();
     await app.send.expectFirstStep();
-    await app.portfolio.openViaDeeplink();
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.openPortfolioViaDeeplink();
     await app.send.sendViaDeeplink(ethereumLong);
     await app.send.expectFirstStep();
     await app.common.expectSearch(ethereumLong);
@@ -142,8 +146,7 @@ describe("DeepLinks Tests", () => {
     });
 
     it("should open from Receive in a selected account", async () => {
-      await app.portfolio.openViaDeeplink();
-      await app.portfolio.waitForPortfolioPageToLoad();
+      await app.mainNavigation.openPortfolioViaDeeplink();
       await app.receive.receiveViaDeeplink(ethereumLong);
       await app.modularDrawer.validateAccountsScreen([account.accountName]);
     });

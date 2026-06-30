@@ -148,6 +148,27 @@ describe("listPrivateOperations", () => {
     expect(result.operations).toEqual([mockOp]);
   });
 
+  it("should not produce operations for fee_private records (enrichPrivateRecord returns null for them)", async () => {
+    const record = getMockedRecord({
+      program_name: PROGRAM_ID.CREDITS,
+      function_name: EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
+    });
+
+    mockEnrichPrivateRecord.mockResolvedValue(null);
+
+    const result = await listPrivateOperations({
+      currency: mockCurrency,
+      viewKey: mockViewKey,
+      address: mockAddress,
+      ledgerAccountId: mockLedgerAccountId,
+      privateRecords: [record],
+    });
+
+    expect(mockEnrichPrivateRecord).toHaveBeenCalledTimes(1);
+    expect(mockToPrivateBridgeOperation).not.toHaveBeenCalled();
+    expect(result.operations).toEqual([]);
+  });
+
   it("should call toPrivateBridgeOperation with ledgerAccountId, enriched record, and address", async () => {
     const record = getMockedRecord({
       program_name: PROGRAM_ID.CREDITS,

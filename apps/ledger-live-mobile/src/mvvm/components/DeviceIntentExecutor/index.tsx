@@ -56,13 +56,21 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,
 ): React.ReactElement {
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const { sourceFlow, wrappedProps, hasHeaderOverride, headerContextValue } =
-    useDeviceIntentExecutorLWMViewModel(props);
+  const {
+    sourceFlow,
+    wrappedProps,
+    hasHeaderOverride,
+    headerContextValue,
+    onHeaderClosePressed,
+    onBackdropPress,
+  } = useDeviceIntentExecutorLWMViewModel(props);
 
   return (
     <QueuedDrawerBottomSheet
       isRequestingToBeOpened={wrappedProps.enabled}
       onClose={wrappedProps.onUserCancel}
+      onHeaderClosePressed={onHeaderClosePressed}
+      onBackdropPress={onBackdropPress}
       hideHandle
       enableDynamicSizing
     >

@@ -27,6 +27,8 @@ type CliCommand = (
   speculosAddress?: string,
 ) => Observable<unknown> | Promise<unknown> | string;
 
+export let isMyWalletEnabled = false;
+
 export type InitOptions = {
   speculosApp?: SpeculosAppType;
   cliCommands?: CliCommand[];
@@ -303,7 +305,9 @@ export class InitializationManager {
     userdataPath: string,
     userdataSpeculos: string,
   ): Promise<void> {
-    const { speculosApp, cliCommands = [], cliCommandsOnApp = [], featureFlags } = options;
+    const { speculosApp, cliCommands = [], cliCommandsOnApp = [], featureFlags = {} } = options;
+
+    await InitializationManager.setFeatureFlags(featureFlags);
 
     // Group commands by app name
     const commandsByAppMap = new Map<string, { app: SpeculosAppType; cmds: CliCommand[] }>();
@@ -345,6 +349,9 @@ export class InitializationManager {
 
     // Finalize setup only after successful global CLI run
     await loadConfig(userdataSpeculos, true);
+  }
+
+  static async setFeatureFlags(featureFlags: PartialFeatures) {
     const defaultFlags = {
       lwmWallet40: {
         enabled: isWallet40,
@@ -390,6 +397,9 @@ export class InitializationManager {
       ...extraFeatureFlags,
       ...featureFlags,
     };
+    const wallet40 = mergedFeatureFlags.lwmWallet40;
+    isMyWalletEnabled = Boolean(wallet40?.enabled && wallet40?.params?.myWallet);
+
     await allure.attachment(
       "Merged Feature Flags",
       JSON.stringify(mergedFeatureFlags, null, 2),

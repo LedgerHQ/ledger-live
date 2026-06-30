@@ -14,6 +14,15 @@ describe("mapDryRunError", () => {
       const error = new Error("Balance of gas object 10 is Lower than the Needed Amount: 100");
       expect(mapDryRunError(error)).toBeInstanceOf(NotEnoughBalanceFees);
     });
+
+    it("maps the GraphQL SimulateTransaction-wrapped gas-shortage message", () => {
+      const error = new Error(
+        "GraphQL SimulateTransaction failed: Invalid argument: Error checking transaction input objects: Balance of gas object 1078120 is lower than the needed amount: 2176000",
+      );
+      const result = mapDryRunError(error);
+      expect(result).toBeInstanceOf(NotEnoughBalanceFees);
+      expect(result.cause).toBe(error);
+    });
   });
 
   describe("InsufficientBalanceError pattern", () => {

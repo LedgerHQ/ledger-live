@@ -10,6 +10,7 @@ export { getGenericAwarenessModalContentCard } from "./getGenericAwarenessModalC
 export { hasAwarenessModalActionButton } from "./hasAwarenessModalActionButton";
 export { resolveCarouselNavigationButtonLabel } from "./resolveCarouselNavigationButtonLabel";
 export {
+  createThemedImageUrls,
   hasThemedImage,
   resolveThemedImageUrl,
   type ThemedImageUrls,

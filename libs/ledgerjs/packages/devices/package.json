@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/devices",
-  "version": "8.15.1",
+  "version": "8.16.0",
   "description": "Ledger devices",
   "keywords": [
     "Ledger"
@@ -56,9 +56,6 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
-    "rxjs": "catalog:",
     "semver": "catalog:"
   },
   "devDependencies": {

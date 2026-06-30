@@ -44,6 +44,7 @@ describe("Aptos bridge interface", () => {
       expect(bridge).toEqual({
         accountBridge: {
           estimateMaxSpendable: expect.any(Function),
+          getEstimationRecipient: expect.any(Function),
           createTransaction: expect.any(Function),
           updateTransaction: expect.any(Function),
           getTransactionStatus: expect.any(Function),

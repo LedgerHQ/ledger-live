@@ -1,5 +1,69 @@
 # @ledgerhq/asset-detail
 
+## 0.7.0
+
+### Minor Changes
+
+- [#18641](https://github.com/LedgerHQ/ledger-live/pull/18641) [`104d174`](https://github.com/LedgerHQ/ledger-live/commit/104d17428f5d3f9fa1adf29709a29c447dcf40da) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Fix Asset Detail favourites for tokens opened from Market or Assets by resolving market data via the /v3/markets `ledgerIds` filter while keeping backward compatibility with the legacy `ids` filter.
+
+- [#18590](https://github.com/LedgerHQ/ledger-live/pull/18590) [`c199be5`](https://github.com/LedgerHQ/ledger-live/commit/c199be55aae0dc60e7fce5fbb251c049e13504c8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Gate swap/buy CTAs on the asset detail page by availability: hide the swap sidebar (right panel) when swap is unavailable, hide the Buy action when the asset is not buyable, hide all actions/banner/sidebar for unsupported currencies, and show a fallback banner under the market data section when neither Buy nor Swap is available.
+
+- [#18612](https://github.com/LedgerHQ/ledger-live/pull/18612) [`0ffa53e`](https://github.com/LedgerHQ/ledger-live/commit/0ffa53e33fb10313728f872257f098d25cd19313) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Fix asset detail chart transaction marker clustering with per-timeframe spacing (wider gaps on 5y/all) via shared `@ledgerhq/asset-detail` utils.
+
+- [#18665](https://github.com/LedgerHQ/ledger-live/pull/18665) [`1dff6fa`](https://github.com/LedgerHQ/ledger-live/commit/1dff6faee51d18656ebe0310f2953b2385c58074) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Share the Asset Detail trade-availability gating between mobile and desktop. Extracted `useTradeAvailability` and the ramp ledger-id resolution helpers (`resolveRampLedgerIds`, `ledgerIdsFromLedgerCurrency`, `isAvailableOnBuy`, `isAvailableOnSwap`) into `@ledgerhq/asset-detail`, and refactored desktop to consume them. Mobile now gates the Asset Detail CTAs (Buy/Swap/Receive) on the same logic: a currency that is not supported by the build or deactivated by a feature flag exposes no transfer actions (footer and in-page), while supported assets without buy/swap show the existing "Swap and Buy are not supported for this asset." banner.
+
+### Patch Changes
+
+- Updated dependencies [[`9c07ff0`](https://github.com/LedgerHQ/ledger-live/commit/9c07ff0410eb303e7195f6937f5e01902b62de2e), [`d60474c`](https://github.com/LedgerHQ/ledger-live/commit/d60474ca81da537dad606744fe5b8ba3bb8f5ba6), [`104d174`](https://github.com/LedgerHQ/ledger-live/commit/104d17428f5d3f9fa1adf29709a29c447dcf40da), [`8a8b22f`](https://github.com/LedgerHQ/ledger-live/commit/8a8b22fec04257632fcb4acf204d42c1b7ef92c1), [`e636885`](https://github.com/LedgerHQ/ledger-live/commit/e6368852f2989f86180812ad9e2570d720b8f3ee), [`dc8833d`](https://github.com/LedgerHQ/ledger-live/commit/dc8833d93a74f36b6a9f3d83f925bb06fe24bfab), [`669d2c3`](https://github.com/LedgerHQ/ledger-live/commit/669d2c35d2a9b4c7a9160d58afb1a956af2b2e35), [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6), [`2ffc0e8`](https://github.com/LedgerHQ/ledger-live/commit/2ffc0e821c254d8926327ef6d608c41ce5d372db), [`7280849`](https://github.com/LedgerHQ/ledger-live/commit/72808491569c2d176baae00f6a90265dea0e8df8), [`7165ad2`](https://github.com/LedgerHQ/ledger-live/commit/7165ad22bfa49e9f9b28fe618c4f013cc7481628), [`01cf3a8`](https://github.com/LedgerHQ/ledger-live/commit/01cf3a85ba1e3e1b8109bdd6466b570d85ce696a), [`862198f`](https://github.com/LedgerHQ/ledger-live/commit/862198f7b4537b24b88664199bf1ea2ab2edcf2f), [`30cfdb1`](https://github.com/LedgerHQ/ledger-live/commit/30cfdb1c3c4bcaa9beab26cb8d28663d7a3daf1e), [`636a4cb`](https://github.com/LedgerHQ/ledger-live/commit/636a4cbc5ae01364af425e3837cecf1ce4d3f3bc), [`0fe1b2d`](https://github.com/LedgerHQ/ledger-live/commit/0fe1b2d9507d73be519c5612d0be8167927a1741), [`88c89b0`](https://github.com/LedgerHQ/ledger-live/commit/88c89b02d2eda15dec2007c8e675791b639e747b), [`13aeeb6`](https://github.com/LedgerHQ/ledger-live/commit/13aeeb6186997b433785e542ed1dafa6afde2267), [`0d7cf69`](https://github.com/LedgerHQ/ledger-live/commit/0d7cf6959c7d6e14b2be767081a35135e5610945), [`246bb7d`](https://github.com/LedgerHQ/ledger-live/commit/246bb7def5224d552e9adba6322a473529a1a566), [`9aa69db`](https://github.com/LedgerHQ/ledger-live/commit/9aa69db7d0c74f1aba64b7003c993909177176e5), [`5da03e4`](https://github.com/LedgerHQ/ledger-live/commit/5da03e4db3781c60989e9bc73940bde99222fa12), [`663e374`](https://github.com/LedgerHQ/ledger-live/commit/663e37464c0c14186ea9b2ef6481a80e70067e46), [`8688ac1`](https://github.com/LedgerHQ/ledger-live/commit/8688ac1e5a41490dbe6648eb05f796b3fa822d95), [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934), [`798081d`](https://github.com/LedgerHQ/ledger-live/commit/798081db3e427c8d2d09930ceb836703146ca1ba), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292), [`1888882`](https://github.com/LedgerHQ/ledger-live/commit/188888257bf9d65c1ca520cfcb05ba945ffb6fa3), [`674af05`](https://github.com/LedgerHQ/ledger-live/commit/674af05bbb04edb77d408d0df0472c54e3d2b932), [`37eba10`](https://github.com/LedgerHQ/ledger-live/commit/37eba10db15542fb7859bafac772e6d280650872), [`e620b15`](https://github.com/LedgerHQ/ledger-live/commit/e620b1596da0582ee0d86858293fd34be99df08e), [`cbc874e`](https://github.com/LedgerHQ/ledger-live/commit/cbc874e15412d47abd96d5112702d18f7650084b), [`51fb5a9`](https://github.com/LedgerHQ/ledger-live/commit/51fb5a98c8d151f8385986969170ad6bb65b3d39)]:
+  - @ledgerhq/live-common@36.3.0
+  - @ledgerhq/asset-aggregation@0.9.0
+
+## 0.7.0-next.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@36.3.0-next.4
+
+## 0.7.0-next.3
+
+### Patch Changes
+
+- Updated dependencies [[`30cfdb1`](https://github.com/LedgerHQ/ledger-live/commit/30cfdb1c3c4bcaa9beab26cb8d28663d7a3daf1e)]:
+  - @ledgerhq/live-common@36.3.0-next.3
+
+## 0.7.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`d60474c`](https://github.com/LedgerHQ/ledger-live/commit/d60474ca81da537dad606744fe5b8ba3bb8f5ba6)]:
+  - @ledgerhq/live-common@36.3.0-next.2
+
+## 0.7.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@36.3.0-next.1
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#18641](https://github.com/LedgerHQ/ledger-live/pull/18641) [`104d174`](https://github.com/LedgerHQ/ledger-live/commit/104d17428f5d3f9fa1adf29709a29c447dcf40da) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Fix Asset Detail favourites for tokens opened from Market or Assets by resolving market data via the /v3/markets `ledgerIds` filter while keeping backward compatibility with the legacy `ids` filter.
+
+- [#18590](https://github.com/LedgerHQ/ledger-live/pull/18590) [`c199be5`](https://github.com/LedgerHQ/ledger-live/commit/c199be55aae0dc60e7fce5fbb251c049e13504c8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Gate swap/buy CTAs on the asset detail page by availability: hide the swap sidebar (right panel) when swap is unavailable, hide the Buy action when the asset is not buyable, hide all actions/banner/sidebar for unsupported currencies, and show a fallback banner under the market data section when neither Buy nor Swap is available.
+
+- [#18612](https://github.com/LedgerHQ/ledger-live/pull/18612) [`0ffa53e`](https://github.com/LedgerHQ/ledger-live/commit/0ffa53e33fb10313728f872257f098d25cd19313) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Fix asset detail chart transaction marker clustering with per-timeframe spacing (wider gaps on 5y/all) via shared `@ledgerhq/asset-detail` utils.
+
+- [#18665](https://github.com/LedgerHQ/ledger-live/pull/18665) [`1dff6fa`](https://github.com/LedgerHQ/ledger-live/commit/1dff6faee51d18656ebe0310f2953b2385c58074) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Share the Asset Detail trade-availability gating between mobile and desktop. Extracted `useTradeAvailability` and the ramp ledger-id resolution helpers (`resolveRampLedgerIds`, `ledgerIdsFromLedgerCurrency`, `isAvailableOnBuy`, `isAvailableOnSwap`) into `@ledgerhq/asset-detail`, and refactored desktop to consume them. Mobile now gates the Asset Detail CTAs (Buy/Swap/Receive) on the same logic: a currency that is not supported by the build or deactivated by a feature flag exposes no transfer actions (footer and in-page), while supported assets without buy/swap show the existing "Swap and Buy are not supported for this asset." banner.
+
+### Patch Changes
+
+- Updated dependencies [[`9c07ff0`](https://github.com/LedgerHQ/ledger-live/commit/9c07ff0410eb303e7195f6937f5e01902b62de2e), [`104d174`](https://github.com/LedgerHQ/ledger-live/commit/104d17428f5d3f9fa1adf29709a29c447dcf40da), [`8a8b22f`](https://github.com/LedgerHQ/ledger-live/commit/8a8b22fec04257632fcb4acf204d42c1b7ef92c1), [`e636885`](https://github.com/LedgerHQ/ledger-live/commit/e6368852f2989f86180812ad9e2570d720b8f3ee), [`dc8833d`](https://github.com/LedgerHQ/ledger-live/commit/dc8833d93a74f36b6a9f3d83f925bb06fe24bfab), [`669d2c3`](https://github.com/LedgerHQ/ledger-live/commit/669d2c35d2a9b4c7a9160d58afb1a956af2b2e35), [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6), [`2ffc0e8`](https://github.com/LedgerHQ/ledger-live/commit/2ffc0e821c254d8926327ef6d608c41ce5d372db), [`7280849`](https://github.com/LedgerHQ/ledger-live/commit/72808491569c2d176baae00f6a90265dea0e8df8), [`7165ad2`](https://github.com/LedgerHQ/ledger-live/commit/7165ad22bfa49e9f9b28fe618c4f013cc7481628), [`01cf3a8`](https://github.com/LedgerHQ/ledger-live/commit/01cf3a85ba1e3e1b8109bdd6466b570d85ce696a), [`862198f`](https://github.com/LedgerHQ/ledger-live/commit/862198f7b4537b24b88664199bf1ea2ab2edcf2f), [`636a4cb`](https://github.com/LedgerHQ/ledger-live/commit/636a4cbc5ae01364af425e3837cecf1ce4d3f3bc), [`0fe1b2d`](https://github.com/LedgerHQ/ledger-live/commit/0fe1b2d9507d73be519c5612d0be8167927a1741), [`88c89b0`](https://github.com/LedgerHQ/ledger-live/commit/88c89b02d2eda15dec2007c8e675791b639e747b), [`13aeeb6`](https://github.com/LedgerHQ/ledger-live/commit/13aeeb6186997b433785e542ed1dafa6afde2267), [`0d7cf69`](https://github.com/LedgerHQ/ledger-live/commit/0d7cf6959c7d6e14b2be767081a35135e5610945), [`246bb7d`](https://github.com/LedgerHQ/ledger-live/commit/246bb7def5224d552e9adba6322a473529a1a566), [`9aa69db`](https://github.com/LedgerHQ/ledger-live/commit/9aa69db7d0c74f1aba64b7003c993909177176e5), [`5da03e4`](https://github.com/LedgerHQ/ledger-live/commit/5da03e4db3781c60989e9bc73940bde99222fa12), [`663e374`](https://github.com/LedgerHQ/ledger-live/commit/663e37464c0c14186ea9b2ef6481a80e70067e46), [`8688ac1`](https://github.com/LedgerHQ/ledger-live/commit/8688ac1e5a41490dbe6648eb05f796b3fa822d95), [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934), [`798081d`](https://github.com/LedgerHQ/ledger-live/commit/798081db3e427c8d2d09930ceb836703146ca1ba), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292), [`1888882`](https://github.com/LedgerHQ/ledger-live/commit/188888257bf9d65c1ca520cfcb05ba945ffb6fa3), [`674af05`](https://github.com/LedgerHQ/ledger-live/commit/674af05bbb04edb77d408d0df0472c54e3d2b932), [`37eba10`](https://github.com/LedgerHQ/ledger-live/commit/37eba10db15542fb7859bafac772e6d280650872), [`e620b15`](https://github.com/LedgerHQ/ledger-live/commit/e620b1596da0582ee0d86858293fd34be99df08e), [`cbc874e`](https://github.com/LedgerHQ/ledger-live/commit/cbc874e15412d47abd96d5112702d18f7650084b), [`51fb5a9`](https://github.com/LedgerHQ/ledger-live/commit/51fb5a98c8d151f8385986969170ad6bb65b3d39)]:
+  - @ledgerhq/live-common@36.3.0-next.0
+  - @ledgerhq/asset-aggregation@0.9.0-next.0
+
 ## 0.6.0
 
 ### Minor Changes

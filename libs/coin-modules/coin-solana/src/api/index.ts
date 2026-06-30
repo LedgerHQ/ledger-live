@@ -95,7 +95,7 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): SolanaC
       balances: Balance[],
       customFees?: FeeEstimation,
     ) => {
-      return validateIntent(intent, balances, customFees);
+      return validateIntent(intent, balances, customFees, api);
     },
     getNextSequence: async (address: string) => {
       return getNextSequence(address);

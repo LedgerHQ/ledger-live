@@ -314,7 +314,7 @@ describe("BleTransport connectivity test coverage", () => {
     });
 
     // Multi-frames message response is not handled by our current mocked react-native-ble-plx
-    // The logic of encoding a message into several frames is tested directly with unit tests on ledgerhq/devices/lib/ble/sendAPDU
+    // The logic of encoding a message into several frames is tested directly with unit tests on ./ble/sendAPDU
     describe("When the message to exchange needs more than 1 frame", () => {
       beforeEach(async () => {
         // Triggering a disconnection and clearing the transport cache

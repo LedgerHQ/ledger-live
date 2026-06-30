@@ -42,12 +42,15 @@ export function resolveDistributionItem({
   if (!routeAssetId) return undefined;
   const decoded = decodedAssetId ?? routeAssetId;
   const marketLedgerId = marketState?.ledgerIds?.[0];
-  const targetIds = new Set([decoded, marketLedgerId].filter((id): id is string => id != null));
+  const targetIds = new Set(
+    [decoded, marketLedgerId].filter((id): id is string => id != null).map(id => id.toLowerCase()),
+  );
+  const matchesId = (id: string): boolean => targetIds.has(id.toLowerCase());
 
   return (
     distribution.bySlug?.[decoded] ??
     (marketLedgerId ? distribution.bySlug?.[toSlug(marketLedgerId)] : undefined) ??
-    distribution.list.find(item => targetIds.has(item.currency.id)) ??
-    distribution.list.find(item => item.networks?.some(n => targetIds.has(n.currency.id)))
+    distribution.list.find(item => matchesId(item.currency.id)) ??
+    distribution.list.find(item => item.networks?.some(n => matchesId(n.currency.id)))
   );
 }

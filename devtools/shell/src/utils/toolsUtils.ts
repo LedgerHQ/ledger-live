@@ -6,16 +6,25 @@ export function filterToolsByPlatform(tools: Tool[], platform: ToolPlatform): To
   return tools.filter(t => !t.platform || t.platform === platform);
 }
 
-export function filterToolsByQuery(categories: CategoryEntry[], query: string): CategoryEntry[] {
+export function filterTools(tools: Tool[], query: string): Tool[] {
   const q = query.trim().toLowerCase();
-  if (!q) return categories;
+  if (!q) return tools;
+  return tools.filter(
+    t => t.label.toLowerCase().includes(q) || (t.owner ?? "").toLowerCase().includes(q),
+  );
+}
+
+export function filterToolsByQuery(categories: CategoryEntry[], query: string): CategoryEntry[] {
+  if (!query.trim()) return categories;
   return categories.reduce<CategoryEntry[]>((acc, { category, tools }) => {
-    const matched = tools.filter(
-      t => t.label.toLowerCase().includes(q) || (t.owner ?? "").toLowerCase().includes(q),
-    );
+    const matched = filterTools(tools, query);
     if (matched.length > 0) acc.push({ category, tools: matched });
     return acc;
   }, []);
+}
+
+export function toolsForCategory(categories: CategoryEntry[], category: Category): Tool[] {
+  return categories.find(c => c.category === category)?.tools ?? [];
 }
 
 export function findCategoryForToolId(

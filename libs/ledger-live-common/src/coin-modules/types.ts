@@ -13,12 +13,17 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
 import type Prando from "prando";
 import type { Resolver } from "../hw/getAddress/types";
 import type { SignMessage } from "../hw/signMessage/types";
-import type { CoinFrameworkSigner } from "../bridge/generic-coin-framework/types";
+import type {
+  AccountRawAssignHooks,
+  CoinFrameworkSigner,
+} from "../bridge/generic-coin-framework/types";
 export type { CoinFrameworkSigner };
 
 export type MessageSignerModule = {
@@ -145,4 +150,7 @@ export type CoinModuleLoader<
   loadValidateAddress?: () => Promise<ValidateAddressFn>;
   loadSigner?: () => Promise<CoinFrameworkSigner>;
   loadBridgeExtensions?: () => Promise<AccountBridgeExtensions>;
+  loadBridgeApi?: () => Promise<BridgeApi | ((currency: CryptoCurrency) => BridgeApi)>;
+  loadAccountRawAssign?: () => Promise<AccountRawAssignHooks>;
+  loadLocalApi?: () => Promise<(currencyId: string) => CoinModuleApi<any> & BridgeApi>;
 };

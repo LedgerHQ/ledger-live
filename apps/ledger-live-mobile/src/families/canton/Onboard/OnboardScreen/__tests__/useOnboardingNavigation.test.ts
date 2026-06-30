@@ -99,6 +99,51 @@ describe("useOnboardingNavigation", () => {
       expect(mockParentNavigate).toHaveBeenCalled();
     });
 
+    it("should keep already-onboarded (unfunded) Canton accounts instead of dropping them", () => {
+      // Re-adding a previously-onboarded account alongside onboarding a new one: the re-added
+      // party is unfunded (used=false) but exists on-chain (isOnboarded=true) and must be kept.
+      const onboardedUnfunded = createMockAccount({
+        id: "onboarded-unfunded",
+        used: false,
+        cantonResources: {
+          isOnboarded: true,
+          instrumentUtxoCounts: {},
+          pendingTransferProposals: [],
+        },
+      } as any);
+      const accountsToAdd = [onboardedUnfunded];
+      const onboardResult = createMockOnboardResult({
+        account: createMockAccount({ id: "newly-onboarded" }),
+        partyId: "party-123",
+      });
+      const mockRoute = { params: {} };
+
+      const { result } = renderHook(() =>
+        useOnboardingNavigation({
+          navigation: mockNavigation as any,
+          route: mockRoute as any,
+          accountsToAdd,
+          cryptoCurrency: mockCryptoCurrency,
+          dispatch: mockDispatch,
+          existingAccounts: mockExistingAccounts,
+          restoreNavigationSnapshot: mockRestoreNavigationSnapshot,
+        }),
+      );
+
+      act(() => {
+        result.current.finishOnboarding(onboardResult);
+      });
+
+      expect(mockDispatch).toHaveBeenCalledWith(
+        addAccountsAction({
+          existingAccounts: mockExistingAccounts,
+          scannedAccounts: [onboardedUnfunded, onboardResult.account],
+          selectedIds: [onboardedUnfunded.id, onboardResult.account.id],
+          renamings: {},
+        }),
+      );
+    });
+
     it("should navigate to success screen for normal onboarding", () => {
       const accountsToAdd = [createMockAccount({ id: "new-1", used: true })];
       const onboardResult = createMockOnboardResult();

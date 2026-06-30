@@ -2,9 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
-import { getParentAccount } from "@ledgerhq/live-common/account/helpers";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
+import type { formatCurrencyUnitOptions } from "@ledgerhq/live-common/currencies/index";
+import type { AleoAccount, AleoTokenAccount } from "@ledgerhq/live-common/families/aleo/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { localeSelector } from "~/renderer/reducers/settings";
@@ -17,8 +16,9 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { dayAndHourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import Spinner from "~/renderer/components/Spinner";
-import { PRIVATE_BALANCE_PLACEHOLDER } from "./constants";
+import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
+import { getAleoCurrencyConfig, formatAleoBalances } from "./shared/utils";
 
 type AleoSyncState = "ready" | "running" | "complete";
 
@@ -111,6 +111,30 @@ const SyncProgress = ({
   return null;
 };
 
+const BalanceRow = ({
+  titleKey,
+  tooltipKey,
+  formattedValue,
+}: {
+  titleKey: string;
+  tooltipKey: string;
+  formattedValue: string;
+}) => (
+  <BalanceDetail>
+    <ToolTip content={<Trans i18nKey={tooltipKey} />}>
+      <TitleWrapper>
+        <Title>
+          <Trans i18nKey={titleKey} />
+        </Title>
+        <InfoCircle size={13} />
+      </TitleWrapper>
+    </ToolTip>
+    <AmountValue>
+      <Discreet>{formattedValue}</Discreet>
+    </AmountValue>
+  </BalanceDetail>
+);
+
 interface Props {
   account: AleoAccount | TokenAccount;
 }
@@ -123,6 +147,14 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
 
   const mainAccount =
     account.type === "TokenAccount" ? getParentAccount(account, allAccounts) : account;
+  const config = getAleoCurrencyConfig(getAccountCurrency(account));
+  const formatConfig: formatCurrencyUnitOptions = {
+    alwaysShowSign: false,
+    showCode: true,
+    discreet,
+    disableRounding: true,
+    locale,
+  };
 
   const {
     isSyncing,
@@ -153,71 +185,72 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
     };
   }, [isSyncing]);
 
+  if (account.type === "TokenAccount" && config?.enableTokens) {
+    const aleoTokenAccount = account as AleoTokenAccount;
+    const formattedBalances = formatAleoBalances({
+      unit,
+      formatConfig,
+      balances: {
+        spendableBalance: aleoTokenAccount.spendableBalance,
+        transparentBalance: aleoTokenAccount.transparentBalance,
+        privateBalance: aleoTokenAccount.privateBalance,
+      },
+    });
+
+    return (
+      <Wrapper>
+        <BalanceRow
+          titleKey="aleo.account.availableBalance"
+          tooltipKey="aleo.account.availableBalanceTooltip"
+          formattedValue={formattedBalances.available}
+        />
+        <BalanceRow
+          titleKey="aleo.account.transparentBalance"
+          tooltipKey="aleo.account.transparentBalanceTooltip"
+          formattedValue={formattedBalances.transparent}
+        />
+        <BalanceRow
+          titleKey="aleo.account.privateBalance"
+          tooltipKey="aleo.account.privateBalanceTooltip"
+          formattedValue={formattedBalances.private}
+        />
+      </Wrapper>
+    );
+  }
+
   if (account.type !== "Account" || !account.aleoResources) {
     return null;
   }
 
-  const formatConfig = {
-    alwaysShowSign: false,
-    showCode: true,
-    discreet,
-    locale,
-  };
-
-  const spendableBalance = account.spendableBalance;
-  const transparentBalance = account.aleoResources.transparentBalance;
-  const privateBalance = account.aleoResources.privateBalance;
-
-  const formattedAvailableBalance = formatCurrencyUnit(unit, spendableBalance, formatConfig);
-  const formattedTransparentBalance = formatCurrencyUnit(unit, transparentBalance, formatConfig);
-  const formattedPrivateBalance = privateBalance
-    ? formatCurrencyUnit(unit, privateBalance, formatConfig)
-    : PRIVATE_BALANCE_PLACEHOLDER;
-
   const lastSync = account.aleoResources.lastPrivateSyncDate ?? null;
   const syncState: AleoSyncState = displaySyncing ? "running" : lastSync ? "complete" : "ready";
+  const formattedBalances = formatAleoBalances({
+    unit,
+    formatConfig,
+    balances: {
+      spendableBalance: account.spendableBalance,
+      transparentBalance: account.aleoResources.transparentBalance,
+      privateBalance: account.aleoResources.privateBalance,
+    },
+  });
 
   return (
     <Wrapper>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="aleo.account.availableBalanceTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="aleo.account.availableBalance" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{formattedAvailableBalance}</Discreet>
-        </AmountValue>
-      </BalanceDetail>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="aleo.account.transparentBalanceTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="aleo.account.transparentBalance" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{formattedTransparentBalance}</Discreet>
-        </AmountValue>
-      </BalanceDetail>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="aleo.account.privateBalanceTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="aleo.account.privateBalance" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{formattedPrivateBalance}</Discreet>
-        </AmountValue>
-      </BalanceDetail>
+      <BalanceRow
+        titleKey="aleo.account.availableBalance"
+        tooltipKey="aleo.account.availableBalanceTooltip"
+        formattedValue={formattedBalances.available}
+      />
+      <BalanceRow
+        titleKey="aleo.account.transparentBalance"
+        tooltipKey="aleo.account.transparentBalanceTooltip"
+        formattedValue={formattedBalances.transparent}
+      />
+      <BalanceRow
+        titleKey="aleo.account.privateBalance"
+        tooltipKey="aleo.account.privateBalanceTooltip"
+        formattedValue={formattedBalances.private}
+      />
       <BalanceDetail>
         <div
           style={{

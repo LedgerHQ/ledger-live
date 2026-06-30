@@ -1,87 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { BigNumber } from "bignumber.js";
-import {
-  encodeAccountId,
-  decodeAccountId,
-  emptyHistoryCache,
-} from "@ledgerhq/live-common/account/index";
-import {
-  findCryptoCurrencyById,
-  getCryptoCurrencyById,
-} from "@ledgerhq/live-common/currencies/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { reduce } from "rxjs/operators";
-import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
-import {
-  getDerivationScheme,
-  runDerivationScheme,
-  asDerivationMode,
-} from "@ledgerhq/ledger-wallet-framework/derivation";
-import type { Account, DerivationMode } from "@ledgerhq/types-live";
-
-const localCache: Record<string, unknown> = {};
-const bridgeCache = makeBridgeCacheSystem({
-  saveData(c, d) {
-    localCache[c.id] = d;
-    return Promise.resolve();
-  },
-
-  getData(c) {
-    return Promise.resolve(localCache[c.id]);
-  },
-});
-
-function inferAccount(id: string): Account {
-  const { derivationMode, xpubOrAddress, currencyId } = decodeAccountId(id);
-  const currency = getCryptoCurrencyById(currencyId);
-  const scheme = getDerivationScheme({
-    derivationMode: derivationMode as DerivationMode,
-    currency,
-  });
-  const index = 0;
-  const freshAddressPath = runDerivationScheme(scheme, currency, {
-    account: index,
-    node: 0,
-    address: 0,
-  });
-  const account: Account = {
-    type: "Account",
-    xpub: xpubOrAddress,
-    seedIdentifier: xpubOrAddress,
-    used: true,
-    swapHistory: [],
-    id,
-    derivationMode,
-    currency,
-    index,
-    freshAddress: xpubOrAddress,
-    freshAddressPath,
-    creationDate: new Date(),
-    lastSyncDate: new Date(0),
-    blockHeight: 0,
-    balance: new BigNumber(0),
-    spendableBalance: new BigNumber(0),
-    operationsCount: 0,
-    operations: [],
-    pendingOperations: [],
-    balanceHistoryCache: emptyHistoryCache,
-  };
-  return account;
-}
-
-async function syncAccount(id: string) {
-  const account = inferAccount(id);
-  const bridge = await getAccountBridge(account);
-  await bridgeCache.prepareCurrency(account.currency);
-  const syncConfig = {
-    paginationConfig: {},
-    blacklistedTokenIds: [],
-  };
-  const observable = bridge.sync(account, syncConfig);
-  const reduced = observable.pipe(reduce((a, f) => f(a), account));
-  const synced = await reduced.toPromise();
-  return synced;
-}
+import { encodeAccountId, decodeAccountId } from "@ledgerhq/live-common/account/index";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { asDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
+import type { Account } from "@ledgerhq/types-live";
+import { Spinner, TextInput } from "@ledgerhq/lumen-ui-react";
+import { ToolPage } from "../components/ToolPage";
+import { syncAccount } from "../logic/syncAccount";
 
 function App() {
   // synchronise account with an id that is input in a input text field
@@ -118,30 +42,39 @@ function App() {
     }
   }, [accountId]);
 
+  const isLoading = account === undefined && !accountError;
+
   return (
-    <div>
-      <h1>Synchronisation</h1>
-      <p>
-        <input
-          type="text"
-          placeholder="account id"
-          value={accountId}
-          onChange={e => setAccountId(e.target.value)}
-        />
-        <span style={{ color: "red" }}>{accountIdError}</span>
-      </p>
-      <pre>
-        <code>
-          {account
-            ? JSON.stringify(account, null, 2)
-            : accountError
-              ? String(accountError)
-              : account === null
-                ? "insert an account id to synchronise"
-                : "loading..."}
-        </code>
-      </pre>
-    </div>
+    <ToolPage
+      title="Synchronisation"
+      description="Synchronise an account from its id (or a currency:xpub/address shorthand)."
+    >
+      <TextInput
+        label="Account id"
+        placeholder="ethereum:0x… or js:2:ethereum:0x…:"
+        value={accountId}
+        onChange={e => setAccountId(e.target.value)}
+        status={accountIdError ? "error" : undefined}
+        helperText={accountIdError || undefined}
+      />
+
+      <div className="flex flex-col gap-8">
+        {accountError ? (
+          <p className="body-2 text-error">{String(accountError)}</p>
+        ) : isLoading ? (
+          <span className="inline-flex items-center gap-8 body-2 text-muted">
+            <Spinner size={16} /> Synchronising…
+          </span>
+        ) : null}
+        {account ? (
+          <pre className="max-h-[60vh] overflow-auto rounded-lg border border-base bg-muted p-16 body-3 text-base">
+            <code>{JSON.stringify(account, null, 2)}</code>
+          </pre>
+        ) : !accountError && !isLoading ? (
+          <p className="body-2 text-muted">Enter an account id to synchronise.</p>
+        ) : null}
+      </div>
+    </ToolPage>
   );
 }
 

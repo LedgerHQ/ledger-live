@@ -1,6 +1,5 @@
 import React from "react";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
@@ -10,6 +9,7 @@ import SelectAccount from "~/renderer/components/SelectAccount";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import BalanceSelector from "../shared/BalanceSelector";
+import { applyAleoBalanceSourceChange, getAleoCurrencyConfig } from "../shared/utils";
 import { Trans } from "react-i18next";
 
 export const SelfTransferStepRecipient = ({
@@ -29,6 +29,7 @@ export const SelfTransferStepRecipient = ({
   }
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const config = getAleoCurrencyConfig(mainAccount.currency);
 
   // show only Aleo accounts
   const accountFilter = (acc: AccountLike) => {
@@ -58,6 +59,11 @@ export const SelfTransferStepRecipient = ({
             onChange={onChangeAccount}
             value={account}
             filter={accountFilter}
+            {...(config?.enableTokens && {
+              withSubAccounts: true,
+              enforceHideEmptySubAccounts: true,
+              subAccountFilter: a => !a.balance.isZero(),
+            })}
           />
         </Box>
         <Box>
@@ -67,26 +73,11 @@ export const SelfTransferStepRecipient = ({
           <BalanceSelector
             transaction={transaction}
             mainAccount={mainAccount}
+            subAccount={account.type === "TokenAccount" ? account : undefined}
             onChange={value => {
-              updateTransaction(t => {
-                if (t.family !== "aleo") return t;
-
-                if (value === "public") {
-                  const { properties: _ignoredProperties, ...txWithoutProperties } = t;
-                  return {
-                    ...txWithoutProperties,
-                    mode: TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE,
-                  };
-                }
-
-                return {
-                  ...t,
-                  mode: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
-                  properties: {
-                    amountRecordCommitments: [],
-                    feeRecordCommitment: null,
-                  },
-                };
+              updateTransaction(tx => {
+                if (tx.family !== "aleo") return tx;
+                return applyAleoBalanceSourceChange(tx, value);
               });
             }}
           />

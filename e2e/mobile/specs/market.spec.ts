@@ -29,7 +29,7 @@ describe("Market page for user with no device", () => {
         },
       ],
     });
-    await app.portfolio.waitForPortfolioPageToLoad();
+    await app.mainNavigation.waitForWallet40Ready();
   });
 
   setTeamOwner(Team.WALLET_XP);

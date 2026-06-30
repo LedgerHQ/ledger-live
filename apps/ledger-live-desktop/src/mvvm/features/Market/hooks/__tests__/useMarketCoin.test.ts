@@ -4,6 +4,7 @@ import { http, HttpResponse } from "msw";
 import { useMarketCoin } from "../useMarketCoin";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { MARKET_API, DADA_API, EMPTY_DADA_RESPONSE } from "./shared";
+import { track } from "~/renderer/analytics/segment";
 
 const mockOnBuy = jest.fn();
 const mockOnSwap = jest.fn();
@@ -119,6 +120,36 @@ describe("useMarketCoin", () => {
     });
 
     expect(store.getState().settings.starredMarketCoins).toContain("bitcoin");
+  });
+
+  it("toggleStar tracks favourite button clicks", async () => {
+    const { result } = renderMarketCoinHook();
+
+    await waitFor(() => {
+      expect(result.current.currency).toBeDefined();
+    });
+
+    await act(async () => {
+      result.current.toggleStar();
+    });
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "favourite",
+      currency: "bitcoin",
+      page: "",
+      is_favourite: true,
+    });
+
+    await act(async () => {
+      result.current.toggleStar();
+    });
+
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "favourite",
+      currency: "bitcoin",
+      page: "",
+      is_favourite: false,
+    });
   });
 
   it("should be no-op when currency data is unavailable", async () => {

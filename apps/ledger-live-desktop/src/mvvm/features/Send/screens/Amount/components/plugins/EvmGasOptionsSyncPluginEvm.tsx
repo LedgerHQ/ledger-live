@@ -2,14 +2,15 @@ import React from "react";
 import { Banner } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
+import type { GasOptions } from "@ledgerhq/coin-evm/types/index";
 import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
+import type { EvmGasOptionsSyncTransaction } from "../../../../utils/isEvmTransaction";
 import { EvmGasOptionsSync } from "../Fees/EvmGasOptionsSync";
 
 type Props = Readonly<{
   account: AccountLike;
   parentAccount: Account | null;
-  transaction: EvmTransaction;
+  transaction: EvmGasOptionsSyncTransaction;
   transactionActions: SendFlowTransactionActions;
   evmGasOptions: GasOptions | undefined;
   gasOptionsError: Error | undefined;

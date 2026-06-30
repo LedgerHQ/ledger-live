@@ -8,6 +8,7 @@ import {
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
+import { MULTIVERSX_DUMMY_ADDRESS } from "../constants";
 import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import formatters from "../formatters";
@@ -63,6 +64,7 @@ export function buildAccountBridge(
     createTransaction,
     updateTransaction,
     getTransactionStatus,
+    getEstimationRecipient: () => MULTIVERSX_DUMMY_ADDRESS,
     prepareTransaction,
     sync,
     receive,

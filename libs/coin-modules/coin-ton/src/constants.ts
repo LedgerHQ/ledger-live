@@ -1,3 +1,5 @@
+export const TON_DUMMY_ADDRESS = "UQChCJybqqY3KOVE_6QCCVJDvXDMT-lPszwl1loaCEyVDfbq";
+
 /**
  * Maximum commission fee for jetton transactions in TON units.
  * Any excess fee will be returned to the user.

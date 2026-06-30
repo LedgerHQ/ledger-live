@@ -1,19 +1,37 @@
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import BigNumber from "bignumber.js";
+import invariant from "invariant";
 
 import { getDelegationOpMaxAmount, getStakingPosition } from "../logic/staking";
 import { AptosAPI } from "../network";
-import type { AptosAccount, Transaction } from "../types";
+import type { AptosAccount, Transaction, TransactionErrors } from "../types";
 import {
   APTOS_DELEGATION_RESERVE_IN_OCTAS,
   APTOS_MINIMUM_RESTAKE_IN_OCTAS,
+  DEFAULT_GAS,
+  DEFAULT_GAS_PRICE,
   MIN_COINS_ON_SHARES_POOL_IN_OCTAS,
-} from "./../constants";
+} from "../constants";
 import { getEstimatedGas } from "./getFeesForTransaction";
 import { getMaxSendBalance } from "./logic";
 
-const checkSendConditions = (transaction: Transaction, account: AptosAccount) =>
-  transaction.mode === "send" && transaction.amount.gt(account.spendableBalance);
+type TokenAccount = ReturnType<typeof findSubAccountById>;
+
+const DELEGATION_RESERVE_MODES = new Set<Transaction["mode"]>(["restake", "unstake", "withdraw"]);
+
+const checkSendConditions = (transaction: Transaction, account: AptosAccount) => {
+  if (transaction.mode !== "send") {
+    return false;
+  }
+
+  if (transaction.subAccountId) {
+    const tokenAccount = findSubAccountById(account, transaction.subAccountId);
+    invariant(tokenAccount, "aptos: token account is missing");
+    return transaction.amount.gt(tokenAccount.spendableBalance);
+  }
+
+  return transaction.amount.gt(account.spendableBalance);
+};
 
 const checkStakeConditions = (transaction: Transaction, account: AptosAccount) => {
   const txAmount = transaction.useAllAmount ? account.spendableBalance : transaction.amount;
@@ -48,19 +66,66 @@ const checkWithdrawConditions = (transaction: Transaction, account: AptosAccount
   return transaction.mode === "withdraw" && transaction.amount.gt(stakingPosition);
 };
 
+const shouldSkipPreparation = (transaction: Transaction, account: AptosAccount): boolean =>
+  !transaction.recipient ||
+  checkSendConditions(transaction, account) ||
+  checkStakeConditions(transaction, account) ||
+  checkRestakeConditions(transaction, account) ||
+  checkUnstakeConditions(transaction, account) ||
+  checkWithdrawConditions(transaction, account);
+
+const maxSendBalanceFor = (
+  account: AptosAccount,
+  tokenAccount: TokenAccount,
+  gas: BigNumber,
+  gasPrice: BigNumber,
+): BigNumber =>
+  tokenAccount
+    ? getMaxSendBalance(tokenAccount, account, gas, gasPrice)
+    : getMaxSendBalance(account, undefined, gas, gasPrice);
+
+// For "use max" sends, reserve the default gas limit to avoid too-tight simulation estimates.
+const applyMaxSend = (
+  transaction: Transaction,
+  account: AptosAccount,
+  tokenAccount: TokenAccount,
+  errors: TransactionErrors,
+): Transaction => {
+  const maxGas = BigNumber(DEFAULT_GAS);
+  const maxGasPrice = BigNumber(DEFAULT_GAS_PRICE);
+
+  transaction.amount = maxSendBalanceFor(account, tokenAccount, maxGas, maxGasPrice);
+  transaction.fees = maxGas.multipliedBy(maxGasPrice);
+  transaction.options = {
+    maxGasAmount: maxGas.toString(),
+    gasUnitPrice: maxGasPrice.toString(),
+  };
+  transaction.errors = errors;
+
+  return transaction;
+};
+
+// Reserve a certain amount to cover future network fees to deactivate and withdraw
+const getUseAllAmount = (
+  transaction: Transaction,
+  account: AptosAccount,
+  maxAmount: BigNumber,
+): BigNumber => {
+  if (DELEGATION_RESERVE_MODES.has(transaction.mode)) {
+    return getDelegationOpMaxAmount(account, transaction.recipient, transaction.mode);
+  }
+  if (transaction.mode === "stake") {
+    const reservedAmount = maxAmount.minus(APTOS_DELEGATION_RESERVE_IN_OCTAS);
+    return reservedAmount.isNegative() ? BigNumber(0) : reservedAmount;
+  }
+  return transaction.amount;
+};
+
 const prepareTransaction = async (
   account: AptosAccount,
   transaction: Transaction,
 ): Promise<Transaction> => {
-  if (
-    !transaction.recipient ||
-    checkSendConditions(transaction, account) ||
-    checkStakeConditions(transaction, account) ||
-    checkRestakeConditions(transaction, account) ||
-    checkUnstakeConditions(transaction, account) ||
-    checkWithdrawConditions(transaction, account)
-  )
-    return transaction;
+  if (shouldSkipPreparation(transaction, account)) return transaction;
 
   // if transaction.useAllAmount is true, then we expect transaction.amount to be 0
   // so to check that actual amount is zero or not, we also need to check if useAllAmount is false
@@ -74,33 +139,27 @@ const prepareTransaction = async (
   const aptosClient = new AptosAPI(account.currency.id);
   const tokenAccount = findSubAccountById(account, transaction?.subAccountId ?? "");
 
+  const estimationTransaction = transaction.useAllAmount
+    ? { ...transaction, amount: BigNumber(0) }
+    : transaction;
+
   try {
-    const { fees, estimate, errors } = await getEstimatedGas(account, transaction, aptosClient);
-    const gas = BigNumber(estimate.maxGasAmount);
-    const gasPrice = BigNumber(estimate.gasUnitPrice);
+    const { fees, estimate, errors } = await getEstimatedGas(
+      account,
+      estimationTransaction,
+      aptosClient,
+    );
 
     if (transaction.useAllAmount) {
-      const maxAmount = tokenAccount
-        ? getMaxSendBalance(tokenAccount, account, gas, gasPrice)
-        : getMaxSendBalance(account, undefined, gas, gasPrice);
-
       if (transaction.mode === "send") {
-        transaction.amount = maxAmount;
-      } else if (
-        transaction.mode === "restake" ||
-        transaction.mode === "unstake" ||
-        transaction.mode === "withdraw"
-      ) {
-        // Reserve a certain amount to cover future network fees to deactivate and withdraw
-        transaction.amount = getDelegationOpMaxAmount(
-          account,
-          transaction.recipient,
-          transaction.mode,
-        );
-      } else if (transaction.mode === "stake") {
-        // Reserve a certain amount to cover future network fees to deactivate and withdraw
-        transaction.amount = maxAmount.minus(APTOS_DELEGATION_RESERVE_IN_OCTAS);
+        return applyMaxSend(transaction, account, tokenAccount, errors);
       }
+
+      const gas = BigNumber(estimate.maxGasAmount);
+      const gasPrice = BigNumber(estimate.gasUnitPrice);
+      const maxAmount = maxSendBalanceFor(account, tokenAccount, gas, gasPrice);
+
+      transaction.amount = getUseAllAmount(transaction, account, maxAmount);
     }
 
     transaction.fees = fees;

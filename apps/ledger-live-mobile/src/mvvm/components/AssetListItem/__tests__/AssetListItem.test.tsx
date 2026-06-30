@@ -78,6 +78,17 @@ describe("AssetListItem", () => {
       renderView({ countervalueChange: null });
       expect(screen.queryByText(/%/)).toBeNull();
     });
+
+    it("renders the 1D price fallback through the delta when it is supplied as the change", () => {
+      renderView({ countervalueChange: { percentage: 0.012, value: 12 } });
+      expect(screen.getByText(/1\.20%/)).toBeVisible();
+    });
+
+    it("should render 0.00% for a zero countervalue change", () => {
+      renderView({ countervalueChange: { percentage: 0, value: 0 } });
+      expect(screen.getByText(/0\.00%/)).toBeVisible();
+      expect(screen.queryByText(/1\.59%/)).toBeNull();
+    });
   });
 
   describe("market variant", () => {

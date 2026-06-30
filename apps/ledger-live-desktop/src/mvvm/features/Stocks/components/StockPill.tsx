@@ -2,10 +2,11 @@ import React from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { MediaButton } from "@ledgerhq/lumen-ui-react";
 import { StockSuggestion } from "../types";
+import type { AssetNavigationMarketState } from "LLD/features/Assets/types";
 
 type StockPillProps = {
   stock: StockSuggestion;
-  onClick: (currencyId: string) => void;
+  onClick: (currencyId: string, marketState?: AssetNavigationMarketState) => void;
 };
 
 export function StockPill({ stock, onClick }: Readonly<StockPillProps>) {
@@ -22,7 +23,7 @@ export function StockPill({ stock, onClick }: Readonly<StockPillProps>) {
       leadingContent={leadingContent}
       leadingContentShape="rounded"
       className="shrink-0"
-      onClick={() => onClick(navigationId)}
+      onClick={() => onClick(navigationId, { id: navigationId, ledgerIds: [ledgerId] })}
       aria-label={name}
       data-testid={`stock-item-ticker-${ticker.toLowerCase()}`}
     >

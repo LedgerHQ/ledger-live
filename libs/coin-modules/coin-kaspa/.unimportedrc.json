@@ -37,6 +37,7 @@
     "src/deviceTransactionConfig.ts",
     "src/errors.ts",
     "src/hw-getAddress.ts",
+    "src/constants.ts",
     "src/logic/base32.ts",
     "src/logic/bip32.ts",
     "src/logic/constants.ts",

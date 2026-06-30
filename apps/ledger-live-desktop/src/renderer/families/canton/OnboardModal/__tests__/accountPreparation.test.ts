@@ -1,3 +1,4 @@
+import type { CantonResources } from "@ledgerhq/coin-canton/types";
 import { createMockAccount, createMockCantonCurrency } from "../../__tests__/testUtils";
 import {
   getCreatableAccount,
@@ -49,6 +50,24 @@ describe("accountPreparation", () => {
       const unused = createMockAccount({ id: "unused", used: false });
       const result = getImportableAccounts([unused]);
       expect(result).toEqual([]);
+    });
+
+    it("should include already-onboarded Canton accounts even when unfunded (used=false)", () => {
+      const used = createMockAccount({ id: "used", used: true });
+      const cantonResources: CantonResources = {
+        isOnboarded: true,
+        instrumentUtxoCounts: {},
+        pendingTransferProposals: [],
+      };
+      const onboardedUnfunded = createMockAccount({
+        id: "onboarded",
+        used: false,
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        cantonResources,
+      } as Partial<ReturnType<typeof createMockAccount>>);
+
+      const result = getImportableAccounts([used, onboardedUnfunded]);
+      expect(result).toEqual([used, onboardedUnfunded]);
     });
   });
 

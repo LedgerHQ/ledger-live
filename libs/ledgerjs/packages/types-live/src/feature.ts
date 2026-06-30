@@ -236,7 +236,6 @@ export type Features = CurrencyFeatures & {
   ptxEarnUi: Feature_PtxEarnUi;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
-  llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
   analyticsOptIn: DefaultFeature;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
   ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
@@ -319,7 +318,6 @@ export type Features = CurrencyFeatures & {
   llmNanoSDeprecation: DefaultFeature;
   llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
-  llmHomescreen: DefaultFeature;
   supportDeviceApex: DefaultFeature;
   llmSyncOnboardingIncr1: DefaultFeature;
   lldSyncOnboardingIncr1: DefaultFeature;
@@ -351,6 +349,7 @@ export type Features = CurrencyFeatures & {
   llmTransferButtonCopyVariant: Feature_LlmTransferButtonCopyVariant;
   lldTezosStaking: DefaultFeature;
   llmTezosStaking: DefaultFeature;
+  swapToEarn: DefaultFeature;
 };
 
 /**
@@ -733,12 +732,6 @@ export type Feature_FetchAdditionalCoins = Feature<{
   batch: number;
 }>;
 
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmAnalyticsOptInPrompt"]` from `@shared/feature-flags` instead. */
-export type Feature_LlmAnalyticsOptInPrompt = Feature<{
-  variant: ABTestingVariants;
-  entryPoints: Array<string>;
-}>;
-
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldAnalyticsOptInPrompt"]` from `@shared/feature-flags` instead. */
 export type Feature_LldAnalyticsOptInPrompt = Feature<{
   variant: ABTestingVariants;
@@ -939,8 +932,6 @@ export type Feature_LlmTransferButtonCopyVariant = Feature<{
   rowCashToStableDescription?: string;
 }>;
 
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmHomescreen"]` from `@shared/feature-flags` instead. */
-export type Feature_LlmHomescreen = DefaultFeature;
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["supportDeviceApex"]` from `@shared/feature-flags` instead. */
 export type Feature_SupportDeviceApex = DefaultFeature;
 
@@ -986,6 +977,7 @@ type Feature_Wallet40_Params = {
   newReceiveDialog?: boolean;
   earnUpselling?: boolean;
   earnSimulator?: boolean;
+  q2Tour?: boolean;
 };
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwmWallet40"]` from `@shared/feature-flags` instead. */

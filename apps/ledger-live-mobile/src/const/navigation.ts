@@ -1,3 +1,10 @@
+/**
+ * `id` for the Base navigator (the root native stack). Lets descendants reach it deterministically
+ * with `navigation.getParent(BASE_NAVIGATOR_ID)` instead of by tree position (which silently
+ * no-ops if a navigator level is inserted between them).
+ */
+export const BASE_NAVIGATOR_ID = "BaseNavigator";
+
 export enum ScreenName {
   Analytics = "Analytics",
   AnalyticsPreferencesSettings = "AnalyticsPreferencesSettings",
@@ -68,6 +75,7 @@ export enum ScreenName {
   DebugWallet40 = "DebugWallet40",
   DebugWalletV4Tour = "DebugWalletV4Tour",
   DebugProductTour = "DebugProductTour",
+  DebugQ2WalletV4Tour = "DebugQ2WalletV4Tour",
   DebugTermsOfUse = "DebugTermsOfUse",
   DebugVideos = "DebugVideos",
   DebugMockGenerateAccounts = "DebugMockGenerateAccounts",
@@ -120,6 +128,7 @@ export enum ScreenName {
   MyLedgerDevice = "MyLedgerDevice",
   MyWallet = "MyWallet",
   MyWalletHelp = "MyWalletHelp",
+  BackupHub = "BackupHub",
   NotificationsSettings = "NotificationsSettings",
   OperationDetails = "OperationDetails",
   PasswordAdd = "PasswordAdd",
@@ -784,4 +793,5 @@ export enum NavigatorName {
   Assets = "Assets",
   Analytics = "Analytics",
   OperationsHistory = "OperationsHistory",
+  BackupHub = "BackupHubNavigator",
 }

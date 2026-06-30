@@ -57,20 +57,24 @@ function fromStakingRedelegationRaw(r: StakingRedelegationRaw): StakingRedelegat
 function toStakingUnbondingRaw(u: StakingUnbonding): StakingUnbondingRaw {
   return {
     validatorAddress: u.validatorAddress,
+    ...(u.validatorId !== undefined ? { validatorId: u.validatorId } : {}),
     ...(u.validatorName !== undefined ? { validatorName: u.validatorName } : {}),
     amount: u.amount.toString(),
     completionDate: u.completionDate.toISOString(),
     ...(u.withdrawId !== undefined ? { withdrawId: u.withdrawId.toString() } : {}),
+    ...(u.status !== undefined ? { status: u.status } : {}),
   };
 }
 
 function fromStakingUnbondingRaw(u: StakingUnbondingRaw): StakingUnbonding {
   return {
     validatorAddress: u.validatorAddress,
+    ...(typeof u.validatorId === "string" ? { validatorId: u.validatorId } : {}),
     ...(typeof u.validatorName === "string" ? { validatorName: u.validatorName } : {}),
     amount: new BigNumber(u.amount),
     completionDate: new Date(u.completionDate),
     ...(u.withdrawId !== undefined ? { withdrawId: Number(u.withdrawId) } : {}),
+    ...(u.status !== undefined ? { status: u.status } : {}),
   };
 }
 

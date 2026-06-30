@@ -278,9 +278,9 @@ describe("createApi", () => {
       amount: 10n,
       asset: { type: "native" },
     };
-    const result = await api.validateIntent(intent, []);
+    const result = await api.validateIntent(intent, [], undefined);
 
-    expect(validateIntent).toHaveBeenCalledWith(intent, [], undefined);
+    expect(validateIntent).toHaveBeenCalledWith(intent, [], undefined, mockChainAPI);
     expect(result).toEqual(mockResult);
   });
 

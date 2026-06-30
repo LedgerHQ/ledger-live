@@ -60,6 +60,13 @@ describe("buildSignOperation", () => {
   const mockSigner = createMockSigner();
   const mockSignerContext = createMockSignerContext(mockSigner);
   const mockSignOperation = buildSignOperation(mockSignerContext);
+  const mockMultiRecordTransaction = getMockedTransaction({
+    mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+    properties: {
+      amountRecordCommitments: [mockUnspentRecord1.commitment, mockUnspentRecord2.commitment],
+      feeRecordCommitment: mockUnspentRecord2.commitment,
+    },
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -574,5 +581,45 @@ describe("buildSignOperation", () => {
         }).pipe(toArray()),
       ),
     ).rejects.toThrow(`aleo: view key is missing in ${accountWithoutViewKey.freshAddress} account`);
+  });
+
+  it("should stop TVK fetching when subscription is cancelled after root TVK", async () => {
+    let streamingEventCount = 0;
+    const sub = mockSignOperation({
+      account: mockAccount,
+      transaction: mockMultiRecordTransaction,
+      deviceId: "test-device",
+    }).subscribe({
+      next: event => {
+        if (event.type === "device-streaming") {
+          streamingEventCount++;
+          if (streamingEventCount === 2) sub.unsubscribe();
+        }
+      },
+    });
+
+    await new Promise<void>(resolve => setImmediate(resolve));
+
+    expect(mockSigner.getTvk).toHaveBeenCalledTimes(1);
+    expect(mockSigner.signRootIntent).not.toHaveBeenCalled();
+  });
+
+  it("should not start signing when subscription is cancelled after all TVKs are fetched", async () => {
+    const sub = mockSignOperation({
+      account: mockAccount,
+      transaction: mockMultiRecordTransaction,
+      deviceId: "test-device",
+    }).subscribe({
+      next: event => {
+        if (event.type === "device-streaming" && event.progress === 1) {
+          sub.unsubscribe();
+        }
+      },
+    });
+
+    await new Promise<void>(resolve => setImmediate(resolve));
+
+    expect(mockSigner.getTvk).toHaveBeenCalledTimes(3);
+    expect(mockSigner.signRootIntent).not.toHaveBeenCalled();
   });
 });

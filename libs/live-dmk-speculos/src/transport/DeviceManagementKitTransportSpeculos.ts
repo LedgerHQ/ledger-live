@@ -5,6 +5,7 @@ import { filter, timeout as rxTimeout } from "rxjs/operators";
 import {
   DeviceManagementKitBuilder,
   DeviceManagementKit,
+  DeviceModelId,
   type DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
 import {
@@ -19,6 +20,12 @@ export type SpeculosHttpTransportOpts = {
   apiPort?: string;
   timeout?: number;
   baseURL?: string;
+  /**
+   * Device model emulated by Speculos. The underlying DMK Speculos transport
+   * cannot infer it and defaults to {@link DeviceModelId.STAX}, so tests must
+   * pass it explicitly (e.g. nanoX) for the app to behave like the right model.
+   */
+  model?: DeviceModelId;
 };
 
 export enum SpeculosButton {
@@ -139,11 +146,15 @@ export default class SpeculosHttpTransport extends Transport {
     return resolvedBaseUrl;
   }
 
-  private static ensureEntry(baseUrl: string, connectionTimeoutMs: number): DmkEntry {
+  private static ensureEntry(
+    baseUrl: string,
+    connectionTimeoutMs: number,
+    model?: DeviceModelId,
+  ): DmkEntry {
     let deviceManagementEntry = this.byBase.get(baseUrl);
     if (!deviceManagementEntry) {
       const deviceManagementKit = new DeviceManagementKitBuilder()
-        .addTransport(speculosTransportFactory(baseUrl, true))
+        .addTransport(speculosTransportFactory(baseUrl, true, model))
         .build();
 
       deviceManagementEntry = {
@@ -201,7 +212,7 @@ export default class SpeculosHttpTransport extends Transport {
   static async open(options: SpeculosHttpTransportOpts = {}): Promise<SpeculosHttpTransport> {
     const baseUrl = this.resolveBaseFromEnv(options);
     const connectTimeoutMs = options.timeout ?? 10_000;
-    const entry = this.ensureEntry(baseUrl, connectTimeoutMs);
+    const entry = this.ensureEntry(baseUrl, connectTimeoutMs, options.model);
 
     await this.ensureSession(entry);
 
@@ -249,6 +260,7 @@ export default class SpeculosHttpTransport extends Transport {
       const deviceManagementEntry = SpeculosHttpTransport.ensureEntry(
         this.baseUrl,
         this.options.timeout ?? 10_000,
+        this.options.model,
       );
       deviceManagementEntry.sessionId = undefined;
       await SpeculosHttpTransport.ensureSession(deviceManagementEntry);

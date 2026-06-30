@@ -1,5 +1,47 @@
 # @ledgerhq/coin-stellar
 
+## 6.26.0
+
+### Minor Changes
+
+- [#18706](https://github.com/LedgerHQ/ledger-live/pull/18706) [`4767f1a`](https://github.com/LedgerHQ/ledger-live/commit/4767f1a2622d49de866f56cda616c252702d5711) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - use paginated listOperations instead of operationsFromHeight in API entry point
+
+- [#18520](https://github.com/LedgerHQ/ledger-live/pull/18520) [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Move the dummy fee-estimation recipient out of `@ledgerhq/cryptoassets` (`abandonseed.ts`, now deleted) into each coin family. Every account bridge now exposes a required `getEstimationRecipient(account)` returning a valid recipient (or throwing for an unmapped currency, like the former `getAbandonSeedAddress`), and the swap layer dispatches through it instead of the central address map.
+
+- [#18619](https://github.com/LedgerHQ/ledger-live/pull/18619) [`f8d0f50`](https://github.com/LedgerHQ/ledger-live/commit/f8d0f50b7a14e0eda66162aa5c8a75d5883b80b3) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - fetchOperations no longer loops internally on empty pages. Returns empty results + cursor, lets caller paginate.
+
+- [#18674](https://github.com/LedgerHQ/ledger-live/pull/18674) [`51fb5a9`](https://github.com/LedgerHQ/ledger-live/commit/51fb5a98c8d151f8385986969170ad6bb65b3d39) Thanks [@henri-ly](https://github.com/henri-ly)! - test: remove un-faked real timers from two unit suites (no production change)
+
+  - coin-stellar: stub `setTimeout` in `api/index_error.test.ts` so the 429-retry path no longer sleeps a real 4s, which raced Jest's 5s default timeout and intermittently failed CI (mirrors the existing `operationsFromHeight.unit.test.ts` stub).
+  - ledger-live-common: forward `global.setTimeout` with a 0ms delay in the `mock-bridges` suite, eliminating the ~78s of idle wall-clock spent on the mock bridge's simulated device latency (`scanAccounts`/`signOperation`/`sync`) while preserving async ordering.
+
+### Patch Changes
+
+- Updated dependencies [[`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2)]:
+  - @ledgerhq/errors@6.37.0
+  - @ledgerhq/live-network@2.6.6
+
+## 6.26.0-next.0
+
+### Minor Changes
+
+- [#18706](https://github.com/LedgerHQ/ledger-live/pull/18706) [`4767f1a`](https://github.com/LedgerHQ/ledger-live/commit/4767f1a2622d49de866f56cda616c252702d5711) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - use paginated listOperations instead of operationsFromHeight in API entry point
+
+- [#18520](https://github.com/LedgerHQ/ledger-live/pull/18520) [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Move the dummy fee-estimation recipient out of `@ledgerhq/cryptoassets` (`abandonseed.ts`, now deleted) into each coin family. Every account bridge now exposes a required `getEstimationRecipient(account)` returning a valid recipient (or throwing for an unmapped currency, like the former `getAbandonSeedAddress`), and the swap layer dispatches through it instead of the central address map.
+
+- [#18619](https://github.com/LedgerHQ/ledger-live/pull/18619) [`f8d0f50`](https://github.com/LedgerHQ/ledger-live/commit/f8d0f50b7a14e0eda66162aa5c8a75d5883b80b3) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - fetchOperations no longer loops internally on empty pages. Returns empty results + cursor, lets caller paginate.
+
+- [#18674](https://github.com/LedgerHQ/ledger-live/pull/18674) [`51fb5a9`](https://github.com/LedgerHQ/ledger-live/commit/51fb5a98c8d151f8385986969170ad6bb65b3d39) Thanks [@henri-ly](https://github.com/henri-ly)! - test: remove un-faked real timers from two unit suites (no production change)
+
+  - coin-stellar: stub `setTimeout` in `api/index_error.test.ts` so the 429-retry path no longer sleeps a real 4s, which raced Jest's 5s default timeout and intermittently failed CI (mirrors the existing `operationsFromHeight.unit.test.ts` stub).
+  - ledger-live-common: forward `global.setTimeout` with a 0ms delay in the `mock-bridges` suite, eliminating the ~78s of idle wall-clock spent on the mock bridge's simulated device latency (`scanAccounts`/`signOperation`/`sync`) while preserving async ordering.
+
+### Patch Changes
+
+- Updated dependencies [[`48dbd53`](https://github.com/LedgerHQ/ledger-live/commit/48dbd533a7a505cbb37989f8ce94f273f84bc7d2)]:
+  - @ledgerhq/errors@6.37.0-next.0
+  - @ledgerhq/live-network@2.6.6-next.0
+
 ## 6.25.1
 
 ### Patch Changes

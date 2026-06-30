@@ -14,6 +14,7 @@ import MarketTable from "./components/MarketTable";
 import MarketTopCards from "./TopCards";
 import { MarketCategoryBar } from "./components/MarketCategoryBar";
 import { MarketRangeSelect } from "./components/MarketRangeSelect";
+import { useTrackMarketDiscoverabilityPage } from "./utils/marketPageAnalytics";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -72,14 +73,22 @@ export default function Market() {
 
   const { order, range, counterCurrency, search = "", liveCompatible } = marketParams;
 
+  useTrackMarketDiscoverabilityPage(shouldDisplayAssetDiscoverability, {
+    order,
+    range,
+    category: categories.selectedCategory,
+  });
+
   return (
     <Container>
-      <TrackPage
-        category="Market"
-        sort={order !== "desc"}
-        timeframe={range}
-        countervalue={counterCurrency}
-      />
+      {!shouldDisplayAssetDiscoverability && (
+        <TrackPage
+          category="Market"
+          sort={order !== "desc"}
+          timeframe={range}
+          countervalue={counterCurrency}
+        />
+      )}
       <PageHeader title={t("market.title")} onBack={() => navigate("/")} />
 
       <Flex flexDirection="row" pr="6px" my={2} alignItems="center" justifyContent="space-between">

@@ -434,7 +434,9 @@ export class NewSendModal extends Modal {
   }
 
   async getAmountValue(): Promise<string> {
-    return (await this.amountInput.inputValue()) || "";
+    // Lumen's AmountInput formats the value with locale thousands separators
+    // (e.g. "12 831.23"); strip whitespace so the raw numeric string is returned.
+    return ((await this.amountInput.inputValue()) || "").replace(/\s/g, "");
   }
 
   @step("Going to the amount step")

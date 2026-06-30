@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { ColumnDef } from "@tanstack/react-table";
 import { BalanceCell } from "LLD/components/Cells/BalanceCell";
 import { CounterValueCell } from "LLD/components/Cells/CounterValueCell";
+import { TruncatedText } from "LLD/components/TruncatedText";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import type { AllocationTableItem } from "../types";
@@ -36,7 +37,7 @@ export const useAllocationTable = (items: AllocationTableItem[]) => {
                 <CryptoCurrencyIcon currency={row.original.currency} size={32} />
               )
             }
-            title={row.original.currency.name}
+            title={<TruncatedText text={row.original.currency.name} />}
             description={row.original.currency.ticker}
           />
         ),

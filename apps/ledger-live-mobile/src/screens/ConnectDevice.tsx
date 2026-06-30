@@ -157,6 +157,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
   const handleTx = useSignedTxHandler({
     account,
     parentAccount,
+    transaction,
   });
   // `renderOnResult` is invoked on every render of the DeviceAction result state,
   // so guard the broadcast side-effect to fire only once per mount. Without this,

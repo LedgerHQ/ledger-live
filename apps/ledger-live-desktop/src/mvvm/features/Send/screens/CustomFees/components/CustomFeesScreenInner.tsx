@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useStableGasOptions } from "@ledgerhq/live-common/flows/send/customFees/hooks/useStableGasOptions";
-import { isEvmTransaction } from "../../../utils/isEvmTransaction";
+import { isEvmGasOptionsSyncTransaction } from "../../../utils/isEvmTransaction";
 import { CustomFeesScreenInnerBase } from "./CustomFeesScreenInnerBase";
 import { CustomFeesScreenInnerWithAmountPlugins } from "./CustomFeesScreenInnerWithAmountPlugins";
 
@@ -24,7 +24,7 @@ type CustomFeesScreenInnerProps = Readonly<{
 const amountPluginTransactionGuards: Readonly<
   Record<string, (transaction: Transaction) => boolean>
 > = {
-  evmGasOptionsSync: isEvmTransaction,
+  evmGasOptionsSync: isEvmGasOptionsSyncTransaction,
 };
 
 export function CustomFeesScreenInner({
@@ -42,7 +42,9 @@ export function CustomFeesScreenInner({
   const currency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
   const stableTransaction = useStableGasOptions(transaction);
   const amountPlugins = useMemo(() => sendFeatures.getAmountPlugins(currency), [currency]);
-  const evmTransaction = isEvmTransaction(stableTransaction) ? stableTransaction : null;
+  const evmTransaction = isEvmGasOptionsSyncTransaction(stableTransaction)
+    ? stableTransaction
+    : null;
   const hasSupportedAmountPlugin = amountPlugins.some(plugin =>
     amountPluginTransactionGuards[plugin]?.(stableTransaction),
   );

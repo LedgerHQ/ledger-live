@@ -131,6 +131,16 @@ describe("useLineChartViewModel", () => {
     expect(result.current.height).toBe(120);
   });
 
+  it("defaults the empty label to the error translation and forwards an override", () => {
+    const { result: withDefault } = renderHook(() => useLineChartViewModel(buildProps()));
+    expect(withDefault.current.emptyLabel).toBe("Unable to load chart");
+
+    const { result: withOverride } = renderHook(() =>
+      useLineChartViewModel(buildProps({ emptyLabel: "Nothing here" })),
+    );
+    expect(withOverride.current.emptyLabel).toBe("Nothing here");
+  });
+
   it("enables the scrubber, area and axes by default with a String value formatter", () => {
     const { result } = renderHook(() => useLineChartViewModel(buildProps()));
 

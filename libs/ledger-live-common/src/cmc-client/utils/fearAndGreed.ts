@@ -1,5 +1,11 @@
 import type { FearAndGreedLevel } from "../state-manager/types";
 
+const MOOD_INDEX_RESTRICTED_REGIONS = new Set(["GB"]);
+
+export function isMoodIndexAvailable(region: string | null | undefined): boolean {
+  return !region || !MOOD_INDEX_RESTRICTED_REGIONS.has(region);
+}
+
 export const FEAR_AND_GREED_TRANSLATION_KEYS: Record<FearAndGreedLevel, string> = {
   fearPlus: "fearAndGreed.levels.fearPlus",
   fear: "fearAndGreed.levels.fear",

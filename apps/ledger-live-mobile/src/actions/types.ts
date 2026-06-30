@@ -18,7 +18,6 @@ import type {
   State,
   WalletConnectState,
   EarnState,
-  BorrowState,
   DynamicContentState,
   ProtectState,
   MarketState,
@@ -318,6 +317,7 @@ export enum SettingsActionTypes {
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
   SET_HAS_SEEN_WALLET_V4_TOUR = "SET_HAS_SEEN_WALLET_V4_TOUR",
   SET_PRODUCT_TOUR_COMPLETED = "SET_PRODUCT_TOUR_COMPLETED",
+  SET_HAS_SEEN_Q2_WALLET_V4_TOUR = "SET_HAS_SEEN_Q2_WALLET_V4_TOUR",
   SET_DO_NOT_ASK_AGAIN_SKIP_MEMO = "SET_DO_NOT_ASK_AGAIN_SKIP_MEMO",
   DEPRECATION_DO_NOT_REMIND = "DEPRECATION_DO_NOT_REMIND",
   SET_ANALYTICS_CONSENT_INFO = "SET_ANALYTICS_CONSENT_INFO",
@@ -406,6 +406,7 @@ export type SettingsSetAnalyticsConsentInfoPayload = SettingsState["analyticsCon
 export type SettingsSetHasSeenWalletV4TourPayload = SettingsState["hasSeenWalletV4Tour"];
 export type SettingsSetDoNotAskAgainSkipMemoPayload = SettingsState["doNotAskAgainSkipMemo"];
 export type SettingsSetProductTourCompletedPayload = SettingsState["productTourCompleted"];
+export type SettingsSetHasSeenQ2WalletV4TourPayload = SettingsState["hasSeenQ2WalletV4Tour"];
 export type SettingsSetDismissedContentCardsPayload = SettingsState["dismissedContentCards"];
 export type SettingsClearDismissedContentCardsPayload = string[];
 export type SettingsSetFromLedgerSyncOnboardingPayload = boolean;
@@ -475,6 +476,7 @@ export type SettingsPayload =
   | SettingsSetHasSeenWalletV4TourPayload
   | SettingsSetDoNotAskAgainSkipMemoPayload
   | SettingsSetProductTourCompletedPayload
+  | SettingsSetHasSeenQ2WalletV4TourPayload
   | SettingsSetHasClickedRecoverPayload;
 
 // === WALLET CONNECT ACTIONS ===
@@ -522,15 +524,6 @@ export type EarnPayload =
   | EarnSetMenuBottomSheetPayload
   | EarnSetProtocolInfoModalPayload
   | EarnSetActionDialogPayload;
-
-// === BORROW ACTIONS ===
-export enum BorrowActionTypes {
-  BORROW_INFO_BOTTOM_SHEET = "BORROW_INFO_BOTTOM_SHEET",
-}
-
-export type BorrowSetInfoBottomSheetPayload = BorrowState["infoBottomSheet"];
-
-export type BorrowPayload = BorrowSetInfoBottomSheetPayload;
 
 // === IN VIEW ACTIONS ===
 export enum InViewActionTypes {
@@ -634,6 +627,5 @@ export type ActionsPayload =
   | Action<PostOnboardingPayload>
   | Action<ProtectPayload>
   | Action<EarnPayload>
-  | Action<BorrowPayload>
   | Action<MarketPayload>
   | UnknownAction;

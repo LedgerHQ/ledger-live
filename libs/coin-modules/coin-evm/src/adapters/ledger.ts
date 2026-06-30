@@ -20,6 +20,7 @@ import {
   LedgerExplorerER1155TransferEvent,
   LedgerExplorerInternalTransaction,
 } from "../types";
+import { detectEvmStakingOperationType } from "../staking/detectOperationType";
 import { safeEncodeEIP55 } from "../utils";
 
 /**
@@ -30,10 +31,12 @@ export const ledgerOperationToOperations = (
   accountId: string,
   ledgerOp: LedgerExplorerOperation,
 ): Operation[] => {
-  const { xpubOrAddress: address } = decodeAccountId(accountId);
+  const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(ledgerOp.from);
   const to = safeEncodeEIP55(ledgerOp.to);
+  const input = ledgerOp.input ?? undefined;
+  const methodId = input ? input.slice(0, 10) : undefined; // 0x + 4-byte selector
   const value = new BigNumber(ledgerOp.value);
   const fee = new BigNumber(ledgerOp.gas_used).times(new BigNumber(ledgerOp.gas_price));
   const hasFailed = !ledgerOp.status;
@@ -44,7 +47,10 @@ export const ledgerOperationToOperations = (
     types.push("IN");
   }
   if (from === checksummedAddress) {
-    types.push(value.eq(0) ? "FEES" : "OUT");
+    // Recognize staking calls (delegate/undelegate/withdraw/reward) so they are not
+    // collapsed into a generic FEES/OUT operation, mirroring the etherscan adapter.
+    const stakingType = detectEvmStakingOperationType(currencyId, to, methodId);
+    types.push(stakingType ?? (value.eq(0) ? "FEES" : "OUT"));
   }
   if (!types.length) {
     types.push("NONE");

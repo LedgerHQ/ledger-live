@@ -13,14 +13,20 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { isValidBase58Address, isSolanaStakingTransactionIntent } from "../logic";
+import { getAtaDataLengthForMint } from "../helpers/token";
+import { ChainAPI } from "../network";
+import { getMaybeTokenMint } from "../network/chain/web3";
+import type { SolanaTokenProgram } from "../types";
 
 export async function validateIntent(
   transactionIntent: TransactionIntent<StringMemo | MemoNotSupported>,
   balances: Balance[],
   customFees?: FeeEstimation,
+  api?: ChainAPI,
 ): Promise<TransactionValidation> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
@@ -35,6 +41,17 @@ export async function validateIntent(
   validateRecipient(transactionIntent, errors);
   const amount = computeAmount(transactionIntent, balances, estimatedFees, isTokenTransfer);
   validateAmount(transactionIntent, amount, balances, estimatedFees, isTokenTransfer, errors);
+
+  if (isTokenTransfer && api && transactionIntent.recipient && !errors.recipient) {
+    await validateTokenTransferNativeCoverage(
+      api,
+      transactionIntent,
+      balances,
+      estimatedFees,
+      errors,
+    );
+  }
+
   checkFeeTooHigh(amount, estimatedFees, warnings);
 
   const totalSpent = isTokenTransfer ? amount : amount + estimatedFees;
@@ -46,6 +63,48 @@ export async function validateIntent(
     amount,
     totalSpent,
   };
+}
+
+/**
+ * SPL token transfers require enough native SOL to cover the network fee and,
+ * when the recipient has no associated token account, its mint-aware rent. The
+ * mint-aware size matters for Token-2022 mints with extensions, whose ATA is
+ * larger than the classic 165-byte one and rents more SOL on-chain. If we miss
+ * this check, prepareTransaction is happy off-chain but the broadcast fails.
+ */
+async function validateTokenTransferNativeCoverage(
+  api: ChainAPI,
+  intent: TransactionIntent<StringMemo | MemoNotSupported>,
+  balances: Balance[],
+  estimatedFees: bigint,
+  errors: Record<string, Error>,
+): Promise<void> {
+  const mintAddress = "assetReference" in intent.asset ? intent.asset.assetReference : undefined;
+  if (!mintAddress) return;
+
+  const mintOrError = await getMaybeTokenMint(mintAddress, api);
+  if (!mintOrError || mintOrError instanceof Error) return;
+
+  const tokenProgram = mintOrError.onChainAcc.data.program as SolanaTokenProgram;
+  const recipientAta = await api.findAssocTokenAccAddress(
+    intent.recipient,
+    mintAddress,
+    tokenProgram,
+  );
+  const ataExists = (await api.getBalance(recipientAta)) > 0;
+  const ataRent = ataExists
+    ? 0n
+    : BigInt(await api.getMinimumBalanceForRentExemption(getAtaDataLengthForMint(mintOrError)));
+
+  const requiredSol = ataRent + estimatedFees;
+  const native = balances.find(b => b.asset.type === "native");
+  const spendable = (native?.value ?? 0n) - (native?.locked ?? 0n);
+
+  if (spendable < requiredSol || spendable === 0n) {
+    errors.gasPrice = new NotEnoughGas(undefined, {
+      fees: requiredSol.toString(),
+    });
+  }
 }
 
 function validateStakingIntent(

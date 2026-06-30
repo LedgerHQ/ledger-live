@@ -6,9 +6,11 @@ import { APIEpochParams, EpochInfo } from "./api-types";
 
 /**
  * Fetch the current-epoch staking parameters used to compute validator APY (ADR-038 Option 3,
- * served by Ledger's internal Cardano node). The endpoint currently returns only a0/rho/tau and
- * the epoch number; `reserves` and `activeStake` are parsed when present (LIVE-18622) and left
- * undefined otherwise, which keeps APY omitted until the data is exposed.
+ * served by Ledger's internal Cardano node). When present, reserves/activeStake arrive nested under
+ * `adaPots` / `activeStake_aggregate` as JSON numbers, which we flatten + stringify. Each may be absent
+ * or null, in which case it's left undefined and APY is omitted.
+ * activeStake exceeds 2^53 so JSON.parse rounds it, but it's only used in the APY
+ * ratio (error ~1e-16, immaterial).
  */
 export async function fetchEpochInfo(currency: CryptoCurrency): Promise<EpochInfo> {
   const { data } = await network<APIEpochParams>({
@@ -25,8 +27,8 @@ export async function fetchEpochInfo(currency: CryptoCurrency): Promise<EpochInf
 
   return {
     number: epoch.number,
-    reserves: epoch.reserves,
-    activeStake: epoch.activeStake,
+    reserves: epoch.adaPots?.reserves?.toString(),
+    activeStake: epoch.activeStake_aggregate?.aggregate?.sum?.amount?.toString(),
     params: epoch.protocolParams,
   };
 }

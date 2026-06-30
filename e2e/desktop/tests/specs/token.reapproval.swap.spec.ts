@@ -25,7 +25,6 @@ const eligibleProviders = [
   SwapProvider.ONE_INCH,
   SwapProvider.VELORA,
 ];
-const provider = pickRotatingProvider(eligibleProviders);
 
 test.describe("Token reapproval - flow", () => {
   test.skip(
@@ -67,6 +66,7 @@ test.describe("Token reapproval - flow", () => {
       ],
     },
     async ({ app }) => {
+      const provider = await pickRotatingProvider(eligibleProviders, fromAccount, toAccount);
       // Reapproval broadcasts revoke + approve and waits for each to confirm on mainnet; extend beyond the 400s CI default.
       test.setTimeout(600_000);
       await app.swap.logSelectedProvider(provider.uiName);

@@ -19,7 +19,9 @@ import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 
 export const HTTP_PROXY_TRANSPORT_IDENTIFIER = "HTTP_PROXY_TRANSPORT";
-const SYNTHETIC_DEVICE_ID = "http-proxy-device";
+export const HTTP_PROXY_LEGACY_DEVICE_ID_PREFIX = "httpdebug|";
+export const buildHttpProxyLegacyDeviceId = (url: string): string =>
+  `${HTTP_PROXY_LEGACY_DEVICE_ID_PREFIX}${url}`;
 
 export const DEFAULT_HTTP_PROXY_DEVICE_MODEL_ID = DeviceModelId.NANO_X;
 
@@ -186,7 +188,7 @@ export class HttpProxyDmkTransport implements DmkTransport {
     const deviceModelId = await this.resolveDeviceModelId(url);
 
     return {
-      id: SYNTHETIC_DEVICE_ID,
+      id: buildHttpProxyLegacyDeviceId(url),
       deviceModel: this.args.deviceModelDataSource.getDeviceModel({ id: deviceModelId }),
       transport: HTTP_PROXY_TRANSPORT_IDENTIFIER,
       name: `HTTP Proxy (${url})`,

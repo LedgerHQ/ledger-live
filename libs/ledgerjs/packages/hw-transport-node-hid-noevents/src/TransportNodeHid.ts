@@ -12,7 +12,7 @@ import {
   identifyUSBProductId,
   ledgerUSBVendorId,
 } from "@ledgerhq/devices";
-import hidFraming from "@ledgerhq/devices/hid-framing";
+import hidFraming from "./hid-framing";
 import {
   TransportError,
   DisconnectedDevice,

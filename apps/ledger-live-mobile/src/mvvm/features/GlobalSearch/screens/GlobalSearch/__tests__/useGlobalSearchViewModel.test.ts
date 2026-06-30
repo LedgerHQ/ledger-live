@@ -1,5 +1,6 @@
 import { renderHook, act } from "@tests/test-renderer";
 import { track } from "~/analytics";
+import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { ScreenName } from "~/const";
 import { useGlobalSearchViewModel } from "../useGlobalSearchViewModel";
 import { useGlobalSearchDefaults } from "LLM/features/GlobalSearch/hooks/useGlobalSearchDefaults";
@@ -15,6 +16,7 @@ const mockOpenFromMarket = jest.fn();
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({ goBack: mockGoBack, navigate: mockNavigate }),
+  useRoute: () => ({ params: { source: "Portfolio" } }),
 }));
 
 jest.mock("LLM/features/AssetDetail/hooks/useAssetDetailNavigation", () => ({
@@ -112,6 +114,14 @@ describe("useGlobalSearchViewModel", () => {
     expect(track).toHaveBeenCalledWith("search_open", { page: ScreenName.GlobalSearch });
   });
 
+  it("registers GlobalSearch as the current route so it is the source of the next screen", () => {
+    currentRouteNameRef.current = "Portfolio";
+
+    renderHook(() => useGlobalSearchViewModel());
+
+    expect(currentRouteNameRef.current).toBe(ScreenName.GlobalSearch);
+  });
+
   it("navigates back when onBack is invoked", () => {
     const { result } = renderHook(() => useGlobalSearchViewModel());
 
@@ -164,6 +174,7 @@ describe("useGlobalSearchViewModel", () => {
       page: ScreenName.GlobalSearch,
       flow: "global_search",
       searched: false,
+      source: "Portfolio",
     });
     expect(mockOpenFromMarket).toHaveBeenCalledWith({
       marketCurrencyId: "bitcoin",
@@ -207,6 +218,7 @@ describe("useGlobalSearchViewModel", () => {
       page: ScreenName.GlobalSearch,
       flow: "global_search",
       searched: false,
+      source: "Portfolio",
     });
     expect(mockOpenFromMarket).toHaveBeenCalledWith({
       marketCurrencyId: "aapl-market",

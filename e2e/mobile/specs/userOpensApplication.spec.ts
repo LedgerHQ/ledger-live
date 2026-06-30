@@ -1,4 +1,3 @@
-import { setFeatureFlags } from "../bridge/server";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setTeamOwner } from "../helpers/allure/allure-helper";
 
@@ -11,17 +10,6 @@ setTeamOwner(Team.WALLET_XP);
 describe("User opens application", () => {
   testConfig.tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   testConfig.tags.forEach(tag => $Tag(tag));
-  beforeAll(async () => {
-    await setFeatureFlags({
-      llmAnalyticsOptInPrompt: {
-        enabled: true,
-        params: {
-          variant: "A",
-          entryPoints: ["Onboarding", "Portfolio"],
-        },
-      },
-    });
-  });
 
   test("Verify that user can open application", async () => {
     await app.onboarding.waitForOnboardingToLoad();

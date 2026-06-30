@@ -74,6 +74,8 @@
   "common" : {
     "never" : "从不",
     "new" : "新",
+    "scrollLeft" : "向左滚动",
+    "scrollRight" : "向右滚动",
     "skip" : "跳过",
     "apply" : "应用",
     "done" : "完成",
@@ -503,10 +505,10 @@
       "changeProvider" : "使用其他提供商进行互换"
     },
     "incompatibility" : {
-      "ton_title" : "Ledger Nano S™ 不支持互换 TON",
-      "ton_description" : "要互换 TON，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
-      "ton_tokens_title" : "Ledger Nano S™ 不支持互换 Ton 代币",
-      "ton_tokens_description" : "要互换 Ton 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "ton_title" : "Ledger Nano S™ 不支持互换 Gram",
+      "ton_description" : "要互换 Gram，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "ton_tokens_title" : "Ledger Nano S™ 不支持互换 Gram 代币",
+      "ton_tokens_description" : "要互换 Gram 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "spl_tokens_title" : "Ledger Nano S™ 不支持互换 Solana 代币",
       "spl_tokens_description" : "要互换 Solana 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "sui_tokens_title" : "Ledger Nano S™ 不支持互换 Sui 代币",
@@ -1704,7 +1706,11 @@
         "stocks" : "股票",
         "favorites" : "收藏"
       },
-      "emptyFavorites" : "暂无收藏"
+      "emptyFavorites" : "暂无收藏",
+      "noAssets" : {
+        "title" : "无可用资产",
+        "description" : "抱歉，该类别中没有可用资产。"
+      }
     },
     "detailsPage" : {
       "priceStatistics" : "价格统计",
@@ -4425,6 +4431,8 @@
         "header" : "解除委托",
         "headerTooltip" : "{{numberOfDays}} 天时间锁后可用",
         "inactiveTooltip" : "已解除委托的数额不会生成奖励。",
+        "timelockTooltip" : "仍处于锁定期内。这些资金暂时无法提取。",
+        "readyTooltip" : "锁定期已结束。这些资金现已可提取。",
         "flow" : {
           "title" : "停止质押",
           "steps" : {
@@ -7509,6 +7517,10 @@
     "TaprootNotActivated" : {
       "title" : "在激活主网之前，发送到 taproot 地址不安全"
     },
+    "RbfBuildError" : {
+      "title" : "无法替换此交易",
+      "description" : "在当前参数下，无法应用替换此交易所需的费用增加。尝试不同的费用数额或取消操作。"
+    },
     "SolanaAccountNotFunded" : {
       "title" : "账户没有资金"
     },
@@ -7781,13 +7793,13 @@
       "title" : "我们的比特币基础设施遇到了问题。请稍后重试。"
     },
     "TonExcessFee" : {
-      "title" : "这构成了代币转移。您将支付 0.1 TON 的费用，任何超额部分将会退还给您。"
+      "title" : "这构成了代币转移。您将支付 0.1 GRAM 的费用，任何超额部分将会退还给您。"
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "主账户 (TON) 资金不足，无法计算费用。所需最低余额为 0.1 TON。"
+      "title" : "主账户 (GRAM) 资金不足，无法计算费用。所需最低余额为 0.1 GRAM。"
     },
     "TonMinimumRequired" : {
-      "title" : "资金不足。所需最低余额为 0.02 TON。"
+      "title" : "资金不足。所需最低余额为 0.02 GRAM。"
     },
     "AleoAmountRecordRequired" : {
       "title" : "请为数额选择有效的私密记录。",
@@ -8359,7 +8371,7 @@
     }
   },
   "analyticsOptInPrompt" : {
-    "variantA" : {
+    "screen" : {
       "description" : "分享您的 Ledger Wallet 数据有助于我们了解您的偏好，为您展示更相关的内容。",
       "whatWeTrack" : "获得您的同意后，Ledger 将会收集有关您如何使用 Ledger Wallet 的数据（包括页面访问量和点击量）：",
       "whatWeTrackList" : {
@@ -8384,26 +8396,6 @@
         "description" : "为了接收符合您偏好的个性化推荐及内容，帮助我们衡量营销活动的效果，我们会分享应用程序使用数据，包括点击量、页面访问量和转化数据。"
       },
       "validate" : "验证"
-    },
-    "variantB" : {
-      "accept" : "接受",
-      "refuse" : "拒绝",
-      "analytics" : {
-        "description" : "分享您的 Ledger Wallet 分析数据可帮助我们了解用户如何使用 Ledger Wallet，修复错误，改进用户体验。",
-        "details" : {
-          "1" : "分析数据包括页面访问量、点击量。",
-          "2" : "我们不会收集或查看有关您的余额、账户和资产组合的任何信息。",
-          "3" : "分析是完全匿名的。我们无法查看或收集您的个人信息。"
-        }
-      },
-      "personalRecommendations" : {
-        "title" : "享受个性化体验",
-        "description" : "分享您的 Ledger Wallet 个性化数据，让我们可以为您展示符合您个人偏好的内容",
-        "details" : {
-          "1" : "个性化数据包括转化数据、点击量、页面访问量。",
-          "2" : "我们无法跟踪或收集您的任何个人信息或资产组合信息。"
-        }
-      }
     },
     "common" : {
       "title" : "请帮助我们改进并提供个性化体验",
@@ -8751,8 +8743,6 @@
     "title" : "市场",
     "genericError" : "连接失败",
     "cta" : "查看全部",
-    "scrollLeft" : "向左滚动",
-    "scrollRight" : "向右滚动",
     "ranking" : {
       "trending" : "热门",
       "gainers" : "获利者",
@@ -8863,6 +8853,12 @@
   },
   "topBar" : {
     "searchPlaceholder" : "搜索资产",
+    "searchPlaceholders" : {
+      "crypto" : "搜索加密货币",
+      "stablecoins" : "搜索稳定币",
+      "stocks" : "搜索股票",
+      "addresses" : "搜索地址"
+    },
     "search" : {
       "noAssetFound" : "未找到资产。",
       "error" : "连接失败",
@@ -8910,6 +8906,20 @@
       "privateBalanceTooltip" : "对外隐藏的余额"
     },
     "shielded" : {
+      "send" : {
+        "transferFrom" : {
+          "label" : "转移自",
+          "public" : {
+            "title" : "公开余额",
+            "subtitle" : "透明"
+          },
+          "private" : {
+            "title" : "私密余额",
+            "subtitle" : "已屏蔽",
+            "unavailable" : "私密余额不可用"
+          }
+        }
+      },
       "state" : {
         "showBalance" : "显示余额",
         "startSync" : "开始同步",
@@ -9103,6 +9113,35 @@
       "explore" : "探索我的全新资产组合"
     }
   },
+  "q2Tour" : {
+    "slides" : {
+      "welcome" : {
+        "title" : "更智能的资产组合管理更清晰的资产增长路径",
+        "description" : ""
+      },
+      "aggregatedBalance" : {
+        "title" : "按资产汇总余额",
+        "description" : "USDT 等多链资产，现已合计各链总额。简单，清晰，准确。"
+      },
+      "pnl" : {
+        "title" : "您的收益，一目了然",
+        "description" : "在资产组合和数据分析页面查看每种资产的盈亏明细"
+      },
+      "earnSimulator" : {
+        "title" : "测算潜在收益",
+        "description" : "预估您可获得的收益，并制定符合您目标的增长计划"
+      },
+      "earnUpselling" : {
+        "title" : "支持更多协议，赚取更多奖励",
+        "description" : "稳定币和精选优质资产已直接显示在钱包中无需费力搜索专注投资决策"
+      }
+    },
+    "cta" : {
+      "seeWhatsNew" : "了解最新动态",
+      "next" : "下一步",
+      "gotIt" : "知道了"
+    }
+  },
   "productTour" : {
     "cta" : {
       "continue" : "继续",
@@ -9186,23 +9225,23 @@
       "refer" : "推荐"
     },
     "backupHub" : {
-      "title" : "钱包备份",
-      "description" : "综合使用多种助记词恢复备份解决方案保护您的资产。",
+      "title" : "备份",
+      "description" : "不要失去对您资产的访问权限——以多种格式备份您的秘密恢复短语。",
       "back" : "返回",
       "sections" : {
-        "digital" : "基于数字身份的备份",
+        "digital" : "关联身份的数字备份",
         "physical" : "实体备份"
       },
       "recover" : {
         "title" : "Ledger Recover",
-        "notSubscribed" : "创建不会丢失的备份",
+        "notSubscribed" : "通过验证您的身份来恢复访问权限。",
         "inProgress" : "完成激活",
         "done" : "管理您的备份",
         "discover" : "探索"
       },
       "recoveryKey" : {
         "title" : "Ledger Recovery Key 恢复钥匙",
-        "description" : "受 PIN 识别码保护的智能卡"
+        "description" : "一张受 PIN 识别码保护的智能卡。"
       },
       "secretRecoveryPhrase" : {
         "title" : "24 个助记词金属存储",
@@ -9251,6 +9290,9 @@
     "tradingVolume24h" : "24 小时交易量",
     "tradingVolume24hTooltip" : "过去 24 小时内交易的总数额。",
     "marketStatsDisclaimer" : "市场统计数据源自 CoinGecko",
+    "fallbackBanner" : {
+      "title" : "不支持对此资产的互换和买入。"
+    },
     "day" : "1 天",
     "week" : "1 周",
     "month" : "1 个月",

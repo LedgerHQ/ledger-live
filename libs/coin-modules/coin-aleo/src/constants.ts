@@ -1,3 +1,5 @@
+export const ALEO_DUMMY_ADDRESS = "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd4yj0qycs7c9s2xkcwv";
+
 export const PROGRAM_ID = {
   CREDITS: "credits.aleo",
 };
@@ -7,6 +9,7 @@ export const EXPLORER_TRANSFER_TYPES = {
   PUBLIC: "transfer_public",
   PRIVATE_TO_PUBLIC: "transfer_private_to_public",
   PUBLIC_TO_PRIVATE: "transfer_public_to_private",
+  FEE_PRIVATE: "fee_private",
 };
 
 export const TRANSACTION_TYPE = {
@@ -19,6 +22,25 @@ export const TRANSACTION_TYPE = {
   CONVERT_TOKEN_PRIVATE_TO_PUBLIC: "convert_token_private_to_public",
   CONVERT_TOKEN_PUBLIC_TO_PRIVATE: "convert_token_public_to_private",
 } as const;
+
+// Function names that represent actual private token transfers between parties.
+// Used to exclude internal operations (split, join, fee_private, etc.) from history.
+export const PRIVATE_TRANSFER_FUNCTIONS = new Set([
+  EXPLORER_TRANSFER_TYPES.PRIVATE,
+  EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+  EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+]);
+
+// Semi-public function names that cross the public/private boundary.
+// These appear in public token operations AND have matching private records,
+// so they need to be patched during private sync (analogous to coin ops patching).
+export const SEMI_PUBLIC_TOKEN_FUNCTIONS = new Set([
+  EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+  EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+]);
+
+// Each record with this value in `record_name` field is a token record.
+export const TOKEN_RECORD_NAME = "Token";
 
 // Indexes based on aleo credits program args
 // ref: https://developer.aleo.org/concepts/fundamentals/credits/#transfer_public

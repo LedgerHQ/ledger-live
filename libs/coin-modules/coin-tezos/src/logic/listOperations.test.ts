@@ -1211,4 +1211,58 @@ describe("listOperations", () => {
       expect(byLevel[4_200_001]).toBe("");
     });
   });
+
+  describe("origination operations", () => {
+    const originatorAddress = "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb";
+
+    function makeOrigination(overrides: Record<string, unknown> = {}) {
+      return {
+        type: "origination",
+        id: 621018843447296,
+        hash: "onhQ1vG21TosVKCWrwBeYKkRMnTGe34D2ZiaSs6jGQYpw9Z9r1m",
+        level: 3723919,
+        timestamp: "2023-06-17T15:31:51Z",
+        block: "BL5gN6AzyYzstxxheqdbYvFiqHUWZFCsS7knAE8AtiLRJeDTEZ5",
+        counter: 10150476,
+        sender: { address: originatorAddress },
+        bakerFee: 5980,
+        storageFee: 1398750,
+        allocationFee: 64250,
+        gasLimit: 3494,
+        storageLimit: 5852,
+        contractBalance: 0,
+        status: "applied",
+        originatedContract: { address: "KT1PM9HfQ9ZkQoG4UwtuZjrnUywQhokxJxRo" },
+        ...overrides,
+      };
+    }
+
+    it("surfaces origination as a FEES operation with correct fees", async () => {
+      mockGetAccountOperations.mockResolvedValue([makeOrigination()]);
+      const [results] = await listOperations(originatorAddress, options);
+
+      expect(results).toHaveLength(1);
+      expect(results[0].type).toBe("FEES");
+      expect(results[0].value).toBe(0n);
+      expect(results[0].tx.fees).toBe(5980n + 1398750n + 64250n);
+      expect(results[0].tx.feesPayer).toBe(originatorAddress);
+      expect(results[0].details?.ledgerOpType).toBe("ORIGINATION");
+    });
+
+    it("surfaces origination as OUT when contractBalance > 0", async () => {
+      mockGetAccountOperations.mockResolvedValue([makeOrigination({ contractBalance: 1000000 })]);
+      const [results] = await listOperations(originatorAddress, options);
+
+      expect(results).toHaveLength(1);
+      expect(results[0].type).toBe("OUT");
+      expect(results[0].value).toBe(1000000n);
+    });
+
+    it("includes counter in details", async () => {
+      mockGetAccountOperations.mockResolvedValue([makeOrigination()]);
+      const [results] = await listOperations(originatorAddress, options);
+
+      expect(results[0].details?.counter).toBe(10150476);
+    });
+  });
 });

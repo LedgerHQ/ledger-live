@@ -1,0 +1,2 @@
+export const CANTON_UNSET_RECIPIENT =
+  "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
