@@ -170,7 +170,6 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     },
     sendVerify: {
       [AppInfos.SOLANA.name]: DeviceLabels.REVIEW_TRANSACTION_TO,
-      [AppInfos.RIPPLE.name]: DeviceLabels.TRANSACTION_TYPE,
       default: DeviceLabels.REVIEW_OPERATION,
     },
     sendConfirm: {
