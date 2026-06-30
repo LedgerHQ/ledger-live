@@ -29,6 +29,7 @@
     "test": "zx ./scripts/test.mjs"
   },
   "dependencies": {
+    "@domain/entity-currency-crypto": "workspace:^",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
