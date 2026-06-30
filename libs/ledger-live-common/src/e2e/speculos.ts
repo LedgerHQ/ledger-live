@@ -437,7 +437,7 @@ export const specs: Specs = {
     dependencies: [],
   },
   Concordium: {
-    currency: getCryptoCurrencyById("concordium"),
+    currency: getCryptoCurrencyById("concordium_testnet"),
     appQuery: {
       model: getSpeculosModel(),
       appName: "Concordium",
