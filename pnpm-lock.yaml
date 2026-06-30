@@ -578,9 +578,6 @@ patchedDependencies:
   usb@2.17.0:
     hash: 489095f60f30e6127e8077a75f64dc1962a7187d3e054910d61a8a5de45c30a5
     path: patches/usb@2.17.0.patch
-  usb@2.9.0:
-    hash: 4b177e2b898217b7d3148dc43c0ed8922eb1fa940c3998e9c82e644d534127b5
-    path: patches/usb@2.9.0.patch
 
 importers:
 
@@ -10176,9 +10173,6 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:*
         version: link:../hw-transport-mocker
-      '@ledgerhq/hw-transport-node-hid-singleton':
-        specifier: workspace:^
-        version: link:../hw-transport-node-hid-singleton
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -10304,162 +10298,6 @@ importers:
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
-    devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2))
-      rimraf:
-        specifier: ^4.4.1
-        version: 4.4.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2)
-
-  libs/ledgerjs/packages/hw-transport-node-hid:
-    dependencies:
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
-      '@ledgerhq/hw-transport':
-        specifier: workspace:*
-        version: link:../hw-transport
-      '@ledgerhq/hw-transport-node-hid-noevents':
-        specifier: workspace:^
-        version: link:../hw-transport-node-hid-noevents
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../logs
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
-      node-hid:
-        specifier: 2.1.2
-        version: 2.1.2
-      usb:
-        specifier: 2.9.0
-        version: 2.9.0(patch_hash=4b177e2b898217b7d3148dc43c0ed8922eb1fa940c3998e9c82e644d534127b5)
-    devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2))
-      rimraf:
-        specifier: ^4.4.1
-        version: 4.4.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2)
-
-  libs/ledgerjs/packages/hw-transport-node-hid-noevents:
-    dependencies:
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
-      '@ledgerhq/hw-transport':
-        specifier: workspace:*
-        version: link:../hw-transport
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../logs
-      node-hid:
-        specifier: 2.1.2
-        version: 2.1.2
-    devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      '@types/node-hid':
-        specifier: ^1.3.1
-        version: 1.3.4
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2))
-      rimraf:
-        specifier: ^4.4.1
-        version: 4.4.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2)
-
-  libs/ledgerjs/packages/hw-transport-node-hid-singleton:
-    dependencies:
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
-      '@ledgerhq/hw-transport':
-        specifier: workspace:*
-        version: link:../hw-transport
-      '@ledgerhq/hw-transport-node-hid-noevents':
-        specifier: workspace:^
-        version: link:../hw-transport-node-hid-noevents
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../logs
-      node-hid:
-        specifier: 2.1.2
-        version: 2.1.2
-      usb:
-        specifier: 2.9.0
-        version: 2.9.0(patch_hash=4b177e2b898217b7d3148dc43c0ed8922eb1fa940c3998e9c82e644d534127b5)
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -10618,360 +10456,7 @@ importers:
         specifier: ^10.4.0
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2)
 
-  libs/ledgerjs/packages/hw-transport-web-ble:
-    dependencies:
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
-      '@ledgerhq/hw-transport':
-        specifier: workspace:*
-        version: link:../hw-transport
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../logs
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
-    devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      '@types/web-bluetooth':
-        specifier: ^0.0.20
-        version: 0.0.20
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2))
-      rimraf:
-        specifier: ^4.4.1
-        version: 4.4.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2)
-
-  libs/ledgerjs/packages/hw-transport-webhid:
-    dependencies:
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
-      '@ledgerhq/hw-transport':
-        specifier: workspace:*
-        version: link:../hw-transport
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../logs
-    devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      '@types/w3c-web-hid':
-        specifier: ^1.0.2
-        version: 1.0.6
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2))
-      rimraf:
-        specifier: ^4.4.1
-        version: 4.4.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2)
-
-  libs/ledgerjs/packages/hw-transport-webusb:
-    dependencies:
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
-      '@ledgerhq/hw-transport':
-        specifier: workspace:*
-        version: link:../hw-transport
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../logs
-    devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      '@types/w3c-web-usb':
-        specifier: ^1.0.5
-        version: 1.0.10
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2))
-      rimraf:
-        specifier: ^4.4.1
-        version: 4.4.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2)
-
   libs/ledgerjs/packages/logs:
-    devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2))
-      rimraf:
-        specifier: ^4.4.1
-        version: 4.4.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2)
-
-  libs/ledgerjs/packages/react-native-hid:
-    dependencies:
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
-      '@ledgerhq/hw-transport':
-        specifier: workspace:*
-        version: link:../hw-transport
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../logs
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
-    devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2))
-      rimraf:
-        specifier: ^4.4.1
-        version: 4.4.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2)
-      yarn-add-no-save:
-        specifier: ^1.0.3
-        version: 1.0.3
-
-  libs/ledgerjs/packages/react-native-hw-transport-ble:
-    dependencies:
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
-      '@ledgerhq/hw-transport':
-        specifier: workspace:*
-        version: link:../hw-transport
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../logs
-      react-native-ble-plx:
-        specifier: 3.5.1
-        version: 3.5.1
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
-      uuid:
-        specifier: ^9.0.1
-        version: 9.0.1
-    devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      '@types/uuid':
-        specifier: ^9.0.5
-        version: 9.0.8
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2))
-      rimraf:
-        specifier: ^4.4.1
-        version: 4.4.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2)
-
-  libs/ledgerjs/packages/swift-bridge-hw-app-eth:
-    dependencies:
-      '@ledgerhq/hw-app-eth':
-        specifier: workspace:^
-        version: link:../hw-app-eth
-      '@ledgerhq/swift-bridge-hw-transport-ble':
-        specifier: workspace:^
-        version: link:../swift-bridge-hw-transport-ble
-    devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2))
-      rimraf:
-        specifier: ^4.4.1
-        version: 4.4.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2)
-
-  libs/ledgerjs/packages/swift-bridge-hw-app-solana:
-    dependencies:
-      '@ledgerhq/hw-app-solana':
-        specifier: workspace:^
-        version: link:../hw-app-solana
-      '@ledgerhq/swift-bridge-hw-transport-ble':
-        specifier: workspace:^
-        version: link:../swift-bridge-hw-transport-ble
-    devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2))
-      rimraf:
-        specifier: ^4.4.1
-        version: 4.4.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(source-map-support@0.5.21)(typescript@6.0.2)
-
-  libs/ledgerjs/packages/swift-bridge-hw-transport-ble:
-    dependencies:
-      '@ledgerhq/hw-transport':
-        specifier: workspace:*
-        version: link:../hw-transport
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -22204,7 +21689,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.1.4
       react-dom: 19.1.4
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -23286,9 +22771,6 @@ packages:
   '@types/node-forge@1.3.11':
     resolution: {integrity: sha512-FQx220y22OKNTqaByeBGqHWYz4cl94tpcxeFdvBo3wjG6XPBuZ0BNgNZRV5J5TFmmcsJ4IzsLkmGRiQbnYsBEQ==}
 
-  '@types/node-hid@1.3.4':
-    resolution: {integrity: sha512-0ootpsYetN9vjqkDSwm/cA4fk/9yGM/PO0X8SLPE/BzXlUaBelImMWMymtF9QEoEzxY0pnhcROIJM0CNSUqO8w==}
-
   '@types/node@10.12.18':
     resolution: {integrity: sha512-fh+pAqt4xRzPfqA6eh3Z2y6fyZavRIumvjhaCL753+TVkGKGhpPeyrJG2JftD0T9q4GF00KjefsQ+PQNDdWQaQ==}
 
@@ -23571,14 +23053,8 @@ packages:
   '@types/verror@1.10.10':
     resolution: {integrity: sha512-l4MM0Jppn18hb9xmM6wwD1uTdShpf9Pn80aXTStnK1C94gtPvJcV2FrDmbOQUAQfJ1cKZHktkQUDwEqaAKXMMg==}
 
-  '@types/w3c-web-hid@1.0.6':
-    resolution: {integrity: sha512-IWyssXmRDo6K7s31dxf+U+x/XUWuVsl9qUIYbJmpUHPcTv/COfBCKw/F0smI45+gPV34brjyP30BFcIsHgYWLA==}
-
   '@types/w3c-web-usb@1.0.10':
     resolution: {integrity: sha512-CHgUI5kTc/QLMP8hODUHhge0D4vx+9UiAwIGiT0sTy/B2XpdX1U5rJt6JSISgr6ikRT7vxV9EVAFeYZqUnl1gQ==}
-
-  '@types/web-bluetooth@0.0.20':
-    resolution: {integrity: sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==}
 
   '@types/webpack-env@1.18.4':
     resolution: {integrity: sha512-I6e+9+HtWADAWeeJWDFQtdk4EVSAbj6Rtz4q8fJ7mSr1M0jzlFcs8/HZ+Xb5SHzVm1dxH7aUiI+A8kA8Gcrm0A==}
@@ -32048,9 +31524,6 @@ packages:
     engines: {node: ^18 || >=20}
     hasBin: true
 
-  napi-build-utils@1.0.2:
-    resolution: {integrity: sha512-ONmRUqK7zj7DWX0D9ADe03wbwOBZxNAfF20PlGfCWQcD3+/MakShIHrMqx9YwPTfxDdF1zLeL+RGZiR9kGMLdg==}
-
   napi-build-utils@2.0.0:
     resolution: {integrity: sha512-GEbrYkbfF7MoNaoh2iGG84Mnf/WZfB0GdGEsM8wz7Expx/LlWf5U8t9nvJKXSp3qr5IsEbK04cBGhol/KwOsWA==}
 
@@ -32140,14 +31613,8 @@ packages:
   node-addon-api@2.0.2:
     resolution: {integrity: sha512-Ntyt4AIXyaLIuMHF6IOoTakB3K+RWxwtsHNRxllEoA6vPwP9o4866g6YWDLUdnucilZhmkxiHwHr11gAENw+QA==}
 
-  node-addon-api@3.2.1:
-    resolution: {integrity: sha512-mmcei9JghVNDYydghQmeDX8KoAm0FAiYyIcUt/N4nhyAipB17pllZQDOJD2fotxABnt4Mdz+dKTO7eftLg4d0A==}
-
   node-addon-api@5.1.0:
     resolution: {integrity: sha512-eh0GgfEkpnoWDq+VY8OyvYhFEzBk6jIYbRKdIlyTiAXIVJ8PyBaKb0rp7oDtoddbdoHWhq8wwr+XZ81F1rpNdA==}
-
-  node-addon-api@6.1.0:
-    resolution: {integrity: sha512-+eawOlIgy680F0kBzPUNFhMZGtJ1YmqM6l4+Crf4IkImjYrO/mqPwRMh352g23uIaQKFItcQ64I7KMaJxHgAVA==}
 
   node-addon-api@7.1.1:
     resolution: {integrity: sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==}
@@ -32213,11 +31680,6 @@ packages:
   node-gyp@8.4.1:
     resolution: {integrity: sha512-olTJRgUtAb/hOXG0E93wZDs5YiJlgbXxTwQAFHyNlRsXQnYzUaF2aGgujZbw+hR8aF4ZG/rST57bWMWD16jr9w==}
     engines: {node: '>= 10.12.0'}
-    hasBin: true
-
-  node-hid@2.1.2:
-    resolution: {integrity: sha512-qhCyQqrPpP93F/6Wc/xUR7L8mAJW0Z6R7HMQV8jCHHksAxNDe/4z4Un/H9CpLOT+5K39OPyt9tIQlavxWES3lg==}
-    engines: {node: '>=10'}
     hasBin: true
 
   node-int64@0.4.0:
@@ -33448,12 +32910,6 @@ packages:
 
   prando@6.0.1:
     resolution: {integrity: sha512-ghUWxQ1T9IJmPu6eshc3VU0OwveUtXQ33ZLXYUcz1Oc5ppKLDXKp0TBDj6b0epwhEctzcQSNGR2iHyvQSn4W5A==}
-
-  prebuild-install@7.1.2:
-    resolution: {integrity: sha512-UnNke3IQb6sgarcZIDU3gbMeTp/9SSU1DAIkil7PrqG1vZlBtY5msYccSKSHDqa3hNg436IXK+SNImReuA1wEQ==}
-    engines: {node: '>=10'}
-    deprecated: No longer maintained. Please contact the author of the relevant native addon; alternatives are available.
-    hasBin: true
 
   prebuild-install@7.1.3:
     resolution: {integrity: sha512-8Mf2cbV7x1cXPUILADGI3wuhfqWvtiLA1iclTDbFRZkgRQS0NqsPZphna9V+HyTEadheuPmjaJMsbzKQFOzLug==}
@@ -36830,10 +36286,6 @@ packages:
     resolution: {integrity: sha512-UuFgrlglgDn5ll6d5l7kl3nDb2Yx43qLUGcDq+7UNLZLtbNug0HZBb2Xodhgx2JZB1LqvU+dOGqLEeYUeZqsHg==}
     engines: {node: '>=12.22.0 <13.0 || >=14.17.0'}
 
-  usb@2.9.0:
-    resolution: {integrity: sha512-G0I/fPgfHUzWH8xo2KkDxTTFruUWfppgSFJ+bQxz/kVY2x15EQ/XDB7dqD1G432G4gBG4jYQuF3U7j/orSs5nw==}
-    engines: {node: '>=10.20.0 <11.x || >=12.17.0 <13.0 || >=14.0.0'}
-
   use-callback-ref@1.3.3:
     resolution: {integrity: sha512-jQL3lRnocaFtu3V00JToYz/4QkNWswxijDaCVNZRiRTO3HQDLsdu1ZtmIUvV4yPp+rvWm5j0y0TG/S61cuijTg==}
     engines: {node: '>=10'}
@@ -37617,10 +37069,6 @@ packages:
   yargs@17.7.2:
     resolution: {integrity: sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==}
     engines: {node: '>=12'}
-
-  yarn-add-no-save@1.0.3:
-    resolution: {integrity: sha512-ngmmxwYOogvYPjFDXGjoj35r/DteDzfiyoq5BI+kKSCCXW/I2gJA3KAgbm/7yFmcDE9CGSaORpNbYfglGYuxtA==}
-    hasBin: true
 
   yauzl@2.10.0:
     resolution: {integrity: sha512-p4a9I6X6nu6IhoGmBqAcbJy1mlC4j27vEPZX9F4L4/vZT3Lyq1VkFHw/V/PUcB9Buo+DG3iHkT0x3Qya58zc3g==}
@@ -54202,10 +53650,6 @@ snapshots:
     dependencies:
       '@types/node': 24.12.0
 
-  '@types/node-hid@1.3.4':
-    dependencies:
-      '@types/node': 24.12.0
-
   '@types/node@10.12.18': {}
 
   '@types/node@11.11.6': {}
@@ -54466,11 +53910,7 @@ snapshots:
   '@types/verror@1.10.10':
     optional: true
 
-  '@types/w3c-web-hid@1.0.6': {}
-
   '@types/w3c-web-usb@1.0.10': {}
-
-  '@types/web-bluetooth@0.0.20': {}
 
   '@types/webpack-env@1.18.4': {}
 
@@ -66344,8 +65784,6 @@ snapshots:
 
   nanoid@5.1.6: {}
 
-  napi-build-utils@1.0.2: {}
-
   napi-build-utils@2.0.0: {}
 
   napi-postinstall@0.3.4: {}
@@ -66460,11 +65898,7 @@ snapshots:
 
   node-addon-api@2.0.2: {}
 
-  node-addon-api@3.2.1: {}
-
   node-addon-api@5.1.0: {}
-
-  node-addon-api@6.1.0: {}
 
   node-addon-api@7.1.1: {}
 
@@ -66518,12 +65952,6 @@ snapshots:
       - bluebird
       - supports-color
     optional: true
-
-  node-hid@2.1.2:
-    dependencies:
-      bindings: 1.5.0
-      node-addon-api: 3.2.1
-      prebuild-install: 7.1.2
 
   node-int64@0.4.0: {}
 
@@ -67960,21 +67388,6 @@ snapshots:
 
   prando@6.0.1: {}
 
-  prebuild-install@7.1.2:
-    dependencies:
-      detect-libc: 2.0.3
-      expand-template: 2.0.3
-      github-from-package: 0.0.0
-      minimist: 1.2.8
-      mkdirp-classic: 0.5.3
-      napi-build-utils: 1.0.2
-      node-abi: 4.12.0
-      pump: 3.0.0
-      rc: 1.2.8
-      simple-get: 4.0.1
-      tar-fs: 2.1.1
-      tunnel-agent: 0.6.0
-
   prebuild-install@7.1.3:
     dependencies:
       detect-libc: 2.0.3
@@ -68602,8 +68015,6 @@ snapshots:
   react-native-biometrics@3.0.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)):
     dependencies:
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)
-
-  react-native-ble-plx@3.5.1: {}
 
   react-native-ble-plx@3.5.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
     dependencies:
@@ -72477,12 +71888,6 @@ snapshots:
       node-addon-api: 8.7.0
       node-gyp-build: 4.8.0
 
-  usb@2.9.0(patch_hash=4b177e2b898217b7d3148dc43c0ed8922eb1fa940c3998e9c82e644d534127b5):
-    dependencies:
-      '@types/w3c-web-usb': 1.0.10
-      node-addon-api: 6.1.0
-      node-gyp-build: 4.8.0
-
   use-callback-ref@1.3.3(@types/react@19.0.14)(react@19.1.4):
     dependencies:
       react: 19.1.4
@@ -73368,10 +72773,6 @@ snapshots:
       string-width: 4.2.3
       y18n: 5.0.8
       yargs-parser: 21.1.1
-
-  yarn-add-no-save@1.0.3:
-    dependencies:
-      which: 2.0.2
 
   yauzl@2.10.0:
     dependencies:
