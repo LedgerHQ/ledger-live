@@ -1,0 +1,9 @@
+mode: ignore
+reason: >
+  Verify the ignore-gate absorbs the deliberate QUARANTINE-VERIFY failure
+  (mobile detox mock:test). Temporary — paired with the forced-failure edit; remove both.
+owner: "@LedgerHQ/wallet-ci"
+expiry: "2026-12-31"
+filter:
+  file: "apps/ledger-live-mobile/e2e/specs/unknown-currency-resilience.spec.ts"
+  title: "Portfolio to load with unknown currency data in accounts opens to empty state"

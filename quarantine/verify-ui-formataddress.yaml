@@ -1,0 +1,9 @@
+mode: ignore
+reason: >
+  Verify the ignore-gate absorbs the deliberate QUARANTINE-VERIFY failure
+  (ui/react jest). Temporary — paired with the forced-failure edit; remove both.
+owner: "@LedgerHQ/wallet-ci"
+expiry: "2026-12-31"
+filter:
+  file: "libs/ui/packages/react/src/pre-ldls/components/Address/tests/formatAddress.test.ts"
+  title: "formatAddress should format address correctly with default options"

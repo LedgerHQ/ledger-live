@@ -1,4 +1,22 @@
-import { PlaywrightTestConfig } from "@playwright/test";
+import { PlaywrightTestConfig, ReporterDescription } from "@playwright/test";
+
+const reporters: ReporterDescription[] = process.env.CI
+  ? [
+      ["html", { open: "never", outputFolder: "artifacts/html-report" }],
+      ["github"],
+      ["line"],
+      ["allure-playwright"],
+      ["./utils/customJsonReporter.ts"],
+    ]
+  : [["allure-playwright"]];
+
+// test-quarantine: append a standard `json` report (consumed by the wrapper's
+// ignore exit-gate) ONLY when the wrapper requests it via the output-path env.
+// Additive + inert — it never replaces the reporters above, and normal
+// (non-wrapped) runs are unaffected because the env is unset.
+if (process.env.PLAYWRIGHT_JSON_OUTPUT_NAME) {
+  reporters.push(["json"]);
+}
 
 const config: PlaywrightTestConfig = {
   projects: [
@@ -40,15 +58,7 @@ const config: PlaywrightTestConfig = {
   fullyParallel: true,
   workers: "60%", // NOTE: 'macos-latest' and 'windows-latest' can't run 3 concurrent workers
   retries: 0, // We explicitly want to disable retries to be strict about avoiding flaky tests. (see https://github.com/LedgerHQ/ledger-live/pull/4918)
-  reporter: process.env.CI
-    ? [
-        ["html", { open: "never", outputFolder: "artifacts/html-report" }],
-        ["github"],
-        ["line"],
-        ["allure-playwright"],
-        ["./utils/customJsonReporter.ts"],
-      ]
-    : [["allure-playwright"]],
+  reporter: reporters,
 };
 
 export default config;

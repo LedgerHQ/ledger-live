@@ -36,6 +36,8 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
+      FLAKE_API_KEY: ${{ secrets.FLAKE_API_KEY_CI }}
+      FLAKE_API_HOST: ${{ secrets.FLAKE_API_HOST }}
     outputs:
       fail: ${{ steps.diff.outputs.diff }}
       test-fail: ${{ steps.test.outcome }}

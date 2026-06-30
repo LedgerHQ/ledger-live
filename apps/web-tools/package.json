@@ -12,11 +12,11 @@
     "dev": "rsbuild dev",
     "build": "rsbuild build",
     "preview": "rsbuild preview",
-    "test": "jest",
+    "test": "test-quarantine run jest --",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "coverage": "jest --coverage",
+    "coverage": "test-quarantine run jest -- --coverage",
     "remote": "pnpm --filter @devtools/relay start",
     "dev:remote": "concurrently \"pnpm run dev\" \"pnpm --filter @devtools/relay start\""
   },

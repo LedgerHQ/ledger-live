@@ -8,7 +8,7 @@
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
     "typecheck": "node ./scripts/typecheck.js",
-    "test:detox": "pnpm detox test",
+    "test:detox": "test-quarantine run detox -- test",
     "test:ios": "pnpm test:detox --configuration ios.sim.release",
     "test:android": "pnpm test:detox --configuration android.emu.release",
     "build:ios": "nx run live-mobile:e2e:build -- --configuration ios.sim.release",

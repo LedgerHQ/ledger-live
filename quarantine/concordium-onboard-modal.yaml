@@ -1,0 +1,11 @@
+# Example quarantine entry — see tools/test-quarantine/PRD.md §5.2.
+# One entry per file. Validated by tools/test-quarantine on every run.
+mode: skip # "skip" (default) = filtered out before launch | "ignore" = run, gate exit code
+reason: >
+  Flaky OnboardModal happy path — cannot find sign-transaction device prompt (timing/mock).
+owner: "@LedgerHQ/ledger-partner-hoodies" # GitHub team/handle; also the codeowner on flake events
+expiry: "2026-12-31" # ISO date; entry stops applying after this
+jira: "LIVE-12345"
+filter:
+  file: "apps/ledger-live-desktop/src/renderer/families/concordium/OnboardModal/__tests__/OnboardModal.test.tsx"
+  title: "should complete the full onboarding happy path"

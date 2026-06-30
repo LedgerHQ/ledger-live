@@ -1,0 +1,9 @@
+mode: ignore
+reason: >
+  Verify the ignore-gate absorbs the deliberate QUARANTINE-VERIFY failure
+  (coin-bitcoin jest). Temporary — paired with the forced-failure edit; remove both.
+owner: "@LedgerHQ/wallet-ci"
+expiry: "2026-12-31"
+filter:
+  file: "libs/coin-modules/coin-bitcoin/src/logic.unit.test.ts"
+  title: "mapTxToOperations should filter out outputs that have unknown in their address"
