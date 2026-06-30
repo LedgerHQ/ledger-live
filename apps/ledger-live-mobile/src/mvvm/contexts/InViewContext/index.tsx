@@ -76,7 +76,8 @@ function Effect({
       )
       .subscribe(xs => {
         xs.forEach(({ item, entry }) => {
-          if (entry.isInView === visibilityByTarget.current.get(item.target)) return;
+          const wasInView = visibilityByTarget.current.get(item.target);
+          if (entry.isInView === wasInView) return;
           visibilityByTarget.current.set(item.target, entry.isInView);
           item.onInViewUpdate(entry);
         });
