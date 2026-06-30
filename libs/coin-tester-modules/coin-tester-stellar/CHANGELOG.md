@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-stellar
 
+## 1.0.1-next.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@36.3.0-next.4
+
 ## 1.0.1-next.3
 
 ### Patch Changes

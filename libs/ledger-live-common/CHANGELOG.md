@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 36.3.0-next.4
+
+### Patch Changes
+
+- Updated dependencies [[`98eb6d6`](https://github.com/LedgerHQ/ledger-live/commit/98eb6d636e8cbcf1ed35449f7070ac2a84b8b148)]:
+  - @shared/feature-flags@0.12.0-next.2
+  - @features/platform-feature-flags@0.5.0-next.2
+
 ## 36.3.0-next.3
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @shared/feature-flags
 
+## 0.12.0-next.2
+
+### Minor Changes
+
+- [#19098](https://github.com/LedgerHQ/ledger-live/pull/19098) [`98eb6d6`](https://github.com/LedgerHQ/ledger-live/commit/98eb6d636e8cbcf1ed35449f7070ac2a84b8b148) Thanks [@ysitbon](https://github.com/ysitbon)! - feature-flags: apply env (`FEATURE_FLAGS`) overrides at store boot even when the first remote-flags fetch fails. The middleware now re-resolves once on the first settled fetch — on success as before, and once on the first failure — so env (and version/language) resolution runs at boot without depending on a successful remote fetch. Subsequent failed polls do not re-resolve (a one-shot guard), so there is no per-poll churn. No app changes are required: any consumer of `createFeatureFlagsMiddleware` gets correct env-at-boot resolution.
+
 ## 0.12.0-next.1
 
 ### Minor Changes
