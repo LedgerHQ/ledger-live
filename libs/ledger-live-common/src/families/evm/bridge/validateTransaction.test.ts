@@ -1,14 +1,14 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { ethers } from "ethers";
-import { getNodeApi } from "../network/node";
-import { getNextSequence } from "./getNextSequence";
-import { validateTransaction } from "./validateTransaction";
+import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
+import { getNextSequence } from "@ledgerhq/coin-evm/logic/index";
+import { validateTransaction } from "./api";
 
-jest.mock("../network/node", () => ({
+jest.mock("@ledgerhq/coin-evm/network/node/index", () => ({
   getNodeApi: jest.fn(),
 }));
 
-jest.mock("./getNextSequence", () => ({
+jest.mock("@ledgerhq/coin-evm/logic/index", () => ({
   getNextSequence: jest.fn(),
 }));
 

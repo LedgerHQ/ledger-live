@@ -342,7 +342,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       derivationMode,
     });
 
-    const validatorsPromise = coinModuleApi.stakingSupported
+    const validatorsPromise = bridgeApi.stakingSupported
       ? coinModuleApi
           .getValidators()
           .then(page =>
@@ -508,13 +508,13 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         !newOpsWithSubs.some(newOp => pendingOp.hash === newOp.hash), // operation is not confirmed yet
     );
     const confirmedOperations =
-      coinModuleApi.refreshOperations && operationsToRefresh?.length
-        ? await coinModuleApi.refreshOperations(operationsToRefresh)
+      bridgeApi.refreshOperations && operationsToRefresh?.length
+        ? await bridgeApi.refreshOperations(operationsToRefresh)
         : [];
     const newOperations = [...confirmedOperations, ...newOpsWithSubs];
     const operations = mergeOps(syncFromScratch ? [] : oldOps, newOperations) as OperationCommon[];
     const stakingEnabled =
-      coinModuleApi.stakingSupported ?? (delegationsCount > 0 || unbondingsCount > 0);
+      bridgeApi.stakingSupported ?? (delegationsCount > 0 || unbondingsCount > 0);
     let stakingShape: {
       stakingResources?: StakingResources;
       stakingPositions?: StakingPositionOnAccount[];

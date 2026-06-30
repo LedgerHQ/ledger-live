@@ -7,11 +7,18 @@ import type {
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { InvalidTransactionError } from "@ledgerhq/errors";
 import eip55 from "eip55";
+import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
 import {
   fetchRedelegations,
   buildRedelegationsFromOps,
 } from "@ledgerhq/coin-evm/staking/redelegations";
+import { STAKING_CONTRACTS } from "@ledgerhq/coin-evm/staking/index";
+import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
+import { getNextSequence } from "@ledgerhq/coin-evm/logic/index";
+import { getCoinConfig } from "@ledgerhq/coin-evm/config";
 
 export async function getTokenFromAsset(
   currency: CryptoCurrency,
@@ -104,6 +111,91 @@ async function enrichStakingResources(
   return { ...stakingResources, redelegations: merged };
 }
 
+async function getOperationStatus(
+  currency: CryptoCurrency,
+  op: LiveOperation,
+): Promise<LiveOperation | null> {
+  try {
+    const nodeApi = getNodeApi(currency);
+    const { blockHeight, blockHash, nonce, gasPrice, gasUsed, value } =
+      await nodeApi.getTransaction(currency, op.hash);
+
+    if (!blockHeight) {
+      throw new Error("getOperationStatus: Transaction has no block");
+    }
+
+    const { timestamp } = await nodeApi.getBlockByHeight(currency, blockHeight);
+    const date = new Date(timestamp);
+    const fee = new BigNumber(gasPrice).multipliedBy(gasUsed);
+
+    return {
+      ...op,
+      transactionSequenceNumber: new BigNumber(nonce),
+      blockHash,
+      blockHeight,
+      date,
+      fee,
+      value: new BigNumber(value.toString()).plus(fee),
+      subOperations: op.subOperations?.map(subOp => ({
+        ...subOp,
+        transactionSequenceNumber: new BigNumber(nonce),
+        blockHash,
+        blockHeight,
+        date,
+      })),
+    } as LiveOperation;
+  } catch {
+    return null;
+  }
+}
+
+export async function refreshOperations(
+  currency: CryptoCurrency,
+  operations: LiveOperation[],
+): Promise<LiveOperation[]> {
+  const refreshedOperationsOrNull = await Promise.all(
+    operations.map(op => getOperationStatus(currency, op)),
+  );
+
+  return refreshedOperationsOrNull.filter((op): op is LiveOperation => !!op);
+}
+
+export async function validateTransaction(
+  currency: CryptoCurrency,
+  { signature }: { signature: string },
+): Promise<{ error: Error | undefined }> {
+  const nodeApi = getNodeApi(currency);
+  const transaction = ethers.Transaction.from(signature);
+
+  if (transaction.hash) {
+    try {
+      const { hash, blockHeight = null } = await nodeApi.getTransaction(currency, transaction.hash);
+      if (blockHeight) {
+        return { error: new InvalidTransactionError("transaction is already mined") };
+      }
+      if (hash) {
+        return { error: new InvalidTransactionError("transaction is already known") };
+      }
+    } catch {
+      // eslint-disable-next-line no-empty
+    }
+  }
+
+  if (transaction.from) {
+    const currentNonce = await getNextSequence(currency, transaction.from);
+    if (typeof transaction.nonce === "number") {
+      const txNonce = BigInt(transaction.nonce);
+      if (txNonce < currentNonce) {
+        return {
+          error: new InvalidTransactionError("nonce is too low"),
+        };
+      }
+    }
+  }
+
+  return { error: undefined };
+}
+
 export default function evmBridge(currency: CryptoCurrency): BridgeApi {
   return {
     getTokenFromAsset: async (asset: AssetInfo) => getTokenFromAsset(currency, asset),
@@ -112,5 +204,24 @@ export default function evmBridge(currency: CryptoCurrency): BridgeApi {
     computeIntentType: (transaction: Record<string, unknown>) => computeIntentType(transaction),
     balanceOptions: getBalanceOptions(currency),
     enrichStakingResources: (c, addr, ops, sr) => enrichStakingResources(c, addr, ops, sr),
+    validateTransaction: (signature: string) => validateTransaction(currency, { signature }),
+    ...(STAKING_CONTRACTS[currency.id] ? { stakingSupported: true } : {}),
+    // Safe: getBridgeApi is always called right after getCoinModuleApi (which sets the coin config),
+    // so getCoinConfig is populated by the time the bridge is assembled. Only expose refreshOperations
+    // for explorer-less chains (e.g. core) — explorer-backed chains rely on the explorer's results.
+    // Extra-safe: wrap throwing method in try / catch block
+    // TODO: rely on `getTransactions` once https://ledgerhq.atlassian.net/browse/BACK-11373 is done
+    ...(() => {
+      try {
+        return getCoinConfig(currency.id).info.explorer?.type === "none"
+          ? {
+              refreshOperations: (operations: LiveOperation[]) =>
+                refreshOperations(currency, operations),
+            }
+          : {};
+      } catch {
+        return {};
+      }
+    })(),
   };
 }

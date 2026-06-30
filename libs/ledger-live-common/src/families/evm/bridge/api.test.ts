@@ -1,5 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { getCryptoAssetsStore, setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { setCoinConfig } from "@ledgerhq/coin-evm/config";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import evmBridge, { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./api";
 
@@ -7,8 +9,12 @@ describe("evm bridge", () => {
   const ethereum = getCryptoCurrencyById("ethereum");
   const sonic = getCryptoCurrencyById("sonic");
   const flare = getCryptoCurrencyById("flare");
+  const seiEvm = getCryptoCurrencyById("sei_evm");
 
   beforeAll(() => {
+    setCoinConfig(() => ({
+      info: { explorer: { type: "ledger" } } as never,
+    }));
     const mockStore: Parameters<typeof setCryptoAssetsStore>[0] = {
       findTokenById: async () => undefined,
       findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
@@ -205,7 +211,11 @@ describe("evm bridge", () => {
   });
 
   describe("getBalanceOptions", () => {
-    const bridgeApi = evmBridge(ethereum);
+    let bridgeApi: BridgeApi;
+
+    beforeAll(() => {
+      bridgeApi = evmBridge(ethereum);
+    });
 
     it("should return a defined BalanceOptions", () => {
       expect(bridgeApi.balanceOptions).toBeDefined();
@@ -253,6 +263,25 @@ describe("evm bridge", () => {
       expect(await balanceOptions!.includeAssets!(nativeAsset)).toEqual(true);
 
       expect(findTokenByAddressInCurrencySpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("bridge surface", () => {
+    it("always exposes validateTransaction", () => {
+      expect(evmBridge(ethereum).validateTransaction).toEqual(expect.any(Function));
+    });
+
+    it("exposes stakingSupported only for staking-configured currencies", () => {
+      expect(evmBridge(ethereum)).not.toHaveProperty("stakingSupported");
+      expect(evmBridge(seiEvm).stakingSupported).toBe(true);
+    });
+
+    it("exposes refreshOperations only for explorer-less chains", () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } as never }));
+      expect(evmBridge(ethereum)).not.toHaveProperty("refreshOperations");
+
+      setCoinConfig(() => ({ info: { explorer: { type: "none" } } as never }));
+      expect(evmBridge(ethereum).refreshOperations).toEqual(expect.any(Function));
     });
   });
 });

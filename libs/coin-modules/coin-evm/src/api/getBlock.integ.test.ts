@@ -4,7 +4,6 @@ import {
   MemoNotSupported,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
@@ -30,7 +29,7 @@ describe("getBlock ERC20 transfers", () => {
     // - From: 0x534eeF6Db44FBeB71047EE3eb4CB16E572862aF6
     // - To: 0x970402B253733A1f6F4f3cd1d07420006be2882D
 
-    let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
+    let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
 
     beforeAll(() => {
       const velasEvmConfig: EvmConfig = {
@@ -89,7 +88,7 @@ describe("getBlock ERC20 transfers", () => {
     // - Address: 0xcc4461636684868AaB71037b29a11cC643E64500
     // - Token: 0xF68C9Df95a18B2A5a5fa1124d79EEEffBaD0B6Fa
 
-    let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
+    let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
 
     beforeAll(() => {
       const bscConfig: EvmConfig = {
@@ -143,7 +142,7 @@ describe("getBlock ERC20 transfers", () => {
 
   // this test is skipped until a RPC provider supporting trace_block is setup for zksync
   describe.skip("External RPC Node (zkSync)", () => {
-    let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
+    let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
 
     beforeAll(() => {
       const zkSyncConfig: EvmConfig = {
