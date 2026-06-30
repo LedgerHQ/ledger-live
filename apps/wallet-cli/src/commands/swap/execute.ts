@@ -20,7 +20,6 @@ import {
   resolveOutputFormat,
 } from "../inputs";
 import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
-import { writeStdout } from "../../shared/ui";
 import { OutputFormatSchema } from "../../wallet/models";
 import { runFullSwapPipeline as runFullSwapPipelineDefault } from "./cli-swap-pipeline";
 import { runCliSwapDie as runCliSwapDiePipelineDefault } from "./cli-swap-die-pipeline";
@@ -241,26 +240,16 @@ export async function executeSwapCommand({
       });
 
       if (dieResult.plan !== "skip") {
-        writeStdout(
-          JSON.stringify(
-            {
-              ok: true,
-              command: "swap execute",
-              pipeline: "die",
-              network,
-              plan: dieResult.plan,
-              provider: quote.provider,
-              from: flags.from,
-              to: flags.to,
-              amount: flags.amount,
-              quoteId: quote.id ?? null,
-              approvalTxHash: dieResult.result.approvalTxHash,
-              swapTxHash: dieResult.result.swapTxHash,
-            },
-            null,
-            2,
-          ),
-        );
+        out.swapExecuteDieResult({
+          plan: dieResult.plan,
+          from: flags.from,
+          to: flags.to,
+          provider: quote.provider,
+          amount: flags.amount,
+          quoteId: quote.id ?? null,
+          approvalTxHash: dieResult.result.approvalTxHash,
+          swapTxHash: dieResult.result.swapTxHash,
+        });
         return;
       }
 

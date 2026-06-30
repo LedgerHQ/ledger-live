@@ -1,6 +1,5 @@
 /** Providers passed to the swap quote/status/execute API from wallet-cli (allow-list). */
 export const WALLET_CLI_DEFAULT_SWAP_PROVIDERS = [
-  "1inch",
   "changelly",
   "changelly_v2",
   "cic",
@@ -15,12 +14,16 @@ export const WALLET_CLI_DEFAULT_SWAP_PROVIDERS = [
   "velora",
 ] as const;
 
-const allowedSwapProviderInput = new Set<string>(WALLET_CLI_DEFAULT_SWAP_PROVIDERS);
-
 const PROVIDER_ALIAS: Record<string, string> = {
   changelly: "changelly_v2",
   "1inch": "oneinch",
 };
+
+const ALLOWED_SWAP_PROVIDER_INPUT = [
+  ...new Set<string>([...WALLET_CLI_DEFAULT_SWAP_PROVIDERS, ...Object.keys(PROVIDER_ALIAS)]),
+];
+
+const allowedSwapProviderInput = new Set<string>(ALLOWED_SWAP_PROVIDER_INPUT);
 
 /**
  * Validates swap `--provider` against the wallet-cli provider allow-list and maps legacy
@@ -30,7 +33,7 @@ const PROVIDER_ALIAS: Record<string, string> = {
 export function resolveSwapProvider(provider: string): string {
   if (!allowedSwapProviderInput.has(provider)) {
     throw new Error(
-      `Unsupported swap provider "${provider}". Allowed: ${WALLET_CLI_DEFAULT_SWAP_PROVIDERS.join(", ")}.`,
+      `Unsupported swap provider "${provider}". Allowed: ${ALLOWED_SWAP_PROVIDER_INPUT.join(", ")}.`,
     );
   }
   return PROVIDER_ALIAS[provider] ?? provider;

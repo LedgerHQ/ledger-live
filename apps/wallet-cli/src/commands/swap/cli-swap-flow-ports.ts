@@ -18,7 +18,7 @@ import type {
   SignSwapEvmIntentInput,
 } from "@ledgerhq/live-common/wallet-api/Exchange/intents/index";
 import { walletCliDebug } from "../../shared/log";
-import { SignRfqOrderIntentInput, SubmitRfqOrderIntentInput } from "@ledgerhq/live-common/wallet-api/Exchange/swapFlow/types";
+import type { SignRfqOrderIntentInput, SubmitRfqOrderIntentInput } from "@ledgerhq/live-common/wallet-api/Exchange/swapFlow/types";
 
 export type CliInitInput = { readonly appName: string };
 
