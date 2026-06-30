@@ -181,7 +181,7 @@ export class SwapLiveAppPage {
       await this.webviewAction(async () => {
         for (const char of amount) {
           await this.fromAmountInput.addValue(char);
-          await driver.pause(50);
+          await driver.pause(100);
         }
       });
     });
