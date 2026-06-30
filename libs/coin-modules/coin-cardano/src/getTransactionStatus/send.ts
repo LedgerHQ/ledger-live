@@ -79,12 +79,9 @@ export async function getSendTransactionStatus(
       currencyName: account.currency.name,
     });
   } else {
-    // Self-send: comparing the recipient's payment-credential hash to the account's own
-    // credentials (external + internal/change) flags sending to any of the account's addresses,
-    // not just the displayed one. Valid on-chain but almost always a mistake, so warn without
-    // blocking. This warning is what the new send flow surfaces as the recipient warning banner
-    // (useBridgeRecipientValidation reads getTransactionStatus().warnings); the family descriptor's
-    // selfTransfer: "warning" policy permits the self-send without blocking it (LIVE-33176).
+    // Self-send: warn (non-blocking) when the recipient's payment-credential hash matches any of
+    // the account's own credentials. Surfaced as the new send flow's recipient banner; the
+    // descriptor selfTransfer policy permits it. LIVE-33176.
     const recipientKeyHash = getPaymentCredentialKeyHash(transaction.recipient);
     if (recipientKeyHash) {
       const ownKeyHashes = new Set([

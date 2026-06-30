@@ -12,6 +12,7 @@ import { getDelegationInfo } from "../api/getDelegationInfo";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { getProtocolParamsFixture } from "../fixtures/protocolParams";
 import { extractPaymentKeyFromAddress } from "../utils";
+import { CardanoMinAmountError } from "../errors";
 import { buildUnsignedTransaction, craftTransaction } from "./craftTransaction";
 
 jest.mock("../api/fetchTransactions");
@@ -186,7 +187,7 @@ describe("buildUnsignedTransaction — native ADA", () => {
 
     await expect(
       buildUnsignedTransaction(currency, sendIntent({ useAllAmount: true })),
-    ).rejects.toThrow("below the minimum required for an output");
+    ).rejects.toBeInstanceOf(CardanoMinAmountError);
   });
 
   it("rejects a non-positive amount", async () => {
@@ -196,9 +197,9 @@ describe("buildUnsignedTransaction — native ADA", () => {
   });
 
   it("rejects an amount below the per-output min-ADA floor", async () => {
-    await expect(buildUnsignedTransaction(currency, sendIntent({ amount: 1n }))).rejects.toThrow(
-      "Transaction amount is below the minimum required for an output",
-    );
+    await expect(
+      buildUnsignedTransaction(currency, sendIntent({ amount: 1n })),
+    ).rejects.toBeInstanceOf(CardanoMinAmountError);
   });
 
   it("rejects a sender address with no payment credential without hitting the network", async () => {

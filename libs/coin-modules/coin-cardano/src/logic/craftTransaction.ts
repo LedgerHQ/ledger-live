@@ -18,6 +18,7 @@ import { getAllTransactionsByKeys } from "../api/fetchTransactions";
 import { getDelegationInfo } from "../api/getDelegationInfo";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { CARDANO_MAX_SUPPLY, MEMO_LABEL } from "../constants";
+import { CardanoMinAmountError } from "../errors";
 import {
   type DerivedUtxo,
   deriveUtxos,
@@ -201,7 +202,7 @@ function addNativeOutputs(
     new BigNumber(protocolParams.utxoCostPerByte),
   );
   if (amount.lt(minAda)) {
-    throw new Error("Transaction amount is below the minimum required for an output");
+    throw new CardanoMinAmountError("", { amount: minAda.div(1e6).toString() });
   }
   typhonTx.addOutput({ address: recipientAddress, amount, tokens: [] });
   return senderAddress;
@@ -383,7 +384,7 @@ export async function buildUnsignedTransaction(
     if (recipientAmount.lt(minRecipientUtxo)) {
       // After fees the balance can't fund an output above the Babbage min-UTXO floor — the funds
       // are below the network's economic dust threshold and cannot be sent (not lost to fee).
-      throw new Error("Transaction amount is below the minimum required for an output");
+      throw new CardanoMinAmountError("", { amount: minRecipientUtxo.div(1e6).toString() });
     }
 
     typhonTx.setFee(fee);

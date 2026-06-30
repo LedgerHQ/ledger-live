@@ -64,10 +64,8 @@ export async function validateIntent(
   const isTokenTransfer = isTokenAsset(intent.asset);
 
   validateRecipient(currency, intent, errors);
-  // Self-send: compare the payment-credential hashes of sender and recipient (not the raw address
-  // strings) so a base/enterprise re-encoding of the same key is still caught — consistent with the
-  // legacy bridge's check (getTransactionStatus/send.ts). Valid on-chain but almost always a
-  // mistake, so warn without blocking (LIVE-33176). Only when the recipient is otherwise valid.
+  // Self-send: compare sender/recipient payment-credential hashes (robust to base/enterprise
+  // re-encodings). Non-blocking warning, only when the recipient is otherwise valid. LIVE-33176.
   if (!errors.recipient && intent.recipient) {
     const senderKeyHash = getPaymentCredentialKeyHash(intent.sender);
     const recipientKeyHash = getPaymentCredentialKeyHash(intent.recipient);
