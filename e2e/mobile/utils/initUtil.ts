@@ -3,7 +3,7 @@ import { isObservable, lastValueFrom, Observable } from "rxjs";
 import { log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
 import { SpeculosAppType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { isSpeculosRemote, isWallet40 } from "../helpers/commonHelpers";
+import { isSpeculosRemote } from "../helpers/commonHelpers";
 import {
   deleteSpeculos,
   launchSpeculos,
@@ -14,7 +14,7 @@ import {
 import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
-import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
+import { getMergedFeatureFlags } from "./featureFlagUtils";
 
 function checkTestFailed(): void {
   if (globalThis.IS_FAILED) {
@@ -403,51 +403,7 @@ export class InitializationManager {
   }
 
   static async setFeatureFlags(featureFlags: PartialFeatures) {
-    const defaultFlags = {
-      lwmWallet40: {
-        enabled: isWallet40,
-        params: {
-          mainNavigation: isWallet40,
-          marketBanner: isWallet40,
-          graphRework: isWallet40,
-          quickActionCtas: isWallet40,
-          tour: false,
-          lazyOnboarding: isWallet40,
-          balanceRefreshRework: isWallet40,
-          assetSection: false,
-          operationsList: false,
-          aggregatedAssets: false,
-          myWallet: isWallet40,
-          pnl: false,
-          assetDiscoverability: false,
-        },
-      },
-      onboardingWidget: {
-        enabled: true,
-      },
-      llmModularDrawer: {
-        enabled: true,
-        params: {
-          add_account: true,
-          live_app: true,
-          live_apps_allowlist: [],
-          live_apps_blocklist: ["revoke-cash"],
-          receive_flow: false,
-          send_flow: false,
-          enableModularization: true,
-          searchDebounceTime: 300,
-          backendEnvironment: "PROD",
-        },
-      },
-    };
-    const extraFeatureFlags = parseExtraFeatureFlags<PartialFeatures>(
-      process.env.E2E_FEATURE_FLAGS_JSON,
-    );
-    const mergedFeatureFlags = {
-      ...defaultFlags,
-      ...extraFeatureFlags,
-      ...featureFlags,
-    };
+    const mergedFeatureFlags = getMergedFeatureFlags({ testFlags: featureFlags });
     const wallet40 = mergedFeatureFlags.lwmWallet40;
     isMyWalletEnabled = Boolean(wallet40?.enabled && wallet40?.params?.myWallet);
 
