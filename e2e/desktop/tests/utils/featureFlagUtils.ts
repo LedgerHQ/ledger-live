@@ -95,6 +95,16 @@ export const FF_STAKE_PROGRAMS_MODAL = {
   },
 } satisfies OptionalFeatureMap;
 
+export const FF_NEW_SEND_FLOW_DISABLED = {
+  newSendFlow: {
+    enabled: false,
+    params: {
+      families: [],
+      excludedCurrencyIds: [],
+    },
+  },
+} satisfies OptionalFeatureMap;
+
 export const getFeatureFlags = async (page: Page): Promise<OptionalFeatureMap> => {
   const featureFlags = await page.evaluate(() => {
     return window.getAllFeatureFlags("en");
