@@ -51,6 +51,9 @@ import speculosList from "./commands/device/speculosList";
 import balanceHistory from "./commands/live/balanceHistory";
 import countervalues from "./commands/live/countervalues";
 import envs from "./commands/live/envs";
+import generateAddresses from "./commands/live/generateAddresses";
+import generateAppJson from "./commands/live/generateAppJson";
+import generateUtxoAddresses from "./commands/live/generateUtxoAddresses";
 import ledgerKeyRingProtocol from "./commands/live/ledgerKeyRingProtocol";
 import ledgerSync from "./commands/live/ledgerSync";
 import liveData from "./commands/live/liveData";
@@ -113,6 +116,9 @@ export default {
   balanceHistory,
   countervalues,
   envs,
+  generateAddresses,
+  generateAppJson,
+  generateUtxoAddresses,
   ledgerKeyRingProtocol,
   ledgerSync,
   liveData,

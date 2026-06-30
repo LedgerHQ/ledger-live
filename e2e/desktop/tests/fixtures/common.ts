@@ -28,11 +28,14 @@ import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
 import { LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 
-type CliCommand = (userdataPath?: string) => Observable<unknown> | Promise<unknown> | string;
+type CliCommand = ((userdataPath?: string) => Observable<unknown> | Promise<unknown> | string) & {
+  canUseGeneratedUserdata?: () => boolean;
+};
 
 /** Mutable Speculos handle: {@link current} is always the latest device for teardown and env. */
 export type SpeculosFixtureHandle = {
   get current(): SpeculosDevice;
+  get device(): SpeculosDevice | undefined;
   relaunch: (appName: string) => Promise<SpeculosDevice>;
 };
 
@@ -60,6 +63,7 @@ type TestFixtures = {
   localManifestOverride?: LiveAppManifest[];
   teamOwner?: Team;
   speculos: SpeculosFixtureHandle;
+  speculosForSetupOnly?: boolean;
 };
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
@@ -112,6 +116,7 @@ export const test = base.extend<TestFixtures>({
   extraUserdataFiles: undefined,
   localManifestOverride: undefined,
   teamOwner: undefined,
+  speculosForSetupOnly: false,
 
   app: async ({ page, electronApp }, use) => {
     const app = new Application(page, electronApp);
@@ -155,7 +160,7 @@ export const test = base.extend<TestFixtures>({
   },
 
   speculos: async (
-    { speculosApp, cliCommands, userdataDestinationPath, cliCommandsOnApp },
+    { speculosApp, cliCommands, userdataDestinationPath, cliCommandsOnApp, speculosForSetupOnly },
     use,
     testInfo,
   ) => {
@@ -166,6 +171,9 @@ export const test = base.extend<TestFixtures>({
         if (!currentDevice) {
           throw new Error("[E2E] speculos fixture: no device (missing speculosApp?)");
         }
+        return currentDevice;
+      },
+      get device() {
         return currentDevice;
       },
       relaunch: async (appName: string) => {
@@ -192,7 +200,14 @@ export const test = base.extend<TestFixtures>({
       }
 
       if (speculosApp) {
-        currentDevice = await launchSpeculos(speculosApp.name, testInfo.title);
+        const skipSpeculos =
+          !!speculosForSetupOnly &&
+          !!cliCommands?.length &&
+          cliCommands.every(cmd => cmd.canUseGeneratedUserdata?.() ?? false);
+
+        if (!skipSpeculos) {
+          currentDevice = await launchSpeculos(speculosApp.name, testInfo.title);
+        }
 
         if (cliCommands?.length) {
           for (const cmd of cliCommands) {
@@ -210,16 +225,7 @@ export const test = base.extend<TestFixtures>({
   },
 
   electronApp: async (
-    {
-      lang,
-      theme,
-      userdataDestinationPath,
-      env,
-      featureFlags,
-      simulateCamera,
-      speculos,
-      speculosApp,
-    },
+    { lang, theme, userdataDestinationPath, env, featureFlags, simulateCamera, speculos },
     use,
     testInfo,
   ) => {
@@ -248,8 +254,8 @@ export const test = base.extend<TestFixtures>({
         LEDGER_MIN_HEIGHT: 768,
         FEATURE_FLAGS: JSON.stringify(mergedFeatureFlags),
         MANAGER_DEV_MODE: true,
-        SPECULOS_API_PORT: speculosApp ? String(speculos.current.port) : undefined,
-        SPECULOS_ADDRESS: speculosApp ? getSpeculosAddress() : undefined,
+        SPECULOS_API_PORT: speculos.device ? String(speculos.device.port) : undefined,
+        SPECULOS_ADDRESS: speculos.device ? getSpeculosAddress() : undefined,
         DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1",
       },
       env,
@@ -276,7 +282,7 @@ export const test = base.extend<TestFixtures>({
       // App may already be closed when capturing failure video
     }
   },
-  page: async ({ electronApp, speculosApp, cliCommandsOnApp, teamOwner }, use, testInfo) => {
+  page: async ({ electronApp, speculos, cliCommandsOnApp, teamOwner }, use, testInfo) => {
     // app is ready
     const page = await electronApp.firstWindow();
 
@@ -322,7 +328,9 @@ export const test = base.extend<TestFixtures>({
 
     // Take screenshot and video only on failure
     if (testInfo.status !== "passed") {
-      const takeSpeculosScreenshot = Boolean(speculosApp || (cliCommandsOnApp?.length ?? 0) > 0);
+      const takeSpeculosScreenshot = Boolean(
+        speculos.device || (cliCommandsOnApp?.length ?? 0) > 0,
+      );
       await captureArtifacts(page, testInfo, electronApp, takeSpeculosScreenshot, webviewCollector);
     }
 

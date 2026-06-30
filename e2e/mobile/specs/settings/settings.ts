@@ -8,6 +8,7 @@ async function initApp(options: ApplicationOptions) {
     userdata: options.userdata,
     cliCommands: options.cliCommands,
     speculosApp: options.speculosApp,
+    speculosForSetupOnly: true,
   });
   await app.mainNavigation.waitForWallet40Ready();
 }
@@ -116,16 +117,8 @@ async function initPasswordTest() {
   const nanoApp = AppInfos.ETHEREUM;
   await app.init({
     speculosApp: nanoApp,
-    cliCommands: [
-      async (userdataPath?: string) => {
-        return CLI.liveData({
-          currency: nanoApp.name,
-          index: 0,
-          appjson: userdataPath,
-          add: true,
-        });
-      },
-    ],
+    cliCommands: [liveDataCommand(Account.ETH_1)],
+    speculosForSetupOnly: true,
   });
   await app.mainNavigation.waitForWallet40Ready();
 }
