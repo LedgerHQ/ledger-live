@@ -1,3 +1,5 @@
+// Test-only helpers (a Redux store wrapper for the feature-flag hooks).
+// Not re-exported from the package barrel; imported only by `*.test.tsx`.
 import { type FC, type ReactNode } from "react";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
