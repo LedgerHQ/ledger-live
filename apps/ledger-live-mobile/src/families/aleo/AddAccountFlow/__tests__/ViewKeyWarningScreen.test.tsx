@@ -2,25 +2,27 @@ import React from "react";
 import { screen, render } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import ViewKeyWarningScreen from "../ViewKeyWarningScreen";
+import { aleoCurrency } from "../../__mocks__/currency.mock";
 
-// Bypass animation issues: call onModalHide synchronously when the drawer closes.
-jest.mock("LLM/components/QueuedDrawer", () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const ReactMock = require("react");
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { View } = require("react-native");
-  function MockQueuedDrawer(props: Record<string, unknown>) {
-    const prevOpen = ReactMock.useRef(props.isRequestingToBeOpened);
-    ReactMock.useEffect(() => {
-      if (prevOpen.current && !props.isRequestingToBeOpened && typeof props.onModalHide === "function") {
-        (props.onModalHide as () => void)();
-      }
-      prevOpen.current = props.isRequestingToBeOpened;
-    });
-    if (!props.isRequestingToBeOpened) return ReactMock.createElement(View, null);
-    return ReactMock.createElement(View, null, props.children);
-  }
-  return { __esModule: true, default: MockQueuedDrawer };
+// Capture onModalHide so each test can trigger it directly instead of
+// simulating the drawer's close animation via hooks.
+let capturedOnModalHide: (() => void) | undefined;
+
+jest.mock("~/components/ConfirmationModal", () => {
+  const { Pressable } = jest.requireActual<typeof import("react-native")>("react-native");
+  return function MockConfirmationModal({
+    isOpened,
+    onConfirm,
+    onModalHide,
+  }: {
+    isOpened: boolean;
+    onConfirm?: () => void;
+    onModalHide?: () => void;
+  }) {
+    capturedOnModalHide = onModalHide;
+    if (!isOpened) return null;
+    return <Pressable testID="enabled-confirmation-modal-confirm-button" onPress={onConfirm} />;
+  };
 });
 
 const mockParentNavigate = jest.fn();
@@ -34,13 +36,7 @@ const mockNavigation = {
 
 const mockRoute = {
   params: {
-    currency: {
-      type: "CryptoCurrency",
-      id: "aleo",
-      name: "Aleo",
-      ticker: "ALEO",
-      family: "aleo",
-    },
+    currency: aleoCurrency,
     device: { deviceId: "device-1", modelId: "nanoX", wired: false },
     context: undefined,
     onCloseNavigation: mockOnCloseNavigation,
@@ -58,6 +54,7 @@ const renderScreen = () =>
 describe("ViewKeyWarningScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    capturedOnModalHide = undefined;
   });
 
   it("renders the title", () => {
@@ -93,6 +90,9 @@ describe("ViewKeyWarningScreen", () => {
 
     await user.press(screen.getByText("Cancel"));
     await user.press(screen.getByTestId("enabled-confirmation-modal-confirm-button"));
+    // After confirm, the component re-renders with onModalHide = onCloseNavigation.
+    // Call it directly to simulate the drawer's close animation completing.
+    capturedOnModalHide?.();
 
     expect(mockOnCloseNavigation).toHaveBeenCalledTimes(1);
   });

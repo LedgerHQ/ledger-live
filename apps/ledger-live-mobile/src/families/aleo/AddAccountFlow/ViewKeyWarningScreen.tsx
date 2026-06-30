@@ -35,6 +35,8 @@ export default function ViewKeyWarningScreen({ route, navigation }: Props) {
   const { t } = useTranslation();
 
   const { onCloseNavigation } = route.params;
+  const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(false);
+  const [shouldNavigateOnHide, setShouldNavigateOnHide] = useState(false);
 
   const onContinue = useCallback(() => {
     const { currency, device, context, navigationDepth, inline, returnToSwap, onSuccess } =
@@ -51,9 +53,6 @@ export default function ViewKeyWarningScreen({ route, navigation }: Props) {
       onSuccess,
     });
   }, [navigation, onCloseNavigation, route.params]);
-
-  const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(false);
-  const [shouldNavigateOnHide, setShouldNavigateOnHide] = useState(false);
 
   const onCancel = useCallback(() => {
     setIsConfirmationModalOpened(true);

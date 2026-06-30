@@ -36,6 +36,10 @@ function AddAccountNavigator({ route, navigation }: Props) {
       screenOptions={{
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
+        // CloseWithConfirmation cannot be used here: it calls popToTop and enables
+        // confirmation only for a hard-coded set of screen names that excludes
+        // AleoViewKeyWarning. We need skipNavigation + a custom pop(navigationDepth)
+        // callback to exit the correct number of screens from the parent stack.
         headerRight: () => (
           <NavigationHeaderCloseButtonAdvanced
             withConfirmation

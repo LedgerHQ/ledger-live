@@ -1,11 +1,13 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import customAddAccountFlowByFamily from "~/generated/customAddAccountFlow";
+import type {
+  DeviceSelectionNavigationProps,
+  SelectDeviceRouteParams,
+} from "../DeviceSelection/types";
 
 export type DeviceConnectedParams = {
-  navigation: {
-    navigate: (name: string, params?: unknown) => void;
-  };
-  routeParams: Record<string, unknown>;
+  navigation: DeviceSelectionNavigationProps["navigation"];
+  routeParams: SelectDeviceRouteParams;
 };
 
 export type CustomAddAccountFlow = {
