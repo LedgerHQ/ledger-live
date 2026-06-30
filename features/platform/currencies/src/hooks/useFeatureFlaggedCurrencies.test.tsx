@@ -1,6 +1,7 @@
 import { renderHook } from "@testing-library/react";
 import { useFeatureFlaggedCurrencies } from "./useFeatureFlaggedCurrencies";
-import { makeStoreWrapper, FEATURE_FLAGS_DEFAULTS } from "../fixtures";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
+import { makeStoreWrapper } from "../fixtures";
 
 describe("useFeatureFlaggedCurrencies", () => {
   it("deactivates a currency whose gating flag is disabled by default", () => {
