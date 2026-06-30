@@ -8,6 +8,8 @@ export type PnlNumbers = {
   unrealisedPnL: BigNumber;
   realisedPnL: BigNumber;
   totalPnL: BigNumber;
+  costBasis: BigNumber;
+  lifetimeCost: BigNumber;
 };
 
 export type PnlSecondaryCardConfig = {
