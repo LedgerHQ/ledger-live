@@ -26,6 +26,8 @@ export type SwapProps = {
   estimatedFees: string;
   estimatedFeesUnit: string;
   swapId?: string;
+  finalAmount?: string;
+  status?: string;
 };
 
 export function saveSwapToHistory(accounts: AccountLike[], dispatch: Dispatch) {
@@ -54,7 +56,7 @@ export function saveSwapToHistory(accounts: AccountLike[], dispatch: Dispatch) {
     const accountId =
       fromAccount.type === "TokenAccount" ? getParentAccount(fromAccount, accounts).id : fromId;
     const swapOperation: SwapOperation = {
-      status: "pending",
+      status: swap.status ?? "pending",
       provider: swap.provider,
       operationId,
       swapId: swap.swapId,
@@ -68,6 +70,7 @@ export function saveSwapToHistory(accounts: AccountLike[], dispatch: Dispatch) {
         amount: new BigNumber(swap.toAmount),
         account: toAccount,
       })!,
+      finalAmount: swap.finalAmount ? new BigNumber(swap.finalAmount) : undefined,
     };
 
     dispatch(

@@ -108,6 +108,7 @@ describe("getTransactionStatus", () => {
     expect(mockedFetchTransactionSwapStatus).toHaveBeenCalledWith({
       provider: "lifi",
       swapId: "swap-1",
+      network: "from-currency",
       transactionId: "0xhash",
       operationId: "operation-id",
     });
@@ -159,6 +160,7 @@ describe("getTransactionStatus", () => {
     expect(mockedFetchTransactionSwapStatus).toHaveBeenCalledWith({
       provider: "moonpay_trade",
       swapId: "swap-1",
+      network: "from-currency",
       transactionId: "0xhash",
       operationId: "operation-id",
     });

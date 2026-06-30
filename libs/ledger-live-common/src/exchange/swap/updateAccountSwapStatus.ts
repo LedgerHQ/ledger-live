@@ -8,6 +8,7 @@ import { swapProviderRequiresOperationId } from "./providersRequiringOperationId
 import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";
 
 const maybeGetUpdatedSwapHistory = async (
+  account: Account | TokenAccount,
   swapHistory: SwapOperation[] | null | undefined,
   operations: Operation[] | null | undefined,
 ): Promise<SwapOperation[] | null | undefined> => {
@@ -50,6 +51,7 @@ const maybeGetUpdatedSwapHistory = async (
           pendingSwapIds.push({
             provider,
             swapId,
+            network: getSwapStatusNetwork(account),
             transactionId: relatedTransactionId,
             ...(requiresOperationId && { operationId }),
           });
@@ -114,8 +116,13 @@ const maybeGetUpdatedSwapHistory = async (
   }
 };
 
+function getSwapStatusNetwork(account: Account | TokenAccount): string {
+  return account.type === "TokenAccount" ? account.token.parentCurrencyId : account.currency.id;
+}
+
 const updateAccountSwapStatus: UpdateAccountSwapStatus = async (account: Account) => {
   const swapHistoryUpdated = await maybeGetUpdatedSwapHistory(
+    account,
     account.swapHistory,
     account.operations,
   );
@@ -126,6 +133,7 @@ const updateAccountSwapStatus: UpdateAccountSwapStatus = async (account: Account
     subAccounts = await Promise.all(
       account.subAccounts.map(async (subAccount: TokenAccount): Promise<TokenAccount> => {
         const updatedSwapHistory = await maybeGetUpdatedSwapHistory(
+          subAccount,
           subAccount.swapHistory,
           subAccount.operations,
         );

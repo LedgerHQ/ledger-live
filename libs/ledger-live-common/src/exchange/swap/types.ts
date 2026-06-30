@@ -171,6 +171,7 @@ type ValidSwapStatus = TransactionStatusValue;
 export type SwapStatusRequest = {
   provider: string;
   swapId: string;
+  network?: string;
   transactionId?: string;
   operationId?: string;
 };
