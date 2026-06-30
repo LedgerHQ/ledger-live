@@ -143,6 +143,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.ETHEREUM.name]: DeviceLabels.CONFIRM,
       [AppInfos.POLKADOT.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.POLYGON.name]: DeviceLabels.CONFIRM,
+      [AppInfos.RIPPLE.name]: DeviceLabels.CONFIRM,
       [AppInfos.SOLANA.name]: DeviceLabels.CONFIRM,
       [AppInfos.ZCASH.name]: DeviceLabels.CONFIRM,
       [AppInfos.SUI.name]: DeviceLabels.CONFIRM,
@@ -170,7 +171,6 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     },
     sendVerify: {
       [AppInfos.SOLANA.name]: DeviceLabels.REVIEW_TRANSACTION_TO,
-      [AppInfos.RIPPLE.name]: DeviceLabels.TRANSACTION_TYPE,
       default: DeviceLabels.REVIEW_OPERATION,
     },
     sendConfirm: {

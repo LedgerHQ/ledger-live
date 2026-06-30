@@ -13,7 +13,6 @@ Download production apps from https://download.live.ledger.com
 - **[Ledger Wallet Desktop (LWD)](apps/ledger-live-desktop/README.md)** – Desktop app built with Electron.
 - **[Ledger Wallet Mobile (LWM)](apps/ledger-live-mobile/README.md)** – Android and iOS apps built with React Native.
 - **[Wallet CLI](apps/wallet-cli/README.md)** – Agent-optimized CLI toolset.
-- **[CLI](apps/cli/README.md)** – Legacy npm CLI for QA and power users.
 
 ## npm packages
 

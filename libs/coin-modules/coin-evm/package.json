@@ -66,8 +66,6 @@
     "@ethersproject/shims": "^5.7.0",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:*",
-    "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/evm-tools": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
@@ -79,10 +77,8 @@
     "bignumber.js": "^9.1.2",
     "eip55": "^2.1.1",
     "ethers": "catalog:",
-    "expect": "catalog:",
     "imurmurhash": "^0.1.4",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
     "react-native-get-random-values": "^1.8.0"
   },
   "devDependencies": {
@@ -94,7 +90,6 @@
     "@types/imurmurhash": "^0.1.4",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
     "@types/node": "catalog:",
     "dotenv": "^16.4.5",
     "fast-check": "^3.12.0",

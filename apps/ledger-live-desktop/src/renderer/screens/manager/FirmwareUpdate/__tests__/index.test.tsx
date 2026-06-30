@@ -1,9 +1,10 @@
 import React from "react";
+import type { ComponentProps } from "react";
 import { render, screen } from "tests/testSetup";
 import FirmwareUpdate, { initialStepId } from "../index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 const createDevice = (overrides?: Partial<Device>): Device =>
   ({
@@ -20,6 +21,13 @@ const createDeviceInfo = (overrides?: Partial<DeviceInfo>): DeviceInfo =>
     ...overrides,
   }) as DeviceInfo;
 
+const firmwareWithVersion = (name = "2.2.0"): FirmwareUpdateContext =>
+  ({
+    osu: {},
+    final: { name },
+    shouldFlashMCU: false,
+  }) as FirmwareUpdateContext;
+
 const defaultSettings = {
   discreetMode: false,
   vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
@@ -28,7 +36,7 @@ const defaultSettings = {
   latestFirmware: null as FirmwareUpdateContext | null,
 };
 
-const getDefaultInitialState = (overrides: Record<string, unknown> = {}) => ({
+const getInitialState = (overrides: Record<string, unknown> = {}) => ({
   application: { hasPassword: false },
   accounts: [],
   devices: { currentDevice: null, devices: [] },
@@ -39,15 +47,41 @@ const getDefaultInitialState = (overrides: Record<string, unknown> = {}) => ({
   },
 });
 
+const defaultProps: ComponentProps<typeof FirmwareUpdate> = {
+  device: createDevice(),
+  deviceInfo: createDeviceInfo(),
+  setPreventResetOnDeviceChange: jest.fn(),
+  onReset: jest.fn(),
+  firmware: firmwareWithVersion(),
+  error: null,
+  openFirmwareUpdate: false,
+};
+
+const renderFirmwareUpdate = (
+  props: Partial<ComponentProps<typeof FirmwareUpdate>> = {},
+  {
+    latestFirmware = defaultProps.firmware,
+    ...stateOverrides
+  }: { latestFirmware?: FirmwareUpdateContext | null } & Record<string, unknown> = {},
+) =>
+  render(<FirmwareUpdate {...defaultProps} {...props} />, {
+    initialRoute: "/manager",
+    initialState: getInitialState({
+      ...stateOverrides,
+      settings: {
+        latestFirmware,
+        ...(stateOverrides.settings as Record<string, unknown> | undefined),
+      },
+    }),
+  });
+
 describe("initialStepId", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("returns updateMCU when device is OSU", () => {
-    const deviceInfo = createDeviceInfo({
-      isOSU: true,
-    });
+    const deviceInfo = createDeviceInfo({ isOSU: true });
     const device = createDevice();
     expect(initialStepId({ deviceInfo, device })).toBe("updateMCU");
   });
@@ -66,20 +100,6 @@ describe("initialStepId", () => {
 });
 
 describe("FirmwareUpdate", () => {
-  const defaultProps = {
-    device: createDevice(),
-    deviceInfo: createDeviceInfo(),
-    setPreventResetOnDeviceChange: jest.fn(),
-    onReset: jest.fn(),
-    firmware: {
-      osu: {},
-      final: { name: "2.2.0" },
-      shouldFlashMCU: false,
-    } as FirmwareUpdateContext,
-    error: null,
-    openFirmwareUpdate: false,
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -90,94 +110,42 @@ describe("FirmwareUpdate", () => {
   });
 
   it("renders deprecated banner with contact support when firmware is null and device is deprecated", () => {
-    render(
-      <FirmwareUpdate
-        {...defaultProps}
-        device={createDevice({ modelId: DeviceModelId.nanoS })}
-        deviceInfo={createDeviceInfo({ version: "1.1.0" })}
-        firmware={null}
-        error={null}
-      />,
+    renderFirmwareUpdate(
       {
-        initialState: getDefaultInitialState({
-          settings: {
-            latestFirmware: {
-              osu: {},
-              final: { name: "2.2.0" },
-              shouldFlashMCU: false,
-            },
-          },
-        }),
+        device: createDevice({ modelId: DeviceModelId.nanoS }),
+        deviceInfo: createDeviceInfo({ version: "1.1.0" }),
+        firmware: null,
+        error: null,
       },
+      { latestFirmware: firmwareWithVersion() },
     );
-    const buttons = screen.getAllByRole("button");
-    expect(buttons.length).toBeGreaterThan(0);
-    expect(
-      buttons.some(b =>
-        /contact|support|manager\.firmware\.banner\.old\.cta/i.test(b.textContent ?? ""),
-      ),
-    ).toBe(true);
+
+    expect(screen.getByRole("button", { name: /contact support/i })).toBeVisible();
   });
 
   it("renders update firmware button when firmware is available", () => {
-    render(<FirmwareUpdate {...defaultProps} />, {
-      initialState: getDefaultInitialState({
-        settings: {
-          latestFirmware: {
-            osu: {},
-            final: { name: "2.2.0" },
-            shouldFlashMCU: false,
-          },
-        },
-      }),
-    });
-    expect(screen.getByTestId("manager-update-firmware-button")).toBeInTheDocument();
+    renderFirmwareUpdate();
+    expect(screen.getByTestId("manager-update-firmware-button")).toBeVisible();
   });
 
   it("renders update section when firmware update requires user to uninstall apps", () => {
-    render(<FirmwareUpdate {...defaultProps} />, {
-      initialState: getDefaultInitialState({
-        settings: {
-          latestFirmware: {
-            osu: {},
-            final: { name: "2.2.0" },
-            shouldFlashMCU: false,
-          },
-        },
-      }),
+    renderFirmwareUpdate({
+      device: createDevice({ modelId: DeviceModelId.nanoS }),
+      deviceInfo: createDeviceInfo({ version: "1.4.2" }),
     });
-    expect(screen.getByTestId("manager-update-firmware-button")).toBeInTheDocument();
+    expect(screen.getByTestId("manager-update-firmware-button")).toBeVisible();
+    expect(screen.getByText("Uninstall all apps before updating")).toBeVisible();
   });
 
   it("disables update button when disableFirmwareUpdate is true", () => {
-    render(<FirmwareUpdate {...defaultProps} disableFirmwareUpdate />, {
-      initialState: getDefaultInitialState({
-        settings: {
-          latestFirmware: {
-            osu: {},
-            final: { name: "2.2.0" },
-            shouldFlashMCU: false,
-          },
-        },
-      }),
-    });
+    renderFirmwareUpdate({ disableFirmwareUpdate: true });
     expect(screen.getByTestId("manager-update-firmware-button")).toBeDisabled();
   });
 
   it("update button is clickable when firmware is available", async () => {
-    const { user } = render(<FirmwareUpdate {...defaultProps} />, {
-      initialState: getDefaultInitialState({
-        settings: {
-          latestFirmware: {
-            osu: {},
-            final: { name: "2.2.0" },
-            shouldFlashMCU: false,
-          },
-        },
-      }),
-    });
+    const { user } = renderFirmwareUpdate();
     const button = screen.getByTestId("manager-update-firmware-button");
     await user.click(button);
-    expect(button).toBeInTheDocument();
+    expect(button).toBeVisible();
   });
 });

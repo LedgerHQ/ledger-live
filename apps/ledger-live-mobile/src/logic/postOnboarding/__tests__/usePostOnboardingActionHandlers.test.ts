@@ -2,19 +2,19 @@ import { usePostOnboardingActionHandlers } from "../usePostOnboardingActionHandl
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { renderHook, act } from "@tests/test-renderer";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
-import { navigateToPortfolioWalletTab } from "~/navigation/navigateToPortfolioWalletTab";
+import { navigateToPortfolio } from "~/navigation/navigateToPortfolio";
 import { productTourDeeplinkNonceSelector } from "~/reducers/appstate";
 
 jest.mock("LLM/features/Receive", () => ({
   useOpenReceiveDrawer: jest.fn(),
 }));
 
-jest.mock("~/navigation/navigateToPortfolioWalletTab", () => ({
-  navigateToPortfolioWalletTab: jest.fn(),
+jest.mock("~/navigation/navigateToPortfolio", () => ({
+  navigateToPortfolio: jest.fn(),
 }));
 
 const mockUseOpenReceiveDrawer = jest.mocked(useOpenReceiveDrawer);
-const mockNavigateToPortfolioWalletTab = jest.mocked(navigateToPortfolioWalletTab);
+const mockNavigateToPortfolio = jest.mocked(navigateToPortfolio);
 
 describe("usePostOnboardingActionHandlers", () => {
   const mockHandleOpenReceiveDrawer = jest.fn();
@@ -97,6 +97,6 @@ describe("usePostOnboardingActionHandlers", () => {
     });
 
     expect(productTourDeeplinkNonceSelector(store.getState())).toBe(1);
-    expect(mockNavigateToPortfolioWalletTab).toHaveBeenCalledTimes(1);
+    expect(mockNavigateToPortfolio).toHaveBeenCalledTimes(1);
   });
 });

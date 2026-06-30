@@ -329,7 +329,7 @@ describe("useSideBarViewModel", () => {
       const dispatchEventSpy = jest.spyOn(window, "dispatchEvent");
       const { result } = renderViewModel(
         withFeatureFlags({
-          lwdWallet40: { enabled: true, params: { mainNavigation: true } },
+          lwdWallet40: { enabled: true },
         }),
       );
 

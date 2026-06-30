@@ -140,7 +140,6 @@ export function useSideBarViewModel(): SideBarViewModel {
   const recoverHomePath = useAccountPath(recoverFeature);
 
   const {
-    shouldDisplayWallet40MainNav: isWallet40MainNavEnabled,
     shouldDisplayAssetSection,
     shouldDisplayMyWallet: isMyWalletEnabled,
     isEnabled: isWallet40Enabled,
@@ -298,11 +297,7 @@ export function useSideBarViewModel(): SideBarViewModel {
         return;
       }
       if (isSideBarNavValue(value)) {
-        if (
-          isWallet40MainNavEnabled &&
-          value === "home" &&
-          location.pathname === SIDEBAR_VALUE_TO_PATH.home
-        ) {
+        if (value === "home" && location.pathname === SIDEBAR_VALUE_TO_PATH.home) {
           handleScrollToTop();
         }
         const path = value === "accounts" ? accountsSidebarPath : SIDEBAR_VALUE_TO_PATH[value];
@@ -317,7 +312,6 @@ export function useSideBarViewModel(): SideBarViewModel {
       push,
       trackEntry,
       location.pathname,
-      isWallet40MainNavEnabled,
       accountsSidebarPath,
     ],
   );
@@ -334,7 +328,6 @@ export function useSideBarViewModel(): SideBarViewModel {
     isCardDisabled,
     isAccountsDisabled: noAccounts,
     isLiveAppTabSelected,
-    isWallet40MainNavEnabled,
     isMyWalletEnabled,
     referralProgramConfig,
     recoverFeature,

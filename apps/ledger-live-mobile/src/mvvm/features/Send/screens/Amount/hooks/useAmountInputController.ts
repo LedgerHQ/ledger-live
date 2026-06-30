@@ -252,7 +252,8 @@ export function useAmountInputController({
     [accountCurrency, accountUnit, calculateFiatFromCrypto, fiatUnit, locale],
   );
 
-  const amountInputMaxDecimalLength = inputMode === "fiat" ? 2 : Math.max(0, accountUnit.magnitude);
+  const activeInputUnit = inputMode === "fiat" ? fiatUnit : accountUnit;
+  const amountInputMaxDecimalLength = Math.max(0, activeInputUnit.magnitude);
 
   return useMemo(
     () => ({

@@ -6,9 +6,9 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useDispatch } from "~/context/hooks";
 import { openPostOnboardingHubDrawer } from "~/reducers/postOnboardingHubDrawer";
 
-const mainPortfolioWalletTabParams = {
+const mainPortfolioParams = {
   screen: NavigatorName.Portfolio,
-  params: { screen: NavigatorName.WalletTab },
+  params: { screen: ScreenName.Portfolio },
 } as const;
 
 export function useNavigateToPostOnboardingHubCallback() {
@@ -30,7 +30,7 @@ export function useNavigateToPostOnboardingHubCallback() {
                   routes: [
                     {
                       name: NavigatorName.Main,
-                      params: mainPortfolioWalletTabParams,
+                      params: mainPortfolioParams,
                     },
                   ],
                 },
@@ -40,7 +40,7 @@ export function useNavigateToPostOnboardingHubCallback() {
         } else {
           navigation.navigate(NavigatorName.Base, {
             screen: NavigatorName.Main,
-            params: mainPortfolioWalletTabParams,
+            params: mainPortfolioParams,
           });
         }
         dispatch(openPostOnboardingHubDrawer());

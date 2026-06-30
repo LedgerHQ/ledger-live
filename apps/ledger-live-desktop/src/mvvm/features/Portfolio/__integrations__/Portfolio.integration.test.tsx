@@ -471,7 +471,7 @@ describe("PortfolioView", () => {
   });
 
   describe("QuickActions", () => {
-    it("should render QuickActions ", () => {
+    it("should render QuickActions", () => {
       render(<PortfolioView {...defaultProps} />);
       expect(screen.getByTestId("quick-actions-actions-list")).toBeVisible();
     });
@@ -677,7 +677,7 @@ describe("PortfolioView", () => {
 const walletV4TourFlagOverrides = withFlagOverrides({
   lwdWallet40: {
     enabled: true,
-    params: { tour: true, mainNavigation: true },
+    params: { tour: true },
   },
 });
 

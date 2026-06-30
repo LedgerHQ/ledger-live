@@ -10,7 +10,7 @@ import { productTourDeeplinkNonceSelector } from "~/reducers/appstate";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { ProductTourDrawerViewModel } from "../types";
 import { track } from "~/analytics";
-import { NavigatorName } from "~/const/navigation";
+import { NavigatorName, ScreenName } from "~/const/navigation";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 import { PAGE_TRACKING_PRODUCT_TOUR, PRODUCT_TOUR_LAST_SLIDE_INDEX } from "../const";
 import type { ProductTourPrimaryAction } from "../const";
@@ -105,7 +105,7 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
         case "portfolio":
           navigation.navigate(NavigatorName.Main, {
             screen: NavigatorName.Portfolio,
-            params: { screen: NavigatorName.WalletTab },
+            params: { screen: ScreenName.Portfolio },
           });
           break;
       }

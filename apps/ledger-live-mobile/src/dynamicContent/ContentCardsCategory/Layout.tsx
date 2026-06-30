@@ -13,6 +13,7 @@ import {
 } from "../types";
 import { Flex } from "@ledgerhq/native-ui";
 import { ContentCardMetadata, ContentCardProps } from "~/contentCards/cards/types";
+import { buildContentCardTrackingProperties } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { contentCardItem } from "~/contentCards/cards/utils";
 import {
   compareCards,
@@ -21,7 +22,6 @@ import {
   mapAsMediumSquareContentCard,
   mapAsBigSquareContentCard,
   mapAsHeroContentCard,
-  sanitizeExtras,
 } from "~/dynamicContent/utils";
 import Carousel from "../../contentCards/layouts/carousel";
 import { WidthFactor } from "~/contentCards/layouts/types";
@@ -88,11 +88,12 @@ const Layout = ({ category, cards }: LayoutProps) => {
     : contentCardsType.contentCardComponent;
 
   const onCardClick = async (card: AnyContentCard, displayedPosition?: number) => {
-    const page = category.location ?? card.location ?? card.extras?.location;
     await trackContentCardEvent("contentcard_clicked", {
-      ...sanitizeExtras(card.extras),
-      page,
-      location: page,
+      ...buildContentCardTrackingProperties({
+        cardExtras: card.extras,
+        categoryExtras: category.extras,
+        categoryLocation: category.location,
+      }),
       campaign: card.id,
       contentcard: card.title,
       type: category.cardsType,
@@ -110,11 +111,12 @@ const Layout = ({ category, cards }: LayoutProps) => {
   };
 
   const onCardDismiss = (card: AnyContentCard, displayedPosition?: number) => {
-    const page = category.location ?? card.location ?? card.extras?.location;
     trackContentCardEvent("contentcard_dismissed", {
-      ...sanitizeExtras(card.extras),
-      page,
-      location: page,
+      ...buildContentCardTrackingProperties({
+        cardExtras: card.extras,
+        categoryExtras: category.extras,
+        categoryLocation: category.location,
+      }),
       campaign: card.id,
       contentcard: card.title,
       type: category.cardsType,
@@ -184,7 +186,7 @@ const Layout = ({ category, cards }: LayoutProps) => {
         <LogContentCardWrapper
           id={item.props.metadata.id}
           displayedPosition={item.props.metadata.displayedPosition}
-          location={card?.location}
+          location={category.location ?? card?.location}
         >
           <Flex mx={6}>{item.component(item.props)}</Flex>
         </LogContentCardWrapper>

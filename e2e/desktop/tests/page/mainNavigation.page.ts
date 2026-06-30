@@ -50,7 +50,7 @@ export class MainNavigationPage extends AppPage {
     });
   }
 
-  private get sidebarTargets(): Readonly<Record<TargetName, NavigationTarget>> {
+  private async getSidebarTargets(): Promise<Readonly<Record<TargetName, NavigationTarget>>> {
     return {
       home: {
         expectActive: true,
@@ -59,7 +59,9 @@ export class MainNavigationPage extends AppPage {
       accounts: {
         expectActive: true,
         // Asset Section ON routes to /cryptos; OFF redirects to the legacy /accounts page.
-        expectedPath: isAssetSectionEnabled ? /^\/cryptos(?:\/|$|\?)/ : /^\/accounts(?:\/|$|\?)/,
+        expectedPath: (await isAssetSectionEnabled(this.page))
+          ? /^\/cryptos(?:\/|$|\?)/
+          : /^\/accounts(?:\/|$|\?)/,
         selector: this.accountsSideBarButton,
       },
       swap: {
@@ -91,14 +93,14 @@ export class MainNavigationPage extends AppPage {
   }
   @step("Open $0 from main navigation")
   async openTargetFromMainNavigation(target: TargetName) {
-    const { selector } = this.sidebarTargets[target];
+    const { selector } = (await this.getSidebarTargets())[target];
     await expect(selector).toBeEnabled();
     await selector.click();
   }
 
   @step("Validate $0 target from main navigation is selected and redirect to the expected path")
   async validateTargetFromMainNavigation(target: TargetName) {
-    const targetConfig = this.sidebarTargets[target];
+    const targetConfig = (await this.getSidebarTargets())[target];
     if (targetConfig.expectActive) {
       await expect(targetConfig.selector).toHaveAttribute("aria-current", "page");
     }

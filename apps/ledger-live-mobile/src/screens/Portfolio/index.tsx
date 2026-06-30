@@ -21,7 +21,7 @@ import SectionContainer from "../WalletCentricSections/SectionContainer";
 import AllocationsSection from "../WalletCentricSections/Allocations";
 import { track, TrackScreen } from "~/analytics";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
+import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
@@ -59,7 +59,7 @@ import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/
 import { RecoverIntroPortfolioMount } from "LLM/features/BackupHub";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
+  StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
 >;
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(CollapsibleHeaderFlatList, {

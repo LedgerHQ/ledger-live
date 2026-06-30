@@ -157,6 +157,11 @@ export class DelegateModal extends Modal {
     await expect(this.feesSummaryStep).toBeVisible();
   }
 
+  @step("Verify the Tezos delegation starter is visible")
+  async verifyDelegationStarter() {
+    await expect(this.delegateStarterInfos).toBeVisible();
+  }
+
   @step("Click on delegate to earn rewards button")
   async clickDelegateToEarnRewardsButton() {
     await expect(this.delegateStarterInfos).toBeVisible();

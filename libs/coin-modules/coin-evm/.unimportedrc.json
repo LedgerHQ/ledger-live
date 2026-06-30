@@ -1,9 +1,7 @@
 {
   "entry": [
-    "src/deviceTransactionConfig.ts",
     "src/errors.ts",
     "src/logic.ts",
-    "src/specs.ts",
     "src/network/gasTracker/index.ts",
     "src/network/node/rpc.native.ts",
     "src/editTransaction/index.ts",
