@@ -6,6 +6,7 @@ import {
   FeeTooHigh,
   FeeRequired,
   OpReturnDataSizeLimit,
+  InvalidAddress,
 } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
@@ -21,7 +22,12 @@ import { calculateFees, validateRecipient, isTaprootRecipient } from "./cache";
 import { OP_RETURN_DATA_SIZE_LIMIT } from "./wallet-btc/crypto/base";
 import cryptoFactory from "./wallet-btc/crypto/factory";
 import { computeDustAmount } from "./wallet-btc/utils";
-import { TaprootNotActivated, FeeTooLow } from "./errors";
+import {
+  TaprootNotActivated,
+  FeeTooLow,
+  ZcashSaplingRecipientNotSupported,
+} from "./errors";
+import { classifyZcashRecipient } from "./chain-adapters/zcash/address";
 import { Currency } from "./wallet-btc";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
@@ -33,7 +39,10 @@ export const getTransactionStatus: AccountBridge<
   Transaction,
   Account,
   TransactionStatus
->["getTransactionStatus"] = async (account: Account, transaction: Transaction) => {
+>["getTransactionStatus"] = async (
+  account: Account,
+  transaction: Transaction,
+) => {
   const adapter = getChainAdapter(account.currency.id);
   const custom = adapter.getTransactionStatus?.(account, transaction);
   if (custom) return custom;
@@ -41,8 +50,16 @@ export const getTransactionStatus: AccountBridge<
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const useAllAmount = !!transaction.useAllAmount;
-  const { recipientError, recipientWarning, changeAddressError, changeAddressWarning } =
-    await validateRecipient(account.currency, transaction.recipient, transaction?.changeAddress);
+  const {
+    recipientError,
+    recipientWarning,
+    changeAddressError,
+    changeAddressWarning,
+  } = await validateRecipient(
+    account.currency,
+    transaction.recipient,
+    transaction?.changeAddress,
+  );
 
   if (recipientError) {
     errors.recipient = recipientError;
@@ -50,6 +67,27 @@ export const getTransactionStatus: AccountBridge<
 
   if (recipientWarning) {
     warnings.recipient = recipientWarning;
+  }
+
+  // Zcash shielded context: override recipient validation for transparent and
+  // transparent-to-shielded flows. Gated on "sender" in transaction so the
+  // flag-off / non-shielded path is unchanged. The adapter's getTransactionStatus
+  // handles shielded / shielded-to-transparent; this block handles the remaining
+  // transfer types that fall through to the default Bitcoin path.
+  if (
+    account.currency.id === "zcash" &&
+    "sender" in transaction &&
+    transaction.recipient
+  ) {
+    const cls = classifyZcashRecipient(transaction.recipient);
+    if ("error" in cls) {
+      errors.recipient =
+        cls.error === "sapling-unsupported"
+          ? new ZcashSaplingRecipientNotSupported()
+          : new InvalidAddress("", { currencyName: account.currency.name });
+    } else {
+      delete errors.recipient;
+    }
   }
 
   if (changeAddressError) {
@@ -68,7 +106,10 @@ export const getTransactionStatus: AccountBridge<
     account.currency.id === "bitcoin" &&
     account.blockHeight <= MAX_BLOCK_HEIGHT_FOR_TAPROOT
   ) {
-    const isTaproot = await isTaprootRecipient(account.currency, transaction.recipient);
+    const isTaproot = await isTaprootRecipient(
+      account.currency,
+      transaction.recipient,
+    );
     const changeAddressIsTaproot = transaction.changeAddress
       ? await isTaprootRecipient(account.currency, transaction.changeAddress)
       : false;
@@ -90,8 +131,8 @@ export const getTransactionStatus: AccountBridge<
     networkRelayFee && networkRelayFee.gt(0)
       ? networkRelayFee
       : account.currency.id === "bitcoin"
-        ? new BigNumber(1)
-        : undefined;
+      ? new BigNumber(1)
+      : undefined;
 
   if (!transaction.feePerByte) {
     errors.feePerByte = new FeeNotLoaded();
@@ -104,12 +145,12 @@ export const getTransactionStatus: AccountBridge<
       account: account,
       transaction: transaction,
     }).then(
-      res => {
+      (res) => {
         txInputs = res.txInputs;
         txOutputs = res.txOutputs;
         estimatedFees = res.fees;
       },
-      error => {
+      (error) => {
         if (error.name === "NotEnoughBalance") {
           errors.amount = error;
         } else if (error.name === "DustLimit") {
@@ -123,10 +164,13 @@ export const getTransactionStatus: AccountBridge<
     );
   }
 
-  const sumOfInputs = txInputs.reduce((sum, input) => sum.plus(input.value ?? 0), new BigNumber(0));
+  const sumOfInputs = txInputs.reduce(
+    (sum, input) => sum.plus(input.value ?? 0),
+    new BigNumber(0),
+  );
 
   const sumOfChanges = txOutputs
-    .filter(o => o.isChange)
+    .filter((o) => o.isChange)
     .reduce((sum, output) => sum.plus(output.value), new BigNumber(0));
 
   if (txInputs) {
@@ -135,7 +179,10 @@ export const getTransactionStatus: AccountBridge<
     const sanctionedAddresses: string[] = [];
     for (const input of txInputs) {
       if (input.address) {
-        const addressIsSanctioned = await isAddressSanctioned(account.currency, input.address);
+        const addressIsSanctioned = await isAddressSanctioned(
+          account.currency,
+          input.address,
+        );
         if (addressIsSanctioned) {
           sanctionedAddresses.push(input.address);
         }
@@ -150,20 +197,31 @@ export const getTransactionStatus: AccountBridge<
   }
 
   if (txOutputs) {
-    log("bitcoin", `${txOutputs.length} outputs, sum of changes: ${sumOfChanges.toString()}`);
+    log(
+      "bitcoin",
+      `${txOutputs.length} outputs, sum of changes: ${sumOfChanges.toString()}`,
+    );
   }
 
   const totalSpent = sumOfInputs.minus(sumOfChanges);
-  const amount = useAllAmount ? totalSpent.minus(estimatedFees) : transaction.amount;
-  log("bitcoin", `totalSpent ${totalSpent.toString()} amount ${amount.toString()}`);
+  const amount = useAllAmount
+    ? totalSpent.minus(estimatedFees)
+    : transaction.amount;
+  log(
+    "bitcoin",
+    `totalSpent ${totalSpent.toString()} amount ${amount.toString()}`,
+  );
 
   // For RBF cancel transactions, we're sending the same amount as the original tx but to ourselves (change address)
   // The recipient is the change address, so the external amount is effectively cancelled
   const isRbfCancel =
-    transaction.replaceTxId && transaction.recipient === transaction.changeAddress;
+    transaction.replaceTxId &&
+    transaction.recipient === transaction.changeAddress;
 
   if (!errors.amount && !amount.gt(0) && !isRbfCancel) {
-    errors.amount = useAllAmount ? new NotEnoughBalance() : new AmountRequired();
+    errors.amount = useAllAmount
+      ? new NotEnoughBalance()
+      : new AmountRequired();
   }
 
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
@@ -171,10 +229,12 @@ export const getTransactionStatus: AccountBridge<
   }
 
   if (transaction.feePerByte && transaction.feePerByte.gt(0)) {
-    const txSize = Math.ceil(estimatedFees.toNumber() / transaction.feePerByte.toNumber());
+    const txSize = Math.ceil(
+      estimatedFees.toNumber() / transaction.feePerByte.toNumber(),
+    );
     const crypto = cryptoFactory(account.currency.id as Currency);
-    const derivationMode = (account as BitcoinAccount).bitcoinResources?.walletAccount?.params
-      .derivationMode;
+    const derivationMode = (account as BitcoinAccount).bitcoinResources
+      ?.walletAccount?.params.derivationMode;
     const dustAmount = computeDustAmount(crypto, txSize, {
       derivationMode,
       relayFeePerByteSatVb: transaction.networkInfo?.relayFeePerByte,

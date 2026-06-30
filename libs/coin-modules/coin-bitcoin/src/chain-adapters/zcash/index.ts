@@ -8,6 +8,8 @@ import { DmkSignerZcash } from "@ledgerhq/live-signer-zcash";
 import type { ZcashAddress, ZcashViewKey } from "@ledgerhq/live-signer-zcash";
 import { registerChainAdapter } from "../registry";
 import type { ZcashAccount, ZcashAccountRaw, ZcashTransaction } from "./types";
+import { classifyZcashRecipient } from "./address";
+import { ZcashSaplingRecipientNotSupported } from "../../errors";
 import { toZcashPrivateInfoRaw, fromZcashPrivateInfoRaw } from "./serialization";
 import { buildExtraSyncObservable } from "./sync";
 import { collectSpendableNotes } from "./operations";
@@ -126,9 +128,16 @@ const zcashChainAdapter: ChainAdapter = {
     const amount = tx.amount;
     const totalSpent = amount.plus(fee);
 
-    // Recipient validation for shielded-to-transparent (transparent address required).
-    // For shielded-to-shielded, recipient validation is deferred to the PCZT builder.
-    if (tx.transferType === "shielded-to-transparent" && !tx.recipient) {
+    // Recipient classification for shielded branches.
+    if (tx.recipient) {
+      const cls = classifyZcashRecipient(tx.recipient);
+      if ("error" in cls) {
+        errors.recipient =
+          cls.error === "sapling-unsupported"
+            ? new ZcashSaplingRecipientNotSupported()
+            : new Error("Invalid recipient address");
+      }
+    } else if (tx.transferType === "shielded-to-transparent") {
       errors.recipient = new Error("Recipient address is required for shielded-to-transparent");
     }
 

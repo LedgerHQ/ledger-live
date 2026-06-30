@@ -186,8 +186,10 @@ export type ZcashTransferType =
 
 export type ZcashTransaction = Transaction & {
   transferType: ZcashTransferType;
-  /** Source balance pool selected on the Recipient step. */
+  /** Source balance pool selected on the Recipient step (UI-01). */
   sender?: "public" | "private";
+  /** Recipient privacy class derived from the address (UI-02). */
+  recipientType?: "public" | "private";
   /** Optional 512-byte memo field for shielded outputs. */
   memo?: string;
   // Coin selection results (populated by prepareTransaction)
