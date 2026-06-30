@@ -26,7 +26,7 @@ import {
   trackSendRejected,
   trackSendStarted,
   type SendAssetClass,
-} from "./send-analytics";
+} from "../analytics/send-analytics";
 import {
   accountOption,
   deviceTimeoutOption,
@@ -78,6 +78,16 @@ const INTENT_BUILDERS: Record<string, IntentBuilder> = {
   }),
 };
 
+function sendErrorCode(error: unknown): string {
+  if (error instanceof WalletCliDeviceError) {
+    return error.state.code;
+  }
+  if (error instanceof Error) {
+    return error.name;
+  }
+  return "unknown";
+}
+
 function buildIntentData(currencyId: string, flags: SendFlags) {
   const { family } = getCryptoCurrencyById(currencyId);
   const builder = INTENT_BUILDERS[family];
@@ -90,12 +100,11 @@ function buildIntentData(currencyId: string, flags: SendFlags) {
 }
 
 /**
- * Best-effort native/token classification for analytics: a ticker matching the account's
- * native currency is native, anything else (or a missing ticker) is treated as a token send.
+ * Best-effort native/token classification for analytics: ids that resolve to a known
+ * crypto-currency are treated as native sends, anything else as a token send.
  */
 function classifySendAssetClass(currencyId: string): SendAssetClass {
-  const currency = findCryptoCurrencyById(currencyId);
-  return currency ? (currency.type === "CryptoCurrency" ? "native" : "token") : "token";
+  return findCryptoCurrencyById(currencyId) ? "native" : "token";
 }
 
 async function runDryRunSend(
@@ -271,7 +280,10 @@ export default defineCommand({
           amount: flags.amount,
         });
       } catch (error) {
-        trackSendFailed({ errorCode: error instanceof Error ? error.message : String(error) });
+        trackSendFailed({
+          errorCode: sendErrorCode(error),
+          errorMessage: error instanceof Error ? error.message : String(error),
+        });
         throw error;
       }
     });

@@ -1,4 +1,4 @@
-import { track } from "../analytics/segment";
+import { track } from "./segment";
 
 const SEND = "Send";
 
@@ -19,10 +19,11 @@ export function trackSendStarted(p: {
   });
 }
 
-export function trackSendFailed(p: { errorCode: string }): void {
+export function trackSendFailed(p: { errorCode: string; errorMessage: string }): void {
   track("send_failed", {
     page: SEND,
     errorCode: p.errorCode,
+    errorMessage: p.errorMessage,
   });
 }
 
