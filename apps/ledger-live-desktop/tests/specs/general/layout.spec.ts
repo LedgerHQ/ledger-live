@@ -1,7 +1,6 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Layout } from "../../component/layout.component";
-import { Drawer } from "../../component/drawer.component";
 import { SettingsPage } from "../../page/settings.page";
 import { DiscoverPage } from "../../page/discover.page";
 import path from "path";
@@ -23,7 +22,6 @@ test.use({
 
 test("Layout @smoke", async ({ page }) => {
   const layout = new Layout(page);
-  const drawer = new Drawer(page);
   const settingsPage = new SettingsPage(page);
   const discoverPage = new DiscoverPage(page);
 
@@ -31,10 +29,7 @@ test("Layout @smoke", async ({ page }) => {
     await layout.goToAccounts();
     await page.waitForLoadState("networkidle");
     // Wait for accounts list to render (React 19 concurrent rendering may defer the paint)
-    await page
-      .getByTestId("accounts-account-row-item")
-      .first()
-      .waitFor({ state: "visible" });
+    await page.getByTestId("accounts-account-row-item").first().waitFor({ state: "visible" });
     await expect.soft(page).toHaveScreenshot("accounts.png");
   });
 
@@ -81,8 +76,9 @@ test("Layout @smoke", async ({ page }) => {
     });
   });
 
-  await test.step("can display the help modal", async () => {
+  await test.step("can display the help section", async () => {
     await layout.openHelp();
-    await expect.soft(drawer.content).toHaveScreenshot("help-drawer.png");
+    await expect(page).toHaveURL(/\/settings\/help/);
+    await expect.soft(page).toHaveScreenshot("help-drawer.png");
   });
 });
