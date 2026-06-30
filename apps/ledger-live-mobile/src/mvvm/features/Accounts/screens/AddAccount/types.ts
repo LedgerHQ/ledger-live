@@ -4,8 +4,8 @@ import { Device } from "@ledgerhq/types-devices";
 import { Account } from "@ledgerhq/types-live";
 import { Props as TouchableProps } from "~/components/Touchable";
 import { AddAccountContexts } from "./enums";
-import { CantonOnboardAccountParamList } from "~/families/canton/Onboard/types";
-import { AleoAddAccountParamList } from "~/families/aleo/AddAccountFlow/types";
+import type { CantonOnboardAccountParamList } from "~/families/canton/Onboard/types";
+import type { AleoAddAccountParamList } from "~/families/aleo/AddAccountFlow/types";
 
 export type AddAccountContextType = `${AddAccountContexts}`;
 
