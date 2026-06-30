@@ -3,8 +3,8 @@ import { delegateModal } from "./delegate.modal";
 import { step } from "tests/misc/reporters/step";
 
 export class EvmDelegateModal extends delegateModal {
-  private earnRewardsEmptyStateButton = this.page.getByTestId("evm-earn-rewards-button");
   private delegateContinueButton = this.page.locator("#delegate-continue-button");
+  private earnRewardsEmptyStateButton = this.page.getByTestId("evm-earn-rewards-button");
 
   @step("Start evm delegate flow from account empty state")
   async startFromEmptyState() {

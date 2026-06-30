@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { Account } from "@ledgerhq/types-live";
+import { Account, StakingResources } from "@ledgerhq/types-live";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import AccountHeaderActions from "../AccountHeaderManageActions";
 
@@ -22,7 +22,7 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
 
 const seiEvmCurrency = getCryptoCurrencyById("sei_evm");
 
-const emptyStakingResources = {
+const emptyStakingResources: StakingResources = {
   delegatedBalance: new BigNumber(0),
   pendingRewardsBalance: new BigNumber(0),
   unbondingBalance: new BigNumber(0),
@@ -36,10 +36,12 @@ const makeSeiAccount = ({
   withStakingResources = true,
   spendableBalance = new BigNumber(1_000),
   operations,
+  stakingResources = emptyStakingResources,
 }: {
   withStakingResources?: boolean;
   spendableBalance?: BigNumber;
   operations?: Account["operations"];
+  stakingResources?: StakingResources;
 } = {}): Account => {
   const base = genAccount("sei_evm-test", { currency: seiEvmCurrency });
   return {
@@ -47,7 +49,7 @@ const makeSeiAccount = ({
     balance: spendableBalance,
     spendableBalance,
     ...(operations !== undefined && { operations, operationsCount: operations.length }),
-    ...(withStakingResources && { stakingResources: emptyStakingResources }),
+    ...(withStakingResources && { stakingResources }),
   } as Account;
 };
 
@@ -100,7 +102,7 @@ describe("EVM AccountHeaderManageActions", () => {
       ]);
     });
 
-    it("opens MODAL_NO_FUNDS_STAKE on click", () => {
+    it("opens MODAL_EVM_REWARDS_INFO on click", () => {
       const account = makeSeiAccount({ spendableBalance: new BigNumber(0) });
       const { result, store } = renderHook(() => hook({ account, parentAccount: null }), {
         initialState: seiEvmEnabledFlags,
@@ -110,8 +112,37 @@ describe("EVM AccountHeaderManageActions", () => {
         result.current?.[0].onClick();
       });
 
-      expect(store.getState().modals.MODAL_NO_FUNDS_STAKE?.isOpened).toBe(true);
+      expect(store.getState().modals.MODAL_EVM_REWARDS_INFO?.isOpened).toBe(true);
       expect(store.getState().modals.MODAL_EVM_DELEGATE?.isOpened).toBe(undefined);
+    });
+
+    it("opens MODAL_EVM_DELEGATE on click when the account already has delegations", () => {
+      // A fully-staked account has 0 spendable balance but existing delegations; it must
+      // reach the delegate/manage flow rather than the first-timer info screen.
+      const account = makeSeiAccount({
+        spendableBalance: new BigNumber(0),
+        stakingResources: {
+          ...emptyStakingResources,
+          delegations: [
+            {
+              validatorAddress: "seivaloper1xyz",
+              amount: new BigNumber(1_000),
+              pendingRewards: new BigNumber(0),
+              status: "bonded",
+            },
+          ],
+        },
+      });
+      const { result, store } = renderHook(() => hook({ account, parentAccount: null }), {
+        initialState: seiEvmEnabledFlags,
+      });
+
+      act(() => {
+        result.current?.[0].onClick();
+      });
+
+      expect(store.getState().modals.MODAL_EVM_DELEGATE?.isOpened).toBe(true);
+      expect(store.getState().modals.MODAL_EVM_REWARDS_INFO?.isOpened).toBe(undefined);
     });
   });
 
@@ -131,7 +162,7 @@ describe("EVM AccountHeaderManageActions", () => {
       );
     });
 
-    it("opens MODAL_EVM_DELEGATE when clicking the action on a funded account", () => {
+    it("opens MODAL_EVM_REWARDS_INFO when clicking the action on a funded account with no delegations", () => {
       const account = makeSeiAccount();
       const { result, store } = renderHook(() => hook({ account, parentAccount: null }), {
         initialState: seiEvmEnabledFlags,
@@ -141,8 +172,36 @@ describe("EVM AccountHeaderManageActions", () => {
         result.current?.[0].onClick();
       });
 
+      // First-time delegators see the info/starter screen first; it routes on to
+      // MODAL_EVM_DELEGATE via its own onNext after the user continues.
+      expect(store.getState().modals.MODAL_EVM_REWARDS_INFO?.isOpened).toBe(true);
+      expect(store.getState().modals.MODAL_EVM_DELEGATE?.isOpened).toBe(undefined);
+    });
+
+    it("opens MODAL_EVM_DELEGATE when clicking the action on a funded account with existing delegations", () => {
+      const account = makeSeiAccount({
+        stakingResources: {
+          ...emptyStakingResources,
+          delegations: [
+            {
+              validatorAddress: "seivaloper1xyz",
+              amount: new BigNumber(1_000),
+              pendingRewards: new BigNumber(0),
+              status: "bonded",
+            },
+          ],
+        },
+      });
+      const { result, store } = renderHook(() => hook({ account, parentAccount: null }), {
+        initialState: seiEvmEnabledFlags,
+      });
+
+      act(() => {
+        result.current?.[0].onClick();
+      });
+
       expect(store.getState().modals.MODAL_EVM_DELEGATE?.isOpened).toBe(true);
-      expect(store.getState().modals.MODAL_NO_FUNDS_STAKE?.isOpened).toBe(undefined);
+      expect(store.getState().modals.MODAL_EVM_REWARDS_INFO?.isOpened).toBe(undefined);
     });
   });
 });
