@@ -263,7 +263,7 @@ describe("History export dialog integration", () => {
 
     expect(await screen.findByTestId("history-export-success-title")).toBeVisible();
     await user.click(screen.getByRole("button", { name: /done/i }));
-  }, 30000);
+  });
 
   it("should stay on export scene when user cancels save dialog", async () => {
     const { user } = renderHistoryWithAccounts();
