@@ -7,17 +7,19 @@ const audienceModelsSchema = z.object({
   nanoX: z.boolean(),
 });
 
+const dayCountSchema = z.number().int().nonnegative();
+
 const cooldownDaysSchema = z.object({
-  default: z.number(),
-  nanoS: z.number().optional(),
-  nanoSP: z.number().optional(),
-  nanoX: z.number().optional(),
+  default: dayCountSchema,
+  nanoS: dayCountSchema.optional(),
+  nanoSP: dayCountSchema.optional(),
+  nanoX: dayCountSchema.optional(),
 });
 
 const modalSchema = z.object({
   enabled: z.boolean(),
-  killThreshold: z.number(),
-  cadenceDays: z.number(),
+  killThreshold: z.number().int().nonnegative(),
+  cadenceDays: dayCountSchema,
 });
 
 const ctaSchema = z.object({
@@ -28,7 +30,7 @@ export const largeScreenUpsell = flagWith(
   {
     audience: z.object({ models: audienceModelsSchema }),
     cooldownDays: cooldownDaysSchema,
-    discount: z.number(),
+    discount: z.number().min(0).max(1),
     modal: modalSchema,
     opted_in: ctaSchema,
     opted_out: ctaSchema,
