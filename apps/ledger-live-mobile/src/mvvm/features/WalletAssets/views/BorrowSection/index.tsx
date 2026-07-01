@@ -21,9 +21,7 @@ interface PortfolioBorrowSectionProps {
   onPress: () => void;
 }
 
-export const PortfolioBorrowSection = ({
-  onPress,
-}: PortfolioBorrowSectionProps) => {
+export const PortfolioBorrowSection = ({ onPress }: PortfolioBorrowSectionProps) => {
   const { t } = useTranslation();
 
   return (
@@ -39,21 +37,14 @@ export const PortfolioBorrowSection = ({
             <CardLeading>
               <Spot appearance="icon" icon={CoinsAddPlus} />
               <CardContent>
-                <CardContentTitle>
-                  {t("portfolio.borrowEntry.cardTitle")}
-                </CardContentTitle>
+                <CardContentTitle>{t("portfolio.borrowEntry.cardTitle")}</CardContentTitle>
                 <CardContentDescription>
                   {t("portfolio.borrowEntry.cardDescription")}
                 </CardContentDescription>
               </CardContent>
             </CardLeading>
             <CardTrailing>
-              <Button
-                appearance="base"
-                size="sm"
-                onPress={onPress}
-                testID="borrow-explore-cta"
-              >
+              <Button appearance="base" size="sm" onPress={onPress} testID="borrow-explore-cta">
                 {t("portfolio.borrowEntry.cta")}
               </Button>
             </CardTrailing>
