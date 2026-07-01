@@ -1,7 +1,7 @@
 import React from "react";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
-import { render } from "@tests/test-renderer";
+import { render, withFlagOverrides } from "@tests/test-renderer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { screen, track } from "~/analytics";
 import type { OperationsHistoryNavigatorParamsList } from "LLM/features/OperationsHistory/types";
@@ -42,6 +42,7 @@ function stateWithAccountsAndOperations(base: State): State {
 const operation = accountWithOperations.operations[1];
 
 const mockNavigate = jest.fn();
+const mockSetOptions = jest.fn();
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({ navigate: mockNavigate }),
@@ -55,7 +56,31 @@ const MockNavigator = () => (
   </Stack.Navigator>
 );
 
+type OperationsListProps = React.ComponentProps<typeof OperationsList>;
+
+const operationsListRoute = {
+  key: ScreenName.OperationsList,
+  name: ScreenName.OperationsList,
+  params: undefined,
+} as OperationsListProps["route"];
+
+const renderOperationsListWithNavigation = (
+  navigation: Partial<OperationsListProps["navigation"]>,
+  options?: Parameters<typeof render>[1],
+) =>
+  render(
+    <OperationsList
+      route={operationsListRoute}
+      navigation={navigation as OperationsListProps["navigation"]}
+    />,
+    options,
+  );
+
 describe("OperationsList", () => {
+  beforeEach(() => {
+    mockSetOptions.mockClear();
+  });
+
   it("tracks the OperationsList screen on focus", () => {
     render(<MockNavigator />);
     expect(screen).toHaveBeenCalledWith(
@@ -66,6 +91,39 @@ describe("OperationsList", () => {
       true,
       false,
       false,
+    );
+  });
+
+  it("does not register the transaction history options menu when the dust filter feature flag is disabled", () => {
+    renderOperationsListWithNavigation({ setOptions: mockSetOptions });
+
+    expect(mockSetOptions).toHaveBeenCalledWith(
+      expect.objectContaining({
+        lumenNavBar: expect.objectContaining({
+          renderTrailing: undefined,
+        }),
+      }),
+    );
+  });
+
+  it("registers the transaction history options menu in the navigation bar when the dust filter feature flag is enabled", () => {
+    renderOperationsListWithNavigation(
+      { setOptions: mockSetOptions },
+      {
+        overrideInitialState: withFlagOverrides({
+          lwmDustFiltering: {
+            enabled: true,
+          },
+        }),
+      },
+    );
+
+    expect(mockSetOptions).toHaveBeenCalledWith(
+      expect.objectContaining({
+        lumenNavBar: expect.objectContaining({
+          renderTrailing: expect.any(Function),
+        }),
+      }),
     );
   });
 

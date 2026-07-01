@@ -13,6 +13,14 @@ import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import "./experimental";
 import logger, { ConsoleLogger } from "./logger";
 import BigNumber from "bignumber.js";
+import { setCryptoCurrenciesStore } from "@ledgerhq/cryptoassets";
+import {
+  CRYPTO_CURRENCIES_REGISTRY,
+  CRYPTO_CURRENCY_ALIASES,
+} from "@domain/entity-currency-crypto";
+
+// The domain registry is the runtime source of truth for currency data.
+setCryptoCurrenciesStore(Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES);
 
 registerAllCoins();
 

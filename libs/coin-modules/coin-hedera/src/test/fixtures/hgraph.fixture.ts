@@ -5,6 +5,7 @@ export const getMockedERC20TokenBalance = (
 ): ERC20TokenAccount => {
   return {
     token_id: 12345,
+    token_evm_address: "0x12345",
     balance: 1_000_000,
     balance_timestamp: 1764932745835883000,
     created_timestamp: 1760932745835883000,

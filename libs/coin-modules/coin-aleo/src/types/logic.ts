@@ -53,10 +53,12 @@ export type AleoTransactionIntentData =
     }
   | {
       type: typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE;
+      programId: string;
       records: AleoDecryptedRecordResponse[];
     }
   | {
       type: typeof TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC;
+      programId: string;
       records: AleoDecryptedRecordResponse[];
     }
   | {

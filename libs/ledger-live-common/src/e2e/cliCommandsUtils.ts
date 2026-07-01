@@ -15,6 +15,13 @@ import {
 import { getCcdAccountAddress } from "./families/concordium";
 import { approveToken } from "./families/evm";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../currencies/index";
+import {
+  applyGeneratedUserdata,
+  getGeneratedAddress,
+  hasGeneratedUserdata,
+} from "./generatedUserdata";
+import { getCachedAddress, isUtxoBasedCurrency } from "./addressCache";
+import { getCachedUtxoAddress } from "./utxoAddressCache";
 
 export type LiveDataCommandOptions = {
   readonly useScheme?: boolean;
@@ -33,6 +40,20 @@ export const getAccountAddress = async (account: Account | TokenAccount): Promis
     return address;
   }
 
+  if (!isUtxoBasedCurrency(account.currency.id)) {
+    const cached = getCachedAddress(account) ?? getGeneratedAddress(account);
+    if (cached) {
+      account.address = cached;
+      return cached;
+    }
+  } else {
+    const cached = getCachedUtxoAddress(account);
+    if (cached) {
+      account.address = cached;
+      return cached;
+    }
+  }
+
   const { address } = await runCliGetAddress({
     currency: account.currency.speculosApp.name,
     path: account.accountPath,
@@ -43,9 +64,12 @@ export const getAccountAddress = async (account: Account | TokenAccount): Promis
   return address;
 };
 
-export const liveDataCommand =
-  (account: Account | TokenAccount, options?: LiveDataCommandOptions) =>
-  async (userdataPath?: string) => {
+export const liveDataCommand = (
+  account: Account | TokenAccount,
+  options?: LiveDataCommandOptions,
+) => {
+  const cmd = async (userdataPath?: string) => {
+    if (applyGeneratedUserdata(account, userdataPath)) return;
     await runCliLiveData({
       currency: options?.currency ?? account.currency.speculosApp.name,
       index: account.index,
@@ -54,6 +78,9 @@ export const liveDataCommand =
       appjson: userdataPath,
     });
   };
+  cmd.canUseGeneratedUserdata = () => hasGeneratedUserdata(account);
+  return cmd;
+};
 
 /**
  * Family-specific fields that must exist on an empty `AccountRaw` so the
@@ -175,9 +202,11 @@ export const addEmptyAccountCommand =
     }
   };
 
-export const liveDataWithAddressCommand =
-  (account: Account | TokenAccount, options?: LiveDataCommandOptions) =>
-  async (userdataPath?: string) => {
+export const liveDataWithAddressCommand = (
+  account: Account | TokenAccount,
+  options?: LiveDataCommandOptions,
+) => {
+  const cmd = async (userdataPath?: string) => {
     await liveDataCommand(account, options)(userdataPath);
 
     const address = await getAccountAddress(account);
@@ -189,16 +218,24 @@ export const liveDataWithAddressCommand =
 
     return address;
   };
+  cmd.canUseGeneratedUserdata = () =>
+    hasGeneratedUserdata(account) && !isUtxoBasedCurrency(account.currency.id);
+  return cmd;
+};
 
-export const liveDataWithParentAddressCommand =
-  (liveDataAccount: Account | TokenAccount, accountToAssign: TokenAccount) =>
-  async (userdataPath?: string) => {
-    await runCliLiveData({
-      currency: liveDataAccount.currency.speculosApp.name,
-      index: liveDataAccount.index,
-      add: true,
-      appjson: userdataPath,
-    });
+export const liveDataWithParentAddressCommand = (
+  liveDataAccount: Account | TokenAccount,
+  accountToAssign: TokenAccount,
+) => {
+  const cmd = async (userdataPath?: string) => {
+    if (!applyGeneratedUserdata(liveDataAccount, userdataPath)) {
+      await runCliLiveData({
+        currency: liveDataAccount.currency.speculosApp.name,
+        index: liveDataAccount.index,
+        add: true,
+        appjson: userdataPath,
+      });
+    }
 
     if (!accountToAssign.parentAccount) {
       throw new Error("Parent account is required");
@@ -209,21 +246,30 @@ export const liveDataWithParentAddressCommand =
     accountToAssign.address = address;
     return address;
   };
+  cmd.canUseGeneratedUserdata = () =>
+    hasGeneratedUserdata(liveDataAccount) &&
+    !!accountToAssign.parentAccount &&
+    hasGeneratedUserdata(accountToAssign.parentAccount) &&
+    !isUtxoBasedCurrency(accountToAssign.parentAccount.currency.id);
+  return cmd;
+};
 
 export const liveDataWithRecipientAddressCommand = (
   tx: Transaction,
   options?: LiveDataCommandOptions,
 ) => {
   return async (userdataPath?: string) => {
-    await runCliLiveData({
-      currency: tx.accountToDebit.currency.speculosApp.name,
-      index: tx.accountToDebit.index,
-      ...(options?.useScheme && tx.accountToDebit.derivationMode
-        ? { scheme: tx.accountToDebit.derivationMode }
-        : {}),
-      add: true,
-      appjson: userdataPath,
-    });
+    if (!applyGeneratedUserdata(tx.accountToDebit, userdataPath)) {
+      await runCliLiveData({
+        currency: tx.accountToDebit.currency.speculosApp.name,
+        index: tx.accountToDebit.index,
+        ...(options?.useScheme && tx.accountToDebit.derivationMode
+          ? { scheme: tx.accountToDebit.derivationMode }
+          : {}),
+        add: true,
+        appjson: userdataPath,
+      });
+    }
 
     const address = await getAccountAddress(tx.accountToCredit);
 

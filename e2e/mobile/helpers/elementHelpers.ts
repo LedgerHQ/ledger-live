@@ -30,7 +30,7 @@ function hasMatcherProperty(obj: unknown): obj is WebElementWithMatcher {
 
 const scroller = new PageScroller();
 
-const DEFAULT_TIMEOUT = 60000;
+export const DEFAULT_TIMEOUT = 60000;
 const DEFAULT_WEB_ELEMENT_INTERVAL = 2000;
 
 export type WaitForElementOptions = {

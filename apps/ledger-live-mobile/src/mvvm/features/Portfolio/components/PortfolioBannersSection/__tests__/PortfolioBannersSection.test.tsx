@@ -59,7 +59,7 @@ describe("PortfolioBannersSection", () => {
     expect(screen.queryByTestId("mock-onboarding-widget")).toBeNull();
   });
 
-  describe("static layout (assets visible, onboarding widget not active)", () => {
+  describe("when user has assets and onboarding is hidden", () => {
     beforeEach(() => {
       mockUseViewModel.mockReturnValue({
         ...baseViewModel,
@@ -68,19 +68,19 @@ describe("PortfolioBannersSection", () => {
       });
     });
 
-    it("renders the recover banner and content cards", () => {
+    it("renders recover banner and top_wallet content cards", () => {
       renderSection({ showAssets: true });
       expect(screen.getByTestId("mock-recover-banner")).toBeVisible();
       expect(screen.getByTestId("mock-content-cards")).toBeVisible();
     });
 
-    it("does not render the onboarding widget or page indicator", () => {
+    it("does not render onboarding or the carousel page indicator", () => {
       renderSection({ showAssets: true });
       expect(screen.queryByTestId("mock-onboarding-widget")).toBeNull();
       expect(screen.queryByTestId("banners-page-indicator")).toBeNull();
     });
 
-    it("renders content cards without recover when recover banner is off", () => {
+    it("renders content cards without recover when recover is off", () => {
       mockUseViewModel.mockReturnValue({
         ...baseViewModel,
         hasAssets: true,
@@ -92,46 +92,73 @@ describe("PortfolioBannersSection", () => {
     });
   });
 
-  describe("carousel layout", () => {
-    it("renders only the onboarding widget when recover banner is not active", () => {
+  describe("when onboarding is visible", () => {
+    it("renders only the onboarding widget when recover is off", () => {
       mockUseViewModel.mockReturnValue({ ...baseViewModel, shouldShowOnboardingWidget: true });
       renderSection();
       expect(screen.getByTestId("mock-onboarding-widget")).toBeVisible();
       expect(screen.queryByTestId("mock-recover-banner")).toBeNull();
+      expect(screen.queryByTestId("mock-content-cards")).toBeNull();
     });
 
-    it("renders only the recover banner when onboarding widget is not active", () => {
+    it("does not render top_wallet content cards when user has assets", () => {
+      mockUseViewModel.mockReturnValue({
+        ...baseViewModel,
+        shouldShowOnboardingWidget: true,
+        hasAssets: true,
+      });
+      renderSection({ showAssets: true });
+      expect(screen.getByTestId("mock-onboarding-widget")).toBeVisible();
+      expect(screen.queryByTestId("mock-content-cards")).toBeNull();
+    });
+  });
+
+  describe("when recover is visible without onboarding", () => {
+    it("renders only the recover banner", () => {
       mockUseViewModel.mockReturnValue({ ...baseViewModel, shouldDisplayRecover: true });
       renderSection();
       expect(screen.getByTestId("mock-recover-banner")).toBeVisible();
       expect(screen.queryByTestId("mock-onboarding-widget")).toBeNull();
     });
+  });
 
-    it("renders both banners when both are active", () => {
+  describe("when onboarding and recover are both visible", () => {
+    beforeEach(() => {
       mockUseViewModel.mockReturnValue({
         ...baseViewModel,
         shouldShowOnboardingWidget: true,
         shouldDisplayRecover: true,
       });
+    });
+
+    it("renders both banners in the carousel", () => {
       renderSection();
       expect(screen.getByTestId("mock-onboarding-widget")).toBeVisible();
       expect(screen.getByTestId("mock-recover-banner")).toBeVisible();
     });
 
-    it("hides the page indicator when only one banner is active", () => {
-      mockUseViewModel.mockReturnValue({ ...baseViewModel, shouldShowOnboardingWidget: true });
-      renderSection();
-      expect(screen.queryByTestId("banners-page-indicator")).toBeNull();
-    });
-
-    it("shows the page indicator when both banners are active", () => {
+    it("does not render top_wallet content cards when user has assets", () => {
       mockUseViewModel.mockReturnValue({
         ...baseViewModel,
         shouldShowOnboardingWidget: true,
         shouldDisplayRecover: true,
+        hasAssets: true,
       });
+      renderSection({ showAssets: true });
+      expect(screen.queryByTestId("mock-content-cards")).toBeNull();
+    });
+
+    it("shows the page indicator", () => {
       renderSection();
       expect(screen.getByTestId("banners-page-indicator")).toBeVisible();
+    });
+  });
+
+  describe("carousel page indicator", () => {
+    it("is hidden when only onboarding is active", () => {
+      mockUseViewModel.mockReturnValue({ ...baseViewModel, shouldShowOnboardingWidget: true });
+      renderSection();
+      expect(screen.queryByTestId("banners-page-indicator")).toBeNull();
     });
   });
 });

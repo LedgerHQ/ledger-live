@@ -18,14 +18,8 @@ import { VISIBLE_STATUS } from "./Updater/Banner";
 import StyleProvider from "~/renderer/styles/StyleProvider";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { track } from "~/renderer/analytics/segment";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import TopBanner from "./TopBanner";
-import Box from "./Box";
 import getCleanVersion from "../screens/manager/FirmwareUpdate/getCleanVersion";
-import { useTheme } from "styled-components";
 import { getEnv } from "@ledgerhq/live-env";
-import { radii } from "~/renderer/styles/theme";
-import { Button, Text } from "@ledgerhq/react-ui";
 import { getDeviceIcon } from "LLD/utils/getDeviceIcon";
 
 type BannerContentProps = {
@@ -80,83 +74,33 @@ const FirmwareUpdateBannerNew = ({
   );
 };
 
-const FirmwareUpdateBannerLegacy = ({
-  old,
-  right,
-  visibleFirmwareVersion,
-  onClick,
-}: BannerContentProps) => {
-  const { t } = useTranslation();
-  const { colors } = useTheme();
-
-  return (
-    <TopBanner
-      id={"fw-update-banner"}
-      testId="fw-update-banner"
-      containerStyle={{
-        background: `linear-gradient(to left, ${colors.primary.c70}, ${colors.primary.c60})`,
-        borderRadius: radii[2],
-        padding: "12px 16px",
-      }}
-      content={{
-        message: (
-          <Box>
-            <Text fontFamily="Inter|Bold" fontSize={5} color="neutral.c100">
-              {t(old ? "manager.firmware.banner.old.warning" : "manager.firmware.banner.warning")}
-            </Text>
-            {old ? null : (
-              <Text color="neutral.c90">
-                {t("manager.firmware.banner.version", {
-                  latestFirmware: visibleFirmwareVersion,
-                })}
-              </Text>
-            )}
-          </Box>
-        ),
-        right: right ?? (
-          <Button variant="main" onClick={onClick}>
-            {t("manager.firmware.banner.cta")}
-          </Button>
-        ),
-      }}
-    />
-  );
-};
-
 const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
   const latestFirmware = useSelector(latestFirmwareSelector);
   const currentDevice = useSelector(getCurrentDevice);
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
   const hasTrackedImpressionRef = useRef(false);
   const isOnDashboard = location.pathname === "/";
   const inManager = location.pathname === "/manager";
 
   useEffect(() => {
-    if (
-      latestFirmware &&
-      !hasTrackedImpressionRef.current &&
-      shouldDisplayWallet40MainNav &&
-      (isOnDashboard || inManager)
-    ) {
+    if (latestFirmware && !hasTrackedImpressionRef.current && (isOnDashboard || inManager)) {
       hasTrackedImpressionRef.current = true;
       track("banner_impression", {
         banner: "OS update",
         page: inManager ? "my ledger" : "portfolio",
       });
     }
-  }, [latestFirmware, shouldDisplayWallet40MainNav, isOnDashboard, inManager]);
+  }, [latestFirmware, isOnDashboard, inManager]);
 
   const onClick = () => {
-    if (shouldDisplayWallet40MainNav) {
-      track("button_clicked", {
-        page: "portfolio",
-        banner: "OS update",
-        button: "click(update)",
-      });
-    }
+    track("button_clicked", {
+      page: "portfolio",
+      banner: "OS update",
+      button: "click(update)",
+    });
+
     const urlParams = new URLSearchParams({
       firmwareUpdate: "true",
     });
@@ -166,7 +110,7 @@ const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.Rea
 
   const DeviceIcon = useMemo(() => getDeviceIcon(currentDevice?.modelId), [currentDevice]);
 
-  if (shouldDisplayWallet40MainNav && !inManager) {
+  if (!inManager) {
     return latestFirmware ? (
       <NewButton
         appearance="transparent"
@@ -198,11 +142,7 @@ const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.Rea
     onClick,
   };
 
-  return shouldDisplayWallet40MainNav ? (
-    <FirmwareUpdateBannerNew {...bannerProps} />
-  ) : (
-    <FirmwareUpdateBannerLegacy {...bannerProps} />
-  );
+  return <FirmwareUpdateBannerNew {...bannerProps} />;
 };
 
 const FirmwareUpdateBannerEntry = ({ old, right }: { old?: boolean; right?: React.ReactNode }) => {

@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import SettingsRow from "~/components/SettingsRow";
 import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
-import { NavigatorName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
 import { usePostOnboardingHubCompletionContext } from "~/logic/postOnboarding/usePostOnboardingHubCompletionContext";
 import { setStoreValue } from "~/store";
@@ -40,7 +40,7 @@ export default () => {
         fallbackIfNoAction: () =>
           navigation.navigate(NavigatorName.Main, {
             screen: NavigatorName.Portfolio,
-            params: { screen: NavigatorName.WalletTab },
+            params: { screen: ScreenName.Portfolio },
           }),
       }),
     [navigation, startPostOnboarding],

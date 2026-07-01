@@ -1,4 +1,4 @@
-import type { ChangeEvent, ReactNode } from "react";
+import type { ChangeEvent } from "react";
 import type { FeePresetOption } from "../../hooks/useFeePresetOptions";
 import type { FeeFiatMap } from "../../hooks/useFeePresetFiatValues";
 import type { FeePresetLegendMap } from "../../hooks/useFeePresetLegends";
@@ -75,7 +75,7 @@ type ReviewProps = Readonly<{
 export type AmountScreenViewProps = AmountInputProps &
   FeesProps &
   QuickActionsProps &
-  ReviewProps & { pluginsSlot?: ReactNode };
+  ReviewProps;
 
 export type AmountScreenViewModel = Omit<
   AmountScreenViewProps,

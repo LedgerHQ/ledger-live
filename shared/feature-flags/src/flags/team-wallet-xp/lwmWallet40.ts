@@ -3,7 +3,6 @@ import { flagWith } from "../../define";
 
 export const lwmWallet40 = flagWith(
   {
-    marketBanner: z.boolean(),
     graphRework: z.boolean(),
     quickActionCtas: z.boolean(),
     mainNavigation: z.boolean(),
@@ -11,7 +10,6 @@ export const lwmWallet40 = flagWith(
     lazyOnboarding: z.boolean(),
     balanceRefreshRework: z.boolean(),
     assetSection: z.boolean(),
-    newReceiveDialog: z.boolean().optional(),
     operationsList: z.boolean(),
     aggregatedAssets: z.boolean(),
     myWallet: z.boolean(),
@@ -25,7 +23,6 @@ export const lwmWallet40 = flagWith(
   {
     enabled: false,
     params: {
-      marketBanner: true,
       graphRework: true,
       quickActionCtas: true,
       tour: true,

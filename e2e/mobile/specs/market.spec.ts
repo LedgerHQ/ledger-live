@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setTeamOwner } from "../helpers/allure/allure-helper";
 
@@ -13,21 +14,13 @@ const tags: string[] = [
 ];
 describe("Market page for user with no device", () => {
   const nanoApp = AppInfos.ETHEREUM;
-  const ticker = "ETH";
+  const currency = Currency.ETH;
 
   beforeAll(async () => {
     await app.init({
       speculosApp: nanoApp,
-      cliCommands: [
-        async (userdataPath?: string) => {
-          return CLI.liveData({
-            currency: nanoApp.name,
-            index: 0,
-            appjson: userdataPath,
-            add: true,
-          });
-        },
-      ],
+      cliCommands: [liveDataCommand(Account.ETH_1)],
+      speculosForSetupOnly: true,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });
@@ -37,12 +30,12 @@ describe("Market page for user with no device", () => {
   tags.forEach(tag => $Tag(tag));
   it("should filter starred asset in the list", async () => {
     await app.walletTabNavigator.navigateToMarket();
-    await app.market.searchAsset(ticker);
-    await app.market.expectMarketRowTitle(ticker);
-    await app.market.openAssetPage(ticker);
+    await app.market.searchAsset(currency.ticker);
+    await app.market.expectMarketRowTitle(currency);
+    await app.market.openAssetPage(currency);
     await app.market.starFavoriteCoin();
     await app.market.backToAssetList();
     await app.market.filterStaredAsset();
-    await app.market.expectMarketRowTitle(ticker);
+    await app.market.expectMarketRowTitle(currency);
   });
 });

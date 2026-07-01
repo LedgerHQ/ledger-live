@@ -4,11 +4,13 @@ import { ScreenName } from "~/const";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import useExportLogs from "~/components/useExportLogs";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
+import { useSendSignature } from "../../../context/SendSignatureContext";
 import type { SendFlowNavigationProp } from "../../../types";
 
 export function useConfirmationViewModel() {
   const navigation = useNavigation<BaseNavigationComposite<SendFlowNavigationProp>>();
   const { close, status: statusActions, operation } = useSendFlowActions();
+  const { startSigning } = useSendSignature();
   const { state } = useSendFlowData();
   const { account, parentAccount } = state.account;
   const onSaveLogs = useExportLogs();
@@ -29,10 +31,10 @@ export function useConfirmationViewModel() {
   }, [account, parentAccount, concernedOperation, navigation]);
 
   const onRetry = useCallback(() => {
-    navigation.replace(ScreenName.SendFlowSignature);
     operation.onRetry();
     statusActions.resetStatus();
-  }, [navigation, operation, statusActions]);
+    startSigning();
+  }, [operation, statusActions, startSigning]);
 
   return {
     status: state.flowStatus,

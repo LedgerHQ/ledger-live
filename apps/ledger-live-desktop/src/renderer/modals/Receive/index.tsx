@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import logger from "~/renderer/logger";
@@ -49,7 +49,6 @@ function getInitialState(
 
 const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
   const noahFeature = useFeature("noah");
-  const { shouldDisplayNewReceiveDialog } = useWalletFeaturesConfig("desktop");
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
   const isNoahActive = noahFeature?.enabled === true && props?.shouldUseReceiveOptions !== false;
   const initialState = getInitialState(
@@ -137,8 +136,7 @@ const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
 
   if (!hasAccounts) return null;
 
-  // TODO: Remove this once the new receive dialog is fully implemented
-  if (shouldDisplayNewReceiveDialog && stepId === "receiveOptions") {
+  if (stepId === "receiveOptions") {
     return (
       <ReceiveOptionsDialog
         onClose={() => handleClose(false)}
@@ -165,7 +163,6 @@ const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
           onChangeAddressVerified={handleChangeAddressVerified}
           onChangeStepId={setStepId}
           params={data || {}}
-          useLegacyReceiveOptions={!shouldDisplayNewReceiveDialog}
         />
       )}
     />

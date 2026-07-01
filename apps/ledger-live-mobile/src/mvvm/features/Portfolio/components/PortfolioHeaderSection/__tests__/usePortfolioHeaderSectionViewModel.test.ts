@@ -1,13 +1,18 @@
 import { renderHook, act } from "@tests/test-renderer";
 import { usePortfolioHeaderSectionViewModel } from "../usePortfolioHeaderSectionViewModel";
-import { CONTENT_AREA_HEIGHT } from "LLM/components/ScreenHeroSection/constants";
+import {
+  CONTENT_AREA_HEIGHT,
+  MIN_CONTENT_AREA_HEIGHT,
+} from "LLM/components/ScreenHeroSection/constants";
 
 describe("usePortfolioHeaderSectionViewModel", () => {
   describe("minContentHeight", () => {
     it.each([
       { bannerHeight: 0, expected: undefined },
       { bannerHeight: 48, expected: CONTENT_AREA_HEIGHT - 48 },
-      { bannerHeight: 300, expected: 0 },
+      // Tall banners can no longer crush the content area below the floor.
+      { bannerHeight: 120, expected: MIN_CONTENT_AREA_HEIGHT },
+      { bannerHeight: 300, expected: MIN_CONTENT_AREA_HEIGHT },
     ])("is $expected when banner height is $bannerHeight", ({ bannerHeight, expected }) => {
       const { result } = renderHook(() => usePortfolioHeaderSectionViewModel());
 

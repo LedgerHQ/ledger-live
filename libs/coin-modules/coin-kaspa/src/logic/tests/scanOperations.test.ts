@@ -316,4 +316,31 @@ describe("scan transactions for multiple addresses", () => {
       ),
     ).toBe(true);
   });
+
+  it("aggregates operations across many addresses", async () => {
+    const addresses = Array.from({ length: 12 }, (_, i) => `kaspa:addr${i}`);
+
+    mockGetTransactions.mockImplementation((addr: string) =>
+      Promise.resolve({
+        nextPageAfter: null,
+        transactions: [
+          {
+            transaction_id: `tx-${addr}`,
+            block_hash: [`bh-${addr}`],
+            accepting_block_blue_score: 1,
+            block_time: 1754762830110,
+            inputs: [],
+            outputs: [{ script_public_key_address: addr, amount: 1000 }],
+          },
+        ],
+      }),
+    );
+
+    const result = await scanOperations(addresses, "", 1);
+
+    expect(mockGetTransactions).toHaveBeenCalledTimes(addresses.length);
+    expect(result.length).toBe(addresses.length);
+    expect(new Set(result.map(op => op.id)).size).toBe(addresses.length);
+    expect(result.every(op => op.type === "IN")).toBe(true);
+  });
 });

@@ -7,7 +7,7 @@ describe("combine", () => {
   it("should combine a serialized unsigned tx and a signature to produce a signed tx", () => {
     const wallet = Wallet.createRandom();
 
-    const unsignedTx = {
+    const unsignedTx: Partial<ethers.Transaction> = {
       to: wallet.address,
       value: BigInt(1),
       gasLimit: BigInt(21000),
@@ -15,7 +15,7 @@ describe("combine", () => {
       chainId: BigInt(1),
       type: 0,
       gasPrice: BigInt(1),
-    } as Partial<ethers.Transaction>;
+    };
 
     const serializedUnsignedTx = ethers.Transaction.from(unsignedTx).unsignedSerialized;
 
@@ -87,6 +87,38 @@ describe("combine", () => {
     );
     expect(parsedSignedTx.value.toString()).toBe("3");
     expect(parsedSignedTx.nonce).toBe(2);
+  });
+
+  it("should combine a DMK-style signature object with unprefixed r and s", () => {
+    const wallet = Wallet.createRandom();
+
+    const unsignedTx = {
+      to: wallet.address,
+      value: BigInt(4),
+      nonce: 3,
+      gasLimit: BigInt(21000),
+      gasPrice: BigInt(4),
+      chainId: BigInt(1),
+    };
+
+    const serializedUnsignedTx = ethers.Transaction.from(unsignedTx).unsignedSerialized;
+
+    const signingKey = new SigningKey(privateKey);
+    const signature = signingKey.sign(ethers.keccak256(serializedUnsignedTx));
+    const dmkSignature = {
+      r: signature.r.slice(2),
+      s: signature.s.slice(2),
+      v: signature.v,
+    };
+
+    const signedTx = combine(serializedUnsignedTx, dmkSignature);
+
+    const parsedSignedTx = ethers.Transaction.from(signedTx);
+    expect(parsedSignedTx.from).toBe(
+      ethers.recoverAddress(ethers.keccak256(serializedUnsignedTx), signature),
+    );
+    expect(parsedSignedTx.value.toString()).toBe("4");
+    expect(parsedSignedTx.nonce).toBe(3);
   });
 
   it("should throw if signature is invalid", () => {

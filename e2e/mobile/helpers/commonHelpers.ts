@@ -73,7 +73,7 @@ function createDetoxURLBlacklistRegex(): string {
   return `\\("${patterns.join('","')}"\\)`;
 }
 
-export async function launchApp() {
+export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) {
   const port = await findFreePort();
   closeBridge();
   initBridge(port);
@@ -92,6 +92,7 @@ export async function launchApp() {
     permissions: {
       camera: "YES",
     },
+    ...customConfig,
   });
   return port;
 }

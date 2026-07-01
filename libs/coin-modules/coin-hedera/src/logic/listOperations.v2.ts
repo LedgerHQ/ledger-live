@@ -1,9 +1,4 @@
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import {
-  encodeAccountId,
-  encodeTokenAccountId,
-} from "@ledgerhq/ledger-wallet-framework/account/accountId";
-import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { getEnv } from "@ledgerhq/live-env";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -18,7 +13,6 @@ import { hgraphClient } from "../network/hgraph";
 import { parseTransfers, enrichERC20Transfers, analyzeStakingOperation } from "../network/utils";
 import type {
   EnrichedERC20Transfer,
-  HederaERC20TokenBalance,
   HederaMirrorToken,
   HederaMirrorTransaction,
   HederaOperationExtra,
@@ -97,7 +91,7 @@ function createStakingRewardOperation({
   const stakingRewardTimestamp = new Date(date.getTime() + 1);
 
   return {
-    id: encodeOperationId(ledgerAccountId, stakingRewardHash, stakingRewardType),
+    id: `${stakingRewardHash}:${stakingRewardType}`,
     accountId: ledgerAccountId,
     type: stakingRewardType,
     value: stakingReward,
@@ -145,13 +139,7 @@ async function processERC20TokenTransfer({
   const tokenOperations: Operation<HederaOperationExtra>[] = [];
 
   for (const transfer of enrichedERC20Transfer.transfers) {
-    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
-      transfer.token_evm_address,
-      "hedera",
-    );
-
-    if (!token) continue;
-
+    const tokenEvmAddress = transfer.token_evm_address;
     const senderEvmAddress = transfer.sender_evm_address;
     const senderAddress = transfer.sender_account_id
       ? toEntityId({ num: transfer.sender_account_id })
@@ -161,7 +149,7 @@ async function processERC20TokenTransfer({
       : transfer.receiver_evm_address;
 
     // meaningful operation cannot be created without correct addresses, so we skip it
-    if (!senderEvmAddress || !senderAddress || !recipientAddress) continue;
+    if (!tokenEvmAddress || !senderEvmAddress || !senderAddress || !recipientAddress) continue;
 
     const commonFields = {
       ...commonData,
@@ -170,7 +158,7 @@ async function processERC20TokenTransfer({
         senderEvmAddress,
         evmAddress,
       }),
-      contract: token.contractAddress,
+      contract: tokenEvmAddress,
       standard: "erc20",
       blockHeight: commonData.blockHeight,
       blockHash: commonData.blockHash,
@@ -186,17 +174,10 @@ async function processERC20TokenTransfer({
       },
     } satisfies Partial<Operation<HederaOperationExtra>>;
 
-    const encodedTokenAccountId = encodeTokenAccountId(ledgerAccountId, token);
-    const encodedOperationId = encodeOperationId(
-      encodedTokenAccountId,
-      commonFields.hash,
-      commonFields.type,
-    );
-
     const tokenOperation = {
       ...commonFields,
-      id: encodedOperationId,
-      accountId: encodedTokenAccountId,
+      id: `${commonFields.hash}:${commonFields.type}:${tokenEvmAddress}`,
+      accountId: ledgerAccountId,
     } satisfies Operation<HederaOperationExtra>;
 
     tokenOperations.push(tokenOperation);
@@ -207,7 +188,7 @@ async function processERC20TokenTransfer({
   if (outgoingTransfer) {
     coinOperation = {
       ...commonData,
-      id: encodeOperationId(ledgerAccountId, commonData.hash, "FEES"),
+      id: `${commonData.hash}:FEES`,
       accountId: ledgerAccountId,
       type: "FEES",
       ...(outgoingTransfer.contract && { contract: outgoingTransfer.contract }),
@@ -231,13 +212,11 @@ async function processERC20TokenTransfer({
 async function processHTSTokenTransfers({
   rawTx,
   address,
-  currencyId,
   ledgerAccountId,
   commonData,
 }: {
   rawTx: HederaMirrorTransaction;
   address: string;
-  currencyId: string;
   ledgerAccountId: string;
   commonData: ReturnType<typeof getCommonMirrorOperationData>;
 }): Promise<{
@@ -248,20 +227,16 @@ async function processHTSTokenTransfers({
   if (tokenTransfers.length === 0) return null;
 
   const tokenId = tokenTransfers[0].token_id;
-  const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, currencyId);
-  if (!token) return null;
-
-  const encodedTokenId = encodeTokenAccountId(ledgerAccountId, token);
   const { type, value, senders, recipients } = parseTransfers(tokenTransfers, address);
   const { hash, fee, date, blockHeight, blockHash, hasFailed } = commonData;
   const extra = { ...commonData.extra };
 
   let coinOperation: Operation<HederaOperationExtra> | undefined;
 
-  // Add main FEES coin operation for send token transfer
-  if (type === "OUT") {
+  // Add main FEES coin operation for parent tx representing a token transfer (nonce > 0 means child transaction like TOKENWIPE)
+  if (type === "OUT" && rawTx.nonce === 0) {
     coinOperation = {
-      id: encodeOperationId(ledgerAccountId, hash, "FEES"),
+      id: `${hash}:FEES`,
       accountId: ledgerAccountId,
       type: "FEES",
       value: fee,
@@ -278,9 +253,9 @@ async function processHTSTokenTransfers({
   }
 
   const tokenOperation = {
-    id: encodeOperationId(encodedTokenId, hash, type),
-    accountId: encodedTokenId,
-    contract: token.contractAddress,
+    id: `${hash}:${type}:${tokenId}`,
+    accountId: ledgerAccountId,
+    contract: tokenId,
     standard: "hts",
     type,
     value,
@@ -358,7 +333,7 @@ function processCoinTransfers({
   }
 
   coinOperations.push({
-    id: encodeOperationId(ledgerAccountId, hash, operationType),
+    id: `${hash}:${operationType}`,
     accountId: ledgerAccountId,
     type: operationType,
     value,
@@ -428,7 +403,6 @@ async function processTransactionItem({
     const htsTokenResult = await processHTSTokenTransfers({
       rawTx: mirrorTx,
       address,
-      currencyId,
       ledgerAccountId,
       commonData,
     });
@@ -469,7 +443,7 @@ export async function listOperationsV2({
   address,
   evmAddress,
   mirrorTokens,
-  erc20Tokens,
+  tokenEvmAddresses,
   cursor,
   limit = 100,
   order = "desc",
@@ -483,7 +457,7 @@ export async function listOperationsV2({
   address: string;
   evmAddress: string;
   mirrorTokens: HederaMirrorToken[];
-  erc20Tokens: HederaERC20TokenBalance[];
+  tokenEvmAddresses: string[];
   cursor?: string;
   limit?: number;
   order?: "asc" | "desc";
@@ -526,7 +500,7 @@ export async function listOperationsV2({
           order,
           limit,
           fetchAllPages,
-          tokenEvmAddresses: erc20Tokens.map(t => t.token.contractAddress.toLowerCase()),
+          tokenEvmAddresses,
           ...(cursor && { timestamp: cursor }),
         })
         .then(erc20Transfers =>

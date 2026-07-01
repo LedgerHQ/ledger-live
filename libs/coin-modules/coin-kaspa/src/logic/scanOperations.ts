@@ -1,6 +1,9 @@
+import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getAllTransactions } from "./getAllTransactions";
+
+const FETCH_CONCURRENCY = 5;
 
 export async function scanOperations(
   addresses: string[],
@@ -9,23 +12,27 @@ export async function scanOperations(
 ): Promise<Operation[]> {
   const operations: Operation[] = [];
 
-  const fetchedTxs = await Promise.all(
-    addresses.map(addr => getAllTransactions(addr, afterValue)),
-  ).then(results => results.flat());
+  const addressSet = new Set(addresses);
+
+  const fetchedTxs = (
+    await promiseAllBatched(FETCH_CONCURRENCY, addresses, addr =>
+      getAllTransactions(addr, afterValue),
+    )
+  ).flat();
 
   for (const tx of fetchedTxs) {
     const inputs = tx.inputs ?? [];
     const outputs = tx.outputs ?? [];
 
     const myInputAmount: BigNumber = inputs.reduce((acc: BigNumber, v): BigNumber => {
-      if (addresses.includes(v.previous_outpoint_address)) {
+      if (addressSet.has(v.previous_outpoint_address)) {
         return acc.plus(BigNumber(v.previous_outpoint_amount));
       }
       return acc;
     }, BigNumber(0));
 
     const myOutputAmount: BigNumber = outputs.reduce((acc: BigNumber, v) => {
-      if (addresses.includes(v.script_public_key_address)) {
+      if (addressSet.has(v.script_public_key_address)) {
         return acc.plus(BigNumber(v.amount));
       }
       return acc;

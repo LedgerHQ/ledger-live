@@ -10,7 +10,10 @@ import { usePortfolioViewModel } from "../usePortfolioViewModel";
 // flow (useOpenAssetFlow). Mock it so this suite stays focused on the portfolio view-model.
 // The resume behaviour itself is covered by useResumeAddAccountAfterOnboarding.test.ts.
 jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow", () => ({
-  useOpenAssetFlow: () => ({ openAssetFlow: jest.fn(), openAddAccountFlow: jest.fn() }),
+  useOpenAssetFlow: () => ({
+    openAssetFlow: jest.fn(),
+    openAddAccountFlow: jest.fn(),
+  }),
 }));
 
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
@@ -20,9 +23,7 @@ const wallet40AndExchangeFeatureFlags = withFlagOverrides({
   lwdWallet40: {
     enabled: true,
     params: {
-      marketBanner: true,
       graphRework: true,
-      quickActionCtas: true,
     },
   },
 });
@@ -51,9 +52,18 @@ function createPoisonedTokenAccount() {
 describe("usePortfolioViewModel", () => {
   it("should compute account and portfolio totals when accounts are provided", () => {
     const accounts = [
-      genAccount("btc-account", { currency: bitcoinCurrency, operationsSize: 1 }),
-      genAccount("eth-account-1", { currency: ethereumCurrency, operationsSize: 2 }),
-      genAccount("eth-account-2", { currency: ethereumCurrency, operationsSize: 0 }),
+      genAccount("btc-account", {
+        currency: bitcoinCurrency,
+        operationsSize: 1,
+      }),
+      genAccount("eth-account-1", {
+        currency: ethereumCurrency,
+        operationsSize: 2,
+      }),
+      genAccount("eth-account-2", {
+        currency: ethereumCurrency,
+        operationsSize: 0,
+      }),
     ];
 
     const { result } = renderHook(() => usePortfolioViewModel(), {
@@ -82,9 +92,6 @@ describe("usePortfolioViewModel", () => {
     });
 
     expect(result.current.hasExchangeBannerCTA).toBe(true);
-    expect(result.current.shouldDisplayMarketBanner).toBe(true);
-    expect(result.current.shouldDisplayGraphRework).toBe(true);
-    expect(result.current.shouldDisplayQuickActionCtas).toBe(true);
     expect(result.current.isWallet40Enabled).toBe(true);
   });
 

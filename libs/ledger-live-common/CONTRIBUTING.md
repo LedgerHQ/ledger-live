@@ -7,12 +7,12 @@ This repository hosts `@ledgerhq/live-common` JavaScript library which centraliz
 ## JavaScript styleguide
 
 * ES6+ features.
-* [prettier](https://prettier.io/) for formatting convention. You can run `yarn prettier`.
-* ESLint is used to enhance code quality. Check with `yarn lint`.
-* Flowtype is currently getting used to typecheck the library, but we are currently migrating to TypeScript.
+* [oxfmt](https://oxc.rs/docs/guide/usage/formatter) for formatting convention. You can run `pnpm common format` (or `format:check`).
+* [oxlint](https://oxc.rs/docs/guide/usage/linter) is used to enhance code quality. Check with `pnpm common lint`.
+* TypeScript is used to typecheck the library.
 
-> NB. for the 3 points above, the best is to have integration of Prettier,
-> ESlint, Flowtype in your text editor (there are plugin for most editors).
+> NB. for the points above, the best is to have the [oxc](https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode)
+> editor integration (there are plugins for most editors).
 
 ## Expectations
 

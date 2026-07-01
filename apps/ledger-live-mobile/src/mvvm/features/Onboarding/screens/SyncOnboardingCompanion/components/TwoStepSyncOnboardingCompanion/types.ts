@@ -1,5 +1,5 @@
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { SyncOnboardingScreenProps } from "~/screens/SyncOnboarding/SyncOnboardingScreenProps";
+import type { SyncOnboardingScreenProps } from "../../types";
 
 export type TwoStepSyncOnboardingCompanionProps = {
   /**

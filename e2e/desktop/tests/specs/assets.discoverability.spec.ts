@@ -3,7 +3,7 @@ import { expect } from "@playwright/test";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { LWD_WALLET_40_Q2_FF_ENABLED } from "tests/utils/featureFlagUtils";
+import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
 import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
@@ -13,7 +13,7 @@ test.describe("Stocks - empty discovery state", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "1AccountBTC1AccountETH",
-    featureFlags: LWD_WALLET_40_Q2_FF_ENABLED,
+    featureFlags: FF_LWD_WALLET_40_Q2,
   });
 
   test(
@@ -45,7 +45,7 @@ test.describe("Stocks - holdings", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: Account.ETH_1.currency.speculosApp,
     cliCommands: [liveDataCommand(Account.ETH_1)],
-    featureFlags: LWD_WALLET_40_Q2_FF_ENABLED,
+    featureFlags: FF_LWD_WALLET_40_Q2,
   });
 
   test(
@@ -75,7 +75,7 @@ test.describe("Stocks - global search", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
-    featureFlags: LWD_WALLET_40_Q2_FF_ENABLED,
+    featureFlags: FF_LWD_WALLET_40_Q2,
   });
 
   test(

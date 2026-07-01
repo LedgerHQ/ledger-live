@@ -24,17 +24,13 @@ const makeCurrency = (id: string, extra: Partial<CryptoCurrency> = {}): CryptoCu
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   }) as unknown as CryptoCurrency;
 
-// One sentinel per list bucket: the dev/prod split is `!isTestnetFor`, terminated is `terminated`.
+// One sentinel per list bucket: the dev/prod split is `!isTestnetFor`.
 const prodActive = makeCurrency("inj_prod_active");
+const prodActive2 = makeCurrency("inj_prod_active_2");
 const devActive = makeCurrency("inj_dev_active", { isTestnetFor: "inj_prod_active" });
-const prodTerminated = makeCurrency("inj_prod_terminated", { terminated: { link: "https://x" } });
-const devTerminated = makeCurrency("inj_dev_terminated", {
-  isTestnetFor: "inj_prod_active",
-  terminated: { link: "https://x" },
-});
 
 // The caller only passes the list; the store derives every index/array from it.
-const injectedCurrencies = [prodActive, devActive, prodTerminated, devTerminated];
+const injectedCurrencies = [prodActive, prodActive2, devActive];
 
 function clearInjectedStore() {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -80,7 +76,7 @@ describe("currencies-store: store injected", () => {
   it("routes ticker / scheme / predicate lookups", () => {
     expect(findCryptoCurrencyByTicker(prodActive.ticker)).toBe(prodActive);
     expect(findCryptoCurrencyByScheme(prodActive.scheme)).toBe(prodActive);
-    expect(findCryptoCurrency(c => c.id === devTerminated.id)).toBe(devTerminated);
+    expect(findCryptoCurrency(c => c.id === devActive.id)).toBe(devActive);
   });
 
   it("routes keyword and manager-app lookups (which compose the leaf accessors)", () => {
@@ -88,20 +84,34 @@ describe("currencies-store: store injected", () => {
     expect(findCryptoCurrencyByManagerAppName(prodActive.managerAppName)).toBe(prodActive);
   });
 
-  it("listCryptoCurrencies selects the correct bucket per (withDevCrypto, withTerminated)", () => {
-    expect(listCryptoCurrencies()).toEqual([prodActive]);
-    expect(listCryptoCurrencies(true)).toEqual([prodActive, devActive]);
-    expect(listCryptoCurrencies(false, true)).toEqual([prodActive, prodTerminated]);
-    expect(listCryptoCurrencies(true, true)).toEqual([
-      prodActive,
-      devActive,
-      prodTerminated,
-      devTerminated,
-    ]);
+  it("listCryptoCurrencies selects the correct bucket per withDevCrypto", () => {
+    expect(listCryptoCurrencies()).toEqual([prodActive, prodActive2]);
+    expect(listCryptoCurrencies(true)).toEqual([prodActive, prodActive2, devActive]);
   });
 
   it("restores bundled fallback once cleared", () => {
     clearInjectedStore();
     expect(getCryptoCurrencyById("bitcoin")).toMatchObject({ id: "bitcoin" });
+  });
+});
+
+describe("currencies-store: alias keys", () => {
+  afterEach(clearInjectedStore);
+
+  it("registers a valid alias so getCryptoCurrencyById resolves it to the canonical currency", () => {
+    setCryptoCurrenciesStore(injectedCurrencies, { [`${prodActive.id}_alias`]: prodActive.id });
+    expect(getCryptoCurrencyById(`${prodActive.id}_alias`)).toBe(prodActive);
+  });
+
+  it("throws when an alias points to an unknown currency id (fail fast)", () => {
+    expect(() => setCryptoCurrenciesStore(injectedCurrencies, { foo: "does_not_exist" })).toThrow(
+      'alias "foo" points to unknown currency id "does_not_exist"',
+    );
+  });
+
+  it("throws when an alias collides with an existing currency id", () => {
+    expect(() =>
+      setCryptoCurrenciesStore(injectedCurrencies, { [prodActive.id]: prodActive2.id }),
+    ).toThrow(`alias "${prodActive.id}" collides with an existing currency id`);
   });
 });

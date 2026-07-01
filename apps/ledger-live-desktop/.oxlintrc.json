@@ -87,6 +87,18 @@
               "~/renderer/families/*/**"
             ],
             "message": "families files must not be imported directly. use the bridge or export them through the LLDCoinFamily interface instead."
+          },
+          {
+            "group": [
+              "@ledgerhq/live-common/featureFlags",
+              "@ledgerhq/live-common/featureFlags/index",
+              "@ledgerhq/live-common/featureFlags/FeatureFlagsContext",
+              "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/*",
+              "@ledgerhq/live-common/featureFlags/defaultFeatures",
+              "@ledgerhq/live-common/featureFlags/groupedFeatures"
+            ],
+            "importNamePattern": "^(useFeature|useFeatureFlags|useHasLocallyOverriddenFeatureFlags|useWalletFeaturesConfig|FeatureToggle|DEFAULT_FEATURES|groupedFeatures|GroupedFeature)$",
+            "message": "Use @features/platform-feature-flags for hooks/FeatureToggle, @shared/feature-flags for actions/selectors/types/constants (e.g. FEATURE_FLAGS_DEFAULTS, groupedFeatures, GroupedFeature)."
           }
         ]
       }

@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState, useEffect } from "react";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import { View, StyleSheet, Linking, TouchableOpacity, SafeAreaView } from "react-native";
+import { View, StyleSheet, Linking, TouchableOpacity } from "react-native";
 import { Trans } from "~/context/Locale";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
@@ -156,7 +156,7 @@ export default function StellarFeeRow({
         {null}
       </SummaryRow>
 
-      <SafeAreaView style={styles.feesPickerContainer}>
+      <View style={styles.feesPickerContainer}>
         <FeeItem
           label={<Trans i18nKey="stellar.suggested" />}
           isSelected={!isCustom}
@@ -169,7 +169,7 @@ export default function StellarFeeRow({
           fee={isCustomFee ? fees : null}
           onSelect={() => onFeeModeChange(true)}
         />
-      </SafeAreaView>
+      </View>
     </View>
   );
 }

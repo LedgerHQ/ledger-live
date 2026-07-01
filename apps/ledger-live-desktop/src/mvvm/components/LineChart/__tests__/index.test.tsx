@@ -81,4 +81,13 @@ describe("LineChart", () => {
       "Failed to fetch prices",
     );
   });
+
+  it("renders only the provided custom ranges", () => {
+    renderLineChart({ ranges: ["1d", "1w", "all"] });
+
+    expect(screen.getByTestId("line-chart-range-1d")).toBeVisible();
+    expect(screen.getByTestId("line-chart-range-1w")).toBeVisible();
+    expect(screen.getByTestId("line-chart-range-all")).toBeVisible();
+    expect(screen.queryByTestId("line-chart-range-6m")).not.toBeInTheDocument();
+  });
 });

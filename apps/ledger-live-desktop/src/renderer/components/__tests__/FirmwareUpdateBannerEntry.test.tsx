@@ -17,7 +17,7 @@ describe("FirmwareUpdateBannerEntry", () => {
       accounts: [],
       devices: { currentDevice: null, devices: [] },
       ...overrides,
-      ...withFlagOverrides({ lwdWallet40: { enabled: true, params: { mainNavigation: true } } }),
+      ...withFlagOverrides({ lwdWallet40: { enabled: true } }),
       settings: {
         discreetMode: false,
         vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
@@ -175,26 +175,24 @@ describe("FirmwareUpdateBannerEntry", () => {
       expect(screen.queryByRole("button", { name: /Go to My Ledger/i })).toBeNull();
     });
 
-    it("renders legacy banner with CTA when latestFirmware is set and not in manager", () => {
+    it("renders OS update button when latestFirmware is set and not in manager", () => {
       render(<FirmwareUpdateBannerEntry />, {
         initialState: initialState({
           settings: { latestFirmware: firmwareWithVersion() },
         }),
         initialRoute: "/",
       });
-      const banner = document.getElementById("fw-update-banner");
-      expect(banner).toBeInTheDocument();
-      expect(screen.getByRole("button")).toBeInTheDocument();
+      expect(screen.getByTestId("topbar-os-update-button")).toBeVisible();
     });
 
-    it("legacy CTA button triggers onClick without throwing", async () => {
+    it("OS update button triggers onClick without throwing", async () => {
       const { user } = render(<FirmwareUpdateBannerEntry />, {
         initialState: initialState({
           settings: { latestFirmware: firmwareWithVersion() },
         }),
         initialRoute: "/",
       });
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByTestId("topbar-os-update-button"));
     });
   });
 });

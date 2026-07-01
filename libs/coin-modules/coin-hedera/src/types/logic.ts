@@ -1,5 +1,4 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { OperationType } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
 import type { HederaCoinConfig } from "../config";
@@ -24,7 +23,7 @@ export interface EstimateFeesResult {
 }
 
 export interface HederaERC20TokenBalance {
-  token: TokenCurrency;
+  contractAddress: string;
   balance: BigNumber;
 }
 

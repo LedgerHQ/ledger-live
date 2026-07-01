@@ -35,6 +35,7 @@ import {
 } from "./errors";
 import { HWDeviceProvider } from "./HWDeviceProvider";
 import { genericWithJWT } from "./auth";
+import { convertLiveCredentialsToKeyPair, credentialForPubKey, liveAuthentication } from "./utils";
 
 type WithJwt = <T>(job: (jwt: JWT) => Promise<T>) => Promise<T>;
 type WithDevice = <T>(job: (device: Device) => Promise<T>) => Promise<T>;
@@ -161,14 +162,18 @@ export class SDK implements TrustchainSDK {
 
     // make a stream tree from all the trustchains associated to this root id
     let { streamTree } = await withJwt(jwt => this.fetchTrustchain(jwt, trustchainRootId));
-    const path = streamTree.getApplicationRootPath(this.context.applicationId);
-    const child = streamTree.getChild(path);
+    let path = streamTree.getApplicationRootPath(this.context.applicationId);
+    let resolved = (await streamTree.getChild(path)?.resolve()) ?? null;
+
+    // if the current application stream was closed (deactivated), reopen it on the next index
+    if (resolved?.isClosed()) {
+      path = streamTree.getApplicationRootPath(this.context.applicationId, 1);
+      resolved = null; // the reopened stream does not exist yet; pushMember will derive it
+    }
+
     let shouldShare = true;
-
-    if (child) {
-      const resolved = await child.resolve();
+    if (resolved) {
       const members = resolved.getMembers();
-
       shouldShare = !members.some(m => crypto.to_hex(m) === memberCredentials.pubkey); // not already a member
     }
     if (shouldShare) {
@@ -195,13 +200,16 @@ export class SDK implements TrustchainSDK {
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
   ): Promise<Trustchain> {
-    const { streamTree, applicationRootPath } = await this.withAuth(
+    const { streamTree, applicationRootPath, resolved } = await this.withAuth(
       trustchain,
       memberCredentials,
       jwt => this.fetchTrustchainAndResolve(jwt, trustchain.rootId, this.context.applicationId),
       "refresh",
       true,
     );
+    if (resolved.isClosed()) {
+      throw new TrustchainEjected("application stream is closed");
+    }
     const walletSyncEncryptionKey = await extractEncryptionKey(
       streamTree,
       applicationRootPath,
@@ -356,6 +364,48 @@ export class SDK implements TrustchainSDK {
     this.invalidateJwt();
   }
 
+  async destroyApplication(
+    trustchain: Trustchain,
+    memberCredentials: MemberCredentials,
+  ): Promise<{ trustchainDestroyed: boolean }> {
+    this.invalidateJwt();
+
+    const applicationId = this.context.applicationId;
+    const trustchainId = trustchain.rootId;
+    const withJwt: WithJwt = job =>
+      this.withAuth(trustchain, memberCredentials, job, "refresh", true);
+
+    const { streamTree, applicationRootPath, resolved } = await withJwt(jwt =>
+      this.fetchTrustchainAndResolve(jwt, trustchainId, applicationId),
+    );
+
+    // already deactivated: closing again would push a redundant CloseStream
+    if (resolved.isClosed()) {
+      return { trustchainDestroyed: false };
+    }
+
+    // if this is the last open application, closing its stream would leave an empty
+    // trustchain: destroy the whole root instead, preserving the previous deactivation behaviour.
+    if (!(await streamTree.hasAnotherOpenApplication(applicationId))) {
+      await this.destroyTrustchain(trustchain, memberCredentials);
+      return { trustchainDestroyed: true };
+    }
+
+    // otherwise close only the current application stream, signed with the member's software key (no device)
+    const softwareDevice = getSoftwareDevice(memberCredentials);
+    const withSw = (job: (device: Device) => Promise<StreamTree>) => job(softwareDevice);
+    const sendCloseStreamToAPI = await this.closeStream(
+      streamTree,
+      applicationRootPath,
+      trustchainId,
+      withJwt,
+      withSw,
+    );
+    await sendCloseStreamToAPI();
+    this.invalidateJwt();
+    return { trustchainDestroyed: false };
+  }
+
   async encryptUserData(trustchain: Trustchain, input: Uint8Array): Promise<Uint8Array> {
     const key = crypto.from_hex(trustchain.walletSyncEncryptionKey);
     const encrypted = await crypto.encryptUserData(key, input);
@@ -474,15 +524,6 @@ export function convertKeyPairToLiveCredentials(keyPair: CryptoKeyPair): MemberC
   };
 }
 
-export function convertLiveCredentialsToKeyPair(
-  memberCredentials: MemberCredentials,
-): CryptoKeyPair {
-  return {
-    publicKey: crypto.from_hex(memberCredentials.pubkey),
-    privateKey: crypto.from_hex(memberCredentials.privatekey),
-  };
-}
-
 function getSoftwareDevice(memberCredentials: MemberCredentials): SoftwareDevice {
   const kp = convertLiveCredentialsToKeyPair(memberCredentials);
   return new SoftwareDevice(kp);
@@ -505,20 +546,6 @@ async function extractEncryptionKey(
     }
     throw e;
   }
-}
-
-// spec https://ledgerhq.atlassian.net/wiki/spaces/TA/pages/4335960138/ARCH+LedgerLive+Auth+specifications
-function liveAuthentication(rootId: string): Uint8Array {
-  const trustchainId = new TextEncoder().encode(rootId);
-  const att = new Uint8Array(2 + trustchainId.length);
-  att[0] = 0x02; // Prefix tag
-  att[1] = trustchainId.length;
-  att.set(trustchainId, 2);
-  return att;
-}
-
-function credentialForPubKey(publicKey: string) {
-  return { version: 0, curveId: 33, signAlgorithm: 1, publicKey };
 }
 
 function invariant(condition: unknown, message: string): asserts condition {

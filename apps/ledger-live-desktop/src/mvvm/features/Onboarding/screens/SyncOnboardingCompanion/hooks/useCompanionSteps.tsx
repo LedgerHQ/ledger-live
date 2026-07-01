@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useMemo, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { ContinueOnDevice, Flex } from "@ledgerhq/react-ui";
@@ -47,7 +47,6 @@ export type Step = {
   status: StepStatus;
   title: string;
   titleCompleted?: string;
-  hasLoader?: boolean;
   estimatedTime?: number;
   renderBody?: () => ReactNode;
   background?: ReactNode;
@@ -60,7 +59,6 @@ interface UseCompanionStepsProps {
   deviceName: string;
   seedPathStatus: SeedPathStatus;
   productName: string;
-  isTwoStep: boolean;
   charonSupported?: OnboardingState["charonSupported"];
   charonStatus?: OnboardingState["charonStatus"];
   seedConfiguration?: SeedOriginType;
@@ -82,12 +80,10 @@ const useCompanionSteps = ({
   productName,
   charonSupported,
   charonStatus,
-  isTwoStep,
   seedConfiguration,
 }: UseCompanionStepsProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const [hasAppLoader, setHasAppLoader] = useState<boolean>(false);
 
   const deviceToRestore = useSelector(lastSeenDeviceSelector);
   const trustchain = useSelector(trustchainSelector);
@@ -116,7 +112,7 @@ const useCompanionSteps = ({
     }
   }, [device.modelId]);
 
-  const activeBackground = isTwoStep ? colors.opacityDefault.c05 : undefined;
+  const activeBackground = colors.opacityDefault.c05;
 
   const defaultSteps: Step[] = useMemo(() => {
     const steps = [
@@ -196,80 +192,40 @@ const useCompanionSteps = ({
       },
     ];
 
-    if (isTwoStep) {
-      if (hasSyncStep) {
-        steps.push({
-          key: StepKey.Sync,
-          status: InactiveStep,
-          title: t("syncOnboarding.manual.sync.timelineTitle"),
-          titleCompleted: t("syncOnboarding.manual.sync.timelineTitleCompleted"),
-          activeBackground,
-          renderBody: () => (
-            <>
-              <TrackPage
-                category={`Set up ${productName}: Step 4 Ledger Sync`}
-                flow={analyticsFlowName}
-                seedConfiguration={seedConfiguration}
-              />
-              <SyncStep
-                handleContinue={handleSyncContinue}
-                isLedgerSyncActive={isLedgerSyncActive}
-                seedConfiguration={seedConfiguration}
-                deviceName={productName}
-              />
-            </>
-          ),
-        });
-      }
-
-      return steps;
-    }
-
-    steps.push(
-      {
-        key: StepKey.Apps,
+    if (hasSyncStep) {
+      steps.push({
+        key: StepKey.Sync,
         status: InactiveStep,
-        // @ts-expect-error loader does exist on step
-        hasLoader: hasAppLoader,
-        title: t("syncOnboarding.manual.installApplications.title", { productName }),
-        titleCompleted: t("syncOnboarding.manual.installApplications.titleCompleted", {
-          productName,
-        }),
+        title: t("syncOnboarding.manual.sync.timelineTitle"),
+        titleCompleted: t("syncOnboarding.manual.sync.timelineTitleCompleted"),
+        activeBackground,
         renderBody: () => (
-          <OnboardingAppInstallStep
-            device={device}
-            deviceToRestore={shouldRestoreApps && deviceToRestore ? deviceToRestore : undefined}
-            setHeaderLoader={(hasLoader: boolean) => setHasAppLoader(hasLoader)}
-            onComplete={handleInstallRecommendedApplicationComplete}
-            seedConfiguration={seedConfiguration}
-          />
+          <>
+            <TrackPage
+              category={`Set up ${productName}: Step 4 Ledger Sync`}
+              flow={analyticsFlowName}
+              seedConfiguration={seedConfiguration}
+            />
+            <SyncStep
+              handleContinue={handleSyncContinue}
+              isLedgerSyncActive={isLedgerSyncActive}
+              seedConfiguration={seedConfiguration}
+              deviceName={productName}
+            />
+          </>
         ),
-      },
-      {
-        key: StepKey.Ready,
-        status: InactiveStep,
-        title: t("syncOnboarding.manual.endOfSetup.title"),
-        titleCompleted: t("syncOnboarding.manual.endOfSetup.titleCompleted", {
-          deviceName: productName,
-        }),
-      },
-    );
+      });
+    }
 
     return steps;
   }, [
     t,
     deviceName,
     seedPathStatus,
-    hasAppLoader,
     productName,
     DeviceIcon,
     charonSupported,
     charonStatus,
-    device,
-    shouldRestoreApps,
-    deviceToRestore,
-    handleInstallRecommendedApplicationComplete,
-    isTwoStep,
     activeBackground,
     seedConfiguration,
     handleSyncContinue,
@@ -282,7 +238,7 @@ const useCompanionSteps = ({
       <OnboardingAppInstallStep
         device={device}
         deviceToRestore={shouldRestoreApps && deviceToRestore ? deviceToRestore : undefined}
-        setHeaderLoader={(hasLoader: boolean) => setHasAppLoader(hasLoader)}
+        setHeaderLoader={() => {}}
         onComplete={(installedApps?: boolean) =>
           installedApps ? handleInstallRecommendedApplicationComplete() : handleAppStepComplete()
         }

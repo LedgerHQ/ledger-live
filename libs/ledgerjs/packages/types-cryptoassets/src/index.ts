@@ -2,32 +2,11 @@ import { CoinType } from "./slip44";
 
 export type CryptoCurrencyId = string;
 
-export type LedgerExplorerId =
-  | "btc"
-  | "btc_testnet"
-  | "bch"
-  | "btg"
-  | "club"
-  | "dash"
-  | "dcr"
-  | "dgb"
-  | "doge"
-  | "hsr"
-  | "kmd"
-  | "ltc"
-  | "posw"
-  | "qtum"
-  | "strat"
-  | "zec"
-  | "zen"
-  | "avax"
-  | "eth"
-  | "eth_sepolia"
-  | "eth_hoodi"
-  | "etc"
-  | "matic"
-  | "matic_amoy"
-  | "bnb";
+/**
+ * @deprecated Opaque Ledger-explorer endpoint id, kept only for backward compatibility.
+ * Loosened from a fixed union to `string`; the explorer-id concept is being phased out.
+ */
+export type LedgerExplorerId = string;
 
 /**
  *
@@ -138,11 +117,11 @@ export type CryptoCurrency = CurrencyCommon & {
   bitcoinLikeInfo?: BitcoinLikeInfo;
   ethereumLikeInfo?: EthereumLikeInfo;
   explorerViews: ExplorerView[];
-  terminated?: {
-    link: string;
-  };
   deviceTicker?: string;
-  // Used to connect to the right endpoint url since it is different from currencyId and ticker
+  /**
+   * Used to connect to the right endpoint url since it is different from currencyId and ticker.
+   * @deprecated Kept only for backward compatibility; the explorer-id concept is being phased out.
+   */
   explorerId?: LedgerExplorerId;
   tokenTypes?: string[];
 };

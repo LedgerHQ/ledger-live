@@ -20,9 +20,9 @@ import SendPage from "./trade/send.page";
 import SettingsGeneralPage from "./settings/settingsGeneral.page";
 import SettingsPage from "./settings/settings.page";
 import StakePage from "./trade/stake.page";
+import EvmDelegatePage from "./trade/evmDelegate.page";
 import SwapPage from "./trade/swap.page";
 import TransferMenuDrawer from "./wallet/transferMenu.drawer";
-import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 import ModularDrawer from "./drawer/modular.drawer";
 
 import type { Account } from "@ledgerhq/types-live";
@@ -83,9 +83,9 @@ export class Application {
   private settingsPageInstance = lazyInit(SettingsPage);
   private settingsGeneralPageInstance = lazyInit(SettingsGeneralPage);
   private stakePageInstance = lazyInit(StakePage);
+  private evmDelegatePageInstance = lazyInit(EvmDelegatePage);
   private swapPageInstance = lazyInit(SwapPage);
   private transferMenuDrawerInstance = lazyInit(TransferMenuDrawer);
-  private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
   private modularDrawerPageInstance = lazyInit(ModularDrawer);
 
   public async init({
@@ -197,16 +197,16 @@ export class Application {
     return this.stakePageInstance();
   }
 
+  public get evmDelegate() {
+    return this.evmDelegatePageInstance();
+  }
+
   public get swap() {
     return this.swapPageInstance();
   }
 
   public get transferMenu() {
     return this.transferMenuDrawerInstance();
-  }
-
-  public get walletTabNavigator() {
-    return this.walletTabNavigatorPageInstance();
   }
 
   public get modularDrawer() {

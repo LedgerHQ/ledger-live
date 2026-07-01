@@ -55,14 +55,6 @@ describe("GenericLandingPage", () => {
             ...state.settings,
             readOnlyModeEnabled: false,
           },
-          featureFlags: {
-            ...state.featureFlags,
-            overrides: {
-              flexibleContentCards: {
-                enabled: true,
-              },
-            },
-          },
           dynamicContent: {
             ...state.dynamicContent,
             mobileCards: classicCards,

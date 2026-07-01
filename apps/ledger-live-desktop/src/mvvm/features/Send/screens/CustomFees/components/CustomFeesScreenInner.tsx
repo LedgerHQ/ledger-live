@@ -6,11 +6,9 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useStableGasOptions } from "@ledgerhq/live-common/flows/send/customFees/hooks/useStableGasOptions";
-import { isEvmGasOptionsSyncTransaction } from "../../../utils/isEvmTransaction";
+import { useFlowEffects } from "@ledgerhq/live-common/flows/send/effects/hooks/useFlowEffects";
 import { CustomFeesScreenInnerBase } from "./CustomFeesScreenInnerBase";
-import { CustomFeesScreenInnerWithAmountPlugins } from "./CustomFeesScreenInnerWithAmountPlugins";
 
 type CustomFeesScreenInnerProps = Readonly<{
   account: AccountLike;
@@ -20,12 +18,6 @@ type CustomFeesScreenInnerProps = Readonly<{
   transactionActions: SendFlowTransactionActions;
   onConfirm: () => void;
 }>;
-
-const amountPluginTransactionGuards: Readonly<
-  Record<string, (transaction: Transaction) => boolean>
-> = {
-  evmGasOptionsSync: isEvmGasOptionsSyncTransaction,
-};
 
 export function CustomFeesScreenInner({
   account,
@@ -41,34 +33,20 @@ export function CustomFeesScreenInner({
   );
   const currency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
   const stableTransaction = useStableGasOptions(transaction);
-  const amountPlugins = useMemo(() => sendFeatures.getAmountPlugins(currency), [currency]);
-  const evmTransaction = isEvmGasOptionsSyncTransaction(stableTransaction)
-    ? stableTransaction
-    : null;
-  const hasSupportedAmountPlugin = amountPlugins.some(plugin =>
-    amountPluginTransactionGuards[plugin]?.(stableTransaction),
-  );
 
-  if (!hasSupportedAmountPlugin || !evmTransaction) {
-    return (
-      <CustomFeesScreenInnerBase
-        account={account}
-        parentAccount={parentAccount}
-        transaction={stableTransaction}
-        status={status}
-        currency={currency}
-        transactionActions={transactionActions}
-        onConfirm={onConfirm}
-      />
-    );
-  }
+  useFlowEffects({
+    account,
+    parentAccount,
+    transaction,
+    currency,
+    updateTransaction: transactionActions.updateTransaction,
+  });
 
   return (
-    <CustomFeesScreenInnerWithAmountPlugins
+    <CustomFeesScreenInnerBase
       account={account}
       parentAccount={parentAccount}
-      stableTransaction={stableTransaction}
-      evmTransaction={evmTransaction}
+      transaction={stableTransaction}
       status={status}
       currency={currency}
       transactionActions={transactionActions}

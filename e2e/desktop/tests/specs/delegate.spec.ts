@@ -25,10 +25,6 @@ const e2eDelegationAccounts = [
     xrayTicket: "B2CQA-2740, B2CQA-2770",
   },
   {
-    delegate: new Delegate(Account.SOL_2, "0.001", "Ledger by Figment"),
-    xrayTicket: "B2CQA-2742",
-  },
-  {
     delegate: new Delegate(Account.NEAR_1, "0.01", "ledgerbyfigment.poolv1.near"),
     xrayTicket: "B2CQA-2741",
   },
@@ -51,6 +47,10 @@ const e2eDelegationAccountsWithoutBroadcast = [
   {
     delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Figment"),
     xrayTicket: "B2CQA-3020",
+  },
+  {
+    delegate: new Delegate(Account.SOL_2, "1", "Ledger by Figment"),
+    xrayTicket: "B2CQA-2742",
   },
 ];
 
@@ -128,7 +128,6 @@ for (const account of e2eDelegationAccounts) {
           "@NanoGen5",
           `@${account.delegate.account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(account.delegate.account === Account.ATOM_1 ? ["@smoke"] : []),
         ],
         annotation: { type: "TMS", description: account.xrayTicket },
       },
@@ -219,32 +218,40 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
         await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
 
         await app.account.startStakingFlowFromMainStakeButton();
-        await app.delegate.continue();
 
-        if (account.delegate.account.currency.name == Currency.ADA.name) {
-          await app.delegate.openSearchProviderModal();
-          await app.delegate.inputProvider(account.delegate.provider);
+        if (account.delegate.account.currency.name == Currency.SOL.name) {
           await app.delegate.selectProviderByName(account.delegate.provider);
-        } else if (
-          [Currency.APT.name, Currency.MULTIVERS_X.name].includes(
-            account.delegate.account.currency.name,
-          )
-        ) {
-          await app.delegate.inputProvider(account.delegate.provider);
-          await app.delegate.selectProviderByName(account.delegate.provider);
-        } else {
-          await app.delegate.verifyFirstProviderName(account.delegate.provider);
-        }
-
-        await app.delegate.continue();
-
-        if (account.delegate.account.currency.name == Currency.ADA.name) {
-          await app.delegate.verifyValidatorName("Ledger by Figment 3 [LBF3]");
-          await app.delegate.verifyFeesVisible();
           await app.delegate.continue();
-        } else {
           await app.delegate.fillAmount(account.delegate.amount);
           await app.delegate.continue();
+        } else {
+          await app.delegate.continue();
+
+          if (account.delegate.account.currency.name == Currency.ADA.name) {
+            await app.delegate.openSearchProviderModal();
+            await app.delegate.inputProvider(account.delegate.provider);
+            await app.delegate.selectProviderByName(account.delegate.provider);
+          } else if (
+            [Currency.APT.name, Currency.MULTIVERS_X.name].includes(
+              account.delegate.account.currency.name,
+            )
+          ) {
+            await app.delegate.inputProvider(account.delegate.provider);
+            await app.delegate.selectProviderByName(account.delegate.provider);
+          } else {
+            await app.delegate.verifyFirstProviderName(account.delegate.provider);
+          }
+
+          await app.delegate.continue();
+
+          if (account.delegate.account.currency.name == Currency.ADA.name) {
+            await app.delegate.verifyValidatorName("Ledger by Figment 3 [LBF3]");
+            await app.delegate.verifyFeesVisible();
+            await app.delegate.continue();
+          } else {
+            await app.delegate.fillAmount(account.delegate.amount);
+            await app.delegate.continue();
+          }
         }
 
         await app.speculos.signDelegationTransaction(account.delegate);
@@ -270,6 +277,9 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
 }
 
 test.describe("e2e delegation - Tezos", () => {
+  // XTZ_1 (index 0) is the funded + UNDELEGATED account: with lldTezosStaking off (the default) this
+  // routes to the delegate starter ("delegate to earn rewards"). The delegated + staked account lives
+  // on XTZ_2 (index 1), used by the staking specs.
   const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
   setupEnv(true);
   test.use({
@@ -505,6 +515,7 @@ for (const currency of liveApps) {
           "@NanoGen5",
           `@${currency.delegate.account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
+          ...(currency.delegate.account === Account.ETH_1 ? ["@smoke"] : []),
         ],
         annotation: { type: "TMS", description: currency.xrayTicket },
       },

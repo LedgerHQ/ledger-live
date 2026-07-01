@@ -18,7 +18,6 @@ import { userIdSelector } from "@ledgerhq/client-ids/store";
 import { openExchangeDrawer } from "~/renderer/actions/UI";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { track } from "~/renderer/analytics/segment";
-import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { mevProtectionSelector, shareAnalyticsSelector } from "~/renderer/reducers/settings";
@@ -34,8 +33,6 @@ import { useWebviewState } from "./helpers";
 import { Loader as StyledLoader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import { useModularDrawerVisibility } from "@ledgerhq/live-common/modularDrawer/useModularDrawerVisibility";
-import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
@@ -49,15 +46,6 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { createDrawerConfiguration } = useDrawerConfiguration();
-
-  const { isModularDrawerVisible } = useModularDrawerVisibility({
-    modularDrawerFeatureFlagKey: "lldModularDrawer",
-  });
-
-  const modularDrawerVisible = isModularDrawerVisible({
-    location: ModularDrawerLocation.LIVE_APP,
-    liveAppId: manifest.id,
-  });
 
   const source =
     currentRouteNameRef.current === "Platform Catalog"
@@ -85,42 +73,21 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         const shouldUseCurrencies =
           (useCase && currencyIds && currencyIds.length <= 50) || !useCase;
 
-        if (modularDrawerVisible) {
-          dispatch(setFlowValue(flow));
-          setOriginFlow(flow);
-          dispatch(setSourceValue(source));
+        dispatch(setFlowValue(flow));
+        setOriginFlow(flow);
+        dispatch(setSourceValue(source));
 
-          const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
+        const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
 
-          openAssetAndAccount({
-            drawerConfiguration: finalDrawerConfiguration,
-            currencies: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
-            areCurrenciesFiltered,
-            useCase,
-            uiUseCase,
-            onSuccess,
-            onCancel,
-          });
-        } else {
-          setDrawer(
-            SelectAccountAndCurrencyDrawer,
-            {
-              currencyIds: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
-              useCase,
-              onAccountSelected: (account, parentAccount) => {
-                setDrawer();
-                onSuccess(account, parentAccount);
-              },
-              flow,
-            },
-            {
-              onRequestClose: () => {
-                setDrawer();
-                onCancel();
-              },
-            },
-          );
-        }
+        openAssetAndAccount({
+          drawerConfiguration: finalDrawerConfiguration,
+          currencies: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
+          areCurrenciesFiltered,
+          useCase,
+          uiUseCase,
+          onSuccess,
+          onCancel,
+        });
       },
       "account.receive": ({
         account,
@@ -291,7 +258,6 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
       },
     }),
     [
-      modularDrawerVisible,
       dispatch,
       flow,
       source,

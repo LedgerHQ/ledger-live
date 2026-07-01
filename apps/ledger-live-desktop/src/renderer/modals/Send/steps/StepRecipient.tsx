@@ -302,7 +302,6 @@ export const StepRecipientFooter = ({
   const lldMemoTag = useFeature("lldMemoTag");
   const { errors } = status;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const isTerminated = mainAccount && mainAccount.currency.terminated;
   const specific = useLLDCoinFamily(mainAccount?.currency.family);
   const fields = ["recipient"].concat(
     mainAccount ? getFields(mainAccount, lldMemoTag?.enabled, specific?.sendRecipientFields) : [],
@@ -310,11 +309,7 @@ export const StepRecipientFooter = ({
   const hasFieldError = Object.keys(errors).some(name => fields.includes(name));
   const customValidationSuccess = specific?.sendRecipientCanNext?.(status) ?? true;
   const canNext =
-    !bridgePending &&
-    !hasFieldError &&
-    !isTerminated &&
-    customValidationSuccess &&
-    !status.errors.sender;
+    !bridgePending && !hasFieldError && customValidationSuccess && !status.errors.sender;
   const isMemoTagBoxVisibile = useSelector(memoTagBoxVisibilitySelector);
   const alwaysShowMemoTagInfo = useSelector(alwaysShowMemoTagInfoSelector);
 

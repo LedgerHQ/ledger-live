@@ -3,8 +3,8 @@ run-name: >
   @E2E userdata generation • ${{ inputs.platform || 'both' }} • ${{ inputs.ref || github.ref_name }}
 
 on:
-  # schedule:
-  #   - cron: "0 1 * * *"
+  schedule:
+    - cron: "0 1 * * *"
   workflow_dispatch:
     inputs:
       ref:
@@ -91,7 +91,16 @@ jobs:
       - name: Compute cache key date
         id: meta
         shell: bash
-        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+          # Scope the cache key to the IAM-writable S3 namespace: the develop
+          # OIDC role can only write under `develop/`, so keys generated on the
+          # develop branch (e.g. the daily cron) must carry that prefix.
+          PREFIX=""
+          if [ "${{ github.ref_name }}" = "develop" ]; then
+            PREFIX="develop/"
+          fi
+          echo "prefix=${PREFIX}" >> "$GITHUB_OUTPUT"
 
       - name: Generate app.json userdata (Speculos)
         env:
@@ -113,25 +122,49 @@ jobs:
           echo "Generated userdata files:"
           ls -la "$E2E_GENERATED_USERDATA_DIR"
 
+      - name: Generate address cache (Speculos)
+        env:
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          GEN_COINS: ${{ inputs.coins }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Generating address cache (account-based coins) into: $E2E_GENERATED_USERDATA_DIR"
+          if [ -n "${GEN_COINS:-}" ]; then
+            echo "Scoped to coins: $GEN_COINS"
+            pnpm run:cli generateAddresses --coin $GEN_COINS
+          else
+            echo "Generating for all account-based coins"
+            pnpm run:cli generateAddresses
+          fi
+
+      - name: Generate UTXO address cache (Speculos)
+        env:
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          GEN_COINS: ${{ inputs.coins }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Generating UTXO address cache (bitcoin family, Cardano, Kaspa) into: $E2E_GENERATED_USERDATA_DIR"
+          if [ -n "${GEN_COINS:-}" ]; then
+            echo "Scoped to coins: $GEN_COINS"
+            pnpm run:cli generateUtxoAddresses --coin $GEN_COINS
+          else
+            echo "Generating for all UTXO-based coins"
+            pnpm run:cli generateUtxoAddresses
+          fi
+
       - name: Save userdata to S3 cache
         uses: tespkg/actions-cache/save@v1.9.0
         with:
           path: e2e/userdata/generated
-          key: ${{ env.CACHE_PREFIX }}-${{ steps.meta.outputs.date }}
+          key: ${{ steps.meta.outputs.prefix }}${{ env.CACHE_PREFIX }}-${{ steps.meta.outputs.date }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN }}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
-
-      - name: Upload generated userdata artifact (debug)
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        with:
-          name: e2e-generated-userdata-desktop
-          path: e2e/userdata/generated
-          retention-days: 2
-          if-no-files-found: warn
 
   generate-mobile:
     name: "Generate mobile userdata (app.json)"
@@ -184,7 +217,16 @@ jobs:
       - name: Compute cache key date
         id: meta
         shell: bash
-        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+          # Scope the cache key to the IAM-writable S3 namespace: the develop
+          # OIDC role can only write under `develop/`, so keys generated on the
+          # develop branch (e.g. the daily cron) must carry that prefix.
+          PREFIX=""
+          if [ "${{ github.ref_name }}" = "develop" ]; then
+            PREFIX="develop/"
+          fi
+          echo "prefix=${PREFIX}" >> "$GITHUB_OUTPUT"
 
       - name: Generate app.json userdata (Speculos)
         env:
@@ -206,22 +248,46 @@ jobs:
           echo "Generated userdata files:"
           ls -la "$E2E_GENERATED_USERDATA_DIR"
 
+      - name: Generate address cache (Speculos)
+        env:
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          GEN_COINS: ${{ inputs.coins }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Generating address cache (account-based coins) into: $E2E_GENERATED_USERDATA_DIR"
+          if [ -n "${GEN_COINS:-}" ]; then
+            echo "Scoped to coins: $GEN_COINS"
+            pnpm run:cli generateAddresses --coin $GEN_COINS
+          else
+            echo "Generating for all account-based coins"
+            pnpm run:cli generateAddresses
+          fi
+
+      - name: Generate UTXO address cache (Speculos)
+        env:
+          SEED: ${{ secrets.SEED_QAA_B2C }}
+          GEN_COINS: ${{ inputs.coins }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Generating UTXO address cache (bitcoin family, Cardano, Kaspa) into: $E2E_GENERATED_USERDATA_DIR"
+          if [ -n "${GEN_COINS:-}" ]; then
+            echo "Scoped to coins: $GEN_COINS"
+            pnpm run:cli generateUtxoAddresses --coin $GEN_COINS
+          else
+            echo "Generating for all UTXO-based coins"
+            pnpm run:cli generateUtxoAddresses
+          fi
+
       - name: Save userdata to S3 cache
         uses: tespkg/actions-cache/save@v1.9.0
         with:
           path: e2e/userdata/generated
-          key: ${{ env.CACHE_PREFIX }}-${{ steps.meta.outputs.date }}
+          key: ${{ steps.meta.outputs.prefix }}${{ env.CACHE_PREFIX }}-${{ steps.meta.outputs.date }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN }}
           bucket: ${{ env.cache-bucket }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
-
-      - name: Upload generated userdata artifact (debug)
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        with:
-          name: e2e-generated-userdata-mobile
-          path: e2e/userdata/generated
-          retention-days: 2
-          if-no-files-found: warn

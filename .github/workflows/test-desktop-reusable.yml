@@ -46,6 +46,9 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_DEVICE: nanoSP
+      cache-bucket: ll-nx-cache
+      USERDATA_CACHE_ENABLED: "true"
+      E2E_GENERATED_USERDATA_DIR: ${{ format('{0}/e2e/userdata/generated', github.workspace) }}
     runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -72,7 +75,7 @@ jobs:
         with:
           coinapps_path: coin-apps
           speculos_tag: ${{ env.SMOKE_SPECULOS_IMAGE_TAG }}
-          bot_id: ${{ secrets.GH_BOT_APP_ID }}
+          bot_id: ${{ secrets.GH_BOT_CLIENT_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Set test environment variables
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
@@ -83,6 +86,26 @@ jobs:
         id: test-filter
         run: echo "filter=@smoke" >> $GITHUB_OUTPUT
         shell: bash
+      - name: Compute userdata cache key date
+        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
+        id: userdata-meta
+        shell: bash
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+      - name: Restore pre-generated E2E userdata (app.json) from S3 cache
+        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
+        continue-on-error: true
+        uses: tespkg/actions-cache/restore@v1.9.0
+        with:
+          path: e2e/userdata/generated
+          key: develop/e2e-userdata-desktop-${{ steps.userdata-meta.outputs.date }}
+          restore-keys: |
+            develop/e2e-userdata-desktop-
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
       - name: UI e2e smoke tests
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
         with:
@@ -180,7 +203,7 @@ jobs:
       - name: Upload mitmproxy logs
         continue-on-error: true
         if: ${{ !cancelled() && steps.stop-mitmproxy.outputs.mitmproxy_logs_archive != '' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: mitmproxy-logs
           path: ${{ steps.stop-mitmproxy.outputs.mitmproxy_logs_archive }}
@@ -221,7 +244,6 @@ jobs:
     runs-on: ubuntu-22.04
     if: ${{ !cancelled() }}
     steps:
-
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -233,7 +255,7 @@ jobs:
           name: images
 
       - name: parse images
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require("fs");
@@ -257,7 +279,7 @@ jobs:
           images: images.json
           no-actor: true
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         name: prepare status
         id: status
         with:

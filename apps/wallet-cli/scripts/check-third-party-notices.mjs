@@ -26,7 +26,7 @@ const NON_REDISTRIBUTED = new Set([
 
 // First-party scopes: Ledger-owned workspace packages bundled as source under
 // the same Apache-2.0 license as wallet-cli itself — not third-party.
-const FIRST_PARTY_SCOPES = ["@ledgerhq/", "@shared/"];
+const FIRST_PARTY_SCOPES = ["@ledgerhq/", "@shared/", "@domain/"];
 
 const pkg = JSON.parse(await readFile(path.join(root, "package.json"), "utf8"));
 const notices = await readFile(path.join(root, "THIRD_PARTY_NOTICES.md"), "utf8");
@@ -39,8 +39,7 @@ const redistributed = [
   ...Object.keys(pkg.devDependencies ?? {}),
 ].filter(name => !NON_REDISTRIBUTED.has(name) && !isFirstParty(name));
 
-const mentionsPackage = name =>
-  notices.includes(`| ${name} |`) || notices.includes(`\`${name}\``);
+const mentionsPackage = name => notices.includes(`| ${name} |`) || notices.includes(`\`${name}\``);
 
 const missing = redistributed.filter(name => !mentionsPackage(name));
 
@@ -49,9 +48,7 @@ if (missing.length > 0) {
   for (const name of missing) {
     console.error(`  - ${name}`);
   }
-  console.error(
-    "\nEach direct dependency declared in apps/wallet-cli/package.json that ships",
-  );
+  console.error("\nEach direct dependency declared in apps/wallet-cli/package.json that ships");
   console.error("inside the published binary must appear in THIRD_PARTY_NOTICES.md,");
   console.error("either as a markdown table row (`| package-name |`) or quoted in");
   console.error("backticks. If the new dep is build-only and not redistributed, add it");
@@ -59,4 +56,6 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
-console.log(`THIRD_PARTY_NOTICES.md covers all ${redistributed.length} redistributed dependencies.`);
+console.log(
+  `THIRD_PARTY_NOTICES.md covers all ${redistributed.length} redistributed dependencies.`,
+);

@@ -241,6 +241,57 @@ describe("useEvmStakingValidators", () => {
 
     expect(result.current.validators.map(v => v.validatorAddress)).toEqual(["celo-addr"]);
   });
+
+  it("places the Ledger validator first for monad", async () => {
+    mockedGetValidators.mockResolvedValue({
+      items: [
+        {
+          validatorAddress: "0xWhale",
+          validatorId: "1",
+          name: "Whale",
+          commission: 0.05,
+          tokens: "1000000000000000000000",
+          votingPower: 1,
+          estimatedYearlyRewardsRate: 0,
+        },
+        {
+          validatorAddress: "0xF249265D16A9D70F684b0E43863242298C25d81c",
+          validatorId: "2",
+          name: "Ledger by P2P.org",
+          commission: 0.05,
+          tokens: "100",
+          votingPower: 2,
+          estimatedYearlyRewardsRate: 0,
+        },
+      ],
+      next: undefined,
+    });
+
+    const { result } = renderHook(() => useEvmStakingValidators("monad"));
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.validators).toEqual([
+      {
+        validatorAddress: "0xF249265D16A9D70F684b0E43863242298C25d81c",
+        validatorId: "2",
+        name: "Ledger by P2P.org",
+        commission: 0.05,
+        tokens: "100",
+        votingPower: 2,
+        estimatedYearlyRewardsRate: 0,
+      },
+      {
+        validatorAddress: "0xWhale",
+        validatorId: "1",
+        name: "Whale",
+        commission: 0.05,
+        tokens: "1000000000000000000000",
+        votingPower: 1,
+        estimatedYearlyRewardsRate: 0,
+      },
+    ]);
+  });
 });
 
 const seiUnit: Unit = { name: "SEI", code: "SEI", magnitude: 6 };

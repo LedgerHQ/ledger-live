@@ -22,6 +22,8 @@ const mockFiatUnit = {
   symbol: "$",
 };
 
+const mockCalculate = (amount: BigNumber) => amount.multipliedBy(50000);
+
 describe("amountInput utils", () => {
   describe("formatAmountForInput", () => {
     it("returns empty string for zero amount", () => {
@@ -50,6 +52,11 @@ describe("amountInput utils", () => {
       // 100.00 USD
       const result = formatFiatForInput(mockFiatUnit, new BigNumber("10000"), "en-US");
       expect(result).toBe("100");
+    });
+
+    it("keeps crypto countervalue precision based on the unit magnitude", () => {
+      const result = formatFiatForInput(mockUnit, new BigNumber("300000"), "en-US");
+      expect(result).toBe("0.003");
     });
   });
 
@@ -85,11 +92,23 @@ describe("amountInput utils", () => {
       expect(result.clampedDisplay).toBe("123.45");
       expect(result.isOverLimit).toBe(false);
     });
+
+    it("processes crypto countervalue input using the unit magnitude", () => {
+      const result = processFiatInput("0.003", mockUnit, "en-US");
+      expect(result.clampedDisplay).toBe("0.003");
+      expect(result.value.toString()).toBe("300000");
+      expect(result.isOverLimit).toBe(false);
+    });
+
+    it("clamps pasted crypto countervalue over the unit magnitude", () => {
+      const result = processFiatInput("0.123456789", mockUnit, "en-US");
+      expect(result.clampedDisplay).toBe("0.12345678");
+      expect(result.value.toString()).toBe("12345678");
+      expect(result.isOverLimit).toBe(false);
+    });
   });
 
   describe("calculateFiatEquivalent", () => {
-    const mockCalculate = (amount: BigNumber) => amount.multipliedBy(50000);
-
     it("uses direct calculation when available", () => {
       const result = calculateFiatEquivalent({
         amount: new BigNumber(1),

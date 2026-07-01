@@ -19,7 +19,6 @@ import { useNotificationsPromptDrawerScheduler } from "LLM/features/Notification
 
 export function useNotificationsPromptTriggers() {
   const featureBrazePushNotifications = useFeature("brazePushNotifications");
-  const featureNewWordingNotificationsDrawer = useFeature("lwmNewWordingOptInNotificationsDrawer");
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const notifications = useSelector(notificationsSelector);
   const isRatingsModalOpen = useSelector(ratingsModalOpenSelector);
@@ -39,7 +38,6 @@ export function useNotificationsPromptTriggers() {
         },
         {
           brazePushNotifications: featureBrazePushNotifications,
-          wordingFeature: featureNewWordingNotificationsDrawer,
           isRatingsModalOpen,
           isDrawerPending: isDrawerPending(),
         },
@@ -55,7 +53,6 @@ export function useNotificationsPromptTriggers() {
     },
     [
       featureBrazePushNotifications,
-      featureNewWordingNotificationsDrawer,
       isDrawerPending,
       isRatingsModalOpen,
       notifications.areNotificationsAllowed,
@@ -81,7 +78,6 @@ export function useNotificationsPromptTriggers() {
         },
         {
           brazePushNotifications: featureBrazePushNotifications,
-          wordingFeature: featureNewWordingNotificationsDrawer,
           isRatingsModalOpen,
           isDrawerPending: isDrawerPending(),
         },
@@ -97,7 +93,6 @@ export function useNotificationsPromptTriggers() {
     },
     [
       featureBrazePushNotifications,
-      featureNewWordingNotificationsDrawer,
       hasCompletedOnboarding,
       isDrawerPending,
       isRatingsModalOpen,

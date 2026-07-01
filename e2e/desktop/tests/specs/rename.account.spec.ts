@@ -16,6 +16,7 @@ for (const account of accounts) {
       userdata: "skip-onboarding-with-last-seen-device",
       cliCommands: [liveDataCommand(account.account)],
       speculosApp: account.account.currency.speculosApp,
+      speculosForSetupOnly: true,
     });
 
     const family = getFamilyByCurrencyId(account.account.currency.id);

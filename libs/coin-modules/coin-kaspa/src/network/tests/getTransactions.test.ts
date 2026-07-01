@@ -5,6 +5,10 @@ describe("getTransactions function", () => {
     // Clear all mocks before each test to avoid interference
     jest.clearAllMocks();
   });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
   it("should fetch TXs for (burn)address from real API", async () => {
     global.fetch = jest.fn().mockResolvedValueOnce({
       ok: true,
@@ -162,12 +166,45 @@ describe("getTransactions function", () => {
   });
 
   it("should return an error if fetch returns a 500 response", async () => {
+    jest.useFakeTimers();
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
       status: 500,
     });
 
     const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
+    const promise = getTransactions(address);
+    const assertion = expect(promise).rejects.toThrow("Network response was not ok.");
+    await jest.advanceTimersByTimeAsync(2000);
+    await assertion;
+    expect(global.fetch).toHaveBeenCalledTimes(4);
+  });
+
+  it("should retry a transient network failure and then succeed", async () => {
+    jest.useFakeTimers();
+    global.fetch = jest
+      .fn()
+      .mockRejectedValueOnce(new TypeError("fetch failed"))
+      .mockResolvedValueOnce({
+        ok: true,
+        headers: { get: jest.fn(() => "") },
+        json: async () => [{ transaction_id: "abc" }],
+      });
+
+    const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
+    const promise = getTransactions(address);
+    await jest.advanceTimersByTimeAsync(2000);
+    const result = await promise;
+
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(result.transactions.length).toBe(1);
+  });
+
+  it("should not retry a 4xx response", async () => {
+    global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 400 });
+
+    const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
     await expect(getTransactions(address)).rejects.toThrow("Network response was not ok.");
+    expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 });

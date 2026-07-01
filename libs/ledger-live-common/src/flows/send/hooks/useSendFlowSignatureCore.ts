@@ -4,6 +4,7 @@ import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-crypt
 import { getMainAccount } from "../../../account/index";
 import { sendFeatures } from "../../../bridge/descriptor/send/features";
 import type { Transaction, TransactionStatus } from "../../../coin-modules/transaction-types";
+import { saveRecentSendRecipient } from "../utils";
 
 export type SignatureDeviceActionResult =
   | { signedOperation: SignedOperation | undefined | null; device: unknown }
@@ -39,6 +40,8 @@ export type UseSendFlowSignatureCoreParams = Readonly<{
   onFinish: () => void;
   /** Persists the optimistic operation as pending on the (main) account, app-side. */
   registerPendingOperation: (mainAccount: Account, operation: Operation) => void;
+  /** Optional ENS name from the flow recipient state (fallback: transaction.recipientDomain). */
+  recipientEnsName?: string | null;
 }>;
 
 export type UseSendFlowSignatureCoreResult = Readonly<{
@@ -67,6 +70,7 @@ export function useSendFlowSignatureCore({
   statusActions,
   onFinish,
   registerPendingOperation,
+  recipientEnsName,
 }: UseSendFlowSignatureCoreParams): UseSendFlowSignatureCoreResult {
   const hasFinishedRef = useRef(false);
   // Monotonically-increasing id identifying the current set of signature inputs.
@@ -130,13 +134,26 @@ export function useSendFlowSignatureCore({
       if (account) {
         const mainAccount = getMainAccount(account, parentAccount ?? undefined);
         registerPendingOperation(mainAccount, op);
+
+        if (transaction) {
+          saveRecentSendRecipient(account, parentAccount, transaction, recipientEnsName);
+        }
       }
 
       operation.onOperationBroadcasted(op);
       statusActions.setSuccess();
       onFinish();
     },
-    [account, parentAccount, operation, statusActions, onFinish, registerPendingOperation],
+    [
+      account,
+      parentAccount,
+      transaction,
+      recipientEnsName,
+      operation,
+      statusActions,
+      onFinish,
+      registerPendingOperation,
+    ],
   );
 
   const onDeviceActionResult = useCallback(

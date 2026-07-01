@@ -5,7 +5,7 @@
  * resolution (fs.readdirSync) that Bun's bundler cannot detect at compile time.
  * A direct require() makes Bun embed the .node file into the executable, and
  * storing it on globalThis lets the patched usb/dist/usb/bindings.js skip
- * node-gyp-build entirely (see patches/usb@2.9.0.patch).
+ * node-gyp-build entirely (see patches/usb@2.17.0.patch).
  *
  * With `minify: true`, Bun evaluates process.platform / process.arch as
  * compile-time constants for each --target, so only the matching prebuilt

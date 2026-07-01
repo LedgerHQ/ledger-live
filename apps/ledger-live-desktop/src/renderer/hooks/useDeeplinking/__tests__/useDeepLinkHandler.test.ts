@@ -149,7 +149,7 @@ describe("useDeepLinkHandler", () => {
       await testDeeplink("ledgerwallet://add-account?currency=bitcoin");
 
       await waitFor(() => {
-        expect(mockOpenAddAccountFlow).toHaveBeenCalledWith(mockCurrency, true);
+        expect(mockOpenAddAccountFlow).toHaveBeenCalledWith(mockCurrency);
       });
     });
 
@@ -171,7 +171,7 @@ describe("useDeepLinkHandler", () => {
 
       await waitFor(() => {
         expect(mockFindCryptoCurrencyByKeyword).toHaveBeenCalledWith("ETHEREUM");
-        expect(mockOpenAddAccountFlow).toHaveBeenCalledWith(mockCurrency, true);
+        expect(mockOpenAddAccountFlow).toHaveBeenCalledWith(mockCurrency);
       });
     });
   });
@@ -221,11 +221,7 @@ describe("useDeepLinkHandler", () => {
 
         await waitFor(() => {
           expect(mockCloseAllModal).toHaveBeenCalled();
-          expect(mockOpenAddAccountFlow).toHaveBeenCalledWith(
-            mockCurrency,
-            true,
-            expect.any(Function),
-          );
+          expect(mockOpenAddAccountFlow).toHaveBeenCalledWith(mockCurrency, expect.any(Function));
         });
       });
 
@@ -374,7 +370,9 @@ describe("useDeepLinkHandler", () => {
     it("does not set GENERIC_AWARENESS_MODAL when lwdGenericAwarenessModal is disabled", async () => {
       const { result, store } = renderHook(() => useDeepLinkHandler(), {
         initialState: {
-          ...withFlagOverrides({ lwdGenericAwarenessModal: { enabled: false } }),
+          ...withFlagOverrides({
+            lwdGenericAwarenessModal: { enabled: false },
+          }),
           settings: { hasCompletedOnboarding: true },
         },
       });

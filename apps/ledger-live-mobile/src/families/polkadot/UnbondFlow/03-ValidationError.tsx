@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
-import { StyleSheet, SafeAreaView } from "react-native";
+import { StyleSheet } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { TrackScreen } from "~/analytics";
@@ -22,6 +23,7 @@ export default function ValidationError({ navigation, route }: NavigationProps) 
   }, [navigation]);
   return (
     <SafeAreaView
+      edges={["top", "left", "right", "bottom"]}
       style={[
         styles.root,
         {

@@ -22,8 +22,7 @@
     "unimported": "unimported"
   },
   "dependencies": {
-    "bs58check": "^3.0.1",
-    "bip32-path": "^0.4.2"
+    "bs58check": "^3.0.1"
   },
   "devDependencies": {
     "@swc/core": "catalog:",

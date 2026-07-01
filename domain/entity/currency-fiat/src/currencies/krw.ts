@@ -3,9 +3,16 @@ import { fiat } from "../define";
 export const krw = fiat({
   type: "FiatCurrency",
   id: "krw",
-  name: "South Korean Won",
   ticker: "KRW",
+  name: "South Korean Won",
   symbol: "₩",
-  units: [{ name: "South Korean Won", code: "KRW", magnitude: 0 }],
-  keywords: ["won", "krw"],
+  units: [
+    {
+      code: "₩",
+      name: "South Korean Won",
+      magnitude: 0,
+      showAllDigits: true,
+      prefixCode: true,
+    },
+  ],
 });

@@ -78,6 +78,56 @@ describe("genericEstimateMaxSpendable", () => {
     expect(result.toString()).toBe("0");
   });
 
+  describe("TokenAccount", () => {
+    const tokenAccount = {
+      id: "token_account_id",
+      type: "TokenAccount",
+      spendableBalance: new BigNumber(6),
+      balance: new BigNumber(6),
+      pendingOperations: [],
+    } as unknown as Account;
+
+    it("returns the raw spendable balance when there is no pending op", async () => {
+      const estimate = genericEstimateMaxSpendable("testnet", "local");
+      const result = await estimate({
+        account: tokenAccount,
+        parentAccount: dummyAccount,
+        transaction: {} as any,
+      });
+
+      expect(result.toString()).toBe("6");
+    });
+
+    it("subtracts the pending token spend so the banner matches send-max", async () => {
+      const estimate = genericEstimateMaxSpendable("testnet", "local");
+      const result = await estimate({
+        account: {
+          ...tokenAccount,
+          // optimistic OUT sub-op for a pending 1-token send (fee is paid in native)
+          pendingOperations: [{ type: "OUT", value: new BigNumber(1), fee: new BigNumber(2) }],
+        } as unknown as Account,
+        parentAccount: dummyAccount,
+        transaction: {} as any,
+      });
+
+      expect(result.toString()).toBe("5");
+    });
+
+    it("never returns a negative spendable balance", async () => {
+      const estimate = genericEstimateMaxSpendable("testnet", "local");
+      const result = await estimate({
+        account: {
+          ...tokenAccount,
+          pendingOperations: [{ type: "OUT", value: new BigNumber(10), fee: new BigNumber(2) }],
+        } as unknown as Account,
+        parentAccount: dummyAccount,
+        transaction: {} as any,
+      });
+
+      expect(result.toString()).toBe("0");
+    });
+  });
+
   it("returns full spendable balance if fee is 0", async () => {
     mockedGetCoinModuleApi.mockReturnValue({
       estimateFees: estimateFeesMock.mockResolvedValue({ value: 0n }),

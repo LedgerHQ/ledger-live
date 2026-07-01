@@ -40,7 +40,7 @@ An open source framework for easily writing UI tests for our Electron app. Playw
 It's recommended to install those extensions.
 
 - [Typescript](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-next)
-- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [Oxc](https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode)
 - [Playwright Test](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright)
 
 # Installation

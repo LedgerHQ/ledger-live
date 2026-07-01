@@ -1,7 +1,10 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runDelegateTest } from "./delegate";
+import { setEnv } from "@ledgerhq/live-env";
 
-const delegation = new Delegate(Account.SOL_2, "0.0001", "Ledger by Figment");
+setEnv("DISABLE_TRANSACTION_BROADCAST", true);
+
+const delegation = new Delegate(Account.SOL_2, "1", "Ledger by Figment");
 runDelegateTest(
   delegation,
   ["B2CQA-2742"],

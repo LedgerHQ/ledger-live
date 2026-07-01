@@ -62,8 +62,8 @@ import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { addKnownDevice, mapDeviceToKnownDevice } from "~/reducers/knownDevices";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 
-import DesyncOverlay from "./DesyncOverlay";
-import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
+import DesyncOverlay from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/DesyncOverlay";
+import type { SyncOnboardingScreenProps } from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/types";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 

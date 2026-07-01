@@ -140,10 +140,8 @@ export class StepAmountFooter extends PureComponent<StepProps> {
   render() {
     const { account, parentAccount, status, bridgePending } = this.props;
     if (!account) return null;
-    const mainAccount = getMainAccount(account, parentAccount);
-    const isTerminated = mainAccount.currency.terminated;
     const hasErrors = Object.keys(status.errors).length > 0;
-    const canNext = !bridgePending && !hasErrors && !isTerminated;
+    const canNext = !bridgePending && !hasErrors;
     return (
       <>
         <AccountFooter parentAccount={parentAccount} account={account} status={status} />

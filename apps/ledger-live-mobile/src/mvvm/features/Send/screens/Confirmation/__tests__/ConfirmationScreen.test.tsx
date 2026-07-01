@@ -12,6 +12,20 @@ jest.mock("../hooks/useConfirmationViewModel", () => ({
   useConfirmationViewModel: jest.fn(),
 }));
 
+jest.mock("../../../context/SendFlowContext", () => {
+  return {
+    ...jest.requireActual("../../../context/SendFlowContext"),
+    useSendFlowData: jest.fn().mockReturnValue({
+      state: {
+        account: {
+          account: null,
+          parentAccount: null,
+        },
+      },
+    }),
+  };
+});
+
 const onViewTransaction = jest.fn();
 const onSaveLogs = jest.fn();
 const onRetry = jest.fn();

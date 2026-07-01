@@ -7,7 +7,6 @@ module.exports = {
     "!src/test/**/*.ts",
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
-  prettierPath: null,
   testEnvironment: "node",
   transform: {
     "^.+\\.(ts|tsx)$": [

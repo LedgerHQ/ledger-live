@@ -19,6 +19,7 @@ import { RecentlyUsed } from "./RecentlyUsed";
 import { CatalogSection } from "./CatalogSection";
 import { DAppDisclaimer } from "./DAppDisclaimer";
 import { LocalLiveApp } from "./LocalLiveApp";
+import { goBackFromWallet40Catalog } from "./navigation";
 
 const SAFE_AREA_EDGES_WALLET40 = ["top", "left", "right"] as const;
 const SAFE_AREA_EDGES_LEGACY = ["top", "bottom", "left", "right"] as const;
@@ -76,7 +77,7 @@ function CatalogContent({
                 <TouchableOpacity
                   hitSlop={{ bottom: 10, left: 24, right: 24, top: 10 }}
                   style={{ paddingVertical: 16 }}
-                  onPress={() => navigation.goBack()}
+                  onPress={() => goBackFromWallet40Catalog(navigation)}
                   accessibilityLabel={t("common.back")}
                   accessibilityRole="button"
                 >

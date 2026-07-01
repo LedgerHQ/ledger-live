@@ -32,6 +32,7 @@ jest.mock("react-native-safe-area-context", () => ({
 }));
 
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
   listSupportedCurrencies: () => [{ id: "ethereum", ticker: "ETH", name: "Ethereum" }],
 }));
 

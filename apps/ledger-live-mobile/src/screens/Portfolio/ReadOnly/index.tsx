@@ -7,7 +7,7 @@ import { useSelector } from "~/context/hooks";
 import { Box, Button, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { useRefreshAccountsOrdering } from "~/actions/general";
+import { useRefreshAccountsOrderingAfterInteractions } from "~/actions/general";
 import { counterValueCurrencySelector, hasOrderedNanoSelector } from "~/reducers/settings";
 import { usePortfolioAllAccounts } from "~/hooks/portfolio";
 import GraphCardContainer from "../GraphCardContainer";
@@ -23,7 +23,7 @@ import BuyDeviceBanner, {
 import MarketBanner from "LLM/features/MarketBanner";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
+import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePortfolioAnalyticsOptInPrompt";
 import { Asset } from "~/types/asset";
@@ -37,7 +37,7 @@ import { RecoverIntroPortfolioMount } from "LLM/features/BackupHub";
 const maxAssetsToDisplay = 5;
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
+  StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
 >;
 
 function ReadOnlyPortfolio({ navigation }: NavigationProps) {
@@ -61,7 +61,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
 
   usePortfolioAnalyticsOptInPrompt();
 
-  const refreshAccountsOrdering = useRefreshAccountsOrdering();
+  const refreshAccountsOrdering = useRefreshAccountsOrderingAfterInteractions();
   useFocusEffect(refreshAccountsOrdering);
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);

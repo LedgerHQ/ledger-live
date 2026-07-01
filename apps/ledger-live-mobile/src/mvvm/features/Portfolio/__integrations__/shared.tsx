@@ -5,14 +5,14 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { PortfolioScreen as Portfolio } from "../screens/Portfolio";
 import ReadOnlyPortfolio from "../screens/ReadOnly";
-import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
+import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
 import { withFlagOverrides } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
 import { Account } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import subDays from "date-fns/subDays";
 
-type TestStackParamList = WalletTabNavigatorStackParamList;
+type TestStackParamList = PortfolioNavigatorStackParamList;
 
 const Stack = createNativeStackNavigator<TestStackParamList>();
 

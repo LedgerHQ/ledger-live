@@ -170,6 +170,15 @@ export const getDeviceModel = (id: DeviceModelId): DeviceModel => {
 };
 
 /**
+ * Return the official, full product name of a device model
+ * (e.g. "Ledger Flex", "Ledger Nano X").
+ *
+ * This is the canonical name and must be used as-is: do not strip the
+ * "Ledger" prefix, reword, or otherwise transform it.
+ */
+export const getProductName = (id: DeviceModelId): string => getDeviceModel(id).productName;
+
+/**
  * Given a `targetId`, return the deviceModel associated to it,
  * based on the first two bytes.
  */

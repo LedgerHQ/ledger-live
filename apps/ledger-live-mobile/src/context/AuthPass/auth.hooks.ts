@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import { AppState, Platform, Vibration } from "react-native";
 import type { Privacy } from "~/reducers/types";
 import * as Keychain from "react-native-keychain";
@@ -30,7 +30,7 @@ interface UseAppStateHandlerProps {
 }
 
 export function useAppStateHandler({ isPasswordLockBlocked, lock }: UseAppStateHandlerProps) {
-  const [appState, setAppState] = useState<string>(AppState.currentState || "");
+  const appStateRef = useRef<string>(AppState.currentState || "");
   const timeRef = useRef<number>(0);
 
   // The state lifecycle differs between iOS and Android. This is to prevent FaceId from triggering an inactive state and looping.
@@ -43,7 +43,7 @@ export function useAppStateHandler({ isPasswordLockBlocked, lock }: UseAppStateH
   // If the app reopened from the background, lock the app
   const handleAppStateChange = useCallback(
     (nextAppState: string) => {
-      const wasBackgrounded = isBackgrounded(appState);
+      const wasBackgrounded = isBackgrounded(appStateRef.current);
       const isNowActive = nextAppState === "active";
 
       if (nextAppState === "background") {
@@ -68,9 +68,9 @@ export function useAppStateHandler({ isPasswordLockBlocked, lock }: UseAppStateH
           lock();
         }
       }
-      setAppState(nextAppState);
+      appStateRef.current = nextAppState;
     },
-    [appState, isPasswordLockBlocked, lock],
+    [isPasswordLockBlocked, lock],
   );
 
   return { handleAppStateChange };

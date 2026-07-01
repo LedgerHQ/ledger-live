@@ -18,7 +18,7 @@ jobs:
     name: Scan LLM && LLD & Libs
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-    runs-on: [ledger-live-4xlarge]
+    runs-on: [ledger-live-linux-16CPU-64RAM]
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:

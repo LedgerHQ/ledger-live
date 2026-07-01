@@ -31,6 +31,7 @@ for (const account of accounts) {
       userdata: "skip-onboarding-with-last-seen-device",
       cliCommands: [liveDataCommand(account.account)],
       speculosApp: account.account.currency.speculosApp,
+      speculosForSetupOnly: true,
     });
 
     const family = getFamilyByCurrencyId(account.account.currency.id);
@@ -47,7 +48,7 @@ for (const account of accounts) {
           "@NanoGen5",
           `@${account.account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(account.account === Account.XTZ_1 ? ["@smoke"] : []),
+          ...(account.account === Account.ETH_1 ? ["@smoke"] : []),
         ],
         annotation: {
           type: "TMS",
@@ -55,7 +56,9 @@ for (const account of accounts) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+        await addTmsLink(
+          getDescription(test.info().annotations, "TMS").split(", "),
+        );
 
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(account.account.accountName);

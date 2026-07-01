@@ -1,6 +1,6 @@
 import { isStrategyDisabled } from "@ledgerhq/coin-evm/editTransaction/index";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/utils";
-import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
+import { getTypedTransaction } from "@ledgerhq/live-common/families/evm/transaction";
 import type { FeeData, GasOptions, Strategy, Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike, TransactionStatusCommon } from "@ledgerhq/types-live";
@@ -12,7 +12,6 @@ import { useTranslation } from "~/context/Locale";
 import {
   FlatList,
   ListRenderItemInfo,
-  SafeAreaView,
   StyleSheet,
   TouchableOpacity,
   TouchableOpacityProps,
@@ -246,14 +245,14 @@ export default function SelectFeesStrategy({
             </Alert>
           </TouchableOpacity>
         )}
-        <SafeAreaView style={styles.strategiesContainer}>
+        <View style={styles.strategiesContainer}>
           <FlatList
             data={customFees ? strategiesWithCustom : strategies}
             renderItem={renderItem}
             keyExtractor={s => s}
             extraData={feesStrategy}
           />
-        </SafeAreaView>
+        </View>
         <TouchableOpacity
           style={[
             styles.customizeFeesButton,

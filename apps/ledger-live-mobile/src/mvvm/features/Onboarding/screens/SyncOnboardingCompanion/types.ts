@@ -1,6 +1,21 @@
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { CompositeScreenProps } from "@react-navigation/native";
+import { ScreenName } from "~/const";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { RootStackParamList } from "~/components/RootNavigator/types/RootNavigator";
+import type { SyncOnboardingStackParamList } from "~/components/RootNavigator/types/SyncOnboardingNavigator";
+
 /*
  * Types
  */
+export type SyncOnboardingScreenProps = CompositeScreenProps<
+  NativeStackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompanion>,
+  CompositeScreenProps<
+    NativeStackScreenProps<BaseNavigatorStackParamList>,
+    NativeStackScreenProps<RootStackParamList>
+  >
+>;
+
 export enum SEED_STATE {
   NEW_SEED = "new_seed",
   RESTORE = "restore",

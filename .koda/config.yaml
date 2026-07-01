@@ -1,0 +1,5 @@
+snapshot: ledger-live-desktop-agent-cde
+setup: |
+  mise install
+  pnpm i --frozen-lockfile
+lint: pnpm nx affected -t lint

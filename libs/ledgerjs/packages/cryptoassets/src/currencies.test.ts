@@ -102,26 +102,17 @@ test("there are some dev cryptocurrencies", () => {
   expect(all.length).toBeGreaterThan(prod.length);
 });
 
-test("there are some terminated cryptocurrencies", () => {
-  const all = listCryptoCurrencies(false, true);
-  const supported = listCryptoCurrencies();
-  expect(all).not.toBe(supported);
-  expect(all.filter(a => !a.terminated)).toMatchObject(supported);
-  expect(all.length).toBeGreaterThan(supported.length);
-});
-
 test("all cryptocurrencies match (by reference) the one you get by id", () => {
   for (const c of listCryptoCurrencies()) {
     expect(c).toBe(getCryptoCurrencyById(c.id));
   }
 });
 
-test("there is no testnet or terminated coin by default", () => {
-  expect(listCryptoCurrencies(false, false)).toBe(listCryptoCurrencies());
-  expect(listCryptoCurrencies(true, true).length).toBeGreaterThan(listCryptoCurrencies().length);
+test("there is no testnet coin by default", () => {
+  expect(listCryptoCurrencies(false)).toBe(listCryptoCurrencies());
+  expect(listCryptoCurrencies(true).length).toBeGreaterThan(listCryptoCurrencies().length);
 
   for (const c of listCryptoCurrencies()) {
-    expect(!c.terminated).toBe(true);
     expect(!c.isTestnetFor).toBe(true);
   }
 });

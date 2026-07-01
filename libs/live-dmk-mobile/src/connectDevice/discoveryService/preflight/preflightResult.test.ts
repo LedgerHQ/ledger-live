@@ -1,12 +1,12 @@
-import { DiscoveryErrorTypes, type DiscoveryError } from "../../types";
+import { BaseDiscoveryErrorTypes, type MobileDiscoveryError } from "../../types";
 import {
   mapDiscoveryErrorToPreflightResult,
   retryPreflightCheck,
   successPreflightResult,
 } from "./preflightResult";
 
-const discoveryError: DiscoveryError = {
-  type: DiscoveryErrorTypes.Unknown,
+const discoveryError: MobileDiscoveryError = {
+  type: BaseDiscoveryErrorTypes.Unknown,
   error: new Error("failure"),
 };
 

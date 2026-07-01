@@ -27,6 +27,8 @@ export default class SwapLiveAppPage {
   showDetailslink = "show-details-link";
   quotesContainerErrorIcon = "quotes-container-error-icon";
   insufficientFundsBuyButton = "insufficient-funds-buy-button";
+  fromAccountAccountNameTag = "from-account-account-name-tag";
+  toAccountAccountNameTag = "to-account-account-name-tag";
   incompatibilityBannerPartnerId = "incompatibility-banner-partner";
   swapMainContainerCssSelector = "main";
   swapMainContainerWebElement = getWebElementByCssSelector(this.swapMainContainerCssSelector);
@@ -381,7 +383,9 @@ export default class SwapLiveAppPage {
   async checkAssetFromMatchesAccount(account: Account) {
     const selectedAccountText: string = await getWebElementText(this.fromSelector);
     jestExpect(selectedAccountText).toContain(account.currency.ticker);
-    jestExpect(selectedAccountText).toContain(account.accountName);
+    await waitWebElementByTestId(this.fromAccountAccountNameTag);
+    const accountNameText: string = await getWebElementText(this.fromAccountAccountNameTag);
+    jestExpect(accountNameText).toContain(account.accountName);
   }
 
   @Step("Check currency to swap to is $0 with amount $1")
@@ -408,11 +412,13 @@ export default class SwapLiveAppPage {
 
   @Step("Check currency to swap to matches account $0")
   async checkAssetToMatchesAccount(account: Account) {
-    const selectedAccountText: string = await getWebElementText(this.toSelector);
+    const selectedAccountTicker: string = await getWebElementText(this.toSelector);
     const expectedAccountName = account.parentAccount?.accountName ?? account.accountName;
+    await waitWebElementByTestId(this.toAccountAccountNameTag);
+    const selectedAccountNameTag: string = await getWebElementText(this.toAccountAccountNameTag);
 
-    jestExpect(selectedAccountText).toContain(account.currency.ticker);
-    jestExpect(selectedAccountText).toContain(expectedAccountName);
+    jestExpect(selectedAccountTicker).toContain(account.currency.ticker);
+    jestExpect(selectedAccountNameTag).toContain(expectedAccountName);
   }
 
   @Step("Check Ledger Nano S not supported banner for $0")

@@ -225,7 +225,11 @@ export class Currency {
     "Concordium (Testnet)",
     "CCD",
     "concordium_testnet",
-    AppInfos.CONCORDIUM,
+    AppInfos.CONCORDIUM_TESTNET,
     [Network.CONCORDIUM],
   );
+
+  static readonly SEI_EVM = new Currency("SEI Network (EVM)", "SEI", "sei_evm", AppInfos.SEI, [
+    Network.SEI,
+  ]);
 }

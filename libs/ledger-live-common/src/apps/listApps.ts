@@ -191,7 +191,7 @@ export const listApps = ({
        */
 
       const sortedCryptoCurrenciesPromise = currenciesByMarketcap(
-        listCryptoCurrencies(managerDevModeEnabled, true),
+        listCryptoCurrencies(managerDevModeEnabled),
       );
 
       /**

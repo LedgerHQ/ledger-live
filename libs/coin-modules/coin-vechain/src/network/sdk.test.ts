@@ -4,12 +4,12 @@ import { LedgerAPI4xx } from "@ledgerhq/errors";
 import {
   getAccount,
   getBlockRef,
-  getFees,
   getLastBlockHeight,
   getOperations,
   getTokenOperations,
   submit,
 } from "./sdk";
+import { getFees } from "./getFees";
 import type { AccountResponse, VechainSDKTransaction } from "../types";
 
 const LAST_BLOCK_COUNT = 24580112;

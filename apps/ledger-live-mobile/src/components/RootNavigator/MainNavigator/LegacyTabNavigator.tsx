@@ -48,7 +48,7 @@ export function LegacyTabNavigator({
             e.preventDefault();
             managerLockAwareCallback(() => {
               navigation.navigate(NavigatorName.Portfolio, {
-                screen: NavigatorName.WalletTab,
+                screen: ScreenName.Portfolio,
               });
             });
           },

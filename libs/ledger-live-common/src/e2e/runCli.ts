@@ -137,7 +137,8 @@ export function runCliCommand(command: string): Promise<string> {
 
   return new Promise((resolve, reject) => {
     const args = command.split("+");
-    const child = spawn("node", [LEDGER_LIVE_CLI_BIN, ...args], {
+    const cliBin = process.env.LEDGER_LIVE_CLI_BIN || LEDGER_LIVE_CLI_BIN;
+    const child = spawn("node", [cliBin, ...args], {
       stdio: "pipe",
       env: process.env,
     });

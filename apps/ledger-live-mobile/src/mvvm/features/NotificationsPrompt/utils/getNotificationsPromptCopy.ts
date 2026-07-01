@@ -16,7 +16,6 @@ export const isTransactionsAlertsPromptTarget = (
 
 export const getNotificationsPromptCopy = (
   promptTarget: NotificationPromptTarget | undefined,
-  isVariantB: boolean,
 ): NotificationsPromptCopy => {
   if (isTransactionsAlertsPromptTarget(promptTarget)) {
     return {
@@ -28,8 +27,8 @@ export const getNotificationsPromptCopy = (
   }
 
   return {
-    titleKey: isVariantB ? "notifications.prompt.titleVariantB" : "notifications.prompt.title",
-    descriptionKey: isVariantB ? "notifications.prompt.descVariantB" : "notifications.prompt.desc",
+    titleKey: "notifications.prompt.title",
+    descriptionKey: "notifications.prompt.desc",
     allowKey: "notifications.prompt.allow",
     laterKey: "notifications.prompt.later",
   };

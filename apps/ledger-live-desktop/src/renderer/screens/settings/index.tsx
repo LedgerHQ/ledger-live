@@ -5,7 +5,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import TabBar from "~/renderer/components/TabBar";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import { SettingsSection as Section } from "./SettingsSection";
 import SectionDisplay from "./sections/General";
 import SectionExperimental from "./sections/Experimental";
@@ -59,7 +59,6 @@ const getItems = (t: (a: string) => string, devMode?: boolean) => {
 // Props are passed from the <Route /> component in <Default />
 const Settings = () => {
   const { t } = useTranslation();
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
   const navigate = useNavigate();
   const location = useLocation();
   const accounts = useSelector(shallowAccountsSelector);
@@ -115,15 +114,9 @@ const Settings = () => {
 
   return (
     <Box pb={4} selectable>
-      {shouldDisplayWallet40MainNav ? (
-        <div className="mb-24">
-          <PageHeader title={t("settings.title")} />
-        </div>
-      ) : (
-        <Box ff="Inter|SemiBold" color="neutral.c100" fontSize={7} mb={5} data-e2e="settings_title">
-          {t("settings.title")}
-        </Box>
-      )}
+      <div className="mb-24">
+        <PageHeader title={t("settings.title")} />
+      </div>
 
       {ledgerSyncOptimisationFlag?.enabled && (
         <LedgerSyncEntryPoint entryPoint={EntryPoint.settings} />

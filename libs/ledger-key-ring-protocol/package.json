@@ -60,6 +60,7 @@
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:*",
     "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:*",
+    "@ledgerhq/ledger-auth": "workspace:*",
     "@ledgerhq/live-env": "workspace:*",
     "@ledgerhq/live-network": "workspace:*",
     "@ledgerhq/logs": "workspace:*",
@@ -68,13 +69,15 @@
     "base64-js": "1",
     "isomorphic-ws": "catalog:",
     "rxjs": "catalog:",
-    "ws": "catalog:"
+    "ws": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "bip39": "^3.0.4",
     "expect": "catalog:",
+    "fetch-cookie": "3.2.0",
     "jest": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",
@@ -97,6 +100,7 @@
     "unimported": "pnpm knip --directory ../.. -W libs/ledger-key-ring-protocol",
     "test": "jest",
     "coverage": "jest --coverage",
-    "e2e": "ts-node scripts/e2e.ts"
+    "e2e": "ts-node scripts/e2e.ts",
+    "keycloak-auth": "ts-node --transpile-only scripts/keycloakAuth.ts"
   }
 }

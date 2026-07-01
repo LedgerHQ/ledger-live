@@ -10,9 +10,16 @@ register({
 
 import { globalTeardown } from "detox/runners/jest";
 import { promises as fs } from "fs";
-import { close as closeBridge, getEnvs, getFlags, loadConfig } from "./bridge/server";
+import {
+  close as closeBridge,
+  getEnvs,
+  getFlags,
+  loadConfig,
+  setFeatureFlags,
+} from "./bridge/server";
 import { formatEnvData, formatFlagsData } from "@ledgerhq/live-common/e2e";
 import { launchApp } from "./helpers/commonHelpers";
+import { getMergedFeatureFlags } from "./utils/featureFlagUtils";
 import detox from "detox/internals";
 import path from "path";
 import { glob } from "glob";
@@ -40,9 +47,11 @@ export default async () => {
   if (process.env.CI && process.env.SHARD_INDEX === "1") {
     try {
       await initDetox();
-      await launchApp();
+      await launchApp({ newInstance: true });
       await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
       await NativeElementHelpers.waitForElementById("topbar-settings", 120_000);
+
+      await setFeatureFlags(getMergedFeatureFlags());
 
       const flagsData = formatFlagsData(JSON.parse(await getFlags()));
       const envsData = formatEnvData(JSON.parse(await getEnvs()));

@@ -17,7 +17,8 @@
     "src/signer.ts",
     "src/transaction/common.ts",
     "src/sanction/index.ts",
-    "src/sanction/errors.ts"
+    "src/sanction/errors.ts",
+    "src/tracking/send.ts"
   ],
   "ignoreUnimported": [
     "src/account/groupOperations.ts",

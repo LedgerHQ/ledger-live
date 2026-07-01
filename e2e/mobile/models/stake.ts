@@ -61,6 +61,7 @@ export async function verifyStakeOperationDetailsInfo(
     Currency.OSMO,
     Currency.ADA,
     Currency.MULTIVERS_X,
+    Currency.SEI_EVM,
   ];
   const currenciesForStakeType = [Currency.NEAR];
   const currenciesForLockType = [Currency.CELO];

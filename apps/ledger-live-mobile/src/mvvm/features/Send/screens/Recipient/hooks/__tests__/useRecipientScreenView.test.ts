@@ -1,42 +1,23 @@
 import { renderHook } from "@testing-library/react-native";
 import { useRecipientScreenView } from "../useRecipientScreenView";
-import { useSelector } from "~/context/hooks";
 import { useAddressValidation } from "../useAddressValidation";
 import { useClipboardRecipient } from "../useClipboardRecipient";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
-import {
-  getRecentAddressesStore,
-  getMainAccount,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import { createMockAccount } from "./accounts";
 
-jest.mock("~/context/hooks");
 jest.mock("../useAddressValidation");
 jest.mock("../useClipboardRecipient");
 jest.mock("../../../../context/SendFlowContext");
 jest.mock("@ledgerhq/live-common/account/index");
-jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 
-const mockedUseSelector = jest.mocked(useSelector);
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);
 const mockedUseClipboardRecipient = jest.mocked(useClipboardRecipient);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
-const mockedGetRecentAddressesStore = jest.mocked(getRecentAddressesStore);
 const mockedGetMainAccount = jest.mocked(getMainAccount);
-const mockedGetAccountCurrency = jest.mocked(getAccountCurrency);
-const mockedSendFeatures = jest.mocked(sendFeatures);
 
 const mockAccount = createMockAccount({ id: "account_1" });
-
-const mockRecentAddressesStore = {
-  removeAddress: jest.fn(),
-  addAddress: jest.fn(),
-  syncAddresses: jest.fn(),
-  getAddresses: jest.fn(() => []),
-};
 
 const mockRecipientSearch = {
   value: "",
@@ -44,22 +25,30 @@ const mockRecipientSearch = {
   clear: jest.fn(),
 };
 
+const idleResult = {
+  status: "idle" as const,
+  error: null,
+  bridgeErrors: {},
+  bridgeWarnings: {},
+  matchedAccounts: [],
+  resolvedAddress: undefined,
+  ensName: undefined,
+  isLedgerAccount: false,
+  accountName: undefined,
+  accountBalance: undefined,
+  accountBalanceFormatted: undefined,
+  isFirstInteraction: false,
+  matchedRecentAddress: undefined,
+};
+
 describe("useRecipientScreenView", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedUseSelector.mockReturnValue([]);
-    mockedGetRecentAddressesStore.mockReturnValue(mockRecentAddressesStore);
     mockedGetMainAccount.mockImplementation((account, parentAccount) => {
       if (!account) return mockAccount;
       // getMainAccount returns the account itself if it's an Account, otherwise the parentAccount
       return account.type === "Account" ? account : parentAccount || mockAccount;
     });
-    mockedGetAccountCurrency.mockImplementation(account => {
-      if (!account) return mockAccount.currency;
-      // getAccountCurrency returns account.currency for Account, account.token for TokenAccount
-      return account.type === "Account" ? account.currency : account.token;
-    });
-    mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("impossible");
     mockedUseClipboardRecipient.mockReturnValue({ clipboardAddress: null });
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: mockRecipientSearch,
@@ -67,21 +56,7 @@ describe("useRecipientScreenView", () => {
       uiConfig: {} as never,
     });
     mockedUseAddressValidation.mockReturnValue({
-      result: {
-        status: "idle",
-        error: null,
-        bridgeErrors: {},
-        bridgeWarnings: {},
-        matchedAccounts: [],
-        resolvedAddress: undefined,
-        ensName: undefined,
-        isLedgerAccount: false,
-        accountName: undefined,
-        accountBalance: undefined,
-        accountBalanceFormatted: undefined,
-        isFirstInteraction: true,
-        matchedRecentAddress: undefined,
-      },
+      result: idleResult,
       isLoading: false,
       validateAddress: jest.fn(),
     });
@@ -121,70 +96,6 @@ describe("useRecipientScreenView", () => {
     expect(result.current.showSearchResults).toBe(true);
   });
 
-  it("filters recent addresses to exclude self-transfers when policy is impossible", () => {
-    mockRecentAddressesStore.getAddresses.mockReturnValue([
-      { address: "source_address", lastUsed: Date.now() } as never,
-      { address: "other_address", lastUsed: Date.now() } as never,
-    ]);
-
-    const { result } = renderHook(() =>
-      useRecipientScreenView({
-        account: mockAccount,
-        currency: mockAccount.currency,
-        onAddressSelected: jest.fn(),
-        recipientSupportsDomain: true,
-      }),
-    );
-
-    expect(result.current.recentAddresses).toHaveLength(1);
-    expect(result.current.recentAddresses[0].address).toBe("other_address");
-  });
-
-  it("calls onAddressSelected when handleRecentAddressSelect is called", () => {
-    const onAddressSelected = jest.fn();
-    const recentAddress = {
-      address: "recent_address",
-      currency: mockAccount.currency,
-      lastUsedAt: new Date(),
-      name: "Recent",
-      isLedgerAccount: false,
-    };
-
-    const { result } = renderHook(() =>
-      useRecipientScreenView({
-        account: mockAccount,
-        currency: mockAccount.currency,
-        onAddressSelected,
-        recipientSupportsDomain: true,
-      }),
-    );
-
-    result.current.handleRecentAddressSelect(recentAddress);
-
-    expect(onAddressSelected).toHaveBeenCalledWith("recent_address", undefined);
-  });
-
-  it("calls onAddressSelected when handleAccountSelect is called", () => {
-    const onAddressSelected = jest.fn();
-    const selectedAccount = createMockAccount({
-      id: "account_2",
-      freshAddress: "selected_fresh_address",
-    });
-
-    const { result } = renderHook(() =>
-      useRecipientScreenView({
-        account: mockAccount,
-        currency: mockAccount.currency,
-        onAddressSelected,
-        recipientSupportsDomain: true,
-      }),
-    );
-
-    result.current.handleAccountSelect(selectedAccount);
-
-    expect(onAddressSelected).toHaveBeenCalledWith("selected_fresh_address");
-  });
-
   it("calls onAddressSelected when handleAddressSelect is called", () => {
     const onAddressSelected = jest.fn();
 
@@ -202,32 +113,6 @@ describe("useRecipientScreenView", () => {
     expect(onAddressSelected).toHaveBeenCalledWith("new_address", "ens_name");
   });
 
-  it("removes address from recent addresses when handleRemoveAddress is called", () => {
-    const recentAddress = {
-      address: "address_to_remove",
-      currency: mockAccount.currency,
-      lastUsedAt: new Date(),
-      name: "Recent",
-      isLedgerAccount: false,
-    };
-
-    const { result } = renderHook(() =>
-      useRecipientScreenView({
-        account: mockAccount,
-        currency: mockAccount.currency,
-        onAddressSelected: jest.fn(),
-        recipientSupportsDomain: true,
-      }),
-    );
-
-    result.current.handleRemoveAddress(recentAddress.address);
-
-    expect(mockRecentAddressesStore.removeAddress).toHaveBeenCalledWith(
-      mockAccount.currency.id,
-      "address_to_remove",
-    );
-  });
-
   it("shows sanctioned banner when address is sanctioned", () => {
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: { ...mockRecipientSearch, value: "sanctioned_address" },
@@ -236,21 +121,7 @@ describe("useRecipientScreenView", () => {
     });
 
     mockedUseAddressValidation.mockReturnValue({
-      result: {
-        status: "sanctioned",
-        error: "sanctioned",
-        bridgeErrors: {},
-        bridgeWarnings: {},
-        matchedAccounts: [],
-        resolvedAddress: undefined,
-        ensName: undefined,
-        isLedgerAccount: false,
-        accountName: undefined,
-        accountBalance: undefined,
-        accountBalanceFormatted: undefined,
-        isFirstInteraction: true,
-        matchedRecentAddress: undefined,
-      },
+      result: { ...idleResult, status: "sanctioned", error: "sanctioned" },
       isLoading: false,
       validateAddress: jest.fn(),
     });
@@ -276,21 +147,7 @@ describe("useRecipientScreenView", () => {
     });
 
     mockedUseAddressValidation.mockReturnValue({
-      result: {
-        status: "invalid",
-        error: "incorrect_format",
-        bridgeErrors: {},
-        bridgeWarnings: {},
-        matchedAccounts: [],
-        resolvedAddress: undefined,
-        ensName: undefined,
-        isLedgerAccount: false,
-        accountName: undefined,
-        accountBalance: undefined,
-        accountBalanceFormatted: undefined,
-        isFirstInteraction: true,
-        matchedRecentAddress: undefined,
-      },
+      result: { ...idleResult, status: "invalid", error: "incorrect_format" },
       isLoading: false,
       validateAddress: jest.fn(),
     });
@@ -316,21 +173,7 @@ describe("useRecipientScreenView", () => {
     });
 
     mockedUseAddressValidation.mockReturnValue({
-      result: {
-        status: "valid",
-        error: null,
-        bridgeErrors: {},
-        bridgeWarnings: {},
-        matchedAccounts: [],
-        resolvedAddress: undefined,
-        ensName: undefined,
-        isLedgerAccount: false,
-        accountName: undefined,
-        accountBalance: undefined,
-        accountBalanceFormatted: undefined,
-        isFirstInteraction: true,
-        matchedRecentAddress: undefined,
-      },
+      result: { ...idleResult, status: "valid" },
       isLoading: false,
       validateAddress: jest.fn(),
     });
@@ -356,21 +199,7 @@ describe("useRecipientScreenView", () => {
 
     const selfTransferError = new InvalidAddressBecauseDestinationIsAlsoSource();
     mockedUseAddressValidation.mockReturnValue({
-      result: {
-        status: "valid",
-        error: null,
-        bridgeErrors: { recipient: selfTransferError },
-        bridgeWarnings: {},
-        matchedAccounts: [],
-        resolvedAddress: undefined,
-        ensName: undefined,
-        isLedgerAccount: false,
-        accountName: undefined,
-        accountBalance: undefined,
-        accountBalanceFormatted: undefined,
-        isFirstInteraction: true,
-        matchedRecentAddress: undefined,
-      },
+      result: { ...idleResult, status: "valid", bridgeErrors: { recipient: selfTransferError } },
       isLoading: false,
       validateAddress: jest.fn(),
     });
@@ -398,21 +227,7 @@ describe("useRecipientScreenView", () => {
 
     const invalidAddressError = new InvalidAddress();
     mockedUseAddressValidation.mockReturnValue({
-      result: {
-        status: "valid",
-        error: null,
-        bridgeErrors: { recipient: invalidAddressError },
-        bridgeWarnings: {},
-        matchedAccounts: [],
-        resolvedAddress: undefined,
-        ensName: undefined,
-        isLedgerAccount: false,
-        accountName: undefined,
-        accountBalance: undefined,
-        accountBalanceFormatted: undefined,
-        isFirstInteraction: true,
-        matchedRecentAddress: undefined,
-      },
+      result: { ...idleResult, status: "valid", bridgeErrors: { recipient: invalidAddressError } },
       isLoading: false,
       validateAddress: jest.fn(),
     });
@@ -437,21 +252,7 @@ describe("useRecipientScreenView", () => {
     });
 
     mockedUseAddressValidation.mockReturnValue({
-      result: {
-        status: "idle",
-        error: null,
-        bridgeErrors: {},
-        bridgeWarnings: {},
-        matchedAccounts: [],
-        resolvedAddress: undefined,
-        ensName: undefined,
-        isLedgerAccount: false,
-        accountName: undefined,
-        accountBalance: undefined,
-        accountBalanceFormatted: undefined,
-        isFirstInteraction: true,
-        matchedRecentAddress: undefined,
-      },
+      result: idleResult,
       isLoading: false,
       validateAddress: jest.fn(),
     });
@@ -466,26 +267,6 @@ describe("useRecipientScreenView", () => {
     );
 
     expect(result.current.showEmptyState).toBe(true);
-  });
-
-  it("filters user accounts to exclude current account", () => {
-    const otherAccount = createMockAccount({
-      id: "account_2",
-      freshAddress: "other_address",
-    });
-
-    mockedUseSelector.mockReturnValue([mockAccount, otherAccount]);
-
-    const { result } = renderHook(() =>
-      useRecipientScreenView({
-        account: mockAccount,
-        currency: mockAccount.currency,
-        onAddressSelected: jest.fn(),
-        recipientSupportsDomain: true,
-      }),
-    );
-
-    expect(result.current.mainAccount.id).toBe("account_1");
   });
 
   it("exposes the clipboard address and pastes it into the recipient search on demand", () => {
@@ -526,21 +307,7 @@ describe("useRecipientScreenView", () => {
 
   it("shows loading state when validation is in progress", () => {
     mockedUseAddressValidation.mockReturnValue({
-      result: {
-        status: "loading",
-        error: null,
-        bridgeErrors: {},
-        bridgeWarnings: {},
-        matchedAccounts: [],
-        resolvedAddress: undefined,
-        ensName: undefined,
-        isLedgerAccount: false,
-        accountName: undefined,
-        accountBalance: undefined,
-        accountBalanceFormatted: undefined,
-        isFirstInteraction: true,
-        matchedRecentAddress: undefined,
-      },
+      result: { ...idleResult, status: "loading" },
       isLoading: true,
       validateAddress: jest.fn(),
     });

@@ -5,8 +5,5 @@ export const descriptor: CoinDescriptor = {
   send: {
     inputs: {},
     fees,
-    amount: {
-      getPlugins: () => ["celoFeeCurrency"],
-    },
   },
 };

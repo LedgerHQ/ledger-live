@@ -1,8 +1,12 @@
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { selectGamDismissedCampaignIds } from "~/renderer/reducers/genericAwarenessModalSlice";
 import {
+  clearGamDismissedContentCards,
   previewDevGenericAwarenessModalCard,
+  removeDevGenericAwarenessModalCardFromStore,
+  removeGamDismissedCampaignIds,
   replaceDevCardsInRedux,
   syncDevCardsToRedux,
 } from "../../utils/applyDevCardsToStore";
@@ -21,10 +25,8 @@ import {
   clearDevGenericAwarenessModalCards,
   getDevGenericAwarenessModalCards,
   removeDevGenericAwarenessModalCard,
-  setDevGenericAwarenessModalCards,
   upsertDevGenericAwarenessModalCard,
 } from "../../utils/devCardsStore";
-import { sampleGenericAwarenessModalContentCards } from "../../utils/sampleContentCards";
 import type {
   CarouselSlideForm,
   DevLayoutMode,
@@ -46,6 +48,8 @@ export const useGenericAwarenessModalDevScreenViewModel = () => {
     createDevFormListKeys(createInitialFormState().items.length),
   );
   const [savedCards, setSavedCards] = useState(getDevGenericAwarenessModalCards);
+  const gamDismissedIds = useSelector(selectGamDismissedCampaignIds);
+  const hasGamDismissedIds = gamDismissedIds.length > 0;
 
   const campaignId = useMemo(
     () => resolveCampaignId(form.layout, form.trigger),
@@ -144,7 +148,7 @@ export const useGenericAwarenessModalDevScreenViewModel = () => {
   const onAddToStore = useCallback(() => {
     const card = buildContentCardFromForm(form);
     upsertDevGenericAwarenessModalCard(card);
-    dispatch(syncDevCardsToRedux());
+    dispatch(syncDevCardsToRedux({ excludeAppStart: true }));
     refreshSavedCards();
   }, [dispatch, form, refreshSavedCards]);
 
@@ -156,21 +160,17 @@ export const useGenericAwarenessModalDevScreenViewModel = () => {
   }, [dispatch, form, refreshSavedCards]);
 
   const onRemoveAll = useCallback(() => {
+    const removedIds = getDevGenericAwarenessModalCards().map(card => card.id);
     clearDevGenericAwarenessModalCards();
+    dispatch(removeGamDismissedCampaignIds(removedIds));
     dispatch(replaceDevCardsInRedux([]));
-    refreshSavedCards();
-  }, [dispatch, refreshSavedCards]);
-
-  const onLoadSamples = useCallback(() => {
-    setDevGenericAwarenessModalCards(sampleGenericAwarenessModalContentCards);
-    dispatch(replaceDevCardsInRedux(sampleGenericAwarenessModalContentCards));
     refreshSavedCards();
   }, [dispatch, refreshSavedCards]);
 
   const onRemoveSavedCard = useCallback(
     (id: string) => {
       removeDevGenericAwarenessModalCard(id);
-      dispatch(syncDevCardsToRedux());
+      dispatch(removeDevGenericAwarenessModalCardFromStore(id));
       refreshSavedCards();
     },
     [dispatch, refreshSavedCards],
@@ -180,11 +180,17 @@ export const useGenericAwarenessModalDevScreenViewModel = () => {
     applyFormState(createInitialFormState(form.layout, form.trigger));
   }, [applyFormState, form.layout, form.trigger]);
 
+  const onClearGamDismissed = useCallback(() => {
+    dispatch(clearGamDismissedContentCards());
+  }, [dispatch]);
+
   return {
     form,
     campaignId,
     deeplink,
     savedCards,
+    gamDismissedIds,
+    hasGamDismissedIds,
     slideKeys,
     itemKeys,
     onBack,
@@ -200,9 +206,9 @@ export const useGenericAwarenessModalDevScreenViewModel = () => {
     onAddToStore,
     onPreview,
     onRemoveAll,
-    onLoadSamples,
     onRemoveSavedCard,
     onResetFormDefaults,
+    onClearGamDismissed,
   };
 };
 

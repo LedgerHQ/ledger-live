@@ -2,7 +2,7 @@
 import "crypto";
 import { v4 as uuid } from "uuid";
 import Config from "react-native-config";
-import { Linking, Platform } from "react-native";
+import { AppState, Linking, Platform, type NativeEventSubscription } from "react-native";
 import { createClient, SegmentClient, UserTraits } from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
 import RNLocalize from "react-native-localize";
@@ -15,7 +15,7 @@ import {
 } from "@react-navigation/native";
 import snakeCase from "lodash/snakeCase";
 import React, { type RefObject, useCallback } from "react";
-import { ABTestingVariants, idsToLanguage } from "@ledgerhq/types-live";
+import { idsToLanguage } from "@ledgerhq/types-live";
 import type { FeatureId, Features } from "@shared/feature-flags";
 
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
@@ -69,8 +69,8 @@ import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalSt
 import { getOnboardingCounterfeitWarningAttributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/onboardingCounterfeitWarning";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/analytics/remoteABTesting/remoteABTestingAnalytics";
-import { notificationsPermissionStatusSelector } from "~/reducers/notifications";
-import { AuthorizationStatus } from "@react-native-firebase/messaging";
+import { AuthorizationStatus, type FirebaseMessagingTypes } from "@react-native-firebase/messaging";
+import { getNotificationPermissionStatus } from "~/logic/getNotificationPermissionStatus";
 
 const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -81,6 +81,35 @@ type MaybeAppStore = Maybe<AppStore>;
 let storeInstance: MaybeAppStore; // is the redux store. it's also used as a flag to know if analytics is on or off.
 let segmentClient: SegmentClient | undefined;
 let analyticsFeatureFlagMethod: null | (<T extends FeatureId>(key: T) => Features[T] | null);
+
+let cachedOsPermissionStatus: FirebaseMessagingTypes.AuthorizationStatus | undefined;
+let osPermissionRefreshPromise: Promise<
+  FirebaseMessagingTypes.AuthorizationStatus | undefined
+> | null = null;
+let appStateSubscription: NativeEventSubscription | undefined;
+
+const refreshOsPermissionStatus = (): Promise<
+  FirebaseMessagingTypes.AuthorizationStatus | undefined
+> => {
+  if (osPermissionRefreshPromise) return osPermissionRefreshPromise;
+  osPermissionRefreshPromise = (async () => {
+    try {
+      cachedOsPermissionStatus = await getNotificationPermissionStatus();
+    } catch {
+      // keep last-known value on native failure
+    } finally {
+      osPermissionRefreshPromise = null;
+    }
+    return cachedOsPermissionStatus;
+  })();
+  return osPermissionRefreshPromise;
+};
+
+// Resolves with the cached value without a native call in steady state; while a refresh is
+// in-flight (right after the app comes back to the foreground) it awaits that single refresh so
+// events tracked in that window still get the up-to-date value instead of a stale one.
+const getOsPermissionStatus = (): Promise<FirebaseMessagingTypes.AuthorizationStatus | undefined> =>
+  osPermissionRefreshPromise ?? Promise.resolve(cachedOsPermissionStatus);
 
 export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFlagMethod): void {
   analyticsFeatureFlagMethod = method;
@@ -174,13 +203,9 @@ const getLedgerSyncAttributes = (state: State) => {
 };
 
 const getRebornAttributes = () => {
-  if (!analyticsFeatureFlagMethod) return false;
-  const reborn = analyticsFeatureFlagMethod("llmRebornLP");
-  const isFFEnabled = reborn?.enabled;
-
   return {
-    llmRebornLP_A: isFFEnabled ? reborn?.params?.variant === ABTestingVariants.variantA : false,
-    llmRebornLP_B: isFFEnabled ? reborn?.params?.variant === ABTestingVariants.variantB : false,
+    llmRebornLP_A: true,
+    llmRebornLP_B: false,
   };
 };
 
@@ -236,20 +261,6 @@ const getMADAttributes = () => {
     receive_flow: madFeatureFlag?.params?.receive_flow ?? false,
     send_flow: madFeatureFlag?.params?.send_flow ?? false,
     isModularizationEnabled: madFeatureFlag?.params?.enableModularization ?? false,
-  };
-};
-
-const getOptimiseOptInNotificationsNewWordingAttributes = (): Record<string, unknown> => {
-  if (!analyticsFeatureFlagMethod) return {};
-  const optimiseOptInNotificationsNewWording = analyticsFeatureFlagMethod(
-    "lwmNewWordingOptInNotificationsDrawer",
-  );
-  const isFFEnabled = optimiseOptInNotificationsNewWording?.enabled;
-
-  if (!isFFEnabled) return {};
-
-  return {
-    pushOptInVariant: optimiseOptInNotificationsNewWording?.params?.variant,
   };
 };
 
@@ -356,8 +367,8 @@ const extraProperties = async (store: AppStore) => {
   const isReborn = isRebornSelector(state);
 
   const notifications = notificationsSelector(state);
-  const hasEnabledOsNotifications =
-    notificationsPermissionStatusSelector(state) === AuthorizationStatus.AUTHORIZED;
+  const osPermissionStatus = await getOsPermissionStatus();
+  const hasEnabledOsNotifications = osPermissionStatus === AuthorizationStatus.AUTHORIZED;
 
   const notificationsOptedIn = {
     notificationsAllowed: notifications.areNotificationsAllowed,
@@ -423,8 +434,6 @@ const extraProperties = async (store: AppStore) => {
     ({ event }) => event === STARTUP_EVENTS.APP_STARTED,
   )?.time;
 
-  const optimiseOptInNotificationsNewWordingAttributes =
-    getOptimiseOptInNotificationsNewWordingAttributes();
   const backupHubAttributes = getBackupHubAttributes();
 
   return {
@@ -479,7 +488,6 @@ const extraProperties = async (store: AppStore) => {
     quickActionsCtasVariant: quickActionsCtasVariantFlag?.enabled,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
-    ...optimiseOptInNotificationsNewWordingAttributes,
     ...remoteABTestingAttributes,
   };
 };
@@ -487,6 +495,14 @@ const extraProperties = async (store: AppStore) => {
 const token = ANALYTICS_TOKEN;
 export const start = async (store: AppStore): Promise<SegmentClient | undefined> => {
   storeInstance = store;
+
+  // Prime the OS notification permission cache and keep it fresh on every foreground, so that
+  // `hasEnabledOsNotifications` reflects changes the user made in the phone settings.
+  refreshOsPermissionStatus();
+  appStateSubscription?.remove();
+  appStateSubscription = AppState.addEventListener("change", nextAppState => {
+    if (nextAppState === "active") refreshOsPermissionStatus();
+  });
 
   const initialUrl = await Linking.getInitialURL();
   const isDeeplinkSession = !!initialUrl;

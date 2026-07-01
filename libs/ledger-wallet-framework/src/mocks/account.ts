@@ -94,7 +94,6 @@ const hardcodedMarketcap = [
   "ethereum/erc20/gxc",
   "zcoin",
   "ethereum/erc20/synthetix_network_token",
-  "stratis",
   "ethereum/erc20/wax",
   "ethereum/erc20/nexo",
   "ethereum/erc20/elf_token",

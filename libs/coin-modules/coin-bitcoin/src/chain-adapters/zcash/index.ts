@@ -280,11 +280,14 @@ const zcashChainAdapter: ChainAdapter = {
 
     // Augment the default BitcoinSigner with DmkSignerZcash methods.
     // This gives chain adapter overrides (getAddress, getWalletXpub, getFullViewingKey)
-    // access to the DMK signer, while signOperation keeps using BitcoinSigner methods from Btc.
+    // access to the DMK signer. Transparent signing also routes through the DMK
+    // signer via createPaymentTransaction; the remaining BitcoinSigner methods
+    // (e.g. splitTransaction) continue to come from Btc.
     const dmk = new DmkSignerZcash(transport.dmk, transport.sessionId);
     return Object.assign(defaultSigner, {
       getAddress: dmk.getAddress.bind(dmk),
       getFullViewingKey: dmk.getFullViewingKey.bind(dmk),
+      createPaymentTransaction: dmk.createPaymentTransaction.bind(dmk),
     });
   },
 };

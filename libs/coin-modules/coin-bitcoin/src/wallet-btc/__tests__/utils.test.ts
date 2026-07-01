@@ -106,10 +106,10 @@ describe("Unit tests for various utils functions", () => {
   it("isValidAddress should default old validation if currency not provided", () => {
     expect(
       utils.isValidAddress("tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sl5k7"),
-    ).toBeTruthy();
+    ).toEqual(true);
     expect(
       utils.isValidAddress("tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sl5k8"),
-    ).toBeFalsy();
+    ).toEqual(false);
   });
 
   it("Test altcoins", () => {

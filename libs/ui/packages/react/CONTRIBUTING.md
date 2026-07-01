@@ -14,7 +14,7 @@ In order to get merged, a pull request must:
 - Pass the linter (`pnpm ui:react lint`)
 - Pass the typechecker (`pnpm ui:react typecheck`)
 
-If you are using VSCode, you can use the `eslint` and `prettier` plugins to auto-format your code on save.
+If you are using VSCode, you can use the [`oxc`](https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode) plugin to lint and format your code on save.
 
 ### Code practices
 

@@ -21,13 +21,8 @@ async function selectCurrency(account: Account, isFromCurrency: boolean = true) 
   } else {
     await app.swapLiveApp.tapToCurrency();
   }
-  if (await app.modularDrawer.isFlowEnabled("live_app")) {
-    await app.modularDrawer.selectAsset(account);
-  } else {
-    await app.common.performSearch(account.currency.name);
-    await app.stake.selectCurrency(account.currency.id);
-    await app.common.selectFirstAccount();
-  }
+
+  await app.modularDrawer.selectAsset(account);
   await app.swapLiveApp.verifyCurrencyIsSelected(account.currency.ticker, isFromCurrency);
 }
 

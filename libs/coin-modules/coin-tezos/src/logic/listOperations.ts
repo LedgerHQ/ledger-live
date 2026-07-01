@@ -215,10 +215,7 @@ function buildParentMap(ops: APIOperation[]): Map<number, APITransactionType> {
   return parentMap;
 }
 
-function keepNativeOp(
-  op: APIOperation,
-  address: string,
-): op is ConvertibleOperation {
+function keepNativeOp(op: APIOperation, address: string): op is ConvertibleOperation {
   if (
     !(
       isAPITransactionType(op) ||
@@ -236,6 +233,16 @@ function keepNativeOp(
       return false;
     }
   }
+  // Filter out internal (contract-to-contract/contract-to-third-party) transactions:
+  // TzKT returns these under the initiator's account, but they don't impact the
+  // initiator's native balance — the top-level operation already accounts for it.
+  if (isAPITransactionType(op)) {
+    const isSender = op.sender?.address === address;
+    const isTarget = op.target?.address === address;
+    if (!isSender && !isTarget) {
+      return false;
+    }
+  }
   return true;
 }
 
@@ -244,9 +251,43 @@ function convertNativeOps(
   address: string,
   stakingBlockHashes: Map<number, string>,
 ): Operation[] {
+  // Accumulate fees from internal sub-txs that will be filtered out.
+  // On Tezos, when an account initiates a contract call, internal sub-operations
+  // may incur storage/baker fees charged to the initiator. These sub-txs are
+  // filtered by keepNativeOp (account is neither sender nor target), but their
+  // fees still impact the initiator's balance and must be attributed to the
+  // top-level operation.
+  const internalFeesByHash = new Map<string, bigint>();
+  for (const op of ops) {
+    if (
+      isAPITransactionType(op) &&
+      op.initiator?.address === address &&
+      op.sender?.address !== address &&
+      op.target?.address !== address
+    ) {
+      const hash = op.hash;
+      if (!hash) continue;
+      const fee =
+        BigInt(op.storageFee ?? 0) + BigInt(op.bakerFee ?? 0) + BigInt(op.allocationFee ?? 0);
+      if (fee > 0n) {
+        internalFeesByHash.set(hash, (internalFeesByHash.get(hash) ?? 0n) + fee);
+      }
+    }
+  }
+
   return ops
     .filter((op): op is ConvertibleOperation => keepNativeOp(op, address))
-    .map(op => convertOperation(address, op, stakingBlockHashes));
+    .map(op => {
+      const converted = convertOperation(address, op, stakingBlockHashes);
+      const extraFee = internalFeesByHash.get(converted.tx.hash);
+      if (extraFee) {
+        // Add internal sub-tx fees to the parent operation, then clear to avoid
+        // attributing the same fees to multiple ops sharing the same hash.
+        internalFeesByHash.delete(converted.tx.hash);
+        return { ...converted, tx: { ...converted.tx, fees: converted.tx.fees + extraFee } };
+      }
+      return converted;
+    });
 }
 
 function convertTokenOps(
@@ -362,7 +403,12 @@ export async function listOperations(
   return [sortedOperations, nextToken];
 }
 
-type ConvertibleOperation = APITransactionType | APIDelegationType | APIRevealType | APIStakingType | APIOriginationType;
+type ConvertibleOperation =
+  | APITransactionType
+  | APIDelegationType
+  | APIRevealType
+  | APIStakingType
+  | APIOriginationType;
 
 /**
  * TzKT omits `block` on staking ops returned by /accounts/{addr}/operations.
@@ -556,11 +602,6 @@ function convertTokenOperation(
     type = "IN";
   }
 
-  const fee = parent
-    ? BigInt(parent.storageFee ?? 0) +
-      BigInt(parent.bakerFee ?? 0) +
-      BigInt(parent.allocationFee ?? 0)
-    : 0n;
   const feesPayer = parent?.initiator?.address ?? parent?.sender?.address;
 
   const tokenId = transfer.token.tokenId ?? "0";
@@ -584,7 +625,9 @@ function convertTokenOperation(
     },
     tx: {
       hash: transfer.hash,
-      fees: fee,
+      // Fee is already on the parent native operation; setting 0 avoids
+      // double-counting when A4 sums fees across sub-operations (FeeAggregationMode.Sum).
+      fees: 0n,
       ...(feesPayer ? { feesPayer } : {}),
       block: {
         hash: transfer.block ?? parent?.block ?? "",

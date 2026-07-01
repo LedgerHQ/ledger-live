@@ -1,5 +1,10 @@
 # @ledgerhq/live-common
 
+> [!WARNING]
+> **`@ledgerhq/live-common` is in maintenance mode and is being progressively dismantled.**
+> Do **not** add new features, folders or top-level modules here. Bugfixes and edits to existing
+> code are welcome. New shared logic belongs in a dedicated `libs/*` package.
+
 `@ledgerhq/live-common` contains shared Ledger Wallet business logic used by
 Ledger Live Desktop, Ledger Live Mobile, CLI tooling, tests, and coin
 integrations.

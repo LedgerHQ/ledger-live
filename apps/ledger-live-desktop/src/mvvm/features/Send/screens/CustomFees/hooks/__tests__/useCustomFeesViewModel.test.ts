@@ -99,11 +99,12 @@ const mockCustomFeeConfigs: Record<string, ReturnType<() => unknown>> = {
 
 const mockCustomAssetsConfigs: Record<string, ReturnType<() => unknown>> = {
   celo: {
-    defaultId: "celo",
-    options: [
+    getOptions: () => [
       { id: "celo", ticker: "CELO", label: "Celo", unitLabel: "Gwei" },
-      { id: "cusd", ticker: "cUSD", label: "cUSD", unitLabel: "cUSD" },
+      { id: "cusd", ticker: "cUSD", label: "cUSD" },
     ],
+    getSelectedOptionId: () => "celo",
+    buildPatch: (optionId: string) => ({ feeCurrencyAccountId: optionId === "celo" ? null : optionId }),
   },
 };
 

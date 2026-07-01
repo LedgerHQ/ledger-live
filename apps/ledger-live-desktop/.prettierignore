@@ -1,7 +1,0 @@
-test-e2e/**/*.json
-analytics.min.js
-src/renderer/animations/**/*.json
-src/renderer/components/Onboarding/Screens/Tutorial/assets/animations/**/*.json
-tests/artifacts
-tests/**/*-snapshots/
-
