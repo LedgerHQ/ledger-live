@@ -5,13 +5,22 @@ import { getMergedFeatureFlags } from "../../utils/constants";
 
 const BST_ADD_ACCOUNT_CURRENCIES = new Set(["ton", "aptos", "cardano", "tezos"]);
 
+// When aggregatedAssets is on, some networks are shown under an aggregated parent asset
+// (e.g. Base shares the ETH ticker and is aggregated under Ethereum), so the portfolio
+// renders `assetItem-Ethereum` instead of `assetItem-Base`. Map those to the parent name.
+const AGGREGATED_ASSET_NAME_BY_ID: Record<string, string> = {
+  base: "Ethereum",
+};
+
 export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], tags: string[]) {
   describe("Add accounts - Network Based", () => {
     let isAssetSectionEnabled = false;
+    let isAggregatedAssetsEnabled = false;
 
     beforeAll(async () => {
       const featureFlags = getMergedFeatureFlags();
       isAssetSectionEnabled = featureFlags.lwmWallet40?.params?.assetSection === true;
+      isAggregatedAssetsEnabled = featureFlags.lwmWallet40?.params?.aggregatedAssets === true;
 
       await app.init({
         userdata: "skip-onboarding",
@@ -48,8 +57,12 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], ta
       await app.addAccount.tapCloseAddAccountCta();
 
       if (isAssetSectionEnabled) {
-        await app.portfolio.checkAssetVisible(currency.name);
-        await app.portfolio.openAssetDetail(currency.name, "up");
+        const assetName =
+          isAggregatedAssetsEnabled && AGGREGATED_ASSET_NAME_BY_ID[currency.id]
+            ? AGGREGATED_ASSET_NAME_BY_ID[currency.id]
+            : currency.name;
+        await app.portfolio.checkAssetVisible(assetName);
+        await app.portfolio.openAssetDetail(assetName, "up");
         await app.assetDetail.expectTotalBalanceVisible();
         await app.assetDetail.expectMarketPriceVisible();
         await app.assetDetail.expectOperationItemVisible();
