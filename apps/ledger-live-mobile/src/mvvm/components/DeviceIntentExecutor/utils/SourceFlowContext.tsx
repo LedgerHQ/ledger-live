@@ -13,6 +13,7 @@ export type SourceFlow =
   | "add_account"
   | "my_ledger"
   | "wallet_connect"
+  | "wallet_api"
   | "onboarding"
   | "debug";
 

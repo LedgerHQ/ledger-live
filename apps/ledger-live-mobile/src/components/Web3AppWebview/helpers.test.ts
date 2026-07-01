@@ -1,7 +1,13 @@
 import { renderHook } from "@testing-library/react-native";
-import { useWebviewState } from "./helpers";
+import type { AccountLike } from "@ledgerhq/types-live";
+import { useWebviewState, useUiHook } from "./helpers";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { useFeature } from "@features/platform-feature-flags";
+import { NavigatorName, ScreenName } from "~/const";
+import prepareSignTransaction from "./liveSDKLogic";
+
+const mockNavigate = jest.fn();
 
 jest.mock("@ledgerhq/live-common/wallet-api/helpers", () => ({
   getInitialURL: jest.fn(),
@@ -22,6 +28,24 @@ jest.mock("styled-components/native", () => ({
 
 jest.mock("LLM/features/ModularDrawer", () => ({
   useModularDrawerController: jest.fn(() => ({ openDrawer: jest.fn() })),
+}));
+
+jest.mock("@react-navigation/native", () => {
+  const actual = jest.requireActual("@react-navigation/native");
+  return { ...actual, useNavigation: () => ({ navigate: mockNavigate }) };
+});
+
+jest.mock("@features/platform-feature-flags", () => ({
+  useFeature: jest.fn(() => ({ enabled: false })),
+}));
+
+jest.mock("@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration", () => ({
+  useDrawerConfiguration: jest.fn(() => ({ createDrawerConfiguration: jest.fn(() => ({})) })),
+}));
+
+jest.mock("./liveSDKLogic", () => ({
+  __esModule: true,
+  default: jest.fn(),
 }));
 
 const mockManifest: LiveAppManifest = {
@@ -119,5 +143,160 @@ describe("useWebviewState", () => {
         uri: "https://new.example.com",
       });
     });
+  });
+});
+
+describe("useUiHook - transaction.sign device-intent branching", () => {
+  const mockedUseFeature = jest.mocked(useFeature);
+  const mockedPrepare = jest.mocked(prepareSignTransaction);
+  const mockRequestDeviceIntentSign = jest.fn();
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const account = { id: "js:2:ethereum:0xabc:", type: "Account" } as unknown as AccountLike;
+  const preparedTx = { family: "ethereum" };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    mockedPrepare.mockResolvedValue(preparedTx as never);
+  });
+
+  function invokeSign(signFlowInfos: { canEditFees: boolean; hasFeesProvided: boolean }) {
+    const onSuccess = jest.fn();
+    const onError = jest.fn();
+    const { result } = renderHook(() =>
+      useUiHook({
+        manifest: mockManifest,
+        requestDeviceIntentSign: mockRequestDeviceIntentSign,
+        requestDeviceIntentSignMessage: jest.fn(),
+      }),
+    );
+    const promise = result.current["transaction.sign"]!({
+      account,
+      parentAccount: undefined,
+      signFlowInfos: { liveTx: {}, ...signFlowInfos },
+      options: { hwAppId: undefined, dependencies: undefined },
+      onSuccess,
+      onError,
+    });
+    return { promise, onSuccess, onError };
+  }
+
+  it("navigates to the legacy summary screen when the flag is disabled", async () => {
+    mockedUseFeature.mockReturnValue({ enabled: false } as ReturnType<typeof useFeature>);
+
+    await invokeSign({ canEditFees: false, hasFeesProvided: true }).promise;
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      NavigatorName.SignTransaction,
+      expect.objectContaining({ screen: ScreenName.SignTransactionSummary }),
+    );
+    expect(mockRequestDeviceIntentSign).not.toHaveBeenCalled();
+  });
+
+  it("requests the device-intent signature drawer when the flag is enabled and fees are provided", async () => {
+    mockedUseFeature.mockReturnValue({
+      enabled: true,
+      params: { enabledManifestIds: ["test-app"] },
+    } as ReturnType<typeof useFeature>);
+
+    const { promise, onSuccess, onError } = invokeSign({
+      canEditFees: false,
+      hasFeesProvided: true,
+    });
+    await promise;
+
+    expect(mockRequestDeviceIntentSign).toHaveBeenCalledWith(
+      expect.objectContaining({ account, transaction: preparedTx, onSuccess, onError }),
+    );
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("requests the drawer even when fees are editable and not provided (no legacy fee-editing buffer)", async () => {
+    mockedUseFeature.mockReturnValue({
+      enabled: true,
+      params: { enabledManifestIds: ["test-app"] },
+    } as ReturnType<typeof useFeature>);
+
+    const { promise } = invokeSign({ canEditFees: true, hasFeesProvided: false });
+    await promise;
+
+    expect(mockRequestDeviceIntentSign).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("navigates to the legacy summary screen when enabled but the manifest id is not allowlisted", async () => {
+    mockedUseFeature.mockReturnValue({
+      enabled: true,
+      params: { enabledManifestIds: ["another-app"] },
+    } as ReturnType<typeof useFeature>);
+
+    await invokeSign({ canEditFees: false, hasFeesProvided: true }).promise;
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      NavigatorName.SignTransaction,
+      expect.objectContaining({ screen: ScreenName.SignTransactionSummary }),
+    );
+    expect(mockRequestDeviceIntentSign).not.toHaveBeenCalled();
+  });
+});
+
+describe("useUiHook - message.sign device-intent branching", () => {
+  const mockedUseFeature = jest.mocked(useFeature);
+  const mockRequestDeviceIntentSignMessage = jest.fn();
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const account = { id: "js:2:ethereum:0xabc:", type: "Account" } as unknown as AccountLike;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const message = { standard: undefined, message: "hello" } as never;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  function invokeMessageSign() {
+    const onSuccess = jest.fn();
+    const onError = jest.fn();
+    const onCancel = jest.fn();
+    const { result } = renderHook(() =>
+      useUiHook({
+        manifest: mockManifest,
+        requestDeviceIntentSign: jest.fn(),
+        requestDeviceIntentSignMessage: mockRequestDeviceIntentSignMessage,
+      }),
+    );
+    result.current["message.sign"]!({
+      account,
+      message,
+      options: { hwAppId: undefined, dependencies: undefined },
+      onSuccess,
+      onError,
+      onCancel,
+    });
+    return { onSuccess, onError, onCancel };
+  }
+
+  it("navigates to the SignMessage stack when the flag is disabled", () => {
+    mockedUseFeature.mockReturnValue({ enabled: false } as ReturnType<typeof useFeature>);
+
+    invokeMessageSign();
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      NavigatorName.SignMessage,
+      expect.objectContaining({ params: expect.objectContaining({ accountId: account.id }) }),
+    );
+    expect(mockRequestDeviceIntentSignMessage).not.toHaveBeenCalled();
+  });
+
+  it("requests the device-intent message drawer when the flag is enabled", () => {
+    mockedUseFeature.mockReturnValue({
+      enabled: true,
+      params: { enabledManifestIds: ["test-app"] },
+    } as ReturnType<typeof useFeature>);
+
+    const { onSuccess, onError, onCancel } = invokeMessageSign();
+
+    expect(mockRequestDeviceIntentSignMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ account, message, onSuccess, onError, onCancel }),
+    );
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

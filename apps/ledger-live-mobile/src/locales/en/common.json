@@ -4479,6 +4479,30 @@
       "hideFullMessage": "Hide full message"
     }
   },
+  "walletApiSignMessage": {
+    "sign": {
+      "title": "Continue on your {{productName}}",
+      "description": "Verify and sign the message on your device.",
+      "cancelled": {
+        "title": "Message signing canceled",
+        "description": "You rejected the message signature.",
+        "close": "Close",
+        "retry": "Try again"
+      }
+    }
+  },
+  "walletApiSignTransaction": {
+    "sign": {
+      "title": "Continue on your {{productName}}",
+      "description": "Verify and sign the transaction on your device.",
+      "cancelled": {
+        "title": "Transaction signing canceled",
+        "description": "You rejected the transaction signature.",
+        "close": "Close",
+        "retry": "Try again"
+      }
+    }
+  },
   "sync": {
     "error": "Sync Error",
     "loading": "Sync"

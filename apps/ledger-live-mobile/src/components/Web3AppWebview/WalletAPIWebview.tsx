@@ -6,6 +6,8 @@ import Config from "react-native-config";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebView } from "./helpers";
 import { NetworkError } from "./NetworkError";
+import TransactionSignatureDrawer from "LLM/features/WalletApiSignature/components/TransactionSignatureDrawer";
+import MessageSignatureDrawer from "LLM/features/WalletApiSignature/components/MessageSignatureDrawer";
 import { INTERNAL_APP_IDS, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { useFeature } from "@features/platform-feature-flags";
@@ -46,6 +48,10 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewCacheOptions,
       noAccounts,
       isLoadingAccounts,
+      deviceIntentSignRequest,
+      clearDeviceIntentSignRequest,
+      deviceIntentSignMessageRequest,
+      clearDeviceIntentSignMessageRequest,
     } = useWebView(
       {
         manifest,
@@ -88,53 +94,67 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     }
 
     return (
-      <RNWebView
-        ref={webviewRef}
-        onScroll={onScroll}
-        decelerationRate={Platform.OS === "ios" ? "normal" : 0.998}
-        startInLoadingState={true}
-        showsHorizontalScrollIndicator={false}
-        allowsBackForwardNavigationGestures={allowsBackForwardNavigationGestures}
-        showsVerticalScrollIndicator={false}
-        renderLoading={Loader}
-        originWhitelist={manifestDomainCheckEnabled ? undefined : manifest.domains}
-        onShouldStartLoadWithRequest={
-          manifestDomainCheckEnabled ? onShouldStartLoadWithRequest : undefined
-        }
-        allowsInlineMediaPlayback
-        onMessage={onMessage}
-        onError={(event: { nativeEvent?: { description?: string; code?: number } }) => {
-          if (Config.DETOX) {
-            const desc = event?.nativeEvent?.description;
-            const code = event?.nativeEvent?.code;
-            webviewLogStore.addLoadError({
-              timestamp: new Date().toISOString(),
-              source: "WalletAPIWebview",
-              message: desc ?? "WebView onError fired",
-              details: `manifestId=${manifest.id} url=${manifest.url}${code != null ? ` code=${code}` : ""}`,
-            });
+      <>
+        <RNWebView
+          ref={webviewRef}
+          onScroll={onScroll}
+          decelerationRate={Platform.OS === "ios" ? "normal" : 0.998}
+          startInLoadingState={true}
+          showsHorizontalScrollIndicator={false}
+          allowsBackForwardNavigationGestures={allowsBackForwardNavigationGestures}
+          showsVerticalScrollIndicator={false}
+          renderLoading={Loader}
+          originWhitelist={manifestDomainCheckEnabled ? undefined : manifest.domains}
+          onShouldStartLoadWithRequest={
+            manifestDomainCheckEnabled ? onShouldStartLoadWithRequest : undefined
           }
-          onLoadError();
-          setError(true);
-        }}
-        onOpenWindow={onOpenWindow}
-        overScrollMode="content"
-        bounces={false}
-        mediaPlaybackRequiresUserAction={false}
-        automaticallyAdjustContentInsets={false}
-        scrollEnabled={true}
-        style={[styles.webview, { display: error ? "none" : "flex" }]}
-        renderError={() => <NetworkError handleTryAgain={reloadWebView} />}
-        testID="wallet-api-webview"
-        applicationNameForUserAgent={APPLICATION_NAME}
-        webviewDebuggingEnabled={__DEV__}
-        allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
-        javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
-        injectedJavaScriptBeforeContentLoaded={manifest.dapp ? INJECTED_JAVASCRIPT : undefined}
-        injectedJavaScript={Config.DETOX ? E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT : undefined}
-        {...webviewProps}
-        {...webviewCacheOptions}
-      />
+          allowsInlineMediaPlayback
+          onMessage={onMessage}
+          onError={(event: { nativeEvent?: { description?: string; code?: number } }) => {
+            if (Config.DETOX) {
+              const desc = event?.nativeEvent?.description;
+              const code = event?.nativeEvent?.code;
+              webviewLogStore.addLoadError({
+                timestamp: new Date().toISOString(),
+                source: "WalletAPIWebview",
+                message: desc ?? "WebView onError fired",
+                details: `manifestId=${manifest.id} url=${manifest.url}${code != null ? ` code=${code}` : ""}`,
+              });
+            }
+            onLoadError();
+            setError(true);
+          }}
+          onOpenWindow={onOpenWindow}
+          overScrollMode="content"
+          bounces={false}
+          mediaPlaybackRequiresUserAction={false}
+          automaticallyAdjustContentInsets={false}
+          scrollEnabled={true}
+          style={[styles.webview, { display: error ? "none" : "flex" }]}
+          renderError={() => <NetworkError handleTryAgain={reloadWebView} />}
+          testID="wallet-api-webview"
+          applicationNameForUserAgent={APPLICATION_NAME}
+          webviewDebuggingEnabled={__DEV__}
+          allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
+          javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
+          injectedJavaScriptBeforeContentLoaded={manifest.dapp ? INJECTED_JAVASCRIPT : undefined}
+          injectedJavaScript={Config.DETOX ? E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT : undefined}
+          {...webviewProps}
+          {...webviewCacheOptions}
+        />
+        {deviceIntentSignRequest && (
+          <TransactionSignatureDrawer
+            request={deviceIntentSignRequest}
+            onClose={clearDeviceIntentSignRequest}
+          />
+        )}
+        {deviceIntentSignMessageRequest && (
+          <MessageSignatureDrawer
+            request={deviceIntentSignMessageRequest}
+            onClose={clearDeviceIntentSignMessageRequest}
+          />
+        )}
+      </>
     );
   },
 );

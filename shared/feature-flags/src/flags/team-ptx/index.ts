@@ -4,6 +4,7 @@ export * from "./buySellUi";
 export * from "./ethStakingModalWithFilters";
 export * from "./ethStakingProviders";
 export * from "./lifiSolana";
+export * from "./llmWalletApiDeviceIntentSign";
 export * from "./noah";
 export * from "./portfolioExchangeBanner";
 export * from "./ptxBorrowLiveApp";

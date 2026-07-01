@@ -52,6 +52,9 @@ import { Linking } from "react-native";
 import { useCacheBustedLiveAppsDB } from "~/screens/Platform/v2/hooks";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { useFeature } from "@features/platform-feature-flags";
+import type { WalletApiDeviceIntentSignRequest } from "LLM/features/WalletApiSignature/components/TransactionSignatureDrawer";
+import type { WalletApiDeviceIntentSignMessageRequest } from "LLM/features/WalletApiSignature/components/MessageSignatureDrawer";
 export function useWebView(
   {
     manifest,
@@ -110,9 +113,28 @@ export function useWebView(
   const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
 
+  // When the device-intent sign flow is enabled, `transaction.sign` surfaces the request
+  // here instead of navigating, so the Device Intent Executor can be mounted as a
+  // bottom-sheet drawer floating over the live app (see TransactionSignatureDrawer).
+  const [deviceIntentSignRequest, setDeviceIntentSignRequest] =
+    useState<WalletApiDeviceIntentSignRequest | null>(null);
+  const clearDeviceIntentSignRequest = useCallback(() => setDeviceIntentSignRequest(null), []);
+
+  // Same drawer treatment as `transaction.sign`, but for `message.sign`: the request is
+  // surfaced here so the Device Intent Executor can be mounted as a bottom-sheet drawer
+  // (see MessageSignatureDrawer) instead of navigating to the SignMessage stack.
+  const [deviceIntentSignMessageRequest, setDeviceIntentSignMessageRequest] =
+    useState<WalletApiDeviceIntentSignMessageRequest | null>(null);
+  const clearDeviceIntentSignMessageRequest = useCallback(
+    () => setDeviceIntentSignMessageRequest(null),
+    [],
+  );
+
   const uiHook = useUiHook({
     manifest,
     onTransactionBroadcast: onWalletApiTransactionBroadcast,
+    requestDeviceIntentSign: setDeviceIntentSignRequest,
+    requestDeviceIntentSignMessage: setDeviceIntentSignMessageRequest,
   });
 
   const trackingEnabled = useSelector(trackingEnabledSelector);
@@ -271,6 +293,10 @@ export function useWebView(
     webviewRef,
     noAccounts,
     isLoadingAccounts,
+    deviceIntentSignRequest,
+    clearDeviceIntentSignRequest,
+    deviceIntentSignMessageRequest,
+    clearDeviceIntentSignMessageRequest,
   };
 }
 
@@ -470,13 +496,36 @@ export function useWebviewState(
 export interface Props {
   manifest: LiveAppManifest;
   onTransactionBroadcast?: () => void;
+  /**
+   * Surfaces a pending `transaction.sign` request so the Device Intent Executor can be
+   * mounted as a bottom-sheet drawer over the live app (used when the device-intent sign
+   * flow is enabled, in place of navigating to a dedicated screen).
+   */
+  requestDeviceIntentSign: (request: WalletApiDeviceIntentSignRequest) => void;
+  /**
+   * Same as {@link requestDeviceIntentSign} but for `message.sign`, surfacing the request
+   * so the Device Intent Executor is mounted as a bottom-sheet drawer instead of navigating
+   * to the SignMessage stack.
+   */
+  requestDeviceIntentSignMessage: (request: WalletApiDeviceIntentSignMessageRequest) => void;
 }
 
-function useUiHook({ manifest, onTransactionBroadcast }: Props): UiHook {
+export function useUiHook({
+  manifest,
+  onTransactionBroadcast,
+  requestDeviceIntentSign,
+  requestDeviceIntentSignMessage,
+}: Props): UiHook {
   const navigation = useNavigation();
   const [device, setDevice] = useState<Device>();
   const { createDrawerConfiguration } = useDrawerConfiguration();
   const { openDrawer: openModularDrawer } = useModularDrawerController();
+  const deviceIntentSignFlag = useFeature("llmWalletApiDeviceIntentSign");
+  // The device-intent sign flow is opt-in per live-app: only enabled when the flag is on
+  // and the current manifest id is in the configured allowlist.
+  const deviceIntentSignEnabled =
+    (deviceIntentSignFlag?.enabled ?? false) &&
+    (deviceIntentSignFlag?.params?.enabledManifestIds?.includes(manifest.id) ?? false);
 
   const source =
     currentRouteNameRef.current === "Platform Catalog"
@@ -537,6 +586,24 @@ function useUiHook({ manifest, onTransactionBroadcast }: Props): UiHook {
         });
       },
       "message.sign": ({ account, message, options, onSuccess, onError, onCancel }) => {
+        // When enabled, skip the SignMessage stack and connect to the device directly
+        // through the DeviceIntentExecutor, surfaced as a bottom-sheet drawer over the
+        // live app (see MessageSignatureDrawer). The message is already prepared
+        // upstream, so no in-app recap step is needed.
+        if (deviceIntentSignEnabled) {
+          requestDeviceIntentSignMessage({
+            account,
+            parentAccount: undefined,
+            message,
+            appName: options?.hwAppId,
+            dependencies: options?.dependencies,
+            onSuccess,
+            onError,
+            onCancel,
+          });
+          return;
+        }
+
         navigation.navigate(NavigatorName.SignMessage, {
           screen:
             message.standard === "EIP712" ? ScreenName.SignSelectDevice : ScreenName.SignSummary,
@@ -568,6 +635,24 @@ function useUiHook({ manifest, onTransactionBroadcast }: Props): UiHook {
       }) => {
         try {
           const tx = await prepareSignTransaction(account, parentAccount, liveTx);
+
+          // When enabled, skip the recap/fee "buffer" screen and connect to the device
+          // directly through the DeviceIntentExecutor, surfaced as a bottom-sheet drawer
+          // over the live app (see TransactionSignatureDrawer). Fees are estimated as part
+          // of preparing the transaction there, so no in-app fee editing step is needed.
+          if (deviceIntentSignEnabled) {
+            requestDeviceIntentSign({
+              account,
+              parentAccount,
+              transaction: tx,
+              appName: options?.hwAppId,
+              dependencies: options?.dependencies,
+              onSuccess,
+              onError,
+            });
+            return;
+          }
+
           navigation.navigate(NavigatorName.SignTransaction, {
             screen: ScreenName.SignTransactionSummary,
             params: {
@@ -692,6 +777,9 @@ function useUiHook({ manifest, onTransactionBroadcast }: Props): UiHook {
       device,
       createDrawerConfiguration,
       onTransactionBroadcast,
+      deviceIntentSignEnabled,
+      requestDeviceIntentSign,
+      requestDeviceIntentSignMessage,
     ],
   );
 }
