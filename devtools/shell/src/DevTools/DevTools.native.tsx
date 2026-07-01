@@ -2,7 +2,7 @@ import {
   createNativeStackNavigator,
   type NativeStackNavigationOptions,
 } from "@react-navigation/native-stack";
-import { type DevToolsConfig } from "@devtools/registry";
+import { type DevToolsBaseProps } from "./DevTools.types";
 import { DevToolsProvider, DevToolsShellProvider } from "../context";
 import { useDevToolsViewModel } from "./useDevToolsViewModel.native";
 import { CategoriesScreen } from "./screens/CategoriesScreen.native";
@@ -10,8 +10,7 @@ import { ToolsScreen } from "./screens/ToolsScreen.native";
 import { ToolScreen } from "./screens/ToolScreen.native";
 import type { DevToolsParamList } from "./navigation.native";
 
-export interface DevToolsProps {
-  readonly config?: DevToolsConfig;
+export interface DevToolsProps extends DevToolsBaseProps {
   readonly screenOptions?: NativeStackNavigationOptions;
 }
 

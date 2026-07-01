@@ -4,10 +4,10 @@ import { Sidebar, ToolShell, Overview } from "../components";
 import { Loading } from "../components/Loading/Loading.web";
 import { useDevToolsViewModel, type DevToolsViewProps } from "./useDevToolsViewModel.web";
 import { DevToolsProvider } from "../context";
-import { type DevToolsConfig } from "@devtools/registry";
+import { type DevToolsBaseProps } from "./DevTools.types";
 
-export interface DevToolsProps {
-  config?: DevToolsConfig;
+export interface DevToolsProps extends DevToolsBaseProps {
+  onClose?: () => void;
 }
 
 function DevToolsView({
@@ -16,7 +16,8 @@ function DevToolsView({
   recentToolIds,
   onSelectTool,
   onClearTool,
-}: DevToolsViewProps) {
+  onClose,
+}: DevToolsViewProps & { onClose?: () => void }) {
   return (
     <div data-testid="devtools" className="flex flex-col h-full bg-canvas text-base">
       <div className="flex items-center gap-8 px-16 py-6 bg-warning text-warning body-3 font-semibold border-b border-muted shrink-0">
@@ -30,6 +31,7 @@ function DevToolsView({
           activeToolId={activeTool?.id}
           onSelectTool={onSelectTool}
           onHome={onClearTool}
+          onClose={onClose}
         />
 
         <Divider orientation="vertical" />
@@ -55,10 +57,10 @@ function DevToolsView({
   );
 }
 
-export const DevTools = ({ config = [] }: DevToolsProps) => {
+export const DevTools = ({ config = [], onClose }: DevToolsProps) => {
   return (
     <DevToolsProvider value={config}>
-      <DevToolsView {...useDevToolsViewModel({ config })} />
+      <DevToolsView {...useDevToolsViewModel({ config })} onClose={onClose} />
     </DevToolsProvider>
   );
 };

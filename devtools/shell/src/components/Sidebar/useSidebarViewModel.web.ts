@@ -11,6 +11,7 @@ interface SidebarInput {
   activeToolId: ToolId | undefined;
   onSelectTool: (id: ToolId) => void;
   onHome: () => void;
+  onClose?: () => void;
 }
 
 export interface SidebarViewProps {
@@ -24,6 +25,7 @@ export interface SidebarViewProps {
   activeToolId: ToolId | undefined;
   onSelectTool: (id: ToolId) => void;
   onHome: () => void;
+  onClose?: () => void;
 }
 
 export function useSidebarViewModel({
@@ -31,6 +33,7 @@ export function useSidebarViewModel({
   activeToolId,
   onSelectTool,
   onHome,
+  onClose,
 }: SidebarInput): SidebarViewProps {
   const [query, setQuery] = useState("");
 
@@ -61,5 +64,6 @@ export function useSidebarViewModel({
     activeToolId,
     onSelectTool,
     onHome,
+    onClose,
   };
 }

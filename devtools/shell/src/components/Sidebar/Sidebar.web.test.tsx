@@ -78,6 +78,26 @@ describe("Sidebar", () => {
     expect(screen.getByText("Feature Flags")).toBeInTheDocument();
   });
 
+  describe("back button", () => {
+    it("does not render the Back button when onClose is not provided", () => {
+      render(<Sidebar {...defaultProps} />);
+      expect(screen.queryByRole("button", { name: "Back" })).not.toBeInTheDocument();
+    });
+
+    it("renders the Back button when onClose is provided", () => {
+      render(<Sidebar {...defaultProps} onClose={jest.fn()} />);
+      expect(screen.getByRole("button", { name: "Back" })).toBeInTheDocument();
+    });
+
+    it("calls onClose when the Back button is clicked", async () => {
+      const user = userEvent.setup();
+      const onClose = jest.fn();
+      render(<Sidebar {...defaultProps} onClose={onClose} />);
+      await user.click(screen.getByRole("button", { name: "Back" }));
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("search", () => {
     it("filters categories to those with matching tools", async () => {
       const user = userEvent.setup();

@@ -43,11 +43,12 @@ import {
   DevToolsProvider,
   useToolProps,
   type DevToolsProps,
+  type DevToolsBaseProps,
   type DevToolsConfig,
 } from "@devtools/shell";
 ```
 
-- `<DevTools config={DevToolsConfig} />` — root component (web). The native build is exported from `index.native.ts` and additionally accepts `screenOptions?: NativeStackNavigationOptions` for host header chrome.
+- `<DevTools config={DevToolsConfig} />` — root component. Each platform's `DevToolsProps` extends the shared `DevToolsBaseProps` (`config`) with platform-only props: the web build adds `onClose?: () => void`; the native build (exported from `index.native.ts`) adds `screenOptions?: NativeStackNavigationOptions` for host header chrome. Shared, cross-platform code should type against `DevToolsBaseProps`.
 - `DevToolsProvider` — context provider that maps `id → config` for the rendered tools.
 - `useToolProps(id)` — returns the unknown-typed config the host passed for `id`, or `undefined`.
 - `DevToolsConfig` is re-exported from `@devtools/registry` for convenience.
