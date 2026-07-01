@@ -81,7 +81,7 @@ export class Application {
   private speculosPageInstance = lazyInit(SpeculosPage);
   private stakePageInstance = lazyInit(StakePage);
   private evmStakePageInstance = lazyInit(EvmStakePage);
-  private tezosStakePageInstance = lazyInit(TezosStakePage);
+  private readonly tezosStakePageInstance = lazyInit(TezosStakePage);
   private swapLiveAppInstance = lazyInit(SwapLiveAppPage);
   private swapPageInstance = lazyInit(SwapPage);
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
