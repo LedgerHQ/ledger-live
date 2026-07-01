@@ -37,7 +37,14 @@ export const useCryptoAddressesBannerViewModel = (): CryptoAddressesBannerViewMo
 
   const hasAccount = accounts.length > 0;
   const accountsCount = accounts.length;
-  const firstThreeCurrencies = [...new Set(accounts.map(a => getAccountCurrency(a)))].slice(0, 3);
+  const firstThreeCurrencies = [
+    ...new Map(
+      accounts.map(a => {
+        const currency = getAccountCurrency(a);
+        return [currency.id, currency] as const;
+      }),
+    ).values(),
+  ].slice(0, 3);
 
   const onGoToAccounts = useCallback(() => {
     track("button_clicked", {

@@ -49,10 +49,7 @@ import { importWalletState } from "@ledgerhq/live-wallet/store";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
 import { initHistory } from "~/reducers/history";
 import type { SettingsState } from "~/reducers/types";
-import {
-  restoreTokensToCache,
-  PERSISTENCE_VERSION,
-} from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
 import { setAllOverrides, setBannerVisible, type PartialFeatures } from "@shared/feature-flags";
 import { initIdentities } from "../helpers/identities";
 
@@ -148,16 +145,11 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       // Hydrate persisted crypto assets tokens BEFORE importing accounts
       // This ensures tokens are available when decoding accounts (which now uses findTokenById)
       // Cross-caching is automatic: tokens are cached under both ID and address lookups
-      if (cryptoAssetsCache?.tokens) {
-        if (cryptoAssetsCache.version === PERSISTENCE_VERSION) {
-          const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-          await restoreTokensToCache(store.dispatch, cryptoAssetsCache, TOKEN_CACHE_TTL);
-        } else {
-          // eslint-disable-next-line no-console
-          console.warn(
-            `Crypto assets cache version mismatch (expected ${PERSISTENCE_VERSION}, got ${cryptoAssetsCache.version}), skipping restore`,
-          );
-        }
+      // parsePersistedCAL validates version + schema; returns null for missing/corrupt/legacy blobs.
+      const persistedCryptoAssets = parsePersistedCAL(cryptoAssetsCache);
+      if (persistedCryptoAssets) {
+        const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+        await restoreTokensToCache(store.dispatch, persistedCryptoAssets, TOKEN_CACHE_TTL);
       }
 
       // Handle account import with error recovery for async issues
