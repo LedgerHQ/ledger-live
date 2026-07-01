@@ -1,8 +1,40 @@
 import { BigNumber } from "bignumber.js";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import type { AccountLike, SwapOperation } from "@ledgerhq/types-live";
+import type { AccountLike, Operation, SwapOperation } from "@ledgerhq/types-live";
+import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";
 import { accountWithMandatoryTokens, getAccountCurrency } from "../../account";
 import type { MappedSwapOperation, SwapHistorySection } from "./types";
+
+// Sum the atomic value credited to an account by the given transaction: direct
+// incoming operations (token receives) plus incoming internal operations
+// (native receives that happen inside a contract call).
+const sumIncomingOperationValue = (operations: Operation[], txHash: string): BigNumber => {
+  let total = new BigNumber(0);
+  for (const operation of operations) {
+    if (operation.hash !== txHash) continue;
+    if (operation.type === "IN") {
+      total = total.plus(operation.value);
+    } else if (operation.internalOperations?.length) {
+      for (const internalOperation of operation.internalOperations) {
+        if (internalOperation.type === "IN") total = total.plus(internalOperation.value);
+      }
+    }
+  }
+  return total;
+};
+
+// For DEX swaps the received amount is settled on-chain in the receiving
+// account, so we read the real credited amount from that account's incoming
+// operation(s) sharing the swap transaction hash. Returned in atomic units to
+// match the `toAmount` convention.
+const getDexReceivedAmount = (
+  toAccount: AccountLike,
+  txHash: string | undefined,
+): BigNumber | undefined => {
+  if (!txHash) return undefined;
+  const received = sumIncomingOperationValue(toAccount.operations ?? [], txHash);
+  return received.isGreaterThan(0) ? received : undefined;
+};
 
 const getSwapOperationMap =
   (account: AccountLike, accounts: AccountLike[]) =>
@@ -67,10 +99,20 @@ const getSwapOperationMap =
 
         const toCurrency = getAccountCurrency(toAccount);
         const toMagnitude = toCurrency.units[0].magnitude;
-        const magnitudeAwareFinalAmount =
+        // CEX providers report the final amount remotely (stored in human units).
+        const persistedFinalAmount =
           finalAmount && finalAmount.isGreaterThan(0)
             ? finalAmount.times(new BigNumber(10).pow(toMagnitude))
             : undefined;
+        // DEX swaps (swapId embedded in operationId) never persist a finalAmount,
+        // so once the swap is finished we derive the real received amount from the
+        // receiving account's on-chain operation.
+        const isDexSwap = Boolean(operationId && swapId && operationId.includes(swapId));
+        const magnitudeAwareFinalAmount =
+          persistedFinalAmount ??
+          (isDexSwap && status === TransactionStatus.Finished
+            ? getDexReceivedAmount(toAccount, op.hash)
+            : undefined);
 
         return {
           provider,
