@@ -29,7 +29,6 @@ import {
   resolveSwapProvider,
   WALLET_CLI_DEFAULT_SWAP_PROVIDERS,
 } from "./providers";
-import { resolveSwapProvider, WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./providers";
 import { swapFlowId, trackSwapFailed, trackSwapSimulated } from "../../analytics/swap-analytics";
 import { getErrorDetails } from "@ledgerhq/live-common/exchange/error";
 
