@@ -1,4 +1,4 @@
-import { CRYPTO_CURRENCIES_REGISTRY, CRYPTO_CURRENCY_ALIASES } from "./registry";
+import { CRYPTO_CURRENCIES_REGISTRY, CRYPTO_CURRENCY_ALIASES } from "../registry";
 import { findCryptoCurrencyById, getCryptoCurrencyById, hasCryptoCurrencyId } from "./accessors";
 
 describe("findCryptoCurrencyById", () => {

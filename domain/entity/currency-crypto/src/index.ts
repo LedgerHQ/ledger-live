@@ -1,3 +1,3 @@
 export * from "./schema";
 export * from "./registry";
-export * from "./accessors";
+export * from "./legacy/accessors";

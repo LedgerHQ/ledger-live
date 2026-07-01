@@ -1,5 +1,7 @@
-import { CRYPTO_CURRENCIES_REGISTRY, CRYPTO_CURRENCY_ALIASES } from "./registry";
-import type { CryptoCurrency } from "./schema";
+// Static by-id accessors over `CRYPTO_CURRENCIES_REGISTRY`. These become selectors over a dynamic
+// currency slice once the registry stops being a compile-time constant — see `./FUTURE.md`.
+import { CRYPTO_CURRENCIES_REGISTRY, CRYPTO_CURRENCY_ALIASES } from "../registry";
+import type { CryptoCurrency } from "../schema";
 
 /**
  * Resolve a crypto currency by its id, returning `undefined` when unknown.
