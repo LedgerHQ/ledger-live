@@ -1,5 +1,6 @@
 {
   "entry": [
+    "src/api/index.ts",
     "src/bridge/index.ts",
     "src/bridge/deviceTransactionConfig.ts",
     "src/datasets/dataset-1.ts",
