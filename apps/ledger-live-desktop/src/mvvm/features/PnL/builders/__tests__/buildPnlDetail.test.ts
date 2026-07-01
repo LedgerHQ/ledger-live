@@ -9,6 +9,8 @@ const makeInput = (overrides: Partial<Parameters<typeof buildPnlDetail>[0]> = {}
   totalPnL: new BigNumber(100),
   unrealisedPnL: new BigNumber(60),
   realisedPnL: new BigNumber(40),
+  costBasis: new BigNumber(2000),
+  lifetimeCost: new BigNumber(3000),
   formatFiat: (v: BigNumber, alwaysShowSign?: boolean) =>
     `formatted(${v.toString()}${alwaysShowSign ? ",sign" : ""})`,
   t: fakeT,
@@ -47,5 +49,22 @@ describe("buildPnlDetail", () => {
       "formatted(40,sign)",
       "formatted(100,sign)",
     ]);
+  });
+
+  it("computes percentage evolution for each bucket against the appropriate cost basis", () => {
+    const detail = buildPnlDetail(makeInput());
+    const percentages = detail.items.map(i => i.percentage);
+
+    expect(percentages[0]).toBe(3);
+    expect(percentages[1]).toBe(4);
+    expect(percentages[2]).toBeCloseTo(3.33, 2);
+  });
+
+  it("omits percentage when the relevant cost basis is zero", () => {
+    const detail = buildPnlDetail(
+      makeInput({ costBasis: new BigNumber(0), lifetimeCost: new BigNumber(0) }),
+    );
+
+    expect(detail.items.map(i => i.percentage)).toEqual([undefined, undefined, undefined]);
   });
 });

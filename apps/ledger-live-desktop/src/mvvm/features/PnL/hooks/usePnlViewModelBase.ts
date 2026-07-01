@@ -59,7 +59,13 @@ export function usePnlViewModelBase({
     });
   }, []);
 
-  const { unrealisedPnL = ZERO, realisedPnL = ZERO, totalPnL = ZERO } = pnlData ?? {};
+  const {
+    unrealisedPnL = ZERO,
+    realisedPnL = ZERO,
+    totalPnL = ZERO,
+    costBasis = ZERO,
+    lifetimeCost = ZERO,
+  } = pnlData ?? {};
 
   const formatFiat = useCallback(
     (value: BigNumber, alwaysShowSign?: boolean) =>
@@ -106,10 +112,12 @@ export function usePnlViewModelBase({
         totalPnL,
         unrealisedPnL,
         realisedPnL,
+        costBasis,
+        lifetimeCost,
         formatFiat,
         t,
       }),
-    [namespace, totalPnL, unrealisedPnL, realisedPnL, formatFiat, t],
+    [namespace, totalPnL, unrealisedPnL, realisedPnL, costBasis, lifetimeCost, formatFiat, t],
   );
 
   const shouldDisplayPnl = isPnlFlagOn && accountsCount > 0;

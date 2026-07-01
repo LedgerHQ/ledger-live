@@ -2,21 +2,9 @@ import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogBody } from "@ledgerhq/lumen-ui-react";
 import { PnLinfoDetail } from "./PnLinfoDetail";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import type { PnlDetailProps } from "./types";
 
-export type PnlDetailItem = {
-  title: string;
-  description: string;
-  value: string;
-};
-
-export type PnlDetailProps = {
-  title: string;
-  description: string;
-  items: PnlDetailItem[];
-  disclaimer: string;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-};
+export type { PnlDetailItem, PnlDetailProps } from "./types";
 
 export const PnlDetail = ({
   title,
