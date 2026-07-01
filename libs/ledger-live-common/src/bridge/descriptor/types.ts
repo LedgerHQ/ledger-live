@@ -67,6 +67,15 @@ export type CustomFeeConfig = Readonly<{
   buildTransactionPatch: (values: Record<string, string>) => Record<string, unknown>;
 }>;
 
+export type CustomFeeInputValueTransform = Readonly<{
+  /** Restrict the transform to specific custom fee input keys. Applies to all inputs when omitted. */
+  inputKeys?: readonly string[];
+  /** Converts descriptor-native values to values displayed in the input. */
+  fromCanonicalValue: (value: string) => string;
+  /** Converts user-entered values back to descriptor-native values. */
+  toCanonicalValue: (value: string) => string;
+}>;
+
 /**
  * A single selectable fee-paying asset displayed in the "Pay fees in" control
  * of the Custom Fees step (e.g. native CELO or an allowlisted token).
@@ -77,6 +86,8 @@ export type FeeAssetOption = Readonly<{
   label: string;
   /** Unit label to display in the fee input when this asset is selected (ex: "Gwei", "sat") */
   unitLabel?: string;
+  /** Optional conversion between descriptor-native fee values and selected-asset display values. */
+  customFeeInputValueTransform?: CustomFeeInputValueTransform;
 }>;
 
 /**

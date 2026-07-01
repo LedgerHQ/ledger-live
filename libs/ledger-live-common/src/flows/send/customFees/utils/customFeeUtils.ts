@@ -6,7 +6,7 @@ export function isValidNumberForInput(inputKey: string, value: string): boolean 
   if (!value.trim()) return false;
 
   const num = new BigNumber(value);
-  if (num.isNaN() || num.isNegative()) return false;
+  if (num.isNaN() || !num.isFinite() || num.isNegative()) return false;
 
   // EVM max priority fee can be 0.
   if (inputKey === "maxPriorityFeePerGas") {

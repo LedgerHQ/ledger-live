@@ -108,31 +108,44 @@ const mockCustomAssetsConfigs: Record<string, ReturnType<() => unknown>> = {
   },
 };
 
-jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
-  resolveFeeUnitLabel: (
-    unitLabel: string | ((currency: CryptoOrTokenCurrency) => string | undefined) | undefined,
-    currency: CryptoOrTokenCurrency | undefined,
-  ) => {
-    if (typeof unitLabel === "function") {
-      return currency ? unitLabel(currency) : undefined;
-    }
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => {
+  const actual = jest.requireActual("@ledgerhq/live-common/bridge/descriptor/send/features");
+  return {
+    ...actual,
+    resolveFeeUnitLabel: (
+      unitLabel: string | ((currency: CryptoOrTokenCurrency) => string | undefined) | undefined,
+      currency: CryptoOrTokenCurrency | undefined,
+    ) => {
+      if (typeof unitLabel === "function") {
+        return currency ? unitLabel(currency) : undefined;
+      }
 
-    return unitLabel;
-  },
-  sendFeatures: {
-    getCustomFeeConfig: (currency: CryptoOrTokenCurrency) =>
-      mockCustomFeeConfigs[currency.id] ?? null,
-    hasCustomAssets: () => false,
-    getCustomAssetsConfig: (currency: CryptoOrTokenCurrency) =>
-      mockCustomAssetsConfigs[currency.id] ?? null,
-  },
-}));
+      return unitLabel;
+    },
+    sendFeatures: {
+      ...actual.sendFeatures,
+      getCustomFeeConfig: (currency: CryptoOrTokenCurrency) =>
+        mockCustomFeeConfigs[currency.id] ?? null,
+      hasCustomAssets: () => false,
+      getCustomAssetsConfig: (currency: CryptoOrTokenCurrency) =>
+        mockCustomAssetsConfigs[currency.id] ?? null,
+      getFeeCurrencyAccountId: () => null,
+    },
+  };
+});
 
 function createMockAccount(): AccountLike {
   return {
     id: "ethereum-account-1",
     type: "Account",
-    currency: { id: "ethereum", name: "Ethereum" },
+    currency: {
+      id: "ethereum",
+      name: "Ethereum",
+      units: [
+        { code: "ETH", magnitude: 18, name: "Ether" },
+        { code: "Gwei", magnitude: 9, name: "Gwei" },
+      ],
+    },
     balance: new BigNumber(1000000000000000000),
   } as unknown as AccountLike;
 }
@@ -160,6 +173,10 @@ function createMockCurrency(): CryptoOrTokenCurrency {
     id: "ethereum",
     name: "Ethereum",
     type: "CryptoCurrency",
+    units: [
+      { code: "ETH", magnitude: 18, name: "Ether" },
+      { code: "Gwei", magnitude: 9, name: "Gwei" },
+    ],
   } as unknown as CryptoOrTokenCurrency;
 }
 
@@ -203,6 +220,10 @@ describe("useCustomFeesViewModel - EIP-1559 Validation", () => {
       id: "celo",
       name: "Celo",
       type: "CryptoCurrency",
+      units: [
+        { code: "CELO", magnitude: 18, name: "Celo" },
+        { code: "Gwei", magnitude: 9, name: "Gwei" },
+      ],
     } as unknown as CryptoOrTokenCurrency;
     const transactionActions = createMockTransactionActions();
 
