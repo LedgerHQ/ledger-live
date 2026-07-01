@@ -24,6 +24,7 @@ const getBlockMock = jest.fn<Promise<{ baseFeePerGas: bigint | undefined }>, unk
 const readContractMock = jest.fn(async ({ functionName }: { functionName: string }) => {
   if (functionName === "getAccountNonvotingLockedGold") return BigInt(0);
   if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
+  if (functionName === "getGroupsVotedForByAccount") return [VALID_RECIPIENT];
   return BigInt(0);
 });
 

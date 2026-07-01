@@ -8,9 +8,11 @@ import {
   MAX_FEES_THRESHOLD_MULTIPLIER,
   ZERO_ADDRESS,
 } from "../constants";
+import { CeloGroupNotVoted } from "../errors";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { celoEstimateGas, getCeloClient } from "../network/client";
 import { getRegistryAddressFor } from "../network/registry";
+import { voteSignerAccount } from "../network/sdk";
 import type { CeloAccount, CeloTransactionRequest, Transaction } from "../types";
 import { valueToHex, isSameTokenAsFee, normalizeAndSubtract, convertNumberDecimals } from "./utils";
 
@@ -196,6 +198,42 @@ const buildVoteTx = async (
   };
 };
 
+/**
+ * Resolve the index of `group` within the account's list of voted-for groups.
+ *
+ * Election.revokePending / revokeActive take this index as their 5th argument and
+ * enforce `group == groupsVoted[index]`, reverting with "Bad index" otherwise. It
+ * must NOT be confused with `transaction.index`, which this codebase uses only as a
+ * pending(0)/active(1) marker. Hard-coding it to 0 breaks revoke for any account that
+ * has voted for more than one group and revokes a non-first group.
+ *
+ * The vote-signer resolution mirrors `getVotes` in `network/sdk`, so the computed
+ * index lines up with the same vote list shown in the UI (and thus the group the user
+ * is revoking). The positional index isn't derivable from the preloaded
+ * `celoResources.votes` (which store a pending/active marker, not the group's
+ * position), so it's read on demand here.
+ */
+const getVotedGroupIndex = async (
+  electionAddress: `0x${string}`,
+  account: CeloAccount,
+  group: `0x${string}`,
+): Promise<bigint> => {
+  const client = getCeloClient();
+  const signerAddress = (await voteSignerAccount(account.freshAddress)) as `0x${string}`;
+  const groupsVotedFor = await client.readContract({
+    address: electionAddress,
+    abi: electionABI,
+    functionName: "getGroupsVotedForByAccount",
+    args: [signerAddress],
+  });
+
+  const index = groupsVotedFor.findIndex(g => g.toLowerCase() === group.toLowerCase());
+  if (index < 0) {
+    throw new CeloGroupNotVoted(`celo: group ${group} not found in account's voted groups`);
+  }
+  return BigInt(index);
+};
+
 const buildRevokeTx = async (
   account: CeloAccount,
   transaction: Transaction,
@@ -205,13 +243,11 @@ const buildRevokeTx = async (
   const recipient = transaction.recipient as `0x${string}`;
   const revokeValue = BigInt(value.toFixed());
 
-  const { lesser, greater } = await getVoteNeighbors(
-    electionAddress,
-    recipient,
-    revokeValue,
-    false,
-  );
-  const revokeArgs = [recipient, revokeValue, lesser, greater, BigInt(0)] as const;
+  const [{ lesser, greater }, groupIndex] = await Promise.all([
+    getVoteNeighbors(electionAddress, recipient, revokeValue, false),
+    getVotedGroupIndex(electionAddress, account, recipient),
+  ]);
+  const revokeArgs = [recipient, revokeValue, lesser, greater, groupIndex] as const;
   const functionName = transaction.index === 0 ? "revokePending" : "revokeActive";
 
   return {
