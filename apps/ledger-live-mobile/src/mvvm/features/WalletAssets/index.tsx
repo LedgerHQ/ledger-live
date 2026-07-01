@@ -21,6 +21,8 @@ export const WalletAssetsView: React.FC<WalletAssetsViewProps> = ({
     shouldAddBottomPadding,
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
+    shouldDisplayBorrowSection,
+    onBorrowPress,
   } = useWalletAssetsViewModel();
   const { bottom } = useSafeAreaInsets();
 
@@ -37,6 +39,8 @@ export const WalletAssetsView: React.FC<WalletAssetsViewProps> = ({
         variant={variant}
         shouldDisplayAssetSection={shouldDisplayAssetSection}
         shouldDisplayAssetDiscoverability={shouldDisplayAssetDiscoverability}
+        shouldDisplayBorrowSection={shouldDisplayBorrowSection}
+        onBorrowPress={onBorrowPress}
       />
       <AssetsButtonSection
         variant={variant}

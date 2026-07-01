@@ -7,6 +7,8 @@ import {
   MAX_STABLECOINS_TO_DISPLAY,
 } from "LLM/features/WalletAssets/constants";
 import { usePortfolioSectionActions } from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
+import { useBorrowLiveConfig } from "LLM/features/Borrow/hooks/useBorrowLiveConfig";
+import { usePortfolioBorrowSectionViewModel } from "LLM/features/WalletAssets/views/BorrowSection/usePortfolioBorrowSectionViewModel";
 
 interface WalletAssetsViewModelResult {
   hasMore: boolean;
@@ -14,6 +16,8 @@ interface WalletAssetsViewModelResult {
   shouldAddBottomPadding: boolean;
   shouldDisplayAssetSection: boolean;
   shouldDisplayAssetDiscoverability: boolean;
+  shouldDisplayBorrowSection: boolean;
+  onBorrowPress: () => void;
 }
 
 export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
@@ -26,6 +30,8 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
     shouldDisplayGraphRework,
     shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("mobile");
+  const borrowConfig = useBorrowLiveConfig();
+  const { onPress: onBorrowPress } = usePortfolioBorrowSectionViewModel();
 
   const hasMore = useMemo(
     () =>
@@ -43,5 +49,7 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
       shouldDisplayOperationsList && walletCardsDisplayed.length === 0 && shouldDisplayGraphRework,
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
+    shouldDisplayBorrowSection: borrowConfig?.enabled ?? false,
+    onBorrowPress,
   };
 }

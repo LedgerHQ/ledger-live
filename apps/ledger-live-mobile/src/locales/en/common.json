@@ -2847,9 +2847,9 @@
       "description": "Trade with leverage"
     },
     "borrowEntry": {
-      "title": "Loans",
-      "cardTitle": "Borrow Stablecoin",
-      "cardDescription": "Unlock liquidity",
+      "title": "Crypto loans",
+      "cardTitle": "Borrow stablecoins",
+      "cardDescription": "Borrow at competitive rates",
       "cta": "Explore"
     },
     "recommended": {
