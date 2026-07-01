@@ -29,6 +29,8 @@ import {
   resolveSwapProvider,
   WALLET_CLI_DEFAULT_SWAP_PROVIDERS,
 } from "./providers";
+import { swapFlowId, trackSwapFailed, trackSwapSimulated } from "../../analytics/swap-analytics";
+import { getErrorDetails } from "@ledgerhq/live-common/exchange/error";
 
 type RunFullSwapPipeline = typeof runFullSwapPipelineDefault;
 type RunCliSwapDiePipeline = typeof runCliSwapDiePipelineDefault;
@@ -150,19 +152,46 @@ export async function executeSwapCommand({
   flags: SwapExecuteFlags;
   positional: readonly string[];
 } & SwapExecuteDependencies): Promise<void> {
-  const fromDescriptor = await resolveDescriptor(resolveAccountArg(flags.account, positional));
-  const fromCurrency = findCryptoCurrencyById(flags.from) ?? (await findTokenById(flags.from));
-  const toCurrency = findCryptoCurrencyById(flags.to) ?? (await findTokenById(flags.to));
+  const flowId = swapFlowId();
+  const resolveSwapExecuteContext = async () => {
+    const fromDescriptor = await resolveDescriptor(resolveAccountArg(flags.account, positional));
+    const fromCurrency = findCryptoCurrencyById(flags.from) ?? (await findTokenById(flags.from));
+    const toCurrency = findCryptoCurrencyById(flags.to) ?? (await findTokenById(flags.to));
 
-  if (!fromCurrency) {
-    throw new Error(`Unknown source currency (--from): ${flags.from}`);
+    if (!fromCurrency) {
+      throw new Error(`Unknown source currency (--from): ${flags.from}`);
+    }
+
+    if (!toCurrency) {
+      throw new Error(`Unknown destination currency (--to): ${flags.to}`);
+    }
+
+    const provider = resolveSwapProvider(flags.provider);
+    return { fromDescriptor, fromCurrency, toCurrency, provider };
+  };
+
+  let context: Awaited<ReturnType<typeof resolveSwapExecuteContext>>;
+  try {
+    context = await resolveSwapExecuteContext();
+  } catch (err) {
+    const { name, cause } = getErrorDetails(err);
+    trackSwapFailed({
+      flowId,
+      fromCurrency: flags.from,
+      toCurrency: flags.to,
+      errorCode: cause?.swapCode ?? name ?? "UnknownError",
+    });
+    throw err;
   }
+  const { fromDescriptor, fromCurrency, toCurrency, provider } = context;
 
-  if (!toCurrency) {
-    throw new Error(`Unknown destination currency (--to): ${flags.to}`);
-  }
+  trackSwapSimulated({
+    flowId,
+    fromCurrency: flags.from,
+    toCurrency: flags.to,
+    provider,
+  });
 
-  const provider = resolveSwapProvider(flags.provider);
   const networkCurrencyId =
     fromCurrency.type === "TokenCurrency" ? fromCurrency.parentCurrencyId : fromCurrency.id;
   const network = networkStringFromCurrencyId(networkCurrencyId);
@@ -269,6 +298,7 @@ export async function executeSwapCommand({
       fromParentAccount,
       toParentAccount,
       getAccountBridge: getBridge,
+      flowId,
     });
 
     out.swapExecuteFullResult({
