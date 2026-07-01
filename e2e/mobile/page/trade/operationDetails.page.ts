@@ -35,7 +35,7 @@ export default class OperationDetailsPage {
 
   @Step("Wait for operation details")
   async waitForOperationDetails() {
-    await waitForElementById(this.titleId, 30000);
+    await waitForElementById(this.titleId);
   }
 
   @Step("Check account details")

@@ -161,3 +161,16 @@ export const normalizeText = (text: string) =>
     .replace(/\s+/g, " ")
     .replace(/\u202F/g, " ")
     .trim();
+
+// Escapes regex metacharacters so a dynamic value (ticker, provider name, currency name, ...)
+// can be embedded in a RegExp and matched literally.
+export const escapeRegExp = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+
+export const parseTickerAmount = (text: string, ticker: string) => {
+  const normalized = normalizeText(text).replace(/,/g, "");
+  const tickerAmountRegex = new RegExp(String.raw`(-?\d+(?:\.\d+)?)\s*${escapeRegExp(ticker)}`);
+  const match = tickerAmountRegex.exec(normalized);
+  if (!match) throw new Error(`Unable to parse ${ticker} amount from "${text}"`);
+  return Number(match[1]);
+};

@@ -1,33 +1,43 @@
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
+import { FF_LWM_WALLET_40_Q2 } from "../../utils/featureFlagUtils";
+import type { PartialFeatures } from "@shared/feature-flags";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
+const DAI_TICKER = Currency.POL_DAI.ticker;
+const USDT_TICKER = Currency.ETH_USDT.ticker;
+const USDT_ASSET_NAME = Currency.ETH_USDT.name;
+const POLYGON_DAI_ASSET_NAME = Currency.POL_DAI.name;
+
+// Aggregated-asset display name and market data are specific to the
+// `wallet40-many-stablecoins` userdata fixture, with no shared-enum equivalent.
 const DAI_ASSET_NAME = "Dai Stablecoin v2.0";
-const DAI_TICKER = "DAI";
-const USDT_ASSET_NAME = "Tether USD";
-const USDT_TICKER = "USDT";
 const USDT_MARKET_ID = "tether";
 const USDT_MARKET_NAME = "Tether";
+
+// Account IDs are tied to the `wallet40-many-stablecoins` userdata fixture; the shared
+// `Account` enum is keyed by derivation path, not full account id, so they stay local.
 const ETHEREUM_ACCOUNT_ID = "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:";
 const POLYGON_ACCOUNT_ID = "js:2:polygon:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:";
 const POLYGON_DAI_ACCOUNT_ID =
   "js:2:polygon:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+polygon%2Ferc20%2F(pos)~!underscore!~dai~!underscore!~stablecoin";
-const POLYGON_DAI_ASSET_NAME = "(PoS) Dai Stablecoin";
+
+// Reuse the shared Q2 Wallet 4.0 flags (aggregatedAssets + assetDiscoverability enabled).
+// lazyOnboarding is forced off: leaving it on opened onboarding modals at startup that
+// broke this flow.
 const ASSET_AGGREGATION_FEATURE_FLAGS = {
-  ...WALLET_40_FEATURE_FLAGS,
   lwmWallet40: {
-    ...WALLET_40_FEATURE_FLAGS.lwmWallet40,
+    ...FF_LWM_WALLET_40_Q2.lwmWallet40,
     params: {
-      ...WALLET_40_FEATURE_FLAGS.lwmWallet40.params,
-      assetDiscoverability: true,
+      ...FF_LWM_WALLET_40_Q2.lwmWallet40.params,
       lazyOnboarding: false,
-      tour: false,
+      pnl: false,
     },
   },
-} as const;
+};
 
 const getAddressFromAccountId = (accountId: string) => {
   const address = accountId.split(":")[3];
@@ -36,26 +46,60 @@ const getAddressFromAccountId = (accountId: string) => {
 };
 
 const getAddressPrefix = (accountId: string) => getAddressFromAccountId(accountId).slice(0, 4);
+const isAggregatedAssetsDisabledByJson = () =>
+  parseExtraFeatureFlags<PartialFeatures>(process.env.E2E_FEATURE_FLAGS_JSON).lwmWallet40?.params
+    ?.aggregatedAssets === false;
+
+const describeWithAggregatedAssets = isAggregatedAssetsDisabledByJson() ? describe.skip : describe;
+
+const ensurePortfolioReady = async () => {
+  if (await app.account.isAccountDetailVisible()) {
+    await app.account.goBackFromAccountDetail();
+  }
+
+  if (await app.assetDetail.isAssetDetailPageVisible()) {
+    await app.common.goToPreviousPage();
+  }
+
+  if (await app.portfolio.isStablecoinListPageVisible()) {
+    await app.common.goToPreviousPage();
+  }
+
+  await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
+  await app.mainNavigation.waitForWallet40Ready();
+};
+
+const openStablecoinAssetDetail = async (assetName: string, ticker: string) => {
+  if (!(await app.portfolio.isStablecoinListPageVisible())) {
+    await ensurePortfolioReady();
+    await app.portfolio.openStablecoinsListW40();
+  } else {
+    await app.portfolio.checkStablecoinListPageVisible();
+  }
+
+  await app.portfolio.checkAggregatedAssetRowVisible(assetName, app.portfolio.stablecoinListId);
+  await app.portfolio.openAssetDetailW40(assetName, app.portfolio.stablecoinListId);
+  await app.assetDetail.expectAssetDetailPageForTicker(ticker);
+};
+
+const ensureDaiAssetDetail = async () => {
+  if (await app.assetDetail.isAssetDetailPageForTickerVisible(DAI_TICKER)) {
+    return;
+  }
+
+  await openStablecoinAssetDetail(DAI_ASSET_NAME, DAI_TICKER);
+};
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
+describeWithAggregatedAssets("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
   beforeAll(async () => {
     await app.init({
-      userdata: "skip-onboarding-with-last-seen-device",
-      cliCommandsOnApp: [
-        {
-          app: Account.ETH_1.currency.speculosApp,
-          cmd: liveDataCommand(Account.ETH_1),
-        },
-        {
-          app: Account.POL_1.currency.speculosApp,
-          cmd: liveDataCommand(Account.POL_1),
-        },
-      ],
+      userdata: "wallet40-many-stablecoins",
       featureFlags: ASSET_AGGREGATION_FEATURE_FLAGS,
     });
+    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible(10_000);
     await app.mainNavigation.waitForWallet40Ready();
-    await app.portfolio.closeAnalyticsConsentDrawerIfVisible(5_000);
+    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });
 
   TAGS.forEach(tag => $Tag(tag));
@@ -101,7 +145,7 @@ describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
   $TmsLink("B2CQA-5523");
   $TmsLink("B2CQA-5526");
   it("shows asset detail market data, balances and transaction details", async () => {
-    await app.assetDetail.expectAssetDetailPageForTicker(DAI_TICKER);
+    await ensureDaiAssetDetail();
     await app.assetDetail.expectMarketDataVisible();
     await app.assetDetail.expectTotalBalanceCryptoForTicker(DAI_TICKER);
     await app.assetDetail.expectPortfolioSectionsVisible();
@@ -119,6 +163,7 @@ describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
 
   $TmsLink("B2CQA-5535");
   it("opens an address detail page with balances, actions, assets and transactions", async () => {
+    await ensureDaiAssetDetail();
     await app.assetDetail.openHoldingAddress(POLYGON_ACCOUNT_ID);
 
     await app.account.waitAndVerifyAccountName(POLYGON_DAI_ASSET_NAME);
@@ -138,41 +183,16 @@ describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
   $TmsLink("B2CQA-5532");
   $TmsLink("B2CQA-5533");
   it("stars an asset and finds it in the starred market list", async () => {
-    await app.account.goBackFromAccountDetail();
-    await app.assetDetail.expectAssetDetailPageForTicker(DAI_TICKER);
-    await app.common.goToPreviousPage();
-    if (await app.assetDetail.isAssetDetailPageVisible(1_000)) {
-      await app.common.goToPreviousPage();
-    }
-    if (!(await app.portfolio.isStablecoinListPageVisible(3_000))) {
-      await app.mainNavigation.waitForWallet40Ready();
-      await app.portfolio.openStablecoinsListW40();
-    }
-    await app.portfolio.openAssetDetailW40(USDT_ASSET_NAME, app.portfolio.stablecoinListId);
-    await app.assetDetail.expectAssetDetailPageForTicker(USDT_TICKER);
+    await openStablecoinAssetDetail(USDT_ASSET_NAME, USDT_TICKER);
     await app.assetDetail.addToFavorites();
-    const favoriteActionLabel =
-      await app.assetDetail.getFavoriteActionLabel("Remove from favorites");
-    expect(favoriteActionLabel).toContain("Remove from favorites");
-    await app.assetDetail.closeCoinOptions();
 
-    await app.common.goToPreviousPage();
-    if (await app.assetDetail.isAssetDetailPageVisible(1_000)) {
-      await app.common.goToPreviousPage();
-    }
-    if (await app.portfolio.isStablecoinListPageVisible(3_000)) {
-      await app.common.goToPreviousPage();
-    }
-    await app.mainNavigation.waitForWallet40Ready();
-    await app.common.disableSynchronizationForAndroid();
-    try {
-      await app.portfolio.expectMarketBannerVisible("up");
-      await app.portfolio.tapMarketBannerTitle();
-      await app.market.expectMarketScreenVisible();
-      await app.market.filterStarredAssetsOnMarketScreen();
-      await app.market.expectMarketScreenItemVisible(USDT_MARKET_ID, USDT_MARKET_NAME);
-    } finally {
-      await app.common.enableSynchronizationForAndroid();
-    }
+    await app.market.openViaDeeplink();
+    await app.market.expectMarketScreenVisible();
+    await app.market.filterStarredAssetsOnMarketScreen();
+    const isStarredAssetListed = await app.market.isMarketScreenItemVisible(
+      USDT_MARKET_ID,
+      USDT_MARKET_NAME,
+    );
+    expect(isStarredAssetListed).toBe(true);
   });
 });

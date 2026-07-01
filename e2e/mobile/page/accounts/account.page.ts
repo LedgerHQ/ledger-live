@@ -1,6 +1,6 @@
-import { by, element as detoxElement, waitFor } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
+import { VISIBILITY_PROBE_TIMEOUT } from "../../helpers/elementHelpers";
 import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 
 export default class AccountPage {
@@ -26,7 +26,8 @@ export default class AccountPage {
 
   accountGraph = (accountId: string) => getElementById(this.accountGraphId(accountId));
   accountBalance = (accountId: string) => getElementById(`account-balance-${accountId}`);
-  accountAddress = (accountId: string) => getElementById(`account-address-${accountId}`);
+  accountAddressId = (accountId: string) => `account-address-${accountId}`;
+  accountAddress = (accountId: string) => getElementById(this.accountAddressId(accountId));
   accountAdvancedLogRow = () => getElementById("account-advanced-log-row");
   accountDeleteRow = () => getElementById("account-settings-delete-row");
   accountDeleteConfirm = () => getElementById("delete-account-confirmation-button");
@@ -56,6 +57,11 @@ export default class AccountPage {
   async goBackFromAccountDetail() {
     await waitForElementById(this.headerBackButtonId);
     await tapById(this.headerBackButtonId);
+  }
+
+  @Step("Check if account detail is visible")
+  async isAccountDetailVisible(timeout = VISIBILITY_PROBE_TIMEOUT) {
+    return await IsIdVisible(this.accountScreenScrollView, timeout);
   }
 
   @Step("Go to the account with the name")
@@ -115,14 +121,23 @@ export default class AccountPage {
     await typeTextById(this.accountRenameTextInputId, name);
   }
 
+  // The operations history section wraps the whole operations list, so it is
+  // taller than the viewport and can never reach the default 75% visibility.
+  // A lower threshold still proves the section scrolled into view.
+  operationHistoryVisibilityPercentage = 35;
+
   @Step("Expect operation history to be visible")
   async expectOperationHistoryVisible(accountId: string) {
     const id = this.operationHistorySectionId(accountId);
-    await waitFor(detoxElement(by.id(id)))
-      .toBeVisible(35)
-      .whileElement(by.id(this.accountScreenScrollView))
-      .scroll(250, "down", Number.NaN, 0.55);
-    await detoxExpect(getElementById(id)).toBeVisible(35);
+    await scrollToId(
+      id,
+      this.accountScreenScrollView,
+      250,
+      "down",
+      undefined,
+      this.operationHistoryVisibilityPercentage,
+    );
+    await detoxExpect(getElementById(id)).toBeVisible(this.operationHistoryVisibilityPercentage);
   }
 
   @Step("Scroll to operation history")
@@ -150,9 +165,9 @@ export default class AccountPage {
 
   @Step("Get visible account address label")
   async getVisibleAccountAddressLabel(accountId: string) {
-    await scrollToId(`account-address-${accountId}`, this.accountScreenScrollView);
+    await scrollToId(this.accountAddressId(accountId), this.accountScreenScrollView);
     await detoxExpect(this.accountAddress(accountId)).toBeVisible();
-    return await getLabelOfElement(`account-address-${accountId}`);
+    return await getLabelOfElement(this.accountAddressId(accountId));
   }
 
   @Step("Expect account receive and send actions")

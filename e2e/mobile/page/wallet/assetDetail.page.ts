@@ -1,5 +1,10 @@
 import { Step } from "jest-allure2-reporter/api";
-import { delay, isAndroid, normalizeText } from "../../helpers/commonHelpers";
+import { delay, normalizeText, parseTickerAmount } from "../../helpers/commonHelpers";
+import {
+  DEFAULT_TIMEOUT,
+  QUICK_VISIBILITY_PROBE_TIMEOUT,
+  VISIBILITY_PROBE_TIMEOUT,
+} from "../../helpers/elementHelpers";
 
 type HoldingAddressExpectation = {
   accountId: string;
@@ -8,15 +13,7 @@ type HoldingAddressExpectation = {
 };
 
 const TOKEN_BALANCE_DECIMAL_PRECISION = 5;
-const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
-
-const parseTickerAmount = (text: string, ticker: string) => {
-  const normalized = normalizeText(text).replace(/,/g, "");
-  const tickerAmountRegex = new RegExp(String.raw`(-?\d+(?:\.\d+)?)\s*${escapeRegExp(ticker)}`);
-  const match = tickerAmountRegex.exec(normalized);
-  if (!match) throw new Error(`Unable to parse ${ticker} amount from "${text}"`);
-  return Number(match[1]);
-};
+const OPERATION_DETAILS_OPEN_TIMEOUT = 5000;
 
 export default class AssetDetailPage {
   screenId = "asset-detail-screen";
@@ -30,66 +27,56 @@ export default class AssetDetailPage {
   addAccountId = "asset-detail-add-account";
   coinOptionsTrailingId = "asset-detail-coin-options-trailing";
   coinOptionsFavouriteRowId = "asset-detail-coin-options-favourite-row";
+  coinOptionsAddFavouriteRowId = "asset-detail-coin-options-favourite-row-add";
   bottomSheetCloseButtonId = "bottom-sheet-header-close-button";
+  addressesId = "asset-detail-addresses";
+  addressesHeaderId = "asset-detail-addresses-header";
+  transactionsId = "asset-detail-transactions";
   operationsListItemId = "operations-list-item";
   transactionsHeaderId = "asset-detail-transactions-header";
+  operationDetailsTitleId = "operationDetails-title";
 
   addressItemNameId = (accountId: string) => `asset-detail-address-item-name-${accountId}`;
   addressItemAddressId = (accountId: string) => `asset-detail-address-item-address-${accountId}`;
   addressItemCounterValueId = (accountId: string) =>
     `asset-detail-address-item-countervalue-${accountId}`;
   addressItemBalanceId = (accountId: string) => `asset-detail-address-item-balance-${accountId}`;
-  favouriteRowWithText = (text: string) =>
-    getElementByIdWithDescendantTexts(this.coinOptionsFavouriteRowId, text);
   operationByTicker = (ticker: string) =>
     getElementByIdWithDescendantTexts(this.operationsListItemId, ticker);
 
   private async scrollToTransactions() {
-    await scrollToText("Transactions", this.scrollViewId, 350, "down");
+    await scrollToId(this.transactionsHeaderId, this.scrollViewId, 500, "down");
   }
 
-  private async positionTransactionForAndroidTap(ticker: string) {
-    if (!isAndroid()) return;
-
-    await scrollToId(this.operationsListItemId, this.scrollViewId, 700, "down");
-    await getElementById(this.scrollViewId).swipe("up", "slow", 0.8);
-    await detoxExpect(this.operationByTicker(ticker).atIndex(0)).toBeVisible();
-    await delay(500);
-  }
-
-  private async positionTransactionForNonAndroidTap(ticker: string) {
-    if (isAndroid()) return;
-
-    await scrollToId(this.operationsListItemId, this.scrollViewId, 500, "down");
-    await getElementById(this.scrollViewId).swipe("up", "slow", 0.6);
-    await detoxExpect(this.operationByTicker(ticker).atIndex(0)).toBeVisible();
-    // Let the scroll settle so CI does not interpret the next tap as a continued scroll.
-    await delay(500);
+  private async tapTransactionUntilOperationDetailsOpen() {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      await tapById(this.operationsListItemId, 0);
+      if (await IsIdVisible(this.operationDetailsTitleId, OPERATION_DETAILS_OPEN_TIMEOUT)) return;
+      await delay(500);
+    }
+    throw new Error("Operation details did not open after tapping the transaction");
   }
 
   private async scrollToAddressItem(accountId: string) {
     await scrollToId(this.addressItemNameId(accountId), this.scrollViewId, 450, "down");
-    await waitForElementById(this.addressItemNameId(accountId), 10_000, {
+    await waitForElementById(this.addressItemNameId(accountId), DEFAULT_TIMEOUT, {
       checkVisibility: false,
     });
   }
 
-  private async openCoinOptions(expectedFavouriteText: string) {
-    if (await IsIdVisible(this.coinOptionsFavouriteRowId, 500)) {
-      const favouriteRowLabel = await getLabelOfElement(this.coinOptionsFavouriteRowId);
-      jestExpect(favouriteRowLabel).toContain(expectedFavouriteText);
+  private async openCoinOptions() {
+    if (await IsIdVisible(this.coinOptionsFavouriteRowId, QUICK_VISIBILITY_PROBE_TIMEOUT)) {
       return;
     }
 
     await waitForElementById(this.coinOptionsTrailingId);
     await tapById(this.coinOptionsTrailingId);
-    await detoxExpect(this.favouriteRowWithText(expectedFavouriteText)).toBeVisible();
+    await detoxExpect(getElementById(this.coinOptionsFavouriteRowId)).toBeVisible();
   }
 
-  private async tapFavouriteRowWithText(text: string) {
-    await detoxExpect(this.favouriteRowWithText(text)).toBeVisible();
-    await tapById(this.coinOptionsFavouriteRowId);
-    await waitForElementNotVisible(this.coinOptionsFavouriteRowId);
+  private async tapFavouriteRow(expectedStateId: string) {
+    await detoxExpect(getElementById(expectedStateId)).toBeVisible();
+    await tapByIdAndExpectToDisappear(this.coinOptionsFavouriteRowId);
   }
 
   @Step("Expect Asset Detail page for ticker")
@@ -110,12 +97,21 @@ export default class AssetDetailPage {
   }
 
   @Step("Check if Asset Detail page is visible")
-  async isAssetDetailPageVisible(timeout = 1000) {
+  async isAssetDetailPageVisible(timeout = VISIBILITY_PROBE_TIMEOUT) {
     return await IsIdVisible(this.scrollViewId, timeout);
+  }
+
+  @Step("Check if Asset Detail page for ticker is visible")
+  async isAssetDetailPageForTickerVisible(ticker: string, timeout = VISIBILITY_PROBE_TIMEOUT) {
+    return (
+      (await IsIdVisible(this.scrollViewId, timeout)) &&
+      (await IsIdVisible(this.coinCapsuleIconId(ticker), timeout))
+    );
   }
 
   @Step("Expect Asset Detail market data")
   async expectMarketDataVisible() {
+    await scrollToId(this.marketPriceId, this.scrollViewId, 1200, "up");
     await waitForElementById(this.marketPriceId);
     await detoxExpect(getElementById(this.marketPriceId)).toBeVisible();
     await detoxExpect(getElementById(this.marketVariationId)).toBeVisible();
@@ -134,16 +130,16 @@ export default class AssetDetailPage {
   async expectPortfolioSectionsVisible() {
     await scrollToId(this.totalBalanceId, this.scrollViewId);
     await detoxExpect(getElementById(this.totalBalanceId)).toBeVisible();
-    await scrollToText("Accounts", this.scrollViewId, 350, "down");
-    await detoxExpect(getElementByText("Accounts")).toBeVisible();
+    await scrollToId(this.addressesHeaderId, this.scrollViewId, 350, "down");
+    await detoxExpect(getElementById(this.addressesHeaderId)).toBeVisible();
     await detoxExpect(getElementById(this.addAccountId)).toBeVisible();
     await this.scrollToTransactions();
-    await detoxExpect(getElementByText("Transactions")).toBeVisible();
+    await detoxExpect(getElementById(this.transactionsHeaderId)).toBeVisible();
   }
 
   @Step("Open Add account network drawer from Asset Detail")
   async openAddAccountNetworkDrawer() {
-    await scrollToText("Accounts", this.scrollViewId, 350, "down");
+    await scrollToId(this.addressesHeaderId, this.scrollViewId, 350, "down");
     await tapById(this.addAccountId);
     await waitForElementByText("Select network");
   }
@@ -219,6 +215,7 @@ export default class AssetDetailPage {
   @Step("Get visible Asset Detail transaction count for ticker")
   async getVisibleTransactionCountForTicker(ticker: string) {
     await this.scrollToTransactions();
+    await scrollToId(this.operationsListItemId, this.scrollViewId, 300, "down");
     const visibleOperationsCount = await countElementsById(this.operationsListItemId);
     jestExpect(visibleOperationsCount).toBeGreaterThan(0);
 
@@ -233,36 +230,24 @@ export default class AssetDetailPage {
   @Step("Open first Asset Detail transaction")
   async openFirstTransaction(ticker: string) {
     await this.scrollToTransactions();
-    await this.positionTransactionForNonAndroidTap(ticker);
-    await this.positionTransactionForAndroidTap(ticker);
+    await scrollToId(this.operationsListItemId, this.scrollViewId, 300, "down");
+    // Extra "slack" scroll so the first operation is centered and not stuck behind the
+    // sticky Buy/Swap footer, which would otherwise intercept the tap on Android.
+    await scrollByPixels(this.scrollViewId, 200, "down");
     await detoxExpect(this.operationByTicker(ticker).atIndex(0)).toBeVisible();
-    await tapByElement(this.operationByTicker(ticker).atIndex(0));
+    await this.tapTransactionUntilOperationDetailsOpen();
   }
 
   @Step("Open Asset Detail transactions history")
   async openTransactionsHistory() {
     await scrollToId(this.transactionsHeaderId, this.scrollViewId, 500, "down");
     await detoxExpect(getElementById(this.transactionsHeaderId)).toBeVisible();
-    await tapByText("Transactions");
+    await tapById(this.transactionsHeaderId);
   }
 
   @Step("Add asset to favorites from Asset Detail")
   async addToFavorites() {
-    await this.openCoinOptions("Add to favorites");
-    await this.tapFavouriteRowWithText("Add to favorites");
-  }
-
-  @Step("Get favorite action label from Asset Detail")
-  async getFavoriteActionLabel(expectedFavouriteText: string) {
-    await this.openCoinOptions(expectedFavouriteText);
-    return await getLabelOfElement(this.coinOptionsFavouriteRowId);
-  }
-
-  @Step("Close Asset Detail coin options")
-  async closeCoinOptions() {
-    await tapById(this.bottomSheetCloseButtonId);
-    await waitForElementNotVisible(this.bottomSheetCloseButtonId);
-    await waitForElementNotVisible(this.coinOptionsFavouriteRowId);
-    await waitForElementById(this.coinOptionsTrailingId);
+    await this.openCoinOptions();
+    await this.tapFavouriteRow(this.coinOptionsAddFavouriteRowId);
   }
 }

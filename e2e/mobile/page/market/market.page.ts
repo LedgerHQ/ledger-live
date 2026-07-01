@@ -12,6 +12,7 @@ export default class MarketPage {
   marketScreenSearchBarId = "market-screen-search-bar";
   marketAssetsCategorySwitcherStarredId = "market-screen-assets-category-switcher-starred";
   marketRowTitleBaseId = "market-row-title-";
+  marketItemId = (id: string) => `marketItem-${id}`;
   marketFilterSortButton = () => getElementById("market-filter-sort");
   marketFilterTimeButton = () => getElementById("market-filter-time");
   marketFilterCurrencyButton = () => getElementById("market-filter-currency");
@@ -23,7 +24,7 @@ export default class MarketPage {
   marketRowTitle = (currency: CurrencyType) =>
     getElementById(`${this.marketRowTitleBaseId}${currency.ticker}`);
   marketScreenItemWithTitle = (marketId: string, title: string) =>
-    getElementByIdWithDescendantTexts(`marketItem-${marketId}`, title);
+    getElementByIdWithDescendantTexts(this.marketItemId(marketId), title);
   starMarketListButton = () => getElementById("toggle-starred-currencies");
   marketQuickActionButton = (action: "send" | "receive" | "buy" | "sell" | "swap") =>
     getElementById(`market-quick-action-button-${action}`);
@@ -32,12 +33,16 @@ export default class MarketPage {
   marketCategorySwitcherId = "market-screen-assets-category-switcher";
   marketCategoryTabId = (value: string) => `${this.marketCategorySwitcherId}-${value}`;
   headerBackButtonId = "navigation-header-back-button";
+  assetDetailScrollViewId = "asset-detail-scroll-view";
+  assetDetailCoinCapsuleId = "asset-detail-coin-capsule";
+  assetDetailMarketPriceId = "asset-detail-market-price";
+  assetDetailCoinOptionsTrailingId = "asset-detail-coin-options-trailing";
 
   marketScreenFilterButton = () => getElementById("market-screen-assets-filter-button");
   coinOptionsTrigger = () => getElementById("asset-detail-coin-options-trailing");
   coinOptionsFavouriteRow = () => getElementById("asset-detail-coin-options-favourite-row");
   // The new MarketScreen keys rows by ledger currency id, the legacy list by ticker.
-  marketScreenRow = (currency: CurrencyType) => getElementById(`marketItem-${currency.id}`);
+  marketScreenRow = (currency: CurrencyType) => getElementById(this.marketItemId(currency.id));
 
   @Step("Go back from the market screen")
   async goBack() {
@@ -59,6 +64,28 @@ export default class MarketPage {
       await waitForElementById(scrollViewId);
     } else {
       await detoxExpect(this.starButton()).toBeVisible();
+    }
+  }
+
+  @Step("Expect asset page")
+  async expectAssetPageVisible() {
+    if (await isAggregatedAssetsEnabled()) {
+      await waitForElementById(this.assetDetailScrollViewId);
+      await detoxExpect(getElementById(this.assetDetailScrollViewId)).toBeVisible();
+      await detoxExpect(getElementById(this.assetDetailMarketPriceId)).toBeVisible();
+      await detoxExpect(getElementById(this.assetDetailCoinCapsuleId)).toBeVisible();
+      await detoxExpect(getElementById(this.assetDetailCoinOptionsTrailingId)).toBeVisible();
+    } else {
+      await this.expectMarketDetailPage();
+    }
+  }
+
+  @Step("Leave asset page")
+  async leaveAssetPage() {
+    if (await isAggregatedAssetsEnabled()) {
+      await tapById(this.headerBackButtonId);
+    } else {
+      await this.leaveMarketDetailPage();
     }
   }
 
@@ -150,10 +177,14 @@ export default class MarketPage {
     }
   }
 
-  @Step("Expect market screen item")
-  async expectMarketScreenItemVisible(marketId: string, title: string) {
-    await waitForElementById(`marketItem-${marketId}`);
-    await detoxExpect(this.marketScreenItemWithTitle(marketId, title)).toBeVisible();
+  @Step("Check market screen item is visible")
+  async isMarketScreenItemVisible(marketId: string, title: string): Promise<boolean> {
+    try {
+      await waitForElement(this.marketScreenItemWithTitle(marketId, title));
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   @Step("Tap on market quick action button ")

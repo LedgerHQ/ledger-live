@@ -39,6 +39,7 @@ import EarnV2DashboardPage from "./trade/earnV2Dashboard.page";
 import ModularDrawer from "./drawer/modular.drawer";
 import SwapTransactionStatusDrawer from "./drawer/swapTransactionStatus.drawer";
 import UndelegatePage from "./trade/undelegate.page";
+import Wallet40DrawersPage from "./drawer/wallet40Drawers.drawer";
 
 import path from "path";
 import fs from "fs";
@@ -98,6 +99,7 @@ export class Application {
   private readonly earnV2DashboardPageInstance = lazyInit(EarnV2DashboardPage);
   private modularDrawerPageInstance = lazyInit(ModularDrawer);
   private swapTransactionStatusDrawerInstance = lazyInit(SwapTransactionStatusDrawer);
+  private readonly wallet40DrawersPageInstance = lazyInit(Wallet40DrawersPage);
   private readonly topBarSearchPageInstance = lazyInit(TopBarSearchPage);
   private undelegatePageInstance = lazyInit(UndelegatePage);
 
@@ -263,6 +265,10 @@ export class Application {
 
   public get swapTransactionStatusDrawer() {
     return this.swapTransactionStatusDrawerInstance();
+  }
+
+  public get wallet40Drawers() {
+    return this.wallet40DrawersPageInstance();
   }
 
   public get topBarSearch() {

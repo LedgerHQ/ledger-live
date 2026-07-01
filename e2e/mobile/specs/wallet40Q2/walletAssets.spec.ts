@@ -26,9 +26,9 @@ describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - Onboard without accounts", (
       speculosApp: currency.speculosApp,
       featureFlags: FF_WALLET_ASSETS,
     });
-    await app.portfolio.closeWallet40BlockingDrawersIfVisible(10_000);
+    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible(10_000);
     await app.mainNavigation.waitForWallet40Ready();
-    await app.portfolio.closeWallet40BlockingDrawersIfVisible();
+    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });
 
   tmsLinks.forEach(link => $TmsLink(link));
@@ -43,8 +43,8 @@ describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - Onboard without accounts", (
 
   it("should redirect to the correct asset market page when selecting an asset", async () => {
     await app.portfolio.tapFirstAssetItemW40();
-    await app.assetDetail.expectAssetDetailPageVisible();
-    await app.common.goToPreviousPage();
+    await app.market.expectAssetPageVisible();
+    await app.market.leaveAssetPage();
     await app.mainNavigation.waitForWallet40Ready();
   });
 });
@@ -58,9 +58,9 @@ describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - With fewer accounts than sec
       userdata: "wallet40-btc-only",
       featureFlags: FF_WALLET_ASSETS,
     });
-    await app.portfolio.closeWallet40BlockingDrawersIfVisible(10_000);
+    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible(10_000);
     await app.mainNavigation.waitForWallet40Ready();
-    await app.portfolio.closeWallet40BlockingDrawersIfVisible();
+    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });
 
   tmsLinks.forEach(link => $TmsLink(link));
@@ -83,9 +83,9 @@ describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - Open the app with accounts",
       userdata: "wallet40-many-stablecoins",
       featureFlags: FF_WALLET_ASSETS,
     });
-    await app.portfolio.closeWallet40BlockingDrawersIfVisible(10_000);
+    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible(10_000);
     await app.mainNavigation.waitForWallet40Ready();
-    await app.portfolio.closeWallet40BlockingDrawersIfVisible();
+    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });
 
   tmsLinks.forEach(link => $TmsLink(link));

@@ -29,9 +29,9 @@ describe("Wallet 4.0 Q2 - Operations History", () => {
       userdata: "speculos-x-other-account",
       featureFlags: FF_OPERATION_HISTORY,
     });
-    await app.portfolio.closeWallet40BlockingDrawersIfVisible(10_000);
+    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible(10_000);
     await app.mainNavigation.waitForWallet40Ready();
-    await app.portfolio.closeWallet40BlockingDrawersIfVisible();
+    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });
 
   it("should open Tx History from the top bar clock icon", async () => {
@@ -51,9 +51,8 @@ describe("Wallet 4.0 Q2 - Operations History", () => {
 
   it("should open Tx History from within an asset page", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
-    await app.portfolio.goToAccountsW40(CURRENCY.name);
-    await app.assetDetail.expectAssetDetailPageForTicker(CURRENCY.ticker);
-    await app.assetDetail.openTransactionsHistory();
+    await app.portfolio.goToAccounts(CURRENCY.name);
+    await app.common.pressOnSeeAllOperationsButtonFromAssetPage();
     await app.operation.expectOperationsListVisible();
   });
 });

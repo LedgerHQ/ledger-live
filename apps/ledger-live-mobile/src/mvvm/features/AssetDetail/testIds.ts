@@ -42,6 +42,8 @@ export const ASSET_DETAIL_TEST_IDS = {
   coinOptionsTrailing: "asset-detail-coin-options-trailing",
   coinOptionsSheet: "asset-detail-coin-options-sheet",
   coinOptionsFavouriteRow: "asset-detail-coin-options-favourite-row",
+  coinOptionsAddFavouriteRow: "asset-detail-coin-options-favourite-row-add",
+  coinOptionsRemoveFavouriteRow: "asset-detail-coin-options-favourite-row-remove",
   coinOptionsHideRow: "asset-detail-coin-options-hide-row",
   chartOptionsTrailing: "asset-detail-chart-options-trailing",
   chartOptionsSheet: "asset-detail-chart-options-sheet",

@@ -9,7 +9,7 @@ export const WALLET_40_FEATURE_FLAGS = {
       lazyOnboarding: true,
       assetSection: true,
       operationsList: true,
-      aggregatedAssets: true,
+      aggregatedAssets: false,
       myWallet: true,
       pnl: false,
       assetDiscoverability: false,

@@ -1,7 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import { removeSpeculosAndDeregisterKnownSpeculos } from "../utils/speculosUtils";
 import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { isAndroid, isIos, openDeeplink } from "../helpers/commonHelpers";
+import { isIos, openDeeplink } from "../helpers/commonHelpers";
 import { device } from "detox";
 import ErrorPage from "./error.page";
 import { isAggregatedAssetsEnabled } from "../utils/featureFlagUtils";
@@ -21,6 +21,8 @@ export default class CommonPage {
   closeWithConfirmationButtonId = "button-close-add-account";
   errorPage = new ErrorPage();
   seeAllTransactionButton = "portfolio-seeAll-transaction";
+  assetDetailScrollViewId = "asset-detail-scroll-view";
+  assetDetailTransactionsHeaderId = "asset-detail-transactions-header";
 
   searchBar = () => getElementById(this.searchBarId);
   closeButton = () => getElementById("NavigationHeaderCloseButton");
@@ -149,14 +151,6 @@ export default class CommonPage {
     if (isIos()) await device.disableSynchronization();
   }
 
-  async disableSynchronizationForAndroid() {
-    if (isAndroid()) await device.disableSynchronization();
-  }
-
-  async enableSynchronizationForAndroid() {
-    if (isAndroid()) await device.enableSynchronization();
-  }
-
   async enableSynchronization() {
     await device.enableSynchronization();
   }
@@ -166,5 +160,20 @@ export default class CommonPage {
     await detoxExpect(this.assetScreenFlatlistElement()).toBeVisible();
     await scrollToId(this.seeAllTransactionButton, this.assetScreenFlatlistId);
     await tapByElement(this.seeAllOperationsButtonElement());
+  }
+
+  @Step("Press on see all operations button from asset page")
+  async pressOnSeeAllOperationsButtonFromAssetPage() {
+    if (await isAggregatedAssetsEnabled()) {
+      await scrollToId(
+        this.assetDetailTransactionsHeaderId,
+        this.assetDetailScrollViewId,
+        500,
+        "down",
+      );
+      await tapById(this.assetDetailTransactionsHeaderId);
+    } else {
+      await this.pressOnSeeAllOperationsButton();
+    }
   }
 }

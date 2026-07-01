@@ -26,9 +26,9 @@ describe("Wallet 4.0 - Market Banner", () => {
     await app.init({
       userdata: "1AccountBTC1AccountETHReadOnlyFalse",
     });
-    await app.portfolio.closeWallet40BlockingDrawersIfVisible(10_000);
+    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible(10_000);
     await app.mainNavigation.waitForWallet40Ready();
-    await app.portfolio.closeWallet40BlockingDrawersIfVisible();
+    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });
 
   it("should display and interact with market banner", async () => {
@@ -40,8 +40,8 @@ describe("Wallet 4.0 - Market Banner", () => {
     await app.portfolio.closeBottomSheet();
 
     await app.portfolio.tapMarketBannerTile(0);
-    await app.assetDetail.expectAssetDetailPageVisible();
-    await app.common.goToPreviousPage();
+    await app.market.expectAssetPageVisible();
+    await app.market.leaveAssetPage();
 
     await app.portfolio.expectMarketBannerVisible();
     await app.portfolio.tapMarketBannerTitle();
