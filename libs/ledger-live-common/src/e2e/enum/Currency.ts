@@ -225,7 +225,7 @@ export class Currency {
     "Concordium (Testnet)",
     "CCD",
     "concordium_testnet",
-    AppInfos.CONCORDIUM,
+    AppInfos.CONCORDIUM_TESTNET,
     [Network.CONCORDIUM],
   );
 

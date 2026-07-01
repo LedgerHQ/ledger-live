@@ -444,6 +444,14 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
+  "Concordium_(Testnet)": {
+    currency: getCryptoCurrencyById("concordium_testnet"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Concordium",
+    },
+    dependencies: [],
+  },
 };
 
 // Resolves DeviceParams from the Provider 1 catalog (app version + firmware) and
