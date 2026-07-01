@@ -115,8 +115,23 @@ wallet-cli skill list                       # list embedded skills
 wallet-cli skill retrieve ledger-wallet-cli # print SKILL.md (or --file references/business-logic.md)
 wallet-cli skill install --agent claude     # write into ./.claude/skills (also: cursor, codex, agents)
 wallet-cli skill install --dir ./my-skills  # write into an explicit directory
+wallet-cli skill doctor                     # check installed skills against this binary
+wallet-cli skill doctor --fix               # reinstall outdated / missing skills
 ```
 
 `skill install` maps `--agent` (`claude`, `cursor`, `codex`, `agents`) to the matching `.<agent>/skills` directory (`agents` → `.agents/skills`) under the current working directory, or the user home directory with `--global`. `--dir` overrides both. Existing files are preserved unless `--force` is passed.
+
+On install, a small provenance sidecar `.wallet-cli-skill.json` is written next to each skill. It records the wallet-cli version and a content hash at install time (it never touches the human-readable `SKILL.md`, and is always refreshed — even under `--force`). This version-locks installed skills to the wallet-cli that wrote them so drift can be detected later.
+
+`skill doctor` scans for installed skills and classifies each one against the skills shipped in the running binary:
+
+- **up-to-date** — on disk matches what this wallet-cli ships. (Also covers installs with no/unreadable provenance sidecar whose files still match the shipped content — e.g. legacy or manually copied installs.)
+- **outdated** — installed by an older wallet-cli; the shipped content is newer.
+- **modified-locally** — the on-disk files no longer match their provenance sidecar (edited after install), or an install with no/unreadable sidecar whose files don't match what this wallet-cli ships (without provenance we can't tell an old version from local edits, so it's treated conservatively).
+- **missing** — a shipped skill is not present in any scanned location.
+
+By default `doctor` scans the agent skill directories under the current working directory. Use `--global` to also scan the user home directory, or `--dir <path>` to scan an explicit directory. It exits non-zero when any drift remains.
+
+`--fix` self-heals conservatively: it reinstalls `outdated` and `missing` skills, but leaves `modified-locally` skills untouched unless you also pass `--force` (`skill doctor --fix --force`), which overwrites local edits.
 
 The embedded content is generated from the canonical `.agents/skills/` directory (`.claude/skills` is just a symlink to it) into `src/skills/manifest.gen.ts` by `pnpm generate:skills`. That file is **generated, not committed** (gitignored like `.bunli/commands.gen.ts`) and is regenerated automatically before `typecheck`, `test`, and `build` via the `pretypecheck` / `pretest` / `prebuild` npm hooks. `pnpm check:skills` validates that generation succeeds (every shipped skill is found in the sources).
