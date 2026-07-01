@@ -251,9 +251,6 @@ const extraProperties = (store: ReduxStore) => {
   const ldmkCosmosSigner = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkCosmosSigner")
     : { enabled: false };
-  const nanoOnboardingFundWallet = analyticsFeatureFlagMethod
-    ? analyticsFeatureFlagMethod("nanoOnboardingFundWallet")
-    : { enabled: false };
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
   const mevProtectionAttributes = getMEVAttributes(state);
@@ -333,7 +330,6 @@ const extraProperties = (store: ReduxStore) => {
     madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
-    nanoOnboardingFundWallet: Boolean(nanoOnboardingFundWallet?.enabled),
     // For tracking receive flow events during onboarding
     ...getOnboardingStatusAttributes(
       postOnboardingInProgress,

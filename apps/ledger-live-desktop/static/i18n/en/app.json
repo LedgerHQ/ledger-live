@@ -5842,10 +5842,6 @@
             "buttons": {
               "next": "OK, I'm ready!",
               "prev": "Previous step"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "deviceHowTo": {
@@ -5869,10 +5865,6 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "deviceHowTo2": {
@@ -5897,10 +5889,6 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "pinCode": {
@@ -5911,10 +5899,6 @@
               "next": "Set up PIN",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "quizSuccess": {
@@ -5932,10 +5916,6 @@
             "buttons": {
               "next": "Next step",
               "prev": "Previous step"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "pinCodeHowTo": {
@@ -5951,10 +5931,6 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "recoverHowTo": {
@@ -6005,10 +5981,6 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "newRecoveryPhrase": {
@@ -6020,10 +5992,6 @@
               "next": "Recovery phrase",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "recoveryHowTo": {
@@ -6049,10 +6017,6 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "recoveryHowTo3": {
@@ -6067,10 +6031,6 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "genuineCheck": {
@@ -6094,10 +6054,6 @@
               "prev": "Previous step",
               "help": "Need help",
               "learn": "Learn how to hide it"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "pairMyNano": {
@@ -6107,10 +6063,6 @@
               "next": "Check my Nano",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "enableSync": {

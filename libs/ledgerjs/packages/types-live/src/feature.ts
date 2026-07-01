@@ -184,7 +184,6 @@ export type CurrencyFeatures = {
  * @deprecated Moved to `@shared/feature-flags`. Use `Features` from `@shared/feature-flags` instead.
  */
 export type Features = CurrencyFeatures & {
-  nanoOnboardingFundWallet: DefaultFeature;
   mixpanelAnalytics: DefaultFeature;
   brazePushNotifications: Feature_BrazePushNotifications;
   ratingsPrompt: Feature_RatingsPrompt;

@@ -1,7 +1,6 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Bullet, Title, Column, IllustrationContainer, AsideFooter } from "../shared";
-import nanoHourglass from "../assets/nanoHourglass.png";
+import { Bullet, Title, Column } from "../shared";
 
 export function HowToGetStarted() {
   const { t } = useTranslation();
@@ -24,22 +23,6 @@ export function HowToGetStarted() {
     </Column>
   );
 }
-
-HowToGetStarted.Illustration = (
-  <IllustrationContainer width="240px" height="245px" src={nanoHourglass} />
-);
-
-const Footer = (props: object) => {
-  const { t } = useTranslation();
-  return (
-    <AsideFooter
-      {...props}
-      text={t("onboarding.screens.tutorial.screens.howToGetStarted.help.descr")}
-    />
-  );
-};
-
-HowToGetStarted.Footer = Footer;
 
 HowToGetStarted.continueLabel = (
   <Trans i18nKey="onboarding.screens.tutorial.screens.howToGetStarted.buttons.next" />

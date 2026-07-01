@@ -1,7 +1,6 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Title, Column, SubTitle, IllustrationContainer } from "../shared";
-import RestorePassPhrase from "../assets/restorePassPhrase.png";
+import { Title, Column, SubTitle } from "../shared";
 
 export function ImportYourRecoveryPhrase() {
   const { t } = useTranslation();
@@ -19,9 +18,6 @@ export function ImportYourRecoveryPhrase() {
   );
 }
 
-ImportYourRecoveryPhrase.Illustration = (
-  <IllustrationContainer width="240px" height="245px" src={RestorePassPhrase} />
-);
 ImportYourRecoveryPhrase.continueLabel = (
   <Trans i18nKey="onboarding.screens.tutorial.screens.importYourRecoveryPhrase.buttons.next" />
 );

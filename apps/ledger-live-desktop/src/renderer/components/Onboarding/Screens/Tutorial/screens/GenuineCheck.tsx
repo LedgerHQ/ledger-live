@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { AsideFooter, Bullet, Column, IllustrationContainer, TrackTutorialProps } from "../shared";
-import connectNano from "../assets/connectNano.png";
+import { Bullet, Column, TrackTutorialProps } from "../shared";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { useSelector } from "LLD/hooks/redux";
 import { OnboardingContext } from "../../../index";
@@ -75,22 +74,6 @@ export function GenuineCheck({
     )
   );
 }
-
-GenuineCheck.Illustration = (
-  <IllustrationContainer width="240px" height="245px" src={connectNano} />
-);
-
-const Footer = (props: object) => {
-  const { t } = useTranslation();
-  return (
-    <AsideFooter
-      {...props}
-      text={t("onboarding.screens.tutorial.screens.recoveryHowTo.help.descr")}
-    />
-  );
-};
-
-GenuineCheck.Footer = Footer;
 
 GenuineCheck.continueLabel = (
   <Trans i18nKey="onboarding.screens.tutorial.screens.genuineCheck.buttons.next" />
