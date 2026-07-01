@@ -45,7 +45,7 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
     ...initialState,
     ...(payload as PartialNewStatePayload).newState,
   }),
-  POST_ONBOARDING_INIT: (_, { payload }) => {
+  POST_ONBOARDING_INIT: (state, { payload }) => {
     const { deviceModelId, actionsIds } = payload as InitPayload;
     return {
       deviceModelId,
@@ -56,7 +56,7 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
       actionsCompleted: Object.fromEntries(actionsIds.map(id => [id, false])),
       lastActionCompleted: null,
       postOnboardingInProgress: true,
-      onboardingDate: new Date(),
+      onboardingDate: state.onboardingDate ?? new Date(),
     };
   },
   POST_ONBOARDING_ADD_ACTION: (state, { payload }) => {

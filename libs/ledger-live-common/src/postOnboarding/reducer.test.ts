@@ -317,11 +317,11 @@ describe("postOnboarding reducer (& action creators)", () => {
       expect(state.onboardingDate).toEqual(new Date("2020-01-20"));
     });
 
-    it("updates onboardingDate when a new device is onboarded", () => {
+    it("preserves onboardingDate when initPostOnboarding is called again for the same device", () => {
       state = reducer(state, initPostOnboarding(...initializationParamsA));
       jest.setSystemTime(new Date("2021-06-15"));
-      state = reducer(state, initPostOnboarding(...initializationParamsB));
-      expect(state.onboardingDate).toEqual(new Date("2021-06-15"));
+      state = reducer(state, initPostOnboarding(...initializationParamsA));
+      expect(state.onboardingDate).toEqual(new Date("2020-01-20"));
       jest.setSystemTime(new Date("2020-01-20"));
     });
 

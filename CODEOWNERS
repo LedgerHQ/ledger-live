@@ -351,6 +351,7 @@ apps/ledger-live-desktop/src/renderer/analytics/                                
 apps/ledger-live-desktop/src/renderer/components/SyncOnboarding/                               @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/components/Onboarding/                                   @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/components/PostOnboardingHub/                            @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/hooks/useBackfillOnboardingDate.ts                           @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/PostOnboardingHubTester.tsx @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/postOnboarding.handler.ts  @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/productTour.handler.ts      @ledgerhq/engagement
@@ -421,6 +422,7 @@ apps/ledger-live-mobile/src/mvvm/features/AnalyticsConsent/                     
 apps/ledger-live-mobile/src/mvvm/features/WelcomePage/                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Onboarding/                                          @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/PostOnboardingHubDrawer/                             @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/hooks/useBackfillOnboardingDate.ts                            @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/DynamicContent/                                      @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/GenericAwarenessModal/                              @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/LandingPages/                                        @ledgerhq/engagement
