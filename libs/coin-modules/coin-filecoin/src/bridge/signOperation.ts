@@ -77,7 +77,7 @@ export const buildSignOperation =
           nonce,
           signatureType: 1,
           tokenTransfer: tokenAccountTxn,
-          value: finalAmount.toString(),
+          value: finalAmount.toFixed(),
         };
 
         o.next({

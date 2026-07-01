@@ -38,7 +38,7 @@ export const toCBOR = async (account: Account, tx: Transaction): Promise<toCBORR
     finalRecipient = recipientValidation.parsedAddress.toString();
   }
 
-  const finalAmount = tokenTransfer ? "0" : amount.toString();
+  const finalAmount = tokenTransfer ? "0" : amount.toFixed();
 
   const message = new Message({
     to: finalRecipient,
