@@ -1,5 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
-import { isTransactionConfirmed } from "@ledgerhq/coin-evm/editTransaction/isTransactionConfirmed";
+import { getAccountBridge } from "../../bridge";
 import { delay } from "../../promise";
 
 export type WaitForConfirmationOpts = {
@@ -32,8 +32,10 @@ export async function waitForTransactionConfirmation(
   const pollIntervalMs = opts.pollIntervalMs ?? DEFAULT_POLL_INTERVAL_MS;
   const deadline = Date.now() + timeoutMs;
 
+  const bridge = await getAccountBridge(account);
+
   while (Date.now() < deadline) {
-    const confirmed = await isTransactionConfirmed({
+    const confirmed = await bridge.isTransactionConfirmed({
       currency: account.currency,
       hash,
     });

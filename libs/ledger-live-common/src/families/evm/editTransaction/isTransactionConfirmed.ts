@@ -1,6 +1,6 @@
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getNodeApi } from "../network/node/index";
+import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 
 /**
  * Check if a transaction has been confirmed on the network

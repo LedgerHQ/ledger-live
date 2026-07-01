@@ -4,7 +4,6 @@
  * with some changes to make it work with our custom flow
  */
 
-import { getEditTransactionStatus } from "@ledgerhq/coin-evm/editTransaction/index";
 import { Transaction as EvmTransaction, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import { isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
 import { NotEnoughGas } from "@ledgerhq/errors";
@@ -57,12 +56,12 @@ function EditTransactionSummaryContent({ navigation, route, transactionToUpdate 
     parentAccount,
   }));
 
-  const status = getEditTransactionStatus({
+  const status = bridge.getEditTransactionStatus({
     transaction: transaction as EvmTransaction,
     transactionToUpdate,
     status: txStatus as TransactionStatus,
     editType,
-  });
+  }) as TransactionStatus;
 
   // handle any edit screen changes like fees changes
   useTransactionChangeFromNavigation(setTransaction);

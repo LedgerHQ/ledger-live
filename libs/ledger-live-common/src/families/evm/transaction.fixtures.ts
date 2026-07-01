@@ -1,12 +1,16 @@
 import BigNumber from "bignumber.js";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   EvmTransactionEIP1559,
   EvmTransactionEIP1559Raw,
   EvmTransactionLegacy,
   EvmTransactionLegacyRaw,
+  Transaction as EvmTransaction,
   EvmNftTransaction,
   EvmNftTransactionRaw,
 } from "@ledgerhq/coin-evm/types/index";
+import { makeTokenAccount } from "./common.fixtures";
+import usdcTokenData from "./ethereum-erc20-usd__coin.json";
 
 export const testData = Object.freeze(Buffer.from("testBufferString").toString("hex"));
 
@@ -196,4 +200,48 @@ export const nftLegacyTx: EvmTransactionLegacy & EvmNftTransaction = Object.free
   ...legacyTx,
   mode: "erc721",
   nft,
+});
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+export const tokenCurrency = Object.freeze(usdcTokenData as TokenCurrency);
+export const tokenAccount = makeTokenAccount(
+  "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+  tokenCurrency,
+);
+
+export const tokenTransaction: EvmTransaction = Object.freeze({
+  family: "evm",
+  mode: "send",
+  amount: new BigNumber(100),
+  useAllAmount: false,
+  subAccountId: tokenAccount.id,
+  recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168", // michel.eth
+  feesStrategy: "custom",
+  nonce: 0,
+  gasLimit: new BigNumber(60000),
+  chainId: 1,
+  maxFeePerGas: new BigNumber(100),
+  maxPriorityFeePerGas: new BigNumber(100),
+  type: 2,
+});
+
+export const erc1155Transaction: EvmTransaction = Object.freeze({
+  family: "evm",
+  mode: "erc1155",
+  amount: new BigNumber(0),
+  useAllAmount: false,
+  recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168", // michel.eth
+  feesStrategy: "custom",
+  nonce: 0,
+  gasLimit: new BigNumber(60000),
+  chainId: 1,
+  nft: {
+    contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+    tokenId: "1",
+    quantity: new BigNumber(10),
+    collectionName: "BAYC",
+  },
+  maxFeePerGas: new BigNumber(100),
+  maxPriorityFeePerGas: new BigNumber(100),
+  type: 2,
 });

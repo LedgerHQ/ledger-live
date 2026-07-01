@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import BigNumber from "bignumber.js";
-import { getCoinConfig } from "../config";
-import { makeAccount } from "../fixtures/common.fixtures";
+import { getCoinConfig } from "@ledgerhq/coin-evm/config";
+import { makeAccount } from "../common.fixtures";
 import {
   eip1559Tx,
   erc1155Transaction,
@@ -9,12 +9,12 @@ import {
   nftEip1559tx,
   nftLegacyTx,
   tokenTransaction,
-} from "../fixtures/transaction.fixtures";
-import { getGasTracker } from "../network/gasTracker/index";
+} from "../transaction.fixtures";
+import { getGasTracker } from "@ledgerhq/coin-evm/network/gasTracker/index";
 import { getEditTransactionPatch } from "./getEditTransactionPatch";
 import { getMinEip1559Fees, getMinLegacyFees } from "./getMinEditTransactionFees";
 
-jest.mock("../network/gasTracker/index");
+jest.mock("@ledgerhq/coin-evm/network/gasTracker/index");
 const mockedGetGasTracker = jest.mocked(getGasTracker);
 
 jest.mock("./getMinEditTransactionFees");
@@ -23,7 +23,7 @@ const mockedGetMinEip1559Fees = jest.mocked(getMinEip1559Fees);
 
 const mockedGetGasOptions = jest.fn();
 
-jest.mock("../config");
+jest.mock("@ledgerhq/coin-evm/config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
 const currency = getCryptoCurrencyById("ethereum");
@@ -249,7 +249,6 @@ describe.each(["speedup", "cancel"])("with editType %s", editType => {
       describe.each([{ cond: "<" }, { cond: ">" }, { cond: "==" }])(
         "with gasOptionFast $cond minFees",
         ({ cond }) => {
-          // @ts-expect-error using quick test utils (not typed to handle any "number")
           const { gasOptions, minFees } = gasOptionFastAndMinFeesByTypeAndTest[txType][cond];
 
           beforeEach(() => {
@@ -275,7 +274,6 @@ describe.each(["speedup", "cancel"])("with editType %s", editType => {
           it.each([{ mode: "coin" }, { mode: "erc20" }, { mode: "erc721" }, { mode: "erc1155" }])(
             "should return the expected patch for $mode transaction",
             async ({ mode }) => {
-              // @ts-expect-error using quick test utils (not typed to handle any "number")
               const transaction = txByTypeAndMode[txType][mode];
 
               const patch = await getEditTransactionPatch({

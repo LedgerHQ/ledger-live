@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
-import { getCoinConfig } from "../config";
+import { getCoinConfig } from "@ledgerhq/coin-evm/config";
 import { isStrategyDisabled } from "./isStrategyDisabled";
 
-jest.mock("../config");
+jest.mock("@ledgerhq/coin-evm/config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
 describe("isStrategyDisabled", () => {
