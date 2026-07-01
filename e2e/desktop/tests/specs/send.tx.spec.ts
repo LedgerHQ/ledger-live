@@ -13,6 +13,8 @@ import {
 } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { NEW_SEND_FLOW_CURRENCY_IDS } from "./send/newSendFlowData";
+import { getSendFlowMode } from "tests/utils/featureFlagUtils";
 
 const transactionsAmountInvalid = [
   {
@@ -259,8 +261,22 @@ function shouldSkipLNSTag(currencyId: string): boolean {
   return LNS_UNSUPPORTED_CURRENCIES.has(currencyId);
 }
 
+const mode = getSendFlowMode();
+// In "new" mode only the new send flow spec runs, so skip the whole legacy spec.
+const runLegacySpec = mode !== "new";
+// In "auto" (nightly), drop coins already covered by the new send flow spec so a
+// "dual" coin is tested once (on the new flow). Legacy-only coins always stay.
+const legacyHappyPath =
+  mode === "auto"
+    ? transactionE2E.filter(
+        t => !NEW_SEND_FLOW_CURRENCY_IDS.has(t.transaction.accountToDebit.currency.id),
+      )
+    : transactionE2E;
+
 test.describe("Send flows", () => {
-  for (const transaction of transactionE2E) {
+  if (!runLegacySpec) return;
+
+  for (const transaction of legacyHappyPath) {
     test.describe("Send from 1 account to another", () => {
       test.use({
         teamOwner: Team.COIN_INTEGRATION,

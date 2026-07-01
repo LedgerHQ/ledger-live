@@ -156,3 +156,22 @@ export const isAssetSectionEnabled = async (page: Page): Promise<boolean> => {
   const params = flags.lwdWallet40?.params as { assetSection?: boolean } | undefined;
   return Boolean(params?.assetSection);
 };
+
+/**
+ * Send-flow spec selection, driven by the `E2E_SEND_FLOW_MODE` env var (set by the
+ * desktop E2E workflow from the `feature_flags` input). Lets CI choose which send
+ * flow(s) to exercise without running the same coin on both flows at once.
+ *
+ * - `auto`   (nightly): new spec runs; legacy spec drops coins already covered by the new spec.
+ * - `new`    : only the new send flow spec runs.
+ * - `legacy` : only the legacy send flow spec runs.
+ * - `both`   (release): both specs run in full (dual coins tested on both flows).
+ *
+ * Read once at spec module scope (test-collection time), never inside a test body.
+ */
+export type SendFlowMode = "auto" | "new" | "legacy" | "both";
+
+export function getSendFlowMode(): SendFlowMode {
+  const raw = (process.env.E2E_SEND_FLOW_MODE || "auto").toLowerCase();
+  return raw === "new" || raw === "legacy" || raw === "both" ? raw : "auto";
+}

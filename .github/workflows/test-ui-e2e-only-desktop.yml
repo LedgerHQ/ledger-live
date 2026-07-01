@@ -64,13 +64,16 @@ on:
         type: boolean
         default: false
       feature_flags:
-        description: "Choose a feature flag set for the run"
+        description: "Feature-flag set / send flow for the run. Send-flow options: send-new, send-legacy, send-both (release). Any other value (defaults, wallet40-*) uses the nightly 'auto' send-flow selection (new where available, else legacy)."
         required: false
         type: choice
         options:
           - defaults
           - wallet40-q1
           - wallet40-q2
+          - send-new
+          - send-legacy
+          - send-both
         default: defaults
       feature_flags_json:
         description: "JSON to override feature flags (takes precedence if set)"
@@ -200,6 +203,7 @@ jobs:
       SPECULOS_DEVICE: ${{ matrix.device }}
       COINAPPS: ${{ github.workspace }}/coin-apps
       E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
+      E2E_SEND_FLOW_MODE: ${{ github.event_name == 'schedule' && 'auto' || (inputs.build_type == 'js' && 'both' || (inputs.feature_flags == 'send-new' && 'new' || inputs.feature_flags == 'send-legacy' && 'legacy' || inputs.feature_flags == 'send-both' && 'both' || 'auto')) }}
       cache-bucket: ll-nx-cache
       USERDATA_CACHE_ENABLED: ${{ inputs.build_type != 'js' }}
       E2E_GENERATED_USERDATA_DIR: ${{ inputs.build_type != 'js' && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
@@ -318,6 +322,7 @@ jobs:
             echo "- **Filtered pattern:** $FILTER_PATTERN"
             echo "- **Test Execution ticket ID:** $TEST_EXECUTION"
             echo "- **Firebase env to target:** $BUILD_TYPE"
+            echo "- **Send-flow mode:** $E2E_SEND_FLOW_MODE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
             echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
             echo "- **Repeat each:** $REPEAT_EACH"
