@@ -8,6 +8,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import { MINA_BLOCK_INFO_CONCURRENCY, MINA_BLOCK_INFO_TIMEOUT } from "../consts";
 import { getAccount } from "../logic/account/getAccount";
 import { getDelegateAddress } from "../logic/account/getDelegateAddress";
 import { getBlockInfo } from "../logic/history/getBlockInfo";
@@ -15,16 +16,42 @@ import { getTransactions } from "../logic/history/getTransactions";
 import { fetchValidators, getEpochInfo, RosettaTransaction } from "../network";
 import { MinaAccount, MinaAccountRaw, MinaOperation } from "../types";
 
+/**
+ * Runs `worker` over `items` with at most `limit` concurrent executions, avoiding the
+ * unbounded `Promise.all` burst that overwhelms the node on accounts with many transactions.
+ */
+async function runWithConcurrency<T>(
+  limit: number,
+  items: T[],
+  worker: (item: T) => Promise<void>,
+): Promise<void> {
+  let cursor = 0;
+  const runners = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (cursor < items.length) {
+      const index = cursor++;
+      await worker(items[index]);
+    }
+  });
+  await Promise.all(runners);
+}
+
 export const mapRosettaTxnToOperation = async (
   accountId: string,
   address: string,
   txn: RosettaTransaction,
+  blockTimestamp?: number,
 ): Promise<MinaOperation[]> => {
   try {
     const hash = txn.transaction.transaction_identifier.hash;
     const blockHeight = txn.block_identifier.index;
     const blockHash = txn.block_identifier.hash;
-    const date = new Date(txn.timestamp ?? (await getBlockInfo(blockHeight)).block.timestamp);
+    // Prefer the timestamp already resolved once per block by the caller; only fall back
+    // to a per-tx /block fetch if it is missing (keeps a single, bounded burst upstream).
+    const date = new Date(
+      txn.timestamp ??
+        blockTimestamp ??
+        (await getBlockInfo(blockHeight, MINA_BLOCK_INFO_TIMEOUT)).block.timestamp,
+    );
     const memo = txn.transaction.metadata?.memo || "";
 
     let value = new BigNumber(0);
@@ -156,8 +183,31 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
   const { blockHeight, balance, spendableBalance } = await getAccount(address);
 
   const rosettaTxns = await getTransactions(address);
+
+  // Rosetta /search/transactions does not return per-tx timestamps, so operation dates come
+  // from /block. Resolve each unique block once, with bounded concurrency, to avoid firing one
+  // unbounded /block request per transaction (which overwhelms the node on busy accounts).
+  const uniqueBlockHeights = [...new Set(rosettaTxns.map(t => t.block_identifier.index))];
+  const blockTimestamps = new Map<number, number>();
+  await runWithConcurrency(MINA_BLOCK_INFO_CONCURRENCY, uniqueBlockHeights, async height => {
+    try {
+      const info = await getBlockInfo(height, MINA_BLOCK_INFO_TIMEOUT);
+      blockTimestamps.set(height, info.block.timestamp);
+    } catch (e) {
+      // Non-fatal: mapRosettaTxnToOperation falls back to a per-tx fetch for this block.
+      log("warn", `mina: failed to resolve block timestamp for ${height}`, { e });
+    }
+  });
+
   const newOperations = await Promise.all(
-    rosettaTxns.flatMap(t => mapRosettaTxnToOperation(accountId, address, t)),
+    rosettaTxns.map(t =>
+      mapRosettaTxnToOperation(
+        accountId,
+        address,
+        t,
+        blockTimestamps.get(t.block_identifier.index),
+      ),
+    ),
   );
 
   const operations = mergeOps(oldOperations, newOperations.flat());

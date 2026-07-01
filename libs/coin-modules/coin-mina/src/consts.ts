@@ -19,4 +19,11 @@ export const MAX_TRANSACTIONS_PER_PAGE = 100;
 export const MINA_ROSETTA_TIMEOUT = 120000;
 export const MINA_API_RETRY_COUNT = 3;
 
+// Block timestamps are resolved once per unique block to build the operation dates.
+// Rosetta /search/transactions does not return per-tx timestamps, so we fetch /block;
+// bound the concurrency (and use a shorter timeout) to avoid an unbounded burst that
+// overwhelms the node when an account has many transactions.
+export const MINA_BLOCK_INFO_CONCURRENCY = 8;
+export const MINA_BLOCK_INFO_TIMEOUT = 30000;
+
 export const MINA_CANCEL_RETURN_CODE = "27013";
