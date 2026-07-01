@@ -34,6 +34,16 @@ export function expectAmountCloseTo(actual: number, expected: number, relativeTo
   expect(Math.abs(actual - expected)).toBeLessThan(tolerance);
 }
 
+// Balance labels are prefixed with a translated label (e.g. "Balance 1,234.56 ETH"),
+// so a plain parseFloat would return NaN; extract the numeric substring and strip
+// locale thousands separators before parsing.
+export function parseBalanceAmount(balanceText: string | null): number {
+  const numericMatch = balanceText?.match(/[\d,]*\.?\d+/)?.[0];
+  const balance = numericMatch ? parseFloat(numericMatch.replace(/,/g, "")) : NaN;
+  expect(Number.isFinite(balance)).toBe(true);
+  return balance;
+}
+
 export async function checkAccountFromIsSynchronised(app: Application, swap: Swap) {
   await app.mainNavigation.openTargetFromMainNavigation("accounts");
   await app.accounts.clickSyncBtnForAccount(swap.accountToDebit.accountName);
