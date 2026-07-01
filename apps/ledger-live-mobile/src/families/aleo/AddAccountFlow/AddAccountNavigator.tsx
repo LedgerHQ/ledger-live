@@ -20,7 +20,36 @@ const Stack = createNativeStackNavigator<AleoViewKeyFlowParamList>();
 
 const DEFAULT_ADD_ACCOUNT_FLOW_DEPTH = 2; // SelectDevice + AddAccounts
 
-function AddAccountNavigator({ route, navigation }: Props) {
+interface HeaderRightProps {
+  onClose: () => void;
+}
+
+function HeaderRight({ onClose }: Readonly<HeaderRightProps>) {
+  return (
+    <NavigationHeaderCloseButtonAdvanced
+      withConfirmation
+      skipNavigation
+      onClose={onClose}
+      confirmationTitle={<Trans i18nKey="addAccounts.quitConfirmation.v2.title" />}
+      confirmButtonText={<Trans i18nKey="addAccounts.quitConfirmation.v2.cancel" />}
+      rejectButtonText={<Trans i18nKey="addAccounts.quitConfirmation.v2.continue" />}
+      cancelCTAConfig={{ type: "primary", outline: true }}
+      customDrawerStyle={{
+        title: {
+          textAlign: "left",
+          fontSize: 18,
+          fontWeight: "600",
+          lineHeight: 32.4,
+          letterSpacing: -0.72,
+          marginBottom: 16,
+          marginTop: -45,
+        },
+      }}
+    />
+  );
+}
+
+function AddAccountNavigator({ route, navigation }: Readonly<Props>) {
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, false), [colors]);
   const initialRouteName = ScreenName.AleoViewKeyWarning;
@@ -30,6 +59,8 @@ function AddAccountNavigator({ route, navigation }: Props) {
     parent?.pop(navigationDepth ?? DEFAULT_ADD_ACCOUNT_FLOW_DEPTH);
   }, [navigation, navigationDepth]);
 
+  const renderHeaderRight = useCallback(() => <HeaderRight onClose={handleClose} />, [handleClose]);
+
   return (
     <Stack.Navigator
       initialRouteName={initialRouteName}
@@ -37,28 +68,7 @@ function AddAccountNavigator({ route, navigation }: Props) {
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
         // Default close pops only one parent screen; pop(navigationDepth) exits the full add-account stack.
-        headerRight: () => (
-          <NavigationHeaderCloseButtonAdvanced
-            withConfirmation
-            skipNavigation
-            onClose={handleClose}
-            confirmationTitle={<Trans i18nKey="addAccounts.quitConfirmation.v2.title" />}
-            confirmButtonText={<Trans i18nKey="addAccounts.quitConfirmation.v2.cancel" />}
-            rejectButtonText={<Trans i18nKey="addAccounts.quitConfirmation.v2.continue" />}
-            cancelCTAConfig={{ type: "primary", outline: true }}
-            customDrawerStyle={{
-              title: {
-                textAlign: "left",
-                fontSize: 18,
-                fontWeight: "600",
-                lineHeight: 32.4,
-                letterSpacing: -0.72,
-                marginBottom: 16,
-                marginTop: -45,
-              },
-            }}
-          />
-        ),
+        headerRight: renderHeaderRight,
       }}
     >
       <Stack.Screen

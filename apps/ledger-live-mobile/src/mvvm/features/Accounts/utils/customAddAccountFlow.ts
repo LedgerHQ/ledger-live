@@ -18,7 +18,7 @@ export type CustomAddAccountFlow = {
 const isCustomAddAccountFlowFamily = (
   family: string,
 ): family is keyof typeof customAddAccountFlowByFamily =>
-  Object.prototype.hasOwnProperty.call(customAddAccountFlowByFamily, family);
+  Object.hasOwn(customAddAccountFlowByFamily, family);
 
 export const getCustomAddAccountFlow = (
   currency: CryptoOrTokenCurrency,

@@ -1,5 +1,5 @@
 import { NavigatorName, ScreenName } from "~/const";
-import type { CustomAddAccountFlow } from "LLM/features/Accounts/customAddAccountFlow";
+import type { CustomAddAccountFlow } from "LLM/features/Accounts/utils/customAddAccountFlow";
 
 export default {
   onDeviceConnected: ({ navigation, routeParams }) => {
