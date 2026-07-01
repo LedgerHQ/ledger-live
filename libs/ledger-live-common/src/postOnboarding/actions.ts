@@ -63,7 +63,7 @@ export const postOnboardingSetFinished: ActionCreatorPlain = () => ({
 });
 
 export const setPostOnboardingDate: ActionCreator<{
-  onboardingDate: Date | null;
+  onboardingDate: Date | string | null;
 }> = ({ onboardingDate }) => ({
   type: `${actionTypePrefix}SET_ONBOARDING_DATE`,
   payload: { onboardingDate },

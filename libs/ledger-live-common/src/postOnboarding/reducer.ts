@@ -28,7 +28,7 @@ type SetActionCompletedPayload = {
   actionId: PostOnboardingActionId;
 };
 type SetOnboardingDatePayload = {
-  onboardingDate: Date | null;
+  onboardingDate: Date | string | null;
 };
 
 export type Payload =
@@ -41,10 +41,14 @@ export type Payload =
   | boolean;
 
 const handlers: ReducerMap<PostOnboardingState, Payload> = {
-  POST_ONBOARDING_IMPORT_STATE: (_, { payload }): PostOnboardingState => ({
-    ...initialState,
-    ...(payload as PartialNewStatePayload).newState,
-  }),
+  POST_ONBOARDING_IMPORT_STATE: (_, { payload }): PostOnboardingState => {
+    const { newState } = payload as PartialNewStatePayload;
+    return {
+      ...initialState,
+      ...newState,
+      onboardingDate: normalizeOnboardingDate(newState.onboardingDate),
+    };
+  },
   POST_ONBOARDING_INIT: (state, { payload }) => {
     const { deviceModelId, actionsIds } = payload as InitPayload;
     const isSameDeviceModel = sanitizeDeviceModelId(state.deviceModelId) === deviceModelId;
@@ -59,7 +63,9 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
       lastActionCompleted: null,
       postOnboardingInProgress: true,
       onboardingDate:
-        isSameDeviceModel && currentOnboardingDate ? currentOnboardingDate : new Date(),
+        isSameDeviceModel && currentOnboardingDate
+          ? currentOnboardingDate
+          : new Date().toISOString(),
     };
   },
   POST_ONBOARDING_ADD_ACTION: (state, { payload }) => {
@@ -127,7 +133,7 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
     const { onboardingDate } = payload as SetOnboardingDatePayload;
     return {
       ...state,
-      onboardingDate,
+      onboardingDate: normalizeOnboardingDate(onboardingDate),
     };
   },
 };
@@ -149,10 +155,15 @@ function sanitizeDeviceModelId(deviceModelId: DeviceModelId | null): DeviceModel
   return deviceModelId;
 }
 
-function normalizeOnboardingDate(onboardingDate: Date | string | null | undefined): Date | null {
+function normalizeOnboardingDate(onboardingDate: Date | string | null | undefined): string | null {
   if (onboardingDate == null) return null;
   const date = onboardingDate instanceof Date ? onboardingDate : new Date(onboardingDate);
-  return Number.isNaN(date.getTime()) ? null : date;
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+function parseOnboardingDate(onboardingDate: Date | string | null | undefined): Date | null {
+  const normalizedOnboardingDate = normalizeOnboardingDate(onboardingDate);
+  return normalizedOnboardingDate ? new Date(normalizedOnboardingDate) : null;
 }
 
 export const postOnboardingSelector: Selector<
@@ -205,5 +216,5 @@ export const walletEntryPointEligibleForPortfolioSelector = createSelector(
 
 export const onboardingDateSelector = createSelector(
   (state: { postOnboarding: PostOnboardingState }) => state.postOnboarding.onboardingDate,
-  onboardingDate => normalizeOnboardingDate(onboardingDate),
+  onboardingDate => parseOnboardingDate(onboardingDate),
 );
