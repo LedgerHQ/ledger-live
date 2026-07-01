@@ -207,6 +207,16 @@ export type PostOnboardingState = {
    * Did the user started the PostOnboarding without closing or finishing it ?
    */
   postOnboardingInProgress: boolean;
+
+  /**
+   * Date at which the user completed onboarding. Used as the "start of the clock"
+   * for post-onboarding cooldowns (e.g. the large-screen upsell).
+   *
+   * Set on every onboarding completion. For legacy users (already onboarded, no
+   * date stored yet) it is backfilled to `today` on the first launch of the
+   * version introducing it, and never overwritten once set.
+   */
+  onboardingDate: Date | null;
 };
 
 /**

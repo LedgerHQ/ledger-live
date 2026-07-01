@@ -13,6 +13,7 @@ export const initialState: PostOnboardingState = {
   actionsCompleted: {},
   lastActionCompleted: null,
   postOnboardingInProgress: false,
+  onboardingDate: null,
 };
 
 type PartialNewStatePayload = { newState: Partial<PostOnboardingState> };
@@ -26,12 +27,16 @@ type AddPayload = {
 type SetActionCompletedPayload = {
   actionId: PostOnboardingActionId;
 };
+type SetOnboardingDatePayload = {
+  onboardingDate: Date | null;
+};
 
 export type Payload =
   | undefined
   | PartialNewStatePayload
   | InitPayload
   | SetActionCompletedPayload
+  | SetOnboardingDatePayload
   | AddPayload
   | boolean;
 
@@ -51,6 +56,7 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
       actionsCompleted: Object.fromEntries(actionsIds.map(id => [id, false])),
       lastActionCompleted: null,
       postOnboardingInProgress: true,
+      onboardingDate: new Date(),
     };
   },
   POST_ONBOARDING_ADD_ACTION: (state, { payload }) => {
@@ -113,6 +119,14 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
     ...state,
     postOnboardingInProgress: false,
   }),
+
+  POST_ONBOARDING_SET_ONBOARDING_DATE: (state, { payload }) => {
+    const { onboardingDate } = payload as SetOnboardingDatePayload;
+    return {
+      ...state,
+      onboardingDate,
+    };
+  },
 };
 
 export default handleActions<PostOnboardingState, Payload>(handlers, initialState);
@@ -178,4 +192,9 @@ export const entryPointFirstDisplayedDateSelector = createSelector(
 export const walletEntryPointEligibleForPortfolioSelector = createSelector(
   postOnboardingSelector,
   postOnboarding => postOnboarding.walletEntryPointEligibleForPortfolio,
+);
+
+export const onboardingDateSelector = createSelector(
+  postOnboardingSelector,
+  postOnboarding => postOnboarding.onboardingDate,
 );

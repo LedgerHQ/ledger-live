@@ -3,6 +3,7 @@ import { PostOnboardingActionId, PostOnboardingState } from "@ledgerhq/types-liv
 import reducer, {
   hubStateSelector,
   initialState,
+  onboardingDateSelector,
   postOnboardingDeviceModelIdSelector,
   postOnboardingSelector,
   walletEntryPointEligibleForPortfolioSelector,
@@ -17,6 +18,7 @@ import {
   setPostOnboardingWalletEntryPointEligibility,
   addPostOnboardingAction,
   removePostOnboardingActionCompleted,
+  setPostOnboardingDate,
 } from "./actions";
 
 const initializationParamsA: Parameters<typeof initPostOnboarding> = [
@@ -48,6 +50,7 @@ const stateA0: PostOnboardingState = {
   },
   lastActionCompleted: null,
   postOnboardingInProgress: true,
+  onboardingDate: new Date("2020-01-20"),
 };
 
 // stateA0 -> setPostOnboardingActionCompleted(claimMock)
@@ -68,6 +71,7 @@ const stateA1: PostOnboardingState = {
   },
   lastActionCompleted: PostOnboardingActionId.claimMock, // stateA0 -> setPostOnboardingActionCompleted(claimMock)
   postOnboardingInProgress: true,
+  onboardingDate: new Date("2020-01-20"),
 };
 
 // stateA1 -> clearPostOnboardingLastActionCompleted()
@@ -88,6 +92,7 @@ const stateA2: PostOnboardingState = {
   },
   lastActionCompleted: null, // stateA1 -> clearPostOnboardingLastActionCompleted()
   postOnboardingInProgress: true,
+  onboardingDate: new Date("2020-01-20"),
 };
 
 // stateA2 -> setPostOnboardingActionCompleted(personalizeMock)
@@ -108,6 +113,7 @@ const stateA3: PostOnboardingState = {
   },
   lastActionCompleted: PostOnboardingActionId.personalizeMock, // stateA2 -> setPostOnboardingActionCompleted(personalizeMock)
   postOnboardingInProgress: true,
+  onboardingDate: new Date("2020-01-20"),
 };
 
 // stateA3 -> hidePostOnboardingWalletEntryPoint()
@@ -128,6 +134,7 @@ const stateA4: PostOnboardingState = {
   },
   lastActionCompleted: PostOnboardingActionId.personalizeMock,
   postOnboardingInProgress: true,
+  onboardingDate: new Date("2020-01-20"),
 };
 
 // stateA0 -> addPostOnboardingAction(recoverMock)
@@ -150,6 +157,7 @@ const stateA5: PostOnboardingState = {
   },
   lastActionCompleted: null,
   postOnboardingInProgress: true,
+  onboardingDate: new Date("2020-01-20"),
 };
 
 // stateA1 -> removePostOnboardingActionCompleted(claimMock)
@@ -170,6 +178,7 @@ const stateA6: PostOnboardingState = {
   },
   lastActionCompleted: null, // stateA1 -> removePostOnboardingActionCompleted(claimMock)
   postOnboardingInProgress: true,
+  onboardingDate: new Date("2020-01-20"),
 };
 
 const initializationParamsB: Parameters<typeof initPostOnboarding> = [
@@ -189,6 +198,7 @@ const stateB0 = {
   actionsCompleted: { [PostOnboardingActionId.claimMock]: false },
   lastActionCompleted: null,
   postOnboardingInProgress: true,
+  onboardingDate: new Date("2020-01-20"),
 };
 
 // stateB0 -> setPostOnboardingActionCompleted(claimMock)
@@ -201,6 +211,7 @@ const stateB1 = {
   actionsCompleted: { [PostOnboardingActionId.claimMock]: true },
   lastActionCompleted: PostOnboardingActionId.claimMock,
   postOnboardingInProgress: true,
+  onboardingDate: new Date("2020-01-20"),
 };
 
 const initializationParamsC: Parameters<typeof initPostOnboarding> = [
@@ -220,6 +231,7 @@ const stateC0 = {
   actionsCompleted: {},
   lastActionCompleted: null,
   postOnboardingInProgress: true,
+  onboardingDate: new Date("2020-01-20"),
 };
 
 describe("postOnboarding reducer (& action creators)", () => {
@@ -297,6 +309,42 @@ describe("postOnboarding reducer (& action creators)", () => {
     state = stateA3;
     state = reducer(state, hidePostOnboardingWalletEntryPoint());
     expect(state).toEqual(stateA4);
+  });
+
+  describe("onboardingDate", () => {
+    it("sets onboardingDate on initPostOnboarding", () => {
+      state = reducer(state, initPostOnboarding(...initializationParamsA));
+      expect(state.onboardingDate).toEqual(new Date("2020-01-20"));
+    });
+
+    it("updates onboardingDate when a new device is onboarded", () => {
+      state = reducer(state, initPostOnboarding(...initializationParamsA));
+      jest.setSystemTime(new Date("2021-06-15"));
+      state = reducer(state, initPostOnboarding(...initializationParamsB));
+      expect(state.onboardingDate).toEqual(new Date("2021-06-15"));
+      jest.setSystemTime(new Date("2020-01-20"));
+    });
+
+    it("does not wipe onboardingDate when hiding the wallet entry point", () => {
+      state = stateA3;
+      state = reducer(state, hidePostOnboardingWalletEntryPoint());
+      expect(state.onboardingDate).toEqual(new Date("2020-01-20"));
+    });
+
+    it("backfills onboardingDate to null when importing a legacy state without it", () => {
+      const { onboardingDate: _omit, ...legacyState } = stateA0;
+      state = reducer(state, importPostOnboardingState({ newState: legacyState }));
+      expect(state.onboardingDate).toBe(null);
+    });
+
+    it("handles setPostOnboardingDate (set and reset)", () => {
+      const date = new Date("2019-12-31");
+      state = reducer(state, setPostOnboardingDate({ onboardingDate: date }));
+      expect(state.onboardingDate).toEqual(date);
+
+      state = reducer(state, setPostOnboardingDate({ onboardingDate: null }));
+      expect(state.onboardingDate).toBe(null);
+    });
   });
 
   it("should handle setPostOnboardingWalletEntryPointEligibility", () => {
@@ -390,6 +438,7 @@ describe("postOnboarding selectors", () => {
       lastActionCompleted: null,
       postOnboardingInProgress: false,
       walletEntryPointEligibleForPortfolio: null,
+      onboardingDate: null,
     };
     const storeState = { postOnboarding: stateValidDeviceId };
 
@@ -420,6 +469,7 @@ describe("postOnboarding selectors", () => {
       lastActionCompleted: null,
       postOnboardingInProgress: false,
       walletEntryPointEligibleForPortfolio: null,
+      onboardingDate: null,
     };
     const storeState = { postOnboarding: stateValidDeviceId };
 
@@ -461,5 +511,16 @@ describe("postOnboarding selectors", () => {
 
     const storeStateNull = { postOnboarding: initialState };
     expect(walletEntryPointEligibleForPortfolioSelector(storeStateNull)).toBe(null);
+  });
+
+  it("should return onboardingDate from state", () => {
+    const date = new Date("2020-01-20");
+    const storeStateWithDate = {
+      postOnboarding: { ...initialState, onboardingDate: date },
+    };
+    expect(onboardingDateSelector(storeStateWithDate)).toEqual(date);
+
+    const storeStateNull = { postOnboarding: initialState };
+    expect(onboardingDateSelector(storeStateNull)).toBe(null);
   });
 });
