@@ -1,3 +1,5 @@
+import type { OperationType } from "@ledgerhq/types-live";
+
 export const ALEO_DUMMY_ADDRESS = "aleo14pfq40wgltv8wrhsxqe5tlme4pkp448rfejfvqhd4yj0qycs7c9s2xkcwv";
 
 export const PROGRAM_ID = {
@@ -25,6 +27,21 @@ export const TRANSACTION_TYPE = {
   UNBOND_PUBLIC: "unbond_public",
   CLAIM_UNBOND_PUBLIC: "claim_unbond_public",
 } as const;
+
+export const STAKING_OPERATION_TYPE: Record<string, OperationType> = {
+  [TRANSACTION_TYPE.BOND_PUBLIC]: "BOND",
+  [TRANSACTION_TYPE.UNBOND_PUBLIC]: "UNBOND",
+  [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC]: "WITHDRAW_UNBONDED",
+};
+
+// The public indexer's transaction-list `amount` field is always 0 for bond_public/unbond_public,
+// so the real amount must be recovered from the on-chain transition input at this index.
+// claim_unbond_public has no amount argument at all (see logic/utils.ts extractStakingAmountFromTransactionDetails)
+// — TODO: reconstructing the claimed amount (e.g. from prior unbond_public history) is left for a future feature.
+export const STAKING_AMOUNT_INPUT_INDEX: Partial<Record<string, number>> = {
+  [TRANSACTION_TYPE.BOND_PUBLIC]: 2,
+  [TRANSACTION_TYPE.UNBOND_PUBLIC]: 1,
+};
 
 // Function names that represent actual private token transfers between parties.
 // Used to exclude internal operations (split, join, fee_private, etc.) from history.

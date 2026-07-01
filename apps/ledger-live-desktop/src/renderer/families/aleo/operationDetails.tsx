@@ -7,6 +7,8 @@ import type {
   AleoOperation,
   AleoTransactionType,
 } from "@ledgerhq/live-common/families/aleo/types";
+import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
+import type { BigNumber } from "bignumber.js";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import {
   OpDetailsData,
@@ -21,6 +23,22 @@ type OperationDetails = NonNullable<AleoFamily["operationDetails"]>;
 const mapFunctionIdToTranslationKey: Record<AleoTransactionType, string> = {
   public: "aleo.operations.type.public",
   private: "aleo.operations.type.private",
+};
+
+const getAmount = (operation: AleoOperation): BigNumber => {
+  switch (operation.type) {
+    case "BOND":
+      return operation.value.plus(operation.fee).negated();
+    case "UNBOND":
+      return operation.fee.negated();
+    case "WITHDRAW_UNBONDED":
+      // TODO: claim_unbond_public carries no amount on-chain, so `operation.value` is 0 once
+      // synced from history (only the freshly-signed optimistic operation has the real amount).
+      // A future feature should reconstruct the claimed amount from prior unbond_public history.
+      return operation.value.minus(operation.fee);
+    default:
+      return getOperationAmountNumber(operation);
+  }
 };
 
 const CustomMetadataCell: OperationDetails["customMetadataCell"] = props => {
@@ -64,4 +82,5 @@ const OperationDetailsExtra = ({
 export default {
   customMetadataCell: CustomMetadataCell,
   OperationDetailsExtra,
+  getAmount,
 };

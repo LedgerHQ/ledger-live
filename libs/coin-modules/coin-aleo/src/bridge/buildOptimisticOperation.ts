@@ -5,6 +5,7 @@ import {
   getFunctionNameFromTransactionType,
   getNextSequenceNumber,
   getOperationTransactionType,
+  getStakingOperationType,
   isTokenTransaction,
 } from "../logic/utils";
 
@@ -18,7 +19,8 @@ export function buildOptimisticOperation({
   const fee = transaction.fees;
   const isTokenTx = isTokenTransaction(transaction);
   const value = isTokenTx ? fee : transaction.amount;
-  const mainOperationType: OperationType = isTokenTx ? "FEES" : "OUT";
+  const stakingType = getStakingOperationType(transaction.mode);
+  const mainOperationType: OperationType = isTokenTx ? "FEES" : (stakingType ?? "OUT");
   const subOperations: Operation[] = [];
   const tokenSubAccount = account.subAccounts?.find(s => s.id === transaction.subAccountId);
   const transactionSequenceNumber = getNextSequenceNumber(account);

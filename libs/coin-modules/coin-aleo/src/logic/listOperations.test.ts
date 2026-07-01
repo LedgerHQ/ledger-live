@@ -1,5 +1,7 @@
+import BigNumber from "bignumber.js";
 import { fetchAccountTransactionsFromHeight } from "../network/utils";
-import { getMockedTransaction } from "../__tests__/fixtures/api.fixture";
+import { apiClient } from "../network/api";
+import { getMockedTransaction, getMockedTransactionDetails } from "../__tests__/fixtures/api.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import {
   getMockedCurrency,
@@ -10,16 +12,26 @@ import {
   getMockedCoinFrameworkOperation,
   getMockedOperation,
 } from "../__tests__/fixtures/operation.fixture";
-import { getCalTokens, toCoinFrameworkOperation, toBridgeOperation } from "./utils";
+import {
+  getCalTokens,
+  toCoinFrameworkOperation,
+  toBridgeOperation,
+  extractStakingAmountFromTransactionDetails,
+} from "./utils";
 import { listOperations } from "./listOperations";
 
 jest.mock("../network/utils");
+jest.mock("../network/api");
 jest.mock("./utils");
 
 const mockFetchAccountTransactionsFromHeight = jest.mocked(fetchAccountTransactionsFromHeight);
 const mockToCoinFrameworkOperation = jest.mocked(toCoinFrameworkOperation);
 const mockToBridgeOperation = jest.mocked(toBridgeOperation);
 const mockGetCalTokens = jest.mocked(getCalTokens);
+const mockGetTransactionById = jest.mocked(apiClient.getTransactionById);
+const mockExtractStakingAmountFromTransactionDetails = jest.mocked(
+  extractStakingAmountFromTransactionDetails,
+);
 
 const mockConfig = getMockedConfig("mainnet");
 const mockConfigWithTokens = { ...mockConfig, enableTokens: true };
@@ -33,6 +45,8 @@ describe("listOperations", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetCalTokens.mockResolvedValue(new Map());
+    mockGetTransactionById.mockResolvedValue(getMockedTransactionDetails());
+    mockExtractStakingAmountFromTransactionDetails.mockReturnValue(null);
   });
 
   describe("bridge mode", () => {
@@ -262,6 +276,146 @@ describe("listOperations", () => {
         expect(result.tokenOperations).toEqual([op1, op2]);
       });
     });
+
+    describe("staking amount enrichment", () => {
+      it("should override the value of a bond_public operation with the recovered amount", async () => {
+        const bondTx = getMockedTransaction({
+          transaction_id: "bond-tx",
+          function_id: "bond_public",
+          amount: 0,
+        });
+        const bondOp = getMockedOperation({ id: "bond-op", value: new BigNumber(0) });
+        const overriddenAmount = new BigNumber(10000000000);
+
+        mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+          transactions: [bondTx],
+          nextCursor: null,
+        });
+        mockToBridgeOperation.mockReturnValue(bondOp);
+        mockExtractStakingAmountFromTransactionDetails.mockReturnValue(overriddenAmount);
+
+        const result = await listOperations({
+          config: mockConfig,
+          currency: mockCurrency,
+          address: mockAddress,
+          ledgerAccountId: mockLedgerAccountId,
+          mode: "bridge",
+          options: { minHeight: 0 },
+        });
+
+        expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, "bond-tx");
+        expect(result.operations[0].value.isEqualTo(overriddenAmount)).toBe(true);
+      });
+
+      it("should override the value of an unbond_public operation with the recovered amount", async () => {
+        const unbondTx = getMockedTransaction({
+          transaction_id: "unbond-tx",
+          function_id: "unbond_public",
+          amount: 0,
+        });
+        const unbondOp = getMockedOperation({ id: "unbond-op", value: new BigNumber(0) });
+        const overriddenAmount = new BigNumber(5000000);
+
+        mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+          transactions: [unbondTx],
+          nextCursor: null,
+        });
+        mockToBridgeOperation.mockReturnValue(unbondOp);
+        mockExtractStakingAmountFromTransactionDetails.mockReturnValue(overriddenAmount);
+
+        const result = await listOperations({
+          config: mockConfig,
+          currency: mockCurrency,
+          address: mockAddress,
+          ledgerAccountId: mockLedgerAccountId,
+          mode: "bridge",
+          options: { minHeight: 0 },
+        });
+
+        expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, "unbond-tx");
+        expect(result.operations[0].value.isEqualTo(overriddenAmount)).toBe(true);
+      });
+
+      it("should not fetch transaction details for a transfer_public transaction", async () => {
+        const transferTx = getMockedTransaction({
+          transaction_id: "transfer-tx",
+          function_id: "transfer_public",
+          amount: 100000000,
+        });
+        const transferOp = getMockedOperation({ id: "transfer-op" });
+
+        mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+          transactions: [transferTx],
+          nextCursor: null,
+        });
+        mockToBridgeOperation.mockReturnValue(transferOp);
+
+        await listOperations({
+          config: mockConfig,
+          currency: mockCurrency,
+          address: mockAddress,
+          ledgerAccountId: mockLedgerAccountId,
+          mode: "bridge",
+          options: { minHeight: 0 },
+        });
+
+        expect(mockGetTransactionById).not.toHaveBeenCalled();
+      });
+
+      it("should not fetch transaction details for a claim_unbond_public transaction", async () => {
+        const claimTx = getMockedTransaction({
+          transaction_id: "claim-tx",
+          function_id: "claim_unbond_public",
+          amount: 0,
+        });
+        const claimOp = getMockedOperation({ id: "claim-op" });
+
+        mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+          transactions: [claimTx],
+          nextCursor: null,
+        });
+        mockToBridgeOperation.mockReturnValue(claimOp);
+
+        await listOperations({
+          config: mockConfig,
+          currency: mockCurrency,
+          address: mockAddress,
+          ledgerAccountId: mockLedgerAccountId,
+          mode: "bridge",
+          options: { minHeight: 0 },
+        });
+
+        expect(mockGetTransactionById).not.toHaveBeenCalled();
+      });
+
+      it("should keep the original operation value when getTransactionById rejects", async () => {
+        const bondTx = getMockedTransaction({
+          transaction_id: "bond-tx-fail",
+          function_id: "bond_public",
+          amount: 0,
+        });
+        const originalValue = new BigNumber(0);
+        const bondOp = getMockedOperation({ id: "bond-op-fail", value: originalValue });
+
+        mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+          transactions: [bondTx],
+          nextCursor: null,
+        });
+        mockToBridgeOperation.mockReturnValue(bondOp);
+        mockGetTransactionById.mockRejectedValueOnce(new Error("network fail"));
+
+        const result = await listOperations({
+          config: mockConfig,
+          currency: mockCurrency,
+          address: mockAddress,
+          ledgerAccountId: mockLedgerAccountId,
+          mode: "bridge",
+          options: { minHeight: 0 },
+        });
+
+        expect(result.operations[0].value.isEqualTo(originalValue)).toBe(true);
+      });
+    });
   });
 
   describe("coin-framework mode", () => {
@@ -319,6 +473,31 @@ describe("listOperations", () => {
       expect(result.tokenOperations).toEqual([]);
       expect(result.nextCursor).toBeNull();
       expect(result.calTokens).toEqual(new Map());
+    });
+
+    it("should not fetch staking amount details even for a bond_public transaction", async () => {
+      const bondTx = getMockedTransaction({
+        transaction_id: "bond-tx",
+        function_id: "bond_public",
+        amount: 0,
+      });
+      const mockCoinFrameworkOp = getMockedCoinFrameworkOperation({ id: "bond-tx" });
+
+      mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+        transactions: [bondTx],
+        nextCursor: null,
+      });
+      mockToCoinFrameworkOperation.mockReturnValue(mockCoinFrameworkOp);
+
+      await listOperations({
+        config: mockConfig,
+        currency: mockCurrency,
+        address: mockAddress,
+        mode: "coin-framework",
+        options: { minHeight: 0 },
+      });
+
+      expect(mockGetTransactionById).not.toHaveBeenCalled();
     });
 
     it("should not call getCalTokens even when enableTokens is true", async () => {

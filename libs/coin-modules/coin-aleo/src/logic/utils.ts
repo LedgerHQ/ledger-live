@@ -23,6 +23,8 @@ import {
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
   PROGRAM_ID,
   SINGLE_CALL_SIGNING_TIME,
+  STAKING_AMOUNT_INPUT_INDEX,
+  STAKING_OPERATION_TYPE,
   TRANSACTION_TYPE,
 } from "../constants";
 import type {
@@ -39,6 +41,7 @@ import type {
   Intent,
   AleoTransactionIntentData,
   AleoPublicTransaction,
+  AleoPublicTransactionDetailsResponse,
   AleoOperationExtra,
   TransactionPublic,
   TransactionPrivate,
@@ -67,6 +70,28 @@ export function parseMicrocredits(microcredits: string): string {
 export function parseAmount(raw: string | null): BigNumber {
   if (!raw) return new BigNumber(0);
   return new BigNumber(matchAleoPlaintextAmount(raw) ?? 0);
+}
+
+/**
+ * Recovers the real bond/unbond amount from the transaction's on-chain execution transition,
+ * since the indexer's transaction-list `amount` field is always 0 for these function types.
+ * Returns null when the function has no known amount input index (e.g. claim_unbond_public,
+ * which carries no amount argument at all), or when the transition/input can't be found.
+ */
+export function extractStakingAmountFromTransactionDetails(
+  details: AleoPublicTransactionDetailsResponse,
+  functionId: string,
+): BigNumber | null {
+  const inputIndex = STAKING_AMOUNT_INPUT_INDEX[functionId];
+  if (inputIndex === undefined) return null;
+
+  const transition = details.execution.transitions.find(
+    t => t.program === PROGRAM_ID.CREDITS && t.function === functionId,
+  );
+  const input = transition?.inputs[inputIndex];
+  if (!input || input.type !== "public") return null;
+
+  return parseAmount(input.value);
 }
 
 export function getNetworkConfig(currency: CryptoCurrency) {
@@ -135,6 +160,9 @@ export function patchAccountWithViewKey(account: Account, viewKey: string): Acco
   };
 }
 
+export const getStakingOperationType = (functionId: string): OperationType | undefined =>
+  STAKING_OPERATION_TYPE[functionId];
+
 export const determineTransactionType = (
   functionId: string,
   operationType: OperationType,
@@ -164,6 +192,8 @@ function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
 
   if (rawTx.program_id === PROGRAM_ID.CREDITS) {
     type = address === rawTx.recipient_address ? "IN" : "OUT";
+    const stakingType = getStakingOperationType(rawTx.function_id);
+    if (stakingType) type = stakingType;
   }
 
   const transactionType = determineTransactionType(rawTx.function_id, type);

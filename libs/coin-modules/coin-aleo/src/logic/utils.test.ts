@@ -28,6 +28,7 @@ import {
 import {
   getMockedTransaction as getMockedPublicTransaction,
   getMockedEnrichedPrivateRecord,
+  getMockedTransactionDetails,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
@@ -58,6 +59,7 @@ import {
   isAleoAddressPlaintext,
   isAleoAmountPlaintext,
   determineTransactionType,
+  getStakingOperationType,
   patchAccountWithViewKey,
   toCoinFrameworkOperation,
   toBridgeOperation,
@@ -93,6 +95,7 @@ import {
   getEstimatedSigningTime,
   sumPrivateRecords,
   getCalTokens,
+  extractStakingAmountFromTransactionDetails,
 } from "./utils";
 
 jest.mock("../config");
@@ -188,6 +191,120 @@ describe("parseAleoAmount", () => {
 
   it("should return zero for invalid input", () => {
     expect(parseAmount("invalid").toString()).toBe("0");
+  });
+});
+
+describe("extractStakingAmountFromTransactionDetails", () => {
+  it("should extract the amount from a bond_public transition input", () => {
+    const details = getMockedTransactionDetails(undefined, {
+      execution: {
+        transitions: [
+          {
+            id: "au1xyz789",
+            scm: "cm1abc",
+            tcm: "cm1def",
+            tpk: "tpk1ghi",
+            inputs: [
+              { id: "input1", type: "public", value: "aleo1validator" },
+              { id: "input2", type: "public", value: "aleo1withdrawal" },
+              { id: "input3", type: "public", value: "10000000000u64" },
+            ],
+            outputs: [],
+            program: "credits.aleo",
+            function: "bond_public",
+          },
+        ],
+      },
+    });
+
+    const result = extractStakingAmountFromTransactionDetails(details, "bond_public");
+
+    expect(result).not.toBeNull();
+    expect(result?.isEqualTo(10000000000)).toBe(true);
+  });
+
+  it("should extract the amount from an unbond_public transition input", () => {
+    const details = getMockedTransactionDetails(undefined, {
+      execution: {
+        transitions: [
+          {
+            id: "au1xyz789",
+            scm: "cm1abc",
+            tcm: "cm1def",
+            tpk: "tpk1ghi",
+            inputs: [
+              { id: "input1", type: "public", value: "aleo1staker" },
+              { id: "input2", type: "public", value: "5000000u64" },
+            ],
+            outputs: [],
+            program: "credits.aleo",
+            function: "unbond_public",
+          },
+        ],
+      },
+    });
+
+    const result = extractStakingAmountFromTransactionDetails(details, "unbond_public");
+
+    expect(result).not.toBeNull();
+    expect(result?.isEqualTo(5000000)).toBe(true);
+  });
+
+  it("should return null for claim_unbond_public (no known amount input index)", () => {
+    const details = getMockedTransactionDetails();
+
+    const result = extractStakingAmountFromTransactionDetails(details, "claim_unbond_public");
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null when there is no matching transition for the function", () => {
+    const details = getMockedTransactionDetails(undefined, {
+      execution: {
+        transitions: [
+          {
+            id: "au1xyz789",
+            scm: "cm1abc",
+            tcm: "cm1def",
+            tpk: "tpk1ghi",
+            inputs: [{ id: "input1", type: "public", value: "100u64" }],
+            outputs: [],
+            program: "credits.aleo",
+            function: "transfer_public",
+          },
+        ],
+      },
+    });
+
+    const result = extractStakingAmountFromTransactionDetails(details, "bond_public");
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null when the input at the expected index is not public (e.g. record)", () => {
+    const details = getMockedTransactionDetails(undefined, {
+      execution: {
+        transitions: [
+          {
+            id: "au1xyz789",
+            scm: "cm1abc",
+            tcm: "cm1def",
+            tpk: "tpk1ghi",
+            inputs: [
+              { id: "input1", type: "public", value: "aleo1staker" },
+              { id: "input2", type: "record", tag: "tag123" },
+            ],
+            outputs: [],
+            program: "credits.aleo",
+            function: "unbond_public",
+          },
+        ],
+      },
+    });
+
+    const result = extractStakingAmountFromTransactionDetails(details, "unbond_public");
+
+    expect(result).toBeNull();
   });
 });
 
@@ -350,6 +467,20 @@ describe("determineTransactionType", () => {
   );
 });
 
+describe("getStakingOperationType", () => {
+  it.each([
+    [TRANSACTION_TYPE.BOND_PUBLIC, "BOND"],
+    [TRANSACTION_TYPE.UNBOND_PUBLIC, "UNBOND"],
+    [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC, "WITHDRAW_UNBONDED"],
+  ] as const)("should map '%s' to '%s'", (functionId, expected) => {
+    expect(getStakingOperationType(functionId)).toBe(expected);
+  });
+
+  it("should return undefined for a non-staking function id", () => {
+    expect(getStakingOperationType(EXPLORER_TRANSFER_TYPES.PUBLIC)).toBeUndefined();
+  });
+});
+
 describe("toCoinFrameworkOperation", () => {
   const recipientAddress = "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px";
   const senderAddress = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
@@ -420,6 +551,37 @@ describe("toCoinFrameworkOperation", () => {
       ledgerOpType: "IN",
     });
   });
+
+  it.each([
+    [TRANSACTION_TYPE.BOND_PUBLIC, "BOND"],
+    [TRANSACTION_TYPE.UNBOND_PUBLIC, "UNBOND"],
+    [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC, "WITHDRAW_UNBONDED"],
+  ] as const)(
+    "should map credits.aleo function_id '%s' to operation type '%s'",
+    (functionId, expected) => {
+      const rawTx = getMockedPublicTransaction({ function_id: functionId });
+
+      const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+
+      expect(result.type).toBe(expected);
+    },
+  );
+
+  it("should still set type to OUT for a transfer_public credits tx when address is the sender", () => {
+    const rawTx = getMockedPublicTransaction({ function_id: EXPLORER_TRANSFER_TYPES.PUBLIC });
+
+    const result = toCoinFrameworkOperation(rawTx, senderAddress);
+
+    expect(result.type).toBe("OUT");
+  });
+
+  it("should still set type to IN for a transfer_public credits tx when address is the recipient", () => {
+    const rawTx = getMockedPublicTransaction({ function_id: EXPLORER_TRANSFER_TYPES.PUBLIC });
+
+    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
+
+    expect(result.type).toBe("IN");
+  });
 });
 
 describe("toBridgeOperation", () => {
@@ -476,6 +638,38 @@ describe("toBridgeOperation", () => {
 
     expect(result.type).toBe("OUT");
     expect(result.id).toBe(encodeOperationId(ledgerAccountId, rawTx.transaction_id, "OUT"));
+  });
+
+  it.each([
+    [TRANSACTION_TYPE.BOND_PUBLIC, "BOND"],
+    [TRANSACTION_TYPE.UNBOND_PUBLIC, "UNBOND"],
+    [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC, "WITHDRAW_UNBONDED"],
+  ] as const)(
+    "should map credits.aleo function_id '%s' to operation type '%s'",
+    (functionId, expected) => {
+      const rawTx = getMockedPublicTransaction({ function_id: functionId });
+
+      const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
+
+      expect(result.type).toBe(expected);
+      expect(result.id).toBe(encodeOperationId(ledgerAccountId, rawTx.transaction_id, expected));
+    },
+  );
+
+  it("should still set type to OUT for a transfer_public credits tx when address is the sender", () => {
+    const rawTx = getMockedPublicTransaction({ function_id: EXPLORER_TRANSFER_TYPES.PUBLIC });
+
+    const result = toBridgeOperation(ledgerAccountId, rawTx, senderAddress);
+
+    expect(result.type).toBe("OUT");
+  });
+
+  it("should still set type to IN for a transfer_public credits tx when address is the recipient", () => {
+    const rawTx = getMockedPublicTransaction({ function_id: EXPLORER_TRANSFER_TYPES.PUBLIC });
+
+    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
+
+    expect(result.type).toBe("IN");
   });
 
   it("should attach programId when the transaction is a token transfer", () => {

@@ -171,4 +171,41 @@ describe("buildOptimisticOperation", () => {
       },
     });
   });
+
+  it.each([
+    [TRANSACTION_TYPE.BOND_PUBLIC, "bond_public", "BOND"],
+    [TRANSACTION_TYPE.UNBOND_PUBLIC, "unbond_public", "UNBOND"],
+    [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC, "claim_unbond_public", "WITHDRAW_UNBONDED"],
+  ])(
+    "should build a %s operation with type '%s' for staking mode %s",
+    (mode, functionId, expectedType) => {
+      const transaction = getMockedTransaction({
+        amount: new BigNumber(5_000_000),
+        fees: new BigNumber(34_060),
+        recipient: "aleo1recipient123",
+        mode,
+      });
+
+      const operation = buildOptimisticOperation({ account, transaction });
+
+      expect(operation).toEqual({
+        id: encodeOperationId(account.id, "", expectedType),
+        hash: "",
+        type: expectedType,
+        value: transaction.amount,
+        fee: transaction.fees,
+        blockHash: null,
+        blockHeight: null,
+        senders: [account.freshAddress],
+        recipients: [transaction.recipient],
+        accountId: account.id,
+        date: expect.any(Date),
+        transactionSequenceNumber: expect.any(BigNumber),
+        extra: {
+          functionId,
+          transactionType: "public",
+        },
+      });
+    },
+  );
 });
