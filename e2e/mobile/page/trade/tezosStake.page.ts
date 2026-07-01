@@ -16,6 +16,8 @@ export default class TezosStakePage {
   // Earning-choice chooser (TezosDelegationFlow -> TezosEarnRewards) and the delegation summary it leads to
   earnRewardsStartButtonId = "tezos-earn-rewards-start-button";
   delegationSummaryValidatorId = "tezos-delegation-summary-validator";
+  delegationSummaryContinueId = "tezos-summary-continue-button";
+  awaitingDelegationId = "tezos-stake-awaiting-delegation";
   // Account staking-section cards (families/tezos/Delegations)
   stakingRowId = "tezos-staking-row";
   delegationRowId = "tezos-delegation-row";
@@ -40,6 +42,23 @@ export default class TezosStakePage {
   @Step("Verify the delegation summary is shown")
   async verifyDelegationSummary() {
     await waitForElementById(this.delegationSummaryValidatorId);
+  }
+
+  @Step("Continue from the delegation summary")
+  async continueFromDelegationSummary() {
+    await waitForElementById(enabled(this.delegationSummaryContinueId));
+    await tapById(enabled(this.delegationSummaryContinueId));
+  }
+
+  @Step("Verify the stake step is reached after delegating")
+  async verifyStakeStepAfterDelegation() {
+    // Broadcast off: the un-broadcast delegation stays "awaiting". Broadcast on (=0): it confirms
+    // and the amount input appears. Accept either so the check is broadcast-tolerant.
+    try {
+      await waitForElementById(this.awaitingDelegationId);
+    } catch {
+      await waitForElementById(this.stakeAmountInputId);
+    }
   }
 
   @Step("Fill stake amount $0")

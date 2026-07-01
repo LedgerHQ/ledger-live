@@ -52,14 +52,20 @@ export function runEarningChoiceTezos(
       await initStakingAccount(delegation);
     });
 
-    it("Earning choice routes to the delegation summary", async () => {
+    it("Earning choice delegates and awaits the delegation", async () => {
+      await app.speculos.goToSettings();
+      await app.speculos.activateExpertMode();
       await goToTezosAccount(delegation);
       // Funded + undelegated => Earn opens the earning-choice chooser (not the legacy delegate starter).
       await app.account.tapEarn();
       await app.tezosStake.verifyEarningChoice();
       await app.tezosStake.startEarning();
-      // Undelegated => the single chooser CTA leads into the delegation summary.
+      // Undelegated => the chooser CTA leads to the delegation summary, then signs the delegation and
+      // lands on the stake step (awaiting if un-broadcast, amount input once it confirms).
       await app.tezosStake.verifyDelegationSummary();
+      await app.tezosStake.continueFromDelegationSummary();
+      await app.speculos.signDelegationTransaction(delegation);
+      await app.tezosStake.verifyStakeStepAfterDelegation();
     });
   });
 }
