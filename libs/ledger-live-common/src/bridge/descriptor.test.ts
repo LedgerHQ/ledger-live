@@ -452,6 +452,57 @@ describe("sendFeatures", () => {
     ]);
   });
 
+  it("should expose token-decimal fee value transforms for celo fee assets", () => {
+    const celo = getCryptoCurrencyById("celo");
+    const config = sendFeatures.getCustomAssetsConfig(celo);
+    if (!config) throw new Error("Expected Celo fee asset config");
+
+    const options = config.getOptions({
+      mainAccount: {
+        ...genAccount("celo-fee-assets-with-usdt", { currency: celo }),
+        subAccounts: [
+          {
+            type: "TokenAccount",
+            id: "celo-usdt-token-account-id",
+            balance: new BigNumber(1),
+            spendableBalance: new BigNumber(1),
+            token: {
+              id: "celo/erc20/usdt",
+              type: "TokenCurrency",
+              name: "Tether USD",
+              ticker: "USDT",
+              contractAddress: "0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e",
+              units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
+            },
+          } as never,
+        ],
+      },
+      transaction: {},
+    });
+
+    const usdtOption = options.find(option => option.ticker === "USDT");
+    const transform = usdtOption?.customFeeInputValueTransform;
+
+    expect(usdtOption?.unitLabel).toBeUndefined();
+    expect(transform?.fromCanonicalValue("20160084")).toBe("0.020160084");
+    expect(transform?.toCanonicalValue("0.020160084")).toBe("20160084");
+    expect(transform?.fromCanonicalValue("Infinity")).toBe("Infinity");
+    expect(transform?.toCanonicalValue("Infinity")).toBe("Infinity");
+  });
+
+  it("should not derive Celo suggested fees from an already-custom fee value", () => {
+    const celo = getCryptoCurrencyById("celo");
+    const config = sendFeatures.getCustomFeeConfig(celo);
+    const feesInput = config?.inputs.find(input => input.key === "fees");
+
+    expect(
+      feesInput?.suggestedRange?.getRange({
+        feesStrategy: "custom",
+        fees: new BigNumber("2006769410934648000"),
+      }),
+    ).toBeNull();
+  });
+
   it("should expose the gas options sync effect for evm", () => {
     const ethereum = getCryptoCurrencyById("ethereum");
     expect(sendFeatures.getAmountEffects(ethereum).map(e => e.id)).toEqual(["syncGasOptions"]);
