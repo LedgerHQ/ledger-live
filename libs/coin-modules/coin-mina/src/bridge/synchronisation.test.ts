@@ -81,6 +81,28 @@ describe("synchronisation", () => {
       });
     });
 
+    it("uses the provided block timestamp instead of fetching the block", async () => {
+      const mockTxn = createMockTxn({
+        type: "OUT",
+        senderAddress: mockAddress,
+        receiverAddress: "receiver_address",
+        status: "Success",
+      });
+      // Rosetta /search/transactions does not return a per-tx timestamp in practice.
+      delete (mockTxn as { timestamp?: number }).timestamp;
+
+      const result = await mapRosettaTxnToOperation(
+        mockAccountId,
+        mockAddress,
+        mockTxn,
+        1700000000000,
+      );
+
+      // The pre-resolved block timestamp is used, without a per-tx getBlockInfo fetch.
+      expect(result[0].date).toEqual(new Date(1700000000000));
+      expect(getBlockInfo).not.toHaveBeenCalled();
+    });
+
     it("should map payment transaction (IN)", async () => {
       const mockTxn = createMockTxn({
         type: "IN",
