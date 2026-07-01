@@ -111,7 +111,8 @@ const transforms: Transforms = {
       }
       return accounts;
     },
-    set: async accounts => Promise.all((accounts || []).map(accountModel.encode)),
+    set: async accounts =>
+      Promise.all((accounts || []).map(account => accountModel.encode(account))),
   },
 };
 
