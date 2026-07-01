@@ -1,9 +1,9 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { StyleSheet } from "react-native";
+import { counterValueFormatter } from "LLM/features/Market/utils";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { InformationsProps } from "../../types";
-import { formatCounterValue } from "../../utils";
 import { AthAtlBlock } from "./AthAtlBlock";
 import { InfoCard } from "./InfoCard";
 import { useInformations } from "../../hooks/useInformations";
@@ -37,11 +37,23 @@ export const Informations: React.FC<InformationsProps> = props => {
         <InfoCard
           left
           label={t("largeMover.marketCap")}
-          value={formatCounterValue(marketCap ?? 0, counterValueCurrency.ticker, locale, t)}
+          value={counterValueFormatter({
+            value: marketCap ?? 0,
+            shorten: true,
+            currency: counterValueCurrency.ticker,
+            locale,
+            t,
+          }).toUpperCase()}
         />
         <InfoCard
           label={t("largeMover.volume")}
-          value={formatCounterValue(totalVolume ?? 0, counterValueCurrency.ticker, locale, t)}
+          value={counterValueFormatter({
+            value: totalVolume ?? 0,
+            shorten: true,
+            currency: counterValueCurrency.ticker,
+            locale,
+            t,
+          }).toUpperCase()}
         />
       </Flex>
 
@@ -49,12 +61,13 @@ export const Informations: React.FC<InformationsProps> = props => {
         <InfoCard
           left
           label={t("largeMover.fdv")}
-          value={formatCounterValue(
-            fullyDilutedValuation ?? 0,
-            counterValueCurrency.ticker,
+          value={counterValueFormatter({
+            value: fullyDilutedValuation ?? 0,
+            shorten: true,
+            currency: counterValueCurrency.ticker,
             locale,
             t,
-          )}
+          }).toUpperCase()}
         />
         <InfoCard
           label={t("largeMover.marketCap24h")}
@@ -71,13 +84,23 @@ export const Informations: React.FC<InformationsProps> = props => {
         <InfoCard
           left
           label={t("largeMover.circulatingSupply")}
-          value={formatCounterValue(circulatingSupply, "", locale, t, {
+          value={counterValueFormatter({
+            value: circulatingSupply,
+            shorten: true,
+            locale,
+            t,
             ticker,
-          })}
+          }).toUpperCase()}
         />
         <InfoCard
           label={t("largeMover.totalSupply")}
-          value={`${formatCounterValue(totalSupply, "", locale, t, { ticker })} ${ticker}`}
+          value={counterValueFormatter({
+            value: totalSupply,
+            shorten: true,
+            locale,
+            t,
+            ticker,
+          }).toUpperCase()}
         />
       </Flex>
 
