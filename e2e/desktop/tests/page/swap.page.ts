@@ -17,6 +17,8 @@ import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 const APPROVAL_PROCESSING_TIMEOUT = 300_000;
 type SwapSurface = "full" | "embedded";
 
+type PercentageKey = "25%" | "50%" | "75%";
+
 export class SwapPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "swap";
   private static readonly EXPORT_SOURCE_PATH = path.resolve("./ledgerwallet-swap-history.csv");
@@ -49,8 +51,7 @@ export class SwapPage extends WebViewAppPage {
   private swapMaxToggle = "from-account-max-toggle";
   private fromAccountWrapper = "from-account-wrapper";
   private fromAccountBalance = "from-account-balance";
-  private percentageButtonTestId = (key: "25%" | "50%" | "75%") =>
-    `from-account-percentage-${key}`;
+  private percentageButtonTestId = (key: PercentageKey) => `from-account-percentage-${key}`;
   private quotesCountdown = "quotes-countdown";
   private networkFeesInfoIcon = "quoteCardTestId-networkFees-infoIcon";
   private rateInfoIcon = "QuoteCard-rate-infoIcon";
@@ -584,53 +585,58 @@ export class SwapPage extends WebViewAppPage {
     await webview.getByTestId(this.fromAccountWrapper).hover();
   }
 
-  @step("Check if Max button is enabled")
-  async isMaxToggleEnabled() {
+  // Max/% are Lumen `Tag` components rendered as plain <div>s: `disabled` only
+  // drives styling (never a real disabled/aria-disabled attribute), so
+  // enabled state must be read from the `cursor-not-allowed` class.
+  private async isEnabledByCursorClass(testId: string) {
     const webview = await this.getWebView();
-    const classAttr = await webview.getByTestId(this.swapMaxToggle).getAttribute("class");
+    const classAttr = await webview.getByTestId(testId).getAttribute("class");
     return !classAttr?.includes("cursor-not-allowed");
   }
 
-  @step("Get Max button tooltip text")
-  async getMaxTooltipText() {
+  // Hovers the trigger and reads the currently open Radix tooltip. Waits for
+  // the tooltip to settle first: reading role="tooltip" immediately after
+  // hover() can still match a previous trigger's stale, not-yet-closed tooltip.
+  private async getVisibleTooltipText(hoverTrigger: () => Promise<void>) {
     const webview = await this.getWebView();
-    await webview.getByTestId(this.swapMaxToggle).hover();
-    // Scoped to role="tooltip" (the Radix tooltip popup) since the same copy
-    // is also rendered as a persistent inline warning elsewhere on the form.
-    const tooltip = webview.getByRole("tooltip");
-    await expect(tooltip).toBeVisible();
-    return await tooltip.textContent();
-  }
-
-  @step("Get percentage button tooltip text: $0")
-  async getPercentageTooltipText(key: "25%" | "50%" | "75%") {
-    const webview = await this.getWebView();
-    await this.hoverAmountField();
-    await webview.getByTestId(this.percentageButtonTestId(key)).hover();
-    // Give the previous tooltip time to close and this one time to open;
-    // checking toBeVisible() right after hover() can still match the
-    // previous trigger's stale, not-yet-closed tooltip.
+    await hoverTrigger();
     await webview.waitForTimeout(500);
     const tooltip = webview.getByRole("tooltip");
     await expect(tooltip).toBeVisible();
     return await tooltip.textContent();
   }
 
+  @step("Check if Max button is enabled")
+  async isMaxToggleEnabled() {
+    return this.isEnabledByCursorClass(this.swapMaxToggle);
+  }
+
+  @step("Get Max button tooltip text")
+  async getMaxTooltipText() {
+    const webview = await this.getWebView();
+    return this.getVisibleTooltipText(() => webview.getByTestId(this.swapMaxToggle).hover());
+  }
+
+  @step("Get percentage button tooltip text: $0")
+  async getPercentageTooltipText(key: PercentageKey) {
+    const webview = await this.getWebView();
+    return this.getVisibleTooltipText(async () => {
+      await this.hoverAmountField();
+      await webview.getByTestId(this.percentageButtonTestId(key)).hover();
+    });
+  }
+
   @step("Click quick percentage button: $0")
-  async clickPercentage(key: "25%" | "50%" | "75%") {
+  async clickPercentage(key: PercentageKey) {
     const webview = await this.getWebView();
     await this.hoverAmountField();
     await webview.getByTestId(this.percentageButtonTestId(key)).click();
   }
 
   @step("Check if quick percentage button $0 is enabled")
-  async isPercentageEnabled(key: "25%" | "50%" | "75%") {
-    const webview = await this.getWebView();
+  async isPercentageEnabled(key: PercentageKey) {
     await this.hoverAmountField();
-    const classAttr = await webview
-      .getByTestId(this.percentageButtonTestId(key))
-      .getAttribute("class");
-    return !classAttr?.includes("cursor-not-allowed");
+    return this.isEnabledByCursorClass(this.percentageButtonTestId(key));
   }
 
   @step("Expect reset allowance screen to be displayed")
