@@ -8,6 +8,7 @@ import Button from "~/components/wrappedUi/Button";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { Trans, useTranslation } from "~/context/Locale";
 import { urls } from "~/utils/urls";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import type { AleoViewKeyFlowParamList } from "./types";
 import ConfirmationModal from "~/components/ConfirmationModal";
 
@@ -36,6 +37,7 @@ export default function ViewKeyWarningScreen({ route, navigation }: Props) {
   const { t } = useTranslation();
 
   const { onCloseNavigation } = route.params;
+  const learnMoreUrl = useLocalizedUrl(urls.aleo.learnMore);
   const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(false);
   const [shouldNavigateOnHide, setShouldNavigateOnHide] = useState(false);
 
@@ -69,7 +71,7 @@ export default function ViewKeyWarningScreen({ route, navigation }: Props) {
         <LText secondary style={styles.description} color="neutral.c70">
           <Trans i18nKey="aleo.addAccount.stepViewKeyWarning.description">
             <LText
-              onPress={() => Linking.openURL(urls.aleo.learnMore)}
+              onPress={() => Linking.openURL(learnMoreUrl)}
               accessibilityRole="link"
               color="primary.c80"
             />

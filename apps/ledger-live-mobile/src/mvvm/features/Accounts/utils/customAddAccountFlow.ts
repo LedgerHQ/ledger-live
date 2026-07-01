@@ -3,7 +3,7 @@ import customAddAccountFlowByFamily from "~/generated/customAddAccountFlow";
 import type {
   DeviceSelectionNavigationProps,
   SelectDeviceRouteParams,
-} from "../DeviceSelection/types";
+} from "../../DeviceSelection/types";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 
 type DeviceConnectedParams = {
