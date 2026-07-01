@@ -33,8 +33,6 @@ function mockTool(display: FlagDisplayState, setOverride = jest.fn()) {
   mockedUseToolState.mockReturnValue({
     resolved,
     overrides: {},
-    defaults: {},
-    remote: {},
     getFlagDisplayState: () => display,
   });
   mockedUseToolActions.mockReturnValue({

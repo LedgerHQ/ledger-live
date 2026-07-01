@@ -8,8 +8,6 @@ import { useFeatureFlagsState } from "../hooks";
 export interface FeatureFlagsToolContextState {
   readonly overrides: FeatureFlagsToolProps["overrides"];
   readonly resolved: FeatureFlagsToolProps["resolved"];
-  readonly defaults: FeatureFlagsToolProps["defaults"];
-  readonly remote: FeatureFlagsToolProps["remote"];
   readonly getFlagDisplayState: (id: FeatureId) => FlagDisplayState;
 }
 
@@ -30,16 +28,8 @@ export function FeatureFlagsToolProvider({
   ...props
 }: PropsWithChildren<FeatureFlagsToolProps>) {
   const { getFlagDisplayState } = useFeatureFlagsState(props);
-  const {
-    overrides,
-    resolved,
-    defaults,
-    remote,
-    setOverride,
-    setAllOverrides,
-    clearOverride,
-    clearAllOverrides,
-  } = props;
+  const { overrides, resolved, setOverride, setAllOverrides, clearOverride, clearAllOverrides } =
+    props;
   const actions = useMemo(
     () => ({
       setOverride,
@@ -54,11 +44,9 @@ export function FeatureFlagsToolProvider({
     () => ({
       overrides,
       resolved,
-      defaults,
-      remote,
       getFlagDisplayState,
     }),
-    [overrides, resolved, defaults, remote, getFlagDisplayState],
+    [overrides, resolved, getFlagDisplayState],
   );
 
   return (
