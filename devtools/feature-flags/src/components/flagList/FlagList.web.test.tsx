@@ -15,7 +15,6 @@ const baseProps: FeatureFlagsToolProps = {
   setAllOverrides: jest.fn(),
   clearOverride: jest.fn(),
   clearAllOverrides: jest.fn(),
-  importOverrides: jest.fn(),
 };
 
 const sidebar = () => screen.queryByTestId("feature-flags-sidebar");

@@ -1,6 +1,15 @@
 import mockSafeAreaContext from "react-native-safe-area-context/jest/mock";
 import mockGorhomBottomSheet from "@gorhom/bottom-sheet/mock";
 
+const originalError = console.error;
+
+const EXCLUDED_ERRORS = ["act(...)"];
+
+console.error = (...args) => {
+  if (EXCLUDED_ERRORS.some(excluded => args.join().includes(excluded))) return;
+  originalError.call(console, ...args);
+};
+
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 expect.extend(require("@testing-library/react-native/matchers"));
 

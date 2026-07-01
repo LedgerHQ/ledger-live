@@ -59,10 +59,6 @@ interface FeatureFlagsToolProps {
   setAllOverrides: (overrides: PartialFeatures) => void;
   clearOverride: (key: FeatureId) => void;
   clearAllOverrides: () => void;
-  defaults?: PartialFeatures;
-  remote?: PartialFeatures;
-  importOverrides?: () => void; // deprecated, ignored — removed in a follow-up PR
-  exportOverrides?: () => void; // deprecated, ignored — removed in a follow-up PR
 }
 ```
 

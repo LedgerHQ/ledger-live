@@ -7,18 +7,16 @@ export interface FeatureFlagsToolState {
 }
 
 export function useFeatureFlagsState(props: FeatureFlagsToolProps): FeatureFlagsToolState {
-  const { overrides, resolved, defaults, remote } = props;
+  const { overrides, resolved } = props;
 
   const getFlagDisplayState = useCallback(
     (id: FeatureId): FlagDisplayState => ({
       id,
       resolved: resolved[id],
       override: overrides[id],
-      remote: remote?.[id],
-      default: defaults?.[id],
       isOverridden: !!overrides[id],
     }),
-    [overrides, resolved, remote, defaults],
+    [overrides, resolved],
   );
 
   return { getFlagDisplayState };
