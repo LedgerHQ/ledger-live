@@ -38,7 +38,7 @@ const OperationDetailsExtra = ({
     locale,
   };
 
-  if (!Object.keys(extra).length) {
+  if (!extra.amount) {
     return null;
   }
   const formattedAmount = formatCurrencyUnit(unit, new BigNumber(extra.amount), formatConfig);
@@ -52,7 +52,7 @@ const OperationDetailsExtra = ({
             <Trans i18nKey={"operationDetails.extra.undelegatedFrom"} />
           </OpDetailsTitle>
           <OpDetailsData>
-            <Address>{extra.name}</Address>
+            <Address>{extra.name ?? extra.address}</Address>
           </OpDetailsData>
         </OpDetailsSection>
         <Divider />

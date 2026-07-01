@@ -13,7 +13,7 @@
     "**/*.fixtures.ts",
     "**/fixtures.ts",
     "**/*.mock.ts",
-    "**/getOperationExtra.ts",
+    "**/getStakingExtraByDigest.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
   "ignoreUnresolved": [

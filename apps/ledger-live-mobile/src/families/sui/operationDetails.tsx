@@ -27,11 +27,11 @@ function OperationDetailsExtra({ account, operation }: Props) {
     return null;
   }
 
-  if (!Object.keys(extra).length) {
+  if (!extra.amount) {
     return null;
   }
 
-  const formattedAmount = formatCurrencyUnit(unit, new BigNumber(operation.value), {
+  const formattedAmount = formatCurrencyUnit(unit, new BigNumber(extra.amount), {
     disableRounding: true,
     alwaysShowSign: false,
     showCode: true,
