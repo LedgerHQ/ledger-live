@@ -963,7 +963,7 @@ jobs:
           summary_message: ${{ steps.summary.outputs.summary_message }}
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@support/qaa_1306
         with:
           results-path: ios-test-artifacts
           runner: detox
@@ -1043,7 +1043,7 @@ jobs:
           summary_message: ${{ steps.summary.outputs.summary_message }}
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@support/qaa_1306
         with:
           results-path: android-test-artifacts
           runner: detox
