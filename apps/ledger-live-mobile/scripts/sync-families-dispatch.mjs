@@ -27,6 +27,7 @@ const targets = [
   "AccountHeader",
   "AccountBodyHeader",
   "AccountSubHeader",
+  "AccountBalanceHeader",
   "SendRowsCustom",
   "SendRowsFee",
   "SendSelectRecipient",
