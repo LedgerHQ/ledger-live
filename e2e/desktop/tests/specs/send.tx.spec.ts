@@ -13,6 +13,7 @@ import {
 } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { FF_NEW_SEND_FLOW_DISABLED } from "tests/utils/featureFlagUtils";
 
 const transactionsAmountInvalid = [
   {
@@ -267,6 +268,9 @@ test.describe("Send flows", () => {
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
+        featureFlags: {
+          ...FF_NEW_SEND_FLOW_DISABLED,
+        },
       });
 
       const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
@@ -326,6 +330,9 @@ test.describe("Send flows", () => {
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
+        featureFlags: {
+          ...FF_NEW_SEND_FLOW_DISABLED,
+        },
       });
 
       const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
@@ -382,6 +389,9 @@ test.describe("Send flows", () => {
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transactionInputValid.accountToDebit.currency.speculosApp,
       cliCommands: [liveDataWithRecipientAddressCommand(transactionInputValid)],
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     const family = getFamilyByCurrencyId(transactionInputValid.accountToDebit.currency.id);
@@ -431,6 +441,9 @@ test.describe("Send flows", () => {
         cliCommands: [
           liveDataWithRecipientAddressCommand(transaction.transaction, { useScheme: true }),
         ],
+        featureFlags: {
+          ...FF_NEW_SEND_FLOW_DISABLED,
+        },
       });
 
       const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
@@ -506,6 +519,9 @@ test.describe("Send flows", () => {
             return transaction.address;
           },
         ],
+        featureFlags: {
+          ...FF_NEW_SEND_FLOW_DISABLED,
+        },
       });
 
       const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
@@ -566,6 +582,9 @@ test.describe("Send flows", () => {
       speculosApp: transactionEnsAddress.accountToDebit.currency.speculosApp,
       cliCommands: [liveDataWithRecipientAddressCommand(transactionEnsAddress)],
       env: { DISABLE_TRANSACTION_BROADCAST: "1" },
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     const family = getFamilyByCurrencyId(transactionEnsAddress.accountToDebit.currency.id);
@@ -637,6 +656,7 @@ test.describe("Send flows", () => {
         },
       ],
       featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
         currencyConcordiumTestnet: { enabled: true },
         analyticsOptIn: { enabled: true, params: { policyVersion: 1, consentValidityDays: 365 } },
       },

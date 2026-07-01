@@ -19,6 +19,7 @@ import {
 } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { FF_NEW_SEND_FLOW_DISABLED } from "tests/utils/featureFlagUtils";
 
 const subAccounts = [
   {
@@ -88,6 +89,9 @@ for (const token of subAccounts) {
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: token.account.parentAccount?.currency.speculosApp,
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     const family = getFamilyByCurrencyId(token.account.currency.id);
@@ -148,6 +152,9 @@ for (const token of subAccountReceive) {
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "speculos-subAccount",
       speculosApp: token.account.currency.speculosApp,
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     const family = getFamilyByCurrencyId(token.account.currency.id);
@@ -204,6 +211,9 @@ for (const token of subAccounts) {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "speculos-subAccount",
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     const family = getFamilyByCurrencyId(token.account.currency.id);
@@ -264,6 +274,9 @@ for (const transaction of transactionE2E) {
           transaction.tx.accountToCredit,
         ),
       ],
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     test(
@@ -367,6 +380,9 @@ for (const transaction of transactionsAddressInvalid) {
           return transaction.recipient;
         },
       ],
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
@@ -425,6 +441,9 @@ for (const transaction of transactionsAddressValid) {
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [liveDataCommand(transaction.transaction.accountToDebit)],
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     test(
@@ -509,6 +528,9 @@ for (const transaction of tokenTransactionInvalid) {
           transaction.tx.accountToCredit,
         ),
       ],
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     const family = getFamilyByCurrencyId(transaction.tx.accountToDebit.currency.id);
@@ -569,6 +591,9 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
         tokenTransactionValid.accountToCredit,
       ),
     ],
+    featureFlags: {
+      ...FF_NEW_SEND_FLOW_DISABLED,
+    },
   });
 
   test(
