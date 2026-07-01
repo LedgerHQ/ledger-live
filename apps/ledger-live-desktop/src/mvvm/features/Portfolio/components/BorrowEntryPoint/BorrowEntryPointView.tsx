@@ -42,7 +42,7 @@ export function BorrowEntryPointView({ onClick }: BorrowEntryPointViewProps) {
             </CardContent>
           </CardLeading>
           <CardTrailing>
-            <Button appearance="base" size="sm" onClick={onClick}>
+            <Button appearance="base" size="sm">
               {t("portfolio.borrowEntry.cta")}
             </Button>
           </CardTrailing>

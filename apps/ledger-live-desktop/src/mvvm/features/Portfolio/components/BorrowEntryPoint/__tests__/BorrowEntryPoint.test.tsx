@@ -25,6 +25,14 @@ describe("BorrowEntryPoint", () => {
     expect(screen.getByText(t("portfolio.borrowEntry.cardDescription"))).toBeVisible();
   });
 
+  it("should call the view model handleClick when the card is clicked", async () => {
+    const { user } = render(<BorrowEntryPoint />);
+
+    await user.click(screen.getByText(t("portfolio.borrowEntry.cardTitle")));
+
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+
   it("should call the view model handleClick when the CTA is clicked", async () => {
     const { user } = render(<BorrowEntryPoint />);
 
