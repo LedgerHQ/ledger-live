@@ -1,6 +1,6 @@
 # detox-next-gen — team presentation
 
-A short reveal.js deck (7 slides) on three improvements over `e2e/mobile`: the
+A short reveal.js deck (8 slides) on three improvements over `e2e/mobile`: the
 **element layer**, **timeouts**, and **cross-page flows**. Talking points are in
 each slide's speaker notes.
 

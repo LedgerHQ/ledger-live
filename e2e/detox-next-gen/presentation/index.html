@@ -107,7 +107,7 @@ await this.recipient.replaceText(address);
             </code></pre>
           </div>
         </div>
-        <p class="note"><span class="win">Win:</span> every action waits first → kills the #1 flake; strategy explicit at definition; native + web symmetric. &nbsp; <span class="cost">Cost:</span> a new lib to learn and own.</p>
+        <p class="note"><span class="win">Win:</span> every action waits first → kills the #1 flake; strategy explicit at definition; native + web symmetric. &nbsp; <span class="cost">Cost:</span> a small, documented lib to learn.</p>
         <aside class="notes">Mobile repeats the id and splits wait from act. Next-gen declares the locator once with its strategy, and the wait is baked into .tap()/.fill()/.replaceText(). This is the slide to run the fast-fail demo on.</aside>
       </section>
 
@@ -162,8 +162,8 @@ async openViaDeeplink(t = TIMEOUTS.M) {}
             </code></pre>
           </div>
         </div>
-        <p class="note"><span class="win">Win:</span> a failing test fails in ~1s, not 60s — tight loop, fast red signal; the tier names the intent. &nbsp; <span class="cost">Cost:</span> mis-tiering → flake (we hit it twice). A deliberate trade.</p>
-        <aside class="notes">Keep this one brief — it's the last topic before the ask. Mobile's 60s is slow-but-safe. Tiers trade that for speed + intent, and ask the author to think about each wait. Be honest about the new failure mode.</aside>
+        <p class="note"><span class="win">Win:</span> a failing test fails in ~1s, not 60s — tight loop, fast red signal; the tier names the intent. &nbsp; <span class="cost">Cost:</span> a too-tight tier can flake — bump it up one and it's fixed.</p>
+        <aside class="notes">Keep this one brief — it's the last topic before the ask. Mobile's 60s is slow-but-safe. Tiers trade that for speed + intent, and ask the author to size each wait. If flake risk comes up: a too-tight tier just bumps up a tier — cheap to fix.</aside>
       </section>
 
       <section>
@@ -187,7 +187,7 @@ async openViaDeeplink(t = TIMEOUTS.M) {}
             </ul></td></tr>
             <tr><td>Cleaner to change</td><td><ul>
               <li>Pages are leaves; cross-page logic written once in <code>flows/</code>, reused</li>
-              <li>"Mobile has flow-helpers" → but its pages call pages (<code>BuySellPage</code> → 2 pages); here that's impossible</li>
+              <li>"Mobile has flow-helpers" → but its pages can call other pages; here the rule keeps that in <code>flows/</code></li>
             </ul></td></tr>
             <tr><td>Explicit deps</td><td><ul>
               <li>Imports → go-to-definition, autocomplete, knip, safe renames</li>
@@ -200,6 +200,49 @@ async openViaDeeplink(t = TIMEOUTS.M) {}
           </tbody>
         </table>
         <aside class="notes">Q&A armor: each benefit with its proof and the rebuttal to the obvious pushback. You don't have to present it — keep it ready to jump to when a claim gets challenged. Facts to anchor on: waitForElementById is opt-in in mobile; mobile's default is 60s; BuySellPage.chooseAssetIfNotSelected drives two pages; global.d.ts declares 83 globals.</aside>
+      </section>
+
+      <section>
+        <h2>Built for agents</h2>
+        <p class="lead">The rules in AGENTS.md + docs/ — each one keeps a common pitfall out:</p>
+        <ul style="display: block; font-size: 0.78em; line-height: 1.5">
+          <li><span class="win">Scope, don't index</span> — locators bind to structure (<code>withAncestor</code>), so they survive list reordering</li>
+          <li><span class="win">Pages stay leaves</span> — cross-page steps live in <code>flows/</code>, not inside a page</li>
+          <li><span class="win">Mechanics in one place</span> — waits, polls and retries live in the element layer, not copied per page</li>
+          <li><span class="win">Explicit match strategy</span> — chosen at the locator (<code>byId</code> / <code>byText</code>), never inferred from a string</li>
+          <li><span class="win">Explicit imports</span> — no ambient globals; typed, greppable, safe to rename</li>
+          <li><span class="win">Short waits by default</span> — speed tiers; a real failure returns in ~1s, slow steps opt up</li>
+        </ul>
+        <aside class="notes">These are the written rules in AGENTS.md + docs/ — guardrails every spec (and every agent) follows. Each rules out a known bad pattern: indexed locators that break on reorder (the "scope, don't index" rule); pages reaching into other pages (cycles); the same wait/retry copied across pages; ambiguous string matchers; 83 ambient globals that can't be traced; and uniform slow waits. They're written down precisely so they hold consistently — enforced by reviewers and coding agents alike. Q&A: "mobile could adopt these too" — yes, that's the plan; the rules are cheap to copy, the structure that makes them hold is the work.</aside>
+      </section>
+
+      <section>
+        <h2>Why we keep swc — not ts-jest</h2>
+        <p class="lead">ts-jest transforms <em>only</em> TypeScript. But every spec imports ESM JavaScript from <code>live-common</code> (<code>lib-es/</code>), which Jest must transpile to CommonJS.</p>
+        <div class="cols">
+          <div class="col">
+            <p class="lbl before">if we moved to ts-jest</p>
+            <pre><code data-trim class="language-javascript">
+transform: {
+  "^.+\\.ts$": "ts-jest",     // .ts only
+  "^.+\\.js$": "@swc/jest",   // STILL needed — live-common is ESM .js
+}
+// two transformers · ts-jest type-checks every run → slow
+            </code></pre>
+          </div>
+          <div class="col">
+            <p class="lbl after">swc — today</p>
+            <pre><code data-trim class="language-javascript">
+transform: {
+  "^.+\\.(ts|tsx)$": ["@swc/jest", cfg],
+  "^.+\\.(js|cjs)$": ["@swc/jest", cfg],
+}
+// one tool, both kinds · type-strip only → fast
+            </code></pre>
+          </div>
+        </div>
+        <p class="note"><span class="win">Net:</span> ts-jest can't replace swc, only add to it — two tools, slower, zero gain. &nbsp; <span class="cost">The trap:</span> "so we lose type safety?" → no — <code>tsc --noEmit</code> checks types as its own step; per-run type-checking is the cost we deliberately avoid.</p>
+        <aside class="notes">Anchor facts: every spec imports @ledgerhq/live-common/e2e/* — that resolves to lib-es/*.js, which is ESM, and it's a workspace package OUTSIDE node_modules, so transformIgnorePatterns doesn't skip it; it must be transpiled to CJS. ts-jest only transforms .ts and leaves .js raw → Jest's CommonJS runtime hits `import` and throws, so you'd have to add @swc/jest (or babel) back anyway — note it's still in the left config. swc is Rust, type-strips both .ts and .js in one fast pass (the gap shows most on cold runs + CI). Type safety isn't lost: tsc --noEmit is a separate step (the `typecheck` script + AGENTS.md pre-finish checklist) — ts-jest's in-run checking is slow and redundant. Bonus: e2e/mobile uses the same swc approach, so keeping swc also keeps us aligned with the sibling suite.</aside>
       </section>
 
       <section class="center">
