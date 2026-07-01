@@ -15,6 +15,7 @@ import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
   expectAmountCloseTo,
+  parseBalanceAmount,
 } from "tests/utils/swapUtils";
 import { expect } from "@playwright/test";
 import { getEnv } from "@ledgerhq/live-env";
@@ -371,7 +372,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", ()
         await performSwapUntilQuoteSelectionStep(app, new Swap(fromAccount, toAccount, ""), "");
 
         const balanceText = await app.swap.getFromAccountBalanceText();
-        const balance = parseFloat(balanceText ?? "0");
+        const balance = parseBalanceAmount(balanceText);
 
         for (const percent of ["25%", "50%", "75%"] as const) {
           await test.step(`${fromAccount.currency.name} - ${percent}`, async () => {
