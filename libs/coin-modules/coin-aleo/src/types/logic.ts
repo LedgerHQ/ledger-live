@@ -79,6 +79,16 @@ export type AleoTransactionIntentData =
   | {
       type: typeof TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE;
       programId: string;
+    }
+  | {
+      type: typeof TRANSACTION_TYPE.BOND_PUBLIC;
+      withdrawal: string;
+    }
+  | {
+      type: typeof TRANSACTION_TYPE.UNBOND_PUBLIC;
+    }
+  | {
+      type: typeof TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC;
     };
 
 export type AleoTransactionIntent = TransactionIntent<MemoNotSupported, AleoTransactionIntentData>;

@@ -180,3 +180,14 @@ export const mockTxIntentConvertTokenPrivateToPublic2: AleoTransactionIntent = {
     records: [mockUnspentTokenRecord1.decryptedData, mockUnspentTokenRecord2.decryptedData],
   },
 };
+
+export const mockTxIntentBondPublic: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 100n,
+  type: TRANSACTION_TYPE.BOND_PUBLIC,
+  recipient: "aleo1validator00000000000000000000000000000000000000000000000q",
+  data: {
+    type: TRANSACTION_TYPE.BOND_PUBLIC,
+    withdrawal: "aleo172yejeypnffsdft3nrlpwnu964sn83p7ga6dm5zj7ucmqfqjk5rq3pmx6f",
+  },
+};

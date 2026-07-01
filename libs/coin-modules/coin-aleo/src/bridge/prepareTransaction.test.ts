@@ -637,4 +637,62 @@ describe("prepareTransaction", () => {
       },
     });
   });
+
+  describe("bond_public", () => {
+    it("keeps bond_public mode and defaults withdrawal to freshAddress when withdrawal is empty", async () => {
+      const bondTransaction: Transaction = {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.BOND_PUBLIC,
+        withdrawal: "",
+      };
+
+      const result = await prepareTransaction(mockAccount, bondTransaction);
+
+      expect(result).toMatchObject({ mode: TRANSACTION_TYPE.BOND_PUBLIC, withdrawal: mockAccount.freshAddress });
+      expect(result.fees.gt(0)).toBe(true);
+    });
+
+    it("preserves withdrawal when already set for bond_public", async () => {
+      const customWithdrawal = "aleo1custom000000000000000000000000000000000000000000000000000000";
+      const bondTransaction: Transaction = {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.BOND_PUBLIC,
+        withdrawal: customWithdrawal,
+      };
+
+      const result = await prepareTransaction(mockAccount, bondTransaction);
+
+      expect(result).toMatchObject({ mode: TRANSACTION_TYPE.BOND_PUBLIC, withdrawal: customWithdrawal });
+    });
+  });
+
+  describe("prepareTransaction unbond/claim", () => {
+    it("prepares unbond_public preserving the input amount", async () => {
+      const tx: Transaction = {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
+        amount: new BigNumber(1000000),
+      };
+
+      const prepared = await prepareTransaction(mockAccount, tx as never);
+
+      expect(prepared.amount.toString()).toBe(mockAmount.toString());
+      expect(prepared.fees.gt(0)).toBe(true);
+      expect(prepared.mode).toBe(TRANSACTION_TYPE.UNBOND_PUBLIC);
+      expect("withdrawal" in prepared).toBe(false);
+    });
+
+    it("prepares claim_unbond_public with zero amount", async () => {
+      const tx: Transaction = {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+        amount: new BigNumber(0),
+      };
+
+      const prepared = await prepareTransaction(mockAccount, tx as never);
+
+      expect(prepared.amount.toString()).toBe("0");
+      expect(prepared.fees.gt(0)).toBe(true);
+    });
+  });
 });

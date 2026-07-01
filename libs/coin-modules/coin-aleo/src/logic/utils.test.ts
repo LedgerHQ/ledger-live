@@ -47,6 +47,7 @@ import {
   mockTxIntentTransferTokenPrivate2,
   mockTxIntentConvertTokenPrivateToPublic,
   mockTxIntentConvertTokenPrivateToPublic2,
+  mockTxIntentBondPublic,
 } from "../__tests__/fixtures/transaction.fixture";
 import type { AleoOperationExtra, ProvableApi } from "../types";
 import {
@@ -1400,6 +1401,19 @@ describe("mapTransactionIntentToSdkIntent", () => {
     );
   });
 
+  it("should map bond_public intent to SDK intent with validator and withdrawal", () => {
+    const intent = mockTxIntentBondPublic;
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: "bond_public",
+      amount: intent.amount.toString(),
+      validator: intent.recipient,
+      withdrawal: "aleo172yejeypnffsdft3nrlpwnu964sn83p7ga6dm5zj7ucmqfqjk5rq3pmx6f",
+    });
+  });
+
   it("should throw for unsupported intent type", () => {
     const intent = {
       ...mockTxIntentTransferPublic,
@@ -1409,6 +1423,32 @@ describe("mapTransactionIntentToSdkIntent", () => {
     expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(
       `aleo: unsupported intent type: ${intent.type}`,
     );
+  });
+
+  describe("unbond/claim SDK intent mapping", () => {
+    it("maps unbond_public intent to SDK intent with staker and amount", () => {
+      const sdkIntent = mapTransactionIntentToSdkIntent({
+        type: "unbond_public",
+        sender: "aleo1stakeraddr",
+        recipient: "aleo1stakeraddr",
+        amount: 1000000n,
+        asset: { type: "native" },
+        data: { type: "unbond_public" },
+      } as never);
+      expect(sdkIntent).toEqual({ type: "unbond_public", amount: "1000000", staker: "aleo1stakeraddr" });
+    });
+
+    it("maps claim_unbond_public intent to SDK intent with staker only", () => {
+      const sdkIntent = mapTransactionIntentToSdkIntent({
+        type: "claim_unbond_public",
+        sender: "aleo1stakeraddr",
+        recipient: "aleo1stakeraddr",
+        amount: 0n,
+        asset: { type: "native" },
+        data: { type: "claim_unbond_public" },
+      } as never);
+      expect(sdkIntent).toEqual({ type: "claim_unbond_public", staker: "aleo1stakeraddr" });
+    });
   });
 });
 
@@ -1538,6 +1578,23 @@ describe("isPublicTransaction", () => {
     const transaction = getMockedTransaction({ mode });
 
     expect(isPublicTransaction(transaction)).toBe(expected);
+  });
+});
+
+describe("unbond/claim classification", () => {
+  it("treats unbond_public and claim_unbond_public as public transactions", () => {
+    const base = { family: "aleo", amount: new BigNumber(0), recipient: "", fees: new BigNumber(0) } as const;
+    expect(isPublicTransaction({ ...base, mode: TRANSACTION_TYPE.UNBOND_PUBLIC })).toBe(true);
+    expect(isPublicTransaction({ ...base, mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC })).toBe(true);
+  });
+
+  it("uses the public transparent balance for unbond/claim available balance", () => {
+    const account = {
+      aleoResources: { transparentBalance: new BigNumber(500) },
+    } as unknown as Parameters<typeof getAvailableBalance>[0];
+    const base = { family: "aleo", amount: new BigNumber(0), recipient: "", fees: new BigNumber(0) } as const;
+    expect(getAvailableBalance(account, { ...base, mode: TRANSACTION_TYPE.UNBOND_PUBLIC }).toString()).toBe("500");
+    expect(getAvailableBalance(account, { ...base, mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC }).toString()).toBe("500");
   });
 });
 
@@ -1852,6 +1909,27 @@ describe("createTransactionIntent", () => {
     expect(() => createTransactionIntent({ account, transaction })).toThrow(
       `aleo: no token amount records found for given commitments: ${missingCommitment}`,
     );
+  });
+
+  it("should create a bond_public transaction intent with withdrawal in data", () => {
+    const withdrawal = "aleo172yejeypnffsdft3nrlpwnu964sn83p7ga6dm5zj7ucmqfqjk5rq3pmx6f";
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.BOND_PUBLIC,
+      amount: new BigNumber(100),
+      recipient: "aleo1validator00000000000000000000000000000000000000000000000q",
+      withdrawal,
+    });
+
+    const result = createTransactionIntent({ account: mockAccount, transaction });
+
+    expect(result).toMatchObject({
+      type: TRANSACTION_TYPE.BOND_PUBLIC,
+      recipient: "aleo1validator00000000000000000000000000000000000000000000000q",
+      data: {
+        type: TRANSACTION_TYPE.BOND_PUBLIC,
+        withdrawal,
+      },
+    });
   });
 });
 

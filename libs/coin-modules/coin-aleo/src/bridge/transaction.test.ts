@@ -109,4 +109,44 @@ describe("transaction", () => {
       expect("properties" in result).toBe(false);
     },
   );
+
+  describe("bond_public round-trip", () => {
+    it("should round-trip withdrawal through raw serialization", () => {
+      const withdrawalAddress =
+        "aleo1withdraw000000000000000000000000000000000000000000000000q";
+      const tx = getMockedTransaction({
+        mode: TRANSACTION_TYPE.BOND_PUBLIC,
+        withdrawal: withdrawalAddress,
+      });
+
+      const raw = toTransactionRaw(tx);
+      const back = fromTransactionRaw(raw);
+
+      expect((raw as any).withdrawal).toBe(withdrawalAddress);
+      expect((back as any).withdrawal).toBe(withdrawalAddress);
+      expect(back.mode).toBe(TRANSACTION_TYPE.BOND_PUBLIC);
+    });
+  });
+
+  describe("unbond/claim serialization", () => {
+    it.each([TRANSACTION_TYPE.UNBOND_PUBLIC, TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC])(
+      "round-trips %s without extra fields",
+      mode => {
+        const raw = {
+          family: "aleo" as const,
+          recipient: "aleo1stakeraddr",
+          amount: "1000000",
+          fees: "0",
+          mode,
+        };
+        const tx = fromTransactionRaw(raw as never);
+        expect(tx.mode).toBe(mode);
+        expect("withdrawal" in tx).toBe(false);
+        expect("properties" in tx).toBe(false);
+        const back = toTransactionRaw(tx);
+        expect(back.mode).toBe(mode);
+        expect("withdrawal" in back).toBe(false);
+      },
+    );
+  });
 });

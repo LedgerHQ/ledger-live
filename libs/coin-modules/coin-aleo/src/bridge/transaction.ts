@@ -43,6 +43,15 @@ export function fromTransactionRaw(tr: TransactionRaw): Transaction {
     };
   }
 
+  if (tr.mode === TRANSACTION_TYPE.BOND_PUBLIC) {
+    return {
+      ...commonGeneric,
+      ...commonAleo,
+      mode: tr.mode,
+      withdrawal: tr.withdrawal,
+    };
+  }
+
   return {
     ...commonGeneric,
     ...commonAleo,
@@ -63,6 +72,15 @@ export function toTransactionRaw(t: Transaction): TransactionRaw {
       ...commonAleo,
       mode: t.mode,
       properties: t.properties,
+    };
+  }
+
+  if (t.mode === TRANSACTION_TYPE.BOND_PUBLIC) {
+    return {
+      ...commonGeneric,
+      ...commonAleo,
+      mode: t.mode,
+      withdrawal: t.withdrawal,
     };
   }
 

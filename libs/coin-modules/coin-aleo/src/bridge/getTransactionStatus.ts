@@ -7,6 +7,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import invariant from "invariant";
 import type {
   AleoAccount,
@@ -33,10 +34,13 @@ import aleoCoinConfig from "../config";
 import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+  MIN_BOND_AMOUNT,
+  TRANSACTION_TYPE,
 } from "../constants";
 import {
   AleoAmountRecordRequired,
   AleoAmountTooLargeForTransaction,
+  AleoBondAmountTooLow,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
   AleoTooManyRecordsSelected,
@@ -266,18 +270,47 @@ async function handleTransferTransaction({
   const errors: Errors = {};
   const warnings: Warnings = {};
 
+  const isStakingSelfMode =
+    transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC;
+
   const recipientError = await validateRecipient({
     account,
     recipient: transaction.recipient,
-    allowSelfTransfer,
+    allowSelfTransfer: allowSelfTransfer || isStakingSelfMode,
   });
 
   if (recipientError) {
     errors.recipient = recipientError;
   }
 
-  if (!transaction.useAllAmount && transaction.amount.lte(0)) {
+  if (transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC) {
+    const withdrawalError = await validateRecipient({
+      account,
+      recipient: transaction.withdrawal,
+      allowSelfTransfer: true,
+    });
+    if (withdrawalError) {
+      errors.withdrawal = withdrawalError;
+    }
+  }
+
+  if (
+    transaction.mode !== TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC &&
+    !transaction.useAllAmount &&
+    transaction.amount.lte(0)
+  ) {
     errors.amount = new AmountRequired();
+  } else if (
+    transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC &&
+    calculatedAmount.amount.gt(0) &&
+    calculatedAmount.amount.lt(MIN_BOND_AMOUNT)
+  ) {
+    errors.amount = new AleoBondAmountTooLow(undefined, {
+      minAmount: formatCurrencyUnit(account.currency.units[0], new BigNumber(MIN_BOND_AMOUNT), {
+        showCode: true,
+      }),
+    });
   }
 
   if (isPrivateTransaction(transaction)) {
@@ -295,7 +328,7 @@ async function handleTransferTransaction({
 
   Object.assign(errors, validatePublicFees({ account, transaction, config, estimatedFees }));
 
-  if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
+  if (!isStakingSelfMode && availableBalance.isLessThan(calculatedAmount.totalSpent)) {
     errors.amount = new NotEnoughBalance();
   }
 

@@ -21,6 +21,9 @@ export const TRANSACTION_TYPE = {
   TRANSFER_TOKEN_PRIVATE: "transfer_token_private",
   CONVERT_TOKEN_PRIVATE_TO_PUBLIC: "convert_token_private_to_public",
   CONVERT_TOKEN_PUBLIC_TO_PRIVATE: "convert_token_public_to_private",
+  BOND_PUBLIC: "bond_public",
+  UNBOND_PUBLIC: "unbond_public",
+  CLAIM_UNBOND_PUBLIC: "claim_unbond_public",
 } as const;
 
 // Function names that represent actual private token transfers between parties.
@@ -73,3 +76,7 @@ export const MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION = 13;
 
 // The estimated time in milliseconds it takes to sign a single record during transaction signing.
 export const SINGLE_CALL_SIGNING_TIME = 12500;
+
+// Minimum amount (in microcredits) required to bond/stake to a validator.
+// 1 ALEO = 1_000_000 microcredits (ALEO magnitude is 6).
+export const MIN_BOND_AMOUNT = 1_000_000;

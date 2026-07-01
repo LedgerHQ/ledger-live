@@ -38,6 +38,9 @@ describe("getDeviceTransactionConfig", () => {
     ["Transfer Token Private", TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE],
     ["Token Shield", TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE],
     ["Token Unshield", TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC],
+    ["Bond Public", TRANSACTION_TYPE.BOND_PUBLIC],
+    ["Unbond Public", TRANSACTION_TYPE.UNBOND_PUBLIC],
+    ["Claim Unbond Public", TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC],
   ] as const)("should return method '%s' for mode '%s'", async (expectedMethod, mode) => {
     const fields = await getDeviceTransactionConfig({
       account: mockAccount,

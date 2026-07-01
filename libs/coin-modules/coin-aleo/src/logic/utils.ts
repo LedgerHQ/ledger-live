@@ -418,6 +418,9 @@ export function isPublicTransaction(transaction: Transaction): transaction is Tr
   return (
     transaction.mode === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
     transaction.mode === TRANSACTION_TYPE.TRANSFER_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC ||
     isPublicTokenTransaction(transaction)
   );
 }
@@ -440,7 +443,12 @@ export function derivePublicTransactionMode({
 }: {
   isTokenTx: boolean;
   isSelfTransfer: boolean;
-}): TransactionPublic["mode"] {
+}): Exclude<
+  TransactionPublic["mode"],
+  | typeof TRANSACTION_TYPE.BOND_PUBLIC
+  | typeof TRANSACTION_TYPE.UNBOND_PUBLIC
+  | typeof TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC
+> {
   if (isTokenTx) {
     return isSelfTransfer
       ? TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
@@ -692,6 +700,28 @@ export function mapTransactionIntentToSdkIntent(
         program_id: txIntent.data.programId,
       };
     }
+    case TRANSACTION_TYPE.BOND_PUBLIC: {
+      invariant(hasSpecificIntentData(txIntent, type), `aleo: intent data is required for ${type}`);
+      return {
+        type: "bond_public",
+        amount,
+        validator: to,
+        withdrawal: txIntent.data.withdrawal,
+      };
+    }
+    case TRANSACTION_TYPE.UNBOND_PUBLIC: {
+      return {
+        type: "unbond_public",
+        amount,
+        staker: to,
+      };
+    }
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC: {
+      return {
+        type: "claim_unbond_public",
+        staker: to,
+      };
+    }
     default: {
       throw new Error(`aleo: unsupported intent type: ${type}`);
     }
@@ -726,6 +756,9 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
     // spending public native balance
     case TRANSACTION_TYPE.TRANSFER_PUBLIC:
     case TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE:
+    case TRANSACTION_TYPE.BOND_PUBLIC:
+    case TRANSACTION_TYPE.UNBOND_PUBLIC:
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
       return account.aleoResources?.transparentBalance ?? new BigNumber(0);
     // spending private native balance
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:
@@ -857,6 +890,27 @@ export function createTransactionIntent({
             findRecord: commitment => getRecordByCommitment({ account, commitment }),
           }),
         },
+      };
+
+    case TRANSACTION_TYPE.BOND_PUBLIC:
+      return {
+        ...base,
+        data: {
+          type: TRANSACTION_TYPE.BOND_PUBLIC,
+          withdrawal: transaction.withdrawal,
+        },
+      };
+
+    case TRANSACTION_TYPE.UNBOND_PUBLIC:
+      return {
+        ...base,
+        data: { type: TRANSACTION_TYPE.UNBOND_PUBLIC },
+      };
+
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
+      return {
+        ...base,
+        data: { type: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC },
       };
 
     case TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC:
@@ -997,6 +1051,12 @@ export function getFunctionNameFromTransactionType(transactionType: TransactionT
       return "transfer_token_public_to_private";
     case TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC:
       return "transfer_token_private_to_public";
+    case TRANSACTION_TYPE.BOND_PUBLIC:
+      return "bond_public";
+    case TRANSACTION_TYPE.UNBOND_PUBLIC:
+      return "unbond_public";
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
+      return "claim_unbond_public";
     default:
       throw new Error(`aleo: unsupported transaction type: ${transactionType}`);
   }

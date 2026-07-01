@@ -13,3 +13,4 @@ export const AleoTooManyRecordsSelected = createCustomErrorClass("AleoTooManyRec
 export const AleoAmountTooLargeForTransaction = createCustomErrorClass(
   "AleoAmountTooLargeForTransaction",
 );
+export const AleoBondAmountTooLow = createCustomErrorClass("AleoBondAmountTooLow");
