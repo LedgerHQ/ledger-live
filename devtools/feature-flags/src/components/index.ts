@@ -4,7 +4,7 @@ export { FlagRow } from "./flagRow/FlagRow";
 export { FlagList } from "./flagList/FlagList";
 export { FlagEnableIndicator } from "./flagEnableIndicator/FlagEnableIndicator";
 export { FlagListSummary } from "./flagListSummary/FlagListSummary";
-export { Sidebar } from "./sidebar/Sidebar";
+export { FlagDetailsDialog } from "./flagDetailsDialog/FlagDetailsDialog";
 export { FlagJsonEditor } from "./flagJsonEditor/flagJsonEditor";
 export { FlagDiffView } from "./flagDiffView/FlagDiffView.web";
 export { ToolBar } from "./toolBar/ToolBar";
