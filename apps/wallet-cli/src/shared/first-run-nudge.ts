@@ -38,10 +38,15 @@ function buildMessage(): string {
   if (agent) {
     return (
       `Tip: install the Ledger wallet-cli skills so ${label} can drive this CLI:\n` +
-      `  wallet-cli skill install --all --agent ${agent}\n`
+      `  wallet-cli skill install --all --agent ${agent}\n` +
+      `Or run it as an MCP server:\n` +
+      `  wallet-cli mcp --install --agent ${agent}\n`
     );
   }
-  return `Tip: install the Ledger wallet-cli agent skills:\n  wallet-cli skill install --all\n`;
+  return (
+    `Tip: install the Ledger wallet-cli agent skills:\n  wallet-cli skill install --all\n` +
+    `Or run it as an MCP server:\n  wallet-cli mcp --print-config\n`
+  );
 }
 
 /**
@@ -57,8 +62,8 @@ export function maybeShowFirstRunNudge(argv: string[]): void {
     // Empty / flag-led invocations (help, version, bare root listing) aren't a
     // real command — don't consume the one-time nudge before the user runs one.
     if (isNonCommandInvocation(argv)) return;
-    // The user is already engaging with skills.
-    if (argv[0] === "skill") return;
+    // The user is already engaging with skills or the MCP server.
+    if (argv[0] === "skill" || argv[0] === "mcp") return;
     // Show for interactive humans and detected agents; stay quiet in plain pipes.
     if (!(process.stderr.isTTY === true || isAgentEnvironment())) return;
     if (hasNudgeBeenShown()) return;

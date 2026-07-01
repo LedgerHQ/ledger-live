@@ -11,7 +11,7 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import { getCurrencyForAccount, type Account, type AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount, getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { integrateNewAccountDescriptor } from "@ledgerhq/live-wallet/walletsync/modules/accounts";
-import { createCommandOutput } from "../../output";
+import { type CommandOutput, type OutputContext, createCommandOutput } from "../../output";
 import {
   accountOption,
   outputOption,
@@ -85,13 +85,26 @@ const swapExecuteFlagsSchema = z.object({
   to: z.string().min(1, "Destination currency is required (--to <currencyId>)"),
   provider: z.string().min(1, "Provider is required (--provider <name>)"),
   amount: z.string().min(1, "Amount is required (--amount <value>)"),
-  "to-account": z.string().optional(),
-  account: z.string().min(1).optional(),
+  // `account` and `to-account` are effectively required for the full pipeline (there is no
+  // positional fallback over MCP and the core throws when either is missing). Marking them
+  // required makes the MCP tool advertise them and reject a missing arg up front, matching
+  // send/receive/balances. The CLI handler feeds "" for an absent flag/positional so those
+  // calls still route to the core's friendly guards (resolveAccountArg / the --to-account
+  // check) instead of a schema rejection.
+  "to-account": z
+    .string()
+    .min(1, "Destination account session label is required (--to-account <session-label>)"),
+  account: z.string().min(1, "Account session label is required (--account <session-label>)"),
   "fee-strategy": z.enum(["slow", "medium", "fast"]).default("medium"),
   output: OutputFormatSchema.optional(),
 });
 
 export type SwapExecuteFlags = z.infer<typeof swapExecuteFlagsSchema>;
+
+/** Business inputs for the swap execute core (the CLI `output` flag is not a business input). */
+export const swapExecuteInputSchema = swapExecuteFlagsSchema.omit({ output: true });
+
+export type SwapExecuteInput = z.infer<typeof swapExecuteInputSchema>;
 
 export type SwapExecuteDependencies = {
   runFullSwapPipeline: RunFullSwapPipeline;
@@ -143,36 +156,47 @@ async function selectDieQuote(
   return match;
 }
 
-export async function executeSwapCommand({
-  flags,
-  positional,
-  runFullSwapPipeline,
-  runCliSwapDiePipeline = runCliSwapDiePipelineDefault,
-  resolveAccountDescriptor: resolveDescriptor = resolveAccountDescriptor,
-  integrateNewAccountDescriptor: integrateDescriptor = integrateNewAccountDescriptor,
-  getAccountBridge: getBridge = getAccountBridge,
-  makeBridgeCacheSystem: makeCacheSystem = makeBridgeCacheSystem,
-  findTokenById = id => getCryptoAssetsStore().findTokenById(id),
-  getQuotes: getQuotesFn = getQuotes,
-}: {
-  flags: SwapExecuteFlags;
-  positional: readonly string[];
-} & SwapExecuteDependencies): Promise<void> {
+export function swapExecuteContext(_input: SwapExecuteInput): OutputContext {
+  return { command: "swap execute", network: "" };
+}
+
+/**
+ * Shared swap-execute business core used by both the CLI handler (via executeSwapCommand)
+ * and the MCP tool. `out` is injected so the MCP path can collect the envelope. Currency /
+ * provider validation happens before `out.run` so the failures surface as thrown errors
+ * (CLI) or are converted to structured errors by the caller (MCP).
+ */
+export async function swapExecuteCore(
+  input: SwapExecuteInput,
+  out: CommandOutput,
+  {
+    positional = [],
+    runFullSwapPipeline = runFullSwapPipelineDefault,
+    runCliSwapDiePipeline = runCliSwapDiePipelineDefault,
+    resolveAccountDescriptor: resolveDescriptor = resolveAccountDescriptor,
+    integrateNewAccountDescriptor: integrateDescriptor = integrateNewAccountDescriptor,
+    getAccountBridge: getBridge = getAccountBridge,
+    makeBridgeCacheSystem: makeCacheSystem = makeBridgeCacheSystem,
+    findTokenById = id => getCryptoAssetsStore().findTokenById(id),
+    getQuotes: getQuotesFn = getQuotes,
+  }: { positional?: readonly string[] } & Partial<SwapExecuteDependencies> = {},
+): Promise<void> {
   const flowId = swapFlowId();
+
   const resolveSwapExecuteContext = async () => {
-    const fromDescriptor = await resolveDescriptor(resolveAccountArg(flags.account, positional));
-    const fromCurrency = findCryptoCurrencyById(flags.from) ?? (await findTokenById(flags.from));
-    const toCurrency = findCryptoCurrencyById(flags.to) ?? (await findTokenById(flags.to));
+    const fromDescriptor = await resolveDescriptor(resolveAccountArg(input.account, positional));
+    const fromCurrency = findCryptoCurrencyById(input.from) ?? (await findTokenById(input.from));
+    const toCurrency = findCryptoCurrencyById(input.to) ?? (await findTokenById(input.to));
 
     if (!fromCurrency) {
-      throw new Error(`Unknown source currency (--from): ${flags.from}`);
+      throw new Error(`Unknown source currency (--from): ${input.from}`);
     }
 
     if (!toCurrency) {
-      throw new Error(`Unknown destination currency (--to): ${flags.to}`);
+      throw new Error(`Unknown destination currency (--to): ${input.to}`);
     }
 
-    const provider = resolveSwapProvider(flags.provider);
+    const provider = resolveSwapProvider(input.provider);
     return { fromDescriptor, fromCurrency, toCurrency, provider };
   };
 
@@ -183,8 +207,8 @@ export async function executeSwapCommand({
     const { name, cause } = getErrorDetails(err);
     trackSwapFailed({
       flowId,
-      fromCurrency: flags.from,
-      toCurrency: flags.to,
+      fromCurrency: input.from,
+      toCurrency: input.to,
       errorCode: cause?.swapCode ?? name ?? "UnknownError",
     });
     throw err;
@@ -193,19 +217,14 @@ export async function executeSwapCommand({
 
   trackSwapSimulated({
     flowId,
-    fromCurrency: flags.from,
-    toCurrency: flags.to,
+    fromCurrency: input.from,
+    toCurrency: input.to,
     provider,
   });
 
   const networkCurrencyId =
     fromCurrency.type === "TokenCurrency" ? fromCurrency.parentCurrencyId : fromCurrency.id;
-  const network = networkStringFromCurrencyId(networkCurrencyId);
-
-  const out = createCommandOutput(resolveOutputFormat(flags.output), {
-    command: "swap execute",
-    network,
-  });
+  out.setContext({ network: networkStringFromCurrencyId(networkCurrencyId) });
 
   await out.run(async () => {
     const syncCache = makeCacheSystem({
@@ -213,9 +232,9 @@ export async function executeSwapCommand({
       getData: async () => undefined,
     });
 
-    const toAccountArg = flags["to-account"];
+    const toAccountArg = input["to-account"];
     if (typeof toAccountArg !== "string" || toAccountArg.trim().length === 0) {
-      throw new Error("Swap execute requires --to-account <descriptor-or-session-label>.");
+      throw new Error("Swap execute requires --to-account <session-label>.");
     }
     const toDescriptor = await resolveDescriptor(toAccountArg);
 
@@ -230,13 +249,13 @@ export async function executeSwapCommand({
 
     const fromAccount = resolveSwapAccountForCurrency(
       fromParentAccount,
-      flags.from,
+      input.from,
       fromCurrency,
       "from",
     );
-    const toAccount = resolveSwapAccountForCurrency(toParentAccount, flags.to, toCurrency, "to");
+    const toAccount = resolveSwapAccountForCurrency(toParentAccount, input.to, toCurrency, "to");
 
-    const amountInAtomicUnit: BigNumber = parseCurrencyUnit(fromCurrency.units[0], flags.amount);
+    const amountInAtomicUnit: BigNumber = parseCurrencyUnit(fromCurrency.units[0], input.amount);
 
     const accounts: AccountLike[] = [
       fromAccount,
@@ -256,9 +275,9 @@ export async function executeSwapCommand({
 
       const quote = await selectDieQuote(getQuotesFn, {
         provider,
-        from: flags.from,
-        to: flags.to,
-        amount: flags.amount,
+        from: input.from,
+        to: input.to,
+        amount: input.amount,
         sendAddress: mainFromAccount.freshAddress,
         receiveAddress,
       });
@@ -269,18 +288,18 @@ export async function executeSwapCommand({
         mainAccount: mainFromAccount,
         fromCurrencyId:
           fromAccount.type === "TokenAccount" ? fromAccount.token.id : fromAccount.currency.id,
-        toCurrencyId: flags.to,
+        toCurrencyId: input.to,
         flowId,
-        feeStrategy: flags["fee-strategy"],
+        feeStrategy: input["fee-strategy"],
       });
 
       if (dieResult.plan !== "skip") {
         out.swapExecuteDieResult({
           plan: dieResult.plan,
-          from: flags.from,
-          to: flags.to,
+          from: input.from,
+          to: input.to,
           provider: quote.provider,
-          amount: flags.amount,
+          amount: input.amount,
           quoteId: quote.id ?? null,
           approvalTxHash: dieResult.result.approvalTxHash,
           swapTxHash: dieResult.result.swapTxHash,
@@ -296,9 +315,9 @@ export async function executeSwapCommand({
     const result = await runFullSwapPipeline({
       out,
       provider,
-      amount: flags.amount,
+      amount: input.amount,
       amountInAtomicUnit,
-      feeStrategy: flags["fee-strategy"],
+      feeStrategy: input["fee-strategy"],
       fromAccount,
       toAccount,
       fromParentAccount,
@@ -308,10 +327,10 @@ export async function executeSwapCommand({
     });
 
     out.swapExecuteFullResult({
-      from: flags.from,
-      to: flags.to,
+      from: input.from,
+      to: input.to,
       provider,
-      amount: flags.amount,
+      amount: input.amount,
       transactionId: result.transactionId,
       payload: result.payload,
       operationHash: result.operationHash,
@@ -320,6 +339,19 @@ export async function executeSwapCommand({
       magnitudeAwareRate: result.magnitudeAwareRate,
     });
   });
+}
+
+export async function executeSwapCommand({
+  flags,
+  positional,
+  ...deps
+}: {
+  flags: SwapExecuteFlags;
+  positional: readonly string[];
+} & SwapExecuteDependencies): Promise<void> {
+  const { output, ...input } = flags;
+  const out = createCommandOutput(resolveOutputFormat(output), swapExecuteContext(input));
+  await swapExecuteCore(input, out, { positional, ...deps });
 }
 
 export default defineCommand({
@@ -343,7 +375,9 @@ export default defineCommand({
     amount: option(swapExecuteFlagsSchema.shape.amount, {
       description: "Swap source amount in human units",
     }),
-    "to-account": option(swapExecuteFlagsSchema.shape["to-account"], {
+    // Optional at the CLI layer (unlike the required schema field) so an absent flag routes to
+    // the core's friendly "requires --to-account" guard rather than a Bunli required-option error.
+    "to-account": option(swapExecuteFlagsSchema.shape["to-account"].optional(), {
       description: "Destination account descriptor or session label (required for full pipeline)",
     }),
     account: accountOption,
@@ -354,7 +388,14 @@ export default defineCommand({
   },
   handler: async ({ flags, positional }) => {
     await executeSwapCommand({
-      flags,
+      flags: {
+        ...flags,
+        // "" fallback routes an absent CLI flag/positional to the core's friendly
+        // missing-account / missing-to-account guards instead of the required-schema
+        // rejection the MCP path relies on (see swapExecuteFlagsSchema).
+        account: flags.account ?? positional[0] ?? "",
+        "to-account": flags["to-account"] ?? "",
+      },
       positional,
       runFullSwapPipeline: runFullSwapPipelineDefault,
       runCliSwapDiePipeline: runCliSwapDiePipelineDefault,

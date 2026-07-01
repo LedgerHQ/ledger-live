@@ -96,6 +96,81 @@ pnpm start -- <command> [args]
 - In `apps/wallet-cli`: `pnpm build` (Bunli native bundle → `dist/`)
 - From repo root: `pnpm build:wallet-cli`
 
+## MCP server
+
+`wallet-cli mcp` starts a **stdio [Model Context Protocol](https://modelcontextprotocol.io) server** that exposes every wallet-cli operation as a typed MCP tool. MCP-capable agents (Claude Code, Claude Desktop, Cursor, Codex, …) call the tools directly instead of shelling out to the CLI, and receive the same structured payloads as `--output json`. The server speaks JSON-RPC over **stdout only** (logs go to stderr) and is normally launched by the MCP client, not by hand.
+
+Start it (from an installed binary, or from the repo for dev):
+
+```bash
+wallet-cli mcp                        # installed binary
+pnpm wallet-cli start -- mcp          # from the repository root
+```
+
+### Per-agent config
+
+`wallet-cli mcp --install --agent <claude|cursor|codex>` writes the matching config for you (use `--print-config` to print it instead). The equivalent snippets:
+
+**Claude Code**
+
+```bash
+claude mcp add ledger -- wallet-cli mcp
+```
+
+**Claude Desktop / Cursor** (`.cursor/mcp.json`, or Claude Desktop's `claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "ledger": {
+      "command": "wallet-cli",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+**Codex** (`~/.codex/config.toml`):
+
+```toml
+[mcp_servers.ledger]
+command = "wallet-cli"
+args = ["mcp"]
+```
+
+### Tools
+
+Each tool mirrors the CLI command of the same name and returns the identical envelope as `--output json`. `<account>` arguments are session labels (e.g. `ethereum-1`).
+
+| Tool                 | CLI equivalent       | Device  | Notes                                                       |
+| -------------------- | -------------------- | ------- | ---------------------------------------------------------- |
+| `account_discover`   | `account discover`   | Yes     | Discover/import accounts for a network onto the session.   |
+| `session_view`       | `session view`       | No      | List saved session accounts.                              |
+| `session_reset`      | `session reset`      | No      | Wipe the session.                                         |
+| `balances`           | `balances`           | No      | Native + token balances.                                  |
+| `operations`         | `operations`         | No      | Operation history (paginate with `limit`/`cursor`).        |
+| `receive`            | `receive`            | Yes\*   | \*Device only when verifying the address on screen.        |
+| `send`               | `send`               | Yes\*\* | \*\*Device only for a real send; dry-run needs no device.  |
+| `swap_quote`         | `swap quote`         | No      | Quotes from the built-in provider list.                    |
+| `swap_execute`       | `swap execute`       | Yes     | Full swap flow, then sign + broadcast.                    |
+| `swap_status`        | `swap status`        | No      | Read swap status from the partner API.                    |
+| `genuine_check`      | `genuine-check`      | Yes     | Verify the connected device is genuine.                   |
+| `assets_token`       | `assets token`       | No      | Resolve token metadata by contract address.               |
+| `assets_token_by_id` | `assets token-by-id` | No      | Resolve token metadata by token id.                       |
+
+Device-touching tools emit MCP **progress notifications** mapped from the device state (awaiting unlock, awaiting on-device approval, …).
+
+### Safety
+
+The same hardware-wallet rails apply whether a flow runs via the CLI or an MCP tool (see [`ledger-wallet-cli` skills](#agent-guidance) and their `references/safety.md`):
+
+- **USB required.** Device tools drive a physical Ledger over USB — it must be connected and unlocked. There is no remote/network signing.
+- **Serialized, never parallel.** The server holds a single device lock, so only one device-touching tool runs at a time; the USB HID channel does not multiplex and concurrent calls would corrupt each other's APDU exchange.
+- **On-device confirmation is the source of truth.** The user must verify address/amount/recipient/fees on the Ledger screen; treat any mismatch as a possible compromise.
+- **Errors preserve the CLI taxonomy.** A failing device tool returns a structured MCP error with the same `code` and `exitCode` as the equivalent CLI command.
+
+Agents should read the `ledger-wallet-cli-mcp` skill (methodology + tool list) before using the MCP tools — see [Agent guidance](#agent-guidance).
+
 ## Environment
 
 If `USER_ID` is unset, it defaults to `wallet-cli` so DMK firmware distribution salt stays stable for this CLI (`env-setup.ts`).
@@ -114,6 +189,7 @@ AI agents should read the wallet-cli agent skills before running wallet-cli comm
 - [`ledger-wallet-cli-send`](../../.agents/skills/ledger-wallet-cli-send/SKILL.md) — sign and broadcast a transfer.
 - [`ledger-wallet-cli-swap`](../../.agents/skills/ledger-wallet-cli-swap/SKILL.md) — quote → execute → status a swap.
 - [`ledger-wallet-cli-genuine-check`](../../.agents/skills/ledger-wallet-cli-genuine-check/SKILL.md) — verify a device is genuine.
+- [`ledger-wallet-cli-mcp`](../../.agents/skills/ledger-wallet-cli-mcp/SKILL.md) — run wallet-cli as an [MCP server](#mcp-server) and call the flows as typed MCP tools (setup snippets + tool list).
 
 The cross-cutting hardware-wallet safety rails (USB sandbox requirement, device contention, on-device confirmation, ambiguous→ask, out-of-scope, shared error table) live in a single canonical [`references/safety.md`](../../.agents/skills/ledger-wallet-cli/references/safety.md). Each task skill's `references/safety.md` is a **relative symlink** to that file, so there is one edit point and zero drift; the embed codegen resolves the symlink so every skill ships an identical copy, and a `skill install` materializes a real per-skill copy on disk.
 

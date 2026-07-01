@@ -88,6 +88,13 @@ export interface CommandOutput {
    */
   fail(e: unknown): never;
 
+  /**
+   * Update the JSON envelope context (network / account) once resolved inside a command core.
+   * Human: noop (it does not embed a context). Json/Collecting: patch the envelope context so
+   * subsequent result envelopes carry the correct network and account.
+   */
+  setContext(patch: Partial<Pick<OutputContext, "network" | "account">>): void;
+
   // ---- Data output methods ----
 
   balances(items: Balance[]): Promise<void>;
@@ -257,6 +264,10 @@ class HumanCommandOutput implements CommandOutput {
       this._exitWithDeviceError(e);
     }
     throw e;
+  }
+
+  setContext(_patch: Partial<Pick<OutputContext, "network" | "account">>): void {
+    /* noop — human output does not embed an envelope context */
   }
 
   private static _formatErrorForSpinner(err: unknown): string {
@@ -682,9 +693,25 @@ class JsonCommandOutput implements CommandOutput {
     writeStdout(JSON.stringify(value));
   }
 
+  /**
+   * Sink for a terminal `result` envelope (the final makeEnvelope payload).
+   * JsonCommandOutput writes it to stdout; CollectingCommandOutput buffers it.
+   */
+  protected _emitResult(envelope: Record<string, unknown>): void {
+    this._writeNdjson(envelope);
+  }
+
+  /**
+   * Sink for an intermediate `event` emission (device-state, pre-verify-address).
+   * JsonCommandOutput writes it to stdout; CollectingCommandOutput forwards it.
+   */
+  protected _emitEvent(event: Record<string, unknown>): void {
+    this._writeNdjson(event);
+  }
+
   private _emitDeviceStateEvent(state: DeviceState): void {
     const { message } = renderDeviceState(state);
-    this._writeNdjson({
+    this._emitEvent({
       type: "device-state",
       command: this._ctx.command,
       network: this._ctx.network,
@@ -717,18 +744,22 @@ class JsonCommandOutput implements CommandOutput {
     throw new CliProcessExitError(this._exitCode(e));
   }
 
+  setContext(patch: Partial<Pick<OutputContext, "network" | "account">>): void {
+    Object.assign(this._ctx, patch);
+  }
+
   async balances(items: Balance[]): Promise<void> {
     const balances = await this._jsonFmt.balances(items);
-    this._writeNdjson(this._envelope({ balances }));
+    this._emitResult(this._envelope({ balances }));
   }
 
   async operations(items: Operation[], currencyId: string, nextCursor?: string): Promise<void> {
     const operations = await this._jsonFmt.operations(items, currencyId, this._ctx.account ?? "");
-    this._writeNdjson(this._envelope({ operations, nextCursor }));
+    this._emitResult(this._envelope({ operations, nextCursor }));
   }
 
   address(addr: string, verified: boolean): void {
-    this._writeNdjson(
+    this._emitResult(
       this._envelope({
         address: addr,
         verified,
@@ -738,11 +769,11 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   token(t: TokenInfo): void {
-    this._writeNdjson(this._envelope({ token: this._jsonFmt.token(t) }));
+    this._emitResult(this._envelope({ token: this._jsonFmt.token(t) }));
   }
 
   preVerifyAddress(addr: string): void {
-    this._writeNdjson({
+    this._emitEvent({
       type: "pre-verify-address",
       command: this._ctx.command,
       network: this._ctx.network,
@@ -752,7 +783,7 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   genuineCheck(): void {
-    this._writeNdjson(this._envelope({ genuine: true }));
+    this._emitResult(this._envelope({ genuine: true }));
   }
 
   discoveredAccount(d: DiscoveredAccount): void {
@@ -761,7 +792,7 @@ class JsonCommandOutput implements CommandOutput {
 
   flushDiscovery(): void {
     const accounts = JsonFormatter.discoveredAccounts(this._discoveredAccounts);
-    this._writeNdjson(this._envelope({ accounts }));
+    this._emitResult(this._envelope({ accounts }));
   }
 
   sessionSaved(_added: number): void {
@@ -769,15 +800,15 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   sessionReset(count: number): void {
-    this._writeNdjson(this._envelope({ removed: count }));
+    this._emitResult(this._envelope({ removed: count }));
   }
 
   sessionView(accounts: readonly SessionEntry[]): void {
-    this._writeNdjson(this._envelope({ accounts }));
+    this._emitResult(this._envelope({ accounts }));
   }
 
   sendDryRun(p: { recipient: string; amount: string; fees: string }): void {
-    this._writeNdjson(
+    this._emitResult(
       this._envelope({ dry_run: true, recipient: p.recipient, amount: p.amount, fee: p.fees }),
     );
   }
@@ -797,7 +828,7 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   sendComplete(): void {
-    this._writeNdjson(this._envelope(this._sendResult));
+    this._emitResult(this._envelope(this._sendResult));
   }
 
   deviceState(state: DeviceState): void {
@@ -805,7 +836,7 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   swapQuotes(args: { quotes: SwapQuoteLine[]; partialErrors: SwapQuoteProviderError[] }): void {
-    this._writeNdjson(
+    this._emitResult(
       this._envelope({
         quotes: args.quotes,
         ...(args.partialErrors.length === 0 ? {} : { provider_errors: args.partialErrors }),
@@ -814,7 +845,7 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   swapStatus(status: SwapStatusLine): void {
-    this._writeNdjson(this._envelope(status));
+    this._emitResult(this._envelope(status));
   }
 
   swapQuotesUnavailable(message: string, errors: SwapQuoteProviderError[]): never {
@@ -832,7 +863,7 @@ class JsonCommandOutput implements CommandOutput {
     transactionId?: string;
     payload: SwapPayloadResponse;
   }): void {
-    this._writeNdjson(
+    this._emitResult(
       this._envelope({
         provider: args.provider,
         amount: args.amount,
@@ -854,7 +885,7 @@ class JsonCommandOutput implements CommandOutput {
     amountExpectedTo?: string;
     magnitudeAwareRate?: string;
   }): void {
-    this._writeNdjson(
+    this._emitResult(
       this._envelope({
         from: args.from,
         to: args.to,
@@ -880,7 +911,7 @@ class JsonCommandOutput implements CommandOutput {
     approvalTxHash?: string;
     swapTxHash?: string;
   }): void {
-    this._writeNdjson(
+    this._emitResult(
       this._envelope({
         plan: args.plan,
         from: args.from,
@@ -952,6 +983,90 @@ class JsonCommandOutput implements CommandOutput {
 }
 
 // ---------------------------------------------------------------------------
+// CollectingCommandOutput
+// ---------------------------------------------------------------------------
+
+/** Intermediate NDJSON event forwarded to an onEvent callback (device-state / pre-verify). */
+export type CollectingEvent = Record<string, unknown>;
+
+/** Structured, machine-readable error captured by a collecting output. */
+export type CollectingError = {
+  /** DeviceState code or a swap error code, when the failure is classified. */
+  code?: string;
+  message: string;
+  /** Per-provider quote failures, mirroring the CLI `swap_quotes_unavailable` JSON envelope. */
+  provider_errors?: SwapQuoteProviderError[];
+  exitCode: number;
+};
+
+/**
+ * A CommandOutput that produces byte-for-byte identical envelopes to JsonCommandOutput
+ * but, instead of writing to stdout, buffers the terminal `result` envelope and forwards
+ * intermediate `event` emissions to an onEvent callback. Errors are captured as a
+ * structured `{ code, message, exitCode }` rather than printed. Used by the MCP server so
+ * one tool call maps to one envelope plus MCP progress notifications.
+ */
+class CollectingCommandOutput extends JsonCommandOutput {
+  private _capturedResult: Record<string, unknown> | undefined;
+  private _capturedError: CollectingError | undefined;
+
+  constructor(
+    ctx: OutputContext,
+    fmt: HumanFormatter,
+    private readonly _onEvent: (event: CollectingEvent) => void,
+  ) {
+    super(ctx, fmt);
+  }
+
+  protected override _emitResult(envelope: Record<string, unknown>): void {
+    this._capturedResult = envelope;
+  }
+
+  protected override _emitEvent(event: Record<string, unknown>): void {
+    this._onEvent(event);
+  }
+
+  private _capture(e: unknown): void {
+    if (this._capturedError) return;
+    if (e instanceof WalletCliDeviceError) {
+      const { message } = renderDeviceState(e.state);
+      this._capturedError = { code: e.state.code, message, exitCode: e.exitCode };
+      return;
+    }
+    this._capturedError = { message: HumanFormatter.formatError(e), exitCode: 1 };
+  }
+
+  override async run(fn: () => Promise<void>): Promise<void> {
+    try {
+      await fn();
+    } catch (e) {
+      // fail()/swapQuotesUnavailable() already recorded the error before throwing the sentinel.
+      if (e instanceof CliProcessExitError) return;
+      this._capture(e);
+    }
+  }
+
+  override fail(e: unknown): never {
+    this._capture(e);
+    throw new CliProcessExitError(e instanceof WalletCliDeviceError ? e.exitCode : 1);
+  }
+
+  override swapQuotesUnavailable(message: string, errors: SwapQuoteProviderError[]): never {
+    this._capturedError ??= {
+      code: "swap_quotes_unavailable",
+      message,
+      provider_errors: errors,
+      exitCode: 1,
+    };
+    throw new CliProcessExitError(1);
+  }
+
+  getResult(): { result?: Record<string, unknown>; error?: CollectingError } {
+    return { result: this._capturedResult, error: this._capturedError };
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Factory
 // ---------------------------------------------------------------------------
 
@@ -959,4 +1074,21 @@ export function createCommandOutput(format: "human" | "json", ctx: OutputContext
   const humanFmt = new HumanFormatter(getCryptoAssetsStore());
   if (format === "json") return new JsonCommandOutput(ctx, humanFmt);
   return new HumanCommandOutput(humanFmt);
+}
+
+/**
+ * Build a collecting output for the MCP server. `getResult()` returns the buffered terminal
+ * envelope (byte-for-byte the same as `--output json`) or a structured error; `onEvent`
+ * receives intermediate device-state / pre-verify events for progress notifications.
+ */
+export function createCollectingOutput(
+  ctx: OutputContext,
+  { onEvent }: { onEvent: (event: CollectingEvent) => void },
+): {
+  output: CommandOutput;
+  getResult: () => { result?: Record<string, unknown>; error?: CollectingError };
+} {
+  const humanFmt = new HumanFormatter(getCryptoAssetsStore());
+  const output = new CollectingCommandOutput(ctx, humanFmt, onEvent);
+  return { output, getResult: () => output.getResult() };
 }

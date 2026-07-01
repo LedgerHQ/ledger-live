@@ -1,10 +1,11 @@
 import { defineCommand } from "@bunli/core";
+import { z } from "zod";
 import { DeviceOnDashboardExpected, UserRefusedAllowManager } from "@ledgerhq/errors";
 import { getGenuineCheckFromDeviceId } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
 import type { GetGenuineCheckFromDeviceIdResult } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
 import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError";
 import { TimeoutError, timeout } from "rxjs";
-import { createCommandOutput } from "../output";
+import { type CommandOutput, type OutputContext, createCommandOutput } from "../output";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 import { withDmkDeviceSession } from "../session/bridge-device-session";
@@ -44,6 +45,74 @@ function mapGenuineCheckError(error: unknown): unknown {
   );
 }
 
+export const genuineCheckInputSchema = z.object({
+  "device-timeout": z.coerce.number().int().positive().default(60_000),
+});
+
+export type GenuineCheckInput = z.infer<typeof genuineCheckInputSchema>;
+
+export function genuineCheckContext(_input: GenuineCheckInput): OutputContext {
+  return { command: "genuine-check", network: "device" };
+}
+
+export async function genuineCheckCore(
+  input: GenuineCheckInput,
+  out: CommandOutput,
+): Promise<void> {
+  await out.run(async () => {
+    let isGenuine = false;
+    const spin = out.spin("Connect and unlock your Ledger on the dashboard…");
+
+    await withDmkDeviceSession(async () => {
+      await runObservable<GetGenuineCheckFromDeviceIdResult>({
+        source$: getGenuineCheckFromDeviceId({
+          deviceId: WALLET_CLI_DMK_DEVICE_ID,
+          deviceName: null,
+        }).pipe(timeout({ each: input["device-timeout"] })),
+        onNext: ({ socketEvent, lockedDevice }) => {
+          if (lockedDevice) {
+            out.deviceState({ code: "awaiting_approval", reason: "unlock" });
+            return;
+          }
+          if (!socketEvent) {
+            if (spin) {
+              spin.text = "Ledger unlocked. Starting genuine check…";
+            }
+            return;
+          }
+
+          switch (socketEvent.type) {
+            case "device-permission-requested":
+              if (spin) {
+                spin.text = "Allow Ledger Manager on device…";
+              } else {
+                out.deviceState({ code: "awaiting_approval", reason: "open_app" });
+              }
+              break;
+            case "device-permission-granted":
+              if (spin) {
+                spin.text = "Verifying device genuineness…";
+              }
+              break;
+            case "result":
+              if (socketEvent.payload !== SOCKET_EVENT_PAYLOAD_GENUINE) {
+                throw new NonGenuineDeviceError();
+              }
+              isGenuine = true;
+              break;
+          }
+        },
+        mapError: mapGenuineCheckError,
+      });
+    });
+
+    if (!isGenuine) {
+      throw new Error("Genuine check completed without a result.");
+    }
+    out.genuineCheck();
+  });
+}
+
 export default defineCommand({
   name: "genuine-check",
   description: "Check whether the connected Ledger device is genuine",
@@ -52,60 +121,8 @@ export default defineCommand({
     "device-timeout": deviceTimeoutOption,
   },
   handler: async ({ flags }) => {
-    const ctx = { command: "genuine-check", network: "device" };
-    const out = createCommandOutput(resolveOutputFormat(flags.output), ctx);
-
-    await out.run(async () => {
-      let isGenuine = false;
-      const spin = out.spin("Connect and unlock your Ledger on the dashboard…");
-
-      await withDmkDeviceSession(async () => {
-        await runObservable<GetGenuineCheckFromDeviceIdResult>({
-          source$: getGenuineCheckFromDeviceId({
-            deviceId: WALLET_CLI_DMK_DEVICE_ID,
-            deviceName: null,
-          }).pipe(timeout({ each: flags["device-timeout"] })),
-          onNext: ({ socketEvent, lockedDevice }) => {
-            if (lockedDevice) {
-              out.deviceState({ code: "awaiting_approval", reason: "unlock" });
-              return;
-            }
-            if (!socketEvent) {
-              if (spin) {
-                spin.text = "Ledger unlocked. Starting genuine check…";
-              }
-              return;
-            }
-
-            switch (socketEvent.type) {
-              case "device-permission-requested":
-                if (spin) {
-                  spin.text = "Allow Ledger Manager on device…";
-                } else {
-                  out.deviceState({ code: "awaiting_approval", reason: "open_app" });
-                }
-                break;
-              case "device-permission-granted":
-                if (spin) {
-                  spin.text = "Verifying device genuineness…";
-                }
-                break;
-              case "result":
-                if (socketEvent.payload !== SOCKET_EVENT_PAYLOAD_GENUINE) {
-                  throw new NonGenuineDeviceError();
-                }
-                isGenuine = true;
-                break;
-            }
-          },
-          mapError: mapGenuineCheckError,
-        });
-      });
-
-      if (!isGenuine) {
-        throw new Error("Genuine check completed without a result.");
-      }
-      out.genuineCheck();
-    });
+    const input: GenuineCheckInput = { "device-timeout": flags["device-timeout"] };
+    const out = createCommandOutput(resolveOutputFormat(flags.output), genuineCheckContext(input));
+    await genuineCheckCore(input, out);
   },
 });

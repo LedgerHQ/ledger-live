@@ -20,6 +20,7 @@ const ALL_SKILLS = [
   "ledger-wallet-cli-send",
   "ledger-wallet-cli-swap",
   "ledger-wallet-cli-genuine-check",
+  "ledger-wallet-cli-mcp",
 ];
 
 let tmpDir: string | undefined;

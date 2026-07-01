@@ -46,6 +46,7 @@ const SHIPPED_SKILLS = new Set([
   "ledger-wallet-cli-send",
   "ledger-wallet-cli-swap",
   "ledger-wallet-cli-genuine-check",
+  "ledger-wallet-cli-mcp",
 ]);
 
 /**

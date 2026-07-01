@@ -11,6 +11,8 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 This is the **entry/router** skill. It hosts the intent map, the supporting commands that fit no single task skill (`session`, `balances`, `operations`, `assets`, `earn`, `ring`), and the shared references. For a specific flow, retrieve the dedicated task skill (each is self-contained: informal-request mapping, flags, task errors, and the shared safety rails).
 
+> **Two ways in — same flows.** wallet-cli ships as a CLI **and** as an MCP server. `wallet-cli mcp` starts a stdio MCP server that exposes every command as a typed MCP tool (`account_discover`, `balances`, `receive`, `send`, `swap_execute`, …), returning the same envelopes as `--output json`. The skills are the _methodology_ (when/how to run a flow, safety rails); MCP is the _transport_ (the tools). For MCP setup and the tool list, retrieve the `ledger-wallet-cli-mcp` skill. All safety rails apply identically to both paths.
+
 > **Shared safety rails:** every device-touching flow follows [`references/safety.md`](references/safety.md) (USB sandbox bypass, device contention, on-device confirmation, ambiguous→ask, out-of-scope, shared error table). Each task skill embeds an identical copy. The `earn deposit`/`withdraw` and `ring` flows below are hosted here but obey the same rails.
 
 > **Concepts & rationale:** for _why_ a command behaves the way it does (genuine check, receive-address verification, sessions, sandbox, device contention), read [`references/business-logic.md`](references/business-logic.md).
@@ -44,7 +46,7 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "wipe my key ring", "destroy the ring", "tear down LKRP membership"                 | `ring destroy`                                                                            |
 | "start over", "clear my session", "I switched devices"                             | `session reset`                                                                           |
 
-Retrieve a task skill with, e.g., `wallet-cli skill retrieve ledger-wallet-cli-send` (or install them all with `wallet-cli skill install --all`).
+Retrieve a task skill with, e.g., `wallet-cli skill retrieve ledger-wallet-cli-send` (or install them all with `wallet-cli skill install --all`). To drive these flows as MCP tools instead of the CLI, retrieve `ledger-wallet-cli-mcp`.
 
 ---
 
