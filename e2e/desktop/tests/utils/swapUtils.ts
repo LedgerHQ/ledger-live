@@ -38,8 +38,8 @@ export function expectAmountCloseTo(actual: number, expected: number, relativeTo
 // so a plain parseFloat would return NaN; extract the numeric substring and strip
 // locale thousands separators before parsing.
 export function parseBalanceAmount(balanceText: string | null): number {
-  const numericMatch = balanceText?.match(/[\d,]*\.?\d+/)?.[0];
-  const balance = numericMatch ? parseFloat(numericMatch.replace(/,/g, "")) : NaN;
+  const numericMatch = balanceText?.match(/\d[\d,]*(?:\.\d+)?/)?.[0];
+  const balance = numericMatch ? Number.parseFloat(numericMatch.replaceAll(",", "")) : Number.NaN;
   expect(Number.isFinite(balance)).toBe(true);
   return balance;
 }
