@@ -44,8 +44,6 @@ function Effect({
   itemsRef: React.RefObject<WatchedItem[]>;
   outOfViewThreshold: number;
 }) {
-  // Keyed by the stable `target` ref, not the WatchedItem, so visibility memory
-  // survives re-subscriptions and avoids re-firing on re-render.
   const visibilityByTarget = useRef(new WeakMap<RefObject<View | null>, boolean>());
 
   const hasItems = useSelector(inViewHasItemsSelector);

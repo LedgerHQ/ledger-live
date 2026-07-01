@@ -19,25 +19,9 @@ const entry = (isInView: boolean): InViewEntry => ({
   progressRatio: isInView ? 1 : 0,
 });
 
-function Consumer({
-  onUpdate,
-  depValue,
-}: {
-  onUpdate: (entry: InViewEntry) => void;
-  depValue: number;
-}) {
+function Consumer({ onUpdate }: { onUpdate: (entry: InViewEntry) => void }) {
   const ref = useRef<View | null>(null);
-  // The callback closes over `depValue`, so bumping it changes the memoized callback
-  // identity and forces a re-subscription with a new WatchedItem but the same target
-  // ref — exactly how the carousel re-subscribes when it rebuilds its `items`.
-  useInViewContext(
-    entry => {
-      if (depValue < 0) return;
-      onUpdate(entry);
-    },
-    [onUpdate, depValue],
-    ref,
-  );
+  useInViewContext(onUpdate, [onUpdate], ref);
   return <View ref={ref} />;
 }
 
@@ -55,7 +39,7 @@ describe("InViewContext", () => {
   });
 
   afterEach(() => {
-    jest.runOnlyPendingTimers();
+    jest.clearAllTimers();
     jest.useRealTimers();
   });
 
@@ -65,7 +49,7 @@ describe("InViewContext", () => {
 
     render(
       <InViewProvider intervalDuration={INTERVAL}>
-        <Consumer onUpdate={onUpdate} depValue={0} />
+        <Consumer onUpdate={onUpdate} />
       </InViewProvider>,
     );
 
@@ -81,17 +65,17 @@ describe("InViewContext", () => {
 
     const { rerender } = render(
       <InViewProvider intervalDuration={INTERVAL}>
-        <Consumer onUpdate={onUpdate} depValue={0} />
+        <Consumer onUpdate={entry => onUpdate(entry)} />
       </InViewProvider>,
     );
 
     await tick();
     expect(onUpdate).toHaveBeenCalledTimes(1);
 
-    // New WatchedItem, same target ref — like the carousel rebuilding `items`.
+    // New callback identity creates a new WatchedItem, same target ref.
     rerender(
       <InViewProvider intervalDuration={INTERVAL}>
-        <Consumer onUpdate={onUpdate} depValue={1} />
+        <Consumer onUpdate={entry => onUpdate(entry)} />
       </InViewProvider>,
     );
 
@@ -106,7 +90,7 @@ describe("InViewContext", () => {
 
     render(
       <InViewProvider intervalDuration={INTERVAL}>
-        <Consumer onUpdate={onUpdate} depValue={0} />
+        <Consumer onUpdate={onUpdate} />
       </InViewProvider>,
     );
 
