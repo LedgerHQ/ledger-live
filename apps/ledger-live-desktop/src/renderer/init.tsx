@@ -339,8 +339,6 @@ async function init() {
     check();
   });
 
-  r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
-
   const postOnboardingState = await getKey("app", "postOnboarding");
   if (postOnboardingState) {
     store.dispatch(
@@ -349,6 +347,8 @@ async function init() {
       }),
     );
   }
+
+  r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
 
   await dispatch(fetchTrustchain());
   await dispatch(fetchWallet());

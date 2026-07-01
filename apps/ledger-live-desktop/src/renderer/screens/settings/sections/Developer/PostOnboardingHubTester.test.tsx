@@ -94,7 +94,7 @@ describe("PostOnboardingHubTester", () => {
   it("should show a null onboarding date when no date is persisted", () => {
     render(<PostOnboardingHubTester />);
 
-    expect(screen.getByText("Current: null")).toBeInTheDocument();
+    expect(screen.getByText("Current: null")).toBeVisible();
   });
 
   it("should show the current onboarding date when one is persisted", () => {
@@ -106,7 +106,7 @@ describe("PostOnboardingHubTester", () => {
 
     render(<PostOnboardingHubTester />);
 
-    expect(screen.getByText("Current: 2024-03-04T05:06:07.000Z")).toBeInTheDocument();
+    expect(screen.getByText("Current: 2024-03-04T05:06:07.000Z")).toBeVisible();
   });
 
   it("should set and reset the onboarding date from the debug actions", () => {
