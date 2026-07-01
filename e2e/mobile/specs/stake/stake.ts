@@ -1,4 +1,3 @@
-import { setEnv } from "@ledgerhq/live-env";
 import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
@@ -18,6 +17,9 @@ const TEZOS_STAKING_TAGS = [
 // Mobile twin of desktop's lldTezosStaking; the staking screens, routing and the account-screen
 // staking section are all gated on it (default off).
 const STAKING_FEATURE_FLAGS = { llmTezosStaking: { enabled: true } };
+
+// Broadcast follows DISABLE_TRANSACTION_BROADCAST via setupEnvironment (off by default; "0" to
+// broadcast on-chain), matching desktop — so these suites intentionally don't override it.
 
 async function initStakingAccount(delegation: DelegateType) {
   await app.init({
@@ -44,7 +46,6 @@ export function runEarningChoiceTezos(
   tmsLinks: string[],
   tags: string[] = TEZOS_STAKING_TAGS,
 ) {
-  setEnv("DISABLE_TRANSACTION_BROADCAST", true);
   tagSuite(tmsLinks, tags);
   describe("Earning choice on TEZOS", () => {
     beforeAll(async () => {
@@ -68,8 +69,6 @@ export function runStakeTezos(
   tmsLinks: string[],
   tags: string[] = TEZOS_STAKING_TAGS,
 ) {
-  // Broadcast off so CI never mutates the seed; the app still reaches the success screen.
-  setEnv("DISABLE_TRANSACTION_BROADCAST", true);
   tagSuite(tmsLinks, tags);
   describe("Stake flow on TEZOS", () => {
     beforeAll(async () => {
@@ -98,7 +97,6 @@ export function runUnstakeTezos(
   tmsLinks: string[],
   tags: string[] = TEZOS_STAKING_TAGS,
 ) {
-  setEnv("DISABLE_TRANSACTION_BROADCAST", true);
   tagSuite(tmsLinks, tags);
   describe("Unstake flow on TEZOS", () => {
     beforeAll(async () => {
@@ -127,7 +125,6 @@ export function runUnstakeRequiredTezos(
   tmsLinks: string[],
   tags: string[] = TEZOS_STAKING_TAGS,
 ) {
-  setEnv("DISABLE_TRANSACTION_BROADCAST", true); // assertion-only: never signs or broadcasts
   tagSuite(tmsLinks, tags);
   const title =
     action === "changeValidator"
