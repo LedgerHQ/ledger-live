@@ -2,6 +2,7 @@ import { setEnv } from "@ledgerhq/live-env";
 import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { verifyTezosStakingOperationDetails } from "../../models/stake";
 
 const TEZOS_STAKING_TAGS = [
   "@NanoSP",
@@ -33,7 +34,7 @@ async function goToTezosAccount(delegation: DelegateType) {
 }
 
 function tagSuite(tmsLinks: string[], tags: string[]) {
-  setTeamOwner(Team.EARN);
+  setTeamOwner(Team.BST);
   tags.forEach(tag => $Tag(tag));
   tmsLinks.forEach(tms => $TmsLink(tms));
 }
@@ -83,9 +84,11 @@ export function runStakeTezos(
       await app.account.tapEarn();
       await app.tezosStake.fillStakeAmount(delegation.amount);
       await app.tezosStake.continueStakeAmount();
+      await app.deviceValidation.expectDeviceValidationScreen();
       // Tezos signs stake via the same on-device review flow as delegation.
       await app.speculos.signDelegationTransaction(delegation);
       await app.common.successViewDetails();
+      await verifyTezosStakingOperationDetails(delegation, "stake");
     });
   });
 }
@@ -110,8 +113,10 @@ export function runUnstakeTezos(
       await app.tezosStake.openUnstakeFromStakingSection();
       await app.tezosStake.fillUnstakeAmount(delegation.amount);
       await app.tezosStake.continueUnstakeAmount();
+      await app.deviceValidation.expectDeviceValidationScreen();
       await app.speculos.signDelegationTransaction(delegation);
       await app.common.successViewDetails();
+      await verifyTezosStakingOperationDetails(delegation, "unstake");
     });
   });
 }
