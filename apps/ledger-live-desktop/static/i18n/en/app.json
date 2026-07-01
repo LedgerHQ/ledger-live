@@ -9417,6 +9417,61 @@
         "description": "An error occurred. Please try again or contact Ledger support if the issue persists."
       }
     },
+    "initialization": {
+      "loading": {
+        "title": "Loading"
+      },
+      "installingApp": {
+        "title": "Installing app"
+      },
+      "outdatedAppWarning": {
+        "title": "App version outdated",
+        "description": "An important update is available for the {{appName}} application on your device. Please go to My Ledger to update it."
+      },
+      "retryable": {
+        "userRefused": {
+          "title": "Operation rejected on device"
+        },
+        "deviceBusy": {
+          "title": "Action pending on your Ledger device",
+          "description": "Complete it and then select Retry."
+        }
+      },
+      "blocking": {
+        "deviceNotOnboarded": {
+          "title": "Your Ledger is not ready to use yet",
+          "description": "You need to set up your {{productName}} first. We will guide you through the device setup process."
+        },
+        "unsupportedFirmwareVersion": {
+          "title": "Ledger OS update required"
+        },
+        "unsupportedApplication": {
+          "title": "Unsupported feature",
+          "description": "The app required for this operation is not currently available on your Ledger device. Please contact Ledger support for details."
+        },
+        "unsupportedFeature": {
+          "title": "Unsupported feature",
+          "description": "The app required for this operation is not currently available on your Ledger device. Please contact Ledger support for details."
+        },
+        "wrongDeviceForAccount": {
+          "title": "Wrong Secret Recovery Phrase",
+          "description": "This Ledger isn't set up with the recovery phrase linked to the selected account. Check that you're using the correct device."
+        },
+        "deviceOutOfStorageSpace": {
+          "title": "Not enough device memory",
+          "description": "Your device doesn't have enough memory. Please uninstall apps and try again.",
+          "apps": "Apps to manage: {{appNames}}"
+        }
+      },
+      "cta": {
+        "openMyLedger": "Open My Ledger",
+        "goToMyLedger": "Go to My Ledger",
+        "setupDevice": "Set up device",
+        "updateLedgerOs": "Update Ledger OS",
+        "cancelOperation": "Cancel operation",
+        "contactLedgerSupport": "Contact Ledger support"
+      }
+    },
     "connectDevice": {
       "common": {
         "ledgerDevice": "Ledger device",

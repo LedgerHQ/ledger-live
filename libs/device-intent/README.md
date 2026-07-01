@@ -73,11 +73,12 @@ platform-specific components.
 
 ### LWD (Ledger Wallet Desktop)
 
-Not yet integrated — coming soon. The wrapper will mirror the LWM one
-(planned as `DeviceIntentExecutorLWD`) and inject desktop-specific platform
-components for the connection, initialisation, and error screens. The
-shared core (`DeviceIntentExecutor`, state machine, intent definitions, initialization logic via `ensureAppReadyUseCase`) is
-already platform-agnostic, so the wiring is the only missing piece.
+Supported via the `DeviceIntentExecutorLWD` wrapper at
+`apps/ledger-live-desktop/src/mvvm/components/DeviceIntentExecutor/`. It mirrors
+the LWM integration and injects desktop-specific platform components for the
+connection, context-initialisation, and error screens. The shared core
+(`DeviceIntentExecutor`, state machine, intent definitions, initialization logic
+via `ensureAppReadyUseCase`) remains platform-agnostic.
 
 ### CLI
 
