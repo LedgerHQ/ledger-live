@@ -3,8 +3,9 @@ import { getProductName } from "@ledgerhq/devices";
 import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState } from "@ledgerhq/live-dmk-desktop";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { screen } from "@testing-library/react";
+import { render } from "tests/testSetup";
 
-import { makeKnownDevice, renderWithUser } from "../testUtils";
+import { makeKnownDevice } from "../testUtils";
 import { WaitingForSelectedDeviceState } from "./WaitingForSelectedDeviceState";
 
 jest.mock("~/renderer/components/DeviceAction/animations", () => ({
@@ -13,22 +14,13 @@ jest.mock("~/renderer/components/DeviceAction/animations", () => ({
 
 jest.mock("~/renderer/hooks/useTheme", () => () => ({ theme: "dark" }));
 
-jest.mock("react-i18next", () => ({
-  useTranslation: () => ({
-    t: (key: string, params?: Record<string, string>) => {
-      const { mockT } = jest.requireActual("../testUtils");
-      return mockT(key, params);
-    },
-  }),
-}));
-
 type WaitingForSelectedDeviceUIState = Extract<
   ConnectDeviceUIState,
   { type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice }
 >;
 
 function renderState(device: WaitingForSelectedDeviceUIState["device"]) {
-  return renderWithUser(
+  return render(
     <WaitingForSelectedDeviceState
       state={{
         type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice,

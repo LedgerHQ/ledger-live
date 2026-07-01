@@ -1,24 +1,13 @@
 import React from "react";
 import { screen } from "@testing-library/react";
+import { render } from "tests/testSetup";
 
-import { renderWithUser } from "../testUtils";
 import { NoKnownDeviceState } from "./NoKnownDeviceState";
-
-jest.mock("react-i18next", () => ({
-  useTranslation: () => ({
-    t: (key: string, params?: Record<string, string>) => {
-      const { mockT } = jest.requireActual("../testUtils");
-      return mockT(key, params);
-    },
-  }),
-}));
 
 describe("NoKnownDeviceState", () => {
   it("GIVEN there is no known device WHEN rendering THEN it shows the no known device copy", () => {
     // WHEN
-    renderWithUser(
-      <NoKnownDeviceState onConnectLedgerDevice={jest.fn()} onBuyLedgerDevice={jest.fn()} />,
-    );
+    render(<NoKnownDeviceState onConnectLedgerDevice={jest.fn()} onBuyLedgerDevice={jest.fn()} />);
 
     // THEN
     expect(screen.getByText("Ledger device required")).toBeVisible();
@@ -28,7 +17,7 @@ describe("NoKnownDeviceState", () => {
   it("GIVEN there is no known device WHEN clicking the connect CTA THEN it calls the connect callback", async () => {
     // GIVEN
     const onConnectLedgerDevice = jest.fn();
-    const { user } = renderWithUser(
+    const { user } = render(
       <NoKnownDeviceState
         onConnectLedgerDevice={onConnectLedgerDevice}
         onBuyLedgerDevice={jest.fn()}
@@ -45,7 +34,7 @@ describe("NoKnownDeviceState", () => {
   it("GIVEN there is no known device WHEN clicking the buy device CTA THEN it calls the buy device callback", async () => {
     // GIVEN
     const onBuyLedgerDevice = jest.fn();
-    const { user } = renderWithUser(
+    const { user } = render(
       <NoKnownDeviceState
         onConnectLedgerDevice={jest.fn()}
         onBuyLedgerDevice={onBuyLedgerDevice}

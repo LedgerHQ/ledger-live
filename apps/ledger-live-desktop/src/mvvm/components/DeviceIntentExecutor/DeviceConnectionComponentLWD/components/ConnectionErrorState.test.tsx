@@ -5,18 +5,10 @@ import {
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-desktop";
 import { screen } from "@testing-library/react";
+import { render } from "tests/testSetup";
 
-import { makeKnownDevice, renderWithUser } from "../testUtils";
+import { makeKnownDevice } from "../testUtils";
 import { ConnectionErrorState } from "./ConnectionErrorState";
-
-jest.mock("react-i18next", () => ({
-  useTranslation: () => ({
-    t: (key: string, params?: Record<string, string>) => {
-      const { mockT } = jest.requireActual("../testUtils");
-      return mockT(key, params);
-    },
-  }),
-}));
 
 type ConnectionErrorUIState = Extract<
   ConnectDeviceUIState,
@@ -24,7 +16,7 @@ type ConnectionErrorUIState = Extract<
 >;
 
 function renderState(state: Partial<ConnectionErrorUIState> = {}) {
-  return renderWithUser(
+  return render(
     <ConnectionErrorState
       state={
         {

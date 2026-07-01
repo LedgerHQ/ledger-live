@@ -2,18 +2,10 @@ import React from "react";
 import { getProductName } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { screen } from "@testing-library/react";
+import { render } from "tests/testSetup";
 
-import { makeDisplayedDevice, makeKnownDevice, renderWithUser } from "../testUtils";
+import { makeDisplayedDevice, makeKnownDevice } from "../testUtils";
 import { DeviceListItem } from "./DeviceListItem";
-
-jest.mock("react-i18next", () => ({
-  useTranslation: () => ({
-    t: (key: string, params?: Record<string, string>) => {
-      const { mockT } = jest.requireActual("../testUtils");
-      return mockT(key, params);
-    },
-  }),
-}));
 
 describe("DeviceListItem", () => {
   it("GIVEN an available device WHEN rendering THEN it shows the device name and available status", () => {
@@ -24,7 +16,7 @@ describe("DeviceListItem", () => {
     });
 
     // WHEN
-    renderWithUser(<DeviceListItem device={device} />);
+    render(<DeviceListItem device={device} />);
 
     // THEN
     expect(screen.getByText("Available Ledger")).toBeVisible();
@@ -39,7 +31,7 @@ describe("DeviceListItem", () => {
     });
 
     // WHEN
-    renderWithUser(<DeviceListItem device={device} />);
+    render(<DeviceListItem device={device} />);
 
     // THEN
     expect(screen.getByText("Unavailable Ledger")).toBeVisible();
@@ -53,7 +45,7 @@ describe("DeviceListItem", () => {
     });
 
     // WHEN
-    renderWithUser(<DeviceListItem device={device} />);
+    render(<DeviceListItem device={device} />);
 
     // THEN
     expect(
@@ -71,7 +63,7 @@ describe("DeviceListItem", () => {
       }),
       onSelect,
     });
-    const { user } = renderWithUser(<DeviceListItem device={device} />);
+    const { user } = render(<DeviceListItem device={device} />);
 
     // WHEN
     await user.click(screen.getByText("Ledger Stax"));

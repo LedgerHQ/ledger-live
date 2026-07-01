@@ -1,18 +1,10 @@
 import React from "react";
 import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState } from "@ledgerhq/live-dmk-desktop";
 import { screen } from "@testing-library/react";
+import { render } from "tests/testSetup";
 
-import { makeDisplayedDevice, makeKnownDevice, renderWithUser } from "../testUtils";
+import { makeDisplayedDevice, makeKnownDevice } from "../testUtils";
 import { DiscoveringState } from "./DiscoveringState";
-
-jest.mock("react-i18next", () => ({
-  useTranslation: () => ({
-    t: (key: string, params?: Record<string, string>) => {
-      const { mockT } = jest.requireActual("../testUtils");
-      return mockT(key, params);
-    },
-  }),
-}));
 
 type DiscoveringUIState = Extract<
   ConnectDeviceUIState,
@@ -20,7 +12,7 @@ type DiscoveringUIState = Extract<
 >;
 
 function renderState(state: Partial<DiscoveringUIState> = {}) {
-  return renderWithUser(
+  return render(
     <DiscoveringState
       state={{
         type: ConnectDeviceUIStateTypes.Discovering,

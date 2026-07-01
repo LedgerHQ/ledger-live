@@ -5,18 +5,9 @@ import {
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-desktop";
 import { screen } from "@testing-library/react";
+import { render } from "tests/testSetup";
 
-import { renderWithUser } from "../testUtils";
 import { DiscoveryErrorState } from "./DiscoveryErrorState";
-
-jest.mock("react-i18next", () => ({
-  useTranslation: () => ({
-    t: (key: string, params?: Record<string, string>) => {
-      const { mockT } = jest.requireActual("../testUtils");
-      return mockT(key, params);
-    },
-  }),
-}));
 
 type DiscoveryErrorUIState = Extract<
   ConnectDeviceUIState,
@@ -24,7 +15,7 @@ type DiscoveryErrorUIState = Extract<
 >;
 
 function renderState(state: Partial<DiscoveryErrorUIState> = {}) {
-  return renderWithUser(
+  return render(
     <DiscoveryErrorState
       state={
         {

@@ -6,9 +6,10 @@ import {
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-desktop";
 import { screen } from "@testing-library/react";
+import { render } from "tests/testSetup";
 
 import { DeviceConnectionComponentLWDView } from "./DeviceConnectionComponentLWDView";
-import { makeKnownDevice, renderWithUser } from "./testUtils";
+import { makeKnownDevice } from "./testUtils";
 import type { DeviceConnectionComponentLWDViewModel } from "./useDeviceConnectionComponentLWDViewModel";
 
 jest.mock("~/renderer/components/DeviceAction/animations", () => ({
@@ -17,20 +18,11 @@ jest.mock("~/renderer/components/DeviceAction/animations", () => ({
 
 jest.mock("~/renderer/hooks/useTheme", () => () => ({ theme: "dark" }));
 
-jest.mock("react-i18next", () => ({
-  useTranslation: () => ({
-    t: (key: string, params?: Record<string, string>) => {
-      const { mockT } = jest.requireActual("./testUtils");
-      return mockT(key, params);
-    },
-  }),
-}));
-
 function renderView(
   state: ConnectDeviceUIState,
   callbacks: Partial<Omit<DeviceConnectionComponentLWDViewModel, "state">> = {},
 ) {
-  return renderWithUser(
+  return render(
     <DeviceConnectionComponentLWDView
       state={state}
       onConnectLedgerDevice={callbacks.onConnectLedgerDevice ?? jest.fn()}
