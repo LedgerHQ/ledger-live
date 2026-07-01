@@ -97,6 +97,31 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
   return port;
 }
 
+/**
+ * Simulate an abrupt, uncatchable loss of the app process — the way an OOM / jetsam
+ * kill takes the app down in the wild. Sends SIGKILL to the app via `simctl terminate`
+ * (iOS) or `am force-stop` (Android); neither delivers a signal Detox's in-app crash
+ * handler can catch. Because Detox is never told, it does not relaunch, so the next
+ * interaction fails with "The app has unexpectedly disconnected from Detox server" /
+ * "Detox can't seem to connect to the test app(s)!" — the CI connection-loss signature,
+ * as opposed to "The app has crashed" (a caught crash) or "The app is busy" (a JS freeze).
+ *
+ * Contrast with `device.terminateApp()`, which Detox performs knowingly and cleanly.
+ *
+ * @param bundleId app id to kill; defaults to the e2e build id for the current platform.
+ */
+export function killApp(bundleId?: string): Promise<void> {
+  // device.id is this worker's simulator UDID (iOS) / adb id (Android): parallel-safe.
+  const id = bundleId ?? (isIos() ? "com.ledger.live" : "com.ledger.live.detox");
+  const cmd = isIos()
+    ? `xcrun simctl terminate ${device.id} ${id}`
+    : `adb -s ${device.id} shell am force-stop ${id}`;
+  log.info(`[killApp] simulating Detox connection loss: ${cmd}`);
+  return new Promise<void>((resolve, reject) => {
+    exec(cmd, error => (error ? reject(error) : resolve()));
+  });
+}
+
 export function setupEnvironment() {
   setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
   setEnv("MOCK", "");

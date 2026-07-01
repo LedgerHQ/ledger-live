@@ -99,7 +99,7 @@ const config = {
 
   setupFilesAfterEnv: ["<rootDir>/setup.ts"],
   testMatch: ["<rootDir>/specs/**/*.spec.ts"],
-  testTimeout: 300_000,
+  testTimeout: 30000,
   reporters: [
     "detox/runners/jest/reporter",
     ["jest-allure2-reporter", jestAllure2ReporterOptions],
