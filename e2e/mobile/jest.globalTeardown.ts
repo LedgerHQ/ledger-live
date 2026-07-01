@@ -48,10 +48,9 @@ export default async () => {
     try {
       await initDetox();
       await launchApp({ newInstance: true });
+      await setFeatureFlags(getMergedFeatureFlags());
       await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
       await NativeElementHelpers.waitForElementById("topbar-settings", 120_000);
-
-      await setFeatureFlags(getMergedFeatureFlags());
 
       const flagsData = formatFlagsData(JSON.parse(await getFlags()));
       const envsData = formatEnvData(JSON.parse(await getEnvs()));
