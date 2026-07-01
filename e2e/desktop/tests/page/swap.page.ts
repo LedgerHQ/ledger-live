@@ -583,7 +583,16 @@ export class SwapPage extends WebViewAppPage {
   @step("Hover from-account amount field to reveal quick-fill buttons")
   async hoverAmountField() {
     const webview = await this.getWebView();
-    await webview.getByTestId(this.fromAccountWrapper).hover();
+    const wrapper = webview.getByTestId(this.fromAccountWrapper);
+    const anyPercentageButton = webview.getByTestId(this.percentageButtonTestId("25%"));
+    // hover() on the wrapper can occasionally fail to stick the CSS :hover
+    // state (seen with Electron's out-of-process webview), leaving the
+    // group-hover-revealed row invisible; re-hovering until it's confirmed
+    // revealed is more reliable than waiting longer on a single attempt.
+    await expect(async () => {
+      await wrapper.hover();
+      await expect(anyPercentageButton).toBeVisible({ timeout: 2_000 });
+    }).toPass({ timeout: 20_000 });
   }
 
   // Max/% are Lumen `Tag` components rendered as plain <div>s: `disabled` only
