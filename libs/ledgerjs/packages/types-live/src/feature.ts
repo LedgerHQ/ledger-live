@@ -948,7 +948,6 @@ type Feature_Wallet40_Params = {
   mainNavigation: boolean;
   tour: boolean;
   lazyOnboarding: boolean;
-  balanceRefreshRework: boolean;
   assetSection: boolean;
   operationsList: boolean;
   aggregatedAssets: boolean;

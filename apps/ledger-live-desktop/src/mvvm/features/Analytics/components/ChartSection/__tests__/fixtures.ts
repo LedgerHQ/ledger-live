@@ -24,6 +24,6 @@ export const chartSectionInitialState = {
 export const chartSectionHeaderInitialState = {
   ...chartSectionInitialState,
   ...withFlagOverrides({
-    lwdWallet40: { enabled: true, params: { balanceRefreshRework: true } },
+    lwdWallet40: { enabled: true },
   }),
 };

@@ -325,7 +325,6 @@ describe("PortfolioView", () => {
           ...withFlagOverrides({
             lwdWallet40: {
               enabled: true,
-              params: { balanceRefreshRework: true },
             },
           }),
         },
@@ -350,7 +349,6 @@ describe("PortfolioView", () => {
           ...withFlagOverrides({
             lwdWallet40: {
               enabled: true,
-              params: { balanceRefreshRework: true },
             },
           }),
         },

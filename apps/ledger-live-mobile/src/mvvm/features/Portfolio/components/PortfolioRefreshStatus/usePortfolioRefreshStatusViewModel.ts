@@ -1,11 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import {
-  selectIsRefreshing,
-  selectLastOfflineRefreshAttemptTimestamp,
-} from "~/reducers/portfolioRefresh";
+import { selectLastOfflineRefreshAttemptTimestamp } from "~/reducers/portfolioRefresh";
 import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
 
 export const REFRESH_STATUS_VISIBLE_DURATION_MS = 3_000;
@@ -24,8 +20,6 @@ interface UsePortfolioRefreshStatusViewModelResult {
 
 export const usePortfolioRefreshStatusViewModel = (): UsePortfolioRefreshStatusViewModelResult => {
   const { t } = useTranslation();
-  const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
-  const legacyIsRefreshing = useSelector(selectIsRefreshing);
   const lastOfflineRefreshAttemptTimestamp = useSelector(selectLastOfflineRefreshAttemptTimestamp);
   const { syncPhase, isManualRefreshLoading } = usePortfolioBalance();
 
@@ -38,9 +32,7 @@ export const usePortfolioRefreshStatusViewModel = (): UsePortfolioRefreshStatusV
     wasUserTriggeredRef.current = false;
   }
 
-  const isSyncing = shouldDisplayBalanceRefreshRework
-    ? syncPhase === "syncing" && wasUserTriggeredRef.current
-    : legacyIsRefreshing;
+  const isSyncing = syncPhase === "syncing" && wasUserTriggeredRef.current;
 
   const [outcome, setOutcome] = useState<RefreshOutcome>(null);
   const prevIsSyncingRef = useRef(isSyncing);
@@ -63,18 +55,17 @@ export const usePortfolioRefreshStatusViewModel = (): UsePortfolioRefreshStatusV
   }, [isSyncing, syncPhase]);
 
   useEffect(() => {
-    if (!shouldDisplayBalanceRefreshRework) return;
     if (outcome === "success" && syncPhase === "failed") {
       setOutcome("error");
     }
-  }, [syncPhase, outcome, shouldDisplayBalanceRefreshRework]);
+  }, [syncPhase, outcome]);
 
   useEffect(() => {
-    if (!shouldDisplayBalanceRefreshRework || !lastOfflineRefreshAttemptTimestamp) return;
+    if (!lastOfflineRefreshAttemptTimestamp) return;
     setOutcome("offline");
     const timer = setTimeout(() => setOutcome(null), REFRESH_STATUS_VISIBLE_DURATION_MS);
     return () => clearTimeout(timer);
-  }, [lastOfflineRefreshAttemptTimestamp, shouldDisplayBalanceRefreshRework]);
+  }, [lastOfflineRefreshAttemptTimestamp]);
 
   return {
     isVisible: isSyncing || outcome !== null,

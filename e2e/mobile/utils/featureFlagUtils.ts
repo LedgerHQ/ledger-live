@@ -12,7 +12,6 @@ const defaultFlags = {
       quickActionCtas: isWallet40,
       tour: false,
       lazyOnboarding: isWallet40,
-      balanceRefreshRework: isWallet40,
       assetSection: false,
       operationsList: false,
       aggregatedAssets: false,
