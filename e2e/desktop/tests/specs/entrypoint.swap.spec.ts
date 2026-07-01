@@ -106,7 +106,9 @@ test.describe("Swap flow from different entry point", () => {
         app.market.startSwapForSelectedTicker(swapEntryPoint.swap.accountToDebit.currency.ticker),
       );
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      await app.swap.checkAssetToAccountNameContains(swapEntryPoint.swap.accountToDebit.accountName);
+      await app.swap.checkAssetToAccountNameContains(
+        swapEntryPoint.swap.accountToDebit.accountName,
+      );
     },
   );
 
@@ -167,7 +169,9 @@ test.describe("Swap flow from different entry point", () => {
       );
       await app.swap.goAndWaitForSwapToBeReady(() => app.account.navigateToSwap());
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      await app.swap.checkAssetToAccountNameContains(swapEntryPoint.swap.accountToDebit.accountName);
+      await app.swap.checkAssetToAccountNameContains(
+        swapEntryPoint.swap.accountToDebit.accountName,
+      );
     },
   );
 

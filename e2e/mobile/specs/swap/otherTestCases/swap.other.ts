@@ -7,7 +7,6 @@ import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
 import { beforeAllFunctionSwap } from "../swap.setup";
-import { isWallet40 } from "../../../helpers/commonHelpers";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
@@ -504,12 +503,7 @@ async function validateSwapAssetsPage(accountFrom: string, accountTo: string) {
 
 async function openSwapFromPortfolioEntryPoint() {
   await app.mainNavigation.openPortfolioViaDeeplink();
-  if (isWallet40) {
-    await app.mainNavigation.tapWallet40Tab("swap");
-  } else {
-    await app.transferMenuDrawer.open();
-    await app.transferMenuDrawer.navigateToSwap();
-  }
+  await app.mainNavigation.tapWallet40Tab("swap");
 }
 
 export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: string[]) {

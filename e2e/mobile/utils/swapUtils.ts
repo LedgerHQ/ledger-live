@@ -65,7 +65,7 @@ export async function ensureTokenApproval(
       provider.contractAddress,
       new BigNumber(minAmount).times(12).div(10).toFixed(),
     );
-    await allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
+    allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
   } finally {
     await deleteSpeculos(speculos.id);
     if (previousSpeculosPort > 0) {
@@ -87,7 +87,7 @@ export async function revokeTokenApproval(
     await registerSpeculos(speculos.port);
     try {
       const result = await revokeTokenCommand(fromAccount, provider.contractAddress);
-      await allure.description(`Token revoke result for ${provider.uiName}:\n\n ${result}`);
+      allure.description(`Token revoke result for ${provider.uiName}:\n\n ${result}`);
     } finally {
       await deleteSpeculos(speculos.id);
       if (previousSpeculosPort > 0) {

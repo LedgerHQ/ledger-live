@@ -29,7 +29,7 @@ describe("Market page for user with no device", () => {
   $TmsLink("B2CQA-1879");
   tags.forEach(tag => $Tag(tag));
   it("should filter starred asset in the list", async () => {
-    await app.walletTabNavigator.navigateToMarket();
+    await app.portfolio.tapMarketBannerTitle();
     await app.market.searchAsset(currency.ticker);
     await app.market.expectMarketRowTitle(currency);
     await app.market.openAssetPage(currency);
