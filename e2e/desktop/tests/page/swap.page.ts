@@ -607,6 +607,10 @@ export class SwapPage extends WebViewAppPage {
     const webview = await this.getWebView();
     await this.hoverAmountField();
     await webview.getByTestId(this.percentageButtonTestId(key)).hover();
+    // Give the previous tooltip time to close and this one time to open;
+    // checking toBeVisible() right after hover() can still match the
+    // previous trigger's stale, not-yet-closed tooltip.
+    await webview.waitForTimeout(500);
     const tooltip = webview.getByRole("tooltip");
     await expect(tooltip).toBeVisible();
     return await tooltip.textContent();
