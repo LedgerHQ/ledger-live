@@ -369,11 +369,15 @@ export const fetchAccountTransactions = async (
   return transactions;
 };
 
-export const rosettaGetBlockInfo = async (blockHeight: number) => {
+export const rosettaGetBlockInfo = async (
+  blockHeight: number,
+  timeout: number = MINA_ROSETTA_TIMEOUT,
+) => {
   return await makeNetworkRequest<RosettaBlockInfoResponse>({
     method: "POST",
     url: getRosettaUrl("/block"),
     data: addNetworkIdentifier({ block_identifier: { index: blockHeight } }),
+    timeout,
   });
 };
 
