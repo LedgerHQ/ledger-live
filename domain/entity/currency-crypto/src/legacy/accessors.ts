@@ -11,12 +11,13 @@ import type { CryptoCurrency } from "../schema";
  * {@link CRYPTO_CURRENCY_ALIASES}, so it stays a drop-in for callers that pass those keys.
  */
 export function findCryptoCurrencyById(id: string): CryptoCurrency | undefined {
-  const direct = CRYPTO_CURRENCIES_REGISTRY[id];
-  if (direct) {
-    return direct;
+  if (Object.hasOwn(CRYPTO_CURRENCIES_REGISTRY, id)) {
+    return CRYPTO_CURRENCIES_REGISTRY[id];
   }
-  const aliasId = CRYPTO_CURRENCY_ALIASES[id];
-  return aliasId ? CRYPTO_CURRENCIES_REGISTRY[aliasId] : undefined;
+  if (Object.hasOwn(CRYPTO_CURRENCY_ALIASES, id)) {
+    return CRYPTO_CURRENCIES_REGISTRY[CRYPTO_CURRENCY_ALIASES[id]];
+  }
+  return undefined;
 }
 
 /**

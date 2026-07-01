@@ -18,6 +18,25 @@ describe("findCryptoCurrencyById", () => {
   );
 });
 
+// The registry is a normal object (Object.fromEntries), so a naive index read resolves inherited
+// Object.prototype keys. These must be treated as unknown ids, not as currencies.
+describe.each(["__proto__", "constructor", "toString", "hasOwnProperty", "valueOf"])(
+  "does not resolve the Object.prototype key %s",
+  key => {
+    it("findCryptoCurrencyById returns undefined", () => {
+      expect(findCryptoCurrencyById(key)).toBeUndefined();
+    });
+
+    it("hasCryptoCurrencyId returns false", () => {
+      expect(hasCryptoCurrencyId(key)).toBe(false);
+    });
+
+    it("getCryptoCurrencyById throws", () => {
+      expect(() => getCryptoCurrencyById(key)).toThrow();
+    });
+  },
+);
+
 describe("getCryptoCurrencyById", () => {
   it("resolves a known id to its registry object", () => {
     expect(getCryptoCurrencyById("bitcoin")).toBe(CRYPTO_CURRENCIES_REGISTRY.bitcoin);
