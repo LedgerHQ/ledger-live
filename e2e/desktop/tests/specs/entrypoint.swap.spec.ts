@@ -11,7 +11,11 @@ import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
-import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
+import {
+  setupEnv,
+  performSwapUntilQuoteSelectionStep,
+  expectAmountCloseTo,
+} from "tests/utils/swapUtils";
 import { expect } from "@playwright/test";
 import { getEnv } from "@ledgerhq/live-env";
 import { overrideNetworkPayload } from "tests/utils/networkUtils";
@@ -374,8 +378,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", ()
             await app.swap.clickPercentage(percent);
             const amountToSend = Number(await app.swap.getAmountToSend());
             const expectedAmount = (balance * parseFloat(percent)) / 100;
-            const tolerance = Math.max(expectedAmount * 0.01, 1e-6);
-            expect(Math.abs(amountToSend - expectedAmount)).toBeLessThan(tolerance);
+            expectAmountCloseTo(amountToSend, expectedAmount);
           });
         }
       }
