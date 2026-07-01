@@ -72,6 +72,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.SOLANA.name]: DeviceLabels.PUBKEY,
       [AppInfos.ZCASH.name]: DeviceLabels.VERIFY_ADDRESS,
       [AppInfos.CONCORDIUM.name]: DeviceLabels.ADDRESS,
+      [AppInfos.CONCORDIUM_TESTNET.name]: DeviceLabels.ADDRESS,
       default: DeviceLabels.ADDRESS,
     },
     receiveConfirm: {
@@ -104,6 +105,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.COSMOS.name]: DeviceLabels.TYPE_SEND,
       [AppInfos.POLKADOT.name]: DeviceLabels.CHAIN_STATEMINT,
       [AppInfos.CONCORDIUM.name]: DeviceLabels.TRANSACTION_TYPE,
+      [AppInfos.CONCORDIUM_TESTNET.name]: DeviceLabels.TRANSACTION_TYPE,
       default: DeviceLabels.REVIEW_OPERATION,
     },
     sendConfirm: {
@@ -119,6 +121,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.DOGECOIN.name]: DeviceLabels.ACCEPT,
       [AppInfos.BITCOIN.name]: DeviceLabels.CONTINUE,
       [AppInfos.CONCORDIUM.name]: DeviceLabels.SIGN_TRANSACTION,
+      [AppInfos.CONCORDIUM_TESTNET.name]: DeviceLabels.SIGN_TRANSACTION,
       default: DeviceLabels.CAPS_APPROVE,
     },
   },
@@ -187,6 +190,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.DOGECOIN.name]: DeviceLabels.ACCEPT,
       [AppInfos.BITCOIN_CASH.name]: DeviceLabels.ACCEPT,
       [AppInfos.CONCORDIUM.name]: DeviceLabels.SIGN_TRANSACTION,
+      [AppInfos.CONCORDIUM_TESTNET.name]: DeviceLabels.SIGN_TRANSACTION,
       default: DeviceLabels.CAPS_APPROVE,
     },
   },
