@@ -40,4 +40,14 @@ export class ModularNetworkDialog extends Dialog {
   async isNetworkDialogVisible() {
     return await this.networkSelectorListContainer.isVisible();
   }
+
+  @step("Wait for the network dialog to appear (returns false if it does not)")
+  async waitForNetworkDialogVisible(timeout = 5000): Promise<boolean> {
+    try {
+      await this.networkSelectorListContainer.waitFor({ state: "visible", timeout });
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }

@@ -6,6 +6,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
+import { coinDetailUrlPattern } from "tests/utils/urlUtils";
 
 /**
  * Suite: Wallet 4.0 - Portfolio-Asset/Address
@@ -71,7 +72,8 @@ test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
         // Step 2: Select a placeholder asset — redirects to the asset market page
         await test.step("Click placeholder asset - redirected to market page", async () => {
           await app.assets.clickAssetInCryptosSection("Bitcoin");
-          await expect(app.layout.getPage()).toHaveURL(/\/market\/bitcoin/);
+          const page = app.layout.getPage();
+          await expect(page).toHaveURL(await coinDetailUrlPattern(page, "bitcoin"));
         });
 
         // Step 3: Go back to portfolio

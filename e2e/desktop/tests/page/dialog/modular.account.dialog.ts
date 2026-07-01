@@ -16,6 +16,16 @@ export class ModularAccountDialog extends Dialog {
     return await this.dialogContent.isVisible();
   }
 
+  @step("Wait for the account selection screen to appear (returns false if it does not)")
+  async waitForAccountSelectionVisible(timeout = 3000): Promise<boolean> {
+    try {
+      await this.dialogContent.waitFor({ state: "visible", timeout });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   @step("Select account by name")
   async selectAccountByName(account: AccountType) {
     const isAccountDialogVisible = await this.isModularAccountDialogVisible();

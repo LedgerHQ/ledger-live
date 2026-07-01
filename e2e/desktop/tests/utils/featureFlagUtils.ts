@@ -1,7 +1,44 @@
 import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
 import { Page } from "@playwright/test";
-
 import type { OptionalFeatureMap } from "@shared/feature-flags";
+
+export const getFeatureFlags = async (page: Page): Promise<OptionalFeatureMap> => {
+  const featureFlags = await page.evaluate(() => {
+    return window.getAllFeatureFlags("en");
+  });
+  return featureFlags;
+};
+
+// Wallet 4.0 UI variants (Asset Section, My Wallet, operations History page) are detected at runtime
+// from the feature flags actually injected into the running app, so a page object/spec branches on the
+// same flag set the test opted into (`FF_LWD_WALLET_40_Q1` vs `FF_LWD_WALLET_40_Q2`).
+type LwdWallet40Params = {
+  assetSection?: boolean;
+  myWallet?: boolean;
+  operationsList?: boolean;
+  aggregatedAssets?: boolean;
+  assetDiscoverability?: boolean;
+};
+
+const getLwdWallet40Params = async (page: Page): Promise<LwdWallet40Params> => {
+  const featureFlags = await getFeatureFlags(page);
+  return (featureFlags.lwdWallet40?.params as LwdWallet40Params | undefined) ?? {};
+};
+
+export const isAssetSectionEnabled = async (page: Page): Promise<boolean> =>
+  Boolean((await getLwdWallet40Params(page)).assetSection);
+
+export const isMyWalletEnabled = async (page: Page): Promise<boolean> =>
+  Boolean((await getLwdWallet40Params(page)).myWallet);
+
+export const isOperationsListEnabled = async (page: Page): Promise<boolean> =>
+  Boolean((await getLwdWallet40Params(page)).operationsList);
+
+export const isAggregatedAssetsEnabled = async (page: Page): Promise<boolean> =>
+  Boolean((await getLwdWallet40Params(page)).aggregatedAssets);
+
+export const isAssetDiscoverabilityEnabled = async (page: Page): Promise<boolean> =>
+  Boolean((await getLwdWallet40Params(page)).assetDiscoverability);
 
 export const useLocalEarnManifest = process.env.USE_LOCAL_EARN_MANIFEST === "1";
 
@@ -61,7 +98,10 @@ export const FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT = {
 
 export const FF_EARN_V2_DESKTOP = {
   ...(useLocalEarnManifest && {
-    ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-local-manifest" } },
+    ptxEarnLiveApp: {
+      enabled: true,
+      params: { manifest_id: "earn-local-manifest" },
+    },
   }),
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
 } satisfies OptionalFeatureMap;
@@ -104,13 +144,6 @@ export const FF_NEW_SEND_FLOW_DISABLED = {
     },
   },
 } satisfies OptionalFeatureMap;
-
-export const getFeatureFlags = async (page: Page): Promise<OptionalFeatureMap> => {
-  const featureFlags = await page.evaluate(() => {
-    return window.getAllFeatureFlags("en");
-  });
-  return featureFlags;
-};
 
 export const getMergedFeatureFlags = ({
   testFlags,
@@ -159,10 +192,4 @@ export const getMergedFeatureFlags = ({
     ...jsonOverrideFlags,
     ...testFlags,
   };
-};
-
-export const isAssetSectionEnabled = async (page: Page): Promise<boolean> => {
-  const flags = await getFeatureFlags(page);
-  const params = flags.lwdWallet40?.params as { assetSection?: boolean } | undefined;
-  return Boolean(params?.assetSection);
 };

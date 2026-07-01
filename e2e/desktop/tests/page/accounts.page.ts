@@ -151,7 +151,9 @@ export class AccountsPage extends AppPage {
   @step("Expect Redux accounts length to be $0")
   async expectReduxAccountsLength(count: number) {
     await expect
-      .poll(async () => (await this.getReduxAccountIds()).length, { timeout: 60_000 })
+      .poll(async () => (await this.getReduxAccountIds()).length, {
+        timeout: 60_000,
+      })
       .toBe(count);
   }
 

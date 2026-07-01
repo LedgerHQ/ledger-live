@@ -3,7 +3,7 @@ import { AppPage } from "./abstractClasses";
 import { expect, Locator } from "@playwright/test";
 import { sanitizeAssetNameForTestId } from "~/mvvm/features/Assets/utils/assetTableHelpers";
 import { waitForAccountsPersisted, waitForIdentitiesInAppJson } from "tests/utils/userdata";
-import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
+import { isAssetSectionEnabled, isOperationsListEnabled } from "tests/utils/featureFlagUtils";
 
 type QuickActionButton = "receive" | "buy" | "sell" | "send";
 
@@ -13,6 +13,15 @@ export class PortfolioPage extends AppPage {
   private readonly stakeEntryButton = this.page.getByTestId("stake-entry-button");
   private readonly chart = this.page.getByTestId("chart-container");
   private readonly operationList = this.page.locator("#operation-list");
+  private readonly historyButton = this.page.getByTestId("topbar-action-button-history");
+  private readonly historyTable = this.page.getByTestId("history-table");
+  private readonly historyOperationRows = this.page.locator(
+    "[data-testid^='history-operation-row-']",
+  );
+  private readonly historyOperationValue = this.page.getByTestId("history-operation-value");
+  private readonly homeSideBarButton = this.page
+    .getByTestId("sidebar-navigation")
+    .getByRole("button", { name: "home" });
   private readonly assetAllocationTitle = this.page.getByText("Asset allocation");
   private readonly assetRowElements = this.page.locator(
     "[data-testid^='w40-asset-row-']:not([data-testid^='w40-asset-row-value-'])",
@@ -146,17 +155,29 @@ export class PortfolioPage extends AppPage {
     await this.page.getByText("Choose Asset").waitFor({ state: "visible" });
   }
 
+  private async openHistoryPage() {
+    await this.historyButton.click();
+    await this.checkVisibility(this.historyTable);
+  }
+
   @step("check operation history")
   async checkOperationHistory() {
-    await this.operationList.scrollIntoViewIfNeeded();
-    await this.checkVisibility(this.operationList);
+    if (await isOperationsListEnabled(this.page)) {
+      await this.openHistoryPage();
+      await expect(this.historyOperationRows.first()).toBeVisible();
+      await this.homeSideBarButton.click();
+      await this.checkVisibility(this.portfolioTotalBalance);
+    } else {
+      await this.operationList.scrollIntoViewIfNeeded();
+      await this.checkVisibility(this.operationList);
 
-    const numberOfOperationsBefore = await this.operationRows.count();
+      const numberOfOperationsBefore = await this.operationRows.count();
 
-    if (await this.showMoreButton.isVisible()) {
-      await this.showMoreButton.click();
-      const numberOfOperationsAfter = await this.operationRows.count();
-      expect(numberOfOperationsAfter).toBeGreaterThan(numberOfOperationsBefore);
+      if (await this.showMoreButton.isVisible()) {
+        await this.showMoreButton.click();
+        const numberOfOperationsAfter = await this.operationRows.count();
+        expect(numberOfOperationsAfter).toBeGreaterThan(numberOfOperationsBefore);
+      }
     }
   }
 
@@ -208,15 +229,26 @@ export class PortfolioPage extends AppPage {
 
   @step("Expect operation row to be visible")
   async expectOperationRowToBeVisible() {
-    const operationRow = this.operationRows.first();
-    await this.checkVisibility(operationRow);
+    if (await isOperationsListEnabled(this.page)) {
+      await this.openHistoryPage();
+      await this.checkVisibility(this.historyOperationRows.first());
+    } else {
+      await this.checkVisibility(this.operationRows.first());
+    }
   }
 
   @step("Expect operation to contain counter value $0")
   async expectOperationCounterValue(counterValue: string) {
-    await this.expectOperationRowToBeVisible();
-    const operationRow = this.operationRows.first();
-    await expect(operationRow).toContainText(counterValue);
+    if (await isOperationsListEnabled(this.page)) {
+      await this.openHistoryPage();
+      const valueCell = this.historyOperationValue.first();
+      await this.checkVisibility(valueCell);
+      await expect(valueCell).toContainText(this.getExpectedCounterValuePattern(counterValue));
+    } else {
+      await this.expectOperationRowToBeVisible();
+      const operationRow = this.operationRows.first();
+      await expect(operationRow).toContainText(counterValue);
+    }
   }
 
   @step("Wait for balance to be visible")

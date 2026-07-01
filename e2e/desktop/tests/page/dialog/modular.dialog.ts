@@ -65,6 +65,14 @@ export class ModularDialog extends Dialog {
     return await this.networkDialog.isNetworkDialogVisible();
   }
 
+  async waitForNetworkDialogVisible(timeout?: number): Promise<boolean> {
+    return await this.networkDialog.waitForNetworkDialogVisible(timeout);
+  }
+
+  async waitForAccountSelectionVisible(timeout?: number): Promise<boolean> {
+    return await this.accountDialog.waitForAccountSelectionVisible(timeout);
+  }
+
   async selectAccountByName(account: AccountType) {
     return await this.accountDialog.selectAccountByName(account);
   }
