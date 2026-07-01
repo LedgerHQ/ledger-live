@@ -1,4 +1,4 @@
-function getSafeStringLinks(error?: Error | null): string[] {
+function getSafeStringLinks(error?: unknown): string[] {
   return error && typeof error === "object" && "links" in error && Array.isArray(error.links)
     ? error.links.filter((link): link is string => typeof link === "string")
     : [];
