@@ -19,6 +19,7 @@
   "ignoreUnimported": [
     "src/bridge/transaction.ts",
     "src/bridge/fixtures.ts",
+    "src/bridge/syncHelpers.fixtures.ts",
     "src/config.ts",
     "src/datasets/celo.scanAccounts.1.ts",
     "src/errors.ts",

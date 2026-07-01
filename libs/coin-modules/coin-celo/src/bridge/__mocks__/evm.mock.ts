@@ -24,7 +24,7 @@ mockCoinConfig.mockResolvedValue({
 
 const getSyncHash = jest.fn();
 const createSwapHistoryMap = jest.fn();
-jest.mock("@ledgerhq/coin-evm/logic", () => {
+jest.mock("../syncHelpers", () => {
   return {
     createSwapHistoryMap: () => createSwapHistoryMap(),
     mergeSubAccounts: (...args: [Account | undefined, Partial<TokenAccount>[]]) => {
