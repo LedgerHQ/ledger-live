@@ -3,6 +3,9 @@ import type {
   Account,
   AccountRaw,
   Operation,
+  OperationExtra,
+  OperationExtraRaw,
+  OperationRaw,
   TokenAccount,
   TokenAccountRaw,
   TransactionCommon,
@@ -192,7 +195,30 @@ export type AleoOperationExtra = {
   patched?: boolean;
   // token program id for token operations (CAL lookup, sub-account routing)
   programId?: string;
+  // Best-effort reconstructed staking amounts (see docs/superpowers/specs/2026-07-01-aleo-claim-amount-design.md).
+  // operation.value is fee-only for BOND/UNBOND/WITHDRAW_UNBONDED; these carry the real amount.
+  estimatedBondedAmount?: BigNumber;
+  estimatedUnbondedAmount?: BigNumber;
+  estimatedWithdrawUnbondedAmount?: BigNumber;
 };
+
+export type AleoOperationExtraRaw = {
+  functionId: string;
+  transactionType: AleoTransactionType;
+  patched?: boolean;
+  programId?: string;
+  estimatedBondedAmount?: string;
+  estimatedUnbondedAmount?: string;
+  estimatedWithdrawUnbondedAmount?: string;
+};
+
+export function isAleoOperationExtra(extra: OperationExtra): extra is AleoOperationExtra {
+  return extra !== null && typeof extra === "object" && "functionId" in extra;
+}
+
+export function isAleoOperationExtraRaw(extraRaw: OperationExtraRaw): extraRaw is AleoOperationExtraRaw {
+  return extraRaw !== null && typeof extraRaw === "object" && "functionId" in extraRaw;
+}
 
 export type OperationDetailsExtraField = {
   key: keyof AleoOperationExtra;
@@ -200,6 +226,7 @@ export type OperationDetailsExtraField = {
 };
 
 export type AleoOperation = Operation<AleoOperationExtra>;
+export type AleoOperationRaw = OperationRaw<AleoOperationExtraRaw>;
 
 export type TransactionTransfer = Extract<
   Transaction,

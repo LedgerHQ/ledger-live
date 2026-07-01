@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { AccountRaw, Account, TokenAccount, TokenAccountRaw } from "@ledgerhq/types-live";
+import type { AccountRaw, Account, TokenAccount, TokenAccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 import type {
   AleoAccount,
   AleoAccountRaw,
@@ -7,7 +7,10 @@ import type {
   AleoResourcesRaw,
   AleoTokenAccount,
   AleoTokenAccountRaw,
+  AleoOperationExtra,
+  AleoOperationExtraRaw,
 } from "../types";
+import { isAleoOperationExtra, isAleoOperationExtraRaw } from "../types";
 
 export function toAleoResourcesRaw(resources: AleoResources): AleoResourcesRaw {
   return {
@@ -93,4 +96,54 @@ export function assignFromTokenAccountRaw(
   aleoTokenAccount.unspentPrivateRecords = aleoTokenAccountRaw.unspentPrivateRecords
     ? JSON.parse(aleoTokenAccountRaw.unspentPrivateRecords)
     : null;
+}
+
+export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
+  if (!isAleoOperationExtra(extra)) {
+    throw new Error("Unsupported OperationExtra");
+  }
+
+  const extraRaw: AleoOperationExtraRaw = {
+    functionId: extra.functionId,
+    transactionType: extra.transactionType,
+    ...(extra.patched !== undefined && { patched: extra.patched }),
+    ...(extra.programId !== undefined && { programId: extra.programId }),
+  };
+
+  if (extra.estimatedBondedAmount) {
+    extraRaw.estimatedBondedAmount = extra.estimatedBondedAmount.toString();
+  }
+  if (extra.estimatedUnbondedAmount) {
+    extraRaw.estimatedUnbondedAmount = extra.estimatedUnbondedAmount.toString();
+  }
+  if (extra.estimatedWithdrawUnbondedAmount) {
+    extraRaw.estimatedWithdrawUnbondedAmount = extra.estimatedWithdrawUnbondedAmount.toString();
+  }
+
+  return extraRaw;
+}
+
+export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExtra {
+  if (!isAleoOperationExtraRaw(extraRaw)) {
+    throw new Error("Unsupported OperationExtraRaw");
+  }
+
+  const extra: AleoOperationExtra = {
+    functionId: extraRaw.functionId,
+    transactionType: extraRaw.transactionType,
+    ...(extraRaw.patched !== undefined && { patched: extraRaw.patched }),
+    ...(extraRaw.programId !== undefined && { programId: extraRaw.programId }),
+  };
+
+  if (extraRaw.estimatedBondedAmount) {
+    extra.estimatedBondedAmount = new BigNumber(extraRaw.estimatedBondedAmount);
+  }
+  if (extraRaw.estimatedUnbondedAmount) {
+    extra.estimatedUnbondedAmount = new BigNumber(extraRaw.estimatedUnbondedAmount);
+  }
+  if (extraRaw.estimatedWithdrawUnbondedAmount) {
+    extra.estimatedWithdrawUnbondedAmount = new BigNumber(extraRaw.estimatedWithdrawUnbondedAmount);
+  }
+
+  return extra;
 }
