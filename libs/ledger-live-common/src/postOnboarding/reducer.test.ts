@@ -325,6 +325,30 @@ describe("postOnboarding reducer (& action creators)", () => {
       jest.setSystemTime(new Date("2020-01-20"));
     });
 
+    it("updates onboardingDate when initPostOnboarding is called for a different device", () => {
+      state = reducer(state, initPostOnboarding(...initializationParamsA));
+      jest.setSystemTime(new Date("2021-06-15"));
+      state = reducer(state, initPostOnboarding(...initializationParamsB));
+      expect(state.onboardingDate).toEqual(new Date("2021-06-15"));
+      jest.setSystemTime(new Date("2020-01-20"));
+    });
+
+    it("normalizes persisted onboardingDate strings when preserving the same device date", () => {
+      state = reducer(
+        state,
+        importPostOnboardingState({
+          newState: {
+            ...stateA0,
+            // @ts-expect-error - persisted JSON rehydrates Date as a string
+            onboardingDate: "2020-01-20T00:00:00.000Z",
+          },
+        }),
+      );
+
+      state = reducer(state, initPostOnboarding(...initializationParamsA));
+      expect(state.onboardingDate).toEqual(new Date("2020-01-20T00:00:00.000Z"));
+    });
+
     it("does not wipe onboardingDate when hiding the wallet entry point", () => {
       state = stateA3;
       state = reducer(state, hidePostOnboardingWalletEntryPoint());
@@ -522,5 +546,19 @@ describe("postOnboarding selectors", () => {
 
     const storeStateNull = { postOnboarding: initialState };
     expect(onboardingDateSelector(storeStateNull)).toBe(null);
+  });
+
+  it("should normalize persisted onboardingDate strings", () => {
+    const storeStateWithString: { postOnboarding: PostOnboardingState } = {
+      postOnboarding: {
+        ...initialState,
+        // @ts-expect-error - persisted JSON rehydrates Date as a string
+        onboardingDate: "2020-01-20T00:00:00.000Z",
+      },
+    };
+
+    expect(onboardingDateSelector(storeStateWithString)).toEqual(
+      new Date("2020-01-20T00:00:00.000Z"),
+    );
   });
 });

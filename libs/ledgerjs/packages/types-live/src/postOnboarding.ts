@@ -209,12 +209,12 @@ export type PostOnboardingState = {
   postOnboardingInProgress: boolean;
 
   /**
-   * First known date at which the user completed onboarding. Used as the "start
-   * of the clock" for post-onboarding cooldowns (e.g. the large-screen upsell).
+   * Date at which the user completed onboarding for the current device model.
+   * Used as the "start of the clock" for post-onboarding cooldowns (e.g. the
+   * large-screen upsell).
    *
-   * Set when missing, then preserved. For legacy users (already onboarded, no
-   * date stored yet) it is backfilled to `today` on the first launch of the
-   * version introducing it.
+   * Preserved when reopening post-onboarding for the same device model, refreshed
+   * for a different device model, and backfilled to `today` for legacy users.
    */
   onboardingDate: Date | null;
 };
