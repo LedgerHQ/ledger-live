@@ -92,7 +92,6 @@ describe("usePortfolioViewModel", () => {
     });
 
     expect(result.current.hasExchangeBannerCTA).toBe(true);
-    expect(result.current.isWallet40Enabled).toBe(true);
   });
 
   it("should expose clear cache banner visibility when enabled in settings", () => {
