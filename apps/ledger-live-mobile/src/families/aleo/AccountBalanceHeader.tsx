@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import { ScrollView } from "react-native";
-import { TFunction } from "i18next";
+import type { TFunction } from "i18next";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import type { ModalInfo } from "~/modals/Info";
