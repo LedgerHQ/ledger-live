@@ -3,6 +3,7 @@
 import { Account } from "@ledgerhq/types-live";
 import { BitcoinInput, Transaction } from "./types";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
+import { DustLimit } from "@ledgerhq/errors";
 import { RbfBuildError, FeeTooLow } from "./errors";
 import BigNumber from "bignumber.js";
 
@@ -237,6 +238,58 @@ describe("getTransactionStatus on Bitcoin", () => {
     it("applies the 1 sat/vB fallback for bitcoin when relayFeePerByte is 0 (back-compat)", async () => {
       const status = await getTransactionStatus(buildAccount(), buildTransaction(0.5, 0));
       expect(status.errors.feePerByte).toBeInstanceOf(FeeTooLow);
+    });
+  });
+
+  describe("relay-aware dust limit", () => {
+    const recipient = "bc1pxlmrudqyq8qd8pfsc4mpmlaw56x6vtcr9m8nvp8kj3gckefc4kmqhkg4l7";
+
+    beforeEach(() => {
+      validateRecipientSpy.mockResolvedValue({
+        recipientError: undefined,
+        recipientWarning: undefined,
+        changeAddressError: undefined,
+        changeAddressWarning: undefined,
+      });
+      isAddressSanctionedSpy.mockResolvedValue(false);
+      calculateFeesSpy.mockResolvedValue({ txInputs: [], txOutputs: [], fees: BigNumber(0) });
+    });
+
+    // Native SegWit input = 68 vB, so relay-aware dust = 3 * 68 * relayFeePerByte
+    const buildAccount = () =>
+      ({
+        currency: { id: "bitcoin" },
+        blockHeight: MAX_BLOCK_HEIGHT_FOR_TAPROOT + 1,
+        bitcoinResources: { walletAccount: { params: { derivationMode: "Native SegWit" } } },
+      }) as unknown as Account;
+
+    const buildTransaction = (amount: number, feePerByte: number, relayFeePerByte: number) =>
+      ({
+        amount: BigNumber(amount),
+        recipient,
+        feePerByte: BigNumber(feePerByte),
+        networkInfo: {
+          family: "bitcoin",
+          feeItems: {},
+          relayFeePerByte: BigNumber(relayFeePerByte),
+        },
+      }) as unknown as Transaction;
+
+    it("raises DustLimit when amount is below the relay-aware dust", async () => {
+      // dust = 3 * 68 * 10 = 2040 > amount 1000
+      const status = await getTransactionStatus(buildAccount(), buildTransaction(1000, 10, 10));
+      expect(status.errors.dustLimit).toBeInstanceOf(DustLimit);
+    });
+
+    it("does not raise DustLimit at a low relay fee for the same amount", async () => {
+      // dust = 3 * 68 * 1 = 204 < amount 1000
+      const status = await getTransactionStatus(buildAccount(), buildTransaction(1000, 1, 1));
+      expect(status.errors.dustLimit).toBeUndefined();
+    });
+
+    it("does not compute dust (no DustLimit) when feePerByte is zero", async () => {
+      const status = await getTransactionStatus(buildAccount(), buildTransaction(1000, 0, 10));
+      expect(status.errors.dustLimit).toBeUndefined();
     });
   });
 });

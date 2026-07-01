@@ -10,7 +10,13 @@ import {
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
-import type { BitcoinInput, BitcoinOutput, Transaction, TransactionStatus } from "./types";
+import type {
+  BitcoinAccount,
+  BitcoinInput,
+  BitcoinOutput,
+  Transaction,
+  TransactionStatus,
+} from "./types";
 import { calculateFees, validateRecipient, isTaprootRecipient } from "./cache";
 import { OP_RETURN_DATA_SIZE_LIMIT } from "./wallet-btc/crypto/base";
 import cryptoFactory from "./wallet-btc/crypto/factory";
@@ -164,10 +170,15 @@ export const getTransactionStatus: AccountBridge<
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  if (transaction.feePerByte) {
+  if (transaction.feePerByte && transaction.feePerByte.gt(0)) {
     const txSize = Math.ceil(estimatedFees.toNumber() / transaction.feePerByte.toNumber());
     const crypto = cryptoFactory(account.currency.id as Currency);
-    const dustAmount = computeDustAmount(crypto, txSize);
+    const derivationMode = (account as BitcoinAccount).bitcoinResources?.walletAccount?.params
+      .derivationMode;
+    const dustAmount = computeDustAmount(crypto, txSize, {
+      derivationMode,
+      relayFeePerByteSatVb: transaction.networkInfo?.relayFeePerByte,
+    });
 
     if (amount.gt(0) && amount.lt(dustAmount)) {
       errors.dustLimit = new DustLimit();

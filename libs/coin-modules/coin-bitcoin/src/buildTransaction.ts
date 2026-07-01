@@ -157,6 +157,9 @@ export const buildTransaction = async (
     changeAddress,
     ...(transaction.replaceTxId === undefined ? {} : { originalTxId: transaction.replaceTxId }),
     ...(pendingOperations === undefined ? {} : { pendingOperations }),
+    ...(transaction.networkInfo?.relayFeePerByte === undefined
+      ? {}
+      : { relayFeePerByteSatVb: transaction.networkInfo.relayFeePerByte }),
   });
   log("btcwallet", "txInfo", txInfo);
 

@@ -29,6 +29,7 @@ type BuildTxParams = {
   originalTxId?: string;
   /** For RBF: minimum total fee (sats) so replacement pays more than original (avoids "less fees than conflicting" reject) */
   minReplacementFeeSat?: number;
+  relayFeePerByteSatVb?: BigNumber;
 };
 
 type BuildTxSelection = {
@@ -219,6 +220,7 @@ class Xpub {
       sequence,
       originalTxId,
       minReplacementFeeSat,
+      relayFeePerByteSatVb,
     } = params;
 
     const outputs = this.buildOutputs({ amount, opReturnData, destAddress });
@@ -260,7 +262,10 @@ class Xpub {
       this.derivationMode,
     );
 
-    const dustLimit = computeDustAmount(this.crypto, txSize);
+    const dustLimit = computeDustAmount(this.crypto, txSize, {
+      derivationMode: this.derivationMode,
+      relayFeePerByteSatVb,
+    });
 
     // Abandon the change output if change output amount is less than dust amount
     if (needChangeoutput && total.minus(amount).minus(fee).gt(dustLimit)) {
