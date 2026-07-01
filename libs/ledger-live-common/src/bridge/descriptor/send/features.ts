@@ -70,6 +70,10 @@ export const sendFeatures = {
     const d = getSendDescriptor(currency);
     return d?.fees.presets?.estimation?.fallbackPresetIds ?? [];
   },
+  hasFeeRateLegend: (currency: CryptoOrTokenCurrency | undefined): boolean => {
+    const d = getSendDescriptor(currency);
+    return d?.fees.presets?.legend?.type === "feeRate";
+  },
   canEstimateFeePresetsWithZeroAmount: (
     currency: CryptoOrTokenCurrency | undefined,
     transaction: unknown,
