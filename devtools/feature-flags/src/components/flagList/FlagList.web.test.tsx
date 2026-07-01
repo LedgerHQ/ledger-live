@@ -17,7 +17,7 @@ const baseProps: FeatureFlagsToolProps = {
   clearAllOverrides: jest.fn(),
 };
 
-const sidebar = () => screen.queryByTestId("feature-flags-sidebar");
+const detailsDialog = () => screen.queryByRole("dialog");
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -32,22 +32,22 @@ describe("FlagList", () => {
   });
 
   describe("selection", () => {
-    it("renders the sidebar for the flag whose row is clicked", async () => {
+    it("renders the details dialog for the flag whose row is clicked", async () => {
       const user = userEvent.setup();
       render(<FlagList {...baseProps} />);
       await user.click(screen.getByText("mockFeature"));
-      expect(sidebar()).toBeInTheDocument();
+      expect(detailsDialog()).toBeInTheDocument();
     });
 
-    it("closes the sidebar when it requests a close", async () => {
+    it("closes the details dialog when it requests a close", async () => {
       const user = userEvent.setup();
       render(<FlagList {...baseProps} />);
       await user.click(screen.getByText("mockFeature"));
       await user.click(screen.getByRole("button", { name: "Cancel" }));
-      expect(sidebar()).not.toBeInTheDocument();
+      expect(detailsDialog()).not.toBeInTheDocument();
     });
 
-    it("clears the override of the selected flag when the sidebar restores it", async () => {
+    it("clears the override of the selected flag when the details dialog restores it", async () => {
       const setOverride = jest.fn();
       const overrides: PartialFeatures = { mockFeature: { enabled: true } };
       const user = userEvent.setup();

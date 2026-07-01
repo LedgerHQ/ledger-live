@@ -30,18 +30,18 @@ function ToolBarView({
   onClearAll,
 }: ToolBarViewProps) {
   return (
-    <div className="flex flex-col gap-16 p-16 lg:flex-row lg:items-center lg:justify-between">
-      <div className="flex flex-wrap items-center justify-between gap-16 lg:contents">
+    <div className="flex flex-col gap-16 p-16 xl:flex-row xl:items-center xl:justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-16 xl:contents">
         <SearchInput
-          // max-lg:flex-1 + min-w-0 lets the input shrink (be "crushed") instead of pushing
-          // the menu to the next line when the row wraps below lg. At lg the row never wraps,
+          // max-xl:flex-1 + min-w-0 lets the input shrink (be "crushed") instead of pushing
+          // the menu to the next line when the row wraps below xl. At xl the row never wraps,
           // so we leave its sizing alone.
-          className="order-1 max-lg:min-w-0 max-lg:flex-1"
+          className="order-1 max-xl:min-w-0 max-xl:flex-1"
           placeholder="Search flags..."
           value={search}
           onChange={onSearchChange}
         />
-        <div className="flex items-center gap-4 order-3 max-sm:basis-full sm:order-2 lg:order-3">
+        <div className="flex items-center gap-4 order-3 max-sm:basis-full sm:order-2 xl:order-3">
           <Button appearance="no-background" size="sm" icon={FilterSort} onClick={onCycleCategory}>
             {sortLabel}
           </Button>
@@ -53,7 +53,7 @@ function ToolBarView({
             onClick={onToggleDirection}
           />
         </div>
-        <div className="order-2 sm:order-3 lg:order-4">
+        <div className="order-2 sm:order-3 xl:order-4">
           <Menu>
             <MenuTrigger
               render={
@@ -74,7 +74,7 @@ function ToolBarView({
         </div>
       </div>
       <SegmentedControl
-        className="self-start lg:order-2 lg:self-center"
+        className="self-start xl:order-2 xl:self-center"
         selectedValue={filter}
         onSelectedChange={onFilterChange}
         tabLayout="fit"
