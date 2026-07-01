@@ -48,6 +48,19 @@ jobs:
           repositories: |
             ledger-live
             agent-skills
+          permission-contents: write
+          permission-pull-requests: write
+
+      # agent-skills is checked out at the workspace root because
+      # planetscale/ghcommit-action reads the working tree from $GITHUB_WORKSPACE.
+      # It is checked out first so the ledger-live checkout below can nest under
+      # it without being wiped by git clean.
+      - name: Checkout agent-skills
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          repository: ${{ env.TARGET_REPOSITORY }}
+          ref: ${{ env.TARGET_BASE }}
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: Checkout ledger-live
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -55,21 +68,14 @@ jobs:
           ref: ${{ inputs.source_ref || github.sha }}
           token: ${{ steps.generate-token.outputs.token }}
           path: ledger-live
-
-      - name: Checkout agent-skills
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          repository: ${{ env.TARGET_REPOSITORY }}
-          ref: ${{ env.TARGET_BASE }}
-          token: ${{ steps.generate-token.outputs.token }}
-          path: agent-skills
+          persist-credentials: false
 
       - name: Export wallet-cli skill
         run: |
           set -euo pipefail
 
           source_skill_dir="$GITHUB_WORKSPACE/ledger-live/$SOURCE_SKILL_DIR"
-          target_skill_dir="$GITHUB_WORKSPACE/agent-skills/$TARGET_SKILL_DIR"
+          target_skill_dir="$GITHUB_WORKSPACE/$TARGET_SKILL_DIR"
 
           rm -rf "$target_skill_dir"
           mkdir -p "$target_skill_dir"
@@ -102,119 +108,49 @@ jobs:
             exit 1
           fi
 
-      # Commits are created through the GitHub API (not `git commit`) so that
-      # GitHub signs them server-side — agent-skills' `main` ruleset requires
-      # signed commits, which a local push from the bot token cannot satisfy.
-      #
-      # NOTE: $SYNC_BRANCH is fully managed and rewritten on every run. Do not
-      # commit to it directly — manual commits will be lost.
+      # ghcommit-action (below) commits the working tree through GitHub's API so
+      # the commit is signed server-side — agent-skills' `main` ruleset requires
+      # signed commits, which a push from the bot token cannot satisfy. The
+      # action only picks up staged changes, so stage the export here and skip
+      # the rest of the job (leaving any open sync PR untouched) when it is a
+      # no-op.
+      - name: Stage exported skill
+        id: stage
+        run: |
+          set -euo pipefail
+
+          git add -A -- "$TARGET_SKILL_DIR"
+          if git diff --cached --quiet -- "$TARGET_SKILL_DIR"; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No agent-skills changes to sync."
+            exit 0
+          fi
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      # Reset the managed branch to the base tip so the single ghcommit-action
+      # commit lands on top (branch = base + one commit), matching the release
+      # workflows. NOTE: $SYNC_BRANCH is fully managed and rewritten on every
+      # run — do not commit to it directly, manual commits will be lost.
+      - name: Reset sync branch to base
+        if: steps.stage.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
+          git push --force origin "HEAD:refs/heads/$SYNC_BRANCH"
+
       - name: Create signed commit
         id: commit
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        if: steps.stage.outputs.changed == 'true'
+        uses: planetscale/ghcommit-action@c6125dee9e9c0daebc4adea9f68ead8293414174 # v0.2.9
         with:
-          github-token: ${{ steps.generate-token.outputs.token }}
-          script: |
-            const fs = require("fs");
-            const path = require("path");
-            const { execFileSync } = require("child_process");
-
-            const repoDir = "agent-skills";
-            const targetSkillDir = process.env.TARGET_SKILL_DIR;
-            const targetRepository = process.env.TARGET_REPOSITORY;
-            const [owner, repo] = targetRepository.split("/");
-            const syncBranch = process.env.SYNC_BRANCH;
-
-            const git = (args) =>
-              execFileSync("git", args, { cwd: repoDir, maxBuffer: 64 * 1024 * 1024 });
-
-            // Stage the exported skill so a single diff captures every addition,
-            // modification, and deletion under the target directory.
-            git(["add", "-A", "--", targetSkillDir]);
-
-            const statusZ = git([
-              "diff", "--cached", "--name-status", "-z", "--no-renames",
-            ]).toString("utf8");
-            const records = statusZ.split("\0").filter((entry) => entry.length > 0);
-
-            const additions = [];
-            const deletions = [];
-            for (let i = 0; i < records.length; i += 2) {
-              const status = records[i];
-              const filePath = records[i + 1];
-              if (status === undefined || filePath === undefined) {
-                throw new Error(
-                  `Unexpected git diff output (odd field count): ${JSON.stringify(records)}`,
-                );
-              }
-              if (status === "D") {
-                deletions.push({ path: filePath });
-              } else {
-                const contents = fs.readFileSync(path.join(repoDir, filePath)).toString("base64");
-                additions.push({ path: filePath, contents });
-              }
-            }
-
-            if (additions.length === 0 && deletions.length === 0) {
-              core.setOutput("changed", "false");
-              core.info("No agent-skills changes to sync.");
-              return;
-            }
-
-            const upsertBranchRef = async (branch, sha) => {
-              const ref = `heads/${branch}`;
-              try {
-                await github.rest.git.getRef({ owner, repo, ref });
-                await github.rest.git.updateRef({ owner, repo, ref, sha, force: true });
-              } catch (error) {
-                if (error.status !== 404) throw error;
-                await github.rest.git.createRef({ owner, repo, ref: `refs/${ref}`, sha });
-              }
-            };
-
-            // Parent the commit on the checked-out base tip — the same revision
-            // the staged diff was computed against — so the additions/deletions
-            // stay consistent with the commit base even if the remote base moves.
-            const baseSha = git(["rev-parse", "HEAD"]).toString("utf8").trim();
-
-            // Build the signed commit on a throwaway branch, then move the sync
-            // branch to it in a single update (old head -> new commit). Pointing
-            // the sync branch itself at the base tip first would briefly make its
-            // head an ancestor of the base, which auto-closes the open PR and
-            // leaves the next step creating a duplicate.
-            const buildBranch = `${syncBranch}-build`;
-            await upsertBranchRef(buildBranch, baseSha);
-
-            try {
-              const { createCommitOnBranch } = await github.graphql(
-                `mutation ($input: CreateCommitOnBranchInput!) {
-                  createCommitOnBranch(input: $input) { commit { oid } }
-                }`,
-                {
-                  input: {
-                    branch: {
-                      repositoryNameWithOwner: targetRepository,
-                      branchName: buildBranch,
-                    },
-                    expectedHeadOid: baseSha,
-                    message: { headline: "chore: sync wallet-cli skill" },
-                    fileChanges: { additions, deletions },
-                  },
-                },
-              );
-              await upsertBranchRef(syncBranch, createCommitOnBranch.commit.oid);
-            } finally {
-              await github.rest.git
-                .deleteRef({ owner, repo, ref: `heads/${buildBranch}` })
-                .catch((error) =>
-                  core.warning(`Could not delete build branch ${buildBranch}: ${error.message}`),
-                );
-            }
-
-            core.setOutput("changed", "true");
+          commit_message: "chore: sync wallet-cli skill"
+          repo: ${{ env.TARGET_REPOSITORY }}
+          branch: ${{ env.SYNC_BRANCH }}
+          file_pattern: ${{ env.TARGET_SKILL_DIR }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
       - name: Open or update pull request
-        if: steps.commit.outputs.changed == 'true'
-        working-directory: agent-skills
+        if: steps.stage.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
@@ -228,7 +164,7 @@ jobs:
           EOF
           )
 
-          pr_number=$(gh pr list \
+          open_pr=$(gh pr list \
             --repo "$TARGET_REPOSITORY" \
             --head "$SYNC_BRANCH" \
             --base "$TARGET_BASE" \
@@ -236,10 +172,25 @@ jobs:
             --json number \
             --jq '.[0].number // empty')
 
-          if [ -n "$pr_number" ]; then
-            gh pr edit "$pr_number" \
-              --repo "$TARGET_REPOSITORY" \
-              --body "$body"
+          if [ -n "$open_pr" ]; then
+            gh pr edit "$open_pr" --repo "$TARGET_REPOSITORY" --body "$body"
+            exit 0
+          fi
+
+          # Resetting the branch to base momentarily leaves it with no commits
+          # ahead of base, which auto-closes an open sync PR. Reopen that PR
+          # instead of opening a duplicate.
+          closed_pr=$(gh pr list \
+            --repo "$TARGET_REPOSITORY" \
+            --head "$SYNC_BRANCH" \
+            --base "$TARGET_BASE" \
+            --state closed \
+            --json number,state \
+            --jq 'map(select(.state == "CLOSED")) | .[0].number // empty')
+
+          if [ -n "$closed_pr" ]; then
+            gh pr reopen "$closed_pr" --repo "$TARGET_REPOSITORY"
+            gh pr edit "$closed_pr" --repo "$TARGET_REPOSITORY" --body "$body"
           else
             gh pr create \
               --repo "$TARGET_REPOSITORY" \
