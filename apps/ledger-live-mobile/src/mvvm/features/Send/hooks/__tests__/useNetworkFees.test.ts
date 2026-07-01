@@ -67,7 +67,6 @@ function buildParams(overrides?: {
     hasFeePresets: false,
     hasCustomFees: false,
     hasCoinControl: false,
-    hasAmountPlugins: false,
     ...overrides?.uiConfig,
   };
   const transactionActions: SendFlowTransactionActions = {

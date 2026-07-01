@@ -77,7 +77,6 @@ const mockUiConfig: SendFlowUiConfig = {
   hasFeePresets: true,
   hasCustomFees: false,
   hasCoinControl: false,
-  hasAmountPlugins: false,
 };
 
 describe("useNetworkFeesCore", () => {

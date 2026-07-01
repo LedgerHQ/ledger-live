@@ -36,7 +36,6 @@ function fromDescriptor<T>(
 const noCustomFeeConfig: CustomFeeConfig | null = null;
 const noFeeAssetsConfig: FeeAssetsConfig | null = null;
 const noCoinControlConfig: CoinControlConfig | null = null;
-const noAmountPlugins: readonly string[] = [];
 const noAmountEffects: readonly FlowEffect[] = [];
 const defaultSelfTransferPolicy: SelfTransferPolicy = "impossible";
 
@@ -84,7 +83,6 @@ export const sendFeatures = {
 
     return allowZeroAmount ?? false;
   },
-  getAmountPlugins: fromDescriptor(d => d.amount?.getPlugins?.(), noAmountPlugins),
   getAmountEffects: fromDescriptor(d => d.amount?.effects, noAmountEffects),
   getFeeCurrencyAccountId: (
     currency: CryptoOrTokenCurrency | undefined,

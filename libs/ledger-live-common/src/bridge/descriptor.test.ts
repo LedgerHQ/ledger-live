@@ -5,6 +5,7 @@ import { getDescriptor, getSendDescriptor } from "./descriptor/registry";
 import { resolveFeeUnitLabel, sendFeatures } from "./descriptor/send/features";
 import { applyMemoToTransaction } from "./descriptor/send/memo";
 import * as configModule from "../config/index";
+import { genAccount } from "../mock/account";
 
 jest.mock("../config/index");
 
@@ -412,14 +413,43 @@ describe("sendFeatures", () => {
     expect(sendFeatures.canEstimateFeePresetsWithZeroAmount(ethereum, {})).toBe(true);
   });
 
-  it("should return empty plugins when not specified", () => {
-    const bitcoin = getCryptoCurrencyById("bitcoin");
-    expect(sendFeatures.getAmountPlugins(bitcoin)).toEqual([]);
+  it("should expose the fee asset selection config for celo on the custom fees step", () => {
+    const celo = getCryptoCurrencyById("celo");
+    expect(sendFeatures.hasCustomAssets(celo)).toBe(true);
+
+    const config = sendFeatures.getCustomAssetsConfig(celo);
+    expect(typeof config?.getOptions).toBe("function");
+    expect(typeof config?.getSelectedOptionId).toBe("function");
+    expect(typeof config?.buildPatch).toBe("function");
+
+    // Native CELO is always offered as the first fee asset option.
+    const options = config?.getOptions({
+      mainAccount: genAccount("celo-fee-assets", { currency: celo }),
+      transaction: {},
+    });
+    expect(options?.map(option => option.id)).toEqual(["celo"]);
   });
 
-  it("should not expose legacy amount plugins for evm", () => {
-    const ethereum = getCryptoCurrencyById("ethereum");
-    expect(sendFeatures.getAmountPlugins(ethereum)).toEqual([]);
+  it("should keep the selected celo fee asset option while token accounts hydrate", () => {
+    const celo = getCryptoCurrencyById("celo");
+    const config = sendFeatures.getCustomAssetsConfig(celo);
+    if (!config) throw new Error("Expected Celo fee asset config");
+
+    const options = config.getOptions({
+      mainAccount: {
+        ...genAccount("celo-fee-assets-hydrating", { currency: celo }),
+        subAccounts: undefined,
+      },
+      transaction: {
+        feeCurrencyAccountId: "celo-token-account-id",
+        feeCurrencyUnwrapped: "0xcebA9300f2b948710d2653dD7B07f33A8B32118C",
+      },
+    });
+
+    expect(options.map(option => [option.id, option.ticker])).toEqual([
+      ["celo", "CELO"],
+      ["celo-token-account-id", "USDC"],
+    ]);
   });
 
   it("should expose the gas options sync effect for evm", () => {
