@@ -18,14 +18,12 @@ type UseChartSectionHeaderViewModelProps = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
   hoveredBalance: number | null;
   isLoading: boolean;
-  shouldDisplayBalanceRefreshRework: boolean;
 }>;
 
 export function useChartSectionHeaderViewModel({
   balanceInfo,
   hoveredBalance,
   isLoading,
-  shouldDisplayBalanceRefreshRework,
 }: UseChartSectionHeaderViewModelProps): ChartSectionHeaderViewModel {
   const { t } = useTranslation();
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
@@ -58,7 +56,6 @@ export function useChartSectionHeaderViewModel({
     balance,
     balanceAvailable: balanceInfo.isAvailable,
     isLoading,
-    shouldDisplayBalanceRefreshRework,
     balanceFormatter,
     discreet,
     percentageValue,

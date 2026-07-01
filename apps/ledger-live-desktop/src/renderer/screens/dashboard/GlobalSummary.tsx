@@ -19,7 +19,6 @@ type Props = {
   chartColor: string;
   range: PortfolioRange;
   isWallet40?: boolean;
-  shouldDisplayGraphRework?: boolean;
   balanceInfo?: PortfolioBalanceInfo;
 };
 export default function PortfolioBalanceSummary({
@@ -27,7 +26,6 @@ export default function PortfolioBalanceSummary({
   chartColor,
   counterValue,
   isWallet40,
-  shouldDisplayGraphRework,
   balanceInfo,
 }: Props) {
   const portfolio = usePortfolio();
@@ -78,7 +76,6 @@ export default function PortfolioBalanceSummary({
           isAvailable={displayBalanceInfo.isAvailable}
           valueChange={displayBalanceInfo.valueChange}
           totalBalance={displayBalanceInfo.totalBalance}
-          shouldDisplayGraphRework={shouldDisplayGraphRework}
         />
       </Box>
 

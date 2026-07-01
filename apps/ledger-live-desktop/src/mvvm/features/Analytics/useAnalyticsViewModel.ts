@@ -18,16 +18,12 @@ export default function useAnalyticsViewModel(): AnalyticsViewModel {
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const accounts = useSelector(accountsSelector);
   const cvState = useCountervaluesState();
-  const {
-    shouldDisplayGraphRework,
-    shouldDisplayAssetSection,
-    shouldDisplayPnl: isPnlFlagOn,
-  } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAssetSection, shouldDisplayPnl: isPnlFlagOn } =
+    useWalletFeaturesConfig("desktop");
   const {
     balanceInfo: syncBalanceInfo,
     portfolio,
     isLoading,
-    shouldDisplayBalanceRefreshRework,
   } = usePortfolioBalanceDisplayState({ legacyRange: true });
 
   const shouldDisplayPnl = isPnlFlagOn && accounts.length > 0;
@@ -64,8 +60,6 @@ export default function useAnalyticsViewModel(): AnalyticsViewModel {
     balanceInfo,
     portfolio,
     isLoading,
-    shouldDisplayBalanceRefreshRework,
-    shouldDisplayGraphRework,
     shouldDisplayAssetSection,
     shouldDisplayPnl,
   };

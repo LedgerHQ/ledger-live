@@ -23,7 +23,6 @@ describe("ChartSection", () => {
         balanceInfo={mockPortfolioBalanceInfo}
         portfolio={portfolioWithHistory}
         isLoading={false}
-        shouldDisplayBalanceRefreshRework={false}
       />,
       { initialState: chartSectionInitialState },
     );
@@ -41,7 +40,6 @@ describe("ChartSection", () => {
         balanceInfo={{ ...mockPortfolioBalanceInfo, isAvailable: false }}
         portfolio={portfolioWithHistory}
         isLoading={false}
-        shouldDisplayBalanceRefreshRework={false}
       />,
       { initialState: chartSectionInitialState },
     );

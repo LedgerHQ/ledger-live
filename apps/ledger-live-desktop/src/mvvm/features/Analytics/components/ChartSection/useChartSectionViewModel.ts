@@ -37,14 +37,12 @@ type UseChartSectionViewModelProps = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
   portfolio: Portfolio;
   isLoading: boolean;
-  shouldDisplayBalanceRefreshRework: boolean;
 }>;
 
 export type ChartSectionViewModelResult = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
   hoveredBalance: number | null;
   isLoading: boolean;
-  shouldDisplayBalanceRefreshRework: boolean;
   chart: LineChartProps;
 }>;
 
@@ -52,7 +50,6 @@ export function useChartSectionViewModel({
   balanceInfo,
   portfolio,
   isLoading,
-  shouldDisplayBalanceRefreshRework,
 }: UseChartSectionViewModelProps): ChartSectionViewModelResult {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -140,7 +137,6 @@ export function useChartSectionViewModel({
     balanceInfo,
     hoveredBalance,
     isLoading,
-    shouldDisplayBalanceRefreshRework,
     chart: {
       series,
       selectedRange,

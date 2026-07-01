@@ -11,7 +11,6 @@ export interface BalanceViewProps {
   readonly handleKeyDown: (event: React.KeyboardEvent<HTMLButtonElement>) => void;
   readonly isColdStart: boolean;
   readonly isLoading: boolean;
-  readonly shouldDisplayBalanceRefreshRework: boolean;
   readonly theme: "light" | "dark";
 }
 

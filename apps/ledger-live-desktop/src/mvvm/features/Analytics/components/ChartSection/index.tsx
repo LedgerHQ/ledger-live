@@ -8,7 +8,6 @@ type ChartSectionProps = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
   portfolio: Portfolio;
   isLoading: boolean;
-  shouldDisplayBalanceRefreshRework: boolean;
 }>;
 
 export function ChartSection(props: ChartSectionProps) {

@@ -12,7 +12,6 @@ export function ChartSectionHeaderView({ viewModel }: ChartSectionHeaderViewProp
     balance,
     balanceAvailable,
     isLoading,
-    shouldDisplayBalanceRefreshRework,
     balanceFormatter,
     discreet,
     percentageValue,
@@ -27,7 +26,7 @@ export function ChartSectionHeaderView({ viewModel }: ChartSectionHeaderViewProp
           value={balance}
           formatter={balanceFormatter}
           hidden={discreet}
-          loading={shouldDisplayBalanceRefreshRework && isLoading}
+          loading={isLoading}
           data-testid="analytics-balance-amount"
         />
       ) : (

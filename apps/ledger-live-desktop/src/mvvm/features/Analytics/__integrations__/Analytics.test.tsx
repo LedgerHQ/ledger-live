@@ -50,7 +50,6 @@ const defaultViewModel = {
   balanceInfo: mockPortfolioBalanceInfo,
   portfolio: defaultPortfolio,
   isLoading: false,
-  shouldDisplayBalanceRefreshRework: false,
   shouldDisplayPnl: false,
 };
 
