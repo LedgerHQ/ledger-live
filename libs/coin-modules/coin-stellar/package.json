@@ -116,7 +116,6 @@
     "@types/node": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
-    "nock": "14.0.2",
     "oxfmt": "catalog:",
     "oxlint": "catalog:"
   }
