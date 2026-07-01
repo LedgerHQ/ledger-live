@@ -43,6 +43,8 @@ export default class PortfolioPage {
     await expect(this.portfolioSettingsButton()).toBeVisible();
     await waitForElementById(this.readOnlyItemsId);
     await waitForElementById(this.balanceId);
+    const balanceLabel = await getLabelOfElement(this.balanceId);
+    jestExpect(balanceLabel.replace(/\s/g, "")).toBe(this.zeroBalance);
     for (let index = 0; index < 4; index++)
       jestExpect(await getTextOfElement(this.assetBalanceId, index)).toBe(this.zeroBalance);
   }
