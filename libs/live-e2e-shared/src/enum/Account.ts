@@ -347,6 +347,16 @@ export class TokenAccount extends Account {
     Account.ETH_1,
   );
 
+  // Never funded with USDC; used to test the zero-balance disabled state of Max/% buttons
+  static readonly ETH_USDC_2 = new TokenAccount(
+    Currency.ETH_USDC,
+    "USD Coin 2",
+    1,
+    Account.ETH_2.accountPath,
+    TokenType.ERC20,
+    Account.ETH_2,
+  );
+
   static readonly ETH_USDT_1 = new TokenAccount(
     Currency.ETH_USDT,
     "Tether USD 1",
