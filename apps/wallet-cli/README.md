@@ -108,6 +108,17 @@ This package is DMK-focused and is separate from `@ledgerhq/live-cli` ([`apps/cl
 
 AI agents should read the [ledger-wallet-cli agent skill](../../.claude/skills/ledger-wallet-cli/SKILL.md) before running wallet-cli commands. It maps informal user requests to commands and documents hardware-wallet safety rules, session labels, USB sandbox requirements, and device-contention constraints.
 
+### First-run nudge
+
+On the first real command, wallet-cli prints a one-time hint to **stderr** pointing at `skill install`. When a known agent is detected (Claude Code, Cursor, Codex, …) the hint is tailored to it (e.g. `wallet-cli skill install --agent claude`); otherwise it shows the generic `wallet-cli skill install`. The nudge:
+
+- shows at most **once per user** — a marker is written under the XDG state dir (`stateDir("ledger-wallet-cli")`, honoring `XDG_STATE_HOME`);
+- writes to **stderr only**, so it never pollutes piped stdout, and is **silent under `--output json`**;
+- is **not shown for `skill *` commands** (you are already engaging with skills);
+- can be disabled entirely with `WALLET_CLI_NO_NUDGE=1`.
+
+It is fully best-effort: it never throws and never changes a command's exit code.
+
 The skill also **ships inside the compiled binary**, so it is available even from an installed npm package with no repo checkout, via the `skill` command group:
 
 ```bash

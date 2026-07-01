@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { createCLI } from "@bunli/core";
 import "./live-common-setup";
 import { emitTestingBuildBannerIfNeeded } from "./shared/testing-build-banner";
+import { maybeShowFirstRunNudge } from "./shared/first-run-nudge";
 // createCLI() normally tries to import .bunli/commands.gen.ts from process.cwd() via a file:// URL.
 // Our @bunli/core patch removes that dynamic import entirely because it can hang in Bun standalone
 // mode, this static import registers commands instead.
@@ -49,6 +50,7 @@ export async function runMain(argv: string[] = process.argv.slice(2)): Promise<n
   cli.command(GenuineCheckCommand);
   cli.command(RingGroup);
   cli.command(SkillGroup);
+  maybeShowFirstRunNudge(argv);
   const code = await cli.run(normalizeNegatedFlags(argv), { noExit: true });
   return code ?? 0;
 }
