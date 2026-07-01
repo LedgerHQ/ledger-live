@@ -6213,9 +6213,6 @@ importers:
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@6.0.2)
-      nock:
-        specifier: 14.0.2
-        version: 14.0.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.36.0
@@ -17557,10 +17554,6 @@ packages:
     resolution: {integrity: sha512-wK+5pLK5XFmgtH3aQ2YVvA3HohS3xqV/OxuVOdNx9Wpnz7VE/fnC+e1A7ln6LFYeck7gOJ/dsZV6OLplOtAJ2w==}
     engines: {node: '>=18'}
 
-  '@mswjs/interceptors@0.38.0':
-    resolution: {integrity: sha512-nPHVM+LUl4V1kXPXuTcNN5OMD//ltCQ0lccuEagvidJdpbig3hP3W6/ctWHx6mee7vZIWE0L+Mqj3vx0ASlm/w==}
-    engines: {node: '>=18'}
-
   '@mswjs/interceptors@0.38.3':
     resolution: {integrity: sha512-3AMc2fTnX4q3qyO6K/LKwWXjUAFc3COC3bo5YCROIyQYJ8g/++5Col5fSIglIyUdBN787CTbL+c04KRwaaZ/UA==}
     engines: {node: '>=18'}
@@ -23691,7 +23684,7 @@ packages:
   '@xmldom/xmldom@0.7.13':
     resolution: {integrity: sha512-lm2GW5PkosIzccsaZIz7tp8cPADSIlIHWDFTR1N0SzfinhhYgeIQjFMz4rYzanCScr3DqQLeomUDArp6MWKm+g==}
     engines: {node: '>=10.0.0'}
-    deprecated: this version is no longer supported, please update to at least 0.8.*
+    deprecated: this version has critical issues, please update to the latest version
 
   '@xmldom/xmldom@0.8.10':
     resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
@@ -28172,7 +28165,7 @@ packages:
   git-raw-commits@2.0.11:
     resolution: {integrity: sha512-VnctFhw+xfj8Va1xtfEqCUD2XDrbAPSJx+hSrE5K7fGdjZruW7XV+QOrN7LF/RJyvspRiD2I0asWsxFp0ya26A==}
     engines: {node: '>=10'}
-    deprecated: Deprecated and no longer maintained. Use @conventional-changelog/git-client instead.
+    deprecated: This package is no longer maintained. For the JavaScript API, please use @conventional-changelog/git-client instead.
     hasBin: true
 
   git-up@7.0.0:
@@ -31667,10 +31660,6 @@ packages:
   nock@13.5.6:
     resolution: {integrity: sha512-o2zOYiCpzRqSzPj0Zt/dQ/DqZeYoaQ7TUonc/xUPjCGl9WeHpNbxgVvOquXYAaJzI0M9BXV3HTzG0p8IUAbBTQ==}
     engines: {node: '>= 10.13'}
-
-  nock@14.0.2:
-    resolution: {integrity: sha512-jDUBpCNY7KLyOF2FTiT4mLRxV2kpjo4YrcGtv3IMCIwqFKxOQFrmeXefvuEiWvS3ApPWQHAkakkkVpoOrDNCVg==}
-    engines: {node: '>=18.20.0 <20 || >=20.12.1'}
 
   nock@14.0.3:
     resolution: {integrity: sha512-sJ9RNmCuYBqXDmGZZHgZ1D1441MqFOU4T5aeLGVGEB4OWI/2LM0mZlkfBQzQKdOfJypL+2nPPBugXKjixBn4kQ==}
@@ -46078,21 +46067,6 @@ snapshots:
       is-node-process: 1.2.0
       outvariant: 1.4.3
       strict-event-emitter: 0.5.1
-
-  '@mswjs/interceptors@0.38.0':
-    dependencies:
-      '@open-draft/deferred-promise': 2.2.0
-      '@open-draft/logger': 0.3.0
-      '@open-draft/until': 2.1.0
-      is-node-process: 1.2.0
-      jsdom: 26.1.0
-      outvariant: 1.4.3
-      strict-event-emitter: 0.5.1
-    transitivePeerDependencies:
-      - bufferutil
-      - canvas
-      - supports-color
-      - utf-8-validate
 
   '@mswjs/interceptors@0.38.3':
     dependencies:
@@ -65974,17 +65948,6 @@ snapshots:
       propagate: 2.0.1
     transitivePeerDependencies:
       - supports-color
-
-  nock@14.0.2:
-    dependencies:
-      '@mswjs/interceptors': 0.38.0
-      json-stringify-safe: 5.0.1
-      propagate: 2.0.1
-    transitivePeerDependencies:
-      - bufferutil
-      - canvas
-      - supports-color
-      - utf-8-validate
 
   nock@14.0.3:
     dependencies:
