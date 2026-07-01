@@ -1,5 +1,5 @@
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
-import { Flex } from "@ledgerhq/native-ui";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
 import BigNumber from "bignumber.js";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "~/context/Locale";
@@ -45,7 +45,7 @@ function AleoBalanceSummary({ account }: { readonly account: AleoAccount }) {
           onClose={onCloseModal}
           data={infoName ? info[infoName] : []}
         />
-        <Flex flexDirection={"row"}>
+        <Box style={{ flexDirection: "row" }}>
           <InfoItem
             title={t("aleo.info.transparent.title")}
             onPress={onPressInfoCreator("transparent")}
@@ -63,7 +63,7 @@ function AleoBalanceSummary({ account }: { readonly account: AleoAccount }) {
               )
             }
           />
-        </Flex>
+        </Box>
       </ScrollView>
     </SectionContainer>
   );
