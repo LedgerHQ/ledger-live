@@ -114,30 +114,34 @@ function launchIntent(args: {
   const { intent, initInput, ensureApp, deviceConnectionResult, out, send } = args;
   out.swapExecuteProgress(`Launching ${intent.kind}`);
 
-  const observable: Observable<AnyJobState> =
-    intent.kind === "sign-approval"
-      ? signApprovalEvmJob({
+  const observable: Observable<AnyJobState> = (() => {
+    switch (intent.kind) {
+      case "sign-approval":
+        return signApprovalEvmJob({
           deviceConnectionResult,
           deviceExtractedContext: STUB_DEVICE_EXTRACTED_CONTEXT,
           input: intent.input,
-        })
-      : intent.kind === "sign-permit2"
-        ? signPermit2EvmJob({
-            deviceConnectionResult,
-            deviceExtractedContext: STUB_DEVICE_EXTRACTED_CONTEXT,
-            input: intent.input,
-          })
-        : intent.kind === "sign-swap"
-          ? signSwapEvmJob({
-              deviceConnectionResult,
-              deviceExtractedContext: STUB_DEVICE_EXTRACTED_CONTEXT,
-              input: intent.input,
-            })
-          : broadcastEvmJob({
-              deviceConnectionResult,
-              deviceExtractedContext: STUB_DEVICE_EXTRACTED_CONTEXT,
-              input: intent.input,
-            });
+        });
+      case "sign-permit2":
+        return signPermit2EvmJob({
+          deviceConnectionResult,
+          deviceExtractedContext: STUB_DEVICE_EXTRACTED_CONTEXT,
+          input: intent.input,
+        });
+      case "sign-swap":
+        return signSwapEvmJob({
+          deviceConnectionResult,
+          deviceExtractedContext: STUB_DEVICE_EXTRACTED_CONTEXT,
+          input: intent.input,
+        });
+      default:
+        return broadcastEvmJob({
+          deviceConnectionResult,
+          deviceExtractedContext: STUB_DEVICE_EXTRACTED_CONTEXT,
+          input: intent.input,
+        });
+    }
+  })();
 
   const observer = {
     next: (state: AnyJobState) => {
