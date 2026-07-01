@@ -207,7 +207,13 @@ function setupMainWindowHandlers() {
     });
 
     webContents.on("destroyed", () => {
-      devtoolContents?.close();
+      // Electron 42 tears down the webview's DevTools automatically when the guest
+      // is destroyed. Calling close() on the already-destroyed DevTools WebContents
+      // then throws "Object has been destroyed" in the main process, which closes the
+      // main window (surfaces on CI as "Target page ... has been closed"). Guard it.
+      if (devtoolContents && !devtoolContents.isDestroyed()) {
+        devtoolContents.close();
+      }
     });
   });
 
