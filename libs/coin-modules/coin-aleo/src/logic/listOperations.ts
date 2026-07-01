@@ -76,6 +76,65 @@ async function fetchStakingAmountOverrides(
   return overrides;
 }
 
+/**
+ * claim_unbond_public always reports amount=0 from the indexer (it carries no amount argument
+ * on-chain at all), so the claimed amount is reconstructed by walking backward through the
+ * account's transaction history (paged, most recent first) starting at the claim's block,
+ * summing unbond_public amounts until either a prior claim_unbond_public is hit (excluded from
+ * the sum) or history is exhausted. Returns null when no unbond_public precedes this claim.
+ */
+export async function sumUnbondedSinceLastClaim(
+  currency: CryptoCurrency,
+  address: string,
+  claimTx: AleoPublicTransaction,
+): Promise<BigNumber | null> {
+  let sum = new BigNumber(0);
+  let foundAny = false;
+  let cursor: string | undefined = claimTx.block_number.toString();
+  let hasMorePages = true;
+
+  while (hasMorePages) {
+    const page = await apiClient.getAccountPublicTransactions({
+      currency,
+      address,
+      order: "desc",
+      limit: 50,
+      ...(cursor && { cursor }),
+    });
+
+    for (const tx of page.transactions) {
+      if (tx.transaction_id === claimTx.transaction_id) continue;
+
+      if (tx.function_id === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC) {
+        return foundAny ? sum : null;
+      }
+
+      if (tx.function_id === TRANSACTION_TYPE.UNBOND_PUBLIC) {
+        try {
+          const details = await apiClient.getTransactionById(currency, tx.transaction_id);
+          const amount = extractStakingAmountFromTransactionDetails(details, tx.function_id);
+          if (amount) {
+            sum = sum.plus(amount);
+            foundAny = true;
+          }
+        } catch (e) {
+          log(
+            "aleo/listOperations",
+            `failed to enrich unbond amount for claim reconstruction ${tx.transaction_id}`,
+            e,
+          );
+        }
+      }
+    }
+
+    const nextCursor = page.next_cursor?.block_number.toString();
+    hasMorePages = Boolean(nextCursor);
+    cursor = nextCursor;
+  }
+
+  return foundAny ? sum : null;
+}
+
 export async function listOperations(params: BridgeParams): Promise<Result<AleoOperation>>;
 export async function listOperations(params: CoinFrameworkParams): Promise<Result<Operation>>;
 export async function listOperations(
@@ -110,15 +169,38 @@ export async function listOperations(
       ? await fetchStakingAmountOverrides(currency, result.transactions)
       : new Map<string, BigNumber>();
 
+  const claimTransactions = result.transactions.filter(
+    tx => tx.function_id === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+  );
+  const claimAmounts =
+    mode === "bridge" && claimTransactions.length > 0
+      ? new Map(
+          await Promise.all(
+            claimTransactions.map(
+              async tx =>
+                [tx.transaction_id, await sumUnbondedSinceLastClaim(currency, address, tx)] as const,
+            ),
+          ),
+        )
+      : new Map<string, BigNumber | null>();
+
   for (const rawTx of result.transactions) {
     if (mode === "coin-framework") {
       operations.push(toCoinFrameworkOperation(rawTx, address));
     } else {
       const isTokenTx = calTokens.has(rawTx.program_id);
-      const op = toBridgeOperation(params.ledgerAccountId, rawTx, address, isTokenTx);
+      const op = toBridgeOperation(params.ledgerAccountId, rawTx, address, isTokenTx) as AleoOperation;
       const stakingAmountOverride = stakingAmountOverrides.get(rawTx.transaction_id);
       if (stakingAmountOverride) {
-        op.value = stakingAmountOverride;
+        if (rawTx.function_id === TRANSACTION_TYPE.BOND_PUBLIC) {
+          op.extra.estimatedBondedAmount = stakingAmountOverride;
+        } else if (rawTx.function_id === TRANSACTION_TYPE.UNBOND_PUBLIC) {
+          op.extra.estimatedUnbondedAmount = stakingAmountOverride;
+        }
+      }
+      const claimAmount = claimAmounts.get(rawTx.transaction_id);
+      if (claimAmount) {
+        op.extra.estimatedWithdrawUnbondedAmount = claimAmount;
       }
       operations.push(op);
       if (isTokenTx) {

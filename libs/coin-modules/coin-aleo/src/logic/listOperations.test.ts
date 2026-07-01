@@ -278,13 +278,17 @@ describe("listOperations", () => {
     });
 
     describe("staking amount enrichment", () => {
-      it("should override the value of a bond_public operation with the recovered amount", async () => {
+      it("should set extra.estimatedBondedAmount for a bond_public operation with the recovered amount", async () => {
         const bondTx = getMockedTransaction({
           transaction_id: "bond-tx",
           function_id: "bond_public",
           amount: 0,
         });
-        const bondOp = getMockedOperation({ id: "bond-op", value: new BigNumber(0) });
+        const bondOp = getMockedOperation({
+          id: "bond-op",
+          value: new BigNumber(0),
+          extra: { functionId: "bond_public", transactionType: "public" },
+        });
         const overriddenAmount = new BigNumber(10000000000);
 
         mockFetchAccountTransactionsFromHeight.mockResolvedValue({
@@ -304,16 +308,24 @@ describe("listOperations", () => {
         });
 
         expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, "bond-tx");
-        expect(result.operations[0].value.isEqualTo(overriddenAmount)).toBe(true);
+        expect(
+          (result.operations[0].extra as { estimatedBondedAmount?: BigNumber })
+            .estimatedBondedAmount?.isEqualTo(overriddenAmount),
+        ).toBe(true);
+        expect(result.operations[0].value.isEqualTo(0)).toBe(true);
       });
 
-      it("should override the value of an unbond_public operation with the recovered amount", async () => {
+      it("should set extra.estimatedUnbondedAmount for an unbond_public operation with the recovered amount", async () => {
         const unbondTx = getMockedTransaction({
           transaction_id: "unbond-tx",
           function_id: "unbond_public",
           amount: 0,
         });
-        const unbondOp = getMockedOperation({ id: "unbond-op", value: new BigNumber(0) });
+        const unbondOp = getMockedOperation({
+          id: "unbond-op",
+          value: new BigNumber(0),
+          extra: { functionId: "unbond_public", transactionType: "public" },
+        });
         const overriddenAmount = new BigNumber(5000000);
 
         mockFetchAccountTransactionsFromHeight.mockResolvedValue({
@@ -333,7 +345,11 @@ describe("listOperations", () => {
         });
 
         expect(mockGetTransactionById).toHaveBeenCalledWith(mockCurrency, "unbond-tx");
-        expect(result.operations[0].value.isEqualTo(overriddenAmount)).toBe(true);
+        expect(
+          (result.operations[0].extra as { estimatedUnbondedAmount?: BigNumber })
+            .estimatedUnbondedAmount?.isEqualTo(overriddenAmount),
+        ).toBe(true);
+        expect(result.operations[0].value.isEqualTo(0)).toBe(true);
       });
 
       it("should not fetch transaction details for a transfer_public transaction", async () => {
@@ -362,21 +378,39 @@ describe("listOperations", () => {
         expect(mockGetTransactionById).not.toHaveBeenCalled();
       });
 
-      it("should not fetch transaction details for a claim_unbond_public transaction", async () => {
+      it("sums unbond_public amounts before a claim into estimatedWithdrawUnbondedAmount", async () => {
         const claimTx = getMockedTransaction({
           transaction_id: "claim-tx",
           function_id: "claim_unbond_public",
           amount: 0,
+          block_number: 100,
         });
-        const claimOp = getMockedOperation({ id: "claim-op" });
+        const unbondTxOlder = getMockedTransaction({
+          transaction_id: "unbond-tx-1",
+          function_id: "unbond_public",
+          amount: 0,
+          block_number: 80,
+        });
+        const claimOp = getMockedOperation({
+          id: "claim-op",
+          value: new BigNumber(0),
+          extra: { functionId: "claim_unbond_public", transactionType: "public" },
+        });
 
         mockFetchAccountTransactionsFromHeight.mockResolvedValue({
           transactions: [claimTx],
           nextCursor: null,
         });
         mockToBridgeOperation.mockReturnValue(claimOp);
+        jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
+          address: mockAddress,
+          transactions: [unbondTxOlder],
+        });
+        mockExtractStakingAmountFromTransactionDetails.mockImplementation((_, functionId) =>
+          functionId === "unbond_public" ? new BigNumber(7000000) : null,
+        );
 
-        await listOperations({
+        const result = await listOperations({
           config: mockConfig,
           currency: mockCurrency,
           address: mockAddress,
@@ -385,7 +419,175 @@ describe("listOperations", () => {
           options: { minHeight: 0 },
         });
 
-        expect(mockGetTransactionById).not.toHaveBeenCalled();
+        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledWith(
+          expect.objectContaining({ currency: mockCurrency, address: mockAddress, order: "desc" }),
+        );
+        expect(
+          (result.operations[0].extra as { estimatedWithdrawUnbondedAmount?: BigNumber })
+            .estimatedWithdrawUnbondedAmount?.isEqualTo(7000000),
+        ).toBe(true);
+      });
+
+      it("sums unbond_public amounts across a paginated walk crossing two pages", async () => {
+        const claimTx = getMockedTransaction({
+          transaction_id: "claim-tx-paginated",
+          function_id: "claim_unbond_public",
+          amount: 0,
+          block_number: 100,
+        });
+        const unbondTxPage1 = getMockedTransaction({
+          transaction_id: "unbond-tx-page1",
+          function_id: "unbond_public",
+          amount: 0,
+          block_number: 95,
+        });
+        const unbondTxPage2 = getMockedTransaction({
+          transaction_id: "unbond-tx-page2",
+          function_id: "unbond_public",
+          amount: 0,
+          block_number: 85,
+        });
+        const claimOp = getMockedOperation({
+          id: "claim-op-paginated",
+          value: new BigNumber(0),
+          extra: { functionId: "claim_unbond_public", transactionType: "public" },
+        });
+
+        mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+          transactions: [claimTx],
+          nextCursor: null,
+        });
+        mockToBridgeOperation.mockReturnValue(claimOp);
+        jest
+          .mocked(apiClient.getAccountPublicTransactions)
+          .mockResolvedValueOnce({
+            address: mockAddress,
+            transactions: [unbondTxPage1],
+            next_cursor: { block_number: 90, transition_id: "x" },
+          })
+          .mockResolvedValueOnce({
+            address: mockAddress,
+            transactions: [unbondTxPage2],
+          });
+        mockGetTransactionById.mockImplementation((_, transactionId) =>
+          Promise.resolve(getMockedTransactionDetails(transactionId)),
+        );
+        mockExtractStakingAmountFromTransactionDetails.mockImplementation((details, functionId) => {
+          if (functionId !== "unbond_public") return null;
+          return details.id === "unbond-tx-page1" ? new BigNumber(2000000) : new BigNumber(4000000);
+        });
+
+        const result = await listOperations({
+          config: mockConfig,
+          currency: mockCurrency,
+          address: mockAddress,
+          ledgerAccountId: mockLedgerAccountId,
+          mode: "bridge",
+          options: { minHeight: 0 },
+        });
+
+        expect(apiClient.getAccountPublicTransactions).toHaveBeenCalledTimes(2);
+        expect(
+          (result.operations[0].extra as { estimatedWithdrawUnbondedAmount?: BigNumber })
+            .estimatedWithdrawUnbondedAmount?.isEqualTo(6000000),
+        ).toBe(true);
+      });
+
+      it("stops summing at a prior claim_unbond_public and excludes it", async () => {
+        const claimTx = getMockedTransaction({
+          transaction_id: "claim-tx-2",
+          function_id: "claim_unbond_public",
+          amount: 0,
+          block_number: 200,
+        });
+        const unbondAfterPriorClaim = getMockedTransaction({
+          transaction_id: "unbond-tx-2",
+          function_id: "unbond_public",
+          amount: 0,
+          block_number: 150,
+        });
+        const priorClaim = getMockedTransaction({
+          transaction_id: "claim-tx-1",
+          function_id: "claim_unbond_public",
+          amount: 0,
+          block_number: 120,
+        });
+        const unbondBeforePriorClaim = getMockedTransaction({
+          transaction_id: "unbond-tx-1",
+          function_id: "unbond_public",
+          amount: 0,
+          block_number: 90,
+        });
+        const claimOp = getMockedOperation({
+          id: "claim-op-2",
+          value: new BigNumber(0),
+          extra: { functionId: "claim_unbond_public", transactionType: "public" },
+        });
+
+        mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+          transactions: [claimTx],
+          nextCursor: null,
+        });
+        mockToBridgeOperation.mockReturnValue(claimOp);
+        jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
+          address: mockAddress,
+          transactions: [unbondAfterPriorClaim, priorClaim, unbondBeforePriorClaim],
+        });
+        mockExtractStakingAmountFromTransactionDetails.mockImplementation((_, functionId) =>
+          functionId === "unbond_public" ? new BigNumber(3000000) : null,
+        );
+
+        const result = await listOperations({
+          config: mockConfig,
+          currency: mockCurrency,
+          address: mockAddress,
+          ledgerAccountId: mockLedgerAccountId,
+          mode: "bridge",
+          options: { minHeight: 0 },
+        });
+
+        expect(
+          (result.operations[0].extra as { estimatedWithdrawUnbondedAmount?: BigNumber })
+            .estimatedWithdrawUnbondedAmount?.isEqualTo(3000000),
+        ).toBe(true);
+      });
+
+      it("leaves estimatedWithdrawUnbondedAmount unset when no unbond_public precedes the claim", async () => {
+        const claimTx = getMockedTransaction({
+          transaction_id: "claim-tx-3",
+          function_id: "claim_unbond_public",
+          amount: 0,
+          block_number: 50,
+        });
+        const claimOp = getMockedOperation({
+          id: "claim-op-3",
+          value: new BigNumber(0),
+          extra: { functionId: "claim_unbond_public", transactionType: "public" },
+        });
+
+        mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+          transactions: [claimTx],
+          nextCursor: null,
+        });
+        mockToBridgeOperation.mockReturnValue(claimOp);
+        jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
+          address: mockAddress,
+          transactions: [],
+        });
+
+        const result = await listOperations({
+          config: mockConfig,
+          currency: mockCurrency,
+          address: mockAddress,
+          ledgerAccountId: mockLedgerAccountId,
+          mode: "bridge",
+          options: { minHeight: 0 },
+        });
+
+        expect(
+          (result.operations[0].extra as { estimatedWithdrawUnbondedAmount?: BigNumber })
+            .estimatedWithdrawUnbondedAmount,
+        ).toBeUndefined();
       });
 
       it("should keep the original operation value when getTransactionById rejects", async () => {

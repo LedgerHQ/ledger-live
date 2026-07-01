@@ -1,6 +1,7 @@
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { AleoOperation, AleoOperationExtra, Transaction } from "../types";
+import { TRANSACTION_TYPE } from "../constants";
 import {
   getFunctionNameFromTransactionType,
   getNextSequenceNumber,
@@ -18,8 +19,8 @@ export function buildOptimisticOperation({
 }): AleoOperation {
   const fee = transaction.fees;
   const isTokenTx = isTokenTransaction(transaction);
-  const value = isTokenTx ? fee : transaction.amount;
   const stakingType = getStakingOperationType(transaction.mode);
+  const value = isTokenTx || stakingType ? fee : transaction.amount;
   const mainOperationType: OperationType = isTokenTx ? "FEES" : (stakingType ?? "OUT");
   const subOperations: Operation[] = [];
   const tokenSubAccount = account.subAccounts?.find(s => s.id === transaction.subAccountId);
@@ -27,6 +28,12 @@ export function buildOptimisticOperation({
   const extra: AleoOperationExtra = {
     functionId: getFunctionNameFromTransactionType(transaction.mode),
     transactionType: getOperationTransactionType(transaction.mode),
+    ...(transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC && {
+      estimatedBondedAmount: transaction.amount,
+    }),
+    ...(transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC && {
+      estimatedUnbondedAmount: transaction.amount,
+    }),
   };
 
   if (isTokenTx && tokenSubAccount) {

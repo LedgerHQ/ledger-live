@@ -241,11 +241,12 @@ export const toBridgeOperation = (
   address: string,
   isTokenTx?: boolean,
 ): AleoOperation => {
-  const value = new BigNumber(rawTx.amount);
   const { type, fee, blockHash, transactionType, date, hasFailed } = parseTransactionFields(
     rawTx,
     address,
   );
+  const isStakingTx = getStakingOperationType(rawTx.function_id) !== undefined;
+  const value = isStakingTx ? new BigNumber(fee) : new BigNumber(rawTx.amount);
 
   if (value.isNaN() || value.lte(0)) {
     log("aleo/toBridgeOperation", `Invalid raw transaction details for ${address}`, rawTx);

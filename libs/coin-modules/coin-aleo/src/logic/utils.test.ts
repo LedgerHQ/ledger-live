@@ -706,6 +706,64 @@ describe("toBridgeOperation", () => {
 
     expect(log).not.toHaveBeenCalled();
   });
+
+  describe("toBridgeOperation - staking value", () => {
+    it("sets value to fee (not amount) for bond_public", () => {
+      const rawTx = getMockedPublicTransaction({
+        function_id: "bond_public",
+        amount: 500000000,
+        fee: 12345,
+        recipient_address: "aleo1recipient",
+        sender_address: "aleo1sender",
+      });
+
+      const op = toBridgeOperation(ledgerAccountId, rawTx, "aleo1sender");
+
+      expect(op.value.toNumber()).toBe(12345);
+    });
+
+    it("sets value to fee (not amount) for unbond_public", () => {
+      const rawTx = getMockedPublicTransaction({
+        function_id: "unbond_public",
+        amount: 500000000,
+        fee: 6789,
+        recipient_address: "aleo1sender",
+        sender_address: "aleo1sender",
+      });
+
+      const op = toBridgeOperation(ledgerAccountId, rawTx, "aleo1sender");
+
+      expect(op.value.toNumber()).toBe(6789);
+    });
+
+    it("sets value to fee (not amount) for claim_unbond_public", () => {
+      const rawTx = getMockedPublicTransaction({
+        function_id: "claim_unbond_public",
+        amount: 0,
+        fee: 4321,
+        recipient_address: "aleo1sender",
+        sender_address: "aleo1sender",
+      });
+
+      const op = toBridgeOperation(ledgerAccountId, rawTx, "aleo1sender");
+
+      expect(op.value.toNumber()).toBe(4321);
+    });
+
+    it("keeps value = amount for a regular transfer_public", () => {
+      const rawTx = getMockedPublicTransaction({
+        function_id: "transfer_public",
+        amount: 500000000,
+        fee: 100,
+        recipient_address: "aleo1recipient",
+        sender_address: "aleo1sender",
+      });
+
+      const op = toBridgeOperation(ledgerAccountId, rawTx, "aleo1sender");
+
+      expect(op.value.toNumber()).toBe(500000000);
+    });
+  });
 });
 
 describe("resolveConfig", () => {

@@ -173,12 +173,12 @@ describe("buildOptimisticOperation", () => {
   });
 
   it.each([
-    [TRANSACTION_TYPE.BOND_PUBLIC, "bond_public", "BOND"],
-    [TRANSACTION_TYPE.UNBOND_PUBLIC, "unbond_public", "UNBOND"],
-    [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC, "claim_unbond_public", "WITHDRAW_UNBONDED"],
+    [TRANSACTION_TYPE.BOND_PUBLIC, "bond_public", "BOND", "estimatedBondedAmount"],
+    [TRANSACTION_TYPE.UNBOND_PUBLIC, "unbond_public", "UNBOND", "estimatedUnbondedAmount"],
+    [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC, "claim_unbond_public", "WITHDRAW_UNBONDED", null],
   ])(
     "should build a %s operation with type '%s' for staking mode %s",
-    (mode, functionId, expectedType) => {
+    (mode, functionId, expectedType, extraField) => {
       const transaction = getMockedTransaction({
         amount: new BigNumber(5_000_000),
         fees: new BigNumber(34_060),
@@ -188,11 +188,19 @@ describe("buildOptimisticOperation", () => {
 
       const operation = buildOptimisticOperation({ account, transaction });
 
+      const extra: any = {
+        functionId,
+        transactionType: "public",
+      };
+      if (extraField) {
+        extra[extraField] = transaction.amount;
+      }
+
       expect(operation).toEqual({
         id: encodeOperationId(account.id, "", expectedType),
         hash: "",
         type: expectedType,
-        value: transaction.amount,
+        value: transaction.fees,
         fee: transaction.fees,
         blockHash: null,
         blockHeight: null,
@@ -201,11 +209,52 @@ describe("buildOptimisticOperation", () => {
         accountId: account.id,
         date: expect.any(Date),
         transactionSequenceNumber: expect.any(BigNumber),
-        extra: {
-          functionId,
-          transactionType: "public",
-        },
+        extra,
       });
     },
   );
+
+  describe("staking modes", () => {
+    it("sets value=fee and extra.estimatedBondedAmount=amount for bond_public", () => {
+      const transaction = getMockedTransaction({
+        mode: TRANSACTION_TYPE.BOND_PUBLIC,
+        amount: new BigNumber(1000000000),
+        fees: new BigNumber(500),
+      });
+
+      const op = buildOptimisticOperation({ account, transaction });
+
+      expect(op.value.toNumber()).toBe(500);
+      expect(op.extra.estimatedBondedAmount?.toNumber()).toBe(1000000000);
+      expect(op.type).toBe("BOND");
+    });
+
+    it("sets value=fee and extra.estimatedUnbondedAmount=amount for unbond_public", () => {
+      const transaction = getMockedTransaction({
+        mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
+        amount: new BigNumber(2000000000),
+        fees: new BigNumber(600),
+      });
+
+      const op = buildOptimisticOperation({ account, transaction });
+
+      expect(op.value.toNumber()).toBe(600);
+      expect(op.extra.estimatedUnbondedAmount?.toNumber()).toBe(2000000000);
+      expect(op.type).toBe("UNBOND");
+    });
+
+    it("sets value=fee and leaves estimatedWithdrawUnbondedAmount unset for claim_unbond_public", () => {
+      const transaction = getMockedTransaction({
+        mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+        amount: new BigNumber(0),
+        fees: new BigNumber(700),
+      });
+
+      const op = buildOptimisticOperation({ account, transaction });
+
+      expect(op.value.toNumber()).toBe(700);
+      expect(op.extra.estimatedWithdrawUnbondedAmount).toBeUndefined();
+      expect(op.type).toBe("WITHDRAW_UNBONDED");
+    });
+  });
 });
