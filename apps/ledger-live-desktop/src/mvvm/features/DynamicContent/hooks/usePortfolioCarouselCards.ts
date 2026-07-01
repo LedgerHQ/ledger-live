@@ -3,7 +3,6 @@ import { ClassicCard } from "@braze/web-sdk";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
-import { track } from "~/renderer/analytics/segment";
 import { setPortfolioCards, setBottomPortfolioCards } from "~/renderer/actions/dynamicContent";
 import { setDismissedContentCards } from "~/renderer/actions/settings";
 import {
@@ -15,6 +14,8 @@ import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import type { PortfolioContentCard } from "~/types/dynamicContent";
 import type { CarouselActions } from "../types";
 import { sanitizeExtras } from "~/renderer/hooks/useBraze";
+import { trackContentCard } from "LLD/features/DynamicContent/utils/trackContentCard";
+import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 
 export type PortfolioCarouselVariant = "top" | "bottom";
 
@@ -55,7 +56,7 @@ export function usePortfolioCarouselCards(
       if (currentCard) {
         if (isTrackedUser) {
           braze.logCardDismissal(currentCard);
-          track("contentcard_dismissed", {
+          trackContentCard(ContentCardEvent.Dismissed, {
             ...sanitizeExtras(currentCard.extras),
             card: slide.id,
             page: "Portfolio",
@@ -86,7 +87,7 @@ export function usePortfolioCarouselCards(
       // Setting it as the card id just to have a dummy non empty value
       currentCard.url = currentCard.id;
       braze.logContentCardClick(currentCard);
-      track("contentcard_clicked", {
+      trackContentCard(ContentCardEvent.Clicked, {
         ...sanitizeExtras(currentCard.extras),
         contentcard: slide.title,
         link: slide.path || slide.url,

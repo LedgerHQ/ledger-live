@@ -5,6 +5,7 @@ import PortfolioContentCards from "../components/PortfolioContentCards";
 import { BottomCarouselContentCards } from "../components/BottomCarouselContentCards";
 import { ClassicCard, logCardDismissal, logContentCardClick } from "@braze/web-sdk";
 import { track } from "~/renderer/analytics/segment";
+import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { LocationContentCard } from "~/types/dynamicContent";
 import { CONTENT_BANNER_ACTION_CARD_CLOSE_LABEL } from "../components/ContentBannerActionCard/types";
 
@@ -148,7 +149,7 @@ describe("PortfolioContentCards", () => {
       },
     });
 
-    // I'm not sure how to properly test logContentCardImpressions and track("contentcard_impression")
+    // I'm not sure how to properly test logContentCardImpressions and track(ContentCardEvent.Impression)
     // because IntersectionObserver is not available in JSDOM and mocking it would defeat the purpose IMO.
 
     const title0 = await screen.findByText("Foo");
@@ -193,7 +194,7 @@ describe("PortfolioContentCards", () => {
 
     // Test dismiss button
     expect(logCardDismissal).not.toHaveBeenCalled();
-    expect(track).not.toHaveBeenCalledWith("contentcard_dismissed", expect.any(Object));
+    expect(track).not.toHaveBeenCalledWith(ContentCardEvent.Dismissed, expect.any(Object));
     await user.click(screen.getAllByTestId("portfolio-card-close-button")[1]);
     expect(logCardDismissal).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -202,7 +203,7 @@ describe("PortfolioContentCards", () => {
       }),
     );
     expect(track).toHaveBeenCalledWith(
-      "contentcard_dismissed",
+      ContentCardEvent.Dismissed,
       expect.objectContaining({
         canvas_name: "Portfolio Canvas 2",
         canvas_step_name: "Portfolio Step 2",
@@ -217,7 +218,7 @@ describe("PortfolioContentCards", () => {
 
     // Test click button
     expect(logContentCardClick).not.toHaveBeenCalled();
-    expect(track).not.toHaveBeenCalledWith("contentcard_clicked", expect.any(Object));
+    expect(track).not.toHaveBeenCalledWith(ContentCardEvent.Clicked, expect.any(Object));
     await user.click(cta0);
     expect(logContentCardClick).toHaveBeenCalledTimes(1);
     expect(logContentCardClick).toHaveBeenCalledWith(
@@ -228,7 +229,7 @@ describe("PortfolioContentCards", () => {
       }),
     );
     expect(track).toHaveBeenCalledWith(
-      "contentcard_clicked",
+      ContentCardEvent.Clicked,
       expect.objectContaining({
         canvas_name: "Portfolio Canvas",
         canvas_step_name: "Portfolio Step",
@@ -283,7 +284,7 @@ describe("PortfolioContentCards", () => {
     await user.click(title0);
     expect(logContentCardClick).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenCalledWith(
-      "contentcard_clicked",
+      ContentCardEvent.Clicked,
       expect.objectContaining({
         contentcard: "Foo",
         campaign: "0",
@@ -347,7 +348,7 @@ describe("BottomCarouselContentCards", () => {
       expect.objectContaining({ id: BottomCards[1].id }),
     );
     expect(track).toHaveBeenCalledWith(
-      "contentcard_dismissed",
+      ContentCardEvent.Dismissed,
       expect.objectContaining({
         card: "3",
         page: "Portfolio",
@@ -372,7 +373,7 @@ describe("BottomCarouselContentCards", () => {
       }),
     );
     expect(track).toHaveBeenCalledWith(
-      "contentcard_clicked",
+      ContentCardEvent.Clicked,
       expect.objectContaining({
         contentcard: "Foo",
         link: "ledger-live://deep-link",

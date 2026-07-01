@@ -3,6 +3,7 @@ import {
   sanitizeExtras,
   buildContentCardTrackingProperties,
   isCategoryContentCardExtras,
+  finalizeContentCardEventProperties,
 } from "./contentCardExtras";
 
 describe("parseOrder", () => {
@@ -87,6 +88,16 @@ describe("sanitizeExtras", () => {
   it("should handle order of zero", () => {
     const result = sanitizeExtras({ order: "0" });
     expect(result).toEqual({ order: 0 });
+  });
+
+  it("should omit displayedPosition from Braze extras", () => {
+    const result = sanitizeExtras({
+      title: "Promo",
+      displayedPosition: "campaign_slot",
+      order: "1",
+    });
+    expect(result).toEqual({ title: "Promo", order: 1 });
+    expect(result).not.toHaveProperty("displayedPosition");
   });
 });
 
@@ -175,6 +186,44 @@ describe("buildContentCardTrackingProperties", () => {
       location: "portfolio",
       canvas_name: "Earn canvas",
     });
+  });
+});
+
+describe("finalizeContentCardEventProperties", () => {
+  it("should keep a numeric displayedPosition and strip leaked string values from extras", () => {
+    expect(
+      finalizeContentCardEventProperties({
+        ...buildContentCardTrackingProperties({
+          cardExtras: { title: "Buy", displayedPosition: "invalid" },
+        }),
+        displayedPosition: 2,
+      }),
+    ).toEqual({
+      title: "Buy",
+      displayedPosition: 2,
+    });
+  });
+
+  it("should omit displayedPosition when it is not a number", () => {
+    expect(
+      finalizeContentCardEventProperties({
+        title: "Buy",
+        displayedPosition: "invalid",
+      }),
+    ).toEqual({ title: "Buy" });
+  });
+
+  it("should omit displayedPosition when it is undefined", () => {
+    expect(finalizeContentCardEventProperties({ title: "Buy" })).toEqual({ title: "Buy" });
+  });
+
+  it("should omit displayedPosition when it is NaN", () => {
+    expect(
+      finalizeContentCardEventProperties({
+        title: "Buy",
+        displayedPosition: Number.NaN,
+      }),
+    ).toEqual({ title: "Buy" });
   });
 });
 

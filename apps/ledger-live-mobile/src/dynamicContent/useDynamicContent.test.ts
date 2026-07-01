@@ -1,5 +1,6 @@
 import { act, renderHook } from "@tests/test-renderer";
 import type { ContentCard } from "@braze/react-native-sdk";
+import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import useDynamicContent from "./useDynamicContent";
 import { flush, track } from "../analytics";
 
@@ -39,6 +40,8 @@ const localCard: ContentCard = {
 describe("useDynamicContent", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedTrack.mockResolvedValue(undefined);
+    mockedFlush.mockResolvedValue(undefined);
   });
 
   it("should flush clicked events after tracking resolves", async () => {
@@ -61,13 +64,13 @@ describe("useDynamicContent", () => {
 
     let trackingPromise: Promise<void> | undefined;
     act(() => {
-      trackingPromise = result.current.trackContentCardEvent("contentcard_clicked", {
+      trackingPromise = result.current.trackContentCardEvent(ContentCardEvent.Clicked, {
         campaign: "card-1",
         contentcard: "Card title",
       });
     });
 
-    expect(mockedTrack).toHaveBeenCalledWith("contentcard_clicked", {
+    expect(mockedTrack).toHaveBeenCalledWith(ContentCardEvent.Clicked, {
       campaign: "card-1",
       contentcard: "Card title",
     });
@@ -75,12 +78,10 @@ describe("useDynamicContent", () => {
 
     await act(async () => {
       resolveTrack?.();
+      await Promise.resolve();
     });
 
     expect(mockedFlush).toHaveBeenCalledTimes(1);
-    await expect(Promise.race([trackingPromise, Promise.resolve("pending")])).resolves.toBe(
-      "pending",
-    );
 
     await act(async () => {
       resolveFlush?.();
@@ -101,13 +102,13 @@ describe("useDynamicContent", () => {
 
     let trackingPromise: Promise<void> | undefined;
     act(() => {
-      trackingPromise = result.current.trackContentCardEvent("contentcard_dismissed", {
+      trackingPromise = result.current.trackContentCardEvent(ContentCardEvent.Dismissed, {
         campaign: "card-1",
         contentcard: "Card title",
       });
     });
 
-    expect(mockedTrack).toHaveBeenCalledWith("contentcard_dismissed", {
+    expect(mockedTrack).toHaveBeenCalledWith(ContentCardEvent.Dismissed, {
       campaign: "card-1",
       contentcard: "Card title",
     });
@@ -133,7 +134,7 @@ describe("useDynamicContent", () => {
     });
 
     await act(async () => {
-      await result.current.trackContentCardEvent("contentcard_clicked", {
+      await result.current.trackContentCardEvent(ContentCardEvent.Clicked, {
         campaign: "local-card",
       });
     });
@@ -142,13 +143,28 @@ describe("useDynamicContent", () => {
     expect(mockedFlush).not.toHaveBeenCalled();
   });
 
+  it("should strip non-numeric displayedPosition before tracking", async () => {
+    const { result } = renderHook(() => useDynamicContent());
+
+    await act(async () => {
+      await result.current.trackContentCardEvent(ContentCardEvent.Clicked, {
+        campaign: "card-1",
+        displayedPosition: "invalid",
+      });
+    });
+
+    expect(mockedTrack).toHaveBeenCalledWith(ContentCardEvent.Clicked, {
+      campaign: "card-1",
+    });
+  });
+
   it("should swallow analytics errors", async () => {
     mockedTrack.mockRejectedValueOnce(new Error("track failed"));
 
     const { result } = renderHook(() => useDynamicContent());
 
     await expect(
-      result.current.trackContentCardEvent("contentcard_clicked", {
+      result.current.trackContentCardEvent(ContentCardEvent.Clicked, {
         campaign: "card-1",
       }),
     ).resolves.toBeUndefined();

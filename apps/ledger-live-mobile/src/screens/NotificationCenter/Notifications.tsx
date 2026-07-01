@@ -17,6 +17,7 @@ import Swipeable, { SwipeableMethods } from "react-native-gesture-handler/Reanim
 import { TrashMedium } from "@ledgerhq/native-ui/assets/icons";
 import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
+import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import SettingsNavigationScrollView from "../Settings/SettingsNavigationScrollView";
 import { NotificationContentCard } from "~/dynamicContent/types";
 import { getTime } from "./helper";
@@ -88,7 +89,7 @@ export default function NotificationCenter() {
     async (item: NotificationContentCard) => {
       if (!item) return;
 
-      await trackContentCardEvent("contentcard_clicked", {
+      await trackContentCardEvent(ContentCardEvent.Clicked, {
         ...item.extras,
         screen: item.location,
         campaign: item.id,
@@ -110,7 +111,7 @@ export default function NotificationCenter() {
 
       logDismissCard(item.id);
 
-      trackContentCardEvent("contentcard_dismissed", {
+      trackContentCardEvent(ContentCardEvent.Dismissed, {
         ...item.extras,
         screen: item.location,
         campaign: item.id,

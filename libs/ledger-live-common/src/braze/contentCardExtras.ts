@@ -13,14 +13,38 @@ export const sanitizeExtras = (
   extras: Record<string, string> | undefined,
 ): Record<string, string | number> => {
   if (!extras) return {};
-  const { order, ...rest } = extras;
+  const { order, displayedPosition: _displayedPosition, ...rest } = extras;
   const parsed = parseOrder(order);
   return parsed !== undefined ? { ...rest, order: parsed } : { ...rest };
 };
 
+export type ContentCardEventProperties = Record<string, string | number | undefined>;
+
+export const ContentCardEvent = {
+  Impression: "contentcard_impression",
+  Clicked: "contentcard_clicked",
+  Dismissed: "contentcard_dismissed",
+} as const;
+
+export type ContentCardEvent = (typeof ContentCardEvent)[keyof typeof ContentCardEvent];
+
+export type ContentCardInteractionEvent =
+  | typeof ContentCardEvent.Clicked
+  | typeof ContentCardEvent.Dismissed;
+
+/** Strip leaked Braze displayedPosition and keep only a numeric app index when provided. */
+export const finalizeContentCardEventProperties = (
+  props: ContentCardEventProperties,
+): Record<string, string | number> => {
+  const { displayedPosition, ...base } = props;
+  return typeof displayedPosition === "number" && Number.isFinite(displayedPosition)
+    ? { ...base, displayedPosition }
+    : (base as Record<string, string | number>);
+};
+
 const TOP_WALLET_ALWAYS_ON_CATEGORY_ID = "alwayson";
 
-export const resolveCategoryLocation = (
+const resolveCategoryLocation = (
   categoryExtras: Record<string, string> | undefined,
 ): string | undefined => {
   if (!categoryExtras) return undefined;
