@@ -49,9 +49,10 @@ export class SwapPage extends WebViewAppPage {
   private bestValueInfoIcon = "best-value-info-icon";
   private switchButton = "to-account-switch-accounts";
   private swapMaxToggle = "from-account-max-toggle";
-  private fromAccountWrapper = "from-account-wrapper";
-  private fromAccountBalance = "from-account-balance";
-  private percentageButtonTestId = (key: PercentageKey) => `from-account-percentage-${key}`;
+  private readonly fromAccountWrapper = "from-account-wrapper";
+  private readonly fromAccountBalance = "from-account-balance";
+  private readonly percentageButtonTestId = (key: PercentageKey) =>
+    `from-account-percentage-${key}`;
   private quotesCountdown = "quotes-countdown";
   private networkFeesInfoIcon = "quoteCardTestId-networkFees-infoIcon";
   private rateInfoIcon = "QuoteCard-rate-infoIcon";
