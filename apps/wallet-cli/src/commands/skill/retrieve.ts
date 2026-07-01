@@ -1,7 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { writeStdout } from "../../shared/ui";
-import { getSkill, getSoleSkill, listSkills, renderSkillMarkdown } from "../../skills/registry";
+import { getSkill, listSkills, renderSkillMarkdown } from "../../skills/registry";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { emitJson, failSkill, skillEnvelope } from "./shared";
 
@@ -18,10 +18,13 @@ export default defineCommand({
   handler: async ({ flags, positional }) => {
     const format = resolveOutputFormat(flags.output);
     try {
-      const name = positional[0] ?? getSoleSkill()?.name;
+      const name = positional[0];
       if (!name) {
+        const available = listSkills()
+          .map(s => s.name)
+          .join(", ");
         throw new Error(
-          "Missing skill name. Usage: skill retrieve <name>. Run `skill list` to see available skills.",
+          `Missing skill name. Usage: skill retrieve <name>. Available skills: ${available || "(none)"}. Run \`skill list\` for descriptions.`,
         );
       }
 

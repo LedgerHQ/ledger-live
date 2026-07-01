@@ -26,6 +26,11 @@ async function install(dir: string): Promise<void> {
   expect(res.exitCode, `install stderr: ${res.stderr}`).toBe(0);
 }
 
+async function installAll(dir: string): Promise<void> {
+  const res = await runCli(["skill", "install", "--all", "--dir", dir]);
+  expect(res.exitCode, `install --all stderr: ${res.stderr}`).toBe(0);
+}
+
 /** Read the manifest-tracked files as they currently exist on disk. */
 async function readTrackedFromDisk(
   skillRoot: string,
@@ -56,14 +61,39 @@ async function stampSidecar(skillRoot: string, cliVersion: string): Promise<void
 }
 
 describe("skill doctor", () => {
-  it("reports up-to-date and exits 0 for a fresh install", async () => {
+  it("reports up-to-date and exits 0 for a fresh --all install", async () => {
     const dir = await makeTmpDir();
-    await install(dir);
+    await installAll(dir);
 
     const { stdout, exitCode, stderr } = await runCli(["skill", "doctor", "--dir", dir]);
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
     expect(stdout).toContain("up-to-date");
     expect(stdout).toContain("All skills up-to-date.");
+  });
+
+  it("reports a mix of up-to-date and missing after a single-skill install", async () => {
+    const dir = await makeTmpDir();
+    await install(dir); // installs only ledger-wallet-cli; the rest stay missing
+
+    const { stdout, exitCode } = await runCli([
+      "skill",
+      "doctor",
+      "--dir",
+      dir,
+      "--output",
+      "json",
+    ]);
+    expect(exitCode).toBe(1);
+    const data = JSON.parse(stdout);
+    const byName = new Map(
+      (data.results as { name: string; status: string }[]).map(r => [r.name, r.status]),
+    );
+    expect(byName.get(SKILL_NAME)).toBe("up-to-date");
+    expect(byName.get("ledger-wallet-cli-send")).toBe("missing");
+    expect(byName.get("ledger-wallet-cli-swap")).toBe("missing");
+    // Remaining drift must include the missing task skills.
+    const remaining = (data.remainingDrift as { name: string }[]).map(r => r.name);
+    expect(remaining).toContain("ledger-wallet-cli-send");
   });
 
   it("detects outdated (older sidecar consistent with disk) and heals with --fix", async () => {
@@ -200,7 +230,7 @@ describe("skill doctor", () => {
 
   it("returns a json envelope with status, command and results", async () => {
     const dir = await makeTmpDir();
-    await install(dir);
+    await installAll(dir);
 
     const { stdout, exitCode } = await runCli([
       "skill",
@@ -216,7 +246,10 @@ describe("skill doctor", () => {
     expect(data.command).toBe("skill doctor");
     expect(Array.isArray(data.results)).toBe(true);
     expect(Array.isArray(data.remainingDrift)).toBe(true);
-    expect(data.results[0].name).toBe(SKILL_NAME);
-    expect(data.results[0].status).toBe("up-to-date");
+    const umbrella = (data.results as { name: string; status: string }[]).find(
+      r => r.name === SKILL_NAME,
+    );
+    expect(umbrella).toBeDefined();
+    expect(umbrella!.status).toBe("up-to-date");
   });
 });

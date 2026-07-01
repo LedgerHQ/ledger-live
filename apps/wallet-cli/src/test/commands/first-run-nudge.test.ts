@@ -79,7 +79,7 @@ async function withStderrTTY<T>(isTTY: boolean, fn: () => Promise<T>): Promise<T
 }
 
 const TIP = "Tip:";
-const INSTALL = "wallet-cli skill install";
+const INSTALL = "wallet-cli skill install --all";
 
 describe("first-run nudge", () => {
   it("shows once, then not again for the same user", async () => {
@@ -126,7 +126,7 @@ describe("first-run nudge", () => {
       nudgeEnv(stateHome, { ...CLEAR_AGENTS, CLAUDECODE: "1" }),
     );
     expect(res.exitCode).toBe(0);
-    expect(res.stderr).toContain("wallet-cli skill install --agent claude");
+    expect(res.stderr).toContain("wallet-cli skill install --all --agent claude");
   });
 
   it("tailors the --agent flag for Cursor", async () => {
@@ -136,7 +136,7 @@ describe("first-run nudge", () => {
       nudgeEnv(stateHome, { ...CLEAR_AGENTS, CURSOR_AGENT: "1" }),
     );
     expect(res.exitCode).toBe(0);
-    expect(res.stderr).toContain("wallet-cli skill install --agent cursor");
+    expect(res.stderr).toContain("wallet-cli skill install --all --agent cursor");
   });
 
   it("tailors the --agent flag for Codex", async () => {
@@ -146,7 +146,7 @@ describe("first-run nudge", () => {
       nudgeEnv(stateHome, { ...CLEAR_AGENTS, CODEX_ENABLED: "1" }),
     );
     expect(res.exitCode).toBe(0);
-    expect(res.stderr).toContain("wallet-cli skill install --agent codex");
+    expect(res.stderr).toContain("wallet-cli skill install --all --agent codex");
   });
 
   it("tailors the --agent flag to the generic `agents` bucket for opencode/Gemini/amp", async () => {
@@ -158,7 +158,7 @@ describe("first-run nudge", () => {
     expect(res.exitCode).toBe(0);
     // The generic bucket still maps to a valid --agent value (-> .agents/skills);
     // a bare `skill install` would default to --agent claude (wrong directory).
-    expect(res.stderr).toContain("wallet-cli skill install --agent agents");
+    expect(res.stderr).toContain("wallet-cli skill install --all --agent agents");
   });
 
   it("does not consume the nudge on flag-led (help/version/bare-root) invocations", async () => {

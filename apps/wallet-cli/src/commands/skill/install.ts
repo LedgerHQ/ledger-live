@@ -7,7 +7,6 @@ import {
   SUPPORTED_AGENTS,
   getAllSkills,
   getSkill,
-  getSoleSkill,
   listSkills,
   resolveInstallRoot,
   writeSkill,
@@ -51,10 +50,13 @@ export default defineCommand({
       if (flags.all) {
         skillsToInstall.push(...getAllSkills());
       } else {
-        const name = positional[0] ?? getSoleSkill()?.name;
+        const name = positional[0];
         if (!name) {
+          const available = listSkills()
+            .map(s => s.name)
+            .join(", ");
           throw new Error(
-            `Missing skill name. Usage: skill install <name> [--agent ${SUPPORTED_AGENTS.join("|")}] [--global] [--dir <path>]. Or use --all.`,
+            `Missing skill name. Usage: skill install <name> [--agent ${SUPPORTED_AGENTS.join("|")}] [--global] [--dir <path>]. Available skills: ${available || "(none)"}. Run \`skill list\`, or use --all to install every skill.`,
           );
         }
         const skill = getSkill(name);

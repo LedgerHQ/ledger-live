@@ -1,0 +1,1 @@
+../../ledger-wallet-cli/references/safety.md

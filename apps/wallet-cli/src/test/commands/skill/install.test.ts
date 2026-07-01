@@ -13,6 +13,15 @@ async function exists(p: string): Promise<boolean> {
   }
 }
 
+const ALL_SKILLS = [
+  "ledger-wallet-cli",
+  "ledger-wallet-cli-account-discover",
+  "ledger-wallet-cli-receive",
+  "ledger-wallet-cli-send",
+  "ledger-wallet-cli-swap",
+  "ledger-wallet-cli-genuine-check",
+];
+
 let tmpDir: string | undefined;
 afterEach(async () => {
   if (tmpDir) {
@@ -39,6 +48,42 @@ describe("skill install", () => {
     expect(await exists(reference)).toBe(true);
     expect(await readFile(skillMd, "utf8")).toContain("# wallet-cli");
     expect(stdout).toContain(skillMd);
+  });
+
+  it("errors and hints --all when no name is given", async () => {
+    const { stdout, exitCode } = await runCli(["skill", "install", "--output", "json"]);
+    expect(exitCode).toBe(1);
+    const err = JSON.parse(stdout);
+    expect(err.ok).toBe(false);
+    expect(err.error.message).toMatch(/missing skill name/i);
+    expect(err.error.message).toMatch(/--all/);
+    expect(err.error.message).toContain("ledger-wallet-cli-send");
+  });
+
+  it("installs every skill with --all", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const { stdout, exitCode, stderr } = await runCli([
+      "skill",
+      "install",
+      "--all",
+      "--dir",
+      tmpDir,
+      "--output",
+      "json",
+    ]);
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    const data = JSON.parse(stdout);
+    expect(data.skills).toEqual(expect.arrayContaining(ALL_SKILLS));
+    expect(data.skills).toHaveLength(ALL_SKILLS.length);
+
+    for (const name of ALL_SKILLS) {
+      const skillMd = path.join(tmpDir, name, "SKILL.md");
+      expect(await exists(skillMd), `${name}/SKILL.md should exist`).toBe(true);
+    }
+    // Each task skill materializes a real copy of the shared safety reference.
+    const safety = path.join(tmpDir, "ledger-wallet-cli-send", "references", "safety.md");
+    expect(await exists(safety)).toBe(true);
+    expect(await readFile(safety, "utf8")).toMatch(/safety rails/i);
   });
 
   it("refuses to overwrite existing files without --force, then succeeds with --force", async () => {

@@ -59,11 +59,6 @@ export function getSkill(name: string): SkillManifest | undefined {
   return SKILLS.find(skill => skill.name === name);
 }
 
-/** True when exactly one skill is embedded (lets `retrieve`/`install` default it). */
-export function getSoleSkill(): SkillManifest | undefined {
-  return SKILLS.length === 1 ? SKILLS[0] : undefined;
-}
-
 /**
  * Return the content of one file within a skill (default: SKILL.md).
  * Throws if the requested file does not exist.

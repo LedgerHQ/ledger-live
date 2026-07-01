@@ -1,4 +1,4 @@
-name: "[Wallet CLI] - Sync Skill - Push"
+name: "[Wallet CLI] - Sync Skills - Push"
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
       - develop
     paths:
       - ".agents/skills/ledger-wallet-cli/**"
+      - ".agents/skills/ledger-wallet-cli-*/**"
   workflow_dispatch:
     inputs:
       source_ref:
@@ -29,15 +30,19 @@ permissions:
 
 jobs:
   sync-wallet-cli-skill:
-    name: Sync wallet-cli skill
+    name: Sync wallet-cli skills
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
-      SOURCE_SKILL_DIR: .agents/skills/ledger-wallet-cli
+      # All shipped wallet-cli skills live under .agents/skills and share the
+      # "ledger-wallet-cli" prefix (umbrella + task skills). Discovery below
+      # picks up every matching dir, so adding a new task skill needs no edit here.
+      SOURCE_SKILLS_DIR: .agents/skills
+      SKILL_PREFIX: ledger-wallet-cli
       TARGET_REPOSITORY: LedgerHQ/agent-skills
       TARGET_BASE: ${{ inputs.target_base || 'main' }}
       SYNC_BRANCH: ${{ inputs.sync_branch || 'sync/wallet-cli-skill' }}
-      TARGET_SKILL_DIR: skills/wallet-cli/wallet-cli-usage
+      TARGET_SKILLS_BASE: skills/wallet-cli
     steps:
       - name: Generate token
         id: generate-token
@@ -70,56 +75,116 @@ jobs:
           path: ledger-live
           persist-credentials: false
 
-      - name: Export wallet-cli skill
+      - name: Export wallet-cli skills
         run: |
           set -euo pipefail
+          shopt -s nullglob
 
-          source_skill_dir="$GITHUB_WORKSPACE/ledger-live/$SOURCE_SKILL_DIR"
-          target_skill_dir="$GITHUB_WORKSPACE/$TARGET_SKILL_DIR"
+          source_skills_dir="$GITHUB_WORKSPACE/ledger-live/$SOURCE_SKILLS_DIR"
+          target_skills_base="$GITHUB_WORKSPACE/$TARGET_SKILLS_BASE"
 
-          rm -rf "$target_skill_dir"
-          mkdir -p "$target_skill_dir"
+          # Rewrite monorepo-only run instructions to installed-CLI instructions.
+          # Single-quoted so backticks stay literal; applied to SKILL.md and to
+          # every referenced markdown file (e.g. safety.md carries the same line).
+          apply_common_rewrites() {
+            sed -E -i \
+              -e 's|Run from repo root: `pnpm --silent wallet-cli start <command> \[flags\]`|Install globally with a user-preferred package manager — `npm i -g @ledgerhq/wallet-cli`, `pnpm add -g @ledgerhq/wallet-cli`, `yarn global add @ledgerhq/wallet-cli`, or `bun add -g @ledgerhq/wallet-cli`. Run: `wallet-cli [flags]`.|' \
+              -e 's|pnpm --silent wallet-cli start ?|wallet-cli |g' \
+              "$1"
+          }
 
-          cp -R "$source_skill_dir/references" "$target_skill_dir/references"
+          synced=0
+          for source_skill_dir in \
+            "$source_skills_dir/$SKILL_PREFIX" \
+            "$source_skills_dir/$SKILL_PREFIX"-*; do
+            [ -d "$source_skill_dir" ] || continue
+            skill_name="$(basename "$source_skill_dir")"
 
-          sed -E \
-            -e 's|^name: ledger-wallet-cli$|name: wallet-cli-usage|' \
-            -e 's|Run from repo root: `pnpm --silent wallet-cli start <command> \[flags\]`|Install globally with a user-preferred package manager — `npm i -g @ledgerhq/wallet-cli`, `pnpm add -g @ledgerhq/wallet-cli`, `yarn global add @ledgerhq/wallet-cli`, or `bun add -g @ledgerhq/wallet-cli`. Run: `wallet-cli [flags]`.|' \
-            -e 's|pnpm --silent wallet-cli start ?|wallet-cli |g' \
-            "$source_skill_dir/SKILL.md" > "$target_skill_dir/SKILL.md"
+            # Portal naming mirrors the existing convention: the umbrella keeps
+            # its "wallet-cli-usage" doc slug; task skills drop the "ledger-"
+            # prefix (e.g. ledger-wallet-cli-send -> wallet-cli-send).
+            if [ "$skill_name" = "$SKILL_PREFIX" ]; then
+              portal_name="wallet-cli-usage"
+            else
+              portal_name="${skill_name#ledger-}"
+            fi
 
-          if grep -Fq "pnpm --silent wallet-cli start" "$target_skill_dir/SKILL.md"; then
-            echo "Exported skill still contains monorepo-only wallet-cli commands."
+            target_skill_dir="$target_skills_base/$portal_name"
+            rm -rf "$target_skill_dir"
+            mkdir -p "$target_skill_dir"
+
+            # -L dereferences symlinks so the real content is uploaded. The
+            # shared references/safety.md is a symlink to the umbrella copy;
+            # without -L it would land as a broken link in the portal.
+            if [ -d "$source_skill_dir/references" ]; then
+              cp -RL "$source_skill_dir/references" "$target_skill_dir/references"
+              for ref in "$target_skill_dir"/references/*.md; do
+                [ -f "$ref" ] || continue
+                apply_common_rewrites "$ref"
+              done
+            fi
+
+            sed -E "s|^name: ${skill_name}$|name: ${portal_name}|" \
+              "$source_skill_dir/SKILL.md" > "$target_skill_dir/SKILL.md"
+            apply_common_rewrites "$target_skill_dir/SKILL.md"
+
+            if ! grep -Fq "name: ${portal_name}" "$target_skill_dir/SKILL.md"; then
+              echo "Exported skill '${skill_name}' frontmatter does not match portal name '${portal_name}'."
+              exit 1
+            fi
+
+            if grep -RFq "pnpm --silent wallet-cli start" "$target_skill_dir"; then
+              echo "Exported skill '${skill_name}' still contains monorepo-only wallet-cli commands."
+              exit 1
+            fi
+
+            if grep -RFq "Run from repo root" "$target_skill_dir"; then
+              echo "Exported skill '${skill_name}' still contains monorepo-only run instructions."
+              exit 1
+            fi
+
+            synced=$((synced + 1))
+          done
+
+          if [ "$synced" -eq 0 ]; then
+            echo "No wallet-cli skills found to export under $source_skills_dir."
             exit 1
           fi
 
-          if grep -Fq "Run from repo root" "$target_skill_dir/SKILL.md"; then
-            echo "Exported skill still contains monorepo-only run instructions."
+          # The umbrella skill carries the shared business-logic reference.
+          if [ ! -f "$target_skills_base/wallet-cli-usage/references/business-logic.md" ]; then
+            echo "Exported umbrella skill is missing references/business-logic.md."
             exit 1
           fi
 
-          if ! grep -Fq "name: wallet-cli-usage" "$target_skill_dir/SKILL.md"; then
-            echo "Exported skill frontmatter does not match the agent-skills skill name."
-            exit 1
-          fi
+          # Every task skill must carry a resolved (non-symlink) safety reference.
+          for target_skill_dir in "$target_skills_base"/wallet-cli-*; do
+            [ -d "$target_skill_dir" ] || continue
+            [ "$(basename "$target_skill_dir")" = "wallet-cli-usage" ] && continue
+            if [ ! -f "$target_skill_dir/references/safety.md" ]; then
+              echo "Exported skill '$(basename "$target_skill_dir")' is missing a resolved references/safety.md."
+              exit 1
+            fi
+            if [ -L "$target_skill_dir/references/safety.md" ]; then
+              echo "Exported skill '$(basename "$target_skill_dir")' has an unresolved symlink for references/safety.md."
+              exit 1
+            fi
+          done
 
-          if [ ! -f "$target_skill_dir/references/business-logic.md" ]; then
-            echo "Exported skill is missing references/business-logic.md."
-            exit 1
-          fi
+          echo "Exported $synced wallet-cli skill(s)."
 
       # ghcommit-action (below) creates the commit through GitHub's API so it is
       # signed server-side — agent-skills' `main` ruleset requires signed commits.
       # Stage the export first: the action skips untracked files, so new skill
       # files must be in the index to be committed; the staged diff also drives
       # the no-op check that leaves any open sync PR untouched.
-      - name: Stage exported skill
+      - name: Stage exported skills
         id: stage
         run: |
           set -euo pipefail
 
-          git add -A -- "$TARGET_SKILL_DIR"
-          if git diff --cached --quiet -- "$TARGET_SKILL_DIR"; then
+          git add -A -- "$TARGET_SKILLS_BASE"
+          if git diff --cached --quiet -- "$TARGET_SKILLS_BASE"; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "No agent-skills changes to sync."
             exit 0
@@ -147,10 +212,10 @@ jobs:
         if: steps.stage.outputs.changed == 'true'
         uses: planetscale/ghcommit-action@c6125dee9e9c0daebc4adea9f68ead8293414174 # v0.2.9
         with:
-          commit_message: "chore: sync wallet-cli skill"
+          commit_message: "chore: sync wallet-cli skills"
           repo: ${{ env.TARGET_REPOSITORY }}
           branch: ${{ env.SYNC_BRANCH }}
-          file_pattern: ${{ env.TARGET_SKILL_DIR }}
+          file_pattern: ${{ env.TARGET_SKILLS_BASE }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
@@ -162,7 +227,7 @@ jobs:
           set -euo pipefail
 
           body=$(cat <<EOF
-          Syncs the wallet-cli skill from LedgerHQ/ledger-live.
+          Syncs the wallet-cli skills (umbrella + task skills) from LedgerHQ/ledger-live.
 
           Source commit: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}
           Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
@@ -201,6 +266,6 @@ jobs:
               --repo "$TARGET_REPOSITORY" \
               --base "$TARGET_BASE" \
               --head "$SYNC_BRANCH" \
-              --title "chore: sync wallet-cli skill" \
+              --title "chore: sync wallet-cli skills" \
               --body "$body"
           fi

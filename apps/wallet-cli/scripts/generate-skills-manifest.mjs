@@ -39,7 +39,14 @@ const CHECK = process.argv.includes("--check");
 // tooling…) that must not leak into a public npm package. The collection
 // machinery below is fully generic, so shipping another skill is a one-line
 // addition here.
-const SHIPPED_SKILLS = new Set(["ledger-wallet-cli"]);
+const SHIPPED_SKILLS = new Set([
+  "ledger-wallet-cli",
+  "ledger-wallet-cli-account-discover",
+  "ledger-wallet-cli-receive",
+  "ledger-wallet-cli-send",
+  "ledger-wallet-cli-swap",
+  "ledger-wallet-cli-genuine-check",
+]);
 
 /**
  * Recursively collect files (relative paths) under `dir`. Uses `lstat` so symlinks

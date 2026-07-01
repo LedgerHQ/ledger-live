@@ -2,7 +2,7 @@
 
 Concepts and product rules behind the wallet-cli commands. Load when the user asks _why_ something works the way it does, or when surfacing context for a safety rule that the main skill states tersely.
 
-For the command surface, errors, sandbox/device rules, and informal-request mapping, see the main `SKILL.md` in this skill folder.
+For the command surface and informal-request mapping, see the umbrella `SKILL.md` (and the per-task skills). For the cross-cutting sandbox/device/error rules, see [`safety.md`](safety.md) in this folder.
 
 ---
 

@@ -106,11 +106,20 @@ This package is DMK-focused and is separate from `@ledgerhq/live-cli` ([`apps/cl
 
 ## Agent guidance
 
-AI agents should read the [ledger-wallet-cli agent skill](../../.claude/skills/ledger-wallet-cli/SKILL.md) before running wallet-cli commands. It maps informal user requests to commands and documents hardware-wallet safety rules, session labels, USB sandbox requirements, and device-contention constraints.
+AI agents should read the wallet-cli agent skills before running wallet-cli commands. The skill set is split into a thin **umbrella** skill plus five **task** skills, each self-contained for its flow:
+
+- [`ledger-wallet-cli`](../../.agents/skills/ledger-wallet-cli/SKILL.md) — entry/router skill: the informal-request → command intent map and the supporting commands that fit no single task (`session view/reset`, `balances`, `operations`, `assets token/token-by-id`). It points to the task skills and to [`references/business-logic.md`](../../.agents/skills/ledger-wallet-cli/references/business-logic.md).
+- [`ledger-wallet-cli-account-discover`](../../.agents/skills/ledger-wallet-cli-account-discover/SKILL.md) — discover/import accounts for a network.
+- [`ledger-wallet-cli-receive`](../../.agents/skills/ledger-wallet-cli-receive/SKILL.md) — get and verify a receive address.
+- [`ledger-wallet-cli-send`](../../.agents/skills/ledger-wallet-cli-send/SKILL.md) — sign and broadcast a transfer.
+- [`ledger-wallet-cli-swap`](../../.agents/skills/ledger-wallet-cli-swap/SKILL.md) — quote → execute → status a swap.
+- [`ledger-wallet-cli-genuine-check`](../../.agents/skills/ledger-wallet-cli-genuine-check/SKILL.md) — verify a device is genuine.
+
+The cross-cutting hardware-wallet safety rails (USB sandbox requirement, device contention, on-device confirmation, ambiguous→ask, out-of-scope, shared error table) live in a single canonical [`references/safety.md`](../../.agents/skills/ledger-wallet-cli/references/safety.md). Each task skill's `references/safety.md` is a **relative symlink** to that file, so there is one edit point and zero drift; the embed codegen resolves the symlink so every skill ships an identical copy, and a `skill install` materializes a real per-skill copy on disk.
 
 ### First-run nudge
 
-On the first real command, wallet-cli prints a one-time hint to **stderr** pointing at `skill install`. When a known agent is detected (Claude Code, Cursor, Codex, …) the hint is tailored to it (e.g. `wallet-cli skill install --agent claude`); otherwise it shows the generic `wallet-cli skill install`. The nudge:
+On the first real command, wallet-cli prints a one-time hint to **stderr** pointing at `skill install --all` (there is no longer a single skill). When a known agent is detected (Claude Code, Cursor, Codex, …) the hint is tailored to it (e.g. `wallet-cli skill install --all --agent claude`); otherwise it shows the generic `wallet-cli skill install --all`. The nudge:
 
 - shows at most **once per user** — a marker is written under the XDG state dir (`stateDir("ledger-wallet-cli")`, honoring `XDG_STATE_HOME`);
 - writes to **stderr only**, so it never pollutes piped stdout, and is **silent under `--output json`**;
@@ -119,16 +128,19 @@ On the first real command, wallet-cli prints a one-time hint to **stderr** point
 
 It is fully best-effort: it never throws and never changes a command's exit code.
 
-The skill also **ships inside the compiled binary**, so it is available even from an installed npm package with no repo checkout, via the `skill` command group:
+The skills also **ship inside the compiled binary**, so they are available even from an installed npm package with no repo checkout, via the `skill` command group:
 
 ```bash
-wallet-cli skill list                       # list embedded skills
-wallet-cli skill retrieve ledger-wallet-cli # print SKILL.md (or --file references/business-logic.md)
-wallet-cli skill install --agent claude     # write into ./.claude/skills (also: cursor, codex, agents)
-wallet-cli skill install --dir ./my-skills  # write into an explicit directory
-wallet-cli skill doctor                     # check installed skills against this binary
-wallet-cli skill doctor --fix               # reinstall outdated / missing skills
+wallet-cli skill list                            # list embedded skills
+wallet-cli skill retrieve ledger-wallet-cli      # print a skill's SKILL.md (name is required)
+wallet-cli skill retrieve ledger-wallet-cli-send --file references/safety.md  # print a reference file
+wallet-cli skill install --all --agent claude    # write every skill into ./.claude/skills (also: cursor, codex, agents)
+wallet-cli skill install ledger-wallet-cli-send --dir ./my-skills  # install one skill into an explicit directory
+wallet-cli skill doctor                          # check installed skills against this binary
+wallet-cli skill doctor --fix                    # reinstall outdated / missing skills
 ```
+
+`skill retrieve` and `skill install` **require an explicit skill name** — with no name (and, for install, no `--all`) they error and list the available skills with a `skill list` hint. Use `skill install --all` to install the umbrella and all task skills at once.
 
 `skill install` maps `--agent` (`claude`, `cursor`, `codex`, `agents`) to the matching `.<agent>/skills` directory (`agents` → `.agents/skills`) under the current working directory, or the user home directory with `--global`. `--dir` overrides both. Existing files are preserved unless `--force` is passed.
 

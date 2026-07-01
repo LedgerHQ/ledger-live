@@ -9,13 +9,28 @@ describe("skill retrieve — human", () => {
     expect(stdout).toContain("# wallet-cli");
   });
 
-  it("defaults to the sole embedded skill when no name is given", async () => {
-    const { stdout, exitCode, stderr } = await runCli(["skill", "retrieve"]);
+  it("retrieves a task skill by name", async () => {
+    const { stdout, exitCode, stderr } = await runCli([
+      "skill",
+      "retrieve",
+      "ledger-wallet-cli-send",
+    ]);
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
-    expect(stdout).toContain("name: ledger-wallet-cli");
+    expect(stdout).toContain("name: ledger-wallet-cli-send");
+    expect(stdout).toMatch(/send/i);
   });
 
-  it("prints a reference file with --file", async () => {
+  it("errors and lists available skills when no name is given", async () => {
+    const { stdout, exitCode } = await runCli(["skill", "retrieve", "--output", "json"]);
+    expect(exitCode).toBe(1);
+    const err = JSON.parse(stdout);
+    expect(err.ok).toBe(false);
+    expect(err.error.message).toMatch(/missing skill name/i);
+    expect(err.error.message).toContain("ledger-wallet-cli");
+    expect(err.error.message).toContain("ledger-wallet-cli-send");
+  });
+
+  it("prints the business-logic reference file with --file", async () => {
     const { stdout, exitCode, stderr } = await runCli([
       "skill",
       "retrieve",
@@ -25,6 +40,19 @@ describe("skill retrieve — human", () => {
     ]);
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
     expect(stdout).toMatch(/business logic/i);
+  });
+
+  it("prints the shared safety reference with --file references/safety.md", async () => {
+    const { stdout, exitCode, stderr } = await runCli([
+      "skill",
+      "retrieve",
+      "ledger-wallet-cli-send",
+      "--file",
+      "references/safety.md",
+    ]);
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    expect(stdout).toMatch(/safety rails/i);
+    expect(stdout).toMatch(/dangerouslyDisableSandbox/);
   });
 
   it("exits non-zero for an unknown skill name", async () => {

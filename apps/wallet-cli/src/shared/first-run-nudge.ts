@@ -37,11 +37,11 @@ function buildMessage(): string {
   // omitting the flag here would point those users at the wrong directory.
   if (agent) {
     return (
-      `Tip: install the Ledger wallet-cli skill so ${label} can drive this CLI:\n` +
-      `  wallet-cli skill install --agent ${agent}\n`
+      `Tip: install the Ledger wallet-cli skills so ${label} can drive this CLI:\n` +
+      `  wallet-cli skill install --all --agent ${agent}\n`
     );
   }
-  return `Tip: install the Ledger wallet-cli agent skill:\n  wallet-cli skill install\n`;
+  return `Tip: install the Ledger wallet-cli agent skills:\n  wallet-cli skill install --all\n`;
 }
 
 /**
