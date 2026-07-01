@@ -5,7 +5,7 @@ import { openDeeplink } from "../../helpers/commonHelpers";
 export default class PortfolioPage {
   baseLink = "portfolio";
   zeroBalance = "$0.00";
-  graphCardBalanceId = "graphCard-balance";
+  balanceId = "analytics-balance-amount";
   assetBalanceId = "asset-balance";
   assetsListId = "AssetsList";
   readOnlyItemsId = "PortfolioReadOnlyItems";
@@ -42,7 +42,9 @@ export default class PortfolioPage {
   async expectPortfolioReadOnly() {
     await expect(this.portfolioSettingsButton()).toBeVisible();
     await waitForElementById(this.readOnlyItemsId);
-    jestExpect(await getTextOfElement(this.graphCardBalanceId)).toBe(this.zeroBalance);
+    // The reworked balance renders via AmountDisplay (animated digit strips), whose value
+    // is exposed as an accessibility label rather than readable text, so assert visibility.
+    await waitForElementById(this.balanceId);
     for (let index = 0; index < 4; index++)
       jestExpect(await getTextOfElement(this.assetBalanceId, index)).toBe(this.zeroBalance);
   }
