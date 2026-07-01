@@ -59,9 +59,7 @@ function makeTx(fil: number): Transaction {
 describe("toCBOR (legacy bridge serializer)", () => {
   beforeEach(() => mockMessageCtor.mockClear());
 
-  // Regression for LIVE-31661: 1000 FIL == 1e21 attoFIL, the exact magnitude at which
-  // BigNumber.toString() flips to exponential notation ("1e+21"). The broadcast backend
-  // can't parse that and responds 500. The amount must serialize as a plain integer.
+  //Regression test for LIVE-31661: value must be serialized as a plain integer string (no exponential notation).
   it.each([
     [999, "999000000000000000000"],
     [1000, "1000000000000000000000"],

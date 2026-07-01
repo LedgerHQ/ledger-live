@@ -72,9 +72,7 @@ describe("buildSignOperation (legacy bridge)", () => {
     mockSign.mockResolvedValue({ signature_compact: new Uint8Array([1, 2, 3]) });
   });
 
-  // Regression for LIVE-31661: the `signed` event's rawData.value is what broadcast sends
-  // to the backend. For 1000 FIL (1e21 attoFIL) it must be a plain integer string, not the
-  // exponential "1e+21" that BigNumber.toString() produces and the backend rejects (500).
+  //Regression test for LIVE-31661 (broadcast rejects exponential BigNumber strings at ≥ 1e21 attoFIL)
   it.each([
     [999, "999000000000000000000"],
     [1000, "1000000000000000000000"],
