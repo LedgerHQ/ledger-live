@@ -63,7 +63,6 @@
     "@domain/api-currency-token": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:*",
     "@electron/fuses": "2.0.0",
-    "@features/flow-market-banner": "workspace:^",
     "@features/platform-currencies": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
     "@ledgerhq/asset-aggregation": "workspace:^",

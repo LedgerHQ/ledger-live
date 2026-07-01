@@ -7,17 +7,15 @@ import IconAngleDown from "~/renderer/icons/AngleDown";
 import Row from "./Row";
 import Header from "./Header";
 import { useDistribution } from "~/renderer/actions/general";
-import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
+import { TableHeader } from "~/renderer/components/TableContainer";
 import {
   blacklistedTokenIdsSelector,
   hideEmptyTokenAccountsSelector,
 } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export default function AssetDistribution() {
   const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
-  const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("desktop");
 
   const distribution = useDistribution({
     hideEmptyTokenAccount,
@@ -72,15 +70,10 @@ export default function AssetDistribution() {
         }
       />
       <Box p={0}>
-        <Header isResponsiveLayout={isWallet40Enabled} />
+        <Header />
         <div ref={cardRef}>
           {subList.map(item => (
-            <Row
-              key={item.currency.id}
-              item={item}
-              isVisible={isVisible}
-              isResponsiveLayout={isWallet40Enabled}
-            />
+            <Row key={item.currency.id} item={item} isVisible={isVisible} />
           ))}
         </div>
         {!almostAll && (
@@ -95,11 +88,7 @@ export default function AssetDistribution() {
     </>
   );
 
-  if (isWallet40Enabled) {
-    return <div className="overflow-hidden rounded-md bg-surface">{tableContent}</div>;
-  }
-
-  return <TableContainer>{tableContent}</TableContainer>;
+  return <div className="overflow-hidden rounded-md bg-surface">{tableContent}</div>;
 }
 const SeeAllButton = styled.div<{
   expanded: boolean;

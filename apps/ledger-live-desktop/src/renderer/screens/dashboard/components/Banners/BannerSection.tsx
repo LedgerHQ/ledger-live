@@ -6,7 +6,6 @@ export default function BannerSection({
   topBannerAlerts = true,
   portfolioBannerContent = true,
 }: {
-  isWallet40Enabled?: boolean;
   topBannerAlerts?: boolean;
   portfolioBannerContent?: boolean;
 }) {
