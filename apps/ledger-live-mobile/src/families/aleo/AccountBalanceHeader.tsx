@@ -17,7 +17,7 @@ import { PRIVATE_BALANCE_PLACEHOLDER } from "./constants";
 
 type InfoName = "transparent" | "private";
 
-function AleoBalanceSummary({ account }: { account: AleoAccount }) {
+function AleoBalanceSummary({ account }: { readonly account: AleoAccount }) {
   const { t } = useTranslation();
   const [infoName, setInfoName] = useState<InfoName>();
   const info = useMemo(() => getInfo(t), [t]);
@@ -69,7 +69,7 @@ function AleoBalanceSummary({ account }: { account: AleoAccount }) {
   );
 }
 
-export default function AccountBalanceHeader({ account }: { account?: AccountLike }) {
+export default function AccountBalanceHeader({ account }: { readonly account?: AccountLike }) {
   const aleoAccount = account as AleoAccount;
   if (!aleoAccount?.aleoResources || aleoAccount.balance.lte(0)) return null;
   return <AleoBalanceSummary account={aleoAccount} />;
