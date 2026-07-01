@@ -478,6 +478,9 @@
     "FeeRequired": {
       "title": "Fees are required"
     },
+    "FeeTooLow": {
+      "title": "Fees are too low to be accepted by the network. Please increase them"
+    },
     "FirmwareOrAppUpdateRequired": {
       "title": "Firmware or app update needed",
       "description": "Please use My Ledger to uninstall all apps then check if a firmware update is available before reinstalling them."

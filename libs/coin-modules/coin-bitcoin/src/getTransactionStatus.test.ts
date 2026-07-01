@@ -3,7 +3,7 @@
 import { Account } from "@ledgerhq/types-live";
 import { BitcoinInput, Transaction } from "./types";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
-import { RbfBuildError } from "./errors";
+import { RbfBuildError, FeeTooLow } from "./errors";
 import BigNumber from "bignumber.js";
 
 // Mock modules before importing the module under test
@@ -182,6 +182,61 @@ describe("getTransactionStatus on Bitcoin", () => {
       await expect(getTransactionStatus(buildAccount(), buildTransaction())).rejects.toBe(
         unknownError,
       );
+    });
+  });
+
+  describe("min relay fee floor", () => {
+    const recipient = "bc1pxlmrudqyq8qd8pfsc4mpmlaw56x6vtcr9m8nvp8kj3gckefc4kmqhkg4l7";
+
+    beforeEach(() => {
+      validateRecipientSpy.mockResolvedValue({
+        recipientError: undefined,
+        recipientWarning: undefined,
+        changeAddressError: undefined,
+        changeAddressWarning: undefined,
+      });
+      isAddressSanctionedSpy.mockResolvedValue(false);
+      calculateFeesSpy.mockResolvedValue({ txInputs: [], txOutputs: [], fees: BigNumber(0) });
+    });
+
+    const buildAccount = () =>
+      ({
+        currency: { id: "bitcoin" },
+        blockHeight: MAX_BLOCK_HEIGHT_FOR_TAPROOT + 1,
+      }) as unknown as Account;
+
+    const buildTransaction = (feePerByte: number, relayFeePerByte?: number) =>
+      ({
+        amount: BigNumber(1),
+        recipient,
+        feePerByte: BigNumber(feePerByte),
+        networkInfo:
+          relayFeePerByte !== undefined
+            ? { family: "bitcoin", feeItems: {}, relayFeePerByte: BigNumber(relayFeePerByte) }
+            : undefined,
+      }) as unknown as Transaction;
+
+    it("sets FeeTooLow when manual fee is below the relay floor", async () => {
+      const status = await getTransactionStatus(buildAccount(), buildTransaction(1, 3));
+      expect(status.errors.feePerByte).toBeInstanceOf(FeeTooLow);
+    });
+
+    it("accepts a manual fee equal to the relay floor", async () => {
+      const status = await getTransactionStatus(buildAccount(), buildTransaction(3, 3));
+      expect(status.errors.feePerByte).toBeUndefined();
+    });
+
+    it("applies the 1 sat/vB fallback for bitcoin when networkInfo is missing", async () => {
+      const tooLow = await getTransactionStatus(buildAccount(), buildTransaction(0.5));
+      expect(tooLow.errors.feePerByte).toBeInstanceOf(FeeTooLow);
+
+      const atFloor = await getTransactionStatus(buildAccount(), buildTransaction(1));
+      expect(atFloor.errors.feePerByte).toBeUndefined();
+    });
+
+    it("applies the 1 sat/vB fallback for bitcoin when relayFeePerByte is 0 (back-compat)", async () => {
+      const status = await getTransactionStatus(buildAccount(), buildTransaction(0.5, 0));
+      expect(status.errors.feePerByte).toBeInstanceOf(FeeTooLow);
     });
   });
 });

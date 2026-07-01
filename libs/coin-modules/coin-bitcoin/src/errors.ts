@@ -7,3 +7,5 @@ export const TaprootNotActivated = createCustomErrorClass("TaprootNotActivated")
 export const BitcoinInfrastructureError = createCustomErrorClass("InfrastructureError");
 
 export const RbfBuildError = createCustomErrorClass("RbfBuildError");
+
+export const FeeTooLow = createCustomErrorClass("FeeTooLow");

@@ -7319,6 +7319,9 @@
     "FeeRequired": {
       "title": "Fees are required"
     },
+    "FeeTooLow": {
+      "title": "Fees are too low to be accepted by the network. Please increase them"
+    },
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
     },
