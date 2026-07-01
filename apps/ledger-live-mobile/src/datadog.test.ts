@@ -1,4 +1,8 @@
 import { DdLogs } from "@datadog/mobile-react-native";
+import {
+  BroadcastErrorType,
+  BroadcastFlow,
+} from "@ledgerhq/live-common/wallet-api/broadcastLogEvent";
 import { broadcastLogger, customErrorEventMapper } from "./datadog";
 
 jest.mock("@datadog/mobile-react-native", () => ({
@@ -44,6 +48,7 @@ describe("broadcastLogger", () => {
 
     broadcastLogger({
       status: "success",
+      flow: BroadcastFlow.Send,
       appVersion: "1.0.0",
       currencyId: "bitcoin",
       family: "family",
@@ -55,6 +60,7 @@ describe("broadcastLogger", () => {
     expect(infoSpy).toHaveBeenCalledWith("broadcast_success", {
       event: {
         status: "success",
+        flow: BroadcastFlow.Send,
         appVersion: "1.0.0",
         currencyId: "bitcoin",
         family: "family",
@@ -72,7 +78,9 @@ describe("broadcastLogger", () => {
 
     broadcastLogger({
       status: "failure",
+      flow: BroadcastFlow.Send,
       error,
+      errorType: BroadcastErrorType.Unknown,
       txPayload: { signature: "signature" },
       appVersion: "1.0.0",
       currencyId: "ethereum",
@@ -90,6 +98,8 @@ describe("broadcastLogger", () => {
       {
         event: {
           status: "failure",
+          flow: BroadcastFlow.Send,
+          errorType: BroadcastErrorType.Unknown,
           txPayload: { signature: "signature" },
           appVersion: "1.0.0",
           currencyId: "ethereum",

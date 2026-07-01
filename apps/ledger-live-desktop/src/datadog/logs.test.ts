@@ -1,4 +1,8 @@
 import {
+  BroadcastErrorType,
+  BroadcastFlow,
+} from "@ledgerhq/live-common/wallet-api/broadcastLogEvent";
+import {
   __resetDatadogLogsForTesting,
   broadcastLogger,
   initDatadogLogs,
@@ -179,6 +183,7 @@ describe("datadog logs", () => {
     it("calls datadogLogs.logger.info with correct parameters on success event", () => {
       broadcastLogger({
         status: "success",
+        flow: BroadcastFlow.Send,
         appVersion: "1.0.0",
         currencyId: "bitcoin",
         family: "bitcoin",
@@ -190,6 +195,7 @@ describe("datadog logs", () => {
       expect(datadogLogs.logger.info).toHaveBeenCalledWith("broadcast_success", {
         event: {
           status: "success",
+          flow: BroadcastFlow.Send,
           appVersion: "1.0.0",
           currencyId: "bitcoin",
           family: "bitcoin",
@@ -210,7 +216,9 @@ describe("datadog logs", () => {
 
       broadcastLogger({
         status: "failure",
+        flow: BroadcastFlow.Send,
         error,
+        errorType: BroadcastErrorType.Unknown,
         txPayload: { signature: "signature" },
         appVersion: "1.0.0",
         currencyId: "ethereum",
@@ -225,6 +233,8 @@ describe("datadog logs", () => {
         {
           event: {
             status: "failure",
+            flow: BroadcastFlow.Send,
+            errorType: BroadcastErrorType.Unknown,
             txPayload: { signature: "signature" },
             appVersion: "1.0.0",
             currencyId: "ethereum",
