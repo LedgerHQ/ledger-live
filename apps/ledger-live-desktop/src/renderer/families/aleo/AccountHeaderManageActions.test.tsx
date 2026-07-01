@@ -112,5 +112,25 @@ describe("AccountHeaderManageActions", () => {
         data: { account: ALEO_TOKEN_ACCOUNT, parentAccount: ALEO_MAIN_ACCOUNT },
       });
     });
+
+    it("stake header action opens the Manage hub", () => {
+      const { result, store } = renderHook(() =>
+        hook({ account: ALEO_ACCOUNT_1, parentAccount: null }),
+      );
+      const stakeAction = result.current?.[1];
+
+      act(() => {
+        stakeAction?.onClick();
+      });
+
+      const modalState = store.getState().modals[AleoCustomModal.MANAGE];
+
+      // The Manage hub always targets the main account (getMainAccount) and
+      // Data.parentAccount is optional (Account | undefined), so null is normalized to undefined.
+      expect(modalState).toEqual({
+        isOpened: true,
+        data: { account: ALEO_ACCOUNT_1, parentAccount: undefined },
+      });
+    });
   });
 });

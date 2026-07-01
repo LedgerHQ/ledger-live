@@ -7798,6 +7798,10 @@
       "title": "Amount too large for one transaction",
       "description": "Your private records can't cover this amount in a single transaction. Try a smaller amount."
     },
+    "AleoBondAmountTooLow": {
+      "title": "Amount too low to stake",
+      "description": "The minimum staking amount is {{minAmount}}."
+    },
     "AleoFeeRecordRequired": {
       "title": "Another private record is required to cover the network fee.",
       "description": "Top up your balance if needed. One private record is used for the transfer amount, and you must have another record that can cover the network fee."
@@ -9075,6 +9079,96 @@
         "desc": "Please wait",
         "errorTitle": "Private sync failed",
         "errorDesc": "Something went wrong, please try again"
+      }
+    },
+    "bond": {
+      "headerAction": "Stake",
+      "flow": {
+        "title": "Stake ALEO",
+        "steps": {
+          "validator": {
+            "title": "Validator",
+            "label": "Validator address",
+            "loading": "Loading validators...",
+            "closed": "Closed",
+            "commission": "Commission"
+          },
+          "withdrawal": {
+            "title": "Withdrawal",
+            "label": "Withdrawal address",
+            "info": "On Aleo, the withdrawal address controls where the staked funds can be claimed after they are unbonded. It defaults to your account address. Only change it if you want the funds to be claimable by another Aleo account."
+          },
+          "amount": {
+            "title": "Amount"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "broadcastError": "Your bond could not be sent.",
+            "success": {
+              "title": "Bond sent",
+              "text": "Your stake is being processed.",
+              "cta": "View details"
+            }
+          }
+        }
+      }
+    },
+    "manage": {
+      "headerAction": "Manage",
+      "title": "Manage staking",
+      "stake": {
+        "title": "Stake",
+        "description": "Stake your ALEO to earn rewards by bonding to a validator."
+      },
+      "unstake": {
+        "title": "Unstake",
+        "description": "Unbond your staked ALEO. Funds will be available after the unbonding period."
+      },
+      "claim": {
+        "title": "Claim",
+        "description": "Claim your unbonded ALEO back to your available balance."
+      }
+    },
+    "unbond": {
+      "flow": {
+        "title": "Unstake ALEO",
+        "steps": {
+          "amount": { "title": "Amount" },
+          "connectDevice": { "title": "Device" },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "Unstake submitted",
+              "text": "Your unbonding request has been broadcast.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your unstake transaction was signed but could not be broadcast."
+          }
+        }
+      }
+    },
+    "claim": {
+      "flow": {
+        "title": "Claim ALEO",
+        "steps": {
+          "summary": {
+            "title": "Summary",
+            "info": "This claims all ALEO whose unbonding period has elapsed back to your account."
+          },
+          "connectDevice": { "title": "Device" },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "Claim submitted",
+              "text": "Your claim has been broadcast.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your claim transaction was signed but could not be broadcast."
+          }
+        }
       }
     }
   },
