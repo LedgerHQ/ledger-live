@@ -66,6 +66,34 @@ const resolveVotedGroupIndex = async (
 };
 
 /**
+ * Build the Election `revoke*` tx params. `revokePending` and `revokeActive` are
+ * otherwise identical — same neighbors lookup, voted-group index and args — so
+ * they differ only by the contract function called.
+ */
+const buildRevokeTxParams = async (
+  intent: CeloStakingIntent,
+  functionName: "revokePending" | "revokeActive",
+  feeCurrencyField: { feeCurrency?: `0x${string}` },
+): Promise<CeloTxParams> => {
+  const to = await getRegistryAddressFor("Election");
+  const group = requireGroup(intent);
+  const [{ lesser, greater }, index] = await Promise.all([
+    getVoteNeighbors(to, group, intent.amount, false),
+    resolveVotedGroupIndex(intent.sender, to, group),
+  ]);
+  return {
+    to,
+    data: encodeFunctionData({
+      abi: electionABI,
+      functionName,
+      args: [group, intent.amount, lesser, greater, index],
+    }),
+    value: 0n,
+    ...feeCurrencyField,
+  };
+};
+
+/**
  * Derives the on-chain target, calldata and value for a Celo staking intent,
  * encoding the same contract calls as the legacy bridge
  * (`src/bridge/buildTransaction.ts`) with `@celo/abis` + viem. The result feeds
@@ -178,43 +206,11 @@ export const buildStakingTxParams = async (
       };
     }
 
-    case "celo.revokePending": {
-      const to = await getRegistryAddressFor("Election");
-      const group = requireGroup(intent);
-      const [{ lesser, greater }, index] = await Promise.all([
-        getVoteNeighbors(to, group, intent.amount, false),
-        resolveVotedGroupIndex(intent.sender, to, group),
-      ]);
-      return {
-        to,
-        data: encodeFunctionData({
-          abi: electionABI,
-          functionName: "revokePending",
-          args: [group, intent.amount, lesser, greater, index],
-        }),
-        value: 0n,
-        ...feeCurrencyField,
-      };
-    }
+    case "celo.revokePending":
+      return buildRevokeTxParams(intent, "revokePending", feeCurrencyField);
 
-    case "celo.revokeActive": {
-      const to = await getRegistryAddressFor("Election");
-      const group = requireGroup(intent);
-      const [{ lesser, greater }, index] = await Promise.all([
-        getVoteNeighbors(to, group, intent.amount, false),
-        resolveVotedGroupIndex(intent.sender, to, group),
-      ]);
-      return {
-        to,
-        data: encodeFunctionData({
-          abi: electionABI,
-          functionName: "revokeActive",
-          args: [group, intent.amount, lesser, greater, index],
-        }),
-        value: 0n,
-        ...feeCurrencyField,
-      };
-    }
+    case "celo.revokeActive":
+      return buildRevokeTxParams(intent, "revokeActive", feeCurrencyField);
 
     default:
       throw new Error(`celo: unsupported staking operation "${(intent as { type: string }).type}"`);

@@ -39,6 +39,24 @@ describe("makeGetBalance", () => {
     expect(balances[1].asset.type).toBe("native");
   });
 
+  it("drops coin-evm's inherited staking positions, keeping only Celo's", async () => {
+    const evmShim: Balance = {
+      value: 0n,
+      asset: { type: "native" },
+      stake: stake("evm-shim", 999n),
+    };
+    const base = jest.fn(async (): Promise<Balance[]> => [NATIVE, evmShim]);
+    (buildCeloStakes as jest.Mock).mockResolvedValue([stake("celo-vote", 100n)]);
+
+    const balances = await makeGetBalance(base)(ADDR);
+
+    // coin-evm's embedded (governance-delegation) stake is removed; native kept; only Celo's appended
+    expect(balances).toHaveLength(2);
+    expect(balances[0]).toBe(NATIVE);
+    expect(balances.some(b => b.stake?.uid === "evm-shim")).toBe(false);
+    expect(balances[1].stake?.uid).toBe("celo-vote");
+  });
+
   it("passes balance options through to the base getBalance", async () => {
     const base = jest.fn(async (): Promise<Balance[]> => [NATIVE]);
     (buildCeloStakes as jest.Mock).mockResolvedValue([]);

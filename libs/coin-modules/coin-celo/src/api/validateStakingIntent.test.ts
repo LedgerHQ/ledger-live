@@ -62,6 +62,17 @@ describe("validateStakingIntent", () => {
     expect(res.errors.amount).toBeInstanceOf(Error);
   });
 
+  it("routes a fee-only shortfall to errors.fees, not errors.amount", async () => {
+    const res = await validateStakingIntent(
+      makeIntent("celo.register"),
+      nativeBalances(5n),
+      eip1559Fees(10n),
+    );
+
+    expect(res.errors.fees).toBeInstanceOf(Error);
+    expect(res.errors.amount).toBeUndefined();
+  });
+
   it("rejects a non-positive amount for amount-bearing operations", async () => {
     const res = await validateStakingIntent(
       makeIntent("celo.lock", { amount: 0n }),

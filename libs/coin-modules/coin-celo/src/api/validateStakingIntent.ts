@@ -64,7 +64,15 @@ export const validateStakingIntent = async (
   if (AMOUNT_OPERATIONS.has(intent.type) && intent.amount <= 0n) {
     errors.amount = new Error(`celo: ${intent.type} requires a positive amount`);
   } else if (totalSpent > available) {
-    errors.amount = new Error("celo: insufficient CELO balance for this staking operation");
+    // Only `lock` spends native CELO, so an amount-bearing shortfall belongs on the
+    // amount field. A fee-only op (nativeSpent === 0n) has no amount field — the shortfall
+    // is purely gas — so surface it under `fees`, matching coin-evm's staking validation
+    // (coin-evm/src/logic/validateIntent.ts).
+    if (nativeSpent === 0n) {
+      errors.fees = new Error("celo: insufficient CELO balance to cover the network fees");
+    } else {
+      errors.amount = new Error("celo: insufficient CELO balance for this staking operation");
+    }
   }
 
   return { errors, warnings, estimatedFees, amount, totalSpent };

@@ -52,6 +52,14 @@ describe("getVoteNeighbors", () => {
     expect(greater).toBe(ZERO);
   });
 
+  it("rethrows a transient RPC error instead of silently yielding zero neighbors", async () => {
+    mockReadContract(() => {
+      throw new Error("HttpRequestError: connection timeout");
+    });
+
+    await expect(getVoteNeighbors(ELECTION, T, 5n, true)).rejects.toThrow(/timeout/);
+  });
+
   it("recomputes neighbors for a revoke (subtracting votes) on an existing group", async () => {
     // T currently holds 50; revoking 30 leaves 20 → lands between A(10) and B(30)
     mockReadContract(() => [

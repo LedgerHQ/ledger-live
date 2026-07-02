@@ -1,6 +1,7 @@
 import { electionABI } from "@celo/abis";
 import { ZERO_ADDRESS } from "../constants";
 import { getCeloClient } from "./client";
+import { isRevertLike } from "./rpcErrors";
 
 const ZERO = ZERO_ADDRESS as `0x${string}`;
 
@@ -37,8 +38,9 @@ export const getVoteNeighbors = async (
   const client = getCeloClient();
 
   // On networks where no validator groups are registered (e.g. some testnets)
-  // the call may revert. Treat that as an empty list so lesser/greater both
-  // resolve to the zero address.
+  // the call reverts. Treat only a revert as an empty list (defaults → ZERO
+  // neighbors); a transient/transport failure must surface, otherwise it would
+  // silently yield ZERO neighbors and make the subsequent vote/revoke revert.
   let groups: readonly `0x${string}`[] = [];
   let votes: readonly bigint[] = [];
   try {
@@ -47,8 +49,8 @@ export const getVoteNeighbors = async (
       abi: electionABI,
       functionName: "getTotalVotesForEligibleValidatorGroups",
     });
-  } catch {
-    // empty eligible list — keep defaults
+  } catch (error) {
+    if (!isRevertLike(error)) throw error;
   }
 
   const groupIdx = groups.findIndex(g => g.toLowerCase() === group.toLowerCase());

@@ -1,5 +1,5 @@
 import type { CeloStakingType } from "@ledgerhq/coin-celo/api/index";
-import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
+import type { AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -59,11 +59,26 @@ export function computeIntentType(transaction: Record<string, unknown>): CeloSta
   }
 }
 
+/**
+ * Restricts the delegated coin-evm `getBalance` to the native asset + tokens the
+ * cryptoassets store recognizes, so unknown/spam token contracts seen in recent
+ * operations don't bloat the account shape or add RPC load (mirrors the EVM family).
+ */
+function getBalanceOptions(currency: CryptoCurrency): BalanceOptions {
+  return {
+    includeAssets: async (asset: AssetInfo) => {
+      if (asset.type === "native") return true;
+      return (await getTokenFromAsset(currency, asset)) !== undefined;
+    },
+  };
+}
+
 export default function celoBridge(currency: CryptoCurrency): BridgeApi {
   return {
     getTokenFromAsset: async (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) => getAssetFromToken(token, owner),
     computeIntentType: (transaction: Record<string, unknown>) => computeIntentType(transaction),
+    balanceOptions: getBalanceOptions(currency),
     // Celo votes + pending withdrawals are surfaced per-position (via Balance.stake),
     // not as the EVM-style aggregate; see coin-celo src/api/getBalance.ts.
     usesStakingPositions: true,

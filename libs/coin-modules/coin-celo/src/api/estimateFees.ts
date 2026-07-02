@@ -6,32 +6,12 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { CELO_STAKING_FALLBACK_GAS_LIMIT, MAX_FEES_THRESHOLD_MULTIPLIER } from "../constants";
 import { celoEstimateGas } from "../network/client";
+import { isRevertLike } from "../network/rpcErrors";
 import { getFeeMarketGasParams } from "../network/sdk";
 import { buildTxParams } from "./buildTxParams";
 import { resolveFeeCurrency } from "./feeCurrency";
 import { isCeloStakingIntent } from "./stakingIntent";
 import type { CeloFeeParameters } from "./types";
-
-/**
- * Heuristic for an EVM execution revert (vs a transient/network failure). Used to
- * decide whether a failed staking gas estimation may safely fall back to a fixed
- * ceiling — a revert usually means a prerequisite step is not yet on-chain (e.g.
- * estimating a `vote` before locking), whereas a transient error must surface.
- */
-const isRevertLike = (error: unknown): boolean => {
-  const message = (error instanceof Error ? error.message : String(error)).toLowerCase();
-  // A transient/transport failure must surface even if its wrapped message
-  // happens to mention a revert — never mask it with the fixed-gas fallback.
-  if (/timeout|timed out|econn|socket|network|fetch failed|request failed/.test(message)) {
-    return false;
-  }
-  return (
-    message.includes("revert") ||
-    message.includes("execution error") ||
-    message.includes("out of gas") ||
-    message.includes("invalid opcode")
-  );
-};
 
 /**
  * Estimates the network fee for a Celo transaction intent, honoring CIP-64 fee

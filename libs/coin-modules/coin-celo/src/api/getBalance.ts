@@ -12,6 +12,11 @@ type GetBalanceFn = (address: string, options?: BalanceOptions) => Promise<Balan
  * `extractBalance(..., "native")` still resolves it; the appended entries are
  * consumed only via their `.stake`. Failing to read stakes must not fail the
  * whole balance fetch, so it degrades to the base balances.
+ *
+ * coin-evm's `getBalance` already embeds its own (governance-delegation) staking
+ * positions via `Balance.stake` for Celo, so those are dropped first — otherwise
+ * a mixed/duplicated staking model would surface alongside Celo's real
+ * LockedGold/Election positions.
  */
 export const makeGetBalance =
   (baseGetBalance: GetBalanceFn): GetBalanceFn =>
@@ -29,7 +34,8 @@ export const makeGetBalance =
       stake,
     }));
 
-    return [...base, ...stakeBalances];
+    const baseWithoutStakes = base.filter(balance => balance.stake === undefined);
+    return [...baseWithoutStakes, ...stakeBalances];
   };
 
 export default makeGetBalance;
