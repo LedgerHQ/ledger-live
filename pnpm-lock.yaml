@@ -3477,13 +3477,6 @@ importers:
         version: 1.51.0
 
   features/flow/market-banner:
-    dependencies:
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
     devDependencies:
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'

@@ -109,7 +109,7 @@ pnpm typecheck     # tsc --noEmit
 Mock factory:
 
 ```ts
-import { mockFiatCurrency } from "@domain/entity-currency-fiat/src/schema.mock";
+import { mockFiatCurrency } from "@domain/entity-currency-fiat/schema.mock";
 
 const eur = mockFiatCurrency({ id: "eur", name: "Euro", ticker: "EUR", symbol: "€" });
 ```
