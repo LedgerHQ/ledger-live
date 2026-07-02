@@ -1,0 +1,63 @@
+{
+  "name": "@ledgerhq/wallet-analytics",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared Analytics chart utilities for Ledger Wallet",
+  "keywords": [
+    "Ledger"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/wallet-analytics",
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/ledger-wallet-framework": "workspace:*",
+    "@ledgerhq/live-countervalues": "workspace:*",
+    "@ledgerhq/types-cryptoassets": "workspace:*",
+    "@ledgerhq/types-live": "workspace:*"
+  },
+  "devDependencies": {
+    "@ledgerhq/cryptoassets": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "bignumber.js": "^9.1.2",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint:fix": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
+    "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
+    "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
+    "typecheck": "tsc --noEmit --customConditions node",
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "import": "./lib-es/index.js",
+      "require": "./lib/index.js",
+      "default": "./lib/index.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./package.json": "./package.json"
+  }
+}

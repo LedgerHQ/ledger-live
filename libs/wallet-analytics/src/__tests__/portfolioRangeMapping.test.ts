@@ -1,5 +1,6 @@
 import {
   ANALYTICS_CHART_RANGES,
+  isAnalyticsChartRange,
   lineChartRangeToPortfolioRange,
   portfolioRangeToLineChartRange,
 } from "../portfolioRangeMapping";
@@ -25,5 +26,10 @@ describe("portfolioRangeMapping", () => {
 
   it("exposes only portfolio-compatible analytics chart ranges", () => {
     expect(ANALYTICS_CHART_RANGES).toEqual(["1d", "1w", "1m", "1y", "all"]);
+  });
+
+  it("validates analytics chart range values", () => {
+    expect(isAnalyticsChartRange("1w")).toBe(true);
+    expect(isAnalyticsChartRange("6m")).toBe(false);
   });
 });

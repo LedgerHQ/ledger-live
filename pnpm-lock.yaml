@@ -943,6 +943,9 @@ importers:
       '@ledgerhq/wallet-pnl':
         specifier: workspace:^
         version: link:../../libs/wallet-pnl
+      '@ledgerhq/wallet-analytics':
+        specifier: workspace:^
+        version: link:../../libs/wallet-analytics
       '@ledgerhq/zcash-utils':
         specifier: 'catalog:'
         version: 0.3.1
@@ -1629,6 +1632,9 @@ importers:
       '@ledgerhq/wallet-pnl':
         specifier: workspace:^
         version: link:../../libs/wallet-pnl
+      '@ledgerhq/wallet-analytics':
+        specifier: workspace:^
+        version: link:../../libs/wallet-analytics
       '@react-native-async-storage/async-storage':
         specifier: 2.1.2
         version: 2.1.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))
@@ -3599,7 +3605,7 @@ importers:
         version: 0.1.19
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.45(@ledgerhq/lumen-design-core@0.1.19)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+        version: 0.1.45(@ledgerhq/lumen-design-core@0.1.19)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.48(bdae926a59af589d19d78b5b880d45b3)
@@ -12513,6 +12519,49 @@ importers:
       tiny-glob:
         specifier: ^0.2.9
         version: 0.2.9
+
+  libs/wallet-analytics:
+    dependencies:
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:*
+        version: link:../ledger-wallet-framework
+      '@ledgerhq/live-countervalues':
+        specifier: workspace:*
+        version: link:../live-countervalues
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/types-live
+    devDependencies:
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/cryptoassets
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      bignumber.js:
+        specifier: 9.1.2
+        version: 9.1.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/wallet-api-acre-module:
     dependencies:
@@ -21780,7 +21829,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.1.4
       react-dom: 19.1.4
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -24055,7 +24104,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -45826,14 +45875,16 @@ snapshots:
     transitivePeerDependencies:
       - react-native
 
-  '@ledgerhq/lumen-ui-react@0.1.45(@ledgerhq/lumen-design-core@0.1.19)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)':
+  '@ledgerhq/lumen-ui-react@0.1.45(@ledgerhq/lumen-design-core@0.1.19)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)':
     dependencies:
       '@ledgerhq/lumen-design-core': 0.1.19
       '@ledgerhq/lumen-utils-shared': 0.1.7(react@19.1.4)
+      clsx: 2.1.1
       i18next: 23.10.1
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
       react-i18next: 14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      tailwind-merge: 3.4.0
     transitivePeerDependencies:
       - react-native
 

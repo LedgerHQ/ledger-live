@@ -1,6 +1,6 @@
 import { DEFAULT_LINE_CHART_HEIGHT } from "LLM/components/LineChart";
 import type { LineChartXAxisConfig, LineChartYAxisConfig } from "LLM/components/LineChart";
-import type { AnalyticsChartRange } from "./portfolioRangeMapping";
+import type { AnalyticsChartRange } from "@ledgerhq/wallet-analytics";
 
 const MIN_X_AXIS_TICKS = 5;
 const MIN_X_AXIS_TICKS_1D = 8;

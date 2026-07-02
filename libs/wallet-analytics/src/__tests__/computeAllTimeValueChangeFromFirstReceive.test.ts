@@ -1,8 +1,5 @@
+import { getCryptoCurrencyById, getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import {
-  getCryptoCurrencyById,
-  getFiatCurrencyByTicker,
-} from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import BigNumber from "bignumber.js";
@@ -20,7 +17,7 @@ const usd = getFiatCurrencyByTicker("USD");
 const mockCvState = { data: {}, status: {}, cache: {} } as CounterValuesState;
 
 function accountWithReceive(id: string, receiveDate: Date, receiveValue: number): Account {
-  const account = genAccount(id, { currency: btc });
+  const account = genAccount(id, { currency: btc, operationsSize: 1 });
   account.operations = [
     {
       ...account.operations[0],
@@ -39,7 +36,7 @@ describe("computeAllTimeValueChangeFromFirstReceive", () => {
   });
 
   it("returns null percentage when there are no receive operations", () => {
-    const account = genAccount("empty", { currency: btc });
+    const account = genAccount("empty", { currency: btc, operationsSize: 0 });
     account.operations = [];
 
     const result = computeAllTimeValueChangeFromFirstReceive([account], 1000, mockCvState, usd);
