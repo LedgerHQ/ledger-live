@@ -10,7 +10,7 @@ import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accou
 import { log } from "@ledgerhq/logs";
 import { concat, merge, Observable, of } from "rxjs";
 import { concatMap } from "rxjs/operators";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SyncConfig, SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import invariant from "invariant";
@@ -26,6 +26,7 @@ import {
 } from "../logic/utils";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
 import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
+import { apiClient } from "../network/api";
 import {
   PROGRESS_AFTER_SCANNER,
   PROGRESS_AFTER_LIST_OPS,
@@ -51,6 +52,10 @@ import {
 } from "./tokens";
 
 const privateSyncInFlight = new Set<string>();
+
+// Pending op ids to evict in postSync, keyed by ledger account id.
+// Written by performPublicSync (async, does the on-chain lookup) and consumed+cleared by postSync (sync).
+const pendingEvictions = new Map<string, Set<string>>();
 
 /**
  * Performs the public (transparent) portion of the Aleo account sync.
@@ -182,6 +187,27 @@ export async function performPublicSync(
   const operations = [...updatedPublicOperations, ...preservedPrivateOps].sort(
     (a, b) => b.date.getTime() - a.date.getTime(),
   );
+
+  const accountPendingOps = (initialAccount?.pendingOperations ?? []) as AleoOperation[];
+  const subAccountPendingOps = (initialAccount?.subAccounts ?? []).flatMap(
+    sa => (sa.pendingOperations ?? []) as AleoOperation[],
+  );
+  const allPendingOps = [...accountPendingOps, ...subAccountPendingOps];
+
+  if (allPendingOps.length > 0) {
+    const confirmedForCorrelation = [
+      ...operations,
+      ...subAccounts.flatMap(sa => sa.operations as AleoOperation[]),
+    ];
+    const evict = await collectPendingEvictions(currency, confirmedForCorrelation, allPendingOps);
+    if (evict.size > 0) {
+      pendingEvictions.set(ledgerAccountId, evict);
+    } else {
+      pendingEvictions.delete(ledgerAccountId);
+    }
+  } else {
+    pendingEvictions.delete(ledgerAccountId);
+  }
 
   return {
     type: "Account",
@@ -760,6 +786,74 @@ export function makeGetAccountShape(): GetAccountShapeStream<AleoAccount> {
 }
 
 /**
+ * Correlates pending operations with confirmed operations via an on-chain lookup.
+ *
+ * A pending op is keyed by the broadcast/execution id; a reverted tx is listed by the
+ * indexer under a fee-derived transaction_id, so the two op ids never match and the
+ * pending op cannot be evicted by id alone. Looking the pending op's hash up via
+ * getTransactionById resolves the on-chain identity of the tx and yields two
+ * correlation keys:
+ *
+ * - the resolved transaction id (`details.id`) — for a reverted tx the node answers
+ *   the original broadcast id with the fee-derived tx (type "fee", no `execution`
+ *   field), whose id is exactly the confirmed failed op's hash;
+ * - the execution transition id — stable between broadcast and confirmed forms when
+ *   the node does return an execution.
+ *
+ * When either key points at a confirmed op with a *different* op id, the pending op
+ * is marked for eviction (the same-id case is already handled by postSync's id match).
+ *
+ * Any lookup failure / no match leaves the pending op untouched.
+ */
+export async function collectPendingEvictions(
+  currency: CryptoCurrency,
+  confirmedOps: AleoOperation[],
+  pendingOps: AleoOperation[],
+): Promise<Set<string>> {
+  const evict = new Set<string>();
+  if (pendingOps.length === 0) return evict;
+
+  // transitionId -> confirmed op ids carrying it
+  const confirmedByTransition = new Map<string, Set<string>>();
+  // tx hash -> confirmed op ids carrying it
+  const confirmedByHash = new Map<string, Set<string>>();
+  for (const op of confirmedOps) {
+    const t = op.extra?.transitionId;
+    if (t) {
+      const set = confirmedByTransition.get(t) ?? new Set<string>();
+      set.add(op.id);
+      confirmedByTransition.set(t, set);
+    }
+    if (op.hash) {
+      const set = confirmedByHash.get(op.hash) ?? new Set<string>();
+      set.add(op.id);
+      confirmedByHash.set(op.hash, set);
+    }
+  }
+
+  const candidates = pendingOps.filter(op => !!op.hash);
+
+  await Promise.allSettled(
+    candidates.map(async pendingOp => {
+      const details = await apiClient.getTransactionById(currency, pendingOp.hash);
+      const transitionId = details.execution?.transitions?.[0]?.id;
+      const confirmedIds = new Set<string>([
+        ...(details.id ? (confirmedByHash.get(details.id) ?? []) : []),
+        ...(transitionId ? (confirmedByTransition.get(transitionId) ?? []) : []),
+      ]);
+      for (const id of confirmedIds) {
+        if (id !== pendingOp.id) {
+          evict.add(pendingOp.id);
+          break;
+        }
+      }
+    }),
+  );
+
+  return evict;
+}
+
+/**
  * Aleo doesn't have a per-account transaction nonce, so there is no natural value
  * to assign to `transactionSequenceNumber` on confirmed operations.
  *
@@ -778,6 +872,9 @@ export function postSync(_initial: AleoAccount, synced: AleoAccount): AleoAccoun
   const pendingOperations = synced.pendingOperations ?? [];
   const pendingSubOperations = (synced.subAccounts ?? []).flatMap(sa => sa.pendingOperations ?? []);
 
+  const evict = pendingEvictions.get(synced.id) ?? new Set<string>();
+  pendingEvictions.delete(synced.id);
+
   if (pendingOperations.length === 0 && pendingSubOperations.length === 0) {
     return synced;
   }
@@ -787,13 +884,15 @@ export function postSync(_initial: AleoAccount, synced: AleoAccount): AleoAccoun
     ...(synced.subAccounts ?? []).flatMap(sa => sa.operations.map(o => o.id)),
   ]);
 
+  const shouldDrop = (id: string) => confirmedIds.has(id) || evict.has(id);
+
   return {
     ...synced,
-    pendingOperations: pendingOperations.filter(po => !confirmedIds.has(po.id)),
+    pendingOperations: pendingOperations.filter(po => !shouldDrop(po.id)),
     ...(synced.subAccounts && {
       subAccounts: synced.subAccounts.map(sa => ({
         ...sa,
-        pendingOperations: (sa.pendingOperations ?? []).filter(po => !confirmedIds.has(po.id)),
+        pendingOperations: (sa.pendingOperations ?? []).filter(po => !shouldDrop(po.id)),
       })),
     }),
   };
