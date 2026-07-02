@@ -3,7 +3,7 @@ import { spawn } from "child_process";
 import type { GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { sanitizeError, sleep } from "./index";
 
-export const LEDGER_LIVE_CLI_BIN = path.resolve(__dirname, "../../../../apps/cli/bin/index.js");
+export const LEDGER_LIVE_CLI_BIN = path.resolve(__dirname, "../../../apps/cli/bin/index.js");
 
 export type LedgerKeyRingProtocolOpts = {
   initMemberCredentials?: boolean;

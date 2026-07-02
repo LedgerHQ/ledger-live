@@ -2,7 +2,7 @@ import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import { getFlags } from "../../bridge/server";
 import type { Features } from "@shared/feature-flags";
-import type { CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
+import type { CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
 export default class MarketPage {
   marketRowTitleBaseId = "market-row-title-";

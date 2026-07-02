@@ -4,7 +4,7 @@ import { AppPage } from "./abstractClasses";
 import { AssetCategory } from "../component/portfolio/assetSection";
 import { PageHeader } from "tests/component/pageHeader.component";
 import { AssetsTable } from "../component/portfolio/assetsTable";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
 export class CryptoAssetsPage extends AppPage {
   readonly category: AssetCategory;

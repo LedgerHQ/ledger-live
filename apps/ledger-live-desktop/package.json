@@ -194,6 +194,7 @@
     "@jest/globals": "catalog:",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/live-cli": "workspace:^",
+    "@ledgerhq/live-e2e-shared": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
     "@playwright/test": "catalog:",

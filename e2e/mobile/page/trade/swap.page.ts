@@ -1,12 +1,12 @@
 import CommonPage from "../common.page";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
-import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
-import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapType } from "@ledgerhq/live-e2e-shared/models/Swap";
+import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
-import { getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
+import { getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 
 export default class SwapPage extends CommonPage {
   baseLink = "swap";

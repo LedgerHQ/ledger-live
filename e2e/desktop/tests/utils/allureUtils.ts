@@ -1,13 +1,13 @@
 import { ElectronApplication, Page, TestInfo } from "@playwright/test";
 import { promisify } from "util";
 import { readFile } from "fs";
-import { takeScreenshot, drainSpeculosScreenshots } from "@ledgerhq/live-common/e2e/speculos";
+import { takeScreenshot, drainSpeculosScreenshots } from "@ledgerhq/live-e2e-shared/speculos";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { listen } from "@ledgerhq/logs";
 import * as allure from "allure-js-commons";
 import { isLastRetry } from "tests/utils/testInfoUtils";
 import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 
 const readFileAsync = promisify(readFile);
 

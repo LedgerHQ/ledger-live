@@ -1,15 +1,15 @@
 import fs from "fs";
 import path from "path";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { runCliLiveData } from "@ledgerhq/live-common/e2e/runCli";
+import { runCliLiveData } from "@ledgerhq/live-e2e-shared/runCli";
 import {
   startSpeculos,
   stopSpeculos,
   specs,
   type SpeculosDevice,
-} from "@ledgerhq/live-common/e2e/speculos";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import type { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+} from "@ledgerhq/live-e2e-shared/speculos";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import type { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
 export type GenerateAppJsonJobOpts = Partial<{
   coin: string[];

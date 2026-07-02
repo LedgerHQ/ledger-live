@@ -1,4 +1,4 @@
-import { TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
+import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runSendInvalidTokenAmountTest } from "../send";
 
 const transaction = new Transaction(

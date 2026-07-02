@@ -2,7 +2,7 @@ import { access } from "fs/promises";
 import * as path from "path";
 import { expect } from "@playwright/test";
 import test from "../fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 
 // These tests cover the general Ledger Wallet app behavior
 

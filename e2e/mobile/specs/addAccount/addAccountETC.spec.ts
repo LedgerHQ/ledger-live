@@ -1,4 +1,4 @@
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { runAddAccountTest } from "./addAccount";
 
 runAddAccountTest(

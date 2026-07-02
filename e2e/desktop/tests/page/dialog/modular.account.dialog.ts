@@ -1,5 +1,5 @@
 import { step } from "../../misc/reporters/step";
-import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
+import { AccountType, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Dialog } from "../../component/dialog.component";
 
 export class ModularAccountDialog extends Dialog {
