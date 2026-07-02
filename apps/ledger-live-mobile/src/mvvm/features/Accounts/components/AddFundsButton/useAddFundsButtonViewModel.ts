@@ -10,7 +10,6 @@ import { useNavigation } from "@react-navigation/core";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
-import { useFeature } from "@features/platform-feature-flags";
 
 export type Props = {
   accounts: Account[];
@@ -33,17 +32,11 @@ export default function useAddFundsButtonViewModel({
 
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
 
-  const shouldOnboardingRedirectToReceive = !!useFeature("llmSyncOnboardingIncr1")?.enabled;
-
   const openFundOrAccountListDrawer = useCallback(() => {
     let clickMetadata;
     const parentNavigationState = navigation.getParent()?.getState();
 
-    if (
-      shouldOnboardingRedirectToReceive &&
-      parentNavigationState?.routeNames[0] === NavigatorName.Onboarding &&
-      selectedAccount?.id
-    ) {
+    if (parentNavigationState?.routeNames[0] === NavigatorName.Onboarding && selectedAccount?.id) {
       clickMetadata = analyticsMetadata.AddFunds?.onQuickActionOpen;
       track(clickMetadata.eventName, { ...clickMetadata.payload, flow: "onboarding" });
       navigation.navigate(NavigatorName.ReceiveFunds, {
@@ -72,7 +65,6 @@ export default function useAddFundsButtonViewModel({
     analyticsMetadata.AddFunds?.onOpenDrawer,
     navigation,
     currency,
-    shouldOnboardingRedirectToReceive,
     selectedAccount?.id,
   ]);
 

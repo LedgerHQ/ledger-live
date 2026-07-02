@@ -2779,13 +2779,6 @@
         "cta": "I understand"
       }
     },
-    "appsStep": {
-      "title": "Install apps on {{productName}}"
-    },
-    "readyStep": {
-      "title": "End of setup",
-      "doneTitle": "{{productName}} is ready"
-    },
     "completion": {
       "title": "Now you are in control"
     },
