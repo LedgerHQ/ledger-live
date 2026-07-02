@@ -156,7 +156,18 @@ const ValidatorList = ({ account, transaction, onUpdateTransaction }: Props) => 
             noResultPlaceholder={null}
           />
         </Box>
-        <SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
+        <SeeAllButton
+          expanded={showAll}
+          role="button"
+          tabIndex={0}
+          onClick={() => setShowAll(shown => !shown)}
+          onKeyDown={e => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setShowAll(shown => !shown);
+            }
+          }}
+        >
           <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
             <Trans i18nKey={showAll ? "distribution.showLess" : "distribution.showAll"} />
           </Text>
