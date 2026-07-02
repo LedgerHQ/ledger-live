@@ -47,7 +47,10 @@ export function useChartSectionHeaderViewModel({
 
   const variationText = useMemo(() => {
     if (discreet) return "***";
-    return formatSignedFiatVariation(balanceInfo.valueChange.value, fiatUnit, locale);
+    const mainUnitValue = new BigNumber(balanceInfo.valueChange.value)
+      .shiftedBy(-fiatUnit.magnitude)
+      .toNumber();
+    return formatSignedFiatVariation(mainUnitValue, fiatUnit, locale);
   }, [balanceInfo.valueChange.value, discreet, fiatUnit, locale]);
 
   const rangeLabel = t(PORTFOLIO_RANGE_LABEL_KEY[selectedTimeRange]);

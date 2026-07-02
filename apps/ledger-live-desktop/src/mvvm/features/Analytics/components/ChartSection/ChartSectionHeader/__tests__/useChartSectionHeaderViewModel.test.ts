@@ -23,6 +23,23 @@ describe("useChartSectionHeaderViewModel", () => {
     expect(result.current.percentageValue).toBe(12.34);
   });
 
+  it("formats the variation from a smallest-atom countervalue without a x100 shift", () => {
+    const { result } = renderHook(
+      () =>
+        useChartSectionHeaderViewModel({
+          balanceInfo: {
+            ...mockPortfolioBalanceInfo,
+            valueChange: { percentage: 0.1, value: 1300 },
+          },
+          hoveredBalance: null,
+          isLoading: false,
+        }),
+      { initialState: chartSectionHeaderInitialState },
+    );
+
+    expect(result.current.variationText).toBe("+$13.00");
+  });
+
   it("uses the hovered balance when scrubbing the chart", () => {
     const { result } = renderHook(
       () =>
