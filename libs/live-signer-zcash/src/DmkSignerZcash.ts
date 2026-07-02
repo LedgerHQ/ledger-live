@@ -7,6 +7,8 @@ import type {
   ZcashSignature,
   SignerTransactionLike,
   BitcoinCreateTransactionLike,
+  PcztTransaction,
+  SignPcztTransactionResult,
 } from "./types";
 import { lastValueFrom, type Observable } from "rxjs";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -22,6 +24,7 @@ import {
   type SignerZcash,
   type LegacyCreateTransactionArg,
   type LegacyTransaction,
+  type SignPcztTransactionDAError,
   type SignTransactionDAError,
   type SignTransactionDAOutput,
 } from "@ledgerhq/device-signer-kit-zcash";
@@ -214,6 +217,25 @@ export class DmkSignerZcash implements ZcashSigner {
     onDeviceSignatureGranted?.();
 
     return signedTx.startsWith("0x") ? signedTx.slice(2) : signedTx;
+  }
+
+  /**
+   * Sign an Orchard PCZT via the DMK signer.
+   *
+   * Delegates to the DMK `signPcztTransaction` device action, which streams the
+   * PCZT bundle to the device and collects all spend-authorization signatures
+   * atomically. Returns `SignPcztTransactionResult` containing per-action Orchard
+   * signatures and per-input transparent signatures — callers must not reorder
+   * them before passing to `finalizeTransaction`.
+   *
+   * `skipOpenApp: true` is consistent with the other signer methods; the caller
+   * (signOperation orchestration) is responsible for ensuring the Zcash app is open.
+   */
+  async signPcztTransaction(pczt: PcztTransaction): Promise<SignPcztTransactionResult> {
+    const { observable } = this.signer.signPcztTransaction(pczt, { skipOpenApp: true });
+    return this.resolveDeviceAction<SignPcztTransactionResult, SignPcztTransactionDAError>(
+      observable,
+    );
   }
 
   async signMessage(_path: string, _messageHex: string): Promise<ZcashSignature> {
