@@ -793,12 +793,18 @@ importers:
       '@datadog/browser-rum':
         specifier: 6.30.1
         version: 6.30.1(@datadog/browser-logs@6.30.1)
+      '@domain/api-currency-fiat':
+        specifier: workspace:^
+        version: link:../../domain/api/currency-fiat
       '@domain/api-currency-token':
         specifier: workspace:^
         version: link:../../domain/api/currency-token
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
+      '@domain/entity-currency-fiat':
+        specifier: workspace:^
+        version: link:../../domain/entity/currency-fiat
       '@electron/fuses':
         specifier: 2.0.0
         version: 2.0.0
@@ -1461,12 +1467,18 @@ importers:
       '@datadog/mobile-react-navigation':
         specifier: 2.8.2
         version: 2.8.2(@datadog/mobile-react-native@2.8.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@domain/api-currency-fiat':
+        specifier: workspace:^
+        version: link:../../domain/api/currency-fiat
       '@domain/api-currency-token':
         specifier: workspace:^
         version: link:../../domain/api/currency-token
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
+      '@domain/entity-currency-fiat':
+        specifier: workspace:^
+        version: link:../../domain/entity/currency-fiat
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
@@ -2245,6 +2257,9 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:^
         version: link:../../domain/entity/currency-crypto
+      '@domain/entity-currency-fiat':
+        specifier: workspace:^
+        version: link:../../domain/entity/currency-fiat
       '@ledgerhq/coin-bitcoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-bitcoin
@@ -2416,6 +2431,9 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
+      '@domain/entity-currency-fiat':
+        specifier: workspace:^
+        version: link:../../domain/entity/currency-fiat
       '@features/platform-feature-flags':
         specifier: workspace:*
         version: link:../../features/platform/feature-flags
@@ -3150,6 +3168,9 @@ importers:
       '@domain/entity-currency-unit':
         specifier: workspace:*
         version: link:../currency-unit
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
       '@shared/schema-primitives':
         specifier: workspace:*
         version: link:../../../shared/schema-primitives
