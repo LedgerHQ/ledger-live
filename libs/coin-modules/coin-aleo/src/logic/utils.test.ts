@@ -64,6 +64,7 @@ import {
   toCoinFrameworkOperation,
   toBridgeOperation,
   toPrivateBridgeOperation,
+  backfillStakingSenders,
   resolveConfig,
   getTransactionType,
   getAleoSubAccount,
@@ -771,6 +772,89 @@ describe("toBridgeOperation", () => {
       const op = toBridgeOperation(ledgerAccountId, rawTx, "aleo1sender");
 
       expect(op.value.toNumber()).toBe(500000000);
+    });
+
+    it("falls back to the account address as sender when the indexer omits sender_address for bond_public", () => {
+      const rawTx = getMockedPublicTransaction({
+        function_id: "bond_public",
+        fee: 12345,
+        sender_address: "",
+      });
+
+      const op = toBridgeOperation(ledgerAccountId, rawTx, "aleo1sender");
+
+      expect(op.senders).toEqual(["aleo1sender"]);
+    });
+
+    it("falls back to the account address as sender when the indexer omits sender_address for unbond_public", () => {
+      const rawTx = getMockedPublicTransaction({
+        function_id: "unbond_public",
+        fee: 6789,
+        sender_address: "",
+      });
+
+      const op = toBridgeOperation(ledgerAccountId, rawTx, "aleo1sender");
+
+      expect(op.senders).toEqual(["aleo1sender"]);
+    });
+
+    it("falls back to the account address as sender when the indexer omits sender_address for claim_unbond_public", () => {
+      const rawTx = getMockedPublicTransaction({
+        function_id: "claim_unbond_public",
+        fee: 4321,
+        sender_address: "",
+      });
+
+      const op = toBridgeOperation(ledgerAccountId, rawTx, "aleo1sender");
+
+      expect(op.senders).toEqual(["aleo1sender"]);
+    });
+
+    it("keeps an empty sender for a regular transfer_public when the indexer omits sender_address", () => {
+      const rawTx = getMockedPublicTransaction({
+        function_id: "transfer_public",
+        recipient_address: "aleo1recipient",
+        sender_address: "",
+      });
+
+      const op = toBridgeOperation(ledgerAccountId, rawTx, "aleo1sender");
+
+      expect(op.senders).toEqual([""]);
+    });
+  });
+
+  describe("backfillStakingSenders", () => {
+    it("backfills a blank sender on a cached unbond_public op with the account address", () => {
+      const op = getMockedOperation({
+        senders: [""],
+        extra: { functionId: "unbond_public", transactionType: "public" },
+      });
+
+      const result = backfillStakingSenders([op], "aleo1sender");
+
+      expect(result[0].senders).toEqual(["aleo1sender"]);
+    });
+
+    it("leaves a cached op with a populated sender untouched", () => {
+      const op = getMockedOperation({
+        senders: ["aleo1original"],
+        extra: { functionId: "unbond_public", transactionType: "public" },
+      });
+
+      const result = backfillStakingSenders([op], "aleo1sender");
+
+      expect(result[0].senders).toEqual(["aleo1original"]);
+    });
+
+    it("does not backfill a blank sender for a non-staking function", () => {
+      const op = getMockedOperation({
+        senders: [""],
+        extra: { functionId: "transfer_public", transactionType: "public" },
+      });
+
+      const result = backfillStakingSenders([op], "aleo1sender");
+
+      expect(result[0].senders).toEqual([""]);
     });
   });
 });

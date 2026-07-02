@@ -7802,6 +7802,10 @@
       "title": "Amount too low to stake",
       "description": "The minimum staking amount is {{minAmount}}."
     },
+    "AleoStakeAmountTooLow": {
+      "title": "Amount too low to stake",
+      "description": "You must have at least {{minAmount}} staked in total."
+    },
     "AleoFeeRecordRequired": {
       "title": "Another private record is required to cover the network fee.",
       "description": "Top up your balance if needed. One private record is used for the transfer amount, and you must have another record that can cover the network fee."
@@ -9079,6 +9083,7 @@
       "unstake": "Unstake",
       "claim": "Claim",
       "claimableAtTooltip": "Claimable at block {{height}} (current block: {{current}})",
+      "blocksRemaining": "~{{count}} blocks left",
       "emptyState": {
         "description": "You can earn rewards by staking your {{name}}.",
         "earnRewards": "Earn rewards"
@@ -9122,7 +9127,8 @@
             "label": "Validator address",
             "loading": "Loading validators...",
             "closed": "Closed",
-            "commission": "Commission"
+            "commission": "Commission",
+            "closedWarning": "This validator does not accept new stakers."
           },
           "withdrawal": {
             "title": "Withdrawal",
@@ -9148,7 +9154,7 @@
       }
     },
     "manage": {
-      "headerAction": "Manage",
+      "headerAction": "Staking",
       "title": "Manage staking",
       "bond": {
         "title": "Bond",

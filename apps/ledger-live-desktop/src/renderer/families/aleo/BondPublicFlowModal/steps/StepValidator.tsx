@@ -8,6 +8,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import Button from "~/renderer/components/Button";
@@ -128,6 +129,7 @@ export default function StepValidator({
   transaction,
   error,
   status,
+  setIsClosedValidatorSelected,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
@@ -138,6 +140,15 @@ export default function StepValidator({
 
   const recipient = transaction.recipient || "";
   const { validators, isLoading, fetchFailed } = useAleoValidators(search);
+  const selectedValidator = useMemo(
+    () => validators.find(validator => validator.address === recipient),
+    [validators, recipient],
+  );
+  const isClosedValidatorSelected = selectedValidator ? !selectedValidator.isOpen : false;
+
+  useEffect(() => {
+    setIsClosedValidatorSelected?.(isClosedValidatorSelected);
+  }, [isClosedValidatorSelected, setIsClosedValidatorSelected]);
 
   const setValidator = useCallback(
     (address: string) =>
@@ -211,6 +222,11 @@ export default function StepValidator({
   return (
     <Box flow={3}>
       <TrackPage category="Bond Flow" name="Step Validator" currency="aleo" type="modal" />
+      {isClosedValidatorSelected && (
+        <Alert type="error">
+          <Trans i18nKey="aleo.bond.flow.steps.validator.closedWarning" />
+        </Alert>
+      )}
       {error && recipient.length > 0 && <ErrorBanner error={error} />}
       {showRecipientError && <ErrorBanner error={status.errors.recipient} />}
       <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />
@@ -253,9 +269,11 @@ export function StepValidatorFooter({
   bridgePending,
   transaction,
   onClose,
+  isClosedValidatorSelected,
 }: StepProps) {
   const { errors } = status;
-  const canNext = !bridgePending && !!transaction?.recipient && !errors.recipient;
+  const canNext =
+    !bridgePending && !!transaction?.recipient && !errors.recipient && !isClosedValidatorSelected;
   return (
     <Box horizontal>
       <Button mr={1} onClick={onClose}>

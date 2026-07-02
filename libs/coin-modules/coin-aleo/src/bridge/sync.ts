@@ -17,6 +17,7 @@ import invariant from "invariant";
 import { AleoApiConfigurationResetError } from "../errors";
 import { getBalance, getStakingPosition, lastBlock, listOperations } from "../logic";
 import {
+  backfillStakingSenders,
   extractViewKey,
   isProvableApiConfigured,
   isRecordScannerReady,
@@ -108,7 +109,8 @@ export async function performPublicSync(
 
   // Keep public and private ops separate so each cursor is derived from the correct op type.
   // Mixing them risks using a private op's blockHeight as the public sync cursor.
-  const [oldPrivateOps, oldPublicOps] = splitPrivateAndPublicOperations(allOldOperations);
+  const [oldPrivateOps, oldPublicOpsRaw] = splitPrivateAndPublicOperations(allOldOperations);
+  const oldPublicOps = backfillStakingSenders(oldPublicOpsRaw as AleoOperation[], address);
   const lastBlockHeight =
     shouldSyncFromScratch || isTokenMigrationRequired ? 0 : (oldPublicOps[0]?.blockHeight ?? 0);
 
@@ -133,7 +135,7 @@ export async function performPublicSync(
   // Filter them from the incoming ops — mergeOps then simply keeps the patched version
   // from oldPublicOps untouched, and no patch-restoration pass is needed.
   const patchedOpIds = new Set(
-    (oldPublicOps as AleoOperation[]).filter(op => op.extra?.patched).map(op => op.id),
+    oldPublicOps.filter(op => op.extra?.patched).map(op => op.id),
   );
 
   const filteredLatestPublicOperations = latestAccountPublicOperations.operations.filter(

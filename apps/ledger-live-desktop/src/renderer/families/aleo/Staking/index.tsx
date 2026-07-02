@@ -17,51 +17,13 @@ import Button from "~/renderer/components/Button";
 import Discreet from "~/renderer/components/Discreet";
 import ToolTip from "~/renderer/components/Tooltip";
 import IconChartLine from "~/renderer/icons/ChartLine";
-import DelegateIcon from "~/renderer/icons/Delegate";
-import TableContainer, { TableHeader, HeaderWrapper } from "~/renderer/components/TableContainer";
+import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 
-const TableLine = styled(Box).attrs(() => ({
-  ff: "Inter|SemiBold",
-  color: "neutral.c70",
-  horizontal: true,
-  alignItems: "center",
-  justifyContent: "flex-start",
-  fontSize: 3,
-  flex: 1,
-  pr: 2,
-}))`
-  box-sizing: border-box;
-  &:last-child {
-    justify-content: flex-end;
-    flex: 0.5;
-    text-align: right;
-    white-space: nowrap;
-  }
-`;
-
-const RowWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 16px 20px;
-`;
-
-const Column = styled(TableLine).attrs<{ strong?: boolean; clickable?: boolean }>(p => ({
-  ff: "Inter|SemiBold",
-  color: p.strong ? "neutral.c100" : "neutral.c80",
-  fontSize: 3,
-}))<{ strong?: boolean; clickable?: boolean }>`
-  cursor: ${p => (p.clickable ? "pointer" : "default")};
-  ${p => (p.clickable ? `&:hover { color: ${p.theme.colors.primary.c80}; }` : "")}
-`;
-
-const Ellipsis = styled.div`
-  flex: 1;
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
+// No shared middle-ellipsis helper exists in the repo; keep this local to the component.
+const middleEllipsis = (value: string, head: number, tail: number) => {
+  if (value.length <= head + tail + 1) return value;
+  return `${value.slice(0, head)}…${value.slice(value.length - tail)}`;
+};
 
 const EmptyStateWrapper = styled(Box).attrs(() => ({ p: 3 }))`
   border-radius: 4px;
@@ -69,19 +31,120 @@ const EmptyStateWrapper = styled(Box).attrs(() => ({ p: 3 }))`
   align-items: center;
 `;
 
-const Header = () => (
-  <HeaderWrapper>
-    <TableLine>
-      <Trans i18nKey="aleo.stake.table.status" />
-    </TableLine>
-    <TableLine>
-      <Trans i18nKey="aleo.stake.table.validator" />
-    </TableLine>
-    <TableLine>
-      <Trans i18nKey="aleo.stake.table.amount" />
-    </TableLine>
-    <TableLine />
-  </HeaderWrapper>
+const ManageLink = styled(Text).attrs(() => ({
+  ff: "Inter|SemiBold",
+  color: "primary.c80",
+  fontSize: 3,
+}))`
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const ValidatorLineWrapper = styled(Box).attrs(() => ({
+  horizontal: true,
+  alignItems: "center",
+  px: 20,
+  py: 3,
+}))`
+  gap: 8px;
+`;
+
+const ValidatorLabel = styled(Text).attrs(() => ({
+  ff: "Inter|SemiBold",
+  color: "neutral.c70",
+  fontSize: 2,
+}))`
+  text-transform: uppercase;
+`;
+
+const ValidatorAddress = styled(Text).attrs(() => ({
+  ff: "Inter|SemiBold",
+  color: "neutral.c100",
+  fontSize: 3,
+}))`
+  cursor: pointer;
+  &:hover {
+    color: ${p => p.theme.colors.primary.c80};
+  }
+`;
+
+const CardGrid = styled(Box).attrs(() => ({
+  horizontal: true,
+  p: 20,
+}))`
+  gap: 16px;
+  align-items: stretch;
+`;
+
+const Card = styled(Box).attrs(() => ({
+  p: 20,
+  flex: 1,
+}))`
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
+  border-radius: ${p => p.theme.radii[1]}px;
+`;
+
+const Dot = styled(Box).attrs<{ bg: string }>(p => ({ bg: p.bg }))<{ bg: string }>`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+`;
+
+const CardLabel = styled(Text).attrs(() => ({
+  ff: "Inter|SemiBold",
+  color: "neutral.c80",
+  fontSize: 3,
+}))``;
+
+const CardAmount = styled(Text).attrs(() => ({
+  ff: "Inter|SemiBold",
+  color: "neutral.c100",
+  fontSize: 6,
+}))``;
+
+const CardSubLine = styled(Text).attrs(() => ({
+  ff: "Inter|Regular",
+  color: "neutral.c70",
+  fontSize: 2,
+}))``;
+
+const GreenButton = styled(Button)`
+  background-color: ${p => p.theme.colors.success.c50};
+  color: ${p => p.theme.colors.neutral.c00};
+  &:hover {
+    background-color: ${p => p.theme.colors.success.c60};
+  }
+  &:disabled {
+    background-color: ${p => p.theme.colors.opacityDefault.c10};
+    color: ${p => p.theme.colors.opacityDefault.c20};
+  }
+`;
+
+const StakingCard = ({
+  dotColor,
+  label,
+  amount,
+  subLine,
+  button,
+}: {
+  dotColor: string;
+  label: React.ReactNode;
+  amount: React.ReactNode;
+  subLine?: React.ReactNode;
+  button: React.ReactNode;
+}) => (
+  <Card>
+    <Box horizontal alignItems="center" mb={2} style={{ gap: 8 }}>
+      <Dot bg={dotColor} />
+      <CardLabel>{label}</CardLabel>
+    </Box>
+    <CardAmount>{amount}</CardAmount>
+    {subLine ? <Box mt={1}>{subLine}</Box> : null}
+    <Box mt={3}>{button}</Box>
+  </Card>
 );
 
 const Staking = ({ account }: { account: AleoAccount }) => {
@@ -94,6 +157,8 @@ const Staking = ({ account }: { account: AleoAccount }) => {
   const unbondingHeight = account.aleoResources?.unbondingHeight ?? null;
   const claimable = getClaimableStakingBalance(account);
   const isClaimable = claimable.gt(0);
+  const blocksLeft =
+    unbondingHeight != null ? Math.max(0, unbondingHeight - account.blockHeight) : null;
   const hasBonded = bondedBalance.gt(0);
   const hasUnbonding = unbondingBalance.gt(0);
   const hasPosition = hasBonded || hasUnbonding;
@@ -127,74 +192,80 @@ const Staking = ({ account }: { account: AleoAccount }) => {
         titleProps={{ "data-e2e": "title_Staking" }}
       >
         {hasPosition ? (
-          <Button
-            id="account-manage-staking-button"
-            mr={2}
-            color="primary.c80"
-            small
-            onClick={onManage}
-          >
-            <Box horizontal flow={1} alignItems="center">
-              <DelegateIcon size={12} />
-              <Box>
-                <Trans i18nKey="aleo.stake.table.manage" />
-              </Box>
-            </Box>
-          </Button>
+          <ManageLink id="account-manage-staking-button" onClick={onManage}>
+            <Trans i18nKey="aleo.stake.table.manage" />
+          </ManageLink>
         ) : null}
       </TableHeader>
       {hasPosition ? (
         <>
-          <Header />
-          {hasBonded ? (
-            <RowWrapper>
-              <Column strong>
-                <Trans i18nKey="aleo.stake.status.staked" />
-              </Column>
-              <Column clickable={!!bondedValidator} onClick={onValidatorClick}>
-                <Ellipsis>{bondedValidator ?? "-"}</Ellipsis>
-              </Column>
-              <Column strong>
-                <Discreet>{formatAmount(bondedBalance)}</Discreet>
-              </Column>
-              <Column>
-                <Button small outlineGrey onClick={onUnstake}>
-                  <Trans i18nKey="aleo.stake.unstake" />
-                </Button>
-              </Column>
-            </RowWrapper>
+          {bondedValidator ? (
+            <ValidatorLineWrapper>
+              <ValidatorLabel>
+                <Trans i18nKey="aleo.stake.table.validator" />
+              </ValidatorLabel>
+              <ValidatorAddress onClick={onValidatorClick}>
+                {middleEllipsis(bondedValidator, 8, 12)}
+              </ValidatorAddress>
+            </ValidatorLineWrapper>
           ) : null}
-          {hasUnbonding ? (
-            <RowWrapper>
-              <Column strong>
-                <Trans
-                  i18nKey={isClaimable ? "aleo.stake.status.claimable" : "aleo.stake.status.unstaking"}
+          <CardGrid>
+            {hasBonded ? (
+              <StakingCard
+                dotColor="primary.c80"
+                label={<Trans i18nKey="aleo.stake.status.staked" />}
+                amount={<Discreet>{formatAmount(bondedBalance)}</Discreet>}
+                button={
+                  <Button small outlineGrey onClick={onUnstake}>
+                    <Trans i18nKey="aleo.stake.unstake" />
+                  </Button>
+                }
+              />
+            ) : null}
+            {hasUnbonding ? (
+              isClaimable ? (
+                <StakingCard
+                  dotColor="success.c50"
+                  label={<Trans i18nKey="aleo.stake.status.claimable" />}
+                  amount={<Discreet>{formatAmount(unbondingBalance)}</Discreet>}
+                  button={
+                    <GreenButton small onClick={onClaim}>
+                      <Trans i18nKey="aleo.stake.claim" />
+                    </GreenButton>
+                  }
                 />
-              </Column>
-              <Column>
-                <Ellipsis>-</Ellipsis>
-              </Column>
-              <Column strong>
-                <Discreet>{formatAmount(unbondingBalance)}</Discreet>
-              </Column>
-              <Column>
-                <ToolTip
-                  content={
-                    !isClaimable && unbondingHeight != null ? (
-                      <Trans
-                        i18nKey="aleo.stake.claimableAtTooltip"
-                        values={{ height: unbondingHeight, current: account.blockHeight }}
-                      />
+              ) : (
+                <StakingCard
+                  dotColor="neutral.c70"
+                  label={<Trans i18nKey="aleo.stake.status.unstaking" />}
+                  amount={<Discreet>{formatAmount(unbondingBalance)}</Discreet>}
+                  subLine={
+                    blocksLeft != null ? (
+                      <CardSubLine>
+                        <Trans i18nKey="aleo.stake.blocksRemaining" values={{ count: blocksLeft }} />
+                      </CardSubLine>
                     ) : null
                   }
-                >
-                  <Button small primary disabled={!isClaimable} onClick={onClaim}>
-                    <Trans i18nKey="aleo.stake.claim" />
-                  </Button>
-                </ToolTip>
-              </Column>
-            </RowWrapper>
-          ) : null}
+                  button={
+                    <ToolTip
+                      content={
+                        unbondingHeight != null ? (
+                          <Trans
+                            i18nKey="aleo.stake.claimableAtTooltip"
+                            values={{ height: unbondingHeight, current: account.blockHeight }}
+                          />
+                        ) : null
+                      }
+                    >
+                      <Button small primary disabled onClick={onClaim}>
+                        <Trans i18nKey="aleo.stake.claim" />
+                      </Button>
+                    </ToolTip>
+                  }
+                />
+              )
+            ) : null}
+          </CardGrid>
         </>
       ) : (
         <EmptyStateWrapper horizontal>

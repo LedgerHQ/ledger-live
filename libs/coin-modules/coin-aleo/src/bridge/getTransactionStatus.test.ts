@@ -23,12 +23,14 @@ import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
   MIN_BOND_AMOUNT,
+  MIN_STAKE_AMOUNT,
   TRANSACTION_TYPE,
 } from "../constants";
 import {
   AleoAmountRecordRequired,
   AleoAmountTooLargeForTransaction,
   AleoBondAmountTooLow,
+  AleoStakeAmountTooLow,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
   AleoNoClaimableAmount,
@@ -957,6 +959,58 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(mockAccount, transaction);
 
       expect(result.errors.amount).not.toBeInstanceOf(AleoBondAmountTooLow);
+    });
+
+    const bondTransaction = (amount: BigNumber): Transaction => ({
+      family: "aleo",
+      amount,
+      useAllAmount: false,
+      recipient: "aleo1validator00000000000000000000000000000000000000000000000q",
+      fees: new BigNumber(1),
+      mode: TRANSACTION_TYPE.BOND_PUBLIC,
+      withdrawal: "aleo1validwithdrawal000000000000000000000000000000000000000000q",
+    });
+
+    // transparentBalance must cover the bond amount so NotEnoughBalance does not
+    // mask the stake-amount validation we are asserting on.
+    const fundedBond = (bondedBalance: BigNumber) =>
+      getMockedAccount({
+        balance: mockBalance,
+        aleoResources: {
+          ...mockAleoResources,
+          transparentBalance: new BigNumber(MIN_STAKE_AMOUNT).times(2),
+          bondedBalance,
+        },
+      });
+
+    it("reports errors.amount when the projected total stake is below the minimum stake amount", async () => {
+      const amount = new BigNumber(MIN_STAKE_AMOUNT).minus(1);
+      mockCalculateAmount.mockReturnValue({ amount, totalSpent: amount });
+
+      const result = await getTransactionStatus(fundedBond(new BigNumber(0)), bondTransaction(amount));
+
+      expect(result.errors.amount).toBeInstanceOf(AleoStakeAmountTooLow);
+    });
+
+    it("does not report a too-low stake error when the projected total stake meets the minimum", async () => {
+      const amount = new BigNumber(MIN_STAKE_AMOUNT);
+      mockCalculateAmount.mockReturnValue({ amount, totalSpent: amount });
+
+      const result = await getTransactionStatus(fundedBond(new BigNumber(0)), bondTransaction(amount));
+
+      expect(result.errors.amount).not.toBeInstanceOf(AleoStakeAmountTooLow);
+    });
+
+    it("allows a top-up below the minimum stake when already bonded above the minimum", async () => {
+      const amount = new BigNumber(MIN_BOND_AMOUNT);
+      mockCalculateAmount.mockReturnValue({ amount, totalSpent: amount });
+
+      const result = await getTransactionStatus(
+        fundedBond(new BigNumber(MIN_STAKE_AMOUNT)),
+        bondTransaction(amount),
+      );
+
+      expect(result.errors.amount).not.toBeInstanceOf(AleoStakeAmountTooLow);
     });
   });
 

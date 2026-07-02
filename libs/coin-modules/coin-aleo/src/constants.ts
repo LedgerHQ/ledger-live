@@ -97,3 +97,9 @@ export const SINGLE_CALL_SIGNING_TIME = 12500;
 // Minimum amount (in microcredits) required to bond/stake to a validator.
 // 1 ALEO = 1_000_000 microcredits (ALEO magnitude is 6).
 export const MIN_BOND_AMOUNT = 1_000_000;
+
+// Minimum total amount (in microcredits) a delegator must have bonded to a
+// validator: 10,000 ALEO. Enforced against the projected total stake
+// (already-bonded balance + this bond amount), so top-ups on an existing
+// >= 10,000 ALEO position only need to satisfy MIN_BOND_AMOUNT.
+export const MIN_STAKE_AMOUNT = 10_000 * 1_000_000;

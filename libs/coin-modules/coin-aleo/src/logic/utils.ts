@@ -201,6 +201,37 @@ function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
   return { type, fee, blockHash, transactionType, date, hasFailed };
 }
 
+/**
+ * The indexer's transaction-list `sender_address` can come back empty for staking calls
+ * (bond_public/unbond_public/claim_unbond_public), unlike transfers. Since these functions can
+ * only appear in an account's history when that account is the staker itself, fall back to the
+ * synced account's own address rather than showing a blank sender.
+ */
+function resolveSenderAddress(rawTx: AleoPublicTransaction, address: string): string {
+  if (rawTx.sender_address) return rawTx.sender_address;
+  return getStakingOperationType(rawTx.function_id) !== undefined ? address : rawTx.sender_address;
+}
+
+/**
+ * Incremental sync only refetches transactions above the previous sync's cursor, so a staking
+ * op cached before the resolveSenderAddress fallback existed (blank sender_address) never gets
+ * refetched and stays blank forever. Backfill it in place from the already-cached operations
+ * instead of relying on a full resync.
+ */
+export function backfillStakingSenders(
+  ops: AleoOperation[],
+  address: string,
+): AleoOperation[] {
+  return ops.map(op => {
+    const functionId = op.extra?.functionId;
+    const hasBlankSender = op.senders.every(sender => !sender);
+    if (!hasBlankSender || !functionId || getStakingOperationType(functionId) === undefined) {
+      return op;
+    }
+    return { ...op, senders: [address] };
+  });
+}
+
 export const toCoinFrameworkOperation = (
   rawTx: AleoPublicTransaction,
   address: string,
@@ -209,11 +240,12 @@ export const toCoinFrameworkOperation = (
     rawTx,
     address,
   );
+  const senderAddress = resolveSenderAddress(rawTx, address);
   return {
     id: rawTx.transaction_id,
     type,
     recipients: [rawTx.recipient_address],
-    senders: [rawTx.sender_address],
+    senders: [senderAddress],
     value: BigInt(rawTx.amount.toFixed(0)),
     asset: { type: "native" },
     details: {
@@ -255,7 +287,7 @@ export const toBridgeOperation = (
   return {
     id: encodeOperationId(ledgerAccountId, rawTx.transaction_id, type),
     recipients: [rawTx.recipient_address],
-    senders: [rawTx.sender_address],
+    senders: [resolveSenderAddress(rawTx, address)],
     value,
     type,
     hasFailed,

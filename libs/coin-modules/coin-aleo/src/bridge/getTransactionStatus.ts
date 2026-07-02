@@ -35,12 +35,14 @@ import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
   MIN_BOND_AMOUNT,
+  MIN_STAKE_AMOUNT,
   TRANSACTION_TYPE,
 } from "../constants";
 import {
   AleoAmountRecordRequired,
   AleoAmountTooLargeForTransaction,
   AleoBondAmountTooLow,
+  AleoStakeAmountTooLow,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
   AleoNoClaimableAmount,
@@ -309,6 +311,21 @@ async function handleTransferTransaction({
   ) {
     errors.amount = new AleoBondAmountTooLow(undefined, {
       minAmount: formatCurrencyUnit(account.currency.units[0], new BigNumber(MIN_BOND_AMOUNT), {
+        showCode: true,
+      }),
+    });
+  } else if (
+    transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC &&
+    calculatedAmount.amount.gt(0) &&
+    // A delegator must have at least MIN_STAKE_AMOUNT bonded in total. Validate the
+    // projected total stake (already-bonded balance + this bond amount), so top-ups
+    // on an existing >= MIN_STAKE_AMOUNT position are allowed.
+    (account.aleoResources?.bondedBalance ?? new BigNumber(0))
+      .plus(calculatedAmount.amount)
+      .lt(MIN_STAKE_AMOUNT)
+  ) {
+    errors.amount = new AleoStakeAmountTooLow(undefined, {
+      minAmount: formatCurrencyUnit(account.currency.units[0], new BigNumber(MIN_STAKE_AMOUNT), {
         showCode: true,
       }),
     });

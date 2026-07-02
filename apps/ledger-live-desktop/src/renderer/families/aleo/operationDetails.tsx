@@ -1,8 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import BigNumber from "bignumber.js";
 import { Box, Text } from "@ledgerhq/react-ui/index";
-import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import { getOperationDetailsExtraFields } from "@ledgerhq/live-common/families/aleo/utils";
 import type {
   AleoAccount,
@@ -63,30 +61,7 @@ const OperationDetailsExtra = ({
   );
 };
 
-// getOperationAmountNumber renders -fee for all stake-family types; that is right for UNBOND
-// (contract interaction, no balance delta) but not for BOND (funds leave to the validator) or
-// WITHDRAW_UNBONDED (funds come back). Failed staking txs only ever cost the fee.
-const getAmount = (operation: AleoOperation): BigNumber => {
-  if (operation.hasFailed) {
-    return getOperationAmountNumber(operation);
-  }
-
-  switch (operation.type) {
-    case "BOND": {
-      const amount = operation.extra.estimatedBondedAmount;
-      return amount && !amount.isZero() ? amount.negated() : getOperationAmountNumber(operation);
-    }
-    case "WITHDRAW_UNBONDED": {
-      const amount = operation.extra.estimatedWithdrawUnbondedAmount;
-      return amount && !amount.isZero() ? amount : getOperationAmountNumber(operation);
-    }
-    default:
-      return getOperationAmountNumber(operation);
-  }
-};
-
 export default {
   customMetadataCell: CustomMetadataCell,
   OperationDetailsExtra,
-  getAmount,
 };

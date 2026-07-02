@@ -371,6 +371,54 @@ describe("sync.ts", () => {
       ]);
     });
 
+    it("should backfill a blank sender on a cached staking op that predates the resolveSenderAddress fallback", async () => {
+      const staleUnbondOp = getMockedOperation({
+        id: "op1",
+        hash: "hash1",
+        type: "UNBOND",
+        blockHeight: 100,
+        accountId: mockInitialAccount.id,
+        senders: [""],
+        extra: { functionId: "unbond_public", transactionType: "public" },
+        date: new Date("2023-01-02"),
+      });
+
+      const accountWithOperations = {
+        ...mockInitialAccount,
+        operations: [staleUnbondOp],
+      };
+
+      mockGetBalance.mockResolvedValue([
+        {
+          asset: { type: "native" as const },
+          value: BigInt(1000),
+        },
+      ]);
+
+      mockListOperations.mockResolvedValue({
+        operations: [],
+        tokenOperations: [],
+        calTokens: new Map(),
+        nextCursor: null,
+      });
+
+      const result = await performPublicSync(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: accountWithOperations,
+        },
+        mockSyncConfig,
+      );
+
+      expect(result.operations).toEqual([
+        expect.objectContaining({ id: "op1", senders: [mockAccount.freshAddress] }),
+      ]);
+    });
+
     it("should propagate errors", async () => {
       mockGetBalance.mockRejectedValue(new Error("Network timeout"));
 
