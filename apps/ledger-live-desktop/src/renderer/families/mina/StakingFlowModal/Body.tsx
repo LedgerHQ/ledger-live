@@ -139,7 +139,8 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const errorSteps = [];
 
   if (transactionError) {
-    errorSteps.push(2);
+    // Confirmation is the last step in both flows (3-step delegate, 2-step undelegate).
+    errorSteps.push(steps.length - 1);
   } else if (bridgeError) {
     errorSteps.push(0);
   }
