@@ -195,12 +195,14 @@ describe("useDeviceContextInitializerComponentLWDViewModel", () => {
     const { sideEffects } = mockedEnsureAppReadyUseCase.mock.calls[0][0];
     const deviceId = DeviceId.fromString("010203");
     const deviceInfo = { version: "2.0.0" } as DeviceInfo;
+    const apps = [{ name: "Bitcoin", version: "2.2.0" }];
 
     // WHEN
     sideEffects.onDeviceIdObserved(deviceId);
     sideEffects.onLastSeenDeviceInfoObserved({
       modelId: DeviceModelId.nanoX,
       deviceInfo,
+      apps,
       latestFirmware: null,
     });
 
@@ -211,7 +213,7 @@ describe("useDeviceContextInitializerComponentLWDViewModel", () => {
     expect(state.settings.lastSeenDevice).toEqual({
       modelId: DeviceModelId.nanoX,
       deviceInfo,
-      apps: [],
+      apps,
     });
     expect(state.settings.latestFirmware).toBeNull();
     expect(state.settings.devicesModelList).toContain(DeviceModelId.nanoX);
