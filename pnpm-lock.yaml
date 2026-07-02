@@ -11528,6 +11528,9 @@ importers:
       '@ledgerhq/live-dmk-shared':
         specifier: workspace:^
         version: link:../live-dmk-shared
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../env
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2

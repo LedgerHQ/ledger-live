@@ -17,6 +17,7 @@ import {
   hexaStringToBuffer,
 } from "@ledgerhq/device-management-kit";
 import { ContextModuleBuilder, ContextModuleChainID } from "@ledgerhq/context-module";
+import { getEnv } from "@ledgerhq/live-env";
 import { EIP712Message } from "@ledgerhq/types-live";
 import {
   EthAppPleaseEnableContractData,
@@ -60,6 +61,7 @@ export class DmkSignerEth implements EvmSigner {
       .setAppSource("ledger-wallet")
       .setBlindSigningReporter(liveBlindSigningReporter)
       .setChain(ContextModuleChainID.Ethereum)
+      .setCalConfig({ url: `${getEnv("CAL_SERVICE_URL")}/v1`, mode: "prod", branch: "main" })
       .build();
     this.signer = new SignerEthBuilder({
       dmk,

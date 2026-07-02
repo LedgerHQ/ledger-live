@@ -33,6 +33,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
     "rxjs": "catalog:"
   },
   "scripts": {

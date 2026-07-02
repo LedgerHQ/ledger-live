@@ -3,6 +3,8 @@ import { EIP712Message } from "@ledgerhq/types-live";
 import { lastValueFrom, of } from "rxjs";
 import { DmkSignerEth } from "../src/DmkSignerEth";
 import { SignTransactionDAStep } from "@ledgerhq/device-signer-kit-ethereum";
+import { ContextModuleBuilder } from "@ledgerhq/context-module";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 
 describe("DmkSignerEth", () => {
   const dmkMock = {
@@ -338,16 +340,18 @@ describe("DmkSignerEth", () => {
       });
 
       // WHEN
-      const result = await lastValueFrom(signer.signTransaction(path, rawTxHex, {
-        domains: [
-          {
-            registry: "ens",
-            domain,
-            address: "0x",
-            type: "forward",
-          },
-        ]
-      }));
+      const result = await lastValueFrom(
+        signer.signTransaction(path, rawTxHex, {
+          domains: [
+            {
+              registry: "ens",
+              domain,
+              address: "0x",
+              type: "forward",
+            },
+          ],
+        }),
+      );
 
       // THEN
       expect(dmkMock.executeDeviceAction).toHaveBeenCalledWith(
@@ -615,6 +619,27 @@ describe("DmkSignerEth", () => {
       } catch (error) {
         // THEN
         expect(error).toEqual(new Error("Method not implemented."));
+      }
+    });
+  });
+
+  describe("CAL config", () => {
+    it("wires setCalConfig from the CAL_SERVICE_URL env", () => {
+      const previous = getEnv("CAL_SERVICE_URL");
+      const setCalConfig = jest.spyOn(ContextModuleBuilder.prototype, "setCalConfig");
+      setEnv("CAL_SERVICE_URL", "https://cal.example.test");
+
+      try {
+        new DmkSignerEth(dmkMock as unknown as DeviceManagementKit, "sessionId");
+
+        expect(setCalConfig).toHaveBeenCalledWith({
+          url: "https://cal.example.test/v1",
+          mode: "prod",
+          branch: "main",
+        });
+      } finally {
+        setEnv("CAL_SERVICE_URL", previous);
+        setCalConfig.mockRestore();
       }
     });
   });
