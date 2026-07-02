@@ -6,11 +6,8 @@ import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
-import {
-  importPostOnboardingState,
-  setPostOnboardingDate,
-} from "@ledgerhq/live-common/postOnboarding/actions";
-import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
+import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
+import { backfillOnboardingDate } from "~/renderer/components/PostOnboardingHub/logic/backfillOnboardingDate";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import each from "lodash/each";
@@ -45,7 +42,6 @@ import {
   trackingEnabledSelector,
   hideEmptyTokenAccountsSelector,
   filterTokenOperationsZeroAmountSelector,
-  hasCompletedOnboardingSelector,
 } from "~/renderer/reducers/settings";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import ReactRoot from "~/renderer/ReactRoot";
@@ -353,17 +349,7 @@ async function init() {
     );
   }
 
-  // One-off migration at store hydration: legacy users who completed onboarding
-  // before `onboardingDate` existed have no date stored. Seed it once here so the
-  // app starts with correct state and components only read it. Never overwrite an
-  // existing date (new onboardings set the real completion date via POST_ONBOARDING_INIT).
-  // The DB middleware persists post-onboarding actions automatically.
-  if (
-    hasCompletedOnboardingSelector(store.getState()) &&
-    onboardingDateSelector(store.getState()) == null
-  ) {
-    store.dispatch(setPostOnboardingDate({ onboardingDate: new Date() }));
-  }
+  backfillOnboardingDate(store);
 
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
 
