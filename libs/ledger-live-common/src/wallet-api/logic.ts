@@ -28,7 +28,6 @@ import { Exchange } from "../exchange/types";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
-import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/utils";
 import type { CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -356,9 +355,10 @@ export const bitcoinFamilyAccountGetPublicKeyLogic = async (
 
 type AccountPublicKeyResolver = (account: Account) => string | null;
 
-const ACCOUNT_PUBLIC_KEY_RESOLVERS: Record<string, AccountPublicKeyResolver> = {
-  tezos: account =>
-    normalizePublicKeyForAddress(account.seedIdentifier, account.freshAddress) ?? null,
+const ACCOUNT_PUBLIC_KEY_RESOLVERS: Partial<Record<string, AccountPublicKeyResolver>> = {
+  // xpub now holds the account public key (generic-coin-framework). The un-healed case
+  // (xpub still === freshAddress) is rejected by the shared guard below.
+  tezos: account => account.xpub ?? null,
   // cosmos seedIdentifier is seed-level (shared across accounts), so the per-account
   // compressed pubkey (hex) is persisted in cosmosResources at scan time.
   cosmos: account => (account as CosmosAccount).cosmosResources?.publicKey || null,
@@ -390,10 +390,18 @@ export const accountGetPublicKeyLogic = async (
     throw new Error("account not found");
   }
 
-  const publicKey = ACCOUNT_PUBLIC_KEY_RESOLVERS[mainAccount.currency.family]?.(mainAccount);
-  if (!publicKey) {
+  const resolver = ACCOUNT_PUBLIC_KEY_RESOLVERS[mainAccount.currency.family];
+  if (!resolver) {
     tracking.accountGetPublicKeyFail(manifest);
     throw new Error("account.getPublicKey not implemented");
+  }
+
+  const publicKey = resolver(mainAccount);
+  // A resolver exists but no usable public key is stored yet: xpub still holds the address
+  // because the account has not been synced with the device connected.
+  if (!publicKey || publicKey === mainAccount.freshAddress) {
+    tracking.accountGetPublicKeyFail(manifest);
+    throw new Error("no public key available for this account");
   }
 
   tracking.accountGetPublicKeySuccess(manifest);

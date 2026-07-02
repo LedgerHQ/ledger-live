@@ -940,9 +940,9 @@ describe("accountGetPublicKeyLogic", () => {
     mockAccountGetPublicKeyFail.mockClear();
     mockAccountGetPublicKeySuccess.mockClear();
     mockedGetAccountIdFromWalletAccountId.mockClear();
-    // seedIdentifier holds the base58 public key for a scanned tezos account
+    // xpub holds the base58 account public key for a device-healed tezos account
     const tezosAccount = context.accounts.find(a => a.id === tezosAccountId);
-    if (tezosAccount?.type === "Account") tezosAccount.seedIdentifier = tezosPublicKey;
+    if (tezosAccount?.type === "Account") tezosAccount.xpub = tezosPublicKey;
   });
 
   const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
@@ -1007,15 +1007,18 @@ describe("accountGetPublicKeyLogic", () => {
     expect(mockAccountGetPublicKeySuccess).toHaveBeenCalledTimes(1);
   });
 
-  it("rejects (and tracks failure) when seedIdentifier is not a tezos public key", async () => {
-    // Given a tezos account whose seedIdentifier is not a base58 public key
+  it("rejects (and tracks failure) when no public key is available (xpub === freshAddress)", async () => {
+    // Given a tezos account whose xpub still holds the address (not yet synced with the device)
     const tezosAccount = context.accounts.find(a => a.id === tezosAccountId);
-    if (tezosAccount?.type === "Account") tezosAccount.seedIdentifier = "0x01";
+    if (tezosAccount?.type === "Account") {
+      tezosAccount.freshAddress = "tz1UnhealedAddress";
+      tezosAccount.xpub = "tz1UnhealedAddress";
+    }
     mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(tezosAccountId);
 
     // When / Then
     await expect(accountGetPublicKeyLogic(context, walletAccountId)).rejects.toThrow(
-      "account.getPublicKey not implemented",
+      "no public key available for this account",
     );
     expect(mockAccountGetPublicKeyFail).toHaveBeenCalledTimes(1);
     expect(mockAccountGetPublicKeySuccess).toHaveBeenCalledTimes(0);
