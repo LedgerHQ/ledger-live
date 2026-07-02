@@ -20,6 +20,7 @@ import type {
   SettingsState,
 } from "./reducers/types";
 import type { HistoryState } from "./reducers/history";
+import type { LargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import {
   mapPersistedKnownDeviceToKnownDevice,
   type KnownDevicesState,
@@ -272,6 +273,16 @@ export function getPostOnboardingState(): Promise<PostOnboardingState> {
 
 export async function savePostOnboardingState(obj: PostOnboardingState): Promise<void> {
   await storage.save("postOnboarding", obj);
+}
+
+export function getLargeScreenUpsellModalState(): Promise<LargeScreenUpsellModalState | null> {
+  return storage.get("largeScreenUpsellModal") as Promise<LargeScreenUpsellModalState | null>;
+}
+
+export async function saveLargeScreenUpsellModalState(
+  largeScreenUpsellModalState: LargeScreenUpsellModalState,
+): Promise<void> {
+  await storage.save("largeScreenUpsellModal", largeScreenUpsellModalState);
 }
 
 export function getMarketState(): Promise<MarketState> {

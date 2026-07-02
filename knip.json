@@ -105,6 +105,9 @@
     "./libs/live-dmk-mobile": {
       "entry": ["src/index.ts"]
     },
+    "./libs/live-engagement": {
+      "entry": ["src/index.ts", "src/largeScreenUpsellModal.ts"]
+    },
     "./libs/live-wallet": {
       "entry": [
         "src/walletsync/index.ts",

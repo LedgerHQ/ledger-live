@@ -1,4 +1,5 @@
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
+import { largeScreenUpsellModalReducer } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import postOnboardingHubDrawer from "./postOnboardingHubDrawer";
 import { combineReducers, type Store } from "redux";
 import { llmRTKApiReducers } from "~/context/rtkQueryApi";
@@ -73,6 +74,7 @@ const appReducer = combineReducers({
   transferDrawer,
   swapTransactionStatusDrawer,
   notifications,
+  largeScreenUpsellModal: largeScreenUpsellModalReducer,
   postOnboarding,
   postOnboardingHubDrawer,
   protect,
