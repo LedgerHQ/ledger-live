@@ -10,12 +10,14 @@ concurrency:
 
 permissions:
   id-token: write
-  contents: write
+  contents: read
   pull-requests: write
   actions: write
 
 jobs:
   pre_job:
+    permissions:
+      contents: write
     name: "Skip Check"
     if: ${{!github.event.pull_request.head.repo.fork}}
     runs-on: ubuntu-latest
