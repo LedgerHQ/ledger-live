@@ -112,7 +112,9 @@ test.describe("Swap flow from different entry point", () => {
         app.market.startSwapForSelectedTicker(swapEntryPoint.swap.accountToDebit.currency.ticker),
       );
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      await app.swap.checkAssetToAccountNameContains(swapEntryPoint.swap.accountToDebit.accountName);
+      await app.swap.checkAssetToAccountNameContains(
+        swapEntryPoint.swap.accountToDebit.accountName,
+      );
     },
   );
 
@@ -173,7 +175,9 @@ test.describe("Swap flow from different entry point", () => {
       );
       await app.swap.goAndWaitForSwapToBeReady(() => app.account.navigateToSwap());
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      await app.swap.checkAssetToAccountNameContains(swapEntryPoint.swap.accountToDebit.accountName);
+      await app.swap.checkAssetToAccountNameContains(
+        swapEntryPoint.swap.accountToDebit.accountName,
+      );
     },
   );
 
@@ -382,7 +386,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", ()
           expect(await app.swap.isPercentageEnabled("50%")).toBe(true);
           expect(await app.swap.isPercentageEnabled("75%")).toBe(true);
 
-          expect(await app.swap.getMaxTooltipText()).toBe("Max amount includes network fees");
+          await app.swap.checkMaxTooltip("Max amount includes network fees");
         });
       }
     },
@@ -401,11 +405,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", ()
       await performSwapUntilQuoteSelectionStep(app, new Swap(fromAccount, toAccount, ""), "");
 
       for (const percent of ["25%", "50%", "75%"] as const) {
-        await test.step(`Tooltip for ${percent}`, async () => {
-          expect(await app.swap.getPercentageTooltipText(percent)).toBe(
-            `${percent} of your available balance`,
-          );
-        });
+        await app.swap.checkPercentageTooltip(percent, `${percent} of your available balance`);
       }
     },
   );
@@ -477,9 +477,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - insufficient native 
       await performSwapUntilQuoteSelectionStep(app, new Swap(fromAccount, toAccount, ""), "");
 
       expect(await app.swap.isMaxToggleEnabled()).toBe(false);
-      expect(await app.swap.getMaxTooltipText()).toBe(
-        "You don't have enough balance including network fees",
-      );
+      await app.swap.checkMaxTooltip("You don't have enough balance including network fees");
 
       expect(await app.swap.isPercentageEnabled("25%")).toBe(true);
       expect(await app.swap.isPercentageEnabled("50%")).toBe(true);
@@ -527,9 +525,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - zero balance", () =>
       await performSwapUntilQuoteSelectionStep(app, new Swap(fromAccount, toAccount, ""), "");
 
       expect(await app.swap.isMaxToggleEnabled()).toBe(false);
-      expect(await app.swap.getMaxTooltipText()).toBe(
-        "You don't have enough balance including network fees",
-      );
+      await app.swap.checkMaxTooltip("You don't have enough balance including network fees");
 
       expect(await app.swap.isPercentageEnabled("25%")).toBe(false);
       expect(await app.swap.isPercentageEnabled("50%")).toBe(false);
