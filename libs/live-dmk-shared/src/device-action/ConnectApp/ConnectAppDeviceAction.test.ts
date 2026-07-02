@@ -966,7 +966,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
     const FUTURE = "2999-01-01";
 
     const baseEntry = (over: Partial<DeviceDeprecationConfig> = {}): DeviceDeprecationConfig => ({
-      deviceModelId: LLDeviceModelId.nanoS,
+      deviceModelId: "nanoS" as LLDeviceModelId,
       warningScreen: { date: FUTURE, deprecatedFlow: [] },
       errorScreen: { date: FUTURE, deprecatedFlow: [] },
       warningClearSigningScreen: { date: FUTURE, deprecatedFlow: [], exception: [] },
@@ -975,7 +975,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
 
     const INFO_PAST_CONFIG: DeviceDeprecationConfigs = [
       {
-        deviceModelId: LLDeviceModelId.nanoS,
+        deviceModelId: "nanoS" as LLDeviceModelId,
         warningScreen: { date: PAST, deprecatedFlow: ["receive"] },
         errorScreen: { date: FUTURE, deprecatedFlow: [] },
         warningClearSigningScreen: { date: FUTURE, deprecatedFlow: [], exception: [] },
@@ -984,7 +984,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
 
     const ERROR_PAST_CONFIG: DeviceDeprecationConfigs = [
       {
-        deviceModelId: LLDeviceModelId.nanoS,
+        deviceModelId: "nanoS" as LLDeviceModelId,
         warningScreen: { date: FUTURE, deprecatedFlow: [] },
         errorScreen: { date: PAST, deprecatedFlow: ["receive"] },
         warningClearSigningScreen: { date: FUTURE, deprecatedFlow: [], exception: [] },
