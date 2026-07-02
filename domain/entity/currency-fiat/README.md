@@ -7,8 +7,7 @@ Zod-first canonical schema and static registry for the `FiatCurrency` domain ent
 - Define the **canonical data model** for fiat currencies (`FiatCurrencySchema`)
 - Provide a **static registry** of all known fiat currencies (`FIAT_CURRENCIES_REGISTRY`), one file per currency under `src/currencies/`
 - Provide **mock factories** for use in tests
-
-No Redux slice, no selectors — the registry is fully static.
+- Expose a **`supportedFiatsSlice`** (RTK slice + `selectSupportedFiats` selector) that holds the runtime-supported fiat list populated by the CVS API, with an OFAC-filtered fallback
 
 ## Source of truth & dual maintenance
 
@@ -29,6 +28,7 @@ parity test compares on that.
 |---|---|
 | `@shared/schema-primitives` | `CurrencyIdSchema` branded value object |
 | `@domain/entity-currency-unit` | `UnitSchema` embedded value object |
+| `@reduxjs/toolkit` | `createSlice` for `supportedFiatsSlice` |
 
 ## Public API
 
@@ -36,6 +36,13 @@ parity test compares on that.
 import { FiatCurrencySchema, type FiatCurrency } from "@domain/entity-currency-fiat";
 import { FIAT_CURRENCIES_REGISTRY, FIAT_CURRENCIES_IDS } from "@domain/entity-currency-fiat";
 import { fiat } from "@domain/entity-currency-fiat";
+import {
+  supportedFiatsSlice,
+  setFiats,
+  selectSupportedFiats,
+  OFAC_FIAT_TICKERS,
+  type SupportedFiatsState,
+} from "@domain/entity-currency-fiat";
 ```
 
 For the full currency union (`CryptoCurrency | TokenCurrency | FiatCurrency`) use `@domain/entity-currency`.
@@ -84,6 +91,7 @@ src/
   schema.mock.ts          mockFiatCurrency() factory
   registry.ts             FIAT_CURRENCIES_REGISTRY — keyed by currency id
                           FIAT_CURRENCIES_IDS — flat array of all known ids
+  supportedFiatsSlice.ts  RTK slice — runtime-supported list (CVS API + OFAC fallback)
   currencies/
     index.ts              barrel export
     usd.ts  eur.ts  gbp.ts  ...   one file per currency (named by id)

@@ -46,18 +46,24 @@ describe("@domain/entity-currency-fiat parity with @ledgerhq/cryptoassets", () =
  */
 describe("lookup parity: injected domain store hands back domain references", () => {
   const domainFiats = Object.values(FIAT_CURRENCIES_REGISTRY);
+  let previousStore: typeof globalThis.__ledgerFiatCurrenciesStore;
 
   beforeAll(() => {
+    previousStore = globalThis.__ledgerFiatCurrenciesStore;
     setFiatCurrenciesStore(domainFiats);
   });
 
   afterAll(() => {
-    // Reset the global store so other suites fall back to the bundled registry.
-    globalThis.__ledgerFiatCurrenciesStore = undefined;
+    globalThis.__ledgerFiatCurrenciesStore = previousStore;
   });
 
   it("listFiatCurrencies returns the domain objects", () => {
-    expect(new Set(listFiatCurrencies())).toEqual(new Set(domainFiats));
+    const result = listFiatCurrencies();
+    expect(result).toHaveLength(domainFiats.length);
+    const byTicker = Object.fromEntries(result.map(c => [c.ticker, c]));
+    for (const currency of domainFiats) {
+      expect(byTicker[currency.ticker]).toBe(currency);
+    }
   });
 
   it.each(sortedTickers)("getFiatCurrencyByTicker(%s) is the domain object reference", ticker => {
