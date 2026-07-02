@@ -1,17 +1,13 @@
 import { useMemo } from "react";
 import { useTheme } from "styled-components/native";
-import { useWalletFeaturesConfig, type WalletPlatform } from "@features/platform-feature-flags";
 
 export interface Wallet40ThemeResult {
   readonly isDarkMode: boolean;
-  readonly isWallet40Enabled: boolean;
-  readonly isWallet40DarkMode: boolean;
   readonly backgroundColor: string;
 }
 
 export interface Wallet40ThemeInput {
   readonly theme: string;
-  readonly isWallet40Enabled: boolean;
 }
 
 /**
@@ -20,30 +16,21 @@ export interface Wallet40ThemeInput {
  */
 export const computeWallet40Theme = (input: Wallet40ThemeInput): Wallet40ThemeResult => {
   const isDarkMode = input.theme === "dark";
-  const isWallet40DarkMode = input.isWallet40Enabled && isDarkMode;
-  const backgroundColor = isWallet40DarkMode ? "#000000" : "background.main";
+  const backgroundColor = isDarkMode ? "#000000" : "background.main";
 
   return {
     isDarkMode,
-    isWallet40Enabled: input.isWallet40Enabled,
-    isWallet40DarkMode,
     backgroundColor,
   };
 };
 
 /**
  * Hook providing theme-related values for Wallet 4.0.
- * Centralizes the logic for background colors and theme detection.
- *
- * @param platform - The platform to get the feature flag for ("desktop" or "mobile")
- * @returns Theme-related values for Wallet 4.0
+ * Centralizes the background-color logic. Wallet 4.0 is always enabled,
+ * so the values depend only on the current light/dark palette.
  */
-export const useWallet40Theme = (platform: WalletPlatform): Wallet40ThemeResult => {
+export const useWallet40Theme = (): Wallet40ThemeResult => {
   const { theme } = useTheme();
-  const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig(platform);
 
-  return useMemo(
-    () => computeWallet40Theme({ theme, isWallet40Enabled }),
-    [theme, isWallet40Enabled],
-  );
+  return useMemo(() => computeWallet40Theme({ theme }), [theme]);
 };

@@ -47,7 +47,7 @@ describe("AnalyticsMain Integration Tests", () => {
       ptxServiceCtaExchangeDrawer: { enabled: isExchangeEnabled },
       lwmWallet40: {
         enabled: true,
-        params: { mainNavigation: true, aggregatedAssets: false },
+        params: { aggregatedAssets: false },
       },
     })({
       ...state,

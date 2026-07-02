@@ -15,7 +15,6 @@ const withFeatureFlag = (enabled: boolean) =>
     {
       lwmWallet40: {
         enabled,
-        params: { mainNavigation: true },
       },
     },
     (state: State) => ({
@@ -35,77 +34,63 @@ const withTabBarVisibility = (isVisible: boolean) => (state: State) => ({
 });
 
 describe("useNavigationBarHeights", () => {
-  describe("when lwmWallet40 feature flag is disabled", () => {
-    it("should throw error", () => {
-      expect(() => {
-        renderHook(() => useNavigationBarHeights(), {
-          overrideInitialState: withFeatureFlag(false),
-        });
-      }).toThrow(
-        "[useNavigationBarHeights] This hook requires the 'lwmWallet40' feature flag to be enabled",
-      );
+  it("should calculate top height including the insets top", () => {
+    const { result } = renderHook(() => useNavigationBarHeights(), {
+      overrideInitialState: withTabBarVisibility(true),
     });
+
+    expect(result.current.top).toBe(124);
   });
 
-  describe("when lwmWallet40 feature flag is enabled", () => {
-    it("should calculate top height including the insets top", () => {
-      const { result } = renderHook(() => useNavigationBarHeights(), {
-        overrideInitialState: withTabBarVisibility(true),
-      });
-
-      expect(result.current.top).toBe(124);
+  it("should return TAB_BAR_HEIGHT when tab bar is visible", () => {
+    const { result } = renderHook(() => useNavigationBarHeights(), {
+      overrideInitialState: withTabBarVisibility(true),
     });
 
-    it("should return TAB_BAR_HEIGHT when tab bar is visible", () => {
-      const { result } = renderHook(() => useNavigationBarHeights(), {
-        overrideInitialState: withTabBarVisibility(true),
-      });
-
-      expect(result.current.bottom).toBe(TAB_BAR_HEIGHT);
-    });
-
-    it("should return 0 when tab bar is hidden", () => {
-      const { result } = renderHook(() => useNavigationBarHeights(), {
-        overrideInitialState: withTabBarVisibility(false),
-      });
-
-      expect(result.current.bottom).toBe(0);
-    });
-
-    it("should return TOP_BAR_BAR_HEIGHT as topBarHeight", () => {
-      const { result } = renderHook(() => useNavigationBarHeights(), {
-        overrideInitialState: withTabBarVisibility(true),
-      });
-
-      expect(result.current.topBarHeight).toBe(64);
-    });
-
-    it("should always return TAB_BAR_HEIGHT as bottomBarHeight", () => {
-      const { result } = renderHook(() => useNavigationBarHeights(), {
-        overrideInitialState: withTabBarVisibility(false),
-      });
-
-      expect(result.current.bottomBarHeight).toBe(TAB_BAR_HEIGHT);
-    });
+    expect(result.current.bottom).toBe(TAB_BAR_HEIGHT);
   });
 
-  describe("when running on Android", () => {
-    const originalOS = Platform.OS;
-
-    beforeEach(() => {
-      Platform.OS = "android";
+  it("should return 0 when tab bar is hidden", () => {
+    const { result } = renderHook(() => useNavigationBarHeights(), {
+      overrideInitialState: withTabBarVisibility(false),
     });
 
-    afterEach(() => {
-      Platform.OS = originalOS;
+    expect(result.current.bottom).toBe(0);
+  });
+
+  it("should return TOP_BAR_BAR_HEIGHT as topBarHeight", () => {
+    const { result } = renderHook(() => useNavigationBarHeights(), {
+      overrideInitialState: withTabBarVisibility(true),
     });
 
-    it("should use Android-specific top bar height with gradient", () => {
-      const { result } = renderHook(() => useNavigationBarHeights(), {
-        overrideInitialState: withTabBarVisibility(true),
-      });
+    expect(result.current.topBarHeight).toBe(64);
+  });
 
-      expect(result.current.top).toBe(112);
+  it("should always return TAB_BAR_HEIGHT as bottomBarHeight", () => {
+    const { result } = renderHook(() => useNavigationBarHeights(), {
+      overrideInitialState: withTabBarVisibility(false),
     });
+
+    expect(result.current.bottomBarHeight).toBe(TAB_BAR_HEIGHT);
+  });
+});
+
+describe("when running on Android", () => {
+  const originalOS = Platform.OS;
+
+  beforeEach(() => {
+    Platform.OS = "android";
+  });
+
+  afterEach(() => {
+    Platform.OS = originalOS;
+  });
+
+  it("should use Android-specific top bar height with gradient", () => {
+    const { result } = renderHook(() => useNavigationBarHeights(), {
+      overrideInitialState: withTabBarVisibility(true),
+    });
+
+    expect(result.current.top).toBe(112);
   });
 });

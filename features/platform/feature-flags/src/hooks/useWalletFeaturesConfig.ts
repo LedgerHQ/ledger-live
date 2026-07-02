@@ -27,7 +27,6 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
       isEnabled,
       shouldDisplayGraphRework: isEnabled && Boolean(params?.graphRework),
       shouldDisplayQuickActionCtas: isEnabled && Boolean(params?.quickActionCtas),
-      shouldDisplayWallet40MainNav: isEnabled && Boolean(params?.mainNavigation),
       shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
       shouldDisplayTour: isEnabled && Boolean(params?.tour),
       shouldDisplayQ2Tour: isEnabled && Boolean(params?.q2Tour),
@@ -71,8 +70,6 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayGraphRework: boolean;
   /** Whether to show quick action CTAs */
   readonly shouldDisplayQuickActionCtas: boolean;
-  /** Whether to show the wallet 4.0 main navigation */
-  readonly shouldDisplayWallet40MainNav: boolean;
   /** Whether onboarding should skip device setup and open portfolio in read-only mode */
   readonly shouldUseLazyOnboarding: boolean;
   /** Whether to show the Wallet V4 Tour (e.g. drawer/dialog on Portfolio) */

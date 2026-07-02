@@ -28,7 +28,6 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
   const {
     safeAreaTop,
     shouldDisplayGraphRework,
-    shouldDisplayWallet40MainNav,
     isLNSUpsellBannerShown,
     source,
     onBackFromUpdate,
@@ -80,7 +79,7 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
         renderItem={({ item }) => item}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
-        useSafeArea={!shouldDisplayWallet40MainNav}
+        useSafeArea={false}
         testID="PortfolioReadOnlyItems"
       />
       <AnalyticsConsentDrawer />

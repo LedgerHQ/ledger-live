@@ -5,7 +5,6 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BluetoothRequired } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import TrackScreen from "~/analytics/TrackScreen";
@@ -24,7 +23,6 @@ import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import SafeAreaView from "~/components/SafeAreaView";
 import { wallet40HeaderOptions } from "~/screens/MyLedgerChooseDevice/wallet40HeaderOptions";
 
@@ -48,7 +46,6 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   const action = useManagerDeviceAction();
   const [device, setDevice] = useState<Device | null>();
   const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { params } = useRoute<NavigationProps["route"]>();
@@ -115,26 +112,19 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         });
         setIsHeaderOverridden(true);
       } else {
-        navigation.setOptions(
-          shouldDisplayWallet40MainNav
-            ? { ...wallet40HeaderOptions, headerRight: () => null }
-            : { headerLeft: () => null, headerRight: () => null, ...headerOptions },
-        );
+        navigation.setOptions({ ...wallet40HeaderOptions, headerRight: () => null });
         setIsHeaderOverridden(false);
       }
     },
-    [navigation, shouldDisplayWallet40MainNav],
+    [navigation],
   );
 
-  const Container = shouldDisplayWallet40MainNav ? SafeAreaView : TabBarSafeAreaView;
-  const containerProps = useMemo(
-    () => (shouldDisplayWallet40MainNav ? { isFlex: true, edges: ["left", "right"] as const } : {}),
-    [shouldDisplayWallet40MainNav],
-  );
+  const Container = SafeAreaView;
+  const containerProps = useMemo(() => ({ isFlex: true, edges: ["left", "right"] as const }), []);
 
   if (!isFocused) return null;
 
-  const showInlineTitle = !shouldDisplayWallet40MainNav && !isHeaderOverridden;
+  const showInlineTitle = !isHeaderOverridden;
 
   return (
     <Container {...containerProps}>

@@ -15,22 +15,6 @@ export const exposedManagerNavLockCallback = new BehaviorSubject<
   }>
 >(undefined);
 
-export function useManagerNavLockCallback() {
-  const [callback, setCallback] = useState<BehaviorSubjectType>();
-
-  useEffect(() => {
-    const subscription = exposedManagerNavLockCallback.subscribe(cb => {
-      setCallback(() => cb);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  return callback;
-}
-
 export function useIsNavLocked(): boolean {
   const [isLocked, setIsLocked] = useState(false);
 

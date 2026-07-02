@@ -141,7 +141,11 @@ export function renderRequestQuitApp({
     <Wrapper>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ modelId: device.modelId, key: "quitApp", theme })}
+          source={getDeviceAnimation({
+            modelId: device.modelId,
+            key: "quitApp",
+            theme,
+          })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
@@ -208,7 +212,11 @@ export function renderVerifyAddress({
     <Wrapper>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ modelId: device.modelId, key: "verify", theme })}
+          source={getDeviceAnimation({
+            modelId: device.modelId,
+            key: "verify",
+            theme,
+          })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
@@ -258,7 +266,11 @@ export function renderConfirmSwap({
         <Wrapper rowGap={16} mr="16px" ml="16px">
           <AnimationContainer marginTop="16px">
             <Animation
-              source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
+              source={getDeviceAnimation({
+                modelId: device.modelId,
+                key: "sign",
+                theme,
+              })}
               style={getDeviceAnimationStyles(device.modelId)}
             />
           </AnimationContainer>
@@ -305,7 +317,11 @@ export function renderAllowManager({
       </Flex>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ modelId: device.modelId, key: "allowManager", theme })}
+          source={getDeviceAnimation({
+            modelId: device.modelId,
+            key: "allowManager",
+            theme,
+          })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
@@ -783,7 +799,7 @@ export function RequiredFirmwareUpdate({
   const { t } = useTranslation();
   const track = useTrack();
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
-  const { shouldDisplayWallet40MainNav, shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
   const usbFwUpdateActivated = !!lastSeenDevice;
   const deviceName = getDeviceModel(device.modelId).productName;
@@ -830,27 +846,13 @@ export function RequiredFirmwareUpdate({
           },
         ],
       };
-      if (shouldDisplayWallet40MainNav) {
-        navigation.reset({
-          index: 1,
-          routes: [
-            { name: NavigatorName.Main },
-            { name: NavigatorName.MyLedger, state: myLedgerState },
-          ],
-        });
-      } else {
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: NavigatorName.Main,
-              state: {
-                routes: [{ name: NavigatorName.MyLedger, state: myLedgerState }],
-              },
-            },
-          ],
-        });
-      }
+      navigation.reset({
+        index: 1,
+        routes: [
+          { name: NavigatorName.Main },
+          { name: NavigatorName.MyLedger, state: myLedgerState },
+        ],
+      });
     }
   };
 
@@ -1102,7 +1104,11 @@ export function renderSecureTransferDeviceConfirmation({
     <Wrapper>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
+          source={getDeviceAnimation({
+            modelId: device.modelId,
+            key: "sign",
+            theme,
+          })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>

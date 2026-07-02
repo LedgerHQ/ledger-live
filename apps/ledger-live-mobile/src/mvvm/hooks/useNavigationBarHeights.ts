@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import { TAB_BAR_HEIGHT } from "~/components/TabBar/shared";
@@ -47,7 +46,6 @@ export interface NavigationBarHeights {
  * @returns `bottomBarHeight` - The height of the bottom bar
  */
 export function useNavigationBarHeights(): NavigationBarHeights {
-  const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("mobile");
   const insets = useSafeAreaInsets();
   const isTabBarVisible = useSelector(isMainNavigatorVisibleSelector);
 
@@ -63,14 +61,6 @@ export function useNavigationBarHeights(): NavigationBarHeights {
     }),
     [insets.top, topBarHeightWithBlur, isTabBarVisible],
   );
-
-  if (!isWallet40Enabled) {
-    throw new Error(
-      "[useNavigationBarHeights] This hook requires the 'lwmWallet40' feature flag to be enabled. " +
-        "Ensure that any component using this hook is only rendered within Wallet 4.0-gated navigation trees " +
-        "where useWalletFeaturesConfig('mobile').isEnabled is true, or handle this error via an error boundary.",
-    );
-  }
 
   return result;
 }

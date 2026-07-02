@@ -34,7 +34,7 @@ const TRACKING_BUTTON_EVENT = "button_clicked";
 export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResult => {
   const { t } = useTranslation();
   const { theme: lumenTheme } = useLumenTheme();
-  const { isWallet40DarkMode } = useWallet40Theme("mobile");
+  const { isDarkMode } = useWallet40Theme();
   const [imageLoaded, setImageLoaded] = useState(false);
   const navigation = useNavigation();
   const { bottomBarHeight } = useNavigationBarHeights();
@@ -93,11 +93,11 @@ export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResul
   );
 
   const backgroundImageSource = useMemo(() => {
-    if (isWallet40DarkMode) {
+    if (isDarkMode) {
       return require("~/images/card/card-bg.webp");
     }
     return require("~/images/portfolio/v4-light.webp");
-  }, [isWallet40DarkMode]);
+  }, [isDarkMode]);
 
   const topInset = hasExperimentalHeader ? safeAreaTop + HEADER_HEIGHT : HEADER_HEIGHT;
   const bottomInset = bottomBarHeight;

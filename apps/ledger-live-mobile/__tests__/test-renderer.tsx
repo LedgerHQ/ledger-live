@@ -162,7 +162,7 @@ type LooseFlagOverrides = {
  * merging with FEATURE_FLAGS_DEFAULTS to satisfy the strict PartialFeatures type.
  *
  * @example
- * renderHook(hook, { overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { mainNavigation: true } } }) })
+ * renderHook(hook, { overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true } }) })
  */
 function withFlagOverrides(
   flags: LooseFlagOverrides,

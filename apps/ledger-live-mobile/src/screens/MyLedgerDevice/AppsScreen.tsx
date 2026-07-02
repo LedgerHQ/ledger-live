@@ -51,7 +51,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
 import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
 import { LNSUpsellBanner } from "LLM/features/LNSUpsell";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 type Props = {
   state: State;
@@ -192,8 +191,6 @@ const AppsScreen = ({
     [scrollOffset],
   );
 
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
-
   const scrollToSearchBar = useCallback(() => {
     const minScrollOffset = headerLayoutRef.current?.height ?? 0;
     if (scrollOffset.current > minScrollOffset) return; // avoid scrolling past the search bar if it's already visible
@@ -214,7 +211,7 @@ const AppsScreen = ({
   const listHeader = useMemo(
     () => (
       <Flex pt={4} pb={8} onLayout={onHeaderLayout} backgroundColor="background.main">
-        {showFwUpdateBanner && shouldDisplayWallet40MainNav ? (
+        {showFwUpdateBanner ? (
           <Flex pb={16} testID="wallet40-firmware-update-banner">
             <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
           </Flex>
@@ -232,11 +229,6 @@ const AppsScreen = ({
           appList={deviceApps}
           onLanguageChange={onLanguageChange}
         >
-          {showFwUpdateBanner && !shouldDisplayWallet40MainNav ? (
-            <Flex p={6} pb={0} testID="firmware-update-banner">
-              <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-            </Flex>
-          ) : null}
           {!showAppUpdate && !showFwUpdateBanner ? (
             <Flex m={6} mb={0}>
               <LedgerSyncEntryPoint entryPoint={EntryPoint.manager} page="Manager" />
@@ -274,7 +266,6 @@ const AppsScreen = ({
       showFwUpdateBanner,
       state,
       updateModalOpened,
-      shouldDisplayWallet40MainNav,
     ],
   );
 

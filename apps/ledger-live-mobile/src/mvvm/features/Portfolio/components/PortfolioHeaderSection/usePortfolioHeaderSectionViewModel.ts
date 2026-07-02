@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   CONTENT_AREA_HEIGHT,
   MIN_CONTENT_AREA_HEIGHT,
@@ -16,7 +15,6 @@ interface PortfolioHeaderSectionViewModel {
 
 export function usePortfolioHeaderSectionViewModel(): PortfolioHeaderSectionViewModel {
   const { top: safeAreaTop } = useSafeAreaInsets();
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
 
   const [bannerHeight, setBannerHeight] = useState(0);
   const onBannerHeightChange = useCallback((height: number) => {
@@ -24,8 +22,7 @@ export function usePortfolioHeaderSectionViewModel(): PortfolioHeaderSectionView
   }, []);
 
   // Clear the floating Wallet 4.0 TopBar when a banner is shown.
-  const bannerTopInset =
-    shouldDisplayWallet40MainNav && bannerHeight > 0 ? OS_UPDATE_BANNER_TOP_GAP : 0;
+  const bannerTopInset = bannerHeight > 0 ? OS_UPDATE_BANNER_TOP_GAP : 0;
 
   // Shrink the hero by the banner height (floored) so total header height stays ~constant.
   const minContentHeight =

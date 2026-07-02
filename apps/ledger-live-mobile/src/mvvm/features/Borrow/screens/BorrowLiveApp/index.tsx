@@ -27,7 +27,7 @@ export function BorrowLiveAppView({
   webviewInputs,
   customHandlers,
 }: BorrowLiveAppViewProps) {
-  const { backgroundColor } = useWallet40Theme("mobile");
+  const { backgroundColor } = useWallet40Theme();
 
   if (error) {
     return (

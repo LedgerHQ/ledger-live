@@ -20,7 +20,6 @@ const UpdateBannerView = ({
   unsupportedUpdateDrawerOpened,
   closeUnsupportedUpdateDrawer,
   isUpdateSupportedButDeviceNotWired,
-  shouldDisplayWallet40MainNav,
   isInMyLedgerDeviceScreen,
   debugBannerMode,
 }: ViewProps) => {
@@ -64,7 +63,7 @@ const UpdateBannerView = ({
     );
   }
 
-  if (shouldDisplayWallet40MainNav && !isInMyLedgerDeviceScreen) {
+  if (!isInMyLedgerDeviceScreen) {
     return (
       <Wallet40PortfolioBanner
         deviceIcon={getDeviceSymbol(lastConnectedDevice)}
@@ -74,7 +73,7 @@ const UpdateBannerView = ({
     );
   }
 
-  if (shouldDisplayWallet40MainNav && isInMyLedgerDeviceScreen) {
+  if (isInMyLedgerDeviceScreen) {
     return (
       <Wallet40MyLedgerBanner
         productName={productName}

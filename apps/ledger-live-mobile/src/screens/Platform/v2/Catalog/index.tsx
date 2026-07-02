@@ -7,8 +7,6 @@ import { useTranslation } from "~/context/Locale";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NavigationProps } from "../types";
 import ArrowLeft from "~/icons/ArrowLeft";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Layout } from "./Layout";
 import { useCatalog } from "../hooks";
@@ -22,13 +20,8 @@ import { LocalLiveApp } from "./LocalLiveApp";
 import { goBackFromWallet40Catalog } from "./navigation";
 
 const SAFE_AREA_EDGES_WALLET40 = ["top", "left", "right"] as const;
-const SAFE_AREA_EDGES_LEGACY = ["top", "bottom", "left", "right"] as const;
 
-function CatalogContent({
-  shouldDisplayWallet40MainNav,
-}: {
-  readonly shouldDisplayWallet40MainNav: boolean;
-}) {
+function CatalogContent() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationProps["navigation"]>();
@@ -56,12 +49,7 @@ function CatalogContent({
           exiting={FadeOut.duration(200)}
           style={{ flex: 1 }}
         >
-          <Search
-            title={shouldDisplayWallet40MainNav ? undefined : title}
-            disclaimer={disclaimer}
-            search={search}
-            isLegacySearch={!shouldDisplayWallet40MainNav}
-          />
+          <Search title={undefined} disclaimer={disclaimer} search={search} />
         </Animated.View>
       ) : (
         <Animated.View
@@ -73,19 +61,17 @@ function CatalogContent({
           <Layout
             listStickyElement={[2]}
             topHeaderContent={
-              shouldDisplayWallet40MainNav ? (
-                <TouchableOpacity
-                  hitSlop={{ bottom: 10, left: 24, right: 24, top: 10 }}
-                  style={{ paddingVertical: 16 }}
-                  onPress={() => goBackFromWallet40Catalog(navigation)}
-                  accessibilityLabel={t("common.back")}
-                  accessibilityRole="button"
-                >
-                  <ArrowLeft size={18} color={colors.neutral.c100} testID="catalog-back-arrow" />
-                </TouchableOpacity>
-              ) : undefined
+              <TouchableOpacity
+                hitSlop={{ bottom: 10, left: 24, right: 24, top: 10 }}
+                style={{ paddingVertical: 16 }}
+                onPress={() => goBackFromWallet40Catalog(navigation)}
+                accessibilityLabel={t("common.back")}
+                accessibilityRole="button"
+              >
+                <ArrowLeft size={18} color={colors.neutral.c100} testID="catalog-back-arrow" />
+              </TouchableOpacity>
             }
-            title={shouldDisplayWallet40MainNav ? title : undefined}
+            title={title}
             middleHeaderContent={
               <>
                 <Flex marginBottom={16}>
@@ -120,19 +106,9 @@ function CatalogContent({
 }
 
 export function Catalog() {
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
-
-  if (shouldDisplayWallet40MainNav) {
-    return (
-      <SafeAreaView isFlex edges={SAFE_AREA_EDGES_WALLET40}>
-        <CatalogContent shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav} />
-      </SafeAreaView>
-    );
-  }
-
   return (
-    <TabBarSafeAreaView edges={SAFE_AREA_EDGES_LEGACY}>
-      <CatalogContent shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav} />
-    </TabBarSafeAreaView>
+    <SafeAreaView isFlex edges={SAFE_AREA_EDGES_WALLET40}>
+      <CatalogContent />
+    </SafeAreaView>
   );
 }

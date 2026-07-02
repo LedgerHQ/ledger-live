@@ -5,7 +5,6 @@ export const lwmWallet40 = flagWith(
   {
     graphRework: z.boolean(),
     quickActionCtas: z.boolean(),
-    mainNavigation: z.boolean(),
     tour: z.boolean(),
     lazyOnboarding: z.boolean(),
     assetSection: z.boolean(),
@@ -25,7 +24,6 @@ export const lwmWallet40 = flagWith(
       graphRework: true,
       quickActionCtas: true,
       tour: true,
-      mainNavigation: true,
       lazyOnboarding: true,
       assetSection: false,
       operationsList: false,
