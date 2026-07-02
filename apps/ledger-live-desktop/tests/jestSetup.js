@@ -1,5 +1,10 @@
+import { setEnv } from "@ledgerhq/live-env";
 import "../src/live-common-set-supported-currencies";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+
+// The crypto-assets token store validates a non-empty LEDGER_CLIENT_VERSION (calApiExtra) at store
+// creation; the app sets it at boot, so tests must provide one too.
+setEnv("LEDGER_CLIENT_VERSION", "jest");
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import { setCoinConfig } from "@ledgerhq/coin-evm/config";
 LiveConfig.setConfig(liveConfig);

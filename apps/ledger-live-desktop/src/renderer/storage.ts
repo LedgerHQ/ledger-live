@@ -18,7 +18,7 @@ import { marketStoreSelector } from "./reducers/market";
 import { marketBannerStoreSelector } from "./reducers/marketBanner";
 import { knownDevicesStoreSelector } from "./reducers/knownDevices";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
-import type { PersistedCAL } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import type { PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@ledgerhq/client-ids/store";
 import type { FeatureFlagsState } from "@shared/feature-flags";
 
@@ -111,7 +111,8 @@ const transforms: Transforms = {
       }
       return accounts;
     },
-    set: async accounts => Promise.all((accounts || []).map(accountModel.encode)),
+    set: async accounts =>
+      Promise.all((accounts || []).map(account => accountModel.encode(account))),
   },
 };
 

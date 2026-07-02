@@ -790,6 +790,9 @@ importers:
       '@datadog/browser-rum':
         specifier: 6.30.1
         version: 6.30.1(@datadog/browser-logs@6.30.1)
+      '@domain/api-currency-token':
+        specifier: workspace:^
+        version: link:../../domain/api/currency-token
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
@@ -799,6 +802,9 @@ importers:
       '@features/flow-market-banner':
         specifier: workspace:^
         version: link:../../features/flow/market-banner
+      '@features/platform-currencies':
+        specifier: workspace:^
+        version: link:../../features/platform/currencies
       '@features/platform-feature-flags':
         specifier: workspace:^
         version: link:../../features/platform/feature-flags
@@ -1455,9 +1461,15 @@ importers:
       '@datadog/mobile-react-navigation':
         specifier: 2.8.2
         version: 2.8.2(@datadog/mobile-react-native@2.8.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@domain/api-currency-token':
+        specifier: workspace:^
+        version: link:../../domain/api/currency-token
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
+      '@features/platform-currencies':
+        specifier: workspace:^
+        version: link:../../features/platform/currencies
       '@features/platform-feature-flags':
         specifier: workspace:^
         version: link:../../features/platform/feature-flags
