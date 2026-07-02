@@ -72,7 +72,7 @@ describe("buildSignOperation (legacy bridge)", () => {
     mockSign.mockResolvedValue({ signature_compact: new Uint8Array([1, 2, 3]) });
   });
 
-  //Regression test for LIVE-31661 (broadcast rejects exponential BigNumber strings at ≥ 1e21 attoFIL)
+  // Regression test for LIVE-31661 (broadcast rejects exponential BigNumber strings at ≥ 1e21 attoFIL)
   it.each([
     [999, "999000000000000000000"],
     [1000, "1000000000000000000000"],

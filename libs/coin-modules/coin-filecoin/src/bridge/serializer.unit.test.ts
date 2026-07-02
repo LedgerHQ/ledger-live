@@ -59,7 +59,7 @@ function makeTx(fil: number): Transaction {
 describe("toCBOR (legacy bridge serializer)", () => {
   beforeEach(() => mockMessageCtor.mockClear());
 
-  //Regression test for LIVE-31661: value must be serialized as a plain integer string (no exponential notation).
+  // Regression test for LIVE-31661: value must be serialized as a plain integer string (no exponential notation).
   it.each([
     [999, "999000000000000000000"],
     [1000, "1000000000000000000000"],
