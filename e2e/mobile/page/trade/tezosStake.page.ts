@@ -15,8 +15,11 @@ export default class TezosStakePage {
   unstakeAmountContinueId = "tezos-unstake-amount-continue";
   // Earning-choice chooser (TezosDelegationFlow -> TezosEarnRewards) and the delegation summary it leads to
   earnRewardsStartButtonId = "tezos-earn-rewards-start-button";
+  earnRewardsDelegateStepId = "tezos-earn-rewards-delegate-step";
+  earnRewardsStakeStepId = "tezos-earn-rewards-stake-step";
   delegationSummaryValidatorId = "tezos-delegation-summary-validator";
   delegationSummaryContinueId = "tezos-summary-continue-button";
+  delegationSuccessStakeId = "tezos-delegation-success-stake-button";
   awaitingDelegationId = "tezos-stake-awaiting-delegation";
   // Account staking-section cards (families/tezos/Delegations)
   stakingRowId = "tezos-staking-row";
@@ -27,10 +30,14 @@ export default class TezosStakePage {
   changeValidatorActionId = "TezosChangeBaker";
   endDelegationActionId = "TezosEndDelegation";
   // Unstake-required guard drawer
+  unstakeRequiredTitleId = "tezos-unstake-required-title";
   unstakeRequiredCloseId = "tezos-unstake-required-close";
 
   @Step("Verify the earning-choice chooser is shown")
   async verifyEarningChoice() {
+    // Assert the journey cards, not just the CTA, so this can't pass on the direct stake step.
+    await waitForElementById(this.earnRewardsDelegateStepId);
+    await waitForElementById(this.earnRewardsStakeStepId);
     await waitForElementById(this.earnRewardsStartButtonId);
   }
 
@@ -48,6 +55,12 @@ export default class TezosStakePage {
   async continueFromDelegationSummary() {
     await waitForElementById(enabled(this.delegationSummaryContinueId));
     await tapById(enabled(this.delegationSummaryContinueId));
+  }
+
+  @Step("Continue to staking from the delegation success screen")
+  async stakeAfterDelegation() {
+    await waitForElementById(enabled(this.delegationSuccessStakeId));
+    await tapById(enabled(this.delegationSuccessStakeId));
   }
 
   @Step("Verify the stake step is reached after delegating")
@@ -111,6 +124,7 @@ export default class TezosStakePage {
 
   @Step("Verify the unstake-required guard is shown")
   async verifyUnstakeRequired() {
+    await waitForElementById(this.unstakeRequiredTitleId);
     await waitForElementById(this.unstakeRequiredCloseId);
   }
 

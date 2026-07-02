@@ -77,7 +77,7 @@ describe("Tezos DelegationFlow ValidationSuccess", () => {
 
   it("chains into the stake flow when stakeAfter is set", () => {
     render(<ValidationSuccess {...makeProps({ stakeAfter: true, parentId: "parent-1" })} />);
-    fireEvent.press(screen.getByTestId("TezosDelegationSuccessStake"));
+    fireEvent.press(screen.getByTestId("tezos-delegation-success-stake-button"));
     expect(mockPop).toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.TezosStakeFlow, {
       screen: ScreenName.TezosStakeAmount,
@@ -88,7 +88,7 @@ describe("Tezos DelegationFlow ValidationSuccess", () => {
   it("shows the default view-details action and no stake CTA without stakeAfter", () => {
     render(<ValidationSuccess {...makeProps()} />);
     expect(screen.getByTestId("has-view-details")).toBeTruthy();
-    expect(screen.queryByTestId("TezosDelegationSuccessStake")).toBeNull();
+    expect(screen.queryByTestId("tezos-delegation-success-stake-button")).toBeNull();
   });
 
   it("forwards the originating source into the stake flow", () => {
@@ -96,7 +96,7 @@ describe("Tezos DelegationFlow ValidationSuccess", () => {
     render(
       <ValidationSuccess {...makeProps({ stakeAfter: true, parentId: "parent-1", source })} />,
     );
-    fireEvent.press(screen.getByTestId("TezosDelegationSuccessStake"));
+    fireEvent.press(screen.getByTestId("tezos-delegation-success-stake-button"));
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.TezosStakeFlow, {
       screen: ScreenName.TezosStakeAmount,
       params: { accountId: "tezos-acc-1", parentId: "parent-1", source },

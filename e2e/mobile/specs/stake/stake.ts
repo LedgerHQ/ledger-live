@@ -14,8 +14,6 @@ const TEZOS_STAKING_TAGS = [
   "@family-tezos",
 ];
 
-// Mobile twin of desktop's lldTezosStaking; the staking screens, routing and the account-screen
-// staking section are all gated on it (default off).
 const STAKING_FEATURE_FLAGS = { llmTezosStaking: { enabled: true } };
 
 // Broadcast follows DISABLE_TRANSACTION_BROADCAST via setupEnvironment (off by default; "0" to
@@ -56,15 +54,13 @@ export function runEarningChoiceTezos(
       await app.speculos.goToSettings();
       await app.speculos.activateExpertMode();
       await goToTezosAccount(delegation);
-      // Funded + undelegated => Earn opens the earning-choice chooser (not the legacy delegate starter).
       await app.account.tapEarn();
       await app.tezosStake.verifyEarningChoice();
       await app.tezosStake.startEarning();
-      // Undelegated => the chooser CTA leads to the delegation summary, then signs the delegation and
-      // lands on the stake step (awaiting if un-broadcast, amount input once it confirms).
       await app.tezosStake.verifyDelegationSummary();
       await app.tezosStake.continueFromDelegationSummary();
       await app.speculos.signDelegationTransaction(delegation);
+      await app.tezosStake.stakeAfterDelegation();
       await app.tezosStake.verifyStakeStepAfterDelegation();
     });
   });
@@ -85,12 +81,10 @@ export function runStakeTezos(
       await app.speculos.goToSettings();
       await app.speculos.activateExpertMode();
       await goToTezosAccount(delegation);
-      // Already delegated => Earn opens the stake amount step directly (skipDelegation).
       await app.account.tapEarn();
       await app.tezosStake.fillStakeAmount(delegation.amount);
       await app.tezosStake.continueStakeAmount();
       await app.deviceValidation.expectDeviceValidationScreen();
-      // Tezos signs stake via the same on-device review flow as delegation.
       await app.speculos.signDelegationTransaction(delegation);
       await app.common.successViewDetails();
       await verifyTezosStakingOperationDetails(delegation, "stake");
@@ -113,7 +107,6 @@ export function runUnstakeTezos(
       await app.speculos.goToSettings();
       await app.speculos.activateExpertMode();
       await goToTezosAccount(delegation);
-      // Delegated + staked => the staking section card opens the unstake action.
       await app.tezosStake.openUnstakeFromStakingSection();
       await app.tezosStake.fillUnstakeAmount(delegation.amount);
       await app.tezosStake.continueUnstakeAmount();
@@ -143,7 +136,6 @@ export function runUnstakeRequiredTezos(
 
     it(title, async () => {
       await goToTezosAccount(delegation);
-      // Delegated + staked => both actions hit the "unstake first" guard instead of the real flow.
       if (action === "changeValidator") {
         await app.tezosStake.openChangeValidator();
       } else {
