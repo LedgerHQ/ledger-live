@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useCallback, useRef } from "react";
+import React, { useState, useLayoutEffect, useCallback, useRef, useImperativeHandle } from "react";
 import { BigNumber } from "bignumber.js";
 import { uncontrollable } from "uncontrollable";
 import styled from "styled-components";
@@ -115,17 +115,11 @@ function InputCurrency(props: Props) {
     return { isFocused, displayValue, rawValue: "" };
   });
 
-  // Merge our caret-tracking ref with any parent-forwarded ref.
+  // Hold the DOM input via an object ref so Input's click-to-focus (which needs a
+  // ref exposing `.current`) keeps working, and expose it to any forwarded ref.
   const innerRef = useRef<HTMLInputElement | null>(null);
   const caretRef = useRef<number | null>(null);
-  const setRefs = useCallback(
-    (node: HTMLInputElement | null) => {
-      innerRef.current = node;
-      if (typeof forwardedRef === "function") forwardedRef(node);
-      else if (forwardedRef) forwardedRef.current = node;
-    },
-    [forwardedRef],
-  );
+  useImperativeHandle(forwardedRef, () => innerRef.current as HTMLInputElement, []);
 
   const syncInput = useCallback(
     (isFocused: boolean) => {
@@ -239,7 +233,7 @@ function InputCurrency(props: Props) {
       {...rest}
       disabled={disabled}
       ff="Inter"
-      ref={setRefs}
+      ref={innerRef}
       value={state.displayValue}
       onChange={handleChange}
       onFocus={handleFocus}

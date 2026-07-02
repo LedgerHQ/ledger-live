@@ -72,4 +72,19 @@ describe("InputCurrency — caret preservation", () => {
     expect(input.value).toBe("3.014305248"); // value unchanged
     expect(input.selectionStart).toBe(11); // caret stays at the end, no jump
   });
+
+  it("forwards a ref to the underlying input element", () => {
+    const ref = React.createRef<HTMLInputElement>();
+    render(
+      <InputCurrency
+        ref={ref}
+        defaultUnit={gweiUnit}
+        value={new BigNumber("1000000000")} // 1 Gwei
+        onChange={() => {}}
+      />,
+    );
+
+    expect(ref.current).toBeInstanceOf(HTMLInputElement);
+    expect(ref.current).toBe(screen.getByRole("textbox"));
+  });
 });
