@@ -5,7 +5,11 @@ import {
 } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/coin-evm/errors";
-import { EvmTransactionEIP1559, EvmTransactionLegacy, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import {
+  EvmTransactionEIP1559,
+  EvmTransactionLegacy,
+  TransactionStatus,
+} from "@ledgerhq/coin-evm/types/index";
 import { getMinEip1559Fees, getMinLegacyFees } from "./getMinEditTransactionFees";
 import { validateEditTransaction, getEditTransactionStatus } from "./getTransactionStatus";
 
