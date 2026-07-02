@@ -7,6 +7,7 @@ import {
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { savePostOnboardingState } from "~/db";
 import type { State } from "~/reducers/types";
+import logger from "~/logger";
 
 type BackfillDeps = {
   now?: Date;
@@ -27,6 +28,6 @@ export function backfillOnboardingDate(
   if (hasCompletedOnboardingSelector(state) && onboardingDateSelector(state) == null) {
     store.dispatch(setPostOnboardingDate({ onboardingDate: now }));
     // Persist immediately because DBSave baselines after this migration runs.
-    void save(postOnboardingSelector(store.getState()));
+    save(postOnboardingSelector(store.getState())).catch(error => logger.critical(error));
   }
 }
