@@ -448,9 +448,9 @@ function mergeAuxiliaryTx(
     return;
   }
 
-  // In Tezos, ops sharing the same hash form a batch: if any op fails, later
-  // ops are backtracked. Wiping operations here is safe because the on-chain
-  // state was not modified for any op in the batch.
+  // When an auxiliary op (reveal, delegation, etc.) failed, we mark the whole
+  // merged transaction as failed. This is a modeling choice: the auxiliary op
+  // shares the same hash and its failure typically means the batch was aborted.
   if (auxTx.failed) {
     existing.failed = true;
     existing.operations = [];
