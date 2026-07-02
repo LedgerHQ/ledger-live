@@ -10,6 +10,12 @@ import type {
 import type { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
 import type { DeviceModelId as LLDeviceModelId } from "@ledgerhq/types-devices";
 
+/**
+ * Extracts UI deprecation rules for the connected device.
+ *
+ * Deprecation configs come from Ledger Live remote config and use Ledger Live
+ * device model ids, while the connected device model comes from DMK.
+ */
 export function extractDeviceDeprecationRules(
   configs: DeviceDeprecationConfigs,
   dmkDeviceModelId: DMKDeviceModelId,
