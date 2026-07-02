@@ -65,7 +65,6 @@ import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setu
 import { setSuiGraphqlEnabled } from "@ledgerhq/live-common/families/sui/setup";
 import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
-import { useBackfillOnboardingDate } from "LLD/hooks/useBackfillOnboardingDate";
 import GlobalDialogs from "LLD/features/GlobalDialogs";
 import GenericAwarenessModalAppStart from "LLD/features/GenericAwarenessModal/GenericAwarenessModalAppStart";
 import GlobalDrawers from "LLD/features/GlobalDrawers";
@@ -426,7 +425,6 @@ export default function Default() {
   useFetchCurrencyFrom();
   useRecoverRestoreOnboarding();
   useAutoDismissPostOnboardingEntryPoint();
-  useBackfillOnboardingDate();
   useEnforceSupportedLanguage();
 
   useEffect(() => {

@@ -1,7 +1,14 @@
 import React, { useEffect, useState, ReactNode, useCallback } from "react";
 import { Provider } from "react-redux";
 import { Store } from "redux";
-import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
+import {
+  importPostOnboardingState,
+  setPostOnboardingDate,
+} from "@ledgerhq/live-common/postOnboarding/actions";
+import {
+  onboardingDateSelector,
+  postOnboardingSelector,
+} from "@ledgerhq/live-common/postOnboarding/reducer";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import {
   findCryptoCurrencyById,
@@ -24,6 +31,7 @@ import {
   getHistory,
   getKnownDevices,
   getPostOnboardingState,
+  savePostOnboardingState,
   getProtect,
   getMarketState,
   getMarketListConfig,
@@ -39,7 +47,10 @@ import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { importBle } from "~/actions/ble";
 import { importKnownDevices } from "~/reducers/knownDevices";
 import { updateProtectData, updateProtectStatus } from "~/actions/protect";
-import { INITIAL_STATE as settingsState } from "~/reducers/settings";
+import {
+  INITIAL_STATE as settingsState,
+  hasCompletedOnboardingSelector,
+} from "~/reducers/settings";
 import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
 import { importMarket } from "~/actions/market";
 import { importMarketListConfig } from "~/reducers/market";
@@ -172,6 +183,21 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       if (postOnboardingState) {
         store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
+      }
+
+      // One-off migration at store hydration: legacy users who completed onboarding
+      // before `onboardingDate` existed have no date stored. Seed it once here so the
+      // app starts with correct state and components only read it. Never overwrite an
+      // existing date (new onboardings set the real completion date via POST_ONBOARDING_INIT).
+      if (
+        hasCompletedOnboardingSelector(store.getState()) &&
+        onboardingDateSelector(store.getState()) == null
+      ) {
+        store.dispatch(setPostOnboardingDate({ onboardingDate: new Date() }));
+        // Persist immediately: the post-onboarding DBSave effect baselines to the current
+        // (already-migrated) state when it mounts and would otherwise skip this write,
+        // re-seeding the date on every launch.
+        void savePostOnboardingState(postOnboardingSelector(store.getState()));
       }
 
       if (marketState) {

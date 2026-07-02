@@ -69,7 +69,6 @@ import { selectFeature, type FeatureId } from "@shared/feature-flags";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { useBackfillOnboardingDate } from "LLM/hooks/useBackfillOnboardingDate";
 import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { registerTransports } from "~/services/registerTransports";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
@@ -231,7 +230,6 @@ function App() {
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useAutoDismissPostOnboardingEntryPoint();
-  useBackfillOnboardingDate();
 
   return (
     <>
