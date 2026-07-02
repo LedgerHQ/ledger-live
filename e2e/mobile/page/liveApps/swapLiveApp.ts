@@ -9,6 +9,10 @@ import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 // before the sign-permit button (Step 2) appears (the app shows a "1-5 mins" estimate).
 const APPROVAL_PROCESSING_TIMEOUT = 300_000;
 
+// Provider UI names (e.g. "Swaps.xyz", "LI.FI") can contain regex metacharacters. Escape them
+// before embedding in a RegExp so they match literally instead of altering the pattern.
+const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -263,14 +267,24 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Check exchange button has provider name: $0")
-  async checkExchangeButtonHasProviderName(provider: string): Promise<string> {
+  async checkExchangeButtonHasProviderName(
+    provider: string,
+    allowApprovalCta = false,
+  ): Promise<string> {
     const selector = this.providerExecuteButtonCss(provider);
     const button = getWebElementByCssSelector(selector);
     await waitWebElement(button);
     const actualButtonText =
       (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
-    jestExpect(actualButtonText).toMatch(new RegExp(`^(Swap|Continue) with ${provider}$`, "i"));
+    const ctaVerbs = allowApprovalCta ? "Swap|Continue|Approve spending" : "Swap|Continue";
+    jestExpect(actualButtonText).toMatch(
+      new RegExp(`^(${ctaVerbs}) with ${escapeRegExp(provider)}$`, "i"),
+    );
     return actualButtonText;
+  }
+
+  isApprovalRequired(buttonText: string, provider: string): boolean {
+    return new RegExp(`^Approve spending with ${escapeRegExp(provider)}$`, "i").test(buttonText);
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')
