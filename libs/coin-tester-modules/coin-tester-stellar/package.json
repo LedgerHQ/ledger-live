@@ -57,7 +57,7 @@
     "unimported": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-stellar"
   },
   "dependencies": {
-    "@ledgerhq/coin-stellar": "workspace:^",
+    "@ledgerhq/coin-stellar": "catalog:",
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
