@@ -1,7 +1,6 @@
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { killApp } from "../../helpers/commonHelpers";
 
 const testConfig = {
   tmsLinks: ["B2CQA-5405", "B2CQA-5426", "B2CQA-5427"],
@@ -15,7 +14,6 @@ describe("Wallet 4.0 - MyWallet", () => {
       userdata: "speculos-x-other-account",
       featureFlags: WALLET_40_FEATURE_FLAGS,
     });
-    await killApp();
     await app.mainNavigation.waitForWallet40Ready();
   });
 

@@ -122,6 +122,21 @@ export function killApp(bundleId?: string): Promise<void> {
   });
 }
 
+/**
+ * Kill the app with an optional delay before or after the kill.
+ * @param delayMs wait duration in milliseconds
+ * @param options.when `"before"` (default) waits then kills; `"after"` kills then waits
+ */
+export async function killAppWithDelay(
+  delayMs: number,
+  options: { bundleId?: string; when?: "before" | "after" } = {},
+): Promise<void> {
+  const when = options.when ?? "before";
+  if (when === "before") await delay(delayMs);
+  await killApp(options.bundleId);
+  if (when === "after") await delay(delayMs);
+}
+
 export function setupEnvironment() {
   setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
   setEnv("MOCK", "");

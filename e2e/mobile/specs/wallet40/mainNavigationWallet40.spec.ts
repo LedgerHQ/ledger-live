@@ -1,6 +1,7 @@
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { killApp, killAppWithDelay } from "../../helpers/commonHelpers";
 
 setTeamOwner(Team.WALLET_XP);
 $TmsLink("B2CQA-4383");
@@ -14,6 +15,10 @@ describe("Wallet 4.0 - Main Navigation", () => {
       userdata: "skip-onboarding",
       featureFlags: WALLET_40_FEATURE_FLAGS,
     });
+    await app.mainNavigation.expectPortfolioPageVisible();
+    await app.mainNavigation.expectPortfolioPageVisible(); // fails → test_fn_failure
+    killAppWithDelay(50, { when: "before" });
+
     await app.mainNavigation.waitForWallet40Ready();
   });
 
