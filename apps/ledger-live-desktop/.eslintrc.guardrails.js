@@ -13,6 +13,33 @@ const shellOpenExternalRestrictions = [
   },
 ];
 
+const sendRestrictions = [
+  {
+    selector: "BinaryExpression[operator=/^[=!]==?$/] MemberExpression[property.name='family']",
+    message:
+      "Send must not branch on `.family`. Move family-specific behavior behind the send flow/families contract.",
+  },
+  {
+    selector: "CallExpression[callee.property.name='includes'] MemberExpression[property.name='family']",
+    message:
+      "Send must not check `.family` with includes(). Move family-specific behavior behind the send flow/families contract.",
+  },
+  {
+    selector:
+      "SwitchStatement[discriminant.property.name='family'], SwitchStatement[discriminant.expression.property.name='family']",
+    message:
+      "Send must not switch on `.family`. Move family-specific behavior behind the send flow/families contract.",
+  },
+];
+
+const sendImportRestrictions = [
+  {
+    group: ["@ledgerhq/coin-*", "@ledgerhq/coin-*/**"],
+    message:
+      "Send must not import coin modules. Move family-specific behavior behind the send flow/families contract.",
+  },
+];
+
 module.exports = {
   env: { browser: true, es2022: true, node: true },
   parser: "@typescript-eslint/parser",
@@ -28,6 +55,13 @@ module.exports = {
       excludedFiles: ["src/renderer/linking.ts", "src/main/openURL.ts"],
       rules: {
         "no-restricted-syntax": ["error", ...shellOpenExternalRestrictions],
+      },
+    },
+    {
+      files: ["src/mvvm/features/Send/**/*.ts", "src/mvvm/features/Send/**/*.tsx"],
+      rules: {
+        "no-restricted-imports": ["error", { patterns: sendImportRestrictions }],
+        "no-restricted-syntax": ["error", ...sendRestrictions],
       },
     },
   ],
