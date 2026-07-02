@@ -52,6 +52,8 @@ export class SwapPage extends WebViewAppPage {
   private readonly fromAccountBalance = "from-account-balance";
   private readonly percentageButtonTestId = (key: PercentageKey) =>
     `from-account-percentage-${key}`;
+  private readonly openTooltipSelector =
+    '[data-slot="tooltip-content"]:not([data-state="closed"]) [role="tooltip"]';
   private quotesCountdown = "quotes-countdown";
   private networkFeesInfoIcon = "quoteCardTestId-networkFees-infoIcon";
   private rateInfoIcon = "QuoteCard-rate-infoIcon";
@@ -603,16 +605,23 @@ export class SwapPage extends WebViewAppPage {
     return !classAttr?.includes("cursor-not-allowed");
   }
 
-  // Hovers the trigger and reads the currently open Radix tooltip. Waits for
-  // the tooltip to settle first: reading role="tooltip" immediately after
-  // hover() can still match a previous trigger's stale, not-yet-closed tooltip.
-  private async getVisibleTooltipText(hoverTrigger: () => Promise<void>) {
+  // Hovers a trigger and asserts the tooltip text. Radix keeps a just-left
+  // trigger's tooltip open (data-state !== "closed") until the newly-hovered
+  // trigger's tooltip finishes its open delay, so "read whichever tooltip is
+  // open" returns the stale one when moving between the 25/50/75 buttons.
+  // Polling allTextContents (which never throws strict-mode on multiple matches)
+  // until the expected text appears waits that transition out. We read the
+  // visually-hidden span[role="tooltip"] that mirrors the content, so the text
+  // comes back once (the visible wrapper's own textContent would be doubled).
+  private async checkTooltipText(hoverTrigger: () => Promise<void>, expected: string) {
     const webview = await this.getWebView();
     await hoverTrigger();
-    await webview.waitForTimeout(500);
-    const tooltip = webview.getByRole("tooltip");
-    await expect(tooltip).toBeVisible();
-    return await tooltip.textContent();
+    const tooltips = webview.locator(this.openTooltipSelector);
+    await expect
+      .poll(async () => (await tooltips.allTextContents()).map(text => text.trim()), {
+        timeout: 15_000,
+      })
+      .toContain(expected);
   }
 
   @step("Check if Max button is enabled")
@@ -620,19 +629,19 @@ export class SwapPage extends WebViewAppPage {
     return this.isEnabledByCursorClass(this.swapMaxToggle);
   }
 
-  @step("Get Max button tooltip text")
-  async getMaxTooltipText() {
+  @step("Check Max button tooltip text: $0")
+  async checkMaxTooltip(expected: string) {
     const webview = await this.getWebView();
-    return this.getVisibleTooltipText(() => webview.getByTestId(this.swapMaxToggle).hover());
+    await this.checkTooltipText(() => webview.getByTestId(this.swapMaxToggle).hover(), expected);
   }
 
-  @step("Get percentage button tooltip text: $0")
-  async getPercentageTooltipText(key: PercentageKey) {
+  @step("Check percentage button $0 tooltip text: $1")
+  async checkPercentageTooltip(key: PercentageKey, expected: string) {
     const webview = await this.getWebView();
-    return this.getVisibleTooltipText(async () => {
+    await this.checkTooltipText(async () => {
       await this.hoverAmountField();
       await webview.getByTestId(this.percentageButtonTestId(key)).hover();
-    });
+    }, expected);
   }
 
   @step("Click quick percentage button: $0")
