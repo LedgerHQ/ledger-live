@@ -129,7 +129,7 @@ describe("StepConfirmationFooter", () => {
     expect(props.onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("renders second close button when operation exists", () => {
+  it("renders a close button and a view-details button when operation exists", () => {
     const operation = createMockOperation();
     const props = createMockStepProps({
       optimisticOperation: operation,
@@ -137,8 +137,9 @@ describe("StepConfirmationFooter", () => {
 
     render(<StepConfirmationFooter {...props} />);
 
-    const buttons = screen.getAllByText("Close");
-    expect(buttons).toHaveLength(2);
+    expect(screen.getByTestId("modal-close-button")).toBeInTheDocument();
+    expect(screen.getByText("Close")).toBeInTheDocument();
+    expect(screen.getByText("View details")).toBeInTheDocument();
   });
 
   it("renders retry button when there is an error", () => {
