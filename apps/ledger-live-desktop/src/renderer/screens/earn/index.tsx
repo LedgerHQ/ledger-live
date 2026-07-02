@@ -72,6 +72,15 @@ const Earn = () => {
     [stakePrograms],
   );
 
+  const swapToEarnFlag = useFeature("swapToEarn");
+  const swapToEarnParam = useMemo(
+    () =>
+      swapToEarnFlag
+        ? JSON.stringify({ enabled: swapToEarnFlag.enabled, params: swapToEarnFlag.params })
+        : undefined,
+    [swapToEarnFlag],
+  );
+
   const { updateManifests } = useRemoteLiveAppContext();
 
   const inputs = useMemo(() => {
@@ -91,6 +100,7 @@ const Earn = () => {
       stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
       stakeCurrenciesParam: stakeCurrenciesParam ? JSON.stringify(stakeCurrenciesParam) : undefined,
       ethDepositCohort,
+      swapToEarn: swapToEarnParam,
     };
 
     return {
@@ -114,6 +124,7 @@ const Earn = () => {
     stakeProgramsParam,
     stakeCurrenciesParam,
     ethDepositCohort,
+    swapToEarnParam,
   ]);
 
   if (!manifest) {
