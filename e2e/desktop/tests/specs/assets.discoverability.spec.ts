@@ -66,7 +66,7 @@ test.describe("Stocks - holdings", () => {
       await app.portfolio.clickStocksSectionTitle();
 
       await expect(app.layout.getPage()).toHaveURL(/\/assets\?category=stocks/);
-      await expect(app.assets.cryptoAssetPageContent).toBeVisible();
+      await expect(app.portfolio.assetsView.categoryPageContent).toBeVisible();
     },
   );
 });

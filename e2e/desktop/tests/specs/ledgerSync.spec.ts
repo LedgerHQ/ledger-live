@@ -77,7 +77,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await addBugLink(["LIVE-31799"]);
 
-      await app.portfolio.checkAddAccountButtonVisibility();
+      await app.portfolio.expectAddAccountButtonVisible();
 
       await app.mainNavigation.openSettings();
       await app.settings.enableWalletSync();
