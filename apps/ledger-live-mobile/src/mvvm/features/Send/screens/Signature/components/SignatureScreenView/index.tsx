@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { View } from "react-native";
 import {
   DeviceIntentExecutorLWM,
@@ -8,16 +8,21 @@ import type {
   SignTransactionIntent,
   SignTransactionIntentJobState,
 } from "@ledgerhq/live-common/intents/signTransactionIntent";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { useAnalytics } from "~/analytics";
+import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 
 const deviceConnectionParams = { acceptedDeviceModelIds: [] };
 const noop = () => undefined;
 
-export type SignatureScreenViewProps = Readonly<{
+type SignatureScreenViewProps = Readonly<{
   deviceInitializationInput: InitializationInput;
   signatureIntent: SignTransactionIntent;
   onIntentJobStateChanged: (jobState: SignTransactionIntentJobState) => void;
   onIntentJobError: (error: unknown) => void;
   onUserCancel: () => void;
+  account?: AccountLike;
+  parentAccount?: Account;
 }>;
 
 export function SignatureScreenView({
@@ -26,7 +31,22 @@ export function SignatureScreenView({
   onIntentJobStateChanged,
   onIntentJobError,
   onUserCancel,
+  account,
+  parentAccount,
 }: SignatureScreenViewProps) {
+  const { track } = useAnalytics();
+  const trackingProperties = useMemo(() => {
+    return getSendFlowTrackingProperties(account ?? null, parentAccount);
+  }, [account, parentAccount]);
+
+  useEffect(() => {
+    track("send_modal", {
+      ...trackingProperties,
+      name: "step review device",
+      flow: "send",
+    });
+  }, [track, trackingProperties]);
+
   return (
     <View style={{ flex: 1 }} testID="send-signature-step">
       <DeviceIntentExecutorLWM

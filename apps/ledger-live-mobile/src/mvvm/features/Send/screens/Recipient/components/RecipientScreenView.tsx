@@ -6,7 +6,7 @@ import { MemoControls } from "LLM/features/Send/components/Memo/MemoControls";
 import { useMemoViewModel } from "LLM/features/Send/components/Memo/hooks/useMemoViewModel";
 import { shouldShowMatchedAddress } from "@ledgerhq/live-common/flows/send/recipient/utils/shouldShowMatchedAddress";
 import { useSendFlowData } from "LLM/features/Send/context/SendFlowContext";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useRecipientScreenView } from "../hooks/useRecipientScreenView";
 import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
@@ -61,19 +61,6 @@ export const RecipientScreenView = ({
   });
 
   const { uiConfig } = useSendFlowData();
-  const resolvedAddress = result?.resolvedAddress ?? searchValue;
-  const showMemo = uiConfig.hasMemo && isAddressComplete;
-  const memoVm = useMemoViewModel({
-    address: showMemo ? resolvedAddress : "",
-    onSkip: onMemoProceed,
-  });
-  const showMatched = shouldShowMatchedAddress({
-    showMatchedAddress,
-    hasMemo: uiConfig.hasMemo,
-    hasFilledMemo: memoVm.hasFilledMemo,
-    hasMemoError: !!memoVm.memoError,
-  });
-
   const { track } = useAnalytics();
   const trackingProperties = useMemo(() => {
     return {
@@ -82,6 +69,28 @@ export const RecipientScreenView = ({
       page: "step recipient",
     };
   }, [account, parentAccount]);
+
+  const handleSkipMemo = useCallback(() => {
+    track("button_clicked", {
+      ...trackingProperties,
+      button: "skip",
+      page: "step memo",
+    });
+    onMemoProceed();
+  }, [track, onMemoProceed, trackingProperties]);
+
+  const resolvedAddress = result?.resolvedAddress ?? searchValue;
+  const showMemo = uiConfig.hasMemo && isAddressComplete;
+  const memoVm = useMemoViewModel({
+    address: showMemo ? resolvedAddress : "",
+    onSkip: handleSkipMemo,
+  });
+  const showMatched = shouldShowMatchedAddress({
+    showMatchedAddress,
+    hasMemo: uiConfig.hasMemo,
+    hasFilledMemo: memoVm.hasFilledMemo,
+    hasMemoError: !!memoVm.memoError,
+  });
 
   const handleMatchedAddress = useCallback(
     (address: string, ensName?: string) => {
@@ -97,6 +106,22 @@ export const RecipientScreenView = ({
       showSanctionedBanner ||
       showBridgeRecipientError ||
       showBridgeRecipientWarning);
+
+  useEffect(() => {
+    if (showMemo) {
+      track("send_modal", { ...trackingProperties, name: "step memo" });
+    }
+  }, [showMemo, track, trackingProperties]);
+
+  useEffect(() => {
+    if (uiConfig.hasMemo && memoVm.hasFilledMemo && !memoVm.memoError) {
+      track("send_modal", {
+        ...trackingProperties,
+        button: "skip",
+        name: "step memo",
+      });
+    }
+  }, [track, trackingProperties, uiConfig.hasMemo, memoVm.hasFilledMemo, memoVm.memoError]);
 
   return (
     <SendFlowLayout>

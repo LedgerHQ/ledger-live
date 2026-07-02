@@ -79,6 +79,11 @@
       "default": "./lib-es/transaction/*.js"
     },
     "./test-helpers/staticTime": "./src/test-helpers/staticTime.ts",
+    "./tracking/*": {
+      "@ledgerhq/source": "./src/tracking/*.ts",
+      "require": "./lib/tracking/*.js",
+      "default": "./lib-es/tracking/*.js"
+    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
