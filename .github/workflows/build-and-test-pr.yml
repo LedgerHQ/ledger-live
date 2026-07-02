@@ -18,6 +18,7 @@ jobs:
   pre_job:
     permissions:
       contents: write
+      pull-requests: write
     name: "Skip Check"
     if: ${{!github.event.pull_request.head.repo.fork}}
     runs-on: ubuntu-latest
