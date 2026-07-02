@@ -108,12 +108,11 @@ jobs:
             exit 1
           fi
 
-      # ghcommit-action (below) commits the working tree through GitHub's API so
-      # the commit is signed server-side — agent-skills' `main` ruleset requires
-      # signed commits, which a push from the bot token cannot satisfy. The
-      # action only picks up staged changes, so stage the export here and skip
-      # the rest of the job (leaving any open sync PR untouched) when it is a
-      # no-op.
+      # ghcommit-action (below) creates the commit through GitHub's API so it is
+      # signed server-side — agent-skills' `main` ruleset requires signed commits.
+      # Stage the export first: the action skips untracked files, so new skill
+      # files must be in the index to be committed; the staged diff also drives
+      # the no-op check that leaves any open sync PR untouched.
       - name: Stage exported skill
         id: stage
         run: |
@@ -135,7 +134,13 @@ jobs:
         if: steps.stage.outputs.changed == 'true'
         run: |
           set -euo pipefail
-          git push --force origin "HEAD:refs/heads/$SYNC_BRANCH"
+
+          remote_sha=$(git ls-remote --heads origin "$SYNC_BRANCH" | awk '{print $1}')
+          if [ -n "$remote_sha" ]; then
+            git push --force-with-lease="refs/heads/$SYNC_BRANCH:$remote_sha" origin "HEAD:refs/heads/$SYNC_BRANCH"
+          else
+            git push origin "HEAD:refs/heads/$SYNC_BRANCH"
+          fi
 
       - name: Create signed commit
         id: commit
