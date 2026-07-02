@@ -121,6 +121,15 @@ describe("estimateFees", () => {
     expect(fee.value).toBe(1_000_000_000n);
   });
 
+  it("rethrows a transient (non-revert) estimation error for a staking intent", async () => {
+    // a network/timeout failure must surface, not be masked into a fallback fee
+    mockEstimateGas
+      .mockReset()
+      .mockRejectedValue(new Error("HttpRequestError: connection timeout"));
+
+    await expect(estimateFees(makeRegisterIntent())).rejects.toThrow(/timeout/);
+  });
+
   it("rethrows estimation errors for non-staking intents", async () => {
     mockEstimateGas.mockReset().mockRejectedValue(new Error("boom"));
 

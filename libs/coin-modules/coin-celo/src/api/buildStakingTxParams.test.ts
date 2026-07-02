@@ -3,15 +3,20 @@ import type { BufferTxData, MemoNotSupported } from "@ledgerhq/coin-module-frame
 import { BigNumber } from "bignumber.js";
 import { encodeFunctionData } from "viem";
 
+jest.mock("../network/client", () => ({ getCeloClient: jest.fn() }));
 jest.mock("../network/registry", () => ({ getRegistryAddressFor: jest.fn() }));
-jest.mock("../network/sdk", () => ({ getPendingWithdrawals: jest.fn() }));
-jest.mock("./voteNeighbors", () => ({ getVoteNeighbors: jest.fn() }));
+jest.mock("../network/sdk", () => ({
+  getPendingWithdrawals: jest.fn(),
+  voteSignerAccount: jest.fn(),
+}));
+jest.mock("../network/voteNeighbors", () => ({ getVoteNeighbors: jest.fn() }));
 
+import { getCeloClient } from "../network/client";
 import { getRegistryAddressFor } from "../network/registry";
-import { getPendingWithdrawals } from "../network/sdk";
+import { getPendingWithdrawals, voteSignerAccount } from "../network/sdk";
+import { getVoteNeighbors } from "../network/voteNeighbors";
 import { buildStakingTxParams } from "./buildStakingTxParams";
 import type { CeloStakingIntent, CeloStakingType } from "./stakingIntent";
-import { getVoteNeighbors } from "./voteNeighbors";
 
 const ACCOUNTS = "0x1111111111111111111111111111111111111111" as `0x${string}`;
 const LOCKED = "0x2222222222222222222222222222222222222222" as `0x${string}`;
@@ -20,6 +25,7 @@ const GROUP = "0x4444444444444444444444444444444444444444" as `0x${string}`;
 const LESSER = "0x5555555555555555555555555555555555555555" as `0x${string}`;
 const GREATER = "0x6666666666666666666666666666666666666666" as `0x${string}`;
 const SENDER = "0x7777777777777777777777777777777777777777";
+const OTHER_GROUP = "0x8888888888888888888888888888888888888888" as `0x${string}`;
 const USDC_ADAPTER = "0x2F25deB3848C207fc8E0c34035B3Ba7fC157602B" as `0x${string}`;
 
 const REGISTRY: Record<string, `0x${string}`> = {
@@ -27,6 +33,11 @@ const REGISTRY: Record<string, `0x${string}`> = {
   LockedGold: LOCKED,
   Election: ELECTION,
 };
+
+// readContract stub: canReceiveVotes → true, getGroupsVotedForByAccount → [GROUP] (index 0)
+const defaultReadContract = jest.fn(async ({ functionName }: { functionName: string }) =>
+  functionName === "canReceiveVotes" ? true : [GROUP],
+);
 
 const makeIntent = (
   type: CeloStakingType,
@@ -52,6 +63,8 @@ describe("buildStakingTxParams", () => {
       .mockReset()
       .mockResolvedValue({ lesser: LESSER, greater: GREATER });
     (getPendingWithdrawals as jest.Mock).mockReset();
+    (voteSignerAccount as unknown as jest.Mock).mockReset().mockResolvedValue(SENDER);
+    (getCeloClient as jest.Mock).mockReset().mockReturnValue({ readContract: defaultReadContract });
   });
 
   it("register → Accounts.createAccount(), value 0", async () => {
@@ -91,6 +104,28 @@ describe("buildStakingTxParams", () => {
     );
   });
 
+  it("withdraw → honors an explicit matured index", async () => {
+    const past = Math.floor(Date.now() / 1000) - 100;
+    (getPendingWithdrawals as jest.Mock).mockResolvedValue([
+      { value: new BigNumber(10), time: new BigNumber(past), index: 0 },
+      { value: new BigNumber(20), time: new BigNumber(past), index: 3 },
+    ]);
+    const params = await buildStakingTxParams(makeIntent("celo.withdraw", { index: 3 }));
+    expect(params.data).toBe(
+      encodeFunctionData({ abi: lockedGoldABI, functionName: "withdraw", args: [3n] }),
+    );
+  });
+
+  it("withdraw → throws when the explicit index is not matured", async () => {
+    const future = Math.floor(Date.now() / 1000) + 100_000;
+    (getPendingWithdrawals as jest.Mock).mockResolvedValue([
+      { value: new BigNumber(10), time: new BigNumber(future), index: 3 },
+    ]);
+    await expect(buildStakingTxParams(makeIntent("celo.withdraw", { index: 3 }))).rejects.toThrow(
+      /unavailable or not yet matured/,
+    );
+  });
+
   it("withdraw → throws when no pending withdrawal has matured", async () => {
     const future = Math.floor(Date.now() / 1000) + 100_000;
     (getPendingWithdrawals as jest.Mock).mockResolvedValue([
@@ -115,6 +150,13 @@ describe("buildStakingTxParams", () => {
     );
   });
 
+  it("vote → throws when the group cannot receive the votes (cap exceeded)", async () => {
+    (getCeloClient as jest.Mock).mockReturnValue({ readContract: jest.fn(async () => false) });
+    await expect(
+      buildStakingTxParams(makeIntent("celo.vote", { valAddress: GROUP, amount: 100n })),
+    ).rejects.toThrow(/cap exceeded/);
+  });
+
   it("activate → Election.activate(group)", async () => {
     const params = await buildStakingTxParams(makeIntent("celo.activate", { valAddress: GROUP }));
     expect(params.to).toBe(ELECTION);
@@ -123,7 +165,7 @@ describe("buildStakingTxParams", () => {
     );
   });
 
-  it("revokePending → Election.revokePending(...), neighbors removed", async () => {
+  it("revokePending → Election.revokePending(...), neighbors removed, group index resolved", async () => {
     const params = await buildStakingTxParams(
       makeIntent("celo.revokePending", { valAddress: GROUP, amount: 40n }),
     );
@@ -137,7 +179,11 @@ describe("buildStakingTxParams", () => {
     );
   });
 
-  it("revokeActive → Election.revokeActive(...)", async () => {
+  it("revokeActive → uses the group's index in the account's voted-groups list", async () => {
+    // GROUP is the second voted group → index 1 (not hardcoded 0)
+    (getCeloClient as jest.Mock).mockReturnValue({
+      readContract: jest.fn(async () => [OTHER_GROUP, GROUP]),
+    });
     const params = await buildStakingTxParams(
       makeIntent("celo.revokeActive", { valAddress: GROUP, amount: 40n }),
     );
@@ -145,14 +191,21 @@ describe("buildStakingTxParams", () => {
       encodeFunctionData({
         abi: electionABI,
         functionName: "revokeActive",
-        args: [GROUP, 40n, LESSER, GREATER, 0n],
+        args: [GROUP, 40n, LESSER, GREATER, 1n],
       }),
     );
   });
 
+  it("revoke → throws when the group is not in the account's voted groups", async () => {
+    (getCeloClient as jest.Mock).mockReturnValue({
+      readContract: jest.fn(async () => [OTHER_GROUP]),
+    });
+    await expect(
+      buildStakingTxParams(makeIntent("celo.revokePending", { valAddress: GROUP, amount: 40n })),
+    ).rejects.toThrow(/not in the account's voted groups/);
+  });
+
   it("uses recipient as the group when valAddress is absent", async () => {
-    await buildStakingTxParams(makeIntent("celo.activate", { recipient: GROUP }));
-    // activate encodes the group from recipient
     const params = await buildStakingTxParams(makeIntent("celo.activate", { recipient: GROUP }));
     expect(params.data).toBe(
       encodeFunctionData({ abi: electionABI, functionName: "activate", args: [GROUP] }),

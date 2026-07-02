@@ -25,7 +25,7 @@ const toHex = (buffer: Buffer): `0x${string}` => `0x${buffer.toString("hex")}`;
  *   `value` = 0, calldata = `transfer(recipient, amount)`.
  *
  * `feeCurrency` (a CIP-64 adapter address) is attached unchanged when provided;
- * it is orthogonal to the asset being sent (e.g. send CELO, pay gas in USDC).
+ * it is orthogonal to the asset being sent.
  */
 export const buildCeloTxParams = (
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,

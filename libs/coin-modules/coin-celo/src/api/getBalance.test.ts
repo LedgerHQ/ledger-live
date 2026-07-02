@@ -33,7 +33,9 @@ describe("makeGetBalance", () => {
     // native balance stays first so extractBalance(..., "native") resolves it
     expect(balances[0]).toBe(NATIVE);
     expect(balances[1].stake?.uid).toBe("s1");
-    expect(balances[1].value).toBe(100n);
+    expect(balances[1].stake?.amount).toBe(100n);
+    // value is 0 so it can't be mistaken for the native balance; the amount lives on .stake
+    expect(balances[1].value).toBe(0n);
     expect(balances[1].asset.type).toBe("native");
   });
 

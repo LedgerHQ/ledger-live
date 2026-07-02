@@ -1,7 +1,7 @@
-jest.mock("../network/client", () => ({ getCeloClient: jest.fn() }));
+jest.mock("../../network/client", () => ({ getCeloClient: jest.fn() }));
 
-import { getCeloClient } from "../network/client";
-import { getVoteNeighbors } from "./voteNeighbors";
+import { getCeloClient } from "../../network/client";
+import { getVoteNeighbors } from "../../network/voteNeighbors";
 
 const ELECTION = "0x3333333333333333333333333333333333333333" as `0x${string}`;
 const A = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" as `0x${string}`;

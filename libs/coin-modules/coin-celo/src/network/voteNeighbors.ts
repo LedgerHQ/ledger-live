@@ -1,6 +1,6 @@
 import { electionABI } from "@celo/abis";
 import { ZERO_ADDRESS } from "../constants";
-import { getCeloClient } from "../network/client";
+import { getCeloClient } from "./client";
 
 const ZERO = ZERO_ADDRESS as `0x${string}`;
 
@@ -24,8 +24,9 @@ const compareVotesAscending = (a: { votes: bigint }, b: { votes: bigint }): numb
  * below (`lesser`) and above (`greater`) the target once its vote total changes,
  * or the call reverts. This recomputes those neighbors off the on-chain totals.
  *
- * Ported from the legacy bridge (`src/bridge/buildTransaction.ts`) so the api
- * layer stays self-contained (framework + viem + `@celo/abis` + `../network/*`).
+ * Single source of truth shared by the api staking builder
+ * (`src/api/buildStakingTxParams.ts`) and the legacy bridge
+ * (`src/bridge/buildTransaction.ts`).
  */
 export const getVoteNeighbors = async (
   electionAddress: `0x${string}`,

@@ -10,7 +10,9 @@ import { getPendingWithdrawals, getVotes } from "../network/sdk";
 const NATIVE: AssetInfo = { type: "native" };
 
 /**
- * Returns the account's Celo staking positions, mapped to framework `Stake`s:
+ * Builds the account's Celo staking positions as framework `Stake`s. Shared by
+ * `getStakes` and the staking-aware `getBalance` (which surfaces them via
+ * `Balance.stake`, the shape the generic-coin-framework consumes):
  *
  * - **Votes** (`getVotes`) — one Stake per (group, pending|active) position.
  *   `delegate` = the validator group; `state` is `activating` for pending votes
@@ -24,11 +26,6 @@ const NATIVE: AssetInfo = { type: "native" };
  * All positions are returned in a single page. Non-voting locked balance is not
  * represented as a Stake yet.
  */
-/**
- * Builds the account's Celo staking positions as framework `Stake`s. Shared by
- * `getStakes` (CoinModuleApi) and the staking-aware `getBalance` (which surfaces
- * these via `Balance.stake`, the shape the generic-coin-framework consumes).
- */
 export const buildCeloStakes = async (address: string): Promise<Stake[]> => {
   const [votes, pendingWithdrawals] = await Promise.all([
     getVotes(address),
@@ -40,7 +37,9 @@ export const buildCeloStakes = async (address: string): Promise<Stake[]> => {
     address,
     delegate: vote.validatorGroup,
     state: vote.type === "active" ? "active" : "activating",
-    actions: ["undelegate"],
+    // only offer revoke when the vote is actually revokable (an active vote is
+    // not, while a pending vote for the same group still exists)
+    actions: vote.revokable ? ["undelegate"] : [],
     asset: NATIVE,
     amount: BigInt(vote.amount.toFixed(0)),
     details: {

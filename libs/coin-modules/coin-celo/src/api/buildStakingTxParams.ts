@@ -1,12 +1,13 @@
 import { accountsABI, electionABI, lockedGoldABI } from "@celo/abis";
 import { encodeFunctionData } from "viem";
+import { getCeloClient } from "../network/client";
 import { getRegistryAddressFor } from "../network/registry";
-import { getPendingWithdrawals } from "../network/sdk";
+import { getPendingWithdrawals, voteSignerAccount } from "../network/sdk";
+import { getVoteNeighbors } from "../network/voteNeighbors";
 import type { CeloTxParams } from "./buildCeloTxParams";
 import type { CeloStakingIntent } from "./stakingIntent";
-import { getVoteNeighbors } from "./voteNeighbors";
 
-/** Resolve the target validator group, preferring `valAddress` over `recipient`. */
+/** Resolve the target validator group from `valAddress`, or `recipient` (the channel the framework populates). */
 const requireGroup = (intent: CeloStakingIntent): `0x${string}` => {
   const group = intent.valAddress ?? intent.recipient;
   if (!group) {
@@ -16,18 +17,52 @@ const requireGroup = (intent: CeloStakingIntent): `0x${string}` => {
 };
 
 /**
- * Pick the LockedGold pending-withdrawal index to withdraw: the earliest entry
- * whose unbonding period has elapsed. `getPendingWithdrawals` returns entries
- * sorted by maturity time (ascending), so the first matured one is the oldest.
+ * Pick the LockedGold pending-withdrawal index to withdraw. When `intent.index`
+ * is set, that specific (matured) withdrawal is used; otherwise the earliest
+ * matured entry. `getPendingWithdrawals` assigns each entry its on-chain array
+ * index before sorting by maturity, so the returned index is the contract index.
  */
-const resolveWithdrawIndex = async (address: string): Promise<bigint> => {
-  const pending = await getPendingWithdrawals(address);
+const resolveWithdrawIndex = async (intent: CeloStakingIntent): Promise<bigint> => {
+  const pending = await getPendingWithdrawals(intent.sender);
   const nowSeconds = Math.floor(Date.now() / 1000);
+
+  if (typeof intent.index === "number") {
+    const chosen = pending.find(w => w.index === intent.index);
+    if (!chosen || !chosen.time.lte(nowSeconds)) {
+      throw new Error(`celo: pending withdrawal ${intent.index} is unavailable or not yet matured`);
+    }
+    return BigInt(chosen.index);
+  }
+
   const matured = pending.find(w => w.time.lte(nowSeconds));
   if (!matured) {
     throw new Error("celo: no matured pending withdrawal is available to withdraw");
   }
   return BigInt(matured.index);
+};
+
+/**
+ * The Election `revoke*` calls take the group's index in the account's list of
+ * voted-for groups (the contract asserts `groups[index] == group`). Resolve it
+ * from `getGroupsVotedForByAccount` rather than assuming position 0.
+ */
+const resolveVotedGroupIndex = async (
+  sender: string,
+  electionAddress: `0x${string}`,
+  group: `0x${string}`,
+): Promise<bigint> => {
+  const signer = (await voteSignerAccount(sender)) as `0x${string}`;
+  const groups = await getCeloClient().readContract({
+    address: electionAddress,
+    abi: electionABI,
+    functionName: "getGroupsVotedForByAccount",
+    args: [signer],
+  });
+  const index = groups.findIndex(g => g.toLowerCase() === group.toLowerCase());
+  if (index < 0) {
+    throw new Error(`celo: ${group} is not in the account's voted groups`);
+  }
+  return BigInt(index);
 };
 
 /**
@@ -39,7 +74,7 @@ const resolveWithdrawIndex = async (address: string): Promise<bigint> => {
  * `broadcast` unchanged.
  *
  * `feeCurrency` (a CIP-64 adapter address) is attached unchanged when provided;
- * it is orthogonal to the staking operation (gas can be paid in an ERC-20).
+ * it is orthogonal to the staking operation.
  */
 export const buildStakingTxParams = async (
   intent: CeloStakingIntent,
@@ -84,7 +119,7 @@ export const buildStakingTxParams = async (
 
     case "celo.withdraw": {
       const to = await getRegistryAddressFor("LockedGold");
-      const index = await resolveWithdrawIndex(intent.sender);
+      const index = await resolveWithdrawIndex(intent);
       return {
         to,
         data: encodeFunctionData({
@@ -100,7 +135,22 @@ export const buildStakingTxParams = async (
     case "celo.vote": {
       const to = await getRegistryAddressFor("Election");
       const group = requireGroup(intent);
-      const { lesser, greater } = await getVoteNeighbors(to, group, intent.amount, true);
+      // Reject a vote that would exceed the group's cap *before* crafting, so the
+      // failure surfaces here rather than as a masked `eth_estimateGas` revert.
+      const [canVote, { lesser, greater }] = await Promise.all([
+        getCeloClient().readContract({
+          address: to,
+          abi: electionABI,
+          functionName: "canReceiveVotes",
+          args: [group, intent.amount],
+        }),
+        getVoteNeighbors(to, group, intent.amount, true),
+      ]);
+      if (!canVote) {
+        throw new Error(
+          `celo: validator group ${group} cannot receive that many more votes (cap exceeded)`,
+        );
+      }
       return {
         to,
         data: encodeFunctionData({
@@ -131,13 +181,16 @@ export const buildStakingTxParams = async (
     case "celo.revokePending": {
       const to = await getRegistryAddressFor("Election");
       const group = requireGroup(intent);
-      const { lesser, greater } = await getVoteNeighbors(to, group, intent.amount, false);
+      const [{ lesser, greater }, index] = await Promise.all([
+        getVoteNeighbors(to, group, intent.amount, false),
+        resolveVotedGroupIndex(intent.sender, to, group),
+      ]);
       return {
         to,
         data: encodeFunctionData({
           abi: electionABI,
           functionName: "revokePending",
-          args: [group, intent.amount, lesser, greater, 0n],
+          args: [group, intent.amount, lesser, greater, index],
         }),
         value: 0n,
         ...feeCurrencyField,
@@ -147,13 +200,16 @@ export const buildStakingTxParams = async (
     case "celo.revokeActive": {
       const to = await getRegistryAddressFor("Election");
       const group = requireGroup(intent);
-      const { lesser, greater } = await getVoteNeighbors(to, group, intent.amount, false);
+      const [{ lesser, greater }, index] = await Promise.all([
+        getVoteNeighbors(to, group, intent.amount, false),
+        resolveVotedGroupIndex(intent.sender, to, group),
+      ]);
       return {
         to,
         data: encodeFunctionData({
           abi: electionABI,
           functionName: "revokeActive",
-          args: [group, intent.amount, lesser, greater, 0n],
+          args: [group, intent.amount, lesser, greater, index],
         }),
         value: 0n,
         ...feeCurrencyField,

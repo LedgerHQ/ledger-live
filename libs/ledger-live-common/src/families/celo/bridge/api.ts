@@ -1,3 +1,4 @@
+import type { CeloStakingType } from "@ledgerhq/coin-celo/api/index";
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
@@ -30,7 +31,7 @@ export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInf
  * (see coin-celo `src/api/stakingIntent.ts`); `revoke` splits into pending/active
  * by `transaction.index` (0 = pending), matching the legacy `buildRevokeTx`.
  */
-export function computeIntentType(transaction: Record<string, unknown>): string {
+export function computeIntentType(transaction: Record<string, unknown>): CeloStakingType | "send" {
   const mode = transaction.mode as string | undefined;
 
   switch (mode) {

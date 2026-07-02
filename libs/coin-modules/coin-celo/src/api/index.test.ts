@@ -109,9 +109,9 @@ describe("createApi", () => {
     expect(api.getBalance).not.toBe(evmApi.getBalance);
   });
 
-  it("getRewards throws not supported (Celo has no discrete on-chain reward events)", () => {
+  it("getRewards rejects with not supported (Celo has no discrete on-chain reward events)", async () => {
     const api = createApi(config);
-    expect(() => api.getRewards("0xabc")).toThrow(/not supported/);
+    await expect(api.getRewards("0xabc")).rejects.toThrow(/not supported/);
   });
 
   it("validates a staking (lock) intent against the native balance", async () => {

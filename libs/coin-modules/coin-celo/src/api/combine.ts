@@ -23,11 +23,13 @@ const normalizeSignature = (signature: string | DeviceSignature): Signature => {
     return {
       r: prefix(hex.slice(0, 64)),
       s: prefix(hex.slice(64, 128)),
-      yParity: vToYParity(BigInt(prefix(hex.slice(128, 130)))),
+      // take the whole remainder as `v` (not just one byte) so a multi-byte value
+      // fails loudly in vToYParity rather than being silently truncated
+      yParity: vToYParity(BigInt(prefix(hex.slice(128)))),
     };
   }
 
-  // A numeric `v` is decimal (e.g. 27); a string `v` is hex, as the device returns it (e.g. "1b").
+  // A numeric `v` is decimal; a string `v` is hex, as the device returns it.
   const v = typeof signature.v === "number" ? BigInt(signature.v) : BigInt(prefix(signature.v));
   return {
     r: prefix(signature.r),

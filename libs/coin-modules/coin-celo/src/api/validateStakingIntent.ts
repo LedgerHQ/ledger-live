@@ -50,8 +50,12 @@ export const validateStakingIntent = async (
   const nativeBalance = balances.find(balance => balance.asset.type === "native");
   const available = (nativeBalance?.value ?? 0n) - (nativeBalance?.locked ?? 0n);
 
-  const amount = intent.type === "celo.lock" ? intent.amount : 0n;
-  const totalSpent = feeCurrency ? amount : amount + estimatedFees;
+  // `amount` is the operation amount (what the intent moves). Only `lock` spends
+  // native CELO — the other ops move already-locked funds and cost only gas — so
+  // the native-denominated `totalSpent` is computed from `nativeSpent`, separately.
+  const amount = AMOUNT_OPERATIONS.has(intent.type) ? intent.amount : 0n;
+  const nativeSpent = intent.type === "celo.lock" ? intent.amount : 0n;
+  const totalSpent = feeCurrency ? nativeSpent : nativeSpent + estimatedFees;
 
   if (GROUP_OPERATIONS.has(intent.type) && !(intent.valAddress ?? intent.recipient)) {
     errors.recipient = new Error(`celo: ${intent.type} requires a validator group (valAddress)`);

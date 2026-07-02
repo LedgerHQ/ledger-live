@@ -47,6 +47,8 @@ describe("getStakes", () => {
 
     expect(active.state).toBe("active");
     expect(active.amount).toBe(200n);
+    // this active vote is marked non-revokable (a pending vote for the group coexists)
+    expect(active.actions).toEqual([]);
   });
 
   it("maps pending withdrawals to withdrawable/deactivating Stakes", async () => {

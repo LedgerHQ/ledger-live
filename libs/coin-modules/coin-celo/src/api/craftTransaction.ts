@@ -47,7 +47,8 @@ export const craftTransaction = async (
         });
 
   const baseFields = {
-    chainId: celo.id,
+    // follow the client's configured chain rather than hardcoding mainnet
+    chainId: getCeloClient().chain?.id ?? celo.id,
     nonce,
     to,
     value,

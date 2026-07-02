@@ -7,13 +7,10 @@ import type {
 /**
  * The Celo staking operations exposed by the CoinModuleApi.
  *
- * The framework's canonical `StakingOperation` enum (`delegate`/`undelegate`/…)
- * cannot express Celo's multi-contract choreography (register → lock → vote →
- * activate → revoke → unlock → withdraw): it has no `activate`/`lock`/`register`
- * member, and `withdraw`/`revoke` need per-position specifics. We therefore carry
- * the operation on the free-form `TransactionIntent.type` field — the same escape
- * hatch coin-solana uses (`stake.delegate`, …) — mirroring the legacy Celo bridge's
- * `CeloOperationMode`. Each maps 1:1 to a single on-chain transaction.
+ * The framework's canonical `StakingOperation` enum can't express Celo's
+ * register → lock → vote → activate → revoke → unlock → withdraw choreography, so
+ * each operation rides the free-form `TransactionIntent.type` field (mirroring the
+ * legacy bridge's `CeloOperationMode`) and maps 1:1 to a single transaction.
  */
 export const CELO_STAKING_TYPES = [
   "celo.register",
@@ -31,14 +28,16 @@ export type CeloStakingType = (typeof CELO_STAKING_TYPES)[number];
 /**
  * A staking intent for the Celo api.
  *
- * `valAddress` (the framework's validator field) carries the target validator
- * group for group operations (`vote`/`activate`/`revoke*`); `recipient` is
- * accepted as a fallback. `amount` carries the CELO amount for `lock`/`vote`/
- * `unlock`/`revoke*`. The `withdraw` index is derived from on-chain reads.
+ * The target validator group for group operations (`vote`/`activate`/`revoke*`)
+ * comes from `recipient` (the channel the framework populates for Celo's
+ * non-canonical modes), or `valAddress` when a direct caller sets it. `amount`
+ * carries the CELO amount for `lock`/`vote`/`unlock`/`revoke*`. `index` optionally
+ * selects a specific pending withdrawal for `withdraw` (else the earliest matured).
  */
 export type CeloStakingIntent = TransactionIntent<MemoNotSupported, BufferTxData> & {
   type: CeloStakingType;
   valAddress?: string;
+  index?: number;
 };
 
 const STAKING_TYPE_SET = new Set<string>(CELO_STAKING_TYPES);

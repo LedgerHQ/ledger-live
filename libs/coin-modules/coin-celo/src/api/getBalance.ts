@@ -21,8 +21,10 @@ export const makeGetBalance =
       buildCeloStakes(address).catch((): Stake[] => []),
     ]);
 
+    // `value` is 0 so these native-typed entries are never mistaken for the account's
+    // native balance by `extractBalance("native")`; the staked amount lives on `.stake`.
     const stakeBalances: Balance[] = stakes.map(stake => ({
-      value: stake.amount,
+      value: 0n,
       asset: { type: "native" },
       stake,
     }));

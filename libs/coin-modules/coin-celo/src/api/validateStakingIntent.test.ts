@@ -11,6 +11,7 @@ import type { CeloStakingIntent, CeloStakingType } from "./stakingIntent";
 import { validateStakingIntent } from "./validateStakingIntent";
 
 const SENDER = "0x7777777777777777777777777777777777777777";
+const GROUP = "0x4444444444444444444444444444444444444444";
 const USDC_ADAPTER = "0x2F25deB3848C207fc8E0c34035B3Ba7fC157602B";
 
 const makeIntent = (
@@ -105,7 +106,22 @@ describe("validateStakingIntent", () => {
 
     expect(estimateFees).toHaveBeenCalledWith(intent);
     expect(res.estimatedFees).toBe(7n);
-    expect(res.amount).toBe(0n);
+    // unlock moves 5 CELO of already-locked funds: amount reflects the operation,
+    // but only gas is native-spent (unlock doesn't spend native), so totalSpent = fees
+    expect(res.amount).toBe(5n);
     expect(res.totalSpent).toBe(7n);
+  });
+
+  it("does not count a vote's amount as native spend (moves already-locked funds)", async () => {
+    const res = await validateStakingIntent(
+      makeIntent("celo.vote", { valAddress: GROUP, amount: 100n }),
+      nativeBalances(10n),
+      eip1559Fees(5n),
+    );
+
+    // vote of 100 with only 10 native available must NOT error — it spends locked gold, not native
+    expect(res.amount).toBe(100n);
+    expect(res.totalSpent).toBe(5n);
+    expect(Object.keys(res.errors)).toHaveLength(0);
   });
 });
