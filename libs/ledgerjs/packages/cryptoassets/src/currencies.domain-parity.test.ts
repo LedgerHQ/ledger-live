@@ -2,9 +2,12 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   CRYPTO_CURRENCIES_REGISTRY,
   CRYPTO_CURRENCY_ALIASES,
+  findCryptoCurrencyById as findDomainCryptoCurrencyById,
+  getCryptoCurrencyById as getDomainCryptoCurrencyById,
 } from "@domain/entity-currency-crypto";
 import {
   cryptocurrenciesById,
+  findCryptoCurrencyById,
   findCryptoCurrencyByScheme,
   findCryptoCurrencyByTicker,
   getCryptoCurrencyById,
@@ -55,6 +58,35 @@ describe("@domain/entity-currency-crypto parity with @ledgerhq/cryptoassets", ()
         .map(([key, currency]) => [key, currency.id]),
     );
     expect(CRYPTO_CURRENCY_ALIASES).toEqual(legacyAliases);
+  });
+});
+
+// Direct by-id accessor parity: the domain package exposes getCryptoCurrencyById/findCryptoCurrencyById
+// over its static registry (LIVE-31917) — what the eventual repoint reads instead of the legacy
+// accessors. Assert both resolve identically for every legacy key (canonical AND alias, e.g. "osmosis")
+// and agree on misses. Runs before the injection blocks below, so legacy reads the bundled store.
+const legacyKeyEntries = Object.entries(cryptocurrenciesById);
+const MISSING_ID = "not_a_real_currency_id";
+
+describe("by-id accessor parity: domain vs @ledgerhq/cryptoassets", () => {
+  it.each(legacyKeyEntries)(
+    "getCryptoCurrencyById(%s) matches the legacy accessor",
+    (key, legacyCurrency) => {
+      // Value-equal to the legacy accessor result (the two registries are dual-maintained)...
+      expect(getDomainCryptoCurrencyById(key)).toEqual(getCryptoCurrencyById(key));
+      // ...and resolves to the domain registry object for that id (guards alias-key resolution).
+      expect(getDomainCryptoCurrencyById(key)).toBe(CRYPTO_CURRENCIES_REGISTRY[legacyCurrency.id]);
+    },
+  );
+
+  it("findCryptoCurrencyById returns undefined for an unknown id (both accessors)", () => {
+    expect(findDomainCryptoCurrencyById(MISSING_ID)).toBeUndefined();
+    expect(findCryptoCurrencyById(MISSING_ID)).toBeUndefined();
+  });
+
+  it("getCryptoCurrencyById throws for an unknown id (both accessors)", () => {
+    expect(() => getDomainCryptoCurrencyById(MISSING_ID)).toThrow();
+    expect(() => getCryptoCurrencyById(MISSING_ID)).toThrow();
   });
 });
 
