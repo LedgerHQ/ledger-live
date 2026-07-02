@@ -30,6 +30,8 @@ export type ExchangeStartSwapParams = {
   fromAccountId: string;
   toAccountId: string;
   tokenCurrency?: string;
+  isEmbedded?: boolean;
+  swapEntryPoint?: string;
 };
 
 export type ExchangeSwapParams = ExchangeStartSwapParams & {
@@ -43,7 +45,6 @@ export type ExchangeSwapParams = ExchangeStartSwapParams & {
   };
   swapAppVersion?: string;
   sponsored?: boolean;
-  isEmbedded?: boolean;
   correlationId?: string;
 };
 
@@ -79,6 +80,8 @@ export type ExchangeCompleteSwapParams = ExchangeCompleteBaseParams & {
   exchangeType: "SWAP";
   toAccountId: string;
   swapId: string;
+  isEmbedded?: boolean;
+  swapEntryPoint?: string;
 };
 
 export type ExchangeCompleteParams =

@@ -1,10 +1,15 @@
 {
   "name": "@ledgerhq/coin-tester-cardano",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Ledger Cardano Coin Tester",
   "main": "src/scenarii.test.ts",
-  "keywords": ["Ledger", "LedgerWallet", "Cardano", "Testing"],
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "Cardano",
+    "Testing"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -15,9 +20,15 @@
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-modules/coin-tester-cardano",
   "typesVersions": {
     "*": {
-      "lib/*": ["lib/*"],
-      "lib-es/*": ["lib-es/*"],
-      "*": ["lib/*"]
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ],
+      "*": [
+        "lib/*"
+      ]
     }
   },
   "exports": {

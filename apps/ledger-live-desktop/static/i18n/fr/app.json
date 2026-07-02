@@ -74,6 +74,8 @@
   "common" : {
     "never" : "Jamais",
     "new" : "Nouv.",
+    "scrollLeft" : "Défiler à gauche",
+    "scrollRight" : "Défiler à droite",
     "skip" : "Passer",
     "apply" : "Appliquer",
     "done" : "Terminé",
@@ -503,10 +505,10 @@
       "changeProvider" : "Choisir un autre prestataire"
     },
     "incompatibility" : {
-      "ton_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de TON",
-      "ton_description" : "Pour échanger des TON, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
-      "ton_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Ton",
-      "ton_tokens_description" : "Pour échanger des tokens Ton, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "ton_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Gram",
+      "ton_description" : "Pour échanger des Gram, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "ton_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Gram",
+      "ton_tokens_description" : "Pour échanger des tokens Gram, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "spl_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Solana",
       "spl_tokens_description" : "Pour échanger des tokens Solana, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "sui_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Sui",
@@ -1648,7 +1650,7 @@
     "topCards" : {
       "error" : "Une erreur est survenue",
       "moodIndex" : {
-        "title" : "Sentiment du marché"
+        "title" : "Sentiment"
       },
       "globalMarketCap" : {
         "title" : "Capitalisation globale",
@@ -1704,7 +1706,11 @@
         "stocks" : "Actions",
         "favorites" : "Favoris"
       },
-      "emptyFavorites" : "Pas encore de favoris"
+      "emptyFavorites" : "Pas encore de favoris",
+      "noAssets" : {
+        "title" : "Aucun actif disponible",
+        "description" : "Aucun actif n’est disponible dans cette catégorie."
+      }
     },
     "detailsPage" : {
       "priceStatistics" : "Statistiques du cours",
@@ -3539,7 +3545,7 @@
         "steps" : {
           "assets" : {
             "title" : "ASA (Actifs)",
-            "info" : "Pour ajouter un actif, vous devez émettre une transaction. Elle apparaîtra dans votre historique des transactions.",
+            "info" : "Pour ajouter un actif, vous devez émettre une transaction. Elle apparaîtra dans votre historique des opérations.",
             "selectLabel" : "Choisir un ASA (Actif)",
             "disabledTooltip" : "Cet ASA (Actif) est déjà dans votre compte Algorand."
           },
@@ -4070,7 +4076,7 @@
       "pendingBalanceTooltip" : "Montant des actifs déstakés qui seront bientôt disponibles."
     },
     "common" : {
-      "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer.",
+      "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer.",
       "viewDetails" : "Voir les détails",
       "connectDevice" : {
         "title" : "Appareil"
@@ -4138,7 +4144,7 @@
               "text" : "Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur la blockchain.",
               "cta" : "Voir les détails"
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       }
@@ -4166,7 +4172,7 @@
               "description" : "Vous avez restaké {{amount}} avec {{validator}}.",
               "cta" : "Voir les détails"
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       }
@@ -4196,7 +4202,7 @@
               "description" : "Vous avez déstaké {{amount}} de {{validator}}.",
               "cta" : "Voir les détails"
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       }
@@ -4223,7 +4229,7 @@
               "description" : "Vous avez retiré {{amount}} de {{validator}}.",
               "cta" : "Voir les détails"
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       }
@@ -4382,7 +4388,7 @@
                 "text" : "Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur le réseau.",
                 "cta" : "Voir les détails"
               },
-              "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+              "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
             }
           }
         }
@@ -4416,7 +4422,7 @@
                 "text" : "La redélégation sera mise à jour une fois votre transaction confirmée sur le réseau.",
                 "cta" : "Voir les détails"
               },
-              "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+              "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
             }
           }
         }
@@ -4425,6 +4431,8 @@
         "header" : "Délégations arrêtées",
         "headerTooltip" : "Disponibles après une immobilisation de {{numberOfDays}} jours",
         "inactiveTooltip" : "Les montants retirés de la délégation ne génèrent pas de récompenses.",
+        "timelockTooltip" : "Toujours immobilisés. Ces actifs ne sont pas encore disponibles pour le retrait.",
+        "readyTooltip" : "Ces actifs ne sont plus immobilisés et peuvent être retirés.",
         "flow" : {
           "title" : "Arrêter le staking",
           "steps" : {
@@ -4448,7 +4456,7 @@
                 "description" : "<0>{{amount}}</0> ne sont plus délégués à <0>{{validator}}</0>.",
                 "cta" : "Voir les détails"
               },
-              "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+              "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
             }
           }
         }
@@ -4475,7 +4483,7 @@
                 "description" : "<0>{{amount}}</0> ont été retirés de <0>{{validator}}</0>.",
                 "cta" : "Voir les détails"
               },
-              "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+              "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
             }
           }
         }
@@ -4700,7 +4708,7 @@
               "text" : "Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur la blockchain.",
               "cta" : "Voir les détails"
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       }
@@ -4729,7 +4737,7 @@
               "description" : "<0>{{amount}}</0> ne sont plus délégués à <0>{{validator}}</0>.",
               "cta" : "Voir les détails"
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       }
@@ -4820,7 +4828,7 @@
               "text" : "Vous avez staké {{amount}}. Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur le réseau.",
               "cta" : "Ouvrir le tableau de bord"
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer.",
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer.",
             "howItWorks" : "Fonctionnement du staking"
           }
         }
@@ -5457,7 +5465,7 @@
     "hardResetModal" : {
       "title" : "Réinitialiser l’application Ledger Wallet",
       "desc" : "Réinitialisez l’application Ledger Wallet pour effacer tous vos paramètres et comptes de votre ordinateur. Vous pouvez ensuite choisir votre mot de passe et rajouter vos comptes avec votre appareil Ledger. Les clés privées donnant accès à vos crypto-actifs restent protégées sur votre appareil Ledger. Elles sont également sauvegardées grâce à votre phrase de récupération.",
-      "warning" : "La réinitialisation de Ledger Wallet effacera l’historique des transactions Swap de tous vos comptes."
+      "warning" : "La réinitialisation de Ledger Wallet effacera l’historique des opérations Swap de tous vos comptes."
     },
     "softResetModal" : {
       "title" : "Vider le cache",
@@ -5490,7 +5498,7 @@
     },
     "exportLogs" : {
       "title" : "Enregistrer les logs",
-      "desc" : "Sauvegarder les logs de l’application Ledger Wallet peut être nécessaire à des fins de dépannage.",
+      "desc" : "Télécharger les logs de l’application Ledger Wallet peut être nécessaire à des fins de dépannage.",
       "btn" : "Sauvegarder"
     },
     "troubleshootNetwork" : {
@@ -7509,6 +7517,10 @@
     "TaprootNotActivated" : {
       "title" : "L’envoi à une adresse Taproot avant l’activation du réseau présente un risque"
     },
+    "RbfBuildError" : {
+      "title" : "Cette transaction ne peut pas être remplacée",
+      "description" : "L’augmentation des frais requise pour remplacer cette transaction ne peut pas être appliquée avec les paramètres actuels. Essayez avec un montant de frais différent ou annulez l’opération."
+    },
     "SolanaAccountNotFunded" : {
       "title" : "Compte vide"
     },
@@ -7781,13 +7793,13 @@
       "title" : "Notre infrastructure Bitcoin rencontre actuellement des difficultés. Veuillez réessayer plus tard."
     },
     "TonExcessFee" : {
-      "title" : "Cette transaction est un transfert de token. Vous paierez des frais de 0,1 TON, et tout excédent vous sera remboursé."
+      "title" : "Cette transaction est un transfert de token. Vous paierez des frais de 0,1 GRAM, et tout excédent vous sera remboursé."
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "Solde insuffisant sur le compte principal (TON) pour couvrir les frais. Le solde minimum requis est de 0,1 TON."
+      "title" : "Solde insuffisant sur le compte principal (GRAM) pour couvrir les frais. Le solde minimum requis est de 0,1 GRAM."
     },
     "TonMinimumRequired" : {
-      "title" : "Solde insuffisant. Le solde minimum requis est de 0,02 TON."
+      "title" : "Solde insuffisant. Le solde minimum requis est de 0,02 GRAM."
     },
     "AleoAmountRecordRequired" : {
       "title" : "Sélectionnez une entrée privée valide pour le montant",
@@ -8032,7 +8044,7 @@
             "description" : "Vous pourrez recevoir ce token une fois la transaction d’association confirmée.",
             "cta" : "Voir les détails"
           },
-          "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
         }
       }
     },
@@ -8097,7 +8109,7 @@
               "text" : "Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur le réseau.",
               "cta" : "Voir les détails"
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       }
@@ -8123,7 +8135,7 @@
               "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction.",
               "cta" : "Voir les détails"
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       }
@@ -8153,7 +8165,7 @@
               "text" : "La redélégation sera mise à jour une fois votre transaction confirmée sur le réseau.",
               "cta" : "Voir les détails"
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       }
@@ -8177,7 +8189,7 @@
               "text" : "Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur le réseau.",
               "cta" : "Voir les détails"
             },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des opérations avant de réessayer."
           }
         }
       }
@@ -8359,7 +8371,7 @@
     }
   },
   "analyticsOptInPrompt" : {
-    "variantA" : {
+    "screen" : {
       "description" : "Le partage de vos données Ledger Wallet nous permet de mieux comprendre vos préférences et vous présenter des contenus pertinents.",
       "whatWeTrack" : "Avec votre consentement, Ledger pourra collecter des données relatives à la façon dont vous utilisez Ledger Wallet (y compris les visites de pages et clics) :",
       "whatWeTrackList" : {
@@ -8384,26 +8396,6 @@
         "description" : "Le partage des données sur l’utilisation de l’application (y compris les clics, visites de pages et données de conversion) nous permet de vous proposer des recommandations personnalisées, des contenus adaptés à vos préférences et de mesurer l’efficacité de nos campagnes marketing."
       },
       "validate" : "Valider"
-    },
-    "variantB" : {
-      "accept" : "Accepter",
-      "refuse" : "Refuser",
-      "analytics" : {
-        "description" : "Le partage des données analytiques de Ledger Wallet nous permet de comprendre comment Ledger Wallet est utilisé, de corriger les bugs et d’améliorer l’expérience utilisateur.",
-        "details" : {
-          "1" : "Les données analytiques incluent les visites de pages et les clics.",
-          "2" : "Nous ne collecterons ni ne verrons aucune donnée relative à vos soldes, comptes ou à votre portefeuille.",
-          "3" : "Les données analytiques sont entièrement anonymes. Nous ne pouvons pas voir ni collecter vos données personnelles."
-        }
-      },
-      "personalRecommendations" : {
-        "title" : "Profitez d’une expérience personnalisée",
-        "description" : "Le partage des données de personnalisation de Ledger Wallet nous permet de vous proposer un contenu qui correspond à vos préférences.",
-        "details" : {
-          "1" : "Les données de personnalisation incluent les données de conversion, les clics et les visites de pages.",
-          "2" : "Nous ne pouvons pas suivre ni collecter vos données personnelles ni celles relatives à votre portefeuille."
-        }
-      }
     },
     "common" : {
       "title" : "Aidez-nous à améliorer et personnaliser votre expérience",
@@ -8751,8 +8743,6 @@
     "title" : "Marché",
     "genericError" : "Échec de la connexion",
     "cta" : "Voir tout",
-    "scrollLeft" : "Défiler à gauche",
-    "scrollRight" : "Défiler à droite",
     "ranking" : {
       "trending" : "Tendance",
       "gainers" : "Top hausses",
@@ -8772,7 +8762,7 @@
       "greedPlus" : "Cupidité+"
     },
     "dialog" : {
-      "title" : "Sentiment du marché",
+      "title" : "Sentiment",
       "content" : "Cet indicateur représente le sentiment général du marché de 0 à 100, sur la base notamment de la volatilité, de la dynamique du marché et des tendances sociales. Des valeurs basses indiquent la peur, des valeurs élevées signalent la cupidité.",
       "disclaimer" : "Les données proviennent de CoinMarketCap. Fournies à titre informatif uniquement.",
       "cta" : "Compris"
@@ -8863,6 +8853,12 @@
   },
   "topBar" : {
     "searchPlaceholder" : "Rechercher un actif",
+    "searchPlaceholders" : {
+      "crypto" : "Rechercher une crypto",
+      "stablecoins" : "Rechercher un stablecoin",
+      "stocks" : "Rechercher des actions",
+      "addresses" : "Rechercher une adresse"
+    },
     "search" : {
       "noAssetFound" : "Aucun actif trouvé",
       "error" : "Échec de la connexion",
@@ -8910,6 +8906,20 @@
       "privateBalanceTooltip" : "Le solde qui est masqué."
     },
     "shielded" : {
+      "send" : {
+        "transferFrom" : {
+          "label" : "Transfert de",
+          "public" : {
+            "title" : "Solde public",
+            "subtitle" : "Transparent"
+          },
+          "private" : {
+            "title" : "Solde privé",
+            "subtitle" : "Protégé",
+            "unavailable" : "Solde privé indisponible"
+          }
+        }
+      },
       "state" : {
         "showBalance" : "Afficher le solde",
         "startSync" : "Synchroniser",
@@ -9103,6 +9113,35 @@
       "explore" : "Explorer"
     }
   },
+  "q2Tour" : {
+    "slides" : {
+      "welcome" : {
+        "title" : "Gestion d’actifs optimisée. Opportunités plus claires.",
+        "description" : ""
+      },
+      "aggregatedBalance" : {
+        "title" : "Un solde, un actif",
+        "description" : "Chaque actif a désormais un solde unique, tous réseaux confondus. Gagnez en clarté."
+      },
+      "pnl" : {
+        "title" : "Vos performances à l’honneur",
+        "description" : "Suivez la performance de tous vos actifs, directement depuis votre page d’accueil."
+      },
+      "earnSimulator" : {
+        "title" : "Simulation de votre potentiel de croissance",
+        "description" : "Estimez vos récompenses potentielles et élaborez une stratégie adaptée à vos objectifs."
+      },
+      "earnUpselling" : {
+        "title" : "Davantage de protocoles, toujours plus d’opportunités",
+        "description" : "Les stablecoins et actifs phares sont propulsés sur la page d’accueil. Gagnez du temps."
+      }
+    },
+    "cta" : {
+      "seeWhatsNew" : "Voir les nouveautés",
+      "next" : "Suivant",
+      "gotIt" : "Compris"
+    }
+  },
   "productTour" : {
     "cta" : {
       "continue" : "Continuer",
@@ -9137,7 +9176,7 @@
     }
   },
   "history" : {
-    "title" : "Historique des transactions",
+    "title" : "Historique des opérations",
     "pending" : "Transaction en attente",
     "pending_other" : "Transactions en attente",
     "columns" : {
@@ -9158,7 +9197,7 @@
       "csv" : "Exporter"
     },
     "exportDialog" : {
-      "title" : "Exporter l’historique des opérations",
+      "title" : "Exporter l’historique",
       "disclaimer" : "Ces valeurs sont uniquement estimées et fournies par Kaiko à titre d’information. N’utilisez pas ces données à des fins fiscales, juridiques ou comptables.",
       "accountsToInclude" : "Comptes",
       "selectAll" : "Sélectionner tout ({{count}})",
@@ -9186,16 +9225,16 @@
       "refer" : "Parrainage"
     },
     "backupHub" : {
-      "title" : "Vos sauvegardes",
-      "description" : "Protégez vos actifs avec une combinaison de solutions de sauvegarde.",
+      "title" : "Sauvegardes",
+      "description" : "Ne perdez pas l’accès à vos actifs : sauvegardez votre phrase de récupération secrète dans plusieurs formats.",
       "back" : "Retour",
       "sections" : {
-        "digital" : "Sauvegardes numériques",
+        "digital" : "Sauvegarde numérique",
         "physical" : "Sauvegardes physiques"
       },
       "recover" : {
         "title" : "Ledger Recover",
-        "notSubscribed" : "Créez une sauvegarde que vous ne perdrez pas",
+        "notSubscribed" : "Accès à vos actifs via votre identité",
         "inProgress" : "Terminer l’activation",
         "done" : "Gérer la synchronisation",
         "discover" : "Découvrir"
@@ -9250,7 +9289,10 @@
     "marketRank" : "Rang",
     "tradingVolume24h" : "Volume de trading (24h)",
     "tradingVolume24hTooltip" : "Le montant total échangé au cours des dernières 24 heures.",
-    "marketStatsDisclaimer" : "Statistiques sur le marché fournies par CoinGecko",
+    "marketStatsDisclaimer" : "Statistiques du marché fournies par CoinGecko",
+    "fallbackBanner" : {
+      "title" : "L’échange et l’achat ne sont pas pris en charge pour cet actif."
+    },
     "day" : "1 jour",
     "week" : "1 semaine",
     "month" : "1 mois",

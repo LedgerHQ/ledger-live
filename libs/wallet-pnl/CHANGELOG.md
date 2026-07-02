@@ -1,5 +1,33 @@
 # @ledgerhq/wallet-pnl
 
+## 0.7.0
+
+### Minor Changes
+
+- [#18711](https://github.com/LedgerHQ/ledger-live/pull/18711) [`e32e372`](https://github.com/LedgerHQ/ledger-live/commit/e32e3724af01a8808705702edcb323bec248da5d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix the asset-detail average entry price for assets that span networks with different token decimals (e.g. USDC: 6 on Ethereum, 18 on BNB Chain). `computeAssetGroupPnL` now converts each account's balance to full units using its own currency magnitude before summing, instead of dividing the mixed-magnitude total by the magnitude read from `accounts[0]`. Previously a zero-balance account in another magnitude (e.g. an empty BNB USDC) could land at `accounts[0]` and inflate the average entry price by orders of magnitude (e.g. ~$10¹²).
+
+### Patch Changes
+
+- Updated dependencies [[`36200f9`](https://github.com/LedgerHQ/ledger-live/commit/36200f969272f31c6737146b154b7dca8139d4cc), [`636a4cb`](https://github.com/LedgerHQ/ledger-live/commit/636a4cbc5ae01364af425e3837cecf1ce4d3f3bc), [`ad68778`](https://github.com/LedgerHQ/ledger-live/commit/ad68778ad71686c9e4f397276917e606a099f573), [`1f41eee`](https://github.com/LedgerHQ/ledger-live/commit/1f41eee5b4dc6aa50accd94e5a0d6c98fcf76e23), [`b8a0765`](https://github.com/LedgerHQ/ledger-live/commit/b8a0765d7ac1ac1a60456f9c604e7a694e38bd84), [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934), [`1f11587`](https://github.com/LedgerHQ/ledger-live/commit/1f11587b4681429aa9be2dc50035f292e0394108), [`b383bd5`](https://github.com/LedgerHQ/ledger-live/commit/b383bd51879861ab707bbf4795ac1b76393acb98), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292), [`25101e2`](https://github.com/LedgerHQ/ledger-live/commit/25101e2991ea7c9ab54c7f3e4e5bc0bda8056d0b), [`37eba10`](https://github.com/LedgerHQ/ledger-live/commit/37eba10db15542fb7859bafac772e6d280650872), [`ca20506`](https://github.com/LedgerHQ/ledger-live/commit/ca20506c138a1cfb9c254f61e6bb930aea4c6ab8)]:
+  - @ledgerhq/live-countervalues@0.21.0
+  - @ledgerhq/types-live@6.113.0
+  - @ledgerhq/cryptoassets@13.53.0
+  - @ledgerhq/ledger-wallet-framework@2.2.1
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#18711](https://github.com/LedgerHQ/ledger-live/pull/18711) [`e32e372`](https://github.com/LedgerHQ/ledger-live/commit/e32e3724af01a8808705702edcb323bec248da5d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix the asset-detail average entry price for assets that span networks with different token decimals (e.g. USDC: 6 on Ethereum, 18 on BNB Chain). `computeAssetGroupPnL` now converts each account's balance to full units using its own currency magnitude before summing, instead of dividing the mixed-magnitude total by the magnitude read from `accounts[0]`. Previously a zero-balance account in another magnitude (e.g. an empty BNB USDC) could land at `accounts[0]` and inflate the average entry price by orders of magnitude (e.g. ~$10¹²).
+
+### Patch Changes
+
+- Updated dependencies [[`36200f9`](https://github.com/LedgerHQ/ledger-live/commit/36200f969272f31c6737146b154b7dca8139d4cc), [`636a4cb`](https://github.com/LedgerHQ/ledger-live/commit/636a4cbc5ae01364af425e3837cecf1ce4d3f3bc), [`ad68778`](https://github.com/LedgerHQ/ledger-live/commit/ad68778ad71686c9e4f397276917e606a099f573), [`1f41eee`](https://github.com/LedgerHQ/ledger-live/commit/1f41eee5b4dc6aa50accd94e5a0d6c98fcf76e23), [`b8a0765`](https://github.com/LedgerHQ/ledger-live/commit/b8a0765d7ac1ac1a60456f9c604e7a694e38bd84), [`93a84fb`](https://github.com/LedgerHQ/ledger-live/commit/93a84fbadb2b1a0e529e2ffa08ca1de790355934), [`1f11587`](https://github.com/LedgerHQ/ledger-live/commit/1f11587b4681429aa9be2dc50035f292e0394108), [`b383bd5`](https://github.com/LedgerHQ/ledger-live/commit/b383bd51879861ab707bbf4795ac1b76393acb98), [`4ace552`](https://github.com/LedgerHQ/ledger-live/commit/4ace55213a4f1869980aab5160683bb120c65292), [`25101e2`](https://github.com/LedgerHQ/ledger-live/commit/25101e2991ea7c9ab54c7f3e4e5bc0bda8056d0b), [`37eba10`](https://github.com/LedgerHQ/ledger-live/commit/37eba10db15542fb7859bafac772e6d280650872), [`ca20506`](https://github.com/LedgerHQ/ledger-live/commit/ca20506c138a1cfb9c254f61e6bb930aea4c6ab8)]:
+  - @ledgerhq/live-countervalues@0.21.0-next.0
+  - @ledgerhq/types-live@6.113.0-next.0
+  - @ledgerhq/cryptoassets@13.53.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.2.1-next.0
+
 ## 0.6.0
 
 ### Minor Changes

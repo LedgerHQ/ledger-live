@@ -72,6 +72,8 @@ export class ExchangeModule extends CustomModule {
     fromAccountId,
     toAccountId,
     tokenCurrency,
+    isEmbedded,
+    swapEntryPoint,
   }: ExchangeStartSwapParams) {
     const result = await this.request<ExchangeStartSwapParams, ExchangeStartResult>(
       "custom.exchange.start",
@@ -81,6 +83,8 @@ export class ExchangeModule extends CustomModule {
         fromAccountId,
         toAccountId,
         tokenCurrency,
+        isEmbedded,
+        swapEntryPoint,
       },
     );
 
@@ -116,6 +120,8 @@ export class ExchangeModule extends CustomModule {
     signature,
     feeStrategy,
     tokenCurrency,
+    isEmbedded,
+    swapEntryPoint,
   }: {
     provider: string;
     fromAccountId: string;
@@ -126,6 +132,8 @@ export class ExchangeModule extends CustomModule {
     signature: string;
     feeStrategy: ExchangeCompleteParams["feeStrategy"];
     tokenCurrency?: string;
+    isEmbedded?: boolean;
+    swapEntryPoint?: string;
   }) {
     const result = await this.request<ExchangeCompleteParams, ExchangeCompleteResult>(
       "custom.exchange.complete",
@@ -140,6 +148,8 @@ export class ExchangeModule extends CustomModule {
         hexSignature: signature,
         feeStrategy,
         tokenCurrency,
+        isEmbedded,
+        swapEntryPoint,
       },
     );
 
@@ -159,6 +169,7 @@ export class ExchangeModule extends CustomModule {
     swapAppVersion,
     sponsored,
     isEmbedded,
+    swapEntryPoint,
     correlationId,
   }: ExchangeSwapParams) {
     const { operationHash, swapId } = await this.request<ExchangeSwapParams, SwapResult>(
@@ -177,6 +188,7 @@ export class ExchangeModule extends CustomModule {
         swapAppVersion,
         sponsored,
         isEmbedded,
+        swapEntryPoint,
         correlationId,
       },
     );

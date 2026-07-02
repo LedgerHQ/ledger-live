@@ -1,5 +1,33 @@
 # @devtools/registry
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/feature-flags@0.5.1
+
+## 0.1.4-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/feature-flags@0.5.1-next.2
+
+## 0.1.4-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/feature-flags@0.5.1-next.1
+
+## 0.1.4-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/feature-flags@0.5.1-next.0
+
 ## 0.1.3
 
 ### Patch Changes
