@@ -2,7 +2,7 @@ import {
   isEditableOperation,
   isStuckOperation,
   getStuckAccountAndOperation,
-} from "@ledgerhq/coin-evm/operation";
+} from "./editTransaction/operation";
 import { getEvmDummyAddress } from "@ledgerhq/coin-evm/constants";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type {
