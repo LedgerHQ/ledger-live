@@ -11,8 +11,7 @@ import { compareAddress } from "./getCoinAndAmounts";
 import { normalizeAddress } from "./normalizeAddress";
 
 const transferLikeFunctions = (payload: InputEntryFunctionData) =>
-  COIN_TRANSFER_TYPES.includes(payload.function) ||
-  DELEGATION_POOL_TYPES.includes(payload.function);
+  COIN_TRANSFER_TYPES.has(payload.function) || DELEGATION_POOL_TYPES.has(payload.function);
 
 const addLikeFunctionsToRecipients = (
   op: Operation | APIOperation,
@@ -69,10 +68,10 @@ export function processRecipients(
   if (transferLikeFunctions(payload)) {
     // 1. Transfer like functions (includes some delegation pool functions)
     addLikeFunctionsToRecipients(op, payload);
-  } else if (FA_TRANSFER_TYPES.includes(payload.function)) {
+  } else if (FA_TRANSFER_TYPES.has(payload.function)) {
     // 1. Transfer like functions (includes some delegation pool functions)
     addFungibleToRecipients(op, payload);
-  } else if (BATCH_TRANSFER_TYPES.includes(payload.function)) {
+  } else if (BATCH_TRANSFER_TYPES.has(payload.function)) {
     // 2. Batch function, to validate we are in the recipients list
     if (!compareAddress(op.senders[0], address)) {
       addBatchedFunctions(op, payload, address);
