@@ -10,9 +10,7 @@ jest.mock("@ledgerhq/live-common/currencies/index");
 describe("AccountBalanceSummaryFooter", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest
-      .spyOn(currencies, "formatCurrencyUnit")
-      .mockReturnValue("10 MINA");
+    jest.spyOn(currencies, "formatCurrencyUnit").mockReturnValue("10 MINA");
   });
 
   it("renders nothing when account has no active delegation", () => {
