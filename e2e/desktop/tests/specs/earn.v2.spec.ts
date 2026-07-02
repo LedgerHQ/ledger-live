@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { test } from "tests/fixtures/common";
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { EarnProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { EarnProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import {
   FF_EARN_V2_DESKTOP,
   FF_STAKE_PROGRAMS_MODAL,
@@ -14,7 +14,7 @@ import earnLocalManifestJson from "tests/utils/earnLocalManifest.json";
 import {
   liveDataCommand,
   liveDataWithAddressCommand,
-} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import type { Application } from "tests/page";
 

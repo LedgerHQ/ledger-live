@@ -4,8 +4,28 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Handlers } from "./types";
 import { SettingsState } from "./settings";
-import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
 import { createSelector } from "@reduxjs/toolkit";
+
+// Maps the SPECULOS_DEVICE env var to a device model when running against a Speculos simulator.
+// Kept local so production code does not depend on E2E test-support packages.
+function getSpeculosModel(): DeviceModelId {
+  switch (process.env.SPECULOS_DEVICE) {
+    case "nanoS":
+      return DeviceModelId.nanoS;
+    case "nanoX":
+      return DeviceModelId.nanoX;
+    case "stax":
+      return DeviceModelId.stax;
+    case "flex":
+    case "europa":
+      return DeviceModelId.europa;
+    case "nanoGen5":
+      return DeviceModelId.apex;
+    case "nanoSP":
+    default:
+      return DeviceModelId.nanoSP;
+  }
+}
 
 export type DevicesState = {
   /**

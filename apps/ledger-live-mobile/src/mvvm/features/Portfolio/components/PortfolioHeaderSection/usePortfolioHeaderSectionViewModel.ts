@@ -9,7 +9,6 @@ import {
 
 interface PortfolioHeaderSectionViewModel {
   readonly safeAreaTop: number;
-  readonly shouldDisplayBalanceRefreshRework: boolean;
   readonly onBannerHeightChange: (height: number) => void;
   readonly minContentHeight: number | undefined;
   readonly bannerTopInset: number;
@@ -17,8 +16,7 @@ interface PortfolioHeaderSectionViewModel {
 
 export function usePortfolioHeaderSectionViewModel(): PortfolioHeaderSectionViewModel {
   const { top: safeAreaTop } = useSafeAreaInsets();
-  const { shouldDisplayBalanceRefreshRework, shouldDisplayWallet40MainNav } =
-    useWalletFeaturesConfig("mobile");
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
 
   const [bannerHeight, setBannerHeight] = useState(0);
   const onBannerHeightChange = useCallback((height: number) => {
@@ -37,7 +35,6 @@ export function usePortfolioHeaderSectionViewModel(): PortfolioHeaderSectionView
 
   return {
     safeAreaTop,
-    shouldDisplayBalanceRefreshRework,
     onBannerHeightChange,
     minContentHeight,
     bannerTopInset,

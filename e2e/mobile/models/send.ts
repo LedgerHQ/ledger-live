@@ -1,4 +1,4 @@
-import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
+import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 
 export async function verifyAppValidationSendInfo(transaction: TransactionType, amount: string) {
   const currenciesForValidationAmount = [

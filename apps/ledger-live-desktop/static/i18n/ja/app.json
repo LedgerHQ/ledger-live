@@ -74,6 +74,8 @@
   "common" : {
     "never" : "なし",
     "new" : "New",
+    "scrollLeft" : "左にスクロール",
+    "scrollRight" : "右にスクロール",
     "skip" : "スキップ",
     "apply" : "適用",
     "done" : "完了",
@@ -503,10 +505,10 @@
       "changeProvider" : "別のプロバイダーでスワップ"
     },
     "incompatibility" : {
-      "ton_title" : "Ledger Nano S™はTonのスワップに対応していません",
-      "ton_description" : "Tonをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
-      "ton_tokens_title" : "Ledger Nano S™は、Tonトークンのスワップに対応していません",
-      "ton_tokens_description" : "Tonトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "ton_title" : "Ledger Nano S™はGramのスワップに対応していません",
+      "ton_description" : "Gramをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+      "ton_tokens_title" : "Ledger Nano S™は、Gramトークンのスワップに対応していません",
+      "ton_tokens_description" : "Gramトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
       "spl_tokens_title" : "Ledger Nano S™はSolanaトークンのスワップに対応していません",
       "spl_tokens_description" : "Solanaトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
       "sui_tokens_title" : "Ledger Nano S™は、Suiトークンのスワップに対応していません",
@@ -1704,7 +1706,11 @@
         "stocks" : "株",
         "favorites" : "お気に入り"
       },
-      "emptyFavorites" : "まだお気に入りがありません"
+      "emptyFavorites" : "まだお気に入りがありません",
+      "noAssets" : {
+        "title" : "利用可能な資産はありません",
+        "description" : "このカテゴリに利用可能な資産はありません。"
+      }
     },
     "detailsPage" : {
       "priceStatistics" : "価格統計",
@@ -4425,6 +4431,8 @@
         "header" : "デリゲート解除",
         "headerTooltip" : "{{numberOfDays}}日間のロック後に利用可能",
         "inactiveTooltip" : "デリゲートされていない金額は報酬を生成しません。",
+        "timelockTooltip" : "まだタイムロック期間内です。これらの資金はまだ引き出しできません。",
+        "readyTooltip" : "タイムロックが終了しました。これらの資金は出金準備ができています。",
         "flow" : {
           "title" : "ステーキングを停止する",
           "steps" : {
@@ -7509,6 +7517,10 @@
     "TaprootNotActivated" : {
       "title" : "メインネットのアクティベート前に、Taprootアドレスへの送付は安全ではありません。"
     },
+    "RbfBuildError" : {
+      "title" : "このトランザクションを置き換えることはできません",
+      "description" : "このトランザクションを置き換えるために必要な手数料の増額は、現在のパラメーターでは適用できません。別の手数料の数量を試すか、操作をキャンセルしてください。"
+    },
     "SolanaAccountNotFunded" : {
       "title" : "アカウントに資金がありません"
     },
@@ -7781,13 +7793,13 @@
       "title" : "当社のビットコインインフラストラクチャで問題が発生しています。後でもう一度お試しください。"
     },
     "TonExcessFee" : {
-      "title" : "これはトークン転送を構成します。手数料は0.1TONで、それ以上はお客様に返金されます。"
+      "title" : "これはトークン転送を構成します。手数料は0.1 GRAMで、それ以上はお客様に返金されます。"
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "メインアカウント（TON）の資金が不足しており、手数料を計算できません。最低必要残高は0.1TONです。"
+      "title" : "メインアカウント（GRAM）の資金が不足しており、手数料を計算できません。最低必要残高は0.1 GRAMです。"
     },
     "TonMinimumRequired" : {
-      "title" : "資金が不足しています。最低必要残高は0.02TONです。"
+      "title" : "資金が不足しています。最低必要残高は0.02 GRAMです。"
     },
     "AleoAmountRecordRequired" : {
       "title" : "数量についての有効なプライベート記録を選択します。",
@@ -8359,7 +8371,7 @@
     }
   },
   "analyticsOptInPrompt" : {
-    "variantA" : {
+    "screen" : {
       "description" : "お客様のLedger Walletデータを共有いただくことで、お客様の好みを理解し、お客様に関連するコンテンツを表示することができます。",
       "whatWeTrack" : "お客様の同意のもと、Ledgerは、Ledger Walletのご使用状況（ページの訪問数やクリック数など）に関するデータを収集できるようになります。",
       "whatWeTrackList" : {
@@ -8384,26 +8396,6 @@
         "description" : "好みに合った、パーソナライズされた推奨事項やコンテンツを受け取り、マーケティングキャンペーンのパフォーマンスの測定に役立てるため、クリック数、ページ訪問数、コンバージョンデータなどのアプリ使用状況データを共有します。"
       },
       "validate" : "検証"
-    },
-    "variantB" : {
-      "accept" : "同意する",
-      "refuse" : "拒否する",
-      "analytics" : {
-        "description" : "Ledger Wallet分析データをご共有いただくことで、お客様がLedger Walletをどのように使用されているのかを理解し、バグを修正し、お客様のご体験を向上させることができます。",
-        "details" : {
-          "1" : "分析データには、ページ訪問数、クリック数が含まれます。",
-          "2" : "当社は、お客様の残高、アカウント、ポートフォリオに関する情報を収集や閲覧することはありません。",
-          "3" : "分析は完全に匿名です。当社は、お客様の個人情報を閲覧したり収集したりすることはできません。"
-        }
-      },
-      "personalRecommendations" : {
-        "title" : "パーソナライズされたコンテンツを使用する",
-        "description" : "Ledger Walletのパーソナライゼーションデータをご共有いただくと、お客様のお好みに合ったコンテンツを表示できるようになります。",
-        "details" : {
-          "1" : "パーソナライゼーションデータには、コンバージョンデータ（資料のご請求、ご購入などのアクション）、クリック数、ページ訪問数が含まれます。",
-          "2" : "当社は、お客様の個人情報やポートフォリオ情報を追跡したり収集したりすることはできません。"
-        }
-      }
     },
     "common" : {
       "title" : "コンテンツの改善およびパーソナライズへご協力ください",
@@ -8751,8 +8743,6 @@
     "title" : "マーケット",
     "genericError" : "接続に失敗",
     "cta" : "すべて表示",
-    "scrollLeft" : "左にスクロール",
-    "scrollRight" : "右にスクロール",
     "ranking" : {
       "trending" : "トレンド",
       "gainers" : "上昇",
@@ -8863,6 +8853,12 @@
   },
   "topBar" : {
     "searchPlaceholder" : "資産を検索",
+    "searchPlaceholders" : {
+      "crypto" : "暗号資産を検索",
+      "stablecoins" : "ステーブルコインを検索",
+      "stocks" : "株式を検索",
+      "addresses" : "アドレスを検索"
+    },
     "search" : {
       "noAssetFound" : "資産が見つかりません",
       "error" : "接続に失敗しました",
@@ -8910,6 +8906,20 @@
       "privateBalanceTooltip" : "一般には非公開の残高"
     },
     "shielded" : {
+      "send" : {
+        "transferFrom" : {
+          "label" : "転送元",
+          "public" : {
+            "title" : "公開残高",
+            "subtitle" : "透明性"
+          },
+          "private" : {
+            "title" : "プライベート残高",
+            "subtitle" : "シールド",
+            "unavailable" : "プライベート残高は利用できません"
+          }
+        }
+      },
       "state" : {
         "showBalance" : "残高を表示",
         "startSync" : "同期を開始",
@@ -9103,6 +9113,35 @@
       "explore" : "新しいポートフォリオを見る"
     }
   },
+  "q2Tour" : {
+    "slides" : {
+      "welcome" : {
+        "title" : "よりスマートな資産管理を。資産形成のより明確な道筋へ",
+        "description" : ""
+      },
+      "aggregatedBalance" : {
+        "title" : "資産ごとの残高を1つに集約",
+        "description" : "USDTなどのマルチチェーン資産が、1つの合計額として表示されるようになりました。シンプル、正確、そして明確に。"
+      },
+      "pnl" : {
+        "title" : "収益状況を、いつでも最前面に",
+        "description" : "ポートフォリオや分析ページから、すべての資産の損益（P&L）をひと目で確認。"
+      },
+      "earnSimulator" : {
+        "title" : "運用のポテンシャルを試す",
+        "description" : "獲得可能な報酬をシミュレーションし、目標に合わせた資産成長プランを構築。"
+      },
+      "earnUpselling" : {
+        "title" : "対応プロトコルの拡大で、報酬もアップ",
+        "description" : "ステーブルコインや注目の資産が、ウォレットのトップに自動表示。探す手間を削減し、スムーズな決断へ。"
+      }
+    },
+    "cta" : {
+      "seeWhatsNew" : "新機能をチェック",
+      "next" : "次へ",
+      "gotIt" : "了解"
+    }
+  },
   "productTour" : {
     "cta" : {
       "continue" : "続行",
@@ -9186,16 +9225,16 @@
       "refer" : "紹介"
     },
     "backupHub" : {
-      "title" : "ウォレットのバックアップ",
-      "description" : "シードフレーズ復元のための複数のバックアップソリューションを組み合わせることで、資産を保護できます。",
+      "title" : "バックアップ",
+      "description" : "資産へのアクセスを失わないように、複数の形式でシークレットリカバリーフレーズをバックアップしてください。",
       "back" : "戻る",
       "sections" : {
-        "digital" : "デジタルIDベースのバックアップ",
+        "digital" : "IDに紐づくデジタルバックアップ",
         "physical" : "物理的なバックアップ"
       },
       "recover" : {
         "title" : "Ledger Recover",
-        "notSubscribed" : "紛失しないバックアップを作成する",
+        "notSubscribed" : "IDを認証してアクセスを復元してください。",
         "inProgress" : "有効化を完了",
         "done" : "バックアップの管理",
         "discover" : "アプリ一覧"
@@ -9251,6 +9290,9 @@
     "tradingVolume24h" : "24時間取引量",
     "tradingVolume24hTooltip" : "過去24時間に取引された合計数量。",
     "marketStatsDisclaimer" : "市場統計はCoinGeckoから取得しています",
+    "fallbackBanner" : {
+      "title" : "この資産は、スワップと購入に対応していません。"
+    },
     "day" : "1日間",
     "week" : "1週間",
     "month" : "1か月",

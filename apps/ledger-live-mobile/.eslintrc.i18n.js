@@ -49,12 +49,5 @@ module.exports = {
       rules: { "i18next/no-literal-string": "off" },
     },
   ],
-  ignorePatterns: [
-    "node_modules",
-    "src/locales",
-    "generated",
-    "scripts",
-    "e2e/bridge",
-    "*.min.js",
-  ],
+  ignorePatterns: ["node_modules", "src/locales", "generated", "scripts", "e2e/bridge", "*.min.js"],
 };

@@ -35,11 +35,13 @@ describe("Cosmos Tester", () => {
 // `exit` (and some signal paths) won't await pending promises, so the handler
 // must trigger teardown synchronously rather than awaiting it. Tear down both
 // devnets — whichever scenario was mid-run, its containers must not leak.
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(event => {
-  process.on(event, () => {
-    // Swallow rejections: a failed teardown here must not become an
-    // unhandledRejection that masks the original error.
-    void killBabylond().catch(() => {});
-    void killGaiad().catch(() => {});
-  });
-});
+["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(
+  event => {
+    process.on(event, () => {
+      // Swallow rejections: a failed teardown here must not become an
+      // unhandledRejection that masks the original error.
+      void killBabylond().catch(() => {});
+      void killGaiad().catch(() => {});
+    });
+  },
+);

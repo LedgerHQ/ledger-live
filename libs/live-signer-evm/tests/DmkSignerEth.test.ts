@@ -338,16 +338,18 @@ describe("DmkSignerEth", () => {
       });
 
       // WHEN
-      const result = await lastValueFrom(signer.signTransaction(path, rawTxHex, {
-        domains: [
-          {
-            registry: "ens",
-            domain,
-            address: "0x",
-            type: "forward",
-          },
-        ]
-      }));
+      const result = await lastValueFrom(
+        signer.signTransaction(path, rawTxHex, {
+          domains: [
+            {
+              registry: "ens",
+              domain,
+              address: "0x",
+              type: "forward",
+            },
+          ],
+        }),
+      );
 
       // THEN
       expect(dmkMock.executeDeviceAction).toHaveBeenCalledWith(

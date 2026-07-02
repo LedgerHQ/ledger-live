@@ -33,12 +33,12 @@ screenshots:
   - apps/ledger-live-desktop/tests/specs/**/*.png
 
 coin-modules-api:
- - libs/coin-framework/src/api/**
- - libs/coin-modules/*/src/api/**
+  - libs/coin-framework/src/api/**
+  - libs/coin-modules/*/src/api/**
 
 coin-modules:
- - libs/coin-framework/**/*
- - libs/coin-modules/**/*
+  - libs/coin-framework/**/*
+  - libs/coin-modules/**/*
 
 shared-lib:
   - libs/asset-aggregation/**/*

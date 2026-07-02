@@ -22,9 +22,7 @@ module.exports = {
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
-  transformIgnorePatterns: [
-    "node_modules/(?!(@walletconnect)/)",
-  ],
+  transformIgnorePatterns: ["node_modules/(?!(@walletconnect)/)"],
   workerThreads: true,
   reporters: [
     "default",

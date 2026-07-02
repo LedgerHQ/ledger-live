@@ -34,7 +34,7 @@ jobs:
             const hasMobile = labels.includes('mobile') || labels.includes('mobile-lib');
             const hasCommon = labels.includes('common') || labels.includes('shared-lib');
             const hasCoinModules = labels.includes('coin-modules');
-            
+
             if (hasCommon || (hasDesktop && hasMobile) || hasCoinModules) {
               prefixes = ['LWDM'];
             } else if (hasDesktop) {
@@ -75,4 +75,4 @@ jobs:
                   throw error;
                 }
               }
-            } 
+            }

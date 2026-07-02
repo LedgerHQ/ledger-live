@@ -5,7 +5,7 @@
 const axios = require("axios");
 const {
   listCryptoCurrencies,
-  formatCurrencyUnit
+  formatCurrencyUnit,
   // $FlowFixMe
 } = require("../lib/helpers/currencies");
 
@@ -27,14 +27,16 @@ function main() {
       pairs: currencies
         .map(c => ({
           from: c.ticker,
-          to: "USD"
+          to: "USD",
         }))
         .concat(
-          currencies.filter(c => c.id !== "bitcoin").map(c => ({
-            from: c.ticker,
-            to: "BTC"
-          }))
-        )
+          currencies
+            .filter(c => c.id !== "bitcoin")
+            .map(c => ({
+              from: c.ticker,
+              to: "BTC",
+            })),
+        ),
     })
     .then(res => {
       function getRate(from, to) {
@@ -45,8 +47,7 @@ function main() {
       const btcRate = getRate("BTC", "USD");
       console.log("::: PRICE FOR USD " + amount.toFixed(2) + " :::");
       currencies.forEach(c => {
-        const rate =
-          getRate(c.ticker, "USD") || btcRate * getRate(c.ticker, "BTC");
+        const rate = getRate(c.ticker, "USD") || btcRate * getRate(c.ticker, "BTC");
         const price = formatCurrencyUnit(c.units[0], (amount * 100) / rate);
         console.log(c.ticker + "\t" + price);
       });

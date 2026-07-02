@@ -8,7 +8,6 @@ runs:
       shell: bash
       run: |
         SCRIPT_PATH="${{ github.action_path }}/validate-all-changesets.sh"
-        
+
         # Run the script
         "$SCRIPT_PATH"
-

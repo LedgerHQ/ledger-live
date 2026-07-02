@@ -34,9 +34,10 @@ export interface CloudSyncSDKInterface<Data> {
   ): Observable<number>;
 }
 
-export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>>
-  implements CloudSyncSDKInterface<Data>
-{
+export class CloudSyncSDK<
+  Schema extends ZodType,
+  Data = z.infer<Schema>,
+> implements CloudSyncSDKInterface<Data> {
   private slug: string;
   private schema: Schema;
   private trustchainSdk: TrustchainSDK;

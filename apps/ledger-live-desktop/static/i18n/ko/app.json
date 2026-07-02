@@ -74,6 +74,8 @@
   "common" : {
     "never" : "절대",
     "new" : "New",
+    "scrollLeft" : "왼쪽으로 스크롤",
+    "scrollRight" : "오른쪽으로 스크롤",
     "skip" : "건너뛰기",
     "apply" : "적용",
     "done" : "완료",
@@ -503,10 +505,10 @@
       "changeProvider" : "다른 공급자를 통해 스왑"
     },
     "incompatibility" : {
-      "ton_title" : "Ledger Nano S™는 Ton 스왑을 지원하지 않습니다",
-      "ton_description" : "Ton을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
-      "ton_tokens_title" : "Ledger Nano S™는 Ton 토큰 스왑을 지원하지 않습니다.",
-      "ton_tokens_description" : "Ton 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+      "ton_title" : "Ledger Nano S™는 Gram 스왑을 지원하지 않습니다.",
+      "ton_description" : "Gram을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
+      "ton_tokens_title" : "Ledger Nano S™는 Gram 토큰 스왑을 지원하지 않습니다.",
+      "ton_tokens_description" : "Gram 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
       "spl_tokens_title" : "Ledger Nano S™는 솔라나 토큰 스왑을 지원하지 않습니다.",
       "spl_tokens_description" : "솔라노 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
       "sui_tokens_title" : "Ledger Nano S™는 Sui 토큰 스왑을 지원하지 않습니다.",
@@ -1704,7 +1706,11 @@
         "stocks" : "주식",
         "favorites" : "즐겨찾기"
       },
-      "emptyFavorites" : "아직 등록된 즐겨찾기가 없습니다"
+      "emptyFavorites" : "아직 등록된 즐겨찾기가 없습니다",
+      "noAssets" : {
+        "title" : "표시할 자산이 없습니다",
+        "description" : "현재 선택하신 카테고리에는 표시할 수 있는 자산이 없습니다."
+      }
     },
     "detailsPage" : {
       "priceStatistics" : "가격 통계",
@@ -2731,14 +2737,14 @@
     "value" : "가치",
     "showAll" : "모두 보기",
     "showLess" : "간단히 표시",
-    "header" : "자산 배분 ({{count}})"
+    "header" : "자산 구성 ({{count}})"
   },
   "accountDistribution" : {
     "account" : "계정",
     "distribution" : "할당",
     "amount" : "금액",
     "value" : "가치",
-    "header" : "계정 배분 ({{count}})"
+    "header" : "계정 구성 ({{count}})"
   },
   "elrond" : {
     "guardedAccountWarning" : "계정에 보호자 설정이 되어 있으면 Ledger Wallet을 통해 트랜잭션을 전송할 수 없습니다.",
@@ -4425,6 +4431,8 @@
         "header" : "위임 해제",
         "headerTooltip" : "{{numberOfDays}}일 타임 락이 끝나면 이용할 수 있습니다",
         "inactiveTooltip" : "위임되지 않은 금액은 보상을 생성하지 않습니다",
+        "timelockTooltip" : "타임락 진행 중 해당 자산은 아직 출금할 수 없습니다.",
+        "readyTooltip" : "타임락 종료 이제 자산을 출금할 수 있습니다.",
         "flow" : {
           "title" : "스테이킹 중지",
           "steps" : {
@@ -7509,6 +7517,10 @@
     "TaprootNotActivated" : {
       "title" : "메인넷 활성화 전에 탭루트(taproot) 주소로 보내는 것은 안전하지 않습니다"
     },
+    "RbfBuildError" : {
+      "title" : "트랜잭션을 대체할 수 없습니다.",
+      "description" : "현재 조건으로는 거래 대체에 필요한 수수료 인상분을 반영할 수 없습니다. 수수료 금액을 변경하여 다시 시도하거나 작업을 취소해 주세요."
+    },
     "SolanaAccountNotFunded" : {
       "title" : "자금이 입금되지 않은 계정"
     },
@@ -7781,13 +7793,13 @@
       "title" : "당사 비트코인 인프라에 문제개 발생했습니다. 나중에 다시 시도해 주세요."
     },
     "TonExcessFee" : {
-      "title" : "진행할 경우, 토큰이 전송됩니다. 수수료로 0.1 TON을 지불하게 되며, 초과 금액은 반환됩니다."
+      "title" : "트랜잭션 진행 시, 토큰이 전송됩니다. 수수료로 0.1 GRAM이 부과되며, 초과 금액은 반환됩니다."
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "메인 계정(TON)에 수수료 계산에 사용할 잔액이 부족합니다. 필요한 최소 잔액은 0.1 TON입니다."
+      "title" : "메인 계정(GRAM)에 수수료 계산을 위한 잔액이 부족합니다. 최소 0.1 GRAM이 필요합니다."
     },
     "TonMinimumRequired" : {
-      "title" : "자금이 부족합니다 필요한 최소 잔액은 0.02 TON입니다."
+      "title" : "잔액이 부족합니다. 잔액으로 최소 0.02 GRAM이 필요합니다."
     },
     "AleoAmountRecordRequired" : {
       "title" : "전송에 사용할 유효한 프라이빗 레코드를 선택하세요.",
@@ -8359,17 +8371,17 @@
     }
   },
   "analyticsOptInPrompt" : {
-    "variantA" : {
+    "screen" : {
       "description" : "Ledger Wallet 데이터를 공유하면 사용자의 선호도를 이해하고 사용자와 관련 있는 콘텐츠를 표시하는 데 도움이 됩니다.",
       "whatWeTrack" : "사용자의 동의 하에 Ledger는 사용자가 Ledger Wallet을 사용하는 방식에 대한 데이터(페이지 방문 및 클릭 포함)를 수집할 수 있습니다.",
       "whatWeTrackList" : {
-        "1" : "Ledger Wallet의 성능을 측정하고 앱과 사용자 경험을 모두 개선(분석)하는 것이 목적입니다.",
-        "2" : "사용자 선호도에 맞는 맞춤형 추천과 콘텐츠를 제공하고(개인 맞춤화), 마케팅 캠페인의 효과를 측정할 목적."
+        "1" : "Ledger Wallet 성능 측정, 앱 & 사용자 경험 분석 및 개선",
+        "2" : "사용자 선호에 맞춘 개인화된 추천 및 콘텐츠 제공, 마케팅 캠페인 효과 측정"
       },
       "whatWeDoNotTrack" : "Ledger는 다음과 관련한 정보를 결코 수집하지 않습니다.",
       "whatWeDoNotTrackList" : {
-        "1" : "고객 자산.",
-        "2" : "고객 포트폴리오.",
+        "1" : "사용자 자산",
+        "2" : "사용자 포트폴리오",
         "3" : "고객의 개인 식별 정보."
       },
       "managePreferences" : "환경 설정 관리",
@@ -8384,26 +8396,6 @@
         "description" : "사용자의 선호도에 맞는 맞춤형 추천과 콘텐츠를 제공받고 마케팅 캠페인 성과를 측정하기 위해 당사는 클릭수, 페이지 방문, 전환 데이터를 포함한 앱 사용 데이터를 공유합니다."
       },
       "validate" : "승인"
-    },
-    "variantB" : {
-      "accept" : "수락",
-      "refuse" : "거부",
-      "analytics" : {
-        "description" : "공유해 주신 Ledger Wallet 분석 데이터는 고객이 어떤 방식으로 Ledger Wallet을 활용하는지 이해하고, 버그를 수정하며 개선된 사용자 경험을 제공하는 데 활용됩니다.",
-        "details" : {
-          "1" : "페이지 방문, 클릭 수를 포함한 분석 데이터.",
-          "2" : "당사는 고객의 잔액, 계좌, 포트폴리오와 관련한 어떤 정보도 수집 또는 열람할 수 없습니다.",
-          "3" : "분석은 온전히 익명으로 처리됩니다. 당사는 고객의 개인 정보를 열람 또는 수집할 수 없습니다."
-        }
-      },
-      "personalRecommendations" : {
-        "title" : "맞춤화된 고객 경험을 즐겨보세요",
-        "description" : "공유해 주신 Ledger Wallet 개인 설정 데이터를 바탕으로 고객님의 선호도에 맞는 콘텐츠를 표시할 수 있습니다.",
-        "details" : {
-          "1" : "환전 데이터, 클릭 수, 페이지 방문을 포함한 개인화 데이터.",
-          "2" : "당사는 고객의 개인 정보 또는 포트폴리오 정보를 추적하거나 수집할 수 없습니다."
-        }
-      }
     },
     "common" : {
       "title" : "사용자 경험을 개선하고 개인 맞춤형 서비스를 제공할 수 있도록 도와주세요.",
@@ -8420,7 +8412,7 @@
   "analytics" : {
     "title" : "애널리틱스",
     "allocation" : {
-      "title" : "자산 배분",
+      "title" : "자산 구성",
       "columns" : {
         "name" : "이름",
         "balance" : "잔액",
@@ -8751,8 +8743,6 @@
     "title" : "마켓",
     "genericError" : "연결에 실패했습니다",
     "cta" : "모두 보기",
-    "scrollLeft" : "왼쪽으로 스크롤",
-    "scrollRight" : "오른쪽으로 스크롤",
     "ranking" : {
       "trending" : "인기 급상승",
       "gainers" : "상승 코인",
@@ -8863,6 +8853,12 @@
   },
   "topBar" : {
     "searchPlaceholder" : "자산 검색",
+    "searchPlaceholders" : {
+      "crypto" : "암호화폐 검색",
+      "stablecoins" : "스테이블코인 검색",
+      "stocks" : "주식 종목 검색",
+      "addresses" : "주소 검색"
+    },
     "search" : {
       "noAssetFound" : "발견된 자산 없음",
       "error" : "연결에 실패했습니다",
@@ -8910,6 +8906,20 @@
       "privateBalanceTooltip" : "타인에게 공개되지 않은 수량"
     },
     "shielded" : {
+      "send" : {
+        "transferFrom" : {
+          "label" : "출금 계정",
+          "public" : {
+            "title" : "공개 수량",
+            "subtitle" : "Transparent(공개)"
+          },
+          "private" : {
+            "title" : "비공개 수량",
+            "subtitle" : "Shielded(프라이빗)",
+            "unavailable" : "비공개 수량 확인 불가"
+          }
+        }
+      },
       "state" : {
         "showBalance" : "잔액 보기",
         "startSync" : "동기화 시작",
@@ -9103,6 +9113,35 @@
       "explore" : "새로워진 포트폴리오 살펴보기"
     }
   },
+  "q2Tour" : {
+    "slides" : {
+      "welcome" : {
+        "title" : "더 똑똑해진 포트폴리오 관리, 더 확실해진 자산 성장 로드맵",
+        "description" : ""
+      },
+      "aggregatedBalance" : {
+        "title" : "자산별 잔액 통합 보기",
+        "description" : "USDT 등의 멀티체인 자산을 이제 하나의 통합 잔액으로 확인하세요. 심플하게, 정확하게, 명확하게!"
+      },
+      "pnl" : {
+        "title" : "수익률 현황을 한눈에",
+        "description" : "포트폴리오와 분석 페이지에서 모든 자산의 손익을 실시간으로 확인해 보세요."
+      },
+      "earnSimulator" : {
+        "title" : "예상 수익 확인하기",
+        "description" : "예상 보상을 시뮬레이션하고, 투자 목표에 부합하는 맞춤형 성장 플랜을 세워보세요."
+      },
+      "earnUpselling" : {
+        "title" : "더 다양한 프로토콜, 더 커진 보상",
+        "description" : "스테이블코인부터 엄선된 인기 자산까지 지갑에서 바로 확인해 보세요. 검색 시간은 줄이고, 투자 결정은 더 빠르게."
+      }
+    },
+    "cta" : {
+      "seeWhatsNew" : "새로운 소식 살펴보기",
+      "next" : "다음",
+      "gotIt" : "확인"
+    }
+  },
   "productTour" : {
     "cta" : {
       "continue" : "계속",
@@ -9186,16 +9225,16 @@
       "refer" : "친구 추천"
     },
     "backupHub" : {
-      "title" : "지갑 백업",
-      "description" : "다양한 복구 솔루션을 조합해 시드 문구를 안전하게 보호하세요.",
+      "title" : "백업",
+      "description" : "자산에 대한 액세스 권한을 잃지 마세요 — 다양한 형태로 비밀 복구 문구를 안전하게 백업해 두세요.",
       "back" : "뒤로",
       "sections" : {
-        "digital" : "디지털 ID 기반 백업",
+        "digital" : "ID 연동 디지털 백업",
         "physical" : "물리적 백업"
       },
       "recover" : {
         "title" : "Ledger Recover",
-        "notSubscribed" : "유실 위험 제로, 완벽한 백업 만들기",
+        "notSubscribed" : "신원 인증을 통해 자산 액세스 권한을 복구합니다.",
         "inProgress" : "활성화 완료",
         "done" : "백업 관리",
         "discover" : "탐색"
@@ -9251,6 +9290,9 @@
     "tradingVolume24h" : "24시간 거래량",
     "tradingVolume24hTooltip" : "최근 24시간 동안의 거래량을 의미합니다.",
     "marketStatsDisclaimer" : "시장 통계 데이터 출처: CoinGecko",
+    "fallbackBanner" : {
+      "title" : "스왑 및 매수가 지원되지 않는 자산입니다."
+    },
     "day" : "1일",
     "week" : "1주",
     "month" : "1달",

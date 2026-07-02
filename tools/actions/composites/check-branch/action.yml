@@ -1,18 +1,18 @@
-name: 'Check Branch Existence'
-description: 'Check if a branch exists in the repository using GitHub API'
+name: "Check Branch Existence"
+description: "Check if a branch exists in the repository using GitHub API"
 
 inputs:
   branch-name:
-    description: 'Name of the branch to check'
+    description: "Name of the branch to check"
     required: true
   repository:
-    description: 'Repository name with owner (e.g., owner/repo)'
+    description: "Repository name with owner (e.g., owner/repo)"
     required: true
     default: ${{ github.repository }}
 
 outputs:
   exists:
-    description: 'Boolean indicating if the branch exists (true/false)'
+    description: "Boolean indicating if the branch exists (true/false)"
     value: ${{ steps.check-branch.outputs.exists }}
 
 runs:

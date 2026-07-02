@@ -250,7 +250,7 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
         );
       } catch (err) {
         console.error(
-          `Skipping failing run. Error: ${err instanceof Error ? err.stack ?? err.message : err}`,
+          `Skipping failing run. Error: ${err instanceof Error ? (err.stack ?? err.message) : err}`,
         );
         // We may miss some parameters added to the error on runtime
         // We display only the message on the top for convenience and better readability

@@ -147,26 +147,30 @@ describe("trackingWrapper with optional tracking params", () => {
     { method: "signTransactionRequested", message: "WalletAPI SignTransaction" },
     { method: "signTransactionFail", message: "WalletAPI SignTransaction Fail" },
     { method: "signTransactionSuccess", message: "WalletAPI SignTransaction Success" },
-  ])("$method includes isEmbeddedSwap and partner when provided", ({ method, message }) => {
-    // Given
-    const appManifest = appManifestFixture();
-    const mockedTrack = jest.fn();
+  ])(
+    "$method includes isEmbeddedSwap, partner, and swapEntryPoint when provided",
+    ({ method, message }) => {
+      // Given
+      const appManifest = appManifestFixture();
+      const mockedTrack = jest.fn();
 
-    // When
-    trackingWrapper(mockedTrack)[method](appManifest, true, "uniswap");
+      // When
+      trackingWrapper(mockedTrack)[method](appManifest, true, "uniswap", "asset_embed");
 
-    // Then
-    expect(mockedTrack).toHaveBeenCalledTimes(1);
-    expect(mockedTrack).toHaveBeenCalledWith(
-      message,
-      {
-        walletAPI: appManifest.name,
-        isEmbeddedSwap: "true",
-        partner: "uniswap",
-      },
-      null,
-    );
-  });
+      // Then
+      expect(mockedTrack).toHaveBeenCalledTimes(1);
+      expect(mockedTrack).toHaveBeenCalledWith(
+        message,
+        {
+          walletAPI: appManifest.name,
+          isEmbeddedSwap: "true",
+          partner: "uniswap",
+          swapEntryPoint: "asset_embed",
+        },
+        null,
+      );
+    },
+  );
 });
 
 describe("trackingWrapper broadcast with BroadcastTrackingData", () => {
@@ -181,6 +185,7 @@ describe("trackingWrapper broadcast with BroadcastTrackingData", () => {
     // When
     trackingWrapper(mockedTrack)[method](appManifest, {
       isEmbeddedSwap: true,
+      swapEntryPoint: "asset_embed",
       partner: "uniswap",
       sourceCurrency: "Bitcoin",
       targetCurrency: "LBTC",
@@ -194,6 +199,7 @@ describe("trackingWrapper broadcast with BroadcastTrackingData", () => {
       {
         walletAPI: appManifest.name,
         isEmbeddedSwap: "true",
+        swapEntryPoint: "asset_embed",
         partner: "uniswap",
         sourceCurrency: "Bitcoin",
         targetCurrency: "LBTC",

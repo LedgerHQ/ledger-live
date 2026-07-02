@@ -29,7 +29,6 @@ const baseProps: PortfolioBalanceSectionViewProps = {
   isBalanceAvailable: true,
   isAnalyticPillVisible: true,
   isLoading: false,
-  shouldDisplayBalanceRefreshRework: false,
   onToggleDiscreetMode: jest.fn(),
 };
 
@@ -84,12 +83,11 @@ describe("PortfolioBalanceSectionView", () => {
       expect(screen.queryByTestId("portfolio-balance-analytics-pill")).toBeNull();
     });
 
-    it("should show skeleton when balance refresh rework is enabled and loading", () => {
+    it("should show skeleton when balance is not available and loading", () => {
       renderView({
         isBalanceAvailable: false,
         isAnalyticPillVisible: true,
         isLoading: true,
-        shouldDisplayBalanceRefreshRework: true,
       });
 
       expect(screen.getByTestId("portfolio-balance-loading")).toBeVisible();
@@ -98,11 +96,10 @@ describe("PortfolioBalanceSectionView", () => {
       expect(screen.getByTestId("portfolio-balance-analytics-pill")).toBeVisible();
     });
 
-    it("should show shimmer on amount when balance is available and loading with rework enabled", () => {
+    it("should show shimmer on amount when balance is available and loading", () => {
       renderView({
         isBalanceAvailable: true,
         isLoading: true,
-        shouldDisplayBalanceRefreshRework: true,
       });
 
       expect(screen.getByTestId("portfolio-balance-normal")).toBeVisible();

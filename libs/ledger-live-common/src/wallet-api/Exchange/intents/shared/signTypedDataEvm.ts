@@ -1,10 +1,7 @@
 import { defer, of, type Observable } from "rxjs";
 import { catchError, filter, finalize, map } from "rxjs/operators";
 import { Signature as EthersSignature } from "ethers";
-import {
-  DeviceActionStatus,
-  UserInteractionRequired,
-} from "@ledgerhq/device-management-kit";
+import { DeviceActionStatus, UserInteractionRequired } from "@ledgerhq/device-management-kit";
 import { SignTypedDataDAStateStep } from "@ledgerhq/device-signer-kit-ethereum";
 import type { DeviceConnectionResult } from "@ledgerhq/device-intent";
 import type { EIP712Message } from "@ledgerhq/types-live";
@@ -48,11 +45,9 @@ export function runSignTypedDataEvm(
     // filters load on-device (Permit2 spender, token symbols, …)
     // instead of falling back to blind signing.
     const signer = new DmkSignerEth(dmk, sessionId).signer;
-    const { observable, cancel } = signer.signTypedData(
-      derivationPath,
-      typedData,
-      { skipOpenApp: true },
-    );
+    const { observable, cancel } = signer.signTypedData(derivationPath, typedData, {
+      skipOpenApp: true,
+    });
 
     return observable.pipe(
       finalize(cancel),

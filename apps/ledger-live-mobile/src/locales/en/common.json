@@ -2779,13 +2779,6 @@
         "cta": "I understand"
       }
     },
-    "appsStep": {
-      "title": "Install apps on {{productName}}"
-    },
-    "readyStep": {
-      "title": "End of setup",
-      "doneTitle": "{{productName}} is ready"
-    },
     "completion": {
       "title": "Now you are in control"
     },
@@ -10030,6 +10023,17 @@
     },
     "accountActions": {
       "publicToPrivate": "Self transfer"
+    },
+    "balancesSection": "Balances",
+    "info": {
+      "transparent": {
+        "title": "Transparent balance",
+        "description": "The publicly visible balance on the Aleo network. This amount can be sent or received directly and is visible to anyone."
+      },
+      "private": {
+        "title": "Private balance",
+        "description": "The shielded balance on the Aleo network. This balance is only visible to you and requires proof generation for private transactions."
+      }
     }
   }
 }

@@ -20,9 +20,7 @@ import process from "node:process";
 const [graphPath, focusProject, chunkCountArg = "2"] = process.argv.slice(2);
 
 if (!graphPath || !focusProject) {
-  console.error(
-    "Usage: print-build-dep-chunks.mjs <graph.json> <focusProject> [chunkCount]",
-  );
+  console.error("Usage: print-build-dep-chunks.mjs <graph.json> <focusProject> [chunkCount]");
   process.exit(1);
 }
 
@@ -54,9 +52,7 @@ function visit(name) {
 
 visit(focusProject);
 
-const buildable = order.filter(
-  name => name !== focusProject && nodes[name]?.data?.targets?.build,
-);
+const buildable = order.filter(name => name !== focusProject && nodes[name]?.data?.targets?.build);
 
 const chunkSize = Math.max(1, Math.ceil(buildable.length / chunkCount));
 for (let i = 0; i < buildable.length; i += chunkSize) {

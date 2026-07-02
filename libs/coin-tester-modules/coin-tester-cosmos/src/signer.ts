@@ -27,9 +27,7 @@ type DerivedKey = { privKey: Uint8Array; compressedPubKey: Uint8Array };
 // markers before calling the signer (see signOperation.ts), so we re-apply
 // the hardening here.
 function applyCosmosHardening(path: number[]) {
-  return path.map((n, i) =>
-    i < 3 ? Slip10RawIndex.hardened(n) : Slip10RawIndex.normal(n),
-  );
+  return path.map((n, i) => (i < 3 ? Slip10RawIndex.hardened(n) : Slip10RawIndex.normal(n)));
 }
 
 // Like the device, the tester signs from a single seed for the whole run. The
@@ -45,11 +43,7 @@ export async function buildSigner(): Promise<CosmosSigner> {
   const seed = await Bip39.mnemonicToSeed(phrase);
 
   async function deriveFromNumberPath(path: number[]): Promise<DerivedKey> {
-    const { privkey } = Slip10.derivePath(
-      Slip10Curve.Secp256k1,
-      seed,
-      applyCosmosHardening(path),
-    );
+    const { privkey } = Slip10.derivePath(Slip10Curve.Secp256k1, seed, applyCosmosHardening(path));
     const { pubkey } = await Secp256k1.makeKeypair(privkey);
     return { privKey: privkey, compressedPubKey: Secp256k1.compressPubkey(pubkey) };
   }
@@ -65,10 +59,7 @@ export async function buildSigner(): Promise<CosmosSigner> {
   }
 
   return {
-    async getAddressAndPubKey(
-      path: number[],
-      hrp: string,
-    ): Promise<CosmosGetAddressAndPubKeyRes> {
+    async getAddressAndPubKey(path: number[], hrp: string): Promise<CosmosGetAddressAndPubKeyRes> {
       const { compressedPubKey } = await deriveFromNumberPath(path);
       const rawAddr = rawSecp256k1PubkeyToRawAddress(compressedPubKey);
       return {

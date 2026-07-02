@@ -18,25 +18,22 @@ keywords = ["seed", "mnemonic", "pass", "recovery", "phrase"]
 [[rules]]
 id = "generic-api-key"
 
-    [[rules.allowlists]]
-    condition = "AND"
-    description = "Ignore public blockchain contract/token addresses by network prefix in tokenId."
-    regexTarget = "match"
-    regexes = [
-        '''(?i)\"?tokenId\"?\s*[=:]\s*[\"']?(?:aleo|algorand|aptos|assethub_polkadot|base|bitcoin|bsc|cardano|celo|cosmos|dogecoin|elrond|ethereum|hedera|injective|internet_computer|kaspa|litecoin|near|optimism|osmo|polygon|ripple|solana|stellar|sui|tezos|ton|tron|vechain|zcash)''',
-    ]
-    paths = [
-        '''e2e/.+/userdata/.+\.json''',
-        '''e2e/desktop/tests/.+/.+\.spec\.ts''',
-        '''libs/.+/.+\.test\.ts\.snap''',
-    ]
+[[rules.allowlists]]
+condition = "AND"
+description = "Ignore public blockchain contract/token addresses by network prefix in tokenId."
+regexTarget = "match"
+regexes = [
+  '''(?i)\"?tokenId\"?\s*[=:]\s*[\"']?(?:aleo|algorand|aptos|assethub_polkadot|base|bitcoin|bsc|cardano|celo|cosmos|dogecoin|elrond|ethereum|hedera|injective|internet_computer|kaspa|litecoin|near|optimism|osmo|polygon|ripple|solana|stellar|sui|tezos|ton|tron|vechain|zcash)''',
+]
+paths = [
+  '''e2e/.+/userdata/.+\.json''',
+  '''e2e/desktop/tests/.+/.+\.spec\.ts''',
+  '''libs/.+/.+\.test\.ts\.snap''',
+]
 
 [[rules]]
 id = "jwt"
 
-    [[rules.allowlists]]
-    description = "Ignore fake JWTs in mock files."
-    paths = [
-        '''libs/.+/mocks/.+/.+\.json''',
-        '''apps/.+/__mocks__/.+/.+\.json''',
-    ]
+[[rules.allowlists]]
+description = "Ignore fake JWTs in mock files."
+paths = ['''libs/.+/mocks/.+/.+\.json''', '''apps/.+/__mocks__/.+/.+\.json''']

@@ -1,4 +1,4 @@
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 
 describe("Send flow", () => {
   beforeAll(async () => {

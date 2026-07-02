@@ -31,7 +31,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -49,7 +53,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -67,7 +75,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -85,7 +97,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -103,7 +119,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -121,7 +141,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -139,7 +163,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -157,7 +185,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -175,7 +207,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -193,7 +229,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -211,7 +251,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -229,7 +273,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -247,7 +295,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -265,7 +317,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -283,7 +339,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -301,7 +361,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -321,7 +385,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -341,7 +409,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -361,7 +433,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -381,7 +457,11 @@ describe("EIP712", () => {
         RecordStore.fromString(nanoAppVersionApdus + apdusBuffer),
       );
 
-      const eth = new Eth(transport, "w0w", { calServiceURL: "http://mock-cal-service", staticEIP712SignaturesV1: v1, staticEIP712SignaturesV2: v2 });
+      const eth = new Eth(transport, "w0w", {
+        calServiceURL: "http://mock-cal-service",
+        staticEIP712SignaturesV1: v1,
+        staticEIP712SignaturesV2: v2,
+      });
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
       expect(result).toEqual({
@@ -413,9 +493,9 @@ describe("EIP712", () => {
         );
 
         const eth = new Eth(transport, "w0w", {
-        staticEIP712SignaturesV1: v1,
-        staticEIP712SignaturesV2: v2,
-      });
+          staticEIP712SignaturesV1: v1,
+          staticEIP712SignaturesV2: v2,
+        });
         const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
         expect(result).toEqual({
@@ -439,9 +519,9 @@ describe("EIP712", () => {
         );
 
         const eth = new Eth(transport, "w0w", {
-        staticEIP712SignaturesV1: v1,
-        staticEIP712SignaturesV2: v2,
-      });
+          staticEIP712SignaturesV1: v1,
+          staticEIP712SignaturesV2: v2,
+        });
         const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
 
         expect(result).toEqual({

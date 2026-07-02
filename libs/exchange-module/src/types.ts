@@ -30,6 +30,8 @@ export type ExchangeStartSwapParams = {
   fromAccountId: string;
   toAccountId: string;
   tokenCurrency?: string;
+  isEmbedded?: boolean;
+  swapEntryPoint?: string;
 };
 
 export type ExchangeSwapParams = ExchangeStartSwapParams & {
@@ -43,7 +45,6 @@ export type ExchangeSwapParams = ExchangeStartSwapParams & {
   };
   swapAppVersion?: string;
   sponsored?: boolean;
-  isEmbedded?: boolean;
   correlationId?: string;
 };
 
@@ -79,6 +80,8 @@ export type ExchangeCompleteSwapParams = ExchangeCompleteBaseParams & {
   exchangeType: "SWAP";
   toAccountId: string;
   swapId: string;
+  isEmbedded?: boolean;
+  swapEntryPoint?: string;
 };
 
 export type ExchangeCompleteParams =
@@ -114,6 +117,7 @@ export type SwapLiveError = {
 
 export type UniswapOrderType = "classic" | "uniswapxv2" | "all";
 export type QuotesAppPlatform = "lld" | "llm-ios" | "llm-android" | "unknown";
+export type QuoteSortBy = "netCounterValue";
 
 export type QuotesInput = {
   amount: string;
@@ -131,6 +135,7 @@ export type QuotesInput = {
 export type GetQuotesArgs = {
   providers: string[];
   data: QuotesInput;
+  sortBy?: QuoteSortBy;
   headers?: Array<[string, string]>;
   signal?: AbortSignal;
 };

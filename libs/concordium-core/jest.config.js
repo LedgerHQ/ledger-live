@@ -24,11 +24,7 @@ module.exports = {
     "!src/**/*.d.ts",
     "!src/index.ts",
   ],
-  coverageReporters: [
-    "json",
-    ["lcov", { file: "lcov.info", projectRoot: "../../" }],
-    "text",
-  ],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
   testPathIgnorePatterns: ["lib/", "lib-es/"],
   reporters: [
     "default",

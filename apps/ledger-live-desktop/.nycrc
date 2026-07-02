@@ -1,11 +1,7 @@
 {
   "all": true,
-  "include": [
-    "src/"
-  ],
-  "reporter": [
-    "html"
-  ],
+  "include": ["src/"],
+  "reporter": ["html"],
   "report-dir": "tests/artifacts/coverage",
   "temp-dir": "tests/artifacts/.nyc_output"
 }

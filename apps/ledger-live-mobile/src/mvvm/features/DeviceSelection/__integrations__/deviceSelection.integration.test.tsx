@@ -113,4 +113,3 @@ describe("Device Selection feature integration test", () => {
     });
   });
 });
-

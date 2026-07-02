@@ -20,7 +20,7 @@ const crypto = require("crypto");
 async function createHashFile() {
   const files = await fs.readdir(path.join(process.cwd(), "dist"));
   let fileName = files
-    .find((file) => file.endsWith("linux-x86_64.AppImage"))
+    .find(file => file.endsWith("linux-x86_64.AppImage"))
     .split("-linux-x86_64.AppImage")[0];
   fileName += ".sha512sum";
   await fs.writeFile(path.join(process.cwd(), fileName), "", "utf8");
@@ -34,4 +34,4 @@ async function createHashFile() {
   }
 }
 
-createHashFile().catch((err) => console.error(err));
+createHashFile().catch(err => console.error(err));

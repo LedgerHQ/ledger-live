@@ -315,7 +315,6 @@ export type Features = CurrencyFeatures & {
   llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
   supportDeviceApex: DefaultFeature;
-  llmSyncOnboardingIncr1: DefaultFeature;
   onboardingWidget: DefaultFeature;
   noah: Feature_Noah;
   newSendFlow: Feature_NewSendFlow;
@@ -948,7 +947,6 @@ type Feature_Wallet40_Params = {
   mainNavigation: boolean;
   tour: boolean;
   lazyOnboarding: boolean;
-  balanceRefreshRework: boolean;
   assetSection: boolean;
   operationsList: boolean;
   aggregatedAssets: boolean;

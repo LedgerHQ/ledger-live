@@ -7,7 +7,7 @@ const destination = path.join(__dirname, "..", "lib");
 // Copy files that we want to include in the published package.
 const requiredFiles = ["src/assets/images", "src/assets/fonts"];
 
-requiredFiles.forEach((filename) => {
+requiredFiles.forEach(filename => {
   const fromSrc = filename.startsWith("src/");
   const suffix = fromSrc ? filename.slice(4) : filename;
   const filePath = path.join(__dirname, "..", filename);

@@ -212,5 +212,4 @@ describe("LegacySignerCelo", () => {
       expect(celoMock.setLoadConfig).toHaveBeenCalledWith(config);
     });
   });
-
 });

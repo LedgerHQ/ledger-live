@@ -48,14 +48,9 @@ export function toRfqEIP712Message(
     throw new Error("RFQ typedData is missing `types`");
   }
 
-  const primaryType =
-    provider === "uniswapx"
-      ? "PermitWitnessTransferFrom"
-      : typedData.primaryType;
+  const primaryType = provider === "uniswapx" ? "PermitWitnessTransferFrom" : typedData.primaryType;
   if (!primaryType) {
-    throw new Error(
-      "RFQ typedData is missing `primaryType` (1inch-fusion must ship one)",
-    );
+    throw new Error("RFQ typedData is missing `primaryType` (1inch-fusion must ship one)");
   }
 
   // Layer the partner-provided `types` over the canonical Permit2

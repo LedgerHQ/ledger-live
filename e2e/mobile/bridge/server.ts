@@ -13,7 +13,7 @@ import {
 import type { OptionalFeatureMap, FeatureId } from "@shared/feature-flags";
 import { FeatureIdSchema } from "@shared/feature-flags";
 import { log as detoxLog } from "detox";
-import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
+import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { v4 as uuid } from "uuid";
 
 const RESPONSE_TIMEOUT = 10000;

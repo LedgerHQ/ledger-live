@@ -129,7 +129,10 @@ describe("DmkSignerZcash", () => {
 
     it("rejects with UserRefusedOnDevice (drives the 'Action rejected' UI) on the 6985 status word", async () => {
       mockSignerZcash.getAddress.mockReturnValue({
-        observable: createErrorStatusObservable({ _tag: "ZcashAppCommandError", errorCode: "6985" }),
+        observable: createErrorStatusObservable({
+          _tag: "ZcashAppCommandError",
+          errorCode: "6985",
+        }),
       });
 
       await expect(signer.getAddress("44'/133'/0'/0/0")).rejects.toMatchObject({

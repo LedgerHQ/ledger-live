@@ -959,6 +959,10 @@
     "TaprootNotActivated" : {
       "title" : "Taproot mainnetは、まだ有効化されていません。"
     },
+    "RbfBuildError" : {
+      "title" : "このトランザクションを置き換えることはできません",
+      "description" : "このトランザクションを置き換えるために必要な手数料の増額は、現在のパラメーターでは適用できません。別の手数料の数量を試すか、操作をキャンセルしてください。"
+    },
     "generic" : {
       "title" : "{{message}}",
       "description" : "問題が発生しました。もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。",
@@ -1254,13 +1258,13 @@
       "description" : "もう一度お試しいただくか、Ledgerサポートにご連絡ください。"
     },
     "TonExcessFee" : {
-      "title" : "これはトークン転送を構成します。手数料は0.1TONで、それ以上はお客様に返金されます。"
+      "title" : "これはトークン転送を構成します。手数料は0.1 GRAMで、それ以上はお客様に返金されます。"
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "メインアカウント（TON）の資金が不足しており、手数料を計算できません。最低必要残高は0.1TONです。"
+      "title" : "メインアカウント（GRAM）の資金が不足しており、手数料を計算できません。最低必要残高は0.1 GRAMです。"
     },
     "TonMinimumRequired" : {
-      "title" : "資金が不足しています。最低必要残高は0.02TONです。"
+      "title" : "資金が不足しています。最低必要残高は0.02 GRAMです。"
     },
     "BackupAppDataError" : {
       "title" : "アプリデータのバックアップ中にエラーが発生しました"
@@ -1322,6 +1326,9 @@
       "select" : "アカウントを選択"
     }
   },
+  "lineChart" : {
+    "error" : "チャートを読み込みできません"
+  },
   "location" : {
     "titleServiceRequired" : "位置情報サービスが必要です",
     "descriptionServiceRequired" : "Ledger Walletは、Bluetoothでデバイスをペアリングするために、位置情報サービスへのアクセスが必要です。",
@@ -1335,6 +1342,28 @@
     "appNotFound" : "借入アプリが見つかりません",
     "infoModal" : {
       "close" : "閉じる"
+    }
+  },
+  "backupHub" : {
+    "featureIntro" : {
+      "title" : "紛失しないバックアップを作成する",
+      "subtitle" : "シークレットリカバリーフレーズの暗号化されたバックアップは、いかなる状況でもアクセスの回復に役立ちます。",
+      "primaryCta" : "1ヶ月間無料でお試し",
+      "secondaryCta" : "ログイン",
+      "items" : {
+        "secure" : {
+          "title" : "お客様のIDに紐づけられたバックアップ",
+          "subtitle" : "ウォレットの復元を承認できるのはお客様のみです。"
+        },
+        "access" : {
+          "title" : "ワンランク上のバックアップセキュリティ",
+          "subtitle" : "暗号化および断片化され、ハードウェアセキュリティモジュール内で保護されます。"
+        },
+        "restore" : {
+          "title" : "いつでもアクセスを復元",
+          "subtitle" : "必要なのは、ID、Ledger Wallet、およびLedgerデバイスのみです。"
+        }
+      }
     }
   },
   "earn" : {
@@ -1463,6 +1492,12 @@
   },
   "globalSearch" : {
     "searchPlaceholder" : "資産を検索",
+    "searchPlaceholders" : {
+      "crypto" : "暗号資産を検索",
+      "stablecoins" : "ステーブルコインを検索",
+      "stock" : "株式を検索",
+      "addresses" : "アドレスを検索"
+    },
     "sections" : {
       "cryptos" : "暗号資産",
       "stocks" : "株"
@@ -1719,6 +1754,32 @@
       "cta" : "ウォレットに資金を追加する",
       "title" : "まずはウォレットへの入金から始めましょう",
       "subTitle" : "お好きな方法でLedger Walletに入金—送金、購入または現金をステーブルコインに交換。"
+    }
+  },
+  "q2WalletV4Tour" : {
+    "cta" : {
+      "start" : "新機能をチェック",
+      "next" : "次へ",
+      "done" : "了解"
+    },
+    "portfolio" : {
+      "title" : "よりスマートな資産管理を。資産形成のより明確な道筋へ"
+    },
+    "balance" : {
+      "title" : "資産ごとの残高を1つに集約",
+      "subTitle" : "USDTなどのマルチチェーン資産が、1つの合計額として表示されるようになりました。シンプル、正確、そして明確に。"
+    },
+    "returns" : {
+      "title" : "収益状況を、いつでも最前面に",
+      "subTitle" : "ポートフォリオや分析ページから、すべての資産の損益（P&L）をひと目で確認。"
+    },
+    "earn" : {
+      "title" : "運用のポテンシャルを試す",
+      "subTitle" : "獲得可能な報酬をシミュレーションし、目標に合わせた資産成長プランを構築。"
+    },
+    "protocols" : {
+      "title" : "対応プロトコルの拡大で、報酬もアップ",
+      "subTitle" : "ステーブルコインや注目の資産が、ウォレットのトップに自動表示。探す手間を削減し、スムーズな決断へ。"
     }
   },
   "discover" : {
@@ -3287,6 +3348,7 @@
   "crypto" : {
     "title" : "暗号資産",
     "stablecoinTitle" : "ステーブルコイン",
+    "stocksTitle" : "株",
     "errorState" : "資産の読み込み中にエラーが発生しました",
     "emptyState" : "表示する資産がありません"
   },
@@ -4143,10 +4205,10 @@
       "incompatibility" : {
         "explore_compatible_devices" : "対応デバイスを探す",
         "contact_support" : "カスタマーサポートに問い合わせる",
-        "ton_title" : "Ledger Nano S™はTonのスワップに対応していません",
-        "ton_description" : "Tonをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
-        "ton_tokens_title" : "Ledger Nano S™は、Tonトークンのスワップに対応していません",
-        "ton_tokens_description" : "Tonトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+        "ton_title" : "Ledger Nano S™はGramのスワップに対応していません",
+        "ton_description" : "Gramをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+        "ton_tokens_title" : "Ledger Nano S™は、Gramトークンのスワップに対応していません",
+        "ton_tokens_description" : "Gramトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
         "spl_tokens_title" : "Ledger Nano S™はSolanaトークンのスワップに対応していません",
         "spl_tokens_description" : "Solanaトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
         "near_title" : "Ledger Nano S™はNearのスワップに対応していません",
@@ -4476,7 +4538,16 @@
       "processingTransaction" : "トランザクションを処理中です",
       "sign" : {
         "title" : "Ledger {{wording}}で続ける",
-        "description" : "セキュアタッチスクリーンに表示される指示に従ってください。"
+        "description" : "セキュアタッチスクリーンに表示される指示に従ってください。",
+        "cancelled" : {
+          "title" : "トランザクションがキャンセルされました",
+          "description" : "トランザクションを拒否しました。お客様の資金に影響はありません。",
+          "close" : "閉じる",
+          "retry" : "再試行"
+        }
+      },
+      "confirmation" : {
+        "viewTransaction" : "トランザクションを表示"
       },
       "gasOptionsSync" : {
         "warningTitle" : "ネットワーク手数料を更新できません",
@@ -6732,8 +6803,8 @@
         "description" : "現在のベーカーでXTZをステーキングしました。デリゲーションを終了する前に、資金のステーキング解除をしてください。"
       },
       "steps" : {
-        "0" : "報酬獲得メニューを開き、ステーキング解除を選択する。",
-        "1" : "デバイスで数量を確認し、ステーキング解除のトランザクションを送信する。",
+        "0" : "Tezosアカウントのダッシュボードを開き、ステーキングセクションでステーキング解除オプションを選択します。",
+        "1" : "最大数量をステーキング解除し、デバイスでステーキング解除のトランザクションを送信する。",
         "2" : "ステーキング解除期間が完了するまで約4日待機してください。",
         "3" : "引き出した後は、ベーカーを変更したりデリゲートを解除したりできます。"
       },
@@ -8217,8 +8288,8 @@
       "filters" : {
         "accessibilityLabel" : "資産フィルターを開く",
         "title" : "フィルター",
-        "sorting" : "並び替え",
-        "timeframe" : "期間",
+        "sorting" : "資産の並び替え",
+        "timeframe" : "期間を選択",
         "sortingOptions" : {
           "marketCap" : "マーケットキャップ",
           "volume" : "ボリューム",
@@ -8968,41 +9039,6 @@
           "accept" : "同意する",
           "acceptAll" : "すべて受け入れる",
           "confirm" : "検証"
-        },
-        "infoText" : {
-          "info" : "同意はアプリの設定からいつでも取り消すことができます。",
-          "link" : "当社の追跡ポリシーの詳細についてご覧ください"
-        }
-      }
-    },
-    "variantB" : {
-      "main" : {
-        "title" : "Ledger Walletをさらに使いやすく",
-        "description" : "Ledger Wallet分析データをご共有いただくことで、お客様がLedger Walletをどのように使用されているのかを理解し、バグを修正し、お客様のご体験を向上させることができます。",
-        "bulletPoints" : {
-          "1" : "分析データには、ページ訪問数、クリック数が含まれます。",
-          "2" : "当社は、お客様の残高、アカウント、ポートフォリオに関する情報を収集や閲覧することはありません。",
-          "3" : "分析は完全に匿名です。当社は、お客様の個人情報を閲覧したり収集したりすることはできません。"
-        },
-        "ctas" : {
-          "refuse" : "拒否する",
-          "share" : "共有する"
-        },
-        "infoText" : {
-          "info" : "同意はアプリの設定からいつでも取り消すことができます。",
-          "link" : "当社の追跡ポリシーの詳細についてご覧ください"
-        }
-      },
-      "details" : {
-        "title" : "パーソナライズされたコンテンツを使用する",
-        "description" : "Ledger Walletのパーソナライゼーションデータをご共有いただくと、お客様のお好みに合ったコンテンツを表示できるようになります。",
-        "bulletPoints" : {
-          "1" : "パーソナライゼーションデータには、コンバージョンデータ（資料のご請求、ご購入などのアクション）、クリック数、ページ訪問数が含まれます。",
-          "2" : "当社は、お客様の個人情報やポートフォリオ情報を追跡したり収集したりすることはできません。"
-        },
-        "ctas" : {
-          "refuse" : "拒否する",
-          "allow" : "許可する"
         },
         "infoText" : {
           "info" : "同意はアプリの設定からいつでも取り消すことができます。",
@@ -9918,6 +9954,30 @@
       "backup" : "バックアップ",
       "help" : "ヘルプ",
       "referral" : "紹介"
+    },
+    "backupHub" : {
+      "title" : "シークレットリカバリーフレーズのバックアップ",
+      "description" : "資産へのアクセスを失わないように、シークレットリカバリーフレーズを複数の形式でバックアップしてください。",
+      "compareFooter" : "すべてのバックアップ方法を比較する",
+      "sections" : {
+        "digital" : "ID連携デジタルバックアップ",
+        "physical" : "物理的なバックアップ"
+      },
+      "recover" : {
+        "title" : "Ledger Recover",
+        "notSubscribed" : "IDを認証してアクセスを復元してください。",
+        "inProgress" : "有効化を完了",
+        "done" : "バックアップの管理",
+        "discover" : "アプリ一覧"
+      },
+      "recoveryKey" : {
+        "title" : "Ledger Recovery Key",
+        "description" : "PINコード保護のスマートカード"
+      },
+      "secretRecoveryPhrase" : {
+        "title" : "24単語メタルストレージ",
+        "description" : "耐火・耐水性を備えた保護。"
+      }
     },
     "help" : {
       "title" : "ヘルプ",

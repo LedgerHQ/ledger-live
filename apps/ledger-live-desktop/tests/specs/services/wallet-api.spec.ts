@@ -1,7 +1,7 @@
 import "../../../src/live-common-set-supported-currencies";
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { DiscoverPage } from "../../page/discover.page";
 import { Layout } from "../../component/layout.component";
 import { Drawer } from "../../component/drawer.component";

@@ -109,7 +109,8 @@ function familyMatchesPackage(family, packageName) {
 function resolveTestScript(scripts = {}) {
   if (scripts.test) return { script: "test", integration: false };
   // coin-tester-* packages launch docker-backed integration suites via "start"
-  if (scripts.start && scripts.start.includes("jest")) return { script: "start", integration: true };
+  if (scripts.start && scripts.start.includes("jest"))
+    return { script: "start", integration: true };
   return null;
 }
 
@@ -227,7 +228,7 @@ function extractJestFailures(output) {
 
 function printSummary() {
   const green = s => `\x1b[32m${s}\x1b[0m`;
-  const red   = s => `\x1b[31m${s}\x1b[0m`;
+  const red = s => `\x1b[31m${s}\x1b[0m`;
 
   const statusIcon = s => (s === "pass" ? green("✓ PASS") : red("✗ FAIL"));
 
@@ -320,7 +321,10 @@ async function main() {
 
   console.log(`\nRunning all tests for family: "${family}"`);
   if (matched.length > 0) {
-    console.log(`\nPackages:\n` + matched.map(p => `  • ${p.name}${p.integration ? "  [needs Docker]" : ""}`).join("\n"));
+    console.log(
+      `\nPackages:\n` +
+        matched.map(p => `  • ${p.name}${p.integration ? "  [needs Docker]" : ""}`).join("\n"),
+    );
   }
 
   // 1. Package-level tests (Logic)

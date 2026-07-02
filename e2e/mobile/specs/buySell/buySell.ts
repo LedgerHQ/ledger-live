@@ -1,11 +1,11 @@
 import { setEnv } from "@ledgerhq/live-env";
-import { BuySell } from "@ledgerhq/live-common/e2e/models/BuySell";
+import { BuySell } from "@ledgerhq/live-e2e-shared/models/BuySell";
 import { ApplicationOptions } from "page";
-import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { getMinimumSellAmount } from "@ledgerhq/live-common/e2e/buySell";
+import { getMinimumSellAmount } from "@ledgerhq/live-e2e-shared/buySell";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 

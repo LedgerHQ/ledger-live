@@ -26,11 +26,7 @@ const DEFAULT_MAX_POLL_ATTEMPTS = 60;
  * cannot be redirected to an arbitrary route via the wallet-api input
  * (CodeQL SSRF guard).
  */
-const ALLOWED_RFQ_PROVIDERS = new Set<string>([
-  "uniswap",
-  "oneinch",
-  "oneinchfusion",
-]);
+const ALLOWED_RFQ_PROVIDERS = new Set<string>(["uniswap", "oneinch", "oneinchfusion"]);
 
 function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -86,14 +82,11 @@ function buildSubmitObservable(
           `Unsupported RFQ provider "${input.provider}" — refusing to issue swap-api submit request`,
         );
       }
-      const submitResponse = await fetchImpl(
-        `${baseURL}/${input.provider}/submit`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(input.submitBody),
-        },
-      );
+      const submitResponse = await fetchImpl(`${baseURL}/${input.provider}/submit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input.submitBody),
+      });
       if (cancelled) return;
       if (!submitResponse.ok) {
         throw new Error(
@@ -103,12 +96,9 @@ function buildSubmitObservable(
       const submitJson = (await submitResponse.json()) as SubmitResponse;
       if (cancelled) return;
 
-      const orderId =
-        input.precomputedOrderId ?? extractOrderId(submitJson);
+      const orderId = input.precomputedOrderId ?? extractOrderId(submitJson);
       if (!orderId) {
-        throw new Error(
-          "RFQ submit did not return an order id and no precomputed id was provided",
-        );
+        throw new Error("RFQ submit did not return an order id and no precomputed id was provided");
       }
       subscriber.next({ type: "submitted", orderId });
 
@@ -159,9 +149,7 @@ function buildSubmitObservable(
 
       subscriber.next({
         type: "failed",
-        error: new Error(
-          `RFQ order ${orderId} did not resolve after ${maxAttempts} attempts`,
-        ),
+        error: new Error(`RFQ order ${orderId} did not resolve after ${maxAttempts} attempts`),
       });
       subscriber.complete();
     })().catch(err => {
@@ -193,10 +181,9 @@ function buildSubmitObservable(
  * the observable always completes cleanly so the orchestrator can react
  * in `onIntentJobComplete`.
  */
-export const submitRfqOrderEvmJob: Job<
-  SubmitRfqOrderEvmJobState,
-  SubmitRfqOrderEvmIntentInput
-> = ({ input }) =>
+export const submitRfqOrderEvmJob: Job<SubmitRfqOrderEvmJobState, SubmitRfqOrderEvmIntentInput> = ({
+  input,
+}) =>
   concat(
     of<SubmitRfqOrderEvmJobState>({ type: "submitting" }),
     buildSubmitObservable(input).pipe(

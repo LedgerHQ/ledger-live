@@ -8,5 +8,5 @@ module.exports = packages.reduce(
       `yarn --cwd packages/${package} typecheck`,
     ],
   }),
-  {}
+  {},
 );

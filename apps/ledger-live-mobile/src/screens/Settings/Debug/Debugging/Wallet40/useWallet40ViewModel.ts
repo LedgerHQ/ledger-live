@@ -11,7 +11,6 @@ export const WALLET_40_PARAMS = [
   { key: "tour", label: "Tour" },
   { key: "mainNavigation", label: "Main Navigation" },
   { key: "lazyOnboarding", label: "Lazy Onboarding" },
-  { key: "balanceRefreshRework", label: "Balance Refresh Rework" },
   { key: "assetSection", label: "Asset Section" },
   { key: "brazePlacement", label: "Braze Placement (ContentBanner)" },
   { key: "operationsList", label: "TX History" },

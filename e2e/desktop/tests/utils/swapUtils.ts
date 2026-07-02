@@ -1,19 +1,19 @@
 import test from "tests/fixtures/common";
 import { Application } from "tests/page";
-import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
+import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ModularDialog } from "tests/page/dialog/modular.dialog";
 import { getModularSelector } from "./modularSelectorUtils";
-import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import {
   isTokenAllowanceSufficientCommand,
   approveTokenCommand,
   revokeTokenCommand,
   getTokenAllowanceCommand,
-} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { getEnv } from "@ledgerhq/live-env";
 import * as allure from "allure-js-commons";
 import BigNumber from "bignumber.js";

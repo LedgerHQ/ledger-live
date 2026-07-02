@@ -8,9 +8,9 @@ import {
 import type { ChainAPI } from "../../network";
 import { broadcast } from "../broadcast";
 
-jest.spyOn(VersionedTransaction, "deserialize").mockImplementation(
-  () => ({ __mocked: true }) as unknown as VersionedTransaction,
-);
+jest
+  .spyOn(VersionedTransaction, "deserialize")
+  .mockImplementation(() => ({ __mocked: true }) as unknown as VersionedTransaction);
 
 function buildApi({
   simulateValues,
@@ -61,10 +61,7 @@ describe("broadcast", () => {
       replaceRecentBlockhash: false,
       commitment: "confirmed",
     });
-    expect(sendRawTransaction).toHaveBeenCalledWith(
-      Buffer.from(txBase64, "base64"),
-      undefined,
-    );
+    expect(sendRawTransaction).toHaveBeenCalledWith(Buffer.from(txBase64, "base64"), undefined);
   });
 
   it("forwards recentBlockhash to sendRawTransaction", async () => {
@@ -76,7 +73,10 @@ describe("broadcast", () => {
 
     const result = await broadcast(api, txBase64, { recentBlockhash });
     expect(result).toBe("sig");
-    expect(sendRawTransaction).toHaveBeenCalledWith(Buffer.from(txBase64, "base64"), recentBlockhash);
+    expect(sendRawTransaction).toHaveBeenCalledWith(
+      Buffer.from(txBase64, "base64"),
+      recentBlockhash,
+    );
   });
 
   it("should throw an error if the simulation fails", async () => {

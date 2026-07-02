@@ -11,7 +11,6 @@ export const WALLET_40_FEATURE_FLAGS = {
       mainNavigation: true,
       tour: true,
       lazyOnboarding: true,
-      balanceRefreshRework: true,
       assetSection: true,
       operationsList: true,
       aggregatedAssets: false,

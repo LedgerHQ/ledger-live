@@ -74,6 +74,8 @@
   "common" : {
     "never" : "Nunca",
     "new" : "Novo",
+    "scrollLeft" : "Deslize para a esquerda",
+    "scrollRight" : "Deslize para a direita",
     "skip" : "Pular",
     "apply" : "Aplicar",
     "done" : "Concluído",
@@ -503,10 +505,10 @@
       "changeProvider" : "Trocar com outro provedor"
     },
     "incompatibility" : {
-      "ton_title" : "A Ledger Nano S™ não é compatível com a troca de Ton",
-      "ton_description" : "Para trocar Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
-      "ton_tokens_title" : "A Ledger Nano S™ não é compatível com trocas de tokens Ton",
-      "ton_tokens_description" : "Para trocar tokens Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "ton_title" : "A Ledger Nano S™ não é compatível com a troca de Zcash",
+      "ton_description" : "Para trocar Gram, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "ton_tokens_title" : "A Ledger Nano S™ não é compatível com trocas de tokens Gram",
+      "ton_tokens_description" : "Para trocar tokens Gram, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "spl_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Solana",
       "spl_tokens_description" : "Para trocar tokens Solana, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "sui_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Sui",
@@ -1704,7 +1706,11 @@
         "stocks" : "Ações",
         "favorites" : "Favoritos"
       },
-      "emptyFavorites" : "Ainda não há favoritos"
+      "emptyFavorites" : "Ainda não há favoritos",
+      "noAssets" : {
+        "title" : "Nenhum ativo disponível",
+        "description" : "Desculpe, não há ativos disponíveis nesta categoria."
+      }
     },
     "detailsPage" : {
       "priceStatistics" : "Estatísticas de preço",
@@ -4425,6 +4431,8 @@
         "header" : "Remoções de delegação",
         "headerTooltip" : "Disponível após o bloqueio temporal de {{numberOfDays}}",
         "inactiveTooltip" : "Quantias removidas de delegação não geram recompensas",
+        "timelockTooltip" : "Ainda dentro do timelock (bloqueados). Esses fundos ainda não estão disponíveis para saque.",
+        "readyTooltip" : "O timelock terminou. Estes fundos já podem ser sacados.",
         "flow" : {
           "title" : "Interromper staking",
           "steps" : {
@@ -7509,6 +7517,10 @@
     "TaprootNotActivated" : {
       "title" : "Não é seguro enviar para um endereço taproot antes da ativação da mainnet"
     },
+    "RbfBuildError" : {
+      "title" : "Não é possível substituir esta transação",
+      "description" : "O aumento de taxa necessário para substituir esta transação não pode ser aplicado com os parâmetros atuais. Tente uma quantia de taxa diferente ou cancele a operação."
+    },
     "SolanaAccountNotFunded" : {
       "title" : "Conta sem saldo"
     },
@@ -7781,13 +7793,13 @@
       "title" : "Estamos enfrentando um problema com a nossa infraestrutura Bitcoin. Tente novamente mais tarde."
     },
     "TonExcessFee" : {
-      "title" : "Isso constitui uma transferência de token. Você pagará 0,1 TON em taxas e qualquer extra será devolvido a você."
+      "title" : "Isso constitui uma transferência de token. Você pagará 0,1 GRAM em taxas e qualquer extra será devolvido a você."
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "Fundos insuficientes na conta principal (TON) para calcular taxas. O saldo mínimo exigido é de 0,1 TON."
+      "title" : "Fundos insuficientes na conta principal (GRAM) para calcular taxas. O saldo mínimo exigido é de 0,1 GRAM."
     },
     "TonMinimumRequired" : {
-      "title" : "Fundos insuficientes. O saldo mínimo exigido é de 0,02 TON."
+      "title" : "Fundos insuficientes. O saldo mínimo exigido é de 0,02 GRAM."
     },
     "AleoAmountRecordRequired" : {
       "title" : "Selecione um registro privado válido para a quantia.",
@@ -8359,7 +8371,7 @@
     }
   },
   "analyticsOptInPrompt" : {
-    "variantA" : {
+    "screen" : {
       "description" : "Compartilhar seus dados da Ledger Wallet nos ajuda a entender suas preferências e a mostrar conteúdo relevante para você.",
       "whatWeTrack" : "Com o seu consentimento, a Ledger poderá coletar dados sobre como você usa a Ledger Wallet (incluindo visitas a páginas e cliques):",
       "whatWeTrackList" : {
@@ -8384,26 +8396,6 @@
         "description" : "Para receber recomendações e conteúdos personalizados que correspondam às suas preferências e para nos ajudar a medir o desempenho de nossas campanhas de marketing, compartilhamos dados de uso do aplicativo, que inclui cliques, visitas a páginas e dados de conversão."
       },
       "validate" : "Validar"
-    },
-    "variantB" : {
-      "accept" : "Aceitar",
-      "refuse" : "Recusar",
-      "analytics" : {
-        "description" : "Compartilhar seus dados de uso da Ledger Wallet nos ajuda a entender como a Ledger Wallet é usada, a corrigir bugs e a melhorar sua experiência de uso.",
-        "details" : {
-          "1" : "As métricas incluem visitas a páginas, cliques.",
-          "2" : "Não coletaremos nem visualizaremos nenhuma informação sobre seu saldo, contas e portfólio.",
-          "3" : "As métricas são completamente anônimas. Não podemos ver nem coletar suas informações pessoais."
-        }
-      },
-      "personalRecommendations" : {
-        "title" : "Tenha uma experiência personalizada",
-        "description" : "Compartilhar seus dados de personalização da Ledger Wallet nos permite exibir o conteúdo que corresponde às suas preferências.",
-        "details" : {
-          "1" : "Os dados de personalização incluem dados de conversão, cliques e visitas a páginas.",
-          "2" : "Não podemos rastrear nem coletar qualquer informação pessoal sua nem do seu portfólio."
-        }
-      }
     },
     "common" : {
       "title" : "Ajude-nos a melhorar e a personalizar a sua experiência",
@@ -8751,8 +8743,6 @@
     "title" : "Mercado",
     "genericError" : "Falha de conexão",
     "cta" : "Ver todos",
-    "scrollLeft" : "Deslize para a esquerda",
-    "scrollRight" : "Deslize para a direita",
     "ranking" : {
       "trending" : "Em alta",
       "gainers" : "Melhores",
@@ -8863,10 +8853,16 @@
   },
   "topBar" : {
     "searchPlaceholder" : "Procurar ativo",
+    "searchPlaceholders" : {
+      "crypto" : "Buscar criptomoedas",
+      "stablecoins" : "Buscar stablecoins",
+      "stocks" : "Buscar ações",
+      "addresses" : "Buscar endereços"
+    },
     "search" : {
       "noAssetFound" : "Nenhum ativo encontrado",
       "error" : "Falha de conexão",
-      "cryptos" : "Criptomoedas",
+      "cryptos" : "Cripto",
       "stocks" : "Ações"
     },
     "history" : {
@@ -8910,6 +8906,20 @@
       "privateBalanceTooltip" : "Saldo oculto ao público"
     },
     "shielded" : {
+      "send" : {
+        "transferFrom" : {
+          "label" : "Transferência de",
+          "public" : {
+            "title" : "Saldo público",
+            "subtitle" : "Transparente"
+          },
+          "private" : {
+            "title" : "Saldo privado",
+            "subtitle" : "Blindado",
+            "unavailable" : "Saldo privado indisponível"
+          }
+        }
+      },
       "state" : {
         "showBalance" : "Mostrar saldo",
         "startSync" : "Iniciar sincronização",
@@ -9103,6 +9113,35 @@
       "explore" : "Explorar meu novo portfólio"
     }
   },
+  "q2Tour" : {
+    "slides" : {
+      "welcome" : {
+        "title" : "Gestão de portfólio mais inteligente. Clareza para investir",
+        "description" : ""
+      },
+      "aggregatedBalance" : {
+        "title" : "Um saldo para cada ativo",
+        "description" : "Ativos multicadeia como USDC agora são exibidos num único total. Simples, preciso e claro."
+      },
+      "pnl" : {
+        "title" : "Seus retornos em destaque",
+        "description" : "Veja o lucro e o prejuízo de cada ativo no seu portfólio e na página de análise."
+      },
+      "earnSimulator" : {
+        "title" : "Veja o quanto você pode ganhar",
+        "description" : "Simule recompensas e crie um plano de crescimento para suas metas."
+      },
+      "earnUpselling" : {
+        "title" : "Mais protocolos, mais recompensas",
+        "description" : "Stablecoins e melhores opções, direto na sua carteira. Menos tempo buscando. Mais decisão."
+      }
+    },
+    "cta" : {
+      "seeWhatsNew" : "Veja as novidades",
+      "next" : "Próximo",
+      "gotIt" : "Entendi"
+    }
+  },
   "productTour" : {
     "cta" : {
       "continue" : "Continuar",
@@ -9186,16 +9225,16 @@
       "refer" : "Indicação"
     },
     "backupHub" : {
-      "title" : "Backups de carteira",
-      "description" : "Proteja seus ativos combinando soluções de backup para a recuperação da sua seed phrase.",
+      "title" : "Backups",
+      "description" : "Não perca acesso aos seus ativos — faça backup da sua frase de recuperação secreta em vários formatos.",
       "back" : "Voltar",
       "sections" : {
-        "digital" : "Backups baseados em ID digital",
+        "digital" : "Backup digital vinculado à ID",
         "physical" : "Backups físicos"
       },
       "recover" : {
         "title" : "Ledger Recover",
-        "notSubscribed" : "Criar um backup impossível de perder",
+        "notSubscribed" : "Restaure o acesso verificando sua ID.",
         "inProgress" : "Concluir ativação",
         "done" : "Gerencie seu backup",
         "discover" : "Explorar"
@@ -9251,6 +9290,9 @@
     "tradingVolume24h" : "Volume de negociação 24h",
     "tradingVolume24hTooltip" : "A quantia total negociada nas últimas 24 horas.",
     "marketStatsDisclaimer" : "Métricas do mercado obtidas do CoinGecko",
+    "fallbackBanner" : {
+      "title" : "Este ativo não é compatível com trocas e compras."
+    },
     "day" : "1 dia",
     "week" : "1 semana",
     "month" : "1 mês",

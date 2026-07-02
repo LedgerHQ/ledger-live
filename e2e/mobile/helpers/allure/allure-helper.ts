@@ -1,5 +1,5 @@
 import { allure } from "jest-allure2-reporter/api";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 
 export function setTeamOwner(team: Team): void {
   $Owner(team);

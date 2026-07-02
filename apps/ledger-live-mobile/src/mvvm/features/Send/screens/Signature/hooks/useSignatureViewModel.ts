@@ -44,7 +44,11 @@ export function useSignatureViewModel() {
     transaction,
     broadcastConfig: {
       mevProtected,
-      source: { type: "coin-module", name: "ledger-live-mobile", flags: { newSendFlow: true } },
+      source: {
+        type: "coin-module",
+        name: "ledger-live-mobile",
+        flags: { newSendFlow: true },
+      },
     },
     logger: broadcastLogger,
   });
@@ -163,6 +167,7 @@ export function useSignatureViewModel() {
 
   return {
     account,
+    parentAccount,
     transaction,
     request,
     deviceInitializationInput,

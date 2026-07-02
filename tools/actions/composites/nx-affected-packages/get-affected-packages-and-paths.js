@@ -65,17 +65,12 @@ async function getAffectedPackagesAndPaths(options = {}) {
   if (head) args.push("--head", head);
 
   let packageNames = [];
-  const {
-    stdout: affectedStdout,
-    stderr: affectedStderr,
-    exitCode,
-  } = await runPnpm(args, exec);
+  const { stdout: affectedStdout, stderr: affectedStderr, exitCode } = await runPnpm(args, exec);
 
   // If Nx cannot compute affected projects, fail instead of silently
   // returning an empty list, which could cause CI to skip tests/jobs.
   if (exitCode !== 0) {
-    const debugEnabled =
-      process.env.RUNNER_DEBUG === "1" || process.env.DEBUG_NX_AFFECTED;
+    const debugEnabled = process.env.RUNNER_DEBUG === "1" || process.env.DEBUG_NX_AFFECTED;
     if (debugEnabled) {
       console.error(
         "[nx-affected] `pnpm nx show projects --affected --json` failed.",
@@ -87,14 +82,11 @@ async function getAffectedPackagesAndPaths(options = {}) {
         affectedStdout || "<none>",
       );
     }
-    throw new Error(
-      `pnpm nx show projects --affected --json failed with exit code ${exitCode}`,
-    );
+    throw new Error(`pnpm nx show projects --affected --json failed with exit code ${exitCode}`);
   }
 
   if (!affectedStdout || !affectedStdout.trim()) {
-    const debugEnabled =
-      process.env.RUNNER_DEBUG === "1" || process.env.DEBUG_NX_AFFECTED;
+    const debugEnabled = process.env.RUNNER_DEBUG === "1" || process.env.DEBUG_NX_AFFECTED;
     if (debugEnabled) {
       console.error(
         "[nx-affected] `pnpm nx show projects --affected --json` produced no output.",
@@ -102,17 +94,14 @@ async function getAffectedPackagesAndPaths(options = {}) {
         affectedStderr || "<none>",
       );
     }
-    throw new Error(
-      "pnpm nx show projects --affected --json returned empty output",
-    );
+    throw new Error("pnpm nx show projects --affected --json returned empty output");
   }
 
   try {
     const parsed = JSON.parse(affectedStdout.trim());
     if (Array.isArray(parsed)) packageNames = parsed.filter(Boolean);
   } catch (e) {
-    const debugEnabled =
-      process.env.RUNNER_DEBUG === "1" || process.env.DEBUG_NX_AFFECTED;
+    const debugEnabled = process.env.RUNNER_DEBUG === "1" || process.env.DEBUG_NX_AFFECTED;
     if (debugEnabled) {
       console.error(
         "[nx-affected] Failed to parse affected projects JSON.",

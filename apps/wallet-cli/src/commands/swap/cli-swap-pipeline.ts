@@ -35,7 +35,11 @@ import {
   getSwapStepFromError,
 } from "@ledgerhq/live-common/exchange/error";
 import { WalletCliDeviceError } from "../../device/wallet-cli-device-error";
-import { trackSwapCompleted, trackSwapRejected, trackSwapStarted } from "../../analytics/swap-analytics";
+import {
+  trackSwapCompleted,
+  trackSwapRejected,
+  trackSwapStarted,
+} from "../../analytics/swap-analytics";
 
 const EXCHANGE_SWAP: ExchangeTypes.Swap = 0x00;
 const RATE_FIXED: RateTypes = 0x00;

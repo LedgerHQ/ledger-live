@@ -9,7 +9,7 @@ test("check that known targetIds match known devices", () => {
 
   for (const modelId in knownTargetIds) {
     const ids = knownTargetIds[modelId];
-    ids.forEach((id) => {
+    ids.forEach(id => {
       const deviceModel = identifyTargetId(id);
       expect(deviceModel?.id).toBe(modelId);
     });

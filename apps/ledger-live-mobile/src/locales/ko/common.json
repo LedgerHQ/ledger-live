@@ -959,6 +959,10 @@
     "TaprootNotActivated" : {
       "title" : "Taproot(탭루트) 메인넷이 아직 활성화되지 않았습니다"
     },
+    "RbfBuildError" : {
+      "title" : "트랜잭션을 대체할 수 없습니다.",
+      "description" : "현재 조건으로는 거래 대체에 필요한 수수료 인상분을 반영할 수 없습니다. 수수료 금액을 변경하여 다시 시도하거나 작업을 취소해 주세요."
+    },
     "generic" : {
       "title" : "{{message}}",
       "description" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요.",
@@ -1254,13 +1258,13 @@
       "description" : "다시 시도하거나 Ledger 지원 부서에 문의하세요."
     },
     "TonExcessFee" : {
-      "title" : "진행할 경우, 토큰이 전송됩니다. 수수료로 0.1 TON을 지불하게 되며, 초과 금액은 반환됩니다."
+      "title" : "트랜잭션 진행 시, 토큰이 전송됩니다. 수수료로 0.1 GRAM이 부과되며, 초과 금액은 반환됩니다."
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "메인 계정(TON)에 수수료 계산에 사용할 잔액이 부족합니다. 필요한 최소 잔액은 0.1 TON입니다."
+      "title" : "메인 계정(GRAM)에 수수료 계산을 위한 잔액이 부족합니다. 최소 0.1 GRAM이 필요합니다."
     },
     "TonMinimumRequired" : {
-      "title" : "자금이 부족합니다 필요한 최소 잔액은 0.02 TON입니다."
+      "title" : "잔액이 부족합니다. 잔액으로 최소 0.02 GRAM이 필요합니다."
     },
     "BackupAppDataError" : {
       "title" : "앱 데이터 백업 중 오류가 발생했습니다"
@@ -1322,6 +1326,9 @@
       "select" : "계정 선택"
     }
   },
+  "lineChart" : {
+    "error" : "차트를 불러올 수 없습니다"
+  },
   "location" : {
     "titleServiceRequired" : "위치 서비스가 필요합니다",
     "descriptionServiceRequired" : "블루투스로 장치를 페어링하려면 Ledger Wallet에서 위치 서비스를 활성화해야 합니다.",
@@ -1335,6 +1342,28 @@
     "appNotFound" : "대출 앱을 찾을 수 없습니다",
     "infoModal" : {
       "close" : "닫기"
+    }
+  },
+  "backupHub" : {
+    "featureIntro" : {
+      "title" : "유실 위험 제로, 완벽한 백업 만들기",
+      "subtitle" : "비밀 복구 구문을 암호화하여 백업해 두면, 어떤 상황이 발생하더라도 자산에 대한 접근 권한을 다시 확보할 수 있습니다.",
+      "primaryCta" : "1개월 무료 체험하기",
+      "secondaryCta" : "로그인",
+      "items" : {
+        "secure" : {
+          "title" : "사용자 ID와 연결된 백업",
+          "subtitle" : "오직 사용자 본인만이 지갑 복구를 승인할 수 있습니다."
+        },
+        "access" : {
+          "title" : "강력한 백업 보안 기술",
+          "subtitle" : "데이터가 암호화 및 분할되어 하드웨어 보안 모듈(HSM)에 안전하게 보관됩니다."
+        },
+        "restore" : {
+          "title" : "언제든 액세스 권한 복구 가능",
+          "subtitle" : "ID, Ledger Wallet, Ledger 장치만 있으면 안심할 수 있습니다."
+        }
+      }
     }
   },
   "earn" : {
@@ -1463,6 +1492,12 @@
   },
   "globalSearch" : {
     "searchPlaceholder" : "자산 검색",
+    "searchPlaceholders" : {
+      "crypto" : "암호화폐 검색",
+      "stablecoins" : "스테이블코인 검색",
+      "stock" : "주식 종목 검색",
+      "addresses" : "주소 검색"
+    },
     "sections" : {
       "cryptos" : "암호화폐",
       "stocks" : "주식"
@@ -1719,6 +1754,32 @@
       "cta" : "자산 입금하기",
       "title" : "자산을 입금하고 시작하세요",
       "subTitle" : "간편한 암호화폐 전송과 매수는 물론 Cash-to-Stablecoin 옵션까지, 원하는 방식으로 Ledger Wallet에 자산을 추가하세요."
+    }
+  },
+  "q2WalletV4Tour" : {
+    "cta" : {
+      "start" : "새로운 소식 살펴보기",
+      "next" : "다음",
+      "done" : "확인"
+    },
+    "portfolio" : {
+      "title" : "더 똑똑해진 포트폴리오 관리, 더 확실해진 자산 성장 로드맵"
+    },
+    "balance" : {
+      "title" : "자산별 잔액 통합 보기",
+      "subTitle" : "USDT 등의 멀티체인 자산을 이제 하나의 통합 잔액으로 확인하세요. 심플하게, 정확하게, 명확하게!"
+    },
+    "returns" : {
+      "title" : "수익률 현황을 한눈에",
+      "subTitle" : "포트폴리오와 분석 페이지에서 모든 자산의 손익을 실시간으로 확인해 보세요."
+    },
+    "earn" : {
+      "title" : "예상 수익 확인하기",
+      "subTitle" : "예상 보상을 시뮬레이션하고, 투자 목표에 부합하는 맞춤형 성장 플랜을 세워보세요."
+    },
+    "protocols" : {
+      "title" : "더 다양한 프로토콜, 더 커진 보상",
+      "subTitle" : "스테이블코인부터 엄선된 인기 자산까지 지갑에서 바로 확인해 보세요. 검색 시간은 줄이고, 투자 결정은 더 빠르게."
     }
   },
   "discover" : {
@@ -3287,6 +3348,7 @@
   "crypto" : {
     "title" : "암호화폐",
     "stablecoinTitle" : "스테이블코인",
+    "stocksTitle" : "주식",
     "errorState" : "자산을 불러오는 동안 오류가 발생했습니다.",
     "emptyState" : "표시할 자산 없음"
   },
@@ -3332,12 +3394,12 @@
     }
   },
   "distribution" : {
-    "header" : "자산 배분",
-    "list" : "자산 배분 ({{count}})",
+    "header" : "자산 구성",
+    "list" : "자산 구성 ({{count}})",
     "assets_one" : "자산",
     "assets_other" : "자산",
     "total" : "총 잔액",
-    "listAccount" : "자산 배분 ({{count}})",
+    "listAccount" : "자산 구성 ({{count}})",
     "title" : "자산",
     "moreAssets" : "더 추가하기"
   },
@@ -4143,10 +4205,10 @@
       "incompatibility" : {
         "explore_compatible_devices" : "호환 가능한 장치 탐색",
         "contact_support" : "고객 지원 문의",
-        "ton_title" : "Ledger Nano S™는 Ton 스왑을 지원하지 않습니다",
-        "ton_description" : "Ton을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
-        "ton_tokens_title" : "Ledger Nano S™는 Ton 토큰 스왑을 지원하지 않습니다.",
-        "ton_tokens_description" : "Ton 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+        "ton_title" : "Ledger Nano S™는 Gram 스왑을 지원하지 않습니다.",
+        "ton_description" : "Gram을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
+        "ton_tokens_title" : "Ledger Nano S™는 Gram 토큰 스왑을 지원하지 않습니다.",
+        "ton_tokens_description" : "Gram 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
         "spl_tokens_title" : "Ledger Nano S™는 솔라나 토큰 스왑을 지원하지 않습니다.",
         "spl_tokens_description" : "솔라노 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
         "near_title" : "Ledger Nano S™는 Near 스왑을 지원하지 않습니다.",
@@ -4476,7 +4538,16 @@
       "processingTransaction" : "트랜잭션을 처리 중입니다",
       "sign" : {
         "title" : "Ledger {{wording}}에서 계속하기",
-        "description" : "보안 터치스크린에 표시된 안내를 따라주세요."
+        "description" : "보안 터치스크린에 표시된 안내를 따라주세요.",
+        "cancelled" : {
+          "title" : "트랜잭션 취소됨",
+          "description" : "트랜잭션을 거부했습니다. 자산에는 아무런 영향이 없습니다.",
+          "close" : "닫기",
+          "retry" : "다시 시도하세요"
+        }
+      },
+      "confirmation" : {
+        "viewTransaction" : "트랜잭션 보기"
       },
       "gasOptionsSync" : {
         "warningTitle" : "네트워크 수수료를 새로고침할 수 없습니다",
@@ -6725,15 +6796,15 @@
     "unstakeRequired" : {
       "changeBaker" : {
         "title" : "베이커 변경 전 언스테이킹하기",
-        "description" : "현재 베이커에게 XTZ를 스테이킹했습니다. 새로운 베이커에게 위임하려면 먼저 해당 자산을 언스테이킹하세요."
+        "description" : "현재 베이커에게 XTZ를 스테이킹했습니다. 새로운 베이커에게 위임하려면 먼저 모든 자산을 언스테이킹하세요."
       },
       "endDelegation" : {
         "title" : "위임 종료 전 언스테이킹하기",
-        "description" : "현재 베이커에게 XTZ를 스테이킹했습니다. 위임을 종료하려면 먼저 해당 자산을 언스테이킹하세요."
+        "description" : "현재 베이커에게 XTZ를 스테이킹했습니다. 위임을 종료하려면 먼저 모든 자산을 언스테이킹하세요."
       },
       "steps" : {
-        "0" : "수익 창출 메뉴에서 언스테이킹을 선택합니다.",
-        "1" : "수량(금액)을 확인하고 장치에서 언스테이킹 트랜잭션을 승인합니다.",
+        "0" : "테조스(Tezos) 계정 대시보드를 열고 스테이킹 섹션에서 언스테이킹 옵션을 선택하세요.",
+        "1" : "최대 수량을 언스테이킹하고 장치에서 언스테이킹 트랜잭션을 승인합니다.",
         "2" : "스테이킹 해제까지 약 4일이 소요됩니다.",
         "3" : "출금 후에는 베이커를 변경하거나 위임을 종료할 수 있습니다."
       },
@@ -8217,8 +8288,8 @@
       "filters" : {
         "accessibilityLabel" : "자산 필터 열기",
         "title" : "필터",
-        "sorting" : "정렬",
-        "timeframe" : "기간",
+        "sorting" : "자산 정렬 기준",
+        "timeframe" : "기간 선택",
         "sortingOptions" : {
           "marketCap" : "시가총액",
           "volume" : "거래량",
@@ -8933,13 +9004,13 @@
         "content" : {
           "able" : {
             "title" : "사용자의 동의 하에 Ledger는 사용자가 Ledger Wallet을 사용하는 방식에 대한 데이터(페이지 방문 및 클릭 포함)를 수집할 수 있습니다.",
-            "diagAndUsage" : "Ledger Wallet의 성능을 측정하고 앱과 사용자 경험을 모두 개선(분석)하는 것이 목적입니다.",
-            "personnalizationData" : "사용자 선호도에 맞는 맞춤형 추천과 콘텐츠를 제공하고(개인 맞춤화), 마케팅 캠페인의 효과를 측정할 목적."
+            "diagAndUsage" : "Ledger Wallet 성능 측정, 앱 & 사용자 경험 분석 및 개선",
+            "personnalizationData" : "사용자 선호에 맞춘 개인화된 추천 및 콘텐츠 제공, 마케팅 캠페인 효과 측정"
           },
           "unable" : {
             "title" : "Ledger Wallet은 다음과 관련한 정보를 결코 수집하지 않습니다.",
-            "adresses" : "고객 자산.",
-            "balance" : "고객 포트폴리오.",
+            "adresses" : "사용자 자산",
+            "balance" : "사용자 포트폴리오",
             "personnalInfos" : "사용자 개인 식별 정보(예: 이름이나 이메일 주소)"
           },
           "moreOptions" : "환경 설정 관리",
@@ -8968,41 +9039,6 @@
           "accept" : "수락",
           "acceptAll" : "모두 수락",
           "confirm" : "유효성 검사"
-        },
-        "infoText" : {
-          "info" : "당사 앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
-          "link" : "당사 추적 정책 자세히 살펴보기"
-        }
-      }
-    },
-    "variantB" : {
-      "main" : {
-        "title" : "더욱 향상된 Ledger Wallet 서비스를 제공할 수 있도록 도와주세요",
-        "description" : "공유해 주신 Ledger Wallet 분석 데이터는 고객이 어떤 방식으로 Ledger Wallet을 활용하는지 이해하고, 버그를 수정하며 개선된 사용자 경험을 제공하는 데 활용됩니다.",
-        "bulletPoints" : {
-          "1" : "페이지 방문, 클릭 수를 포함한 분석 데이터.",
-          "2" : "당사는 고객의 잔액, 계좌, 포트폴리오와 관련한 어떤 정보도 수집 또는 열람할 수 없습니다.",
-          "3" : "분석은 온전히 익명으로 처리됩니다. 당사는 고객의 개인 정보를 열람 또는 수집할 수 없습니다."
-        },
-        "ctas" : {
-          "refuse" : "거부",
-          "share" : "공유"
-        },
-        "infoText" : {
-          "info" : "당사 앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
-          "link" : "당사 추적 정책 자세히 살펴보기"
-        }
-      },
-      "details" : {
-        "title" : "맞춤화된 고객 경험을 즐겨보세요",
-        "description" : "공유해 주신 Ledger Wallet 개인 설정 데이터는 고객 선호에 맞는 콘텐츠를 표시하는 데 사용됩니다.",
-        "bulletPoints" : {
-          "1" : "환전 데이터, 클릭 수, 페이지 방문을 포함한 개인화 데이터.",
-          "2" : "당사는 고객의 개인 정보 또는 포트폴리오 정보를 추적하거나 수집할 수 없습니다."
-        },
-        "ctas" : {
-          "refuse" : "거부",
-          "allow" : "허용"
         },
         "infoText" : {
           "info" : "당사 앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
@@ -9918,6 +9954,30 @@
       "backup" : "백업",
       "help" : "도움말",
       "referral" : "친구 추천"
+    },
+    "backupHub" : {
+      "title" : "비밀 복구 문구 백업",
+      "description" : "자산에 대한 액세스 권한을 잃지 마세요 — 다양한 형태로 비밀 복구 문구를 안전하게 백업해 두세요.",
+      "compareFooter" : "모든 백업 방법 비교하기",
+      "sections" : {
+        "digital" : "ID 연동 디지털 백업",
+        "physical" : "물리적 백업"
+      },
+      "recover" : {
+        "title" : "Ledger Recover",
+        "notSubscribed" : "신원 인증을 통해 자산 액세스 권한을 복구합니다.",
+        "inProgress" : "활성화 완료",
+        "done" : "백업 관리",
+        "discover" : "탐색"
+      },
+      "recoveryKey" : {
+        "title" : "Ledger Recovery Key",
+        "description" : "PIN으로 보호되는 스마트 카드"
+      },
+      "secretRecoveryPhrase" : {
+        "title" : "24 단어 메탈 스토리지",
+        "description" : "화재 및 침수 방지 보호 기능"
+      }
     },
     "help" : {
       "title" : "도움말",

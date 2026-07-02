@@ -14,9 +14,8 @@ import { fileURLToPath } from "url";
 
 // Dynamic import so tsx resolves the extensionless TS specifier (static imports
 // fall through to Node 24's native TS resolver, which cannot add the extension).
-const { cryptocurrenciesById } = await import(
-  "../../../../libs/ledgerjs/packages/cryptoassets/src/currencies"
-);
+const { cryptocurrenciesById } =
+  await import("../../../../libs/ledgerjs/packages/cryptoassets/src/currencies");
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outDir = join(__dirname, "../src/currencies");

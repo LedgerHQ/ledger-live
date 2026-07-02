@@ -444,7 +444,10 @@ describe("buildTransaction", () => {
     // The voted-groups list must be read for the vote *signer*, not the raw account,
     // otherwise the computed index wouldn't match the vote list shown in the UI.
     expect(readContractMock).toHaveBeenCalledWith(
-      expect.objectContaining({ functionName: "getGroupsVotedForByAccount", args: ["signer_account"] }),
+      expect.objectContaining({
+        functionName: "getGroupsVotedForByAccount",
+        args: ["signer_account"],
+      }),
     );
   });
 

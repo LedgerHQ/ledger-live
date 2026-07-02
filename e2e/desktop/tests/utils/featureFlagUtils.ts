@@ -1,4 +1,4 @@
-import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
+import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
 import { Page } from "@playwright/test";
 
 import type { OptionalFeatureMap, Features } from "@shared/feature-flags";
@@ -42,7 +42,6 @@ export const FF_LWD_WALLET_40_Q1 = {
       graphRework: true,
       mainNavigation: true,
       newReceiveDialog: true,
-      balanceRefreshRework: true,
       lazyOnboarding: true,
       assetSection: false,
       brazePlacement: true,
@@ -66,7 +65,6 @@ export const FF_LWD_WALLET_40_Q2 = {
       graphRework: true,
       mainNavigation: true,
       newReceiveDialog: true,
-      balanceRefreshRework: true,
       lazyOnboarding: true,
       assetSection: true,
       brazePlacement: true,

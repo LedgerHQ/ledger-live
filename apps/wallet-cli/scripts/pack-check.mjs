@@ -99,9 +99,7 @@ async function packPackage(pkg, destination) {
 }
 
 function listTarball(tarball) {
-  return run("tar", ["-tf", tarball], { cwd: root })
-    .split("\n")
-    .filter(Boolean);
+  return run("tar", ["-tf", tarball], { cwd: root }).split("\n").filter(Boolean);
 }
 
 function assertPackageContents(pkg, entries) {

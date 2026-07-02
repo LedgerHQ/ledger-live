@@ -4,15 +4,15 @@ import { session as detoxSession, config as detoxConfig } from "detox/internals"
 import * as fs from "fs/promises";
 import * as path from "path";
 import { exec } from "child_process";
-import { releaseSpeculosDeviceCI } from "@ledgerhq/live-common/e2e/speculosCI";
+import { releaseSpeculosDeviceCI } from "@ledgerhq/live-e2e-shared/speculosCI";
 import {
   getDeviceFirmwareVersion,
   getSpeculosModel,
-} from "@ledgerhq/live-common/e2e/speculosAppVersion";
+} from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { isSpeculosRemote } from "./helpers/commonHelpers";
 import { ARTIFACTS_DIR, SPECULOS_TRACKING_FILE_PATTERN } from "./utils/speculosUtils";
 import { NANO_APP_CATALOG_PATH } from "./utils/constants";
-import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import type { DetoxAllure2AdapterOptions } from "detox-allure2-adapter";
 
 export default async function setup(): Promise<void> {

@@ -86,7 +86,10 @@ describe("ConfirmationScreen", () => {
   });
 
   it("renders the error state with save logs/retry/close when the flow status is ERROR", () => {
-    mockViewModel({ status: FLOW_STATUS.ERROR, transactionError: new Error("broadcast failed") });
+    mockViewModel({
+      status: FLOW_STATUS.ERROR,
+      transactionError: new Error("broadcast failed"),
+    });
     render(<ConfirmationScreen />);
 
     expect(screen.queryByTestId("send-confirmation-success")).toBeNull();

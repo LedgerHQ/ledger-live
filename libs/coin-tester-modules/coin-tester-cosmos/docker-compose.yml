@@ -18,7 +18,11 @@ services:
     healthcheck:
       # LCD `latest block` endpoint — only responds once the chain has produced
       # a block, which the single validator does on its own within a few seconds.
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:1317/cosmos/base/tendermint/v1beta1/blocks/latest >/dev/null"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://127.0.0.1:1317/cosmos/base/tendermint/v1beta1/blocks/latest >/dev/null",
+        ]
       interval: 5s
       timeout: 10s
       retries: 24

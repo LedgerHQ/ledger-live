@@ -50,7 +50,7 @@ const commonConfig = {
 
 const toEntryMap = (files, baseDir) =>
   Object.fromEntries(
-    files.map((file) => {
+    files.map(file => {
       const entryName = path
         .relative(baseDir, file)
         .replace(path.extname(file), "")
@@ -60,7 +60,7 @@ const toEntryMap = (files, baseDir) =>
     }),
   );
 
-const runCompiler = (config) =>
+const runCompiler = config =>
   new Promise((resolve, reject) => {
     const compiler = rspack(config);
     compiler.run((error, stats) => {
@@ -92,7 +92,7 @@ const commonjs = async () => {
   });
 };
 
-commonjs().catch((error) => {
+commonjs().catch(error => {
   console.error(error);
   process.exit(1);
 });

@@ -44,8 +44,8 @@ describe("feature-flags selectors", () => {
 
   it("selectRemoteFlagsReady returns remoteFlagsReady", () => {
     expect(selectRemoteFlagsReady(state)).toBe(false);
-    expect(selectRemoteFlagsReady({ featureFlags: { ...state.featureFlags, remoteFlagsReady: true } })).toBe(
-      true,
-    );
+    expect(
+      selectRemoteFlagsReady({ featureFlags: { ...state.featureFlags, remoteFlagsReady: true } }),
+    ).toBe(true);
   });
 });

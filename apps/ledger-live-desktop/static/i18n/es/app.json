@@ -74,6 +74,8 @@
   "common" : {
     "never" : "Nunca",
     "new" : "Nuevo",
+    "scrollLeft" : "Desplaza a la izquierda",
+    "scrollRight" : "Desplaza a la derecha",
     "skip" : "Omitir",
     "apply" : "Aplicar",
     "done" : "Listo",
@@ -503,10 +505,10 @@
       "changeProvider" : "Permutar con otro proveedor"
     },
     "incompatibility" : {
-      "ton_title" : "No es posible utilizar el Ledger Nano S™ para permutar Ton",
-      "ton_description" : "Para permutar Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
-      "ton_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Ton",
-      "ton_tokens_description" : "Para permutar tokens de Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "ton_title" : "No es posible usar el Ledger Nano S™ para permutar Gram",
+      "ton_description" : "Para permutar Gram, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "ton_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Gram",
+      "ton_tokens_description" : "Para permutar tokens de Gram, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "spl_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Solana",
       "spl_tokens_description" : "Para permutar tokens de Solana, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "sui_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Sui",
@@ -1704,7 +1706,11 @@
         "stocks" : "Acciones",
         "favorites" : "Favoritos"
       },
-      "emptyFavorites" : "Aún no hay favoritos"
+      "emptyFavorites" : "Aún no hay favoritos",
+      "noAssets" : {
+        "title" : "No hay activos disponibles",
+        "description" : "Lo sentimos, no hay activos disponibles en esta categoría."
+      }
     },
     "detailsPage" : {
       "priceStatistics" : "Estadísticas de precio",
@@ -4425,6 +4431,8 @@
         "header" : "Desdelegaciones",
         "headerTooltip" : "Disponible después de un bloqueo temporal de {{numberOfDays}} días",
         "inactiveTooltip" : "Los importes desdelegados no generan recompensas.",
+        "timelockTooltip" : "Aún dentro del bloqueo temporal. Estos fondos aún no están disponibles para retirar.",
+        "readyTooltip" : "El bloqueo temporal ha finalizado. Estos fondos están listos para retirar.",
         "flow" : {
           "title" : "Dejar de poner en participación",
           "steps" : {
@@ -7509,6 +7517,10 @@
     "TaprootNotActivated" : {
       "title" : "Los envíos a una dirección taproot antes de la activación de la red principal no son seguros"
     },
+    "RbfBuildError" : {
+      "title" : "No se puede reemplazar esta transacción",
+      "description" : "El aumento de la tarifa necesario para reemplazar esta transacción no se puede aplicar con los parámetros actuales. Prueba con una cantidad de tarifa diferente o cancela la operación."
+    },
     "SolanaAccountNotFunded" : {
       "title" : "Cuenta sin fondos"
     },
@@ -7781,13 +7793,13 @@
       "title" : "Estamos sufriendo inconvenientes con nuestra infraestructura de Bitcoin. Inténtalo de nuevo más tarde."
     },
     "TonExcessFee" : {
-      "title" : "Representa una transferencia de tokens. Pagarás una tarifa de 0,1 TON y los tokens extra se te devolverán."
+      "title" : "Representa una transferencia de tokens. Pagarás una tarifa de 0,1 GRAM y los tokens extra se te devolverán."
     },
     "TonNotEnoughBalanceInParentAccount" : {
-      "title" : "No tienes fondos suficientes en la cuenta principal (TON) para calcular las tarifas. El saldo mínimo requerido es de 0,1 TON."
+      "title" : "No tienes fondos suficientes en la cuenta principal (GRAM) para calcular las tarifas. El saldo mínimo requerido es de 0,1 GRAM."
     },
     "TonMinimumRequired" : {
-      "title" : "Fondos insuficientes. El saldo mínimo requerido es de 0,02 TON."
+      "title" : "Fondos insuficientes. El saldo mínimo requerido es de 0,02 GRAM."
     },
     "AleoAmountRecordRequired" : {
       "title" : "Selecciona un registro privado válido para la cantidad.",
@@ -8359,7 +8371,7 @@
     }
   },
   "analyticsOptInPrompt" : {
-    "variantA" : {
+    "screen" : {
       "description" : "Al compartir tus datos de Ledger Wallet, nos ayudas a conocer tus preferencias y mostrarte contenido relevante para ti.",
       "whatWeTrack" : "Con tu consentimiento, Ledger podrá recopilar datos sobre cómo usas Ledger Wallet (incluidas las visitas a páginas y los clics):",
       "whatWeTrackList" : {
@@ -8384,26 +8396,6 @@
         "description" : "Para que recibas recomendaciones personalizadas y contenido que se ajuste a tus preferencias y para ayudarnos a medir el rendimiento de nuestras campañas de marketing, compartimos datos de uso de la aplicación, incluidos clics, visitas a páginas y datos de conversión."
       },
       "validate" : "Validar"
-    },
-    "variantB" : {
-      "accept" : "Aceptar",
-      "refuse" : "Rechazar",
-      "analytics" : {
-        "description" : "Al compartir tus datos analíticos de Ledger Wallet, nos ayudas a entender cómo se utiliza Ledger Wallet, corregir errores y mejorar la experiencia de usuario.",
-        "details" : {
-          "1" : "Los datos analíticos incluyen visitas a páginas y clics.",
-          "2" : "No recopilaremos ni veremos ninguna información relativa a tu saldo, cuentas ni portfolio.",
-          "3" : "Los análisis son completamente anónimos. No podemos ver ni recopilar tu información personal."
-        }
-      },
-      "personalRecommendations" : {
-        "title" : "Disfruta de una experiencia personalizada",
-        "description" : "Al compartir tus datos de personalización de Ledger Wallet, nos permites mostrarte contenido adaptado a tus preferencias.",
-        "details" : {
-          "1" : "Los datos de personalización incluyen datos de conversión, clics y visitas a páginas.",
-          "2" : "No podemos rastrear ni recopilar tu información personal ni información relativa a tu portfolio."
-        }
-      }
     },
     "common" : {
       "title" : "Ayúdanos a mejorar y personalizar tu experiencia",
@@ -8751,8 +8743,6 @@
     "title" : "Mercado",
     "genericError" : "La conexión ha fallado",
     "cta" : "Ver todo",
-    "scrollLeft" : "Desplaza a la izquierda",
-    "scrollRight" : "Desplaza a la derecha",
     "ranking" : {
       "trending" : "Tendencias",
       "gainers" : "Ganadores",
@@ -8863,6 +8853,12 @@
   },
   "topBar" : {
     "searchPlaceholder" : "Buscar activos",
+    "searchPlaceholders" : {
+      "crypto" : "Buscar cripto",
+      "stablecoins" : "Buscar monedas estables",
+      "stocks" : "Buscar acciones",
+      "addresses" : "Buscar direcciones"
+    },
     "search" : {
       "noAssetFound" : "No se encontraron activos",
       "error" : "La conexión ha fallado",
@@ -8910,6 +8906,20 @@
       "privateBalanceTooltip" : "Saldo que está oculto al público"
     },
     "shielded" : {
+      "send" : {
+        "transferFrom" : {
+          "label" : "Transferir desde",
+          "public" : {
+            "title" : "Saldo público",
+            "subtitle" : "Transparente"
+          },
+          "private" : {
+            "title" : "Saldo privado",
+            "subtitle" : "Blindado",
+            "unavailable" : "Saldo privado no disponible"
+          }
+        }
+      },
       "state" : {
         "showBalance" : "Mostrar saldo",
         "startSync" : "Iniciar sincronización",
@@ -9103,6 +9113,35 @@
       "explore" : "Explorar mi nuevo portfolio"
     }
   },
+  "q2Tour" : {
+    "slides" : {
+      "welcome" : {
+        "title" : "Gestión de Portfolio inteligente. Vías claras para crecer.",
+        "description" : ""
+      },
+      "aggregatedBalance" : {
+        "title" : "Un saldo para cada activo",
+        "description" : "Los activos multicadena como USDT ahora se muestran como total. Sencillo, preciso, claro."
+      },
+      "pnl" : {
+        "title" : "Tus rendimientos con total claridad",
+        "description" : "Mira beneficios y pérdidas de todos tus activos en tu página de Portfolio y análisis."
+      },
+      "earnSimulator" : {
+        "title" : "Pon a prueba tu potencial de ganar",
+        "description" : "Simula las recompensas que puedes ganar y crea un plan adaptado a tus objetivos."
+      },
+      "earnUpselling" : {
+        "title" : "Más protocolos, más recompensas",
+        "description" : "Mira las estables y opciones destacadas en tu wallet. Menos búsquedas, más decisiones."
+      }
+    },
+    "cta" : {
+      "seeWhatsNew" : "Entérate de las novedades",
+      "next" : "Siguiente",
+      "gotIt" : "Entendido"
+    }
+  },
   "productTour" : {
     "cta" : {
       "continue" : "Continuar",
@@ -9183,19 +9222,19 @@
       "help" : "Ayuda",
       "recover" : "[L] Recover",
       "backup" : "Respalda.",
-      "refer" : "Recomendación"
+      "refer" : "Recomendar"
     },
     "backupHub" : {
-      "title" : "Copias de respaldo de la wallet",
-      "description" : "Protege tus activos con una combinación de soluciones de copia de respaldo para recuperar tu Frase Semilla.",
+      "title" : "Copias de respaldo",
+      "description" : "No pierdas el acceso a tus activos — crea una copia de respaldo de tu Frase de Recuperación Secreta en distintos formatos.",
       "back" : "Atrás",
       "sections" : {
-        "digital" : "Copias de respaldo basadas en ID digital",
+        "digital" : "Copia de respaldo digital vinculada a ID",
         "physical" : "Copias de respaldo físicas"
       },
       "recover" : {
         "title" : "Ledger Recover",
-        "notSubscribed" : "Crear una copia de respaldo que no perderás",
+        "notSubscribed" : "Restaura el acceso verificando tu identidad.",
         "inProgress" : "Completa la activación",
         "done" : "Administra tu copia de respaldo",
         "discover" : "Discover"
@@ -9251,6 +9290,9 @@
     "tradingVolume24h" : "Volumen de operaciones 24h",
     "tradingVolume24hTooltip" : "La cantidad total operada en las últimas 24 horas.",
     "marketStatsDisclaimer" : "Estadísticas de mercado obtenidas de Coingecko",
+    "fallbackBanner" : {
+      "title" : "Permutas y Compras no son compatibles con este activo."
+    },
     "day" : "1 día",
     "week" : "1 semana",
     "month" : "1 mes",

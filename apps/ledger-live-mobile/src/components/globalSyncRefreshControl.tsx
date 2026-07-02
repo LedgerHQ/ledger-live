@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { RefreshControl, RefreshControlProps } from "react-native";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useIsFocused, useRoute, useTheme } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { SYNC_DELAY } from "~/utils/constants";
@@ -42,7 +41,6 @@ function globalSyncRefreshControl<P>(
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
     const store = useStore();
-    const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
     const hasNoAccounts = useSelector(hasNoAccountsSelector);
     const route = useRoute();
     const { isConnected, isInternetReachable } = useNetInfo();
@@ -58,9 +56,7 @@ function globalSyncRefreshControl<P>(
       });
       setRefreshing(true);
       dispatch(setRefreshStarted(selectLastSyncTimestamp(store.getState())));
-      if (shouldDisplayBalanceRefreshRework) {
-        dispatch(setLastUserSyncClickTimestamp(Date.now()));
-      }
+      dispatch(setLastUserSyncClickTimestamp(Date.now()));
       track("button_clicked", {
         button: "pull to refresh",
         page: route.name,
@@ -71,11 +67,8 @@ function globalSyncRefreshControl<P>(
 
     function handleRefresh() {
       if (refreshingRef.current) return;
-      if (shouldDisplayBalanceRefreshRework && hasNoAccounts) return;
-      if (
-        shouldDisplayBalanceRefreshRework &&
-        (isConnected === false || isInternetReachable === false)
-      ) {
+      if (hasNoAccounts) return;
+      if (isConnected === false || isInternetReachable === false) {
         dispatch(setOfflineRefreshAttempt(Date.now()));
         return;
       }
@@ -116,9 +109,9 @@ function globalSyncRefreshControl<P>(
         refreshControl={
           <RefreshControl
             progressBackgroundColor={dark ? colors.background : colors.card}
-            colors={shouldDisplayBalanceRefreshRework ? ["transparent"] : [colors.live]}
-            tintColor={shouldDisplayBalanceRefreshRework ? "transparent" : colors.live}
-            refreshing={shouldDisplayBalanceRefreshRework ? false : refreshing}
+            colors={["transparent"]}
+            tintColor="transparent"
+            refreshing={false}
             onRefresh={handleRefresh}
             {...mergedRefreshControlProps}
           />

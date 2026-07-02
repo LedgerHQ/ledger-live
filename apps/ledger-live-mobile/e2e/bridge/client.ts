@@ -3,8 +3,15 @@ import invariant from "invariant";
 import { Subject } from "rxjs";
 import { store } from "~/state-manager/configureStore";
 import { importSettings, setLastConnectedDevice } from "~/actions/settings";
-import { setOverride, setAllOverrides, selectFeature } from "@shared/feature-flags";
+import {
+  setOverride,
+  setAllOverrides,
+  selectFeature,
+  getAllFeatureFlags,
+} from "@shared/feature-flags";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
+import { exportSelector as accountsExportSelector } from "~/reducers/accounts";
+import { saveAccounts } from "~/db";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
 import {
@@ -19,7 +26,6 @@ import logReport from "../../src/log-report";
 import { webviewLogStore } from "../../src/e2e/webviewLogStore";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
-import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
 import Config from "react-native-config";
 import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
 import { bleDevicesSelector } from "~/reducers/ble";
@@ -101,6 +107,12 @@ async function onMessage(event: WebSocketMessageEvent) {
         break;
       case "importAccounts": {
         store.dispatch(await importAccountsRaw({ active: msg.payload }));
+        try {
+          // workaround: persist bridge-imported accounts so they survive app restarts (QAA-1353)
+          await saveAccounts(await accountsExportSelector(store.getState()));
+        } catch (error) {
+          log(`Failed to persist bridge-imported accounts: ${String(error)}`);
+        }
         break;
       }
       case "mockDeviceEvent": {

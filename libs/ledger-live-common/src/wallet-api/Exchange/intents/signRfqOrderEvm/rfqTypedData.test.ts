@@ -44,10 +44,7 @@ describe("toRfqEIP712Message", () => {
   });
 
   it("preserves the provider-supplied primaryType for 1inch Fusion", () => {
-    const result = toRfqEIP712Message(
-      ONEINCH_FUSION_TYPED_DATA,
-      "oneinchfusion",
-    );
+    const result = toRfqEIP712Message(ONEINCH_FUSION_TYPED_DATA, "oneinchfusion");
     expect(result.primaryType).toBe("Order");
   });
 
@@ -57,10 +54,7 @@ describe("toRfqEIP712Message", () => {
   });
 
   it("reads message from `message` (1inch Fusion) when `values` is absent", () => {
-    const result = toRfqEIP712Message(
-      ONEINCH_FUSION_TYPED_DATA,
-      "oneinchfusion",
-    );
+    const result = toRfqEIP712Message(ONEINCH_FUSION_TYPED_DATA, "oneinchfusion");
     expect(result.message).toEqual(BASE_VALUES);
   });
 
@@ -104,28 +98,19 @@ describe("toRfqEIP712Message", () => {
 
   it("throws when the payload is missing both `values` and `message`", () => {
     expect(() =>
-      toRfqEIP712Message(
-        { domain: BASE_DOMAIN, types: BASE_TYPES },
-        "uniswapx",
-      ),
+      toRfqEIP712Message({ domain: BASE_DOMAIN, types: BASE_TYPES }, "uniswapx"),
     ).toThrow(/values/);
   });
 
   it("throws when the payload is missing the domain", () => {
     expect(() =>
-      toRfqEIP712Message(
-        { values: BASE_VALUES, types: BASE_TYPES },
-        "uniswapx",
-      ),
+      toRfqEIP712Message({ values: BASE_VALUES, types: BASE_TYPES }, "uniswapx"),
     ).toThrow(/domain/);
   });
 
   it("throws when the payload is missing the types", () => {
     expect(() =>
-      toRfqEIP712Message(
-        { values: BASE_VALUES, domain: BASE_DOMAIN },
-        "uniswapx",
-      ),
+      toRfqEIP712Message({ values: BASE_VALUES, domain: BASE_DOMAIN }, "uniswapx"),
     ).toThrow(/types/);
   });
 

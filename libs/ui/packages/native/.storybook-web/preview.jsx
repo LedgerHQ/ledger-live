@@ -41,10 +41,7 @@ const fontFaces = `
 export const decorators = [
   (Story, { globals }) => {
     const backgrounds = globals?.backgrounds ?? {};
-    const theme =
-      backgrounds?.value === palettes.dark.background.main
-        ? "dark"
-        : "light";
+    const theme = backgrounds?.value === palettes.dark.background.main ? "dark" : "light";
     return (
       <div
         style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden" }}

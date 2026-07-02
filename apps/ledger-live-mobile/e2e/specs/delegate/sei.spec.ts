@@ -1,7 +1,7 @@
 describe("SEI EVM Native Staking - Delegate flow", () => {
   const SEI_CURRENCY_ID = "sei_evm";
   const DELEGATION_AMOUNT = "2";
-  const EMPTY_ACCOUNT_ID = "mock:2:sei_evm:0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707:";
+  const EMPTY_ACCOUNT_ID = "mock:2:sei_evm:0x343029058D040DfeE7F25f438A7402eb472Ed106:";
   const STAKED_ACCOUNT_ID = "mock:2:sei_evm:0x18E9A4F2A5A2B01F35E7D086E75D7D01530A1A9F:";
 
   async function selectAccount(accountId: string) {

@@ -39,7 +39,7 @@ module.exports = defineConfig({
     },
   },
   tools: {
-    rspack: (config) => {
+    rspack: config => {
       config.module = config.module || { rules: [] };
       config.module.rules = config.module.rules || [];
       config.module.rules.unshift({

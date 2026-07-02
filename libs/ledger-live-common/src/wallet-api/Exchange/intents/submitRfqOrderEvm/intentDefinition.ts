@@ -10,10 +10,9 @@ import type { SubmitRfqOrderEvmIntentDefinition } from "./types";
  * UI can render a "submitting / waiting" loader while the partner fills
  * the order.
  */
-export const submitRfqOrderEvmIntentDefinition: SubmitRfqOrderEvmIntentDefinition =
-  {
-    label: "Submit RFQ order to partner",
-    requiresConnectedDevice: false,
-    delegateDeviceLockStateHandlingToExecutor: false,
-    job: submitRfqOrderEvmJob,
-  };
+export const submitRfqOrderEvmIntentDefinition: SubmitRfqOrderEvmIntentDefinition = {
+  label: "Submit RFQ order to partner",
+  requiresConnectedDevice: false,
+  delegateDeviceLockStateHandlingToExecutor: false,
+  job: submitRfqOrderEvmJob,
+};

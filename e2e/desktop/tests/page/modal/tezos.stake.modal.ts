@@ -7,6 +7,7 @@ export class TezosStakeModal extends Modal {
   private readonly validatorContinueButton = this.page.locator(
     "#tezos-stake-validator-continue-button",
   );
+  private readonly validatorList = this.page.getByTestId("validator-list");
   private readonly amountContinueButton = this.page.locator("#tezos-stake-amount-continue-button");
   private readonly visitAccountButton = this.page.locator(
     "#tezos-stake-confirmation-visit-account-button",
@@ -19,7 +20,7 @@ export class TezosStakeModal extends Modal {
   @step("Verify the validator step is shown")
   async verifyValidatorStep() {
     await expect(this.title).toBeVisible();
-    await expect(this.content).toBeVisible();
+    await expect(this.validatorList).toBeVisible();
     await expect(this.validatorContinueButton).toBeVisible();
   }
 

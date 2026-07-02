@@ -9,7 +9,7 @@ import type { RecordStore } from "./RecordStore";
 const createTransportRecorder = (
   DecoratedTransport: Transport,
   recordStore: RecordStore,
-): new (T) => Transport => {
+): (new (T) => Transport) => {
   class TransportRecorder extends Transport {
     static recordStore = recordStore;
     static isSupported = (DecoratedTransport.constructor as typeof Transport).isSupported;

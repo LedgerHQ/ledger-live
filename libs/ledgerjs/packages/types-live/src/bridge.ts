@@ -292,7 +292,9 @@ export interface AccountBridgeExtensions {
   getStuckAccountAndOperation?: (
     account: AccountLike,
     parentAccount: Account | null | undefined,
-  ) => { account: AccountLike; parentAccount: Account | undefined; operation: Operation } | undefined;
+  ) =>
+    | { account: AccountLike; parentAccount: Account | undefined; operation: Operation }
+    | undefined;
 }
 
 export type AccountBridge<

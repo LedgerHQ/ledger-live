@@ -13,7 +13,7 @@ inputs:
   tags:
     required: false
     default: ""
-    description: "JSON array of tag strings, e.g. '[\"desktop\",\"smoke\"]'."
+    description: 'JSON array of tag strings, e.g. ''["desktop","smoke"]''.'
   history_level:
     required: false
     default: "50"

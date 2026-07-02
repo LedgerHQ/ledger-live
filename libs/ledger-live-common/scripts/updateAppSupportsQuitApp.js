@@ -5,13 +5,10 @@ function main() {
   axios.request(req).then(({ data }) => {
     // Extract the names and versions from the latest snapshot
     if (data && "application_versions" in data) {
-      const latestAppsAndVersions = data.application_versions.reduce(
-        (acc, app) => {
-          acc[app.name] = app.version;
-          return acc;
-        },
-        {}
-      );
+      const latestAppsAndVersions = data.application_versions.reduce((acc, app) => {
+        acc[app.name] = app.version;
+        return acc;
+      }, {});
       let changed = false;
       for (const appName in latestAppsAndVersions) {
         if (appName in minAppVersion) {
@@ -27,7 +24,7 @@ function main() {
         const ordered = {};
         Object.keys(minAppVersion)
           .sort()
-          .forEach((key) => {
+          .forEach(key => {
             ordered[key] = minAppVersion[key];
           });
         console.log(ordered);

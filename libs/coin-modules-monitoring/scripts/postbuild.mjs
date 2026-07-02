@@ -7,7 +7,8 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const libDir = fileURLToPath(new URL("../lib/", import.meta.url));
-const windowPolyfill = "if(typeof globalThis.window==='undefined'){globalThis.window=globalThis;}\n";
+const windowPolyfill =
+  "if(typeof globalThis.window==='undefined'){globalThis.window=globalThis;}\n";
 
 for (const file of readdirSync(libDir).filter(f => f.endsWith(".js"))) {
   const path = join(libDir, file);

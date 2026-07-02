@@ -21,9 +21,7 @@ export const llmDatadog = flagWith(
     trackInteractions: z.boolean().optional(),
     trackWatchdogTerminations: z.boolean().optional(),
     uploadFrequency: z.enum(["AVERAGE", "FREQUENT", "RARE"]).optional(),
-    vitalsUpdateFrequency: z
-      .enum(["AVERAGE", "FREQUENT", "RARE", "NEVER"])
-      .optional(),
+    vitalsUpdateFrequency: z.enum(["AVERAGE", "FREQUENT", "RARE", "NEVER"]).optional(),
   },
   {
     enabled: false,

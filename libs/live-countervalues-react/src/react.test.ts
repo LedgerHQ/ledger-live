@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  CountervaluesProvider,
-  useTrackingPairForAccounts,
-  type CountervaluesBridge,
-} from ".";
+import { CountervaluesProvider, useTrackingPairForAccounts, type CountervaluesBridge } from ".";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { renderHook, act, render, waitFor } from "@testing-library/react";
 import {

@@ -5,7 +5,7 @@ import {
   stopSpeculos,
   takeScreenshot,
   setExchangeDependencies,
-} from "@ledgerhq/live-common/e2e/speculos";
+} from "@ledgerhq/live-e2e-shared/speculos";
 import { setEnv } from "@ledgerhq/live-env";
 import { device, log } from "detox";
 import {
@@ -13,14 +13,14 @@ import {
   fetchSpeculinhoLogs,
   fetchSpeculinhoStatus,
   getSpeculinhoRunIdFromError,
-} from "@ledgerhq/live-common/e2e/speculosCI";
+} from "@ledgerhq/live-e2e-shared/speculosCI";
 import { isSpeculosRemote } from "../helpers/commonHelpers";
 import { addKnownSpeculos, getEnvs, removeKnownSpeculos } from "../bridge/server";
 import { CLI } from "./cliUtils";
 import { promises as fs } from "fs";
 import path from "path";
 
-import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { getCapturedStderr } from "./loggingUtils";
 
 const SPECULOS_STDOUT_MARKER = "--- Speculos stdout ---";

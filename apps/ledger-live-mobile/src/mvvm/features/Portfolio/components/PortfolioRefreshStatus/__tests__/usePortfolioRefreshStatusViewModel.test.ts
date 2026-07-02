@@ -1,7 +1,5 @@
 import { renderHook, act } from "@tests/test-renderer";
 import * as usePortfolioBalanceModule from "LLM/hooks/usePortfolioBalance";
-import * as useWalletFeaturesConfigModule from "@features/platform-feature-flags";
-import type { WalletFeaturesConfig } from "@features/platform-feature-flags";
 import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/index";
 import {
   usePortfolioRefreshStatusViewModel,
@@ -9,12 +7,8 @@ import {
 } from "../usePortfolioRefreshStatusViewModel";
 
 jest.mock("LLM/hooks/usePortfolioBalance");
-jest.mock("@features/platform-feature-flags");
 
 const mockUsePortfolioBalance = jest.mocked(usePortfolioBalanceModule.usePortfolioBalance);
-const mockUseWalletFeaturesConfig = jest.mocked(
-  useWalletFeaturesConfigModule.useWalletFeaturesConfig,
-);
 
 function mockSync(syncPhase: SyncPhase, isManualRefreshLoading = false) {
   mockUsePortfolioBalance.mockReturnValue({ syncPhase, isManualRefreshLoading } as ReturnType<
@@ -24,9 +18,6 @@ function mockSync(syncPhase: SyncPhase, isManualRefreshLoading = false) {
 
 beforeEach(() => {
   jest.clearAllMocks();
-  mockUseWalletFeaturesConfig.mockReturnValue({
-    shouldDisplayBalanceRefreshRework: true,
-  } as WalletFeaturesConfig);
 });
 
 it("banner stays visible through the settle-guard window then clears on synced", () => {

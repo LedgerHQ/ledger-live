@@ -85,7 +85,8 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
     [currency],
   );
   const fallbackPresetIds = useMemo(
-    () => (currency && transaction ? sendFeatures.getFeePresetFallbackIds(currency, transaction) : []),
+    () =>
+      currency && transaction ? sendFeatures.getFeePresetFallbackIds(currency, transaction) : [],
     [currency, transaction],
   );
 

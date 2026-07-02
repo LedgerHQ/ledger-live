@@ -58,7 +58,6 @@ permissions:
   contents: read
 
 jobs:
-
   build-web-tools:
     name: "Web Tools Build"
     if: ${{ inputs.build-web-tools != 'false' }}
@@ -107,7 +106,6 @@ jobs:
         with:
           command: pnpm exec nx run @ledgerhq/web-tools:typecheck
           disable_cache: false
-
 
   build-native-storybook:
     name: "Native Storybook Build"
@@ -238,4 +236,4 @@ jobs:
               });
             }
         env:
-          NEEDS_JSON: '${{ toJson(needs) }}'
+          NEEDS_JSON: "${{ toJson(needs) }}"

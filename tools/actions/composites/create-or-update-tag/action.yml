@@ -35,7 +35,7 @@ runs:
           const ref = '${{ inputs.ref }}';
           const tagName = '${{ inputs.tagName }}';
           const overwrite = '${{ inputs.overwrite }}' === 'true';
-          
+
           try {
             // Try to get the existing tag
             await github.rest.git.getRef({

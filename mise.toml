@@ -59,16 +59,14 @@ HK_MISE = 1
 
 [hooks]
 # hk + Nx cache config: local only (skip in CI; CI uses setup-caches / configure-nx-remote-cache-profile).
-postinstall = [
-  """
+postinstall = ["""
 {% if env.CI is defined %}
   # skip for CI
 {% else %}
   hk install --mise
   pnpm nx:write-cache-config
 {% endif %}
-""",
-]
+"""]
 
 [task_config]
 includes = [".mise/tasks/pnpm.toml", ".mise/tasks/nx.toml", ".mise/tasks"]
@@ -99,12 +97,7 @@ run = '''
 [tasks.setup]
 description = "Clean project and install all dependencies"
 alias = "s"
-run = [
-  "mise install",
-  "mise reshim",
-  { task = "pnpm:install" },
-  "pnpm build:llm:deps",
-]
+run = ["mise install", "mise reshim", { task = "pnpm:install" }, "pnpm build:llm:deps"]
 depends = ["clean"]
 
 [tasks.clean]

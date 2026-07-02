@@ -71,9 +71,7 @@ describe("LegacySignerCosmos", () => {
         publicKey: "0a0b0c",
         address: "cosmos1def",
       };
-      const getAddress = jest
-        .spyOn(Cosmos.prototype, "getAddress")
-        .mockResolvedValue(mockResult);
+      const getAddress = jest.spyOn(Cosmos.prototype, "getAddress").mockResolvedValue(mockResult);
 
       expect(await signer.getAddress("44/118/0/0/0", "cosmos", boolDisplay)).toEqual(mockResult);
       expect(getAddress).toHaveBeenCalledWith("44/118/0/0/0", "cosmos", boolDisplay);
