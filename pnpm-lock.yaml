@@ -5112,9 +5112,6 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.51.0
-      prando:
-        specifier: ^6.0.1
-        version: 6.0.1
 
   libs/coin-modules/coin-filecoin:
     dependencies:
@@ -21822,7 +21819,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.1.4
       react-dom: 19.1.4
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -24097,7 +24094,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
