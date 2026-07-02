@@ -28,6 +28,7 @@
     "src/types/assets.ts"
   ],
   "ignoreUnused": [
-    "@ledgerhq/devices"
+    "@ledgerhq/devices",
+    "invariant"
   ]
 }

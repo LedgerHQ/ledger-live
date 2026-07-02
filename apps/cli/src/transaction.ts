@@ -1,18 +1,7 @@
-import uniqBy from "lodash/uniqBy";
 import shuffle from "lodash/shuffle";
-import flatMap from "lodash/flatMap";
 import { BigNumber } from "bignumber.js";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type {
-  Account,
-  AccountLike,
-  AccountLikeArray,
-  TransactionStatusCommon,
-} from "@ledgerhq/types-live";
-import {
-  getRegisteredFamilies,
-  loadSetupForFamily,
-} from "@ledgerhq/live-common/coin-modules/registry";
+import type { Account, AccountLike, TransactionStatusCommon } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -45,129 +34,86 @@ export type InferTransactionsOpts = Partial<{
   recipient: string[];
   amount: string;
   shuffle: boolean;
-  "fees-strategy": string;
   collection: string;
   tokenIds: string;
   quantities: string;
 }>;
-export const inferTransactionsOpts = (async () => {
-  const setups = await Promise.all(
-    getRegisteredFamilies().map(family => Promise.resolve(loadSetupForFamily(family))),
-  );
-  return uniqBy(
-    [
-      {
-        name: "self-transaction",
-        type: Boolean,
-        desc: "Pre-fill the transaction for the account to send to itself",
-      },
-      {
-        name: "use-all-amount",
-        type: Boolean,
-        desc: "Send MAX of the account balance",
-      },
-      {
-        name: "recipient",
-        type: String,
-        desc: "the address to send funds to",
-        multiple: true,
-      },
-      {
-        name: "amount",
-        type: String,
-        desc: "how much to send in the main currency unit",
-      },
-      {
-        name: "shuffle",
-        type: Boolean,
-        desc: "if using multiple token or recipient, order will be randomized",
-      },
-      {
-        name: "collection",
-        type: String,
-        desc: "collection of an NFT (in corelation with --tokenIds)",
-      },
-      {
-        name: "tokenIds",
-        type: String,
-        desc: "tokenId or list of tokenIds of an NFT separated by commas (order is kept in corelation with --quantities)",
-      },
-      {
-        name: "quantities",
-        type: String,
-        desc: "quantity or list of quantity of an ERC1155 NFT separated by commas (order is kept in corelation with --tokenIds)",
-      },
-    ].concat(
-      flatMap(
-        setups.map(setup => setup?.cliTools),
-        (m: unknown) =>
-          (m && typeof m === "object" && "options" in m ? (m as any).options : []) || [],
-      ),
-    ),
-    "name",
-  );
-})();
+export const inferTransactionsOpts = [
+  {
+    name: "self-transaction",
+    type: Boolean,
+    desc: "Pre-fill the transaction for the account to send to itself",
+  },
+  {
+    name: "use-all-amount",
+    type: Boolean,
+    desc: "Send MAX of the account balance",
+  },
+  {
+    name: "recipient",
+    type: String,
+    desc: "the address to send funds to",
+    multiple: true,
+  },
+  {
+    name: "amount",
+    type: String,
+    desc: "how much to send in the main currency unit",
+  },
+  {
+    name: "shuffle",
+    type: Boolean,
+    desc: "if using multiple token or recipient, order will be randomized",
+  },
+  {
+    name: "collection",
+    type: String,
+    desc: "collection of an NFT (in corelation with --tokenIds)",
+  },
+  {
+    name: "tokenIds",
+    type: String,
+    desc: "tokenId or list of tokenIds of an NFT separated by commas (order is kept in corelation with --quantities)",
+  },
+  {
+    name: "quantities",
+    type: String,
+    desc: "quantity or list of quantity of an ERC1155 NFT separated by commas (order is kept in corelation with --tokenIds)",
+  },
+];
+
 export async function inferTransactions(
   mainAccount: Account,
   opts: InferTransactionsOpts,
 ): Promise<[Transaction, TransactionStatusCommon][]> {
   const bridge = await getAccountBridge(mainAccount, null);
-  const setup = await Promise.resolve(loadSetupForFamily(mainAccount.currency.family));
-  const specific = setup?.cliTools;
 
-  const inferAccounts: (account: Account, opts: Record<string, unknown>) => AccountLikeArray =
-    (specific && "inferAccounts" in specific && (specific.inferAccounts as any)) ||
-    ((account, _opts) => [account]);
+  const recipients = opts.recipient || [opts["self-transaction"] ? mainAccount.freshAddress : ""];
 
-  const inferTransactions =
-    (specific && "inferTransactions" in specific && (specific.inferTransactions as any)) ||
-    ((
-      inferred: Array<{ transaction: Transaction }>,
-      _opts: Record<string, unknown>,
-      _r: Record<string, unknown>,
-    ) => Promise.resolve(inferred.map(({ transaction }) => transaction)));
+  let transactionsToPrepare: Transaction[] = recipients.map((recipient: string) => {
+    const transaction = bridge.createTransaction(mainAccount);
+    transaction.recipient = recipient;
+    transaction.useAllAmount = !!opts["use-all-amount"];
+    transaction.amount = transaction.useAllAmount
+      ? new BigNumber(0)
+      : inferAmount(mainAccount, opts.amount || "0");
 
-  let all: Array<{
-    account: AccountLike;
-    transaction: Transaction;
-    mainAccount: Account;
-  }> = await Promise.all(
-    product(
-      inferAccounts(mainAccount, opts),
-      opts.recipient || [opts["self-transaction"] ? mainAccount.freshAddress : ""],
-    ).map(async ([account, recipient]: [AccountLike, string]) => {
-      const transaction = bridge.createTransaction(mainAccount);
-      transaction.recipient = recipient;
-      transaction.useAllAmount = !!opts["use-all-amount"];
-      transaction.amount = transaction.useAllAmount
-        ? new BigNumber(0)
-        : inferAmount(account, opts.amount || "0");
+    // NFT collection and tokenId go by pair
+    if (opts.tokenIds && opts.collection) {
+      transaction.tokenIds = opts.tokenIds.split(",");
+      transaction.collection = opts.collection;
+      transaction.quantities = opts.quantities?.split(",")?.map(q => new BigNumber(q));
+    }
 
-      // NFT collection and tokenId go by pair
-      if (opts.tokenIds && opts.collection) {
-        transaction.tokenIds = opts.tokenIds.split(",");
-        transaction.collection = opts.collection;
-        transaction.quantities = opts.quantities?.split(",")?.map(q => new BigNumber(q));
-      }
-
-      return {
-        account,
-        transaction,
-        mainAccount,
-      };
-    }),
-  );
-
-  if (opts.shuffle) {
-    all = shuffle(all);
-  }
-
-  const inferredTransactions = await inferTransactions(all, opts, {
-    inferAmount,
+    return transaction;
   });
 
+  if (opts.shuffle) {
+    transactionsToPrepare = shuffle(transactionsToPrepare);
+  }
+
   const transactions: [Transaction, TransactionStatusCommon][] = await Promise.all(
-    inferredTransactions.map(async transaction => {
+    transactionsToPrepare.map(async transaction => {
       const tx = await bridge.prepareTransaction(mainAccount, transaction);
       const status = await bridge.getTransactionStatus(mainAccount, tx);
       const errorKeys = Object.keys(status.errors);
@@ -181,14 +127,4 @@ export async function inferTransactions(
   );
 
   return transactions;
-}
-
-function product<A, B>(arr1: A[], arr2: B[]): [A, B][] {
-  const result: [A, B][] = [];
-  arr1.forEach(item1 => {
-    arr2.forEach(item2 => {
-      result.push([item1, item2]);
-    });
-  });
-  return result;
 }

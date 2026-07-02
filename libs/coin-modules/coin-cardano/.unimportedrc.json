@@ -4,7 +4,6 @@
     "src/api/getPools.ts",
     "src/api/index.ts",
     "src/bridge/index.ts",
-    "src/cli-transaction.ts",
     "src/datasets/rawAccount.1.ts",
     "src/datasets/scanAccounts.ts",
     "src/deviceTransactionConfig.ts",

@@ -30,9 +30,9 @@ export type SendJobOpts = ScanCommonOpts &
 
 export default {
   description: "Send crypto-assets",
-  args: inferTransactionsOpts.then(opts => [
+  args: [
     ...scanCommonOpts,
-    ...opts,
+    ...inferTransactionsOpts,
     {
       name: "ignore-errors",
       type: Boolean,
@@ -58,7 +58,7 @@ export default {
       type: String,
       desc: "default | json | silent",
     },
-  ]),
+  ],
   job: (opts: SendJobOpts) => {
     const l =
       opts.format !== "json" && opts.format !== "silent"

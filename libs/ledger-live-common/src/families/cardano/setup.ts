@@ -5,7 +5,6 @@ import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/ut
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
 import { createBridges } from "@ledgerhq/coin-cardano/bridge";
-import makeCliTools from "@ledgerhq/coin-cardano/cli-transaction";
 import cardanoResolver from "@ledgerhq/coin-cardano/hw-getAddress";
 import type {
   CardanoAccount,
@@ -94,6 +93,4 @@ const bridge: Bridge<Transaction, CardanoAccount, TransactionStatus> = createBri
 
 const resolver: Resolver = createResolver(createSigner, cardanoResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, resolver };
+export { bridge, resolver };

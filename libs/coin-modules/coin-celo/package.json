@@ -61,11 +61,6 @@
       "require": "./lib/bridge/transaction.js",
       "default": "./lib-es/bridge/transaction.js"
     },
-    "./cli-transaction": {
-      "@ledgerhq/source": "./src/test/cli-transaction.ts",
-      "require": "./lib/test/cli-transaction.js",
-      "default": "./lib-es/test/cli-transaction.js"
-    },
     "./hw-getAddress": {
       "@ledgerhq/source": "./src/signer/hw-getAddress.ts",
       "require": "./lib/signer/hw-getAddress.js",

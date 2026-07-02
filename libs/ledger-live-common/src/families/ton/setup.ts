@@ -1,7 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
 import { createBridges } from "@ledgerhq/coin-ton/bridge/js";
-import makeCliTools from "@ledgerhq/coin-ton/cli-transaction";
 import tonResolver from "@ledgerhq/coin-ton/hw-getAddress";
 import { signMessage } from "@ledgerhq/coin-ton/hw-signMessage";
 import { TonCoinConfig } from "@ledgerhq/coin-ton/config";
@@ -35,6 +34,4 @@ const messageSigner = {
 
 const resolver: Resolver = createResolver(createSigner, tonResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, messageSigner, resolver };
+export { bridge, messageSigner, resolver };

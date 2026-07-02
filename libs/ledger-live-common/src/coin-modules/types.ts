@@ -118,7 +118,6 @@ export type FamilySetup<
   };
   resolver?: Resolver;
   messageSigner?: MessageSignerModule;
-  cliTools?: any;
 };
 
 export type ValidateAddressFn = (

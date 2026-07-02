@@ -1,7 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
 import { createBridges } from "@ledgerhq/coin-celo/bridge";
-import makeCliTools from "@ledgerhq/coin-celo/cli-transaction";
 import CeloResolver from "@ledgerhq/coin-celo/hw-getAddress";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
@@ -29,6 +28,4 @@ const bridge: Bridge<Transaction, CeloAccount> = createBridges(executeWithSigner
 
 const resolver: Resolver = createResolver(createSigner, CeloResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, resolver };
+export { bridge, resolver };

@@ -1,7 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
 import { createBridges } from "@ledgerhq/coin-algorand/bridge/js";
-import makeCliTools from "@ledgerhq/coin-algorand/cli-transaction";
 import { setCoinConfig } from "@ledgerhq/coin-algorand/config";
 import algorandResolver from "@ledgerhq/coin-algorand/hw-getAddress";
 import type {
@@ -36,6 +35,4 @@ const bridge: Bridge<Transaction, AlgorandAccount, TransactionStatus, AlgorandOp
 
 const resolver: Resolver = createResolver(createSigner, algorandResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, resolver };
+export { bridge, resolver };
