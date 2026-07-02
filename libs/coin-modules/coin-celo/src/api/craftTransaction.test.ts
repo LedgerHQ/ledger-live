@@ -11,6 +11,9 @@ jest.mock("../network/client", () => ({
   getCeloClient: jest.fn(() => ({ getTransactionCount: jest.fn(async () => 7) })),
 }));
 jest.mock("./estimateFees", () => ({ estimateFees: jest.fn() }));
+jest.mock("../network/registry", () => ({
+  getRegistryAddressFor: jest.fn(async () => "0x1111111111111111111111111111111111111111"),
+}));
 
 import { estimateFees } from "./estimateFees";
 import { craftTransaction } from "./craftTransaction";
@@ -109,5 +112,25 @@ describe("craftTransaction", () => {
     const tx = parseTransaction(crafted.transaction as `0x${string}`);
 
     expect(tx.nonce).toBe(7);
+  });
+
+  it("routes a staking intent through the staking builder (register → Accounts contract)", async () => {
+    const intent = {
+      intentType: "staking",
+      type: "celo.register",
+      sender: SENDER,
+      recipient: "",
+      amount: 0n,
+      asset: { type: "native" },
+      data: { type: "buffer", value: Buffer.from([]) },
+    } as unknown as Parameters<typeof craftTransaction>[0];
+
+    const crafted = await craftTransaction(intent, fees());
+    const tx = parseTransaction(crafted.transaction as `0x${string}`);
+
+    // `to` is the Accounts registry contract, not the (empty) recipient — proves staking routing
+    expect(tx.to?.toLowerCase()).toBe("0x1111111111111111111111111111111111111111");
+    expect(tx.value ?? 0n).toBe(0n);
+    expect(mockEstimate).not.toHaveBeenCalled();
   });
 });

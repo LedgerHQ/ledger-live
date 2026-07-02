@@ -22,7 +22,8 @@ jest.mock("@ledgerhq/coin-evm/api/index", () => {
   const evmApiStub: Record<string, unknown> = Object.fromEntries(
     methods.map(name => [name, jest.fn()]),
   );
-  // coin-evm advertises EVM-staking support for Celo — the api under test must strip it.
+  // coin-evm advertises EVM-staking support for Celo; the Celo api now implements
+  // its own (LockedGold + Election) staking and advertises stakingSupported: true.
   evmApiStub.stakingSupported = true;
   return { createApi: jest.fn(() => evmApiStub) };
 });
@@ -37,6 +38,9 @@ jest.mock("../network/client", () => {
 
 import { createApi as createEvmApi } from "@ledgerhq/coin-evm/api/index";
 import { getCeloClient } from "../network/client";
+import { getRewards } from "./getRewards";
+import { getStakes } from "./getStakes";
+import { getValidators } from "./getValidators";
 import { createApi } from "./index";
 
 const config = {} as Parameters<typeof createApi>[0];
@@ -94,13 +98,68 @@ describe("createApi", () => {
     expect(api.broadcast).not.toBe(evmApi.broadcast);
   });
 
-  it("does not advertise staking and throws for staking methods", () => {
+  it("advertises staking support and wires the staking read methods", () => {
     const api = createApi(config);
 
-    expect((api as { stakingSupported?: boolean }).stakingSupported).toBeUndefined();
-    expect(() => api.getStakes("0xabc")).toThrow(/not supported/);
+    expect((api as { stakingSupported?: boolean }).stakingSupported).toBe(true);
+    expect(api.getStakes).toBe(getStakes);
+    expect(api.getValidators).toBe(getValidators);
+    expect(api.getRewards).toBe(getRewards);
+  });
+
+  it("getRewards throws not supported (Celo has no discrete on-chain reward events)", () => {
+    const api = createApi(config);
     expect(() => api.getRewards("0xabc")).toThrow(/not supported/);
-    expect(() => api.getValidators()).toThrow(/not supported/);
+  });
+
+  it("validates a staking (lock) intent against the native balance", async () => {
+    const api = createApi(config);
+    const intent = {
+      intentType: "staking",
+      type: "celo.lock",
+      sender: "0x7777777777777777777777777777777777777777",
+      recipient: "",
+      amount: 100n,
+      asset: { type: "native" },
+      data: { type: "buffer", value: Buffer.from([]) },
+    };
+    const balances = [{ value: 1000n, asset: { type: "native" } }];
+    const customFees = {
+      value: 10n,
+      parameters: { type: "eip1559", maxFeePerGas: 1n, maxPriorityFeePerGas: 1n, gasLimit: 5n },
+    };
+
+    const res = await api.validateIntent(
+      intent as unknown as Parameters<typeof api.validateIntent>[0],
+      balances as unknown as Parameters<typeof api.validateIntent>[1],
+      customFees as unknown as Parameters<typeof api.validateIntent>[2],
+    );
+
+    expect(res.amount).toBe(100n);
+    expect(res.totalSpent).toBe(110n);
+    expect(Object.keys(res.errors)).toHaveLength(0);
+  });
+
+  it("delegates non-staking validateIntent to the coin-evm api", async () => {
+    const api = createApi(config);
+    const evmApi = (createEvmApi as jest.Mock).mock.results[0].value;
+    const intent = {
+      intentType: "transaction",
+      type: "send",
+      sender: "0xa",
+      recipient: "0xb",
+      amount: 1n,
+      asset: { type: "native" },
+      data: { type: "buffer", value: Buffer.from([]) },
+    };
+    const balances: unknown[] = [];
+
+    await api.validateIntent(
+      intent as unknown as Parameters<typeof api.validateIntent>[0],
+      balances as unknown as Parameters<typeof api.validateIntent>[1],
+    );
+
+    expect(evmApi.validateIntent).toHaveBeenCalledWith(intent, balances, undefined);
   });
 
   it("broadcasts by forwarding the raw transaction to the node", async () => {

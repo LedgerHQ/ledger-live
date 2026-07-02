@@ -4,11 +4,12 @@ import type {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { MAX_FEES_THRESHOLD_MULTIPLIER } from "../constants";
+import { CELO_STAKING_FALLBACK_GAS_LIMIT, MAX_FEES_THRESHOLD_MULTIPLIER } from "../constants";
 import { celoEstimateGas } from "../network/client";
 import { getFeeMarketGasParams } from "../network/sdk";
-import { buildCeloTxParams } from "./buildCeloTxParams";
+import { buildTxParams } from "./buildTxParams";
 import { resolveFeeCurrency } from "./feeCurrency";
+import { isCeloStakingIntent } from "./stakingIntent";
 import type { CeloFeeParameters } from "./types";
 
 /**
@@ -28,19 +29,27 @@ export const estimateFees = async (
   customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> => {
   const feeCurrency = resolveFeeCurrency(customFeesParameters?.feeCurrency as string | undefined);
-  const { to, data, value } = buildCeloTxParams(intent, feeCurrency);
+  const { to, data, value } = await buildTxParams(intent, feeCurrency);
 
   const { maxFeePerGas, maxPriorityFeePerGas } = await getFeeMarketGasParams(feeCurrency);
 
-  const estimatedGas = await celoEstimateGas({
-    from: intent.sender as `0x${string}`,
-    to,
-    data,
-    value,
-    ...(feeCurrency ? { feeCurrency } : {}),
-  });
-
-  const gasLimit = estimatedGas * BigInt(MAX_FEES_THRESHOLD_MULTIPLIER);
+  // Staking ops can revert during `eth_estimateGas` when a prerequisite step is
+  // not yet on-chain (e.g. estimating a `vote` before locking). Fall back to a
+  // generous fixed ceiling so fee estimation still returns a usable value.
+  let gasLimit: bigint;
+  try {
+    const estimatedGas = await celoEstimateGas({
+      from: intent.sender as `0x${string}`,
+      to,
+      data,
+      value,
+      ...(feeCurrency ? { feeCurrency } : {}),
+    });
+    gasLimit = estimatedGas * BigInt(MAX_FEES_THRESHOLD_MULTIPLIER);
+  } catch (error) {
+    if (!isCeloStakingIntent(intent)) throw error;
+    gasLimit = CELO_STAKING_FALLBACK_GAS_LIMIT;
+  }
 
   const parameters: CeloFeeParameters = {
     maxFeePerGas,

@@ -9,7 +9,7 @@ import type { TransactionSerializableEIP1559 } from "viem";
 import { serializeTransaction, type TransactionSerializableCIP64 } from "viem/celo";
 import { celo } from "viem/chains";
 import { getCeloClient } from "../network/client";
-import { buildCeloTxParams } from "./buildCeloTxParams";
+import { buildTxParams } from "./buildTxParams";
 import { estimateFees } from "./estimateFees";
 import type { CeloFeeParameters } from "./types";
 
@@ -36,7 +36,7 @@ export const craftTransaction = async (
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> => {
   const params = await resolveFeeParameters(intent, customFees);
-  const { to, data, value, feeCurrency } = buildCeloTxParams(intent, params.feeCurrency);
+  const { to, data, value, feeCurrency } = await buildTxParams(intent, params.feeCurrency);
 
   const nonce =
     typeof intent.sequence === "bigint" && intent.sequence >= 0n

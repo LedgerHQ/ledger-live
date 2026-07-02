@@ -4,7 +4,8 @@ import { parseTransaction, serializeTransaction } from "viem/celo";
 /** Signature object shape returned by the Ledger device / DMK (`r`/`s` may be unprefixed, `v` is a hex string or number). */
 type DeviceSignature = { r: string; s: string; v: string | number };
 
-const prefix = (hex: string): `0x${string}` => (hex.startsWith("0x") ? hex : `0x${hex}`) as `0x${string}`;
+const prefix = (hex: string): `0x${string}` =>
+  (hex.startsWith("0x") ? hex : `0x${hex}`) as `0x${string}`;
 
 /** Map a transaction `v` to the `yParity` used by typed (eip1559/cip64) transactions. */
 const vToYParity = (v: bigint): number => {

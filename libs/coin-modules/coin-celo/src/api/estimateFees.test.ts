@@ -11,6 +11,9 @@ jest.mock("../network/sdk", () => ({
 jest.mock("../network/client", () => ({
   celoEstimateGas: jest.fn(),
 }));
+jest.mock("../network/registry", () => ({
+  getRegistryAddressFor: jest.fn(async () => "0x1111111111111111111111111111111111111111"),
+}));
 
 import { celoEstimateGas } from "../network/client";
 import { getFeeMarketGasParams } from "../network/sdk";
@@ -82,5 +85,45 @@ describe("estimateFees", () => {
     );
     expect(fee.parameters?.feeCurrency).toBe(USDC_ADAPTER);
     expect(fee.parameters?.type).toBe("cip64");
+  });
+
+  const makeRegisterIntent = () =>
+    ({
+      intentType: "staking",
+      type: "celo.register",
+      sender: SENDER,
+      recipient: "",
+      amount: 0n,
+      asset: { type: "native" },
+      data: { type: "buffer", value: Buffer.from([]) },
+    }) as unknown as Parameters<typeof estimateFees>[0];
+
+  it("estimates a staking intent via the staking builder (register → Accounts contract)", async () => {
+    const fee = await estimateFees(makeRegisterIntent());
+
+    expect(mockEstimateGas).toHaveBeenCalledWith(
+      expect.objectContaining({
+        from: SENDER,
+        to: "0x1111111111111111111111111111111111111111",
+        value: 0n,
+      }),
+    );
+    expect(fee.parameters?.gasLimit).toBe(84000n);
+  });
+
+  it("falls back to a fixed gas limit when estimation reverts for a staking intent", async () => {
+    mockEstimateGas.mockReset().mockRejectedValue(new Error("execution reverted"));
+
+    const fee = await estimateFees(makeRegisterIntent());
+
+    expect(fee.parameters?.gasLimit).toBe(1_000_000n);
+    // value = maxFeePerGas (1000) * fallback gasLimit (1_000_000)
+    expect(fee.value).toBe(1_000_000_000n);
+  });
+
+  it("rethrows estimation errors for non-staking intents", async () => {
+    mockEstimateGas.mockReset().mockRejectedValue(new Error("boom"));
+
+    await expect(estimateFees(makeIntent({ type: "native" }))).rejects.toThrow("boom");
   });
 });
