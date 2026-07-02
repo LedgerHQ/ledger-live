@@ -848,9 +848,7 @@ describe("coin-framework utils", () => {
         extractBalances({
           spendableBalance: BigNumber(8),
           balance: BigNumber(10),
-          pendingOperations: [
-            { type: "OUT", value: BigNumber(3), fee: BigNumber(1) },
-          ],
+          pendingOperations: [{ type: "OUT", value: BigNumber(3), fee: BigNumber(1) }],
         } as unknown as Account),
       ).toEqual([{ value: 10n, locked: 6n, asset: { type: "native" } }]);
 

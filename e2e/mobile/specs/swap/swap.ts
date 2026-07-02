@@ -62,7 +62,7 @@ export function runSwapTest(
       if (app.swapLiveApp.isApprovalRequired(exchangeButtonText, provider.uiName)) {
         console.warn(
           `[swap] ${provider.uiName} requires token approval for ${accountToDebit.currency.name}; ` +
-          `skipping swap completion (covered by the token-approval spec).`,
+            `skipping swap completion (covered by the token-approval spec).`,
         );
       } else {
         await app.common.disableSynchronizationForiOS();

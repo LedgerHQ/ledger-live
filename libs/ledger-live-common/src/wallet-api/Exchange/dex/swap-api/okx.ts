@@ -17,9 +17,7 @@ export interface OkxSwapInput {
  * Fetches OKX DEX calldata. OKX forwards the opaque `customFields` blob
  * straight through, mirroring the live-app behaviour.
  */
-export const getOkxTransaction = async (
-  input: OkxSwapInput,
-): Promise<OkxSwapResponse> => {
+export const getOkxTransaction = async (input: OkxSwapInput): Promise<OkxSwapResponse> => {
   const baseURL = getSwapAPIBaseURL();
   const response = await network<{ swapResponse: OkxSwapResponse }>({
     method: "POST",

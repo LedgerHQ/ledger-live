@@ -118,9 +118,7 @@ export function formatAleoBalances({
   };
 }
 
-export function getMaxPrivateRecordsForAccount(
-  account: AleoAccount | AleoTokenAccount,
-): number {
+export function getMaxPrivateRecordsForAccount(account: AleoAccount | AleoTokenAccount): number {
   return account.type === "TokenAccount"
     ? MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION
     : MAX_PRIVATE_RECORDS_PER_TRANSACTION;

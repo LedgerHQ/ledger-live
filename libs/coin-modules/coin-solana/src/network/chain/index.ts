@@ -270,10 +270,8 @@ export function getChainAPI(
         .then(r => r.value)
         .catch(remapErrors),
 
-    simulateTransaction: (
-      transaction: VersionedTransaction,
-      config?: SimulateTransactionConfig,
-    ) => connection.simulateTransaction(transaction, config).catch(remapErrors),
+    simulateTransaction: (transaction: VersionedTransaction, config?: SimulateTransactionConfig) =>
+      connection.simulateTransaction(transaction, config).catch(remapErrors),
 
     sendRawTransaction: (buffer: Buffer, recentBlockhash?: BlockhashWithExpiryBlockHeight) => {
       return (async () => {

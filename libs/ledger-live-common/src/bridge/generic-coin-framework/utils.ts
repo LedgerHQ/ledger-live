@@ -180,9 +180,7 @@ export function extractBalances(
     balances.push({
       value: BigInt(subAccount.balance.toFixed()),
       asset,
-      locked: BigInt(
-        BigNumber.min(tokenReserve.plus(tokenPending), subAccount.balance).toFixed(),
-      ),
+      locked: BigInt(BigNumber.min(tokenReserve.plus(tokenPending), subAccount.balance).toFixed()),
     });
   }
 

@@ -104,7 +104,9 @@ const mockCustomAssetsConfigs: Record<string, ReturnType<() => unknown>> = {
       { id: "cusd", ticker: "cUSD", label: "cUSD" },
     ],
     getSelectedOptionId: () => "celo",
-    buildPatch: (optionId: string) => ({ feeCurrencyAccountId: optionId === "celo" ? null : optionId }),
+    buildPatch: (optionId: string) => ({
+      feeCurrencyAccountId: optionId === "celo" ? null : optionId,
+    }),
   },
 };
 

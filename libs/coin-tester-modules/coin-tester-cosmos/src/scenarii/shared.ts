@@ -131,7 +131,9 @@ export function makeCosmosScenario(
         // Cosmos Hub, at the next epoch boundary on Babylon); once applied, the
         // LCD reflects it.
         expect(
-          currentAccount.cosmosResources.delegations.some(d => d.validatorAddress === validatorAddress),
+          currentAccount.cosmosResources.delegations.some(
+            d => d.validatorAddress === validatorAddress,
+          ),
         ).toBe(true);
         expect(currentAccount.cosmosResources.delegatedBalance.toFixed()).toBe(
           parseCurrencyUnit(unit, "100").toFixed(),

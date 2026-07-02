@@ -43,7 +43,10 @@ export function useSendFlowTransaction({
     (recipient: RecipientData) => {
       if (!account || !transaction || !bridge) return;
 
-      const updates = buildRecipientTransactionPatch(transaction, recipient) as Partial<Transaction>;
+      const updates = buildRecipientTransactionPatch(
+        transaction,
+        recipient,
+      ) as Partial<Transaction>;
 
       setTransaction(bridge.updateTransaction(transaction, updates));
     },

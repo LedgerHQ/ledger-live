@@ -18,7 +18,10 @@ import type {
   SignSwapEvmIntentInput,
 } from "@ledgerhq/live-common/wallet-api/Exchange/intents/index";
 import { walletCliDebug } from "../../shared/log";
-import type { SignRfqOrderIntentInput, SubmitRfqOrderIntentInput } from "@ledgerhq/live-common/wallet-api/Exchange/swapFlow/types";
+import type {
+  SignRfqOrderIntentInput,
+  SubmitRfqOrderIntentInput,
+} from "@ledgerhq/live-common/wallet-api/Exchange/swapFlow/types";
 
 export type CliInitInput = { readonly appName: string };
 
@@ -52,25 +55,30 @@ export const CLI_SWAP_FLOW_PORTS: SwapFlowPorts<CliSwapIntent, CliInitInput> = {
   buildSwapTransactionData: async ({ provider, context }) => {
     const startedAt = Date.now();
     walletCliDebug(
-      `Requesting calldata from swap-api (provider=${provider}, amountFrom=${context.amountFrom.toFixed()}, slippage=${context.slippage})…`
+      `Requesting calldata from swap-api (provider=${provider}, amountFrom=${context.amountFrom.toFixed()}, slippage=${context.slippage})…`,
     );
     try {
       const { transactionData, appName } = await buildProviderTransactionData(provider, context);
       walletCliDebug(
-        `Swap-api returned in ${Date.now() - startedAt}ms (appName=${appName}, to=${transactionData.to}, gasLimit=${transactionData.gasLimit})`
+        `Swap-api returned in ${Date.now() - startedAt}ms (appName=${appName}, to=${transactionData.to}, gasLimit=${transactionData.gasLimit})`,
       );
       return { transactionData, appName };
     } catch (err) {
       walletCliDebug(
-        `Swap-api failed after ${Date.now() - startedAt}ms — ${err instanceof Error ? `${err.name}: ${err.message}` : String(err)}`
+        `Swap-api failed after ${Date.now() - startedAt}ms — ${err instanceof Error ? `${err.name}: ${err.message}` : String(err)}`,
       );
       throw err;
     }
   },
-  createSignRfqOrderIntent: function (input: SignRfqOrderIntentInput): { intent: CliSwapIntent; initInput: CliInitInput; } {
+  createSignRfqOrderIntent: function (input: SignRfqOrderIntentInput): {
+    intent: CliSwapIntent;
+    initInput: CliInitInput;
+  } {
     throw new Error("Function not implemented.");
   },
-  createSubmitRfqOrderIntent: function (input: SubmitRfqOrderIntentInput & { initInput: CliInitInput; }): { intent: CliSwapIntent; initInput: CliInitInput; } {
+  createSubmitRfqOrderIntent: function (
+    input: SubmitRfqOrderIntentInput & { initInput: CliInitInput },
+  ): { intent: CliSwapIntent; initInput: CliInitInput } {
     throw new Error("Function not implemented.");
-  }
+  },
 };

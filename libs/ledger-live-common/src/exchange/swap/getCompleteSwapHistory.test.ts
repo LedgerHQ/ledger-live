@@ -191,7 +191,10 @@ describe("getCompleteSwapHistory", () => {
 
   it("leaves finalAmount undefined for a DEX swap when the receive operation has not synced yet", async () => {
     const txHash = "0xdexpendinghash";
-    const senderParent = genAccount("dex-missing-sender", { operationsSize: 0, currency: ethereum });
+    const senderParent = genAccount("dex-missing-sender", {
+      operationsSize: 0,
+      currency: ethereum,
+    });
     const receiverParent = genAccount("dex-missing-receiver", {
       operationsSize: 0,
       currency: ethereum,

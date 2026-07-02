@@ -20,8 +20,7 @@ export function resolveFeeDisplayContext(params: {
 }): FeeDisplayContext {
   const feeCurrencySubAccount = params.feeCurrencyAccountId
     ? ((params.mainAccount.subAccounts ?? []).find(
-        (sub): sub is TokenAccount =>
-          sub.id === params.feeCurrencyAccountId && isTokenAccount(sub),
+        (sub): sub is TokenAccount => sub.id === params.feeCurrencyAccountId && isTokenAccount(sub),
       ) ?? null)
     : null;
 

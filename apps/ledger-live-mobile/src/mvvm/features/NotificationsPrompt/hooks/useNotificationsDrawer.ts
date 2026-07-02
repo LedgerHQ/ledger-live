@@ -113,12 +113,7 @@ export const useNotificationsDrawer = ({
         openDrawer("inactivity", 1000);
       }
     },
-    [
-      featureBrazePushNotifications?.enabled,
-      isRatingsModalOpen,
-      openDrawer,
-      checkIsInactive,
-    ],
+    [featureBrazePushNotifications?.enabled, isRatingsModalOpen, openDrawer, checkIsInactive],
   );
 
   const tryTriggerPushNotificationDrawerAfterAction = useCallback(

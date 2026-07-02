@@ -100,7 +100,9 @@ describe("AleoAddAccountNavigator — handleClose", () => {
   it("pops navigationDepth screens when navigationDepth is provided", () => {
     render(
       <AddAccountNavigator
-        route={{ params: { currency: aleoCurrency, device: mockDevice, navigationDepth: 4 } } as any}
+        route={
+          { params: { currency: aleoCurrency, device: mockDevice, navigationDepth: 4 } } as any
+        }
         navigation={{ getParent: () => ({ pop: mockPop }) } as any}
       />,
     );

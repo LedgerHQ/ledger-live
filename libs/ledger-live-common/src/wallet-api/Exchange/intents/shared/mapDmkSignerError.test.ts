@@ -23,9 +23,7 @@ describe("mapDmkSignerError", () => {
         "Sign approval failed",
       );
       expect(result).toBeInstanceOf(UserRefusedOnDevice);
-      expect(result.message).toBe(
-        "EthAppCommandError (code: 6985) - Condition not satisfied",
-      );
+      expect(result.message).toBe("EthAppCommandError (code: 6985) - Condition not satisfied");
     });
 
     it("returns EthAppPleaseEnableContractData for SW 6a80, carrying the DMK-sourced message", () => {
@@ -34,9 +32,7 @@ describe("mapDmkSignerError", () => {
         "Sign approval failed",
       );
       expect(result).toBeInstanceOf(EthAppPleaseEnableContractData);
-      expect(result.message).toBe(
-        "EthAppCommandError (code: 6a80) - Invalid data",
-      );
+      expect(result.message).toBe("EthAppCommandError (code: 6a80) - Invalid data");
     });
   });
 
@@ -74,9 +70,7 @@ describe("mapDmkSignerError", () => {
         { errorCode: "6800", message: "Internal error" },
         "Sign approval failed",
       );
-      expect(result.message).toBe(
-        "Sign approval failed (code: 6800) - Internal error",
-      );
+      expect(result.message).toBe("Sign approval failed (code: 6800) - Internal error");
     });
 
     it("uses just _tag when no errorCode or message is present (UnknownDeviceExchangeError shape)", () => {

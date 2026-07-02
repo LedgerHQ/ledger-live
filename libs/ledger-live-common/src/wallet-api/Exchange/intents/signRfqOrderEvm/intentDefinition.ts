@@ -9,10 +9,9 @@ import type { SignRfqOrderEvmIntentDefinition } from "./types";
  * the device-action's own UI states can be surfaced through
  * {@link SignRfqOrderEvmJobState}.
  */
-export const signRfqOrderEvmIntentDefinition: SignRfqOrderEvmIntentDefinition =
-  {
-    label: "Sign EVM RFQ order typed data",
-    requiresConnectedDevice: true,
-    delegateDeviceLockStateHandlingToExecutor: false,
-    job: signRfqOrderEvmJob,
-  };
+export const signRfqOrderEvmIntentDefinition: SignRfqOrderEvmIntentDefinition = {
+  label: "Sign EVM RFQ order typed data",
+  requiresConnectedDevice: true,
+  delegateDeviceLockStateHandlingToExecutor: false,
+  job: signRfqOrderEvmJob,
+};
