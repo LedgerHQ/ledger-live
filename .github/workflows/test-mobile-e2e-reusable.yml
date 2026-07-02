@@ -3,10 +3,12 @@ run-name: >
   @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'schedule' && 'Scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ inputs.ref || github.ref_name }} • ${{ github.actor }}
 
 # One concurrent run per: workflow definition ref (Use workflow from), code ref/sha under test,
-# test surface (tests_type or schedule cron), and filter. Matches checkout ref: inputs.ref || github.sha.
+# test surface (tests_type or schedule cron). Matches checkout ref: inputs.ref || github.sha.
+# NB: test_filter is intentionally reduced to a bounded "filtered"/"all" token rather than embedded verbatim.
+# It is free-text and can be very long; the concurrency group name must stay under 400 characters.
 concurrency:
   group: >-
-    mobile-e2e-${{ github.workflow_ref }}-${{ inputs.ref || github.sha }}-${{ github.event_name == 'schedule' && github.event.schedule || inputs.tests_type }}-${{ inputs.test_filter || '' }}
+    mobile-e2e-${{ github.ref_name }}-${{ inputs.ref || github.sha }}-${{ github.event_name == 'schedule' && github.event.schedule || inputs.tests_type }}-${{ inputs.test_filter && 'filtered' || 'all' }}
   cancel-in-progress: false
 
 on:
@@ -959,6 +961,12 @@ jobs:
           path: ios-test-artifacts
           report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
           summary_message: ${{ steps.summary.outputs.summary_message }}
+      - name: Write failed tests summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        with:
+          results-path: ios-test-artifacts
+          runner: detox
       - name: Aggregate test results
         if: ${{ !cancelled() }}
         id: aggregate
@@ -1033,6 +1041,12 @@ jobs:
           path: android-test-artifacts
           report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
           summary_message: ${{ steps.summary.outputs.summary_message }}
+      - name: Write failed tests summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        with:
+          results-path: android-test-artifacts
+          runner: detox
       - name: Aggregate test results
         if: ${{ !cancelled() }}
         id: aggregate
