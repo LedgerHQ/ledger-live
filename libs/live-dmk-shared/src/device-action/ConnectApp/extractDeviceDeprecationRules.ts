@@ -6,20 +6,23 @@ import type {
   DeviceDeprecationScreenRules,
   DeviceDeprecationScreenConfig,
 } from "./types";
-import type { DeviceModelId } from "@ledgerhq/device-management-kit";
 
-export function isDeviceDeprecated(
+import type { DeviceModelId as DMKDeviceModelId } from "@ledgerhq/device-management-kit";
+import type { DeviceModelId as LLDeviceModelId } from "@ledgerhq/types-devices";
+
+export function extractDeviceDeprecationRules(
   configs: DeviceDeprecationConfigs,
-  modelId: DeviceModelId,
+  dmkDeviceModelId: DMKDeviceModelId,
 ): DeviceDeprecationRules {
   const now = new Date();
   const fallbackDate = now;
+  const llDeviceModelId: LLDeviceModelId = dmkToLedgerDeviceIdMap[dmkDeviceModelId];
 
   const base: DeviceDeprecationRules = {
     warningScreenVisible: false,
     clearSigningScreenVisible: false,
     errorScreenVisible: false,
-    modelId: dmkToLedgerDeviceIdMap[modelId],
+    modelId: llDeviceModelId,
     date: fallbackDate,
     warningScreenRules: { exception: [], deprecatedFlow: [] },
     clearSigningScreenRules: { exception: [], deprecatedFlow: [] },
@@ -28,7 +31,7 @@ export function isDeviceDeprecated(
   };
 
   const config: DeviceDeprecationConfig | undefined = configs.find(
-    (cfg: DeviceDeprecationConfig) => cfg.deviceModelId === modelId,
+    (cfg: DeviceDeprecationConfig) => cfg.deviceModelId === llDeviceModelId,
   );
   if (!config) return base;
   const createScreenRules = (

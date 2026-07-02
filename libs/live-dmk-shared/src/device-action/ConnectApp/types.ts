@@ -71,7 +71,7 @@ export type DeviceDeprecationScreenConfig = {
  * @property warningClearSigningScreen: config for the warning screen shown when clearing signing
  */
 export type DeviceDeprecationConfig = {
-  deviceModelId: string;
+  deviceModelId: LLDeviceModelId;
   warningScreen: DeviceDeprecationScreenConfig;
   errorScreen: DeviceDeprecationScreenConfig;
   warningClearSigningScreen: DeviceDeprecationScreenConfig;
