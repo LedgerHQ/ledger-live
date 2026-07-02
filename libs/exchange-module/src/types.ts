@@ -114,6 +114,7 @@ export type SwapLiveError = {
 
 export type UniswapOrderType = "classic" | "uniswapxv2" | "all";
 export type QuotesAppPlatform = "lld" | "llm-ios" | "llm-android" | "unknown";
+export type QuoteSortBy = "netCounterValue";
 
 export type QuotesInput = {
   amount: string;
@@ -131,6 +132,7 @@ export type QuotesInput = {
 export type GetQuotesArgs = {
   providers: string[];
   data: QuotesInput;
+  sortBy?: QuoteSortBy;
   headers?: Array<[string, string]>;
   signal?: AbortSignal;
 };
