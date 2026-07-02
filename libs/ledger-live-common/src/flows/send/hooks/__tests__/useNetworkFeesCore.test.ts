@@ -26,6 +26,7 @@ jest.mock("../useFeePresetFiatValuesCore", () => ({
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers", () => ({
   getMainAccount: jest.fn((acc: AccountLike) => acc),
   getAccountCurrency: jest.fn((acc: Account) => acc.currency),
+  isTokenAccount: jest.fn((acc: unknown) => (acc as { type?: string })?.type === "TokenAccount"),
 }));
 
 const mockedSendFeatures = jest.mocked(sendFeatures);
@@ -188,5 +189,69 @@ describe("useNetworkFeesCore", () => {
         enabled: false,
       }),
     );
+  });
+
+  describe("fee-currency decimals rescaling (e.g. Celo CIP-64 with a sub-decimal fee token)", () => {
+    const usdcUnit: Unit = { name: "USD Coin", code: "USDC", magnitude: 6 };
+    const usdcToken = {
+      type: "TokenCurrency",
+      id: "celo/erc20/usdc",
+      ticker: "USDC",
+      units: [usdcUnit],
+    } as unknown as import("@ledgerhq/types-cryptoassets").TokenCurrency;
+    const usdcSubAccount = {
+      type: "TokenAccount",
+      id: "usdc-sub-account-id",
+      token: usdcToken,
+      balance: new BigNumber(0),
+    } as unknown as import("@ledgerhq/types-live").TokenAccount;
+
+    const celoAccount = {
+      ...mockAccount,
+      subAccounts: [usdcSubAccount],
+    } as unknown as Account;
+
+    const renderCoreWithFeeCurrency = (overrides?: { status?: Partial<TransactionStatus> }) =>
+      renderHook(() =>
+        useNetworkFeesCore({
+          account: celoAccount,
+          parentAccount: null,
+          transaction: buildTransaction(),
+          status: { ...mockStatus, ...overrides?.status },
+          uiConfig: mockUiConfig,
+          transactionActions: { updateTransaction: mockUpdateTransaction } as never,
+          fiatUnit: usdUnit,
+          accountUnit: btcUnit,
+          calculateCountervalue: mockCalculateCountervalue,
+        }),
+      );
+
+    it("rescales an 18-decimal-style estimated fee into the 6-decimal fee-currency unit before display", () => {
+      mockedSendFeatures.getFeeCurrencyAccountId.mockReturnValue("usdc-sub-account-id");
+      // accountUnit magnitude is 8 (btcUnit) in this suite's fixtures; use a fee value that
+      // would be off by the magnitude delta (1e2) if left unscaled, to prove scaling occurred.
+      const rawFees = new BigNumber("100000000000"); // 8 -> 6 decimals: shift down by 1e2
+
+      const { result } = renderCoreWithFeeCurrency({ status: { estimatedFees: rawFees } });
+
+      // The value handed to calculateCountervalue/formatCurrencyUnit must already be scaled
+      // from accountUnit (magnitude 8) to the fee-currency unit (magnitude 6) — not the raw,
+      // unscaled estimatedFees (which would be 1e2 too large).
+      const expectedScaled = rawFees.shiftedBy(usdcUnit.magnitude - btcUnit.magnitude);
+      expect(mockCalculateCountervalue).toHaveBeenCalledWith(
+        usdcToken,
+        expect.objectContaining({ toString: expect.any(Function) }),
+      );
+      const [, calledValue] = mockCalculateCountervalue.mock.calls[0];
+      expect(calledValue.toString()).toBe(expectedScaled.toString());
+
+      // calculateCountervalue is mocked as value/100, and formatDisplayFeesValue prefers the
+      // fiat-formatted value once a countervalue is available.
+      const expectedFiat = expectedScaled.dividedBy(100);
+      expect(result.current.displayFeesValue).toBe(`FORMATTED_${expectedFiat.toString()}`);
+      expect(result.current.formattedEstimatedFeesFiat).toBe(
+        `FORMATTED_${expectedFiat.toString()}`,
+      );
+    });
   });
 });

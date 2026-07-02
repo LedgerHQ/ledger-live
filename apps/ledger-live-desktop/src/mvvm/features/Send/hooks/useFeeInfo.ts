@@ -12,6 +12,7 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { scaleFeesToDisplayUnit } from "@ledgerhq/live-common/flows/send/utils/networkFeesDisplay";
 
 type UseFeeInfoParams = Readonly<{
   account: AccountLike;
@@ -54,10 +55,14 @@ export function useFeeInfo({
     () => status.estimatedFees ?? new BigNumber(0),
     [status.estimatedFees],
   );
+  const displayFees = useMemo(
+    () => scaleFeesToDisplayUnit(estimatedFees, accountUnit, displayUnit),
+    [estimatedFees, accountUnit, displayUnit],
+  );
   const estimatedFeesCountervalue = useCalculate({
     from: displayCurrency,
     to: counterValueCurrency,
-    value: estimatedFees.toNumber(),
+    value: displayFees.toNumber(),
     disableRounding: true,
   });
   const estimatedFeesFiat = useMemo(
@@ -67,7 +72,7 @@ export function useFeeInfo({
 
   const feeSummary = useMemo(
     () =>
-      estimatedFees.gt(0) || estimatedFeesFiat.gt(0)
+      displayFees.gt(0) || estimatedFeesFiat.gt(0)
         ? {
             fiatLabel: t("newSendFlow.networkFeesInFiat", {
               currency: counterValueCurrency.ticker,
@@ -80,7 +85,7 @@ export function useFeeInfo({
             cryptoLabel: t("newSendFlow.feesAmount", {
               unit: displayUnit.code,
             }),
-            cryptoValue: formatCurrencyUnit(displayUnit, estimatedFees, {
+            cryptoValue: formatCurrencyUnit(displayUnit, displayFees, {
               showCode: true,
               disableRounding: true,
               locale,
@@ -88,15 +93,7 @@ export function useFeeInfo({
             description: t("newSendFlow.feesPaid"),
           }
         : null,
-    [
-      displayUnit,
-      counterValueCurrency.ticker,
-      estimatedFees,
-      estimatedFeesFiat,
-      fiatUnit,
-      locale,
-      t,
-    ],
+    [displayUnit, counterValueCurrency.ticker, displayFees, estimatedFeesFiat, fiatUnit, locale, t],
   );
 
   return { feeSummary };

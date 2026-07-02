@@ -6,6 +6,7 @@ import {
   formatDisplayFeesValue,
   getSelectedPresetFiatValue,
   resolveFeeDisplayContext,
+  scaleFeesToDisplayUnit,
 } from "../networkFeesDisplay";
 import type { Account } from "@ledgerhq/types-live";
 
@@ -78,5 +79,31 @@ describe("networkFeesDisplay", () => {
   it("getSelectedPresetFiatValue ignores custom strategy", () => {
     expect(getSelectedPresetFiatValue("custom", { slow: "$1" })).toBeNull();
     expect(getSelectedPresetFiatValue("slow", { slow: "$1" })).toBe("$1");
+  });
+
+  describe("scaleFeesToDisplayUnit", () => {
+    const celoUnit = { name: "Celo", code: "CELO", magnitude: 18 };
+    const usdcUnit6 = { name: "USD Coin", code: "USDC", magnitude: 6 };
+
+    it("returns the fee unchanged when units share the same magnitude", () => {
+      const fees = new BigNumber("2100000000000000");
+      const result = scaleFeesToDisplayUnit(fees, celoUnit, celoUnit);
+
+      expect(result.toString()).toBe(fees.toString());
+    });
+
+    it("rescales an 18-decimal fee down to a 6-decimal fee currency", () => {
+      const fees = new BigNumber("2100000000000000");
+      const result = scaleFeesToDisplayUnit(fees, celoUnit, usdcUnit6);
+
+      expect(result.toString()).toBe("2100");
+    });
+
+    it("is a no-op when the account unit and display unit magnitudes match", () => {
+      const fees = new BigNumber("12345");
+      const result = scaleFeesToDisplayUnit(fees, btcUnit, btcUnit);
+
+      expect(result.toString()).toBe(fees.toString());
+    });
   });
 });

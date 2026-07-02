@@ -18,6 +18,7 @@ import {
   getFeePresetEstimationConfig,
   getSelectedPresetFiatValue,
   resolveFeeDisplayContext,
+  scaleFeesToDisplayUnit,
 } from "../utils/networkFeesDisplay";
 import { useFeePresetFiatValuesCore, type FeeFiatMap } from "./useFeePresetFiatValuesCore";
 
@@ -110,20 +111,24 @@ export function useNetworkFeesCore({
     () => status.estimatedFees ?? new BigNumber(0),
     [status.estimatedFees],
   );
+  const displayFees = useMemo(
+    () => scaleFeesToDisplayUnit(estimatedFees, accountUnit, displayUnit),
+    [estimatedFees, accountUnit, displayUnit],
+  );
   const estimatedFeesCountervalue = useMemo(
-    () => calculateCountervalue(displayCurrency, estimatedFees),
-    [calculateCountervalue, displayCurrency, estimatedFees],
+    () => calculateCountervalue(displayCurrency, displayFees),
+    [calculateCountervalue, displayCurrency, displayFees],
   );
   const { displayFeesValue, formattedEstimatedFeesFiat } = useMemo(
     () =>
       formatDisplayFeesValue({
-        estimatedFees,
+        estimatedFees: displayFees,
         estimatedFeesCountervalue,
         fiatUnit,
         displayUnit,
         locale,
       }),
-    [displayUnit, estimatedFees, estimatedFeesCountervalue, fiatUnit, locale],
+    [displayUnit, displayFees, estimatedFeesCountervalue, fiatUnit, locale],
   );
 
   const updateTransactionWithPatch = useCallback(

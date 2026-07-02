@@ -20,8 +20,7 @@ export function resolveFeeDisplayContext(params: {
 }): FeeDisplayContext {
   const feeCurrencySubAccount = params.feeCurrencyAccountId
     ? ((params.mainAccount.subAccounts ?? []).find(
-        (sub): sub is TokenAccount =>
-          sub.id === params.feeCurrencyAccountId && isTokenAccount(sub),
+        (sub): sub is TokenAccount => sub.id === params.feeCurrencyAccountId && isTokenAccount(sub),
       ) ?? null)
     : null;
 
@@ -67,6 +66,26 @@ export function formatDisplayFeesValue(params: {
     formatOptions,
   );
   return { displayFeesValue, formattedEstimatedFeesFiat: null };
+}
+
+/**
+ * Rescale an estimated fee expressed in the account currency's atomic scale into the
+ * fee-currency's atomic scale, preserving the human value. No-op when the units share a
+ * magnitude (i.e. the fee currency is the account currency), so non-Celo coins are unaffected.
+ * This corrects display when a coin module denominates the fee in the native-coin scale
+ * (e.g. Celo's 18-decimal CIP-64 adapter amount) but the fee is shown against a sub-decimal
+ * fee token (e.g. 6-decimal USDC). ROUND_FLOOR can floor a sub-1-atomic-unit fee to 0
+ * (rendered as "-"), which does not occur for realistic fees.
+ */
+export function scaleFeesToDisplayUnit(
+  fees: BigNumber,
+  accountUnit: Unit,
+  displayUnit: Unit,
+): BigNumber {
+  if (displayUnit.magnitude === accountUnit.magnitude) return fees;
+  return fees
+    .shiftedBy(displayUnit.magnitude - accountUnit.magnitude)
+    .integerValue(BigNumber.ROUND_FLOOR);
 }
 
 export function getSelectedPresetFiatValue(
