@@ -193,7 +193,9 @@ describe("onboard", () => {
         new Error('Party with public key "pk" does not exist'),
       );
       mockedGateway.prepareOnboarding.mockRejectedValue(
-        new Error(`Party with id "${existingPartyId}" already exists and its topology is up to date`),
+        new Error(
+          `Party with id "${existingPartyId}" already exists and its topology is up to date`,
+        ),
       );
       mockedGateway.isPartyAlreadyExists.mockReturnValue(true);
 

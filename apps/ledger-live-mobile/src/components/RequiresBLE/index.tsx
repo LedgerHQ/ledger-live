@@ -24,7 +24,9 @@ type Props = {
 const RequiresBLE: React.FC<Props> = ({ children, forceOpenSettingsOnErrorButton = false }) => {
   if (Platform.OS === "android") {
     return (
-      <AndroidRequiresBluetoothPermissions forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}>
+      <AndroidRequiresBluetoothPermissions
+        forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
+      >
         <RequiresBluetoothEnabled forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}>
           <AndroidRequiresLocationPermission
             required={Platform.Version <= 30}

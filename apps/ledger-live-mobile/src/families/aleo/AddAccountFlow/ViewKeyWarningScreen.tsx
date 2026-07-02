@@ -63,7 +63,10 @@ export default function ViewKeyWarningScreen({ route, navigation }: Props) {
   }, []);
 
   return (
-    <SafeAreaView edges={["bottom"]} style={[styles.root, { backgroundColor: colors.background.main }]}>
+    <SafeAreaView
+      edges={["bottom"]}
+      style={[styles.root, { backgroundColor: colors.background.main }]}
+    >
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
         <LText semiBold style={styles.title} color="neutral.c100">
           <Trans i18nKey="aleo.addAccount.stepViewKeyWarning.title" />

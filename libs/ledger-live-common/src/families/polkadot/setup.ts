@@ -11,7 +11,6 @@ import Polkadot from "@ledgerhq/hw-app-polkadot";
 import type { Bridge } from "@ledgerhq/types-live";
 import { PolkadotCoinConfig } from "@ledgerhq/coin-polkadot/config";
 import polkadotResolver from "@ledgerhq/coin-polkadot/signer/index";
-import makeCliTools, { type CliTools } from "@ledgerhq/coin-polkadot/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
@@ -34,6 +33,4 @@ const bridge: Bridge<Transaction, PolkadotAccount, TransactionStatus> = createBr
 
 const resolver: Resolver = createResolver(createSigner, polkadotResolver);
 
-const cliTools: CliTools = makeCliTools();
-
-export { bridge, cliTools, resolver };
+export { bridge, resolver };

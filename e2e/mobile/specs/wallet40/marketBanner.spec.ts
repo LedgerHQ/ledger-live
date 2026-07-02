@@ -1,5 +1,5 @@
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 const testConfig = {

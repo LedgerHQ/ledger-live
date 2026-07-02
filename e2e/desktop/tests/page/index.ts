@@ -1,7 +1,6 @@
 import { AccountPage } from "./account.page";
 import { AccountsPage } from "./accounts.page";
 import { AnalyticsPage } from "./analytics.page";
-import { AssetsPage } from "./assets.page";
 import { AddAccountModal } from "./modal/add.account.modal";
 import { AssetDrawer } from "./drawer/asset.drawer";
 import { AssetDetailPage } from "./assetDetail.page";
@@ -46,6 +45,8 @@ import { TezosStakeModal } from "./modal/tezos.stake.modal";
 import { TezosEarningChoiceModal } from "./modal/tezos.earning.choice.modal";
 import { TezosUnstakeModal } from "./modal/tezos.unstake.modal";
 import { TezosUnstakeRequiredModal } from "./modal/tezos.unstake.required.modal";
+import { MarketCoinPage } from "./marketCoin.page";
+import { CryptoAssetsPage } from "./cryptoAssets.page";
 import { TopBarSearch } from "./topBarSearch.page";
 
 export class Application extends PageHolder {
@@ -91,10 +92,12 @@ export class Application extends PageHolder {
   public swapTransactionStatusDialog = new SwapTransactionStatusDialog(this.page);
   public history = new HistoryPage(this.page);
   public mainNavigation = new MainNavigationPage(this.page);
-  public assets = new AssetsPage(this.page);
   public tezosStake = new TezosStakeModal(this.page);
   public tezosEarningChoice = new TezosEarningChoiceModal(this.page);
   public tezosUnstake = new TezosUnstakeModal(this.page);
   public tezosUnstakeRequired = new TezosUnstakeRequiredModal(this.page);
+  public marketCoin = new MarketCoinPage(this.page);
+  public cryptoAssets = new CryptoAssetsPage(this.page, "cryptos");
+  public stablecoinsAssets = new CryptoAssetsPage(this.page, "stablecoins");
   public topBarSearch = new TopBarSearch(this.page);
 }

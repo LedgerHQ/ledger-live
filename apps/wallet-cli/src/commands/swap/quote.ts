@@ -13,7 +13,11 @@ import {
   resolveOutputFormat,
 } from "../inputs";
 import { mapSwapQuoteLine, WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./quote-shared";
-import { swapFlowId, trackSwapQuoteRequested, trackSwapQuoteReturned } from "../../analytics/swap-analytics";
+import {
+  swapFlowId,
+  trackSwapQuoteRequested,
+  trackSwapQuoteReturned,
+} from "../../analytics/swap-analytics";
 
 const walletCliSupportedSwapCurrencyIds = new Set<string>(WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS);
 

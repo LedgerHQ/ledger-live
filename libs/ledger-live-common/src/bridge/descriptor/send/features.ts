@@ -29,7 +29,7 @@ function fromDescriptor<T>(
 ): (currency: CryptoOrTokenCurrency | undefined) => T {
   return currency => {
     const d = getSendDescriptor(currency);
-    return d ? getter(d) ?? fallback : fallback;
+    return d ? (getter(d) ?? fallback) : fallback;
   };
 }
 
@@ -69,6 +69,10 @@ export const sendFeatures = {
   ): readonly string[] => {
     const d = getSendDescriptor(currency);
     return d?.fees.presets?.estimation?.fallbackPresetIds ?? [];
+  },
+  hasFeeRateLegend: (currency: CryptoOrTokenCurrency | undefined): boolean => {
+    const d = getSendDescriptor(currency);
+    return d?.fees.presets?.legend?.type === "feeRate";
   },
   canEstimateFeePresetsWithZeroAmount: (
     currency: CryptoOrTokenCurrency | undefined,

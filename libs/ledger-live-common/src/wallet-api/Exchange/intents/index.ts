@@ -6,10 +6,7 @@
  * platform-specific React components live alongside their callers (LWM
  * under `apps/ledger-live-mobile`, LWD under `apps/ledger-live-desktop`).
  */
-export {
-  signApprovalEvmIntentDefinition,
-  signApprovalEvmJob,
-} from "./signApprovalEvm";
+export { signApprovalEvmIntentDefinition, signApprovalEvmJob } from "./signApprovalEvm";
 export type {
   SignApprovalEvmIntentDefinition,
   SignApprovalEvmIntentInput,
@@ -53,10 +50,7 @@ export type {
   SignRfqOrderEvmJobState,
 } from "./signRfqOrderEvm";
 
-export {
-  submitRfqOrderEvmIntentDefinition,
-  submitRfqOrderEvmJob,
-} from "./submitRfqOrderEvm";
+export { submitRfqOrderEvmIntentDefinition, submitRfqOrderEvmJob } from "./submitRfqOrderEvm";
 export type {
   SubmitRfqOrderEvmIntentDefinition,
   SubmitRfqOrderEvmIntentInput,

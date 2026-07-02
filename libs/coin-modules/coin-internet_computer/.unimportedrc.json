@@ -24,7 +24,6 @@
     "src/signer/index.ts",
     "src/test/bot-specs.ts",
     "src/test/bridgeDatasetTest.ts",
-    "src/test/cli.ts",
     "src/test/index.ts",
     "src/test/speculos-deviceActions.ts",
     "src/types/common.ts",

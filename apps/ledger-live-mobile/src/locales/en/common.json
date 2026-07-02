@@ -2779,13 +2779,6 @@
         "cta": "I understand"
       }
     },
-    "appsStep": {
-      "title": "Install apps on {{productName}}"
-    },
-    "readyStep": {
-      "title": "End of setup",
-      "doneTitle": "{{productName}} is ready"
-    },
     "completion": {
       "title": "Now you are in control"
     },
@@ -4188,6 +4181,42 @@
       },
       "history": {
         "title": "Swap history"
+      },
+      "modals": {
+        "transactionStatus": {
+          "title": "Swap {{sendTicker}} → {{receiveTicker}}",
+          "sections": {
+            "status": {
+              "heading": "Status",
+              "sendPending": "Sending {{ticker}}",
+              "sendCompleted": "Sent {{ticker}}",
+              "receivePending": "Receiving {{ticker}}",
+              "receiveCompleted": "Received {{ticker}}"
+            },
+            "details": {
+              "networkFees": "Network fees",
+              "receiveAccount": "Receive account",
+              "provider": "Provider",
+              "swapId": "Swap ID"
+            }
+          },
+          "statusLabels": {
+            "pending": "Ongoing",
+            "onhold": "On hold",
+            "expired": "Expired",
+            "finished": "Completed",
+            "refunded": "Refunded",
+            "cancelled": "Cancelled",
+            "unknown": "Unknown"
+          },
+          "actions": {
+            "viewInExplorer": "View in explorer",
+            "copied": "Copied"
+          },
+          "accessibility": {
+            "copySwapId": "Copy swap ID"
+          }
+        }
       },
       "wrongDevice": {
         "title": "Ledger Nano S™ is not compatible with {{provider}}",
@@ -10030,6 +10059,17 @@
     },
     "accountActions": {
       "publicToPrivate": "Self transfer"
+    },
+    "balancesSection": "Balances",
+    "info": {
+      "transparent": {
+        "title": "Transparent balance",
+        "description": "The publicly visible balance on the Aleo network. This amount can be sent or received directly and is visible to anyone."
+      },
+      "private": {
+        "title": "Private balance",
+        "description": "The shielded balance on the Aleo network. This balance is only visible to you and requires proof generation for private transactions."
+      }
     }
   }
 }

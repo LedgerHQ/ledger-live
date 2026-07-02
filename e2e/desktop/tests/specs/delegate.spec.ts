@@ -1,14 +1,14 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { getEnv } from "@ledgerhq/live-env";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
 
 import type { OptionalFeatureMap } from "@shared/feature-flags";
@@ -475,8 +475,15 @@ test.describe("Staking flow from different entry point", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.marketBanner.clickExploreMarketHeader();
-      await app.market.search(delegateAccount.account.currency.ticker);
-      await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
+      // The asset-discoverability Market has no search input and no per-row stake CTA: staking is
+      // reached by opening the asset detail page. Both entry points open the same stake flow.
+      if (await app.market.isLegacyMarketList()) {
+        await app.market.search(delegateAccount.account.currency.ticker);
+        await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
+      } else {
+        await app.market.openCoinPage(delegateAccount.account.currency.ticker);
+        await app.assetDetail.startEarnFlow();
+      }
 
       const selector = await getModularSelector(app, "ACCOUNT");
       if (selector) {

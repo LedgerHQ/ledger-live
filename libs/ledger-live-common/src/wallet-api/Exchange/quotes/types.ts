@@ -5,6 +5,7 @@
 export type {
   QuotesInput,
   QuotesAppPlatform,
+  QuoteSortBy,
   GetQuotesArgs,
   GetQuotesWireArgs,
   GetQuotesResponse,

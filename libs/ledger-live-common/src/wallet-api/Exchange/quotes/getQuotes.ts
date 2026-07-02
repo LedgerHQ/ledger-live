@@ -12,6 +12,7 @@ import { fetchQuotes } from "./service/fetchQuotes";
 import { computeFeeEstimate } from "./normalizer/networkFeeEstimate";
 import { buildFormatContext } from "./normalizer/buildFormatContext";
 import { normalizeQuote } from "./normalizer";
+import { sortQuotes } from "./sorting/sortQuotes";
 import {
   QuotesErrorCodes,
   type GetQuotesArgs,
@@ -190,13 +191,19 @@ export async function getQuotes(
     const feeEstimate = feeContext ? computeFeeEstimate(raw, feeContext) : undefined;
     return normalizeQuote(raw, providerData, normalizationContext, feeEstimate, formatContext);
   });
+  const sortedQuotes = sortQuotes(quotes, {
+    sortBy: args.sortBy,
+    receiveCurrencyId: quotesInput.receiveCurrencyId,
+    spotPrices: context.spotPrices,
+    feeCurrencyMagnitude: feeContext?.feeCurrencyMagnitude,
+  });
 
   return {
-    quotes,
+    quotes: sortedQuotes,
     providerErrors,
     warnings,
     errors: computeQuotesErrors({
-      successfulQuotesCount: quotes.length,
+      successfulQuotesCount: sortedQuotes.length,
       providerErrors,
       amountFrom: args.data.amount,
     }),

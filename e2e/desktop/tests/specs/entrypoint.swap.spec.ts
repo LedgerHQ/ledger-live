@@ -1,22 +1,22 @@
 import test from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
   Account,
   TokenAccount,
   getParentAccountName,
-} from "@ledgerhq/live-common/e2e/enum/Account";
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
-import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+} from "@ledgerhq/live-e2e-shared/enum/Account";
+import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
+import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 import { getEnv } from "@ledgerhq/live-env";
 import { overrideNetworkPayload } from "tests/utils/networkUtils";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
@@ -72,8 +72,7 @@ test.describe("Swap flow from different entry point", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("home");
-      await app.portfolio.clickOnSelectedAssetRow(swapEntryPoint.swap.accountToDebit.currency.name);
-
+      await app.portfolio.clickAsset(swapEntryPoint.swap.accountToDebit.currency);
       await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow());
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
     },
@@ -106,7 +105,9 @@ test.describe("Swap flow from different entry point", () => {
         app.market.startSwapForSelectedTicker(swapEntryPoint.swap.accountToDebit.currency.ticker),
       );
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      await app.swap.checkAssetToAccountNameContains(swapEntryPoint.swap.accountToDebit.accountName);
+      await app.swap.checkAssetToAccountNameContains(
+        swapEntryPoint.swap.accountToDebit.accountName,
+      );
     },
   );
 
@@ -133,8 +134,11 @@ test.describe("Swap flow from different entry point", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.marketBanner.clickExploreMarketHeader();
-      await app.market.openCoinPage(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      await app.swap.goAndWaitForSwapToBeReady(() => app.market.clickOnSwapButtonOnAsset());
+      await app.market.clickCoinRow(swapEntryPoint.swap.accountToDebit.currency.ticker);
+      await app.marketCoin.expectMarketCoinPageToBeVisible(
+        swapEntryPoint.swap.accountToDebit.currency.id,
+      );
+      await app.swap.goAndWaitForSwapToBeReady(() => app.marketCoin.clickSwapButton());
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
     },
   );
@@ -167,7 +171,9 @@ test.describe("Swap flow from different entry point", () => {
       );
       await app.swap.goAndWaitForSwapToBeReady(() => app.account.navigateToSwap());
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      await app.swap.checkAssetToAccountNameContains(swapEntryPoint.swap.accountToDebit.accountName);
+      await app.swap.checkAssetToAccountNameContains(
+        swapEntryPoint.swap.accountToDebit.accountName,
+      );
     },
   );
 

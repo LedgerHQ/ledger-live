@@ -1,13 +1,13 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
-import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
+import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
 function getRequiredFamily(currencyId: string): string {
   const family = getFamilyByCurrencyId(currencyId);

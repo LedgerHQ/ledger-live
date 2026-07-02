@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "36.2.0",
+  "version": "36.3.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -163,10 +163,6 @@
     "./hooks": {
       "default": "./lib-es/hooks/index.js"
     },
-    "./e2e": {
-      "@ledgerhq/source": "./src/e2e/index.ts",
-      "default": "./lib-es/e2e/index.js"
-    },
     "./featureFlags": {
       "@ledgerhq/source": "./src/featureFlags/*.ts",
       "default": "./lib-es/featureFlags/*.js"
@@ -294,7 +290,7 @@
     "@ledgerhq/coin-polkadot": "workspace:^",
     "@ledgerhq/coin-solana": "workspace:^",
     "@ledgerhq/coin-stacks": "workspace:^",
-    "@ledgerhq/coin-stellar": "workspace:^",
+    "@ledgerhq/coin-stellar": "catalog:",
     "@ledgerhq/coin-sui": "workspace:^",
     "@ledgerhq/coin-tezos": "workspace:^",
     "@ledgerhq/coin-ton": "workspace:^",
@@ -354,7 +350,6 @@
     "@ledgerhq/live-signer-cosmos": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/wallet-api-acre-module": "workspace:^",
     "@ledgerhq/wallet-api-client": "^1.15.0",

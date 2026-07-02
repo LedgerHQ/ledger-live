@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 
 export class AccountsPage extends AppPage {
@@ -151,7 +151,9 @@ export class AccountsPage extends AppPage {
   @step("Expect Redux accounts length to be $0")
   async expectReduxAccountsLength(count: number) {
     await expect
-      .poll(async () => (await this.getReduxAccountIds()).length, { timeout: 60_000 })
+      .poll(async () => (await this.getReduxAccountIds()).length, {
+        timeout: 60_000,
+      })
       .toBe(count);
   }
 

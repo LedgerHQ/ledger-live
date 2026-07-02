@@ -10,7 +10,6 @@ import {
   Tooltip,
 } from "@ledgerhq/lumen-ui-react";
 import { ChevronUpDown, Information } from "@ledgerhq/lumen-ui-react/symbols";
-import { getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor/registry";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import {
   getAccountCurrency,
@@ -85,6 +84,11 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
     () => (currency ? sendFeatures.hasFeePresets(currency) : false),
     [currency],
   );
+  const fallbackPresetIds = useMemo(
+    () =>
+      currency && transaction ? sendFeatures.getFeePresetFallbackIds(currency, transaction) : [],
+    [currency, transaction],
+  );
 
   const feeOptionsWithFiat = useMemo(() => {
     const options = feePresetOptions ?? [];
@@ -98,19 +102,18 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
       });
     }
 
-    if (hasPresetsForCurrency) {
-      const strategies = ["slow", "medium", "fast"] as const;
-      return strategies.map(strategy => {
+    if (hasPresetsForCurrency && fallbackPresetIds.length > 0) {
+      return fallbackPresetIds.map(presetId => {
         return {
-          id: strategy,
-          fiatValue: fiatByPreset[strategy] ?? null,
-          legendValue: legendByPreset[strategy] ?? null,
+          id: presetId,
+          fiatValue: fiatByPreset[presetId] ?? null,
+          legendValue: legendByPreset[presetId] ?? null,
         } satisfies FeeOptionDisplay;
       });
     }
 
     return [];
-  }, [feePresetOptions, fiatByPreset, legendByPreset, hasPresetsForCurrency]);
+  }, [feePresetOptions, fiatByPreset, legendByPreset, hasPresetsForCurrency, fallbackPresetIds]);
 
   if (!account || !transaction || !mainAccount || !currency) {
     return null;
@@ -121,8 +124,7 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
     sendFeatures.hasCustomFees(currency) && !!sendFeatures.getCustomFeeConfig(currency);
   const hasCoinControl = sendFeatures.hasCoinControl(currency);
   const showCoinControlMenuItem = hasCoinControl && currentStep !== SEND_FLOW_STEP.COIN_CONTROL;
-  const legendConfig = getSendDescriptor(currency)?.fees.presets?.legend;
-  const shouldShowFeeRateLegend = legendConfig?.type === "feeRate";
+  const shouldShowFeeRateLegend = sendFeatures.hasFeeRateLegend(currency);
 
   const hasMenuOptions = hasPresets || hasCustom || hasCoinControl;
 

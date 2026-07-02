@@ -147,7 +147,10 @@ export default function StakingSummary({ navigation, route }: Props) {
   const hasErrors = hasStatusError(status);
 
   return (
-    <SafeAreaView edges={["left", "right", "bottom"]} style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      edges={["left", "right", "bottom"]}
+      style={[styles.root, { backgroundColor: colors.background }]}
+    >
       <TrackScreen
         category="DelegationFlow"
         name={route.params.skipStartedStep ? "Step Starter" : "Summary"}

@@ -1,10 +1,10 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { FileUtils } from "tests/utils/fileUtils";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 
 test.describe("Settings", () => {
   test.use({
@@ -120,7 +120,7 @@ test.describe("counter value selection", () => {
 
       await app.portfolio.expectBalanceDiffCounterValue("%");
 
-      await app.portfolio.expectAssetRowCounterValue(account.currency.name, "€");
+      await app.portfolio.expectAssetValueToBe(account.currency, "€");
       await app.portfolio.expectOperationCounterValue("€");
     },
   );

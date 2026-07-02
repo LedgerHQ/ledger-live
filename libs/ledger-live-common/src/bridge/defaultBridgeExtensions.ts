@@ -45,4 +45,19 @@ export const defaultBridgeExtensions: Required<AccountBridgeExtensions> = {
   isEditableOperation: () => false,
   isStuckOperation: () => false,
   getStuckAccountAndOperation: () => undefined,
+  getEditTransactionPatch: async () => {
+    throw new Error("getEditTransactionPatch is not supported for this currency");
+  },
+  getEditTransactionStatus: () => {
+    throw new Error("getEditTransactionStatus is not supported for this currency");
+  },
+  getFormattedFeeFields: () => {
+    throw new Error("getFormattedFeeFields is not supported for this currency");
+  },
+  hasMinimumFundsToCancel: () => false,
+  hasMinimumFundsToSpeedUp: () => false,
+  isStrategyDisabled: () => false,
+  isTransactionConfirmed: async () => {
+    throw new Error("isTransactionConfirmed is not supported for this currency");
+  },
 };

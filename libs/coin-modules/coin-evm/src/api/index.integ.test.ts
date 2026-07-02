@@ -7,7 +7,6 @@ import {
   StakingTransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { ethers } from "ethers";
 import { EvmConfig } from "../config";
@@ -37,7 +36,7 @@ describe.each([
     },
   ],
 ])("EVM Api (%s)", (_, config) => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
     // Setup CAL client store (automatically set as global store)
@@ -788,7 +787,7 @@ describe.each([
 });
 
 describe("EVM Api: external node and explorer ONLY", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
     setupCalClientStore();
@@ -879,7 +878,7 @@ describe("EVM Api: external node and explorer ONLY", () => {
 });
 
 describe("EVM Api (Moonbeam Network)", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
     setupCalClientStore();
@@ -924,7 +923,7 @@ describe("EVM Api (Moonbeam Network)", () => {
 });
 
 describe("EVM Api (SEI Network)", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
   const seiStakingSender = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
   const seiStakingRecipient = "0x0000000000000000000000000000000000001005";
   const seiStakingDelegationAmount = 1000000000000000n; // 0.001 SEI
@@ -1051,7 +1050,7 @@ describe("EVM Api (SEI Network)", () => {
 });
 
 describe("EVM Api (Zero Gravity)", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
     setupCalClientStore();

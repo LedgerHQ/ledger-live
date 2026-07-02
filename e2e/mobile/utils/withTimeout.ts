@@ -1,5 +1,5 @@
 import { log } from "detox";
-import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
 /**
  * Race a promise against a timeout. Timeouts always warn-and-resolve-`undefined`;

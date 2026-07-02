@@ -10,10 +10,10 @@ import {
   OverrideFeatureFlagPayload,
   ServerData,
 } from "../../../apps/ledger-live-mobile/e2e/bridge/types";
-import type { PartialFeatures, FeatureId } from "@shared/feature-flags";
+import type { OptionalFeatureMap, FeatureId } from "@shared/feature-flags";
 import { FeatureIdSchema } from "@shared/feature-flags";
 import { log as detoxLog } from "detox";
-import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
+import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { v4 as uuid } from "uuid";
 
 const RESPONSE_TIMEOUT = 10000;
@@ -123,7 +123,7 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
   }
 }
 
-export async function setFeatureFlags(flags: PartialFeatures) {
+export async function setFeatureFlags(flags: OptionalFeatureMap) {
   for (const id in flags) {
     if (isFeatureId(id)) {
       setFeatureFlag({ id, value: flags[id] });

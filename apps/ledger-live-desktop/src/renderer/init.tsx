@@ -20,10 +20,7 @@ import "~/renderer/i18n/init";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
 import { setupCryptoAssetsStore } from "~/config/bridge-setup";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import {
-  restoreTokensToCache,
-  PERSISTENCE_VERSION,
-} from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
 import logger, { enableDebugLogger } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import sentry from "~/sentry/renderer";
@@ -159,18 +156,12 @@ async function init() {
   // Hydrate persisted crypto assets tokens from app.json
   // Cross-caching is automatic: tokens are cached under both ID and address lookups
   try {
-    const persistedData = await getKey("app", "cryptoAssets");
+    // parsePersistedCAL validates version + schema; returns null for missing/corrupt/legacy blobs.
+    const persistedData = parsePersistedCAL(await getKey("app", "cryptoAssets"));
 
-    // Check version and restore tokens
-    if (persistedData?.tokens) {
-      if (persistedData.version === PERSISTENCE_VERSION) {
-        const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-        await restoreTokensToCache(store.dispatch, persistedData, TOKEN_CACHE_TTL);
-      } else {
-        logger.warn(
-          `Crypto assets cache version mismatch (expected ${PERSISTENCE_VERSION}, got ${persistedData.version}), skipping restore`,
-        );
-      }
+    if (persistedData) {
+      const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+      await restoreTokensToCache(store.dispatch, persistedData, TOKEN_CACHE_TTL);
     }
   } catch (error) {
     logger.error("Failed to load crypto assets tokens from app.json:", error);

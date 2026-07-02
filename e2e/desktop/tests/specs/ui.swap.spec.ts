@@ -1,13 +1,13 @@
 import test from "tests/fixtures/common";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
-import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
+import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
+import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
-import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 
 const exchangeAppInfo: AppInfos = AppInfos.EXCHANGE;
 const swapUiTags = [
@@ -25,12 +25,12 @@ const swapUiTags = [
 
 const kycFromAccount = Account.BTC_NATIVE_SEGWIT_1;
 const kycToAccount = Account.ETH_1;
-const kycProvider = SwapProvider.CHANGELLY;
+const kycProvider = SwapProvider.NEAR_INTENTS;
 const accPair: string[] = [kycFromAccount, kycToAccount].map(acc =>
   acc.currency.speculosApp.name.replaceAll(" ", "_"),
 );
 
-test.describe("Swap - Changelly KYC warning and feedback link", () => {
+test.describe("Swap - feedback link", () => {
   setupEnv(true);
   test.beforeEach(async () => {
     setExchangeDependencies(
@@ -65,7 +65,7 @@ test.describe("Swap - Changelly KYC warning and feedback link", () => {
     ],
   });
   test(
-    "shows Changelly AML/KYC warning and displays feedback link from success drawer",
+    "displays feedback link from success drawer",
     {
       tag: swapUiTags,
       annotation: {
@@ -85,7 +85,8 @@ test.describe("Swap - Changelly KYC warning and feedback link", () => {
       const swap = new Swap(kycFromAccount, kycToAccount, amountToSend);
 
       await app.swap.clickExchangeButton(kycProvider.name);
-      await app.swapDrawer.checkKycWarningBannerVisible();
+      // TODO: re-enable once Changelly provider is re-enabled
+      // await app.swapDrawer.checkKycWarningBannerVisible();
       await app.speculos.verifyAmountsAndAcceptSwap(swap, amountToSend);
       await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       await app.swapDrawer.checkShareYourFeedbackLinkVisible();

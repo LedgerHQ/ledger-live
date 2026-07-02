@@ -35,19 +35,21 @@ const PERMIT_TYPED_DATA: QuotePermit2Message = {
   primaryType: "PermitSingle",
 };
 
-function makeQuote(overrides: {
-  provider?: string;
-  providerType?: "DEX" | "CEX";
-  isUniswapX?: boolean;
-  isTokenApprovalRequired?: boolean;
-  isApproved?: boolean;
-  hasApprovalBlob?: boolean;
-  permitTypedData?: QuotePermit2Message | null;
-  permitOrderHash?: string;
-  customFields?: Record<string, unknown>;
-  approvedAmount?: string;
-  sendAmount?: number;
-} = {}): Quote {
+function makeQuote(
+  overrides: {
+    provider?: string;
+    providerType?: "DEX" | "CEX";
+    isUniswapX?: boolean;
+    isTokenApprovalRequired?: boolean;
+    isApproved?: boolean;
+    hasApprovalBlob?: boolean;
+    permitTypedData?: QuotePermit2Message | null;
+    permitOrderHash?: string;
+    customFields?: Record<string, unknown>;
+    approvedAmount?: string;
+    sendAmount?: number;
+  } = {},
+): Quote {
   const {
     provider = "uniswap",
     providerType = "DEX",
@@ -233,9 +235,7 @@ describe("planSwapFlow", () => {
       if (result.kind === "rfq-order") {
         expect(result.rfqProvider).toBe("uniswapx");
         expect(result.provider).toBe("uniswap");
-        expect(result.orderTypedData.primaryType).toBe(
-          "PermitWitnessTransferFrom",
-        );
+        expect(result.orderTypedData.primaryType).toBe("PermitWitnessTransferFrom");
       }
     });
 

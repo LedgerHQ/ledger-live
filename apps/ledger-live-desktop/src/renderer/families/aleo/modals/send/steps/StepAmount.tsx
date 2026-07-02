@@ -63,7 +63,9 @@ const StepAmount = (props: StepProps) => {
       {error ? <ErrorBanner error={error} /> : null}
       <Fragment key={account.id}>
         {isAutoPickingStrategy ? (
-          isAleoAccount(account) ? <InfoBanner account={account} /> : null
+          isAleoAccount(account) ? (
+            <InfoBanner account={account} />
+          ) : null
         ) : (
           <SpendableBanner
             account={account}

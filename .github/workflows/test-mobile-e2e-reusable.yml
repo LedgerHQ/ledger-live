@@ -3,10 +3,12 @@ run-name: >
   @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'schedule' && 'Scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ inputs.ref || github.ref_name }} • ${{ github.actor }}
 
 # One concurrent run per: workflow definition ref (Use workflow from), code ref/sha under test,
-# test surface (tests_type or schedule cron), and filter. Matches checkout ref: inputs.ref || github.sha.
+# test surface (tests_type or schedule cron). Matches checkout ref: inputs.ref || github.sha.
+# NB: test_filter is intentionally reduced to a bounded "filtered"/"all" token rather than embedded verbatim.
+# It is free-text and can be very long; the concurrency group name must stay under 400 characters.
 concurrency:
   group: >-
-    mobile-e2e-${{ github.workflow_ref }}-${{ inputs.ref || github.sha }}-${{ github.event_name == 'schedule' && github.event.schedule || inputs.tests_type }}-${{ inputs.test_filter || '' }}
+    mobile-e2e-${{ github.ref_name }}-${{ inputs.ref || github.sha }}-${{ github.event_name == 'schedule' && github.event.schedule || inputs.tests_type }}-${{ inputs.test_filter && 'filtered' || 'all' }}
   cancel-in-progress: false
 
 on:
@@ -75,16 +77,19 @@ on:
         required: false
         type: boolean
         default: false
-      enable_wallet40:
-        description: "Enable wallet 4.0 feature flag for tests"
-        required: false
-        type: boolean
-        default: true
       generate_ai_artifacts:
         description: "Generate AI analysis artifacts"
         required: false
         type: boolean
         default: false
+      feature_flags:
+        description: "Choose a feature flag set for the run"
+        required: false
+        type: choice
+        options:
+          - defaults
+          - wallet40-q2
+        default: defaults
       feature_flags_json:
         description: "JSON to override feature flags"
         required: false
@@ -130,16 +135,16 @@ on:
         required: false
         type: boolean
         default: false
-      enable_wallet40:
-        description: "Enable wallet 4.0 feature flag for tests"
-        required: false
-        type: boolean
-        default: true
       generate_ai_artifacts:
         description: "Generate AI analysis artifacts"
         required: false
         type: boolean
         default: false
+      feature_flags:
+        description: "Choose a feature flag set for the run"
+        required: false
+        type: string
+        default: defaults
       feature_flags_json:
         description: "JSON to override feature flags"
         required: false
@@ -165,7 +170,7 @@ env:
   SPECULOS_IMAGE_TAG_IOS: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-83978f0' || 'latest' }}
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
-  E2E_ENABLE_WALLET40: ${{ inputs.enable_wallet40 == 'false' && '0' || '1' }}
+  E2E_MOBILE_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
   USERDATA_CACHE_ENABLED: ${{ !inputs.production_firebase }}
   E2E_GENERATED_USERDATA_DIR: ${{ !inputs.production_firebase && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
@@ -304,8 +309,8 @@ jobs:
           echo "- **Firebase env to target:** $BUILD_TYPE"
           echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
           echo "- **Slack notification:** ${{ (inputs.slack_notif || github.event_name == 'schedule') && 'enabled' || 'disabled' }}"
-          echo "- **Wallet 4.0:** ${{ env.E2E_ENABLE_WALLET40 == '1' && 'enabled' || 'disabled' }}"
-          echo "- **Extra feature flags:** $EXTRA_FEATURE_FLAGS"
+          echo "- **Feature Flags:** ${{ env.E2E_MOBILE_FEATURE_FLAGS }}"
+          echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
           } >> $GITHUB_STEP_SUMMARY
 
       - name: Validate feature flags JSON input
@@ -663,6 +668,7 @@ jobs:
           NX_SKIP_NX_CACHE: true
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_IOS }}
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
+          E2E_MOBILE_FEATURE_FLAGS: ${{ env.E2E_MOBILE_FEATURE_FLAGS }}
         run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
 
       - name: Upload iOS artifacts
@@ -900,6 +906,7 @@ jobs:
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_ANDROID }}
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
+          E2E_MOBILE_FEATURE_FLAGS: ${{ env.E2E_MOBILE_FEATURE_FLAGS }}
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
 
       - name: Upload Android artifacts
@@ -959,6 +966,12 @@ jobs:
           path: ios-test-artifacts
           report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
           summary_message: ${{ steps.summary.outputs.summary_message }}
+      - name: Write failed tests summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        with:
+          results-path: ios-test-artifacts
+          runner: detox
       - name: Aggregate test results
         if: ${{ !cancelled() }}
         id: aggregate
@@ -1033,6 +1046,12 @@ jobs:
           path: android-test-artifacts
           report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
           summary_message: ${{ steps.summary.outputs.summary_message }}
+      - name: Write failed tests summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        with:
+          results-path: android-test-artifacts
+          runner: detox
       - name: Aggregate test results
         if: ${{ !cancelled() }}
         id: aggregate

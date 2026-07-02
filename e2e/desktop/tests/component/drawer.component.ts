@@ -1,6 +1,6 @@
 import { Component } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
-import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 
 export class Drawer extends Component {
   readonly content = this.page.getByTestId("drawer-content");

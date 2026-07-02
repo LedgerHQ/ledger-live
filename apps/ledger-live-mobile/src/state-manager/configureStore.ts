@@ -14,6 +14,7 @@ import { createIdentitiesSyncMiddleware } from "@ledgerhq/client-ids/store";
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector, languageSelector } from "~/reducers/settings";
 import { getEnv } from "@ledgerhq/live-env";
+import { calApiExtra } from "@domain/api-currency-token";
 import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags } from "~/firebase/remoteConfig";
 
@@ -22,7 +23,18 @@ export const store = configureStore({
   devTools: !!Config.DEBUG_RNDEBUGGER,
   middleware: getDefaultMiddleware =>
     applyLlmRTKApiMiddlewares(
-      getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
+      getDefaultMiddleware({
+        serializableCheck: false,
+        immutableCheck: false,
+        thunk: {
+          extraArgument: {
+            ...calApiExtra({
+              calServiceUrl: getEnv("CAL_SERVICE_URL"),
+              ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+            }),
+          },
+        },
+      }),
     )
       .concat(rebootMiddleware)
       .concat(

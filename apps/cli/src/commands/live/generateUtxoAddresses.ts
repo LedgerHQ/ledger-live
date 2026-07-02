@@ -1,5 +1,5 @@
-import { isUtxoBasedCurrency } from "@ledgerhq/live-common/e2e/addressCache";
-import { UTXO_ADDRESS_CACHE_FILE } from "@ledgerhq/live-common/e2e/utxoAddressCache";
+import { isUtxoBasedCurrency } from "@ledgerhq/live-e2e-shared/addressCache";
+import { UTXO_ADDRESS_CACHE_FILE } from "@ledgerhq/live-e2e-shared/utxoAddressCache";
 import {
   addressCacheArgs,
   generateAddressCache,

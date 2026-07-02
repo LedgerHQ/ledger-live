@@ -1,11 +1,11 @@
 import { step } from "../misc/reporters/step";
 import { WebViewAppPage } from "./webViewApp.page";
-import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
-import { BuySell, Fiat } from "@ledgerhq/live-common/e2e/models/BuySell";
+import { AccountType, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { BuySell, Fiat } from "@ledgerhq/live-e2e-shared/models/BuySell";
 import { expect } from "@playwright/test";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
-import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
+import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { OperationType } from "@ledgerhq/live-e2e-shared/enum/OperationType";
 import { doubleDecodeGoToURL } from "../utils/urlUtils";
 import { getAccountAddressesFromAppJson } from "../utils/getAccountAddressesUtils";
 import { waitFor } from "../utils/waitFor";
@@ -103,6 +103,16 @@ export class BuyAndSellPage extends WebViewAppPage {
   async selectTab(operation: string) {
     await this.clickElement(this.tabTestId(operation));
     await this.verifyElementIsSelected(this.tabTestId(operation));
+  }
+
+  @step("Select network/account in the modular drawer if it opens")
+  async selectNetworkAndAccountIfShown(account: AccountType) {
+    if (await this.modularDialog.waitForNetworkDialogVisible()) {
+      await this.modularDialog.selectNetwork(account.currency);
+      if (await this.modularDialog.waitForAccountSelectionVisible()) {
+        await this.modularDialog.selectAccountByName(account);
+      }
+    }
   }
 
   @step("Choose crypto asset if not selected")

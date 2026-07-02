@@ -64,17 +64,21 @@ export function useNetworkFees({
     calculateCountervalue,
   });
 
-  const getFeeStrategyLabel = useCallback((strategy: string | null): string => {
-    if (!strategy) return t("fees.medium");
-    if (strategy === "custom") return t("fees.custom");
-    return t(`fees.${strategy}`);
-  }, [t]);
+  const getFeeStrategyLabel = useCallback(
+    (strategy: string | null): string => {
+      if (!strategy) return t("fees.medium");
+      if (strategy === "custom") return t("fees.custom");
+      return t(`fees.${strategy}`);
+    },
+    [t],
+  );
 
   return useMemo(
     () => ({
       feesRowLabel: t("fees.networkFees"),
       feesRowValue:
-        core.selectedPresetFiatValue ?? (core.displayFeesValue === "-" ? "--" : core.displayFeesValue),
+        core.selectedPresetFiatValue ??
+        (core.displayFeesValue === "-" ? "--" : core.displayFeesValue),
       feesRowStrategyLabel: getFeeStrategyLabel(core.selectedFeeStrategy),
       showNetworkFees: true,
       showFeePresets: core.showFeePresets,

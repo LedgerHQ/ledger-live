@@ -1,7 +1,37 @@
-import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
+import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
 import { Page } from "@playwright/test";
 
-import type { OptionalFeatureMap } from "@shared/feature-flags";
+import type { OptionalFeatureMap, Features } from "@shared/feature-flags";
+
+export const getFeatureFlags = async (page: Page): Promise<OptionalFeatureMap> => {
+  const featureFlags = await page.evaluate(() => {
+    return window.getAllFeatureFlags("en");
+  });
+  return featureFlags;
+};
+
+const getLwdWallet40Params = async (
+  page: Page,
+): Promise<Features["lwdWallet40"]["params"] | undefined> => {
+  const featureFlags = await getFeatureFlags(page);
+  const lwdWallet40 = featureFlags.lwdWallet40 as Features["lwdWallet40"];
+  return lwdWallet40?.params;
+};
+
+export const isAssetSectionEnabled = async (page: Page): Promise<boolean> =>
+  Boolean((await getLwdWallet40Params(page))?.assetSection);
+
+export const isMyWalletEnabled = async (page: Page): Promise<boolean> =>
+  Boolean((await getLwdWallet40Params(page))?.myWallet);
+
+export const isOperationsListEnabled = async (page: Page): Promise<boolean> =>
+  Boolean((await getLwdWallet40Params(page))?.operationsList);
+
+export const isAggregatedAssetsEnabled = async (page: Page): Promise<boolean> =>
+  Boolean((await getLwdWallet40Params(page))?.aggregatedAssets);
+
+export const isAssetDiscoverabilityEnabled = async (page: Page): Promise<boolean> =>
+  Boolean((await getLwdWallet40Params(page))?.assetDiscoverability);
 
 export const useLocalEarnManifest = process.env.USE_LOCAL_EARN_MANIFEST === "1";
 
@@ -12,7 +42,6 @@ export const FF_LWD_WALLET_40_Q1 = {
       graphRework: true,
       mainNavigation: true,
       newReceiveDialog: true,
-      balanceRefreshRework: true,
       lazyOnboarding: true,
       assetSection: false,
       brazePlacement: true,
@@ -24,7 +53,7 @@ export const FF_LWD_WALLET_40_Q1 = {
       earnSimulator: false,
       finishOnboardingWidget: false,
       assetDiscoverability: false,
-      q2tour: false,
+      q2Tour: false,
     },
   },
 } satisfies OptionalFeatureMap;
@@ -36,7 +65,6 @@ export const FF_LWD_WALLET_40_Q2 = {
       graphRework: true,
       mainNavigation: true,
       newReceiveDialog: true,
-      balanceRefreshRework: true,
       lazyOnboarding: true,
       assetSection: true,
       brazePlacement: true,
@@ -61,7 +89,10 @@ export const FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT = {
 
 export const FF_EARN_V2_DESKTOP = {
   ...(useLocalEarnManifest && {
-    ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-local-manifest" } },
+    ptxEarnLiveApp: {
+      enabled: true,
+      params: { manifest_id: "earn-local-manifest" },
+    },
   }),
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
 } satisfies OptionalFeatureMap;
@@ -105,22 +136,17 @@ export const FF_NEW_SEND_FLOW_DISABLED = {
   },
 } satisfies OptionalFeatureMap;
 
-export const getFeatureFlags = async (page: Page): Promise<OptionalFeatureMap> => {
-  const featureFlags = await page.evaluate(() => {
-    return window.getAllFeatureFlags("en");
-  });
-  return featureFlags;
-};
-
 export const getMergedFeatureFlags = ({
   testFlags,
 }: { testFlags?: OptionalFeatureMap } = {}): OptionalFeatureMap => {
   const ffEnvMapping: Record<string, OptionalFeatureMap> = {
-    // the keys here are the values of the `E2E_DESKTOP_FEATURE_FLAGS` environment variable
-    // we can add more mappings here in the future to test different feature flag combinations.
-    // for the GitHub Actions workflow we can add options and leave the input variable name as is.
-    // this will reduce friction and provide CI stability for any callers of the workflow.
-    "wallet40-q1": FF_LWD_WALLET_40_Q1,
+    /*
+     * The keys here are the values of the `E2E_DESKTOP_FEATURE_FLAGS` environment variable.
+     * We can add more mappings here in the future to test different feature flag combinations.
+     * For the GitHub Actions workflow we can add options and leave the input variable name as is.
+     * This will reduce friction and provide CI stability for any callers of the workflow.
+     * PLEASE NOTE: non-existing keys will return 'undefined' which spreads to an empty object.
+     */
     "wallet40-q2": FF_LWD_WALLET_40_Q2,
   };
 
@@ -144,7 +170,7 @@ export const getMergedFeatureFlags = ({
     },
     // default flags for wallet 4.0
     ...FF_LWD_WALLET_40_Q1,
-    // any flags from environment variable if set
+    // any flags from env variable (if set)
     ...ffEnvMapping[process.env.E2E_DESKTOP_FEATURE_FLAGS || ""],
   };
 
@@ -154,15 +180,9 @@ export const getMergedFeatureFlags = ({
   );
 
   return {
-    // use spread so that duplicate keys are overridden (last one wins)
+    // use spread to override duplicate keys (last one wins)
     ...defaultFlags,
     ...jsonOverrideFlags,
     ...testFlags,
   };
-};
-
-export const isAssetSectionEnabled = async (page: Page): Promise<boolean> => {
-  const flags = await getFeatureFlags(page);
-  const params = flags.lwdWallet40?.params as { assetSection?: boolean } | undefined;
-  return Boolean(params?.assetSection);
 };

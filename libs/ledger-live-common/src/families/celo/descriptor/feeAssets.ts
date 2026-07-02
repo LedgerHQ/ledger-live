@@ -1,16 +1,21 @@
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import type {
   FeeAssetOption,
   FeeAssetsConfig,
   TransactionPatch,
 } from "../../../bridge/descriptor/types";
 import { FEE_CURRENCY_BY_CONTRACT, FEE_CURRENCY_OPTIONS } from "../logic";
+import { GWEI_DIVISOR } from "./constants";
 
 /** Option id representing the native CELO fee currency (no token override). */
 const NATIVE_OPTION_ID = "celo";
 
-/** Celo gas is always entered in Gwei, regardless of the asset used to pay it. */
+/** Canonical Celo gas values are expressed in Gwei; when paying fees with a token,
+ * the UI displays token-decimal values via `customFeeInputValueTransform`.
+ */
 const CELO_FEE_UNIT_LABEL = "Gwei";
+const FEE_INPUT_KEYS = ["fees"] as const;
 
 const RESET_PATCH: TransactionPatch = {
   feeCurrency: null,
@@ -33,6 +38,26 @@ function getFeeCurrencyAccountId(transaction: unknown): string | null {
 function getFeeCurrencyUnwrapped(transaction: unknown): string | null {
   return getTransactionStringField(transaction, "feeCurrencyUnwrapped");
 }
+
+function transformFiniteValue(value: string, transform: (value: BigNumber) => BigNumber): string {
+  if (value.trim() === "") return value;
+
+  const parsed = new BigNumber(value);
+  if (!parsed.isFinite()) return value;
+
+  const transformed = transform(parsed);
+  if (!transformed.isFinite()) return value;
+
+  return transformed.toFixed();
+}
+
+const feeAssetInputValueTransform = {
+  inputKeys: FEE_INPUT_KEYS,
+  fromCanonicalValue: (value: string) =>
+    transformFiniteValue(value, parsed => parsed.dividedBy(GWEI_DIVISOR)),
+  toCanonicalValue: (value: string) =>
+    transformFiniteValue(value, parsed => parsed.times(GWEI_DIVISOR)),
+};
 
 /** Token sub-accounts with a positive balance that are allowlisted as fee currencies. */
 function getEligibleTokenAccounts(mainAccount: Account): EligibleTokenAccount[] {
@@ -63,6 +88,7 @@ function getHydratingSelectedTokenOption(transaction: unknown): FeeAssetOption |
     id: selectedAccountId,
     ticker: feeCurrencyOption.name,
     label: feeCurrencyOption.name,
+    customFeeInputValueTransform: feeAssetInputValueTransform,
   };
 }
 
@@ -87,12 +113,13 @@ export const celoFeeAssets: FeeAssetsConfig = {
       return selectedToken ? [native, selectedToken] : [native];
     }
 
-    // Token options intentionally omit `unitLabel`: the fee input unit then
-    // falls back to the asset ticker (e.g. "USDT"), matching the design.
+    // Token options intentionally omit `unitLabel`: the fee input unit falls
+    // back to the ticker while the value is transformed to token decimals.
     const tokens = getEligibleTokenAccounts(mainAccount).map(token => ({
       id: token.id,
       ticker: token.feeCurrencyName,
       label: token.feeCurrencyName,
+      customFeeInputValueTransform: feeAssetInputValueTransform,
     }));
     return [native, ...tokens];
   },

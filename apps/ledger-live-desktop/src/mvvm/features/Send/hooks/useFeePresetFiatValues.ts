@@ -23,10 +23,7 @@ type Params = Readonly<
   }
 >;
 
-export function useFeePresetFiatValues({
-  counterValueCurrency,
-  ...params
-}: Params): FeeFiatMap {
+export function useFeePresetFiatValues({ counterValueCurrency, ...params }: Params): FeeFiatMap {
   const calculateCountervalue = useCalculateCountervalueCallback({ to: counterValueCurrency });
   return useFeePresetFiatValuesCore({ ...params, calculateCountervalue });
 }

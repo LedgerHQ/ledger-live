@@ -1,9 +1,9 @@
 import test from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
-import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
+import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import {
@@ -11,7 +11,7 @@ import {
   performSwapUntilQuoteSelectionStep,
   ensureTokenApproval,
 } from "tests/utils/swapUtils";
-import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 
 const exchangeApp: AppInfos = AppInfos.EXCHANGE;
 
@@ -349,22 +349,23 @@ const swaps = [
       "@family-sui",
     ],
   },
-  {
-    fromAccount: TokenAccount.CELO_1,
-    toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-4011",
-    tag: [
-      "@NanoSP",
-      "@NanoX",
-      "@Stax",
-      "@Flex",
-      "@NanoGen5",
-      "@celo",
-      "@solana",
-      "@family-solana",
-      "@family-celo",
-    ],
-  },
+  // Temporary removed with Changelly deactivation.
+  // {
+  //   fromAccount: TokenAccount.CELO_1,
+  //   toAccount: Account.SOL_1,
+  //   xrayTicket: "B2CQA-4011",
+  //   tag: [
+  //     "@NanoSP",
+  //     "@NanoX",
+  //     "@Stax",
+  //     "@Flex",
+  //     "@NanoGen5",
+  //     "@celo",
+  //     "@solana",
+  //     "@family-solana",
+  //     "@family-celo",
+  //   ],
+  // },
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {

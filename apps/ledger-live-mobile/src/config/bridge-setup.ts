@@ -1,13 +1,9 @@
-import { cryptoAssetsApi, createRtkCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { buildCryptoAssetsStore } from "@features/platform-currencies";
 import type { StoreType } from "~/state-manager/configureStore";
 
 export function setupCryptoAssetsStore(store: StoreType) {
-  const cryptoAssetsStore = createRtkCryptoAssetsStore(cryptoAssetsApi, async <T>(action: T) => {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return store.dispatch(action as Parameters<typeof store.dispatch>[0]) as unknown;
-  });
-
-  // Set as global store in cryptoassets (single source of truth)
-  setCryptoAssetsStore(cryptoAssetsStore);
+  // Single source of truth: delegate the legacy getCryptoAssetsStore singleton to the domain-backed
+  // token store over the one cryptoAssetsApi cache registered in this store.
+  setCryptoAssetsStore(buildCryptoAssetsStore({ dispatch: store.dispatch }));
 }

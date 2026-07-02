@@ -1,9 +1,8 @@
 import type { CustomFeeInputDescriptor, FeeDescriptor } from "../../../bridge/descriptor/types";
 import type { Transaction as CeloTransaction } from "../types";
 import { BigNumber } from "bignumber.js";
+import { GWEI_DIVISOR } from "./constants";
 import { celoFeeAssets } from "./feeAssets";
-
-const GWEI_DIVISOR = new BigNumber(10).pow(9);
 
 function isBigNumber(value: unknown): value is BigNumber {
   return BigNumber.isBigNumber(value);
@@ -35,6 +34,8 @@ function getSuggestedFeesRange(
       max: weiToGwei(rawGasPrice.times(1.2).integerValue(BigNumber.ROUND_UP)),
     };
   }
+
+  if (transaction.feesStrategy === "custom") return null;
 
   const fees = transaction.fees;
   if (isBigNumber(fees) && fees.gt(0)) {

@@ -69,7 +69,6 @@ on:
         type: choice
         options:
           - defaults
-          - wallet40-q1
           - wallet40-q2
         default: defaults
       feature_flags_json:
@@ -199,6 +198,7 @@ jobs:
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
       SPECULOS_DEVICE: ${{ matrix.device }}
       COINAPPS: ${{ github.workspace }}/coin-apps
+      E2E_DESKTOP_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
       E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
       cache-bucket: ll-nx-cache
       USERDATA_CACHE_ENABLED: ${{ inputs.build_type != 'js' }}
@@ -314,11 +314,11 @@ jobs:
             echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
             echo "- **Commit SHA:** ${{ github.sha }}"
             echo "- **Device selected:** $DEVICE"
-            echo "- **Feature Flags:** ${{ inputs.feature_flags || 'defaults' }}"
             echo "- **Filtered pattern:** $FILTER_PATTERN"
             echo "- **Test Execution ticket ID:** $TEST_EXECUTION"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
+            echo "- **Feature Flags:** ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}"
             echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
             echo "- **Repeat each:** $REPEAT_EACH"
           } >> $GITHUB_STEP_SUMMARY
@@ -370,7 +370,7 @@ jobs:
           test_filter: ${{ steps.test-filter.outputs.filter }}
           invert_filter: ${{ inputs.invert_filter || false }}
           repeat_each: ${{ inputs.repeat_each }}
-          feature_flags: ${{ inputs.feature_flags || 'defaults' }}
+          feature_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           XRAY: ${{ matrix.is_primary && inputs.export_to_xray || false }}
@@ -429,6 +429,13 @@ jobs:
           path: ${{ env.ALLURE_RESULTS }}
           summary_message: ${{ steps.summary.outputs.summary_message }}
 
+      - name: Write failed tests summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        with:
+          results-path: ${{ env.ALLURE_RESULTS }}
+          runner: playwright
+
   report-to-allure-device2:
     name: "Create Allure Report - device 2"
     runs-on: [ledger-live-medium]
@@ -465,6 +472,13 @@ jobs:
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ${{ env.ALLURE_RESULTS }}
           summary_message: ${{ steps.summary.outputs.summary_message }}
+
+      - name: Write failed tests summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        with:
+          results-path: ${{ env.ALLURE_RESULTS }}
+          runner: playwright
 
   qaa-allure-upload:
     name: "QAA Allure Upload - ${{ needs.prepare-devices.outputs.device_1 }} (Experimental)"

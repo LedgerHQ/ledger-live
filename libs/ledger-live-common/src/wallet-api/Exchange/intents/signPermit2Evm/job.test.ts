@@ -36,9 +36,7 @@ beforeEach(() => {
 describe("signPermit2EvmJob", () => {
   it("prepends `preparing` and forwards Permit2 input to the shared typed-data signer", async () => {
     const failure = { type: "failed", error: new Error("boom") } as const;
-    runSignTypedDataEvm.mockReturnValueOnce(
-      of<SignTypedDataEvmRunState>(failure),
-    );
+    runSignTypedDataEvm.mockReturnValueOnce(of<SignTypedDataEvmRunState>(failure));
 
     const states = await lastValueFrom(run().pipe(toArray()));
     const [connection, typedData, path, errorLabel] = runSignTypedDataEvm.mock.calls[0];

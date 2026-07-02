@@ -1,5 +1,5 @@
 import { runAddSubAccountTest } from "../subAccount";
-import { assetAvailableNetworks } from "@ledgerhq/live-common/e2e/data/assetsDrawer";
+import { assetAvailableNetworks } from "@ledgerhq/live-e2e-shared/data/assetsDrawer";
 
 const testConfig = {
   asset: TokenAccount.ETH_USDT_1,

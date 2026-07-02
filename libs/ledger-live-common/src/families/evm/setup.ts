@@ -1,6 +1,5 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import makeCliTools from "./cli";
 import evmResolver from "./getAddress";
 import { prepareMessageToSign, signMessage } from "./signerMessage";
 import { CreateSigner, createMessageSigner, createResolver } from "../../bridge/setup";
@@ -35,6 +34,4 @@ const messageSigner = {
 
 const resolver: Resolver = createResolver(createSigner, evmResolver);
 
-const cliTools = makeCliTools();
-
-export { cliTools, resolver, messageSigner };
+export { resolver, messageSigner };

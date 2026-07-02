@@ -22,7 +22,7 @@ import {
   extractPersistedCALFromState,
   persistedCALContentEqual,
   type PersistedCAL,
-} from "@ledgerhq/cryptoassets/cal-client/persistence";
+} from "@domain/api-currency-token";
 
 import { marketStoreSelector } from "../reducers/market";
 import { marketBannerStoreSelector } from "../reducers/marketBanner";

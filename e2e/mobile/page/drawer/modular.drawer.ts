@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 
 export default class ModularDrawer {
   bottomSheetId = (component: string) => `bottom-sheet-${component}`;

@@ -1,12 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "@ledgerhq/coin-sui/constants";
 import { BigNumber } from "bignumber.js";
-import { SuiAccount, SuiResources, SuiValidator, MappedStake } from "./types";
+import {
+  SuiAccount,
+  SuiOperationExtra,
+  SuiResources,
+  SuiStakingExtra,
+  SuiValidator,
+  MappedStake,
+} from "./types";
 import { getAccountCurrency } from "../../account";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getCurrentSuiPreloadData } from "@ledgerhq/coin-sui/preload";
-import { getOperationExtra } from "@ledgerhq/coin-sui/getOperationExtra";
+import { getStakingExtraByDigest } from "@ledgerhq/coin-sui/getStakingExtraByDigest";
 import { OperationType } from "@ledgerhq/types-live";
 
 export function useSuiMappedStakingPositions(account: SuiAccount) {
@@ -21,27 +28,54 @@ export function useSuiMappedStakingPositions(account: SuiAccount) {
   );
 }
 
-export function useGetExtraDetails(account: SuiAccount, type: OperationType, digest: string) {
-  if (!account.suiResources) {
-    account.suiResources = {};
-  }
-  if (!account.suiResources.cachedOps) {
-    account.suiResources.cachedOps = {};
-  }
-  const cache = account.suiResources.cachedOps;
-  const [data, setData] = useState(cache[digest]);
+/**
+ * Resolve `{ amount, address, name }` for the DELEGATE/UNDELEGATE operation-details drawer.
+ * Fast path: `op.extra.{validatorAddress, stakedAmount}` (populated at sync by
+ * `transactionToOperation`) — synchronous, no network; name from preload. Fallback: ops synced
+ * before those fields existed aren't re-fetched by the incremental sync, so recover them by digest
+ * on open (held in component state). Returns `{}` for non-staking ops or when nothing resolves
+ * (e.g. an optimistic op pre-broadcast), matching the legacy `?? {}` contract.
+ */
+export function useGetExtraDetails(
+  account: SuiAccount,
+  type: OperationType,
+  digest: string,
+): { amount?: string; address?: string; name?: string } {
+  const { validators } = getCurrentSuiPreloadData();
   const currencyId = getAccountCurrency(account).id;
+  const isStakingOp = type === "DELEGATE" || type === "UNDELEGATE";
+
+  const synced = useMemo<SuiStakingExtra | null>(() => {
+    if (!isStakingOp) return null;
+    const op = account.operations.find(o => o.hash === digest);
+    const extra = op?.extra as SuiOperationExtra | undefined;
+    if (!extra?.validatorAddress || !extra?.stakedAmount) return null;
+    return { validatorAddress: extra.validatorAddress, stakedAmount: extra.stakedAmount };
+  }, [account.operations, digest, isStakingOp]);
+
+  // Keyed by digest so a previous op's fetched value is never shown for the current one.
+  const [fetched, setFetched] = useState<{ digest: string; extra: SuiStakingExtra } | null>(null);
 
   useEffect(() => {
-    if (type !== "DELEGATE" && type !== "UNDELEGATE") return;
-    if (data) return;
-    getOperationExtra(digest, currencyId).then(result => {
-      setData(result);
-      cache[digest] = result;
+    if (!isStakingOp || synced || fetched?.digest === digest) return;
+    let cancelled = false;
+    getStakingExtraByDigest(digest, type, currencyId).then(result => {
+      if (cancelled || !result) return;
+      setFetched({ digest, extra: result });
     });
-  }, [data, digest, cache, type, currencyId]);
+    return () => {
+      cancelled = true;
+    };
+  }, [isStakingOp, synced, fetched, digest, type, currencyId]);
 
-  return data;
+  return useMemo(() => {
+    const resolved = synced ?? (fetched?.digest === digest ? fetched.extra : null);
+    if (!resolved) return {};
+    // Leave `name` undefined when the validator isn't in preload so the drawers' `?? address`
+    // fallback can fire (an empty string would defeat it).
+    const name = validators.find(v => v.suiAddress === resolved.validatorAddress)?.name;
+    return { amount: resolved.stakedAmount, address: resolved.validatorAddress, name };
+  }, [synced, fetched, digest, validators]);
 }
 
 export function useLedgerFirstShuffledValidatorsSui(search: string) {

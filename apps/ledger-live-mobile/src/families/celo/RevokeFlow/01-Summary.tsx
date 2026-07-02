@@ -137,7 +137,10 @@ export default function RevokeSummary({ navigation, route }: Props) {
   const hasErrors = Object.keys(status.errors).length > 0;
 
   return (
-    <SafeAreaView edges={["left", "right", "bottom"]} style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      edges={["left", "right", "bottom"]}
+      style={[styles.root, { backgroundColor: colors.background }]}
+    >
       <TrackScreen
         category="CeloRevoke"
         name="Summary"

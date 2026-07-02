@@ -1,5 +1,29 @@
 # @ledgerhq/wallet-cli
 
+## 1.2.0
+
+### Minor Changes
+
+- [#18670](https://github.com/LedgerHQ/ledger-live/pull/18670) [`8de4c1a`](https://github.com/LedgerHQ/ledger-live/commit/8de4c1a112ad768b767ddbecfbc7c2d49bbdce8c) Thanks [@CremaFR](https://github.com/CremaFR)! - Fix swap execution into token accounts that do not exist yet
+
+- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump Device Management Kit to 1.7.1
+
+- [#18215](https://github.com/LedgerHQ/ledger-live/pull/18215) [`b1c20cf`](https://github.com/LedgerHQ/ledger-live/commit/b1c20cfc2595e8ec2019e94ef15238852e4e9fea) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Fix Solana `send --memo` failing before the signing prompt. The wallet-cli bridge was projecting `--memo` as a top-level transaction field, but `@ledgerhq/coin-solana` only reads it from `tx.model.uiState.memo`. The memo never reached the command descriptor, no Memo program instruction was added to the message, and the resulting half-prepared transaction broke the USB/DMK transport. `--memo` is now projected into `tx.model.uiState.memo` for both native and SPL-token transfers.
+
+- [#18203](https://github.com/LedgerHQ/ledger-live/pull/18203) [`0322baa`](https://github.com/LedgerHQ/ledger-live/commit/0322baa8ab7ad8ac5c45c805e7159653047ee7bf) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - remove to fresh address
+
+## 1.2.0-next.0
+
+### Minor Changes
+
+- [#18670](https://github.com/LedgerHQ/ledger-live/pull/18670) [`8de4c1a`](https://github.com/LedgerHQ/ledger-live/commit/8de4c1a112ad768b767ddbecfbc7c2d49bbdce8c) Thanks [@CremaFR](https://github.com/CremaFR)! - Fix swap execution into token accounts that do not exist yet
+
+- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump Device Management Kit to 1.7.1
+
+- [#18215](https://github.com/LedgerHQ/ledger-live/pull/18215) [`b1c20cf`](https://github.com/LedgerHQ/ledger-live/commit/b1c20cfc2595e8ec2019e94ef15238852e4e9fea) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Fix Solana `send --memo` failing before the signing prompt. The wallet-cli bridge was projecting `--memo` as a top-level transaction field, but `@ledgerhq/coin-solana` only reads it from `tx.model.uiState.memo`. The memo never reached the command descriptor, no Memo program instruction was added to the message, and the resulting half-prepared transaction broke the USB/DMK transport. `--memo` is now projected into `tx.model.uiState.memo` for both native and SPL-token transfers.
+
+- [#18203](https://github.com/LedgerHQ/ledger-live/pull/18203) [`0322baa`](https://github.com/LedgerHQ/ledger-live/commit/0322baa8ab7ad8ac5c45c805e7159653047ee7bf) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - remove to fresh address
+
 ## 1.1.0
 
 ### Minor Changes

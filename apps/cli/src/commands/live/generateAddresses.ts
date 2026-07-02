@@ -1,4 +1,4 @@
-import { ADDRESS_CACHE_FILE, isUtxoBasedCurrency } from "@ledgerhq/live-common/e2e/addressCache";
+import { ADDRESS_CACHE_FILE, isUtxoBasedCurrency } from "@ledgerhq/live-e2e-shared/addressCache";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import {
   addressCacheArgs,

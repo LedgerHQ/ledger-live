@@ -5,7 +5,6 @@ import type {
   Operation,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { EvmConfig } from "../config";
 import { createApi } from "./index";
 
@@ -19,7 +18,7 @@ const ARC_USDC_NATIVE_CONTRACT = "0x3600000000000000000000000000000000000000";
 const NATIVE_USDC_ADDRESS = "0x6b618ca7eadcd948266de6602f2f8f3452d1ad6c";
 
 describe("EVM Api (Arc Testnet)", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
   let operations: Operation[];
 
   beforeAll(async () => {

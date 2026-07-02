@@ -24,6 +24,7 @@ const getBlockMock = jest.fn<Promise<{ baseFeePerGas: bigint | undefined }>, unk
 const readContractMock = jest.fn(async ({ functionName }: { functionName: string }) => {
   if (functionName === "getAccountNonvotingLockedGold") return BigInt(0);
   if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
+  if (functionName === "getGroupsVotedForByAccount") return [VALID_RECIPIENT];
   return BigInt(0);
 });
 
@@ -75,8 +76,10 @@ describe("getFeesForTransaction", () => {
     expect(fees).toEqual(BigNumber(24));
   });
 
-  it("should return the correct fees for a revoke transaction without revoked transactions", async () => {
-    // estimateGas throws for revoke with 0 votes → return 0
+  it("should fallback to min native transfer gas when revoke estimateGas reverts", async () => {
+    // A revoke whose on-chain gas estimation reverts must NOT yield a 0 fee
+    // (which would trip FeeNotLoaded and disable Continue). It falls back to a
+    // minimum gas estimate instead.
     estimateGasMock.mockImplementation(async () => {
       throw new Error("execution reverted");
     });
@@ -86,11 +89,13 @@ describe("getFeesForTransaction", () => {
       transaction: { ...transactionFixture, mode: "revoke", recipient: VALID_RECIPIENT },
     });
 
-    expect(fees).toEqual(BigNumber(0));
+    const expectedGas = MIN_GAS_FOR_NATIVE_TRANSFER * MAX_FEES_THRESHOLD_MULTIPLIER;
+    expect(fees).toEqual(new BigNumber(2).times(expectedGas));
   });
 
-  it("should return the correct fees for a revoke transaction with revoked transactions", async () => {
-    // estimateGas = 2, fees = 2*2 = 4
+  it("should return the correct fees for a revoke transaction", async () => {
+    // revoke reuses buildTransaction, which applies MAX_FEES_THRESHOLD_MULTIPLIER:
+    // gas = ceil(estimateGas * 4) = ceil(2*4) = 8, fees = maxFeePerGas(2) * 8 = 16
     estimateGasMock.mockImplementation(async () => BigInt(2));
 
     const fees = await getFeesForTransaction({
@@ -98,10 +103,10 @@ describe("getFeesForTransaction", () => {
       transaction: { ...transactionFixture, mode: "revoke", recipient: VALID_RECIPIENT },
     });
 
-    expect(fees).toEqual(BigNumber(4));
+    expect(fees).toEqual(BigNumber(16));
   });
 
-  it("should return the correct fees for a revoke transaction with revoked transactions and useAllAmount set to true", async () => {
+  it("should return the correct fees for a revoke transaction with useAllAmount set to true", async () => {
     estimateGasMock.mockImplementation(async () => BigInt(2));
 
     const fees = await getFeesForTransaction({
@@ -131,7 +136,20 @@ describe("getFeesForTransaction", () => {
       },
     });
 
-    expect(fees).toEqual(BigNumber(4));
+    expect(fees).toEqual(BigNumber(16));
+  });
+
+  it("should return the correct fees for a revoke transaction of an active vote (index !== 0)", async () => {
+    // index !== 0 builds revokeActive (vs revokePending for index 0); the gas/fee
+    // math is identical: gas = ceil(2*4) = 8, fees = maxFeePerGas(2) * 8 = 16.
+    estimateGasMock.mockImplementation(async () => BigInt(2));
+
+    const fees = await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction: { ...transactionFixture, mode: "revoke", index: 1, recipient: VALID_RECIPIENT },
+    });
+
+    expect(fees).toEqual(BigNumber(16));
   });
 
   it("should return the correct fees for a withdraw transaction", async () => {

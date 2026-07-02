@@ -1,11 +1,7 @@
 import { createActor } from "xstate";
 import type { Account, EIP712Message } from "@ledgerhq/types-live";
 import { createSwapFlowMachine } from "./machine";
-import type {
-  SwapFlowPlan,
-  SwapFlowPorts,
-  SwapFlowResolvers,
-} from "./types";
+import type { SwapFlowPlan, SwapFlowPorts, SwapFlowResolvers } from "./types";
 
 type TestIntent = { kind: string };
 type TestInitInput = { appName: string };
@@ -50,10 +46,7 @@ const RFQ_PLAN: Extract<SwapFlowPlan, { kind: "rfq-order" }> = {
   network: "ethereum",
 };
 
-const APPROVAL_THEN_RFQ_PLAN: Extract<
-  SwapFlowPlan,
-  { kind: "approval-then-rfq-order" }
-> = {
+const APPROVAL_THEN_RFQ_PLAN: Extract<SwapFlowPlan, { kind: "approval-then-rfq-order" }> = {
   kind: "approval-then-rfq-order",
   approvalTransaction: APPROVAL_TX,
   rfqProvider: "uniswapx",

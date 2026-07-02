@@ -1,4 +1,4 @@
-import { formatFlagsData, formatEnvData } from "@ledgerhq/live-common/e2e/index";
+import { formatFlagsData, formatEnvData } from "@ledgerhq/live-e2e-shared/index";
 import fs from "fs";
 import { ElectronApplication } from "@playwright/test";
 import { OnboardingPage } from "../page/onboarding.page";

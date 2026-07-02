@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-evm",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "description": "Ledger EVM Coin integration",
   "keywords": [
     "Ledger",
@@ -95,7 +95,6 @@
     "jest-expect-message": "^1.1.3",
     "msw": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:",
-    "prando": "^6.0.1"
+    "oxlint": "catalog:"
   }
 }

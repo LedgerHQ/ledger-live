@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-celo",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "description": "celo coin integration",
   "keywords": [
     "Ledger",
@@ -60,11 +60,6 @@
       "@ledgerhq/source": "./src/bridge/transaction.ts",
       "require": "./lib/bridge/transaction.js",
       "default": "./lib-es/bridge/transaction.js"
-    },
-    "./cli-transaction": {
-      "@ledgerhq/source": "./src/test/cli-transaction.ts",
-      "require": "./lib/test/cli-transaction.js",
-      "default": "./lib-es/test/cli-transaction.js"
     },
     "./hw-getAddress": {
       "@ledgerhq/source": "./src/signer/hw-getAddress.ts",

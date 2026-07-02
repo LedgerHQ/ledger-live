@@ -5,6 +5,9 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { getStakingABI } from "./abis";
 import { STAKING_CONTRACTS } from "./contracts";
+import { getCoinConfig } from "../config";
+import { isExternalNodeConfig } from "../network/node/types";
+import { getCosmosAddr } from "./redelegations";
 import type {
   StakingAccount,
   StakingDelegation,
@@ -223,32 +226,45 @@ export function parseAmountStringToNumber(amountString: string, unitCode: string
 }
 
 /**
- * Returns true when a Sei EVM account's public key has not yet been confirmed on-chain
- * (via an outbound transaction), meaning its EVM (0x) and Cosmos (sei1) addresses are not yet
- * linked.  Delegation will fail in this state because the staking precompile
- * routes internally through the Cosmos layer and cannot resolve the Cosmos
- * address for an unregistered EVM key.
+ * Returns true when a Sei EVM account's EVM (0x) address is not yet linked
+ * on-chain to its Cosmos (sei1) address. Delegation fails in this state because
+ * the staking precompile routes internally through the Cosmos layer and cannot
+ * resolve the Cosmos address for an unregistered EVM key.
  *
- * Association happens automatically once the account has its first successful outbound
- * transaction confirmed on-chain (e.g. a simple send). We detect the absence of
- * any prior confirmed outbound tx by checking whether the account has ever
- * appeared as a sender in its local confirmed operation history. For a
- * genuinely unassociated account every recorded operation is incoming.
- * Only applies to `sei_evm`; returns false for every other currency.
+ * The link is resolved by querying the chain's address precompile (`getSeiAddr`):
+ * it returns the linked Cosmos address when associated, and reverts when the
+ * address has not been associated yet. We therefore treat a successful, non-empty
+ * response as associated (→ false) and any failure (the revert, but also any RPC
+ * error) as unassociated (→ true), so the warning is shown.
+ *
+ * Only applies to `sei_evm`; returns false for every other currency and when no
+ * precompile / RPC node is configured.
  */
-export function isSeiAccountUnassociated(
+export async function isSeiAccountUnassociated(
   currencyId: string,
   freshAddress: string,
-  operations: ReadonlyArray<{ blockHeight: number | null | undefined; senders: string[] }>,
-): boolean {
+): Promise<boolean> {
   if (currencyId !== "sei_evm") return false;
-  const addressLower = freshAddress.toLowerCase();
-  return !operations.some(
-    op =>
-      op.blockHeight !== null &&
-      op.blockHeight !== undefined &&
-      op.senders.some(s => s.toLowerCase() === addressLower),
-  );
+
+  const precompile = STAKING_CONTRACTS[currencyId]?.apiConfig?.precompileAddress;
+  if (!precompile) return false;
+
+  // Resolve the RPC endpoint. A missing/non-external config means we cannot
+  // determine the status, so we don't surface a warning.
+  let uri: string;
+  try {
+    const node = getCoinConfig(currencyId).info.node;
+    if (!isExternalNodeConfig(node)) return false;
+    uri = node.uri;
+  } catch {
+    return false;
+  }
+
+  // Associated only when the precompile returns a non-empty Cosmos address.
+  // `getCosmosAddr` returns `null` on revert or RPC failure, which we treat as
+  // unassociated so the warning is shown.
+  const cosmosAddress = await getCosmosAddr(uri, precompile, freshAddress);
+  return !cosmosAddress;
 }
 
 /**

@@ -1,5 +1,5 @@
 import { step } from "../../misc/reporters/step";
-import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
+import { AccountType, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Dialog } from "../../component/dialog.component";
 
 export class ModularAccountDialog extends Dialog {
@@ -14,6 +14,16 @@ export class ModularAccountDialog extends Dialog {
   async isModularAccountDialogVisible(): Promise<boolean> {
     await this.waitForDialogToBeVisible();
     return await this.dialogContent.isVisible();
+  }
+
+  @step("Wait for the account selection screen to appear (returns false if it does not)")
+  async waitForAccountSelectionVisible(timeout = 3000): Promise<boolean> {
+    try {
+      await this.dialogContent.waitFor({ state: "visible", timeout });
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   @step("Select account by name")

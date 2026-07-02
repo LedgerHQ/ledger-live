@@ -1,10 +1,20 @@
-import { MoveResource, WriteSetChangeWriteResource, Event } from "@aptos-labs/ts-sdk";
+import {
+  EntryFunctionPayloadResponse,
+  MoveResource,
+  WriteSetChangeWriteResource,
+  Event,
+} from "@aptos-labs/ts-sdk";
 import BigNumber from "bignumber.js";
 import {
   ADD_STAKE_EVENTS,
+  APTOS_ACCOUNT_TRANSFER,
+  APTOS_ASSET_FUNGIBLE_ID,
   APTOS_ASSET_ID,
+  APTOS_FEE_STATEMENT,
   APTOS_FUNGIBLE_STORE,
   APTOS_OBJECT_CORE,
+  COIN_TRANSFER_TYPES,
+  DELEGATION_POOL_TYPES,
   OP_TYPE,
   REACTIVATE_STAKE_EVENTS,
   STAKING_EVENTS,
@@ -34,9 +44,9 @@ export function checkFAOwner(tx: AptosTransaction, event: Event, user_address: s
     if (isWriteSetChangeWriteResource(change)) {
       const storeData = change.data as MoveResource<AptosFungibleoObjectCoreResourceData>;
       if (
-        change.address === event.data.store &&
+        compareAddress(change.address, event.data.store) &&
         storeData.type === APTOS_OBJECT_CORE &&
-        storeData.data.owner === user_address
+        compareAddress(storeData.data.owner, user_address)
       ) {
         return true;
       }
@@ -114,7 +124,7 @@ const checkPayloadType = (
   }
 
   const isTransfer =
-    txPayload?.function === "0x1::aptos_account::transfer" ||
+    txPayload?.function === APTOS_ACCOUNT_TRANSFER ||
     txPayload?.function === "0x1::aptos_account::transfer_coins" ||
     txPayload?.function === "0x1::primary_fungible_store::transfer";
   const isRecipient: boolean = txPayload?.arguments.some(arg => {
@@ -125,24 +135,57 @@ const checkPayloadType = (
   return isTransfer && (shouldFindAddress ? !isRecipient : isRecipient);
 };
 
-export function getCoinAndAmounts(
-  tx: AptosTransaction,
-  address: string,
-): {
+type CoinAndAmounts = {
   coin_id: string | null;
   amount_in: BigNumber;
   amount_out: BigNumber;
   type: OP_TYPE;
-} {
+};
+
+const emptyCoinAndAmounts = (): CoinAndAmounts => ({
+  coin_id: null,
+  amount_in: BigNumber(0),
+  amount_out: BigNumber(0),
+  type: OP_TYPE.UNKNOWN,
+});
+
+const nativeApt = (amount_in: BigNumber, amount_out: BigNumber, type: OP_TYPE): CoinAndAmounts => ({
+  coin_id: APTOS_ASSET_ID,
+  amount_in,
+  amount_out,
+  type,
+});
+
+export function getCoinAndAmounts(tx: AptosTransaction, address: string): CoinAndAmounts {
+  return (
+    getCoinAndAmountsFromEvents(tx, address) ??
+    getCoinAndAmountsFromPayload(tx, address) ??
+    getGasFeeFallback(tx, address) ??
+    emptyCoinAndAmounts()
+  );
+}
+
+function getGasFeeFallback(tx: AptosTransaction, address: string): CoinAndAmounts | null {
+  const senderPaidGas =
+    !!tx.sender &&
+    compareAddress(tx.sender, address) &&
+    tx.events.some(event => event.type === APTOS_FEE_STATEMENT);
+  if (!senderPaidGas) {
+    return null;
+  }
+
+  const fee = BigNumber(tx.gas_unit_price).times(BigNumber(tx.gas_used));
+  return fee.gt(0) ? nativeApt(BigNumber(0), fee, OP_TYPE.UNKNOWN) : null;
+}
+
+function getCoinAndAmountsFromEvents(tx: AptosTransaction, address: string): CoinAndAmounts | null {
   let coin_id: string | null = null;
   let amount_in = BigNumber(0);
   let amount_out = BigNumber(0);
   let type = OP_TYPE.UNKNOWN;
 
-  // Check if it is a staking transaction
-  const stakingTx = !!tx.events.find(event => STAKING_EVENTS.includes(event.type));
+  const stakingTx = tx.events.some(event => STAKING_EVENTS.has(event.type));
 
-  // Collect all events related to the address and calculate the overall amounts
   if (stakingTx) {
     tx.events.forEach(event => {
       if (
@@ -205,15 +248,89 @@ export function getCoinAndAmounts(
       ) {
         coin_id = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
         amount_in = amount_in.plus(event.data.amount);
-      } else if (event.type === "0x1::transaction_fee::FeeStatement" && tx.sender === address) {
-        coin_id ??= APTOS_ASSET_ID;
-        if (coin_id === APTOS_ASSET_ID) {
-          const fees = BigNumber(tx.gas_unit_price).times(BigNumber(tx.gas_used));
-          amount_out = amount_out.plus(fees);
-        }
       }
     });
   }
 
+  if (coin_id === null && amount_in.isZero() && amount_out.isZero()) {
+    return null;
+  }
+
   return { coin_id, amount_in, amount_out, type };
+}
+
+function getCoinAndAmountsFromPayload(
+  tx: AptosTransaction,
+  address: string,
+): CoinAndAmounts | null {
+  const payload = tx.payload;
+  if (!payload || !("function" in payload)) {
+    return null;
+  }
+  return (
+    getNativeTransferFromPayload(payload, tx.sender, address) ??
+    getStakingFromPayload(payload, tx.sender, address)
+  );
+}
+
+function getNativeTransferFromPayload(
+  payload: EntryFunctionPayloadResponse,
+  sender: string,
+  address: string,
+): CoinAndAmounts | null {
+  if (!COIN_TRANSFER_TYPES.has(payload.function)) {
+    return null;
+  }
+
+  const coinType = (payload.type_arguments ?? [])[0];
+  // `aptos_account::transfer` is always native APT and carries no type argument; the generic
+  // transfer functions must explicitly reference APT, otherwise the asset is a (possibly scam) token.
+  const isNative =
+    payload.function === APTOS_ACCOUNT_TRANSFER ||
+    coinType === APTOS_ASSET_ID ||
+    coinType === APTOS_ASSET_FUNGIBLE_ID;
+  if (!isNative) {
+    return null;
+  }
+
+  const args = payload.arguments ?? [];
+  const recipient = typeof args[0] === "string" ? args[0] : undefined;
+  const amount = BigNumber(String(args[1] ?? "0"));
+  if (amount.isZero()) {
+    return null;
+  }
+
+  if (compareAddress(sender, address)) {
+    return nativeApt(BigNumber(0), amount, OP_TYPE.UNKNOWN);
+  }
+  if (recipient && compareAddress(recipient, address)) {
+    return nativeApt(amount, BigNumber(0), OP_TYPE.UNKNOWN);
+  }
+  return null;
+}
+
+function getStakingFromPayload(
+  payload: EntryFunctionPayloadResponse,
+  sender: string,
+  address: string,
+): CoinAndAmounts | null {
+  const fn = payload.function;
+  if (!DELEGATION_POOL_TYPES.has(fn) || !compareAddress(sender, address)) {
+    return null;
+  }
+
+  const amount = BigNumber(String((payload.arguments ?? [])[1] ?? "0"));
+  if (amount.isZero()) {
+    return null;
+  }
+  if (fn.endsWith("::add_stake") || fn.endsWith("::reactivate_stake")) {
+    return nativeApt(BigNumber(0), amount, OP_TYPE.STAKE);
+  }
+  if (fn.endsWith("::unlock")) {
+    return nativeApt(amount, BigNumber(0), OP_TYPE.UNSTAKE);
+  }
+  if (fn.endsWith("::withdraw")) {
+    return nativeApt(amount, BigNumber(0), OP_TYPE.WITHDRAW);
+  }
+  return null;
 }

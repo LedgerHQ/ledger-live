@@ -32,10 +32,14 @@ export function useCryptoAddressesButtonViewModel(): CryptoAddressesButtonViewMo
   const hasAccounts = accountsCount > 0;
   const shouldShowAddAccount = isAddAccountOpen && !hasAccounts;
 
-  const firstThreeCurrencies = [...new Set(accounts.map(a => getAccountCurrency(a)))].slice(
-    0,
-    MAX_ACCOUNTS_TO_DISPLAY,
-  );
+  const firstThreeCurrencies = [
+    ...new Map(
+      accounts.map(a => {
+        const currency = getAccountCurrency(a);
+        return [currency.id, currency] as const;
+      }),
+    ).values(),
+  ].slice(0, MAX_ACCOUNTS_TO_DISPLAY);
 
   const onPress = useCallback(() => {
     if (hasAccounts) {

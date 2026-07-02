@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "4.9.0",
+  "version": "4.10.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -88,7 +88,9 @@
     "@braze/react-native-sdk": "18.0.0",
     "@datadog/mobile-react-native": "2.8.2",
     "@datadog/mobile-react-navigation": "2.8.2",
+    "@domain/api-currency-token": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:*",
+    "@features/platform-currencies": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
     "@formatjs/intl-locale": "3.4.5",
     "@formatjs/intl-pluralrules": "5.2.12",
@@ -273,6 +275,7 @@
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/asset-detail": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-e2e-shared": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/coin-cardano": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",

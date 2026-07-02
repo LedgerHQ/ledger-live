@@ -11,7 +11,7 @@ import {
   type LineChartScrubberPositionChange,
   type LineChartSeries,
 } from "LLD/components/LineChart";
-import { createFiatLineChartValueFormatter } from "LLD/components/LineChart/utils/createFiatLineChartValueFormatter";
+import { createSmallestUnitFiatLineChartValueFormatter } from "LLD/components/LineChart/utils/createFiatLineChartValueFormatter";
 import { createLineChartTooltipTitle } from "LLD/components/LineChart/utils/createLineChartTooltipTitle";
 import {
   buildLineChartBottomPaddedYAxisConfig,
@@ -90,7 +90,7 @@ export function useChartSectionViewModel({
   const points = useMemo(() => getExtremaPointMarkers(series), [series]);
 
   const formatValue = useMemo(
-    () => createFiatLineChartValueFormatter(fiatUnit, locale, discreet),
+    () => createSmallestUnitFiatLineChartValueFormatter(fiatUnit, locale, discreet),
     [fiatUnit, locale, discreet],
   );
 

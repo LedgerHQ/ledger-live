@@ -12,12 +12,12 @@ import {
   approveToken,
   signTypedMessage as signTypedMessageDevice,
   acceptEnableTransactionCheck as acceptEnableTransactionCheckDevice,
-} from "@ledgerhq/live-common/e2e/speculos";
+} from "@ledgerhq/live-e2e-shared/speculos";
 import { setExchangeDependencies } from "../utils/speculosUtils";
-import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
-import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
-import { Account, AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
-import { SwapType, Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
+import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
+import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { SwapType, Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 
 function isSwap(value: SwapType | Account): value is SwapType {
   return value instanceof Swap;

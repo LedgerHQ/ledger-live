@@ -31,7 +31,8 @@ export const PortfolioBorrowSection = ({ onPress }: PortfolioBorrowSectionProps)
   const containerStyle = shouldDisplayOperationsList ? { paddingBottom: bottom + 24 } : undefined;
 
   return (
-    <Box style={containerStyle}
+    <Box
+      style={containerStyle}
       lx={{
         paddingTop: "s32",
         paddingHorizontal: "s16",

@@ -41,6 +41,7 @@ export type BodyContentProps = {
     sourceCurrency: Currency;
     targetCurrency?: Currency;
     isEmbeddedSwap?: boolean;
+    swapEntryPoint?: string;
     sponsored?: boolean;
   };
   onOperationSigned: (value: SignedOperation) => void;
@@ -66,6 +67,7 @@ export const BodyContent = (props: BodyContentProps) => {
         sourceCurrency={props.result.sourceCurrency}
         targetCurrency={props.result.targetCurrency}
         isEmbeddedSwap={props.result.isEmbeddedSwap}
+        swapEntryPoint={props.result.swapEntryPoint}
         sponsored={props.result.sponsored}
         onViewDetails={props.onViewDetails}
       />

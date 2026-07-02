@@ -5,14 +5,8 @@
  * and sign it through the device intent stack without going back to the
  * live-app.
  */
-export {
-  buildProviderTransactionData,
-  isDexExecutionProvider,
-} from "./dexDataBuilders";
-export {
-  DEFAULT_DEX_GAS_LIMIT,
-  DEFAULT_DEX_GAS_LIMIT_MULTIPLIER,
-} from "./constants";
+export { buildProviderTransactionData, isDexExecutionProvider } from "./dexDataBuilders";
+export { DEFAULT_DEX_GAS_LIMIT, DEFAULT_DEX_GAS_LIMIT_MULTIPLIER } from "./constants";
 export { getAdjustedGasLimit } from "./gasLimitAdjusted";
 export type {
   DexBuildContext,

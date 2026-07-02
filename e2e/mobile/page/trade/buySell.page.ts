@@ -1,9 +1,9 @@
 import { Step } from "jest-allure2-reporter/api";
-import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
-import { BuySell, Fiat } from "@ledgerhq/live-common/e2e/models/BuySell";
-import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { AccountType, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { BuySell, Fiat } from "@ledgerhq/live-e2e-shared/models/BuySell";
+import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { openDeeplink, normalizeText } from "../../helpers/commonHelpers";
-import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
 export default class BuySellPage {
   appContainerCssSelector = "#app-container";

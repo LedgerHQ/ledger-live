@@ -46,7 +46,10 @@ export default function SelectPool({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView edges={["left", "right", "bottom"]} style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      edges={["left", "right", "bottom"]}
+      style={[styles.root, { backgroundColor: colors.background }]}
+    >
       <TrackScreen category="DelegationFlow" name="SelectValidator" />
       <SelectPoolSearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <View style={styles.header}>

@@ -21,6 +21,22 @@ function getEventData(manifest: AppManifest) {
   return { walletAPI: manifest.name };
 }
 
+function getSignTrackingPayload(
+  manifest: AppManifest,
+  isEmbeddedSwap?: boolean,
+  partner?: string,
+  swapEntryPoint?: string,
+) {
+  return {
+    ...getEventData(manifest),
+    ...(isEmbeddedSwap !== undefined && {
+      isEmbeddedSwap: String(isEmbeddedSwap),
+    }),
+    ...(partner !== undefined && { partner }),
+    ...(swapEntryPoint !== undefined && { swapEntryPoint }),
+  };
+}
+
 /**
  * Wrap call to underlying trackCall function.
  * @param trackCall
@@ -60,33 +76,38 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       manifest: AppManifest,
       isEmbeddedSwap?: boolean,
       partner?: string,
+      swapEntryPoint?: string,
     ) => {
-      const properties = {
-        ...getEventData(manifest),
-        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
-        ...(partner !== undefined && { partner }),
-      };
-      track("WalletAPI SignTransaction", properties);
+      track(
+        "WalletAPI SignTransaction",
+        getSignTrackingPayload(manifest, isEmbeddedSwap, partner, swapEntryPoint),
+      );
     },
 
     // Failed to sign transaction (cancel or error)
-    signTransactionFail: (manifest: AppManifest, isEmbeddedSwap?: boolean, partner?: string) => {
-      const properties = {
-        ...getEventData(manifest),
-        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
-        ...(partner !== undefined && { partner }),
-      };
-      track("WalletAPI SignTransaction Fail", properties);
+    signTransactionFail: (
+      manifest: AppManifest,
+      isEmbeddedSwap?: boolean,
+      partner?: string,
+      swapEntryPoint?: string,
+    ) => {
+      track(
+        "WalletAPI SignTransaction Fail",
+        getSignTrackingPayload(manifest, isEmbeddedSwap, partner, swapEntryPoint),
+      );
     },
 
     // Successfully signed transaction
-    signTransactionSuccess: (manifest: AppManifest, isEmbeddedSwap?: boolean, partner?: string) => {
-      const properties = {
-        ...getEventData(manifest),
-        ...(isEmbeddedSwap !== undefined && { isEmbeddedSwap: String(isEmbeddedSwap) }),
-        ...(partner !== undefined && { partner }),
-      };
-      track("WalletAPI SignTransaction Success", properties);
+    signTransactionSuccess: (
+      manifest: AppManifest,
+      isEmbeddedSwap?: boolean,
+      partner?: string,
+      swapEntryPoint?: string,
+    ) => {
+      track(
+        "WalletAPI SignTransaction Success",
+        getSignTrackingPayload(manifest, isEmbeddedSwap, partner, swapEntryPoint),
+      );
     },
 
     // Sign Raw transaction modal open
@@ -139,6 +160,7 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       const properties: Record<string, unknown> = getEventData(manifest);
       if (data?.isEmbeddedSwap !== undefined)
         properties.isEmbeddedSwap = String(data.isEmbeddedSwap);
+      if (data?.swapEntryPoint !== undefined) properties.swapEntryPoint = data.swapEntryPoint;
       if (data?.partner !== undefined) properties.partner = data.partner;
       if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
       if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
@@ -151,6 +173,7 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       const properties: Record<string, unknown> = getEventData(manifest);
       if (data?.isEmbeddedSwap !== undefined)
         properties.isEmbeddedSwap = String(data.isEmbeddedSwap);
+      if (data?.swapEntryPoint !== undefined) properties.swapEntryPoint = data.swapEntryPoint;
       if (data?.partner !== undefined) properties.partner = data.partner;
       if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
       if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
@@ -293,13 +316,22 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     },
 
     dappSendTransactionRequested: (manifest: AppManifest, trackingData: DAppTrackingData) => {
-      track("dApp SendTransaction requested", { ...getEventData(manifest), ...trackingData });
+      track("dApp SendTransaction requested", {
+        ...getEventData(manifest),
+        ...trackingData,
+      });
     },
     dappSendTransactionSuccess: (manifest: AppManifest, trackingData: DAppTrackingData) => {
-      track("dApp SendTransaction success", { ...getEventData(manifest), ...trackingData });
+      track("dApp SendTransaction success", {
+        ...getEventData(manifest),
+        ...trackingData,
+      });
     },
     dappSendTransactionFail: (manifest: AppManifest, trackingData?: DAppTrackingData) => {
-      track("dApp SendTransaction fail", { ...getEventData(manifest), ...(trackingData || {}) });
+      track("dApp SendTransaction fail", {
+        ...getEventData(manifest),
+        ...(trackingData || {}),
+      });
     },
     dappPersonalSignRequested: (manifest: AppManifest) => {
       track("dApp PersonalSign requested", getEventData(manifest));

@@ -4,7 +4,7 @@ import { AccountPage } from "../../page/account.page";
 import { AccountsPage } from "../../page/accounts.page";
 import { Layout } from "../../component/layout.component";
 import { DeviceAction } from "../../models/DeviceAction";
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { BigNumber } from "bignumber.js";
 import { Application } from "tests/page";
 import { StellarMemoType } from "tests/page/modal/new.send.modal";

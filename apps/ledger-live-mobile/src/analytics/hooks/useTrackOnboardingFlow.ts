@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
-import { SeedPathStatus } from "~/screens/SyncOnboarding/SyncOnboardingCompanion";
+import { SeedPathStatus } from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/types";
 
 export type UseTrackOnboardingFlow = {
   location: HOOKS_TRACKING_LOCATIONS.onboardingFlow | undefined;

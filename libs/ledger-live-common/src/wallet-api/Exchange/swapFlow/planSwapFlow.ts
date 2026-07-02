@@ -2,14 +2,8 @@ import BigNumber from "bignumber.js";
 import type { EIP712Message } from "@ledgerhq/types-live";
 import { isDexExecutionProvider, type DexBuildContext } from "../dex";
 import { toEIP712Message } from "../intents/signPermit2Evm/permit2";
-import {
-  toRfqEIP712Message,
-  type RfqProvider,
-} from "../intents/signRfqOrderEvm/rfqTypedData";
-import type {
-  Quote,
-  QuoteApprovalTransaction,
-} from "../quotes/types";
+import { toRfqEIP712Message, type RfqProvider } from "../intents/signRfqOrderEvm/rfqTypedData";
+import type { Quote, QuoteApprovalTransaction } from "../quotes/types";
 import type { PlanSwapFlowInput, SwapFlowPlan } from "./types";
 
 /**
@@ -43,8 +37,8 @@ export function quoteNeedsApproval(quote: Quote): boolean {
   const tokenAllowance = quote.quoteDetails.tokenAllowance;
   return Boolean(
     quote.quoteDetails.tags?.isTokenApprovalRequired &&
-      tokenAllowance &&
-      !tokenAllowance.isApproved,
+    tokenAllowance &&
+    !tokenAllowance.isApproved,
   );
 }
 
@@ -58,9 +52,7 @@ export function quoteNeedsApproval(quote: Quote): boolean {
  * transaction blob. The planner uses {@link quoteNeedsApproval} to
  * detect that mismatch and refuse to silently downgrade to a direct swap.
  */
-function getApprovalTransaction(
-  quote: Quote,
-): QuoteApprovalTransaction | null {
+function getApprovalTransaction(quote: Quote): QuoteApprovalTransaction | null {
   const tokenAllowance = quote.quoteDetails.tokenAllowance;
   if (
     quote.quoteDetails.tags?.isTokenApprovalRequired &&
@@ -122,10 +114,7 @@ function getPermitTypedData(quote: Quote): EIP712Message | null {
  * The wallet-side machine splices in the `signature` field once the
  * device signs the order, so the planner returns the body without it.
  */
-function buildRfqSubmitBody(
-  quote: Quote,
-  provider: RfqProvider,
-): Record<string, unknown> {
+function buildRfqSubmitBody(quote: Quote, provider: RfqProvider): Record<string, unknown> {
   const customFields = quote.customFields ?? {};
   if (provider === "uniswapx") {
     return { ...customFields, routing: "DUTCH_V2" };
@@ -146,9 +135,7 @@ function buildRfqPlan(
   const submitBody = buildRfqSubmitBody(quote, rfqProvider);
   const network = quote.quoteDetails.networkFees.currencyId;
   const precomputedOrderId =
-    rfqProvider === "oneinchfusion"
-      ? quote.quoteDetails.permitData?.orderHash
-      : undefined;
+    rfqProvider === "oneinchfusion" ? quote.quoteDetails.permitData?.orderHash : undefined;
 
   if (approvalTransaction) {
     return {
@@ -203,9 +190,7 @@ function needsUsdtRevoke(
 
   // `sendAmount` is in display units (e.g. `350` USDT); atomise it
   // before comparing against the on-chain allowance (atomic units).
-  const sendAmountAtomic = new BigNumber(
-    quote.quoteDetails.sendAmount,
-  ).shiftedBy(USDT_DECIMALS);
+  const sendAmountAtomic = new BigNumber(quote.quoteDetails.sendAmount).shiftedBy(USDT_DECIMALS);
 
   return sendAmountAtomic.gt(approvedAmount);
 }
@@ -228,9 +213,7 @@ function needsUsdtRevoke(
 export function planSwapFlow(input: PlanSwapFlowInput): SwapFlowPlan {
   const { quote } = input;
 
-  if (
-    needsUsdtRevoke(quote, input.fromCurrencyTicker, input.fromCurrencyParentId)
-  ) {
+  if (needsUsdtRevoke(quote, input.fromCurrencyTicker, input.fromCurrencyParentId)) {
     return { kind: "skip", reason: "usdt-revoke-needed" };
   }
 
@@ -307,9 +290,7 @@ export function planSwapFlow(input: PlanSwapFlowInput): SwapFlowPlan {
     const tokenAllowance = quote.quoteDetails.tokenAllowance;
     return {
       kind: "skip",
-      reason: tokenAllowance?.isApproved
-        ? "already-approved-non-dex"
-        : "no-approval-non-dex",
+      reason: tokenAllowance?.isApproved ? "already-approved-non-dex" : "no-approval-non-dex",
     };
   }
 

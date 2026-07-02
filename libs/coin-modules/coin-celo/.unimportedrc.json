@@ -25,7 +25,6 @@
     "src/errors.ts",
     "src/test/bot-specs.ts",
     "src/test/bridgeDatasetTest.ts",
-    "src/test/cli-transaction.ts",
     "src/test/specs/createActivateVoteMutation.ts",
     "src/test/specs/createLockMutation.ts",
     "src/test/specs/createRegisterAccountMutation.ts",

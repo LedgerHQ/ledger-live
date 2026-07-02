@@ -52,6 +52,13 @@ const mockBridge = {
   isEditableOperation: jest.fn(),
   isStuckOperation: jest.fn(),
   getStuckAccountAndOperation: jest.fn(),
+  getEditTransactionPatch: jest.fn(),
+  getEditTransactionStatus: jest.fn(),
+  getFormattedFeeFields: jest.fn(),
+  hasMinimumFundsToCancel: jest.fn(),
+  hasMinimumFundsToSpeedUp: jest.fn(),
+  isStrategyDisabled: jest.fn(),
+  isTransactionConfirmed: jest.fn(),
 };
 
 describe("useBridgeRecipientValidation", () => {

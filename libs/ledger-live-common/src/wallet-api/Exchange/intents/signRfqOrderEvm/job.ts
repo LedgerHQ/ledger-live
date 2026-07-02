@@ -1,10 +1,7 @@
 import { concat, of } from "rxjs";
 import type { Job } from "@ledgerhq/device-intent";
 import { runSignTypedDataEvm } from "../shared/signTypedDataEvm";
-import type {
-  SignRfqOrderEvmIntentInput,
-  SignRfqOrderEvmJobState,
-} from "./types";
+import type { SignRfqOrderEvmIntentInput, SignRfqOrderEvmJobState } from "./types";
 
 /**
  * Job for the RFQ order EIP-712 signing intent (UniswapX, 1inch Fusion).
@@ -19,10 +16,10 @@ import type {
  * device errors into a terminal `failed` state instead of an observable
  * error so the orchestrator can react in `onIntentJobComplete`.
  */
-export const signRfqOrderEvmJob: Job<
-  SignRfqOrderEvmJobState,
-  SignRfqOrderEvmIntentInput
-> = ({ deviceConnectionResult, input }) =>
+export const signRfqOrderEvmJob: Job<SignRfqOrderEvmJobState, SignRfqOrderEvmIntentInput> = ({
+  deviceConnectionResult,
+  input,
+}) =>
   concat(
     of<SignRfqOrderEvmJobState>({ type: "preparing" }),
     runSignTypedDataEvm(

@@ -1,5 +1,5 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../helpers/allure/allure-helper";
 
 const tags: string[] = [
@@ -29,7 +29,7 @@ describe("Market page for user with no device", () => {
   $TmsLink("B2CQA-1879");
   tags.forEach(tag => $Tag(tag));
   it("should filter starred asset in the list", async () => {
-    await app.walletTabNavigator.navigateToMarket();
+    await app.portfolio.tapMarketBannerTitle();
     await app.market.searchAsset(currency.ticker);
     await app.market.expectMarketRowTitle(currency);
     await app.market.openAssetPage(currency);

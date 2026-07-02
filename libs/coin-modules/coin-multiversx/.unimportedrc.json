@@ -7,7 +7,6 @@
     "src/signer.ts"
   ],
   "ignoreUnimported": [
-    "src/cli-transaction.ts",
     "src/datasets/multiversx1.ts",
     "src/deviceTransactionConfig.ts",
     "src/formatters.ts",

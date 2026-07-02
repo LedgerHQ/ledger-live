@@ -1,4 +1,4 @@
-import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
+import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 
 export async function verifyAppValidationStakeInfo(
   delegation: DelegateType,

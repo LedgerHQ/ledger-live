@@ -4,7 +4,6 @@ import invariant from "invariant";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { DmkSignerAleo } from "@ledgerhq/live-signer-aleo";
 import { createBridges } from "@ledgerhq/coin-aleo/bridge/index";
-import makeCliTools from "@ledgerhq/coin-aleo/test/cli";
 import aleoAddressResolver from "@ledgerhq/coin-aleo/signer/getAddress";
 import aleoViewKeyResolver from "@ledgerhq/coin-aleo/signer/getViewKey";
 import type {
@@ -43,6 +42,4 @@ const bridge: Bridge<AleoTransaction> = createBridges(
 const resolver = createResolver(createSigner, aleoAddressResolver);
 const viewKeyResolver = createViewKeyResolver(createSigner, aleoViewKeyResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, resolver, viewKeyResolver };
+export { bridge, resolver, viewKeyResolver };

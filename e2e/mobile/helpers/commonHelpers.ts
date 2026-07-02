@@ -3,16 +3,14 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { exec } from "child_process";
 import { device, log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
-import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
+import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
 import { readFile } from "fs/promises";
 import { NANO_APP_CATALOG_PATH } from "../utils/constants";
-import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
 export const currencyParam = "?currency=";
-
-export const isWallet40 = process.env.E2E_ENABLE_WALLET40 !== "0";
 
 /**
  * Waits for a specified amount of time

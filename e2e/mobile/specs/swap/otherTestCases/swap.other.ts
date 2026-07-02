@@ -1,13 +1,12 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
-import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
+import { SwapType } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
 import { beforeAllFunctionSwap } from "../swap.setup";
-import { isWallet40 } from "../../../helpers/commonHelpers";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
@@ -504,12 +503,7 @@ async function validateSwapAssetsPage(accountFrom: string, accountTo: string) {
 
 async function openSwapFromPortfolioEntryPoint() {
   await app.mainNavigation.openPortfolioViaDeeplink();
-  if (isWallet40) {
-    await app.mainNavigation.tapWallet40Tab("swap");
-  } else {
-    await app.transferMenuDrawer.open();
-    await app.transferMenuDrawer.navigateToSwap();
-  }
+  await app.mainNavigation.tapWallet40Tab("swap");
 }
 
 export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: string[]) {

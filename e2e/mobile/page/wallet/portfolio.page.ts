@@ -1,15 +1,15 @@
 import { Step } from "jest-allure2-reporter/api";
-import { isWallet40, openDeeplink } from "../../helpers/commonHelpers";
+import { openDeeplink } from "../../helpers/commonHelpers";
 import { DEFAULT_TIMEOUT } from "../../helpers/elementHelpers";
+import { getFlags } from "../../bridge/server";
+import type { Features } from "@shared/feature-flags";
 export default class PortfolioPage {
   addNewOrExistingAccount = "add-new-account-button";
   assetsListId = "AssetsList";
   baseLink = "portfolio";
   baseAssetItem = "assetItem-";
   zeroBalance = "$0.00";
-  graphCardBalanceId = "graphCard-balance";
   analyticsBalanceAmountId = "analytics-balance-amount";
-  graphCardChart = "graphCard-chart";
   assetBalanceId = "asset-balance";
   readOnlyItemsId = "PortfolioReadOnlyItems";
   accountsListView = "PortfolioAccountsList";
@@ -17,7 +17,6 @@ export default class PortfolioPage {
   portfolioSettingsId = "topbar-settings";
   portfolioListIdRegex = new RegExp(`portfolio-screen|${this.readOnlyItemsId}`);
   addAccountCta = "add-account-cta";
-  allocationSectionTitleId = "portfolio-allocation-section";
   transactionHistorySectionTitleId = "portfolio-transaction-history-section";
   showAllAssetsButton = "assets-button";
   showAllAccountsButton = "show-all-accounts-button";
@@ -38,7 +37,6 @@ export default class PortfolioPage {
   fearAndGreedCard = "fear-and-greed-card";
   fearAndGreedTitle = "fear-and-greed-title";
   bottomSheetCloseButton = "bottom-sheet-header-close-button";
-  accountsList = "portfolio-assets-layout";
   marketBannerTitle = "market-banner-title";
   quickActionTransferButtonV4 = "quick-action-transfer";
   quickActionSwapButtonV4 = "quick-action-swap";
@@ -75,6 +73,17 @@ export default class PortfolioPage {
       ? getElementByIdWithDescendantTexts(this.operationRowBody, accountName, operationType)
       : getElementByIdWithDescendantTexts(this.operationRowBody, operationType);
 
+  private flags: Features["noah"] | null = null;
+
+  private async loadFlags(): Promise<void> {
+    this.flags ??= JSON.parse(await getFlags()).noah;
+  }
+
+  async isNoahEnabled(): Promise<boolean> {
+    await this.loadFlags();
+    return this.flags!.enabled;
+  }
+
   @Step("Wait for portfolio page to load")
   async waitForPortfolioPageToLoad(timeout = 120000) {
     await waitForElementById(this.portfolioListIdRegex, timeout); // TODO: Remove Regex when legacyWallet is removed from source code
@@ -84,7 +93,8 @@ export default class PortfolioPage {
   async expectPortfolioReadOnly() {
     await detoxExpect(await this.portfolioSettingsButton()).toBeVisible();
     await waitForElementById(this.readOnlyItemsId);
-    jestExpect(await getTextOfElement(this.graphCardBalanceId)).toBe(this.zeroBalance);
+    const balanceLabel = await getLabelOfElement(this.analyticsBalanceAmountId);
+    jestExpect(balanceLabel.replace(/\s/g, "")).toBe(this.zeroBalance);
     for (let index = 0; index < 4; index++)
       jestExpect(await getTextOfElement(this.assetBalanceId, index)).toBe(this.zeroBalance);
   }
@@ -154,24 +164,6 @@ export default class PortfolioPage {
 
   @Step("Go to asset's accounts from portfolio")
   async goToAccounts(currencyName: string) {
-    if (isWallet40) {
-      await this.goToAccountsW40(currencyName);
-    } else {
-      await waitForElementById(this.accountsListView, 10000);
-      await scrollToId(this.allocationSectionTitleId, this.accountsListView, 400);
-
-      if (await IsIdVisible(this.assetItemId(currencyName))) {
-        await tapById(this.assetItemId(currencyName));
-      } else {
-        await tapById(this.showAllAssetsButton);
-        await scrollToId(this.assetItemId(currencyName), this.accountsListView);
-        await tapById(this.assetItemId(currencyName));
-      }
-    }
-  }
-
-  @Step("Go to asset's accounts from portfolio wallet 40")
-  async goToAccountsW40(currencyName: string) {
     await waitForElementById(this.accountsListView, 10000);
     await scrollToId(this.assetItemId(currencyName), this.accountsListView);
     await tapById(this.assetItemId(currencyName));

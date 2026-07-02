@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "24.45.0",
+  "version": "24.45.1",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -38,6 +38,7 @@
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
+    "@ledgerhq/live-e2e-shared": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",

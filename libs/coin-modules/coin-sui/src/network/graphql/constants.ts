@@ -32,7 +32,7 @@ export const STAKES_PAGE_SIZE = 50;
 /** Per-page transaction cap for `BLOCK_BY_SEQUENCE` — server enforces ≤50. */
 export const BLOCK_TXS_PAGE_SIZE = 50;
 
-/** Per-tx event cap for `TRANSACTION_BY_DIGEST`, `TRANSACTIONS_BY_AFFECTED_ADDRESS`, `BLOCK_BY_SEQUENCE`. */
+/** Per-tx event cap for `TRANSACTIONS_BY_AFFECTED_ADDRESS`, `BLOCK_BY_SEQUENCE`, `STAKING_EVENTS_BY_DIGEST`. */
 export const EVENTS_PAGE_SIZE = 50;
 
 /**

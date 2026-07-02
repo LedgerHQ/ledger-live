@@ -1,19 +1,19 @@
 import fs from "fs";
 import path from "path";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { runCliGetAddress } from "@ledgerhq/live-common/e2e/runCli";
+import { runCliGetAddress } from "@ledgerhq/live-e2e-shared/runCli";
 import {
   startSpeculos,
   stopSpeculos,
   specs,
   type SpeculosDevice,
-} from "@ledgerhq/live-common/e2e/speculos";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+} from "@ledgerhq/live-e2e-shared/speculos";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import {
   setCachedAddressEntry,
   type AddressCacheFile,
-} from "@ledgerhq/live-common/e2e/addressCache";
-import type { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+} from "@ledgerhq/live-e2e-shared/addressCache";
+import type { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
 export type GenerateAddressesJobOpts = Partial<{
   coin: string[];

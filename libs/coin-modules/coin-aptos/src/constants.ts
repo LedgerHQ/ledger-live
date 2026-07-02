@@ -18,25 +18,27 @@ export const APTOS_NON_HARDENED_DERIVATION_PATH_REGEX = /^44'\/637'\/[0-9]+'\/[0
 export const APTOS_NON_HARDENED_DERIVATION_PATH = "44'/637'/0'/0/0";
 export const APTOS_HARDENED_DERIVATION_PATH = "44'/637'/0'/0'/0'";
 
-export const COIN_TRANSFER_TYPES: MoveStructId[] = [
-  "0x1::aptos_account::transfer",
+export const APTOS_ACCOUNT_TRANSFER: MoveStructId = "0x1::aptos_account::transfer";
+
+export const COIN_TRANSFER_TYPES = new Set<MoveStructId>([
+  APTOS_ACCOUNT_TRANSFER,
   "0x1::aptos_account::transfer_coins",
   "0x1::coin::transfer",
-];
+]);
 
-export const FA_TRANSFER_TYPES: MoveStructId[] = ["0x1::primary_fungible_store::transfer"];
+export const FA_TRANSFER_TYPES = new Set<MoveStructId>(["0x1::primary_fungible_store::transfer"]);
 
-export const BATCH_TRANSFER_TYPES: MoveStructId[] = [
+export const BATCH_TRANSFER_TYPES = new Set<MoveStructId>([
   "0x1::aptos_account::batch_transfer",
   "0x1::aptos_account::batch_transfer_coins",
-];
+]);
 
-export const DELEGATION_POOL_TYPES: MoveStructId[] = [
+export const DELEGATION_POOL_TYPES = new Set<MoveStructId>([
   "0x1::delegation_pool::add_stake",
   "0x1::delegation_pool::reactivate_stake",
   "0x1::delegation_pool::unlock",
   "0x1::delegation_pool::withdraw",
-];
+]);
 
 export const ADD_STAKE_EVENTS = [
   "0x1::stake::AddStake",
@@ -66,11 +68,12 @@ export const WITHDRAW_STAKE_EVENTS = [
   "0x1::delegation_pool::WithdrawStakeEvent",
 ];
 
-export const STAKING_EVENTS = ADD_STAKE_EVENTS.concat(
-  REACTIVATE_STAKE_EVENTS,
-  UNLOCK_STAKE_EVENTS,
-  WITHDRAW_STAKE_EVENTS,
-);
+export const STAKING_EVENTS = new Set([
+  ...ADD_STAKE_EVENTS,
+  ...REACTIVATE_STAKE_EVENTS,
+  ...UNLOCK_STAKE_EVENTS,
+  ...WITHDRAW_STAKE_EVENTS,
+]);
 
 export const APTOS_ASSET_ID: MoveStructId = "0x1::aptos_coin::AptosCoin";
 
@@ -80,6 +83,8 @@ export const APTOS_FUNGIBLE_STORE: MoveStructId = "0x1::fungible_asset::Fungible
 export const APTOS_ASSET_FUNGIBLE_ID: string = "0xa";
 
 export const APTOS_OBJECT_CORE: MoveStructId = "0x1::object::ObjectCore";
+
+export const APTOS_FEE_STATEMENT = "0x1::transaction_fee::FeeStatement";
 
 export enum OP_TYPE {
   IN = "IN",

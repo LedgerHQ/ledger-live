@@ -17,7 +17,7 @@ import {
   loadConfig,
   setFeatureFlags,
 } from "./bridge/server";
-import { formatEnvData, formatFlagsData } from "@ledgerhq/live-common/e2e";
+import { formatEnvData, formatFlagsData } from "@ledgerhq/live-e2e-shared";
 import { launchApp } from "./helpers/commonHelpers";
 import { getMergedFeatureFlags } from "./utils/featureFlagUtils";
 import detox from "detox/internals";
@@ -26,7 +26,7 @@ import { glob } from "glob";
 import { log } from "detox";
 import { Subject } from "rxjs";
 import { NativeElementHelpers } from "./helpers/elementHelpers";
-import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { withTimeout } from "./utils/withTimeout";
 
 const ARTIFACT_ENV_PATH = path.resolve("artifacts/environment.properties");
@@ -48,10 +48,9 @@ export default async () => {
     try {
       await initDetox();
       await launchApp({ newInstance: true });
+      await setFeatureFlags(getMergedFeatureFlags());
       await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
       await NativeElementHelpers.waitForElementById("topbar-settings", 120_000);
-
-      await setFeatureFlags(getMergedFeatureFlags());
 
       const flagsData = formatFlagsData(JSON.parse(await getFlags()));
       const envsData = formatEnvData(JSON.parse(await getEnvs()));

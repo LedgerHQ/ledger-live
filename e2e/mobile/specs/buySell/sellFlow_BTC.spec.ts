@@ -1,7 +1,7 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runSellFlowTest } from "./buySell";
-import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
-import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { OperationType } from "@ledgerhq/live-e2e-shared/enum/OperationType";
+import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 
 const testConfig = {
   buySell: {

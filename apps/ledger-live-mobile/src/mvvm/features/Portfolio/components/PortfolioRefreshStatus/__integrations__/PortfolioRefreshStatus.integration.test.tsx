@@ -30,81 +30,42 @@ jest.mock("react-native-reanimated", () => {
 });
 
 import React from "react";
-import { render, screen, act, withFlagOverrides } from "@tests/test-renderer";
-import { genAccount } from "@ledgerhq/live-common/mock/account";
+import { render, screen, act } from "@tests/test-renderer";
+import * as usePortfolioBalanceModule from "LLM/hooks/usePortfolioBalance";
+import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/index";
 import { REFRESH_STATUS_VISIBLE_DURATION_MS } from "../usePortfolioRefreshStatusViewModel";
 import { PortfolioRefreshStatus } from "../index";
-import { setRefreshCompleted } from "~/reducers/portfolioRefresh";
 import { State } from "~/reducers/types";
+
+jest.mock("LLM/hooks/usePortfolioBalance");
+
+const mockUsePortfolioBalance = jest.mocked(usePortfolioBalanceModule.usePortfolioBalance);
 
 const FIXED_NOW = new Date("2025-08-15T12:00:00Z").getTime();
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-const makeAccount = (lastSyncDate: Date) => ({
-  ...genAccount("test-sync-account"),
-  lastSyncDate,
-});
+function mockSync(syncPhase: SyncPhase, isManualRefreshLoading = false) {
+  mockUsePortfolioBalance.mockReturnValue({ syncPhase, isManualRefreshLoading } as ReturnType<
+    typeof mockUsePortfolioBalance
+  >);
+}
 
-const withBalanceRefreshRework = withFlagOverrides({
-  lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } },
-});
-
-const withRefreshing = (): ((state: State) => State) => state => ({
+const withOfflineAttempt = (): ((state: State) => State) => state => ({
   ...state,
   portfolioRefresh: {
-    isRefreshing: true,
-    lastSyncTimestampSnapshot: null,
-    hasCompletedInitialSync: false,
-    lastUserSyncClickTimestamp: 0,
-    lastOfflineRefreshAttemptTimestamp: 0,
+    ...state.portfolioRefresh,
+    lastOfflineRefreshAttemptTimestamp: FIXED_NOW,
   },
 });
-
-const withIdle =
-  (lastSyncDate: Date): ((state: State) => State) =>
-  state => ({
-    ...state,
-    accounts: {
-      ...state.accounts,
-      active: [makeAccount(lastSyncDate)],
-    },
-    portfolioRefresh: {
-      isRefreshing: false,
-      lastSyncTimestampSnapshot: null,
-      hasCompletedInitialSync: false,
-      lastUserSyncClickTimestamp: 0,
-      lastOfflineRefreshAttemptTimestamp: 0,
-    },
-  });
-
-const withOfflineAttempt = (): ((state: State) => State) => state =>
-  withBalanceRefreshRework({
-    ...state,
-    portfolioRefresh: {
-      isRefreshing: false,
-      lastSyncTimestampSnapshot: null,
-      hasCompletedInitialSync: false,
-      lastUserSyncClickTimestamp: 0,
-      lastOfflineRefreshAttemptTimestamp: FIXED_NOW,
-    },
-  });
-
-const renderRefreshing = () =>
-  render(<PortfolioRefreshStatus />, {
-    overrideInitialState: withRefreshing(),
-  });
-
-const completeRefresh = (store: ReturnType<typeof renderRefreshing>["store"]) =>
-  act(() => {
-    store.dispatch(setRefreshCompleted());
-  });
 
 // ─── Tests ──────────────────────────────────────────────────────────────────
 
 describe("PortfolioRefreshStatus", () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     jest.setSystemTime(FIXED_NOW);
+    mockSync("synced");
   });
 
   describe("idle state", () => {
@@ -116,17 +77,18 @@ describe("PortfolioRefreshStatus", () => {
       expect(screen.queryByTestId("portfolio-refresh-status-up-to-date")).toBeNull();
     });
 
-    it("should not show up-to-date when mounted with a completed timestamp but no prior refresh", () => {
-      render(<PortfolioRefreshStatus />, {
-        overrideInitialState: withIdle(new Date(Date.now() - 30_000)),
-      });
+    it("should not show any content during cold start (syncing but no user trigger)", () => {
+      mockSync("syncing", false);
+      render(<PortfolioRefreshStatus />);
+      expect(screen.queryByTestId("portfolio-refresh-status-spinner")).toBeNull();
       expect(screen.queryByTestId("portfolio-refresh-status-up-to-date")).toBeNull();
     });
   });
 
   describe("refreshing state", () => {
     it("should show spinner and 'Refreshing...' label", () => {
-      renderRefreshing();
+      mockSync("syncing", true);
+      render(<PortfolioRefreshStatus />);
       expect(screen.getByTestId("portfolio-refresh-status-spinner")).toBeVisible();
       expect(screen.getByTestId("portfolio-refresh-status-refreshing")).toBeVisible();
       expect(screen.getByText("Refreshing...")).toBeVisible();
@@ -158,8 +120,11 @@ describe("PortfolioRefreshStatus", () => {
 
   describe("up-to-date state", () => {
     it("should show checkmark and 'You're up to date' without spinner right after refresh completes", () => {
-      const { store } = renderRefreshing();
-      completeRefresh(store);
+      mockSync("syncing", true);
+      const { rerender } = render(<PortfolioRefreshStatus />);
+
+      mockSync("synced");
+      rerender(<PortfolioRefreshStatus />);
 
       expect(screen.getByTestId("portfolio-refresh-status-up-to-date")).toBeVisible();
       expect(screen.getByText("Portfolio up to date")).toBeVisible();
@@ -168,8 +133,11 @@ describe("PortfolioRefreshStatus", () => {
     });
 
     it("should hide after the visibility duration elapses", () => {
-      const { store } = renderRefreshing();
-      completeRefresh(store);
+      mockSync("syncing", true);
+      const { rerender } = render(<PortfolioRefreshStatus />);
+
+      mockSync("synced");
+      rerender(<PortfolioRefreshStatus />);
 
       expect(screen.getByTestId("portfolio-refresh-status-up-to-date")).toBeVisible();
 
