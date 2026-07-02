@@ -14,6 +14,7 @@ import logger from "~/logger";
 import { NavigatorName, ScreenName } from "~/const";
 import { prepareCurrency } from "~/bridge/cache";
 import noAssociatedAccountsByFamily from "~/generated/NoAssociatedAccounts";
+import { getCustomAddAccountFlow } from "LLM/features/Accounts/utils/customAddAccountFlow";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { groupAddAccounts, addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
@@ -63,6 +64,8 @@ export default function useScanDeviceAccountsViewModel({
     navigationDepth,
     context,
   } = route.params || {};
+
+  const customFlow = getCustomAddAccountFlow(currency);
 
   const newAccountSchemes = useMemo(() => {
     // Find accounts that are (scanned && !existing && !used)
@@ -234,6 +237,18 @@ export default function useScanDeviceAccountsViewModel({
       }
     }
 
+    if (customFlow?.onImportAccounts) {
+      const continueMetadata = analyticsMetadata?.AccountsFound?.onContinue;
+      if (continueMetadata)
+        track(continueMetadata.eventName, {
+          ...continueMetadata.payload,
+        });
+
+      setIsAddinAccounts(true);
+      customFlow.onImportAccounts({ navigation, routeParams: route.params, accountsToAdd });
+      return;
+    }
+
     setIsAddinAccounts(true);
 
     dispatch(
@@ -276,6 +291,7 @@ export default function useScanDeviceAccountsViewModel({
         amount: accountsToAdd.length,
       });
   }, [
+    customFlow,
     currency,
     inline,
     navigation,
@@ -409,6 +425,18 @@ export default function useScanDeviceAccountsViewModel({
     scannedAccounts.length,
     latestScannedAccount,
   ]);
+
+  const scanDeviceAccountsBack = customFlow?.onScanDeviceAccountsBack
+    ? () => {
+        const backMetadata = analyticsMetadata?.ScanDeviceAccounts?.onBack;
+        if (backMetadata)
+          track(backMetadata.eventName, {
+            ...backMetadata.payload,
+          });
+        customFlow.onScanDeviceAccountsBack?.({ navigation });
+      }
+    : undefined;
+
   return {
     alreadyEmptyAccount,
     alreadyEmptyAccountName,
@@ -436,5 +464,7 @@ export default function useScanDeviceAccountsViewModel({
     returnToSwap,
     currency,
     onCloseNavigation,
+    confirmI18nKey: customFlow?.scanDeviceAccountsCtaI18nKey,
+    scanDeviceAccountsBack,
   };
 }
