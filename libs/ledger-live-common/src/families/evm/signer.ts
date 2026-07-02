@@ -70,6 +70,7 @@ export const createSigner: CreateSigner<Signer> = (transport: Transport) => {
         domains: domain && [domain],
       };
       const loadConfig: LoadConfig = {
+        calServiceURL: getEnv("CAL_SERVICE_URL"),
         cryptoassetsBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),
         nftExplorerBaseURL: getEnv("NFT_METADATA_SERVICE") + "/v1/ethereum",
       };
