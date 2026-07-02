@@ -8,6 +8,7 @@ import {
   APIDelegationType,
   APIOperation,
   APIOriginationType,
+  APIRevealType,
   APIStakingType,
   APITokenTransfer,
   APITransactionType,
@@ -272,6 +273,21 @@ const api = {
   },
 
   /**
+   * Fetches a single page of `reveal` operations at the given block level.
+   * Internal — used by `fetchBlockReveals` which handles pagination.
+   * https://api.tzkt.io/#operation/Operations_GetReveals
+   */
+  async getBlockRevealsPage(level: number, cursor?: number): Promise<APIRevealType[]> {
+    const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE, "sort.asc": "id" };
+    if (cursor !== undefined) params["offset.cr"] = cursor;
+    const { data } = await network<APIRevealType[]>({
+      url: `${getExplorerUrl()}/v1/operations/reveals`,
+      params,
+    });
+    return data;
+  },
+
+  /**
    * Fetches a single page of `delegation` operations at the given block level.
    * Internal — used by `fetchBlockDelegations` which handles pagination.
    * https://api.tzkt.io/#operation/Operations_GetDelegations
@@ -470,5 +486,8 @@ export const fetchBlockStaking = (level: number) =>
 
 export const fetchBlockOriginations = (level: number) =>
   fetchBlockPaginated(api.getBlockOriginationsPage, level, "fetchBlockOriginations");
+
+export const fetchBlockReveals = (level: number) =>
+  fetchBlockPaginated(api.getBlockRevealsPage, level, "fetchBlockReveals");
 
 export default api;

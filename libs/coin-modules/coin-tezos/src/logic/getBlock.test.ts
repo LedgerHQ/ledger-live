@@ -2,6 +2,7 @@ import type { OtherBlockOperation } from "@ledgerhq/coin-module-framework/api/ty
 import type {
   APIDelegationType,
   APIOriginationType,
+  APIRevealType,
   APIStakingType,
   APITokenTransfer,
   APITransactionType,
@@ -21,6 +22,7 @@ const mockFetchBlockTokenTransfers = jest.fn();
 const mockFetchBlockDelegations = jest.fn();
 const mockFetchBlockStaking = jest.fn();
 const mockFetchBlockOriginations = jest.fn();
+const mockFetchBlockReveals = jest.fn();
 
 jest.mock("../network", () => ({
   tzkt: {
@@ -32,6 +34,7 @@ jest.mock("../network", () => ({
   fetchBlockDelegations: (...args: unknown[]) => mockFetchBlockDelegations(...args),
   fetchBlockStaking: (...args: unknown[]) => mockFetchBlockStaking(...args),
   fetchBlockOriginations: (...args: unknown[]) => mockFetchBlockOriginations(...args),
+  fetchBlockReveals: (...args: unknown[]) => mockFetchBlockReveals(...args),
 }));
 
 // ---------------------------------------------------------------------------
@@ -149,6 +152,26 @@ function makeOrigination(overrides: Partial<APIOriginationType> = {}): APIOrigin
   } as APIOriginationType;
 }
 
+function makeReveal(overrides: Partial<APIRevealType> = {}): APIRevealType {
+  return {
+    id: 500,
+    hash: "opReveal1",
+    type: "reveal",
+    sender: { address: "tz1Revealer" },
+    counter: 1,
+    level: 5_000_000,
+    block: "BLockHash123",
+    timestamp: "2024-01-01T00:00:00Z",
+    bakerFee: 1420,
+    storageFee: 0,
+    allocationFee: 0,
+    status: "applied",
+    gasLimit: 10600,
+    storageLimit: 0,
+    ...overrides,
+  } as APIRevealType;
+}
+
 // ---------------------------------------------------------------------------
 // Setup
 // ---------------------------------------------------------------------------
@@ -160,6 +183,7 @@ beforeEach(() => {
   mockFetchBlockDelegations.mockResolvedValue([]);
   mockFetchBlockStaking.mockResolvedValue([]);
   mockFetchBlockOriginations.mockResolvedValue([]);
+  mockFetchBlockReveals.mockResolvedValue([]);
   mockGetOperationsOrigination.mockResolvedValue([]);
 });
 
@@ -1170,9 +1194,9 @@ describe("staking operations", () => {
 // ---------------------------------------------------------------------------
 
 describe("origination operations", () => {
-  it("produces a fee-only BlockTransaction for a zero-balance origination", async () => {
+  it("produces a BlockTransaction with ledgerOpType ORIGINATION and zero amount for zero-balance origination", async () => {
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
-    mockFetchBlockOriginations.mockResolvedValue([makeOrigination({ contractBalance: 0 })]);
+    mockFetchBlockOriginations.mockResolvedValue([makeOrigination({ contractBalance: 0, counter: 42, gasLimit: 3494, storageLimit: 5852 })]);
 
     const result = await getBlock(5_000_000);
 
@@ -1182,12 +1206,16 @@ describe("origination operations", () => {
     expect(tx.fees).toBe(1_069_250n); // 5000 + 1000000 + 64250
     expect(tx.feesPayer).toBe("tz1Deployer");
     expect(tx.failed).toBe(false);
-    // zero-balance origination still emits a transfer with amount 0
     expect(tx.operations).toHaveLength(1);
-    expect((tx.operations[0] as any).amount).toBe(0n);
+    expect(tx.operations[0]).toMatchObject({
+      type: "other",
+      address: "tz1Deployer",
+      amount: 0n,
+      details: { ledgerOpType: "ORIGINATION", counter: 42, gasLimit: 3494, storageLimit: 5852, originatedContract: "KT1NewContract" },
+    });
   });
 
-  it("produces an outgoing transfer for an origination with contractBalance > 0", async () => {
+  it("produces negative amount for an origination with contractBalance > 0", async () => {
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockOriginations.mockResolvedValue([makeOrigination({ contractBalance: 500_000 })]);
 
@@ -1196,11 +1224,22 @@ describe("origination operations", () => {
     expect(result.transactions).toHaveLength(1);
     const tx = result.transactions[0];
     expect(tx.operations).toHaveLength(1);
-    const op = tx.operations[0] as any;
+    const op = tx.operations[0] as OtherBlockOperation;
+    expect(op.type).toBe("other");
     expect(op.amount).toBe(-500_000n);
     expect(op.address).toBe("tz1Deployer");
-    expect(op.peer).toBe("KT1NewContract");
-    expect(op.asset.type).toBe("native");
+    expect((op.details as any).ledgerOpType).toBe("ORIGINATION");
+  });
+
+  it("treats negative contractBalance as zero (defensive guard)", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockOriginations.mockResolvedValue([
+      makeOrigination({ contractBalance: -500 }),
+    ]);
+
+    const result = await getBlock(5_000_000);
+
+    expect(result.transactions[0].operations[0]).toMatchObject({ amount: 0n });
   });
 
   it("marks a failed origination and emits no operations", async () => {
@@ -1282,11 +1321,111 @@ describe("origination operations", () => {
 });
 
 // ---------------------------------------------------------------------------
+// 8b. Reveal operations
+// ---------------------------------------------------------------------------
+
+describe("reveal operations", () => {
+  it("creates a BlockTransaction for a reveal with ledgerOpType REVEAL", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockReveals.mockResolvedValue([
+      makeReveal({ counter: 10, gasLimit: 10600, storageLimit: 0, bakerFee: 1420 }),
+    ]);
+
+    const result = await getBlock(5_000_000);
+
+    expect(result.transactions).toHaveLength(1);
+    const tx = result.transactions[0];
+    expect(tx.hash).toBe("opReveal1");
+    expect(tx.failed).toBe(false);
+    expect(tx.feesPayer).toBe("tz1Revealer");
+    expect(tx.fees).toBe(1420n);
+    expect(tx.operations).toHaveLength(1);
+    expect(tx.operations[0]).toEqual({
+      type: "other",
+      address: "tz1Revealer",
+      asset: { type: "native", name: "XTZ" },
+      amount: 0n,
+      details: { counter: 10, gasLimit: 10600, storageLimit: 0, ledgerOpType: "REVEAL" },
+    });
+  });
+
+  it("merges reveal fee into sibling transaction sharing the same hash", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockTransactions.mockResolvedValue([
+      makeTx({ hash: "opBatchedHash", amount: 0, bakerFee: 5115, sender: { address: "tz1User" } }),
+    ]);
+    mockFetchBlockReveals.mockResolvedValue([
+      makeReveal({ hash: "opBatchedHash", bakerFee: 1420, sender: { address: "tz1User" } }),
+    ]);
+
+    const result = await getBlock(5_000_000);
+
+    expect(result.transactions).toHaveLength(1);
+    const tx = result.transactions[0];
+    expect(tx.fees).toBe(6535n); // 5115 + 1420
+    expect(tx.operations.some(op => op.type === "other")).toBe(true);
+    const revealOp = tx.operations.find(op => op.type === "other") as OtherBlockOperation;
+    expect(revealOp.details).toMatchObject({ ledgerOpType: "REVEAL" });
+  });
+
+  it("marks a reveal as failed when status is not 'applied'", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockReveals.mockResolvedValue([makeReveal({ status: "failed" })]);
+
+    const result = await getBlock(5_000_000);
+
+    expect(result.transactions[0].failed).toBe(true);
+    expect(result.transactions[0].operations).toEqual([]);
+  });
+
+  it("skips reveals without a hash", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockReveals.mockResolvedValue([
+      makeReveal({ hash: undefined as unknown as string }),
+      makeReveal({ id: 501, hash: "opReveal2" }),
+    ]);
+
+    const result = await getBlock(5_000_000);
+
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].hash).toBe("opReveal2");
+  });
+
+  it("does not add reveal operations to an already-failed sibling transaction", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockTransactions.mockResolvedValue([
+      makeTx({ hash: "opBatchedHash", amount: 1_000_000, status: "failed", bakerFee: 500 }),
+    ]);
+    mockFetchBlockReveals.mockResolvedValue([
+      makeReveal({ hash: "opBatchedHash", bakerFee: 1420 }),
+    ]);
+
+    const result = await getBlock(5_000_000);
+
+    expect(result.transactions).toHaveLength(1);
+    const tx = result.transactions[0];
+    expect(tx.failed).toBe(true);
+    expect(tx.operations).toEqual([]);
+    expect(tx.fees).toBe(1920n); // 500 + 1420 — fees still accumulate
+  });
+
+  it("creates reveal with empty operations when sender is missing", async () => {
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockReveals.mockResolvedValue([makeReveal({ sender: null })]);
+
+    const result = await getBlock(5_000_000);
+
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].operations).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // 9. Network call contract
 // ---------------------------------------------------------------------------
 
 describe("network calls", () => {
-  it("issues all seven network calls with the correct heights", async () => {
+  it("issues all eight network calls with the correct heights", async () => {
     // Given
     const height = 6_000_000;
     mockGetBlockByLevel.mockResolvedValue(makeBlock(height));
@@ -1308,6 +1447,8 @@ describe("network calls", () => {
     expect(mockFetchBlockStaking).toHaveBeenCalledWith(height);
     expect(mockFetchBlockOriginations).toHaveBeenCalledTimes(1);
     expect(mockFetchBlockOriginations).toHaveBeenCalledWith(height);
+    expect(mockFetchBlockReveals).toHaveBeenCalledTimes(1);
+    expect(mockFetchBlockReveals).toHaveBeenCalledWith(height);
   });
 
   it("propagates errors from getBlockByLevel", async () => {
