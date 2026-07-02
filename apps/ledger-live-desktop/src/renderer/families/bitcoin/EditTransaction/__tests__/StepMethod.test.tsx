@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import { getEditTransactionPatch } from "@ledgerhq/coin-bitcoin/editTransaction/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -16,11 +15,6 @@ jest.mock("~/renderer/linking", () => ({
 
 jest.mock("~/renderer/hooks/useLocalizedUrls", () => ({
   useLocalizedUrl: (url: string) => url,
-}));
-
-jest.mock("@ledgerhq/coin-bitcoin/editTransaction/index", () => ({
-  ...jest.requireActual("@ledgerhq/coin-bitcoin/editTransaction/index"),
-  getEditTransactionPatch: jest.fn(),
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => {
@@ -94,11 +88,11 @@ describe("Bitcoin EditTransaction StepMethod", () => {
     const transitionTo = jest.fn();
     const patch = { feePerByte: new BigNumber(15) };
 
-    const bridge = { updateTransaction: bridgeUpdateTransaction };
+    const getEditTransactionPatch = jest.fn().mockResolvedValue(patch);
+    const bridge = { updateTransaction: bridgeUpdateTransaction, getEditTransactionPatch };
     (getAccountBridge as jest.Mock).mockReturnValue(
       Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge }),
     );
-    (getEditTransactionPatch as jest.Mock).mockResolvedValue(patch);
 
     const props = createProps({ updateTransaction, transitionTo, editType: "cancel" });
     const { user } = render(<StepMethodFooter {...props} />);
@@ -124,11 +118,11 @@ describe("Bitcoin EditTransaction StepMethod", () => {
     const transitionTo = jest.fn();
     const patch = { feePerByte: new BigNumber(15) };
 
-    const bridge2 = { updateTransaction: bridgeUpdateTransaction };
+    const getEditTransactionPatch = jest.fn().mockResolvedValue(patch);
+    const bridge2 = { updateTransaction: bridgeUpdateTransaction, getEditTransactionPatch };
     (getAccountBridge as jest.Mock).mockReturnValue(
       Object.assign(Promise.resolve(bridge2), { status: "fulfilled", value: bridge2 }),
     );
-    (getEditTransactionPatch as jest.Mock).mockResolvedValue(patch);
 
     const props = createProps({ updateTransaction, transitionTo, editType: "speedup" });
     const { user } = render(<StepMethodFooter {...props} />);

@@ -1,8 +1,8 @@
-import { isTransactionConfirmed } from "../../../editTransaction/isTransactionConfirmed";
-import wallet, { type BitcoinLikeWallet } from "../../../wallet-btc";
-import { Account } from "../../../wallet-btc";
+import { isTransactionConfirmed } from "./isTransactionConfirmed";
+import wallet, { type BitcoinLikeWallet } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 
-jest.mock("../../../wallet-btc", () => ({
+jest.mock("@ledgerhq/coin-bitcoin/wallet-btc/index", () => ({
   __esModule: true,
   default: {
     getAccountTxBlockHeight: jest.fn(),
@@ -12,7 +12,11 @@ jest.mock("../../../wallet-btc", () => ({
 const mockedWallet = wallet as jest.Mocked<BitcoinLikeWallet>;
 
 describe("isTransactionConfirmed", () => {
-  const account = {} as Account;
+  const walletAccount = {} as any;
+  const account = {
+    type: "Account",
+    bitcoinResources: { walletAccount },
+  } as unknown as AccountLike;
   const txid = "test-tx-id";
 
   afterEach(() => {
@@ -22,16 +26,16 @@ describe("isTransactionConfirmed", () => {
   it("returns true when transaction exists and has a valid block height", async () => {
     mockedWallet.getAccountTxBlockHeight.mockResolvedValue(123456);
 
-    const result = await isTransactionConfirmed(account, txid);
+    const result = await isTransactionConfirmed({ account, hash: txid });
 
     expect(result).toBe(true);
-    expect(mockedWallet.getAccountTxBlockHeight).toHaveBeenCalledWith(account, txid);
+    expect(mockedWallet.getAccountTxBlockHeight).toHaveBeenCalledWith(walletAccount, txid);
   });
 
   it("returns false when transaction exists but has no block", async () => {
     mockedWallet.getAccountTxBlockHeight.mockResolvedValue(0);
 
-    const result = await isTransactionConfirmed(account, txid);
+    const result = await isTransactionConfirmed({ account, hash: txid });
 
     expect(result).toBe(false);
   });
@@ -39,7 +43,7 @@ describe("isTransactionConfirmed", () => {
   it("returns false when transaction is not found", async () => {
     mockedWallet.getAccountTxBlockHeight.mockResolvedValue(null);
 
-    const result = await isTransactionConfirmed(account, txid);
+    const result = await isTransactionConfirmed({ account, hash: txid });
 
     expect(result).toBe(false);
   });

@@ -4,13 +4,13 @@ import { BigNumber } from "bignumber.js";
 import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/utils";
 
-export const hasMinimumFundsToCancel = ({
+export const hasMinimumFundsToCancel = async ({
   mainAccount,
   transactionToUpdate,
 }: {
   mainAccount: Account;
   transactionToUpdate: Transaction;
-}): boolean => {
+}): Promise<boolean> => {
   const isEip1559 = transactionToUpdate.type === 2;
 
   const factor: number = isEip1559
@@ -21,15 +21,15 @@ export const hasMinimumFundsToCancel = ({
   return mainAccount.balance.gt(feeValue.times(factor).integerValue(BigNumber.ROUND_CEIL));
 };
 
-export const hasMinimumFundsToSpeedUp = ({
+export const hasMinimumFundsToSpeedUp = async ({
   account,
   mainAccount,
   transactionToUpdate,
 }: {
-  account: AccountLike;
+  account?: AccountLike;
   mainAccount: Account;
   transactionToUpdate: Transaction;
-}): boolean => {
+}): Promise<boolean> => {
   const isEip1559 = transactionToUpdate.type === 2;
 
   const factor: number = isEip1559
@@ -40,7 +40,7 @@ export const hasMinimumFundsToSpeedUp = ({
   return mainAccount.balance.gt(
     feeValue
       .times(factor)
-      .plus(account.type === "Account" ? transactionToUpdate.amount : 0)
+      .plus(account?.type === "Account" ? transactionToUpdate.amount : 0)
       .integerValue(BigNumber.ROUND_CEIL),
   );
 };

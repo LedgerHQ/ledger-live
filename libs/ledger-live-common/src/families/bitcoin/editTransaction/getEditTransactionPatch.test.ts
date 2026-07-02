@@ -1,10 +1,10 @@
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction as BtcTransaction } from "../../../types";
-import { buildRbfCancelTx, buildRbfSpeedUpTx } from "../../../buildRbfTransaction";
-import { getEditTransactionPatch } from "../../../editTransaction/getEditTransactionPatch";
+import type { Transaction as BtcTransaction } from "@ledgerhq/coin-bitcoin/types";
+import { buildRbfCancelTx, buildRbfSpeedUpTx } from "./buildRbfTransaction";
+import { getEditTransactionPatch } from "./getEditTransactionPatch";
 
-jest.mock("../../../buildRbfTransaction", () => ({
+jest.mock("./buildRbfTransaction", () => ({
   buildRbfSpeedUpTx: jest.fn(),
   buildRbfCancelTx: jest.fn(),
 }));

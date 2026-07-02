@@ -2,7 +2,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import type { EditType, Transaction as BtcTransaction } from "../types";
-import { buildRbfCancelTx, buildRbfSpeedUpTx } from "../buildRbfTransaction";
+import { buildRbfCancelTx, buildRbfSpeedUpTx } from "./buildRbfTransaction";
 
 const getNetworkFastFeePerByte = (tx: Partial<BtcTransaction>): BigNumber | null => {
   const items = tx.networkInfo?.feeItems?.items;

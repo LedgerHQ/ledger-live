@@ -13,8 +13,8 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => {
   const bridge = {
     updateTransaction: jest.fn(),
     getEditTransactionPatch: jest.fn(),
-    hasMinimumFundsToCancel: jest.fn().mockReturnValue(false),
-    hasMinimumFundsToSpeedUp: jest.fn().mockReturnValue(false),
+    hasMinimumFundsToCancel: jest.fn().mockResolvedValue(false),
+    hasMinimumFundsToSpeedUp: jest.fn().mockResolvedValue(false),
     isTransactionConfirmed: jest.fn().mockResolvedValue(true),
   };
   const settledPromise = Object.assign(Promise.resolve(bridge), {

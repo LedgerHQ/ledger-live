@@ -1,7 +1,7 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { Transaction } from "../types";
+import type { Transaction } from "@ledgerhq/coin-bitcoin/types";
 
 /**
  * Used to display the pending transaction (the original transaction being sped up or canceled) fees info in the edit flow

@@ -1,5 +1,4 @@
-import { getEditTransactionPatch } from "@ledgerhq/coin-bitcoin/editTransaction/index";
-import { Transaction as BitcoinTransaction } from "@ledgerhq/coin-bitcoin/types";
+import type { Transaction as BitcoinTransaction } from "@ledgerhq/coin-bitcoin/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import invariant from "invariant";
@@ -69,7 +68,7 @@ export const StepMethodFooter: React.FC<StepProps> = ({
 
     const mainAccount = getMainAccount(account, parentAccount);
 
-    const patch = await getEditTransactionPatch({
+    const patch = await bridge.getEditTransactionPatch({
       editType,
       transaction: transactionToUpdate,
       account: mainAccount,

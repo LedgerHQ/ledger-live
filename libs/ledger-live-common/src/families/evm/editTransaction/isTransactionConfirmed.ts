@@ -1,6 +1,6 @@
 import { LedgerAPI4xx } from "@ledgerhq/errors";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 
 /**
  * Check if a transaction has been confirmed on the network
@@ -12,16 +12,19 @@ import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
  * broadcast). Treat that as "not confirmed" so wait-for-confirmation polling can continue.
  */
 export const isTransactionConfirmed = async ({
-  currency,
+  account,
   hash,
 }: {
-  currency: CryptoCurrency;
+  account: AccountLike;
   hash: string;
 }): Promise<boolean> => {
-  const nodeApi = getNodeApi(currency);
+  if (account.type !== "Account") {
+    return false;
+  }
+  const nodeApi = getNodeApi(account.currency);
 
   try {
-    const { blockHeight = null } = await nodeApi.getTransaction(currency, hash);
+    const { blockHeight = null } = await nodeApi.getTransaction(account.currency, hash);
     return blockHeight !== null;
   } catch (e: unknown) {
     if (e instanceof LedgerAPI4xx && e.status === 404) {

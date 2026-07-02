@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { getMinFees } from "../../../editTransaction/getMinEditTransactionFees";
+import { getMinFees } from "./getMinEditTransactionFees";
 
 describe("getMinFees", () => {
   it("returns at least +1 sat/vB bump for very small fees", () => {
