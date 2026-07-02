@@ -4,8 +4,8 @@ import {
   ReplacementTransactionUnderpriced,
 } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
-import { NotEnoughNftOwned, NotOwnedNft } from "../errors";
-import { EvmTransactionEIP1559, EvmTransactionLegacy, TransactionStatus } from "../types";
+import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/coin-evm/errors";
+import { EvmTransactionEIP1559, EvmTransactionLegacy, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import { getMinEip1559Fees, getMinLegacyFees } from "./getMinEditTransactionFees";
 import { validateEditTransaction, getEditTransactionStatus } from "./getTransactionStatus";
 

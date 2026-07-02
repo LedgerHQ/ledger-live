@@ -1,11 +1,30 @@
-import { getNodeApi } from "../network/node";
-import { mockNodeApi } from "../network/node/node.fixtures";
+import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
+import type { NodeApi } from "@ledgerhq/coin-evm/network/node/types";
 import { isTransactionConfirmed } from "./isTransactionConfirmed";
 
-jest.mock("../network/node", () => ({
-  ...jest.requireActual("../network/node"),
+jest.mock("@ledgerhq/coin-evm/network/node/index", () => ({
+  ...jest.requireActual("@ledgerhq/coin-evm/network/node/index"),
   getNodeApi: jest.fn(),
 }));
+
+function mockNodeApi(overrides: Partial<jest.Mocked<NodeApi>> = {}): jest.Mocked<NodeApi> {
+  return {
+    getTransaction: jest.fn(),
+    getCoinBalance: jest.fn(),
+    getTokenBalance: jest.fn(),
+    getTokenAllowance: jest.fn(),
+    getTransactionCount: jest.fn(),
+    getGasEstimation: jest.fn(),
+    getFeeData: jest.fn(),
+    broadcastTransaction: jest.fn(),
+    getBlockByHeight: jest.fn(),
+    getBlockReceipts: jest.fn(),
+    traceBlock: jest.fn(),
+    getOptimismAdditionalFees: jest.fn(),
+    getScrollAdditionalFees: jest.fn(),
+    ...overrides,
+  } as jest.Mocked<NodeApi>;
+}
 
 const mockGetNodeApi = jest.mocked(getNodeApi);
 
