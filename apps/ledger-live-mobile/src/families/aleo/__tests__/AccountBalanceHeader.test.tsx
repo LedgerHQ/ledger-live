@@ -14,43 +14,7 @@ jest.mock("LLM/hooks/useAccountUnit", () => ({
   useAccountUnit: () => ({ code: "ALEO", name: "Aleo", magnitude: 6 }),
 }));
 
-jest.mock("~/components/BalanceSummaryInfoItem", () => {
-  const ReactMod = require("react");
-  const { View, Text } = require("react-native");
-  return {
-    __esModule: true,
-    default: ({ title, value }: { title: React.ReactNode; value: React.ReactNode }) =>
-      ReactMod.createElement(
-        View,
-        null,
-        ReactMod.createElement(Text, null, title),
-        ReactMod.createElement(Text, null, value),
-      ),
-  };
-});
-
-jest.mock("~/modals/Info", () => ({ __esModule: true, default: () => null }));
-
 jest.mock("~/components/CurrencyUnitValue", () => ({ __esModule: true, default: () => null }));
-
-jest.mock("~/screens/WalletCentricSections/SectionContainer", () => {
-  const ReactMod = require("react");
-  const { View } = require("react-native");
-  return {
-    __esModule: true,
-    default: ({ children }: { children: React.ReactNode }) =>
-      ReactMod.createElement(View, null, children),
-  };
-});
-
-jest.mock("~/screens/WalletCentricSections/SectionTitle", () => {
-  const ReactMod = require("react");
-  const { Text } = require("react-native");
-  return {
-    __esModule: true,
-    default: ({ title }: { title: React.ReactNode }) => ReactMod.createElement(Text, null, title),
-  };
-});
 
 const baseAleoResources = {
   transparentBalance: new BigNumber(600000),
