@@ -1467,6 +1467,12 @@ importers:
       '@datadog/mobile-react-navigation':
         specifier: 2.8.2
         version: 2.8.2(@datadog/mobile-react-native@2.8.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@devtools/bindings':
+        specifier: workspace:^
+        version: link:../../devtools/bindings
+      '@devtools/shell':
+        specifier: workspace:^
+        version: link:../../devtools/shell
       '@domain/api-currency-fiat':
         specifier: workspace:^
         version: link:../../domain/api/currency-fiat
