@@ -20,10 +20,8 @@ interface StyledBoxProps {
 
 const Container = styled(Box)<StyledBoxProps>`
   align-items: center;
-  grow: true;
-  color: palette.text.shade100;
   justify-content: center;
-  [data-align="true"] {
+  &[data-align="true"] {
     justify-content: space-between;
   }
 `;
