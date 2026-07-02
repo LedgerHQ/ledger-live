@@ -54,12 +54,12 @@ export function useDeviceContextInitializerComponentLWMViewModel({
       onDeviceIdObserved: deviceId => {
         dispatch(identitiesSlice.actions.addDeviceId(deviceId));
       },
-      onLastSeenDeviceInfoObserved: ({ modelId, deviceInfo }) => {
+      onLastSeenDeviceInfoObserved: ({ modelId, deviceInfo, apps }) => {
         dispatch(
           setLastSeenDeviceInfo({
             modelId,
             deviceInfo,
-            apps: [],
+            apps,
           }),
         );
       },

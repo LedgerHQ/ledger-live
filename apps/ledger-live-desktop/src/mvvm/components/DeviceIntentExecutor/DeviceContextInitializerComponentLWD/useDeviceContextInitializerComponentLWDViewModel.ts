@@ -52,13 +52,13 @@ export function useDeviceContextInitializerComponentLWDViewModel({
       onDeviceIdObserved: deviceId => {
         dispatch(identitiesSlice.actions.addDeviceId(deviceId));
       },
-      onLastSeenDeviceInfoObserved: ({ modelId, deviceInfo, latestFirmware }) => {
+      onLastSeenDeviceInfoObserved: ({ modelId, deviceInfo, apps, latestFirmware }) => {
         dispatch(
           setLastSeenDeviceInfo({
             lastSeenDevice: {
               modelId,
               deviceInfo,
-              apps: [],
+              apps,
             },
             latestFirmware,
           }),
