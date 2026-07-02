@@ -349,22 +349,23 @@ const swaps = [
       "@family-sui",
     ],
   },
-  {
-    fromAccount: TokenAccount.CELO_1,
-    toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-4011",
-    tag: [
-      "@NanoSP",
-      "@NanoX",
-      "@Stax",
-      "@Flex",
-      "@NanoGen5",
-      "@celo",
-      "@solana",
-      "@family-solana",
-      "@family-celo",
-    ],
-  },
+  // Temporary removed with Changelly deactivation.
+  // {
+  //   fromAccount: TokenAccount.CELO_1,
+  //   toAccount: Account.SOL_1,
+  //   xrayTicket: "B2CQA-4011",
+  //   tag: [
+  //     "@NanoSP",
+  //     "@NanoX",
+  //     "@Stax",
+  //     "@Flex",
+  //     "@NanoGen5",
+  //     "@celo",
+  //     "@solana",
+  //     "@family-solana",
+  //     "@family-celo",
+  //   ],
+  // },
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
