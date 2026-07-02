@@ -46,7 +46,9 @@ export function runSwapTest(
     tags.forEach(tag => $Tag(tag));
     it(`Swap ${accountToDebit.currency.name} to ${accountToCredit.currency.name}`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(accountToDebit, accountToCredit);
-      const swapAmount = parseFloat(Number(minAmount).toFixed(8)).toString();
+      const swapAmount = minAmount
+        ? Number(minAmount).toFixed(8).replace(/\.?0+$/, "")
+        : minAmount;
       swap.amount = swapAmount;
 
       await performSwapUntilQuoteSelectionStep(accountToDebit, accountToCredit, swapAmount);
