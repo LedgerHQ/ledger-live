@@ -1,22 +1,29 @@
 import type { Account } from "@ledgerhq/types-live";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Device } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";
-import type { CommonParams } from "LLM/features/Accounts/screens/AddAccount/types";
+import type { AddAccountContextType } from "LLM/features/Accounts/screens/AddAccount/types";
 
-export type AleoAddAccountParams = CommonParams & {
+export type AleoAddAccountParams = {
+  currency: CryptoOrTokenCurrency;
   device: Device;
+  context?: AddAccountContextType;
+  onCloseNavigation?: () => void;
+  navigationDepth?: number;
+  accountsToAdd?: Account[];
   inline?: boolean;
   returnToSwap?: boolean;
   onSuccess?: (res: { scannedAccounts: Account[]; selected: Account[] }) => void;
+  initialRouteName?: ScreenName.AleoViewKeyWarning | ScreenName.AleoViewKeyApprove;
 };
 
-// Outer navigator screen (AddAccountNavigator itself, mounted in the root stack).
 export type AleoAddAccountParamList = {
   [ScreenName.AleoAddAccount]: AleoAddAccountParams;
 };
 
-// Inner stack created inside AddAccountNavigator — keyed on a different screen name,
-// so it cannot reuse AleoAddAccountParamList directly.
 export type AleoViewKeyFlowParamList = {
-  [ScreenName.AleoViewKeyWarning]: AleoAddAccountParams;
+  [ScreenName.AleoViewKeyWarning]: Omit<AleoAddAccountParams, "accountsToAdd">;
+  [ScreenName.AleoViewKeyApprove]: AleoAddAccountParams & {
+    accountsToAdd: Account[];
+  };
 };

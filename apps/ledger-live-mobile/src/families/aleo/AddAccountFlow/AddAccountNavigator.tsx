@@ -13,6 +13,7 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { ScreenName } from "~/const";
 import { AleoAddAccountParamList, AleoViewKeyFlowParamList } from "./types";
 import ViewKeyWarningScreen from "./ViewKeyWarningScreen";
+import ViewKeyApproveScreen from "./ViewKeyApproveScreen";
 
 type Props = StackNavigatorProps<AleoAddAccountParamList, ScreenName.AleoAddAccount>;
 
@@ -52,7 +53,15 @@ function HeaderRight({ onClose }: Readonly<HeaderRightProps>) {
 function AddAccountNavigator({ route, navigation }: Readonly<Props>) {
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, false), [colors]);
-  const initialRouteName = ScreenName.AleoViewKeyWarning;
+  // AleoViewKeyApprove requires a non-empty accountsToAdd; fall back to the warning screen
+  // rather than letting ViewKeyApproveScreen mount with an invalid navigation state.
+  const hasAccountsToAdd = Array.isArray(route.params.accountsToAdd)
+    ? route.params.accountsToAdd.length > 0
+    : false;
+  const initialRouteName =
+    route.params.initialRouteName === ScreenName.AleoViewKeyApprove && !hasAccountsToAdd
+      ? ScreenName.AleoViewKeyWarning
+      : (route.params.initialRouteName ?? ScreenName.AleoViewKeyWarning);
   const navigationDepth = route.params.navigationDepth;
   const handleClose = useCallback(() => {
     const parent = navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
@@ -74,6 +83,12 @@ function AddAccountNavigator({ route, navigation }: Readonly<Props>) {
       <Stack.Screen
         name={ScreenName.AleoViewKeyWarning}
         component={ViewKeyWarningScreen}
+        initialParams={{ ...route.params, onCloseNavigation: handleClose }}
+        options={{ headerTitle: "" }}
+      />
+      <Stack.Screen
+        name={ScreenName.AleoViewKeyApprove}
+        component={ViewKeyApproveScreen}
         initialParams={{ ...route.params, onCloseNavigation: handleClose }}
         options={{ headerTitle: "" }}
       />
