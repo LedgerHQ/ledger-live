@@ -1,4 +1,4 @@
-import { renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { renderHook } from "@tests/test-renderer";
 import { usePortfolioBalanceSectionViewModel } from "../usePortfolioBalanceSectionViewModel";
 import * as usePortfolioBalanceModule from "LLM/hooks/usePortfolioBalance";
 import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/index";
@@ -55,12 +55,6 @@ function makeReturn(
 
 const defaultProps = { showAssets: true, isReadOnlyMode: false };
 
-const withFreezeFlag = {
-  overrideInitialState: withFlagOverrides({
-    lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } },
-  }),
-};
-
 describe("usePortfolioBalanceSectionViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -84,13 +78,15 @@ describe("usePortfolioBalanceSectionViewModel", () => {
   });
 
   describe("isLoading", () => {
-    it("is true while syncPhase is syncing, false otherwise", () => {
+    it("is true while CVS is pending, false otherwise", () => {
       const { result, rerender } = renderHook(() =>
         usePortfolioBalanceSectionViewModel(defaultProps),
       );
       expect(result.current.isLoading).toBe(false);
 
-      mockUsePortfolioBalance.mockReturnValue(makeReturn({ syncPhase: "syncing" }));
+      mockUsePortfolioBalance.mockReturnValue(
+        makeReturn({ syncPhase: "syncing", isCvPending: true }),
+      );
       rerender({});
       expect(result.current.isLoading).toBe(true);
 
@@ -108,9 +104,8 @@ describe("usePortfolioBalanceSectionViewModel", () => {
         }),
       );
 
-      const { result, rerender } = renderHook(
-        () => usePortfolioBalanceSectionViewModel(defaultProps),
-        withFreezeFlag,
+      const { result, rerender } = renderHook(() =>
+        usePortfolioBalanceSectionViewModel(defaultProps),
       );
       expect(result.current.balance).toBe(1500);
 
@@ -135,7 +130,12 @@ describe("usePortfolioBalanceSectionViewModel", () => {
       };
 
       mockUsePortfolioBalance.mockReturnValue(
-        makeReturn({ balanceAvailable: false, syncPhase: "syncing", portfolio: emptyPortfolio }),
+        makeReturn({
+          balanceAvailable: false,
+          syncPhase: "syncing",
+          isCvPending: true,
+          portfolio: emptyPortfolio,
+        }),
       );
 
       const { result, rerender } = renderHook(() =>
@@ -144,7 +144,12 @@ describe("usePortfolioBalanceSectionViewModel", () => {
       expect(result.current.isBalanceAvailable).toBe(false);
 
       mockUsePortfolioBalance.mockReturnValue(
-        makeReturn({ balanceAvailable: true, syncPhase: "syncing", portfolio: emptyPortfolio }),
+        makeReturn({
+          balanceAvailable: true,
+          syncPhase: "syncing",
+          isCvPending: true,
+          portfolio: emptyPortfolio,
+        }),
       );
       rerender({});
       expect(result.current.isBalanceAvailable).toBe(false);

@@ -5,7 +5,6 @@ import { BigNumber } from "bignumber.js";
 import { useSelector } from "~/context/hooks";
 import { useLocale } from "~/context/Locale";
 import { discreetModeSelector } from "~/reducers/settings";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { usePortfolioBalanceForDisplay } from "LLM/hooks/usePortfolioBalanceForDisplay";
 
 type Params = {
@@ -19,7 +18,6 @@ export type AnalyticsBalanceDisplayViewModel = {
   isHovering: boolean;
   isLoading: boolean;
   isBalanceAvailable: boolean;
-  shouldDisplayBalanceRefreshRework: boolean;
 };
 
 export function useAnalyticsBalanceDisplayViewModel({
@@ -28,7 +26,6 @@ export function useAnalyticsBalanceDisplayViewModel({
   const { locale } = useLocale();
   const { displayedBalance, isLoading, isBalanceAvailable, unit } = usePortfolioBalanceForDisplay();
   const discreet = useSelector(discreetModeSelector);
-  const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
 
   const formatter = useCallback(
     (val: number): FormattedValue =>
@@ -49,6 +46,5 @@ export function useAnalyticsBalanceDisplayViewModel({
     isHovering,
     isLoading,
     isBalanceAvailable,
-    shouldDisplayBalanceRefreshRework,
   };
 }

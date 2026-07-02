@@ -7,7 +7,6 @@ export default class PortfolioPage {
   baseLink = "portfolio";
   baseAssetItem = "assetItem-";
   zeroBalance = "$0.00";
-  graphCardBalanceId = "graphCard-balance";
   analyticsBalanceAmountId = "analytics-balance-amount";
   graphCardChart = "graphCard-chart";
   assetBalanceId = "asset-balance";
@@ -84,7 +83,8 @@ export default class PortfolioPage {
   async expectPortfolioReadOnly() {
     await detoxExpect(await this.portfolioSettingsButton()).toBeVisible();
     await waitForElementById(this.readOnlyItemsId);
-    jestExpect(await getTextOfElement(this.graphCardBalanceId)).toBe(this.zeroBalance);
+    const balanceLabel = await getLabelOfElement(this.analyticsBalanceAmountId);
+    jestExpect(balanceLabel.replace(/\s/g, "")).toBe(this.zeroBalance);
     for (let index = 0; index < 4; index++)
       jestExpect(await getTextOfElement(this.assetBalanceId, index)).toBe(this.zeroBalance);
   }

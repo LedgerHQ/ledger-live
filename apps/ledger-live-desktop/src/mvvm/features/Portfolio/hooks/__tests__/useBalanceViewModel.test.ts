@@ -12,10 +12,9 @@ jest.mock("LLD/hooks/usePortfolioBalance");
 
 const mockUsePortfolioBalance = jest.mocked(usePortfolioBalanceModule.usePortfolioBalance);
 
-const wallet40WithBalanceRefreshRework = withFlagOverrides({
+const wallet40Enabled = withFlagOverrides({
   lwdWallet40: {
     enabled: true,
-    params: { balanceRefreshRework: true },
   },
 });
 
@@ -32,7 +31,7 @@ const initialState = {
     counterValueCurrency: mockCounterValue,
     selectedTimeRange: "week" as const,
   },
-  ...wallet40WithBalanceRefreshRework,
+  ...wallet40Enabled,
 };
 
 describe("useBalanceViewModel", () => {

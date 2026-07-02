@@ -16,7 +16,6 @@ export interface PortfolioBalanceSectionViewProps {
   readonly isBalanceAvailable: boolean;
   readonly isAnalyticPillVisible: boolean;
   readonly isLoading: boolean;
-  readonly shouldDisplayBalanceRefreshRework: boolean;
   readonly onToggleDiscreetMode: () => void;
 }
 

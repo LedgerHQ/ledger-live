@@ -183,6 +183,13 @@ export const ElementHelpers = {
     return (!("elements" in attributes) ? attributes.text : attributes.elements[index].text) || "";
   },
 
+  async getLabelOfElement(id: string | RegExp, index = 0) {
+    const attributes = await ElementHelpers.getElementById(id, index).getAttributes();
+    return (
+      (!("elements" in attributes) ? attributes.label : attributes.elements[index].label) || ""
+    );
+  },
+
   async getIdOfElement(element: NativeElement, index = 0) {
     const attributes = await element.getAttributes();
     return (

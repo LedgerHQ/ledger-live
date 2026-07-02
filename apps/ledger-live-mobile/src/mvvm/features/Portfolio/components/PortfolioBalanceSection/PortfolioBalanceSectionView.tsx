@@ -35,7 +35,6 @@ export const PortfolioBalanceSectionView = ({
   isBalanceAvailable,
   isAnalyticPillVisible,
   isLoading,
-  shouldDisplayBalanceRefreshRework,
   onToggleDiscreetMode,
 }: PortfolioBalanceSectionViewProps) => {
   const { t } = useTranslation();
@@ -92,7 +91,7 @@ export const PortfolioBalanceSectionView = ({
                 formatter={formatter}
                 size={getAmountDisplaySize(balance)}
                 hidden={discreet}
-                loading={shouldDisplayBalanceRefreshRework && isLoading}
+                loading={isLoading}
                 testID="portfolio-balance-amount"
               />
             ) : (

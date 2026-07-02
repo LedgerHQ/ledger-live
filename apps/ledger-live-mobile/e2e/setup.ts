@@ -67,6 +67,7 @@ declare global {
   var scrollToText: typeof ElementHelpers.scrollToText;
   var scrollToId: typeof ElementHelpers.scrollToId;
   var getTextOfElement: typeof ElementHelpers.getTextOfElement;
+  var getLabelOfElement: typeof ElementHelpers.getLabelOfElement;
   var getIdByRegexp: typeof ElementHelpers.getIdByRegexp;
   var getIdOfElement: typeof ElementHelpers.getIdOfElement;
   var getWebElementByTestId: typeof ElementHelpers.getWebElementByTestId;
@@ -117,6 +118,7 @@ global.performScroll = ElementHelpers.performScroll;
 global.scrollToText = ElementHelpers.scrollToText;
 global.scrollToId = ElementHelpers.scrollToId;
 global.getTextOfElement = ElementHelpers.getTextOfElement;
+global.getLabelOfElement = ElementHelpers.getLabelOfElement;
 global.getIdByRegexp = ElementHelpers.getIdByRegexp;
 global.getIdOfElement = ElementHelpers.getIdOfElement;
 global.getWebElementByTestId = ElementHelpers.getWebElementByTestId;
