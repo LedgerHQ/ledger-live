@@ -276,10 +276,6 @@ export default class SwapLiveAppPage {
     await waitWebElement(button);
     const actualButtonText =
       (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
-    // Default: the CTA must be actionable for a swap ("Swap"/"Continue"), so callers that don't
-    // handle approval fail fast. Only callers that branch on isApprovalRequired() should opt in via
-    // allowApprovalCta to also accept "Approve spending with <provider>" (shown for ERC-20 sources
-    // whose selected provider, e.g. THORChain, has no on-chain allowance yet).
     const ctaVerbs = allowApprovalCta ? "Swap|Continue|Approve spending" : "Swap|Continue";
     jestExpect(actualButtonText).toMatch(
       new RegExp(`^(${ctaVerbs}) with ${escapeRegExp(provider)}$`, "i"),
