@@ -94,6 +94,7 @@ const account: CosmosAccount = {
     unbondingBalance: new BigNumber("0"),
     withdrawAddress: "",
     sequence: 0,
+    publicKey: "",
   },
 };
 

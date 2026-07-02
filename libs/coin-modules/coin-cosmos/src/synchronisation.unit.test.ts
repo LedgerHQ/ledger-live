@@ -228,6 +228,33 @@ describe("getAccountShape", () => {
     ]);
   });
 
+  it("persists the per-account publicKey captured from the device at scan", async () => {
+    mockAccountInfo({});
+    const account = await getAccountShape(
+      { ...infoMock, rest: { publicKey: "02ab" } } as AccountShapeInfo<CosmosAccount>,
+      syncConfig,
+    );
+    expect((account as CosmosAccount).cosmosResources.publicKey).toEqual("02ab");
+  });
+
+  it("falls back to the previously-persisted publicKey on a deviceless re-sync", async () => {
+    mockAccountInfo({});
+    const account = await getAccountShape(
+      {
+        ...infoMock,
+        initialAccount: { cosmosResources: { publicKey: "0399" } } as CosmosAccount,
+      },
+      syncConfig,
+    );
+    expect((account as CosmosAccount).cosmosResources.publicKey).toEqual("0399");
+  });
+
+  it("defaults publicKey to empty string when neither device nor initial account has it", async () => {
+    mockAccountInfo({});
+    const account = await getAccountShape(infoMock, syncConfig);
+    expect((account as CosmosAccount).cosmosResources.publicKey).toEqual("");
+  });
+
   it("should get the memo correctly", async () => {
     mockAccountInfo({ txs: [mockCosmosTx({})] });
     const account = await getAccountShape(infoMock, syncConfig);

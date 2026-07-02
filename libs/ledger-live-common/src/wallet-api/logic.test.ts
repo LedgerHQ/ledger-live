@@ -1039,6 +1039,66 @@ describe("accountGetPublicKeyLogic", () => {
   });
 });
 
+describe("accountGetPublicKeyLogic (cosmos)", () => {
+  const mockAccountGetPublicKeyRequested = jest.fn();
+  const mockAccountGetPublicKeyFail = jest.fn();
+  const mockAccountGetPublicKeySuccess = jest.fn();
+
+  const cosmosCrypto = cryptocurrenciesById["cosmos"];
+  const cosmosAccountId = "js:2:cosmos:0x013:";
+  const cosmosPublicKey = "03a1b2c3";
+
+  const context = createContextContainingAccountId({
+    tracking: {
+      accountGetPublicKeyRequested: mockAccountGetPublicKeyRequested,
+      accountGetPublicKeyFail: mockAccountGetPublicKeyFail,
+      accountGetPublicKeySuccess: mockAccountGetPublicKeySuccess,
+    },
+    accountsParams: [{ id: "13", currency: cosmosCrypto }],
+  });
+
+  const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
+
+  const setCosmosPublicKey = (publicKey: string | undefined) => {
+    const account = context.accounts.find(a => a.id === cosmosAccountId);
+    // the per-account pubkey is persisted in cosmosResources at scan time
+    if (account?.type === "Account")
+      (account as unknown as { cosmosResources: unknown }).cosmosResources = { publicKey };
+  };
+
+  beforeEach(() => {
+    mockAccountGetPublicKeyRequested.mockClear();
+    mockAccountGetPublicKeyFail.mockClear();
+    mockAccountGetPublicKeySuccess.mockClear();
+    mockedGetAccountIdFromWalletAccountId.mockClear();
+    setCosmosPublicKey(cosmosPublicKey);
+  });
+
+  it("returns the persisted public key for a cosmos account", async () => {
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(cosmosAccountId);
+
+    const result = await accountGetPublicKeyLogic(context, walletAccountId);
+
+    expect(result).toEqual(cosmosPublicKey);
+    expect(mockAccountGetPublicKeyFail).toHaveBeenCalledTimes(0);
+    expect(mockAccountGetPublicKeySuccess).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    { desc: "empty (account synced before publicKey was persisted)", publicKey: "" },
+    { desc: "absent (publicKey field unset)", publicKey: undefined },
+  ])("rejects when the persisted public key is $desc", async ({ publicKey }) => {
+    setCosmosPublicKey(publicKey);
+    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(cosmosAccountId);
+
+    await expect(accountGetPublicKeyLogic(context, walletAccountId)).rejects.toThrow(
+      "account.getPublicKey not implemented",
+    );
+    expect(mockAccountGetPublicKeyFail).toHaveBeenCalledTimes(1);
+    expect(mockAccountGetPublicKeySuccess).toHaveBeenCalledTimes(0);
+  });
+});
+
 describe("bitcoinFamilyAccountGetAddressesLogic", () => {
   const mockBitcoinFamilyAccountAddressesRequested = jest.fn();
   const mockBitcoinFamilyAccountAddressesFail = jest.fn();

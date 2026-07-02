@@ -29,6 +29,7 @@ import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/utils";
+import type { CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
@@ -358,6 +359,9 @@ type AccountPublicKeyResolver = (account: Account) => string | null;
 const ACCOUNT_PUBLIC_KEY_RESOLVERS: Record<string, AccountPublicKeyResolver> = {
   tezos: account =>
     normalizePublicKeyForAddress(account.seedIdentifier, account.freshAddress) ?? null,
+  // cosmos seedIdentifier is seed-level (shared across accounts), so the per-account
+  // compressed pubkey (hex) is persisted in cosmosResources at scan time.
+  cosmos: account => (account as CosmosAccount).cosmosResources?.publicKey || null,
 };
 
 export const accountGetPublicKeyLogic = async (
