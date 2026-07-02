@@ -48,6 +48,7 @@
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",
+    "@domain/entity-currency-fiat": "workspace:^",
     "@ledgerhq/coin-solana": "workspace:^",
     "@ledgerhq/context-module": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",

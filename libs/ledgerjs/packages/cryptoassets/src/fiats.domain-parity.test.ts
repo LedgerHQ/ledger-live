@@ -1,6 +1,7 @@
 import type { FiatCurrency } from "@ledgerhq/types-cryptoassets";
 import { FIAT_CURRENCIES_REGISTRY } from "@domain/entity-currency-fiat";
-import { listFiatCurrencies } from "./fiats";
+import { findFiatCurrencyByTicker, getFiatCurrencyByTicker, listFiatCurrencies } from "./fiats";
+import { setFiatCurrenciesStore } from "./fiats-store";
 
 /**
  * Parity guard between the legacy bundled fiat registry (`@ledgerhq/cryptoassets`) and the
@@ -34,5 +35,34 @@ describe("@domain/entity-currency-fiat parity with @ledgerhq/cryptoassets", () =
   it.each(sortedTickers)("matches the legacy definition for %s", ticker => {
     const id = ticker.toLowerCase();
     expect(FIAT_CURRENCIES_REGISTRY[id]).toEqual({ ...legacyByTicker.get(ticker), id });
+  });
+});
+
+/**
+ * Once the domain registry is injected (as every app does at bootstrap), the cryptoassets
+ * accessors must hand back the *same object reference* as `@domain/entity-currency-fiat` — this is
+ * the single-source-of-truth guarantee that keeps `usd === usd` across the codebase. Object
+ * equality (`toEqual`) is already covered above; here we assert reference equality (`toBe`).
+ */
+describe("lookup parity: injected domain store hands back domain references", () => {
+  const domainFiats = Object.values(FIAT_CURRENCIES_REGISTRY);
+
+  beforeAll(() => {
+    setFiatCurrenciesStore(domainFiats);
+  });
+
+  afterAll(() => {
+    // Reset the global store so other suites fall back to the bundled registry.
+    globalThis.__ledgerFiatCurrenciesStore = undefined;
+  });
+
+  it("listFiatCurrencies returns the domain objects", () => {
+    expect(new Set(listFiatCurrencies())).toEqual(new Set(domainFiats));
+  });
+
+  it.each(sortedTickers)("getFiatCurrencyByTicker(%s) is the domain object reference", ticker => {
+    const domain = FIAT_CURRENCIES_REGISTRY[ticker.toLowerCase()];
+    expect(getFiatCurrencyByTicker(ticker)).toBe(domain);
+    expect(findFiatCurrencyByTicker(ticker)).toBe(domain);
   });
 });

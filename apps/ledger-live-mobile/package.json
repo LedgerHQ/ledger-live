@@ -107,6 +107,7 @@
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/coin-multiversx": "workspace:^",
     "@ledgerhq/coin-stacks": "workspace:^",
+    "@domain/entity-currency-fiat": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-intent": "workspace:^",
