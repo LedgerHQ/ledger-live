@@ -326,7 +326,7 @@ function buildParentOperations(
 
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
-    const { address, initialAccount, currency, derivationMode } = info;
+    const { address, initialAccount, currency, derivationMode, rest } = info;
     const coinModuleApi = await getCoinModuleApi(currency.id, kind);
     const bridgeApi = await getBridgeApi(currency, network);
 
@@ -545,7 +545,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       stakingPositions?: StakingPositionOnAccount[];
     } = {
       id: accountId,
-      xpub: address,
+      // `||` (not `??`): a device getAddress may return an empty-string publicKey (e.g. when the
+      // chain code is not requested); treat "" as absent and fall back rather than storing a blank xpub.
+      xpub: rest?.publicKey || initialAccount?.xpub || address,
       blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
       balance: new BigNumber(nativeBalance.toString()),
       spendableBalance: new BigNumber(spendableBalance.toString()),

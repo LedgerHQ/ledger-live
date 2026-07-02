@@ -150,6 +150,53 @@ describe("makeSync", () => {
     expect(newAccount.id).toEqual(account.id);
   });
 
+  it("does not re-key or clear the account when xpub holds the public key instead of the address", async () => {
+    // Account id is address-based; xpub now carries the account public key (post device-heal).
+    // Identity must come from the immutable id, not the mutable xpub field, so the id is unchanged
+    // and the account is NOT cleared/rebuilt on resync.
+    const account = createAccount({
+      id: "js:2:bitcoin:tz1address:",
+      freshAddress: "tz1address",
+      xpub: "edpkPublicKeyDifferentFromTheAddress",
+    });
+
+    // When
+    let capturedInitialAccount: unknown;
+    const accountUpdater = makeSync({
+      getAccountShape: (info: AccountShapeInfo) => {
+        capturedInitialAccount = info.initialAccount;
+        return Promise.resolve({} as Account);
+      },
+    })(account, {} as SyncConfig);
+    const updater = await firstValueFrom(accountUpdater);
+    const newAccount = updater(account);
+
+    // Then — id stays address-based (would be re-keyed to the pubkey if derived from initial.xpub) ...
+    expect(newAccount.id).toEqual("js:2:bitcoin:tz1address:");
+    // ... and needClear was false: getAccountShape received the original account, not a cleared copy.
+    expect(capturedInitialAccount).toBe(account);
+  });
+
+  it("still recomputes the id on a legitimate change (derivationMode)", async () => {
+    // Stored id has derivationMode="", but the account's derivationMode is "segwit":
+    // a legitimate mismatch must still recompute the id (needClear preserved).
+    const account = createAccount({
+      id: "js:2:bitcoin:tz1address:",
+      freshAddress: "tz1address",
+      derivationMode: "segwit",
+    });
+
+    // When
+    const accountUpdater = makeSync({
+      getAccountShape: (_accountShape: AccountShapeInfo) => Promise.resolve({} as Account),
+    })(account, {} as SyncConfig);
+    const updater = await firstValueFrom(accountUpdater);
+    const newAccount = updater(account);
+
+    // Then
+    expect(newAccount.id).toEqual("js:2:bitcoin:tz1address:segwit");
+  });
+
   it("supports getAccountShape returning an Observable", async () => {
     const account = createAccount({
       id: "12",
@@ -912,5 +959,6 @@ function createAccount(init: Partial<Account>): Account {
     // subAccounts: [],
     balanceHistoryCache: createEmptyHistoryCache(),
     swapHistory: [],
+    ...init,
   };
 }

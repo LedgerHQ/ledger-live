@@ -781,6 +781,92 @@ describe("genericGetAccountShape", () => {
     });
   });
 
+  describe("xpub (account public key)", () => {
+    const network = "mainnet";
+    const currency = { id: "tezos", name: "Tezos" };
+
+    beforeEach(() => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 0 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+    });
+
+    test("stores the device public key from info.rest.publicKey", async () => {
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: "tz1address",
+          initialAccount: undefined,
+          currency,
+          derivationMode: "",
+          rest: { publicKey: "edpkPUBLICKEY" },
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.xpub).toBe("edpkPUBLICKEY");
+    });
+
+    test("preserves the stored xpub on a device-less resync (no rest)", async () => {
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: "tz1address",
+          initialAccount: {
+            xpub: "edpkPUBLICKEY",
+            operations: [],
+            pendingOperations: [],
+            blockHeight: 0,
+          },
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      // Never clobbered back to the address.
+      expect(result.xpub).toBe("edpkPUBLICKEY");
+    });
+
+    test("treats an empty-string device publicKey as absent (does not store a blank xpub)", async () => {
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: "tz1address",
+          initialAccount: undefined,
+          currency,
+          derivationMode: "",
+          rest: { publicKey: "" },
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      // "" must fall through to the address, never be stored as the xpub.
+      expect(result.xpub).toBe("tz1address");
+    });
+
+    test("falls back to the address pre-heal (no rest, no stored xpub)", async () => {
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        {
+          address: "tz1address",
+          initialAccount: undefined,
+          currency,
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result.xpub).toBe("tz1address");
+    });
+  });
+
   describe("evm", () => {
     const network = "mainnet";
     const currency = { id: "evm", name: "EVM" };
