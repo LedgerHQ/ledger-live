@@ -82,7 +82,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
               <InfoCircle size={13} />
             </TitleWrapper>
           </ToolTip>
-          <Text>{account.resources?.delegateInfo?.identityName}</Text>
+          <Text>{account.resources?.delegateInfo?.identityName ?? "-"}</Text>
         </BalanceDetail>
 
         <BalanceDetail>
@@ -109,7 +109,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
             </TitleWrapper>
           </ToolTip>
           <CopiableField value={account.resources?.delegateInfo?.address ?? ""}>
-            <Text>{account.resources?.delegateInfo?.address}</Text>
+            <Text>{account.resources?.delegateInfo?.address ?? "-"}</Text>
           </CopiableField>
         </BalanceDetail>
       </DetailsWrapper>
