@@ -6,6 +6,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { getClaimableStakingBalance } from "@ledgerhq/live-common/families/aleo/utils";
+import { useAleoLiveBlockHeight } from "../hooks/useAleoLiveBlockHeight";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { openModal } from "~/renderer/actions/modals";
@@ -143,7 +144,9 @@ const StakingCard = ({
     </Box>
     <CardAmount>{amount}</CardAmount>
     {subLine ? <Box mt={1}>{subLine}</Box> : null}
-    <Box mt={3}>{button}</Box>
+    <Box mt={3} alignItems="flex-start">
+      {button}
+    </Box>
   </Card>
 );
 
@@ -157,10 +160,19 @@ const Staking = ({ account }: { account: AleoAccount }) => {
   const unbondingHeight = account.aleoResources?.unbondingHeight ?? null;
   const claimable = getClaimableStakingBalance(account);
   const isClaimable = claimable.gt(0);
-  const blocksLeft =
-    unbondingHeight != null ? Math.max(0, unbondingHeight - account.blockHeight) : null;
   const hasBonded = bondedBalance.gt(0);
   const hasUnbonding = unbondingBalance.gt(0);
+
+  // Poll the live block height so the countdown stays fresh between account syncs,
+  // but only while an unstaking countdown is actually visible.
+  const isCountingDown =
+    hasUnbonding && !isClaimable && unbondingHeight != null && unbondingHeight > account.blockHeight;
+  const currentHeight = useAleoLiveBlockHeight(account.currency, {
+    fallbackHeight: account.blockHeight,
+    enabled: isCountingDown,
+  });
+  const blocksLeft =
+    unbondingHeight != null ? Math.max(0, unbondingHeight - currentHeight) : null;
   const hasPosition = hasBonded || hasUnbonding;
 
   const formatAmount = (value: BigNumber) =>
@@ -252,7 +264,7 @@ const Staking = ({ account }: { account: AleoAccount }) => {
                         unbondingHeight != null ? (
                           <Trans
                             i18nKey="aleo.stake.claimableAtTooltip"
-                            values={{ height: unbondingHeight, current: account.blockHeight }}
+                            values={{ height: unbondingHeight, current: currentHeight }}
                           />
                         ) : null
                       }

@@ -1,8 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
+import BigNumber from "bignumber.js";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
-import type { formatCurrencyUnitOptions } from "@ledgerhq/live-common/currencies/index";
+import {
+  formatCurrencyUnit,
+  type formatCurrencyUnitOptions,
+} from "@ledgerhq/live-common/currencies/index";
 import type { AleoAccount, AleoTokenAccount } from "@ledgerhq/live-common/families/aleo/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -233,6 +237,10 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
       privateBalance: account.aleoResources.privateBalance,
     },
   });
+  const stakedBalance = (account.aleoResources.bondedBalance ?? new BigNumber(0)).plus(
+    account.aleoResources.unbondingBalance ?? new BigNumber(0),
+  );
+  const formattedStakedBalance = formatCurrencyUnit(unit, stakedBalance, formatConfig);
 
   return (
     <Wrapper>
@@ -250,6 +258,11 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
         titleKey="aleo.account.privateBalance"
         tooltipKey="aleo.account.privateBalanceTooltip"
         formattedValue={formattedBalances.private}
+      />
+      <BalanceRow
+        titleKey="aleo.account.stakedBalance"
+        tooltipKey="aleo.account.stakedBalanceTooltip"
+        formattedValue={formattedStakedBalance}
       />
       <BalanceDetail>
         <div

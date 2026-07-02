@@ -94,6 +94,35 @@ describe("AccountBalanceSummaryFooter", () => {
     expect(screen.getByText("***")).toBeInTheDocument();
   });
 
+  it("should display staked balance as the sum of bonded and unbonding balances", () => {
+    const bondedBalance = BigNumber(25);
+    const unbondingBalance = BigNumber(15);
+    const stakedAccount: AleoAccount = {
+      ...mockAccount,
+      aleoResources: {
+        transparentBalance: mockTransparentBalance,
+        provableApi: null,
+        privateBalance: null,
+        unspentPrivateRecords: [],
+        lastPrivateSyncDate: null,
+        bondedBalance,
+        unbondingBalance,
+      },
+    };
+
+    render(<AccountBalanceSummaryFooter account={stakedAccount} />);
+
+    expect(screen.getByText("Staked")).toBeInTheDocument();
+    expect(screen.getByText(`formatted: ${bondedBalance.plus(unbondingBalance)}`)).toBeInTheDocument();
+  });
+
+  it("should display staked balance as 0 when there is no staking position", () => {
+    render(<AccountBalanceSummaryFooter account={mockAccount} />);
+
+    expect(screen.getByText("Staked")).toBeInTheDocument();
+    expect(screen.getByText("formatted: 0")).toBeInTheDocument();
+  });
+
   it("should return null for token accounts when token config flag is disabled", () => {
     const { container } = render(<AccountBalanceSummaryFooter account={ALEO_TOKEN_ACCOUNT} />, {
       initialState: { accounts: [mockAccount] },

@@ -7,6 +7,10 @@ import StakingSection from "./index";
 import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
 
 jest.mock("~/renderer/hooks/useAccountUnit");
+// Keep the live-block-height poll inert so the countdown stays at account.blockHeight.
+jest.mock("@ledgerhq/live-common/families/aleo/logic", () => ({
+  lastBlock: jest.fn(() => new Promise(() => {})),
+}));
 
 const mockUseAccountUnit = jest.mocked(useAccountUnit);
 

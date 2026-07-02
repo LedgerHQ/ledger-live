@@ -9060,6 +9060,8 @@
       "transparentBalanceTooltip": "Balance that is visible to the public",
       "privateBalance": "Private balance",
       "privateBalanceTooltip": "Balance that is hidden from the public",
+      "stakedBalance": "Staked",
+      "stakedBalanceTooltip": "Balance that is bonded, unbonding, or ready to be claimed",
       "syncButton": {
         "startSync": "Start sync",
         "stopSync": "Stop sync",
