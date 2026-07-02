@@ -3,6 +3,7 @@ import { isObservable, lastValueFrom, Observable } from "rxjs";
 import { log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
 import { SpeculosAppType } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { getMergedFeatureFlags } from "./featureFlagUtils";
 import { isSpeculosRemote } from "../helpers/commonHelpers";
 import {
   deleteSpeculos,
@@ -12,9 +13,9 @@ import {
   removeSpeculosAndDeregisterKnownSpeculos,
 } from "./speculosUtils";
 import { waitForSpeculosReady } from "@ledgerhq/live-e2e-shared/speculosCI";
-import type { PartialFeatures } from "@shared/feature-flags";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
-import { getMergedFeatureFlags } from "./featureFlagUtils";
+
+import type { Features, PartialFeatures } from "@shared/feature-flags";
 
 function checkTestFailed(): void {
   if (globalThis.IS_FAILED) {
@@ -377,7 +378,7 @@ export class InitializationManager {
 
   static async setFeatureFlags(featureFlags: PartialFeatures) {
     const mergedFeatureFlags = getMergedFeatureFlags({ testFlags: featureFlags });
-    const wallet40 = mergedFeatureFlags.lwmWallet40;
+    const wallet40 = mergedFeatureFlags.lwmWallet40 as Features["lwmWallet40"];
     isMyWalletEnabled = Boolean(wallet40?.enabled && wallet40?.params?.myWallet);
 
     await allure.attachment(

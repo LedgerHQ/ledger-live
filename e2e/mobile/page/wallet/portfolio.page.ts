@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { isWallet40, openDeeplink } from "../../helpers/commonHelpers";
+import { openDeeplink } from "../../helpers/commonHelpers";
 import { DEFAULT_TIMEOUT } from "../../helpers/elementHelpers";
 import { getFlags } from "../../bridge/server";
 import type { Features } from "@shared/feature-flags";
@@ -10,7 +10,6 @@ export default class PortfolioPage {
   baseAssetItem = "assetItem-";
   zeroBalance = "$0.00";
   analyticsBalanceAmountId = "analytics-balance-amount";
-  graphCardChart = "graphCard-chart";
   assetBalanceId = "asset-balance";
   readOnlyItemsId = "PortfolioReadOnlyItems";
   accountsListView = "PortfolioAccountsList";
@@ -18,7 +17,6 @@ export default class PortfolioPage {
   portfolioSettingsId = "topbar-settings";
   portfolioListIdRegex = new RegExp(`portfolio-screen|${this.readOnlyItemsId}`);
   addAccountCta = "add-account-cta";
-  allocationSectionTitleId = "portfolio-allocation-section";
   transactionHistorySectionTitleId = "portfolio-transaction-history-section";
   showAllAssetsButton = "assets-button";
   showAllAccountsButton = "show-all-accounts-button";
@@ -39,7 +37,6 @@ export default class PortfolioPage {
   fearAndGreedCard = "fear-and-greed-card";
   fearAndGreedTitle = "fear-and-greed-title";
   bottomSheetCloseButton = "bottom-sheet-header-close-button";
-  accountsList = "portfolio-assets-layout";
   marketBannerTitle = "market-banner-title";
   quickActionTransferButtonV4 = "quick-action-transfer";
   quickActionSwapButtonV4 = "quick-action-swap";
@@ -167,24 +164,6 @@ export default class PortfolioPage {
 
   @Step("Go to asset's accounts from portfolio")
   async goToAccounts(currencyName: string) {
-    if (isWallet40) {
-      await this.goToAccountsW40(currencyName);
-    } else {
-      await waitForElementById(this.accountsListView, 10000);
-      await scrollToId(this.allocationSectionTitleId, this.accountsListView, 400);
-
-      if (await IsIdVisible(this.assetItemId(currencyName))) {
-        await tapById(this.assetItemId(currencyName));
-      } else {
-        await tapById(this.showAllAssetsButton);
-        await scrollToId(this.assetItemId(currencyName), this.accountsListView);
-        await tapById(this.assetItemId(currencyName));
-      }
-    }
-  }
-
-  @Step("Go to asset's accounts from portfolio wallet 40")
-  async goToAccountsW40(currencyName: string) {
     await waitForElementById(this.accountsListView, 10000);
     await scrollToId(this.assetItemId(currencyName), this.accountsListView);
     await tapById(this.assetItemId(currencyName));

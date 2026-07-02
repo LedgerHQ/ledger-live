@@ -1,7 +1,11 @@
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
-import { getFlags } from "../../bridge/server";
-import type { Features } from "@shared/feature-flags";
+
+import {
+  isAssetDiscoverabilityEnabled,
+  isAggregatedAssetsEnabled,
+} from "../../utils/featureFlagUtils";
+
 import type { CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
 export default class MarketPage {
@@ -30,29 +34,6 @@ export default class MarketPage {
   // The new MarketScreen keys rows by ledger currency id, the legacy list by ticker.
   marketScreenRow = (currency: CurrencyType) => getElementById(`marketItem-${currency.id}`);
 
-  private flags: Features["lwmWallet40"] | null = null;
-
-  @Step("Reset market feature flags cache")
-  resetFlags(): void {
-    this.flags = null;
-  }
-
-  private async loadFlags(): Promise<void> {
-    this.flags ??= JSON.parse(await getFlags()).lwmWallet40;
-  }
-
-  private async isAssetDiscoverabilityEnabled(): Promise<boolean> {
-    await this.loadFlags();
-    return !!this.flags?.enabled && !!this.flags?.params?.assetDiscoverability;
-  }
-
-  // Distinct from `assetDiscoverability`: gates the new MVVM AssetDetail (with
-  // coin-options) vs the legacy MarketDetail screen (see useAssetDetailNavigation).
-  private async isAggregatedAssetsEnabled(): Promise<boolean> {
-    await this.loadFlags();
-    return !!this.flags?.enabled && !!this.flags?.params?.aggregatedAssets;
-  }
-
   @Step("Go back from the market screen")
   async goBack() {
     await waitForElementById(this.headerBackButtonId);
@@ -71,7 +52,7 @@ export default class MarketPage {
 
   @Step("Expect market list header left")
   async goBackToPortfolio() {
-    if (await this.isAssetDiscoverabilityEnabled()) {
+    if (await isAssetDiscoverabilityEnabled()) {
       await this.goBack();
     } else {
       await tapByElement(this.marketListHeaderLeft());
@@ -91,7 +72,7 @@ export default class MarketPage {
 
   @Step("Open asset page")
   async openAssetPage(currency: CurrencyType) {
-    if (await this.isAssetDiscoverabilityEnabled()) {
+    if (await isAssetDiscoverabilityEnabled()) {
       await tapByElement(this.marketScreenRow(currency));
     } else {
       await tapByElement(this.marketRowTitle(currency));
@@ -100,7 +81,7 @@ export default class MarketPage {
 
   @Step("Star favorite coin")
   async starFavoriteCoin() {
-    if (await this.isAggregatedAssetsEnabled()) {
+    if (await isAggregatedAssetsEnabled()) {
       await tapByElement(this.coinOptionsTrigger());
       await tapByElement(this.coinOptionsFavouriteRow());
     } else {
@@ -110,7 +91,7 @@ export default class MarketPage {
 
   @Step("Back to asset list")
   async backToAssetList() {
-    if (await this.isAggregatedAssetsEnabled()) {
+    if (await isAggregatedAssetsEnabled()) {
       await this.goBack();
     } else {
       await tapByElement(this.assetDetailBackBtn());
@@ -119,7 +100,7 @@ export default class MarketPage {
 
   @Step("Filter starred asset")
   async filterStaredAsset() {
-    if (await this.isAssetDiscoverabilityEnabled()) {
+    if (await isAssetDiscoverabilityEnabled()) {
       await tapById(this.marketCategoryTabId("starred"));
     } else {
       await tapByElement(this.starMarketListButton());
@@ -128,7 +109,7 @@ export default class MarketPage {
 
   @Step("Expect market row title")
   async expectMarketRowTitle(currency: CurrencyType) {
-    if (await this.isAssetDiscoverabilityEnabled()) {
+    if (await isAssetDiscoverabilityEnabled()) {
       await detoxExpect(this.marketScreenRow(currency)).toBeVisible();
     } else {
       await detoxExpect(this.marketRowTitle(currency)).toBeVisible();
@@ -142,7 +123,7 @@ export default class MarketPage {
 
   @Step("Expect filters visible")
   async expectFiltersVisible() {
-    if (await this.isAssetDiscoverabilityEnabled()) {
+    if (await isAssetDiscoverabilityEnabled()) {
       await detoxExpect(this.marketScreenFilterButton()).toBeVisible();
     } else {
       await detoxExpect(this.marketFilterSortButton()).toBeVisible();
