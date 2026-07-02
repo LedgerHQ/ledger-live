@@ -24,7 +24,6 @@ jest.mock("../api", () => ({
     lastBlock: (...a: any[]) => lastBlockMock(...a),
     getBalance: (...a: any[]) => getBalanceMock(...a),
     listOperations: (...a: any[]) => listOperationsMock(...a),
-    refreshOperations: (...a: any[]) => refreshOperationsMock(...a),
   }),
 }));
 const getBridgeApiMock = jest.fn();
@@ -36,6 +35,7 @@ const defaultBridgeApi = () => ({
   getChainSpecificRules: {
     getAccountShape: (...a: any[]) => chainSpecificGetAccountShapeMock(...a),
   },
+  refreshOperations: (...a: any[]) => refreshOperationsMock(...a),
 });
 getBridgeApiMock.mockImplementation(defaultBridgeApi);
 
