@@ -25,13 +25,13 @@ export const PortfolioBorrowSection = ({ onPress }: PortfolioBorrowSectionProps)
   const { t } = useTranslation();
 
   return (
-    <Box>
+    <Box lx={{ paddingTop: "s24" }}>
       <Subheader>
         <SubheaderRow lx={{ marginBottom: "s12" }}>
           <SubheaderTitle>{t("portfolio.borrowEntry.title")}</SubheaderTitle>
         </SubheaderRow>
       </Subheader>
-      <Box lx={{ marginTop: "s8" }}>
+      <Box>
         <Card onPress={onPress} testID="portfolio-borrow-entry-point">
           <CardHeader>
             <CardLeading>
