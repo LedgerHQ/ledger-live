@@ -283,8 +283,9 @@ describe("QuickAmountSelector", () => {
 
     it("sets useAllAmount when full tile is clicked with more token records than the token cap", async () => {
       // MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION + 1 records — full tile fills exactly the cap → isSendMax
-      const records = Array.from({ length: MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION + 1 }, (_, i) =>
-        makeRecord(String((i + 1) * 100)),
+      const records = Array.from(
+        { length: MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION + 1 },
+        (_, i) => makeRecord(String((i + 1) * 100)),
       );
       const account = makeTokenAccount(records);
       const transaction = makeAleoTransaction();

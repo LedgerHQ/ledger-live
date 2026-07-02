@@ -50,7 +50,9 @@ export const isAccountOnboarded = async (currency: CryptoCurrency, publicKey: st
 const PARTY_ALREADY_EXISTS_ID_RE = /party with id\s+"?([^"\s]+)"?\s+already exists/i;
 
 const extractExistingPartyId = (error: unknown): string | undefined =>
-  error instanceof Error ? (error.message.match(PARTY_ALREADY_EXISTS_ID_RE)?.[1] ?? undefined) : undefined;
+  error instanceof Error
+    ? (error.message.match(PARTY_ALREADY_EXISTS_ID_RE)?.[1] ?? undefined)
+    : undefined;
 
 export const isCantonCoinPreapproved = async (currency: CryptoCurrency, partyId: string) => {
   const { expires_at, receiver } = await getTransferPreApproval(currency, partyId);

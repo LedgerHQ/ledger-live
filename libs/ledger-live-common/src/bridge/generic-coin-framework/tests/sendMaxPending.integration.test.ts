@@ -61,7 +61,12 @@ describe("[integration] EVM send-max accounts for pending operations", () => {
       useAllAmount: true,
     } as unknown as GenericTransaction;
 
-    const intent = transactionToIntent(account, transaction, computeIntentType, craftTransactionData);
+    const intent = transactionToIntent(
+      account,
+      transaction,
+      computeIntentType,
+      craftTransactionData,
+    );
     const { amount } = await validateIntent(
       ethereum,
       intent as Parameters<typeof validateIntent>[1],

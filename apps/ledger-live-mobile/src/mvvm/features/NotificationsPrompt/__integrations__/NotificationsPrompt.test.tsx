@@ -994,5 +994,4 @@ describe("NotificationsPrompt Integration", () => {
       expect(screen.getByText(/allow notifications/i)).toBeOnTheScreen();
     });
   });
-
 });

@@ -6,10 +6,7 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import type {
-  Transaction,
-  TransactionStatus,
-} from "../../../../../coin-modules/transaction-types";
+import type { Transaction, TransactionStatus } from "../../../../../coin-modules/transaction-types";
 import type { SendFlowTransactionActions } from "../../../types";
 import { useCustomFeesViewModelCore } from "../useCustomFeesViewModelCore";
 import { useBridgeFeeEstimation } from "../useBridgeFeeEstimation";
@@ -17,10 +14,8 @@ import { getAccountBridge } from "../../../../../bridge/impl";
 
 const feeAssetInputValueTransform = {
   inputKeys: ["fees"],
-  fromCanonicalValue: (value: string) =>
-    new BigNumber(value).dividedBy("1e9").toFixed(),
-  toCanonicalValue: (value: string) =>
-    new BigNumber(value).times("1e9").toFixed(),
+  fromCanonicalValue: (value: string) => new BigNumber(value).dividedBy("1e9").toFixed(),
+  toCanonicalValue: (value: string) => new BigNumber(value).times("1e9").toFixed(),
 };
 
 const customFeeConfig = {
@@ -76,8 +71,7 @@ jest.mock("../../../../../bridge/descriptor/send/features", () => ({
 jest.mock("../../../../../bridge/impl");
 
 const mockedGetAccountBridge = jest.mocked(getAccountBridge);
-const flushBridgeEstimation = () =>
-  new Promise<void>((resolve) => setTimeout(resolve, 0));
+const flushBridgeEstimation = () => new Promise<void>(resolve => setTimeout(resolve, 0));
 
 const celoCurrency = {
   id: "celo",
@@ -148,15 +142,12 @@ function createTransactionActions(): SendFlowTransactionActions {
 }
 
 const labels = {
-  getInputLabel: (_inputKey: string, unit: string | undefined) =>
-    `Fees amount (${unit})`,
+  getInputLabel: (_inputKey: string, unit: string | undefined) => `Fees amount (${unit})`,
   getHelperLabel: () => null,
-  getNetworkFeesInFiatLabel: (currencyTicker: string) =>
-    `Network fees in ${currencyTicker}`,
+  getNetworkFeesInFiatLabel: (currencyTicker: string) => `Network fees in ${currencyTicker}`,
   invalidValue: "Enter a valid number",
   belowMinimum: (min: string) => `Minimum is ${min}`,
-  maxFeeBelowPriorityFee:
-    "Max fee must be greater than or equal to max priority fee",
+  maxFeeBelowPriorityFee: "Max fee must be greater than or equal to max priority fee",
   insufficientBalanceFees: "Insufficient balance for fees",
   confirm: "Confirm",
   suggested: "Suggested",
@@ -167,15 +158,11 @@ describe("useCustomFeesViewModelCore", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedGetAccountBridge.mockResolvedValue({
-      updateTransaction: jest.fn(
-        (tx: Transaction, patch: Partial<Transaction>) => ({
-          ...tx,
-          ...patch,
-        })
-      ),
-      prepareTransaction: jest.fn(
-        async (_account: Account, tx: Transaction) => tx
-      ),
+      updateTransaction: jest.fn((tx: Transaction, patch: Partial<Transaction>) => ({
+        ...tx,
+        ...patch,
+      })),
+      prepareTransaction: jest.fn(async (_account: Account, tx: Transaction) => tx),
       getTransactionStatus: jest.fn(async () => ({
         errors: {},
         estimatedFees: new BigNumber("2006769"),
@@ -187,7 +174,7 @@ describe("useCustomFeesViewModelCore", () => {
     const transaction = createTransaction();
     const transactionActions = createTransactionActions();
     const calculateCountervalue = jest.fn((_from: Currency, value: BigNumber) =>
-      value.eq("2006769") ? new BigNumber("175") : new BigNumber(0)
+      value.eq("2006769") ? new BigNumber("175") : new BigNumber(0),
     );
 
     const { result } = renderHook(() =>
@@ -203,7 +190,7 @@ describe("useCustomFeesViewModelCore", () => {
         counterValueCurrency: usdCurrency,
         calculateCountervalue,
         labels,
-      })
+      }),
     );
 
     expect(result.current.inputs[0]).toMatchObject({
@@ -222,7 +209,7 @@ describe("useCustomFeesViewModelCore", () => {
     await waitFor(() => {
       expect(calculateCountervalue).toHaveBeenCalledWith(
         expect.objectContaining({ ticker: "USDT" }),
-        new BigNumber("2006769")
+        new BigNumber("2006769"),
       );
     });
 
@@ -238,8 +225,7 @@ describe("useCustomFeesViewModelCore", () => {
       result.current.onConfirm();
     });
 
-    const updater = (transactionActions.updateTransaction as jest.Mock).mock
-      .calls[0][0];
+    const updater = (transactionActions.updateTransaction as jest.Mock).mock.calls[0][0];
     const nextTransaction = updater(transaction);
 
     expect(nextTransaction.feesStrategy).toBe("custom");
@@ -258,15 +244,11 @@ describe("useCustomFeesViewModelCore", () => {
         estimatedFees: new BigNumber("3006769"),
       });
     mockedGetAccountBridge.mockResolvedValue({
-      updateTransaction: jest.fn(
-        (tx: Transaction, patch: Partial<Transaction>) => ({
-          ...tx,
-          ...patch,
-        })
-      ),
-      prepareTransaction: jest.fn(
-        async (_account: Account, tx: Transaction) => tx
-      ),
+      updateTransaction: jest.fn((tx: Transaction, patch: Partial<Transaction>) => ({
+        ...tx,
+        ...patch,
+      })),
+      prepareTransaction: jest.fn(async (_account: Account, tx: Transaction) => tx),
       getTransactionStatus,
     } as never);
 
@@ -290,7 +272,7 @@ describe("useCustomFeesViewModelCore", () => {
           estimatedFeesFromInputs: null,
           customFeeConfig,
         }),
-      { initialProps: { tx: transaction } }
+      { initialProps: { tx: transaction } },
     );
 
     await act(async () => {
@@ -321,15 +303,11 @@ describe("useCustomFeesViewModelCore", () => {
 
   it("should ignore previous bridge insufficient balance when local fee estimation is available", async () => {
     mockedGetAccountBridge.mockResolvedValue({
-      updateTransaction: jest.fn(
-        (tx: Transaction, patch: Partial<Transaction>) => ({
-          ...tx,
-          ...patch,
-        })
-      ),
-      prepareTransaction: jest.fn(
-        async (_account: Account, tx: Transaction) => tx
-      ),
+      updateTransaction: jest.fn((tx: Transaction, patch: Partial<Transaction>) => ({
+        ...tx,
+        ...patch,
+      })),
+      prepareTransaction: jest.fn(async (_account: Account, tx: Transaction) => tx),
       getTransactionStatus: jest.fn(async () => ({
         errors: { insufficientBalanceFees: new Error("Insufficient balance") },
         estimatedFees: new BigNumber("2020160084"),
@@ -367,7 +345,7 @@ describe("useCustomFeesViewModelCore", () => {
           tx: transaction,
           estimatedFeesFromInputs: null as BigNumber | null,
         },
-      }
+      },
     );
 
     await act(async () => {

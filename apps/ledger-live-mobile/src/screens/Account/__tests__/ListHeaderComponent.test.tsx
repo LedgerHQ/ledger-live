@@ -120,7 +120,9 @@ describe("Testing ListHeaderComponent Component", () => {
     };
 
     it("should not render AccountBalanceHeader for a family without one", () => {
-      const { listHeaderComponents } = getUseListHeaderComponentsResult({} as unknown as CurrencyConfig);
+      const { listHeaderComponents } = getUseListHeaderComponentsResult(
+        {} as unknown as CurrencyConfig,
+      );
 
       expect(listHeaderComponents[7]).toBeFalsy();
     });

@@ -1,13 +1,7 @@
 import { firstValueFrom, lastValueFrom, toArray } from "rxjs";
-import type {
-  DeviceConnectionResult,
-  DeviceExtractedContext,
-} from "@ledgerhq/device-intent";
+import type { DeviceConnectionResult, DeviceExtractedContext } from "@ledgerhq/device-intent";
 import { submitRfqOrderEvmJob } from "./job";
-import type {
-  SubmitRfqOrderEvmIntentInput,
-  SubmitRfqOrderEvmJobState,
-} from "./types";
+import type { SubmitRfqOrderEvmIntentInput, SubmitRfqOrderEvmJobState } from "./types";
 
 const FAKE_DEVICE_CONNECTION = {} as DeviceConnectionResult;
 const FAKE_DEVICE_CONTEXT = {} as DeviceExtractedContext;
@@ -96,10 +90,7 @@ describe("submitRfqOrderEvmJob", () => {
   });
 
   it("prefers the precomputed order id over the submit response", async () => {
-    const { fetchImpl, calls } = makeFetch([
-      { body: {} },
-      { body: [{ status: "finished" }] },
-    ]);
+    const { fetchImpl, calls } = makeFetch([{ body: {} }, { body: [{ status: "finished" }] }]);
     const states = await collectStates({
       ...BASE_INPUT,
       provider: "oneinchfusion",

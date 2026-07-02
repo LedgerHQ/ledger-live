@@ -48,7 +48,12 @@ const makeAccount = (operations: unknown[] = []): SuiAccount =>
   ({ type: "Account", operations }) as unknown as SuiAccount;
 
 const stakingOp = (extra: Record<string, unknown>, hash = DIGEST) =>
-  ({ id: "op", hash, type: "DELEGATE" as OperationType, extra }) as unknown as SuiAccount["operations"][number];
+  ({
+    id: "op",
+    hash,
+    type: "DELEGATE" as OperationType,
+    extra,
+  }) as unknown as SuiAccount["operations"][number];
 
 describe("useGetExtraDetails", () => {
   beforeEach(() => {
@@ -58,9 +63,7 @@ describe("useGetExtraDetails", () => {
   });
 
   it("synced fast-path: resolves amount/address/name from op.extra without fetching", () => {
-    const account = makeAccount([
-      stakingOp({ validatorAddress: VALIDATOR, stakedAmount: STAKED }),
-    ]);
+    const account = makeAccount([stakingOp({ validatorAddress: VALIDATOR, stakedAmount: STAKED })]);
 
     const { result } = renderHook(() => useGetExtraDetails(account, "DELEGATE", DIGEST));
 
@@ -70,9 +73,7 @@ describe("useGetExtraDetails", () => {
 
   it("leaves name undefined when the validator is absent from preload", () => {
     const unknown = "0xunknown";
-    const account = makeAccount([
-      stakingOp({ validatorAddress: unknown, stakedAmount: STAKED }),
-    ]);
+    const account = makeAccount([stakingOp({ validatorAddress: unknown, stakedAmount: STAKED })]);
 
     const { result } = renderHook(() => useGetExtraDetails(account, "DELEGATE", DIGEST));
 

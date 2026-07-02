@@ -23,13 +23,10 @@ type CoinGroup = {
 };
 
 const DEFAULT_OUTPUT_DIR = "e2e/userdata/generated";
-const DEFAULT_BASE =
-  "e2e/desktop/tests/userdata/skip-onboarding-with-last-seen-device.json";
+const DEFAULT_BASE = "e2e/desktop/tests/userdata/skip-onboarding-with-last-seen-device.json";
 
 function resolveOutputDir(outputDir?: string): string {
-  return path.resolve(
-    outputDir ?? process.env.E2E_GENERATED_USERDATA_DIR ?? DEFAULT_OUTPUT_DIR,
-  );
+  return path.resolve(outputDir ?? process.env.E2E_GENERATED_USERDATA_DIR ?? DEFAULT_OUTPUT_DIR);
 }
 
 function groupAccountsByCoin(coins?: string[]): Map<string, CoinGroup> {
@@ -41,11 +38,7 @@ function groupAccountsByCoin(coins?: string[]): Map<string, CoinGroup> {
     if (coins?.length && !coins.includes(id)) continue;
     const group = groups.get(id) ?? { currency: value.currency, accounts: [] };
     const scheme = value.derivationMode || undefined;
-    if (
-      !group.accounts.some(
-        (a) => a.index === value.index && a.scheme === scheme,
-      )
-    ) {
+    if (!group.accounts.some(a => a.index === value.index && a.scheme === scheme)) {
       group.accounts.push({ index: value.index, scheme });
     }
     groups.set(id, group);
@@ -85,17 +78,14 @@ async function generateCoin(
     const count = written?.data?.accounts?.length ?? 0;
     return `${coinId}: ${count} account(s) -> ${outPath}`;
   } catch (error) {
-    return `${coinId}: FAILED (${
-      error instanceof Error ? error.message : String(error)
-    })`;
+    return `${coinId}: FAILED (${error instanceof Error ? error.message : String(error)})`;
   } finally {
     if (device) await stopSpeculos(device.id);
   }
 }
 
 export default {
-  description:
-    "Generate one app.json per coin for E2E userdata, launching Speculos automatically",
+  description: "Generate one app.json per coin for E2E userdata, launching Speculos automatically",
   args: [
     {
       name: "coin",
@@ -125,8 +115,7 @@ export default {
     fs.mkdirSync(outDir, { recursive: true });
 
     const baseTemplate = path.resolve(base ?? DEFAULT_BASE);
-    if (!fs.existsSync(baseTemplate))
-      throw new Error(`base userdata not found: ${baseTemplate}`);
+    if (!fs.existsSync(baseTemplate)) throw new Error(`base userdata not found: ${baseTemplate}`);
 
     process.env.LEDGER_LIVE_CLI_BIN = process.argv[1];
     setEnv("MOCK", "");
@@ -134,10 +123,7 @@ export default {
     setEnv("PLAYWRIGHT_RUN", true);
 
     if (!getEnv("E2E_NANO_APP_VERSION_PATH")) {
-      setEnv(
-        "E2E_NANO_APP_VERSION_PATH",
-        path.join(outDir, "nano-app-catalog.json"),
-      );
+      setEnv("E2E_NANO_APP_VERSION_PATH", path.join(outDir, "nano-app-catalog.json"));
     }
 
     const groups = groupAccountsByCoin(coin);

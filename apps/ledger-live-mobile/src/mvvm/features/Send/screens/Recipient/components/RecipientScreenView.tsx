@@ -129,10 +129,7 @@ export const RecipientScreenView = ({
         {isLoading && <LoadingState />}
 
         {showInitialState && clipboardAddress && (
-          <PasteFromClipboard
-            address={clipboardAddress}
-            onPaste={handlePasteFromClipboard}
-          />
+          <PasteFromClipboard address={clipboardAddress} onPaste={handlePasteFromClipboard} />
         )}
 
         {showMemo && <MemoControls vm={memoVm} />}
@@ -155,11 +152,7 @@ export const RecipientScreenView = ({
         {shouldShowErrorBanner && (
           <Box lx={{ marginHorizontal: "s8", gap: "s16" }}>
             {showBridgeSenderError && (
-              <ValidationBanner
-                type="error"
-                error={bridgeSenderError}
-                variant="sender"
-              />
+              <ValidationBanner type="error" error={bridgeSenderError} variant="sender" />
             )}
             {showSanctionedBanner && <ValidationBanner type="sanctioned" />}
             {showBridgeRecipientError && (

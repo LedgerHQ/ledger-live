@@ -72,10 +72,7 @@ type ReviewProps = Readonly<{
   onGetFunds?: () => void;
 }>;
 
-export type AmountScreenViewProps = AmountInputProps &
-  FeesProps &
-  QuickActionsProps &
-  ReviewProps;
+export type AmountScreenViewProps = AmountInputProps & FeesProps & QuickActionsProps & ReviewProps;
 
 export type AmountScreenViewModel = Omit<
   AmountScreenViewProps,

@@ -1,4 +1,8 @@
-import { getRecipientDisplayValue, getRecipientSearchPrefillValue, saveRecentSendRecipient } from "../utils";
+import {
+  getRecipientDisplayValue,
+  getRecipientSearchPrefillValue,
+  saveRecentSendRecipient,
+} from "../utils";
 import { getMainAccount, getRecentAddressesStore } from "../../../account/index";
 import type { Transaction } from "../../../coin-modules/transaction-types";
 
@@ -22,11 +26,9 @@ describe("saveRecentSendRecipient", () => {
   });
 
   it("should persist the recipient after broadcast", () => {
-    saveRecentSendRecipient(
-      { type: "Account", id: "eth-account" } as never,
-      null,
-      { recipient: "0xrecipient" } as Transaction,
-    );
+    saveRecentSendRecipient({ type: "Account", id: "eth-account" } as never, null, {
+      recipient: "0xrecipient",
+    } as Transaction);
 
     expect(addAddress).toHaveBeenCalledWith("ethereum", "0xrecipient", undefined);
   });
@@ -46,11 +48,9 @@ describe("saveRecentSendRecipient", () => {
   });
 
   it("should skip empty recipients", () => {
-    saveRecentSendRecipient(
-      { type: "Account", id: "eth-account" } as never,
-      null,
-      { recipient: "   " } as Transaction,
-    );
+    saveRecentSendRecipient({ type: "Account", id: "eth-account" } as never, null, {
+      recipient: "   ",
+    } as Transaction);
 
     expect(addAddress).not.toHaveBeenCalled();
   });

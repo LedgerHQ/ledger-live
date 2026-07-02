@@ -37,8 +37,10 @@ function classifySimulationError(err: TransactionError): Error {
       if (detail === "InsufficientFunds") return new InvalidTransactionError("Insufficient funds");
       if (detail && typeof detail === "object" && "Custom" in detail) {
         const custom = (detail as { Custom: number }).Custom;
-        if (custom === SPL_TOKEN_ACCOUNT_FROZEN) return new InvalidTransactionError("Token account frozen");
-        if (custom === SPL_TOKEN_INSUFFICIENT_FUNDS) return new InvalidTransactionError("Insufficient funds");
+        if (custom === SPL_TOKEN_ACCOUNT_FROZEN)
+          return new InvalidTransactionError("Token account frozen");
+        if (custom === SPL_TOKEN_INSUFFICIENT_FUNDS)
+          return new InvalidTransactionError("Insufficient funds");
       }
       return new InvalidTransactionError("Transaction simulation failed");
     }
