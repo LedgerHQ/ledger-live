@@ -79,7 +79,7 @@ const PostOnboardingHubTester = () => {
       ))}
       <SettingsSectionRow
         title="onboardingDate"
-        desc={`Current: ${onboardingDate ? new Date(onboardingDate).toISOString() : "null"}`}
+        desc={`Current: ${onboardingDate ? onboardingDate.toISOString() : "null"}`}
       >
         <Flex flexDirection={"row"} columnGap={3}>
           <Button

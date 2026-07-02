@@ -204,7 +204,7 @@ export type PostOnboardingState = {
   lastActionCompleted: PostOnboardingActionId | null;
 
   /**
-   * Did the user started the PostOnboarding without closing or finishing it ?
+   * Did the user start the PostOnboarding without closing or finishing it?
    */
   postOnboardingInProgress: boolean;
 

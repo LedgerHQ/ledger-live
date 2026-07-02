@@ -101,7 +101,7 @@ export default () => {
 
         <SettingsRow
           title="onboardingDate - Set to today"
-          desc={`Current: ${onboardingDate ? new Date(onboardingDate).toISOString() : "null"}`}
+          desc={`Current: ${onboardingDate ? onboardingDate.toISOString() : "null"}`}
           onPress={() => dispatch(setPostOnboardingDate({ onboardingDate: new Date() }))}
         />
         <SettingsRow

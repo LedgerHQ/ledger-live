@@ -26,9 +26,7 @@ export function backfillOnboardingDate(
   const state = store.getState();
   if (hasCompletedOnboardingSelector(state) && onboardingDateSelector(state) == null) {
     store.dispatch(setPostOnboardingDate({ onboardingDate: now }));
-    // Persist immediately: the post-onboarding DBSave effect baselines to the current
-    // (already-migrated) state when it mounts and would otherwise skip this write,
-    // re-seeding the date on every launch.
+    // Persist immediately because DBSave baselines after this migration runs.
     void save(postOnboardingSelector(store.getState()));
   }
 }
