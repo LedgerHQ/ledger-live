@@ -35,7 +35,8 @@ export class SwapProvider extends BaseProvider {
     super(name, uiName);
   }
 
-  static readonly CHANGELLY = new SwapProvider("changelly_v2", "Changelly", false, true);
+  // TODO: re-enable once Changelly provider is re-enabled
+  //static readonly CHANGELLY = new SwapProvider("changelly_v2", "Changelly", false, true);
   static readonly EXODUS = new SwapProvider("exodus", "Exodus", false, true);
   static readonly MOONPAY = new SwapProvider("moonpay", "MoonPay", true, true);
   static readonly CIC = new SwapProvider("cic_v2", "CIC", false, true);
