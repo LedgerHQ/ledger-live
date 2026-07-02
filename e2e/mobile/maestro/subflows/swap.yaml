@@ -9,9 +9,6 @@ appId: ${APP_ID}
 - runFlow: dismiss-analytics-prompt.yaml
 - tapOn:
     id: "w40-tab-swap"
-# Swap live-app WebView. Both currency selectors expose the "Select Currency or Token" aria-label
-# regardless of selection, so From = index 0 and To = index 1 are stable. Picking a currency drops
-# into the native modular drawer.
 - extendedWaitUntil:
     visible:
       text: "Select Currency or Token"
@@ -54,10 +51,6 @@ appId: ${APP_ID}
     timeout: 30000
 - tapOn:
     text: "25%"
-# Quotes/provider/execute are driven natively by Maestro on BOTH iOS and Android. By-text taps fire
-# the swap live-app's React onClick reliably (verified on iOS WKWebView): "View quotes" -> quotes
-# render -> provider card -> "Swap with X". The buttons sit above the home indicator, so they are not
-# clipped. The old iOS-only bridge webviewDriver path is disabled (see harness main.ts driveSwapExecute).
 - runFlow:
     commands:
       - extendedWaitUntil:

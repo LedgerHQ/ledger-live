@@ -86,6 +86,7 @@ env:
   MOBILE_ARTIFACTS_ROOT: e2e/mobile/artifacts
   MAESTRO_ALLURE_RESULTS_PATH: e2e/mobile/artifacts/maestro-allure-results
   PNPM_FILTERS: --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..."
+  E2E_GENERATED_USERDATA_DIR: ${{ github.workspace }}/e2e/userdata/generated
 
 jobs:
   # Run-scoped cache keys (always build; no hash-based reuse — keeps this workflow simple/standalone).
@@ -239,6 +240,21 @@ jobs:
         with:
           command: pnpm exec nx run @ledgerhq/live-cli:build
           disable_cache: false
+      - name: Compute userdata cache key date
+        id: userdata-date
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+      - name: Restore generated userdata
+        uses: tespkg/actions-cache/restore@v1.10.0
+        with:
+          path: e2e/userdata/generated
+          key: e2e-userdata-mobile-${{ steps.userdata-date.outputs.date }}
+          restore-keys: e2e-userdata-mobile
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
       - name: Set transaction broadcast
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
@@ -367,6 +383,21 @@ jobs:
         with:
           command: pnpm exec nx run @ledgerhq/live-cli:build
           disable_cache: false
+      - name: Compute userdata cache key date
+        id: userdata-date
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+      - name: Restore generated userdata
+        uses: tespkg/actions-cache/restore@v1.10.0
+        with:
+          path: e2e/userdata/generated
+          key: e2e-userdata-mobile-${{ steps.userdata-date.outputs.date }}
+          restore-keys: e2e-userdata-mobile
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
       - name: Set transaction broadcast
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:

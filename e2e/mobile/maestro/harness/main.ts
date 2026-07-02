@@ -191,8 +191,21 @@ async function setupSwap(): Promise<void> {
   const { AppInfos } = await import("@ledgerhq/live-common/e2e/enum/AppInfos");
   const { Fee } = await import("@ledgerhq/live-common/e2e/enum/Fee");
   const { liveDataWithAddressCommand } = await import("@ledgerhq/live-common/e2e/cliCommandsUtils");
+  const { getGeneratedUserdataDir } = await import("@ledgerhq/live-common/e2e/generatedUserdata");
   const { verifyAmountsAndAcceptSwap } = await import("@ledgerhq/live-common/e2e/speculos");
   const { randomUUID } = await import("crypto");
+
+  // Account data (balances + fresh address) is read from pre-generated JSON files produced by the
+  // generate-e2e-userdata CI job (pnpm run:cli generateAppJson). E2E_GENERATED_USERDATA_DIR must point
+  // at the directory containing those files (ethereum.json, bitcoin.json, addresses.json, …).
+  // liveDataWithAddressCommand short-circuits to the cache — no per-coin Speculos is needed for setup.
+  if (!getGeneratedUserdataDir()) {
+    throw new Error(
+      "[maestro-harness] E2E_GENERATED_USERDATA_DIR is not set.\n" +
+        "  Point it at the pre-generated userdata directory produced by the generate-e2e-userdata CI job,\n" +
+        "  or download the latest artifact: pnpm run:cli generateAppJson --base e2e/mobile/userdata/skip-onboarding.json",
+    );
+  }
 
   const amount = process.env.SWAP_AMOUNT ?? "0.01";
   // FROM/TO come from the pair (SWAP_FROM/SWAP_TO tickers); everything below derives from the Swap's
@@ -219,7 +232,8 @@ async function setupSwap(): Promise<void> {
   fs.mkdirSync(path.dirname(READY_FILE), { recursive: true });
   fs.writeFileSync(path.resolve("artifacts", ".maestro-swap-amount"), amount);
 
-  // Exchange app needs the coin apps (Ethereum) as dependencies (app.speculos.setExchangeDependencies).
+  // Exchange app needs the coin apps as lib dependencies so it can load them during signing
+  // (os_lib_call). setExchangeDependencies tells the Speculos launcher to pass --libapp for each.
   setExchangeDependencies(
     [swap.accountToDebit, swap.accountToCredit].map(acc => ({
       name: acc.currency.speculosApp.name.replace(/ /g, "_"),
@@ -246,20 +260,29 @@ async function setupSwap(): Promise<void> {
           ...NO_ANALYTICS_PROMPT,
           // lwmWallet40 left to InitializationManager's default (enabled = isWallet40 = true).
         },
-        cliCommandsOnApp: [
-          {
-            app: swap.accountToDebit.currency.speculosApp,
-            cmd: liveDataWithAddressCommand(swap.accountToDebit),
-          },
-          {
-            app: swap.accountToCredit.currency.speculosApp,
-            cmd: liveDataWithAddressCommand(swap.accountToCredit),
-          },
+        // Use cliCommands (not cliCommandsOnApp) so no per-coin Speculos is started for setup.
+        // liveDataWithAddressCommand reads account data + fresh address from the pre-generated JSON
+        // (E2E_GENERATED_USERDATA_DIR) without touching Speculos. The Exchange Speculos (speculosApp)
+        // is still booted above — needed only for the device-signing step.
+        //
+        // Token credit accounts (e.g. USDT on Ethereum) share the parent's coin file: the parent's
+        // liveData scan already includes ERC-20 sub-accounts, so there is no separate command needed.
+        // Their address is derived from the parent (same ETH address) and copied below after init.
+        cliCommands: [
+          liveDataWithAddressCommand(swap.accountToDebit),
+          ...(swap.accountToCredit.currency.id.includes("/")
+            ? []
+            : [liveDataWithAddressCommand(swap.accountToCredit)]),
         ],
       },
       tmpPath,
       tmp,
     );
+    // For token credit accounts (e.g. USDT), the address equals the parent account's address,
+    // which was derived during the debit account's liveDataWithAddressCommand above.
+    if (swap.accountToCredit.currency.id.includes("/")) {
+      swap.accountToCredit.address = swap.accountToDebit.address;
+    }
   } finally {
     if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
   }

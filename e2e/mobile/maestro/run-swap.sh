@@ -10,6 +10,25 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
+# Pre-generated account data (balances + fresh addresses) produced by the generate-e2e-userdata CI job.
+# Default: <repo-root>/e2e/userdata/generated (where the CI artifact is unpacked).
+# Override: set E2E_GENERATED_USERDATA_DIR before calling this script.
+REPO_ROOT="$(cd "$(dirname "$0")/../../.."; pwd)"
+export E2E_GENERATED_USERDATA_DIR="${E2E_GENERATED_USERDATA_DIR:-$REPO_ROOT/e2e/userdata/generated}"
+
+# CLI binary: if not set, use the worktree's own CLI. If that hasn't been built yet (common in git
+# worktrees where `pnpm build` hasn't run for apps/cli), fall back to the main repo's built CLI.
+if [ -z "${LEDGER_LIVE_CLI_BIN:-}" ]; then
+  _worktree_lib="$REPO_ROOT/apps/cli/lib/cli.js"
+  if [ ! -f "$_worktree_lib" ]; then
+    _main_root="$(git -C "$REPO_ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null | xargs -I{} dirname {} 2>/dev/null || true)"
+    if [ -f "${_main_root}/apps/cli/lib/cli.js" ]; then
+      export LEDGER_LIVE_CLI_BIN="${_main_root}/apps/cli/bin/index.js"
+      echo ">> CLI not built in worktree; using main repo CLI: $LEDGER_LIVE_CLI_BIN"
+    fi
+  fi
+fi
+
 export MAESTRO_FLOW=swap
 export MAESTRO_BRIDGE_PORT="${MAESTRO_BRIDGE_PORT:-8099}"
 export MOCK="${MOCK:-0}"
