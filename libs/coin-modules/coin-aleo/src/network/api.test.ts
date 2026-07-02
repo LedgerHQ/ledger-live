@@ -399,6 +399,48 @@ describe("apiClient", () => {
     });
   });
 
+  describe("getBondedMapping", () => {
+    it("should fetch the bonded mapping value", async () => {
+      const mockBonded = "{\n  validator: aleo1validator,\n  microcredits: 111468399u64\n}";
+      jest.mocked(network).mockResolvedValue({ data: mockBonded, status: 200 });
+
+      const result = await apiClient.getBondedMapping(mockCurrency, MOCK_ALEO_ADDRESS);
+
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/program/credits.aleo/mapping/bonded/${MOCK_ALEO_ADDRESS}`,
+      });
+      expect(result).toEqual(mockBonded);
+    });
+
+    it("should return null when the address has no bonded entry", async () => {
+      jest.mocked(network).mockResolvedValue({ data: null, status: 200 });
+      const result = await apiClient.getBondedMapping(mockCurrency, MOCK_ALEO_ADDRESS);
+      expect(result).toBeNull();
+    });
+  });
+
+  describe("getUnbondingMapping", () => {
+    it("should fetch the unbonding mapping value", async () => {
+      const mockUnbonding = "{\n  microcredits: 10000000000u64,\n  height: 17655195u32\n}";
+      jest.mocked(network).mockResolvedValue({ data: mockUnbonding, status: 200 });
+
+      const result = await apiClient.getUnbondingMapping(mockCurrency, MOCK_ALEO_ADDRESS);
+
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/program/credits.aleo/mapping/unbonding/${MOCK_ALEO_ADDRESS}`,
+      });
+      expect(result).toEqual(mockUnbonding);
+    });
+
+    it("should return null when the address has no unbonding entry", async () => {
+      jest.mocked(network).mockResolvedValue({ data: null, status: 200 });
+      const result = await apiClient.getUnbondingMapping(mockCurrency, MOCK_ALEO_ADDRESS);
+      expect(result).toBeNull();
+    });
+  });
+
   describe("getScannerPublicKey", () => {
     it("should fetch the scanner public key successfully", async () => {
       const mockResponse = {

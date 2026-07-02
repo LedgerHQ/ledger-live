@@ -268,6 +268,7 @@ export const toBridgeOperation = (
     extra: {
       functionId: rawTx.function_id,
       transactionType,
+      transitionId: rawTx.transition_id,
       ...(isTokenTx && { programId: rawTx.program_id }),
     },
   };
@@ -369,6 +370,11 @@ function getAmountToSpend({
   // public token transfer: full transparent token balance as fees are paid with native ALEO
   if (isTokenTx) {
     return tokenAccount?.transparentBalance ?? new BigNumber(0);
+  }
+
+  // unbonding spends the bonded position; the fee is paid from the transparent balance
+  if (transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC) {
+    return account.aleoResources?.bondedBalance ?? new BigNumber(0);
   }
 
   const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
@@ -774,6 +780,16 @@ export const getOperationDetailsExtraFields = (
 };
 
 /**
+ * Unbonded funds become claimable once the chain reaches the height stored in the
+ * credits.aleo `unbonding` mapping. Uses the account's last synced blockHeight.
+ */
+export function getClaimableStakingBalance(account: AleoAccount): BigNumber {
+  const { unbondingBalance, unbondingHeight } = account.aleoResources ?? {};
+  if (!unbondingBalance || unbondingHeight == null) return new BigNumber(0);
+  return account.blockHeight >= unbondingHeight ? unbondingBalance : new BigNumber(0);
+}
+
+/**
  * Returns the spendable balance for a given Aleo transaction mode.
  *
  * Aleo accounts maintain two balances:
@@ -788,9 +804,11 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
     case TRANSACTION_TYPE.TRANSFER_PUBLIC:
     case TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE:
     case TRANSACTION_TYPE.BOND_PUBLIC:
-    case TRANSACTION_TYPE.UNBOND_PUBLIC:
-    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
       return account.aleoResources?.transparentBalance ?? new BigNumber(0);
+    case TRANSACTION_TYPE.UNBOND_PUBLIC:
+      return account.aleoResources?.bondedBalance ?? new BigNumber(0);
+    case TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC:
+      return getClaimableStakingBalance(account);
     // spending private native balance
     case TRANSACTION_TYPE.TRANSFER_PRIVATE:
     case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC: {

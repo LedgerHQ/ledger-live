@@ -40,6 +40,34 @@ async function getAccountBalance(
   return res.data;
 }
 
+async function getBondedMapping(
+  currency: CryptoCurrency,
+  address: string,
+): Promise<string | null> {
+  const { nodeUrl, networkType } = getNetworkConfig(currency);
+
+  const res = await network<string | null>({
+    method: "GET",
+    url: `${nodeUrl}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/bonded/${address}`,
+  });
+
+  return res.data;
+}
+
+async function getUnbondingMapping(
+  currency: CryptoCurrency,
+  address: string,
+): Promise<string | null> {
+  const { nodeUrl, networkType } = getNetworkConfig(currency);
+
+  const res = await network<string | null>({
+    method: "GET",
+    url: `${nodeUrl}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/unbonding/${address}`,
+  });
+
+  return res.data;
+}
+
 /**
  * Fetches the public balance of an address-mapped token program
  * (e.g. usdcx_stablecoin.aleo, usad_stablecoin.aleo) for a given address.
@@ -286,6 +314,8 @@ async function submitEncryptedDelegatedProvingRequest({
 export const apiClient = {
   getLatestBlock,
   getAccountBalance,
+  getBondedMapping,
+  getUnbondingMapping,
   getTokenBalance,
   getTransactionById,
   getAccountPublicTransactions,

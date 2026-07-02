@@ -31,6 +31,7 @@ import {
   AleoBondAmountTooLow,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
+  AleoNoClaimableAmount,
   AleoTooManyRecordsSelected,
   AleoTwoRecordsRequired,
 } from "../errors";
@@ -962,11 +963,24 @@ describe("getTransactionStatus", () => {
   describe("getTransactionStatus unbond/claim", () => {
     beforeEach(() => mockValidateAddress.mockResolvedValue(true));
 
+    // blockHeight on mockAccount is 1234 (see account.fixture.ts); unbondingHeight 1000 is matured.
+    const stakingAccount = getMockedAccount({
+      balance: mockBalance,
+      aleoResources: {
+        ...mockAleoResources,
+        transparentBalance: mockTransparentBalance,
+        privateBalance: mockPrivateBalance,
+        bondedBalance: new BigNumber(2_000_000),
+        unbondingBalance: new BigNumber(2_000_000),
+        unbondingHeight: 1000,
+      },
+    });
+
     it("unbond_public with positive amount and self recipient has no errors", async () => {
-      const status = await getTransactionStatus(mockAccount, {
+      const status = await getTransactionStatus(stakingAccount, {
         ...mockTransaction,
         mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
-        recipient: mockAccount.freshAddress,
+        recipient: stakingAccount.freshAddress,
         amount: new BigNumber(1000000),
       } as never);
       expect(status.errors.amount).toBeUndefined();
@@ -974,20 +988,20 @@ describe("getTransactionStatus", () => {
     });
 
     it("unbond_public with zero amount raises AmountRequired", async () => {
-      const status = await getTransactionStatus(mockAccount, {
+      const status = await getTransactionStatus(stakingAccount, {
         ...mockTransaction,
         mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
-        recipient: mockAccount.freshAddress,
+        recipient: stakingAccount.freshAddress,
         amount: new BigNumber(0),
       } as never);
       expect(status.errors.amount).toBeInstanceOf(AmountRequired);
     });
 
     it("claim_unbond_public with zero amount and self recipient has no amount/recipient errors", async () => {
-      const status = await getTransactionStatus(mockAccount, {
+      const status = await getTransactionStatus(stakingAccount, {
         ...mockTransaction,
         mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
-        recipient: mockAccount.freshAddress,
+        recipient: stakingAccount.freshAddress,
         amount: new BigNumber(0),
       } as never);
       expect(status.errors.amount).toBeUndefined();
@@ -995,20 +1009,92 @@ describe("getTransactionStatus", () => {
     });
 
     it("unbond_public with amount exceeding transparentBalance does NOT raise NotEnoughBalance", async () => {
-      // transparentBalance is 1_000_000; unbond draws from bonded pool, not liquid balance
-      const unbondAmount = mockTransparentBalance.plus(500000); // 1_500_000 > transparentBalance
+      // transparentBalance is 1_000_000; unbond draws from the bonded pool (2_000_000), not liquid balance
+      const unbondAmount = mockTransparentBalance.plus(500000); // 1_500_000 > transparentBalance, < bondedBalance
       mockCalculateAmount.mockReturnValue({
         amount: unbondAmount,
-        totalSpent: unbondAmount.plus(mockFees), // clearly exceeds transparentBalance
+        totalSpent: unbondAmount.plus(mockFees),
       });
 
-      const status = await getTransactionStatus(mockAccount, {
+      const status = await getTransactionStatus(stakingAccount, {
         ...mockTransaction,
         mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
-        recipient: mockAccount.freshAddress,
+        recipient: stakingAccount.freshAddress,
         amount: unbondAmount,
       } as never);
 
+      expect(status.errors.amount).toBeUndefined();
+    });
+
+    it("errors with NotEnoughBalance when unbond amount exceeds bonded balance", async () => {
+      const unbondAmount = new BigNumber(3_000_000); // > bondedBalance (2_000_000)
+      mockCalculateAmount.mockReturnValue({
+        amount: unbondAmount,
+        totalSpent: unbondAmount.plus(mockFees),
+      });
+
+      const transaction: Transaction = {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
+        recipient: stakingAccount.freshAddress,
+        amount: unbondAmount,
+      };
+
+      const status = await getTransactionStatus(stakingAccount, transaction);
+      expect(status.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+
+    it("accepts an unbond amount within the bonded balance", async () => {
+      const unbondAmount = new BigNumber(500_000); // < bondedBalance (2_000_000)
+      mockCalculateAmount.mockReturnValue({
+        amount: unbondAmount,
+        totalSpent: unbondAmount.plus(mockFees),
+      });
+
+      const transaction: Transaction = {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
+        recipient: stakingAccount.freshAddress,
+        amount: unbondAmount,
+      };
+
+      const status = await getTransactionStatus(stakingAccount, transaction);
+      expect(status.errors.amount).toBeUndefined();
+    });
+
+    it("errors with AleoNoClaimableAmount when claiming with nothing matured", async () => {
+      const immatureAccount = getMockedAccount({
+        balance: mockBalance,
+        aleoResources: {
+          ...mockAleoResources,
+          transparentBalance: mockTransparentBalance,
+          privateBalance: mockPrivateBalance,
+          unbondingBalance: new BigNumber(2_000_000),
+          unbondingHeight: 5000, // account.blockHeight (1234) < 5000, not matured yet
+        },
+      });
+
+      const transaction: Transaction = {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+        recipient: immatureAccount.freshAddress,
+        amount: new BigNumber(0),
+      };
+
+      const status = await getTransactionStatus(immatureAccount, transaction);
+      expect(status.errors.amount?.name).toBe("AleoNoClaimableAmount");
+      expect(status.errors.amount).toBeInstanceOf(AleoNoClaimableAmount);
+    });
+
+    it("accepts a claim when the unbonding has matured", async () => {
+      const transaction: Transaction = {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+        recipient: stakingAccount.freshAddress,
+        amount: new BigNumber(0),
+      };
+
+      const status = await getTransactionStatus(stakingAccount, transaction);
       expect(status.errors.amount).toBeUndefined();
     });
   });

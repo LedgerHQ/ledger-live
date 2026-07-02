@@ -1,6 +1,8 @@
 import React from "react";
 import { Trans } from "react-i18next";
+import BigNumber from "bignumber.js";
 import { Box, Text } from "@ledgerhq/react-ui/index";
+import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import { getOperationDetailsExtraFields } from "@ledgerhq/live-common/families/aleo/utils";
 import type {
   AleoAccount,
@@ -8,14 +10,12 @@ import type {
   AleoTransactionType,
 } from "@ledgerhq/live-common/families/aleo/types";
 import Ellipsis from "~/renderer/components/Ellipsis";
-import FormattedVal from "~/renderer/components/FormattedVal";
-import CounterValue from "~/renderer/components/CounterValue";
 import {
   OpDetailsData,
   OpDetailsSection,
   OpDetailsTitle,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
-import type { AmountCellExtraProps, OperationDetailsExtraProps } from "~/renderer/families/types";
+import type { OperationDetailsExtraProps } from "~/renderer/families/types";
 import type { AleoFamily } from "./types";
 
 type OperationDetails = NonNullable<AleoFamily["operationDetails"]>;
@@ -63,72 +63,30 @@ const OperationDetailsExtra = ({
   );
 };
 
-const BondAmountCell = ({ operation, currency, unit }: AmountCellExtraProps<AleoOperation>) => {
-  const amount = operation.extra.estimatedBondedAmount;
-  if (!amount || amount.isZero()) return null;
-  return (
-    <>
-      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color="neutral.c80" />
-      <CounterValue
-        color="neutral.c70"
-        fontSize={3}
-        date={operation.date}
-        currency={currency}
-        value={amount}
-      />
-    </>
-  );
-};
+// getOperationAmountNumber renders -fee for all stake-family types; that is right for UNBOND
+// (contract interaction, no balance delta) but not for BOND (funds leave to the validator) or
+// WITHDRAW_UNBONDED (funds come back). Failed staking txs only ever cost the fee.
+const getAmount = (operation: AleoOperation): BigNumber => {
+  if (operation.hasFailed) {
+    return getOperationAmountNumber(operation);
+  }
 
-const UnbondAmountCell = ({ operation, currency, unit }: AmountCellExtraProps<AleoOperation>) => {
-  const amount = operation.extra.estimatedUnbondedAmount;
-  if (!amount || amount.isZero()) return null;
-  return (
-    <>
-      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color="neutral.c80" />
-      <CounterValue
-        color="neutral.c70"
-        fontSize={3}
-        date={operation.date}
-        currency={currency}
-        value={amount}
-      />
-    </>
-  );
-};
-
-const WithdrawUnbondedAmountCell = ({
-  operation,
-  currency,
-  unit,
-}: AmountCellExtraProps<AleoOperation>) => {
-  const amount = operation.extra.estimatedWithdrawUnbondedAmount;
-  if (!amount || amount.isZero()) return null;
-  return (
-    <>
-      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color="neutral.c80" />
-      <CounterValue
-        color="neutral.c70"
-        fontSize={3}
-        date={operation.date}
-        currency={currency}
-        value={amount}
-      />
-      <Text color="neutral.c70" fontSize={2}>
-        <Trans i18nKey="aleo.operations.claimAmountEstimated" />
-      </Text>
-    </>
-  );
-};
-
-const amountCellExtra: NonNullable<OperationDetails["amountCellExtra"]> = {
-  BOND: BondAmountCell,
-  UNBOND: UnbondAmountCell,
-  WITHDRAW_UNBONDED: WithdrawUnbondedAmountCell,
+  switch (operation.type) {
+    case "BOND": {
+      const amount = operation.extra.estimatedBondedAmount;
+      return amount && !amount.isZero() ? amount.negated() : getOperationAmountNumber(operation);
+    }
+    case "WITHDRAW_UNBONDED": {
+      const amount = operation.extra.estimatedWithdrawUnbondedAmount;
+      return amount && !amount.isZero() ? amount : getOperationAmountNumber(operation);
+    }
+    default:
+      return getOperationAmountNumber(operation);
+  }
 };
 
 export default {
   customMetadataCell: CustomMetadataCell,
   OperationDetailsExtra,
-  amountCellExtra,
+  getAmount,
 };

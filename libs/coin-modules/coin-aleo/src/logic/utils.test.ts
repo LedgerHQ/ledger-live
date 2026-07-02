@@ -50,7 +50,7 @@ import {
   mockTxIntentConvertTokenPrivateToPublic2,
   mockTxIntentBondPublic,
 } from "../__tests__/fixtures/transaction.fixture";
-import type { AleoOperationExtra, ProvableApi } from "../types";
+import type { AleoAccount, AleoOperationExtra, ProvableApi, Transaction } from "../types";
 import {
   getNetworkConfig,
   parseMicrocredits,
@@ -96,6 +96,7 @@ import {
   sumPrivateRecords,
   getCalTokens,
   extractStakingAmountFromTransactionDetails,
+  getClaimableStakingBalance,
 } from "./utils";
 
 jest.mock("../config");
@@ -705,6 +706,14 @@ describe("toBridgeOperation", () => {
     toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
 
     expect(log).not.toHaveBeenCalled();
+  });
+
+  describe("toBridgeOperation transitionId", () => {
+    it("carries rawTx.transition_id into extra.transitionId", () => {
+      const rawTx = getMockedPublicTransaction({ transition_id: "au1specifictransition" });
+      const op = toBridgeOperation("js:2:aleo:addr:", rawTx, rawTx.recipient_address);
+      expect(op.extra.transitionId).toBe("au1specifictransition");
+    });
   });
 
   describe("toBridgeOperation - staking value", () => {
@@ -1840,13 +1849,109 @@ describe("unbond/claim classification", () => {
     expect(isPublicTransaction({ ...base, mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC })).toBe(true);
   });
 
-  it("uses the public transparent balance for unbond/claim available balance", () => {
+  it("uses bondedBalance for unbond and the matured unbonding balance for claim", () => {
+    // NOTE: previously this asserted both modes fell back to transparentBalance; that was the
+    // interim behavior before real bonded/unbonding validation existed (see task 5).
     const account = {
-      aleoResources: { transparentBalance: new BigNumber(500) },
+      blockHeight: 1000,
+      aleoResources: {
+        transparentBalance: new BigNumber(500),
+        bondedBalance: new BigNumber(700),
+        unbondingBalance: new BigNumber(300),
+        unbondingHeight: 900,
+      },
     } as unknown as Parameters<typeof getAvailableBalance>[0];
     const base = { family: "aleo", amount: new BigNumber(0), recipient: "", fees: new BigNumber(0) } as const;
-    expect(getAvailableBalance(account, { ...base, mode: TRANSACTION_TYPE.UNBOND_PUBLIC }).toString()).toBe("500");
-    expect(getAvailableBalance(account, { ...base, mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC }).toString()).toBe("500");
+    expect(getAvailableBalance(account, { ...base, mode: TRANSACTION_TYPE.UNBOND_PUBLIC }).toString()).toBe("700");
+    expect(getAvailableBalance(account, { ...base, mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC }).toString()).toBe("300");
+  });
+});
+
+describe("getClaimableStakingBalance", () => {
+  const baseAccount = {
+    ...getMockedAccount(),
+    blockHeight: 1000,
+    aleoResources: {
+      transparentBalance: new BigNumber(100),
+      provableApi: null,
+      privateBalance: null,
+      unspentPrivateRecords: null,
+      lastPrivateSyncDate: null,
+      unbondingBalance: new BigNumber(2_000_000),
+      unbondingHeight: 900,
+    },
+  } as AleoAccount;
+
+  it("returns the unbonding balance once matured", () => {
+    expect(getClaimableStakingBalance(baseAccount)).toEqual(new BigNumber(2_000_000));
+  });
+
+  it("returns 0 while still unbonding", () => {
+    const account = {
+      ...baseAccount,
+      aleoResources: { ...baseAccount.aleoResources!, unbondingHeight: 2000 },
+    };
+    expect(getClaimableStakingBalance(account)).toEqual(new BigNumber(0));
+  });
+
+  it("returns 0 when there is no unbonding entry", () => {
+    // omit unbonding fields entirely — under exactOptionalPropertyTypes an
+    // optional field is "absent or BigNumber", never explicitly undefined.
+    const {
+      unbondingBalance: _unbondingBalance,
+      unbondingHeight: _unbondingHeight,
+      ...aleoResourcesWithoutUnbonding
+    } = baseAccount.aleoResources!;
+    const account = {
+      ...baseAccount,
+      aleoResources: aleoResourcesWithoutUnbonding,
+    };
+    expect(getClaimableStakingBalance(account)).toEqual(new BigNumber(0));
+  });
+});
+
+describe("getAvailableBalance staking modes", () => {
+  it("returns bondedBalance for unbond_public", () => {
+    const account = {
+      ...getMockedAccount(),
+      aleoResources: {
+        transparentBalance: new BigNumber(100),
+        provableApi: null,
+        privateBalance: null,
+        unspentPrivateRecords: null,
+        lastPrivateSyncDate: null,
+        bondedBalance: new BigNumber(5_000_000),
+      },
+    } as AleoAccount;
+    const tx = { mode: TRANSACTION_TYPE.UNBOND_PUBLIC } as Transaction;
+    expect(getAvailableBalance(account, tx)).toEqual(new BigNumber(5_000_000));
+  });
+});
+
+describe("getAmountToSpend useAllAmount for unbond", () => {
+  it("returns full bondedBalance without deducting fees", () => {
+    const account = {
+      ...getMockedAccount(),
+      aleoResources: {
+        transparentBalance: new BigNumber(100),
+        provableApi: null,
+        privateBalance: null,
+        unspentPrivateRecords: null,
+        lastPrivateSyncDate: null,
+        bondedBalance: new BigNumber(5_000_000),
+      },
+    } as AleoAccount;
+    const tx = {
+      mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
+      useAllAmount: true,
+      amount: new BigNumber(0),
+    } as Transaction;
+    const { amount } = calculateAmount({
+      account,
+      transaction: tx,
+      estimatedFees: new BigNumber(1000),
+    });
+    expect(amount).toEqual(new BigNumber(5_000_000));
   });
 });
 

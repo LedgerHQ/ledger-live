@@ -1,4 +1,5 @@
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
+import AccountBodyHeader from "./AccountBodyHeader";
 import ModularDrawerAddAccountFlowManager from "./ModularDrawerAddAccountFlowManager";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import createSendSteps from "./createSendSteps";
@@ -11,6 +12,7 @@ import type { AleoFamily } from "./types";
 
 const family: AleoFamily = {
   AccountBalanceSummaryFooter,
+  AccountBodyHeader,
   ModularDrawerAddAccountFlowManager,
   accountHeaderManageActions,
   createSendSteps,

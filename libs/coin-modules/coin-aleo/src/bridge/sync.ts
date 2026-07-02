@@ -15,7 +15,7 @@ import { SyncConfig, SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq
 import type { TokenAccount } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { AleoApiConfigurationResetError } from "../errors";
-import { getBalance, lastBlock, listOperations } from "../logic";
+import { getBalance, getStakingPosition, lastBlock, listOperations } from "../logic";
 import {
   extractViewKey,
   isProvableApiConfigured,
@@ -35,6 +35,7 @@ import {
 } from "../constants";
 import type {
   AleoAccount,
+  AleoResources,
   AleoOperation,
   AleoUnspentRecord,
   Transaction as AleoTransaction,
@@ -75,9 +76,10 @@ export async function performPublicSync(
   });
   const config = resolveConfig(currency.id);
 
-  const [balances, latestBlock] = await Promise.all([
+  const [balances, latestBlock, stakingPosition] = await Promise.all([
     getBalance(currency, address),
     lastBlock(currency),
+    getStakingPosition(currency, address),
   ]);
 
   const blockHeight = latestBlock?.height ?? initialAccount?.blockHeight ?? 0;
@@ -143,7 +145,10 @@ export async function performPublicSync(
   const preservedPrivateOps = oldPrivateOps as AleoOperation[];
 
   const preservedPrivateBalance = initialAccount?.aleoResources?.privateBalance ?? null;
-  const totalBalance = transparentBalance.plus(preservedPrivateBalance ?? 0);
+  const liquidBalance = transparentBalance.plus(preservedPrivateBalance ?? 0);
+  const totalBalance = liquidBalance
+    .plus(stakingPosition.bondedBalance)
+    .plus(stakingPosition.unbondingBalance);
 
   // Same reasoning as filteredLatestPublicOperations: patched token sub-account ops have
   // modified senders/recipients that differ from raw API data. sameOp detects the difference
@@ -182,7 +187,7 @@ export async function performPublicSync(
     type: "Account",
     id: ledgerAccountId,
     balance: totalBalance,
-    spendableBalance: totalBalance,
+    spendableBalance: liquidBalance,
     blockHeight,
     operations,
     operationsCount: operations.length,
@@ -195,6 +200,10 @@ export async function performPublicSync(
       privateBalance: preservedPrivateBalance,
       unspentPrivateRecords: initialAccount?.aleoResources?.unspentPrivateRecords ?? null,
       lastPrivateSyncDate: initialAccount?.aleoResources?.lastPrivateSyncDate ?? null,
+      bondedBalance: stakingPosition.bondedBalance,
+      bondedValidator: stakingPosition.bondedValidator,
+      unbondingBalance: stakingPosition.unbondingBalance,
+      unbondingHeight: stakingPosition.unbondingHeight,
       ...(config.enableTokens && { hasMigratedPublicTokens: true }),
     },
   };
@@ -234,12 +243,17 @@ export function createPublicSyncObservable(
  *   freshly-fetched data rather than the previous cycle's state.
  * @param freshTransparentBalance - The transparent balance from the current
  *   public sync cycle. Used to compute the correct total balance.
+ * @param freshStakingPosition - The staking fields fetched by the current public
+ *   sync cycle. The combined-sync emission spreads the private shape last, so it
+ *   must carry the fresh staking values or it would clobber them with the stale
+ *   initialAccount ones — same reasoning as freshTransparentBalance.
  */
 export async function performPrivateSync({
   info,
   syncConfig: _syncConfig,
   currentPublicOps,
   freshTransparentBalance,
+  freshStakingPosition,
   onProgress,
   signal,
   publicSubAccounts,
@@ -249,6 +263,10 @@ export async function performPrivateSync({
   syncConfig: SyncConfig;
   currentPublicOps: AleoOperation[];
   freshTransparentBalance?: BigNumber;
+  freshStakingPosition?: Pick<
+    AleoResources,
+    "bondedBalance" | "bondedValidator" | "unbondingBalance" | "unbondingHeight"
+  >;
   onProgress?: (progress: number) => void;
   signal?: AbortSignal;
   publicSubAccounts?: TokenAccount[];
@@ -473,7 +491,16 @@ export async function performPrivateSync({
   // otherwise fall back to what the account last recorded.
   const transparentBalance =
     freshTransparentBalance ?? initialAccount.aleoResources?.transparentBalance ?? new BigNumber(0);
-  const totalBalance = transparentBalance.plus(privateBalance);
+  // Prefer the staking position from the current public sync cycle; fall back to
+  // what the account last recorded. Reading only from initialAccount here would
+  // revert freshly bonded/unbonded amounts on every combined sync.
+  const staking = freshStakingPosition ?? initialAccount.aleoResources;
+  const bondedBalance = staking?.bondedBalance ?? new BigNumber(0);
+  const bondedValidator = staking?.bondedValidator ?? null;
+  const unbondingBalance = staking?.unbondingBalance ?? new BigNumber(0);
+  const unbondingHeight = staking?.unbondingHeight ?? null;
+  const liquidBalance = transparentBalance.plus(privateBalance);
+  const totalBalance = liquidBalance.plus(bondedBalance).plus(unbondingBalance);
 
   log("aleo/performPrivateSync", "Private sync completed", {
     ledgerAccountId,
@@ -520,7 +547,7 @@ export async function performPrivateSync({
     type: "Account",
     id: ledgerAccountId,
     balance: totalBalance,
-    spendableBalance: totalBalance,
+    spendableBalance: liquidBalance,
     blockHeight,
     operations: finalOperations,
     operationsCount: finalOperations.length,
@@ -533,6 +560,10 @@ export async function performPrivateSync({
       privateBalance,
       unspentPrivateRecords,
       lastPrivateSyncDate: new Date(),
+      bondedBalance,
+      bondedValidator,
+      unbondingBalance,
+      unbondingHeight,
       ...(config.enableTokens && {
         hasMigratedPublicTokens: true,
         hasMigratedPrivateTokens: true,
@@ -548,6 +579,10 @@ export function createPrivateSyncObservable(
   freshTransparentBalance?: BigNumber,
   publicSubAccounts?: TokenAccount[],
   freshSyncHash?: string,
+  freshStakingPosition?: Pick<
+    AleoResources,
+    "bondedBalance" | "bondedValidator" | "unbondingBalance" | "unbondingHeight"
+  >,
 ): Observable<Partial<AleoAccount>> {
   const { initialAccount } = info;
   const currencyId = info.currency.id;
@@ -580,6 +615,7 @@ export function createPrivateSyncObservable(
       currentPublicOps: publicOps,
       signal: controller.signal,
       ...(freshTransparentBalance !== undefined && { freshTransparentBalance }),
+      ...(freshStakingPosition !== undefined && { freshStakingPosition }),
       ...(onProgress !== undefined && { onProgress }),
       ...(publicSubAccounts !== undefined && { publicSubAccounts }),
       ...(freshSyncHash !== undefined && { freshSyncHash }),
@@ -680,6 +716,7 @@ export function buildSyncObservables(
               publicResult.aleoResources?.transparentBalance,
               publicResult.subAccounts,
               publicResult.syncHash,
+              publicResult.aleoResources,
             ),
           ),
         ),

@@ -23,6 +23,10 @@ export function toAleoResourcesRaw(resources: AleoResources): AleoResourcesRaw {
     unspentPrivateRecords: resources.unspentPrivateRecords
       ? JSON.stringify(resources.unspentPrivateRecords)
       : null,
+    bondedBalance: resources.bondedBalance?.toString() ?? "0",
+    bondedValidator: resources.bondedValidator ?? null,
+    unbondingBalance: resources.unbondingBalance?.toString() ?? "0",
+    unbondingHeight: resources.unbondingHeight ?? null,
     ...(typeof resources.hasMigratedPublicTokens === "boolean" && {
       hasMigratedPublicTokens: resources.hasMigratedPublicTokens,
     }),
@@ -43,6 +47,10 @@ export function fromAleoResourcesRaw(rawResources: AleoResourcesRaw): AleoResour
     unspentPrivateRecords: rawResources.unspentPrivateRecords
       ? JSON.parse(rawResources.unspentPrivateRecords)
       : null,
+    bondedBalance: new BigNumber(rawResources.bondedBalance ?? 0),
+    bondedValidator: rawResources.bondedValidator ?? null,
+    unbondingBalance: new BigNumber(rawResources.unbondingBalance ?? 0),
+    unbondingHeight: rawResources.unbondingHeight ?? null,
     ...(typeof rawResources.hasMigratedPublicTokens === "boolean" && {
       hasMigratedPublicTokens: rawResources.hasMigratedPublicTokens,
     }),
@@ -108,6 +116,7 @@ export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
     transactionType: extra.transactionType,
     ...(extra.patched !== undefined && { patched: extra.patched }),
     ...(extra.programId !== undefined && { programId: extra.programId }),
+    ...(extra.transitionId !== undefined && { transitionId: extra.transitionId }),
   };
 
   if (extra.estimatedBondedAmount) {
@@ -133,6 +142,7 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
     transactionType: extraRaw.transactionType,
     ...(extraRaw.patched !== undefined && { patched: extraRaw.patched }),
     ...(extraRaw.programId !== undefined && { programId: extraRaw.programId }),
+    ...(extraRaw.transitionId !== undefined && { transitionId: extraRaw.transitionId }),
   };
 
   if (extraRaw.estimatedBondedAmount) {

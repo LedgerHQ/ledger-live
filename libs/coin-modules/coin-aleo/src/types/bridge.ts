@@ -155,6 +155,10 @@ export interface AleoResources {
   lastPrivateSyncDate: Date | null;
   hasMigratedPublicTokens?: boolean;
   hasMigratedPrivateTokens?: boolean;
+  bondedBalance?: BigNumber;
+  bondedValidator?: string | null;
+  unbondingBalance?: BigNumber;
+  unbondingHeight?: number | null;
 }
 
 export interface AleoResourcesRaw {
@@ -165,6 +169,10 @@ export interface AleoResourcesRaw {
   lastPrivateSyncDate: string | null;
   hasMigratedPublicTokens?: boolean;
   hasMigratedPrivateTokens?: boolean;
+  bondedBalance?: string;
+  bondedValidator?: string | null;
+  unbondingBalance?: string;
+  unbondingHeight?: number | null;
 }
 
 export type AleoAccount = Account & {
@@ -195,6 +203,9 @@ export type AleoOperationExtra = {
   patched?: boolean;
   // token program id for token operations (CAL lookup, sub-account routing)
   programId?: string;
+  // on-chain transition id of the tx; stable join key used to correlate a pending op
+  // (keyed by execution/broadcast id) with its confirmed listing row (keyed by transaction id)
+  transitionId?: string;
   // Best-effort reconstructed staking amounts (see docs/superpowers/specs/2026-07-01-aleo-claim-amount-design.md).
   // operation.value is fee-only for BOND/UNBOND/WITHDRAW_UNBONDED; these carry the real amount.
   estimatedBondedAmount?: BigNumber;
@@ -207,6 +218,7 @@ export type AleoOperationExtraRaw = {
   transactionType: AleoTransactionType;
   patched?: boolean;
   programId?: string;
+  transitionId?: string;
   estimatedBondedAmount?: string;
   estimatedUnbondedAmount?: string;
   estimatedWithdrawUnbondedAmount?: string;

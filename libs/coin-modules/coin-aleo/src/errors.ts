@@ -14,3 +14,7 @@ export const AleoAmountTooLargeForTransaction = createCustomErrorClass(
   "AleoAmountTooLargeForTransaction",
 );
 export const AleoBondAmountTooLow = createCustomErrorClass("AleoBondAmountTooLow");
+
+export class AleoNoClaimableAmount extends Error {
+  override name = "AleoNoClaimableAmount";
+}

@@ -5,7 +5,7 @@ import { log } from "@ledgerhq/logs";
 import { SyncConfig, DerivationMode } from "@ledgerhq/types-live";
 import { firstValueFrom, toArray, type Observable } from "rxjs";
 import { SYNC_TYPE_TRANSPARENT, SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
-import { getBalance, lastBlock, listOperations } from "../logic";
+import { getBalance, lastBlock, listOperations, getStakingPosition } from "../logic";
 import {
   getMockedCurrency,
   getMockedTokenCurrency,
@@ -56,6 +56,7 @@ jest.mock("@ledgerhq/logs", () => ({
 const mockGetSyncHash = jest.mocked(getSyncHash);
 const mockGetBalance = jest.mocked(getBalance);
 const mockLastBlock = jest.mocked(lastBlock);
+const mockGetStakingPosition = jest.mocked(getStakingPosition);
 const mockListOperations = jest.mocked(listOperations);
 const mockAccessProvableApi = jest.mocked(accessProvableApi);
 const mockFetchAllOwnedRecords = jest.mocked(fetchAllOwnedRecords);
@@ -129,6 +130,12 @@ describe("sync.ts", () => {
     mockListPrivateOperations.mockResolvedValue({ operations: [], consumedRecordTags: new Set() });
     mockGetPrivateBalance.mockResolvedValue({ balance: new BigNumber(0), unspentRecords: [] });
     mockPatchPublicOperations.mockResolvedValue([]);
+    mockGetStakingPosition.mockResolvedValue({
+      bondedBalance: new BigNumber(0),
+      bondedValidator: null,
+      unbondingBalance: new BigNumber(0),
+      unbondingHeight: null,
+    });
   });
 
   describe("performPublicSync", () => {
@@ -761,6 +768,35 @@ describe("sync.ts", () => {
           options: expect.objectContaining({ cursor: "12345" }),
         }),
       );
+    });
+
+    it("stores the staking position in aleoResources and includes it in balance", async () => {
+      mockGetStakingPosition.mockResolvedValue({
+        bondedBalance: new BigNumber(5_000_000),
+        bondedValidator: "aleo1validator",
+        unbondingBalance: new BigNumber(2_000_000),
+        unbondingHeight: 12345,
+      });
+
+      const result = await performPublicSync(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: mockInitialAccount,
+        },
+        mockSyncConfig,
+      );
+
+      expect(mockGetStakingPosition).toHaveBeenCalledWith(mockCurrency, mockAccount.freshAddress);
+      expect(result.aleoResources?.bondedBalance).toEqual(new BigNumber(5_000_000));
+      expect(result.aleoResources?.bondedValidator).toBe("aleo1validator");
+      expect(result.aleoResources?.unbondingBalance).toEqual(new BigNumber(2_000_000));
+      expect(result.aleoResources?.unbondingHeight).toBe(12345);
+      // balance includes staking, spendable does not
+      expect(result.balance).toEqual(result.spendableBalance!.plus(7_000_000));
     });
   });
 
@@ -1413,6 +1449,78 @@ describe("sync.ts", () => {
         privateRecords: [unspentRecord],
         oldUnspentRecords: [],
       });
+    });
+
+    it("preserves staking fields from the initial account and includes them in balance", async () => {
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+      const initialWithStaking: AleoAccount = {
+        ...mockInitialAccount,
+        aleoResources: {
+          ...mockInitialAccount.aleoResources!,
+          bondedBalance: new BigNumber(5_000_000),
+          bondedValidator: "aleo1validator",
+          unbondingBalance: new BigNumber(2_000_000),
+          unbondingHeight: 12345,
+        },
+      };
+
+      const result = await performPrivateSync({
+        info: {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: initialWithStaking,
+        },
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
+
+      expect(result?.aleoResources?.bondedBalance).toEqual(new BigNumber(5_000_000));
+      expect(result?.aleoResources?.unbondingHeight).toBe(12345);
+      expect(result?.balance).toEqual(result?.spendableBalance!.plus(7_000_000));
+    });
+
+    it("uses the fresh staking position from the current public cycle over stale initialAccount", async () => {
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+      // initialAccount holds the PREVIOUS cycle's (stale) staking values
+      const initialWithStaleStaking: AleoAccount = {
+        ...mockInitialAccount,
+        aleoResources: {
+          ...mockInitialAccount.aleoResources!,
+          bondedBalance: new BigNumber(1_000_000),
+          bondedValidator: "aleo1stale",
+          unbondingBalance: new BigNumber(0),
+          unbondingHeight: null,
+        },
+      };
+
+      const result = await performPrivateSync({
+        info: {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: initialWithStaleStaking,
+        },
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+        // fresh values fetched by this cycle's public sync
+        freshStakingPosition: {
+          bondedBalance: new BigNumber(5_000_000),
+          bondedValidator: "aleo1fresh",
+          unbondingBalance: new BigNumber(2_000_000),
+          unbondingHeight: 12345,
+        },
+      });
+
+      expect(result?.aleoResources?.bondedBalance).toEqual(new BigNumber(5_000_000));
+      expect(result?.aleoResources?.bondedValidator).toBe("aleo1fresh");
+      expect(result?.aleoResources?.unbondingBalance).toEqual(new BigNumber(2_000_000));
+      expect(result?.aleoResources?.unbondingHeight).toBe(12345);
+      expect(result?.balance).toEqual(result?.spendableBalance!.plus(7_000_000));
     });
   });
 

@@ -43,6 +43,7 @@ import {
   AleoBondAmountTooLow,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
+  AleoNoClaimableAmount,
   AleoTooManyRecordsSelected,
   AleoTwoRecordsRequired,
 } from "../errors";
@@ -328,7 +329,16 @@ async function handleTransferTransaction({
 
   Object.assign(errors, validatePublicFees({ account, transaction, config, estimatedFees }));
 
-  if (!isStakingSelfMode && availableBalance.isLessThan(calculatedAmount.totalSpent)) {
+  if (transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC) {
+    // fee coverage is validated separately by validatePublicFees against the transparent balance
+    if (calculatedAmount.amount.gt(availableBalance)) {
+      errors.amount = new NotEnoughBalance();
+    }
+  } else if (transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC) {
+    if (availableBalance.lte(0)) {
+      errors.amount = new AleoNoClaimableAmount();
+    }
+  } else if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
     errors.amount = new NotEnoughBalance();
   }
 
