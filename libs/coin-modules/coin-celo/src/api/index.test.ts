@@ -81,7 +81,6 @@ describe("createApi", () => {
     const api = createApi(config);
     const evmApi = (createEvmApi as jest.Mock).mock.results[0].value;
 
-    expect(api.getBalance).toBe(evmApi.getBalance);
     expect(api.listOperations).toBe(evmApi.listOperations);
     expect(api.lastBlock).toBe(evmApi.lastBlock);
     expect(api.getNextSequence).toBe(evmApi.getNextSequence);
@@ -100,11 +99,14 @@ describe("createApi", () => {
 
   it("advertises staking support and wires the staking read methods", () => {
     const api = createApi(config);
+    const evmApi = (createEvmApi as jest.Mock).mock.results[0].value;
 
     expect((api as { stakingSupported?: boolean }).stakingSupported).toBe(true);
     expect(api.getStakes).toBe(getStakes);
     expect(api.getValidators).toBe(getValidators);
     expect(api.getRewards).toBe(getRewards);
+    // getBalance is wrapped (not delegated) to surface Celo staking positions via Balance.stake
+    expect(api.getBalance).not.toBe(evmApi.getBalance);
   });
 
   it("getRewards throws not supported (Celo has no discrete on-chain reward events)", () => {

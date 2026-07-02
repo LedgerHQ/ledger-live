@@ -22,9 +22,14 @@ const NATIVE: AssetInfo = { type: "native" };
  *   `deactivating` (no action yet).
  *
  * All positions are returned in a single page. Non-voting locked balance is not
- * represented as a Stake yet (see `src/api/STAKING.md`).
+ * represented as a Stake yet.
  */
-export const getStakes = async (address: string, _cursor?: Cursor): Promise<Page<Stake>> => {
+/**
+ * Builds the account's Celo staking positions as framework `Stake`s. Shared by
+ * `getStakes` (CoinModuleApi) and the staking-aware `getBalance` (which surfaces
+ * these via `Balance.stake`, the shape the generic-coin-framework consumes).
+ */
+export const buildCeloStakes = async (address: string): Promise<Stake[]> => {
   const [votes, pendingWithdrawals] = await Promise.all([
     getVotes(address),
     getPendingWithdrawals(address).catch(() => []),
@@ -61,7 +66,12 @@ export const getStakes = async (address: string, _cursor?: Cursor): Promise<Page
     };
   });
 
-  return { items: [...voteStakes, ...withdrawalStakes], next: undefined };
+  return [...voteStakes, ...withdrawalStakes];
 };
+
+export const getStakes = async (address: string, _cursor?: Cursor): Promise<Page<Stake>> => ({
+  items: await buildCeloStakes(address),
+  next: undefined,
+});
 
 export default getStakes;

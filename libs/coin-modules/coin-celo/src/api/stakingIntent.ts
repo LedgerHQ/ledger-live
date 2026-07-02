@@ -14,8 +14,6 @@ import type {
  * the operation on the free-form `TransactionIntent.type` field — the same escape
  * hatch coin-solana uses (`stake.delegate`, …) — mirroring the legacy Celo bridge's
  * `CeloOperationMode`. Each maps 1:1 to a single on-chain transaction.
- *
- * See `src/api/STAKING.md`.
  */
 export const CELO_STAKING_TYPES = [
   "celo.register",
@@ -39,15 +37,22 @@ export type CeloStakingType = (typeof CELO_STAKING_TYPES)[number];
  * `unlock`/`revoke*`. The `withdraw` index is derived from on-chain reads.
  */
 export type CeloStakingIntent = TransactionIntent<MemoNotSupported, BufferTxData> & {
-  intentType: "staking";
   type: CeloStakingType;
   valAddress?: string;
 };
 
 const STAKING_TYPE_SET = new Set<string>(CELO_STAKING_TYPES);
 
-/** Narrows a transaction intent to a supported Celo staking intent. */
+/**
+ * Narrows a transaction intent to a supported Celo staking intent.
+ *
+ * Detection keys off the `celo.*` operation carried in `intent.type` — NOT
+ * `intentType` — because the generic-coin-framework adapter builds staking
+ * intents with `intentType: "transaction"` for modes it doesn't recognize as
+ * canonical `StakingOperation`s (Celo's `lock`/`vote`/`activate`/… are not
+ * canonical). Keying off the `celo.*` type keeps routing correct whether the
+ * intent is built directly or by the framework via `computeIntentType`.
+ */
 export const isCeloStakingIntent = (
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,
-): intent is CeloStakingIntent =>
-  intent.intentType === "staking" && STAKING_TYPE_SET.has(intent.type);
+): intent is CeloStakingIntent => STAKING_TYPE_SET.has(intent.type);

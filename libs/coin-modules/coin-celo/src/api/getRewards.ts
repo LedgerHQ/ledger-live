@@ -7,12 +7,12 @@ import type { Cursor, Page, Reward } from "@ledgerhq/coin-module-framework/api/i
  * tracked here. The framework documents throwing "not supported" in this case.
  *
  * Rewards are still observable indirectly: an active vote's `amount` (from
- * `getStakes`) already includes accrued rewards. See `src/api/STAKING.md`.
+ * `getStakes`) already includes accrued rewards.
  */
 export const getRewards = (_address: string, _cursor?: Cursor): Promise<Page<Reward>> => {
   throw new Error(
     "celo: getRewards is not supported — Celo has no discrete on-chain reward events " +
-      "(rewards accrue in-protocol per epoch; see src/api/STAKING.md)",
+      "(rewards accrue in-protocol per epoch)",
   );
 };
 

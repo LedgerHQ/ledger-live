@@ -13,6 +13,7 @@ import { getCeloClient } from "../network/client";
 import { combine } from "./combine";
 import { craftTransaction } from "./craftTransaction";
 import { estimateFees } from "./estimateFees";
+import { makeGetBalance } from "./getBalance";
 import { getRewards } from "./getRewards";
 import { getStakes } from "./getStakes";
 import { getValidators } from "./getValidators";
@@ -34,9 +35,9 @@ const prefixHex = (hex: string): `0x${string}` =>
  * Staking is implemented on Celo's real LockedGold + Election validator-group
  * model (not coin-evm's governance-delegation shim): `getStakes`/`getValidators`
  * read live positions and groups, and staking transactions are crafted via the
- * `celo.*` intent operations (see `src/api/STAKING.md`). `getRewards` is not
- * supported (Celo has no discrete on-chain reward events). `validateIntent`
- * handles staking intents and delegates the rest to coin-evm.
+ * `celo.*` intent operations. `getRewards` is not supported (Celo has no discrete
+ * on-chain reward events). `validateIntent` handles staking intents and delegates
+ * the rest to coin-evm.
  */
 export function createApi(
   config: EvmConfig | (() => EvmCoinConfig),
@@ -51,6 +52,10 @@ export function createApi(
     combine,
     broadcast: (tx: string, _broadcastConfig?: BroadcastConfig): Promise<string> =>
       getCeloClient().sendRawTransaction({ serializedTransaction: prefixHex(tx) }),
+    // Surface Celo staking positions via `getBalance().stake` (what the
+    // generic-coin-framework reads) while still delegating native/token balance
+    // fetching to coin-evm.
+    getBalance: makeGetBalance((address: string, options) => evmApi.getBalance(address, options)),
     getStakes,
     getRewards,
     getValidators,

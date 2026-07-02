@@ -15,6 +15,15 @@ const GROUP_OPERATIONS = new Set<CeloStakingType>([
   "celo.revokeActive",
 ]);
 
+/** Staking operations that move a caller-specified amount and thus require amount > 0. */
+const AMOUNT_OPERATIONS = new Set<CeloStakingType>([
+  "celo.lock",
+  "celo.unlock",
+  "celo.vote",
+  "celo.revokePending",
+  "celo.revokeActive",
+]);
+
 /**
  * Lean validation for a Celo staking intent: fee coverage, required-field
  * presence, and (for `lock`) native-amount coverage.
@@ -24,8 +33,7 @@ const GROUP_OPERATIONS = new Set<CeloStakingType>([
  * the estimated fee is denominated in that token, not CELO, so it is excluded
  * from the native `totalSpent` and the native coverage check.
  *
- * Deeper checks (vote-cap, activation timing, unbonding readiness) are deferred —
- * see `src/api/STAKING.md`.
+ * Deeper checks (vote-cap, activation timing, unbonding readiness) are deferred.
  */
 export const validateStakingIntent = async (
   intent: CeloStakingIntent,
@@ -49,7 +57,9 @@ export const validateStakingIntent = async (
     errors.recipient = new Error(`celo: ${intent.type} requires a validator group (valAddress)`);
   }
 
-  if (totalSpent > available) {
+  if (AMOUNT_OPERATIONS.has(intent.type) && intent.amount <= 0n) {
+    errors.amount = new Error(`celo: ${intent.type} requires a positive amount`);
+  } else if (totalSpent > available) {
     errors.amount = new Error("celo: insufficient CELO balance for this staking operation");
   }
 

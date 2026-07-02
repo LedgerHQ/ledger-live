@@ -61,6 +61,17 @@ describe("validateStakingIntent", () => {
     expect(res.errors.amount).toBeInstanceOf(Error);
   });
 
+  it("rejects a non-positive amount for amount-bearing operations", async () => {
+    const res = await validateStakingIntent(
+      makeIntent("celo.lock", { amount: 0n }),
+      nativeBalances(1000n),
+      eip1559Fees(10n),
+    );
+
+    expect(res.errors.amount).toBeInstanceOf(Error);
+    expect(res.errors.amount.message).toMatch(/positive amount/);
+  });
+
   it("flags a group operation missing its validator group", async () => {
     const res = await validateStakingIntent(
       makeIntent("celo.vote", { amount: 10n }),

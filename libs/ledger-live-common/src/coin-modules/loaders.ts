@@ -97,9 +97,11 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "celo",
     supportedCoins: ["celo"],
     loadSetup: () => import("../families/celo/setup"),
+    loadLocalApi: () => import("../families/celo/coinModuleApi").then(m => m.createLocalCeloApi),
     loadTransaction: () => import("@ledgerhq/coin-celo/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-celo/deviceTransactionConfig").then(m => m.default),
+    loadBridgeApi: () => import("../families/celo/bridge/api").then(m => m.default),
   },
   {
     family: "concordium",
