@@ -5108,7 +5108,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 4663,
     },
-    explorerViews: [blockscoutExplorerView("https://explorer.chain.robinhood.com")],
+    explorerViews: [blockscoutExplorerView("https://robinhoodchain.blockscout.com")],
   },
   robinhood_testnet: {
     type: "CryptoCurrency",
