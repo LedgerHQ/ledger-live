@@ -68,11 +68,11 @@ Built via `internalTxSources().addSource("explorer").addSource("trace_block").ad
 | Source | When unavailable (skipped) | When available but fails at runtime |
 |--------|---------------------------|-------------------------------------|
 | `explorer` | Explorer config is not etherscan-like | Best-effort: wrapped as `SourceUnavailableError`, fall through to node traces |
-| `trace_block` | `nodeApi.traceBlockErigon` is undefined | Real error propagated (caller may retry the whole block) |
-| `debug_traceBlockByNumber` | `nodeApi.traceBlockGeth` is undefined | Real error propagated |
+| `trace_block` | `nodeApi.traceBlockErigon` is undefined | Remember error, try next source; rethrow when `empty` is reached with a remembered error or the list is exhausted without a later success (e.g. erigon error → geth fallback) |
+| `debug_traceBlockByNumber` | `nodeApi.traceBlockGeth` is undefined | Same as `trace_block`: remember and continue; rethrow only when no later source succeeds |
 | `empty` | N/A (terminal) | Resolves empty Map only if no real runtime error was remembered; otherwise re-throws the last real error |
 
-**Behaviour-preserving rule:** structurally unsupported sources are skipped; transient RPC/explorer failures on available trace methods propagate so the caller can retry `getBlock`. Explorer failures are always best-effort (fall through). A trailing `empty` only resolves when every prior source was unavailable, not when a trace call failed at runtime.
+**Behaviour-preserving rule:** structurally unsupported sources are skipped (`SourceUnavailableError`). Explorer failures are always best-effort (fall through). Runtime trace failures are remembered and the loop continues to later sources (erigon → geth); the last remembered error is rethrown only when `empty` is reached with a remembered error or the list ends without a success. A trailing `empty` resolves only when every prior source was unavailable, not when a trace call failed at runtime.
 
 ## Paths summary
 

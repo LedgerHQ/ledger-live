@@ -123,6 +123,20 @@ describe("composeInternalTxsFetcher", () => {
 
     await expect(fetch(height)).resolves.toBe(gethResult);
   });
+
+  it("throws when all sources are unavailable and empty is not configured", async () => {
+    const fetch = composeInternalTxsFetcher(
+      internalTxSources().addSource("trace_block").addSource("debug_traceBlockByNumber").build(),
+      makeFetchers({
+        trace_block: jest.fn().mockRejectedValue(new SourceUnavailableError("no erigon")),
+        debug_traceBlockByNumber: jest
+          .fn()
+          .mockRejectedValue(new SourceUnavailableError("no geth")),
+      }),
+    );
+
+    await expect(fetch(height)).rejects.toThrow("all internal tx sources unavailable");
+  });
 });
 
 describe("makeSourceFetchers", () => {

@@ -20,6 +20,7 @@ async function runInternalTxSources(
   height: number,
 ): Promise<InternalTxsByHash> {
   let lastRealError: unknown;
+  let hadUnavailableSource = false;
 
   for (const source of sources) {
     if (source === "empty") {
@@ -33,6 +34,7 @@ async function runInternalTxSources(
       return await fetchers[source](height);
     } catch (error) {
       if (error instanceof SourceUnavailableError) {
+        hadUnavailableSource = true;
         continue;
       }
       lastRealError = error;
@@ -41,6 +43,10 @@ async function runInternalTxSources(
 
   if (lastRealError !== undefined) {
     throw lastRealError;
+  }
+
+  if (hadUnavailableSource) {
+    throw new SourceUnavailableError("all internal tx sources unavailable");
   }
 
   throw new Error("no internal tx sources configured");
