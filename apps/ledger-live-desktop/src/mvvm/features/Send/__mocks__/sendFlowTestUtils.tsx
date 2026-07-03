@@ -5,11 +5,13 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
-import type { Transaction as BtcTransaction } from "@ledgerhq/coin-bitcoin/types";
 import { SendWorkflow } from "../index";
 
 export { screen, waitFor };
+
+type SupportedMockFamily = "bitcoin" | "evm";
+type EvmTransaction = Extract<Transaction, { family: "evm" }>;
+type BtcTransaction = Extract<Transaction, { family: "bitcoin" }>;
 
 export type MockTransactionStatus = {
   errors: Record<string, Error>;
@@ -88,6 +90,11 @@ export const createMinimalBtcTransaction = (overrides?: Partial<BtcTransaction>)
   ...overrides,
 });
 
+const transactionFactories: Record<SupportedMockFamily, () => Transaction> = {
+  bitcoin: createMinimalBtcTransaction,
+  evm: createMinimalEvmTransaction,
+};
+
 let mockTransaction: Transaction = createMinimalEvmTransaction();
 let mockStatus: MockTransactionStatus = createResolvedStatus();
 let mockBridgePending = false;
@@ -96,9 +103,8 @@ let mockStatusResolver: ((transaction: Transaction) => MockTransactionStatus) | 
 const getResolvedStatus = (transaction: Transaction) =>
   mockStatusResolver ? mockStatusResolver(transaction) : mockStatus;
 
-export const resetBridgeState = (family: string) => {
-  mockTransaction =
-    family === "bitcoin" ? createMinimalBtcTransaction() : createMinimalEvmTransaction();
+export const resetBridgeState = (family: SupportedMockFamily) => {
+  mockTransaction = transactionFactories[family]();
   mockStatus = createResolvedStatus();
   mockBridgePending = false;
   mockStatusResolver = null;
@@ -128,7 +134,7 @@ export const setMockDeviceActionResult = (result: unknown) => {
   mockDeviceActionResult = result;
 };
 
-export const resetSendFlowTestState = (family = "evm") => {
+export const resetSendFlowTestState = (family: SupportedMockFamily = "evm") => {
   jest.clearAllMocks();
   resetBridgeState(family);
   setMockDeviceActionResult(null);
