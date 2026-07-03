@@ -1,4 +1,6 @@
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { resolveLedgerCryptoCurrencyId } from "@ledgerhq/asset-detail";
+
+export { parseLedgerAssetPath, type LedgerAssetPath } from "@ledgerhq/asset-detail";
 
 /** `/asset` when Wallet 4.0 aggregated assets is on, else `/market` (market deeplinks). */
 export function getAssetsDetailPathPrefix(
@@ -39,7 +41,5 @@ export function isAssetOrMarketDetailPath(pathname: string): boolean {
  * Used when Wallet 4.0 aggregated assets is off (legacy market/asset screens).
  */
 export function resolveLegacyCryptoCurrencyId(path: string): string | null {
-  const normalizedPath = path.trim().toLowerCase();
-  if (!normalizedPath) return null;
-  return findCryptoCurrencyById(normalizedPath)?.id ?? null;
+  return resolveLedgerCryptoCurrencyId(path);
 }

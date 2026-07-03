@@ -63,7 +63,10 @@ function DistributionCard({ item: { currency, amount, distribution } }: Props) {
     () => ensureContrast(getCurrencyColor(currency), colors.background.main),
     [colors, currency],
   );
-  const percentage = useMemo(() => Math.round(distribution * 1e4) / 1e2, [distribution]);
+  const percentage = useMemo(
+    () => (Number.isFinite(distribution) ? Math.round(distribution * 1e4) / 1e2 : 0),
+    [distribution],
+  );
 
   const navigateToAccounts = useCallback(() => {
     track("button_clicked", {

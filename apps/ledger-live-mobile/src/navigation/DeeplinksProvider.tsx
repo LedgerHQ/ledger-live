@@ -44,7 +44,7 @@ import {
   validateEarnDepositScreen,
   validateLargeMoverCurrencyIds,
   validateLargeMoverLedgerIds,
-  validateMarketCurrencyId,
+  validateMarketAssetPath,
   validateMarketListCategory,
 } from "./deeplinks/validation";
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
@@ -678,23 +678,27 @@ export const DeeplinksProvider = ({
           }
 
           if (hostname === "market") {
-            const currencyIdFromPath = pathname.replace("/", "");
-            if (currencyIdFromPath) {
-              const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
+            const validatedMarketAsset = validateMarketAssetPath(pathname);
+            if (validatedMarketAsset) {
+              const { currencyId, assetId, ledgerIds } = validatedMarketAsset;
 
-              if (!validatedCurrencyId) {
+              if (ledgerIds && !shouldDisplayAggregatedAssets) {
                 return handleMarketBannerDeeplink();
               }
 
               if (shouldDisplayAggregatedAssets) {
                 return handleAssetDetailDeeplink({
-                  currencyId: validatedCurrencyId,
+                  currencyId: assetId,
                   source: "deeplink_market",
+                  marketState: ledgerIds ? { id: assetId, ledgerIds } : undefined,
                 });
               }
 
-              url.pathname = `/${validatedCurrencyId}`;
+              url.pathname = `/${currencyId}`;
               return getStateFromPath(url.href?.split("://")[1], config);
+            }
+            if (pathname.replace("/", "")) {
+              return handleMarketBannerDeeplink();
             }
             const validatedCategory = shouldDisplayAssetDiscoverability
               ? validateMarketListCategory(searchParams.get("category"))
@@ -704,23 +708,27 @@ export const DeeplinksProvider = ({
 
           // Handle asset deeplink - validate currencyId before navigation
           if (hostname === "asset") {
-            const currencyIdFromPath = pathname.replace("/", "");
-            if (currencyIdFromPath) {
-              const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
+            const validatedMarketAsset = validateMarketAssetPath(pathname);
+            if (validatedMarketAsset) {
+              const { currencyId, assetId, ledgerIds } = validatedMarketAsset;
 
-              if (!validatedCurrencyId) {
+              if (ledgerIds && !shouldDisplayAggregatedAssets) {
                 return getStateFromPath("portfolio", config);
               }
 
               if (shouldDisplayAggregatedAssets) {
                 return handleAssetDetailDeeplink({
-                  currencyId: validatedCurrencyId,
+                  currencyId: assetId,
                   source: "deeplink_asset",
+                  marketState: ledgerIds ? { id: assetId, ledgerIds } : undefined,
                 });
               }
 
-              url.pathname = `/${validatedCurrencyId}`;
+              url.pathname = `/${currencyId}`;
               return getStateFromPath(url.href?.split("://")[1], config);
+            }
+            if (pathname.replace("/", "")) {
+              return getStateFromPath("portfolio", config);
             }
             if (shouldDisplayAggregatedAssets) {
               return getStateFromPath("portfolio", config);
