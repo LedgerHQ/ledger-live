@@ -7,9 +7,18 @@ type Props = Readonly<{
   formattedChange?: string;
   timeLabel?: string;
   testID?: string;
+  trendSize?: "sm" | "md";
+  showTrend?: boolean;
 }>;
 
-export function TrendSection({ percentage, formattedChange, timeLabel, testID }: Props) {
+export function TrendSection({
+  percentage,
+  formattedChange,
+  timeLabel,
+  testID,
+  trendSize = "md",
+  showTrend = true,
+}: Props) {
   // NaN signals missing data → neutral dash. A real 0 is rendered as a neutral
   // (grey) trend so the row (and its time label) stays visible, e.g. while
   // scrubbing back to the start of the range.
@@ -23,7 +32,7 @@ export function TrendSection({ percentage, formattedChange, timeLabel, testID }:
 
   return (
     <Box lx={rowStyle} testID={testID}>
-      <Trend value={percentage} size="md" />
+      {showTrend && <Trend value={percentage} size={trendSize} />}
       {formattedChange != null && (
         <Text typography="body2" lx={{ color: "muted" }}>
           {formattedChange}

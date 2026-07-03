@@ -59,4 +59,20 @@ describe("TrendSection", () => {
     expect(screen.getByText("+$10.00")).toBeVisible();
     expect(screen.queryByText("·")).toBeNull();
   });
+
+  it("hides the trend icon when showTrend is false", () => {
+    render(
+      <TrendSection
+        percentage={5.5}
+        formattedChange="+$10.00"
+        timeLabel="1 week"
+        showTrend={false}
+        testID="trend"
+      />,
+    );
+
+    expect(screen.queryByText("5.50%")).toBeNull();
+    expect(screen.getByText("+$10.00")).toBeVisible();
+    expect(screen.getByText("1 week")).toBeVisible();
+  });
 });
