@@ -119,10 +119,10 @@ describe("validateMarketAssetPath", () => {
       assetId: "ethereum/erc20/uniswap_(bridged)",
       ledgerIds: ["ethereum/erc20/uniswap_(bridged)"],
     });
-    expect(validateMarketAssetPath("/stellar/asset/usdc:ga5z")).toEqual({
+    expect(validateMarketAssetPath("/stellar/asset/USDC:GA5ZSEJY")).toEqual({
       currencyId: "stellar",
-      assetId: "stellar/asset/usdc:ga5z",
-      ledgerIds: ["stellar/asset/usdc:ga5z"],
+      assetId: "stellar/asset/USDC:GA5ZSEJY",
+      ledgerIds: ["stellar/asset/USDC:GA5ZSEJY"],
     });
   });
 

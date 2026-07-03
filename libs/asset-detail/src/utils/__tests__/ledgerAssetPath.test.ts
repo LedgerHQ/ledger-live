@@ -29,10 +29,22 @@ describe("ledger asset path utils", () => {
         assetId: "ethereum/erc20/uniswap_(bridged)",
         ledgerIds: ["ethereum/erc20/uniswap_(bridged)"],
       });
-      expect(parseLedgerAssetPath("/stellar/asset/usdc:ga5z")).toEqual({
+    });
+
+    it("preserves case-sensitive token segments (e.g. Stellar issuer addresses)", () => {
+      const stellarTokenId = "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KG";
+      expect(parseLedgerAssetPath(`/${stellarTokenId}`)).toEqual({
         currencyId: "stellar",
-        assetId: "stellar/asset/usdc:ga5z",
-        ledgerIds: ["stellar/asset/usdc:ga5z"],
+        assetId: stellarTokenId,
+        ledgerIds: [stellarTokenId],
+      });
+    });
+
+    it("normalizes only the parent currency id, keeping token segment case", () => {
+      expect(parseLedgerAssetPath("/Ethereum/erc20/USD_Coin")).toEqual({
+        currencyId: "ethereum",
+        assetId: "ethereum/erc20/USD_Coin",
+        ledgerIds: ["ethereum/erc20/USD_Coin"],
       });
     });
 
