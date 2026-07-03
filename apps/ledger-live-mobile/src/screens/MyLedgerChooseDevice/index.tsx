@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
-import { useTranslation } from "~/context/Locale";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BluetoothRequired } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import TrackScreen from "~/analytics/TrackScreen";
@@ -42,10 +41,8 @@ type ChooseDeviceProps = Props & {
 };
 
 const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
-  const { t } = useTranslation();
   const action = useManagerDeviceAction();
   const [device, setDevice] = useState<Device | null>();
-  const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { params } = useRoute<NavigationProps["route"]>();
@@ -110,10 +107,8 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           headerRight: request.options.headerRight,
           title: "",
         });
-        setIsHeaderOverridden(true);
       } else {
         navigation.setOptions({ ...wallet40HeaderOptions, headerRight: () => null });
-        setIsHeaderOverridden(false);
       }
     },
     [navigation],
@@ -124,16 +119,9 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
 
   if (!isFocused) return null;
 
-  const showInlineTitle = !isHeaderOverridden;
-
   return (
     <Container {...containerProps}>
       <TrackScreen category="Manager" name="ChooseDevice" />
-      {showInlineTitle ? (
-        <Text pt={3} px={16} pb={8} fontWeight="semiBold" variant="h4" testID="manager-title">
-          {t("manager.title")}
-        </Text>
-      ) : null}
       <Flex flex={1}>
         <SelectDevice2
           onSelect={onSelectDevice}
