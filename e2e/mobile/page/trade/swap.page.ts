@@ -12,7 +12,6 @@ export default class SwapPage extends CommonPage {
   baseLink = "swap";
   confirmSwapOnDeviceDrawerId = "confirm-swap-on-device";
   swapSuccessTitleId = "swap-success-title";
-  swapOperationDetailsScrollViewId = "swap-operation-details-scroll-view";
   deviceActionLoading = "device-action-loading";
   operationRow = {
     rowBaseId: "swap-operation-row-",
@@ -24,22 +23,9 @@ export default class SwapPage extends CommonPage {
   };
   historyButton = "navigation-header-swap-history";
   topBarSwapHistoryButton = "topbar-swap-history";
-  swapStatus = "swap-status";
   exportOperationsButton = "enabled-export-swap-operations-link";
   swapHistoryFeedbackLink = "swap-history-feedback-link";
   swapFormTabId = "swap-form-tab";
-
-  operationDetails = {
-    fromAccount: "swap-operation-details-fromAccount",
-    toAccount: "swap-operation-details-toAccount",
-    fromAmount: "swap-operation-details-fromAmount",
-    toAmount: "swap-operation-details-toAmount",
-    provider: "swap-operation-details-provider",
-    providerLink: "swap-operation-details-provider-link",
-    swapId: "swap-operation-details-swapId",
-    date: "swap-operation-details-date",
-    viewInExplorerButton: "operation-detail-view-in-explorer-button",
-  };
 
   swapFormTab = () => getElementById(this.swapFormTabId);
   operationRows = () => getElementById(this.operationRow.rowRegexp);
@@ -98,39 +84,6 @@ export default class SwapPage extends CommonPage {
   @Step("Open selected operation by swapId: $0")
   async openSelectedOperation(swapId: string) {
     await tapByElement(this.getSpecificOperation(swapId));
-  }
-
-  @Step("Verify swap operation details")
-  async expectSwapDrawerInfos(swapId: string, swap: SwapType, provider: SwapProvider) {
-    jestExpect(normalizeText(await getTextOfElement(this.swapStatus))).toMatch(/Pending|Finished/);
-    await detoxExpect(getElementByText("Swap ID")).toBeVisible();
-    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.swapId))).toEqual(swapId);
-    if (await IsIdVisible(this.operationDetails.providerLink)) {
-      jestExpect(normalizeText(await getTextOfElement(this.operationDetails.providerLink))).toEqual(
-        normalizeText(provider.uiName),
-      );
-    } else {
-      jestExpect(normalizeText(await getTextOfElement(this.operationDetails.provider))).toEqual(
-        normalizeText(provider.uiName),
-      );
-    }
-    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.date))).toMatch(
-      /^(0?[1-9]|1[0-2])\/(0?[1-9]|[12][0-9]|3[01])\/\d{4}$/,
-    );
-    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.fromAccount))).toEqual(
-      normalizeText(swap.accountToDebit.accountName),
-    );
-    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.fromAmount))).toEqual(
-      normalizeText(`${swap.amount} ${swap.accountToDebit.currency.ticker}`),
-    );
-
-    await scrollToId(this.operationDetails.toAmount, this.swapOperationDetailsScrollViewId);
-    jestExpect(normalizeText(await getTextOfElement(this.operationDetails.toAccount))).toEqual(
-      normalizeText(swap.accountToCredit.accountName),
-    );
-    await detoxExpect(getElementById(this.operationDetails.toAmount)).toBeVisible();
-
-    await detoxExpect(getElementById(this.operationDetails.viewInExplorerButton)).toBeVisible();
   }
 
   @Step("Click on export operations")
