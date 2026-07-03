@@ -373,7 +373,9 @@ export async function buildUnsignedTransaction(
     const committedAda = typhonTx.getOutputAmount().ada.plus(typhonTx.getAdditionalOutputAda());
     const spendableAda = availableAda.minus(committedAda);
 
-    const fee = typhonTx.calculateFee([{ address: changeAddress, amount: spendableAda, tokens: [] }]);
+    const fee = typhonTx.calculateFee([
+      { address: changeAddress, amount: spendableAda, tokens: [] },
+    ]);
     const recipientAmount = spendableAda.minus(fee);
 
     const minRecipientUtxo = typhonTx.calculateMinUtxoAmountBabbage({
