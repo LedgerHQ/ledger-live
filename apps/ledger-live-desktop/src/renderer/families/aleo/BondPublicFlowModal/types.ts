@@ -28,8 +28,6 @@ export type StepProps = {
   setSigned: (a: boolean) => void;
   bridgePending: boolean;
   source?: string;
-  isClosedValidatorSelected?: boolean;
-  setIsClosedValidatorSelected?: (a: boolean) => void;
 };
 
 export type St = Step<StepId, StepProps>;

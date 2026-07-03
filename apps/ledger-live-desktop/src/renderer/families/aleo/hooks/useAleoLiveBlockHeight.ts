@@ -22,7 +22,12 @@ export function useAleoLiveBlockHeight(
   const [liveHeight, setLiveHeight] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      // Drop any stale height from a previous countdown so the next one
+      // starts clean instead of inheriting an inflated value.
+      setLiveHeight(null);
+      return;
+    }
 
     let cancelled = false;
     let inFlight = false;

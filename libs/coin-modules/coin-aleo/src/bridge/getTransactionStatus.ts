@@ -19,7 +19,7 @@ import type {
   AleoCoinConfig,
 } from "../types";
 import type { AleoUnspentRecord } from "../types/logic";
-import { estimateFees, validateAddress } from "../logic";
+import { estimateFees, getValidators, validateAddress } from "../logic";
 import {
   calculateAmount,
   getAvailableBalance,
@@ -42,6 +42,7 @@ import {
   AleoAmountRecordRequired,
   AleoAmountTooLargeForTransaction,
   AleoBondAmountTooLow,
+  AleoClosedValidator,
   AleoStakeAmountTooLow,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
@@ -227,6 +228,46 @@ async function validateRecipient({
   return null;
 }
 
+/**
+ * Bridge-level guard mirroring (and backstopping) the UI-only closed-validator
+ * check in StepValidator.tsx: it derives `isOpen` from the fetched validator
+ * list and disables the UI's Continue button, but that guard silently
+ * disappears when the validator fetch fails and the UI falls back to a
+ * free-text address input with an empty list. Re-checking here makes the
+ * bridge — not the UI — authoritative, so a closed-validator bond is
+ * rejected regardless of which UI path was used.
+ *
+ * The committee/latest response (fetched via getValidators) is the only
+ * place `isOpen` is available; there is no single-address lookup. A
+ * validator absent from the committee is not proven closed (it may be new,
+ * or the metadata fetch may be incomplete) so it is not blocked here — an
+ * invalid/unknown recipient is already caught by validateRecipient above.
+ * A network failure while fetching the committee is treated the same way:
+ * we do not hard-fail the status (that would block legitimate bonds during
+ * an outage), we simply skip this check.
+ */
+async function validateBondValidatorIsOpen({
+  account,
+  recipient,
+}: {
+  account: Account;
+  recipient: string;
+}): Promise<Error | null> {
+  try {
+    const validators = await getValidators(account.currency);
+    const validator = validators.find(({ address }) => address === recipient);
+
+    if (validator && !validator.isOpen) {
+      return new AleoClosedValidator();
+    }
+  } catch {
+    // Unable to determine validator status (e.g. committee endpoint down):
+    // do not block the bond on an unrelated outage.
+  }
+
+  return null;
+}
+
 function validatePublicFees({
   account,
   transaction,
@@ -295,6 +336,18 @@ async function handleTransferTransaction({
     });
     if (withdrawalError) {
       errors.withdrawal = withdrawalError;
+    }
+
+    // Only worth checking once we know the recipient is a well-formed
+    // address; an invalid/empty recipient is already reported above.
+    if (!recipientError) {
+      const closedValidatorError = await validateBondValidatorIsOpen({
+        account,
+        recipient: transaction.recipient,
+      });
+      if (closedValidatorError) {
+        errors.recipient = closedValidatorError;
+      }
     }
   }
 

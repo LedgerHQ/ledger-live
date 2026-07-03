@@ -23,7 +23,6 @@ import {
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
   PROGRAM_ID,
   SINGLE_CALL_SIGNING_TIME,
-  STAKING_AMOUNT_INPUT_INDEX,
   STAKING_OPERATION_TYPE,
   TRANSACTION_TYPE,
 } from "../constants";
@@ -41,7 +40,6 @@ import type {
   Intent,
   AleoTransactionIntentData,
   AleoPublicTransaction,
-  AleoPublicTransactionDetailsResponse,
   AleoOperationExtra,
   TransactionPublic,
   TransactionPrivate,
@@ -70,28 +68,6 @@ export function parseMicrocredits(microcredits: string): string {
 export function parseAmount(raw: string | null): BigNumber {
   if (!raw) return new BigNumber(0);
   return new BigNumber(matchAleoPlaintextAmount(raw) ?? 0);
-}
-
-/**
- * Recovers the real bond/unbond amount from the transaction's on-chain execution transition,
- * since the indexer's transaction-list `amount` field is always 0 for these function types.
- * Returns null when the function has no known amount input index (e.g. claim_unbond_public,
- * which carries no amount argument at all), or when the transition/input can't be found.
- */
-export function extractStakingAmountFromTransactionDetails(
-  details: AleoPublicTransactionDetailsResponse,
-  functionId: string,
-): BigNumber | null {
-  const inputIndex = STAKING_AMOUNT_INPUT_INDEX[functionId];
-  if (inputIndex === undefined) return null;
-
-  const transition = details.execution.transitions.find(
-    t => t.program === PROGRAM_ID.CREDITS && t.function === functionId,
-  );
-  const input = transition?.inputs[inputIndex];
-  if (!input || input.type !== "public") return null;
-
-  return parseAmount(input.value);
 }
 
 export function getNetworkConfig(currency: CryptoCurrency) {
@@ -202,13 +178,22 @@ function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
 }
 
 /**
+ * Shared predicate for "no usable sender was recorded" — a single source of truth so
+ * resolveSenderAddress (raw indexer sender_address) and backfillStakingSenders (already
+ * bridge-mapped op.senders) cannot drift on what counts as blank.
+ */
+function isBlankSenderValue(sender: string | null | undefined): boolean {
+  return !sender;
+}
+
+/**
  * The indexer's transaction-list `sender_address` can come back empty for staking calls
  * (bond_public/unbond_public/claim_unbond_public), unlike transfers. Since these functions can
  * only appear in an account's history when that account is the staker itself, fall back to the
  * synced account's own address rather than showing a blank sender.
  */
 function resolveSenderAddress(rawTx: AleoPublicTransaction, address: string): string {
-  if (rawTx.sender_address) return rawTx.sender_address;
+  if (!isBlankSenderValue(rawTx.sender_address)) return rawTx.sender_address;
   return getStakingOperationType(rawTx.function_id) !== undefined ? address : rawTx.sender_address;
 }
 
@@ -217,6 +202,9 @@ function resolveSenderAddress(rawTx: AleoPublicTransaction, address: string): st
  * op cached before the resolveSenderAddress fallback existed (blank sender_address) never gets
  * refetched and stays blank forever. Backfill it in place from the already-cached operations
  * instead of relying on a full resync.
+ *
+ * This is a one-time cache repair: callers should gate it on a persisted per-account flag
+ * (see `hasBackfilledStakingSenders` in bridge/sync.ts) rather than invoking it on every sync.
  */
 export function backfillStakingSenders(
   ops: AleoOperation[],
@@ -224,7 +212,7 @@ export function backfillStakingSenders(
 ): AleoOperation[] {
   return ops.map(op => {
     const functionId = op.extra?.functionId;
-    const hasBlankSender = op.senders.every(sender => !sender);
+    const hasBlankSender = op.senders.every(isBlankSenderValue);
     if (!hasBlankSender || !functionId || getStakingOperationType(functionId) === undefined) {
       return op;
     }
@@ -241,12 +229,14 @@ export const toCoinFrameworkOperation = (
     address,
   );
   const senderAddress = resolveSenderAddress(rawTx, address);
+  const isStakingTx = getStakingOperationType(rawTx.function_id) !== undefined;
+  const value = isStakingTx ? BigInt(fee.toFixed(0)) : BigInt(rawTx.amount.toFixed(0));
   return {
     id: rawTx.transaction_id,
     type,
     recipients: [rawTx.recipient_address],
     senders: [senderAddress],
-    value: BigInt(rawTx.amount.toFixed(0)),
+    value,
     asset: { type: "native" },
     details: {
       functionId: rawTx.function_id,

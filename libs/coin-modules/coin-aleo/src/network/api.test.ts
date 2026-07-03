@@ -441,6 +441,74 @@ describe("apiClient", () => {
     });
   });
 
+  describe("getCommittee", () => {
+    it("should fetch the committee mainnet URL by default", async () => {
+      const mockResponse = { members: { aleo1validator: [1000, true, 5] as [number, boolean, number] } };
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+
+      const result = await apiClient.getCommittee(mockCurrency);
+
+      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/committee/latest`,
+      });
+      expect(result).toEqual(mockResponse);
+    });
+
+    it("should use the testnet URL when configured for testnet", async () => {
+      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(network).mockResolvedValue({ data: { members: {} }, status: 200 });
+
+      await apiClient.getCommittee(mockCurrency);
+
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `${testnetConfig.nodeUrl}/v2/${testnetConfig.networkType}/committee/latest`,
+      });
+    });
+
+    it("should throw an error when network request fails", async () => {
+      jest.mocked(network).mockRejectedValue(new Error("Network error"));
+
+      await expect(apiClient.getCommittee(mockCurrency)).rejects.toThrow("Network error");
+    });
+  });
+
+  describe("getValidatorMetadata", () => {
+    it("should fetch the validator metadata mainnet URL by default", async () => {
+      const mockResponse = { aleo1validator: "Validator One" };
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+
+      const result = await apiClient.getValidatorMetadata(mockCurrency);
+
+      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/committee/validator-metadata`,
+      });
+      expect(result).toEqual(mockResponse);
+    });
+
+    it("should use the testnet URL when configured for testnet", async () => {
+      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(network).mockResolvedValue({ data: {}, status: 200 });
+
+      await apiClient.getValidatorMetadata(mockCurrency);
+
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `${testnetConfig.nodeUrl}/v2/${testnetConfig.networkType}/committee/validator-metadata`,
+      });
+    });
+
+    it("should throw an error when network request fails", async () => {
+      jest.mocked(network).mockRejectedValue(new Error("Network error"));
+
+      await expect(apiClient.getValidatorMetadata(mockCurrency)).rejects.toThrow("Network error");
+    });
+  });
+
   describe("getScannerPublicKey", () => {
     it("should fetch the scanner public key successfully", async () => {
       const mockResponse = {

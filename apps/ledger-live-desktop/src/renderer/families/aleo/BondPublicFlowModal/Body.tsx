@@ -96,7 +96,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
-  const [isClosedValidatorSelected, setIsClosedValidatorSelected] = useState(false);
   const dispatch = useDispatch();
   const { account, parentAccount, source = "Account Page" } = params;
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
@@ -177,8 +176,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     t,
     bridgePending,
     source,
-    isClosedValidatorSelected,
-    setIsClosedValidatorSelected,
   };
 
   return (

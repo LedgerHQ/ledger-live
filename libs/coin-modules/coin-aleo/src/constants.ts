@@ -34,15 +34,6 @@ export const STAKING_OPERATION_TYPE: Record<string, OperationType> = {
   [TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC]: "WITHDRAW_UNBONDED",
 };
 
-// The public indexer's transaction-list `amount` field is always 0 for bond_public/unbond_public,
-// so the real amount must be recovered from the on-chain transition input at this index.
-// claim_unbond_public has no amount argument at all (see logic/utils.ts extractStakingAmountFromTransactionDetails)
-// — TODO: reconstructing the claimed amount (e.g. from prior unbond_public history) is left for a future feature.
-export const STAKING_AMOUNT_INPUT_INDEX: Partial<Record<string, number>> = {
-  [TRANSACTION_TYPE.BOND_PUBLIC]: 2,
-  [TRANSACTION_TYPE.UNBOND_PUBLIC]: 1,
-};
-
 // Function names that represent actual private token transfers between parties.
 // Used to exclude internal operations (split, join, fee_private, etc.) from history.
 export const PRIVATE_TRANSFER_FUNCTIONS = new Set([

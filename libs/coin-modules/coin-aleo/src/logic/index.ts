@@ -4,6 +4,8 @@ export { craftTransaction } from "./craftTransaction";
 export { estimateFees } from "./estimateFees";
 export { getBalance } from "./getBalance";
 export { getStakingPosition } from "./getStakingPosition";
+export { getValidators } from "./getValidators";
+export type { AleoValidator } from "./getValidators";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";
 export { validateIntent } from "./validateIntent";

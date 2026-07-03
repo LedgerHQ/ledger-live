@@ -30,6 +30,7 @@ import {
   AleoAmountRecordRequired,
   AleoAmountTooLargeForTransaction,
   AleoBondAmountTooLow,
+  AleoClosedValidator,
   AleoStakeAmountTooLow,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
@@ -37,6 +38,7 @@ import {
   AleoTooManyRecordsSelected,
   AleoTwoRecordsRequired,
 } from "../errors";
+import { getValidators } from "../logic";
 import { getTransactionStatus } from "./getTransactionStatus";
 
 jest.mock("../config");
@@ -50,6 +52,7 @@ const mockEstimateFees = jest.mocked(estimateFees);
 const mockValidateAddress = jest.mocked(validateAddress);
 const mockCalculateAmount = jest.mocked(calculateAmount);
 const mockAleoConfig = jest.mocked(aleoCoinConfig);
+const mockGetValidators = jest.mocked(getValidators);
 
 describe("getTransactionStatus", () => {
   const mockFees = new BigNumber(5000);
@@ -90,6 +93,7 @@ describe("getTransactionStatus", () => {
       amount: mockAmount,
       totalSpent: mockAmount.plus(mockFees),
     });
+    mockGetValidators.mockResolvedValue([]);
   });
 
   it("should return empty errors and warnings for valid transaction", async () => {
@@ -1011,6 +1015,46 @@ describe("getTransactionStatus", () => {
       );
 
       expect(result.errors.amount).not.toBeInstanceOf(AleoStakeAmountTooLow);
+    });
+
+    const validatorAddress = "aleo1validator00000000000000000000000000000000000000000000000q";
+
+    it("reports errors.recipient with AleoClosedValidator when bonding to a closed validator", async () => {
+      mockGetValidators.mockResolvedValue([
+        { address: validatorAddress, stake: 1000, isOpen: false, commission: 5 },
+      ]);
+
+      const result = await getTransactionStatus(mockAccount, bondTransaction(new BigNumber(10)));
+
+      expect(result.errors.recipient).toBeInstanceOf(AleoClosedValidator);
+    });
+
+    it("does not report AleoClosedValidator when bonding to an open validator", async () => {
+      mockGetValidators.mockResolvedValue([
+        { address: validatorAddress, stake: 1000, isOpen: true, commission: 5 },
+      ]);
+
+      const result = await getTransactionStatus(mockAccount, bondTransaction(new BigNumber(10)));
+
+      expect(result.errors.recipient).toBeUndefined();
+    });
+
+    it("does not block the bond when the validator list is unavailable (fetch fails)", async () => {
+      mockGetValidators.mockRejectedValue(new Error("committee endpoint down"));
+
+      const result = await getTransactionStatus(mockAccount, bondTransaction(new BigNumber(10)));
+
+      expect(result.errors.recipient).toBeUndefined();
+    });
+
+    it("does not block the bond when the validator is absent from the committee list", async () => {
+      mockGetValidators.mockResolvedValue([
+        { address: "aleo1other0000000000000000000000000000000000000000000000000000q", stake: 1000, isOpen: false, commission: 5 },
+      ]);
+
+      const result = await getTransactionStatus(mockAccount, bondTransaction(new BigNumber(10)));
+
+      expect(result.errors.recipient).toBeUndefined();
     });
   });
 

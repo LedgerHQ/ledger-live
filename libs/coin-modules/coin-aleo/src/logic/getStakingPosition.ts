@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { apiClient } from "../network/api";
 
@@ -46,6 +47,19 @@ export async function getStakingPosition(
 
   const bonded = parseBondedMapping(bondedRaw);
   const unbonding = parseUnbondingMapping(unbondingRaw);
+
+  // Log parse failures: detect when raw data is non-null but parsing returned null
+  if (bondedRaw && !bonded) {
+    log("aleo/getStakingPosition", "Failed to parse bonded mapping", {
+      raw: bondedRaw,
+    });
+  }
+
+  if (unbondingRaw && !unbonding) {
+    log("aleo/getStakingPosition", "Failed to parse unbonding mapping", {
+      raw: unbondingRaw,
+    });
+  }
 
   return {
     bondedBalance: bonded?.microcredits ?? new BigNumber(0),

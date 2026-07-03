@@ -1,5 +1,16 @@
 export type AleoTransactionType = "public" | "private";
 
+// Tuple shape returned by the committee endpoint for each validator:
+// [stake (in microcredits), isOpen, commission]
+export type AleoCommitteeMember = [number, boolean, number];
+
+export interface AleoCommitteeResponse {
+  members?: Record<string, AleoCommitteeMember>;
+}
+
+// Maps a validator address to its human-readable name.
+export type AleoValidatorMetadataResponse = Record<string, string>;
+
 export type AleoTransitionValue =
   | {
       id: string;

@@ -8,7 +8,6 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import Button from "~/renderer/components/Button";
@@ -24,54 +23,10 @@ import Text from "~/renderer/components/Text";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
 import { Transaction } from "@ledgerhq/live-common/families/aleo/types";
+import { getValidators, AleoValidator } from "@ledgerhq/live-common/families/aleo/logic";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-const COMMITTEE_URL = "https://api.provable.com/v2/mainnet/committee/latest?";
-const VALIDATOR_METADATA_URL = "https://api.provable.com/v2/mainnet/committee/validator-metadata";
-
-type AleoCommitteeResponse = {
-  members?: Record<string, [number, boolean, number]>;
-};
-
-type AleoValidator = {
-  address: string;
-  name?: string;
-  stake: number;
-  isOpen: boolean;
-  commission: number;
-};
-
-async function fetchAleoValidators(): Promise<AleoValidator[]> {
-  const committeeResponse = await fetch(COMMITTEE_URL);
-
-  if (!committeeResponse.ok) {
-    throw new Error("Unable to fetch Aleo validators");
-  }
-
-  const committee = (await committeeResponse.json()) as AleoCommitteeResponse;
-  const metadataResponse = await fetch(VALIDATOR_METADATA_URL).catch(() => null);
-  const metadata =
-    metadataResponse?.ok === true
-      ? ((await metadataResponse.json()) as Record<string, string>)
-      : {};
-
-  return Object.entries(committee.members ?? {})
-    .map(([address, [stake, isOpen, commission]]) => ({
-      address,
-      name: metadata[address],
-      stake,
-      isOpen,
-      commission,
-    }))
-    .sort((left, right) => {
-      if (left.isOpen !== right.isOpen) {
-        return left.isOpen ? -1 : 1;
-      }
-
-      return right.stake - left.stake;
-    });
-}
-
-function useAleoValidators(search: string) {
+function useAleoValidators(search: string, currency: CryptoCurrency) {
   const [validators, setValidators] = useState<AleoValidator[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchFailed, setFetchFailed] = useState(false);
@@ -81,7 +36,7 @@ function useAleoValidators(search: string) {
 
     setIsLoading(true);
     setFetchFailed(false);
-    fetchAleoValidators()
+    getValidators(currency)
       .then(validators => {
         if (!cancelled) {
           setValidators(validators);
@@ -102,7 +57,7 @@ function useAleoValidators(search: string) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [currency]);
 
   return useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
@@ -129,7 +84,6 @@ export default function StepValidator({
   transaction,
   error,
   status,
-  setIsClosedValidatorSelected,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
@@ -139,16 +93,7 @@ export default function StepValidator({
   const explorerView = getDefaultExplorerView(account.currency);
 
   const recipient = transaction.recipient || "";
-  const { validators, isLoading, fetchFailed } = useAleoValidators(search);
-  const selectedValidator = useMemo(
-    () => validators.find(validator => validator.address === recipient),
-    [validators, recipient],
-  );
-  const isClosedValidatorSelected = selectedValidator ? !selectedValidator.isOpen : false;
-
-  useEffect(() => {
-    setIsClosedValidatorSelected?.(isClosedValidatorSelected);
-  }, [isClosedValidatorSelected, setIsClosedValidatorSelected]);
+  const { validators, isLoading, fetchFailed } = useAleoValidators(search, account.currency);
 
   const setValidator = useCallback(
     (address: string) =>
@@ -222,11 +167,6 @@ export default function StepValidator({
   return (
     <Box flow={3}>
       <TrackPage category="Bond Flow" name="Step Validator" currency="aleo" type="modal" />
-      {isClosedValidatorSelected && (
-        <Alert type="error">
-          <Trans i18nKey="aleo.bond.flow.steps.validator.closedWarning" />
-        </Alert>
-      )}
       {error && recipient.length > 0 && <ErrorBanner error={error} />}
       {showRecipientError && <ErrorBanner error={status.errors.recipient} />}
       <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />
@@ -269,11 +209,9 @@ export function StepValidatorFooter({
   bridgePending,
   transaction,
   onClose,
-  isClosedValidatorSelected,
 }: StepProps) {
   const { errors } = status;
-  const canNext =
-    !bridgePending && !!transaction?.recipient && !errors.recipient && !isClosedValidatorSelected;
+  const canNext = !bridgePending && !!transaction?.recipient && !errors.recipient;
   return (
     <Box horizontal>
       <Button mr={1} onClick={onClose}>

@@ -2412,6 +2412,28 @@ describe("sync.ts", () => {
       const result = postSync(synced, synced);
       expect(result.pendingOperations).toEqual([expect.objectContaining({ id: pendingOp.id })]);
     });
+
+    it("consumes pendingEvictionIds from the shape and strips it so it never persists", () => {
+      const pendingOp = getMockedOperation({
+        id: "js:2:aleo:addr:at1execid-OUT",
+        hash: "at1execid",
+        blockHeight: null,
+      });
+
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        operations: [],
+        pendingOperations: [pendingOp],
+        pendingEvictionIds: [pendingOp.id],
+      };
+
+      const result = postSync(synced, synced);
+
+      // evicted purely off the threaded ids (no confirmed op matches by id)
+      expect(result.pendingOperations).toEqual([]);
+      // transient field must not survive into the returned (persisted) account
+      expect(result.pendingEvictionIds).toBeUndefined();
+    });
   });
 
   describe("collectPendingEvictions", () => {
@@ -2500,6 +2522,41 @@ describe("sync.ts", () => {
       const result = await collectPendingEvictions(currency, [], [pending]);
       expect(mockApiClient.getTransactionById).not.toHaveBeenCalled();
       expect(result.size).toBe(0);
+    });
+
+    it("skips the on-chain lookup for a pending op already confirmed under the same id (plain send), avoiding a redundant call", async () => {
+      const confirmed = getMockedOperation({
+        id: "same-id-OUT",
+        hash: "at1x",
+        extra: { functionId: "transfer_public", transactionType: "public" },
+      });
+      const pending = getMockedOperation({ id: "same-id-OUT", hash: "at1x" });
+
+      const result = await collectPendingEvictions(currency, [confirmed], [pending]);
+
+      // already resolvable by id match in postSync — no need for the extra API call
+      expect(mockApiClient.getTransactionById).not.toHaveBeenCalled();
+      expect(result.size).toBe(0);
+    });
+
+    it("still performs the lookup for a reverted plain send (different id, not staking) so eviction is not staking-only", async () => {
+      const confirmed = getMockedOperation({
+        id: "confirmed-feeid-OUT",
+        hash: "at1feeid",
+        extra: { functionId: "transfer_public", transactionType: "public" },
+        hasFailed: true,
+      });
+      const pending = getMockedOperation({ id: "pending-execid-OUT", hash: "at1execid" });
+      mockApiClient.getTransactionById.mockResolvedValue({
+        type: "fee",
+        id: "at1feeid",
+        fee: { transition: { id: "au1feetransition" } },
+      } as any);
+
+      const result = await collectPendingEvictions(currency, [confirmed], [pending]);
+
+      expect(mockApiClient.getTransactionById).toHaveBeenCalledWith(currency, "at1execid");
+      expect([...result]).toEqual(["pending-execid-OUT"]);
     });
   });
 });

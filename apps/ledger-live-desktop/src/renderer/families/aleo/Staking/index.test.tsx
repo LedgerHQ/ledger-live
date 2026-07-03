@@ -133,7 +133,7 @@ describe("Aleo StakingSection", () => {
     expect(screen.getByRole("button", { name: /claim/i })).toBeEnabled();
   });
 
-  it("renders the validator line with the middle-truncated address", () => {
+  it("renders the validator line with the full address", () => {
     render(
       <StakingSection
         account={makeAccount({
@@ -143,6 +143,8 @@ describe("Aleo StakingSection", () => {
       />,
     );
     expect(screen.getByText(/validator/i)).toBeVisible();
-    expect(screen.getByText("aleo18xw…x90grsah3jug")).toBeVisible();
+    expect(
+      screen.getByText("aleo18xwgkgzzafk48v9ytx56tumypx2zxaskyygpxc9x90grsah3jug"),
+    ).toBeVisible();
   });
 });

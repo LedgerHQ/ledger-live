@@ -33,6 +33,9 @@ export function toAleoResourcesRaw(resources: AleoResources): AleoResourcesRaw {
     ...(typeof resources.hasMigratedPrivateTokens === "boolean" && {
       hasMigratedPrivateTokens: resources.hasMigratedPrivateTokens,
     }),
+    ...(typeof resources.hasBackfilledStakingSenders === "boolean" && {
+      hasBackfilledStakingSenders: resources.hasBackfilledStakingSenders,
+    }),
   };
 }
 
@@ -56,6 +59,9 @@ export function fromAleoResourcesRaw(rawResources: AleoResourcesRaw): AleoResour
     }),
     ...(typeof rawResources.hasMigratedPrivateTokens === "boolean" && {
       hasMigratedPrivateTokens: rawResources.hasMigratedPrivateTokens,
+    }),
+    ...(typeof rawResources.hasBackfilledStakingSenders === "boolean" && {
+      hasBackfilledStakingSenders: rawResources.hasBackfilledStakingSenders,
     }),
   };
 }
@@ -119,16 +125,6 @@ export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
     ...(extra.transitionId !== undefined && { transitionId: extra.transitionId }),
   };
 
-  if (extra.estimatedBondedAmount) {
-    extraRaw.estimatedBondedAmount = extra.estimatedBondedAmount.toString();
-  }
-  if (extra.estimatedUnbondedAmount) {
-    extraRaw.estimatedUnbondedAmount = extra.estimatedUnbondedAmount.toString();
-  }
-  if (extra.estimatedWithdrawUnbondedAmount) {
-    extraRaw.estimatedWithdrawUnbondedAmount = extra.estimatedWithdrawUnbondedAmount.toString();
-  }
-
   return extraRaw;
 }
 
@@ -144,16 +140,6 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
     ...(extraRaw.programId !== undefined && { programId: extraRaw.programId }),
     ...(extraRaw.transitionId !== undefined && { transitionId: extraRaw.transitionId }),
   };
-
-  if (extraRaw.estimatedBondedAmount) {
-    extra.estimatedBondedAmount = new BigNumber(extraRaw.estimatedBondedAmount);
-  }
-  if (extraRaw.estimatedUnbondedAmount) {
-    extra.estimatedUnbondedAmount = new BigNumber(extraRaw.estimatedUnbondedAmount);
-  }
-  if (extraRaw.estimatedWithdrawUnbondedAmount) {
-    extra.estimatedWithdrawUnbondedAmount = new BigNumber(extraRaw.estimatedWithdrawUnbondedAmount);
-  }
 
   return extra;
 }

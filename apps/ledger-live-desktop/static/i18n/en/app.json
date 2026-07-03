@@ -7822,6 +7822,10 @@
       "title": "Nothing to claim yet",
       "description": "Your unstaked funds are not claimable yet. They unlock once the unbonding period ends."
     },
+    "AleoClosedValidator": {
+      "title": "This validator is closed",
+      "description": "This validator is not accepting new delegators. Choose an open validator to continue."
+    },
     "AleoApiConfigurationResetError": {
       "title": "Record scanner configuration was reset, please sync your account again."
     },
@@ -9095,9 +9099,6 @@
       "type": {
         "public": "Public",
         "private": "Private"
-      },
-      "operationTypes": {
-        "WITHDRAW_UNBONDED": "Claim"
       }
     },
     "operationTypes": {
@@ -9129,8 +9130,7 @@
             "label": "Validator address",
             "loading": "Loading validators...",
             "closed": "Closed",
-            "commission": "Commission",
-            "closedWarning": "This validator does not accept new stakers."
+            "commission": "Commission"
           },
           "withdrawal": {
             "title": "Withdrawal",
@@ -9175,7 +9175,7 @@
       "flow": {
         "title": "Unbond ALEO",
         "steps": {
-          "amount": { "title": "Amount" },
+          "amount": { "title": "Amount", "availableLabel": "Bonded balance" },
           "connectDevice": { "title": "Device" },
           "confirmation": {
             "title": "Confirmation",
@@ -9195,7 +9195,8 @@
         "steps": {
           "summary": {
             "title": "Summary",
-            "info": "This claims all ALEO whose unbonding period has elapsed back to your account."
+            "info": "This claims all ALEO whose unbonding period has elapsed back to your account.",
+            "claimableAmountLabel": "Claimable amount"
           },
           "connectDevice": { "title": "Device" },
           "confirmation": {

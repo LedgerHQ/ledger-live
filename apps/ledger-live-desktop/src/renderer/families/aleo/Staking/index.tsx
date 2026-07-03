@@ -20,12 +20,6 @@ import ToolTip from "~/renderer/components/Tooltip";
 import IconChartLine from "~/renderer/icons/ChartLine";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 
-// No shared middle-ellipsis helper exists in the repo; keep this local to the component.
-const middleEllipsis = (value: string, head: number, tail: number) => {
-  if (value.length <= head + tail + 1) return value;
-  return `${value.slice(0, head)}…${value.slice(value.length - tail)}`;
-};
-
 const EmptyStateWrapper = styled(Box).attrs(() => ({ p: 3 }))`
   border-radius: 4px;
   justify-content: space-between;
@@ -66,6 +60,7 @@ const ValidatorAddress = styled(Text).attrs(() => ({
   fontSize: 3,
 }))`
   cursor: pointer;
+  word-break: break-all;
   &:hover {
     color: ${p => p.theme.colors.primary.c80};
   }
@@ -216,9 +211,7 @@ const Staking = ({ account }: { account: AleoAccount }) => {
               <ValidatorLabel>
                 <Trans i18nKey="aleo.stake.table.validator" />
               </ValidatorLabel>
-              <ValidatorAddress onClick={onValidatorClick}>
-                {middleEllipsis(bondedValidator, 8, 12)}
-              </ValidatorAddress>
+              <ValidatorAddress onClick={onValidatorClick}>{bondedValidator}</ValidatorAddress>
             </ValidatorLineWrapper>
           ) : null}
           <CardGrid>

@@ -28,7 +28,6 @@ import {
 import {
   getMockedTransaction as getMockedPublicTransaction,
   getMockedEnrichedPrivateRecord,
-  getMockedTransactionDetails,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
@@ -96,7 +95,6 @@ import {
   getEstimatedSigningTime,
   sumPrivateRecords,
   getCalTokens,
-  extractStakingAmountFromTransactionDetails,
   getClaimableStakingBalance,
 } from "./utils";
 
@@ -193,120 +191,6 @@ describe("parseAleoAmount", () => {
 
   it("should return zero for invalid input", () => {
     expect(parseAmount("invalid").toString()).toBe("0");
-  });
-});
-
-describe("extractStakingAmountFromTransactionDetails", () => {
-  it("should extract the amount from a bond_public transition input", () => {
-    const details = getMockedTransactionDetails(undefined, {
-      execution: {
-        transitions: [
-          {
-            id: "au1xyz789",
-            scm: "cm1abc",
-            tcm: "cm1def",
-            tpk: "tpk1ghi",
-            inputs: [
-              { id: "input1", type: "public", value: "aleo1validator" },
-              { id: "input2", type: "public", value: "aleo1withdrawal" },
-              { id: "input3", type: "public", value: "10000000000u64" },
-            ],
-            outputs: [],
-            program: "credits.aleo",
-            function: "bond_public",
-          },
-        ],
-      },
-    });
-
-    const result = extractStakingAmountFromTransactionDetails(details, "bond_public");
-
-    expect(result).not.toBeNull();
-    expect(result?.isEqualTo(10000000000)).toBe(true);
-  });
-
-  it("should extract the amount from an unbond_public transition input", () => {
-    const details = getMockedTransactionDetails(undefined, {
-      execution: {
-        transitions: [
-          {
-            id: "au1xyz789",
-            scm: "cm1abc",
-            tcm: "cm1def",
-            tpk: "tpk1ghi",
-            inputs: [
-              { id: "input1", type: "public", value: "aleo1staker" },
-              { id: "input2", type: "public", value: "5000000u64" },
-            ],
-            outputs: [],
-            program: "credits.aleo",
-            function: "unbond_public",
-          },
-        ],
-      },
-    });
-
-    const result = extractStakingAmountFromTransactionDetails(details, "unbond_public");
-
-    expect(result).not.toBeNull();
-    expect(result?.isEqualTo(5000000)).toBe(true);
-  });
-
-  it("should return null for claim_unbond_public (no known amount input index)", () => {
-    const details = getMockedTransactionDetails();
-
-    const result = extractStakingAmountFromTransactionDetails(details, "claim_unbond_public");
-
-    expect(result).toBeNull();
-  });
-
-  it("should return null when there is no matching transition for the function", () => {
-    const details = getMockedTransactionDetails(undefined, {
-      execution: {
-        transitions: [
-          {
-            id: "au1xyz789",
-            scm: "cm1abc",
-            tcm: "cm1def",
-            tpk: "tpk1ghi",
-            inputs: [{ id: "input1", type: "public", value: "100u64" }],
-            outputs: [],
-            program: "credits.aleo",
-            function: "transfer_public",
-          },
-        ],
-      },
-    });
-
-    const result = extractStakingAmountFromTransactionDetails(details, "bond_public");
-
-    expect(result).toBeNull();
-  });
-
-  it("should return null when the input at the expected index is not public (e.g. record)", () => {
-    const details = getMockedTransactionDetails(undefined, {
-      execution: {
-        transitions: [
-          {
-            id: "au1xyz789",
-            scm: "cm1abc",
-            tcm: "cm1def",
-            tpk: "tpk1ghi",
-            inputs: [
-              { id: "input1", type: "public", value: "aleo1staker" },
-              { id: "input2", type: "record", tag: "tag123" },
-            ],
-            outputs: [],
-            program: "credits.aleo",
-            function: "unbond_public",
-          },
-        ],
-      },
-    });
-
-    const result = extractStakingAmountFromTransactionDetails(details, "unbond_public");
-
-    expect(result).toBeNull();
   });
 });
 

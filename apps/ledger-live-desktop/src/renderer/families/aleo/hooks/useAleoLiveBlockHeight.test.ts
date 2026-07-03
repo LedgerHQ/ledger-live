@@ -78,6 +78,27 @@ describe("useAleoLiveBlockHeight", () => {
     expect(result.current).toBe(100);
   });
 
+  it("resets the live height when disabled, so a later re-enable does not reuse a stale high value", async () => {
+    mockLastBlock.mockResolvedValue(blockAt(150));
+    const { result, rerender } = renderHook(
+      ({ enabled, fallbackHeight }: { enabled: boolean; fallbackHeight: number }) =>
+        useAleoLiveBlockHeight(currency, { fallbackHeight, enabled }),
+      { initialProps: { enabled: true, fallbackHeight: 100 } },
+    );
+    await flush();
+    expect(result.current).toBe(150);
+
+    // Countdown finishes: disable polling.
+    rerender({ enabled: false, fallbackHeight: 100 });
+    expect(result.current).toBe(100);
+
+    // A new countdown starts (e.g. unbond -> matures -> unbond again) with a
+    // lower fallback height reflecting the fresh account state.
+    mockLastBlock.mockReturnValue(new Promise(() => {})); // no fresh value yet
+    rerender({ enabled: true, fallbackHeight: 120 });
+    expect(result.current).toBe(120);
+  });
+
   it("keeps the last good value when a fetch rejects", async () => {
     mockLastBlock.mockResolvedValueOnce(blockAt(150)).mockRejectedValueOnce(new Error("network"));
     const { result } = renderHook(() =>

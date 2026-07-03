@@ -9,7 +9,7 @@ import {
 } from "../__tests__/fixtures/account.fixture";
 import { getMockedTokenCurrency } from "../__tests__/fixtures/currency.fixture";
 import type { AleoAccount, AleoAccountRaw, AleoResources, AleoResourcesRaw } from "../types";
-import type { AleoOperationExtra, AleoOperationExtraRaw } from "../types/bridge";
+import type { AleoOperationExtraRaw } from "../types/bridge";
 import {
   assignFromAccountRaw,
   assignFromTokenAccountRaw,
@@ -179,34 +179,6 @@ describe("serialization", () => {
 });
 
 describe("operation extra serialization", () => {
-  it("round-trips staking amount fields through toOperationExtraRaw/fromOperationExtraRaw", () => {
-    const extra: AleoOperationExtra = {
-      functionId: "unbond_public",
-      transactionType: "public",
-      estimatedUnbondedAmount: new BigNumber("123456789"),
-    };
-
-    const raw = toOperationExtraRaw(extra);
-    expect(raw).toEqual({
-      functionId: "unbond_public",
-      transactionType: "public",
-      estimatedUnbondedAmount: "123456789",
-    });
-
-    const roundTripped = fromOperationExtraRaw(raw);
-    expect((roundTripped as AleoOperationExtra).estimatedUnbondedAmount?.toString()).toBe(
-      "123456789",
-    );
-  });
-
-  it("omits staking amount fields when absent", () => {
-    const extra: AleoOperationExtra = { functionId: "transfer_public", transactionType: "public" };
-    const raw = toOperationExtraRaw(extra) as AleoOperationExtraRaw;
-    expect(raw.estimatedBondedAmount).toBeUndefined();
-    expect(raw.estimatedUnbondedAmount).toBeUndefined();
-    expect(raw.estimatedWithdrawUnbondedAmount).toBeUndefined();
-  });
-
   describe("operation extra transitionId round-trip", () => {
     it("preserves transitionId through toOperationExtraRaw/fromOperationExtraRaw", () => {
       const raw = toOperationExtraRaw({
