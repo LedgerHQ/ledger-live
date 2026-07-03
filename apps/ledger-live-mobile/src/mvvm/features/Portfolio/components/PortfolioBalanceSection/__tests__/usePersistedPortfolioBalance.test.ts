@@ -1,5 +1,5 @@
 import { renderHook, act } from "@testing-library/react-native";
-import { MMKV } from "react-native-mmkv";
+import { mmkv } from "LLM/storage/mmkvStorageWrapper";
 import { usePersistedPortfolioBalance } from "../usePersistedPortfolioBalance";
 import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/index";
 
@@ -12,11 +12,11 @@ let setSpy: jest.SpyInstance;
 
 beforeEach(() => {
   store = {};
-  getNumberSpy = jest.spyOn(MMKV.prototype, "getNumber").mockImplementation((k: string) => {
+  getNumberSpy = jest.spyOn(mmkv, "getNumber").mockImplementation((k: string) => {
     const v = store[k];
     return typeof v === "number" ? v : undefined;
   });
-  setSpy = jest.spyOn(MMKV.prototype, "set").mockImplementation((k: string, v: unknown) => {
+  setSpy = jest.spyOn(mmkv, "set").mockImplementation((k: string, v: unknown) => {
     store[k] = v;
   });
 });
