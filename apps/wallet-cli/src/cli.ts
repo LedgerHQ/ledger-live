@@ -10,7 +10,7 @@ import { emitTestingBuildBannerIfNeeded } from "./shared/testing-build-banner";
 import "../.bunli/commands.gen";
 import bunliConfig from "../bunli.config";
 import { disposeAnalytics, startAnalytics } from "./analytics/segment";
-import { getCliProcessExitCode } from "./cli-process-exit-error";
+import { withCommandLifecycleAnalytics } from "./analytics/lifecycle-analytics";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
 import AccountGroup from "./commands/account/index";
 import AssetsGroup from "./commands/assets/index";
@@ -52,17 +52,12 @@ function normalizeNegatedFlags(argv: string[]): string[] {
 }
 
 if (import.meta.main) {
-  let exitCode = 0;
+  const argv = normalizeNegatedFlags(process.argv.slice(2));
   try {
     startAnalytics();
-    exitCode = await runMain();
-  } catch (e) {
-    const code = getCliProcessExitCode(e);
-    if (code === null) throw e;
-    exitCode = code;
+    process.exitCode = await withCommandLifecycleAnalytics(argv, () => runMain(argv));
   } finally {
     await disposeWalletCliDmkTransportFully();
     await disposeAnalytics();
   }
-  process.exitCode = exitCode;
 }
