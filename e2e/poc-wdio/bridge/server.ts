@@ -271,6 +271,10 @@ export const swapSetup = () => {
   return fetchData({ type: "swapSetup", id: uuid(), swapApiBase: process.env.SWAP_API_BASE });
 };
 
+export async function waitEarnReady() {
+  return fetchData({ type: "waitEarnReady", id: uuid() }, RESPONSE_TIMEOUT * 3);
+}
+
 export async function findFreePort(): Promise<number> {
   return new Promise((resolve, reject) => {
     const server = net.createServer({ allowHalfOpen: false });

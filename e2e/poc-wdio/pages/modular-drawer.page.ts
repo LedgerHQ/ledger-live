@@ -15,6 +15,16 @@ export class ModularDrawerPage {
     return getByTestId("modular-drawer-flow-view");
   }
 
+  get addNewOrExistingAccountButton() {
+    return getByTestId("add-new-account-button");
+  }
+
+  get assetBasedTitle() {
+    return getByTestIdMatching(
+      new RegExp("bottom-sheet-header-title|modular-drawer-Asset-title", "i"),
+    );
+  }
+
   get accountItem() {
     return getByTestId("account-item");
   }
@@ -77,6 +87,20 @@ export class ModularDrawerPage {
     await step("Select first account in modular drawer", async () => {
       // TODO: use $$ to get all and take first
       await this.accountItem.click();
+    });
+  }
+
+  async tapAddNewOrExistingAccountButtonMAD() {
+    await step("Tap add new or existing account button", async () => {
+      await this.addNewOrExistingAccountButton.click();
+    });
+  }
+
+  async checkSelectAssetPage() {
+    await step("Verify Select Asset page in modular drawer", async () => {
+      await this.assetBasedTitle.waitForDisplayed();
+      await expect(this.assetBasedTitle).toBeDisplayed();
+      await expect(this.searchBar).toBeDisplayed();
     });
   }
 

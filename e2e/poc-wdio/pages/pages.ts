@@ -8,6 +8,9 @@ import { SwapPage } from "./swap.page.ts";
 import { SwapLiveAppPage } from "./swap-live-app.page.ts";
 import { ModularDrawerPage } from "./modular-drawer.page.ts";
 import { CommonPage } from "./common.page.ts";
+import { MainNavigationPage } from "./main-navigation.page.ts";
+import { EarnV2DashboardPage } from "./earn-v2-dashboard.page.ts";
+import { AddAccountPage } from "./add-account.page.ts";
 
 import { InitializationManager, InitOptions } from "../utils/InitialisationManager.ts";
 import { randomUUID } from "node:crypto";
@@ -30,6 +33,9 @@ class Pages {
   private swapLiveAppPageInstance = Pages.LAZY_INIT(SwapLiveAppPage);
   private modularDrawerInstance = Pages.LAZY_INIT(ModularDrawerPage);
   private commonPageInstance = Pages.LAZY_INIT(CommonPage);
+  private mainNavigationPageInstance = Pages.LAZY_INIT(MainNavigationPage);
+  private earnV2DashboardPageInstance = Pages.LAZY_INIT(EarnV2DashboardPage);
+  private addAccountPageInstance = Pages.LAZY_INIT(AddAccountPage);
 
   async init(options: InitOptions) {
     // TODO: move this into initialisation manager?
@@ -72,6 +78,18 @@ class Pages {
 
   public get common() {
     return this.commonPageInstance();
+  }
+
+  public get mainNavigation() {
+    return this.mainNavigationPageInstance();
+  }
+
+  public get earnV2Dashboard() {
+    return this.earnV2DashboardPageInstance();
+  }
+
+  public get addAccount() {
+    return this.addAccountPageInstance();
   }
 }
 
