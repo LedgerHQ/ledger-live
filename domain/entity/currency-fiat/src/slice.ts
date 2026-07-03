@@ -10,7 +10,7 @@ export const supportedFiatsSlice = createSlice({
   initialState,
   reducers: {
     /**
-     * Replaces the supported-fiat list with the CVS-supplied tickers.
+     * Replaces the supported-fiat list with CVS-resolved fiat currencies.
      * No-op when `payload` is empty so the OFAC-filtered fallback is
      * preserved on transient network failures.
      */
