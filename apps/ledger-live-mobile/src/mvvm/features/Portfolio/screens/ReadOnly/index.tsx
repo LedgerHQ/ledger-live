@@ -1,8 +1,6 @@
 import React, { useMemo } from "react";
 import { View } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
-import { Box } from "@ledgerhq/lumen-ui-rnative";
-import PortfolioGraphCard from "~/screens/Portfolio/PortfolioGraphCard";
 import TrackScreen from "~/analytics/TrackScreen";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
@@ -25,51 +23,30 @@ type NavigationProps = BaseComposite<
 >;
 
 function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
-  const {
-    safeAreaTop,
-    shouldDisplayGraphRework,
-    isLNSUpsellBannerShown,
-    source,
-    onBackFromUpdate,
-  } = useReadOnlyPortfolioViewModel(navigation);
+  const { safeAreaTop, isLNSUpsellBannerShown, source, onBackFromUpdate } =
+    useReadOnlyPortfolioViewModel(navigation);
 
   const data = useMemo(
     () => [
-      shouldDisplayGraphRework ? (
-        <View key="header" style={{ paddingTop: safeAreaTop }}>
-          <Flex px={6}>
-            <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-          </Flex>
-          <ScreenHeroSectionView>
-            <PortfolioBalanceSection showAssets={false} isReadOnlyMode />
-          </ScreenHeroSectionView>
-        </View>
-      ) : (
-        <Box key="PortfolioGraphCard">
-          <PortfolioGraphCard
-            showAssets={false}
-            screenName="Wallet"
-            hideGraph={false}
-            isReadOnlyMode
-          />
-        </Box>
-      ),
+      <View key="header" style={{ paddingTop: safeAreaTop }}>
+        <Flex px={6}>
+          <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+        </Flex>
+        <ScreenHeroSectionView>
+          <PortfolioBalanceSection showAssets={false} isReadOnlyMode />
+        </ScreenHeroSectionView>
+      </View>,
       <PortfolioNoSignerContent
         key="noSigner"
         isLNSUpsellBannerShown={isLNSUpsellBannerShown}
         variant="readOnly"
       />,
     ],
-    [shouldDisplayGraphRework, isLNSUpsellBannerShown, onBackFromUpdate, safeAreaTop],
+    [isLNSUpsellBannerShown, onBackFromUpdate, safeAreaTop],
   );
 
   return (
     <>
-      {!shouldDisplayGraphRework && (
-        <Flex px={6} py={4}>
-          <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-        </Flex>
-      )}
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
       <TrackScreen category="Wallet" source={source} />
