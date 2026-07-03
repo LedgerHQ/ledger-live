@@ -16,12 +16,10 @@ const parse = memoize(navLang => {
  * follow the system language, it's unreliable. cf. https://stackoverflow.com/a/3335420
  * */
 export const getAppLocale = () => {
-  if (!globalThis.location) return globalThis.navigator?.language ?? "";
   return new URLSearchParams(window.location.search).get("appLocale") || window.navigator.language;
 };
 
 export const getSystemLocale = () => {
-  if (!globalThis.location) return globalThis.navigator?.language ?? "";
   return (
     new URLSearchParams(window.location.search).get("systemLocale") || window.navigator.language
   );
