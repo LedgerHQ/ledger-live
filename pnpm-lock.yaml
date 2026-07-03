@@ -2431,6 +2431,9 @@ importers:
       '@codemirror/view':
         specifier: ^6.39.5
         version: 6.39.5
+      '@devtools/bindings':
+        specifier: workspace:*
+        version: link:../../devtools/bindings
       '@devtools/shell':
         specifier: workspace:*
         version: link:../../devtools/shell
@@ -2714,6 +2717,61 @@ importers:
       tailwindcss:
         specifier: 'catalog:'
         version: 4.1.18
+
+  devtools/bindings:
+    dependencies:
+      '@features/platform-feature-flags':
+        specifier: workspace:^
+        version: link:../../features/platform/feature-flags
+      '@shared/feature-flags':
+        specifier: workspace:^
+        version: link:../../shared/feature-flags
+    devDependencies:
+      '@devtools/registry':
+        specifier: workspace:^
+        version: link:../registry
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.2.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
 
   devtools/feature-flags:
     dependencies:
