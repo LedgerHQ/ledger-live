@@ -242,9 +242,7 @@ export async function executeSwapCommand({
     const mainFromAccount: Account = getMainAccount(fromAccount, fromParent);
 
     if (isDieExecutionProvider(provider) && mainFromAccount.currency.family === "evm") {
-      out.swapExecuteProgress(
-        `[i] Using provider=${provider}; fetching quote…`,
-      );
+      out.swapExecuteProgress(`[i] Using provider=${provider}; fetching quote…`);
 
       const toParent = getParentAccount(toAccount, accounts);
       const mainToAccount: Account = getMainAccount(toAccount, toParent);
