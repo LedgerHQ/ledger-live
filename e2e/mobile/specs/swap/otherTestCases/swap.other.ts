@@ -8,7 +8,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
-import { SwapTransactionStatusDetails } from "../../../page/drawer/swapTransactionStatus.drawer";
+import type { SwapTransactionStatusDetails } from "../../../page/drawer/swapTransactionStatus.drawer";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -346,7 +346,7 @@ export function runSwapHistoryOperationsTest(
       await app.swap.checkSwapOperation(swapId, swap);
       await app.swap.openSelectedOperation(swapId);
       await app.swapTransactionStatusDrawer.expectSwapTransactionStatusDrawerInfos(
-        swapId.slice(0, 6),
+        swapId.slice(0, 8),
         provider,
         details,
       );

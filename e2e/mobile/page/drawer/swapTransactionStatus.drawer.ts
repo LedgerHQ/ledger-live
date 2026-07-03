@@ -60,7 +60,7 @@ export default class SwapTransactionStatusDrawer {
       await detoxExpect(getElementById(this.receivedAmountId)).toBeVisible();
     }
 
-    await scrollToId(this.networkFeesId, this.scrollViewId);
+    await retryUntilTimeout(() => scrollToId(this.networkFeesId, this.scrollViewId));
     await this.expectTextEventually(this.networkFeesId, text =>
       jestExpect(text).toEqual(normalizeText(details.networkFees)),
     );
@@ -74,7 +74,7 @@ export default class SwapTransactionStatusDrawer {
       jestExpect(text).toContain(swapIdPrefix),
     );
 
-    await scrollToId(this.viewInExplorerButtonId, this.scrollViewId);
+    await retryUntilTimeout(() => scrollToId(this.viewInExplorerButtonId, this.scrollViewId));
     await detoxExpect(getElementById(this.viewInExplorerButtonId)).toBeVisible();
   }
 }
