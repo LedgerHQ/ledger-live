@@ -1,7 +1,7 @@
 import type { BlockOperation } from "@ledgerhq/coin-module-framework/api/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { EvmCoinConfig, internalTxSources, setCoinConfig } from "../config";
-import { UnsupportedRpcMethodError } from "../errors";
+import { SourceUnavailableError } from "../errors";
 import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
 import { mockNodeApi } from "../network/node/node.fixtures";
 import {
@@ -48,7 +48,20 @@ describe("composeInternalTxsFetcher", () => {
     expect(traceBlock).not.toHaveBeenCalled();
   });
 
-  it("falls through rejected sources in order", async () => {
+  it("falls through unavailable sources in order", async () => {
+    const explorer = jest.fn().mockRejectedValue(new SourceUnavailableError("explorer down"));
+    const traceBlock = jest.fn().mockResolvedValue(traceResult);
+    const fetch = composeInternalTxsFetcher(
+      ["explorer", "trace_block", "empty"],
+      makeFetchers({ explorer, trace_block: traceBlock }),
+    );
+
+    await expect(fetch(height)).resolves.toBe(traceResult);
+    expect(explorer).toHaveBeenCalledWith(height);
+    expect(traceBlock).toHaveBeenCalledWith(height);
+  });
+
+  it("falls through real errors to the next source when empty is not yet reached", async () => {
     const explorer = jest.fn().mockRejectedValue(new Error("explorer down"));
     const traceBlock = jest.fn().mockResolvedValue(traceResult);
     const fetch = composeInternalTxsFetcher(
@@ -61,15 +74,28 @@ describe("composeInternalTxsFetcher", () => {
     expect(traceBlock).toHaveBeenCalledWith(height);
   });
 
-  it("resolves to an empty map when the list ends with empty", async () => {
-    const explorer = jest.fn().mockRejectedValue(new Error("explorer down"));
-    const traceBlock = jest.fn().mockRejectedValue(new Error("trace down"));
+  it("resolves to an empty map when unavailable sources are skipped and the list ends with empty", async () => {
+    const explorer = jest.fn().mockRejectedValue(new SourceUnavailableError("explorer down"));
+    const traceBlock = jest.fn().mockRejectedValue(new SourceUnavailableError("trace down"));
     const fetch = composeInternalTxsFetcher(
       ["explorer", "trace_block", "empty"],
       makeFetchers({ explorer, trace_block: traceBlock }),
     );
 
     await expect(fetch(height)).resolves.toEqual(new Map());
+  });
+
+  it("propagates a real error when the list ends with empty", async () => {
+    const traceError = new Error("trace down");
+    const fetch = composeInternalTxsFetcher(
+      ["explorer", "trace_block", "empty"],
+      makeFetchers({
+        explorer: jest.fn().mockRejectedValue(new SourceUnavailableError("explorer down")),
+        trace_block: jest.fn().mockRejectedValue(traceError),
+      }),
+    );
+
+    await expect(fetch(height)).rejects.toThrow(traceError);
   });
 
   it("propagates the last rejection when empty is not configured", async () => {
@@ -116,9 +142,7 @@ describe("makeSourceFetchers", () => {
     );
 
     const fetchers = makeSourceFetchers(mockNodeApi(), {} as CryptoCurrency);
-    await expect(fetchers.explorer(1)).rejects.toThrow(
-      "explorer internal txs not configured for currency",
-    );
+    await expect(fetchers.explorer(1)).rejects.toBeInstanceOf(SourceUnavailableError);
   });
 
   it("rejects trace_block when traceBlockErigon is undefined", async () => {
@@ -131,7 +155,25 @@ describe("makeSourceFetchers", () => {
 
     const { traceBlockErigon: _traceBlockErigon, ...nodeApiWithoutErigon } = mockNodeApi();
     const fetchers = makeSourceFetchers(nodeApiWithoutErigon, {} as CryptoCurrency);
-    await expect(fetchers.trace_block(1)).rejects.toBeInstanceOf(UnsupportedRpcMethodError);
+    await expect(fetchers.trace_block(1)).rejects.toBeInstanceOf(SourceUnavailableError);
+  });
+
+  it("wraps explorer runtime failures as SourceUnavailableError", async () => {
+    setCoinConfig(
+      () =>
+        ({
+          info: {
+            node: { type: "external" as const, retries: 0 },
+            explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          },
+        }) as unknown as EvmCoinConfig,
+    );
+
+    const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
+    mockGetInternalTransactionsByBlock.mockRejectedValueOnce(new Error("explorer error"));
+
+    const fetchers = makeSourceFetchers(mockNodeApi(), { id: "ethereum" } as CryptoCurrency);
+    await expect(fetchers.explorer(99)).rejects.toBeInstanceOf(SourceUnavailableError);
   });
 
   it("calls getInternalTransactionsByBlock for explorer when configured", async () => {

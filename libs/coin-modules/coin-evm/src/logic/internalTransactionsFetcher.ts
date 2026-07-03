@@ -5,7 +5,7 @@ import { traceBlockItemsToOperationsByHash } from "../adapters/blockOperations";
 import { internalTxsToOperationsByHash } from "../adapters/etherscan";
 import { getCoinConfig } from "../config";
 import type { InternalTxSource } from "../internalTxSources";
-import { UnsupportedRpcMethodError } from "../errors";
+import { SourceUnavailableError } from "../errors";
 import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
 import { isEtherscanLikeExplorerConfig } from "../network/explorer/types";
 import { NodeApi } from "../network/node/types";
@@ -14,15 +14,43 @@ export type InternalTxsByHash = Map<string, BlockOperation[]>;
 
 export type SourceFetcher = (height: number) => Promise<InternalTxsByHash>;
 
+async function runInternalTxSources(
+  sources: readonly InternalTxSource[],
+  fetchers: Record<InternalTxSource, SourceFetcher>,
+  height: number,
+): Promise<InternalTxsByHash> {
+  let lastRealError: unknown;
+
+  for (const source of sources) {
+    if (source === "empty") {
+      if (lastRealError !== undefined) {
+        throw lastRealError;
+      }
+      return new Map();
+    }
+
+    try {
+      return await fetchers[source](height);
+    } catch (error) {
+      if (error instanceof SourceUnavailableError) {
+        continue;
+      }
+      lastRealError = error;
+    }
+  }
+
+  if (lastRealError !== undefined) {
+    throw lastRealError;
+  }
+
+  throw new Error("no internal tx sources configured");
+}
+
 export function composeInternalTxsFetcher(
   sources: readonly InternalTxSource[],
   fetchers: Record<InternalTxSource, SourceFetcher>,
 ): SourceFetcher {
-  return (height: number) =>
-    sources.reduce(
-      (acc, source) => acc.catch(() => fetchers[source](height)),
-      Promise.reject<InternalTxsByHash>(new Error("no internal tx sources configured")),
-    );
+  return (height: number) => runInternalTxSources(sources, fetchers, height);
 }
 
 export function makeSourceFetchers(
@@ -35,34 +63,25 @@ export function makeSourceFetchers(
   return {
     trace_block: (height: number) => {
       if (nodeApi.traceBlockErigon === undefined) {
-        log("coin-evm", "error: no internal transactions support for this currency", {
+        log("coin-evm", "debug: trace_block internal tx source unavailable", {
           currencyId: currency.id,
           blockHeight: height,
-          source: "trace_block",
         });
         return Promise.reject(
-          new UnsupportedRpcMethodError("trace_block is not supported by this RPC provider", {
-            method: "trace_block",
-            rawError: undefined,
-          }),
+          new SourceUnavailableError("trace_block is not supported by this RPC provider"),
         );
       }
       return nodeApi.traceBlockErigon(currency, height).then(traceBlockItemsToOperationsByHash);
     },
     debug_traceBlockByNumber: (height: number) => {
       if (nodeApi.traceBlockGeth === undefined) {
-        log("coin-evm", "error: no internal transactions support for this currency", {
+        log("coin-evm", "debug: debug_traceBlockByNumber internal tx source unavailable", {
           currencyId: currency.id,
           blockHeight: height,
-          source: "debug_traceBlockByNumber",
         });
         return Promise.reject(
-          new UnsupportedRpcMethodError(
+          new SourceUnavailableError(
             "debug_traceBlockByNumber is not supported by this RPC provider",
-            {
-              method: "debug_traceBlockByNumber",
-              rawError: undefined,
-            },
           ),
         );
       }
@@ -71,12 +90,23 @@ export function makeSourceFetchers(
     explorer: (height: number) => {
       if (!isEtherscanLikeExplorerConfig(explorer)) {
         return Promise.reject(
-          new Error(`explorer internal txs not configured for currency ${currency.id}`),
+          new SourceUnavailableError(
+            `explorer internal txs not configured for currency ${currency.id}`,
+          ),
         );
       }
-      return getInternalTransactionsByBlock(currency, height).then(internalTxsToOperationsByHash);
+      return getInternalTransactionsByBlock(currency, height)
+        .then(internalTxsToOperationsByHash)
+        .catch(error => {
+          log("coin-evm", "debug: explorer internal txs failed, falling through", {
+            currencyId: currency.id,
+            blockHeight: height,
+            error,
+          });
+          return Promise.reject(new SourceUnavailableError("explorer internal txs failed"));
+        });
     },
-    empty: async () => new Map(),
+    empty: async () => new Map<string, BlockOperation[]>(),
   };
 }
 

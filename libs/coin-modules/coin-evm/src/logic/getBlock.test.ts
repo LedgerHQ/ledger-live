@@ -950,6 +950,148 @@ describe("getBlock", () => {
     expect(mockTraceBlock).toHaveBeenCalledWith(expect.anything(), 12345);
   });
 
+  it("with default source list, propagates trace errors when explorer and both trace methods fail at runtime", async () => {
+    setCoinConfig(
+      () =>
+        ({
+          info: {
+            node: { type: "external" as const, retries: 0 },
+            explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          },
+        }) as unknown as EvmCoinConfig,
+    );
+
+    const erigonError = new UnsupportedRpcMethodError(
+      "trace_block is not supported by this RPC provider",
+      { method: "trace_block", rawError: { code: -32601 } },
+    );
+    const gethError = new UnsupportedRpcMethodError(
+      "debug_traceBlockByNumber is not supported by this RPC provider",
+      { method: "debug_traceBlockByNumber", rawError: { code: -32601 } },
+    );
+    const mockTraceBlockErigon = jest.fn().mockRejectedValue(erigonError);
+    const mockTraceBlockGeth = jest.fn().mockRejectedValue(gethError);
+    const mockGetNodeApi = jest.mocked(getNodeApi);
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: jest.fn().mockResolvedValue(
+        makeNodeBlock({
+          transactions: [makeNodeBlockTx({ hash: "0xtx1", value: "0" })],
+        }),
+      ),
+      getBlockReceipts: jest
+        .fn()
+        .mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] })]),
+      getTransaction: jest.fn(),
+      traceBlockErigon: mockTraceBlockErigon,
+      traceBlockGeth: mockTraceBlockGeth,
+    } as any);
+
+    const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
+    mockGetInternalTransactionsByBlock.mockRejectedValueOnce(new Error("explorer error"));
+
+    await expect(getBlock({} as CryptoCurrency, 12345)).rejects.toThrow(gethError);
+    expect(mockTraceBlockErigon).toHaveBeenCalledWith(expect.anything(), 12345);
+    expect(mockTraceBlockGeth).toHaveBeenCalledWith(expect.anything(), 12345);
+  });
+
+  it("with default source list, falls back from traceBlockErigon to traceBlockGeth when explorer fails", async () => {
+    setCoinConfig(
+      () =>
+        ({
+          info: {
+            node: { type: "external" as const, retries: 0 },
+            explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          },
+        }) as unknown as EvmCoinConfig,
+    );
+
+    const amount = 240000481795678944n;
+    const mockTraceBlockErigon = jest.fn().mockRejectedValue(new Error("erigon down"));
+    const mockTraceBlockGeth = jest.fn().mockResolvedValue([
+      makeNodeTraceBlockItem({
+        action: makeNodeTraceAction({ from: address1, to: address2, value: amount.toString() }),
+      }),
+    ]);
+    const mockGetNodeApi = jest.mocked(getNodeApi);
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: jest.fn().mockResolvedValue(
+        makeNodeBlock({
+          hash: "0xabc",
+          transactions: [makeNodeBlockTx({ hash: "0xtx1" })],
+        }),
+      ),
+      getBlockReceipts: jest.fn().mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1" })]),
+      getTransaction: jest.fn(),
+      traceBlockErigon: mockTraceBlockErigon,
+      traceBlockGeth: mockTraceBlockGeth,
+    } as any);
+
+    const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
+    mockGetInternalTransactionsByBlock.mockRejectedValueOnce(new Error("explorer error"));
+
+    const result = await getBlock({} as CryptoCurrency, 12345);
+
+    expect(mockTraceBlockErigon).toHaveBeenCalledWith(expect.anything(), 12345);
+    expect(mockTraceBlockGeth).toHaveBeenCalledWith(expect.anything(), 12345);
+    const encodedFrom = safeEncodeEIP55(address1);
+    const encodedTo = safeEncodeEIP55(address2);
+    expect(result.transactions[0].operations).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "transfer",
+          address: encodedFrom,
+          peer: encodedTo,
+          asset: { type: "native" },
+          amount: -amount,
+        }),
+        expect.objectContaining({
+          type: "transfer",
+          address: encodedTo,
+          peer: encodedFrom,
+          asset: { type: "native" },
+          amount: amount,
+        }),
+      ]),
+    );
+  });
+
+  it("with default source list, propagates traceBlockErigon error when traceBlockGeth is unavailable", async () => {
+    setCoinConfig(
+      () =>
+        ({
+          info: {
+            node: { type: "external" as const, retries: 0 },
+            explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          },
+        }) as unknown as EvmCoinConfig,
+    );
+
+    const erigonError = new UnsupportedRpcMethodError(
+      "trace_block is not supported by this RPC provider",
+      { method: "trace_block", rawError: { code: -32601 } },
+    );
+    const mockTraceBlockErigon = jest.fn().mockRejectedValue(erigonError);
+    const mockGetNodeApi = jest.mocked(getNodeApi);
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: jest.fn().mockResolvedValue(
+        makeNodeBlock({
+          transactions: [makeNodeBlockTx({ hash: "0xtx1", value: "0" })],
+        }),
+      ),
+      getBlockReceipts: jest
+        .fn()
+        .mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] })]),
+      getTransaction: jest.fn(),
+      traceBlockErigon: mockTraceBlockErigon,
+    } as any);
+
+    const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
+    mockGetInternalTransactionsByBlock.mockRejectedValueOnce(new Error("explorer error"));
+
+    await expect(getBlock({} as CryptoCurrency, 12345)).rejects.toThrow(erigonError);
+    expect(mockTraceBlockErigon).toHaveBeenCalledWith(expect.anything(), 12345);
+  });
+
   it("uses prefetched tx gasPrice as fallback when Cronos receipt omits effectiveGasPrice and gasPrice", async () => {
     setCoinConfig(
       () =>

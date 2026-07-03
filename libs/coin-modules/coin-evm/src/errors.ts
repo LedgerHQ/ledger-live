@@ -21,6 +21,9 @@ export const UnsupportedRpcMethodError = createCustomErrorClass<{
   rawError: unknown;
 }>("UnsupportedRpcMethodError");
 
+/** Internal-tx source is not configured or structurally unsupported; skip to the next source. */
+export const SourceUnavailableError = createCustomErrorClass("SourceUnavailableError");
+
 // GasTracker errors
 export const LedgerGasTrackerUsedIncorrectly = createCustomErrorClass(
   "LedgerGasTrackerUsedIncorrectly",

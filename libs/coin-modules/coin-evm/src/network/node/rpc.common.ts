@@ -714,11 +714,11 @@ async function traceBlockErigon(
 }
 
 function normalizeTraceBlockItems(traces: TraceBlockItem[]): TraceBlockItem[] {
-  if (!Array.isArray(traces)) throw new Error("Invalid trace_block response");
+  if (!Array.isArray(traces)) throw new Error("Invalid trace block response");
 
   return traces.map((trace, index) => {
     if (!isTraceBlockItem(trace)) {
-      throw new Error(`Malformed trace_block response at index ${index} ${JSON.stringify(trace)}`);
+      throw new Error(`Malformed trace block response at index ${index} ${JSON.stringify(trace)}`);
     }
     return trace;
   });

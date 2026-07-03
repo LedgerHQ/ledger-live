@@ -19,7 +19,6 @@ function mockNodeApi(overrides: Partial<jest.Mocked<NodeApi>> = {}): jest.Mocked
     broadcastTransaction: jest.fn(),
     getBlockByHeight: jest.fn(),
     getBlockReceipts: jest.fn(),
-    traceBlock: jest.fn(),
     getOptimismAdditionalFees: jest.fn(),
     getScrollAdditionalFees: jest.fn(),
     ...overrides,

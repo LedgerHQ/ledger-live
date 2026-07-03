@@ -7,74 +7,98 @@ This document describes how internal transactions are fetched and merged when ca
 ```mermaid
 flowchart TB
   subgraph entry["getBlock(currency, height)"]
-    A[getNodeApi] --> B[internalTransactionsFetcher(nodeApi, currency)]
-    B --> C[fetchInternalTxs = fetcher function]
+    A[getNodeApi] --> B["createInternalTransactionsFetcher(nodeApi, currency, sources)"]
+    B --> C[fetchInternalTxs]
   end
 
   subgraph parallel["Promise.all (parallel)"]
-    D[nodeApi.getBlockByHeight(currency, height, true)]
-    E[fetchInternalTxs(height)]
+    D["nodeApi.getBlockByHeight(currency, height, true)"]
+    E["fetchInternalTxs(height)"]
   end
 
   A --> parallel
   C --> E
 
-  subgraph fetcher["internalTransactionsFetcher — builds fetcher for (height)"]
-    F{isEtherscanLikeExplorerConfig(explorer)?}
-    F -->|yes| G[getInternalTransactionsByBlock(currency, height)]
-    G --> H[GET explorer?module=account&action=txlistinternal<br/>fromBlock/toBlock=height, paginated]
-    H --> I[internalTxsToOperationsByHash]
-    I --> J{success?}
-    J -->|no| K[nodeFallback(height)]
-    J -->|yes| L["Map(txHash → BlockOperation[])"]
-
-    F -->|no| K
-    K --> M{traceBlock defined?}
-    M -->|no| N[log error, return empty Map]
-    M -->|yes| O[nodeApi.traceBlock(currency, height)]
-    O --> P[RPC trace_block]
-    P --> Q[traceBlockItemsToOperationsByHash]
-    Q --> L
-    N --> L
+  subgraph sources["Ordered source list (default or getBlockInternalTxsSources)"]
+    F["explorer → getInternalTransactionsByBlock"]
+    G["trace_block → nodeApi.traceBlockErigon"]
+    H["debug_traceBlockByNumber → nodeApi.traceBlockGeth"]
+    I["empty → resolve Map()"]
   end
 
-  E -.-> fetcher
+  E -.-> sources
+
+  subgraph compose["composeInternalTxsFetcher loop"]
+    J{source resolves?}
+    J -->|yes| K["Map(txHash → BlockOperation[])"]
+    J -->|SourceUnavailableError| L[skip to next source]
+    J -->|real runtime error| M[remember error, next source]
+    L --> N{next source}
+    M --> N
+    N -->|empty, no real error| O[resolve empty Map]
+    N -->|empty, real error remembered| P[throw last real error]
+    N -->|list exhausted| P
+  end
+
+  sources -.-> compose
 
   subgraph after["after parallel"]
-    R[result, internalTxs]
-    S[getTransactionsFromNode]
-    T[mergeInternalTransactions(transactions, internalTxs)]
-    U[return Block]
+    Q[result, internalTxs]
+    R[getTransactionsFromNode]
+    S[mergeInternalTransactions]
+    T[return Block]
   end
 
-  parallel --> R
+  parallel --> Q
+  Q --> R
   R --> S
   S --> T
-  T --> U
 ```
+
+## Default source list
+
+When `getBlockInternalTxsSources` is absent, the default is:
+
+`["explorer", "trace_block", "debug_traceBlockByNumber", "empty"]`
+
+Built via `internalTxSources().addSource("explorer").addSource("trace_block").addSource("debug_traceBlockByNumber").addSource("empty").build()` in `internalTxSources.ts`.
+
+## Source semantics
+
+| Source | When unavailable (skipped) | When available but fails at runtime |
+|--------|---------------------------|-------------------------------------|
+| `explorer` | Explorer config is not etherscan-like | Best-effort: wrapped as `SourceUnavailableError`, fall through to node traces |
+| `trace_block` | `nodeApi.traceBlockErigon` is undefined | Real error propagated (caller may retry the whole block) |
+| `debug_traceBlockByNumber` | `nodeApi.traceBlockGeth` is undefined | Real error propagated |
+| `empty` | N/A (terminal) | Resolves empty Map only if no real runtime error was remembered; otherwise re-throws the last real error |
+
+**Behaviour-preserving rule:** structurally unsupported sources are skipped; transient RPC/explorer failures on available trace methods propagate so the caller can retry `getBlock`. Explorer failures are always best-effort (fall through). A trailing `empty` only resolves when every prior source was unavailable, not when a trace call failed at runtime.
 
 ## Paths summary
 
-| Explorer config              | Primary source                    | Fallback (on error / no explorer) |
-|-----------------------------|------------------------------------|------------------------------------|
-| Etherscan-like (etherscan, blockscout, teloscan, klaytnfinder, corescan) | `getInternalTransactionsByBlock` → Etherscan API `txlistinternal` | `nodeApi.traceBlock` (RPC `trace_block`) or empty Map |
-| Other (ledger, none, …)     | `nodeApi.traceBlock` (RPC `trace_block`) | empty Map if `traceBlock` undefined or `UnsupportedRpcMethodError` |
+| Explorer config | Primary source | Fallback |
+|-----------------|----------------|----------|
+| Etherscan-like (etherscan, blockscout, teloscan, klaytnfinder, corescan) | `getInternalTransactionsByBlock` → `txlistinternal` | `traceBlockErigon` → `traceBlockGeth` → empty (if traces unavailable) or propagate (if traces error) |
+| Other (ledger, none, …) | `traceBlockErigon` → `traceBlockGeth` | empty (if traces unavailable) or propagate (if traces error) |
 
 ## Data flow
 
 1. **Explorer path**  
    `getInternalTransactionsByBlock` → `EtherscanInternalTransaction[]` → `internalTxsToOperationsByHash` → `Map<string, BlockOperation[]>`.
 
-2. **Node path**  
-   `traceBlock` → RPC `trace_block` → `TraceBlockItem[]` → `traceBlockItemsToOperationsByHash` → `Map<string, BlockOperation[]>`.
+2. **Node trace paths**  
+   `traceBlockErigon` / `traceBlockGeth` → RPC `trace_block` / `debug_traceBlockByNumber` → `TraceBlockItem[]` → `traceBlockItemsToOperationsByHash` → `Map<string, BlockOperation[]>`.
 
 3. **Merge**  
    `mergeInternalTransactions(transactions, internalTxs)` adds each `internalTxs.get(tx.hash)` as extra `operations` on the corresponding `BlockTransaction`.
 
 ## Files
 
-- **Fetcher & getBlock:** `libs/coin-modules/coin-evm/src/logic/getBlock.ts`
-- **Explorer internal txs:** `libs/coin-modules/coin-evm/src/network/explorer/etherscan.ts` (`getInternalTransactionsByBlock`)
-- **Explorer → operations:** `libs/coin-modules/coin-evm/src/adapters/etherscan.ts` (`internalTxsToOperationsByHash`)
-- **RPC trace_block:** `libs/coin-modules/coin-evm/src/network/node/rpc.common.ts` (`traceBlock`)
-- **Trace → operations:** `libs/coin-modules/coin-evm/src/adapters/blockOperations.ts` (`traceBlockItemsToOperationsByHash`)
+- **Fetcher wiring:** `libs/coin-modules/coin-evm/src/logic/internalTransactionsFetcher.ts`
+- **getBlock:** `libs/coin-modules/coin-evm/src/logic/getBlock.ts`
+- **Source list builder:** `libs/coin-modules/coin-evm/src/internalTxSources.ts`
+- **Config field:** `libs/coin-modules/coin-evm/src/config.ts` (`getBlockInternalTxsSources`)
+- **Explorer internal txs:** `libs/coin-modules/coin-evm/src/network/explorer/etherscan.ts`
+- **Explorer → operations:** `libs/coin-modules/coin-evm/src/adapters/etherscan.ts`
+- **RPC traces:** `libs/coin-modules/coin-evm/src/network/node/rpc.common.ts` (`traceBlockErigonWithValidation`, `traceBlockGethWithValidation`)
+- **Trace → operations:** `libs/coin-modules/coin-evm/src/adapters/blockOperations.ts`
