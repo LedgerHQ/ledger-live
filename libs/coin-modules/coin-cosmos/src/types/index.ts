@@ -66,8 +66,8 @@ export type CosmosResources = {
   withdrawAddress: string;
   sequence: number;
   // Compressed secp256k1 public key (hex) of this account, captured at scan from the
-  // device. Empty string when unknown (e.g. accounts synced before this was persisted).
-  publicKey: string;
+  // device. Optional/empty when unknown (e.g. accounts synced before this was persisted).
+  publicKey?: string;
 };
 export type CosmosDelegationRaw = {
   validatorAddress: string;
@@ -95,7 +95,7 @@ export type CosmosResourcesRaw = {
   unbondingBalance: string;
   withdrawAddress: string;
   sequence: number;
-  publicKey: string;
+  publicKey?: string;
 };
 // NB this must be serializable (no Date, no BigNumber)
 export type CosmosValidatorItem = {
