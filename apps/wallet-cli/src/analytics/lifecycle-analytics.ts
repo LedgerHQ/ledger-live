@@ -1,8 +1,9 @@
 import { getErrorName as resolveErrorName } from "@ledgerhq/live-common/exchange/error";
+import { commandMeta } from "../../.bunli/commands.gen";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 import { track } from "./segment";
 
-const GROUP_COMMANDS = new Set(["account", "assets", "session", "swap", "balances", "operations", "receive", "send", "genuine-check"]);
+const GROUP_COMMANDS = new Set<string>(Object.keys(commandMeta));
 
 export function parseCommand(argv: string[]): string | undefined {
   const words: string[] = [];
