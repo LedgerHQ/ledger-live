@@ -204,9 +204,19 @@ export type PostOnboardingState = {
   lastActionCompleted: PostOnboardingActionId | null;
 
   /**
-   * Did the user started the PostOnboarding without closing or finishing it ?
+   * Did the user start the PostOnboarding without closing or finishing it?
    */
   postOnboardingInProgress: boolean;
+
+  /**
+   * ISO date at which the user completed onboarding for the current device
+   * model. Used as the "start of the clock" for post-onboarding cooldowns
+   * (e.g. the large-screen upsell).
+   *
+   * Preserved when reopening post-onboarding for the same device model, refreshed
+   * for a different device model, and backfilled to `today` for legacy users.
+   */
+  onboardingDate: string | null;
 };
 
 /**

@@ -7,6 +7,7 @@ import { log } from "@ledgerhq/logs";
 import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
+import { backfillOnboardingDate } from "~/renderer/components/PostOnboardingHub/logic/backfillOnboardingDate";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import each from "lodash/each";
@@ -330,8 +331,6 @@ async function init() {
     check();
   });
 
-  r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
-
   const postOnboardingState = await getKey("app", "postOnboarding");
   if (postOnboardingState) {
     store.dispatch(
@@ -340,6 +339,10 @@ async function init() {
       }),
     );
   }
+
+  backfillOnboardingDate(store);
+
+  r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
 
   await dispatch(fetchTrustchain());
   await dispatch(fetchWallet());

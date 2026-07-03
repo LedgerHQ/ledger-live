@@ -144,6 +144,7 @@ apps/ledger-live-mobile/src/screens/SignTransaction/                @ledgerhq/co
 libs/ledgerjs/packages/cryptoassets                      @ledgerhq/wallet-xp
 libs/ledgerjs/packages/cryptoassets/src/currencies.ts    @ledgerhq/coin-integration
 libs/ledgerjs/packages/types-live/src/lnsUpsell.ts       @ledgerhq/engagement
+libs/ledgerjs/packages/types-live/src/postOnboarding.ts  @ledgerhq/engagement
 
 libs/psbtv2/                                             @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
@@ -351,6 +352,7 @@ apps/ledger-live-desktop/src/renderer/analytics/                                
 apps/ledger-live-desktop/src/renderer/components/SyncOnboarding/                               @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/components/Onboarding/                                   @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/components/PostOnboardingHub/                            @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/PostOnboardingHubTester.tsx @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/postOnboarding.handler.ts  @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/productTour.handler.ts      @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/__tests__/productTour.handler.test.ts @ledgerhq/engagement

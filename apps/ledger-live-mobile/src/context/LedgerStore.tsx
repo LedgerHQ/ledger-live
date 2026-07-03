@@ -2,6 +2,7 @@ import React, { useEffect, useState, ReactNode, useCallback } from "react";
 import { Provider } from "react-redux";
 import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
+import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import {
   findCryptoCurrencyById,
@@ -165,6 +166,8 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       if (postOnboardingState) {
         store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
       }
+
+      backfillOnboardingDate(store);
 
       if (marketState) {
         store.dispatch(importMarket(marketState));
