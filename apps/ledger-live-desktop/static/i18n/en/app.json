@@ -9336,6 +9336,58 @@
         "title": "Invalid state",
         "description": "An error occurred. Please try again or contact Ledger support if the issue persists."
       }
+    },
+    "connectDevice": {
+      "common": {
+        "ledgerDevice": "Ledger device",
+        "available": "Available",
+        "notConnected": "Not connected"
+      },
+      "states": {
+        "loading": {
+          "title": "Loading"
+        },
+        "connecting": {
+          "title": "Loading"
+        },
+        "connectionError": {
+          "errors": {
+            "unknown": {
+              "title": "Pairing unsuccessful",
+              "description": "Please try again.",
+              "tip": "Make sure your device is unlocked.",
+              "cta": {
+                "retry": "Try again",
+                "help": "Get help"
+              }
+            }
+          }
+        },
+        "discovering": {
+          "title": "Select a device",
+          "noAvailableDeviceTitle": "Power on and unlock a device"
+        },
+        "discoveryError": {
+          "errors": {
+            "unknown": {
+              "title": "Something went wrong",
+              "description": "Please try again or contact Ledger support.",
+              "cta": {
+                "retry": "Try again"
+              }
+            }
+          }
+        },
+        "noKnownDevice": {
+          "title": "Ledger device required",
+          "description": "To continue, set up or connect your signer.",
+          "connectLedgerDevice": "Connect Ledger device",
+          "noLedgerDevice": "I don't have a Ledger device"
+        },
+        "waitingForSelectedDevice": {
+          "title": "Power on and unlock your {{productName}}"
+        }
+      }
     }
   },
   "pnl": {

@@ -53,12 +53,12 @@ export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps>(
     <Dialog open={wrappedProps.enabled} onOpenChange={onOpenChange} height="fit">
       <DialogContent
         aria-describedby={undefined}
-        className="max-h-[calc(100vh-16px)] w-[400px] overflow-hidden bg-base p-0"
+        className="w-[400px] bg-base p-0"
         data-testid="device-intent-executor-dialog"
       >
         <DialogBackgroundToneProvider>
-          <DialogHeader density="compact" onClose={onClose} />
-          <DialogBody className="relative flex min-h-0 flex-col px-24 pb-24">
+          <DialogHeader density="compact" onClose={onClose} className="!mb-0" />
+          <DialogBody className="!mb-0 flex min-h-0 flex-col px-24 pb-24">
             <DeviceIntentExecutor
               {...wrappedProps}
               platformConfig={platformConfig}

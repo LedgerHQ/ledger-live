@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { getDeviceModel } from "@ledgerhq/devices";
+import { getProductName } from "@ledgerhq/devices";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { InfoState } from "LLD/components/InfoState";
 
@@ -16,7 +16,7 @@ export function RetryableDeviceLocked({
   testID,
 }: RetryableDeviceLockedProps) {
   const { t } = useTranslation();
-  const { productName } = getDeviceModel(deviceModelId);
+  const productName = getProductName(deviceModelId);
 
   return (
     <InfoState
