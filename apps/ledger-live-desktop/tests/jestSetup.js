@@ -60,13 +60,6 @@ jest.mock("src/sentry/install", () => ({
   setTags: jest.fn(),
 }));
 
-// Stable window.location: RTK Query retry middleware can fire async after jsdom
-// tears down its internal session history; the plain getter below survives that.
-Object.defineProperty(window, "location", {
-  configurable: true,
-  get: () => ({ search: "", href: "http://localhost/", pathname: "/", hash: "" }),
-});
-
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: jest.fn().mockImplementation(query => ({
