@@ -1,11 +1,8 @@
 import { DeeplinkHandler } from "../types";
-import {
-  getAssetDetailPath,
-  getMarketOrAssetDetailPath,
-  parseLedgerAssetPath,
-} from "LLD/utils/marketAssetNavigation";
+import { getMarketOrAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 import { parseMarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { setMarketCategory } from "~/renderer/actions/market";
+import { navigateLedgerAssetDeeplink } from "./navigateLedgerAssetDeeplink";
 
 /**
  * Market deeplinks. When Wallet 4.0 aggregated assets is on, `/market/:currencyId` opens the
@@ -30,31 +27,11 @@ export const marketHandler: DeeplinkHandler<"market"> = (
     return;
   }
 
-  const assetPath = parseLedgerAssetPath(path);
-
-  if (assetsPath === "/asset") {
-    if (!assetPath) {
-      navigate("/market");
-      return;
-    }
-
-    if (assetPath.ledgerIds) {
-      navigate(getAssetDetailPath(assetPath.assetId), {
-        id: assetPath.assetId,
-        ledgerIds: assetPath.ledgerIds,
-      });
-      return;
-    }
-
-    navigate(getAssetDetailPath(assetPath.assetId));
-    return;
-  }
-
-  const currencyId = assetPath?.ledgerIds ? null : assetPath?.currencyId;
-  if (currencyId) {
-    navigate(getMarketOrAssetDetailPath(currencyId, false));
-    return;
-  }
-
-  navigate("/market");
+  navigateLedgerAssetDeeplink({
+    path,
+    assetsPath,
+    navigate,
+    fallbackPath: "/market",
+    legacyDetailPath: currencyId => getMarketOrAssetDetailPath(currencyId, false),
+  });
 };

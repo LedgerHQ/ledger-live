@@ -89,15 +89,9 @@ describe("validateLargeMoverLedgerIds", () => {
   });
 });
 
+// Exhaustive parsing/validation behavior lives in @ledgerhq/asset-detail's parseLedgerAssetPath
+// tests; here we only assert this validator delegates to it for the coin, token and invalid cases.
 describe("validateMarketAssetPath", () => {
-  it("should return null when pathname is null", () => {
-    expect(validateMarketAssetPath(null)).toBeNull();
-  });
-
-  it("should return null when pathname is empty", () => {
-    expect(validateMarketAssetPath("")).toBeNull();
-  });
-
   it("should return a canonical currency id for a coin path", () => {
     expect(validateMarketAssetPath("/BiTcOiN")).toEqual({
       currencyId: "bitcoin",
@@ -113,41 +107,10 @@ describe("validateMarketAssetPath", () => {
     });
   });
 
-  it("should support Ledger token id characters beyond underscores", () => {
-    expect(validateMarketAssetPath("/ethereum/erc20/uniswap_(bridged)")).toEqual({
-      currencyId: "ethereum",
-      assetId: "ethereum/erc20/uniswap_(bridged)",
-      ledgerIds: ["ethereum/erc20/uniswap_(bridged)"],
-    });
-    expect(validateMarketAssetPath("/stellar/asset/USDC:GA5ZSEJY")).toEqual({
-      currencyId: "stellar",
-      assetId: "stellar/asset/USDC:GA5ZSEJY",
-      ledgerIds: ["stellar/asset/USDC:GA5ZSEJY"],
-    });
-  });
-
-  it("should return null when the parent currency is unknown", () => {
+  it("should return null for unresolved or empty paths", () => {
     expect(validateMarketAssetPath("/unknown/erc20/usd_tether__erc20_")).toBeNull();
-  });
-
-  it("should return null when the path contains an empty segment", () => {
-    expect(validateMarketAssetPath("/ethereum//erc20/usd_tether__erc20_")).toBeNull();
-  });
-
-  it("should return null when a segment contains unsupported characters", () => {
-    expect(validateMarketAssetPath("/ethereum/erc20/<script>")).toBeNull();
-  });
-
-  it("should return null when a segment contains an encoded slash", () => {
-    expect(validateMarketAssetPath("/ethereum%2Ferc20")).toBeNull();
-  });
-
-  it("should decode supported percent-encoded segment characters", () => {
-    expect(validateMarketAssetPath("/ethereum/erc20/usd_tether%5F%5Ferc20%5F")).toEqual({
-      currencyId: "ethereum",
-      assetId: "ethereum/erc20/usd_tether__erc20_",
-      ledgerIds: ["ethereum/erc20/usd_tether__erc20_"],
-    });
+    expect(validateMarketAssetPath(null)).toBeNull();
+    expect(validateMarketAssetPath("")).toBeNull();
   });
 });
 

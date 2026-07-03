@@ -1,5 +1,6 @@
 import { DeeplinkHandler } from "../types";
-import { getAssetDetailPath, parseLedgerAssetPath } from "LLD/utils/marketAssetNavigation";
+import { getAssetDetailPath } from "LLD/utils/marketAssetNavigation";
+import { navigateLedgerAssetDeeplink } from "./navigateLedgerAssetDeeplink";
 
 /**
  * Asset deeplinks. Empty path → portfolio (`/`). When Wallet 4.0 is on, `/asset/:currencyId`
@@ -14,31 +15,11 @@ export const assetHandler: DeeplinkHandler<"asset"> = (route, { navigate, assets
     return;
   }
 
-  const assetPath = parseLedgerAssetPath(path);
-
-  if (assetsPath === "/asset") {
-    if (!assetPath) {
-      navigate("/");
-      return;
-    }
-
-    if (assetPath.ledgerIds) {
-      navigate(getAssetDetailPath(assetPath.assetId), {
-        id: assetPath.assetId,
-        ledgerIds: assetPath.ledgerIds,
-      });
-      return;
-    }
-
-    navigate(getAssetDetailPath(assetPath.assetId));
-    return;
-  }
-
-  const currencyId = assetPath?.ledgerIds ? null : assetPath?.currencyId;
-  if (currencyId) {
-    navigate(getAssetDetailPath(currencyId));
-    return;
-  }
-
-  navigate("/");
+  navigateLedgerAssetDeeplink({
+    path,
+    assetsPath,
+    navigate,
+    fallbackPath: "/",
+    legacyDetailPath: getAssetDetailPath,
+  });
 };
