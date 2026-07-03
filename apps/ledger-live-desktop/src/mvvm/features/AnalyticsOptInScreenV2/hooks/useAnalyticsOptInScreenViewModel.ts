@@ -16,6 +16,7 @@ import {
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
+import { analyticsOptInPolicyUrlByVariant } from "LLD/features/AnalyticsOptInPrompt/const/policyUrls";
 
 export function useAnalyticsOptInScreenViewModel({
   isOpened = false,
@@ -24,7 +25,7 @@ export function useAnalyticsOptInScreenViewModel({
   entryPoint,
 }: AnalyticsOptInScreenHostProps) {
   const dispatch = useDispatch();
-  const trackingPolicyUrl = useLocalizedUrl(urls.trackingPolicy);
+  const trackingPolicyUrl = useLocalizedUrl(analyticsOptInPolicyUrlByVariant.B);
   const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy);
   const { shouldWeTrack } = useAnalyticsOptInPrompt({ entryPoint });
 
@@ -143,3 +144,5 @@ export function useAnalyticsOptInScreenViewModel({
     handleOpenPrivacyPolicy,
   };
 }
+
+export type AnalyticsOptInScreenViewModel = ReturnType<typeof useAnalyticsOptInScreenViewModel>;

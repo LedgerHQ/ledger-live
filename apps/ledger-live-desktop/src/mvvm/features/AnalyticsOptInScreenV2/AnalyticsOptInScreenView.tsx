@@ -2,11 +2,9 @@ import React from "react";
 import { cn } from "LLD/utils/cn";
 import { AnalyticsConsentScreen } from "./components/AnalyticsConsentScreen";
 import { PreferencesDialog } from "./components/PreferencesDialog";
-import type { useAnalyticsOptInScreenViewModel } from "./hooks/useAnalyticsOptInScreenViewModel";
+import type { AnalyticsOptInScreenViewModel } from "./hooks/useAnalyticsOptInScreenViewModel";
 
-export type AnalyticsOptInScreenViewProps = Readonly<
-  ReturnType<typeof useAnalyticsOptInScreenViewModel>
->;
+export type AnalyticsOptInScreenViewProps = Readonly<AnalyticsOptInScreenViewModel>;
 
 export function AnalyticsOptInScreenView({
   isOpened,
