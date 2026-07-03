@@ -244,9 +244,9 @@ apps/ledger-live-desktop/src/mvvm/features/SwapTransactionStatusDialog/         
 apps/ledger-live-mobile/src/mvvm/features/SwapTransactionStatus/                         @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/LiveAppModal/                                  @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Borrow/                                       @ledgerhq/ptx
-apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioBorrowSection   @ledgerhq/ptx
-apps/ledger-live-desktop/src/mvvm/features/Borrow							            @ledgerhq/ptx
-apps/ledger-live-desktop/src/mvvm/features/Portfolio/components/BorrowEntryPoint        @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/WalletAssets/views/BorrowSection/             @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/Borrow/							            @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/Portfolio/components/BorrowEntryPoint/       @ledgerhq/ptx
 
 # Wallet API team > coin-integration
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/coin-integration

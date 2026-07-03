@@ -3,6 +3,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { AssetsSections } from "LLM/features/WalletAssets/views/AssetsSections";
 import { AssetsButtonSection } from "LLM/features/WalletAssets/views/AssetsButtonSection";
+import { PortfolioBorrowSection } from "LLM/features/WalletAssets/views/BorrowSection";
 import { useWalletAssetsViewModel } from "./hooks/useWalletAssetsViewModel";
 import { WalletAssetsVariant } from "./types";
 
@@ -21,6 +22,8 @@ export const WalletAssetsView: React.FC<WalletAssetsViewProps> = ({
     shouldAddBottomPadding,
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
+    shouldDisplayBorrowSection,
+    onBorrowPress,
   } = useWalletAssetsViewModel();
   const { bottom } = useSafeAreaInsets();
 
@@ -38,6 +41,9 @@ export const WalletAssetsView: React.FC<WalletAssetsViewProps> = ({
         shouldDisplayAssetSection={shouldDisplayAssetSection}
         shouldDisplayAssetDiscoverability={shouldDisplayAssetDiscoverability}
       />
+      {variant !== "readOnly" && shouldDisplayBorrowSection && (
+        <PortfolioBorrowSection onPress={onBorrowPress} />
+      )}
       <AssetsButtonSection
         variant={variant}
         shouldDisplayAssetSection={shouldDisplayAssetSection}

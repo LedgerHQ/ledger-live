@@ -15,7 +15,6 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
 import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
 import TrackScreen from "~/analytics/TrackScreen";
-import { usePortfolioBorrowSectionViewModel } from "../../components/PortfolioBorrowSection/usePortfolioBorrowSectionViewModel";
 import {
   PROGRESS_VIEW_OFFSET_LEGACY_ANDROID,
   PROGRESS_VIEW_OFFSET_LEGACY_IOS,
@@ -39,7 +38,6 @@ import {
   PortfolioOperationsSection,
   PortfolioBannersSection,
   PortfolioPerpsEntryPoint,
-  PortfolioBorrowSection,
 } from "../../components";
 import { Box } from "@ledgerhq/native-ui";
 type NavigationProps = BaseComposite<
@@ -60,7 +58,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     isAccountListUIEnabled,
     shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
-    shouldDisplayBorrowSection,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
@@ -80,7 +77,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
   const progressViewOffset = getProgressViewOffset(Platform.OS, shouldDisplayWallet40MainNav);
 
   const { handleFlatListRef } = useScrollToTop();
-  const { onPress: onPortfolioBorrowPress } = usePortfolioBorrowSectionViewModel();
 
   const { isDrawerOpen, handleCloseDrawer, closeDrawer, onSlideChange, slides } =
     useWalletV4TourDrawer();
@@ -178,10 +174,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       );
     }
 
-    if (shouldDisplayBorrowSection) {
-      sections.push(<PortfolioBorrowSection key="borrow" onPress={onPortfolioBorrowPress} />);
-    }
-
     if (!shouldDisplayOperationsList) {
       sections.push(<PortfolioOperationsSection key="operations" />);
     }
@@ -191,7 +183,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     showAssets,
     shouldDisplayGraphRework,
     shouldDisplayAssetSection,
-    shouldDisplayBorrowSection,
     onBackFromUpdate,
     isLNSUpsellBannerShown,
     shouldDisplayQuickActionCtas,
@@ -204,7 +195,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     goToAnalyticsAllocations,
     shouldDisplayOperationsList,
     shouldAddBottomPaddingForLegacyAssets,
-    onPortfolioBorrowPress,
   ]);
 
   return (

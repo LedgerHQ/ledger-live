@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Wallet } from "@ledgerhq/lumen-ui-react/symbols";
+import { CoinsAddPlus } from "@ledgerhq/lumen-ui-react/symbols";
 import {
   Card,
   CardHeader,
@@ -30,10 +30,10 @@ export function BorrowEntryPointView({ onClick }: BorrowEntryPointViewProps) {
           <SubheaderTitle>{t("portfolio.borrowEntry.title")}</SubheaderTitle>
         </SubheaderRow>
       </Subheader>
-      <Card>
+      <Card onClick={onClick}>
         <CardHeader>
           <CardLeading>
-            <Spot appearance="icon" icon={Wallet} />
+            <Spot appearance="icon" icon={CoinsAddPlus} />
             <CardContent>
               <CardContentTitle>{t("portfolio.borrowEntry.cardTitle")}</CardContentTitle>
               <CardContentDescription>
@@ -42,7 +42,7 @@ export function BorrowEntryPointView({ onClick }: BorrowEntryPointViewProps) {
             </CardContent>
           </CardLeading>
           <CardTrailing>
-            <Button appearance="base" size="sm" onClick={onClick}>
+            <Button appearance="base" size="sm">
               {t("portfolio.borrowEntry.cta")}
             </Button>
           </CardTrailing>

@@ -11,7 +11,6 @@ import type { Features } from "@shared/feature-flags";
 import { useRefreshAccountsOrderingAfterInteractions } from "~/actions/general";
 import { track } from "~/analytics";
 import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
-import { useBorrowLiveConfig } from "LLM/features/Borrow/hooks/useBorrowLiveConfig";
 import {
   flattenAccountsSelector,
   hasNonTokenAccountsSelector,
@@ -39,7 +38,6 @@ interface UsePortfolioViewModelResult {
   shouldDisplayQuickActionCtas: boolean;
   shouldDisplayWallet40MainNav: boolean;
   shouldDisplayAssetSection: boolean;
-  shouldDisplayBorrowSection: boolean;
   shouldDisplayOperationsList: boolean;
   showAssets: boolean;
   isLNSUpsellBannerShown: boolean;
@@ -72,8 +70,6 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
-  const borrowConfig = useBorrowLiveConfig();
-  const shouldDisplayBorrowSection = borrowConfig?.enabled ?? false;
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
   const isFocused = useIsFocused();
@@ -167,7 +163,6 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayQuickActionCtas,
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
-    shouldDisplayBorrowSection,
     shouldDisplayOperationsList,
     showAssets,
     isLNSUpsellBannerShown,

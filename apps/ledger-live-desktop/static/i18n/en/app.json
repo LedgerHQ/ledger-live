@@ -8717,9 +8717,9 @@
       "cta": "Discover"
     },
     "borrowEntry": {
-      "title": "Loans",
-      "cardTitle": "Borrow Stablecoin",
-      "cardDescription": "Unlock liquidity",
+      "title": "Crypto loans",
+      "cardTitle": "Borrow stablecoins",
+      "cardDescription": "Borrow at competitive rates",
       "cta": "Explore"
     },
     "noDeviceTitle": "Your secure crypto wallet"
