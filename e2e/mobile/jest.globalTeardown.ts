@@ -51,19 +51,21 @@ export default async () => {
       await setFeatureFlags(getMergedFeatureFlags());
       await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
       await NativeElementHelpers.waitForElementById("topbar-settings", 120_000);
-
+    } catch (err) {
+      log.warn("Error starting the app in CI global teardown:", sanitizeError(err));
+    }
+    try {
       const flagsData = formatFlagsData(JSON.parse(await getFlags()));
       const envsData = formatEnvData(JSON.parse(await getEnvs()));
       await fs.appendFile(ARTIFACT_ENV_PATH, flagsData + envsData);
     } catch (err) {
-      log.error("Error during CI global teardown:", sanitizeError(err));
-    } finally {
-      try {
-        closeBridge();
-        await withTimeout(cleanupDetox(), 30_000, "cleanupDetox");
-      } catch (cleanupErr) {
-        log.warn("Error during cleanup:", sanitizeError(cleanupErr));
-      }
+      log.warn("Error collecting env data for report in CI global teardown:", sanitizeError(err));
+    }
+    try {
+      closeBridge();
+      await withTimeout(cleanupDetox(), 30_000, "cleanupDetox");
+    } catch (cleanupErr) {
+      log.warn("Error during cleanup in CI global teardown:", sanitizeError(cleanupErr));
     }
   } else if (process.env.CI) {
     try {
