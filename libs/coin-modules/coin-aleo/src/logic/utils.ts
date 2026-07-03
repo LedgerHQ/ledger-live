@@ -137,7 +137,7 @@ export function patchAccountWithViewKey(account: Account, viewKey: string): Acco
 }
 
 export const getStakingOperationType = (functionId: string): OperationType | undefined =>
-  STAKING_OPERATION_TYPE[functionId];
+  Object.hasOwn(STAKING_OPERATION_TYPE, functionId) ? STAKING_OPERATION_TYPE[functionId] : undefined;
 
 export const determineTransactionType = (
   functionId: string,

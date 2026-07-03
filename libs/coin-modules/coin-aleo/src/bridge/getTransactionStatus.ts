@@ -358,6 +358,17 @@ async function handleTransferTransaction({
   ) {
     errors.amount = new AmountRequired();
   } else if (
+    // useAllAmount bypasses the guard above, but BOND/UNBOND have no other zero-amount
+    // check (unlike the transfer path, which reports NotEnoughBalance downstream). A
+    // resolved stake/unstake amount of 0 (e.g. balance == fee, or unbond with 0 bonded)
+    // must never validate clean.
+    transaction.useAllAmount &&
+    (transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC ||
+      transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC) &&
+    calculatedAmount.amount.lte(0)
+  ) {
+    errors.amount = new AmountRequired();
+  } else if (
     transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC &&
     calculatedAmount.amount.gt(0) &&
     calculatedAmount.amount.lt(MIN_BOND_AMOUNT)

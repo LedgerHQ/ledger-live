@@ -3,7 +3,7 @@ import type { AccountBridge } from "@ledgerhq/types-live";
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import aleoCoinConfig from "../config";
 import { MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION, TRANSACTION_TYPE } from "../constants";
-import { estimateFees } from "../logic";
+import { estimateFeesBN } from "../logic";
 import {
   calculateAmount,
   derivePrivateTransactionMode,
@@ -181,11 +181,10 @@ export const prepareTransaction: AccountBridge<
   const isTokenTx = !!subAccount;
 
   if (transaction.mode === TRANSACTION_TYPE.BOND_PUBLIC) {
-    const feeEstimation = estimateFees({
+    const estimatedFees = estimateFeesBN({
       configOrCurrencyId: config,
       transactionType: TRANSACTION_TYPE.BOND_PUBLIC,
     });
-    const estimatedFees = new BigNumber(feeEstimation.value.toString());
     const calculatedAmount = calculateAmount({ transaction, account, estimatedFees });
 
     return updateTransaction(transaction, {
@@ -196,11 +195,10 @@ export const prepareTransaction: AccountBridge<
   }
 
   if (transaction.mode === TRANSACTION_TYPE.UNBOND_PUBLIC) {
-    const feeEstimation = estimateFees({
+    const estimatedFees = estimateFeesBN({
       configOrCurrencyId: config,
       transactionType: TRANSACTION_TYPE.UNBOND_PUBLIC,
     });
-    const estimatedFees = new BigNumber(feeEstimation.value.toString());
     const calculatedAmount = calculateAmount({ transaction, account, estimatedFees });
 
     return updateTransaction(transaction, {
@@ -213,11 +211,10 @@ export const prepareTransaction: AccountBridge<
   }
 
   if (transaction.mode === TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC) {
-    const feeEstimation = estimateFees({
+    const estimatedFees = estimateFeesBN({
       configOrCurrencyId: config,
       transactionType: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
     });
-    const estimatedFees = new BigNumber(feeEstimation.value.toString());
 
     return updateTransaction(transaction, {
       amount: new BigNumber(0),
@@ -230,11 +227,10 @@ export const prepareTransaction: AccountBridge<
 
   if (isPrivateTransaction(transaction)) {
     const derivedTransactionMode = derivePrivateTransactionMode({ isTokenTx, isSelfTransfer });
-    const feeEstimation = estimateFees({
+    const estimatedFees = estimateFeesBN({
       configOrCurrencyId: config,
       transactionType: derivedTransactionMode,
     });
-    const estimatedFees = new BigNumber(feeEstimation.value.toString());
 
     return preparePrivateTransaction({
       account,
@@ -249,11 +245,10 @@ export const prepareTransaction: AccountBridge<
   }
 
   const derivedTransactionMode = derivePublicTransactionMode({ isTokenTx, isSelfTransfer });
-  const feeEstimation = estimateFees({
+  const estimatedFees = estimateFeesBN({
     configOrCurrencyId: config,
     transactionType: derivedTransactionMode,
   });
-  const estimatedFees = new BigNumber(feeEstimation.value.toString());
 
   return preparePublicTransaction({
     account,

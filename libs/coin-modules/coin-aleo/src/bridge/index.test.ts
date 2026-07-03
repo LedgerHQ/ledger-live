@@ -6,10 +6,21 @@ import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import type { AleoSigner, AleoCoinConfig } from "../types";
 import aleoCoinConfig from "../config";
 import { buildCurrencyBridge, buildAccountBridge, createBridges } from "./index";
+import { apiClient } from "../network/api";
+import { getValidators } from "../logic";
 
 jest.mock("../config");
+jest.mock("../network/api");
 
 const mockAleoConfig = jest.mocked(aleoCoinConfig);
+const mockApiClient = jest.mocked(apiClient);
+
+beforeEach(() => {
+  jest.clearAllMocks();
+  // preload/hydrate route through the getValidators LRU (keyed by currency.id);
+  // reset it so a cached result from one test doesn't mask another's mocks.
+  getValidators.reset();
+});
 
 describe("Bridge", () => {
   const mockConfig = getMockedConfig("testnet");
@@ -42,29 +53,45 @@ describe("Bridge", () => {
     jest.fn().mockReturnValue(mockConfig);
 
   describe("buildCurrencyBridge", () => {
-    it("should return a currency bridge with preload, hydrate, and scanAccounts methods", () => {
+    it("should return a currency bridge with getPreloadStrategy, preload, hydrate, and scanAccounts methods", () => {
       const signerContext = createMockSignerContext();
       const currencyBridge = buildCurrencyBridge(signerContext);
 
+      expect(currencyBridge.getPreloadStrategy).toBeInstanceOf(Function);
       expect(currencyBridge.preload).toBeInstanceOf(Function);
       expect(currencyBridge.hydrate).toBeInstanceOf(Function);
       expect(currencyBridge.scanAccounts).toBeInstanceOf(Function);
     });
 
-    it("should preload successfully", async () => {
+    it("should preload the validator committee", async () => {
+      mockApiClient.getCommittee.mockResolvedValue({
+        members: { aleo1validator: [3000, true, 5] },
+      });
+      mockApiClient.getValidatorMetadata.mockResolvedValue({});
       const signerContext = createMockSignerContext();
       const currencyBridge = buildCurrencyBridge(signerContext);
 
       const result = await currencyBridge.preload(getMockedCurrency());
 
-      expect(result).toEqual({});
+      expect(mockApiClient.getCommittee).toHaveBeenCalled();
+      expect(result).toEqual([
+        { address: "aleo1validator", name: undefined, stake: 3000, isOpen: true, commission: 5 },
+      ]);
     });
 
-    it("hydrate should be a no-op function", () => {
+    it("preload resolves to an empty array instead of throwing when the fetch fails", async () => {
+      mockApiClient.getCommittee.mockRejectedValue(new Error("Network error"));
       const signerContext = createMockSignerContext();
       const currencyBridge = buildCurrencyBridge(signerContext);
 
-      const result = currencyBridge.hydrate({}, getMockedCurrency());
+      await expect(currencyBridge.preload(getMockedCurrency())).resolves.toEqual([]);
+    });
+
+    it("hydrate returns void", () => {
+      const signerContext = createMockSignerContext();
+      const currencyBridge = buildCurrencyBridge(signerContext);
+
+      const result = currencyBridge.hydrate([], getMockedCurrency());
       expect(result).toBeUndefined();
     });
   });

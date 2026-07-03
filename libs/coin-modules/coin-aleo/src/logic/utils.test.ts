@@ -365,6 +365,13 @@ describe("getStakingOperationType", () => {
   it("should return undefined for a non-staking function id", () => {
     expect(getStakingOperationType(EXPLORER_TRANSFER_TYPES.PUBLIC)).toBeUndefined();
   });
+
+  it.each(["constructor", "toString", "hasOwnProperty", "__proto__"])(
+    "should return undefined for inherited Object property '%s'",
+    functionId => {
+      expect(getStakingOperationType(functionId)).toBeUndefined();
+    },
+  );
 });
 
 describe("toCoinFrameworkOperation", () => {

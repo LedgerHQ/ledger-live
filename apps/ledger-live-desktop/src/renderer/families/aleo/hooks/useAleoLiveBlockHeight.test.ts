@@ -24,7 +24,7 @@ const flush = () => act(async () => {});
 describe("useAleoLiveBlockHeight", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.useFakeTimers();
+    jest.useFakeTimers({ doNotFake: ["queueMicrotask"] });
   });
 
   afterEach(() => {

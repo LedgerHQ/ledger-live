@@ -965,6 +965,27 @@ describe("getTransactionStatus", () => {
       expect(result.errors.amount).not.toBeInstanceOf(AleoBondAmountTooLow);
     });
 
+    it("reports AmountRequired when useAllAmount resolves the bond amount to zero", async () => {
+      mockCalculateAmount.mockReturnValue({
+        amount: new BigNumber(0),
+        totalSpent: new BigNumber(1),
+      });
+
+      const transaction: Transaction = {
+        family: "aleo",
+        amount: new BigNumber(0),
+        useAllAmount: true,
+        recipient: "aleo1validator00000000000000000000000000000000000000000000000q",
+        fees: new BigNumber(1),
+        mode: TRANSACTION_TYPE.BOND_PUBLIC,
+        withdrawal: "aleo1validwithdrawal000000000000000000000000000000000000000000q",
+      };
+
+      const result = await getTransactionStatus(mockAccount, transaction);
+
+      expect(result.errors.amount).toBeInstanceOf(AmountRequired);
+    });
+
     const bondTransaction = (amount: BigNumber): Transaction => ({
       family: "aleo",
       amount,
@@ -1091,6 +1112,22 @@ describe("getTransactionStatus", () => {
         mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
         recipient: stakingAccount.freshAddress,
         amount: new BigNumber(0),
+      } as never);
+      expect(status.errors.amount).toBeInstanceOf(AmountRequired);
+    });
+
+    it("unbond_public with useAllAmount resolving to zero raises AmountRequired", async () => {
+      mockCalculateAmount.mockReturnValue({
+        amount: new BigNumber(0),
+        totalSpent: new BigNumber(0),
+      });
+
+      const status = await getTransactionStatus(stakingAccount, {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.UNBOND_PUBLIC,
+        recipient: stakingAccount.freshAddress,
+        amount: new BigNumber(0),
+        useAllAmount: true,
       } as never);
       expect(status.errors.amount).toBeInstanceOf(AmountRequired);
     });
