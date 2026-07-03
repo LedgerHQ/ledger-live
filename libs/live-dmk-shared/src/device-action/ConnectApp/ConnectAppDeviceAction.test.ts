@@ -11,6 +11,7 @@ import {
   UnknownDAError,
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
+import { DeviceModelId as LLDeviceModelId } from "@ledgerhq/types-devices";
 
 import { makeDeviceActionInternalApiMock } from "../__test-utils__/makeInternalApi";
 import {
@@ -33,7 +34,7 @@ import {
   type DeviceDeprecationConfigs,
   type DeviceDeprecationConfig,
 } from "./types";
-import { isDeviceDeprecated } from "./deprecation";
+import { extractDeviceDeprecationRules } from "./extractDeviceDeprecationRules";
 
 jest.mock("@ledgerhq/device-management-kit", () => {
   const original = jest.requireActual<typeof import("@ledgerhq/device-management-kit")>(
@@ -965,7 +966,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
     const FUTURE = "2999-01-01";
 
     const baseEntry = (over: Partial<DeviceDeprecationConfig> = {}): DeviceDeprecationConfig => ({
-      deviceModelId: "nanoS",
+      deviceModelId: "nanoS" as LLDeviceModelId,
       warningScreen: { date: FUTURE, deprecatedFlow: [] },
       errorScreen: { date: FUTURE, deprecatedFlow: [] },
       warningClearSigningScreen: { date: FUTURE, deprecatedFlow: [], exception: [] },
@@ -974,7 +975,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
 
     const INFO_PAST_CONFIG: DeviceDeprecationConfigs = [
       {
-        deviceModelId: MODEL,
+        deviceModelId: "nanoS" as LLDeviceModelId,
         warningScreen: { date: PAST, deprecatedFlow: ["receive"] },
         errorScreen: { date: FUTURE, deprecatedFlow: [] },
         warningClearSigningScreen: { date: FUTURE, deprecatedFlow: [], exception: [] },
@@ -983,7 +984,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
 
     const ERROR_PAST_CONFIG: DeviceDeprecationConfigs = [
       {
-        deviceModelId: MODEL,
+        deviceModelId: "nanoS" as LLDeviceModelId,
         warningScreen: { date: FUTURE, deprecatedFlow: [] },
         errorScreen: { date: PAST, deprecatedFlow: ["receive"] },
         warningClearSigningScreen: { date: FUTURE, deprecatedFlow: [], exception: [] },
@@ -1006,18 +1007,32 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       const cfg: DeviceDeprecationConfigs = [
         baseEntry({ warningScreen: { date: PAST, deprecatedFlow: ["receive"] } }),
       ];
-      const res = isDeviceDeprecated(cfg, MODEL);
+      const res = extractDeviceDeprecationRules(cfg, MODEL);
       expect(res.warningScreenVisible).toBe(true);
       expect(res.warningScreenRules).toEqual({ exception: [], deprecatedFlow: ["receive"] });
       expect(res.errorScreenVisible).toBe(false);
       expect(res.clearSigningScreenVisible).toBe(false);
     });
 
+    it("matches Ledger Live device ids from remote config against the connected DMK model", () => {
+      const cfg: DeviceDeprecationConfigs = [
+        baseEntry({
+          deviceModelId: LLDeviceModelId.europa,
+          warningScreen: { date: PAST, deprecatedFlow: ["receive"] },
+        }),
+      ];
+
+      const res = extractDeviceDeprecationRules(cfg, DeviceModelId.FLEX);
+
+      expect(res.warningScreenVisible).toBe(true);
+      expect(res.modelId).toBe(LLDeviceModelId.europa);
+    });
+
     it("sets error visible and date = errorDate when errorScreen is past", () => {
       const cfg: DeviceDeprecationConfigs = [
         baseEntry({ errorScreen: { date: PAST, deprecatedFlow: ["receive"], exception: ["X"] } }),
       ];
-      const res = isDeviceDeprecated(cfg, MODEL);
+      const res = extractDeviceDeprecationRules(cfg, MODEL);
       expect(res.errorScreenVisible).toBe(true);
       expect(res.errorScreenRules).toEqual({ exception: ["X"], deprecatedFlow: ["receive"] });
       expect(res.date.toISOString().startsWith("2000-01-01")).toBe(true);
@@ -1033,7 +1048,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
           },
         }),
       ];
-      const res = isDeviceDeprecated(cfg, MODEL);
+      const res = extractDeviceDeprecationRules(cfg, MODEL);
       expect(res.clearSigningScreenVisible).toBe(true);
       expect(res.clearSigningScreenRules).toEqual({
         exception: ["A", "B"],
@@ -1043,7 +1058,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
 
     it("does not set visible flags when all dates are future", () => {
       const cfg: DeviceDeprecationConfigs = [baseEntry()];
-      const res = isDeviceDeprecated(cfg, MODEL);
+      const res = extractDeviceDeprecationRules(cfg, MODEL);
       expect(res.warningScreenVisible).toBe(false);
       expect(res.errorScreenVisible).toBe(false);
       expect(res.clearSigningScreenVisible).toBe(false);
@@ -1057,7 +1072,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
           warningClearSigningScreen: { date: FUTURE, deprecatedFlow: [], exception: [] },
         }),
       ];
-      const res = isDeviceDeprecated(cfg, MODEL);
+      const res = extractDeviceDeprecationRules(cfg, MODEL);
       expect(res.warningScreenVisible).toBe(true);
       expect(res.errorScreenVisible).toBe(false);
       expect(res.clearSigningScreenVisible).toBe(false);
