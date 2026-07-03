@@ -1,4 +1,3 @@
-import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
@@ -12,7 +11,6 @@ describe("Wallet 4.0 - Main Navigation", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding",
-      featureFlags: WALLET_40_FEATURE_FLAGS,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });

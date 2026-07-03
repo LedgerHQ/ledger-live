@@ -15,7 +15,7 @@ import {
 import { waitForSpeculosReady } from "@ledgerhq/live-e2e-shared/speculosCI";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
-import type { Features, PartialFeatures } from "@shared/feature-flags";
+import type { Features, OptionalFeatureMap, PartialFeatures } from "@shared/feature-flags";
 
 function checkTestFailed(): void {
   if (globalThis.IS_FAILED) {
@@ -41,7 +41,7 @@ export type InitOptions = {
   }[];
   userdata?: string;
   testedCurrencies?: string[];
-  featureFlags?: PartialFeatures;
+  featureFlags?: OptionalFeatureMap;
   speculosForSetupOnly?: boolean;
 };
 
@@ -376,7 +376,7 @@ export class InitializationManager {
     await loadConfig(userdataSpeculos, true);
   }
 
-  static async setFeatureFlags(featureFlags: PartialFeatures) {
+  static async setFeatureFlags(featureFlags: OptionalFeatureMap) {
     const mergedFeatureFlags = getMergedFeatureFlags({ testFlags: featureFlags });
     const wallet40 = mergedFeatureFlags.lwmWallet40 as Features["lwmWallet40"];
     isMyWalletEnabled = Boolean(wallet40?.enabled && wallet40?.params?.myWallet);

@@ -1,4 +1,3 @@
-import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
@@ -13,7 +12,6 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Onboard without accounts", () =
     await app.init({
       userdata: "skip-onboarding",
       speculosApp: currency.speculosApp,
-      featureFlags: WALLET_40_FEATURE_FLAGS,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });
@@ -43,7 +41,6 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - With fewer accounts than sectio
   beforeAll(async () => {
     await app.init({
       userdata: "wallet40-btc-only",
-      featureFlags: WALLET_40_FEATURE_FLAGS,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });
@@ -66,7 +63,6 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Open the app with accounts", ()
   beforeAll(async () => {
     await app.init({
       userdata: "wallet40-many-stablecoins",
-      featureFlags: WALLET_40_FEATURE_FLAGS,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });
