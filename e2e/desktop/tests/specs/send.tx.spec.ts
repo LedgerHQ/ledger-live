@@ -262,7 +262,7 @@ function shouldSkipLNSTag(currencyId: string): boolean {
 
 test.describe("Send flows", () => {
   for (const transaction of transactionE2E) {
-    test.describe("Send from 1 account to another", () => {
+    test.describe("legacy send flow - Send from 1 account to another", () => {
       test.use({
         teamOwner: Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
@@ -324,7 +324,7 @@ test.describe("Send flows", () => {
   }
 
   for (const transaction of transactionsAmountInvalid) {
-    test.describe("Check invalid amount input error", () => {
+    test.describe("legacy send flow - Check invalid amount input error", () => {
       test.use({
         teamOwner: Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
@@ -376,7 +376,7 @@ test.describe("Send flows", () => {
     });
   }
 
-  test.describe("Verify send max user flow", () => {
+  test.describe("legacy send flow - Verify send max user flow", () => {
     const transactionInputValid = new Transaction(
       Account.ETH_1,
       Account.ETH_2,
@@ -433,7 +433,7 @@ test.describe("Send flows", () => {
   });
 
   for (const transaction of transactionAddressValid) {
-    test.describe("Send funds step 1 (Recipient) - positive cases (Button enabled)", () => {
+    test.describe("legacy send flow - Send funds step 1 (Recipient) - positive cases (Button enabled)", () => {
       test.use({
         teamOwner: Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
@@ -495,7 +495,7 @@ test.describe("Send flows", () => {
   }
 
   for (const transaction of transactionsAddressInvalid) {
-    test.describe("Send funds step 1 (Recipient) - negative cases (Button disabled)", () => {
+    test.describe("legacy send flow - Send funds step 1 (Recipient) - negative cases (Button disabled)", () => {
       test.use({
         teamOwner: Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
@@ -568,7 +568,7 @@ test.describe("Send flows", () => {
     });
   }
 
-  test.describe("User sends funds to ENS address", () => {
+  test.describe("legacy send flow - User sends funds to ENS address", () => {
     const transactionEnsAddress = new Transaction(
       Account.ETH_1,
       Account.ETH_2_WITH_ENS,
@@ -630,7 +630,7 @@ test.describe("Send flows", () => {
     );
   });
 
-  test.describe("Send Concordium (Testnet)", () => {
+  test.describe("legacy send flow - Send Concordium (Testnet)", () => {
     const ccdTx = new Transaction(
       Account.CCD_TESTNET_1,
       Account.CCD_TESTNET_2,
