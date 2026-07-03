@@ -14,18 +14,25 @@ export type InternalTxsByHash = Map<string, BlockOperation[]>;
 
 export type SourceFetcher = (height: number) => Promise<InternalTxsByHash>;
 
+function throwCollectedRealErrors(errors: unknown[]): never {
+  if (errors.length === 1) {
+    throw errors[0];
+  }
+  throw new AggregateError(errors, "internal tx sources failed");
+}
+
 async function runInternalTxSources(
   sources: readonly InternalTxSource[],
   fetchers: Record<InternalTxSource, SourceFetcher>,
   height: number,
 ): Promise<InternalTxsByHash> {
-  let lastRealError: unknown;
+  const realErrors: unknown[] = [];
   let hadUnavailableSource = false;
 
   for (const source of sources) {
     if (source === "empty") {
-      if (lastRealError !== undefined) {
-        throw lastRealError;
+      if (realErrors.length > 0) {
+        throwCollectedRealErrors(realErrors);
       }
       return new Map();
     }
@@ -37,12 +44,12 @@ async function runInternalTxSources(
         hadUnavailableSource = true;
         continue;
       }
-      lastRealError = error;
+      realErrors.push(error);
     }
   }
 
-  if (lastRealError !== undefined) {
-    throw lastRealError;
+  if (realErrors.length > 0) {
+    throwCollectedRealErrors(realErrors);
   }
 
   if (hadUnavailableSource) {

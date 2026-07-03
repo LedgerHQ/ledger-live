@@ -98,17 +98,36 @@ describe("composeInternalTxsFetcher", () => {
     await expect(fetch(height)).rejects.toThrow(traceError);
   });
 
-  it("propagates the last rejection when empty is not configured", async () => {
-    const lastError = new Error("trace down");
+  it("propagates collected real errors when empty is not configured", async () => {
+    const explorerError = new Error("explorer down");
+    const traceError = new Error("trace down");
     const fetch = composeInternalTxsFetcher(
       internalTxSources().addSource("explorer").addSource("trace_block").build(),
       makeFetchers({
-        explorer: jest.fn().mockRejectedValue(new Error("explorer down")),
-        trace_block: jest.fn().mockRejectedValue(lastError),
+        explorer: jest.fn().mockRejectedValue(explorerError),
+        trace_block: jest.fn().mockRejectedValue(traceError),
       }),
     );
 
-    await expect(fetch(height)).rejects.toThrow(lastError);
+    await expect(fetch(height)).rejects.toMatchObject({
+      errors: [explorerError, traceError],
+    });
+  });
+
+  it("propagates all collected real errors when the list ends with empty", async () => {
+    const explorerError = new Error("explorer down");
+    const traceError = new Error("trace down");
+    const fetch = composeInternalTxsFetcher(
+      ["explorer", "trace_block", "empty"],
+      makeFetchers({
+        explorer: jest.fn().mockRejectedValue(explorerError),
+        trace_block: jest.fn().mockRejectedValue(traceError),
+      }),
+    );
+
+    await expect(fetch(height)).rejects.toMatchObject({
+      errors: [explorerError, traceError],
+    });
   });
 
   it("falls back from trace_block to debug_traceBlockByNumber", async () => {

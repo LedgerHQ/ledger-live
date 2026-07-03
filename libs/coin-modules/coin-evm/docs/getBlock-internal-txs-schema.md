@@ -32,11 +32,11 @@ flowchart TB
     J{source resolves?}
     J -->|yes| K["Map(txHash → BlockOperation[])"]
     J -->|SourceUnavailableError| L[skip to next source]
-    J -->|real runtime error| M[remember error, next source]
+    J -->|real runtime error| M[remember errors, next source]
     L --> N{next source}
     M --> N
     N -->|empty, no real error| O[resolve empty Map]
-    N -->|empty, real error remembered| P[throw last real error]
+    N -->|empty, real errors remembered| P[throw collected real errors]
     N -->|list exhausted| P
   end
 
@@ -68,11 +68,11 @@ Built via `internalTxSources().addSource("explorer").addSource("trace_block").ad
 | Source | When unavailable (skipped) | When available but fails at runtime |
 |--------|---------------------------|-------------------------------------|
 | `explorer` | Explorer config is not etherscan-like | Best-effort: wrapped as `SourceUnavailableError`, fall through to node traces |
-| `trace_block` | `nodeApi.traceBlockErigon` is undefined | Remember error, try next source; rethrow when `empty` is reached with a remembered error or the list is exhausted without a later success (e.g. erigon error → geth fallback) |
-| `debug_traceBlockByNumber` | `nodeApi.traceBlockGeth` is undefined | Same as `trace_block`: remember and continue; rethrow only when no later source succeeds |
-| `empty` | N/A (terminal) | Resolves empty Map only if no real runtime error was remembered; otherwise re-throws the last real error |
+| `trace_block` | `nodeApi.traceBlockErigon` is undefined | Remember error, try next source; rethrow collected errors when `empty` is reached or the list is exhausted without a later success (e.g. erigon error → geth fallback) |
+| `debug_traceBlockByNumber` | `nodeApi.traceBlockGeth` is undefined | Same as `trace_block`: remember and continue; rethrow collected errors only when no later source succeeds |
+| `empty` | N/A (terminal) | Resolves empty Map only if no real runtime errors were remembered; otherwise re-throws all collected real errors |
 
-**Behaviour-preserving rule:** structurally unsupported sources are skipped (`SourceUnavailableError`). Explorer failures are always best-effort (fall through). Runtime trace failures are remembered and the loop continues to later sources (erigon → geth); the last remembered error is rethrown only when `empty` is reached with a remembered error or the list ends without a success. A trailing `empty` resolves only when every prior source was unavailable, not when a trace call failed at runtime.
+**Behaviour-preserving rule:** structurally unsupported sources are skipped (`SourceUnavailableError`). Explorer failures are always best-effort (fall through). Runtime trace failures are remembered and the loop continues to later sources (erigon → geth); collected real errors are rethrown only when `empty` is reached with remembered errors or the list ends without a success (single error rethrown as-is, multiple as `AggregateError`). A trailing `empty` resolves only when every prior source was unavailable, not when a trace call failed at runtime.
 
 ## Paths summary
 

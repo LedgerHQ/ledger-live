@@ -989,7 +989,9 @@ describe("getBlock", () => {
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
     mockGetInternalTransactionsByBlock.mockRejectedValueOnce(new Error("explorer error"));
 
-    await expect(getBlock({} as CryptoCurrency, 12345)).rejects.toThrow(gethError);
+    await expect(getBlock({} as CryptoCurrency, 12345)).rejects.toMatchObject({
+      errors: [erigonError, gethError],
+    });
     expect(mockTraceBlockErigon).toHaveBeenCalledWith(expect.anything(), 12345);
     expect(mockTraceBlockGeth).toHaveBeenCalledWith(expect.anything(), 12345);
   });
