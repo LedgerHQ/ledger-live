@@ -2,6 +2,7 @@ import MarketHandlers from "./market";
 import CoingeckoHandlers from "./coingecko";
 import CryptoIconsHandlers from "./cryptoIcons";
 import CounterValuesHandlers from "./countervalues";
+import CurrencyFiatHandlers from "./currencyFiat";
 import AssetsHandlers from "./assets";
 import FearAndGreedHandlers from "./fearAndGreed";
 import AltcoinSeasonHandlers from "./altcoinSeason";
@@ -16,6 +17,7 @@ export default [
   ...CoingeckoHandlers,
   ...CryptoIconsHandlers,
   ...CounterValuesHandlers,
+  ...CurrencyFiatHandlers,
   ...AssetsHandlers,
   ...FearAndGreedHandlers,
   ...AltcoinSeasonHandlers,
