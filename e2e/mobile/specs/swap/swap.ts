@@ -47,7 +47,7 @@ export function runSwapTest(
     it(`Swap ${accountToDebit.currency.name} to ${accountToCredit.currency.name}`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(accountToDebit, accountToCredit);
       const swapAmount = minAmount
-        ? Number(minAmount).toFixed(8).replace(/\.?0+$/, "")
+        ? Number(minAmount).toFixed(8).replace(/0+$/, "").replace(/\.$/, "")
         : minAmount;
       swap.amount = swapAmount;
 
