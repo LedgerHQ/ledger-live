@@ -242,9 +242,7 @@ export async function executeSwapCommand({
     const mainFromAccount: Account = getMainAccount(fromAccount, fromParent);
 
     if (isDieExecutionProvider(provider) && mainFromAccount.currency.family === "evm") {
-      out.swapExecuteProgress(
-        `[i] Using device-intent (DIE) pipeline for provider=${provider}; fetching quote…`,
-      );
+      out.swapExecuteProgress(`[i] Using provider=${provider}; fetching quote…`);
 
       const toParent = getParentAccount(toAccount, accounts);
       const mainToAccount: Account = getMainAccount(toAccount, toParent);
@@ -285,7 +283,7 @@ export async function executeSwapCommand({
       }
 
       out.swapExecuteProgress(
-        `[i] DIE planner returned skip (${dieResult.skipReason ?? "no reason"}); falling back to legacy Exchange-app pipeline.`,
+        `[i] Embedded coin-app flow skipped (${dieResult.skipReason ?? "no reason"}); falling back to legacy Exchange-app pipeline.`,
       );
     }
 
@@ -321,7 +319,7 @@ export async function executeSwapCommand({
 export default defineCommand({
   name: "execute",
   description:
-    "Swap flow on the connected Ledger. DEX providers (uniswap, 1inch/oneinch, velora, okx) run end-to-end through the device-intent (DIE) pipeline in the partner's embedded coin app; every other provider runs the legacy Exchange-app pipeline (nonce → payload → complete exchange → sign/broadcast).",
+    "Swap flow on the connected Ledger. DEX providers (uniswap, 1inch/oneinch, velora, okx) run end-to-end in the partner's embedded coin app; every other provider runs the legacy Exchange-app pipeline (nonce → payload → complete exchange → sign/broadcast).",
   options: {
     from: option(swapExecuteFlagsSchema.shape.from, {
       description:
