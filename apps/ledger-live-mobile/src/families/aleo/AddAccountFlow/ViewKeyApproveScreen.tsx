@@ -166,19 +166,9 @@ export default function ViewKeyApproveScreen({ route, navigation }: Props) {
     onCloseNavigation?.();
   }, [onCloseNavigation]);
 
-  return (
-    <SafeAreaView
-      edges={["bottom"]}
-      style={[styles.root, { backgroundColor: colors.background.main }]}
-    >
-      <DeviceActionDefaultRendering
-        status={hookState}
-        request={request}
-        payload={payload}
-        device={device}
-        onResult={onResult}
-      />
-      {hookState.sharePending ? (
+  const renderApprovalContent = () => {
+    if (hookState.sharePending) {
+      return (
         <Box style={[styles.overlay, { backgroundColor: colors.background.main }]}>
           <ScrollView style={styles.list} contentContainerStyle={styles.contentContainer}>
             <Box style={styles.animationContainer}>
@@ -222,9 +212,29 @@ export default function ViewKeyApproveScreen({ route, navigation }: Props) {
             </Button>
           </Box>
         </Box>
-      ) : payload !== null ? (
-        <Loading />
-      ) : null}
+      );
+    }
+
+    if (payload === null) {
+      return null;
+    }
+
+    return <Loading />;
+  };
+
+  return (
+    <SafeAreaView
+      edges={["bottom"]}
+      style={[styles.root, { backgroundColor: colors.background.main }]}
+    >
+      <DeviceActionDefaultRendering
+        status={hookState}
+        request={request}
+        payload={payload}
+        device={device}
+        onResult={onResult}
+      />
+      {renderApprovalContent()}
     </SafeAreaView>
   );
 }

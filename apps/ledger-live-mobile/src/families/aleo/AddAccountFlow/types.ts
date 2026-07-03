@@ -8,6 +8,7 @@ export type AleoAddAccountParams = {
   currency: CryptoOrTokenCurrency;
   device: Device;
   context?: AddAccountContextType;
+  sourceScreenName?: string;
   onCloseNavigation?: () => void;
   navigationDepth?: number;
   accountsToAdd?: Account[];
