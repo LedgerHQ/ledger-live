@@ -1,6 +1,6 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { FF_LWM_WALLET_40_Q2 } from "utils/featureFlagUtils";
+import { OptionalFeatureMap } from "@ledgerhq/types-live";
 
 setTeamOwner(Team.WALLET_XP);
 $TmsLink("B2CQA-5256");
@@ -12,11 +12,30 @@ tags.forEach(tag => $Tag(tag));
 const ACCOUNT = Account.ETH_1;
 const CURRENCY = ACCOUNT.currency;
 
+const OP_HISTORY_FEATURE_FLAGS: OptionalFeatureMap = {
+  lwmWallet40: {
+    enabled: true,
+    params: {
+      marketBanner: true,
+      graphRework: true,
+      quickActionCtas: true,
+      tour: true,
+      lazyOnboarding: true,
+      assetSection: true,
+      operationsList: true,
+      aggregatedAssets: false,
+      myWallet: true,
+      pnl: false,
+      assetDiscoverability: false,
+    },
+  },
+};
+
 describe("Wallet 4.0 - Operations History", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "speculos-x-other-account",
-      featureFlags: FF_LWM_WALLET_40_Q2,
+      featureFlags: OP_HISTORY_FEATURE_FLAGS,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });

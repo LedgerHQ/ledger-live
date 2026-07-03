@@ -1,6 +1,6 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { FF_LWM_WALLET_40_Q2 } from "utils/featureFlagUtils";
+import { OptionalFeatureMap } from "@shared/feature-flags";
 
 setTeamOwner(Team.WALLET_XP);
 $TmsLink("B2CQA-4383");
@@ -8,11 +8,30 @@ $TmsLink("B2CQA-4385");
 const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 tags.forEach(tag => $Tag(tag));
 
+const MAIN_NAVIGATION_FEATURE_FLAGS: OptionalFeatureMap = {
+  lwmWallet40: {
+    enabled: true,
+    params: {
+      marketBanner: true,
+      graphRework: true,
+      quickActionCtas: true,
+      tour: true,
+      lazyOnboarding: true,
+      assetSection: true,
+      operationsList: true,
+      aggregatedAssets: false,
+      myWallet: true,
+      pnl: false,
+      assetDiscoverability: false,
+    },
+  },
+};
+
 describe("Wallet 4.0 - Main Navigation", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding",
-      featureFlags: FF_LWM_WALLET_40_Q2,
+      featureFlags: MAIN_NAVIGATION_FEATURE_FLAGS,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });
