@@ -90,7 +90,8 @@ export type EvmConfig = {
   feeHistoryRewardPercentile?: number;
   /**
    * Ordered list of internal-tx sources for `getBlock`. Built via `internalTxSources()`.
-   * Defaults to explorer-first, then node traces, then silent empty (ADR-048).
+   * Defaults to explorer-first, then node traces, then `empty` (resolves only when no
+   * real trace runtime error was remembered; trace failures still propagate for retry).
    * @see https://ledgerhq.atlassian.net/wiki/spaces/CF/pages/7297957892
    */
   getBlockInternalTxsSources?: InternalTxSourceList;

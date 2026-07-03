@@ -695,7 +695,7 @@ describe("getBlock", () => {
     );
   });
 
-  it("when explorer is not etherscan like, fallbacks to node.traceBlockErigon", async () => {
+  it("when explorer is not etherscan like, falls back to node.traceBlockErigon", async () => {
     setCoinConfig(
       () =>
         ({
