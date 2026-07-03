@@ -1,6 +1,6 @@
 import type { BlockOperation } from "@ledgerhq/coin-module-framework/api/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { EvmCoinConfig, setCoinConfig } from "../config";
+import { EvmCoinConfig, internalTxSources, setCoinConfig } from "../config";
 import { UnsupportedRpcMethodError } from "../errors";
 import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
 import { getNodeApi } from "../network/node";
@@ -695,7 +695,7 @@ describe("getBlock", () => {
     );
   });
 
-  it("when explorer is not etherscan like, fallbacks to node.traceBlock", async () => {
+  it("when explorer is not etherscan like, fallbacks to node.traceBlockErigon", async () => {
     setCoinConfig(
       () =>
         ({
@@ -723,7 +723,7 @@ describe("getBlock", () => {
       ),
       getBlockReceipts: jest.fn().mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1" })]),
       getTransaction: jest.fn(),
-      traceBlock: mockTraceBlock,
+      traceBlockErigon: mockTraceBlock,
     } as any);
 
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
@@ -755,13 +755,14 @@ describe("getBlock", () => {
     );
   });
 
-  it("when traceBlock throws UnsupportedRpcMethodError, the exception is propagated so that the caller can retry to fetch the whole block", async () => {
+  it("when traceBlockErigon throws UnsupportedRpcMethodError and empty is not configured, the exception is propagated so that the caller can retry to fetch the whole block", async () => {
     setCoinConfig(
       () =>
         ({
           info: {
             node: { type: "external" as const, retries: 0 },
             explorer: { type: "ledger" },
+            getBlockInternalTxsSources: internalTxSources().addSource("trace_block").build(),
           },
         }) as unknown as EvmCoinConfig,
     );
@@ -784,7 +785,7 @@ describe("getBlock", () => {
       ),
       getBlockReceipts: jest.fn().mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1" })]),
       getTransaction: jest.fn(),
-      traceBlock: mockTraceBlock,
+      traceBlockErigon: mockTraceBlock,
     } as any);
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
 
@@ -836,7 +837,7 @@ describe("getBlock", () => {
     });
   });
 
-  it("when getInternalTransactionsByBlock fails and traceBlock is defined, falls back to traceBlock for internal transactions", async () => {
+  it("when getInternalTransactionsByBlock fails and traceBlockErigon is defined, falls back to traceBlockErigon for internal transactions", async () => {
     setCoinConfig(
       () =>
         ({
@@ -864,7 +865,7 @@ describe("getBlock", () => {
         .fn()
         .mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] })]),
       getTransaction: jest.fn(),
-      traceBlock: mockTraceBlock,
+      traceBlockErigon: mockTraceBlock,
     } as any);
 
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
@@ -903,13 +904,17 @@ describe("getBlock", () => {
     });
   });
 
-  it("when explorer.getInternalTransactionsByBlock fails and traceBlock rejects UnsupportedRpcMethodError, propagates the error", async () => {
+  it("when explorer.getInternalTransactionsByBlock fails and traceBlockErigon rejects UnsupportedRpcMethodError without empty source, propagates the error", async () => {
     setCoinConfig(
       () =>
         ({
           info: {
             node: { type: "external" as const, retries: 0 },
             explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+            getBlockInternalTxsSources: internalTxSources()
+              .addSource("explorer")
+              .addSource("trace_block")
+              .build(),
           },
         }) as unknown as EvmCoinConfig,
     );
@@ -933,7 +938,7 @@ describe("getBlock", () => {
         .fn()
         .mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] })]),
       getTransaction: jest.fn(),
-      traceBlock: mockTraceBlock,
+      traceBlockErigon: mockTraceBlock,
     } as any);
 
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);

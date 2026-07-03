@@ -713,28 +713,7 @@ async function traceBlockErigon(
   });
 }
 
-function isNumber(value: unknown): value is number {
-  return typeof value === "number";
-}
-
-async function callTraceBlock(
-  api: JsonRpcProvider,
-  blockHeight: number | "latest",
-): Promise<TraceBlockItem[]> {
-  return await traceBlockErigon(api, blockHeight).catch(error => {
-    if (isNumber(blockHeight)) {
-      return traceBlockGeth(api, blockHeight);
-    }
-    throw error;
-  });
-}
-
-async function traceBlock(
-  api: JsonRpcProvider,
-  _currency: CryptoCurrency,
-  blockHeight: number | "latest",
-): Promise<TraceBlockItem[]> {
-  const traces = await callTraceBlock(api, blockHeight);
+function normalizeTraceBlockItems(traces: TraceBlockItem[]): TraceBlockItem[] {
   if (!Array.isArray(traces)) throw new Error("Invalid trace_block response");
 
   return traces.map((trace, index) => {
@@ -743,6 +722,22 @@ async function traceBlock(
     }
     return trace;
   });
+}
+
+async function traceBlockGethWithValidation(
+  api: JsonRpcProvider,
+  _currency: CryptoCurrency,
+  blockHeight: number,
+): Promise<TraceBlockItem[]> {
+  return normalizeTraceBlockItems(await traceBlockGeth(api, blockHeight));
+}
+
+async function traceBlockErigonWithValidation(
+  api: JsonRpcProvider,
+  _currency: CryptoCurrency,
+  blockHeight: number | "latest",
+): Promise<TraceBlockItem[]> {
+  return normalizeTraceBlockItems(await traceBlockErigon(api, blockHeight));
 }
 
 function isPrefetchedBlockTransaction(value: unknown): value is PrefetchedBlockTransaction {
@@ -888,7 +883,8 @@ export function createNodeApi(config: ExternalNodeConfig): NodeApi {
     getTransactionCount: make(getTransactionCount, config),
     getTransaction: make(getTransaction, config),
     getBlockReceipts: make(getBlockReceipts, config),
-    traceBlock: make(traceBlock, config),
+    traceBlockErigon: make(traceBlockErigonWithValidation, config),
+    traceBlockGeth: make(traceBlockGethWithValidation, config),
     getGasEstimation: makeGetGasEstimation(config),
     getFeeData: make(getFeeData, config),
     broadcastTransaction: make(broadcastTransaction, config, { retries: 0 }),

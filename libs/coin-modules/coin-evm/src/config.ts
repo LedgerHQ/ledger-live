@@ -1,5 +1,9 @@
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
+import type { InternalTxSourceList } from "./internalTxSources";
+
+export type { InternalTxSource, InternalTxSourceList, NonEmptySource } from "./internalTxSources";
+export { DEFAULT_INTERNAL_TX_SOURCES, internalTxSources } from "./internalTxSources";
 
 /**
  * Block finalization levels supported by EVM JSON-RPC API, used to fetch the latest block.
@@ -84,6 +88,12 @@ export type EvmConfig = {
    * inclusion at the cost of paying more; lower values bias toward minimal cost.
    */
   feeHistoryRewardPercentile?: number;
+  /**
+   * Ordered list of internal-tx sources for `getBlock`. Built via `internalTxSources()`.
+   * Defaults to explorer-first, then node traces, then silent empty (ADR-048).
+   * @see https://ledgerhq.atlassian.net/wiki/spaces/CF/pages/7297957892
+   */
+  getBlockInternalTxsSources?: InternalTxSourceList;
 };
 
 export type ExternalNodeConfig = Extract<EvmConfig["node"], { type: "external" }>;

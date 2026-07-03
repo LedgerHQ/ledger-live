@@ -1245,7 +1245,7 @@ describe("EVM Family", () => {
     });
   });
 
-  describe("traceBlock", () => {
+  describe("traceBlockErigon", () => {
     it("should return trace array when trace_block is supported", async () => {
       const traceItem = {
         action: {
@@ -1272,7 +1272,7 @@ describe("EVM Family", () => {
         throw new Error(`Method not mocked: ${method}`);
       });
 
-      const result = await nodeApi.traceBlock!(fakeCurrency as CryptoCurrency, 120647648);
+      const result = await nodeApi.traceBlockErigon!(fakeCurrency as CryptoCurrency, 120647648);
       expect(result).toEqual([traceItem]);
     });
 
@@ -1290,33 +1290,28 @@ describe("EVM Family", () => {
         label: "-32053 (e.g. API key cannot call trace_block)",
       },
     ])(
-      "should throw UnsupportedRpcMethodError when trace_block and debug_traceBlockByNumber return $label",
+      "should throw UnsupportedRpcMethodError when trace_block returns $label",
       async ({ code, message }) => {
         jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async (method: string) => {
           if (method === "trace_block") {
             throw { code, message };
           }
-
-          if (method === "debug_traceBlockByNumber") {
-            throw { code, message };
-          }
           throw new Error(`Method not mocked: ${method}`);
         });
 
-        const err = await nodeApi.traceBlock!(fakeCurrency as CryptoCurrency, 1).then(
+        const err = await nodeApi.traceBlockErigon!(fakeCurrency as CryptoCurrency, 1).then(
           () => null,
           (e: unknown) => e,
         );
         expect(err).toBeInstanceOf(UnsupportedRpcMethodError);
-        expect((err as { method?: string }).method).toBe("debug_traceBlockByNumber");
+        expect((err as { method?: string }).method).toBe("trace_block");
       },
     );
+  });
 
-    it("falls back to debug_traceBlockByNumber when trace_block is unsupported", async () => {
+  describe("traceBlockGeth", () => {
+    it("returns normalized traces when debug_traceBlockByNumber is supported", async () => {
       jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async (method: string) => {
-        if (method === "trace_block") {
-          throw { code: -32601, message: "method not found" };
-        }
         if (method === "debug_traceBlockByNumber") {
           return [
             {
@@ -1336,7 +1331,7 @@ describe("EVM Family", () => {
         throw new Error(`Method not mocked: ${method}`);
       });
 
-      const result = await nodeApi.traceBlock!(fakeCurrency as CryptoCurrency, 42);
+      const result = await nodeApi.traceBlockGeth!(fakeCurrency as CryptoCurrency, 42);
       expect(result).toEqual([
         {
           action: {
@@ -1356,18 +1351,35 @@ describe("EVM Family", () => {
       ]);
     });
 
+    it.each([
+      { code: -32601, message: "method not found", label: "-32601" },
+      {
+        code: -32605,
+        message:
+          "debug and trace methods are not supported on your current plan. Enable by upgrading to Growth or Business plan at dashboard.quicknode.com/billing/plan.",
+        label: "-32605 (e.g. QuickNode plan limit)",
+      },
+    ])(
+      "should throw UnsupportedRpcMethodError when debug_traceBlockByNumber returns $label",
+      async ({ code, message }) => {
+        jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async (method: string) => {
+          if (method === "debug_traceBlockByNumber") {
+            throw { code, message };
+          }
+          throw new Error(`Method not mocked: ${method}`);
+        });
+
+        const err = await nodeApi.traceBlockGeth!(fakeCurrency as CryptoCurrency, 1).then(
+          () => null,
+          (e: unknown) => e,
+        );
+        expect(err).toBeInstanceOf(UnsupportedRpcMethodError);
+        expect((err as { method?: string }).method).toBe("debug_traceBlockByNumber");
+      },
+    );
+
     it("throws UnsupportedRpcMethodError when debug_traceBlockByNumber reports historical state unavailable", async () => {
       jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async (method: string) => {
-        if (method === "trace_block") {
-          throw { code: -32601, message: "method not found" };
-        }
-        if (method === "eth_getBlockByNumber") {
-          return {
-            hash: "0xdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
-            number: "0x1",
-            transactions: [],
-          };
-        }
         if (method === "debug_traceBlockByNumber") {
           throw {
             code: -32000,
@@ -1377,7 +1389,7 @@ describe("EVM Family", () => {
         throw new Error(`Method not mocked: ${method}`);
       });
 
-      const err = await nodeApi.traceBlock!(fakeCurrency as CryptoCurrency, 1).then(
+      const err = await nodeApi.traceBlockGeth!(fakeCurrency as CryptoCurrency, 1).then(
         () => null,
         (e: unknown) => e,
       );
