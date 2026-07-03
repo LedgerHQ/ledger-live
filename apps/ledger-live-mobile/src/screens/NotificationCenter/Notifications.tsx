@@ -11,7 +11,7 @@ import { NotificationCard, Box, Flex, Text } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "~/context/Locale";
-import { useDispatch } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
 import Swipeable, { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
 
 import { TrashMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -21,9 +21,19 @@ import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras"
 import SettingsNavigationScrollView from "../Settings/SettingsNavigationScrollView";
 import { NotificationContentCard } from "~/dynamicContent/types";
 import { getTime } from "./helper";
-import { setDynamicContentNotificationCards } from "~/actions/dynamicContent";
+import {
+  setDynamicContentNotificationCards,
+  markLocalCardsViewed,
+  removeLocalCard,
+} from "~/actions/dynamicContent";
+import { localMobileCardsSelector } from "~/reducers/dynamicContent";
 import { useDynamicContentLogic } from "~/dynamicContent/useDynamicContentLogic";
 import getWindowDimensions from "~/logic/getWindowDimensions";
+import {
+  isLocalNotificationCard,
+  removeBrazeNotificationCard,
+  splitNotificationCardsBySource,
+} from "./notificationCards";
 import Animated, {
   SharedValue,
   useAnimatedStyle,
@@ -57,15 +67,19 @@ export default function NotificationCenter() {
   } = useDynamicContent();
   const { fetchData, refreshDynamicContent } = useDynamicContentLogic();
   const [isDynamicContentLoading, setIsDynamicContentLoading] = useState(false);
+  const localMobileCards = useSelector(localMobileCardsSelector);
 
   const dispatchCards = useCallback(() => {
-    const cards = notificationCards.map(n => ({
-      ...n,
-      viewed: true,
-    }));
+    const { brazeCards, localCards } = splitNotificationCardsBySource(
+      notificationCards,
+      localMobileCards,
+    );
 
-    dispatch(setDynamicContentNotificationCards(cards));
-  }, [notificationCards, dispatch]);
+    dispatch(setDynamicContentNotificationCards(brazeCards.map(n => ({ ...n, viewed: true }))));
+    if (localCards.length > 0) {
+      dispatch(markLocalCardsViewed(localCards.map(n => n.id)));
+    }
+  }, [notificationCards, localMobileCards, dispatch]);
 
   const refreshNotifications = useCallback(async () => {
     setIsDynamicContentLoading(true);
@@ -118,9 +132,18 @@ export default function NotificationCenter() {
         contentcard: item.title,
       });
 
-      dispatch(setDynamicContentNotificationCards(notificationCards.filter(n => n.id !== item.id)));
+      if (isLocalNotificationCard(localMobileCards, item.id)) {
+        dispatch(removeLocalCard(item.id));
+        return;
+      }
+
+      dispatch(
+        setDynamicContentNotificationCards(
+          removeBrazeNotificationCard(notificationCards, localMobileCards, item.id),
+        ),
+      );
     },
-    [dispatch, logDismissCard, notificationCards, trackContentCardEvent],
+    [dispatch, localMobileCards, logDismissCard, notificationCards, trackContentCardEvent],
   );
 
   const onClickCard = useCallback(
@@ -129,8 +152,6 @@ export default function NotificationCenter() {
     },
     [onPress],
   );
-
-  // ---------------
 
   // ----- Render functions --------
   const RightActions = ({
@@ -182,7 +203,6 @@ export default function NotificationCenter() {
         }
         ref={swipeableRef}
         onSwipeableOpenStartDrag={() => {
-          // Close row when starting swipe another
           [...rowRefs.entries()].forEach(([id, ref]) => {
             if (id !== card.id && ref.current) ref.current.close();
           });
@@ -201,7 +221,6 @@ export default function NotificationCenter() {
       </Swipeable>
     );
   };
-  // -------------------------------
 
   const visibleCardsRef = useRef<string[]>([]);
   const handleViewableItemsChanged = useCallback(

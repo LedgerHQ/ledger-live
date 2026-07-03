@@ -76,7 +76,7 @@ export const useDynamicContentLogic = () => {
       ContentCardLocation.LandingPageStickyCta,
     )
       .map(card => mapAsLandingPageStickyCtaContentCard(card))
-      .sort(compareCards);
+      .sort((a, b) => b.createdAt - a.createdAt);
 
     const genericAwarenessModalContentCards = processGenericAwarenessModalBrazeCards(
       filterByPage(mobileContentCards, ContentCardLocation.GenericAwarenessModal),

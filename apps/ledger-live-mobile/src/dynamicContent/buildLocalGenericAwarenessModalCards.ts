@@ -42,9 +42,8 @@ type GenericAwarenessModalDebugBrazeCard = Parameters<
 >[0][number];
 
 const GENERIC_AWARENESS_LOCATION = "generic_awareness_modal";
-
-const DEFAULT_IMAGE_URL =
-  "https://images.unsplash.com/photo-1640161704729-cbe966a08476?auto=format&fit=crop&w=1200&q=80";
+const DEFAULT_GENERIC_AWARENESS_IMAGE_URL =
+  "https://ledger-wp-website-s3-prd.ledger.com/uploads/2026/04/phone-1.webp";
 
 const DEFAULT_APP_START_CAMPAIGN_IDS: Record<GenericAwarenessModalDebugLayout, string> = {
   [GenericAwarenessModalLayout.Carousel]: "app_start_debug_generic_awareness_carousel",
@@ -77,7 +76,7 @@ export function buildDefaultGenericAwarenessModalFormValues(): GenericAwarenessM
     campaignId: getDefaultGenericAwarenessModalCampaignId(layout, trigger),
     title: "Secure your crypto journey",
     subtitle: "Discover how Ledger Wallet helps you stay in control.",
-    imageUrlLight: DEFAULT_IMAGE_URL,
+    imageUrlLight: DEFAULT_GENERIC_AWARENESS_IMAGE_URL,
     imageUrlDark: "",
     primaryButtonLabel: "Continue",
     primaryButtonLink: "ledgerlive://buy/bitcoin",
@@ -87,7 +86,7 @@ export function buildDefaultGenericAwarenessModalFormValues(): GenericAwarenessM
       {
         title: "Own your keys",
         subtitle: "Your private keys stay protected by your Ledger device.",
-        imageUrlLight: DEFAULT_IMAGE_URL,
+        imageUrlLight: DEFAULT_GENERIC_AWARENESS_IMAGE_URL,
         imageUrlDark: "",
         primaryButtonLabel: "Open My Ledger",
         primaryButtonLink: "ledgerlive://myledger",
@@ -96,7 +95,7 @@ export function buildDefaultGenericAwarenessModalFormValues(): GenericAwarenessM
       {
         title: "Explore safely",
         subtitle: "Review every transaction before you sign.",
-        imageUrlLight: DEFAULT_IMAGE_URL,
+        imageUrlLight: DEFAULT_GENERIC_AWARENESS_IMAGE_URL,
         imageUrlDark: "",
         primaryButtonLabel: "Receive Bitcoin",
         primaryButtonLink: "ledgerlive://receive?currency=bitcoin",
@@ -105,7 +104,7 @@ export function buildDefaultGenericAwarenessModalFormValues(): GenericAwarenessM
       {
         title: "Stay informed",
         subtitle: "Get timely product and security updates.",
-        imageUrlLight: DEFAULT_IMAGE_URL,
+        imageUrlLight: DEFAULT_GENERIC_AWARENESS_IMAGE_URL,
         imageUrlDark: "",
         primaryButtonLabel: "Open Discover",
         primaryButtonLink: "ledgerlive://discover",

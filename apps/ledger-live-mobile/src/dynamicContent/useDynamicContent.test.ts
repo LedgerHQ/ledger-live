@@ -122,7 +122,7 @@ describe("useDynamicContent", () => {
     expect(mockedFlush).not.toHaveBeenCalled();
   });
 
-  it("should skip tracking for local cards", async () => {
+  it("should track local cards through Segment", async () => {
     const { result } = renderHook(() => useDynamicContent(), {
       overrideInitialState: state => ({
         ...state,
@@ -139,8 +139,10 @@ describe("useDynamicContent", () => {
       });
     });
 
-    expect(mockedTrack).not.toHaveBeenCalled();
-    expect(mockedFlush).not.toHaveBeenCalled();
+    expect(mockedTrack).toHaveBeenCalledWith(ContentCardEvent.Clicked, {
+      campaign: "local-card",
+    });
+    expect(mockedFlush).toHaveBeenCalledTimes(1);
   });
 
   it("should strip non-numeric displayedPosition before tracking", async () => {
