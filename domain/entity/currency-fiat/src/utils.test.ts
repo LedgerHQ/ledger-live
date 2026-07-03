@@ -8,4 +8,8 @@ describe("getFiatCurrencyByTicker", () => {
   it("returns undefined for an unknown ticker", () => {
     expect(getFiatCurrencyByTicker("ZZZ")).toBeUndefined();
   });
+
+  it("returns undefined for prototype keys like 'constructor'", () => {
+    expect(getFiatCurrencyByTicker("constructor")).toBeUndefined();
+  });
 });
