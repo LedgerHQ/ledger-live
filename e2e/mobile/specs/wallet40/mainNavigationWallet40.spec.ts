@@ -1,5 +1,6 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { FF_LWM_WALLET_40_Q2 } from "utils/featureFlagUtils";
 
 setTeamOwner(Team.WALLET_XP);
 $TmsLink("B2CQA-4383");
@@ -11,6 +12,7 @@ describe("Wallet 4.0 - Main Navigation", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding",
+      featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });
