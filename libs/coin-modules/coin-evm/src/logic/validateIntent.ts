@@ -26,9 +26,11 @@ import {
   RedelegateDstValAddressRequired,
   ValAddressRequired,
 } from "@ledgerhq/errors";
+import { GasPriceTooLow } from "../errors";
 import { getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
+import { getCoinConfig } from "../config";
 import { getGasTracker } from "../network/gasTracker";
 import { isNative, StakingOperation, TransactionTypes } from "../types";
 import { STAKING_CONTRACTS } from "../staking";
@@ -143,6 +145,9 @@ async function validateGas(
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
+  const { minGasPrice } = getCoinConfig(currency.id).info;
+  const minGasPriceFloor = typeof minGasPrice === "string" ? BigInt(minGasPrice) : null;
+
   const nativeBalance = findBalance({ type: "native" }, balances);
   const additionalFees =
     typeof estimatedFees.parameters?.additionalFees === "bigint"
@@ -203,6 +208,17 @@ async function validateGas(
     });
   }
 
+  // legacy specific
+  if (transactionType === TransactionTypes.legacy && isLegacyFeeEstimation(estimatedFees)) {
+    if (
+      !errors.gasPrice &&
+      typeof minGasPriceFloor === "bigint" &&
+      estimatedFees.parameters.gasPrice < minGasPriceFloor
+    ) {
+      errors.gasPrice = new GasPriceTooLow();
+    }
+  }
+
   // eip1559 specific
   if (transactionType === TransactionTypes.eip1559 && isEip1559FeeEstimation(estimatedFees)) {
     const { maxFeePerGas, maxPriorityFeePerGas, gasOptions } = estimatedFees.parameters;
@@ -242,6 +258,8 @@ async function validateGas(
 
     if (maxPriorityFeePerGas === 0n) {
       errors.maxPriorityFee = new PriorityFeeTooLow();
+    } else if (typeof minGasPriceFloor === "bigint" && maxPriorityFeePerGas < minGasPriceFloor) {
+      errors.maxPriorityFee = new GasPriceTooLow();
     } else if (maxPriorityFeePerGas > maxFeePerGas) {
       // priority fee is more than max fee (total fee for the transaction) which doesn't make sense
       errors.maxPriorityFee = new PriorityFeeHigherThanMaxFee();

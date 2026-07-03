@@ -1194,6 +1194,9 @@
     "MaxFeeTooLow": {
       "title": "Max fee is lower than the recommended value"
     },
+    "GasPriceTooLow": {
+      "title": "Gas price is lower than the network minimum"
+    },
     "PriorityFeeHigherThanMaxFee": {
       "title": "Max priority fee cannot be higher than max fee"
     },
