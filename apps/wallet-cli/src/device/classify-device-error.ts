@@ -78,7 +78,7 @@ function classifyTransportStatusError(
     case StatusCodes.SECURITY_STATUS_NOT_SATISFIED:
       return { code: "locked" };
     case StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED:
-      return { code: "rejected", context: ctx.rejectedContext ?? "sign", deviceModelId: ctx.deviceModelId ?? "undefined" };
+      return { code: "rejected", context: ctx.rejectedContext ?? "sign", deviceModelId: ctx.deviceModelId };
     case StatusCodes.CLA_NOT_SUPPORTED:
     case StatusCodes.INS_NOT_SUPPORTED:
       return {

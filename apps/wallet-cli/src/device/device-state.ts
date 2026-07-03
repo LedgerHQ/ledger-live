@@ -30,7 +30,7 @@ export type DeviceState =
   | { code: "disconnected" }
   | { code: "wrong_app"; expected: string; found?: string }
   | { code: "awaiting_approval"; reason: AwaitingApprovalReason }
-  | { code: "rejected"; context: RejectedContext; deviceModelId: string }
+  | { code: "rejected"; context: RejectedContext; deviceModelId?: string }
   | { code: "exchange_app_needed" }
   | { code: "locked" }
   | { code: "app_not_installed"; appName: string }
