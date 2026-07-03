@@ -4,7 +4,7 @@ const supportedCvsHandlers = [
   http.get("https://countervalues.live.ledger.com/v3/supported/crypto", () =>
     HttpResponse.json([]),
   ),
-  http.get("https://countervalues.ledger.com/v3/supported/fiat", () =>
+  http.get("https://countervalues.live.ledger.com/v3/supported/fiat", () =>
     HttpResponse.json([
       "AED",
       "AUD",

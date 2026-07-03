@@ -5,8 +5,6 @@ import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 // The crypto-assets token store validates a non-empty LEDGER_CLIENT_VERSION (calApiExtra) at store
 // creation; the app sets it at boot, so tests must provide one too.
 setEnv("LEDGER_CLIENT_VERSION", "jest");
-// cvsApiExtra validates a non-empty countervaluesServiceUrl; set a dummy value for tests.
-setEnv("LEDGER_COUNTERVALUES_API", "https://countervalues.ledger.com");
 registerAllCoins();
 LiveConfig.setConfig(liveConfig);
 import "react-native-gesture-handler/jestSetup";
