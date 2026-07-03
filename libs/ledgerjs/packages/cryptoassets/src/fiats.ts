@@ -207,7 +207,8 @@ function activeFiatCurrenciesStore(): FiatCurrenciesStore {
  * @param {*} ticker
  */
 export function hasFiatCurrencyTicker(ticker: string): boolean {
-  return Object.hasOwn(activeFiatCurrenciesStore().fiatCurrenciesByTicker, ticker);
+  // null-prototype map: `in` checks own keys only, same guarantee as hasOwn but compatible with ES2017 lib
+  return ticker in activeFiatCurrenciesStore().fiatCurrenciesByTicker;
 }
 
 /**
