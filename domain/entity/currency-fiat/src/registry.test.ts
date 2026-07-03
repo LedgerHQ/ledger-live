@@ -3,8 +3,8 @@ import {
   FIAT_CURRENCIES_REGISTRY,
   FIAT_CURRENCIES_IDS,
   FIAT_CURRENCIES_BY_TICKER,
-  getFiatCurrencyByTicker,
-} from "./registry";
+} from "./constants";
+import { getFiatCurrencyByTicker } from "./registry";
 
 describe("FIAT_CURRENCIES_REGISTRY", () => {
   it("is non-empty", () => {
