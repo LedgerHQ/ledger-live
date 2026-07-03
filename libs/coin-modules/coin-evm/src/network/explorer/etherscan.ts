@@ -1,9 +1,9 @@
 import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
+import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { delay } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Operation } from "@ledgerhq/types-live";
 import axios, { AxiosRequestConfig } from "axios";
 import {
   etherscanOperationToOperations,
@@ -51,7 +51,6 @@ function getConfiguredMaxLimit(currency: CryptoCurrency): number | undefined {
 export type FetchOperationsParams = {
   currency: CryptoCurrency;
   address: string;
-  accountId: string;
   // Inclusive lower bound of the block range. fromBlock <= toBlock whatever the sort order is.
   fromBlock: number;
   // Inclusive upper bound of the block range. fromBlock <= toBlock whatever the sort order is.
@@ -67,18 +66,18 @@ export type FetchOperationsParams = {
   page?: number;
 };
 
-function boundBlockFromOperations(ops: Operation[]): number {
+function boundBlockFromOperations(ops: Array<Operation<MemoNotSupported>>): number {
   if (ops.length === 0) return 0;
   // Results are already sorted
   // In asc mode [1, 2, 3], the bound is 3
   // In desc mode [3, 2, 1], the bound is 1
   const op = ops[ops.length - 1];
-  return op.blockHeight ?? 0;
+  return op.tx.block.height ?? 0;
 }
 
 // Result type for individual endpoint fetches
 export type EndpointResult = {
-  operations: Operation[];
+  operations: Array<Operation<MemoNotSupported>>;
   // true when there are no more operations to fetch at all
   isDone: boolean;
   // the block number that is a max bound (inclusive) for the next endpoint call
@@ -280,13 +279,15 @@ export const getCoinOperations = async (params: FetchOperationsParams): Promise<
     params: paginationParams(params),
   });
 
-  const operations = ops.flatMap(tx => etherscanOperationToOperations(params.accountId, tx));
+  const operations = ops.flatMap(tx =>
+    etherscanOperationToOperations(params.address, params.currency.id, tx),
+  );
 
   // Recover REWARD op amounts (claim/compound) from receipt logs — these txs send 0 native
   // value, so the amount would otherwise show as 0 in history and operation details.
   const node = getCoinConfig(params.currency.id).info.node;
   if (
-    operations.some(op => op.type === "REWARD" && op.value.isZero()) &&
+    operations.some(op => op.type === "REWARD" && op.value === 0n) &&
     isExternalNodeConfig(node)
   ) {
     try {
@@ -355,9 +356,7 @@ export const getTokenOperations = async (
   const opsByHash = groupByHash(filteredOps);
 
   const operations = Object.values(opsByHash).flatMap(events =>
-    events.flatMap((event, index) =>
-      etherscanERC20EventToOperations(params.accountId, event, index),
-    ),
+    events.flatMap((event, index) => etherscanERC20EventToOperations(params.address, event, index)),
   );
   const maxBlock = boundBlockFromOperations(operations);
 
@@ -405,7 +404,7 @@ export const getERC721Operations = async (
 
   const operations = Object.values(opsByHash).flatMap(events =>
     events.flatMap((event, index) =>
-      etherscanERC721EventToOperations(params.accountId, event, index),
+      etherscanERC721EventToOperations(params.address, event, index),
     ),
   );
   const maxBlock = boundBlockFromOperations(operations);
@@ -454,7 +453,7 @@ export const getERC1155Operations = async (
 
   const operations = Object.values(opsByHash).flatMap(events =>
     events.flatMap((event, index) =>
-      etherscanERC1155EventToOperations(params.accountId, event, index),
+      etherscanERC1155EventToOperations(params.address, event, index),
     ),
   );
   const maxBlock = boundBlockFromOperations(operations);
@@ -483,7 +482,9 @@ export const getNftOperations = async (params: FetchOperationsParams): Promise<E
   const operations = [...erc721Result.operations, ...erc1155Result.operations].sort(
     // sorting by date based on sort parameter
     (a, b) =>
-      sort === "desc" ? b.date.getTime() - a.date.getTime() : a.date.getTime() - b.date.getTime(),
+      sort === "desc"
+        ? b.tx.date.getTime() - a.tx.date.getTime()
+        : a.tx.date.getTime() - b.tx.date.getTime(),
   );
   const maxBlock = Math.max(erc721Result.boundBlock, erc1155Result.boundBlock);
 
@@ -535,7 +536,7 @@ export const getInternalOperations = async (
 
   const operations = Object.values(opsByHash).flatMap(internalTxs =>
     internalTxs.flatMap((internalTx, index) =>
-      etherscanInternalTransactionToOperations(params.accountId, internalTx, index),
+      etherscanInternalTransactionToOperations(params.address, internalTx, index),
     ),
   );
   const maxBlock = boundBlockFromOperations(operations);
@@ -659,7 +660,7 @@ export async function exhaustEndpoint(
   // otherwise we can stop here (no heights spreading across pages)
   // example: with limit = 3, if I fetch 4 ops with heights [1, 2, 3, 4], I know I have all the blocks at height 3.
   const lastTwoOps = firstPage.operations.slice(-2);
-  if (lastTwoOps.length === 2 && lastTwoOps[0].blockHeight !== lastTwoOps[1].blockHeight) {
+  if (lastTwoOps.length === 2 && lastTwoOps[0].tx.block.height !== lastTwoOps[1].tx.block.height) {
     // return the first page with the last op removed to honor the limit
     // and we also know there are more pages to fetch (not done)
     const butLastOps = firstPage.operations.slice(0, -1);
@@ -677,7 +678,9 @@ export async function exhaustEndpoint(
     // here we call with limit + 1 so that endpoint pagination doesn't break
     nextPage = await fetchPage(currentPageNumber, limit + 1);
 
-    boundaryOps = nextPage.operations.filter(op => (op.blockHeight ?? 0) === firstPage.boundBlock);
+    boundaryOps = nextPage.operations.filter(
+      op => (op.tx.block.height ?? 0) === firstPage.boundBlock,
+    );
     allOperations.push(...boundaryOps);
     // Continue while all ops are at boundary block AND page is full (more pages might exist)
   } while (
@@ -714,7 +717,6 @@ export const getOperations = makeLRUCache<
   [
     currency: CryptoCurrency,
     address: string,
-    accountId: string,
     fromBlock: number,
     toBlock?: number,
     pagingToken?: string,
@@ -722,14 +724,14 @@ export const getOperations = makeLRUCache<
     order?: "asc" | "desc",
   ],
   {
-    lastCoinOperations: Operation[];
-    lastTokenOperations: Operation[];
-    lastNftOperations: Operation[];
-    lastInternalOperations: Operation[];
+    lastCoinOperations: Array<Operation<MemoNotSupported>>;
+    lastTokenOperations: Array<Operation<MemoNotSupported>>;
+    lastNftOperations: Array<Operation<MemoNotSupported>>;
+    lastInternalOperations: Array<Operation<MemoNotSupported>>;
     nextPagingToken: string;
   }
 >(
-  async (currency, address, accountId, fromBlock, toBlock, pagingToken, limit, order = "desc") => {
+  async (currency, address, fromBlock, toBlock, pagingToken, limit, order = "desc") => {
     try {
       const configuredMaxLimit = getConfiguredMaxLimit(currency);
       const effectiveLimit =
@@ -745,7 +747,6 @@ export const getOperations = makeLRUCache<
       const baseParams: FetchOperationsParams = {
         currency,
         address,
-        accountId,
         fromBlock,
         ...(toBlock !== undefined && { toBlock }),
         ...(effectiveLimit !== undefined && { limit: effectiveLimit }),
@@ -809,11 +810,9 @@ export const getOperations = makeLRUCache<
         effectiveBoundBlock === undefined ? undefined : cmp.next(effectiveBoundBlock);
 
       // drop operations below/above the currentBoundBlock
-      const respectsBoundBlock = (op: Operation): boolean =>
+      const respectsBoundBlock = (op: Operation<MemoNotSupported>): boolean =>
         effectiveBoundBlock === undefined ||
-        (op.blockHeight !== null &&
-          op.blockHeight !== undefined &&
-          cmp.isLessOrEqual(op.blockHeight, effectiveBoundBlock));
+        cmp.isLessOrEqual(op.tx.block.height ?? 0, effectiveBoundBlock);
 
       const [coinsResult, internalsResult, tokensResult, nftsResult] = [
         coins.result,
@@ -859,8 +858,8 @@ export const getOperations = makeLRUCache<
       );
     }
   },
-  (_currency, _address, accountId, fromBlock, toBlock, pagingToken, limit, order) =>
-    `${accountId}:${fromBlock}:${toBlock ?? ""}:${pagingToken ?? ""}:${limit ?? ""}:${order ?? "desc"}`,
+  (currency, address, fromBlock, toBlock, pagingToken, limit, order) =>
+    `${currency.id}:${address}:${fromBlock}:${toBlock ?? ""}:${pagingToken ?? ""}:${limit ?? ""}:${order ?? "desc"}`,
   { ttl: ETHERSCAN_TIMEOUT },
 );
 

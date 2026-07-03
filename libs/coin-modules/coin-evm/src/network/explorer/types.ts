@@ -1,5 +1,5 @@
+import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Operation } from "@ledgerhq/types-live";
 import { EvmConfigInfo } from "../../config";
 
 /** Constant representing no pagination token (end of pagination or first page) */
@@ -9,17 +9,16 @@ export type ExplorerApi = {
   getOperations: (
     currency: CryptoCurrency,
     address: string,
-    accountId: string,
     fromBlock: number,
     toBlock?: number,
     pagingToken?: string,
     limit?: number,
     order?: "asc" | "desc",
   ) => Promise<{
-    lastCoinOperations: Operation[];
-    lastTokenOperations: Operation[];
-    lastNftOperations: Operation[];
-    lastInternalOperations: Operation[];
+    lastCoinOperations: Array<Operation<MemoNotSupported>>;
+    lastTokenOperations: Array<Operation<MemoNotSupported>>;
+    lastNftOperations: Array<Operation<MemoNotSupported>>;
+    lastInternalOperations: Array<Operation<MemoNotSupported>>;
     nextPagingToken: string;
   }>;
 };
