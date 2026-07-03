@@ -78,7 +78,11 @@ function classifyTransportStatusError(
     case StatusCodes.SECURITY_STATUS_NOT_SATISFIED:
       return { code: "locked" };
     case StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED:
-      return { code: "rejected", context: ctx.rejectedContext ?? "sign", deviceModelId: ctx.deviceModelId };
+      return {
+        code: "rejected",
+        context: ctx.rejectedContext ?? "sign",
+        deviceModelId: ctx.deviceModelId,
+      };
     case StatusCodes.CLA_NOT_SUPPORTED:
     case StatusCodes.INS_NOT_SUPPORTED:
       return {
@@ -124,7 +128,11 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
 
   // DMK refused-by-user (RefusedByUserDAError) happens when the user declines the OpenApp prompt.
   if (hasTag(error, "RefusedByUserDAError")) {
-    return { code: "rejected", context: ctx.rejectedContext ?? "open_app", deviceModelId: ctx.deviceModelId};
+    return {
+      code: "rejected",
+      context: ctx.rejectedContext ?? "open_app",
+      deviceModelId: ctx.deviceModelId,
+    };
   }
 
   // OpenApp command error codes: 670a (app not found) / 6807 (app not installed).
