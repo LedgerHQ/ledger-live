@@ -2,7 +2,6 @@ import {
   validateLargeMoverCurrencyIds,
   validateLargeMoverLedgerIds,
   validateMarketAssetPath,
-  validateMarketCurrencyId,
   validateMarketListCategory,
 } from "../validation";
 
@@ -87,28 +86,6 @@ describe("validateLargeMoverLedgerIds", () => {
 
   it("should filter out empty segments", () => {
     expect(validateLargeMoverLedgerIds("btc,,eth")).toBe("btc,eth");
-  });
-});
-
-describe("validateMarketCurrencyId", () => {
-  it("should return null when currencyId is null", () => {
-    const result = validateMarketCurrencyId(null);
-    expect(result).toBeNull();
-  });
-
-  it("should return null when currencyId is empty", () => {
-    const result = validateMarketCurrencyId("");
-    expect(result).toBeNull();
-  });
-
-  it("should return null for an unknown currencyId", () => {
-    const result = validateMarketCurrencyId("unknown_coin");
-    expect(result).toBeNull();
-  });
-
-  it("should normalize and return a valid currencyId", () => {
-    const result = validateMarketCurrencyId("BiTcOiN");
-    expect(result).toBe("bitcoin");
   });
 });
 
