@@ -8,6 +8,7 @@ import type {
 import {
   fetchBlockDelegations,
   fetchBlockOriginations,
+  fetchBlockReveals,
   fetchBlockStaking,
   fetchBlockTokenTransfers,
   fetchBlockTransactions,
@@ -18,6 +19,7 @@ import type {
   APIBlock,
   APIDelegationType,
   APIOriginationType,
+  APIRevealType,
   APIStakingType,
   APITokenTransfer,
   APITransactionType,
@@ -227,13 +229,20 @@ function buildOriginationOperations(op: APIOriginationType): BlockOperation[] {
   if (!senderAddr) return [];
 
   const contractAddr = op.originatedContract?.address;
+
   return [
     {
-      type: "transfer",
+      type: "other",
       address: senderAddr,
-      ...(contractAddr && { peer: contractAddr }),
       asset: NATIVE_ASSET,
-      amount: op.contractBalance ? -BigInt(op.contractBalance) : 0n,
+      amount: op.contractBalance > 0 ? -BigInt(op.contractBalance) : 0n,
+      details: {
+        counter: op.counter,
+        gasLimit: op.gasLimit,
+        storageLimit: op.storageLimit,
+        ledgerOpType: "ORIGINATION",
+        ...(contractAddr && { originatedContract: contractAddr }),
+      },
     },
   ];
 }
@@ -249,6 +258,46 @@ function buildBlockTransactionFromOrigination(op: APIOriginationType): BlockTran
     fees: computeOriginationFees(op),
     ...(feesPayer && { feesPayer }),
     operations: succeeded ? buildOriginationOperations(op) : [],
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Reveal helpers
+// ---------------------------------------------------------------------------
+
+const computeRevealFees = computeOpFees;
+
+function buildRevealOperations(op: APIRevealType): BlockOperation[] {
+  const senderAddr = op.sender?.address;
+  if (!senderAddr) return [];
+
+  return [
+    {
+      type: "other",
+      address: senderAddr,
+      asset: NATIVE_ASSET,
+      amount: 0n,
+      details: {
+        counter: op.counter,
+        gasLimit: op.gasLimit,
+        storageLimit: op.storageLimit,
+        ledgerOpType: "REVEAL",
+      },
+    },
+  ];
+}
+
+function buildBlockTransactionFromReveal(op: APIRevealType): BlockTransaction | null {
+  if (!op.hash) return null;
+
+  const feesPayer = op.sender?.address;
+  const succeeded = !op.status || op.status === "applied";
+  return {
+    hash: op.hash,
+    failed: !succeeded,
+    fees: computeRevealFees(op),
+    ...(feesPayer && { feesPayer }),
+    operations: succeeded ? buildRevealOperations(op) : [],
   };
 }
 
@@ -399,6 +448,9 @@ function mergeAuxiliaryTx(
     return;
   }
 
+  // When an auxiliary op (reveal, delegation, etc.) failed, we mark the whole
+  // merged transaction as failed. This is a modeling choice: the auxiliary op
+  // shares the same hash and its failure typically means the batch was aborted.
   if (auxTx.failed) {
     existing.failed = true;
     existing.operations = [];
@@ -414,6 +466,7 @@ function groupAndMapTransactions(
   delegations: APIDelegationType[],
   stakings: APIStakingType[],
   originations: APIOriginationType[],
+  reveals: APIRevealType[],
   crossBlockIdToHash: Map<number, string> = new Map(),
 ): BlockTransaction[] {
   const groups = groupTransactionsByHash(transactions);
@@ -449,6 +502,11 @@ function groupAndMapTransactions(
     if (originationTx) mergeAuxiliaryTx(blockTxByHash, originationTx);
   }
 
+  for (const reveal of reveals) {
+    const revealTx = buildBlockTransactionFromReveal(reveal);
+    if (revealTx) mergeAuxiliaryTx(blockTxByHash, revealTx);
+  }
+
   const standaloneByKey = new Map<string, BlockTransaction>();
   for (const transfer of tokenTransfers) {
     attachTokenTransfer(transfer, txIdToHash, blockTxByHash, standaloneByKey);
@@ -476,7 +534,7 @@ export async function getBlock(height: number): Promise<Block> {
     throw new Error(`getBlock: height must be a positive integer, got ${height}`);
   }
 
-  const [block, parentBlock, transactions, tokenTransfers, delegations, stakings, originations] =
+  const [block, parentBlock, transactions, tokenTransfers, delegations, stakings, originations, reveals] =
     await Promise.all([
       tzkt.getBlockByLevel(height),
       tzkt.getBlockByLevel(height - 1),
@@ -485,6 +543,7 @@ export async function getBlock(height: number): Promise<Block> {
       fetchBlockDelegations(height),
       fetchBlockStaking(height),
       fetchBlockOriginations(height),
+      fetchBlockReveals(height),
     ]);
 
   // Token transfers triggered by originations from other blocks carry an
@@ -518,6 +577,7 @@ export async function getBlock(height: number): Promise<Block> {
       delegations,
       stakings,
       originations,
+      reveals,
       crossBlockIdToHash,
     ),
   };

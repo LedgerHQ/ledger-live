@@ -6,6 +6,7 @@ export {
   fetchAllTransactions,
   fetchBlockDelegations,
   fetchBlockOriginations,
+  fetchBlockReveals,
   fetchBlockStaking,
   fetchBlockTokenTransfers,
   fetchBlockTransactions,
