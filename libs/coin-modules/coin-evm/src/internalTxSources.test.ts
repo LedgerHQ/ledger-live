@@ -58,5 +58,12 @@ describe("internalTxSources", () => {
       // @ts-expect-error - "bogus" is not a valid InternalTxSource
       internalTxSources().addSource("bogus");
     });
+
+    it("rejects raw arrays bypassing the builder", () => {
+      const raw = ["explorer", "empty"] as const;
+      // @ts-expect-error - InternalTxSourceList is branded; only build() can produce it
+      const sources: InternalTxSourceList = raw;
+      void sources;
+    });
   });
 });

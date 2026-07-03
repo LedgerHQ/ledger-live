@@ -2,7 +2,11 @@ export type NonEmptySource = "trace_block" | "debug_traceBlockByNumber" | "explo
 
 export type InternalTxSource = NonEmptySource | "empty";
 
-export type InternalTxSourceList = readonly InternalTxSource[];
+declare const brand: unique symbol;
+
+export type InternalTxSourceList = readonly InternalTxSource[] & {
+  readonly [brand]: "InternalTxSourceList";
+};
 
 /** No source chosen yet: at least one source must be added (hence no `build`). */
 export interface InitialBuilder {
@@ -32,7 +36,7 @@ class Builder {
   }
 
   build(): InternalTxSourceList {
-    return this.sources;
+    return this.sources as unknown as InternalTxSourceList;
   }
 }
 
