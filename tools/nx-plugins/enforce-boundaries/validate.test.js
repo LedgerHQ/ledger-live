@@ -312,12 +312,13 @@ function makeTmpWorkspace(files) {
   return root;
 }
 
-test("collectLegacyPackageNames returns @ledgerhq/* names for scope:libs nodes", () => {
+test("collectLegacyPackageNames returns @ledgerhq/* names for scope:libs nodes", t => {
   const root = makeTmpWorkspace({
     "libs/foo/package.json": JSON.stringify({ name: "@ledgerhq/foo" }),
     "libs/bar/package.json": JSON.stringify({ name: "@ledgerhq/bar" }),
     "libs/external-only/package.json": JSON.stringify({ name: "some-non-ledger-pkg" }),
   });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const graph = {
     nodes: {
       foo: { data: { root: "libs/foo", tags: ["scope:libs", "scope:libs-non-ui"] } },
@@ -330,14 +331,14 @@ test("collectLegacyPackageNames returns @ledgerhq/* names for scope:libs nodes",
   assert.ok(names.has("@ledgerhq/foo"));
   assert.ok(names.has("@ledgerhq/bar"));
   assert.ok(!names.has("some-non-ledger-pkg"));
-  fs.rmSync(root, { recursive: true });
 });
 
-test("collectLegacyPackageNames skips nodes without scope:libs tag", () => {
+test("collectLegacyPackageNames skips nodes without scope:libs tag", t => {
   const root = makeTmpWorkspace({
     "domain/entity/foo/package.json": JSON.stringify({ name: "@domain/foo" }),
     "libs/pkg/package.json": JSON.stringify({ name: "@ledgerhq/pkg" }),
   });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const graph = {
     nodes: {
       domainFoo: {
@@ -350,126 +351,125 @@ test("collectLegacyPackageNames skips nodes without scope:libs tag", () => {
   const names = collectLegacyPackageNames(graph, root);
   assert.ok(!names.has("@domain/foo"));
   assert.ok(names.has("@ledgerhq/pkg"));
-  fs.rmSync(root, { recursive: true });
 });
 
-test("import from legacy in-repo package is flagged", () => {
+test("import from legacy in-repo package is flagged", t => {
   const root = makeTmpWorkspace({
     "shared/utils/src/index.ts": 'import { something } from "@ledgerhq/errors";',
   });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const legacy = new Set(["@ledgerhq/errors"]);
   const violations = findSourceImportViolations(root, legacy);
   assert.equal(violations.length, 1);
   assert.ok(violations[0].file.includes("index.ts"));
   assert.equal(violations[0].specifier, "@ledgerhq/errors");
-  fs.rmSync(root, { recursive: true });
 });
 
-test("import from external @ledgerhq/* (not in legacy set) is not flagged", () => {
+test("import from external @ledgerhq/* (not in legacy set) is not flagged", t => {
   const root = makeTmpWorkspace({
     "features/ui/src/Banner.tsx": 'import { Box } from "@ledgerhq/lumen-ui-rnative";',
   });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const legacy = new Set(["@ledgerhq/errors"]); // lumen not in the set
   const violations = findSourceImportViolations(root, legacy);
   assert.equal(violations.length, 0);
-  fs.rmSync(root, { recursive: true });
 });
 
-test("require() of legacy package is flagged", () => {
+test("require() of legacy package is flagged", t => {
   const root = makeTmpWorkspace({
     "domain/entity/foo/src/index.js": 'const x = require("@ledgerhq/live-common");',
   });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const legacy = new Set(["@ledgerhq/live-common"]);
   const violations = findSourceImportViolations(root, legacy);
   assert.equal(violations.length, 1);
   assert.equal(violations[0].specifier, "@ledgerhq/live-common");
-  fs.rmSync(root, { recursive: true });
 });
 
-test("dynamic import() of legacy package is flagged", () => {
+test("dynamic import() of legacy package is flagged", t => {
   const root = makeTmpWorkspace({
     "features/flow/foo/src/index.ts": 'const m = await import("@ledgerhq/live-common");',
   });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const legacy = new Set(["@ledgerhq/live-common"]);
   const violations = findSourceImportViolations(root, legacy);
   assert.equal(violations.length, 1);
   assert.equal(violations[0].specifier, "@ledgerhq/live-common");
-  fs.rmSync(root, { recursive: true });
 });
 
-test("sub-path import is matched by package name", () => {
+test("sub-path import is matched by package name", t => {
   const root = makeTmpWorkspace({
     "shared/utils/src/index.ts": 'import type { Foo } from "@ledgerhq/errors/types";',
   });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const legacy = new Set(["@ledgerhq/errors"]);
   const violations = findSourceImportViolations(root, legacy);
   assert.equal(violations.length, 1);
   assert.equal(violations[0].specifier, "@ledgerhq/errors/types");
-  fs.rmSync(root, { recursive: true });
 });
 
-test("relative import resolving into libs/ is flagged", () => {
+test("relative import resolving into libs/ is flagged", t => {
   const root = makeTmpWorkspace({
     "shared/utils/src/index.ts": 'import something from "../../../libs/errors/src/index";',
     "libs/errors/src/index.ts": "export const err = 1;",
   });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const violations = findSourceImportViolations(root, new Set());
   assert.equal(violations.length, 1);
   assert.ok(violations[0].specifier.includes("libs/errors"));
-  fs.rmSync(root, { recursive: true });
 });
 
-test("relative import NOT resolving into libs/ is not flagged", () => {
+test("relative import NOT resolving into libs/ is not flagged", t => {
   const root = makeTmpWorkspace({
     "shared/utils/src/index.ts": 'import something from "./helper";',
     "shared/utils/src/helper.ts": "export const x = 1;",
   });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const violations = findSourceImportViolations(root, new Set());
   assert.equal(violations.length, 0);
-  fs.rmSync(root, { recursive: true });
 });
 
-test("files in node_modules/ under new-arch roots are skipped", () => {
+test("files in node_modules/ under new-arch roots are skipped", t => {
   const root = makeTmpWorkspace({
     "shared/utils/node_modules/@ledgerhq/errors/index.ts":
       'import something from "@ledgerhq/live-common";',
   });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const legacy = new Set(["@ledgerhq/live-common"]);
   const violations = findSourceImportViolations(root, legacy);
   assert.equal(violations.length, 0);
-  fs.rmSync(root, { recursive: true });
 });
 
-test("files in dist/ under new-arch roots are skipped", () => {
+test("files in dist/ under new-arch roots are skipped", t => {
   const root = makeTmpWorkspace({
     "domain/entity/foo/dist/index.js": 'const x = require("@ledgerhq/errors");',
   });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const legacy = new Set(["@ledgerhq/errors"]);
   const violations = findSourceImportViolations(root, legacy);
   assert.equal(violations.length, 0);
-  fs.rmSync(root, { recursive: true });
 });
 
-test("multiple violations across different layers are all reported", () => {
+test("multiple violations across different layers are all reported", t => {
   const root = makeTmpWorkspace({
     "shared/a/src/index.ts": 'import { x } from "@ledgerhq/errors";',
     "domain/entity/b/src/index.ts": 'import { y } from "@ledgerhq/live-common";',
     "features/flow/c/src/index.ts": 'import { z } from "@ledgerhq/errors";',
   });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const legacy = new Set(["@ledgerhq/errors", "@ledgerhq/live-common"]);
   const violations = findSourceImportViolations(root, legacy);
   assert.equal(violations.length, 3);
-  fs.rmSync(root, { recursive: true });
 });
 
-test("no violations in a clean workspace", () => {
+test("no violations in a clean workspace", t => {
   const root = makeTmpWorkspace({
     "shared/a/src/index.ts": "export const x = 1;",
     "domain/entity/b/src/index.ts": 'import { x } from "@domain/entity-a";',
     "features/flow/c/src/index.ts": 'import { Box } from "@ledgerhq/lumen-ui-rnative";',
   });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const legacy = new Set(["@ledgerhq/errors"]); // lumen not in set
   const violations = findSourceImportViolations(root, legacy);
   assert.equal(violations.length, 0);
-  fs.rmSync(root, { recursive: true });
 });
