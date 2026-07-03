@@ -44,11 +44,9 @@ import {
   validateEarnDepositScreen,
   validateLargeMoverCurrencyIds,
   validateLargeMoverLedgerIds,
-  validateMarketAssetPath,
-  validateMarketListCategory,
 } from "./deeplinks/validation";
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
-import { resolveAssetDeeplinkAction } from "./deeplinks/resolveAssetDeeplinkAction";
+import { resolveMarketOrAssetDeeplinkIntent } from "./deeplinks/resolveMarketOrAssetDeeplinkIntent";
 import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
 import { handleAssetDetailDeeplink } from "./deeplinks/handleAssetDetailDeeplink";
 import { handleGenericAwarenessModalDeeplink } from "./deeplinks/handleGenericAwarenessModalDeeplink";
@@ -678,67 +676,32 @@ export const DeeplinksProvider = ({
             return getStateFromPath(url.href?.split("://")[1], config);
           }
 
-          if (hostname === "market") {
-            const validatedMarketAsset = validateMarketAssetPath(pathname);
-            if (validatedMarketAsset) {
-              const action = resolveAssetDeeplinkAction(
-                validatedMarketAsset,
-                shouldDisplayAggregatedAssets,
-              );
+          // Handle market & asset deeplinks - resolve the target before navigation.
+          if (hostname === "market" || hostname === "asset") {
+            const intent = resolveMarketOrAssetDeeplinkIntent({
+              hostname,
+              pathname,
+              shouldDisplayAggregatedAssets,
+              shouldDisplayAssetDiscoverability,
+              categoryParam: searchParams.get("category"),
+            });
 
-              if (action.kind === "reject") {
-                return handleMarketBannerDeeplink();
-              }
-
-              if (action.kind === "asset-detail") {
+            switch (intent.type) {
+              case "asset-detail":
                 return handleAssetDetailDeeplink({
-                  currencyId: action.currencyId,
-                  source: "deeplink_market",
-                  marketState: action.marketState,
+                  currencyId: intent.currencyId,
+                  source: intent.source,
+                  marketState: intent.marketState,
                 });
-              }
-
-              url.pathname = `/${action.currencyId}`;
-              return getStateFromPath(url.href?.split("://")[1], config);
-            }
-            if (pathname.replace("/", "")) {
-              return handleMarketBannerDeeplink();
-            }
-            const validatedCategory = shouldDisplayAssetDiscoverability
-              ? validateMarketListCategory(searchParams.get("category"))
-              : undefined;
-            return handleMarketBannerDeeplink(validatedCategory);
-          }
-
-          // Handle asset deeplink - validate currencyId before navigation
-          if (hostname === "asset") {
-            const validatedMarketAsset = validateMarketAssetPath(pathname);
-            if (validatedMarketAsset) {
-              const action = resolveAssetDeeplinkAction(
-                validatedMarketAsset,
-                shouldDisplayAggregatedAssets,
-              );
-
-              if (action.kind === "reject") {
+              case "legacy-path":
+                url.pathname = `/${intent.currencyId}`;
+                return getStateFromPath(url.href?.split("://")[1], config);
+              case "market-banner":
+                return handleMarketBannerDeeplink(intent.category);
+              case "portfolio":
                 return getStateFromPath("portfolio", config);
-              }
-
-              if (action.kind === "asset-detail") {
-                return handleAssetDetailDeeplink({
-                  currencyId: action.currencyId,
-                  source: "deeplink_asset",
-                  marketState: action.marketState,
-                });
-              }
-
-              url.pathname = `/${action.currencyId}`;
-              return getStateFromPath(url.href?.split("://")[1], config);
-            }
-            if (pathname.replace("/", "")) {
-              return getStateFromPath("portfolio", config);
-            }
-            if (shouldDisplayAggregatedAssets) {
-              return getStateFromPath("portfolio", config);
+              case "continue":
+                break;
             }
           }
 

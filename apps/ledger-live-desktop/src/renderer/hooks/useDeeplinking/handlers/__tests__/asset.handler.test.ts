@@ -54,6 +54,14 @@ describe("assetHandler", () => {
     expect(context.navigate).toHaveBeenCalledWith("/");
   });
 
+  it("falls back to home for an unresolvable path when aggregated assets are on", () => {
+    const context = createMockContext({ assetsPath: "/asset" });
+
+    assetHandler({ type: "asset", path: "unknown_coin" }, context);
+
+    expect(context.navigate).toHaveBeenCalledWith("/");
+  });
+
   it("normalizes a coin path when aggregated assets are on", () => {
     const context = createMockContext({ assetsPath: "/asset" });
 

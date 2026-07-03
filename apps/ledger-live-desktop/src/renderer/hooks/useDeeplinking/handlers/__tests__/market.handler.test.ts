@@ -74,6 +74,14 @@ describe("marketHandler", () => {
     expect(context.navigate).toHaveBeenCalledWith("/market/bitcoin");
   });
 
+  it("falls back to market list for an unresolvable path when aggregated assets are on", () => {
+    const context = createMockContext({ assetsPath: "/asset" });
+
+    marketHandler({ type: "market", path: "unknown_coin" }, context);
+
+    expect(context.navigate).toHaveBeenCalledWith("/market");
+  });
+
   it("falls back to market list for unknown currency when aggregated assets are off", () => {
     const context = createMockContext({ assetsPath: "/market" });
 

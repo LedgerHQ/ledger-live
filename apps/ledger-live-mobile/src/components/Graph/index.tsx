@@ -11,7 +11,7 @@ import DefGraph from "./DefGrad";
 import BarInteraction from "./BarInteraction";
 import type { Item, ItemArray } from "./types";
 
-type Props = {
+type Props = Readonly<{
   width: number;
   height: number;
   /** Represents the offset to apply to the chart positioning on x-axis. Default to 0.  */
@@ -27,7 +27,7 @@ type Props = {
   verticalRangeRatio?: number;
   fill?: string;
   testID?: string;
-};
+}>;
 const STROKE_WIDTH = 2;
 const FOCUS_RADIUS = 4;
 
@@ -78,7 +78,7 @@ function Graph({
   const x = d3scale
     .scaleTime()
     .range([0, width])
-    .domain([safeData[0].date!, safeData[safeData.length - 1].date!]);
+    .domain([safeData[0].date!, safeData.at(-1)!.date!]);
   const y = d3scale
     .scaleLinear()
     .domain([paddedMinY, maxY])
