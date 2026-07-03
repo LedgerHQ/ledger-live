@@ -13,6 +13,8 @@ export default class TezosStakePage {
   // Unstake flow (TezosUnstakeFlow)
   unstakeAmountInputId = "tezos-unstake-amount-input";
   unstakeAmountContinueId = "tezos-unstake-amount-continue";
+  unstakeUnbondingNoticeId = "tezos-unstake-unbonding-notice";
+  unstakeStakedBalanceId = "tezos-unstake-staked-balance";
   // Earning-choice chooser (TezosDelegationFlow -> TezosEarnRewards) and the delegation summary it leads to
   earnRewardsStartButtonId = "tezos-earn-rewards-start-button";
   earnRewardsDelegateStepId = "tezos-earn-rewards-delegate-step";
@@ -92,6 +94,12 @@ export default class TezosStakePage {
     await tapById(this.stakingRowId);
     await waitForElementById(this.unstakeActionId);
     await tapById(this.unstakeActionId);
+  }
+
+  @Step("Verify the unstake amount screen shows the unbonding notice and staked balance")
+  async verifyUnstakeAmountInfo() {
+    await waitForElementById(this.unstakeUnbondingNoticeId);
+    await waitForElementById(this.unstakeStakedBalanceId);
   }
 
   @Step("Fill unstake amount $0")

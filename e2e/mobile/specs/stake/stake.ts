@@ -108,6 +108,7 @@ export function runUnstakeTezos(
       await app.speculos.activateExpertMode();
       await goToTezosAccount(delegation);
       await app.tezosStake.openUnstakeFromStakingSection();
+      await app.tezosStake.verifyUnstakeAmountInfo();
       await app.tezosStake.fillUnstakeAmount(delegation.amount);
       await app.tezosStake.continueUnstakeAmount();
       await app.deviceValidation.expectDeviceValidationScreen();
