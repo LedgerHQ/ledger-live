@@ -84,7 +84,7 @@ const subAccountReceive: Array<{
 ];
 
 for (const token of subAccounts) {
-  test.describe("Add subAccount without parent", () => {
+  test.describe("legacy send flow - Add subAccount without parent", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -147,7 +147,7 @@ for (const token of subAccounts) {
 }
 
 for (const token of subAccountReceive) {
-  test.describe("Add subAccount when parent exists", () => {
+  test.describe("legacy send flow - Add subAccount when parent exists", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "speculos-subAccount",
@@ -207,7 +207,7 @@ for (const token of subAccountReceive) {
 }
 
 for (const token of subAccounts) {
-  test.describe("Token visible in parent account", () => {
+  test.describe("legacy send flow - Token visible in parent account", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "speculos-subAccount",
@@ -263,7 +263,7 @@ const transactionE2E = [
 ];
 
 for (const transaction of transactionE2E) {
-  test.describe("Send token - E2E", () => {
+  test.describe("legacy send flow - Send token - E2E", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -363,7 +363,7 @@ const transactionsAddressInvalid = [
 ];
 
 for (const transaction of transactionsAddressInvalid) {
-  test.describe("Send token - invalid address input", () => {
+  test.describe("legacy send flow - Send token - invalid address input", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -435,7 +435,7 @@ const transactionsAddressValid = [
 ];
 
 for (const transaction of transactionsAddressValid) {
-  test.describe("Send token - valid address input", () => {
+  test.describe("legacy send flow - Send token - valid address input", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -517,7 +517,7 @@ const tokenTransactionInvalid = [
 ];
 
 for (const transaction of tokenTransactionInvalid) {
-  test.describe("Send token (subAccount) - invalid amount input", () => {
+  test.describe("legacy send flow - Send token (subAccount) - invalid amount input", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -574,7 +574,7 @@ for (const transaction of tokenTransactionInvalid) {
   });
 }
 
-test.describe("Send token (subAccount) - valid address & amount input", () => {
+test.describe("legacy send flow - Send token (subAccount) - valid address & amount input", () => {
   const tokenTransactionValid = new Transaction(
     TokenAccount.ETH_USDT_1,
     TokenAccount.ETH_USDT_3,
