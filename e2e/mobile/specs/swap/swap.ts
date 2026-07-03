@@ -1,8 +1,8 @@
 import { SwapType } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { setEnv } from "@ledgerhq/live-env";
 import { performSwapUntilQuoteSelectionStep } from "../../utils/swapUtils";
-import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { beforeAllFunctionSwap } from "./swap.setup";
@@ -46,10 +46,12 @@ export function runSwapTest(
     tags.forEach(tag => $Tag(tag));
     it(`Swap ${accountToDebit.currency.name} to ${accountToCredit.currency.name}`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(accountToDebit, accountToCredit);
-      const swapAmount =
-        accountToDebit.currency.name === Account.XRP_1.currency.name
-          ? parseFloat(Number(minAmount).toFixed(6)).toString()
-          : minAmount;
+      const swapAmount = minAmount
+        ? (Math.trunc(Number(minAmount) * 1e8) / 1e8)
+            .toFixed(8)
+            .replace(/0+$/, "")
+            .replace(/\.$/, "")
+        : minAmount;
       swap.amount = swapAmount;
 
       await performSwapUntilQuoteSelectionStep(accountToDebit, accountToCredit, swapAmount);
