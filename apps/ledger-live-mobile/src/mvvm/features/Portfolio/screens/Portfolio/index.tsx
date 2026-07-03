@@ -56,7 +56,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     hideEmptyTokenAccount,
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
-    shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
     showAssets,
     isLNSUpsellBannerShown,
@@ -90,7 +89,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     const sections: React.JSX.Element[] = [];
 
     const heroCtasNode =
-      showAssets && shouldDisplayQuickActionCtas && shouldDisplayGraphRework ? (
+      showAssets && shouldDisplayGraphRework ? (
         <>
           <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
           <TransferDrawer />
@@ -116,7 +115,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
 
     sections.push(<TrackScreen key="trackWallet" category="Wallet" />);
 
-    if (shouldDisplayQuickActionCtas && !shouldDisplayGraphRework) {
+    if (!shouldDisplayGraphRework) {
       sections.push(
         <Box px={6} pt={6} key="quickActions">
           <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
@@ -184,7 +183,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     shouldDisplayAssetSection,
     onBackFromUpdate,
     isLNSUpsellBannerShown,
-    shouldDisplayQuickActionCtas,
     isAccountListUIEnabled,
     hideEmptyTokenAccount,
     openAddModal,

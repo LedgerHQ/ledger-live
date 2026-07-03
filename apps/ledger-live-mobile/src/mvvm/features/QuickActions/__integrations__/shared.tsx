@@ -124,7 +124,6 @@ export const overrideStateWithFundsVariant = withFlagOverrides(
   {
     lwmWallet40: {
       enabled: true,
-      params: { quickActionCtas: true },
     },
     lwmQuickActionsCtasVariant: { enabled: true },
   },
@@ -135,7 +134,6 @@ export const overrideStateWithoutFundsVariant = withFlagOverrides(
   {
     lwmWallet40: {
       enabled: true,
-      params: { quickActionCtas: true },
     },
     lwmQuickActionsCtasVariant: { enabled: true },
   },

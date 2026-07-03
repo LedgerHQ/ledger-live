@@ -36,7 +36,6 @@ const makeConfig = (
 ): WalletFeaturesConfig => ({
   isEnabled: value,
   shouldDisplayGraphRework: value,
-  shouldDisplayQuickActionCtas: value,
   shouldUseLazyOnboarding: value,
   shouldDisplayTour: value,
   shouldDisplayQ2Tour: value,
@@ -54,7 +53,6 @@ const makeConfig = (
 
 const makeParams = (value: boolean): Wallet40Params => ({
   graphRework: value,
-  quickActionCtas: value,
   lazyOnboarding: value,
   tour: value,
   q2Tour: value,
