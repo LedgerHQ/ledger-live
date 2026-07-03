@@ -95,6 +95,9 @@ describe("useWelcomeViewModel", () => {
             ...INITIAL_STATE,
             hasCompletedOnboarding: true,
           },
+          ...withFlagOverrides({
+            lwdWallet40: { enabled: true, params: { lazyOnboarding: false } },
+          }),
         },
       });
 
@@ -134,6 +137,9 @@ describe("useWelcomeViewModel", () => {
             ...INITIAL_STATE,
             hasCompletedOnboarding: false,
           },
+          ...withFlagOverrides({
+            lwdWallet40: { enabled: true, params: { lazyOnboarding: false } },
+          }),
         },
       });
 
