@@ -1,5 +1,5 @@
 import type { FiatCurrency } from "./schema";
-import { getFiatCurrencyByTicker } from "./registry";
+import { getFiatCurrencyByTicker } from "./utils";
 import { OFAC_FIAT_TICKERS, FALLBACK_FIAT_TICKERS } from "./constants";
 
 /** Builds the offline fallback list: FALLBACK_FIAT_TICKERS minus OFAC-restricted entries. */

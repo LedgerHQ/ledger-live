@@ -1,4 +1,4 @@
-import { getFiatCurrencyByTicker } from "./registry";
+import { getFiatCurrencyByTicker } from "./utils";
 
 describe("getFiatCurrencyByTicker", () => {
   it("resolves a known ticker", () => {
