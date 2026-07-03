@@ -35,6 +35,7 @@ See the [ADR: Device Intent Executor component](https://ledgerhq.atlassian.net/w
 - [Exports](#exports)
   - [Core types](#core-types-srccorets)
   - [Executor types](#executor-types-srcexecutorts)
+- [Feature-specific intent contracts](#feature-specific-intent-contracts)
 - [Usage Guide](#usage-guide)
   - [Intent implementation checklist](#intent-implementation-checklist)
   - [Mounting the executor](#mounting-the-executor)
@@ -249,6 +250,11 @@ sequenceDiagram
 | `ExecutorPlatformConfiguration`                                     | Groups all platform-injected UI components (connection, initialisation, intent errors, invalid-operation) |
 | `ExecutorState`                                                     | Discriminated union of executor lifecycle states                                                          |
 | `DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInput>` | Props for the `DeviceIntentExecutor` component                                                            |
+
+## Feature-specific intent contracts
+
+- [EVM Address Book Device Intents](./docs/address-book-evm-intents.md) -
+  WXP-facing contract for Address Book management intents.
 
 ## Usage Guide
 
