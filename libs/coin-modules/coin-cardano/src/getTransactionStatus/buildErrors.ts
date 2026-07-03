@@ -11,7 +11,7 @@
  * robust if the error is re-created across the coin-module-framework boundary.
  */
 export const isRecoverableBuildError = (error: unknown): boolean => {
-  if (error instanceof Error && error.name === "CardanoMinAmountError") return true;
+  if ((error as { name?: unknown } | null)?.name === "CardanoMinAmountError") return true;
 
   const message = (error instanceof Error ? error.message : String(error)).toLowerCase();
 
