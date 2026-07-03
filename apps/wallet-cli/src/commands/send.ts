@@ -165,6 +165,7 @@ async function runLiveSend({
           WalletCliDeviceError.fromKnownDeviceError(error, {
             expectedApp: managerAppName,
             rejectedContext: "sign",
+            deviceModelId,
           }) ?? error,
       });
 
@@ -274,8 +275,7 @@ export default defineCommand({
         });
       } catch (error) {
         if (error instanceof WalletCliDeviceError && error.state.code === "rejected") {
-          const device = await getWalletCliDeviceModelId();
-          trackSendRejected({ network: ctx.network, device });
+          trackSendRejected({ network: ctx.network, device: error.state.deviceModelId });
         } else {
           trackSendFailed({
             errorCode: sendErrorCode(error),

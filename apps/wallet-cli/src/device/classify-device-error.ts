@@ -24,6 +24,7 @@ export type ClassifyContext = {
   foundApp?: string;
   /** Defaults the rejection context when we can't infer it from the error itself. */
   rejectedContext?: RejectedContext;
+  deviceModelId?: string;
 };
 
 const TRANSPORT_FRAMING_TAGS = new Set(["ReceiverApduError", "UnknownDeviceExchangeError"]);
@@ -77,7 +78,7 @@ function classifyTransportStatusError(
     case StatusCodes.SECURITY_STATUS_NOT_SATISFIED:
       return { code: "locked" };
     case StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED:
-      return { code: "rejected", context: ctx.rejectedContext ?? "sign" };
+      return { code: "rejected", context: ctx.rejectedContext ?? "sign", deviceModelId: ctx.deviceModelId ?? "undefined" };
     case StatusCodes.CLA_NOT_SUPPORTED:
     case StatusCodes.INS_NOT_SUPPORTED:
       return {
@@ -123,7 +124,7 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
 
   // DMK refused-by-user (RefusedByUserDAError) happens when the user declines the OpenApp prompt.
   if (hasTag(error, "RefusedByUserDAError")) {
-    return { code: "rejected", context: ctx.rejectedContext ?? "open_app" };
+    return { code: "rejected", context: ctx.rejectedContext ?? "open_app", deviceModelId: ctx.deviceModelId ?? "undefined" };
   }
 
   // OpenApp command error codes: 670a (app not found) / 6807 (app not installed).

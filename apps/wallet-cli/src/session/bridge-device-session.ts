@@ -4,6 +4,7 @@ import type { DeviceState } from "../device/device-state";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 import {
   ensureWalletCliDmkTransport,
+  getWalletCliDeviceModelId,
   resetWalletCliDmkSession,
 } from "../device/register-dmk-transport";
 import { withWalletCliDeviceInterruptScope } from "../device/interrupt-scope";
@@ -36,7 +37,8 @@ export function withCurrencyDeviceSession<T>(
         deviceTimeoutMs: options.deviceTimeoutMs,
       });
     } catch (e) {
-      throw WalletCliDeviceError.fromUnknown(e, { expectedApp: managerAppName });
+      const deviceModelId = await getWalletCliDeviceModelId();
+      throw WalletCliDeviceError.fromUnknown(e, { expectedApp: managerAppName, deviceModelId });
     }
     walletCliDebug("Device session ready.");
     try {
