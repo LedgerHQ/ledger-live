@@ -266,6 +266,8 @@ export async function executeSwapCommand({
         fromCurrencyId:
           fromAccount.type === "TokenAccount" ? fromAccount.token.id : fromAccount.currency.id,
         toCurrencyId: flags.to,
+        flowId,
+        feeStrategy: flags["fee-strategy"],
       });
 
       if (dieResult.plan !== "skip") {
