@@ -420,3 +420,44 @@ describe("listOperations — mainnet origination ops", () => {
     expect(balance).toEqual(BigInt(account.balance));
   }, 60_000);
 });
+
+/**
+ * Multi-asset FA2 integration tests (LIVE-29210).
+ * Uses tz1ZB8hpQJZdQeEPc3uG2cL1NXwLTPkqeAD6 which holds multiple tokens
+ * on the Wrapped Tokens Contract (KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ).
+ */
+const MULTI_ASSET_ADDRESS = "tz1ZB8hpQJZdQeEPc3uG2cL1NXwLTPkqeAD6";
+const WRAPPED_CONTRACT = "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ";
+
+describe("listOperations — mainnet multi-asset FA2 (LIVE-29210)", () => {
+  let originalGetCoinConfig: () => TezosCoinConfig;
+
+  beforeAll(() => {
+    originalGetCoinConfig = coinConfig.getCoinConfig;
+    coinConfig.setCoinConfig(mainnetConfig);
+  });
+
+  afterAll(() => {
+    if (originalGetCoinConfig) {
+      coinConfig.setCoinConfig(originalGetCoinConfig);
+    }
+  });
+
+  it("returns a known multi-asset FA2 operation with tokenId=11", async () => {
+    const [operations] = await listOperations(MULTI_ASSET_ADDRESS, { ...baseOpts, limit: 200 });
+
+    // Known on-chain transfer: tokenId=11 (wMATIC), OUT to KT1V5X...
+    const op = operations.find(
+      op =>
+        "assetReference" in op.asset &&
+        op.asset.assetReference === `${WRAPPED_CONTRACT}:11` &&
+        op.tx.hash === "ooMtaw5H7dtrgAyW5ky4jFzhQjayWn6La2h3BadHvZd56p6jm9g",
+    )!;
+
+    expect(op.type).toBe("OUT");
+    expect(op.asset.type).toBe("fa2");
+    expect(op.value).toBe(18423705864886566n);
+    expect(op.senders).toEqual([MULTI_ASSET_ADDRESS]);
+    expect(op.recipients).toEqual(["KT1V5XKmeypanMS9pR65REpqmVejWBZURuuT"]);
+  });
+});
