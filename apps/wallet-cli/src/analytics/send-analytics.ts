@@ -19,11 +19,11 @@ export function trackSendStarted(p: {
   });
 }
 
-export function trackSendFailed(p: { errorCode: string; errorMessage: string }): void {
+export function trackSendFailed(p: { errorCode: string; errorName: string }): void {
   track("send_failed", {
     page: SEND,
     errorCode: p.errorCode,
-    errorMessage: p.errorMessage,
+    errorName: p.errorName,
   });
 }
 

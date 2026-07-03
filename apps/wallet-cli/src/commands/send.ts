@@ -155,25 +155,18 @@ async function runLiveSend({
         );
       }
 
-      try {
-        await runObservable({
-          source$: wallet.send(descriptor, intent, {
-            deviceId: WALLET_CLI_DMK_DEVICE_ID,
-            deviceModelId,
-          }),
-          onNext: event => out.sendEvent(event),
-          mapError: error =>
-            WalletCliDeviceError.fromKnownDeviceError(error, {
-              expectedApp: managerAppName,
-              rejectedContext: "sign",
-            }) ?? error,
-        });
-      } catch (error) {
-        if (error instanceof WalletCliDeviceError && error.state.code === "rejected") {
-          trackSendRejected({ network, device: deviceModelId });
-        }
-        throw error;
-      }
+      await runObservable({
+        source$: wallet.send(descriptor, intent, {
+          deviceId: WALLET_CLI_DMK_DEVICE_ID,
+          deviceModelId,
+        }),
+        onNext: event => out.sendEvent(event),
+        mapError: error =>
+          WalletCliDeviceError.fromKnownDeviceError(error, {
+            expectedApp: managerAppName,
+            rejectedContext: "sign",
+          }) ?? error,
+      });
 
       out.sendComplete();
       trackSendCompleted({ network, assetClass, amount, device: deviceModelId });
@@ -280,10 +273,15 @@ export default defineCommand({
           amount: flags.amount,
         });
       } catch (error) {
-        trackSendFailed({
-          errorCode: sendErrorCode(error),
-          errorMessage: error instanceof Error ? error.message : String(error),
-        });
+        if (error instanceof WalletCliDeviceError && error.state.code === "rejected") {
+          const device = await getWalletCliDeviceModelId();
+          trackSendRejected({ network: ctx.network, device });
+        } else {
+          trackSendFailed({
+            errorCode: sendErrorCode(error),
+            errorName: error instanceof Error ? error.name : "unknown",
+          });
+        }
         throw error;
       }
     });
