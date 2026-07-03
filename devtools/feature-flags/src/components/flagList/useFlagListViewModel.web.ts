@@ -21,7 +21,7 @@ export interface FlagListViewProps {
   readonly setOverride: FeatureFlagsToolProps["setOverride"];
   readonly onSelectFlag: (id: FeatureId) => void;
   readonly selectedFlagId: FeatureId | null;
-  readonly onCloseSidebar: () => void;
+  readonly onCloseDetails: () => void;
   readonly clearSelectedOverride: () => void;
 }
 
@@ -69,7 +69,7 @@ export function useFlagListViewModel(props: FeatureFlagsToolProps): FlagListView
     setOverride,
     onSelectFlag: selectFlag,
     selectedFlagId,
-    onCloseSidebar: clearSelection,
+    onCloseDetails: clearSelection,
     clearSelectedOverride: () => {
       if (selectedFlagId) setOverride(selectedFlagId, undefined);
     },

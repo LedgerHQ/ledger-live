@@ -47,7 +47,7 @@ export function FlagJsonEditor({
       {onJsonEditor ? (
         <textarea
           className={cn(
-            "block bg-canvas-muted body-3 w-full font-mono rounded-md outline-none min-h-[200px] p-8 overflow-hidden resize-none [field-sizing:content]",
+            "block bg-canvas-muted body-3 text-base w-full font-mono rounded-md outline-none min-h-[200px] p-8 overflow-hidden resize-none [field-sizing:content]",
             {
               "border-2 border-error": !isValidJson,
             },
