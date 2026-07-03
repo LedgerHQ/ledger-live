@@ -161,13 +161,15 @@ const Staking = ({ account }: { account: AleoAccount }) => {
   // Poll the live block height so the countdown stays fresh between account syncs,
   // but only while an unstaking countdown is actually visible.
   const isCountingDown =
-    hasUnbonding && !isClaimable && unbondingHeight != null && unbondingHeight > account.blockHeight;
+    hasUnbonding &&
+    !isClaimable &&
+    unbondingHeight != null &&
+    unbondingHeight > account.blockHeight;
   const currentHeight = useAleoLiveBlockHeight(account.currency, {
     fallbackHeight: account.blockHeight,
     enabled: isCountingDown,
   });
-  const blocksLeft =
-    unbondingHeight != null ? Math.max(0, unbondingHeight - currentHeight) : null;
+  const blocksLeft = unbondingHeight != null ? Math.max(0, unbondingHeight - currentHeight) : null;
   const hasPosition = hasBonded || hasUnbonding;
 
   const formatAmount = (value: BigNumber) =>
@@ -247,7 +249,10 @@ const Staking = ({ account }: { account: AleoAccount }) => {
                   subLine={
                     blocksLeft != null ? (
                       <CardSubLine>
-                        <Trans i18nKey="aleo.stake.blocksRemaining" values={{ count: blocksLeft }} />
+                        <Trans
+                          i18nKey="aleo.stake.blocksRemaining"
+                          values={{ count: blocksLeft }}
+                        />
                       </CardSubLine>
                     ) : null
                   }

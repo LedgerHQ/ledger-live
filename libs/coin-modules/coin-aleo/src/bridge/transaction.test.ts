@@ -112,8 +112,7 @@ describe("transaction", () => {
 
   describe("bond_public round-trip", () => {
     it("should round-trip withdrawal through raw serialization", () => {
-      const withdrawalAddress =
-        "aleo1withdraw000000000000000000000000000000000000000000000000q";
+      const withdrawalAddress = "aleo1withdraw000000000000000000000000000000000000000000000000q";
       const tx = getMockedTransaction({
         mode: TRANSACTION_TYPE.BOND_PUBLIC,
         withdrawal: withdrawalAddress,

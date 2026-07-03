@@ -193,7 +193,10 @@ describe("operation extra serialization", () => {
     });
 
     it("omits transitionId when absent", () => {
-      const raw = toOperationExtraRaw({ functionId: "transfer_public", transactionType: "public" }) as AleoOperationExtraRaw;
+      const raw = toOperationExtraRaw({
+        functionId: "transfer_public",
+        transactionType: "public",
+      }) as AleoOperationExtraRaw;
       expect(raw.transitionId).toBeUndefined();
     });
   });

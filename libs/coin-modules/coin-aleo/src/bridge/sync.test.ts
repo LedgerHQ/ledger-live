@@ -2325,7 +2325,11 @@ describe("sync.ts", () => {
         hash: "at1feeid",
         hasFailed: true,
         blockHeight: 90,
-        extra: { functionId: "claim_unbond_public", transactionType: "public", transitionId: "au1revert" },
+        extra: {
+          functionId: "claim_unbond_public",
+          transactionType: "public",
+          transitionId: "au1revert",
+        },
       });
       const pendingOp = getMockedOperation({
         id: "js:2:aleo:addr:at1execid-OUT",
@@ -2440,13 +2444,17 @@ describe("sync.ts", () => {
     const currency = getMockedCurrency();
 
     const detailsWithTransition = (transitionId: string) =>
-      ({ execution: { transitions: [{ id: transitionId }] } } as any);
+      ({ execution: { transitions: [{ id: transitionId }] } }) as any;
 
     it("evicts a pending op when a confirmed op shares its transition id but has a different id", async () => {
       const confirmed = getMockedOperation({
         id: "confirmed-feeid-OUT",
         hash: "at1feeid",
-        extra: { functionId: "claim_unbond_public", transactionType: "public", transitionId: "au1shared" },
+        extra: {
+          functionId: "claim_unbond_public",
+          transactionType: "public",
+          transitionId: "au1shared",
+        },
       });
       const pending = getMockedOperation({ id: "pending-execid-OUT", hash: "at1execid" });
       mockApiClient.getTransactionById.mockResolvedValue(detailsWithTransition("au1shared"));
@@ -2484,7 +2492,11 @@ describe("sync.ts", () => {
       const shared = getMockedOperation({
         id: "same-OUT",
         hash: "at1x",
-        extra: { functionId: "transfer_public", transactionType: "public", transitionId: "au1same" },
+        extra: {
+          functionId: "transfer_public",
+          transactionType: "public",
+          transitionId: "au1same",
+        },
       });
       const pending = getMockedOperation({ id: "same-OUT", hash: "at1execid" });
       mockApiClient.getTransactionById.mockResolvedValue(detailsWithTransition("au1same"));
@@ -2496,7 +2508,11 @@ describe("sync.ts", () => {
     it("does not evict when no confirmed op shares the transition id (indexer lag)", async () => {
       const confirmed = getMockedOperation({
         id: "confirmed-OUT",
-        extra: { functionId: "transfer_public", transactionType: "public", transitionId: "au1other" },
+        extra: {
+          functionId: "transfer_public",
+          transactionType: "public",
+          transitionId: "au1other",
+        },
       });
       const pending = getMockedOperation({ id: "pending-OUT", hash: "at1execid" });
       mockApiClient.getTransactionById.mockResolvedValue(detailsWithTransition("au1nomatch"));
@@ -2508,7 +2524,11 @@ describe("sync.ts", () => {
     it("does not evict and does not throw when getTransactionById rejects", async () => {
       const confirmed = getMockedOperation({
         id: "confirmed-OUT",
-        extra: { functionId: "transfer_public", transactionType: "public", transitionId: "au1shared" },
+        extra: {
+          functionId: "transfer_public",
+          transactionType: "public",
+          transitionId: "au1shared",
+        },
       });
       const pending = getMockedOperation({ id: "pending-OUT", hash: "at1execid" });
       mockApiClient.getTransactionById.mockRejectedValue(new Error("404"));

@@ -648,7 +648,10 @@ describe("prepareTransaction", () => {
 
       const result = await prepareTransaction(mockAccount, bondTransaction);
 
-      expect(result).toMatchObject({ mode: TRANSACTION_TYPE.BOND_PUBLIC, withdrawal: mockAccount.freshAddress });
+      expect(result).toMatchObject({
+        mode: TRANSACTION_TYPE.BOND_PUBLIC,
+        withdrawal: mockAccount.freshAddress,
+      });
       expect(result.fees.gt(0)).toBe(true);
     });
 
@@ -662,7 +665,10 @@ describe("prepareTransaction", () => {
 
       const result = await prepareTransaction(mockAccount, bondTransaction);
 
-      expect(result).toMatchObject({ mode: TRANSACTION_TYPE.BOND_PUBLIC, withdrawal: customWithdrawal });
+      expect(result).toMatchObject({
+        mode: TRANSACTION_TYPE.BOND_PUBLIC,
+        withdrawal: customWithdrawal,
+      });
     });
   });
 

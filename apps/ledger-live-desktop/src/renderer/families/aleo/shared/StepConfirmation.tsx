@@ -110,9 +110,7 @@ export function createStepConfirmation({ flow, action, trackField }: StakingConf
             currency="aleo"
           />
           {signed ? (
-            <BroadcastErrorDisclaimer
-              title={<Trans i18nKey={`${i18nPrefix}.broadcastError`} />}
-            />
+            <BroadcastErrorDisclaimer title={<Trans i18nKey={`${i18nPrefix}.broadcastError`} />} />
           ) : null}
           <ErrorDisplay error={error} withExportLogs />
         </Container>

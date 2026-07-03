@@ -17,9 +17,7 @@ const LOW_STAKE_OPEN_VALIDATOR = "aleo1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
 
 describe("isValidCommitteeResponse", () => {
   it("accepts a well-formed committee response", () => {
-    expect(
-      isValidCommitteeResponse({ members: { [OPEN_VALIDATOR]: [1000, true, 5] } }),
-    ).toBe(true);
+    expect(isValidCommitteeResponse({ members: { [OPEN_VALIDATOR]: [1000, true, 5] } })).toBe(true);
   });
 
   it("accepts a response with no members field", () => {
@@ -39,9 +37,9 @@ describe("isValidCommitteeResponse", () => {
   });
 
   it("rejects a members map with wrong tuple field types", () => {
-    expect(
-      isValidCommitteeResponse({ members: { [OPEN_VALIDATOR]: ["1000", true, 5] } }),
-    ).toBe(false);
+    expect(isValidCommitteeResponse({ members: { [OPEN_VALIDATOR]: ["1000", true, 5] } })).toBe(
+      false,
+    );
   });
 });
 

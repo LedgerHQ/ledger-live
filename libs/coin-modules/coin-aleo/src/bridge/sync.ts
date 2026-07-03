@@ -138,9 +138,7 @@ export async function performPublicSync(
   // Already-patched ops have modified senders/recipients that differ from raw API data.
   // Filter them from the incoming ops — mergeOps then simply keeps the patched version
   // from oldPublicOps untouched, and no patch-restoration pass is needed.
-  const patchedOpIds = new Set(
-    oldPublicOps.filter(op => op.extra?.patched).map(op => op.id),
-  );
+  const patchedOpIds = new Set(oldPublicOps.filter(op => op.extra?.patched).map(op => op.id));
 
   const filteredLatestPublicOperations = latestAccountPublicOperations.operations.filter(
     op => !patchedOpIds.has(op.id),

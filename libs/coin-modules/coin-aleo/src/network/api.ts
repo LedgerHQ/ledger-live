@@ -42,10 +42,7 @@ async function getAccountBalance(
   return res.data;
 }
 
-async function getBondedMapping(
-  currency: CryptoCurrency,
-  address: string,
-): Promise<string | null> {
+async function getBondedMapping(currency: CryptoCurrency, address: string): Promise<string | null> {
   const { nodeUrl, networkType } = getNetworkConfig(currency);
 
   const res = await network<string | null>({

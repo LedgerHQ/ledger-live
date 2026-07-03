@@ -231,7 +231,9 @@ export function isAleoOperationExtra(extra: OperationExtra): extra is AleoOperat
   return extra !== null && typeof extra === "object" && "functionId" in extra;
 }
 
-export function isAleoOperationExtraRaw(extraRaw: OperationExtraRaw): extraRaw is AleoOperationExtraRaw {
+export function isAleoOperationExtraRaw(
+  extraRaw: OperationExtraRaw,
+): extraRaw is AleoOperationExtraRaw {
   return extraRaw !== null && typeof extraRaw === "object" && "functionId" in extraRaw;
 }
 

@@ -904,7 +904,7 @@ describe("getTransactionStatus", () => {
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
-      expect(result.errors.withdrawal).toBeDefined();
+      expect(result.errors.withdrawal).toBeInstanceOf(InvalidAddress);
     });
 
     it("does not report errors.withdrawal for a valid withdrawal address", async () => {
@@ -1012,7 +1012,10 @@ describe("getTransactionStatus", () => {
       const amount = new BigNumber(MIN_STAKE_AMOUNT).minus(1);
       mockCalculateAmount.mockReturnValue({ amount, totalSpent: amount });
 
-      const result = await getTransactionStatus(fundedBond(new BigNumber(0)), bondTransaction(amount));
+      const result = await getTransactionStatus(
+        fundedBond(new BigNumber(0)),
+        bondTransaction(amount),
+      );
 
       expect(result.errors.amount).toBeInstanceOf(AleoStakeAmountTooLow);
     });
@@ -1021,7 +1024,10 @@ describe("getTransactionStatus", () => {
       const amount = new BigNumber(MIN_STAKE_AMOUNT);
       mockCalculateAmount.mockReturnValue({ amount, totalSpent: amount });
 
-      const result = await getTransactionStatus(fundedBond(new BigNumber(0)), bondTransaction(amount));
+      const result = await getTransactionStatus(
+        fundedBond(new BigNumber(0)),
+        bondTransaction(amount),
+      );
 
       expect(result.errors.amount).not.toBeInstanceOf(AleoStakeAmountTooLow);
     });
@@ -1070,7 +1076,12 @@ describe("getTransactionStatus", () => {
 
     it("does not block the bond when the validator is absent from the committee list", async () => {
       mockGetValidators.mockResolvedValue([
-        { address: "aleo1other0000000000000000000000000000000000000000000000000000q", stake: 1000, isOpen: false, commission: 5 },
+        {
+          address: "aleo1other0000000000000000000000000000000000000000000000000000q",
+          stake: 1000,
+          isOpen: false,
+          commission: 5,
+        },
       ]);
 
       const result = await getTransactionStatus(mockAccount, bondTransaction(new BigNumber(10)));

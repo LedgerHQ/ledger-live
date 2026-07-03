@@ -137,7 +137,9 @@ export function patchAccountWithViewKey(account: Account, viewKey: string): Acco
 }
 
 export const getStakingOperationType = (functionId: string): OperationType | undefined =>
-  Object.hasOwn(STAKING_OPERATION_TYPE, functionId) ? STAKING_OPERATION_TYPE[functionId] : undefined;
+  Object.hasOwn(STAKING_OPERATION_TYPE, functionId)
+    ? STAKING_OPERATION_TYPE[functionId]
+    : undefined;
 
 export const determineTransactionType = (
   functionId: string,
@@ -206,10 +208,7 @@ function resolveSenderAddress(rawTx: AleoPublicTransaction, address: string): st
  * This is a one-time cache repair: callers should gate it on a persisted per-account flag
  * (see `hasBackfilledStakingSenders` in bridge/sync.ts) rather than invoking it on every sync.
  */
-export function backfillStakingSenders(
-  ops: AleoOperation[],
-  address: string,
-): AleoOperation[] {
+export function backfillStakingSenders(ops: AleoOperation[], address: string): AleoOperation[] {
   return ops.map(op => {
     const functionId = op.extra?.functionId;
     const hasBlankSender = op.senders.every(isBlankSenderValue);
@@ -807,7 +806,8 @@ export const getOperationDetailsExtraFields = (
  */
 export function getClaimableStakingBalance(account: AleoAccount): BigNumber {
   const { unbondingBalance, unbondingHeight } = account.aleoResources ?? {};
-  if (!unbondingBalance || unbondingHeight == null) return new BigNumber(0);
+  if (!unbondingBalance || unbondingHeight === null || unbondingHeight === undefined)
+    return new BigNumber(0);
   return account.blockHeight >= unbondingHeight ? unbondingBalance : new BigNumber(0);
 }
 

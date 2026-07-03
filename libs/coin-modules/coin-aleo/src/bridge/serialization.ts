@@ -1,5 +1,12 @@
 import BigNumber from "bignumber.js";
-import type { AccountRaw, Account, TokenAccount, TokenAccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
+import type {
+  AccountRaw,
+  Account,
+  TokenAccount,
+  TokenAccountRaw,
+  OperationExtra,
+  OperationExtraRaw,
+} from "@ledgerhq/types-live";
 import type {
   AleoAccount,
   AleoAccountRaw,

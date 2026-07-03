@@ -1671,7 +1671,11 @@ describe("mapTransactionIntentToSdkIntent", () => {
         asset: { type: "native" },
         data: { type: "unbond_public" },
       } as never);
-      expect(sdkIntent).toEqual({ type: "unbond_public", amount: "1000000", staker: "aleo1stakeraddr" });
+      expect(sdkIntent).toEqual({
+        type: "unbond_public",
+        amount: "1000000",
+        staker: "aleo1stakeraddr",
+      });
     });
 
     it("maps claim_unbond_public intent to SDK intent with staker only", () => {
@@ -1819,7 +1823,12 @@ describe("isPublicTransaction", () => {
 
 describe("unbond/claim classification", () => {
   it("treats unbond_public and claim_unbond_public as public transactions", () => {
-    const base = { family: "aleo", amount: new BigNumber(0), recipient: "", fees: new BigNumber(0) } as const;
+    const base = {
+      family: "aleo",
+      amount: new BigNumber(0),
+      recipient: "",
+      fees: new BigNumber(0),
+    } as const;
     expect(isPublicTransaction({ ...base, mode: TRANSACTION_TYPE.UNBOND_PUBLIC })).toBe(true);
     expect(isPublicTransaction({ ...base, mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC })).toBe(true);
   });
@@ -1836,9 +1845,21 @@ describe("unbond/claim classification", () => {
         unbondingHeight: 900,
       },
     } as unknown as Parameters<typeof getAvailableBalance>[0];
-    const base = { family: "aleo", amount: new BigNumber(0), recipient: "", fees: new BigNumber(0) } as const;
-    expect(getAvailableBalance(account, { ...base, mode: TRANSACTION_TYPE.UNBOND_PUBLIC }).toString()).toBe("700");
-    expect(getAvailableBalance(account, { ...base, mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC }).toString()).toBe("300");
+    const base = {
+      family: "aleo",
+      amount: new BigNumber(0),
+      recipient: "",
+      fees: new BigNumber(0),
+    } as const;
+    expect(
+      getAvailableBalance(account, { ...base, mode: TRANSACTION_TYPE.UNBOND_PUBLIC }).toString(),
+    ).toBe("700");
+    expect(
+      getAvailableBalance(account, {
+        ...base,
+        mode: TRANSACTION_TYPE.CLAIM_UNBOND_PUBLIC,
+      }).toString(),
+    ).toBe("300");
   });
 });
 

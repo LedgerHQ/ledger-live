@@ -263,7 +263,6 @@ describe("listOperations", () => {
         expect(result.tokenOperations).toEqual([op1, op2]);
       });
     });
-
   });
 
   describe("coin-framework mode", () => {

@@ -113,7 +113,9 @@ describe("AccountBalanceSummaryFooter", () => {
     render(<AccountBalanceSummaryFooter account={stakedAccount} />);
 
     expect(screen.getByText("Staked")).toBeInTheDocument();
-    expect(screen.getByText(`formatted: ${bondedBalance.plus(unbondingBalance)}`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`formatted: ${bondedBalance.plus(unbondingBalance)}`),
+    ).toBeInTheDocument();
   });
 
   it("should display staked balance as 0 when there is no staking position", () => {

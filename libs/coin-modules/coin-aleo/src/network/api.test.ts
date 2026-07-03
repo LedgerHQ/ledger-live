@@ -443,7 +443,9 @@ describe("apiClient", () => {
 
   describe("getCommittee", () => {
     it("should fetch the committee mainnet URL by default", async () => {
-      const mockResponse = { members: { aleo1validator: [1000, true, 5] as [number, boolean, number] } };
+      const mockResponse = {
+        members: { aleo1validator: [1000, true, 5] as [number, boolean, number] },
+      };
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getCommittee(mockCurrency);

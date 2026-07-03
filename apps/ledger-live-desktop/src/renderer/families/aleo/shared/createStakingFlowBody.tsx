@@ -17,7 +17,11 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { OpenModal, openModal } from "~/renderer/actions/modals";
 import Stepper, { Step } from "~/renderer/components/Stepper";
 import logger from "~/renderer/logger";
-import { AleoAccount, Transaction, TransactionStatus } from "@ledgerhq/live-common/families/aleo/types";
+import {
+  AleoAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/aleo/types";
 import { Account, Operation } from "@ledgerhq/types-live";
 
 // Shared between BondPublicFlowModal / UnbondFlowModal / ClaimUnbondFlowModal:
@@ -148,7 +152,9 @@ export function createStakingFlowBody<StepId extends string>({
     const error = transactionError || bridgeError;
     const errorSteps: number[] = [];
     if (transactionError) {
-      errorSteps.push(stepId === steps[confirmationIndex].id ? confirmationIndex : connectDeviceIndex);
+      errorSteps.push(
+        stepId === steps[confirmationIndex].id ? confirmationIndex : connectDeviceIndex,
+      );
     } else if (bridgeError) {
       errorSteps.push(0);
     }

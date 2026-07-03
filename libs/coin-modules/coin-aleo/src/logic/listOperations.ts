@@ -62,7 +62,12 @@ export async function listOperations(
       operations.push(toCoinFrameworkOperation(rawTx, address));
     } else {
       const isTokenTx = calTokens.has(rawTx.program_id);
-      const op = toBridgeOperation(params.ledgerAccountId, rawTx, address, isTokenTx) as AleoOperation;
+      const op = toBridgeOperation(
+        params.ledgerAccountId,
+        rawTx,
+        address,
+        isTokenTx,
+      ) as AleoOperation;
       operations.push(op);
       if (isTokenTx) {
         tokenOperations.push(op);
