@@ -98,9 +98,9 @@ describe("RingChart integration", () => {
       />,
     );
 
-    expect(UNSAFE_queryAllByType(Path).every(path => !String(path.props.d).includes("NaN"))).toBe(
-      true,
-    );
+    const paths = UNSAFE_queryAllByType(Path);
+    expect(paths.length).toBeGreaterThan(0);
+    expect(paths.every(path => !String(path.props.d).includes("NaN"))).toBe(true);
   });
 });
 
