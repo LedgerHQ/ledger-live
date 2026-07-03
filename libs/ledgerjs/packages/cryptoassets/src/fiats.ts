@@ -207,10 +207,7 @@ function activeFiatCurrenciesStore(): FiatCurrenciesStore {
  * @param {*} ticker
  */
 export function hasFiatCurrencyTicker(ticker: string): boolean {
-  return Object.prototype.hasOwnProperty.call(
-    activeFiatCurrenciesStore().fiatCurrenciesByTicker,
-    ticker,
-  );
+  return Object.hasOwn(activeFiatCurrenciesStore().fiatCurrenciesByTicker, ticker);
 }
 
 /**
