@@ -1,28 +1,18 @@
 import { getErrorName as resolveErrorName } from "@ledgerhq/live-common/exchange/error";
-import { commandMeta } from "../../.bunli/commands.gen";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
+import { getCliProcessExitCode } from "../cli-process-exit-error";
+import { parseCommand } from "../shared/parse-command";
 import { track } from "./segment";
 
-const GROUP_COMMANDS = new Set<string>(Object.keys(commandMeta));
-
-export function parseCommand(argv: string[]): string | undefined {
-  const words: string[] = [];
-  for (const arg of argv) {
-    if (arg.startsWith("-")) break;
-    words.push(arg);
-  }
-  if (words.length === 0) {
-    return undefined;
-  }
-  return GROUP_COMMANDS.has(words[0]) && words[1] ? `${words[0]} ${words[1]}` : words[0];
-}
-
 function getErrorName(error: unknown): string {
+  // A non-zero exit with no thrown error, or an explicit CliProcessExitError,
+  // is an intentional process exit rather than a runtime failure.
+  if (error === undefined || getCliProcessExitCode(error) !== null) return "process_exit";
   if (error instanceof WalletCliDeviceError) return error.state.code;
   return resolveErrorName(error) ?? "unknown";
 }
 
-export function trackCommandInvoked(command: string, argv: string[]): void {
+function trackCommandInvoked(command: string, argv: string[]): void {
   track("command_invoked", {
     page: command,
     command,
@@ -33,10 +23,43 @@ export function trackCommandInvoked(command: string, argv: string[]): void {
   });
 }
 
-export function trackCommandCompleted(command: string, durationMs: number): void {
+function trackCommandCompleted(command: string, durationMs: number): void {
   track("command_completed", { page: command, durationMs });
 }
 
-export function trackCommandFailed(command: string, durationMs: number, error: unknown): void {
+function trackCommandFailed(command: string, durationMs: number, error: unknown): void {
   track("command_failed", { page: command, durationMs, errorName: getErrorName(error) });
+}
+
+/**
+ * Runs a CLI command while emitting its lifecycle analytics (invoked/completed/failed)
+ * and measuring its duration. Preserves the entrypoint's exit-code semantics: a
+ * CliProcessExitError is converted to its numeric code, any other non-zero outcome is
+ * treated as a failure, and unexpected errors are rethrown after tracking.
+ */
+export async function withCommandLifecycleAnalytics(
+  argv: string[],
+  run: () => Promise<number>,
+): Promise<number> {
+  const command = parseCommand(argv);
+  const startedAt = Date.now();
+  if (command) trackCommandInvoked(command, argv);
+
+  let exitCode = 0;
+  let failure: unknown;
+  try {
+    exitCode = await run();
+  } catch (e) {
+    failure = e;
+    exitCode = getCliProcessExitCode(e) ?? 1;
+  }
+
+  if (command) {
+    const durationMs = Date.now() - startedAt;
+    if (exitCode === 0) trackCommandCompleted(command, durationMs);
+    else trackCommandFailed(command, durationMs, failure);
+  }
+
+  if (failure && getCliProcessExitCode(failure) === null) throw failure;
+  return exitCode;
 }
