@@ -468,7 +468,7 @@ class HumanCommandOutput implements CommandOutput {
     approvalTxHash?: string;
     swapTxHash?: string;
   }): void {
-    writeStdout(`${colors.bold("Pipeline:")} die (${args.plan})\n`);
+    writeStdout(`${colors.bold("Pipeline:")} (${args.plan})\n`);
     writeStdout(`${colors.bold("From:")} ${args.from}\n`);
     writeStdout(`${colors.bold("To:")} ${args.to}\n`);
     writeStdout(`${colors.bold("Provider:")} ${args.provider}\n`);
@@ -744,7 +744,6 @@ class JsonCommandOutput implements CommandOutput {
   }): void {
     this._writeNdjson(
       this._envelope({
-        pipeline: "die",
         plan: args.plan,
         from: args.from,
         to: args.to,
