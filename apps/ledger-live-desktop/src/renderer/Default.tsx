@@ -75,7 +75,7 @@ import {
   preloadBackgrounds,
 } from "LLD/components/Page/backgrounds";
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
-const PortfolioPage = lazy(() => import("LLD/features/Portfolio/PortfolioPage"));
+const PortfolioPage = lazy(() => import("LLD/features/Portfolio/screens/PortfolioPage"));
 const Settings = lazy(() => import("~/renderer/screens/settings"));
 const Accounts = lazy(() => import("~/renderer/screens/accounts"));
 const Card = lazy(() => import("~/renderer/screens/card"));
