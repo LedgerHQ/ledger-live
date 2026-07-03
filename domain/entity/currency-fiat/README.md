@@ -86,14 +86,18 @@ covers every fiat ticker it ships (163 currencies). Each currency lives in its o
 
 ```
 src/
-  define.ts               fiat() helper — parses input through FiatCurrencySchema
-  schema.ts               FiatCurrencySchema + inferred FiatCurrency type
-  schema.mock.ts          mockFiatCurrency() factory
-  registry.ts             FIAT_CURRENCIES_REGISTRY — keyed by currency id
-                          FIAT_CURRENCIES_IDS — flat array of all known ids
-  supportedFiatsSlice.ts  RTK slice — runtime-supported list (CVS API + OFAC fallback)
+  define.ts       fiat() helper — parses input through FiatCurrencySchema
+  schema.ts       FiatCurrencySchema + inferred FiatCurrency type
+  schema.mock.ts  mockFiatCurrency() factory
+  constants.ts    FIAT_CURRENCIES_REGISTRY, FIAT_CURRENCIES_IDS, FIAT_CURRENCIES_BY_TICKER
+                  OFAC_FIAT_TICKERS, FALLBACK_FIAT_TICKERS
+  types.ts        SupportedFiatsState
+  utils.ts        getFiatCurrencyByTicker
+  internals.ts    buildFallbackFiats (package-internal, not re-exported)
+  slice.ts        supportedFiatsSlice, setFiats
+  selector.ts     selectSupportedFiats
   currencies/
-    index.ts              barrel export
+    index.ts      barrel export
     usd.ts  eur.ts  gbp.ts  ...   one file per currency (named by id)
 scripts/
   generate-currencies.mts   codegen — run when the legacy fiat list changes

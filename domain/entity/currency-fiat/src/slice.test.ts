@@ -57,8 +57,7 @@ describe("setFiats", () => {
     const store = makeStore();
     const before = selectSupportedFiats(store.getState());
     store.dispatch(setFiats([]));
-    // State reference is unchanged — Immer returns the same draft when nothing mutated.
-    expect(selectSupportedFiats(store.getState())).toStrictEqual(before);
+    expect(selectSupportedFiats(store.getState())).toBe(before);
   });
 });
 
