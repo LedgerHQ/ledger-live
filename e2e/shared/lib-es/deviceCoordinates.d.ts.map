@@ -1,0 +1,1 @@
+{"version":3,"file":"deviceCoordinates.d.ts","sourceRoot":"","sources":["../src/deviceCoordinates.ts"],"names":[],"mappings":"AAGA,KAAK,aAAa,GACd,iBAAiB,GACjB,kBAAkB,GAClB,YAAY,GACZ,cAAc,GACd,WAAW,CAAC;AAiChB,wBAAgB,oBAAoB,CAAC,GAAG,EAAE,aAAa,GAAG;IAAE,CAAC,EAAE,MAAM,CAAC;IAAC,CAAC,EAAE,MAAM,CAAA;CAAE,CAQjF"}

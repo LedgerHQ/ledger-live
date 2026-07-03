@@ -1,0 +1,1 @@
+{"version":3,"file":"utxoAddressCache.d.ts","sourceRoot":"","sources":["../src/utxoAddressCache.ts"],"names":[],"mappings":"AAOA,OAAO,KAAK,EAAE,OAAO,EAAE,YAAY,EAAE,MAAM,gBAAgB,CAAC;AAE5D,eAAO,MAAM,uBAAuB,uBAAuB,CAAC;AAE5D,wBAAgB,uBAAuB,IAAI,MAAM,GAAG,IAAI,CAGvD;AAED,wBAAgB,oBAAoB,CAAC,OAAO,EAAE,OAAO,GAAG,YAAY,GAAG,MAAM,GAAG,IAAI,CAOnF"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"Delegate.d.ts","sourceRoot":"","sources":["../../src/models/Delegate.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,MAAM,iBAAiB,CAAC;AAE1C,MAAM,MAAM,YAAY,GAAG,QAAQ,CAAC;AAEpC,qBAAa,QAAQ;IAEV,OAAO,EAAE,OAAO;IAChB,MAAM,EAAE,MAAM;IACd,QAAQ,EAAE,MAAM;gBAFhB,OAAO,EAAE,OAAO,EAChB,MAAM,EAAE,MAAM,EACd,QAAQ,EAAE,MAAM;CAE1B"}
