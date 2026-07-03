@@ -1,5 +1,9 @@
-import { getFiatCurrencyByTicker, hasFiatCurrencyTicker } from "@ledgerhq/cryptoassets";
-import { FiatCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  getCryptoCurrencyById,
+  getFiatCurrencyByTicker,
+  hasFiatCurrencyTicker,
+} from "@ledgerhq/cryptoassets";
+import { CryptoCurrency, FiatCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 
@@ -111,4 +115,26 @@ export async function listSupportedFiats(): Promise<FiatCurrency[]> {
     return userSupportedFiats || [];
   }
   return userSupportedFiats;
+}
+
+/**
+ * The only cryptocurrencies ever offered as a countervalue (Settings counter-value picker
+ * and the Market countervalue picker). Resolved once by id — never by ticker, which is
+ * ambiguous across currencies.
+ */
+export const countervalueCryptoCurrencies: CryptoCurrency[] = ["bitcoin", "ethereum"].map(id =>
+  getCryptoCurrencyById(id),
+);
+
+/**
+ * Resolve a countervalue crypto currency from its ticker within the closed set of
+ * {@link countervalueCryptoCurrencies}. Unlike findCryptoCurrencyByTicker, this never scans
+ * the whole registry, so it can't return an arbitrary ambiguous-ticker winner.
+ */
+export function findCountervalueCryptoCurrencyByTicker(
+  ticker: string | undefined | null,
+): CryptoCurrency | undefined {
+  if (!ticker) return undefined;
+  const upperTicker = ticker.toUpperCase();
+  return countervalueCryptoCurrencies.find(c => c.ticker === upperTicker);
 }

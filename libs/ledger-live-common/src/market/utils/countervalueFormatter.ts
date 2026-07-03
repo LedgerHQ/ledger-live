@@ -1,5 +1,6 @@
-import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
+import { findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
+import { findCountervalueCryptoCurrencyByTicker } from "../../currencies";
 
 const MAXIMUM_FRACTION_DIGITS = 8;
 
@@ -35,7 +36,9 @@ export const counterValueFormatter = ({
   }
   const normalizedCurrency = currency?.toUpperCase();
   const fiat = normalizedCurrency ? findFiatCurrencyByTicker(normalizedCurrency) : undefined;
-  const crypto = normalizedCurrency ? findCryptoCurrencyByTicker(normalizedCurrency) : undefined;
+  const crypto = normalizedCurrency
+    ? findCountervalueCryptoCurrencyByTicker(normalizedCurrency)
+    : undefined;
   const unit = fiat?.units[0] ?? crypto?.units[0];
   const baseOptions: Intl.NumberFormatOptions = {
     notation: shorten ? "compact" : "standard",

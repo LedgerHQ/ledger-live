@@ -3,7 +3,7 @@ import type { Action } from "redux-actions";
 import {
   getFiatCurrencyByTicker,
   findFiatCurrencyByTicker,
-  findCryptoCurrencyByTicker,
+  findCountervalueCryptoCurrencyByTicker,
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { createSelector } from "~/context/selectors";
@@ -710,7 +710,7 @@ export const settingsStoreSelector = (state: State): SettingsState => state.sett
 
 const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
   findFiatCurrencyByTicker(state.counterValue) ||
-  findCryptoCurrencyByTicker(state.counterValue) ||
+  findCountervalueCryptoCurrencyByTicker(state.counterValue) ||
   getFiatCurrencyByTicker("USD");
 
 export const counterValueCurrencySelector = createSelector(

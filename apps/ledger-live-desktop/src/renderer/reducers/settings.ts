@@ -1,10 +1,10 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getBrazeCampaignCutoff } from "@ledgerhq/live-common/braze/anonymousUsers";
 import {
-  getCryptoCurrencyById,
   getFiatCurrencyByTicker,
   findFiatCurrencyByTicker,
-  findCryptoCurrencyByTicker,
+  findCountervalueCryptoCurrencyByTicker,
+  countervalueCryptoCurrencies,
   listSupportedFiats,
   OFAC_CURRENCIES,
 } from "@ledgerhq/live-common/currencies/index";
@@ -620,9 +620,7 @@ export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults & Un
     unit: c.units[0],
   };
 };
-const bitcoin = getCryptoCurrencyById("bitcoin");
-const ethereum = getCryptoCurrencyById("ethereum");
-export const possibleIntermediaries = [bitcoin, ethereum];
+export const possibleIntermediaries = countervalueCryptoCurrencies;
 
 export type LangAndRegion = {
   language: string;
@@ -666,7 +664,7 @@ export const counterValueCurrencyLocalSelector = (state: SettingsState): Currenc
   }
   return (
     findFiatCurrencyByTicker(state.counterValue) ||
-    findCryptoCurrencyByTicker(state.counterValue) ||
+    findCountervalueCryptoCurrencyByTicker(state.counterValue) ||
     getFiatCurrencyByTicker("USD")
   );
 };

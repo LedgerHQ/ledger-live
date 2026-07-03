@@ -10,6 +10,7 @@ import reducer, {
   themeSelector,
   trackingEnabledSelector,
   canPushDeviceIdsSelector,
+  counterValueCurrencySelector,
   INITIAL_STATE as SETTINGS_INITIAL_STATE,
   filterValidSettings,
 } from "./settings";
@@ -292,6 +293,35 @@ describe("canPushDeviceIdsSelector", () => {
   it("returns true only when FF is on and user has opted in", () => {
     expect(canPushDeviceIdsSelector(optedInState())).toBe(true);
   });
+});
+
+describe("counterValueCurrencySelector", () => {
+  const resolve = (counterValue: string) =>
+    counterValueCurrencySelector({
+      ...({} as State),
+      settings: { ...SETTINGS_INITIAL_STATE, counterValue },
+    });
+
+  it("resolves a fiat ticker (EUR)", () => {
+    expect(resolve("EUR")).toMatchObject({ ticker: "EUR", type: "FiatCurrency" });
+  });
+
+  // BTC is also registered as a pseudo-fiat (see fiats.ts), so it resolves via
+  // findFiatCurrencyByTicker before ever reaching the crypto countervalue lookup.
+  it("resolves BTC to the Bitcoin pseudo-fiat currency", () => {
+    expect(resolve("BTC")).toMatchObject({ ticker: "BTC", type: "FiatCurrency" });
+  });
+
+  it("resolves ETH to ethereum by id, since ETH has no fiat entry", () => {
+    expect(resolve("ETH")).toMatchObject({ id: "ethereum", type: "CryptoCurrency" });
+  });
+
+  it.each([["CRO"], ["NOT_A_CURRENCY"]])(
+    "falls back to USD for an unresolvable ticker (%s)",
+    ticker => {
+      expect(resolve(ticker).ticker).toBe("USD");
+    },
+  );
 });
 
 describe("lastConnectedDeviceSelector", () => {

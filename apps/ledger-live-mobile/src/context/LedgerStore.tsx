@@ -6,7 +6,7 @@ import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardin
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import {
   findCryptoCurrencyById,
-  getCryptoCurrencyById,
+  countervalueCryptoCurrencies,
   listSupportedFiats,
 } from "@ledgerhq/live-common/currencies/index";
 import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";
@@ -316,11 +316,8 @@ async function hydrateCurrencies() {
 
 async function updateSupportedCountervalues(store: Store, settingsData: Partial<SettingsState>) {
   const supportedFiats = await retry(listSupportedFiats, MAX_RETRIES, RETRY_DELAY);
-  const bitcoin = getCryptoCurrencyById("bitcoin");
-  const ethereum = getCryptoCurrencyById("ethereum");
-  const possibleIntermediaries = [bitcoin, ethereum];
 
-  const supportedCounterValues = [...supportedFiats, ...possibleIntermediaries]
+  const supportedCounterValues = [...supportedFiats, ...countervalueCryptoCurrencies]
     .map(currency => ({
       value: currency.ticker,
       ticker: currency.ticker,

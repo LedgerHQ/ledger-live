@@ -91,7 +91,8 @@ export function useMarket() {
   const marketCurrentPage = useSelector(marketCurrentPageSelector);
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const locale = useSelector(localeSelector);
-  const settingsCounterValue = useSelector(counterValueCurrencySelector).ticker.toLowerCase();
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const settingsCounterValue = counterValueCurrency.ticker.toLowerCase();
 
   const REFRESH_RATE = resolveRefreshRate(lldRefreshMarketDataFeature?.params?.refreshTime);
 

@@ -1,4 +1,4 @@
-import { findCryptoCurrencyByTicker } from "@ledgerhq/cryptoassets";
+import { findCountervalueCryptoCurrencyByTicker } from "../../currencies";
 import { useSupportedCounterCurrencies } from "../../cg-client/hooks/useCoingeckoDataProvider";
 
 export type MarketCounterCurrencyResolution = {
@@ -28,7 +28,8 @@ export function useResolveMarketCounterCurrency({
   const displayCounterCurrency = counterCurrency?.toLowerCase();
   const isUsd = displayCounterCurrency === "usd";
   const isCryptoCountervalue = Boolean(
-    displayCounterCurrency && findCryptoCurrencyByTicker(displayCounterCurrency.toUpperCase()),
+    displayCounterCurrency &&
+    findCountervalueCryptoCurrencyByTicker(displayCounterCurrency.toUpperCase()),
   );
 
   const cryptoFallback = fallbackForCryptoCountervalues && isCryptoCountervalue;

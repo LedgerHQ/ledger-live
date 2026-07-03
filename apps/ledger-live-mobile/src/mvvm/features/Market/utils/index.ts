@@ -2,7 +2,7 @@ import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/type
 import { getSortParam } from "@ledgerhq/live-common/market/utils/index";
 import { rangeDataTable } from "@ledgerhq/live-common/cg-client/utils/rangeDataTable";
 import {
-  findCryptoCurrencyByTicker,
+  findCountervalueCryptoCurrencyByTicker,
   findFiatCurrencyByTicker,
 } from "@ledgerhq/live-common/currencies/index";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
@@ -82,7 +82,7 @@ const getNumberFormatter = (
 
   const normalizedCurrency = currency.toUpperCase();
   const fiat = findFiatCurrencyByTicker(normalizedCurrency);
-  const crypto = findCryptoCurrencyByTicker(normalizedCurrency);
+  const crypto = findCountervalueCryptoCurrencyByTicker(normalizedCurrency);
   const unit = fiat?.units[0] ?? crypto?.units[0];
   const formatterKey = `${normalizedCurrency}:${shorten ? "short" : "full"}`;
 

@@ -22,6 +22,7 @@ import reducer, {
   filterValidSettings,
   trackingEnabledSelector,
   canPushDeviceIdsSelector,
+  counterValueCurrencyLocalSelector,
 } from "./settings";
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
@@ -803,6 +804,30 @@ describe("trackingEnabledSelector", () => {
       }),
     ).toBe(true);
   });
+});
+
+describe("counterValueCurrencyLocalSelector", () => {
+  const resolve = (counterValue: string) =>
+    counterValueCurrencyLocalSelector({ ...SETTINGS_INITIAL_STATE, counterValue });
+
+  it("resolves a fiat ticker (EUR)", () => {
+    expect(resolve("EUR")).toMatchObject({ ticker: "EUR", type: "FiatCurrency" });
+  });
+
+  it("resolves BTC to the Bitcoin pseudo-fiat currency", () => {
+    expect(resolve("BTC")).toMatchObject({ ticker: "BTC", type: "FiatCurrency" });
+  });
+
+  it("resolves ETH to ethereum by id, since ETH has no fiat entry", () => {
+    expect(resolve("ETH")).toMatchObject({ id: "ethereum", type: "CryptoCurrency" });
+  });
+
+  it.each([["CRO"], ["NOT_A_CURRENCY"]])(
+    "falls back to USD for an unresolvable ticker (%s)",
+    ticker => {
+      expect(resolve(ticker).ticker).toBe("USD");
+    },
+  );
 });
 
 describe("canPushDeviceIdsSelector", () => {
