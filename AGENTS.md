@@ -19,3 +19,16 @@ For general test, build and check recipes see [/docs/repo-commands.md](/docs/rep
 ## Validate Before Finishing
 
 Always follow the [validate-before-finishing](/docs/validate-before-finishing.md) instructions before completing code changes.
+
+## Keep the external services catalog up to date
+
+- [/docs/services.md](/docs/services.md) lists every external service the apps contact (domain, how it's managed, scope/team).
+- When you add, remove, or change a service — a new entry in `libs/env/src/env.ts`, a hardcoded endpoint, a coin/family config change, or a new SDK dependency that phones home — update the matching table in `docs/services.md`.
+
+## Read READMEs for packages where you're working
+
+See examples:
+
+- **Entity packages** (`domain/entity/`): read `domain/entity/README.md`
+- **API packages** (`domain/api/`): read `domain/api/README.md`
+- **Shared packages** (`shared/**`): read `shared/README.md`
