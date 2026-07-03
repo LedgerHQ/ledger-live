@@ -160,7 +160,6 @@ const defaultPortfolioMock = createPortfolioMock({
 
 describe("PortfolioView", () => {
   const defaultProps = {
-    isWallet40Enabled: true,
     totalAccounts: 5,
     totalOperations: 10,
     totalCurrencies: 3,
@@ -551,44 +550,21 @@ describe("PortfolioView", () => {
   describe("AddAccount CTA", () => {
     it("should render AddAccount CTA when user has zero accounts, Wallet 4.0 is enabled, and asset section is not displayed", () => {
       render(
-        <PortfolioView
-          {...defaultProps}
-          totalAccounts={0}
-          isWallet40Enabled={true}
-          shouldDisplayAssetSection={false}
-        />,
+        <PortfolioView {...defaultProps} totalAccounts={0} shouldDisplayAssetSection={false} />,
       );
 
       expect(screen.getByTestId("portfolio-add-account-button")).toBeVisible();
     });
 
     it("should not render AddAccount CTA when user has accounts", () => {
-      render(<PortfolioView {...defaultProps} totalAccounts={3} isWallet40Enabled={true} />);
-
-      expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
-    });
-
-    it("should not render AddAccount CTA when Wallet 4.0 is disabled", () => {
-      render(
-        <PortfolioView
-          {...defaultProps}
-          totalAccounts={0}
-          isWallet40Enabled={false}
-          shouldDisplayAssetSection={false}
-        />,
-      );
+      render(<PortfolioView {...defaultProps} totalAccounts={3} />);
 
       expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
     });
 
     it("should not render AddAccount CTA when asset section is displayed", () => {
       render(
-        <PortfolioView
-          {...defaultProps}
-          totalAccounts={0}
-          isWallet40Enabled={true}
-          shouldDisplayAssetSection={true}
-        />,
+        <PortfolioView {...defaultProps} totalAccounts={0} shouldDisplayAssetSection={true} />,
       );
 
       expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();

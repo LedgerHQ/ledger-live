@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { PageViewModelResult } from "./usePageViewModel";
-import { ClassicLayout, Wallet40Layout } from "./components";
+import { Wallet40Layout } from "./components";
 import RightPanel from "LLD/components/RightPanel";
 import Wallet40TopBar from "LLD/components/TopBar";
 
@@ -13,13 +13,10 @@ type PageViewProps = PageViewModelResult & {
 /**
  * PageView
  * Main layout component that renders TopBar and content area
- * Switches between ClassicLayout and Wallet40Layout based on feature flag
  */
 export const PageView = memo(function PageView({
   children,
   pageScrollerRef,
-  isScrollAtUpperBound,
-  isWallet40Enabled,
   shouldDisplayBrazePlacement,
   pathname,
   shouldRenderRightPanel,
@@ -27,18 +24,14 @@ export const PageView = memo(function PageView({
   return (
     <div className="relative flex flex-1 flex-col min-w-0">
       <Wallet40TopBar />
-      {isWallet40Enabled ? (
-        <Wallet40Layout
-          scrollerRef={pageScrollerRef}
-          rightPanel={shouldRenderRightPanel ? <RightPanel /> : undefined}
-        >
-          {children}
-        </Wallet40Layout>
-      ) : (
-        <ClassicLayout scrollerRef={pageScrollerRef} isScrollAtUpperBound={isScrollAtUpperBound}>
-          {children}
-        </ClassicLayout>
-      )}
+
+      <Wallet40Layout
+        scrollerRef={pageScrollerRef}
+        rightPanel={shouldRenderRightPanel ? <RightPanel /> : undefined}
+      >
+        {children}
+      </Wallet40Layout>
+
       {/* Only on dashboard; hide sticky variant when Braze placement (cards shown in banner only) */}
       {pathname === "/" && !shouldDisplayBrazePlacement && (
         <ActionContentCards variant={ABTestingVariants.variantB} />

@@ -3,11 +3,16 @@ import { AppPage } from "tests/page/abstractClasses";
 import { expect } from "@playwright/test";
 
 export class PortfolioPage extends AppPage {
-  readonly emptyStateTitle = this.page.getByTestId("portfolio-empty-state-title");
-  private addAccountButton = this.page.getByTestId("portfolio-empty-state-add-account-button");
-  private buySellEntryButton = this.page.getByTestId("buy-sell-entry-button");
+  private addAccountButton = this.page.getByTestId("portfolio-add-account-button");
+  // private buySellEntryButton = this.page.getByTestId("buy-sell-entry-button");
+  private buyQuickActionButton = this.page.getByTestId("quick-action-button-buy");
+  private sellQuickActionButton = this.page.getByTestId("quick-action-button-sell");
   private embeddedSwapContainer = this.page.getByTestId("embedded-swap-container");
-  private stakeEntryButton = this.page.getByTestId("stake-entry-button");
+  // private stakeEntryButton = this.page.getByTestId("stake-entry-button");
+  private readonly sidebarNavigation = this.page.getByTestId("sidebar-navigation");
+  private stakeEntryButton = this.sidebarNavigation
+    .getByRole("button", { name: /^(earn|stake|yield)$/i })
+    .or(this.page.getByTestId("drawer-earn-button"));
   private operationList = this.page.locator("#operation-list");
   private showAllButton = this.page.getByText("Show all");
   private assetRow = (asset: string) => this.page.getByTestId(`asset-row-${asset.toLowerCase()}`);
@@ -18,9 +23,15 @@ export class PortfolioPage extends AppPage {
     await this.addAccountButton.click();
   }
 
+  @step("Expect portfolio to be in empty mode")
+  async expectEmptyPortfolio() {
+    await expect(this.addAccountButton).toBeVisible();
+  }
+
   @step("Check 'Buy/Sell' button visibility")
   async checkBuySellButtonVisibility() {
-    await expect(this.buySellEntryButton).toBeVisible();
+    await expect(this.buyQuickActionButton).toBeVisible();
+    await expect(this.sellQuickActionButton).toBeVisible();
   }
 
   @step("Check embedded swap container visibility")
@@ -33,14 +44,17 @@ export class PortfolioPage extends AppPage {
     await expect(this.stakeEntryButton).toBeVisible();
   }
 
+  @step("Click Buy quick action")
   async startBuyFlow() {
-    await this.buySellEntryButton.click();
+    await this.buyQuickActionButton.click();
+    await expect(this.page).toHaveURL(/\/exchange(?:\/|$|\?|#)/);
   }
 
   @step("Click stake button")
   async startStakeFlow() {
     await this.stakeEntryButton.click();
-    await this.page.getByText("Select asset").first().waitFor({ state: "visible" });
+    await expect(this.page).toHaveURL(/\/earn(?:\/|$|\?|#)/);
+    // await this.page.getByText("Select asset").first().waitFor({ state: "visible" });
   }
 
   @step("Navigate to asset $0")

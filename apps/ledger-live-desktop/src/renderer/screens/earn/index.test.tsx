@@ -143,28 +143,6 @@ describe("Earn screen", () => {
     useLocationSpy.mockRestore();
   });
 
-  it("passes fallback uiVersion and lw40enabled=false when feature is disabled", () => {
-    render(<Earn />, {
-      initialState: withFlagOverrides({
-        ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
-        ptxEarnUi: { enabled: true, params: { value: "v2" } },
-        lwdWallet40: { enabled: false },
-        stakePrograms: {
-          enabled: true,
-          params: { list: [], redirects: {} },
-        } as never,
-      }),
-    });
-
-    expect(mockWebPlatformPlayer).toHaveBeenCalled();
-    const lastCall = mockWebPlatformPlayer.mock.calls.at(-1)?.[0] as unknown as {
-      inputs: Record<string, string | undefined>;
-    };
-
-    expect(lastCall.inputs.uiVersion).toBe("v1");
-    expect(lastCall.inputs.lw40enabled).toBe("false");
-  });
-
   it("passes uiVersion v3 when earn upselling is enabled", () => {
     render(<Earn />, {
       initialState: withFlagOverrides({

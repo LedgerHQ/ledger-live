@@ -23,7 +23,6 @@ export interface PortfolioViewModelResult {
   readonly shouldDisplayBorrowSection: boolean;
   readonly shouldDisplayOperationsList: boolean;
   readonly shouldDisplayBrazePlacement: boolean;
-  readonly isWallet40Enabled: boolean;
   readonly filterOperations: (operation: Operation, account: AccountLike) => boolean;
   readonly accounts: AccountLike[];
   readonly t: TFunction;
@@ -42,7 +41,6 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplayAssetDiscoverability,
     shouldDisplayOperationsList,
     shouldDisplayBrazePlacement,
-    isEnabled: isWallet40Enabled,
   } = useWalletFeaturesConfig("desktop");
   const borrowConfig = useBorrowLiveConfig();
   const shouldDisplayBorrowSection = borrowConfig?.enabled ?? false;
@@ -89,7 +87,6 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplayBorrowSection,
     shouldDisplayOperationsList,
     shouldDisplayBrazePlacement,
-    isWallet40Enabled,
     filterOperations,
     accounts,
     t,

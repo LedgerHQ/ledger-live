@@ -21,8 +21,6 @@ jest.mock("LLD/components/RightPanel", () => ({
 describe("PageView - TopBar", () => {
   const defaultProps = {
     pageScrollerRef: jest.fn(),
-    isScrollAtUpperBound: true,
-    isWallet40Enabled: false,
     shouldDisplayBrazePlacement: false,
     pathname: "/dashboard",
     shouldRenderRightPanel: false,
@@ -30,7 +28,7 @@ describe("PageView - TopBar", () => {
 
   it("renders Wallet40TopBar", () => {
     render(
-      <PageView {...defaultProps} isWallet40Enabled={true}>
+      <PageView {...defaultProps}>
         <div>Test Content</div>
       </PageView>,
       {
@@ -43,6 +41,5 @@ describe("PageView - TopBar", () => {
     );
 
     expect(screen.getByTestId("wallet40-topbar")).toBeVisible();
-    expect(screen.queryByTestId("classic-topbar")).toBeNull();
   });
 });

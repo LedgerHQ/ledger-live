@@ -8,9 +8,6 @@ import path from "path";
 test.use({
   userdata: "1AccountBTC1AccountETH",
   featureFlags: {
-    lwdWallet40: {
-      enabled: false,
-    },
     noah: { enabled: false },
   },
   simulateCamera: path.join(

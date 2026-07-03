@@ -75,7 +75,7 @@ import {
   preloadBackgrounds,
 } from "LLD/components/Page/backgrounds";
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
-const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
+const PortfolioPage = lazy(() => import("LLD/features/Portfolio/PortfolioPage"));
 const Settings = lazy(() => import("~/renderer/screens/settings"));
 const Accounts = lazy(() => import("~/renderer/screens/accounts"));
 const Card = lazy(() => import("~/renderer/screens/card"));
@@ -269,7 +269,7 @@ const MainAppContent = ({
         <VaultSignerBanner />
       </TopBannerContainer>
       <Routes>
-        <Route path="/" element={withSuspense(Dashboard)({})} />
+        <Route path="/" element={withSuspense(PortfolioPage)({})} />
         <Route path="/settings/*" element={withSuspense(Settings)({})} />
         <Route path="/accounts" element={withSuspense(Accounts)({})} />
         <Route
@@ -331,17 +331,13 @@ export const MainAppLayout = () => {
   const { pathname } = useLocation();
   const theme = useSelector(themeSelector);
   const styledComponentsTheme = useTheme();
-  const {
-    isEnabled: isWallet40Enabled,
-    shouldDisplayAssetSection,
-    shouldDisplayAggregatedAssets,
-  } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAssetSection, shouldDisplayAggregatedAssets } =
+    useWalletFeaturesConfig("desktop");
   const shouldShowDeferredModals = useShouldShowDeferredModals();
 
   const backgroundImage = getPageBackground(pathname, theme);
 
-  const useWallet40Layout =
-    isWallet40Enabled && isWallet40Page(pathname, { shouldDisplayAggregatedAssets });
+  const useWallet40Layout = isWallet40Page(pathname, { shouldDisplayAggregatedAssets });
 
   useEffect(() => {
     preloadBackgrounds();

@@ -8,8 +8,6 @@ import { useRightPanelSwapAvailability } from "LLD/components/RightPanel/useRigh
 
 export interface PageViewModelResult {
   readonly pageScrollerRef: (node: HTMLDivElement | null) => void;
-  readonly isScrollAtUpperBound: boolean;
-  readonly isWallet40Enabled: boolean;
   readonly shouldDisplayBrazePlacement: boolean;
   readonly pathname: string;
   readonly shouldRenderRightPanel: boolean;
@@ -17,13 +15,9 @@ export interface PageViewModelResult {
 
 export const usePageViewModel = (): PageViewModelResult => {
   const [scrollerElement, setScrollerElement] = useState<HTMLDivElement | null>(null);
-  const [isScrollAtUpperBound, setScrollAtUpperBound] = useState(true);
   const { pathname } = useLocation();
-  const {
-    isEnabled: isWallet40Enabled,
-    shouldDisplayBrazePlacement,
-    shouldDisplayAggregatedAssets,
-  } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayBrazePlacement, shouldDisplayAggregatedAssets } =
+    useWalletFeaturesConfig("desktop");
   const isRightPanelEnabled = useRightPanelVisibility();
   const isSwapAvailableForRoute = useRightPanelSwapAvailability(pathname);
 
@@ -61,28 +55,8 @@ export const usePageViewModel = (): PageViewModelResult => {
     scrollToTop(false);
   }, [pathname, scrollToTop]);
 
-  // Attach scroll listener when element is available
-  useLayoutEffect(() => {
-    if (!scrollerElement) return;
-
-    const listener = () => {
-      setScrollAtUpperBound(scrollerElement.scrollTop === 0);
-    };
-
-    // Check initial scroll position
-    listener();
-
-    scrollerElement.addEventListener("scroll", listener, { passive: true });
-
-    return () => {
-      scrollerElement.removeEventListener("scroll", listener);
-    };
-  }, [scrollerElement]);
-
   return {
     pageScrollerRef,
-    isScrollAtUpperBound,
-    isWallet40Enabled,
     shouldDisplayBrazePlacement,
     pathname,
     shouldRenderRightPanel,

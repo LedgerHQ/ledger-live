@@ -14,9 +14,6 @@ test.use({
   userdata: "1AccountBTC1AccountETH",
   featureFlags: {
     portfolioExchangeBanner: { enabled: true },
-    lwdWallet40: {
-      enabled: false,
-    },
   },
 });
 
@@ -57,7 +54,7 @@ test("Buy / Sell @smoke", async ({ page, electronApp }) => {
   // const settingsPage = new SettingsPage(page);
   // const marketPage = new MarketPage(page);
 
-  await test.step("Navigate to Buy app from portfolio banner", async () => {
+  await test.step("Navigate to Buy app from portfolio quick action", async () => {
     await portfolioPage.startBuyFlow();
     await liveAppWebview.waitForLoaded();
     await liveAppWebview.waitForText("theme: dark");

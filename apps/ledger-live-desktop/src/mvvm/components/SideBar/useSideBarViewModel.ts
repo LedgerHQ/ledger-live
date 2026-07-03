@@ -139,19 +139,14 @@ export function useSideBarViewModel(): SideBarViewModel {
   const recoverFeature = useFeature("protectServicesDesktop");
   const recoverHomePath = useAccountPath(recoverFeature);
 
-  const {
-    shouldDisplayAssetSection,
-    shouldDisplayMyWallet: isMyWalletEnabled,
-    isEnabled: isWallet40Enabled,
-  } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAssetSection, shouldDisplayMyWallet: isMyWalletEnabled } =
+    useWalletFeaturesConfig("desktop");
 
   const accountsSidebarPath = getAccountsSidebarPath(shouldDisplayAssetSection);
 
   const wasNarrowRef = useRef<boolean | null>(null);
 
   useEffect(() => {
-    if (!isWallet40Enabled) return;
-
     const handleResize = () => {
       const isNarrow = window.innerWidth <= HIDE_BAR_THRESHOLD;
 
@@ -167,7 +162,7 @@ export function useSideBarViewModel(): SideBarViewModel {
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [isWallet40Enabled, dispatch]);
+  }, [dispatch]);
 
   const handleCollapsedChange = useCallback(
     (newCollapsed: boolean) => {
