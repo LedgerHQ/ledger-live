@@ -2,7 +2,7 @@ import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useRightPanelVisibility } from "../useRightPanelVisibility";
 
 describe("useRightPanelVisibility", () => {
-  it("returns true when wallet 4.0 and ptxSwap flags are enabled", () => {
+  it("returns true when ptxSwap flag is enabled", () => {
     const { result } = renderHook(() => useRightPanelVisibility(), {
       initialState: withFlagOverrides({
         ptxSwapLiveAppOnPortfolio: { enabled: true },
