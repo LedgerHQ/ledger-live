@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor, act } from "tests/testSetup";
+import { render, screen, waitFor, act, withFlagOverrides } from "tests/testSetup";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import {
@@ -158,7 +158,11 @@ describe("LiveAppModal Integration", () => {
     });
 
     it("should merge earn extra inputs when useCase is 'earn'", async () => {
-      const { store } = render(<LiveAppModal />);
+      const { store } = render(<LiveAppModal />, {
+        initialState: withFlagOverrides({
+          lwdWallet40: { enabled: true },
+        }),
+      });
 
       act(() => {
         store.dispatch(setLiveAppModal({ ...baseParams, useCase: "earn" }));
@@ -171,7 +175,7 @@ describe("LiveAppModal Integration", () => {
       expect(lastCall.inputs).toEqual(
         expect.objectContaining({
           uiVersion: "v1",
-          lw40enabled: "false",
+          lw40enabled: "true",
           ethDepositCohort: expect.any(String),
         }),
       );
