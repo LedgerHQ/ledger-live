@@ -1,5 +1,3 @@
-import BigNumber from "bignumber.js";
-import { APTOS_NON_HARDENED_DERIVATION_PATH_REGEX } from "@ledgerhq/coin-aptos/constants";
 import { getCurrencyConfiguration } from "./config";
 import { findCryptoCurrencyById } from "./currencies";
 
@@ -23,6 +21,10 @@ export type DataModel<R, M> = {
 /**
  * this is to be implemented to create a DataModel
  * @memberof DataModel
+ *
+ * IMPORTANT: This file must remain domain-agnostic. Do NOT add any account-specific,
+ * coin-specific, or app-specific migration logic here. Such logic belongs in the
+ * app-level accountModel (apps/ledger-live-desktop, apps/ledger-live-mobile).
  */
 export type DataSchema<R, M> = {
   // write extra logic to transform raw data into your model
@@ -41,31 +43,7 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
   const version = migrations.length;
   async function decodeModel(raw) {
     let { data } = raw;
-    const { currencyId, freshAddressPath } = data;
-    const currency = findCryptoCurrencyById(currencyId);
-    // Set 'change' and 'address_index' levels to be hardened for Aptos derivation path
-    if (
-      currencyId === "aptos" &&
-      freshAddressPath.match(APTOS_NON_HARDENED_DERIVATION_PATH_REGEX)
-    ) {
-      data.freshAddressPath = freshAddressPath
-        .split("/")
-        .map(value => (value.endsWith("'") ? value : value + "'"))
-        .join("/");
-    }
-
-    if (currencyId == "crypto_org" && !data.cosmosResources) {
-      data.cosmosResources = {
-        delegations: [],
-        redelegations: [],
-        unbondings: [],
-        delegatedBalance: new BigNumber(0),
-        pendingRewardsBalance: new BigNumber(0),
-        unbondingBalance: new BigNumber(0),
-        withdrawAddress: data.freshAddress,
-        sequence: 0,
-      };
-    }
+    const currency = findCryptoCurrencyById(data.currencyId);
     if (currency && currency.family == "evm" && !getCurrencyConfiguration(currency.id).showNfts) {
       if (Array.isArray(data.operations)) {
         data.operations = data.operations.filter(tx => !("nftOperations" in tx));
