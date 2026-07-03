@@ -901,6 +901,6 @@ flowchart LR
   - Will the APDUs be the same across all apps (once supported on all apps) ?
     -> this will impact if we have 1 set of intents for ALL APPS or 1 set PER-APP
   - Chain ID: is number relevant ? cf. Cosmos
-  - Blockchain ID should be in contact ?
+  - Blockchain ID should be in contact ? OR just use common derivation path in contact object (regardless of the app/blockchain)
   -> Depending on the answer, we can maybe remove "evm" specific wording and make those intents and types more generic.
   -> In that case, we might have to expose something to derive the "initialization context" required by the DIE (app name, min app version) from the contact data
