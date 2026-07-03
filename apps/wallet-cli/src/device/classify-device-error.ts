@@ -124,7 +124,7 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
 
   // DMK refused-by-user (RefusedByUserDAError) happens when the user declines the OpenApp prompt.
   if (hasTag(error, "RefusedByUserDAError")) {
-    return { code: "rejected", context: ctx.rejectedContext ?? "open_app", deviceModelId: ctx.deviceModelId ?? "undefined" };
+    return { code: "rejected", context: ctx.rejectedContext ?? "open_app", deviceModelId: ctx.deviceModelId};
   }
 
   // OpenApp command error codes: 670a (app not found) / 6807 (app not installed).
