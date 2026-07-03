@@ -81,7 +81,7 @@ function classifyTransportStatusError(
       return {
         code: "rejected",
         context: ctx.rejectedContext ?? "sign",
-        deviceModelId: ctx.deviceModelId,
+        ...(ctx.deviceModelId ? { deviceModelId: ctx.deviceModelId } : {}),
       };
     case StatusCodes.CLA_NOT_SUPPORTED:
     case StatusCodes.INS_NOT_SUPPORTED:
@@ -131,7 +131,7 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
     return {
       code: "rejected",
       context: ctx.rejectedContext ?? "open_app",
-      deviceModelId: ctx.deviceModelId,
+      ...(ctx.deviceModelId ? { deviceModelId: ctx.deviceModelId } : {}),
     };
   }
 

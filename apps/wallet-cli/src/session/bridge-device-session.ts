@@ -37,7 +37,7 @@ export function withCurrencyDeviceSession<T>(
         deviceTimeoutMs: options.deviceTimeoutMs,
       });
     } catch (e) {
-      const deviceModelId = await getWalletCliDeviceModelId().catch(() => {});
+      const deviceModelId = await getWalletCliDeviceModelId().catch(() => undefined);
       throw WalletCliDeviceError.fromUnknown(e, { expectedApp: managerAppName, deviceModelId });
     }
     walletCliDebug("Device session ready.");
