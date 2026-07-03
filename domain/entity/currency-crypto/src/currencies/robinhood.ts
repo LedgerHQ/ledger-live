@@ -43,10 +43,10 @@ export const robinhood = currency({
   },
   explorerViews: [
     {
-      tx: "https://explorer.chain.robinhood.com/tx/$hash",
-      address: "https://explorer.chain.robinhood.com/address/$address",
+      tx: "https://robinhoodchain.blockscout.com/tx/$hash",
+      address: "https://robinhoodchain.blockscout.com/address/$address",
       token:
-        "https://explorer.chain.robinhood.com/address/$address?tab=token_transfer&token=$contractAddress",
+        "https://robinhoodchain.blockscout.com/address/$address?tab=token_transfer&token=$contractAddress",
     },
   ],
 });
