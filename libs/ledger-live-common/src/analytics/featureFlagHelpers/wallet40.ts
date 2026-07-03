@@ -24,7 +24,6 @@ export const getWallet40Attributes = (
     }),
     tour: wallet40FeatureFlag?.params?.tour ?? false,
     q2Tour: wallet40FeatureFlag?.params?.q2Tour ?? false,
-    mainNavigation: wallet40FeatureFlag?.params?.mainNavigation ?? false,
     lazyOnboarding: wallet40FeatureFlag?.params?.lazyOnboarding ?? false,
     assetSection: wallet40FeatureFlag?.params?.assetSection ?? false,
     brazePlacement: wallet40FeatureFlag?.params?.brazePlacement ?? false,

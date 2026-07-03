@@ -37,7 +37,6 @@ const makeConfig = (
   isEnabled: value,
   shouldDisplayGraphRework: value,
   shouldDisplayQuickActionCtas: value,
-  shouldDisplayWallet40MainNav: value,
   shouldUseLazyOnboarding: value,
   shouldDisplayTour: value,
   shouldDisplayQ2Tour: value,
@@ -56,7 +55,6 @@ const makeConfig = (
 const makeParams = (value: boolean): Wallet40Params => ({
   graphRework: value,
   quickActionCtas: value,
-  mainNavigation: value,
   lazyOnboarding: value,
   tour: value,
   q2Tour: value,
@@ -110,7 +108,6 @@ describe("useWalletFeaturesConfig hook", () => {
     describe.each(PLATFORMS)("on %s platform", platform => {
       it.each<[string, Wallet40Params, Partial<WalletFeaturesConfig>]>([
         ["graphRework", { graphRework: true }, { shouldDisplayGraphRework: true }],
-        ["mainNavigation", { mainNavigation: true }, { shouldDisplayWallet40MainNav: true }],
         ["lazyOnboarding", { lazyOnboarding: true }, { shouldUseLazyOnboarding: true }],
         ["tour", { tour: true }, { shouldDisplayTour: true }],
         ["q2Tour", { q2Tour: true }, { shouldDisplayQ2Tour: true }],

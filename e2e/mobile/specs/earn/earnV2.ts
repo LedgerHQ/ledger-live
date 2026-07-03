@@ -51,8 +51,6 @@ const FF_STAKE_PROGRAMS_MODAL: PartialFeatures = {
 let earnReady: Promise<string>;
 
 async function navigateToEarn() {
-  // EARN_V2_FLAGS always enables lwmWallet40 with mainNavigation: true,
-  // so the app always renders the Wallet 4.0 navigator for earnV2 tests.
   await app.mainNavigation.tapWallet40Tab("earn");
   await earnReady;
 }

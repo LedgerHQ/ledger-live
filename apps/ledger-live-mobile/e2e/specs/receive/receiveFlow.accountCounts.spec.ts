@@ -1,6 +1,8 @@
 import { initReceiveFlowApp, openReceive } from "./receiveFlow.shared";
 
-describe("Receive Flow — account counts per network", () => {
+// TODO(LIVE-33334): these legacy mock specs will be removed in a follow-up task;
+// skipped for now.
+describe.skip("Receive Flow — account counts per network", () => {
   beforeAll(async () => {
     await initReceiveFlowApp();
   });

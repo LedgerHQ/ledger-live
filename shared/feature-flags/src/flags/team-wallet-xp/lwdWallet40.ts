@@ -4,7 +4,6 @@ import { flagWith } from "../../define";
 export const lwdWallet40 = flagWith(
   {
     graphRework: z.boolean(),
-    mainNavigation: z.boolean(),
     tour: z.boolean(),
     q2Tour: z.boolean(),
     lazyOnboarding: z.boolean(),
@@ -22,7 +21,6 @@ export const lwdWallet40 = flagWith(
     enabled: false,
     params: {
       graphRework: true,
-      mainNavigation: true,
       tour: true,
       q2Tour: false,
       lazyOnboarding: true,

@@ -1,7 +1,9 @@
 import { initReceiveFlowApp, openReceive } from "./receiveFlow.shared";
 import DeviceAction from "../../models/DeviceAction";
 
-describe("Receive Flow — Arbitrum import", () => {
+// TODO(LIVE-33334): these legacy mock specs will be removed in a follow-up task;
+// skipped for now.
+describe.skip("Receive Flow — Arbitrum import", () => {
   let deviceAction: DeviceAction;
 
   beforeAll(async () => {

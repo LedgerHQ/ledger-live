@@ -33,75 +33,70 @@ describe("<AppsScreen />", () => {
     });
   });
 
-  describe.each([
-    { wallet40Enabled: true, mainNavigation: true },
-    { wallet40Enabled: false, mainNavigation: false },
-  ])("when wallet40Enabled is $wallet40Enabled", ({ wallet40Enabled, mainNavigation }) => {
-    const deviceInfo = aDeviceInfoBuilder({
-      version: "2.0.0",
-      isOSU: false,
-    });
+  describe.each([{ wallet40Enabled: true }, { wallet40Enabled: false }])(
+    "when wallet40Enabled is $wallet40Enabled",
+    ({ wallet40Enabled }) => {
+      const deviceInfo = aDeviceInfoBuilder({
+        version: "2.0.0",
+        isOSU: false,
+      });
 
-    const state = makeOverrideInitialState({
-      deviceModelId: DeviceModelId.nanoS,
-      version: "2.0.0",
-      hasCompletedOnboarding: true,
-      wired: true,
-      hasConnectedDevice: true,
-      lwmWallet40: {
-        enabled: wallet40Enabled,
-        params: { mainNavigation },
-      },
-    });
-    const dispatch = jest.fn();
-    const deviceId = DeviceModelId.nanoS;
-    const initialDeviceName = getProductName(deviceId);
-    const device = {
-      deviceId: DeviceModelId.nanoS,
-      deviceName: initialDeviceName,
-      modelId: DeviceModelId.nanoS,
-      wired: true,
-    } as Device;
-
-    it("should show firmware update banner when update is available", () => {
-      const appState = {
-        installQueue: ["Bitcoin"],
-        install: [{ name: "Bitcoin", version: "1.0.0" }],
-        uninstallQueue: [],
-        updateAllQueue: [],
-        recentlyInstalledApps: [],
-        installed: [],
-        apps: [],
-        deviceInfo,
-        deviceModel: getDeviceModel(DeviceModelId.nanoS),
-      } as unknown as State;
-
-      render(
-        <AppsScreen
-          state={appState}
-          dispatch={dispatch}
-          setStorageWarning={() => {}}
-          deviceId={deviceId}
-          initialDeviceName={initialDeviceName}
-          pendingInstalls={false}
-          deviceInfo={deviceInfo}
-          device={device}
-          tab={"INSTALLED_APPS"}
-          optimisticState={appState}
-          result={{} as ListAppsResult}
-          onLanguageChange={() => {}}
-          onBackFromUpdate={() => {}}
-        />,
-        {
-          overrideInitialState: state,
+      const state = makeOverrideInitialState({
+        deviceModelId: DeviceModelId.nanoS,
+        version: "2.0.0",
+        hasCompletedOnboarding: true,
+        wired: true,
+        hasConnectedDevice: true,
+        lwmWallet40: {
+          enabled: wallet40Enabled,
         },
-      );
+      });
+      const dispatch = jest.fn();
+      const deviceId = DeviceModelId.nanoS;
+      const initialDeviceName = getProductName(deviceId);
+      const device = {
+        deviceId: DeviceModelId.nanoS,
+        deviceName: initialDeviceName,
+        modelId: DeviceModelId.nanoS,
+        wired: true,
+      } as Device;
 
-      if (wallet40Enabled) {
+      it("should show firmware update banner when update is available", () => {
+        const appState = {
+          installQueue: ["Bitcoin"],
+          install: [{ name: "Bitcoin", version: "1.0.0" }],
+          uninstallQueue: [],
+          updateAllQueue: [],
+          recentlyInstalledApps: [],
+          installed: [],
+          apps: [],
+          deviceInfo,
+          deviceModel: getDeviceModel(DeviceModelId.nanoS),
+        } as unknown as State;
+
+        render(
+          <AppsScreen
+            state={appState}
+            dispatch={dispatch}
+            setStorageWarning={() => {}}
+            deviceId={deviceId}
+            initialDeviceName={initialDeviceName}
+            pendingInstalls={false}
+            deviceInfo={deviceInfo}
+            device={device}
+            tab={"INSTALLED_APPS"}
+            optimisticState={appState}
+            result={{} as ListAppsResult}
+            onLanguageChange={() => {}}
+            onBackFromUpdate={() => {}}
+          />,
+          {
+            overrideInitialState: state,
+          },
+        );
+
         expect(screen.getByTestId("wallet40-firmware-update-banner")).toBeOnTheScreen();
-      } else {
-        expect(screen.getByTestId("firmware-update-banner")).toBeOnTheScreen();
-      }
-    });
-  });
+      });
+    },
+  );
 });

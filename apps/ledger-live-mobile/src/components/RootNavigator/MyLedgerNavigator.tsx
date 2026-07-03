@@ -1,18 +1,14 @@
 import React, { useMemo } from "react";
-import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSelector } from "~/context/hooks";
 import { Box, IconsLegacy, Flex, Icons } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { ScreenName } from "~/const";
 import { hasAvailableUpdateSelector, lastSeenDeviceSelector } from "~/reducers/settings";
-import MyLedgerChooseDeviceScreen, { headerOptions } from "~/screens/MyLedgerChooseDevice";
+import MyLedgerChooseDeviceScreen from "~/screens/MyLedgerChooseDevice";
 import MyLedgerDeviceScreen from "~/screens/MyLedgerDevice";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import TabIcon from "../TabIcon";
-import { useIsNavLocked } from "./CustomBlockRouterNavigator";
 import { MyLedgerNavigatorStackParamList } from "./types/MyLedgerNavigator";
 import { wallet40HeaderOptions } from "~/screens/MyLedgerChooseDevice/wallet40HeaderOptions";
 
@@ -38,39 +34,23 @@ const Badge = () => {
   );
 };
 
+const wallet40GestureHeaderOptions = { ...wallet40HeaderOptions, gestureEnabled: true };
+
 export default function MyLedgerNavigator() {
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
-
-  const chooseDeviceOptions = useMemo(
-    () =>
-      shouldDisplayWallet40MainNav
-        ? { ...wallet40HeaderOptions, gestureEnabled: true }
-        : { ...headerOptions, gestureEnabled: false },
-    [shouldDisplayWallet40MainNav],
-  );
-
-  const myLedgerDeviceOptions = useMemo(
-    () => (shouldDisplayWallet40MainNav ? wallet40HeaderOptions : { title: "" }),
-    [shouldDisplayWallet40MainNav],
-  );
 
   return (
-    <Stack.Navigator
-      screenOptions={{
-        ...stackNavConfig,
-      }}
-    >
+    <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
         name={ScreenName.MyLedgerChooseDevice}
         component={MyLedgerChooseDeviceScreen}
-        options={chooseDeviceOptions}
+        options={wallet40GestureHeaderOptions}
       />
       <Stack.Screen
         name={ScreenName.MyLedgerDevice}
         component={MyLedgerDeviceScreen}
-        options={myLedgerDeviceOptions}
+        options={wallet40GestureHeaderOptions}
       />
     </Stack.Navigator>
   );
@@ -112,18 +92,3 @@ const DeviceIcon = ({ color, size = 16 }: { color?: string; size?: number }) => 
     icon
   );
 };
-
-export function ManagerTabIcon(
-  props: Omit<React.ComponentProps<typeof TabIcon>, "Icon" | "i18nKey">,
-) {
-  const isNavLocked = useIsNavLocked();
-
-  const content = <TabIcon {...props} Icon={DeviceIcon} i18nKey="tabs.manager" />;
-
-  if (isNavLocked) {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    return <TouchableOpacity onPress={() => {}}>{content}</TouchableOpacity>;
-  }
-
-  return content;
-}

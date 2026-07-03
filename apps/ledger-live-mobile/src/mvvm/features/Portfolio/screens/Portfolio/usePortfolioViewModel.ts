@@ -36,7 +36,6 @@ interface UsePortfolioViewModelResult {
   isAccountListUIEnabled: boolean;
   shouldDisplayAssetDiscoverability: boolean;
   shouldDisplayQuickActionCtas: boolean;
-  shouldDisplayWallet40MainNav: boolean;
   shouldDisplayAssetSection: boolean;
   shouldDisplayOperationsList: boolean;
   showAssets: boolean;
@@ -64,7 +63,6 @@ const usePortfolioViewModel = (navigation: {
   const {
     shouldDisplayGraphRework,
     shouldDisplayQuickActionCtas,
-    shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayOperationsList,
     shouldDisplayAssetDiscoverability,
@@ -73,7 +71,7 @@ const usePortfolioViewModel = (navigation: {
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
   const isFocused = useIsFocused();
-  const { backgroundColor } = useWallet40Theme("mobile");
+  const { backgroundColor } = useWallet40Theme();
 
   const mmkvMigrationFF = useFeature("llmMmkvMigration");
 
@@ -161,7 +159,6 @@ const usePortfolioViewModel = (navigation: {
     isAccountListUIEnabled,
     shouldDisplayAssetDiscoverability,
     shouldDisplayQuickActionCtas,
-    shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayOperationsList,
     showAssets,

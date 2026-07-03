@@ -8,7 +8,6 @@ export const WALLET_40_FEATURE_FLAGS = {
       marketBanner: true,
       graphRework: true,
       quickActionCtas: true,
-      mainNavigation: true,
       tour: true,
       lazyOnboarding: true,
       assetSection: true,

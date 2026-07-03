@@ -69,12 +69,11 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     handleHeightChange,
     onBackFromUpdate,
     goToAnalyticsAllocations,
-    shouldDisplayWallet40MainNav,
     shouldDisplayOperationsList,
     shouldAddBottomPaddingForLegacyAssets,
   } = usePortfolioViewModel(navigation);
 
-  const progressViewOffset = getProgressViewOffset(Platform.OS, shouldDisplayWallet40MainNav);
+  const progressViewOffset = getProgressViewOffset(Platform.OS);
 
   const { handleFlatListRef } = useScrollToTop();
 
@@ -209,7 +208,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           keyExtractor={(_: unknown, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
           testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
-          useSafeArea={!shouldDisplayWallet40MainNav}
+          useSafeArea={false}
           overrideRefreshControlProps={{ progressViewOffset }}
           isError={isSyncError}
         />

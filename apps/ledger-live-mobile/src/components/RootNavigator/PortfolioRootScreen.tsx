@@ -14,7 +14,6 @@ import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import Portfolio from "~/screens/Portfolio";
 import ReadOnlyPortfolio from "~/screens/Portfolio/ReadOnly";
 import WalletTabBackgroundGradient from "../WalletTab/WalletTabBackgroundGradient";
-import WalletTabHeader from "../WalletTab/WalletTabHeader";
 import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScrollManager";
 import { BaseComposite, StackNavigatorProps } from "./types/helpers";
 import { PortfolioNavigatorStackParamList } from "./types/PortfolioNavigator";
@@ -30,11 +29,8 @@ export default function PortfolioRootScreen({ navigation, route }: NavigationPro
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
 
-  const {
-    isEnabled: isNewPortfolioEnabled,
-    shouldDisplayWallet40MainNav: shouldDisplayWallet40TopBar,
-  } = useWalletFeaturesConfig("mobile");
-  const { backgroundColor } = useWallet40Theme("mobile");
+  const { isEnabled: isNewPortfolioEnabled } = useWalletFeaturesConfig("mobile");
+  const { backgroundColor } = useWallet40Theme();
 
   const PortfolioComponent = useMemo(() => {
     if (readOnlyModeEnabled && hasNoAccounts) {
@@ -49,7 +45,6 @@ export default function PortfolioRootScreen({ navigation, route }: NavigationPro
       <Box flexGrow={1} bg={backgroundColor}>
         <WalletTabBackgroundGradient />
         <PortfolioComponent navigation={navigation} route={route} />
-        <WalletTabHeader hidePortfolio={false} useWallet40TopBar={shouldDisplayWallet40TopBar} />
       </Box>
     </WalletTabNavigatorScrollManager>
   );

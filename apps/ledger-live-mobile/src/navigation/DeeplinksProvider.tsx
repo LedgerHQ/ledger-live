@@ -355,7 +355,6 @@ export const DeeplinksProvider = ({
   const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
 
   const {
-    shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayAggregatedAssets,
     shouldDisplayAssetDiscoverability,
@@ -554,14 +553,13 @@ export const DeeplinksProvider = ({
                            */
                           [ScreenName.Asset]: "asset/:currencyId",
                           /**
-                           * if shouldDisplayWallet40MainNav and shouldDisplayAssetSection are enabled
+                           * if shouldDisplayAssetSection is enabled
                            * @params ?sourceScreenName: string
                            * ie: "ledgerlive://crypto-addresses" will open the crypto addresses screen.
                            */
-                          ...(shouldDisplayWallet40MainNav &&
-                            shouldDisplayAssetSection && {
-                              [ScreenName.CryptoAddresses]: "crypto-addresses",
-                            }),
+                          ...(shouldDisplayAssetSection && {
+                            [ScreenName.CryptoAddresses]: "crypto-addresses",
+                          }),
                         },
                       },
                     },
@@ -900,10 +898,8 @@ export const DeeplinksProvider = ({
             return getStateFromPath(url.href?.split("://")[1], config);
           }
 
-          if (shouldDisplayWallet40MainNav) {
-            const w40State = handleWallet40Deeplink(hostname, platform, query);
-            if (w40State) return w40State;
-          }
+          const w40State = handleWallet40Deeplink(hostname, platform, query);
+          if (w40State) return w40State;
 
           return getStateFromPath(path, config);
         },
@@ -917,7 +913,6 @@ export const DeeplinksProvider = ({
     onDeeplinkReceived,
     buySellUiManifestId,
     dispatch,
-    shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayAggregatedAssets,
     shouldDisplayAssetDiscoverability,

@@ -25,7 +25,6 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { UpdateStep } from "../FirmwareUpdate";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   AppWithDependencies,
   AppWithDependents,
@@ -53,7 +52,6 @@ const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
   const reduxDispatch = useDispatch();
   const baseNavigation = useNavigation<BaseNavigation>();
 
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   useEffect(() => {
     // refresh the manager if an USB device gets plugged while we're on a bluetooth connection
@@ -147,29 +145,15 @@ const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
         ],
       };
 
-      if (shouldDisplayWallet40MainNav) {
-        baseNavigation.reset({
-          index: 1,
-          routes: [
-            { name: NavigatorName.Main },
-            { name: NavigatorName.MyLedger, state: myLedgerState },
-          ],
-        });
-      } else {
-        baseNavigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: NavigatorName.Main,
-              state: {
-                routes: [{ name: NavigatorName.MyLedger, state: myLedgerState }],
-              },
-            },
-          ],
-        });
-      }
+      baseNavigation.reset({
+        index: 1,
+        routes: [
+          { name: NavigatorName.Main },
+          { name: NavigatorName.MyLedger, state: myLedgerState },
+        ],
+      });
     },
-    [device, baseNavigation, shouldDisplayWallet40MainNav],
+    [device, baseNavigation],
   );
 
   const appsInstallUninstallWithDependenciesContextValue = useMemo(

@@ -1,11 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
-import { useTranslation } from "~/context/Locale";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BluetoothRequired } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
-import { Flex, Text } from "@ledgerhq/native-ui";
-import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
+import { Flex } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import TrackScreen from "~/analytics/TrackScreen";
@@ -24,7 +22,6 @@ import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import SafeAreaView from "~/components/SafeAreaView";
 import { wallet40HeaderOptions } from "~/screens/MyLedgerChooseDevice/wallet40HeaderOptions";
 
@@ -44,11 +41,8 @@ type ChooseDeviceProps = Props & {
 };
 
 const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
-  const { t } = useTranslation();
   const action = useManagerDeviceAction();
   const [device, setDevice] = useState<Device | null>();
-  const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { params } = useRoute<NavigationProps["route"]>();
@@ -113,37 +107,21 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           headerRight: request.options.headerRight,
           title: "",
         });
-        setIsHeaderOverridden(true);
       } else {
-        navigation.setOptions(
-          shouldDisplayWallet40MainNav
-            ? { ...wallet40HeaderOptions, headerRight: () => null }
-            : { headerLeft: () => null, headerRight: () => null, ...headerOptions },
-        );
-        setIsHeaderOverridden(false);
+        navigation.setOptions({ ...wallet40HeaderOptions, headerRight: () => null });
       }
     },
-    [navigation, shouldDisplayWallet40MainNav],
+    [navigation],
   );
 
-  const Container = shouldDisplayWallet40MainNav ? SafeAreaView : TabBarSafeAreaView;
-  const containerProps = useMemo(
-    () => (shouldDisplayWallet40MainNav ? { isFlex: true, edges: ["left", "right"] as const } : {}),
-    [shouldDisplayWallet40MainNav],
-  );
+  const Container = SafeAreaView;
+  const containerProps = useMemo(() => ({ isFlex: true, edges: ["left", "right"] as const }), []);
 
   if (!isFocused) return null;
-
-  const showInlineTitle = !shouldDisplayWallet40MainNav && !isHeaderOverridden;
 
   return (
     <Container {...containerProps}>
       <TrackScreen category="Manager" name="ChooseDevice" />
-      {showInlineTitle ? (
-        <Text pt={3} px={16} pb={8} fontWeight="semiBold" variant="h4" testID="manager-title">
-          {t("manager.title")}
-        </Text>
-      ) : null}
       <Flex flex={1}>
         <SelectDevice2
           onSelect={onSelectDevice}
