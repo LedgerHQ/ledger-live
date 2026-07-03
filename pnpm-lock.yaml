@@ -2401,6 +2401,9 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
+      '@features/platform-devtools':
+        specifier: workspace:*
+        version: link:../../features/platform/devtools
       '@features/platform-feature-flags':
         specifier: workspace:*
         version: link:../../features/platform/feature-flags
