@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { OFAC_FIAT_TICKERS } from "./constants";
-import { selectSupportedFiats, setFiats, supportedFiatsSlice } from "./slice";
+import { setFiats, supportedFiatsSlice } from "./slice";
+import { selectSupportedFiats } from "./selector";
 import { mockFiatCurrency } from "./schema.mock";
 
 function makeStore() {
