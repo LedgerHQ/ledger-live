@@ -1,4 +1,4 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runUnstakeRequiredTezos } from "./stake";
 
 // XTZ_2 (index 1) is DELEGATED + STAKED: stopping delegation is blocked until the user unstakes first.

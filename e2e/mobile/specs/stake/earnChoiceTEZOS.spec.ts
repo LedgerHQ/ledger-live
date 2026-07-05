@@ -1,4 +1,4 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runEarningChoiceTezos } from "./stake";
 
 // XTZ_1 (index 0) is funded + UNDELEGATED: with the staking flag on, Earn opens the earning-choice chooser.

@@ -1,4 +1,4 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runUnstakeTezos } from "./stake";
 
 // XTZ_2 (index 1) is DELEGATED + STAKED: the account screen shows the staking section with the unstake action.

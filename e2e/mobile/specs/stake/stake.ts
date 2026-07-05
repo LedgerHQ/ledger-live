@@ -1,5 +1,5 @@
-import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { verifyTezosStakingOperationDetails } from "../../models/stake";
 
