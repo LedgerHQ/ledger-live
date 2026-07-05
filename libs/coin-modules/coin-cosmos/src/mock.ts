@@ -36,7 +36,6 @@ function setCosmosResources(
     unbondings: unbondings ?? account.cosmosResources?.unbondings ?? [],
     redelegations: redelegations ?? account.cosmosResources?.redelegations ?? [],
     sequence: account.cosmosResources.sequence + 1,
-    publicKey: account.cosmosResources?.publicKey ?? "",
   };
   return account;
 }
@@ -98,7 +97,6 @@ function addDelegationOperation(account: CosmosAccount, rng: Prando): CosmosAcco
         unbondings: [],
         redelegations: [],
         sequence: 1,
-        publicKey: "",
       };
   if (spendableBalance.isZero()) return account;
 
@@ -167,7 +165,6 @@ function addRedelegationOperation(account: CosmosAccount, rng: Prando): CosmosAc
         unbondings: [],
         redelegations: [],
         sequence: 1,
-        publicKey: "",
       };
   if (!cosmosResources.delegations.length) return account;
 
@@ -228,7 +225,6 @@ function addClaimRewardsOperation(account: CosmosAccount, rng: Prando): CosmosAc
         unbondings: [],
         redelegations: [],
         sequence: 1,
-        publicKey: "",
       };
   if (!cosmosResources.delegations.length) return account;
 
@@ -278,7 +274,6 @@ function addUndelegationOperation(account: CosmosAccount, rng: Prando): CosmosAc
         unbondings: [],
         redelegations: [],
         sequence: 1,
-        publicKey: "",
       };
   if (!cosmosResources.delegations.length) return account;
 
@@ -387,7 +382,6 @@ function postScanAccount(
       unbondings: [],
       redelegations: [],
       sequence: 0,
-      publicKey: "",
     };
     account.operations = [];
   }
