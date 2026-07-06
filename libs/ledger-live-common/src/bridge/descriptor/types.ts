@@ -7,7 +7,7 @@ import type { Transaction } from "../../coin-modules/transaction-types";
  * Memo field type configuration
  */
 export type MemoType =
-  | "text" // Simple text memo (cosmos, solana, algorand)
+  | "text" // Simple text memo (cosmos, solana)
   | "tag" // Numeric tag (xrp destination tag, casper transfer id)
   | "typed"; // Typed memo with predefined options (stellar)
 
