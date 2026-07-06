@@ -137,5 +137,29 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     unbondingPeriodDays: 0.75,
   },
 
-  // TODO: add 0G next
+  // 0G staking - factory-per-validator model.
+  // Source: https://docs.0g.ai/developer-hub/building-on-0g/contracts-on-0g/validator-contract-functions
+  zero_gravity: {
+    contractAddress: ctx => {
+      const addr = ctx?.valAddress;
+      if (!addr) throw new Error("0G staking requires a validator address");
+      return addr;
+    },
+    value: ({ mode, amount, txValue }) => {
+      return mode === "undelegate" ? (txValue ?? 0n) : amount;
+    },
+    functions: {
+      delegate: "delegate",
+      undelegate: "undelegate",
+      getStakedBalance: "getDelegation",
+    },
+    // minWithdrawabilityDelay on registry 0xea224d = 0x30d40 = 200,000 blocks; at ~1 s/block = 2d 7h.
+    // curl https://zero-gravity.coin.ledger.com -sX POST -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","method":"eth_call","params":[{"to":"0xea224dBB52F57752044c0C86aD50930091F561B9","data":"0x279a0d76"},"latest"],"id":1}'
+    unbondingPeriodDays: 2.31,
+    explorerConfig: {
+      validatorUrl: "https://explorer.0g.ai/mainnet/validators/$address/delegators",
+    },
+  },
+
+  // TODO: add Somnia next
 };
