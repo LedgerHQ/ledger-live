@@ -11,9 +11,6 @@ jest.mock("~/context/Locale", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 
-// PrivateSyncButton (rendered by AccountBalanceHeader) pulls in the real hw/bridge
-// stack through the live-common hook — mock it so this stays a unit test of the
-// balance header, not an integration test of the private sync flow.
 jest.mock("../hooks/useAleoPrivateSync");
 
 jest.mocked(useAleoPrivateSync).mockReturnValue({

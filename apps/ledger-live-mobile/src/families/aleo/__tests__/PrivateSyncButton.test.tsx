@@ -1,4 +1,5 @@
 import React from "react";
+import BigNumber from "bignumber.js";
 import { render, screen } from "@tests/test-renderer";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
@@ -16,7 +17,7 @@ const mockUseAleoPrivateSync = jest.mocked(useAleoPrivateSync);
 const baseAccount: AleoAccount = {
   ...(ALEO_ACCOUNT_1 as AleoAccount),
   aleoResources: {
-    transparentBalance: null,
+    transparentBalance: new BigNumber(0),
     provableApi: null,
     privateBalance: null,
     unspentPrivateRecords: null,
