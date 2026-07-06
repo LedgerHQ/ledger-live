@@ -7,9 +7,6 @@ const MIN_X_AXIS_TICKS_1D = 8;
 
 export const LINE_CHART_Y_AXIS_BOTTOM_OFFSET_PX = 50;
 
-export const LINE_CHART_VIEW_HEIGHT =
-  DEFAULT_LINE_CHART_HEIGHT + LINE_CHART_Y_AXIS_BOTTOM_OFFSET_PX;
-
 export function buildLineChartXAxisConfig({
   timestamps,
   selectedRange,
