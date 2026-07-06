@@ -3,7 +3,9 @@ import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { usdcToken, maticEth } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { Account } from "@ledgerhq/types-live";
+import { track } from "~/analytics";
 import type { State } from "~/reducers/types";
 import { useOperationsListViewModel } from "../useOperationsListViewModel";
 
@@ -15,10 +17,19 @@ jest.mock("~/screens/Analytics/Operations/useOperationsV1", () => ({
   useOperationsV1: (...args: unknown[]) => mockUseOperationsV1(...args),
 }));
 
+jest.mock("@ledgerhq/live-countervalues/logic", () => ({
+  ...jest.requireActual("@ledgerhq/live-countervalues/logic"),
+  calculate: jest.fn(),
+}));
+
+const mockedCalculate = jest.mocked(calculate);
+const mockedTrack = jest.mocked(track);
+
 describe("useOperationsListViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseOperationsV1.mockReturnValue({ sections: [], completed: true });
+    mockedCalculate.mockReturnValue(undefined);
   });
 
   it("isEmpty is true when completed with no sections", () => {
@@ -115,7 +126,7 @@ describe("useOperationsListViewModel", () => {
       expect(result.current.isOptionsSheetOpen).toBe(false);
       expect(result.current.dustFilterOption?.title).toBe("Hide dust transactions");
       expect(result.current.dustFilterOption?.description).toBe(
-        "Transactions below $0.01 will be hidden.",
+        "Transactions below US$0.01 will be hidden.",
       );
 
       act(() => {
@@ -131,9 +142,53 @@ describe("useOperationsListViewModel", () => {
       expect(store.getState().settings.hideSmallValueTokenOperations).toBe(true);
       expect(result.current.isOptionsSheetOpen).toBe(false);
       expect(result.current.dustFilterOption?.title).toBe("Show dust transactions");
+      expect(result.current.dustFilterOption?.description).toBe(
+        "Transactions below US$0.01 will be displayed.",
+      );
+      expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+        button: "dust_filter",
+        enabled: true,
+      });
     });
 
-    it("adds the selected countervalue threshold in parentheses when it is not USD", () => {
+    it("tracks the dust filter toggle as disabled when showing dust transactions again", () => {
+      const { result, store } = renderHook(() => useOperationsListViewModel(), {
+        overrideInitialState: withFlagOverrides(
+          {
+            lwmDustFiltering: {
+              enabled: true,
+            },
+          },
+          (state: State) => ({
+            ...state,
+            settings: {
+              ...state.settings,
+              hideSmallValueTokenOperations: true,
+            },
+          }),
+        ),
+      });
+
+      expect(result.current.dustFilterOption?.title).toBe("Show dust transactions");
+      expect(result.current.dustFilterOption?.description).toBe(
+        "Transactions below US$0.01 will be displayed.",
+      );
+
+      act(() => {
+        result.current.onToggleHideSmallValueTokenOperations();
+      });
+
+      expect(store.getState().settings.hideSmallValueTokenOperations).toBe(false);
+      expect(result.current.dustFilterOption?.title).toBe("Hide dust transactions");
+      expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+        button: "dust_filter",
+        enabled: false,
+      });
+    });
+
+    it("adds the converted USD threshold in parentheses when the countervalue is not USD", () => {
+      mockedCalculate.mockReturnValue(0.92);
+
       const { result } = renderHook(() => useOperationsListViewModel(), {
         overrideInitialState: withFlagOverrides(
           {
@@ -152,8 +207,14 @@ describe("useOperationsListViewModel", () => {
       });
 
       expect(result.current.dustFilterOption?.description).toBe(
-        "Transactions below $0.01 (€0.01) will be hidden.",
+        "Transactions below US$0.01 (€0.0092) will be hidden.",
       );
+      expect(mockedCalculate).toHaveBeenCalledWith(expect.any(Object), {
+        from: expect.objectContaining({ ticker: "USD" }),
+        to: expect.objectContaining({ ticker: "EUR" }),
+        value: 1,
+        disableRounding: true,
+      });
     });
 
     it("hides and disables the dust filter option when only the desktop flag param is enabled", () => {

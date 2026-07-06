@@ -1,13 +1,6 @@
 import { renderHook, act, waitFor, withFlagOverrides } from "tests/testSetup";
 import { useNavigate, useLocation } from "react-router";
-import { formatDustFilterThreshold, useHistoryViewModel } from "../useHistoryViewModel";
-import { importCountervalues } from "@ledgerhq/live-countervalues/logic";
-import type {
-  CountervaluesSettings,
-  CounterValuesStateRaw,
-} from "@ledgerhq/live-countervalues/types";
-import { getFiatCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
-import type { CountervaluesState } from "~/renderer/reducers/countervalues";
+import { useHistoryViewModel } from "../useHistoryViewModel";
 import { track } from "~/renderer/analytics/segment";
 
 jest.mock("react-router", () => ({
@@ -38,33 +31,6 @@ jest.mock("../useHistoryVirtualization", () => ({
 const mockNavigate = jest.fn();
 const mockUseNavigate = jest.mocked(useNavigate);
 const mockUseLocation = jest.mocked(useLocation);
-const USD = getFiatCurrencyByTicker("USD");
-const EUR = getFiatCurrencyByTicker("EUR");
-const countervaluesSettings: CountervaluesSettings = {
-  trackingPairs: [{ from: USD, to: EUR, startDate: new Date("2026-01-01T00:00:00.000Z") }],
-  autofillGaps: false,
-  refreshRate: 60000,
-  marketCapBatchingAfterRank: 100,
-};
-
-const buildUsdEurCountervaluesState = (): CountervaluesState => ({
-  countervalues: {
-    state: importCountervalues(
-      {
-        status: {},
-        "EUR USD": { latest: 0.92 },
-      } as CounterValuesStateRaw,
-      countervaluesSettings,
-    ),
-    pending: false,
-    error: null,
-  },
-  polling: {
-    isPolling: true,
-    triggerLoad: false,
-  },
-  userSettings: countervaluesSettings,
-});
 
 describe("useHistoryViewModel navigateBack", () => {
   beforeEach(() => {
@@ -114,28 +80,6 @@ describe("useHistoryViewModel navigateBack", () => {
     });
 
     expect(result.current.dustFilterThreshold).toBe("US$0.01");
-  });
-
-  it("should format the dust filter threshold with the USD reference when the countervalue is not USD", () => {
-    expect(
-      formatDustFilterThreshold({
-        countervaluesState: buildUsdEurCountervaluesState().countervalues.state,
-        counterValueCurrency: EUR,
-        locale: "en-US",
-        thresholdUsd: 0.01,
-      }),
-    ).toBe("US$0.01 (€0.0092)");
-  });
-
-  it("should format the converted dust filter threshold with the current locale", () => {
-    expect(
-      formatDustFilterThreshold({
-        countervaluesState: buildUsdEurCountervaluesState().countervalues.state,
-        counterValueCurrency: EUR,
-        locale: "fr-FR",
-        thresholdUsd: 0.01,
-      }),
-    ).toBe("US$0,01 (€0,0092)");
   });
 
   it("should request USD countervalue tracking when the dust filter option is shown for a non-USD countervalue", async () => {

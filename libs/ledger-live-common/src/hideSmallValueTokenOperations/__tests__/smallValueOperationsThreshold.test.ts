@@ -10,6 +10,7 @@ import {
   convertThresholdMinorUnitToMajor,
   floorThresholdToCurrencyMinorUnit,
   formatThresholdMinorUnitForInput,
+  formatSmallValueOperationsThreshold,
   isSmallValueTokenOperation,
   SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
 } from "../smallValueOperationsThreshold";
@@ -83,6 +84,45 @@ describe("smallValueOperationsThreshold", () => {
 
     it("should format the input value without forcing trailing zeros", () => {
       expect(formatThresholdMinorUnitForInput(new BigNumber(50), USD)).toBe("0.5");
+    });
+  });
+
+  describe("formatSmallValueOperationsThreshold", () => {
+    it("should format the dust filter threshold in USD without a reference conversion", () => {
+      expect(
+        formatSmallValueOperationsThreshold({
+          counterValueCurrency: USD,
+          locale: "en-US",
+          thresholdUsd: 0.01,
+        }),
+      ).toBe("US$0.01");
+      expect(mockCalculate).not.toHaveBeenCalled();
+    });
+
+    it("should include the converted threshold when the countervalue is not USD", () => {
+      mockCalculate.mockReturnValue(0.92);
+
+      expect(
+        formatSmallValueOperationsThreshold({
+          countervaluesState: mockCountervaluesState,
+          counterValueCurrency: EUR,
+          locale: "en-US",
+          thresholdUsd: 0.01,
+        }),
+      ).toBe("US$0.01 (€0.0092)");
+    });
+
+    it("should format the converted threshold with the current locale", () => {
+      mockCalculate.mockReturnValue(0.92);
+
+      expect(
+        formatSmallValueOperationsThreshold({
+          countervaluesState: mockCountervaluesState,
+          counterValueCurrency: EUR,
+          locale: "fr-FR",
+          thresholdUsd: 0.01,
+        }),
+      ).toBe("US$0,01 (€0,0092)");
     });
   });
 
