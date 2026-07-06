@@ -4557,7 +4557,7 @@
       "transactionSigned": "Transaction signed",
       "processingTransaction": "Your transaction is being processed",
       "sign": {
-        "title": "Continue on your Ledger {{wording}}",
+        "title": "Continue on your {{wording}}",
         "description": "Follow the instructions displayed on your Secure Touchscreen.",
         "cancelled": {
           "title": "Transaction canceled",
