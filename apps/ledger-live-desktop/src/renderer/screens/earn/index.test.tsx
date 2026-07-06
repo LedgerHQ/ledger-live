@@ -102,6 +102,7 @@ describe("Earn screen", () => {
       initialState: withFlagOverrides({
         ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
         stakePrograms: { enabled: true, params: { list: [], redirects: {} } } as never,
+        swapToEarn: { enabled: true, params: { foo: "bar" } } as never,
       }),
     });
 
@@ -116,6 +117,9 @@ describe("Earn screen", () => {
     expect(goToURL).toContain("lang=");
     expect(goToURL).toContain("uiVersion=");
     expect(goToURL).toContain("lw40enabled=");
+    expect(goToURL).toContain(
+      `swapToEarn=${encodeURIComponent(JSON.stringify({ enabled: true, params: { foo: "bar" } }))}`,
+    );
     useLocationSpy.mockRestore();
   });
 
