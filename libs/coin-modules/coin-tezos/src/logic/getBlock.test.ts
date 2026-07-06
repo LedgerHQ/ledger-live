@@ -1196,7 +1196,9 @@ describe("staking operations", () => {
 describe("origination operations", () => {
   it("produces a BlockTransaction with ledgerOpType ORIGINATION and zero amount for zero-balance origination", async () => {
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
-    mockFetchBlockOriginations.mockResolvedValue([makeOrigination({ contractBalance: 0, counter: 42, gasLimit: 3494, storageLimit: 5852 })]);
+    mockFetchBlockOriginations.mockResolvedValue([
+      makeOrigination({ contractBalance: 0, counter: 42, gasLimit: 3494, storageLimit: 5852 }),
+    ]);
 
     const result = await getBlock(5_000_000);
 
@@ -1211,7 +1213,13 @@ describe("origination operations", () => {
       type: "other",
       address: "tz1Deployer",
       amount: 0n,
-      details: { ledgerOpType: "ORIGINATION", counter: 42, gasLimit: 3494, storageLimit: 5852, originatedContract: "KT1NewContract" },
+      details: {
+        ledgerOpType: "ORIGINATION",
+        counter: 42,
+        gasLimit: 3494,
+        storageLimit: 5852,
+        originatedContract: "KT1NewContract",
+      },
     });
   });
 
@@ -1233,9 +1241,7 @@ describe("origination operations", () => {
 
   it("treats negative contractBalance as zero (defensive guard)", async () => {
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
-    mockFetchBlockOriginations.mockResolvedValue([
-      makeOrigination({ contractBalance: -500 }),
-    ]);
+    mockFetchBlockOriginations.mockResolvedValue([makeOrigination({ contractBalance: -500 })]);
 
     const result = await getBlock(5_000_000);
 

@@ -534,17 +534,25 @@ export async function getBlock(height: number): Promise<Block> {
     throw new Error(`getBlock: height must be a positive integer, got ${height}`);
   }
 
-  const [block, parentBlock, transactions, tokenTransfers, delegations, stakings, originations, reveals] =
-    await Promise.all([
-      tzkt.getBlockByLevel(height),
-      tzkt.getBlockByLevel(height - 1),
-      fetchBlockTransactions(height),
-      fetchBlockTokenTransfers(height),
-      fetchBlockDelegations(height),
-      fetchBlockStaking(height),
-      fetchBlockOriginations(height),
-      fetchBlockReveals(height),
-    ]);
+  const [
+    block,
+    parentBlock,
+    transactions,
+    tokenTransfers,
+    delegations,
+    stakings,
+    originations,
+    reveals,
+  ] = await Promise.all([
+    tzkt.getBlockByLevel(height),
+    tzkt.getBlockByLevel(height - 1),
+    fetchBlockTransactions(height),
+    fetchBlockTokenTransfers(height),
+    fetchBlockDelegations(height),
+    fetchBlockStaking(height),
+    fetchBlockOriginations(height),
+    fetchBlockReveals(height),
+  ]);
 
   // Token transfers triggered by originations from other blocks carry an
   // `originationId` that points outside this block's origination set. Resolve
