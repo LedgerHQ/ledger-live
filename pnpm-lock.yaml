@@ -8357,11 +8357,11 @@ importers:
   libs/deeplink-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.15.0
-        version: 1.15.0(@ton/crypto@3.3.0)
+        specifier: ^1.15.1
+        version: 1.15.1(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.33.0
-        version: 1.33.0(@ton/crypto@3.3.0)
+        specifier: ^1.34.0
+        version: 1.34.0(@ton/crypto@3.3.0)
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -8761,11 +8761,11 @@ importers:
   libs/exchange-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.15.0
-        version: 1.15.0(@ton/crypto@3.3.0)
+        specifier: ^1.15.1
+        version: 1.15.1(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.33.0
-        version: 1.33.0(@ton/crypto@3.3.0)
+        specifier: ^1.34.0
+        version: 1.34.0(@ton/crypto@3.3.0)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -8783,11 +8783,11 @@ importers:
   libs/feature-flag-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.15.0
-        version: 1.15.0(@ton/crypto@3.3.0)
+        specifier: ^1.15.1
+        version: 1.15.1(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.33.0
-        version: 1.33.0(@ton/crypto@3.3.0)
+        specifier: ^1.34.0
+        version: 1.34.0(@ton/crypto@3.3.0)
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -9249,17 +9249,17 @@ importers:
         specifier: workspace:^
         version: link:../wallet-api-acre-module
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.15.0
-        version: 1.15.0(@ton/crypto@3.3.0)
+        specifier: ^1.15.1
+        version: 1.15.1(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.33.0
-        version: 1.33.0(@ton/crypto@3.3.0)
+        specifier: ^1.34.0
+        version: 1.34.0(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-exchange-module':
         specifier: workspace:^
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
-        specifier: ^3.4.0
-        version: 3.4.0(@ton/crypto@3.3.0)
+        specifier: ^3.4.1
+        version: 3.4.1(@ton/crypto@3.3.0)
       '@noble/curves':
         specifier: ^1.9.7
         version: 1.9.7
@@ -13456,11 +13456,11 @@ importers:
   libs/wallet-api-acre-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.15.0
-        version: 1.15.0(@ton/crypto@3.3.0)
+        specifier: ^1.15.1
+        version: 1.15.1(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.33.0
-        version: 1.33.0(@ton/crypto@3.3.0)
+        specifier: ^1.34.0
+        version: 1.34.0(@ton/crypto@3.3.0)
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -13687,17 +13687,17 @@ importers:
         specifier: workspace:*
         version: link:../../libs/ledger-live-common
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.15.0
-        version: 1.15.0(@ton/crypto@3.3.0)
+        specifier: ^1.15.1
+        version: 1.15.1(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-client-react':
-        specifier: ^1.4.31
-        version: 1.4.31(@ton/crypto@3.3.0)(react@19.1.4)
+        specifier: ^1.4.32
+        version: 1.4.32(@ton/crypto@3.3.0)(react@19.1.4)
       '@ledgerhq/wallet-api-deeplink-module':
         specifier: workspace:*
         version: link:../../libs/deeplink-module
       '@ledgerhq/wallet-api-simulator':
-        specifier: ^2.3.0
-        version: 2.3.0(@ton/crypto@3.3.0)
+        specifier: ^2.3.1
+        version: 2.3.1(@ton/crypto@3.3.0)
       '@solana/web3.js':
         specifier: 'catalog:'
         version: 1.98.4(typescript@6.0.2)
@@ -18434,22 +18434,22 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.5.1
 
-  '@ledgerhq/wallet-api-client-react@1.4.31':
-    resolution: {integrity: sha512-WbvKKd0EmlmU0xwFox+qYUSBMPWwnax0kzis3qQ7WGT6aMlwEGEPAwlJ81Hn209NjcIbSDhteHQk9eiV2sZEJw==}
+  '@ledgerhq/wallet-api-client-react@1.4.32':
+    resolution: {integrity: sha512-5enZnUzQDa0AAJYAXbtPVyBf2jal78xQKjNC9zqkyOahWaZibuO44B5Wr1+dAR4LSPruH6Gic3Uz15FV7xssww==}
     peerDependencies:
       react: 19.1.4
 
-  '@ledgerhq/wallet-api-client@1.15.0':
-    resolution: {integrity: sha512-mu8WsLI7FonzErvfb5Z13hUjeCYJFYoyqCsDfMSGRF4L32N/Ae7feeFNqpAtsbCZtu9ssiNdsrdDaEy8EnZ1Bg==}
+  '@ledgerhq/wallet-api-client@1.15.1':
+    resolution: {integrity: sha512-Lo/5C2g6e+6gT7H0AssMuK+ewvs3u1FpHcY7wZYT0an3gO+muV7BCwhxuVaiDBelR6S9kxFOgWG1D9i/skIFQA==}
 
-  '@ledgerhq/wallet-api-core@1.33.0':
-    resolution: {integrity: sha512-oMJe09hoqckbYSttBIBPfjBcCdpn0CR8lPm/jw8fa7vk2DsC8XLhZgC86OAZU9Fid4/hr90oqk5HXD+siO0a0w==}
+  '@ledgerhq/wallet-api-core@1.34.0':
+    resolution: {integrity: sha512-bgIegxFBeH6JidOBP9g0TPs0QZ1wlukXAPLBhFhhKJMrwvtLj4Gp7wcfX9S3bfa88/HM2BS6rcPZmboxycV6TQ==}
 
-  '@ledgerhq/wallet-api-server@3.4.0':
-    resolution: {integrity: sha512-ivLU2iqa4Z0gyG1UhE7M7YyWrz0VRAr4yHbL+DAMPnAR2kAAjczpYjPvNC9SeFBTuE0w5o7YUuukzqftbImneA==}
+  '@ledgerhq/wallet-api-server@3.4.1':
+    resolution: {integrity: sha512-+DxIHbu7a91EaXp9cFDqVpwfEbplVv5Ng+CBpJhysPDA9IbOeBHnU6d1sx0xx8EBqzSlNNpPi5d3zmmGZlW5zw==}
 
-  '@ledgerhq/wallet-api-simulator@2.3.0':
-    resolution: {integrity: sha512-mOt2UBgfuC2OQXddOPDuEPzdzWz3mB8qEX3kEt6kSXedT1g9+oZZRk3343BZHCGeQ4jHGwWDrHPogEy42yowCQ==}
+  '@ledgerhq/wallet-api-simulator@2.3.1':
+    resolution: {integrity: sha512-l5p4ZnOUO5GDB4bhxJlXeuNAhh9K+7IiWHjNlnYkk4kIRtu8+hd67jFvD3muwgHr42qHLRqWyjNM+1YE/YTdfQ==}
 
   '@ledgerhq/zcash-utils@1.0.1':
     resolution: {integrity: sha512-SdBprD/NcsCxvLQhCeGPqt+2uUYNxTqBQGIHybyzvwibqYieuUpzwBHrIEYa0Oy78YfJAlx+LWl9iSIuD4puOg==}
@@ -46523,7 +46523,7 @@ snapshots:
 
   '@ledgerhq/live-network@2.4.3':
     dependencies:
-      '@ledgerhq/errors': 6.32.0
+      '@ledgerhq/errors': 6.36.0
       '@ledgerhq/live-env': 2.31.0
       '@ledgerhq/live-promise': 0.2.2
       '@ledgerhq/logs': 6.16.0
@@ -46796,24 +46796,24 @@ snapshots:
       '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
 
-  '@ledgerhq/wallet-api-client-react@1.4.31(@ton/crypto@3.3.0)(react@19.1.4)':
+  '@ledgerhq/wallet-api-client-react@1.4.32(@ton/crypto@3.3.0)(react@19.1.4)':
     dependencies:
-      '@ledgerhq/wallet-api-client': 1.15.0(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-client': 1.15.1(@ton/crypto@3.3.0)
       react: 19.1.4
     transitivePeerDependencies:
       - '@ton/crypto'
       - encoding
 
-  '@ledgerhq/wallet-api-client@1.15.0(@ton/crypto@3.3.0)':
+  '@ledgerhq/wallet-api-client@1.15.1(@ton/crypto@3.3.0)':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/wallet-api-core': 1.33.0(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-core': 1.34.0(@ton/crypto@3.3.0)
       bignumber.js: 9.1.2
     transitivePeerDependencies:
       - '@ton/crypto'
       - encoding
 
-  '@ledgerhq/wallet-api-core@1.33.0(@ton/crypto@3.3.0)':
+  '@ledgerhq/wallet-api-core@1.34.0(@ton/crypto@3.3.0)':
     dependencies:
       '@ledgerhq/errors': 6.36.0
       '@stacks/transactions': 6.17.0
@@ -46824,21 +46824,21 @@ snapshots:
       - '@ton/crypto'
       - encoding
 
-  '@ledgerhq/wallet-api-server@3.4.0(@ton/crypto@3.3.0)':
+  '@ledgerhq/wallet-api-server@3.4.1(@ton/crypto@3.3.0)':
     dependencies:
-      '@ledgerhq/wallet-api-core': 1.33.0(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-core': 1.34.0(@ton/crypto@3.3.0)
       bignumber.js: 9.1.2
       picomatch: 4.0.4
     transitivePeerDependencies:
       - '@ton/crypto'
       - encoding
 
-  '@ledgerhq/wallet-api-simulator@2.3.0(@ton/crypto@3.3.0)':
+  '@ledgerhq/wallet-api-simulator@2.3.1(@ton/crypto@3.3.0)':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/wallet-api-client': 1.15.0(@ton/crypto@3.3.0)
-      '@ledgerhq/wallet-api-core': 1.33.0(@ton/crypto@3.3.0)
-      '@ledgerhq/wallet-api-server': 3.4.0(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-client': 1.15.1(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-core': 1.34.0(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-server': 3.4.1(@ton/crypto@3.3.0)
       ws: 8.21.0
     transitivePeerDependencies:
       - '@ton/crypto'
