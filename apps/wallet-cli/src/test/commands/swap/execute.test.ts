@@ -5,13 +5,19 @@ import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { GetQuotesArgs, Quote } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/types";
 import type { getAccountBridge as getLiveAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { installOutputCapture } from "../../../shared/ui";
+import { CliProcessExitError } from "../../../cli-process-exit-error";
 import type { AccountDescriptor } from "../../../wallet/models";
 import { MOCK_ETH_DESCRIPTOR } from "../../../test/helpers/constants";
 import { USDT_CONTRACT } from "../../helpers/cal-fixtures";
-import { executeSwapCommand, type SwapExecuteFlags } from "../../../commands/swap/execute";
+import type { SwapExecuteFlags } from "../../../commands/swap/execute";
 import type { FullSwapPipelineInput } from "../../../commands/swap/cli-swap-pipeline";
+import type {
+  CliSwapDieInput,
+  CliSwapDieResult,
+} from "../../../commands/swap/cli-swap-die-pipeline";
 
 const mockPipelineResult = {
   transactionId: "mock-device-transaction-id",
@@ -80,8 +86,42 @@ const baseFlags: SwapExecuteFlags = {
   output: "json",
 };
 
+const dieBaseFlags: SwapExecuteFlags = {
+  ...baseFlags,
+  provider: "uniswap",
+};
+
+const mockDieQuote = {
+  id: "die-quote-1",
+  provider: "uniswap",
+} as Quote;
+
+const mockDiePipelineResult = {
+  plan: "direct-swap" as const,
+  result: {
+    approvalTxHash: "0xapprovalhash",
+    swapTxHash: "0xswaphash",
+  },
+};
+
+const getQuotesMock = mock(async (_args: GetQuotesArgs) => ({
+  quotes: [mockDieQuote],
+  providerErrors: [] as { provider: string; message: string }[],
+}));
+
+mock.module("@ledgerhq/live-common/wallet-api/Exchange/quotes/getQuotes", () => ({
+  getQuotes: getQuotesMock,
+}));
+
+const { executeSwapCommand } = await import("../../../commands/swap/execute");
+
 function makeAccount(descriptor: AccountDescriptor): Account {
-  const family = descriptor.currencyId === "bitcoin" ? "bitcoin" : "ethereum";
+  const family =
+    descriptor.currencyId === "bitcoin"
+      ? "bitcoin"
+      : descriptor.currencyId === "solana"
+        ? "solana"
+        : "evm";
   return {
     type: "Account",
     id: descriptor.id,
@@ -126,6 +166,13 @@ const runFullSwapPipelineMock = mock((_input: FullSwapPipelineInput) =>
   Promise.resolve({ ...mockPipelineResult }),
 );
 
+const runCliSwapDiePipelineMock = mock(
+  async (_input: CliSwapDieInput): Promise<CliSwapDieResult> => ({
+    plan: mockDiePipelineResult.plan,
+    result: { ...mockDiePipelineResult.result },
+  }),
+);
+
 const findTokenByIdMock = mock(async (id: string) =>
   id === USDT_TOKEN_ID ? usdtToken : undefined,
 );
@@ -144,6 +191,7 @@ async function runExecuteSwapCommand(flags: SwapExecuteFlags = baseFlags) {
       integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
       getAccountBridge: getAccountBridgeMock,
       runFullSwapPipeline: runFullSwapPipelineMock,
+      runCliSwapDiePipeline: runCliSwapDiePipelineMock,
       findTokenById: findTokenByIdMock,
     });
   } finally {
@@ -161,6 +209,16 @@ describe("swap execute command", () => {
     integrateNewAccountDescriptorMock.mockClear();
     getAccountBridgeMockFn.mockClear();
     runFullSwapPipelineMock.mockClear();
+    runCliSwapDiePipelineMock.mockClear();
+    getQuotesMock.mockClear();
+    getQuotesMock.mockImplementation(async () => ({
+      quotes: [mockDieQuote],
+      providerErrors: [],
+    }));
+    runCliSwapDiePipelineMock.mockImplementation(async (_input: CliSwapDieInput) => ({
+      plan: mockDiePipelineResult.plan,
+      result: { ...mockDiePipelineResult.result },
+    }));
     findTokenByIdMock.mockClear();
     server.start();
   });
@@ -299,5 +357,110 @@ describe("swap execute command", () => {
         findTokenById: findTokenByIdMock,
       }),
     ).rejects.toThrow("--to account is bitcoin but --to is ethereum.");
+  });
+
+  describe("DIE execute pipeline", () => {
+    it("should emit a DIE JSON envelope when the DIE pipeline succeeds", async () => {
+      const data = await runExecuteSwapCommand(dieBaseFlags);
+
+      expect(data.command).toBe("swap execute");
+      expect(data.network).toBe("ethereum:main");
+      expect(data.pipeline).toBe("die");
+      expect(data.plan).toBe("direct-swap");
+      expect(data.from).toBe("ethereum");
+      expect(data.to).toBe("bitcoin");
+      expect(data.provider).toBe("uniswap");
+      expect(data.amount).toBe("0.001");
+      expect(data.quoteId).toBe("die-quote-1");
+      expect(data.approvalTxHash).toBe("0xapprovalhash");
+      expect(data.swapTxHash).toBe("0xswaphash");
+
+      expect(getQuotesMock).toHaveBeenCalledTimes(1);
+      const quoteRequest = getQuotesMock.mock.calls[0][0];
+      expect(quoteRequest.providers).toEqual(["uniswap"]);
+      expect(quoteRequest.data.sendAddress).toBe(fromDescriptor.freshAddress);
+      expect(quoteRequest.data.receiveAddress).toBe(toDescriptor.freshAddress);
+      expect(quoteRequest.data.sendCurrencyId).toBe("ethereum");
+      expect(quoteRequest.data.receiveCurrencyId).toBe("bitcoin");
+      expect(quoteRequest.data.amount).toBe("0.001");
+
+      expect(runCliSwapDiePipelineMock).toHaveBeenCalledTimes(1);
+      const dieInput = runCliSwapDiePipelineMock.mock.calls[0][0];
+      expect(dieInput.quote).toEqual(mockDieQuote);
+      expect(dieInput.mainAccount.freshAddress).toBe(fromDescriptor.freshAddress);
+      expect(dieInput.fromCurrencyId).toBe("ethereum");
+      expect(dieInput.toCurrencyId).toBe("bitcoin");
+
+      expect(runFullSwapPipelineMock).not.toHaveBeenCalled();
+    });
+
+    it("should resolve 1inch to oneinch and run the DIE pipeline", async () => {
+      const oneInchQuote = { id: "die-quote-2", provider: "oneinch" } as Quote;
+      getQuotesMock.mockImplementationOnce(async () => ({
+        quotes: [oneInchQuote],
+        providerErrors: [],
+      }));
+
+      const data = await runExecuteSwapCommand({ ...dieBaseFlags, provider: "1inch" });
+
+      expect(data.pipeline).toBe("die");
+      expect(data.provider).toBe("oneinch");
+      const quoteRequest = getQuotesMock.mock.calls[0][0];
+      expect(quoteRequest.providers).toEqual(["oneinch"]);
+      expect(runCliSwapDiePipelineMock).toHaveBeenCalledTimes(1);
+      expect(runFullSwapPipelineMock).not.toHaveBeenCalled();
+    });
+
+    it("should fall back to the legacy pipeline when DIE planner returns skip", async () => {
+      runCliSwapDiePipelineMock.mockImplementationOnce(async () => ({
+        plan: "skip",
+        skipReason: "dex-approval-blob-missing",
+        result: {},
+      }));
+
+      const data = await runExecuteSwapCommand(dieBaseFlags);
+
+      expect(data.transactionId).toBe(mockPipelineResult.transactionId);
+      expect(data.provider).toBe("uniswap");
+      expect(runCliSwapDiePipelineMock).toHaveBeenCalledTimes(1);
+      expect(runFullSwapPipelineMock).toHaveBeenCalledTimes(1);
+      const pipelineInput = runFullSwapPipelineMock.mock.calls[0][0];
+      expect(pipelineInput.provider).toBe("uniswap");
+    });
+
+    it("should reject when no DIE quote is returned", async () => {
+      getQuotesMock.mockImplementationOnce(async () => ({
+        quotes: [],
+        providerErrors: [{ provider: "uniswap", message: "rate unavailable" }],
+      }));
+
+      const writes: string[] = [];
+      const restoreCapture = installOutputCapture({
+        stdout: chunk => writes.push(chunk),
+      });
+
+      try {
+        await expect(
+          executeSwapCommand({
+            flags: dieBaseFlags,
+            positional: [],
+            resolveAccountDescriptor: resolveAccountDescriptorMock,
+            integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
+            getAccountBridge: getAccountBridgeMock,
+            runFullSwapPipeline: runFullSwapPipelineMock,
+            runCliSwapDiePipeline: runCliSwapDiePipelineMock,
+            findTokenById: findTokenByIdMock,
+          }),
+        ).rejects.toThrow(CliProcessExitError);
+      } finally {
+        restoreCapture();
+      }
+
+      const data = JSON.parse(writes.join("").trim());
+      expect(data.ok).toBe(false);
+      expect(data.error.message).toBe("No quote from 'uniswap': uniswap: rate unavailable");
+      expect(runCliSwapDiePipelineMock).not.toHaveBeenCalled();
+      expect(runFullSwapPipelineMock).not.toHaveBeenCalled();
+    });
   });
 });
