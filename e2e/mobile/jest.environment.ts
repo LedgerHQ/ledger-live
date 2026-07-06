@@ -215,6 +215,7 @@ export default class TestEnvironment extends DetoxEnvironment {
       tapWebElementByTestId: WebElementHelpers.tapWebElementByTestId,
       typeTextByWebTestId: WebElementHelpers.typeTextByWebTestId,
       waitForCurrentWebviewUrlToContain: WebElementHelpers.waitForCurrentWebviewUrlToContain,
+      waitForWebviewContentToRender: WebElementHelpers.waitForWebviewContentToRender,
       waitForWebElementToBeEnabled: WebElementHelpers.waitForWebElementToBeEnabled,
       waitForWebElementToMatchRegex: WebElementHelpers.waitForWebElementToMatchRegex,
       waitWebElement: WebElementHelpers.waitWebElement,
