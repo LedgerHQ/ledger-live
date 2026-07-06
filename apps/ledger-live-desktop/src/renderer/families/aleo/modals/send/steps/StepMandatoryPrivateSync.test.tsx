@@ -90,6 +90,25 @@ describe("StepMandatoryPrivateSync", () => {
     expect(mockSync).not.toHaveBeenCalled();
   });
 
+  it("should not crash or start a sync when account is undefined (StepProps allows this)", async () => {
+    // account is typed AccountLike | undefined | null — this step must tolerate
+    // it (e.g. a brief render before the send flow has picked an account) rather
+    // than latching into a syncing state with no account to sync.
+    const props = makeStepProps({ account: undefined });
+    const { rerender } = render(<StepMandatoryPrivateSync {...props} />);
+
+    expect(mockSync).not.toHaveBeenCalled();
+
+    // Once a real account arrives, sync should still start normally — the
+    // earlier undefined render must not have left the hook in a stuck state.
+    await act(async () => {
+      rerender(<StepMandatoryPrivateSync {...makeStepProps()} />);
+    });
+    await Promise.resolve();
+
+    expect(mockSync).toHaveBeenCalledTimes(1);
+  });
+
   describe("transition when progress reaches 100%", () => {
     const makeAleoAccountAt100 = (): AleoAccount => ({
       ...ALEO_ACCOUNT_1,
