@@ -53,6 +53,10 @@ class RingChart extends PureComponent<Props> {
   }
 
   reducer = (data: Paths, item: ColorableDistributionItem, index: number): Paths => {
+    if (!Number.isFinite(item.distribution)) {
+      return data;
+    }
+
     const increment = item.distribution * 2 * Math.PI;
 
     const pathData =

@@ -65,6 +65,25 @@ describe("useLineChartViewModel", () => {
     expect(new Set([mutedStroke, successStroke, errorStroke]).size).toBe(3);
   });
 
+  it("sanitizes non-finite values before handing series to the native chart", () => {
+    const { result } = renderHook(() =>
+      useLineChartViewModel(
+        buildProps({
+          series: [
+            {
+              id: "price",
+              data: [1, Number.NaN, Number.POSITIVE_INFINITY, null, 2],
+              label: "Price",
+              stroke: "",
+            },
+          ],
+        }),
+      ),
+    );
+
+    expect(result.current.chartSeries[0]?.data).toEqual([1, null, null, null, 2]);
+  });
+
   it("forwards onRangeChange via handleSelectedChange", () => {
     const onRangeChange = jest.fn();
     const { result } = renderHook(() => useLineChartViewModel(buildProps({ onRangeChange })));

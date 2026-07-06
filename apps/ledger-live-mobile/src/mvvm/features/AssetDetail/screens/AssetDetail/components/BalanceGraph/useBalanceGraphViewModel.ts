@@ -316,11 +316,17 @@ export function useBalanceGraphViewModel({
   const chartColor = resolveLineChartColorFromPercentChange(priceChangePercentage);
 
   const formatValue = useCallback<LineChartValueFormatter>(
-    value =>
-      formatPrice(counterValueUnit, new BigNumber(value).times(10 ** counterValueUnit.magnitude), {
-        showCode: true,
-        locale,
-      }),
+    value => {
+      if (!Number.isFinite(value)) return "";
+      return formatPrice(
+        counterValueUnit,
+        new BigNumber(value).times(10 ** counterValueUnit.magnitude),
+        {
+          showCode: true,
+          locale,
+        },
+      );
+    },
     [counterValueUnit, locale],
   );
 
