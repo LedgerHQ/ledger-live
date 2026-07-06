@@ -36,7 +36,7 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
       <PageHeader title={t("analytics.title")} onBack={navigateToDashboard} />
 
       <div
-        className={cn("overflow-hidden", !shouldDisplayPnl && "rounded-md bg-surface")}
+        className={cn(!shouldDisplayPnl && "rounded-md bg-surface")}
         data-testid="analytics-chart"
       >
         {shouldDisplayPnl ? (
