@@ -24,6 +24,7 @@
     "android:gradleClean": "cd android && ./gradlew clean",
     "android:bundleInDebug": "ANDROID_BUNDLE_IN_DEBUG=true pnpm android",
     "gen-metafile": "zx ./scripts/gen-metafile.mjs",
+    "e2e:ci": "DETOX=1 zx ./scripts/e2e-ci.mjs",
     "e2e:build": "detox build --config-path ../../e2e/mobile/detox.config.js",
     "prebeta": "bundle install",
     "ios:staging": "ENVFILE=.env.ios.staging react-native run-ios --mode Staging",
