@@ -243,6 +243,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.ZEC_1, Account.ZEC_2, "0.001"),
     xrayTicket: "B2CQA-4299",
+    disableBroadcast: true,
   },
   {
     transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "0.00001", undefined, "noTag"),
@@ -268,6 +269,7 @@ test.describe("Send flows", () => {
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
+        env: transaction.disableBroadcast ? { DISABLE_TRANSACTION_BROADCAST: "1" } : {},
         featureFlags: {
           ...FF_NEW_SEND_FLOW_DISABLED,
         },
