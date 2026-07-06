@@ -1,6 +1,6 @@
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { submitTransaction } from "../network";
+import { broadcast as broadcastTransaction } from "../logic/broadcast";
 import { Transaction } from "../types";
 
 /**
@@ -9,9 +9,6 @@ import { Transaction } from "../types";
  */
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signedOperation }) => {
   const { signature, operation } = signedOperation;
-  const hash = (await submitTransaction(signature)).txId;
-  if (!hash) {
-    throw new Error("kaspa: broadcast returned no transaction id");
-  }
+  const hash = await broadcastTransaction(signature);
   return patchOperationWithHash(operation, hash);
 };

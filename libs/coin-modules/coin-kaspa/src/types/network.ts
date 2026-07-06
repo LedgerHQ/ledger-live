@@ -48,6 +48,7 @@ type Outpoint = {
 };
 
 type ScriptPublicKey = {
+  version: number;
   scriptPublicKey: string;
 };
 
