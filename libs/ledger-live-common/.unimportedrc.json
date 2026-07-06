@@ -304,7 +304,7 @@
     "src/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet.ts",
     "src/postOnboarding/hooks/usePostOnboardingPortfolioWidgetVisibility.ts",
     "src/postOnboarding/hooks/useStartPostOnboardingCallback.ts",
-    "src/postOnboarding/logic/shouldRedirectToPostOnboardingOrRecoverUpsell.ts",
+    "src/postOnboarding/logic/index.ts",
     "src/postOnboarding/PostOnboardingProvider.ts",
     "src/postOnboarding/reducer.ts",
     "src/promise.ts",
