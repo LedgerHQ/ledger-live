@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
 import AccountBalanceHeader from "../AccountBalanceHeader";
-import { PRIVATE_BALANCE_PLACEHOLDER } from "../constants";
+import { PRIVATE_BALANCE_PLACEHOLDER } from "@ledgerhq/live-common/families/aleo/constants";
 
 jest.mock("~/context/Locale", () => ({
   useTranslation: () => ({ t: (key: string) => key }),

@@ -18,7 +18,7 @@ import { useAccountUnit, useMaybeAccountUnit } from "~/renderer/hooks/useAccount
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { dayFormat, hourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
-import { PRIVATE_BALANCE_PLACEHOLDER } from "../constants";
+import { PRIVATE_BALANCE_PLACEHOLDER } from "@ledgerhq/live-common/families/aleo/constants";
 import { isAleoAccount } from "./utils";
 import { BalanceOption } from "./BalanceOption";
 import BalanceOptionsSwitch from "./BalanceOptionsSwitch";
