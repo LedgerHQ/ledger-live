@@ -21,10 +21,8 @@ describe("createBridges", () => {
         validateAddress: expect.any(Function),
       },
       currencyBridge: {
-        hydrate: expect.any(Function),
         onboardAccount: expect.any(Function),
         pairWalletConnect: expect.any(Function),
-        preload: expect.any(Function),
         scanAccounts: expect.any(Function),
       },
     });

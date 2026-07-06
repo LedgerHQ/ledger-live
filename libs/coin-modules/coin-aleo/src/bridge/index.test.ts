@@ -42,30 +42,11 @@ describe("Bridge", () => {
     jest.fn().mockReturnValue(mockConfig);
 
   describe("buildCurrencyBridge", () => {
-    it("should return a currency bridge with preload, hydrate, and scanAccounts methods", () => {
+    it("should return a currency bridge with scanAccounts method", () => {
       const signerContext = createMockSignerContext();
       const currencyBridge = buildCurrencyBridge(signerContext);
 
-      expect(currencyBridge.preload).toBeInstanceOf(Function);
-      expect(currencyBridge.hydrate).toBeInstanceOf(Function);
       expect(currencyBridge.scanAccounts).toBeInstanceOf(Function);
-    });
-
-    it("should preload successfully", async () => {
-      const signerContext = createMockSignerContext();
-      const currencyBridge = buildCurrencyBridge(signerContext);
-
-      const result = await currencyBridge.preload(getMockedCurrency());
-
-      expect(result).toEqual({});
-    });
-
-    it("hydrate should be a no-op function", () => {
-      const signerContext = createMockSignerContext();
-      const currencyBridge = buildCurrencyBridge(signerContext);
-
-      const result = currencyBridge.hydrate({}, getMockedCurrency());
-      expect(result).toBeUndefined();
     });
   });
 
@@ -136,13 +117,11 @@ describe("Bridge", () => {
       expect(bridges.accountBridge).toBeInstanceOf(Object);
     });
 
-    it("currency bridge should have preload, hydrate, and scanAccounts", () => {
+    it("currency bridge should have scanAccounts", () => {
       const signerContext = createMockSignerContext();
       const mockCoinConfig = createMockCoinConfig();
       const bridges = createBridges(signerContext, mockCoinConfig);
 
-      expect(bridges.currencyBridge.preload).toBeInstanceOf(Function);
-      expect(bridges.currencyBridge.hydrate).toBeInstanceOf(Function);
       expect(bridges.currencyBridge.scanAccounts).toBeInstanceOf(Function);
     });
 
