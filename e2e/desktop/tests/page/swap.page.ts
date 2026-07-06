@@ -35,6 +35,7 @@ export class SwapPage extends WebViewAppPage {
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
   private fromAccountCoinSelector = "from-account-coin-selector";
   private fromAccountAmountInput = "from-account-amount-input";
+  private fromAccountBalance = "from-account-balance";
   private toAccountCoinSelector = "to-account-coin-selector";
   private readonly toAccountAccountNameTag = "to-account-account-name-tag";
   private quoteCardProviderName = "compact-quote-card-provider-";
@@ -624,5 +625,12 @@ export class SwapPage extends WebViewAppPage {
   @step("Selected provider: $0")
   async logSelectedProvider(providerName: string) {
     expect(providerName).toBeDefined();
+  }
+
+  @step("Check swap widget balance is masked in discreet mode for $0")
+  async checkWidgetBalanceIsDiscreet(ticker: string) {
+    const webview = await this.getWebView();
+    const text = webview.getByTestId(this.fromAccountBalance);
+    await expect(text).toContainText(new RegExp(`\\*\\*\\*\\s+${ticker}`, "i"));
   }
 }

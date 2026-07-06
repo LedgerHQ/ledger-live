@@ -1,6 +1,6 @@
-import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
 import { SwapType } from "@ledgerhq/live-e2e-shared/models/Swap";
+import { Account, type AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
@@ -580,6 +580,41 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
       await app.swapLiveApp.checkQuotes();
       await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
+    });
+  });
+}
+
+export function runSwapDiscreetModeTest(
+  accounts: AccountType[],
+  tmsLinks: string[],
+  tags: string[],
+) {
+  describe("Swap Discreet Mode", () => {
+    beforeAll(async () => {
+      await beforeAllFunctionSwap({
+        userdata: "discreet-mode",
+        cliCommandsOnApp: [
+          {
+            app: Account.BTC_NATIVE_SEGWIT_1.currency.speculosApp,
+            cmd: liveDataWithAddressCommand(Account.BTC_NATIVE_SEGWIT_1),
+          },
+          {
+            app: Account.ETH_1.currency.speculosApp,
+            cmd: liveDataWithAddressCommand(Account.ETH_1),
+          },
+        ],
+      });
+    });
+
+    setTeamOwner(Team.SWAP);
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+
+    it("Checks if the amount is hidden in the asset drawer", async () => {
+      const tickers = accounts.map(account => account.currency.ticker);
+      await app.swapLiveApp.tapFromCurrency();
+      await app.modularDrawer.checkSelectAssetPage();
+      await app.modularDrawer.checkAssetAmountsAreDiscreet(tickers);
     });
   });
 }
