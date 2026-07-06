@@ -27,7 +27,6 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
   const {
     shouldDisplayOperationsList,
     shouldDisplayAssetSection,
-    shouldDisplayGraphRework,
     shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("mobile");
   const borrowConfig = useBorrowLiveConfig();
@@ -40,13 +39,12 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
     [categorizedAssets],
   );
 
-  // Tx History in header: extra space under the last block — Accounts when carousel is absent and
-  // nothing is rendered below (no allocations row when graph rework is off).
+  // Tx History in header: extra space under the last block (Accounts) when the carousel is absent,
+  // since nothing is rendered below it.
   return {
     hasMore,
     onPressShowAll,
-    shouldAddBottomPadding:
-      shouldDisplayOperationsList && walletCardsDisplayed.length === 0 && shouldDisplayGraphRework,
+    shouldAddBottomPadding: shouldDisplayOperationsList && walletCardsDisplayed.length === 0,
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
     shouldDisplayBorrowSection: borrowConfig?.enabled ?? false,

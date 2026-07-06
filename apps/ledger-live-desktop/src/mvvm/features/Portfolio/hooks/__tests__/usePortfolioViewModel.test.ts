@@ -22,9 +22,6 @@ const wallet40AndExchangeFeatureFlags = withFlagOverrides({
   portfolioExchangeBanner: { enabled: true },
   lwdWallet40: {
     enabled: true,
-    params: {
-      graphRework: true,
-    },
   },
 });
 const wallet40AndExchangeSettings = {

@@ -1,4 +1,3 @@
-export { PortfolioAllocationsSection } from "./PortfolioAllocationsSection";
 export { PortfolioAssetsSection } from "./PortfolioAssetsSection";
 export { PortfolioBalanceSection } from "./PortfolioBalanceSection";
 export { PortfolioCarouselSection } from "./PortfolioCarouselSection";

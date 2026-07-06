@@ -5,7 +5,6 @@ export const WALLET_40_FEATURE_FLAGS = {
   lwmWallet40: {
     enabled: true,
     params: {
-      graphRework: true,
       tour: true,
       lazyOnboarding: true,
       assetSection: true,
