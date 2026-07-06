@@ -156,8 +156,10 @@ function makeSign(
   };
 }
 
-function makePreload(getChainAPI: (config: Config) => ChainAPI): CurrencyBridge["preload"] {
-  const preload: CurrencyBridge["preload"] = (currency): Promise<SolanaPreloadDataV1> => {
+function makePreload(
+  getChainAPI: (config: Config) => ChainAPI,
+): (currency: CryptoCurrency) => Promise<SolanaPreloadDataV1> {
+  const preload = (currency: CryptoCurrency): Promise<SolanaPreloadDataV1> => {
     const config: Config = {
       endpoint: endpointByCurrencyId(currency.id),
     };

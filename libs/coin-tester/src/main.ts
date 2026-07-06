@@ -122,9 +122,11 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
       "\n\n",
     );
 
-    const data = await currencyBridge.preload(account.currency);
-    currencyBridge.hydrate(data, account.currency);
-    console.log("Preload + hydrate completed ✓");
+    if (currencyBridge.preload) {
+      const data = await currencyBridge.preload(account.currency);
+      currencyBridge.hydrate?.(data, account.currency);
+      console.log("Preload + hydrate completed ✓");
+    }
 
     await scenario.beforeSync?.();
     console.log("Running a synchronization on the account...");
