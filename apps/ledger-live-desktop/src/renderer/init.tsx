@@ -39,6 +39,7 @@ import {
   trackingEnabledSelector,
   hideEmptyTokenAccountsSelector,
   filterTokenOperationsZeroAmountSelector,
+  migrateLegacyCryptoCounterValue,
 } from "~/renderer/reducers/settings";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import ReactRoot from "~/renderer/ReactRoot";
@@ -207,6 +208,11 @@ async function init() {
   const settingsToLoad = { ...initialSettings };
   if (wasHardReset) {
     settingsToLoad.hasCompletedOnboarding = false;
+  }
+
+  // Legacy crypto counter-values were persisted as ticker (BTC/ETH); migrate them to Ledger ids.
+  if (typeof settingsToLoad.counterValue === "string") {
+    settingsToLoad.counterValue = migrateLegacyCryptoCounterValue(settingsToLoad.counterValue);
   }
 
   if (deepLinkUrl) {

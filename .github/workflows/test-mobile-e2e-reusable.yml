@@ -13,7 +13,8 @@ concurrency:
 
 on:
   schedule:
-    - cron: "0 3 * * 1-5" # Mon–Fri → Wallet 4.0 (default)
+    - cron: "0 3 * * 1,3,5"
+    - cron: "0 3 * * 2,4"
   workflow_dispatch:
     inputs:
       ref:
@@ -170,7 +171,8 @@ env:
   SPECULOS_IMAGE_TAG_IOS: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-83978f0' || 'latest' }}
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
-  E2E_MOBILE_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
+  ANDROID_FEATURE_FLAGS: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 3 * * 1,3,5' && 'wallet40-q2') || inputs.feature_flags || 'defaults' }}
+  IOS_FEATURE_FLAGS: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 3 * * 2,4' && 'wallet40-q2') || inputs.feature_flags || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
   USERDATA_CACHE_ENABLED: ${{ !inputs.production_firebase }}
   E2E_GENERATED_USERDATA_DIR: ${{ !inputs.production_firebase && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
@@ -309,7 +311,8 @@ jobs:
           echo "- **Firebase env to target:** $BUILD_TYPE"
           echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
           echo "- **Slack notification:** ${{ (inputs.slack_notif || github.event_name == 'schedule') && 'enabled' || 'disabled' }}"
-          echo "- **Feature Flags:** ${{ env.E2E_MOBILE_FEATURE_FLAGS }}"
+          echo "- **Android Feature Flags:** ${{ env.ANDROID_FEATURE_FLAGS }}"
+          echo "- **iOS Feature Flags:** ${{ env.IOS_FEATURE_FLAGS }}"
           echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
           } >> $GITHUB_STEP_SUMMARY
 
@@ -668,7 +671,7 @@ jobs:
           NX_SKIP_NX_CACHE: true
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_IOS }}
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
-          E2E_MOBILE_FEATURE_FLAGS: ${{ env.E2E_MOBILE_FEATURE_FLAGS }}
+          E2E_MOBILE_FEATURE_FLAGS: ${{ env.IOS_FEATURE_FLAGS }}
         run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
 
       - name: Upload iOS artifacts
@@ -906,7 +909,7 @@ jobs:
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_ANDROID }}
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
-          E2E_MOBILE_FEATURE_FLAGS: ${{ env.E2E_MOBILE_FEATURE_FLAGS }}
+          E2E_MOBILE_FEATURE_FLAGS: ${{ env.ANDROID_FEATURE_FLAGS }}
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
 
       - name: Upload Android artifacts

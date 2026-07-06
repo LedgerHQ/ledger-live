@@ -943,7 +943,6 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 }>;
 
 type Feature_Wallet40_Params = {
-  graphRework: boolean;
   tour: boolean;
   lazyOnboarding: boolean;
   assetSection: boolean;
@@ -957,7 +956,6 @@ type Feature_Wallet40_Params = {
   earnUpselling?: boolean;
   earnSimulator?: boolean;
   q2Tour?: boolean;
-  quickActionCtas?: boolean;
 };
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwmWallet40"]` from `@shared/feature-flags` instead. */

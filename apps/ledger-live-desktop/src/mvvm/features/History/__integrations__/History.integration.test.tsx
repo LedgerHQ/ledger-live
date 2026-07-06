@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { cleanup, render, screen, waitFor, within } from "tests/testSetup";
+import { cleanup, render, screen, waitFor, within, withFlagOverrides } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useExportOperationsCsv } from "~/renderer/hooks/useExportOperationsCsv";
@@ -90,11 +90,12 @@ describe("History integration", () => {
     cleanup();
   });
 
-  function renderHistory(accounts: Account[] = [BTC_ACCOUNT]) {
+  function renderHistory(accounts: Account[] = [BTC_ACCOUNT], initialState = {}) {
     return render(<History />, {
       initialState: {
         accounts,
         settings: AFTER_ONBOARDING_STATE,
+        ...initialState,
       },
     });
   }
@@ -191,6 +192,27 @@ describe("History integration", () => {
 
     expect(screen.queryByRole("table")).not.toBeInTheDocument();
   });
+
+  it("toggles dust filtering from the actions menu", async () => {
+    const { user, store } = renderHistory(
+      [BTC_ACCOUNT],
+      withFlagOverrides({ lwdDustFiltering: { enabled: true } }),
+    );
+
+    await user.click(await screen.findByTestId("history-actions-menu-button"));
+    expect(await screen.findByText("Transactions below US$0.01 will be hidden.")).toBeVisible();
+    await user.click(await screen.findByTestId("history-toggle-dust-filter-button"));
+
+    expect(store.getState().settings.hideSmallValueTokenOperations).toBe(true);
+  });
+
+  it("does not render the dust filtering action when the feature flag is disabled", async () => {
+    const { user } = renderHistory();
+
+    await user.click(await screen.findByTestId("history-actions-menu-button"));
+
+    expect(screen.queryByTestId("history-toggle-dust-filter-button")).not.toBeInTheDocument();
+  });
 });
 
 describe("History export dialog integration", () => {
@@ -225,6 +247,8 @@ describe("History export dialog integration", () => {
   }
 
   async function openExportDialog(user: ReturnType<typeof renderHistoryWithAccounts>["user"]) {
+    const menuButton = await screen.findByTestId("history-actions-menu-button");
+    await user.click(menuButton);
     const exportButton = await screen.findByTestId("history-export-csv-button");
     await user.click(exportButton);
     return within(await screen.findByRole("dialog"));

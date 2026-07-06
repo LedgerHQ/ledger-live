@@ -13,6 +13,78 @@ type WebviewHandlersGlobal = typeof globalThis & {
 
 const webviewHandlersGlobal = globalThis as WebviewHandlersGlobal;
 
+// Electron 42 made guest-side DevTools capture unreliable, so discovery happens
+// app-wide and ownership is re-derived when a Live App <webview> is destroyed.
+const trackedDevToolsContents = new Set<Electron.WebContents>();
+
+const isDevToolsContents = (contents: Electron.WebContents) => {
+  try {
+    return (
+      !contents.isDestroyed() &&
+      contents.getType() === "remote" &&
+      // `devtools://` is a stable, localization-independent signal; the exact
+      // "DevTools" title is kept as a fallback in case the URL isn't populated yet.
+      (contents.getURL().startsWith("devtools://") || contents.getTitle() === "DevTools")
+    );
+  } catch {
+    return false;
+  }
+};
+
+const findDevToolsOwner = (
+  devToolsContents: Electron.WebContents,
+): Electron.WebContents | undefined => {
+  try {
+    return webContents
+      .getAllWebContents()
+      .find(wc => !wc.isDestroyed() && wc.devToolsWebContents === devToolsContents);
+  } catch {
+    return undefined;
+  }
+};
+
+const trackDevToolsForGuest = (contents: Electron.WebContents) => {
+  if (!isDevToolsContents(contents)) return;
+  const owner = findDevToolsOwner(contents);
+  if (owner && owner.getType() !== "webview") {
+    trackedDevToolsContents.delete(contents);
+    return;
+  }
+  trackedDevToolsContents.add(contents);
+};
+
+/**
+ * Force-closes tracked, still-alive guest DevTools WebContents.
+ *
+ * When `guestId` is provided, only DevTools whose owner resolves to that guest
+ * are closed. Ownership is re-derived here (more reliable once the DevTools
+ * document has loaded than at discovery): a non-<webview> owner is dropped and
+ * left alone (protecting the developer's own DevTools, even on an app-wide
+ * close), a different still-alive guest is left for its own teardown, and an
+ * unattributable owner is closed as the deliberate Electron 42 safety net.
+ *
+ * Called from the main process when a Live App <webview> guest is destroyed.
+ */
+export function closeTrackedWebviewDevTools(guestId?: number) {
+  for (const contents of trackedDevToolsContents) {
+    if (contents.isDestroyed()) {
+      trackedDevToolsContents.delete(contents);
+      continue;
+    }
+    const owner = findDevToolsOwner(contents);
+    if (owner && owner.getType() !== "webview") {
+      trackedDevToolsContents.delete(contents);
+      continue;
+    }
+    if (guestId !== undefined && owner && owner.id !== guestId) continue;
+    try {
+      contents.close();
+    } catch {
+      trackedDevToolsContents.delete(contents);
+    }
+  }
+}
+
 /**
  * Wires up all security-sensitive handlers for Live App <webview> guests
  * (CSP injection, external-protocol handoff guards, manifest-domain
@@ -125,7 +197,19 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
   // `event.preventDefault()` inside the scheme guard stops Chromium from
   // delegating the URL to the OS's external-protocol handler.
   app.on("web-contents-created", (_appEvent, contents) => {
-    if (contents.getType() !== "webview") return;
+    const contentsType = contents.getType();
+
+    if (contentsType === "remote") {
+      // DevTools ownership is usually available once the DevTools document loads.
+      contents.on("page-title-updated", () => {
+        trackDevToolsForGuest(contents);
+      });
+      contents.once("destroyed", () => {
+        trackedDevToolsContents.delete(contents);
+      });
+    }
+
+    if (contentsType !== "webview") return;
 
     // Route same-tab `window.open` attempts: http(s) goes to the user's
     // default browser via `openURL`; everything else (including

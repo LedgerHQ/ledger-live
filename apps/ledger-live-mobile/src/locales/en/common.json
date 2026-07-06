@@ -49,6 +49,7 @@
     "transactionDate": "Transaction date",
     "outdated": "Outdated",
     "satPerByte": "sat/bytes",
+    "satPerVByte": "sat/vByte",
     "sompiPerByte": "sompi/bytes",
     "notAvailable": "Not available",
     "import": "Import",
@@ -1193,6 +1194,9 @@
     },
     "MaxFeeTooLow": {
       "title": "Max fee is lower than the recommended value"
+    },
+    "GasPriceTooLow": {
+      "title": "Gas price is lower than the network minimum"
     },
     "PriorityFeeHigherThanMaxFee": {
       "title": "Max priority fee cannot be higher than max fee"
@@ -2792,7 +2796,6 @@
     }
   },
   "tabs": {
-    "portfolio": "Wallet",
     "accounts": "Accounts",
     "transfer": "Transfer",
     "manager": "My Ledger",
@@ -2830,10 +2833,7 @@
         "addAccounts": "Add asset",
         "title": "Get started",
         "description": "You can either purchase crypto from our partners or setup your wallet"
-      },
-      "title": "Start by adding your favorite assets to your wallet",
-      "subtitle": "Ledger supports more than 6,000 coins and tokens",
-      "addAccount": "or add an account"
+      }
     },
     "noOpState": {
       "title": "No operations yet?",
@@ -4558,7 +4558,7 @@
       "transactionSigned": "Transaction signed",
       "processingTransaction": "Your transaction is being processed",
       "sign": {
-        "title": "Continue on your Ledger {{wording}}",
+        "title": "Continue on your {{wording}}",
         "description": "Follow the instructions displayed on your Secure Touchscreen.",
         "cancelled": {
           "title": "Transaction canceled",
@@ -10054,6 +10054,18 @@
         "cta": {
           "allow": "Allow",
           "cancel": "Cancel"
+        }
+      },
+      "stepViewKeyApprove": {
+        "title": "Approve on your Ledger",
+        "description": "Confirm sharing the view key on your device",
+        "cancelAlert": "You can reject individual accounts on your device. Cancelling all will stop adding any accounts to your portfolio.",
+        "cancelAllBtn_one": "Cancel",
+        "cancelAllBtn_other": "Cancel all"
+      },
+      "stepScanAccounts": {
+        "cta": {
+          "shareViewKeys": "Share view keys"
         }
       }
     },

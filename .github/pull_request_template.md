@@ -1,45 +1,14 @@
-<!--
-Thank you for your contribution! 👍
-Please make sure to read CONTRIBUTING.md if you have not already. Pull Requests that do not comply with the rules will be arbitrarily closed.
--->
-
-### ✅ Checklist
-
-<!-- Pull Requests must pass the CI and be code reviewed. Set as Draft if the PR is not ready. -->
-
-- [ ] `npx changeset` was attached.
-- [ ] **Covered by automatic tests.** <!-- if not, please explain. (Feature must be tested / Bug fix must bring non-regression) -->
-- [ ] **Impact of the changes:** <!-- Please take some time to list the impact & what specific areas Quality Assurance (QA) should focus on -->
-  - ...
+<!-- Create all pull requests in Draft. Automated checks must pass before making your pull request "Ready for review". See CONTRIBUTING.md for guidelines. -->
 
 ### 📝 Description
 
-_Replace this text by a clear and concise description of what this pull request is about and why it is needed. Be sure to explain the problem you're addressing and the solution you're proposing._
-_For libraries, you can add a code sample of how to use it._
-_For bug fixes, you can explain the previous behaviour and how it was fixed._
-_In case of visual features, please attach screenshots or video recordings to demonstrate the changes._
+<!-- A clear and concise description of what this PR does and why it is needed. -->
+<!-- For bug fixes: describe the previous behaviour, the fix and the automated check that prevents future regression. -->
+<!-- For features: describe the problem solved and the approach taken. -->
+<!-- For libraries: include a usage code sample. -->
+<!-- When possible, attach screenshots or recordings to help reviewers validate the changes. -->
 
-<!--
-| Before        | After         |
-| ------------- | ------------- |
-|               |               |
--->
+### 🔗 Context
 
-### ❓ Context
-
-- **JIRA or GitHub link**: <!-- Attach the relevant ticket number if applicable. (e.g., [JIRA-123] for Jira or #123 for a Github issue) -->
-- **ADR link (if any)**: <!-- Attach the relevant architectural decision record if applicable. -->
-
-
----
-
-### 🧐 Checklist for the PR Reviewers
-
-<!-- Please do not edit this if you are the PR author -->
-
-- **The code aligns with the requirements** described in the linked JIRA or GitHub issue.
-- **The PR description clearly documents the changes** made and explains any technical trade-offs or design decisions.
-- **There are no undocumented trade-offs**, technical debt, or maintainability issues.
-- **The PR has been tested** thoroughly, and any potential edge cases have been considered and handled.
-- **Any new dependencies** have been justified and documented.
-- **Performance** considerations have been taken into account. (changes have been profiled or benchmarked if necessary)
+- **JIRA / GitHub issue**: <!-- e.g. [LLD-1234] or #456 -->
+- **ADR** (if any): <!-- link to the relevant architectural decision record -->

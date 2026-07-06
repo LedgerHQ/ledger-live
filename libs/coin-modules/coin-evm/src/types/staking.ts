@@ -79,8 +79,8 @@ export type RewardsEventDecoder = {
 };
 
 export type StakingContractConfig = {
-  contractAddress: string;
-  specificContractAddressByOperation?: Partial<Record<StakingOperation, string>>;
+  contractAddress: (ctx?: { mode: StakingOperation; valAddress?: string }) => string;
+  value: (ctx: { mode: StakingOperation; amount: bigint; txValue?: bigint }) => bigint;
   functions: Partial<Record<StakingOperation, string>> & {
     // necessary function names below
     delegate: string;

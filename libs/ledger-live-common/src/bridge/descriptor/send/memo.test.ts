@@ -16,8 +16,8 @@ describe("applyMemoToTransaction", () => {
       });
     });
 
-    it("unknown family: empty string clears the generic memo", () => {
-      expect(applyMemoToTransaction("algorand", "")).toEqual({ memo: undefined });
+    it("generic memo family: empty string clears the memo", () => {
+      expect(applyMemoToTransaction("cosmos", "")).toEqual({ memo: undefined });
     });
   });
 
@@ -37,8 +37,8 @@ describe("applyMemoToTransaction", () => {
       });
     });
 
-    it("unknown family: generic memo", () => {
-      expect(applyMemoToTransaction("algorand", "note")).toEqual({ memo: "note" });
+    it("generic memo family: generic memo", () => {
+      expect(applyMemoToTransaction("cosmos", "note")).toEqual({ memo: "note" });
     });
   });
 });

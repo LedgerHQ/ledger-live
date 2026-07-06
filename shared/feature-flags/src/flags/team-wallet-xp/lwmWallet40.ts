@@ -3,8 +3,6 @@ import { flagWith } from "../../define";
 
 export const lwmWallet40 = flagWith(
   {
-    graphRework: z.boolean(),
-    quickActionCtas: z.boolean(),
     tour: z.boolean(),
     lazyOnboarding: z.boolean(),
     assetSection: z.boolean(),
@@ -21,8 +19,6 @@ export const lwmWallet40 = flagWith(
   {
     enabled: false,
     params: {
-      graphRework: true,
-      quickActionCtas: true,
       tour: true,
       lazyOnboarding: true,
       assetSection: false,

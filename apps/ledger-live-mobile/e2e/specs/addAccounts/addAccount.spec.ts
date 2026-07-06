@@ -1,7 +1,9 @@
 import { knownDevices } from "../../models/devices";
 import DeviceAction from "../../models/DeviceAction";
 
-describe("Add account from modal", () => {
+// TODO(LIVE-33334): these legacy mock specs will be removed in a follow-up task;
+// skipped for now.
+describe.skip("Add account from modal", () => {
   let deviceAction: DeviceAction;
   const testedCurrency = Currency.BTC;
   const expectedBalance = "1.19576\u00a0BTC";

@@ -7,9 +7,9 @@ import type {
   AleoTokenAccount,
   AleoCoinConfig,
 } from "@ledgerhq/live-common/families/aleo/types";
+import { PRIVATE_BALANCE_PLACEHOLDER } from "@ledgerhq/live-common/families/aleo/constants";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
-import { PRIVATE_BALANCE_PLACEHOLDER } from "./constants";
 import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
 import { ALEO_ACCOUNT_1, ALEO_TOKEN_ACCOUNT } from "./__mocks__/account.mock";
 import { getAleoCurrencyConfig } from "./shared/utils";

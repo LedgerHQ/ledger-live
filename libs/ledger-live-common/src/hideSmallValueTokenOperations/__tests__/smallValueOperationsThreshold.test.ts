@@ -20,8 +20,8 @@ jest.mock("@ledgerhq/live-countervalues/logic", () => ({
 
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 
-const mockCalculate = calculate as jest.MockedFunction<typeof calculate>;
-const mockCountervaluesState = {} as CounterValuesState;
+const mockCalculate = jest.mocked(calculate);
+const mockCountervaluesState: CounterValuesState = { data: {}, status: {}, cache: {} };
 const USD = getFiatCurrencyByTicker("USD");
 const EUR = getFiatCurrencyByTicker("EUR");
 const JPY = getFiatCurrencyByTicker("JPY");
@@ -96,7 +96,7 @@ describe("smallValueOperationsThreshold", () => {
         thresholdUsd: 0.5,
       });
 
-      expect(result?.toString()).toBe("72");
+      expect(result?.toString()).toBe("72.8");
       expect(mockCalculate).toHaveBeenCalledWith(mockCountervaluesState, {
         from: SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
         to: JPY,
@@ -180,9 +180,18 @@ describe("smallValueOperationsThreshold", () => {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       ({ type, value }) as Operation;
 
-    // calculate is called as { from: token, to: user_fiat, value: op.value } and returns
-    // the operation's fiat value in user_fiat minor units (eg EUR cents)
-    // The threshold is floor(thresholdUsd × 10^fiat.magnitude), e.g. $0.5 -> 50 EUR cents
+    const mockSmallValueCalculations = (
+      opFiatValue: number | undefined,
+      thresholdFiatValue = 50,
+    ) => {
+      mockCalculate.mockImplementation((_state, query) => {
+        if (query.from === mockToken) return opFiatValue;
+        if (query.from === SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY) {
+          return thresholdFiatValue;
+        }
+        return undefined;
+      });
+    };
 
     it.each([
       { desc: "non-token Account", account: "regular", opType: "IN" },
@@ -211,7 +220,8 @@ describe("smallValueOperationsThreshold", () => {
       expect(mockCalculate).not.toHaveBeenCalled();
     });
 
-    // threshold = floor($0.5 × 100) = 50 EUR cents; calculate returns the op's fiat value
+    // The USD threshold is converted to 50 EUR cents; calculate also returns
+    // the operation's fiat value in EUR minor units.
     it.each([
       { fiatValue: 49, opValue: 499_999, expected: true, desc: "strictly below threshold -> dust" },
       {
@@ -222,7 +232,7 @@ describe("smallValueOperationsThreshold", () => {
       },
       { fiatValue: 51, opValue: 510_000, expected: false, desc: "above threshold -> not dust" },
     ])("$desc", ({ fiatValue, opValue, expected }) => {
-      mockCalculate.mockReturnValue(fiatValue);
+      mockSmallValueCalculations(fiatValue);
 
       const result = isSmallValueTokenOperation({
         operation: buildOp("IN", new BigNumber(opValue)),
@@ -238,7 +248,7 @@ describe("smallValueOperationsThreshold", () => {
       { fiatValue: undefined, desc: "calculate returns undefined" },
       { fiatValue: Number.POSITIVE_INFINITY, desc: "calculate returns Infinity" },
     ])("should not filter when price feed is unavailable ($desc)", ({ fiatValue }) => {
-      mockCalculate.mockReturnValue(fiatValue);
+      mockSmallValueCalculations(fiatValue);
 
       const result = isSmallValueTokenOperation({
         operation: buildOp("IN", new BigNumber(1_000_000)),
@@ -253,7 +263,7 @@ describe("smallValueOperationsThreshold", () => {
     it("should correctly filter a dust amount from an 18-decimal token", () => {
       // Scenario: 18-decimal token, op worth ~1 EUR cent (dust)
       // calculate(token -> EUR, 10^20) -> 1 EUR cent ; threshold = 50 EUR cents
-      mockCalculate.mockReturnValue(1);
+      mockSmallValueCalculations(1);
 
       const dustAmount = new BigNumber("100").times(new BigNumber(10).pow(18)); // 10^20
 
@@ -268,9 +278,7 @@ describe("smallValueOperationsThreshold", () => {
     });
 
     it("should use a custom Firebase thresholdUsd when provided", () => {
-      // Firebase overrides the threshold to $0.25 _> floor(0.25 × 100) = 25 EUR cents
-      // calculate returns 24 EUR cents -> below 25 ->dust.
-      mockCalculate.mockReturnValue(24);
+      mockSmallValueCalculations(24, 25);
 
       const result = isSmallValueTokenOperation({
         operation: buildOp("IN", new BigNumber(249_999)),
@@ -293,8 +301,7 @@ describe("smallValueOperationsThreshold", () => {
     });
 
     it("should fall back to the default threshold ($0.5 -> 50 EUR cents) when thresholdUsd is omitted", () => {
-      // calculate returns 1 EUR cent -> below 50 EUR cents default threshold
-      mockCalculate.mockReturnValue(1);
+      mockSmallValueCalculations(1);
 
       const result = isSmallValueTokenOperation({
         operation: buildOp("IN", new BigNumber(1)),
@@ -306,11 +313,9 @@ describe("smallValueOperationsThreshold", () => {
       expect(result).toBe(true);
     });
 
-    it("should return false for JPY (0 decimal places -> threshold rounds to 0 -> no filtering)", () => {
-      // JPY has magnitude=0, so floor(0.5 × 10^0) = floor(0.5) = 0 JPY.
-      // A zero threshold is treated as "no threshold" to avoid filtering all operations
-      // calculate is not expected to be called in this path (function returns early)
-      mockCalculate.mockReturnValue(0);
+    it("should return false when the converted threshold is zero", () => {
+      // A zero threshold is treated as "no threshold" to avoid filtering all operations.
+      mockSmallValueCalculations(0, 0);
 
       const result = isSmallValueTokenOperation({
         operation: buildOp("IN", new BigNumber(1)),

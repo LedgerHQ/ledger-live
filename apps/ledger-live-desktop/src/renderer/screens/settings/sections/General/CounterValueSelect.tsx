@@ -4,6 +4,7 @@ import { setCounterValue } from "~/renderer/actions/settings";
 import {
   SupportedCountervaluesData,
   counterValueCurrencySelector,
+  counterValueIdOf,
   supportedCounterValuesSelector,
 } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
@@ -17,7 +18,7 @@ const CounterValueSelectComponent: React.FC = () => {
   const handleChangeCounterValue = useCallback(
     (item?: SupportedCountervaluesData | null) => {
       if (!item) return;
-      dispatch(setCounterValue(item.currency.ticker));
+      dispatch(setCounterValue(counterValueIdOf(item.currency)));
     },
     [dispatch],
   );

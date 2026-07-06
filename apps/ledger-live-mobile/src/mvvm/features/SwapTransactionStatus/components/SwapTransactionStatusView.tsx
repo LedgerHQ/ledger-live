@@ -26,7 +26,10 @@ export function SwapTransactionStatusView({
   isFooterLoading,
 }: Readonly<SwapTransactionStatusViewModel>) {
   return (
-    <BottomSheetScrollView showsVerticalScrollIndicator={false}>
+    <BottomSheetScrollView
+      testID="swap-transaction-status-scroll-view"
+      showsVerticalScrollIndicator={false}
+    >
       <Box lx={{ gap: "s24", paddingBottom: "s24" }}>
         <TransactionHeader
           sendCurrency={sendCurrency}

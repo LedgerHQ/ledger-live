@@ -7,7 +7,6 @@ import { ArrowEvolutionUpMedium, ArrowEvolutionDownMedium } from "@ledgerhq/nati
 import { useTranslation } from "~/context/Locale";
 import { BaseTextProps } from "@ledgerhq/native-ui/components/Text/index";
 import CurrencyUnitValue from "./CurrencyUnitValue";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 type Props = {
   valueChange: ValueChange;
@@ -25,10 +24,6 @@ type Props = {
   testID?: string;
 };
 
-const getDecimalPlaces = (shouldDisplayGraphRework: boolean) => {
-  return shouldDisplayGraphRework ? 2 : 0;
-};
-
 function Delta({
   valueChange,
   percent,
@@ -43,7 +38,6 @@ function Delta({
   testID,
 }: Props) {
   const { t } = useTranslation();
-  const { shouldDisplayGraphRework } = useWalletFeaturesConfig("mobile");
 
   const percentPlaceholder = fallbackToPercentPlaceholder ? (
     // eslint-disable-next-line i18next/no-literal-string
@@ -57,8 +51,7 @@ function Delta({
       ? valueChange.percentage * 100
       : valueChange.value;
 
-  const decimalPlaces = getDecimalPlaces(shouldDisplayGraphRework);
-  const roundedDelta = parseFloat(delta.toFixed(decimalPlaces));
+  const roundedDelta = parseFloat(delta.toFixed(2));
 
   if (roundedDelta === 0) {
     return percentPlaceholder;
@@ -108,7 +101,7 @@ function Delta({
               value={absDelta}
             />
           ) : percent ? (
-            `${absDelta.toFixed(decimalPlaces)}%`
+            `${absDelta.toFixed(2)}%`
           ) : null}
           {range && ` (${t(`time.${range}`)})`}
           {isPercentSignDisplayed ? "%" : ""}

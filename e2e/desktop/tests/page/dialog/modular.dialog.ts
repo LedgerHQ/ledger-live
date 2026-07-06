@@ -55,6 +55,14 @@ export class ModularDialog extends Dialog {
     return await this.assetDialog.selectAssetByTicker(currency);
   }
 
+  async checkAssetAmountIsDiscreet(ticker: string) {
+    return await this.assetDialog.checkAssetAmountIsDiscreet(ticker);
+  }
+
+  async checkAssetAmountsAreDiscreet(tickers: string[]) {
+    return await this.assetDialog.checkAssetAmountsAreDiscreet(tickers);
+  }
+
   async selectNetwork(currency: Currency, networkIndex: number = 0) {
     if (await this.isNetworkDialogVisible()) {
       await this.networkDialog.selectNetwork(currency, networkIndex);

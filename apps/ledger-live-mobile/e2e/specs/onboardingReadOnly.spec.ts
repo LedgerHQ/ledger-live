@@ -1,6 +1,8 @@
 import { device } from "detox";
 
-describe("Onboarding - Read Only", () => {
+// TODO(LIVE-33334): these legacy mock specs will be removed in a follow-up task;
+// skipped for now.
+describe.skip("Onboarding - Read Only", () => {
   $TmsLink("B2CQA-370");
   $TmsLink("B2CQA-1753");
   $TmsLink("B2CQA-1806");

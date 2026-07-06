@@ -365,6 +365,7 @@ export const getCeloAmount = (decoded: unknown): bigint => {
 export type EvmStakingIntent = StakingTransactionIntent & {
   valId?: string;
   withdrawId?: string;
+  txValue?: bigint;
 };
 
 export function isStakingIntent(intent: TransactionIntent): intent is EvmStakingIntent {

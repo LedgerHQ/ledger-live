@@ -8,6 +8,9 @@ import { DmkSignerZcash } from "@ledgerhq/live-signer-zcash";
 import type { ZcashAddress, ZcashViewKey } from "@ledgerhq/live-signer-zcash";
 import { registerChainAdapter } from "../registry";
 import type { ZcashAccount, ZcashAccountRaw, ZcashTransaction } from "./types";
+import { classifyZcashRecipient } from "./address";
+import { ZcashSaplingRecipientNotSupported } from "../../errors";
+import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
 import { toZcashPrivateInfoRaw, fromZcashPrivateInfoRaw } from "./serialization";
 import { buildExtraSyncObservable } from "./sync";
 import { collectSpendableNotes } from "./operations";
@@ -35,6 +38,34 @@ type ZcashLikeSigner = {
 
 const isZcashSigner = (signer: unknown): signer is ZcashLikeSigner =>
   !!signer && typeof signer === "object";
+
+// Recipient classification for shielded branches. Both shielded flows
+// ("shielded" and "shielded-to-transparent") require a recipient, so an empty
+// address must surface a RecipientRequired error — otherwise the send flow
+// considers the recipient step valid and lets the user proceed.
+const computeRecipientError = (recipient: string, currencyName: string): Error | undefined => {
+  if (!recipient) return new RecipientRequired("");
+  const cls = classifyZcashRecipient(recipient);
+  if (!("error" in cls)) return undefined;
+  return cls.error === "sapling-unsupported"
+    ? new ZcashSaplingRecipientNotSupported()
+    : new InvalidAddress("", { currencyName });
+};
+
+const computeAmountError = (
+  tx: ZcashTransaction,
+  totalSpent: BigNumber,
+  orchardBalance: BigNumber,
+): Error | undefined => {
+  if (tx.amount.lte(0) && !tx.useAllAmount) return new Error("Amount must be positive");
+  if (!tx.selectedNotes || tx.selectedNotes.length === 0)
+    return new Error("Insufficient shielded balance");
+  if (totalSpent.gt(orchardBalance)) return new Error("Insufficient shielded balance");
+  // Verify selected notes actually cover the spend (consistency check)
+  const selectedTotal = tx.selectedNotes.reduce((sum, n) => sum.plus(n.amount), new BigNumber(0));
+  if (selectedTotal.lt(totalSpent)) return new Error("Selected notes do not cover amount + fee");
+  return undefined;
+};
 
 const hasGetAddressFunction = (signer: unknown): signer is ZcashLikeSigner =>
   isZcashSigner(signer) && "getAddress" in signer && typeof signer.getAddress === "function";
@@ -82,15 +113,33 @@ const zcashChainAdapter: ChainAdapter = {
     _transaction: Transaction,
     _signerContext: SignerContext,
   ) {
-    // TODO: implement PCZT signing for all Zcash transactions
+    // TODO(zcash transparent-to-shielded): implement PCZT signing for all Zcash
+    // transactions. Until then this returns undefined and only the legacy
+    // transparent (t-address -> t-address) send actually completes; shielded and
+    // transparent-to-shielded sends are blocked at signing even when recipient
+    // validation and status pass.
     return undefined;
   },
 
   getTransactionStatus(account: Account, transaction: Transaction) {
     const zcashAccount = account as ZcashAccount;
     const tx = transaction as ZcashTransaction;
-    // Only handle flows with shielded inputs (Orchard note selection).
-    // transparent and transparent-to-shielded use the Bitcoin legacy path.
+    // Only handle flows with shielded inputs (Orchard note selection): "shielded"
+    // (private -> private) and "shielded-to-transparent" (private -> public).
+    //
+    // "transparent" (public -> public, t-address recipient) legitimately uses the
+    // Bitcoin legacy path. "transparent-to-shielded" (public -> shielded u1
+    // recipient) ALSO falls through here, but the legacy path cannot encode a
+    // shielded output — see the skip-legacy-fee workaround in
+    // ../../getTransactionStatus.ts, which keeps recipient validation working while
+    // the real send is unimplemented.
+    //
+    // TODO(zcash transparent-to-shielded): when PCZT building lands, add
+    // "transparent-to-shielded" to this guard and compute its status here
+    // (recipient already classified below; fees come from the PCZT builder, NOT
+    // ZIP-317 Orchard note selection since the inputs are transparent UTXOs). Once
+    // handled here, remove the skipLegacyFeeCalculation workaround in
+    // ../../getTransactionStatus.ts.
     if (tx.transferType !== "shielded" && tx.transferType !== "shielded-to-transparent")
       return undefined;
 
@@ -123,31 +172,13 @@ const zcashChainAdapter: ChainAdapter = {
 
     const orchardBalance = privateInfo.orchardBalance;
     const fee = tx.zcashFee ?? new BigNumber(ZIP317_MINIMUM_FEE);
-    const amount = tx.amount;
-    const totalSpent = amount.plus(fee);
+    const totalSpent = tx.amount.plus(fee);
 
-    // Recipient validation for shielded-to-transparent (transparent address required).
-    // For shielded-to-shielded, recipient validation is deferred to the PCZT builder.
-    if (tx.transferType === "shielded-to-transparent" && !tx.recipient) {
-      errors.recipient = new Error("Recipient address is required for shielded-to-transparent");
-    }
+    const recipientError = computeRecipientError(tx.recipient, account.currency.name);
+    if (recipientError) errors.recipient = recipientError;
 
-    if (amount.lte(0) && !tx.useAllAmount) {
-      errors.amount = new Error("Amount must be positive");
-    } else if (!tx.selectedNotes || tx.selectedNotes.length === 0) {
-      errors.amount = new Error("Insufficient shielded balance");
-    } else if (totalSpent.gt(orchardBalance)) {
-      errors.amount = new Error("Insufficient shielded balance");
-    } else {
-      // Verify selected notes actually cover the spend (consistency check)
-      const selectedTotal = tx.selectedNotes.reduce(
-        (sum, n) => sum.plus(n.amount),
-        new BigNumber(0),
-      );
-      if (selectedTotal.lt(totalSpent)) {
-        errors.amount = new Error("Selected notes do not cover amount + fee");
-      }
-    }
+    const amountError = computeAmountError(tx, totalSpent, orchardBalance);
+    if (amountError) errors.amount = amountError;
 
     return Promise.resolve({
       errors,
@@ -167,6 +198,16 @@ const zcashChainAdapter: ChainAdapter = {
     const zcashAccount = account as ZcashAccount;
     const tx = transaction as ZcashTransaction | null | undefined;
     const transferType = tx?.transferType ?? "transparent";
+    // Max spendable from Orchard notes only applies to shielded-input flows.
+    //
+    // TODO(zcash transparent-to-shielded): "transparent" and
+    // "transparent-to-shielded" fall back to the legacy Bitcoin
+    // estimateMaxSpendable, which calls toOutputScript on the recipient. For a
+    // shielded (u1) recipient that throws InvalidAddress (ZCash.toOutputScript only
+    // supports t1/t3) — so "Send max" from a transparent balance to a u1 recipient
+    // currently fails. When the transparent-to-shielded send is implemented, handle
+    // it here (max spendable = transparent UTXO balance minus the PCZT fee) so it
+    // never reaches the legacy estimator.
     if (transferType !== "shielded" && transferType !== "shielded-to-transparent") return undefined;
 
     const notes = collectSpendableNotes(zcashAccount.privateInfo?.transactions ?? []);
@@ -177,6 +218,12 @@ const zcashChainAdapter: ChainAdapter = {
     const zcashAccount = account as ZcashAccount;
     const tx = transaction as ZcashTransaction;
     // Only handle flows with shielded inputs (Orchard note selection).
+    //
+    // TODO(zcash transparent-to-shielded): "transparent-to-shielded" currently
+    // falls through to the legacy Bitcoin prepareTransaction. That spends
+    // transparent UTXOs (correct for the inputs) but cannot build the shielded
+    // output for a u1 recipient. When PCZT building lands, handle it here:
+    // select transparent UTXOs and produce the PCZT with an Orchard output.
     if (tx.transferType !== "shielded" && tx.transferType !== "shielded-to-transparent")
       return undefined;
 

@@ -39,6 +39,7 @@ export function DetailsSection({
   const receiveAccountValue = renderReceiveAccountValue({
     receiveAccountName,
     receiveAccountCurrency,
+    testId: "swap-transaction-details-receive-account",
   });
   const providerRow = renderProviderRow({
     label: providerLabel,
@@ -52,6 +53,7 @@ export function DetailsSection({
       <DetailRow
         label={networkFeesLabel}
         value={feesAmount ?? <Skeleton lx={{ height: "s16", width: "s96" }} />}
+        testId="swap-transaction-details-network-fees"
       />
       <DetailRow label={receiveAccountLabel} value={receiveAccountValue} />
       {providerRow}
@@ -59,7 +61,11 @@ export function DetailsSection({
         label={swapIdLabel}
         value={
           <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s6" }}>
-            <Text typography="body3SemiBold" lx={{ color: "base" }}>
+            <Text
+              testID="swap-transaction-details-swap-id"
+              typography="body3SemiBold"
+              lx={{ color: "base" }}
+            >
               {truncatedSwapId}
             </Text>
             <CopyIconButton text={swapId} />
@@ -73,11 +79,13 @@ export function DetailsSection({
 type ReceiveAccountValueProps = Readonly<{
   receiveAccountName?: string;
   receiveAccountCurrency?: CryptoCurrency;
+  testId: string;
 }>;
 
 function renderReceiveAccountValue({
   receiveAccountName,
   receiveAccountCurrency,
+  testId,
 }: ReceiveAccountValueProps) {
   if (!receiveAccountName) {
     return <Skeleton lx={{ height: "s16", width: "s112" }} />;
@@ -92,7 +100,11 @@ function renderReceiveAccountValue({
         flexShrink: 1,
       }}
     >
-      <Text typography="body3" lx={{ color: "base", textAlign: "right", flexShrink: 1 }}>
+      <Text
+        testID={testId}
+        typography="body3"
+        lx={{ color: "base", textAlign: "right", flexShrink: 1 }}
+      >
         {receiveAccountName}
       </Text>
       {receiveAccountCurrency ? (
@@ -121,6 +133,7 @@ function renderProviderRow({ label, provider, providerName, providerMainUrl }: P
         provider,
         providerName,
         providerMainUrl,
+        testId: "swap-transaction-details-provider",
       })}
     />
   );
@@ -130,14 +143,18 @@ type ProviderValueRendererProps = Readonly<{
   provider: string;
   providerName: string;
   providerMainUrl?: string;
+  testId: string;
 }>;
 
 function renderProviderValue({
   provider,
   providerName,
   providerMainUrl,
+  testId,
 }: ProviderValueRendererProps) {
-  const providerValue = <ProviderValue provider={provider} providerName={providerName} />;
+  const providerValue = (
+    <ProviderValue provider={provider} providerName={providerName} testId={testId} />
+  );
 
   if (!providerMainUrl) {
     return providerValue;
@@ -163,12 +180,13 @@ function renderProviderValue({
 type ProviderValueProps = Readonly<{
   provider: string;
   providerName: string;
+  testId: string;
 }>;
 
-function ProviderValue({ provider, providerName }: ProviderValueProps) {
+function ProviderValue({ provider, providerName, testId }: ProviderValueProps) {
   return (
     <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s6" }}>
-      <Text typography="body3SemiBold" lx={{ color: "base", textAlign: "right" }}>
+      <Text testID={testId} typography="body3SemiBold" lx={{ color: "base", textAlign: "right" }}>
         {providerName}
       </Text>
       <ProviderIcon name={provider} />

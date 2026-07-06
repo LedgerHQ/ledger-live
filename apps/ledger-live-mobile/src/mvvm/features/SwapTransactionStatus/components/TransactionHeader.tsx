@@ -42,14 +42,22 @@ export function TransactionHeader({
         )}
       </Box>
       {title ? (
-        <Text typography="heading5SemiBold" lx={{ color: "base", textAlign: "center" }}>
+        <Text
+          testID="swap-transaction-title"
+          typography="heading5SemiBold"
+          lx={{ color: "base", textAlign: "center" }}
+        >
           {title}
         </Text>
       ) : (
         <Skeleton lx={{ height: "s24", width: "s176" }} />
       )}
       {formattedDate ? (
-        <Text typography="body3" lx={{ color: "muted", textAlign: "center" }}>
+        <Text
+          testID="swap-transaction-date"
+          typography="body3"
+          lx={{ color: "muted", textAlign: "center" }}
+        >
           {formattedDate}
         </Text>
       ) : (

@@ -127,6 +127,9 @@
     "./libs/promise": {
       "entry": ["src/index.ts"]
     },
+    "./libs/wallet-analytics": {
+      "entry": ["src/index.ts"]
+    },
     "./libs/ui/packages/native": {
       "entry": [
         "src/assets/cryptoIcons.ts",

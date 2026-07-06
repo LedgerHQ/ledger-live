@@ -3,13 +3,12 @@ import type { Action } from "redux-actions";
 import {
   getFiatCurrencyByTicker,
   findFiatCurrencyByTicker,
-  findCryptoCurrencyByTicker,
+  findCryptoCurrencyById,
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { createSelector } from "~/context/selectors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
-import type { FeatureId } from "@shared/feature-flags";
 import type { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CurrencySettings, SettingsState, State, Theme } from "./types";
@@ -85,7 +84,6 @@ import type {
   SettingsHideSmallValueTokenOperationsPayload,
 } from "../actions/types";
 import { SettingsActionTypes } from "../actions/types";
-import { getFeature } from "@ledgerhq/live-common/firebase/featureFlags";
 import {
   needsConsentRenewal,
   resolveAnalyticsOptInParams,
@@ -213,16 +211,10 @@ export function filterValidSettings(
   ) as Partial<SettingsState>;
 }
 
-const LWM_WALLET_40: FeatureId = "lwmWallet40";
-
 const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SETTINGS_IMPORT]: (state, action) => {
     const payload = (action as Action<SettingsImportPayload>).payload;
     const filteredPayload = filterValidSettings(payload);
-    const wallet40FF = getFeature({ key: LWM_WALLET_40 });
-    const isWallet40Enabled = wallet40FF?.enabled === true;
-    const isWallet40GraphReworkEnabled =
-      wallet40FF?.params?.graphRework === true && isWallet40Enabled;
     const analyticsConsentInfo =
       filteredPayload.analyticsConsentInfo === undefined
         ? state.analyticsConsentInfo
@@ -237,7 +229,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       },
       analyticsConsentInfo,
       locale: filteredPayload.locale ?? state.locale ?? getDefaultLocale(),
-      ...(isWallet40GraphReworkEnabled && { selectedTimeRange: "day" }),
+      ...(filteredPayload.selectedTimeRange === undefined && { selectedTimeRange: "day" }),
     };
   },
 
@@ -708,9 +700,21 @@ export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_S
 
 export const settingsStoreSelector = (state: State): SettingsState => state.settings;
 
+// The persisted counterValue identifies fiats by ticker and cryptos by Ledger id.
+export const counterValueIdOf = (currency: Currency): string =>
+  currency.type === "CryptoCurrency" ? currency.id : currency.ticker;
+
+// One-time migration: legacy persisted crypto counterValues were stored as ticker.
+const LEGACY_CRYPTO_COUNTERVALUE_TICKER_TO_ID: Record<string, string> = {
+  BTC: "bitcoin",
+  ETH: "ethereum",
+};
+export const migrateLegacyCryptoCounterValue = (counterValue: string): string =>
+  LEGACY_CRYPTO_COUNTERVALUE_TICKER_TO_ID[counterValue] ?? counterValue;
+
 const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
   findFiatCurrencyByTicker(state.counterValue) ||
-  findCryptoCurrencyByTicker(state.counterValue) ||
+  findCryptoCurrencyById(state.counterValue) ||
   getFiatCurrencyByTicker("USD");
 
 export const counterValueCurrencySelector = createSelector(

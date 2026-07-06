@@ -27,10 +27,10 @@ import {
 } from "LLD/components/LineChart";
 import { createFiatLineChartValueFormatter } from "LLD/components/LineChart/utils/createFiatLineChartValueFormatter";
 import { createLineChartTooltipTitle } from "LLD/components/LineChart/utils/createLineChartTooltipTitle";
+import { DEFAULT_LINE_CHART_HEIGHT } from "LLD/components/LineChart/constants";
 import {
   buildLineChartBottomPaddedYAxisConfig,
   buildLineChartXAxisConfig,
-  LINE_CHART_VIEW_HEIGHT,
 } from "LLD/components/LineChart/utils/lineChartAxisConfig";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import {
@@ -288,7 +288,7 @@ export function useChartSectionViewModel({
 
   return {
     series,
-    height: LINE_CHART_VIEW_HEIGHT,
+    height: DEFAULT_LINE_CHART_HEIGHT,
     selectedRange,
     onRangeChange: handleRangeChange,
     color,

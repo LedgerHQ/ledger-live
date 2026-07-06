@@ -360,6 +360,8 @@ export async function runCliSwapDie(input: CliSwapDieInput): Promise<CliSwapDieR
     if (flowId) {
       trackSwapCompleted({
         flowId,
+        fromCurrency: trackingFromCurrency,
+        toCurrency: trackingToCurrency,
         fromAmount: String(quote.quoteDetails.sendAmount),
         toAmount: String(quote.quoteDetails.receiveAmount),
       });

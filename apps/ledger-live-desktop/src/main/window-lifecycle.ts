@@ -1,9 +1,10 @@
-import { BrowserWindow, screen, app, WebPreferences, WebContents } from "electron";
+import { BrowserWindow, screen, app, WebPreferences } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
 import { URL, pathToFileURL } from "url";
 import { ledgerUSBVendorId } from "@ledgerhq/devices";
 import { intFromEnv, MIN_HEIGHT, MIN_WIDTH } from "~/config/windowConstants";
+import { closeTrackedWebviewDevTools } from "./webviewHandlers";
 
 export const DEFAULT_WINDOW_WIDTH = intFromEnv("LEDGER_DEFAULT_WINDOW_WIDTH", 1024);
 export const DEFAULT_WINDOW_HEIGHT = intFromEnv("LEDGER_DEFAULT_WINDOW_HEIGHT", 768);
@@ -196,18 +197,12 @@ function setupMainWindowHandlers() {
     return false;
   });
 
-  // Track and clean up a webview's DevTools WebContents to avoid orphaned DevTools windows.
+  // On <webview> teardown, close any tracked DevTools window for that guest id.
+  // (Capture the id before `destroyed` because the WebContents is gone by then.)
   mainWindow.webContents.on("did-attach-webview", function (_event, webContents) {
-    let devtoolContents: WebContents | null = null;
-    webContents.on("devtools-opened", () => {
-      devtoolContents = webContents.devToolsWebContents;
-      devtoolContents?.on("destroyed", () => {
-        devtoolContents = null;
-      });
-    });
-
+    const guestId = webContents.id;
     webContents.on("destroyed", () => {
-      devtoolContents?.close();
+      closeTrackedWebviewDevTools(guestId);
     });
   });
 

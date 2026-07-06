@@ -13,7 +13,7 @@ import InfoModal from "~/modals/Info";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
 import SectionContainer from "~/screens/WalletCentricSections/SectionContainer";
 import SectionTitle from "~/screens/WalletCentricSections/SectionTitle";
-import { PRIVATE_BALANCE_PLACEHOLDER } from "./constants";
+import { PRIVATE_BALANCE_PLACEHOLDER } from "@ledgerhq/live-common/families/aleo/constants";
 
 type InfoName = "transparent" | "private";
 

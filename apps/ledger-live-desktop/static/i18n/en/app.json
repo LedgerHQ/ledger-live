@@ -7212,6 +7212,9 @@
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
     },
+    "ZcashSaplingRecipientNotSupported": {
+      "title": "Sending to Sapling addresses is not supported"
+    },
     "InvalidNonce": {
       "title": "Nonce is required"
     },
@@ -7285,6 +7288,9 @@
     },
     "MaxFeeTooLow": {
       "title": "Fee is lower than the recommended value"
+    },
+    "GasPriceTooLow": {
+      "title": "Gas price is lower than the network minimum"
     },
     "PriorityFeeHigherThanMaxFee": {
       "title": "Max priority fee cannot be higher than max fee"
@@ -8318,6 +8324,20 @@
   "recoverRestore": {
     "title": "Connect and unlock your Ledger"
   },
+  "analyticsOptInScreen": {
+    "main": {
+      "title": "Help us improve Ledger",
+      "description": "With your consent, we'll collect usage data to improve features and fix bugs. We won't track your assets or portfolio details",
+      "ctaAcceptAll": "Accept all",
+      "ctaRefuseAll": "Refuse all",
+      "ctaPrevious": "Previous",
+      "setPreferencesLink": "Set preferences"
+    },
+    "footer": {
+      "lead": "You can revoke your consent any time in the app settings.",
+      "trackingPolicyLink": "Learn more about our Tracking Policy"
+    }
+  },
   "analyticsConsentModal": {
     "fresh": {
       "title": "Help us improve Ledger",
@@ -9185,7 +9205,11 @@
       "description": "Come back later to see your transactions."
     },
     "actionsBar": {
-      "csv": "Export"
+      "csv": "Export",
+      "more": "Transaction history options",
+      "hideDustTransactions": "Hide dust transactions",
+      "showDustTransactions": "Show dust transactions",
+      "dustTransactionsDescription": "Transactions below {{threshold}} will be hidden."
     },
     "exportDialog": {
       "title": "Export transaction history",

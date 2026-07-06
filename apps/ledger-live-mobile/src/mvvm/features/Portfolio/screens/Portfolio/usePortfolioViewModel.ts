@@ -35,13 +35,11 @@ interface UsePortfolioViewModelResult {
   isAWalletCardDisplayed: boolean;
   isAccountListUIEnabled: boolean;
   shouldDisplayAssetDiscoverability: boolean;
-  shouldDisplayQuickActionCtas: boolean;
   shouldDisplayAssetSection: boolean;
   shouldDisplayOperationsList: boolean;
   showAssets: boolean;
   isLNSUpsellBannerShown: boolean;
   isAddModalOpened: boolean;
-  shouldDisplayGraphRework: boolean;
   backgroundColor: string;
   isSyncError: boolean;
   shouldAddBottomPaddingForLegacyAssets: boolean;
@@ -49,7 +47,6 @@ interface UsePortfolioViewModelResult {
   closeAddModal: () => void;
   handleHeightChange: (newHeight: number) => void;
   onBackFromUpdate: () => void;
-  goToAnalyticsAllocations: () => void;
 }
 
 const usePortfolioViewModel = (navigation: {
@@ -61,8 +58,6 @@ const usePortfolioViewModel = (navigation: {
   const { isAWalletCardDisplayed } = useDynamicContent();
   const accountListFF = useFeature("llmAccountListUI");
   const {
-    shouldDisplayGraphRework,
-    shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
     shouldDisplayOperationsList,
     shouldDisplayAssetDiscoverability,
@@ -143,28 +138,22 @@ const usePortfolioViewModel = (navigation: {
 
   const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;
 
-  const goToAnalyticsAllocations = useCallback(() => {
-    navigation.navigate(ScreenName.AnalyticsAllocation);
-  }, [navigation]);
-
   const { syncPhase } = usePortfolioBalance();
   const isSyncError = syncPhase === "failed";
 
   const shouldAddBottomPaddingForLegacyAssets =
-    !isAWalletCardDisplayed && shouldDisplayGraphRework && shouldDisplayOperationsList;
+    !isAWalletCardDisplayed && shouldDisplayOperationsList;
 
   return {
     hideEmptyTokenAccount,
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
     shouldDisplayAssetDiscoverability,
-    shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
     shouldDisplayOperationsList,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
-    shouldDisplayGraphRework,
     backgroundColor,
     isSyncError,
     shouldAddBottomPaddingForLegacyAssets,
@@ -172,7 +161,6 @@ const usePortfolioViewModel = (navigation: {
     closeAddModal,
     handleHeightChange,
     onBackFromUpdate,
-    goToAnalyticsAllocations,
   };
 };
 

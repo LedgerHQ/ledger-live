@@ -1,5 +1,8 @@
-import { getFiatCurrencyByTicker, type FiatCurrency } from "@domain/entity-currency-fiat";
-import { OFAC_FIAT_TICKERS } from "./internals";
+import {
+  getFiatCurrencyByTicker,
+  OFAC_FIAT_TICKERS,
+  type FiatCurrency,
+} from "@domain/entity-currency-fiat";
 
 /**
  * Resolves the Countervalues Service supported-fiat tickers to {@link FiatCurrency} entities.

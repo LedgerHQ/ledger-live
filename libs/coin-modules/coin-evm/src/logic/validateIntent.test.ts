@@ -21,6 +21,7 @@ import {
   RedelegateDstValAddressRequired,
   ValAddressRequired,
 } from "@ledgerhq/errors";
+import { GasPriceTooLow } from "../errors";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -1138,6 +1139,112 @@ describe("validateIntent", () => {
             maxFee: new MaxFeeTooLow(),
           }),
         );
+      });
+
+      describe("minGasPrice", () => {
+        beforeEach(() => {
+          setCoinConfig(
+            () =>
+              ({
+                info: {
+                  node: { type: "ledger", explorerId: "eth" },
+                  explorer: { type: "ledger" },
+                  gasTracker: { type: "ledger", explorerId: "eth" },
+                  minGasPrice: "25000000000",
+                },
+              }) as unknown as EvmCoinConfig,
+          );
+        });
+
+        it("raises an error when maxPriorityFeePerGas is below the chain minGasPrice", async () => {
+          const res = await validateIntent(
+            {} as CryptoCurrency,
+            eip1559Intent({}),
+            [{ value: 50n, asset: { type: "native" } }],
+            {
+              value: 0n,
+              parameters: { maxPriorityFeePerGas: 17921520186n, maxFeePerGas: 30000000000n },
+            },
+          );
+
+          expect(res.errors).toEqual(
+            expect.objectContaining({
+              maxPriorityFee: new GasPriceTooLow(),
+            }),
+          );
+        });
+
+        it("does not raise an error when maxPriorityFeePerGas is above the chain minGasPrice", async () => {
+          const res = await validateIntent(
+            {} as CryptoCurrency,
+            eip1559Intent({}),
+            [{ value: 50n, asset: { type: "native" } }],
+            {
+              value: 0n,
+              parameters: { maxPriorityFeePerGas: 30000000000n, maxFeePerGas: 60000000000n },
+            },
+          );
+
+          expect(res.errors).not.toEqual(
+            expect.objectContaining({
+              maxPriorityFee: expect.any(GasPriceTooLow),
+            }),
+          );
+        });
+      });
+    });
+
+    describe("legacy specific", () => {
+      describe("minGasPrice", () => {
+        beforeEach(() => {
+          setCoinConfig(
+            () =>
+              ({
+                info: {
+                  node: { type: "ledger", explorerId: "eth" },
+                  explorer: { type: "ledger" },
+                  gasTracker: { type: "ledger", explorerId: "eth" },
+                  minGasPrice: "25000000000",
+                },
+              }) as unknown as EvmCoinConfig,
+          );
+        });
+
+        it("raises an error when gasPrice is below the chain minGasPrice", async () => {
+          const res = await validateIntent(
+            {} as CryptoCurrency,
+            legacyIntent({ recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29" }),
+            [{ value: 50n, asset: { type: "native" } }],
+            {
+              value: 0n,
+              parameters: { gasPrice: 10000000000n },
+            },
+          );
+
+          expect(res.errors).toEqual(
+            expect.objectContaining({
+              gasPrice: new GasPriceTooLow(),
+            }),
+          );
+        });
+
+        it("does not raise an error when gasPrice is above the chain minGasPrice", async () => {
+          const res = await validateIntent(
+            {} as CryptoCurrency,
+            legacyIntent({ recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29" }),
+            [{ value: 50n, asset: { type: "native" } }],
+            {
+              value: 0n,
+              parameters: { gasPrice: 30000000000n },
+            },
+          );
+
+          expect(res.errors).not.toEqual(
+            expect.objectContaining({
+              gasPrice: new GasPriceTooLow(),
+            }),
+          );
+        });
       });
     });
   });

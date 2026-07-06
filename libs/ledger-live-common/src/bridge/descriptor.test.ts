@@ -207,6 +207,7 @@ describe("sendFeatures", () => {
 
   it.each([
     ["solana", true],
+    ["algorand", false],
     ["bitcoin", false],
   ])("should check memo support for %s", (currencyId, expected) => {
     const currency = getCryptoCurrencyById(currencyId);
@@ -538,7 +539,7 @@ describe("sendFeatures", () => {
 
   describe("applyMemoToTransaction", () => {
     describe("fallback behavior", () => {
-      it.each(["algorand", "cosmos", "hedera", "stacks", "internet_computer", "mina"])(
+      it.each(["cosmos", "hedera", "stacks", "internet_computer", "mina"])(
         "should use default memo field for %s",
         family => {
           const result = applyMemoToTransaction(family, "test memo");

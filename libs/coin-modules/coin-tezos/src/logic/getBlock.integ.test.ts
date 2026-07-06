@@ -146,8 +146,8 @@ describe("getBlock — Shadownet Paris staking ops", () => {
       expect(stakingOp.type).toBe("other");
       expect(details.operationType).toBe(expectedOpType);
       expect(details.stakedAmount).toBe(expectedAmount);
-      expect(details.delegate).toBe(SHADOWNET_BAKER);
       expect(details.ledgerOpType).toBe(expectedOpType);
+      expect(details).not.toHaveProperty("delegate");
     },
   );
 
