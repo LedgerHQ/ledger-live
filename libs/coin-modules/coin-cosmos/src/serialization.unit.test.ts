@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { AccountRaw } from "@ledgerhq/types-live";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
-import type { CosmosAccount, CosmosAccountRaw, CosmosResources } from "./types";
+import type { CosmosAccount, CosmosAccountRaw, CosmosResources, CosmosResourcesRaw } from "./types";
 
 function makeResources(publicKey: string): CosmosResources {
   return {
@@ -17,6 +17,20 @@ function makeResources(publicKey: string): CosmosResources {
   };
 }
 
+function makeRawResources(publicKey?: string): CosmosResourcesRaw {
+  return {
+    delegations: [],
+    redelegations: [],
+    unbondings: [],
+    delegatedBalance: "0",
+    pendingRewardsBalance: "0",
+    unbondingBalance: "0",
+    withdrawAddress: "cosmos1xxx",
+    sequence: 3,
+    ...(publicKey !== undefined ? { publicKey } : {}),
+  };
+}
+
 describe("cosmos serialization: publicKey", () => {
   it("persists publicKey from account to raw", () => {
     const account = { cosmosResources: makeResources("02ab") } as unknown as CosmosAccount;
@@ -29,7 +43,7 @@ describe("cosmos serialization: publicKey", () => {
 
   it("restores publicKey from raw to account", () => {
     const accountRaw = {
-      cosmosResources: { ...makeResources("02ab"), delegatedBalance: "0" },
+      cosmosResources: makeRawResources("02ab"),
     } as unknown as CosmosAccountRaw;
     const account = {} as CosmosAccount;
 
@@ -51,10 +65,8 @@ describe("cosmos serialization: publicKey", () => {
 
   it("defaults to empty string for accounts persisted before publicKey existed", () => {
     // legacy raw with no publicKey field
-    const legacy = makeResources("") as Partial<CosmosResources>;
-    delete legacy.publicKey;
     const accountRaw = {
-      cosmosResources: { ...legacy, delegatedBalance: "0" },
+      cosmosResources: makeRawResources(),
     } as unknown as CosmosAccountRaw;
     const account = {} as CosmosAccount;
 
