@@ -11,6 +11,7 @@ import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import type { AleoViewKeyFlowParamList } from "./types";
 import ConfirmationModal from "~/components/ConfirmationModal";
+import { TrackScreen } from "~/analytics";
 
 type Props = StackNavigatorProps<AleoViewKeyFlowParamList, ScreenName.AleoViewKeyWarning>;
 
@@ -67,6 +68,7 @@ export default function ViewKeyWarningScreen({ route, navigation }: Props) {
       edges={["bottom"]}
       style={[styles.root, { backgroundColor: colors.background.main }]}
     >
+      <TrackScreen category="AleoAddAccountFlow" name="View key warning" />
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
         <LText semiBold style={styles.title} color="neutral.c100">
           <Trans i18nKey="aleo.addAccount.stepViewKeyWarning.title" />

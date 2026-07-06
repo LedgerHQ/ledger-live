@@ -278,12 +278,15 @@ describe("ViewKeyApproveScreen", () => {
       expect(mockParentNavigate).not.toHaveBeenCalled();
     });
 
-    it("calls onCloseNavigation when buildAccountsWithViewKeys returns empty", () => {
-      const mockOnClose = jest.fn();
+    it("navigates to AleoNoAccountsAdded when buildAccountsWithViewKeys returns empty", () => {
       mockBuildAccountsWithViewKeys.mockReturnValue([]);
-      renderScreen({ payload: {} }, { onCloseNavigation: mockOnClose });
+      renderScreen({ payload: {} });
       capturedOnResult!();
-      expect(mockOnClose).toHaveBeenCalledTimes(1);
+      expect(mockNavigation.navigate).toHaveBeenCalledTimes(1);
+      expect(mockNavigation.navigate).toHaveBeenCalledWith(
+        ScreenName.AleoNoAccountsAdded,
+        mockRoute.params,
+      );
       expect(mockDispatch).not.toHaveBeenCalled();
     });
 
@@ -291,7 +294,9 @@ describe("ViewKeyApproveScreen", () => {
       mockBuildAccountsWithViewKeys.mockReturnValue([ACCOUNT_1]);
       renderScreen({ payload: { account1: "vk1" } });
       capturedOnResult!();
+      expect(mockDispatch).toHaveBeenCalledTimes(1);
       expect(mockDispatch).toHaveBeenCalledWith({ type: "ADD_ACCOUNTS" });
+      expect(mockParentNavigate).toHaveBeenCalledTimes(1);
       expect(mockParentNavigate).toHaveBeenCalledWith(
         ScreenName.AddAccountsSuccess,
         expect.objectContaining({

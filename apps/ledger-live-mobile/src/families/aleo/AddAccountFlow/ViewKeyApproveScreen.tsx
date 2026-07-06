@@ -23,6 +23,7 @@ import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDevic
 import { useAccountName } from "~/reducers/wallet";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
 import type { AleoViewKeyFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<AleoViewKeyFlowParamList, ScreenName.AleoViewKeyApprove>;
@@ -36,12 +37,7 @@ function AccountStatusLabel({
 }>) {
   const accountName = useAccountName(account);
   return (
-    <Text
-      typography="body2"
-      numberOfLines={1}
-      style={styles.accountLabel}
-      lx={{ color: "muted" }}
-    >
+    <Text typography="body2" numberOfLines={1} style={styles.accountLabel} lx={{ color: "muted" }}>
       {accountName || fallbackLabel}
     </Text>
   );
@@ -101,7 +97,7 @@ export default function ViewKeyApproveScreen({ route, navigation }: Props) {
     const accountsWithViewKeys = buildAccountsWithViewKeys(accountsToAdd, payload);
 
     if (accountsWithViewKeys.length === 0) {
-      onCloseNavigation?.();
+      navigation.navigate(ScreenName.AleoNoAccountsAdded, route.params);
       return;
     }
 
@@ -134,8 +130,8 @@ export default function ViewKeyApproveScreen({ route, navigation }: Props) {
     existingAccounts,
     dispatch,
     navigation,
+    route.params,
     currency,
-    onCloseNavigation,
     onSuccess,
     context,
   ]);
@@ -227,6 +223,7 @@ export default function ViewKeyApproveScreen({ route, navigation }: Props) {
       edges={["bottom"]}
       style={[styles.root, { backgroundColor: colors.background.main }]}
     >
+      <TrackScreen category="AleoAddAccountFlow" name="View key approve" />
       <DeviceActionDefaultRendering
         status={hookState}
         request={request}

@@ -14,6 +14,7 @@ import { ScreenName } from "~/const";
 import { AleoAddAccountParamList, AleoViewKeyFlowParamList } from "./types";
 import ViewKeyWarningScreen from "./ViewKeyWarningScreen";
 import ViewKeyApproveScreen from "./ViewKeyApproveScreen";
+import NoAccountsAddedScreen from "./NoAccountsAddedScreen";
 
 type Props = StackNavigatorProps<AleoAddAccountParamList, ScreenName.AleoAddAccount>;
 
@@ -70,6 +71,8 @@ function AddAccountNavigator({ route, navigation }: Readonly<Props>) {
 
   const renderHeaderRight = useCallback(() => <HeaderRight onClose={handleClose} />, [handleClose]);
 
+  const { accountsToAdd: _, ...viewKeyWarningParams } = route.params;
+
   return (
     <Stack.Navigator
       initialRouteName={initialRouteName}
@@ -83,7 +86,7 @@ function AddAccountNavigator({ route, navigation }: Readonly<Props>) {
       <Stack.Screen
         name={ScreenName.AleoViewKeyWarning}
         component={ViewKeyWarningScreen}
-        initialParams={{ ...route.params, onCloseNavigation: handleClose }}
+        initialParams={{ ...viewKeyWarningParams, onCloseNavigation: handleClose }}
         options={{ headerTitle: "" }}
       />
       <Stack.Screen
@@ -91,6 +94,12 @@ function AddAccountNavigator({ route, navigation }: Readonly<Props>) {
         component={ViewKeyApproveScreen}
         initialParams={{ ...route.params, onCloseNavigation: handleClose }}
         options={{ headerTitle: "" }}
+      />
+      <Stack.Screen
+        name={ScreenName.AleoNoAccountsAdded}
+        component={NoAccountsAddedScreen}
+        initialParams={{ ...route.params, onCloseNavigation: handleClose }}
+        options={{ headerTitle: "", headerLeft: () => null }}
       />
     </Stack.Navigator>
   );
