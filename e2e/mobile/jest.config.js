@@ -95,8 +95,8 @@ const config = {
     ],
   },
   moduleNameMapper: {
-    "^@ledgerhq/live-e2e-shared/(.*)$": "<rootDir>/../shared/src/$1",
-    "^@ledgerhq/live-e2e-shared$": "<rootDir>/../shared/src/index",
+    "^@ledgerhq/live-e2e-shared/(.*)$": "<rootDir>/../../libs/live-e2e-shared/src/$1",
+    "^@ledgerhq/live-e2e-shared$": "<rootDir>/../../libs/live-e2e-shared/src/index",
     ...pathsToModuleNameMapper(compilerOptions.paths, {
       prefix: "<rootDir>/",
     }),
