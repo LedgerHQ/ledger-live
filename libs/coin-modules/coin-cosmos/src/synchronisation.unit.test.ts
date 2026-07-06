@@ -228,10 +228,14 @@ describe("getAccountShape", () => {
     ]);
   });
 
-  it("persists the per-account publicKey captured from the device at scan", async () => {
+  it("persists the device-scanned publicKey, taking precedence over a persisted one", async () => {
     mockAccountInfo({});
     const account = await getAccountShape(
-      { ...infoMock, rest: { publicKey: "02ab" } } as AccountShapeInfo<CosmosAccount>,
+      {
+        ...infoMock,
+        rest: { publicKey: "02ab" },
+        initialAccount: { cosmosResources: { publicKey: "0399" } } as CosmosAccount,
+      } as AccountShapeInfo<CosmosAccount>,
       syncConfig,
     );
     expect((account as CosmosAccount).cosmosResources.publicKey).toEqual("02ab");
