@@ -1,3 +1,4 @@
+const path = require("node:path");
 const { parseExtraFeatureFlags } = require("@ledgerhq/live-e2e-shared/featureFlagsJsonUtils");
 const { compilerOptions } = require("./tsconfig.json");
 
@@ -32,6 +33,12 @@ const jestAllure2ReporterOptions = {
     },
     labels: {
       host: process.env.RUNNER_NAME,
+      // Bare spec-file basename (never a directory) so the rerun filter stays portable:
+      // `filePath` may be an array of path segments or an absolute/relative path string.
+      sourceFile: ({ filePath }) => {
+        const fp = Array.isArray(filePath) ? filePath[filePath.length - 1] : filePath;
+        return path.basename(String(fp ?? ""));
+      },
     },
     status: ({ value }) => (value === "broken" ? "failed" : value),
     historyId: ({ value }) => `${value}:${platform}`,
@@ -106,11 +113,7 @@ const config = {
   setupFilesAfterEnv: ["<rootDir>/setup.ts"],
   testMatch: ["<rootDir>/specs/**/*.spec.ts"],
   testTimeout: 300_000,
-  reporters: [
-    "detox/runners/jest/reporter",
-    ["jest-allure2-reporter", jestAllure2ReporterOptions],
-    ...(process.env.CI ? [["github-actions", { silent: false }]] : []),
-  ],
+  reporters: ["detox/runners/jest/reporter", ["jest-allure2-reporter", jestAllure2ReporterOptions]],
   globalSetup: "<rootDir>/jest.globalSetup.ts",
   globalTeardown: "<rootDir>/jest.globalTeardown.ts",
   testEnvironment: "<rootDir>/jest.environment.ts",
