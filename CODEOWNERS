@@ -534,3 +534,4 @@ libs/ledger-live-common/src/config/sharedConfig.ts
 libs/ledger-live-common/package.json
 **/generated/
 **/live-common-set*.ts
+docs/services.md
