@@ -31,8 +31,6 @@ export function buildCurrencyBridge(signerContext: SignerContext<TonSigner>): Cu
   });
 
   return {
-    preload: async () => Promise.resolve({}),
-    hydrate: () => {},
     scanAccounts,
   };
 }

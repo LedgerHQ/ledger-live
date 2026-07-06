@@ -31,8 +31,6 @@ function buildCurrencyBridge(signerContext: SignerContext<CasperSigner>): Curren
   });
 
   return {
-    preload: () => Promise.resolve({}),
-    hydrate: () => {},
     scanAccounts,
   };
 }

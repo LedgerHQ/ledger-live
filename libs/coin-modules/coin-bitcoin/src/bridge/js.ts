@@ -46,8 +46,6 @@ function buildCurrencyBridge(signerContext: SignerContext) {
 
   return {
     scanAccounts,
-    preload: () => Promise.resolve({}),
-    hydrate: () => {},
   };
 }
 

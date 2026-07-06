@@ -45,8 +45,6 @@ export function createBridges(
   const transferInstruction = buildTransferInstruction(signerContext);
 
   const currencyBridge: CantonCurrencyBridge = {
-    preload: () => Promise.resolve({}),
-    hydrate: () => {},
     scanAccounts,
     onboardAccount,
     authorizePreapproval,

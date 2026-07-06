@@ -29,8 +29,6 @@ function buildCurrencyBridge(signerContext: SignerContext<FilecoinSigner>): Curr
   });
 
   return {
-    preload: () => Promise.resolve({}),
-    hydrate: () => {},
     scanAccounts,
   };
 }
