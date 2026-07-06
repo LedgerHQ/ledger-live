@@ -13,10 +13,10 @@ import {
 } from "LLD/components/LineChart";
 import { createSmallestUnitFiatLineChartValueFormatter } from "LLD/components/LineChart/utils/createFiatLineChartValueFormatter";
 import { createLineChartTooltipTitle } from "LLD/components/LineChart/utils/createLineChartTooltipTitle";
+import { DEFAULT_LINE_CHART_HEIGHT } from "LLD/components/LineChart/constants";
 import {
   buildLineChartBottomPaddedYAxisConfig,
   buildLineChartXAxisConfig,
-  LINE_CHART_VIEW_HEIGHT,
 } from "LLD/components/LineChart/utils/lineChartAxisConfig";
 import {
   counterValueCurrencySelector,
@@ -143,7 +143,7 @@ export function useChartSectionViewModel({
       onRangeChange,
       color,
       isLoading: isChartLoading,
-      height: LINE_CHART_VIEW_HEIGHT,
+      height: DEFAULT_LINE_CHART_HEIGHT,
       formatValue,
       tooltipTitle,
       onScrubberPositionChange,
