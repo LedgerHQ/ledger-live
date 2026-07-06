@@ -26,53 +26,44 @@ export default class SwapTransactionStatusDrawer {
   swapIdId = "swap-transaction-details-swap-id";
   viewInExplorerButtonId = "swap-transaction-view-explorer-btn";
 
-  // Amounts/details render behind a loading Skeleton until the swap status view-model resolves,
-  // so the underlying text can briefly be empty right after the drawer opens: poll instead of reading once.
-  private async expectTextEventually(id: string, matcher: (text: string) => void) {
-    await retryUntilTimeout(async () => {
-      matcher(normalizeText(await getTextOfElement(id)));
-    });
-  }
-
   @Step("Verify swap transaction status drawer information")
   async expectSwapTransactionStatusDrawerInfos(
     swapIdPrefix: string,
     provider: SwapProvider,
     details: SwapTransactionStatusDetails,
   ) {
+    // Every value here only mounts its testID once resolved (a Skeleton renders otherwise), so
+    // getTextOfElement's built-in retry-until-exists already guarantees the text is final once found.
     await waitForElementById(this.titleId);
-    await this.expectTextEventually(this.dateId, text =>
-      jestExpect(text).toContain(normalizeText(details.date)),
+    jestExpect(normalizeText(await getTextOfElement(this.dateId))).toContain(
+      normalizeText(details.date),
     );
 
     await detoxExpect(getElementById(this.sendRowId)).toBeVisible();
-    await this.expectTextEventually(this.sentAmountId, text =>
-      jestExpect(text).toEqual(normalizeText(details.sentAmount)),
+    jestExpect(normalizeText(await getTextOfElement(this.sentAmountId))).toEqual(
+      normalizeText(details.sentAmount),
     );
 
     await detoxExpect(getElementById(this.receiveRowId)).toBeVisible();
     if (details.receivedAmount) {
-      const receivedAmount = normalizeText(details.receivedAmount);
-      await this.expectTextEventually(this.receivedAmountId, text =>
-        jestExpect(text).toEqual(receivedAmount),
+      jestExpect(normalizeText(await getTextOfElement(this.receivedAmountId))).toEqual(
+        normalizeText(details.receivedAmount),
       );
     } else {
       await detoxExpect(getElementById(this.receivedAmountId)).toBeVisible();
     }
 
     await retryUntilTimeout(() => scrollToId(this.networkFeesId, this.scrollViewId));
-    await this.expectTextEventually(this.networkFeesId, text =>
-      jestExpect(text).toEqual(normalizeText(details.networkFees)),
+    jestExpect(normalizeText(await getTextOfElement(this.networkFeesId))).toEqual(
+      normalizeText(details.networkFees),
     );
-    await this.expectTextEventually(this.receiveAccountId, text =>
-      jestExpect(text).toContain(normalizeText(details.receiveAccount)),
+    jestExpect(normalizeText(await getTextOfElement(this.receiveAccountId))).toContain(
+      normalizeText(details.receiveAccount),
     );
-    await this.expectTextEventually(this.providerId, text =>
-      jestExpect(text).toEqual(normalizeText(provider.uiName)),
+    jestExpect(normalizeText(await getTextOfElement(this.providerId))).toEqual(
+      normalizeText(provider.uiName),
     );
-    await this.expectTextEventually(this.swapIdId, text =>
-      jestExpect(text).toContain(swapIdPrefix),
-    );
+    jestExpect(normalizeText(await getTextOfElement(this.swapIdId))).toContain(swapIdPrefix);
 
     await retryUntilTimeout(() => scrollToId(this.viewInExplorerButtonId, this.scrollViewId));
     await detoxExpect(getElementById(this.viewInExplorerButtonId)).toBeVisible();
