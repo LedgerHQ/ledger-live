@@ -1,0 +1,108 @@
+[
+  {
+    "type": "function",
+    "name": "delegate",
+    "stateMutability": "payable",
+    "inputs": [{ "name": "delegatorAddress", "type": "address" }],
+    "outputs": [{ "name": "shares", "type": "uint256" }]
+  },
+  {
+    "type": "function",
+    "name": "undelegate",
+    "stateMutability": "payable",
+    "inputs": [
+      { "name": "withdrawalAddress", "type": "address" },
+      { "name": "shares", "type": "uint256" }
+    ],
+    "outputs": [{ "name": "", "type": "uint256" }]
+  },
+  {
+    "type": "function",
+    "name": "getDelegation",
+    "stateMutability": "view",
+    "inputs": [{ "name": "delegatorAddress", "type": "address" }],
+    "outputs": [
+      { "name": "validatorAddress", "type": "address" },
+      { "name": "shares", "type": "uint256" }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "convertToTokens",
+    "stateMutability": "view",
+    "inputs": [{ "name": "shares", "type": "uint256" }],
+    "outputs": [{ "name": "", "type": "uint256" }]
+  },
+  {
+    "type": "function",
+    "name": "convertToShares",
+    "stateMutability": "view",
+    "inputs": [{ "name": "tokens", "type": "uint256" }],
+    "outputs": [{ "name": "", "type": "uint256" }]
+  },
+  {
+    "type": "function",
+    "name": "withdrawalFeeInGwei",
+    "stateMutability": "view",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint96" }]
+  },
+  {
+    "type": "function",
+    "name": "commissionRate",
+    "stateMutability": "view",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint32" }]
+  },
+  {
+    "type": "function",
+    "name": "annualPercentageYield",
+    "stateMutability": "view",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256" }]
+  },
+  {
+    "type": "function",
+    "name": "tokens",
+    "stateMutability": "view",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256" }]
+  },
+  {
+    "type": "function",
+    "name": "description",
+    "stateMutability": "view",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "components": [
+          { "name": "moniker", "type": "string" },
+          { "name": "identity", "type": "string" },
+          { "name": "website", "type": "string" },
+          { "name": "securityContact", "type": "string" },
+          { "name": "details", "type": "string" }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "withdrawCount",
+    "stateMutability": "view",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256" }]
+  },
+  {
+    "type": "function",
+    "name": "getWithdraw",
+    "stateMutability": "view",
+    "inputs": [{ "name": "index", "type": "uint64" }],
+    "outputs": [
+      { "name": "completionHeight", "type": "uint256" },
+      { "name": "delegatorAddress", "type": "address" },
+      { "name": "amount", "type": "uint256" }
+    ]
+  }
+]
