@@ -1,55 +1,45 @@
 import { useEffect, useMemo } from "react";
-import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
-import {
-  usePostOnboardingHubState,
-  usePostOnboardingPortfolioWidgetVisibility,
-} from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { postOnboardingSetFinished } from "@ledgerhq/live-common/postOnboarding/actions";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { addCompletionDate } from "~/actions/settings";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import {
   hasCompletedOnboardingSelector,
   onboardingCompletionDateSelector,
 } from "~/reducers/settings";
 import { usePostOnboardingHubStepperDisplay } from "~/logic/postOnboarding/usePostOnboardingHubStepperDisplay";
-
-const cutoffDays = 15;
+import {
+  isPostOnboardingCutoffElapsed,
+  usePostOnboardingCompletionDateBackfill,
+} from "../utils/postOnboardingCompletionWindow";
 
 export function useAutoFinishPostOnboarding() {
   const dispatch = useDispatch();
   const { actionsState, postOnboardingInProgress } = usePostOnboardingHubState();
-  const { isPortfolioWidgetBaseVisible } =
-    usePostOnboardingPortfolioWidgetVisibility(flattenAccountsSelector);
   const { areAllActionsCompleted } = usePostOnboardingHubStepperDisplay(actionsState);
-
+  const accounts = useSelector(flattenAccountsSelector);
   const onboardingCompletionDate = useSelector(onboardingCompletionDateSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
-  const isBeforeCutoffTime = useMemo(() => {
-    if (onboardingCompletionDate === null) {
-      return hasCompletedOnboarding;
-    }
-    return differenceInCalendarDays(new Date(), new Date(onboardingCompletionDate)) <= cutoffDays;
-  }, [onboardingCompletionDate, hasCompletedOnboarding]);
+  usePostOnboardingCompletionDateBackfill();
+
+  const hasAccountsWithFunds = useMemo(
+    () => accounts.some(account => account?.balance?.isGreaterThan(0)),
+    [accounts],
+  );
 
   const areHubStepsDone = actionsState.length > 0 && areAllActionsCompleted;
 
-  const isCutoffElapsed = onboardingCompletionDate !== null && !isBeforeCutoffTime;
+  const isCutoffElapsed = isPostOnboardingCutoffElapsed({
+    onboardingCompletionDate,
+    hasCompletedOnboarding,
+  });
 
-  const isPhaseOver = !isPortfolioWidgetBaseVisible || isCutoffElapsed || areHubStepsDone;
-
-  useEffect(() => {
-    if (hasCompletedOnboarding && onboardingCompletionDate === null) {
-      dispatch(addCompletionDate());
-    }
-  }, [hasCompletedOnboarding, onboardingCompletionDate, dispatch]);
+  const isPhaseOver = hasAccountsWithFunds || isCutoffElapsed || areHubStepsDone;
 
   useEffect(() => {
     if (postOnboardingInProgress && isPhaseOver) {
       dispatch(postOnboardingSetFinished());
     }
   }, [dispatch, postOnboardingInProgress, isPhaseOver]);
-
-  return null;
 }

@@ -1,9 +1,8 @@
+import BigNumber from "bignumber.js";
 import { renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import {
-  usePostOnboardingHubState,
-  usePostOnboardingPortfolioWidgetVisibility,
-} from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import type { Account } from "@ledgerhq/types-live";
+import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import type { State } from "~/reducers/types";
 import { usePostOnboardingHubStepperDisplay } from "~/logic/postOnboarding/usePostOnboardingHubStepperDisplay";
 import subDays from "date-fns/subDays";
@@ -13,18 +12,19 @@ jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index");
 jest.mock("~/logic/postOnboarding/usePostOnboardingHubStepperDisplay");
 
 const mockedHubState = jest.mocked(usePostOnboardingHubState);
-const mockedWidgetVisibility = jest.mocked(usePostOnboardingPortfolioWidgetVisibility);
 const mockedStepper = jest.mocked(usePostOnboardingHubStepperDisplay);
 
 const daysAgoISO = (days: number) => subDays(new Date(), days).toISOString();
 
+const accountWithFunds = { balance: new BigNumber(1) } as Account;
+
 type Scenario = {
   postOnboardingInProgress: boolean;
-  isPortfolioWidgetBaseVisible: boolean;
   actionsCount: number;
   areAllActionsCompleted: boolean;
   onboardingCompletionDate?: string | null;
   hasCompletedOnboarding?: boolean;
+  accounts?: Account[];
   transform?: (state: State) => State;
 };
 
@@ -43,9 +43,6 @@ function setup(scenario: Scenario) {
     actionsState: Array.from({ length: scenario.actionsCount }, makeAction),
     lastActionCompleted: null,
     postOnboardingInProgress: scenario.postOnboardingInProgress,
-  });
-  mockedWidgetVisibility.mockReturnValue({
-    isPortfolioWidgetBaseVisible: scenario.isPortfolioWidgetBaseVisible,
   });
   mockedStepper.mockReturnValue({
     currentStep: 1,
@@ -67,6 +64,10 @@ function setup(scenario: Scenario) {
       hasCompletedOnboarding: scenario.hasCompletedOnboarding ?? true,
       onboardingCompletionDate: scenario.onboardingCompletionDate ?? null,
     },
+    accounts: {
+      ...state.accounts,
+      active: scenario.accounts ?? state.accounts.active,
+    },
   });
 
   return renderHook(() => useAutoFinishPostOnboarding(), {
@@ -78,15 +79,21 @@ function setup(scenario: Scenario) {
 
 describe("useAutoFinishPostOnboarding", () => {
   beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date("2026-01-02T03:04:05.000Z"));
     jest.clearAllMocks();
   });
 
-  it("clears postOnboardingInProgress when the user is no longer eligible (has funds)", async () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("clears postOnboardingInProgress when the user has funded accounts", async () => {
     const { store } = setup({
       postOnboardingInProgress: true,
-      isPortfolioWidgetBaseVisible: false,
       actionsCount: 2,
       areAllActionsCompleted: false,
+      accounts: [accountWithFunds],
     });
 
     await waitFor(() =>
@@ -97,7 +104,6 @@ describe("useAutoFinishPostOnboarding", () => {
   it("clears postOnboardingInProgress when the 15-day cutoff has elapsed", async () => {
     const { store } = setup({
       postOnboardingInProgress: true,
-      isPortfolioWidgetBaseVisible: true,
       actionsCount: 2,
       areAllActionsCompleted: false,
       onboardingCompletionDate: daysAgoISO(16),
@@ -111,7 +117,6 @@ describe("useAutoFinishPostOnboarding", () => {
   it("does not clear postOnboardingInProgress on the last day of the 15-day window", () => {
     const { store } = setup({
       postOnboardingInProgress: true,
-      isPortfolioWidgetBaseVisible: true,
       actionsCount: 2,
       areAllActionsCompleted: false,
       onboardingCompletionDate: daysAgoISO(15),
@@ -123,7 +128,6 @@ describe("useAutoFinishPostOnboarding", () => {
   it("does not treat incomplete onboarding without a completion date as cutoff elapsed", () => {
     const { store } = setup({
       postOnboardingInProgress: true,
-      isPortfolioWidgetBaseVisible: true,
       actionsCount: 2,
       areAllActionsCompleted: false,
       onboardingCompletionDate: null,
@@ -136,7 +140,6 @@ describe("useAutoFinishPostOnboarding", () => {
   it("clears postOnboardingInProgress when all hub actions are completed", async () => {
     const { store } = setup({
       postOnboardingInProgress: true,
-      isPortfolioWidgetBaseVisible: true,
       actionsCount: 2,
       areAllActionsCompleted: true,
     });
@@ -149,9 +152,9 @@ describe("useAutoFinishPostOnboarding", () => {
   it("keeps postOnboardingInProgress while genuinely in the post-onboarding phase", () => {
     const { store } = setup({
       postOnboardingInProgress: true,
-      isPortfolioWidgetBaseVisible: true,
       actionsCount: 2,
       areAllActionsCompleted: false,
+      accounts: [],
     });
 
     expect(store.getState().postOnboarding.postOnboardingInProgress).toBe(true);
@@ -160,21 +163,19 @@ describe("useAutoFinishPostOnboarding", () => {
   it("does nothing when post-onboarding is already finished", () => {
     const { store } = setup({
       postOnboardingInProgress: false,
-      isPortfolioWidgetBaseVisible: false,
       actionsCount: 2,
       areAllActionsCompleted: false,
     });
 
-    // The guard requires the flag to be in progress; the store is left untouched.
     expect(store.getState().postOnboarding.postOnboardingInProgress).toBe(false);
   });
 
   it("behaves the same regardless of the onboardingWidget feature flag", async () => {
     const { store } = setup({
       postOnboardingInProgress: true,
-      isPortfolioWidgetBaseVisible: false,
       actionsCount: 2,
       areAllActionsCompleted: false,
+      accounts: [accountWithFunds],
       transform: withFlagOverrides({ onboardingWidget: { enabled: true } }),
     });
 

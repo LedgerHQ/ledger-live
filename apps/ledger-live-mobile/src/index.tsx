@@ -99,7 +99,7 @@ import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setu
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
 import { setSuiGraphqlEnabled } from "@ledgerhq/live-common/families/sui/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
-import { useAutoFinishPostOnboarding } from "./logic/postOnboarding/useAutoFinishPostOnboarding";
+import { useAutoFinishPostOnboarding } from "LLM/features/PostOnboarding/hooks/useAutoFinishPostOnboarding";
 logStartupEvent("After js imports");
 
 if (Config.DISABLE_YELLOW_BOX) {
