@@ -4,6 +4,7 @@ import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import { STAKING_CONTRACTS } from "../contracts";
 import monadValidatorApi from "./monad";
 import seiValidatorApi from "./sei";
+import zeroGravityValidatorApi from "./zero_gravity";
 import type { ValidatorApi } from "./types";
 
 /**
@@ -18,6 +19,8 @@ export const getValidatorApi = (currencyId: string): ValidatorApi | undefined =>
       return seiValidatorApi;
     case "monad":
       return monadValidatorApi;
+    case "zero_gravity":
+      return zeroGravityValidatorApi;
     default:
       return undefined;
   }

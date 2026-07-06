@@ -153,6 +153,10 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       undelegate: "undelegate",
       getStakedBalance: "getDelegation",
     },
+    apiConfig: {
+      baseUrl: "https://api.0g.exploreme.pro",
+      validatorsEndpoint: "/api/v2/validators?limit=100",
+    },
     // minWithdrawabilityDelay on registry 0xea224d = 0x30d40 = 200,000 blocks; at ~1 s/block = 2d 7h.
     // curl https://zero-gravity.coin.ledger.com -sX POST -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","method":"eth_call","params":[{"to":"0xea224dBB52F57752044c0C86aD50930091F561B9","data":"0x279a0d76"},"latest"],"id":1}'
     unbondingPeriodDays: 2.31,

@@ -14,6 +14,17 @@ describe("getValidators", () => {
         },
       } as EvmCoinConfig,
     ],
+    [
+      "zero_gravity",
+      {
+        info: {
+          node: {
+            type: "external",
+            uri: "https://zero-gravity.coin.ledger.com",
+          },
+        },
+      } as EvmCoinConfig,
+    ],
   ])("fetches validators on '%s'", async (currencyId, config) => {
     setCoinConfig(() => config);
 
