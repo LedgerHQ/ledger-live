@@ -19,10 +19,6 @@ import { getExtremaPointMarkers } from "./utils/getExtremaPointMarkers";
 
 const defaultFormatValue: LineChartValueFormatter = value => String(value);
 
-function sanitizeSeriesData(data: LineChartSeries["data"]): LineChartSeries["data"] {
-  return data?.map(value => (Number.isFinite(value) ? value : null));
-}
-
 export type LineChartViewModelResult<TRange extends string = string> = Readonly<{
   chartSeries: LineChartSeries[];
   selectedRange: TRange;
@@ -85,10 +81,7 @@ export function useLineChartViewModel<TRange extends string>({
     [color, theme.colors.bg],
   );
 
-  const chartSeries = useMemo(
-    () => series.map(entry => ({ ...entry, data: sanitizeSeriesData(entry.data), stroke })),
-    [series, stroke],
-  );
+  const chartSeries = useMemo(() => series.map(entry => ({ ...entry, stroke })), [series, stroke]);
 
   const resolvedPoints = useMemo(
     () => points ?? getExtremaPointMarkers(chartSeries),

@@ -489,13 +489,6 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.formatValue(100)).toContain("100");
     });
 
-    it("does not format non-finite chart values", () => {
-      const { result } = renderVM();
-
-      expect(result.current.formatValue(Number.NaN)).toBe("");
-      expect(result.current.formatValue(Number.POSITIVE_INFINITY)).toBe("");
-    });
-
     it("builds a tooltip title from the timestamp at the given index", () => {
       const { result } = renderVM();
 

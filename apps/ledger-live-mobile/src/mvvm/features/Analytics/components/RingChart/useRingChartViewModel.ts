@@ -22,10 +22,6 @@ export function useRingChartViewModel(data: Array<ColorableDistributionItem>, st
 
     return data.reduce<Paths>(
       (acc, item) => {
-        if (!Number.isFinite(item.distribution)) {
-          return acc;
-        }
-
         const increment = item.distribution * 2 * Math.PI;
 
         const pathData =

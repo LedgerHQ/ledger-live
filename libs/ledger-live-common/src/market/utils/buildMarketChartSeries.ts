@@ -12,10 +12,6 @@ type BuildMarketChartSeriesParams = Readonly<{
   atlTime?: number;
 }>;
 
-function isFiniteChartPoint([timestamp, value]: readonly [number, number]): boolean {
-  return Number.isFinite(timestamp) && Number.isFinite(value);
-}
-
 export function buildMarketChartSeries({
   chartData,
   range,
@@ -25,7 +21,7 @@ export function buildMarketChartSeries({
   athTime,
   atlTime,
 }: BuildMarketChartSeriesParams): { prices: number[]; timestamps: number[] } {
-  const rawPoints = (chartData?.[range] ?? []).filter(isFiniteChartPoint);
+  const rawPoints = chartData?.[range] ?? [];
   const withExtrema =
     range === "all"
       ? injectMarketExtrema(rawPoints, { ath, athDate: athTime, atl, atlDate: atlTime })

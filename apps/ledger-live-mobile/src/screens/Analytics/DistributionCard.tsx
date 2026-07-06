@@ -67,7 +67,7 @@ function DistributionCard({ item: { currency, amount, distribution } }: Props) {
     () => ensureContrast(getCurrencyColor(currency), colors.background.main),
     [colors, currency],
   );
-  const percentage = Number.isFinite(distribution) ? Math.round(distribution * 1e4) / 1e2 : 0;
+  const percentage = Math.round(distribution * 1e4) / 1e2;
 
   const navigateToAccounts = useCallback(() => {
     openFromAsset({ currency, source: "analytics_distribution" });

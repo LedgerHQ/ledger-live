@@ -1,6 +1,5 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import { Path } from "react-native-svg";
 import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { State } from "~/reducers/types";
@@ -77,31 +76,6 @@ describe("RingChart integration", () => {
 
     expect(screen.getByTestId("analytics-ring-chart")).toBeVisible();
   });
-
-  it("should skip chart paths when an allocation distribution is not finite", () => {
-    const { UNSAFE_queryAllByType } = render(
-      <RingChart
-        size={76}
-        strokeWidth={3}
-        data={[
-          {
-            currency: mockBitcoinCurrency,
-            distribution: Number.NaN,
-            amount: 1,
-          },
-          {
-            currency: mockEthereumCurrency,
-            distribution: 0.4,
-            amount: 4,
-          },
-        ]}
-      />,
-    );
-
-    const paths = UNSAFE_queryAllByType(Path);
-    expect(paths.length).toBeGreaterThan(0);
-    expect(paths.every(path => !String(path.props.d).includes("NaN"))).toBe(true);
-  });
 });
 
 describe("DistributionCard integration", () => {
@@ -122,14 +96,6 @@ describe("DistributionCard integration", () => {
 
     expect(screen.getByText(mockBitcoinCurrency.name)).toBeVisible();
     expect(screen.getByText("37.5%")).toBeVisible();
-  });
-
-  it("should display zero percent when the distribution item is not finite", () => {
-    render(<DistributionCard item={{ ...item, distribution: Number.NaN }} />, {
-      overrideInitialState: mockStateWithCountervalues,
-    });
-
-    expect(screen.getByText("0%")).toBeVisible();
   });
 
   it("should track and navigate to the asset screen when the card is pressed", async () => {

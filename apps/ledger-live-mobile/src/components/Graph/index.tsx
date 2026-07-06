@@ -11,7 +11,7 @@ import DefGraph from "./DefGrad";
 import BarInteraction from "./BarInteraction";
 import type { Item, ItemArray } from "./types";
 
-type Props = Readonly<{
+type Props = {
   width: number;
   height: number;
   /** Represents the offset to apply to the chart positioning on x-axis. Default to 0.  */
@@ -27,7 +27,7 @@ type Props = Readonly<{
   verticalRangeRatio?: number;
   fill?: string;
   testID?: string;
-}>;
+};
 const STROKE_WIDTH = 2;
 const FOCUS_RADIUS = 4;
 
@@ -48,37 +48,15 @@ function Graph({
 }: Props) {
   const { colors } = useTheme();
   const color = initialColor || colors.primary.c80;
-  const safeData = data.filter(item => {
-    const timestamp = item.date?.getTime();
-    return Number.isFinite(timestamp) && Number.isFinite(mapValue(item));
-  });
-  const contentBounds = {
-    height,
-    width,
-    viewBox: `${xOffset * -1} ${yOffset * -1} ${width} ${height}`,
-  };
-
-  if (width <= 0 || height <= 0 || safeData.length < 2) {
-    return (
-      <Svg
-        testID={testID}
-        height={contentBounds.height}
-        width={contentBounds.width}
-        viewBox={contentBounds.viewBox}
-        preserveAspectRatio="none"
-      />
-    );
-  }
-
-  const maxY = mapValue(maxBy(safeData, mapValue)!);
-  const minY = mapValue(minBy(safeData, mapValue)!);
+  const maxY = mapValue(maxBy(data, mapValue)!);
+  const minY = mapValue(minBy(data, mapValue)!);
   const isSameValue = maxY === minY;
   const paddedMinY = minY - (maxY - minY) / verticalRangeRatio;
   const curve = d3shape[shape] as d3shape.CurveFactory;
   const x = d3scale
     .scaleTime()
     .range([0, width])
-    .domain([safeData[0].date!, safeData.at(-1)!.date!]);
+    .domain([data[0].date!, data[data.length - 1].date!]);
   const y = d3scale
     .scaleLinear()
     .domain([paddedMinY, maxY])
@@ -98,19 +76,19 @@ function Graph({
     .x(d => x(d.date!))
     .y0(() => height)
     .y1(d => yExtractor(d))
-    .curve(curve)(safeData);
+    .curve(curve)(data);
 
   const line = d3shape
     .line<Item>()
     .x(d => x(d.date!))
     .y(yExtractor)
-    .curve(curve)(safeData);
+    .curve(curve)(data);
   const content = (
     <Svg
       testID={testID}
-      height={contentBounds.height}
-      width={contentBounds.width}
-      viewBox={contentBounds.viewBox}
+      height={height}
+      width={width}
+      viewBox={`${xOffset * -1} ${yOffset * -1} ${width} ${height}`}
       preserveAspectRatio="none"
     >
       <Defs>
@@ -125,7 +103,7 @@ function Graph({
     <BarInteraction
       width={width}
       height={height}
-      data={safeData}
+      data={data}
       color={color}
       mapValue={mapValue}
       onItemHover={onItemHover}
