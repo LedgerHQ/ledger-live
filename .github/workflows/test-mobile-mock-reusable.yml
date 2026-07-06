@@ -682,10 +682,7 @@ jobs:
 
   detox-ui-e2e-android:
     name: "Android UI E2E Smoke Tests"
-    continue-on-error: true
     needs: [build-android, determine-builds]
-    # Only run on merge to develop (push), not on PRs
-    if: ${{ github.event_name == 'push' && github.ref_name == 'develop' }}
     runs-on: [ledger-live-linux-8CPU-32RAM]
     timeout-minutes: 80
     env:
@@ -966,12 +963,8 @@ jobs:
 
   detox-ui-e2e-ios:
     name: "iOS UI E2E Smoke Tests"
-    continue-on-error: true
     needs: [build-ios, determine-builds]
-    # Only run on merge to develop (push), not on PRs
-    if: ${{ github.event_name == 'push' && github.ref_name == 'develop' }}
-    # Pin to performance-pool so smoke-test timing stats are accurate and consistent
-    runs-on: ["performance-pool", macOS, ARM64]
+    runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
     timeout-minutes: 80
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
