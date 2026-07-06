@@ -1,6 +1,6 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { OptionalFeatureMap } from "@shared/feature-flags";
+import type { OptionalFeatureMap } from "@shared/feature-flags";
 
 setTeamOwner(Team.WALLET_XP);
 $TmsLink("B2CQA-4383");

@@ -15,7 +15,7 @@ import {
 import { waitForSpeculosReady } from "@ledgerhq/live-e2e-shared/speculosCI";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
-import type { Features, OptionalFeatureMap, PartialFeatures } from "@shared/feature-flags";
+import type { Features, OptionalFeatureMap } from "@shared/feature-flags";
 
 function checkTestFailed(): void {
   if (globalThis.IS_FAILED) {
