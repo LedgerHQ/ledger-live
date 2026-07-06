@@ -132,6 +132,7 @@ describe("onQueryStarted", () => {
     });
 
   afterEach(() => {
+    jest.useRealTimers();
     fetchSpy?.mockRestore();
   });
 
@@ -163,6 +164,5 @@ describe("onQueryStarted", () => {
     await pending;
 
     expect(selectSupportedFiats(store.getState())).toBe(fallbackBefore);
-    jest.useRealTimers();
   });
 });
