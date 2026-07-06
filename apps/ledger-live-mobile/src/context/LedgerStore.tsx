@@ -40,7 +40,11 @@ import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { importBle } from "~/actions/ble";
 import { importKnownDevices } from "~/reducers/knownDevices";
 import { updateProtectData, updateProtectStatus } from "~/actions/protect";
-import { INITIAL_STATE as settingsState } from "~/reducers/settings";
+import {
+  INITIAL_STATE as settingsState,
+  counterValueIdOf,
+  migrateLegacyCryptoCounterValue,
+} from "~/reducers/settings";
 import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
 import { importMarket } from "~/actions/market";
 import { importMarketListConfig } from "~/reducers/market";
@@ -139,6 +143,11 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       store.dispatch(importBle(bleData));
       if (persistedKnownDevices) {
         store.dispatch(importKnownDevices(persistedKnownDevices));
+      }
+
+      // Legacy crypto counter-values were persisted as ticker (BTC/ETH); migrate them to Ledger ids.
+      if (settingsData && typeof settingsData.counterValue === "string") {
+        settingsData.counterValue = migrateLegacyCryptoCounterValue(settingsData.counterValue);
       }
 
       store.dispatch(importSettings(settingsData));
@@ -333,7 +342,9 @@ async function updateSupportedCountervalues(store: Store, settingsData: Partial<
 
   if (
     settingsData?.counterValue &&
-    !supportedCounterValues.find(({ ticker }) => ticker === settingsData.counterValue) &&
+    !supportedCounterValues.find(
+      ({ currency }) => counterValueIdOf(currency) === settingsData.counterValue,
+    ) &&
     settingsData.counterValue !== settingsState.counterValue
   ) {
     settingsData.counterValue = settingsState.counterValue;

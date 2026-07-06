@@ -13,6 +13,10 @@ import {
   removeDismissedContentCards,
   setDismissedContentCards,
 } from "../actions/settings";
+import {
+  getCryptoCurrencyById,
+  getFiatCurrencyByTicker,
+} from "@ledgerhq/live-common/currencies/index";
 import reducer, {
   lastSeenDeviceSelector,
   languageSelector,
@@ -22,6 +26,9 @@ import reducer, {
   filterValidSettings,
   trackingEnabledSelector,
   canPushDeviceIdsSelector,
+  counterValueCurrencySelector,
+  counterValueIdOf,
+  migrateLegacyCryptoCounterValue,
 } from "./settings";
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
@@ -802,6 +809,60 @@ describe("trackingEnabledSelector", () => {
         },
       }),
     ).toBe(true);
+  });
+});
+
+describe("counterValueCurrencySelector", () => {
+  const buildState = (counterValue: string): State => ({
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    ...({} as State),
+    settings: {
+      ...SETTINGS_INITIAL_STATE,
+      counterValue,
+    },
+  });
+
+  it("resolves a fiat counter-value by ticker", () => {
+    expect(counterValueCurrencySelector(buildState("EUR"))).toBe(getFiatCurrencyByTicker("EUR"));
+  });
+
+  it("resolves a crypto counter-value by Ledger id to the CryptoCurrency", () => {
+    const btc = counterValueCurrencySelector(buildState("bitcoin"));
+    expect(btc).toBe(getCryptoCurrencyById("bitcoin"));
+    expect(btc.type).toBe("CryptoCurrency");
+
+    const eth = counterValueCurrencySelector(buildState("ethereum"));
+    expect(eth).toBe(getCryptoCurrencyById("ethereum"));
+    expect(eth.type).toBe("CryptoCurrency");
+  });
+
+  it("falls back to USD for unknown values", () => {
+    expect(counterValueCurrencySelector(buildState("not-a-currency"))).toBe(
+      getFiatCurrencyByTicker("USD"),
+    );
+  });
+});
+
+describe("counterValueIdOf", () => {
+  it("returns the Ledger id for crypto currencies", () => {
+    expect(counterValueIdOf(getCryptoCurrencyById("bitcoin"))).toBe("bitcoin");
+    expect(counterValueIdOf(getCryptoCurrencyById("ethereum"))).toBe("ethereum");
+  });
+
+  it("returns the ticker for fiat currencies", () => {
+    expect(counterValueIdOf(getFiatCurrencyByTicker("EUR"))).toBe("EUR");
+  });
+});
+
+describe("migrateLegacyCryptoCounterValue", () => {
+  it("migrates legacy crypto tickers to Ledger ids", () => {
+    expect(migrateLegacyCryptoCounterValue("BTC")).toBe("bitcoin");
+    expect(migrateLegacyCryptoCounterValue("ETH")).toBe("ethereum");
+  });
+
+  it("leaves fiat tickers and already-migrated ids untouched", () => {
+    expect(migrateLegacyCryptoCounterValue("USD")).toBe("USD");
+    expect(migrateLegacyCryptoCounterValue("bitcoin")).toBe("bitcoin");
   });
 });
 

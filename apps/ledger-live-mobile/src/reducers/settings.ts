@@ -3,7 +3,7 @@ import type { Action } from "redux-actions";
 import {
   getFiatCurrencyByTicker,
   findFiatCurrencyByTicker,
-  findCryptoCurrencyByTicker,
+  findCryptoCurrencyById,
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { createSelector } from "~/context/selectors";
@@ -708,9 +708,21 @@ export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_S
 
 export const settingsStoreSelector = (state: State): SettingsState => state.settings;
 
+// The persisted counterValue identifies fiats by ticker and cryptos by Ledger id.
+export const counterValueIdOf = (currency: Currency): string =>
+  currency.type === "CryptoCurrency" ? currency.id : currency.ticker;
+
+// One-time migration: legacy persisted crypto counterValues were stored as ticker.
+const LEGACY_CRYPTO_COUNTERVALUE_TICKER_TO_ID: Record<string, string> = {
+  BTC: "bitcoin",
+  ETH: "ethereum",
+};
+export const migrateLegacyCryptoCounterValue = (counterValue: string): string =>
+  LEGACY_CRYPTO_COUNTERVALUE_TICKER_TO_ID[counterValue] ?? counterValue;
+
 const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
   findFiatCurrencyByTicker(state.counterValue) ||
-  findCryptoCurrencyByTicker(state.counterValue) ||
+  findCryptoCurrencyById(state.counterValue) ||
   getFiatCurrencyByTicker("USD");
 
 export const counterValueCurrencySelector = createSelector(

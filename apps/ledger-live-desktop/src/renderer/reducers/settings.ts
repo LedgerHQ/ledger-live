@@ -4,7 +4,7 @@ import {
   getCryptoCurrencyById,
   getFiatCurrencyByTicker,
   findFiatCurrencyByTicker,
-  findCryptoCurrencyByTicker,
+  findCryptoCurrencyById,
   listSupportedFiats,
   OFAC_CURRENCIES,
 } from "@ledgerhq/live-common/currencies/index";
@@ -439,7 +439,7 @@ const handlers: SettingsHandlers = {
     let activeCounterValue = state.counterValue;
     if (
       activeCounterValue &&
-      !payload.find(({ currency }) => currency.ticker === activeCounterValue)
+      !payload.find(({ currency }) => counterValueIdOf(currency) === activeCounterValue)
     ) {
       activeCounterValue = INITIAL_STATE.counterValue;
     }
@@ -624,6 +624,18 @@ const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
 export const possibleIntermediaries = [bitcoin, ethereum];
 
+// The persisted counterValue identifies fiats by ticker and cryptos by Ledger id.
+export const counterValueIdOf = (currency: Currency): string =>
+  currency.type === "CryptoCurrency" ? currency.id : currency.ticker;
+
+// One-time migration: legacy persisted crypto counterValues were stored as ticker.
+const LEGACY_CRYPTO_COUNTERVALUE_TICKER_TO_ID: Record<string, string> = {
+  BTC: "bitcoin",
+  ETH: "ethereum",
+};
+export const migrateLegacyCryptoCounterValue = (counterValue: string): string =>
+  LEGACY_CRYPTO_COUNTERVALUE_TICKER_TO_ID[counterValue] ?? counterValue;
+
 export type LangAndRegion = {
   language: string;
   region: string | undefined | null;
@@ -666,7 +678,7 @@ export const counterValueCurrencyLocalSelector = (state: SettingsState): Currenc
   }
   return (
     findFiatCurrencyByTicker(state.counterValue) ||
-    findCryptoCurrencyByTicker(state.counterValue) ||
+    findCryptoCurrencyById(state.counterValue) ||
     getFiatCurrencyByTicker("USD")
   );
 };
