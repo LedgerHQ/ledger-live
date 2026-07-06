@@ -13,7 +13,7 @@ import { CosmosAPI } from "./network/Cosmos";
 import { CosmosAccount, CosmosOperation, CosmosTx } from "./types";
 
 export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any) => {
-  const { address, currency, derivationMode, initialAccount } = info;
+  const { address, currency, derivationMode, initialAccount, rest } = info;
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -68,6 +68,9 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
     unbondingBalance,
     withdrawAddress,
     sequence: accountInfo.sequence,
+    // Captured from the device at scan (hw-getAddress); plain re-syncs have no device,
+    // so carry the previously-persisted value forward.
+    publicKey: rest?.publicKey ?? initialAccount?.cosmosResources?.publicKey ?? "",
   };
 
   const shape = {

@@ -70,6 +70,7 @@ export function genAccountLegacy(id: number | string, opts: GenAccountOptions = 
             unbondingBalance: new BigNumber(0),
             withdrawAddress: address,
             sequence: 0,
+            publicKey: "",
           };
           break;
         case "bitcoin":

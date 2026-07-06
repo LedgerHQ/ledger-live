@@ -20,6 +20,7 @@ function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
     redelegations,
     unbondings,
     sequence,
+    publicKey,
   } = r;
 
   return {
@@ -47,6 +48,7 @@ function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
     unbondingBalance: unbondingBalance.toString(),
     withdrawAddress,
     sequence,
+    publicKey: publicKey ?? "",
   };
 }
 function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
@@ -59,6 +61,7 @@ function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
     withdrawAddress,
     unbondings,
     sequence,
+    publicKey,
   } = r;
   return {
     delegations: delegations.map(({ amount, status, pendingRewards, validatorAddress }) => ({
@@ -85,6 +88,7 @@ function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
     unbondingBalance: new BigNumber(unbondingBalance),
     withdrawAddress,
     sequence,
+    publicKey: publicKey ?? "",
   };
 }
 
