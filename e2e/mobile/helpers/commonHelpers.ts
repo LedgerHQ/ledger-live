@@ -61,7 +61,7 @@ function createDetoxURLBlacklistRegex(): string {
     ".*.googleapis.com/.*",
     ".*clients3.google.com.*",
     ".*tron.coin.ledger.com/wallet/getBrokerage.*",
-    ".*crypto-assets-service.api.ledger.com.*",
+    ".*global.api.prd.ledger.com/cal.*",
     ".*127.0.0.1.*",
     ".*speculos.*ldg-tech.com.*",
     ".*optimism.*",

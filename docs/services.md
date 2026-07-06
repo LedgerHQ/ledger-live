@@ -95,7 +95,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | Provider session | `buy.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Swap backend | `swap.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Ramp catalog | `cdn.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
-| Partner signatures (CAL) | `crypto-assets-service.api.ledger.com` | [env](/libs/env/src/env.ts) | prod |
+| Partner signatures (CAL) | `global.api.prd.ledger.com`<br>_path: `/cal`; staging: `global.api.stg.ledger-test.com`_ | [env](/libs/env/src/env.ts) | prod |
 | Buy/Sell limits | `buy.api.aws.prd.ldg-tech.com`<br>_E2E only_ | [code](/libs/ledger-live-common/src/e2e/buySell.ts) | test |
 | Live app — Swap | `swap-live-app.ledger.com`<br>_manifest [`swap-live-app-aws`](https://live-app-catalog.ledger.com/api/v1/apps)_ | feature-flag | prod |
 | Live app — Buy / Sell | `buy-sell.live.ledger.com`<br>_manifest [`buy-sell`](https://live-app-catalog.ledger.com/api/v1/apps)_ | feature-flag | prod |
@@ -107,7 +107,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | Countervalues / prices | `countervalues.live.ledger.com`<br>_also `countervalues.api.live`, `countervalues-service.api`_ | [env](/libs/env/src/env.ts) | prod |
 | CoinMarketCap proxy | `proxycmc.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | CoinGecko proxy | `proxycg.api.live.ledger.com`<br>_`proxycgassets.api.live` also seen_ | [env](/libs/env/src/env.ts) | prod |
-| Crypto Assets List (CAL) | `crypto-assets-service.api.ledger.com`<br>_`cal.api.*` also seen_ | [env](/libs/env/src/env.ts) | prod |
+| Crypto Assets List (CAL) | `global.api.prd.ledger.com`<br>_path: `/cal`; staging: `global.api.stg.ledger-test.com`_ | [env](/libs/env/src/env.ts) | prod |
 | CAL dynamic CDN | `cdn.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | DADA (assets data aggregator) | `dada.api.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Mapping service | `mapping-service.api.ledger.com` | [env](/libs/env/src/env.ts) | prod |

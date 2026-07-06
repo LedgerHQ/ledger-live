@@ -14,7 +14,7 @@ import { setupServer } from "msw/node";
  */
 export function initMswHandlers(): () => void {
   const server = setupServer(
-    http.get("https://crypto-assets-service.api.ledger.com/*", () => HttpResponse.json([])),
+    http.get("https://global.api.prd.ledger.com/cal/*", () => HttpResponse.json([])),
     http.get("https://nft.api.live.ledger.com/*", () => HttpResponse.json([])),
     http.get("https://earn.api.live.ledger.com/*", () => HttpResponse.json([])),
     http.get("https://countervalues.live.ledger.com/*", () => HttpResponse.json([])),

@@ -209,7 +209,7 @@ describe("getProvidersData", () => {
 
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: "https://crypto-assets-service.api.ledger.com/v1/partners",
+        url: "https://global.api.prd.ledger.com/cal/v1/partners",
         params: {
           env: partnerSignatureEnv,
           output: "name,public_key,public_key_curve,service_app_version,descriptor,partner_id,env",

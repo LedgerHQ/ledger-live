@@ -105,7 +105,7 @@ export const cryptoAssetsApi = createApi({
       async queryFn(currencyId, queryApi) {
         const extra = getCalExtra(queryApi);
         try {
-          const url = new URL("/v1/currencies", extra.calServiceUrl);
+          const url = new URL(`${extra.calServiceUrl}/v1/currencies`);
           url.searchParams.set("output", "id");
           url.searchParams.set("limit", "1");
           url.searchParams.set("id", currencyId);
