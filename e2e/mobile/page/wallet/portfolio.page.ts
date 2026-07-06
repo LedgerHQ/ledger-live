@@ -3,6 +3,9 @@ import { openDeeplink } from "../../helpers/commonHelpers";
 import { DEFAULT_TIMEOUT } from "../../helpers/elementHelpers";
 import { getFlags } from "../../bridge/server";
 import type { Features } from "@shared/feature-flags";
+
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+
 export default class PortfolioPage {
   addNewOrExistingAccount = "add-new-account-button";
   assetsListId = "AssetsList";
@@ -64,6 +67,10 @@ export default class PortfolioPage {
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
   assetItemBalanceId = (currencyName: string) => `${this.baseAssetItem}${currencyName}-balance`;
+  assetItemCountervalueId = (currencyName: string) =>
+    `${this.baseAssetItem}${currencyName}-countervalue`;
+  assetItemExactRegExp = (currencyName: string) =>
+    new RegExp(`^${this.baseAssetItem}${escapeRegExp(currencyName)}$`);
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
   walletTabSelector = (id: "Wallet" | "Market") =>
     getElementById(`${this.walletTabSelectorBase}${id}`);
@@ -456,6 +463,45 @@ export default class PortfolioPage {
   async tapStablecoinsSectionTitle() {
     await scrollToId(this.stablecoinsSectionHeaderId, this.accountsListView);
     await tapById(this.stablecoinsSectionHeaderId);
+  }
+
+  @Step("Open Wallet 4.0 stablecoins list")
+  async openStablecoinsListW40() {
+    await this.tapStablecoinsSectionTitle();
+    await this.checkStablecoinListPageVisible();
+  }
+
+  @Step("Check aggregated asset row is visible")
+  async checkAggregatedAssetRowVisible(currencyName: string, scrollViewId?: string) {
+    if (scrollViewId) {
+      await scrollToId(this.assetItemId(currencyName), scrollViewId);
+    }
+
+    await detoxExpect(getElementById(this.assetItemId(currencyName))).toBeVisible();
+  }
+
+  @Step("Get aggregated asset row count")
+  async getAggregatedAssetRowCount(currencyName: string) {
+    return await countElementsById(this.assetItemExactRegExp(currencyName));
+  }
+
+  @Step("Check asset countervalue is visible")
+  async checkAssetCountervalueVisible(currencyName: string, scrollViewId?: string) {
+    if (scrollViewId) {
+      await scrollToId(this.assetItemId(currencyName), scrollViewId);
+    }
+
+    await detoxExpect(getElementById(this.assetItemCountervalueId(currencyName))).toBeVisible();
+  }
+
+  @Step("Open Wallet 4.0 asset detail")
+  async openAssetDetailW40(currencyName: string, scrollViewId?: string) {
+    if (scrollViewId) {
+      await scrollToId(this.assetItemId(currencyName), scrollViewId);
+    }
+
+    await detoxExpect(getElementById(this.assetItemId(currencyName))).toBeVisible();
+    await tapById(this.assetItemId(currencyName));
   }
 
   private async checkListPageVisible(listId: string) {
