@@ -18,10 +18,6 @@ export const getWallet40Attributes = (
   return {
     isEnabled,
     graphRework: wallet40FeatureFlag?.params?.graphRework ?? false,
-    // quickActionCtas only exists on the mobile (lwm) flag; the lwd schema does not declare it.
-    ...(platform === "lwm" && {
-      quickActionCtas: analyticsFeatureFlagMethod("lwmWallet40")?.params?.quickActionCtas ?? false,
-    }),
     tour: wallet40FeatureFlag?.params?.tour ?? false,
     q2Tour: wallet40FeatureFlag?.params?.q2Tour ?? false,
     lazyOnboarding: wallet40FeatureFlag?.params?.lazyOnboarding ?? false,

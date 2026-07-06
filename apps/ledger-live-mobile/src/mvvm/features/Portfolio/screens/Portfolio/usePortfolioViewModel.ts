@@ -35,7 +35,6 @@ interface UsePortfolioViewModelResult {
   isAWalletCardDisplayed: boolean;
   isAccountListUIEnabled: boolean;
   shouldDisplayAssetDiscoverability: boolean;
-  shouldDisplayQuickActionCtas: boolean;
   shouldDisplayAssetSection: boolean;
   shouldDisplayOperationsList: boolean;
   showAssets: boolean;
@@ -62,7 +61,6 @@ const usePortfolioViewModel = (navigation: {
   const accountListFF = useFeature("llmAccountListUI");
   const {
     shouldDisplayGraphRework,
-    shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
     shouldDisplayOperationsList,
     shouldDisplayAssetDiscoverability,
@@ -158,7 +156,6 @@ const usePortfolioViewModel = (navigation: {
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
     shouldDisplayAssetDiscoverability,
-    shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
     shouldDisplayOperationsList,
     showAssets,
