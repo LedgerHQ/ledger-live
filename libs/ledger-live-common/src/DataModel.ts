@@ -64,7 +64,6 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
         unbondingBalance: new BigNumber(0),
         withdrawAddress: data.freshAddress,
         sequence: 0,
-        publicKey: "",
       };
     }
     if (currency && currency.family == "evm" && !getCurrencyConfiguration(currency.id).showNfts) {
