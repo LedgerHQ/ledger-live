@@ -41,6 +41,7 @@ import portfolioBalanceDisplay from "./portfolioBalanceDisplay";
 import recoverState from "./recoverState";
 import liveAppModal from "./liveAppModal";
 import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import { supportedFiatsSlice } from "@domain/entity-currency-fiat";
 import type { UnknownAction } from "@reduxjs/toolkit";
 
 export type AppStore = Store<State>;
@@ -87,6 +88,7 @@ const appReducer = combineReducers({
   portfolioBalanceDisplay,
   recoverState,
   liveAppModal,
+  supportedFiats: supportedFiatsSlice.reducer,
   ...llmRTKApiReducers,
 });
 

@@ -77,6 +77,8 @@
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-filecoin": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",
+    "@domain/api-currency-fiat": "workspace:^",
+    "@domain/entity-currency-fiat": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",

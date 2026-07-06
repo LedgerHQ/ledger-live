@@ -3,8 +3,7 @@ import {
   FIAT_CURRENCIES_REGISTRY,
   FIAT_CURRENCIES_IDS,
   FIAT_CURRENCIES_BY_TICKER,
-  getFiatCurrencyByTicker,
-} from "./registry";
+} from "./constants";
 
 describe("FIAT_CURRENCIES_REGISTRY", () => {
   it("is non-empty", () => {
@@ -50,15 +49,5 @@ describe("FIAT_CURRENCIES_BY_TICKER", () => {
     for (const [key, currency] of Object.entries(FIAT_CURRENCIES_BY_TICKER)) {
       expect(currency.ticker).toBe(key);
     }
-  });
-});
-
-describe("getFiatCurrencyByTicker", () => {
-  it("resolves a known ticker", () => {
-    expect(getFiatCurrencyByTicker("USD")?.id).toBe("usd");
-  });
-
-  it("returns undefined for an unknown ticker", () => {
-    expect(getFiatCurrencyByTicker("ZZZ")).toBeUndefined();
   });
 });

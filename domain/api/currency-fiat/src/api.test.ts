@@ -7,7 +7,8 @@ jest.mock("./converter", () => ({
 import { resolveSupportedFiats } from "./converter";
 import { currencyFiatApi, cvsApiExtra, useGetSupportedFiatsQuery } from "./api";
 import { SupportedFiatsResponseSchema } from "./schema";
-import { mockSupportedFiatsResponse } from "./fixtures";
+import { fiatByTicker, mockSupportedFiatsResponse } from "./fixtures";
+import { supportedFiatsSlice, selectSupportedFiats } from "@domain/entity-currency-fiat";
 
 const mockResolve = resolveSupportedFiats as jest.MockedFunction<typeof resolveSupportedFiats>;
 
@@ -110,5 +111,58 @@ describe("currencyFiatApi requests", () => {
     await store.dispatch(currencyFiatApi.endpoints.getSupportedFiats.initiate());
 
     expect(mockResolve).toHaveBeenCalledWith(["USD", "EUR"]);
+  });
+});
+
+describe("onQueryStarted", () => {
+  let fetchSpy: jest.SpyInstance;
+
+  const makeFullStore = () =>
+    configureStore({
+      reducer: {
+        [currencyFiatApi.reducerPath]: currencyFiatApi.reducer,
+        supportedFiats: supportedFiatsSlice.reducer,
+      },
+      middleware: gdm =>
+        gdm({
+          thunk: {
+            extraArgument: cvsApiExtra({ countervaluesServiceUrl: "https://cvs.test" }),
+          },
+        }).concat(currencyFiatApi.middleware),
+    });
+
+  afterEach(() => {
+    jest.useRealTimers();
+    fetchSpy?.mockRestore();
+  });
+
+  it("dispatches setFiats with resolved currencies on success", async () => {
+    const usd = fiatByTicker("USD");
+    const eur = fiatByTicker("EUR");
+    mockResolve.mockReturnValue([usd, eur]);
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify(["USD", "EUR"]), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+    const store = makeFullStore();
+
+    await store.dispatch(currencyFiatApi.endpoints.getSupportedFiats.initiate());
+
+    expect(selectSupportedFiats(store.getState())).toEqual([usd, eur]);
+  });
+
+  it("preserves the fallback on fetch failure", async () => {
+    jest.useFakeTimers();
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockRejectedValue(new Error("network error"));
+    const store = makeFullStore();
+    const fallbackBefore = selectSupportedFiats(store.getState());
+
+    const pending = store.dispatch(currencyFiatApi.endpoints.getSupportedFiats.initiate());
+    await jest.runAllTimersAsync();
+    await pending;
+
+    expect(selectSupportedFiats(store.getState())).toBe(fallbackBefore);
   });
 });

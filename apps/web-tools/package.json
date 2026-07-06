@@ -27,6 +27,7 @@
     "react-redux": "catalog:",
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/view": "^6.39.5",
+    "@domain/entity-currency-fiat": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",

@@ -1,10 +1,9 @@
 import { http, HttpResponse } from "msw";
 
-const supportedCvsHandlers = [
-  http.get("https://countervalues.live.ledger.com/v3/supported/crypto", () =>
-    HttpResponse.json([]),
-  ),
-  http.get("https://countervalues.live.ledger.com/v3/supported/fiat", () =>
+const CVS_BASE = "https://countervalues.live.ledger.com";
+
+const currencyFiatHandlers = [
+  http.get(`${CVS_BASE}/v3/supported/fiat`, () =>
     HttpResponse.json([
       "AED",
       "AUD",
@@ -45,4 +44,4 @@ const supportedCvsHandlers = [
   ),
 ];
 
-export default supportedCvsHandlers;
+export default currencyFiatHandlers;

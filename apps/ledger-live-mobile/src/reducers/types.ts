@@ -28,6 +28,7 @@ import type { CountervaluesState } from "./countervalues";
 import type { ToastState } from "./toast";
 import type { ModularDrawerState } from "./modularDrawer";
 import type { LLMRTKApiState } from "~/context/rtkQueryApi";
+import type { SupportedFiatsState } from "@domain/entity-currency-fiat";
 import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
 import type { TransferDrawerState } from "./transferDrawer";
 import type { SwapTransactionStatusDrawerState } from "./swapTransactionStatusDrawer";
@@ -478,4 +479,5 @@ export type State = LLMRTKApiState & {
   portfolioBalanceDisplay: PortfolioBalanceDisplayState;
   recoverState: RecoverStateSliceState;
   liveAppModal: LiveAppModalState;
+  supportedFiats: SupportedFiatsState;
 };
