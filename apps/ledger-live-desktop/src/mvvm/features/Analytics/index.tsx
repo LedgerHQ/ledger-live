@@ -16,7 +16,11 @@ export default function Analytics() {
   return <AnalyticsView viewModel={viewModel} />;
 }
 
-function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }) {
+function AnalyticsView({
+  viewModel,
+}: {
+  readonly viewModel: AnalyticsViewModel;
+}) {
   const {
     counterValue,
     selectedTimeRange,
@@ -32,7 +36,11 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
 
   return (
     <div className="flex flex-col gap-32 pb-32">
-      <TrackPage category="Analytics" range={selectedTimeRange} countervalue={counterValue} />
+      <TrackPage
+        category="Analytics"
+        range={selectedTimeRange}
+        countervalue={counterValue}
+      />
       <PageHeader title={t("analytics.title")} onBack={navigateToDashboard} />
 
       <div
@@ -40,7 +48,11 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
         data-testid="analytics-chart"
       >
         {shouldDisplayPnl ? (
-          <ChartSection balanceInfo={balanceInfo} portfolio={portfolio} isLoading={isLoading} />
+          <ChartSection
+            balanceInfo={balanceInfo}
+            portfolio={portfolio}
+            isLoading={isLoading}
+          />
         ) : (
           <PortfolioBalanceSummary
             counterValue={counterValue}
