@@ -6,6 +6,7 @@ import {
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { postOnboardingSetFinished } from "@ledgerhq/live-common/postOnboarding/actions";
 import { useDispatch, useSelector } from "~/context/hooks";
+import { addCompletionDate } from "~/actions/settings";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import {
   hasCompletedOnboardingSelector,
@@ -37,6 +38,12 @@ export function useAutoFinishPostOnboarding() {
   const isCutoffElapsed = onboardingCompletionDate !== null && !isBeforeCutoffTime;
 
   const isPhaseOver = !isPortfolioWidgetBaseVisible || isCutoffElapsed || areHubStepsDone;
+
+  useEffect(() => {
+    if (hasCompletedOnboarding && onboardingCompletionDate === null) {
+      dispatch(addCompletionDate());
+    }
+  }, [hasCompletedOnboarding, onboardingCompletionDate, dispatch]);
 
   useEffect(() => {
     if (postOnboardingInProgress && isPhaseOver) {

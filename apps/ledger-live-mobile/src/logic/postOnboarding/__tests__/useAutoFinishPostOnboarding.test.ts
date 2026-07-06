@@ -6,6 +6,7 @@ import {
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import type { State } from "~/reducers/types";
 import { usePostOnboardingHubStepperDisplay } from "~/logic/postOnboarding/usePostOnboardingHubStepperDisplay";
+import subDays from "date-fns/subDays";
 import { useAutoFinishPostOnboarding } from "../useAutoFinishPostOnboarding";
 
 jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index");
@@ -15,8 +16,7 @@ const mockedHubState = jest.mocked(usePostOnboardingHubState);
 const mockedWidgetVisibility = jest.mocked(usePostOnboardingPortfolioWidgetVisibility);
 const mockedStepper = jest.mocked(usePostOnboardingHubStepperDisplay);
 
-const daysAgoISO = (days: number) =>
-  new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+const daysAgoISO = (days: number) => subDays(new Date(), days).toISOString();
 
 type Scenario = {
   postOnboardingInProgress: boolean;
@@ -58,7 +58,10 @@ function setup(scenario: Scenario) {
 
   const baseTransform = (state: State): State => ({
     ...state,
-    postOnboarding: { ...state.postOnboarding, postOnboardingInProgress: true },
+    postOnboarding: {
+      ...state.postOnboarding,
+      postOnboardingInProgress: scenario.postOnboardingInProgress,
+    },
     settings: {
       ...state.settings,
       hasCompletedOnboarding: scenario.hasCompletedOnboarding ?? true,
@@ -163,7 +166,7 @@ describe("useAutoFinishPostOnboarding", () => {
     });
 
     // The guard requires the flag to be in progress; the store is left untouched.
-    expect(store.getState().postOnboarding.postOnboardingInProgress).toBe(true);
+    expect(store.getState().postOnboarding.postOnboardingInProgress).toBe(false);
   });
 
   it("behaves the same regardless of the onboardingWidget feature flag", async () => {
