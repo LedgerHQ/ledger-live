@@ -1,5 +1,6 @@
 import { step } from "../misc/reporters/step";
 import { AppPage } from "./abstractClasses";
+import { isAggregatedAssetsEnabled } from "tests/utils/featureFlagUtils";
 
 export class AssetPage extends AppPage {
   // Buy CTA differs between the legacy Asset page (`asset-page-buy-button`) and the Wallet 4.0
@@ -19,15 +20,11 @@ export class AssetPage extends AppPage {
 
   @step("Start swap flow")
   async startSwapFlow() {
-    // Wait for whichever swap entry the rendered page exposes, then click only the legacy CTA.
-    // On AssetDetail the embedded rail is already mounted, so there is nothing to click and the
-    // caller's swap-readiness wait takes over from here.
-    await this.legacySwapButton
-      .or(this.embeddedSwapContainer)
-      .first()
-      .waitFor({ state: "visible" });
-    if (await this.legacySwapButton.isVisible()) {
-      await this.legacySwapButton.click();
+    if (await isAggregatedAssetsEnabled(this.page)) {
+      await this.embeddedSwapContainer.waitFor();
+      return;
     }
+    await this.legacySwapButton.waitFor();
+    await this.legacySwapButton.click();
   }
 }
