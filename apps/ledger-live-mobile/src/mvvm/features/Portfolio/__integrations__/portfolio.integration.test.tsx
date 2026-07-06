@@ -5,8 +5,7 @@ import {
   PortfolioTest,
   ReadOnlyPortfolioTest,
   overrideInitialStateWithFeatureFlag,
-  overrideInitialStateWithGraphReworkEnabled,
-  overrideInitialStateWithGraphReworkAndReadOnly,
+  overrideInitialStateWithReadOnly,
   overrideInitialStateWithPerpsEntryPoint,
   overrideInitialStateWithPerpsAndAssetSection,
   overrideInitialStateWithAssetSection,
@@ -38,7 +37,7 @@ const setupDadaApiLoading = () => {
 };
 
 describe("Portfolio Screen", () => {
-  it("should render Portfolio when feature flag is enabled", async () => {
+  it("should render Portfolio", async () => {
     renderWithReactQuery(<PortfolioTest />, {
       overrideInitialState: overrideInitialStateWithFeatureFlag,
     });
@@ -46,32 +45,10 @@ describe("Portfolio Screen", () => {
     expect(await screen.findByTestId("PortfolioEmptyList")).toBeVisible();
   });
 
-  describe("Graph Rework Feature", () => {
-    it("should hide graph when graphRework is enabled", async () => {
-      renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithGraphReworkEnabled,
-      });
-
-      await screen.findByTestId("PortfolioEmptyList");
-
-      expect(screen.queryByTestId("graphCard-chart")).toBeNull();
-    });
-
-    it("should hide allocation section when graphRework is enabled", async () => {
-      renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithGraphReworkEnabled,
-      });
-
-      await screen.findByTestId("PortfolioEmptyList");
-
-      expect(screen.queryByTestId("portfolio-allocation-section")).toBeNull();
-    });
-  });
-
   describe("Portfolio Balance Section", () => {
-    it("should display noFund state when graphRework is enabled and user has no assets", async () => {
+    it("should display noFund state when user has no assets", async () => {
       renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithGraphReworkEnabled,
+        overrideInitialState: overrideInitialStateWithFeatureFlag,
       });
 
       await screen.findByTestId("PortfolioEmptyList");
@@ -79,9 +56,9 @@ describe("Portfolio Screen", () => {
       expect(await screen.findByTestId("portfolio-balance-noAccounts")).toBeVisible();
     });
 
-    it("should display noSigner state when graphRework is enabled and user is in readOnly mode", async () => {
+    it("should display noSigner state in readOnly mode", async () => {
       renderWithReactQuery(<ReadOnlyPortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithGraphReworkAndReadOnly,
+        overrideInitialState: overrideInitialStateWithReadOnly,
       });
 
       await screen.findByTestId("PortfolioReadOnlyItems");

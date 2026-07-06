@@ -25,7 +25,6 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
 
     return {
       isEnabled,
-      shouldDisplayGraphRework: isEnabled && Boolean(params?.graphRework),
       shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
       shouldDisplayTour: isEnabled && Boolean(params?.tour),
       shouldDisplayQ2Tour: isEnabled && Boolean(params?.q2Tour),
@@ -65,8 +64,6 @@ export type Wallet40Params = Partial<
 export interface WalletFeaturesConfig {
   /** Whether the feature flag is enabled */
   readonly isEnabled: boolean;
-  /** Whether to show the graph rework UI */
-  readonly shouldDisplayGraphRework: boolean;
   /** Whether onboarding should skip device setup and open portfolio in read-only mode */
   readonly shouldUseLazyOnboarding: boolean;
   /** Whether to show the Wallet V4 Tour (e.g. drawer/dialog on Portfolio) */

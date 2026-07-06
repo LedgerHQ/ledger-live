@@ -39,7 +39,6 @@ export const FF_LWD_WALLET_40_Q1 = {
   lwdWallet40: {
     enabled: true,
     params: {
-      graphRework: true,
       newReceiveDialog: true,
       lazyOnboarding: true,
       assetSection: false,
@@ -61,7 +60,6 @@ export const FF_LWD_WALLET_40_Q2 = {
   lwdWallet40: {
     enabled: true,
     params: {
-      graphRework: true,
       newReceiveDialog: true,
       lazyOnboarding: true,
       assetSection: true,

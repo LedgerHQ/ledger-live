@@ -17,7 +17,6 @@ export const getWallet40Attributes = (
 
   return {
     isEnabled,
-    graphRework: wallet40FeatureFlag?.params?.graphRework ?? false,
     tour: wallet40FeatureFlag?.params?.tour ?? false,
     q2Tour: wallet40FeatureFlag?.params?.q2Tour ?? false,
     lazyOnboarding: wallet40FeatureFlag?.params?.lazyOnboarding ?? false,

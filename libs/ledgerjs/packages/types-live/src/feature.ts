@@ -943,7 +943,6 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 }>;
 
 type Feature_Wallet40_Params = {
-  graphRework: boolean;
   tour: boolean;
   lazyOnboarding: boolean;
   assetSection: boolean;

@@ -29,7 +29,6 @@ import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/
 import { RecoverIntroPortfolioMount } from "LLM/features/BackupHub";
 
 import {
-  PortfolioAllocationsSection,
   PortfolioAssetsSection,
   WalletAssetsView,
   PortfolioCarouselSection,
@@ -60,14 +59,12 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
-    shouldDisplayGraphRework,
     backgroundColor,
     isSyncError,
     openAddModal,
     closeAddModal,
     handleHeightChange,
     onBackFromUpdate,
-    goToAnalyticsAllocations,
     shouldDisplayOperationsList,
     shouldAddBottomPaddingForLegacyAssets,
   } = usePortfolioViewModel(navigation);
@@ -88,19 +85,17 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
   const data = useMemo(() => {
     const sections: React.JSX.Element[] = [];
 
-    const heroCtasNode =
-      showAssets && shouldDisplayGraphRework ? (
-        <>
-          <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
-          <TransferDrawer />
-        </>
-      ) : undefined;
+    const heroCtasNode = showAssets ? (
+      <>
+        <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
+        <TransferDrawer />
+      </>
+    ) : undefined;
 
     sections.push(
       <PortfolioHeaderSection
         key="header"
         showAssets={showAssets}
-        hideGraph={shouldDisplayGraphRework}
         onBackFromUpdate={onBackFromUpdate}
         ctas={heroCtasNode}
       />,
@@ -114,15 +109,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     }
 
     sections.push(<TrackScreen key="trackWallet" category="Wallet" />);
-
-    if (!shouldDisplayGraphRework) {
-      sections.push(
-        <Box px={6} pt={6} key="quickActions">
-          <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
-          <TransferDrawer />
-        </Box>,
-      );
-    }
 
     sections.push(
       <Box key="portfolioBannersSection" px={6} backgroundColor="background.contrast">
@@ -162,16 +148,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       sections.push(<PortfolioCarouselSection key="carousel" backgroundColor={backgroundColor} />);
     }
 
-    if (!shouldDisplayGraphRework) {
-      sections.push(
-        <PortfolioAllocationsSection
-          key="allocations"
-          isFirst={!isAWalletCardDisplayed}
-          onPress={goToAnalyticsAllocations}
-        />,
-      );
-    }
-
     if (!shouldDisplayOperationsList) {
       sections.push(<PortfolioOperationsSection key="operations" />);
     }
@@ -179,7 +155,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     return sections;
   }, [
     showAssets,
-    shouldDisplayGraphRework,
     shouldDisplayAssetSection,
     onBackFromUpdate,
     isLNSUpsellBannerShown,
@@ -189,7 +164,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     handleHeightChange,
     isAWalletCardDisplayed,
     backgroundColor,
-    goToAnalyticsAllocations,
     shouldDisplayOperationsList,
     shouldAddBottomPaddingForLegacyAssets,
   ]);
