@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
+import { useGetSupportedFiatsQuery } from "@domain/api-currency-fiat";
 import { useSelector } from "~/context/hooks";
 import { selectRemoteFlagsReady } from "@shared/feature-flags";
 
@@ -13,6 +14,8 @@ export function InitialQueriesProvider({ children }: React.PropsWithChildren) {
 
   // OFAC Geo Blocking
   const ofacQueryResult = ofacGeoBlockApi.useCheckQuery();
+  // Boot-time fiat fetch: onQueryStarted → setFiats populates the supportedFiats slice
+  useGetSupportedFiatsQuery();
   const ofacResult = useMemo(
     () => ({ blocked: ofacQueryResult.data ?? false, isLoading: ofacQueryResult.isLoading }),
     [ofacQueryResult.data, ofacQueryResult.isLoading],

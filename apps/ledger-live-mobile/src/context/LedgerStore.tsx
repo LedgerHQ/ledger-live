@@ -7,8 +7,8 @@ import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import {
   findCryptoCurrencyById,
   getCryptoCurrencyById,
-  listSupportedFiats,
 } from "@ledgerhq/live-common/currencies/index";
+import { selectSupportedFiats } from "@domain/entity-currency-fiat";
 import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
@@ -323,8 +323,8 @@ async function hydrateCurrencies() {
   });
 }
 
-async function updateSupportedCountervalues(store: Store, settingsData: Partial<SettingsState>) {
-  const supportedFiats = await retry(listSupportedFiats, MAX_RETRIES, RETRY_DELAY);
+function updateSupportedCountervalues(store: Store, settingsData: Partial<SettingsState>) {
+  const supportedFiats = selectSupportedFiats(store.getState());
   const bitcoin = getCryptoCurrencyById("bitcoin");
   const ethereum = getCryptoCurrencyById("ethereum");
   const possibleIntermediaries = [bitcoin, ethereum];

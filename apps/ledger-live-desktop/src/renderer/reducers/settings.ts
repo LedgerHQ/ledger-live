@@ -5,11 +5,10 @@ import {
   getFiatCurrencyByTicker,
   findFiatCurrencyByTicker,
   findCryptoCurrencyById,
-  listSupportedFiats,
   OFAC_CURRENCIES,
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency, FiatCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import {
   AccountLike,
   DeviceInfo,
@@ -657,17 +656,15 @@ export type SupportedCountervaluesData = {
   currency: Currency;
 };
 
-export const getsupportedCountervalues = async (): Promise<SupportedCountervaluesData[]> => {
-  const supportedFiats = await listSupportedFiats();
-  const data = [...supportedFiats, ...possibleIntermediaries]
+export function getsupportedCountervalues(fiats: FiatCurrency[]): SupportedCountervaluesData[] {
+  return [...fiats, ...possibleIntermediaries]
     .map(currency => ({
       value: currency.ticker,
       label: `${currency.name} - ${currency.ticker}`,
       currency,
     }))
     .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
-  return data;
-};
+}
 // TODO refactor selectors to *Selector naming convention
 
 export const settingsStoreSelector = (state: State): SettingsState => state.settings;
