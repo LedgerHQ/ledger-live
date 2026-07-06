@@ -63,7 +63,7 @@ export function resolveMarketOrAssetDeeplinkIntent({
     return hostname === "market" ? { type: "market-banner" } : { type: "portfolio" };
   }
 
-  const hasPath = Boolean(pathname.replace("/", ""));
+  const hasPath = pathname.trim().split("/").some(Boolean);
 
   if (hostname === "market") {
     if (hasPath) return { type: "market-banner" };

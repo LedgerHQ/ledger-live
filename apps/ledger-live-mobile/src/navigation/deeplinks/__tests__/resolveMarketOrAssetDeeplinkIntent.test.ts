@@ -112,5 +112,16 @@ describe("resolveMarketOrAssetDeeplinkIntent", () => {
         }),
       ).toEqual({ type: "continue" });
     });
+
+    it("treats an extra-slash path as empty (no phantom segment)", () => {
+      expect(
+        resolveMarketOrAssetDeeplinkIntent({
+          ...base,
+          hostname: "asset",
+          pathname: "//",
+          shouldDisplayAggregatedAssets: false,
+        }),
+      ).toEqual({ type: "continue" });
+    });
   });
 });
