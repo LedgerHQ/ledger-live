@@ -1292,7 +1292,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      node: { type: "external", uri: "https://rpc.chain.robinhood.com" },
+      node: { type: "external", uri: "https://robinhood.coin.ledger.com" },
       explorer: {
         type: "none",
       },
