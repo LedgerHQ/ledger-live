@@ -44,6 +44,7 @@ export function StatusSection({
           value={sentAmount ?? <Skeleton lx={{ height: "s16", width: "s96" }} />}
           isLoading={isLoading}
           lineStatus={sendRow.lineStatus}
+          testId="swap-transaction-status-send"
         />
         <StatusRow
           status={receiveRow.status}
@@ -52,6 +53,7 @@ export function StatusSection({
           value={receivedAmount ?? <Skeleton lx={{ height: "s16", width: "s96" }} />}
           isLoading={isLoading}
           isLast
+          testId="swap-transaction-status-receive"
         />
       </Box>
     </Box>

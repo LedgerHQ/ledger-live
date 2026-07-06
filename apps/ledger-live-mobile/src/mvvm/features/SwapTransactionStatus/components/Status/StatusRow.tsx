@@ -17,6 +17,7 @@ type StatusRowProps = Readonly<{
   isLoading: boolean;
   lineStatus?: SwapTransactionStatusDisplayStatus;
   isLast?: boolean;
+  testId?: string;
 }>;
 
 export function StatusRow({
@@ -27,11 +28,12 @@ export function StatusRow({
   isLoading,
   lineStatus,
   isLast,
+  testId,
 }: StatusRowProps) {
   const visualTokens = getSwapTransactionStatusVisualTokens(status);
 
   return (
-    <Box lx={{ flexDirection: "row", gap: "s12" }}>
+    <Box testID={testId ? `${testId}-row` : undefined} lx={{ flexDirection: "row", gap: "s12" }}>
       <Box lx={{ alignItems: "center", width: "s20", paddingTop: "s1" }}>
         {renderStatusIcon(visualTokens.icon)}
         {isLast ? null : <StatusLine status={lineStatus ?? status} />}
@@ -46,7 +48,11 @@ export function StatusRow({
             </Text>
           )}
           {typeof value === "string" ? (
-            <Text typography="body2SemiBold" lx={{ color: "base", textAlign: "right" }}>
+            <Text
+              testID={testId ? `${testId}-amount` : undefined}
+              typography="body2SemiBold"
+              lx={{ color: "base", textAlign: "right" }}
+            >
               {value}
             </Text>
           ) : (

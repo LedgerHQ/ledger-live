@@ -35,6 +35,7 @@ import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 import BuySellPage from "./trade/buySell.page";
 import EarnV2DashboardPage from "./trade/earnV2Dashboard.page";
 import ModularDrawer from "./drawer/modular.drawer";
+import SwapTransactionStatusDrawer from "./drawer/swapTransactionStatus.drawer";
 
 import path from "path";
 import fs from "fs";
@@ -91,6 +92,7 @@ export class Application {
   private settingsHelpPageInstance = lazyInit(SettingsHelpPage);
   private readonly earnV2DashboardPageInstance = lazyInit(EarnV2DashboardPage);
   private modularDrawerPageInstance = lazyInit(ModularDrawer);
+  private swapTransactionStatusDrawerInstance = lazyInit(SwapTransactionStatusDrawer);
   private readonly topBarSearchPageInstance = lazyInit(TopBarSearchPage);
 
   @Step("Account initialization")
@@ -243,6 +245,10 @@ export class Application {
 
   public get modularDrawer() {
     return this.modularDrawerPageInstance();
+  }
+
+  public get swapTransactionStatusDrawer() {
+    return this.swapTransactionStatusDrawerInstance();
   }
 
   public get topBarSearch() {
