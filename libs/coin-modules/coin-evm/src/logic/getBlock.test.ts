@@ -795,7 +795,7 @@ describe("getBlock", () => {
     expect(mockTraceBlock).toHaveBeenCalledWith(expect.anything(), 12345);
   });
 
-  it("when explorer.getInternalTransactionsByBlock fails and node.traceBlock is undefined, returns block with no internal transactions", async () => {
+  it("when explorer.getInternalTransactionsByBlock fails and node trace methods are undefined, returns block with no internal transactions", async () => {
     setCoinConfig(
       () =>
         ({
