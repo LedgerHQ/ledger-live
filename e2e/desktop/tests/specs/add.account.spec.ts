@@ -105,7 +105,7 @@ for (const currency of currencies) {
 
 test.describe("Add Accounts - Aleo", () => {
   test.use({
-    teamOwner: Team.WALLET_XP,
+    teamOwner: Team.BST,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: Currency.ALEO.speculosApp,
     featureFlags: {
