@@ -8,8 +8,13 @@ import { SwapPage } from "./swap.page.ts";
 import { SwapLiveAppPage } from "./swap-live-app.page.ts";
 import { ModularDrawerPage } from "./modular-drawer.page.ts";
 import { CommonPage } from "./common.page.ts";
+import { EarnPage } from "./earn.page.ts";
+import { EarnLiveAppPage } from "./earn-live-app.page.ts";
 
-import { InitializationManager, InitOptions } from "../utils/InitialisationManager.ts";
+import {
+  InitializationManager,
+  InitOptions,
+} from "../utils/InitialisationManager.ts";
 import { randomUUID } from "node:crypto";
 
 class Pages {
@@ -30,17 +35,29 @@ class Pages {
   private swapLiveAppPageInstance = Pages.LAZY_INIT(SwapLiveAppPage);
   private modularDrawerInstance = Pages.LAZY_INIT(ModularDrawerPage);
   private commonPageInstance = Pages.LAZY_INIT(CommonPage);
+  private earnPageInstance = Pages.LAZY_INIT(EarnPage);
+  private earnLiveAppPageInstance = Pages.LAZY_INIT(EarnLiveAppPage);
 
   async init(options: InitOptions) {
     // TODO: move this into initialisation manager?
     // this.modularDrawer.resetFlags(); TODO: REVIEW
     const userDataString = `temp-userdata-${randomUUID()}`;
-    const userDataPathSpeculos = path.resolve("userdata", `${userDataString}.json`);
-    const userDataTest = path.resolve("userdata", `${options.userdata || "skip-onboarding"}.json`);
+    const userDataPathSpeculos = path.resolve(
+      "userdata",
+      `${userDataString}.json`,
+    );
+    const userDataTest = path.resolve(
+      "userdata",
+      `${options.userdata || "skip-onboarding"}.json`,
+    );
 
     copyFileSync(userDataTest, userDataPathSpeculos);
     try {
-      await InitializationManager.initialize(options, userDataPathSpeculos, userDataString);
+      await InitializationManager.initialize(
+        options,
+        userDataPathSpeculos,
+        userDataString,
+      );
     } finally {
       unlinkSync(userDataPathSpeculos);
     }
@@ -60,6 +77,14 @@ class Pages {
 
   public get swap() {
     return this.swapPageInstance();
+  }
+
+  public get earn() {
+    return this.earnPageInstance();
+  }
+
+  public get earnLiveApp() {
+    return this.earnLiveAppPageInstance();
   }
 
   public get swapLiveApp() {

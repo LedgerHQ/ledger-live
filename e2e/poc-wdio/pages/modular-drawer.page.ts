@@ -1,5 +1,8 @@
 import { getFlags } from "../bridge/server";
-import { getByTestId, getByTestIdMatching } from "../components/appiumSelector.ts";
+import {
+  getByTestId,
+  getByTestIdMatching,
+} from "../components/appiumSelector.ts";
 import { Feature_ModularDrawer } from "@ledgerhq/types-live";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { step } from "@wdio/allure-reporter";
@@ -30,26 +33,32 @@ export class ModularDrawerPage {
 
   // steps
   async performSearchByTicker(ticker: string) {
-    await step(`Perform search in modular drawer with ticker: ${ticker}`, async () => {
-      await this.searchBar.setValue(ticker);
+    await step(
+      `Perform search in modular drawer with ticker: ${ticker}`,
+      async () => {
+        await this.searchBar.setValue(ticker);
 
-      // wait for search result to be displayed and stable
-      await driver.waitUntil(async () => {
-        let isDisplayed = false;
-        for (let count = 0; count < 3; count++) {
-          isDisplayed = await this.getAssetItemByTicker(ticker).isDisplayed();
-          if (!isDisplayed) break;
-          await driver.pause(500);
-        }
-        return isDisplayed;
-      });
-    });
+        // wait for search result to be displayed and stable
+        await driver.waitUntil(async () => {
+          let isDisplayed = false;
+          for (let count = 0; count < 3; count++) {
+            isDisplayed = await this.getAssetItemByTicker(ticker).isDisplayed();
+            if (!isDisplayed) break;
+            await driver.pause(500);
+          }
+          return isDisplayed;
+        });
+      },
+    );
   }
 
   async selectCurrencyByTicker(ticker: string): Promise<void> {
-    await step(`Select currency with ticker ${ticker} in modular drawer`, async () => {
-      await this.getAssetItemByTicker(ticker).click();
-    });
+    await step(
+      `Select currency with ticker ${ticker} in modular drawer`,
+      async () => {
+        await this.getAssetItemByTicker(ticker).click();
+      },
+    );
   }
 
   async selectNetworkIfAsked(networkName: string): Promise<void> {
@@ -80,15 +89,26 @@ export class ModularDrawerPage {
     });
   }
 
-  async selectAsset(account: Account): Promise<void> {
-    await step(`Select currency in modular drawer: ${account.currency.ticker}`, async () => {
-      await this.performSearchByTicker(account.currency.ticker);
-      await this.selectCurrencyByTicker(account.currency.ticker);
-      const networkName = this.getNetworkNameForAccount(account);
-      await this.selectNetworkIfAsked(networkName);
-      await this.selectFirstAccount();
-      await this.modularFlowView.waitForExist({ reverse: true });
+  async verifyModularAssetDrawerVisible() {
+    await step("Verify modular asset drawer is visible", async () => {
+      await this.modularFlowView.waitForDisplayed();
+      await expect(this.modularFlowView).toBeDisplayed();
+      await expect(this.searchBar).toBeDisplayed();
     });
+  }
+
+  async selectAsset(account: Account): Promise<void> {
+    await step(
+      `Select currency in modular drawer: ${account.currency.ticker}`,
+      async () => {
+        await this.performSearchByTicker(account.currency.ticker);
+        await this.selectCurrencyByTicker(account.currency.ticker);
+        const networkName = this.getNetworkNameForAccount(account);
+        await this.selectNetworkIfAsked(networkName);
+        await this.selectFirstAccount();
+        await this.modularFlowView.waitForExist({ reverse: true });
+      },
+    );
   }
 
   // functions
@@ -96,9 +116,9 @@ export class ModularDrawerPage {
     this.flags ??= JSON.parse(await getFlags()).llmModularDrawer;
   }
 
-  async isFlowEnabled<K extends keyof NonNullable<Feature_ModularDrawer["params"]>>(
-    flow: K,
-  ): Promise<boolean> {
+  async isFlowEnabled<
+    K extends keyof NonNullable<Feature_ModularDrawer["params"]>,
+  >(flow: K): Promise<boolean> {
     await this.loadFlags();
     return this.flags!.enabled && Boolean(this.flags!.params?.[flow]);
   }
