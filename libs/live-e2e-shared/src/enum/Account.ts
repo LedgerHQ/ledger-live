@@ -252,6 +252,7 @@ export class Account {
 
   static readonly XTZ_1 = new Account(Currency.XTZ, "Tezos 1", 0, "44'/1729'/0'/0'");
   static readonly XTZ_2 = new Account(Currency.XTZ, "Tezos 2", 1, "44'/1729'/1'/0'");
+  static readonly XTZ_3 = new Account(Currency.XTZ, "Tezos 3", 2, "44'/1729'/2'/0'");
 
   static readonly sep_ETH_1 = new Account(
     Currency.sepETH,

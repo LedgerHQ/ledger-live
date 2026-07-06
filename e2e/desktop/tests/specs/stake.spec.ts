@@ -31,9 +31,9 @@ const tags = [
   ...(family ? [`@family-${family}`] : []),
 ];
 
-// Two accounts: XTZ_1 (index 0) funded + UNDELEGATED for the earning-choice chooser; XTZ_2 (index 1)
-// DELEGATED + STAKED for the stake (Earn -> stake modal) and unstake (staking-section menu) flows.
-// (index 0 must stay undelegated: the legacy receive/add-account/delegate Tezos specs rely on it.)
+// Accounts: XTZ_1 (index 0) funded + UNDELEGATED for the earning-choice chooser; XTZ_2 (index 1)
+// DELEGATED + STAKED for the stake flow; XTZ_3 (index 2) same, dedicated to unstake to avoid a settlement
+// race. (index 0 must stay undelegated: the legacy Tezos specs rely on it.)
 test.describe("e2e staking - Tezos - earning choice", () => {
   const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
 
@@ -100,7 +100,7 @@ test.describe("e2e staking - Tezos - stake", () => {
 });
 
 test.describe("e2e staking - Tezos - unstake", () => {
-  const account = new Delegate(Account.XTZ_2, "0.005", "Ledger by Kiln");
+  const account = new Delegate(Account.XTZ_3, "0.005", "Ledger by Kiln");
 
   test.use(tezosStakeUse(account));
 
