@@ -114,6 +114,9 @@ describe("useOperationsListViewModel", () => {
       expect(result.current.hideSmallValueTokenOperations).toBe(false);
       expect(result.current.isOptionsSheetOpen).toBe(false);
       expect(result.current.dustFilterOption?.title).toBe("Hide dust transactions");
+      expect(result.current.dustFilterOption?.description).toBe(
+        "Transactions below $0.01 will be hidden.",
+      );
 
       act(() => {
         result.current.openOptionsSheet();
@@ -128,6 +131,29 @@ describe("useOperationsListViewModel", () => {
       expect(store.getState().settings.hideSmallValueTokenOperations).toBe(true);
       expect(result.current.isOptionsSheetOpen).toBe(false);
       expect(result.current.dustFilterOption?.title).toBe("Show dust transactions");
+    });
+
+    it("adds the selected countervalue threshold in parentheses when it is not USD", () => {
+      const { result } = renderHook(() => useOperationsListViewModel(), {
+        overrideInitialState: withFlagOverrides(
+          {
+            lwmDustFiltering: {
+              enabled: true,
+            },
+          },
+          (state: State) => ({
+            ...state,
+            settings: {
+              ...state.settings,
+              counterValue: "EUR",
+            },
+          }),
+        ),
+      });
+
+      expect(result.current.dustFilterOption?.description).toBe(
+        "Transactions below $0.01 (€0.01) will be hidden.",
+      );
     });
 
     it("hides and disables the dust filter option when only the desktop flag param is enabled", () => {

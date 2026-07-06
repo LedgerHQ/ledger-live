@@ -3,7 +3,10 @@ import BigNumber from "bignumber.js";
 import { useDustFilteringFeature } from "@features/platform-feature-flags";
 import { flattenAccounts, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { floorThresholdToCurrencyMinorUnit } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
+import {
+  floorThresholdToCurrencyMinorUnit,
+  SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
+} from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import type { IconProps } from "@ledgerhq/lumen-ui-rnative";
 import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { setHideSmallValueTokenOperations } from "~/actions/settings";
@@ -108,15 +111,42 @@ export function useOperationsListViewModel(accountIds?: string[]) {
   const dustFilterThreshold = useMemo(() => {
     if (!counterValueCurrency) return undefined;
 
-    const thresholdMinorUnit =
+    const referenceThresholdMinorUnit =
+      floorThresholdToCurrencyMinorUnit(
+        HISTORY_DUST_FILTER_THRESHOLD_USD,
+        SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
+      ) ?? new BigNumber(0);
+
+    const referenceThreshold = formatCurrencyUnit(
+      SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY.units[0],
+      referenceThresholdMinorUnit,
+      {
+        showCode: true,
+        locale,
+      },
+    );
+
+    if (
+      counterValueCurrency.ticker === SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY.ticker
+    ) {
+      return referenceThreshold;
+    }
+
+    const countervalueThresholdMinorUnit =
       floorThresholdToCurrencyMinorUnit(HISTORY_DUST_FILTER_THRESHOLD_USD, counterValueCurrency) ??
       new BigNumber(0);
+    const countervalueThreshold = formatCurrencyUnit(
+      counterValueCurrency.units[0],
+      countervalueThresholdMinorUnit,
+      {
+        showCode: true,
+        locale,
+      },
+    );
 
-    return formatCurrencyUnit(counterValueCurrency.units[0], thresholdMinorUnit, {
-      showCode: true,
-      locale,
-    });
+    return `${referenceThreshold} (${countervalueThreshold})`;
   }, [counterValueCurrency, locale]);
+
   const dustFilterOption: OperationsHistoryDustFilterOption | undefined = useMemo(() => {
     if (!isDustFilterFeatureEnabled || !dustFilterThreshold) return undefined;
 
