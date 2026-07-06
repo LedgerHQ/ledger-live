@@ -25,12 +25,16 @@ export function useAutoFinishPostOnboarding() {
   const onboardingCompletionDate = useSelector(onboardingCompletionDateSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
-  const isCutoffElapsed = useMemo(() => {
-    if (onboardingCompletionDate === null) return !hasCompletedOnboarding;
-    return differenceInCalendarDays(new Date(), new Date(onboardingCompletionDate)) > cutoffDays;
+  const isBeforeCutoffTime = useMemo(() => {
+    if (onboardingCompletionDate === null) {
+      return hasCompletedOnboarding;
+    }
+    return differenceInCalendarDays(new Date(), new Date(onboardingCompletionDate)) <= cutoffDays;
   }, [onboardingCompletionDate, hasCompletedOnboarding]);
 
   const areHubStepsDone = actionsState.length > 0 && areAllActionsCompleted;
+
+  const isCutoffElapsed = onboardingCompletionDate !== null && !isBeforeCutoffTime;
 
   const isPhaseOver = !isPortfolioWidgetBaseVisible || isCutoffElapsed || areHubStepsDone;
 

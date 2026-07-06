@@ -97,12 +97,37 @@ describe("useAutoFinishPostOnboarding", () => {
       isPortfolioWidgetBaseVisible: true,
       actionsCount: 2,
       areAllActionsCompleted: false,
-      onboardingCompletionDate: daysAgoISO(20),
+      onboardingCompletionDate: daysAgoISO(16),
     });
 
     await waitFor(() =>
       expect(store.getState().postOnboarding.postOnboardingInProgress).toBe(false),
     );
+  });
+
+  it("does not clear postOnboardingInProgress on the last day of the 15-day window", () => {
+    const { store } = setup({
+      postOnboardingInProgress: true,
+      isPortfolioWidgetBaseVisible: true,
+      actionsCount: 2,
+      areAllActionsCompleted: false,
+      onboardingCompletionDate: daysAgoISO(15),
+    });
+
+    expect(store.getState().postOnboarding.postOnboardingInProgress).toBe(true);
+  });
+
+  it("does not treat incomplete onboarding without a completion date as cutoff elapsed", () => {
+    const { store } = setup({
+      postOnboardingInProgress: true,
+      isPortfolioWidgetBaseVisible: true,
+      actionsCount: 2,
+      areAllActionsCompleted: false,
+      onboardingCompletionDate: null,
+      hasCompletedOnboarding: false,
+    });
+
+    expect(store.getState().postOnboarding.postOnboardingInProgress).toBe(true);
   });
 
   it("clears postOnboardingInProgress when all hub actions are completed", async () => {
