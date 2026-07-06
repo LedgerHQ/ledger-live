@@ -10070,6 +10070,14 @@
         "title": "Private balance",
         "description": "The shielded balance on the Aleo network. This balance is only visible to you and requires proof generation for private transactions."
       }
+    },
+    "account": {
+      "syncButton": {
+        "startSync": "Start sync",
+        "stopSync": "Stop sync",
+        "syncAgain": "Sync again",
+        "lastSync": "Last synced: {{date}}"
+      }
     }
   }
 }

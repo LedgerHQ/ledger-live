@@ -5,10 +5,24 @@ import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
 import AccountBalanceHeader from "../AccountBalanceHeader";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "@ledgerhq/live-common/families/aleo/constants";
+import { useAleoPrivateSync } from "../hooks/useAleoPrivateSync";
 
 jest.mock("~/context/Locale", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
+
+// PrivateSyncButton (rendered by AccountBalanceHeader) pulls in the real hw/bridge
+// stack through the live-common hook — mock it so this stays a unit test of the
+// balance header, not an integration test of the private sync flow.
+jest.mock("../hooks/useAleoPrivateSync");
+
+jest.mocked(useAleoPrivateSync).mockReturnValue({
+  isSyncing: false,
+  progress: 0,
+  error: null,
+  start: jest.fn(),
+  stop: jest.fn(),
+});
 
 jest.mock("LLM/hooks/useAccountUnit", () => ({
   useAccountUnit: () => ({ code: "ALEO", name: "Aleo", magnitude: 6 }),
