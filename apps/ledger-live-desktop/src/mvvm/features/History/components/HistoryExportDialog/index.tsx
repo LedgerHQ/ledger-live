@@ -10,18 +10,31 @@ function HistoryExportDialogContent({
   return <HistoryExportDialogView {...vm} />;
 }
 
-export function HistoryExportDialog({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [open, setOpen] = useState(false);
-  const [dialogHeight, setDialogHeight] = useState<"fixed" | "fit">("fixed");
+type Props = Readonly<{
+  children?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}>;
 
-  const handleOpenChange = useCallback((next: boolean) => {
-    setOpen(next);
-    if (!next) setDialogHeight("fixed");
-  }, []);
+export function HistoryExportDialog({ children, open: controlledOpen, onOpenChange }: Props) {
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const [dialogHeight, setDialogHeight] = useState<"fixed" | "fit">("fixed");
+  const open = controlledOpen ?? uncontrolledOpen;
+
+  const handleOpenChange = useCallback(
+    (next: boolean) => {
+      if (controlledOpen === undefined) {
+        setUncontrolledOpen(next);
+      }
+      onOpenChange?.(next);
+      if (!next) setDialogHeight("fixed");
+    },
+    [controlledOpen, onOpenChange],
+  );
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange} height={dialogHeight}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      {children ? <DialogTrigger asChild>{children}</DialogTrigger> : null}
       {open ? <HistoryExportDialogContent setDialogHeight={setDialogHeight} /> : null}
     </Dialog>
   );

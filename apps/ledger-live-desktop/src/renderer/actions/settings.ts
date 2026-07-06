@@ -10,6 +10,7 @@ import {
   AnalyticsConsentInfo,
   SettingsState as Settings,
   hideEmptyTokenAccountsSelector,
+  hideSmallValueTokenOperationsSelector,
   filterTokenOperationsZeroAmountSelector,
   selectedTimeRangeSelector,
   SettingsState,
@@ -190,6 +191,24 @@ export function useFilterTokenOperationsZeroAmount(): [
           }),
         );
       }
+    },
+    [dispatch],
+  );
+  return [value, setter];
+}
+export function useHideSmallValueTokenOperations(): [
+  boolean,
+  (hideSmallValueTokenOperations: boolean) => void,
+] {
+  const dispatch = useDispatch();
+  const value = useSelector(hideSmallValueTokenOperationsSelector);
+  const setter = useCallback(
+    (hideSmallValueTokenOperations: boolean) => {
+      dispatch(
+        saveSettings({
+          hideSmallValueTokenOperations,
+        }),
+      );
     },
     [dispatch],
   );

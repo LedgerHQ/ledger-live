@@ -66,7 +66,7 @@ export function convertThresholdFromUsdToCountervalueMinorUnit({
     return null;
   }
 
-  return new BigNumber(rawCountervalueMinorUnit).decimalPlaces(0, BigNumber.ROUND_FLOOR);
+  return new BigNumber(rawCountervalueMinorUnit);
 }
 
 export function convertThresholdFromCountervalueMinorUnitToUsd({
@@ -103,22 +103,16 @@ export function convertThresholdFromCountervalueMinorUnitToUsd({
  * - it belongs to a TokenAccount, AND
  * - its type is "IN" (incoming transfer), AND
  * - either its crypto value is exactly zero, OR its fiat countervalue is
- *   strictly below the configured threshold (defaults to $0.5, overridable
- *   via ff).
+ *   strictly below the configured USD threshold (defaults to $0.5,
+ *   overridable via ff).
  *
  * When the fiat countervalue cannot be computed (e.g. price feed unavailable),
  * the operation is NOT filtered so that legitimate transactions are never
  * accidentally hidden.
  *
  * The comparison is performed in the user's countervalue currency space:
- * we convert the operation amount (token minor units) to user-fiat minor
- * units via the stored `{from: token, to: user_fiat}` countervalue pair,
- * then compare against the threshold expressed in the same units.
- *
- * The countervalues state only stores `{from: token, to: user_fiat}` pairs
- * (never `{from: USD, to: token}`), so the threshold is expressed directly
- * in user_fiat minor units as `floor(thresholdUsd × 10^user_fiat.magnitude)`.
- * This is a ~1:1 USD/fiat approximation that is acceptable for a dust filter.
+ * we convert both the operation amount and the USD threshold to user-fiat
+ * minor units, then compare those raw values.
  */
 export function isSmallValueTokenOperation({
   operation,
@@ -151,10 +145,11 @@ export function isSmallValueTokenOperation({
 
   if (typeof rawOpFiatValue !== "number" || !Number.isFinite(rawOpFiatValue)) return false;
 
-  const thresholdFiatMinorUnit = floorThresholdToCurrencyMinorUnit(
-    clampSmallValueThresholdUsd(thresholdUsd, 0),
-    userCounterValueCurrency,
-  );
+  const thresholdFiatMinorUnit = convertThresholdFromUsdToCountervalueMinorUnit({
+    counterValueCurrency: userCounterValueCurrency,
+    countervaluesState,
+    thresholdUsd,
+  });
 
   if (!thresholdFiatMinorUnit || thresholdFiatMinorUnit.isZero()) return false;
 

@@ -1,14 +1,17 @@
-import { useMemo, useCallback } from "react";
+import { useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { selectFeature } from "@shared/feature-flags";
-import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import { isAddressPoisoningOperation } from "@ledgerhq/ledger-wallet-framework/operation";
+import type { Account } from "@ledgerhq/types-live";
 import { filterTokenOperationsZeroAmountSelector } from "~/renderer/reducers/settings";
 import {
   buildHistoryOperationItems,
+  buildHistoryOperationFilter,
   getAddressPoisoningFamiliesForFilter,
 } from "../utils/historyOperationItems";
-import { lastSeenOperationDateSelector } from "~/renderer/reducers/history";
+import {
+  historyDustFilterOptionsSelector,
+  lastSeenOperationDateSelector,
+} from "~/renderer/reducers/history";
 import type { State } from "~/renderer/reducers";
 import type { OperationTableItem } from "../types";
 
@@ -19,6 +22,7 @@ export function useHistoryOperationItemsForRootAccounts(
   const currenciesSettings = useSelector((state: State) => state.settings.currenciesSettings);
   const lastSeenOperationDate = useSelector(lastSeenOperationDateSelector);
   const shouldFilterTokenOps = useSelector(filterTokenOperationsZeroAmountSelector);
+  const dustFilterOptions = useSelector(historyDustFilterOptionsSelector);
   const poisoningFeature = useSelector((state: State) =>
     selectFeature(state, "addressPoisoningOperationsFilter"),
   );
@@ -28,16 +32,14 @@ export function useHistoryOperationItemsForRootAccounts(
     [shouldFilterTokenOps, poisoningFeature],
   );
 
-  const filterOperation = useCallback(
-    (operation: Operation, account: AccountLike) => {
-      if (!shouldFilterTokenOps) return true;
-      return !isAddressPoisoningOperation(
-        operation,
-        account,
-        addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
-      );
-    },
-    [shouldFilterTokenOps, addressPoisoningFamilies],
+  const filterOperation = useMemo(
+    () =>
+      buildHistoryOperationFilter({
+        shouldFilterTokenOps,
+        addressPoisoningFamilies,
+        ...dustFilterOptions,
+      }),
+    [shouldFilterTokenOps, addressPoisoningFamilies, dustFilterOptions],
   );
 
   return useMemo(
