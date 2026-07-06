@@ -214,7 +214,6 @@ export function makeBridges({
 
   const currencyBridge: CurrencyBridge = {
     preload: makePreload(getAPI),
-    hydrate: (_data: unknown, _currency: CryptoCurrency) => {},
     scanAccounts: scan,
     getPreloadStrategy,
     nftResolvers,
