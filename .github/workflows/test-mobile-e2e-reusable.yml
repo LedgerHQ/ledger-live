@@ -615,10 +615,10 @@ jobs:
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }} 
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
 
-      - name: Build CLI
+      - name: Build e2e dependencies (CLI + libs)
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm exec nx run @ledgerhq/live-cli:build
+          command: pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
           disable_cache: false
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
@@ -855,10 +855,10 @@ jobs:
           bot_id: ${{ secrets.GH_BOT_CLIENT_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
-      - name: Build CLI
+      - name: Build e2e dependencies (CLI + libs)
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm exec nx run @ledgerhq/live-cli:build
+          command: pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
           disable_cache: false
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
