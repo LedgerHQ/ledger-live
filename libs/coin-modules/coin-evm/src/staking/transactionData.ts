@@ -25,7 +25,7 @@ export function buildStakingTransactionParams(
     throw new Error("Intent must be a staking intent");
   }
 
-  const { amount, sender, mode, valAddress, valId, dstValAddress, withdrawId } = intent;
+  const { amount, sender, mode, valAddress, valId, dstValAddress, withdrawId, txValue } = intent;
 
   const config = STAKING_CONTRACTS[currency.id];
   if (!config) {
@@ -45,7 +45,7 @@ export function buildStakingTransactionParams(
     withdrawId,
   });
 
-  const to = config.specificContractAddressByOperation?.[mode] ?? config.contractAddress;
+  const to = config.contractAddress({ mode, valAddress });
   const data = Buffer.from(
     encodeStakingData({
       currencyId: currency.id,
@@ -61,7 +61,9 @@ export function buildStakingTransactionParams(
     throw new Error(`No function mapping found for the operation: ${mode}`);
   }
 
-  const value = isPayable(currency.id, functionName) ? amount : 0n;
+  const value = isPayable(currency.id, functionName)
+    ? config.value({ mode, amount, ...(typeof txValue === "bigint" ? { txValue } : {}) })
+    : 0n;
 
   return { to, data, value };
 }

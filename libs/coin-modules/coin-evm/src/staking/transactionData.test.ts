@@ -97,4 +97,24 @@ describe("buildStakingTransactionParams", () => {
     expect(to).toEqual("0x0000000000000000000000000000000000001005");
     expect(value).toEqual(1000000000000000000n);
   });
+
+  it("routes Sei claimReward to the distribution precompile (0x1007)", () => {
+    const valAddress = "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn";
+    const intent = delegateIntent({ mode: "claimReward", valAddress });
+
+    const { to } = buildStakingTransactionParams(asCurrency("sei_evm"), intent);
+
+    expect(to).toEqual("0x0000000000000000000000000000000000001007");
+  });
+
+  it.each([
+    ["sei_evm", { valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn" }],
+    ["monad", { valId: "42", valAddress: "0xDisplayAddressIgnoredByEncoder" }],
+  ])("ignores txValue for '%s'", (currencyId, fields) => {
+    const intent = delegateIntent({ ...fields, txValue: 999n });
+
+    const { value } = buildStakingTransactionParams(asCurrency(currencyId), intent);
+
+    expect(value).toEqual(1000000000000000000n);
+  });
 });
