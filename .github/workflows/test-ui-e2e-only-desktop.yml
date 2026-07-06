@@ -432,7 +432,7 @@ jobs:
 
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@support/qaa_fix_e2e_fail_filter
         with:
           results-path: ${{ env.ALLURE_RESULTS }}
           runner: playwright
@@ -476,7 +476,7 @@ jobs:
 
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@support/qaa_fix_e2e_fail_filter
         with:
           results-path: ${{ env.ALLURE_RESULTS }}
           runner: playwright
