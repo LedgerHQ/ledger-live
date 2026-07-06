@@ -256,7 +256,10 @@ const updateAccountWithUpdater = jest.fn((accountId: string, updater: (a: Accoun
 }));
 
 const useTestAleoPrivateSync = (
-  options: Omit<Parameters<typeof useAleoPrivateSync>[0], "accountSelector" | "updateAccountWithUpdater">,
+  options: Omit<
+    Parameters<typeof useAleoPrivateSync>[0],
+    "accountSelector" | "updateAccountWithUpdater"
+  >,
 ) => useAleoPrivateSync({ ...options, accountSelector, updateAccountWithUpdater });
 
 function renderAleoPrivateSync<Props = void>(
@@ -275,11 +278,7 @@ function renderAleoPrivateSync<Props = void>(
     store,
     ...renderHook(hook, {
       wrapper: ({ children }: { children: React.ReactNode }) =>
-        React.createElement(
-          Provider,
-          { store } as React.ComponentProps<typeof Provider>,
-          children,
-        ),
+        React.createElement(Provider, { store } as React.ComponentProps<typeof Provider>, children),
       initialProps,
     }),
   };
@@ -308,7 +307,9 @@ describe("useAleoPrivateSync", () => {
     });
 
     it("should have isSyncing as false and progress as 0 initially", () => {
-      const { result } = renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: makeAleoAccount() }));
+      const { result } = renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: makeAleoAccount() }),
+      );
 
       expect(result.current.isSyncing).toBe(false);
       expect(result.current.progress).toBe(0);
@@ -316,7 +317,9 @@ describe("useAleoPrivateSync", () => {
     });
 
     it("should call sync and set isSyncing to true when start() is called", async () => {
-      const { result } = renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: makeAleoAccount() }));
+      const { result } = renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: makeAleoAccount() }),
+      );
 
       await act(async () => {
         result.current.start();
@@ -327,7 +330,9 @@ describe("useAleoPrivateSync", () => {
     });
 
     it("should set progress to 100 when next is emitted from the bridge observable", async () => {
-      const { result } = renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: makeAleoAccount() }));
+      const { result } = renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: makeAleoAccount() }),
+      );
 
       await act(async () => {
         result.current.start();
@@ -358,7 +363,9 @@ describe("useAleoPrivateSync", () => {
     });
 
     it("should set error and stop syncing when the observable errors", async () => {
-      const { result } = renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: makeAleoAccount() }));
+      const { result } = renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: makeAleoAccount() }),
+      );
 
       await act(async () => {
         result.current.start();
@@ -373,7 +380,9 @@ describe("useAleoPrivateSync", () => {
     });
 
     it("should clear error when start() is called again after an error", async () => {
-      const { result } = renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: makeAleoAccount() }));
+      const { result } = renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: makeAleoAccount() }),
+      );
 
       await act(async () => {
         result.current.start();
@@ -396,7 +405,9 @@ describe("useAleoPrivateSync", () => {
     });
 
     it("should set isSyncing to false when stop() is called", async () => {
-      const { result } = renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: makeAleoAccount() }));
+      const { result } = renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: makeAleoAccount() }),
+      );
 
       await act(async () => {
         result.current.start();
@@ -410,7 +421,9 @@ describe("useAleoPrivateSync", () => {
     });
 
     it("should set isSyncing to false when complete fires with synced=true", async () => {
-      const { result } = renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: makeAleoAccount() }));
+      const { result } = renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: makeAleoAccount() }),
+      );
 
       await act(async () => {
         result.current.start();
@@ -433,7 +446,9 @@ describe("useAleoPrivateSync", () => {
         .mockReturnValueOnce(firstSubject.asObservable())
         .mockReturnValueOnce(secondSubject.asObservable());
 
-      const { result } = renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: makeAleoAccount() }));
+      const { result } = renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: makeAleoAccount() }),
+      );
 
       act(() => {
         result.current.start();
@@ -471,7 +486,9 @@ describe("useAleoPrivateSync", () => {
         .mockReturnValueOnce(firstSubject.asObservable())
         .mockReturnValueOnce(secondSubject.asObservable());
 
-      const { result } = renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: makeAleoAccount() }));
+      const { result } = renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: makeAleoAccount() }),
+      );
 
       act(() => {
         result.current.start();
@@ -500,7 +517,9 @@ describe("useAleoPrivateSync", () => {
 
     it("should not retry when stop() is called before complete fires", async () => {
       jest.useFakeTimers();
-      const { result } = renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: makeAleoAccount() }));
+      const { result } = renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: makeAleoAccount() }),
+      );
 
       act(() => {
         result.current.start();
@@ -522,7 +541,9 @@ describe("useAleoPrivateSync", () => {
 
     it("should not call sync for a non-Aleo account", async () => {
       const nonAleoAccount = genAccount("btc-1", { currency: getCryptoCurrencyById("bitcoin") });
-      const { result } = renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: nonAleoAccount }));
+      const { result } = renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: nonAleoAccount }),
+      );
 
       await act(async () => {
         result.current.start();
@@ -557,7 +578,9 @@ describe("useAleoPrivateSync", () => {
 
   describe("autoStart: true", () => {
     it("should call sync immediately on mount", async () => {
-      renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: makeAleoAccount(), autoStart: true }));
+      renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: makeAleoAccount(), autoStart: true }),
+      );
       await Promise.resolve(); // flush from(Promise.resolve(bridge)) microtask
 
       expect(mockSync).toHaveBeenCalledTimes(1);
@@ -629,7 +652,9 @@ describe("useAleoPrivateSync", () => {
 
     it("should not call onAccountUpdated when not provided", async () => {
       // No onAccountUpdated — just confirm it doesn't throw and progress reaches 100
-      const { result } = renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: makeAleoAccount() }));
+      const { result } = renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: makeAleoAccount() }),
+      );
 
       await act(async () => {
         result.current.start();
@@ -748,7 +773,9 @@ describe("useAleoPrivateSync", () => {
         .mockReturnValueOnce(firstSubject.asObservable())
         .mockReturnValueOnce(secondSubject.asObservable());
 
-      const { result } = renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: makeAleoAccount() }));
+      const { result } = renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: makeAleoAccount() }),
+      );
 
       await act(async () => {
         result.current.start();
@@ -772,7 +799,9 @@ describe("useAleoPrivateSync", () => {
     });
 
     it("should clear a previous error when start() is called while an error is set", async () => {
-      const { result } = renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: makeAleoAccount() }));
+      const { result } = renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: makeAleoAccount() }),
+      );
 
       await act(async () => {
         result.current.start();
@@ -797,7 +826,9 @@ describe("useAleoPrivateSync", () => {
 
   describe("dispatch behaviour", () => {
     it("should dispatch updateAccountWithUpdater on each sync emission", async () => {
-      const { result } = renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: makeAleoAccount() }));
+      const { result } = renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: makeAleoAccount() }),
+      );
 
       await act(async () => {
         result.current.start();
@@ -815,7 +846,9 @@ describe("useAleoPrivateSync", () => {
     });
 
     it("should dispatch once per emission when multiple next values arrive", async () => {
-      const { result } = renderAleoPrivateSync(() => useTestAleoPrivateSync({ account: makeAleoAccount() }));
+      const { result } = renderAleoPrivateSync(() =>
+        useTestAleoPrivateSync({ account: makeAleoAccount() }),
+      );
 
       await act(async () => {
         result.current.start();
