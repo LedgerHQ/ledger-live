@@ -136,11 +136,12 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     };
   }, [bridge, mainAccount.currency, operation.hash]);
 
-  if (transactionHasBeenValidated) {
+  useEffect(() => {
+    if (!transactionHasBeenValidated) return;
     navigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
       error: new TransactionHasBeenValidatedError(),
     });
-  }
+  }, [transactionHasBeenValidated, navigation]);
 
   useEffect(() => {
     log("[edit transaction]", "Transaction to edit", transaction);

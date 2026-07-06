@@ -13,7 +13,7 @@ import type {
   BroadcastConfig,
 } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { TransactionHasBeenValidatedError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import {
   addPendingOperation,
@@ -372,6 +372,16 @@ export function useSignedTxHandler({
           !(error instanceof UserRefusedOnDevice || error instanceof TransactionRefusedOnDevice)
         ) {
           logger.critical(error as Error);
+        }
+
+        const isEditTransaction = Boolean(
+          (route.params as { editType?: string } | undefined)?.editType,
+        );
+        if (isEditTransaction && shouldRestartFlow(error as Error)) {
+          return (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(
+            ScreenName.TransactionAlreadyValidatedError,
+            { error: new TransactionHasBeenValidatedError() },
+          );
         }
 
         if (
