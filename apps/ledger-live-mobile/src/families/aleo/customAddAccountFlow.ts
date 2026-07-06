@@ -15,4 +15,18 @@ export default {
       },
     });
   },
+  onImportAccounts: ({ navigation, routeParams, accountsToAdd }) => {
+    // Same as onDeviceConnected: omit undefined onCloseNavigation to preserve initialParams.
+    const { onCloseNavigation, ...restParams } = routeParams;
+    navigation.replace(ScreenName.AleoAddAccount, {
+      ...restParams,
+      ...(typeof onCloseNavigation === "function" ? { onCloseNavigation } : {}),
+      accountsToAdd,
+      initialRouteName: ScreenName.AleoViewKeyApprove,
+    });
+  },
+  onScanDeviceAccountsBack: ({ navigation }) => {
+    navigation.goBack();
+  },
+  scanDeviceAccountsCtaI18nKey: "aleo.addAccount.stepScanAccounts.cta.shareViewKeys",
 } satisfies CustomAddAccountFlow;

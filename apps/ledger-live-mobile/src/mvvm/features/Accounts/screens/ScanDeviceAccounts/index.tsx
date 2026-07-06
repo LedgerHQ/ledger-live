@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useCallback, useLayoutEffect } from "react";
 import { StyleSheet, View, Pressable } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { useSelector } from "~/context/hooks";
 import { Trans, useTranslation } from "~/context/Locale";
 import Config from "react-native-config";
@@ -20,7 +21,7 @@ import AnimatedGradient from "./components/AnimatedGradient";
 import ScanDeviceAccountsFooter from "./components/ScanDeviceAccountsFooter";
 import AddressTypeTooltip from "./components/AddressTypeTooltip";
 import ScannedAccountsSection from "./components/ScannedAccountsSection";
-import { useRoute } from "@react-navigation/core";
+import { useNavigation, useRoute } from "@react-navigation/core";
 import { ScanDeviceAccountsNavigationProps } from "./types";
 import useAnalytics from "LLM/hooks/useAnalytics";
 
@@ -38,8 +39,17 @@ const StyledPressable = styled(Pressable)`
   column-gap: 12px;
 `;
 
+interface HeaderLeftProps {
+  onPress?: () => void;
+}
+
+function HeaderLeft({ onPress }: Readonly<HeaderLeftProps>) {
+  return <NavigationHeaderBackButton onPress={onPress} />;
+}
+
 function ScanDeviceAccounts() {
   const { colors } = useTheme();
+  const navigation = useNavigation();
 
   const existingAccounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
@@ -72,11 +82,25 @@ function ScanDeviceAccounts() {
     viewAllCreatedAccounts,
     currency,
     returnToSwap,
+    confirmI18nKey,
+    scanDeviceAccountsBack,
   } = useScanDeviceAccountsViewModel({
     existingAccounts,
     blacklistedTokenIds,
     analyticsMetadata,
   });
+
+  const renderHeaderLeft = useCallback(
+    () => <HeaderLeft onPress={scanDeviceAccountsBack} />,
+    [scanDeviceAccountsBack],
+  );
+
+  useLayoutEffect(() => {
+    if (!scanDeviceAccountsBack) return;
+    navigation.setOptions({
+      headerLeft: renderHeaderLeft,
+    });
+  }, [navigation, scanDeviceAccountsBack, renderHeaderLeft]);
 
   const pageTrackingEvent =
     sections?.length === 0
@@ -193,6 +217,7 @@ function ScanDeviceAccounts() {
           onContinue={importAccounts}
           isDisabled={selectedIds.length === 0}
           returnToSwap={returnToSwap}
+          confirmI18nKey={confirmI18nKey}
         />
       )}
       <GenericErrorBottomModal
