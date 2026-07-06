@@ -309,6 +309,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         explorerId: "matic",
       },
       showNfts: false,
+      minGasPrice: "25000000000",
     },
   },
   config_currency_reosc: {
