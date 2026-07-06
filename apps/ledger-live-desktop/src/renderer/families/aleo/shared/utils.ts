@@ -14,6 +14,7 @@ import {
 import {
   derivePrivateTransactionMode,
   derivePublicTransactionMode,
+  isPrivateDestination,
   isPrivateTransaction,
   isSelfTransferTransaction,
 } from "@ledgerhq/live-common/families/aleo/utils";
@@ -49,15 +50,6 @@ export function isAleoAccount(acc: AccountLike): acc is AleoAccount | AleoTokenA
 
 export function isAleoTransaction(tx: Transaction): tx is AleoTransaction {
   return tx.family === "aleo";
-}
-
-function isPrivateDestination(transaction: AleoTransaction): boolean {
-  return (
-    transaction.mode === TRANSACTION_TYPE.TRANSFER_PRIVATE ||
-    transaction.mode === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
-    transaction.mode === TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE ||
-    transaction.mode === TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
-  );
 }
 
 export function getAleoAddressBadgeI18nKey(
