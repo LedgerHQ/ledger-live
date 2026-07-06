@@ -32,9 +32,8 @@ export function isStakingOperation(value: string): value is StakingOperation {
 
 /**
  * Builds a map of `(to, 4-byte selector)` pairs to OperationType for a staking currency.
- * Some chains (e.g. SEI) route specific operations to dedicated precompiles
- * (`specificContractAddressByOperation`) instead of the main staking contract.
- * Cached per `currencyId` since inputs are static (config + ABI files).
+ * The `to` address is resolved per-operation via `config.contractAddress` (e.g. SEI routes
+ * claimReward to its distribution precompile). Cached per `currencyId` since inputs are static.
  */
 const selectorsCache = new Map<string, Map<string, OperationType>>();
 const getStakingMethodSelectors = (currencyId: string): Map<string, OperationType> | undefined => {
@@ -43,7 +42,7 @@ const getStakingMethodSelectors = (currencyId: string): Map<string, OperationTyp
 
   const config = STAKING_CONTRACTS[currencyId];
   const abi = getStakingABI(currencyId);
-  if (!config?.contractAddress || !abi) return undefined;
+  if (!config || !abi) return undefined;
 
   const selectors = new Map<string, OperationType>();
   selectorsCache.set(currencyId, selectors);
@@ -66,8 +65,7 @@ const getStakingMethodSelectors = (currencyId: string): Map<string, OperationTyp
       const signature = `${fn}(${paramTypes})`;
       // calculate selector (first 4 bytes of the keccak256 hash)
       const selector = ethers.id(signature).slice(0, 10);
-      const opContractAddress =
-        config.specificContractAddressByOperation?.[operation] ?? config.contractAddress;
+      const opContractAddress = config.contractAddress({ mode: operation });
       selectors.set(key(opContractAddress, selector), mapped);
     } catch {
       // ignore if function not in ABI or malformed

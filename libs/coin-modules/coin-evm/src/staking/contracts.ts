@@ -4,12 +4,17 @@ import { USEI_TO_EVM_SCALE } from "../utils";
 export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
   // Sei EVM staking
   // Source: https://docs.sei.io/evm/precompiles/staking
+  // claimReward routes to the distribution precompile: https://docs.sei.io/evm/precompiles/distribution
   sei_evm: {
-    contractAddress: "0x0000000000000000000000000000000000001005",
-    specificContractAddressByOperation: {
-      // https://docs.sei.io/evm/precompiles/distribution
-      claimReward: "0x0000000000000000000000000000000000001007",
+    contractAddress: ctx => {
+      switch (ctx?.mode) {
+        case "claimReward":
+          return "0x0000000000000000000000000000000000001007";
+        default:
+          return "0x0000000000000000000000000000000000001005";
+      }
     },
+    value: ({ amount }) => amount,
     functions: {
       delegate: "delegate",
       undelegate: "undelegate",
@@ -69,7 +74,8 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
   // Celo staking
   // Source: https://celo.blockscout.com/address/0x55E1A0C8f376964bd339167476063bFED7f213d5?tab=contract_source_code
   celo: {
-    contractAddress: "0x55E1A0C8f376964bd339167476063bFED7f213d5",
+    contractAddress: () => "0x55E1A0C8f376964bd339167476063bFED7f213d5",
+    value: ({ amount }) => amount,
     functions: {
       delegate: "delegateGovernanceVotes",
       undelegate: "revokeDelegatedGovernanceVotes",
@@ -84,7 +90,8 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
   monad: {
     // Native staking precompile — address 0x1000
     // There is no bytecode at this address; it is a precompile, not a smart contract.
-    contractAddress: "0x0000000000000000000000000000000000001000",
+    contractAddress: () => "0x0000000000000000000000000000000000001000",
+    value: ({ amount }) => amount,
     functions: {
       // delegate(uint64 validatorId) payable — amount is msg.value (18-decimal MON wei).
       delegate: "delegate",
