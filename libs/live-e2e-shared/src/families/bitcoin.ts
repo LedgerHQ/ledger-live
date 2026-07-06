@@ -1,6 +1,12 @@
 import expect from "expect";
 import { Transaction } from "../models/Transaction";
-import { waitFor, containsSubstringInEvent, pressUntilTextFound, getSendEvents } from "../speculos";
+import {
+  waitFor,
+  containsSubstringInEvent,
+  pressUntilTextFound,
+  getSendEvents,
+  SLOW_SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS,
+} from "../speculos";
 import { getSpeculosModel, isTouchDevice } from "../speculosAppVersion";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import invariant from "invariant";
@@ -61,7 +67,7 @@ export const sendBTC = withDeviceController(
       const speculosDevice = getSpeculosModel();
 
       try {
-        const events = await getSendEvents(tx);
+        const events = await getSendEvents(tx, SLOW_SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS);
         const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
         expect(isAmountCorrect).toBeTruthy();
 
