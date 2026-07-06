@@ -116,7 +116,7 @@ export function makeSourceFetchers(
             blockHeight: height,
             error,
           });
-          return Promise.reject(new SourceUnavailableError("explorer internal txs failed"));
+          throw new SourceUnavailableError("explorer internal txs failed");
         });
     },
     empty: async () => new Map<string, BlockOperation[]>(),
