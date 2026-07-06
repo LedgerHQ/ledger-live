@@ -144,7 +144,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
                 },
               ]}
             >
-              {t("common.satPerByte")}
+              {t("common.satPerVByte")}
             </LText>
           </View>
           {isBelowRelayFee ? (
