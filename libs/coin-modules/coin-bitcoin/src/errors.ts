@@ -9,3 +9,7 @@ export const BitcoinInfrastructureError = createCustomErrorClass("Infrastructure
 export const RbfBuildError = createCustomErrorClass("RbfBuildError");
 
 export const FeeTooLow = createCustomErrorClass("FeeTooLow");
+
+export const ZcashSaplingRecipientNotSupported = createCustomErrorClass(
+  "ZcashSaplingRecipientNotSupported",
+);

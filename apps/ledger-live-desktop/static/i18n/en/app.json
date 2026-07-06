@@ -7212,6 +7212,9 @@
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
     },
+    "ZcashSaplingRecipientNotSupported": {
+      "title": "Sending to Sapling addresses is not supported"
+    },
     "InvalidNonce": {
       "title": "Nonce is required"
     },
