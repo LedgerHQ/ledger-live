@@ -1,4 +1,5 @@
-import { getAssetDetailPath, parseLedgerAssetPath } from "LLD/utils/marketAssetNavigation";
+import { parseLedgerAssetPath } from "@ledgerhq/asset-detail";
+import { getAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 import { NavigateFn } from "../types";
 
 type NavigateLedgerAssetDeeplinkParams = {

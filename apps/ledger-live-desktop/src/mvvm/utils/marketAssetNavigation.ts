@@ -1,5 +1,3 @@
-export { parseLedgerAssetPath, type LedgerAssetPath } from "@ledgerhq/asset-detail";
-
 /** `/asset` when Wallet 4.0 aggregated assets is on, else `/market` (market deeplinks). */
 export function getAssetsDetailPathPrefix(
   shouldDisplayAggregatedAssets: boolean,
