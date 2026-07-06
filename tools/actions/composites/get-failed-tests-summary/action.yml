@@ -2,7 +2,7 @@ name: "Failed Tests Summary"
 description: "Writes a GitHub job summary with a ready-to-copy Filter pattern that reruns only the failed/broken E2E tests. Shared by mobile and desktop e2e workflows."
 inputs:
   results-path:
-    description: "Directory containing the test results (Allure *-result.json for Playwright, Jest --json e2e-test-results-*.json for Detox)"
+    description: "Directory containing the Allure *-result.json files (both Playwright and Detox emit these; each file is one test attempt, retries share a historyId)"
     required: true
   runner:
     description: >-
@@ -35,9 +35,13 @@ runs:
         case "$RUNNER" in
           detox)
             # Detox selects whole spec files via a regex tested against file path/content,
-            # so the reusable unit is the failed spec file (basename). Source: Jest --json.
+            # so the reusable unit is the failed spec file (basename). Source: Allure
+            # *-result.json so a pass on a Detox retry clears the earlier failure — the raw
+            # Jest --json only records the failing attempt and would over-include specs.
+            # The spec file comes from the `sourceFile` label set by e2e/mobile/jest.config.js
+            # (mobile Allure results carry only test titles, never the file path otherwise).
             shopt -s nullglob
-            files=("$RESULTS_DIR"/e2e-test-results-*.json)
+            files=("$RESULTS_DIR"/*-result.json)
             shopt -u nullglob
             ;;
           playwright)
@@ -63,15 +67,24 @@ runs:
         fi
 
         if [ "$RUNNER" = "detox" ]; then
-          # Failed spec files (basename), deduplicated.
-          FAILED_LIST=$(jq -rs '
-            [ .[].testResults[]? | select(.status == "failed") | .name | sub(".*/"; "") ]
-            | unique | .[]
-          ' "${files[@]}")
-          FILTER_PATTERN=$(jq -rs "$JQ_ESC"'
-            [ .[].testResults[]? | select(.status == "failed") | .name | sub(".*/"; "") | esc ]
-            | unique | join("|")
-          ' "${files[@]}")
+          # Spec files (basename) that still have a genuinely-failing test after retries.
+          # Each Allure result is one attempt; retries of a test share a historyId. A test
+          # "finally failed" when it has a failed/broken attempt and never passed. A spec
+          # file is included when it holds at least one such test. The spec basename is read
+          # from the `sourceFile` label (set by e2e/mobile/jest.config.js).
+          DETOX_JQ='
+            def specFile:
+              [ (.labels // [])[] | select(.name == "sourceFile") | .value ][0] // "";
+            [ .[] | { id: (.historyId // .fullName), spec: specFile, status: .status } ]
+            | group_by(.id)
+            | map(select(
+                (any(.[]; .status == "failed" or .status == "broken"))
+                and (all(.[]; .status != "passed"))
+              ) | .[0].spec)
+            | map(select(. != "")) | unique
+          '
+          FAILED_LIST=$(jq -rs "$DETOX_JQ"' | .[]' "${files[@]}")
+          FILTER_PATTERN=$(jq -rs "$JQ_ESC$DETOX_JQ"' | map(esc) | join("|")' "${files[@]}")
         else
           # Failed/broken test titles that never passed (a pass on retry clears the failure).
           FAILED_LIST=$(jq -rs '
