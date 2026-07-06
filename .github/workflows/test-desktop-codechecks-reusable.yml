@@ -68,7 +68,7 @@ jobs:
           skip_builds: true
 
       - name: format check
-        if: inputs.base_ref == 'develop' || github.ref == 'refs/heads/develop'
+        if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop'
         run: pnpm desktop format:check
 
       - name: lint
