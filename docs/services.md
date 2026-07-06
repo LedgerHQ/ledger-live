@@ -148,7 +148,7 @@ Services **not** operated by Ledger, including domains baked into SDKs we ship. 
 | Sui testnet | `fullnode.testnet.sui.io`, `graphql.testnet.sui.io` | [env](/libs/env/src/env.ts) | testnet |
 | NEAR fallback RPC | `rpc.mainnet.near.org` | [code](/libs/ledger-live-common/src/families/near/config.ts) | prod |
 | ICON testnet | `solidwallet.io` | [env](/libs/env/src/env.ts) | testnet |
-| Cosmos LCDs (third-party) | `api.mainnet.desmos.network`, `rest.core.persistence.one`, `lcd.quicksilver.zone`, `api.nyx.nodes.guru` | [code](/libs/coin-modules/coin-cosmos/src/config.ts) | prod |
+| Cosmos LCDs (third-party) | `api.mainnet.desmos.network`, `rest.core.persistence.one`, `lcd.quicksilver.zone`, `api.nyx.nodes.guru`, `verona-api.polkachu.com` | [code](/libs/coin-modules/coin-cosmos/src/config.ts) | prod |
 | 0G validators (ExploreMe) | `api.0g.exploreme.pro` | [code](/libs/coin-modules/coin-evm/src/staking/contracts.ts) | prod |
 | ICP gateway | `ic0.app` | [SDK](https://www.npmjs.com/package/@zondax/ledger-live-icp) | prod |
 | **Engagement** | | | |
