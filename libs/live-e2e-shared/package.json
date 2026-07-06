@@ -17,6 +17,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/device-core": "workspace:^",
+    "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",

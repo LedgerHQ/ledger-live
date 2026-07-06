@@ -71,7 +71,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Install dependencies
-        run: pnpm i --filter="live-cli..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm --ignore-scripts
+        run: pnpm i --filter="live-cli..." --filter="ledger-live-desktop-e2e-tests..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Setup Speculos image and Coin Apps
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
@@ -82,10 +82,10 @@ jobs:
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
-      - name: Build CLI
+      - name: Build CLI and e2e shared lib
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm exec nx run @ledgerhq/live-cli:build
+          command: pnpm exec nx run-many -t build --projects=@ledgerhq/live-cli,@ledgerhq/live-e2e-shared
           disable_cache: false
 
       - name: Compute cache key date
@@ -114,10 +114,10 @@ jobs:
           echo "Generating desktop app.json userdata into: $E2E_GENERATED_USERDATA_DIR (base: $BASE_USERDATA)"
           if [ -n "${GEN_COINS:-}" ]; then
             echo "Scoped to coins: $GEN_COINS"
-            pnpm run:cli generateAppJson --base "$BASE_USERDATA" --coin $GEN_COINS
+            pnpm --filter ledger-live-desktop-e2e-tests run generate:appjson -- --base "$BASE_USERDATA" --coin $GEN_COINS
           else
             echo "Generating for all coins"
-            pnpm run:cli generateAppJson --base "$BASE_USERDATA"
+            pnpm --filter ledger-live-desktop-e2e-tests run generate:appjson -- --base "$BASE_USERDATA"
           fi
           echo "Generated userdata files:"
           ls -la "$E2E_GENERATED_USERDATA_DIR"
@@ -132,10 +132,10 @@ jobs:
           echo "Generating address cache (account-based coins) into: $E2E_GENERATED_USERDATA_DIR"
           if [ -n "${GEN_COINS:-}" ]; then
             echo "Scoped to coins: $GEN_COINS"
-            pnpm run:cli generateAddresses --coin $GEN_COINS
+            pnpm --filter ledger-live-desktop-e2e-tests run generate:addresses -- --coin $GEN_COINS
           else
             echo "Generating for all account-based coins"
-            pnpm run:cli generateAddresses
+            pnpm --filter ledger-live-desktop-e2e-tests run generate:addresses
           fi
 
       - name: Generate UTXO address cache (Speculos)
@@ -148,10 +148,10 @@ jobs:
           echo "Generating UTXO address cache (bitcoin family, Cardano, Kaspa) into: $E2E_GENERATED_USERDATA_DIR"
           if [ -n "${GEN_COINS:-}" ]; then
             echo "Scoped to coins: $GEN_COINS"
-            pnpm run:cli generateUtxoAddresses --coin $GEN_COINS
+            pnpm --filter ledger-live-desktop-e2e-tests run generate:utxo-addresses -- --coin $GEN_COINS
           else
             echo "Generating for all UTXO-based coins"
-            pnpm run:cli generateUtxoAddresses
+            pnpm --filter ledger-live-desktop-e2e-tests run generate:utxo-addresses
           fi
 
       - name: Save userdata to S3 cache
@@ -197,7 +197,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Install dependencies
-        run: pnpm i --filter="live-cli..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm --ignore-scripts
+        run: pnpm i --filter="live-cli..." --filter="ledger-live-desktop-e2e-tests..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Setup Speculos image and Coin Apps
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
@@ -208,10 +208,10 @@ jobs:
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
-      - name: Build CLI
+      - name: Build CLI and e2e shared lib
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm exec nx run @ledgerhq/live-cli:build
+          command: pnpm exec nx run-many -t build --projects=@ledgerhq/live-cli,@ledgerhq/live-e2e-shared
           disable_cache: false
 
       - name: Compute cache key date
@@ -240,10 +240,10 @@ jobs:
           echo "Generating mobile app.json userdata into: $E2E_GENERATED_USERDATA_DIR (base: $BASE_USERDATA)"
           if [ -n "${GEN_COINS:-}" ]; then
             echo "Scoped to coins: $GEN_COINS"
-            pnpm run:cli generateAppJson --base "$BASE_USERDATA" --coin $GEN_COINS
+            pnpm --filter ledger-live-desktop-e2e-tests run generate:appjson -- --base "$BASE_USERDATA" --coin $GEN_COINS
           else
             echo "Generating for all coins"
-            pnpm run:cli generateAppJson --base "$BASE_USERDATA"
+            pnpm --filter ledger-live-desktop-e2e-tests run generate:appjson -- --base "$BASE_USERDATA"
           fi
           echo "Generated userdata files:"
           ls -la "$E2E_GENERATED_USERDATA_DIR"
@@ -258,10 +258,10 @@ jobs:
           echo "Generating address cache (account-based coins) into: $E2E_GENERATED_USERDATA_DIR"
           if [ -n "${GEN_COINS:-}" ]; then
             echo "Scoped to coins: $GEN_COINS"
-            pnpm run:cli generateAddresses --coin $GEN_COINS
+            pnpm --filter ledger-live-desktop-e2e-tests run generate:addresses -- --coin $GEN_COINS
           else
             echo "Generating for all account-based coins"
-            pnpm run:cli generateAddresses
+            pnpm --filter ledger-live-desktop-e2e-tests run generate:addresses
           fi
 
       - name: Generate UTXO address cache (Speculos)
@@ -274,10 +274,10 @@ jobs:
           echo "Generating UTXO address cache (bitcoin family, Cardano, Kaspa) into: $E2E_GENERATED_USERDATA_DIR"
           if [ -n "${GEN_COINS:-}" ]; then
             echo "Scoped to coins: $GEN_COINS"
-            pnpm run:cli generateUtxoAddresses --coin $GEN_COINS
+            pnpm --filter ledger-live-desktop-e2e-tests run generate:utxo-addresses -- --coin $GEN_COINS
           else
             echo "Generating for all UTXO-based coins"
-            pnpm run:cli generateUtxoAddresses
+            pnpm --filter ledger-live-desktop-e2e-tests run generate:utxo-addresses
           fi
 
       - name: Save userdata to S3 cache

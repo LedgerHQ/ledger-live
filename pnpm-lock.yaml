@@ -703,9 +703,6 @@ importers:
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:^
         version: link:../../libs/live-dmk-speculos
-      '@ledgerhq/live-e2e-shared':
-        specifier: workspace:^
-        version: link:../../libs/live-e2e-shared
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
@@ -3340,6 +3337,9 @@ importers:
       playwright:
         specifier: 'catalog:'
         version: 1.60.0
+      tsx:
+        specifier: ^4.19.3
+        version: 4.20.6
     optionalDependencies:
       '@oxlint/binding-darwin-arm64':
         specifier: 1.51.0
@@ -11031,7 +11031,7 @@ importers:
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.3.0(rxjs@7.8.2)
+        version: 0.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -11078,6 +11078,9 @@ importers:
       '@ledgerhq/device-core':
         specifier: workspace:^
         version: link:../device-core
+      '@ledgerhq/device-management-kit':
+        specifier: 'catalog:'
+        version: 1.7.1(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -11095,7 +11098,7 @@ importers:
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.3.0(rxjs@7.8.2)
+        version: 0.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../speculos-transport
@@ -17559,6 +17562,8 @@ packages:
 
   '@ledgerhq/speculos-device-controller@0.3.0':
     resolution: {integrity: sha512-FCOGVs28pTxYEom+Yr8skQ1QUyj1+sC0YDvE+Xk+DfXQx8FMRI1l41x+XT8ZGPNUh8kRTd0hsZc2lqVpxD6a8w==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': ^1.5.1
 
   '@ledgerhq/wallet-api-client-react@1.4.31':
     resolution: {integrity: sha512-WbvKKd0EmlmU0xwFox+qYUSBMPWwnax0kzis3qQ7WGT6aMlwEGEPAwlJ81Hn209NjcIbSDhteHQk9eiV2sZEJw==}
@@ -46026,14 +46031,10 @@ snapshots:
       '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
       semver: 7.7.2
 
-  '@ledgerhq/speculos-device-controller@0.3.0(rxjs@7.8.2)':
+  '@ledgerhq/speculos-device-controller@0.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
-    transitivePeerDependencies:
-      - bufferutil
-      - rxjs
-      - utf-8-validate
 
   '@ledgerhq/wallet-api-client-react@1.4.31(@ton/crypto@3.3.0)(react@19.1.4)':
     dependencies:
