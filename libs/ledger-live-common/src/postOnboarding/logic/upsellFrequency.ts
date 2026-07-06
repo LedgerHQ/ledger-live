@@ -13,13 +13,13 @@ export function isCooldownElapsed(
 }
 
 export function shouldThrottle(
-  retriesUpsellModal: number,
+  killsUpsellModal: number,
   lastSeenUpsellModal: Date | null,
   killThreshold: number,
   cadenceDays: number,
   now: Date,
 ): boolean {
-  if (retriesUpsellModal < killThreshold || lastSeenUpsellModal === null) {
+  if (killsUpsellModal < killThreshold || lastSeenUpsellModal === null) {
     return false;
   }
 
