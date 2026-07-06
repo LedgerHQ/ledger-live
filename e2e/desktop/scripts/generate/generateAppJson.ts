@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { runCliLiveData } from "@ledgerhq/live-e2e-shared/runCli";
 import {
@@ -10,12 +10,7 @@ import {
 } from "@ledgerhq/live-e2e-shared/speculos";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import type { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-
-export type GenerateAppJsonJobOpts = Partial<{
-  coin: string[];
-  outputDir: string;
-  base: string;
-}>;
+import { resolveFromRoot, runGenerator, type GeneratorArgs } from "./shared";
 
 type CoinGroup = {
   currency: Currency;
@@ -24,10 +19,6 @@ type CoinGroup = {
 
 const DEFAULT_OUTPUT_DIR = "e2e/userdata/generated";
 const DEFAULT_BASE = "e2e/desktop/tests/userdata/skip-onboarding-with-last-seen-device.json";
-
-function resolveOutputDir(outputDir?: string): string {
-  return path.resolve(outputDir ?? process.env.E2E_GENERATED_USERDATA_DIR ?? DEFAULT_OUTPUT_DIR);
-}
 
 function groupAccountsByCoin(coins?: string[]): Map<string, CoinGroup> {
   const groups = new Map<string, CoinGroup>();
@@ -84,55 +75,31 @@ async function generateCoin(
   }
 }
 
-export default {
-  description: "Generate one app.json per coin for E2E userdata, launching Speculos automatically",
-  args: [
-    {
-      name: "coin",
-      alias: "c",
-      type: String,
-      multiple: true,
-      typeDesc: "currencyId",
-      desc: "currency id to generate, e.g. ethereum (repeatable, defaults to all)",
-    },
-    {
-      name: "outputDir",
-      alias: "o",
-      type: String,
-      typeDesc: "dir",
-      desc: `output directory (defaults to $E2E_GENERATED_USERDATA_DIR or ${DEFAULT_OUTPUT_DIR})`,
-    },
-    {
-      name: "base",
-      alias: "b",
-      type: String,
-      typeDesc: "file",
-      desc: `base userdata to append accounts onto (defaults to ${DEFAULT_BASE})`,
-    },
-  ],
-  job: async ({ coin, outputDir, base }: GenerateAppJsonJobOpts) => {
-    const outDir = resolveOutputDir(outputDir);
-    fs.mkdirSync(outDir, { recursive: true });
+async function generateAppJson({ coin, outputDir, base }: GeneratorArgs): Promise<string> {
+  const outDir = resolveFromRoot(
+    outputDir ?? process.env.E2E_GENERATED_USERDATA_DIR ?? DEFAULT_OUTPUT_DIR,
+  );
+  fs.mkdirSync(outDir, { recursive: true });
 
-    const baseTemplate = path.resolve(base ?? DEFAULT_BASE);
-    if (!fs.existsSync(baseTemplate)) throw new Error(`base userdata not found: ${baseTemplate}`);
+  const baseTemplate = resolveFromRoot(base ?? DEFAULT_BASE);
+  if (!fs.existsSync(baseTemplate)) throw new Error(`base userdata not found: ${baseTemplate}`);
 
-    process.env.LEDGER_LIVE_CLI_BIN = process.argv[1];
-    setEnv("MOCK", "");
-    process.env.MOCK = "";
-    setEnv("PLAYWRIGHT_RUN", true);
+  setEnv("MOCK", "");
+  process.env.MOCK = "";
+  setEnv("PLAYWRIGHT_RUN", true);
 
-    if (!getEnv("E2E_NANO_APP_VERSION_PATH")) {
-      setEnv("E2E_NANO_APP_VERSION_PATH", path.join(outDir, "nano-app-catalog.json"));
-    }
+  if (!getEnv("E2E_NANO_APP_VERSION_PATH")) {
+    setEnv("E2E_NANO_APP_VERSION_PATH", path.join(outDir, "nano-app-catalog.json"));
+  }
 
-    const groups = groupAccountsByCoin(coin);
-    if (groups.size === 0) throw new Error("no matching coin found");
+  const groups = groupAccountsByCoin(coin);
+  if (groups.size === 0) throw new Error("no matching coin found");
 
-    const results: string[] = [];
-    for (const [coinId, group] of groups) {
-      results.push(await generateCoin(coinId, group, outDir, baseTemplate));
-    }
-    return results.join("\n");
-  },
-};
+  const results: string[] = [];
+  for (const [coinId, group] of groups) {
+    results.push(await generateCoin(coinId, group, outDir, baseTemplate));
+  }
+  return results.join("\n");
+}
+
+runGenerator(generateAppJson);
