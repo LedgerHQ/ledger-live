@@ -155,7 +155,7 @@ jobs:
           fi
 
       - name: Save userdata to S3 cache
-        uses: tespkg/actions-cache/save@v1.9.0
+        uses: tespkg/actions-cache/save@v1.10.0
         with:
           path: e2e/userdata/generated
           key: ${{ steps.meta.outputs.prefix }}${{ env.CACHE_PREFIX }}-${{ steps.meta.outputs.date }}
@@ -281,7 +281,7 @@ jobs:
           fi
 
       - name: Save userdata to S3 cache
-        uses: tespkg/actions-cache/save@v1.9.0
+        uses: tespkg/actions-cache/save@v1.10.0
         with:
           path: e2e/userdata/generated
           key: ${{ steps.meta.outputs.prefix }}${{ env.CACHE_PREFIX }}-${{ steps.meta.outputs.date }}
