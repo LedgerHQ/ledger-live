@@ -11,6 +11,8 @@ import type { AccountLike, Account } from "@ledgerhq/types-live";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/index";
+import { getCustomSendFlow } from "~/screens/SendFunds/utils/customSendFlow";
 import { ScreenName } from "~/const";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { TrackScreen } from "~/analytics";
@@ -135,12 +137,20 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
   }, [setTransaction, bridge, transaction]);
   const blur = useCallback(() => Keyboard.dismiss(), []);
   const onMaxSpendableLearnMore = useCallback(() => Linking.openURL(urls.maxSpendable), []);
+  const handleUpdateTransaction = useCallback(
+    (updater: (arg0: Transaction) => Transaction) => {
+      if (transaction) setTransaction(updater(transaction));
+    },
+    [setTransaction, transaction],
+  );
 
   const unit = useMaybeAccountUnit(account);
   if (!transaction || !unit) return null;
   const { useAllAmount } = transaction;
   const { amount } = status;
   const currency = getAccountCurrency(account);
+  const family = getFamilyByCurrencyId(currency.id);
+  const familySendFlow = family ? getCustomSendFlow(family) : null;
 
   const transferFee =
     "model" in transaction && transaction.model.commandDescriptor?.command.kind === "token.transfer"
@@ -179,6 +189,16 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
                 }
                 warning={status.warnings.amount}
               />
+
+              {familySendFlow?.AfterAmountInput && (
+                <View style={styles.afterAmountInputWrapper}>
+                  <familySendFlow.AfterAmountInput
+                    account={account}
+                    transaction={transaction}
+                    updateTransaction={handleUpdateTransaction}
+                  />
+                </View>
+              )}
 
               <View style={styles.bottomWrapper}>
                 <View style={[styles.available]}>
@@ -300,6 +320,9 @@ const styles = StyleSheet.create({
   },
   maxLabel: {
     marginRight: 4,
+  },
+  afterAmountInputWrapper: {
+    flex: 1,
   },
   bottomWrapper: {
     alignSelf: "stretch",

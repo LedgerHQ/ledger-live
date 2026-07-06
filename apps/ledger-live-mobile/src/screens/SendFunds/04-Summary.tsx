@@ -37,6 +37,7 @@ import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNav
 import { Alert as NativeUiAlert, Flex, Text } from "@ledgerhq/native-ui";
 import SupportLinkError from "~/components/SupportLinkError";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
+import { getCustomSendFlow } from "~/screens/SendFunds/utils/customSendFlow";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -139,6 +140,8 @@ function SendSummary({ navigation, route }: Props) {
   const { tooManyUtxos } = warnings || {};
   const mainAccount = getMainAccount(account, parentAccount);
   const currencyOrToken = getAccountCurrency(account);
+  const family = mainAccount.currency.family;
+  const familySendFlow = getCustomSendFlow(family);
   const hasNonEmptySubAccounts =
     account &&
     account.type === "Account" &&
@@ -174,6 +177,37 @@ function SendSummary({ navigation, route }: Props) {
   const displayedError = mergeErrors();
 
   const isSolanaRawTransaction = "raw" in transaction && transaction.raw;
+  const shouldShowTotal = !amount.eq(totalSpent) && !hideTotal && !isSolanaRawTransaction;
+
+  const renderToSection = useCallback(() => {
+    if (!transaction.recipient) {
+      return null;
+    }
+
+    const badge = familySendFlow?.SummaryToBadge ? (
+      <familySendFlow.SummaryToBadge transaction={transaction} />
+    ) : undefined;
+
+    if (familySendFlow?.SummaryToSection) {
+      return (
+        <familySendFlow.SummaryToSection
+          transaction={transaction}
+          currency={mainAccount.currency}
+          account={account}
+          parentAccount={parentAccount}
+          {...(badge && { badge })}
+        />
+      );
+    }
+
+    return (
+      <SummaryToSection
+        transaction={transaction}
+        currency={mainAccount.currency}
+        {...(badge && { badge })}
+      />
+    );
+  }, [transaction, familySendFlow, account, parentAccount, mainAccount.currency]);
 
   if (!account || !transaction || !currencyOrToken) {
     return null;
@@ -204,7 +238,13 @@ function SendSummary({ navigation, route }: Props) {
             </Alert>
           </View>
         ) : null}
-        <SummaryFromSection account={account} parentAccount={parentAccount} />
+        <SummaryFromSection
+          account={account}
+          parentAccount={parentAccount}
+          {...(familySendFlow?.SummaryFromBadge && {
+            badge: <familySendFlow.SummaryFromBadge transaction={transaction} />,
+          })}
+        />
         <View
           style={[
             styles.verticalConnector,
@@ -213,9 +253,7 @@ function SendSummary({ navigation, route }: Props) {
             },
           ]}
         />
-        {transaction.recipient ? (
-          <SummaryToSection transaction={transaction} currency={mainAccount.currency} />
-        ) : null}
+        {renderToSection()}
         {status.warnings.recipient ? (
           <LText style={styles.warning} color="orange" testID="send-summary-warning">
             <TranslatedError error={status.warnings.recipient} />
@@ -268,7 +306,7 @@ function SendSummary({ navigation, route }: Props) {
           route={route}
         />
 
-        {!amount.eq(totalSpent) && !hideTotal && !isSolanaRawTransaction ? (
+        {shouldShowTotal ? (
           <>
             <SectionSeparator lineColor={colors.lightFog} />
             <SummaryTotalSection

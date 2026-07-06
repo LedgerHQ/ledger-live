@@ -1,5 +1,6 @@
 import React from "react";
 import BigNumber from "bignumber.js";
+import { View, Pressable, Text } from "react-native";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
@@ -7,6 +8,8 @@ import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { render, screen } from "@tests/test-renderer";
 import SelectAccount from "../SelectAccount";
 import type { State } from "~/reducers/types";
+import { ScreenName } from "~/const";
+import { getCustomSendFlow } from "~/screens/SendFunds/utils/customSendFlow";
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
   const { defaultIsAccountEmpty } = jest.requireActual(
@@ -22,19 +25,28 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
 });
 
 jest.mock("~/components/AccountSelector", () => {
-  const { View, Text } = jest.requireActual("react-native");
-  return function MockAccountSelector({ list }: { list: AccountLike[] }) {
+  return function MockAccountSelector({
+    list,
+    onSelectAccount,
+  }: {
+    list: AccountLike[];
+    onSelectAccount: (a: AccountLike) => void;
+  }) {
     return (
       <View testID="account-selector">
         {list.map(a => (
-          <Text key={a.id} testID={`account-${a.id}`}>
-            {a.id}
-          </Text>
+          <Pressable key={a.id} testID={`account-${a.id}`} onPress={() => onSelectAccount(a)}>
+            <Text>{a.id}</Text>
+          </Pressable>
         ))}
       </View>
     );
   };
 });
+
+jest.mock("~/screens/SendFunds/utils/customSendFlow", () => ({
+  getCustomSendFlow: jest.fn(() => null),
+}));
 
 jest.mock("LLM/features/Send/hooks/useNewSendFlowFeature", () => ({
   useNewSendFlowFeature: () => ({
@@ -204,5 +216,63 @@ describe("SelectAccount — currencyIds multi-network filter", () => {
 
     expect(screen.getByTestId(`account-${USDT_ETH.id}`)).toBeVisible();
     expect(screen.queryByTestId(`account-${EMPTY_USDT_POLY.id}`)).toBeNull();
+  });
+});
+
+const mockGetCustomSendFlow = jest.mocked(getCustomSendFlow);
+
+describe("SelectAccount — custom send flow navigation", () => {
+  afterEach(() => {
+    mockGetCustomSendFlow.mockReturnValue(null);
+  });
+
+  it("calls navigateToInitialScreen when the family has a custom flow", async () => {
+    const mockNavigateToInitialScreen = jest.fn();
+    mockGetCustomSendFlow.mockReturnValue({
+      screens: [],
+      navigateToInitialScreen: mockNavigateToInitialScreen,
+    });
+
+    const navigation = makeNavigation();
+    const { user } = render(
+      <SelectAccount
+        // oxlint-disable-next-line typescript/no-explicit-any
+        navigation={navigation as any}
+        route={
+          // oxlint-disable-next-line typescript/no-explicit-any
+          makeRoute({ next: ScreenName.SendSelectRecipient, minBalance: 0 }) as any
+        }
+      />,
+      { overrideInitialState: withAccounts([FUNDED_ETH]) },
+    );
+
+    await user.press(screen.getByTestId(`account-${FUNDED_ETH.id}`));
+
+    expect(mockNavigateToInitialScreen).toHaveBeenCalledWith(
+      expect.objectContaining({ account: FUNDED_ETH }),
+    );
+    expect(navigation.navigate).not.toHaveBeenCalled();
+  });
+
+  it("falls through to default navigation when no custom flow exists", async () => {
+    const navigation = makeNavigation();
+    const { user } = render(
+      <SelectAccount
+        // oxlint-disable-next-line typescript/no-explicit-any
+        navigation={navigation as any}
+        route={
+          // oxlint-disable-next-line typescript/no-explicit-any
+          makeRoute({ next: ScreenName.SendSelectRecipient, minBalance: 0 }) as any
+        }
+      />,
+      { overrideInitialState: withAccounts([FUNDED_ETH]) },
+    );
+
+    await user.press(screen.getByTestId(`account-${FUNDED_ETH.id}`));
+
+    expect(navigation.navigate).toHaveBeenCalledWith(
+      ScreenName.SendSelectRecipient,
+      expect.objectContaining({ accountId: FUNDED_ETH.id }),
+    );
   });
 });

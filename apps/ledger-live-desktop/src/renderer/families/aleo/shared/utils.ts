@@ -8,7 +8,6 @@ import {
 import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
-  TRANSACTION_TYPE,
   PRIVATE_BALANCE_PLACEHOLDER,
 } from "@ledgerhq/live-common/families/aleo/constants";
 import {

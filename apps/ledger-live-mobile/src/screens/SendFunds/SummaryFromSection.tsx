@@ -11,12 +11,13 @@ import CurrencyIcon from "~/components/CurrencyIcon";
 import Wallet from "@ledgerhq/icons-ui/native/Wallet";
 import { useAccountName } from "~/reducers/wallet";
 
-type Props = {
+type Props = Readonly<{
   account: AccountLike;
   parentAccount: Account | null | undefined;
-};
+  badge?: React.ReactNode;
+}>;
 
-function SummaryFromSection({ account }: Props) {
+function SummaryFromSection({ account, badge }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const currency = getAccountCurrency(account);
@@ -29,12 +30,9 @@ function SummaryFromSection({ account }: Props) {
           <Wallet size="S" color={colors.primary.c80} />
         </Circle>
       }
+      labelBadge={badge}
       data={
-        <View
-          style={{
-            flexDirection: "row",
-          }}
-        >
+        <View style={{ flexDirection: "row" }}>
           <View style={styles.currencyIcon}>
             <CurrencyIcon size={14} currency={currency} />
           </View>
