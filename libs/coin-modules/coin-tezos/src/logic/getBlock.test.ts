@@ -1212,6 +1212,7 @@ describe("origination operations", () => {
       amount: 0n,
       details: { ledgerOpType: "ORIGINATION", counter: 42, gasLimit: 3494, storageLimit: 5852 },
     });
+    expect((tx.operations[0] as any).details).not.toHaveProperty("originatedContract");
   });
 
   it("produces negative amount for an origination with contractBalance > 0", async () => {
