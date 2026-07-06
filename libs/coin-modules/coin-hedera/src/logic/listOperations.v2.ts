@@ -539,15 +539,16 @@ export async function listOperationsV2({
   // `NONE` operations are produced when the account is neither a sender nor a recipient of any transfer in a
   // transaction (value 0, no balance impact) — e.g. an HTS transfer between third parties for a token the account
   // is merely associated with. getBlock builds operations only from real transfer participants and never emits
-  // these, so we drop them here to keep listOperations and getBlock consistent.
-  const coinOperationsWithoutNone = coinOperations.filter(op => op.type !== "NONE");
-  const tokenOperationsWithoutNone = tokenOperations.filter(op => op.type !== "NONE");
+  // these, so we drop them here to keep listOperations and getBlock consistent. Fees are unaffected: they are
+  // represented separately (transaction-level feesPayer/fees and dedicated FEES operations), never as a NONE op.
+  const removeNone = (ops: Operation<HederaOperationExtra>[]) =>
+    ops.filter(op => op.type !== "NONE");
 
   return {
-    tokenOperations: tokenOperationsWithoutNone,
+    tokenOperations: removeNone(tokenOperations),
     coinOperations: skipFeesForTokenOperations
-      ? coinOperationsWithoutNone.filter(op => op.type !== "FEES")
-      : coinOperationsWithoutNone,
+      ? removeNone(coinOperations).filter(op => op.type !== "FEES")
+      : removeNone(coinOperations),
     nextCursor: mergeResult.nextCursor,
   };
 }
