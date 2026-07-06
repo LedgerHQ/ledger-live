@@ -136,7 +136,6 @@ function buildDelegationOperations(op: APIDelegationType): BlockOperation[] {
   const senderAddr = op.sender?.address;
   if (!senderAddr) return [];
 
-  const targetAddr = op.newDelegate?.address || op.prevDelegate?.address;
   const isDelegate = !!op.newDelegate?.address;
 
   return [
@@ -148,7 +147,6 @@ function buildDelegationOperations(op: APIDelegationType): BlockOperation[] {
       details: {
         operationType: isDelegate ? "DELEGATE" : "UNDELEGATE",
         stakedAmount: 0n,
-        ...(targetAddr && { delegate: targetAddr }),
         counter: op.counter,
         gasLimit: op.gasLimit,
         storageLimit: op.storageLimit,
@@ -183,7 +181,6 @@ function buildStakingOperations(op: APIStakingType): BlockOperation[] {
   if (!senderAddr) return [];
 
   const operationType = STAKING_ACTION_TO_OP_TYPE[op.action];
-  const bakerAddr = op.baker?.address;
 
   return [
     {
@@ -194,7 +191,6 @@ function buildStakingOperations(op: APIStakingType): BlockOperation[] {
       details: {
         operationType,
         stakedAmount: BigInt(op.amount ?? 0),
-        ...(bakerAddr && { delegate: bakerAddr }),
         counter: op.counter,
         gasLimit: op.gasLimit,
         storageLimit: op.storageLimit,
@@ -228,8 +224,6 @@ function buildOriginationOperations(op: APIOriginationType): BlockOperation[] {
   const senderAddr = op.sender?.address;
   if (!senderAddr) return [];
 
-  const contractAddr = op.originatedContract?.address;
-
   return [
     {
       type: "other",
@@ -241,7 +235,6 @@ function buildOriginationOperations(op: APIOriginationType): BlockOperation[] {
         gasLimit: op.gasLimit,
         storageLimit: op.storageLimit,
         ledgerOpType: "ORIGINATION",
-        ...(contractAddr && { originatedContract: contractAddr }),
       },
     },
   ];

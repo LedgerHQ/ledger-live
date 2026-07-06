@@ -860,7 +860,6 @@ describe("delegation operations", () => {
       details: {
         operationType: "DELEGATE",
         stakedAmount: 0n,
-        delegate: "tz1Baker",
         counter: 42,
         gasLimit: 1000,
         storageLimit: 257,
@@ -898,7 +897,6 @@ describe("delegation operations", () => {
       details: {
         operationType: "UNDELEGATE",
         stakedAmount: 0n,
-        delegate: "tz1PrevBaker",
         counter: 7,
         gasLimit: 500,
         storageLimit: 100,
@@ -1113,7 +1111,6 @@ describe("staking operations", () => {
         details: {
           operationType: expectedOpType,
           stakedAmount: expectedStakedAmount,
-          delegate: "tz1Baker",
           counter: 1,
           gasLimit: 3630,
           storageLimit: 0,
@@ -1213,14 +1210,9 @@ describe("origination operations", () => {
       type: "other",
       address: "tz1Deployer",
       amount: 0n,
-      details: {
-        ledgerOpType: "ORIGINATION",
-        counter: 42,
-        gasLimit: 3494,
-        storageLimit: 5852,
-        originatedContract: "KT1NewContract",
-      },
+      details: { ledgerOpType: "ORIGINATION", counter: 42, gasLimit: 3494, storageLimit: 5852 },
     });
+    expect((tx.operations[0] as any).details).not.toHaveProperty("originatedContract");
   });
 
   it("produces negative amount for an origination with contractBalance > 0", async () => {
