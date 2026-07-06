@@ -1,7 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import { normalizeText } from "../../helpers/commonHelpers";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
-import { retryUntilTimeout } from "../../utils/retry";
+import { DEFAULT_TIMEOUT } from "../../helpers/elementHelpers";
 
 export type SwapTransactionStatusDetails = {
   date: string;
@@ -53,7 +53,8 @@ export default class SwapTransactionStatusDrawer {
       await detoxExpect(getElementById(this.receivedAmountId)).toBeVisible();
     }
 
-    await retryUntilTimeout(() => scrollToId(this.networkFeesId, this.scrollViewId));
+    await waitForElementById(this.networkFeesId, DEFAULT_TIMEOUT, { checkVisibility: false });
+    await scrollToId(this.networkFeesId, this.scrollViewId);
     jestExpect(normalizeText(await getTextOfElement(this.networkFeesId))).toEqual(
       normalizeText(details.networkFees),
     );
@@ -65,7 +66,10 @@ export default class SwapTransactionStatusDrawer {
     );
     jestExpect(normalizeText(await getTextOfElement(this.swapIdId))).toContain(swapIdPrefix);
 
-    await retryUntilTimeout(() => scrollToId(this.viewInExplorerButtonId, this.scrollViewId));
+    await waitForElementById(this.viewInExplorerButtonId, DEFAULT_TIMEOUT, {
+      checkVisibility: false,
+    });
+    await scrollToId(this.viewInExplorerButtonId, this.scrollViewId);
     await detoxExpect(getElementById(this.viewInExplorerButtonId)).toBeVisible();
   }
 }
