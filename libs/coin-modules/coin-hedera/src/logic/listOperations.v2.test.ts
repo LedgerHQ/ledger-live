@@ -745,8 +745,7 @@ describe("listOperationsV2", () => {
       result: "INSUFFICIENT_PAYER_BALANCE",
       token_transfers: [],
       staking_reward_transfers: [],
-      // the account is a transfer participant (recipient) while a different account (0.0.23) pays the fee,
-      // so the operation is kept and its inferred feesPayer can be asserted
+      // account must be a transfer participant so the op survives the NONE filter; fee payer stays a different account
       transfers: [
         { account: "0.0.23", amount: -40743 },
         { account: mockMirrorAccount.account, amount: 40743 },
