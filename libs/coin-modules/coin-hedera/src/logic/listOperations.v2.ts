@@ -536,11 +536,18 @@ export async function listOperationsV2({
     tokenOperations.push(...result.newTokenOperations);
   }
 
+  // `NONE` operations are produced when the account is neither a sender nor a recipient of any transfer in a
+  // transaction (value 0, no balance impact) — e.g. an HTS transfer between third parties for a token the account
+  // is merely associated with. getBlock builds operations only from real transfer participants and never emits
+  // these, so we drop them here to keep listOperations and getBlock consistent.
+  const coinOperationsWithoutNone = coinOperations.filter(op => op.type !== "NONE");
+  const tokenOperationsWithoutNone = tokenOperations.filter(op => op.type !== "NONE");
+
   return {
-    tokenOperations,
+    tokenOperations: tokenOperationsWithoutNone,
     coinOperations: skipFeesForTokenOperations
-      ? coinOperations.filter(op => op.type !== "FEES")
-      : coinOperations,
+      ? coinOperationsWithoutNone.filter(op => op.type !== "FEES")
+      : coinOperationsWithoutNone,
     nextCursor: mergeResult.nextCursor,
   };
 }
