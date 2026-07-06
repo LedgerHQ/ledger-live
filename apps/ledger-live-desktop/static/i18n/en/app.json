@@ -8321,6 +8321,20 @@
   "recoverRestore": {
     "title": "Connect and unlock your Ledger"
   },
+  "analyticsOptInScreen": {
+    "main": {
+      "title": "Help us improve Ledger",
+      "description": "With your consent, we'll collect usage data to improve features and fix bugs. We won't track your assets or portfolio details",
+      "ctaAcceptAll": "Accept all",
+      "ctaRefuseAll": "Refuse all",
+      "ctaPrevious": "Previous",
+      "setPreferencesLink": "Set preferences"
+    },
+    "footer": {
+      "lead": "You can revoke your consent any time in the app settings.",
+      "trackingPolicyLink": "Learn more about our Tracking Policy"
+    }
+  },
   "analyticsConsentModal": {
     "fresh": {
       "title": "Help us improve Ledger",
