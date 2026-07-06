@@ -6,8 +6,10 @@ import ModalBody from "~/renderer/components/Modal/ModalBody";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 
 export type Props = {
-  isOpened: boolean;
-  onClose: () => void;
+  // Optional: when opened via openModal, the modal framework (Modal) supplies open state and
+  // close handling; they are only passed when ErrorModal is rendered directly.
+  isOpened?: boolean;
+  onClose?: () => void;
   error?: Error;
   onRetry?: () => void;
   withExportLogs?: boolean;

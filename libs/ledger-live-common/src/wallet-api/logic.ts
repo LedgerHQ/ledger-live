@@ -30,6 +30,8 @@ import { WalletState } from "@ledgerhq/live-wallet/store";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import type { CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { isValidTezosPublicKey } from "@ledgerhq/coin-tezos/utils";
+import { AccountPublicKeyUnavailable } from "../errors";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -356,9 +358,12 @@ export const bitcoinFamilyAccountGetPublicKeyLogic = async (
 type AccountPublicKeyResolver = (account: Account) => string | null;
 
 const ACCOUNT_PUBLIC_KEY_RESOLVERS: Partial<Record<string, AccountPublicKeyResolver>> = {
-  // xpub now holds the account public key (generic-coin-framework). The un-healed case
-  // (xpub still === freshAddress) is rejected by the shared guard below.
-  tezos: account => account.xpub ?? null,
+  // xpub holds the account public key (generic-coin-framework). Throw the dedicated error when
+  // it is not a valid public key so the caller can prompt the user to re-add the account.
+  tezos: account => {
+    if (isValidTezosPublicKey(account.xpub)) return account.xpub!;
+    throw new AccountPublicKeyUnavailable();
+  },
   // cosmos seedIdentifier is seed-level (shared across accounts), so the per-account
   // compressed pubkey (hex) is persisted in cosmosResources at scan time.
   cosmos: account => (account as CosmosAccount).cosmosResources?.publicKey || null,
@@ -390,18 +395,18 @@ export const accountGetPublicKeyLogic = async (
     throw new Error("account not found");
   }
 
-  const resolver = ACCOUNT_PUBLIC_KEY_RESOLVERS[mainAccount.currency.family];
-  if (!resolver) {
+  let publicKey: string | null | undefined;
+  try {
+    publicKey = ACCOUNT_PUBLIC_KEY_RESOLVERS[mainAccount.currency.family]?.(mainAccount);
+  } catch (error) {
+    // A resolver may throw a typed error (e.g. tezos AccountPublicKeyUnavailable) to signal a
+    // recoverable "re-add the account" state; record the failure before propagating it.
+    tracking.accountGetPublicKeyFail(manifest);
+    throw error;
+  }
+  if (!publicKey) {
     tracking.accountGetPublicKeyFail(manifest);
     throw new Error("account.getPublicKey not implemented");
-  }
-
-  const publicKey = resolver(mainAccount);
-  // A resolver exists but no usable public key is stored yet: xpub still holds the address
-  // because the account has not been synced with the device connected.
-  if (!publicKey || publicKey === mainAccount.freshAddress) {
-    tracking.accountGetPublicKeyFail(manifest);
-    throw new Error("no public key available for this account");
   }
 
   tracking.accountGetPublicKeySuccess(manifest);

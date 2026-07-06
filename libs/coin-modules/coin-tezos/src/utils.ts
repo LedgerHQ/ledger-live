@@ -110,6 +110,14 @@ export function createMockSigner(publicKeyHash: string, publicKey: string) {
 }
 
 /**
+ * True when `maybeKey` is a valid base58 Tezos public key (edpk/sppk/p2pk),
+ * i.e. not an address, a hex string, or an empty value.
+ */
+export function isValidTezosPublicKey(maybeKey: string | undefined | null): boolean {
+  return !!maybeKey && validatePublicKey(maybeKey) === ValidationResult.VALID;
+}
+
+/**
  * Normalize a Tezos public key to base58 format (edpk/sppk/p2pk) based on the
  * sender address prefix (tz1/tz2/tz3). Accepts either an already base58-encoded
  * key or a hex key returned by the Ledger app. Returns undefined if input is

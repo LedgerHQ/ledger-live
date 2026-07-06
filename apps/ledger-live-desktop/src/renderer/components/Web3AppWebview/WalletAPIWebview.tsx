@@ -7,6 +7,7 @@ import {
   useWalletAPIServer,
 } from "@ledgerhq/live-common/wallet-api/react";
 import trackingWrapper, { TrackingAPI } from "@ledgerhq/live-common/wallet-api/tracking";
+import { AccountPublicKeyUnavailable } from "@ledgerhq/live-common/errors";
 import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Operation } from "@ledgerhq/types-live";
@@ -110,6 +111,10 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
             verifyAddress: true,
           }),
         );
+      },
+      "account.publicKeyUnavailable": () => {
+        ipcRenderer.send("show-app", {});
+        dispatch(openModal("MODAL_ERROR", { error: new AccountPublicKeyUnavailable() }));
       },
       "message.sign": ({ account, message, options, onSuccess, onError, onCancel }) => {
         ipcRenderer.send("show-app", {});

@@ -127,6 +127,10 @@
       "title": "Please try again",
       "description": "Account is outdated. A synchronisation is needed"
     },
+    "AccountPublicKeyUnavailable": {
+      "title": "Account needs to be re-added",
+      "description": "Ledger Live couldn't retrieve this account's public key. Please remove it and add it again to continue."
+    },
     "AlgorandASANotOptInInRecipient": {
       "title": "Recipient account has not opted in the selected ASA."
     },

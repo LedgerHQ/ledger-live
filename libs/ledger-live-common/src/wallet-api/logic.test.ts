@@ -15,6 +15,7 @@ import {
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 
 import { AppManifest, WalletAPITransaction } from "./types";
+import { AccountPublicKeyUnavailable } from "../errors";
 import { createFixtureAccount, createFixtureTokenAccount } from "../mock/fixtures/cryptoCurrencies";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { OperationType, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
@@ -1007,22 +1008,29 @@ describe("accountGetPublicKeyLogic", () => {
     expect(mockAccountGetPublicKeySuccess).toHaveBeenCalledTimes(1);
   });
 
-  it("rejects (and tracks failure) when no public key is available (xpub === freshAddress)", async () => {
-    // Given a tezos account whose xpub still holds the address (not yet synced with the device)
-    const tezosAccount = context.accounts.find(a => a.id === tezosAccountId);
-    if (tezosAccount?.type === "Account") {
-      tezosAccount.freshAddress = "tz1UnhealedAddress";
-      tezosAccount.xpub = "tz1UnhealedAddress";
-    }
-    mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(tezosAccountId);
+  it.each([
+    {
+      desc: "xpub holds an address instead of a public key",
+      xpub: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
+    },
+    { desc: "xpub holds a raw hex key rather than base58", xpub: "00aabbccdd" },
+    { desc: "xpub is empty", xpub: "" },
+  ])(
+    "rejects with AccountPublicKeyUnavailable (and tracks failure) when $desc",
+    async ({ xpub }) => {
+      // Given a tezos account whose xpub is not a valid base58 public key (edpk/sppk/p2pk)
+      const tezosAccount = context.accounts.find(a => a.id === tezosAccountId);
+      if (tezosAccount?.type === "Account") tezosAccount.xpub = xpub;
+      mockedGetAccountIdFromWalletAccountId.mockReturnValueOnce(tezosAccountId);
 
-    // When / Then
-    await expect(accountGetPublicKeyLogic(context, walletAccountId)).rejects.toThrow(
-      "no public key available for this account",
-    );
-    expect(mockAccountGetPublicKeyFail).toHaveBeenCalledTimes(1);
-    expect(mockAccountGetPublicKeySuccess).toHaveBeenCalledTimes(0);
-  });
+      // When / Then
+      await expect(accountGetPublicKeyLogic(context, walletAccountId)).rejects.toThrow(
+        AccountPublicKeyUnavailable,
+      );
+      expect(mockAccountGetPublicKeyFail).toHaveBeenCalledTimes(1);
+      expect(mockAccountGetPublicKeySuccess).toHaveBeenCalledTimes(0);
+    },
+  );
 
   it("rejects (and tracks failure) when a token account's parent is missing", async () => {
     // Given a token account whose parent is not in the accounts list
