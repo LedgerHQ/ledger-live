@@ -21,6 +21,17 @@ export const MIN_GAS_FOR_NATIVE_TRANSFER = 21000;
 export const MAX_FEES_THRESHOLD_MULTIPLIER = 4;
 
 /**
+ * Fallback gas limit for staking transactions when `eth_estimateGas` reverts.
+ *
+ * A Celo staking op can legitimately fail gas estimation when a prerequisite
+ * step is not yet on-chain (e.g. estimating a `vote` before the CELO is locked,
+ * or an `activate` before pending votes exist). This ceiling is deliberately
+ * generous — real Celo staking ops settle well under it — so fee estimation
+ * still returns a usable value instead of throwing.
+ */
+export const CELO_STAKING_FALLBACK_GAS_LIMIT = 1_000_000n;
+
+/**
  * Celo Fee Abstraction — allowlisted fee currencies.
  *
  * Celo's protocol allows users to pay gas in tokens other than the native CELO.
