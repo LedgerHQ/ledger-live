@@ -1,5 +1,5 @@
+import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { getFiatCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
 import { resolveAnalyticsValueChange } from "../resolveAnalyticsValueChange";
 
 const mockCounterValue = getFiatCurrencyByTicker("USD");

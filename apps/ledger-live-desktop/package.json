@@ -111,6 +111,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/wallet-analytics": "workspace:^",
     "@ledgerhq/wallet-pnl": "workspace:^",
     "@ledgerhq/zcash-utils": "catalog:",
     "@lottiefiles/dotlottie-react": "0.17.13",

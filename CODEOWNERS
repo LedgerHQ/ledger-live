@@ -66,6 +66,7 @@ libs/ui/                                                 @ledgerhq/wallet-xp
 libs/asset-aggregation/                                  @ledgerhq/wallet-xp
 libs/asset-detail/                                       @ledgerhq/wallet-xp
 libs/wallet-pnl/                                         @ledgerhq/wallet-xp
+libs/wallet-analytics/                                   @ledgerhq/wallet-xp
 libs/live-wallet/                                        @ledgerhq/wallet-xp
 libs/live-wallet/src/walletsync/                          @ledgerhq/platform
 libs/ledger-live-common/src/featureFlags/walletFeaturesConfig/ @ledgerhq/wallet-xp
