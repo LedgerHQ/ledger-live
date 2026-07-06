@@ -13,6 +13,9 @@ const APPROVAL_PROCESSING_TIMEOUT = 300_000;
 // before embedding in a RegExp so they match literally instead of altering the pattern.
 const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+// Net value of a quote as shown on screen: amount received minus network fees (both in fiat).
+const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - quote.fees;
+
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -283,18 +286,24 @@ export default class SwapLiveAppPage {
 
   @Step('Check "Best Offer" corresponds to the best quote')
   async checkBestOffer(providerList: string[]) {
+    if (providerList.length === 0) {
+      throw new Error("checkBestOffer: expected a non-empty provider list");
+    }
+    // net = cent-rounded amount - cent-rounded fees, so each net carries ±0.01; two providers'
+    // nets can therefore differ by up to 0.02 from rounding alone.
+    const NET_ROUNDING_TOLERANCE = 0.02;
+
     await retryUntilTimeout(async () => {
       const quotes = [];
       for (const provider of providerList) {
         quotes.push(await this.getProviderQuote(provider));
       }
-      const bestOffer = quotes.reduce<{ provider: string; rate: number; fees: number } | null>(
-        (max, current) =>
-          current && (!max || current.rate - current.fees > max.rate - max.fees) ? current : max,
-        null,
-      );
 
-      jestExpect(bestOffer?.provider).toBe(providerList[0]);
+      const firstQuote = quotes[0];
+      const bestNetValue = Math.max(...quotes.map(quoteNetValue));
+      jestExpect(bestNetValue - quoteNetValue(firstQuote)).toBeLessThanOrEqual(
+        NET_ROUNDING_TOLERANCE,
+      );
     });
   }
 
