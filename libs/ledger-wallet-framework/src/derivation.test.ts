@@ -85,6 +85,7 @@ describe("getDerivationModesForCurrency", () => {
     ["tezos", ["galleonL", "tezboxL", "tezosSecp256k1", "tezosbip44h", "tezbox"]], // disableBIP44
     ["solana", ["solanaMain", "solanaBip44Change", "solanaSub"]], // backward compatible change in getDerivationModesForCurrency
     ["celo", ["celo", "celoMM", "celoEvm"]], // backward compatible change in getDerivationModesForCurrency
+    ["bittensor", ["polkadotbip44"]], // reuses the Polkadot path (polkadotbip44 + disableBIP44); asserts no default "" BIP44 mode
   ];
 
   let envBackup: boolean;
