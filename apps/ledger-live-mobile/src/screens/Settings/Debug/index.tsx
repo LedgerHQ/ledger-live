@@ -97,6 +97,12 @@ export default function DebugSettings({
         iconLeft={<IconsLegacy.ChartNetworkMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugAnalyticsConsentQA)}
       />
+      <SettingsRow
+        title="Notifications prompt — QA"
+        desc="Inspect notifications opt-in state, reprompt timing, and trigger the drawer"
+        iconLeft={<IconsLegacy.NotificationsMedium size={24} color="black" />}
+        onPress={() => navigate(ScreenName.DebugNotificationsPromptQA)}
+      />
     </SettingsNavigationScrollView>
   );
 }
