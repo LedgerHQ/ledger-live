@@ -1,3 +1,4 @@
+import { setEnv } from "@ledgerhq/live-env";
 import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
@@ -15,9 +16,6 @@ const TEZOS_STAKING_TAGS = [
 ];
 
 const STAKING_FEATURE_FLAGS = { llmTezosStaking: { enabled: true } };
-
-// Broadcast follows DISABLE_TRANSACTION_BROADCAST via setupEnvironment (off by default; "0" to
-// broadcast on-chain), matching desktop — so these suites intentionally don't override it.
 
 async function initStakingAccount(delegation: DelegateType) {
   await app.init({
@@ -44,6 +42,7 @@ export function runEarningChoiceTezos(
   tmsLinks: string[],
   tags: string[] = TEZOS_STAKING_TAGS,
 ) {
+  setEnv("DISABLE_TRANSACTION_BROADCAST", true);
   tagSuite(tmsLinks, tags);
   describe("Earning choice on TEZOS", () => {
     beforeAll(async () => {
@@ -61,7 +60,7 @@ export function runEarningChoiceTezos(
       await app.tezosStake.continueFromDelegationSummary();
       await app.speculos.signDelegationTransaction(delegation);
       await app.tezosStake.stakeAfterDelegation();
-      await app.tezosStake.verifyStakeStepAfterDelegation();
+      await app.tezosStake.verifyAwaitingDelegation();
     });
   });
 }

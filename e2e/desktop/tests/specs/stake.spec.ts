@@ -37,8 +37,8 @@ const tags = [
 test.describe("e2e staking - Tezos - earning choice", () => {
   const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
 
-  // With DISABLE_TRANSACTION_BROADCAST=0 this delegates idx0 on-chain — undelegate after to reset.
-  test.use(tezosStakeUse(account));
+  // Force no broadcast: signing here would otherwise delegate idx0 on-chain.
+  test.use({ ...tezosStakeUse(account), env: { DISABLE_TRANSACTION_BROADCAST: "1" } });
 
   test(
     "Earning choice routes to delegate and stake",

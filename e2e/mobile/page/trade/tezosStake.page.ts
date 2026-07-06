@@ -65,15 +65,9 @@ export default class TezosStakePage {
     await tapById(enabled(this.delegationSuccessStakeId));
   }
 
-  @Step("Verify the stake step is reached after delegating")
-  async verifyStakeStepAfterDelegation() {
-    // Broadcast off: the un-broadcast delegation stays "awaiting". Broadcast on (=0): it confirms
-    // and the amount input appears. Accept either so the check is broadcast-tolerant.
-    try {
-      await waitForElementById(this.awaitingDelegationId);
-    } catch {
-      await waitForElementById(this.stakeAmountInputId);
-    }
+  @Step("Verify the delegation is awaiting confirmation")
+  async verifyAwaitingDelegation() {
+    await waitForElementById(this.awaitingDelegationId);
   }
 
   @Step("Fill stake amount $0")
