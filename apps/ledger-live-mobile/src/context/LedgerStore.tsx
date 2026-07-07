@@ -4,11 +4,9 @@ import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
-import {
-  findCryptoCurrencyById,
-  getCryptoCurrencyById,
-  listSupportedFiats,
-} from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { selectSupportedFiats } from "@domain/entity-currency-fiat";
+import { buildSupportedCounterValues } from "~/logic/buildSupportedCounterValues";
 import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
@@ -261,10 +259,8 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       setReady(true);
       onInitFinished();
 
-      await Promise.all([
-        hydrateCurrencies(),
-        updateSupportedCountervalues(store, settingsData),
-      ]).finally(() => setCurrencyInitialized(true)); // Don't block the App rendering for this
+      updateSupportedCountervalues(store, settingsData);
+      await hydrateCurrencies().finally(() => setCurrencyInitialized(true)); // Don't block the App rendering for this
     } catch (error) {
       console.error(
         error instanceof Error
@@ -323,21 +319,9 @@ async function hydrateCurrencies() {
   });
 }
 
-async function updateSupportedCountervalues(store: Store, settingsData: Partial<SettingsState>) {
-  const supportedFiats = await retry(listSupportedFiats, MAX_RETRIES, RETRY_DELAY);
-  const bitcoin = getCryptoCurrencyById("bitcoin");
-  const ethereum = getCryptoCurrencyById("ethereum");
-  const possibleIntermediaries = [bitcoin, ethereum];
-
-  const supportedCounterValues = [...supportedFiats, ...possibleIntermediaries]
-    .map(currency => ({
-      value: currency.ticker,
-      ticker: currency.ticker,
-      label: `${currency.name} - ${currency.ticker}`,
-      currency,
-    }))
-    .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
-
+function updateSupportedCountervalues(store: Store, settingsData: Partial<SettingsState>) {
+  const supportedFiats = selectSupportedFiats(store.getState());
+  const supportedCounterValues = buildSupportedCounterValues(supportedFiats);
   store.dispatch(setSupportedCounterValues(supportedCounterValues));
 
   if (

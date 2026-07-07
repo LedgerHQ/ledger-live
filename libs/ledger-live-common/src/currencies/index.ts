@@ -28,5 +28,5 @@ export { getCurrencyColor, type ColorableCurrency } from "./color";
 export { formatShort } from "./formatShort";
 export * from "./helpers";
 export { sortCurrenciesByIds, currenciesByMarketcap } from "./sortByMarketcap";
-export { listSupportedFiats, OFAC_CURRENCIES } from "./support";
+export { OFAC_CURRENCIES } from "./support";
 export { valueFromUnit } from "./valueFromUnit";
