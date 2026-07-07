@@ -29,7 +29,13 @@ export function usePnlSectionViewModel(): PnlSectionViewModel {
 
   // Skip the (potentially expensive) portfolio walk when the section is hidden.
   const pnl = usePortfolioPnL(shouldDisplayPnl ? accounts : EMPTY_ACCOUNTS, countervalues, fiat);
-  const { unrealisedPnL = ZERO, realisedPnL = ZERO, totalPnL = ZERO } = pnl ?? {};
+  const {
+    unrealisedPnL = ZERO,
+    realisedPnL = ZERO,
+    totalPnL = ZERO,
+    costBasis = ZERO,
+    lifetimeCost = ZERO,
+  } = pnl ?? {};
 
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const openDrawer = useCallback(() => setDrawerOpen(true), []);
@@ -91,10 +97,12 @@ export function usePnlSectionViewModel(): PnlSectionViewModel {
         totalPnL,
         unrealisedPnL,
         realisedPnL,
+        costBasis,
+        lifetimeCost,
         formatFiat,
         t,
       }),
-    [totalPnL, unrealisedPnL, realisedPnL, formatFiat, t],
+    [totalPnL, unrealisedPnL, realisedPnL, costBasis, lifetimeCost, formatFiat, t],
   );
 
   return {
@@ -112,6 +120,7 @@ export function usePnlSectionViewModel(): PnlSectionViewModel {
       footer: t("pnl.disclaimer"),
       pageName: PNL_DETAIL_PAGE,
       source: ANALYTICS_PAGE,
+      discreet,
     },
   };
 }

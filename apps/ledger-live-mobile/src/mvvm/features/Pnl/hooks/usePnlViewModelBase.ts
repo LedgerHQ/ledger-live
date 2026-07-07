@@ -45,7 +45,13 @@ export function usePnlViewModelBase({
   const discreet = useSelector(discreetModeSelector);
   const [openDrawer, setOpenDrawer] = useState<Drawer>(null);
 
-  const { unrealisedPnL = ZERO, realisedPnL = ZERO, totalPnL = ZERO } = pnlData ?? {};
+  const {
+    unrealisedPnL = ZERO,
+    realisedPnL = ZERO,
+    totalPnL = ZERO,
+    costBasis = ZERO,
+    lifetimeCost = ZERO,
+  } = pnlData ?? {};
 
   const formatFiat = useCallback(
     (value: BigNumber, alwaysShowSign?: boolean) =>
@@ -111,8 +117,18 @@ export function usePnlViewModelBase({
   );
 
   const detail = useMemo(
-    () => buildPnlDetail({ namespace, totalPnL, unrealisedPnL, realisedPnL, formatFiat, t }),
-    [namespace, totalPnL, unrealisedPnL, realisedPnL, formatFiat, t],
+    () =>
+      buildPnlDetail({
+        namespace,
+        totalPnL,
+        unrealisedPnL,
+        realisedPnL,
+        costBasis,
+        lifetimeCost,
+        formatFiat,
+        t,
+      }),
+    [namespace, totalPnL, unrealisedPnL, realisedPnL, costBasis, lifetimeCost, formatFiat, t],
   );
 
   return {
@@ -128,6 +144,7 @@ export function usePnlViewModelBase({
       footer: t("pnl.disclaimer"),
       pageName: PNL_DETAIL_PAGE,
       source,
+      discreet,
     },
     secondaryDrawer: {
       isOpen: openDrawer === "secondary",
@@ -136,6 +153,7 @@ export function usePnlViewModelBase({
       bodyText: t(secondaryCard.tooltipKey),
       pageName: AVERAGE_PRICE_PAGE,
       source,
+      discreet,
     },
   };
 }

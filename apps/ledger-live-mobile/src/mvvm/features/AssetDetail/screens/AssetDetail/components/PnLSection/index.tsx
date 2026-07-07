@@ -69,6 +69,7 @@ function PnLSectionContent({
         description={pnlDrawer.description}
         items={pnlDrawer.items}
         footer={pnlDrawer.footer}
+        discreet={pnlDrawer.discreet}
         pageName={pnlDrawer.pageName}
         source={pnlDrawer.source}
         testID={ASSET_DETAIL_PNL_TEST_IDS.detailDrawer}
@@ -78,6 +79,7 @@ function PnLSectionContent({
         onClose={secondaryDrawer.onClose}
         title={secondaryDrawer.title}
         bodyText={secondaryDrawer.bodyText}
+        discreet={secondaryDrawer.discreet}
         pageName={secondaryDrawer.pageName}
         source={secondaryDrawer.source}
         testID={ASSET_DETAIL_PNL_TEST_IDS.secondaryDrawer}

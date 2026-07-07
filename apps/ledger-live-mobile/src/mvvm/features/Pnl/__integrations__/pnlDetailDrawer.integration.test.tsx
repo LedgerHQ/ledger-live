@@ -23,16 +23,19 @@ const ITEMS: PnlDetailItem[] = [
     title: "Total return",
     value: "$1,200.00 USD",
     definition: "Realised + unrealised gains since first inflow.",
+    percentage: 10,
   },
   {
     title: "Unrealised return",
     value: "$900.00 USD",
     definition: "Mark-to-market on coins you still hold.",
+    percentage: 3,
   },
   {
     title: "Realised return",
     value: "$300.00 USD",
     definition: "Gains booked through past sells.",
+    percentage: 1,
   },
 ];
 
@@ -56,6 +59,9 @@ describe("PnlDetailDrawer integration", () => {
       if (item.definition) {
         expect(screen.getByText(item.definition)).toBeVisible();
       }
+      if (item.percentage != null) {
+        expect(screen.getByText(`${item.percentage.toFixed(2)}%`)).toBeVisible();
+      }
     }
   });
 
@@ -75,6 +81,15 @@ describe("PnlDetailDrawer integration", () => {
 
     expect(screen.getByText("Bare row")).toBeVisible();
     expect(screen.getByText("$50.00 USD")).toBeVisible();
+  });
+
+  it("masks percentage values when discreet mode is on", () => {
+    render(
+      <PnlDetailDrawer isOpen onClose={jest.fn()} title={TITLE} items={[ITEMS[1]]} discreet />,
+    );
+
+    expect(screen.getByText("***")).toBeVisible();
+    expect(screen.queryByText("3.00%")).toBeNull();
   });
 
   describe("TrackScreen", () => {

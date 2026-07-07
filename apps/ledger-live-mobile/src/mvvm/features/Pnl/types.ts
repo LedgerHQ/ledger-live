@@ -10,6 +10,8 @@ export type PnlNumbers = {
   unrealisedPnL: BigNumber;
   realisedPnL: BigNumber;
   totalPnL: BigNumber;
+  costBasis: BigNumber;
+  lifetimeCost: BigNumber;
 };
 
 export type PnlSecondaryCardConfig = {
@@ -39,6 +41,7 @@ export type PnlDrawerViewModel = {
   title: string;
   pageName?: string;
   source?: string;
+  discreet: boolean;
 };
 
 export type PnlViewModel = {
