@@ -8,7 +8,7 @@ const testConfig = {
 };
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 - MyWallet", () => {
+describe("Wallet 4.0 Q2- MyWallet", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "speculos-x-other-account",

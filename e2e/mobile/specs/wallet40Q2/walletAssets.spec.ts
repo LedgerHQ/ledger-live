@@ -1,27 +1,12 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import type { OptionalFeatureMap } from "@shared/feature-flags";
+import { FF_LWM_WALLET_40_Q2 } from "utils/featureFlagUtils";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
-const WALLET_ASSETS_FEATURE_FLAGS: OptionalFeatureMap = {
-  lwmWallet40: {
-    enabled: true,
-    params: {
-      tour: true,
-      lazyOnboarding: true,
-      assetSection: true,
-      operationsList: true,
-      aggregatedAssets: false,
-      myWallet: true,
-      pnl: false,
-      assetDiscoverability: false,
-    },
-  },
-};
-
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 - Portfolio-Asset/Address - Onboard without accounts", () => {
+describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - Onboard without accounts", () => {
   const tmsLinks = ["B2CQA-4839", "B2CQA-4840"];
   const currency = Account.INJ_1.currency;
 
@@ -29,7 +14,7 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Onboard without accounts", () =
     await app.init({
       userdata: "skip-onboarding",
       speculosApp: currency.speculosApp,
-      featureFlags: WALLET_ASSETS_FEATURE_FLAGS,
+      featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });
@@ -53,7 +38,7 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Onboard without accounts", () =
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 - Portfolio-Asset/Address - With fewer accounts than section minimum (padding)", () => {
+describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - With fewer accounts than section minimum (padding)", () => {
   const tmsLinks = ["B2CQA-4841"];
 
   beforeAll(async () => {
@@ -76,7 +61,7 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - With fewer accounts than sectio
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 - Portfolio-Asset/Address - Open the app with accounts", () => {
+describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - Open the app with accounts", () => {
   const tmsLinks = ["B2CQA-4834", "B2CQA-4837", "B2CQA-4838"];
 
   beforeAll(async () => {
