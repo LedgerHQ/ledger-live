@@ -1,5 +1,13 @@
 # @ledgerhq/wallet-cli
 
+## 1.2.0-next.0
+
+### Minor Changes
+
+- [#19220](https://github.com/LedgerHQ/ledger-live/pull/19220) [`996c76b`](https://github.com/LedgerHQ/ledger-live/commit/996c76b157553c547f83d877d25199b311ee0f63) Thanks [@ysitbon](https://github.com/ysitbon)! - Make the `@ledgerhq/cryptoassets` fiat registry injectable (`setFiatCurrenciesStore`) and inject the `@domain/entity-currency-fiat` registry at each app's bootstrap, so the domain registry is the single runtime source of truth for fiat currency data. The bundled fiat list stays as the fallback and is kept in sync by the existing parity test.
+
+- [#19313](https://github.com/LedgerHQ/ledger-live/pull/19313) [`abc6cc1`](https://github.com/LedgerHQ/ledger-live/commit/abc6cc1be7b14c0a8462ce7010499beac8739079) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Add fromCurrency and toCurrency fields to swap_completed analytics event
+
 ## 1.1.0
 
 ### Minor Changes

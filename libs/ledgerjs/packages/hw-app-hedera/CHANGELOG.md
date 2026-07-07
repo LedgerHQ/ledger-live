@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-hedera
 
+## 1.6.6-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.6-next.0
+
 ## 1.6.5
 
 ### Patch Changes

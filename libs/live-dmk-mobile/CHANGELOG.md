@@ -1,5 +1,21 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.28.0-next.0
+
+### Minor Changes
+
+- [#18978](https://github.com/LedgerHQ/ledger-live/pull/18978) [`0225804`](https://github.com/LedgerHQ/ledger-live/commit/0225804cd0f39b90050f52b14e1b159340f0530e) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Extract connectDevice shared core from live-dmk-mobile to live-dmk-shared
+
+- [#19044](https://github.com/LedgerHQ/ledger-live/pull/19044) [`ed6c3dd`](https://github.com/LedgerHQ/ledger-live/commit/ed6c3dda2a5ae28f4e15522d32f1a0333e068910) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Restore Android permission retry behavior after the React Native permission fix
+
+### Patch Changes
+
+- Updated dependencies [[`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11), [`d91f849`](https://github.com/LedgerHQ/ledger-live/commit/d91f849185c7a30514349be655bba69dd77bb8c8), [`0225804`](https://github.com/LedgerHQ/ledger-live/commit/0225804cd0f39b90050f52b14e1b159340f0530e), [`df96477`](https://github.com/LedgerHQ/ledger-live/commit/df964774bdaccd897e5e7414c172e9c26ff21f67)]:
+  - @ledgerhq/live-env@2.41.0-next.0
+  - @ledgerhq/live-dmk-shared@0.28.0-next.0
+  - @ledgerhq/devices@8.17.0-next.0
+  - @ledgerhq/hw-transport@6.35.6-next.0
+
 ## 0.27.0
 
 ### Minor Changes

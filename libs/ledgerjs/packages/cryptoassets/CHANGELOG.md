@@ -1,5 +1,35 @@
 # @ledgerhq/cryptoassets
 
+## 13.54.0-next.0
+
+### Minor Changes
+
+- [#18933](https://github.com/LedgerHQ/ledger-live/pull/18933) [`6df2017`](https://github.com/LedgerHQ/ledger-live/commit/6df20171a84b54e5b67eabefc938a98d7e3c3e43) Thanks [@ysitbon](https://github.com/ysitbon)! - Fix dead keyword tiebreak in registerCurrencyInStore: case-insensitive comparison so findCryptoCurrencyByTicker resolves ambiguous tickers (ETH, BNB, DOT, XTZ, CRO) order-independently
+
+- [#19016](https://github.com/LedgerHQ/ledger-live/pull/19016) [`38728f9`](https://github.com/LedgerHQ/ledger-live/commit/38728f9d9ac879c276def56ce88c5e49549e4b9d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Mark findCryptoCurrencyByTicker as @deprecated: tickers are not unique so the lookup is ambiguous. Use findCryptoCurrencyById instead.
+
+- [#19185](https://github.com/LedgerHQ/ledger-live/pull/19185) [`86ca231`](https://github.com/LedgerHQ/ledger-live/commit/86ca231ea9e0ec5996258b1abfa9742a7df3f9ec) Thanks [@ysitbon](https://github.com/ysitbon)! - Add by-id accessors to `@domain/entity-currency-crypto`: `getCryptoCurrencyById` (throws on miss), `findCryptoCurrencyById` (returns `undefined` on miss) and `hasCryptoCurrencyId`, resolving over the static `CRYPTO_CURRENCIES_REGISTRY` including the legacy alias keys. These let DA-layer and app consumers resolve currencies by id from the domain package directly, matching the legacy `@ledgerhq/cryptoassets` accessor semantics. Extended the domain parity test accordingly.
+
+  Raised the CLI's TypeScript `lib` to `es2022` (was `es2020`, matching desktop and mobile) so it can typecheck domain source that uses ES2022 APIs such as `Object.hasOwn`.
+
+- [#19220](https://github.com/LedgerHQ/ledger-live/pull/19220) [`996c76b`](https://github.com/LedgerHQ/ledger-live/commit/996c76b157553c547f83d877d25199b311ee0f63) Thanks [@ysitbon](https://github.com/ysitbon)! - Make the `@ledgerhq/cryptoassets` fiat registry injectable (`setFiatCurrenciesStore`) and inject the `@domain/entity-currency-fiat` registry at each app's bootstrap, so the domain registry is the single runtime source of truth for fiat currency data. The bundled fiat list stays as the fallback and is kept in sync by the existing parity test.
+
+- [#19237](https://github.com/LedgerHQ/ledger-live/pull/19237) [`7fe5f11`](https://github.com/LedgerHQ/ledger-live/commit/7fe5f1129d6ac218ad274f2187a1a3dd83b8855a) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - chore: change explorer robinhood
+
+- [#18867](https://github.com/LedgerHQ/ledger-live/pull/18867) [`7c39ea3`](https://github.com/LedgerHQ/ledger-live/commit/7c39ea39ca8999bcb8ce2294f4884430b6d1b2dc) Thanks [@ysitbon](https://github.com/ysitbon)! - Seed `@domain/entity-currency-crypto` to parity with the legacy `@ledgerhq/cryptoassets` registry and add a CI parity test (in cryptoassets) that fails if the two diverge. The domain registry is now the primary source of truth; both are dual-maintained until legacy is dropped. The generator now dedupes by currency `.id` and removes stale files, so legacy alias/casing keys no longer produce duplicate entries.
+
+- [#18883](https://github.com/LedgerHQ/ledger-live/pull/18883) [`d686e93`](https://github.com/LedgerHQ/ledger-live/commit/d686e93f8a548ff4e9ab3c877ad1f815510b35d9) Thanks [@ysitbon](https://github.com/ysitbon)! - Seed `@domain/entity-currency-fiat` to parity with the legacy `@ledgerhq/cryptoassets` fiat registry and add a CI parity test (in cryptoassets) that fails if the two diverge. The domain registry is now the primary source of truth; both are dual-maintained until legacy is dropped. Legacy fiats carry no `id`; the domain `id` is the lower-cased ticker (e.g. `USD` → `usd`), which the parity test compares on.
+
+- [#19007](https://github.com/LedgerHQ/ledger-live/pull/19007) [`f495213`](https://github.com/LedgerHQ/ledger-live/commit/f495213e811477c99d62f0d93cc7c513b951a303) Thanks [@ysitbon](https://github.com/ysitbon)! - `setCryptoCurrenciesStore` now accepts an optional `aliases` map (alias key → canonical id) and registers those keys in the injected by-id index, so legacy alias lookups (e.g. `getCryptoCurrencyById("osmosis")`) keep resolving after injection, matching the bundled map. `@domain/entity-currency-crypto` exposes `CRYPTO_CURRENCY_ALIASES` (`osmosis`→`osmo`, `groestlcoin`→`groestcoin`, `lbry`→`LBRY`) for apps to pass at bootstrap.
+
+- [#18829](https://github.com/LedgerHQ/ledger-live/pull/18829) [`b3ffa2f`](https://github.com/LedgerHQ/ledger-live/commit/b3ffa2f4bf735f2cfeed2a8028ea92d4bc3588e3) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Sunset the `CryptoCurrency.terminated` field: remove it from the type/schema, delete the 5 currencies it marked (clubcoin, hcash, poswallet, stakenet, stratis), drop the now-unused `withTerminated` parameter from `listCryptoCurrencies`, and clean up the dead code orphaned by those deletions.
+
+### Patch Changes
+
+- Updated dependencies [[`a2621e2`](https://github.com/LedgerHQ/ledger-live/commit/a2621e2c6c6369c7109af72e1cb59df2448951ff), [`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11), [`8b6614e`](https://github.com/LedgerHQ/ledger-live/commit/8b6614eaff423aaeb50b7eb44ba5916a941a573d), [`6400154`](https://github.com/LedgerHQ/ledger-live/commit/6400154daa131b225c6ec62c9134f1cd06370729), [`9f8ab96`](https://github.com/LedgerHQ/ledger-live/commit/9f8ab9672ababc02909e7553d433ee326c37762e), [`addef52`](https://github.com/LedgerHQ/ledger-live/commit/addef52ed445008c16e3f94d66f46222c8c535f7), [`81373c1`](https://github.com/LedgerHQ/ledger-live/commit/81373c1ca46cf2094cfd4f98958eff2114f02cea), [`e820e40`](https://github.com/LedgerHQ/ledger-live/commit/e820e402fb57d52b31dcd6de26f8d31d9564e2a4), [`0e30cdc`](https://github.com/LedgerHQ/ledger-live/commit/0e30cdc29d7fb3cab5bf1f2ef7c24cf0a152516e), [`b10ca6a`](https://github.com/LedgerHQ/ledger-live/commit/b10ca6ab5e80889b24805b460f81eff5748f0170), [`cf3aad1`](https://github.com/LedgerHQ/ledger-live/commit/cf3aad160bd9d2002a3154fbc70018fb1f7a6171), [`df6ca42`](https://github.com/LedgerHQ/ledger-live/commit/df6ca422fa70171162974ea71519da5c5eeb55d8), [`5aada6f`](https://github.com/LedgerHQ/ledger-live/commit/5aada6f1a72df070770f4b67112f51b5ced58cff), [`69b201e`](https://github.com/LedgerHQ/ledger-live/commit/69b201e2b1e01b2c6bfb6eaf9e0aa60088f175fc), [`3da6b44`](https://github.com/LedgerHQ/ledger-live/commit/3da6b4439d61a7ad7f06e04be12aa1e92b9cdb55), [`f9411d1`](https://github.com/LedgerHQ/ledger-live/commit/f9411d1e2a06b031555cda9e26ecba37b4cf045e), [`6eea36b`](https://github.com/LedgerHQ/ledger-live/commit/6eea36bfafeba265672a96b37981e2c7e629ef33), [`35d4af9`](https://github.com/LedgerHQ/ledger-live/commit/35d4af90e7bee849814cd98358c80e20ef4e4f2a)]:
+  - @ledgerhq/types-live@6.114.0-next.0
+  - @ledgerhq/live-env@2.41.0-next.0
+
 ## 13.53.0
 
 ### Minor Changes
