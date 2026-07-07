@@ -1,5 +1,5 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { setTeamOwner } from "helpers/allure/allure-helper";
 import type { OptionalFeatureMap } from "@shared/feature-flags";
 import { FF_LWM_WALLET_40_Q2 } from "utils/featureFlagUtils";
 
@@ -44,7 +44,7 @@ describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - With fewer accounts than sec
   beforeAll(async () => {
     await app.init({
       userdata: "wallet40-btc-only",
-      featureFlags: WALLET_ASSETS_FEATURE_FLAGS,
+      featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });
@@ -67,7 +67,7 @@ describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - Open the app with accounts",
   beforeAll(async () => {
     await app.init({
       userdata: "wallet40-many-stablecoins",
-      featureFlags: WALLET_ASSETS_FEATURE_FLAGS,
+      featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });

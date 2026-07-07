@@ -1,5 +1,5 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { setTeamOwner } from "helpers/allure/allure-helper";
 
 const testConfig = {
   tmsLinks: [
