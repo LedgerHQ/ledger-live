@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { getFiatCurrencyByTicker } from "../currencies";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import { formatCurrencyUnit, getFiatCurrencyByTicker } from "../currencies";
+import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 
 export const MAX_SMALL_VALUE_OPERATIONS_THRESHOLD_USD = 0.5;
@@ -38,6 +38,86 @@ export const formatThresholdMinorUnitForInput = (
   thresholdMinorUnit: BigNumber,
   currency: Currency,
 ) => convertThresholdMinorUnitToMajor(thresholdMinorUnit, currency).toFixed();
+
+const formatCounterValueThreshold = ({
+  currency,
+  locale,
+  thresholdMinorUnit,
+}: {
+  currency: Currency;
+  locale: string | null | undefined;
+  thresholdMinorUnit: BigNumber;
+}) => {
+  const unit = currency.units[0];
+  const amount = convertThresholdMinorUnitToMajor(thresholdMinorUnit, currency);
+  const fractionDigits = Math.min(Math.max(unit.magnitude + 2, 4), 8);
+  const formattedAmount = new Intl.NumberFormat(locale ?? undefined, {
+    maximumFractionDigits: fractionDigits,
+    minimumFractionDigits: 0,
+    useGrouping: false,
+  }).format(amount.toNumber());
+
+  return unit.prefixCode
+    ? `${unit.code}${formattedAmount}`
+    : `${formattedAmount}\u00A0${unit.code}`;
+};
+
+const formatReferenceThreshold = ({
+  locale,
+  thresholdUsd,
+}: {
+  locale: string | null | undefined;
+  thresholdUsd: number;
+}) => {
+  const unit: Unit = {
+    ...SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY.units[0],
+    code: "US$",
+  };
+  const thresholdMinorUnit =
+    floorThresholdToCurrencyMinorUnit(
+      thresholdUsd,
+      SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
+    ) ?? new BigNumber(0);
+
+  return formatCurrencyUnit(unit, thresholdMinorUnit, {
+    showCode: true,
+    locale: locale ?? undefined,
+  });
+};
+
+export function formatSmallValueOperationsThreshold({
+  countervaluesState,
+  counterValueCurrency,
+  locale,
+  thresholdUsd,
+}: {
+  countervaluesState?: CounterValuesState;
+  counterValueCurrency: Currency;
+  locale: string | null | undefined;
+  thresholdUsd: number;
+}) {
+  const referenceThreshold = formatReferenceThreshold({ locale, thresholdUsd });
+
+  if (counterValueCurrency.ticker === SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY.ticker) {
+    return referenceThreshold;
+  }
+
+  if (!countervaluesState) return referenceThreshold;
+
+  const counterValueThresholdMinorUnit = convertThresholdFromUsdToCountervalueMinorUnit({
+    counterValueCurrency,
+    countervaluesState,
+    thresholdUsd,
+  });
+
+  if (!counterValueThresholdMinorUnit) return referenceThreshold;
+
+  return `${referenceThreshold} (${formatCounterValueThreshold({
+    currency: counterValueCurrency,
+    locale,
+    thresholdMinorUnit: counterValueThresholdMinorUnit,
+  })})`;
+}
 
 export function convertThresholdFromUsdToCountervalueMinorUnit({
   counterValueCurrency,

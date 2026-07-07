@@ -3048,7 +3048,8 @@
       "more": "Transaction history options",
       "hideDustTransactions": "Hide dust transactions",
       "showDustTransactions": "Show dust transactions",
-      "dustTransactionsDescription": "Transactions below {{threshold}} in your main currency will be hidden."
+      "dustTransactionsHiddenDescription": "Transactions below {{threshold}} will be hidden.",
+      "dustTransactionsDisplayedDescription": "Transactions below {{threshold}} will be displayed."
     }
   },
   "operationDetails": {
