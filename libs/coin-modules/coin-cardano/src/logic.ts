@@ -180,6 +180,28 @@ export const isValidAddress = (address: string, networkId: number): boolean => {
   return true;
 };
 
+/**
+ * The payment-credential key hash (hex) embedded in a Shelley address, or `undefined` for a
+ * Byron / script / unparseable address. Lets callers tell whether a recipient belongs to the
+ * account by comparing it to the account's own credential key hashes (external + internal),
+ * which catches sending to *any* of the account's addresses — not just the displayed one — and
+ * is robust to base vs enterprise encodings of the same key (unlike a raw string compare).
+ */
+export const getPaymentCredentialKeyHash = (address: string): string | undefined => {
+  try {
+    const cardanoAddress = TyphonUtils.getAddressFromString(address);
+    if (
+      cardanoAddress instanceof ShelleyTypeAddress &&
+      cardanoAddress.paymentCredential.type === TyphonTypes.HashType.ADDRESS
+    ) {
+      return cardanoAddress.paymentCredential.hash.toString("hex");
+    }
+  } catch {
+    return undefined;
+  }
+  return undefined;
+};
+
 export const getAbsoluteSlot = function (networkName: string, time: Date): number {
   const networkParams = getNetworkParameters(networkName);
   const byronChainEndSlots = networkParams.shelleyStartEpoch * networkParams.byronSlotsPerEpoch;

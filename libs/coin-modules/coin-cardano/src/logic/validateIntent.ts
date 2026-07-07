@@ -12,6 +12,7 @@ import {
   AmountRequired,
   FeeTooHigh,
   InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
   ValAddressRequired,
@@ -22,7 +23,7 @@ import BigNumber from "bignumber.js";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { CARDANO_MAX_SUPPLY } from "../constants";
 import { CardanoMemoExceededSizeError, CardanoMinAmountError } from "../errors";
-import { isTestnet, isTokenAsset, isValidAddress } from "../logic";
+import { getPaymentCredentialKeyHash, isTestnet, isTokenAsset, isValidAddress } from "../logic";
 import { validateMemo } from "./validateMemo";
 
 type Intent = TransactionIntent<StringMemo | MemoNotSupported>;
@@ -63,6 +64,15 @@ export async function validateIntent(
   const isTokenTransfer = isTokenAsset(intent.asset);
 
   validateRecipient(currency, intent, errors);
+  // Self-send: compare sender/recipient payment-credential hashes (robust to base/enterprise
+  // re-encodings). Non-blocking warning, only when the recipient is otherwise valid. LIVE-33176.
+  if (!errors.recipient && intent.recipient) {
+    const senderKeyHash = getPaymentCredentialKeyHash(intent.sender);
+    const recipientKeyHash = getPaymentCredentialKeyHash(intent.recipient);
+    if (senderKeyHash && recipientKeyHash && senderKeyHash === recipientKeyHash) {
+      warnings.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+    }
+  }
   validateMemoSize(intent, errors);
 
   const amount = computeAmount(intent, balances, estimatedFees, isTokenTransfer);

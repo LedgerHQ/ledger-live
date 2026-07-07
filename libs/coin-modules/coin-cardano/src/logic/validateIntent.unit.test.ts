@@ -62,7 +62,7 @@ describe("validateIntent", () => {
     expect(res.errors.recipient?.name).toBe(name);
   });
 
-  it("allows a self-send (sender === recipient)", async () => {
+  it("warns (without blocking) on a self-send (sender === recipient)", async () => {
     const res = await validateIntent(
       currency,
       intent({ recipient: SENDER }),
@@ -71,7 +71,9 @@ describe("validateIntent", () => {
         value: 200_000n,
       },
     );
+    // Self-send is a non-blocking warning, reusing the shared already-localized error. LIVE-33176.
     expect(res.errors.recipient).toBeUndefined();
+    expect(res.warnings.recipient?.name).toBe("InvalidAddressBecauseDestinationIsAlsoSource");
   });
 
   it("flags a zero amount", async () => {
