@@ -434,10 +434,10 @@ jobs:
           command: pnpm build:llm:deps
           disable_cache: ${{ inputs.disable-nx-cache || false }}
 
-      - name: Build CLI
+      - name: Build e2e dependencies (CLI + libs)
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm build:cli
+          command: pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
           disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Download android emulator
@@ -538,7 +538,7 @@ jobs:
       - name: Restore pre-generated E2E userdata (app.json) from S3 cache
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
         continue-on-error: true
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: e2e/userdata/generated
           key: develop/e2e-userdata-mobile-${{ steps.userdata-meta.outputs.date }}
@@ -683,10 +683,10 @@ jobs:
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }}
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
 
-      - name: Build CLI
+      - name: Build e2e dependencies (CLI + libs)
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm exec nx run @ledgerhq/live-cli:build
+          command: pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
           disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Compute userdata cache key date
@@ -698,7 +698,7 @@ jobs:
       - name: Restore pre-generated E2E userdata (app.json) from S3 cache
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
         continue-on-error: true
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: e2e/userdata/generated
           key: develop/e2e-userdata-mobile-${{ steps.userdata-meta.outputs.date }}

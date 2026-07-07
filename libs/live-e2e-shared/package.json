@@ -10,13 +10,14 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/e2e/shared",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-e2e-shared",
   "main": "lib/index.js",
   "module": "lib-es/index.js",
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/device-core": "workspace:^",
+    "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",

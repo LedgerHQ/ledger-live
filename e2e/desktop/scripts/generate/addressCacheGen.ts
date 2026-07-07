@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { runCliGetAddress } from "@ledgerhq/live-e2e-shared/runCli";
 import {
@@ -14,19 +14,15 @@ import {
   type AddressCacheFile,
 } from "@ledgerhq/live-e2e-shared/addressCache";
 import type { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-
-export type GenerateAddressesJobOpts = Partial<{
-  coin: string[];
-  outputDir: string;
-}>;
+import { resolveFromRoot } from "./shared";
 
 type AccountToDerive = { index: number; derivationMode: string; accountPath: string };
 type CoinGroup = { currency: Currency; accounts: AccountToDerive[] };
 
-export const DEFAULT_OUTPUT_DIR = "e2e/userdata/generated";
+const DEFAULT_OUTPUT_DIR = "e2e/userdata/generated";
 
-export function resolveOutputDir(outputDir?: string): string {
-  return path.resolve(
+function resolveOutputDir(outputDir?: string): string {
+  return resolveFromRoot(
     outputDir ??
       process.env.E2E_GENERATED_ADDRESSES_DIR ??
       process.env.E2E_GENERATED_USERDATA_DIR ??
@@ -95,7 +91,6 @@ export async function generateAddressCache(opts: {
   const outDir = resolveOutputDir(opts.outputDir);
   fs.mkdirSync(outDir, { recursive: true });
 
-  process.env.LEDGER_LIVE_CLI_BIN = process.argv[1];
   setEnv("MOCK", "");
   process.env.MOCK = "";
   setEnv("PLAYWRIGHT_RUN", true);
@@ -119,21 +114,3 @@ export async function generateAddressCache(opts: {
   results.push(`-> ${outPath}`);
   return results.join("\n");
 }
-
-export const addressCacheArgs = [
-  {
-    name: "coin",
-    alias: "c",
-    type: String,
-    multiple: true,
-    typeDesc: "currencyId",
-    desc: "currency id to generate, e.g. ethereum (repeatable, defaults to all matching coins)",
-  },
-  {
-    name: "outputDir",
-    alias: "o",
-    type: String,
-    typeDesc: "dir",
-    desc: `output directory (defaults to $E2E_GENERATED_ADDRESSES_DIR, $E2E_GENERATED_USERDATA_DIR, then ${DEFAULT_OUTPUT_DIR})`,
-  },
-];
