@@ -72,26 +72,8 @@ describe("bridge/js", () => {
     it("should build a currency bridge with required methods", () => {
       const bridge = buildCurrencyBridge(mockSignerContext);
 
-      expect(bridge).toHaveProperty("preload");
-      expect(bridge).toHaveProperty("hydrate");
       expect(bridge).toHaveProperty("scanAccounts");
-      expect(typeof bridge.preload).toBe("function");
-      expect(typeof bridge.hydrate).toBe("function");
       expect(typeof bridge.scanAccounts).toBe("function");
-    });
-
-    it("preload should resolve to empty object", async () => {
-      const bridge = buildCurrencyBridge(mockSignerContext);
-
-      const result = await bridge.preload();
-
-      expect(result).toEqual({});
-    });
-
-    it("hydrate should be callable", () => {
-      const bridge = buildCurrencyBridge(mockSignerContext);
-
-      expect(() => bridge.hydrate()).not.toThrow();
     });
   });
 
@@ -150,8 +132,6 @@ describe("bridge/js", () => {
     it("should return valid currency bridge", () => {
       const { currencyBridge } = createBridges(mockSignerContext);
 
-      expect(currencyBridge).toHaveProperty("preload");
-      expect(currencyBridge).toHaveProperty("hydrate");
       expect(currencyBridge).toHaveProperty("scanAccounts");
     });
 

@@ -36,8 +36,6 @@ export function buildCurrencyBridge(signerContext: SignerContext<MinaSigner>): C
   });
 
   return {
-    preload: async () => Promise.resolve({}),
-    hydrate: () => {},
     scanAccounts,
   };
 }
