@@ -16,8 +16,6 @@ const OP_HISTORY_FEATURE_FLAGS: OptionalFeatureMap = {
   lwmWallet40: {
     enabled: true,
     params: {
-      graphRework: true,
-      quickActionCtas: true,
       tour: true,
       lazyOnboarding: true,
       assetSection: true,
