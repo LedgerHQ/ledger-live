@@ -1,6 +1,6 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "helpers/allure/allure-helper";
-import { FF_LWM_WALLET_40_Q1 } from "utils/featureFlagUtils";
+import { FF_LWM_WALLET_40_Q2 } from "utils/featureFlagUtils";
 
 setTeamOwner(Team.WALLET_XP);
 $TmsLink("B2CQA-4383");
@@ -8,16 +8,16 @@ $TmsLink("B2CQA-4385");
 const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 tags.forEach(tag => $Tag(tag));
 
-describe("Wallet 4.0 - Main Navigation", () => {
+describe("Wallet 4.0 Q2 - Main Navigation", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding",
-      featureFlags: FF_LWM_WALLET_40_Q1,
+      featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });
 
-  it("should show Portfolio with Wallet 4.0 navigation layout", async () => {
+  it("should show Portfolio with Wallet 4.0 Q2 navigation layout", async () => {
     await app.mainNavigation.expectPortfolioPageVisible();
     await app.mainNavigation.expectWallet40BottomTabsVisible();
     await app.mainNavigation.expectWallet40TopBarVisible();

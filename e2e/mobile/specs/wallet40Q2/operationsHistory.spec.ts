@@ -2,6 +2,16 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "helpers/allure/allure-helper";
 import { FF_LWM_WALLET_40_Q2 } from "utils/featureFlagUtils";
 
+const FF_OPERATION_HISTORY = {
+  lwmWallet40: {
+    ...FF_LWM_WALLET_40_Q2.lwmWallet40,
+    params: {
+      ...FF_LWM_WALLET_40_Q2.lwmWallet40.params,
+      aggregatedAssets: false,
+    },
+  },
+};
+
 setTeamOwner(Team.WALLET_XP);
 $TmsLink("B2CQA-5256");
 $TmsLink("B2CQA-5263");
@@ -16,7 +26,7 @@ describe("Wallet 4.0 Q2 - Operations History", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "speculos-x-other-account",
-      featureFlags: FF_LWM_WALLET_40_Q2,
+      featureFlags: FF_OPERATION_HISTORY,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });
