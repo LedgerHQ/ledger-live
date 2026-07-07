@@ -92,6 +92,7 @@
     "wallet-cli": "pnpm --filter wallet-cli",
     "apdu-proxy": "pnpm --filter wallet-cli apdu-proxy",
     "coin:features:report": "node scripts/coin-features-report.mjs",
+    "ff": "node scripts/feature-flags/ff.mjs",
     "coin:coverage": "nx run-many -t coverage -p \"@ledgerhq/coin-*\" --parallel=2",
     "coin:coverage:report": "pnpm coin:coverage && node scripts/coin-coverage-report.mjs",
     "coin:coverage:summary": "node scripts/coin-coverage-report.mjs",

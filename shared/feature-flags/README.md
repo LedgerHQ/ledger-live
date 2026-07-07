@@ -79,6 +79,40 @@ export * from "./myNewFlag";
 
 That's it — `FeatureId`, `Features`, `FEATURE_FLAGS_DEFAULTS`, and `FeatureIdSchema` are all derived automatically from the registry.
 
+## Documenting flags (metadata + the `ff` CLI)
+
+Every flag can carry optional **metadata** — description, lifecycle status, owner, ticket, dependencies, and per-parameter docs — passed as the **last argument** to `flag` / `flagWith` / `flagWithRecord`. Metadata is stored in a Zod registry _alongside_ the schema, so it has **zero impact** on flag resolution, Firebase mapping, or the derived types.
+
+```ts
+import { z } from "zod";
+import { flagWith } from "../../define";
+
+export const myNewFlag = flagWith(
+  { environment: z.enum(["STAGING", "PROD"]) },
+  { enabled: false, params: { environment: "PROD" } },
+  {
+    description: "Switches the widget to the new backend.",
+    status: "rollout", // "experiment" | "rollout" | "permanent" | "deprecated"
+    owner: "platform", // defaults to the team-* folder if omitted
+    ticket: "LIVE-1234",
+    dependsOn: ["someUpstreamFlag"], // validated by `ff lint`
+    paramsDoc: { environment: "Which backend the widget talks to." },
+  },
+);
+```
+
+The `ff` CLI reads the registry + metadata and powers a browsable catalog, discovery, and CI checks (run from the repo root):
+
+| Command | What it does |
+| --- | --- |
+| `pnpm ff list [--team <t>] [--status <s>]` | List flags (id, team, status, default, usage count). |
+| `pnpm ff show <flagId>` | Full detail: Firebase key, default + params, description, param docs, code/e2e usage. |
+| `pnpm ff catalog [--check]` | (Re)generate `CATALOG.md`. `--check` fails if it is stale (for CI). |
+| `pnpm ff lint` | Validate metadata. Enforced only for _enrolled_ flags/teams — expand the enrolment sets in `scripts/feature-flags/ff.mjs` as teams backfill. |
+| `pnpm ff coverage` | Find dead-flag candidates (no `useFeature`) and orphans (no code or e2e references). |
+
+The generated **[`CATALOG.md`](./CATALOG.md)** is the human-facing index of every flag and its Firebase key. Regenerate and commit it whenever you add or change a flag under `src/flags/`.
+
 ## Type inference
 
 You can derive per-flag types from the registry without manual duplication:

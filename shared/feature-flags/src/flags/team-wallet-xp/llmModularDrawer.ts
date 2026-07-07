@@ -27,4 +27,22 @@ export const llmModularDrawer = flagWith(
       backendEnvironment: "PROD",
     },
   },
+  {
+    description:
+      "Enables the Modular Asset Drawer on Mobile — the unified asset/network selection drawer " +
+      "shared across the add-account, receive, send and Live App flows.",
+    status: "rollout",
+    owner: "wallet-xp",
+    paramsDoc: {
+      add_account: "Use the modular drawer in the add-account flow.",
+      live_app: "Use the modular drawer when triggered from a Live App.",
+      live_apps_allowlist: "Live App manifest ids explicitly allowed to use the modular drawer.",
+      live_apps_blocklist: "Live App manifest ids explicitly blocked from the modular drawer.",
+      receive_flow: "Use the modular drawer in the receive flow.",
+      send_flow: "Use the modular drawer in the send flow.",
+      enableModularization: "Master switch for the modularization refactor behind the drawer.",
+      searchDebounceTime: "Debounce in ms applied to the drawer's asset search input.",
+      backendEnvironment: "Which backend environment the drawer queries (e.g. \"PROD\").",
+    },
+  },
 );
