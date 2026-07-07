@@ -1,11 +1,21 @@
 import React from "react";
-import { act, render, waitFor } from "@tests/test-renderer";
-import { ModularDrawerSharedNavigator, WITH_ACCOUNT_SELECTION } from "./shared";
+import {
+  act,
+  render,
+  waitFor,
+  withReadOnlyDisabled,
+  withFlagOverrides,
+} from "@tests/test-renderer";
+import { ModularDrawerSharedNavigator, WITH_ACCOUNT_SELECTION, mockedFF } from "./shared";
+import { State } from "~/reducers/types";
 import { BTC_ACCOUNT } from "@ledgerhq/live-common/modularDrawer/__mocks__/accounts.mock";
 import { Account } from "@ledgerhq/types-live";
 import { of, Observable } from "rxjs";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { IsDeviceLockedResultType } from "~/hooks/useIsDeviceLockedPolling/types";
+
+const overrideInitialState = (state: State) =>
+  withFlagOverrides({ ...mockedFF, lwmWallet40: { enabled: true } })(withReadOnlyDisabled(state));
 
 // Needed for receive navigator
 jest.mock("@ledgerhq/live-config/LiveConfig", () => {
@@ -153,7 +163,8 @@ const advanceTimers = () => {
 describe("AddAccountFlow with MAD", () => {
   it("should do the add account flow then go back to the previous screen", async () => {
     const { getByText, queryByText, user } = render(
-      <ModularDrawerSharedNavigator useDeviceSelectionState flow="add_account" />,
+      <ModularDrawerSharedNavigator flow="add_account" />,
+      { overrideInitialState },
     );
     expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
     await user.press(getByText(WITH_ACCOUNT_SELECTION));
@@ -184,7 +195,8 @@ describe("AddAccountFlow with MAD", () => {
 
   it("should do the add account flow and go back to the previous screen automatically", async () => {
     const { getByText, user, queryByText } = render(
-      <ModularDrawerSharedNavigator useDeviceSelectionState flow="not_add_account" />,
+      <ModularDrawerSharedNavigator flow="not_add_account" />,
+      { overrideInitialState },
     );
     expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
     await user.press(getByText(WITH_ACCOUNT_SELECTION));
@@ -213,7 +225,8 @@ describe("AddAccountFlow with MAD", () => {
 
   it("should do the add account flow then add funds actions", async () => {
     const { getByText, getByTestId, user } = render(
-      <ModularDrawerSharedNavigator useDeviceSelectionState flow="add_account" />,
+      <ModularDrawerSharedNavigator flow="add_account" />,
+      { overrideInitialState },
     );
     expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
     await user.press(getByText(WITH_ACCOUNT_SELECTION));
@@ -241,7 +254,8 @@ describe("AddAccountFlow with MAD", () => {
 
   it("should return to device selection on retry when device is locked in inline flow", async () => {
     const { user, getByText, queryByText, getByTestId } = render(
-      <ModularDrawerSharedNavigator useDeviceSelectionState flow="not_add_account" />,
+      <ModularDrawerSharedNavigator flow="not_add_account" />,
+      { overrideInitialState },
     );
 
     // Navigate through the add account flow
@@ -293,7 +307,8 @@ describe("AddAccountFlow with MAD", () => {
 
   it("should close flow and return to initial screen when clicking X button on error modal in inline flow", async () => {
     const { user, getByText, queryByText, getByTestId } = render(
-      <ModularDrawerSharedNavigator useDeviceSelectionState flow="not_add_account" />,
+      <ModularDrawerSharedNavigator flow="not_add_account" />,
+      { overrideInitialState },
     );
 
     // Navigate through the add account flow
@@ -346,7 +361,8 @@ describe("AddAccountFlow with MAD", () => {
 
   it("should close flow and return to device selection when clicking X button on error modal in non-inline flow", async () => {
     const { user, getByText, queryByText, getByTestId } = render(
-      <ModularDrawerSharedNavigator useDeviceSelectionState flow="add_account" />,
+      <ModularDrawerSharedNavigator flow="add_account" />,
+      { overrideInitialState },
     );
 
     // Navigate through the add account flow
@@ -399,7 +415,8 @@ describe("AddAccountFlow with MAD", () => {
 
   it("should close inline flow and return to initial screen after account creation", async () => {
     const { user, getByText, queryByText } = render(
-      <ModularDrawerSharedNavigator useDeviceSelectionState flow="not_add_account" />,
+      <ModularDrawerSharedNavigator flow="not_add_account" />,
+      { overrideInitialState },
     );
 
     // Navigate through the add account flow

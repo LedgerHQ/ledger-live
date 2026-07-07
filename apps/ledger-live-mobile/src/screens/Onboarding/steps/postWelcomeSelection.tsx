@@ -12,7 +12,6 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { SelectionCards } from "./Cards/SelectionCard";
 import OnboardingView from "./OnboardingView";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { DETOX_ENABLED } from "~/utils/constants";
@@ -32,7 +31,6 @@ function PostWelcomeSelection() {
   const currentNavigation = navigation.getParent()?.getParent()?.getState().routes[0].name;
   const isInOnboarding = currentNavigation === NavigatorName.BaseOnboarding;
   const localizedRebornUrl = useLocalizedUrl(urls.reborn);
-  const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("mobile");
 
   const identifyUser = useCallback(
     (hasDevice: boolean | null) => {
@@ -81,7 +79,7 @@ function PostWelcomeSelection() {
         },
       }}
       footer={
-        isWallet40Enabled && userHasDevice ? undefined : (
+        userHasDevice ? undefined : (
           <Button type="default" mb={10} onPress={openNoLedgerYet} testID="onboarding-noLedgerYet">
             {t("onboarding.postWelcomeStep.noLedgerYet")}
           </Button>

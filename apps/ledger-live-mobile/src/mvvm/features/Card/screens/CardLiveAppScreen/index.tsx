@@ -6,16 +6,13 @@ import { useTranslation } from "~/context/Locale";
 import { PtxScreen } from "~/screens/PTX";
 import { CARD_APP_ID } from "../../constants";
 import { BackConfig } from "~/components/WebPTXPlayer";
-import { useFeature } from "@features/platform-feature-flags";
-
 type CardLiveAppScreenProps = StackNavigatorProps<PtxNavigatorParamList, ScreenName.Card>;
 
 export function CardLiveAppScreen(props: CardLiveAppScreenProps) {
   const { t } = useTranslation();
   const { goToURL, lastScreen, platform, path, referrer } = props.route.params || {};
-  const lwmWallet40 = useFeature("lwmWallet40");
   const config: BackConfig =
-    !lwmWallet40?.enabled || platform === CARD_APP_ID
+    platform === CARD_APP_ID
       ? {
           screen: ScreenName.Card,
           btnText: t("browseWeb3.webPlatformPlayer.back.card"),
