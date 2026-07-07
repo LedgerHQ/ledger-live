@@ -62,7 +62,7 @@ async function extractExportMethods(filePath) {
 async function findUsages(functionName) {
   try {
     const { stdout } = await execAsync(
-      `grep -r --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --exclude-dir=lib --exclude-dir=lib-es --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=build --exclude-dir=generated --exclude-dir=dist --exclude-dir=.expo -l "${functionName}" .`,
+      `grep -r --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --exclude-dir=lib --exclude-dir=lib-es --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=build --exclude-dir=generated --exclude-dir=dist --exclude-dir=.expo --exclude-dir=.claude -l "${functionName}" .`,
       {
         cwd: rootDir,
         encoding: "utf-8",
@@ -95,7 +95,8 @@ async function checkFunction(sourceFile, functionName, allowedFiles, rules) {
   );
   const finalAllowedFiles = [...new Set([sourceFile, ...idDefinitionFiles, ...allowedFiles])];
 
-  // Exclude test files, webpack bundles, next.js builds, and the source file itself (where the function is defined)
+  // Exclude test files, webpack bundles, next.js builds, types-* packages (interface declarations),
+  // and the source file itself (where the function is defined)
   const violations = usages.filter(
     file =>
       !file.includes(".test.") &&
@@ -105,6 +106,7 @@ async function checkFunction(sourceFile, functionName, allowedFiles, rules) {
       !file.includes("/build/") &&
       !file.includes("/generated/") &&
       !file.includes("CHANGELOG") &&
+      !file.split("/").some(seg => seg.startsWith("types-")) &&
       file !== sourceFile &&
       !finalAllowedFiles.includes(file),
   );
@@ -172,6 +174,7 @@ async function main() {
             !file.includes("/build/") &&
             !file.includes("/generated/") &&
             !file.includes("CHANGELOG") &&
+            !file.split("/").some(seg => seg.startsWith("types-")) &&
             file !== sourceFile &&
             !file.startsWith(sourceDir + "/"),
         );

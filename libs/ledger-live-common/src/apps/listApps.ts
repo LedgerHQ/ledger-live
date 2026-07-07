@@ -112,7 +112,9 @@ export const listApps = ({
                 case "device-id": {
                   // Normalize deviceId to DeviceId object (SocketEvent may have string or DeviceId)
                   const deviceIdValue =
-                    typeof e.deviceId === "string" ? DeviceId.fromString(e.deviceId) : e.deviceId;
+                    typeof e.deviceId === "string"
+                      ? DeviceId.fromString(e.deviceId)
+                      : (e.deviceId as DeviceId);
                   o.next({
                     type: "device-id",
                     deviceId: deviceIdValue,
