@@ -16,7 +16,6 @@ const OP_HISTORY_FEATURE_FLAGS: OptionalFeatureMap = {
   lwmWallet40: {
     enabled: true,
     params: {
-      marketBanner: true,
       graphRework: true,
       quickActionCtas: true,
       tour: true,
