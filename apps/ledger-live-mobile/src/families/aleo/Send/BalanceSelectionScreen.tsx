@@ -1,10 +1,9 @@
 import React, { useCallback } from "react";
-import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction as AleoTransaction } from "@ledgerhq/live-common/families/aleo/types";
 import { useTranslation } from "~/context/Locale";
-import Button from "~/components/Button";
 import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -63,20 +62,12 @@ export function BalanceSelectionScreen({ navigation, route }: Props) {
         </Text>
       </Box>
       <Box lx={footerStyle}>
-        <Button
-          event="AleoBalanceSelectionConfirm"
-          type="primary"
-          title="Public"
-          containerStyle={{ flexGrow: 1 }}
-          onPress={() => onConfirm("public")}
-        />
-        <Button
-          event="AleoBalanceSelectionConfirm"
-          type="primary"
-          title="Private"
-          containerStyle={{ flexGrow: 1 }}
-          onPress={() => onConfirm("private")}
-        />
+        <Button appearance="base" style={{ flexGrow: 1 }} onPress={() => onConfirm("public")}>
+          {t("aleo.send.balanceSelection.mockButtonPublic")}
+        </Button>
+        <Button appearance="base" style={{ flexGrow: 1 }} onPress={() => onConfirm("private")}>
+          {t("aleo.send.balanceSelection.mockButtonPrivate")}
+        </Button>
       </Box>
     </Box>
   );

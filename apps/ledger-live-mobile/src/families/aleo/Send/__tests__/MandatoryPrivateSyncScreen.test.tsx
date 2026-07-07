@@ -1,20 +1,8 @@
 import React from "react";
-import { View, Text } from "react-native";
 import { act, render } from "@tests/test-renderer";
 import { MandatoryPrivateSyncScreen } from "../MandatoryPrivateSyncScreen";
 import { ScreenName } from "~/const";
 import { ALEO_ACCOUNT_1 } from "../../__mocks__/account.mock";
-
-jest.mock("@ledgerhq/lumen-ui-rnative", () => {
-  const actual = jest.requireActual("@ledgerhq/lumen-ui-rnative");
-
-  return {
-    ...actual,
-    Box: ({ children }: { children: React.ReactNode }) => <View>{children}</View>,
-    Text: ({ children }: { children: React.ReactNode }) => <Text>{children}</Text>,
-    Spinner: () => <View testID="spinner" />,
-  };
-});
 
 const mockTransaction = { family: "aleo", recipient: "aleo1abc" } as never;
 

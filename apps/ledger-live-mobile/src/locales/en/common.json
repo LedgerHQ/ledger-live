@@ -10078,7 +10078,9 @@
       "balanceSelection": {
         "title": "Select balance",
         "mockTitle": "Balance selection screen mock",
-        "selfTransfer": "Self transfer: {{value}}"
+        "selfTransfer": "Self transfer: {{value}}",
+        "mockButtonPublic": "Public",
+        "mockButtonPrivate": "Private"
       },
       "privateSync": {
         "mockTitle": "Private sync mock"

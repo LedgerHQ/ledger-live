@@ -25,24 +25,8 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
   default: jest.fn(),
 }));
 
-jest.mock("LLM/hooks/useAccountUnit", () => ({
-  useMaybeAccountUnit: jest.fn(() => ({ code: "ALEO", magnitude: 6, name: "Aleo" })),
-}));
-
 jest.mock("~/screens/SendFunds/utils/customSendFlow", () => ({
   getCustomSendFlow: jest.fn(() => null),
-}));
-
-jest.mock("~/screens/SendFunds/AmountInput", () => () => <View testID="amount-input" />);
-
-jest.mock("~/components/KeyboardView", () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => <View>{children}</View>,
-}));
-
-jest.mock("~/components/SafeAreaView", () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => <View>{children}</View>,
 }));
 
 const mockGetCustomSendFlow = jest.mocked(getCustomSendFlow);

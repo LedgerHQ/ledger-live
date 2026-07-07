@@ -11,36 +11,8 @@ jest.mock("@react-navigation/native", () => ({
   useRoute: () => ({ name: "Asset", key: "asset-key", params: {} }),
 }));
 
-jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog", () => ({
-  useRampCatalog: () => ({ isCurrencyAvailable: jest.fn(() => false) }),
-}));
-
-jest.mock("@features/platform-feature-flags", () => ({
-  useFeature: jest.fn(() => ({ enabled: true })),
-}));
-
 jest.mock("@ledgerhq/live-common/exchange/swap/hooks/index", () => ({
   useFetchCurrencyAll: () => ({ data: [] }),
-}));
-
-jest.mock("LLM/hooks/useStake/useStake", () => ({
-  useStake: () => ({ getCanStakeCurrency: jest.fn(() => false) }),
-}));
-
-jest.mock("LLM/features/Stake", () => ({
-  useOpenStakeDrawer: () => ({ handleOpenStakeDrawer: jest.fn() }),
-}));
-
-jest.mock("LLM/features/Receive", () => ({
-  useOpenReceiveDrawer: () => ({ handleOpenReceiveDrawer: jest.fn() }),
-}));
-
-jest.mock("LLM/features/Swap", () => ({
-  useOpenSwap: () => ({ handleOpenSwap: jest.fn() }),
-}));
-
-jest.mock("LLM/features/ModularDrawer", () => ({
-  useModularDrawerController: () => ({ openDrawer: jest.fn() }),
 }));
 
 jest.mock("~/generated/accountActions", () => ({
