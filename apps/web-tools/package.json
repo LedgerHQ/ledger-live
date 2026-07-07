@@ -23,6 +23,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/feature-flags": "workspace:*",
+    "@devtools/bindings": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
     "react-redux": "catalog:",
     "@codemirror/lang-json": "^6.0.2",

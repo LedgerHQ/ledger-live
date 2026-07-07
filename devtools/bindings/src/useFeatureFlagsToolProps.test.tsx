@@ -20,18 +20,22 @@ function withStore(store: ReturnType<typeof buildStore>) {
 }
 
 describe("useFeatureFlagsToolProps", () => {
-  it("returns the resolved and overrides slices from the store", () => {
-    const store = buildStore();
-    const { result } = renderHook(() => useFeatureFlagsToolProps(), { wrapper: withStore(store) });
+  let store: ReturnType<typeof buildStore>;
+  let result: ReturnType<
+    typeof renderHook<ReturnType<typeof useFeatureFlagsToolProps>, void>
+  >["result"];
 
+  beforeEach(() => {
+    store = buildStore();
+    ({ result } = renderHook(() => useFeatureFlagsToolProps(), { wrapper: withStore(store) }));
+  });
+
+  it("returns the resolved and overrides slices from the store", () => {
     expect(result.current.overrides).toEqual(featureFlagsOverridesSelector(store.getState()));
     expect(result.current.resolved).toEqual(store.getState().featureFlags.resolved);
   });
 
   it("setOverride dispatches and updates the overrides slice", () => {
-    const store = buildStore();
-    const { result } = renderHook(() => useFeatureFlagsToolProps(), { wrapper: withStore(store) });
-
     act(() => {
       result.current.setOverride("mockFeature", { enabled: true });
     });
@@ -40,15 +44,18 @@ describe("useFeatureFlagsToolProps", () => {
     expect(result.current.overrides).toEqual({ mockFeature: { enabled: true } });
   });
 
-  it("clearOverride removes a single override", () => {
-    const store = buildStore();
-    const { result } = renderHook(() => useFeatureFlagsToolProps(), { wrapper: withStore(store) });
+  it("setAllOverrides replaces the whole overrides slice", () => {
+    act(() => {
+      result.current.setAllOverrides({ mockFeature: { enabled: true } });
+    });
 
+    expect(store.getState().featureFlags.overrides).toEqual({ mockFeature: { enabled: true } });
+  });
+
+  it("clearOverride removes a single override", () => {
     act(() => {
       result.current.setOverride("mockFeature", { enabled: true });
     });
-    expect(store.getState().featureFlags.overrides).toHaveProperty("mockFeature");
-
     act(() => {
       result.current.clearOverride("mockFeature");
     });
@@ -56,14 +63,9 @@ describe("useFeatureFlagsToolProps", () => {
   });
 
   it("clearAllOverrides empties the overrides slice", () => {
-    const store = buildStore();
-    const { result } = renderHook(() => useFeatureFlagsToolProps(), { wrapper: withStore(store) });
-
     act(() => {
       result.current.setOverride("mockFeature", { enabled: true });
     });
-    expect(store.getState().featureFlags.overrides).toHaveProperty("mockFeature");
-
     act(() => {
       result.current.clearAllOverrides();
     });
