@@ -19,6 +19,12 @@ const swapHistoryTestConfig = {
     "@ethereum",
     "@family-evm",
   ],
+  details: {
+    date: "July 15, 2025",
+    sentAmount: "0.07 SOL",
+    networkFees: "0.000005 SOL",
+    receiveAccount: "Ethereum 1",
+  },
 };
 
 runSwapHistoryOperationsTest(
@@ -27,4 +33,5 @@ runSwapHistoryOperationsTest(
   swapHistoryTestConfig.swapId,
   swapHistoryTestConfig.tmsLinks,
   swapHistoryTestConfig.tags,
+  swapHistoryTestConfig.details,
 );

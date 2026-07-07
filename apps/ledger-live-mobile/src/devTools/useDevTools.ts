@@ -2,6 +2,7 @@ import { useNetworkActivityDevTools } from "@rozenite/network-activity-plugin";
 import { useReactNavigationDevTools } from "@rozenite/react-navigation-plugin";
 import { useMMKVDevTools } from "@rozenite/mmkv-plugin";
 import { mmkv } from "LLM/storage/mmkvStorageWrapper";
+import { CONFIG_PARAMS } from "LLM/storage/mmkvStorageWrapper/constants";
 import { navigationRef } from "~/rootnavigation";
 
 const config = {
@@ -19,7 +20,7 @@ const HookDevTools = () => {
 
   useReactNavigationDevTools({ ref: navigationRef });
   useMMKVDevTools({
-    storages: [mmkv],
+    storages: { [CONFIG_PARAMS.ID]: mmkv },
   });
 
   return null;

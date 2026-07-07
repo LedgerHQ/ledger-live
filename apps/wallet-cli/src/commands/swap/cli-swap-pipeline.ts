@@ -425,6 +425,8 @@ export async function runFullSwapPipeline(
       if (flowId) {
         trackSwapCompleted({
           flowId,
+          fromCurrency: fromCurrency.id,
+          toCurrency: toCurrency.id,
           fromAmount: amount,
           toAmount: amountExpectedTo.toFixed(),
         });

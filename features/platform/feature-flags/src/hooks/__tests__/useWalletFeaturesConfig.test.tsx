@@ -35,8 +35,6 @@ const makeConfig = (
   overrides?: Partial<WalletFeaturesConfig>,
 ): WalletFeaturesConfig => ({
   isEnabled: value,
-  shouldDisplayGraphRework: value,
-  shouldDisplayQuickActionCtas: value,
   shouldUseLazyOnboarding: value,
   shouldDisplayTour: value,
   shouldDisplayQ2Tour: value,
@@ -53,8 +51,6 @@ const makeConfig = (
 });
 
 const makeParams = (value: boolean): Wallet40Params => ({
-  graphRework: value,
-  quickActionCtas: value,
   lazyOnboarding: value,
   tour: value,
   q2Tour: value,
@@ -107,7 +103,6 @@ describe("useWalletFeaturesConfig hook", () => {
 
     describe.each(PLATFORMS)("on %s platform", platform => {
       it.each<[string, Wallet40Params, Partial<WalletFeaturesConfig>]>([
-        ["graphRework", { graphRework: true }, { shouldDisplayGraphRework: true }],
         ["lazyOnboarding", { lazyOnboarding: true }, { shouldUseLazyOnboarding: true }],
         ["tour", { tour: true }, { shouldDisplayTour: true }],
         ["q2Tour", { q2Tour: true }, { shouldDisplayQ2Tour: true }],
@@ -132,9 +127,9 @@ describe("useWalletFeaturesConfig hook", () => {
       it("handles partial params", () => {
         const { result } = renderWalletFeaturesConfig(platform, {
           enabled: true,
-          params: { graphRework: true },
+          params: { lazyOnboarding: true },
         });
-        expectConfig(result, { ...ENABLED_NO_PARAMS_CONFIG, shouldDisplayGraphRework: true });
+        expectConfig(result, { ...ENABLED_NO_PARAMS_CONFIG, shouldUseLazyOnboarding: true });
       });
     });
   });

@@ -35,6 +35,12 @@ import { connectLedgerApp } from "../../device/connect-ledger-app";
 import { withLedgerManagerAppSession } from "../../session/exchange-device-session";
 import type { CommandOutput } from "../../output";
 import { walletCliDebug } from "../../shared/log";
+import { WalletCliDeviceError } from "../../device/wallet-cli-device-error";
+import {
+  trackSwapCompleted,
+  trackSwapRejected,
+  trackSwapStarted,
+} from "../../analytics/swap-analytics";
 import {
   CLI_ETHEREUM_INIT_INPUT,
   CLI_SWAP_FLOW_PORTS,
@@ -63,6 +69,8 @@ export type CliSwapDieInput = {
   mainAccount: Account;
   fromCurrencyId: string | undefined;
   toCurrencyId: string | undefined;
+  flowId?: string;
+  feeStrategy?: string;
 };
 
 export type CliSwapDieResult = {
@@ -208,7 +216,7 @@ function launchIntent(args: {
 }
 
 export async function runCliSwapDie(input: CliSwapDieInput): Promise<CliSwapDieResult> {
-  const { out, quote, mainAccount, fromCurrencyId, toCurrencyId } = input;
+  const { out, quote, mainAccount, fromCurrencyId, toCurrencyId, flowId, feeStrategy } = input;
 
   if (mainAccount.currency.family !== "evm") {
     throw new Error(
@@ -239,101 +247,138 @@ export async function runCliSwapDie(input: CliSwapDieInput): Promise<CliSwapDieR
     };
   }
 
-  const result = await withLedgerManagerAppSession(ETHEREUM_APP_NAME, async () => {
-    const transport = await ensureWalletCliDmkTransport();
-    const deviceModelId = await getWalletCliDeviceModelId();
-    if (!deviceModelId) {
-      throw new Error("Could not resolve the connected device model id");
-    }
-    const deviceConnectionResult = buildDeviceConnectionResult(
-      transport.dmk,
-      transport.sessionId,
-      deviceModelId,
-    );
+  const trackingFromCurrency = fromCurrencyId ?? mainAccount.currency.id;
+  const trackingToCurrency = toCurrencyId ?? "";
+  let hardwareWalletType: DeviceModelId | undefined;
 
-    let currentApp = ETHEREUM_APP_NAME;
-    const ensureApp = async (appName: string): Promise<void> => {
-      if (appName === currentApp) return;
-      out.swapExecuteProgress(
-        `Switching device app: ${currentApp} → ${appName} (confirm "Open ${appName}" on device)…`,
-      );
-      walletCliDebug(`Switching device app: ${currentApp} → ${appName}`);
-      await connectLedgerApp(transport.dmk, transport.sessionId, appName);
-      currentApp = appName;
-    };
+  if (flowId) {
+    trackSwapStarted({
+      flowId,
+      fromCurrency: trackingFromCurrency,
+      toCurrency: trackingToCurrency,
+      provider: quote.provider,
+      feeStrategy: feeStrategy ?? "",
+    });
+  }
 
-    const machine = createSwapFlowMachine(CLI_SWAP_FLOW_PORTS);
-    const actor = createActor(machine, { input: undefined }).start();
-
-    const launched = new WeakSet<CliSwapIntent>();
-    const subscriptions: Subscription[] = [];
-
-    try {
-      return await new Promise<SwapFlowResult>((resolve, reject) => {
-        const resolvers: SwapFlowResolvers = {
-          resolve,
-          reject: err => {
-            walletCliDebug("Pipeline error:", err);
-            reject(err);
-          },
-        };
-
-        const send = (event: Parameters<typeof actor.send>[0]): void => {
-          actor.send(event);
-        };
-
-        const actorSub = actor.subscribe(snapshot => {
-          const { currentIntent, currentInitInput } = snapshot.context as {
-            currentIntent: CliSwapIntent | null;
-            currentInitInput: CliInitInput | null;
-          };
-          if (currentIntent && !launched.has(currentIntent)) {
-            launched.add(currentIntent);
-            subscriptions.push(
-              launchIntent({
-                intent: currentIntent,
-                initInput: currentInitInput,
-                ensureApp,
-                deviceConnectionResult,
-                out,
-                send,
-              }),
-            );
-          }
-
-          if (snapshot.matches("approvalSuccess")) {
-            send({ type: "SWAP_PRESSED" });
-          } else if (snapshot.matches("swapSuccess")) {
-            send({ type: "SWAP_DISMISSED" });
-          }
-        });
-        subscriptions.push(new Subscription(() => actorSub.unsubscribe()));
-
-        actor.send({
-          type: "START",
-          input: {
-            plan,
-            mainAccount,
-            currencyId: mainAccount.currency.id,
-            derivationPath: mainAccount.freshAddressPath,
-            initInput: CLI_ETHEREUM_INIT_INPUT,
-            resolvers,
-          },
-        });
-      });
-    } finally {
-      for (const sub of subscriptions) {
-        try {
-          sub.unsubscribe();
-        } catch {
-          /* empty */
-        }
+  try {
+    const result = await withLedgerManagerAppSession(ETHEREUM_APP_NAME, async () => {
+      const transport = await ensureWalletCliDmkTransport();
+      const deviceModelId = await getWalletCliDeviceModelId();
+      if (!deviceModelId) {
+        throw new Error("Could not resolve the connected device model id");
       }
-      actor.stop();
-    }
-  });
+      hardwareWalletType = deviceModelId;
+      const deviceConnectionResult = buildDeviceConnectionResult(
+        transport.dmk,
+        transport.sessionId,
+        deviceModelId,
+      );
 
-  return { plan: plan.kind, result };
+      let currentApp = ETHEREUM_APP_NAME;
+      const ensureApp = async (appName: string): Promise<void> => {
+        if (appName === currentApp) return;
+        out.swapExecuteProgress(
+          `Switching device app: ${currentApp} → ${appName} (confirm "Open ${appName}" on device)…`,
+        );
+        walletCliDebug(`Switching device app: ${currentApp} → ${appName}`);
+        await connectLedgerApp(transport.dmk, transport.sessionId, appName);
+        currentApp = appName;
+      };
+
+      const machine = createSwapFlowMachine(CLI_SWAP_FLOW_PORTS);
+      const actor = createActor(machine, { input: undefined }).start();
+
+      const launched = new WeakSet<CliSwapIntent>();
+      const subscriptions: Subscription[] = [];
+
+      try {
+        return await new Promise<SwapFlowResult>((resolve, reject) => {
+          const resolvers: SwapFlowResolvers = {
+            resolve,
+            reject: err => {
+              walletCliDebug("Pipeline error:", err);
+              reject(err);
+            },
+          };
+
+          const send = (event: Parameters<typeof actor.send>[0]): void => {
+            actor.send(event);
+          };
+
+          const actorSub = actor.subscribe(snapshot => {
+            const { currentIntent, currentInitInput } = snapshot.context as {
+              currentIntent: CliSwapIntent | null;
+              currentInitInput: CliInitInput | null;
+            };
+            if (currentIntent && !launched.has(currentIntent)) {
+              launched.add(currentIntent);
+              subscriptions.push(
+                launchIntent({
+                  intent: currentIntent,
+                  initInput: currentInitInput,
+                  ensureApp,
+                  deviceConnectionResult,
+                  out,
+                  send,
+                }),
+              );
+            }
+
+            if (snapshot.matches("approvalSuccess")) {
+              send({ type: "SWAP_PRESSED" });
+            } else if (snapshot.matches("swapSuccess")) {
+              send({ type: "SWAP_DISMISSED" });
+            }
+          });
+          subscriptions.push(new Subscription(() => actorSub.unsubscribe()));
+
+          actor.send({
+            type: "START",
+            input: {
+              plan,
+              mainAccount,
+              currencyId: mainAccount.currency.id,
+              derivationPath: mainAccount.freshAddressPath,
+              initInput: CLI_ETHEREUM_INIT_INPUT,
+              resolvers,
+            },
+          });
+        });
+      } finally {
+        for (const sub of subscriptions) {
+          try {
+            sub.unsubscribe();
+          } catch {
+            /* empty */
+          }
+        }
+        actor.stop();
+      }
+    });
+
+    if (flowId) {
+      trackSwapCompleted({
+        flowId,
+        fromCurrency: trackingFromCurrency,
+        toCurrency: trackingToCurrency,
+        fromAmount: String(quote.quoteDetails.sendAmount),
+        toAmount: String(quote.quoteDetails.receiveAmount),
+      });
+    }
+
+    return { plan: plan.kind, result };
+  } catch (error) {
+    if (flowId && WalletCliDeviceError.fromKnownDeviceError(error)?.state.code === "rejected") {
+      trackSwapRejected({
+        flowId,
+        fromCurrency: trackingFromCurrency,
+        toCurrency: trackingToCurrency,
+        device: hardwareWalletType,
+      });
+    }
+    throw error;
+  }
 }
 
 export type { Quote };

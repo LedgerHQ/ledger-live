@@ -504,6 +504,7 @@ export class DefaultConnectDeviceStateMachine<
 
   stop(): void {
     const snapshot = this.actor.getSnapshot();
+
     if (snapshot.context.isDiscovering) {
       this.deviceDiscoveryService.stop();
     }

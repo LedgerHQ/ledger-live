@@ -3,7 +3,6 @@ import { flagWith } from "../../define";
 
 export const lwdWallet40 = flagWith(
   {
-    graphRework: z.boolean(),
     tour: z.boolean(),
     q2Tour: z.boolean(),
     lazyOnboarding: z.boolean(),
@@ -18,9 +17,8 @@ export const lwdWallet40 = flagWith(
     earnSimulator: z.boolean().optional(),
   },
   {
-    enabled: false,
+    enabled: true,
     params: {
-      graphRework: true,
       tour: true,
       q2Tour: false,
       lazyOnboarding: true,

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-cli",
-  "version": "1.2.0",
+  "version": "1.1.0",
   "private": true,
   "description": "Ledger Wallet CLI using Device Management Kit (USB)",
   "license": "Apache-2.0",
@@ -48,6 +48,7 @@
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",
+    "@domain/entity-currency-fiat": "workspace:^",
     "@ledgerhq/coin-solana": "workspace:^",
     "@ledgerhq/context-module": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",

@@ -34,22 +34,6 @@ const mockContentSizeChangeEvent = (width: number, height: number) => ({
 });
 
 describe("portfolioAssets", () => {
-  it("should render quick actions", async () => {
-    const { getByText } = render(
-      <TestNavigator>
-        <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
-      </TestNavigator>,
-      {
-        overrideInitialState: (state: State) => ({
-          ...INITIAL_STATE.overrideInitialState(state),
-          accounts: { ...state.accounts },
-        }),
-      },
-    );
-    const quickActions = [/buy/i, /swap/i, /send/i, /receive/i];
-    quickActions.forEach(action => expect(getByText(action)).toBeVisible());
-  });
-
   it("should track click on tab account", async () => {
     const { getByText, user } = render(
       <TestNavigator>

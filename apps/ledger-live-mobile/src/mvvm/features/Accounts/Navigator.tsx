@@ -125,6 +125,7 @@ export default function Navigator() {
         name={ScreenName.AleoAddAccount}
         component={AleoAddAccountNavigator}
         options={{ headerShown: false }}
+        initialParams={{ onCloseNavigation: onClose }}
       />
       <Stack.Screen
         name={ScreenName.AddAccountsSuccess}

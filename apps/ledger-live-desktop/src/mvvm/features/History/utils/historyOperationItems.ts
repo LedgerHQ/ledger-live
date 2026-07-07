@@ -1,12 +1,14 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type { Features } from "@shared/feature-flags";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   flattenAccounts,
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
+import { isSmallValueTokenOperation } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import {
   getOperationAmountNumber,
   flattenOperationWithInternalsAndNfts,
@@ -16,10 +18,21 @@ import { isAddressPoisoningOperation } from "@ledgerhq/ledger-wallet-framework/o
 import { currencySettingsDefaults, type CurrencySettings } from "~/renderer/reducers/settings";
 import { getOperationCounterpartyAddress } from "./getOperationCounterpartyAddress";
 import type { OperationTableItem } from "../types";
+import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "../constants";
 
 type AccountInfo = { account: AccountLike; parentAccount?: Account };
 type FilterFn = (operation: Operation, account: AccountLike) => boolean;
 type TaggedOperation = { operation: Operation; isPending: boolean };
+export type HistoryOperationFilterOptions = {
+  readonly shouldFilterTokenOps: boolean;
+  readonly addressPoisoningFamilies: string[] | null;
+  readonly shouldHideSmallValueTokenOperations?: boolean;
+  readonly countervaluesState?: CounterValuesState;
+  readonly userCounterValueCurrency?: Currency;
+};
+export type HistoryUnreadOperationsOptions = HistoryOperationFilterOptions & {
+  readonly currenciesSettings: Record<string, CurrencySettings>;
+};
 
 export function parseLastSeenMs(iso: string | null): number | null {
   if (!iso) return null;
@@ -164,6 +177,44 @@ export function buildHistoryOperationItems(
   return items.sort((a, b) => b.date.getTime() - a.date.getTime());
 }
 
+export function buildHistoryOperationFilter({
+  shouldFilterTokenOps,
+  addressPoisoningFamilies,
+  shouldHideSmallValueTokenOperations = false,
+  countervaluesState,
+  userCounterValueCurrency,
+}: HistoryOperationFilterOptions): FilterFn {
+  return (operation, account) => {
+    if (
+      shouldFilterTokenOps &&
+      isAddressPoisoningOperation(
+        operation,
+        account,
+        addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      shouldHideSmallValueTokenOperations &&
+      countervaluesState &&
+      userCounterValueCurrency &&
+      isSmallValueTokenOperation({
+        operation,
+        account,
+        countervaluesState,
+        userCounterValueCurrency,
+        thresholdUsd: HISTORY_DUST_FILTER_THRESHOLD_USD,
+      })
+    ) {
+      return false;
+    }
+
+    return true;
+  };
+}
+
 /**
  * True when any operation that would appear in the global History list is newer than `lastSeenDate`.
  * Uses the same flattening, pending merge, and filters as {@link buildHistoryOperationItems}.
@@ -171,22 +222,13 @@ export function buildHistoryOperationItems(
 export function historyHasUnreadOperations(
   accounts: Account[],
   lastSeenDate: string | null,
-  currenciesSettings: Record<string, CurrencySettings>,
-  shouldFilterTokenOps: boolean,
-  addressPoisoningFamilies: string[] | null,
+  options: HistoryUnreadOperationsOptions,
 ): boolean {
   if (!lastSeenDate) return false;
   const lastSeenTs = parseLastSeenMs(lastSeenDate);
-  const filterOperation: FilterFn = (operation, account) => {
-    if (!shouldFilterTokenOps) return true;
-    return !isAddressPoisoningOperation(
-      operation,
-      account,
-      addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
-    );
-  };
+  const filterOperation = buildHistoryOperationFilter(options);
   const getConfirmationsNb = (mainAccount: Account) =>
-    getConfirmationsNbForCurrency(currenciesSettings, mainAccount.currency);
+    getConfirmationsNbForCurrency(options.currenciesSettings, mainAccount.currency);
   const accountsMap = buildAccountsMap(accounts);
   const items = buildOperationItems(accountsMap, filterOperation, getConfirmationsNb, lastSeenTs);
   return items.some(item => item.isUnread);

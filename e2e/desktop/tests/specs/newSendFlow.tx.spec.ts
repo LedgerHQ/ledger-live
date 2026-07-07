@@ -35,9 +35,7 @@ const NEW_SEND_FLOW_FAMILIES = Array.from(
 );
 
 const MEMO_STEP_FAMILIES = new Set(
-  [Currency.ALGO, Currency.XLM, Currency.XRP, Currency.SOL].map(currency =>
-    getRequiredFamily(currency.id),
-  ),
+  [Currency.XLM, Currency.XRP, Currency.SOL].map(currency => getRequiredFamily(currency.id)),
 );
 
 const transactionsNewSendFlow = [

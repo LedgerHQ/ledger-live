@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { getDeviceModel } from "@ledgerhq/devices";
+import { getProductName } from "@ledgerhq/devices";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceActionContent } from "LLD/components/DeviceActionContent";
 
@@ -12,7 +12,7 @@ type UnlockDeviceProps = Readonly<{
 
 export function UnlockDevice({ deviceModelId, deviceName, testID }: UnlockDeviceProps) {
   const { t } = useTranslation();
-  const { productName } = getDeviceModel(deviceModelId);
+  const productName = getProductName(deviceModelId);
 
   return (
     <DeviceActionContent

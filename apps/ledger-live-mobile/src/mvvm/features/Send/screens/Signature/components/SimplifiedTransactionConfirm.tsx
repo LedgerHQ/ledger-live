@@ -1,5 +1,5 @@
 import React from "react";
-import { getDeviceModel } from "@ledgerhq/devices";
+import { getProductName } from "@ledgerhq/devices";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { useTranslation } from "~/context/Locale";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
@@ -10,7 +10,7 @@ type SimplifiedTransactionConfirmProps = Readonly<{
 
 export function SimplifiedTransactionConfirm({ deviceModelId }: SimplifiedTransactionConfirmProps) {
   const { t } = useTranslation();
-  const wording = getDeviceModel(deviceModelId).productName;
+  const productName = getProductName(deviceModelId);
 
   return (
     <DeviceActionContent
@@ -18,7 +18,7 @@ export function SimplifiedTransactionConfirm({ deviceModelId }: SimplifiedTransa
       description={t("send.newSendFlow.sign.description")}
       deviceModelId={deviceModelId}
       testID="send-signature-prompt"
-      title={t("send.newSendFlow.sign.title", { wording })}
+      title={t("send.newSendFlow.sign.title", { wording: productName })}
     />
   );
 }

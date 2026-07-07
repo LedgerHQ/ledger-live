@@ -9,7 +9,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { usePortfolioBalanceDisplayState } from "LLD/hooks/usePortfolioBalanceDisplayState";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
-import { resolveAnalyticsValueChange } from "./utils/resolveAnalyticsValueChange";
+import { resolveAnalyticsValueChange } from "@ledgerhq/wallet-analytics";
 import type { AnalyticsViewModel } from "./types";
 
 export default function useAnalyticsViewModel(): AnalyticsViewModel {

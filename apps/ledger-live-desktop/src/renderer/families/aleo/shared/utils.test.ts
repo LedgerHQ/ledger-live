@@ -4,6 +4,7 @@ import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
   TRANSACTION_TYPE,
+  PRIVATE_BALANCE_PLACEHOLDER,
 } from "@ledgerhq/live-common/families/aleo/constants";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -20,7 +21,6 @@ import {
   applyAleoBalanceSourceChange,
   formatAleoBalances,
 } from "./utils";
-import { PRIVATE_BALANCE_PLACEHOLDER } from "../constants";
 
 jest.mock("@ledgerhq/live-common/config/index");
 

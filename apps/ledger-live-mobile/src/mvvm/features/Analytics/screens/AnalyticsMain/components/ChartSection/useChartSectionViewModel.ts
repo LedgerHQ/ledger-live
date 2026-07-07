@@ -28,9 +28,9 @@ import {
   isAnalyticsChartRange,
   lineChartRangeToPortfolioRange,
   portfolioRangeToLineChartRange,
+  resolveAnalyticsValueChange,
   type AnalyticsChartRange,
-} from "LLM/features/Analytics/utils/portfolioRangeMapping";
-import { resolveAnalyticsValueChange } from "LLM/features/Analytics/utils/resolveAnalyticsValueChange";
+} from "@ledgerhq/wallet-analytics";
 import {
   buildAnalyticsChartXAxisConfig,
   buildAnalyticsChartYAxisConfig,

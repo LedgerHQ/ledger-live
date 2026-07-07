@@ -88,12 +88,16 @@ export function trackSwapStarted(p: {
 
 export function trackSwapCompleted(p: {
   flowId: string;
+  fromCurrency: string;
+  toCurrency: string;
   fromAmount: string;
   toAmount?: string;
 }): void {
   track("swap_completed", {
     page: EXECUTE,
     flowId: p.flowId,
+    fromCurrency: p.fromCurrency,
+    toCurrency: p.toCurrency,
     fromAmount: p.fromAmount,
     toAmount: p.toAmount,
   });

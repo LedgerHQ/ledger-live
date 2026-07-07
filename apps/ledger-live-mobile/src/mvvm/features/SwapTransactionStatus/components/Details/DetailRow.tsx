@@ -4,9 +4,10 @@ import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 type DetailRowProps = Readonly<{
   label: string;
   value: React.ReactNode;
+  testId?: string;
 }>;
 
-export function DetailRow({ label, value }: DetailRowProps) {
+export function DetailRow({ label, value, testId }: DetailRowProps) {
   return (
     <Box
       lx={{
@@ -20,7 +21,11 @@ export function DetailRow({ label, value }: DetailRowProps) {
         {label}
       </Text>
       {typeof value === "string" ? (
-        <Text typography="body3" lx={{ color: "base", textAlign: "right", flexShrink: 1 }}>
+        <Text
+          testID={testId}
+          typography="body3"
+          lx={{ color: "base", textAlign: "right", flexShrink: 1 }}
+        >
           {value}
         </Text>
       ) : (

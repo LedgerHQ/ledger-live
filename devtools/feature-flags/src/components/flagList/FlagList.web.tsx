@@ -3,7 +3,7 @@ import type { FeatureFlagsToolProps } from "../../types";
 import { FlagRow } from "../flagRow/FlagRow.web";
 import { FlagListSummary } from "../flagListSummary/FlagListSummary";
 import { Divider } from "@ledgerhq/lumen-ui-react";
-import { Sidebar } from "../sidebar/Sidebar";
+import { FlagDetailsDialog } from "../flagDetailsDialog/FlagDetailsDialog";
 import { ToolBar } from "../toolBar/ToolBar";
 import { useFlagListViewModel, type FlagListViewProps } from "./useFlagListViewModel.web";
 
@@ -17,7 +17,7 @@ function FlagListView({
   setOverride,
   onSelectFlag,
   selectedFlagId,
-  onCloseSidebar,
+  onCloseDetails,
   clearSelectedOverride,
 }: FlagListViewProps) {
   return (
@@ -33,10 +33,10 @@ function FlagListView({
         <Divider className="bg-canvas-muted" />
       </div>
       {selectedFlagId && (
-        <Sidebar
+        <FlagDetailsDialog
           setOverride={setOverride}
           display={getFlagDisplayState(selectedFlagId)}
-          onClose={onCloseSidebar}
+          onClose={onCloseDetails}
           clearOverride={clearSelectedOverride}
         />
       )}

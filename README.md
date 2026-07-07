@@ -38,6 +38,12 @@ pnpm i
 
 What to run next depends on the workspace you're targeting. See [repo commands](docs/repo-commands.md) for build, dev, lint, and test recipes, or check the README in the relevant workspace.
 
+
+### Contributing & reviewing
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) — for **PR authors**: branch conventions, the PR lifecycle, and quality gates before requesting review.
+- [REVIEWING.md](REVIEWING.md) — for **code-owner reviewers**: how to scope, what to look for, and how to give feedback.
+
 ### Finding documentation
 
 1. **Repo-wide** — [AGENTS.md](AGENTS.md), then [docs/](docs/)

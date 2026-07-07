@@ -309,6 +309,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         explorerId: "matic",
       },
       showNfts: false,
+      minGasPrice: "25000000000",
     },
   },
   config_currency_reosc: {
@@ -1292,7 +1293,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      node: { type: "external", uri: "https://rpc.chain.robinhood.com" },
+      node: { type: "external", uri: "https://robinhood.coin.ledger.com" },
       explorer: {
         type: "none",
       },

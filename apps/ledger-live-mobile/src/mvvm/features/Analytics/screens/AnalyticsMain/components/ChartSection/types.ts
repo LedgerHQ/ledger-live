@@ -1,5 +1,5 @@
 import type { LineChartProps } from "LLM/components/LineChart";
-import type { AnalyticsChartRange } from "LLM/features/Analytics/utils/portfolioRangeMapping";
+import type { AnalyticsChartRange } from "@ledgerhq/wallet-analytics";
 
 export type ChartSectionHeaderViewModel = Readonly<{
   hoveredBalance: number | null;

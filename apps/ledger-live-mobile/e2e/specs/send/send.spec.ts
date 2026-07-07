@@ -1,6 +1,8 @@
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 
-describe("Send flow", () => {
+// TODO(LIVE-33334): these legacy mock specs will be removed in a follow-up task;
+// skipped for now.
+describe.skip("Send flow", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "EthAccountXrpAccountReadOnlyFalse",

@@ -1,7 +1,11 @@
 import { connect } from "react-redux";
 import { setCountervalue } from "~/actions/settings";
-import { counterValueCurrencySelector, supportedCounterValuesSelector } from "~/reducers/settings";
-import { State } from "~/reducers/types";
+import {
+  counterValueCurrencySelector,
+  counterValueIdOf,
+  supportedCounterValuesSelector,
+} from "~/reducers/settings";
+import { State, supportedCountervaluesData } from "~/reducers/types";
 import makeGenericSelectScreen from "../../makeGenericSelectScreen";
 
 const mapStateToProps = (state: State) => ({
@@ -10,10 +14,11 @@ const mapStateToProps = (state: State) => ({
 });
 
 const mapDispatchToProps = {
-  onValueChange: ({ value }: { value: string }) => setCountervalue(value),
+  onValueChange: (item: supportedCountervaluesData) =>
+    setCountervalue(counterValueIdOf(item.currency)),
 };
 
-const Screen = makeGenericSelectScreen({
+const Screen = makeGenericSelectScreen<supportedCountervaluesData>({
   id: "CounterValueSettingsSelect",
   itemEventProperties: item => ({ countervalue: item.value }),
   keyExtractor: item => item.value,

@@ -7,8 +7,7 @@ Zod-first canonical schema and static registry for the `FiatCurrency` domain ent
 - Define the **canonical data model** for fiat currencies (`FiatCurrencySchema`)
 - Provide a **static registry** of all known fiat currencies (`FIAT_CURRENCIES_REGISTRY`), one file per currency under `src/currencies/`
 - Provide **mock factories** for use in tests
-
-No Redux slice, no selectors — the registry is fully static.
+- Expose a **`supportedFiatsSlice`** (RTK slice + `selectSupportedFiats` selector) that holds the runtime-supported fiat list populated by the CVS API, with an OFAC-filtered fallback
 
 ## Source of truth & dual maintenance
 
@@ -29,6 +28,7 @@ parity test compares on that.
 |---|---|
 | `@shared/schema-primitives` | `CurrencyIdSchema` branded value object |
 | `@domain/entity-currency-unit` | `UnitSchema` embedded value object |
+| `@reduxjs/toolkit` | `createSlice` for `supportedFiatsSlice` |
 
 ## Public API
 
@@ -36,6 +36,13 @@ parity test compares on that.
 import { FiatCurrencySchema, type FiatCurrency } from "@domain/entity-currency-fiat";
 import { FIAT_CURRENCIES_REGISTRY, FIAT_CURRENCIES_IDS } from "@domain/entity-currency-fiat";
 import { fiat } from "@domain/entity-currency-fiat";
+import {
+  supportedFiatsSlice,
+  setFiats,
+  selectSupportedFiats,
+  OFAC_FIAT_TICKERS,
+  type SupportedFiatsState,
+} from "@domain/entity-currency-fiat";
 ```
 
 For the full currency union (`CryptoCurrency | TokenCurrency | FiatCurrency`) use `@domain/entity-currency`.
@@ -79,13 +86,18 @@ covers every fiat ticker it ships (163 currencies). Each currency lives in its o
 
 ```
 src/
-  define.ts               fiat() helper — parses input through FiatCurrencySchema
-  schema.ts               FiatCurrencySchema + inferred FiatCurrency type
-  schema.mock.ts          mockFiatCurrency() factory
-  registry.ts             FIAT_CURRENCIES_REGISTRY — keyed by currency id
-                          FIAT_CURRENCIES_IDS — flat array of all known ids
+  define.ts       fiat() helper — parses input through FiatCurrencySchema
+  schema.ts       FiatCurrencySchema + inferred FiatCurrency type
+  schema.mock.ts  mockFiatCurrency() factory
+  constants.ts    FIAT_CURRENCIES_REGISTRY, FIAT_CURRENCIES_IDS, FIAT_CURRENCIES_BY_TICKER
+                  OFAC_FIAT_TICKERS, FALLBACK_FIAT_TICKERS
+  types.ts        SupportedFiatsState
+  utils.ts        getFiatCurrencyByTicker
+  internals.ts    buildFallbackFiats (package-internal, not re-exported)
+  slice.ts        supportedFiatsSlice, setFiats
+  selector.ts     selectSupportedFiats
   currencies/
-    index.ts              barrel export
+    index.ts      barrel export
     usd.ts  eur.ts  gbp.ts  ...   one file per currency (named by id)
 scripts/
   generate-currencies.mts   codegen — run when the legacy fiat list changes

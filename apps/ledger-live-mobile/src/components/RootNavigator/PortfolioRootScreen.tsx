@@ -1,18 +1,12 @@
 import React, { useMemo } from "react";
 import { Box } from "@ledgerhq/native-ui";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import { PortfolioBalanceSync } from "LLM/features/Portfolio/components/PortfolioBalanceSync";
-import {
-  Portfolio as NewPortfolio,
-  ReadOnlyPortfolio as NewReadOnlyPortfolio,
-} from "LLM/features/Portfolio";
+import { Portfolio, ReadOnlyPortfolio } from "LLM/features/Portfolio";
 import { useSelector } from "~/context/hooks";
 import { ScreenName } from "~/const/navigation";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import Portfolio from "~/screens/Portfolio";
-import ReadOnlyPortfolio from "~/screens/Portfolio/ReadOnly";
 import WalletTabBackgroundGradient from "../WalletTab/WalletTabBackgroundGradient";
 import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScrollManager";
 import { BaseComposite, StackNavigatorProps } from "./types/helpers";
@@ -29,15 +23,12 @@ export default function PortfolioRootScreen({ navigation, route }: NavigationPro
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
 
-  const { isEnabled: isNewPortfolioEnabled } = useWalletFeaturesConfig("mobile");
   const { backgroundColor } = useWallet40Theme();
 
-  const PortfolioComponent = useMemo(() => {
-    if (readOnlyModeEnabled && hasNoAccounts) {
-      return isNewPortfolioEnabled ? NewReadOnlyPortfolio : ReadOnlyPortfolio;
-    }
-    return isNewPortfolioEnabled ? NewPortfolio : Portfolio;
-  }, [readOnlyModeEnabled, hasNoAccounts, isNewPortfolioEnabled]);
+  const PortfolioComponent = useMemo(
+    () => (readOnlyModeEnabled && hasNoAccounts ? ReadOnlyPortfolio : Portfolio),
+    [readOnlyModeEnabled, hasNoAccounts],
+  );
 
   return (
     <WalletTabNavigatorScrollManager currentRouteName={ScreenName.Portfolio}>

@@ -4,6 +4,7 @@ import { TransactionIntent, BufferTxData } from "@ledgerhq/coin-module-framework
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getStakingABI } from "./abis";
 import { buildStakingTransactionParams } from "./transactionData";
+import { STAKING_CONTRACTS } from "./contracts";
 
 const asCurrency = (id: string): CryptoCurrency =>
   ({ id, family: "evm", ethereumLikeInfo: { chainId: 1 } }) as CryptoCurrency;
@@ -96,5 +97,57 @@ describe("buildStakingTransactionParams", () => {
     expect("0x" + data.toString("hex")).toEqual(iface.encodeFunctionData("delegate", [valAddress]));
     expect(to).toEqual("0x0000000000000000000000000000000000001005");
     expect(value).toEqual(1000000000000000000n);
+  });
+
+  it("routes Sei claimReward to the distribution precompile (0x1007)", () => {
+    const valAddress = "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn";
+    const intent = delegateIntent({ mode: "claimReward", valAddress });
+
+    const { to } = buildStakingTransactionParams(asCurrency("sei_evm"), intent);
+
+    expect(to).toEqual("0x0000000000000000000000000000000000001007");
+  });
+
+  it.each([
+    ["sei_evm", { valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn" }],
+    ["monad", { valId: "42", valAddress: "0xDisplayAddressIgnoredByEncoder" }],
+  ])("ignores txValue for '%s'", (currencyId, fields) => {
+    const intent = delegateIntent({ ...fields, txValue: 999n });
+
+    const { value } = buildStakingTransactionParams(asCurrency(currencyId), intent);
+
+    expect(value).toEqual(1000000000000000000n);
+  });
+});
+
+describe("0G / zero_gravity contractAddress resolver", () => {
+  const config = STAKING_CONTRACTS["zero_gravity"];
+
+  it("returns valAddress when provided", () => {
+    expect(config.contractAddress({ mode: "delegate", valAddress: "0xValidatorAddr" })).toEqual(
+      "0xValidatorAddr",
+    );
+  });
+
+  it("throws when valAddress is missing", () => {
+    expect(() => config.contractAddress({ mode: "delegate" })).toThrow(
+      "0G staking requires a validator address",
+    );
+  });
+
+  it("throws when ctx is undefined", () => {
+    expect(() => config.contractAddress()).toThrow("0G staking requires a validator address");
+  });
+});
+
+describe("0G / zero_gravity value resolver", () => {
+  const config = STAKING_CONTRACTS["zero_gravity"];
+
+  it.each([
+    [{ mode: "delegate", amount: 1000n }, 1000n],
+    [{ mode: "undelegate", amount: 1000n, txValue: 50n }, 50n],
+    [{ mode: "undelegate", amount: 1000n }, 0n],
+  ] as const)("value(%o) returns %s", (ctx, expected) => {
+    expect(config.value(ctx)).toEqual(expected);
   });
 });

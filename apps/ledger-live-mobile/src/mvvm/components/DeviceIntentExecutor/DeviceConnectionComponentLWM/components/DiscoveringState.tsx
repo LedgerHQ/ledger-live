@@ -1,6 +1,10 @@
 import React from "react";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
-import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState } from "@ledgerhq/live-dmk-mobile";
+import {
+  ConnectDeviceUIStateTypes,
+  type ConnectDeviceUIState,
+  type DisplayedDevice,
+} from "@ledgerhq/live-dmk-mobile";
 import { TrackScreen } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import { useSourceFlow } from "../../utils/SourceFlowContext";
@@ -10,6 +14,12 @@ import { DeviceListItem } from "./DeviceListItem";
 type DiscoveringStateProps = {
   state: Extract<ConnectDeviceUIState, { type: ConnectDeviceUIStateTypes.Discovering }>;
 };
+
+function getDeviceKey(device: DisplayedDevice, index: number): string {
+  const { deviceModelId, id, name, transport } = device.knownDevice;
+
+  return `${transport}:${deviceModelId}:${id || name || index}`;
+}
 
 export function DiscoveringState({ state }: Readonly<DiscoveringStateProps>): React.ReactNode {
   const { t } = useTranslation();
@@ -27,8 +37,8 @@ export function DiscoveringState({ state }: Readonly<DiscoveringStateProps>): Re
         {t("deviceIntentExecutor.connectDevice.states.discovering.title")}
       </Text>
       <Box>
-        {state.devices.map(device => (
-          <DeviceListItem key={device.knownDevice.id} device={device} />
+        {state.devices.map((device, index) => (
+          <DeviceListItem key={getDeviceKey(device, index)} device={device} />
         ))}
       </Box>
     </Box>

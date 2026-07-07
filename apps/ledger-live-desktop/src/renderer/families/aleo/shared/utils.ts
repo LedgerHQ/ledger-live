@@ -9,6 +9,7 @@ import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
   TRANSACTION_TYPE,
+  PRIVATE_BALANCE_PLACEHOLDER,
 } from "@ledgerhq/live-common/families/aleo/constants";
 import {
   derivePrivateTransactionMode,
@@ -26,7 +27,6 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { PRIVATE_BALANCE_PLACEHOLDER } from "../constants";
 
 export const getAleoCurrencyConfig = (
   currency: CryptoCurrency | TokenCurrency,

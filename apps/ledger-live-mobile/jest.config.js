@@ -52,6 +52,7 @@ const transformIncludePatterns = [
   "@noble",
   "d3-.*",
   "internmap",
+  "react-native-mmkv",
 ];
 
 /** @type {import('@swc/jest').JestConfigWithTsJest} */
@@ -137,6 +138,7 @@ module.exports = {
       "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
     "^react-redux": "<rootDir>/node_modules/react-redux",
     "^@tanstack/react-query$": "<rootDir>/node_modules/@tanstack/react-query",
+    "^react-native-mmkv$": "<rootDir>/__mocks__/react-native-mmkv.ts",
     // Redirect to mock for pre-compiled dependencies (like @ledgerhq/native-ui)
     "^react-native-worklets$": "<rootDir>/__mocks__/react-native-worklets.js",
     // Global mock for .lottie (dotLottie) files

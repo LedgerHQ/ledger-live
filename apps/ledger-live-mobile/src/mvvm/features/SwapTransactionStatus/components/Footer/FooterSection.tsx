@@ -23,6 +23,7 @@ export function FooterSection({ explorerUrl, isLoading }: FooterSectionProps) {
 
   return (
     <Button
+      testID="swap-transaction-view-explorer-btn"
       appearance="transparent"
       size="md"
       icon={ExternalLink}

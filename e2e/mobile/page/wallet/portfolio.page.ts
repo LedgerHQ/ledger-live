@@ -8,9 +8,8 @@ export default class PortfolioPage {
   assetsListId = "AssetsList";
   baseLink = "portfolio";
   baseAssetItem = "assetItem-";
-  zeroBalance = "$0.00";
   analyticsBalanceAmountId = "analytics-balance-amount";
-  assetBalanceId = "asset-balance";
+  connectButtonId = "quick-action-connect";
   readOnlyItemsId = "PortfolioReadOnlyItems";
   accountsListView = "PortfolioAccountsList";
   emptyPortfolioListId = "PortfolioEmptyList";
@@ -93,10 +92,7 @@ export default class PortfolioPage {
   async expectPortfolioReadOnly() {
     await detoxExpect(await this.portfolioSettingsButton()).toBeVisible();
     await waitForElementById(this.readOnlyItemsId);
-    const balanceLabel = await getLabelOfElement(this.analyticsBalanceAmountId);
-    jestExpect(balanceLabel.replace(/\s/g, "")).toBe(this.zeroBalance);
-    for (let index = 0; index < 4; index++)
-      jestExpect(await getTextOfElement(this.assetBalanceId, index)).toBe(this.zeroBalance);
+    await waitForElementById(this.connectButtonId);
   }
 
   @Step("Expect asset row to be visible")

@@ -74,6 +74,29 @@ export default class ModularDrawer {
     await tapById(assetItemId, 0);
   }
 
+  @Step("Check asset $0 amount is masked in discreet mode")
+  async checkAssetAmountIsDiscreet(ticker: string): Promise<void> {
+    await this.performSearchByTicker(ticker);
+    const assetItemId = this.assetItemByTicker(ticker);
+    await waitForElement(getElementById(assetItemId));
+    await detoxExpect(getElementById(assetItemId)).toBeVisible();
+
+    const assetItemIdentifier = await getIdByRegexp(assetItemId);
+    const fiatMask = /\$\*\*\*/;
+    const cryptoMask = new RegExp(`\\*\\*\\*\\s+${ticker}`, "i");
+
+    await detoxExpect(
+      getElementByIdWithDescendantTexts(assetItemIdentifier, fiatMask, cryptoMask).atIndex(0),
+    ).toBeVisible();
+  }
+
+  @Step("Check listed asset amounts are masked in discreet mode")
+  async checkAssetAmountsAreDiscreet(tickers: string[]): Promise<void> {
+    for (const ticker of tickers) {
+      await this.checkAssetAmountIsDiscreet(ticker);
+    }
+  }
+
   @Step("Select network in list if needed")
   async selectNetworkIfAsked(networkName: string): Promise<void> {
     if (await IsIdVisible(this.networkScreenId)) {

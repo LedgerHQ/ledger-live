@@ -160,7 +160,7 @@ const resolveContext = (currencyId: string): ResolvedContext | undefined => {
       currency,
       abi: abi as ethers.InterfaceAbi,
       node,
-      contractAddress: config.contractAddress,
+      contractAddress: config.contractAddress(),
     };
   } catch {
     return undefined;

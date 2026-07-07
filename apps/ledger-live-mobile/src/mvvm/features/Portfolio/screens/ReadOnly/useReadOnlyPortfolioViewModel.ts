@@ -3,14 +3,12 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useRefreshAccountsOrderingAfterInteractions } from "~/actions/general";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePortfolioAnalyticsOptInPrompt";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import { useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
 
 interface UseReadOnlyPortfolioViewModelResult {
   safeAreaTop: number;
-  shouldDisplayGraphRework: boolean;
   isLNSUpsellBannerShown: boolean;
   source: string | undefined;
   onBackFromUpdate: () => void;
@@ -20,7 +18,6 @@ const useReadOnlyPortfolioViewModel = (navigation: {
   goBack: () => void;
   navigate: (name: string, params?: object) => void;
 }): UseReadOnlyPortfolioViewModelResult => {
-  const { shouldDisplayGraphRework } = useWalletFeaturesConfig("mobile");
   const { top: safeAreaTop } = useSafeAreaInsets();
   const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;
 
@@ -44,7 +41,6 @@ const useReadOnlyPortfolioViewModel = (navigation: {
 
   return {
     safeAreaTop,
-    shouldDisplayGraphRework,
     isLNSUpsellBannerShown,
     source,
     onBackFromUpdate,

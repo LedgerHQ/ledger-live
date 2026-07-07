@@ -50,7 +50,7 @@ export const STAKING_CONFIG: Record<string, StakingStrategy> = {
   celo: {
     fetcher: createStakingFetcher(async config => [
       {
-        validatorAddress: config.contractAddress,
+        validatorAddress: config.contractAddress(),
         name: "",
         commission: 0,
         tokens: "0",
@@ -130,8 +130,12 @@ const createStakeFromContract = async (stakingContract: StakeCreate): Promise<St
           params,
         });
 
+        const contractAddress = config.contractAddress({
+          mode: "getStakedBalance",
+          valAddress: validatorAddress,
+        });
         const result = await rpcProvider.call({
-          to: config.contractAddress,
+          to: contractAddress,
           data: encodedData,
         });
         const decoded = decodeStakingResult(currencyId, "getStakedBalance", config, result);
@@ -142,7 +146,7 @@ const createStakeFromContract = async (stakingContract: StakeCreate): Promise<St
         }
 
         return {
-          uid: `${config.contractAddress}-${validatorAddress}-${address}`,
+          uid: `${contractAddress}-${validatorAddress}-${address}`,
           address,
           delegate: validatorAddress,
           state: "active",
@@ -154,7 +158,7 @@ const createStakeFromContract = async (stakingContract: StakeCreate): Promise<St
           amount,
           actions: [],
           details: {
-            contractAddress: config.contractAddress,
+            contractAddress,
             validator: validatorAddress,
           },
         };

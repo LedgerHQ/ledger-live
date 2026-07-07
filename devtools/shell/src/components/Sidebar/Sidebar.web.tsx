@@ -1,4 +1,5 @@
 import { SearchInput } from "@ledgerhq/lumen-ui-react";
+import { ArrowLeft } from "@ledgerhq/lumen-ui-react/symbols";
 import { Category, ValueOf } from "@devtools/registry";
 import type { Tool, ToolId } from "@devtools/registry";
 import { CategoryRow } from "../CategoryRow/CategoryRow.web";
@@ -16,12 +17,22 @@ function SidebarView({
   activeToolId,
   onSelectTool,
   onHome,
+  onClose,
 }: SidebarViewProps) {
   return (
     <nav
       data-testid="devtools-nav"
       className="w-[240px] shrink-0 bg-surface border-r border-muted flex flex-col"
     >
+      {onClose && (
+        <button
+          onClick={onClose}
+          aria-label="Back"
+          className="flex items-center px-16 pt-16 text-muted bg-transparent border-none cursor-pointer hover:text-base"
+        >
+          <ArrowLeft size={20} />
+        </button>
+      )}
       <button
         onClick={onHome}
         className="flex items-center gap-12 px-16 pt-16 w-full text-left bg-transparent border-none cursor-pointer hover:opacity-80"
@@ -65,6 +76,7 @@ interface SidebarProps {
   activeToolId: ToolId | undefined;
   onSelectTool: (id: ToolId) => void;
   onHome: () => void;
+  onClose?: () => void;
 }
 
 export function Sidebar(props: SidebarProps) {
