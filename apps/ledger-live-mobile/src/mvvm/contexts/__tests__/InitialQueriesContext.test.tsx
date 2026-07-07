@@ -24,10 +24,12 @@ describe("InitialQueriesContext", () => {
     ofacResponse.mockResolvedValueOnce(HttpResponse.json({}));
     renderApp();
     await waitFor(() =>
-      expect(contextSpy).toHaveBeenLastCalledWith({
-        firebaseIsReady: true,
-        ofacResult: { blocked: false, isLoading: false },
-      }),
+      expect(contextSpy).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          firebaseIsReady: true,
+          ofacResult: { blocked: false, isLoading: false },
+        }),
+      ),
     );
   });
 
@@ -35,10 +37,12 @@ describe("InitialQueriesContext", () => {
     ofacResponse.mockResolvedValueOnce(HttpResponse.json({}, { status: 451 }));
     renderApp();
     await waitFor(() =>
-      expect(contextSpy).toHaveBeenLastCalledWith({
-        firebaseIsReady: true,
-        ofacResult: { blocked: true, isLoading: false },
-      }),
+      expect(contextSpy).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          firebaseIsReady: true,
+          ofacResult: { blocked: true, isLoading: false },
+        }),
+      ),
     );
   });
 

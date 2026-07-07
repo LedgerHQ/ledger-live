@@ -13,6 +13,7 @@ describe("WaitForAppReady", () => {
     renderApp({
       currencyInitialized: true,
       firebaseIsReady: true,
+      fiatsReady: true,
       ofacResult: { blocked: false, isLoading: false },
     });
     expect(screen.getByText("App is Ready")).toBeTruthy();
@@ -22,6 +23,7 @@ describe("WaitForAppReady", () => {
     renderApp({
       currencyInitialized: true,
       firebaseIsReady: false,
+      fiatsReady: true,
       ofacResult: { blocked: false, isLoading: false },
     });
     expect(screen.toJSON()).toBeNull();
@@ -31,6 +33,7 @@ describe("WaitForAppReady", () => {
     renderApp({
       currencyInitialized: true,
       firebaseIsReady: true,
+      fiatsReady: true,
       ofacResult: { blocked: false, isLoading: true },
     });
     expect(screen.toJSON()).toBeNull();
@@ -40,6 +43,7 @@ describe("WaitForAppReady", () => {
     renderApp({
       currencyInitialized: false,
       firebaseIsReady: true,
+      fiatsReady: true,
       ofacResult: { blocked: false, isLoading: false },
     });
     expect(screen.toJSON()).toBeNull();

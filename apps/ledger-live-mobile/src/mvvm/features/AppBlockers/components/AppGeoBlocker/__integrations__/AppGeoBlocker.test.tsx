@@ -75,7 +75,7 @@ describe("AppGeoBlocker", () => {
 });
 
 function getWrapper(ofacResult: { blocked: boolean; isLoading: boolean }) {
-  const value = { ofacResult, firebaseIsReady: true };
+  const value = { ofacResult, firebaseIsReady: true, fiatsReady: true };
   return ({ children }: React.PropsWithChildren) => (
     <InitialQueriesContext.Provider value={value}>{children}</InitialQueriesContext.Provider>
   );
