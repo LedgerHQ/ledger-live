@@ -3604,7 +3604,7 @@ importers:
         version: 0.1.19
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.45(@ledgerhq/lumen-design-core@0.1.19)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.45(@ledgerhq/lumen-design-core@0.1.19)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.48(bdae926a59af589d19d78b5b880d45b3)
@@ -11718,8 +11718,8 @@ importers:
         specifier: 'catalog:'
         version: 1.7.1(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-zcash':
-        specifier: 0.3.0
-        version: 0.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        specifier: 0.4.0
+        version: 0.4.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -17463,8 +17463,8 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.5.1
 
-  '@ledgerhq/device-signer-kit-zcash@0.3.0':
-    resolution: {integrity: sha512-+wgFuOGe/BC1cZzJS/0MC9P37C3QYQ33BX+6gmqSwsSZveDyHAvPXxSeZ+6pmzgYHDIC2aO+4LU4vQI1+R5luQ==}
+  '@ledgerhq/device-signer-kit-zcash@0.4.0':
+    resolution: {integrity: sha512-ipCVVjyWiRchK1iKu83v7VIc6IYQEIkgIseMSF1VLy/UpzEr3Ou29y8YsNFNTHoURznRUDqG5k6mF3xM64wPDg==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.7.1
 
@@ -45762,7 +45762,7 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-zcash@0.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-zcash@0.4.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
       '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
@@ -45962,16 +45962,14 @@ snapshots:
     transitivePeerDependencies:
       - react-native
 
-  '@ledgerhq/lumen-ui-react@0.1.45(@ledgerhq/lumen-design-core@0.1.19)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)':
+  '@ledgerhq/lumen-ui-react@0.1.45(@ledgerhq/lumen-design-core@0.1.19)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)':
     dependencies:
       '@ledgerhq/lumen-design-core': 0.1.19
       '@ledgerhq/lumen-utils-shared': 0.1.7(react@19.1.4)
-      clsx: 2.1.1
       i18next: 23.10.1
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
       react-i18next: 14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-      tailwind-merge: 3.4.0
     transitivePeerDependencies:
       - react-native
 

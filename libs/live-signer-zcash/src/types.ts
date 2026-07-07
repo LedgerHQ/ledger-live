@@ -1,3 +1,16 @@
+/**
+ * PCZT signing types are re-exported straight from the DMK Zcash signer so the
+ * app-facing `ZcashSigner` contract and `DmkSignerZcash` share the exact shapes
+ * the device action consumes/produces — no local mirror to keep in sync.
+ */
+import type {
+  OrchardActionSignature,
+  PcztTransaction,
+  SignPcztTransactionResult,
+} from "@ledgerhq/device-signer-kit-zcash";
+
+export type { OrchardActionSignature, PcztTransaction, SignPcztTransactionResult };
+
 export type ZcashAppConfig = {
   version: string;
 };
@@ -83,5 +96,6 @@ export type ZcashSigner = {
   getAddress: (path: string, display?: boolean) => Promise<ZcashAddress>;
   getFullViewingKey: (path: string) => Promise<ZcashViewKey>;
   createPaymentTransaction: (arg: BitcoinCreateTransactionLike) => Promise<string>;
+  signPcztTransaction: (pczt: PcztTransaction) => Promise<SignPcztTransactionResult>;
   signMessage: (path: string, messageHex: string) => Promise<ZcashSignature>;
 };
