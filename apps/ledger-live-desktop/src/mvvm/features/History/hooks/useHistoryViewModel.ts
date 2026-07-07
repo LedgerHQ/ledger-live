@@ -174,7 +174,12 @@ export function useHistoryViewModel(): HistoryViewModel {
   }, [countervaluesState, counterValueCurrency, locale]);
   const onToggleHideSmallValueTokenOperations = useCallback(() => {
     if (!showDustFilterOption) return;
-    setHideSmallValueTokenOperations(!hideSmallValueTokenOperations);
+    const enabled = !hideSmallValueTokenOperations;
+    track("button_clicked", {
+      button: "dust_filter",
+      enabled,
+    });
+    setHideSmallValueTokenOperations(enabled);
   }, [hideSmallValueTokenOperations, setHideSmallValueTokenOperations, showDustFilterOption]);
 
   return {

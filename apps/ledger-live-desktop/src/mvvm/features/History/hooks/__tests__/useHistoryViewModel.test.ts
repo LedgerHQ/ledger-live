@@ -8,6 +8,7 @@ import type {
 } from "@ledgerhq/live-countervalues/types";
 import { getFiatCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
 import type { CountervaluesState } from "~/renderer/reducers/countervalues";
+import { track } from "~/renderer/analytics/segment";
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -164,5 +165,34 @@ describe("useHistoryViewModel navigateBack", () => {
     });
 
     expect(store.getState().countervaluesExtraTracking.extraTrackingPairs).toEqual([]);
+  });
+
+  it("should track the target dust filter state when toggling dust filtering", () => {
+    const { result, store } = renderHook(() => useHistoryViewModel(), {
+      initialState: {
+        settings: { hideSmallValueTokenOperations: false },
+        ...withFlagOverrides({ lwdDustFiltering: { enabled: true } }),
+      },
+    });
+
+    act(() => {
+      result.current.onToggleHideSmallValueTokenOperations();
+    });
+
+    expect(store.getState().settings.hideSmallValueTokenOperations).toBe(true);
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "dust_filter",
+      enabled: true,
+    });
+
+    act(() => {
+      result.current.onToggleHideSmallValueTokenOperations();
+    });
+
+    expect(store.getState().settings.hideSmallValueTokenOperations).toBe(false);
+    expect(track).toHaveBeenLastCalledWith("button_clicked", {
+      button: "dust_filter",
+      enabled: false,
+    });
   });
 });

@@ -18,6 +18,13 @@ export function Dust({
   const dustFilterLabel = hideSmallValueTokenOperations
     ? t("history.actionsBar.showDustTransactions")
     : t("history.actionsBar.hideDustTransactions");
+  const dustFilterDescription = hideSmallValueTokenOperations
+    ? t("history.actionsBar.dustTransactionsDisplayedDescription", {
+        threshold: dustFilterThreshold,
+      })
+    : t("history.actionsBar.dustTransactionsDescription", {
+        threshold: dustFilterThreshold,
+      });
   const DustFilterIcon = hideSmallValueTokenOperations ? Eye : EyeCross;
 
   return (
@@ -29,11 +36,7 @@ export function Dust({
       <DustFilterIcon size={20} className="shrink-0" />
       <span className="flex flex-col">
         <span>{dustFilterLabel}</span>
-        <span className="body-3 text-muted">
-          {t("history.actionsBar.dustTransactionsDescription", {
-            threshold: dustFilterThreshold,
-          })}
-        </span>
+        <span className="body-3 text-muted">{dustFilterDescription}</span>
       </span>
     </MenuItem>
   );
