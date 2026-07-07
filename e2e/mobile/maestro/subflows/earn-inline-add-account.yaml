@@ -20,12 +20,12 @@ appId: ${APP_ID}
     env:
       ACCOUNT_NAME: "${ACCOUNT_NAME}"
 # Earn flow started: for ETH the app redirects into the earn deposit WebView (the Detox
-# `verifyEarnFlowStarted("ETH")` waits for a URL containing "/deposit"). Maestro cannot assert a
-# webview URL, so we wait for a text hint rendered on the deposit step. EARN_DEPOSIT_HINT is
-# supplied by run-earn.sh; confirm the exact on-device text once and update it there. A screenshot
-# is captured regardless, for triage.
+# `verifyEarnFlowStarted("ETH")` waits for a URL containing "/deposit"). Maestro can't read the
+# webview URL, but it does resolve this webview's `data-testid` by `id`, so we assert the deposit
+# amount input ("amount-input-section-input", from earnV2Dashboard.page.ts) — a concrete element
+# on the deposit step. Screenshot for triage regardless.
 - extendedWaitUntil:
     visible:
-      text: "${EARN_DEPOSIT_HINT}"
+      id: "amount-input-section-input"
     timeout: 120000
 - takeScreenshot: artifacts/earn-inline-add-account-eth

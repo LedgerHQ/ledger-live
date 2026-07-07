@@ -7,5 +7,3 @@ appId: ${APP_ID}
 - assertVisible: ${ACCOUNT_NAME}
 - tapOn:
     id: "enabled-add-accounts-continue-button"
-- tapOn:
-    id: "button-close-add-account"

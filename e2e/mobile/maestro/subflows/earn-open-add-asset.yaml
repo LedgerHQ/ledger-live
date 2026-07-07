@@ -1,22 +1,25 @@
-# Wallet 4.0 "Earn" bottom tab -> ice-cold-start earn CTA -> native modular asset drawer.
+# Wallet 4.0 "Earn" bottom tab -> ice-cold-start earn CTA (in the WebView) -> native modular
+# asset drawer.
 #
-# The Earn dashboard is a remote WebView (ptxEarnUi v2). Maestro's `id` selector does NOT match
-# web `data-testid`s — the dashboard's "ice-cold-start-earn-cta" / "footer-disclaimer" are web
-# testIDs — so the CTA is tapped by its visible text, the same approach subflows/swap.yaml uses
-# for the swap live-app. EARN_CTA_TEXT is supplied by run-earn.sh; the exact on-device label must
-# be confirmed once and updated there. Tapping the CTA opens the NATIVE modular drawer, whose
-# search input ("modular-drawer-search-input", from page/drawer/modular.drawer.ts) is a real
-# testID we can wait on before handing off to modular-drawer-pick.yaml.
+# The Earn dashboard is a remote WebView (ptxEarnUi v2). Maestro DOES resolve this webview's
+# `data-testid` via the `id` selector on this setup, so we target the CTA by its web testID
+# ("ice-cold-start-earn-cta", from earnV2Dashboard.page.ts) rather than locale-sensitive text.
+# Tapping it opens the NATIVE modular drawer, whose search input ("modular-drawer-search-input",
+# from page/drawer/modular.drawer.ts) is a real native testID.
 appId: ${APP_ID}
 ---
 - tapOn:
     id: "w40-tab-earn"
+# Wait for the Earn WebView to render, then assert the ice-cold-start CTA is present before tapping
+# (an explicit checkpoint that we're on the empty Earn dashboard, not still loading).
 - extendedWaitUntil:
     visible:
-      text: "${EARN_CTA_TEXT}"
+      id: "ice-cold-start-earn-cta"
     timeout: 120000
+- assertVisible:
+    id: "ice-cold-start-earn-cta"
 - tapOn:
-    text: "${EARN_CTA_TEXT}"
+    id: "ice-cold-start-earn-cta"
     retryTapIfNoChange: true
 - extendedWaitUntil:
     visible:

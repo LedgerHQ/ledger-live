@@ -2,15 +2,12 @@
 # specs/earn/earnInlineAddAccount.spec.ts -> runInlineAddAccountTest(Account.ETH_1)).
 #
 # Like add-account-eth.yaml, this test case just composes reusable subflows in order. The Earn
-# dashboard is a remote WebView (the harness enables Wallet 4.0 + ptxEarnUi v2), so its two
-# webview touchpoints are matched by TEXT, not web data-testid (see earn-open-add-asset.yaml):
-#   * EARN_CTA_TEXT      — the ice-cold-start "earn" CTA label on the empty Earn dashboard.
-#   * EARN_DEPOSIT_HINT  — text visible on the ETH deposit step the flow lands on afterwards
-#                          (Detox asserts the webview URL contains "/deposit"; Maestro can't read
-#                          the URL, so it matches on-screen text instead).
-# >>> Both TEXT values are best-effort placeholders: confirm the exact on-device labels once and
-# >>> update them here. The modular drawer + add-account steps below are native and reuse the same
-# >>> proven subflows as add-account-eth.yaml.
+# dashboard is a remote WebView (the harness enables Wallet 4.0 + ptxEarnUi v2), but Maestro
+# resolves its web `data-testid`s via the `id` selector on this setup, so the two webview
+# touchpoints are targeted by testID (not locale-sensitive text): "ice-cold-start-earn-cta"
+# (see earn-open-add-asset.yaml) and "amount-input-section-input" on the ETH deposit step (see
+# earn-inline-add-account.yaml). The modular drawer + add-account steps are native and reuse the
+# same proven subflows as add-account-eth.yaml.
 appId: ${APP_ID}
 tags:
   - earn
@@ -25,10 +22,7 @@ tags:
       id: "w40-tab-earn"
     timeout: 180000
 - runFlow: ../subflows/dismiss-analytics-prompt.yaml
-- runFlow:
-    file: ../subflows/earn-open-add-asset.yaml
-    env:
-      EARN_CTA_TEXT: "Earn"
+- runFlow: ../subflows/earn-open-add-asset.yaml
 - runFlow:
     file: ../subflows/modular-drawer-pick.yaml
     env:
@@ -41,4 +35,3 @@ tags:
     file: ../subflows/earn-inline-add-account.yaml
     env:
       ACCOUNT_NAME: "Ethereum 1"
-      EARN_DEPOSIT_HINT: "Amount"
