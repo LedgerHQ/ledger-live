@@ -289,7 +289,7 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
     });
 
     const { accountBridge, currencyBridge } = createBridges(signerContext, () => coinConfig);
-    await currencyBridge.preload();
+    await currencyBridge.preload?.();
     const BITCOIN = getCryptoCurrencyById("bitcoin_regtest");
     const getAddress = resolver(signerContext);
     // Can also test LEGACY here

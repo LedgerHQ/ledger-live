@@ -92,8 +92,8 @@ const testSync = async (currencyId: string, xpubOrAddress: string) => {
   const mockAccount = getMockAccount(currencyId, xpubOrAddress);
   const currency = getCryptoCurrencyById(currencyId);
   const currencyBridge = await getCurrencyBridge(currency);
-  const data = await currencyBridge.preload(currency);
-  currencyBridge.hydrate(data, currency);
+  const data = await currencyBridge.preload?.(currency);
+  currencyBridge.hydrate?.(data, currency);
   const accountBridge = await getAccountBridgeByFamily(
     mockAccount.currency!.family,
     mockAccount.id,
@@ -115,8 +115,8 @@ const testSyncAccount = async (account: Account) => {
   console.log("starting sync on", account.currency.id, account.xpub ?? account.freshAddress);
   const currency = getCryptoCurrencyById(account.currency.id);
   const currencyBridge = await getCurrencyBridge(currency);
-  const data = await currencyBridge.preload(currency);
-  currencyBridge.hydrate(data, currency);
+  const data = await currencyBridge.preload?.(currency);
+  currencyBridge.hydrate?.(data, currency);
   const accountBridge = await getAccountBridgeByFamily(account.currency!.family, account.id);
 
   const syncedAccount = await firstValueFrom(

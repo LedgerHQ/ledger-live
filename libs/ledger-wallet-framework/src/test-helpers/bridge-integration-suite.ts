@@ -167,24 +167,25 @@ export async function testBridge<T extends TransactionCommon, U extends Transact
 
       if (FIXME_ignorePreloadFields !== true) {
         test("preload and rehydrate", async () => {
+          if (!bridge.preload) return;
           const data1 = (await bridge.preload(currency)) || {};
           const data1filtered = omit(data1, FIXME_ignorePreloadFields || []);
 
-          bridge.hydrate(data1filtered, currency);
+          bridge.hydrate?.(data1filtered, currency);
 
           if (data1filtered) {
             const serialized1 = JSON.parse(JSON.stringify(data1filtered));
-            bridge.hydrate(serialized1, currency);
+            bridge.hydrate?.(serialized1, currency);
             expect(serialized1).toBeDefined();
             const data2 = (await bridge.preload(currency)) || {};
             const data2filtered = omit(data2, FIXME_ignorePreloadFields || []);
 
             if (data2filtered) {
-              bridge.hydrate(data2filtered, currency);
+              bridge.hydrate?.(data2filtered, currency);
               expect(data1filtered).toMatchObject(data2filtered);
               const serialized2 = JSON.parse(JSON.stringify(data2filtered));
               expect(serialized1).toMatchObject(serialized2);
-              bridge.hydrate(serialized2, currency);
+              bridge.hydrate?.(serialized2, currency);
             }
           }
         });
