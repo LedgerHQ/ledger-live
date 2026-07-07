@@ -1,10 +1,16 @@
 import React from "react";
+import BigNumber from "bignumber.js";
 import { Text, View } from "react-native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { screen, render } from "@tests/test-renderer";
 import { BalanceSelectionScreen } from "../BalanceSelectionScreen";
 import { ScreenName } from "~/const";
 import { ALEO_ACCOUNT_1, ALEO_TOKEN_ACCOUNT_1 } from "../../__mocks__/account.mock";
+
+jest.mock("../../hooks/useFormatPrivateSyncDate", () => ({
+  useFormatPrivateSyncDate: jest.fn(() => (date: Date) => `formatted:${date.toISOString()}`),
+}));
 
 const mockCreateTransaction = jest.fn(() => ({ family: "aleo" }));
 const mockUpdateTransaction = jest.fn((tx: object, patch: object) => ({ ...tx, ...patch }));
@@ -127,6 +133,40 @@ describe("BalanceSelectionScreen", () => {
 
       expect(mockCreateTransaction).toHaveBeenCalledWith(ALEO_TOKEN_ACCOUNT_1);
       expect(mockCreateTransaction).not.toHaveBeenCalledWith(ALEO_ACCOUNT_1);
+    });
+  });
+
+  describe("private sync date", () => {
+    const syncDate = new Date(2024, 0, 15, 14, 30, 0);
+    const syncedAccount: AleoAccount = {
+      ...(ALEO_ACCOUNT_1 as AleoAccount),
+      aleoResources: {
+        transparentBalance: new BigNumber(0),
+        provableApi: null,
+        privateBalance: null,
+        unspentPrivateRecords: null,
+        lastPrivateSyncDate: syncDate,
+      },
+    };
+
+    it("shows the formatted private sync date in the private balance card", () => {
+      const route = makeRoute({ account: syncedAccount, isSelfTransfer: false });
+
+      render(
+        <BalanceSelectionScreen navigation={mockNavigation as never} route={route as never} />,
+      );
+
+      expect(
+        screen.getByText(`Last update: formatted:${syncDate.toISOString()}`),
+      ).toBeOnTheScreen();
+    });
+
+    it("does not show a formatted date when private sync has never run", () => {
+      render(
+        <BalanceSelectionScreen navigation={mockNavigation as never} route={sendRoute as never} />,
+      );
+
+      expect(screen.queryByText(/Last update: formatted:/)).not.toBeOnTheScreen();
     });
   });
 

@@ -18,6 +18,7 @@ import type {
 } from "@ledgerhq/live-common/families/aleo/types";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useTranslation } from "~/context/Locale";
+import { useFormatPrivateSyncDate } from "../hooks/useFormatPrivateSyncDate";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";
@@ -77,6 +78,7 @@ export function BalanceSelectionScreen({ navigation, route }: Props) {
   const { t } = useTranslation();
   const bridge = useAccountBridge<AleoTransaction>(account, parentAccount);
   const unit = useAccountUnit(account);
+  const formatPrivateSyncDate = useFormatPrivateSyncDate();
 
   const mainAccount = getMainAccount(account, parentAccount) as AleoAccount;
   const isToken = account.type === "TokenAccount";
@@ -138,7 +140,7 @@ export function BalanceSelectionScreen({ navigation, route }: Props) {
             lastUpdateLabel={
               privateSyncDate
                 ? t("aleo.send.balanceSelector.lastUpdate", {
-                    label: new Date(privateSyncDate).toLocaleDateString(),
+                    label: formatPrivateSyncDate(privateSyncDate),
                   })
                 : undefined
             }
