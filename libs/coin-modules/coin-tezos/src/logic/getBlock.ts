@@ -88,8 +88,8 @@ function isGroupSucceeded(group: APITransactionType[]): boolean {
 }
 
 /**
- * Produces one outgoing and one incoming `BlockOperation` for each XTZ
- * transfer within the group that has a balance impact.
+ * Produces one outgoing and one incoming `BlockOperation` for each transaction in the group
+ * that has a balance impact.
  *
  * A transaction has balance impact when it transfers XTZ (amount > 0) or
  * carries fees (bakerFee + storageFee + allocationFee > 0). Zero-amount,
