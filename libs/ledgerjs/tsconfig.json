@@ -7,7 +7,7 @@
     "noImplicitThis": false,
     "lib": ["DOM", "ES2017"],
     "isolatedModules": false,
-    "target": "ESNext",
+    "target": "ES2022",
     "types": ["node"]
   }
 }

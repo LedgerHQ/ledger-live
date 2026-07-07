@@ -1,5 +1,7 @@
 # domain/api/
 
+> Part of the [DDD monorepo architecture](../../docs/ddd-monorepo-architecture.md).
+
 Domain API packages. Each subdirectory is an independent pnpm workspace package that defines RTK Query `createApi` endpoints, `createAsyncThunk` actions, or re-exports/composes existing ones under a unified access point for a domain.
 
 ## Scope

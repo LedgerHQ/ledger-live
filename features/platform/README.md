@@ -1,5 +1,7 @@
 # features/platform/
 
+> Part of the [DDD monorepo architecture](../../docs/ddd-monorepo-architecture.md).
+
 Non-functional requirement (NFR) packages at the features layer. Each subdirectory is an independent pnpm workspace package providing hooks, selectors, and cross-feature helpers that are invisible to users but required for the system to deliver user-facing features reliably.
 
 ## Scope

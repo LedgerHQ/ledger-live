@@ -5,8 +5,8 @@
       "jest/*": ["./jest/*"],
       "jest/render.native": ["./jest/render/index.native.tsx"]
     },
-    "lib": ["ES2024", "DOM"],
-    "target": "ESNext",
+    "lib": ["ES2022", "DOM"],
+    "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "moduleSuffixes": [".web", ""],
