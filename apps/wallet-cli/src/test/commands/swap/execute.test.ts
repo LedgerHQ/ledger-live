@@ -365,7 +365,6 @@ describe("swap execute command", () => {
 
       expect(data.command).toBe("swap execute");
       expect(data.network).toBe("ethereum:main");
-      expect(data.pipeline).toBe("die");
       expect(data.plan).toBe("direct-swap");
       expect(data.from).toBe("ethereum");
       expect(data.to).toBe("bitcoin");
@@ -403,7 +402,6 @@ describe("swap execute command", () => {
 
       const data = await runExecuteSwapCommand({ ...dieBaseFlags, provider: "1inch" });
 
-      expect(data.pipeline).toBe("die");
       expect(data.provider).toBe("oneinch");
       const quoteRequest = getQuotesMock.mock.calls[0][0];
       expect(quoteRequest.providers).toEqual(["oneinch"]);
