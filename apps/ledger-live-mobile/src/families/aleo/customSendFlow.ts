@@ -6,6 +6,10 @@ import type {
 } from "~/screens/SendFunds/utils/customSendFlow";
 import { BalanceSelectionScreen, BalanceSelectionHeaderTitle } from "./Send/BalanceSelectionScreen";
 import { MandatoryPrivateSyncScreen } from "./Send/MandatoryPrivateSyncScreen";
+import { QuickAmountSelector } from "./Send/QuickAmountSelector";
+import { SummaryFromBadge } from "./Send/SummaryFromBadge";
+import { SummaryToBadge } from "./Send/SummaryToBadge";
+import { SummaryToSection } from "./Send/SummaryToSection";
 
 const screens: CustomSendFlowScreen[] = [
   {
@@ -22,6 +26,10 @@ const screens: CustomSendFlowScreen[] = [
 
 const aleoSendFlow = {
   screens,
+  SummaryFromBadge,
+  SummaryToBadge,
+  SummaryToSection,
+  AfterAmountInput: QuickAmountSelector,
   buildSendEntrypoint: ({ account, parentAccount }) => ({
     screen: ScreenName.AleoSendBalanceSelection,
     params: { account, parentAccount, isSelfTransfer: false },
