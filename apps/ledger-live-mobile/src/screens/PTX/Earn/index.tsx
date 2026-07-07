@@ -85,6 +85,15 @@ function Earn({ route }: Props) {
     [stakePrograms],
   );
 
+  const swapToEarnFlag = useFeature("swapToEarn");
+  const swapToEarnParam = useMemo(
+    () =>
+      swapToEarnFlag
+        ? JSON.stringify({ enabled: swapToEarnFlag.enabled, params: swapToEarnFlag.params })
+        : undefined,
+    [swapToEarnFlag],
+  );
+
   if (!remoteLiveAppState.isLoading && !manifest) {
     console.error(appManifestNotFoundError);
   }
@@ -106,6 +115,7 @@ function Earn({ route }: Props) {
       stakeCurrenciesParam: stakeCurrenciesParam?.length
         ? JSON.stringify(stakeCurrenciesParam)
         : undefined,
+      swapToEarn: swapToEarnParam,
       OS: Platform.OS,
       ethDepositCohort,
       uiVersion: "v1",
@@ -127,6 +137,7 @@ function Earn({ route }: Props) {
     stakeProgramsParam,
     stakeCurrenciesParam,
     ethDepositCohort,
+    swapToEarnParam,
     params,
     searchParams,
   ]);
