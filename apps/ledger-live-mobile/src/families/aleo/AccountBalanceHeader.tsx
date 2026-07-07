@@ -9,11 +9,12 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import type { ModalInfo } from "~/modals/Info";
 import type { AccountLike } from "@ledgerhq/types-live";
+import { PRIVATE_BALANCE_PLACEHOLDER } from "@ledgerhq/live-common/families/aleo/constants";
 import InfoModal from "~/modals/Info";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
 import SectionContainer from "~/screens/WalletCentricSections/SectionContainer";
 import SectionTitle from "~/screens/WalletCentricSections/SectionTitle";
-import { PRIVATE_BALANCE_PLACEHOLDER } from "@ledgerhq/live-common/families/aleo/constants";
+import PrivateSyncButton from "./PrivateSyncButton";
 
 type InfoName = "transparent" | "private";
 
@@ -65,6 +66,7 @@ function AleoBalanceSummary({ account }: { readonly account: AleoAccount }) {
           />
         </Box>
       </ScrollView>
+      <PrivateSyncButton account={account} />
     </SectionContainer>
   );
 }
