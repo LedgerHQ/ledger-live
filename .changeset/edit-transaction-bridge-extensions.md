@@ -2,8 +2,8 @@
 "@ledgerhq/types-live": minor
 "@ledgerhq/coin-evm": minor
 "@ledgerhq/live-common": minor
-"ledger-live-desktop": patch
-"live-mobile": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Promote the EVM edit-transaction (speed-up / cancel) helpers to the bridge contract.

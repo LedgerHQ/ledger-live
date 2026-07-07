@@ -1,7 +1,7 @@
 ---
 "@ledgerhq/wallet-analytics": minor
-"live-mobile": patch
-"ledger-live-desktop": patch
+"live-mobile": minor
+"ledger-live-desktop": minor
 ---
 
 Extract shared Analytics chart utils into @ledgerhq/wallet-analytics

@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-celo": patch
+"@ledgerhq/coin-celo": minor
 ---
 
 celo: stop offering saturated validator groups in the vote flow, and refresh the validator list properly.

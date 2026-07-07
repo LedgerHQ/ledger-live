@@ -1,7 +1,7 @@
 ---
 "@ledgerhq/coin-evm": minor
-"ledger-live-desktop": patch
-"live-mobile": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 fix(sei): determine Sei EVM account association via on-chain RPC

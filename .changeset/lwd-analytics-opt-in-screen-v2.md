@@ -1,5 +1,5 @@
 ---
-"@shared/feature-flags": patch
+"@shared/feature-flags": minor
 ---
 
 Add lwdAnalyticsOptInScreenV2 feature flag

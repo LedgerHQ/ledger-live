@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"ledger-live-desktop": minor
 ---
 
 refactor: remove the Wallet 4.0 feature flag and delete the legacy classic dashboard

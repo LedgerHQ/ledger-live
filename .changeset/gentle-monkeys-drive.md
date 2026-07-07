@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-solana": patch
+"@ledgerhq/coin-solana": minor
 ---
 
 Fix: fetch withdrawable value at runtime

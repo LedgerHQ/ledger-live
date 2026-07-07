@@ -1,11 +1,11 @@
 ---
 "@ledgerhq/live-e2e-shared": minor
-"@ledgerhq/live-common": patch
-"@shared/feature-flags": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
-"ledger-live-desktop-e2e-tests": patch
-"ledger-live-mobile-e2e-tests": patch
+"@ledgerhq/live-common": minor
+"@shared/feature-flags": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
+"ledger-live-desktop-e2e-tests": minor
+"ledger-live-mobile-e2e-tests": minor
 ---
 
 Extract E2E test-support code out of `@ledgerhq/live-common`

@@ -1,6 +1,6 @@
 ---
 "@ledgerhq/coin-tezos": minor
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 feat(coin-tezos): support multi-asset FA2 contracts (wrapped tokens)

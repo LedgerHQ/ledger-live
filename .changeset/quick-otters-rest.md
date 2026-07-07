@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 Remove address suggestions from the new send flow recipient screen, while keeping the first-seen-address warning
