@@ -17,5 +17,6 @@ export type PnlSectionViewModel = {
     footer: string;
     pageName: string;
     source: string;
+    discreet: boolean;
   };
 };
