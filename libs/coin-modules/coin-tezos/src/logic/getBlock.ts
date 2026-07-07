@@ -88,8 +88,12 @@ function isGroupSucceeded(group: APITransactionType[]): boolean {
 }
 
 /**
- * Produces one outgoing and one incoming `BlockOperation` for each non-zero XTZ
- * transfer within the group.
+ * Produces one outgoing and one incoming `BlockOperation` for each XTZ
+ * transfer within the group that has a balance impact.
+ *
+ * A transaction has balance impact when it transfers XTZ (amount > 0) or
+ * carries fees (bakerFee + storageFee + allocationFee > 0). Zero-amount,
+ * zero-fee transactions are skipped — they don't affect any account's balance.
  *
  * Fees are intentionally excluded from amounts — they are reported separately in
  * `BlockTransaction.fees`.  In Tezos, the `amount` field on `APITransactionType`
@@ -99,7 +103,8 @@ function isGroupSucceeded(group: APITransactionType[]): boolean {
 function buildNativeOperations(group: APITransactionType[]): BlockOperation[] {
   const ops: BlockOperation[] = [];
   for (const tx of group) {
-    if (!tx.amount) continue;
+    const amount = BigInt(tx.amount ?? 0);
+    if (!amount && computeOpFees(tx) === 0n) continue;
 
     const fromAddr = tx.sender?.address;
     const toAddr = tx.target?.address;
@@ -110,7 +115,7 @@ function buildNativeOperations(group: APITransactionType[]): BlockOperation[] {
         address: fromAddr,
         ...(toAddr && { peer: toAddr }),
         asset: NATIVE_ASSET,
-        amount: -BigInt(tx.amount),
+        amount: -amount,
       });
     }
     if (toAddr) {
@@ -119,7 +124,7 @@ function buildNativeOperations(group: APITransactionType[]): BlockOperation[] {
         address: toAddr,
         ...(fromAddr && { peer: fromAddr }),
         asset: NATIVE_ASSET,
-        amount: BigInt(tx.amount),
+        amount,
       });
     }
   }
