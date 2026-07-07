@@ -664,7 +664,7 @@ export function getsupportedCountervalues(fiats: FiatCurrency[]): SupportedCount
       label: `${currency.name} - ${currency.ticker}`,
       currency,
     }))
-    .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
+    .sort((a, b) => a.currency.name.localeCompare(b.currency.name));
 }
 // TODO refactor selectors to *Selector naming convention
 
