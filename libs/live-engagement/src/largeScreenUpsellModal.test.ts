@@ -4,6 +4,7 @@ import {
   lastSeenUpsellModalSelector,
   recordUpsellModalDisplay,
   restoreLargeScreenUpsellModalState,
+  resetUpsellModalRetries,
   retriesUpsellModalSelector,
   type LargeScreenUpsellModalState,
 } from "./largeScreenUpsellModal";
@@ -122,6 +123,23 @@ describe("largeScreenUpsellModal", () => {
     expect(largeScreenUpsellModalReducer(initialState, recordUpsellModalDisplay())).toEqual({
       retries: 1,
       lastSeenAt: Date.parse("2026-07-01T12:00:00.000Z"),
+    });
+  });
+
+  it("resets retries without clearing the last display timestamp", () => {
+    const lastSeenAt = Date.parse("2026-07-01T12:00:00.000Z");
+
+    expect(
+      largeScreenUpsellModalReducer(
+        {
+          retries: 3,
+          lastSeenAt,
+        },
+        resetUpsellModalRetries(),
+      ),
+    ).toEqual({
+      retries: 0,
+      lastSeenAt,
     });
   });
 

@@ -37,6 +37,9 @@ const largeScreenUpsellModalSlice = createSlice({
         payload: timestamp,
       }),
     },
+    resetUpsellModalRetries: state => {
+      state.retries = initialState.retries;
+    },
   },
   selectors: {
     largeScreenUpsellModalSelector: state => state,
@@ -45,8 +48,11 @@ const largeScreenUpsellModalSlice = createSlice({
   },
 });
 
-export const { restoreLargeScreenUpsellModalState, recordUpsellModalDisplay } =
-  largeScreenUpsellModalSlice.actions;
+export const {
+  restoreLargeScreenUpsellModalState,
+  recordUpsellModalDisplay,
+  resetUpsellModalRetries,
+} = largeScreenUpsellModalSlice.actions;
 
 export const {
   largeScreenUpsellModalSelector,
