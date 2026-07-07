@@ -259,10 +259,8 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       setReady(true);
       onInitFinished();
 
-      await Promise.all([
-        hydrateCurrencies(),
-        updateSupportedCountervalues(store, settingsData),
-      ]).finally(() => setCurrencyInitialized(true)); // Don't block the App rendering for this
+      updateSupportedCountervalues(store, settingsData);
+      await hydrateCurrencies().finally(() => setCurrencyInitialized(true)); // Don't block the App rendering for this
     } catch (error) {
       console.error(
         error instanceof Error
