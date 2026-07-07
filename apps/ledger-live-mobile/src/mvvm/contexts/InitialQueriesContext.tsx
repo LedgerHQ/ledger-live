@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
 import { useGetSupportedFiatsQuery } from "@domain/api-currency-fiat";
-import { selectSupportedFiats } from "@domain/entity-currency-fiat";
+import { selectSupportedFiats, selectSupportedFiatsReady } from "@domain/entity-currency-fiat";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setSupportedCounterValues } from "~/actions/settings";
 import { selectRemoteFlagsReady } from "@shared/feature-flags";
@@ -10,6 +10,7 @@ import { buildSupportedCounterValues } from "~/logic/buildSupportedCounterValues
 export const InitialQueriesContext = React.createContext({
   ofacResult: { blocked: false, isLoading: true },
   firebaseIsReady: false,
+  fiatsReady: false,
 });
 
 export function InitialQueriesProvider({ children }: React.PropsWithChildren) {
@@ -21,6 +22,8 @@ export function InitialQueriesProvider({ children }: React.PropsWithChildren) {
   // Boot-time fiat fetch: onQueryStarted → setFiats populates the supportedFiats slice
   useGetSupportedFiatsQuery();
 
+  const fiatsReady = useSelector(selectSupportedFiatsReady);
+
   // Keep supportedCounterValues in sync: re-dispatch whenever the slice updates (fallback → CVS result)
   const fiats = useSelector(selectSupportedFiats);
   useEffect(() => {
@@ -31,6 +34,9 @@ export function InitialQueriesProvider({ children }: React.PropsWithChildren) {
     [ofacQueryResult.data, ofacQueryResult.isLoading],
   );
 
-  const value = useMemo(() => ({ ofacResult, firebaseIsReady }), [ofacResult, firebaseIsReady]);
+  const value = useMemo(
+    () => ({ ofacResult, firebaseIsReady, fiatsReady }),
+    [ofacResult, firebaseIsReady, fiatsReady],
+  );
   return <InitialQueriesContext.Provider value={value}>{children}</InitialQueriesContext.Provider>;
 }

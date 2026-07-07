@@ -7,7 +7,7 @@ import {
   type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
 import type { FiatCurrency } from "@domain/entity-currency-fiat";
-import { setFiats } from "@domain/entity-currency-fiat";
+import { setFiats, setFiatsReady } from "@domain/entity-currency-fiat";
 import { resolveSupportedFiats } from "./converter";
 import { CvsApiExtraSchema, SupportedFiatsResponseSchema } from "./schema";
 import type { CvsApiExtra } from "./types";
@@ -59,6 +59,8 @@ export const currencyFiatApi = createApi({
           dispatch(setFiats(data));
         } catch {
           // CVS unreachable — slice keeps its fallback state
+        } finally {
+          dispatch(setFiatsReady());
         }
       },
     }),
