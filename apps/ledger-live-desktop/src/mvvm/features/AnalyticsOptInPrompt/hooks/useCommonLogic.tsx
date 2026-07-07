@@ -11,10 +11,10 @@ import {
   setHasSeenAnalyticsOptInPrompt,
 } from "~/renderer/actions/settings";
 import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
-import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
 import { track, updateIdentify } from "~/renderer/analytics/segment";
+import { resolveAnalyticsOptInPolicyUrl, type AnalyticsOptInVariant } from "../const/policyUrls";
 
 const trackingKeysByFlow: Record<EntryPoint, string> = {
   onboarding: "consent onboarding",
@@ -39,8 +39,9 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
 
   const [nextStep, setNextStep] = useState<(() => void) | null>(null);
   const flow = trackingKeysByFlow?.[entryPoint];
-
-  const trackingPolicyUrl = useLocalizedUrl(urls.trackingPolicy);
+  const variant = (lldAnalyticsOptInPromptFlag?.params?.variant ?? "A") as AnalyticsOptInVariant;
+  const policyUrlKey = resolveAnalyticsOptInPolicyUrl(entryPoint, variant);
+  const policyUrl = useLocalizedUrl(policyUrlKey);
 
   const openAnalyticsOptInPrompt = useCallback(
     (routePath: string, callBack: () => void) => {
@@ -89,13 +90,15 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   };
 
   const handleOpenPrivacyPolicy = (page?: string) => {
-    openURL(trackingPolicyUrl);
+    openURL(policyUrl);
     track(
       "button_clicked",
       {
         button: "Learn more link",
         flow,
         page,
+        variant,
+        entryPoint,
       },
       shouldWeTrack,
     );
@@ -109,6 +112,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     isFeatureFlagsAnalyticsPrefDisplayed: isFlagEnabled,
     lldAnalyticsOptInPromptFlag,
     flow,
+    variant,
     shouldWeTrack,
     handleOpenPrivacyPolicy,
   };

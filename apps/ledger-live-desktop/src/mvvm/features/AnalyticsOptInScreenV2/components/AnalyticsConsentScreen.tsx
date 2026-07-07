@@ -9,6 +9,7 @@ import analyticsConsentIllustration from "LLD/features/AnalyticsOptInScreenV2/as
 import { ANALYTICS_OPT_IN_SCREEN_PAGES } from "LLD/features/AnalyticsOptInScreenV2/types";
 
 export type AnalyticsConsentScreenProps = Readonly<{
+  shouldWeTrack: boolean;
   onAcceptAll: () => void;
   onRefuseAll: () => void;
   onPrevious: () => void;
@@ -17,6 +18,7 @@ export type AnalyticsConsentScreenProps = Readonly<{
 }>;
 
 export function AnalyticsConsentScreen({
+  shouldWeTrack,
   onAcceptAll,
   onRefuseAll,
   onPrevious,
@@ -29,7 +31,7 @@ export function AnalyticsConsentScreen({
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <Track onMount mandatory event={page} page={page} />
+      <Track onMount mandatory={shouldWeTrack} event={page} page={page} />
       <header className="relative flex shrink-0 items-center justify-between px-24 py-40">
         <Button size="sm" appearance="no-background" onClick={onPrevious} icon={ArrowLeft}>
           {t("analyticsOptInScreen.main.ctaPrevious")}
