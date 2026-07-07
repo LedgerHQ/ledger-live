@@ -3,7 +3,7 @@ import { BleScanningState, ScannedDevice } from "@ledgerhq/live-dmk-mobile";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId, getInfosForServiceUuid } from "@ledgerhq/devices";
 import { BehaviorSubject } from "rxjs";
-import { e2eBridgeClient } from "../../../e2e/bridge/client";
+import { e2eBridgeClient } from "~/e2e/bridge/client";
 import { makeMockDiscoveredDevice } from "../mockDiscoveredDevice";
 import getBLETransport from "./index";
 

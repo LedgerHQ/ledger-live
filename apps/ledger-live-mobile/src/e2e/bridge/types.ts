@@ -1,8 +1,8 @@
 import { Event as AppEvent } from "@ledgerhq/live-common/hw/actions/app";
 import { DescriptorEventType } from "@ledgerhq/hw-transport";
 import { AccountRaw } from "@ledgerhq/types-live";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BleState, SettingsState } from "~/reducers/types";
-import { DeviceUSB } from "../models/devices";
 import { Subject, Observable } from "rxjs";
 
 import { ConnectAppEvent } from "@ledgerhq/live-common/hw/connectApp";
@@ -14,10 +14,15 @@ import { ExchangeRequestEvent } from "@ledgerhq/live-common/hw/actions/startExch
 import { CompleteExchangeRequestEvent } from "@ledgerhq/live-common/exchange/platform/types";
 import { RemoveImageEvent } from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
-import WebSocket from "ws";
 import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
 
 export type OverrideFeatureFlagPayload = { id: FeatureId; value: Feature | undefined };
+
+export interface DeviceUSB extends Device {
+  deviceName: string;
+  productId: number;
+  vendorId: number;
+}
 
 export type ServerData =
   | {
@@ -115,13 +120,3 @@ export const completeExchangeExecMock = (): Observable<CompleteExchangeRequestEv
 export const renameDeviceExecMock = (): Observable<RenameDeviceEvent> =>
   mockDeviceEventSubject as Observable<RenameDeviceEvent>;
 /* eslint-enable @typescript-eslint/consistent-type-assertions */
-
-declare global {
-  // eslint-disable-next-line no-var
-  var webSocket: {
-    wss: WebSocket.Server | undefined;
-    ws: WebSocket | undefined;
-    messages: { [id: string]: MessageData };
-    e2eBridgeServer: Subject<ServerData>;
-  };
-}

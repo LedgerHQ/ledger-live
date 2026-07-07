@@ -1,4 +1,4 @@
-import { Platform } from "react-native";
+import { Platform, DeviceEventEmitter } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs";
 import { store } from "~/state-manager/configureStore";
@@ -21,9 +21,8 @@ import {
   removeKnownBleDevices,
 } from "~/actions/ble";
 import { LaunchArguments } from "react-native-launch-arguments";
-import { DeviceEventEmitter } from "react-native";
-import logReport from "../../src/log-report";
-import { webviewLogStore } from "../../src/e2e/webviewLogStore";
+import logReport from "~/log-report";
+import { webviewLogStore } from "~/e2e/webviewLogStore";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
 import Config from "react-native-config";
