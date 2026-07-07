@@ -1,5 +1,5 @@
 ---
-"live-mobile": minor
+"live-mobile": patch
 ---
 
-resolved issues with polyfill for ios
+Fix iOS errors by polyfilling AbortSignal.throwIfAborted
