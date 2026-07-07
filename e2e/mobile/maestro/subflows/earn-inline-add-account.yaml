@@ -1,0 +1,31 @@
+# Inline add-account from the Earn modular drawer, then assert the earn flow started.
+# Mirrors the tail of the Detox `runInlineAddAccountTest`:
+#   modularDrawer.tapAddNewOrExistingAccountButtonMAD() -> addAccount.addAccountAtIndex() ->
+#   earnV2Dashboard.verifyEarnFlowStarted(ticker)
+# testIDs sourced from:
+#   e2e/mobile/page/drawer/modular.drawer.ts    addNewOrExistingAccountButton = "add-new-account-button"
+#   e2e/mobile/page/accounts/addAccount.drawer.ts (via add-discovered-account.yaml)
+#
+# Preconditions: modular-drawer-pick.yaml has already searched + selected the asset, so the
+# inline "add a new / existing account" entry is on screen.
+appId: ${APP_ID}
+---
+# Inline entry point that starts Speculos-backed discovery for a brand-new account.
+- tapOn:
+    id: "add-new-account-button"
+# Reuse the shared discovery step (wait for discovery -> confirm -> close). ACCOUNT_NAME is
+# passed through from the parent flow (e.g. "Ethereum 1").
+- runFlow:
+    file: add-discovered-account.yaml
+    env:
+      ACCOUNT_NAME: "${ACCOUNT_NAME}"
+# Earn flow started: for ETH the app redirects into the earn deposit WebView (the Detox
+# `verifyEarnFlowStarted("ETH")` waits for a URL containing "/deposit"). Maestro cannot assert a
+# webview URL, so we wait for a text hint rendered on the deposit step. EARN_DEPOSIT_HINT is
+# supplied by run-earn.sh; confirm the exact on-device text once and update it there. A screenshot
+# is captured regardless, for triage.
+- extendedWaitUntil:
+    visible:
+      text: "${EARN_DEPOSIT_HINT}"
+    timeout: 120000
+- takeScreenshot: artifacts/earn-inline-add-account-eth

@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+#
+# Orchestrates the Maestro Earn V2 inline add-account POC (port of the Detox
+# specs/earn/earnInlineAddAccount.spec.ts):
+#   1. preflight the prerequisites (fail fast with guidance)
+#   2. start the backend harness (bridge [+ Speculos]) with Earn V2 (Wallet 4.0) flags
+#   3. run the Maestro flow (which launches the app pointed at the bridge)
+#   4. tear the backend down on exit
+#
+# Usage:
+#   bash maestro/run-earn.sh                  # full run (Speculos-backed)
+#   MAESTRO_FULL=0 bash maestro/run-earn.sh   # seed-only smoke test (no Speculos)
+#   bash maestro/run-earn.sh -d <udid>        # extra args forwarded to `maestro test`
+#
+# NOTE: ASCII only on purpose -- fancy glyphs broke variable parsing in some shells.
+set -euo pipefail
+
+# Run from the e2e/mobile package dir so userdata/ + Speculos + jest config resolve.
+cd "$(dirname "$0")/.."
+
+FULL="${MAESTRO_FULL:-1}"
+export MAESTRO_FULL="$FULL"
+# Select the Earn V2 backend path in maestro/harness/main.ts (Wallet 4.0 + ptxEarnUi v2 flags).
+export MAESTRO_FLOW="earn"
+export MAESTRO_BRIDGE_PORT="${MAESTRO_BRIDGE_PORT:-8099}"
+export MOCK="${MOCK:-0}"
+export SPECULOS_DEVICE="${SPECULOS_DEVICE:-nanoX}"
+export SPECULOS_IMAGE_TAG="${SPECULOS_IMAGE_TAG:-ghcr.io/ledgerhq/speculos:latest}"
+# Earn V2 renders inside the Wallet 4.0 navigator (the Detox EARN_V2_FLAGS force lwmWallet40 with
+# mainNavigation:true), so — unlike the classic add-account POC — Wallet 4.0 MUST be enabled.
+export E2E_ENABLE_WALLET40="${E2E_ENABLE_WALLET40:-1}"
+# Speculos backend: local Docker (default) needs Docker + SEED; REMOTE_SPECULOS=true uses remote
+# Speculinho (needs SPECULINHO_URL) — the iOS CI macOS runners have no Docker, so they use remote.
+export REMOTE_SPECULOS="${REMOTE_SPECULOS:-false}"
+IS_REMOTE=0
+[ "$REMOTE_SPECULOS" = "true" ] && IS_REMOTE=1
+
+# --- Java (Maestro needs 17+; fall back to Android Studio's bundled JDK) ---
+# NB: macOS ships a /usr/bin/java stub that exists but has no runtime, so test
+# `java -version` actually working rather than `command -v java`.
+if ! java -version >/dev/null 2>&1; then
+  JBR="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+  [ -d "$JBR" ] && export JAVA_HOME="$JBR" && export PATH="$JAVA_HOME/bin:$PATH"
+fi
+java -version >/dev/null 2>&1 || { echo "ERROR: Java 17+ not found (Maestro needs it). Install a JDK / set JAVA_HOME."; exit 1; }
+command -v maestro >/dev/null 2>&1 || { echo "ERROR: maestro not found. Install: brew install maestro"; exit 1; }
+
+# --- device + app preflight (platform-aware: iOS sim / Android emulator; see _platform.sh) ---
+source "maestro/_platform.sh"
+platform_preflight_device
+platform_install_app
+if [ "$FULL" != "0" ]; then
+  if [ "$IS_REMOTE" = "1" ]; then
+    [ -n "${SPECULINHO_URL:-}" ] || { echo "ERROR: REMOTE_SPECULOS=true but SPECULINHO_URL is not set."; exit 1; }
+    echo ">> using REMOTE Speculos (Speculinho): $SPECULINHO_URL"
+  elif ! docker info >/dev/null 2>&1; then
+    echo "ERROR: Docker isn't running (needed for local Speculos). Or use REMOTE_SPECULOS=true."
+    echo "  Start Docker (+ docker pull $SPECULOS_IMAGE_TAG), or run seed-only:  MAESTRO_FULL=0 $0"
+    exit 1
+  fi
+  [ -n "${SEED:-}" ] || { echo "ERROR: SEED is not set (Speculos needs the test mnemonic to derive addresses)."; exit 1; }
+fi
+
+# Seed-only mode can't complete discovery (no device) -> run the smoke flow that
+# stops after navigation. Full mode runs the complete Earn inline add-account flow.
+FLOW="maestro/flows/earn-inline-add-account.yaml"
+[ "$FULL" = "0" ] && FLOW="maestro/flows/smoke-launch.yaml"
+
+# Snapshot Speculos containers that already existed, so on exit we only remove the
+# ones THIS run started (don't kill a Speculos you may be running elsewhere).
+SPECULOS_FILTER="ancestor=$SPECULOS_IMAGE_TAG"
+PRE_SPECULOS=""
+[ "$IS_REMOTE" = "0" ] && PRE_SPECULOS="$(docker ps -q --filter "$SPECULOS_FILTER" 2>/dev/null | tr '\n' ' ' || true)"
+
+cleanup() {
+  echo ">> stopping backend + Speculos..."
+  # Kill the harness tree FIRST so it can't be mid-managing Speculos while we remove
+  # containers (otherwise it races with the harness's own async cleanup).
+  if [ -n "${HARNESS_PID:-}" ]; then
+    pkill -P "$HARNESS_PID" 2>/dev/null || true
+    kill "$HARNESS_PID" 2>/dev/null || true
+  fi
+  pkill -f "$HARNESS_PKILL_PATTERN" 2>/dev/null || true
+  [ -n "${HARNESS_PID:-}" ] && wait "$HARNESS_PID" 2>/dev/null || true
+  # Now remove (synchronously) the local Speculos containers started during this run (remote
+  # Speculinho pods are released by the operator's TTL, not here).
+  if [ "$IS_REMOTE" = "0" ]; then
+    for c in $(docker ps -q --filter "$SPECULOS_FILTER" 2>/dev/null || true); do
+      case " $PRE_SPECULOS " in
+        *" $c "*) : ;;                                  # pre-existing -> leave it
+        *) echo ">> removing Speculos container $c"; docker rm -f "$c" >/dev/null 2>&1 || true ;;
+      esac
+    done
+  fi
+}
+trap cleanup EXIT
+
+echo ">> starting backend harness (flow=earn, full=$FULL, port $MAESTRO_BRIDGE_PORT) via ts-node..."
+HARNESS_LOG="artifacts/harness-earn.log"
+start_harness "$HARNESS_LOG"
+
+# Wait for the bridge port to open, then launch. In full mode the harness's Speculos
+# registration polls the app (getEnvs), so the app MUST be able to connect during init;
+# launch as soon as the port is open. The app boots to onboarding and switches to the
+# portfolio once the seed (loadConfig) is applied (~1-2 min while Speculos boots).
+echo ">> waiting for bridge on port $MAESTRO_BRIDGE_PORT ..."
+for _ in $(seq 1 "${BACKEND_WAIT:-120}"); do
+  nc -z localhost "$MAESTRO_BRIDGE_PORT" 2>/dev/null && break
+  sleep 1
+done
+
+platform_reverse_host_ports   # Android: adb reverse Metro + bridge (no-op on iOS)
+
+run_maestro_flow "$FLOW" "$@"

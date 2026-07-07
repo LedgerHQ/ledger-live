@@ -1,0 +1,44 @@
+# E2E: Earn V2 inline add-account (Maestro port of the Detox
+# specs/earn/earnInlineAddAccount.spec.ts -> runInlineAddAccountTest(Account.ETH_1)).
+#
+# Like add-account-eth.yaml, this test case just composes reusable subflows in order. The Earn
+# dashboard is a remote WebView (the harness enables Wallet 4.0 + ptxEarnUi v2), so its two
+# webview touchpoints are matched by TEXT, not web data-testid (see earn-open-add-asset.yaml):
+#   * EARN_CTA_TEXT      — the ice-cold-start "earn" CTA label on the empty Earn dashboard.
+#   * EARN_DEPOSIT_HINT  — text visible on the ETH deposit step the flow lands on afterwards
+#                          (Detox asserts the webview URL contains "/deposit"; Maestro can't read
+#                          the URL, so it matches on-screen text instead).
+# >>> Both TEXT values are best-effort placeholders: confirm the exact on-device labels once and
+# >>> update them here. The modular drawer + add-account steps below are native and reuse the same
+# >>> proven subflows as add-account-eth.yaml.
+appId: ${APP_ID}
+tags:
+  - earn
+  - addAccount
+  - eth
+---
+- runFlow: ../subflows/launch.yaml
+# Earn V2 forces the Wallet 4.0 navigator, so the readiness signal is the W40 "Earn" bottom tab
+# (not the classic add-account CTA that add-account-eth.yaml waits on).
+- extendedWaitUntil:
+    visible:
+      id: "w40-tab-earn"
+    timeout: 180000
+- runFlow: ../subflows/dismiss-analytics-prompt.yaml
+- runFlow:
+    file: ../subflows/earn-open-add-asset.yaml
+    env:
+      EARN_CTA_TEXT: "Earn"
+- runFlow:
+    file: ../subflows/modular-drawer-pick.yaml
+    env:
+      SEARCH: "ETH"
+      ASSET_ID: "asset-item-ETH"
+      NETWORK_ID: "network-item-[Ee]thereum"
+      NETWORK_REQUIRED: "false"
+      PICK_ACCOUNT: "false"
+- runFlow:
+    file: ../subflows/earn-inline-add-account.yaml
+    env:
+      ACCOUNT_NAME: "Ethereum 1"
+      EARN_DEPOSIT_HINT: "Amount"

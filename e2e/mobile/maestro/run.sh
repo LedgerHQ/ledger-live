@@ -33,6 +33,7 @@ rm -rf "$MAESTRO_DEBUG_ROOT" "$MAESTRO_ALLURE_RESULTS" "$MAESTRO_ALLURE_REPORT"
 
 # Test registry: "name|script|description". The name is what you filter on.
 TESTS="add-account|maestro/run-eth.sh|native ETH add-account (classic UI)
+earn|maestro/run-earn.sh|Earn V2 inline add-account (Wallet 4.0, ETH)
 send-doge|maestro/run-send-doge.sh|native send DOGE (on-device sign)
 swap|maestro/run-swap.sh|swap across all currency pairs (one harness cycle each)"
 

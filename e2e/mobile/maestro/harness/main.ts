@@ -5,7 +5,7 @@
  * remap (tsconfig.json) resolve and ./setup-globals installs the globals the reused infra reads.
  *
  * Env:
- *   MAESTRO_FLOW  "add-account" (default) | "swap" | "send-doge".
+ *   MAESTRO_FLOW  "add-account" (default) | "swap" | "send-doge" | "earn".
  *   MAESTRO_BRIDGE_PORT  default 8099 — MUST match `wsPort` in launch.yaml.
  *   MAESTRO_FULL  (add-account only) "1" (default) = Speculos(Ethereum) discovery; "0" = seed-only.
  *   SWAP_AMOUNT   (swap only) ETH amount to swap; default "0.01".
@@ -113,6 +113,8 @@ async function main(): Promise<void> {
     await setupSwap();
   } else if (FLOW === "send-doge") {
     await setupSendDoge();
+  } else if (FLOW === "earn") {
+    await setupEarn();
   } else if (FULL) {
     // Faithful path — exactly what app.init({ userdata, speculosApp }) does.
     // Imported lazily so seed-only mode never loads the Speculos/allure graph.
@@ -122,7 +124,7 @@ async function main(): Promise<void> {
     setupEnvironment();
     const { getUserdataPath } = await import("../../page/index");
     const { InitializationManager } = await import("../../utils/initUtil");
-    const { Currency } = await import("@ledgerhq/live-common/e2e/enum/Currency");
+    const { Currency } = await import("@ledgerhq/live-e2e-shared/enum/Currency");
     const { randomUUID } = await import("crypto");
     const fs = await import("fs");
 
@@ -178,6 +180,52 @@ main().catch(err => {
  *     for the Speculos review screen, so it signs the moment Maestro taps "execute".
  * Imported lazily so add-account modes never load the swap/Speculos/allure graph.
  */
+/**
+ * Earn V2 inline add-account backend — mirrors the Detox `runInlineAddAccountTest`
+ * (specs/earn/earnInlineAddAccount.spec.ts): Wallet 4.0 + `ptxEarnUi` v2, Speculos(Ethereum)
+ * for account discovery. Maestro drives the UI: Earn tab -> ice-cold-start CTA -> native modular
+ * asset drawer -> inline "add a new/existing account" -> discovery. No balances are seeded — the
+ * ice-cold-start entry point requires an account-less state, and discovery adds the first ETH
+ * account live via Speculos. Imported lazily so other modes don't load the Speculos/allure graph.
+ */
+async function setupEarn(): Promise<void> {
+  const { setupEnvironment } = await import("../../helpers/commonHelpers");
+  setupEnvironment();
+  const { getUserdataPath } = await import("../../page/index");
+  const { InitializationManager } = await import("../../utils/initUtil");
+  const { Currency } = await import("@ledgerhq/live-e2e-shared/enum/Currency");
+  const { WALLET_40_FEATURE_FLAGS } = await import("../../utils/constants");
+  const { randomUUID } = await import("crypto");
+  const fsm = await import("fs");
+
+  const tmp = `temp-userdata-${randomUUID()}`;
+  const tmpPath = getUserdataPath(tmp);
+  fsm.copyFileSync(getUserdataPath(USERDATA), tmpPath);
+  try {
+    await InitializationManager.initialize(
+      {
+        userdata: USERDATA,
+        speculosApp: Currency.ETH.speculosApp,
+        // EARN_V2_FLAGS from the Detox spec: Wallet 4.0 navigator (so the "Earn" tab renders) +
+        // ptxEarnUi v2. Keep the modular-drawer defaults so the native add-account drawer the
+        // Maestro flow drives is enabled, and silence the analytics prompt like the other flows.
+        featureFlags: {
+          ...WALLET_40_FEATURE_FLAGS,
+          ptxEarnUi: { enabled: true, params: { value: "v2" } },
+          llmModularDrawer: SEED_FLAGS.llmModularDrawer,
+          ...NO_ANALYTICS_PROMPT,
+        },
+      },
+      tmpPath,
+      tmp,
+    );
+  } finally {
+    if (fsm.existsSync(tmpPath)) fsm.unlinkSync(tmpPath);
+  }
+  // eslint-disable-next-line no-console
+  console.log("[maestro-harness] Speculos(Ethereum) up + Earn V2 (Wallet 4.0) flags — ready for Maestro.");
+}
+
 async function setupSwap(): Promise<void> {
   const { setupEnvironment } = await import("../../helpers/commonHelpers");
   setupEnvironment();
@@ -186,12 +234,12 @@ async function setupSwap(): Promise<void> {
   const { InitializationManager } = await import("../../utils/initUtil");
   const { setExchangeDependencies } = await import("../../utils/speculosUtils");
   const { swapSetup } = await import("../../bridge/server");
-  const { Swap } = await import("@ledgerhq/live-common/e2e/models/Swap");
-  const { Account, TokenAccount } = await import("@ledgerhq/live-common/e2e/enum/Account");
-  const { AppInfos } = await import("@ledgerhq/live-common/e2e/enum/AppInfos");
-  const { Fee } = await import("@ledgerhq/live-common/e2e/enum/Fee");
-  const { liveDataWithAddressCommand } = await import("@ledgerhq/live-common/e2e/cliCommandsUtils");
-  const { verifyAmountsAndAcceptSwap } = await import("@ledgerhq/live-common/e2e/speculos");
+  const { Swap } = await import("@ledgerhq/live-e2e-shared/models/Swap");
+  const { Account, TokenAccount } = await import("@ledgerhq/live-e2e-shared/enum/Account");
+  const { AppInfos } = await import("@ledgerhq/live-e2e-shared/enum/AppInfos");
+  const { Fee } = await import("@ledgerhq/live-e2e-shared/enum/Fee");
+  const { liveDataWithAddressCommand } = await import("@ledgerhq/live-e2e-shared/cliCommandsUtils");
+  const { verifyAmountsAndAcceptSwap } = await import("@ledgerhq/live-e2e-shared/speculos");
   const { randomUUID } = await import("crypto");
 
   const amount = process.env.SWAP_AMOUNT ?? "0.01";
@@ -398,7 +446,7 @@ async function driveSwapExecute(): Promise<void> {
     return;
   }
   const { webviewDriver } = await import("../../bridge/server");
-  const { SwapProvider } = await import("@ledgerhq/live-common/e2e/enum/Provider");
+  const { SwapProvider } = await import("@ledgerhq/live-e2e-shared/enum/Provider");
   const DRIVER = process.env.PRODUCTION === "true" ? "swap-live-app-aws" : "swap-live-app-stg-aws";
 
   // Retry the bridge op while the WebView isn't registered yet (Maestro hasn't opened swap).
@@ -520,13 +568,13 @@ async function setupSendDoge(): Promise<void> {
 
   const { getUserdataPath } = await import("../../page/index");
   const { InitializationManager } = await import("../../utils/initUtil");
-  const { Account } = await import("@ledgerhq/live-common/e2e/enum/Account");
-  const { Fee } = await import("@ledgerhq/live-common/e2e/enum/Fee");
-  const { Transaction } = await import("@ledgerhq/live-common/e2e/models/Transaction");
+  const { Account } = await import("@ledgerhq/live-e2e-shared/enum/Account");
+  const { Fee } = await import("@ledgerhq/live-e2e-shared/enum/Fee");
+  const { Transaction } = await import("@ledgerhq/live-e2e-shared/models/Transaction");
   const { liveDataWithAddressCommand, getAccountAddress } = await import(
-    "@ledgerhq/live-common/e2e/cliCommandsUtils"
+    "@ledgerhq/live-e2e-shared/cliCommandsUtils"
   );
-  const { signSendTransaction } = await import("@ledgerhq/live-common/e2e/speculos");
+  const { signSendTransaction } = await import("@ledgerhq/live-e2e-shared/speculos");
   const { randomUUID } = await import("crypto");
 
   const amount = process.env.SEND_AMOUNT ?? "0.01";
@@ -677,7 +725,7 @@ async function dumpSpeculinhoLogsIfRemote(failureMsg: string): Promise<void> {
     }
     const runId = new URL(addr).hostname.split(".")[0];
     const { fetchSpeculinhoLogs, fetchSpeculinhoStatus } = await import(
-      "@ledgerhq/live-common/e2e/speculosCI"
+      "@ledgerhq/live-e2e-shared/speculosCI"
     );
     const status = await fetchSpeculinhoStatus(runId);
     const logs = await fetchSpeculinhoLogs(runId);
@@ -731,7 +779,7 @@ async function dumpAppLogs(): Promise<void> {
  */
 async function speculosEventsUrl(): Promise<string> {
   const { getEnv } = await import("@ledgerhq/live-env");
-  const { getSpeculosAddress } = await import("@ledgerhq/live-common/e2e/speculos");
+  const { getSpeculosAddress } = await import("@ledgerhq/live-e2e-shared/speculos");
   const port = getEnv("SPECULOS_API_PORT");
   return `${getSpeculosAddress()}:${port}/events?stream=false&currentscreenonly=true`;
 }

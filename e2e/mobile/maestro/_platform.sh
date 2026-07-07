@@ -113,7 +113,7 @@ platform_reverse_host_ports() {
 # --- Backend harness (ts-node daemon) -------------------------------------------------------------
 # The harness reuses the e2e/mobile bridge + Speculos seeding. It runs as a plain ts-node script (NOT
 # a jest test): `ts-node --swc` transpiles via @swc/core, and `tsconfig-paths/register` resolves the
-# package's `~/*` / `@shared/*` / `@ledgerhq/live-common/e2e/*` aliases (+ the detox->stub remap) from
+# package's `~/*` / `@shared/*` / `@ledgerhq/live-e2e-shared/*` aliases (+ the detox->stub remap) from
 # maestro/harness/tsconfig.json. Mirrors the existing `e2e:loadConfig` ts-node bridge script.
 HARNESS_ENTRY="maestro/harness/main.ts"
 HARNESS_PROJECT="maestro/harness/tsconfig.json"
@@ -124,6 +124,9 @@ HARNESS_PKILL_PATTERN="ts-node .*${HARNESS_ENTRY}"
 # Sets HARNESS_PID in the caller's scope. $1 = log file path.
 start_harness() {
   local logfile="$1"
+  # The log lives under artifacts/, which doesn't exist on a clean checkout — create it so the
+  # redirect below can't fail with "No such file or directory".
+  mkdir -p "$(dirname "$logfile")"
   export TS_NODE_PROJECT="$HARNESS_PROJECT"
   if [ "${VERBOSE:-0}" = "1" ]; then
     pnpm exec ts-node --swc --require tsconfig-paths/register "$HARNESS_ENTRY" &
