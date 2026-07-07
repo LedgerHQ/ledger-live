@@ -77,6 +77,13 @@ jest.mock("~/components/Loading", () => ({
   Loading: () => <View testID="loading" />,
 }));
 
+// TrackScreen uses the real useIsFocused(), which subscribes to navigation focus
+// events outside of a Screen context here — stub it out so the test doesn't depend
+// on that subscription's behavior.
+jest.mock("~/analytics", () => ({
+  TrackScreen: () => null,
+}));
+
 jest.mock("~/components/wrappedUi/Button", () => {
   return ({
     children,
@@ -114,7 +121,7 @@ const ACCOUNT_2 = { id: "account2", freshAddress: "addr2" } as Account;
 
 const mockParentNavigate = jest.fn();
 const mockNavigation = {
-  navigate: jest.fn(),
+  replace: jest.fn(),
   getParent: jest.fn(() => ({ navigate: mockParentNavigate })),
 };
 
@@ -264,7 +271,7 @@ describe("ViewKeyApproveScreen", () => {
       });
       fireEvent.press(screen.getByTestId("button-AleoAddAccountViewKeyApproveCancelAll"));
       capturedOnResult!();
-      expect(mockNavigation.navigate).not.toHaveBeenCalled();
+      expect(mockNavigation.replace).not.toHaveBeenCalled();
       expect(mockParentNavigate).not.toHaveBeenCalled();
       expect(mockDispatch).not.toHaveBeenCalled();
     });
@@ -278,12 +285,16 @@ describe("ViewKeyApproveScreen", () => {
       expect(mockParentNavigate).not.toHaveBeenCalled();
     });
 
-    it("calls onCloseNavigation when buildAccountsWithViewKeys returns empty", () => {
-      const mockOnClose = jest.fn();
+    it("navigates to AleoNoAccountsAdded when buildAccountsWithViewKeys returns empty", () => {
       mockBuildAccountsWithViewKeys.mockReturnValue([]);
-      renderScreen({ payload: {} }, { onCloseNavigation: mockOnClose });
+      renderScreen({ payload: {} });
       capturedOnResult!();
-      expect(mockOnClose).toHaveBeenCalledTimes(1);
+      const { accountsToAdd: _accountsToAdd, ...expectedParams } = mockRoute.params;
+      expect(mockNavigation.replace).toHaveBeenCalledTimes(1);
+      expect(mockNavigation.replace).toHaveBeenCalledWith(
+        ScreenName.AleoNoAccountsAdded,
+        expectedParams,
+      );
       expect(mockDispatch).not.toHaveBeenCalled();
     });
 
@@ -291,7 +302,9 @@ describe("ViewKeyApproveScreen", () => {
       mockBuildAccountsWithViewKeys.mockReturnValue([ACCOUNT_1]);
       renderScreen({ payload: { account1: "vk1" } });
       capturedOnResult!();
+      expect(mockDispatch).toHaveBeenCalledTimes(1);
       expect(mockDispatch).toHaveBeenCalledWith({ type: "ADD_ACCOUNTS" });
+      expect(mockParentNavigate).toHaveBeenCalledTimes(1);
       expect(mockParentNavigate).toHaveBeenCalledWith(
         ScreenName.AddAccountsSuccess,
         expect.objectContaining({

@@ -10069,6 +10069,10 @@
         "cancelAllBtn_one": "Cancel",
         "cancelAllBtn_other": "Cancel all"
       },
+      "stepNoAccountsAdded": {
+        "title": "No {{currency}} accounts were added",
+        "description": "You haven't shared view keys for any of the selected accounts. View keys are required to display your private balance in Ledger Wallet."
+      },
       "stepScanAccounts": {
         "cta": {
           "shareViewKeys": "Share view keys"
