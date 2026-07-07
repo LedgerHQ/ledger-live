@@ -138,6 +138,11 @@ function MethodSelectionComponent({ navigation, route }: Props) {
 
   useEffect(() => {
     if (!transactionHasBeenValidated) return;
+    // Only surface the "already validated" screen while the user is still on the
+    // method selection screen (mirrors desktop where the banner only gates the
+    // form). Once the user has moved forward to sign/broadcast, the broadcast
+    // handler owns the error, so we must not navigate over it.
+    if (!navigation.isFocused()) return;
     navigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
       error: new TransactionHasBeenValidatedError(),
     });

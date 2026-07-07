@@ -88,7 +88,7 @@ describe("EVM MethodSelection", () => {
 
     render(
       <MethodSelection
-        navigation={{ navigate } as never}
+        navigation={{ navigate, isFocused: () => true } as never}
         route={{ params: { operation, account, parentAccount } } as never}
       />,
     );
