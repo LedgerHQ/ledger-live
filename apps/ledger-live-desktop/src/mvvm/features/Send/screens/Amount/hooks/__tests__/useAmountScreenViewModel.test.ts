@@ -55,11 +55,17 @@ jest.mock("../useAmountInput", () => ({
     currencyText: "BTC",
     currencyPosition: "right",
     secondaryValue: "$0",
+    fiatAmountValue: 0,
+    inputMode: "crypto",
     onAmountChange: jest.fn(),
     onToggleInputMode: jest.fn(),
     cancelPendingUpdates: jest.fn(),
     updateBothInputs: jest.fn(),
   }),
+}));
+
+jest.mock("../useAmountUsd", () => ({
+  useAmountUsd: jest.fn(() => 0),
 }));
 
 jest.mock("../useQuickActions", () => ({

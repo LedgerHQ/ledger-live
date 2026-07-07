@@ -12,6 +12,7 @@ import { useSendFlowAmountReviewCore } from "@ledgerhq/live-common/flows/send/ho
 import type { AmountScreenViewModel } from "../types";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useAmountInput } from "./useAmountInput";
+import { useAmountUsd } from "./useAmountUsd";
 import { useQuickActions } from "./useQuickActions";
 import { useInitialTransactionPreparation } from "../../../hooks/useInitialTransactionPreparation";
 import { useAmountScreenMessage } from "./useAmountScreenMessage";
@@ -79,6 +80,8 @@ export function useAmountScreenViewModel({
     status,
     onUpdateTransaction: updateTransactionWithPatch,
   });
+
+  const amountUsd = useAmountUsd(account, transaction.amount, amountInput.fiatAmountValue);
 
   useInitialTransactionPreparation({
     shouldPrepare,
@@ -192,6 +195,8 @@ export function useAmountScreenViewModel({
     onToggleInputMode: amountInput.onToggleInputMode,
     toggleLabel: t("newSendFlow.switchInputMode"),
     secondaryValue: amountInput.secondaryValue,
+    amountUsd,
+    inputMode: amountInput.inputMode,
     quickActions: trackedQuickActions,
     showQuickActions: quickActionsAvailableBalance.gt(0),
     amountMessage,

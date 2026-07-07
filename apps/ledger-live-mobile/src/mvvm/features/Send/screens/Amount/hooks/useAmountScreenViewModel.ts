@@ -10,8 +10,11 @@ import type {
 import { useSendFlowAmountReviewCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowAmountReviewCore";
 import type { AmountScreenMessage, AmountScreenViewModel } from "../types";
 import { useAmountInputController } from "./useAmountInputController";
+import { useAmountUsd } from "./useAmountUsd";
 import { useQuickActions } from "./useQuickActions";
 import { useNetworkFees } from "../../../hooks/useNetworkFees";
+import { useAnalytics } from "~/analytics";
+import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 import {
   getAmountScreenRawMessage,
   isAmountInputDisabledByRecipientError,
@@ -140,6 +143,25 @@ export function useAmountScreenViewModel({
 
   const reviewDisabled = coreReviewDisabled || amountInput.isTyping;
 
+  const { track } = useAnalytics();
+  const trackingProperties = useMemo(
+    () => getSendFlowTrackingProperties(account, parentAccount),
+    [account, parentAccount],
+  );
+
+  const amountUsd = useAmountUsd(account, transaction.amount, amountInput.fiatAmountValue);
+
+  const handleReview = useCallback(() => {
+    track("button_clicked", {
+      ...trackingProperties,
+      button: "review",
+      page: "step amount",
+      amount: amountUsd,
+      input_mode: amountInput.inputMode,
+    });
+    onReview();
+  }, [onReview, amountUsd, amountInput.inputMode, track, trackingProperties]);
+
   return useMemo(
     () => ({
       ready: true,
@@ -164,7 +186,7 @@ export function useAmountScreenViewModel({
         showIcon: coreReviewShowIcon,
         disabled: reviewDisabled,
         loading: amountComputationPending,
-        onPress: hasInsufficientFundsError ? onGetFunds : onReview,
+        onPress: hasInsufficientFundsError ? onGetFunds : handleReview,
       },
       message: amountMessage,
     }),
@@ -180,7 +202,7 @@ export function useAmountScreenViewModel({
       reviewDisabled,
       amountComputationPending,
       onGetFunds,
-      onReview,
+      handleReview,
       amountMessage,
     ],
   );

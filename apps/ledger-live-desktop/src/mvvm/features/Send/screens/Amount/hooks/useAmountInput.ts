@@ -245,6 +245,7 @@ export function useAmountInput({
 
   const activeInputUnit = inputMode === "fiat" ? fiatUnit : accountUnit;
   const amountInputMaxDecimalLength = Math.max(0, activeInputUnit.magnitude);
+  const fiatAmountValue = fiatAmount.div(10 ** fiatUnit.magnitude).toNumber();
 
   return {
     amountValue,
@@ -252,6 +253,7 @@ export function useAmountInput({
     currencyPosition,
     secondaryValue,
     inputMode,
+    fiatAmountValue,
     amountInputMaxDecimalLength,
     onAmountChange: handleAmountChange,
     onToggleInputMode: handleToggleMode,

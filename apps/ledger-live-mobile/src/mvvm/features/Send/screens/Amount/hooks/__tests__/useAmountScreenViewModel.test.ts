@@ -18,6 +18,23 @@ jest.mock("../useAmountInputController", () => ({
   useAmountInputController: jest.fn(),
 }));
 
+jest.mock("../useAmountUsd", () => ({
+  useAmountUsd: jest.fn(() => 500),
+}));
+
+const mockTrack = jest.fn();
+jest.mock("~/analytics", () => ({
+  useAnalytics: () => ({ track: mockTrack }),
+}));
+
+jest.mock("@ledgerhq/ledger-wallet-framework/tracking/send", () => ({
+  getSendFlowTrackingProperties: () => ({
+    flow: "send",
+    currency: "BTC",
+    blockchain: "bitcoin",
+  }),
+}));
+
 jest.mock("../useQuickActions", () => ({
   useQuickActions: jest.fn(() => []),
 }));
@@ -85,6 +102,8 @@ const baseAmountInputController = {
   maxDecimalLength: 2,
   isDisabled: false,
   isTyping: false,
+  fiatAmountValue: 100,
+  inputMode: "fiat" as const,
   onChangeText: jest.fn(),
   onToggleMode: jest.fn(),
   updateBothInputs: jest.fn(),
@@ -211,5 +230,42 @@ describe("useAmountScreenViewModel", () => {
       type: "error",
       error: recipientError,
     });
+  });
+
+  it("tracks the review click with the USD amount and input mode", () => {
+    const onReview = jest.fn();
+
+    const { result } = renderHook(() =>
+      useAmountScreenViewModel({
+        account: mockAccount,
+        parentAccount: null,
+        transaction: baseTransaction,
+        status: createBaseStatus(),
+        bridgePending: false,
+        bridgeError: null,
+        uiConfig: { hasFeePresets: false } as never,
+        transactionActions: { updateTransaction: jest.fn() } as never,
+        onReview,
+        onGetFunds: jest.fn(),
+        onSelectCoinControl: jest.fn(),
+      }),
+    );
+
+    if (!result.current.ready) {
+      throw new Error("view model should be ready");
+    }
+
+    result.current.reviewButton.onPress();
+
+    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+      flow: "send",
+      currency: "BTC",
+      blockchain: "bitcoin",
+      button: "review",
+      page: "step amount",
+      amount: 500,
+      input_mode: "fiat",
+    });
+    expect(onReview).toHaveBeenCalled();
   });
 });

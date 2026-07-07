@@ -81,4 +81,6 @@ export type AmountScreenViewModel = Omit<
   Readonly<{
     showFeePresets: boolean;
     onOpenCustomFees: () => void;
+    amountUsd: number;
+    inputMode: "fiat" | "crypto";
   }>;
