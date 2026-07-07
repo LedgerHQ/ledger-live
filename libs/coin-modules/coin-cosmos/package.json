@@ -51,7 +51,6 @@
     "@keplr-wallet/proto-types": "^0.12.300",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
@@ -64,9 +63,7 @@
     "bech32": "^1.1.3",
     "bignumber.js": "^9.1.2",
     "cosmjs-types": "0.2.1",
-    "expect": "catalog:",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
     "prando": "^6.0.1",
     "rxjs": "catalog:",
     "semver": "catalog:"

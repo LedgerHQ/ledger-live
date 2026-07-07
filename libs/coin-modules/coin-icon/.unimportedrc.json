@@ -6,8 +6,9 @@
     "src/errors.ts",
     "src/hw-getAddress.ts",
     "src/serialization.ts",
-    "src/specs.ts",
-    "src/transaction.ts"
+    "src/transaction.ts",
+    "src/constants.ts",
+    "src/logic.ts"
   ],
   "ignoreUnimported": [
     "src/api/api-type.ts",
@@ -34,7 +35,8 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"],
+    "jest-util"
+  ],
   "ignoreUnused": [
     "@ledgerhq/live-env",
     "@ledgerhq/live-network",

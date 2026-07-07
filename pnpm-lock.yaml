@@ -943,12 +943,12 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
-      '@ledgerhq/wallet-pnl':
-        specifier: workspace:^
-        version: link:../../libs/wallet-pnl
       '@ledgerhq/wallet-analytics':
         specifier: workspace:^
         version: link:../../libs/wallet-analytics
+      '@ledgerhq/wallet-pnl':
+        specifier: workspace:^
+        version: link:../../libs/wallet-pnl
       '@ledgerhq/zcash-utils':
         specifier: 'catalog:'
         version: 0.3.1
@@ -1638,12 +1638,12 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
-      '@ledgerhq/wallet-pnl':
-        specifier: workspace:^
-        version: link:../../libs/wallet-pnl
       '@ledgerhq/wallet-analytics':
         specifier: workspace:^
         version: link:../../libs/wallet-analytics
+      '@ledgerhq/wallet-pnl':
+        specifier: workspace:^
+        version: link:../../libs/wallet-pnl
       '@react-native-async-storage/async-storage':
         specifier: 2.1.2
         version: 2.1.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))
@@ -3604,7 +3604,7 @@ importers:
         version: 0.1.19
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.45(@ledgerhq/lumen-design-core@0.1.19)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.45(@ledgerhq/lumen-design-core@0.1.19)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.48(bdae926a59af589d19d78b5b880d45b3)
@@ -4096,9 +4096,6 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -4126,9 +4123,6 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -4214,9 +4208,6 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       got:
         specifier: 11.8.5
         version: 11.8.5
@@ -4284,9 +4275,6 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -4350,9 +4338,6 @@ importers:
       create-hmac:
         specifier: ^1.1.7
         version: 1.1.7
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -4541,9 +4526,6 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -4580,9 +4562,6 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -4632,9 +4611,6 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -4696,9 +4672,6 @@ importers:
       axios:
         specifier: 'catalog:'
         version: 1.13.5
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
@@ -4932,9 +4905,6 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -4971,15 +4941,9 @@ importers:
       cosmjs-types:
         specifier: 0.2.1
         version: 0.2.1
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       prando:
         specifier: ^6.0.1
         version: 6.0.1
@@ -5253,9 +5217,6 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -5311,9 +5272,6 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -5341,15 +5299,9 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       icon-sdk-js:
         specifier: 1.5.2
         version: 1.5.2
-      invariant:
-        specifier: ^2.2.2
-        version: 2.2.4
       prando:
         specifier: ^6.0.1
         version: 6.0.1
@@ -5393,9 +5345,6 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -5414,9 +5363,6 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -5590,9 +5536,6 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -5617,9 +5560,6 @@ importers:
       bs58check:
         specifier: 'catalog:'
         version: 2.1.2
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -5848,9 +5788,6 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -5872,12 +5809,6 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
-      invariant:
-        specifier: ^2.2.2
-        version: 2.2.4
       near-api-js:
         specifier: ^3.0.2
         version: 3.0.2
@@ -5924,9 +5855,6 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -5969,15 +5897,9 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -6078,9 +6000,6 @@ importers:
       bs58:
         specifier: 'catalog:'
         version: 4.0.1
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -6154,9 +6073,6 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -6227,9 +6143,6 @@ importers:
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
@@ -6418,9 +6331,6 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -6454,12 +6364,6 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
-      invariant:
-        specifier: ^2.2.2
-        version: 2.2.4
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -6536,9 +6440,6 @@ importers:
       bs58check:
         specifier: 'catalog:'
         version: 2.1.2
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -8561,9 +8462,6 @@ importers:
       ethers:
         specifier: 6.15.0
         version: 6.15.0
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       fuse.js:
         specifier: ^6.6.2
         version: 6.6.2
@@ -8593,9 +8491,6 @@ importers:
         version: 2.0.6
       pako:
         specifier: ^2.0.4
-        version: 2.1.0
-      performance-now:
-        specifier: ^2.1.0
         version: 2.1.0
       prando:
         specifier: ^6.0.1
@@ -8733,9 +8628,6 @@ importers:
       jest-file-snapshot:
         specifier: 'catalog:'
         version: 0.7.0
-      mkdirp:
-        specifier: 1.0.4
-        version: 1.0.4
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@6.0.2)
@@ -12640,7 +12532,7 @@ importers:
         version: 9.1.2
       jest:
         specifier: 'catalog:'
-        version: 30.2.0
+        version: 30.2.0(@types/node@24.12.0)
       oxfmt:
         specifier: 'catalog:'
         version: 0.36.0
@@ -21916,7 +21808,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.1.4
       react-dom: 19.1.4
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -24191,7 +24083,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -45962,16 +45854,14 @@ snapshots:
     transitivePeerDependencies:
       - react-native
 
-  '@ledgerhq/lumen-ui-react@0.1.45(@ledgerhq/lumen-design-core@0.1.19)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)':
+  '@ledgerhq/lumen-ui-react@0.1.45(@ledgerhq/lumen-design-core@0.1.19)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)':
     dependencies:
       '@ledgerhq/lumen-design-core': 0.1.19
       '@ledgerhq/lumen-utils-shared': 0.1.7(react@19.1.4)
-      clsx: 2.1.1
       i18next: 23.10.1
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
       react-i18next: 14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-      tailwind-merge: 3.4.0
     transitivePeerDependencies:
       - react-native
 

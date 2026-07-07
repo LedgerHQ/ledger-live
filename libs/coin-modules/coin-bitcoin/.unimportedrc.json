@@ -29,7 +29,6 @@
     "src/mock.ts",
     "src/mockBtcSigner.ts",
     "src/serialization.ts",
-    "src/specs.ts",
     "src/transaction.ts",
     "src/tokens.ts"
   ],

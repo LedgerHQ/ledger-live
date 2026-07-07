@@ -5,15 +5,12 @@
     "src/errors.ts",
     "src/hw-getAddress.ts",
     "src/types.ts",
-    "src/synchronisation.ts",
-    "src/specs.ts"
+    "src/synchronisation.ts"
   ],
   "ignoreUnimported": [
     "src/transaction.ts",
     "src/deviceTransactionConfig.ts",
     "src/hw-signMessage.ts",
-    "src/specs.ts",
-    "src/speculos-deviceActions.ts",
     "src/test/bridge.dataset.ts",
     "src/supportedFeatures.ts"
   ],
