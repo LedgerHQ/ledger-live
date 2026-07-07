@@ -2038,6 +2038,9 @@ importers:
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
+      '@ledgerhq/live-e2e-shared':
+        specifier: workspace:^
+        version: link:../../libs/live-e2e-shared
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../../libs/speculos-transport
@@ -21904,7 +21907,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.1.4
       react-dom: 19.1.4
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
