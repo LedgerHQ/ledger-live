@@ -36,12 +36,7 @@ function AccountStatusLabel({
 }>) {
   const accountName = useAccountName(account);
   return (
-    <Text
-      typography="body2"
-      numberOfLines={1}
-      style={styles.accountLabel}
-      lx={{ color: "muted" }}
-    >
+    <Text typography="body2" numberOfLines={1} style={styles.accountLabel} lx={{ color: "muted" }}>
       {accountName || fallbackLabel}
     </Text>
   );
