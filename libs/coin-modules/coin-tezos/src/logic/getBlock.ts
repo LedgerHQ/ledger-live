@@ -89,11 +89,11 @@ function isGroupSucceeded(group: APITransactionType[]): boolean {
 
 /**
  * Produces one outgoing and one incoming `BlockOperation` for each transaction in the group
- * that has a balance impact.
+ * that should be represented in the block.
  *
- * A transaction has balance impact when it transfers XTZ (amount > 0) or
- * carries fees (bakerFee + storageFee + allocationFee > 0). Zero-amount,
- * zero-fee transactions are skipped — they don't affect any account's balance.
+ * Transactions are skipped only when both the transferred amount and the fees are zero.
+ * Fee-only transactions (amount === 0 but fees > 0) are kept so fee attribution and
+ * sender/target linkage match `listOperations`.
  *
  * Fees are intentionally excluded from amounts — they are reported separately in
  * `BlockTransaction.fees`.  In Tezos, the `amount` field on `APITransactionType`
@@ -104,7 +104,7 @@ function buildNativeOperations(group: APITransactionType[]): BlockOperation[] {
   const ops: BlockOperation[] = [];
   for (const tx of group) {
     const amount = BigInt(tx.amount ?? 0);
-    if (!amount && computeOpFees(tx) === 0n) continue;
+    if (amount === 0n && computeOpFees(tx) === 0n) continue;
 
     const fromAddr = tx.sender?.address;
     const toAddr = tx.target?.address;
