@@ -143,7 +143,7 @@ async function init() {
   setupListeners(store.dispatch);
   setupRecentAddressesStore(store);
   setupCryptoAssetsStore(store);
-  store.dispatch(currencyFiatApi.endpoints.getSupportedFiats.initiate());
+  dispatch(currencyFiatApi.endpoints.getSupportedFiats.initiate());
 
   // Feature flags: install the LiveConfig provider (serves non-feature `config_*` keys) and
   // point analytics at the Redux slice. The middleware (wired at store creation) drives the
