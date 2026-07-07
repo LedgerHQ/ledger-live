@@ -29,14 +29,6 @@ const tooLowAmountForQuoteSwaps = [
     errorDisplay: "banner" as const,
   },
 
-  // Enable test when "Sponsored" program is over
-
-  // {
-  //   swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "USE_MIN_AMOUNT"),
-  //   xrayTicket: "B2CQA-3241",
-  //   errorMessage: new RegExp(`\\d+(\\.\\d{1,10})? ETH needed for network fees\\.\\s*$`),
-  //   quotesVisible: true,
-  // },
   {
     swap: new Swap(TokenAccount.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "0.000001"),
     xrayTicket: "B2CQA-3242",
@@ -150,6 +142,15 @@ const swapNetworkFeesAboveAccountBalanceTestConfig = {
   ],
 };
 
+// The Buy-ETH CTA + banner for this scenario is currently unreachable because
+// ptxSponsoredTransactions covers this provider/chain pair (sponsored fees mean the account
+// never actually runs out of ETH for network fees). Enable once that coverage is rolled back.
+const swapEthNeededForNetworkFeesTestConfig = {
+  swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "USE_MIN_AMOUNT"),
+  errorMessage: new RegExp(`\\d+(\\.\\d{1,10})? ETH needed for network fees\\.\\s*$`),
+  xrayTicket: "B2CQA-3241",
+};
+
 test.describe(`Swap - Error message when network fees are above account balance (${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToDebit.currency.name} to ${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToCredit.currency.name})`, () => {
   setupEnv(true);
 
@@ -223,6 +224,31 @@ test.describe(`Swap - Error message when network fees are above account balance 
       await app.swap.checkFeeErrorMessage(
         swapNetworkFeesAboveAccountBalanceTestConfig.errorMessage,
       );
+    },
+  );
+
+  // Enable once ptxSponsoredTransactions no longer covers this provider/chain pair.
+  test.skip(
+    `Swap too low quote amounts from ${swapEthNeededForNetworkFeesTestConfig.swap.accountToDebit.currency.name} to ${swapEthNeededForNetworkFeesTestConfig.swap.accountToCredit.currency.name} - ETH needed for network fees`,
+    {
+      tag: swapNetworkFeesAboveAccountBalanceTestConfig.tags,
+      annotation: {
+        type: "TMS",
+        description: swapEthNeededForNetworkFeesTestConfig.xrayTicket,
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      const minAmount = await app.swap.getMinimumAmount(accountToDebit, accountToCredit);
+
+      await performSwapUntilQuoteSelectionStep(
+        app,
+        swapEthNeededForNetworkFeesTestConfig.swap,
+        minAmount,
+      );
+      await app.swap.checkQuotes();
+      await app.swap.selectExchange();
+      await app.swap.checkFeeErrorMessage(swapEthNeededForNetworkFeesTestConfig.errorMessage);
     },
   );
 });
