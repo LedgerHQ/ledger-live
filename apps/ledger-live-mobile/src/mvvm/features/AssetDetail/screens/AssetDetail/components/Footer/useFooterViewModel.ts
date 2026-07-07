@@ -1,8 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTradeAvailability } from "@ledgerhq/asset-detail";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { isTokenAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useSelector } from "~/context/hooks";
-import { flattenAccountsSelector } from "~/reducers/accounts";
+import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/accounts";
 import { track } from "~/analytics";
 import { useOpenBuySell } from "LLM/features/Buy";
 import { useOpenSwap } from "LLM/features/Swap";
@@ -80,7 +81,25 @@ export function useAssetActionsAvailability(
 }
 
 export function useFooterViewModel(currency: AssetDetailCurrencyProps, ledgerIds?: string[]) {
+  const flattenedAccounts = useSelector(flattenAccountsSelector);
+  const shallowAccounts = useSelector(shallowAccountsSelector);
   const [isMoreOptionsRequestingToBeOpened, setIsMoreOptionsRequestingToBeOpened] = useState(false);
+
+  // Mirror desktop's asset-page swap (RightPanel): preselect the highest-balance
+  // account of the asset for the receive side, so multiple accounts don't force the
+  // account-selection drawer. `useOpenSwap` falls back to its own logic (empty →
+  // "select asset") when no funded account is found.
+  const { defaultAccount, defaultParentAccount } = useMemo(() => {
+    if (!currency) {
+      return { defaultAccount: undefined, defaultParentAccount: undefined };
+    }
+    const preselectedAccount = getAvailableAccountsById(currency.id, flattenedAccounts)[0];
+    const defaultParentAccount =
+      preselectedAccount && isTokenAccount(preselectedAccount)
+        ? shallowAccounts.find(a => a.id === preselectedAccount.parentId)
+        : undefined;
+    return { defaultAccount: preselectedAccount, defaultParentAccount };
+  }, [currency, flattenedAccounts, shallowAccounts]);
 
   const { handleOpenBuySell } = useOpenBuySell({
     currency,
@@ -90,6 +109,8 @@ export function useFooterViewModel(currency: AssetDetailCurrencyProps, ledgerIds
   const { handleOpenSwap } = useOpenSwap({
     currency,
     sourceScreenName: "Asset Detail",
+    defaultAccount,
+    defaultParentAccount,
   });
 
   const { handleOpenStakeDrawer } = useOpenStakeDrawer({
