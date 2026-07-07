@@ -27,8 +27,9 @@ export function InitialQueriesProvider({ children }: React.PropsWithChildren) {
   // Keep supportedCounterValues in sync: re-dispatch whenever the slice updates (fallback → CVS result)
   const fiats = useSelector(selectSupportedFiats);
   useEffect(() => {
+    if (!fiatsReady) return;
     dispatch(setSupportedCounterValues(buildSupportedCounterValues(fiats)));
-  }, [dispatch, fiats]);
+  }, [dispatch, fiats, fiatsReady]);
   const ofacResult = useMemo(
     () => ({ blocked: ofacQueryResult.data ?? false, isLoading: ofacQueryResult.isLoading }),
     [ofacQueryResult.data, ofacQueryResult.isLoading],
