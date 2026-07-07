@@ -2,4 +2,4 @@
 "live-mobile": minor
 ---
 
-added type badge into mobile list ops for Aleo
+add a private/public transaction type badge to Aleo operation status icons on mobile
