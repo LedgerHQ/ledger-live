@@ -1,6 +1,6 @@
-import { DeviceModelId } from "@ledgerhq/devices";
 import { isCooldownElapsed } from "@ledgerhq/live-common/postOnboarding/logic/upsellFrequency";
 import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
+import { DeviceModelId, DevicesWithTouchScreen } from "@ledgerhq/types-devices";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { knownDeviceModelIdsSelector } from "~/reducers/settings";
@@ -10,12 +10,6 @@ const NANO_DEVICE_MODEL_IDS = [
   DeviceModelId.nanoSP,
   DeviceModelId.nanoX,
 ] as const;
-
-const TOUCHSCREEN_DEVICE_MODEL_IDS = new Set<DeviceModelId>([
-  DeviceModelId.apex,
-  DeviceModelId.europa,
-  DeviceModelId.stax,
-]);
 
 type NanoDeviceModelId = (typeof NANO_DEVICE_MODEL_IDS)[number];
 
@@ -49,13 +43,7 @@ function getSeenNanoDeviceModelIds(
 }
 
 function hasSeenTouchscreenDevice(knownDeviceModelIds: Record<DeviceModelId, boolean>): boolean {
-  for (const deviceModelId of TOUCHSCREEN_DEVICE_MODEL_IDS) {
-    if (knownDeviceModelIds[deviceModelId]) {
-      return true;
-    }
-  }
-
-  return false;
+  return DevicesWithTouchScreen.some(deviceModelId => knownDeviceModelIds[deviceModelId]);
 }
 
 function selectCooldownDeviceModelId(
