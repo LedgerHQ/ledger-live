@@ -10090,6 +10090,12 @@
         "syncAgain": "Sync again",
         "lastSync": "Last synced: {{date}}"
       }
+    },
+    "operations": {
+      "type": {
+        "public": "Public",
+        "private": "Private"
+      }
     }
   }
 }
