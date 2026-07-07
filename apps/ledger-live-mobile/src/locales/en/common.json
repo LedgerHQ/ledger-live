@@ -533,6 +533,10 @@
     "InvalidExplorerResponse": {
       "title": "Invalid response from {{currencyName}} explorer"
     },
+    "InvalidTransactionError": {
+      "title": "Invalid transaction",
+      "description": "The transaction doesn't match the blockchain state anymore. Please start the flow again."
+    },
     "LanguageInstallRefusedOnDevice": {
       "title": "Language installation refused on device",
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
