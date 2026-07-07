@@ -1,56 +1,11 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import { renderHook } from "@testing-library/react-native";
-import { useFeature } from "@features/platform-feature-flags";
-import { useSelector } from "~/context/hooks";
+import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useLargeScreenUpsellEligibility } from "../useLargeScreenUpsellEligibility";
 import type { State } from "~/reducers/types";
-import type { Features } from "@shared/feature-flags";
-
-jest.mock("@features/platform-feature-flags", () => ({
-  useFeature: jest.fn(),
-}));
-
-jest.mock("~/context/hooks", () => ({
-  useSelector: jest.fn(),
-}));
 
 const NOW = new Date("2026-07-06T12:00:00.000Z");
 
-type LargeScreenUpsellFeature = Features["largeScreenUpsell"];
-type LargeScreenUpsellParams = NonNullable<LargeScreenUpsellFeature["params"]>;
 type NanoDeviceModelId = DeviceModelId.nanoS | DeviceModelId.nanoSP | DeviceModelId.nanoX;
-
-const DEFAULT_KNOWN_DEVICE_MODEL_IDS: Record<DeviceModelId, boolean> = {
-  [DeviceModelId.blue]: false,
-  [DeviceModelId.nanoS]: false,
-  [DeviceModelId.nanoSP]: false,
-  [DeviceModelId.nanoX]: false,
-  [DeviceModelId.stax]: false,
-  [DeviceModelId.europa]: false,
-  [DeviceModelId.apex]: false,
-};
-
-const DEFAULT_PARAMS: LargeScreenUpsellParams = {
-  audience: {
-    models: {
-      [DeviceModelId.nanoS]: true,
-      [DeviceModelId.nanoSP]: true,
-      [DeviceModelId.nanoX]: true,
-    },
-  },
-  cooldownDays: {
-    default: 30,
-    [DeviceModelId.nanoS]: 0,
-  },
-  discount: 0.2,
-  modal: {
-    enabled: true,
-    killThreshold: 3,
-    cadenceDays: 30,
-  },
-  opted_in: { link: "https://example.com/opt-in" },
-  opted_out: { link: "https://example.com/opt-out" },
-};
 
 type RenderOptions = {
   enabled?: boolean;
@@ -65,31 +20,38 @@ function renderEligibility({
   onboardingDate = "2026-06-01T12:00:00.000Z",
   audienceModels,
 }: RenderOptions = {}) {
-  const mockUseFeature = jest.mocked(useFeature);
-  const mockUseSelector = jest.mocked(useSelector);
-  const state = {
+  const withState = (state: State): State => ({
+    ...state,
     settings: {
+      ...state.settings,
       knownDeviceModelIds: {
-        ...DEFAULT_KNOWN_DEVICE_MODEL_IDS,
+        ...state.settings.knownDeviceModelIds,
         ...Object.fromEntries(knownDeviceModelIds.map(deviceModelId => [deviceModelId, true])),
       },
     },
-    postOnboarding: { onboardingDate },
-  } as State;
-  const params: LargeScreenUpsellParams = {
-    ...DEFAULT_PARAMS,
-    audience: {
-      models: {
-        ...DEFAULT_PARAMS.audience.models,
-        ...audienceModels,
-      },
+    postOnboarding: {
+      ...state.postOnboarding,
+      onboardingDate,
     },
-  };
+  });
 
-  mockUseFeature.mockReturnValue({ enabled, params } as LargeScreenUpsellFeature);
-  mockUseSelector.mockImplementation(selector => (selector as (state: State) => unknown)(state));
-
-  return renderHook(() => useLargeScreenUpsellEligibility());
+  return renderHook(() => useLargeScreenUpsellEligibility(), {
+    overrideInitialState: withFlagOverrides(
+      {
+        largeScreenUpsell: {
+          enabled,
+          ...(audienceModels && {
+            params: {
+              audience: {
+                models: { nanoS: true, nanoSP: true, nanoX: true, ...audienceModels },
+              },
+            },
+          }),
+        },
+      },
+      withState,
+    ),
+  });
 }
 
 describe("useLargeScreenUpsellEligibility", () => {
@@ -99,7 +61,6 @@ describe("useLargeScreenUpsellEligibility", () => {
 
   afterEach(() => {
     jest.useRealTimers();
-    jest.clearAllMocks();
   });
 
   it("should be ineligible when the largeScreenUpsell flag is off", () => {

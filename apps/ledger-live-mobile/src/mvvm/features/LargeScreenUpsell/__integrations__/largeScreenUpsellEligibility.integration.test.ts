@@ -4,18 +4,6 @@ import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useLargeScreenUpsellEligibility } from "..";
 import type { State } from "~/reducers/types";
 
-jest.mock("react-native-mmkv", () => ({
-  createMMKV: jest.fn(() => ({
-    clearAll: jest.fn(),
-    contains: jest.fn(() => false),
-    getAllKeys: jest.fn(() => []),
-    getString: jest.fn(),
-    remove: jest.fn(),
-    set: jest.fn(),
-    size: 0,
-  })),
-}));
-
 jest.mock(
   "@ledgerhq/live-common/postOnboarding/logic/upsellFrequency",
   () => ({
