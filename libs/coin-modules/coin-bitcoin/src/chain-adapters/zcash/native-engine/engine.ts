@@ -12,7 +12,15 @@
 
 import { log } from "@ledgerhq/logs";
 import { ZCASH_LOG_TYPE } from "../constants";
-import type { ShieldedSyncResultRaw, ShieldedTransactionRaw } from "../types";
+import type {
+  ShieldedSyncResultRaw,
+  ShieldedTransactionRaw,
+  BuildTransactionArgs,
+  BuildTransactionResult,
+  FinalizeTransactionArgs,
+  FinalizeTransactionResult,
+} from "../types";
+import type { PcztTransaction } from "@ledgerhq/live-signer-zcash";
 
 let nativeModulePromise: Promise<typeof import("@ledgerhq/zcash-utils")> | null = null;
 
@@ -27,6 +35,44 @@ function getNativeModule(): Promise<typeof import("@ledgerhq/zcash-utils")> {
 type NativeModule = Awaited<ReturnType<typeof getNativeModule>>;
 type NativeStream = Awaited<ReturnType<NativeModule["startSync"]>>;
 type NativeTx = NonNullable<Awaited<ReturnType<NativeStream["next"]>>>;
+
+/**
+ * The `parsePczt()` output shape as declared by `@ledgerhq/zcash-utils`. Its
+ * zatoshi value fields are decimal `string`s and its optional fields use
+ * `undefined`; `adaptPcztForSigner` normalises these to the `bigint` / `null`
+ * shape the device signer's `PcztTransaction` expects.
+ */
+type NativePcztTransaction = ReturnType<NativeModule["parsePczt"]>;
+
+/** PCZT methods that must be present on the native addon at runtime. */
+const PCZT_METHODS = [
+  "parsePczt",
+  "buildTransaction",
+  "finalizeTransaction",
+  "broadcastTransaction",
+] as const;
+
+/**
+ * Loads the native addon and asserts it exposes the PCZT methods. Their types
+ * ship with `@ledgerhq/zcash-utils`, but this runtime guard still catches a
+ * version/build mismatch where the loaded binary lacks a method -- otherwise it
+ * would surface as an opaque "x is not a function" deep inside a job; here it
+ * fails fast with an actionable message listing what's missing.
+ */
+async function getPcztModule(): Promise<NativeModule> {
+  const native = await getNativeModule();
+  const missing = PCZT_METHODS.filter(
+    method => typeof (native as Record<string, unknown>)[method] !== "function",
+  );
+  if (missing.length > 0) {
+    throw new Error(
+      `@ledgerhq/zcash-utils is missing PCZT method(s): ${missing.join(", ")}. ` +
+        `The loaded native addon (keys: ${Object.keys(native).join(", ")}) is incompatible; ` +
+        `check that the shipped binary matches the expected zcash-utils version.`,
+    );
+  }
+  return native;
+}
 
 export type StartSyncJobArgs = {
   grpcUrl: string;
@@ -72,6 +118,94 @@ export async function getChainTipJob(grpcUrl: string): Promise<number> {
 export async function findBlockHeightJob(grpcUrl: string, timestamp: number): Promise<number> {
   const native = await getNativeModule();
   return native.findBlockHeight(grpcUrl, timestamp);
+}
+
+/**
+ * Converts zcash-utils parsePczt() output to the PcztTransaction shape the
+ * device signer consumes. Two mismatches are resolved here:
+ *
+ *   (a) Nullability: zcash-utils uses `undefined` for 3 optional fields;
+ *       device-signer-kit-zcash uses `null`.
+ *   (b) Value types: all zatoshi value fields are converted via BigInt() so the
+ *       adapter remains safe if an upstream change switches the wire format.
+ *
+ * Running inside buildTransactionJob ensures this stays in the UtilityProcess
+ * where the native addon is loaded -- parsePczt is a synchronous NAPI call.
+ */
+function adaptPcztForSigner(raw: NativePcztTransaction): PcztTransaction {
+  return {
+    global: {
+      ...raw.global,
+      fallbackLockTime: raw.global.fallbackLockTime ?? null,
+    },
+    transparentInputs: raw.transparentInputs.map(input => ({
+      ...input,
+      value: BigInt(input.value), // normalise: string (legacy) or bigint
+      sequence: input.sequence ?? null,
+    })),
+    transparentOutputs: raw.transparentOutputs.map(output => ({
+      ...output,
+      value: BigInt(output.value),
+      derivation: output.derivation ?? null,
+    })),
+    orchardBundle: raw.orchardBundle
+      ? {
+          ...raw.orchardBundle,
+          valueBalance: BigInt(raw.orchardBundle.valueBalance),
+          actions: raw.orchardBundle.actions.map(action => ({
+            ...action,
+            spendValue: BigInt(action.spendValue),
+            value: BigInt(action.value),
+          })),
+        }
+      : null,
+  };
+}
+
+/**
+ * Builds a PCZT for a Zcash send, then immediately parses it back into the
+ * structured `PcztTransaction` the device signer expects. Both NAPI calls run
+ * here in the UtilityProcess so the result can be sent to the renderer in a
+ * single IPC reply.
+ */
+export async function buildTransactionJob(
+  args: Omit<BuildTransactionArgs, "requestId">,
+): Promise<BuildTransactionResult> {
+  const native = await getPcztModule();
+  const built = await native.buildTransaction(args);
+  const rawPczt = native.parsePczt(built.pcztHex);
+  return {
+    pcztHex: built.pcztHex,
+    pcztTransaction: adaptPcztForSigner(rawPczt),
+    feeZat: built.feeZat,
+    anchorHeight: built.anchorHeight,
+    nActionsOrchard: built.nActionsOrchard,
+    nTransparentInputs: built.nTransparentInputs,
+    nTransparentOutputs: built.nTransparentOutputs,
+  };
+}
+
+/**
+ * Injects device signatures into the PCZT and extracts the final signed V5
+ * transaction. CPU-bound; dispatched to spawn_blocking in the Rust layer.
+ */
+export async function finalizeTransactionJob(
+  args: Omit<FinalizeTransactionArgs, "requestId">,
+): Promise<FinalizeTransactionResult> {
+  const native = await getPcztModule();
+  return native.finalizeTransaction(args);
+}
+
+/**
+ * Broadcasts a signed V5 transaction to the Zaino gRPC endpoint.
+ * Returns the txid (64-char hex, big-endian display order).
+ */
+export async function broadcastTransactionJob(
+  grpcUrl: string,
+  txHex: string,
+): Promise<string> {
+  const native = await getPcztModule();
+  return native.broadcastTransaction(grpcUrl, txHex);
 }
 
 /**

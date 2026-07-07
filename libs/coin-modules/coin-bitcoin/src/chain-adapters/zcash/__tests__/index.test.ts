@@ -19,6 +19,7 @@ jest.mock("@ledgerhq/live-signer-zcash", () => ({
       getAddress: jest.fn(),
       getFullViewingKey: jest.fn(),
       createPaymentTransaction: jest.fn().mockResolvedValue("0500signedtx"),
+      signPcztTransaction: jest.fn(),
     };
   }),
 }));

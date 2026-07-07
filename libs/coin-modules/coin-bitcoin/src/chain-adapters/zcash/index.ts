@@ -1,23 +1,265 @@
 import { BigNumber } from "bignumber.js";
-import type { Account, AccountRaw } from "@ledgerhq/types-live";
+import { Observable } from "rxjs";
+import type { Account, AccountRaw, Operation, SignOperationEvent, SignedOperation } from "@ledgerhq/types-live";
+import { encodeOperationId, patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { pathStringToArray } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { ChainAdapter } from "../types";
-import type { BitcoinAddress, BitcoinXPub, SignerContext } from "../../signer";
-import type { Transaction, TransactionStatus } from "../../types";
+import type { BitcoinAddress, BitcoinSigner, BitcoinXPub, SignerContext } from "../../signer";
+import type { Transaction, TransactionStatus, BitcoinAccount, BitcoinOutput, BtcInputRef, BtcOperationExtra } from "../../types";
 import { DmkSignerZcash } from "@ledgerhq/live-signer-zcash";
-import type { ZcashAddress, ZcashViewKey } from "@ledgerhq/live-signer-zcash";
+import type {
+  ZcashAddress,
+  ZcashViewKey,
+  PcztTransaction,
+  SignPcztTransactionResult,
+} from "@ledgerhq/live-signer-zcash";
 import { registerChainAdapter } from "../registry";
-import type { ZcashAccount, ZcashAccountRaw, ZcashTransaction } from "./types";
+import type {
+  BuildTransactionArgs,
+  SpendableNote,
+  ZcashAccount,
+  ZcashAccountRaw,
+  ZcashTransaction,
+  ZcashTransferType,
+} from "./types";
+import { isZcashTransaction } from "./types";
 import { classifyZcashRecipient } from "./address";
-import { ZcashSaplingRecipientNotSupported } from "../../errors";
-import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
+import {
+  ZcashSaplingRecipientNotSupported,
+  ZcashSignerNotSupported,
+  ZcashSigningCancelled,
+  ZcashUtxoNotInAccount,
+} from "../../errors";
+import { InvalidAddress, NotEnoughBalance, RecipientRequired } from "@ledgerhq/errors";
 import { toZcashPrivateInfoRaw, fromZcashPrivateInfoRaw } from "./serialization";
 import { buildExtraSyncObservable } from "./sync";
 import { collectSpendableNotes } from "./operations";
-import { selectNotes, estimateMaxSpendableAmount, ZIP317_MINIMUM_FEE } from "./coin-selection";
+import {
+  selectNotes,
+  estimateMaxSpendableAmount,
+  selectTransparentInputs,
+  estimateMaxSpendableTransparent,
+  ZIP317_MINIMUM_FEE,
+} from "./coin-selection";
 import { composeXpub } from "./xpub";
 import { computeZcashBalance } from "./balance";
-import type { BitcoinAccount } from "../../types";
+import { getWalletAccount } from "../../wallet-btc";
+import { getZainoEndpoint, isZcashShieldedEnabled } from "./constants";
+
+// ── Lazy module import (renderer-safe) ────────────────────────────────────
+//
+// ZCash.ts transitively loads the native .node addon. In the Electron renderer
+// rspack aliases this import to ZCashIPC so the IPC client is used instead.
+// Keeping it lazy avoids bundling the native addon in the renderer.
+
+type ZCashModule = {
+  createZCashClient: (args: { grpcUrl: string; network?: string }) => import("./types").ZCashClient;
+};
+
+let zcashClientModuleCache: Promise<ZCashModule> | null = null;
+
+function getZCashModule(): Promise<ZCashModule> {
+  zcashClientModuleCache ??= import(
+    /* webpackChunkName: "zcash-native" */ "@ledgerhq/coin-bitcoin/chain-adapters/zcash/ZCash"
+  ) as Promise<ZCashModule>;
+  return zcashClientModuleCache;
+}
+
+// ── PCZT signing helpers ───────────────────────────────────────────────────
+
+type OrchardSpendInputJs = BuildTransactionArgs["spends"][number];
+type TransparentInputJs = BuildTransactionArgs["transparentInputs"][number];
+type OutputRequestJs = BuildTransactionArgs["outputs"][number];
+
+function mapSpends(notes: SpendableNote[]): OrchardSpendInputJs[] {
+  return notes.map(note => ({
+    recipient: note.recipient,
+    valueZat: note.amount.toFixed(0),
+    rho: note.rho,
+    rseed: note.rseed,
+    cmx: note.cmx,
+    position: note.position,
+  }));
+}
+
+// Transfer types that actually spend transparent UTXOs as inputs. A pure
+// shielded send ("shielded" / "shielded-to-transparent") spends Orchard notes
+// only and must never pull in the account's transparent UTXOs — so only these
+// types resolve to a non-empty transparent input set.
+//
+// "transparent" (Public→Public t→t) is included: with the zcashShielded flag on
+// it is built as a V5 PCZT that spends transparent UTXOs into a transparent
+// output, so it shares the exact same transparent-input machinery as
+// "transparent-to-shielded" (only the recipient's address class differs). When
+// the flag is off it never reaches this code — every routing hook returns
+// `undefined` first and the legacy Bitcoin path takes over.
+const TRANSPARENT_INPUT_TRANSFER_TYPES = new Set<ZcashTransferType>([
+  "transparent-to-shielded",
+  "transparent",
+]);
+
+const isTransparentInputTransfer = (transferType: ZcashTransferType): boolean =>
+  TRANSPARENT_INPUT_TRANSFER_TYPES.has(transferType);
+
+/**
+ * Resolves the transparent UTXOs spent by a Public→* flow. Returns an empty set
+ * for transfer types that do not spend transparent inputs, so an account holding
+ * transparent UTXOs cannot leak them into an Orchard-note-only send. For the
+ * flows that do spend transparent inputs, caller-provided `selectedUtxos` takes
+ * precedence over the account's synced UTXO set. Kept as a single helper so the
+ * PCZT builder inputs and the optimistic operation's `inputRefs` are always
+ * derived from the exact same set.
+ */
+function resolveTransparentUtxos(account: ZcashAccount, tx: ZcashTransaction): BitcoinOutput[] {
+  if (!TRANSPARENT_INPUT_TRANSFER_TYPES.has(tx.transferType)) return [];
+  return tx.selectedUtxos ?? account.bitcoinResources?.utxos ?? [];
+}
+
+/**
+ * Maps wallet UTXOs to the transparent-input shape the PCZT builder expects.
+ *
+ * Must be async: `crypto.getPubkeyAt` returns `Promise<Buffer>`.
+ * The txid is byte-reversed from big-endian (display order, as stored in
+ * BitcoinOutput.hash) to little-endian (internal order, as required by
+ * buildTransaction / lib.rs:274).
+ */
+async function mapTransparentInputs(
+  account: ZcashAccount,
+  tx: ZcashTransaction,
+): Promise<TransparentInputJs[]> {
+  const utxos: BitcoinOutput[] = resolveTransparentUtxos(account, tx);
+  if (utxos.length === 0) return [];
+
+  const walletAccount = getWalletAccount(account);
+  const { xpub, crypto } = walletAccount.xpub;
+
+  const [receiveAddrs, changeAddrs] = await Promise.all([
+    walletAccount.xpub.getAccountAddresses(0),
+    walletAccount.xpub.getAccountAddresses(1),
+  ]);
+
+  const addrMap = new Map<string, { account: number; index: number }>();
+  for (const addr of [...receiveAddrs, ...changeAddrs]) {
+    addrMap.set(addr.address, { account: addr.account, index: addr.index });
+  }
+
+  return Promise.all(
+    utxos.map(async utxo => {
+      const address = utxo.address;
+      if (address === null || address === undefined || address === "") {
+        // Fail-closed: a UTXO with no address cannot be mapped to a signing key.
+        // The txid/vout are on-chain public data (safe for support logs); no
+        // address is leaked because there is none.
+        throw new ZcashUtxoNotInAccount(
+          "Can't sign this transaction: one of your Zcash coins is missing address data. Please re-sync your account and try again.",
+          { txid: utxo.hash, vout: utxo.outputIndex },
+        );
+      }
+      const derivInfo = addrMap.get(address);
+      if (!derivInfo) {
+        // The UTXO's address is outside the synced receive/change set (gap-limit
+        // bounded — see getAccountAddresses(0)/(1)), e.g. an out-of-gap-limit or
+        // stale-sync coin. Fail-closed with account-scoped guidance rather than
+        // leaking the raw address in the message; keep txid/vout for support.
+        throw new ZcashUtxoNotInAccount(
+          "Can't sign this transaction: one of your Zcash coins isn't recognized by this account yet. Please re-sync your account and try again.",
+          { txid: utxo.hash, vout: utxo.outputIndex },
+        );
+      }
+      const pubkeyBuf = await crypto.getPubkeyAt(xpub, derivInfo.account, derivInfo.index);
+      const scriptPubKey = crypto.toOutputScript(address);
+      return {
+        // Reverse BE→LE: BitcoinOutput.hash is display (big-endian) order;
+        // TransparentInputJs.txid requires internal (little-endian) byte order.
+        txid: Buffer.from(utxo.hash, "hex").reverse().toString("hex"),
+        vout: utxo.outputIndex,
+        scriptPubKey: scriptPubKey.toString("hex"),
+        valueZat: utxo.value.toFixed(0),
+        pubkey: pubkeyBuf.toString("hex"),
+        derivationScope: derivInfo.account, // 0 = external, 1 = change
+        addressIndex: derivInfo.index,
+      };
+    }),
+  );
+}
+
+function mapOutputs(tx: ZcashTransaction): OutputRequestJs[] {
+  return [
+    {
+      address: tx.recipient,
+      valueZat: tx.amount.toFixed(0),
+      ...(tx.memo !== undefined && { memo: tx.memo }),
+    },
+  ];
+  // Note: change output is computed internally by buildTransaction (ZIP-317).
+}
+
+// Marker written to the signed operation's `extra` so the adapter's broadcast
+// override can recognise a shielded PCZT operation and submit it over gRPC.
+// Transparent Zcash operations (legacy Bitcoin path) don't carry it and fall
+// through to the standard explorer broadcast.
+//
+// Public→* flows also spend transparent UTXOs, so the extra additionally carries
+// the standard Bitcoin `inputs`/`inputRefs` metadata (BtcOperationExtra) — this
+// keeps the broadcast() double-spend guard and pending-spent/conflict-dedup
+// consumers working for those UTXOs even though the V5 tx broadcasts over gRPC.
+type ZcashOperationExtra = BtcOperationExtra & { zcashShielded?: boolean };
+
+const isShieldedOperation = (extra: unknown): boolean =>
+  !!extra && typeof extra === "object" && (extra as ZcashOperationExtra).zcashShielded === true;
+
+/**
+ * Builds the `inputs`/`inputRefs` metadata for the transparent UTXOs spent by a
+ * Public→* flow. Empty for pure shielded flows (Orchard-note inputs only).
+ */
+function buildTransparentInputExtra(
+  account: ZcashAccount,
+  tx: ZcashTransaction,
+): Pick<BtcOperationExtra, "inputs" | "inputRefs"> {
+  const inputRefs: BtcInputRef[] = resolveTransparentUtxos(account, tx).flatMap(utxo =>
+    utxo.address !== null && utxo.address !== undefined && utxo.address !== ""
+      ? [{ hash: utxo.hash, outputIndex: utxo.outputIndex, address: utxo.address }]
+      : [],
+  );
+  if (inputRefs.length === 0) return {};
+  return { inputs: inputRefs.map(r => `${r.hash}-${r.outputIndex}`), inputRefs };
+}
+
+/**
+ * Builds an optimistic SignedOperation for the Zcash PCZT flow.
+ * The hash is the txid returned by finalizeTransaction (big-endian display order).
+ * The transaction is NOT broadcast here — the adapter's broadcast override
+ * submits the signed V5 tx over gRPC during the standard broadcast step.
+ */
+function buildSignedOperation(
+  account: ZcashAccount,
+  tx: ZcashTransaction,
+  txid: string,
+  feeZat: string,
+  txHex: string,
+): SignedOperation {
+  const fee = new BigNumber(feeZat);
+  const operation: Operation = {
+    id: encodeOperationId(account.id, txid, "OUT"),
+    hash: txid,
+    type: "OUT",
+    value: tx.amount.plus(fee),
+    fee,
+    blockHash: null,
+    blockHeight: null,
+    senders: [account.freshAddress],
+    recipients: [tx.recipient].filter(Boolean),
+    accountId: account.id,
+    date: new Date(),
+    extra: {
+      zcashShielded: true,
+      ...buildTransparentInputExtra(account, tx),
+    } satisfies ZcashOperationExtra,
+  };
+  return { operation, signature: txHex };
+}
+
+// ── DMK transport helpers ─────────────────────────────────────────────────
 
 type DmkTransport = {
   dmk: ConstructorParameters<typeof DmkSignerZcash>[0];
@@ -75,6 +317,63 @@ const hasGetFullViewingKeyFunction = (signer: unknown): signer is ZcashLikeSigne
   "getFullViewingKey" in signer &&
   typeof signer.getFullViewingKey === "function";
 
+// Bitcoin-specific status fields — never applicable to shielded/PCZT flows.
+const bitcoinStatusExtras: Pick<
+  TransactionStatus,
+  "txInputs" | "txOutputs" | "opReturnData" | "changeAddress"
+> = {
+  txInputs: undefined,
+  txOutputs: undefined,
+  opReturnData: undefined,
+  changeAddress: undefined,
+};
+
+/**
+ * Computes the transaction status for a transparent-input (Public→*) send:
+ * Public→Private ("transparent-to-shielded", Orchard output) and, with the
+ * zcashShielded flag on, Public→Public ("transparent", transparent output).
+ *
+ * Inputs are transparent UTXOs (validated against the transparent balance). The
+ * recipient class differs per flow (u1 for →shielded, t1/t3 for →transparent)
+ * but both are accepted by `computeRecipientError`. The fee is the ZIP-317 fee
+ * produced by prepareTransaction; an unprepared tx falls back to the minimum so
+ * the status still renders.
+ */
+function getTransparentInputStatus(
+  account: ZcashAccount,
+  tx: ZcashTransaction,
+  currencyName: string,
+): Promise<TransactionStatus> {
+  const errors: Record<string, Error> = {};
+  const warnings: Record<string, Error> = {};
+
+  const transparentBalance = resolveTransparentUtxos(account, tx).reduce(
+    (sum, utxo) => sum.plus(utxo.value),
+    new BigNumber(0),
+  );
+
+  const fee = tx.zcashFee ?? new BigNumber(ZIP317_MINIMUM_FEE);
+  const totalSpent = tx.amount.plus(fee);
+
+  const recipientError = computeRecipientError(tx.recipient, currencyName);
+  if (recipientError) errors.recipient = recipientError;
+
+  if (tx.amount.lte(0) && !tx.useAllAmount) {
+    errors.amount = new Error("Amount must be positive");
+  } else if (totalSpent.gt(transparentBalance)) {
+    errors.amount = new NotEnoughBalance();
+  }
+
+  return Promise.resolve({
+    errors,
+    warnings,
+    estimatedFees: fee,
+    amount: tx.amount,
+    totalSpent,
+    ...bitcoinStatusExtras,
+  } satisfies TransactionStatus);
+}
+
 const zcashChainAdapter: ChainAdapter = {
   id: "zcash",
 
@@ -104,58 +403,224 @@ const zcashChainAdapter: ChainAdapter = {
   },
 
   // ── Transaction ─────────────────────────────────────────────────────
-  // All Zcash transactions (transparent + shielded) will use PCZT.
-  // Until PCZT is implemented, returning undefined falls back to Bitcoin legacy path.
+  // Routing between the PCZT/V5 path (here) and the legacy Bitcoin PSBT path is
+  // driven by the zcashShielded feature flag (isZcashShieldedEnabled), NOT by the
+  // transfer type: flag ON ⇒ every send (including Public→Public "transparent")
+  // is signed via PCZT here; flag OFF ⇒ every send returns undefined and falls
+  // back to the legacy path.
 
   signOperation(
-    _account: Account,
-    _deviceId: string,
-    _transaction: Transaction,
-    _signerContext: SignerContext,
-  ) {
-    // TODO(zcash transparent-to-shielded): implement PCZT signing for all Zcash
-    // transactions. Until then this returns undefined and only the legacy
-    // transparent (t-address -> t-address) send actually completes; shielded and
-    // transparent-to-shielded sends are blocked at signing even when recipient
-    // validation and status pass.
-    return undefined;
+    account: Account,
+    deviceId: string,
+    transaction: Transaction,
+    signerContext: SignerContext,
+  ): Observable<SignOperationEvent> | undefined {
+    // Routing is driven by the zcashShielded feature flag, NOT by the transfer
+    // type: flag ON ⇒ every Zcash send (including Public→Public / transparent
+    // t→t) is built and signed as a V5 PCZT here; flag OFF ⇒ fall through to the
+    // legacy Bitcoin PSBT path for every send.
+    if (!isZcashShieldedEnabled()) return undefined;
+
+    // createTransaction() returns a base Bitcoin-family Transaction with no
+    // Zcash-specific fields. Until the UI populates the Zcash shape (transferType
+    // + the prepareTransaction-computed selectedNotes/zcashFee), the PCZT path
+    // below would throw. Fall back to the legacy PSBT path so partial/legacy
+    // flows aren't broken while the flag is enabled.
+    if (!isZcashTransaction(transaction)) return undefined;
+
+    const zcashAccount = account as ZcashAccount;
+    const tx = transaction;
+
+    return new Observable<SignOperationEvent>(subscriber => {
+      let cancelled = false;
+      const abort = (): void => {
+        cancelled = true;
+      };
+
+      // Cooperative cancellation between steps. The in-flight await (Halo2
+      // proving, device signing, finalize) can't be interrupted, so this only
+      // stops the flow *before the next step*, discarding the in-flight result.
+      // If the subscription is cancelled (unsubscribed) while an async step is in-flight,
+      // we stop the orchestration after the current await resolves and do not proceed
+      // to subsequent steps (device signing / finalize / signed event).
+      // No cancellation error is emitted because the subscriber is already closed on unsubscribe.
+      const bailIfCancelled = (): boolean => {
+        if (!cancelled) return false;
+        if (!subscriber.closed) subscriber.error(new ZcashSigningCancelled());
+        return true;
+      };
+
+      (async () => {
+        const ufvk = zcashAccount.privateInfo?.ufvk;
+        if (!ufvk) throw new Error("Missing UFVK — account not yet synced");
+        if (!tx.selectedNotes) throw new Error("Missing selectedNotes — run prepareTransaction first");
+        if (tx.zcashFee === undefined) throw new Error("Missing zcashFee — run prepareTransaction first");
+
+        // ── Step 1: resolve the ZCash client via lazy module import ──────────
+        // Resolve the endpoint once so build, finalize and broadcast all target
+        // the same URL/network — and honour any setZainoGrpcUrl override (the
+        // shielded sync path uses the same resolver).
+        const { grpcUrl, network } = getZainoEndpoint();
+        const { createZCashClient } = await getZCashModule();
+        const client = createZCashClient({ grpcUrl, network });
+
+        // The transaction-building methods are optional on ZCashClient: the
+        // React Native stub omits them entirely. Fail with a clear message
+        // rather than a cryptic "client.buildTransaction is not a function"
+        // TypeError if a client without shielded-signing support is resolved.
+        if (!client.buildTransaction || !client.finalizeTransaction || !client.broadcastTransaction) {
+          throw new Error("Shielded Zcash transactions are not supported in this environment");
+        }
+
+        if (bailIfCancelled()) return;
+
+        // ── Step 2: resolve the ZIP-32 account index ─────────────────────────
+        // freshAddressPath is an address-level path (".../0/<addressIndex>") and
+        // does not carry the hardened account index. The wallet-btc account keeps
+        // the ZIP-32 account index as a plain number in params.index.
+        const accountIndex = getWalletAccount(zcashAccount).params.index;
+
+        // ── Step 3: map inputs/outputs ───────────────────────────────────────
+        const transparentInputs = await mapTransparentInputs(zcashAccount, tx);
+        if (bailIfCancelled()) return;
+
+        // ── Step 4: build PCZT (Halo 2 proving + parsePczt in UtilityProcess) ─
+        const buildResult = await client.buildTransaction!({
+          grpcUrl,
+          ufvk,
+          network,
+          // Placeholder all-zero 32-byte ZIP-32 seed fingerprint. The Zcash
+          // device app only *logs* this field: in app-zcash the PCZT parser
+          // binds it to an intentionally-unused `_seed_fingerprint`
+          // (parser/pczt/transparent.rs) / emits it via `debug!`
+          // (parser/pczt/orchard.rs finish_orchard_zip32_derivation) and
+          // validates the derivation *path* (check_bip44_compliance), not the
+          // fingerprint. Safe today, but if the app ever starts validating it,
+          // every PCZT built here would be rejected on-device with no
+          // compile-time signal.
+          // TODO(zcash): supply the real ZIP-32 seed fingerprint.
+          seedFingerprint: "00".repeat(32),
+          accountIndex,
+          // zcashFee and selectedNotes are validated before the Observable is
+          // constructed — non-null assertions are safe here.
+          feeZat: tx.zcashFee!.toFixed(0),
+          spends: mapSpends(tx.selectedNotes!),
+          transparentInputs,
+          outputs: mapOutputs(tx),
+        });
+
+        if (bailIfCancelled()) return;
+
+        // ── Step 5: device signing via signerContext ──────────────────────────
+        // The signer is augmented with signPcztTransaction in createSigner().
+        // Emitted here, immediately before device interaction, so the UI does not
+        // prompt "confirm on device" while the CPU-bound PCZT build is still running.
+        subscriber.next({ type: "device-signature-requested" });
+        const sigResult = await signerContext(
+          deviceId,
+          account.currency,
+          async (signer: BitcoinSigner) => {
+            const zcashSigner = signer as unknown as {
+              signPcztTransaction?: (
+                pczt: PcztTransaction,
+              ) => Promise<SignPcztTransactionResult>;
+            };
+            if (typeof zcashSigner.signPcztTransaction !== "function") {
+              throw new ZcashSignerNotSupported(
+                "ZCash signing requires a signer augmented with signPcztTransaction (see createSigner); the provided signerContext returned an incompatible signer",
+              );
+            }
+            return zcashSigner.signPcztTransaction(buildResult.pcztTransaction);
+          },
+        );
+
+        subscriber.next({ type: "device-signature-granted" });
+        if (bailIfCancelled()) return;
+
+        // ── Step 6: finalize (inject signatures → signed V5 tx) ──────────────
+        // finalizeTransaction strips the sighash_type byte from transparent sigs
+        // internally (parse_transparent_der in finalize.rs). Pass as-is.
+        const orchardSignatures = sigResult.orchard.map(a =>
+          Buffer.from(a.spendAuthSig).toString("hex"),
+        );
+        const transparentSignatures = sigResult.transparentInputSigs.map(sig =>
+          Buffer.from(sig).toString("hex"),
+        );
+
+        const finalizeResult = await client.finalizeTransaction!({
+          pczt: buildResult.pcztHex,
+          orchardSignatures,
+          transparentSignatures,
+        });
+
+        if (bailIfCancelled()) return;
+
+        // ── Step 7: emit signed event ────────────────────────────────────────
+        // Broadcasting is intentionally NOT done here. The signed V5 tx is
+        // submitted over gRPC by the adapter's broadcast override during the
+        // standard signOperation() → broadcast() flow, mirroring the Bitcoin
+        // bridge and avoiding a double-broadcast (the transparent explorer
+        // path cannot submit a shielded V5 tx anyway).
+        const signedOperation = buildSignedOperation(
+          zcashAccount,
+          tx,
+          finalizeResult.txid,
+          buildResult.feeZat,
+          finalizeResult.txHex,
+        );
+        subscriber.next({ type: "signed", signedOperation });
+        subscriber.complete();
+      })().catch(err => subscriber.error(err));
+
+      return abort;
+    });
+  },
+
+  broadcast(_account: Account, signedOperation: SignedOperation): Promise<Operation> | undefined {
+    // Only shielded PCZT operations are broadcast here (via gRPC). Transparent
+    // Zcash operations carry no marker and fall through to the standard Bitcoin
+    // explorer broadcast.
+    if (!isShieldedOperation(signedOperation.operation.extra)) return undefined;
+
+    return (async () => {
+      // Resolve the endpoint the same way signOperation did, honouring any
+      // setZainoGrpcUrl override.
+      const { grpcUrl, network } = getZainoEndpoint();
+      const { createZCashClient } = await getZCashModule();
+      const client = createZCashClient({ grpcUrl, network });
+
+      if (!client.broadcastTransaction) {
+        throw new Error("Shielded Zcash transactions are not supported in this environment");
+      }
+
+      // signedOperation.signature is the finalized V5 tx hex from signOperation.
+      const txid = await client.broadcastTransaction(grpcUrl, signedOperation.signature);
+      return patchOperationWithHash(signedOperation.operation, txid);
+    })();
   },
 
   getTransactionStatus(account: Account, transaction: Transaction) {
     const zcashAccount = account as ZcashAccount;
     const tx = transaction as ZcashTransaction;
-    // Only handle flows with shielded inputs (Orchard note selection): "shielded"
+
+    // Flag OFF ⇒ legacy Bitcoin validation for every Zcash send.
+    if (!isZcashShieldedEnabled()) return undefined;
+
+    // Transparent-input flows (Public→*): status is computed from the transparent
+    // balance and the ZIP-317 fee (NOT Orchard note selection). Covers
+    // Public→Private ("transparent-to-shielded") and, with the flag on,
+    // Public→Public ("transparent").
+    if (isTransparentInputTransfer(tx.transferType)) {
+      return getTransparentInputStatus(zcashAccount, tx, account.currency.name);
+    }
+
+    // Remaining flows with shielded inputs (Orchard note selection): "shielded"
     // (private -> private) and "shielded-to-transparent" (private -> public).
-    //
-    // "transparent" (public -> public, t-address recipient) legitimately uses the
-    // Bitcoin legacy path. "transparent-to-shielded" (public -> shielded u1
-    // recipient) ALSO falls through here, but the legacy path cannot encode a
-    // shielded output — see the skip-legacy-fee workaround in
-    // ../../getTransactionStatus.ts, which keeps recipient validation working while
-    // the real send is unimplemented.
-    //
-    // TODO(zcash transparent-to-shielded): when PCZT building lands, add
-    // "transparent-to-shielded" to this guard and compute its status here
-    // (recipient already classified below; fees come from the PCZT builder, NOT
-    // ZIP-317 Orchard note selection since the inputs are transparent UTXOs). Once
-    // handled here, remove the skipLegacyFeeCalculation workaround in
-    // ../../getTransactionStatus.ts.
     if (tx.transferType !== "shielded" && tx.transferType !== "shielded-to-transparent")
       return undefined;
 
     const errors: Record<string, Error> = {};
     const warnings: Record<string, Error> = {};
-
-    // Bitcoin-specific fields — not applicable for shielded transactions
-    const bitcoinExtras: Pick<
-      TransactionStatus,
-      "txInputs" | "txOutputs" | "opReturnData" | "changeAddress"
-    > = {
-      txInputs: undefined,
-      txOutputs: undefined,
-      opReturnData: undefined,
-      changeAddress: undefined,
-    };
 
     const privateInfo = zcashAccount.privateInfo;
     if (!privateInfo) {
@@ -166,7 +631,7 @@ const zcashChainAdapter: ChainAdapter = {
         estimatedFees: new BigNumber(0),
         amount: tx.amount,
         totalSpent: tx.amount,
-        ...bitcoinExtras,
+        ...bitcoinStatusExtras,
       } satisfies TransactionStatus);
     }
 
@@ -186,7 +651,7 @@ const zcashChainAdapter: ChainAdapter = {
       estimatedFees: fee,
       amount: tx.amount,
       totalSpent,
-      ...bitcoinExtras,
+      ...bitcoinStatusExtras,
     } satisfies TransactionStatus);
   },
 
@@ -197,17 +662,21 @@ const zcashChainAdapter: ChainAdapter = {
   ) {
     const zcashAccount = account as ZcashAccount;
     const tx = transaction as ZcashTransaction | null | undefined;
+
+    // Flag OFF ⇒ legacy Bitcoin estimation for every Zcash send.
+    if (!isZcashShieldedEnabled()) return undefined;
+
+    // Transparent-input flows (Public→*): max spendable is the transparent UTXO
+    // balance minus the ZIP-317 fee. Handled here so a →shielded send never
+    // reaches the legacy Bitcoin estimator (which would call toOutputScript on a
+    // u1 recipient and throw).
+    if (tx && isTransparentInputTransfer(tx.transferType)) {
+      const utxoValues = resolveTransparentUtxos(zcashAccount, tx).map(utxo => utxo.value);
+      return Promise.resolve(estimateMaxSpendableTransparent(utxoValues, tx.transferType));
+    }
+
     const transferType = tx?.transferType ?? "transparent";
     // Max spendable from Orchard notes only applies to shielded-input flows.
-    //
-    // TODO(zcash transparent-to-shielded): "transparent" and
-    // "transparent-to-shielded" fall back to the legacy Bitcoin
-    // estimateMaxSpendable, which calls toOutputScript on the recipient. For a
-    // shielded (u1) recipient that throws InvalidAddress (ZCash.toOutputScript only
-    // supports t1/t3) — so "Send max" from a transparent balance to a u1 recipient
-    // currently fails. When the transparent-to-shielded send is implemented, handle
-    // it here (max spendable = transparent UTXO balance minus the PCZT fee) so it
-    // never reaches the legacy estimator.
     if (transferType !== "shielded" && transferType !== "shielded-to-transparent") return undefined;
 
     const notes = collectSpendableNotes(zcashAccount.privateInfo?.transactions ?? []);
@@ -217,13 +686,51 @@ const zcashChainAdapter: ChainAdapter = {
   prepareTransaction(account: Account, transaction: Transaction) {
     const zcashAccount = account as ZcashAccount;
     const tx = transaction as ZcashTransaction;
-    // Only handle flows with shielded inputs (Orchard note selection).
-    //
-    // TODO(zcash transparent-to-shielded): "transparent-to-shielded" currently
-    // falls through to the legacy Bitcoin prepareTransaction. That spends
-    // transparent UTXOs (correct for the inputs) but cannot build the shielded
-    // output for a u1 recipient. When PCZT building lands, handle it here:
-    // select transparent UTXOs and produce the PCZT with an Orchard output.
+
+    // Flag OFF ⇒ legacy Bitcoin preparation for every Zcash send.
+    if (!isZcashShieldedEnabled()) return undefined;
+
+    // Transparent-input flows (Public→*): spend transparent UTXOs. There is no
+    // Orchard note selection — only ZIP-317 fee/change resolution over the
+    // transparent inputs. signOperation then builds the PCZT with
+    // `selectedNotes: []` (no Orchard spends) and these transparent inputs.
+    // Covers Public→Private ("transparent-to-shielded", Orchard output) and,
+    // with the flag on, Public→Public ("transparent", transparent output).
+    if (isTransparentInputTransfer(tx.transferType)) {
+      const utxoValues = resolveTransparentUtxos(zcashAccount, tx).map(utxo => utxo.value);
+      // When useAllAmount is set, the effective amount is the max spendable over
+      // the current UTXO set — recomputed here so it stays coherent even if a
+      // prior prepare mutated tx.amount and the UTXOs have since changed.
+      const effectiveAmount = tx.useAllAmount
+        ? estimateMaxSpendableTransparent(utxoValues, tx.transferType)
+        : tx.amount;
+      const result = selectTransparentInputs(
+        utxoValues,
+        effectiveAmount,
+        !!tx.useAllAmount,
+        tx.transferType,
+      );
+      if (!result) {
+        // Insufficient balance: strip any stale fee/change from a prior prepare
+        // and reset amount to the current effective value so the UI never shows a
+        // spendable amount without a matching fee.
+        const { zcashFee: _, changeAmount: __, ...rest } = tx;
+        return Promise.resolve({
+          ...rest,
+          amount: effectiveAmount,
+          selectedNotes: [],
+        } as ZcashTransaction);
+      }
+      return Promise.resolve({
+        ...tx,
+        amount: effectiveAmount,
+        selectedNotes: [], // transparent inputs — no Orchard note spends
+        zcashFee: result.fee,
+        changeAmount: result.changeAmount,
+      } as ZcashTransaction);
+    }
+
+    // Only handle remaining flows with shielded inputs (Orchard note selection).
     if (tx.transferType !== "shielded" && tx.transferType !== "shielded-to-transparent")
       return undefined;
 
@@ -335,6 +842,7 @@ const zcashChainAdapter: ChainAdapter = {
       getAddress: dmk.getAddress.bind(dmk),
       getFullViewingKey: dmk.getFullViewingKey.bind(dmk),
       createPaymentTransaction: dmk.createPaymentTransaction.bind(dmk),
+      signPcztTransaction: dmk.signPcztTransaction.bind(dmk),
     });
   },
 };

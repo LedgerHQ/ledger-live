@@ -11,13 +11,26 @@ jest.mock("@ledgerhq/logs", () => ({
 const mockGetChainTip = jest.fn<Promise<number>, [string]>();
 const mockFindBlockHeight = jest.fn<Promise<number>, [string, number]>();
 const mockStartSync = jest.fn();
+const mockParsePczt = jest.fn();
+const mockBuildTransaction = jest.fn();
+const mockFinalizeTransaction = jest.fn();
+const mockBroadcastTransaction = jest.fn();
 
-jest.mock("@ledgerhq/zcash-utils", () => ({
+// Mutable module object so individual tests can delete a PCZT method to
+// exercise the `getPcztModule` capability guard. `__esModule: true` makes the
+// interop return this exact object, so mutations are visible to the SUT.
+const mockNativeModule: Record<string, unknown> = {
   __esModule: true,
   getChainTip: (...args: unknown[]) => mockGetChainTip(...(args as [string])),
   findBlockHeight: (...args: unknown[]) => mockFindBlockHeight(...(args as [string, number])),
   startSync: (...args: unknown[]) => mockStartSync(...(args as [unknown])),
-}));
+  parsePczt: (...args: unknown[]) => mockParsePczt(...args),
+  buildTransaction: (...args: unknown[]) => mockBuildTransaction(...args),
+  finalizeTransaction: (...args: unknown[]) => mockFinalizeTransaction(...args),
+  broadcastTransaction: (...args: unknown[]) => mockBroadcastTransaction(...args),
+};
+
+jest.mock("@ledgerhq/zcash-utils", () => mockNativeModule);
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -68,8 +81,12 @@ import {
   getChainTipJob,
   findBlockHeightJob,
   startSyncJob,
+  buildTransactionJob,
+  finalizeTransactionJob,
+  broadcastTransactionJob,
   type StartSyncJobArgs,
 } from "../engine";
+import type { BuildTransactionArgs, FinalizeTransactionArgs } from "../../types";
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -672,5 +689,202 @@ describe("startSyncJob", () => {
     const mappedTx2 = chunk.transactions.find((t: { id: string }) => t.id === "tx2-spend");
     expect(mappedTx2.decryptedData.orchard_outputs[0].is_spent).toBe(false);
     expect(mappedTx2.decryptedData.orchard_outputs[1].is_spent).toBe(false);
+  });
+});
+
+// ── PCZT signing jobs ──────────────────────────────────────────────────
+//
+// buildTransactionJob / finalizeTransactionJob / broadcastTransactionJob all
+// go through `getPcztModule`, which asserts the native addon exposes the four
+// PCZT methods before use.
+
+/** A raw parsePczt() result with string zatoshi values and `undefined` optionals. */
+function makeRawPczt(overrides: Partial<Record<string, unknown>> = {}) {
+  return {
+    global: {
+      txVersion: 5,
+      versionGroupId: 0x26a7270a,
+      consensusBranchId: 0xc2d6d0b4,
+      // fallbackLockTime intentionally omitted (undefined) -> normalised to null
+      expiryHeight: 123456,
+      coinType: 133,
+      txModifiable: 0,
+    },
+    transparentInputs: [
+      {
+        prevoutTxid: new Uint8Array([1, 2, 3]),
+        prevoutIndex: 0,
+        // sequence intentionally omitted (undefined) -> normalised to null
+        value: "100000", // decimal string -> normalised to bigint
+        scriptPubKey: new Uint8Array([0x76, 0xa9]),
+        sighashType: 1,
+        derivation: { signingPath: "m/44'/133'/0'/0/0", pubkey: new Uint8Array([9]) },
+      },
+    ],
+    transparentOutputs: [
+      {
+        value: 50000n, // already bigint -> passes through BigInt() unchanged
+        scriptPubKey: new Uint8Array([0x00]),
+        // derivation intentionally omitted (undefined) -> normalised to null
+      },
+    ],
+    orchardBundle: {
+      actions: [
+        {
+          cvNet: new Uint8Array([0]),
+          nullifier: new Uint8Array([0]),
+          rk: new Uint8Array([0]),
+          spendRecipient: new Uint8Array([0]),
+          spendValue: "70000", // string -> bigint
+          spendRho: new Uint8Array([0]),
+          spendRseed: new Uint8Array([0]),
+          alpha: new Uint8Array([0]),
+          signingPath: "m/44'/133'/0'",
+          cmx: new Uint8Array([0]),
+          ephemeralKey: new Uint8Array([0]),
+          encCiphertext: new Uint8Array([0]),
+          outCiphertext: new Uint8Array([0]),
+          recipient: new Uint8Array([0]),
+          value: 30000n, // bigint -> bigint
+          rseed: new Uint8Array([0]),
+          rcv: new Uint8Array([0]),
+        },
+      ],
+      flags: 3,
+      valueBalance: "-20000", // string -> bigint
+      anchor: new Uint8Array([0xab]),
+    },
+    ...overrides,
+  };
+}
+
+const buildArgs: Omit<BuildTransactionArgs, "requestId"> = {
+  grpcUrl: "https://grpc.example.com",
+  ufvk: "uview1test",
+  network: "mainnet",
+  seedFingerprint: "00".repeat(32),
+  accountIndex: 0,
+  feeZat: "10000",
+  spends: [],
+  transparentInputs: [],
+  outputs: [{ address: "u1recipient", valueZat: "50000" }],
+};
+
+const nativeBuildResult = {
+  pcztHex: "deadbeef",
+  feeZat: "10000",
+  anchorHeight: 2_000_000,
+  nActionsOrchard: 2,
+  nTransparentInputs: 1,
+  nTransparentOutputs: 1,
+};
+
+describe("buildTransactionJob", () => {
+  it("builds a PCZT, parses it, and returns the adapted result", async () => {
+    mockBuildTransaction.mockResolvedValue(nativeBuildResult);
+    mockParsePczt.mockReturnValue(makeRawPczt());
+
+    const result = await buildTransactionJob(buildArgs);
+
+    expect(mockBuildTransaction).toHaveBeenCalledWith(buildArgs);
+    expect(mockParsePczt).toHaveBeenCalledWith("deadbeef");
+
+    // Passthrough metadata from the native buildTransaction result.
+    expect(result.pcztHex).toBe("deadbeef");
+    expect(result.feeZat).toBe("10000");
+    expect(result.anchorHeight).toBe(2_000_000);
+    expect(result.nActionsOrchard).toBe(2);
+    expect(result.nTransparentInputs).toBe(1);
+    expect(result.nTransparentOutputs).toBe(1);
+  });
+
+  it("normalises value fields to bigint and undefined optionals to null (adaptPcztForSigner)", async () => {
+    mockBuildTransaction.mockResolvedValue(nativeBuildResult);
+    mockParsePczt.mockReturnValue(makeRawPczt());
+
+    const { pcztTransaction } = await buildTransactionJob(buildArgs);
+
+    // global.fallbackLockTime: undefined -> null
+    expect(pcztTransaction.global.fallbackLockTime).toBeNull();
+
+    // transparent input: string value -> bigint, undefined sequence -> null
+    expect(pcztTransaction.transparentInputs[0].value).toBe(100000n);
+    expect(pcztTransaction.transparentInputs[0].sequence).toBeNull();
+
+    // transparent output: bigint value passes through, undefined derivation -> null
+    expect(pcztTransaction.transparentOutputs[0].value).toBe(50000n);
+    expect(pcztTransaction.transparentOutputs[0].derivation).toBeNull();
+
+    // orchard bundle: valueBalance + action values normalised to bigint
+    expect(pcztTransaction.orchardBundle?.valueBalance).toBe(-20000n);
+    expect(pcztTransaction.orchardBundle?.actions[0].spendValue).toBe(70000n);
+    expect(pcztTransaction.orchardBundle?.actions[0].value).toBe(30000n);
+  });
+
+  it("passes a null orchardBundle through unchanged", async () => {
+    mockBuildTransaction.mockResolvedValue(nativeBuildResult);
+    mockParsePczt.mockReturnValue(makeRawPczt({ orchardBundle: null }));
+
+    const { pcztTransaction } = await buildTransactionJob(buildArgs);
+
+    expect(pcztTransaction.orchardBundle).toBeNull();
+  });
+
+  it("propagates errors from the native buildTransaction", async () => {
+    mockBuildTransaction.mockRejectedValue(new Error("proving failed"));
+    await expect(buildTransactionJob(buildArgs)).rejects.toThrow("proving failed");
+  });
+});
+
+describe("finalizeTransactionJob", () => {
+  const finalizeArgs: Omit<FinalizeTransactionArgs, "requestId"> = {
+    pczt: "cafebabe",
+    orchardSignatures: ["aa".repeat(64)],
+    transparentSignatures: ["bb".repeat(35)],
+  };
+
+  it("delegates to native.finalizeTransaction and returns its result", async () => {
+    const finalizeResult = { txHex: "ff00", txid: "cc".repeat(32) };
+    mockFinalizeTransaction.mockResolvedValue(finalizeResult);
+
+    const result = await finalizeTransactionJob(finalizeArgs);
+
+    expect(mockFinalizeTransaction).toHaveBeenCalledWith(finalizeArgs);
+    expect(result).toBe(finalizeResult);
+  });
+
+  it("propagates errors from the native finalizeTransaction", async () => {
+    mockFinalizeTransaction.mockRejectedValue(new Error("bad signature"));
+    await expect(finalizeTransactionJob(finalizeArgs)).rejects.toThrow("bad signature");
+  });
+});
+
+describe("broadcastTransactionJob", () => {
+  it("delegates to native.broadcastTransaction and returns the txid", async () => {
+    mockBroadcastTransaction.mockResolvedValue("dd".repeat(32));
+
+    const txid = await broadcastTransactionJob("https://grpc.example.com", "abcd");
+
+    expect(mockBroadcastTransaction).toHaveBeenCalledWith("https://grpc.example.com", "abcd");
+    expect(txid).toBe("dd".repeat(32));
+  });
+
+  it("propagates errors from the native broadcastTransaction", async () => {
+    mockBroadcastTransaction.mockRejectedValue(new Error("gRPC rejected tx"));
+    await expect(broadcastTransactionJob("url", "abcd")).rejects.toThrow("gRPC rejected tx");
+  });
+});
+
+describe("getPcztModule guard (via jobs)", () => {
+  it("throws a descriptive error listing the missing PCZT method(s)", async () => {
+    const original = mockNativeModule.finalizeTransaction;
+    delete mockNativeModule.finalizeTransaction;
+    try {
+      await expect(broadcastTransactionJob("url", "abcd")).rejects.toThrow(
+        /missing PCZT method\(s\): finalizeTransaction/,
+      );
+    } finally {
+      mockNativeModule.finalizeTransaction = original;
+    }
   });
 });

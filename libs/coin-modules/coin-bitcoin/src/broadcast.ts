@@ -3,6 +3,7 @@ import { InvalidTransactionError } from "@ledgerhq/errors";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import { Transaction, BtcOperationExtra } from "./types";
+import { getChainAdapter } from "./chain-adapters/registry";
 /**
  * Broadcast a signed transaction
  * @param {signature: string, operation: string} signedOperation
@@ -18,6 +19,11 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   const extra = operation.extra as BtcOperationExtra | undefined;
   const inputRefs = extra?.inputRefs ?? [];
 
+  // Double-spend guard. Runs whenever the operation carries transparent input
+  // references — including chain-adapter flows that broadcast elsewhere (e.g.
+  // Zcash Public→* PCZT txs spend transparent UTXOs but submit the signed V5 tx
+  // via the adapter override below). Kept before the adapter delegation so those
+  // flows are protected too; a no-op when there are no transparent inputs.
   if (inputRefs.length > 0) {
     // Check each UTXO we're about to spend by fetching its source tx.
     // If the relevant output already has spent_at_height > 0 it has been
@@ -37,6 +43,13 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
       }
     }
   }
+
+  // Chain adapters may own broadcasting for transactions the Bitcoin explorer
+  // cannot submit (e.g. Zcash shielded V5 txs, broadcast via gRPC). When the
+  // adapter takes over it returns the patched operation; otherwise we fall
+  // through to the standard explorer broadcast below.
+  const custom = getChainAdapter(account.currency.id).broadcast?.(account, signedOperation);
+  if (custom) return custom;
 
   const hash = await wallet.broadcastTx(walletAccount, signature, broadcastConfig);
   return patchOperationWithHash(operation, hash);

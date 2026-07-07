@@ -33,6 +33,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import { allowDebugReactQuerySelector } from "./reducers/settings";
 import { ThemeProvider } from "@ledgerhq/lumen-ui-react";
+import { setZcashShieldedEnabled } from "@ledgerhq/live-common/families/bitcoin/setup";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -65,6 +66,14 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
 
   const selectedPalette = useSelector(themeSelector) || "light";
   const ldmkTransport = useFeature("ldmkTransport");
+  const zcashShielded = useFeature("zcashShielded");
+
+  // Mirror the `zcashShielded` feature flag into the Zcash coin module: flag ON routes
+  // every Zcash send through the shielded PCZT/V5 path, flag OFF keeps the legacy
+  // transparent Bitcoin path. The coin module can't read React feature flags directly.
+  useEffect(() => {
+    setZcashShieldedEnabled(zcashShielded?.enabled ?? false);
+  }, [zcashShielded?.enabled]);
 
   return (
     <StyleProvider selectedPalette={selectedPalette}>
