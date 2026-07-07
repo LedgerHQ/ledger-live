@@ -21,7 +21,11 @@ export function useOnDemandCurrencyCountervalues(
 
   useEffect(() => {
     if (hasTrackingPair) return;
-    addExtraSessionTrackingPair({ from: currency, to: counterValueCurrency, startDate: new Date() });
+    addExtraSessionTrackingPair({
+      from: currency,
+      to: counterValueCurrency,
+      startDate: new Date(),
+    });
     const t = setTimeout(() => pollRef.current(), 2000);
     return () => clearTimeout(t);
   }, [hasTrackingPair, currency, counterValueCurrency]);
