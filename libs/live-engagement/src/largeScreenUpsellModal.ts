@@ -24,7 +24,7 @@ const largeScreenUpsellModalSlice = createSlice({
 
       state.retries = isRestorableRetryCount ? retries : initialState.retries;
       state.lastSeenAt =
-        typeof lastSeenAt === "number" && Number.isFinite(lastSeenAt)
+        typeof lastSeenAt === "number" && Number.isSafeInteger(lastSeenAt) && lastSeenAt >= 0
           ? lastSeenAt
           : initialState.lastSeenAt;
     },

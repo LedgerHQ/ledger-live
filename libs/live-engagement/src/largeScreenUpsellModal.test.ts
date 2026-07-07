@@ -79,6 +79,25 @@ describe("largeScreenUpsellModal", () => {
     });
   });
 
+  it("restores only non-negative safe integer last display timestamps", () => {
+    const invalidLastSeenAtValues = [2.7, -1, Number.MAX_SAFE_INTEGER + 1];
+
+    for (const lastSeenAt of invalidLastSeenAtValues) {
+      expect(
+        largeScreenUpsellModalReducer(
+          undefined,
+          restoreLargeScreenUpsellModalState({
+            retries: 2,
+            lastSeenAt,
+          }),
+        ),
+      ).toEqual({
+        retries: 2,
+        lastSeenAt: null,
+      });
+    }
+  });
+
   it("falls back to defaults for malformed persisted values", () => {
     const malformedPayload = {
       retries: NaN,

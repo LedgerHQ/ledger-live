@@ -1,11 +1,12 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
     "declaration": true,
     "declarationMap": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "lib": ["es2020", "dom"],
     "types": ["jest"],
     "outDir": "lib",
     "rootDir": "src"
