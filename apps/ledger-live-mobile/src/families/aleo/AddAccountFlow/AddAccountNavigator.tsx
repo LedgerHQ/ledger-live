@@ -3,6 +3,7 @@ import { Platform } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
 import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
 import { Trans } from "~/context/Locale";
 import type {
@@ -14,6 +15,7 @@ import { ScreenName } from "~/const";
 import { AleoAddAccountParamList, AleoViewKeyFlowParamList } from "./types";
 import ViewKeyWarningScreen from "./ViewKeyWarningScreen";
 import ViewKeyApproveScreen from "./ViewKeyApproveScreen";
+import NoAccountsAddedScreen from "./NoAccountsAddedScreen";
 
 type Props = StackNavigatorProps<AleoAddAccountParamList, ScreenName.AleoAddAccount>;
 
@@ -23,12 +25,13 @@ const DEFAULT_ADD_ACCOUNT_FLOW_DEPTH = 2; // SelectDevice + AddAccounts
 
 interface HeaderRightProps {
   onClose: () => void;
+  withConfirmation?: boolean;
 }
 
-function HeaderRight({ onClose }: Readonly<HeaderRightProps>) {
+function HeaderRight({ onClose, withConfirmation = true }: Readonly<HeaderRightProps>) {
   return (
     <NavigationHeaderCloseButtonAdvanced
-      withConfirmation
+      withConfirmation={withConfirmation}
       skipNavigation
       onClose={onClose}
       confirmationTitle={<Trans i18nKey="addAccounts.quitConfirmation.v2.title" />}
@@ -69,6 +72,12 @@ function AddAccountNavigator({ route, navigation }: Readonly<Props>) {
   }, [navigation, navigationDepth]);
 
   const renderHeaderRight = useCallback(() => <HeaderRight onClose={handleClose} />, [handleClose]);
+  const renderHeaderRightNoConfirmation = useCallback(
+    () => <HeaderRight onClose={handleClose} withConfirmation={false} />,
+    [handleClose],
+  );
+
+  const { accountsToAdd: _, ...viewKeyWarningParams } = route.params;
 
   return (
     <Stack.Navigator
@@ -83,7 +92,7 @@ function AddAccountNavigator({ route, navigation }: Readonly<Props>) {
       <Stack.Screen
         name={ScreenName.AleoViewKeyWarning}
         component={ViewKeyWarningScreen}
-        initialParams={{ ...route.params, onCloseNavigation: handleClose }}
+        initialParams={{ ...viewKeyWarningParams, onCloseNavigation: handleClose }}
         options={{ headerTitle: "" }}
       />
       <Stack.Screen
@@ -91,6 +100,17 @@ function AddAccountNavigator({ route, navigation }: Readonly<Props>) {
         component={ViewKeyApproveScreen}
         initialParams={{ ...route.params, onCloseNavigation: handleClose }}
         options={{ headerTitle: "" }}
+      />
+      <Stack.Screen
+        name={ScreenName.AleoNoAccountsAdded}
+        component={NoAccountsAddedScreen}
+        initialParams={{ ...viewKeyWarningParams, onCloseNavigation: handleClose }}
+        options={{
+          ...TransparentHeaderNavigationOptions,
+          headerLeft: () => null,
+          headerRight: renderHeaderRightNoConfirmation,
+          gestureEnabled: false,
+        }}
       />
     </Stack.Navigator>
   );
