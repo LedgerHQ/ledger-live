@@ -3,7 +3,7 @@
   "targets": {
     "build-e2e-deps": {
       "executor": "nx:noop",
-      "dependsOn": ["^build", "@ledgerhq/live-cli:build"]
+      "dependsOn": ["^build", "@ledgerhq/live-cli:build", "live-mobile:build"]
     },
     "e2e:ci": {
       "executor": "nx:run-script",
