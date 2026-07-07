@@ -3,6 +3,7 @@ import { AccountType, getParentAccountName } from "@ledgerhq/live-e2e-shared/enu
 import { BuySell, Fiat } from "@ledgerhq/live-e2e-shared/models/BuySell";
 import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { openDeeplink, normalizeText } from "../../helpers/commonHelpers";
+import { checkForErrorElement, ERROR_MODAL_SELECTORS } from "../../helpers/errorHelpers";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
 export default class BuySellPage {
@@ -198,7 +199,26 @@ export default class BuySellPage {
       const currentUrl = await waitForCurrentWebviewUrlToContain(normalizedProvider);
       jestExpect(currentUrl.toLowerCase()).toContain(normalizedProvider);
     } catch (error) {
-      throw new Error(`Provider page verification failed: ${sanitizeError(error)}`);
+      throw Object.assign(new Error(`Provider page verification failed: ${sanitizeError(error)}`), {
+        cause: error,
+      });
+    }
+  }
+
+  @Step("Verify provider page is displayed and not a blank/error screen")
+  async verifyProviderPageIsNotBlank(provider: string) {
+    try {
+      await waitForWebviewContentToRender();
+    } catch (error) {
+      throw Object.assign(
+        new Error(
+          `Provider "${provider}" redirected to the correct URL but rendered a blank screen: ${sanitizeError(error)}`,
+        ),
+        { cause: error },
+      );
+    }
+    for (const errorSelector of ERROR_MODAL_SELECTORS) {
+      await checkForErrorElement(errorSelector, 1000);
     }
   }
 
@@ -216,6 +236,7 @@ export default class BuySellPage {
     const selectedProvider = await this.selectRandomProvider();
     await this.tapBuySellWithCta(selectedProvider, buySell.operation);
     await this.verifyProviderPageLoadedWithCorrectUrl(selectedProvider);
+    await this.verifyProviderPageIsNotBlank(selectedProvider);
   }
 
   @Step("Handle sell flow")
@@ -229,5 +250,6 @@ export default class BuySellPage {
     await this.selectProvider(provider.name);
     await this.tapBuySellWithCta(provider.uiName, buySell.operation);
     await this.verifyProviderPageLoadedWithCorrectUrl(provider.uiName);
+    await this.verifyProviderPageIsNotBlank(provider.uiName);
   }
 }

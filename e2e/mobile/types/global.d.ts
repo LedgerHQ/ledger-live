@@ -104,6 +104,7 @@ declare global {
   var tapWebElementByTestId: typeof WebElementHelpers.tapWebElementByTestId;
   var typeTextByWebTestId: typeof WebElementHelpers.typeTextByWebTestId;
   var waitForCurrentWebviewUrlToContain: typeof WebElementHelpers.waitForCurrentWebviewUrlToContain;
+  var waitForWebviewContentToRender: typeof WebElementHelpers.waitForWebviewContentToRender;
   var waitForWebElementToBeEnabled: typeof WebElementHelpers.waitForWebElementToBeEnabled;
   var waitForWebElementToMatchRegex: typeof WebElementHelpers.waitForWebElementToMatchRegex;
   var waitWebElement: typeof WebElementHelpers.waitWebElement;
