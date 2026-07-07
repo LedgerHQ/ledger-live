@@ -16,6 +16,15 @@ const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\
 // Net value of a quote as shown on screen: amount received minus network fees (both in fiat).
 const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - quote.fees;
 
+// Strings match by substring, RegExps by pattern.
+const expectTextMatches = (actual: string, expected: string | RegExp) => {
+  if (typeof expected === "string") {
+    jestExpect(actual).toContain(expected);
+  } else {
+    jestExpect(actual).toMatch(expected);
+  }
+};
+
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -31,6 +40,7 @@ export default class SwapLiveAppPage {
   executeSwapButtonStepApproval = "execute-swap-button-step-approval";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
   fromAccountErrorId = "from-account-error";
+  swapErrorButtonReplacementId = "swap-error-button-replacement";
   showDetailslink = "show-details-link";
   quotesContainerErrorIcon = "quotes-container-error-icon";
   insufficientFundsBuyButton = "insufficient-funds-buy-button";
@@ -339,15 +349,16 @@ export default class SwapLiveAppPage {
     };
   }
 
-  @Step("Verify swap amount error message match: $0")
-  async verifySwapAmountErrorMessageIsCorrect(expectedMessage: string | RegExp) {
-    await waitWebElementByTestId(this.fromAccountErrorId);
-    const errorText: string = await getWebElementText(this.fromAccountErrorId);
-    if (typeof expectedMessage === "string") {
-      jestExpect(errorText).toContain(expectedMessage);
-    } else {
-      jestExpect(errorText).toMatch(expectedMessage);
-    }
+  @Step("Verify swap error message match: $0 ($1)")
+  async verifySwapErrorMessageIsCorrect(
+    expectedMessage: string | RegExp,
+    display: "banner" | "buttonReplacement" = "banner",
+  ) {
+    const testId =
+      display === "buttonReplacement" ? this.swapErrorButtonReplacementId : this.fromAccountErrorId;
+    await waitWebElementByTestId(testId);
+    const errorText: string = await getWebElementText(testId);
+    expectTextMatches(errorText, expectedMessage);
   }
 
   @Step("Verify swap CTA banner displayed")

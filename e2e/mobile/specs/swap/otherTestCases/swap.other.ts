@@ -225,6 +225,7 @@ export function runTooLowAmountForQuoteSwapsTest(
   ctaBanner: boolean,
   quotesVisible: boolean,
   tags: string[],
+  errorDisplay: "banner" | "buttonReplacement" = "banner",
 ) {
   describe(`Swap - with too low amount (throwing UI errors) - ${swap.amount} ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, () => {
     beforeAll(async () => {
@@ -266,7 +267,9 @@ export function runTooLowAmountForQuoteSwapsTest(
         await app.swapLiveApp.checkQuotes();
         await app.swapLiveApp.selectExchange();
       }
-      await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
+      // NOT_ENOUGH_BALANCE / NOT_ENOUGH_TOKEN_BALANCE hide the from-account-error banner on
+      // mobile and replace the swap button with a red inert button instead (errorDisplay: "buttonReplacement").
+      await app.swapLiveApp.verifySwapErrorMessageIsCorrect(errorMessage, errorDisplay);
 
       // CTA banner temporarily removed from UI — re-enable when it returns
       // if (ctaBanner) {
@@ -585,7 +588,7 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
       );
       await app.swapLiveApp.checkQuotes();
       await app.swapLiveApp.selectExchange();
-      await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
+      await app.swapLiveApp.verifySwapErrorMessageIsCorrect(errorMessage);
     });
   });
 }

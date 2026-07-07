@@ -57,6 +57,8 @@ export class SwapPage extends WebViewAppPage {
   private insufficientFundsBuyButton = "insufficient-funds-buy-button";
   private insufficientFundsWarning = "insufficient-funds-warning";
   private executeButtonDisabled = "execute-button-disabled";
+  private fromAccountError = "from-account-error";
+  private noQuotesPlaceholder = "quotes-loading";
   // Swap Steps Approval components
   private readonly giveApprovalButton = "give-approval-button";
   private readonly signPermitButton = "sign-permit-button";
@@ -486,17 +488,16 @@ export class SwapPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.toAccountAccountNameTag)).toContainText(expected);
   }
 
-  @step("Verify swap amount error message match: $0")
-  async verifySwapAmountErrorMessageIsCorrect(message: string | RegExp) {
+  @step("Verify swap error message match: $0 ($1)")
+  async verifySwapErrorMessageIsCorrect(
+    message: string | RegExp,
+    display: "banner" | "quotesPlaceholder" = "banner",
+  ) {
     const webview = await this.getWebView();
-    const errorSpan = await webview.getByTestId("from-account-error").textContent();
-    expect(errorSpan).toMatch(message);
-  }
-
-  @step("Check insufficient funds warning banner is visible")
-  async checkInsufficientFundsBannerVisible() {
-    const webview = await this.getWebView();
-    await expect(webview.getByTestId(this.insufficientFundsWarning)).toBeVisible();
+    const testId =
+      display === "quotesPlaceholder" ? this.noQuotesPlaceholder : this.fromAccountError;
+    const text = await webview.getByTestId(testId).textContent();
+    expect(text).toMatch(message);
   }
 
   @step("verify quotes are displayed")
