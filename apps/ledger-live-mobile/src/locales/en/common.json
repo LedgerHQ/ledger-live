@@ -2975,6 +2975,8 @@
     "month": "1M",
     "year": "1Y",
     "all": "All",
+    "second_short": "s",
+    "minute_short": "min",
     "since": {
       "day": "past day",
       "week": "past week",
@@ -10076,6 +10078,18 @@
     "accountActions": {
       "publicToPrivate": "Self transfer"
     },
+    "send": {
+      "balanceSelection": {
+        "title": "Select balance",
+        "mockTitle": "Balance selection screen mock",
+        "selfTransfer": "Self transfer: {{value}}",
+        "mockButtonPublic": "Public",
+        "mockButtonPrivate": "Private"
+      },
+      "privateSync": {
+        "mockTitle": "Private sync mock"
+      }
+    },
     "balancesSection": "Balances",
     "info": {
       "transparent": {
@@ -10093,6 +10107,12 @@
         "stopSync": "Stop sync",
         "syncAgain": "Sync again",
         "lastSync": "Last synced: {{date}}"
+      }
+    },
+    "operations": {
+      "type": {
+        "public": "Public",
+        "private": "Private"
       }
     }
   }

@@ -61,6 +61,7 @@ export type SendFundsNavigatorStackParamList = {
         category?: string;
         notEmptyAccounts?: boolean;
         minBalance?: number;
+        extra?: Record<string, unknown>;
       }
     | undefined;
   [ScreenName.SendSelectRecipient]: {
@@ -390,5 +391,15 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
+  };
+  [ScreenName.AleoSendBalanceSelection]: {
+    account: AccountLike;
+    parentAccount?: Account;
+    isSelfTransfer: boolean;
+  };
+  [ScreenName.AleoMandatoryPrivateSync]: {
+    account: AccountLike;
+    parentAccount?: Account;
+    transaction: Transaction;
   };
 };

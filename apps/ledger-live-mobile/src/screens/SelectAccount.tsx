@@ -20,6 +20,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
+import { getCustomSendFlow } from "~/screens/SendFunds/utils/customSendFlow";
 
 type Props = BaseComposite<
   StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendCoin>
@@ -95,43 +96,57 @@ function ReceiveFunds({ navigation, route }: Props) {
 
       if (typeof minBalance !== "undefined" && !isNaN(minBalance) && balance.lte(minBalance)) {
         setError(new NotEnoughBalance());
-      } else {
-        // If navigating to Send flow, check if new flow is enabled for this account's family
-        if (next === ScreenName.SendSelectRecipient) {
-          const parentAccount = getParentAccount(account, accounts);
-          const accountFamily = getFamilyFromAccount(account, parentAccount);
-          const accountCurrencyId = getCurrencyIdFromAccount(account, parentAccount);
-          const shouldUseNewFlow = isEnabledForFamily(accountFamily, accountCurrencyId);
+        return;
+      }
 
-          if (shouldUseNewFlow) {
-            const mainAccount = getMainAccount(account, parentAccount);
-            navigation.navigate(NavigatorName.SendFlow, {
-              params: {
-                account,
-                parentAccount: mainAccount === account ? undefined : mainAccount,
-              },
-            });
-            return;
-          }
+      // If navigating to Send flow, check if new flow is enabled for this account's family
+      if (next === ScreenName.SendSelectRecipient) {
+        const parentAccount = getParentAccount(account, accounts);
+        const accountFamily = getFamilyFromAccount(account, parentAccount);
+        const accountCurrencyId = getCurrencyIdFromAccount(account, parentAccount);
+        const shouldUseNewFlow = isEnabledForFamily(accountFamily, accountCurrencyId);
+        const mainAccount = getMainAccount(account, parentAccount);
+
+        if (shouldUseNewFlow) {
+          navigation.navigate(NavigatorName.SendFlow, {
+            params: {
+              account,
+              parentAccount: mainAccount === account ? undefined : mainAccount,
+            },
+          });
+          return;
         }
 
-        // Determine navigation target for old flows or non-Send flows
-        const targetScreen = next || ScreenName.ReceiveConnectDevice;
+        const family = mainAccount.currency.family;
+        const familySendFlow = getCustomSendFlow(family);
 
-        // FIXME: Double check if this works because it seems very weird.
-        // 1) "next" does not seem to be passed as a param anywhere
-        // 2) This component belongs to "SendFundsNavigator", but ReceiveConnectDevice does not.
-        //    It belongs to "ReceiveFundsNavigator".
-        // Update: next is never passed as a dynamic param, it is only defined as an initial param
-        // Thus, next is always defined and the || condition seems to be kinda stupid.
-        // @ts-expect-error this seems impossible to type correctly…
-        navigation.navigate(targetScreen, {
-          ...route.params,
-          account,
-          accountId: account.id,
-          parentId: account.type !== "Account" ? account.parentId : undefined,
-        });
+        if (familySendFlow?.navigateToInitialScreen) {
+          familySendFlow.navigateToInitialScreen({
+            navigation,
+            account,
+            parentAccount,
+            extra: route.params?.extra,
+          });
+          return;
+        }
       }
+
+      // Determine navigation target for old flows or non-Send flows
+      const targetScreen = next || ScreenName.ReceiveConnectDevice;
+
+      // FIXME: Double check if this works because it seems very weird.
+      // 1) "next" does not seem to be passed as a param anywhere
+      // 2) This component belongs to "SendFundsNavigator", but ReceiveConnectDevice does not.
+      //    It belongs to "ReceiveFundsNavigator".
+      // Update: next is never passed as a dynamic param, it is only defined as an initial param
+      // Thus, next is always defined and the || condition seems to be kinda stupid.
+      // @ts-expect-error this seems impossible to type correctly…
+      navigation.navigate(targetScreen, {
+        ...route.params,
+        account,
+        accountId: account.id,
+        parentId: account.type !== "Account" ? account.parentId : undefined,
+      });
     },
     [
       accounts,

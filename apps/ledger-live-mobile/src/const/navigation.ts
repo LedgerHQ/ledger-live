@@ -425,6 +425,8 @@ export enum ScreenName {
   AleoAddAccount = "AleoAddAccount",
   AleoViewKeyWarning = "AleoViewKeyWarning",
   AleoViewKeyApprove = "AleoViewKeyApprove",
+  AleoSendBalanceSelection = "AleoSendBalanceSelection",
+  AleoMandatoryPrivateSync = "AleoMandatoryPrivateSync",
 
   OnboardingWelcome = "OnboardingWelcome",
   OnboardingPostWelcomeSelection = "OnboardingPostWelcomeSelection",

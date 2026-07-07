@@ -430,6 +430,15 @@ export function isPrivateTransaction(transaction: Transaction): transaction is T
   );
 }
 
+export function isPrivateDestination(transaction: Transaction): boolean {
+  return (
+    transaction.mode === TRANSACTION_TYPE.TRANSFER_PRIVATE ||
+    transaction.mode === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
+    transaction.mode === TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE ||
+    transaction.mode === TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
+  );
+}
+
 /**
  * Workaround for useBridgeTransaction.setAccount preserving the previous mode and only patching subAccountId.
  * Switching between main/sub-account can leave a native mode on a token tx (or vice versa).

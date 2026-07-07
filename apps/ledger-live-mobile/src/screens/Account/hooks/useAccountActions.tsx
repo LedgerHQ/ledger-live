@@ -107,7 +107,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
 
   const extraReceiveActionParams = useMemo(
     () =>
-      decorators && decorators.getExtraSendActionParams
+      decorators && decorators.getExtraReceiveActionParams
         ? decorators.getExtraReceiveActionParams({ account, parentAccount })
         : {},
     [account, parentAccount, decorators],

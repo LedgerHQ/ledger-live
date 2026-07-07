@@ -79,6 +79,7 @@ import {
   isPublicTransaction,
   isPrivateTransaction,
   isTokenTransaction,
+  isPrivateDestination,
   derivePublicTransactionMode,
   derivePrivateTransactionMode,
   createTransactionIntent,
@@ -1552,6 +1553,23 @@ describe("isPrivateTransaction", () => {
     const transaction = getMockedTransaction({ mode });
 
     expect(isPrivateTransaction(transaction)).toBe(expected);
+  });
+});
+
+describe("isPrivateDestination", () => {
+  it.each([
+    [true, TRANSACTION_TYPE.TRANSFER_PRIVATE],
+    [true, TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
+    [true, TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE],
+    [true, TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE],
+    [false, TRANSACTION_TYPE.TRANSFER_PUBLIC],
+    [false, TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
+    [false, TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC],
+    [false, TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC],
+  ] as const)("should return %s for mode '%s'", (expected, mode) => {
+    const transaction = getMockedTransaction({ mode });
+
+    expect(isPrivateDestination(transaction)).toBe(expected);
   });
 });
 

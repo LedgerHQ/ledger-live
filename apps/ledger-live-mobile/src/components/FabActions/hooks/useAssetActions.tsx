@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useRoute } from "@react-navigation/native";
-import { AccountLikeArray } from "@ledgerhq/types-live";
+import type { AccountLikeArray } from "@ledgerhq/types-live";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { IconsLegacy } from "@ledgerhq/native-ui";
@@ -9,12 +9,15 @@ import {
   getParentAccount,
   isTokenAccount,
 } from "@ledgerhq/live-common/account/index";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@features/platform-feature-flags";
 import { NavigatorName, ScreenName } from "~/const";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { ActionButtonEvent } from "..";
+import { getCustomSendFlow } from "~/screens/SendFunds/utils/customSendFlow";
+import perFamilyAccountActions from "~/generated/accountActions";
 import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
 import { sharedSwapTracking } from "~/screens/Swap/utils";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
@@ -82,6 +85,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
 
   const { getCanStakeCurrency } = useStake();
   const accountCurrency = !defaultAccount ? null : getAccountCurrency(defaultAccount);
+  const family = currency ? getFamilyByCurrencyId(currency.id) : undefined;
   const assetId = !currency ? accountCurrency?.id : currency.id;
   const canStakeCurrency = !assetId ? false : getCanStakeCurrency(assetId);
 
@@ -96,6 +100,12 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
 
   const { openDrawer } = useModularDrawerController();
 
+  const familySendFlow = family ? getCustomSendFlow(family) : null;
+
+  const familyAccountActions = family
+    ? perFamilyAccountActions[family as keyof typeof perFamilyAccountActions]
+    : null;
+
   const handleOpenAddAccountDrawer = useCallback(() => {
     openDrawer({
       currencies: currency ? [currency.id] : [],
@@ -107,6 +117,36 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
 
   const actions = useMemo<ActionButtonEvent[]>(() => {
     const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
+
+    const additionalAssetActions =
+      familyAccountActions && "getAdditionalAssetActions" in familyAccountActions
+        ? familyAccountActions.getAdditionalAssetActions({
+            currency,
+            defaultAccount,
+            parentAccount,
+          })
+        : [];
+
+    const getScreenDescriptor = () => {
+      if (defaultAccount && familySendFlow?.buildSendEntrypoint) {
+        return familySendFlow.buildSendEntrypoint({ account: defaultAccount, parentAccount });
+      }
+
+      if (defaultAccount) {
+        return {
+          screen: ScreenName.SendSelectRecipient,
+          params: {
+            accountId: defaultAccount.id,
+            parentId: defaultAccount.type === "TokenAccount" ? defaultAccount.parentId : undefined,
+          },
+        };
+      }
+
+      return {
+        screen: ScreenName.SendCoin,
+        params: { selectedCurrency: currency },
+      };
+    };
 
     return [
       ...(canBeBought
@@ -207,29 +247,16 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               id: "send",
               label: t("transfer.send.title"),
               Icon: iconSend,
-              navigationParams: [
-                NavigatorName.SendFunds,
-                defaultAccount
-                  ? {
-                      screen: ScreenName.SendSelectRecipient,
-                      params: {
-                        accountId: defaultAccount.id,
-                        parentId:
-                          defaultAccount.type === "TokenAccount"
-                            ? defaultAccount.parentId
-                            : undefined,
-                      },
-                    }
-                  : {
-                      screen: ScreenName.SendCoin,
-                      params: { selectedCurrency: currency },
-                    },
-              ] as const,
+              navigationParams: [NavigatorName.SendFunds, getScreenDescriptor()] as const,
               disabled: areAccountsBalanceEmpty,
               modalOnDisabledClick: {
                 component: ZeroBalanceDisabledModalContent,
               },
             },
+            ...additionalAssetActions.map(additionalAction => ({
+              disabled: areAccountsBalanceEmpty,
+              ...additionalAction,
+            })),
           ]
         : [
             ...(!readOnlyModeEnabled
@@ -255,10 +282,13 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     readOnlyModeEnabled,
     availableOnSwap,
     defaultAccount,
+    parentAccount,
     canStakeCurrency,
     assetId,
     stakeLabel,
     accountCurrency?.ticker,
+    familySendFlow,
+    familyAccountActions,
     handleOpenStakeDrawer,
     handleOpenReceiveDrawer,
     handleOpenSwap,
