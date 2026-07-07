@@ -85,7 +85,14 @@ export function AmountScreenInner({
       ...sendFlowTrackingProperties,
     });
     onReview();
-  }, [onReview, viewModel.quickActions, viewModel.selectedFeeStrategy, viewModel.amountUsd, viewModel.inputMode, sendFlowTrackingProperties]);
+  }, [
+    onReview,
+    viewModel.quickActions,
+    viewModel.selectedFeeStrategy,
+    viewModel.amountUsd,
+    viewModel.inputMode,
+    sendFlowTrackingProperties,
+  ]);
 
   return (
     <AmountScreenView

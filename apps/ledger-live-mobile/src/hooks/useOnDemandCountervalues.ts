@@ -3,14 +3,8 @@ import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { useTrackingPairs, addExtraSessionTrackingPair } from "~/actions/general";
 
-/**
- * Ensures the (currency, counterValueCurrency) pair is tracked by the
- * countervalues engine, registering it on demand when it is missing.
- *
- * Mirrors the desktop `useOnDemandCurrencyCountervalues` hook. Registration
- * mutates the session tracking pairs, so we poll shortly after to let the
- * debounced countervalues settings take effect.
- */
+// Registers the (currency, counterValueCurrency) pair with the countervalues
+// engine when missing, then polls so the debounced settings take effect.
 export function useOnDemandCurrencyCountervalues(
   currency: Currency,
   counterValueCurrency: Currency,

@@ -8,14 +8,8 @@ import { useOnDemandCurrencyCountervalues } from "~/hooks/useOnDemandCountervalu
 
 const USD = getFiatCurrencyByTicker("USD");
 
-/**
- * Converts the transaction amount to USD, regardless of the user's chosen
- * countervalue currency, so analytics amounts are always comparable.
- *
- * The crypto→USD pair is registered on demand (it is not fetched by default
- * when the user's countervalue is not USD). While that rate is still loading,
- * we fall back to the provided value (the amount in the user's fiat).
- */
+// Converts the amount to USD for comparable analytics. Registers the crypto→USD
+// pair on demand and falls back to the user's fiat amount until the rate loads.
 export function useAmountUsd(account: AccountLike, amount: BigNumber, fallback: number): number {
   const currency = useMemo(() => getAccountCurrency(account), [account]);
 

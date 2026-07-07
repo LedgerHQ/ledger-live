@@ -1,14 +1,14 @@
-import React, { useState, useCallback, useMemo, useEffect } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "~/context/hooks";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
-import { useCalculate, useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
+import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { counterValueCurrencySelector } from "~/reducers/settings";
-import { useTrackingPairs, addExtraSessionTrackingPair } from "~/actions/general";
+import { useOnDemandCurrencyCountervalues } from "~/hooks/useOnDemandCountervalues";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import type { CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import LText from "./LText";
@@ -68,28 +68,7 @@ export default function CounterValue({
   ...props
 }: Props) {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const trackingPairs = useTrackingPairs();
-  const { poll } = useCountervaluesPolling();
-  const hasTrackingPair = useMemo(
-    () => trackingPairs.some(tp => tp.from === currency && tp.to === counterValueCurrency),
-    [counterValueCurrency, currency, trackingPairs],
-  );
-  useEffect(() => {
-    let t: NodeJS.Timeout | undefined;
-
-    if (!hasTrackingPair) {
-      addExtraSessionTrackingPair({
-        from: currency,
-        to: counterValueCurrency,
-        startDate: new Date(),
-      });
-      t = setTimeout(poll, 2000); // poll after 2s to ensure debounced CV userSettings are effective after this update
-    }
-
-    return () => {
-      if (t) clearTimeout(t);
-    };
-  }, [counterValueCurrency, currency, poll, hasTrackingPair, trackingPairs]);
+  useOnDemandCurrencyCountervalues(currency, counterValueCurrency);
   const param = useMemo(
     () => ({
       from: currency,
