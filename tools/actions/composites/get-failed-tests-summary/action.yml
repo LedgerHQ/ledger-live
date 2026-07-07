@@ -28,9 +28,13 @@ runs:
       run: |
         set -euo pipefail
 
-        # jq filter escaping every char that is special in a JS regex, so the emitted
-        # Filter pattern is a literal alternation once split on '|' by the workflow.
-        JQ_ESC='def esc: gsub("(?<c>[.^$*+?()\\[\\]{}|\\\\/-])"; "\\" + .c);'
+        # jq filter escaping every char that is special in a JS regex, PLUS the
+        # comma, so the emitted Filter pattern is a literal alternation once split
+        # on '|' by the workflow. The comma must be escaped too: resolve-e2e-test-filter.mjs
+        # treats ',' as a filter separator, so an unescaped comma inside a test title
+        # (e.g. "Sync instances, rename and delete accounts") would be split into
+        # partial fragments that over-match unrelated tests and drop the intended one.
+        JQ_ESC='def esc: gsub("(?<c>[.^$*+?()\\[\\]{}|,\\\\/-])"; "\\" + .c);'
 
         case "$RUNNER" in
           detox)

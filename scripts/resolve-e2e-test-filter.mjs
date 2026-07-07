@@ -28,8 +28,14 @@ function readEnabledGenericCoinFrameworkFamilies() {
 }
 
 function splitFilter(input) {
+  // Split on `|` / `,` separators, but NOT on separators that are regex-escaped
+  // (preceded by a backslash). The failed-tests-summary action emits exact test
+  // titles as regex literals joined by `|`, escaping any literal `|`/`,` inside a
+  // title to `\|` / `\,`. Splitting on those would shatter a single title (e.g.
+  // "Sync instances, rename and delete accounts") into partial fragments that
+  // then over-match unrelated tests and drop the intended one.
   return input
-    .split(/[|,]/)
+    .split(/(?<!\\)[|,]/)
     .map(part => part.trim())
     .filter(Boolean);
 }
