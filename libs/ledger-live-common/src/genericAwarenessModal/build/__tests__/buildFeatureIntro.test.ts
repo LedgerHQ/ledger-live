@@ -4,7 +4,7 @@ import {
   GenericAwarenessModalLayout,
   type GenericAwarenessModalBrazeCard,
   type GenericAwarenessModalInputExtras,
-} from "../types";
+} from "../../types";
 
 const makeCard = (
   id: string,

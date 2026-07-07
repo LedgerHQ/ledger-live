@@ -120,4 +120,31 @@ describe("useGenericAwarenessModalPromptViewModel", () => {
       dismissAppStart: true,
     });
   });
+
+  it("should track primary click, skip opening the link, and close dialog when link is empty", () => {
+    const cardWithEmptyPrimaryLink = {
+      ...promptCampaignCard,
+      primaryButtonLink: "",
+    };
+    const { result } = renderHookWithStore(() =>
+      useGenericAwarenessModalPromptViewModel(cardWithEmptyPrimaryLink, true),
+    );
+
+    act(() => {
+      result.current.onPrimaryClick();
+    });
+
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: "learn more",
+        ctaPosition: "primary",
+        link: "",
+      }),
+    );
+    expect(openURL).not.toHaveBeenCalled();
+    expect(jest.mocked(closeGenericAwarenessModalDialog)).toHaveBeenCalledWith({
+      dismissAppStart: true,
+    });
+  });
 });

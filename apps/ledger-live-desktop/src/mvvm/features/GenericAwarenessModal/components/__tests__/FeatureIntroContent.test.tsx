@@ -45,19 +45,29 @@ describe("FeatureIntroContent", () => {
 
   it.each([
     ["primary", { primaryButtonLabel: "", primaryButtonLink: "https://example.com/primary" }],
-    ["primary", { primaryButtonLabel: "Primary", primaryButtonLink: "" }],
     [
       "secondary",
       { secondaryButtonLabel: "", secondaryButtonLink: "https://example.com/secondary" },
     ],
-    ["secondary", { secondaryButtonLabel: "Secondary", secondaryButtonLink: "" }],
-  ] as const)("should hide the %s button when label or link is empty", (button, patch) => {
+  ] as const)("should hide the %s button when label is empty", (button, patch) => {
     render(<FeatureIntroContent {...baseProps} {...patch} />);
 
     expect(
       screen.queryByTestId(`generic-awareness-modal-${button}-button`),
     ).not.toBeInTheDocument();
   });
+
+  it.each([
+    ["primary", { primaryButtonLabel: "Primary", primaryButtonLink: "" }],
+    ["secondary", { secondaryButtonLabel: "Secondary", secondaryButtonLink: "" }],
+  ] as const)(
+    "should show the %s button when label is present and link is empty",
+    (button, patch) => {
+      render(<FeatureIntroContent {...baseProps} {...patch} />);
+
+      expect(screen.getByTestId(`generic-awareness-modal-${button}-button`)).toBeVisible();
+    },
+  );
 
   it("should call action handlers when buttons are pressed", async () => {
     const { user } = render(<FeatureIntroContent {...baseProps} />);

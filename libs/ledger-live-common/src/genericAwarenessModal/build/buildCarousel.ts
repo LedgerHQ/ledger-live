@@ -7,7 +7,7 @@ import {
   type GenericAwarenessModalCarousel,
   type GenericAwarenessModalCarouselSlide,
   type GenericAwarenessModalParsedCarouselInput,
-} from "./types";
+} from "../types";
 
 const buildCarouselSlide = (
   input: GenericAwarenessModalParsedCarouselInput,
