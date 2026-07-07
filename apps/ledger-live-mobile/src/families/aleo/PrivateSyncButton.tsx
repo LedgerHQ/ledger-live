@@ -16,11 +16,7 @@ const lastSyncDateFormat: Intl.DateTimeFormatOptions = {
   minute: "numeric",
 };
 
-export default function PrivateSyncButton({
-  account,
-}: {
-  readonly account: AleoAccount;
-}) {
+export default function PrivateSyncButton({ account }: { readonly account: AleoAccount }) {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
 
@@ -39,7 +35,9 @@ export default function PrivateSyncButton({
   );
 
   return (
-    <Box style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 16, marginTop: 12 }}>
+    <Box
+      style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 16, marginTop: 12 }}
+    >
       {syncState === "ready" && (
         <Button size="sm" onPress={start} testID="start-private-sync-button">
           {t("aleo.account.syncButton.startSync")}
