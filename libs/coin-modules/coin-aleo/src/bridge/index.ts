@@ -43,8 +43,6 @@ export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): C
   });
 
   return {
-    preload: () => Promise.resolve({}),
-    hydrate: () => {},
     scanAccounts,
   };
 }

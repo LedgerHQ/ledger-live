@@ -29,8 +29,6 @@ function buildCurrencyBridge(signerContext: SignerContext<ICPSigner>): CurrencyB
   });
 
   return {
-    preload: () => Promise.resolve({}),
-    hydrate: () => {},
     scanAccounts,
   };
 }

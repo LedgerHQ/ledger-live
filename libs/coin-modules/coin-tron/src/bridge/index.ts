@@ -37,8 +37,6 @@ function buildCurrencyBridge(signerContext: SignerContext<TronSigner>): Currency
   });
 
   return {
-    preload: () => Promise.resolve({}),
-    hydrate: () => undefined,
     scanAccounts,
   };
 }

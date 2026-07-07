@@ -158,14 +158,14 @@ describe("bridge/index", () => {
     });
 
     it("should return preload from preload module", async () => {
-      const result = await currencyBridge.preload(mockCurrency);
+      const result = await currencyBridge.preload?.(mockCurrency);
       expect(mockPreload).toHaveBeenCalled();
       expect(result).toEqual({});
     });
 
     it("should return hydrate from preload module", () => {
       const data = { some: "data" };
-      currencyBridge.hydrate(data, mockCurrency);
+      currencyBridge.hydrate?.(data, mockCurrency);
       expect(mockHydrate).toHaveBeenCalledWith(data, mockCurrency);
     });
 

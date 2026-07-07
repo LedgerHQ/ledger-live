@@ -41,8 +41,6 @@ function buildCurrencyBridge(signerContext: SignerContext<KaspaSigner>): Currenc
   });
 
   return {
-    preload: async () => Promise.resolve({}),
-    hydrate: () => {},
     scanAccounts,
   };
 }
