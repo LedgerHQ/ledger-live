@@ -2,8 +2,8 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "lib": ["ES2021", "dom"],
-    "target": "esnext",
+    "lib": ["ES2022", "dom"],
+    "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": { "*": ["./*"] },

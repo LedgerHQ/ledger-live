@@ -1,5 +1,7 @@
 # shared/
 
+> Part of the [DDD monorepo architecture](../docs/ddd-monorepo-architecture.md).
+
 Cross-cutting concern packages that don't belong to a specific business domain. Each subdirectory is an independent pnpm workspace package.
 
 ## Scope
