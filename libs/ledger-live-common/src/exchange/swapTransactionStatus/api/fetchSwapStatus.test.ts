@@ -32,7 +32,6 @@ describe("fetchTransactionSwapStatus", () => {
     await fetchTransactionSwapStatus({
       provider: "lifi",
       swapId: "swap-1",
-      network: "ethereum",
       transactionId: "0xhash",
       operationId: "operation-id",
     });
@@ -41,7 +40,6 @@ describe("fetchTransactionSwapStatus", () => {
       {
         provider: "lifi",
         swapId: "swap-1",
-        network: "ethereum",
         transactionId: "0xhash",
         operationId: "operation-id",
       },

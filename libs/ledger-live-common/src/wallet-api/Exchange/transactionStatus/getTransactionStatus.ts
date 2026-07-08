@@ -111,15 +111,9 @@ function buildSwapStatusRequest({
   return {
     provider,
     swapId,
-    ...(swapOperation ? { network: getSwapOperationNetwork(swapOperation) } : {}),
     transactionId: requiresOperationId ? swapOperation?.operation.hash : undefined,
     ...(requiresOperationId && swapOperation ? { operationId: swapOperation.operation.id } : {}),
   };
-}
-
-function getSwapOperationNetwork(swapOperation: MappedSwapOperation): string {
-  const fromCurrency = getAccountCurrency(swapOperation.fromAccount);
-  return fromCurrency.type === "TokenCurrency" ? fromCurrency.parentCurrencyId : fromCurrency.id;
 }
 
 async function fetchTransactionStatusSafely(

@@ -66,7 +66,7 @@ describe("updateAccountSwapStatus", () => {
     mockedGetMultipleStatus.mockReset();
   });
 
-  it("sends the account network and backfills finalAmount from backend status", async () => {
+  it("backfills finalAmount from backend status response", async () => {
     mockedGetMultipleStatus.mockResolvedValueOnce([
       {
         provider: "lifi",
@@ -82,7 +82,6 @@ describe("updateAccountSwapStatus", () => {
       {
         provider: "lifi",
         swapId: "swap-1",
-        network: "ethereum",
         transactionId: "0xhash",
         operationId: "operation-id",
       },
@@ -91,32 +90,5 @@ describe("updateAccountSwapStatus", () => {
       status: "finished",
       finalAmount: new BigNumber("1.99"),
     });
-  });
-
-  it("uses the token parent network for token-account swap histories", async () => {
-    mockedGetMultipleStatus.mockResolvedValueOnce([
-      {
-        provider: "lifi",
-        swapId: "swap-1",
-        status: "finished",
-      },
-    ]);
-
-    await updateAccountSwapStatus(
-      makeAccount({
-        swapHistory: [],
-        subAccounts: [makeTokenAccount()],
-      }),
-    );
-
-    expect(mockedGetMultipleStatus).toHaveBeenCalledWith([
-      {
-        provider: "lifi",
-        swapId: "swap-1",
-        network: "ethereum",
-        transactionId: "0xhash",
-        operationId: "operation-id",
-      },
-    ]);
   });
 });
