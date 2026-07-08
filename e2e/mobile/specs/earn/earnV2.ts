@@ -11,6 +11,8 @@ setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 const EARN_V2_FLAGS: PartialFeatures = {
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
+  // TODO: remove once deposit flow v2 is fully rolled out and set to 'true' by default
+  swapToEarn: { enabled: true },
 };
 
 // Pins the ETH deposit webview to the `basic_sorting` cohort (mirrors the desktop
