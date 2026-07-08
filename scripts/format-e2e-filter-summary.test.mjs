@@ -66,6 +66,13 @@ test("does not split on escaped separators inside a title", () => {
   );
 });
 
+test("splits when a pattern ends with an escaped backslash before the separator", () => {
+  assert.equal(
+    formatFilterSummary("Path C\\\\|Another test"),
+    [`${LABEL} (2 patterns)`, "  - Path C\\", "  - Another test"].join("\n"),
+  );
+});
+
 test("only unescapes the summary's literal escapes, preserving real regex escapes", () => {
   assert.equal(
     formatFilterSummary("Amount \\d\\d\\.\\d\\d \\[USD\\]"),

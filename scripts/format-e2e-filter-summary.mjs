@@ -6,10 +6,7 @@ import { fileURLToPath } from "node:url";
 const LABEL = "- **Filtered pattern:**";
 
 function splitFilter(input) {
-  return input
-    .split(/(?<!\\)[|,]/)
-    .map(part => part.trim())
-    .filter(Boolean);
+  return (input.match(/(?:\\.|[^|,])+/g) ?? []).map(part => part.trim()).filter(Boolean);
 }
 
 function humanizePattern(pattern) {

@@ -28,10 +28,7 @@ function readEnabledGenericCoinFrameworkFamilies() {
 }
 
 function splitFilter(input) {
-  return input
-    .split(/(?<!\\)[|,]/)
-    .map(part => part.trim())
-    .filter(Boolean);
+  return (input.match(/(?:\\.|[^|,])+/g) ?? []).map(part => part.trim()).filter(Boolean);
 }
 
 function joinFilterParts(parts) {
