@@ -49,6 +49,41 @@ describe("useInitializerActions", () => {
   });
 
   describe("openMyLedger", () => {
+    it("resets the root navigator to the MyLedger manager when shouldDisplayMyWallet is false (default)", () => {
+      const { result } = renderHook(() => useInitializerActions(nanoX));
+
+      act(() => {
+        result.current.openMyLedger("ethereum");
+      });
+
+      expect(mockReset).toHaveBeenCalledTimes(1);
+      expect(mockReset).toHaveBeenCalledWith({
+        index: 0,
+        routes: [
+          {
+            name: NavigatorName.Base,
+            state: {
+              index: 1,
+              routes: [
+                { name: NavigatorName.Main },
+                {
+                  name: NavigatorName.MyLedger,
+                  state: {
+                    routes: [
+                      {
+                        name: ScreenName.MyLedgerChooseDevice,
+                        params: { searchQuery: "ethereum" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      });
+    });
+
     it("resets the root navigator to the MyWallet manager when shouldDisplayMyWallet is true", () => {
       const { result } = renderHook(() => useInitializerActions(nanoX), {
         overrideInitialState: withMyWallet,
@@ -88,6 +123,48 @@ describe("useInitializerActions", () => {
   });
 
   describe("openMyLedgerFirmwareUpdate", () => {
+    it("targets MyLedger for wireless devices when shouldDisplayMyWallet is false (default)", () => {
+      const { result } = renderHook(() => useInitializerActions(stax));
+
+      act(() => {
+        result.current.openMyLedgerFirmwareUpdate();
+      });
+
+      expect(mockReset).toHaveBeenCalledWith({
+        index: 0,
+        routes: [
+          {
+            name: NavigatorName.Base,
+            state: {
+              index: 1,
+              routes: [
+                { name: NavigatorName.Main },
+                {
+                  name: NavigatorName.MyLedger,
+                  state: {
+                    routes: [
+                      {
+                        name: ScreenName.MyLedgerChooseDevice,
+                        params: {
+                          device: {
+                            deviceId: stax.id,
+                            deviceName: stax.name,
+                            modelId: stax.modelId,
+                            wired: stax.wired,
+                          },
+                          firmwareUpdate: false,
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      });
+    });
+
     it("targets MyWallet with firmwareUpdate=false for wireless devices when shouldDisplayMyWallet is true", () => {
       const { result } = renderHook(() => useInitializerActions(stax), {
         overrideInitialState: withMyWallet,
