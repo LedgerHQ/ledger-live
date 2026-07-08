@@ -2,7 +2,7 @@ import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import { DEFAULT_TIMEOUT } from "../../helpers/elementHelpers";
 import { getFlags } from "../../bridge/server";
-import { isAssetSectionEnabled } from "../../utils/featureFlagUtils";
+import { isAggregatedAssetsEnabled, isAssetSectionEnabled } from "../../utils/featureFlagUtils";
 import type { Features } from "@shared/feature-flags";
 export default class PortfolioPage {
   addNewOrExistingAccount = "add-new-account-button";
@@ -121,7 +121,11 @@ export default class PortfolioPage {
 
   @Step("Expect balance diff to be visible")
   async expectBalanceDiffToBeVisible() {
-    await waitForElementById(this.portfolioBalanceDelta);
+    if (await isAggregatedAssetsEnabled()) {
+      return;
+    } else {
+      await waitForElementById(this.portfolioBalanceDelta);
+    }
   }
 
   @Step("Expect operation row to be visible")

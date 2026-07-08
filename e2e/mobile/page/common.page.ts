@@ -4,6 +4,7 @@ import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Ac
 import { isIos } from "../helpers/commonHelpers";
 import { device } from "detox";
 import ErrorPage from "./error.page";
+import { openDeeplink } from "../helpers/commonHelpers";
 import { isAggregatedAssetsEnabled } from "../utils/featureFlagUtils";
 
 export default class CommonPage {
@@ -82,6 +83,10 @@ export default class CommonPage {
   @Step("Go to the account")
   async goToAccount(accountId: string, currencyId?: string) {
     if (await isAggregatedAssetsEnabled()) {
+      if (currencyId) {
+        await openDeeplink(`asset/${currencyId}`);
+        await waitForElementById(`asset-detail-scroll-view-${currencyId}`);
+      }
       const q2AccountItemRegExp = /^asset-detail-address-item-.*/;
       const scrollViewId = currencyId ? `asset-detail-scroll-view-${currencyId}` : undefined;
       await scrollToId(q2AccountItemRegExp, scrollViewId);
