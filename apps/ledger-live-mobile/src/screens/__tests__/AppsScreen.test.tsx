@@ -33,7 +33,7 @@ describe("<AppsScreen />", () => {
     });
   });
 
-  describe("<AppsScreen />", () => {
+  describe("firmware update banner", () => {
     const deviceInfo = aDeviceInfoBuilder({
       version: "2.0.0",
       isOSU: false,
