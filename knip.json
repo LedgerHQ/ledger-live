@@ -197,6 +197,9 @@
     "./features/flow/market-banner": {
       "entry": ["src/index.ts", "src/components/MarketBanner/index.native.ts"]
     },
+    "./features/flow/contacts": {
+      "entry": ["src/index.ts"]
+    },
     "./features/platform/feature-flags": {
       "entry": ["src/index.ts"]
     }
