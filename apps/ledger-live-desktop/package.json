@@ -67,6 +67,7 @@
     "@electron/fuses": "2.0.0",
     "@features/platform-currencies": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
+    "@features/platform-style": "workspace:^",
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/asset-detail": "workspace:^",
     "@ledgerhq/client-ids": "workspace:*",

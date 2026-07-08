@@ -25,6 +25,7 @@
     "@shared/feature-flags": "workspace:*",
     "@devtools/bindings": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
+    "@features/platform-style": "workspace:*",
     "react-redux": "catalog:",
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/view": "^6.39.5",
