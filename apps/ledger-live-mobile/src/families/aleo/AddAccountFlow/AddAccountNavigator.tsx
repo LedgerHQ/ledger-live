@@ -99,7 +99,7 @@ function AddAccountNavigator({ route, navigation }: Readonly<Props>) {
         name={ScreenName.AleoViewKeyApprove}
         component={ViewKeyApproveScreen}
         initialParams={{ ...route.params, onCloseNavigation: handleClose }}
-        options={{ headerTitle: "" }}
+        options={{ headerTitle: "", headerLeft: () => null, gestureEnabled: false }}
       />
       <Stack.Screen
         name={ScreenName.AleoNoAccountsAdded}

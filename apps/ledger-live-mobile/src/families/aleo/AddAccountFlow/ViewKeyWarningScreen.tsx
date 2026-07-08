@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { Linking, ScrollView, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "styled-components/native";
@@ -10,7 +10,8 @@ import { Trans, useTranslation } from "~/context/Locale";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import type { AleoViewKeyFlowParamList } from "./types";
-import ConfirmationModal from "~/components/ConfirmationModal";
+import QuitConfirmationModal from "./QuitConfirmationModal";
+import useQuitConfirmation from "./useQuitConfirmation";
 import { TrackScreen } from "~/analytics";
 
 type Props = StackNavigatorProps<AleoViewKeyFlowParamList, ScreenName.AleoViewKeyWarning>;
@@ -23,24 +24,13 @@ const bulletPointTranslationKeys = [
   "aleo.addAccount.stepViewKeyWarning.bullets.4",
 ];
 
-const confirmationTitleStyle: Record<string, unknown> = {
-  textAlign: "left",
-  fontSize: 18,
-  fontWeight: "600",
-  lineHeight: 32.4,
-  letterSpacing: -0.72,
-  marginBottom: 16,
-  marginTop: -45,
-};
-
 export default function ViewKeyWarningScreen({ route, navigation }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
   const { onCloseNavigation } = route.params;
   const learnMoreUrl = useLocalizedUrl(urls.aleo.learnMore);
-  const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(false);
-  const [shouldNavigateOnHide, setShouldNavigateOnHide] = useState(false);
+  const quitConfirmation = useQuitConfirmation({ onCloseNavigation });
 
   const onContinue = useCallback(() => {
     navigation.getParent()?.navigate(ScreenName.ScanDeviceAccounts, {
@@ -48,20 +38,6 @@ export default function ViewKeyWarningScreen({ route, navigation }: Props) {
       onCloseNavigation,
     });
   }, [navigation, onCloseNavigation, route.params]);
-
-  const onCancel = useCallback(() => {
-    setIsConfirmationModalOpened(true);
-  }, []);
-
-  const closeConfirmationModal = useCallback(() => {
-    setShouldNavigateOnHide(false);
-    setIsConfirmationModalOpened(false);
-  }, []);
-
-  const onConfirmCancel = useCallback(() => {
-    setShouldNavigateOnHide(true);
-    setIsConfirmationModalOpened(false);
-  }, []);
 
   return (
     <SafeAreaView
@@ -101,22 +77,17 @@ export default function ViewKeyWarningScreen({ route, navigation }: Props) {
           type="main"
           outline
           mt={4}
-          onPress={onCancel}
+          onPress={quitConfirmation.open}
           event="AleoAddAccountViewKeyWarningCancel"
         >
           {t("aleo.addAccount.stepViewKeyWarning.cta.cancel")}
         </Button>
       </View>
-      <ConfirmationModal
-        isOpened={isConfirmationModalOpened}
-        onClose={closeConfirmationModal}
-        onConfirm={onConfirmCancel}
-        onModalHide={shouldNavigateOnHide ? onCloseNavigation : undefined}
-        confirmationTitle={<Trans i18nKey="addAccounts.quitConfirmation.v2.title" />}
-        confirmButtonText={<Trans i18nKey="addAccounts.quitConfirmation.v2.cancel" />}
-        rejectButtonText={<Trans i18nKey="addAccounts.quitConfirmation.v2.continue" />}
-        cancelCTAConfig={{ type: "primary", outline: true }}
-        customTitleStyle={confirmationTitleStyle}
+      <QuitConfirmationModal
+        isOpened={quitConfirmation.isOpened}
+        onClose={quitConfirmation.close}
+        onConfirm={quitConfirmation.confirm}
+        onModalHide={quitConfirmation.onModalHide}
       />
     </SafeAreaView>
   );
