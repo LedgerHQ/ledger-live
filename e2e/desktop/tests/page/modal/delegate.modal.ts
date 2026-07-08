@@ -190,6 +190,17 @@ export class DelegateModal extends Modal {
     await this.celoLockButton.click();
   }
 
+  @step("Click on vote button for CELO")
+  async clickCeloVoteButton() {
+    await this.celoVoteButton.click();
+  }
+
+  @step("Select Celo validator group $0")
+  async selectCeloValidatorGroup(name: string) {
+    await expect(this.validatorList).toBeVisible();
+    await this.validatorList.getByText(name, { exact: false }).first().click();
+  }
+
   @step("Check alert message is visible when locking CELO")
   async verifyLockInfoCeloWarning() {
     await expect(this.lockInfoCeloWarning).toBeVisible();

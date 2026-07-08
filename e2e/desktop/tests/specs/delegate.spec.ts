@@ -9,9 +9,6 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
-
-import type { OptionalFeatureMap } from "@shared/feature-flags";
 
 function setupEnv(disableBroadcast?: boolean) {
   test.use({
@@ -82,19 +79,7 @@ const validators = [
   },
 ];
 
-const liveApps: {
-  delegate: Delegate;
-  xrayTicket: string;
-  featureFlags?: OptionalFeatureMap;
-}[] = [
-  {
-    delegate: new Delegate(Account.ETH_1, "0.01", "lido"),
-    xrayTicket: "B2CQA-3024",
-    // TODO: remove FF and update coverage accordingly
-    featureFlags: {
-      ...FF_STAKE_PROGRAMS_MODAL,
-    },
-  },
+const liveApps = [
   {
     delegate: new Delegate(Account.TRX_1, "1", "yield.xyz"),
     xrayTicket: "B2CQA-3025", //todo: Add split from when parent ticket is available
@@ -332,6 +317,7 @@ test.describe("e2e delegation - Tezos", () => {
 
 test.describe("e2e delegation - Celo", () => {
   const account = new Delegate(Account.CELO_1, "0.001", "N/A");
+  const voteAccount = new Delegate(Account.CELO_1, "0.001", "Ledger by Figment");
   test.use({
     teamOwner: Team.EARN,
     userdata: "skip-onboarding-with-last-seen-device",
@@ -377,6 +363,47 @@ test.describe("e2e delegation - Celo", () => {
       await app.delegateDrawer.verifyTxTypeIs("Locked");
       await app.delegateDrawer.providerIsVisible(account);
       await app.delegateDrawer.operationTypeIsCorrect("Locked");
+      await app.drawer.closeDrawer();
+    },
+  );
+
+  test(
+    "Celo Vote",
+    {
+      tag: [
+        "@NanoSP",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        `@${voteAccount.account.currency.id}`,
+        ...(family ? [`@family-${family}`] : []),
+      ],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-201",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await addBugLink(["NAPPS-1128"]);
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.navigateToAccountByName(voteAccount.account.accountName);
+      await app.account.startStakingFlowFromMainStakeButton();
+      await app.delegate.checkCeloManageAssetModal();
+      await app.delegate.clickCeloVoteButton();
+      await app.delegate.selectCeloValidatorGroup(voteAccount.provider);
+      await app.delegate.continue();
+      await app.delegate.fillAmount(voteAccount.amount);
+      await app.delegate.continue();
+      await app.speculos.signDelegationTransaction(voteAccount);
+      await app.delegate.verifySuccessMessage();
+      await app.delegate.clickViewDetailsButton();
+      await app.drawer.waitForDrawerToBeVisible();
+      await app.delegateDrawer.verifyTxTypeIsVisible();
+      await app.delegateDrawer.verifyTxTypeIs("Voted");
+      await app.delegateDrawer.providerIsVisible(voteAccount);
+      await app.delegateDrawer.operationTypeIsCorrect("Voted");
       await app.drawer.closeDrawer();
     },
   );
@@ -505,7 +532,6 @@ for (const currency of liveApps) {
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: currency.delegate.account.currency.speculosApp,
       cliCommands: [liveDataCommand(currency.delegate.account)],
-      featureFlags: { ...currency.featureFlags },
     });
 
     const family = getFamilyByCurrencyId(currency.delegate.account.currency.id);
@@ -522,7 +548,6 @@ for (const currency of liveApps) {
           "@NanoGen5",
           `@${currency.delegate.account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(currency.delegate.account === Account.ETH_1 ? ["@smoke"] : []),
         ],
         annotation: { type: "TMS", description: currency.xrayTicket },
       },
@@ -533,12 +558,7 @@ for (const currency of liveApps) {
         await app.accounts.navigateToAccountByName(currency.delegate.account.accountName);
 
         await app.account.startStakingFlowFromMainStakeButton();
-        if (currency.delegate.account.currency.name == Currency.ETH.name) {
-          await app.earnV2Dashboard.verifyDepositFlowVisible();
-          await app.earnV2Dashboard.selectEthProvider(currency.delegate.provider);
-        } else {
-          await app.liveApp.verifyLiveAppTitle(currency.delegate.provider);
-        }
+        await app.liveApp.verifyLiveAppTitle(currency.delegate.provider);
       },
     );
   });
