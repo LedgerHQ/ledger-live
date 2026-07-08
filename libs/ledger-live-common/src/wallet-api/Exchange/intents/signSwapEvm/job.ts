@@ -33,13 +33,12 @@ async function buildUnsignedSwapTxHex(
       amount: BigInt(transactionData.value || "0"),
       asset: { type: "native" },
       data: { type: "buffer", value: data },
-      feesStrategy: "medium",
     } satisfies Parameters<typeof craftTransaction>[1]["transactionIntent"],
     customFees: {
       value: 0n,
-      // Only gasLimit is pinned — `craftTransaction` fetches `maxFeePerGas`
-      // and `maxPriorityFeePerGas` from the node when fee params are missing.
-      parameters: { gasLimit: BigInt(transactionData.gasLimit) },
+      // Pin the medium tier and gasLimit; `craftTransaction` fetches
+      // `maxFeePerGas` / `maxPriorityFeePerGas` from the node.
+      parameters: { feesStrategy: "medium", gasLimit: BigInt(transactionData.gasLimit) },
     },
   });
 

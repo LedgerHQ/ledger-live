@@ -268,7 +268,6 @@ describe("common", () => {
         asset: { type: "native" },
         recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
         sender: "0xSender",
-        feesStrategy: "medium",
         data: { type: "buffer", value: Buffer.from([]) },
       } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>;
 

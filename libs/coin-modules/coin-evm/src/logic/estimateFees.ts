@@ -1,6 +1,7 @@
 import type {
   BufferTxData,
   FeeEstimation,
+  FeesStrategy,
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
@@ -139,7 +140,7 @@ export async function estimateFees(
     finalFeeData: FeeData;
     finalGasOptions?: GasOptions;
   }> => {
-    const feesStrategy = transactionIntent.feesStrategy;
+    const feesStrategy = customFeesParameters?.feesStrategy as FeesStrategy | undefined;
 
     if (feesStrategy === "custom") {
       return { finalFeeData: extractFeeData(customFeesParameters) };
@@ -164,7 +165,7 @@ export async function estimateFees(
     const node = getNodeApi(currency);
     const feeData = await node.getFeeData(currency, {
       type: txType,
-      feesStrategy: transactionIntent.feesStrategy,
+      feesStrategy,
     });
 
     return { finalFeeData: feeData };

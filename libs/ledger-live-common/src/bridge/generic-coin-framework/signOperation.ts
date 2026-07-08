@@ -33,6 +33,8 @@ export const genericSignOperation =
         const customFees = bigNumberToBigIntDeep({
           value: transaction.fees ?? new BigNumber(0),
           parameters: {
+            feesStrategy: transaction.feesStrategy ?? undefined,
+            sponsored: transaction.sponsored,
             gasLimit: transaction.customGasLimit ?? transaction.gasLimit,
             gasPrice: transaction.gasPrice,
             maxFeePerGas: transaction.maxFeePerGas,
