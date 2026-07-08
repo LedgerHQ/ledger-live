@@ -6,7 +6,7 @@ the test runtime (specs, page objects, fixtures) — they run inside GitHub Acti
 
 | File | Role |
 |------|------|
-| `escaping.mjs` | Single source of truth for the filter grammar: separator split (unescaped `\|` / `,`, odd-backslash aware), the Playwright leaf anchor `(?! [^@])`, and (un)escaping of regex-literal characters. |
+| `escaping.mjs` | Single source of truth for the filter grammar: splits patterns on separators (`|` / `,`) that are not backslash-escaped and is odd-backslash aware, defines the Playwright leaf anchor `(?! [^@])`, and unescapes regex-literal characters (`unescapeLiteral`) for display. |
 | `resolve.mjs` | Resolves the workflow `test_filter` input into a Playwright/Detox grep string (expands `@generic-coin-framework`, applies `@smoke`, warns on zero matches). |
 | `format-summary.mjs` | Renders a resolved filter as a readable Markdown bullet list for the "Workflow Context" job summary. |
 
