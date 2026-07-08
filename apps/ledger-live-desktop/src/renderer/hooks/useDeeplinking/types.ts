@@ -56,6 +56,8 @@ export interface DeeplinkHandlerContext {
   isProductTourEnabled: boolean;
   /** `lwdGenericAwarenessModal` — deeplink opens the modal only when this flag is enabled. */
   isGenericAwarenessModalEnabled: boolean;
+  /** `lwdPayTab` — deeplink navigates to `/paytab` only when this flag is enabled; otherwise falls back to the default handler. */
+  isPayTabEnabled: boolean;
 }
 
 export interface ParsedDeeplink {
@@ -217,6 +219,10 @@ export interface PerpsRoute {
   type: "perps";
 }
 
+export interface PayTabRoute {
+  type: "paytab";
+}
+
 export interface LedgerSyncRoute {
   type: "ledgersync";
 }
@@ -256,6 +262,7 @@ export type DeeplinkRoute =
   | RecoverRoute
   | RecoverRestoreFlowRoute
   | PerpsRoute
+  | PayTabRoute
   | PostOnboardingRoute
   | LedgerSyncRoute
   | ProductTourRoute
