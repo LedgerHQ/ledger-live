@@ -16,8 +16,8 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import BigNumber from "bignumber.js";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
 
-const fromAccount = TokenAccount.ETH_USDT_1;
-const toAccount = Account.ETH_1;
+const fromAccount = TokenAccount.ETH_USDT_3;
+const toAccount = Account.ETH_3;
 const eligibleProviders = [
   SwapProvider.THORCHAIN,
   SwapProvider.LIFI,
