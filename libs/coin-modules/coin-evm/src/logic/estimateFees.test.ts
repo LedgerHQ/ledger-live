@@ -48,7 +48,6 @@ describe("estimateFees", () => {
     asset: mockNativeAsset,
     recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
     sender: "0xsender",
-    feesStrategy: "fast",
     data: { type: "buffer", value: Buffer.from([]) },
   };
 
@@ -73,10 +72,10 @@ describe("estimateFees", () => {
     expect(
       await estimateFees(
         {} as CryptoCurrency,
-        { type: "send-legacy", recipient: "not-an-address" } as TransactionIntent<
-          MemoNotSupported,
-          BufferTxData
-        >,
+        {
+          type: "send-legacy",
+          recipient: "not-an-address",
+        } as TransactionIntent<MemoNotSupported, BufferTxData>,
       ),
     ).toEqual({ value: 0n });
     expect(nodeApiMock.getGasEstimation).not.toHaveBeenCalled();
@@ -95,10 +94,10 @@ describe("estimateFees", () => {
         asset: { type: "native" },
         recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
         sender: "0xsender",
-        feesStrategy: "fast",
         data: { type: "buffer", value: Buffer.from([]) },
       } as SendTransactionIntent<MemoNotSupported, BufferTxData>,
       {
+        feesStrategy: "fast",
         gasOptions: {
           fast: {
             maxFeePerGas: null,
@@ -182,16 +181,22 @@ describe("estimateFees", () => {
       }),
     });
 
-    const result = await estimateFees(mockCurrency, {
-      intentType: "transaction",
-      type: "send-legacy",
-      amount: BigInt("1000000000000000000"),
-      recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
-      sender: "0xsender",
-      feesStrategy: "fast",
-      data: { type: "buffer", value: Buffer.from([]) },
-      asset: { type: "erc20", assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" },
-    } as SendTransactionIntent<MemoNotSupported, BufferTxData>);
+    const result = await estimateFees(
+      mockCurrency,
+      {
+        intentType: "transaction",
+        type: "send-legacy",
+        amount: BigInt("1000000000000000000"),
+        recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+        sender: "0xsender",
+        data: { type: "buffer", value: Buffer.from([]) },
+        asset: {
+          type: "erc20",
+          assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        },
+      } as SendTransactionIntent<MemoNotSupported, BufferTxData>,
+      { feesStrategy: "fast" },
+    );
 
     expect(nodeApiMock.getFeeData).not.toHaveBeenCalled();
     expect(result).toEqual({
@@ -238,16 +243,19 @@ describe("estimateFees", () => {
     });
     mockGetGasTracker.mockReturnValue(null);
 
-    const result = await estimateFees(mockCurrency, {
-      intentType: "transaction",
-      type: "send-eip1559",
-      amount: BigInt("1000000000000000000"),
-      recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
-      sender: "0xsender",
-      feesStrategy: "medium",
-      data: { type: "buffer", value: Buffer.from([]) },
-      asset: { type: "native" },
-    } as SendTransactionIntent<MemoNotSupported, BufferTxData>);
+    const result = await estimateFees(
+      mockCurrency,
+      {
+        intentType: "transaction",
+        type: "send-eip1559",
+        amount: BigInt("1000000000000000000"),
+        recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+        sender: "0xsender",
+        data: { type: "buffer", value: Buffer.from([]) },
+        asset: { type: "native" },
+      } as SendTransactionIntent<MemoNotSupported, BufferTxData>,
+      { feesStrategy: "medium" },
+    );
 
     expect(result).toEqual({
       value: 420000000000n,
@@ -274,10 +282,10 @@ describe("estimateFees", () => {
         asset: { type: "native" },
         recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
         sender: "0xsender",
-        feesStrategy: "custom",
         data: { type: "buffer", value: Buffer.from([]) },
       } as SendTransactionIntent<MemoNotSupported, BufferTxData>,
       {
+        feesStrategy: "custom",
         gasPrice: 60000n,
       },
     );
@@ -306,16 +314,19 @@ describe("estimateFees", () => {
     });
     mockGetGasTracker.mockReturnValue(null);
 
-    const result = await estimateFees(mockCurrency, {
-      intentType: "transaction",
-      type: "send-legacy",
-      amount: BigInt("1000000000000000000"),
-      asset: { type: "native" },
-      recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
-      sender: "0xsender",
-      feesStrategy: "slow",
-      data: { type: "buffer", value: Buffer.from([]) },
-    } as SendTransactionIntent<MemoNotSupported, BufferTxData>);
+    const result = await estimateFees(
+      mockCurrency,
+      {
+        intentType: "transaction",
+        type: "send-legacy",
+        amount: BigInt("1000000000000000000"),
+        asset: { type: "native" },
+        recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+        sender: "0xsender",
+        data: { type: "buffer", value: Buffer.from([]) },
+      } as SendTransactionIntent<MemoNotSupported, BufferTxData>,
+      { feesStrategy: "slow" },
+    );
 
     expect(result).toEqual({
       value: 0n,
@@ -341,16 +352,19 @@ describe("estimateFees", () => {
     });
     mockGetGasTracker.mockReturnValue(null);
 
-    const result = await estimateFees(mockCurrency, {
-      intentType: "transaction",
-      type: "send-legacy",
-      amount: BigInt("1000000000000000000"),
-      asset: { type: "native" },
-      recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
-      sender: "0xsender",
-      feesStrategy: "slow",
-      data: { type: "buffer", value: Buffer.from([]) },
-    } as SendTransactionIntent<MemoNotSupported, BufferTxData>);
+    const result = await estimateFees(
+      mockCurrency,
+      {
+        intentType: "transaction",
+        type: "send-legacy",
+        amount: BigInt("1000000000000000000"),
+        asset: { type: "native" },
+        recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+        sender: "0xsender",
+        data: { type: "buffer", value: Buffer.from([]) },
+      } as SendTransactionIntent<MemoNotSupported, BufferTxData>,
+      { feesStrategy: "slow" },
+    );
 
     expect(result).toEqual({
       value: 0n,
@@ -585,10 +599,10 @@ describe("estimateFees", () => {
         asset: { type: "native" },
         recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
         sender: "0xsender",
-        feesStrategy: "custom",
         data: { type: "buffer", value: Buffer.from([]) },
       } as SendTransactionIntent<MemoNotSupported, BufferTxData>,
       {
+        feesStrategy: "custom",
         gasLimit: 50000n,
         gasPrice: 30000000000n,
       },

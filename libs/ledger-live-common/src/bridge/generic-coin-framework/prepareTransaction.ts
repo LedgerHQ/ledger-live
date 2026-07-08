@@ -104,6 +104,8 @@ export function genericPrepareTransaction(
       coinModuleApi.craftTransactionData,
     );
     const customFeesParameters = bigNumberToBigIntDeep({
+      feesStrategy: transaction.feesStrategy ?? undefined,
+      sponsored: transaction.sponsored,
       gasPrice: transaction.gasPrice,
       maxFeePerGas: transaction.maxFeePerGas,
       maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,

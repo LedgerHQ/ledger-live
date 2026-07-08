@@ -481,12 +481,10 @@ export function transactionToIntent(
     amount,
     asset: { type: "native", name: account.currency.name, unit: account.currency.units[0] },
     useAllAmount,
-    feesStrategy: transaction.feesStrategy ?? undefined,
     sequence:
       transaction.nonce !== null && transaction.nonce !== undefined
         ? BigInt(transaction.nonce.toString())
         : undefined,
-    sponsored: transaction.sponsored,
     ...getDelegationIntentFields(delegationMode, transaction),
   };
   if (transaction.assetReference && transaction.assetOwner) {
