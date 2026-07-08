@@ -479,6 +479,36 @@ describe("estimateFees", () => {
     });
   });
 
+  it("exposes reserve and amountScale for a delegate send-max (useAllAmount)", async () => {
+    nodeApiMock.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
+    nodeApiMock.getTransactionCount.mockResolvedValue(42);
+    nodeApiMock.getFeeData.mockResolvedValue({
+      gasPrice: new BigNumber("20000000000"),
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
+      nextBaseFee: null,
+    });
+    mockGetGasTracker.mockReturnValue(null);
+
+    const delegateMaxIntent = {
+      ...mockIntent,
+      intentType: "staking" as const,
+      mode: "delegate",
+      recipient: "0x0000000000000000000000000000000000001005",
+      valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
+      amount: 1000000n,
+      useAllAmount: true,
+    };
+    const result = await estimateFees(
+      { ...mockCurrency, id: "sei_evm", ethereumLikeInfo: { chainId: 1329 } },
+      delegateMaxIntent,
+    );
+    expect(result.parameters).toMatchObject({
+      reserve: 10n ** 17n, // 0.1 SEI reserve
+      amountScale: 10n ** 12n, // usei -> wei scale
+    });
+  });
+
   it("returns 0 for redelegate without dstValAddress and makes no node/gas-tracker calls", async () => {
     const redelegateNoDst = {
       ...mockIntent,

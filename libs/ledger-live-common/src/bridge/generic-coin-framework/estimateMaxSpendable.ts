@@ -1,10 +1,11 @@
 import { AccountBridge } from "@ledgerhq/types-live";
+import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { getMainAccount } from "../../account";
 import { getCoinModuleApi } from "./api";
 import { createTransaction } from "./createTransaction";
 import {
-  bigNumberToBigIntDeep,
-  extractBalances,
+  computeUseAllAmount,
+  getNativeSpendableAfterPending,
   getPendingTokenSpent,
   transactionToIntent,
 } from "./utils";
@@ -31,35 +32,23 @@ export function genericEstimateMaxSpendable(
       useAllAmount: true,
     };
 
-    let fees = transaction?.fees;
-    if (!BigNumber.isBigNumber(fees)) {
-      const { value } = await coinModuleApi.estimateFees(
-        transactionToIntent(
-          mainAccount,
-          draftTransaction,
-          bridgeApi.computeIntentType,
-          coinModuleApi.craftTransactionData,
-        ),
-      );
-
-      fees = new BigNumber(value.toString());
-    }
-
-    // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22229
-    const { amount } = await coinModuleApi.validateIntent(
+    const estimated = await coinModuleApi.estimateFees(
       transactionToIntent(
-        account,
-        { ...draftTransaction },
+        mainAccount,
+        draftTransaction,
         bridgeApi.computeIntentType,
         coinModuleApi.craftTransactionData,
       ),
-      extractBalances(account, bridgeApi.getAssetFromToken),
-      bigNumberToBigIntDeep({ value: transaction?.fees ?? new BigNumber(0) }),
     );
-    if (["stellar", "tezos", "evm", "solana"].includes(network)) {
-      return amount > 0 ? new BigNumber(amount.toString()) : new BigNumber(0);
-    }
-    const bnFee = BigNumber(fees.toString());
-    return BigNumber.max(0, account.spendableBalance.minus(bnFee));
+    const estimation: FeeEstimation = {
+      value: BigNumber.isBigNumber(transaction?.fees)
+        ? BigInt(transaction.fees.toFixed())
+        : estimated.value,
+      parameters: BigNumber.isBigNumber(transaction?.additionalFees)
+        ? { ...estimated.parameters, additionalFees: BigInt(transaction.additionalFees.toFixed()) }
+        : estimated.parameters,
+    };
+
+    return computeUseAllAmount(estimation, getNativeSpendableAfterPending(account));
   };
 }
