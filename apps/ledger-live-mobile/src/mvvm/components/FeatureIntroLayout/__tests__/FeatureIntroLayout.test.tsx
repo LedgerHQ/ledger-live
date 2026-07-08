@@ -74,6 +74,22 @@ describe("FeatureIntroLayout", () => {
     expect(onClose).toHaveBeenCalledTimes(2);
   });
 
+  it("should not render a secondary button when no label is provided", async () => {
+    const onClose = jest.fn();
+    const { user } = renderFeatureIntroLayout({
+      onClose,
+      content: {
+        ...content,
+        secondaryButtonLabel: " ",
+      },
+    });
+
+    expect(screen.queryByText("Buy your Ledger device")).not.toBeOnTheScreen();
+
+    await user.press(screen.getByText("Connect"));
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
   it("should render the hero image container when themed urls are provided", () => {
     renderFeatureIntroLayout();
 
