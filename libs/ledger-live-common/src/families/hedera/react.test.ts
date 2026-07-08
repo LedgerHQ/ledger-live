@@ -154,7 +154,7 @@ describe("hedera/react", () => {
       hederaResources: {
         delegation: null,
       },
-    } as HederaAccount;
+    } as unknown as HederaAccount;
 
     beforeEach(async () => {
       const { prepare } = setup();
