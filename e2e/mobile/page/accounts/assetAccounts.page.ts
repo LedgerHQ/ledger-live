@@ -42,9 +42,20 @@ export default class AssetAccountsPage {
 
   @Step("Tap on asset quick action button ")
   async tapOnAssetQuickActionButton(action: "send" | "receive" | "buy" | "sell" | "swap") {
-    const quickActionButton = this.assetQuickActionButton(action);
-    await waitForElement(quickActionButton);
-    await tapByElement(quickActionButton);
+    if (await isAggregatedAssetsEnabled()) {
+      const q2TestIds: Partial<Record<typeof action, string>> = {
+        buy: "asset-detail-buy-button",
+        swap: "asset-detail-swap-button",
+        receive: "asset-detail-footer-receive-button",
+      };
+      const testId = q2TestIds[action] ?? `asset-quick-action-button-${action}`;
+      await waitForElementById(testId);
+      await tapById(testId);
+    } else {
+      const quickActionButton = this.assetQuickActionButton(action);
+      await waitForElement(quickActionButton);
+      await tapByElement(quickActionButton);
+    }
   }
 
   @Step("Open asset page via deeplink")

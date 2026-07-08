@@ -131,7 +131,18 @@ export default class MarketPage {
 
   @Step("Tap on market quick action button ")
   async tapOnMarketQuickActionButton(action: "send" | "receive" | "buy" | "sell" | "swap") {
-    await tapByElement(this.marketQuickActionButton(action));
+    if (await isAggregatedAssetsEnabled()) {
+      const q2TestIds: Partial<Record<typeof action, string>> = {
+        buy: "asset-detail-buy-button",
+        swap: "asset-detail-swap-button",
+        receive: "asset-detail-footer-receive-button",
+      };
+      const testId = q2TestIds[action] ?? `asset-quick-action-button-${action}`;
+      await waitForElementById(testId);
+      await tapById(testId);
+    } else {
+      await tapByElement(this.marketQuickActionButton(action));
+    }
   }
 
   @Step("Expect filters visible")
