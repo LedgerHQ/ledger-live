@@ -29,6 +29,8 @@ export default class CommonPage {
   accountCardRegExp = (id = ".*") => new RegExp(this.accountCardPrefix + id);
   accountItemRegExp = (id = ".*(?<!-name)$") => new RegExp(`${this.accountItemId}${id}`);
   accountItem = (id: string) => getElementById(this.accountItemRegExp(id));
+  addressItemRegExp = (id: string) => new RegExp(`asset-detail-address-item-${id}`);
+  assetScrollContainerId = "asset-detail-scroll-view";
   accountItemName = (accountId: string) => getElementById(`${this.accountItemId + accountId}-name`);
   accountId = (account: Account) =>
     `test-id-account-${getParentAccountName(account)}${account.tokenType !== undefined ? ` (${account.currency.ticker})` : ""}`;
@@ -80,8 +82,8 @@ export default class CommonPage {
 
   @Step("Go to the account")
   async goToAccount(accountId: string) {
-    await scrollToId(this.accountItemRegExp(accountId), this.assetScreenFlatlistId);
-    await tapByElement(this.accountItem(accountId));
+    await scrollToId(this.addressItemRegExp(accountId), this.assetScrollContainerId);
+    await tapByElement(getElementById(this.addressItemRegExp(accountId)));
   }
 
   @Step("Tap on close with confirmation button")
@@ -107,10 +109,8 @@ export default class CommonPage {
 
   @Step("Go to the account with the name")
   async goToAccountByName(name: string) {
-    const accountTitle = getElementByText(name);
-    const rowId = (await getIdOfElement(accountTitle)).replace("-name", ""); // Workaround on iOS (name on top of the return arrow clickable layout)
-    jestExpect(rowId).toContain(this.accountItemId);
-    await tapById(rowId);
+    await scrollToText(name, this.assetScrollContainerId);
+    await tapByElement(getElementById(/asset-detail-address-item-.*/));
   }
 
   @Step("Remove Speculos")
