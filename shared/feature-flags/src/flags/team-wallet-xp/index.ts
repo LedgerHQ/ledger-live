@@ -21,3 +21,5 @@ export * from "./lwmWallet40";
 export * from "./lwmQuickActionsCtasVariant";
 export * from "./llmTransferButtonCopyVariant";
 export * from "./llRobinhoodDisclaimer";
+export * from "./lwdPayTab";
+export * from "./lwmPayTab";

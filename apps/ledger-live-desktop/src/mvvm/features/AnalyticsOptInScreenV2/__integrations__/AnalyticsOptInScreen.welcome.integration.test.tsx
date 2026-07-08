@@ -23,7 +23,7 @@ const analyticsPromptEnabledOverrides = {
   lldAnalyticsOptInPrompt: {
     enabled: true,
     params: {
-      variant: "A",
+      variant: "B",
       entryPoints: ["Onboarding"],
     },
   },
@@ -44,6 +44,15 @@ const featureFlagsState = {
 describe("AnalyticsOptInScreen on Welcome", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    if (!document.getElementById("modals")) {
+      const modals = document.createElement("div");
+      modals.id = "modals";
+      document.body.appendChild(modals);
+    }
+  });
+
+  afterEach(() => {
+    document.getElementById("modals")?.remove();
   });
 
   it("should open the screen when user starts onboarding and accept continues flow", async () => {
@@ -129,6 +138,47 @@ describe("AnalyticsOptInScreen on Welcome", () => {
       }),
       true,
     );
+  });
+
+  it("should keep the legacy drawer for onboarding variant A when the v2 flag is enabled", async () => {
+    const variantAFeatureFlagsState = {
+      ...featureFlagsState,
+      overrides: {
+        ...featureFlagsState.overrides,
+        lldAnalyticsOptInPrompt: {
+          enabled: true,
+          params: {
+            variant: "A",
+            entryPoints: ["Onboarding"],
+          },
+        },
+      },
+      resolved: {
+        ...featureFlagsState.resolved,
+        lldAnalyticsOptInPrompt: {
+          enabled: true,
+          params: {
+            variant: "A",
+            entryPoints: ["Onboarding"],
+          },
+        },
+      },
+    };
+
+    const { user } = render(<Welcome />, {
+      initialState: {
+        featureFlags: variantAFeatureFlagsState,
+        settings: {
+          ...INITIAL_STATE,
+          hasSeenAnalyticsOptInPrompt: false,
+        },
+      },
+    });
+
+    await user.click(screen.getByTestId("v3-onboarding-get-started-button"));
+
+    expect(await screen.findByTestId("accept-analytics-button")).toBeVisible();
+    expect(screen.queryByTestId("analytics-opt-in-screen")).not.toBeInTheDocument();
   });
 
   it("should refuse all and close the screen", async () => {

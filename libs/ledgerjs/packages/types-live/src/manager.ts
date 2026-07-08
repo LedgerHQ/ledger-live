@@ -1,6 +1,11 @@
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { DeviceId } from "@ledgerhq/client-ids/ids";
+
+interface DeviceId {
+  exportDeviceIdForPersistence(): string;
+  exportDeviceIdForPushDevicesService(): string;
+  equals(other: DeviceId): boolean;
+}
 // FIXME we need to clearly differentiate what is API types and what is our inner own type
 export type Id = number;
 /**

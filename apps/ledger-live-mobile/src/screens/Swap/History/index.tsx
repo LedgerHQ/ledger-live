@@ -34,7 +34,7 @@ import { useSyncAllAccounts } from "../LiveApp/hooks/useSyncAllAccounts";
 import EmptyState from "./EmptyState";
 import OperationRow from "./OperationRow";
 import { getEnv } from "@ledgerhq/live-env";
-import { sendFile } from "../../../../e2e/bridge/client";
+import { sendFile } from "~/e2e/bridge/client";
 import ExternalLink from "@ledgerhq/icons-ui/native/ExternalLink";
 import SafeAreaView from "~/components/SafeAreaView";
 

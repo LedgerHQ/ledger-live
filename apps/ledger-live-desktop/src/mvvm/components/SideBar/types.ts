@@ -32,6 +32,7 @@ export interface SideBarViewModel {
   readonly displayBlueDot: boolean;
   readonly earnLabel: string;
   readonly isCardDisabled: boolean;
+  readonly isPayTabEnabled: boolean;
   readonly isAccountsDisabled: boolean;
   readonly isLiveAppTabSelected: boolean;
   readonly isMyWalletEnabled: boolean;

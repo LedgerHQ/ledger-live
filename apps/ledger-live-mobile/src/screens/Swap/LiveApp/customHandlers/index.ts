@@ -9,7 +9,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { WebviewProps } from "~/components/Web3AppWebview/types";
 import { NavigatorName, ScreenName } from "~/const";
-import { sendSwapLiveAppReady } from "../../../../../e2e/bridge/client";
+import { sendSwapLiveAppReady } from "~/e2e/bridge/client";
 import { getFee } from "./getFee";
 import { getTransactionByHash } from "./getTransactionByHash";
 import { saveSwapToHistory } from "./saveSwapToHistory";

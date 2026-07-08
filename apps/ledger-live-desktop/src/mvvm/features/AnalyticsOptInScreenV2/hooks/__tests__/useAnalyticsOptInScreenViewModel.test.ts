@@ -10,6 +10,12 @@ jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
 }));
 
+jest.mock("LLD/features/AnalyticsOptInPrompt/hooks/useCommonLogic", () => ({
+  useAnalyticsOptInPrompt: jest.fn(() => ({
+    shouldWeTrack: true,
+  })),
+}));
+
 type SettingsState = typeof INITIAL_STATE;
 
 const renderViewModel = (

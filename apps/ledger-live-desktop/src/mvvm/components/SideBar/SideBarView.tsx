@@ -18,6 +18,7 @@ import {
   Chart5,
   Chart5Fill,
   Compass,
+  DollarConvert,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import { FeatureToggle } from "@features/platform-feature-flags";
 import React from "react";
@@ -79,13 +80,22 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
               activeIcon={Compass}
               label={t("sidebar.catalog")}
             />
-            <SideBarItem
-              value="card"
-              icon={CreditCard}
-              activeIcon={CreditCardFill}
-              label={t("sidebar.card")}
-              disabled={viewModel.isCardDisabled}
-            />
+            {viewModel.isPayTabEnabled ? (
+              <SideBarItem
+                value="paytab"
+                icon={DollarConvert}
+                activeIcon={DollarConvert}
+                label={t("sidebar.paytab")}
+              />
+            ) : (
+              <SideBarItem
+                value="card"
+                icon={CreditCard}
+                activeIcon={CreditCardFill}
+                label={t("sidebar.card")}
+                disabled={viewModel.isCardDisabled}
+              />
+            )}
           </SideBarLeading>
           <SideBarTrailing>
             {viewModel.isMyWalletEnabled ? null : (

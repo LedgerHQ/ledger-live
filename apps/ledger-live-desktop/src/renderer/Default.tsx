@@ -107,6 +107,7 @@ const Analytics = lazy(() => import("LLD/features/Analytics"));
 const CryptoAddresses = lazy(() => import("LLD/features/CryptoAddresses"));
 const CryptoAssets = lazy(() => import("LLD/features/CryptoAddresses/CryptoAssets"));
 const CardW40 = lazy(() => import("LLD/features/Card"));
+const PayTab = lazy(() => import("LLD/features/PayTab"));
 const History = lazy(() => import("LLD/features/History"));
 
 const LoaderWrapper = styled.div`
@@ -294,6 +295,7 @@ const MainAppContent = ({
         />
         <Route path="/card-new-wallet" element={withSuspense(CardW40)({})} />
         <Route path="/card/:appId?" element={withSuspense(Card)({})} />
+        <Route path="/paytab" element={withSuspense(PayTab)({})} />
         <Route path="/manager/reload" element={<Navigate to="/manager" replace />} />
         <Route path="/manager/*" element={withSuspense(Manager)({})} />
         <Route path="/platform" element={withSuspense(PlatformCatalog)({})} />

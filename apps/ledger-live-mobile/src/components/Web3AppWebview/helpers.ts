@@ -33,7 +33,7 @@ import { mevProtectionSelector, trackingEnabledSelector } from "../../reducers/s
 import storage from "LLM/storage";
 import { track } from "../../analytics";
 import { userIdSelector } from "@ledgerhq/client-ids/store";
-import { sendWalletAPIResponse } from "../../../e2e/bridge/client";
+import { sendWalletAPIResponse } from "~/e2e/bridge/client";
 import Config from "react-native-config";
 import { setOriginFlow } from "~/analytics/originFlow";
 import {

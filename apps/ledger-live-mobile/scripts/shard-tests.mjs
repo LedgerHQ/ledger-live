@@ -38,6 +38,7 @@ function findTestFiles(dir) {
       }
     }
   } catch (e) {
+    if (e.code === "ENOENT") return [];
     console.error("[shard-tests] Error reading directory:", dir, e);
     throw new Error(`Failed to read directory ${dir}: ${e.message}`);
   }

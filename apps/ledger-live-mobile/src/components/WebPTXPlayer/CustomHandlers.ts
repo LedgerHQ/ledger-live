@@ -20,7 +20,7 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { WebviewProps } from "../Web3AppWebview/types";
 import Config from "react-native-config";
-import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
+import { sendEarnLiveAppReady } from "~/e2e/bridge/client";
 import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountById";
 import {
   getParentAccount,

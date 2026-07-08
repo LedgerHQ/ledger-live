@@ -32,7 +32,7 @@ import {
   loadImageExecMock,
   removeImageExecMock,
   renameDeviceExecMock,
-} from "../../e2e/bridge/types";
+} from "~/e2e/bridge/types";
 import { useFeature } from "@features/platform-feature-flags";
 
 export function useAppDeviceAction() {

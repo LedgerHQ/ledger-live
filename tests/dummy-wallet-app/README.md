@@ -40,29 +40,7 @@ pnpm desktop test:playwright tests/specs/services/wallet-api.spec.ts
 
 ### Mobile
 
-Start Metro in a separate terminal when running iOS debug tests:
-
-```sh
-pnpm mobile start
-```
-
-### iOS
-
-```sh
-pnpm build:llm:deps
-pnpm mobile e2e:build -c ios.sim.debug
-pnpm mobile e2e:test -c ios.sim.debug apps/ledger-live-mobile/e2e/specs/wallet-api/accountRequest.spec.ts
-```
-
-### Android
-
-Android local E2E runs use release builds.
-
-```sh
-pnpm build:llm:deps
-pnpm mobile e2e:build -c android.emu.release
-pnpm mobile e2e:test -c android.emu.release apps/ledger-live-mobile/e2e/specs/wallet-api/accountRequest.spec.ts
-```
+Mobile Wallet API E2E tests have been removed with the mocked Detox suite. Mobile e2e coverage is now handled by the Speculos-based suite at `e2e/mobile/`. See [e2e/mobile/README.md](../../e2e/mobile/README.md) for setup and run instructions.
 
 # How does it work?
 

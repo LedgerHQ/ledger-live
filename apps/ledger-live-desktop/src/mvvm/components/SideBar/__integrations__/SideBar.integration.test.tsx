@@ -110,6 +110,25 @@ describe("SideBar", () => {
       const cardButton = screen.getByText("Card").closest("button");
       expect(cardButton).toBeDisabled();
     });
+
+    it("should render Pay instead of Card when lwdPayTab is enabled", () => {
+      renderSideBarWithRoute(
+        "/",
+        withFeatureFlags({
+          lwdPayTab: { enabled: true },
+        }),
+      );
+
+      expect(screen.getByText("Pay")).toBeVisible();
+      expect(screen.queryByText("Card")).not.toBeInTheDocument();
+    });
+
+    it("should render Card instead of Pay when lwdPayTab is disabled", () => {
+      renderSideBarWithRoute("/");
+
+      expect(screen.getByText("Card")).toBeVisible();
+      expect(screen.queryByText("Pay")).not.toBeInTheDocument();
+    });
     it("should disable Accounts item when no accounts are present", () => {
       renderSideBarWithRoute("/", {
         accounts: [],
@@ -179,6 +198,19 @@ describe("SideBar", () => {
       expect(mockNavigate).toHaveBeenCalledWith("/card-new-wallet");
     });
 
+    it("should navigate to paytab when clicking Pay item and lwdPayTab is enabled", async () => {
+      const { user } = renderSideBarWithRoute(
+        "/",
+        withFeatureFlags({
+          lwdPayTab: { enabled: true },
+        }),
+      );
+
+      await user.click(screen.getByText("Pay"));
+
+      expect(mockNavigate).toHaveBeenCalledWith("/paytab");
+    });
+
     it("should not navigate when clicking the already active item", async () => {
       const { user } = renderSideBarWithRoute("/");
 
@@ -241,6 +273,18 @@ describe("SideBar", () => {
 
       const cardButton = screen.getByText("Card").closest("button");
       expect(cardButton).toHaveAttribute("aria-current", "page");
+    });
+
+    it("should set paytab as active when on paytab path and lwdPayTab is enabled", () => {
+      renderSideBarWithRoute(
+        "/paytab",
+        withFeatureFlags({
+          lwdPayTab: { enabled: true },
+        }),
+      );
+
+      const payTabButton = screen.getByText("Pay").closest("button");
+      expect(payTabButton).toHaveAttribute("aria-current", "page");
     });
 
     it("should set earn as active when on earn path", () => {
