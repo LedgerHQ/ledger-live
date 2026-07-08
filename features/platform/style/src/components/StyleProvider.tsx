@@ -5,13 +5,13 @@ import type { DefaultTheme } from "styled-components";
 
 type ColorScheme = "light" | "dark" | "system";
 
-interface StyleProviderProps {
+type StyleProviderProps = Readonly<{
   /** Pre-merged theme object (app is responsible for merging via @ledgerhq/react-ui tokens). */
   theme?: DefaultTheme;
   /** Lumen color scheme — renders LumenThemeProvider when provided (e.g. web-tools). */
   colorScheme?: ColorScheme;
   children: React.ReactNode;
-}
+}>;
 
 export function StyleProvider({ theme, colorScheme, children }: StyleProviderProps) {
   let content: React.ReactNode = children;

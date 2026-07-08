@@ -15,6 +15,9 @@ module.exports = {
       },
     ],
   },
+  moduleNameMapper: {
+    "^@ledgerhq/lumen-ui-react$": "<rootDir>/__mocks__/@ledgerhq/lumen-ui-react.tsx",
+  },
   passWithNoTests: true,
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
 };
