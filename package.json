@@ -74,6 +74,7 @@
     "nightly": "nx run-many -t nightly",
     "nightly:lld": "nx run ledger-live-desktop:nightly",
     "test": "nx run-many -t test --parallel=1",
+    "test:scripts": "node --test \"scripts/**/*.test.mjs\"",
     "test:family": "node scripts/test-family.mjs",
     "run:cli": "./apps/cli/bin/index.js",
     "lint": "nx run-many -t lint",
