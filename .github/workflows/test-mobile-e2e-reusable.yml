@@ -296,6 +296,8 @@ jobs:
           if [ -z "$EXTRA_FEATURE_FLAGS" ]; then
             EXTRA_FEATURE_FLAGS="(none)"
           fi
+
+          FILTER_SUMMARY="$(node e2e/tooling/filter/format-summary.mjs "$FILTER_PATTERN")"
           {
           echo "## Workflow Context"
           echo ""
@@ -304,7 +306,7 @@ jobs:
           echo "- **Commit SHA:** ${{ github.sha }}"
           echo "- **iOS device:** $IOS_DEVICE"
           echo "- **Android device:** $ANDROID_DEVICE"
-          node e2e/tooling/filter/format-summary.mjs "$FILTER_PATTERN"
+          echo "$FILTER_SUMMARY"
           echo "- **Smoke tests:** $SMOKE_TESTS"
           echo "- **Test Execution ticket ID (Android):** $TEST_EXECUTION_ANDROID"
           echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"

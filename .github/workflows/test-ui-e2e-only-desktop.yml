@@ -305,6 +305,8 @@ jobs:
           if [ -z "$REPEAT_EACH" ]; then
             REPEAT_EACH="(none)"
           fi
+
+          FILTER_SUMMARY="$(node e2e/tooling/filter/format-summary.mjs "$FILTER_PATTERN")"
           {
             echo "## Workflow Context"
             echo ""
@@ -312,7 +314,7 @@ jobs:
             echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
             echo "- **Commit SHA:** ${{ github.sha }}"
             echo "- **Device selected:** $DEVICE"
-            node e2e/tooling/filter/format-summary.mjs "$FILTER_PATTERN"
+            echo "$FILTER_SUMMARY"
             echo "- **Test Execution ticket ID:** $TEST_EXECUTION"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
