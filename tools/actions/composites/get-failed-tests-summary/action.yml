@@ -30,7 +30,8 @@ runs:
 
         # jq filter escaping every char that is special in a JS regex (plus the
         # comma), so the emitted Filter pattern is a literal alternation once split
-        # on '|' by the workflow.
+        # on the unescaped '|' and ',' separators by the workflow resolver
+        # (scripts/resolve-e2e-test-filter.mjs).
         JQ_ESC='def esc: gsub("(?<c>[.^$*+?()\\[\\]{}|,\\\\/-])"; "\\" + .c);'
 
         case "$RUNNER" in
