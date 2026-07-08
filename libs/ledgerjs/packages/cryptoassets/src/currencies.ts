@@ -1153,6 +1153,26 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  defi_oracle_meta_mainnet: {
+    type: "CryptoCurrency",
+    id: "defi_oracle_meta_mainnet",
+    coinType: CoinType.ETH,
+    name: "DeFi Oracle Meta Mainnet",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "defi-oracle-meta",
+    color: "#627EEA",
+    family: "evm",
+    ethereumLikeInfo: {
+      chainId: 138,
+    },
+    units: ethereumUnits("ETH", "ETH"),
+    explorerViews: [
+      blockscoutExplorerView("https://blockscout.defi-oracle.io"),
+    ],
+    keywords: ["defi oracle meta", "chain 138", "chain138"],
+    tokenTypes: ["erc20"],
+  },
   digibyte: {
     type: "CryptoCurrency",
     id: "digibyte",
