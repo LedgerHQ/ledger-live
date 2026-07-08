@@ -1,26 +1,27 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { useTrackingPairs, addExtraSessionTrackingPair } from "~/actions/general";
 
-// Registers the (currency, counterValueCurrency) pair with the countervalues
-// engine when missing, then polls so the debounced settings take effect.
 export function useOnDemandCurrencyCountervalues(
   currency: Currency,
   counterValueCurrency: Currency,
 ) {
   const trackingPairs = useTrackingPairs();
   const { poll } = useCountervaluesPolling();
+
+  // Read via refs so registering the pair (which updates trackingPairs) doesn't
+  // re-run the effect and clear the timeout before the poll fires.
   const pollRef = useRef(poll);
   pollRef.current = poll;
-
-  const hasTrackingPair = useMemo(
-    () => trackingPairs.some(tp => tp.from === currency && tp.to === counterValueCurrency),
-    [trackingPairs, currency, counterValueCurrency],
-  );
+  const trackingPairsRef = useRef(trackingPairs);
+  trackingPairsRef.current = trackingPairs;
 
   useEffect(() => {
-    if (hasTrackingPair) return;
+    const alreadyTracked = trackingPairsRef.current.some(
+      tp => tp.from === currency && tp.to === counterValueCurrency,
+    );
+    if (alreadyTracked) return;
     addExtraSessionTrackingPair({
       from: currency,
       to: counterValueCurrency,
@@ -28,5 +29,5 @@ export function useOnDemandCurrencyCountervalues(
     });
     const t = setTimeout(() => pollRef.current(), 2000);
     return () => clearTimeout(t);
-  }, [hasTrackingPair, currency, counterValueCurrency]);
+  }, [currency, counterValueCurrency]);
 }

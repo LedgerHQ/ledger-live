@@ -81,7 +81,11 @@ export function useAmountScreenViewModel({
     onUpdateTransaction: updateTransactionWithPatch,
   });
 
-  const amountUsd = useAmountUsd(account, transaction.amount, amountInput.fiatAmountValue);
+  // On "send max", transaction.amount is 0 and the effective amount lives in status.amount.
+  const cryptoAmount = transaction.useAllAmount
+    ? (status.amount ?? new BigNumber(0))
+    : transaction.amount;
+  const amountUsd = useAmountUsd(account, cryptoAmount, amountInput.fiatAmountValue);
 
   useInitialTransactionPreparation({
     shouldPrepare,

@@ -60,4 +60,20 @@ describe("useOnDemandCurrencyCountervalues", () => {
 
     expect(poll).not.toHaveBeenCalled();
   });
+
+  it("still polls when the pair appears right after registration", () => {
+    (useTrackingPairs as jest.Mock).mockReturnValue([]);
+
+    const { rerender } = renderHook(() => useOnDemandCurrencyCountervalues(btc, usd));
+
+    // Registering the pair flips useTrackingPairs to include it and re-renders.
+    (useTrackingPairs as jest.Mock).mockReturnValue([{ from: btc, to: usd }]);
+    rerender({});
+
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+
+    expect(poll).toHaveBeenCalledTimes(1);
+  });
 });
