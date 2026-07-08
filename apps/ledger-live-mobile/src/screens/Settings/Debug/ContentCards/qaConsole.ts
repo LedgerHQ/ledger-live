@@ -828,13 +828,19 @@ export function buildPlacementDiagnostics(
         categoryBlockers.push("No eligible child cards for this category");
       }
     } else {
-      eligibleCardIds = getDirectPlacementEligibleCardIds(placement, buckets, dismissedContentCards);
+      eligibleCardIds = getDirectPlacementEligibleCardIds(
+        placement,
+        buckets,
+        dismissedContentCards,
+      );
     }
 
     // Wallet/Top wallet never mount on the Portfolio screen without a displayable account,
     // regardless of how well-formed their cards are - see PortfolioScreen's `showAssets` gate.
     const accountBlockers =
-      ACCOUNT_GATED_PLACEMENTS.has(placement) && !hasDisplayableAccounts && eligibleCardIds.length > 0
+      ACCOUNT_GATED_PLACEMENTS.has(placement) &&
+      !hasDisplayableAccounts &&
+      eligibleCardIds.length > 0
         ? ["no displayable accounts on this device"]
         : [];
     if (accountBlockers.length > 0) eligibleCardIds = [];
