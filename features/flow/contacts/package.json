@@ -18,12 +18,27 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W features/flow/contacts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@features/platform-feature-flags": "workspace:^",
+    "@shared/feature-flags": "workspace:^"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-redux": ">=9.0.0"
+  },
   "devDependencies": {
+    "@reduxjs/toolkit": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
+    "@types/react": "catalog:",
     "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-redux": "catalog:",
     "typescript": "catalog:"
   }
 }
