@@ -207,9 +207,22 @@ catalog:
   "@ledgerhq/coin-xrp": 7.23.5
   detox: 20.51.3
 
+supportedArchitectures:
+  cpu:
+    - x64
+    - arm64
+    - current
+  os:
+    - linux
+    - darwin
+    - win32
+    - current
+
 overrides:
   node-abi: ^4.9.0
 
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
+  - typescript
+  - "@typescript/*"
