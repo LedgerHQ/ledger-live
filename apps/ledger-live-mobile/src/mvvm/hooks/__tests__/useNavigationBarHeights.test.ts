@@ -10,7 +10,7 @@ jest.mock("react-native-safe-area-context", () => ({
   useSafeAreaInsets: () => mockInsets,
 }));
 
-const withFeatureFlag = (state: State) => ({
+const withDefaultSettings = (state: State) => ({
   ...state,
   settings: {
     ...SETTINGS_INITIAL_STATE,
@@ -18,7 +18,7 @@ const withFeatureFlag = (state: State) => ({
 });
 
 const withTabBarVisibility = (isVisible: boolean) => (state: State) => ({
-  ...withFeatureFlag(state),
+  ...withDefaultSettings(state),
   appstate: {
     ...state.appstate,
     isMainNavigatorVisible: isVisible,

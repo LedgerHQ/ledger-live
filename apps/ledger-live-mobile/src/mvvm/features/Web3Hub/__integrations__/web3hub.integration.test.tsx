@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Text, Pressable } from "react-native";
 import { screen, waitForElementToBeRemoved } from "@testing-library/react-native";
-import { render, withFlagOverrides } from "@tests/test-renderer";
+import { render } from "@tests/test-renderer";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { getDefaultStore } from "jotai";
 import { dismissedManifestsAtom, recentlyUsedAtom } from "LLM/features/Web3Hub/db";
@@ -51,8 +51,6 @@ async function waitForLoader() {
   });
 }
 
-const withWalletV4 = () => withFlagOverrides({});
-
 describe("Web3Hub integration test", () => {
   beforeEach(() => {
     const store = getDefaultStore();
@@ -89,10 +87,7 @@ describe("Web3Hub integration test", () => {
   });
 
   it("Should let users open search and navigate to an app", async () => {
-    const shouldShowMainBackButton = true;
-    const { user } = render(<Web3HubTest />, {
-      overrideInitialState: withWalletV4(),
-    });
+    const { user } = render(<Web3HubTest />);
 
     expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
 
@@ -100,11 +95,7 @@ describe("Web3Hub integration test", () => {
 
     expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
     expect(screen.getByRole("searchbox")).toBeDisabled();
-    if (shouldShowMainBackButton) {
-      expect(screen.getByRole("button", { name: /back/i })).toBeOnTheScreen();
-    } else {
-      expect(screen.queryByRole("button", { name: /back/i })).toBeNull();
-    }
+    expect(screen.getByRole("button", { name: /back/i })).toBeOnTheScreen();
     await user.press(screen.getByRole("searchbox"));
     expect(await screen.findByRole("searchbox")).toBeOnTheScreen();
     expect(screen.getByRole("searchbox")).toBeEnabled();

@@ -36,8 +36,6 @@ const mockAccount = {
   index: 0,
 };
 
-export const overrideInitialStateWithFeatureFlag = (state: State) => state;
-
 export const overrideInitialStateWithReadOnly = (state: State) => ({
   ...state,
   settings: {

@@ -1,13 +1,11 @@
 import React from "react";
 import { renderWithReactQuery, screen } from "@tests/test-renderer";
-import { ReadOnlyPortfolioTest, overrideInitialStateWithFeatureFlag } from "./shared";
+import { ReadOnlyPortfolioTest } from "./shared";
 import { withConsentDrawerState } from "LLM/features/AnalyticsConsentDrawer/__tests__/helpers";
 
 describe("ReadOnly Portfolio Screen", () => {
   it("should render ReadOnly Portfolio", async () => {
-    renderWithReactQuery(<ReadOnlyPortfolioTest />, {
-      overrideInitialState: overrideInitialStateWithFeatureFlag,
-    });
+    renderWithReactQuery(<ReadOnlyPortfolioTest />);
 
     expect(await screen.findByTestId("PortfolioReadOnlyItems")).toBeVisible();
   });
