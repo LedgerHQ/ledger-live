@@ -1,5 +1,6 @@
 export const ASSET_DETAIL_TEST_IDS = {
   screen: "asset-detail-screen",
+  scrollView: (currencyId: string) => `asset-detail-scroll-view-${currencyId}`,
   balanceGraph: "asset-detail-balance-graph",
   marketPrice: "asset-detail-market-price",
   chart: "asset-detail-chart",
