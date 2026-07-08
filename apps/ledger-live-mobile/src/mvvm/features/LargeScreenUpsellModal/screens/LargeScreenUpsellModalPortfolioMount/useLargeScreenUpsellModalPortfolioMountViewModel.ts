@@ -6,8 +6,6 @@ import { shouldThrottle } from "@ledgerhq/live-common/postOnboarding/logic/upsel
 import {
   recordUpsellModalDisplay,
   resetUpsellModalRetries,
-  retriesUpsellModalSelector,
-  lastSeenUpsellModalSelector,
 } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
 import { useLargeScreenUpsellEligibility } from "LLM/features/LargeScreenUpsell";
@@ -44,8 +42,10 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
   const feature = useFeature("largeScreenUpsell");
   const eligibility = useLargeScreenUpsellEligibility();
   const hasCompetingAppStartModal = useCompetingAppStartModalsPresent();
-  const retries = useSelector((state: State) => retriesUpsellModalSelector(state));
-  const lastSeenAt = useSelector((state: State) => lastSeenUpsellModalSelector(state));
+  const retries = useSelector((state: State) => state.largeScreenUpsellModal?.retries ?? 0);
+  const lastSeenAt = useSelector(
+    (state: State) => state.largeScreenUpsellModal?.lastSeenAt ?? null,
+  );
   const competingAtMountRef = useRef<boolean | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
