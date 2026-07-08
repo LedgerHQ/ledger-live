@@ -4,6 +4,7 @@ import { FF_LWM_WALLET_40_Q2 } from "utils/featureFlagUtils";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
+// TODO: temporary override until LIVE-29336 is done
 const FF_WALLET_ASSETS = {
   lwmWallet40: {
     ...FF_LWM_WALLET_40_Q2.lwmWallet40,
