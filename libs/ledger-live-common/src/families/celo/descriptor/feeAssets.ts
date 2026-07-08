@@ -107,6 +107,8 @@ export const celoFeeAssets: FeeAssetsConfig = {
       ticker: FEE_CURRENCY_OPTIONS[0].name,
       label: FEE_CURRENCY_OPTIONS[0].name,
       unitLabel: CELO_FEE_UNIT_LABEL,
+      currency: mainAccount.currency,
+      balance: mainAccount.spendableBalance,
     };
     if (mainAccount.subAccounts === undefined) {
       const selectedToken = getHydratingSelectedTokenOption(transaction);
@@ -120,6 +122,8 @@ export const celoFeeAssets: FeeAssetsConfig = {
       ticker: token.feeCurrencyName,
       label: token.feeCurrencyName,
       customFeeInputValueTransform: feeAssetInputValueTransform,
+      currency: token.token,
+      balance: token.spendableBalance,
     }));
     return [native, ...tokens];
   },

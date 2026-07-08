@@ -88,6 +88,10 @@ export type FeeAssetOption = Readonly<{
   unitLabel?: string;
   /** Optional conversion between descriptor-native fee values and selected-asset display values. */
   customFeeInputValueTransform?: CustomFeeInputValueTransform;
+  /** Currency for the leading icon; the coin-module already has it resolved (no async lookup needed). */
+  currency?: CryptoOrTokenCurrency;
+  /** Raw held balance in the currency's smallest (atomic) unit; the UI formats it with `currency.units[0]` and the user's locale. */
+  balance?: BigNumber;
 }>;
 
 /**
