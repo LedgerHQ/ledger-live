@@ -361,6 +361,7 @@ export const DeeplinksProvider = ({
   const web3hubFlag = useFeature("web3hub");
   const lwmProductTourFlag = useFeature("lwmProductTour");
   const lwmBackupHubFlag = useFeature("lwmBackupHub");
+  const lwmPayTabFlag = useFeature("lwmPayTab");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
 
@@ -506,6 +507,16 @@ export const DeeplinksProvider = ({
                               [ScreenName.Borrow]: "borrow",
                             },
                           },
+                          ...(lwmPayTabFlag?.enabled && {
+                            /**
+                             * ie: "ledgerlive://paytab" will open the Pay tab
+                             */
+                            [NavigatorName.PayTab]: {
+                              screens: {
+                                [ScreenName.PayTab]: "paytab",
+                              },
+                            },
+                          }),
                           [NavigatorName.MyLedger]: {
                             screens: {
                               /**
@@ -710,6 +721,10 @@ export const DeeplinksProvider = ({
             return handleModularDrawerDeeplink(hostname, searchParams, dispatch, config);
           }
 
+          if (hostname === "paytab" && !lwmPayTabFlag?.enabled) {
+            return getStateFromPath("card", config);
+          }
+
           if (hostname === "earn") {
             const earnParamAction = searchParams.get("action");
             const validatedAction = validateEarnAction(earnParamAction);
@@ -900,6 +915,7 @@ export const DeeplinksProvider = ({
     genericAwarenessModalFlag?.enabled,
     lwmProductTourFlag?.enabled,
     lwmBackupHubFlag?.enabled,
+    lwmPayTabFlag?.enabled,
   ]);
   const [isReady, setIsReady] = React.useState(false);
   const [isNavigationContainerReady, setIsNavigationContainerReady] = React.useState(false);
