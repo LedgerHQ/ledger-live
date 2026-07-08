@@ -44,10 +44,9 @@ import {
   validateEarnDepositScreen,
   validateLargeMoverCurrencyIds,
   validateLargeMoverLedgerIds,
-  validateMarketCurrencyId,
-  validateMarketListCategory,
 } from "./deeplinks/validation";
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
+import { resolveMarketOrAssetDeeplinkIntent } from "./deeplinks/resolveMarketOrAssetDeeplinkIntent";
 import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
 import { handleAssetDetailDeeplink } from "./deeplinks/handleAssetDetailDeeplink";
 import { handleGenericAwarenessModalDeeplink } from "./deeplinks/handleGenericAwarenessModalDeeplink";
@@ -677,53 +676,32 @@ export const DeeplinksProvider = ({
             return getStateFromPath(url.href?.split("://")[1], config);
           }
 
-          if (hostname === "market") {
-            const currencyIdFromPath = pathname.replace("/", "");
-            if (currencyIdFromPath) {
-              const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
+          // Handle market & asset deeplinks - resolve the target before navigation.
+          if (hostname === "market" || hostname === "asset") {
+            const intent = resolveMarketOrAssetDeeplinkIntent({
+              hostname,
+              pathname,
+              shouldDisplayAggregatedAssets,
+              shouldDisplayAssetDiscoverability,
+              categoryParam: searchParams.get("category"),
+            });
 
-              if (!validatedCurrencyId) {
-                return handleMarketBannerDeeplink();
-              }
-
-              if (shouldDisplayAggregatedAssets) {
+            switch (intent.type) {
+              case "asset-detail":
                 return handleAssetDetailDeeplink({
-                  currencyId: validatedCurrencyId,
-                  source: "deeplink_market",
+                  currencyId: intent.currencyId,
+                  source: intent.source,
+                  marketState: intent.marketState,
                 });
-              }
-
-              url.pathname = `/${validatedCurrencyId}`;
-              return getStateFromPath(url.href?.split("://")[1], config);
-            }
-            const validatedCategory = shouldDisplayAssetDiscoverability
-              ? validateMarketListCategory(searchParams.get("category"))
-              : undefined;
-            return handleMarketBannerDeeplink(validatedCategory);
-          }
-
-          // Handle asset deeplink - validate currencyId before navigation
-          if (hostname === "asset") {
-            const currencyIdFromPath = pathname.replace("/", "");
-            if (currencyIdFromPath) {
-              const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
-
-              if (!validatedCurrencyId) {
+              case "legacy-path":
+                url.pathname = `/${intent.currencyId}`;
+                return getStateFromPath(url.href?.split("://")[1], config);
+              case "market-banner":
+                return handleMarketBannerDeeplink(intent.category);
+              case "portfolio":
                 return getStateFromPath("portfolio", config);
-              }
-
-              if (shouldDisplayAggregatedAssets) {
-                return handleAssetDetailDeeplink({
-                  currencyId: validatedCurrencyId,
-                  source: "deeplink_asset",
-                });
-              }
-
-              url.pathname = `/${validatedCurrencyId}`;
-              return getStateFromPath(url.href?.split("://")[1], config);
-            }
-            if (shouldDisplayAggregatedAssets) {
-              return getStateFromPath("portfolio", config);
+              case "continue":
+                break;
             }
           }
 
