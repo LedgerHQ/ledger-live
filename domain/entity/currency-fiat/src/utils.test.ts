@@ -1,15 +1,15 @@
-import { getFiatCurrencyByTicker } from "./utils";
+import { findFiatCurrencyByTicker } from "./utils";
 
-describe("getFiatCurrencyByTicker", () => {
+describe("findFiatCurrencyByTicker", () => {
   it("resolves a known ticker", () => {
-    expect(getFiatCurrencyByTicker("USD")?.id).toBe("usd");
+    expect(findFiatCurrencyByTicker("USD")?.id).toBe("usd");
   });
 
   it("returns undefined for an unknown ticker", () => {
-    expect(getFiatCurrencyByTicker("ZZZ")).toBeUndefined();
+    expect(findFiatCurrencyByTicker("ZZZ")).toBeUndefined();
   });
 
   it("returns undefined for prototype keys like 'constructor'", () => {
-    expect(getFiatCurrencyByTicker("constructor")).toBeUndefined();
+    expect(findFiatCurrencyByTicker("constructor")).toBeUndefined();
   });
 });

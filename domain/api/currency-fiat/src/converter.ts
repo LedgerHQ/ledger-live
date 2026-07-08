@@ -1,5 +1,5 @@
 import {
-  getFiatCurrencyByTicker,
+  findFiatCurrencyByTicker,
   OFAC_FIAT_TICKERS,
   type FiatCurrency,
 } from "@domain/entity-currency-fiat";
@@ -19,7 +19,7 @@ export function resolveSupportedFiats(tickers: string[]): FiatCurrency[] {
     const upper = ticker.toUpperCase();
     if (OFAC_FIAT_TICKERS.has(upper)) continue;
 
-    const currency = getFiatCurrencyByTicker(upper);
+    const currency = findFiatCurrencyByTicker(upper);
     if (!currency || seen.has(currency.id)) continue;
 
     seen.add(currency.id);
