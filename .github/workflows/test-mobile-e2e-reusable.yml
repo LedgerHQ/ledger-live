@@ -304,7 +304,7 @@ jobs:
           echo "- **Commit SHA:** ${{ github.sha }}"
           echo "- **iOS device:** $IOS_DEVICE"
           echo "- **Android device:** $ANDROID_DEVICE"
-          echo "- **Filtered pattern:** $FILTER_PATTERN"
+          node scripts/format-e2e-filter-summary.mjs "$FILTER_PATTERN"
           echo "- **Smoke tests:** $SMOKE_TESTS"
           echo "- **Test Execution ticket ID (Android):** $TEST_EXECUTION_ANDROID"
           echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"

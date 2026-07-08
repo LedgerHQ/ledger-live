@@ -299,9 +299,6 @@ jobs:
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
           REPEAT_EACH="${{ inputs.repeat_each }}"
 
-          if [ -z "$FILTER_PATTERN" ]; then
-            FILTER_PATTERN="(none)"
-          fi
           if [ -z "$EXTRA_FEATURE_FLAGS" ]; then
             EXTRA_FEATURE_FLAGS="(none)"
           fi
@@ -315,7 +312,7 @@ jobs:
             echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
             echo "- **Commit SHA:** ${{ github.sha }}"
             echo "- **Device selected:** $DEVICE"
-            echo "- **Filtered pattern:** $FILTER_PATTERN"
+            node scripts/format-e2e-filter-summary.mjs "$FILTER_PATTERN"
             echo "- **Test Execution ticket ID:** $TEST_EXECUTION"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
