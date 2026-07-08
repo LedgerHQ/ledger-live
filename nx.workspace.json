@@ -53,6 +53,9 @@
         "env": "BRAZE_CUSTOM_ENDPOINT"
       },
       {
+        "env": "BYPASS_CORS"
+      },
+      {
         "env": "CI_KEYCHAIN_NAME"
       },
       {
