@@ -29,6 +29,13 @@ test("splits comma-separated filters (raw mobile test_filter input)", () => {
   );
 });
 
+test("splits a purely comma-separated filter into one bullet per pattern", () => {
+  assert.equal(
+    formatFilterSummary("@bitcoin,@family-evm,@solana"),
+    [`${LABEL} (3 patterns)`, "  - @bitcoin", "  - @family-evm", "  - @solana"].join("\n"),
+  );
+});
+
 test("does not split on escaped commas inside a title", () => {
   const input = "Sync instances\\, rename(?! [^@])|Another test(?! [^@])";
   assert.equal(
