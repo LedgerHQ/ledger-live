@@ -127,7 +127,11 @@ const remapErrors = (e: unknown) => {
     throw e;
   }
 
-  throw new NetworkError(e instanceof Error ? e.message : "Unknown Solana error", {}, { cause: e });
+  throw new NetworkError(
+    e instanceof Error ? e.message : "Unknown Solana error",
+    {},
+    e instanceof Error ? { cause: e } : undefined,
+  );
 };
 
 const remapErrorsWithRetry = <P extends Promise<T>, T>(callback: () => P, times = 3) => {
@@ -281,7 +285,7 @@ export function getChainAPI(
       return (async () => {
         const commitment = "confirmed";
 
-        let signature: string | undefined = undefined;
+        let signature: string;
         try {
           signature = await connection.sendRawTransaction(buffer, {
             preflightCommitment: commitment,
