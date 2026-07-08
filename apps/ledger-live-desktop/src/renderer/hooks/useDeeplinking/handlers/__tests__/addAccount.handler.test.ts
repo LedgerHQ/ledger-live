@@ -6,6 +6,7 @@ import { addAccountHandler } from "../addAccount.handler";
 import { createMockContext } from "./test-utils";
 
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
   findCryptoCurrencyByKeyword: jest.fn(),
 }));
 
