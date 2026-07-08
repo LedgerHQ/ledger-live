@@ -12,12 +12,6 @@ import type { SwapTransactionStatusDetails } from "../../../page/drawer/swapTran
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
-// The Buy-ETH CTA banner is unreachable while ptxSponsoredTransactions covers this
-// provider/chain pair (sponsored fees mean the account never runs out of ETH for network
-// fees). Flip to true once that coverage is rolled back — see
-// swapETH_USDT_BTC_NATIVE_SEGWIT_24EthFee.skip.spec.ts.
-const SPONSORED_TRANSACTIONS_ROLLED_BACK = false;
-
 async function handleAssetSwap(asset: Account, hasAccount: boolean) {
   await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
   await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
@@ -276,7 +270,7 @@ export function runTooLowAmountForQuoteSwapsTest(
       // See swap-live-app#1699 for the banner vs. buttonReplacement error-display split.
       await app.swapLiveApp.verifySwapErrorMessageIsCorrect(errorMessage, errorDisplay);
 
-      if (ctaBanner && SPONSORED_TRANSACTIONS_ROLLED_BACK) {
+      if (ctaBanner) {
         await app.swapLiveApp.checkCtaBanner(quotesVisible);
       }
     });
