@@ -44,12 +44,8 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
   const feature = useFeature("largeScreenUpsell");
   const eligibility = useLargeScreenUpsellEligibility();
   const hasCompetingAppStartModal = useCompetingAppStartModalsPresent();
-  const retries = useSelector((state: State) =>
-    retriesUpsellModalSelector(state.largeScreenUpsellModal),
-  );
-  const lastSeenAt = useSelector((state: State) =>
-    lastSeenUpsellModalSelector(state.largeScreenUpsellModal),
-  );
+  const retries = useSelector((state: State) => retriesUpsellModalSelector(state));
+  const lastSeenAt = useSelector((state: State) => lastSeenUpsellModalSelector(state));
   const competingAtMountRef = useRef<boolean | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
