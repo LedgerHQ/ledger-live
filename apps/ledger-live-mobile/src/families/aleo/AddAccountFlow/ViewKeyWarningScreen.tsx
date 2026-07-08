@@ -65,6 +65,7 @@ export default function ViewKeyWarningScreen({ route, navigation }: Props) {
   return (
     <SafeAreaView
       edges={["bottom"]}
+      testID="aleo-view-key-warning-screen"
       style={[styles.root, { backgroundColor: colors.background.main }]}
     >
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
@@ -92,7 +93,12 @@ export default function ViewKeyWarningScreen({ route, navigation }: Props) {
         </View>
       </ScrollView>
       <View style={styles.footer}>
-        <Button type="main" onPress={onContinue} event="AleoAddAccountViewKeyWarningContinue">
+        <Button
+          type="main"
+          onPress={onContinue}
+          event="AleoAddAccountViewKeyWarningContinue"
+          buttonTestId="aleo-view-key-warning-allow-button"
+        >
           {t("aleo.addAccount.stepViewKeyWarning.cta.allow")}
         </Button>
         <Button

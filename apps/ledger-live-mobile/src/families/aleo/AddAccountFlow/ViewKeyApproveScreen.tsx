@@ -220,6 +220,7 @@ export default function ViewKeyApproveScreen({ route, navigation }: Props) {
   return (
     <SafeAreaView
       edges={["bottom"]}
+      testID="aleo-view-key-approve-screen"
       style={[styles.root, { backgroundColor: colors.background.main }]}
     >
       <DeviceActionDefaultRendering
