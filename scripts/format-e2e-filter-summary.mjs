@@ -7,7 +7,7 @@ const LABEL = "- **Filtered pattern:**";
 
 function splitFilter(input) {
   return input
-    .split(/(?<!\\)\|/)
+    .split(/(?<!\\)[|,]/)
     .map(part => part.trim())
     .filter(Boolean);
 }

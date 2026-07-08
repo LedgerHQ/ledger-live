@@ -22,6 +22,21 @@ test("renders multiple patterns as a nested bullet list", () => {
   );
 });
 
+test("splits comma-separated filters (raw mobile test_filter input)", () => {
+  assert.equal(
+    formatFilterSummary("@bitcoin,@family-evm|Accounts"),
+    [`${LABEL} (3 patterns)`, "  - @bitcoin", "  - @family-evm", "  - Accounts"].join("\n"),
+  );
+});
+
+test("does not split on escaped commas inside a title", () => {
+  const input = "Sync instances\\, rename(?! [^@])|Another test(?! [^@])";
+  assert.equal(
+    formatFilterSummary(input),
+    [`${LABEL} (2 patterns)`, "  - Sync instances, rename", "  - Another test"].join("\n"),
+  );
+});
+
 test("strips the Playwright leaf anchor and unescapes regex characters", () => {
   const input =
     "Entry Point \\- Asset Allocation(?! [^@])|Sync instances\\, rename and delete accounts(?! [^@])|\\[Tezos\\] Receive(?! [^@])";
