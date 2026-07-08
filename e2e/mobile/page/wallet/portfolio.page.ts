@@ -103,7 +103,11 @@ export default class PortfolioPage {
 
   @Step("Expect asset row to have the correct counter value")
   async expectAssetRowCounterValue(asset: string, counterValue: string) {
-    await scrollToId(this.assetItemBalanceId(asset), this.accountsListView);
+    if (await isAggregatedAssetsEnabled()) {
+      await scrollToId(this.assetItemBalanceId(asset));
+    } else {
+      await scrollToId(this.assetItemBalanceId(asset), this.accountsListView);
+    }
     const text = await getTextOfElement(this.assetItemBalanceId(asset));
     jestExpect(text).toContain(counterValue);
   }
@@ -130,7 +134,11 @@ export default class PortfolioPage {
 
   @Step("Expect operation row to be visible")
   async expectOperationRowToBeVisible() {
-    await scrollToId(this.operationRowCounterValue, this.accountsListView);
+    if (await isAggregatedAssetsEnabled()) {
+      await scrollToId(this.operationRowCounterValue);
+    } else {
+      await scrollToId(this.operationRowCounterValue, this.accountsListView);
+    }
     await detoxExpect(getElementById(this.operationRowCounterValue)).toBeVisible();
   }
 
