@@ -100,5 +100,5 @@ Built via `internalTxSources().addSource("explorer").addSource("trace_block").ad
 - **Config field:** `libs/coin-modules/coin-evm/src/config.ts` (`getBlockInternalTxsSources`)
 - **Explorer internal txs:** `libs/coin-modules/coin-evm/src/network/explorer/etherscan.ts`
 - **Explorer → operations:** `libs/coin-modules/coin-evm/src/adapters/etherscan.ts`
-- **RPC traces:** `libs/coin-modules/coin-evm/src/network/node/rpc.common.ts` (`traceBlockErigonWithValidation`, `traceBlockGethWithValidation`)
+- **RPC traces:** `libs/coin-modules/coin-evm/src/network/node/rpc.common.ts` (`traceBlockErigon`, `traceBlockGeth`)
 - **Trace → operations:** `libs/coin-modules/coin-evm/src/adapters/blockOperations.ts`

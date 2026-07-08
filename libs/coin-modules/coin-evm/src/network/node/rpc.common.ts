@@ -675,6 +675,7 @@ async function getBlockReceipts(
 
 async function traceBlockGeth(
   api: JsonRpcProvider,
+  _currency: CryptoCurrency,
   blockHeight: number,
 ): Promise<TraceBlockItem[]> {
   const rpcBlockTag = ethers.toQuantity(blockHeight); // convert to hex string
@@ -693,16 +694,16 @@ async function traceBlockGeth(
       throw error;
     });
   if (!Array.isArray(debugResults)) throw new Error("Invalid debug_traceBlockByNumber response");
-  const items = gethCallTracerToTraceBlockItems(blockHeight, debugResults);
-  return items;
+  return normalizeTraceBlockItems(gethCallTracerToTraceBlockItems(blockHeight, debugResults));
 }
 
 async function traceBlockErigon(
   api: JsonRpcProvider,
+  _currency: CryptoCurrency,
   blockHeight: number | "latest",
 ): Promise<TraceBlockItem[]> {
   const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
-  return await api.send("trace_block", [blockTag]).catch(error => {
+  const traces = await api.send("trace_block", [blockTag]).catch(error => {
     if (isUnsupportedRpcMethodError(error)) {
       throw new UnsupportedRpcMethodError("trace_block is not supported by this RPC provider", {
         method: "trace_block",
@@ -711,6 +712,7 @@ async function traceBlockErigon(
     }
     throw error;
   });
+  return normalizeTraceBlockItems(traces);
 }
 
 function normalizeTraceBlockItems(traces: TraceBlockItem[]): TraceBlockItem[] {
@@ -722,22 +724,6 @@ function normalizeTraceBlockItems(traces: TraceBlockItem[]): TraceBlockItem[] {
     }
     return trace;
   });
-}
-
-async function traceBlockGethWithValidation(
-  api: JsonRpcProvider,
-  _currency: CryptoCurrency,
-  blockHeight: number,
-): Promise<TraceBlockItem[]> {
-  return normalizeTraceBlockItems(await traceBlockGeth(api, blockHeight));
-}
-
-async function traceBlockErigonWithValidation(
-  api: JsonRpcProvider,
-  _currency: CryptoCurrency,
-  blockHeight: number | "latest",
-): Promise<TraceBlockItem[]> {
-  return normalizeTraceBlockItems(await traceBlockErigon(api, blockHeight));
 }
 
 function isPrefetchedBlockTransaction(value: unknown): value is PrefetchedBlockTransaction {
@@ -883,8 +869,8 @@ export function createNodeApi(config: ExternalNodeConfig): NodeApi {
     getTransactionCount: make(getTransactionCount, config),
     getTransaction: make(getTransaction, config),
     getBlockReceipts: make(getBlockReceipts, config),
-    traceBlockErigon: make(traceBlockErigonWithValidation, config),
-    traceBlockGeth: make(traceBlockGethWithValidation, config),
+    traceBlockErigon: make(traceBlockErigon, config),
+    traceBlockGeth: make(traceBlockGeth, config),
     getGasEstimation: makeGetGasEstimation(config),
     getFeeData: make(getFeeData, config),
     broadcastTransaction: make(broadcastTransaction, config, { retries: 0 }),
