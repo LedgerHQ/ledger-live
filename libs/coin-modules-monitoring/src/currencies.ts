@@ -45,22 +45,22 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
     },
     ethereum: {
       accounts: {
-        big: { address: "0x835678a611B28684005a5e2233695fB6cbbB0007" },
+        big: { address: "0x4a9a16755a6bf64291cd2c9eb027b39c129ff58d" },
         average: { address: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3" },
         pristine: { address: "0x6895Df5ed013c85B3D9D2446c227C9AfC3813551" },
       },
     },
     base: {
       accounts: {
-        big: { address: "0xb027ea0534152c16462bc61842d03deaee64a851" },
+        big: { address: "0xf047b952225bf90cf65b1c0915a8b42c3556bacd" },
         average: { address: "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1" },
         pristine: { address: "0x6895Df5ed013c85B3D9D2446c227C9AfC3813551" },
       },
     },
     optimism: {
       accounts: {
-        big: { address: "0xdb8e81841920b2c7f5074dae1b1652b37be3c260" },
-        average: { address: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3" },
+        big: { address: "0xf047b952225bf90cf65b1c0915a8b42c3556bacd" },
+        average: { address: "0x9abe1355078b45b7e7f42e3f3e40df246139bc7d" },
         pristine: { address: "0x90D5b3f3FaA3cd61fBd78bF1CE3DdB2100F4BFb2" },
       },
     },
@@ -90,7 +90,7 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
       accounts: {
         pristine: { address: "erd1s4pulht4wn96swcwel64624l40h5lyxfnl9cejwy27kvwvqayuvq2y7klj" },
         average: { address: "erd1trwn89w64n88xhl76y8rfzj4r59h2fc8u03mg0tzjh8r3lmwq0lsa3q0yk" },
-        big: { address: "erd17l22xekj5lvfulatz20xr0llxky6c8zr923r95qg3pfx668m862skjdveh" },
+        big: { address: "erd1avc73ml2gelkr6h3xcv4reft83yuact8h6vuu7dywr3n757st4aqszp996" },
       },
     },
     filecoin: {
@@ -111,14 +111,14 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
       accounts: {
         pristine: { address: "0.0.433" },
         average: { address: "0.0.1000" },
-        big: { address: "0.0.652978" },
+        big: { address: "0.0.10580155" },
       },
     },
     aptos: {
       accounts: {
         pristine: { address: "0x404ccbd2acb6208effa69c100849feff040cec697d06f745152bdb3aa3a70614" },
         average: { address: "0x201cf09644cd5d88aa6db2d1670011325eea2c3198ddfd0c1aa549be0003bb24" },
-        big: { address: "0xb8922507317d85197d70c2bc1afc949c759fd0a62c8841a4300d1e2b63649bf6" },
+        big: { address: "0xc8670e8e67bc47117628b8a13d6d63cd7fc57212aa3c8cc7eaa8783099acb5f1" },
       },
     },
     celo: {
@@ -132,7 +132,7 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
       accounts: {
         pristine: { address: "JHCRLKUBKMRUUHJFYCBYOVQRTSRHSSL6P376LNDQJSVLM7IQI2EUH6S4ZU" },
         average: { address: "EZ6UMFSEAURIYP2E7KI4BUAERRASJM233XLFBO3ZOQYOQOHYL6FRPTYCEI" },
-        big: { address: "KJOLZZ55JVCXTXDEVFSPUSKGP7SCQDEURMAMEBJEPXRLIQBQDTVD4NO7GQ" },
+        big: { address: "AABAXGD66PJJMQQOO3SUZK3VS3QEXK5PF5AZOOT72TCB75LBCS4R2RYZO4" },
       },
     },
     near: {
@@ -147,13 +147,14 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
       accounts: {
         pristine: { address: "cosmos1uh39jx0dva8upvqqqh690rht2vn68zt9wmmhq4" },
         average: { address: "cosmos1gs72s636mzfnc0re2qrvupz0daytv4057y30g6" },
-        big: { address: "cosmos18ejqp3d6yejcq3rxj4z6fsne63uj23cykw92pp" },
+        big: { address: "cosmos1qy9cktcwj0k6dl0j7jryg078ycsxz3xs5dhgxr" },
       },
     },
     babylon: {
       accounts: {
         pristine: { address: "bbn14tg4vsd0q745fxhzn329pkx0krqtszcxnuw9f9" },
         average: { address: "bbn1g84934jpu3v5de5yqukkkhxmcvsw3u2a9casjx" },
+        big: { address: "bbn14ymlk7ezhvgn8gja4dxkcfg0wnxnqu043s3wup" },
       },
     },
     vechain: {
@@ -181,7 +182,7 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
       accounts: {
         pristine: { address: "tz1WMrppYADANWkNus4vs8xqKztacLETnKmT" },
         average: { address: "tz1faGczABYaoG4JaSexQ3J7Pf16ePyLjB6a" },
-        big: { address: "tz1PUToVyv2yNHcCM9hvcBauNQzVoKpXEYoW" },
+        big: { address: "tz1UBZUkXpKGhYsP5KtzDNqLLchwF4uHrGjw" },
       },
     },
     tron: {
