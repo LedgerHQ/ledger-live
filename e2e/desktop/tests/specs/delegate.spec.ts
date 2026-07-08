@@ -364,7 +364,6 @@ test.describe("e2e delegation - Tezos", () => {
 
 test.describe("e2e delegation - Celo", () => {
   const account = new Delegate(Account.CELO_1, "0.001", "N/A");
-  const voteAccount = new Delegate(Account.CELO_1, "0.001", "Ledger by Figment");
   test.use({
     teamOwner: Team.EARN,
     userdata: "skip-onboarding-with-last-seen-device",
@@ -423,7 +422,7 @@ test.describe("e2e delegation - Celo", () => {
         "@Stax",
         "@Flex",
         "@NanoGen5",
-        `@${voteAccount.account.currency.id}`,
+        `@${account.account.currency.id}`,
         ...(family ? [`@family-${family}`] : []),
       ],
       annotation: {
@@ -435,21 +434,21 @@ test.describe("e2e delegation - Celo", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await addBugLink(["NAPPS-1128"]);
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(voteAccount.account.accountName);
+      await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.account.startStakingFlowFromMainStakeButton();
       await app.delegate.checkCeloManageAssetModal();
       await app.delegate.clickCeloVoteButton();
-      await app.delegate.selectCeloValidatorGroup(voteAccount.provider);
+      await app.delegate.selectProviderOnRow(1);
       await app.delegate.continue();
-      await app.delegate.fillAmount(voteAccount.amount);
+      await app.delegate.fillAmount(account.amount);
       await app.delegate.continue();
-      await app.speculos.signDelegationTransaction(voteAccount);
+      await app.speculos.signDelegationTransaction(account);
       await app.delegate.verifySuccessMessage();
       await app.delegate.clickViewDetailsButton();
       await app.drawer.waitForDrawerToBeVisible();
       await app.delegateDrawer.verifyTxTypeIsVisible();
       await app.delegateDrawer.verifyTxTypeIs("Voted");
-      await app.delegateDrawer.providerIsVisible(voteAccount);
+      await app.delegateDrawer.providerIsVisible(account);
       await app.delegateDrawer.operationTypeIsCorrect("Voted");
       await app.drawer.closeDrawer();
     },
