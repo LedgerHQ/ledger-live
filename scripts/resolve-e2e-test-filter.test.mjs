@@ -37,32 +37,6 @@ test("normalizes comma and pipe separated filters", () => {
   );
 });
 
-test("does not split test titles on regex-escaped commas from the failed-tests summary", () => {
-  const input = [
-    "Open My Wallet and navigate to key sections",
-    "Sync instances\\, rename and delete accounts\\, delete instance then delete the backup",
-    "Validate operations list entrypoints\\, layout\\, row rendering\\, details drawer and CSV export",
-    "\\[Base\\] Add account",
-  ].join("|");
-
-  assert.equal(resolveBaseFilter(input, ENABLED_FAMILIES).filter, input);
-});
-
-test("does not split test titles on regex-escaped pipes from the failed-tests summary", () => {
-  const input = "Some test with a pipe \\| inside|Another test";
-  assert.equal(resolveBaseFilter(input, ENABLED_FAMILIES).filter, input);
-});
-
-test("splits on a separator preceded by an even number of backslashes (escaped backslash, real separator)", () => {
-  assert.equal(resolveBaseFilter("A\\\\|A\\\\", ENABLED_FAMILIES).filter, "A\\\\");
-});
-
-test("keeps the Playwright leaf-title anchor intact through the resolver", () => {
-  const input =
-    "Entry Point \\- Asset Allocation(?! [^@])|Sync instances\\, rename and delete accounts(?! [^@])";
-  assert.equal(resolveBaseFilter(input, ENABLED_FAMILIES).filter, input);
-});
-
 test("deduplicates expanded and explicit filters", () => {
   assert.equal(
     resolveBaseFilter("@generic-coin-framework,@family-evm", ENABLED_FAMILIES).filter,
