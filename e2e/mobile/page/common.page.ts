@@ -1,10 +1,9 @@
 import { Step } from "jest-allure2-reporter/api";
 import { removeSpeculosAndDeregisterKnownSpeculos } from "../utils/speculosUtils";
 import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { isIos } from "../helpers/commonHelpers";
+import { isIos, openDeeplink } from "../helpers/commonHelpers";
 import { device } from "detox";
 import ErrorPage from "./error.page";
-import { openDeeplink } from "../helpers/commonHelpers";
 import { isAggregatedAssetsEnabled } from "../utils/featureFlagUtils";
 
 export default class CommonPage {
