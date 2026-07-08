@@ -81,7 +81,12 @@ function FunnelStat({
   value,
   tone,
 }: Readonly<{ label: string; value: number; tone?: "positive" | "negative" }>) {
-  const color = value > 0 && tone === "positive" ? "success" : value > 0 && tone === "negative" ? "error" : "base";
+  const color =
+    value > 0 && tone === "positive"
+      ? "success"
+      : value > 0 && tone === "negative"
+        ? "error"
+        : "base";
   return (
     <Box lx={{ flexDirection: "row", justifyContent: "space-between" }}>
       <Text typography="body2" lx={{ color: "muted" }}>

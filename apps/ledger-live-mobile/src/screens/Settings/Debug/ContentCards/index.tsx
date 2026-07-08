@@ -774,7 +774,9 @@ export default function DebugContentCards() {
         {selectedRawCard ? (
           <CardDetailContent
             card={selectedRawCard}
-            isDismissed={dismissedIds.includes(getDismissalKey(selectedRawCard) ?? selectedRawCard.id)}
+            isDismissed={dismissedIds.includes(
+              getDismissalKey(selectedRawCard) ?? selectedRawCard.id,
+            )}
             isUnmapped={unmappedCards.some(card => card.id === selectedRawCard.id)}
             onCopy={() => copyCardJson(selectedRawCard)}
           />
