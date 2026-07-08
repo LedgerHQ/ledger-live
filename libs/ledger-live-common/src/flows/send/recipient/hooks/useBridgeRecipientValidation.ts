@@ -2,7 +2,10 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { applyMemoToTransaction } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
-import type { TransactionStatus } from "@ledgerhq/live-common/coin-modules/transaction-types";
+import type {
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/coin-modules/transaction-types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { BridgeValidationErrors, BridgeValidationWarnings } from "../types";
@@ -19,6 +22,7 @@ type UseBridgeRecipientValidationProps = {
   recipient: string;
   account: AccountLike | null;
   parentAccount?: Account | null;
+  transaction?: Transaction | null;
   memo?: Memo;
   enabled?: boolean;
   /**
@@ -40,6 +44,7 @@ export function useBridgeRecipientValidation({
   recipient,
   account,
   parentAccount,
+  transaction: baseTransaction,
   memo,
   enabled = true,
   debounceMs = DEBOUNCE_DELAY,
@@ -57,6 +62,7 @@ export function useBridgeRecipientValidation({
   });
 
   const lastRecipientRef = useRef<string>("");
+  const lastBaseTransactionRef = useRef<Transaction | null | undefined>(undefined);
   const validationTriggeredRef = useRef<boolean>(false);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -100,7 +106,7 @@ export function useBridgeRecipientValidation({
       const mainAccount = getMainAccount(account, parentAccount);
       const bridge = await getAccountBridge(account, parentAccount);
 
-      let transaction = bridge.createTransaction(mainAccount);
+      let transaction = baseTransaction ?? bridge.createTransaction(mainAccount);
       transaction = bridge.updateTransaction(transaction, { recipient });
 
       if (memo) {
@@ -154,10 +160,14 @@ export function useBridgeRecipientValidation({
         status: null,
       });
     }
-  }, [account, recipient, enabled, parentAccount, memo]);
+  }, [account, recipient, enabled, parentAccount, baseTransaction, memo]);
 
-  if (recipient !== lastRecipientRef.current) {
+  if (
+    recipient !== lastRecipientRef.current ||
+    baseTransaction !== lastBaseTransactionRef.current
+  ) {
     lastRecipientRef.current = recipient;
+    lastBaseTransactionRef.current = baseTransaction;
     validationTriggeredRef.current = false;
 
     if (debounceTimeoutRef.current) {

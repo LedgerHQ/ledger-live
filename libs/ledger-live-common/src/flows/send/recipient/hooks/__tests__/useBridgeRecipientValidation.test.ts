@@ -118,6 +118,30 @@ describe("useBridgeRecipientValidation", () => {
     expect(mockBridge.getTransactionStatus).toHaveBeenCalled();
   });
 
+  it("uses the provided transaction as validation base when available", async () => {
+    const baseTransaction = mockBridge.createTransaction();
+    baseTransaction.opaqueField = "preserved";
+    mockBridge.createTransaction.mockClear();
+
+    renderHook(() =>
+      useBridgeRecipientValidation({
+        recipient: "valid_address",
+        account: mockAccount,
+        transaction: baseTransaction,
+      }),
+    );
+
+    jest.advanceTimersByTime(300);
+
+    await waitFor(() => {
+      expect(mockBridge.updateTransaction).toHaveBeenCalledWith(baseTransaction, {
+        recipient: "valid_address",
+      });
+    });
+
+    expect(mockBridge.createTransaction).not.toHaveBeenCalled();
+  });
+
   it("returns recipient error when bridge detects invalid address", async () => {
     const recipientError = new InvalidAddress();
     mockBridge.getTransactionStatus.mockResolvedValue({

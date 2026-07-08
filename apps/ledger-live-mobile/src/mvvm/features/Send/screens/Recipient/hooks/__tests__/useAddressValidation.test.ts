@@ -13,6 +13,7 @@ import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/r
 import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";
 import { useMaybeAccountName, useBatchMaybeAccountName } from "~/reducers/wallet";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { createMockAccount, createMockCurrency } from "./accounts";
 
 jest.mock("~/context/hooks");
@@ -484,6 +485,25 @@ describe("useAddressValidation", () => {
     expect(mockedUseBridgeRecipientValidation).toHaveBeenCalledWith(
       expect.objectContaining({
         recipient: "0xResolved",
+      }),
+    );
+  });
+
+  it("passes the current transaction to bridge validation", () => {
+    const transaction = { family: "bitcoin", recipient: "" } as Transaction;
+
+    renderHook(() =>
+      useAddressValidation({
+        searchValue: "valid_address",
+        currency: mockAccount.currency,
+        account: mockAccount,
+        transaction,
+      }),
+    );
+
+    expect(mockedUseBridgeRecipientValidation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        transaction,
       }),
     );
   });

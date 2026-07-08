@@ -9,6 +9,7 @@ import {
   getRecentAddressesStore,
 } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -37,6 +38,7 @@ type UseAddressValidationProps = Readonly<{
   currency: CryptoCurrency | TokenCurrency;
   account?: AccountLike;
   parentAccount?: Account | null;
+  transaction?: Transaction | null;
   currentAccountId?: string;
   recipientSupportsDomain?: boolean;
   /** Debounce before bridge validation. Pass 0 for one-shot values (e.g. clipboard). */
@@ -54,6 +56,7 @@ export function useAddressValidation({
   currency,
   account,
   parentAccount,
+  transaction,
   currentAccountId,
   recipientSupportsDomain = false,
   debounceMs,
@@ -99,6 +102,7 @@ export function useAddressValidation({
     recipient: addressForBridgeValidation,
     account: account ?? null,
     parentAccount: parentAccount ?? null,
+    transaction,
     enabled: Boolean(
       addressForBridgeValidation &&
       account &&
