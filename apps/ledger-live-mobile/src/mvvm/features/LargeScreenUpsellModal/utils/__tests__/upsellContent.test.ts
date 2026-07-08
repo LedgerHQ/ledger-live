@@ -39,6 +39,8 @@ describe("buildLargeScreenUpsellContent", () => {
     expect(content.subtitle).toBe("Enjoy clearer signers and an exclusive offer.");
     expect(content.primaryButtonLabel).toBe("Explore touchscreen signers");
     expect(content.primaryButtonLink).toContain("utm_campaign=upsell_large_screen");
+    expect(content.imageUrlLight).toContain("large_screen_upsell_opted_in");
+    expect(content.imageUrlDark).toContain("large_screen_upsell_opted_in");
     expect(content.secondaryButtonLabel).toBe("");
     expect(content.items).toEqual([]);
   });
@@ -56,5 +58,7 @@ describe("buildLargeScreenUpsellContent", () => {
     expect(content.title).toBe("Spot scams. See every detail");
     expect(content.subtitle).toBe("Review each transaction detail with confidence.");
     expect(content.primaryButtonLink).toContain("support.ledger.com/limits");
+    expect(content.imageUrlLight).toContain("large_screen_upsell_opted_out");
+    expect(content.imageUrlDark).toContain("large_screen_upsell_opted_out");
   });
 });

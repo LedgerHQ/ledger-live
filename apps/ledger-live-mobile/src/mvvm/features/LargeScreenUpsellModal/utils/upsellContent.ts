@@ -20,12 +20,17 @@ export type BuildLargeScreenUpsellContentInput = Readonly<{
 }>;
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const fallbackHeroAsset = require("../../BackupHub/assets/backup_feature_intro.webp");
+const optedInHeroAsset = require("../assets/large_screen_upsell_opted_in.webp");
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const optedOutHeroAsset = require("../assets/large_screen_upsell_opted_out.webp");
 
-const fallbackHeroImageUri =
-  Image.resolveAssetSource(fallbackHeroAsset).uri ?? fallbackHeroAsset.testUri ?? "";
+const optedInHeroImageUri =
+  Image.resolveAssetSource(optedInHeroAsset).uri ?? optedInHeroAsset.testUri ?? "";
+const optedOutHeroImageUri =
+  Image.resolveAssetSource(optedOutHeroAsset).uri ?? optedOutHeroAsset.testUri ?? "";
 
-const fallbackHeroUrls = createThemedImageUrls(fallbackHeroImageUri);
+const optedInHeroUrls = createThemedImageUrls(optedInHeroImageUri);
+const optedOutHeroUrls = createThemedImageUrls(optedOutHeroImageUri);
 
 export function buildLargeScreenUpsellContent({
   id,
@@ -48,11 +53,12 @@ export function buildLargeScreenUpsellContent({
     variant === "opted_in"
       ? "largeScreenUpsellModal.optedIn.subtitle"
       : "largeScreenUpsellModal.optedOut.subtitle";
+  const imageUrls = variant === "opted_in" ? optedInHeroUrls : optedOutHeroUrls;
 
   return {
     id,
     layout: GenericAwarenessModalLayout.FeatureIntro,
-    ...fallbackHeroUrls,
+    ...imageUrls,
     title: t(titleKey, { discount: discountPercentage }),
     subtitle: t(subtitleKey, { discount: discountPercentage }),
     primaryButtonLabel: t("largeScreenUpsellModal.cta"),
