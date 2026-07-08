@@ -1,7 +1,4 @@
-import {
-  useGetFearAndGreedLatestQuery,
-  FIFTEEN_MINUTES_IN_MS,
-} from "@ledgerhq/live-common/cmc-client/state-manager/api";
+import { useGetFearAndGreedLatestQuery, FIFTEEN_MINUTES_IN_MS } from "@domain/api-market-sentiment";
 
 export const useFearAndGreedViewModel = () => {
   const { data, isError, isLoading } = useGetFearAndGreedLatestQuery(undefined, {

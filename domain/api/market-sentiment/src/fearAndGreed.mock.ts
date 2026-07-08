@@ -1,4 +1,5 @@
-import { FearAndGreedResponse, FearAndGreedResponseSchema } from "../state-manager/types";
+import type { FearAndGreedResponse } from "./types";
+import { FearAndGreedResponseSchema } from "./schema";
 
 export const mockFearAndGreedLatest: FearAndGreedResponse = {
   data: {

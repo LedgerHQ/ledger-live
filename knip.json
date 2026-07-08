@@ -188,10 +188,22 @@
     "./domain/entity/contact": {
       "entry": ["src/index.ts"]
     },
+    "./domain/entity/market-sentiment": {
+      "entry": ["src/index.ts"]
+    },
+    "./domain/entity/altcoins-sentiment": {
+      "entry": ["src/index.ts"]
+    },
     "./domain/api/currency-fiat": {
       "entry": ["src/index.ts"]
     },
     "./domain/api/currency-token": {
+      "entry": ["src/index.ts"]
+    },
+    "./domain/api/market-sentiment": {
+      "entry": ["src/index.ts"]
+    },
+    "./domain/api/altcoins-sentiment": {
       "entry": ["src/index.ts"]
     },
     "./shared/schema-primitives": {
@@ -204,6 +216,9 @@
       "entry": ["src/index.ts", "src/components/MarketBanner/index.native.ts"]
     },
     "./features/flow/contacts": {
+      "entry": ["src/index.ts"]
+    },
+    "./features/flow/fear-and-greed": {
       "entry": ["src/index.ts"]
     },
     "./features/platform/feature-flags": {

@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import {
   FIFTEEN_MINUTES_IN_MS,
   useGetAltcoinSeasonIndexLatestQuery,
-} from "@ledgerhq/live-common/cmc-client/state-manager/api";
+} from "@domain/api-altcoins-sentiment";
 import { track } from "~/analytics";
 import type { AltcoinSeasonViewModel } from "./types";
 

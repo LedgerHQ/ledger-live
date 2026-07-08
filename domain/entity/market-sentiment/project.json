@@ -1,0 +1,8 @@
+{
+  "name": "@domain/entity-market-sentiment",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

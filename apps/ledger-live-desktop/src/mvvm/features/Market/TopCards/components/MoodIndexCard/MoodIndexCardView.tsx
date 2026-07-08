@@ -1,6 +1,6 @@
 import React from "react";
-import type { FearAndGreedIndex } from "@ledgerhq/live-common/cmc-client/state-manager/types";
-import { getFearAndGreedTranslationKey } from "@ledgerhq/live-common/cmc-client/utils/fearAndGreed";
+import type { FearAndGreedIndex } from "@domain/entity-market-sentiment";
+import { getFearAndGreedTranslationKey } from "@features/flow-fear-and-greed";
 import {
   Card,
   CardHeader,

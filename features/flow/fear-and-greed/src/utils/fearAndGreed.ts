@@ -1,4 +1,4 @@
-import type { FearAndGreedLevel } from "../state-manager/types";
+export type FearAndGreedLevel = "fearPlus" | "fear" | "neutral" | "greed" | "greedPlus";
 
 const MOOD_INDEX_RESTRICTED_REGIONS = new Set(["GB"]);
 
