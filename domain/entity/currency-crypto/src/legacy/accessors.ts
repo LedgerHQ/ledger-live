@@ -62,27 +62,54 @@ export function hasCryptoCurrencyId(id: string): boolean {
   return findCryptoCurrencyById(id) !== undefined;
 }
 
-/** All known crypto currencies. Pass `true` to include testnets. */
+/**
+ * Return all known crypto currencies.
+ *
+ * Pass `withDevCrypto = true` to include testnet entries (those with a non-null `isTestnetFor`
+ * field). Delisted currencies are always excluded from the default result; pass `true` to include
+ * them too — the full unfiltered list is returned.
+ *
+ * Mirrors the legacy `@ledgerhq/cryptoassets` `listCryptoCurrencies`.
+ */
 export function listCryptoCurrencies(withDevCrypto = false): CryptoCurrency[] {
   return withDevCrypto ? allCurrencies : prodCurrencies;
 }
 
-/** First crypto currency matching the predicate (searches all currencies including testnets). */
+/**
+ * Return the first crypto currency (including testnets and delisted entries) that satisfies the
+ * predicate, or `undefined` when none matches.
+ *
+ * Mirrors the legacy `@ledgerhq/cryptoassets` `findCryptoCurrency`.
+ */
 export function findCryptoCurrency(f: (c: CryptoCurrency) => boolean): CryptoCurrency | undefined {
   return allCurrencies.find(f);
 }
 
-/** Look up a crypto currency by its URI scheme (e.g. `"bitcoin"`). Returns `undefined` when `scheme` is `undefined` or unknown. */
+/**
+ * Resolve a crypto currency by its URI scheme (e.g. `"bitcoin"`, `"ethereum"`), returning
+ * `undefined` when no match is found or when `scheme` is `undefined`.
+ *
+ * Look-up is O(1) against a pre-built index; schemes are unique across the registry.
+ *
+ * Mirrors the legacy `@ledgerhq/cryptoassets` `findCryptoCurrencyByScheme`.
+ */
 export function findCryptoCurrencyByScheme(scheme: string | undefined): CryptoCurrency | undefined {
   if (scheme === undefined) return undefined;
   return byScheme[scheme];
 }
 
 /**
- * Look up a crypto currency by its ticker symbol.
+ * Resolve a crypto currency by its ticker symbol (e.g. `"BTC"`, `"ETH"`), returning `undefined`
+ * when unknown.
  *
- * @deprecated Tickers are not unique across currencies, so the result is ambiguous and arbitrary.
- * Look up by id with {@link findCryptoCurrencyById} instead.
+ * When two non-testnet currencies share a ticker, the one whose `keywords` list contains that
+ * ticker (case-insensitive) wins. This matches the tiebreak introduced in LIVE-33115 and applied
+ * by `registerCurrencyInStore` in `@ledgerhq/cryptoassets`.
+ *
+ * @deprecated Tickers are not globally unique — the result can be ambiguous. Prefer
+ * {@link findCryptoCurrencyById} when the currency id is available.
+ *
+ * Mirrors the legacy `@ledgerhq/cryptoassets` `findCryptoCurrencyByTicker`.
  */
 export function findCryptoCurrencyByTicker(ticker: string): CryptoCurrency | undefined {
   return byTicker[ticker];
@@ -109,7 +136,17 @@ const keywordTests = {
   manager: (s: string) => findByManagerApp(s),
 } as const;
 
-/** Search for a crypto currency across keywords, name, id, ticker, and manager app name. */
+/**
+ * Search for a crypto currency by a free-form keyword string.
+ *
+ * The search is tried against each strategy in `tests` in order; the first match wins. The default
+ * order is: `keywords` field → display `name` → currency `id` → `ticker` → manager app name.
+ * Pass a custom `tests` array to restrict or reorder the strategies.
+ *
+ * Matching is case-insensitive and ignores spaces.
+ *
+ * Mirrors the legacy `@ledgerhq/cryptoassets` `findCryptoCurrencyByKeyword`.
+ */
 export function findCryptoCurrencyByKeyword(
   keyword: string,
   tests: ReadonlyArray<keyof typeof keywordTests> = ["keywords", "name", "id", "ticker", "manager"],
