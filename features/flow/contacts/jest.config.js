@@ -1,14 +1,15 @@
 module.exports = {
-  testEnvironment: "node",
+  testEnvironment: "jsdom",
   roots: ["<rootDir>/src"],
-  testMatch: ["**/*.test.ts"],
+  testMatch: ["**/*.test.ts?(x)"],
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",
       {
         jsc: {
           target: "esnext",
-          parser: { syntax: "typescript" },
+          parser: { syntax: "typescript", tsx: true },
+          transform: { react: { runtime: "automatic" } },
         },
       },
     ],

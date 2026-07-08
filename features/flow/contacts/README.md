@@ -6,17 +6,19 @@ This package owns Contacts-specific flow logic shared by Desktop and Mobile. It 
 
 ## Current scope
 
-- Minimal pure resolver for the Contacts feature flag configuration.
+- Contacts feature-flag configuration hook.
+- Minimal pure resolver used by the hook.
 
 UI screens and scenario state will be added by the dedicated Contacts scenario tickets.
 
 ## Usage
 
 ```ts
-import { resolveContactsFeatureConfig } from "@features/flow-contacts";
+import { useContactsFeature } from "@features/flow-contacts";
 
-const { isEnabled, showNewBadge } = resolveContactsFeatureConfig({
-  enabled: true,
-  params: { newFlag: true },
-});
+export function ContactsEntryPoint() {
+  const { isEnabled, showNewBadge } = useContactsFeature("desktop");
+
+  return null;
+}
 ```
