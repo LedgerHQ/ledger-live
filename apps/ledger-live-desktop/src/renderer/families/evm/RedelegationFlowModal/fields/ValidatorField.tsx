@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
+import styled from "styled-components";
 import type {
   StakingAccount,
   StakingValidatorItem,
@@ -12,6 +13,12 @@ import Text from "~/renderer/components/Text";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
 import EvmFamilyValidatorRow from "~/renderer/families/evm/shared/components/EvmFamilyValidatorRow";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+
+const ValidatorsSection = styled(Box)`
+  width: 100%;
+  height: 100%;
+  padding-bottom: ${p => p.theme.space[6]}px;
+`;
 
 type Props = Readonly<{
   account: StakingAccount;
@@ -59,9 +66,21 @@ export default function ValidatorField({
   );
 
   return (
-    <>
+    <ValidatorsSection>
       {error && <ErrorBanner error={error} />}
-      <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />
+      <Box horizontal alignItems="center" justifyContent="space-between" py={2} px={3}>
+        <Text fontSize={3} ff="Inter|Medium">
+          <Trans
+            i18nKey="vote.steps.castVotes.validators"
+            values={{
+              total: filteredValidators.length,
+            }}
+          />
+        </Text>
+      </Box>
+      <Box mb={2}>
+        <ValidatorSearchInput search={search} onSearch={onSearch} />
+      </Box>
       <ScrollLoadingList
         data={filteredValidators}
         style={{ flex: "1 0 350px" }}
@@ -76,6 +95,6 @@ export default function ValidatorField({
           )
         }
       />
-    </>
+    </ValidatorsSection>
   );
 }
