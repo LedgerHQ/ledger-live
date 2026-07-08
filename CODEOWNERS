@@ -436,6 +436,7 @@ apps/ledger-live-mobile/src/mvvm/features/ProductTour/                          
 apps/ledger-live-mobile/src/mvvm/features/Q2WalletV4Tour/                                       @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/BackupHub/                                           @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/LNSUpsell/                                           @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/LargeScreenUpsell/                                   @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Reborn/                                              @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/GenericAwarenessModal/                               @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/components/FeatureIntroLayout/                                @ledgerhq/engagement
