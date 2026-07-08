@@ -3628,6 +3628,24 @@ importers:
         specifier: 1.51.0
         version: 1.51.0
 
+  features/flow/contacts:
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+
   features/flow/market-banner:
     devDependencies:
       '@gorhom/bottom-sheet':
