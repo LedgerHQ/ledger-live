@@ -141,9 +141,7 @@ const swapNetworkFeesAboveAccountBalanceTestConfig = {
   ],
 };
 
-// The Buy-ETH CTA + banner for this scenario is currently unreachable because
-// ptxSponsoredTransactions covers this provider/chain pair (sponsored fees mean the account
-// never actually runs out of ETH for network fees). Enable once that coverage is rolled back.
+// Unreachable while ptxSponsoredTransactions covers this pair — see B2CQA-3241.
 const swapEthNeededForNetworkFeesTestConfig = {
   swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "USE_MIN_AMOUNT"),
   errorMessage: new RegExp(`\\d+(\\.\\d{1,10})? ETH needed for network fees\\.\\s*$`),

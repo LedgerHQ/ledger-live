@@ -267,7 +267,7 @@ export function runTooLowAmountForQuoteSwapsTest(
         await app.swapLiveApp.checkQuotes();
         await app.swapLiveApp.selectExchange();
       }
-      // See swap-live-app#1699 for the banner vs. buttonReplacement error-display split.
+      // See LedgerHQ/swap-live-app#1699 for the banner vs. buttonReplacement error-display split.
       await app.swapLiveApp.verifySwapErrorMessageIsCorrect(errorMessage, errorDisplay);
 
       if (ctaBanner) {
