@@ -3,17 +3,12 @@ import { useTabBarVisibility, useHideTabBar } from "../useTabBarVisibility";
 import { State } from "~/reducers/types";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/reducers/settings";
 
-const withBaseState = withFlagOverrides(
-  {
-    lwmWallet40: { enabled: true },
+const withBaseState = withFlagOverrides({}, (state: State) => ({
+  ...state,
+  settings: {
+    ...SETTINGS_INITIAL_STATE,
   },
-  (state: State) => ({
-    ...state,
-    settings: {
-      ...SETTINGS_INITIAL_STATE,
-    },
-  }),
-);
+}));
 
 const getStateWithVisibility = (isMainNavigatorVisible: boolean) => (state: State) => ({
   ...withBaseState(state),

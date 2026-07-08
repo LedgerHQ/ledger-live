@@ -93,9 +93,7 @@ const DRAWER_VARIANTS: DrawerVariant[] = [
     backButtonTestId: "bottom-sheet-header-back-button",
     renderOptions: {
       overrideInitialState: (state: State) =>
-        withFlagOverrides({ ...mockedFF, lwmWallet40: { enabled: true } })(
-          withReadOnlyDisabled(state),
-        ),
+        withFlagOverrides({ ...mockedFF })(withReadOnlyDisabled(state)),
     },
   },
 ];
@@ -232,9 +230,7 @@ describe.each(DRAWER_VARIANTS)(
         overrideInitialState: (state: State) =>
           withFlagOverrides({
             ...mockedFF,
-            ...(renderOptions?.overrideInitialState
-              ? { lwmWallet40: { enabled: true } }
-              : undefined),
+            ...(renderOptions?.overrideInitialState ? {} : undefined),
           })({
             ...withReadOnlyDisabled(state),
             accounts: { active: mockedAccounts },
@@ -302,9 +298,7 @@ describe.each(DRAWER_VARIANTS)(
 describe("ModularDrawer — Lumen BottomSheet specific", () => {
   const lumenOverride = {
     overrideInitialState: (state: State) =>
-      withFlagOverrides({ ...mockedFF, lwmWallet40: { enabled: true } })(
-        withReadOnlyDisabled(state),
-      ),
+      withFlagOverrides({ ...mockedFF })(withReadOnlyDisabled(state)),
   };
 
   beforeEach(() => {

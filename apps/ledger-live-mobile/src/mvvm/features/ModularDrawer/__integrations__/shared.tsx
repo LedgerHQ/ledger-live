@@ -135,9 +135,7 @@ const ModularDrawerWithDeviceSelectionStore = (props: MockModularDrawerComponent
     () =>
       createStore({
         overrideInitialState: state =>
-          withFlagOverrides({ ...mockedFF, lwmWallet40: { enabled: true } })(
-            withReadOnlyDisabled(state),
-          ),
+          withFlagOverrides({ ...mockedFF })(withReadOnlyDisabled(state)),
       }),
     [],
   );

@@ -40,7 +40,6 @@ describe("fetchRemoteFlags", () => {
   it("maps known Firebase keys to FeatureIds, drops unknown keys", async () => {
     mockGetAll.mockReturnValue({
       feature_counter_value: value(JSON.stringify({ enabled: true })),
-      feature_lwm_wallet_40: value(JSON.stringify({ enabled: false, params: { mainNav: true } })),
       config_unrelated: value('"ignored"'),
       stranger_key: value('"ignored"'),
       feature_unknown_flag: value('"ignored"'),
@@ -51,7 +50,6 @@ describe("fetchRemoteFlags", () => {
 
     expect(result).toEqual({
       counterValue: { enabled: true },
-      lwmWallet40: { enabled: false, params: { mainNav: true } },
     });
   });
 
@@ -78,7 +76,6 @@ describe("fetchRemoteFlags", () => {
   it("matches Firebase keys case-insensitively", async () => {
     mockGetAll.mockReturnValue({
       Feature_Counter_Value: value(JSON.stringify({ enabled: true })),
-      FEATURE_LWM_WALLET_40: value(JSON.stringify({ enabled: true })),
     });
 
     const { fetchRemoteFlags } = await loadModule();
@@ -86,7 +83,6 @@ describe("fetchRemoteFlags", () => {
 
     expect(result).toEqual({
       counterValue: { enabled: true },
-      lwmWallet40: { enabled: true },
     });
   });
 

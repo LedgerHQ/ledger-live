@@ -33,15 +33,12 @@ const stax: InitializerDevice = {
   wired: false,
 };
 
-const withMyWallet =
-  (enabled: boolean) =>
-  (state: State): State =>
-    withFlagOverrides({
-      lwmWallet40: {
-        enabled,
-        ...(enabled && { params: { myWallet: true } }),
-      },
-    })(state);
+const withMyWallet = (state: State): State =>
+  withFlagOverrides({
+    lwmWallet40: {
+      params: { myWallet: true },
+    },
+  })(state);
 
 describe("useInitializerActions", () => {
   beforeEach(() => {
@@ -52,46 +49,9 @@ describe("useInitializerActions", () => {
   });
 
   describe("openMyLedger", () => {
-    it("resets the root navigator to the MyLedger manager when shouldDisplayMyWallet is false", () => {
-      const { result } = renderHook(() => useInitializerActions(nanoX), {
-        overrideInitialState: withMyWallet(false),
-      });
-
-      act(() => {
-        result.current.openMyLedger("ethereum");
-      });
-
-      expect(mockReset).toHaveBeenCalledTimes(1);
-      expect(mockReset).toHaveBeenCalledWith({
-        index: 0,
-        routes: [
-          {
-            name: NavigatorName.Base,
-            state: {
-              index: 1,
-              routes: [
-                { name: NavigatorName.Main },
-                {
-                  name: NavigatorName.MyLedger,
-                  state: {
-                    routes: [
-                      {
-                        name: ScreenName.MyLedgerChooseDevice,
-                        params: { searchQuery: "ethereum" },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      });
-    });
-
     it("resets the root navigator to the MyWallet manager when shouldDisplayMyWallet is true", () => {
       const { result } = renderHook(() => useInitializerActions(nanoX), {
-        overrideInitialState: withMyWallet(true),
+        overrideInitialState: withMyWallet,
       });
 
       act(() => {
@@ -125,75 +85,12 @@ describe("useInitializerActions", () => {
         ],
       });
     });
-
-    it("climbs to the root navigator before issuing the reset", () => {
-      const rootReset = jest.fn();
-      const rootNavigation = { reset: rootReset, getParent: () => null };
-      const middle = { getParent: () => rootNavigation };
-      mockGetParent.mockReturnValueOnce(middle as never);
-      mockGetParent.mockReturnValueOnce(rootNavigation as never);
-
-      const { result } = renderHook(() => useInitializerActions(nanoX), {
-        overrideInitialState: withMyWallet(false),
-      });
-
-      act(() => {
-        result.current.openMyLedger();
-      });
-
-      expect(rootReset).toHaveBeenCalledTimes(1);
-      expect(mockReset).not.toHaveBeenCalled();
-    });
   });
 
   describe("openMyLedgerFirmwareUpdate", () => {
-    it("passes the live device and firmwareUpdate flag (true when wired) to MyLedger", () => {
-      const { result } = renderHook(() => useInitializerActions(nanoX), {
-        overrideInitialState: withMyWallet(false),
-      });
-
-      act(() => {
-        result.current.openMyLedgerFirmwareUpdate();
-      });
-
-      expect(mockReset).toHaveBeenCalledWith({
-        index: 0,
-        routes: [
-          {
-            name: NavigatorName.Base,
-            state: {
-              index: 1,
-              routes: [
-                { name: NavigatorName.Main },
-                {
-                  name: NavigatorName.MyLedger,
-                  state: {
-                    routes: [
-                      {
-                        name: ScreenName.MyLedgerChooseDevice,
-                        params: {
-                          device: {
-                            deviceId: nanoX.id,
-                            deviceName: nanoX.name,
-                            modelId: nanoX.modelId,
-                            wired: nanoX.wired,
-                          },
-                          firmwareUpdate: true,
-                        },
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      });
-    });
-
     it("targets MyWallet with firmwareUpdate=false for wireless devices when shouldDisplayMyWallet is true", () => {
       const { result } = renderHook(() => useInitializerActions(stax), {
-        overrideInitialState: withMyWallet(true),
+        overrideInitialState: withMyWallet,
       });
 
       act(() => {

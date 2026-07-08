@@ -35,7 +35,6 @@ describe("useEarnLiveAppModalContentViewModel (mobile)", () => {
     const { result } = renderHook(() => useEarnLiveAppModalContentViewModel(), {
       overrideInitialState: withFlagOverrides({
         ptxEarnUi: { enabled: true, params: { value: "v2" } },
-        lwmWallet40: { enabled: true },
       }),
     });
 
@@ -46,25 +45,6 @@ describe("useEarnLiveAppModalContentViewModel (mobile)", () => {
       stakeProgramsParam: JSON.stringify({ ethereum: "earn", bitcoin: "stakekit" }),
       stakeCurrenciesParam: JSON.stringify(["ethereum", "bitcoin"]),
     });
-  });
-
-  it("omits empty stakeCurrencies and falls back to v1 when wallet 40 is disabled", () => {
-    mockedUseVersionedStakePrograms.mockReturnValue({
-      enabled: true,
-      params: { list: [], redirects: {} },
-    } as never);
-
-    const { result } = renderHook(() => useEarnLiveAppModalContentViewModel(), {
-      overrideInitialState: withFlagOverrides({
-        ptxEarnUi: { enabled: true, params: { value: "v2" } },
-        lwmWallet40: { enabled: false },
-      }),
-    });
-
-    expect(result.current.extraInputs?.uiVersion).toBe("v1");
-    expect(result.current.extraInputs?.lw40enabled).toBe("false");
-    expect(result.current.extraInputs?.stakeProgramsParam).toBeUndefined();
-    expect(result.current.extraInputs?.stakeCurrenciesParam).toBeUndefined();
   });
 
   it("returns v3 when earn upselling is enabled", () => {
@@ -79,7 +59,7 @@ describe("useEarnLiveAppModalContentViewModel (mobile)", () => {
     const { result } = renderHook(() => useEarnLiveAppModalContentViewModel(), {
       overrideInitialState: withFlagOverrides({
         ptxEarnUi: { enabled: true, params: { value: "v1" } },
-        lwmWallet40: { enabled: true, params: { earnUpselling: true } as never },
+        lwmWallet40: { params: { earnUpselling: true } as never },
       }),
     });
 
@@ -99,7 +79,7 @@ describe("useEarnLiveAppModalContentViewModel (mobile)", () => {
     const { result } = renderHook(() => useEarnLiveAppModalContentViewModel(), {
       overrideInitialState: withFlagOverrides({
         ptxEarnUi: { enabled: true, params: { value: "v1" } },
-        lwmWallet40: { enabled: true, params: { earnSimulator: true } as never },
+        lwmWallet40: { params: { earnSimulator: true } as never },
       }),
     });
 

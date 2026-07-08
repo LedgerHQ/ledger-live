@@ -16,7 +16,7 @@ const withChartState =
   (balanceAvailable = true) =>
   (state: State): State =>
     withFlagOverrides({
-      lwmWallet40: { enabled: true, params: { pnl: true } },
+      lwmWallet40: { params: { pnl: true } },
     })({
       ...state,
       accounts: { ...state.accounts, active: [btcAccount] },

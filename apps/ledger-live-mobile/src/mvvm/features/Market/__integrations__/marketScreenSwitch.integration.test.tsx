@@ -22,7 +22,7 @@ const NavigatorWrapper = () => (
 );
 
 const enableAssetDiscoverability = withFlagOverrides({
-  lwmWallet40: { enabled: true, params: { assetDiscoverability: true } },
+  lwmWallet40: { params: { assetDiscoverability: true } },
 });
 
 describe("Market screen navigator switch", () => {

@@ -28,7 +28,7 @@ const SLIDES = [
 ] as const;
 
 const Q2_TOUR_FEATURE_FLAGS = {
-  lwmWallet40: { enabled: true, params: { q2Tour: true } },
+  lwmWallet40: { params: { q2Tour: true } },
 };
 
 const TestComponent = () => {

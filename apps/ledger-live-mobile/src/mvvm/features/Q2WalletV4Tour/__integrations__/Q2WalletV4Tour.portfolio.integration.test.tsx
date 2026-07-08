@@ -8,7 +8,7 @@ import { useQ2WalletV4TourDrawer, Q2WalletV4TourDrawer } from "../Drawer";
 const Stack = createNativeStackNavigator();
 
 const eligiblePortfolioState = withFlagOverrides(
-  { lwmWallet40: { enabled: true, params: { q2Tour: true } } },
+  { lwmWallet40: { params: { q2Tour: true } } },
   (state: State) => ({
     ...state,
     settings: {

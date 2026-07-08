@@ -15,7 +15,24 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { IsDeviceLockedResultType } from "~/hooks/useIsDeviceLockedPolling/types";
 
 const overrideInitialState = (state: State) =>
-  withFlagOverrides({ ...mockedFF, lwmWallet40: { enabled: true } })(withReadOnlyDisabled(state));
+  withFlagOverrides({ ...mockedFF })(withReadOnlyDisabled(state));
+
+// Override the global gorhom mock to trigger onDismiss when dismiss() is called.
+// Without this, QueuedDrawerBottomSheet's queue entry is never cleaned up after the
+// ModularDrawer closes (dismiss() in the mock is a no-op), which blocks the
+// DeviceActionModal's QueuedDrawer from opening and prevents the scan flow.
+jest.mock("@gorhom/bottom-sheet", () => {
+  const actual = jest.requireActual("@gorhom/bottom-sheet/mock");
+  class BottomSheetModal extends actual.BottomSheetModal {
+    dismiss() {
+      super.dismiss();
+      if (typeof this.props?.onDismiss === "function") {
+        this.props.onDismiss();
+      }
+    }
+  }
+  return { ...actual, BottomSheetModal };
+});
 
 // Needed for receive navigator
 jest.mock("@ledgerhq/live-config/LiveConfig", () => {

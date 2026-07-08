@@ -73,7 +73,7 @@ describe("usePortfolioStocksSectionViewModel", () => {
   it("navigates to the Crypto screen filtered to stocks on show all", () => {
     const { result } = renderHook(() => usePortfolioStocksSectionViewModel(), {
       overrideInitialState: withFlagOverrides({
-        lwmWallet40: { enabled: true, params: { assetSection: true } },
+        lwmWallet40: { params: { assetSection: true } },
       }),
     });
 

@@ -36,37 +36,29 @@ const mockAccount = {
   index: 0,
 };
 
-export const overrideInitialStateWithFeatureFlag = withFlagOverrides({
-  lwmWallet40: { enabled: true },
-});
+export const overrideInitialStateWithFeatureFlag = (state: State) => state;
 
-export const overrideInitialStateWithReadOnly = withFlagOverrides(
-  { lwmWallet40: { enabled: true } },
-  state => ({
-    ...state,
-    settings: {
-      ...state.settings,
-      readOnlyModeEnabled: true,
-    },
-  }),
-);
+export const overrideInitialStateWithReadOnly = (state: State) => ({
+  ...state,
+  settings: {
+    ...state.settings,
+    readOnlyModeEnabled: true,
+  },
+});
 
 export const overrideInitialStateWithPerpsEntryPoint =
   (enabled: boolean) =>
   (state: State): State =>
-    withFlagOverrides(
-      { lwmWallet40: { enabled: true }, ptxPerpsLiveAppMobile: { enabled } },
-      s => ({
-        ...s,
-        accounts: {
-          active: [mockAccount],
-        },
-      }),
-    )(state);
+    withFlagOverrides({ ptxPerpsLiveAppMobile: { enabled } }, s => ({
+      ...s,
+      accounts: {
+        active: [mockAccount],
+      },
+    }))(state);
 
 export const overrideInitialStateWithPerpsAndAssetSection = withFlagOverrides(
   {
-    lwmWallet40: { enabled: true, params: { assetSection: true } },
+    lwmWallet40: { params: { assetSection: true } },
     ptxPerpsLiveAppMobile: { enabled: true },
   },
   state => ({
@@ -80,7 +72,7 @@ export const overrideInitialStateWithPerpsAndAssetSection = withFlagOverrides(
 export const overrideInitialStateWithAssetSection =
   (assetSection: boolean, accounts: Account[] = [mockAccount]) =>
   (state: State): State =>
-    withFlagOverrides({ lwmWallet40: { enabled: true, params: { assetSection } } }, s => ({
+    withFlagOverrides({ lwmWallet40: { params: { assetSection } } }, s => ({
       ...s,
       accounts: {
         active: accounts,
@@ -108,7 +100,6 @@ const onboardingWidgetBaseState = (state: State): State => ({
 
 export const overrideInitialStateWithOnboardingWidgetVisible = withFlagOverrides(
   {
-    lwmWallet40: { enabled: true },
     onboardingWidget: { enabled: true },
   },
   onboardingWidgetBaseState,
@@ -116,7 +107,6 @@ export const overrideInitialStateWithOnboardingWidgetVisible = withFlagOverrides
 
 export const overrideInitialStateWithOnboardingWidgetVisibleAndReadOnly = withFlagOverrides(
   {
-    lwmWallet40: { enabled: true },
     onboardingWidget: { enabled: true },
   },
   state => ({
