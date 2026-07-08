@@ -69,8 +69,13 @@ export default class MarketPage {
 
   @Step("Leave market detail page")
   async leaveMarketDetailPage() {
-    await waitForElementById(this.backButtonId, 5000);
-    await tapById(this.backButtonId);
+    if (await isAggregatedAssetsEnabled()) {
+      await waitForElementById(this.headerBackButtonId);
+      await tapById(this.headerBackButtonId);
+    } else {
+      await waitForElementById(this.backButtonId, 5000);
+      await tapById(this.backButtonId);
+    }
   }
 
   @Step("Search for asset")

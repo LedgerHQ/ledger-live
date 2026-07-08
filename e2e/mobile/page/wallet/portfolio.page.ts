@@ -296,7 +296,11 @@ export default class PortfolioPage {
 
   @Step("Expect market banner to be visible")
   async expectMarketBannerVisible() {
-    await scrollToId(this.marketBannerTitle, this.accountsListView, undefined, "down");
+    if (await isAggregatedAssetsEnabled()) {
+      await scrollToId(this.marketBannerTitle, undefined, undefined, "down");
+    } else {
+      await scrollToId(this.marketBannerTitle, this.accountsListView, undefined, "down");
+    }
     await detoxExpect(getElementById(this.marketBannerList)).toBeVisible();
   }
 

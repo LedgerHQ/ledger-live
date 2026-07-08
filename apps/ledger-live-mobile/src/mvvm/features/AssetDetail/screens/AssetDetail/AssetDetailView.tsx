@@ -66,7 +66,7 @@ export function AssetDetailView({
     <Box testID={ASSET_DETAIL_TEST_IDS.screen} lx={screenStyle}>
       <TrackScreen category="Asset" currency={currency?.name} source={source} />
       <ScrollView
-        testID={ASSET_DETAIL_TEST_IDS.scrollView(currency.id)}
+        testID={ASSET_DETAIL_TEST_IDS.scrollView(currency?.id ?? "")}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: scrollPaddingBottom }}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
