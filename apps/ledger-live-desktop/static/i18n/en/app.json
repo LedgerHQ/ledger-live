@@ -6733,8 +6733,8 @@
       "description": "Please retry or contact Support ({{reason}})"
     },
     "AccountPublicKeyUnavailable": {
-      "title": "Account needs to be re-added",
-      "description": "Ledger Live couldn't retrieve this account's public key. Please remove it and add it again to continue."
+      "title": "Account needs to be added again",
+      "description": "Ledger Wallet could not retrieve this account's public key. Please remove the account and add it again to continue"
     },
     "AlgorandASANotOptInInRecipient": {
       "title": "Recipient account has not opted in the selected ASA."
