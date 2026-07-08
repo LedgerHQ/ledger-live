@@ -3,17 +3,12 @@
 
 import { fileURLToPath } from "node:url";
 
+import { splitFilter, stripLeafAnchor, unescapeLiteral } from "./escaping.mjs";
+
 const LABEL = "- **Filtered pattern:**";
 
-function splitFilter(input) {
-  return (input.match(/(?:\\.|[^|,])+/g) ?? []).map(part => part.trim()).filter(Boolean);
-}
-
 function humanizePattern(pattern) {
-  return pattern
-    .replace(/\(\?! \[\^@\]\)/g, "")
-    .replace(/\\([\^$.*+?()[\]{}|,/\\-])/g, "$1")
-    .trim();
+  return unescapeLiteral(stripLeafAnchor(pattern)).trim();
 }
 
 export function formatFilterSummary(rawInput = "") {

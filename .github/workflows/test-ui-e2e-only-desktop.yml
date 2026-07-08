@@ -279,7 +279,7 @@ jobs:
       - name: Build Playwright grep filter from inputs
         id: test-filter
         run: |
-          RESOLVED_FILTER="$(node scripts/resolve-e2e-test-filter.mjs \
+          RESOLVED_FILTER="$(node e2e/tooling/filter/resolve.mjs \
             --input "$TEST_FILTER_INPUT" \
             --smoke-tests "$SMOKE_TESTS_INPUT" \
             --check-dir "e2e/desktop/tests")"
@@ -312,7 +312,7 @@ jobs:
             echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
             echo "- **Commit SHA:** ${{ github.sha }}"
             echo "- **Device selected:** $DEVICE"
-            node scripts/format-e2e-filter-summary.mjs "$FILTER_PATTERN"
+            node e2e/tooling/filter/format-summary.mjs "$FILTER_PATTERN"
             echo "- **Test Execution ticket ID:** $TEST_EXECUTION"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
