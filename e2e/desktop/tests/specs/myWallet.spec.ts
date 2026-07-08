@@ -15,6 +15,7 @@ test.describe("Wallet 4.0 - My Wallet", () => {
         enabled: true,
         params: { path: "/refer-a-friend" },
       },
+      lwdBackupHub: { enabled: false },
     },
   });
 
