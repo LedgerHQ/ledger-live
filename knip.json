@@ -182,6 +182,9 @@
     "./domain/entity/currency-unit": {
       "entry": ["src/index.ts"]
     },
+    "./domain/entity/contact": {
+      "entry": ["src/index.ts"]
+    },
     "./domain/api/currency-fiat": {
       "entry": ["src/index.ts"]
     },
