@@ -1153,9 +1153,9 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  defi_oracle_meta_mainnet: {
+  defi_oracle_meta: {
     type: "CryptoCurrency",
-    id: "defi_oracle_meta_mainnet",
+    id: "defi_oracle_meta",
     coinType: CoinType.ETH,
     name: "DeFi Oracle Meta Mainnet",
     managerAppName: "Ethereum",

@@ -1,8 +1,8 @@
 import { currency } from "../define";
 
-export const defi_oracle_meta_mainnet = currency({
+export const defi_oracle_meta = currency({
   type: "CryptoCurrency",
-  id: "defi_oracle_meta_mainnet",
+  id: "defi_oracle_meta",
   coinType: 60,
   name: "DeFi Oracle Meta Mainnet",
   managerAppName: "Ethereum",
