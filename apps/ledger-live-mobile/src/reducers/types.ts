@@ -7,6 +7,7 @@ import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import type { MarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { PostOnboardingState } from "@ledgerhq/types-live";
+import type { LargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import type { DataOfUser, NotificationPromptTarget } from "LLM/features/NotificationsPrompt/types";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import {
@@ -454,6 +455,7 @@ export type State = LLMRTKApiState & {
   identities: IdentitiesState;
   inView: InViewState;
   knownDevices: KnownDevicesState;
+  largeScreenUpsellModal: LargeScreenUpsellModalState;
   largeMover: LargeMoverState;
   market: MarketState;
   marketListConfig: MarketListConfigState;
