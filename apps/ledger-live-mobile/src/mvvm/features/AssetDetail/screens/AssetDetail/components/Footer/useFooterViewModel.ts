@@ -85,10 +85,6 @@ export function useFooterViewModel(currency: AssetDetailCurrencyProps, ledgerIds
   const shallowAccounts = useSelector(shallowAccountsSelector);
   const [isMoreOptionsRequestingToBeOpened, setIsMoreOptionsRequestingToBeOpened] = useState(false);
 
-  // Mirror desktop's asset-page swap (RightPanel): preselect the highest-balance
-  // account of the asset for the receive side, so multiple accounts don't force the
-  // account-selection drawer. `useOpenSwap` falls back to its own logic (empty →
-  // "select asset") when no funded account is found.
   const { defaultAccount, defaultParentAccount } = useMemo(() => {
     if (!currency) {
       return { defaultAccount: undefined, defaultParentAccount: undefined };

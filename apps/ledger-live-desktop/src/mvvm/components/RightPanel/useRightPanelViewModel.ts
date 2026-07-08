@@ -10,10 +10,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useDistribution } from "~/renderer/actions/general";
 import { decodeRouteParam } from "LLD/features/AssetDetail/utils/decodeRouteParam";
-import {
-  buildSwapNavigationState,
-  type SwapNavigationState,
-} from "LLD/features/Market/utils/swapNavigation";
+import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigation";
 import type { RightPanelViewModel } from "./types";
 
 const ASSET_PATH_PREFIX = "/asset/";
@@ -46,9 +43,7 @@ export const useRightPanelRouteCurrency = (
   return useMemo(() => {
     if (!routeAssetId) return undefined;
     const decodedAssetId = decodeRouteParam(routeAssetId).toLowerCase();
-    // Resolve the route asset the same robust way the asset-detail page does: prefer the
-    // portfolio distribution (held assets, widened by the market-state hint), then fall back
-    // to the currency registry.
+     // Prefer portfolio distribution (optionally widened by market-state), then fall back to the currency registry.
     return (
       resolveDistributionItem({ routeAssetId, decodedAssetId, marketState, distribution })
         ?.currency ?? findCryptoCurrencyById(marketState?.ledgerIds?.[0] ?? decodedAssetId)
