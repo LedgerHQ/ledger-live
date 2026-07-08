@@ -15,12 +15,12 @@ export function useAmountUsd(account: AccountLike, amount: BigNumber, fallback: 
 
   useOnDemandCurrencyCountervalues(currency, USD);
 
-  const raw = useCalculate({
-    value: amount.toNumber(),
-    from: currency,
-    to: USD,
-    disableRounding: true,
-  });
+  // Memoize the query so useCalculate's internal memo isn't defeated on every render.
+  const query = useMemo(
+    () => ({ value: amount.toNumber(), from: currency, to: USD, disableRounding: true }),
+    [amount, currency],
+  );
+  const raw = useCalculate(query);
 
   return raw != null ? raw / 10 ** USD.units[0].magnitude : fallback;
 }
