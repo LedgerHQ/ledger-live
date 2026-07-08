@@ -1,8 +1,11 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { getMergedFeatureFlags } from "../../utils/featureFlagUtils";
+import type { Features } from "@shared/feature-flags";
 const tags = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
-const isQ2 = getMergedFeatureFlags().lwmWallet40?.params?.aggregatedAssets === true;
+const isQ2 =
+  (getMergedFeatureFlags().lwmWallet40 as Features["lwmWallet40"] | undefined)?.params
+    ?.aggregatedAssets === true;
 
 setTeamOwner(Team.WALLET_XP);
 // In Q2 the tab layout (Assets/Accounts tabs) no longer exists — skip the whole suite
