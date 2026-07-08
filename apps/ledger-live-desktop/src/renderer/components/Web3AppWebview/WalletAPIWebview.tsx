@@ -7,7 +7,6 @@ import {
   useWalletAPIServer,
 } from "@ledgerhq/live-common/wallet-api/react";
 import trackingWrapper, { TrackingAPI } from "@ledgerhq/live-common/wallet-api/tracking";
-import { AccountPublicKeyUnavailable } from "@ledgerhq/live-common/errors";
 import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Operation } from "@ledgerhq/types-live";
@@ -26,6 +25,7 @@ import { walletSelector } from "~/renderer/reducers/wallet";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { openModal } from "~/renderer/actions/modals";
+import { openAccountPublicKeyUnavailableDialog } from "LLD/features/AccountPublicKeyUnavailableDialog/accountPublicKeyUnavailableDialog";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import { NetworkErrorScreen } from "./NetworkError";
@@ -114,7 +114,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
       },
       "account.publicKeyUnavailable": () => {
         ipcRenderer.send("show-app", {});
-        dispatch(openModal("MODAL_ERROR", { error: new AccountPublicKeyUnavailable() }));
+        dispatch(openAccountPublicKeyUnavailableDialog());
       },
       "message.sign": ({ account, message, options, onSuccess, onError, onCancel }) => {
         ipcRenderer.send("show-app", {});

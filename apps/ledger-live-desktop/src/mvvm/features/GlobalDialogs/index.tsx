@@ -13,6 +13,9 @@ const PtxInfoDialog = lazy(() => import("LLD/features/PtxInfoDialog"));
 const LiveAppModal = lazy(() => import("LLD/features/LiveAppModal"));
 const GenericAwarenessModal = lazy(() => import("LLD/features/GenericAwarenessModal"));
 const SwapTransactionStatusDialog = lazy(() => import("LLD/features/SwapTransactionStatusDialog"));
+const AccountPublicKeyUnavailableDialog = lazy(
+  () => import("LLD/features/AccountPublicKeyUnavailableDialog"),
+);
 
 /** Mounts all root-level dialogs and flows. Add new global dialogs here. */
 const GlobalDialogs = () => (
@@ -43,6 +46,9 @@ const GlobalDialogs = () => (
     </Suspense>
     <Suspense fallback={null}>
       <SwapTransactionStatusDialog />
+    </Suspense>
+    <Suspense fallback={null}>
+      <AccountPublicKeyUnavailableDialog />
     </Suspense>
   </>
 );
