@@ -58,6 +58,7 @@ export * from "./crypto_org_croeseid";
 export * from "./dash";
 export * from "./decred";
 export * from "./desmos";
+export * from "./defi_oracle_meta_mainnet";
 export * from "./dexon";
 export * from "./digibyte";
 export * from "./dogecoin";
