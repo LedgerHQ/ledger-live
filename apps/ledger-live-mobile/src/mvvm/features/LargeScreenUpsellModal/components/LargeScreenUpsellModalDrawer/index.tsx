@@ -19,21 +19,30 @@ export function LargeScreenUpsellModalDrawer({
   featureIntroViewModel,
   bottomInset,
 }: LargeScreenUpsellModalDrawerProps) {
+  const renderContent = () => {
+    if (!isOpen) return null;
+
+    return (
+      <BottomSheetView style={{ paddingBottom: bottomInset }}>
+        <Box
+          testID="large-screen-upsell-modal-drawer"
+          lx={{ paddingTop: "s12", paddingBottom: "s12", paddingHorizontal: "s16" }}
+        >
+          <BottomSheetHeader />
+          <FeatureIntroLayout onClose={onCloseFromCta} viewModel={featureIntroViewModel} />
+        </Box>
+      </BottomSheetView>
+    );
+  };
+
   return (
     <QueuedDrawerBottomSheet
       key="large-screen-upsell-modal-drawer"
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
-      testID="large-screen-upsell-modal-drawer"
       enableDynamicSizing
     >
-      <BottomSheetView>
-        <Box lx={{ paddingTop: "s12", paddingBottom: "s12", paddingHorizontal: "s16" }}>
-          <BottomSheetHeader />
-          <FeatureIntroLayout onClose={onCloseFromCta} viewModel={featureIntroViewModel} />
-          <Box lx={{ height: bottomInset }} />
-        </Box>
-      </BottomSheetView>
+      {renderContent()}
     </QueuedDrawerBottomSheet>
   );
 }

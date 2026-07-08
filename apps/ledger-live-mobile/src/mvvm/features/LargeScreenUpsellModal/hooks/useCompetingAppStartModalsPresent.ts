@@ -28,15 +28,19 @@ export function useCompetingAppStartModalsPresent(): boolean {
   const analyticsEnabled = useSelector(analyticsEnabledSelector);
 
   const productTourFlag = useFeature("lwmProductTour");
+  const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
   const analyticsOptInFlag = useFeature("analyticsOptIn");
 
   return useMemo(() => {
     const hasProductTourCompeting = Boolean(productTourFlag?.enabled && !productTourCompleted);
 
-    const hasGenericAwarenessCompeting = cards.some(
-      card =>
-        isGenericAwarenessAppStartCardReady(card.id) &&
-        isGenericAwarenessModalContentCardReady(card),
+    const hasGenericAwarenessCompeting = Boolean(
+      genericAwarenessModalFlag?.enabled &&
+      cards.some(
+        card =>
+          isGenericAwarenessAppStartCardReady(card.id) &&
+          isGenericAwarenessModalContentCardReady(card),
+      ),
     );
 
     const { consentValidityDays, policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFlag);
@@ -56,6 +60,7 @@ export function useCompetingAppStartModalsPresent(): boolean {
     analyticsEnabled,
     analyticsOptInFlag,
     cards,
+    genericAwarenessModalFlag?.enabled,
     hasCompletedOnboarding,
     productTourCompleted,
     productTourFlag?.enabled,
