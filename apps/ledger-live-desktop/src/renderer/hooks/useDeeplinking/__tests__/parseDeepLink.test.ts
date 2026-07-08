@@ -341,6 +341,15 @@ describe("parseDeepLink", () => {
       });
     });
 
+    it("creates paytab route", () => {
+      const parsed = parseDeepLink("ledgerlive://paytab");
+      const route = createRoute(parsed);
+
+      expect(route).toEqual({
+        type: "paytab",
+      });
+    });
+
     it("creates product tour route", () => {
       const parsed = parseDeepLink("ledgerlive://product-tour");
       const route = createRoute(parsed);
