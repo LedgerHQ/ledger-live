@@ -108,6 +108,7 @@ export enum ScreenName {
   EditAccountName = "EditAccountName",
   EditDeviceName = "EditDeviceName",
   Card = "Card",
+  PayTab = "PayTab",
   ExchangeBuy = "ExchangeBuy",
   ExchangeDeveloperMode = "ExchangeDeveloperMode",
   ExchangeSelectAccount = "ExchangeSelectAccount",
@@ -773,6 +774,7 @@ export enum NavigatorName {
   // Tab
   Main = "Main",
   CardTab = "CardTab",
+  PayTab = "PayTab",
   // Root
   RootNavigator = "RootNavigator",
   Discover = "Discover",

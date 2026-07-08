@@ -9935,7 +9935,8 @@
     "swap": "Swap",
     "earn": "Earn",
     "yield": "Yield",
-    "card": "Card"
+    "card": "Card",
+    "paytab": "Pay"
   },
   "syncIndicator": {
     "accessibilityLabel": {

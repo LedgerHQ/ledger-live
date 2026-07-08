@@ -9,6 +9,7 @@ import {
   ExchangeFill,
   CreditCard,
   CreditCardFill,
+  DollarConvert,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { NavigatorName } from "~/const";
 import type { TabItemConfig, MainTabBarViewProps } from "./types";
@@ -31,6 +32,7 @@ const TAB_ICONS: Partial<Record<string, TabIconConfig>> = {
   [NavigatorName.Swap]: { icon: Exchange, activeIcon: ExchangeFill },
   [NavigatorName.Earn]: { icon: Chart5, activeIcon: Chart5Fill },
   [NavigatorName.CardTab]: { icon: CreditCard, activeIcon: CreditCardFill },
+  [NavigatorName.PayTab]: { icon: DollarConvert, activeIcon: DollarConvert },
 };
 
 const TAB_TEST_IDS: Partial<Record<string, string>> = {
@@ -38,6 +40,7 @@ const TAB_TEST_IDS: Partial<Record<string, string>> = {
   [NavigatorName.Swap]: "w40-tab-swap",
   [NavigatorName.Earn]: "w40-tab-earn",
   [NavigatorName.CardTab]: "w40-tab-card",
+  [NavigatorName.PayTab]: "w40-tab-paytab",
 };
 
 function trackTabNavigation(targetName: string, sourceName: string, value: string) {
