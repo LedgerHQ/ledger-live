@@ -1,6 +1,8 @@
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
+import {
+  getCryptoCurrencyById,
+  findCryptoCurrencyByKeyword,
+} from "@ledgerhq/live-common/currencies/index";
 import { accountsHandler, accountHandler } from "../accounts.handler";
 import { createMockContext } from "./test-utils";
 
@@ -89,7 +91,7 @@ describe("accounts.handler", () => {
     });
 
     it("does nothing when currency is not found", () => {
-      mockFindCryptoCurrencyByKeyword.mockReturnValue(null);
+      mockFindCryptoCurrencyByKeyword.mockReturnValue(undefined);
       const context = createMockContext();
 
       accountHandler({ type: "account", currency: "unknown" }, context);

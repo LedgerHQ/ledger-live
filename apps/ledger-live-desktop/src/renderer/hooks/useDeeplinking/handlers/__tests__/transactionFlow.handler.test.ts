@@ -1,6 +1,8 @@
 import { Account } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
+import {
+  getCryptoCurrencyById,
+  findCryptoCurrencyByKeyword,
+} from "@ledgerhq/live-common/currencies/index";
 import { closeAllModal, openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { sendHandler, receiveHandler, delegateHandler } from "../transactionFlow.handler";

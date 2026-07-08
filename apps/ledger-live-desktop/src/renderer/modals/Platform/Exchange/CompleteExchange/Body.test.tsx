@@ -58,6 +58,7 @@ describe("CompleteExchange Body", () => {
         fromParentAccount: undefined,
         fromCurrency: currency,
         toAccount: account,
+        toParentAccount: undefined,
         toCurrency: currency,
       } as ExchangeSwap,
       transaction: {} as Transaction,

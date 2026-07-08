@@ -3,8 +3,10 @@
 import { renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
+import {
+  getCryptoCurrencyById,
+  findCryptoCurrencyByKeyword,
+} from "@ledgerhq/live-common/currencies/index";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import {
   FEATURE_INTRO_CAMPAIGN_ID,
@@ -154,7 +156,7 @@ describe("useDeepLinkHandler", () => {
     });
 
     it("does not open add account flow with unknown currency", async () => {
-      mockFindCryptoCurrencyByKeyword.mockReturnValue(null);
+      mockFindCryptoCurrencyByKeyword.mockReturnValue(undefined);
 
       await testDeeplink("ledgerwallet://add-account?currency=unknowncoin");
 
