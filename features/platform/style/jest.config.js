@@ -15,5 +15,6 @@ module.exports = {
       },
     ],
   },
+  passWithNoTests: true,
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
 };

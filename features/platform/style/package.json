@@ -6,7 +6,10 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts",
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -19,7 +22,9 @@
   "dependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
-    "@ledgerhq/lumen-ui-rnative": "catalog:"
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "clsx": "catalog:",
+    "tailwind-merge": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
