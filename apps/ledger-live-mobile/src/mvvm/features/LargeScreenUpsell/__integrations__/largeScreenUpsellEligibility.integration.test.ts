@@ -4,7 +4,6 @@ import { useLargeScreenUpsellEligibility } from "..";
 import type { State } from "~/reducers/types";
 
 const NOW = new Date("2026-06-01T12:00:00.000Z");
-
 function withKnownDeviceModels(deviceModelIds: DeviceModelId[]) {
   return (state: State): State => ({
     ...state,
@@ -30,7 +29,6 @@ describe("large screen upsell eligibility integration", () => {
   afterEach(() => {
     jest.useRealTimers();
   });
-
   it("should be eligible when the feature is enabled and only a nano has been seen", () => {
     const { result } = renderHook(() => useLargeScreenUpsellEligibility(), {
       overrideInitialState: withFlagOverrides(
