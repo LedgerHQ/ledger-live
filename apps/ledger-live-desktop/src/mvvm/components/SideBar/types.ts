@@ -1,4 +1,5 @@
 import type { Location } from "react-router";
+import type { ContactsEntryConfig } from "LLD/features/Contacts";
 import type { SideBarActiveValue } from "./utils";
 
 export interface ReferralProgramParams {
@@ -36,6 +37,7 @@ export interface SideBarViewModel {
   readonly isAccountsDisabled: boolean;
   readonly isLiveAppTabSelected: boolean;
   readonly isMyWalletEnabled: boolean;
+  readonly contactsEntryConfig: ContactsEntryConfig;
   readonly referralProgramConfig: ReferralProgramConfig | null;
   readonly recoverFeature: RecoverFeatureConfig | null;
   readonly recoverHomePath: string | undefined;
