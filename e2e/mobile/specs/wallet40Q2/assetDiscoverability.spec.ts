@@ -1,20 +1,8 @@
-import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { setTeamOwner } from "helpers/allure/allure-helper";
+import { FF_LWM_WALLET_40_Q2 } from "utils/featureFlagUtils";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
-
-// Asset discoverability is enabled in the shared Wallet 4.0 flags; we still set it
-// explicitly here so this suite stays self-describing about the flag it relies on.
-const ASSET_DISCOVERABILITY_FEATURE_FLAGS = {
-  lwmWallet40: {
-    ...WALLET_40_FEATURE_FLAGS.lwmWallet40,
-    params: {
-      ...WALLET_40_FEATURE_FLAGS.lwmWallet40.params,
-      assetDiscoverability: true,
-    },
-  },
-};
 
 // The Wallet 4.0 market & global-search screens run continuous animations, so Detox
 // never reaches idle (iOS) and matchers time out. Disable synchronization once for the
@@ -28,11 +16,11 @@ afterEach(async () => {
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 - Asset discoverability - Stocks empty discovery state", () => {
+describe("Wallet 4.0 Q2 - Asset discoverability - Stocks empty discovery state", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "1AccountBTC1AccountETHReadOnlyFalse",
-      featureFlags: ASSET_DISCOVERABILITY_FEATURE_FLAGS,
+      featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
@@ -50,13 +38,13 @@ describe("Wallet 4.0 - Asset discoverability - Stocks empty discovery state", ()
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 - Asset discoverability - Stocks holdings", () => {
+describe("Wallet 4.0 Q2 - Asset discoverability - Stocks holdings", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: Account.ETH_1.currency.speculosApp,
       cliCommands: [liveDataCommand(Account.ETH_1)],
-      featureFlags: ASSET_DISCOVERABILITY_FEATURE_FLAGS,
+      featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
@@ -74,11 +62,11 @@ describe("Wallet 4.0 - Asset discoverability - Stocks holdings", () => {
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 - Asset discoverability - Global search categories", () => {
+describe("Wallet 4.0 Q2 - Asset discoverability - Global search categories", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding-with-last-seen-device",
-      featureFlags: ASSET_DISCOVERABILITY_FEATURE_FLAGS,
+      featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
@@ -100,11 +88,11 @@ describe("Wallet 4.0 - Asset discoverability - Global search categories", () => 
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 - Asset discoverability - Global search ranking", () => {
+describe("Wallet 4.0 Q2 - Asset discoverability - Global search ranking", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding-with-last-seen-device",
-      featureFlags: ASSET_DISCOVERABILITY_FEATURE_FLAGS,
+      featureFlags: FF_LWM_WALLET_40_Q2,
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });

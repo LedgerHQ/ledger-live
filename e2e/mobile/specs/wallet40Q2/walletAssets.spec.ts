@@ -1,11 +1,22 @@
-import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { setTeamOwner } from "helpers/allure/allure-helper";
+import { FF_LWM_WALLET_40_Q2 } from "utils/featureFlagUtils";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
+// TODO: temporary override until LIVE-29336 is done
+const FF_WALLET_ASSETS = {
+  lwmWallet40: {
+    ...FF_LWM_WALLET_40_Q2.lwmWallet40,
+    params: {
+      ...FF_LWM_WALLET_40_Q2.lwmWallet40.params,
+      aggregatedAssets: false,
+    },
+  },
+};
+
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 - Portfolio-Asset/Address - Onboard without accounts", () => {
+describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - Onboard without accounts", () => {
   const tmsLinks = ["B2CQA-4839", "B2CQA-4840"];
   const currency = Account.INJ_1.currency;
 
@@ -13,7 +24,7 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Onboard without accounts", () =
     await app.init({
       userdata: "skip-onboarding",
       speculosApp: currency.speculosApp,
-      featureFlags: WALLET_40_FEATURE_FLAGS,
+      featureFlags: FF_WALLET_ASSETS,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });
@@ -37,13 +48,13 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Onboard without accounts", () =
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 - Portfolio-Asset/Address - With fewer accounts than section minimum (padding)", () => {
+describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - With fewer accounts than section minimum (padding)", () => {
   const tmsLinks = ["B2CQA-4841"];
 
   beforeAll(async () => {
     await app.init({
       userdata: "wallet40-btc-only",
-      featureFlags: WALLET_40_FEATURE_FLAGS,
+      featureFlags: FF_WALLET_ASSETS,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });
@@ -60,13 +71,13 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - With fewer accounts than sectio
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 - Portfolio-Asset/Address - Open the app with accounts", () => {
+describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - Open the app with accounts", () => {
   const tmsLinks = ["B2CQA-4834", "B2CQA-4837", "B2CQA-4838"];
 
   beforeAll(async () => {
     await app.init({
       userdata: "wallet40-many-stablecoins",
-      featureFlags: WALLET_40_FEATURE_FLAGS,
+      featureFlags: FF_WALLET_ASSETS,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });

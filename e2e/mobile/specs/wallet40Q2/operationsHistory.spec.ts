@@ -1,6 +1,17 @@
-import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { setTeamOwner } from "helpers/allure/allure-helper";
+import { FF_LWM_WALLET_40_Q2 } from "utils/featureFlagUtils";
+
+// TODO: temporary override until we implement a navigate to history on account page for Q2
+const FF_OPERATION_HISTORY = {
+  lwmWallet40: {
+    ...FF_LWM_WALLET_40_Q2.lwmWallet40,
+    params: {
+      ...FF_LWM_WALLET_40_Q2.lwmWallet40.params,
+      aggregatedAssets: false,
+    },
+  },
+};
 
 setTeamOwner(Team.WALLET_XP);
 $TmsLink("B2CQA-5256");
@@ -12,11 +23,11 @@ tags.forEach(tag => $Tag(tag));
 const ACCOUNT = Account.ETH_1;
 const CURRENCY = ACCOUNT.currency;
 
-describe("Wallet 4.0 - Operations History", () => {
+describe("Wallet 4.0 Q2 - Operations History", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "speculos-x-other-account",
-      featureFlags: WALLET_40_FEATURE_FLAGS,
+      featureFlags: FF_OPERATION_HISTORY,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });
