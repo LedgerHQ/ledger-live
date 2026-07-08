@@ -224,13 +224,11 @@ const api = {
   async getBlockTokenTransfersPage(level: number, cursor?: number): Promise<APITokenTransfer[]> {
     // Same rationale as getBlockTransactionsPage: explicit ascending sort keeps the
     // offset.cr cursor advancing forward regardless of the API's default ordering.
-    // Filter to FA2 tokenId=0 to match listOperations (getAccountTokenTransfers).
     const params: Record<string, unknown> = {
       level,
       limit: BLOCK_PAGE_SIZE,
       "sort.asc": "id",
       "token.standard": "fa2",
-      "token.tokenId": "0",
     };
     if (cursor !== undefined) params["offset.cr"] = cursor;
     const { data } = await network<APITokenTransfer[]>({
