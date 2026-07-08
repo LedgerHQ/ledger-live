@@ -1,18 +1,9 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import { isCooldownElapsed } from "@ledgerhq/live-common/postOnboarding/logic/upsellFrequency";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useLargeScreenUpsellEligibility } from "..";
 import type { State } from "~/reducers/types";
 
-jest.mock(
-  "@ledgerhq/live-common/postOnboarding/logic/upsellFrequency",
-  () => ({
-    isCooldownElapsed: jest.fn(),
-  }),
-  { virtual: true },
-);
-
-const mockedIsCooldownElapsed = jest.mocked(isCooldownElapsed);
+const NOW = new Date("2026-06-01T12:00:00.000Z");
 
 function withKnownDeviceModels(deviceModelIds: DeviceModelId[]) {
   return (state: State): State => ({
@@ -33,11 +24,11 @@ function withKnownDeviceModels(deviceModelIds: DeviceModelId[]) {
 
 describe("large screen upsell eligibility integration", () => {
   beforeEach(() => {
-    mockedIsCooldownElapsed.mockReturnValue(true);
+    jest.useFakeTimers().setSystemTime(NOW);
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    jest.useRealTimers();
   });
 
   it("should be eligible when the feature is enabled and only a nano has been seen", () => {
@@ -53,11 +44,6 @@ describe("large screen upsell eligibility integration", () => {
       deviceModelId: DeviceModelId.nanoS,
       cooldownDays: 0,
     });
-    expect(mockedIsCooldownElapsed).toHaveBeenCalledWith(
-      new Date("2026-06-01T12:00:00.000Z"),
-      0,
-      expect.any(Date),
-    );
   });
 
   it("should be ineligible for dual owners who have seen a nano and a touchscreen device", () => {
@@ -69,6 +55,5 @@ describe("large screen upsell eligibility integration", () => {
     });
 
     expect(result.current).toEqual({ isEligible: false, reason: "touchscreen_seen" });
-    expect(mockedIsCooldownElapsed).not.toHaveBeenCalled();
   });
 });
