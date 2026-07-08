@@ -3,13 +3,26 @@ import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import { formatTransactionStatus } from "@ledgerhq/ledger-wallet-framework/formatters";
 import {
   fromTransactionCommonRaw,
-  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
+  fromTransactionStatusRawCommon,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/ledger-wallet-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { Transaction, TransactionRaw } from "../types";
+import type { Transaction, TransactionRaw, TransactionStatus, TransactionStatusRaw } from "../types";
+
+// These resource fields are live-derived and not persisted (absent from TransactionStatusRaw).
+// Default them to 0 on deserialization so the required BigNumber fields are never `undefined`.
+export const fromTransactionStatusRaw = (tsr: TransactionStatusRaw): TransactionStatus => {
+  const zero = new BigNumber(0);
+  return {
+    ...fromTransactionStatusRawCommon(tsr),
+    energyRequired: zero,
+    energyAvailable: zero,
+    bandwidthRequired: zero,
+    bandwidthAvailable: zero,
+  };
+};
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
