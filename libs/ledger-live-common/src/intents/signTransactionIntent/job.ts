@@ -1,7 +1,9 @@
 import { TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getMainAccount } from "../../account/index";
 import { getAccountBridge } from "../../bridge/index";
+import { sendFeatures } from "../../bridge/descriptor/send/features";
 import { TransactionRefusedOnDevice } from "../../errors";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
@@ -20,8 +22,12 @@ function buildSigningDevice(connectionResult: DeviceConnectionResult): SigningDe
   };
 }
 
-function isUserRefusalError(error: unknown): boolean {
+function isUserRefusalError(
+  error: unknown,
+  currency: CryptoOrTokenCurrency | undefined,
+): boolean {
   return (
+    sendFeatures.isUserRefusedTransactionError(currency, error) ||
     error instanceof TransactionRefusedOnDevice ||
     error instanceof UserRefusedOnDevice ||
     (error instanceof TransportStatusError && error.statusCode === 0x6985)
@@ -56,6 +62,7 @@ export const signTransactionIntentJob: Job<
 > = ({ deviceConnectionResult, input }) => {
   const device = buildSigningDevice(deviceConnectionResult);
   const mainAccount = getMainAccount(input.account, input.parentAccount ?? undefined);
+  const currency = input.tokenCurrency ?? mainAccount.currency;
 
   return new Observable<SignTransactionIntentJobState>(subscriber => {
     let innerSubscription: Subscription | undefined;
@@ -90,7 +97,7 @@ export const signTransactionIntentJob: Job<
               // "cancelled" state (info screen + retry) instead of letting the error escape
               // the observable, which would otherwise trigger the executor's generic error screen.
               error: error => {
-                if (isUserRefusalError(error)) {
+                if (isUserRefusalError(error, currency)) {
                   subscriber.next({ type: "cancelled", retry: run });
                   return;
                 }

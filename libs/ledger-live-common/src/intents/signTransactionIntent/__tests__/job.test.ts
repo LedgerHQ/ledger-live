@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { getMainAccount } from "../../../account/index";
 import { getAccountBridge } from "../../../bridge/index";
 import type { DeviceConnectionResult, DeviceExtractedContext } from "@ledgerhq/device-intent";
@@ -24,7 +25,10 @@ jest.mock("../../../bridge/index", () => ({
 
 const account = { id: "account-1" } as AccountLike;
 const parentAccount = { id: "parent-account-1" } as Account;
-const mainAccount = { id: "main-account-1" } as Account;
+const mainAccount = {
+  id: "main-account-1",
+  currency: getCryptoCurrencyById("ethereum"),
+} as Account;
 const transaction = { family: "evm" } as SignTransactionIntentInput["transaction"];
 const signedOperation = { operation: { id: "operation-1" } } as SignedOperation;
 
@@ -136,6 +140,30 @@ describe("signTransactionIntentJob", () => {
       type: "cancelled",
       retry: expect.any(Function),
     });
+
+    subscription.unsubscribe();
+  });
+
+  it("should emit a cancellable state when a coin-specific user refusal error is thrown", async () => {
+    const stellarUserRefusedError = new Error("User refused the request");
+    stellarUserRefusedError.name = "StellarUserRefusedError";
+    const stellarAccount = {
+      ...mainAccount,
+      currency: getCryptoCurrencyById("stellar"),
+    } as Account;
+    jest.mocked(getMainAccount).mockReturnValue(stellarAccount);
+    const bridge = createBridgeMock(throwError(() => stellarUserRefusedError));
+    mockGetAccountBridgeResolvedValue(bridge);
+
+    const states: SignTransactionIntentJobState[] = [];
+    const subscription = startJob().subscribe(state => states.push(state));
+
+    await flushPromises();
+
+    expect(states).toEqual([
+      { type: "pending", deviceModelId },
+      { type: "cancelled", retry: expect.any(Function) },
+    ]);
 
     subscription.unsubscribe();
   });
