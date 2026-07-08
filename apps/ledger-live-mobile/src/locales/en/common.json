@@ -10086,13 +10086,22 @@
     "send": {
       "balanceSelection": {
         "title": "Select balance",
-        "mockTitle": "Balance selection screen mock",
-        "selfTransfer": "Self transfer: {{value}}",
-        "mockButtonPublic": "Public",
-        "mockButtonPrivate": "Private"
+        "convertToPrivate": "Convert to private",
+        "convertToPublic": "Convert to public",
+        "sendPublicly": "Send publicly",
+        "sendPrivately": "Send privately"
+      },
+      "balanceSelector": {
+        "public": "Public",
+        "private": "Private",
+        "lastUpdate": "Last update: {{label}}",
+        "recently": "recently"
       },
       "privateSync": {
         "mockTitle": "Private sync mock"
+      },
+      "quickAmountSelector": {
+        "mockTitle": "Quick amount selector mock"
       }
     },
     "balancesSection": "Balances",
