@@ -80,15 +80,14 @@ export function findCryptoCurrencyByTicker(ticker: string): CryptoCurrency | und
  * order is: `keywords` field → display `name` → currency `id` → `ticker` → manager app name.
  * Pass a custom `tests` array to restrict or reorder the strategies.
  *
- * The keyword is normalised to lower-case before comparison. Note: only the first space character
- * is stripped (mirrors legacy behaviour) — for exact matches, prefer {@link findCryptoCurrencyById}
- * or {@link findCryptoCurrencyByTicker}.
+ * The keyword is normalised to lower-case with all whitespace stripped before comparison. For exact
+ * matches, prefer {@link findCryptoCurrencyById} or {@link findCryptoCurrencyByTicker}.
  */
 export function findCryptoCurrencyByKeyword(
   keyword: string,
   tests: ReadonlyArray<keyof typeof keywordTests> = ["keywords", "name", "id", "ticker", "manager"],
 ): CryptoCurrency | undefined {
-  const search = keyword.replace(/ /, "").toLowerCase();
+  const search = keyword.replace(/\s+/g, "").toLowerCase();
   for (const test of tests) {
     const match = keywordTests[test]?.(search);
     if (match) return match;
@@ -96,11 +95,12 @@ export function findCryptoCurrencyByKeyword(
 }
 
 function findByManagerApp(managerAppName: string): CryptoCurrency | undefined {
-  const search = managerAppName.replace(/ /, "").toLowerCase();
+  const search = managerAppName.replace(/\s+/g, "").toLowerCase();
   return (
     allCurrencies.find(c => c.managerAppName === managerAppName) ||
     allCurrencies.find(
-      c => Boolean(c.managerAppName) && c.managerAppName!.replace(/ /, "").toLowerCase() === search,
+      c =>
+        Boolean(c.managerAppName) && c.managerAppName!.replace(/\s+/g, "").toLowerCase() === search,
     )
   );
 }
@@ -126,9 +126,9 @@ for (const c of allCurrencies) {
 const keywordTests = {
   keywords: (s: string) =>
     findCryptoCurrency(c =>
-      Boolean(c.keywords?.map(k => k.replace(/ /, "").toLowerCase()).includes(s)),
+      Boolean(c.keywords?.map(k => k.replace(/\s+/g, "").toLowerCase()).includes(s)),
     ),
-  name: (s: string) => findCryptoCurrency(c => c.name.replace(/ /, "").toLowerCase() === s),
+  name: (s: string) => findCryptoCurrency(c => c.name.replace(/\s+/g, "").toLowerCase() === s),
   id: (s: string) => findCryptoCurrencyById(s.toLowerCase()),
   ticker: (s: string) => findCryptoCurrencyByTicker(s.toUpperCase()),
   manager: (s: string) => findByManagerApp(s),

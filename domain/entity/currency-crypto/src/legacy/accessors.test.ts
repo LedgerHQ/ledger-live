@@ -170,8 +170,14 @@ describe("findCryptoCurrencyByTicker", () => {
 });
 
 describe("findCryptoCurrencyByKeyword", () => {
-  it("matches by currency name (case-insensitive, spaces ignored)", () => {
+  it("matches by currency name (case-insensitive, whitespace stripped)", () => {
     expect(findCryptoCurrencyByKeyword("bitcoin")).toBe(CRYPTO_CURRENCIES_REGISTRY.bitcoin);
+  });
+
+  it("normalises multi-space inputs (Bitcoin Cash searched with extra space)", () => {
+    // "bitcoin  cash" → strip all whitespace → "bitcoincash"; "Bitcoin Cash".replace → "BitcoinCash" → match
+    const result = findCryptoCurrencyByKeyword("bitcoin  cash", ["name"]);
+    expect(result?.id).toBe("bitcoin_cash");
   });
 
   it("matches by currency id", () => {
