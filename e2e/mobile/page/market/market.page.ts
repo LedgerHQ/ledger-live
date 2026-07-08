@@ -49,8 +49,10 @@ export default class MarketPage {
   @Step("Expect market detail page")
   async expectMarketDetailPage(currencyId?: string) {
     if (await isAggregatedAssetsEnabled()) {
-      const currency = currencyId?.toLowerCase() || "bitcoin";
-      await waitForElementById(`asset-detail-scroll-view-${currency}`);
+      const scrollViewId = currencyId
+        ? `asset-detail-scroll-view-${currencyId.toLowerCase()}`
+        : /^asset-detail-scroll-view-.*/;
+      await waitForElementById(scrollViewId);
     } else {
       await detoxExpect(this.starButton()).toBeVisible();
     }

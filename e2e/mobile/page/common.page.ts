@@ -86,10 +86,10 @@ export default class CommonPage {
         await openDeeplink(`asset/${currencyId}`);
         await waitForElementById(`asset-detail-scroll-view-${currencyId}`);
       }
-      const q2AccountItemRegExp = /^asset-detail-address-item-.*/;
+      const itemId = `asset-detail-address-item-${accountId}`;
       const scrollViewId = currencyId ? `asset-detail-scroll-view-${currencyId}` : undefined;
-      await scrollToId(q2AccountItemRegExp, scrollViewId);
-      await tapByElement(getElementById(q2AccountItemRegExp));
+      await scrollToId(itemId, scrollViewId);
+      await tapByElement(getElementById(itemId));
     } else {
       await scrollToId(this.accountItemRegExp(accountId), this.assetScreenFlatlistId);
       await tapByElement(this.accountItem(accountId));
