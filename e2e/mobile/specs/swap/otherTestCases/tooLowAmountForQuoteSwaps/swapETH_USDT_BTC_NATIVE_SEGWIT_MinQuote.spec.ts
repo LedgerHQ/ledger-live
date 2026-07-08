@@ -4,7 +4,7 @@ import { runTooLowAmountForQuoteSwapsTest } from "../swap.other";
 const transactionE2E = {
   swap: new Swap(TokenAccount.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "0.000001"),
   tmsLinks: ["B2CQA-3242"],
-  errorMessage: new RegExp(/Enter a higher amount and try again\./),
+  errorMessage: "Enter a higher amount and try again.",
   ctaBanner: false,
   quotesVisible: false,
   tags: [

@@ -11,8 +11,7 @@ import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommand
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
-// The insufficient-funds CTA banner was removed from the Lumen desktop swap form —
-// re-add a ctaBanner-style check here if/when it returns.
+// swap-live-app#1699 removed the insufficient-funds CTA banner from the Lumen desktop form.
 const tooLowAmountForQuoteSwaps = [
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "1"),

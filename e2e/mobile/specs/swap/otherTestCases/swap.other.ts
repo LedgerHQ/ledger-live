@@ -273,8 +273,7 @@ export function runTooLowAmountForQuoteSwapsTest(
         await app.swapLiveApp.checkQuotes();
         await app.swapLiveApp.selectExchange();
       }
-      // NOT_ENOUGH_BALANCE / NOT_ENOUGH_TOKEN_BALANCE hide the from-account-error banner on
-      // mobile and replace the swap button with a red inert button instead (errorDisplay: "buttonReplacement").
+      // See swap-live-app#1699 for the banner vs. buttonReplacement error-display split.
       await app.swapLiveApp.verifySwapErrorMessageIsCorrect(errorMessage, errorDisplay);
 
       if (ctaBanner && SPONSORED_TRANSACTIONS_ROLLED_BACK) {

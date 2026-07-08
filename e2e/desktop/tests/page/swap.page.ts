@@ -496,8 +496,7 @@ export class SwapPage extends WebViewAppPage {
     const webview = await this.getWebView();
     const testId =
       display === "quotesPlaceholder" ? this.noQuotesPlaceholder : this.fromAccountError;
-    const text = await webview.getByTestId(testId).textContent();
-    expect(text).toMatch(message);
+    await expect(webview.getByTestId(testId)).toContainText(message);
   }
 
   @step("verify quotes are displayed")
