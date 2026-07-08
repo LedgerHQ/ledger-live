@@ -57,8 +57,8 @@ export class SwapPage extends WebViewAppPage {
   private insufficientFundsBuyButton = "insufficient-funds-buy-button";
   private insufficientFundsWarning = "insufficient-funds-warning";
   private executeButtonDisabled = "execute-button-disabled";
-  private fromAccountError = "from-account-error";
-  private noQuotesPlaceholder = "quotes-loading";
+  private readonly fromAccountError = "from-account-error";
+  private readonly noQuotesPlaceholder = "quotes-loading";
   // Swap Steps Approval components
   private readonly giveApprovalButton = "give-approval-button";
   private readonly signPermitButton = "sign-permit-button";
