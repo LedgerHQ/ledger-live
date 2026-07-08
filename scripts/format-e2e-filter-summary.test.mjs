@@ -58,3 +58,11 @@ test("does not split on escaped separators inside a title", () => {
     [`${LABEL} (2 patterns)`, "  - Send A | B", "  - Another test"].join("\n"),
   );
 });
+
+test("only unescapes the summary's literal escapes, preserving real regex escapes", () => {
+  assert.equal(
+    formatFilterSummary("Amount \\d\\d\\.\\d\\d \\[USD\\]"),
+    `${LABEL} Amount \\d\\d.\\d\\d [USD]`,
+  );
+  assert.equal(formatFilterSummary("word \\b boundary"), `${LABEL} word \\b boundary`);
+});

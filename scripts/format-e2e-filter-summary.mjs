@@ -15,7 +15,7 @@ function splitFilter(input) {
 function humanizePattern(pattern) {
   return pattern
     .replace(/\(\?! \[\^@\]\)/g, "")
-    .replace(/\\(.)/g, "$1")
+    .replace(/\\([\^$.*+?()[\]{}|,/\\-])/g, "$1")
     .trim();
 }
 
