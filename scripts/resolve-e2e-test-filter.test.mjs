@@ -55,6 +55,15 @@ test("does not split test titles on regex-escaped pipes from the failed-tests su
   assert.equal(resolveBaseFilter(input, ENABLED_FAMILIES).filter, input);
 });
 
+test("keeps the Playwright leaf-title anchor intact through the resolver", () => {
+  // The failed-tests-summary action appends a "(?! [^@])" anchor to each Playwright title so a
+  // short title cannot substring-match a longer one. The anchor carries no '|'/',', so the
+  // resolver must preserve it verbatim and keep each title as a single alternation branch.
+  const input =
+    "Entry Point \\- Asset Allocation(?! [^@])|Sync instances\\, rename and delete accounts(?! [^@])";
+  assert.equal(resolveBaseFilter(input, ENABLED_FAMILIES).filter, input);
+});
+
 test("deduplicates expanded and explicit filters", () => {
   assert.equal(
     resolveBaseFilter("@generic-coin-framework,@family-evm", ENABLED_FAMILIES).filter,

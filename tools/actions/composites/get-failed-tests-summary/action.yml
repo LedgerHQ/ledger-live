@@ -101,7 +101,20 @@ runs:
           '
         fi
 
-        FILTER_PATTERN=$(jq -rs "$JQ_ESC$ITEMS_JQ"' | map(esc) | join("|")' "${files[@]}")
+        # Playwright selects by test title with a partial (substring) --grep match, so a short
+        # title like "Entry Point - Asset Allocation" would also match longer titles such as
+        # "Entry Point - Asset Allocation page with [Bitcoin] asset". Anchor each Playwright title
+        # so it only matches the whole leaf title: it must be immediately followed by a space+@tag
+        # (Playwright appends " @Device …" tags to every title) or by the end of the title path.
+        # We use the negative lookahead "(?! [^@])" instead of "(?= @|$)" on purpose: it carries no
+        # '|', so resolve-e2e-test-filter.mjs never mistakes it for a filter separator. Detox
+        # matches spec-file basenames (regex over file path/content), so it stays a plain literal.
+        if [ "$RUNNER" = "playwright" ]; then
+          MAP_TO_PATTERN='map(esc + "(?! [^@])")'
+        else
+          MAP_TO_PATTERN='map(esc)'
+        fi
+        FILTER_PATTERN=$(jq -rs "$JQ_ESC$ITEMS_JQ | $MAP_TO_PATTERN | join(\"|\")" "${files[@]}")
         FAILED_COUNT=$(jq -rs "$ITEMS_JQ"' | length' "${files[@]}")
 
         # Robust "did anything fail" gate: counts finally-failing tests (not rerun items),
