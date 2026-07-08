@@ -31,9 +31,9 @@ export function hasCryptoCurrencyId(id: string): boolean {
 /**
  * Return all known crypto currencies.
  *
- * Pass `withDevCrypto = true` to include testnet entries (those with a non-null `isTestnetFor`
- * field). Delisted currencies are always excluded from the default result; pass `true` to include
- * them too — the full unfiltered list is returned.
+ * By default (`withDevCrypto = false`) returns production currencies only: entries where both
+ * `isTestnetFor` and `delisted` are falsy. Pass `true` to get the full unfiltered list, which
+ * includes testnet and delisted entries.
  */
 export function listCryptoCurrencies(withDevCrypto = false): CryptoCurrency[] {
   return withDevCrypto ? allCurrencies : prodCurrencies;
@@ -80,7 +80,9 @@ export function findCryptoCurrencyByTicker(ticker: string): CryptoCurrency | und
  * order is: `keywords` field → display `name` → currency `id` → `ticker` → manager app name.
  * Pass a custom `tests` array to restrict or reorder the strategies.
  *
- * Matching is case-insensitive and ignores spaces.
+ * The keyword is normalised to lower-case before comparison. Note: only the first space character
+ * is stripped (mirrors legacy behaviour) — for exact matches, prefer {@link findCryptoCurrencyById}
+ * or {@link findCryptoCurrencyByTicker}.
  */
 export function findCryptoCurrencyByKeyword(
   keyword: string,
