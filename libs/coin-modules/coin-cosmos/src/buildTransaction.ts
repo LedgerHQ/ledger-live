@@ -212,8 +212,8 @@ export const txToMessages = (
       ) {
         const validator = transaction.validators[0];
         if (stakingMessages.wrapped) {
-          // compound's embedded delegate isn't epoching-wrapped yet (LIVE-31837); fail fast on
-          // babylon rather than sign a bare cosmos-sdk delegate the chain rejects.
+          // compound's embedded delegate isn't epoching-wrapped yet (LIVE-33994); fail fast on
+          // wrapped/epoching chains rather than sign a bare cosmos-sdk delegate the chain rejects.
           throw new Error(`claimRewardCompound is not supported on ${account.currency.id}`);
         }
         // AMINO MESSAGES
