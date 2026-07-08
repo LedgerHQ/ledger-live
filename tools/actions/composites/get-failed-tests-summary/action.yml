@@ -28,12 +28,9 @@ runs:
       run: |
         set -euo pipefail
 
-        # jq filter escaping every char that is special in a JS regex, PLUS the
-        # comma, so the emitted Filter pattern is a literal alternation once split
-        # on '|' by the workflow. The comma must be escaped too: resolve-e2e-test-filter.mjs
-        # treats ',' as a filter separator, so an unescaped comma inside a test title
-        # (e.g. "Sync instances, rename and delete accounts") would be split into
-        # partial fragments that over-match unrelated tests and drop the intended one.
+        # jq filter escaping every char that is special in a JS regex (plus the
+        # comma), so the emitted Filter pattern is a literal alternation once split
+        # on '|' by the workflow.
         JQ_ESC='def esc: gsub("(?<c>[.^$*+?()\\[\\]{}|,\\\\/-])"; "\\" + .c);'
 
         case "$RUNNER" in
@@ -101,14 +98,6 @@ runs:
           '
         fi
 
-        # Playwright selects by test title with a partial (substring) --grep match, so a short
-        # title like "Entry Point - Asset Allocation" would also match longer titles such as
-        # "Entry Point - Asset Allocation page with [Bitcoin] asset". Anchor each Playwright title
-        # so it only matches the whole leaf title: it must be immediately followed by a space+@tag
-        # (Playwright appends " @Device …" tags to every title) or by the end of the title path.
-        # We use the negative lookahead "(?! [^@])" instead of "(?= @|$)" on purpose: it carries no
-        # '|', so resolve-e2e-test-filter.mjs never mistakes it for a filter separator. Detox
-        # matches spec-file basenames (regex over file path/content), so it stays a plain literal.
         if [ "$RUNNER" = "playwright" ]; then
           MAP_TO_PATTERN='map(esc + "(?! [^@])")'
         else

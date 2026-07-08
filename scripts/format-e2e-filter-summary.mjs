@@ -1,17 +1,10 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
-// Renders the resolved E2E filter as a readable Markdown bullet list for the
-// "Workflow Context" job summary. Long anchored Playwright filters like
-// "Foo(?! [^@])|Bar\, baz(?! [^@])" are hard to read, so we strip the leaf-title
-// anchor and unescape regex-escaped characters, then list one pattern per bullet.
-
 import { fileURLToPath } from "node:url";
 
 const LABEL = "- **Filtered pattern:**";
 
-// Split on '|' separators, ignoring escaped '\|' that belong to a single pattern
-// (mirrors resolve-e2e-test-filter.mjs so the counts stay in sync).
 function splitFilter(input) {
   return input
     .split(/(?<!\\)\|/)
@@ -20,14 +13,10 @@ function splitFilter(input) {
 }
 
 function humanizePattern(pattern) {
-  return (
-    pattern
-      // Drop the "(?! [^@])" leaf-title anchor appended to Playwright titles.
-      .replace(/\(\?! \[\^@\]\)/g, "")
-      // Unescape regex-escaped characters (\. \- \, \| \[ \( …) back to literals.
-      .replace(/\\(.)/g, "$1")
-      .trim()
-  );
+  return pattern
+    .replace(/\(\?! \[\^@\]\)/g, "")
+    .replace(/\\(.)/g, "$1")
+    .trim();
 }
 
 export function formatFilterSummary(rawInput = "") {

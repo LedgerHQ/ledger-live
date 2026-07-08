@@ -38,8 +38,6 @@ test("normalizes comma and pipe separated filters", () => {
 });
 
 test("does not split test titles on regex-escaped commas from the failed-tests summary", () => {
-  // The failed-tests-summary action escapes literal commas inside a title to `\,`.
-  // Those must survive as a single alternation branch, not be split into fragments.
   const input = [
     "Open My Wallet and navigate to key sections",
     "Sync instances\\, rename and delete accounts\\, delete instance then delete the backup",
@@ -56,9 +54,6 @@ test("does not split test titles on regex-escaped pipes from the failed-tests su
 });
 
 test("keeps the Playwright leaf-title anchor intact through the resolver", () => {
-  // The failed-tests-summary action appends a "(?! [^@])" anchor to each Playwright title so a
-  // short title cannot substring-match a longer one. The anchor carries no '|'/',', so the
-  // resolver must preserve it verbatim and keep each title as a single alternation branch.
   const input =
     "Entry Point \\- Asset Allocation(?! [^@])|Sync instances\\, rename and delete accounts(?! [^@])";
   assert.equal(resolveBaseFilter(input, ENABLED_FAMILIES).filter, input);
