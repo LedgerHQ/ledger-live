@@ -91,4 +91,27 @@ describe("updateAccountSwapStatus", () => {
       finalAmount: new BigNumber("1.99"),
     });
   });
+
+  it("re-polls a finished swap that has no finalAmount stored", async () => {
+    mockedGetMultipleStatus.mockResolvedValueOnce([
+      {
+        provider: "lifi",
+        swapId: "swap-1",
+        status: "finished",
+        finalAmount: "2.50",
+      },
+    ]);
+
+    const result = await updateAccountSwapStatus(
+      makeAccount({
+        swapHistory: [makeSwapOperation({ status: "finished" })],
+      }),
+    );
+
+    expect(mockedGetMultipleStatus).toHaveBeenCalled();
+    expect(result?.swapHistory[0]).toMatchObject({
+      status: "finished",
+      finalAmount: new BigNumber("2.50"),
+    });
+  });
 });

@@ -21,7 +21,11 @@ const maybeGetUpdatedSwapHistory = async (
       const { provider, swapId, status, operationId } = swap;
       const updatedSwap: SwapOperation = { ...swap };
 
-      if (isSwapOperationPending(status)) {
+      // Also re-poll finished CEX swaps that never got a finalAmount stored — the
+      // live app may have saved status:"finished" before the provider had the settled
+      // amount, so the first poll was skipped and finalAmount was never written back.
+      const needsFinalAmount = status === TransactionStatus.Finished && !swap.finalAmount;
+      if (isSwapOperationPending(status) || needsFinalAmount) {
         // if swapId is in operationId, then we can get the status from the operation
         // it means DEX swap like Uniswap
         if (operationId && swapId && operationId.includes(swapId)) {
