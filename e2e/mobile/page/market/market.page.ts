@@ -13,7 +13,8 @@ export default class MarketPage {
   marketFilterSortButton = () => getElementById("market-filter-sort");
   marketFilterTimeButton = () => getElementById("market-filter-time");
   marketFilterCurrencyButton = () => getElementById("market-filter-currency");
-  searchBar = () => getElementById("search-box");
+  searchBarId = async () =>
+    (await isAssetDiscoverabilityEnabled()) ? "market-screen-search-bar" : "search-box";
   starButton = () => getElementById("star-asset");
   backButtonId = "market-back-btn";
   assetDetailBackBtn = () => getElementById(this.backButtonId);
@@ -72,7 +73,7 @@ export default class MarketPage {
 
   @Step("Search for asset")
   async searchAsset(asset: string) {
-    await typeTextByElement(this.searchBar(), asset);
+    await typeTextByElement(getElementById(await this.searchBarId()), asset);
   }
 
   @Step("Open asset page")
@@ -97,7 +98,9 @@ export default class MarketPage {
   @Step("Back to asset list")
   async backToAssetList() {
     if (await isAggregatedAssetsEnabled()) {
-      await this.goBack();
+      await waitForElementById(this.headerBackButtonId);
+      await tapById(this.headerBackButtonId);
+      await waitForElementById(await this.searchBarId());
     } else {
       await tapByElement(this.assetDetailBackBtn());
     }
@@ -106,6 +109,9 @@ export default class MarketPage {
   @Step("Filter starred asset")
   async filterStaredAsset() {
     if (await isAssetDiscoverabilityEnabled()) {
+      // CategorySwitcher is hidden while search is active — clear search bar first
+      await clearTextByElement(getElementById(await this.searchBarId()));
+      await waitForElementById(this.marketCategoryTabId("starred"));
       await tapById(this.marketCategoryTabId("starred"));
     } else {
       await tapByElement(this.starMarketListButton());

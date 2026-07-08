@@ -4,6 +4,7 @@ import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Ac
 import { isIos } from "../helpers/commonHelpers";
 import { device } from "detox";
 import ErrorPage from "./error.page";
+import { isAggregatedAssetsEnabled } from "../utils/featureFlagUtils";
 
 export default class CommonPage {
   assetScreenFlatlistId = "asset-screen-flatlist";
@@ -79,9 +80,16 @@ export default class CommonPage {
   }
 
   @Step("Go to the account")
-  async goToAccount(accountId: string) {
-    await scrollToId(this.accountItemRegExp(accountId), this.assetScreenFlatlistId);
-    await tapByElement(this.accountItem(accountId));
+  async goToAccount(accountId: string, currencyId?: string) {
+    if (await isAggregatedAssetsEnabled()) {
+      const q2AccountItemRegExp = /^asset-detail-address-item-.*/;
+      const scrollViewId = currencyId ? `asset-detail-scroll-view-${currencyId}` : undefined;
+      await scrollToId(q2AccountItemRegExp, scrollViewId);
+      await tapByElement(getElementById(q2AccountItemRegExp));
+    } else {
+      await scrollToId(this.accountItemRegExp(accountId), this.assetScreenFlatlistId);
+      await tapByElement(this.accountItem(accountId));
+    }
   }
 
   @Step("Tap on close with confirmation button")

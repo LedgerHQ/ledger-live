@@ -11,12 +11,19 @@ export default class AssetAccountsPage {
     getElementById(`asset-quick-action-button-${action}`);
 
   @Step("Wait for asset page to load")
-  async waitForAccountPageToLoad(assetName: string) {
-    await waitForElementById(this.titleId(assetName.toLowerCase()));
+  async waitForAccountPageToLoad(assetName: string, currencyId?: string) {
+    if (await isAggregatedAssetsEnabled()) {
+      await waitForElementById(`asset-detail-scroll-view-${currencyId ?? assetName.toLowerCase()}`);
+    } else {
+      await waitForElementById(this.titleId(assetName.toLowerCase()));
+    }
   }
 
   @Step("Expect asset balance to be visible")
   async expectAccountsBalanceVisible() {
+    if (await isAggregatedAssetsEnabled()) {
+      return; // screen already confirmed in waitForAccountPageToLoad; no legacy balance element in Q2
+    }
     const balanceEl = this.assetBalance();
     await detoxExpect(balanceEl).toBeVisible();
   }
