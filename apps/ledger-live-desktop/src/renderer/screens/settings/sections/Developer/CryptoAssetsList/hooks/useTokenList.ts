@@ -10,7 +10,6 @@ export const useTokenList = (initialFamily: string = "ethereum") => {
   const [selectedFamilyOption, setSelectedFamilyOption] = useState<FamilyOption | null>(
     initialOption,
   );
-  const [isStaging, setIsStaging] = useState<boolean>(true);
   const [pageSize, setPageSize] = useState<number>(1000);
   const [selectedOutputFields, setSelectedOutputFields] = useState<string[]>([
     ...TOKEN_OUTPUT_FIELDS,
@@ -64,10 +63,6 @@ export const useTokenList = (initialFamily: string = "ethereum") => {
     refetch();
   };
 
-  const handleToggleStaging = () => {
-    setIsStaging(!isStaging);
-  };
-
   const handleLoadMore = () => {
     if (loadNext) {
       loadNext();
@@ -109,7 +104,6 @@ export const useTokenList = (initialFamily: string = "ethereum") => {
     setRef("");
     setSelectedOutputFields([...TOKEN_OUTPUT_FIELDS]);
     setPageSize(1000);
-    setIsStaging(true);
     setSelectedFamilyOption(FAMILY_OPTIONS[0]);
   };
 
@@ -119,7 +113,6 @@ export const useTokenList = (initialFamily: string = "ethereum") => {
 
   return {
     selectedFamilyOption,
-    isStaging,
     pageSize,
     selectedOutputFields,
     isOptionsOpen,
@@ -139,7 +132,6 @@ export const useTokenList = (initialFamily: string = "ethereum") => {
     handleFamilyChange,
     handlePageSizeChange,
     handleRefresh,
-    handleToggleStaging,
     handleLoadMore,
     toggleOptionsPanel,
     toggleTokenExpanded,
