@@ -105,12 +105,14 @@ const cryptoAssetsApiInstance = createApi({
     findTokenById: build.query<TokenCurrency | undefined, TokenByIdParams>({
       query: params => {
         const baseUrl = getEnv("CAL_SERVICE_URL");
+        const ref = getEnv("CAL_REF");
         return {
           url: `${baseUrl}/v1/tokens`,
           params: {
             id: params.id,
             limit: "1",
             output: TOKEN_OUTPUT_FIELDS.join(","),
+            ...(ref ? { ref } : {}),
           },
         };
       },
@@ -124,6 +126,7 @@ const cryptoAssetsApiInstance = createApi({
     >({
       query: params => {
         const baseUrl = getEnv("CAL_SERVICE_URL");
+        const ref = getEnv("CAL_REF");
         return {
           url: `${baseUrl}/v1/tokens`,
           params: {
@@ -134,6 +137,7 @@ const cryptoAssetsApiInstance = createApi({
             ...(params.token_identifier === undefined
               ? {}
               : { token_identifier: params.token_identifier }),
+            ...(ref ? { ref } : {}),
           },
         };
       },
