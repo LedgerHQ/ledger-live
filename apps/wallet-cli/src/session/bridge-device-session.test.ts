@@ -86,7 +86,7 @@ describe("withCurrencyDeviceSession", () => {
       WalletCliDeviceError,
     );
     expect(calls.execute).toHaveLength(0);
-    // The transport was never established, so the always-on reset has nothing to disconnect.
+    // No session was established, so the always-on reset has nothing to disconnect.
     expect(calls.reset).toBe(0);
   });
 
@@ -97,7 +97,6 @@ describe("withCurrencyDeviceSession", () => {
       WalletCliDeviceError,
     );
     expect(calls.execute).toHaveLength(1);
-    // A session was opened before app-open failed, so it must be torn down.
     expect(calls.reset).toBe(1);
   });
 
