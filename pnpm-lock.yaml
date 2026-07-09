@@ -8529,7 +8529,7 @@ importers:
         specifier: ^7.1.2
         version: 7.1.2
       '@domain/entity-client-identity':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../domain/entity/client-identity
       '@domain/entity-currency-crypto':
         specifier: workspace:^
