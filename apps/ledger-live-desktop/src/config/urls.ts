@@ -56,6 +56,8 @@ export const urls = {
       "https://www.ledger.com/academy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
   },
   managerHelpRequest: "https://support.ledger.com/article/4404382258961-zd",
+  accountPublicKeyUnavailable:
+    "https://support.ledger.com/article/Account-needs-to-be-re-added-error",
   contactSupport: "https://support.ledger.com/",
   contactSupportWebview: "https://support.ledger.com/article/4423020306705-zd",
   whatIsARecoveryPhrase: "https://www.ledger.com/academy/crypto/what-is-a-recovery-phrase",

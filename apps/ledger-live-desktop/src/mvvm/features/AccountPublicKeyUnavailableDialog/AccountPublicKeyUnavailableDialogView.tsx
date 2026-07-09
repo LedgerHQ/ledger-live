@@ -9,7 +9,9 @@ const AccountPublicKeyUnavailableDialogView = ({
   title,
   description,
   ctaLabel,
+  learnMoreLabel,
   onClose,
+  onLearnMore,
 }: AccountPublicKeyUnavailableDialogViewProps) => {
   const handleOpenChange = (open: boolean) => {
     if (!open) onClose();
@@ -29,6 +31,7 @@ const AccountPublicKeyUnavailableDialogView = ({
               title={title}
               description={description}
               primaryCta={{ label: ctaLabel, onPress: onClose }}
+              secondaryCta={{ label: learnMoreLabel, onPress: onLearnMore }}
             />
           </DialogBody>
         </DialogBackgroundToneProvider>
