@@ -1,47 +1,34 @@
-// TODO Remove dependency to `"@ledgerhq/types-live"` once
-// the legacy bridge is deleted
-import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { encodeNftId } from "@ledgerhq/ledger-wallet-framework/nft/nftId";
-import {
-  encodeERC1155OperationId,
-  encodeERC721OperationId,
-} from "@ledgerhq/ledger-wallet-framework/nft/nftOperationId";
-import {
-  encodeOperationId,
-  encodeSubOperationId,
-} from "@ledgerhq/ledger-wallet-framework/operation";
-import { Operation, OperationType } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import eip55 from "eip55";
-import {
-  LedgerExplorerOperation,
+import type {
   LedgerExplorerERC20TransferEvent,
-  LedgerExplorerER721TransferEvent,
   LedgerExplorerER1155TransferEvent,
+  LedgerExplorerER721TransferEvent,
   LedgerExplorerInternalTransaction,
+  LedgerExplorerOperation,
 } from "../types";
 import { detectEvmStakingOperationType } from "../staking/detectOperationType";
-import { safeEncodeEIP55 } from "../utils";
+import { safeBigInt, safeEncodeEIP55 } from "../utils";
 
 /**
  * Adapter to convert a Ledger Explorer operation
  * into Ledger Live Operations
  */
 export const ledgerOperationToOperations = (
-  accountId: string,
+  address: string,
+  currencyId: string,
   ledgerOp: LedgerExplorerOperation,
-): Operation[] => {
-  const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
+): Array<Operation<MemoNotSupported>> => {
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(ledgerOp.from);
   const to = safeEncodeEIP55(ledgerOp.to);
   const input = ledgerOp.input ?? undefined;
   const methodId = input ? input.slice(0, 10) : undefined; // 0x + 4-byte selector
-  const value = new BigNumber(ledgerOp.value);
-  const fee = new BigNumber(ledgerOp.gas_used).times(new BigNumber(ledgerOp.gas_price));
-  const hasFailed = !ledgerOp.status;
+  const failed = !ledgerOp.status;
   const date = new Date(ledgerOp.block.time);
-  const types: OperationType[] = [];
+  const senders = from ? [from] : [];
+  const recipients = to ? [to] : [];
+  const types: string[] = [];
 
   if (to === checksummedAddress) {
     types.push("IN");
@@ -50,35 +37,38 @@ export const ledgerOperationToOperations = (
     // Recognize staking calls (delegate/undelegate/withdraw/reward) so they are not
     // collapsed into a generic FEES/OUT operation, mirroring the etherscan adapter.
     const stakingType = detectEvmStakingOperationType(currencyId, to, methodId);
-    types.push(stakingType ?? (value.eq(0) ? "FEES" : "OUT"));
+    types.push(stakingType ?? (safeBigInt(ledgerOp.value) === 0n ? "FEES" : "OUT"));
   }
   if (!types.length) {
     types.push("NONE");
   }
 
+  const feesPayer = senders.length === 1 ? senders[0] : undefined;
+
   // Value = transferred amount only (same whether tx failed or not); fee is separate. Ledger Wallet contract is applied by generic-coin-framework bridge.
-  return types.map(
-    type =>
-      ({
-        id: encodeOperationId(accountId, ledgerOp.hash, type),
-        hash: ledgerOp.hash,
-        type: type,
-        value,
-        fee,
-        senders: from ? [from] : [],
-        recipients: to ? [to] : [],
-        blockHeight: ledgerOp.block.height,
-        blockHash: ledgerOp.block.hash,
-        transactionSequenceNumber: new BigNumber(ledgerOp.nonce_value),
-        accountId,
-        date,
-        subOperations: [],
-        nftOperations: [],
-        internalOperations: [],
-        hasFailed,
-        extra: {},
-      }) as Operation,
-  );
+  return types.map(type => ({
+    id: `${address}-${ledgerOp.hash}-${type}`,
+    type,
+    senders,
+    recipients,
+    value: safeBigInt(ledgerOp.value),
+    asset: { type: "native" },
+    tx: {
+      hash: ledgerOp.hash,
+      block: {
+        height: ledgerOp.block.height,
+        hash: ledgerOp.block.hash,
+        time: date,
+      },
+      fees: safeBigInt(ledgerOp.gas_used) * safeBigInt(ledgerOp.gas_price),
+      date,
+      failed,
+      ...(feesPayer ? { feesPayer } : {}),
+    },
+    details: {
+      sequence: ledgerOp.nonce_value,
+    },
+  }));
 };
 
 /**
@@ -86,19 +76,16 @@ export const ledgerOperationToOperations = (
  * on Ledger explorers into LL Operations
  */
 export const ledgerERC20EventToOperations = (
-  coinOperation: Operation,
+  address: string,
+  coinOperation: Operation<MemoNotSupported>,
   event: LedgerExplorerERC20TransferEvent,
   index = 0,
-): Operation[] => {
-  const { accountId, hash, fee, blockHeight, blockHash, transactionSequenceNumber, date } =
-    coinOperation;
-  const { xpubOrAddress: address } = decodeAccountId(accountId);
-
+): Array<Operation<MemoNotSupported>> => {
+  const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(event.from);
   const to = safeEncodeEIP55(event.to);
-  const checksummedAddress = eip55.encode(address);
-  const value = new BigNumber(event.count);
-  const types: OperationType[] = [];
+  const contract = eip55.encode(event.contract);
+  const types: string[] = [];
 
   if (to === checksummedAddress) {
     types.push("IN");
@@ -107,28 +94,21 @@ export const ledgerERC20EventToOperations = (
     types.push("OUT");
   }
 
-  return types.map(
-    type =>
-      ({
-        // NOTE Bridge implementations replace property `id`
-        id: encodeSubOperationId(accountId, hash, type, index),
-        hash: hash,
-        type: type,
-        value,
-        fee: fee,
-        senders: from ? [from] : [],
-        recipients: to ? [to] : [],
-        contract: eip55.encode(event.contract),
-        blockHeight: blockHeight,
-        blockHash: blockHash,
-        transactionSequenceNumber: transactionSequenceNumber,
-        // NOTE Bridge implementations replace property `accountId`
-        // TODO Remove property once the legacy bridge is deleted
-        accountId,
-        date,
-        extra: {},
-      }) as Operation,
-  );
+  return types.map(type => ({
+    id: `${coinOperation.tx.hash}-erc20-${index}-${type}`,
+    type,
+    senders: from ? [from] : [],
+    recipients: to ? [to] : [],
+    value: safeBigInt(event.count),
+    asset: { type: "erc20", assetReference: contract, assetOwner: address },
+    tx: coinOperation.tx,
+    details: {
+      ledgerOpType: type,
+      assetAmount: event.count,
+      assetSenders: from ? [from] : [],
+      assetRecipients: to ? [to] : [],
+    },
+  }));
 };
 
 /**
@@ -136,22 +116,16 @@ export const ledgerERC20EventToOperations = (
  * on Ledger explorers into LL Operations
  */
 export const ledgerERC721EventToOperations = (
-  coinOperation: Operation,
+  address: string,
+  coinOperation: Operation<MemoNotSupported>,
   event: LedgerExplorerER721TransferEvent,
   index = 0,
-): Operation[] => {
-  const { hash, fee, blockHeight, blockHash, transactionSequenceNumber, date, accountId } =
-    coinOperation;
-  const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
-  const { token_id: tokenId } = event;
-
+): Array<Operation<MemoNotSupported>> => {
+  const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(event.sender);
   const to = safeEncodeEIP55(event.receiver);
-  const checksummedAddress = eip55.encode(address);
-  const value = new BigNumber(1); // value is representing the number of NFT transfered. ERC721 are always sending 1 NFT per transaction
   const contract = eip55.encode(event.contract);
-  const nftId = encodeNftId(accountId, contract, tokenId, currencyId);
-  const types: OperationType[] = [];
+  const types: string[] = [];
 
   if (to === checksummedAddress) {
     types.push("NFT_IN");
@@ -160,27 +134,22 @@ export const ledgerERC721EventToOperations = (
     types.push("NFT_OUT");
   }
 
-  return types.map(
-    type =>
-      ({
-        id: encodeERC721OperationId(nftId, hash, type, index),
-        hash,
-        type: type,
-        fee: fee,
-        senders: from ? [from] : [],
-        recipients: to ? [to] : [],
-        blockHeight,
-        blockHash,
-        transactionSequenceNumber,
-        accountId,
-        standard: "ERC721",
-        contract,
-        tokenId,
-        value,
-        date,
-        extra: {},
-      }) as Operation,
-  );
+  return types.map(type => ({
+    id: `${coinOperation.tx.hash}-erc721-${index}-${type}`,
+    type,
+    senders: from ? [from] : [],
+    recipients: to ? [to] : [],
+    value: 1n, // value is representing the number of NFT transfered. ERC721 are always sending 1 NFT per transaction
+    asset: { type: "erc721", assetReference: contract, assetOwner: address },
+    tx: coinOperation.tx,
+    details: {
+      ledgerOpType: type,
+      tokenId: event.token_id,
+      assetAmount: "1",
+      assetSenders: from ? [from] : [],
+      assetRecipients: to ? [to] : [],
+    },
+  }));
 };
 
 /**
@@ -188,18 +157,16 @@ export const ledgerERC721EventToOperations = (
  * on Ledger explorers into LL Operations
  */
 export const ledgerERC1155EventToOperations = (
-  coinOperation: Operation,
+  address: string,
+  coinOperation: Operation<MemoNotSupported>,
   event: LedgerExplorerER1155TransferEvent,
   index = 0,
-): Operation[] => {
-  const { hash, fee, blockHeight, blockHash, transactionSequenceNumber, date, accountId } =
-    coinOperation;
-  const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
+): Array<Operation<MemoNotSupported>> => {
+  const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(event.sender);
   const to = safeEncodeEIP55(event.receiver);
-  const checksummedAddress = eip55.encode(address);
   const contract = eip55.encode(event.contract);
-  const types: OperationType[] = [];
+  const types: string[] = [];
 
   if (to === checksummedAddress) {
     types.push("NFT_IN");
@@ -210,29 +177,23 @@ export const ledgerERC1155EventToOperations = (
 
   return event.transfers.flatMap((transfer, transferIndex) => {
     const { id: tokenId, value: quantity } = transfer;
-    const nftId = encodeNftId(accountId, contract, tokenId, currencyId);
 
-    return types.map(
-      type =>
-        ({
-          id: encodeERC1155OperationId(nftId, hash, type, index, transferIndex),
-          hash,
-          type,
-          fee,
-          senders: from ? [from] : [],
-          recipients: to ? [to] : [],
-          blockHeight,
-          blockHash,
-          transactionSequenceNumber,
-          accountId,
-          standard: "ERC1155",
-          contract,
-          tokenId,
-          value: new BigNumber(quantity),
-          date,
-          extra: {},
-        }) as Operation,
-    );
+    return types.map(type => ({
+      id: `${coinOperation.tx.hash}-erc1155-${index}-${transferIndex}-${type}`,
+      type,
+      senders: from ? [from] : [],
+      recipients: to ? [to] : [],
+      value: safeBigInt(quantity),
+      asset: { type: "erc1155", assetReference: contract, assetOwner: address },
+      tx: coinOperation.tx,
+      details: {
+        ledgerOpType: type,
+        tokenId,
+        assetAmount: quantity,
+        assetSenders: from ? [from] : [],
+        assetRecipients: to ? [to] : [],
+      },
+    }));
   });
 };
 
@@ -241,20 +202,19 @@ export const ledgerERC1155EventToOperations = (
  * on Ledger explorers into LL Operations
  */
 export const ledgerInternalTransactionToOperations = (
-  coinOperation: Operation,
+  address: string,
+  coinOperation: Operation<MemoNotSupported>,
   action: LedgerExplorerInternalTransaction,
   index = 0,
-): Operation[] => {
-  if (coinOperation.hasFailed) return [];
+): Array<Operation<MemoNotSupported>> => {
+  if (coinOperation.tx.failed) return [];
 
-  const { hash, blockHeight, blockHash, date, accountId } = coinOperation;
-  const { xpubOrAddress: address } = decodeAccountId(accountId);
+  const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(action.from);
   const to = safeEncodeEIP55(action.to);
-  const checksummedAddress = eip55.encode(address);
   const hasFailed = !!action.error; // AFAIK this is not working, all actions contain error = null even when it reverted
-  const value = new BigNumber(action.value);
-  const types: OperationType[] = [];
+  const value = safeBigInt(action.value);
+  const types: string[] = [];
 
   // Ledger explorers are indexing the first `CALL` opcode of a smart contract transaction as an
   // internal transaction which is wrong. Only children `CALL` opcode should be indexed,
@@ -263,7 +223,7 @@ export const ledgerInternalTransactionToOperations = (
   if (
     from === coinOperation.senders[0] &&
     to === coinOperation.recipients[0] &&
-    value.isEqualTo(coinOperation.value)
+    value === coinOperation.value
   ) {
     return [];
   }
@@ -275,22 +235,21 @@ export const ledgerInternalTransactionToOperations = (
     types.push("OUT");
   }
 
-  return types.map(
-    type =>
-      ({
-        id: encodeSubOperationId(accountId, hash, type, index),
-        hash: hash,
-        type: type,
-        value,
-        fee: new BigNumber(0), // unecessary as it's already contained in the fees of the main op
-        senders: from ? [from] : [],
-        recipients: to ? [to] : [],
-        blockHeight,
-        blockHash,
-        accountId,
-        date,
-        hasFailed,
-        extra: {},
-      }) as Operation,
-  );
+  return types.map(type => ({
+    id: `${coinOperation.tx.hash}-internal-${index}-${type}`,
+    type,
+    senders: from ? [from] : [],
+    recipients: to ? [to] : [],
+    value,
+    asset: { type: "native" },
+    tx: {
+      ...coinOperation.tx,
+      fees: 0n, // already contained in the fees of the main op
+      failed: hasFailed,
+    },
+    details: {
+      internal: true,
+      hasFailed,
+    },
+  }));
 };

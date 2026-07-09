@@ -1,33 +1,21 @@
-// TODO Remove dependency to `"@ledgerhq/types-live"` once
-// the legacy bridge is deleted
 import type {
   BlockOperation,
   TransferBlockOperation,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { encodeNftId } from "@ledgerhq/ledger-wallet-framework/nft/nftId";
-import {
-  encodeERC1155OperationId,
-  encodeERC721OperationId,
-} from "@ledgerhq/ledger-wallet-framework/nft/nftOperationId";
-import {
-  encodeOperationId,
-  encodeSubOperationId,
-} from "@ledgerhq/ledger-wallet-framework/operation";
-import { Operation, OperationType } from "@ledgerhq/types-live";
+import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
 import eip55 from "eip55";
 import { InvalidExplorerResponse } from "../errors";
 import { NO_TOKEN } from "../network/explorer/types";
 import { detectEvmStakingOperationType } from "../staking/detectOperationType";
-import {
-  EtherscanOperation,
+import type {
+  EtherscanERC1155Event,
   EtherscanERC20Event,
   EtherscanERC721Event,
-  EtherscanERC1155Event,
   EtherscanInternalTransaction,
+  EtherscanOperation,
 } from "../types";
-import { buildSmartContractDetails, safeEncodeEIP55 } from "../utils";
+import { buildSmartContractDetails, safeBigInt, safeEncodeEIP55 } from "../utils";
 import { NON_VALUE_TRANSFER_CALL_TYPES } from "./nonValueTransferCallTypes";
 
 /**
@@ -66,17 +54,19 @@ export const safeDate = (op: { timeStamp?: string; timestamp?: string }): Date =
  * It can return more than one operation in case of self-send
  */
 export const etherscanOperationToOperations = (
-  accountId: string,
+  address: string,
+  currencyId: string,
   etherscanOp: EtherscanOperation,
-): Operation[] => {
-  const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
+): Array<Operation<MemoNotSupported>> => {
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(etherscanOp.from);
   const to = safeEncodeEIP55(etherscanOp.to) || safeEncodeEIP55(etherscanOp.contractAddress);
-  const value = safeBigNumber(etherscanOp.value);
-  const fee = safeBigNumber(etherscanOp.gasUsed).times(safeBigNumber(etherscanOp.gasPrice));
-  const hasFailed = etherscanOp.isError === "1";
-  const types: OperationType[] = [];
+  const value = safeBigInt(etherscanOp.value);
+  const fees = safeBigInt(etherscanOp.gasUsed) * safeBigInt(etherscanOp.gasPrice);
+  const failed = etherscanOp.isError === "1";
+  const senders = from ? [from] : [];
+  const recipients = to ? [to] : [];
+  const types: string[] = [];
 
   if (to === checksummedAddress) {
     types.push("IN");
@@ -96,29 +86,34 @@ export const etherscanOperationToOperations = (
     etherscanOp.contractAddress,
   );
 
+  const feesPayer = senders.length === 1 ? senders[0] : undefined;
+  const date = safeDate(etherscanOp);
+
   // Value = transferred amount only (same whether tx failed or not); fee is separate. Ledger Wallet contract is applied by generic-coin-framework bridge.
-  return types.map(
-    type =>
-      ({
-        id: encodeOperationId(accountId, etherscanOp.hash, type),
-        hash: etherscanOp.hash,
-        type,
-        value,
-        fee,
-        senders: from ? [from] : [],
-        recipients: to ? [to] : [],
-        blockHeight: Number.parseInt(etherscanOp.blockNumber, 10),
-        blockHash: etherscanOp.blockHash,
-        transactionSequenceNumber: new BigNumber(etherscanOp.nonce),
-        accountId: accountId,
-        date: safeDate(etherscanOp),
-        subOperations: [],
-        nftOperations: [],
-        internalOperations: [],
-        hasFailed,
-        extra: contractExtra ? { ...contractExtra } : {},
-      }) as Operation,
-  );
+  return types.map(type => ({
+    id: `${address}-${etherscanOp.hash}-${type}`,
+    type,
+    senders,
+    recipients,
+    value,
+    asset: { type: "native" },
+    tx: {
+      hash: etherscanOp.hash,
+      block: {
+        height: Number.parseInt(etherscanOp.blockNumber, 10) || 0,
+        hash: etherscanOp.blockHash,
+        time: date,
+      },
+      fees,
+      date,
+      failed,
+      ...(feesPayer ? { feesPayer } : {}),
+    },
+    details: {
+      sequence: etherscanOp.nonce,
+      ...(contractExtra ?? {}),
+    },
+  }));
 };
 
 /**
@@ -128,18 +123,18 @@ export const etherscanOperationToOperations = (
  * in case of self-send or airdrop
  */
 export const etherscanERC20EventToOperations = (
-  accountId: string,
+  address: string,
   event: EtherscanERC20Event,
   index = 0,
-): Operation[] => {
-  const { xpubOrAddress: address } = decodeAccountId(accountId);
-
+): Array<Operation<MemoNotSupported>> => {
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(event.from);
   const to = safeEncodeEIP55(event.to);
-  const value = safeBigNumber(event.value);
-  const fee = safeBigNumber(event.gasUsed).times(safeBigNumber(event.gasPrice));
-  const types: OperationType[] = [];
+  const contract = eip55.encode(event.contractAddress);
+  const value = safeBigInt(event.value);
+  const fees = safeBigInt(event.gasUsed) * safeBigInt(event.gasPrice);
+  const date = safeDate(event);
+  const types: string[] = [];
 
   if (to === checksummedAddress) {
     types.push("IN");
@@ -148,28 +143,32 @@ export const etherscanERC20EventToOperations = (
     types.push("OUT");
   }
 
-  return types.map(
-    type =>
-      ({
-        // NOTE Bridge implementations replace property `id`
-        id: encodeSubOperationId(accountId, event.hash, type, index),
-        hash: event.hash,
-        type,
-        value,
-        fee,
-        senders: from ? [from] : [],
-        recipients: to ? [to] : [],
-        contract: eip55.encode(event.contractAddress),
-        blockHeight: Number.parseInt(event.blockNumber, 10),
-        blockHash: event.blockHash,
-        transactionSequenceNumber: new BigNumber(event.nonce),
-        // NOTE Bridge implementations replace property `accountId`
-        // TODO Remove property once the legacy bridge is deleted
-        accountId,
-        date: safeDate(event),
-        extra: {},
-      }) as Operation,
-  );
+  return types.map(type => ({
+    id: `${event.hash}-erc20-${index}-${type}`,
+    type,
+    senders: from ? [from] : [],
+    recipients: to ? [to] : [],
+    value,
+    asset: { type: "erc20", assetReference: contract, assetOwner: address },
+    tx: {
+      hash: event.hash,
+      block: {
+        height: Number.parseInt(event.blockNumber, 10) || 0,
+        hash: event.blockHash,
+        time: date,
+      },
+      fees,
+      date,
+      failed: false,
+    },
+    details: {
+      sequence: event.nonce,
+      ledgerOpType: type,
+      assetAmount: event.value,
+      assetSenders: from ? [from] : [],
+      assetRecipients: to ? [to] : [],
+    },
+  }));
 };
 
 /**
@@ -179,20 +178,17 @@ export const etherscanERC20EventToOperations = (
  * in case of self-send or airdrop
  */
 export const etherscanERC721EventToOperations = (
-  accountId: string,
+  address: string,
   event: EtherscanERC721Event,
   index = 0,
-): Operation[] => {
-  const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
-
+): Array<Operation<MemoNotSupported>> => {
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(event.from);
   const to = safeEncodeEIP55(event.to);
-  const value = new BigNumber(1); // value is representing the number of NFT transfered. ERC721 are always sending 1 NFT per transaction
-  const fee = safeBigNumber(event.gasUsed).times(safeBigNumber(event.gasPrice));
   const contract = eip55.encode(event.contractAddress);
-  const nftId = encodeNftId(accountId, contract, event.tokenID, currencyId);
-  const types: OperationType[] = [];
+  const fees = safeBigInt(event.gasUsed) * safeBigInt(event.gasPrice);
+  const date = safeDate(event);
+  const types: string[] = [];
 
   if (to === checksummedAddress) {
     types.push("NFT_IN");
@@ -201,27 +197,33 @@ export const etherscanERC721EventToOperations = (
     types.push("NFT_OUT");
   }
 
-  return types.map(
-    type =>
-      ({
-        id: encodeERC721OperationId(nftId, event.hash, type, index),
-        hash: event.hash,
-        type,
-        fee,
-        senders: from ? [from] : [],
-        recipients: to ? [to] : [],
-        blockHeight: Number.parseInt(event.blockNumber, 10),
-        blockHash: event.blockHash,
-        transactionSequenceNumber: new BigNumber(event.nonce),
-        accountId,
-        standard: "ERC721",
-        contract,
-        tokenId: event.tokenID,
-        value,
-        date: safeDate(event),
-        extra: {},
-      }) as Operation,
-  );
+  return types.map(type => ({
+    id: `${event.hash}-erc721-${index}-${type}`,
+    type,
+    senders: from ? [from] : [],
+    recipients: to ? [to] : [],
+    value: 1n, // value is representing the number of NFT transfered. ERC721 are always sending 1 NFT per transaction
+    asset: { type: "erc721", assetReference: contract, assetOwner: address },
+    tx: {
+      hash: event.hash,
+      block: {
+        height: Number.parseInt(event.blockNumber, 10) || 0,
+        hash: event.blockHash,
+        time: date,
+      },
+      fees,
+      date,
+      failed: false,
+    },
+    details: {
+      sequence: event.nonce,
+      tokenId: event.tokenID,
+      ledgerOpType: type,
+      assetAmount: "1",
+      assetSenders: from ? [from] : [],
+      assetRecipients: to ? [to] : [],
+    },
+  }));
 };
 
 /**
@@ -229,20 +231,18 @@ export const etherscanERC721EventToOperations = (
  * on etherscan APIs into LL Operations
  */
 export const etherscanERC1155EventToOperations = (
-  accountId: string,
+  address: string,
   event: EtherscanERC1155Event,
   index = 0,
-): Operation[] => {
-  const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
-
+): Array<Operation<MemoNotSupported>> => {
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(event.from);
   const to = safeEncodeEIP55(event.to);
-  const value = safeBigNumber(event.tokenValue); // value is representing the number of NFT transfered.
-  const fee = safeBigNumber(event.gasUsed).times(safeBigNumber(event.gasPrice));
   const contract = eip55.encode(event.contractAddress);
-  const nftId = encodeNftId(accountId, contract, event.tokenID, currencyId);
-  const types: OperationType[] = [];
+  const value = safeBigInt(event.tokenValue); // value is representing the number of NFT transfered.
+  const fees = safeBigInt(event.gasUsed) * safeBigInt(event.gasPrice);
+  const date = safeDate(event);
+  const types: string[] = [];
 
   if (to === checksummedAddress) {
     types.push("NFT_IN");
@@ -251,27 +251,33 @@ export const etherscanERC1155EventToOperations = (
     types.push("NFT_OUT");
   }
 
-  return types.map(
-    type =>
-      ({
-        id: encodeERC1155OperationId(nftId, event.hash, type, index),
-        hash: event.hash,
-        type,
-        fee,
-        senders: from ? [from] : [],
-        recipients: to ? [to] : [],
-        blockHeight: Number.parseInt(event.blockNumber, 10),
-        blockHash: event.blockHash,
-        transactionSequenceNumber: new BigNumber(event.nonce),
-        accountId,
-        standard: "ERC1155",
-        contract,
-        tokenId: event.tokenID,
-        value,
-        date: safeDate(event),
-        extra: {},
-      }) as Operation,
-  );
+  return types.map(type => ({
+    id: `${event.hash}-erc1155-${index}-${type}`,
+    type,
+    senders: from ? [from] : [],
+    recipients: to ? [to] : [],
+    value,
+    asset: { type: "erc1155", assetReference: contract, assetOwner: address },
+    tx: {
+      hash: event.hash,
+      block: {
+        height: Number.parseInt(event.blockNumber, 10) || 0,
+        hash: event.blockHash,
+        time: date,
+      },
+      fees,
+      date,
+      failed: false,
+    },
+    details: {
+      sequence: event.nonce,
+      tokenId: event.tokenID,
+      ledgerOpType: type,
+      assetAmount: event.tokenValue,
+      assetSenders: from ? [from] : [],
+      assetRecipients: to ? [to] : [],
+    },
+  }));
 };
 
 /**
@@ -291,22 +297,21 @@ function isNonValueTransferInternalTx(
  * on etherscan APIs into LL Operations
  */
 export const etherscanInternalTransactionToOperations = (
-  accountId: string,
+  address: string,
   internalTx: EtherscanInternalTransaction,
   index = 0,
-): Operation[] => {
+): Array<Operation<MemoNotSupported>> => {
   // Phantom IN/OUT guard; `isInternalTransactionValid` applies the same filter on the `getBlock` path.
   if (isNonValueTransferInternalTx(internalTx)) return [];
 
   const { hash, blockNumber, isError } = internalTx;
-  const { xpubOrAddress: address } = decodeAccountId(accountId);
-
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(internalTx.from);
   const to = safeEncodeEIP55(internalTx.to);
-  const value = safeBigNumber(internalTx.value);
-  const types: OperationType[] = [];
+  const value = safeBigInt(internalTx.value);
   const hasFailed = isError === "1";
+  const date = safeDate(internalTx);
+  const types: string[] = [];
 
   if (to === checksummedAddress) {
     types.push("IN");
@@ -315,24 +320,28 @@ export const etherscanInternalTransactionToOperations = (
     types.push("OUT");
   }
 
-  return types.map(
-    type =>
-      ({
-        id: encodeSubOperationId(accountId, hash, type, index),
-        hash: hash,
-        type,
-        fee: new BigNumber(0), // unecessary as it's already contained in the fees of the main op
-        senders: from ? [from] : [],
-        recipients: to ? [to] : [],
-        blockHeight: Number.parseInt(blockNumber, 10),
-        blockHash: undefined, // not made directly available by etherscan, only blockNumber is provided
-        accountId,
-        value,
-        date: safeDate(internalTx),
-        hasFailed,
-        extra: {},
-      }) as Operation,
-  );
+  return types.map(type => ({
+    id: `${hash}-internal-${index}-${type}`,
+    type,
+    senders: from ? [from] : [],
+    recipients: to ? [to] : [],
+    value,
+    asset: { type: "native" },
+    tx: {
+      hash,
+      block: {
+        height: Number.parseInt(blockNumber, 10) || 0,
+        hash: "", // not made directly available by etherscan, only blockNumber is provided
+        time: date,
+      },
+      fees: 0n, // unecessary as it's already contained in the fees of the main op
+      date,
+      failed: hasFailed,
+    },
+    details: {
+      internal: true,
+    },
+  }));
 };
 
 const NATIVE_ASSET = { type: "native" } as const;

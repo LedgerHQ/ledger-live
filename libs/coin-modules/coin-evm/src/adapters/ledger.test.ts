@@ -1,6 +1,4 @@
-import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { Operation } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import {
   LedgerExplorerER1155TransferEvent,
   LedgerExplorerER721TransferEvent,
@@ -16,38 +14,35 @@ import {
   ledgerOperationToOperations,
 } from "./ledger";
 
-const accountId = encodeAccountId({
-  type: "js",
-  version: "2",
-  currencyId: "ethereum",
-  xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-  derivationMode: "",
-});
+const address = "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d";
+const currencyId = "ethereum";
 
-const coinOperation: Operation = {
-  id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-FEES",
-  hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-  accountId,
-  blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-  blockHeight: 38476740,
-  recipients: ["0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"],
-  senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-  value: new BigNumber("0"), // FEES op: transferred amount only
-  fee: new BigNumber("4254163264389158"),
-  date: new Date("2023-01-24T17:11:45Z"),
-  transactionSequenceNumber: new BigNumber(75),
-  hasFailed: false,
-  nftOperations: [],
-  subOperations: [],
+const coinOperation: Operation<MemoNotSupported> = {
+  id: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-FEES",
   type: "FEES",
-  extra: {},
+  senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+  recipients: ["0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"],
+  value: 0n,
+  asset: { type: "native" },
+  tx: {
+    hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+    block: {
+      height: 38476740,
+      hash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+      time: new Date("2023-01-24T17:11:45Z"),
+    },
+    fees: 4254163264389158n,
+    date: new Date("2023-01-24T17:11:45Z"),
+    failed: false,
+  },
+  details: { sequence: 75 },
 };
 
 describe("EVM Family", () => {
   describe("adapters", () => {
     describe("ledger", () => {
       describe("ledgerOperationToOperations", () => {
-        it("should convert a ledger explorer smart contract creation operation (from their API) to a Ledger Live Operation", () => {
+        it("should convert a ledger explorer smart contract creation operation (from their API) to an Operation", () => {
           const ledgerExplorerOp: LedgerExplorerOperation = {
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
             transaction_type: 2,
@@ -86,40 +81,36 @@ describe("EVM Family", () => {
             },
           };
 
-          const accountId = encodeAccountId({
-            type: "js",
-            version: "2",
-            currencyId: "ethereum",
-            xpubOrAddress: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
-            derivationMode: "",
-          });
+          const unrelatedAddress = "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e";
 
-          const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NONE",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: [],
-            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            value: new BigNumber("0"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
-            hasFailed: false,
-            nftOperations: [],
-            subOperations: [],
-            internalOperations: [],
+          const expectedOperation = {
+            id: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NONE",
             type: "NONE",
-            extra: {},
+            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            recipients: [],
+            value: 0n,
+            asset: { type: "native" },
+            tx: {
+              hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+              block: {
+                height: 38476740,
+                hash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+                time: new Date("2023-01-24T17:11:45Z"),
+              },
+              fees: 4254163264389158n,
+              date: new Date("2023-01-24T17:11:45Z"),
+              failed: false,
+              feesPayer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            },
+            details: { sequence: 75 },
           };
 
-          expect(ledgerOperationToOperations(accountId, ledgerExplorerOp)).toEqual([
-            expectedOperation,
-          ]);
+          expect(
+            ledgerOperationToOperations(unrelatedAddress, "ethereum", ledgerExplorerOp),
+          ).toEqual([expectedOperation]);
         });
 
-        it("should convert ledger explorer smart contract operation to a Ledger Live Operation", () => {
+        it("should convert ledger explorer smart contract operation to an Operation", () => {
           const ledgerOperation: LedgerExplorerOperation = {
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
             transaction_type: 2,
@@ -157,32 +148,34 @@ describe("EVM Family", () => {
             },
           };
 
-          const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-FEES",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"],
-            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            value: new BigNumber("0"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
-            hasFailed: false,
-            nftOperations: [],
-            subOperations: [],
-            internalOperations: [],
+          const expectedOperation = {
+            id: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-FEES",
             type: "FEES",
-            extra: {},
+            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            recipients: ["0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"],
+            value: 0n,
+            asset: { type: "native" },
+            tx: {
+              hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+              block: {
+                height: 38476740,
+                hash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+                time: new Date("2023-01-24T17:11:45Z"),
+              },
+              fees: 4254163264389158n,
+              date: new Date("2023-01-24T17:11:45Z"),
+              failed: false,
+              feesPayer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            },
+            details: { sequence: 75 },
           };
 
-          expect(ledgerOperationToOperations(accountId, ledgerOperation)).toEqual([
+          expect(ledgerOperationToOperations(address, currencyId, ledgerOperation)).toEqual([
             expectedOperation,
           ]);
         });
 
-        it("should convert ledger explorer coin out operation to a Ledger Live Operation", () => {
+        it("should convert ledger explorer coin out operation to an Operation", () => {
           const ledgerOperation: LedgerExplorerOperation = {
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
             transaction_type: 2,
@@ -220,32 +213,34 @@ describe("EVM Family", () => {
             },
           };
 
-          const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"],
-            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            value: new BigNumber("1"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
-            hasFailed: false,
-            nftOperations: [],
-            subOperations: [],
-            internalOperations: [],
+          const expectedOperation = {
+            id: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT",
             type: "OUT",
-            extra: {},
+            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            recipients: ["0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"],
+            value: 1n,
+            asset: { type: "native" },
+            tx: {
+              hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+              block: {
+                height: 38476740,
+                hash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+                time: new Date("2023-01-24T17:11:45Z"),
+              },
+              fees: 4254163264389158n,
+              date: new Date("2023-01-24T17:11:45Z"),
+              failed: false,
+              feesPayer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            },
+            details: { sequence: 75 },
           };
 
-          expect(ledgerOperationToOperations(accountId, ledgerOperation)).toEqual([
+          expect(ledgerOperationToOperations(address, currencyId, ledgerOperation)).toEqual([
             expectedOperation,
           ]);
         });
 
-        it("should convert ledger explorer coin in operation to a Ledger Live Operation", () => {
+        it("should convert ledger explorer coin in operation to an Operation", () => {
           const ledgerOperation: LedgerExplorerOperation = {
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
             transaction_type: 2,
@@ -283,32 +278,34 @@ describe("EVM Family", () => {
             },
           };
 
-          const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            senders: ["0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"],
-            value: new BigNumber("1"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
-            hasFailed: false,
-            nftOperations: [],
-            subOperations: [],
-            internalOperations: [],
+          const expectedOperation = {
+            id: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN",
             type: "IN",
-            extra: {},
+            senders: ["0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"],
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: 1n,
+            asset: { type: "native" },
+            tx: {
+              hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+              block: {
+                height: 38476740,
+                hash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+                time: new Date("2023-01-24T17:11:45Z"),
+              },
+              fees: 4254163264389158n,
+              date: new Date("2023-01-24T17:11:45Z"),
+              failed: false,
+              feesPayer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+            },
+            details: { sequence: 75 },
           };
 
-          expect(ledgerOperationToOperations(accountId, ledgerOperation)).toEqual([
+          expect(ledgerOperationToOperations(address, currencyId, ledgerOperation)).toEqual([
             expectedOperation,
           ]);
         });
 
-        it("should convert ledger explorer coin none operation to a Ledger Live Operation", () => {
+        it("should convert ledger explorer coin none operation to an Operation", () => {
           const ledgerOperation: LedgerExplorerOperation = {
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
             transaction_type: 2,
@@ -346,32 +343,34 @@ describe("EVM Family", () => {
             },
           };
 
-          const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NONE",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
-            senders: ["0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"],
-            value: new BigNumber("1"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
-            hasFailed: false,
-            nftOperations: [],
-            subOperations: [],
-            internalOperations: [],
+          const expectedOperation = {
+            id: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NONE",
             type: "NONE",
-            extra: {},
+            senders: ["0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"],
+            recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+            value: 1n,
+            asset: { type: "native" },
+            tx: {
+              hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+              block: {
+                height: 38476740,
+                hash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+                time: new Date("2023-01-24T17:11:45Z"),
+              },
+              fees: 4254163264389158n,
+              date: new Date("2023-01-24T17:11:45Z"),
+              failed: false,
+              feesPayer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+            },
+            details: { sequence: 75 },
           };
 
-          expect(ledgerOperationToOperations(accountId, ledgerOperation)).toEqual([
+          expect(ledgerOperationToOperations(address, currencyId, ledgerOperation)).toEqual([
             expectedOperation,
           ]);
         });
 
-        it("should convert ledger explorer legacy coin none operation (smart contract creation) to a Ledger Live Operation", () => {
+        it("should convert ledger explorer legacy coin none operation (smart contract creation) to an Operation", () => {
           // This operation represents a smart contract creation
           // cf. https://polygonscan.com/tx/0x11a358387669d58f3791461124212e40e6899fd286074636f745990f57f87eb1
           // For some reason the explorer API returns a "to" address of "0x0"
@@ -414,32 +413,34 @@ describe("EVM Family", () => {
             },
           };
 
-          const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0x11a358387669d58f3791461124212e40e6899fd286074636f745990f57f87eb1-NONE",
-            hash: "0x11a358387669d58f3791461124212e40e6899fd286074636f745990f57f87eb1",
-            accountId,
-            blockHash: "0xcf0072dc5eb6e39ae5377b5323914f750da0cf5d2538f7d3ce7d8739c0624199",
-            blockHeight: 36795782,
-            recipients: [],
-            senders: ["0x787aCF62fFC81Bb171d1f46fB8b3Fc6503D503e8"],
-            value: new BigNumber("0"),
-            fee: new BigNumber("905335872155003804"),
-            date: new Date("2022-12-13T21:41:37Z"),
-            transactionSequenceNumber: new BigNumber(3),
-            hasFailed: false,
-            nftOperations: [],
-            subOperations: [],
-            internalOperations: [],
+          const expectedOperation = {
+            id: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d-0x11a358387669d58f3791461124212e40e6899fd286074636f745990f57f87eb1-NONE",
             type: "NONE",
-            extra: {},
+            senders: ["0x787aCF62fFC81Bb171d1f46fB8b3Fc6503D503e8"],
+            recipients: [],
+            value: 0n,
+            asset: { type: "native" },
+            tx: {
+              hash: "0x11a358387669d58f3791461124212e40e6899fd286074636f745990f57f87eb1",
+              block: {
+                height: 36795782,
+                hash: "0xcf0072dc5eb6e39ae5377b5323914f750da0cf5d2538f7d3ce7d8739c0624199",
+                time: new Date("2022-12-13T21:41:37Z"),
+              },
+              fees: 905335872155003804n,
+              date: new Date("2022-12-13T21:41:37Z"),
+              failed: false,
+              feesPayer: "0x787aCF62fFC81Bb171d1f46fB8b3Fc6503D503e8",
+            },
+            details: { sequence: 3 },
           };
 
-          expect(ledgerOperationToOperations(accountId, ledgerOperation)).toEqual([
+          expect(ledgerOperationToOperations(address, currencyId, ledgerOperation)).toEqual([
             expectedOperation,
           ]);
         });
 
-        it("should convert ledger explorer self send coin operation to 2 Ledger Live Operations", () => {
+        it("should convert ledger explorer self send coin operation to 2 Operations", () => {
           const ledgerOperation: LedgerExplorerOperation = {
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
             transaction_type: 2,
@@ -477,59 +478,48 @@ describe("EVM Family", () => {
             },
           };
 
-          const expectedOperation1: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN",
+          const selfSendTx = {
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            value: new BigNumber("1"),
-            fee: new BigNumber("4254163264389158"),
+            block: {
+              height: 38476740,
+              hash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+              time: new Date("2023-01-24T17:11:45Z"),
+            },
+            fees: 4254163264389158n,
             date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
-            hasFailed: false,
-            nftOperations: [],
-            subOperations: [],
-            internalOperations: [],
-            type: "IN",
-            extra: {},
-          };
-          const expectedOperation2: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            value: new BigNumber("1"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
-            hasFailed: false,
-            nftOperations: [],
-            subOperations: [],
-            internalOperations: [],
-            type: "OUT",
-            extra: {},
+            failed: false,
+            feesPayer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
           };
 
-          expect(ledgerOperationToOperations(accountId, ledgerOperation)).toEqual([
+          const expectedOperation1 = {
+            id: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN",
+            type: "IN",
+            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: 1n,
+            asset: { type: "native" },
+            tx: selfSendTx,
+            details: { sequence: 75 },
+          };
+          const expectedOperation2 = {
+            id: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT",
+            type: "OUT",
+            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: 1n,
+            asset: { type: "native" },
+            tx: selfSendTx,
+            details: { sequence: 75 },
+          };
+
+          expect(ledgerOperationToOperations(address, currencyId, ledgerOperation)).toEqual([
             expectedOperation1,
             expectedOperation2,
           ]);
         });
 
         it("should return an operation with the expected amount", () => {
-          const randomAccountId = encodeAccountId({
-            type: "js",
-            version: "2",
-            currencyId: "ethereum",
-            xpubOrAddress: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
-            derivationMode: "",
-          });
+          const unrelatedAddress = "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e";
 
           const ledgerExplorerNoneOp: LedgerExplorerOperation = {
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
@@ -571,13 +561,16 @@ describe("EVM Family", () => {
 
           // Successful Op
           expect(
-            ledgerOperationToOperations(randomAccountId, ledgerExplorerNoneOp)[0].value,
-          ).toEqual(new BigNumber(ledgerExplorerNoneOp.value));
+            ledgerOperationToOperations(unrelatedAddress, "ethereum", ledgerExplorerNoneOp)[0]
+              .value,
+          ).toEqual(BigInt(ledgerExplorerNoneOp.value));
           // Failing Op
           expect(
-            ledgerOperationToOperations(randomAccountId, { ...ledgerExplorerNoneOp, status: 0 })[0]
-              .value,
-          ).toEqual(new BigNumber(ledgerExplorerNoneOp.value));
+            ledgerOperationToOperations(unrelatedAddress, "ethereum", {
+              ...ledgerExplorerNoneOp,
+              status: 0,
+            })[0].value,
+          ).toEqual(BigInt(ledgerExplorerNoneOp.value));
 
           const ledgerExplorerFeesOp: LedgerExplorerOperation = {
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
@@ -618,13 +611,16 @@ describe("EVM Family", () => {
           };
 
           // Successful Op (value = transferred only; fee is separate; Ledger Wallet adds fee in bridge)
-          expect(ledgerOperationToOperations(accountId, ledgerExplorerFeesOp)[0].value).toEqual(
-            new BigNumber(ledgerExplorerFeesOp.value),
-          );
+          expect(
+            ledgerOperationToOperations(address, currencyId, ledgerExplorerFeesOp)[0].value,
+          ).toEqual(BigInt(ledgerExplorerFeesOp.value));
           // Failing Op (value = tx value, same as success)
           expect(
-            ledgerOperationToOperations(accountId, { ...ledgerExplorerFeesOp, status: 0 })[0].value,
-          ).toEqual(new BigNumber(ledgerExplorerFeesOp.value));
+            ledgerOperationToOperations(address, currencyId, {
+              ...ledgerExplorerFeesOp,
+              status: 0,
+            })[0].value,
+          ).toEqual(BigInt(ledgerExplorerFeesOp.value));
 
           const ledgerOperationOut: LedgerExplorerOperation = {
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
@@ -664,13 +660,16 @@ describe("EVM Family", () => {
           };
 
           // Successful Op (value = transferred only; fee is separate; Ledger Wallet adds fee in bridge)
-          expect(ledgerOperationToOperations(accountId, ledgerOperationOut)[0].value).toEqual(
-            new BigNumber(ledgerOperationOut.value),
-          );
+          expect(
+            ledgerOperationToOperations(address, currencyId, ledgerOperationOut)[0].value,
+          ).toEqual(BigInt(ledgerOperationOut.value));
           // Failing Op (value = tx value, same as success)
           expect(
-            ledgerOperationToOperations(accountId, { ...ledgerOperationOut, status: 0 })[0].value,
-          ).toEqual(new BigNumber(ledgerOperationOut.value));
+            ledgerOperationToOperations(address, currencyId, {
+              ...ledgerOperationOut,
+              status: 0,
+            })[0].value,
+          ).toEqual(BigInt(ledgerOperationOut.value));
 
           const ledgerOperationIn: LedgerExplorerOperation = {
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
@@ -710,13 +709,14 @@ describe("EVM Family", () => {
           };
 
           // Successful Op
-          expect(ledgerOperationToOperations(accountId, ledgerOperationIn)[0].value).toEqual(
-            new BigNumber(ledgerOperationOut.value),
-          );
+          expect(
+            ledgerOperationToOperations(address, currencyId, ledgerOperationIn)[0].value,
+          ).toEqual(BigInt(ledgerOperationOut.value));
           // Failing Op
           expect(
-            ledgerOperationToOperations(accountId, { ...ledgerOperationIn, status: 0 })[0].value,
-          ).toEqual(new BigNumber(ledgerOperationOut.value));
+            ledgerOperationToOperations(address, currencyId, { ...ledgerOperationIn, status: 0 })[0]
+              .value,
+          ).toEqual(BigInt(ledgerOperationOut.value));
         });
 
         it("should produce empty recipients when to is an empty string", () => {
@@ -750,7 +750,7 @@ describe("EVM Family", () => {
             },
           };
 
-          const result = ledgerOperationToOperations(accountId, ledgerOp);
+          const result = ledgerOperationToOperations(address, currencyId, ledgerOp);
 
           expect(result).toHaveLength(1);
           expect(result[0].recipients).toEqual([]);
@@ -787,20 +787,15 @@ describe("EVM Family", () => {
             },
           };
 
-          const result = ledgerOperationToOperations(accountId, ledgerOp);
+          const result = ledgerOperationToOperations(address, currencyId, ledgerOp);
 
           expect(result).toHaveLength(1);
           expect(result[0].senders).toEqual([]);
         });
 
         it("should detect a Monad staking withdraw (value 0 contract call) as a WITHDRAW_UNBONDED operation instead of FEES", () => {
-          const monadAccountId = encodeAccountId({
-            type: "js",
-            version: "2",
-            currencyId: "monad",
-            xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-            derivationMode: "",
-          });
+          const monadAddress = "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d";
+          const monadCurrencyId = "monad";
 
           const ledgerOp: LedgerExplorerOperation = {
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
@@ -837,7 +832,7 @@ describe("EVM Family", () => {
             },
           };
 
-          const result = ledgerOperationToOperations(monadAccountId, ledgerOp);
+          const result = ledgerOperationToOperations(monadAddress, monadCurrencyId, ledgerOp);
 
           expect(result).toHaveLength(1);
           expect(result[0].type).toBe("WITHDRAW_UNBONDED");
@@ -845,7 +840,7 @@ describe("EVM Family", () => {
       });
 
       describe("ledgerERC20EventToOperations", () => {
-        it("should convert a ledger explorer usdc out event to a Ledger Live Operation", () => {
+        it("should convert a ledger explorer usdc out event to an Operation", () => {
           const ledgerERC20Event: LedgerExplorerERC20TransferEvent = {
             contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
@@ -853,29 +848,32 @@ describe("EVM Family", () => {
             count: "100000000000000",
           };
 
-          const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT-i0",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
-            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-            value: new BigNumber("100000000000000"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
+          const expectedOperation = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-erc20-0-OUT",
             type: "OUT",
-            extra: {},
+            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+            value: 100000000000000n,
+            asset: {
+              type: "erc20",
+              assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+              assetOwner: address,
+            },
+            tx: coinOperation.tx,
+            details: {
+              ledgerOpType: "OUT",
+              assetAmount: "100000000000000",
+              assetSenders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              assetRecipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+            },
           };
 
-          expect(ledgerERC20EventToOperations(coinOperation, ledgerERC20Event)).toEqual([
+          expect(ledgerERC20EventToOperations(address, coinOperation, ledgerERC20Event)).toEqual([
             expectedOperation,
           ]);
         });
 
-        it("should convert a ledger explorer usdc in event to a Ledger Live Operation", () => {
+        it("should convert a ledger explorer usdc in event to an Operation", () => {
           const ledgerERC20Event: LedgerExplorerERC20TransferEvent = {
             contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
             from: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
@@ -883,24 +881,27 @@ describe("EVM Family", () => {
             count: "100000000000000",
           };
 
-          const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN-i0",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            senders: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
-            contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-            value: new BigNumber("100000000000000"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
+          const expectedOperation = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-erc20-0-IN",
             type: "IN",
-            extra: {},
+            senders: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: 100000000000000n,
+            asset: {
+              type: "erc20",
+              assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+              assetOwner: address,
+            },
+            tx: coinOperation.tx,
+            details: {
+              ledgerOpType: "IN",
+              assetAmount: "100000000000000",
+              assetSenders: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+              assetRecipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            },
           };
 
-          expect(ledgerERC20EventToOperations(coinOperation, ledgerERC20Event)).toEqual([
+          expect(ledgerERC20EventToOperations(address, coinOperation, ledgerERC20Event)).toEqual([
             expectedOperation,
           ]);
         });
@@ -913,10 +914,12 @@ describe("EVM Family", () => {
             count: "100000000000000",
           };
 
-          expect(ledgerERC20EventToOperations(coinOperation, ledgerERC20Event)).toEqual([]);
+          expect(ledgerERC20EventToOperations(address, coinOperation, ledgerERC20Event)).toEqual(
+            [],
+          );
         });
 
-        it("should convert a ledger explorer self usdc event into 2 Ledger Live Operations", () => {
+        it("should convert a ledger explorer self usdc event into 2 Operations", () => {
           const ledgerERC20Event: LedgerExplorerERC20TransferEvent = {
             contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
@@ -924,40 +927,46 @@ describe("EVM Family", () => {
             count: "100000000000000",
           };
 
-          const expectedOperation1: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN-i0",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-            value: new BigNumber("100000000000000"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
+          const expectedOperation1 = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-erc20-0-IN",
             type: "IN",
-            extra: {},
-          };
-          const expectedOperation2: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT-i0",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
             senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-            value: new BigNumber("100000000000000"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: 100000000000000n,
+            asset: {
+              type: "erc20",
+              assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+              assetOwner: address,
+            },
+            tx: coinOperation.tx,
+            details: {
+              ledgerOpType: "IN",
+              assetAmount: "100000000000000",
+              assetSenders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              assetRecipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            },
+          };
+          const expectedOperation2 = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-erc20-0-OUT",
             type: "OUT",
-            extra: {},
+            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: 100000000000000n,
+            asset: {
+              type: "erc20",
+              assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+              assetOwner: address,
+            },
+            tx: coinOperation.tx,
+            details: {
+              ledgerOpType: "OUT",
+              assetAmount: "100000000000000",
+              assetSenders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              assetRecipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            },
           };
 
-          expect(ledgerERC20EventToOperations(coinOperation, ledgerERC20Event)).toEqual([
+          expect(ledgerERC20EventToOperations(address, coinOperation, ledgerERC20Event)).toEqual([
             expectedOperation1,
             expectedOperation2,
           ]);
@@ -971,7 +980,7 @@ describe("EVM Family", () => {
             count: "100000000000000",
           };
 
-          const result = ledgerERC20EventToOperations(coinOperation, ledgerERC20Event);
+          const result = ledgerERC20EventToOperations(address, coinOperation, ledgerERC20Event);
 
           expect(result).toHaveLength(1);
           expect(result[0].recipients).toEqual([]);
@@ -979,7 +988,7 @@ describe("EVM Family", () => {
       });
 
       describe("ledgerERC721EventToOperations", () => {
-        it("should convert a ledger explorer erc721 nft out event to a Ledger Live Operation", () => {
+        it("should convert a ledger explorer erc721 nft out event to an Operation", () => {
           const ledgerERC721Event: LedgerExplorerER721TransferEvent = {
             contract: "0x9a29e4e488ab34fb792c0bd9ada78c2c07ebe55a",
             sender: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
@@ -988,32 +997,34 @@ describe("EVM Family", () => {
               "49183440411075624253866807957299276245920874859439606792850319902048050479106",
           };
 
-          const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A+49183440411075624253866807957299276245920874859439606792850319902048050479106+ethereum-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NFT_OUT-i0",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
-            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            contract: "0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A",
-            tokenId:
-              "49183440411075624253866807957299276245920874859439606792850319902048050479106",
-            standard: "ERC721",
-            value: new BigNumber("1"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
+          const expectedOperation = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-erc721-0-NFT_OUT",
             type: "NFT_OUT",
-            extra: {},
+            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+            value: 1n,
+            asset: {
+              type: "erc721",
+              assetReference: "0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A",
+              assetOwner: address,
+            },
+            tx: coinOperation.tx,
+            details: {
+              ledgerOpType: "NFT_OUT",
+              tokenId:
+                "49183440411075624253866807957299276245920874859439606792850319902048050479106",
+              assetAmount: "1",
+              assetSenders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              assetRecipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+            },
           };
 
-          expect(ledgerERC721EventToOperations(coinOperation, ledgerERC721Event)).toEqual([
+          expect(ledgerERC721EventToOperations(address, coinOperation, ledgerERC721Event)).toEqual([
             expectedOperation,
           ]);
         });
 
-        it("should convert a ledger explorer erc721 nft in event to a Ledger Live Operation", () => {
+        it("should convert a ledger explorer erc721 nft in event to an Operation", () => {
           const ledgerERC721Event: LedgerExplorerER721TransferEvent = {
             contract: "0x9a29e4e488ab34fb792c0bd9ada78c2c07ebe55a",
             sender: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
@@ -1022,27 +1033,29 @@ describe("EVM Family", () => {
               "49183440411075624253866807957299276245920874859439606792850319902048050479106",
           };
 
-          const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A+49183440411075624253866807957299276245920874859439606792850319902048050479106+ethereum-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NFT_IN-i0",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            senders: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
-            contract: "0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A",
-            tokenId:
-              "49183440411075624253866807957299276245920874859439606792850319902048050479106",
-            standard: "ERC721",
-            value: new BigNumber("1"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
+          const expectedOperation = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-erc721-0-NFT_IN",
             type: "NFT_IN",
-            extra: {},
+            senders: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: 1n,
+            asset: {
+              type: "erc721",
+              assetReference: "0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A",
+              assetOwner: address,
+            },
+            tx: coinOperation.tx,
+            details: {
+              ledgerOpType: "NFT_IN",
+              tokenId:
+                "49183440411075624253866807957299276245920874859439606792850319902048050479106",
+              assetAmount: "1",
+              assetSenders: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+              assetRecipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            },
           };
 
-          expect(ledgerERC721EventToOperations(coinOperation, ledgerERC721Event)).toEqual([
+          expect(ledgerERC721EventToOperations(address, coinOperation, ledgerERC721Event)).toEqual([
             expectedOperation,
           ]);
         });
@@ -1056,10 +1069,12 @@ describe("EVM Family", () => {
               "49183440411075624253866807957299276245920874859439606792850319902048050479106",
           };
 
-          expect(ledgerERC721EventToOperations(coinOperation, ledgerERC721Event)).toEqual([]);
+          expect(ledgerERC721EventToOperations(address, coinOperation, ledgerERC721Event)).toEqual(
+            [],
+          );
         });
 
-        it("should convert a ledger explorer erc721 nft event into 2 Ledger Live Operations", () => {
+        it("should convert a ledger explorer erc721 nft event into 2 Operations", () => {
           const ledgerERC721Event: LedgerExplorerER721TransferEvent = {
             contract: "0x9a29e4e488ab34fb792c0bd9ada78c2c07ebe55a",
             sender: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
@@ -1068,46 +1083,44 @@ describe("EVM Family", () => {
               "49183440411075624253866807957299276245920874859439606792850319902048050479106",
           };
 
-          const expectedOperation1: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A+49183440411075624253866807957299276245920874859439606792850319902048050479106+ethereum-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NFT_IN-i0",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            contract: "0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A",
-            tokenId:
-              "49183440411075624253866807957299276245920874859439606792850319902048050479106",
-            standard: "ERC721",
-            value: new BigNumber("1"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
+          const tokenId =
+            "49183440411075624253866807957299276245920874859439606792850319902048050479106";
+          const contract721 = "0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A";
+
+          const expectedOperation1 = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-erc721-0-NFT_IN",
             type: "NFT_IN",
-            extra: {},
-          };
-          const expectedOperation2: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A+49183440411075624253866807957299276245920874859439606792850319902048050479106+ethereum-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NFT_OUT-i0",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
             senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            contract: "0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A",
-            tokenId:
-              "49183440411075624253866807957299276245920874859439606792850319902048050479106",
-            standard: "ERC721",
-            value: new BigNumber("1"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: 1n,
+            asset: { type: "erc721", assetReference: contract721, assetOwner: address },
+            tx: coinOperation.tx,
+            details: {
+              ledgerOpType: "NFT_IN",
+              tokenId,
+              assetAmount: "1",
+              assetSenders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              assetRecipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            },
+          };
+          const expectedOperation2 = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-erc721-0-NFT_OUT",
             type: "NFT_OUT",
-            extra: {},
+            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: 1n,
+            asset: { type: "erc721", assetReference: contract721, assetOwner: address },
+            tx: coinOperation.tx,
+            details: {
+              ledgerOpType: "NFT_OUT",
+              tokenId,
+              assetAmount: "1",
+              assetSenders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              assetRecipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            },
           };
 
-          expect(ledgerERC721EventToOperations(coinOperation, ledgerERC721Event)).toEqual([
+          expect(ledgerERC721EventToOperations(address, coinOperation, ledgerERC721Event)).toEqual([
             expectedOperation1,
             expectedOperation2,
           ]);
@@ -1122,7 +1135,7 @@ describe("EVM Family", () => {
               "49183440411075624253866807957299276245920874859439606792850319902048050479106",
           };
 
-          const result = ledgerERC721EventToOperations(coinOperation, ledgerERC721Event);
+          const result = ledgerERC721EventToOperations(address, coinOperation, ledgerERC721Event);
 
           // sender matches account → NFT_OUT is emitted, but recipients must not contain empty string
           expect(result).toHaveLength(1);
@@ -1131,7 +1144,7 @@ describe("EVM Family", () => {
       });
 
       describe("ledgerERC1155EventToOperations", () => {
-        it("should convert a ledger explorer erc721 nft out event to a Ledger Live Operation", () => {
+        it("should convert a ledger explorer erc721 nft out event to an Operation", () => {
           const ledgerERC1155Event: LedgerExplorerER1155TransferEvent = {
             contract: "0x2953399124f0cbb46d2cbacd8a89cf0599974963",
             sender: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
@@ -1149,52 +1162,49 @@ describe("EVM Family", () => {
             ],
           };
 
-          const expectedOperation1: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+0x2953399124F0cBB46d2CbACD8A89cF0599974963+49183440411075624253866807957299276245920874859439606792850319904247073734666+ethereum-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NFT_OUT-i0_0",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
-            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
-            tokenId:
-              "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-            standard: "ERC1155",
-            value: new BigNumber("1"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
+          const contract1155 = "0x2953399124F0cBB46d2CbACD8A89cF0599974963";
+          const tokenId1155 =
+            "49183440411075624253866807957299276245920874859439606792850319904247073734666";
+
+          const expectedOperation1 = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-erc1155-0-0-NFT_OUT",
             type: "NFT_OUT",
-            extra: {},
+            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+            value: 1n,
+            asset: { type: "erc1155", assetReference: contract1155, assetOwner: address },
+            tx: coinOperation.tx,
+            details: {
+              ledgerOpType: "NFT_OUT",
+              tokenId: tokenId1155,
+              assetAmount: "1",
+              assetSenders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              assetRecipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+            },
           };
-          const expectedOperation2: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+0x2953399124F0cBB46d2CbACD8A89cF0599974963+49183440411075624253866807957299276245920874859439606792850319904247073734666+ethereum-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NFT_OUT-i0_1",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
-            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
-            tokenId:
-              "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-            standard: "ERC1155",
-            value: new BigNumber("2"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
+          const expectedOperation2 = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-erc1155-0-1-NFT_OUT",
             type: "NFT_OUT",
-            extra: {},
+            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+            value: 2n,
+            asset: { type: "erc1155", assetReference: contract1155, assetOwner: address },
+            tx: coinOperation.tx,
+            details: {
+              ledgerOpType: "NFT_OUT",
+              tokenId: tokenId1155,
+              assetAmount: "2",
+              assetSenders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              assetRecipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+            },
           };
 
-          expect(ledgerERC1155EventToOperations(coinOperation, ledgerERC1155Event)).toEqual([
-            expectedOperation1,
-            expectedOperation2,
-          ]);
+          expect(
+            ledgerERC1155EventToOperations(address, coinOperation, ledgerERC1155Event),
+          ).toEqual([expectedOperation1, expectedOperation2]);
         });
 
-        it("should convert a ledger explorer erc721 nft in event to a Ledger Live Operation", () => {
+        it("should convert a ledger explorer erc721 nft in event to an Operation", () => {
           const ledgerERC1155Event: LedgerExplorerER1155TransferEvent = {
             contract: "0x2953399124f0cbb46d2cbacd8a89cf0599974963",
             sender: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
@@ -1212,49 +1222,46 @@ describe("EVM Family", () => {
             ],
           };
 
-          const expectedOperation1: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+0x2953399124F0cBB46d2CbACD8A89cF0599974963+49183440411075624253866807957299276245920874859439606792850319904247073734666+ethereum-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NFT_IN-i0_0",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            senders: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
-            contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
-            tokenId:
-              "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-            standard: "ERC1155",
-            value: new BigNumber("1"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
+          const contract1155 = "0x2953399124F0cBB46d2CbACD8A89cF0599974963";
+          const tokenId1155 =
+            "49183440411075624253866807957299276245920874859439606792850319904247073734666";
+
+          const expectedOperation1 = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-erc1155-0-0-NFT_IN",
             type: "NFT_IN",
-            extra: {},
+            senders: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: 1n,
+            asset: { type: "erc1155", assetReference: contract1155, assetOwner: address },
+            tx: coinOperation.tx,
+            details: {
+              ledgerOpType: "NFT_IN",
+              tokenId: tokenId1155,
+              assetAmount: "1",
+              assetSenders: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+              assetRecipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            },
           };
-          const expectedOperation2: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+0x2953399124F0cBB46d2CbACD8A89cF0599974963+49183440411075624253866807957299276245920874859439606792850319904247073734666+ethereum-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NFT_IN-i0_1",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            senders: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
-            contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
-            tokenId:
-              "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-            standard: "ERC1155",
-            value: new BigNumber("2"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
+          const expectedOperation2 = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-erc1155-0-1-NFT_IN",
             type: "NFT_IN",
-            extra: {},
+            senders: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: 2n,
+            asset: { type: "erc1155", assetReference: contract1155, assetOwner: address },
+            tx: coinOperation.tx,
+            details: {
+              ledgerOpType: "NFT_IN",
+              tokenId: tokenId1155,
+              assetAmount: "2",
+              assetSenders: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
+              assetRecipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            },
           };
 
-          expect(ledgerERC1155EventToOperations(coinOperation, ledgerERC1155Event)).toEqual([
-            expectedOperation1,
-            expectedOperation2,
-          ]);
+          expect(
+            ledgerERC1155EventToOperations(address, coinOperation, ledgerERC1155Event),
+          ).toEqual([expectedOperation1, expectedOperation2]);
         });
 
         it("should ignore a ledger explorer erc721 nft none event and return empty array", () => {
@@ -1275,10 +1282,12 @@ describe("EVM Family", () => {
             ],
           };
 
-          expect(ledgerERC1155EventToOperations(coinOperation, ledgerERC1155Event)).toEqual([]);
+          expect(
+            ledgerERC1155EventToOperations(address, coinOperation, ledgerERC1155Event),
+          ).toEqual([]);
         });
 
-        it("should convert a ledger explorer erc721 nft event into 2 Ledger Live Operations", () => {
+        it("should convert a ledger explorer erc721 nft event into 2 Operations", () => {
           const ledgerERC1155Event: LedgerExplorerER1155TransferEvent = {
             contract: "0x2953399124f0cbb46d2cbacd8a89cf0599974963",
             sender: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
@@ -1296,84 +1305,78 @@ describe("EVM Family", () => {
             ],
           };
 
-          const expectedOperation1: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+0x2953399124F0cBB46d2CbACD8A89cF0599974963+49183440411075624253866807957299276245920874859439606792850319904247073734666+ethereum-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NFT_IN-i0_0",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
-            tokenId:
-              "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-            standard: "ERC1155",
-            value: new BigNumber("1"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
+          const contract1155 = "0x2953399124F0cBB46d2CbACD8A89cF0599974963";
+          const tokenId1155 =
+            "49183440411075624253866807957299276245920874859439606792850319904247073734666";
+
+          const expectedOperation1 = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-erc1155-0-0-NFT_IN",
             type: "NFT_IN",
-            extra: {},
-          };
-          const expectedOperation2: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+0x2953399124F0cBB46d2CbACD8A89cF0599974963+49183440411075624253866807957299276245920874859439606792850319904247073734666+ethereum-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NFT_OUT-i0_0",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
             senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
-            tokenId:
-              "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-            standard: "ERC1155",
-            value: new BigNumber("1"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: 1n,
+            asset: { type: "erc1155", assetReference: contract1155, assetOwner: address },
+            tx: coinOperation.tx,
+            details: {
+              ledgerOpType: "NFT_IN",
+              tokenId: tokenId1155,
+              assetAmount: "1",
+              assetSenders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              assetRecipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            },
+          };
+          const expectedOperation2 = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-erc1155-0-0-NFT_OUT",
             type: "NFT_OUT",
-            extra: {},
-          };
-          const expectedOperation3: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+0x2953399124F0cBB46d2CbACD8A89cF0599974963+49183440411075624253866807957299276245920874859439606792850319904247073734666+ethereum-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NFT_IN-i0_1",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
             senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
-            tokenId:
-              "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-            standard: "ERC1155",
-            value: new BigNumber("2"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: 1n,
+            asset: { type: "erc1155", assetReference: contract1155, assetOwner: address },
+            tx: coinOperation.tx,
+            details: {
+              ledgerOpType: "NFT_OUT",
+              tokenId: tokenId1155,
+              assetAmount: "1",
+              assetSenders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              assetRecipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            },
+          };
+          const expectedOperation3 = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-erc1155-0-1-NFT_IN",
             type: "NFT_IN",
-            extra: {},
-          };
-          const expectedOperation4: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+0x2953399124F0cBB46d2CbACD8A89cF0599974963+49183440411075624253866807957299276245920874859439606792850319904247073734666+ethereum-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NFT_OUT-i0_1",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
-            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
             senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
-            tokenId:
-              "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-            standard: "ERC1155",
-            value: new BigNumber("2"),
-            fee: new BigNumber("4254163264389158"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            transactionSequenceNumber: new BigNumber(75),
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: 2n,
+            asset: { type: "erc1155", assetReference: contract1155, assetOwner: address },
+            tx: coinOperation.tx,
+            details: {
+              ledgerOpType: "NFT_IN",
+              tokenId: tokenId1155,
+              assetAmount: "2",
+              assetSenders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              assetRecipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            },
+          };
+          const expectedOperation4 = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-erc1155-0-1-NFT_OUT",
             type: "NFT_OUT",
-            extra: {},
+            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: 2n,
+            asset: { type: "erc1155", assetReference: contract1155, assetOwner: address },
+            tx: coinOperation.tx,
+            details: {
+              ledgerOpType: "NFT_OUT",
+              tokenId: tokenId1155,
+              assetAmount: "2",
+              assetSenders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              assetRecipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            },
           };
 
-          expect(ledgerERC1155EventToOperations(coinOperation, ledgerERC1155Event)).toEqual([
+          expect(
+            ledgerERC1155EventToOperations(address, coinOperation, ledgerERC1155Event),
+          ).toEqual([
             expectedOperation1,
             expectedOperation2,
             expectedOperation3,
@@ -1390,7 +1393,7 @@ describe("EVM Family", () => {
             transfers: [{ id: "10371", value: "1" }],
           };
 
-          const result = ledgerERC1155EventToOperations(coinOperation, ledgerERC1155Event);
+          const result = ledgerERC1155EventToOperations(address, coinOperation, ledgerERC1155Event);
 
           // sender matches account → NFT_OUT is emitted, but recipients must not contain empty string
           expect(result).toHaveLength(1);
@@ -1412,13 +1415,14 @@ describe("EVM Family", () => {
 
           expect(
             ledgerInternalTransactionToOperations(
-              { ...coinOperation, hasFailed: true },
+              address,
+              { ...coinOperation, tx: { ...coinOperation.tx, failed: true } },
               ledgerAction,
             ),
           ).toEqual([]);
         });
 
-        it("should convert a ledger explorer out action to a Ledger Live Operation", () => {
+        it("should convert a ledger explorer out action to an Operation", () => {
           const ledgerAction: LedgerExplorerInternalTransaction = {
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
             to: "0x49048044d57e1c92a77f79988d21fa8faf74e97e",
@@ -1429,28 +1433,23 @@ describe("EVM Family", () => {
             error: null,
           };
 
-          const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT-i0",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
+          const expectedOperation = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-internal-0-OUT",
+            type: "OUT",
             senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
             recipients: ["0x49048044D57e1C92A77f79988d21Fa8fAF74E97e"],
-            value: new BigNumber("10000000000000000"),
-            fee: new BigNumber("0"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            type: "OUT",
-            hasFailed: false,
-            extra: {},
+            value: 10000000000000000n,
+            asset: { type: "native" },
+            tx: { ...coinOperation.tx, fees: 0n },
+            details: { internal: true, hasFailed: false },
           };
 
-          expect(ledgerInternalTransactionToOperations(coinOperation, ledgerAction)).toEqual([
-            expectedOperation,
-          ]);
+          expect(
+            ledgerInternalTransactionToOperations(address, coinOperation, ledgerAction),
+          ).toEqual([expectedOperation]);
         });
 
-        it("should convert a ledger explorer in action to a Ledger Live Operation", () => {
+        it("should convert a ledger explorer in action to an Operation", () => {
           const ledgerAction: LedgerExplorerInternalTransaction = {
             from: "0x49048044d57e1c92a77f79988d21fa8faf74e97e",
             to: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
@@ -1461,25 +1460,20 @@ describe("EVM Family", () => {
             error: null,
           };
 
-          const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN-i0",
-            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-            accountId,
-            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-            blockHeight: 38476740,
+          const expectedOperation = {
+            id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-internal-0-IN",
+            type: "IN",
             senders: ["0x49048044D57e1C92A77f79988d21Fa8fAF74E97e"],
             recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            value: new BigNumber("10000000000000000"),
-            fee: new BigNumber("0"),
-            date: new Date("2023-01-24T17:11:45Z"),
-            type: "IN",
-            hasFailed: false,
-            extra: {},
+            value: 10000000000000000n,
+            asset: { type: "native" },
+            tx: { ...coinOperation.tx, fees: 0n },
+            details: { internal: true, hasFailed: false },
           };
 
-          expect(ledgerInternalTransactionToOperations(coinOperation, ledgerAction)).toEqual([
-            expectedOperation,
-          ]);
+          expect(
+            ledgerInternalTransactionToOperations(address, coinOperation, ledgerAction),
+          ).toEqual([expectedOperation]);
         });
 
         it("shoud ignore a ledger explorer action when identical to the Operation it's triggered by", () => {
@@ -1500,7 +1494,7 @@ describe("EVM Family", () => {
             from: coinOperationFees.senders[0],
             to: coinOperationFees.recipients[0],
             input: null,
-            value: coinOperationFees.value.toFixed(),
+            value: coinOperationFees.value.toString(),
             gas: "57090",
             gas_used: "27485",
             error: null,
@@ -1510,19 +1504,23 @@ describe("EVM Family", () => {
             ...ledgerActionOutOrFees,
             from: coinOperationFees.recipients[0],
             to: coinOperationFees.senders[0],
-            value: coinOperationIn.value.toFixed(),
+            value: coinOperationIn.value.toString(),
           };
 
           expect(
-            ledgerInternalTransactionToOperations(coinOperationFees, ledgerActionOutOrFees),
+            ledgerInternalTransactionToOperations(
+              address,
+              coinOperationFees,
+              ledgerActionOutOrFees,
+            ),
           ).toEqual([]);
           expect(
-            ledgerInternalTransactionToOperations(coinOperationOut, ledgerActionOutOrFees),
+            ledgerInternalTransactionToOperations(address, coinOperationOut, ledgerActionOutOrFees),
           ).toEqual([]);
 
-          expect(ledgerInternalTransactionToOperations(coinOperationIn, ledgerActionIn)).toEqual(
-            [],
-          );
+          expect(
+            ledgerInternalTransactionToOperations(address, coinOperationIn, ledgerActionIn),
+          ).toEqual([]);
         });
 
         it("should emit internal op when action has same from/to but value differs from coin op value", () => {
@@ -1530,7 +1528,7 @@ describe("EVM Family", () => {
           const coinOpOutWithTransfer = {
             ...coinOperation,
             type: "OUT" as const,
-            value: new BigNumber("10000000000000000"),
+            value: 10000000000000000n,
           };
           const actionSameFromToDifferentValue: LedgerExplorerInternalTransaction = {
             from: coinOpOutWithTransfer.senders[0],
@@ -1544,6 +1542,7 @@ describe("EVM Family", () => {
           // Value matches → filtered
           expect(
             ledgerInternalTransactionToOperations(
+              address,
               coinOpOutWithTransfer,
               actionSameFromToDifferentValue,
             ),
@@ -1555,14 +1554,15 @@ describe("EVM Family", () => {
           };
           // Value differs → internal op emitted
           const result = ledgerInternalTransactionToOperations(
+            address,
             coinOpOutWithTransfer,
             actionDifferentValue,
           );
           expect(result).toHaveLength(1);
-          expect(result[0].value.toFixed()).toBe("1");
+          expect(result[0].value.toString()).toBe("1");
         });
 
-        it("should convert a ledger explorer none action to a Ledger Live Operation", () => {
+        it("should convert a ledger explorer none action to an Operation", () => {
           const ledgerAction: LedgerExplorerInternalTransaction = {
             from: "0x49048044d57e1c92a77f79988d21fa8faf74e97e",
             to: "0x3244100A07c7fEE9bDE409e877ed2e8Ff1EdeEda", // pdv.eth
@@ -1573,10 +1573,12 @@ describe("EVM Family", () => {
             error: null,
           };
 
-          expect(ledgerInternalTransactionToOperations(coinOperation, ledgerAction)).toEqual([]);
+          expect(
+            ledgerInternalTransactionToOperations(address, coinOperation, ledgerAction),
+          ).toEqual([]);
         });
 
-        it("should convert a ledger explorer self action to 2 Ledger Live Operations", () => {
+        it("should convert a ledger explorer self action to 2 Operations", () => {
           const ledgerAction: LedgerExplorerInternalTransaction = {
             from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
             to: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", // pdv.eth
@@ -1587,42 +1589,34 @@ describe("EVM Family", () => {
             error: null,
           };
 
-          const expectedOperations: Operation[] = [
+          const internalTx = { ...coinOperation.tx, fees: 0n };
+
+          const expectedOperations = [
             {
-              id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN-i0",
-              hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-              accountId,
-              blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-              blockHeight: 38476740,
+              id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-internal-0-IN",
+              type: "IN",
               senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
               recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-              value: new BigNumber("10000000000000000"),
-              fee: new BigNumber("0"),
-              date: new Date("2023-01-24T17:11:45Z"),
-              type: "IN",
-              hasFailed: false,
-              extra: {},
+              value: 10000000000000000n,
+              asset: { type: "native" },
+              tx: internalTx,
+              details: { internal: true, hasFailed: false },
             },
             {
-              id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT-i0",
-              hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
-              accountId,
-              blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
-              blockHeight: 38476740,
+              id: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-internal-0-OUT",
+              type: "OUT",
               senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
               recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-              value: new BigNumber("10000000000000000"),
-              fee: new BigNumber("0"),
-              date: new Date("2023-01-24T17:11:45Z"),
-              type: "OUT",
-              hasFailed: false,
-              extra: {},
+              value: 10000000000000000n,
+              asset: { type: "native" },
+              tx: internalTx,
+              details: { internal: true, hasFailed: false },
             },
           ];
 
-          expect(ledgerInternalTransactionToOperations(coinOperation, ledgerAction)).toEqual(
-            expectedOperations,
-          );
+          expect(
+            ledgerInternalTransactionToOperations(address, coinOperation, ledgerAction),
+          ).toEqual(expectedOperations);
         });
 
         it("should produce empty recipients when to is an empty string", () => {
@@ -1636,7 +1630,11 @@ describe("EVM Family", () => {
             error: null,
           };
 
-          const result = ledgerInternalTransactionToOperations(coinOperation, ledgerAction);
+          const result = ledgerInternalTransactionToOperations(
+            address,
+            coinOperation,
+            ledgerAction,
+          );
 
           // from matches account → OUT is emitted, but recipients must not contain empty string
           expect(result).toHaveLength(1);

@@ -1,6 +1,7 @@
-import {
+import type {
   BufferTxData,
   MemoNotSupported,
+  Operation,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
 import {
@@ -23,7 +24,6 @@ import {
 } from "@ledgerhq/errors";
 import { GasPriceTooLow } from "../errors";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import ledgerExplorer from "../network/explorer/ledger";
@@ -332,8 +332,11 @@ describe("validateIntent", () => {
         lastNftOperations: [],
         lastTokenOperations: [
           {
-            contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-          } as Operation,
+            asset: {
+              type: "erc20" as const,
+              assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+            },
+          } as unknown as Operation<MemoNotSupported>,
         ],
         nextPagingToken: "",
       });
@@ -1404,7 +1407,11 @@ describe("validateIntent", () => {
           lastCoinOperations: [],
           lastInternalOperations: [],
           lastNftOperations: [],
-          lastTokenOperations: [{ contract: "contract-address" } as Operation],
+          lastTokenOperations: [
+            {
+              asset: { type: "erc20" as const, assetReference: "contract-address" },
+            } as unknown as Operation<MemoNotSupported>,
+          ],
           nextPagingToken: "",
         });
 
@@ -1443,7 +1450,11 @@ describe("validateIntent", () => {
           lastCoinOperations: [],
           lastInternalOperations: [],
           lastNftOperations: [],
-          lastTokenOperations: [{ contract: "contract-address" } as Operation],
+          lastTokenOperations: [
+            {
+              asset: { type: "erc20" as const, assetReference: "contract-address" },
+            } as unknown as Operation<MemoNotSupported>,
+          ],
           nextPagingToken: "",
         });
         jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
@@ -1507,7 +1518,11 @@ describe("validateIntent", () => {
           lastCoinOperations: [],
           lastInternalOperations: [],
           lastNftOperations: [],
-          lastTokenOperations: [{ contract: "contract-address" } as Operation],
+          lastTokenOperations: [
+            {
+              asset: { type: "erc20" as const, assetReference: "contract-address" },
+            } as unknown as Operation<MemoNotSupported>,
+          ],
           nextPagingToken: "",
         });
         const getGasOptions = jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({

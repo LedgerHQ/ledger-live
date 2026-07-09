@@ -1,7 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
-import { Operation } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { STAKING_CONTRACTS } from "./contracts";
 import type { RewardsEventDecoder } from "../types/staking";
 import type { LogWithAddress } from "../network/node/types";
@@ -71,7 +70,7 @@ export function sumRewardFromReceiptLogs(
  */
 export async function enrichRewardOperationsValue(
   currencyId: string,
-  operations: Operation[],
+  operations: Array<Operation<MemoNotSupported>>,
   getReceipt: ReceiptFetcher,
 ): Promise<void> {
   const decoder = STAKING_CONTRACTS[currencyId]?.rewardsEventDecoder;
@@ -79,24 +78,24 @@ export async function enrichRewardOperationsValue(
     return;
   }
 
-  const rewardOps = operations.filter(op => op.type === "REWARD" && op.value.isZero());
+  const rewardOps = operations.filter(op => op.type === "REWARD" && op.value === 0n);
   if (!rewardOps.length) {
     return;
   }
 
   await promiseAllBatched(RECEIPT_FETCH_CONCURRENCY, rewardOps, async op => {
     try {
-      const receipt = await getReceipt(op.hash);
+      const receipt = await getReceipt(op.tx.hash);
       if (!receipt) {
         return;
       }
       const amount = sumRewardFromReceiptLogs(receipt.logs, decoder, op.senders[0]);
       if (amount > 0n) {
-        op.value = new BigNumber(amount.toString());
+        op.value = amount;
       }
     } catch (e) {
       log("coin-evm/staking", "enrichRewardOperationsValue: receipt fetch/decode failed", {
-        hash: op.hash,
+        hash: op.tx.hash,
         error: e instanceof Error ? e.message : String(e),
       });
     }
