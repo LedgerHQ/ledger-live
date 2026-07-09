@@ -16,7 +16,6 @@ export function useRecipientSearchState({
   recipientSupportsDomain,
 }: UseRecipientSearchStateProps) {
   const hasSearchValue = searchValue.length > 0;
-  const showSearchResults = hasSearchValue && !isLoading;
   const isSanctioned = result.status === "sanctioned";
 
   const bridgeRecipientError = result.bridgeErrors?.recipient;
@@ -28,15 +27,17 @@ export function useRecipientSearchState({
   const isBridgeInvalidAddress =
     bridgeRecipientError instanceof InvalidAddress && !isSelfTransferError;
 
+  const isPotentialDomain = recipientSupportsDomain && searchValue.includes(".");
+  const hasValidatedAddress =
+    (result.status === "valid" && !isPotentialDomain) ||
+    result.status === "ens_resolved" ||
+    result.status === "sanctioned";
+
+  const showSearchResults = hasSearchValue && !isLoading;
+
   const isAddressComplete = useMemo(() => {
-    if (isLoading) return false;
-    return (
-      (result.status === "valid" ||
-        result.status === "ens_resolved" ||
-        result.status === "sanctioned") &&
-      !isBridgeInvalidAddress
-    );
-  }, [result.status, isBridgeInvalidAddress, isLoading]);
+    return hasValidatedAddress && !isBridgeInvalidAddress;
+  }, [hasValidatedAddress, isBridgeInvalidAddress]);
 
   const hasAnyMatches =
     (result.matchedAccounts && result.matchedAccounts.length > 0) ||
@@ -54,10 +55,9 @@ export function useRecipientSearchState({
   const showMatchedAddress =
     showSearchResults &&
     (hasAnyMatches ||
-      (result.status === "valid" && !result.error && !isBridgeInvalidAddress) ||
+      (hasValidatedAddress && !result.error && !isBridgeInvalidAddress) ||
       (isAddressComplete && (hasBridgeRecipientError || hasBridgeRecipientWarning))) &&
-    (result.status === "valid" ||
-      (recipientSupportsDomain && result.status === "ens_resolved") ||
+    (hasValidatedAddress ||
       result.isLedgerAccount ||
       !!result.matchedRecentAddress ||
       isSanctioned ||

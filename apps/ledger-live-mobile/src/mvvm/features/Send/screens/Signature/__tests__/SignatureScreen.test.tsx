@@ -3,8 +3,7 @@ import { Observable } from "rxjs";
 import type { SignatureRequest } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowSignatureCore";
 import type { SignTransactionIntent } from "@ledgerhq/live-common/intents/signTransactionIntent";
 import type { InitializationInput } from "LLM/components/DeviceIntentExecutor";
-import { useFeature } from "@features/platform-feature-flags";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { SignatureScreen } from "../index";
 import * as UseSignatureViewModelModule from "../hooks/useSignatureViewModel";
 import * as UseSignatureDeviceActionViewModelModule from "../hooks/useSignatureDeviceActionViewModel";
@@ -47,16 +46,6 @@ jest.mock(
   "@ledgerhq/live-common/firebase/featureFlags",
   () => ({
     getFeature: jest.fn(),
-  }),
-  { virtual: true },
-);
-
-jest.mock(
-  "@features/platform-feature-flags",
-  () => ({
-    formatToFirebaseFeatureId: (featureId: string) => featureId,
-    useFeature: jest.fn(),
-    useFeatureFlags: jest.fn(() => ({})),
   }),
   { virtual: true },
 );
@@ -128,7 +117,6 @@ function buildDeviceActionViewModel(
 describe("SignatureScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.mocked(useFeature).mockReturnValue({ enabled: false });
     jest
       .mocked(UseSignatureViewModelModule.useSignatureViewModel)
       .mockReturnValue(buildViewModel());
@@ -175,9 +163,12 @@ describe("SignatureScreen", () => {
     const viewModel = buildViewModel();
     jest.mocked(UseSignatureViewModelModule.useSignatureViewModel).mockReturnValue(viewModel);
 
-    render(<SignatureScreen />);
+    render(<SignatureScreen />, {
+      overrideInitialState: withFlagOverrides({
+        useDeviceActionSignatureSend: { enabled: false },
+      }),
+    });
 
-    expect(useFeature).toHaveBeenCalledWith("useDeviceActionSignatureSend");
     expect(screen.getByTestId("send-signature-step")).toBeOnTheScreen();
     expect(mockSignatureDeviceActionView).not.toHaveBeenCalled();
     expect(mockDeviceIntentExecutorLWM).toHaveBeenCalledWith(
@@ -197,14 +188,16 @@ describe("SignatureScreen", () => {
 
   it("should render DeviceAction screen when useDeviceActionSignatureSend is enabled", () => {
     const viewModel = buildDeviceActionViewModel();
-    jest.mocked(useFeature).mockReturnValue({ enabled: true });
     jest
       .mocked(UseSignatureDeviceActionViewModelModule.useSignatureDeviceActionViewModel)
       .mockReturnValue(viewModel);
 
-    render(<SignatureScreen />);
+    render(<SignatureScreen />, {
+      overrideInitialState: withFlagOverrides({
+        useDeviceActionSignatureSend: { enabled: true },
+      }),
+    });
 
-    expect(useFeature).toHaveBeenCalledWith("useDeviceActionSignatureSend");
     expect(screen.getByTestId("send-signature-device-action-step")).toBeOnTheScreen();
     expect(mockDeviceIntentExecutorLWM).not.toHaveBeenCalled();
     expect(mockSignatureDeviceActionView).toHaveBeenCalledWith(

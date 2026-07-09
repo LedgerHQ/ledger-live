@@ -75,7 +75,7 @@ jest.mock("expo-keep-awake", () => ({
 
 async function flushTimers(): Promise<void> {
   await act(async () => {
-    jest.advanceTimersByTime(600);
+    await jest.advanceTimersByTimeAsync(600);
   });
 }
 
@@ -111,6 +111,9 @@ describe("Send flow integration tests", () => {
         ...state,
         accounts: { ...state.accounts, active: [account] },
       }),
+      userEventOptions: {
+        advanceTimers: delay => jest.advanceTimersByTime(delay),
+      },
     });
   }
 
@@ -124,8 +127,10 @@ describe("Send flow integration tests", () => {
       await screen.findByPlaceholderText(/^Enter address( or ENS)?$/),
       opts.recipient,
     );
+    await flushTimers();
     if (opts.memo !== undefined) {
       await user.type(await screen.findByTestId("send-memo-input"), opts.memo);
+      await flushTimers();
     }
     await user.press(await screen.findByText(/^Send to /));
     await screen.findByText("Review");

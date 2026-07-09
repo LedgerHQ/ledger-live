@@ -95,6 +95,20 @@ describe("useRecipientSearchState", () => {
     expect(result.current.isAddressComplete).toBe(true);
   });
 
+  it("should not complete a potential domain while it only has valid status", () => {
+    const { result } = renderHook(() =>
+      useRecipientSearchState({
+        ...defaultProps,
+        searchValue: "vitalik.eth",
+        result: createDefaultResult({ status: "valid" }),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(result.current.isAddressComplete).toBe(false);
+    expect(result.current.showMatchedAddress).toBe(false);
+  });
+
   it("should set isAddressComplete for sanctioned status", () => {
     const { result } = renderHook(() =>
       useRecipientSearchState({
@@ -108,7 +122,20 @@ describe("useRecipientSearchState", () => {
     expect(result.current.isSanctioned).toBe(true);
   });
 
-  it("should not set isAddressComplete while validation is loading", () => {
+  it("should not set isAddressComplete while address validation is loading", () => {
+    const { result } = renderHook(() =>
+      useRecipientSearchState({
+        ...defaultProps,
+        searchValue: "0xvalid",
+        result: createDefaultResult({ status: "loading" }),
+        isLoading: true,
+      }),
+    );
+
+    expect(result.current.isAddressComplete).toBe(false);
+  });
+
+  it("should keep a validated address complete without showing actionable results while bridge validation is loading", () => {
     const { result } = renderHook(() =>
       useRecipientSearchState({
         ...defaultProps,
@@ -118,7 +145,8 @@ describe("useRecipientSearchState", () => {
       }),
     );
 
-    expect(result.current.isAddressComplete).toBe(false);
+    expect(result.current.isAddressComplete).toBe(true);
+    expect(result.current.showSearchResults).toBe(false);
   });
 
   it("should not set isAddressComplete for idle or invalid status", () => {
