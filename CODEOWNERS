@@ -206,8 +206,6 @@ libs/coin-modules/coin-celo/                                             @ledger
 
 # PTX team
 apps/cli/src/commands/ptx                                            					@ledgerhq/ptx
-apps/wallet-cli/src/commands/swap/                                            @ledgerhq/ptx
-apps/wallet-cli/src/test/commands/swap/                                       @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/ProviderIcon/       					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/WebPTXPlayer/       					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/hooks/swap-migrations/         					@ledgerhq/ptx
@@ -257,6 +255,11 @@ apps/ledger-live-mobile/src/mvvm/features/Borrow/                               
 apps/ledger-live-mobile/src/mvvm/features/WalletAssets/views/BorrowSection/             @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Borrow/							            @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Portfolio/components/BorrowEntryPoint/       @ledgerhq/ptx
+
+# wallet-cli
+apps/wallet-cli/                                                              @Justkant
+apps/wallet-cli/src/commands/swap/                                            @ledgerhq/ptx @Justkant
+apps/wallet-cli/src/test/commands/swap/                                       @ledgerhq/ptx @Justkant
 
 # Wallet API team > coin-integration
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/coin-integration
@@ -516,6 +519,7 @@ mise.toml                                             @ledgerhq/platform
 
 # Platform — Agent files
 .agents/                           @ledgerhq/platform
+.agents/skills/ledger-wallet-cli/                                             @Justkant
 .claude/                           @ledgerhq/platform
 .codex                             @ledgerhq/platform
 .cursor/                           @ledgerhq/platform
