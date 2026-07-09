@@ -2,23 +2,31 @@
   "name": "@features/platform-contacts",
   "version": "0.1.0",
   "private": true,
-  "description": "Scenario-oriented Contacts platform contracts",
+  "description": "Scenario-oriented Contacts platform contracts and mock adapters",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
     "./contracts": "./src/contracts/index.ts",
+    "./mocks": "./src/mocks/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W features/platform/contacts"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*"
   },
   "devDependencies": {
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "jest": "catalog:",
     "typescript": "catalog:"
   }
 }

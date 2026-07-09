@@ -13,7 +13,8 @@ This package defines the dependency-injection boundary consumed by shared Contac
 - Contact and address edit confirmation boundaries.
 - Ledger Sync gating boundary.
 - Contacts tracking dispatch boundary.
+- Mock adapters for the first mock-first implementation batch.
 
 Asset and network selection UI stays owned by MAD. Contacts should pass supported currency ids to MAD when filtering is needed, then consume the selected currency id returned by the app/flow wiring.
 
-It does not implement mock adapters, tests, UI, app routing, Redux slices, WalletSync persistence, real device actions, signer payloads, or analytics transport.
+It does not implement UI, app routing, Redux slices, WalletSync persistence, real device actions, signer payloads, or analytics transport.
