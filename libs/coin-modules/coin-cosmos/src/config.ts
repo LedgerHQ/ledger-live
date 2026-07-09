@@ -171,7 +171,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_xion: {
     type: "object",
     default: {
-      lcd: "https://xion-api.polkachu.com",
+      lcd: "https://verona-api.polkachu.com",
       minGasPrice: 0.04,
       ledgerValidator: "xionvaloper1t8ysd9cg6s38ak9xfadkjtvfv9uczvrn8wzv77",
       status: {

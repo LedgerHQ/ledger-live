@@ -486,8 +486,8 @@ export const expectedCurrencyList = [
   {
     type: "CryptoCurrency",
     id: "xion",
-    ticker: "XION",
-    name: "Xion",
+    ticker: "VERONA",
+    name: "Verona",
     family: "cosmos",
     color: "#000000",
     decimals: 6,
