@@ -31,13 +31,13 @@ const tags = [
   ...(family ? [`@family-${family}`] : []),
 ];
 
-// Accounts: XTZ_1 (index 0) funded + UNDELEGATED for the earning-choice chooser; XTZ_2 (index 1)
+// Accounts: XTZ_4 (index 3) funded + UNDELEGATED for the earning-choice chooser; XTZ_2 (index 1)
 // DELEGATED + STAKED for the stake flow; XTZ_3 (index 2) same, dedicated to unstake to avoid a settlement
-// race. (index 0 must stay undelegated: the legacy Tezos specs rely on it.)
+// race. (idx0/XTZ_1 stays with the legacy Tezos delegation spec, which relies on it being undelegated.)
 test.describe("e2e staking - Tezos - earning choice", () => {
-  const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
+  const account = new Delegate(Account.XTZ_4, "N/A", "Ledger by Kiln");
 
-  // Force no broadcast: signing here would otherwise delegate idx0 on-chain.
+  // Force no broadcast: signing here would otherwise delegate XTZ_4 (idx3) on-chain.
   test.use({ ...tezosStakeUse(account), env: { DISABLE_TRANSACTION_BROADCAST: "1" } });
 
   test(
