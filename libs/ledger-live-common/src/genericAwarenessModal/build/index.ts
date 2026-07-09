@@ -5,9 +5,9 @@ import {
   GenericAwarenessModalLayout,
   type GenericAwarenessModalBrazeCard,
   type GenericAwarenessModalContentCard,
-} from "./types";
+} from "../types";
 
-export type { GenericAwarenessModalBrazeCard } from "./types";
+export type { GenericAwarenessModalBrazeCard } from "../types";
 
 type ContentCardBuilder = (
   campaignId: string,

@@ -8,7 +8,7 @@ import {
   type GenericAwarenessModalFeatureIntroItem,
   type GenericAwarenessModalParsedFeatureIntroItemInput,
   type GenericAwarenessModalParsedFeatureIntroMainInput,
-} from "./types";
+} from "../types";
 
 const MAX_FEATURE_INTRO_ITEMS = 3;
 

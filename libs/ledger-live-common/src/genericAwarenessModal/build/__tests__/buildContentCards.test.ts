@@ -5,14 +5,14 @@ import {
   type GenericAwarenessModalCarousel,
   type GenericAwarenessModalFeatureIntro,
   type GenericAwarenessModalInputExtras,
-} from "../types";
+} from "../../types";
 import {
   buildGenericAwarenessModalContentCards,
   getValidGenericAwarenessModalCards,
   groupByCampaignId,
   hasUniqueLayout,
   processGenericAwarenessModalBrazeCards,
-} from "../buildContentCards";
+} from "..";
 
 const makeCard = (
   id: string,

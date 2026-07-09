@@ -4,7 +4,7 @@ import {
   type GenericAwarenessModalBrazeCard,
   type GenericAwarenessModalParsedPromptInput,
   type GenericAwarenessModalPrompt,
-} from "./types";
+} from "../types";
 
 const parsePromptInput = (
   card: GenericAwarenessModalBrazeCard,

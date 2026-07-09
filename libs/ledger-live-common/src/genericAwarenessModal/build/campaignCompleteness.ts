@@ -6,7 +6,7 @@ import {
   GenericAwarenessModalLayout,
   type GenericAwarenessModalBrazeCard,
   type GenericAwarenessModalContentCard,
-} from "./types";
+} from "../types";
 
 export const parseCampaignCount = (value: string | number | undefined): number | undefined => {
   const result = GenericAwarenessModalCampaignCountSchema.safeParse(value);
