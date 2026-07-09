@@ -28,14 +28,14 @@ describe("AssociateTokenFlow - select token", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseTokensData.mockReturnValue({
-      data: { tokens: [htsToken, erc20Token], pagination: { nextCursor: "" } } as any,
+      data: { tokens: [htsToken, erc20Token], pagination: { nextCursor: "" } },
       isLoading: false,
       isSuccess: true,
       error: undefined,
       isError: false,
       loadNext: jest.fn(),
       refetch: jest.fn(),
-    });
+    } as unknown as ReturnType<typeof useTokensData>);
   });
 
   it("should render the token list", () => {
