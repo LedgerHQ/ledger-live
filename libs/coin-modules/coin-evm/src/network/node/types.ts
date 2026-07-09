@@ -203,10 +203,11 @@ export type NodeApi = {
     currency: CryptoCurrency,
     blockHeight: number | "latest",
   ) => Promise<BlockReceiptInfo[]>;
-  traceBlock?: (
+  traceBlockErigon?: (
     currency: CryptoCurrency,
     blockHeight: number | "latest",
   ) => Promise<TraceBlockItem[]>;
+  traceBlockGeth?: (currency: CryptoCurrency, blockHeight: number) => Promise<TraceBlockItem[]>;
   getOptimismAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
   getScrollAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
 };
