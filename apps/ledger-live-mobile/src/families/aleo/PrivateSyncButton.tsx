@@ -1,24 +1,15 @@
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { Box, Button, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
-import React, { useMemo } from "react";
+import React from "react";
 import { useTranslation } from "~/context/Locale";
-import { useSelector } from "~/context/hooks";
-import { localeSelector } from "~/reducers/settings";
 import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
+import { useFormatPrivateSyncDate } from "./hooks/useFormatPrivateSyncDate";
 
 type AleoSyncState = "ready" | "running" | "complete";
 
-const lastSyncDateFormat: Intl.DateTimeFormatOptions = {
-  day: "numeric",
-  month: "numeric",
-  year: "numeric",
-  hour: "numeric",
-  minute: "numeric",
-};
-
 export default function PrivateSyncButton({ account }: { readonly account: AleoAccount }) {
   const { t } = useTranslation();
-  const locale = useSelector(localeSelector);
+  const formatPrivateSyncDate = useFormatPrivateSyncDate();
 
   const { isSyncing, progress, start, stop } = useAleoPrivateSync({
     account,
@@ -29,10 +20,7 @@ export default function PrivateSyncButton({ account }: { readonly account: AleoA
   const lastSync = account.aleoResources?.lastPrivateSyncDate ?? null;
   const syncState: AleoSyncState = isSyncing ? "running" : lastSync ? "complete" : "ready";
 
-  const formattedLastSync = useMemo(
-    () => (lastSync ? new Intl.DateTimeFormat(locale, lastSyncDateFormat).format(lastSync) : ""),
-    [lastSync, locale],
-  );
+  const formattedLastSync = lastSync ? formatPrivateSyncDate(lastSync) : "";
 
   return (
     <Box

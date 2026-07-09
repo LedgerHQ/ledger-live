@@ -1,5 +1,5 @@
-import { getFormattedFeeFields } from "@ledgerhq/coin-bitcoin/editTransaction/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import React, { Fragment, memo } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import Alert from "~/renderer/components/Alert";
@@ -35,8 +35,9 @@ const StepFees = ({
 }: StepFeesProps) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const locale = useSelector(localeSelector);
+  const bridge = useAccountBridge(account, parentAccount);
 
-  const { formattedFeeValue } = getFormattedFeeFields({
+  const { formattedFeeValue } = bridge.getFormattedFeeFields({
     transaction: transactionToUpdate,
     mainAccount,
     locale,

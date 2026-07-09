@@ -190,6 +190,7 @@ export enum DynamicContentActionTypes {
   DYNAMIC_CONTENT_CLEAR_LOCAL_CARDS = "DYNAMIC_CONTENT_CLEAR_LOCAL_CARDS",
   DYNAMIC_CONTENT_REMOVE_LOCAL_CARD = "DYNAMIC_CONTENT_REMOVE_LOCAL_CARD",
   DYNAMIC_CONTENT_ADD_LOCAL_WALLET_CAROUSEL_CARDS = "DYNAMIC_CONTENT_ADD_LOCAL_WALLET_CAROUSEL_CARDS",
+  DYNAMIC_CONTENT_MARK_LOCAL_CARDS_VIEWED = "DYNAMIC_CONTENT_MARK_LOCAL_CARDS_VIEWED",
 }
 
 export type DynamicContentSetWalletCardsPayload = DynamicContentState["walletCards"];
@@ -216,6 +217,8 @@ export type DynamicContentRemoveLocalCardPayload = string;
 
 export type DynamicContentAddLocalWalletCarouselPayload = WalletContentCard[];
 
+export type DynamicContentMarkLocalCardsViewedPayload = string[];
+
 export type DynamicContentPayload =
   | DynamicContentSetWalletCardsPayload
   | DynamicContentSetAssetCardsPayload
@@ -226,7 +229,8 @@ export type DynamicContentPayload =
   | DynamicContentAddLocalCardsPayload
   | DynamicContentAppendLocalCardsPayload
   | DynamicContentRemoveLocalCardPayload
-  | DynamicContentAddLocalWalletCarouselPayload;
+  | DynamicContentAddLocalWalletCarouselPayload
+  | DynamicContentMarkLocalCardsViewedPayload;
 
 // === RATINGS ACTIONS ===
 

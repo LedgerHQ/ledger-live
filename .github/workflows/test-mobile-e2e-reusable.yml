@@ -1247,7 +1247,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `- 🍏 iOS - ${{ needs.determine-builds.outputs.ios_device }}: ${{ needs.allure-report-ios.outputs.summary_message || 'No test results' }}`
+                  "text": `🍏 iOS · FF '${{ env.IOS_FEATURE_FLAGS }}' · ${{ needs.determine-builds.outputs.ios_device }} : ${{ needs.allure-report-ios.outputs.summary_message || 'No test results' }}`
                 }
               }
             ];
@@ -1257,7 +1257,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `- 🤖 Android - ${{ needs.determine-builds.outputs.android_device }}: ${{ needs.allure-report-android.outputs.summary_message || 'No test results' }}`
+                  "text": `🤖 Android · FF '${{ env.ANDROID_FEATURE_FLAGS }}' · ${{ needs.determine-builds.outputs.android_device }} : ${{ needs.allure-report-android.outputs.summary_message || 'No test results' }}`
                 }
               }
             ];

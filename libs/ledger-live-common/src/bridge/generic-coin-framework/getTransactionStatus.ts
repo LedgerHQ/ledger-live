@@ -27,10 +27,8 @@ export function genericGetTransactionStatus(
       memoValue: transaction.memoValue || "",
       tag: transaction.tag,
       family: transaction.family,
-      feesStrategy: transaction.feesStrategy,
       data: transaction.data,
       type: transaction.type,
-      sponsored: transaction.sponsored,
       valAddress: transaction.valAddress,
       valId: transaction.valId,
       dstValAddress: transaction.dstValAddress,
@@ -55,6 +53,8 @@ export function genericGetTransactionStatus(
     const customFees = bigNumberToBigIntDeep({
       value: transaction.fees ?? new BigNumber(0),
       parameters: {
+        feesStrategy: transaction.feesStrategy ?? undefined,
+        sponsored: transaction.sponsored,
         gasLimit: transaction.gasLimit,
         customGasLimit: transaction.customGasLimit,
         gasPrice: transaction.gasPrice,

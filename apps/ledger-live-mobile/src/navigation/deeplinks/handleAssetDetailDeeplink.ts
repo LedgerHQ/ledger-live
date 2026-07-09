@@ -1,4 +1,5 @@
 import { NavigatorName, ScreenName } from "~/const";
+import type { AssetDetailMarketState } from "LLM/features/AssetDetail/types";
 
 export type AssetDetailDeeplinkSource = "deeplink_asset" | "deeplink_market";
 
@@ -12,16 +13,19 @@ export type AssetDetailDeeplinkSource = "deeplink_asset" | "deeplink_market";
  * The `source` route param flows into `useAssetDetailViewModel` and is forwarded by
  * `AssetDetailView`'s `TrackScreen` to the screen-view event properties.
  *
- * @param currencyId - Validated Ledger crypto asset id (e.g. "bitcoin").
+ * @param currencyId - Validated Ledger asset id (e.g. "bitcoin", "ethereum/erc20/usd_tether__erc20_").
  * @param source - Origin of the deeplink ("deeplink_asset" or "deeplink_market"), used for tracking.
+ * @param marketState - Optional Market lookup hint for token deeplinks.
  * @returns Navigation state targeting `Base > AssetDetail > AssetDetail` with `Main` at index 0.
  */
 export function handleAssetDetailDeeplink({
   currencyId,
   source,
+  marketState,
 }: {
   currencyId: string;
   source: AssetDetailDeeplinkSource;
+  marketState?: AssetDetailMarketState;
 }): ReturnType<typeof import("@react-navigation/native").getStateFromPath> {
   return {
     routes: [
@@ -37,7 +41,7 @@ export function handleAssetDetailDeeplink({
                 routes: [
                   {
                     name: ScreenName.AssetDetail,
-                    params: { currencyId, source },
+                    params: { currencyId, source, ...(marketState ? { marketState } : {}) },
                   },
                 ],
               },

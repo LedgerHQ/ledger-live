@@ -1,33 +1,10 @@
 import React from "react";
-import { SignatureScreenView } from "./components/SignatureScreenView";
-import { useSignatureViewModel } from "./hooks/useSignatureViewModel";
+import { useFeature } from "@features/platform-feature-flags";
+import { SignatureExecutorScreen } from "./SignatureExecutorScreen";
+import { SignatureDeviceActionScreen } from "./SignatureDeviceActionScreen";
 
 export function SignatureScreen() {
-  const {
-    account,
-    parentAccount,
-    transaction,
-    request,
-    deviceInitializationInput,
-    signatureIntent,
-    onIntentJobStateChanged,
-    onIntentJobError,
-    onUserCancel,
-  } = useSignatureViewModel();
+  const useDeviceActionSignature = useFeature("useDeviceActionSignatureSend")?.enabled ?? false;
 
-  if (!account || !transaction || !request || !deviceInitializationInput || !signatureIntent) {
-    return null;
-  }
-
-  return (
-    <SignatureScreenView
-      deviceInitializationInput={deviceInitializationInput}
-      signatureIntent={signatureIntent}
-      onIntentJobStateChanged={onIntentJobStateChanged}
-      onIntentJobError={onIntentJobError}
-      onUserCancel={onUserCancel}
-      account={account}
-      parentAccount={parentAccount ?? undefined}
-    />
-  );
+  return useDeviceActionSignature ? <SignatureDeviceActionScreen /> : <SignatureExecutorScreen />;
 }

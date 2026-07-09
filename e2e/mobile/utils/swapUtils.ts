@@ -7,13 +7,19 @@ import BigNumber from "bignumber.js";
 import { deleteSpeculos, launchSpeculos, registerSpeculos } from "./speculosUtils";
 import { log } from "detox";
 
-async function selectCurrency(account: Account, isFromCurrency: boolean = true) {
+async function selectCurrency(
+  account: Account,
+  isFromCurrency: boolean = true,
+  selectSpecificAccount: boolean = false,
+) {
   // Check the appropriate field based on whether we're selecting FROM or TO
   const currentCurrencyText = isFromCurrency
     ? await app.swapLiveApp.getFromCurrencyTexts()
     : await app.swapLiveApp.getToCurrencyTexts();
 
-  if (currentCurrencyText.includes(account.currency.ticker)) {
+  // When a specific (non-default) account is required, always open the drawer to pick it —
+  // even if the currency already matches — otherwise the default first account is kept.
+  if (!selectSpecificAccount && currentCurrencyText.includes(account.currency.ticker)) {
     return;
   }
   if (isFromCurrency) {
@@ -22,7 +28,11 @@ async function selectCurrency(account: Account, isFromCurrency: boolean = true) 
     await app.swapLiveApp.tapToCurrency();
   }
 
-  await app.modularDrawer.selectAsset(account);
+  if (selectSpecificAccount) {
+    await app.modularDrawer.selectAssetAndAccount(account);
+  } else {
+    await app.modularDrawer.selectAsset(account);
+  }
   await app.swapLiveApp.verifyCurrencyIsSelected(account.currency.ticker, isFromCurrency);
 }
 
@@ -31,9 +41,10 @@ export async function performSwapUntilQuoteSelectionStep(
   accountToCredit: Account,
   amount: string,
   continueToQuotes: boolean = true,
+  selectSpecificToAccount: boolean = false,
 ) {
   await selectCurrency(accountToDebit, true);
-  await selectCurrency(accountToCredit, false);
+  await selectCurrency(accountToCredit, false, selectSpecificToAccount);
   await app.swapLiveApp.inputAmount(amount);
   if (continueToQuotes) {
     await waitForWebElementToMatchRegex(app.swapLiveApp.toAmountInput, floatNumberRegex, 20000);

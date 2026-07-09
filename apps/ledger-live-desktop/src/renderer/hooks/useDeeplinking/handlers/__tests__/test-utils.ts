@@ -19,5 +19,6 @@ export const createMockContext = (
   assetsPath: "/market",
   isProductTourEnabled: true,
   isGenericAwarenessModalEnabled: true,
+  isPayTabEnabled: false,
   ...overrides,
 });

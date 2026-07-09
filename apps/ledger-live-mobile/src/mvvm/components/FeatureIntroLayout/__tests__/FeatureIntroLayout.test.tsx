@@ -15,9 +15,9 @@ const content: GenericAwarenessModalFeatureIntro = {
   title: "Connect a Ledger device",
   subtitle: "Connect a device to unlock Ledger Wallet features.",
   primaryButtonLabel: "Connect",
-  primaryButtonLink: "",
+  primaryButtonLink: "ledgerlive://connect",
   secondaryButtonLabel: "Buy your Ledger device",
-  secondaryButtonLink: "",
+  secondaryButtonLink: "ledgerlive://buy",
   items: [
     {
       icon: "HandCoins",
@@ -93,6 +93,37 @@ describe("FeatureIntroLayout", () => {
       screen.queryByTestId("generic-awareness-modal-feature-intro-hero"),
     ).not.toBeOnTheScreen();
   });
+
+  it.each([
+    ["primary", { primaryButtonLabel: "", primaryButtonLink: "ledgerlive://connect" }],
+    ["secondary", { secondaryButtonLabel: "", secondaryButtonLink: "ledgerlive://buy" }],
+  ] as const)("should hide the %s button when label is empty", (button, patch) => {
+    renderFeatureIntroLayout({
+      content: {
+        ...content,
+        ...patch,
+      },
+    });
+
+    expect(screen.queryByTestId(`generic-awareness-modal-${button}-button`)).not.toBeOnTheScreen();
+  });
+
+  it.each([
+    ["primary", { primaryButtonLabel: "Connect", primaryButtonLink: "" }],
+    ["secondary", { secondaryButtonLabel: "Buy your Ledger device", secondaryButtonLink: "" }],
+  ] as const)(
+    "should show the %s button when label is present and link is empty",
+    (button, patch) => {
+      renderFeatureIntroLayout({
+        content: {
+          ...content,
+          ...patch,
+        },
+      });
+
+      expect(screen.getByTestId(`generic-awareness-modal-${button}-button`)).toBeOnTheScreen();
+    },
+  );
 
   it("should render with fallback icon when icon name is invalid", () => {
     const contentWithInvalidIcon: GenericAwarenessModalFeatureIntro = {

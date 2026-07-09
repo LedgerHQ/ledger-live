@@ -124,7 +124,7 @@ type NotificationContentCard = ContentCardCommonProperties & {
   cta?: string;
 };
 
-type LandingPageStickyCtaContentCard = ContentCardCommonProperties & {
+type LandingPageStickyCtaContentCard = Omit<ContentCardCommonProperties, "order"> & {
   cta: string;
   link?: string;
   landingPage: LandingPageUseCase;

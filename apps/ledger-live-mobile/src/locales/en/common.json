@@ -479,6 +479,9 @@
     "FeeRequired": {
       "title": "Fees are required"
     },
+    "FeeTooHigh": {
+      "title": "Network fees are above 10% of the amount"
+    },
     "FeeTooLow": {
       "title": "Fees are too low to be accepted by the network. Please increase them"
     },
@@ -911,6 +914,9 @@
     },
     "NotSupportedLegacyAddress": {
       "title": "The legacy address format is no longer supported"
+    },
+    "RecipientRequired": {
+      "title": "Recipient address is required"
     },
     "SourceHasMultiSign": {
       "title": "Please disable multisign to send {{currencyName}}"
@@ -4572,6 +4578,10 @@
           "description": "You rejected the transaction. Your funds won't be affected.",
           "close": "Close",
           "retry": "Try again"
+        },
+        "error": {
+          "retry": "Try again",
+          "close": "Close"
         }
       },
       "confirmation": {
@@ -9935,7 +9945,8 @@
     "swap": "Swap",
     "earn": "Earn",
     "yield": "Yield",
-    "card": "Card"
+    "card": "Card",
+    "paytab": "Pay"
   },
   "syncIndicator": {
     "accessibilityLabel": {
@@ -10086,13 +10097,22 @@
     "send": {
       "balanceSelection": {
         "title": "Select balance",
-        "mockTitle": "Balance selection screen mock",
-        "selfTransfer": "Self transfer: {{value}}",
-        "mockButtonPublic": "Public",
-        "mockButtonPrivate": "Private"
+        "convertToPrivate": "Convert to private",
+        "convertToPublic": "Convert to public",
+        "sendPublicly": "Send publicly",
+        "sendPrivately": "Send privately"
+      },
+      "balanceSelector": {
+        "public": "Public",
+        "private": "Private",
+        "lastUpdate": "Last update: {{label}}",
+        "recently": "recently"
       },
       "privateSync": {
         "mockTitle": "Private sync mock"
+      },
+      "quickAmountSelector": {
+        "mockTitle": "Quick amount selector mock"
       }
     },
     "balancesSection": "Balances",

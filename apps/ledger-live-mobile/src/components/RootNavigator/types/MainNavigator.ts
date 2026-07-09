@@ -6,6 +6,7 @@ import { MyLedgerNavigatorStackParamList } from "./MyLedgerNavigator";
 import { PortfolioNavigatorStackParamList } from "./PortfolioNavigator";
 import { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
 import type { CardLandingNavigatorParamList } from "LLM/features/Card";
+import type { PayTabNavigatorParamList } from "LLM/features/PayTab";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
 
 export type MainNavigatorParamList = {
@@ -17,4 +18,5 @@ export type MainNavigatorParamList = {
   [NavigatorName.Web3HubTab]: NavigatorScreenParams<Web3HubTabStackParamList> | undefined;
   [NavigatorName.MyLedger]: NavigatorScreenParams<MyLedgerNavigatorStackParamList> | undefined;
   [NavigatorName.CardTab]: NavigatorScreenParams<CardLandingNavigatorParamList> | undefined;
+  [NavigatorName.PayTab]: NavigatorScreenParams<PayTabNavigatorParamList> | undefined;
 };

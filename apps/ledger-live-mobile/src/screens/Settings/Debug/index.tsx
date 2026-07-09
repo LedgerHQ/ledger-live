@@ -92,6 +92,12 @@ export default function DebugSettings({
         onPress={() => navigate(ScreenName.DebugWallet40)}
       />
       <SettingsRow
+        title="DevTools"
+        desc="Feature flags and dev tools panel"
+        iconLeft={<IconsLegacy.ToolsMedium size={24} color="black" />}
+        onPress={() => navigate(ScreenName.DebugDevTools)}
+      />
+      <SettingsRow
         title="Analytics opt-in consent — QA"
         desc="Inspect consent state and simulate portfolio drawer scenarios"
         iconLeft={<IconsLegacy.ChartNetworkMedium size={24} color="black" />}

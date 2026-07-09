@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { useFeature } from "@features/platform-feature-flags";
 import {
@@ -60,6 +60,11 @@ export function useSwapLiveAppState(params: unknown) {
 
   const webviewRef = useRef<WebviewAPI>(null);
 
+  // Incrementing this key remounts SwapWebviewContent, resetting the webview to
+  // its initial URL regardless of where it has navigated internally.
+  const [webviewResetKey, setWebviewResetKey] = useState(0);
+  const resetWebview = useCallback(() => setWebviewResetKey(k => k + 1), []);
+
   const swapLiveAppManifestID = ptxSwapLiveAppMobile?.params?.manifest_id ?? DEFAULT_MANIFEST_ID;
 
   const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(
@@ -105,5 +110,7 @@ export function useSwapLiveAppState(params: unknown) {
     webviewState,
     setWebviewState,
     defaultParams,
+    webviewResetKey,
+    resetWebview,
   };
 }

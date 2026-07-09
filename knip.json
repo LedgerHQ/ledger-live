@@ -105,6 +105,9 @@
     "./libs/live-dmk-mobile": {
       "entry": ["src/index.ts"]
     },
+    "./libs/live-engagement": {
+      "entry": ["src/index.ts", "src/largeScreenUpsellModal.ts"]
+    },
     "./libs/live-wallet": {
       "entry": [
         "src/walletsync/index.ts",
@@ -182,6 +185,9 @@
     "./domain/entity/currency-unit": {
       "entry": ["src/index.ts"]
     },
+    "./domain/entity/contact": {
+      "entry": ["src/index.ts"]
+    },
     "./domain/api/currency-fiat": {
       "entry": ["src/index.ts"]
     },
@@ -196,6 +202,9 @@
     },
     "./features/flow/market-banner": {
       "entry": ["src/index.ts", "src/components/MarketBanner/index.native.ts"]
+    },
+    "./features/flow/contacts": {
+      "entry": ["src/index.ts"]
     },
     "./features/platform/feature-flags": {
       "entry": ["src/index.ts"]

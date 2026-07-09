@@ -66,6 +66,22 @@ describe("marketHandler", () => {
     expect(context.navigate).toHaveBeenCalledWith("/market/bitcoin");
   });
 
+  it("uses the canonical parsed coin id when aggregated assets are off", () => {
+    const context = createMockContext({ assetsPath: "/market" });
+
+    marketHandler({ type: "market", path: "bit%63oin" }, context);
+
+    expect(context.navigate).toHaveBeenCalledWith("/market/bitcoin");
+  });
+
+  it("falls back to market list for an unresolvable path when aggregated assets are on", () => {
+    const context = createMockContext({ assetsPath: "/asset" });
+
+    marketHandler({ type: "market", path: "unknown_coin" }, context);
+
+    expect(context.navigate).toHaveBeenCalledWith("/market");
+  });
+
   it("falls back to market list for unknown currency when aggregated assets are off", () => {
     const context = createMockContext({ assetsPath: "/market" });
 
@@ -82,19 +98,30 @@ describe("marketHandler", () => {
     expect(context.navigate).toHaveBeenCalledWith("/asset/ethereum");
   });
 
-  it("passes the path through without currency resolution when aggregated assets are on", () => {
+  it("normalizes a coin path when aggregated assets are on", () => {
     const context = createMockContext({ assetsPath: "/asset" });
 
     marketHandler({ type: "market", path: "BiTcOiN" }, context);
 
-    expect(context.navigate).toHaveBeenCalledWith("/asset/BiTcOiN");
+    expect(context.navigate).toHaveBeenCalledWith("/asset/bitcoin");
   });
 
-  it("does not double-encode percent-encoded deeplink path segments when aggregated assets are on", () => {
+  it("navigates to asset detail with market state for a Ledger token id when aggregated assets are on", () => {
     const context = createMockContext({ assetsPath: "/asset" });
 
-    marketHandler({ type: "market", path: "a%2Fb" }, context);
+    marketHandler({ type: "market", path: "ethereum/erc20/usd_tether__erc20_" }, context);
 
-    expect(context.navigate).toHaveBeenCalledWith("/asset/a%2Fb");
+    expect(context.navigate).toHaveBeenCalledWith("/asset/ethereum%2Ferc20%2Fusd_tether__erc20_", {
+      id: "ethereum/erc20/usd_tether__erc20_",
+      ledgerIds: ["ethereum/erc20/usd_tether__erc20_"],
+    });
+  });
+
+  it("falls back to market list for a token path when aggregated assets are off", () => {
+    const context = createMockContext({ assetsPath: "/market" });
+
+    marketHandler({ type: "market", path: "ethereum/erc20/usd_tether__erc20_" }, context);
+
+    expect(context.navigate).toHaveBeenCalledWith("/market");
   });
 });

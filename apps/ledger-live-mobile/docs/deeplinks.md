@@ -117,6 +117,12 @@ When working on deeplinks, please update the **Wiki** accordingly.
 
   `ledgerlive://earn?action=get-funds&currencyId=ethereum` will open buy drawer with specified currency
 
+- **_paytab_** 🠒 Pay Tab (when `lwmPayTab` is on)
+
+  `ledgerlive://paytab` opens the Pay tab.
+
+  When `lwmPayTab` is off, the link falls back to the Card page.
+
 **_Testing on android_** in order to test in debug your link run using [**_adb_**](https://developer.android.com/training/app-links/deep-linking#testing-filters)
 
 ```

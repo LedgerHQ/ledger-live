@@ -104,12 +104,6 @@ const useDynamicContent = () => {
 
   const trackContentCardEvent = useCallback(
     async (event: ContentCardInteractionEvent, params: ContentCardEventProperties) => {
-      const cardId = params.campaign;
-      if (
-        typeof cardId === "string" &&
-        (localMobileCards.some(c => c.id === cardId) || localWalletCards.some(c => c.id === cardId))
-      )
-        return;
       try {
         await track(event, finalizeContentCardEventProperties(params));
         if (event === ContentCardEvent.Clicked) {
@@ -121,7 +115,7 @@ const useDynamicContent = () => {
         // Analytics must never block the user action that follows.
       }
     },
-    [localMobileCards, localWalletCards],
+    [],
   );
 
   return {

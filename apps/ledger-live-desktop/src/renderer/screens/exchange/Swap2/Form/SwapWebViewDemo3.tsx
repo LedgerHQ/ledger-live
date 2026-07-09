@@ -590,7 +590,7 @@ const SwapWebView = ({
         />
       )}
 
-      <SwapWebAppWrapper>
+      <SwapWebAppWrapper data-testid={`swap-web-app-container-${isEmbedded ? "embedded" : "full"}`}>
         <Web3AppWebview
           manifest={manifestWithHash}
           inputs={{

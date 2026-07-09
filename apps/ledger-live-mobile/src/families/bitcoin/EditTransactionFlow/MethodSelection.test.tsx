@@ -5,19 +5,18 @@ import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { ScreenName } from "~/const";
 import { MethodSelection } from "./MethodSelection";
 
-jest.mock("@ledgerhq/coin-bitcoin/editTransaction/index", () => ({
-  getEditTransactionPatch: jest.fn(),
-  hasMinimumFundsToCancel: jest.fn().mockResolvedValue(false),
-  hasMinimumFundsToSpeedUp: jest.fn().mockResolvedValue(false),
-  isTransactionConfirmed: jest.fn().mockResolvedValue(true),
-}));
-
 jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => ({
   isOldestBitcoinPendingOperation: jest.fn().mockReturnValue(true),
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => {
-  const bridge = { updateTransaction: jest.fn() };
+  const bridge = {
+    getEditTransactionPatch: jest.fn(),
+    hasMinimumFundsToCancel: jest.fn().mockResolvedValue(false),
+    hasMinimumFundsToSpeedUp: jest.fn().mockResolvedValue(false),
+    isTransactionConfirmed: jest.fn().mockResolvedValue(true),
+    getEditTransactionStatus: jest.fn(),
+  };
   const settledPromise = Object.assign(Promise.resolve(bridge), {
     status: "fulfilled",
     value: bridge,

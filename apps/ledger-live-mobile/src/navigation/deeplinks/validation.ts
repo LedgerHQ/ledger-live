@@ -6,7 +6,7 @@
  */
 
 import { DdRum, ErrorSource } from "@datadog/mobile-react-native";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { parseLedgerAssetPath, type LedgerAssetPath } from "@ledgerhq/asset-detail";
 import { validateUrl } from "@ledgerhq/live-common/wallet-api/validation/validateUrl";
 import { parseMarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { isDatadogEnabled } from "../../datadog";
@@ -251,15 +251,10 @@ export function validateLargeMoverLedgerIds(ledgerIds: string | null): string | 
   return unique.length ? unique.join(",") : null;
 }
 
-export function validateMarketCurrencyId(currencyId: string | null): string | null {
-  if (!currencyId || currencyId.trim() === "") {
-    return null;
-  }
+export type ValidatedMarketAssetPath = LedgerAssetPath;
 
-  const normalizedCurrencyId = currencyId.trim().toLowerCase();
-  const currency = findCryptoCurrencyById(normalizedCurrencyId);
-
-  return currency?.id ?? null;
+export function validateMarketAssetPath(pathname: string | null): ValidatedMarketAssetPath | null {
+  return parseLedgerAssetPath(pathname);
 }
 
 export function validateMarketListCategory(

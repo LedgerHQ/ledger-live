@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import {
   GenericAwarenessModalLayout,
+  resolveAwarenessModalActionLink,
   type GenericAwarenessModalContentCard,
   type GenericAwarenessModalPrompt,
 } from "@ledgerhq/live-common/genericAwarenessModal";
@@ -76,7 +77,10 @@ const useGenericAwarenessModalPromptViewModel = (
     const context = getContext();
     if (context && prompt) {
       trackPromptPrimaryClick(context, prompt.primaryButtonLabel, prompt.primaryButtonLink);
-      openURL(prompt.primaryButtonLink);
+      const actionLink = resolveAwarenessModalActionLink(prompt.primaryButtonLink);
+      if (actionLink) {
+        openURL(actionLink);
+      }
     }
     closeDialog({ dismissAppStart: true });
   }, [closeDialog, getContext, prompt]);
@@ -85,7 +89,10 @@ const useGenericAwarenessModalPromptViewModel = (
     const context = getContext();
     if (context && prompt) {
       trackPromptSecondaryClick(context, prompt.secondaryButtonLabel, prompt.secondaryButtonLink);
-      openURL(prompt.secondaryButtonLink);
+      const actionLink = resolveAwarenessModalActionLink(prompt.secondaryButtonLink);
+      if (actionLink) {
+        openURL(actionLink);
+      }
     }
     closeDialog({ dismissAppStart: true });
   }, [closeDialog, getContext, prompt]);

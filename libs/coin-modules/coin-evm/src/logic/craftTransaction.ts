@@ -2,6 +2,7 @@ import {
   BufferTxData,
   CraftedTransaction,
   FeeEstimation,
+  FeesStrategy,
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
@@ -68,7 +69,7 @@ export async function craftTransaction(
     const node = getNodeApi(currency);
     const feeData = await node.getFeeData(currency, {
       type,
-      feesStrategy: transactionIntent.feesStrategy,
+      feesStrategy: customFees?.parameters?.feesStrategy as FeesStrategy | undefined,
     });
 
     if (type === TransactionTypes.legacy && feeData.gasPrice) {

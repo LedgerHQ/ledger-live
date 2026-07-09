@@ -1,21 +1,23 @@
-export { processGenericAwarenessModalBrazeCards } from "./buildContentCards";
+export { processGenericAwarenessModalBrazeCards } from "./build";
 export {
   getExpectedItemCount,
   getExpectedSlideCount,
   hasReceivedAllCarouselSlides,
   hasReceivedAllFeatureIntroCards,
   isGenericAwarenessModalContentCardReady,
-} from "./campaignCompleteness";
-export { getGenericAwarenessModalContentCard } from "./getGenericAwarenessModalContentCard";
-export { hasAwarenessModalActionButton } from "./hasAwarenessModalActionButton";
-export { resolveCarouselNavigationButtonLabel } from "./resolveCarouselNavigationButtonLabel";
+} from "./build/campaignCompleteness";
 export {
   createThemedImageUrls,
+  getGenericAwarenessModalContentCard,
+  hasAwarenessModalActionButton,
+  hasAwarenessModalActionLink,
   hasThemedImage,
+  resolveAwarenessModalActionLink,
+  resolveCarouselNavigationButtonLabel,
   resolveThemedImageUrl,
   type ThemedImageUrls,
   type ThemeVariant,
-} from "./resolveThemedImageUrl";
+} from "./utils";
 
 export { FeatureIntroRole, GenericAwarenessModalLayout } from "./types";
 export type {

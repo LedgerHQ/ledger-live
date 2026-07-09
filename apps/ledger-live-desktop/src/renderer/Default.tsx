@@ -78,6 +78,7 @@ const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const PortfolioPage = lazy(() => import("LLD/features/Portfolio/screens/PortfolioPage"));
 const Settings = lazy(() => import("~/renderer/screens/settings"));
 const Accounts = lazy(() => import("~/renderer/screens/accounts"));
+const DevToolsScreen = lazy(() => import("LLD/features/DevTools/screens/DevToolsScreen"));
 const Card = lazy(() => import("~/renderer/screens/card"));
 const Manager = lazy(() => import("~/renderer/screens/manager"));
 const Exchange = lazy(() => import("~/renderer/screens/exchange"));
@@ -272,6 +273,7 @@ const MainAppContent = ({
       <Routes>
         <Route path="/" element={withSuspense(PortfolioPage)({})} />
         <Route path="/settings/*" element={withSuspense(Settings)({})} />
+        <Route path="/devtools" element={withSuspense(DevToolsScreen)({})} />
         <Route path="/accounts" element={withSuspense(Accounts)({})} />
         <Route
           path="/cryptos"

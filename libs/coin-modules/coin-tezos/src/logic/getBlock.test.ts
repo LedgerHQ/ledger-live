@@ -315,16 +315,44 @@ describe("native XTZ operations", () => {
     });
   });
 
-  it("produces no operations for a zero-amount transaction (e.g. delegation reveal)", async () => {
+  it("produces no operations for a zero-amount, zero-fee transaction", async () => {
     // Given
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
-    mockFetchBlockTransactions.mockResolvedValue([makeTx({ amount: 0 })]);
+    mockFetchBlockTransactions.mockResolvedValue([makeTx({ amount: 0, bakerFee: 0 })]);
 
     // When
     const result = await getBlock(5_000_000);
 
-    // Then
+    // Then — no balance impact, no operations
     expect(result.transactions[0].operations).toEqual([]);
+  });
+
+  it("produces operations for a zero-amount transaction that carries fees", async () => {
+    // Given
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockTransactions.mockResolvedValue([makeTx({ amount: 0, bakerFee: 1500 })]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then — fees are a balance change, so operations must be emitted for fee attribution
+    expect(result.transactions[0].fees).toBe(1500n);
+    expect(result.transactions[0].operations).toEqual([
+      {
+        type: "transfer",
+        address: "tz1Sender",
+        peer: "tz1Target",
+        asset: { type: "native", name: "XTZ" },
+        amount: 0n,
+      },
+      {
+        type: "transfer",
+        address: "tz1Target",
+        peer: "tz1Sender",
+        asset: { type: "native", name: "XTZ" },
+        amount: 0n,
+      },
+    ]);
   });
 
   it("produces only an incoming operation when sender is null, with no peer field", async () => {

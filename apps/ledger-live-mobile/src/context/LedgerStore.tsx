@@ -2,6 +2,7 @@ import React, { useEffect, useState, ReactNode, useCallback } from "react";
 import { Provider } from "react-redux";
 import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
+import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
@@ -22,6 +23,7 @@ import {
   getBle,
   getHistory,
   getKnownDevices,
+  getLargeScreenUpsellModalState,
   getPostOnboardingState,
   getProtect,
   getMarketState,
@@ -99,6 +101,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         settingsData,
         accountsData,
         postOnboardingState,
+        largeScreenUpsellModalState,
         marketState,
         marketListConfigState,
         marketBannerState,
@@ -118,6 +121,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
         retry(getAccounts, MAX_RETRIES, RETRY_DELAY),
         retry(getPostOnboardingState, MAX_RETRIES, RETRY_DELAY),
+        retry(getLargeScreenUpsellModalState, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketState, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketListConfig, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketBannerState, MAX_RETRIES, RETRY_DELAY),
@@ -175,6 +179,10 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       }
 
       backfillOnboardingDate(store);
+
+      if (largeScreenUpsellModalState) {
+        store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
+      }
 
       if (marketState) {
         store.dispatch(importMarket(marketState));

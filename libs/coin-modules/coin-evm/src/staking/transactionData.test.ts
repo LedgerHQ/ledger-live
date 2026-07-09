@@ -20,7 +20,6 @@ const delegateIntent = (
     asset: { type: "native" },
     recipient: "0xRecipient",
     sender: "0xSender",
-    feesStrategy: "medium",
     data: { type: "buffer", value: Buffer.from([]) },
     ...fields,
   }) as unknown as TransactionIntent<MemoNotSupported, BufferTxData>;

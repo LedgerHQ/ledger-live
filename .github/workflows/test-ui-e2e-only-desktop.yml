@@ -139,6 +139,10 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  E2E_DESKTOP_FEATURE_FLAGS: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 4 * * 2,4' && 'wallet40-q2') || inputs.feature_flags || 'defaults' }}
+  E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
+
 jobs:
   prepare-devices:
     name: "Prepare device matrix"
@@ -199,8 +203,6 @@ jobs:
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
       SPECULOS_DEVICE: ${{ matrix.device }}
       COINAPPS: ${{ github.workspace }}/coin-apps
-      E2E_DESKTOP_FEATURE_FLAGS: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 4 * * 2,4' && 'wallet40-q2') || inputs.feature_flags || 'defaults' }}
-      E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
       cache-bucket: ll-nx-cache
       USERDATA_CACHE_ENABLED: ${{ inputs.build_type != 'js' }}
       E2E_GENERATED_USERDATA_DIR: ${{ inputs.build_type != 'js' && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
@@ -608,14 +610,14 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": `- 🐧 linux (${device1}) : ${{ needs.report-to-allure.outputs.summary_message || 'No test results' }}`
+                    "text": `🐧 linux (${device1}) · FF '${{ env.E2E_DESKTOP_FEATURE_FLAGS }}' : ${{ needs.report-to-allure.outputs.summary_message || 'No test results' }}`
                   }
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": `- 🐧 linux (${device2}) : ${{ needs.report-to-allure-device2.outputs.summary_message || 'No test results' }}`
+                    "text": `🐧 linux (${device2}) · FF '${{ env.E2E_DESKTOP_FEATURE_FLAGS }}' : ${{ needs.report-to-allure-device2.outputs.summary_message || 'No test results' }}`
                   }
                 },
                 { "type": "divider" },
@@ -652,7 +654,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": `- 🐧 linux : ${{ needs.report-to-allure.outputs.summary_message || 'No test results' }}`
+                    "text": `🐧 linux · FF '${{ env.E2E_DESKTOP_FEATURE_FLAGS }}' : ${{ needs.report-to-allure.outputs.summary_message || 'No test results' }}`
                   }
                 },
                 { "type": "divider" },

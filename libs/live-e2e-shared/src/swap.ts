@@ -109,7 +109,7 @@ function isUsableQuote(q: SwapQuoteItem): boolean {
   return q.code === undefined && Number(q.amountTo) > 0;
 }
 
-async function keepRunningProviders(
+export async function keepRunningProviders(
   eligibleProviders: SwapProvider[],
   accountFrom: Account,
   accountTo: Account,

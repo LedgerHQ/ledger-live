@@ -368,3 +368,30 @@ test.describe("Earn [v2]", () => {
     );
   });
 });
+
+test.describe("LiveApp delegate - ETH", () => {
+  const account = Account.ETH_1;
+
+  test.use({
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: account.currency.speculosApp,
+    cliCommands: [liveDataCommand(account)],
+    featureFlags: { ...FF_STAKE_PROGRAMS_MODAL },
+  });
+
+  test(
+    "[Ethereum] - Select validator",
+    {
+      tag: [...getTags(account), "@smoke"],
+      annotation: { type: "TMS", description: "B2CQA-3024" },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.navigateToAccountByName(account.accountName);
+      await app.account.startStakingFlowFromMainStakeButton();
+      await app.earnV2Dashboard.verifyDepositFlowVisible();
+      await app.earnV2Dashboard.selectEthProvider(EarnProvider.LIDO.name);
+    },
+  );
+});

@@ -156,9 +156,9 @@ export const featureIntroMockData: GenericAwarenessModalContentCard = {
   title: "Connect a Ledger device",
   subtitle: "To unlock the full potential of your Ledger Wallet, connect a Ledger device.",
   primaryButtonLabel: "Connect",
-  primaryButtonLink: "",
+  primaryButtonLink: "ledgerlive://connect",
   secondaryButtonLabel: "Buy your Ledger device",
-  secondaryButtonLink: "",
+  secondaryButtonLink: "ledgerlive://buy",
   items: [
     {
       icon: "HandCoins",

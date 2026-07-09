@@ -14,8 +14,16 @@ import {
   DynamicContentAppendLocalCardsPayload,
   DynamicContentRemoveLocalCardPayload,
   DynamicContentAddLocalWalletCarouselPayload,
+  DynamicContentMarkLocalCardsViewedPayload,
 } from "../actions/types";
 import { createSelector } from "~/context/selectors";
+import {
+  compareCards,
+  mapAsAssetContentCard,
+  mapAsLandingPageStickyCtaContentCard,
+  mapAsNotificationContentCard,
+} from "~/dynamicContent/utils";
+import { ContentCardLocation } from "~/dynamicContent/types";
 
 export const INITIAL_STATE: DynamicContentState = {
   assetsCards: [],
@@ -62,9 +70,12 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
   }),
   [DynamicContentActionTypes.DYNAMIC_CONTENT_ADD_LOCAL_CARDS]: (state, action) => {
     const { category, cards } = (action as Action<DynamicContentAddLocalCardsPayload>).payload;
+    const localCategoriesCardsWithoutSameId = category.categoryId
+      ? state.localCategoriesCards.filter(existing => existing.categoryId !== category.categoryId)
+      : state.localCategoriesCards;
     return {
       ...state,
-      localCategoriesCards: [...state.localCategoriesCards, category],
+      localCategoriesCards: [...localCategoriesCardsWithoutSameId, category],
       localMobileCards: [...state.localMobileCards, ...cards],
     };
   },
@@ -88,6 +99,17 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
       ...(action as Action<DynamicContentAddLocalWalletCarouselPayload>).payload,
     ],
   }),
+  [DynamicContentActionTypes.DYNAMIC_CONTENT_MARK_LOCAL_CARDS_VIEWED]: (state, action) => {
+    const viewedIds = new Set(
+      (action as Action<DynamicContentMarkLocalCardsViewedPayload>).payload,
+    );
+    return {
+      ...state,
+      localMobileCards: state.localMobileCards.map(card =>
+        viewedIds.has(card.id) ? { ...card, viewed: true } : card,
+      ),
+    };
+  },
   [DynamicContentActionTypes.DYNAMIC_CONTENT_REMOVE_LOCAL_CARD]: (state, action) => {
     const cardId = (action as Action<DynamicContentRemoveLocalCardPayload>).payload;
     const localMobileCards = state.localMobileCards.filter(c => c.id !== cardId);
@@ -108,7 +130,19 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
 };
 
 // Selectors
-export const assetsCardsSelector = (s: State) => s.dynamicContent.assetsCards;
+export const assetsCardsSelector = createSelector(
+  (s: State) => s.dynamicContent.assetsCards,
+  (s: State) => s.dynamicContent.localMobileCards,
+  (assetsCards, localMobileCards) => {
+    const localAssetCards = localMobileCards
+      .filter(card => card.extras.location === ContentCardLocation.Asset)
+      .map(card => mapAsAssetContentCard(card));
+
+    if (localAssetCards.length === 0) return assetsCards;
+
+    return assetsCards.concat(localAssetCards).sort(compareCards);
+  },
+);
 
 export const walletCardsSelector = createSelector(
   (s: State) => s.dynamicContent.walletCards,
@@ -118,7 +152,19 @@ export const walletCardsSelector = createSelector(
 
 export const localWalletCardsSelector = (s: State) => s.dynamicContent.localWalletCards;
 
-export const notificationsCardsSelector = (s: State) => s.dynamicContent.notificationCards;
+export const notificationsCardsSelector = createSelector(
+  (s: State) => s.dynamicContent.notificationCards,
+  (s: State) => s.dynamicContent.localMobileCards,
+  (notificationCards, localMobileCards) => {
+    const localNotificationCards = localMobileCards
+      .filter(card => card.extras.location === ContentCardLocation.NotificationCenter)
+      .map(card => mapAsNotificationContentCard(card));
+
+    if (localNotificationCards.length === 0) return notificationCards;
+
+    return notificationCards.concat(localNotificationCards).sort(compareCards);
+  },
+);
 
 export const categoriesCardsSelector = createSelector(
   (s: State) => s.dynamicContent.categoriesCards,
@@ -126,8 +172,21 @@ export const categoriesCardsSelector = createSelector(
   (categoriesCards, localCategoriesCards) => categoriesCards.concat(localCategoriesCards),
 );
 
-export const landingPageStickyCtaCardsSelector = (s: State) =>
-  s.dynamicContent.landingPageStickyCtaCards;
+export const landingPageStickyCtaCardsSelector = createSelector(
+  (s: State) => s.dynamicContent.landingPageStickyCtaCards,
+  (s: State) => s.dynamicContent.localMobileCards,
+  (landingPageStickyCtaCards, localMobileCards) => {
+    const localLandingPageStickyCtaCards = localMobileCards
+      .filter(card => card.extras.location === ContentCardLocation.LandingPageStickyCta)
+      .map(card => mapAsLandingPageStickyCtaContentCard(card));
+
+    if (localLandingPageStickyCtaCards.length === 0) return landingPageStickyCtaCards;
+
+    return landingPageStickyCtaCards
+      .concat(localLandingPageStickyCtaCards)
+      .sort((a, b) => b.createdAt - a.createdAt);
+  },
+);
 
 export const mobileCardsSelector = createSelector(
   (s: State) => s.dynamicContent.mobileCards,

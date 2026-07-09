@@ -9,7 +9,7 @@ import { closeTrackedWebviewDevTools } from "./webviewHandlers";
 export const DEFAULT_WINDOW_WIDTH = intFromEnv("LEDGER_DEFAULT_WINDOW_WIDTH", 1024);
 export const DEFAULT_WINDOW_HEIGHT = intFromEnv("LEDGER_DEFAULT_WINDOW_HEIGHT", 768);
 export { MIN_HEIGHT, MIN_WIDTH };
-const { DEV_TOOLS, DISABLE_DEV_TOOLS, IGNORE_CERTIFICATE_ERRORS } = process.env;
+const { DEV_TOOLS, DISABLE_DEV_TOOLS, BYPASS_CORS, IGNORE_CERTIFICATE_ERRORS } = process.env;
 
 // Used for minirecover (recover local dev env)
 if (__DEV__ && IGNORE_CERTIFICATE_ERRORS) {
@@ -42,6 +42,8 @@ const getWindowPosition = (width: number, height: number, display = screen.getPr
 };
 
 const webPreferences: WebPreferences = {
+  // https://ledgerhq.atlassian.net/browse/LIVE-6785 : This is a TEMPORARY workaround for some of our backend not yet supporting CORS. we will remove this once it's the case. this is only for develop mode because production don't do strict CORS check at the moment.
+  webSecurity: !(__DEV__ && BYPASS_CORS === "1"),
   // required for Live Apps integration (usage of <webview> in PlatformAPIWebview.tsx)
   webviewTag: true,
   // allow devtools to exists in development mode or when explicitly enabled with DEV_TOOLS env var

@@ -317,14 +317,17 @@ export interface AccountBridgeExtensions<T extends TransactionCommon = Transacti
     mainAccount: Account;
     locale: string;
   }) => Record<string, string>;
-  hasMinimumFundsToCancel?: (args: { mainAccount: Account; transactionToUpdate: T }) => boolean;
-  hasMinimumFundsToSpeedUp?: (args: {
-    account: AccountLike;
+  hasMinimumFundsToCancel?: (args: {
     mainAccount: Account;
     transactionToUpdate: T;
-  }) => boolean;
+  }) => Promise<boolean>;
+  hasMinimumFundsToSpeedUp?: (args: {
+    account?: AccountLike;
+    mainAccount: Account;
+    transactionToUpdate: T;
+  }) => Promise<boolean>;
   isStrategyDisabled?: (args: { transaction: T; feeData: unknown }) => boolean;
-  isTransactionConfirmed?: (args: { currency: CryptoCurrency; hash: string }) => Promise<boolean>;
+  isTransactionConfirmed?: (args: { account: AccountLike; hash: string }) => Promise<boolean>;
 }
 
 export type AccountBridge<

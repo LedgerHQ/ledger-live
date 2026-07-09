@@ -195,21 +195,28 @@ const Body = ({
   const mainAccount = getMainAccount(account, parentAccount);
 
   useEffect(() => {
+    let intervalId: number | undefined;
     const setTransactionHasBeenValidatedCallback = async () => {
-      const hasBeenConfirmed = await bridge.isTransactionConfirmed({
-        currency: mainAccount.currency,
-        hash: params.transactionHash,
-      });
-      if (hasBeenConfirmed) {
-        // stop polling as soon as we have a confirmation
-        clearInterval(intervalId);
-        setTransactionHasBeenValidated(true);
+      try {
+        const hasBeenConfirmed = await bridge.isTransactionConfirmed({
+          account: mainAccount,
+          hash: params.transactionHash,
+        });
+        if (hasBeenConfirmed) {
+          // stop polling as soon as we have a confirmation
+          clearInterval(intervalId);
+          setTransactionHasBeenValidated(true);
+        }
+      } catch {
+        // best-effort polling: swallow transient errors and keep polling
       }
     };
 
-    setTransactionHasBeenValidatedCallback();
-    const intervalId = window.setInterval(
-      () => setTransactionHasBeenValidatedCallback(),
+    void setTransactionHasBeenValidatedCallback();
+    intervalId = window.setInterval(
+      () => {
+        void setTransactionHasBeenValidatedCallback();
+      },
       mainAccount.currency.blockAvgTime
         ? mainAccount.currency.blockAvgTime * 1000
         : getEnv("DEFAULT_TRANSACTION_POLLING_INTERVAL"),
@@ -218,14 +225,34 @@ const Body = ({
     return () => {
       clearInterval(intervalId);
     };
-  }, [bridge, mainAccount.currency, params.transactionHash]);
+  }, [bridge, mainAccount, params.transactionHash]);
 
-  const haveFundToCancel = bridge.hasMinimumFundsToCancel({ transactionToUpdate, mainAccount });
-  const haveFundToSpeedup = bridge.hasMinimumFundsToSpeedUp({
-    transactionToUpdate,
-    mainAccount,
-    account,
-  });
+  const [haveFundToCancel, setHaveFundToCancel] = useState(false);
+  const [haveFundToSpeedup, setHaveFundToSpeedup] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchFunds = async () => {
+      try {
+        const [cancelFunds, speedupFunds] = await Promise.all([
+          bridge.hasMinimumFundsToCancel({ transactionToUpdate, mainAccount }),
+          bridge.hasMinimumFundsToSpeedUp({ transactionToUpdate, mainAccount, account }),
+        ]);
+
+        if (!cancelled) {
+          setHaveFundToCancel(cancelFunds);
+          setHaveFundToSpeedup(speedupFunds);
+        }
+      } catch {
+        // ignore: leave the funds flags unchanged on failure
+      }
+    };
+
+    void fetchFunds();
+    return () => {
+      cancelled = true;
+    };
+  }, [bridge, account, mainAccount, transactionToUpdate]);
 
   // if we are at this step (i.e: in this screen) it means the transaction is editable
   const isOldestEditableOperation = isOldestPendingOperation(
@@ -233,17 +260,21 @@ const Body = ({
     new BigNumber(transactionToUpdate.nonce),
   );
 
-  const [editType, setEditType] = useState<StepProps["editType"]>(
+  const derivedEditType: StepProps["editType"] =
     isOldestEditableOperation && haveFundToSpeedup
       ? "speedup"
       : haveFundToCancel
         ? "cancel"
-        : undefined,
-  );
-  const handleSetEditType: StepProps["setEditType"] = useCallback(
-    editType => setEditType(editType),
-    [],
-  );
+        : undefined;
+
+  // Track if the user has manually selected an edit type, otherwise use the derived value
+  const [userSelectedEditType, setUserSelectedEditType] =
+    useState<StepProps["editType"]>(undefined);
+  const editType = userSelectedEditType ?? derivedEditType;
+
+  const handleSetEditType: StepProps["setEditType"] = useCallback(editType => {
+    setUserSelectedEditType(editType);
+  }, []);
 
   /**
    * In order to display the relevant informations in the summary step, regarding

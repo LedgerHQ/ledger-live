@@ -2,7 +2,6 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
 import { waitEarnReady } from "../../bridge/server";
-import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 import type { ApplicationOptions } from "page";
@@ -11,8 +10,9 @@ import type { PartialFeatures } from "@shared/feature-flags";
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 const EARN_V2_FLAGS: PartialFeatures = {
-  ...WALLET_40_FEATURE_FLAGS,
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
+  // TODO: remove once deposit flow v2 is fully rolled out and set to 'true' by default
+  swapToEarn: { enabled: true },
 };
 
 // Pins the ETH deposit webview to the `basic_sorting` cohort (mirrors the desktop

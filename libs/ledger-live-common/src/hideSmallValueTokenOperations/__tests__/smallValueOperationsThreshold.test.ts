@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { getFiatCurrencyByTicker } from "../../currencies";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   clampSmallValueThresholdUsd,
   convertThresholdFromCountervalueMinorUnitToUsd,
@@ -11,7 +11,7 @@ import {
   floorThresholdToCurrencyMinorUnit,
   formatThresholdMinorUnitForInput,
   formatSmallValueOperationsThreshold,
-  isSmallValueTokenOperation,
+  isSmallValueIncomingOperation,
   SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
 } from "../smallValueOperationsThreshold";
 
@@ -208,24 +208,30 @@ describe("smallValueOperationsThreshold", () => {
     });
   });
 
-  describe("isSmallValueTokenOperation", () => {
+  describe("isSmallValueIncomingOperation", () => {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const mockToken = { units: [{ magnitude: 6 }] } as TokenCurrency;
+    const mockToken = { ticker: "MOCK", units: [{ magnitude: 6 }] } as TokenCurrency;
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const mockNativeCurrency = {
+      ticker: "MOCK_NATIVE",
+      units: [{ magnitude: 10 }],
+    } as CryptoCurrency;
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const tokenAccount = { type: "TokenAccount", token: mockToken } as AccountLike;
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const regularAccount = { type: "Account" } as AccountLike;
+    const regularAccount = { type: "Account", currency: mockNativeCurrency } as AccountLike;
 
     const buildOp = (type: string, value: BigNumber): Operation =>
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       ({ type, value }) as Operation;
 
     const mockSmallValueCalculations = (
+      operationCurrency: CryptoCurrency | TokenCurrency,
       opFiatValue: number | undefined,
       thresholdFiatValue = 50,
     ) => {
       mockCalculate.mockImplementation((_state, query) => {
-        if (query.from === mockToken) return opFiatValue;
+        if (query.from === operationCurrency) return opFiatValue;
         if (query.from === SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY) {
           return thresholdFiatValue;
         }
@@ -233,13 +239,10 @@ describe("smallValueOperationsThreshold", () => {
       });
     };
 
-    it.each([
-      { desc: "non-token Account", account: "regular", opType: "IN" },
-      { desc: "non-IN operation (OUT)", account: "token", opType: "OUT" },
-    ])("should return false for $desc without calling calculate", ({ account, opType }) => {
-      const result = isSmallValueTokenOperation({
-        operation: buildOp(opType, new BigNumber(0)),
-        account: account === "token" ? tokenAccount : regularAccount,
+    it("should keep non-IN operations without calling calculate", () => {
+      const result = isSmallValueIncomingOperation({
+        operation: buildOp("OUT", new BigNumber(0)),
+        account: regularAccount,
         countervaluesState: mockCountervaluesState,
         userCounterValueCurrency: EUR,
       });
@@ -248,8 +251,20 @@ describe("smallValueOperationsThreshold", () => {
       expect(mockCalculate).not.toHaveBeenCalled();
     });
 
+    it("should return true when an incoming native operation has exactly 0 crypto value", () => {
+      const result = isSmallValueIncomingOperation({
+        operation: buildOp("IN", new BigNumber(0)),
+        account: regularAccount,
+        countervaluesState: mockCountervaluesState,
+        userCounterValueCurrency: EUR,
+      });
+
+      expect(result).toBe(true);
+      expect(mockCalculate).not.toHaveBeenCalled();
+    });
+
     it("should return true when token IN operation has exactly 0 crypto value", () => {
-      const result = isSmallValueTokenOperation({
+      const result = isSmallValueIncomingOperation({
         operation: buildOp("IN", new BigNumber(0)),
         account: tokenAccount,
         countervaluesState: mockCountervaluesState,
@@ -272,9 +287,9 @@ describe("smallValueOperationsThreshold", () => {
       },
       { fiatValue: 51, opValue: 510_000, expected: false, desc: "above threshold -> not dust" },
     ])("$desc", ({ fiatValue, opValue, expected }) => {
-      mockSmallValueCalculations(fiatValue);
+      mockSmallValueCalculations(mockToken, fiatValue);
 
-      const result = isSmallValueTokenOperation({
+      const result = isSmallValueIncomingOperation({
         operation: buildOp("IN", new BigNumber(opValue)),
         account: tokenAccount,
         countervaluesState: mockCountervaluesState,
@@ -285,14 +300,42 @@ describe("smallValueOperationsThreshold", () => {
     });
 
     it.each([
+      { fiatValue: 49, opValue: 499_999, expected: true, desc: "below threshold -> dust" },
+      { fiatValue: 51, opValue: 510_000, expected: false, desc: "above threshold -> not dust" },
+    ])("should handle incoming native operations $desc", ({ fiatValue, opValue, expected }) => {
+      mockSmallValueCalculations(mockNativeCurrency, fiatValue);
+
+      const result = isSmallValueIncomingOperation({
+        operation: buildOp("IN", new BigNumber(opValue)),
+        account: regularAccount,
+        countervaluesState: mockCountervaluesState,
+        userCounterValueCurrency: EUR,
+      });
+
+      expect(result).toBe(expected);
+    });
+
+    it("should keep outgoing native operations below the dust threshold", () => {
+      const result = isSmallValueIncomingOperation({
+        operation: buildOp("OUT", new BigNumber(499_999)),
+        account: regularAccount,
+        countervaluesState: mockCountervaluesState,
+        userCounterValueCurrency: EUR,
+      });
+
+      expect(result).toBe(false);
+      expect(mockCalculate).not.toHaveBeenCalled();
+    });
+
+    it.each([
       { fiatValue: undefined, desc: "calculate returns undefined" },
       { fiatValue: Number.POSITIVE_INFINITY, desc: "calculate returns Infinity" },
     ])("should not filter when price feed is unavailable ($desc)", ({ fiatValue }) => {
-      mockSmallValueCalculations(fiatValue);
+      mockSmallValueCalculations(mockNativeCurrency, fiatValue);
 
-      const result = isSmallValueTokenOperation({
+      const result = isSmallValueIncomingOperation({
         operation: buildOp("IN", new BigNumber(1_000_000)),
-        account: tokenAccount,
+        account: regularAccount,
         countervaluesState: mockCountervaluesState,
         userCounterValueCurrency: EUR,
       });
@@ -303,11 +346,11 @@ describe("smallValueOperationsThreshold", () => {
     it("should correctly filter a dust amount from an 18-decimal token", () => {
       // Scenario: 18-decimal token, op worth ~1 EUR cent (dust)
       // calculate(token -> EUR, 10^20) -> 1 EUR cent ; threshold = 50 EUR cents
-      mockSmallValueCalculations(1);
+      mockSmallValueCalculations(mockToken, 1);
 
       const dustAmount = new BigNumber("100").times(new BigNumber(10).pow(18)); // 10^20
 
-      const result = isSmallValueTokenOperation({
+      const result = isSmallValueIncomingOperation({
         operation: buildOp("IN", dustAmount),
         account: tokenAccount,
         countervaluesState: mockCountervaluesState,
@@ -317,10 +360,10 @@ describe("smallValueOperationsThreshold", () => {
       expect(result).toBe(true); // 1 EUR cent < 50 EUR cent threshold -> dust
     });
 
-    it("should use a custom Firebase thresholdUsd when provided", () => {
-      mockSmallValueCalculations(24, 25);
+    it("should use a custom feature flag thresholdUsd when provided", () => {
+      mockSmallValueCalculations(mockToken, 24, 25);
 
-      const result = isSmallValueTokenOperation({
+      const result = isSmallValueIncomingOperation({
         operation: buildOp("IN", new BigNumber(249_999)),
         account: tokenAccount,
         countervaluesState: mockCountervaluesState,
@@ -341,9 +384,9 @@ describe("smallValueOperationsThreshold", () => {
     });
 
     it("should fall back to the default threshold ($0.5 -> 50 EUR cents) when thresholdUsd is omitted", () => {
-      mockSmallValueCalculations(1);
+      mockSmallValueCalculations(mockToken, 1);
 
-      const result = isSmallValueTokenOperation({
+      const result = isSmallValueIncomingOperation({
         operation: buildOp("IN", new BigNumber(1)),
         account: tokenAccount,
         countervaluesState: mockCountervaluesState,
@@ -355,9 +398,9 @@ describe("smallValueOperationsThreshold", () => {
 
     it("should return false when the converted threshold is zero", () => {
       // A zero threshold is treated as "no threshold" to avoid filtering all operations.
-      mockSmallValueCalculations(0, 0);
+      mockSmallValueCalculations(mockToken, 0, 0);
 
-      const result = isSmallValueTokenOperation({
+      const result = isSmallValueIncomingOperation({
         operation: buildOp("IN", new BigNumber(1)),
         account: tokenAccount,
         countervaluesState: mockCountervaluesState,

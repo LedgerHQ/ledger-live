@@ -1,7 +1,7 @@
 import {
   validateLargeMoverCurrencyIds,
   validateLargeMoverLedgerIds,
-  validateMarketCurrencyId,
+  validateMarketAssetPath,
   validateMarketListCategory,
 } from "../validation";
 
@@ -89,25 +89,28 @@ describe("validateLargeMoverLedgerIds", () => {
   });
 });
 
-describe("validateMarketCurrencyId", () => {
-  it("should return null when currencyId is null", () => {
-    const result = validateMarketCurrencyId(null);
-    expect(result).toBeNull();
+// Exhaustive parsing/validation behavior lives in @ledgerhq/asset-detail's parseLedgerAssetPath
+// tests; here we only assert this validator delegates to it for the coin, token and invalid cases.
+describe("validateMarketAssetPath", () => {
+  it("should return a canonical currency id for a coin path", () => {
+    expect(validateMarketAssetPath("/BiTcOiN")).toEqual({
+      currencyId: "bitcoin",
+      assetId: "bitcoin",
+    });
   });
 
-  it("should return null when currencyId is empty", () => {
-    const result = validateMarketCurrencyId("");
-    expect(result).toBeNull();
+  it("should return the full Ledger token id for a token path", () => {
+    expect(validateMarketAssetPath("/ethereum/erc20/usd_tether__erc20_")).toEqual({
+      currencyId: "ethereum",
+      assetId: "ethereum/erc20/usd_tether__erc20_",
+      ledgerIds: ["ethereum/erc20/usd_tether__erc20_"],
+    });
   });
 
-  it("should return null for an unknown currencyId", () => {
-    const result = validateMarketCurrencyId("unknown_coin");
-    expect(result).toBeNull();
-  });
-
-  it("should normalize and return a valid currencyId", () => {
-    const result = validateMarketCurrencyId("BiTcOiN");
-    expect(result).toBe("bitcoin");
+  it("should return null for unresolved or empty paths", () => {
+    expect(validateMarketAssetPath("/unknown/erc20/usd_tether__erc20_")).toBeNull();
+    expect(validateMarketAssetPath(null)).toBeNull();
+    expect(validateMarketAssetPath("")).toBeNull();
   });
 });
 

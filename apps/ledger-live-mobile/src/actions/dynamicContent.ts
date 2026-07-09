@@ -18,6 +18,7 @@ import {
   DynamicContentAppendLocalCardsPayload,
   DynamicContentRemoveLocalCardPayload,
   DynamicContentAddLocalWalletCarouselPayload,
+  DynamicContentMarkLocalCardsViewedPayload,
 } from "./types";
 
 const setDynamicContentWalletCardsAction = createAction<DynamicContentSetWalletCardsPayload>(
@@ -101,3 +102,9 @@ const addLocalWalletCarouselCardsAction = createAction<DynamicContentAddLocalWal
 
 export const addLocalWalletCarouselCards = (cards: DynamicContentAddLocalWalletCarouselPayload) =>
   addLocalWalletCarouselCardsAction(cards);
+
+const markLocalCardsViewedAction = createAction<DynamicContentMarkLocalCardsViewedPayload>(
+  DynamicContentActionTypes.DYNAMIC_CONTENT_MARK_LOCAL_CARDS_VIEWED,
+);
+
+export const markLocalCardsViewed = (cardIds: string[]) => markLocalCardsViewedAction(cardIds);
