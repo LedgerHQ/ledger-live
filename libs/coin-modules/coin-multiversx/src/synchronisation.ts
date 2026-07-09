@@ -3,7 +3,7 @@ import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/j
 import { makeSync, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization/index";
 import { TokenAccount } from "@ledgerhq/types-live";
-import { getAccount, getAccountDelegations, getEGLDOperations, hasESDTTokens } from "./api";
+import { getAccount, getAccountDelegations, getEGLDOperations, hasESDTTokens } from "./network";
 import MultiversXBuildESDTTokenAccounts from "./buildSubAccounts";
 import { computeDelegationBalance } from "./logic";
 import { reconciliateSubAccounts } from "./reconciliation";

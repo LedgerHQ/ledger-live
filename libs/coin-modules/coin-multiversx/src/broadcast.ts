@@ -1,6 +1,6 @@
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { broadcastTransaction } from "./api";
+import { broadcastTransaction } from "./network";
 import { Transaction } from "./types";
 
 /**

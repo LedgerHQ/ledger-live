@@ -1,26 +1,22 @@
-import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
+import buildCoinConfig, {
+  type CoinConfig,
+  type CurrencyConfig,
+} from "@ledgerhq/coin-module-framework/config";
 
-export type MultiversXCoinConfig = () => CurrencyConfig & {
-  config_currency_multiversx: {
-    type: "object";
-    default: {
-      status: {
-        type: "active";
-      };
-    };
-  };
+export type MultiversXConfig = {
+  apiEndpoint: string;
+  delegationApiEndpoint: string;
 };
 
-let coinConfig: MultiversXCoinConfig | undefined;
+export type MultiversXCoinConfig = CurrencyConfig & MultiversXConfig;
 
-export const setCoinConfig = (config: MultiversXCoinConfig): void => {
-  coinConfig = config;
-};
+const coinConfig: {
+  setCoinConfig: (config: CoinConfig<MultiversXCoinConfig>) => void;
+  getCoinConfig: (currencyId?: string) => MultiversXCoinConfig;
+} = buildCoinConfig<MultiversXCoinConfig>();
 
-export const getCoinConfig = (): ReturnType<MultiversXCoinConfig> => {
-  if (!coinConfig?.()) {
-    throw new Error("MultiversX module config not set");
-  }
+export default coinConfig;
 
-  return coinConfig();
-};
+// Backward-compatible named exports used by the bridge path.
+export const setCoinConfig = coinConfig.setCoinConfig.bind(coinConfig);
+export const getCoinConfig = coinConfig.getCoinConfig.bind(coinConfig);

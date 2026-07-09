@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/types-live";
 import { IGasLimit, INetworkConfig, INonce } from "@multiversx/sdk-core";
-import { getAccountNonce, getNetworkConfig } from "./api";
+import { getAccountNonce, getNetworkConfig } from "./network";
 import {
   GAS_PRICE,
   TRANSACTION_OPTIONS_TX_HASH_SIGN,

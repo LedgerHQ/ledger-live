@@ -1,6 +1,6 @@
 {
   "entry": [
-    "src/index.ts",
+    "src/api/index.ts",
     "src/bridge/js.ts",
     "src/config.ts",
     "src/network/index.ts",
@@ -29,5 +29,6 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"]
+    "jest-util"
+  ]
 }
