@@ -1,0 +1,6 @@
+{
+  "name": "@ledgerhq/client-ids",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Stub — migrated to @domain/entity-client-identity and @domain/api-push-devices"
+}

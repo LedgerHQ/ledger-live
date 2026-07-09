@@ -1,0 +1,12 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "@ledgerhq/client-ids",
+  "targets": {
+    "check-export-rules": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'client-ids migrated to @domain/entity-client-identity; see domain/entity/client-identity/'"
+      }
+    }
+  }
+}
