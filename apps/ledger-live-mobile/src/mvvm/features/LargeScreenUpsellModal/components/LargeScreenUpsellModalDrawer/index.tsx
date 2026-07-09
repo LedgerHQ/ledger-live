@@ -1,8 +1,9 @@
 import React from "react";
 import { Box, BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
+import { Platform, StyleSheet } from "react-native";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
-import { FeatureIntroLayout } from "LLM/components/FeatureIntroLayout";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import { LargeScreenUpsellModalContent } from "../LargeScreenUpsellModalContent";
 
 type LargeScreenUpsellModalDrawerProps = Readonly<{
   isOpen: boolean;
@@ -23,13 +24,16 @@ export function LargeScreenUpsellModalDrawer({
     if (!isOpen) return null;
 
     return (
-      <BottomSheetView style={{ paddingBottom: bottomInset }}>
-        <Box
-          testID="large-screen-upsell-modal-drawer"
-          lx={{ paddingTop: "s12", paddingBottom: "s12", paddingHorizontal: "s16" }}
-        >
-          <BottomSheetHeader />
-          <FeatureIntroLayout onClose={onCloseFromCta} viewModel={featureIntroViewModel} />
+      <BottomSheetView
+        style={[styles.container, { paddingBottom: Platform.OS === "ios" ? bottomInset : 0 }]}
+      >
+        <Box testID="large-screen-upsell-modal-drawer">
+          <BottomSheetHeader spacing />
+          <LargeScreenUpsellModalContent
+            onClose={onClose}
+            onCtaPress={onCloseFromCta}
+            viewModel={featureIntroViewModel}
+          />
         </Box>
       </BottomSheetView>
     );
@@ -46,3 +50,10 @@ export function LargeScreenUpsellModalDrawer({
     </QueuedDrawerBottomSheet>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 0,
+    paddingTop: 0,
+  },
+});
