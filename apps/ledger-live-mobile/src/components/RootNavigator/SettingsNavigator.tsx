@@ -37,6 +37,7 @@ import DebugPlayground from "~/screens/Settings/Debug/Playground";
 import DebugBluetoothAndLocationServices from "~/screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
 import DebugSettings from "~/screens/Settings/Debug";
 import DebugAnalyticsConsentQA from "~/screens/Settings/Debug/AnalyticsConsentQA";
+import DebugNotificationsPromptQA from "LLM/features/NotificationsPrompt/screens/NotificationsPromptQADebug";
 import DebugSnackbars from "~/screens/Settings/Debug/Features/Snackbars";
 import DebugTransactionsAlerts from "~/screens/Settings/Debug/Features/TransactionsAlerts";
 import DebugStore from "~/screens/Settings/Debug/Debugging/Store";
@@ -253,6 +254,13 @@ export default function SettingsNavigator() {
         component={DebugAnalyticsConsentQA}
         options={{
           title: "Analytics opt-in consent — QA",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugNotificationsPromptQA}
+        component={DebugNotificationsPromptQA}
+        options={{
+          title: "Notifications prompt — QA",
         }}
       />
       <Stack.Screen

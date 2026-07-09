@@ -105,7 +105,7 @@ type CheckIsInactiveInput = {
   now?: number;
 };
 
-const AFTER_ACTION_SOURCE_TO_EVENT_KEY = {
+export const AFTER_ACTION_SOURCE_TO_EVENT_KEY = {
   onboarding: "complete_onboarding",
   send: "send",
   dapp_complete: "dapp_complete",

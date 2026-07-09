@@ -6,6 +6,7 @@ export { useNotificationsData } from "./hooks/useNotificationsData";
 export { useNotificationsPrompt } from "./hooks/useNotificationsPrompt";
 export { useNotificationsDrawer } from "./hooks/useNotificationsDrawer";
 export {
+  AFTER_ACTION_SOURCE_TO_EVENT_KEY,
   INACTIVITY_DRAWER_DELAY_MS,
   checkIsInactive,
   evaluateAfterActionTrigger,
