@@ -11,6 +11,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { withFlagOverrides } from "@tests/test-renderer";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { EMPTY } from "rxjs";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 
 const Stack = createNativeStackNavigator<
   BaseNavigatorStackParamList & SettingsNavigatorStackParamList & WalletSyncNavigatorStackParamList
@@ -19,14 +20,16 @@ const Stack = createNativeStackNavigator<
 export function WalletSyncSettingsNavigator() {
   return (
     <QueryClientProvider client={new QueryClient()}>
-      <Stack.Navigator initialRouteName={ScreenName.GeneralSettings}>
-        <Stack.Screen name={ScreenName.GeneralSettings} component={GeneralSettings} />
-        <Stack.Screen
-          name={NavigatorName.WalletSync}
-          component={WalletSyncNavigator}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
+      <NotificationsPromptProvider>
+        <Stack.Navigator initialRouteName={ScreenName.GeneralSettings}>
+          <Stack.Screen name={ScreenName.GeneralSettings} component={GeneralSettings} />
+          <Stack.Screen
+            name={NavigatorName.WalletSync}
+            component={WalletSyncNavigator}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NotificationsPromptProvider>
     </QueryClientProvider>
   );
 }
@@ -34,13 +37,15 @@ export function WalletSyncSettingsNavigator() {
 export function WalletSyncSharedNavigator() {
   return (
     <QueryClientProvider client={new QueryClient()}>
-      <Stack.Navigator initialRouteName={NavigatorName.WalletSync}>
-        <Stack.Screen
-          name={NavigatorName.WalletSync}
-          component={WalletSyncNavigator}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
+      <NotificationsPromptProvider>
+        <Stack.Navigator initialRouteName={NavigatorName.WalletSync}>
+          <Stack.Screen
+            name={NavigatorName.WalletSync}
+            component={WalletSyncNavigator}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NotificationsPromptProvider>
     </QueryClientProvider>
   );
 }

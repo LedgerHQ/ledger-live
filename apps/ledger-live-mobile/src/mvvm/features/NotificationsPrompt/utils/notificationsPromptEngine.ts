@@ -70,12 +70,6 @@ type GetNextRepromptDelayInput = NotificationsPromptOptInStateInput & {
   pushNotificationsDataOfUser: DataOfUser | null | undefined;
 };
 
-type AfterActionEligibilityInput = NotificationsPromptOptInStateInput & {
-  pushNotificationsDataOfUser: DataOfUser | null | undefined;
-  repromptSchedule?: NotificationsPromptRepromptDelay[] | null;
-  now?: number;
-};
-
 type NotificationsPromptEvaluationContext = {
   brazePushNotifications: BrazePushNotificationsFeature;
   isRatingsModalOpen: boolean;
@@ -105,7 +99,7 @@ type CheckIsInactiveInput = {
   now?: number;
 };
 
-const AFTER_ACTION_SOURCE_TO_EVENT_KEY = {
+export const AFTER_ACTION_SOURCE_TO_EVENT_KEY = {
   onboarding: "complete_onboarding",
   send: "send",
   dapp_complete: "dapp_complete",
@@ -310,27 +304,7 @@ export const getNextRepromptDelay = ({
   return repromptSchedule[scheduleIndex];
 };
 
-export const shouldPromptOptInDrawerAfterAction = ({
-  permissionStatus,
-  areNotificationsAllowed,
-  pushNotificationsDataOfUser,
-  repromptSchedule,
-  now = Date.now(),
-}: AfterActionEligibilityInput): boolean => {
-  if (!isGloballyOptedIn(permissionStatus, areNotificationsAllowed)) {
-    return hasRepromptDelayElapsed({
-      pushNotificationsDataOfUser,
-      promptTarget: "globalPushNotifications",
-      repromptSchedule,
-      now,
-    }).canShow;
-  }
-
-  // Global opt-in drawer only (legacy hook). Category prompts use evaluateAfterActionTrigger.
-  return false;
-};
-
-export const checkIsInactive = ({
+const checkIsInactive = ({
   inactivityEnabled,
   inactivityReprompt,
   lastActionAt,

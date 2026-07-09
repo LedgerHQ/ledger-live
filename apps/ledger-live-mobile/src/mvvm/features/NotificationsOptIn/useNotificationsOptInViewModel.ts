@@ -10,7 +10,10 @@ import {
   StackNavigatorNavigation,
 } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
+import { getNextRepromptDelay, useNotificationsData } from "LLM/features/NotificationsPrompt";
+import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission";
+import { useInitPushNotificationsData } from "LLM/features/NotificationsPrompt/new/hooks/useInitPushNotificationsData";
+import { useNextRepromptDelay } from "LLM/features/NotificationsPrompt/new/hooks/useNextRepromptDelay";
 import { useCompleteLazyOnboarding } from "./hooks/useCompleteLazyOnboarding";
 
 export type NotificationsOptInState = "default" | "error";
@@ -23,7 +26,7 @@ export type NotificationsOptInViewModel = {
   onContinue: () => void;
   isAllowNotificationsDisabled: boolean;
   dismissedCount: number;
-  nextRepromptDelay: ReturnType<typeof useNotifications>["nextRepromptDelay"];
+  nextRepromptDelay: ReturnType<typeof getNextRepromptDelay>;
 };
 
 export function useNotificationsOptInViewModel(): NotificationsOptInViewModel {
@@ -33,15 +36,11 @@ export function useNotificationsOptInViewModel(): NotificationsOptInViewModel {
     >();
   const completeLazyOnboarding = useCompleteLazyOnboarding();
   const notifications = useSelector(notificationsSelector);
-  const {
-    initPushNotificationsData,
-    permissionStatus,
-    requestPushNotificationsPermission,
-    markUserAsOptIn,
-    markUserAsOptOut,
-    nextRepromptDelay,
-    pushNotificationsDataOfUser,
-  } = useNotifications();
+  const initPushNotificationsData = useInitPushNotificationsData();
+  const { permissionStatus, requestPushNotificationsPermission } = useNotificationsPermission();
+  const { pushNotificationsDataOfUser, markUserAsOptIn, markUserAsOptOut } = useNotificationsData();
+  const nextRepromptDelay = useNextRepromptDelay();
+
   const [state, setState] = useState<NotificationsOptInState>("default");
   const [isInitialized, setIsInitialized] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

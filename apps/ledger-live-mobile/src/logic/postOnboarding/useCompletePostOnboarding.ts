@@ -4,7 +4,7 @@ import { useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
 import { postOnboardingSetFinished } from "@ledgerhq/live-common/postOnboarding/actions";
 import { NavigatorName, ScreenName } from "~/const";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 
 export type CompletePostOnboardingOptions = {
   readonly skipPortfolioNavigation?: boolean;
@@ -14,11 +14,11 @@ export function useCompletePostOnboarding() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
+  const { notifyFlowCompleted } = useNotificationsContext();
 
   const closePostOnboarding = useCallback(
     (options?: CompletePostOnboardingOptions) => {
-      tryTriggerPushNotificationDrawerAfterAction("onboarding");
+      notifyFlowCompleted("onboarding");
 
       dispatch(postOnboardingSetFinished());
 
@@ -29,7 +29,7 @@ export function useCompletePostOnboarding() {
         });
       }
     },
-    [dispatch, navigation, tryTriggerPushNotificationDrawerAfterAction],
+    [dispatch, navigation, notifyFlowCompleted],
   );
 
   return closePostOnboarding;

@@ -4,8 +4,9 @@ import {
   NotificationsPromptProvider,
   NotificationsPromptWrapper,
   setPushNotificationsDataOfUserInStorage,
-  useNotifications,
+  useNotificationsContext,
 } from "LLM/features/NotificationsPrompt";
+import { useInitPushNotificationsData } from "LLM/features/NotificationsPrompt/new/hooks/useInitPushNotificationsData";
 
 import storage from "LLM/storage";
 import { notificationsDataOfUserSelector } from "~/reducers/notifications";
@@ -127,11 +128,9 @@ describe("NotificationsPrompt Integration", () => {
       const [isReady, setIsReady] = useState(false);
       const [reloadCount, reload] = useReducer(x => x + 1, 0);
 
-      const {
-        tryTriggerPushNotificationDrawerAfterAction,
-        initPushNotificationsData,
-        tryTriggerPushNotificationDrawerAfterInactivity,
-      } = useNotifications();
+      const { notifyFlowCompleted, tryTriggerPushNotificationDrawerAfterInactivity } =
+        useNotificationsContext();
+      const initPushNotificationsData = useInitPushNotificationsData();
 
       useEffect(() => {
         initPushNotificationsData()
@@ -148,9 +147,7 @@ describe("NotificationsPrompt Integration", () => {
 
       return (
         <>
-          <Button onPress={() => tryTriggerPushNotificationDrawerAfterAction(actionSource)}>
-            Trigger drawer
-          </Button>
+          <Button onPress={() => notifyFlowCompleted(actionSource)}>Trigger drawer</Button>
           <Button onPress={reload}>Reload app</Button>
         </>
       );
@@ -203,6 +200,7 @@ describe("NotificationsPrompt Integration", () => {
             ...state,
             settings: {
               ...state.settings,
+              hasCompletedOnboarding: true,
               notifications: {
                 ...state.settings.notifications,
                 ...notificationSettings,
@@ -218,6 +216,10 @@ describe("NotificationsPrompt Integration", () => {
       const triggerDrawerButton = await screen.findByRole("button", { name: /trigger drawer/i });
       await rendered.user.press(triggerDrawerButton);
       act(() => jest.runOnlyPendingTimers());
+      // The store update above is dispatched from inside the fake-timer callback, which doesn't
+      // trigger a re-render here on its own. A second press flushes it (harmless: the drawer is
+      // already open, so this just re-evaluates to "already pending" and skips).
+      await rendered.user.press(triggerDrawerButton);
     };
 
     await waitFor(() => {

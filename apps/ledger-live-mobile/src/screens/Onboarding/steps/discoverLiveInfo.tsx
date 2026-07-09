@@ -23,7 +23,7 @@ import {
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
 import { DETOX_ENABLED } from "~/utils/constants";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.webp"),
@@ -62,7 +62,7 @@ const Item = ({
 
   const screenName = useMemo(() => `Reborn Story Step ${currentIndex}`, [currentIndex]);
 
-  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
+  const { notifyFlowCompleted } = useNotificationsContext();
 
   const onClick = useCallback(
     (value: string) => {
@@ -90,8 +90,8 @@ const Item = ({
     dispatch(setIsReborn(true));
     dispatch(setOnboardingHasDevice(false));
     onClick("Explore without a device");
-    tryTriggerPushNotificationDrawerAfterAction("onboarding");
-  }, [dispatch, exploreLedger, onClick, tryTriggerPushNotificationDrawerAfterAction]);
+    notifyFlowCompleted("onboarding");
+  }, [dispatch, exploreLedger, onClick, notifyFlowCompleted]);
 
   return (
     <Flex flex={1} backgroundColor={`background.main`} accessible={true}>

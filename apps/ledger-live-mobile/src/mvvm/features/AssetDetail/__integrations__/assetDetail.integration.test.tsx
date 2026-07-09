@@ -6,6 +6,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import AssetDetailNavigator from "../Navigator";
 import { ASSET_DETAIL_TEST_IDS } from "../testIds";
 import { QUICK_ACTIONS_TEST_IDS } from "LLM/features/QuickActions/testIds";
@@ -67,17 +68,19 @@ function AssetDetailTestNavigator({
   params?: NavigatorParams;
 } = {}) {
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name={NavigatorName.AssetDetail}
-        component={AssetDetailNavigator}
-        initialParams={{
-          screen: ScreenName.AssetDetail,
-          params,
-        }}
-        options={{ headerShown: false }}
-      />
-    </Stack.Navigator>
+    <NotificationsPromptProvider>
+      <Stack.Navigator>
+        <Stack.Screen
+          name={NavigatorName.AssetDetail}
+          component={AssetDetailNavigator}
+          initialParams={{
+            screen: ScreenName.AssetDetail,
+            params,
+          }}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    </NotificationsPromptProvider>
   );
 }
 

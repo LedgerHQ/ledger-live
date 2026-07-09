@@ -8,7 +8,7 @@ import {
 } from "~/actions/settings";
 import { blacklistedTokenIdsSelector, starredMarketCoinsSelector } from "~/reducers/settings";
 import { track } from "~/analytics";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import { useTranslation } from "~/context/Locale";
 
@@ -21,7 +21,7 @@ type Params = Readonly<{
 export function useAssetCoinOptionsViewModel({ currency, currencyId, marketId }: Params) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
+  const { notifyFlowCompleted } = useNotificationsContext();
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const starredMarketCoins = useSelector(starredMarketCoinsSelector);
@@ -53,7 +53,7 @@ export function useAssetCoinOptionsViewModel({ currency, currencyId, marketId }:
       if (!starredMarketCoins.includes(starKey)) {
         dispatch(addStarredMarketCoins(starKey));
       }
-      tryTriggerPushNotificationDrawerAfterAction("add_favorite_coin");
+      notifyFlowCompleted("add_favorite_coin");
     } else if (starredMarketCoins.includes(starKey)) {
       dispatch(removeStarredMarketCoins(starKey));
     }
@@ -65,7 +65,7 @@ export function useAssetCoinOptionsViewModel({ currency, currencyId, marketId }:
     starKey,
     dispatch,
     starredMarketCoins,
-    tryTriggerPushNotificationDrawerAfterAction,
+    notifyFlowCompleted,
     closeCoinOptions,
   ]);
 

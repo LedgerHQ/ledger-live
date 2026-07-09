@@ -8,7 +8,6 @@ import {
   evaluateInactivityTrigger,
   getNextRepromptDelay,
   getNotificationPromptTarget,
-  shouldPromptOptInDrawerAfterAction,
 } from "../notificationsPromptEngine";
 
 type BrazePushNotifications = Features["brazePushNotifications"];
@@ -536,30 +535,6 @@ describe("notificationsPromptEngine", () => {
           transactionsAlertsCategory: true,
         }),
       ).toBeNull();
-    });
-
-    it("does not prompt the legacy global drawer when globally opted in", () => {
-      expect(
-        shouldPromptOptInDrawerAfterAction({
-          permissionStatus: AuthorizationStatus.AUTHORIZED,
-          areNotificationsAllowed: true,
-          transactionsAlertsCategory: false,
-          pushNotificationsDataOfUser: null,
-        }),
-      ).toBe(false);
-    });
-
-    it("prompts the legacy global drawer when not globally opted in and reprompt delay elapsed", () => {
-      expect(
-        shouldPromptOptInDrawerAfterAction({
-          permissionStatus: AuthorizationStatus.DENIED,
-          areNotificationsAllowed: true,
-          transactionsAlertsCategory: false,
-          pushNotificationsDataOfUser: null,
-          repromptSchedule: defaultBrazePushNotificationsParams.reprompt_schedule,
-          now: NOW,
-        }),
-      ).toBe(true);
     });
 
     it("keeps using the last reprompt bucket after the schedule is exhausted", () => {

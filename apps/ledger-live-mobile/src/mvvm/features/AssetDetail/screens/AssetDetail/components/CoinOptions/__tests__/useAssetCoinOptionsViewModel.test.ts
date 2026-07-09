@@ -2,11 +2,8 @@ import { act, renderHook } from "@tests/test-renderer";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { track } from "~/analytics";
 import type { State } from "~/reducers/types";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import { useAssetCoinOptionsViewModel } from "../useAssetCoinOptionsViewModel";
-
-jest.mock("LLM/features/NotificationsPrompt", () => ({
-  useNotifications: () => ({ tryTriggerPushNotificationDrawerAfterAction: jest.fn() }),
-}));
 
 jest.mock("~/analytics", () => ({ track: jest.fn() }));
 
@@ -28,6 +25,7 @@ function renderViewModel({
         ...state,
         settings: { ...state.settings, blacklistedTokenIds, starredMarketCoins },
       }),
+      innerWrapper: NotificationsPromptProvider,
     },
   );
 }
@@ -42,7 +40,9 @@ describe("useAssetCoinOptionsViewModel", () => {
 
     act(() => result.current.onToggleFavourite());
     expect(store.getState().settings.starredMarketCoins).toContain(bitcoin.id);
-    expect(track).toHaveBeenLastCalledWith(
+    // Not toHaveBeenLastCalledWith: notifyFlowCompleted (real NotificationsPromptProvider)
+    // fires its own track call for the drawer decision right after this one.
+    expect(track).toHaveBeenCalledWith(
       "button_clicked",
       expect.objectContaining({
         button: "favourite",
@@ -74,6 +74,7 @@ describe("useAssetCoinOptionsViewModel", () => {
           ...state,
           settings: { ...state.settings, starredMarketCoins: [] },
         }),
+        innerWrapper: NotificationsPromptProvider,
       },
     );
 

@@ -8,7 +8,7 @@ import { AnalyticsButton, AnalyticsFlow, AnalyticsPage } from "../../hooks/useLe
 import { track } from "~/analytics";
 import { useClose } from "../../hooks/useClose";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 
 type Props = BaseComposite<
   StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncSuccess>
@@ -17,7 +17,7 @@ type Props = BaseComposite<
 export function ActivationSuccess({ route }: Props) {
   const { t } = useTranslation();
   const ledgerSyncOptimisationFlag = useFeature("lwmLedgerSyncOptimisation");
-  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
+  const { notifyFlowCompleted } = useNotificationsContext();
 
   const { created } = route.params;
   const title = ledgerSyncOptimisationFlag?.enabled
@@ -48,7 +48,7 @@ export function ActivationSuccess({ route }: Props) {
     // so we always try to trigger the notification drawer
     // however since with the lazy onboarding, there will be no more onboarding flow, so we don't need to trigger the notification drawer
     if (!shouldUseLazyOnboarding) {
-      tryTriggerPushNotificationDrawerAfterAction("onboarding");
+      notifyFlowCompleted("onboarding");
     }
   }
 

@@ -8,7 +8,17 @@ import {
   syncAccountsAction,
 } from "~/logic/postOnboarding/actions";
 import type { State } from "~/reducers/types";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import { PostOnboardingHubDrawerWrapper } from "../PostOnboardingHubDrawerWrapper";
+
+// useCompletePostOnboarding (used deep inside the drawer) needs the real notifications context.
+function TestDrawer() {
+  return (
+    <NotificationsPromptProvider>
+      <PostOnboardingHubDrawerWrapper />
+    </NotificationsPromptProvider>
+  );
+}
 
 jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index", () => ({
   usePostOnboardingHubState: jest.fn(),
@@ -65,7 +75,7 @@ describe("PostOnboardingHubDrawer Integration", () => {
       postOnboardingInProgress: true,
     });
 
-    render(<PostOnboardingHubDrawerWrapper />, {
+    render(<TestDrawer />, {
       overrideInitialState: openedDrawerState,
     });
 
@@ -88,7 +98,7 @@ describe("PostOnboardingHubDrawer Integration", () => {
       postOnboardingInProgress: true,
     });
 
-    render(<PostOnboardingHubDrawerWrapper />, {
+    render(<TestDrawer />, {
       overrideInitialState: openedDrawerState,
     });
 
@@ -110,7 +120,7 @@ describe("PostOnboardingHubDrawer Integration", () => {
       postOnboardingInProgress: true,
     });
 
-    render(<PostOnboardingHubDrawerWrapper />, {
+    render(<TestDrawer />, {
       overrideInitialState: openedDrawerState,
     });
 
@@ -133,7 +143,7 @@ describe("PostOnboardingHubDrawer Integration", () => {
       postOnboardingInProgress: true,
     });
 
-    render(<PostOnboardingHubDrawerWrapper />, {
+    render(<TestDrawer />, {
       overrideInitialState: openedDrawerState,
     });
 
@@ -152,7 +162,7 @@ describe("PostOnboardingHubDrawer Integration", () => {
       postOnboardingInProgress: true,
     });
 
-    render(<PostOnboardingHubDrawerWrapper />, {
+    render(<TestDrawer />, {
       overrideInitialState: openedDrawerState,
     });
 
@@ -175,7 +185,7 @@ describe("PostOnboardingHubDrawer Integration", () => {
       postOnboardingInProgress: true,
     });
 
-    render(<PostOnboardingHubDrawerWrapper />, {
+    render(<TestDrawer />, {
       overrideInitialState: openedDrawerWithLedgerSyncState,
     });
 
@@ -202,7 +212,7 @@ describe("PostOnboardingHubDrawer Integration", () => {
       postOnboardingInProgress: true,
     });
 
-    render(<PostOnboardingHubDrawerWrapper />, {
+    render(<TestDrawer />, {
       overrideInitialState: openedDrawerState,
     });
 
@@ -224,7 +234,7 @@ describe("PostOnboardingHubDrawer Integration", () => {
       postOnboardingInProgress: true,
     });
 
-    const { user, store } = render(<PostOnboardingHubDrawerWrapper />, {
+    const { user, store } = render(<TestDrawer />, {
       overrideInitialState: openedDrawerWithPostOnboardingInProgressState,
     });
 

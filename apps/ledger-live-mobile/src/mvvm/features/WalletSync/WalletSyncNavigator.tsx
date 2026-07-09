@@ -21,7 +21,7 @@ import { AnalyticsPage } from "./hooks/useLedgerSyncAnalytics";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { useSelector } from "~/context/hooks";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 
 const Stack = createNativeStackNavigator<WalletSyncNavigatorStackParamList>();
 
@@ -41,12 +41,12 @@ export default function WalletSyncNavigator() {
     navigation.goBack();
   }, []);
 
-  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
+  const { notifyFlowCompleted } = useNotificationsContext();
 
   const onCloseFromLedgerSyncOnboarding = useCallback(() => {
     close();
-    tryTriggerPushNotificationDrawerAfterAction("onboarding");
-  }, [close, tryTriggerPushNotificationDrawerAfterAction]);
+    notifyFlowCompleted("onboarding");
+  }, [close, notifyFlowCompleted]);
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
