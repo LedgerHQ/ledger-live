@@ -11,6 +11,17 @@ jest.mock("~/renderer/linking", () => ({
   openURL: (...args: unknown[]) => mockOpenURL(...args),
 }));
 
+// jest.mock is hoisted, so the factory inlines the literal; the const below (same value) is used
+// by the assertion.
+jest.mock("~/config/urls", () => ({
+  ...jest.requireActual("~/config/urls"),
+  urls: {
+    ...jest.requireActual("~/config/urls").urls,
+    accountPublicKeyUnavailable: "https://test/account-public-key-unavailable",
+  },
+}));
+const TEST_SUPPORT_URL = "https://test/account-public-key-unavailable";
+
 describe("AccountPublicKeyUnavailableDialog Integration", () => {
   beforeEach(() => {
     mockOpenURL.mockClear();
@@ -47,9 +58,9 @@ describe("AccountPublicKeyUnavailableDialog Integration", () => {
 
     await user.click(screen.getByRole("button", { name: /learn more/i }));
 
-    expect(mockOpenURL).toHaveBeenCalledWith(
-      "https://support.ledger.com/article/Account-needs-to-be-re-added-error",
-    );
+    // The button opens whatever is configured in urls (mocked here); the exact article URL is
+    // a config concern, not something the test should re-encode.
+    expect(mockOpenURL).toHaveBeenCalledWith(TEST_SUPPORT_URL);
     expect(selectIsAccountPublicKeyUnavailableDialogOpen(store.getState())).toBe(true);
   });
 
