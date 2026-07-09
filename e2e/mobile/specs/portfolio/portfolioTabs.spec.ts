@@ -3,9 +3,8 @@ import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { getMergedFeatureFlags } from "../../utils/featureFlagUtils";
 import type { Features } from "@shared/feature-flags";
 const tags = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
-const isQ2 =
-  (getMergedFeatureFlags().lwmWallet40 as Features["lwmWallet40"] | undefined)?.params
-    ?.aggregatedAssets === true;
+const lwmWallet40 = getMergedFeatureFlags().lwmWallet40 as Features["lwmWallet40"] | undefined;
+const isQ2 = lwmWallet40?.enabled === true && lwmWallet40?.params?.aggregatedAssets === true;
 
 setTeamOwner(Team.WALLET_XP);
 // In Q2 the tab layout (Assets/Accounts tabs) no longer exists — skip the whole suite

@@ -234,7 +234,11 @@ export default class PortfolioPage {
         await tapById(this.showAllAssetsButton);
       }
     }
-    await scrollToId(this.assetItemId(currencyName), this.accountsListView);
+    if (await isAggregatedAssetsEnabled()) {
+      await scrollToId(this.assetItemId(currencyName));
+    } else {
+      await scrollToId(this.assetItemId(currencyName), this.accountsListView);
+    }
     await tapById(this.assetItemId(currencyName));
   }
 
