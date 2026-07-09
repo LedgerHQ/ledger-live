@@ -3270,6 +3270,31 @@ importers:
         specifier: 'catalog:'
         version: 6.0.2
 
+  devtools/wire:
+    dependencies:
+      '@devtools/protocols':
+        specifier: workspace:*
+        version: link:../protocols
+      '@devtools/transport':
+        specifier: workspace:*
+        version: link:../transport
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+
   domain/api/altcoins-sentiment:
     dependencies:
       '@domain/entity-altcoins-sentiment':
