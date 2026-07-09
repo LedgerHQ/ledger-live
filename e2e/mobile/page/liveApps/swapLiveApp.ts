@@ -31,9 +31,6 @@ export default class SwapLiveAppPage {
   executeSwapButtonStepApproval = "execute-swap-button-step-approval";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
   fromAccountErrorId = "from-account-error";
-  showDetailslink = "show-details-link";
-  quotesContainerErrorIcon = "quotes-container-error-icon";
-  insufficientFundsBuyButton = "insufficient-funds-buy-button";
   fromAccountAccountNameTag = "from-account-account-name-tag";
   toAccountAccountNameTag = "to-account-account-name-tag";
   incompatibilityBannerPartnerId = "incompatibility-banner-partner";
@@ -348,17 +345,6 @@ export default class SwapLiveAppPage {
     } else {
       jestExpect(errorText).toMatch(expectedMessage);
     }
-  }
-
-  @Step("Verify swap CTA banner displayed")
-  async checkCtaBanner(quotesVisible: boolean) {
-    const showDetailsLink = quotesVisible
-      ? getWebElementByCssSelector(`.fixed [data-testid="${this.showDetailslink}"]`)
-      : getWebElementByTestId(this.showDetailslink);
-    await waitWebElement(showDetailsLink);
-    await tapWebElementByElement(showDetailsLink);
-    await waitWebElementByTestId(this.quotesContainerErrorIcon);
-    await detoxExpect(getWebElementByTestId(this.insufficientFundsBuyButton)).toExist();
   }
 
   @Step("Click on swap max")
