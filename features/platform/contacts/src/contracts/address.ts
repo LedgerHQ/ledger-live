@@ -6,35 +6,7 @@ import type {
 } from "@domain/entity-contact";
 import type { ContactDetailState } from "./detail";
 
-export type AddAddressNetworkOption = Readonly<{
-  currencyId: ContactAddressInput["currencyId"];
-  label: string;
-  ticker?: string;
-  disabledReason?: string;
-}>;
-
-type AddAddressAssetOptionBase = Readonly<{
-  id: string;
-  label: string;
-  ticker?: string;
-  disabledReason?: string;
-}>;
-
-export type AddAddressAssetOption =
-  | (AddAddressAssetOptionBase &
-      Readonly<{
-        currencyId: ContactAddressInput["currencyId"];
-        networkOptions?: never;
-      }>)
-  | (AddAddressAssetOptionBase &
-      Readonly<{
-        currencyId?: never;
-        networkOptions: readonly AddAddressNetworkOption[];
-      }>);
-
-export type AddAddressOptions = Readonly<{
-  assets: readonly AddAddressAssetOption[];
-}>;
+export type SupportedAddressCurrencyIds = readonly ContactAddressInput["currencyId"][];
 
 export type AddressCandidateInput = Readonly<{
   contactId: ContactId;
@@ -55,7 +27,7 @@ export type AddressCandidateValidation =
     }>
   | Readonly<{
       type: "invalid";
-      reason: "invalid-address-format" | "invalid-label" | "unsupported-currency" | "unsupported-network";
+      reason: "invalid-address-format" | "invalid-label" | "unsupported-currency";
     }>;
 
 export type AddressRegistrationDraft = Readonly<{
@@ -86,7 +58,7 @@ export type ConfirmedAddressEditResult = Readonly<{
 }>;
 
 export type AddAddressPort = Readonly<{
-  loadAddAddressOptions(contactId: ContactId): Promise<AddAddressOptions>;
+  loadSupportedAddressCurrencyIds(contactId: ContactId): Promise<SupportedAddressCurrencyIds>;
   validateAddressCandidate(input: AddressCandidateInput): Promise<AddressCandidateValidation>;
   prepareAddressRegistration(candidate: ValidAddressCandidate): Promise<AddressRegistrationDraft>;
   applyConfirmedAddressRegistration(result: ConfirmedAddressRegistrationResult): Promise<ContactDetailState>;
