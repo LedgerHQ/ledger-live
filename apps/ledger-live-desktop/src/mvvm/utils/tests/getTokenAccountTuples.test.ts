@@ -1,5 +1,5 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getTokenAccountTuples } from "../getTokenAccountTuples";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

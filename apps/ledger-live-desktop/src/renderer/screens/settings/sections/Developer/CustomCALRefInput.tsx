@@ -6,7 +6,7 @@ import Input from "~/renderer/components/Input";
 import { Switch, Button } from "@ledgerhq/lumen-ui-react";
 import Box from "~/renderer/components/Box";
 import { useTranslation } from "react-i18next";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { prepareCurrency } from "~/renderer/bridge/cache";
 
 const CustomCALRefInput = () => {

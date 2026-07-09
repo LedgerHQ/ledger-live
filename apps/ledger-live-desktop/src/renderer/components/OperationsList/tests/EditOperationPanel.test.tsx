@@ -1,5 +1,5 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Account, Operation } from "@ledgerhq/types-live";
 import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";

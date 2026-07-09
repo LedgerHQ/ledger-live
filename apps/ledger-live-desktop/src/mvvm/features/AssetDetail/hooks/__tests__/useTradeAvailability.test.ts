@@ -1,12 +1,12 @@
 import { renderHook } from "tests/testSetup";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
+import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import { useTradeAvailability } from "@ledgerhq/asset-detail";
 
 jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog");
 jest.mock("@ledgerhq/live-common/exchange/swap/hooks/index");
-jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag");
+jest.mock("@features/platform-currencies");
 
 const mockRampAvailable = (onRamp: boolean, isCatalogLoaded = true) =>
   jest.mocked(useRampCatalog).mockReturnValue({
@@ -20,9 +20,9 @@ const mockSwapCurrencies = (data: string[] | undefined) =>
   } as unknown as ReturnType<typeof useFetchCurrencyAll>);
 
 const mockDeactivated = (ids: string[]) =>
-  jest.mocked(useCurrenciesUnderFeatureFlag).mockReturnValue({
+  jest.mocked(useFeatureFlaggedCurrencies).mockReturnValue({
     deactivatedCurrencyIds: new Set(ids),
-  } as unknown as ReturnType<typeof useCurrenciesUnderFeatureFlag>);
+  } as unknown as ReturnType<typeof useFeatureFlaggedCurrencies>);
 
 describe("useTradeAvailability", () => {
   beforeEach(() => {

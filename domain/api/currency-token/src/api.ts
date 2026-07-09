@@ -32,6 +32,8 @@ import {
   validateAndTransformSingleTokenResponse,
 } from "./internals";
 
+export { TOKEN_OUTPUT_FIELDS };
+
 /**
  * Builds this package's slice of the thunk `extraArgument`. RTK leaves `extraArgument` untyped, so
  * this is the one compile- and runtime-checked entry point: `parse` fails fast at app init if the CAL

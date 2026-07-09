@@ -1,4 +1,4 @@
-import { TOKEN_OUTPUT_FIELDS } from "@ledgerhq/cryptoassets/cal-client/state-manager/fields";
+import { TOKEN_OUTPUT_FIELDS } from "@domain/api-currency-token";
 import { FamilyOption } from "./types";
 
 export const FAMILY_OPTIONS: FamilyOption[] = [

@@ -11,7 +11,7 @@ import ToolTip from "~/renderer/components/Tooltip";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/families/stellar/types";
-import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
+import { useTokensData } from "@features/platform-currencies";
 
 const EllipsisMiddle = ({ children }: { children: string }) => {
   const Start = styled(Box)`

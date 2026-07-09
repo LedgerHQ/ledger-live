@@ -1,6 +1,6 @@
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Flex, Icon, Text } from "@ledgerhq/react-ui";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { EthStakingProvider } from "@ledgerhq/types-live";

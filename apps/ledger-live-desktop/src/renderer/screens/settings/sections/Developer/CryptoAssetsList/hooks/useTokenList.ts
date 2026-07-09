@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
-import { TOKEN_OUTPUT_FIELDS } from "@ledgerhq/cryptoassets/cal-client/state-manager/fields";
+import { useTokensData } from "@features/platform-currencies";
+import { TOKEN_OUTPUT_FIELDS } from "@domain/api-currency-token";
 import { FAMILY_OPTIONS } from "../constants";
 import { FamilyOption } from "../types";
 
@@ -25,7 +25,6 @@ export const useTokenList = (initialFamily: string = "ethereum") => {
 
   const { data, isLoading, error, loadNext, refetch } = useTokensData({
     networkFamily: selectedFamily,
-    isStaging,
     pageSize,
     output: selectedOutputFields.length > 0 ? selectedOutputFields : undefined,
     limit: limitNumber,

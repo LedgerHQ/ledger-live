@@ -1,6 +1,6 @@
 import React from "react";
 import { cleanup, render, screen, waitFor } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
 import { ConcordiumPairingExpiredError } from "@ledgerhq/errors";
 import { Account } from "@ledgerhq/types-live";

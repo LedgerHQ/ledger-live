@@ -13,7 +13,7 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
 import invariant from "invariant";
-import { useTokenById } from "@ledgerhq/cryptoassets/hooks";
+import { useTokenById } from "@features/platform-currencies";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -28,7 +28,7 @@ const Container = styled(Box).attrs(() => ({
 function StepConfirmation({ optimisticOperation, error, signed, transaction }: StepProps) {
   invariant(transaction, "Transaction should be present");
 
-  const { token, loading } = useTokenById(transaction.assetId!);
+  const { data: token, isLoading: loading } = useTokenById(transaction.assetId!);
 
   if (optimisticOperation) {
     return (

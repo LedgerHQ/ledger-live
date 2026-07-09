@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/react-ui/index";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
-import { TOKEN_OUTPUT_FIELDS } from "@ledgerhq/cryptoassets/cal-client/state-manager/fields";
+import { TOKEN_OUTPUT_FIELDS } from "@domain/api-currency-token";
 import { FAMILY_OPTIONS, PAGE_SIZE_OPTIONS, OUTPUT_FIELD_OPTIONS } from "../constants";
 import {
   DrawerContainer,

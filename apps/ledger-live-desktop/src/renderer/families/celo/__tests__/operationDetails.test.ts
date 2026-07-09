@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { renderHook } from "@testing-library/react";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { NATIVE_FEE_CURRENCY_MARKER } from "@ledgerhq/live-common/families/celo/constants";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -8,15 +8,16 @@ import type { TokenAccount } from "@ledgerhq/types-live";
 import type { CeloAccount, CeloOperation } from "@ledgerhq/live-common/families/celo/types";
 
 const mockUseQuery = jest.fn();
-const mockUseTokenByAddressInCurrency = jest.fn();
+const mockUseFindTokenByAddressInCurrencyQuery = jest.fn();
 const mockGetCeloTransactionFeeCurrency = jest.fn();
 
 jest.mock("@tanstack/react-query", () => ({
   useQuery: (...args: unknown[]) => mockUseQuery(...args),
 }));
 
-jest.mock("@ledgerhq/cryptoassets/hooks", () => ({
-  useTokenByAddressInCurrency: (...args: unknown[]) => mockUseTokenByAddressInCurrency(...args),
+jest.mock("@domain/api-currency-token", () => ({
+  useFindTokenByAddressInCurrencyQuery: (...args: unknown[]) =>
+    mockUseFindTokenByAddressInCurrencyQuery(...args),
 }));
 
 jest.mock("@ledgerhq/live-common/families/celo/network", () => ({
@@ -177,7 +178,7 @@ describe("celo desktop operationDetails.useFeesCurrency", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseQuery.mockReturnValue({ data: undefined });
-    mockUseTokenByAddressInCurrency.mockReturnValue({ token: undefined });
+    mockUseFindTokenByAddressInCurrencyQuery.mockReturnValue({ data: undefined });
   });
 
   it("returns undefined when the stored marker is NATIVE", () => {
@@ -214,14 +215,17 @@ describe("celo desktop operationDetails.useFeesCurrency", () => {
   it("falls back to the CAL token when no subAccount matches", () => {
     const adapter = "0xabcdef0123456789abcdef0123456789abcdef01";
     const calToken = buildToken(adapter, 6, "celo/erc20/cal");
-    mockUseTokenByAddressInCurrency.mockReturnValue({ token: calToken });
+    mockUseFindTokenByAddressInCurrencyQuery.mockReturnValue({ data: calToken });
     const account = buildAccount(); // no subAccounts
     const operation = buildOperation({ feeCurrencyAddress: adapter });
 
     const { result } = renderHook(() => useFeesCurrency(operation, account));
 
     expect(result.current).toBe(calToken);
-    expect(mockUseTokenByAddressInCurrency).toHaveBeenCalledWith(adapter, "celo", { skip: false });
+    expect(mockUseFindTokenByAddressInCurrencyQuery).toHaveBeenCalledWith(
+      { contract_address: adapter, network: "celo" },
+      { skip: false },
+    );
   });
 
   it("uses the fetched address when nothing is stored on the operation", () => {

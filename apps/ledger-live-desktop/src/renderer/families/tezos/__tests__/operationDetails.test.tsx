@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { render, screen } from "tests/testSetup";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Operation } from "@ledgerhq/types-live";
 import type { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";

@@ -1,7 +1,7 @@
 import React from "react";
 import { fireEvent } from "@testing-library/react";
 import { render, screen, waitFor } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type {
   StakingAccount,
   StakingValidatorItem,

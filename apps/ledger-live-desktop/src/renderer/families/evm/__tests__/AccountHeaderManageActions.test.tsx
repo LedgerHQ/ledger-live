@@ -1,7 +1,7 @@
 import { act } from "react";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { Account, StakingResources } from "@ledgerhq/types-live";
 import { renderHook, withFlagOverrides } from "tests/testSetup";

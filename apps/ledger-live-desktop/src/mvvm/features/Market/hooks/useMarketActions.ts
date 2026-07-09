@@ -16,7 +16,7 @@ import {
 import { useStake } from "LLD/hooks/useStake";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useLazyLedgerCurrency } from "@ledgerhq/live-common/dada-client/hooks/useLazyLedgerCurrency";
-import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
+import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import { useSwapNavigation } from "./useSwapNavigation";
 import { useBuyNavigation } from "./useBuyNavigation";
 import { useSellNavigation } from "./useSellNavigation";
@@ -45,7 +45,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
   const currenciesForSwapAllSet = useMemo(() => new Set(currenciesAll), [currenciesAll]);
 
-  const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+  const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies();
 
   const isCurrencySupported =
     currency?.ledgerIds.some(lrId => !deactivatedCurrencyIds.has(lrId)) || false;

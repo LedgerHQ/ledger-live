@@ -5,7 +5,7 @@ import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetF
 import { useNavigate, useLocation } from "react-router";
 import { ArrowDown, Plus, Minus, ArrowUp } from "@ledgerhq/lumen-ui-react/symbols";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { urls } from "~/config/urls";

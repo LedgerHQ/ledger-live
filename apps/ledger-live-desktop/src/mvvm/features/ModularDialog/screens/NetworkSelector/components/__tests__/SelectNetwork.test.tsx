@@ -6,7 +6,7 @@ import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet
 import { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { mockDomMeasurements } from "../../../../../__tests__/shared";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 const bscCurrency = getCryptoCurrencyById("bsc");
 const bscAccount = genAccount("bsc-account", { currency: bscCurrency });

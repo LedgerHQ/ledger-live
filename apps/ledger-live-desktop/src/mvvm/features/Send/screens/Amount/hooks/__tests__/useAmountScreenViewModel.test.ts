@@ -11,7 +11,7 @@ import {
 import { useTranslatedBridgeError } from "../../../Recipient/hooks/useTranslatedBridgeError";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { createMockAccount } from "../../../Recipient/__integrations__/__fixtures__/accounts";
 
 jest.mock("@ledgerhq/live-common/bridge/impl");
