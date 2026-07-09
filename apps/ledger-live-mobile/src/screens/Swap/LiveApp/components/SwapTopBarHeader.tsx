@@ -13,6 +13,8 @@ import {
   useMyLedgerTopBarAction,
 } from "LLM/components/CustomTopBar";
 import { MyWalletTopBarAction } from "LLM/components/TopBar/components/MyWalletTopBarAction";
+import { SyncErrorBottomSheet } from "LLM/components/TopBar/components/SyncErrorBottomSheet";
+import { buildSyncStatusIcon } from "LLM/components/TopBar/components/SyncStatusIcon";
 
 import { Clock } from "@ledgerhq/lumen-ui-rnative/symbols";
 
@@ -24,6 +26,15 @@ export function SwapTopBarHeader() {
     shouldDisplayMyWallet,
     hasUnreadNotifications,
     onSwapHistoryPress,
+    hasAccounts,
+    isSyncError,
+    isSyncPending,
+    listOfErrorAccountNames,
+    syncAccessibilityLabel,
+    isSyncDrawerOpen,
+    openSyncDrawer,
+    closeSyncDrawer,
+    onTryRefresh,
   } = useSwapTopBarHeaderViewModel();
   const myLedgerAction = useMyLedgerTopBarAction(onMyLedgerPress);
   const containerStyle = useMemo(
@@ -40,18 +51,37 @@ export function SwapTopBarHeader() {
     [shouldDisplayMyWallet, myLedgerAction],
   );
 
-  const trailingIcons: readonly TopBarActionIcon[] = useMemo(
-    () => [
-      {
-        id: "swap-history",
-        icon: Clock,
-        callback: onSwapHistoryPress,
-        testID: "topbar-swap-history",
-        accessibilityLabel: "Swap History",
-      },
-    ],
-    [onSwapHistoryPress],
-  );
+  const displaySyncStatusIcon = hasAccounts && isSyncError;
+
+  const trailingIcons: readonly TopBarActionIcon[] = useMemo(() => {
+    const icons: TopBarActionIcon[] = [];
+
+    if (displaySyncStatusIcon) {
+      icons.push(
+        buildSyncStatusIcon({
+          callback: openSyncDrawer,
+          accessibilityLabel: syncAccessibilityLabel,
+          loading: isSyncPending,
+        }),
+      );
+    }
+
+    icons.push({
+      id: "swap-history",
+      icon: Clock,
+      callback: onSwapHistoryPress,
+      testID: "topbar-swap-history",
+      accessibilityLabel: "Swap History",
+    });
+
+    return icons;
+  }, [
+    displaySyncStatusIcon,
+    openSyncDrawer,
+    syncAccessibilityLabel,
+    isSyncPending,
+    onSwapHistoryPress,
+  ]);
 
   return (
     <Box style={containerStyle}>
@@ -59,6 +89,13 @@ export function SwapTopBarHeader() {
         leadingElement={leadingElement}
         leadingIcons={leadingIcons}
         trailingIcons={trailingIcons}
+      />
+
+      <SyncErrorBottomSheet
+        isOpen={isSyncDrawerOpen}
+        onClose={closeSyncDrawer}
+        listOfErrorAccountNames={listOfErrorAccountNames}
+        onTryRefresh={onTryRefresh}
       />
     </Box>
   );
