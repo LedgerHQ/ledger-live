@@ -15,30 +15,13 @@ export function genericGetTransactionStatus(
     const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
     const bridgeApi = await getBridgeApi(account.currency, network);
 
+    // Spread so family-specific fields (e.g. stellar `changeTrust` asset) survive for the asset hooks.
     const draftTransaction = {
-      mode: transaction?.mode ?? "send",
-      recipient: transaction.recipient,
+      ...transaction,
+      mode: transaction.mode ?? "send",
       amount: transaction.amount ?? new BigNumber(0),
       useAllAmount: !!transaction.useAllAmount,
-      // Forward the asset carried directly on the transaction (e.g. stellar `changeTrust`, which has
-      // no sub-account yet). These fields are no longer on `GenericTransaction`, hence the `in` reads;
-      // guard the value type to match `transactionToIntent`'s fallback.
-      ...("assetReference" in transaction && typeof transaction.assetReference === "string"
-        ? { assetReference: transaction.assetReference }
-        : {}),
-      ...("assetOwner" in transaction && typeof transaction.assetOwner === "string"
-        ? { assetOwner: transaction.assetOwner }
-        : {}),
       subAccountId: transaction.subAccountId || "",
-      memoType: transaction.memoType || "",
-      memoValue: transaction.memoValue || "",
-      tag: transaction.tag,
-      family: transaction.family,
-      data: transaction.data,
-      type: transaction.type,
-      valAddress: transaction.valAddress,
-      valId: transaction.valId,
-      dstValAddress: transaction.dstValAddress,
     };
 
     const chainSpecificValidation = bridgeApi.getChainSpecificRules;
@@ -54,6 +37,7 @@ export function genericGetTransactionStatus(
       account,
       draftTransaction,
       bridgeApi.getAssetFromToken,
+      bridgeApi.getAssetFromTransaction,
       bridgeApi.computeIntentType,
       coinModuleApi.craftTransactionData,
     );

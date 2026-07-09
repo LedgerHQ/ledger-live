@@ -34,9 +34,7 @@ async function getDeviceTransactionConfig({
   transaction: Transaction;
   status: TransactionStatus;
 }): Promise<Array<DeviceTransactionField | ExtraDeviceTransactionField>> {
-  // The token asset is derived from `subAccountId` (single source of truth) for a token send,
-  // or from the transaction itself for changeTrust (no sub-account yet). For stellar,
-  // token.name = asset code and token.contractAddress = asset issuer (see bridge/api.ts).
+  // Token send: asset from the sub-account's token; changeTrust: from the transaction.
   const mainAccount = getMainAccount(account, parentAccount);
   const subAccount = transaction.subAccountId
     ? mainAccount.subAccounts?.find(a => a.id === transaction.subAccountId)

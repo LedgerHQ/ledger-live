@@ -3,6 +3,7 @@ import { Config as StellarSdkConfig } from "@stellar/stellar-sdk";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
+import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import coinConfig from "@ledgerhq/coin-stellar/config";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
@@ -33,12 +34,9 @@ jest.setTimeout(600_000);
 
 let closeMsw: (() => void) | null = null;
 
-// `assetReference`/`assetOwner` are no longer on `GenericTransaction`; stellar carries them on its
-// own transaction for the `changeTrust` flow (no sub-account yet). Token sends rely on `subAccountId`.
-type StellarScenarioTransaction = ScenarioTransaction<GenericTransaction, Account> & {
-  assetReference?: string;
-  assetOwner?: string;
-};
+// changeTrust carries the asset on the stellar transaction (no sub-account yet).
+type StellarScenarioTransaction = ScenarioTransaction<GenericTransaction, Account> &
+  Pick<StellarTransaction, "assetReference" | "assetOwner">;
 
 /**
  * Hook flag: ensures we only inject USDC into the test account once,

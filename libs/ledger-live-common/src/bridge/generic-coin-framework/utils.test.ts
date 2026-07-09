@@ -12,7 +12,10 @@ import {
 } from "./utils";
 import { addPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/index";
 import BigNumber from "bignumber.js";
-import type { AssetInfo, Operation as CoreOperation } from "@ledgerhq/coin-module-framework/api/types";
+import type {
+  AssetInfo,
+  Operation as CoreOperation,
+} from "@ledgerhq/coin-module-framework/api/types";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { GenericTransaction, GenericTransactionMode, OperationCommon } from "./types";
@@ -549,6 +552,7 @@ describe("coin-framework utils", () => {
             { currency: { name: "ethereum", units: [{}] } } as Account,
             { mode: "send", type: 2 } as GenericTransaction,
             undefined,
+            undefined,
             computeIntentType,
           ),
         ).toMatchObject({
@@ -582,6 +586,7 @@ describe("coin-framework utils", () => {
             },
           } as unknown as Account,
           { data } as unknown as GenericTransaction,
+          undefined,
           undefined,
           undefined,
           craftTransactionDataMock,
@@ -630,6 +635,7 @@ describe("coin-framework utils", () => {
             },
           } as unknown as Account,
           { data: expectedData } as unknown as GenericTransaction,
+          undefined,
           undefined,
           undefined,
           craftTransactionDataMock,
@@ -723,19 +729,33 @@ describe("coin-framework utils", () => {
         });
       });
 
-      it("reads assetReference/assetOwner off the transaction when there is no subAccountId (stellar changeTrust)", () => {
-        const intent = transactionToIntent(account, {
-          mode: "changeTrust",
-          assetReference: "USDC",
-          assetOwner: "GISSUER",
-        } as unknown as GenericTransaction);
+      it("reads the asset via getAssetFromTransaction when there is no subAccountId (stellar changeTrust)", () => {
+        const getAssetFromTransaction = (tx: Record<string, unknown>): AssetInfo | undefined =>
+          typeof tx.assetReference === "string" && typeof tx.assetOwner === "string"
+            ? {
+                type: "token",
+                assetReference: tx.assetReference,
+                assetOwner: tx.assetOwner,
+                name: tx.assetReference,
+              }
+            : undefined;
+
+        const intent = transactionToIntent(
+          account,
+          {
+            mode: "changeTrust",
+            assetReference: "USDC",
+            assetOwner: "GISSUER",
+          } as unknown as GenericTransaction,
+          undefined,
+          getAssetFromTransaction,
+        );
 
         expect(intent.asset).toEqual({
           type: "token",
           assetReference: "USDC",
-          name: "USDC",
-          unit: { code: "ETH" },
           assetOwner: "GISSUER",
+          name: "USDC",
         });
       });
 
@@ -789,6 +809,7 @@ describe("coin-framework utils", () => {
           } as Account,
           transaction,
           undefined,
+          undefined,
           computeIntentType,
         );
         expect(intent).toMatchObject({
@@ -831,6 +852,7 @@ describe("coin-framework utils", () => {
             },
           } as Account,
           transaction,
+          undefined,
           undefined,
           computeIntentType,
         );

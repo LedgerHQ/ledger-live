@@ -53,6 +53,7 @@ export const genericSignOperation =
             account,
             { ...transaction },
             bridgeApi.getAssetFromToken,
+            bridgeApi.getAssetFromTransaction,
             bridgeApi.computeIntentType,
             coinModuleApi.craftTransactionData,
           );

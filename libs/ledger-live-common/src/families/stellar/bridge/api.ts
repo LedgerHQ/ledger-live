@@ -4,6 +4,7 @@ import type { BridgeApi, ChainSpecificRules } from "@ledgerhq/ledger-wallet-fram
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { StellarBurnAddressError } from "@ledgerhq/coin-stellar/types";
 import { STELLAR_BURN_ADDRESS } from "@ledgerhq/coin-stellar/logic";
+import type { Transaction } from "../types";
 
 export const getChainSpecificRules: ChainSpecificRules = {
   getAccountShape: (address: string) => {
@@ -43,8 +44,17 @@ export function getAssetFromToken(token: TokenCurrency): AssetInfo {
   };
 }
 
+// changeTrust has no sub-account yet: resolve the asset from the transaction (code = name, issuer = owner).
+export function getAssetFromTransaction(transaction: Record<string, unknown>): AssetInfo | undefined {
+  const { assetReference, assetOwner } = transaction as Transaction;
+  return assetReference && assetOwner
+    ? { type: "token", assetReference, assetOwner, name: assetReference }
+    : undefined;
+}
+
 export default {
   getTokenFromAsset,
   getAssetFromToken,
+  getAssetFromTransaction,
   getChainSpecificRules,
 } satisfies BridgeApi;

@@ -69,6 +69,7 @@ describe("genericPrepareTransaction", () => {
       expect.any(Function),
       undefined,
       undefined,
+      undefined,
     );
   });
 
@@ -465,6 +466,7 @@ describe("genericPrepareTransaction", () => {
         amount: new BigNumber(10),
       },
       getAssetFromToken,
+      undefined,
       undefined,
       undefined,
     );

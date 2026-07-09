@@ -72,8 +72,6 @@ export function genericPrepareTransaction(
       }
     }
 
-    // The asset (assetReference/assetOwner) is derived inside transactionToIntent from `subAccountId`
-    // (the single source of truth) via bridgeApi.getAssetFromToken.
     const intent = transactionToIntent(
       account,
       {
@@ -81,6 +79,7 @@ export function genericPrepareTransaction(
         amount,
       },
       bridgeApi.getAssetFromToken,
+      bridgeApi.getAssetFromTransaction,
       bridgeApi.computeIntentType,
       coinModuleApi.craftTransactionData,
     );
