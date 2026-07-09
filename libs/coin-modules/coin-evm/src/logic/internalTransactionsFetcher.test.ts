@@ -1,6 +1,6 @@
 import type { BlockOperation } from "@ledgerhq/coin-module-framework/api/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { EvmCoinConfig, internalTxSources, setCoinConfig } from "../config";
+import { EvmCoinConfig, internalTxSourcesFromList, setCoinConfig } from "../config";
 import { SourceUnavailableError } from "../errors";
 import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
 import { mockNodeApi } from "../network/node/node.fixtures";
@@ -102,7 +102,7 @@ describe("composeInternalTxsFetcher", () => {
     const explorerError = new Error("explorer down");
     const traceError = new Error("trace down");
     const fetch = composeInternalTxsFetcher(
-      internalTxSources().addSource("explorer").addSource("trace_block").build(),
+      internalTxSourcesFromList(["explorer", "trace_block"]),
       makeFetchers({
         explorer: jest.fn().mockRejectedValue(explorerError),
         trace_block: jest.fn().mockRejectedValue(traceError),
@@ -133,7 +133,7 @@ describe("composeInternalTxsFetcher", () => {
   it("falls back from trace_block to debug_traceBlockByNumber", async () => {
     const gethResult = new Map<string, BlockOperation[]>([["0x3", []]]);
     const fetch = composeInternalTxsFetcher(
-      internalTxSources().addSource("trace_block").addSource("debug_traceBlockByNumber").build(),
+      internalTxSourcesFromList(["trace_block", "debug_traceBlockByNumber"]),
       makeFetchers({
         trace_block: jest.fn().mockRejectedValue(new Error("no erigon")),
         debug_traceBlockByNumber: jest.fn().mockResolvedValue(gethResult),
@@ -145,7 +145,7 @@ describe("composeInternalTxsFetcher", () => {
 
   it("throws when all sources are unavailable and empty is not configured", async () => {
     const fetch = composeInternalTxsFetcher(
-      internalTxSources().addSource("trace_block").addSource("debug_traceBlockByNumber").build(),
+      internalTxSourcesFromList(["trace_block", "debug_traceBlockByNumber"]),
       makeFetchers({
         trace_block: jest.fn().mockRejectedValue(new SourceUnavailableError("no erigon")),
         debug_traceBlockByNumber: jest

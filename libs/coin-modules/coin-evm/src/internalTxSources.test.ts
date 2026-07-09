@@ -1,10 +1,10 @@
 import {
   DEFAULT_INTERNAL_TX_SOURCES,
-  internalTxSources,
+  internalTxSourcesFromList,
   type InternalTxSourceList,
 } from "./internalTxSources";
 
-describe("internalTxSources", () => {
+describe("internalTxSourcesFromList", () => {
   it("builds the default explorer-first strategy", () => {
     expect(DEFAULT_INTERNAL_TX_SOURCES).toEqual([
       "explorer",
@@ -15,53 +15,52 @@ describe("internalTxSources", () => {
   });
 
   it("builds a node-only strategy without empty", () => {
-    const sources: InternalTxSourceList = internalTxSources()
-      .addSource("trace_block")
-      .addSource("debug_traceBlockByNumber")
-      .build();
+    const sources: InternalTxSourceList = internalTxSourcesFromList([
+      "trace_block",
+      "debug_traceBlockByNumber",
+    ]);
 
     expect(sources).toEqual(["trace_block", "debug_traceBlockByNumber"]);
   });
 
   it("builds explorer-only strategy", () => {
-    const sources = internalTxSources().addSource("explorer").build();
+    const sources = internalTxSourcesFromList(["explorer"]);
     expect(sources).toEqual(["explorer"]);
   });
 
   it("allows empty as the only source", () => {
-    const sources = internalTxSources().addSource("empty").build();
+    const sources = internalTxSourcesFromList(["empty"]);
     expect(sources).toEqual(["empty"]);
   });
 
-  // The following invalid usages are prevented at compile time by the builder's
-  // interface state machine. The `@ts-expect-error` assertions are enforced by
-  // `tsc --noEmit` (typecheck), which fails if any of them stops being an error.
-  describe("rejects invalid source lists at compile time", () => {
-    it("rejects an empty list: build() is unavailable before any source is added", () => {
-      const builder = internalTxSources();
-      // @ts-expect-error - InitialBuilder exposes no build(): at least one source is required
-      builder.build();
+  describe("rejects invalid source lists at runtime", () => {
+    it("rejects an empty list", () => {
+      expect(() => internalTxSourcesFromList([])).toThrow(
+        "internalTxSources: at least one source is required",
+      );
     });
 
     it("rejects adding a source after empty: empty must be last", () => {
-      const sealed = internalTxSources().addSource("empty");
-      // @ts-expect-error - SealedBuilder is terminal: nothing may follow "empty"
-      sealed.addSource("explorer");
+      expect(() => internalTxSourcesFromList(["empty", "explorer"])).toThrow(
+        'internalTxSources: "empty" must be the last source',
+      );
     });
 
     it("rejects duplicate sources", () => {
-      // @ts-expect-error - "explorer" was already added; duplicates are not allowed
-      internalTxSources().addSource("explorer").addSource("explorer").build();
+      expect(() => internalTxSourcesFromList(["explorer", "explorer"])).toThrow(
+        'internalTxSources: duplicate source "explorer"',
+      );
     });
 
     it("rejects unknown sources", () => {
-      // @ts-expect-error - "bogus" is not a valid InternalTxSource
-      internalTxSources().addSource("bogus");
+      expect(() => internalTxSourcesFromList(["bogus"])).toThrow(
+        'internalTxSources: invalid source "bogus"',
+      );
     });
 
     it("rejects raw arrays bypassing the builder", () => {
       const raw = ["explorer", "empty"] as const;
-      // @ts-expect-error - InternalTxSourceList is branded; only build() can produce it
+      // @ts-expect-error - InternalTxSourceList is branded; only internalTxSourcesFromList can produce it
       const sources: InternalTxSourceList = raw;
       void sources;
     });

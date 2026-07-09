@@ -1,6 +1,6 @@
 import type { BlockOperation } from "@ledgerhq/coin-module-framework/api/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { EvmCoinConfig, internalTxSources, setCoinConfig } from "../config";
+import { EvmCoinConfig, internalTxSourcesFromList, setCoinConfig } from "../config";
 import { UnsupportedRpcMethodError } from "../errors";
 import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
 import { getNodeApi } from "../network/node";
@@ -762,7 +762,7 @@ describe("getBlock", () => {
           info: {
             node: { type: "external" as const, retries: 0 },
             explorer: { type: "ledger" },
-            getBlockInternalTxsSources: internalTxSources().addSource("trace_block").build(),
+            getBlockInternalTxsSources: internalTxSourcesFromList(["trace_block"]),
           },
         }) as unknown as EvmCoinConfig,
     );
@@ -911,10 +911,7 @@ describe("getBlock", () => {
           info: {
             node: { type: "external" as const, retries: 0 },
             explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
-            getBlockInternalTxsSources: internalTxSources()
-              .addSource("explorer")
-              .addSource("trace_block")
-              .build(),
+            getBlockInternalTxsSources: internalTxSourcesFromList(["explorer", "trace_block"]),
           },
         }) as unknown as EvmCoinConfig,
     );
