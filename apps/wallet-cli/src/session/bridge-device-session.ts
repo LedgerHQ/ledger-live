@@ -28,20 +28,20 @@ export function withCurrencyDeviceSession<T>(
 ): Promise<T> {
   return withWalletCliDeviceInterruptScope(async () => {
     const managerAppName = getManagerAppNameForCurrencyId(currencyId);
-    walletCliDebug("Ensuring DMK transport…");
     try {
-      const transport = await ensureWalletCliDmkTransport();
-      walletCliDebug(`Connecting Ledger app (${managerAppName})…`);
-      await connectLedgerApp(transport.dmk, transport.sessionId, managerAppName, {
-        onStateChange: options.onStateChange,
-        deviceTimeoutMs: options.deviceTimeoutMs,
-      });
-    } catch (e) {
-      const deviceModelId = await getWalletCliDeviceModelId().catch(() => undefined);
-      throw WalletCliDeviceError.fromUnknown(e, { expectedApp: managerAppName, deviceModelId });
-    }
-    walletCliDebug("Device session ready.");
-    try {
+      walletCliDebug("Ensuring DMK transport…");
+      try {
+        const transport = await ensureWalletCliDmkTransport();
+        walletCliDebug(`Connecting Ledger app (${managerAppName})…`);
+        await connectLedgerApp(transport.dmk, transport.sessionId, managerAppName, {
+          onStateChange: options.onStateChange,
+          deviceTimeoutMs: options.deviceTimeoutMs,
+        });
+      } catch (e) {
+        const deviceModelId = await getWalletCliDeviceModelId().catch(() => undefined);
+        throw WalletCliDeviceError.fromUnknown(e, { expectedApp: managerAppName, deviceModelId });
+      }
+      walletCliDebug("Device session ready.");
       return await fn();
     } finally {
       walletCliDebug("Resetting device session…");
@@ -55,14 +55,14 @@ export function withCurrencyDeviceSession<T>(
  */
 export function withDmkDeviceSession<T>(fn: () => Promise<T>): Promise<T> {
   return withWalletCliDeviceInterruptScope(async () => {
-    walletCliDebug("Ensuring DMK transport…");
     try {
-      await ensureWalletCliDmkTransport();
-    } catch (e) {
-      throw WalletCliDeviceError.fromUnknown(e, { expectedApp: "Ledger dashboard" });
-    }
-    walletCliDebug("DMK device session ready.");
-    try {
+      walletCliDebug("Ensuring DMK transport…");
+      try {
+        await ensureWalletCliDmkTransport();
+      } catch (e) {
+        throw WalletCliDeviceError.fromUnknown(e, { expectedApp: "Ledger dashboard" });
+      }
+      walletCliDebug("DMK device session ready.");
       return await fn();
     } finally {
       walletCliDebug("Resetting device session…");

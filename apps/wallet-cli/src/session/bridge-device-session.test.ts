@@ -86,17 +86,19 @@ describe("withCurrencyDeviceSession", () => {
       WalletCliDeviceError,
     );
     expect(calls.execute).toHaveLength(0);
+    // The transport was never established, so the always-on reset has nothing to disconnect.
     expect(calls.reset).toBe(0);
   });
 
-  it("wraps connect failures as WalletCliDeviceError", async () => {
+  it("wraps connect failures as WalletCliDeviceError and resets the session", async () => {
     executeImpl = () => errorAction(new Error("connect failed"));
 
     await expect(withCurrencyDeviceSession("ethereum", async () => "ok")).rejects.toBeInstanceOf(
       WalletCliDeviceError,
     );
     expect(calls.execute).toHaveLength(1);
-    expect(calls.reset).toBe(0);
+    // A session was opened before app-open failed, so it must be torn down.
+    expect(calls.reset).toBe(1);
   });
 
   it("rethrows callback failures unchanged after resetting the session", async () => {
