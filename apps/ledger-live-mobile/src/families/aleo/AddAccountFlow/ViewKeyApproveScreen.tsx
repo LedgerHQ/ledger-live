@@ -25,6 +25,8 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import type { AleoViewKeyFlowParamList } from "./types";
+import QuitConfirmationModal from "./QuitConfirmationModal";
+import useQuitConfirmation from "./useQuitConfirmation";
 
 type Props = StackNavigatorProps<AleoViewKeyFlowParamList, ScreenName.AleoViewKeyApprove>;
 
@@ -90,6 +92,13 @@ export default function ViewKeyApproveScreen({ route, navigation }: Props) {
       onCloseNavigation?.();
     }
   }, [hasAccountsToAdd, onCloseNavigation]);
+
+  const quitConfirmation = useQuitConfirmation({
+    onCloseNavigation,
+    onConfirm: useCallback(() => {
+      abortedRef.current = true;
+    }, []),
+  });
 
   const onResult = useCallback(() => {
     if (abortedRef.current) return;
@@ -159,11 +168,6 @@ export default function ViewKeyApproveScreen({ route, navigation }: Props) {
     ],
   );
 
-  const onCancel = useCallback(() => {
-    abortedRef.current = true;
-    onCloseNavigation?.();
-  }, [onCloseNavigation]);
-
   const renderApprovalContent = () => {
     if (hookState.sharePending) {
       return (
@@ -201,7 +205,7 @@ export default function ViewKeyApproveScreen({ route, navigation }: Props) {
             <Button
               type="main"
               outline
-              onPress={onCancel}
+              onPress={quitConfirmation.open}
               event="AleoAddAccountViewKeyApproveCancelAll"
             >
               {t("aleo.addAccount.stepViewKeyApprove.cancelAllBtn", {
@@ -235,6 +239,12 @@ export default function ViewKeyApproveScreen({ route, navigation }: Props) {
         onResult={onResult}
       />
       {renderApprovalContent()}
+      <QuitConfirmationModal
+        isOpened={quitConfirmation.isOpened}
+        onClose={quitConfirmation.close}
+        onConfirm={quitConfirmation.confirm}
+        onModalHide={quitConfirmation.onModalHide}
+      />
     </SafeAreaView>
   );
 }
