@@ -72,11 +72,8 @@ const buildTasks = args => [
   {
     title: "Compiling assets",
     task: async () => {
-      // RC (--pre) validates the build about to ship, so it uses the same
-      // .env.production (incl. BRAZE_API_KEY) as --release. Nightly is
-      // internal-only, so it uses .env.staging, matching mobile's convention
-      // (prerelease/release share the production Braze app; staging/nightly
-      // share the staging one).
+      // Matches mobile: prerelease (--pre) shares prod config with release,
+      // nightly uses staging.
       if (args.release || args.pre) {
         require("dotenv").config({
           path: path.resolve(__dirname, rootFolder, ".env.production"),
@@ -104,9 +101,7 @@ const buildTasks = args => [
             }
           : args.nightly
             ? {
-                // Without this, tools/rspack/utils.ts falls back to
-                // NODE_ENV==="production" and bakes .env.production (incl.
-                // BRAZE_API_KEY) into what should be the internal-only build.
+                // Required for tools/rspack/utils.ts to pick .env.staging.
                 STAGING: "1",
                 DATADOG_APPLICATION_ID: process.env.DATADOG_APPLICATION_ID,
                 DATADOG_CLIENT_TOKEN: process.env.DATADOG_CLIENT_TOKEN,
