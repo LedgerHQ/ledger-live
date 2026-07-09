@@ -38,7 +38,7 @@ import { StyleProvider } from "@features/platform-style";
 </StyleProvider>
 ```
 
-### Web — web-tools (Lumen only, no styled-components)
+### Web — web-tools (Lumen color scheme only, no SC theme prop)
 
 ```tsx
 import { StyleProvider } from "@features/platform-style";
