@@ -1,7 +1,7 @@
 import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
 import { SwapType } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { Account, type AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
+import { performSwapUntilQuoteSelectionStep, truncateSwapAmount } from "../../../utils/swapUtils";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
@@ -305,17 +305,18 @@ export function runUserRefusesTransactionTest(
     tags.forEach(tag => $Tag(tag));
     it(`User refuses transaction - ${fromAccount.currency.name} to ${toAccount.currency.name}`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
-      const rejectedSwap = new Swap(fromAccount, toAccount, minAmount);
+      const rejectAmount = minAmount ? truncateSwapAmount(minAmount) : minAmount;
+      const rejectedSwap = new Swap(fromAccount, toAccount, rejectAmount);
 
       await performSwapUntilQuoteSelectionStep(
         rejectedSwap.accountToDebit,
         rejectedSwap.accountToCredit,
-        minAmount,
+        rejectAmount,
       );
       const provider = await app.swapLiveApp.selectExchange();
       await app.common.disableSynchronizationForiOS();
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
-      await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
+      await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, rejectAmount);
       await app.swapLiveApp.checkErrorMessage("Please retry or contact Ledger Support if in doubt");
     });
   });
