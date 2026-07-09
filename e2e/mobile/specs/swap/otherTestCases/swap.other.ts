@@ -222,6 +222,7 @@ export function runTooLowAmountForQuoteSwapsTest(
   swap: SwapType,
   tmsLinks: string[],
   errorMessage: string | RegExp,
+  ctaBanner: boolean,
   quotesVisible: boolean,
   tags: string[],
 ) {
@@ -266,6 +267,10 @@ export function runTooLowAmountForQuoteSwapsTest(
         await app.swapLiveApp.selectExchange();
       }
       await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
+
+      if (ctaBanner) {
+        await app.swapLiveApp.checkCtaBanner(quotesVisible);
+      }
     });
   });
 }

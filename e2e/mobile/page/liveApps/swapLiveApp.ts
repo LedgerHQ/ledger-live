@@ -31,6 +31,7 @@ export default class SwapLiveAppPage {
   executeSwapButtonStepApproval = "execute-swap-button-step-approval";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
   fromAccountErrorId = "from-account-error";
+  swapErrorBuyParentCta = "swap-error-buy-parent-cta";
   fromAccountAccountNameTag = "from-account-account-name-tag";
   toAccountAccountNameTag = "to-account-account-name-tag";
   incompatibilityBannerPartnerId = "incompatibility-banner-partner";
@@ -345,6 +346,15 @@ export default class SwapLiveAppPage {
     } else {
       jestExpect(errorText).toMatch(expectedMessage);
     }
+  }
+
+  @Step("Verify swap CTA banner displayed")
+  async checkCtaBanner(quotesVisible: boolean) {
+    const buyMoreCta = quotesVisible
+      ? getWebElementByCssSelector(`.fixed [data-testid="${this.swapErrorBuyParentCta}"]`)
+      : getWebElementByTestId(this.swapErrorBuyParentCta);
+    await waitWebElement(buyMoreCta);
+    await detoxExpect(buyMoreCta).toExist();
   }
 
   @Step("Click on swap max")
