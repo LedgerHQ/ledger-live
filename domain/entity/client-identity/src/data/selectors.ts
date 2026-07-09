@@ -1,4 +1,4 @@
-import { IdentitiesState } from "./types";
+import type { IdentitiesState } from "./types";
 
 export const userIdSelector = (state: { identities: IdentitiesState }) => state.identities.userId;
 

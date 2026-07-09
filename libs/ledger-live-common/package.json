@@ -264,7 +264,7 @@
     "@domain/entity-currency-fiat": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
     "@ledgerhq/asset-aggregation": "workspace:^",
-    "@domain/entity-client-identity": "workspace:*",
+    "@domain/entity-client-identity": "workspace:^",
     "@ledgerhq/coin-aleo": "workspace:^",
     "@ledgerhq/coin-algorand": "workspace:^",
     "@ledgerhq/coin-aptos": "workspace:^",

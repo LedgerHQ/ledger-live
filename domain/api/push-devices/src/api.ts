@@ -6,7 +6,7 @@ import {
   type FetchArgs,
   type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
-import { DeviceId } from "@domain/entity-client-identity";
+import type { DeviceId } from "@domain/entity-client-identity";
 import { PushDevicesApiExtraSchema } from "./schema";
 
 export interface PushDevicesRequest {
@@ -38,6 +38,12 @@ const pushDevicesBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQu
       return retry.fail({
         status: "CUSTOM_ERROR" as const,
         error: "pushDevicesApiExtra not configured in store extraArgument",
+      });
+    }
+    if (!extra.pushDevicesServiceUrl) {
+      return retry.fail({
+        status: "CUSTOM_ERROR" as const,
+        error: "pushDevicesServiceUrl is empty — sync is disabled",
       });
     }
     return fetchBaseQuery({
