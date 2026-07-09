@@ -92,7 +92,6 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
@@ -118,7 +117,6 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "dotenv": "^16.4.5",
-    "expect": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

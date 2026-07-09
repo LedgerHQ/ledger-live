@@ -81,7 +81,6 @@ yarn upgrade-interactive -i --latest
 | eth-sig-util                                | Ethereum coin integration                                         | monthly                                                              |
 | ethereumjs-abi                              | Ethereum coin integration                                         | monthly                                                              |
 | ethereumjs-util                             | Ethereum coin integration                                         | monthly                                                              |
-| expect                                      | Tests                                                             | monthly                                                              |
 | generic-pool                                | Bitcoin coin integration                                          | monthly                                                              |
 | invariant                                   | generic helper                                                    | monthly                                                              |
 | isomorphic-ws                               | WebSocket helper                                                  | monthly                                                              |
@@ -91,7 +90,6 @@ yarn upgrade-interactive -i --latest
 | long                                        | Osmosis coin integration                                          | monthly                                                              |
 | numeral                                     | for very concise amount display (on graph)                        | monthly – **TBD if can be dropped**                                  |
 | object-hash                                 | Solana coin integration                                           | monthly                                                              |
-| performance-now                             | bot                                                               | monthly – may not strongly need                                      |
 | prando                                      | account mocks                                                     | stable – try not to upgrade to not change the mock data too often    |
 | redux                                       | general react helper                                              | monthly                                                              |
 | reselect                                    | general react helper                                              | monthly                                                              |

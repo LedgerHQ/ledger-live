@@ -12,7 +12,6 @@
     "src/preloadedData.ts",
     "src/preloadedData.mock.ts",
     "src/serialization.ts",
-    "src/specs.ts",
     "src/transaction.ts"
   ],
   "ignorePatterns": [

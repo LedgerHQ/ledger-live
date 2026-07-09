@@ -15,11 +15,17 @@
     "**/*.mock.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
-  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"
+  ],
   "ignoreUnimported": [
-    "src/test/bot-specs.ts",
     "src/bridge/transaction.ts",
     "src/bridge/buildOptimisticOperation.ts"
   ],
-  "ignoreUnused": ["@ledgerhq/devices", "@ledgerhq/live-env"]
+  "ignoreUnused": [
+    "@ledgerhq/devices",
+    "@ledgerhq/live-env"
+  ]
 }

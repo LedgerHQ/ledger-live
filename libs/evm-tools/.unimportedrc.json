@@ -6,6 +6,8 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"],
+    "jest-util",
+    "@ledgerhq/types-live"
+  ],
   "ignoreUnused": []
 }

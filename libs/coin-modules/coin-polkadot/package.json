@@ -140,7 +140,6 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
@@ -155,9 +154,7 @@
     "@polkadot/util": "catalog:",
     "@polkadot/util-crypto": "catalog:",
     "bignumber.js": "^9.1.2",
-    "expect": "catalog:",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
     "rxjs": "catalog:"
   },
   "devDependencies": {

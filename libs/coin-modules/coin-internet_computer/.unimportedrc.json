@@ -22,10 +22,8 @@
     "src/hw-signMessage.ts",
     "src/signer/getAddress.ts",
     "src/signer/index.ts",
-    "src/test/bot-specs.ts",
     "src/test/bridgeDatasetTest.ts",
     "src/test/index.ts",
-    "src/test/speculos-deviceActions.ts",
     "src/types/common.ts",
     "src/types/index.ts",
     "src/types/signer.ts"
@@ -51,5 +49,7 @@
     "@noble/curves/bls12-381",
     "@noble/curves/ed25519"
   ],
-  "ignoreUnimported": ["src/supportedFeatures.ts"]
+  "ignoreUnimported": [
+    "src/supportedFeatures.ts"
+  ]
 }
