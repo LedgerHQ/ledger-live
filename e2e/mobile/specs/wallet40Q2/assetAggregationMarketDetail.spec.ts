@@ -3,6 +3,7 @@ import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
 import { FF_LWM_WALLET_40_Q2 } from "../../utils/featureFlagUtils";
+import { getFixtureAccountId, getFixtureTokenAccountId } from "../../utils/fixtureAccounts";
 import type { PartialFeatures } from "@shared/feature-flags";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
@@ -12,18 +13,23 @@ const USDT_TICKER = Currency.ETH_USDT.ticker;
 const USDT_ASSET_NAME = Currency.ETH_USDT.name;
 const POLYGON_DAI_ASSET_NAME = Currency.POL_DAI.name;
 
-// Aggregated-asset display name and market data are specific to the
-// `wallet40-many-stablecoins` userdata fixture, with no shared-enum equivalent.
-const DAI_ASSET_NAME = "Dai Stablecoin v2.0";
-const USDT_MARKET_ID = "tether";
-const USDT_MARKET_NAME = "Tether";
+const DAI_ASSET_NAME = Currency.POL_DAI.aggregatedName!;
+const USDT_MARKET_ID = Currency.ETH_USDT.market!.id;
+const USDT_MARKET_NAME = Currency.ETH_USDT.market!.name;
 
-// Account IDs are tied to the `wallet40-many-stablecoins` userdata fixture; the shared
-// `Account` enum is keyed by derivation path, not full account id, so they stay local.
-const ETHEREUM_ACCOUNT_ID = "js:2:ethereum:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:";
-const POLYGON_ACCOUNT_ID = "js:2:polygon:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:";
-const POLYGON_DAI_ACCOUNT_ID =
-  "js:2:polygon:0xE32ad14b89F334dF1CD1036c2a0E39A19248b75a:+polygon%2Ferc20%2F(pos)~!underscore!~dai~!underscore!~stablecoin";
+const WALLET_40_STABLECOINS_FIXTURE = "wallet40-many-stablecoins";
+// CAL token id of the aggregated Polygon DAI holding in the fixture.
+const POLYGON_DAI_TOKEN_ID = "polygon/erc20/(pos)_dai_stablecoin";
+
+// Read from the loaded userdata fixture so the ids always match the app's real
+// account ids, without hardcoding seed-derived addresses.
+const ETHEREUM_ACCOUNT_ID = getFixtureAccountId(WALLET_40_STABLECOINS_FIXTURE, Currency.ETH.id);
+const POLYGON_ACCOUNT_ID = getFixtureAccountId(WALLET_40_STABLECOINS_FIXTURE, Currency.POL.id);
+const POLYGON_DAI_ACCOUNT_ID = getFixtureTokenAccountId(
+  WALLET_40_STABLECOINS_FIXTURE,
+  Currency.POL.id,
+  POLYGON_DAI_TOKEN_ID,
+);
 
 // Reuse the shared Q2 Wallet 4.0 flags (aggregatedAssets + assetDiscoverability enabled).
 // lazyOnboarding is forced off: leaving it on opened onboarding modals at startup that
@@ -94,7 +100,7 @@ setTeamOwner(Team.WALLET_XP);
 describeWithAggregatedAssets("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
   beforeAll(async () => {
     await app.init({
-      userdata: "wallet40-many-stablecoins",
+      userdata: WALLET_40_STABLECOINS_FIXTURE,
       featureFlags: ASSET_AGGREGATION_FEATURE_FLAGS,
     });
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible(10_000);

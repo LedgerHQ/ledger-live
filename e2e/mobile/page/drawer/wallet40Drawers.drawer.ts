@@ -17,6 +17,8 @@ export default class Wallet40DrawersPage {
   analyticsConsentRefuseAllButtonId = "analytics-consent-drawer-secondary-button";
   closeButtonLabel = "Close";
 
+  // The Wallet 4.0 onboarding/product tour can mount over the portfolio at startup and block interactions.
+  // Dismiss it via whatever affordance is present: close-button id, "Close" label, or stepping through the tour.
   @Step("Close Wallet 4.0 tour if visible")
   async closeWalletV4TourIfVisible(timeout = VISIBILITY_PROBE_TIMEOUT): Promise<boolean> {
     if (await this.isTextVisible(this.walletV4TourFirstSlideTitle, timeout)) {
