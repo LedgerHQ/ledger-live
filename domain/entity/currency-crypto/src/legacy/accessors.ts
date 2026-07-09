@@ -113,7 +113,7 @@ const byScheme: Record<string, CryptoCurrency> = Object.fromEntries(
   allCurrencies.map(c => [c.scheme, c]),
 );
 
-const byTicker: Record<string, CryptoCurrency> = {};
+const byTicker: Partial<Record<string, CryptoCurrency>> = {};
 for (const c of allCurrencies) {
   if (c.isTestnetFor) continue;
   const existing = byTicker[c.ticker];
