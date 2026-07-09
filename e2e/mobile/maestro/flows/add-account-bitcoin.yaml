@@ -1,0 +1,29 @@
+appId: ${APP_ID}
+tags:
+  - addAccount
+  - eth
+---
+- runFlow: ../subflows/launch.yaml
+- extendedWaitUntil:
+    visible:
+      id: "add-account-cta"
+    timeout: 180000
+- runFlow: ../subflows/dismiss-analytics-prompt.yaml
+- runFlow: ../subflows/open-add-account.yaml
+- runFlow:
+    file: ../subflows/modular-drawer-pick.yaml
+    env:
+      SEARCH: "BTC"
+      ASSET_ID: "asset-item-BTC"
+      NETWORK_ID: "network-item-[Bb]itcoin"
+      NETWORK_REQUIRED: "false"
+      PICK_ACCOUNT: "false"
+- runFlow:
+    file: ../subflows/add-discovered-account.yaml
+    env:
+      ACCOUNT_NAME: "Bitcoin 1"
+- runFlow:
+    file: ../subflows/open-asset-assert-balance.yaml
+    env:
+      ASSET_ID: "assetItem-Bitcoin"
+      TITLE_ID: "accounts-title-bitcoin"
