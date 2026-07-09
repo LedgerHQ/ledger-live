@@ -33,4 +33,17 @@ describe("getAccountAssetsCurrencies", () => {
 
     expect(getAccountAssetsCurrencies(parent)).toEqual([parent.subAccounts![0].token]);
   });
+
+  it("omits blacklisted token sub-accounts", () => {
+    const tokenAccount = ETH_ACCOUNT_WITH_USDC.subAccounts![0];
+    const result = getAccountAssetsCurrencies(ETH_ACCOUNT_WITH_USDC, [tokenAccount.token.id]);
+    expect(result).toEqual([ethereumCurrency]);
+  });
+
+  it("falls back to the parent currency when all sub-accounts are blacklisted", () => {
+    const tokenAccount = ETH_ACCOUNT_WITH_USDC.subAccounts![0];
+    const parentWithZeroBalance = { ...ETH_ACCOUNT_WITH_USDC, balance: new BigNumber(0) };
+    const result = getAccountAssetsCurrencies(parentWithZeroBalance, [tokenAccount.token.id]);
+    expect(result).toEqual([ethereumCurrency]);
+  });
 });
