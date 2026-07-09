@@ -10,13 +10,77 @@ import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { accountDataToAccount } from "@ledgerhq/live-wallet/liveqr/cross";
 import type { Account, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
+import type {
+  TransactionModel as SolanaTransactionModel,
+  SolanaAccount,
+} from "@ledgerhq/coin-solana/types";
 import { BigNumber } from "bignumber.js";
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
 import type { AccountDescriptor, Balance, Operation, SendEvent } from "../models";
+import type { EarnSolanaStake } from "../earn/types";
 import type { TransactionIntent } from "../intents";
 import { parseAmountWithTicker } from "../intents/parse-amount";
 
 type SendOptions = { deviceId: string; deviceModelId: DeviceModelId };
+
+type SolanaTransactionIntent = Extract<TransactionIntent, { family: "solana" }>;
+
+// Maps a Solana CLI intent to the coin-solana transaction `model` (kind + uiState).
+// coin-solana routes createTransaction/prepareTransaction on `model.kind`, so the stake
+// behaviour MUST be expressed through this model — loose patch fields are ignored by the
+// generic shallow-merge updateTransaction. Mirrors coin-solana's cli-transaction inferTransactions.
+export function buildSolanaTransactionModel(
+  intent: SolanaTransactionIntent,
+  tokenAccount?: TokenAccount,
+): SolanaTransactionModel {
+  switch (intent.mode) {
+    case "stake.createAccount":
+      return {
+        kind: "stake.createAccount",
+        uiState: { delegate: { voteAccAddress: intent.validator ?? "" } },
+      };
+    case "stake.delegate":
+      return {
+        kind: "stake.delegate",
+        uiState: { stakeAccAddr: intent.stakeAccount ?? "", voteAccAddr: intent.validator ?? "" },
+      };
+    case "stake.undelegate":
+      return {
+        kind: "stake.undelegate",
+        uiState: { stakeAccAddr: intent.stakeAccount ?? "" },
+      };
+    case "stake.withdraw":
+      return {
+        kind: "stake.withdraw",
+        uiState: { stakeAccAddr: intent.stakeAccount ?? "" },
+      };
+    case "send":
+    default:
+      // Token transfers carry the sub-account; native transfers just carry the memo.
+      return tokenAccount
+        ? {
+            kind: "token.transfer",
+            uiState: { subAccountId: tokenAccount.id, memo: intent.memo },
+          }
+        : { kind: "transfer", uiState: { memo: intent.memo } };
+  }
+}
+
+// coin-evm's prepareTransaction stores the (unbuffered) gas estimate in `tx.gasLimit`; the limit
+// actually used for fees + signing is `getGasLimit(tx) = customGasLimit ?? gasLimit`. Setting
+// `customGasLimit` to a buffered multiple of the estimate raises the limit without re-estimating
+// (the estimate is preserved on `gasLimit`), so gas-heavy contract calls — e.g. Morpho ERC-4626
+// vault deposits whose cost drifts block-to-block — don't revert out-of-gas. Only the EVM earn
+// intent carries `gasLimitMultiplier`; plain sends leave it undefined and use the bare estimate.
+export function applyEvmGasLimitMultiplier(tx: unknown, intent: TransactionIntent): void {
+  if (intent.family !== "evm" || intent.gasLimitMultiplier === undefined) return;
+  const evmTx = tx as { gasLimit?: BigNumber; customGasLimit?: BigNumber };
+  const estimate = evmTx.customGasLimit ?? evmTx.gasLimit;
+  if (!estimate || !BigNumber.isBigNumber(estimate)) return;
+  evmTx.customGasLimit = estimate
+    .multipliedBy(intent.gasLimitMultiplier)
+    .integerValue(BigNumber.ROUND_CEIL);
+}
 
 export class BridgeAdapter {
   private static readonly SYNC_CONFIG: { paginationConfig: object; blacklistedTokenIds: string[] } =
@@ -109,6 +173,24 @@ export class BridgeAdapter {
     return account.freshAddress;
   }
 
+  /**
+   * On-chain Solana stake accounts for the account, mapped to the serializable shape `earn
+   * positions` exposes. A full bridge sync populates `solanaResources.stakes`; we surface the
+   * stake-account address + delegation + activation state so `earn withdraw --stake-account` has a
+   * concrete target. Returns [] for accounts without staking resources.
+   */
+  async getSolanaStakes(descriptor: AccountDescriptor): Promise<EarnSolanaStake[]> {
+    const account = (await this.sync(descriptor)) as SolanaAccount;
+    const stakes = account.solanaResources?.stakes ?? [];
+    return stakes.map(stake => ({
+      stakeAccount: stake.stakeAccAddr,
+      validator: stake.delegation?.voteAccAddr,
+      state: stake.activation.state,
+      stakeBalance: stake.stakeAccBalance,
+      withdrawable: stake.withdrawable,
+    }));
+  }
+
   async verifyAddress(descriptor: AccountDescriptor, deviceId: string): Promise<string> {
     const account = await this.sync(descriptor);
     const bridge = await getAccountBridge(account);
@@ -193,17 +275,9 @@ export class BridgeAdapter {
         }
         break;
       case "solana":
-        if (intent.mode) patch.mode = intent.mode;
-        if (intent.validator) patch.validator = intent.validator;
-        if (intent.stakeAccount) patch.stakeAccountId = intent.stakeAccount;
-        if (intent.memo && intent.mode === "send") {
-          patch.model = tokenAccount
-            ? {
-                kind: "token.transfer",
-                uiState: { subAccountId: tokenAccount.id, memo: intent.memo },
-              }
-            : { kind: "transfer", uiState: { memo: intent.memo } };
-        }
+        // coin-solana behaviour is driven entirely by `model.kind`; setting loose
+        // mode/validator/stakeAccount fields is a no-op (generic merge ignores them).
+        patch.model = buildSolanaTransactionModel(intent, tokenAccount);
         break;
     }
     return patch;
@@ -228,6 +302,7 @@ export class BridgeAdapter {
       ...this.buildTxExtras(intent, tokenAccount),
     });
     tx = await bridge.prepareTransaction(account, tx);
+    applyEvmGasLimitMultiplier(tx, intent);
     const status = await bridge.getTransactionStatus(account, tx);
     const errors = Object.values(status.errors);
     if (errors.length > 0) throw errors[0];

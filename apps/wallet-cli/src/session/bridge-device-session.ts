@@ -1,3 +1,4 @@
+import type { ApplicationDependency } from "@ledgerhq/device-management-kit";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { connectLedgerApp } from "../device/connect-ledger-app";
 import type { DeviceState } from "../device/device-state";
@@ -15,6 +16,12 @@ export type CurrencyDeviceSessionOptions = {
   onStateChange?: (state: DeviceState) => void;
   /** Max time to wait for the device to unlock. Defaults in connect-ledger-app. */
   deviceTimeoutMs?: number;
+  /**
+   * Extra apps ConnectApp must ensure are installed alongside the currency's app before opening it.
+   * Used for clear-signing plugins the main app calls into — e.g. `[{ name: "Kiln" }]` for EVM earn
+   * vaults, so the Ethereum app can clear-sign the vault calldata. Defaults to none.
+   */
+  dependencies?: ApplicationDependency[];
 };
 
 export function getManagerAppNameForCurrencyId(currencyId: string): string {
@@ -36,6 +43,7 @@ export function withCurrencyDeviceSession<T>(
         await connectLedgerApp(transport.dmk, transport.sessionId, managerAppName, {
           onStateChange: options.onStateChange,
           deviceTimeoutMs: options.deviceTimeoutMs,
+          dependencies: options.dependencies,
         });
       } catch (e) {
         const deviceModelId = await getWalletCliDeviceModelId().catch(() => undefined);

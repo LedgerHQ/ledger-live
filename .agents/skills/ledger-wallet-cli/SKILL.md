@@ -36,6 +36,10 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "what did I send", "transaction history", "recent activity"                         | `operations <account>`                                       |
 | "send X to Y", "transfer", "pay", "withdraw to an exchange"                         | `send <account> --to <address> --amount '<amount> <ticker>'` |
 | "swap A to B", "convert", "trade ETH for BTC", "exchange"                           | `swap quote` -> `swap execute` -> `swap status`              |
+| "where can I earn", "staking rates", "yield/APY", "best return on my ETH/SOL"        | `earn yields [-n <network>]`                                |
+| "what am I staking", "my staking positions", "earn balance"                         | `earn positions <account>`                                  |
+| "stake my SOL", "deposit into a vault", "earn yield on my USDC", "delegate"          | `earn deposit <account> --product <id> --amount '<amount>'` |
+| "unstake", "withdraw my stake", "redeem from vault", "stop earning"                 | `earn withdraw <account> …`                                 |
 | "is this Ledger real", "verify authenticity", "I bought this off eBay"              | `genuine-check`                                              |
 | "start over", "clear my session", "I switched devices"                              | `session reset`                                              |
 
@@ -77,8 +81,12 @@ All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account d
 | `swap status`        | No     | No           |
 | `assets token`       | No     | No           |
 | `assets token-by-id` | No     | No           |
+| `earn yields`        | No     | No           |
+| `earn positions`     | No     | No           |
+| `earn deposit`       | Yes\*  | **Required** |
+| `earn withdraw`      | Yes\*  | **Required** |
 
-\*`send --dry-run` needs no device and no sandbox bypass.
+\*`send`, `earn deposit`, and `earn withdraw` with `--dry-run` need no device and no sandbox bypass.
 
 ### session view / reset
 
@@ -211,6 +219,77 @@ Use `token` when you have the contract address; use `token-by-id` when you have 
 For non-EVM chains pass `--identifier`.
 
 The `id` printed here is the same id accepted by `swap quote --from` / `--to` and `swap execute --from` / `--to`.
+
+---
+
+## earn (staking & DeFi yield)
+
+Earn covers two flows: **Ethereum** ERC-4626 DeFi vaults (deposit/redeem) and **Solana** native staking (delegate/undelegate). `yields` and `positions` are read-only (no device); `deposit` and `withdraw` sign on the device.
+
+> **Only ethereum & solana** support `deposit`/`withdraw`. Other networks appear in `earn yields` (informational) but cannot be deposited to via the CLI.
+
+### earn yields
+
+Lists yield opportunities (no device). Without `--network` it prints every network's headline rate. **With `-n ethereum` or `-n solana` it also prints the concrete deposit targets**, each ending with the exact `→ --product <id>` value to pass to `earn deposit`:
+
+- **ethereum** → ERC-4626 vault ids (e.g. `1_0x7daeba3f217614e409f85d3014d33923a6b03630`).
+- **solana** → validator vote accounts. The CLI surfaces the **Ledger-operated** validators ("Ledger by Figment", "Ledger by Chorus One") as the recommended targets; any other valid vote account also works as `--product`.
+
+```bash
+pnpm --silent wallet-cli start earn yields
+pnpm --silent wallet-cli start earn yields -n solana
+pnpm --silent wallet-cli start earn yields -n ethereum --output json
+```
+
+There is no separate "list validators / vaults" command — `earn yields -n <network>` **is** how you discover a valid `--product`. In JSON, the value is the `vaultId` (ETH) or `validator` (SOL) field on each row.
+
+### earn positions
+
+Lists active earn positions for an account (no device). Account-based networks only (solana, ethereum).
+
+```bash
+pnpm --silent wallet-cli start earn positions solana-1
+pnpm --silent wallet-cli start earn positions solana-1 --fresh   # request a background refresh
+```
+
+`--fresh` flags stale rows for an async backend refresh; the refreshed data shows up on a **re-run**, not in the same response. Watch for the `(stale)` marker.
+
+**Solana stake accounts:** for Solana accounts the command also reads on-chain stake accounts and prints each one's `→ --stake-account <address>`, its `state` (active / inactive / activating / deactivating), balance, and validator. **This is where you get the `--stake-account` value for `earn withdraw`.** In JSON they're a **top-level `stakes[]`** array alongside `positions` (each entry: `stakeAccount`, `validator`, `state`, `stakeBalance`, `withdrawable`); the `stakes` key is omitted entirely when there are none. Stake accounts show up here right after a deposit even if the backend snapshot is still empty. (Requires a chain sync; if it can't be reached the backend snapshot still prints, with a warning.)
+
+### earn deposit
+
+Stakes (Solana) or deposits into a vault (Ethereum). **Touches the device** to sign — bypass the sandbox. `--product` comes from `earn yields -n <network>` (see above). `--amount` requires a ticker.
+
+```bash
+# Solana: --product is a validator vote account
+pnpm --silent wallet-cli start earn deposit solana-1 --product 26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx --amount '1.5 SOL'
+# Ethereum: --product is a vault id
+pnpm --silent wallet-cli start earn deposit ethereum-1 --product 1_0x7daeba3f217614e409f85d3014d33923a6b03630 --amount '100 USDC'
+# Validate without signing (no device, no sandbox bypass)
+pnpm --silent wallet-cli start earn deposit solana-1 --product 26pV97… --amount '1.5 SOL' --dry-run
+```
+
+Solana `stake.createAccount` creates **and** delegates the stake account in one transaction. Ethereum deposits may run two transactions (ERC-20 `approve` then `deposit`).
+
+**First-time ETH vault deposit — dry-run can't validate the deposit leg.** A first deposit into a vault you've never used is `approve` → `deposit`, and the deposit can only be built once a non-zero allowance exists on-chain. In `--dry-run` nothing is broadcast, so when an approve is still required the CLI validates the approve and **skips** the deposit build (status `not-simulated …`, overall `dry-run: approve validated; deposit needs an on-chain allowance to simulate`) rather than surfacing the backend's opaque 500. This is expected — **not** a balance error. The only way to validate the deposit leg is the real run (broadcast `approve`, wait for confirmation, then `deposit`). Treat a clean dry-run here as "approve is fine"; **confirm with the user before the live run** since it's an irreversible on-device signature. Once the allowance exists, a re-run of `--dry-run` will simulate the deposit normally.
+
+### earn withdraw
+
+Unstakes (Solana) or redeems from a vault (Ethereum). **Touches the device** — bypass the sandbox.
+
+- **Ethereum:** `--product <vault-id>` required; `--amount` optional. The amount is in the vault's **asset** units (e.g. `'50 USDC'`); if a ticker is given it must match the vault asset. **Omit `--amount` for a full exit:** the CLI sends `amount:"max"` and the backend redeems the entire share balance, leaving no dust (don't compute the asset amount yourself for a full exit — the share→asset rate drifts).
+- **Solana:** `--stake-account <address>` (required). **Two-phase:** run once to `undelegate` (deactivate), wait for the deactivation epoch boundary (~2–3 days), then re-run with `--finalize` to withdraw the now-inactive lamports back to the main account. coin-solana computes the withdrawable amount on-chain, so `--amount` is ignored on finalize.
+
+```bash
+# Ethereum vault redeem
+pnpm --silent wallet-cli start earn withdraw ethereum-1 --product 1_0x7daeba3f… --amount '50 USDC'
+# Solana phase 1: deactivate
+pnpm --silent wallet-cli start earn withdraw solana-1 --stake-account <stakeAccountAddr>
+# Solana phase 2 (after ~2–3 days): withdraw
+pnpm --silent wallet-cli start earn withdraw solana-1 --stake-account <stakeAccountAddr> --finalize
+```
+
+Get the Solana `--stake-account` address from `earn positions <account>` (its `stakes[]` / `→ --stake-account` lines) — that's the stake account created by your earlier `earn deposit`.
 
 ---
 

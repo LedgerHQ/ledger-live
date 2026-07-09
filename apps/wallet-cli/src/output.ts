@@ -23,9 +23,22 @@ import {
   type SwapQuoteProviderError,
 } from "./commands/swap/quote-shared";
 import { formatSwapStatusHuman, type SwapStatusLine } from "./commands/swap/status-shared";
+import {
+  renderEarnYields,
+  renderEarnPositions,
+  renderEarnDepositResult,
+  renderEarnWithdrawResult,
+} from "./output/earn";
 import type { Balance, Operation, DiscoveredAccount, SendEvent, TokenInfo } from "./wallet/models";
 import type { SessionEntry } from "./session/session-store";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
+import type {
+  EarnDepositResult,
+  EarnPositionRow,
+  EarnSolanaStake,
+  EarnWithdrawResult,
+  EarnYieldRow,
+} from "./wallet/earn/types";
 
 // ---------------------------------------------------------------------------
 // Context & interface
@@ -151,6 +164,20 @@ export interface CommandOutput {
     approvalTxHash?: string;
     swapTxHash?: string;
   }): void;
+
+  // ---- Earn ----
+
+  /** Print earn yield opportunities (human: one line per row; json: envelope with `yields`). */
+  earnYields(rows: EarnYieldRow[]): void;
+  /**
+   * Print earn positions (human: one block per position, then the account's on-chain Solana stake
+   * accounts once; json: envelope with `positions` and, when present, an account-level `stakes`).
+   */
+  earnPositions(rows: EarnPositionRow[], stakes?: EarnSolanaStake[]): Promise<void>;
+  /** Print the result of an earn deposit (human: summary lines; json: envelope). */
+  earnDepositResult(result: EarnDepositResult): void;
+  /** Print the result of an earn withdraw (human: summary lines; json: envelope). */
+  earnWithdrawResult(result: EarnWithdrawResult): void;
 }
 
 // ---------------------------------------------------------------------------
@@ -481,6 +508,22 @@ class HumanCommandOutput implements CommandOutput {
       writeStdout(`${colors.bold("Swap tx hash:")} ${args.swapTxHash}\n`);
     }
   }
+
+  earnYields(rows: EarnYieldRow[]): void {
+    renderEarnYields(rows);
+  }
+
+  async earnPositions(rows: EarnPositionRow[], stakes?: EarnSolanaStake[]): Promise<void> {
+    await renderEarnPositions(this._fmt, rows, stakes);
+  }
+
+  earnDepositResult(result: EarnDepositResult): void {
+    renderEarnDepositResult(result);
+  }
+
+  earnWithdrawResult(result: EarnWithdrawResult): void {
+    renderEarnWithdrawResult(result);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -754,6 +797,24 @@ class JsonCommandOutput implements CommandOutput {
         swapTxHash: args.swapTxHash,
       }),
     );
+  }
+
+  earnYields(rows: EarnYieldRow[]): void {
+    this._writeNdjson(this._envelope({ yields: rows }));
+  }
+
+  async earnPositions(rows: EarnPositionRow[], stakes?: EarnSolanaStake[]): Promise<void> {
+    this._writeNdjson(
+      this._envelope({ positions: rows, ...(stakes === undefined ? {} : { stakes }) }),
+    );
+  }
+
+  earnDepositResult(result: EarnDepositResult): void {
+    this._writeNdjson(this._envelope({ ...result }));
+  }
+
+  earnWithdrawResult(result: EarnWithdrawResult): void {
+    this._writeNdjson(this._envelope({ ...result }));
   }
 }
 
