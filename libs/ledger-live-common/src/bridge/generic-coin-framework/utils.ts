@@ -655,8 +655,10 @@ export const buildOptimisticOperation = (
       type = "OPT_IN";
       break;
     case "delegate":
-    case "redelegate":
       type = "DELEGATE";
+      break;
+    case "redelegate":
+      type = "REDELEGATE";
       break;
     case "undelegate":
       type = "UNDELEGATE";
