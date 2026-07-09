@@ -51,6 +51,10 @@ function getCounterValue(
     return 0;
   }
 
+  if (asset.countervalue !== undefined) {
+    return asset.countervalue;
+  }
+
   const cv = calculate(cvState, {
     from: asset.currency,
     to: counterValueCurrency,

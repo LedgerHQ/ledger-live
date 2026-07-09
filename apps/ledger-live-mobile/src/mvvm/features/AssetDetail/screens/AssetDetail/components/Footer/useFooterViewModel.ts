@@ -39,9 +39,12 @@ export function useAssetActionsAvailability(
       };
     }
 
-    const walletHasFunds = accounts.some(a => a.balance.gt(0));
+    const assetCurrencyIds = ledgerIds ?? [currency.id];
+    const assetHasFunds = accounts.some(
+      a => assetCurrencyIds.includes(a.currency.id) && a.balance.gt(0),
+    );
     const secondaryButton: SecondaryButtonType =
-      walletHasFunds && availableOnSwap ? "swap" : "receive";
+      assetHasFunds && availableOnSwap ? "swap" : "receive";
 
     return {
       isCurrencySupported,
@@ -49,7 +52,7 @@ export function useAssetActionsAvailability(
       availableOnSwap,
       secondaryButton,
     };
-  }, [currency, isCurrencySupported, availableOnBuy, availableOnSwap, accounts]);
+  }, [currency, ledgerIds, isCurrencySupported, availableOnBuy, availableOnSwap, accounts]);
 }
 
 export function useFooterViewModel(currency: AssetDetailCurrencyProps, ledgerIds?: string[]) {

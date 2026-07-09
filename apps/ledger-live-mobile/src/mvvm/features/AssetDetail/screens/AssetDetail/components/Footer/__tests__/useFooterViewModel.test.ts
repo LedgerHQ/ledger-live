@@ -4,6 +4,13 @@ import { useTradeAvailability, type TradeAvailability } from "@ledgerhq/asset-de
 import { track } from "~/analytics";
 import { useFooterViewModel } from "../useFooterViewModel";
 
+let mockAccounts: { currency: { id: string }; balance: { gt: () => boolean } }[] = [];
+
+jest.mock("~/reducers/accounts", () => ({
+  ...jest.requireActual("~/reducers/accounts"),
+  shallowAccountsSelector: () => mockAccounts,
+}));
+
 const mockHandleOpenBuySell = jest.fn();
 const mockHandleOpenSwap = jest.fn();
 const mockHandleOpenReceiveDrawer = jest.fn();
@@ -45,6 +52,7 @@ describe("useFooterViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     setAvailability();
+    mockAccounts = [];
   });
 
   describe("isBuyAvailable", () => {
@@ -84,10 +92,33 @@ describe("useFooterViewModel", () => {
       expect(result.current.secondaryButton).toBeNull();
     });
 
-    it("is receive when supported and the wallet has no funds", () => {
+    it("is receive when the asset has no accounts with funds", () => {
       const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
 
       expect(result.current.secondaryButton).toBe("receive");
+    });
+
+    it("is swap when an account matching ledgerIds has funds and swap is available", () => {
+      mockAccounts = [{ currency: { id: "bitcoin" }, balance: { gt: () => true } }];
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.secondaryButton).toBe("swap");
+    });
+
+    it("is receive when only accounts outside ledgerIds have funds", () => {
+      mockAccounts = [{ currency: { id: "ethereum" }, balance: { gt: () => true } }];
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.secondaryButton).toBe("receive");
+    });
+
+    it("is swap when any network account in ledgerIds has funds for a multi-network asset", () => {
+      mockAccounts = [{ currency: { id: "optimism" }, balance: { gt: () => true } }];
+      const { result } = renderHook(() =>
+        useFooterViewModel(bitcoin, ["ethereum", "optimism", "base"]),
+      );
+
+      expect(result.current.secondaryButton).toBe("swap");
     });
   });
 
