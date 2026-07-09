@@ -149,13 +149,12 @@ function buildDelegationOperations(op: APIDelegationType): BlockOperation[] {
       address: senderAddr,
       asset: NATIVE_ASSET,
       amount: 0n,
+      ledgerOpType: isDelegate ? "DELEGATE" : "UNDELEGATE",
+      stakedAmount: 0n,
       details: {
-        operationType: isDelegate ? "DELEGATE" : "UNDELEGATE",
-        stakedAmount: 0n,
         counter: op.counter,
         gasLimit: op.gasLimit,
         storageLimit: op.storageLimit,
-        ledgerOpType: isDelegate ? "DELEGATE" : "UNDELEGATE",
       },
     },
   ];
@@ -193,13 +192,12 @@ function buildStakingOperations(op: APIStakingType): BlockOperation[] {
       address: senderAddr,
       asset: NATIVE_ASSET,
       amount: 0n,
+      ledgerOpType: operationType,
+      stakedAmount: BigInt(op.amount ?? 0),
       details: {
-        operationType,
-        stakedAmount: BigInt(op.amount ?? 0),
         counter: op.counter,
         gasLimit: op.gasLimit,
         storageLimit: op.storageLimit,
-        ledgerOpType: operationType,
       },
     },
   ];
@@ -235,11 +233,11 @@ function buildOriginationOperations(op: APIOriginationType): BlockOperation[] {
       address: senderAddr,
       asset: NATIVE_ASSET,
       amount: op.contractBalance > 0 ? -BigInt(op.contractBalance) : 0n,
+      ledgerOpType: "ORIGINATION",
       details: {
         counter: op.counter,
         gasLimit: op.gasLimit,
         storageLimit: op.storageLimit,
-        ledgerOpType: "ORIGINATION",
       },
     },
   ];
@@ -275,11 +273,11 @@ function buildRevealOperations(op: APIRevealType): BlockOperation[] {
       address: senderAddr,
       asset: NATIVE_ASSET,
       amount: 0n,
+      ledgerOpType: "REVEAL",
       details: {
         counter: op.counter,
         gasLimit: op.gasLimit,
         storageLimit: op.storageLimit,
-        ledgerOpType: "REVEAL",
       },
     },
   ];

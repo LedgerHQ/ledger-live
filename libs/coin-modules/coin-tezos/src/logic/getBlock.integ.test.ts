@@ -83,12 +83,8 @@ describe("getBlock", () => {
           address: "tz29GPjgeRQTRX6mcPQXkiuHnq7jbya1Abnq",
           asset: { type: "native", name: "XTZ" },
           amount: 0n,
-          details: {
-            counter: 14472417,
-            gasLimit: 581,
-            storageLimit: 0,
-            ledgerOpType: "REVEAL",
-          },
+          ledgerOpType: "REVEAL",
+          details: { counter: 14472417, gasLimit: 581, storageLimit: 0 },
         },
       ]),
     );
@@ -126,28 +122,21 @@ describe("getBlock — Shadownet Paris staking ops", () => {
     [STAKE_BLOCK, "STAKE", 500_000_000n],
     [UNSTAKE_BLOCK, "UNSTAKE", 250_000_000n],
   ])(
-    "block %s contains a staking op with operationType=%s and stakedAmount=%s",
+    "block %s contains a staking op with ledgerOpType=%s and stakedAmount=%s",
     async (height, expectedOpType, expectedAmount) => {
       const block = await getBlock(height);
       const stakingTx = block.transactions.find(tx =>
-        tx.operations.some(op => {
-          const details = (op as OtherBlockOperation).details as
-            | Record<string, unknown>
-            | undefined;
-          return details?.operationType === expectedOpType;
-        }),
+        tx.operations.some(op => (op as Record<string, unknown>).ledgerOpType === expectedOpType),
       );
 
       if (!stakingTx) throw new Error(`No ${expectedOpType} op found in block ${height}`);
       expect(stakingTx.feesPayer).toBe(SHADOWNET_STAKER);
 
-      const stakingOp = stakingTx.operations[0] as OtherBlockOperation;
-      const details = stakingOp.details as Record<string, unknown>;
+      const stakingOp = stakingTx.operations[0] as Record<string, unknown>;
       expect(stakingOp.type).toBe("other");
-      expect(details.operationType).toBe(expectedOpType);
-      expect(details.stakedAmount).toBe(expectedAmount);
-      expect(details.ledgerOpType).toBe(expectedOpType);
-      expect(details).not.toHaveProperty("delegate");
+      expect(stakingOp.ledgerOpType).toBe(expectedOpType);
+      expect(stakingOp.stakedAmount).toBe(expectedAmount);
+      expect(stakingOp).not.toHaveProperty("delegate");
     },
   );
 

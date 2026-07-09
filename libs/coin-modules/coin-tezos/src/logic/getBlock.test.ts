@@ -885,14 +885,9 @@ describe("delegation operations", () => {
       address: "tz1Delegator",
       asset: { type: "native", name: "XTZ" },
       amount: 0n,
-      details: {
-        operationType: "DELEGATE",
-        stakedAmount: 0n,
-        counter: 42,
-        gasLimit: 1000,
-        storageLimit: 257,
-        ledgerOpType: "DELEGATE",
-      },
+      ledgerOpType: "DELEGATE",
+      stakedAmount: 0n,
+      details: { counter: 42, gasLimit: 1000, storageLimit: 257 },
     });
   });
 
@@ -922,14 +917,9 @@ describe("delegation operations", () => {
       address: "tz1Delegator",
       asset: { type: "native", name: "XTZ" },
       amount: 0n,
-      details: {
-        operationType: "UNDELEGATE",
-        stakedAmount: 0n,
-        counter: 7,
-        gasLimit: 500,
-        storageLimit: 100,
-        ledgerOpType: "UNDELEGATE",
-      },
+      ledgerOpType: "UNDELEGATE",
+      stakedAmount: 0n,
+      details: { counter: 7, gasLimit: 500, storageLimit: 100 },
     });
   });
 
@@ -1096,12 +1086,9 @@ describe("delegation operations", () => {
     const result = await getBlock(5_000_000);
 
     // Then
-    const details = (result.transactions[0].operations[0] as OtherBlockOperation).details as Record<
-      string,
-      unknown
-    >;
-    expect(details).not.toHaveProperty("delegate");
-    expect(details.operationType).toBe("UNDELEGATE");
+    const op = result.transactions[0].operations[0] as Record<string, unknown>;
+    expect(op).not.toHaveProperty("delegate");
+    expect(op.ledgerOpType).toBe("UNDELEGATE");
   });
 });
 
@@ -1115,7 +1102,7 @@ describe("staking operations", () => {
     ["unstake", "UNSTAKE", 250_000_000n],
     ["finalize", "FINALIZE_UNSTAKE", 0n],
   ] as const)(
-    "creates a BlockTransaction for action=%s with operationType=%s",
+    "creates a BlockTransaction for action=%s with ledgerOpType=%s",
     async (action, expectedOpType, expectedStakedAmount) => {
       mockGetBlockByLevel.mockResolvedValue(makeBlock());
       mockFetchBlockStaking.mockResolvedValue([
@@ -1136,14 +1123,9 @@ describe("staking operations", () => {
         address: "tz1Staker",
         asset: { type: "native", name: "XTZ" },
         amount: 0n,
-        details: {
-          operationType: expectedOpType,
-          stakedAmount: expectedStakedAmount,
-          counter: 1,
-          gasLimit: 3630,
-          storageLimit: 0,
-          ledgerOpType: expectedOpType,
-        },
+        ledgerOpType: expectedOpType,
+        stakedAmount: expectedStakedAmount,
+        details: { counter: 1, gasLimit: 3630, storageLimit: 0 },
       });
     },
   );
@@ -1205,12 +1187,9 @@ describe("staking operations", () => {
 
     const result = await getBlock(5_000_000);
 
-    const details = (result.transactions[0].operations[0] as OtherBlockOperation).details as Record<
-      string,
-      unknown
-    >;
-    expect(details).not.toHaveProperty("delegate");
-    expect(details.operationType).toBe("STAKE");
+    const op = result.transactions[0].operations[0] as Record<string, unknown>;
+    expect(op).not.toHaveProperty("delegate");
+    expect(op.ledgerOpType).toBe("STAKE");
   });
 });
 
@@ -1238,9 +1217,10 @@ describe("origination operations", () => {
       type: "other",
       address: "tz1Deployer",
       amount: 0n,
-      details: { ledgerOpType: "ORIGINATION", counter: 42, gasLimit: 3494, storageLimit: 5852 },
+      ledgerOpType: "ORIGINATION",
+      details: { counter: 42, gasLimit: 3494, storageLimit: 5852 },
     });
-    expect((tx.operations[0] as any).details).not.toHaveProperty("originatedContract");
+    expect(tx.operations[0]).not.toHaveProperty("originatedContract");
   });
 
   it("produces negative amount for an origination with contractBalance > 0", async () => {
@@ -1256,7 +1236,7 @@ describe("origination operations", () => {
     expect(op.type).toBe("other");
     expect(op.amount).toBe(-500_000n);
     expect(op.address).toBe("tz1Deployer");
-    expect((op.details as any).ledgerOpType).toBe("ORIGINATION");
+    expect((op as any).ledgerOpType).toBe("ORIGINATION");
   });
 
   it("treats negative contractBalance as zero (defensive guard)", async () => {
@@ -1371,7 +1351,8 @@ describe("reveal operations", () => {
       address: "tz1Revealer",
       asset: { type: "native", name: "XTZ" },
       amount: 0n,
-      details: { counter: 10, gasLimit: 10600, storageLimit: 0, ledgerOpType: "REVEAL" },
+      ledgerOpType: "REVEAL",
+      details: { counter: 10, gasLimit: 10600, storageLimit: 0 },
     });
   });
 
@@ -1390,8 +1371,8 @@ describe("reveal operations", () => {
     const tx = result.transactions[0];
     expect(tx.fees).toBe(6535n); // 5115 + 1420
     expect(tx.operations.some(op => op.type === "other")).toBe(true);
-    const revealOp = tx.operations.find(op => op.type === "other") as OtherBlockOperation;
-    expect(revealOp.details).toMatchObject({ ledgerOpType: "REVEAL" });
+    const revealOp = tx.operations.find(op => op.type === "other") as Record<string, unknown>;
+    expect(revealOp).toMatchObject({ ledgerOpType: "REVEAL" });
   });
 
   it("marks a reveal as failed when status is not 'applied'", async () => {
