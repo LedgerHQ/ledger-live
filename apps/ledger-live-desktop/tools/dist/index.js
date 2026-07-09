@@ -91,6 +91,9 @@ const buildTasks = args => [
           }
         : args.pre
           ? {
+              // Without this, tools/rspack/utils.ts falls back to NODE_ENV==="production"
+              // and bakes .env.production (incl. BRAZE_API_KEY) into the "staging" build.
+              STAGING: "1",
               SENTRY_URL: prereleaseSentryDSN,
               DATADOG_APPLICATION_ID: process.env.DATADOG_APPLICATION_ID,
               DATADOG_CLIENT_TOKEN: process.env.DATADOG_CLIENT_TOKEN,
