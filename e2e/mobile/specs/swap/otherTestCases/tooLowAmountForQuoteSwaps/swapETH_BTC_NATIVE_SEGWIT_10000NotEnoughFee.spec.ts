@@ -28,5 +28,5 @@ runTooLowAmountForQuoteSwapsTest(
   transactionE2E.ctaBanner,
   transactionE2E.quotesVisible,
   transactionE2E.tags,
-  "buttonReplacement", // NOT_ENOUGH_BALANCE hides the banner in favor of the swap button replacement
+  "buttonReplacement",
 );
