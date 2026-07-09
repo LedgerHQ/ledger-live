@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { encodeAccountId, decodeAccountId } from "@ledgerhq/live-common/account/index";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { asDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { Account } from "@ledgerhq/types-live";
 import { Spinner, TextInput } from "@ledgerhq/lumen-ui-react";

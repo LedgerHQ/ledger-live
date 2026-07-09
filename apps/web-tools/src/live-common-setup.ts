@@ -4,8 +4,10 @@ import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { setCryptoCurrenciesStore, setFiatCurrenciesStore } from "@ledgerhq/cryptoassets";
+import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { buildCryptoAssetsStore } from "@features/platform-currencies";
+import { store } from "./store";
 import {
   CRYPTO_CURRENCIES_REGISTRY,
   CRYPTO_CURRENCY_ALIASES,
@@ -29,8 +31,7 @@ setWalletAPIVersion(WALLET_API_VERSION);
 registerAllCoins();
 
 export function setupCryptoAssetsStore(): void {
-  // for now we use the test-helpers one
-  setupCalClientStore();
+  setCryptoAssetsStore(buildCryptoAssetsStore({ dispatch: store.dispatch }));
 }
 
 setupCryptoAssetsStore();
