@@ -3,7 +3,6 @@ import {
   BufferTxData,
   MemoNotSupported,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
@@ -19,10 +18,6 @@ import { createApi } from "./index";
  */
 
 describe("Linea (etherscan explorer)", () => {
-  beforeAll(() => {
-    setupCalClientStore();
-  });
-
   describe("getBlock", () => {
     const BLOCK_HEIGHT = 19500620;
     const TX_HASH = "0x85a126db75d00c52b7ee410b6ddedef9108c9727f5e588d747d76ca9da22c55f";

@@ -3,7 +3,6 @@ import {
   BufferTxData,
   MemoNotSupported,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
@@ -16,10 +15,6 @@ import { createApi } from "./index";
  */
 
 describe("getBlock ERC20 transfers", () => {
-  beforeAll(() => {
-    setupCalClientStore();
-  });
-
   // TODO: unskip when Velas nodes are up again
   describe.skip("External RPC Node (Velas EVM)", () => {
     // Real data from Velas EVM:

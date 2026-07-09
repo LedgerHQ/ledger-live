@@ -3,7 +3,6 @@ import type {
   BufferTxData,
   MemoNotSupported,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
@@ -11,7 +10,6 @@ describe("EVM Api (Monad Testnet)", () => {
   let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
-    setupCalClientStore();
     module = createApi(
       {
         node: { type: "external", uri: "https://testnet-rpc.monad.xyz" },

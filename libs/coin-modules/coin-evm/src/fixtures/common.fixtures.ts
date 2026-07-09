@@ -18,7 +18,6 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, DerivationMode, Operation, ProtoNFT, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import "./cryptoAssetsStore.fixtures";
 
 export const makeAccount = (
   address: string,

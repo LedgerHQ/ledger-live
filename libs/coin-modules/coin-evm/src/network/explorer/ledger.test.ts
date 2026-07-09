@@ -1,14 +1,11 @@
 import { AssertionError, fail } from "assert";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import axios from "axios";
 import eip55 from "eip55";
 import { getCoinConfig } from "../../config";
 import { LedgerExplorerUsedIncorrectly } from "../../errors";
-import tokenData from "../../fixtures/ethereum-erc20-usd__coin.json";
 import {
   coinOperation1,
   coinOperation2,
@@ -16,22 +13,6 @@ import {
   coinOperation4,
 } from "../../fixtures/ledger.fixtures";
 import * as LEDGER_API from "./ledger";
-
-setupMockCryptoAssetsStore({
-  findTokenByAddressInCurrency: async (
-    _address: string,
-    _currencyId: string,
-  ): Promise<TokenCurrency | undefined> => {
-    if (_address === tokenData.contractAddress.toLowerCase()) {
-      return {
-        ...tokenData,
-        type: "TokenCurrency" as const,
-      } as TokenCurrency;
-    }
-    return undefined;
-  },
-  getTokensSyncHash: async () => "0",
-});
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");

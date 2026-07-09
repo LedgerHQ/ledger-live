@@ -1,13 +1,8 @@
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { EvmConfig } from "../config";
 import { safeEncodeEIP55 } from "../utils";
 import { createApi } from "./index";
 
 describe("Fantom (etherscan explorer)", () => {
-  beforeAll(() => {
-    setupCalClientStore();
-  });
-
   describe("getBlock", () => {
     let module: ReturnType<typeof createApi>;
 
