@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-style",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

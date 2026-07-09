@@ -91,6 +91,7 @@
     "@devtools/shell": "workspace:^",
     "@devtools/bindings": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
+    "@features/platform-style": "workspace:^",
     "@formatjs/intl-locale": "3.4.5",
     "@formatjs/intl-pluralrules": "5.2.12",
     "@formatjs/intl-relativetimeformat": "11.2.12",

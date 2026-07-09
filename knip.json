@@ -223,6 +223,9 @@
     },
     "./features/platform/feature-flags": {
       "entry": ["src/index.ts"]
+    },
+    "./features/platform/style": {
+      "entry": ["src/index.ts"]
     }
   }
 }
