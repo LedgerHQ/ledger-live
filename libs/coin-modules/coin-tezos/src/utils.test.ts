@@ -1,7 +1,6 @@
 import { validatePublicKey, ValidationResult } from "@taquito/utils";
 import {
   computeMaxStakeAmount,
-  isValidTezosPublicKey,
   normalizePublicKeyForAddress,
   parseTezosTokenAsset,
   partitionNativeBalance,
@@ -87,26 +86,6 @@ describe("resolveTezosOperationMode", () => {
   it("maps delegation intents to delegation modes", () => {
     expect(resolveTezosOperationMode("delegate", { type: "native" })).toBe("delegate");
     expect(resolveTezosOperationMode("undelegate", { type: "native" })).toBe("undelegate");
-  });
-});
-
-describe("isValidTezosPublicKey", () => {
-  it.each([
-    "edpkuBknW28nW72KG6RoHtYW7p12T6GKc7nAbwYX5m8Wd9sDVC9yav",
-    "sppk7but7h93Ws1XhAPvdBcttVmoBDGHxdpaU8dPy5549f3eLJFAjag",
-    "p2pk66tTYL5EvahKAXncbtbRPBkAnxo3CszzUho5wPCgWauBMyvybuB",
-  ])("returns true for a valid base58 public key (%s)", key => {
-    expect(isValidTezosPublicKey(key)).toBe(true);
-  });
-
-  it.each([
-    ["a tz1 address", "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb"],
-    ["a raw hex key", "00aabbccdd"],
-    ["an empty string", ""],
-    ["undefined", undefined],
-    ["null", null],
-  ])("returns false for %s", (_desc, key) => {
-    expect(isValidTezosPublicKey(key)).toBe(false);
   });
 });
 

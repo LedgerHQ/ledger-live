@@ -30,7 +30,7 @@ import { WalletState } from "@ledgerhq/live-wallet/store";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import type { CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { isValidTezosPublicKey } from "@ledgerhq/coin-tezos/utils";
+import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/utils";
 import { AccountPublicKeyUnavailable } from "../errors";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
@@ -358,10 +358,12 @@ export const bitcoinFamilyAccountGetPublicKeyLogic = async (
 type AccountPublicKeyResolver = (account: Account) => string | null;
 
 const ACCOUNT_PUBLIC_KEY_RESOLVERS: Partial<Record<string, AccountPublicKeyResolver>> = {
-  // xpub holds the account public key (generic-coin-framework). Throw the dedicated error when
-  // it is not a valid public key so the caller can prompt the user to re-add the account.
+  // xpub holds the account public key (generic-coin-framework), either hex (as returned by the
+  // Ledger app) or already base58. Normalize it to base58; throw the dedicated error when it
+  // cannot be resolved so the caller can prompt the user to re-add the account.
   tezos: account => {
-    if (isValidTezosPublicKey(account.xpub)) return account.xpub!;
+    const publicKey = normalizePublicKeyForAddress(account.xpub ?? undefined, account.freshAddress);
+    if (publicKey) return publicKey;
     throw new AccountPublicKeyUnavailable();
   },
   // cosmos seedIdentifier is seed-level (shared across accounts), so the per-account
