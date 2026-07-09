@@ -4,7 +4,6 @@
     "moduleResolution": "bundler",
     "customConditions": ["react-native", "@ledgerhq/source"],
     "module": "preserve",
-    "customConditions": ["@ledgerhq/source", "react-native"],
     "allowJs": false,
     "checkJs": false,
     "jsx": "react-native",
