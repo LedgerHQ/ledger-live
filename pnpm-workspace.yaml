@@ -202,9 +202,9 @@ catalog:
   oxlint: 1.51.0
   oxfmt: 0.36.0
   # Modules published by coin-modules
-  "@ledgerhq/coin-module-framework": 3.5.1
-  "@ledgerhq/coin-stellar": 6.26.1
-  "@ledgerhq/coin-xrp": 7.23.5
+  "@ledgerhq/coin-module-framework": 3.6.0
+  "@ledgerhq/coin-stellar": 6.26.2
+  "@ledgerhq/coin-xrp": 7.25.0
   detox: 20.51.3
 
 overrides:
