@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import React, { useCallback, useMemo, useState } from "react";

@@ -3,8 +3,8 @@ import type { Action } from "redux-actions";
 import {
   getFiatCurrencyByTicker,
   findFiatCurrencyByTicker,
-  findCryptoCurrencyById,
 } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getEnv } from "@ledgerhq/live-env";
 import { createSelector } from "~/context/selectors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";

@@ -6,7 +6,7 @@ import { Trans } from "~/context/Locale";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
+import { useTokensData } from "@features/platform-currencies";
 import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount } from "@ledgerhq/types-live";

@@ -37,7 +37,8 @@ import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { useFeature } from "@features/platform-feature-flags";
-import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
+import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { NavigatorName, ScreenName } from "~/const";
 import { broadcastSignedTx } from "~/logic/screenTransactionHooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
@@ -109,7 +110,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       >();
     const [device, setDevice] = useState<Device>();
     const listAccounts = useListPlatformAccounts(walletState, accounts);
-    const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+    const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
     const listPlatformCurrencies = useListPlatformCurrencies(deactivatedCurrencyIds);
 
     const { openDrawer: openModularDrawer } = useModularDrawerController();

@@ -5,7 +5,7 @@ import { track } from "~/analytics";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AddAccountButton as AddAccountButtonComponent } from "@ledgerhq/native-ui/pre-ldls/components/index";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 type Props = {
   sourceScreenName: string;

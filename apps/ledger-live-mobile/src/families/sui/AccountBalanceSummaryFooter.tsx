@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { SuiAccount } from "@ledgerhq/live-common/families/sui/types";
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import BigNumber from "bignumber.js";

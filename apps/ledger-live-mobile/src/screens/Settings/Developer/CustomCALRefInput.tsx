@@ -4,7 +4,7 @@ import { setEnv } from "@ledgerhq/live-env";
 import { Box } from "@ledgerhq/native-ui";
 import TextInput from "~/components/FocusedTextInput";
 import { useTranslation } from "~/context/Locale";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { prepareCurrency } from "~/bridge/cache";
 import { useTheme } from "@react-navigation/native";
 import Switch from "~/components/Switch";
