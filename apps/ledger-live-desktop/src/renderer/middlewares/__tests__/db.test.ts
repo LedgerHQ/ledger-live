@@ -40,7 +40,7 @@ jest.mock("../../reducers/market", () => ({
   marketStoreSelector: (state: FakeState) => state.market,
 }));
 
-jest.mock("@ledgerhq/client-ids/store", () => ({
+jest.mock("@domain/entity-client-identity", () => ({
   exportIdentitiesForPersistence: jest.fn(s => s),
 }));
 

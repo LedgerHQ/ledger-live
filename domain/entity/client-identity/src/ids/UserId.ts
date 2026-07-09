@@ -30,7 +30,7 @@ export class UserId {
     return this[USER_ID_SYMBOL];
   }
 
-  /** For Segment and analytics display (live-common-setup USER_ID, segment, Developer). Allowlisted in export-rules.json. */
+  /** For Segment and analytics display. Allowlisted in export-rules.json. */
   exportUserIdForAnalytics(): string {
     return this[USER_ID_SYMBOL];
   }
@@ -50,12 +50,12 @@ export class UserId {
     return this[USER_ID_SYMBOL];
   }
 
-  /** For user-facing logs export (e.g. export logs button). Allowlisted in export-rules.json. */
+  /** For user-facing logs export. Allowlisted in export-rules.json. */
   exportUserIdForUserLogs(): string {
     return this[USER_ID_SYMBOL];
   }
 
-  /** For Chainwatch / transaction-alerts backend API (account path segment). Allowlisted in export-rules.json. */
+  /** For Chainwatch / transaction-alerts backend API. Allowlisted in export-rules.json. */
   exportUserIdForChainwatch(): string {
     return this[USER_ID_SYMBOL];
   }

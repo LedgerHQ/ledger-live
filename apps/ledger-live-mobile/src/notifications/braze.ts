@@ -1,5 +1,5 @@
 import Braze from "@braze/react-native-sdk";
-import { type UserId, isDummyUserId } from "@ledgerhq/client-ids/store";
+import { type UserId, isDummyUserId } from "@domain/entity-client-identity";
 import { NotificationsSettings } from "../reducers/types";
 import { generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
 

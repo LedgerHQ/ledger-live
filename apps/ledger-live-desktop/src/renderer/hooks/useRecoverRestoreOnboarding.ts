@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { userIdSelector } from "@ledgerhq/client-ids/store";
+import { userIdSelector } from "@domain/entity-client-identity";
 import { getStoreValue } from "~/renderer/store";
 import { useFeature } from "@features/platform-feature-flags";
 import { saveSettings } from "~/renderer/actions/settings";

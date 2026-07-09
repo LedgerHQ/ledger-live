@@ -94,8 +94,7 @@ import { useTrackSyncFlow } from "~/renderer/analytics/hooks/useTrackSyncFlow";
 import { useTrackGenericDAppTransactionSend } from "~/renderer/analytics/hooks/useTrackGenericDAppTransactionSend";
 import { useTrackTransactionChecksFlow } from "~/renderer/analytics/hooks/useTrackTransactionChecksFlow";
 import { useTrackDmkErrorsEvents } from "~/renderer/analytics/hooks/useTrackDmkErrorsEvents";
-import { identitiesSlice } from "@ledgerhq/client-ids/store";
-import { DeviceId } from "@ledgerhq/client-ids/ids";
+import { identitiesSlice, DeviceId } from "@domain/entity-client-identity";
 import { useBuyDeviceIntercept } from "~/renderer/hooks/useBuyDeviceIntercept";
 import {
   DeviceDeprecationScreen,

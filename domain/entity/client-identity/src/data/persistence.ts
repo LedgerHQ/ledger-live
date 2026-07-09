@@ -1,8 +1,5 @@
 import { IdentitiesState, isDummyUserId, isDummyDatadogId } from "./types";
 
-/**
- * Serialized format for persistence
- */
 export interface PersistedIdentities {
   userId?: string;
   datadogId?: string;

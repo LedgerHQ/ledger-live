@@ -27,7 +27,7 @@ import {
 import { marketStoreSelector } from "../reducers/market";
 import { marketBannerStoreSelector } from "../reducers/marketBanner";
 import { knownDevicesStoreSelector } from "../reducers/knownDevices";
-import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
+import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
 import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 
 let DB_MIDDLEWARE_ENABLED = true;

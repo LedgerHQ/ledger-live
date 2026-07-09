@@ -41,7 +41,7 @@ import portfolioRefresh from "./portfolioRefresh";
 import portfolioBalanceDisplay from "./portfolioBalanceDisplay";
 import recoverState from "./recoverState";
 import liveAppModal from "./liveAppModal";
-import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import { identitiesSlice } from "@domain/entity-client-identity";
 import { supportedFiatsSlice } from "@domain/entity-currency-fiat";
 import type { UnknownAction } from "@reduxjs/toolkit";
 

@@ -1,6 +1,5 @@
 module.exports = {
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/"],
   roots: ["<rootDir>/src"],
   testMatch: ["**/*.test.ts"],
   transform: {
@@ -13,11 +12,9 @@ module.exports = {
       },
     ],
   },
-  collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts", "!src/**/*.test.ts"],
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   reporters: [
     "default",
-    ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
 };

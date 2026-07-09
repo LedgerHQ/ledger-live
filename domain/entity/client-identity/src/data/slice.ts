@@ -8,17 +8,14 @@ export function shouldUsePersistedId(value: string | undefined): value is string
   return typeof value === "string" && value.trim() !== "" && value !== DUMMY_ID_STR;
 }
 
-/**
- * Redux slice for identities management
- */
 export const identitiesSlice = createSlice({
   name: "identities",
   initialState: initialIdentitiesState,
   reducers: {
     /**
      * Initialize identities from persisted data.
-     * If userId/datadogId is falsy, empty, or the dummy value, a new id is generated; otherwise the value is preserved.
-     * When a new userId is generated, pushDevicesSyncState is forced to "unsynced" so the backend is updated with the new equipment_id.
+     * When a new userId is generated, pushDevicesSyncState is forced to "unsynced"
+     * so the backend is updated with the new equipment_id.
      */
     initFromPersisted: (state, action: PayloadAction<PersistedIdentities>) => {
       const userIdRaw = action.payload.userId;
@@ -35,9 +32,6 @@ export const identitiesSlice = createSlice({
       state.pushDevicesServiceUrl = action.payload.pushDevicesServiceUrl ?? null;
     },
 
-    /**
-     * Import from legacy system (e.g. app/user in storage)
-     */
     importFromLegacy: (state, action: PayloadAction<{ userId: string; datadogId?: string }>) => {
       state.userId = UserId.fromString(action.payload.userId);
       if (action.payload.datadogId) {
@@ -47,17 +41,11 @@ export const identitiesSlice = createSlice({
       }
     },
 
-    /**
-     * Initialize from scratch (generate new userId and datadogId)
-     */
     initFromScratch: state => {
       state.userId = UserId.fromString(uuid());
       state.datadogId = DatadogId.fromString(uuid());
     },
 
-    /**
-     * Add a new device ID
-     */
     addDeviceId: (state, action: PayloadAction<DeviceId>) => {
       const newDeviceId = action.payload;
       let exists = false;
@@ -73,10 +61,6 @@ export const identitiesSlice = createSlice({
       }
     },
 
-    /**
-     * Mark sync as completed
-     * @param action.payload - The API endpoint URL that was used for this sync
-     */
     markSyncCompleted: (state, action: PayloadAction<string>) => {
       state.pushDevicesSyncState = "synced";
       state.pushDevicesServiceUrl = action.payload;

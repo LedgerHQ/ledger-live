@@ -1,5 +1,5 @@
 import { BottomSheetModalProvider } from "@ledgerhq/lumen-ui-rnative";
-import { initialIdentitiesState } from "@ledgerhq/client-ids/store";
+import { initialIdentitiesState } from "@domain/entity-client-identity";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";

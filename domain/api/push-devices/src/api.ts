@@ -1,0 +1,73 @@
+import {
+  createApi,
+  fetchBaseQuery,
+  retry,
+  type BaseQueryFn,
+  type FetchArgs,
+  type FetchBaseQueryError,
+} from "@reduxjs/toolkit/query/react";
+import { DeviceId } from "@domain/entity-client-identity";
+
+export interface PushDevicesRequest {
+  equipment_id: string;
+  devices: string[];
+}
+
+/**
+ * Slice of the Redux thunk extraArgument for this package.
+ * Pass to the store's extraArgument via `pushDevicesApiExtra({ ... })`.
+ */
+export type PushDevicesApiExtra = {
+  pushDevicesServiceUrl: string;
+  ledgerClientVersion: string;
+};
+
+/**
+ * Builds this package's slice of the thunk extraArgument.
+ * An empty pushDevicesServiceUrl disables sync (middleware checks for it).
+ */
+export function pushDevicesApiExtra(config: PushDevicesApiExtra): PushDevicesApiExtra {
+  return config;
+}
+
+const pushDevicesBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = retry(
+  (args, api, extraOptions) => {
+    const extra = api.extra as PushDevicesApiExtra;
+    return fetchBaseQuery({
+      baseUrl: extra.pushDevicesServiceUrl,
+      prepareHeaders: headers => {
+        headers.set("Content-Type", "application/json");
+        headers.set("X-Ledger-Client-Version", extra.ledgerClientVersion);
+        return headers;
+      },
+    })(args, api, extraOptions);
+  },
+  { maxRetries: 3 },
+);
+
+export const pushDevicesApi = createApi({
+  reducerPath: "pushDevicesApi",
+  baseQuery: pushDevicesBaseQuery,
+  tagTypes: [],
+  endpoints: build => ({
+    pushDevices: build.mutation<void, PushDevicesRequest>({
+      query: body => ({
+        url: "/v2/pushdevices",
+        method: "POST",
+        body,
+      }),
+    }),
+  }),
+});
+
+export function createPushDevicesRequest(
+  userId: string,
+  deviceIds: DeviceId[],
+): PushDevicesRequest {
+  return {
+    equipment_id: userId,
+    devices: deviceIds.map(deviceId => deviceId.exportDeviceIdForPushDevicesService()),
+  };
+}
+
+export type PushDevicesApi = typeof pushDevicesApi;

@@ -27,7 +27,7 @@ import {
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
-import { userIdSelector, isDummyUserId } from "@ledgerhq/client-ids/store";
+import { userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
 import {
   analyticsEnabledSelector,
   trackingEnabledSelector,

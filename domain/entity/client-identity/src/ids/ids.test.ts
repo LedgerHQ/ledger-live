@@ -2,7 +2,6 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import * as idsModule from "./index";
 
-// Load export-rules.json to discover ID classes and their export methods
 const exportRulesPath = join(__dirname, "../../export-rules.json");
 const exportRules = JSON.parse(readFileSync(exportRulesPath, "utf-8"));
 
@@ -13,21 +12,17 @@ interface IdTestConfig {
   exportMethods: string[];
 }
 
-// Discover ID classes from export-rules.json
-// Pattern: libs/client-ids/src/ids/DeviceId.ts => DeviceId class
 const idConfigs: IdTestConfig[] = [];
 
 for (const [filePath, methods] of Object.entries(exportRules)) {
-  // Match files in libs/client-ids/src/ids/*.ts
-  const idsFileMatch = filePath.match(/libs\/client-ids\/src\/ids\/(\w+)\.ts$/);
+  const idsFileMatch = filePath.match(/domain\/entity\/client-identity\/src\/ids\/(\w+)\.ts$/);
   if (idsFileMatch) {
     const className = idsFileMatch[1];
     const Class = (idsModule as any)[className];
 
     if (Class) {
-      const methodsObj = methods;
       const exportMethods =
-        methodsObj && typeof methodsObj === "object" ? Object.keys(methodsObj) : [];
+        methods && typeof methods === "object" ? Object.keys(methods as object) : [];
       idConfigs.push({
         name: className,
         Class,
@@ -105,7 +100,6 @@ describe("ID Classes", () => {
           it("should export the ID", () => {
             const testValue = "test-123";
             const id = new config.Class(testValue);
-            // Access method dynamically without type assertion
             const exportMethod = id[method];
             if (typeof exportMethod === "function") {
               const exported = exportMethod.call(id);

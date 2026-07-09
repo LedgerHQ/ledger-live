@@ -38,7 +38,6 @@
   },
   "devDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/client-ids": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
@@ -59,7 +58,6 @@
   },
   "peerDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/client-ids": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "react": "catalog:",
     "rxjs": "catalog:",
