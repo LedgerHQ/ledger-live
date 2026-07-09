@@ -3,7 +3,11 @@ import { LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
 import type { InternalTxSourceList } from "./internalTxSources";
 
 export type { InternalTxSource, InternalTxSourceList, NonEmptySource } from "./internalTxSources";
-export { DEFAULT_INTERNAL_TX_SOURCES, internalTxSourcesFromList } from "./internalTxSources";
+export {
+  DEFAULT_INTERNAL_TX_SOURCES,
+  internalTxSourcesFromList,
+  isInternalTxSource,
+} from "./internalTxSources";
 
 /**
  * Block finalization levels supported by EVM JSON-RPC API, used to fetch the latest block.

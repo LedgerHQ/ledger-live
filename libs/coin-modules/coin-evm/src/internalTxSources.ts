@@ -40,7 +40,7 @@ export function internalTxSourcesFromList(sources: readonly string[]): InternalT
       seen.add(source);
     }
   });
-  return sources as unknown as InternalTxSourceList;
+  return Object.freeze([...sources]) as unknown as InternalTxSourceList;
 }
 
 export const DEFAULT_INTERNAL_TX_SOURCES = internalTxSourcesFromList([

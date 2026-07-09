@@ -33,6 +33,14 @@ describe("internalTxSourcesFromList", () => {
     expect(sources).toEqual(["empty"]);
   });
 
+  it("returns a frozen copy independent of the input", () => {
+    const input = ["explorer", "trace_block"];
+    const sources = internalTxSourcesFromList(input);
+    input.push("empty");
+    expect(sources).toEqual(["explorer", "trace_block"]);
+    expect(Object.isFrozen(sources)).toBe(true);
+  });
+
   describe("rejects invalid source lists at runtime", () => {
     it("rejects an empty list", () => {
       expect(() => internalTxSourcesFromList([])).toThrow(
