@@ -3,8 +3,7 @@
 import { renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import {
   FEATURE_INTRO_CAMPAIGN_ID,

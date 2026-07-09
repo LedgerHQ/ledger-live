@@ -1,5 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { addAccountHandler } from "../addAccount.handler";
 import { createMockContext } from "./test-utils";
 
