@@ -332,8 +332,7 @@ export function useAddressValidation({
 
   return {
     result,
-    isLoading:
-      validationState.status === "loading" || domainIsLoading || bridgeValidation.isLoading,
+    isLoading: validationState.status === "loading" || domainIsLoading,
     validateAddress,
   };
 }

@@ -368,7 +368,7 @@ describe("useAddressValidation", () => {
     );
   });
 
-  it("shows loading during bridge validation", () => {
+  it("does not surface bridge validation loading as recipient input loading", () => {
     mockedUseBridgeRecipientValidation.mockReturnValue({
       errors: {},
       warnings: {},
@@ -385,7 +385,7 @@ describe("useAddressValidation", () => {
       }),
     );
 
-    expect(result.current.isLoading).toBe(true);
+    expect(result.current.isLoading).toBe(false);
   });
 
   it("resets state when search value is cleared", async () => {
