@@ -7,14 +7,11 @@ import semver from "semver";
 import { promises as fsp } from "fs";
 import { log } from "@ledgerhq/logs";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { AppCandidate } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { registerTransportModule } from "../hw";
 import { getEnv } from "@ledgerhq/live-env";
 import { getDependencies } from "../apps/polyfill";
 import { findCryptoCurrencyByKeyword } from "../currencies";
-import { formatAppCandidate } from "../bot/formatters";
 import { mustUpgrade, shouldUpgrade } from "../apps";
-
 import {
   type SpeculosTransport,
   releaseSpeculosDevice,
@@ -25,6 +22,18 @@ import {
 
 export { closeAllSpeculosDevices, conventionalAppSubpath } from "@ledgerhq/speculos-transport";
 export { type SpeculosTransport, releaseSpeculosDevice, createSpeculosDevice };
+
+export type AppCandidate = {
+  path: string;
+  model: DeviceModelId;
+  firmware: string;
+  appName: string;
+  appVersion: string;
+};
+
+function formatAppCandidate(appCandidate: AppCandidate): string {
+  return `${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}`;
+}
 
 const modelMapPriority: Record<string, number> = {
   apex_p: 7,

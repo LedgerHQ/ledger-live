@@ -20,7 +20,8 @@
     "@jest/expect-utils",
     "@jest/get-type",
     "jest-util",
-    "lru-cache"
+    "lru-cache",
+    "@ledgerhq/devices"
   ],
   "ignoreUnimported": [
     "src/api/index.ts",
