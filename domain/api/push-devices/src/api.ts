@@ -33,7 +33,13 @@ export function pushDevicesApiExtra(config: PushDevicesApiExtra): PushDevicesApi
 
 const pushDevicesBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = retry(
   (args, api, extraOptions) => {
-    const extra = api.extra as PushDevicesApiExtra;
+    const extra = api.extra as PushDevicesApiExtra | undefined;
+    if (!extra?.ledgerClientVersion) {
+      return retry.fail({
+        status: "CUSTOM_ERROR" as const,
+        error: "pushDevicesApiExtra not configured in store extraArgument",
+      });
+    }
     return fetchBaseQuery({
       baseUrl: extra.pushDevicesServiceUrl,
       prepareHeaders: headers => {

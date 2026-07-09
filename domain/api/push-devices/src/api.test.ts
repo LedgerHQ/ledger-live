@@ -72,6 +72,20 @@ describe("pushDevicesApi HTTP request", () => {
     fetchSpy?.mockRestore();
   });
 
+  it("returns CUSTOM_ERROR immediately when pushDevicesApiExtra is not in extraArgument", async () => {
+    const bareStore = configureStore({
+      reducer: { [pushDevicesApi.reducerPath]: pushDevicesApi.reducer },
+      middleware: gdm => gdm().concat(pushDevicesApi.middleware),
+    });
+    const result = await bareStore.dispatch(
+      pushDevicesApi.endpoints.pushDevices.initiate({ equipment_id: "u", devices: [] }),
+    );
+    expect(result.error).toMatchObject({
+      status: "CUSTOM_ERROR",
+      error: expect.stringContaining("pushDevicesApiExtra"),
+    });
+  });
+
   it("sends POST to /v2/pushdevices with correct URL and headers", async () => {
     fetchSpy = jest
       .spyOn(globalThis, "fetch")
