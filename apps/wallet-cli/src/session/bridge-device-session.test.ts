@@ -55,8 +55,12 @@ let executeImpl: () => { observable: Observable<unknown>; cancel: () => void };
 const { _setTestDmkTransport, disposeWalletCliDmkTransportFully } =
   await import("../device/register-dmk-transport");
 const { WalletCliDeviceError } = await import("../device/wallet-cli-device-error");
-const { getManagerAppNameForCurrencyId, withCurrencyDeviceSession, withDmkDeviceSession } =
-  await import("./bridge-device-session");
+const {
+  getManagerAppNameForCurrencyId,
+  withCurrencyDeviceSession,
+  withDmkDeviceSession,
+  withLkrpDeviceSession,
+} = await import("./bridge-device-session");
 
 describe("withCurrencyDeviceSession", () => {
   beforeEach(async () => {
@@ -223,6 +227,54 @@ describe("withCurrencyDeviceSession dependencies", () => {
       calls.execute[0].deviceAction as { input: { dependencies: Array<{ name: string }> } }
     ).input;
     expect(input.dependencies).toEqual([]);
+  });
+});
+
+describe("withLkrpDeviceSession", () => {
+  beforeEach(async () => {
+    _setTestDmkTransport(null);
+    await disposeWalletCliDmkTransportFully();
+    calls.execute = [];
+    calls.reset = 0;
+    executeImpl = () => completedAction();
+    _setTestDmkTransport(testTransport as never);
+  });
+
+  afterEach(async () => {
+    await disposeWalletCliDmkTransportFully();
+    _setTestDmkTransport(null);
+  });
+
+  it("resets the session when opening the Ledger Sync app fails", async () => {
+    // Regression guard: the reset must run even when connect throws, otherwise a half-open DMK
+    // session singleton leaks and the next device command hits BUSY.
+    executeImpl = () => errorAction(new Error("app open failed"));
+
+    await expect(withLkrpDeviceSession(async () => "ok")).rejects.toBeInstanceOf(
+      WalletCliDeviceError,
+    );
+    expect(calls.execute).toHaveLength(1);
+    expect(calls.reset).toBe(1);
+  });
+
+  it("rethrows callback failures unchanged after resetting the session", async () => {
+    const callbackError = new Error("LKRP restore bug");
+
+    await expect(
+      withLkrpDeviceSession(async () => {
+        throw callbackError;
+      }),
+    ).rejects.toBe(callbackError);
+
+    expect(calls.execute).toHaveLength(1);
+    expect(calls.reset).toBe(1);
+  });
+
+  it("resets the session after a successful callback", async () => {
+    const result = await withLkrpDeviceSession(async () => "done");
+
+    expect(result).toBe("done");
+    expect(calls.reset).toBe(1);
   });
 });
 

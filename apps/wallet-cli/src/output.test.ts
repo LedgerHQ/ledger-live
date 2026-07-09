@@ -2,6 +2,7 @@ import "./live-common-setup";
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { getCryptoAssetsStore, setCryptoAssetsStore } from "@ledgerhq/cryptoassets";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { installOutputCapture } from "./shared/ui";
 
 type MockSpinner = {
   text: string;
@@ -461,5 +462,105 @@ describe("HumanCommandOutput", () => {
     expect(joined).toContain(USDT_TOKEN_INFO.id);
     expect(joined).toContain(USDT_TOKEN_INFO.ticker);
     expect(joined).toContain(USDT_TOKEN_INFO.contractAddress);
+  });
+
+  describe("ring human output", () => {
+    let writes: string[] = [];
+    let stderrWrites: string[] = [];
+    let restore: () => void;
+
+    beforeEach(() => {
+      writes = [];
+      stderrWrites = [];
+      restore = installOutputCapture({
+        stdout: chunk => writes.push(chunk),
+        stderr: chunk => stderrWrites.push(chunk),
+      });
+    });
+
+    afterEach(() => restore());
+
+    const ctx = { command: "ring", network: "all" };
+
+    it("ringKeys renders a table with key and date columns", () => {
+      createCommandOutput("human", ctx).ringKeys([
+        { domain: "prod", firstUsed: "2026-04-27T12:00:00.000Z" },
+        { domain: "staging", firstUsed: "2026-04-28T12:00:00.000Z" },
+      ]);
+      const out = writes.join("");
+      expect(out).toContain("prod");
+      expect(out).toContain("staging");
+      expect(out).toContain("2026-04-27");
+      expect(out).toContain("2026-04-28");
+    });
+
+    it("ringKeys renders dim message when empty", () => {
+      createCommandOutput("human", ctx).ringKeys([]);
+      expect(writes.join("")).toContain("No keys");
+    });
+
+    it("ringDestroy shows destroyed message when trustchain was destroyed", () => {
+      createCommandOutput("human", ctx).ringDestroy({
+        remoteSucceeded: true,
+        trustchainDestroyed: true,
+        localWiped: true,
+      });
+      expect(writes.join("")).toContain("Ledger Key Ring destroyed");
+    });
+
+    it("ringDestroy shows deactivated message when only app was deactivated", () => {
+      createCommandOutput("human", ctx).ringDestroy({
+        remoteSucceeded: true,
+        trustchainDestroyed: false,
+        localWiped: true,
+      });
+      expect(writes.join("")).toContain("application deactivated");
+    });
+
+    it("ringDestroy shows local-wipe message when remote failed", () => {
+      createCommandOutput("human", ctx).ringDestroy({
+        remoteSucceeded: false,
+        trustchainDestroyed: false,
+        localWiped: true,
+      });
+      expect(writes.join("")).toContain("local credentials wiped");
+    });
+
+    it("ringDestroy warns when local credentials could not be wiped", () => {
+      createCommandOutput("human", ctx).ringDestroy({
+        remoteSucceeded: false,
+        trustchainDestroyed: false,
+        localWiped: false,
+      });
+      expect(writes.join("")).toContain("Could not remove local credentials");
+    });
+
+    it("ringDestroy still reports remote success when the local wipe failed", () => {
+      createCommandOutput("human", ctx).ringDestroy({
+        remoteSucceeded: true,
+        trustchainDestroyed: true,
+        localWiped: false,
+      });
+      const out = writes.join("");
+      expect(out).toContain("Ledger Key Ring destroyed");
+      expect(out).toContain("Could not remove local credentials");
+    });
+
+    it("ringDestroyCancelled writes Cancelled to stderr", () => {
+      createCommandOutput("human", ctx).ringDestroyCancelled();
+      expect(stderrWrites.join("")).toContain("Cancelled");
+    });
+
+    it("ringEncrypt shows written path and byte count", () => {
+      createCommandOutput("human", ctx).ringEncrypt({ dest: "/tmp/out.enc", bytes: 128 });
+      const out = writes.join("");
+      expect(out).toContain("/tmp/out.enc");
+      expect(out).toContain("128");
+    });
+
+    it("ringDecrypt shows written path", () => {
+      createCommandOutput("human", ctx).ringDecrypt({ dest: "/tmp/out.txt" });
+      expect(writes.join("")).toContain("/tmp/out.txt");
+    });
   });
 });
