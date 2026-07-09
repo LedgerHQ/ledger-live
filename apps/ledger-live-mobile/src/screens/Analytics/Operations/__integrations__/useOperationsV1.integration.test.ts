@@ -23,6 +23,8 @@ const EVM_TOKEN: TokenCurrency = {
 };
 
 const ZERO_VALUE_TOKEN_OP_ID = "zero-value-token-op-id";
+const ZERO_VALUE_NATIVE_OP_ID = "zero-value-native-op-id";
+const NON_ZERO_VALUE_NATIVE_OP_ID = "non-zero-value-native-op-id";
 
 function createZeroValueTokenOperation(tokenAccountId: string): Operation {
   return {
@@ -68,6 +70,46 @@ function createAccountWithZeroValueTokenOperation(): Account {
   return {
     ...parentAccount,
     subAccounts: [tokenAccountWithZeroOp],
+  };
+}
+
+function createNativeOperation(accountId: string, id: string, value: BigNumber): Operation {
+  return {
+    id,
+    hash: id,
+    type: "IN",
+    value,
+    fee: new BigNumber(0),
+    senders: ["0xsender"],
+    recipients: ["0xrecipient"],
+    blockHash: "0xblock",
+    blockHeight: 1,
+    accountId,
+    date: new Date(),
+    extra: {},
+  };
+}
+
+function createAccountWithZeroValueNativeOperation(): Account {
+  const account = genAccount("eth-zero-value-native", {
+    currency: ETH,
+    operationsSize: 0,
+  });
+
+  const zeroValueOp = createNativeOperation(account.id, ZERO_VALUE_NATIVE_OP_ID, new BigNumber(0));
+
+  return {
+    ...account,
+    operations: [
+      zeroValueOp,
+      {
+        ...zeroValueOp,
+        id: NON_ZERO_VALUE_NATIVE_OP_ID,
+        hash: NON_ZERO_VALUE_NATIVE_OP_ID,
+        value: new BigNumber(1),
+      },
+    ],
+    operationsCount: 2,
   };
 }
 
@@ -189,5 +231,16 @@ describe("useOperationsV1 integration", () => {
 
     expect(result.current.sections[0].data.length).toBe(1);
     expect(result.current.sections[0].data[0].id).toBe("non-zero-value-token-op-id");
+  });
+
+  it("should filter out zero-value native operations when dust preference and feature flag are enabled", () => {
+    const accountWithZeroValueNativeOp = createAccountWithZeroValueNativeOperation();
+
+    const { result } = renderHook(() => useOperationsV1([accountWithZeroValueNativeOp], 50), {
+      overrideInitialState: initialStateWithDustFilterEnabled,
+    });
+
+    expect(result.current.sections[0].data.length).toBe(1);
+    expect(result.current.sections[0].data[0].id).toBe(NON_ZERO_VALUE_NATIVE_OP_ID);
   });
 });

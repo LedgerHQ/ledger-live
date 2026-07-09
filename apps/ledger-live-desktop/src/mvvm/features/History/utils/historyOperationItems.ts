@@ -8,7 +8,7 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import { isSmallValueTokenOperation } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
+import { isSmallValueIncomingOperation } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import {
   getOperationAmountNumber,
   flattenOperationWithInternalsAndNfts,
@@ -200,7 +200,7 @@ export function buildHistoryOperationFilter({
       shouldHideSmallValueTokenOperations &&
       countervaluesState &&
       userCounterValueCurrency &&
-      isSmallValueTokenOperation({
+      isSmallValueIncomingOperation({
         operation,
         account,
         countervaluesState,
