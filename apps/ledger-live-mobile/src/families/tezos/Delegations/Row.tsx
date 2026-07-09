@@ -22,6 +22,7 @@ type Props = Readonly<{
   onPress: () => void;
   isLast?: boolean;
   statusLabel?: string;
+  testID?: string;
 }>;
 
 export default function DelegationRow({
@@ -33,13 +34,14 @@ export default function DelegationRow({
   onPress,
   isLast = false,
   statusLabel,
+  testID = "tezos-delegation-row",
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
   return (
     <TouchableOpacity
-      testID="tezos-delegation-row"
+      testID={testID}
       style={[
         styles.row,
         styles.wrapper,

@@ -33,7 +33,7 @@ export default function UnstakeRequiredDrawer({ isOpen, reason, onClose }: Props
         currency="xtz"
       />
       <Flex px={4} pb={4}>
-        <Text variant="h3" fontWeight="semiBold" mb={4}>
+        <Text variant="h3" fontWeight="semiBold" mb={4} testID="tezos-unstake-required-title">
           <Trans i18nKey={`tezos.unstakeRequired.${reason}.title`} />
         </Text>
         <Text variant="body" color="neutral.c70" mb={6}>

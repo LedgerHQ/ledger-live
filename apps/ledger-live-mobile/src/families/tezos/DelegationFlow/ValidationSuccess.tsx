@@ -106,6 +106,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
               title={<Trans i18nKey="tezos.stake.flow.delegationSuccess.cta" />}
               onPress={goToStake}
               containerStyle={styles.button}
+              testID="tezos-delegation-success-stake-button"
             />
           ) : undefined
         }

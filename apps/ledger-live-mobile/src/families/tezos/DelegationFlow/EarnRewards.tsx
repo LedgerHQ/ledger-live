@@ -32,14 +32,16 @@ const StepCard = ({
   subtitle,
   bullets,
   accent,
+  testID,
 }: {
   label: string;
   title: string;
   subtitle: string;
   bullets: string[];
   accent: string;
+  testID?: string;
 }) => (
-  <Flex backgroundColor="neutral.c20" borderRadius={12} padding={6} mb={4}>
+  <Flex backgroundColor="neutral.c20" borderRadius={12} padding={6} mb={4} testID={testID}>
     <Text
       variant="small"
       fontWeight="semiBold"
@@ -111,6 +113,7 @@ export default function EarnRewards({ navigation, route }: Props) {
               t("tezos.earnRewards.delegation.bullets.1"),
               t("tezos.earnRewards.delegation.bullets.2"),
             ]}
+            testID="tezos-earn-rewards-delegate-step"
           />
           <StepCard
             accent="primary.c80"
@@ -122,6 +125,7 @@ export default function EarnRewards({ navigation, route }: Props) {
               t("tezos.earnRewards.staking.bullets.1"),
               t("tezos.earnRewards.staking.bullets.2"),
             ]}
+            testID="tezos-earn-rewards-stake-step"
           />
 
           <Alert

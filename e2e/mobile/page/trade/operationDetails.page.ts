@@ -13,6 +13,7 @@ export default class OperationDetailsPage {
     OUT: "Sent",
     DELEGATE: "Delegated",
     STAKE: "Staked",
+    UNSTAKE: "Unstaked",
     LOCK: "Locked",
     VOTE: "Voted",
   };
@@ -87,6 +88,11 @@ export default class OperationDetailsPage {
   @Step("Check transaction type")
   async checkTransactionType(type: keyof typeof this.operationsType) {
     await detoxExpect(getElementById(this.titleId)).toHaveText(this.operationsType[type]);
+  }
+
+  @Step("Check transaction title $0")
+  async checkTransactionTitle(title: string) {
+    await detoxExpect(getElementById(this.titleId)).toHaveText(title);
   }
 
   @Step("Check CELO validator group in operation details")

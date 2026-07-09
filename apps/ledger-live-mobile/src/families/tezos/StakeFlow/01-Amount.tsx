@@ -171,7 +171,14 @@ export default function StakeAmount() {
         />
         <Flex flex={1} alignItems="center" justifyContent="center" px={6}>
           <InfiniteLoader size={40} />
-          <Text variant="body" fontWeight="medium" color="neutral.c70" mt={6} textAlign="center">
+          <Text
+            variant="body"
+            fontWeight="medium"
+            color="neutral.c70"
+            mt={6}
+            textAlign="center"
+            testID="tezos-stake-awaiting-delegation"
+          >
             {t("tezos.stake.flow.amount.awaitingDelegation")}
           </Text>
         </Flex>

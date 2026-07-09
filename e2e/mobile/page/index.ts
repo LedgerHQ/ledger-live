@@ -23,6 +23,7 @@ import SettingsPage from "./settings/settings.page";
 import SpeculosPage from "./speculos.page";
 import StakePage from "./trade/stake.page";
 import EvmStakePage from "./trade/evmStake.page";
+import TezosStakePage from "./trade/tezosStake.page";
 import SwapPage from "./trade/swap.page";
 import SwapLiveAppPage from "./liveApps/swapLiveApp";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
@@ -80,6 +81,7 @@ export class Application {
   private speculosPageInstance = lazyInit(SpeculosPage);
   private stakePageInstance = lazyInit(StakePage);
   private evmStakePageInstance = lazyInit(EvmStakePage);
+  private readonly tezosStakePageInstance = lazyInit(TezosStakePage);
   private swapLiveAppInstance = lazyInit(SwapLiveAppPage);
   private swapPageInstance = lazyInit(SwapPage);
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
@@ -197,6 +199,10 @@ export class Application {
 
   public get evmStake() {
     return this.evmStakePageInstance();
+  }
+
+  public get tezosStake() {
+    return this.tezosStakePageInstance();
   }
 
   public get swap() {
