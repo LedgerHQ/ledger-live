@@ -15,6 +15,7 @@ import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
 const APPROVAL_PROCESSING_TIMEOUT = 300_000;
+type SwapSurface = "full" | "embedded";
 
 export class SwapPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "swap";
@@ -24,17 +25,14 @@ export class SwapPage extends WebViewAppPage {
     "../artifacts/ledgerwallet-swap-history.csv",
   );
 
-  private swapPageHeading = this.page
-    .getByTestId("page-header")
-    .getByRole("heading", { name: "Swap" });
-  // Wallet 4.0 AssetDetail (aggregatedAssets ON) reaches swap through the always-mounted embedded
-  // rail rather than the full swap page, so there is no "Swap" page header to wait for.
-  private readonly embeddedSwapContainer = this.page.getByTestId("embedded-swap-container");
+  private readonly fullSwapContainer = this.page.getByTestId("swap-web-app-container-full");
+  private readonly embeddedSwapContainer = this.page.getByTestId("swap-web-app-container-embedded");
 
   // Swap Amount and Currency components
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
   private fromAccountCoinSelector = "from-account-coin-selector";
   private fromAccountAmountInput = "from-account-amount-input";
+  private readonly fromAccountError = "from-account-error";
   private fromAccountBalance = "from-account-balance";
   private toAccountCoinSelector = "to-account-coin-selector";
   private readonly toAccountAccountNameTag = "to-account-account-name-tag";
@@ -489,8 +487,15 @@ export class SwapPage extends WebViewAppPage {
   @step("Verify swap amount error message match: $0")
   async verifySwapAmountErrorMessageIsCorrect(message: string | RegExp) {
     const webview = await this.getWebView();
-    const errorSpan = await webview.getByTestId("from-account-error").textContent();
+    const errorSpan = await webview.getByTestId(this.fromAccountError).textContent();
     expect(errorSpan).toMatch(message);
+  }
+
+  @step("Verify swap cross account error message match: $0")
+  async verifySwapCrossAccountErrorMessageIsCorrect(message: string | RegExp) {
+    const webview = await this.getWebView();
+    // Auto-retrying locator assertion: waits for the cross-account warning to render before matching.
+    await expect(webview.getByTestId(this.fromAccountError)).toContainText(message);
   }
 
   @step("Check insufficient funds warning banner is visible")
@@ -508,17 +513,17 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Go and wait for Swap app to be ready")
-  async goAndWaitForSwapToBeReady(swapFunction: () => Promise<void>) {
+  async goAndWaitForSwapToBeReady(
+    swapFunction: () => Promise<void>,
+    surface: SwapSurface = "full",
+  ) {
     // reset cached webview page to ensure we fetch the correct one after navigation
     this._webviewPage = undefined;
 
-    // perform passed in action and wait for the swap page and webview. Swap renders either as the
-    // full swap page (legacy / left-menu entry) or the embedded rail on AssetDetail; accept both.
     await swapFunction();
-    await this.swapPageHeading
-      .or(this.embeddedSwapContainer)
-      .first()
-      .waitFor({ state: "visible", timeout: 60_000 });
+    const swapContainer =
+      surface === "embedded" ? this.embeddedSwapContainer : this.fullSwapContainer;
+    await swapContainer.waitFor();
     await this.getWebView();
   }
 

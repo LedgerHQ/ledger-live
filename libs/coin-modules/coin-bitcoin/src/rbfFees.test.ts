@@ -2,9 +2,9 @@ import { BigNumber } from "bignumber.js";
 import { Transaction as BitcoinTransaction } from "bitcoinjs-lib";
 import { getWalletAccount } from "./wallet-btc/getWalletAccount";
 import { getIncrementalFeeFloorSatVb } from "./wallet-btc/utils";
-import * as rbfHelpers from "./rbfHelpers";
+import * as rbfFees from "./rbfFees";
 
-const { getUtxoValue, getAdditionalFeeRequiredForRbf, getMinReplacementFeeRateSatVb } = rbfHelpers;
+const { getUtxoValue, getMinReplacementFeeRateSatVb } = rbfFees;
 
 jest.mock("bitcoinjs-lib", () => ({
   Transaction: {
@@ -24,7 +24,7 @@ type MockExplorer = {
   getTxHex: jest.Mock<Promise<string>, [string]>;
 };
 
-describe("rbfHelpers", () => {
+describe("rbfFees", () => {
   let mockExplorer: MockExplorer;
   let mockWalletAccount: any;
   const mockedFromHex = (BitcoinTransaction as any).fromHex as jest.Mock;
@@ -70,81 +70,6 @@ describe("rbfHelpers", () => {
       await expect(getUtxoValue(mockWalletAccount, "some-txid", 1)).rejects.toThrow(
         "Output index 1 does not exist",
       );
-    });
-  });
-
-  describe("getAdditionalFeeRequiredForRbf", () => {
-    it("returns zero when replaceTxId is not provided", async () => {
-      const result = await getAdditionalFeeRequiredForRbf({
-        mainAccount: {} as any,
-        transactionToUpdate: {} as any,
-      });
-
-      expect(result.toNumber()).toBe(0);
-      expect(getWalletAccount).not.toHaveBeenCalled();
-    });
-
-    it("returns zero when original transaction is not RBF enabled", async () => {
-      mockExplorer.getTxHex.mockResolvedValue("orig-tx-hex");
-      const nonRbfTx = {
-        ins: [{ sequence: 0xffffffff }],
-        outs: [{ value: 1000 }],
-        virtualSize: () => 100,
-      };
-      mockedFromHex.mockReturnValue(nonRbfTx);
-      (getIncrementalFeeFloorSatVb as jest.Mock).mockResolvedValue(new BigNumber(2));
-
-      const result = await getAdditionalFeeRequiredForRbf({
-        mainAccount: {} as any,
-        transactionToUpdate: { replaceTxId: "orig-txid" } as any,
-      });
-      expect(result.toNumber()).toBe(0);
-      expect(mockExplorer.getTxHex).toHaveBeenCalledWith("orig-txid");
-    });
-
-    it("computes additional fee according to RBF policy", async () => {
-      const vsize = 100;
-
-      const originalTx = {
-        ins: [
-          {
-            sequence: 0, // RBF-enabled
-            hash: Uint8Array.from([1, 2, 3]),
-            index: 0,
-          },
-        ],
-        outs: [{ value: 1000 }],
-        virtualSize: () => vsize,
-      };
-
-      // Funding tx for the referenced UTXO: output[0] = 2000 sats
-      const utxoFundingTx = {
-        outs: [{ value: 2000 }],
-      };
-
-      // getTxHex called for:
-      // 1) original txid ("orig-txid")
-      // 2) prevout txid derived from hash [1,2,3] reversed => "030201"
-      mockExplorer.getTxHex.mockImplementation((txid: string) => {
-        if (txid === "orig-txid") return Promise.resolve("orig-tx-hex");
-        if (txid === "030201") return Promise.resolve("utxo-tx-hex");
-        return Promise.resolve("unexpected");
-      });
-
-      mockedFromHex
-        .mockImplementationOnce(() => originalTx) // fromHex("orig-tx-hex")
-        .mockImplementationOnce(() => utxoFundingTx); // fromHex("utxo-tx-hex")
-
-      (getIncrementalFeeFloorSatVb as jest.Mock).mockResolvedValue(new BigNumber(2));
-
-      const result = await getAdditionalFeeRequiredForRbf({
-        mainAccount: {} as any,
-        transactionToUpdate: { replaceTxId: "orig-txid" } as any,
-      });
-      expect(result.toNumber()).toBe(200);
-      expect(getIncrementalFeeFloorSatVb).toHaveBeenCalledWith(mockExplorer, new BigNumber(10));
-      expect(mockExplorer.getTxHex).toHaveBeenCalledWith("orig-txid");
-      expect(mockExplorer.getTxHex).toHaveBeenCalledWith("030201");
     });
   });
 

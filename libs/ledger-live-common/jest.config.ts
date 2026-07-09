@@ -85,6 +85,7 @@ const defaultConfig = {
   transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],
   moduleDirectories: ["node_modules", "cli/node_modules"],
   moduleNameMapper: {
+    "^buffer$": "<rootDir>/jest.buffer-shim.js",
     "^(\\.{1,2}/.+)\\.js$": "$1",
     "^@tests/(.*)$": "<rootDir>/src/__tests__/$1",
     "^@tests$": "<rootDir>/src/__tests__/server",

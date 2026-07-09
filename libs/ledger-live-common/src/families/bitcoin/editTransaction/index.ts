@@ -11,3 +11,4 @@ export { getFormattedFeeFields } from "./getFormattedFeeFields";
 export { hasMinimumFundsToCancel, hasMinimumFundsToSpeedUp } from "./hasMinimumFunds";
 export { isStrategyDisabled } from "./isStrategyDisabled";
 export { isTransactionConfirmed } from "./isTransactionConfirmed";
+export { getOriginalTxFeeRateSatVb } from "./rbfValidation";

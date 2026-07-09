@@ -2,7 +2,11 @@ import { AmountRequired, ReplacementTransactionUnderpriced } from "@ledgerhq/err
 import type { TransactionStatusCommon } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
 import { getMinFees } from "./getMinEditTransactionFees";
-import type { EditType, Transaction as BitcoinTransaction, TransactionStatus } from "../types";
+import type {
+  EditType,
+  Transaction as BitcoinTransaction,
+  TransactionStatus,
+} from "@ledgerhq/coin-bitcoin/types";
 
 type ValidatedTransactionFields =
   | "recipient"

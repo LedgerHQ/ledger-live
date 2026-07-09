@@ -15,21 +15,24 @@ import { BigNumber } from "bignumber.js";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { DerivationModes } from "../types";
-import BitcoinLikeWallet from "../wallet";
-import { Account as WalletAccount } from "../account";
-import { buildRbfCancelTx, buildRbfSpeedUpTx } from "../../buildRbfTransaction";
-import { getEditTransactionPatch } from "../../editTransaction/getEditTransactionPatch";
-import { buildTransaction } from "../../buildTransaction";
-import { removeReplaced } from "../../synchronisation";
-import type { BitcoinAccount, Transaction as BtcTransaction } from "../../types";
-import type { BtcOperation } from "../../types";
-import { bitcoinPickingStrategy } from "../../types";
+import { DerivationModes } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import BitcoinLikeWallet from "@ledgerhq/coin-bitcoin/wallet-btc/wallet";
+import type { Account as WalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import { buildRbfCancelTx, buildRbfSpeedUpTx } from "./buildRbfTransaction";
+import { getEditTransactionPatch } from "./getEditTransactionPatch";
+import { buildTransaction } from "@ledgerhq/coin-bitcoin/buildTransaction";
+import { removeReplaced } from "@ledgerhq/coin-bitcoin/synchronisation";
+import type {
+  BitcoinAccount,
+  Transaction as BtcTransaction,
+  BtcOperation,
+} from "@ledgerhq/coin-bitcoin/types";
+import { bitcoinPickingStrategy } from "@ledgerhq/coin-bitcoin/types";
 import {
-  RbfFixtureResult,
+  type RbfFixtureResult,
   buildRbfFixtureTxs,
   buildRbfFixtureTxsWithTwoUtxos,
-} from "./fixtures/rbf.fixtures";
+} from "@ledgerhq/coin-bitcoin/fixtures/rbf.fixtures";
 
 jest.setTimeout(30000);
 

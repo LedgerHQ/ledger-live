@@ -34,7 +34,8 @@
     "src/tokens.ts"
   ],
   "ignoreUnimported": [
-    "src/buildRbfTransaction.ts",
+    "src/rbfContext.ts",
+    "src/chain-adapters/zcash/ZCash.ts",
     "src/chain-adapters/zcash/ZCashIPC.ts",
     "src/chain-adapters/zcash/ipc/contract.ts",
     "src/chain-adapters/zcash/ipc/main-host.ts",
@@ -42,18 +43,10 @@
     "src/chain-adapters/zcash/ipc/utility-entry.ts",
     "src/chain-adapters/zcash/native-engine/engine.ts",
     "src/chain-adapters/zcash/serialization/rehydrate.ts",
-    "src/chain-adapters/zcash/sync-estimator.ts",
-    "src/chain-adapters/zcash/ZCash.ts",
     "src/chain-adapters/zcash/stubs/ZCash.native.ts",
-    "src/editTransaction/getEditTransactionPatch.ts",
-    "src/editTransaction/getFormattedFeeFields.ts",
-    "src/editTransaction/getMinEditTransactionFees.ts",
-    "src/editTransaction/getTransactionStatus.ts",
-    "src/editTransaction/hasMinimumFunds.ts",
-    "src/editTransaction/index.ts",
-    "src/editTransaction/isStrategyDisabled.ts",
-    "src/editTransaction/isTransactionConfirmed.ts",
+    "src/chain-adapters/zcash/sync-estimator.ts",
     "src/fixtures/common.fixtures.ts",
+    "src/fixtures/rbf.fixtures.ts",
     "src/operation.ts",
     "src/supportedFeatures.ts"
   ],
@@ -63,5 +56,7 @@
     "@ledgerhq/coin-bitcoin/chain-adapters/zcash/ZCash",
     "jest-util"
   ],
-  "ignoreUnused": ["@ledgerhq/zcash-utils"]
+  "ignoreUnused": [
+    "@ledgerhq/zcash-utils"
+  ]
 }

@@ -36,7 +36,7 @@ export async function waitForTransactionConfirmation(
 
   while (Date.now() < deadline) {
     const confirmed = await bridge.isTransactionConfirmed({
-      currency: account.currency,
+      account,
       hash,
     });
     if (confirmed) {

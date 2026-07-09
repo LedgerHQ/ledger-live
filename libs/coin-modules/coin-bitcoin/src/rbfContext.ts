@@ -1,16 +1,15 @@
 import { BigNumber } from "bignumber.js";
 import { Transaction } from "bitcoinjs-lib";
-import { bitcoinPickingStrategy, UtxoStrategy } from "./types";
 import wallet, { getWalletAccount, Account as WalletAccount } from "./wallet-btc";
 import { Account } from "@ledgerhq/types-live";
 import { fromWalletUtxo } from "./synchronisation";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
-import type { Transaction as BtcTransaction, NetworkInfo } from "./types";
-import { getMinReplacementFeeRateSatVb, RBF_SEQUENCE_THRESHOLD } from "./rbfHelpers";
+import type { NetworkInfo } from "./types";
+import { getMinReplacementFeeRateSatVb, RBF_SEQUENCE_THRESHOLD } from "./rbfFees";
 import { Address } from "./wallet-btc/storage/types";
 import { scriptToAddress } from "./wallet-btc/utils";
 
-async function getAmountAndRecipient(
+export async function getAmountAndRecipient(
   tx: Transaction,
   walletAccount: WalletAccount,
   knownRecipient?: string,
@@ -92,12 +91,10 @@ const buildExcludeUtxos = async (walletAccount: WalletAccount) => {
     .map(u => ({ hash: u.hash, outputIndex: u.outputIndex }));
 };
 
-const resolveFeesStrategy = (feePerByte: BigNumber, networkInfo: NetworkInfo) => {
-  const fast = networkInfo?.feeItems.items.find(item => item.speed === "fast");
-  return fast?.feePerByte && feePerByte.isEqualTo(fast.feePerByte) ? "fast" : "custom";
-};
-
-const getRbfContext = async (account: Account, originalTxId: string): Promise<RbfTxContext> => {
+export const getRbfContext = async (
+  account: Account,
+  originalTxId: string,
+): Promise<RbfTxContext> => {
   const walletAccount = getWalletAccount(account);
   let hexTx: string;
   try {
@@ -128,82 +125,3 @@ const getRbfContext = async (account: Account, originalTxId: string): Promise<Rb
     excludeUTXOs,
   };
 };
-
-export async function buildRbfSpeedUpTx(
-  account: Account,
-  originalTxId: string,
-): Promise<BtcTransaction> {
-  const { walletAccount, originalTx, feePerByte, networkInfo, changeAddress, excludeUTXOs } =
-    await getRbfContext(account, originalTxId);
-
-  // Try to find the pending operation to get the known recipient
-  const pendingOp = account.pendingOperations.find(op => op.hash === originalTxId);
-  const knownRecipient = pendingOp?.recipients?.[0];
-
-  const { amountSent, recipient } = await getAmountAndRecipient(
-    originalTx,
-    walletAccount,
-    knownRecipient,
-  );
-
-  const utxoStrategy: UtxoStrategy = {
-    strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE,
-    excludeUTXOs,
-  };
-
-  return {
-    family: "bitcoin",
-    recipient,
-    amount: new BigNumber(amountSent),
-    feesStrategy: resolveFeesStrategy(feePerByte, networkInfo),
-    utxoStrategy,
-    rbf: true,
-    replaceTxId: originalTxId,
-    feePerByte,
-    networkInfo,
-    changeAddress: changeAddress.address,
-  };
-}
-
-export async function buildRbfCancelTx(
-  account: Account,
-  originalTxId: string,
-): Promise<BtcTransaction> {
-  const { walletAccount, originalTx, feePerByte, networkInfo, changeAddress, excludeUTXOs } =
-    await getRbfContext(account, originalTxId);
-
-  // Get the original external recipient from the pending operation
-  const pendingOp = account.pendingOperations.find(op => op.hash === originalTxId);
-  const originalRecipient = pendingOp?.recipients?.[0];
-
-  // Get the amount sent to the external recipient (not including change)
-  const { amountSent: detectedAmountSent } = await getAmountAndRecipient(
-    originalTx,
-    walletAccount,
-    originalRecipient,
-  );
-  // Cancel-of-cancel may have no external output and no persisted recipient.
-  // In that case, preserve editable intent by using the first spendable output amount.
-  const fallbackAmountFromFirstSpendableOutput =
-    originalTx.outs.find(out => out.value > 0)?.value ?? 0;
-  const amountSent =
-    detectedAmountSent > 0 ? detectedAmountSent : fallbackAmountFromFirstSpendableOutput;
-
-  const utxoStrategy: UtxoStrategy = {
-    strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE,
-    excludeUTXOs,
-  };
-
-  return {
-    family: "bitcoin",
-    recipient: changeAddress.address,
-    amount: new BigNumber(amountSent),
-    feesStrategy: resolveFeesStrategy(feePerByte, networkInfo),
-    utxoStrategy,
-    rbf: true,
-    replaceTxId: originalTxId,
-    feePerByte,
-    networkInfo,
-    changeAddress: changeAddress.address,
-  };
-}
