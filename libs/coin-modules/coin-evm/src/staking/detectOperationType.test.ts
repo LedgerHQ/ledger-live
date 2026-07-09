@@ -97,4 +97,22 @@ describe("detectEvmStakingOperationType", () => {
     const methodId = "0x9ddb511a"; // selector for delegate(address,uint256)
     expect(detectEvmStakingOperationType("unknown", contractAddress, methodId)).toBeUndefined();
   });
+
+  it("returns DELEGATE for 0G regardless of which validator contract address is the `to`", () => {
+    const selector = ethers.id("delegate(address)").slice(0, 10).toLowerCase();
+    expect(
+      detectEvmStakingOperationType(
+        "zero_gravity",
+        "0x0000000000000000000000000000000000000001",
+        selector,
+      ),
+    ).toBe("DELEGATE");
+    expect(
+      detectEvmStakingOperationType(
+        "zero_gravity",
+        "0x0000000000000000000000000000000000000002",
+        selector,
+      ),
+    ).toBe("DELEGATE");
+  });
 });
