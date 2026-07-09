@@ -1,11 +1,12 @@
 import { ReplacementTransactionUnderpriced } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
-import {
-  validateEditTransaction,
-  getEditTransactionStatus,
-} from "../../../editTransaction/getTransactionStatus";
-import type { Transaction as BtcTransaction, EditType, TransactionStatus } from "../../../types";
-import { bitcoinPickingStrategy } from "../../../types";
+import { validateEditTransaction, getEditTransactionStatus } from "./getTransactionStatus";
+import type {
+  Transaction as BtcTransaction,
+  EditType,
+  TransactionStatus,
+} from "@ledgerhq/coin-bitcoin/types";
+import { bitcoinPickingStrategy } from "@ledgerhq/coin-bitcoin/types";
 
 const makeTransaction = (overrides: Partial<BtcTransaction> = {}): BtcTransaction => ({
   family: "bitcoin",
@@ -154,7 +155,7 @@ describe("validateEditTransaction", () => {
     );
   });
 
-  it("returns errors when new feePerByte meets or exceeds minimum required (RBF bump rule)", () => {
+  it("returns empty errors when new feePerByte meets or exceeds minimum required (RBF bump rule)", () => {
     // Original 10 => min is 11. New 12 is OK.
     const transaction = makeTransaction({ feePerByte: new BigNumber(12) });
     const transactionToUpdate = makeTransaction({

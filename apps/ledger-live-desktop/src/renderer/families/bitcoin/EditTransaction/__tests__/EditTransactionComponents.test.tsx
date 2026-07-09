@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getFormattedFeeFields } from "@ledgerhq/coin-bitcoin/editTransaction/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import React from "react";
@@ -10,18 +9,15 @@ import StepFees, { StepFeesFooter } from "../steps/StepFees";
 import { StepSummaryFooter } from "../steps/StepSummaryFooter";
 import type { StepProps } from "../types";
 
-jest.mock("@ledgerhq/coin-bitcoin/editTransaction/index", () => ({
-  ...jest.requireActual("@ledgerhq/coin-bitcoin/editTransaction/index"),
-  getFormattedFeeFields: jest.fn(),
-}));
-
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: jest.fn(),
 }));
 
 const mockGetStuckAccountAndOperation = jest.fn();
+const mockGetFormattedFeeFields = jest.fn();
 (useAccountBridge as jest.Mock).mockReturnValue({
   getStuckAccountAndOperation: mockGetStuckAccountAndOperation,
+  getFormattedFeeFields: mockGetFormattedFeeFields,
 });
 
 jest.mock("~/renderer/modals/Send/SendAmountFields", () => ({
@@ -89,11 +85,12 @@ describe("Bitcoin EditTransaction components", () => {
     const { useAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/useAccountBridge");
     useAccountBridge.mockReturnValue({
       getStuckAccountAndOperation: mockGetStuckAccountAndOperation,
+      getFormattedFeeFields: mockGetFormattedFeeFields,
     });
   });
 
   it("StepFees renders formatted network fee info", () => {
-    (getFormattedFeeFields as jest.Mock).mockReturnValue({
+    mockGetFormattedFeeFields.mockReturnValue({
       formattedFeeValue: "12",
     });
 

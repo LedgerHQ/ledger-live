@@ -1,13 +1,10 @@
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { Transaction as BtcTransaction } from "../../../types";
-import { getAdditionalFeeRequiredForRbf } from "../../../rbfHelpers";
-import {
-  hasMinimumFundsToCancel,
-  hasMinimumFundsToSpeedUp,
-} from "../../../editTransaction/hasMinimumFunds";
+import type { Transaction as BtcTransaction } from "@ledgerhq/coin-bitcoin/types";
+import { getAdditionalFeeRequiredForRbf } from "./rbfValidation";
+import { hasMinimumFundsToCancel, hasMinimumFundsToSpeedUp } from "./hasMinimumFunds";
 
-jest.mock("../../../rbfHelpers", () => ({
+jest.mock("./rbfValidation", () => ({
   getAdditionalFeeRequiredForRbf: jest.fn(),
 }));
 

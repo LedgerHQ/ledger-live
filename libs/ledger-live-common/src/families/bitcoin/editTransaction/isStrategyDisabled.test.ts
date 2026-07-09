@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { isStrategyDisabled } from "../../../editTransaction/isStrategyDisabled";
+import { isStrategyDisabled } from "./isStrategyDisabled";
 
 describe("isStrategyDisabled", () => {
   it("should return true if the strategy's fee rate is lower than the minimum fee rate", () => {

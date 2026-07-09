@@ -1,7 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { Transaction } from "bitcoinjs-lib";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction as BtcTransaction } from "./types";
 import { getWalletAccount } from "./wallet-btc/getWalletAccount";
 import type { Account as WalletAccount } from "./wallet-btc/account";
 import { getIncrementalFeeFloorSatVb } from "./wallet-btc/utils";
@@ -46,7 +45,7 @@ type OriginalTxFeeContext = {
   incrementalFeeRateSatVb: BigNumber;
 };
 
-async function getOriginalTxFeeContext(
+export async function getOriginalTxFeeContext(
   walletAccount: WalletAccount,
   originalTxId: string,
 ): Promise<OriginalTxFeeContext | null> {
@@ -80,58 +79,6 @@ async function getOriginalTxFeeContext(
   );
   return { tx, vsize, oldFeeSat, oldFeeRateSatVb, incrementalFeeRateSatVb };
 }
-
-/**
- * Original transaction fee rate (sat/vB). Used when validating RBF replacement
- * and transactionToUpdate.feePerByte is not available (e.g. not stored in operation).
- */
-export const getOriginalTxFeeRateSatVb = async (
-  account: Account,
-  originalTxId: string,
-): Promise<BigNumber | null> => {
-  try {
-    const walletAccount = getWalletAccount(account);
-    const ctx = await getOriginalTxFeeContext(walletAccount, originalTxId);
-    return ctx ? ctx.oldFeeRateSatVb : null;
-  } catch {
-    return null;
-  }
-};
-
-/**
- * Extra fee (in sats) required by common Bitcoin Core RBF policy:
- * - absolute fee increase >= incrementalRelayFee * vsize
- * - feerate increase >= incrementalRelayFee
- *
- * Uses original tx vsize as a proxy for replacement tx vsize.
- */
-export const getAdditionalFeeRequiredForRbf = async ({
-  mainAccount,
-  transactionToUpdate,
-}: {
-  mainAccount: Account;
-  transactionToUpdate: BtcTransaction;
-}): Promise<BigNumber> => {
-  if (!transactionToUpdate.replaceTxId) return ZERO;
-
-  const walletAccount = getWalletAccount(mainAccount);
-  const ctx = await getOriginalTxFeeContext(walletAccount, transactionToUpdate.replaceTxId);
-  if (!ctx) return ZERO;
-
-  const { vsize, oldFeeSat, oldFeeRateSatVb, incrementalFeeRateSatVb } = ctx;
-
-  const minNewFeeFromAbsolute = oldFeeSat.plus(
-    incrementalFeeRateSatVb.times(vsize).integerValue(BigNumber.ROUND_CEIL),
-  );
-
-  const minNewFeeFromRate = oldFeeRateSatVb
-    .plus(incrementalFeeRateSatVb)
-    .times(vsize)
-    .integerValue(BigNumber.ROUND_CEIL);
-
-  const minNewFeeSat = BigNumber.maximum(minNewFeeFromAbsolute, minNewFeeFromRate);
-  return BigNumber.maximum(minNewFeeSat.minus(oldFeeSat), ZERO);
-};
 
 /**
  * Minimum total fee (in sats) for a replacement tx to beat one specific conflicting tx.

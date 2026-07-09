@@ -9,11 +9,11 @@ export const isStrategyDisabled = ({
   transaction,
   feesStrategy,
 }: {
-  transaction: { feePerByte: BigNumber; rbf?: boolean };
+  transaction: { feePerByte?: BigNumber | null; rbf?: boolean };
   feesStrategy: BigNumber;
 }): boolean => {
-  // If RBF is explicitly disabled, a replacement tx shouldn't be possible.
-  if (!transaction.rbf || !feesStrategy || feesStrategy.lte(0)) {
+  // If RBF is explicitly disabled or the original fee rate is unknown, a replacement tx shouldn't be possible.
+  if (!transaction.rbf || !transaction.feePerByte || !feesStrategy || feesStrategy.lte(0)) {
     return true;
   }
 

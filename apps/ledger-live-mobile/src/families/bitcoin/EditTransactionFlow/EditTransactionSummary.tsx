@@ -1,12 +1,7 @@
 /**
  * Bitcoin RBF edit transaction summary (cancel / speed up).
  */
-
-import {
-  getEditTransactionStatus,
-  type GetEditTransactionStatusParams,
-} from "@ledgerhq/coin-bitcoin/editTransaction/index";
-import { getOriginalTxFeeRateSatVb } from "@ledgerhq/coin-bitcoin/rbfHelpers";
+import { getOriginalTxFeeRateSatVb } from "@ledgerhq/live-common/families/bitcoin/editTransaction/rbfValidation";
 import type {
   Transaction as BtcTransaction,
   TransactionStatus,
@@ -85,7 +80,7 @@ function BitcoinEditTransactionSummaryContent({
     };
   }, [mainAccount, transactionToUpdate]);
 
-  const statusParams: GetEditTransactionStatusParams = {
+  const statusParams = {
     editType,
     transaction: transaction as BtcTransaction,
     transactionToUpdate,
@@ -93,7 +88,7 @@ function BitcoinEditTransactionSummaryContent({
     ...(originalFeePerByte != null ? { originalFeePerByte } : {}),
   };
 
-  const status = getEditTransactionStatus(statusParams);
+  const status = bridge.getEditTransactionStatus(statusParams);
 
   useTransactionChangeFromNavigation(setTransaction);
 

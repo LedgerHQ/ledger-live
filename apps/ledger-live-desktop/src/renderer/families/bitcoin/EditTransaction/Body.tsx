@@ -1,18 +1,6 @@
-import {
-  getEditTransactionStatus,
-  type GetEditTransactionStatusParams,
-  hasMinimumFundsToCancel,
-  hasMinimumFundsToSpeedUp,
-  isTransactionConfirmed,
-} from "@ledgerhq/coin-bitcoin/editTransaction/index";
-import { getOriginalTxFeeRateSatVb } from "@ledgerhq/coin-bitcoin/rbfHelpers";
+import { getOriginalTxFeeRateSatVb } from "@ledgerhq/live-common/families/bitcoin/editTransaction/rbfValidation";
 import { fromTransactionRaw } from "@ledgerhq/coin-bitcoin/transaction";
-import {
-  BitcoinAccount,
-  Transaction,
-  TransactionRaw,
-  TransactionStatus,
-} from "@ledgerhq/coin-bitcoin/types";
+import { Transaction, TransactionRaw, TransactionStatus } from "@ledgerhq/coin-bitcoin/types";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -225,21 +213,32 @@ const Body = ({
   const mainAccount = getMainAccount(account, parentAccount);
 
   useEffect(() => {
+    let intervalId: number | undefined;
     const setTransactionHasBeenValidatedCallback = async () => {
-      const walletAccount = (mainAccount as BitcoinAccount).bitcoinResources?.walletAccount;
-      if (!walletAccount) return;
-      const hasBeenConfirmed = await isTransactionConfirmed(walletAccount, params.transactionHash);
+      try {
+        const hasBeenConfirmed = await bridge.isTransactionConfirmed({
+          account: mainAccount,
+          hash: params.transactionHash,
+        });
 
-      if (hasBeenConfirmed) {
-        // stop polling as soon as we have a confirmation
-        clearInterval(intervalId);
-        setTransactionHasBeenValidated(true);
+        if (hasBeenConfirmed) {
+          // stop polling as soon as we have a confirmation
+          clearInterval(intervalId);
+          setTransactionHasBeenValidated(true);
+        }
+      } catch {
+        // best-effort polling: swallow transient errors and keep polling
       }
     };
 
-    setTransactionHasBeenValidatedCallback();
-    const intervalId = window.setInterval(
-      () => setTransactionHasBeenValidatedCallback(),
+    void setTransactionHasBeenValidatedCallback();
+    // blockAvgTime is in seconds. We intentionally poll faster than the block
+    // interval (x100 instead of the usual seconds->ms x1000) so a confirmation is
+    // surfaced promptly rather than after a full ~15min Bitcoin block time.
+    intervalId = window.setInterval(
+      () => {
+        void setTransactionHasBeenValidatedCallback();
+      },
       mainAccount.currency.blockAvgTime
         ? mainAccount.currency.blockAvgTime * 100
         : getEnv("DEFAULT_TRANSACTION_POLLING_INTERVAL"),
@@ -248,7 +247,7 @@ const Body = ({
     return () => {
       clearInterval(intervalId);
     };
-  }, [mainAccount, params.transactionHash]);
+  }, [bridge, mainAccount, params.transactionHash]);
 
   const [haveFundToCancel, setHaveFundToCancel] = useState(false);
   const [haveFundToSpeedup, setHaveFundToSpeedup] = useState(false);
@@ -257,22 +256,26 @@ const Body = ({
   useEffect(() => {
     let cancelled = false;
     const fetchFunds = async () => {
-      const [cancelFunds, speedupFunds] = await Promise.all([
-        hasMinimumFundsToCancel({ mainAccount, transactionToUpdate }),
-        hasMinimumFundsToSpeedUp({ mainAccount, transactionToUpdate }),
-      ]);
+      try {
+        const [cancelFunds, speedupFunds] = await Promise.all([
+          bridge.hasMinimumFundsToCancel({ mainAccount, transactionToUpdate }),
+          bridge.hasMinimumFundsToSpeedUp({ mainAccount, transactionToUpdate }),
+        ]);
 
-      if (!cancelled) {
-        setHaveFundToCancel(cancelFunds);
-        setHaveFundToSpeedup(speedupFunds);
+        if (!cancelled) {
+          setHaveFundToCancel(cancelFunds);
+          setHaveFundToSpeedup(speedupFunds);
+        }
+      } catch {
+        // ignore: leave the funds flags unchanged on failure
       }
     };
 
-    fetchFunds();
+    void fetchFunds();
     return () => {
       cancelled = true;
     };
-  }, [mainAccount, transactionToUpdate]);
+  }, [bridge, mainAccount, transactionToUpdate]);
 
   // When transactionToUpdate.feePerByte is missing (e.g. not stored in operation), fetch original tx fee rate for RBF validation
   useEffect(() => {
@@ -348,14 +351,14 @@ const Body = ({
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [editType]);
 
-  const statusParams: GetEditTransactionStatusParams = {
+  const statusParams = {
     editType,
     transaction,
     transactionToUpdate,
     status: status as TransactionStatus,
     ...(originalFeePerByte != null ? { originalFeePerByte } : {}),
   };
-  const updatedStatus = getEditTransactionStatus(statusParams);
+  const updatedStatus = bridge.getEditTransactionStatus(statusParams);
 
   const stepperProps = {
     title: t(getStepTitleKey(stepId, editType)),

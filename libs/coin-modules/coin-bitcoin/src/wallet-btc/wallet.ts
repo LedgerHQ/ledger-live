@@ -16,7 +16,7 @@ import cryptoFactory from "./crypto/factory";
 import BitcoinLikeExplorer from "./explorer";
 import { TX, Address, Output } from "./storage/types";
 import { blockchainBaseURL } from "../explorer";
-import { getMinReplacementFeeSat, getTxInputOutpoints } from "../rbfHelpers";
+import { getMinReplacementFeeSat, getTxInputOutpoints } from "../rbfFees";
 import { BitcoinSigner, SignerTransaction } from "../signer";
 
 type BuildAccountTxParams = {
