@@ -55,7 +55,7 @@ let executeImpl: () => { observable: Observable<unknown>; cancel: () => void };
 const { _setTestDmkTransport, disposeWalletCliDmkTransportFully } =
   await import("../device/register-dmk-transport");
 const { WalletCliDeviceError } = await import("../device/wallet-cli-device-error");
-const { getManagerAppNameForCurrencyId, withCurrencyDeviceSession } =
+const { getManagerAppNameForCurrencyId, withCurrencyDeviceSession, withDmkDeviceSession } =
   await import("./bridge-device-session");
 
 describe("withCurrencyDeviceSession", () => {
@@ -125,6 +125,60 @@ describe("withCurrencyDeviceSession", () => {
     const result = await withCurrencyDeviceSession("bitcoin", async () => "done");
 
     expect(result).toBe("done");
+    expect(calls.reset).toBe(1);
+  });
+});
+
+describe("withDmkDeviceSession", () => {
+  beforeEach(async () => {
+    _setTestDmkTransport(null);
+    await disposeWalletCliDmkTransportFully();
+    calls.execute = [];
+    calls.reset = 0;
+    executeImpl = () => completedAction();
+    _setTestDmkTransport(testTransport as never);
+  });
+
+  afterEach(async () => {
+    await disposeWalletCliDmkTransportFully();
+    _setTestDmkTransport(null);
+  });
+
+  it("wraps setup failures as WalletCliDeviceError", async () => {
+    const usbError = new Error("USB down");
+    _setTestDmkTransport({
+      get dmk() {
+        throw usbError;
+      },
+      sessionId: "broken-session-id",
+    } as never);
+
+    await expect(withDmkDeviceSession(async () => "ok")).rejects.toBeInstanceOf(
+      WalletCliDeviceError,
+    );
+    // No session was established, so the always-on reset has nothing to disconnect.
+    expect(calls.reset).toBe(0);
+  });
+
+  it("rethrows callback failures unchanged after resetting the session", async () => {
+    const callbackError = new Error("HTTP parsing bug");
+
+    await expect(
+      withDmkDeviceSession(async () => {
+        throw callbackError;
+      }),
+    ).rejects.toBe(callbackError);
+
+    // No app is opened on this path, so the device action is never executed.
+    expect(calls.execute).toHaveLength(0);
+    expect(calls.reset).toBe(1);
+  });
+
+  it("resets the session after a successful callback", async () => {
+    const result = await withDmkDeviceSession(async () => "done");
+
+    expect(result).toBe("done");
+    expect(calls.execute).toHaveLength(0);
     expect(calls.reset).toBe(1);
   });
 });
