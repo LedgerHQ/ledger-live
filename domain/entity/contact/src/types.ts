@@ -3,8 +3,8 @@ import {
   ContactAddressIdSchema,
   ContactAddressLabelSchema,
   ContactAddressSchema,
+  ContactAddressValueSchema,
   ContactCurrencyIdSchema,
-  ContactEvmAddressSchema,
   ContactIdSchema,
   ContactNameSchema,
   ContactSchema,
@@ -15,7 +15,7 @@ export type ContactAddressId = z.infer<typeof ContactAddressIdSchema>;
 export type ContactCurrencyId = z.infer<typeof ContactCurrencyIdSchema>;
 export type ContactName = z.infer<typeof ContactNameSchema>;
 export type ContactAddressLabel = z.infer<typeof ContactAddressLabelSchema>;
-export type ContactEvmAddress = z.infer<typeof ContactEvmAddressSchema>;
+export type ContactAddressValue = z.infer<typeof ContactAddressValueSchema>;
 export type ContactAddress = z.infer<typeof ContactAddressSchema>;
 export type Contact = z.infer<typeof ContactSchema>;
 

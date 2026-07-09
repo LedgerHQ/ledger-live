@@ -1,8 +1,8 @@
 import {
   ContactAddressLabelSchema,
   ContactAddressSchema,
+  ContactAddressValueSchema,
   ContactCurrencyIdSchema,
-  ContactEvmAddressSchema,
   ContactSchema,
 } from "./schema";
 import {
@@ -38,11 +38,20 @@ describe("ContactSchema", () => {
 });
 
 describe("ContactAddressSchema", () => {
-  it("parses an EVM contact address", () => {
+  it("parses a contact address", () => {
     const address = mockContactAddress();
 
     expect(ContactAddressSchema.parse(address)).toEqual(address);
     expect(address.currencyId).toBe("ethereum");
+  });
+
+  it("keeps address format generic for the selected currency", () => {
+    const address = mockContactAddress({
+      currencyId: "solana",
+      address: "So11111111111111111111111111111111111111112",
+    });
+
+    expect(ContactAddressSchema.parse(address)).toEqual(address);
   });
 
   it("parses a token currency id selected through MAD", () => {
@@ -55,8 +64,8 @@ describe("ContactAddressSchema", () => {
     expect(ContactCurrencyIdSchema.parse("ethereum")).toBe("ethereum");
   });
 
-  it("rejects non-EVM address format", () => {
-    expect(() => ContactEvmAddressSchema.parse("not-an-address")).toThrow();
+  it("rejects empty addresses", () => {
+    expect(() => ContactAddressValueSchema.parse("   ")).toThrow();
   });
 
   it("rejects non-ASCII address labels", () => {

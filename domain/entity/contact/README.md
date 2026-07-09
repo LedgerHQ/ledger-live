@@ -8,9 +8,9 @@ This package describes what Contacts flows manipulate:
 
 - the default `Me` contact used by the `Me` screens;
 - saved contacts;
-- EVM contact addresses with `currencyId`, `label`, and `address`.
+- contact addresses with `currencyId`, `label`, and `address`.
 
-`currencyId` is the id of the `CryptoOrTokenCurrency` selected by MAD. Asset names, tickers, icons, and network display data are resolved later by flow or platform adapters.
+`currencyId` is the id of the `CryptoOrTokenCurrency` selected by MAD. `address` is intentionally stored as a generic non-empty string because address parsing and currency-specific validation belong to flow or platform adapters. Asset names, tickers, icons, and network display data are also resolved later by those adapters.
 
 It does not implement persistence, WalletSync, Ledger Sync, device actions, signer payloads, routing, Redux slices, or UI.
 

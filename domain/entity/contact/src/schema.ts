@@ -13,16 +13,13 @@ export const ContactAddressLabelSchema = z
   .min(1)
   .regex(/^[\x20-\x7E]+$/, "Expected printable ASCII characters");
 
-export const ContactEvmAddressSchema = z
-  .string()
-  .trim()
-  .regex(/^0x[a-fA-F0-9]{40}$/, "Expected an EVM address");
+export const ContactAddressValueSchema = NonEmptyStringSchema;
 
 export const ContactAddressSchema = z.object({
   id: ContactAddressIdSchema,
   currencyId: ContactCurrencyIdSchema,
   label: ContactAddressLabelSchema,
-  address: ContactEvmAddressSchema,
+  address: ContactAddressValueSchema,
 });
 
 export const ContactSchema = z.object({
