@@ -14,12 +14,13 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage --passWithNoTests",
+    "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W domain/api/push-devices"
   },
   "dependencies": {
     "@domain/entity-client-identity": "workspace:*",
-    "@reduxjs/toolkit": "catalog:"
+    "@reduxjs/toolkit": "catalog:",
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

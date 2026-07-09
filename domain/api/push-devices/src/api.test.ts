@@ -13,9 +13,26 @@ describe("pushDevicesApi configuration", () => {
 });
 
 describe("pushDevicesApiExtra", () => {
-  it("returns the config as-is", () => {
+  it("returns the validated config", () => {
     const config = { pushDevicesServiceUrl: "https://push.test", ledgerClientVersion: "1.0.0" };
     expect(pushDevicesApiExtra(config)).toEqual(config);
+  });
+
+  it("accepts empty pushDevicesServiceUrl (sync disabled)", () => {
+    expect(() =>
+      pushDevicesApiExtra({ pushDevicesServiceUrl: "", ledgerClientVersion: "1.0.0" }),
+    ).not.toThrow();
+  });
+
+  it("throws when ledgerClientVersion is empty", () => {
+    expect(() =>
+      pushDevicesApiExtra({ pushDevicesServiceUrl: "https://push.test", ledgerClientVersion: "" }),
+    ).toThrow();
+  });
+
+  it("throws when fields are missing", () => {
+    // @ts-expect-error — both fields required
+    expect(() => pushDevicesApiExtra({})).toThrow();
   });
 });
 

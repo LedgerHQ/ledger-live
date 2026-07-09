@@ -7,6 +7,7 @@ import {
   type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
 import { DeviceId } from "@domain/entity-client-identity";
+import { PushDevicesApiExtraSchema } from "./schema";
 
 export interface PushDevicesRequest {
   equipment_id: string;
@@ -27,7 +28,7 @@ export type PushDevicesApiExtra = {
  * An empty pushDevicesServiceUrl disables sync (middleware checks for it).
  */
 export function pushDevicesApiExtra(config: PushDevicesApiExtra): PushDevicesApiExtra {
-  return config;
+  return PushDevicesApiExtraSchema.parse(config);
 }
 
 const pushDevicesBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = retry(

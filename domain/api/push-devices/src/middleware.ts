@@ -99,7 +99,9 @@ export function createIdentitiesSyncMiddleware<State>(
   function sync(state: State, dispatch: Dispatch) {
     isSyncing = true;
     attemptSync(state, config, dispatch)
-      .catch(() => {})
+      .catch(() => {
+        setLastFailureTime(Date.now());
+      })
       .finally(() => {
         isSyncing = false;
       });

@@ -14,10 +14,10 @@ type RootState = {
 };
 
 function makeStore(
-  getAnalyticsConsent: (state: RootState) => boolean = () => true,
+  getAnalyticsConsent: (_state: RootState) => boolean = () => true,
   pushDevicesServiceUrl = "https://push.test",
 ) {
-  return configureStore<RootState>({
+  return configureStore({
     reducer: {
       identities: identitiesSlice.reducer,
       [pushDevicesApi.reducerPath]: pushDevicesApi.reducer,
@@ -36,7 +36,7 @@ function makeStore(
         .concat(
           createIdentitiesSyncMiddleware<RootState>({
             pushDevicesServiceUrl,
-            getIdentitiesState: state => state.identities,
+            getIdentitiesState: (state: RootState) => state.identities,
             getAnalyticsConsent,
           }),
         ),
