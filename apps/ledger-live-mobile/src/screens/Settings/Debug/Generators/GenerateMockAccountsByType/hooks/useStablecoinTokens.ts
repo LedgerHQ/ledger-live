@@ -40,19 +40,17 @@ export function useStablecoinTokens(enabled = true): StablecoinTokensResult {
 
   const ethereumTokens = useMemo(
     () =>
-      [usdc, usdt, daiV2, daiV1, tusd, pax, eurs].filter(
-        (t): t is TokenCurrency => t !== undefined,
-      ),
+      [usdc, usdt, daiV2, daiV1, tusd, pax, eurs].filter(t => t !== undefined) as TokenCurrency[],
     [daiV1, daiV2, eurs, pax, tusd, usdc, usdt],
   );
 
   const tronTokens = useMemo(
-    () => [tronToken].filter((t): t is TokenCurrency => t !== undefined),
+    () => [tronToken].filter(t => t !== undefined) as TokenCurrency[],
     [tronToken],
   );
 
   const algorandTokens = useMemo(
-    () => [algoToken1, algoToken2].filter((t): t is TokenCurrency => t !== undefined),
+    () => [algoToken1, algoToken2].filter(t => t !== undefined) as TokenCurrency[],
     [algoToken1, algoToken2],
   );
 

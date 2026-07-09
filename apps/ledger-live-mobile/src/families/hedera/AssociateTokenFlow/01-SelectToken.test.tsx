@@ -28,7 +28,7 @@ describe("AssociateTokenFlow - select token", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseTokensData.mockReturnValue({
-      data: { tokens: [htsToken, erc20Token], pagination: { nextCursor: "" } },
+      data: { tokens: [htsToken, erc20Token], pagination: { nextCursor: "" } } as any,
       isLoading: false,
       isSuccess: true,
       error: undefined,
