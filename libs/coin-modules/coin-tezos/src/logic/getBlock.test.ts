@@ -1075,7 +1075,7 @@ describe("delegation operations", () => {
     expect(result.transactions[0].feesPayer).toBeUndefined();
   });
 
-  it("omits delegate field from details when neither newDelegate nor prevDelegate is present", async () => {
+  it("omits delegate field when neither newDelegate nor prevDelegate is present", async () => {
     // Given - edge case: both delegates are null
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockDelegations.mockResolvedValue([
@@ -1181,7 +1181,7 @@ describe("staking operations", () => {
     expect(tx.fees).toBe(800n);
   });
 
-  it("omits delegate field from details when baker is missing", async () => {
+  it("omits delegate field when baker is missing", async () => {
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockStaking.mockResolvedValue([makeStaking({ baker: null })]);
 
@@ -1236,7 +1236,7 @@ describe("origination operations", () => {
     expect(op.type).toBe("other");
     expect(op.amount).toBe(-500_000n);
     expect(op.address).toBe("tz1Deployer");
-    expect((op as any).ledgerOpType).toBe("ORIGINATION");
+    expect((op as Record<string, unknown>).ledgerOpType).toBe("ORIGINATION");
   });
 
   it("treats negative contractBalance as zero (defensive guard)", async () => {
