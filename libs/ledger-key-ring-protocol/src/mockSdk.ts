@@ -52,10 +52,10 @@ type MockRoot = {
 // global states in memory
 const roots = new Map<string, MockRoot>();
 
+// walletSyncEncryptionKey is contractually a hex string (the real SDK feeds it to crypto.from_hex),
+// so the mock must return valid 64-char hex, distinct per application index (rotation/reopen).
 function keyForIndex(index: number): string {
-  return index === 0
-    ? "mock-wallet-sync-encryption-key"
-    : "mock-wallet-sync-encryption-key-" + index;
+  return (index + 1).toString(16).padStart(64, "0");
 }
 
 function buildTrustchain(rootId: string, applicationId: number, app: MockAppState): Trustchain {

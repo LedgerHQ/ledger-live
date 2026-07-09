@@ -186,6 +186,121 @@ describe("YAML round-trip", () => {
   });
 });
 
+describe("ring-field resilience", () => {
+  let tmpDir: string | undefined;
+  let savedEnv: string | undefined;
+
+  afterEach(() => {
+    if (savedEnv === undefined) delete process.env.XDG_STATE_HOME;
+    else process.env.XDG_STATE_HOME = savedEnv;
+    if (tmpDir) rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  function useTmpState(): void {
+    savedEnv = process.env.XDG_STATE_HOME;
+    tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-ring-"));
+    process.env.XDG_STATE_HOME = tmpDir;
+    mkdirSync(dirname(getSessionPath()), { recursive: true });
+  }
+
+  it("still loads accounts when passwordSalt is malformed (no whole-file failure)", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [
+          {
+            label: "ethereum-1",
+            descriptor: "account:1:address:ethereum:main:0xabc:m/44h/60h/0h/0/0",
+          },
+        ],
+        passwordSalt: "NOT-A-VALID-SALT",
+      }),
+    );
+    const session = await Session.read();
+    expect(session.accounts).toHaveLength(1);
+    expect(session.accounts[0].label).toBe("ethereum-1");
+  });
+
+  it("drops a malformed passwordSalt to undefined instead of retaining it verbatim", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({ accounts: [], passwordSalt: "NOT-A-VALID-SALT" }),
+    );
+    const session = await Session.read();
+    expect(session.passwordSalt).toBeUndefined();
+  });
+
+  it("drops a non-string passwordSalt to undefined without throwing", async () => {
+    useTmpState();
+    writeFileSync(getSessionPath(), YAML.stringify({ accounts: [], passwordSalt: 12345 }));
+    const session = await Session.read();
+    expect(session.passwordSalt).toBeUndefined();
+  });
+
+  it("keeps a well-formed passwordSalt", async () => {
+    useTmpState();
+    const salt = "0".repeat(32);
+    writeFileSync(getSessionPath(), YAML.stringify({ accounts: [], passwordSalt: salt }));
+    const session = await Session.read();
+    expect(session.passwordSalt).toBe(salt);
+  });
+
+  it("drops only malformed domain entries, keeping the valid ones", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [],
+        domains: [
+          { domain: "good-key", firstUsed: "2026-01-01T00:00:00.000Z" },
+          { domain: "missing-firstUsed" }, // malformed — must not nuke the whole list
+        ],
+      }),
+    );
+    const session = await Session.read();
+    expect(session.domains.map(d => d.domain)).toEqual(["good-key"]);
+  });
+
+  it("still loads accounts when trustchain/domains are malformed (no whole-file failure)", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [
+          {
+            label: "ethereum-1",
+            descriptor: "account:1:address:ethereum:main:0xabc:m/44h/60h/0h/0/0",
+          },
+        ],
+        trustchain: "not-an-object", // malformed
+        domains: "not-an-array", // malformed
+      }),
+    );
+    const session = await Session.read();
+    expect(session.accounts).toHaveLength(1);
+    expect(session.trustchain).toBeUndefined();
+    expect(session.domains).toHaveLength(0);
+  });
+
+  it("readForReset preserves the trustchain even when the file is otherwise corrupt", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [{ label: "bad label with spaces", descriptor: 42 }], // fails schema
+        trustchain: { rootId: "root-abc", applicationPath: "m/0'/17'/0'" },
+        passwordSalt: "0".repeat(32),
+      }),
+    );
+    const session = await Session.readForReset();
+    expect(session.accounts).toHaveLength(0);
+    expect(session.trustchain).toEqual({ rootId: "root-abc", applicationPath: "m/0'/17'/0'" });
+    expect(session.passwordSalt).toBe("0".repeat(32));
+  });
+});
+
 describe("Session.write() permissions", () => {
   let tmpDir: string | undefined;
   let savedEnv: string | undefined;

@@ -30,6 +30,7 @@ import {
   renderEarnWithdrawResult,
 } from "./output/earn";
 import type { Balance, Operation, DiscoveredAccount, SendEvent, TokenInfo } from "./wallet/models";
+import { APP_NAME } from "./session/session-store";
 import type { SessionEntry } from "./session/session-store";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
 import type {
@@ -51,6 +52,13 @@ export type OutputContext = {
   network: string;
   /** Account identifier included in JSON envelopes (optional — not all commands have one). */
   account?: string;
+};
+
+/** Outcome of `ring destroy`, shared by the interface, both output impls, and the producer. */
+export type RingDestroyResult = {
+  remoteSucceeded: boolean;
+  trustchainDestroyed: boolean;
+  localWiped: boolean;
 };
 
 export interface CommandOutput {
@@ -131,6 +139,7 @@ export interface CommandOutput {
    * WalletCliDeviceError handling in run()/fail().
    */
   deviceState(state: DeviceState): void;
+
   /** Print one progress line for swap execute long-running steps. */
   swapExecuteProgress(line: string): void;
   /** Print payload-only swap execute result. */
@@ -178,6 +187,21 @@ export interface CommandOutput {
   earnDepositResult(result: EarnDepositResult): void;
   /** Print the result of an earn withdraw (human: summary lines; json: envelope). */
   earnWithdrawResult(result: EarnWithdrawResult): void;
+
+  // ---- Ring ----
+
+  /** Output ring init result (human: member + rootId lines; json: envelope). */
+  ringInit(result: { memberName: string; rootId: string }): void;
+  /** Output key names table (human: table or empty message; json: envelope with keys array). */
+  ringKeys(domains: ReadonlyArray<{ domain: string; firstUsed: string }>): void;
+  /** Output ring destroy result (human: colored message; json: envelope). */
+  ringDestroy(result: RingDestroyResult): void;
+  /** User cancelled destroy confirmation (human: stderr line; json: envelope with cancelled:true). */
+  ringDestroyCancelled(): void;
+  /** Output encrypt-to-file result (human: ✔ line; json: envelope with output path + bytes). */
+  ringEncrypt(result: { dest: string; bytes: number }): void;
+  /** Output decrypt-to-file result (human: ✔ line; json: envelope with output path). */
+  ringDecrypt(result: { dest: string }): void;
 }
 
 // ---------------------------------------------------------------------------
@@ -421,7 +445,6 @@ class HumanCommandOutput implements CommandOutput {
 
   deviceState(state: DeviceState): void {
     if (isTerminalDeviceState(state)) {
-      // Terminal states are surfaced via thrown WalletCliDeviceError; avoid double-render.
       return;
     }
     const { glyph, message } = renderDeviceState(state);
@@ -523,6 +546,66 @@ class HumanCommandOutput implements CommandOutput {
 
   earnWithdrawResult(result: EarnWithdrawResult): void {
     renderEarnWithdrawResult(result);
+  }
+
+  ringInit({ memberName, rootId }: { memberName: string; rootId: string }): void {
+    writeStdout("");
+    writeStdout(`${colors.bold("Member:")}  ${memberName}`);
+    writeStdout(`${colors.bold("Root ID:")} ${rootId}`);
+    writeStdout(colors.dim("Encrypt/decrypt with: wallet-cli ring encrypt --key <name>"));
+  }
+
+  ringKeys(domains: ReadonlyArray<{ domain: string; firstUsed: string }>): void {
+    if (domains.length === 0) {
+      writeStdout(colors.dim("No keys yet. Use `ring encrypt --key <name>` to create one."));
+      return;
+    }
+    const w = Math.max(3, ...domains.map(d => d.domain.length));
+    writeStdout(`${colors.bold("Key".padEnd(w))}  ${colors.bold("First Used")}`);
+    writeStdout("─".repeat(w + 2 + 10));
+    for (const { domain, firstUsed } of domains) {
+      writeStdout(`${domain.padEnd(w)}  ${firstUsed.slice(0, 10)}`);
+    }
+  }
+
+  ringDestroy({ remoteSucceeded, trustchainDestroyed, localWiped }: RingDestroyResult): void {
+    // Report the remote outcome first so a successful teardown is never hidden by a local-wipe
+    // failure, then append the local-credentials warning when the keychain delete did not succeed.
+    if (trustchainDestroyed) {
+      writeStdout(`${colors.green("✔")} Ledger Key Ring destroyed.`);
+    } else if (remoteSucceeded) {
+      writeStdout(
+        `${colors.green("✔")} wallet-cli application deactivated (Ledger Key Ring kept for other apps).`,
+      );
+    } else if (localWiped) {
+      writeStdout(
+        `${colors.green("✔")} Ledger Key Ring local credentials wiped (remote teardown skipped or failed).`,
+      );
+    } else {
+      // Reaching here means the remote teardown never ran (creds unusable, or a stray key with no
+      // live ring) and the local wipe also failed — so nothing was removed. Without this line the
+      // command would emit only the keychain warning below, leaving the overall outcome ambiguous.
+      writeStdout(
+        `${colors.red("✖")} Ledger Key Ring not destroyed — remote teardown did not run.`,
+      );
+    }
+    if (!localWiped) {
+      writeStdout(
+        `${colors.yellow("⚠")} Could not remove local credentials from the OS keychain — delete the "${APP_NAME}" entry manually.`,
+      );
+    }
+  }
+
+  ringDestroyCancelled(): void {
+    writeStderr("Cancelled.\n");
+  }
+
+  ringEncrypt({ dest, bytes }: { dest: string; bytes: number }): void {
+    writeStdout(`${colors.green("✔")} Written to ${dest} (${bytes} bytes, AES-256-GCM)`);
+  }
+
+  ringDecrypt({ dest }: { dest: string }): void {
+    writeStdout(`${colors.green("✔")} Written to ${dest}`);
   }
 }
 
@@ -815,6 +898,38 @@ class JsonCommandOutput implements CommandOutput {
 
   earnWithdrawResult(result: EarnWithdrawResult): void {
     this._writeNdjson(this._envelope({ ...result }));
+  }
+
+  ringInit({ memberName, rootId }: { memberName: string; rootId: string }): void {
+    this._writeNdjson(this._envelope({ member: memberName, root_id: rootId }));
+  }
+
+  ringKeys(domains: ReadonlyArray<{ domain: string; firstUsed: string }>): void {
+    this._writeNdjson(
+      this._envelope({ keys: domains.map(d => ({ domain: d.domain, first_used: d.firstUsed })) }),
+    );
+  }
+
+  ringDestroy({ remoteSucceeded, trustchainDestroyed, localWiped }: RingDestroyResult): void {
+    this._writeNdjson(
+      this._envelope({
+        destroyed: trustchainDestroyed,
+        remote_succeeded: remoteSucceeded,
+        local_wiped: localWiped,
+      }),
+    );
+  }
+
+  ringDestroyCancelled(): void {
+    this._writeNdjson(this._envelope({ cancelled: true }));
+  }
+
+  ringEncrypt({ dest, bytes }: { dest: string; bytes: number }): void {
+    this._writeNdjson(this._envelope({ output: dest, bytes }));
+  }
+
+  ringDecrypt({ dest }: { dest: string }): void {
+    this._writeNdjson(this._envelope({ output: dest }));
   }
 }
 
