@@ -102,7 +102,10 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const { deactivatedCurrencyIds: _deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(
       !!useEnv("MOCK"),
     );
-    const deactivatedCurrencyIds = new Set(_deactivatedCurrencyIds);
+    const deactivatedCurrencyIds = useMemo(
+      () => new Set(_deactivatedCurrencyIds),
+      [_deactivatedCurrencyIds],
+    );
     const listCurrencies = useListPlatformCurrencies(deactivatedCurrencyIds);
 
     const { openAssetAndAccountPromise } = useOpenAssetAndAccount();
