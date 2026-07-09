@@ -98,9 +98,11 @@ export function createIdentitiesSyncMiddleware<State>(
   let isSyncing = false;
   function sync(state: State, dispatch: Dispatch) {
     isSyncing = true;
-    attemptSync(state, config, dispatch).finally(() => {
-      isSyncing = false;
-    });
+    attemptSync(state, config, dispatch)
+      .catch(() => {})
+      .finally(() => {
+        isSyncing = false;
+      });
   }
 
   return store => next => action => {
