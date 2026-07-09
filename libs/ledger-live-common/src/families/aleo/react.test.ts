@@ -9,7 +9,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { Subject } from "rxjs";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { AleoAccount } from "./types";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
