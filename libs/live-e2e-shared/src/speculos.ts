@@ -41,7 +41,7 @@ import { Swap } from "./models/Swap";
 import { delegateOsmosis } from "./families/osmosis";
 import { AppInfos } from "./enum/AppInfos";
 import { DEVICE_LABELS_CONFIG } from "./data/deviceLabelsData";
-import { sendSui } from "./families/sui";
+import { sendSui, delegateSui } from "./families/sui";
 import { sendConcordium } from "./families/concordium";
 import {
   getDeviceFirmwareVersion,
@@ -999,6 +999,9 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
       break;
     case Account.MINA_1.currency.name:
       await delegateMina(delegatingAccount);
+      break;
+    case Account.SUI_1.currency.name:
+      await delegateSui(delegatingAccount);
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName}`);
