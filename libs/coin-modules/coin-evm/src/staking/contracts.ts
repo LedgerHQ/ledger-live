@@ -166,6 +166,8 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       undelegate: "undelegate",
       getStakedBalance: "getDelegation",
     },
+    // https://docs.0g.ai/developer-hub/building-on-0g/contracts-on-0g/validator-contract-functions#delegateaddress-delegatoraddress
+    calldataAmountScale: 10n ** 9n,
     apiConfig: {
       baseUrl: "https://api.0g.exploreme.pro",
       validatorsEndpoint: "/api/v2/validators?limit=100",

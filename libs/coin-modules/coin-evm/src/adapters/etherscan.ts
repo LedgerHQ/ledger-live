@@ -72,8 +72,9 @@ export const etherscanOperationToOperations = (
     types.push("IN");
   }
   if (from === checksummedAddress) {
-    const isContractInteraction = new RegExp(/0[xX][0-9a-fA-F]{8}/).test(etherscanOp.methodId); // 0x + 4 bytes selector
-    const stakingType = detectEvmStakingOperationType(currencyId, to, etherscanOp.methodId);
+    const methodId = etherscanOp.methodId || etherscanOp.input?.slice(0, 10) || "";
+    const isContractInteraction = new RegExp(/0[xX][0-9a-fA-F]{8}/).test(methodId); // 0x + 4 bytes selector
+    const stakingType = detectEvmStakingOperationType(currencyId, to, methodId);
     types.push(stakingType ?? (isContractInteraction ? "FEES" : "OUT"));
   }
   if (!types.length) {
