@@ -28,7 +28,7 @@ const e2eDelegationAccounts = [
     transactionType: "Staked",
   },
   {
-    delegate: new Delegate(Account.INJ_1, "0.0000001", "Ledger by Chorus One"),
+    delegate: new Delegate(Account.INJ_1, "0.0000001", "Ledger by Bitwise"),
     xrayTicket: "B2CQA-3021",
     transactionType: "Delegated",
     requiresExpertMode: true,
@@ -517,7 +517,7 @@ for (const validator of validators) {
 }
 
 test.describe("Staking flow from different entry point", () => {
-  const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger by Chorus One");
+  const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger by Bitwise");
   test.use({
     teamOwner: Team.EARN,
     userdata: "skip-onboarding-with-last-seen-device",

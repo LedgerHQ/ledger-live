@@ -1,7 +1,7 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runDelegateTest } from "./delegate";
 
-const delegation = new Delegate(Account.INJ_1, "0.0000001", "Ledger by Chorus One");
+const delegation = new Delegate(Account.INJ_1, "0.0000001", "Ledger by Bitwise");
 runDelegateTest(
   delegation,
   ["B2CQA-3021"],

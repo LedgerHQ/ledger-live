@@ -282,7 +282,7 @@ Earn covers two flows: **Ethereum** ERC-4626 DeFi vaults (deposit/redeem) and **
 Lists yield opportunities (no device). Without `--network` it prints every network's headline rate. **With `-n ethereum` or `-n solana` it also prints the concrete deposit targets**, each ending with the exact `→ --product <id>` value to pass to `earn deposit`:
 
 - **ethereum** → ERC-4626 vault ids (e.g. `1_0x7daeba3f217614e409f85d3014d33923a6b03630`).
-- **solana** → validator vote accounts. The CLI surfaces the **Ledger-operated** validators ("Ledger by Figment", "Ledger by Chorus One") as the recommended targets; any other valid vote account also works as `--product`.
+- **solana** → validator vote accounts. The CLI surfaces the **Ledger-operated** validators ("Ledger by Figment", "Ledger by Bitwise") as the recommended targets; any other valid vote account also works as `--product`.
 
 ```bash
 pnpm --silent wallet-cli start earn yields

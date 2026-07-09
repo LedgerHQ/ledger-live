@@ -62,7 +62,7 @@ describe("selectStakeValidators", () => {
     const result = selectStakeValidators(
       [
         validator({ voteAccount: "other-low", name: "Kiln", score: 3 }),
-        validator({ voteAccount: "ledger-low", name: "Ledger by Chorus One", score: 5 }),
+        validator({ voteAccount: "ledger-low", name: "Ledger by Bitwise", score: 5 }),
         validator({ voteAccount: "other-high", name: "P2P", score: 9 }),
         validator({ voteAccount: "ledger-high", name: "Ledger by Figment", score: 8 }),
       ],

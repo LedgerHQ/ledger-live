@@ -308,7 +308,7 @@ describe("earn yields --network ethereum", () => {
 describe("earn yields --network solana", () => {
   const SOL_VALIDATORS = [
     { vote_account: "ledgerHigh", name: "Ledger by Figment", commission: 5, total_score: 8 },
-    { vote_account: "ledgerLow", name: "Ledger by Chorus One", commission: 6, total_score: 5 },
+    { vote_account: "ledgerLow", name: "Ledger by Bitwise", commission: 6, total_score: 5 },
     { vote_account: "otherHigh", name: "P2P", commission: 7, total_score: 9 },
     { vote_account: "otherNoApy", name: "Chorus One", commission: 8, total_score: 6 },
     { vote_account: "delinquent", name: "Bad", commission: 9, total_score: 100, delinquent: true },

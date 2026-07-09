@@ -165,7 +165,7 @@ export const urls = {
       "https://support.ledger.com/article/Verify-Solana-Address-from-Token-Account-Address",
     splTokenExtensions: "https://support.ledger.com/article/Solana-Token-Extensions",
     recipient_info: "https://support.ledger.com",
-    ledgerByChorusOneTC: "https://chorus.one/tos",
+    ledgerByBitwiseTC: "https://onchain.bitwiseinvestments.com/tos",
     ledgerByFigmentTC:
       "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
   },
