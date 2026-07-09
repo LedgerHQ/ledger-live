@@ -1,6 +1,6 @@
-import { getCryptoAssetsStore, setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore, setCryptoAssetsStore } from "../../currencies/tokenStore";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setupMockCryptoAssetsStore } from "../../test-helpers/cryptoAssetsStore";
 
 describe("Testing CryptoAssetStore", () => {
   beforeEach(() => {

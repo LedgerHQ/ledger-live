@@ -18,7 +18,7 @@ import { stripHexPrefix } from "./helpers";
 import { getTxType } from "./utils/txTrackingHelper";
 import { isLedgerButtonReferrer, reportLedgerButtonBroadcast } from "./utils/ledgerButtonTracking";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "../currencies/tokenStore";
 import { withLiveAppContext } from "./blindSigningContext";
 
 type MessageId = number | string | null;

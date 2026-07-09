@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "../../currencies/tokenStore";
 import type { AccountLike, Operation, SwapOperation } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";
 import { accountWithMandatoryTokens, getAccountCurrency } from "../../account";

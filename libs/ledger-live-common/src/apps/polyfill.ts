@@ -1,6 +1,6 @@
 // polyfill the unfinished support of apps logic
 import semver from "semver";
-import { listCryptoCurrencies, findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { listCryptoCurrencies, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { AppType, ApplicationV2 } from "@ledgerhq/types-live";
 import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 const directDep = {};

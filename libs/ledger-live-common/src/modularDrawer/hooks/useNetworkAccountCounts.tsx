@@ -1,5 +1,5 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAccountTuplesForCurrency } from "../../utils/getAccountTuplesForCurrency";
 import type { Account } from "@ledgerhq/types-live";
 

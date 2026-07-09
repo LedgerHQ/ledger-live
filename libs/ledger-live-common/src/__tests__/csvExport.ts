@@ -4,7 +4,7 @@ import { genAccount } from "../mock/account";
 import { getCryptoCurrencyById, getFiatCurrencyByTicker } from "../currencies";
 import { accountsOpToCSV } from "../csvExport";
 import { initialState, loadCountervalues } from "@ledgerhq/live-countervalues/logic";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setupMockCryptoAssetsStore } from "../test-helpers/cryptoAssetsStore";
 
 // Setup mock store for unit tests
 setupMockCryptoAssetsStore();

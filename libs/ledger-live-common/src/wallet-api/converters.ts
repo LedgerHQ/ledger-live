@@ -1,5 +1,5 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { v5 as uuidv5 } from "uuid";
 import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { loadWalletApiAdapterForFamily } from "../coin-modules/registry";

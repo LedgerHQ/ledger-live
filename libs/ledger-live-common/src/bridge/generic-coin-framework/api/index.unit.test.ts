@@ -9,11 +9,11 @@ import * as evmModule from "@ledgerhq/coin-evm/api/index";
 import * as cardanoModule from "@ledgerhq/coin-cardano/api/index";
 import * as config from "../../../config";
 import * as networkApi from "./network/network-coin-service";
-import * as cryptoAssets from "@ledgerhq/cryptoassets/currencies";
+import * as domainCrypto from "@domain/entity-currency-crypto";
 
 const mockApiInstance = { mock: "api" };
 
-jest.mock("@ledgerhq/cryptoassets/currencies", () => ({
+jest.mock("@domain/entity-currency-crypto", () => ({
   findCryptoCurrencyById: jest.fn(),
 }));
 
@@ -57,7 +57,7 @@ describe("getCoinModuleApi", () => {
     jest.clearAllMocks();
 
     // Common mocks
-    (cryptoAssets.findCryptoCurrencyById as jest.Mock).mockImplementation(id => {
+    (domainCrypto.findCryptoCurrencyById as jest.Mock).mockImplementation(id => {
       switch (id) {
         case "ripple":
           return { family: "xrp" };

@@ -4,7 +4,7 @@ import { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getTokensWithFunds } from "./getTokensWithFunds";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setupMockCryptoAssetsStore } from "../test-helpers/cryptoAssetsStore";
 
 // Setup mock store for unit tests
 setupMockCryptoAssetsStore();

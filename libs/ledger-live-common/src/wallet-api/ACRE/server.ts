@@ -8,8 +8,8 @@ import {
   isTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoAssetsStore } from "../../currencies/tokenStore";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   MessageSignParams,
   MessageSignResult,

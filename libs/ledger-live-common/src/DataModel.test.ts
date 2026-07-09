@@ -4,7 +4,7 @@ import { accountRawToAccountUserData } from "@ledgerhq/live-wallet/store";
 import { createDataModel } from "./DataModel";
 import { fromAccountRaw, toAccountRaw } from "./account";
 import { getCurrencyConfiguration } from "./config";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setupMockCryptoAssetsStore } from "./test-helpers/cryptoAssetsStore";
 
 jest.mock("./config", () => ({
   getCurrencyConfiguration: jest.fn(),

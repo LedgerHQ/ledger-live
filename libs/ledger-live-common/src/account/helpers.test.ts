@@ -2,10 +2,10 @@ import { filterAccountsExcludingBlacklisted } from "./filterAccountsExcludingBla
 import { loadBlacklistedTokenSections } from "./helpers";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "../currencies/tokenStore";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-jest.mock("@ledgerhq/cryptoassets/state");
+jest.mock("../currencies/tokenStore");
 
 const mockGetCryptoAssetsStore = getCryptoAssetsStore as jest.MockedFunction<
   typeof getCryptoAssetsStore

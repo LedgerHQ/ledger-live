@@ -5,7 +5,9 @@ import {
   FetchBaseQueryMeta,
   QueryReturnValue,
 } from "@reduxjs/toolkit/query/react";
-import { convertApiAssets } from "@ledgerhq/cryptoassets";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { convertApiToken, type ApiTokenData } from "@domain/api-currency-token";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { RawApiResponse, AssetsData } from "../entities";
 import { getEnv } from "@ledgerhq/live-env";
 import {
@@ -40,11 +42,40 @@ function assertDadaApiUrl(url: URL): void {
   }
 }
 
+function convertApiAssetsFromDomain(
+  apiAssets: RawApiResponse["cryptoOrTokenCurrencies"],
+): Record<string, CryptoOrTokenCurrency> {
+  const result: Record<string, CryptoOrTokenCurrency> = {};
+  for (const [key, asset] of Object.entries(apiAssets)) {
+    if (asset.type === "crypto_currency") {
+      const currency = findCryptoCurrencyById(asset.id);
+      if (currency) result[key] = currency as unknown as CryptoOrTokenCurrency;
+    } else if (asset.type === "token_currency") {
+      const tokenData: ApiTokenData = {
+        id: asset.id,
+        contractAddress: asset.contractAddress,
+        name: asset.name,
+        ticker: asset.ticker,
+        units: asset.units,
+        standard: asset.standard,
+        delisted: asset.delisted,
+        disableCountervalue: asset.disableCountervalue,
+        tokenIdentifier: asset.tokenIdentifier,
+      };
+      const token = convertApiToken(tokenData);
+      if (token) result[key] = token as unknown as CryptoOrTokenCurrency;
+    }
+  }
+  return result;
+}
+
 function transformAssetsResponse(
   response: RawApiResponse,
   meta?: FetchBaseQueryMeta,
 ): AssetsDataWithPagination {
-  const enrichedCryptoOrTokenCurrencies = convertApiAssets(response.cryptoOrTokenCurrencies);
+  const enrichedCryptoOrTokenCurrencies = convertApiAssetsFromDomain(
+    response.cryptoOrTokenCurrencies,
+  );
 
   const nextCursor = meta?.response?.headers.get("x-ledger-next") || undefined;
 
@@ -119,7 +150,7 @@ async function fetchAssetsPage(
   }
 
   const raw: RawApiResponse = await response.json();
-  const enrichedCryptoOrTokenCurrencies = convertApiAssets(raw.cryptoOrTokenCurrencies);
+  const enrichedCryptoOrTokenCurrencies = convertApiAssetsFromDomain(raw.cryptoOrTokenCurrencies);
 
   return {
     ...raw,

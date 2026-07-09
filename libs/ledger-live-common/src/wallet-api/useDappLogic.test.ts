@@ -61,7 +61,7 @@ jest.mock("./utils/ledgerButtonTracking", () => ({
   reportLedgerButtonBroadcast: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/cryptoassets/state", () => ({
+jest.mock("../currencies/tokenStore", () => ({
   getCryptoAssetsStore: jest.fn().mockReturnValue({
     findTokenByAddressInCurrency: jest.fn().mockResolvedValue(null),
     findTokenById: jest.fn().mockResolvedValue(null),
@@ -206,7 +206,7 @@ describe("useDappLogic — onDappMessage async paths", () => {
     // Re-establish the default mock return values for this suite.
     const { getEnv } = jest.requireMock("@ledgerhq/live-env");
     getEnv.mockReturnValue(true);
-    const { getCryptoAssetsStore } = jest.requireMock("@ledgerhq/cryptoassets/state");
+    const { getCryptoAssetsStore } = jest.requireMock("../currencies/tokenStore");
     getCryptoAssetsStore.mockReturnValue({
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(null),
       findTokenById: jest.fn().mockResolvedValue(null),
@@ -346,7 +346,7 @@ describe("useDappLogic — liveBlindSigningReporter live-app context", () => {
     jest.resetAllMocks();
     const { getEnv } = jest.requireMock("@ledgerhq/live-env");
     getEnv.mockReturnValue(true);
-    const { getCryptoAssetsStore } = jest.requireMock("@ledgerhq/cryptoassets/state");
+    const { getCryptoAssetsStore } = jest.requireMock("../currencies/tokenStore");
     getCryptoAssetsStore.mockReturnValue({
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(null),
       findTokenById: jest.fn().mockResolvedValue(null),

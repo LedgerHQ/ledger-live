@@ -4,7 +4,7 @@ import { getBridgeApi } from "../bridge";
 import { transactionToIntent } from "../utils";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "../types";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setupMockCryptoAssetsStore } from "../../../test-helpers/cryptoAssetsStore";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 

@@ -25,7 +25,7 @@ import { Transaction } from "../coin-modules/transaction-types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { getAccountBridge } from "../bridge";
 import { Exchange } from "../exchange/types";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "../currencies/tokenStore";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import type { CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";

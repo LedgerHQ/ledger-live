@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { genericGetAccountShape } from "../getAccountShape";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setupMockCryptoAssetsStore } from "../../../test-helpers/cryptoAssetsStore";
 
 const getSyncHashMock = jest.fn();
 jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({

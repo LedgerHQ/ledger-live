@@ -59,13 +59,15 @@ jest.mock("../hw/openTransportAsSubject", () => ({
   default: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/cryptoassets/cal-client/state-manager/api", () => ({
-  endpoints: {
-    getTokensData: { initiate: jest.fn() },
+jest.mock("@domain/api-currency-token", () => ({
+  cryptoAssetsApi: {
+    endpoints: {
+      getTokensData: { initiate: jest.fn() },
+    },
   },
 }));
 
-jest.mock("@ledgerhq/cryptoassets/state", () => ({
+jest.mock("../currencies/tokenStore", () => ({
   getCryptoAssetsStore: jest.fn().mockReturnValue({
     findTokenById: jest.fn().mockResolvedValue(null),
   }),

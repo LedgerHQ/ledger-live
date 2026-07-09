@@ -1,4 +1,4 @@
-import { findCryptoCurrencyByTicker } from "@ledgerhq/cryptoassets";
+import { findCryptoCurrencyByTicker } from "@domain/entity-currency-crypto";
 import { useSupportedCounterCurrencies } from "../../cg-client/hooks/useCoingeckoDataProvider";
 
 export type MarketCounterCurrencyResolution = {

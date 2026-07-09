@@ -8,7 +8,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Observable } from "rxjs";
 import type { Observer } from "rxjs";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "../../mock/account";
 import { BridgeSync, resetStates } from "./BridgeSync";
 import * as Bridge from "..";

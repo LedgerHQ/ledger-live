@@ -9,13 +9,10 @@ import { first } from "rxjs/operators";
 import { getEnv } from "@ledgerhq/live-env";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import { endpoints as calEndpoints } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
+import { cryptoAssetsApi } from "@domain/api-currency-token";
+import type { TokensDataWithPagination, PageParam } from "@domain/api-currency-token";
 import { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { InfiniteData } from "@reduxjs/toolkit/query/react";
-import type {
-  TokensDataWithPagination,
-  PageParam,
-} from "@ledgerhq/cryptoassets/cal-client/state-manager/types";
 import { Subject } from "rxjs";
 import { StateDB } from "../hooks/useDBRaw";
 import { useFeatureFlags } from "@features/platform-feature-flags";
@@ -37,7 +34,7 @@ import {
 } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { listSupportedCurrencies } from "../currencies";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "../currencies/tokenStore";
 import { TrackingAPI } from "./tracking";
 import {
   bitcoinFamilyAccountGetXPubLogic,
@@ -476,7 +473,10 @@ export function useWalletAPIServer({
 
         while (hasNextPage) {
           const querySub = dispatch(
-            calEndpoints.getTokensData.initiate(args, data ? { direction: "forward" } : undefined),
+            cryptoAssetsApi.endpoints.getTokensData.initiate(
+              args,
+              data ? { direction: "forward" } : undefined,
+            ),
           );
 
           try {

@@ -37,9 +37,9 @@ jest.mock("../hw/signMessage/index", () => ({
 }));
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrackingAPI } from "./tracking";
-import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
+import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 import { initialState as walletState } from "@ledgerhq/live-wallet/store";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setupMockCryptoAssetsStore } from "../test-helpers/cryptoAssetsStore";
 
 // Setup mock store for unit tests
 setupMockCryptoAssetsStore();
@@ -745,7 +745,7 @@ describe("bitcoinFamilyAccountGetAddressLogic", () => {
   const mockBitcoinFamilyAccountAddressFail = jest.fn();
   const mockBitcoinFamilyAccountAddressSuccess = jest.fn();
 
-  const bitcoinCrypto = cryptocurrenciesById["bitcoin"];
+  const bitcoinCrypto = CRYPTO_CURRENCIES_REGISTRY["bitcoin"];
 
   const context = createContextContainingAccountId({
     tracking: {
@@ -834,7 +834,7 @@ describe("bitcoinFamilyAccountGetPublicKeyLogic", () => {
   const mockBitcoinFamilyAccountPublicKeyFail = jest.fn();
   const mockBitcoinFamilyAccountPublicKeySuccess = jest.fn();
 
-  const bitcoinCrypto = cryptocurrenciesById["bitcoin"];
+  const bitcoinCrypto = CRYPTO_CURRENCIES_REGISTRY["bitcoin"];
 
   const context = createContextContainingAccountId({
     tracking: {
@@ -923,7 +923,7 @@ describe("accountGetPublicKeyLogic", () => {
   const mockAccountGetPublicKeyFail = jest.fn();
   const mockAccountGetPublicKeySuccess = jest.fn();
 
-  const tezosCrypto = cryptocurrenciesById["tezos"];
+  const tezosCrypto = CRYPTO_CURRENCIES_REGISTRY["tezos"];
   const tezosAccountId = "js:2:tezos:0x013:";
   const tezosPublicKey = "edpkuBknW28nW72KG6RoHtYW7p12T6GKc7nAbwYX5m8Wd9sDVC9yav";
 
@@ -1077,7 +1077,7 @@ describe("accountGetPublicKeyLogic (cosmos)", () => {
   const mockAccountGetPublicKeyFail = jest.fn();
   const mockAccountGetPublicKeySuccess = jest.fn();
 
-  const cosmosCrypto = cryptocurrenciesById["cosmos"];
+  const cosmosCrypto = CRYPTO_CURRENCIES_REGISTRY["cosmos"];
   const cosmosAccountId = "js:2:cosmos:0x013:";
   const cosmosPublicKey = "03a1b2c3";
 
@@ -1137,7 +1137,7 @@ describe("bitcoinFamilyAccountGetAddressesLogic", () => {
   const mockBitcoinFamilyAccountAddressesFail = jest.fn();
   const mockBitcoinFamilyAccountAddressesSuccess = jest.fn();
 
-  const bitcoinCrypto = cryptocurrenciesById["bitcoin"];
+  const bitcoinCrypto = CRYPTO_CURRENCIES_REGISTRY["bitcoin"];
 
   const context = createContextContainingAccountId({
     tracking: {
@@ -1301,7 +1301,7 @@ describe("bitcoinFamilyAccountGetXPubLogic", () => {
   const mockBitcoinFamilyAccountXpubFail = jest.fn();
   const mockBitcoinFamilyAccountXpubSuccess = jest.fn();
 
-  const bitcoinCrypto = cryptocurrenciesById["bitcoin"];
+  const bitcoinCrypto = CRYPTO_CURRENCIES_REGISTRY["bitcoin"];
 
   const context = createContextContainingAccountId({
     tracking: {
