@@ -72,13 +72,18 @@ const buildTasks = args => [
   {
     title: "Compiling assets",
     task: async () => {
+      // RC (--pre) validates the build about to ship, so it uses the same
+      // .env.production (incl. BRAZE_API_KEY) as --release. Nightly is
+      // internal-only, so it uses .env.staging, matching mobile's convention
+      // (prerelease/release share the production Braze app; staging/nightly
+      // share the staging one).
       if (args.release || args.pre) {
         require("dotenv").config({
-          path: path.resolve(
-            __dirname,
-            rootFolder,
-            args.release ? ".env.production" : ".env.staging",
-          ),
+          path: path.resolve(__dirname, rootFolder, ".env.production"),
+        });
+      } else if (args.nightly) {
+        require("dotenv").config({
+          path: path.resolve(__dirname, rootFolder, ".env.staging"),
         });
       }
       const baseEnv = args.release
@@ -91,16 +96,24 @@ const buildTasks = args => [
           }
         : args.pre
           ? {
-              // Without this, tools/rspack/utils.ts falls back to NODE_ENV==="production"
-              // and bakes .env.production (incl. BRAZE_API_KEY) into the "staging" build.
-              STAGING: "1",
               SENTRY_URL: prereleaseSentryDSN,
               DATADOG_APPLICATION_ID: process.env.DATADOG_APPLICATION_ID,
               DATADOG_CLIENT_TOKEN: process.env.DATADOG_CLIENT_TOKEN,
               DATADOG_SITE: process.env.DATADOG_SITE || defaultDatadogSite,
               DATADOG_ENV: "staging",
             }
-          : {};
+          : args.nightly
+            ? {
+                // Without this, tools/rspack/utils.ts falls back to
+                // NODE_ENV==="production" and bakes .env.production (incl.
+                // BRAZE_API_KEY) into what should be the internal-only build.
+                STAGING: "1",
+                DATADOG_APPLICATION_ID: process.env.DATADOG_APPLICATION_ID,
+                DATADOG_CLIENT_TOKEN: process.env.DATADOG_CLIENT_TOKEN,
+                DATADOG_SITE: process.env.DATADOG_SITE || defaultDatadogSite,
+                DATADOG_ENV: "nightly",
+              }
+            : {};
       await exec("pnpm", ["run", "build:js"], { env: { ...process.env, ...baseEnv } });
     },
   },
