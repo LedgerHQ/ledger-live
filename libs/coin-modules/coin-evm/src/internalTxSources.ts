@@ -50,3 +50,39 @@ export const DEFAULT_INTERNAL_TX_SOURCES = internalTxSources()
   .addSource("debug_traceBlockByNumber")
   .addSource("empty")
   .build();
+
+const ALL_SOURCES: readonly InternalTxSource[] = [
+  "trace_block",
+  "debug_traceBlockByNumber",
+  "explorer",
+  "empty",
+];
+
+export function isInternalTxSource(value: string): value is InternalTxSource {
+  return (ALL_SOURCES as readonly string[]).includes(value);
+}
+
+/**
+ * Runtime-checked construction from a dynamic (e.g. config-driven) list.
+ * Enforces the same invariants as the compile-time builder:
+ * non-empty, no duplicate non-empty sources, `empty` only as the final element.
+ */
+export function internalTxSourcesFromList(sources: readonly string[]): InternalTxSourceList {
+  if (sources.length === 0) {
+    throw new Error("internalTxSources: at least one source is required");
+  }
+  const seen = new Set<string>();
+  sources.forEach((source, index) => {
+    if (!isInternalTxSource(source)) {
+      throw new Error(`internalTxSources: invalid source "${source}"`);
+    }
+    if (source === "empty" && index !== sources.length - 1) {
+      throw new Error('internalTxSources: "empty" must be the last source');
+    }
+    if (source !== "empty") {
+      if (seen.has(source)) throw new Error(`internalTxSources: duplicate source "${source}"`);
+      seen.add(source);
+    }
+  });
+  return sources as unknown as InternalTxSourceList;
+}
