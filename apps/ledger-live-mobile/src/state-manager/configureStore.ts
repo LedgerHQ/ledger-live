@@ -55,7 +55,7 @@ export const store = configureStore({
       .concat(rebootMiddleware)
       .concat(
         createIdentitiesSyncMiddleware({
-          pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
+          pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL").trim(),
           getIdentitiesState: (state: State) => state.identities,
           getAnalyticsConsent: canPushDeviceIdsSelector,
         }),

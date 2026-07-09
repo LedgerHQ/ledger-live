@@ -65,7 +65,7 @@ const customCreateStore = ({
         .concat(dbMiddleware ? [dbMiddleware] : [])
         .concat(
           createIdentitiesSyncMiddleware({
-            pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
+            pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL").trim(),
             getIdentitiesState: (state: State) => state.identities,
             getAnalyticsConsent: canPushDeviceIdsSelector,
           }),
