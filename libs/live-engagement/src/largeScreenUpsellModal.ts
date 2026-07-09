@@ -40,6 +40,22 @@ const largeScreenUpsellModalSlice = createSlice({
     resetUpsellModalRetries: state => {
       state.retries = initialState.retries;
     },
+    setUpsellModalRetries: (state, action: PayloadAction<number>) => {
+      const retries = action.payload;
+      if (Number.isSafeInteger(retries) && retries >= 0) {
+        state.retries = retries;
+      }
+    },
+    setLastSeenUpsellModal: (state, action: PayloadAction<number | null>) => {
+      const lastSeenAt = action.payload;
+      if (lastSeenAt === null) {
+        state.lastSeenAt = null;
+        return;
+      }
+      if (Number.isSafeInteger(lastSeenAt) && lastSeenAt >= 0) {
+        state.lastSeenAt = lastSeenAt;
+      }
+    },
   },
   selectors: {
     largeScreenUpsellModalSelector: state => state,
@@ -52,6 +68,8 @@ export const {
   restoreLargeScreenUpsellModalState,
   recordUpsellModalDisplay,
   resetUpsellModalRetries,
+  setUpsellModalRetries,
+  setLastSeenUpsellModal,
 } = largeScreenUpsellModalSlice.actions;
 
 export const {

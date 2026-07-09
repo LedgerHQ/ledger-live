@@ -6,6 +6,8 @@ import {
   restoreLargeScreenUpsellModalState,
   resetUpsellModalRetries,
   retriesUpsellModalSelector,
+  setLastSeenUpsellModal,
+  setUpsellModalRetries,
   type LargeScreenUpsellModalState,
 } from "./largeScreenUpsellModal";
 
@@ -160,6 +162,51 @@ describe("largeScreenUpsellModal", () => {
       retries: 0,
       lastSeenAt,
     });
+  });
+
+  it("sets the retry count to an arbitrary non-negative integer", () => {
+    const lastSeenAt = Date.parse("2026-07-01T12:00:00.000Z");
+
+    expect(
+      largeScreenUpsellModalReducer({ retries: 0, lastSeenAt }, setUpsellModalRetries(5)),
+    ).toEqual({
+      retries: 5,
+      lastSeenAt,
+    });
+  });
+
+  it("ignores invalid retry counts", () => {
+    const state = { retries: 3, lastSeenAt: null };
+
+    for (const invalid of [-1, 2.7, NaN]) {
+      expect(largeScreenUpsellModalReducer(state, setUpsellModalRetries(invalid))).toEqual(state);
+    }
+  });
+
+  it("sets the last display timestamp to an arbitrary value or null", () => {
+    const lastSeenAt = Date.parse("2026-07-01T12:00:00.000Z");
+
+    expect(
+      largeScreenUpsellModalReducer({ retries: 1, lastSeenAt: null }, setLastSeenUpsellModal(lastSeenAt)),
+    ).toEqual({
+      retries: 1,
+      lastSeenAt,
+    });
+
+    expect(
+      largeScreenUpsellModalReducer({ retries: 1, lastSeenAt }, setLastSeenUpsellModal(null)),
+    ).toEqual({
+      retries: 1,
+      lastSeenAt: null,
+    });
+  });
+
+  it("ignores invalid last display timestamps", () => {
+    const state = { retries: 1, lastSeenAt: Date.parse("2026-07-01T12:00:00.000Z") };
+
+    for (const invalid of [-1, 2.7, Number.MAX_SAFE_INTEGER + 1]) {
+      expect(largeScreenUpsellModalReducer(state, setLastSeenUpsellModal(invalid))).toEqual(state);
+    }
   });
 
   it("selects raw values", () => {
