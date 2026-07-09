@@ -93,8 +93,9 @@ async function attemptSync<State>(
 }
 
 export function createIdentitiesSyncMiddleware<State>(
-  config: SyncMiddlewareConfig<State>,
+  rawConfig: SyncMiddlewareConfig<State>,
 ): Middleware {
+  const config = { ...rawConfig, pushDevicesServiceUrl: rawConfig.pushDevicesServiceUrl.trim() };
   let isSyncing = false;
   function sync(state: State, dispatch: Dispatch) {
     isSyncing = true;
