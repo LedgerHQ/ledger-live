@@ -183,6 +183,49 @@ describe("withDmkDeviceSession", () => {
   });
 });
 
+describe("withCurrencyDeviceSession dependencies", () => {
+  beforeEach(async () => {
+    _setTestDmkTransport(null);
+    await disposeWalletCliDmkTransportFully();
+    calls.execute = [];
+    calls.reset = 0;
+    executeImpl = () => completedAction();
+    _setTestDmkTransport(testTransport as never);
+  });
+
+  afterEach(async () => {
+    await disposeWalletCliDmkTransportFully();
+    _setTestDmkTransport(null);
+  });
+
+  it("opens the currency app and forwards extra app dependencies to ConnectApp", async () => {
+    const result = await withCurrencyDeviceSession("ethereum", async () => "done", {
+      dependencies: [{ name: "Kiln" }],
+    });
+
+    expect(result).toBe("done");
+    expect(calls.execute).toHaveLength(1);
+    const input = (
+      calls.execute[0].deviceAction as {
+        input: { application: { name: string }; dependencies: Array<{ name: string }> };
+      }
+    ).input;
+    // The opened app stays the currency default; Kiln rides along as a dependency.
+    expect(input.application.name).toBe("Ethereum");
+    expect(input.dependencies).toEqual([{ name: "Kiln" }]);
+    expect(calls.reset).toBe(1);
+  });
+
+  it("defaults to no dependencies when none are passed", async () => {
+    await withCurrencyDeviceSession("ethereum", async () => "done");
+
+    const input = (
+      calls.execute[0].deviceAction as { input: { dependencies: Array<{ name: string }> } }
+    ).input;
+    expect(input.dependencies).toEqual([]);
+  });
+});
+
 describe("getManagerAppNameForCurrencyId", () => {
   it("returns the Ledger manager app name for currencies with dedicated apps", () => {
     expect(getManagerAppNameForCurrencyId("bitcoin")).toBe("Bitcoin");

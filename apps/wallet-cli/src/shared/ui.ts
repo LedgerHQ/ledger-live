@@ -67,6 +67,32 @@ export function isInteractive(): boolean {
   return process.stderr.isTTY === true;
 }
 
+/**
+ * Wrap `url` in an OSC 8 terminal hyperlink so it is clickable in terminals that support it
+ * (Ghostty, iTerm2, kitty, WezTerm, …). Clicking hands the URL to the OS opener, which routes
+ * custom schemes like `ledgerlive://` to the registered app.
+ *
+ * Only emitted when stdout is a real TTY and we are not under an AI agent; otherwise plain text is
+ * returned so piped/redirected output, agent captures, and terminals without OSC 8 support stay
+ * clean. The raw URL is always kept copy-pasteable: when a custom label differs from the URL the
+ * fallback is `label (url)` so the URL is never dropped.
+ */
+export function hyperlink(url: string, label: string = url): string {
+  if (process.stdout.isTTY !== true || isAgentEnvironment()) {
+    return label === url ? url : `${label} (${url})`;
+  }
+  // url/label can be backend-derived (e.g. liveAppId → deeplink); strip control chars so they can't
+  // inject their own escape sequences (ESC/BEL/CSI) into the OSC 8 wrapper and hijack the terminal.
+  return `\x1b]8;;${stripControlChars(url)}\x1b\\${stripControlChars(label)}\x1b]8;;\x1b\\`;
+}
+
+/** Remove C0/C1 control characters (incl. ESC and BEL) that could break out of an escape sequence. */
+// eslint-disable-next-line no-control-regex
+const CONTROL_CHARS = /[\x00-\x1f\x7f-\x9f]/g;
+function stripControlChars(value: string): string {
+  return value.replace(CONTROL_CHARS, "");
+}
+
 /** Singleton no-op spinner used in non-interactive contexts. */
 const noopMethod = () => noopSpinner;
 const noopSpinner: Spinner = new Proxy({} as Spinner, {
