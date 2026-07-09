@@ -36,8 +36,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "bignumber.js": "^9.1.2",
-    "jest": "catalog:",
-    "tsx": "^4.7.1"
+    "jest": "catalog:"
   },
   "typesVersions": {
     "*": {
