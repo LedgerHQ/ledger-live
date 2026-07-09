@@ -42,6 +42,7 @@ import AnalyticsConsentOptInDevTool from "./AnalyticsConsentOptInDevTool";
 import { AnalyticsConsentOptInDevScreen } from "./AnalyticsConsentOptInDevTool/AnalyticsConsentOptInDevScreen";
 import GenericAwarenessModalDevTool from "./GenericAwarenessModalDevTool";
 import GenericAwarenessModalDevScreen from "./GenericAwarenessModalDevTool/screens/GenericAwarenessModalDevScreen";
+import OpenDevToolsRow from "./OpenDevToolsRow";
 import InfoStateDevTool from "./InfoStateDevTool";
 import InfoStateDevScreen from "./InfoStateDevTool/screens/InfoStateDevScreen";
 import DeviceActionContentDevTool from "./DeviceActionContentDevTool";
@@ -149,6 +150,7 @@ const Default = () => {
           <AllowDebugReactQueryToggle />
         </Row>
       )}
+      <OpenDevToolsRow />
       <WalletFeaturesDevTool />
       <FeaturesAndFlowsDevTool />
       <AnalyticsConsentOptInDevTool />

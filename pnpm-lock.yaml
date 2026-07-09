@@ -790,6 +790,12 @@ importers:
       '@datadog/browser-rum':
         specifier: 6.30.1
         version: 6.30.1(@datadog/browser-logs@6.30.1)
+      '@devtools/bindings':
+        specifier: workspace:*
+        version: link:../../devtools/bindings
+      '@devtools/shell':
+        specifier: workspace:^
+        version: link:../../devtools/shell
       '@domain/api-currency-fiat':
         specifier: workspace:^
         version: link:../../domain/api/currency-fiat
@@ -964,6 +970,9 @@ importers:
       '@radix-ui/react-dialog':
         specifier: 'catalog:'
         version: 1.1.15(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@radix-ui/react-dropdown-menu':
+        specifier: 'catalog:'
+        version: 2.1.16(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
