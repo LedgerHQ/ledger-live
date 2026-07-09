@@ -1,13 +1,17 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/feature-flags";
+import { withCopyStoreHydration } from "@devtools/protocols/copyStore";
+import { sleepingListener } from "./sleepingListener";
 import { cryptoAssetsApi, calApiExtra } from "@domain/api-currency-token";
 import { getEnv } from "@ledgerhq/live-env";
 
+const rootReducer = combineReducers({
+  featureFlags: featureFlagsReducer,
+  [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer,
+});
+
 export const store = configureStore({
-  reducer: {
-    featureFlags: featureFlagsReducer,
-    [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer,
-  },
+  reducer: withCopyStoreHydration(rootReducer),
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       thunk: {
@@ -16,7 +20,9 @@ export const store = configureStore({
           ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
         }),
       },
-    }).concat(createFeatureFlagsMiddleware({ resolutionConfig: {} }), cryptoAssetsApi.middleware),
+    })
+      .prepend(sleepingListener.middleware)
+      .concat(createFeatureFlagsMiddleware({ resolutionConfig: {} }), cryptoAssetsApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
