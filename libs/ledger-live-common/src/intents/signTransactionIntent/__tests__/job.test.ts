@@ -28,7 +28,7 @@ const parentAccount = { id: "parent-account-1" } as Account;
 const mainAccount = {
   id: "main-account-1",
   currency: getCryptoCurrencyById("ethereum"),
-} as Account;
+} as unknown as Account;
 const transaction = { family: "evm" } as SignTransactionIntentInput["transaction"];
 const signedOperation = { operation: { id: "operation-1" } } as SignedOperation;
 
