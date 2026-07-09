@@ -24,7 +24,7 @@ describe("withStyleProvider (native)", () => {
         <Wrapped />
       </ThemeProvider>,
     );
-    expect(screen.getByTestId("inner")).toBeInTheDocument();
+    expect(screen.getByTestId("inner")).toBeVisible();
   });
 
   it("wraps with ThemeProvider from styled-components/native", () => {
@@ -33,6 +33,6 @@ describe("withStyleProvider (native)", () => {
         <Wrapped />
       </ThemeProvider>,
     );
-    expect(screen.getByText("native-wrapped")).toBeInTheDocument();
+    expect(screen.getByText("native-wrapped")).toBeVisible();
   });
 });

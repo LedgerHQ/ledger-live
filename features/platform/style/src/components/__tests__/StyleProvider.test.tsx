@@ -16,7 +16,7 @@ describe("StyleProvider (web)", () => {
         <span>content</span>
       </StyleProvider>,
     );
-    expect(screen.getByText("content")).toBeInTheDocument();
+    expect(screen.getByText("content")).toBeVisible();
   });
 
   it("makes the theme available via useTheme when theme is provided", () => {
@@ -34,7 +34,7 @@ describe("StyleProvider (web)", () => {
         <span>content</span>
       </StyleProvider>,
     );
-    expect(screen.getByText("content")).toBeInTheDocument();
+    expect(screen.getByText("content")).toBeVisible();
   });
 
   it("wraps with both providers when theme and colorScheme are provided", () => {

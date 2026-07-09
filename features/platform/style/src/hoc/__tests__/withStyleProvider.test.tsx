@@ -18,7 +18,7 @@ describe("withStyleProvider (web)", () => {
         <WrappedDisplay />
       </ThemeProvider>,
     );
-    expect(screen.getByTestId("theme")).toBeInTheDocument();
+    expect(screen.getByTestId("theme")).toBeVisible();
   });
 
   it("re-injects the outer SC theme into the wrapped component", () => {

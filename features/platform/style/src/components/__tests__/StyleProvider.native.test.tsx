@@ -17,7 +17,7 @@ describe("StyleProvider (native)", () => {
         <span>native light</span>
       </StyleProvider>,
     );
-    expect(screen.getByText("native light")).toBeInTheDocument();
+    expect(screen.getByText("native light")).toBeVisible();
   });
 
   it("renders children with dark palette", () => {
@@ -26,6 +26,6 @@ describe("StyleProvider (native)", () => {
         <span>native dark</span>
       </StyleProvider>,
     );
-    expect(screen.getByText("native dark")).toBeInTheDocument();
+    expect(screen.getByText("native dark")).toBeVisible();
   });
 });
