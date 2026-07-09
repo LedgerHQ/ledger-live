@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import type { Page } from "@ledgerhq/coin-module-framework/api/index";
@@ -42,14 +43,17 @@ const zeroGravityValidatorApi: ValidatorApi = {
       });
 
       const items: StakingValidatorItem[] = Array.isArray(data)
-        ? data.filter(isExploreMe0gValidator).map((v, index) => ({
-            validatorAddress: "0x" + v.addr,
-            name: v.moniker ?? "0x" + v.addr,
-            commission: parseFloat(v.commission_pct) / 100,
-            tokens: v.voting_power_tokens,
-            votingPower: index,
-            estimatedYearlyRewardsRate: 0,
-          }))
+        ? data.filter(isExploreMe0gValidator).map((v, index) => {
+            const validatorAddress = ethers.getAddress("0x" + v.addr);
+            return {
+              validatorAddress,
+              name: v.moniker ?? validatorAddress,
+              commission: parseFloat(v.commission_pct) / 100,
+              tokens: v.voting_power_tokens,
+              votingPower: index,
+              estimatedYearlyRewardsRate: 0,
+            };
+          })
         : [];
 
       return { items, next: undefined };
