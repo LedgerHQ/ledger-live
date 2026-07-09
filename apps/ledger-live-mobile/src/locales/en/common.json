@@ -4581,6 +4581,7 @@
         "maxPriorityFee": "Max priority fee ({{unit}})",
         "gasLimit": "Gas limit ({{unit}})",
         "feePerByte": "Fees amount ({{unit}})",
+        "feesAmount": "Fees amount ({{unit}})",
         "suggested": "Suggested",
         "nextBlock": "Next block",
         "networkFeesInFiat": "Network fees in {{currency}}",
