@@ -405,8 +405,12 @@ const SwapWebView = ({
           return Promise.resolve({});
         }
       },
-      "custom.swapRedirectToHistory": async () => {
-        redirectToHistory();
+      "custom.swapRedirectToHistory": async ({
+        params,
+      }: {
+        params?: { swapId?: string };
+      } = {}) => {
+        redirectToHistory({ swapId: params?.swapId });
       },
       "custom.saveSwapToHistory": async ({
         params,
