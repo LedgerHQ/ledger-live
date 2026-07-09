@@ -8467,6 +8467,12 @@ importers:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
         specifier: ^7.1.2
         version: 7.1.2
+      '@domain/entity-currency-crypto':
+        specifier: workspace:^
+        version: link:../../domain/entity/currency-crypto
+      '@domain/entity-currency-fiat':
+        specifier: workspace:^
+        version: link:../../domain/entity/currency-fiat
       '@features/platform-feature-flags':
         specifier: workspace:^
         version: link:../../features/platform/feature-flags

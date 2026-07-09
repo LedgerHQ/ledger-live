@@ -1,9 +1,12 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
+import {
+  getCryptoCurrencyById,
+  findCryptoCurrencyByKeyword,
+} from "@ledgerhq/live-common/currencies/index";
 import { addAccountHandler } from "../addAccount.handler";
 import { createMockContext } from "./test-utils";
 
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
   findCryptoCurrencyByKeyword: jest.fn(),
 }));
 
@@ -27,7 +30,7 @@ describe("addAccount.handler", () => {
     });
 
     it("opens add account modal via openAssetFlow when currency not found", () => {
-      mockFindCryptoCurrencyByKeyword.mockReturnValue(null);
+      mockFindCryptoCurrencyByKeyword.mockReturnValue(undefined);
       const context = createMockContext();
 
       addAccountHandler({ type: "add-account", currency: "unknowncoin" }, context);
@@ -48,7 +51,7 @@ describe("addAccount.handler", () => {
     });
 
     it("opens add account modal via openAssetFlow when currency is not provided", () => {
-      mockFindCryptoCurrencyByKeyword.mockReturnValue(null);
+      mockFindCryptoCurrencyByKeyword.mockReturnValue(undefined);
       const context = createMockContext();
 
       addAccountHandler({ type: "add-account" }, context);

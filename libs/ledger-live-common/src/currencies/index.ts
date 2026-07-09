@@ -1,8 +1,4 @@
 export {
-  listFiatCurrencies,
-  findFiatCurrencyByTicker,
-  getFiatCurrencyByTicker,
-  hasFiatCurrencyTicker,
   listCryptoCurrencies,
   getCryptoCurrencyById,
   hasCryptoCurrencyId,
@@ -11,7 +7,13 @@ export {
   findCryptoCurrencyByScheme,
   findCryptoCurrencyByKeyword,
   findCryptoCurrencyByTicker,
-} from "@ledgerhq/cryptoassets";
+} from "@domain/entity-currency-crypto";
+export {
+  listFiatCurrencies,
+  findFiatCurrencyByTicker,
+  getFiatCurrencyByTicker,
+  hasFiatCurrencyTicker,
+} from "@domain/entity-currency-fiat";
 export { encodeURIScheme, decodeURIScheme } from "@ledgerhq/ledger-wallet-framework/currencies";
 export { isCurrencySupported, listSupportedCurrencies } from "../coin-modules/registry";
 export {
