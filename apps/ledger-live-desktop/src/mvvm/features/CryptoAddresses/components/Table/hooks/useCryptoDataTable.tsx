@@ -8,6 +8,7 @@ import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import { walletSelector } from "~/renderer/reducers/wallet";
+import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import type { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-table";
 import { track } from "~/renderer/analytics/segment";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../../../constants";
@@ -40,6 +41,7 @@ export function useCryptoDataTable({
   const { t } = useTranslation();
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const walletState = useSelector(walletSelector);
+  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const calculateCountervalue = useCalculateCountervalueCallback();
   const syncPhase = useSyncPhase();
   const isSyncing = syncPhase === "syncing";
@@ -110,7 +112,9 @@ export function useCryptoDataTable({
               header: t("cryptoAddresses.table.columns.asset"),
               enableSorting: false,
               cell: ({ row }: { row: Row<AccountLike> }) => (
-                <AccountAssetsCell currencies={getAccountAssetsCurrencies(row.original)} />
+                <AccountAssetsCell
+                  currencies={getAccountAssetsCurrencies(row.original, blacklistedTokenIds)}
+                />
               ),
               meta: { align: "end" },
             } satisfies ColumnDef<AccountLike>,
@@ -156,6 +160,7 @@ export function useCryptoDataTable({
       getSortCountervalue,
       aggregatedDataByAccountId,
       isSyncing,
+      blacklistedTokenIds,
     ],
   );
 
