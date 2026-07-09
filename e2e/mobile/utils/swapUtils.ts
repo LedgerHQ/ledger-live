@@ -7,6 +7,16 @@ import BigNumber from "bignumber.js";
 import { deleteSpeculos, launchSpeculos, registerSpeculos } from "./speculosUtils";
 import { log } from "detox";
 
+/**
+ * Mirrors swap-live-app's remote-config decimal cap (currently defaults to 8, see
+ * ptxSwapAppConfig / defaultAppConfig.decimals.default), not a device firmware limit.
+ * Safe for currencies with <=8 native decimals (no-op). If that remote config value
+ * ever changes, every caller of this helper would need updating together.
+ */
+export function truncateSwapAmount(amount: string): string {
+  return (Math.trunc(Number(amount) * 1e8) / 1e8).toFixed(8).replace(/0+$/, "").replace(/\.$/, "");
+}
+
 async function selectCurrency(account: Account, isFromCurrency: boolean = true) {
   // Check the appropriate field based on whether we're selecting FROM or TO
   const currentCurrencyText = isFromCurrency
