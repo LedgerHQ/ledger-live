@@ -42,7 +42,7 @@ export function useAssetSearchResultsViewModel({ search, skip }: Params): Result
   const { status: rateStatus, rate } = useUsdToFiatRate(counterCurrency);
 
   // Hide currencies disabled by a feature flag, mirroring the receive flow.
-  const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies();
+  const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
 
   const results = useMemo<MarketCurrencyData[]>(
     () => mapAssetsDataToMarketCurrencies(data, rate ?? 1, deactivatedCurrencyIds),

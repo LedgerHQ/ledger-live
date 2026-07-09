@@ -6,6 +6,7 @@ import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/type
 import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import {
   isAvailableOnBuy,
@@ -95,7 +96,7 @@ export function useActionBarViewModel({
   const { navigateToBuy } = useBuyNavigation();
   const { navigateToSell } = useSellNavigation();
   const { isCurrencyAvailable } = useRampCatalog();
-  const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies();
+  const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
 
   const ledgerIdsForRamp = useMemo(
     () => resolveRampLedgerIds({ ledgerIds, marketCurrencyData, distributionItem, ledgerCurrency }),
