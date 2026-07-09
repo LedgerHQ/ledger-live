@@ -31,6 +31,8 @@ export function pushDevicesApiExtra(config: PushDevicesApiExtra): PushDevicesApi
   return PushDevicesApiExtraSchema.parse(config);
 }
 
+const _baseQueryCache = new WeakMap<PushDevicesApiExtra, ReturnType<typeof fetchBaseQuery>>();
+
 const pushDevicesBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = retry(
   (args, api, extraOptions) => {
     const extra = api.extra as PushDevicesApiExtra | undefined;
@@ -46,14 +48,19 @@ const pushDevicesBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQu
         error: "pushDevicesServiceUrl is empty — sync is disabled",
       });
     }
-    return fetchBaseQuery({
-      baseUrl: extra.pushDevicesServiceUrl,
-      prepareHeaders: headers => {
-        headers.set("Content-Type", "application/json");
-        headers.set("X-Ledger-Client-Version", extra.ledgerClientVersion);
-        return headers;
-      },
-    })(args, api, extraOptions);
+    let bq = _baseQueryCache.get(extra);
+    if (!bq) {
+      bq = fetchBaseQuery({
+        baseUrl: extra.pushDevicesServiceUrl,
+        prepareHeaders: headers => {
+          headers.set("Content-Type", "application/json");
+          headers.set("X-Ledger-Client-Version", extra.ledgerClientVersion);
+          return headers;
+        },
+      });
+      _baseQueryCache.set(extra, bq);
+    }
+    return bq(args, api, extraOptions);
   },
   { maxRetries: 3 },
 );
