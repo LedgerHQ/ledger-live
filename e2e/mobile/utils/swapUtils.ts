@@ -14,7 +14,7 @@ import { log } from "detox";
  * ever changes, every caller of this helper would need updating together.
  */
 export function truncateSwapAmount(amount: string): string {
-  return (Math.trunc(Number(amount) * 1e8) / 1e8).toFixed(8).replace(/0+$/, "").replace(/\.$/, "");
+  return new BigNumber(amount).decimalPlaces(8, BigNumber.ROUND_DOWN).toFixed();
 }
 
 async function selectCurrency(account: Account, isFromCurrency: boolean = true) {
