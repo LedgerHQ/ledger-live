@@ -33,7 +33,12 @@ jest.setTimeout(600_000);
 
 let closeMsw: (() => void) | null = null;
 
-type StellarScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
+// `assetReference`/`assetOwner` are no longer on `GenericTransaction`; stellar carries them on its
+// own transaction for the `changeTrust` flow (no sub-account yet). Token sends rely on `subAccountId`.
+type StellarScenarioTransaction = ScenarioTransaction<GenericTransaction, Account> & {
+  assetReference?: string;
+  assetOwner?: string;
+};
 
 /**
  * Hook flag: ensures we only inject USDC into the test account once,
@@ -144,8 +149,6 @@ function makeScenarioTransactions(address: string): StellarScenarioTransaction[]
     amount: new BigNumber(10 * 1e7),
     recipient: RECIPIENT_ADDRESS,
     subAccountId: tokenSubAccountId,
-    assetReference: USDC_ASSET_CODE,
-    assetOwner: ISSUER_ADDRESS,
     expect: (previousAccount, currentAccount) => {
       const previousSub = findUsdcSubAccount(previousAccount);
       const currentSub = findUsdcSubAccount(currentAccount);
@@ -163,8 +166,6 @@ function makeScenarioTransactions(address: string): StellarScenarioTransaction[]
     name: "Send all USDC to recipient",
     recipient: RECIPIENT_ADDRESS,
     subAccountId: tokenSubAccountId,
-    assetReference: USDC_ASSET_CODE,
-    assetOwner: ISSUER_ADDRESS,
     useAllAmount: true,
     expect: (previousAccount, currentAccount) => {
       const currentSub = findUsdcSubAccount(currentAccount);

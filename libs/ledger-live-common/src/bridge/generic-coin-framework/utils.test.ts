@@ -12,7 +12,8 @@ import {
 } from "./utils";
 import { addPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/index";
 import BigNumber from "bignumber.js";
-import type { Operation as CoreOperation } from "@ledgerhq/coin-module-framework/api/types";
+import type { AssetInfo, Operation as CoreOperation } from "@ledgerhq/coin-module-framework/api/types";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { GenericTransaction, GenericTransactionMode, OperationCommon } from "./types";
 import * as craftTransactionDataModule from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
@@ -547,6 +548,7 @@ describe("coin-framework utils", () => {
           transactionToIntent(
             { currency: { name: "ethereum", units: [{}] } } as Account,
             { mode: "send", type: 2 } as GenericTransaction,
+            undefined,
             computeIntentType,
           ),
         ).toMatchObject({
@@ -580,6 +582,7 @@ describe("coin-framework utils", () => {
             },
           } as unknown as Account,
           { data } as unknown as GenericTransaction,
+          undefined,
           undefined,
           craftTransactionDataMock,
         );
@@ -627,6 +630,7 @@ describe("coin-framework utils", () => {
             },
           } as unknown as Account,
           { data: expectedData } as unknown as GenericTransaction,
+          undefined,
           undefined,
           craftTransactionDataMock,
         );
@@ -678,6 +682,77 @@ describe("coin-framework utils", () => {
       });
     });
 
+    describe("asset", () => {
+      const subAccountId = "js:2:ethereum:0xacc:+0xA0b8";
+      const token = {
+        tokenType: "erc20",
+        name: "USD Coin",
+        contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      };
+      const account = {
+        freshAddress: "sender-address",
+        currency: { name: "ethereum", units: [{ code: "ETH" }] },
+        subAccounts: [{ id: subAccountId, type: "TokenAccount", token }],
+      } as unknown as Account;
+
+      it("derives the token asset from subAccountId via getAssetFromToken (token send)", () => {
+        const getAssetFromToken = jest.fn(
+          (tkn: TokenCurrency, owner: string): AssetInfo =>
+            ({
+              type: tkn.tokenType,
+              assetReference: tkn.contractAddress,
+              assetOwner: owner,
+              name: tkn.name,
+              unit: { code: "USDC" },
+            }) as unknown as AssetInfo,
+        );
+
+        const intent = transactionToIntent(
+          account,
+          { subAccountId, mode: "send" } as unknown as GenericTransaction,
+          getAssetFromToken,
+        );
+
+        expect(getAssetFromToken).toHaveBeenCalledWith(token, "sender-address");
+        expect(intent.asset).toEqual({
+          type: "erc20",
+          assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+          assetOwner: "sender-address",
+          name: "USD Coin",
+          unit: { code: "USDC" },
+        });
+      });
+
+      it("reads assetReference/assetOwner off the transaction when there is no subAccountId (stellar changeTrust)", () => {
+        const intent = transactionToIntent(account, {
+          mode: "changeTrust",
+          assetReference: "USDC",
+          assetOwner: "GISSUER",
+        } as unknown as GenericTransaction);
+
+        expect(intent.asset).toEqual({
+          type: "token",
+          assetReference: "USDC",
+          name: "USDC",
+          unit: { code: "ETH" },
+          assetOwner: "GISSUER",
+        });
+      });
+
+      it("keeps the native asset when subAccountId has no getAssetFromToken and no inline asset", () => {
+        const intent = transactionToIntent(account, {
+          subAccountId,
+          mode: "send",
+        } as unknown as GenericTransaction);
+
+        expect(intent.asset).toEqual({
+          type: "native",
+          name: "ethereum",
+          unit: { code: "ETH" },
+        });
+      });
+    });
+
     it.each([
       "delegate",
       "undelegate",
@@ -713,6 +788,7 @@ describe("coin-framework utils", () => {
             },
           } as Account,
           transaction,
+          undefined,
           computeIntentType,
         );
         expect(intent).toMatchObject({
@@ -755,6 +831,7 @@ describe("coin-framework utils", () => {
             },
           } as Account,
           transaction,
+          undefined,
           computeIntentType,
         );
 

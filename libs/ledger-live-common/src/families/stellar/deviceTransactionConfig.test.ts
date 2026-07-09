@@ -3,7 +3,7 @@ import getDeviceTransactionConfig from "./deviceTransactionConfig";
 
 describe("getDeviceTransactionConfig", () => {
   const baseParams = {
-    account: {} as any,
+    account: { type: "Account", subAccounts: [] } as any,
     parentAccount: null,
     transaction: {} as any,
   };
@@ -40,7 +40,7 @@ describe("getDeviceTransactionConfig", () => {
     ]);
   });
 
-  it("adds asset fields when asset reference and owner are provided", async () => {
+  it("adds asset fields carried on the transaction (changeTrust, no sub-account)", async () => {
     const fields = await getDeviceTransactionConfig({
       ...baseParams,
       transaction: {
@@ -56,8 +56,37 @@ describe("getDeviceTransactionConfig", () => {
     expect(fields).toEqual([
       { type: "stellar.network", label: "Network" },
       { type: "amount", label: "Amount" },
-      { type: "stellar.assetCode", label: "Asset" },
-      { type: "stellar.assetIssuer", label: "Asset issuer" },
+      { type: "stellar.assetCode", label: "Asset", value: "USDC" },
+      { type: "stellar.assetIssuer", label: "Asset issuer", value: "GISSUER" },
+      { type: "stellar.memo", label: "Memo" },
+    ]);
+  });
+
+  it("derives asset fields from the sub-account token for a token send (subAccountId)", async () => {
+    const fields = await getDeviceTransactionConfig({
+      ...baseParams,
+      account: {
+        type: "Account",
+        subAccounts: [
+          {
+            id: "sub-usdc",
+            type: "TokenAccount",
+            token: { name: "USDC", contractAddress: "GISSUER" },
+          },
+        ],
+      } as any,
+      transaction: { subAccountId: "sub-usdc" } as any,
+      status: {
+        amount: new BigNumber(1),
+        estimatedFees: new BigNumber(0),
+      } as any,
+    });
+
+    expect(fields).toEqual([
+      { type: "stellar.network", label: "Network" },
+      { type: "amount", label: "Amount" },
+      { type: "stellar.assetCode", label: "Asset", value: "USDC" },
+      { type: "stellar.assetIssuer", label: "Asset issuer", value: "GISSUER" },
       { type: "stellar.memo", label: "Memo" },
     ]);
   });

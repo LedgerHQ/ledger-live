@@ -73,8 +73,6 @@ export type GenericTransaction = TransactionCommon & {
   data?: Buffer;
   mode?: GenericTransactionMode;
   type?: number | null;
-  assetReference?: string;
-  assetOwner?: string;
   networkInfo?: NetworkInfo | null;
   chainId?: number | null;
   gasLimit?: BigNumber | null;
@@ -105,8 +103,6 @@ export type GenericTransactionRaw = TransactionCommonRaw & {
   data?: string;
   mode?: GenericTransactionMode;
   type?: number | null;
-  assetReference?: string | null;
-  assetOwner?: string | null;
   networkInfo?: NetworkInfoRaw | null;
   chainId?: number | null;
   gasLimit?: string | null;

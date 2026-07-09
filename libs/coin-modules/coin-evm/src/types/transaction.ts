@@ -81,8 +81,6 @@ type EvmTransactionBaseRaw = TransactionCommonRaw & {
   nonce: number;
   gasLimit: string;
   customGasLimit?: string | undefined;
-  assetReference?: string | null | undefined;
-  assetOwner?: string | null | undefined;
   chainId: number;
   data?: string | null | undefined;
   type?: number | undefined;

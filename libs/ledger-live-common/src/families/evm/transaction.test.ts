@@ -96,54 +96,47 @@ describe("EVM Family", () => {
         });
       });
 
-      describe("with token fields (assetReference / assetOwner)", () => {
+      describe("with a token sub-account (subAccountId is the single source of truth)", () => {
+        const SUB_ACCOUNT_ID =
+          "js:2:ethereum:0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045:+0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
         const CONTRACT = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
         const OWNER = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
 
-        it("should deserialize both assetReference and assetOwner when present", () => {
-          expect(
-            fromTransactionRaw({ ...rawEip1559Tx, assetReference: CONTRACT, assetOwner: OWNER }),
-          ).toEqual({ ...eip1559Tx, assetReference: CONTRACT, assetOwner: OWNER });
+        it("restores the token identity from subAccountId (eip1559)", () => {
+          expect(fromTransactionRaw({ ...rawEip1559Tx, subAccountId: SUB_ACCOUNT_ID })).toEqual({
+            ...eip1559Tx,
+            subAccountId: SUB_ACCOUNT_ID,
+          });
         });
 
-        it("should deserialize only assetReference when assetOwner is absent", () => {
-          expect(fromTransactionRaw({ ...rawEip1559Tx, assetReference: CONTRACT })).toEqual({
-            ...eip1559Tx,
+        it("restores the token identity from subAccountId (legacy)", () => {
+          expect(fromTransactionRaw({ ...rawLegacyTx, subAccountId: SUB_ACCOUNT_ID })).toEqual({
+            ...legacyTx,
+            subAccountId: SUB_ACCOUNT_ID,
+          });
+        });
+
+        it("ignores legacy assetReference/assetOwner when subAccountId is present", () => {
+          const tx = fromTransactionRaw({
+            ...rawEip1559Tx,
+            subAccountId: SUB_ACCOUNT_ID,
             assetReference: CONTRACT,
-          });
-        });
-
-        it("should deserialize only assetOwner when assetReference is absent", () => {
-          expect(fromTransactionRaw({ ...rawEip1559Tx, assetOwner: OWNER })).toEqual({
-            ...eip1559Tx,
             assetOwner: OWNER,
-          });
+          } as any);
+          expect(tx).not.toHaveProperty("assetReference");
+          expect(tx).not.toHaveProperty("assetOwner");
+          expect(tx.subAccountId).toBe(SUB_ACCOUNT_ID);
         });
 
-        it("should not set assetReference when absent from raw", () => {
-          expect(fromTransactionRaw(rawEip1559Tx)).not.toHaveProperty("assetReference");
-        });
-
-        it("should not set assetOwner when absent from raw", () => {
-          expect(fromTransactionRaw(rawEip1559Tx)).not.toHaveProperty("assetOwner");
-        });
-
-        it("should not set assetReference when raw value is an empty string", () => {
-          expect(
-            fromTransactionRaw({ ...rawEip1559Tx, assetReference: "" } as any),
-          ).not.toHaveProperty("assetReference");
-        });
-
-        it("should not set assetOwner when raw value is an empty string", () => {
-          expect(fromTransactionRaw({ ...rawEip1559Tx, assetOwner: "" } as any)).not.toHaveProperty(
-            "assetOwner",
-          );
-        });
-
-        it("should deserialize both fields on a legacy transaction", () => {
-          expect(
-            fromTransactionRaw({ ...rawLegacyTx, assetReference: CONTRACT, assetOwner: OWNER }),
-          ).toEqual({ ...legacyTx, assetReference: CONTRACT, assetOwner: OWNER });
+        it("restores legacy assetReference/assetOwner for pre-upgrade raws without subAccountId", () => {
+          const tx = fromTransactionRaw({
+            ...rawEip1559Tx,
+            subAccountId: undefined,
+            assetReference: CONTRACT,
+            assetOwner: OWNER,
+          } as any) as any;
+          expect(tx.assetReference).toBe(CONTRACT);
+          expect(tx.assetOwner).toBe(OWNER);
         });
       });
     });

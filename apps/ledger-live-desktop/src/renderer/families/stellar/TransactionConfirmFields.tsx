@@ -1,4 +1,3 @@
-import invariant from "invariant";
 import React from "react";
 import { Transaction } from "@ledgerhq/live-common/families/stellar/types";
 import styled from "styled-components";
@@ -49,26 +48,20 @@ const StellarNetworkField = ({ field }: StellarFieldComponentProps) => (
     </Text>
   </TransactionConfirmField>
 );
-const StellarAssetCodeField = ({ transaction, field }: StellarFieldComponentProps) => {
-  invariant(transaction.family === "stellar", "stellar transaction");
-  return (
-    <TransactionConfirmField label={field.label}>
-      <Text ff="Inter|Medium" color="neutral.c80" fontSize={3}>
-        {transaction.assetReference}
-      </Text>
-    </TransactionConfirmField>
-  );
-};
-const StellarAssetIssuerField = ({ transaction, field }: StellarFieldComponentProps) => {
-  invariant(transaction.family === "stellar", "stellar transaction");
-  return (
-    <TransactionConfirmField label={field.label}>
-      <WrappedAssetIssuer ff="Inter|Medium" color="neutral.c80" fontSize={3}>
-        {transaction.assetOwner}
-      </WrappedAssetIssuer>
-    </TransactionConfirmField>
-  );
-};
+const StellarAssetCodeField = ({ field }: StellarFieldComponentProps) => (
+  <TransactionConfirmField label={field.label}>
+    <Text ff="Inter|Medium" color="neutral.c80" fontSize={3}>
+      {"value" in field && typeof field.value === "string" ? field.value : undefined}
+    </Text>
+  </TransactionConfirmField>
+);
+const StellarAssetIssuerField = ({ field }: StellarFieldComponentProps) => (
+  <TransactionConfirmField label={field.label}>
+    <WrappedAssetIssuer ff="Inter|Medium" color="neutral.c80" fontSize={3}>
+      {"value" in field && typeof field.value === "string" ? field.value : undefined}
+    </WrappedAssetIssuer>
+  </TransactionConfirmField>
+);
 const fieldComponents = {
   "stellar.memo": StellarMemoField,
   "stellar.network": StellarNetworkField,

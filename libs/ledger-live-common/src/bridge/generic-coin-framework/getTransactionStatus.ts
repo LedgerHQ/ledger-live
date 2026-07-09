@@ -20,8 +20,15 @@ export function genericGetTransactionStatus(
       recipient: transaction.recipient,
       amount: transaction.amount ?? new BigNumber(0),
       useAllAmount: !!transaction.useAllAmount,
-      assetReference: transaction.assetReference || "",
-      assetOwner: transaction.assetOwner || "",
+      // Forward the asset carried directly on the transaction (e.g. stellar `changeTrust`, which has
+      // no sub-account yet). These fields are no longer on `GenericTransaction`, hence the `in` reads;
+      // guard the value type to match `transactionToIntent`'s fallback.
+      ...("assetReference" in transaction && typeof transaction.assetReference === "string"
+        ? { assetReference: transaction.assetReference }
+        : {}),
+      ...("assetOwner" in transaction && typeof transaction.assetOwner === "string"
+        ? { assetOwner: transaction.assetOwner }
+        : {}),
       subAccountId: transaction.subAccountId || "",
       memoType: transaction.memoType || "",
       memoValue: transaction.memoValue || "",
@@ -46,6 +53,7 @@ export function genericGetTransactionStatus(
     const intent = transactionToIntent(
       account,
       draftTransaction,
+      bridgeApi.getAssetFromToken,
       bridgeApi.computeIntentType,
       coinModuleApi.craftTransactionData,
     );

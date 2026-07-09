@@ -10,23 +10,11 @@ import {
   transactionToIntent,
 } from "./utils";
 import BigNumber from "bignumber.js";
-import type { AssetInfo, FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
-import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import type { GenericTransaction } from "./types";
 
 function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {
   return !a && !b ? true : !a || !b ? false : a.eq(b);
-}
-
-function assetInfosFallback(transaction: GenericTransaction): {
-  assetReference: string;
-  assetOwner: string;
-} {
-  return {
-    assetReference: transaction.assetReference ?? "",
-    assetOwner: transaction.assetOwner ?? "",
-  };
 }
 
 function propagateField(estimation: FeeEstimation, field: string, dest: GenericTransaction): void {
@@ -66,10 +54,6 @@ export function genericPrepareTransaction(
     const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
     const bridgeApi = await getBridgeApi(account.currency, network);
 
-    const getAssetFromTokenForCurrency = bridgeApi.getAssetFromToken;
-    const { assetReference, assetOwner } = getAssetFromTokenForCurrency
-      ? await getAssetInfos(transaction, account.freshAddress, getAssetFromTokenForCurrency)
-      : assetInfosFallback(transaction);
     const customParametersFees = transaction.customFees?.parameters?.fees;
 
     /**
@@ -88,18 +72,15 @@ export function genericPrepareTransaction(
       }
     }
 
-    // Pass any parameters that help estimating fees
-    // This includes `assetOwner` and `assetReference` that are not used by some apps that only rely on `subAccountId`
-    // TODO Remove `assetOwner` and `assetReference` in order to maintain one unique way of identifying the type of asset
-    // https://ledgerhq.atlassian.net/browse/LIVE-24044
+    // The asset (assetReference/assetOwner) is derived inside transactionToIntent from `subAccountId`
+    // (the single source of truth) via bridgeApi.getAssetFromToken.
     const intent = transactionToIntent(
       account,
       {
         ...transaction,
-        assetOwner,
-        assetReference,
         amount,
       },
+      bridgeApi.getAssetFromToken,
       bridgeApi.computeIntentType,
       coinModuleApi.craftTransactionData,
     );
@@ -130,12 +111,7 @@ export function genericPrepareTransaction(
         : computeUseAllAmount(estimation, getNativeSpendableAfterPending(account));
     }
 
-    if (
-      bnEq(transaction.fees, fees) &&
-      bnEq(transaction.amount, nextAmount) &&
-      (transaction.assetReference ?? "") === assetReference &&
-      (transaction.assetOwner ?? "") === assetOwner
-    ) {
+    if (bnEq(transaction.fees, fees) && bnEq(transaction.amount, nextAmount)) {
       return transaction;
     }
 
@@ -143,8 +119,6 @@ export function genericPrepareTransaction(
       ...transaction,
       fees,
       amount: nextAmount,
-      assetReference,
-      assetOwner,
       customFees: {
         parameters: {
           fees: customParametersFees ? new BigNumber(customParametersFees.toString()) : undefined,
@@ -174,27 +148,4 @@ export function genericPrepareTransaction(
 
     return next;
   };
-}
-
-export async function getAssetInfos(
-  tr: GenericTransaction,
-  owner: string,
-  getAssetFromToken: (token: TokenCurrency, owner: string) => AssetInfo,
-): Promise<{
-  assetReference: string;
-  assetOwner: string;
-}> {
-  if (tr.subAccountId) {
-    const { token } = await decodeTokenAccountId(tr.subAccountId);
-
-    if (!token) return assetInfosFallback(tr);
-
-    const asset = getAssetFromToken(token, owner);
-
-    return {
-      assetOwner: ("assetOwner" in asset && asset.assetOwner) || "",
-      assetReference: ("assetReference" in asset && asset.assetReference) || "",
-    };
-  }
-  return assetInfosFallback(tr);
 }

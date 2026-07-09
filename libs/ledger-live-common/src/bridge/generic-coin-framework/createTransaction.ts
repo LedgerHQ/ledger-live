@@ -28,8 +28,6 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         memoType: null,
         useAllAmount: false,
         mode: "send",
-        assetReference: "",
-        assetOwner: "",
         networkInfo: null,
       };
     case "tezos":

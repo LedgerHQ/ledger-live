@@ -5,7 +5,6 @@ import { transactionToIntent } from "../utils";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "../types";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 
 jest.mock("../api", () => ({
@@ -67,6 +66,7 @@ describe("genericPrepareTransaction", () => {
     expect(transactionToIntent).toHaveBeenCalledWith(
       account,
       expect.objectContaining(baseTransaction),
+      expect.any(Function),
       undefined,
       undefined,
     );
@@ -434,20 +434,12 @@ describe("genericPrepareTransaction", () => {
     expect((result as any).amount.toString()).toBe("70");
   });
 
-  it("fills 'assetOwner' and 'assetReference' from 'subAccountId' for retro compatibility", async () => {
-    setupMockCryptoAssetsStore({
-      findTokenById: tokenId =>
-        Promise.resolve(tokenId === "usdc" ? ({ id: tokenId } as TokenCurrency) : undefined),
-    });
+  it("forwards getAssetFromToken to transactionToIntent so the asset is derived from subAccountId", async () => {
     (getCoinModuleApi as jest.Mock).mockReturnValue({
       estimateFees: () => Promise.resolve({ value: 0n }),
     });
-    (getBridgeApi as jest.Mock).mockResolvedValue({
-      getAssetFromToken: jest.fn().mockImplementation((token: TokenCurrency, owner: string) => ({
-        assetOwner: owner,
-        assetReference: token.id,
-      })),
-    });
+    const getAssetFromToken = jest.fn();
+    (getBridgeApi as jest.Mock).mockResolvedValue({ getAssetFromToken });
     const prepareTransaction = genericPrepareTransaction("testnet", "local");
 
     await prepareTransaction(
@@ -471,9 +463,8 @@ describe("genericPrepareTransaction", () => {
       {
         subAccountId: "test-sub-account+usdc",
         amount: new BigNumber(10),
-        assetOwner: "test-account-address",
-        assetReference: "usdc",
       },
+      getAssetFromToken,
       undefined,
       undefined,
     );

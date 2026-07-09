@@ -94,15 +94,23 @@ export const fromTransactionRaw = (rawTx: EvmTransactionRaw): EvmTransaction => 
     type: rawTx.type ?? 0, // if rawTx.type is undefined, transaction will be considered legacy and therefore type 0
   };
 
-  // Restore assetReference and assetOwner when present in the raw.
-  // These fields can be present in the transactionRaw produced by `toGenericTransactionRaw`
-  // (used in buildOptimisticOperation), so we map them back to the transaction here to
-  // support the edit-transaction flow on previously-broadcast token operations.
-  if (rawTx.assetReference) {
-    (tx as Record<string, unknown>).assetReference = rawTx.assetReference;
-  }
-  if (rawTx.assetOwner) {
-    (tx as Record<string, unknown>).assetOwner = rawTx.assetOwner;
+  // The token identity is restored from `subAccountId` (carried by `...common` via
+  // fromTransactionCommonRaw and serialized in `toGenericTransactionRaw`), which is the single
+  // source of truth. This supports the edit-transaction flow on previously-broadcast token operations.
+  //
+  // Backward-compat (LIVE-24044): pre-upgrade pending token ops may only have `assetReference`/`assetOwner`
+  // on the raw. New raws rely on `subAccountId`; only fall back to legacy fields when it's absent. Remove
+  // once pre-upgrade pending ops can no longer exist (they self-heal on the next sync).
+  if (!rawTx.subAccountId) {
+    const legacyRaw = rawTx as Record<string, unknown>;
+    // Only restore non-empty legacy values, matching the previous truthy check (an empty string is
+    // not a meaningful token identifier and would just add noise).
+    if (typeof legacyRaw.assetReference === "string" && legacyRaw.assetReference) {
+      (tx as Record<string, unknown>).assetReference = legacyRaw.assetReference;
+    }
+    if (typeof legacyRaw.assetOwner === "string" && legacyRaw.assetOwner) {
+      (tx as Record<string, unknown>).assetOwner = legacyRaw.assetOwner;
+    }
   }
 
   if (rawTx.data) {

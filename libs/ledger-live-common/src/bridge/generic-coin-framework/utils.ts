@@ -446,17 +446,20 @@ function defaultComputeIntentType(transaction: GenericTransaction): string {
  *
  * @param account - The account initiating the transaction. Contains details such as the sender's address.
  * @param transaction - The transaction object containing details about the operation to be performed.
- *   - `assetOwner` (optional): The issuer of the asset, if applicable.
- *   - `assetReference` (optional): The code of the asset, if applicable.
- *   - `mode` (optional): The mode of the transaction, e.g., "changetrust" or "send".
+ *   - `subAccountId` (optional): identifies the token being transacted; the single source of truth for token sends.
+ *   - `mode` (optional): The mode of the transaction, e.g., "changeTrust" or "send".
  *   - `fees` (optional): The fees associated with the transaction.
  *   - `memoType` (optional): The type of memo to attach to the transaction.
  *   - `memoValue` (optional): The value of the memo to attach to the transaction.
+ * @param getAssetFromToken - An optional function (from the family BridgeApi) that derives the asset
+ *   (assetReference/assetOwner) from a TokenAccount's token, for token sends identified by `subAccountId`.
  * @param computeIntentType - An optional function to compute the intent type that supersedes the default implementation if present
  *
  * @returns A `TransactionIntent` object containing the standardized representation of the transaction.
  *   - Includes details such as type, sender, recipient, amount, fees, asset, and an optional memo.
- *   - If `assetReference` and `assetOwner` are provided, the asset is represented as a token.
+ *   - For a token send, the asset is derived from the `subAccountId`'s TokenAccount via `getAssetFromToken`.
+ *   - When no sub-account exists yet (e.g. stellar `changeTrust`), the asset is read from the family
+ *     transaction's own `assetReference`/`assetOwner` fields.
  *   - If `memoType` and `memoValue` are provided, a memo is included; otherwise, a default memo of type "NO_MEMO" is added.
  *
  * @throws An error if the transaction mode is unsupported.
@@ -464,6 +467,7 @@ function defaultComputeIntentType(transaction: GenericTransaction): string {
 export function transactionToIntent(
   account: Account,
   transaction: GenericTransaction,
+  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo,
   computeIntentType?: (transaction: GenericTransaction) => string,
   craftTransactionData?: (intent: TransactionIntent) => TxData,
 ): GenericCoinFrameworkTransactionIntent {
@@ -487,19 +491,37 @@ export function transactionToIntent(
         : undefined,
     ...getDelegationIntentFields(delegationMode, transaction),
   };
-  if (transaction.assetReference && transaction.assetOwner) {
-    const { subAccountId } = transaction;
-    const { subAccounts } = account;
+  const { subAccountId } = transaction;
+  const tokenAccount = subAccountId
+    ? account.subAccounts?.find(ta => ta.id === subAccountId)
+    : undefined;
 
-    const tokenAccount = subAccountId ? subAccounts?.find(ta => ta.id === subAccountId) : null;
+  if (tokenAccount?.type === "TokenAccount" && getAssetFromToken) {
+    // Token send: `subAccountId` is the single source of truth. The asset (assetReference/assetOwner)
+    // is derived from the TokenAccount's token, not carried on the transaction anymore.
+    res.asset = getAssetFromToken(tokenAccount.token, account.freshAddress);
+  } else {
+    // Fallback for families that carry the asset directly on the transaction when no sub-account
+    // exists yet (e.g. stellar `changeTrust`/AddAsset). These fields are no longer declared on
+    // `GenericTransaction`, so we read them via `in` narrowing off the concrete family transaction.
+    const assetReference =
+      "assetReference" in transaction && typeof transaction.assetReference === "string"
+        ? transaction.assetReference
+        : undefined;
+    const assetOwner =
+      "assetOwner" in transaction && typeof transaction.assetOwner === "string"
+        ? transaction.assetOwner
+        : undefined;
 
-    res.asset = {
-      type: tokenAccount?.token.tokenType ?? "token",
-      assetReference: transaction.assetReference,
-      name: tokenAccount?.token.name ?? transaction.assetReference, // NOTE: for stellar, assetReference = tokenAccount.name, this is futureproofing
-      unit: account.currency.units[0],
-      assetOwner: transaction.assetOwner,
-    };
+    if (assetReference && assetOwner) {
+      res.asset = {
+        type: "token",
+        assetReference,
+        name: assetReference,
+        unit: account.currency.units[0],
+        assetOwner,
+      };
+    }
   }
 
   if (typeof transaction.tag === "number") {
@@ -558,16 +580,18 @@ function toGenericTransactionRaw(transaction: GenericTransaction): GenericTransa
     }
   }
 
-  const stringFieldsToPropagate = [
-    "memoType",
-    "memoValue",
-    "assetReference",
-    "assetOwner",
-  ] as const;
+  const stringFieldsToPropagate = ["memoType", "memoValue"] as const;
   for (const field of stringFieldsToPropagate) {
     if (field in transaction) {
       raw[field] = transaction[field];
     }
+  }
+
+  // `subAccountId` is the single source of truth identifying a token. Serializing it lets the
+  // edit-transaction flow restore the token from the raw (e.g. EVM), without relying on
+  // assetReference/assetOwner anymore. Only persist a meaningful (non-empty) value.
+  if (transaction.subAccountId) {
+    raw.subAccountId = transaction.subAccountId;
   }
 
   const numberFieldsToPropagate = ["tag", "type", "chainId"] as const;

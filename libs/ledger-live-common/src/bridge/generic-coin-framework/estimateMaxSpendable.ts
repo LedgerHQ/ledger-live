@@ -36,6 +36,7 @@ export function genericEstimateMaxSpendable(
       transactionToIntent(
         mainAccount,
         draftTransaction,
+        bridgeApi.getAssetFromToken,
         bridgeApi.computeIntentType,
         coinModuleApi.craftTransactionData,
       ),
