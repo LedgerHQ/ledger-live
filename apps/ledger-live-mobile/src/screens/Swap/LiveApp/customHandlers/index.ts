@@ -20,6 +20,7 @@ import { getTransactionByHash } from "./getTransactionByHash";
 import { saveSwapToHistory } from "./saveSwapToHistory";
 import { useCustomExchangeHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
+import { openSwapTransactionStatusDrawer } from "~/reducers/swapTransactionStatusDrawer";
 
 export type NavigationType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
   getState(): NavigationState | undefined;
@@ -103,11 +104,19 @@ export function useSwapCustomHandlers(
     });
   }, [navigation]);
 
-  const navigateToSwapHistory = useCallback(() => {
-    navigation.navigate(NavigatorName.SwapSubScreens, {
-      screen: ScreenName.SwapHistory,
-    });
-  }, [navigation]);
+  const navigateToSwapHistory = useCallback(
+    ({ params }: { params: { swapId?: string; provider?: string } }) => {
+      navigation.navigate(NavigatorName.SwapSubScreens, {
+        screen: ScreenName.SwapHistory,
+      });
+      if (params.swapId) {
+        dispatch(
+          openSwapTransactionStatusDrawer({ swapId: params.swapId, provider: params.provider }),
+        );
+      }
+    },
+    [navigation, dispatch],
+  );
 
   const walletAPISwapHandlers = useCustomExchangeHandlers({
     manifest,

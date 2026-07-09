@@ -204,11 +204,29 @@ describe("useSwapCustomHandlers", () => {
       const handler = (result.current as Record<string, unknown>)["custom.swapRedirectToHistory"];
       expect(typeof handler).toBe("function");
 
-      (handler as () => void)();
+      (handler as (args: { params: { swapId?: string; provider?: string } }) => void)({
+        params: {},
+      });
 
       expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SwapSubScreens, {
         screen: ScreenName.SwapHistory,
       });
+    });
+
+    it("opens the status drawer when swapId is provided", () => {
+      const { result } = render();
+
+      const handler = (result.current as Record<string, unknown>)["custom.swapRedirectToHistory"];
+
+      (handler as (args: { params: { swapId?: string; provider?: string } }) => void)({
+        params: { swapId: "swap-123", provider: "changelly" },
+      });
+
+      expect(MOCK_DISPATCH).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: { swapId: "swap-123", provider: "changelly" },
+        }),
+      );
     });
   });
 

@@ -56,6 +56,7 @@ import {
   useGetSwapTrackingProperties,
   useRedirectToSwapHistory,
 } from "../utils/index";
+import { openSwapTransactionStatusDialog } from "LLD/features/SwapTransactionStatusDialog/swapTransactionStatusDialog";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import { useSwapDefaultAccounts } from "./useSwapDefaultAccounts";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
@@ -405,8 +406,16 @@ const SwapWebView = ({
           return Promise.resolve({});
         }
       },
-      "custom.swapRedirectToHistory": async () => {
-        redirectToHistory();
+      "custom.swapRedirectToHistory": async ({
+        params,
+      }: {
+        params: { swapId?: string; provider?: string };
+      }) => {
+        const { swapId, provider } = params;
+        redirectToHistory({ swapId });
+        if (swapId) {
+          dispatch(openSwapTransactionStatusDialog({ swapId, provider }));
+        }
       },
       "custom.saveSwapToHistory": async ({
         params,
