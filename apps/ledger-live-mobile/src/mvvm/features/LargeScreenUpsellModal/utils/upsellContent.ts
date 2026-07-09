@@ -1,7 +1,6 @@
 import { Image } from "react-native";
 import {
   GenericAwarenessModalLayout,
-  createThemedImageUrls,
   type GenericAwarenessModalFeatureIntro,
 } from "@ledgerhq/live-common/genericAwarenessModal";
 import { buildLargeScreenUpsellCtaLink } from "./upsellCta";
@@ -20,17 +19,18 @@ export type BuildLargeScreenUpsellContentInput = Readonly<{
 }>;
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const optedInHeroAsset = require("../assets/large_screen_upsell_opted_in.webp");
+const lightHeroAsset = require("../assets/large_screen_upsell_light.webp");
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const optedOutHeroAsset = require("../assets/large_screen_upsell_opted_out.webp");
+const darkHeroAsset = require("../assets/large_screen_upsell_dark.webp");
 
-const optedInHeroImageUri =
-  Image.resolveAssetSource(optedInHeroAsset).uri ?? optedInHeroAsset.testUri ?? "";
-const optedOutHeroImageUri =
-  Image.resolveAssetSource(optedOutHeroAsset).uri ?? optedOutHeroAsset.testUri ?? "";
+const lightHeroImageUri =
+  Image.resolveAssetSource(lightHeroAsset).uri ?? lightHeroAsset.testUri ?? "";
+const darkHeroImageUri = Image.resolveAssetSource(darkHeroAsset).uri ?? darkHeroAsset.testUri ?? "";
 
-const optedInHeroUrls = createThemedImageUrls(optedInHeroImageUri);
-const optedOutHeroUrls = createThemedImageUrls(optedOutHeroImageUri);
+const heroImageUrls = {
+  imageUrlLight: lightHeroImageUri,
+  imageUrlDark: darkHeroImageUri,
+} as const;
 
 export function buildLargeScreenUpsellContent({
   id,
@@ -53,12 +53,11 @@ export function buildLargeScreenUpsellContent({
     variant === "opted_in"
       ? "largeScreenUpsellModal.optedIn.subtitle"
       : "largeScreenUpsellModal.optedOut.subtitle";
-  const imageUrls = variant === "opted_in" ? optedInHeroUrls : optedOutHeroUrls;
 
   return {
     id,
     layout: GenericAwarenessModalLayout.FeatureIntro,
-    ...imageUrls,
+    ...heroImageUrls,
     title: t(titleKey, { discount: discountPercentage }),
     subtitle: t(subtitleKey, { discount: discountPercentage }),
     primaryButtonLabel: t("largeScreenUpsellModal.cta"),
