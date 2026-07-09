@@ -32,6 +32,7 @@ export class SwapPage extends WebViewAppPage {
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
   private fromAccountCoinSelector = "from-account-coin-selector";
   private fromAccountAmountInput = "from-account-amount-input";
+  private readonly fromAccountError = "from-account-error";
   private fromAccountBalance = "from-account-balance";
   private toAccountCoinSelector = "to-account-coin-selector";
   private readonly toAccountAccountNameTag = "to-account-account-name-tag";
@@ -486,8 +487,15 @@ export class SwapPage extends WebViewAppPage {
   @step("Verify swap amount error message match: $0")
   async verifySwapAmountErrorMessageIsCorrect(message: string | RegExp) {
     const webview = await this.getWebView();
-    const errorSpan = await webview.getByTestId("from-account-error").textContent();
+    const errorSpan = await webview.getByTestId(this.fromAccountError).textContent();
     expect(errorSpan).toMatch(message);
+  }
+
+  @step("Verify swap cross account error message match: $0")
+  async verifySwapCrossAccountErrorMessageIsCorrect(message: string | RegExp) {
+    const webview = await this.getWebView();
+    // Auto-retrying locator assertion: waits for the cross-account warning to render before matching.
+    await expect(webview.getByTestId(this.fromAccountError)).toContainText(message);
   }
 
   @step("Check insufficient funds warning banner is visible")

@@ -350,6 +350,13 @@ export default class SwapLiveAppPage {
     }
   }
 
+  @Step("Verify swap cross account error message match: $0")
+  async verifySwapCrossAccountErrorMessageIsCorrect(expectedMessage: string | RegExp) {
+    // Cross-account warnings render in the same from-account error slot as amount errors, so reuse
+    // the sibling check: a string stays a literal substring (toContain), only a RegExp is a pattern.
+    await this.verifySwapAmountErrorMessageIsCorrect(expectedMessage);
+  }
+
   @Step("Verify swap CTA banner displayed")
   async checkCtaBanner(quotesVisible: boolean) {
     const showDetailsLink = quotesVisible
