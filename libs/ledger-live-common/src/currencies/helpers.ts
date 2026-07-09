@@ -1,5 +1,5 @@
 import { Currency, CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 export function isCryptoCurrency(currency: Currency): currency is CryptoCurrency {
   return currency.type === "CryptoCurrency";
