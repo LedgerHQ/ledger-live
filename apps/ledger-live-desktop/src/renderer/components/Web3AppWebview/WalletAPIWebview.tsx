@@ -206,21 +206,23 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           },
         });
       },
-      "device.transport": ({ appName, onSuccess, onCancel }) => {
+      "device.transport": ({ appName, allowManager, onSuccess, onCancel }) => {
         ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_CONNECT_DEVICE", {
             appName,
+            allowManager,
             onResult: onSuccess,
             onCancel,
           }),
         );
       },
-      "device.select": ({ appName, onSuccess, onCancel }) => {
+      "device.select": ({ appName, allowManager, onSuccess, onCancel }) => {
         ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_CONNECT_DEVICE", {
             appName,
+            allowManager,
             onResult: onSuccess,
             onCancel,
           }),

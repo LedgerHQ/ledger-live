@@ -1,6 +1,5 @@
 import { useMemo, useState, useEffect, useRef, useCallback, RefObject } from "react";
 import { useDispatch } from "react-redux";
-import semver from "semver";
 import { intervalToDuration } from "date-fns";
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-api-server";
@@ -25,7 +24,7 @@ import {
   currencyToWalletAPICurrency,
   setWalletApiIdForAccountId,
 } from "./converters";
-import { isWalletAPISupportedCurrency } from "./helpers";
+import { isAppVersionOutOfRange, isWalletAPISupportedCurrency } from "./helpers";
 import {
   WalletAPICurrency,
   AppManifest,
@@ -148,13 +147,27 @@ export interface UiHook {
     mainAccount: Account,
     optimisticOperation: Operation,
   ) => void;
+  /**
+   * Opens a device transport for the wallet app.
+   * When `allowManager` is true, the platform leaves the device on the
+   * Manager screen and the subscribed transport can be used to issue
+   * Manager APDUs. In that mode `appName` is ignored and `onSuccess` is
+   * called with the BOLOS dashboard's app-and-version (name: "BOLOS",
+   * version: firmware version, flags: SE flags), matching what
+   * `getAppAndVersion` would return on a device sitting at Manager.
+   */
   "device.transport": (params: {
     appName: string | undefined;
+    allowManager?: boolean;
     onSuccess: (result: AppResult) => void;
     onCancel: () => void;
   }) => void;
+  /**
+   * See `device.transport` for the `allowManager` semantics.
+   */
   "device.select": (params: {
     appName: string | undefined;
+    allowManager?: boolean;
     onSuccess: (result: AppResult) => void;
     onCancel: () => void;
   }) => void;
@@ -1055,7 +1068,7 @@ export function useWalletAPIServer({
 
     server.setHandler(
       "device.transport",
-      ({ appName, appVersionRange, devices }) =>
+      ({ appName, appVersionRange, devices, allowManager }) =>
         new Promise((resolve, reject) => {
           if (device.ref.current) {
             return reject(new Error("Device already opened"));
@@ -1066,6 +1079,7 @@ export function useWalletAPIServer({
           let done = false;
           return uiDeviceTransport({
             appName,
+            allowManager,
             onSuccess: ({ device: deviceParam, appAndVersion }) => {
               if (done) return;
               done = true;
@@ -1079,12 +1093,8 @@ export function useWalletAPIServer({
                 reject(new Error("Device not in the devices list"));
                 return;
               }
-              if (
-                appVersionRange &&
-                appAndVersion &&
-                semver.satisfies(appAndVersion.version, appVersionRange)
-              ) {
-                reject(new Error("App version doesn't satisfies the range"));
+              if (isAppVersionOutOfRange(appVersionRange, appAndVersion)) {
+                reject(new Error("App version doesn't satisfy the range"));
                 return;
               }
               // TODO handle appFirmwareRange & seeded params
@@ -1107,7 +1117,7 @@ export function useWalletAPIServer({
 
     server.setHandler(
       "device.select",
-      ({ appName, appVersionRange, devices }) =>
+      ({ appName, appVersionRange, devices, allowManager }) =>
         new Promise((resolve, reject) => {
           if (device.ref.current) {
             return reject(new Error("Device already opened"));
@@ -1118,6 +1128,7 @@ export function useWalletAPIServer({
           let done = false;
           return uiDeviceSelect({
             appName,
+            allowManager,
             onSuccess: ({ device: deviceParam, appAndVersion }) => {
               if (done) return;
               done = true;
@@ -1131,12 +1142,8 @@ export function useWalletAPIServer({
                 reject(new Error("Device not in the devices list"));
                 return;
               }
-              if (
-                appVersionRange &&
-                appAndVersion &&
-                semver.satisfies(appAndVersion.version, appVersionRange)
-              ) {
-                reject(new Error("App version doesn't satisfies the range"));
+              if (isAppVersionOutOfRange(appVersionRange, appAndVersion)) {
+                reject(new Error("App version doesn't satisfy the range"));
                 return;
               }
               resolve(deviceParam.deviceId);
@@ -1150,7 +1157,7 @@ export function useWalletAPIServer({
           });
         }),
     );
-  }, [device.ref, manifest, server, tracking, uiDeviceSelect]);
+  }, [device, manifest, server, tracking, uiDeviceSelect]);
 
   useEffect(() => {
     server.setHandler("device.open", params => {

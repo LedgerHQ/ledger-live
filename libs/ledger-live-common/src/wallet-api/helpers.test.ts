@@ -1,4 +1,12 @@
-import { getInitialURL } from "./helpers";
+import type { DeviceInfo } from "@ledgerhq/types-live";
+import type { Result as ManagerResult } from "../hw/actions/manager";
+import type { AppAndVersion } from "../hw/connectApp";
+import {
+  bolosAppAndVersionFromDeviceInfo,
+  getInitialURL,
+  isAppVersionOutOfRange,
+  managerResultToAppResult,
+} from "./helpers";
 
 describe("wallet-api helpers", () => {
   describe("isWhitelistedDomain (via getInitialURL)", () => {
@@ -530,6 +538,61 @@ describe("wallet-api helpers", () => {
       const resultUrl = new URL(result);
       expect(resultUrl.searchParams.get("params")).toBe(JSON.stringify({ foo: "bar" }));
       expect(result).not.toContain("other");
+    });
+  });
+
+  describe("bolosAppAndVersionFromDeviceInfo", () => {
+    it("should synthesize a BOLOS AppAndVersion from the device info", () => {
+      const seFlags = Buffer.from([42]);
+      const deviceInfo = { version: "2.2.3", seFlags } as unknown as DeviceInfo;
+
+      expect(bolosAppAndVersionFromDeviceInfo(deviceInfo)).toEqual({
+        name: "BOLOS",
+        version: "2.2.3",
+        flags: seFlags,
+      });
+    });
+  });
+
+  describe("managerResultToAppResult", () => {
+    it("should map the device through and synthesize the BOLOS appAndVersion", () => {
+      const device = { deviceId: "device-1", modelId: "nanoX" };
+      const seFlags = Buffer.from([7]);
+      const deviceInfo = { version: "1.4.0", seFlags } as unknown as DeviceInfo;
+      const result = {
+        device,
+        deviceInfo,
+        result: null,
+      } as unknown as ManagerResult;
+
+      expect(managerResultToAppResult(result)).toEqual({
+        device,
+        appAndVersion: { name: "BOLOS", version: "1.4.0", flags: seFlags },
+      });
+    });
+  });
+
+  describe("isAppVersionOutOfRange", () => {
+    const appAndVersion: AppAndVersion = { name: "BOLOS", version: "2.2.3", flags: 0 };
+
+    it("should return false when the version satisfies the range", () => {
+      expect(isAppVersionOutOfRange(">=2.0.0", appAndVersion)).toBe(false);
+    });
+
+    it("should return true when the version does not satisfy the range", () => {
+      expect(isAppVersionOutOfRange(">=3.0.0", appAndVersion)).toBe(true);
+    });
+
+    it("should return false when no range is provided", () => {
+      expect(isAppVersionOutOfRange(undefined, appAndVersion)).toBe(false);
+    });
+
+    it("should return false when no appAndVersion is provided", () => {
+      expect(isAppVersionOutOfRange(">=3.0.0", undefined)).toBe(false);
+    });
+
+    it("should return false when appAndVersion is null", () => {
+      expect(isAppVersionOutOfRange(">=3.0.0", null)).toBe(false);
     });
   });
 });

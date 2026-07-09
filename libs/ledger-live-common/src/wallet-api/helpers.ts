@@ -1,7 +1,12 @@
+import semver from "semver";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import type { DeviceInfo } from "@ledgerhq/types-live";
 import { isCryptoCurrency, isTokenCurrency } from "../currencies";
 import { Currency } from "@ledgerhq/types-cryptoassets";
+import type { AppResult } from "../hw/actions/app";
+import type { Result as ManagerResult } from "../hw/actions/manager";
+import type { AppAndVersion } from "../hw/connectApp";
 import type {
   WalletAPICurrency,
   WalletAPISupportedCurrency,
@@ -215,3 +220,35 @@ export function objectToURLSearchParams(obj: Record<string, unknown>): URLSearch
 
   return searchParams;
 }
+
+/**
+ * The dashboard firmware (BOLOS) responds to GET_APP_AND_VERSION with its
+ * own name and the firmware version when no app is open. We synthesize the
+ * same shape here so that wallet-api `device.transport` / `device.select`
+ * with `allowManager: true` resolve with a consistent `AppResult` payload
+ * without needing an extra APDU round-trip.
+ */
+export const bolosAppAndVersionFromDeviceInfo = (deviceInfo: DeviceInfo): AppAndVersion => ({
+  name: "BOLOS",
+  version: deviceInfo.version,
+  flags: deviceInfo.seFlags,
+});
+
+export const managerResultToAppResult = (result: ManagerResult): AppResult => ({
+  device: result.device,
+  appAndVersion: bolosAppAndVersionFromDeviceInfo(result.deviceInfo),
+});
+
+/**
+ * Returns true when the resolved version falls outside the requested range.
+ * In the `allowManager` flow the version is the BOLOS firmware version (see
+ * `bolosAppAndVersionFromDeviceInfo`), which is validated against
+ * `appVersionRange` the same way an app version would be.
+ */
+export const isAppVersionOutOfRange = (
+  appVersionRange: string | undefined,
+  appAndVersion: AppAndVersion | null | undefined,
+): boolean =>
+  !!appVersionRange &&
+  !!appAndVersion &&
+  !semver.satisfies(appAndVersion.version, appVersionRange);
