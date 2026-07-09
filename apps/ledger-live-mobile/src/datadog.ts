@@ -145,6 +145,9 @@ export function broadcastLogger(event: LogEvent): void {
       event: {
         ...rest,
       },
+      // Datadog does not provide a function parameter for error,
+      // So we put it in the context
+      error,
     });
   }
 }
