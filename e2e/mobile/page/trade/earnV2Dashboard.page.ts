@@ -120,10 +120,10 @@ export default class EarnV2DashboardPage {
   // --- ETH deposit webview flow (amount -> provider -> partner dapp) ---
 
   ethAmountInput = "amount-input-section-input";
-  ethAmountContinueCta = "amount-continue-cta";
+  ethAmountContinueCta = "input-button-mobile";
   ethProviderPanel = "eth-provider-panel";
   ethProviderAllFilterChip = "filter-chip-all";
-  ethDepositProviderCta = "text-button-cta";
+  ethDepositProviderCta = "select-provider-button-mobile";
   // The provider card test id suffix is the backend `ID` enum value, which differs from the e2e
   // provider value, so map the providers we exercise.
   private static readonly ethProviderCardIds: Record<string, string> = {
