@@ -14,6 +14,10 @@ import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/accoun
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "@react-navigation/native";
 import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
+import {
+  isCompoundRewardSupported,
+  resolveClaimRewardMode,
+} from "@ledgerhq/live-common/families/cosmos/logic";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
 import { ScreenName } from "~/const";
@@ -66,46 +70,28 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
   const unit = useAccountUnit(mainAccount);
   const currency = getAccountCurrency(mainAccount);
   const bridgeTransaction = useBridgeTransaction(bridge, () => {
-    const tx = route.params.transaction;
-
-    if (!tx) {
-      const t = bridge.createTransaction(mainAccount);
+    const initialTx = route.params.transaction;
+    // Normalize an injected tx's mode at creation so an unsupported compound can't reach signing.
+    if (initialTx) {
       return {
         account,
-        transaction: bridge.updateTransaction(t, {
-          mode: "claimReward",
-          validators: [
-            {
-              address: route.params.validator.validatorAddress,
-              amount: route.params.value,
-            },
-          ],
+        transaction: bridge.updateTransaction(initialTx, {
+          mode: resolveClaimRewardMode(currency.id, initialTx.mode),
         }),
       };
     }
-
-    if (!tx) {
-      const t = bridge.createTransaction(mainAccount);
-      return {
-        account,
-        transaction: bridge.updateTransaction(t, {
-          mode: "claimReward",
-          validators: [
-            {
-              address: route.params.validator.validatorAddress,
-              amount: route.params.value,
-            },
-          ],
-
-          /** @TODO remove this once the bridge handles it */
-          recipient: mainAccount.freshAddress,
-        }),
-      };
-    }
-
+    const t = bridge.createTransaction(mainAccount);
     return {
       account,
-      transaction: tx,
+      transaction: bridge.updateTransaction(t, {
+        mode: "claimReward",
+        validators: [
+          {
+            address: route.params.validator.validatorAddress,
+            amount: route.params.value,
+          },
+        ],
+      }),
     };
   });
   const { status, updateTransaction } = bridgeTransaction;
@@ -127,6 +113,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
     },
     [transaction, bridge, updateTransaction],
   );
+  const compoundSupported = isCompoundRewardSupported(currency.id);
   const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
   const openInfoModal = useCallback(() => {
     setInfoModalOpen(true);
@@ -151,13 +138,17 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
       ]}
     >
       <View style={styles.main}>
-        <ToggleButton value={mode} options={options} onChange={onChangeMode} />
-        <TouchableOpacity onPress={openInfoModal} style={styles.info}>
-          <LText semiBold style={styles.infoLabel} color="grey">
-            <Trans i18nKey="cosmos.claimRewards.flow.steps.method.compoundOrCashIn" />
-          </LText>
-          <Info size={16} color={colors.grey} />
-        </TouchableOpacity>
+        {compoundSupported && (
+          <>
+            <ToggleButton value={mode} options={options} onChange={onChangeMode} />
+            <TouchableOpacity onPress={openInfoModal} style={styles.info}>
+              <LText semiBold style={styles.infoLabel} color="grey">
+                <Trans i18nKey="cosmos.claimRewards.flow.steps.method.compoundOrCashIn" />
+              </LText>
+              <Info size={16} color={colors.grey} />
+            </TouchableOpacity>
+          </>
+        )}
         <View style={styles.spacer} />
         <View style={styles.sectionLabel}>
           <LText semiBold style={styles.subLabel} color="grey">
