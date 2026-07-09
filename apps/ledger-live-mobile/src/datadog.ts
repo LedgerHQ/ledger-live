@@ -14,7 +14,7 @@ import type {
   LogsConfigurationOptions,
 } from "@datadog/mobile-react-native";
 import type { LogEvent } from "@ledgerhq/live-common/hooks/useBroadcast";
-import type { Features } from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
 import { ScreenName } from "./const";
 import type { ViewNamePredicate } from "@datadog/mobile-react-navigation";
 import { EXCLUDED_ERROR_DESCRIPTION, EXCLUDED_LOGS_ERROR_NAME } from "./utils/constants";
@@ -93,7 +93,9 @@ export const initializeDatadogProvider = async (
       ...(resourceTracingSamplingRate !== undefined
         ? { resourceTraceSampleRate: resourceTracingSamplingRate }
         : {}),
-      ...(longTaskThresholdMs !== undefined ? { longTaskThresholdMs } : {}),
+      ...(longTaskThresholdMs !== undefined
+        ? { longTaskThresholdMs: longTaskThresholdMs === false ? 0 : longTaskThresholdMs }
+        : {}),
       ...(nativeLongTaskThresholdMs !== undefined
         ? {
             nativeLongTaskThresholdMs:
