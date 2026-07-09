@@ -1,0 +1,8 @@
+{
+  "name": "@domain/api-altcoins-sentiment",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

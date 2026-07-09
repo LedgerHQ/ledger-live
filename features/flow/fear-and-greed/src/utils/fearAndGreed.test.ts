@@ -5,7 +5,8 @@ import {
   isMoodIndexAvailable,
   FEAR_AND_GREED_COLORS,
   FEAR_AND_GREED_TRANSLATION_KEYS,
-} from "../fearAndGreed";
+  type FearAndGreedLevel,
+} from "./fearAndGreed";
 
 describe("Fear and Greed utils", () => {
   describe("getFearAndGreedLevel", () => {
@@ -50,7 +51,7 @@ describe("Fear and Greed utils", () => {
       { value: 70, level: "greed", color: "success" },
       { value: 90, level: "greedPlus", color: "success" },
     ])("should return $color for value $value ($level)", ({ value, level, color }) => {
-      expect(getFearAndGreedColorKey(value)).toBe(FEAR_AND_GREED_COLORS[level]);
+      expect(getFearAndGreedColorKey(value)).toBe(FEAR_AND_GREED_COLORS[level as FearAndGreedLevel]);
       expect(getFearAndGreedColorKey(value)).toBe(color);
     });
   });
@@ -64,7 +65,7 @@ describe("Fear and Greed utils", () => {
         { level: "greed", color: "success" },
         { level: "greedPlus", color: "success" },
       ])("should have correct color for $level", ({ level, color }) => {
-        expect(FEAR_AND_GREED_COLORS[level]).toBe(color);
+        expect(FEAR_AND_GREED_COLORS[level as FearAndGreedLevel]).toBe(color);
       });
     });
 
@@ -76,7 +77,7 @@ describe("Fear and Greed utils", () => {
         { level: "greed", key: "fearAndGreed.levels.greed" },
         { level: "greedPlus", key: "fearAndGreed.levels.greedPlus" },
       ])("should have correct key for $level", ({ level, key }) => {
-        expect(FEAR_AND_GREED_TRANSLATION_KEYS[level]).toBe(key);
+        expect(FEAR_AND_GREED_TRANSLATION_KEYS[level as FearAndGreedLevel]).toBe(key);
       });
     });
   });

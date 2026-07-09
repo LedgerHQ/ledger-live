@@ -198,11 +198,6 @@
       "types": "./lib-es/modularDrawer/__mocks__/*.d.ts",
       "default": "./lib-es/modularDrawer/__mocks__/*.js"
     },
-    "./cmc-client/__mocks__/*": {
-      "@ledgerhq/source": "./src/cmc-client/__mocks__/*.ts",
-      "types": "./lib-es/cmc-client/__mocks__/*.d.ts",
-      "default": "./lib-es/cmc-client/__mocks__/*.js"
-    },
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",

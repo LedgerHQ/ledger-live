@@ -4,7 +4,7 @@ import { useTranslation } from "~/context/Locale";
 import {
   getFearAndGreedColorKey,
   getFearAndGreedTranslationKey,
-} from "@ledgerhq/live-common/cmc-client/utils/fearAndGreed";
+} from "@features/flow-fear-and-greed";
 import FearAndGreedArc from "../FearAndGreedArc";
 import type { FearAndGreedCardProps } from "./types";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";

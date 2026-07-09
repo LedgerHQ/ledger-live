@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-fear-and-greed",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}
