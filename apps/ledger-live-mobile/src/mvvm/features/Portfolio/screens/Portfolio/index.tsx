@@ -27,6 +27,7 @@ import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
 import MarketBanner from "LLM/features/MarketBanner";
 import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/screens/GenericAwarenessModalDrawer";
 import { RecoverIntroPortfolioMount } from "LLM/features/BackupHub";
+import { LargeScreenUpsellModalPortfolioMount } from "LLM/features/LargeScreenUpsellModal";
 
 import {
   PortfolioAssetsSection,
@@ -207,6 +208,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       <AnalyticsConsentDrawer />
       <GenericAwarenessModalDrawer />
       <RecoverIntroPortfolioMount />
+      <LargeScreenUpsellModalPortfolioMount />
     </>
   );
 };
