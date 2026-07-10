@@ -66,7 +66,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | Tron RPC proxy | `tron.coin.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Solana RPC proxy | `solana.coin.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Ledger Earn API (grow `/v0/grow`, stakes `/v3/stakes`, DeFi vaults `/v1/defi/*`, Solana validators) | `earn.api.live.ledger.com` | [env](/libs/env/src/env.ts)<br>[wallet-cli](/apps/wallet-cli/src/wallet/earn/config.ts) | prod |
-| Solana validators summary | `earn-dashboard.aws.stg.ldg-tech.com`<br>_⚠️ staging host set as default_ | [env](/libs/env/src/env.ts) | staging |
+| Solana validators summary | `earn.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Solana testnet validators | `validators-solana.coin.ledger.com` | [env](/libs/env/src/env.ts) | testnet |
 | Sui node / GraphQL | `sui.coin.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Hedera mirror | `hedera.coin.ledger.com` | [env](/libs/env/src/env.ts) | prod |
