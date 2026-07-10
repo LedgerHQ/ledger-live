@@ -10,6 +10,7 @@ import {
 } from "./device/register-dmk-transport";
 import { walletCliDebug } from "./shared/log";
 import { colors, writeStderr } from "./shared/ui";
+import { isValidHex } from "./shared/hex";
 
 const DEFAULT_PORT = 8435;
 
@@ -71,7 +72,7 @@ function main(): void {
   const exchange = (apduHex: string): Promise<string> =>
     serialize(async () => {
       // Buffer.from(_, "hex") silently truncates invalid/odd-length input; reject it instead.
-      if (apduHex.length === 0 || apduHex.length % 2 !== 0 || !/^[0-9a-fA-F]+$/.test(apduHex)) {
+      if (!isValidHex(apduHex, { allowEmpty: false })) {
         throw new Error(`Invalid APDU hex: "${apduHex}"`);
       }
       const transport = await ensureWalletCliDmkTransport();
