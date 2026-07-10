@@ -29,7 +29,7 @@ const StakeBanner: React.FC<{ account: MinaAccount }> = ({ account }) => {
   const linkText = t("common.learnMore");
 
   const onClick = () => {
-    track("button_clicked", {
+    track("button_clicked2", {
       ...stakeDefaultTrack,
       delegation: hasDelegation ? "manage_delegation" : "stake",
       page: "Page Account",

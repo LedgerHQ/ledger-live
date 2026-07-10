@@ -31,7 +31,7 @@ const AccountHeaderManageActions: NonNullable<MinaFamily["accountHeaderManageAct
       label: hasDelegation
         ? t("mina.accountHeaderManageActions.changeDelegation")
         : t("mina.accountHeaderManageActions.earn"),
-      event: "button_clicked",
+      event: "button_clicked2",
       eventProperties: {
         button: "stake",
       },

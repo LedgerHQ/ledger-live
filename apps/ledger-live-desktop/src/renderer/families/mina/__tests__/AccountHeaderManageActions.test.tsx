@@ -42,7 +42,7 @@ describe("AccountHeaderManageActions", () => {
       { minimal: false },
     );
 
-    expect(result.current?.[0].event).toBe("button_clicked");
+    expect(result.current?.[0].event).toBe("button_clicked2");
     expect(result.current?.[0].eventProperties).toEqual({ button: "stake" });
   });
 
