@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui";
-import { RecentlyUsed as RecentlyUsedType } from "@ledgerhq/live-common/wallet-api/react";
+import { RecentlyUsed as RecentlyUsedType } from "@ledgerhq/live-common/wallet-api/react/types";
 import { SectionHeader } from "./SectionHeader";
 import { MinimumCard } from "./Card";
 import styled from "styled-components";

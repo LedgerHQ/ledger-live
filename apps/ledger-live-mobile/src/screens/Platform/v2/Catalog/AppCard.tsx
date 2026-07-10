@@ -9,7 +9,7 @@ import { AppIcon } from "../AppIcon";
 import { Theme } from "../../../../colors";
 import { BackgroundGradientHorizontal } from "~/components/TabBar/BackgroundGradient";
 import { Cta } from "./Cta";
-import { translateContent } from "@ledgerhq/live-common/wallet-api/logic";
+import { translateContent } from "@ledgerhq/live-common/wallet-api/logic/context";
 
 function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
   switch (branch) {

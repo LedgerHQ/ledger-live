@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex } from "@ledgerhq/react-ui";
-import { DisclaimerRaw, Categories } from "@ledgerhq/live-common/wallet-api/react";
+import { DisclaimerRaw, Categories } from "@ledgerhq/live-common/wallet-api/react/types";
 import { Search as SearchType } from "../../hooks";
 import { SectionHeader } from "../SectionHeader";
 import { Search } from "./Search";

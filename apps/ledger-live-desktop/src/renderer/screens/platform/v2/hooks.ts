@@ -4,14 +4,14 @@ import {
   BROWSE_SEARCH_OPTIONS,
   DISCOVER_STORE_KEY,
 } from "@ledgerhq/live-common/wallet-api/constants";
+import { useDisclaimerRaw } from "@ledgerhq/live-common/wallet-api/react/useDisclaimerRaw";
+import { useCategories } from "@ledgerhq/live-common/wallet-api/react/useCategories";
+import { useRecentlyUsed } from "@ledgerhq/live-common/wallet-api/react/useRecentlyUsed";
 import {
-  useDisclaimerRaw,
-  useCategories,
-  useRecentlyUsed,
   RecentlyUsedDB,
   DisclaimerRaw,
   Categories,
-} from "@ledgerhq/live-common/wallet-api/react";
+} from "@ledgerhq/live-common/wallet-api/react/types";
 import { SearchRaw, useSearch } from "@ledgerhq/live-common/hooks/useSearch";
 import { AppManifest, DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 import { useDispatch, useSelector } from "LLD/hooks/redux";

@@ -48,8 +48,8 @@ jest.mock("react-native-webview", () => {
 
 let callTransactionBroadcast: (() => void) | undefined;
 // Capture WalletAPI transaction.broadcast so the test can trigger dApp completion directly.
-jest.mock("@ledgerhq/live-common/wallet-api/react", () => {
-  const actual = jest.requireActual("@ledgerhq/live-common/wallet-api/react");
+jest.mock("@ledgerhq/live-common/wallet-api/react/useWalletAPIServer", () => {
+  const actual = jest.requireActual("@ledgerhq/live-common/wallet-api/react/useWalletAPIServer");
 
   return {
     ...actual,

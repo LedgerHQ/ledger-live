@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { SetCurrentAccountHistDb } from "@ledgerhq/live-common/wallet-api/react";
+import { SetCurrentAccountHistDb } from "@ledgerhq/live-common/wallet-api/react/types";
 import { NoAccountScreen } from "./NoAccountScreen";
 
 type Props = {

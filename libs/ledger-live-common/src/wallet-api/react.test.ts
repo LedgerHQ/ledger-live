@@ -7,9 +7,9 @@ import type { WalletHandlers } from "@ledgerhq/wallet-api-server";
 import { initialState as walletState } from "@ledgerhq/live-wallet/store";
 import { createFixtureAccount } from "../mock/fixtures/cryptoCurrencies";
 import type { TrackingAPI } from "./tracking";
-import type { useWalletAPIServerOptions } from "./react";
+import type { useWalletAPIServerOptions } from "./react/types";
 import { AccountPublicKeyUnavailable } from "../errors";
-import { accountGetPublicKeyLogic } from "./logic";
+import { accountGetPublicKeyLogic } from "./logic/accountGetPublicKey";
 import { getAccountIdFromWalletAccountId, resolveWalletApiSpendableBalance } from "./converters";
 
 const mockSetHandler = jest.fn();
@@ -52,8 +52,8 @@ jest.mock("./converters", () => ({
   resolveWalletApiSpendableBalance: jest.fn(),
 }));
 
-jest.mock("./logic", () => ({
-  ...jest.requireActual("./logic"),
+jest.mock("./logic/accountGetPublicKey", () => ({
+  ...jest.requireActual("./logic/accountGetPublicKey"),
   accountGetPublicKeyLogic: jest.fn(),
 }));
 
@@ -81,7 +81,7 @@ jest.mock("../currencies", () => ({
 }));
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { useWalletAPIServer } = require("./react");
+const { useWalletAPIServer } = require("./react/useWalletAPIServer");
 
 function getRegisteredHandler<Name extends keyof WalletHandlers>(name: Name): WalletHandlers[Name] {
   const calls = mockSetHandler.mock.calls.filter(([handlerName]) => handlerName === name);
@@ -271,12 +271,12 @@ describe("useWalletAPIServer", () => {
     expect(registeredHandlers).toContain("account.request");
   });
 
-  it("should not register account.request handler when uiHook callback is missing", () => {
+  it("should still register account.request handler when uiHook callback is missing (guards at call time)", () => {
     const options = createDefaultOptions({ uiHook: {} });
     renderHook(() => useWalletAPIServer(options));
 
     const registeredHandlers = mockSetHandler.mock.calls.map(([name]) => name);
-    expect(registeredHandlers).not.toContain("account.request");
+    expect(registeredHandlers).toContain("account.request");
   });
 });
 

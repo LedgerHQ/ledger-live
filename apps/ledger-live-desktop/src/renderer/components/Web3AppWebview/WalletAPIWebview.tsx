@@ -1,11 +1,8 @@
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import {
-  ExchangeType,
-  UiHook,
-  useConfig,
-  useWalletAPIServer,
-} from "@ledgerhq/live-common/wallet-api/react";
+import { ExchangeType, UiHook } from "@ledgerhq/live-common/wallet-api/handlers/types";
+import { useConfig } from "@ledgerhq/live-common/wallet-api/react/useConfig";
+import { useWalletAPIServer } from "@ledgerhq/live-common/wallet-api/react/useWalletAPIServer";
 import trackingWrapper, { TrackingAPI } from "@ledgerhq/live-common/wallet-api/tracking";
 import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
@@ -417,7 +414,14 @@ function useWebView(
     };
   }, [customWebviewStyle, widgetLoaded]);
 
-  return { webviewRef, widgetLoaded, onReload, webviewStyle, noAccounts, isLoadingAccounts };
+  return {
+    webviewRef,
+    widgetLoaded,
+    onReload,
+    webviewStyle,
+    noAccounts,
+    isLoadingAccounts,
+  };
 }
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(

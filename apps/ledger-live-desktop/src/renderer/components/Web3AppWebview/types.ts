@@ -1,5 +1,5 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { SetCurrentAccountHistDb } from "@ledgerhq/live-common/wallet-api/react";
+import { SetCurrentAccountHistDb } from "@ledgerhq/live-common/wallet-api/react/types";
 import { DiscoverDB, WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { WebContents } from "electron";
 

@@ -6,7 +6,7 @@ import { useCard } from "./hooks";
 import { Container, Subtitle } from "./Layout";
 import { useSelector } from "LLD/hooks/redux";
 import { languageSelector } from "~/renderer/reducers/settings";
-import { RecentlyUsedManifest } from "@ledgerhq/live-common/wallet-api/react";
+import { RecentlyUsedManifest } from "@ledgerhq/live-common/wallet-api/react/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 export function MinimumCard(props: PropsCard<RecentlyUsedManifest | LiveAppManifest>) {

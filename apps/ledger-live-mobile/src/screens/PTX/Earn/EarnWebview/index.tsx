@@ -4,7 +4,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "~/context/hooks";
 
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react/safeGetRefValue";
 import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
 import WebView from "react-native-webview";
 
