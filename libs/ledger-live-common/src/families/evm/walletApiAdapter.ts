@@ -6,7 +6,7 @@ import {
   GetWalletAPITransactionSignFlowInfos,
 } from "../../wallet-api/types";
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { AccountLike } from "@ledgerhq/types-live";
 import { DEFAULT_GAS_LIMIT, DEFAULT_NONCE } from "@ledgerhq/coin-evm/utils";
 

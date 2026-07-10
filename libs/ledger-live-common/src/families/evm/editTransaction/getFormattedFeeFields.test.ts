@@ -1,4 +1,4 @@
-import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
+import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getCoinConfig } from "@ledgerhq/coin-evm/config";
@@ -32,12 +32,12 @@ const testCases: {
   account: Account;
   type2Transaction: EvmTransaction;
   type0Transaction: EvmTransaction;
-}[] = Object.values(cryptocurrenciesById)
+}[] = Object.values(CRYPTO_CURRENCIES_REGISTRY)
   .filter(currency => currency.family === "evm")
   .map(currency => {
     return {
       currencyName: currency.name,
-      account: { type: "Account", currency } as Account,
+      account: { type: "Account", currency } as unknown as Account,
       type2Transaction: dummyType2Transaction,
       type0Transaction: dummyType0Transaction,
     };
