@@ -7,6 +7,7 @@ import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import * as currencies from "@ledgerhq/live-common/currencies/index";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 
 jest.mock("~/renderer/hooks/useAccountUnit");
 jest.mock("@ledgerhq/live-common/currencies/index");
@@ -14,6 +15,11 @@ jest.mock("@ledgerhq/live-common/config/index", () => ({
   __esModule: true,
   ...jest.requireActual("@ledgerhq/live-common/config/index"),
 }));
+// keep the real factory (real alias + per-chain params) but spy on the calls
+jest.mock("@ledgerhq/coin-cosmos/chain/chain", () => {
+  const actual = jest.requireActual("@ledgerhq/coin-cosmos/chain/chain");
+  return { __esModule: true, default: jest.fn(actual.default) };
+});
 
 describe("AccountBalanceSummaryFooter", () => {
   describe("Testing disableDelegation in currency config", () => {
@@ -31,7 +37,7 @@ describe("AccountBalanceSummaryFooter", () => {
         unbondingBalance: DELEGATE_UNBONDING_BALANCE,
       },
       currency: {
-        id: "cosmos",
+        id: "babylon",
       } as unknown as CryptoCurrency,
     } as CosmosAccount;
 
@@ -47,10 +53,22 @@ describe("AccountBalanceSummaryFooter", () => {
       );
 
       render(<AccountBalanceSummaryFooter account={ACCOUNT} />);
-      expect(screen.getByText("Delegated assets")).toBeInTheDocument();
-      expect(screen.getByText(DELEGATE_BALANCE_TEXT)).toBeInTheDocument();
-      expect(screen.getByText("Undelegating")).toBeInTheDocument();
-      expect(screen.getByText(DELEGATE_UNBONDING_BALANCE_TEXT)).toBeInTheDocument();
+      expect(screen.getByText("Delegated assets")).toBeVisible();
+      expect(screen.getByText(DELEGATE_BALANCE_TEXT)).toBeVisible();
+      expect(screen.getByText("Undelegating")).toBeVisible();
+      expect(screen.getByText(DELEGATE_UNBONDING_BALANCE_TEXT)).toBeVisible();
+    });
+
+    it("looks up the undelegation timelock from the chain factory by currency id, not a hardcoded constant", () => {
+      mockGetCurrencyConfiguration({ disableDelegation: false });
+      mockFormatCurrencyUnit(
+        ACCOUNT.cosmosResources.delegatedBalance,
+        ACCOUNT.cosmosResources.unbondingBalance,
+      );
+
+      render(<AccountBalanceSummaryFooter account={ACCOUNT} />);
+
+      expect(cryptoFactory).toHaveBeenCalledWith("babylon");
     });
 
     it.each([BigNumber(0), BigNumber(-1)])(
@@ -88,6 +106,29 @@ describe("AccountBalanceSummaryFooter", () => {
       expect(screen.queryByText(DELEGATE_BALANCE_TEXT)).not.toBeInTheDocument();
       expect(screen.queryByText("Undelegating")).not.toBeInTheDocument();
       expect(screen.queryByText(DELEGATE_UNBONDING_BALANCE_TEXT)).not.toBeInTheDocument();
+    });
+
+    it("should render the undelegating tooltip without throwing for a testnet id that aliases to a mainnet chain (crypto_org_croeseid)", () => {
+      mockGetCurrencyConfiguration({ disableDelegation: false });
+
+      const account = {
+        type: "Account",
+        cosmosResources: {
+          delegatedBalance: DELEGATE_BALANCE,
+          unbondingBalance: DELEGATE_UNBONDING_BALANCE,
+        },
+        currency: {
+          id: "crypto_org_croeseid",
+        } as unknown as CryptoCurrency,
+      } as CosmosAccount;
+
+      mockFormatCurrencyUnit(
+        account.cosmosResources.delegatedBalance,
+        account.cosmosResources.unbondingBalance,
+      );
+
+      expect(() => render(<AccountBalanceSummaryFooter account={account} />)).not.toThrow();
+      expect(screen.getByText("Undelegating")).toBeVisible();
     });
   });
 });
