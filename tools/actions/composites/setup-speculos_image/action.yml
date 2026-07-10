@@ -30,10 +30,30 @@ runs:
           coin-apps
           ledger-live
 
+    # coin-apps is a large, slow-to-clone binary repo re-fetched on every shard. Cache the
+    # working tree keyed by its master commit so only the first shard on a new revision
+    # checks out; the rest restore from cache.
+    - name: Resolve coin-apps master commit
+      id: coinapps-rev
+      shell: bash
+      run: |
+        sha=$(git ls-remote "https://x-access-token:${TOKEN}@github.com/LedgerHQ/coin-apps.git" master | cut -f1)
+        echo "sha=$sha" >> "$GITHUB_OUTPUT"
+      env:
+        TOKEN: ${{ steps.generate-token.outputs.token }}
+
+    - name: Restore coin-apps cache
+      id: coinapps-cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ inputs.coinapps_path }}
+        key: coin-apps-${{ steps.coinapps-rev.outputs.sha }}
+
     - name: Retrieving coin apps
+      if: steps.coinapps-cache.outputs.cache-hit != 'true'
       uses: actions/checkout@v6
       with:
-        ref: master
+        ref: ${{ steps.coinapps-rev.outputs.sha }}
         repository: LedgerHQ/coin-apps
         token: ${{ steps.generate-token.outputs.token }}
         path: ${{ inputs.coinapps_path }}
