@@ -74,13 +74,12 @@ export function useAssetDetailViewModel() {
   });
   const {
     isBuyAvailable,
-    isBuyButtonVisible,
     availableOnSwap,
     isCurrencySupported,
     hasAssetAccounts,
     secondaryButton,
   } = useAssetActionsAvailability(currency, receiveLedgerIds);
-  const hasFooter = isBuyButtonVisible || secondaryButton !== null;
+  const hasFooter = isBuyAvailable || secondaryButton !== null;
   const hideReceiveInBalanceGraph = !isCurrencySupported || hasAssetAccounts;
   const showFallbackBanner = isCurrencySupported && !isBuyAvailable && !availableOnSwap;
   const robinhoodDisclaimer = useFeature("llRobinhoodDisclaimer");

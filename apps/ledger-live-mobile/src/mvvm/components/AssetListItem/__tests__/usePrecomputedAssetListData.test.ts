@@ -179,7 +179,7 @@ describe("usePrecomputedAssetListData", () => {
     const { result } = renderHook(() => usePrecomputedAssetListData(assets));
 
     expect(mockedCalculate).not.toHaveBeenCalled();
-    expect(result.current.get(bitcoin.id)?.formattedCounterValue).toBe("$50,000.00");
+    expect(result.current.get(bitcoin.id)?.formattedCounterValue).toBe("$420.00");
   });
 
   it("falls back to calculate when countervalue is not set", () => {

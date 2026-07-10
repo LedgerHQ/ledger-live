@@ -85,11 +85,18 @@ describe("useFooterViewModel", () => {
       expect(result.current.isBuyAvailable).toBe(false);
     });
 
-    it("returns true when the user already has an account for the asset", () => {
+    it("follows buy availability when the user already has an account for the asset", () => {
       mockAccounts = [buildAccount("bitcoin")];
-      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+      setAvailability({ availableOnBuy: true });
+      const { result: buyableResult } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
 
-      expect(result.current.isBuyAvailable).toBe(true);
+      setAvailability({ availableOnBuy: false });
+      const { result: notBuyableResult } = renderHook(() =>
+        useFooterViewModel(bitcoin, ["bitcoin"]),
+      );
+
+      expect(buyableResult.current.isBuyAvailable).toBe(true);
+      expect(notBuyableResult.current.isBuyAvailable).toBe(false);
     });
   });
 

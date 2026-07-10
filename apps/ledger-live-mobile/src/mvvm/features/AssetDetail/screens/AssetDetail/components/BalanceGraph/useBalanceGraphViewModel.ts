@@ -267,7 +267,8 @@ export function useBalanceGraphViewModel({
   const flatAccounts = useSelector(flattenAccountsSelector);
 
   const assetCurrencyIds = useMemo(
-    () => new Set(currency ? [currency.id, ...effectiveLedgerIds] : effectiveLedgerIds),
+    () =>
+      new Set(currency ? [currency.id, ...(effectiveLedgerIds ?? [])] : (effectiveLedgerIds ?? [])),
     [currency, effectiveLedgerIds],
   );
 

@@ -13,7 +13,6 @@ export type SecondaryButtonType = "swap" | null;
 export type AssetActionsAvailability = Readonly<{
   isCurrencySupported: boolean;
   isBuyAvailable: boolean;
-  isBuyButtonVisible: boolean;
   availableOnSwap: boolean;
   hasAssetAccounts: boolean;
   secondaryButton: SecondaryButtonType;
@@ -36,7 +35,6 @@ export function useAssetActionsAvailability(
       return {
         isCurrencySupported: false,
         isBuyAvailable: false,
-        isBuyButtonVisible: false,
         availableOnSwap: false,
         hasAssetAccounts: false,
         secondaryButton: null,
@@ -45,13 +43,11 @@ export function useAssetActionsAvailability(
 
     const assetCurrencyIds = new Set([currency.id, ...(ledgerIds ?? [])]);
     const hasAssetAccounts = accounts.some(a => assetCurrencyIds.has(getAccountCurrency(a).id));
-    const isBuyButtonVisible = availableOnBuy;
     const secondaryButton: SecondaryButtonType = availableOnSwap ? "swap" : null;
 
     return {
       isCurrencySupported,
       isBuyAvailable: availableOnBuy,
-      isBuyButtonVisible,
       availableOnSwap,
       hasAssetAccounts,
       secondaryButton,
@@ -70,7 +66,7 @@ export function useFooterViewModel(currency: AssetDetailCurrencyProps, ledgerIds
     sourceScreenName: "Asset Detail",
   });
 
-  const { isBuyButtonVisible, secondaryButton } = useAssetActionsAvailability(currency, ledgerIds);
+  const { isBuyAvailable, secondaryButton } = useAssetActionsAvailability(currency, ledgerIds);
 
   const onBuyPress = useCallback(() => {
     if (!currency) return;
@@ -93,7 +89,7 @@ export function useFooterViewModel(currency: AssetDetailCurrencyProps, ledgerIds
   }, [currency, handleOpenSwap]);
 
   return {
-    isBuyAvailable: isBuyButtonVisible,
+    isBuyAvailable,
     secondaryButton,
     onBuyPress,
     onSwapPress,
