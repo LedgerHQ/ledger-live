@@ -26,6 +26,7 @@ const SEND_ACCOUNT_SELECTION_DRAWER_CONFIGURATION: EnhancedModularDrawerConfigur
 type WorkflowParams = {
   account?: AccountLike;
   parentAccount?: Account;
+  currencyIds?: readonly string[];
   recipient?: string;
   amount?: string | BigNumber;
   memo?: string;
@@ -45,17 +46,20 @@ export function useOpenSendFlow() {
       setOriginFlow(HOOKS_TRACKING_LOCATIONS.sendModal);
 
       const openSendFlowImpl = (nextParams?: WorkflowParams) => {
-        if (!nextParams?.account) {
+        const { currencyIds, ...flowParams } = nextParams ?? {};
+
+        if (!flowParams.account) {
           // When there are no accounts, the old modal requires an account and would throw.
           // Always use the new drawer for account selection (or empty state) in that case.
           const shouldUseNewFlowForNoAccount = hasNoAccounts || isEnabledForFamily();
           if (shouldUseNewFlowForNoAccount) {
             // Feature flag enabled: use new drawer for account selection
             dispatch(setFlowValue("send"));
-            dispatch(setSourceValue(nextParams?.source ?? ""));
+            dispatch(setSourceValue(flowParams.source ?? ""));
             dispatch(
               openDialog({
-                currencies: [],
+                currencies: currencyIds ? [...currencyIds] : [],
+                areCurrenciesFiltered: Boolean(currencyIds?.length),
                 dialogConfiguration: SEND_ACCOUNT_SELECTION_DRAWER_CONFIGURATION,
                 onAccountSelected: (account: AccountLike, parentAccount?: Account) => {
                   dispatch(closeDialog());
@@ -69,7 +73,7 @@ export function useOpenSendFlow() {
                     ...getSendFlowTrackingProperties(account, parentAccount, shouldUseNewFlow),
                   });
                   openSendFlowImpl({
-                    ...nextParams,
+                    ...flowParams,
                     account,
                     parentAccount,
                   });
@@ -83,37 +87,37 @@ export function useOpenSendFlow() {
           // (when there are no accounts we use the new drawer above to avoid "account required").
           dispatch(
             openModal("MODAL_SEND", {
-              ...nextParams,
+              ...flowParams,
               amount:
-                typeof nextParams?.amount === "string"
-                  ? new BigNumber(nextParams.amount)
-                  : nextParams?.amount,
+                typeof flowParams.amount === "string"
+                  ? new BigNumber(flowParams.amount)
+                  : flowParams.amount,
             }),
           );
           return;
         }
 
-        const family = getFamilyFromAccount(nextParams.account, nextParams.parentAccount ?? null);
+        const family = getFamilyFromAccount(flowParams.account, flowParams.parentAccount ?? null);
         const currencyId = getCurrencyIdFromAccount(
-          nextParams.account,
-          nextParams.parentAccount ?? null,
+          flowParams.account,
+          flowParams.parentAccount ?? null,
         );
         const shouldUseNewFlow = isEnabledForFamily(family, currencyId);
 
         if (shouldUseNewFlow) {
           let normalizedAmount: string | undefined;
-          if (typeof nextParams.amount === "string") {
-            normalizedAmount = nextParams.amount;
-          } else if (nextParams.amount) {
-            normalizedAmount = nextParams.amount.toString();
+          if (typeof flowParams.amount === "string") {
+            normalizedAmount = flowParams.amount;
+          } else if (flowParams.amount) {
+            normalizedAmount = flowParams.amount.toString();
           } else {
             normalizedAmount = undefined;
           }
 
           const normalizedParams: SendFlowParams = {
-            ...nextParams,
+            ...flowParams,
             amount: normalizedAmount,
-            fromMAD: nextParams.fromMAD ?? false,
+            fromMAD: flowParams.fromMAD ?? false,
           };
           dispatch(
             openSendFlowDialog({
@@ -123,11 +127,11 @@ export function useOpenSendFlow() {
         } else {
           dispatch(
             openModal("MODAL_SEND", {
-              ...nextParams,
+              ...flowParams,
               amount:
-                typeof nextParams.amount === "string"
-                  ? new BigNumber(nextParams.amount)
-                  : nextParams.amount,
+                typeof flowParams.amount === "string"
+                  ? new BigNumber(flowParams.amount)
+                  : flowParams.amount,
             }),
           );
         }
