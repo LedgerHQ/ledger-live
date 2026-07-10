@@ -69,7 +69,7 @@ describe("StakeBanner", () => {
     await user.click(ctaButton);
 
     expect(track).toHaveBeenCalledWith(
-      "button_clicked",
+      "button_clicked2",
       expect.objectContaining({
         delegation: "stake",
         button: "delegate",
@@ -86,7 +86,7 @@ describe("StakeBanner", () => {
     await user.click(ctaButton);
 
     expect(track).toHaveBeenCalledWith(
-      "button_clicked",
+      "button_clicked2",
       expect.objectContaining({
         delegation: "manage_delegation",
         button: "manage",
