@@ -91,6 +91,7 @@
     "@features/platform-currencies": "workspace:^",
     "@devtools/shell": "workspace:^",
     "@devtools/bindings": "workspace:^",
+    "@card/core": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
     "@features/platform-style": "workspace:^",
     "@formatjs/intl-locale": "3.4.5",

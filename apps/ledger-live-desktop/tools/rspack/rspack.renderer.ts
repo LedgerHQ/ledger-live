@@ -182,6 +182,7 @@ export function createRendererConfig(
             path.resolve(lldRoot, "..", "..", "features"),
             path.resolve(lldRoot, "..", "..", "shared"),
             path.resolve(lldRoot, "..", "..", "devtools"),
+            path.resolve(lldRoot, "..", "..", "card"),
             path.resolve(lldRoot, "..", "..", "domain"),
           ],
           exclude: /node_modules/,

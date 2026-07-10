@@ -9,6 +9,7 @@ const config = {
     "./node_modules/@ledgerhq/lumen-ui-react/dist/lib/**/*.{js,ts,jsx,tsx}",
     "../../features/**/src/**/*.{ts,tsx}",
     "../../devtools/**/src/**/*.{ts,tsx}",
+    "../../card/**/src/**/*.{ts,tsx}",
   ],
   presets: [ledgerLivePreset],
   theme: {

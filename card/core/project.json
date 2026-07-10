@@ -1,0 +1,8 @@
+{
+  "name": "@card/core",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

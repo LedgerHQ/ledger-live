@@ -64,6 +64,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@devtools/shell": "workspace:^",
     "@devtools/bindings": "workspace:*",
+    "@card/core": "workspace:^",
     "@electron/fuses": "2.0.0",
     "@features/flow-contacts": "workspace:^",
     "@features/platform-currencies": "workspace:^",

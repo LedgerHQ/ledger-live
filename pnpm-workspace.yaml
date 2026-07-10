@@ -18,6 +18,7 @@ packages:
   - "domain/api/*"
   - "shared/*"
   - "devtools/*"
+  - "card/*"
 
 catalog:
   "@jest/globals": 30.2.0

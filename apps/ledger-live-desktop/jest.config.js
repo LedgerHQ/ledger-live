@@ -80,6 +80,20 @@ const commonConfig = {
     __CHANNEL__: "null",
   },
   moduleNameMapper,
+  moduleFileExtensions: [
+    "web.tsx",
+    "web.ts",
+    "js",
+    "mjs",
+    "cjs",
+    "jsx",
+    "ts",
+    "mts",
+    "cts",
+    "tsx",
+    "json",
+    "node",
+  ],
   testPathIgnorePatterns,
   setupFiles: ["jest-canvas-mock", "./jest.polyfills.js"],
   setupFilesAfterEnv: ["<rootDir>/tests/jestSetup.js"],
@@ -90,6 +104,11 @@ const commonConfig = {
       {
         jsc: {
           target: "esnext",
+          transform: {
+            react: {
+              runtime: "automatic",
+            },
+          },
         },
       },
     ],
