@@ -1,6 +1,7 @@
 import { defineCommand } from "@bunli/core";
 import { createInterface } from "node:readline";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import type { Spinner } from "yocto-spinner";
 import { Session, trustchainFromMeta, type TrustchainMeta } from "../../session/session-store";
 import {
@@ -103,21 +104,36 @@ async function performRemoteDestroy(
   trustchainMeta: TrustchainMeta,
   memberCredentials: MemberCredentials,
   destroySpin: Spinner | null,
-): Promise<{ remoteSucceeded: boolean; trustchainDestroyed: boolean }> {
+): Promise<{
+  remoteSucceeded: boolean;
+  trustchainDestroyed: boolean;
+  memberEjected: boolean;
+}> {
   const sdk = createLkrpSdk();
   try {
-    const latest = await sdk.restoreTrustchain(
+    // destroyApplication resolves the trustchain itself (no encryption key, no separate
+    // restoreTrustchain round-trip), closes only the wallet-cli stream (or the whole trustchain when
+    // it's the last open app), and is idempotent on an already-closed stream (returns without throwing).
+    const { trustchainDestroyed } = await sdk.destroyApplication(
       trustchainFromMeta(trustchainMeta),
       memberCredentials,
     );
-    const { trustchainDestroyed } = await sdk.destroyApplication(latest, memberCredentials);
     // Stop without a message: out.ringDestroy() below is the single source of the outcome line.
     destroySpin?.stop();
-    return { remoteSucceeded: true, trustchainDestroyed };
-  } catch {
+    return { remoteSucceeded: true, trustchainDestroyed, memberEjected: false };
+  } catch (e) {
+    if (e instanceof TrustchainEjected) {
+      // destroyApplication is idempotent on an already-closed stream (returns without throwing), so
+      // TrustchainEjected means this member is no longer on the ring: it was removed by another
+      // owner, or the trustchain was destroyed remotely. Either way there's nothing left for us to
+      // tear down, so proceed to the local wipe rather than aborting as a transient failure
+      // (retrying would never succeed).
+      destroySpin?.stop();
+      return { remoteSucceeded: true, trustchainDestroyed: false, memberEjected: true };
+    }
     // No local wipe here: the handler aborts on a failed teardown (keeping the key). See below.
     destroySpin?.error("Remote teardown failed");
-    return { remoteSucceeded: false, trustchainDestroyed: false };
+    return { remoteSucceeded: false, trustchainDestroyed: false, memberEjected: false };
   }
 }
 
@@ -189,10 +205,11 @@ export default defineCommand({
 
       let remoteSucceeded = false;
       let trustchainDestroyed = false;
+      let memberEjected = false;
 
       if (creds.status === "ok") {
         const destroySpin = out.spin("Tearing down your Ledger Key Ring…");
-        ({ remoteSucceeded, trustchainDestroyed } = await performRemoteDestroy(
+        ({ remoteSucceeded, trustchainDestroyed, memberEjected } = await performRemoteDestroy(
           trustchainMeta,
           creds.memberCredentials,
           destroySpin,
@@ -227,7 +244,7 @@ export default defineCommand({
         session.wipeRing();
         session.write();
       }
-      out.ringDestroy({ remoteSucceeded, trustchainDestroyed, localWiped });
+      out.ringDestroy({ remoteSucceeded, trustchainDestroyed, localWiped, memberEjected });
       trackRingDestroyCompleted({
         remoteSucceeded,
         trustchainDestroyed,

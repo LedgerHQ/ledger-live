@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, mock } from "bun:test";
-import { mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { Readable } from "node:stream";
@@ -584,10 +585,10 @@ describe("ring destroy — transient remote failure keeps the local key", () => 
     const before = [..._store.values()];
     expect(before).toHaveLength(1);
 
-    // Simulate a transient remote failure: restoreTrustchain throws before any teardown happens.
+    // Simulate a transient remote failure: destroyApplication throws a non-ejected error.
     mock.module("../../key-ring/lkrp-sdk", () => ({
       createLkrpSdk: () => ({
-        restoreTrustchain: async () => {
+        destroyApplication: async () => {
           throw new Error("network down");
         },
       }),
@@ -596,5 +597,183 @@ describe("ring destroy — transient remote failure keeps the local key", () => 
     const r = await runCliWithStdin(["ring", "destroy"], env, ["destroy"]);
     expect(r.exitCode).toBe(1);
     expect([..._store.values()]).toEqual(before); // key kept — no orphaning on a transient failure
+  });
+});
+
+// The runner shares one in-process module graph across tests (see cli-runner.ts), and an lkrp-sdk
+// `mock.module` from an earlier block stays registered here — so a real `ring init` would use the
+// mocked SDK and fail. We therefore seed the initialized ring state (session + keychain) directly
+// and mock only the SDK method under test.
+async function seedInitializedRing(dir: string): Promise<void> {
+  const sessionPath = join(dir, "ledger-wallet-cli", "session.yaml");
+  mkdirSync(dirname(sessionPath), { recursive: true });
+  writeFileSync(
+    sessionPath,
+    YAML.stringify({
+      accounts: [],
+      trustchain: { rootId: "seed-root", applicationPath: "m/0'/17'/0'" },
+    }),
+  );
+  // savePrivateKey hashes the account name from XDG_STATE_HOME, so pin it to this temp dir (matching
+  // the env passed to runCli) before saving.
+  const { savePrivateKey } = await import("../../key-ring/keychain");
+  const saved = process.env.XDG_STATE_HOME;
+  process.env.XDG_STATE_HOME = dir;
+  try {
+    await savePrivateKey("aa".repeat(32), "bb".repeat(33));
+  } finally {
+    if (saved === undefined) delete process.env.XDG_STATE_HOME;
+    else process.env.XDG_STATE_HOME = saved;
+  }
+}
+
+describe("ring destroy — ejected member wipes locally", () => {
+  const { dir, env, cleanup } = makeTmpDir();
+  afterAll(() => {
+    // See the transient-failure block: mock.restore() is all-or-nothing, so re-install the file-wide
+    // keychain mock afterwards.
+    mock.restore();
+    installKeychainMock();
+    cleanup();
+  });
+
+  it("treats TrustchainEjected as remote-already-gone and wipes the key (exit 0)", async () => {
+    _store.clear();
+    await seedInitializedRing(dir);
+    expect([..._store.values()]).toHaveLength(1);
+
+    // destroyApplication is idempotent on an already-closed stream (returns without throwing), so
+    // TrustchainEjected means this member is no longer on the ring (removed by another owner, or the
+    // trustchain was destroyed remotely): the remote is gone for us, so destroy should proceed to the
+    // local wipe rather than abort.
+    mock.module("../../key-ring/lkrp-sdk", () => ({
+      createLkrpSdk: () => ({
+        destroyApplication: async () => {
+          throw new TrustchainEjected("not a member of trustchain");
+        },
+      }),
+    }));
+
+    const r = await runCliWithStdin(["ring", "destroy"], env, ["destroy"]);
+    expect(r.exitCode, r.stderr).toBe(0);
+    expect([..._store.values()]).toHaveLength(0); // key wiped despite the remote being already gone
+    expect(r.stdout).toMatch(/no longer a member/i);
+  });
+});
+
+describe("ring encrypt/decrypt — closed application stream gives reactivation guidance", () => {
+  const { dir, env, cleanup } = makeTmpDir();
+  afterAll(() => {
+    mock.restore();
+    installKeychainMock();
+    cleanup();
+  });
+
+  // Asserted at unit level (like the "stray password-protected key" block above): Bunli prints the
+  // command Error to the real stderr, which runCli's output capture does not observe.
+  it("loadDomainKey rethrows an ejected stream as actionable guidance", async () => {
+    _store.clear();
+    await seedInitializedRing(dir);
+
+    // The application was deactivated on the ring elsewhere: restoreTrustchain rejects a closed stream.
+    mock.module("../../key-ring/lkrp-sdk", () => ({
+      createLkrpSdk: () => ({
+        restoreTrustchain: async () => {
+          throw new TrustchainEjected("application stream is closed");
+        },
+      }),
+    }));
+    // Dynamic import so the mock above is in effect (a static import would hoist above it).
+    const { loadDomainKey } = await import("../../key-ring/load-key-ring");
+
+    const saved = process.env.XDG_STATE_HOME;
+    process.env.XDG_STATE_HOME = dir; // pin the session dir + keychain account to this temp dir
+    try {
+      await expect(loadDomainKey("mykey")).rejects.toThrow(/deactivated/i);
+      await expect(loadDomainKey("mykey")).rejects.toThrow(/ring init/i);
+    } finally {
+      if (saved === undefined) delete process.env.XDG_STATE_HOME;
+      else process.env.XDG_STATE_HOME = saved;
+    }
+  });
+
+  it("the encrypt command fails on an ejected stream (but succeeds on an open one)", async () => {
+    // Self-contained: seed the ring state here too so the test passes when run in isolation (filtered).
+    _store.clear();
+    await seedInitializedRing(dir);
+    const inputFile = join(dir, "plain.txt");
+    writeFileSync(inputFile, "payload");
+    const outFile = join(dir, "o.enc");
+    const encryptArgs = [
+      "ring",
+      "encrypt",
+      "--key",
+      "mykey",
+      "--input",
+      inputFile,
+      "--out",
+      outFile,
+    ];
+
+    // Positive control: with an open stream, the exact same command succeeds and writes ciphertext.
+    // This pins the failure below to the ejection — Bunli prints the command Error to the real stderr
+    // (not captured by runCli), so exit code + file side effect are all we can observe at CLI level.
+    mock.module("../../key-ring/lkrp-sdk", () => ({
+      createLkrpSdk: () => ({
+        restoreTrustchain: async () => ({
+          rootId: "seed-root",
+          applicationPath: "m/0'/17'/0'", // matches the seed → no rotation warning
+          walletSyncEncryptionKey: "00".repeat(32),
+        }),
+      }),
+    }));
+    const ok = await runCli(encryptArgs, env);
+    expect(ok.exitCode, ok.stderr).toBe(0);
+    expect(existsSync(outFile)).toBe(true);
+
+    // Now the stream is ejected: the same command must fail and must NOT leave ciphertext behind.
+    rmSync(outFile, { force: true });
+    mock.module("../../key-ring/lkrp-sdk", () => ({
+      createLkrpSdk: () => ({
+        restoreTrustchain: async () => {
+          throw new TrustchainEjected("application stream is closed");
+        },
+      }),
+    }));
+    const r = await runCli(encryptArgs, env);
+    expect(r.exitCode).toBe(1);
+    expect(existsSync(outFile)).toBe(false); // aborted before writing ciphertext
+  });
+});
+
+describe("ring destroy — non-destructive deactivation keeps the ring but wipes locally", () => {
+  const { dir, env, cleanup } = makeTmpDir();
+  afterAll(() => {
+    mock.restore();
+    installKeychainMock();
+    cleanup();
+  });
+
+  it("reports the app was deactivated (kept for other apps), wipes locally, and unblocks re-init", async () => {
+    _store.clear();
+    await seedInitializedRing(dir);
+
+    // Non-destructive close: destroyApplication closes only the wallet-cli stream (the trustchain is
+    // kept for other applications), so trustchainDestroyed is false.
+    mock.module("../../key-ring/lkrp-sdk", () => ({
+      createLkrpSdk: () => ({
+        destroyApplication: async () => ({ trustchainDestroyed: false }),
+      }),
+    }));
+    const r = await runCliWithStdin(["ring", "destroy"], env, ["destroy"]);
+    expect(r.exitCode, r.stderr).toBe(0);
+    expect([..._store.values()]).toHaveLength(0); // local credentials still wiped
+    expect(r.stdout).toMatch(/kept for other apps/i);
+
+    // Reactivation is unblocked: destroy cleared the local trustchain pointer, so the ring is no
+    // longer "initialized" and `ring init` (which reopens a closed stream on the next index — covered
+    // at the lib level) would run instead of hitting the "already initialized" guard.
+    const keys = await runCli(["ring", "keys"], env);
+    expect(keys.exitCode).toBe(1); // not initialized → init guard is clear
   });
 });

@@ -264,6 +264,40 @@ describe("JsonCommandOutput", () => {
     });
   });
 
+  it("ringDestroy emits member_ejected=true when the member was ejected from the ring", () => {
+    const out = createCommandOutput("json", { command: "ring destroy", network: "all" });
+    out.ringDestroy({
+      remoteSucceeded: true,
+      trustchainDestroyed: false,
+      localWiped: true,
+      memberEjected: true,
+    });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      destroyed: false,
+      remote_succeeded: true,
+      member_ejected: true,
+      local_wiped: true,
+    });
+  });
+
+  it("ringDestroy reports member_ejected=false when the remote teardown did not succeed", () => {
+    const out = createCommandOutput("json", { command: "ring destroy", network: "all" });
+    // member_ejected is only meaningful alongside remote_succeeded, so a failed teardown must not
+    // report it even if a caller mis-populates memberEjected.
+    out.ringDestroy({
+      remoteSucceeded: false,
+      trustchainDestroyed: false,
+      localWiped: true,
+      memberEjected: true,
+    });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({ remote_succeeded: false, member_ejected: false });
+  });
+
   it("ringDestroy emits destroyed=false and remote_succeeded=false when only local wipe", () => {
     const out = createCommandOutput("json", { command: "ring destroy", network: "all" });
     out.ringDestroy({ remoteSucceeded: false, trustchainDestroyed: false, localWiped: true });
