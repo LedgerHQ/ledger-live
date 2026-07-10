@@ -1,6 +1,10 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
+import { Address } from "@multiversx/sdk-core/out";
+import { ESDT_CONTRACT_ADDRESS_HEX } from "@multiversx/sdk-core/out/constants";
 import BigNumber from "bignumber.js";
 import type { MultiversXNetworkApi } from "../../network/api";
+
+const ESDT_SYSTEM_SC_BECH32 = Address.fromHex(ESDT_CONTRACT_ADDRESS_HEX).toBech32();
 
 /**
  * Returns all asset balances for a MultiversX address:
@@ -41,7 +45,8 @@ export async function getBalance(api: MultiversXNetworkApi, address: string): Pr
     value: BigInt(new BigNumber(token.balance ?? "0").toFixed(0)),
     asset: {
       type: "esdt",
-      assetReference: token.identifier, // case preserved
+      assetReference: token.identifier,
+      assetOwner: ESDT_SYSTEM_SC_BECH32,
     },
   }));
 

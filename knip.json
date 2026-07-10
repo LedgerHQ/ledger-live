@@ -229,6 +229,9 @@
     },
     "./features/platform/contacts": {
       "entry": ["src/index.ts"]
+    },
+    "./libs/coin-tester-modules/coin-tester-multiversx": {
+      "entry": ["src/scenarii/multiversx.ts"]
     }
   }
 }

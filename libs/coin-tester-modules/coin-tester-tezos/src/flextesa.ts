@@ -116,8 +116,8 @@ export async function waitForOperationInclusion(operationHash: string): Promise<
     });
 }
 
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
-  process.on(e, async () => {
-    await killFlextesa();
+["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
+  process.on(e, () => {
+    killFlextesa().catch(() => {});
   }),
 );

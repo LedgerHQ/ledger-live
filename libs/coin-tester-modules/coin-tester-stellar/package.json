@@ -85,7 +85,6 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "rimraf": "^5.0.5",
-    "ts-node": "^10.9.2",
     "typescript": "catalog:"
   }
 }

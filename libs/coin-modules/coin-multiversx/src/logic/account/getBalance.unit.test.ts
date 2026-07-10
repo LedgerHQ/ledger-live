@@ -49,7 +49,14 @@ describe("getBalance", () => {
     expect(balances.filter(b => b.asset.type === "esdt")).toHaveLength(2);
     expect(balances).toEqual(
       expect.arrayContaining([
-        { value: 2000000n, asset: { type: "esdt", assetReference: "USDC-c76f1f" } },
+        {
+          value: 2000000n,
+          asset: {
+            type: "esdt",
+            assetReference: "USDC-c76f1f",
+            assetOwner: "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u",
+          },
+        },
       ]),
     );
   });
@@ -60,7 +67,14 @@ describe("getBalance", () => {
 
     expect(balances).toEqual(
       expect.arrayContaining([
-        { value: 0n, asset: { type: "esdt", assetReference: "WEGLD-bd4d79" } },
+        {
+          value: 0n,
+          asset: {
+            type: "esdt",
+            assetReference: "WEGLD-bd4d79",
+            assetOwner: "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u",
+          },
+        },
       ]),
     );
   });

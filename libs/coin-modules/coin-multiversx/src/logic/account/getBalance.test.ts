@@ -38,7 +38,11 @@ describe("getBalance (msw)", () => {
       },
       {
         value: 42n,
-        asset: { type: "esdt", assetReference: "USDC-c76f1f" },
+        asset: {
+          type: "esdt",
+          assetReference: "USDC-c76f1f",
+          assetOwner: "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u",
+        },
       },
     ]);
   });
@@ -86,6 +90,13 @@ describe("getBalance (msw)", () => {
     const balances = await getBalance(testNetworkApi(), ADDR);
 
     const esdt = balances.find(b => b.asset.type === "esdt");
-    expect(esdt).toEqual({ value: 0n, asset: { type: "esdt", assetReference: "WEGLD-bd4d79" } });
+    expect(esdt).toEqual({
+      value: 0n,
+      asset: {
+        type: "esdt",
+        assetReference: "WEGLD-bd4d79",
+        assetOwner: "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u",
+      },
+    });
   });
 });
