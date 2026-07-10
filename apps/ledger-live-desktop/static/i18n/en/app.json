@@ -5262,7 +5262,7 @@
         "featureParameters": "Feature Parameters",
         "eligibleAddressFamilies": "Eligible address families",
         "customFamiliesHint": "Comma-separated families for custom multi-family testing.",
-        "customFamiliesPlaceholder": "evm, bitcoin, solana",
+        "customFamiliesPlaceholder": "evm, stellar, aptos",
         "applyFamilies": "Apply",
         "resetOverride": "Reset override"
       },
