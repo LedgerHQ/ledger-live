@@ -60,6 +60,7 @@ runs:
       if: inputs.use-mise == 'true'
       uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       with:
+        version: "20260628.225.1"  # pin to last known-good version until mise 2026.7.x regression is fixed
         install: true
         cache: true
         reshim: true
