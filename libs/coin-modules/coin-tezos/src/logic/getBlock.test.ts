@@ -1134,7 +1134,7 @@ describe("staking operations", () => {
     // TzKT omits `amount` on failed ops; only `requestedAmount` is present
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockStaking.mockResolvedValue([
-      makeStaking({ status: "failed", amount: undefined as unknown as number, requestedAmount: 750_000_000 }),
+      makeStaking({ status: "failed", amount: undefined, requestedAmount: 750_000_000 }),
     ]);
 
     const result = await getBlock(5_000_000);

@@ -138,8 +138,7 @@ function buildNativeOperations(group: APITransactionType[]): BlockOperation[] {
 const computeDelegationFees = computeOpFees;
 
 function buildDelegationOperations(op: APIDelegationType): BlockOperation[] {
-  const senderAddr = op.sender?.address;
-  if (!senderAddr) return [];
+  if (!op.sender?.address) return [];
 
   const isDelegate = !!op.newDelegate?.address;
 
@@ -180,8 +179,7 @@ function buildBlockTransactionFromDelegation(op: APIDelegationType): BlockTransa
 const computeStakingFees = computeOpFees;
 
 function buildStakingOperations(op: APIStakingType): BlockOperation[] {
-  const senderAddr = op.sender?.address;
-  if (!senderAddr) return [];
+  if (!op.sender?.address) return [];
 
   const operationType = STAKING_ACTION_TO_OP_TYPE[op.action];
 
