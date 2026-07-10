@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-cli
 
+## 2.0.1
+
+### Patch Changes
+
+- Refresh README documentation for the `2.0.0` release: bump the version, retitle the status section to v2, and document the `earn` (staking & DeFi yield) and `ring` (Ledger Key Ring / LKRP encryption) command groups in the commands table, `--help` list, and prerequisites.
+
 ## 2.0.0
 
 > This is a manual major version bump. There are no breaking changes; the `2.0.0` release marks the addition of the `earn` and `ring` command groups as a product milestone. All entries below are additive (minor) or fixes (patch).
