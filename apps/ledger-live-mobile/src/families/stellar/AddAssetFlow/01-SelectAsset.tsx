@@ -37,8 +37,7 @@ const Row = ({
   disabled: boolean;
 }) => {
   const { colors } = useTheme();
-  const tokenId = item.id.split("/")[2];
-  const assetIssuer = tokenId.split(":")[1];
+  const assetIssuer = item.contractAddress;
   return (
     <TouchableOpacity style={[styles.row]} onPress={disabled ? onDisabledPress : onPress}>
       <FirstLetterIcon
@@ -106,13 +105,12 @@ export default function DelegationStarted({ navigation, route }: Props) {
     };
   });
   const onNext = useCallback(
-    (assetId: string) => {
+    (token: TokenCurrency) => {
       if (!transaction) return;
-      const tokenId = assetId.split("/")[2];
-      const [assetCode, assetIssuer] = tokenId.split(":");
+      // The CAL id is lowercased; read the case-sensitive code/issuer from token fields.
       const t = bridge.updateTransaction(transaction, {
-        assetReference: assetCode,
-        assetOwner: assetIssuer,
+        assetReference: token.name,
+        assetOwner: token.contractAddress,
       }) as StellarTransaction;
       navigation.navigate(ScreenName.StellarAddAssetSelectDevice, {
         ...route.params,
@@ -145,7 +143,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
               (sub: TokenAccount) =>
                 sub.type === "TokenAccount" && sub.token && sub.token.id === item.id,
             )}
-            onPress={() => onNext(item.id)}
+            onPress={() => onNext(item)}
             // FIXME: why to we pass a string to a function that accepts boolean ?
             onDisabledPress={() => openModal(item.name)}
           />
