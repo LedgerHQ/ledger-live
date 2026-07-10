@@ -11,26 +11,21 @@ type Props = Readonly<{
   secondaryButton: SecondaryButtonType;
   onBuyPress: () => void;
   onSwapPress: () => void;
-  onReceivePress: () => void;
 }>;
 
-export function FooterView({
-  isBuyAvailable,
-  secondaryButton,
-  onBuyPress,
-  onSwapPress,
-  onReceivePress,
-}: Props) {
+export function FooterView({ isBuyAvailable, secondaryButton, onBuyPress, onSwapPress }: Props) {
   const { t } = useTranslation();
 
   if (!isBuyAvailable && !secondaryButton) return null;
+
+  const hasTwoButtons = isBuyAvailable && secondaryButton !== null;
 
   return (
     <BottomGradientFooter testID={ASSET_DETAIL_TEST_IDS.ctas} contentStyle={rowStyle}>
       {isBuyAvailable && (
         <Box lx={buttonSlotStyle}>
           <Button
-            appearance="gray"
+            appearance={hasTwoButtons ? "gray" : "base"}
             size="lg"
             isFull
             onPress={onBuyPress}
@@ -51,20 +46,6 @@ export function FooterView({
             testID={ASSET_DETAIL_TEST_IDS.swapButton}
           >
             {t("transfer.swap.title")}
-          </Button>
-        </Box>
-      )}
-
-      {secondaryButton === "receive" && (
-        <Box lx={buttonSlotStyle}>
-          <Button
-            appearance="base"
-            size="lg"
-            isFull
-            onPress={onReceivePress}
-            testID={ASSET_DETAIL_TEST_IDS.footerReceiveButton}
-          >
-            {t("transfer.receive.title")}
           </Button>
         </Box>
       )}

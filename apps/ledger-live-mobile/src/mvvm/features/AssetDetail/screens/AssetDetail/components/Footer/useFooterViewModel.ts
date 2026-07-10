@@ -1,19 +1,20 @@
 import { useCallback, useMemo } from "react";
 import { useTradeAvailability } from "@ledgerhq/asset-detail";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "~/context/hooks";
-import { shallowAccountsSelector } from "~/reducers/accounts";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 import { track } from "~/analytics";
 import { useOpenBuySell } from "LLM/features/Buy";
 import { useOpenSwap } from "LLM/features/Swap";
-import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 
-export type SecondaryButtonType = "swap" | "receive" | null;
+export type SecondaryButtonType = "swap" | null;
 
 export type AssetActionsAvailability = Readonly<{
   isCurrencySupported: boolean;
   isBuyAvailable: boolean;
   availableOnSwap: boolean;
+  hasAssetAccounts: boolean;
   secondaryButton: SecondaryButtonType;
 }>;
 
@@ -26,7 +27,7 @@ export function useAssetActionsAvailability(
   currency: AssetDetailCurrencyProps,
   ledgerIds?: string[],
 ): AssetActionsAvailability {
-  const accounts = useSelector(shallowAccountsSelector);
+  const accounts = useSelector(flattenAccountsSelector);
   const { availableOnBuy, availableOnSwap, isCurrencySupported } = useTradeAvailability(ledgerIds);
 
   return useMemo(() => {
@@ -35,21 +36,23 @@ export function useAssetActionsAvailability(
         isCurrencySupported: false,
         isBuyAvailable: false,
         availableOnSwap: false,
+        hasAssetAccounts: false,
         secondaryButton: null,
       };
     }
 
-    const walletHasFunds = accounts.some(a => a.balance.gt(0));
-    const secondaryButton: SecondaryButtonType =
-      walletHasFunds && availableOnSwap ? "swap" : "receive";
+    const assetCurrencyIds = new Set([currency.id, ...(ledgerIds ?? [])]);
+    const hasAssetAccounts = accounts.some(a => assetCurrencyIds.has(getAccountCurrency(a).id));
+    const secondaryButton: SecondaryButtonType = availableOnSwap ? "swap" : null;
 
     return {
       isCurrencySupported,
       isBuyAvailable: availableOnBuy,
       availableOnSwap,
+      hasAssetAccounts,
       secondaryButton,
     };
-  }, [currency, isCurrencySupported, availableOnBuy, availableOnSwap, accounts]);
+  }, [currency, ledgerIds, isCurrencySupported, availableOnBuy, availableOnSwap, accounts]);
 }
 
 export function useFooterViewModel(currency: AssetDetailCurrencyProps, ledgerIds?: string[]) {
@@ -60,12 +63,6 @@ export function useFooterViewModel(currency: AssetDetailCurrencyProps, ledgerIds
 
   const { handleOpenSwap } = useOpenSwap({
     currency,
-    sourceScreenName: "Asset Detail",
-  });
-
-  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
-    currency,
-    currencyIds: ledgerIds,
     sourceScreenName: "Asset Detail",
   });
 
@@ -91,21 +88,10 @@ export function useFooterViewModel(currency: AssetDetailCurrencyProps, ledgerIds
     handleOpenSwap();
   }, [currency, handleOpenSwap]);
 
-  const onReceivePress = useCallback(() => {
-    if (!currency) return;
-    track("button_clicked", {
-      button: "receive",
-      currency: currency.id,
-      page: "Asset Detail",
-    });
-    handleOpenReceiveDrawer();
-  }, [currency, handleOpenReceiveDrawer]);
-
   return {
     isBuyAvailable,
     secondaryButton,
     onBuyPress,
     onSwapPress,
-    onReceivePress,
   };
 }
