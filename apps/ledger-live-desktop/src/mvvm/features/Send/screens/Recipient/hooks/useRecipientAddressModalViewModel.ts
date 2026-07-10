@@ -37,6 +37,7 @@ export function useRecipientAddressModalViewModel({
     currency,
     account,
     parentAccount,
+    transaction: state.transaction.transaction,
     currentAccountId: mainAccount.id,
     recipientSupportsDomain,
   });
