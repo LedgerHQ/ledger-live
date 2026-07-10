@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import network from "@ledgerhq/live-network";
 import { clearValidatorsCache, getValidators } from "./index";
 
@@ -35,7 +36,7 @@ describe("staking/validators/zero_gravity", () => {
 
     const page = await getValidators("zero_gravity");
 
-    expect(page.items[0].validatorAddress).toEqual("0x" + addr);
+    expect(page.items[0].validatorAddress).toEqual(ethers.getAddress("0x" + addr));
   });
 
   it("uses moniker as name", async () => {
@@ -56,7 +57,7 @@ describe("staking/validators/zero_gravity", () => {
 
     const page = await getValidators("zero_gravity");
 
-    expect(page.items[0].name).toEqual("0x" + addr);
+    expect(page.items[0].name).toEqual(ethers.getAddress("0x" + addr));
   });
 
   it("converts commission_pct string to a decimal fraction", async () => {

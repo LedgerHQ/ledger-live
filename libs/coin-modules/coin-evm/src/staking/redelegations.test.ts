@@ -330,6 +330,30 @@ describe("redelegations", () => {
       });
     });
 
+    describe("delegate (0G, recipient-keyed validator)", () => {
+      it("resolves the validator address from operation.recipients[0] ignoring decoded[0]", async () => {
+        const op = makeOperation({
+          type: "DELEGATE",
+          recipients: ["0x2222222222222222222222222222222222222222"],
+          extra: {
+            contractPayload: new ethers.Interface(
+              getStakingABI("zero_gravity")!,
+            ).encodeFunctionData("delegate", ["0x1111111111111111111111111111111111111111"]),
+          },
+        });
+
+        const result = await resolveStakingValidator(
+          { id: "zero_gravity" } as CryptoCurrency,
+          op,
+          "delegate",
+        );
+
+        expect(result).toMatchObject({
+          validatorAddress: "0x2222222222222222222222222222222222222222",
+        });
+      });
+    });
+
     describe("delegate", () => {
       it("should decode validator from cached contractPayload", async () => {
         const op = makeOperation({

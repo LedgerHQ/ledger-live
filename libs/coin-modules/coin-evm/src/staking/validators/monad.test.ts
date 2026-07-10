@@ -5,7 +5,8 @@ import monadAbi from "../../abis/monad.abi.json";
 import { getCoinConfig } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
 import { clearValidatorsCache, getValidators } from "./index";
-import { fetchMonadStakes, getValidatorAddressById } from "./monad";
+import { fetchMonadStakes } from "./monad";
+import { getValidatorAddressById } from "./monadResolver";
 
 jest.mock("../../config", () => ({
   __esModule: true,
