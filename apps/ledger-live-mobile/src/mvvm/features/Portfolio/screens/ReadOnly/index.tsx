@@ -17,6 +17,7 @@ import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
 import useReadOnlyPortfolioViewModel from "./useReadOnlyPortfolioViewModel";
 import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/screens/GenericAwarenessModalDrawer";
 import { RecoverIntroPortfolioMount } from "LLM/features/BackupHub";
+import { LargeScreenUpsellModalPortfolioMount } from "LLM/features/LargeScreenUpsellModal";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
@@ -62,6 +63,7 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
       <AnalyticsConsentDrawer />
       <GenericAwarenessModalDrawer />
       <RecoverIntroPortfolioMount />
+      <LargeScreenUpsellModalPortfolioMount />
     </>
   );
 }
