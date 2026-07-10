@@ -11,6 +11,7 @@ import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/ty
 import { useLargeScreenUpsellEligibility } from "LLM/features/LargeScreenUpsell";
 import { useTranslation } from "~/context/Locale";
 import { useDispatch, useSelector } from "~/context/hooks";
+import { analyticsEnabledSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { useCompetingAppStartModalsPresent } from "../../hooks/useCompetingAppStartModalsPresent";
 import {
@@ -19,6 +20,7 @@ import {
 } from "../../utils/upsellContent";
 
 const LARGE_SCREEN_UPSELL_MODAL_ID = "large-screen-upsell-modal";
+const LARGE_SCREEN_UPSELL_MODAL_IOS_BOTTOM_PADDING = 20;
 
 let hasAutoOpenedThisSession = false;
 
@@ -42,19 +44,16 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
   const feature = useFeature("largeScreenUpsell");
   const eligibility = useLargeScreenUpsellEligibility();
   const hasCompetingAppStartModal = useCompetingAppStartModalsPresent();
+  const analyticsEnabled = useSelector(analyticsEnabledSelector);
   const retries = useSelector((state: State) => state.largeScreenUpsellModal?.retries ?? 0);
   const lastSeenAt = useSelector(
     (state: State) => state.largeScreenUpsellModal?.lastSeenAt ?? null,
   );
-  const competingAtMountRef = useRef<boolean | null>(null);
+  const competingAtMountRef = useRef(hasCompetingAppStartModal);
   const [isOpen, setIsOpen] = useState(false);
 
   const params = feature?.params;
   const hasEnabledFeature = Boolean(feature?.enabled && params);
-
-  if (competingAtMountRef.current === null) {
-    competingAtMountRef.current = hasCompetingAppStartModal;
-  }
 
   const isThrottled =
     hasEnabledFeature && params
@@ -94,7 +93,7 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
     }, [dispatch, shouldAttemptAutoOpen]),
   );
 
-  const variant: LargeScreenUpsellVariant = "opted_in";
+  const variant: LargeScreenUpsellVariant = analyticsEnabled ? "opted_in" : "opted_out";
   const content = useMemo(
     () =>
       hasEnabledFeature && params
@@ -124,6 +123,6 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
       onPrimaryPress: onCloseFromCta,
       onSecondaryPress: onClose,
     },
-    bottomInset: bottom + 20,
+    bottomInset: bottom + LARGE_SCREEN_UPSELL_MODAL_IOS_BOTTOM_PADDING,
   };
 }
