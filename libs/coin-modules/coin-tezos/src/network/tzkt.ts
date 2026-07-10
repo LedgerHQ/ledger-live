@@ -21,6 +21,9 @@ import {
 /** TzKT hard-caps `limit` at 10 000; we use a safer page size to stay well under that. */
 const BLOCK_PAGE_SIZE = 1000;
 
+/** Maximum number of IDs per `id.in` request to keep URLs under the Cloudflare proxy limit (~16 KB). */
+const ID_IN_CHUNK_SIZE = 100;
+
 const getExplorerUrl = () => coinConfig.getCoinConfig().explorer.url;
 
 const clearUndefined = (obj: Record<string, unknown>) => {
@@ -29,6 +32,15 @@ const clearUndefined = (obj: Record<string, unknown>) => {
 
   return newObj;
 };
+
+/** Splits an array into chunks of at most `size` elements. */
+function chunk<T>(arr: T[], size: number): T[][] {
+  const result: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
 
 /**
  * Internal helper shared by `getOperationsTransactions` and `getOperationsOrigination`.
@@ -353,15 +365,27 @@ const api = {
     }
 
     const transactions = transactionIds.length
-      ? await api.getOperationsTransactions(query["level.ge"] || 0, undefined, {
-          "id.in": transactionIds.join(","),
-        })
+      ? (
+          await Promise.all(
+            chunk(transactionIds, ID_IN_CHUNK_SIZE).map(ids =>
+              api.getOperationsTransactions(query["level.ge"] || 0, undefined, {
+                "id.in": ids.join(","),
+              }),
+            ),
+          )
+        ).flat()
       : [];
 
     const originations = originationIds.length
-      ? await api.getOperationsOrigination(query["level.ge"] || 0, undefined, {
-          "id.in": originationIds.join(","),
-        })
+      ? (
+          await Promise.all(
+            chunk(originationIds, ID_IN_CHUNK_SIZE).map(ids =>
+              api.getOperationsOrigination(query["level.ge"] || 0, undefined, {
+                "id.in": ids.join(","),
+              }),
+            ),
+          )
+        ).flat()
       : [];
 
     // Build id -> operation maps once so per-transfer lookups are O(1) instead of O(n).

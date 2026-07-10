@@ -610,6 +610,88 @@ describe("tzkt network API", () => {
         "level.gt": 500,
       });
     });
+
+    it("batches transaction id.in lookups in chunks of 100 when more than 100 ids are present", async () => {
+      const spyTx = spyOnApi("getOperationsTransactions");
+      const spyOrig = spyOnApi("getOperationsOrigination");
+
+      const tokens = Array.from({ length: 150 }, (_, i) => makeTokenWithTxId(i + 1, i + 1));
+
+      mockedNetwork.mockImplementation(async (config: { url: string }) => {
+        if (config.url.includes("/v1/tokens/transfers")) {
+          return networkResponse(tokens) as ReturnType<typeof network>;
+        }
+        throw new Error(`unexpected url: ${config.url}`);
+      });
+
+      spyTx.mockImplementation(async (_level, _cursor, params) => {
+        const ids = (params?.["id.in"] as string).split(",").map(Number);
+        return ids.map(id => ({
+          id,
+          hash: `h${id}`,
+          block: `BLK${id}`,
+        })) as (APITransactionType & { hash: string; block: string })[];
+      });
+
+      const result = await api.getAccountTokenTransfers("tz1batch", {
+        "level.ge": 0,
+      });
+
+      expect(spyTx).toHaveBeenCalledTimes(2);
+      expect(spyOrig).not.toHaveBeenCalled();
+      expect(spyTx).toHaveBeenNthCalledWith(1, 0, undefined, {
+        "id.in": Array.from({ length: 100 }, (_, i) => i + 1).join(","),
+      });
+      expect(spyTx).toHaveBeenNthCalledWith(2, 0, undefined, {
+        "id.in": Array.from({ length: 50 }, (_, i) => i + 101).join(","),
+      });
+      expect(result).toHaveLength(150);
+      expect(result[0]).toEqual(expect.objectContaining({ id: 1, hash: "h1", block: "BLK1" }));
+      expect(result[149]).toEqual(
+        expect.objectContaining({ id: 150, hash: "h150", block: "BLK150" }),
+      );
+    });
+
+    it("batches origination id.in lookups in chunks of 100 when more than 100 ids are present", async () => {
+      const spyTx = spyOnApi("getOperationsTransactions");
+      const spyOrig = spyOnApi("getOperationsOrigination");
+
+      const tokens = Array.from({ length: 150 }, (_, i) => makeTokenWithOrigId(i + 1, i + 1));
+
+      mockedNetwork.mockImplementation(async (config: { url: string }) => {
+        if (config.url.includes("/v1/tokens/transfers")) {
+          return networkResponse(tokens) as ReturnType<typeof network>;
+        }
+        throw new Error(`unexpected url: ${config.url}`);
+      });
+
+      spyOrig.mockImplementation(async (_level, _cursor, params) => {
+        const ids = (params?.["id.in"] as string).split(",").map(Number);
+        return ids.map(id => ({
+          id,
+          hash: `h${id}`,
+          block: `BLK${id}`,
+        })) as (APITransactionType & { hash: string; block: string })[];
+      });
+
+      const result = await api.getAccountTokenTransfers("tz1batchOrig", {
+        "level.ge": 0,
+      });
+
+      expect(spyTx).not.toHaveBeenCalled();
+      expect(spyOrig).toHaveBeenCalledTimes(2);
+      expect(spyOrig).toHaveBeenNthCalledWith(1, 0, undefined, {
+        "id.in": Array.from({ length: 100 }, (_, i) => i + 1).join(","),
+      });
+      expect(spyOrig).toHaveBeenNthCalledWith(2, 0, undefined, {
+        "id.in": Array.from({ length: 50 }, (_, i) => i + 101).join(","),
+      });
+      expect(result).toHaveLength(150);
+      expect(result[0]).toEqual(expect.objectContaining({ id: 1, hash: "h1", block: "BLK1" }));
+      expect(result[149]).toEqual(
+        expect.objectContaining({ id: 150, hash: "h150", block: "BLK150" }),
+      );
+    });
   });
 
   // -------------------------------------------------------------------------
