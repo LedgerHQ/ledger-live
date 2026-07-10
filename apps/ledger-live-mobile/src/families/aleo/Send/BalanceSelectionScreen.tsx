@@ -57,6 +57,7 @@ function buildTransaction({
   return bridge.updateTransaction(tx, {
     mode,
     recipient: isSelfTransfer ? mainAccount.freshAddress : "",
+    ...(account.type === "TokenAccount" && { subAccountId: account.id }),
   });
 }
 
