@@ -143,19 +143,16 @@ function buildDelegationOperations(op: APIDelegationType): BlockOperation[] {
 
   const isDelegate = !!op.newDelegate?.address;
 
+  const opType = isDelegate ? "DELEGATE" : "UNDELEGATE";
   return [
     {
       type: "other",
-      address: senderAddr,
-      asset: NATIVE_ASSET,
-      amount: 0n,
-      ledgerOpType: isDelegate ? "DELEGATE" : "UNDELEGATE",
-      stakedAmount: 0n,
-      details: {
-        counter: op.counter,
-        gasLimit: op.gasLimit,
-        storageLimit: op.storageLimit,
-      },
+      ledgerOpType: opType,
+      operationType: opType,
+      stakedAmount: 0,
+      counter: op.counter,
+      gasLimit: op.gasLimit,
+      storageLimit: op.storageLimit,
     },
   ];
 }
@@ -170,7 +167,9 @@ function buildBlockTransactionFromDelegation(op: APIDelegationType): BlockTransa
     failed: !succeeded,
     fees: computeDelegationFees(op),
     ...(feesPayer && { feesPayer }),
-    operations: succeeded ? buildDelegationOperations(op) : [],
+    // Always include operations even for failed txs — listOperations path
+    // always converts them, so getBlock must match for E2E reindex consistency.
+    operations: buildDelegationOperations(op),
   };
 }
 
@@ -189,16 +188,12 @@ function buildStakingOperations(op: APIStakingType): BlockOperation[] {
   return [
     {
       type: "other",
-      address: senderAddr,
-      asset: NATIVE_ASSET,
-      amount: 0n,
       ledgerOpType: operationType,
-      stakedAmount: BigInt(op.amount ?? 0),
-      details: {
-        counter: op.counter,
-        gasLimit: op.gasLimit,
-        storageLimit: op.storageLimit,
-      },
+      operationType,
+      stakedAmount: Number(op.amount ?? 0),
+      counter: op.counter,
+      gasLimit: op.gasLimit,
+      storageLimit: op.storageLimit,
     },
   ];
 }
@@ -213,7 +208,7 @@ function buildBlockTransactionFromStaking(op: APIStakingType): BlockTransaction 
     failed: !succeeded,
     fees: computeStakingFees(op),
     ...(feesPayer && { feesPayer }),
-    operations: succeeded ? buildStakingOperations(op) : [],
+    operations: buildStakingOperations(op),
   };
 }
 
@@ -231,14 +226,10 @@ function buildOriginationOperations(op: APIOriginationType): BlockOperation[] {
     {
       type: "other",
       address: senderAddr,
-      asset: NATIVE_ASSET,
-      amount: op.contractBalance > 0 ? -BigInt(op.contractBalance) : 0n,
       ledgerOpType: "ORIGINATION",
-      details: {
-        counter: op.counter,
-        gasLimit: op.gasLimit,
-        storageLimit: op.storageLimit,
-      },
+      counter: op.counter,
+      gasLimit: op.gasLimit,
+      storageLimit: op.storageLimit,
     },
   ];
 }
@@ -253,7 +244,7 @@ function buildBlockTransactionFromOrigination(op: APIOriginationType): BlockTran
     failed: !succeeded,
     fees: computeOriginationFees(op),
     ...(feesPayer && { feesPayer }),
-    operations: succeeded ? buildOriginationOperations(op) : [],
+    operations: buildOriginationOperations(op),
   };
 }
 
@@ -271,14 +262,10 @@ function buildRevealOperations(op: APIRevealType): BlockOperation[] {
     {
       type: "other",
       address: senderAddr,
-      asset: NATIVE_ASSET,
-      amount: 0n,
       ledgerOpType: "REVEAL",
-      details: {
-        counter: op.counter,
-        gasLimit: op.gasLimit,
-        storageLimit: op.storageLimit,
-      },
+      counter: op.counter,
+      gasLimit: op.gasLimit,
+      storageLimit: op.storageLimit,
     },
   ];
 }
@@ -293,7 +280,7 @@ function buildBlockTransactionFromReveal(op: APIRevealType): BlockTransaction | 
     failed: !succeeded,
     fees: computeRevealFees(op),
     ...(feesPayer && { feesPayer }),
-    operations: succeeded ? buildRevealOperations(op) : [],
+    operations: buildRevealOperations(op),
   };
 }
 
