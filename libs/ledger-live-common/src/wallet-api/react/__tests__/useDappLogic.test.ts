@@ -5,26 +5,27 @@ import React from "react";
 import { renderHook, act } from "@testing-library/react";
 import { Provider, createStore, useSetAtom } from "jotai";
 import BigNumber from "bignumber.js";
-import { currentAccountAtomFamily, useDappLogic } from "./useDappLogic";
-import { AppBranch, AppPlatform, Visibility } from "./types";
+import { useDappLogic } from "../useDappLogic";
+import { currentAccountAtomFamily } from "../useDappCurrentAccount";
+import { AppBranch, AppPlatform, Visibility } from "../../types";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 
-jest.mock("./converters", () => ({
+jest.mock("../../converters", () => ({
   getWalletAPITransactionSignFlowInfos: jest.fn(),
 }));
 
-jest.mock("../hw/signMessage/index", () => ({
+jest.mock("../../../hw/signMessage/index", () => ({
   prepareMessageToSign: jest.fn(),
 }));
 
-jest.mock("../account", () => ({
+jest.mock("../../../account", () => ({
   getParentAccount: jest.fn().mockReturnValue(undefined),
   getMainAccount: jest.fn().mockImplementation((account: unknown) => account),
 }));
 
-jest.mock("../bridge", () => ({
+jest.mock("../../../bridge", () => ({
   getAccountBridge: jest.fn().mockResolvedValue({
     broadcast: jest.fn(),
   }),
@@ -44,7 +45,7 @@ jest.mock("@ledgerhq/coin-evm/utils", () => ({
   safeEncodeEIP55: (addr: string) => addr,
 }));
 
-jest.mock("./SmartWebsocket", () => ({
+jest.mock("../../SmartWebsocket", () => ({
   SmartWebsocket: jest.fn().mockImplementation(() => ({
     on: jest.fn(),
     connect: jest.fn(),
@@ -52,11 +53,11 @@ jest.mock("./SmartWebsocket", () => ({
   })),
 }));
 
-jest.mock("./utils/txTrackingHelper", () => ({
+jest.mock("../../utils/txTrackingHelper", () => ({
   getTxType: jest.fn().mockReturnValue("transfer"),
 }));
 
-jest.mock("./utils/ledgerButtonTracking", () => ({
+jest.mock("../../utils/ledgerButtonTracking", () => ({
   isLedgerButtonReferrer: jest.fn().mockReturnValue(false),
   reportLedgerButtonBroadcast: jest.fn(),
 }));
@@ -217,7 +218,7 @@ describe("useDappLogic — onDappMessage async paths", () => {
 
   it("personal_sign: awaits prepareMessageToSign and returns signed message", async () => {
     const mockFormattedMessage = { type: "message", message: "deadbeef" };
-    const { prepareMessageToSign } = jest.requireMock("../hw/signMessage/index");
+    const { prepareMessageToSign } = jest.requireMock("../../../hw/signMessage/index");
     prepareMessageToSign.mockResolvedValue(mockFormattedMessage);
 
     const messageSignUiHook = jest
@@ -249,7 +250,7 @@ describe("useDappLogic — onDappMessage async paths", () => {
 
   it("eth_signTypedData: awaits prepareMessageToSign and returns signed typed data", async () => {
     const mockFormattedMessage = { type: "eip712", message: {} };
-    const { prepareMessageToSign } = jest.requireMock("../hw/signMessage/index");
+    const { prepareMessageToSign } = jest.requireMock("../../../hw/signMessage/index");
     prepareMessageToSign.mockResolvedValue(mockFormattedMessage);
 
     const messageSignUiHook = jest
@@ -282,7 +283,7 @@ describe("useDappLogic — onDappMessage async paths", () => {
   });
 
   it("eth_sendTransaction: awaits getWalletAPITransactionSignFlowInfos", async () => {
-    const { getWalletAPITransactionSignFlowInfos } = jest.requireMock("./converters");
+    const { getWalletAPITransactionSignFlowInfos } = jest.requireMock("../../converters");
     getWalletAPITransactionSignFlowInfos.mockResolvedValue({
       canEditFees: true,
       hasFeesProvided: false,
@@ -359,7 +360,7 @@ describe("useDappLogic — liveBlindSigningReporter live-app context", () => {
   });
 
   it("eth_sendTransaction: tags the active sign call with manifest.id and clears it after", async () => {
-    const { getWalletAPITransactionSignFlowInfos } = jest.requireMock("./converters");
+    const { getWalletAPITransactionSignFlowInfos } = jest.requireMock("../../converters");
     getWalletAPITransactionSignFlowInfos.mockResolvedValue({
       canEditFees: true,
       hasFeesProvided: false,
@@ -408,7 +409,7 @@ describe("useDappLogic — liveBlindSigningReporter live-app context", () => {
   });
 
   it("personal_sign: tags the active sign call with manifest.id and clears it after", async () => {
-    const { prepareMessageToSign } = jest.requireMock("../hw/signMessage/index");
+    const { prepareMessageToSign } = jest.requireMock("../../../hw/signMessage/index");
     prepareMessageToSign.mockResolvedValue({ type: "message", message: "deadbeef" });
 
     let contextDuringSign: string | null | undefined = "not-called";
@@ -433,7 +434,7 @@ describe("useDappLogic — liveBlindSigningReporter live-app context", () => {
   });
 
   it("eth_signTypedData: tags the active sign call with manifest.id and clears it after", async () => {
-    const { prepareMessageToSign } = jest.requireMock("../hw/signMessage/index");
+    const { prepareMessageToSign } = jest.requireMock("../../../hw/signMessage/index");
     prepareMessageToSign.mockResolvedValue({ type: "eip712", message: {} });
 
     let contextDuringSign: string | null | undefined = "not-called";
@@ -458,7 +459,7 @@ describe("useDappLogic — liveBlindSigningReporter live-app context", () => {
   });
 
   it("clears the live-app context even when the user rejects an eth_sendTransaction", async () => {
-    const { getWalletAPITransactionSignFlowInfos } = jest.requireMock("./converters");
+    const { getWalletAPITransactionSignFlowInfos } = jest.requireMock("../../converters");
     getWalletAPITransactionSignFlowInfos.mockResolvedValue({
       canEditFees: true,
       hasFeesProvided: false,

@@ -5,7 +5,7 @@ import { useConfig } from "@ledgerhq/live-common/wallet-api/react/useConfig";
 import { useWalletAPIServer } from "@ledgerhq/live-common/wallet-api/react/useWalletAPIServer";
 import trackingWrapper, { TrackingAPI } from "@ledgerhq/live-common/wallet-api/tracking";
 import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
-import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
+import { useDappLogic } from "@ledgerhq/live-common/wallet-api/react/useDappLogic";
 import { Operation } from "@ledgerhq/types-live";
 import { ipcRenderer } from "electron";
 import React, { type RefObject, forwardRef, useCallback, useEffect, useMemo, useRef } from "react";

@@ -18,7 +18,7 @@ import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { track } from "~/renderer/analytics/segment";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
-import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
+import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/react/useDappCurrentAccount";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { AccountLike } from "@ledgerhq/types-live";
 import { useDispatch } from "LLD/hooks/redux";

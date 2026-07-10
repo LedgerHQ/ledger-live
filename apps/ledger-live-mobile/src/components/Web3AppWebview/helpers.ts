@@ -9,7 +9,8 @@ import { useWalletAPIServer } from "@ledgerhq/live-common/wallet-api/react/useWa
 import { useCacheBustedLiveApps } from "@ledgerhq/live-common/wallet-api/react/useCacheBustedLiveApps";
 import { useDAppManifestCurrencyIds } from "@ledgerhq/live-common/wallet-api/react/useDAppManifestCurrencyIds";
 import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
-import { useDappCurrentAccount, useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
+import { useDappLogic } from "@ledgerhq/live-common/wallet-api/react/useDappLogic";
+import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/react/useDappCurrentAccount";
 import type { AccountLike, Operation, Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
