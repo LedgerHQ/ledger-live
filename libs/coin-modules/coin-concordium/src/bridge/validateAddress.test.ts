@@ -2,7 +2,6 @@ import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-module-
 import { validateAddress } from "./validateAddress";
 
 describe("validateAddress", () => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const parameters = {} as unknown as AddressValidationCurrencyParameters;
 
   it("should return true for a valid Concordium address", async () => {

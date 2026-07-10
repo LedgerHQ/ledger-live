@@ -1,5 +1,3 @@
-/* eslint @typescript-eslint/consistent-type-assertions: 0 */
-
 import { CardanoAccount, Transaction } from "../types";
 import * as delegate from "./delegate";
 import { getTransactionStatusByTransactionMode } from "./handler";

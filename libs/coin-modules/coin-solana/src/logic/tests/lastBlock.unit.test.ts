@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { ChainAPI } from "../../network";
 import { lastBlock } from "../lastBlock";
 

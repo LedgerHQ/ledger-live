@@ -40,10 +40,8 @@ function networkResponse<T>(data: T) {
   return Promise.resolve({
     data,
     status: 200,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     headers: {} as any,
     statusText: "",
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     config: { headers: {} as any },
   });
 }

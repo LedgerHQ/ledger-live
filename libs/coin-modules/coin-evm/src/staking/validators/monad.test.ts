@@ -217,7 +217,6 @@ describe("staking/validators/monad", () => {
     // Repo filename is the lowercase secp hex without the `0x` prefix.
     mockedNetwork.mockResolvedValueOnce({
       data: { name: "GalaxyDigital" },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
     const page = await getValidators("monad");
@@ -542,7 +541,6 @@ describe("staking/validators/monad", () => {
       );
       mockedNetwork.mockResolvedValueOnce({
         data: { name: "GalaxyDigital" },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any);
 
       const stakes = await fetchStakes();

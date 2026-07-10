@@ -16,7 +16,6 @@ describe("validateAddress", () => {
   it.each([true, false])(
     "should call validateAddress and return the expected value (%s)",
     async (expectedValue: boolean) => {
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       mockedNetworkValidateAddress.mockReturnValueOnce({
         isValid: expectedValue,
       } as unknown as ValidateAddressResult);
