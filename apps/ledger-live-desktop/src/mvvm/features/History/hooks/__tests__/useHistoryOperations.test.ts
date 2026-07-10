@@ -20,6 +20,8 @@ const SMALL_NON_ZERO_TOKEN_OP_ID = "small-non-zero-token-op-id";
 const LARGE_NON_ZERO_TOKEN_OP_ID = "large-non-zero-token-op-id";
 const SMALL_NATIVE_IN_OP_ID = "small-native-in-op-id";
 const LARGE_NATIVE_IN_OP_ID = "large-native-in-op-id";
+const SMALL_NATIVE_OUT_OP_ID = "small-native-out-op-id";
+const LARGE_NATIVE_OUT_OP_ID = "large-native-out-op-id";
 
 const mockCalculate = calculate as jest.MockedFunction<typeof calculate>;
 
@@ -40,11 +42,16 @@ function createTokenOperation(tokenAccountId: string, id: string, value: BigNumb
   };
 }
 
-function createNativeIncomingOperation(accountId: string, id: string, value: BigNumber): Operation {
+function createNativeOperation(
+  accountId: string,
+  id: string,
+  type: Operation["type"],
+  value: BigNumber,
+): Operation {
   return {
     id,
     hash: id,
-    type: "IN",
+    type,
     value,
     fee: new BigNumber(0),
     senders: ["0xsender"],
@@ -101,8 +108,26 @@ function createAccountWithNativeIncomingOperations(): Account {
     operationsSize: 0,
   });
   const operations = [
-    createNativeIncomingOperation(account.id, SMALL_NATIVE_IN_OP_ID, new BigNumber(1)),
-    createNativeIncomingOperation(account.id, LARGE_NATIVE_IN_OP_ID, new BigNumber(2)),
+    createNativeOperation(account.id, SMALL_NATIVE_IN_OP_ID, "IN", new BigNumber(1)),
+    createNativeOperation(account.id, LARGE_NATIVE_IN_OP_ID, "IN", new BigNumber(2)),
+  ];
+
+  return {
+    ...account,
+    operations,
+    operationsCount: operations.length,
+  };
+}
+
+function createAccountWithNativeOutgoingOperations(): Account {
+  const account = genAccount("eth-native-outgoing-dust", {
+    currency: ETH_ACCOUNT.currency,
+    subAccountsCount: 0,
+    operationsSize: 0,
+  });
+  const operations = [
+    createNativeOperation(account.id, SMALL_NATIVE_OUT_OP_ID, "OUT", new BigNumber(1)),
+    createNativeOperation(account.id, LARGE_NATIVE_OUT_OP_ID, "OUT", new BigNumber(2)),
   ];
 
   return {
@@ -268,6 +293,30 @@ describe("useHistoryOperations", () => {
     });
 
     expect(result.current.map(item => item.operation.id)).toEqual([LARGE_NATIVE_IN_OP_ID]);
+  });
+
+  it("filters non-zero native outgoing operations below the dust countervalue threshold", () => {
+    const account = createAccountWithNativeOutgoingOperations();
+    mockCalculate.mockImplementation((_state, query) => {
+      if (query.from === account.currency && query.value === 1) return 0.5;
+      if (query.from === account.currency && query.value === 2) return 2;
+      if (query.from.ticker === "USD") return 1;
+      return null;
+    });
+
+    const { result } = renderHook(() => useHistoryOperations(), {
+      initialState: {
+        accounts: [account],
+        settings: {
+          ...INITIAL_STATE,
+          filterTokenOperationsZeroAmount: false,
+          hideSmallValueTokenOperations: true,
+        },
+        ...withFlagOverrides({ lwdDustFiltering: { enabled: true } }),
+      },
+    });
+
+    expect(result.current.map(item => item.operation.id)).toEqual([LARGE_NATIVE_OUT_OP_ID]);
   });
 
   it("keeps zero-value token operations when the dust feature flag is disabled", () => {

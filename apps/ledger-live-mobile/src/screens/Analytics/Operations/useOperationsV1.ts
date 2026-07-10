@@ -1,6 +1,6 @@
 import { groupAccountsOperationsByDay } from "@ledgerhq/ledger-wallet-framework/account/groupOperations";
 import { isAddressPoisoningOperation } from "@ledgerhq/ledger-wallet-framework/operation";
-import { isSmallValueIncomingOperation } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
+import { isSmallValueOperation } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useSelector } from "~/context/hooks";
@@ -61,7 +61,7 @@ export function useOperationsV1(
         shouldHideSmallValueTokenOperations &&
         countervaluesState &&
         userCounterValueCurrency &&
-        isSmallValueIncomingOperation({
+        isSmallValueOperation({
           operation,
           account,
           countervaluesState,
