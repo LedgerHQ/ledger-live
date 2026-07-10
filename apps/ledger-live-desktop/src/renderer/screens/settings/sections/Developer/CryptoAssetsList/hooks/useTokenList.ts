@@ -10,7 +10,7 @@ export const useTokenList = (initialFamily: string = "ethereum") => {
     initialOption,
   );
   const [pageSize, setPageSize] = useState<number>(1000);
-  const [selectedOutputFields, setSelectedOutputFields] = useState<string[]>(
+  const [selectedOutputFields, setSelectedOutputFields] = useState<string[]>(() =>
     OUTPUT_FIELD_OPTIONS.map(o => o.value),
   );
   const [isOptionsOpen, setIsOptionsOpen] = useState<boolean>(true);
