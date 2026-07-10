@@ -7,7 +7,7 @@ import {
   type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { CalApiExtraSchema } from "./schema";
+import { ApiTokenResponseSchema, CalApiExtraSchema } from "./schema";
 import {
   type CalApiExtra,
   type GetTokensDataParams,
@@ -22,7 +22,6 @@ import {
   HEADER_X_LEDGER_CLIENT_VERSION,
   HEADER_X_LEDGER_COMMIT,
   MAX_RETRIES,
-  TOKEN_OUTPUT_FIELDS,
   TOKEN_TAGS,
   commitHeaderMissingError,
   currencyNotFoundError,
@@ -31,6 +30,8 @@ import {
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
 } from "./internals";
+
+const TOKEN_OUTPUT_FIELDS = Object.keys(ApiTokenResponseSchema.shape);
 
 /**
  * Builds this package's slice of the thunk `extraArgument`. RTK leaves `extraArgument` untyped, so

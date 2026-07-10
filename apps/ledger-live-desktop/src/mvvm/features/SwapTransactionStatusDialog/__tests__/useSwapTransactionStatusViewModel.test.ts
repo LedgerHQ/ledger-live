@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getSwapProvider } from "@ledgerhq/live-common/exchange/providers/swap";
 import { useSelector } from "LLD/hooks/redux";

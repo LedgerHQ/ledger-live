@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { AllocationTableItem, AllocationViewProps } from "../types";
 
 export const bitcoin = getCryptoCurrencyById("bitcoin");

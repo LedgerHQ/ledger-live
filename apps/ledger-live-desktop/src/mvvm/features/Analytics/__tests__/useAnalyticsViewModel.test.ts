@@ -1,6 +1,6 @@
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { useNavigate } from "react-router";
-import { getFiatCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import * as usePortfolioBalanceDisplayStateModule from "LLD/hooks/usePortfolioBalanceDisplayState";
 import { mockPortfolioBalanceInfo, defaultPortfolio } from "LLD/hooks/__tests__/fixtures";

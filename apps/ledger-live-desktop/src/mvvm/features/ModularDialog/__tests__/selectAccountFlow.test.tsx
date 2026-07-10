@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import React from "react";
 import * as reduxHooks from "LLD/hooks/redux";
 import { render, screen, waitFor } from "tests/testSetup";

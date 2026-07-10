@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions */
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import ModularDrawerAddAccountFlowManager from "../../ModularDrawerAddAccountFlowManager";
 import { createMockAccount } from "../../__tests__/testUtils";

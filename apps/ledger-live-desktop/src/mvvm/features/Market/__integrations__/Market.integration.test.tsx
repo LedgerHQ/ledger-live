@@ -15,8 +15,8 @@ jest.mock("react-router", () => ({
   useNavigate: jest.fn(() => mockNavigate),
 }));
 
-jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
-  useCurrenciesUnderFeatureFlag: () => ({
+jest.mock("@features/platform-currencies", () => ({
+  useFeatureFlaggedCurrencies: () => ({
     deactivatedCurrencyIds: new Set<string>(),
   }),
 }));

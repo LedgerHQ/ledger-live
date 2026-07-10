@@ -1,6 +1,7 @@
 import { renderHook } from "tests/testSetup";
 import { useBalanceCellViewModel } from "../useBalanceCellViewModel";
-import { formatCurrencyUnit, getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({

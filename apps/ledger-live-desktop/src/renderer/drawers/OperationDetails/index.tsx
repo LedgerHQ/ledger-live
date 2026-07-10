@@ -9,7 +9,7 @@ import {
   getDefaultExplorerView,
   getTransactionExplorer as getDefaultTransactionExplorer,
 } from "@ledgerhq/live-common/explorers";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   findOperationInAccount,

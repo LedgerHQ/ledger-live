@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { TokenCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
+import { useTokensData } from "@features/platform-currencies";
 import { supportLinkByTokenType } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";

@@ -1,6 +1,6 @@
 import React from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { render, screen } from "tests/testSetup";
 import { TransactionHeader } from "../components/TransactionHeader";

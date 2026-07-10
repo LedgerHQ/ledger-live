@@ -1,6 +1,6 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
