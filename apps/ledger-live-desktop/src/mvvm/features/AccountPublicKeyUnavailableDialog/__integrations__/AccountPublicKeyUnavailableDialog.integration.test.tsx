@@ -1,30 +1,20 @@
 import React from "react";
 import { render, screen, waitFor, act } from "tests/testSetup";
+import { urls } from "~/config/urls";
+import { openURL } from "~/renderer/linking";
 import AccountPublicKeyUnavailableDialog from "..";
 import {
   openAccountPublicKeyUnavailableDialog,
   selectIsAccountPublicKeyUnavailableDialogOpen,
 } from "../accountPublicKeyUnavailableDialog";
 
-const mockOpenURL = jest.fn();
 jest.mock("~/renderer/linking", () => ({
-  openURL: (...args: unknown[]) => mockOpenURL(...args),
+  openURL: jest.fn(),
 }));
-
-// jest.mock is hoisted, so the factory inlines the literal; the const below (same value) is used
-// by the assertion.
-jest.mock("~/config/urls", () => ({
-  ...jest.requireActual("~/config/urls"),
-  urls: {
-    ...jest.requireActual("~/config/urls").urls,
-    accountPublicKeyUnavailable: "https://test/account-public-key-unavailable",
-  },
-}));
-const TEST_SUPPORT_URL = "https://test/account-public-key-unavailable";
 
 describe("AccountPublicKeyUnavailableDialog Integration", () => {
   beforeEach(() => {
-    mockOpenURL.mockClear();
+    (openURL as jest.Mock).mockClear();
   });
 
   it("does not render a dialog while the dialog state is closed", () => {
@@ -58,9 +48,7 @@ describe("AccountPublicKeyUnavailableDialog Integration", () => {
 
     await user.click(screen.getByRole("button", { name: /learn more/i }));
 
-    // The button opens whatever is configured in urls (mocked here); the exact article URL is
-    // a config concern, not something the test should re-encode.
-    expect(mockOpenURL).toHaveBeenCalledWith(TEST_SUPPORT_URL);
+    expect(openURL).toHaveBeenCalledWith(urls.accountPublicKeyUnavailable);
     expect(selectIsAccountPublicKeyUnavailableDialogOpen(store.getState())).toBe(true);
   });
 
