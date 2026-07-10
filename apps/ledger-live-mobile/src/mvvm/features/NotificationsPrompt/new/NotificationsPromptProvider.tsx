@@ -6,7 +6,7 @@ import {
 import { useNotificationsPromptTriggers } from "LLM/features/NotificationsPrompt/new/hooks/useNotificationsPromptTriggers";
 
 type NotificationsPromptProviderProps = {
-  children?: React.ReactNode;
+  children: React.ReactNode;
 };
 
 export type NotificationsPromptContextValue = {

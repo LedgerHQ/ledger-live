@@ -4,9 +4,9 @@ import {
   NotificationsPromptProvider,
   NotificationsPromptWrapper,
   setPushNotificationsDataOfUserInStorage,
+  useNotifications,
   useNotificationsContext,
 } from "LLM/features/NotificationsPrompt";
-import { useInitPushNotificationsData } from "LLM/features/NotificationsPrompt/new/hooks/useInitPushNotificationsData";
 
 import storage from "LLM/storage";
 import { notificationsDataOfUserSelector } from "~/reducers/notifications";
@@ -130,7 +130,7 @@ describe("NotificationsPrompt Integration", () => {
 
       const { notifyFlowCompleted, tryTriggerPushNotificationDrawerAfterInactivity } =
         useNotificationsContext();
-      const initPushNotificationsData = useInitPushNotificationsData();
+      const { initPushNotificationsData } = useNotifications();
 
       useEffect(() => {
         initPushNotificationsData()

@@ -1,6 +1,7 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   setNotificationsDrawerPromptTarget,
   setNotificationsDrawerSource,
@@ -14,36 +15,102 @@ import {
   notificationsDrawerSource,
   notificationsModalOpenSelector,
 } from "~/reducers/notifications";
+import { ratingsModalOpenSelector } from "~/reducers/ratings";
 import { notificationsSelector } from "~/reducers/settings";
-import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission";
-import { useNotificationsData } from "LLM/features/NotificationsPrompt";
-import { useNextRepromptDelay } from "./useNextRepromptDelay";
-import { resolveDrawerPromptTargetForAnalytics } from "../notificationsPromptAnalytics";
-import { isTransactionsAlertsPromptTarget } from "../../utils/getNotificationsPromptCopy";
+import { type NotificationsState } from "~/reducers/types";
+import { type DataOfUser, type NotificationPromptTarget } from "../types";
+import { resolveDrawerPromptTargetForAnalytics } from "../new/notificationsPromptAnalytics";
+import { isTransactionsAlertsPromptTarget } from "../utils/getNotificationsPromptCopy";
 
-/**
- * Drives the push-notifications opt-in drawer's own button presses (allow / maybe later /
- * backdrop). Triggering the drawer itself (deciding whether/when it should open) lives in
- * {@link useNotificationsPromptTriggers}; this hook only reacts to what the user does once
- * it's already open.
- */
-export function useNotificationsPromptDrawerHandlers() {
-  const dispatch = useDispatch();
-  const notifications = useSelector(notificationsSelector);
+type UseNotificationsDrawerParams = {
+  permissionStatus:
+    | (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus]
+    | null
+    | undefined;
+  pushNotificationsDataOfUser: DataOfUser | null | undefined;
+  nextRepromptDelay: { days?: number; hours?: number; minutes?: number } | null;
+  checkIsInactive: (lastActionAt?: number) => boolean;
+  markUserAsOptIn: () => void;
+  markUserAsOptOut: (promptTarget?: NotificationPromptTarget) => void;
+  enableAppNotifications: () => void;
+  updateUserLastInactiveTime: () => void;
+  requestPushNotificationsPermission: () => Promise<
+    void | (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus]
+  >;
+};
+
+export const useNotificationsDrawer = ({
+  permissionStatus,
+  pushNotificationsDataOfUser,
+  nextRepromptDelay,
+  checkIsInactive,
+  markUserAsOptIn,
+  markUserAsOptOut,
+  enableAppNotifications,
+  requestPushNotificationsPermission,
+  updateUserLastInactiveTime,
+}: UseNotificationsDrawerParams) => {
+  const featureBrazePushNotifications = useFeature("brazePushNotifications");
+
   const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
+  const isRatingsModalOpen = useSelector(ratingsModalOpenSelector);
   const drawerSource = useSelector(notificationsDrawerSource);
   const drawerPromptTarget = useSelector(notificationsDrawerPromptTarget);
+  const notifications = useSelector(notificationsSelector);
 
-  const { permissionStatus, requestPushNotificationsPermission } = useNotificationsPermission();
-  const {
-    pushNotificationsDataOfUser,
-    enableAppNotifications,
-    markUserAsOptIn,
-    markUserAsOptOut,
-    updateUserLastInactiveTime,
-  } = useNotificationsData();
+  const dispatch = useDispatch();
+  const eventTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const nextRepromptDelay = useNextRepromptDelay();
+  const openDrawer = useCallback(
+    (drawerSource: Exclude<NotificationsState["drawerSource"], undefined>, timer = 0) => {
+      if (eventTimeoutRef.current) {
+        clearTimeout(eventTimeoutRef.current);
+        eventTimeoutRef.current = null;
+      }
+
+      eventTimeoutRef.current = setTimeout(() => {
+        dispatch(setNotificationsModalOpen(true));
+        dispatch(setNotificationsDrawerSource(drawerSource));
+      }, timer);
+    },
+    [dispatch],
+  );
+
+  const tryTriggerPushNotificationDrawerAfterInactivity = useCallback(
+    (
+      data:
+        | {
+            status: "success";
+            storedUserData: DataOfUser | null;
+            osPermissionStatus: (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus];
+            areAppNotificationsEnabled: boolean;
+          }
+        | {
+            status: "error";
+            reason: string;
+          },
+    ) => {
+      if (!featureBrazePushNotifications?.enabled || isRatingsModalOpen) {
+        return;
+      }
+      if (data.status === "error") {
+        return;
+      }
+
+      const isOptOut =
+        data.osPermissionStatus !== AuthorizationStatus.AUTHORIZED ||
+        !data.areAppNotificationsEnabled;
+      if (!isOptOut) {
+        return;
+      }
+
+      const isInactive = checkIsInactive(data.storedUserData?.lastActionAt);
+      if (isInactive) {
+        openDrawer("inactivity", 1000);
+      }
+    },
+    [featureBrazePushNotifications?.enabled, isRatingsModalOpen, openDrawer, checkIsInactive],
+  );
 
   const trackButtonClicked = useCallback(
     (eventName: string) => {
@@ -168,10 +235,10 @@ export function useNotificationsPromptDrawerHandlers() {
     isPushNotificationsModalOpen,
     drawerSource,
     drawerPromptTarget,
-    nextRepromptDelay,
-    pushNotificationsDataOfUser,
+    eventTimeoutRef,
     handleAllowNotificationsPress,
     handleDelayLaterPress,
     handleCloseFromBackdropPress,
+    tryTriggerPushNotificationDrawerAfterInactivity,
   };
-}
+};

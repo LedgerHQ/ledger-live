@@ -1,3 +1,4 @@
+export { useNotifications } from "./hooks/useNotifications";
 export { NotificationsPromptWrapper } from "./new/NotificationsPromptWrapper";
 export { NotificationsPromptProvider } from "./new/NotificationsPromptProvider";
 export { useNotificationsContext } from "./new/NotificationsPromptProvider";

@@ -304,7 +304,7 @@ export const getNextRepromptDelay = ({
   return repromptSchedule[scheduleIndex];
 };
 
-const checkIsInactive = ({
+export const checkIsInactive = ({
   inactivityEnabled,
   inactivityReprompt,
   lastActionAt,

@@ -10,8 +10,7 @@ import { track, TrackScreen, trackWithRoute, updateIdentify } from "~/analytics"
 import { notificationsSelector } from "~/reducers/settings";
 import { setNotifications } from "~/actions/settings";
 import type { State } from "~/reducers/types";
-import { useNotificationsData } from "LLM/features/NotificationsPrompt";
-import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 import { updateUserPreferences } from "~/notifications/braze";
 import { useFeature } from "@features/platform-feature-flags";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
@@ -35,8 +34,7 @@ type NotificationRowProps = {
 function NotificationSettingsRow({ disabled, notificationKey, label }: NotificationRowProps) {
   const dispatch = useDispatch();
   const notifications = useSelector(notificationsSelector);
-  const { markUserAsOptIn, markUserAsOptOut } = useNotificationsData();
-  const { permissionStatus } = useNotificationsPermission();
+  const { markUserAsOptIn, permissionStatus, markUserAsOptOut } = useNotifications();
 
   const { t } = useTranslation();
 
@@ -98,7 +96,7 @@ function NotificationSettingsRow({ disabled, notificationKey, label }: Notificat
 function NotificationsSettings() {
   const { t } = useTranslation();
   const notifications = useSelector(notificationsSelector);
-  const { permissionStatus, requestPushNotificationsPermission } = useNotificationsPermission();
+  const { permissionStatus, requestPushNotificationsPermission } = useNotifications();
 
   const featureBrazePushNotifications = useFeature("brazePushNotifications");
   const hiddenNotificationCategories = useMemo(() => {

@@ -1,7 +1,7 @@
 import React, { useCallback, useRef } from "react";
 import { useTranslation } from "~/context/Locale";
 import { Flex, Link as TextLink, Button } from "@ledgerhq/native-ui";
-import { useNotificationsPromptDrawerHandlers } from "LLM/features/NotificationsPrompt/new/hooks/useNotificationsPromptDrawerHandlers";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { NotificationsDrawerIllustration } from "LLM/features/NotificationsPrompt/components/NotificationsDrawerIllustration";
 import { NotificationsPromptContent } from "LLM/features/NotificationsPrompt/components/NotificationsPromptContent";
@@ -27,7 +27,7 @@ export const NotificationsPromptDrawer = () => {
     handleCloseFromBackdropPress,
     nextRepromptDelay,
     pushNotificationsDataOfUser,
-  } = useNotificationsPromptDrawerHandlers();
+  } = useNotifications();
 
   const drawerDisplayStateRef = useRef<DrawerDisplayState>({
     drawerSource: undefined,
