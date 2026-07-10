@@ -40,18 +40,28 @@ export const ProductTourDrawer = () => {
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
 
-  // Max content height before the sheet clips it; the layout pass shrinks the slides area to fit.
-  const contentCeiling = windowHeight - topInset - bottomInset - PRODUCT_TOUR_SHEET_CHROME_HEIGHT;
+  // QueuedDrawerBottomSheet already injects the Android bottom safe-area spacer, so only iOS adds it.
+  const bottomSafeArea = Platform.OS === "ios" ? bottomInset : 0;
+
+  // Max content height before the sheet clips it; the layout pass resizes the slides area to fit.
+  const contentCeiling =
+    windowHeight - topInset - bottomSafeArea - PRODUCT_TOUR_SHEET_CHROME_HEIGHT;
 
   const [slidesListHeight, setSlidesListHeight] = useState(PRODUCT_TOUR_SLIDES_LIST_HEIGHT);
 
   const handleContentLayout = useCallback(
     (event: LayoutChangeEvent) => {
-      const overflow = event.nativeEvent.layout.height - contentCeiling;
-      if (overflow <= 0) {
-        return;
-      }
-      setSlidesListHeight(prev => Math.max(PRODUCT_TOUR_SLIDES_LIST_MIN_HEIGHT, prev - overflow));
+      const measuredHeight = event.nativeEvent.layout.height;
+      // The non-slides height (chrome + paddings) is constant, so derive the slides area that fits
+      // the ceiling. Recomputing on every layout lets it grow back when space returns (rotation).
+      setSlidesListHeight(prev => {
+        const nonSlidesHeight = measuredHeight - prev;
+        const available = Math.floor(contentCeiling - nonSlidesHeight);
+        return Math.min(
+          PRODUCT_TOUR_SLIDES_LIST_HEIGHT,
+          Math.max(PRODUCT_TOUR_SLIDES_LIST_MIN_HEIGHT, available),
+        );
+      });
     },
     [contentCeiling],
   );
@@ -64,13 +74,16 @@ export const ProductTourDrawer = () => {
         onClose={closeProductTour}
         noCloseButton
         enableDynamicSizing
+        maxDynamicContentSize={Platform.OS === "ios" ? "fullWithOffset" : undefined}
       >
         {isDrawerOpen ? (
           // Inner ForceTheme: the sheet portals its children, so context must be re-applied here.
           <ForceTheme selectedPalette={"dark"}>
             <BottomSheetView>
-              <View onLayout={handleContentLayout} style={{ paddingBottom: bottomInset + 8 }}>
-                <Box lx={{ flexDirection: "row", justifyContent: "flex-end", paddingBottom: "s12" }}>
+              <View onLayout={handleContentLayout} style={{ paddingBottom: bottomSafeArea + 8 }}>
+                <Box
+                  lx={{ flexDirection: "row", justifyContent: "flex-end", paddingBottom: "s12" }}
+                >
                   <IconButton
                     icon={Close}
                     appearance="transparent"
@@ -122,9 +135,7 @@ export const ProductTourDrawer = () => {
 const styles = StyleSheet.create({
   // Override Slides' default flex:1 so it wraps its content and can be measured.
   slides: {
-    flexGrow: 0,
-    flexShrink: 0,
-    flexBasis: "auto",
+    flex: 0,
   },
   progressIndicator: {
     marginVertical: 24,
