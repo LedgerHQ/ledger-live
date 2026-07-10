@@ -17,13 +17,13 @@ export function useCategories(
     const res = manifests.reduce(
       (res, manifest) => {
         manifest.categories.forEach(category => {
-          const list = res.has(category) ? [...res.get(category), manifest] : [manifest];
+          const list = [...(res.get(category) ?? []), manifest];
           res.set(category, list);
         });
 
         return res;
       },
-      new Map().set("all", manifests),
+      new Map<string, AppManifest[]>().set("all", manifests),
     );
 
     return res;

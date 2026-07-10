@@ -232,7 +232,6 @@ export function useWalletAPIServer({
     server.setHandler("account.list", createAccountListHandler(getDeps));
     server.setHandler("account.request", createAccountRequestHandler(getDeps));
     server.setHandler("account.receive", createAccountReceiveHandler(getDeps));
-    server.setHandler("account.getPublicKey", createAccountGetPublicKeyHandler(getDeps));
     server.setHandler("message.sign", createMessageSignHandler(getDeps));
     server.setHandler("storage.get", createStorageGetHandler(getDeps));
     server.setHandler("storage.set", createStorageSetHandler(getDeps));
@@ -251,6 +250,7 @@ export function useWalletAPIServer({
     server.setHandler("bitcoin.getAddress", createBitcoinGetAddressHandler(getDeps));
     server.setHandler("bitcoin.getAddresses", createBitcoinGetAddressesHandler(getDeps));
     server.setHandler("bitcoin.getPublicKey", createBitcoinGetPublicKeyHandler(getDeps));
+    server.setHandler("account.getPublicKey", createAccountGetPublicKeyHandler(getDeps));
     server.setHandler("bitcoin.getXPub", createBitcoinGetXPubHandler(getDeps));
     server.setHandler("exchange.start", createExchangeStartHandler(getDeps));
     server.setHandler("exchange.complete", createExchangeCompleteHandler(getDeps));

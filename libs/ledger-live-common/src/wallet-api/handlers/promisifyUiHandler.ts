@@ -44,22 +44,31 @@ export function promisifyUiHandler<UiResult, Result = UiResult>({
       action();
     };
 
-    invokeUi({
-      onSuccess: value =>
-        settle(() => {
-          onSuccess?.();
-          resolve(mapResult ? mapResult(value) : (value as unknown as Result));
-        }),
-      onError: error =>
-        settle(() => {
-          onFail?.();
-          reject(error);
-        }),
-      onCancel: () =>
-        settle(() => {
-          onFail?.();
-          reject(cancelError ? cancelError() : new Error("User cancelled"));
-        }),
-    });
+    try {
+      invokeUi({
+        onSuccess: value =>
+          settle(() => {
+            onSuccess?.();
+            resolve(mapResult ? mapResult(value) : (value as unknown as Result));
+          }),
+        onError: error =>
+          settle(() => {
+            onFail?.();
+            reject(error);
+          }),
+        onCancel: () =>
+          settle(() => {
+            onFail?.();
+            reject(cancelError ? cancelError() : new Error("User cancelled"));
+          }),
+      });
+    } catch (error) {
+      // A UI hook that throws synchronously must still go through the single-shot
+      // fail path so failure tracking (onFail) runs and non-Error throws are normalized.
+      settle(() => {
+        onFail?.();
+        reject(error instanceof Error ? error : new Error(String(error)));
+      });
+    }
   });
 }
