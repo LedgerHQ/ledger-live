@@ -34,6 +34,14 @@ runs:
         for ((i=1; i<=N; i++)); do
           if [[ \$i -eq 1 ]]; then name='iOS Simulator'; else name=\"iOS Simulator \$i\"; fi
           xcrun simctl bootstatus \"\$name\"
+          # Enable Reduce Motion so Reanimated's System-default animations no-op during Detox runs.
+          xcrun simctl spawn \"\$name\" defaults write com.apple.Accessibility ReduceMotionEnabled -bool true || true
+          rm_val=\$(xcrun simctl spawn \"\$name\" defaults read com.apple.Accessibility ReduceMotionEnabled 2>/dev/null || echo 0)
+          if [[ \"\$rm_val\" == \"1\" ]]; then
+            echo \"♿ Reduce Motion enabled on \$name\"
+          else
+            echo \"⚠️  Reduce Motion NOT enabled on \$name (read back '\$rm_val')\"
+          fi
         done
         echo '✅ All simulators booted'
         " > "$LOG_FILE" 2>&1 &
