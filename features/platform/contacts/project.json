@@ -1,8 +1,0 @@
-{
-  "name": "@features/platform-contacts",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}
