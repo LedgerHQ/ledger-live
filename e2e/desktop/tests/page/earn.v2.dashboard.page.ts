@@ -9,7 +9,7 @@ export class EarnV2Page extends EarnBasePage {
   private readonly maxPotentialRewards = "max-potential-rewards";
   private readonly walletHeaderAmount = "wallet-header-amount";
   private readonly rewardsSummary = "rewards-summary";
-  private readonly tokensToEarnBanner = "tokens-to-earn-banner";
+  private readonly crowdFavourites = "crowd-favourites";
   private readonly footerDisclaimer = "footer-disclaimer";
   private readonly assetItemTicker = (ticker: string) =>
     `asset-item-ticker-${ticker.toLowerCase()}`;
@@ -36,7 +36,7 @@ export class EarnV2Page extends EarnBasePage {
   @step("Verify cold start page")
   async verifyColdStartPage() {
     await this.verifyElementIsVisible(this.maxPotentialRewards);
-    await this.verifyElementIsVisible(this.tokensToEarnBanner);
+    await this.verifyElementIsVisible(this.crowdFavourites);
   }
 
   @step("Verify asset ready to earn: $0")
