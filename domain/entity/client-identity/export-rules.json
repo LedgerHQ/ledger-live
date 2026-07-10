@@ -1,13 +1,10 @@
 {
   "domain/entity/client-identity/src/ids/DeviceId.ts": {
-    "exportDeviceIdForPushDevicesService": [
-      "domain/api/push-devices/src/api.ts",
-      "libs/ledger-live-common/src/hw/actions/manager.ts"
-    ],
+    "exportDeviceIdForPushDevicesService": ["domain/api/push-devices/src/api.ts"],
     "exportDeviceIdForPersistence": ["domain/entity/client-identity/src/data/persistence.ts"]
   },
   "domain/entity/client-identity/src/ids/UserId.ts": {
-    "exportUserIdForPushDevicesService": ["domain/api/push-devices/src/middleware.ts"],
+    "exportUserIdForPushDevicesService": ["domain/api/push-devices/src/internals/middleware.ts"],
     "exportUserIdForPersistence": ["domain/entity/client-identity/src/data/persistence.ts"],
     "exportUserIdForAnalytics": [
       "apps/ledger-live-desktop/src/renderer/live-common-setup.ts",

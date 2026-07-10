@@ -85,6 +85,53 @@ describe("identitiesSlice", () => {
 
       expect(state.pushDevicesSyncState).toBe("unsynced");
     });
+
+    it("should restore userId but generate new datadogId when datadogId is missing", () => {
+      const persisted: PersistedIdentities = {
+        userId: "user-persisted-123",
+        deviceIds: [],
+        pushDevicesSyncState: "synced",
+        pushDevicesServiceUrl: null,
+      };
+      const action = identitiesSlice.actions.initFromPersisted(persisted);
+      const state = identitiesSlice.reducer(initialIdentitiesState, action);
+
+      expect(state.userId.exportUserIdForPersistence()).toBe("user-persisted-123");
+      expect(state.datadogId.exportDatadogIdForPersistence()).not.toBe(DUMMY_ID_STR);
+      expect(state.pushDevicesSyncState).toBe("synced");
+    });
+
+    it("should generate new userId and datadogId when both are absent from persisted payload", () => {
+      const persisted: PersistedIdentities = {
+        deviceIds: [],
+        pushDevicesSyncState: "synced",
+        pushDevicesServiceUrl: null,
+      };
+      const action = identitiesSlice.actions.initFromPersisted(persisted);
+      const state = identitiesSlice.reducer(initialIdentitiesState, action);
+
+      expect(state.userId.exportUserIdForPersistence()).not.toBe(DUMMY_ID_STR);
+      expect(state.datadogId.exportDatadogIdForPersistence()).not.toBe(DUMMY_ID_STR);
+      expect(state.pushDevicesSyncState).toBe("unsynced");
+    });
+
+    it("should generate new ids when persisted values are empty or whitespace-only", () => {
+      const persisted: PersistedIdentities = {
+        userId: "  ",
+        datadogId: "",
+        deviceIds: [],
+        pushDevicesSyncState: "synced",
+        pushDevicesServiceUrl: null,
+      };
+      const action = identitiesSlice.actions.initFromPersisted(persisted);
+      const state = identitiesSlice.reducer(initialIdentitiesState, action);
+
+      expect(state.userId.exportUserIdForPersistence()).not.toBe(DUMMY_ID_STR);
+      expect(state.userId.exportUserIdForPersistence()).not.toBe("  ");
+      expect(state.datadogId.exportDatadogIdForPersistence()).not.toBe(DUMMY_ID_STR);
+      expect(state.datadogId.exportDatadogIdForPersistence()).not.toBe("");
+      expect(state.pushDevicesSyncState).toBe("unsynced");
+    });
   });
 
   describe("importFromLegacy", () => {
@@ -98,6 +145,15 @@ describe("identitiesSlice", () => {
       expect(state.userId.exportUserIdForPersistence()).toBe("legacy-user-1");
       expect(state.datadogId.exportDatadogIdForPersistence()).toBe("legacy-dd-1");
     });
+
+    it("should generate new datadogId when only userId is provided", () => {
+      const action = identitiesSlice.actions.importFromLegacy({ userId: "legacy-user-1" });
+      const state = identitiesSlice.reducer(initialIdentitiesState, action);
+
+      expect(state.userId.exportUserIdForPersistence()).toBe("legacy-user-1");
+      expect(state.datadogId.exportDatadogIdForPersistence()).not.toBe(DUMMY_ID_STR);
+      expect(state.datadogId).toBeInstanceOf(DatadogId);
+    });
   });
 
   describe("initFromScratch", () => {
@@ -107,6 +163,14 @@ describe("identitiesSlice", () => {
 
       expect(state.userId).toBeInstanceOf(UserId);
       expect(state.datadogId).toBeInstanceOf(DatadogId);
+    });
+
+    it("should generate ids that are not the dummy placeholder", () => {
+      const action = identitiesSlice.actions.initFromScratch();
+      const state = identitiesSlice.reducer(initialIdentitiesState, action);
+
+      expect(state.userId.exportUserIdForPersistence()).not.toBe(DUMMY_ID_STR);
+      expect(state.datadogId.exportDatadogIdForPersistence()).not.toBe(DUMMY_ID_STR);
     });
   });
 
@@ -127,10 +191,7 @@ describe("identitiesSlice", () => {
         initialIdentitiesState,
         identitiesSlice.actions.addDeviceId(deviceId),
       );
-      const state2 = identitiesSlice.reducer(
-        state1,
-        identitiesSlice.actions.addDeviceId(deviceId),
-      );
+      const state2 = identitiesSlice.reducer(state1, identitiesSlice.actions.addDeviceId(deviceId));
 
       expect(state2.deviceIds).toHaveLength(1);
     });
