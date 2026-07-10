@@ -17,11 +17,6 @@ lockfile_platforms = [
   "windows-x64",
 ]
 
-[plugins]
-bundler = "jonathanmorley/asdf-bundler"
-cocoapods = "mise-plugins/mise-cocoapods"
-
-
 [tools]
 node = '24.14.0'
 pnpm = '10.24.0'
