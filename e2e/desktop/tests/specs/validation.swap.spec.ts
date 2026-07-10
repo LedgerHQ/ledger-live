@@ -256,7 +256,10 @@ test.describe(`Swap - Error message when network fees are above account balance 
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      const minAmount = await app.swap.getMinimumAmount(accountToDebit, accountToCredit);
+      const minAmount = await app.swap.getMinimumAmount(
+        swapEthNeededForNetworkFeesTestConfig.swap.accountToDebit,
+        swapEthNeededForNetworkFeesTestConfig.swap.accountToCredit,
+      );
 
       await performSwapUntilQuoteSelectionStep(
         app,
