@@ -2,7 +2,6 @@
 "@ledgerhq/cryptoassets": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
-"@ledgerhq/wallet-cli": minor
 "@ledgerhq/web-tools": minor
 ---
 
