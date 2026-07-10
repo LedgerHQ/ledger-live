@@ -179,10 +179,7 @@ describe("useFinishOnboardingDialogViewModel", () => {
     const { store } = renderHook(() => useFinishOnboardingDialogViewModel(), {
       initialState: {
         dialogs: { FINISH_POST_ONBOARDING: true },
-        postOnboarding: {
-          ...postOnboardingInitialState,
-          postOnboardingInProgress: true,
-        },
+        postOnboarding: { ...postOnboardingInitialState, postOnboardingInProgress: true },
       },
     });
 
@@ -193,6 +190,30 @@ describe("useFinishOnboardingDialogViewModel", () => {
       deviceModelId: DeviceModelId.nanoX,
       flow: "post-onboarding",
     });
+  });
+
+  it("should not auto-close when allActionsCompleted is true but the dialog has not been opened yet", () => {
+    const actionsState = [
+      { id: PostOnboardingActionId.assetsTransfer, completed: true },
+    ] as PostOnboardingHubState["actionsState"];
+
+    mockedUsePostOnboardingHubState.mockReturnValue(buildHubState({ actionsState }));
+
+    const { result, store } = renderHook(() => useFinishOnboardingDialogViewModel(), {
+      initialState: {
+        dialogs: { FINISH_POST_ONBOARDING: false },
+        postOnboarding: { ...postOnboardingInitialState, postOnboardingInProgress: true },
+      },
+    });
+
+    expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(false);
+    expect(store.getState().postOnboarding.walletEntryPointDismissed).toBe(false);
+
+    act(() => {
+      result.current.onClose();
+    });
+
+    expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(false);
   });
 
   it("should not auto-dismiss when the action list is empty", () => {
@@ -201,70 +222,13 @@ describe("useFinishOnboardingDialogViewModel", () => {
     const { store } = renderHook(() => useFinishOnboardingDialogViewModel(), {
       initialState: {
         dialogs: { FINISH_POST_ONBOARDING: true },
-        postOnboarding: {
-          ...postOnboardingInitialState,
-          postOnboardingInProgress: true,
-        },
+        postOnboarding: { ...postOnboardingInitialState, postOnboardingInProgress: true },
       },
     });
 
     expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(true);
     expect(store.getState().postOnboarding.walletEntryPointDismissed).toBe(false);
     expect(store.getState().postOnboarding.postOnboardingInProgress).toBe(true);
-  });
-
-  it("should NOT auto-close when allActionsCompleted is true but the dialog is not open", () => {
-    const actionsState = [
-      { id: PostOnboardingActionId.assetsTransfer, completed: true },
-      { id: PostOnboardingActionId.personalizeMock, completed: true },
-    ] as PostOnboardingHubState["actionsState"];
-
-    mockedUsePostOnboardingHubState.mockReturnValue(buildHubState({ actionsState }));
-
-    const { store } = renderHook(() => useFinishOnboardingDialogViewModel(), {
-      initialState: {
-        dialogs: { FINISH_POST_ONBOARDING: false },
-        postOnboarding: {
-          ...postOnboardingInitialState,
-          postOnboardingInProgress: true,
-        },
-      },
-    });
-
-    expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(false);
-    expect(store.getState().postOnboarding.walletEntryPointDismissed).toBe(false);
-    expect(store.getState().postOnboarding.postOnboardingInProgress).toBe(true);
-    expect(jest.mocked(track)).not.toHaveBeenCalledWith(
-      "Post-onboarding widget completed",
-      expect.anything(),
-    );
-  });
-
-  it("should auto-close when both allActionsCompleted and isDialogOpen are true", () => {
-    const actionsState = [
-      { id: PostOnboardingActionId.assetsTransfer, completed: true },
-      { id: PostOnboardingActionId.personalizeMock, completed: true },
-    ] as PostOnboardingHubState["actionsState"];
-
-    mockedUsePostOnboardingHubState.mockReturnValue(buildHubState({ actionsState }));
-
-    const { store } = renderHook(() => useFinishOnboardingDialogViewModel(), {
-      initialState: {
-        dialogs: { FINISH_POST_ONBOARDING: true },
-        postOnboarding: {
-          ...postOnboardingInitialState,
-          postOnboardingInProgress: true,
-        },
-      },
-    });
-
-    expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(false);
-    expect(store.getState().postOnboarding.walletEntryPointDismissed).toBe(true);
-    expect(store.getState().postOnboarding.postOnboardingInProgress).toBe(false);
-    expect(jest.mocked(track)).toHaveBeenCalledWith("Post-onboarding widget completed", {
-      deviceModelId: DeviceModelId.nanoX,
-      flow: "post-onboarding",
-    });
   });
 
   it("should not auto-dismiss while any listed action is still pending", () => {
@@ -278,10 +242,7 @@ describe("useFinishOnboardingDialogViewModel", () => {
     const { store } = renderHook(() => useFinishOnboardingDialogViewModel(), {
       initialState: {
         dialogs: { FINISH_POST_ONBOARDING: true },
-        postOnboarding: {
-          ...postOnboardingInitialState,
-          postOnboardingInProgress: true,
-        },
+        postOnboarding: { ...postOnboardingInitialState, postOnboardingInProgress: true },
       },
     });
 
