@@ -8,15 +8,15 @@ export type InternalTxSourceList = readonly InternalTxSource[] & {
   readonly [brand]: "InternalTxSourceList";
 };
 
-const ALL_SOURCES: readonly InternalTxSource[] = [
+const ALL_SOURCES = new Set<string>([
   "trace_block",
   "debug_traceBlockByNumber",
   "explorer",
   "empty",
-];
+] satisfies ReadonlyArray<InternalTxSource>);
 
 export function isInternalTxSource(value: string): value is InternalTxSource {
-  return (ALL_SOURCES as readonly string[]).includes(value);
+  return ALL_SOURCES.has(value);
 }
 
 /**
