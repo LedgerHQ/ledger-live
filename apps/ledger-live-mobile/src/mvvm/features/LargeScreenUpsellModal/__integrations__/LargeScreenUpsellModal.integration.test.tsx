@@ -5,9 +5,10 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { render, screen, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import type { State } from "~/reducers/types";
 import { LargeScreenUpsellModalPortfolioMount } from "..";
-import { __resetLargeScreenUpsellAutoOpenForTests } from "../screens/LargeScreenUpsellModalPortfolioMount/useLargeScreenUpsellModalPortfolioMountViewModel";
+import { __resetLargeScreenUpsellAutoOpenForTests } from "../components/LargeScreenUpsellModalPortfolioMount/useLargeScreenUpsellModalPortfolioMountViewModel";
 
 const Stack = createNativeStackNavigator();
+const NOW = new Date("2026-06-01T12:00:00.000Z");
 
 function withKnownDeviceModels(deviceModelIds: DeviceModelId[]) {
   return (state: State): State => ({
@@ -45,7 +46,12 @@ function IntegrationNavigator() {
 
 describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
   beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(NOW);
     __resetLargeScreenUpsellAutoOpenForTests();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   it("should auto-open the upsell modal when eligible and unblocked", async () => {

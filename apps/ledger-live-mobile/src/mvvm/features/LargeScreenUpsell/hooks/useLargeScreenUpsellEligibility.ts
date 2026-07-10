@@ -11,6 +11,9 @@ const NANO_DEVICE_MODEL_IDS = [
   DeviceModelId.nanoX,
 ] as const;
 
+const FORCE_NANO_S_IN_DEV = __DEV__ && process.env.NODE_ENV !== "test";
+const FORCE_LARGE_SCREEN_UPSELL_IN_DEV = __DEV__ && process.env.NODE_ENV !== "test";
+
 type NanoDeviceModelId = (typeof NANO_DEVICE_MODEL_IDS)[number];
 
 type CooldownDays = { default: number } & Partial<Record<NanoDeviceModelId, number>>;
@@ -62,11 +65,21 @@ function selectCooldownDeviceModelId(
 
 export function useLargeScreenUpsellEligibility(): LargeScreenUpsellEligibility {
   const feature = useFeature("largeScreenUpsell");
-  const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
+  const storedKnownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
   const onboardingDate = useSelector(onboardingDateSelector);
 
+  const knownDeviceModelIds = FORCE_NANO_S_IN_DEV
+    ? {
+        ...storedKnownDeviceModelIds,
+        [DeviceModelId.nanoS]: true,
+        [DeviceModelId.stax]: false,
+        [DeviceModelId.europa]: false,
+        [DeviceModelId.apex]: false,
+      }
+    : storedKnownDeviceModelIds;
+
   const params = feature?.params;
-  if (!feature?.enabled || !params) {
+  if (!(feature?.enabled || FORCE_LARGE_SCREEN_UPSELL_IN_DEV) || !params) {
     return { isEligible: false, reason: "feature_disabled" };
   }
 

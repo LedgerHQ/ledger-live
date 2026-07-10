@@ -5,6 +5,8 @@ import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/ty
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { LargeScreenUpsellModalContent } from "../LargeScreenUpsellModalContent";
 
+const FORCE_LARGE_SCREEN_UPSELL_MODAL_PRIORITY_IN_DEV = __DEV__ && process.env.NODE_ENV !== "test";
+
 type LargeScreenUpsellModalDrawerProps = Readonly<{
   isOpen: boolean;
   onClose: () => void;
@@ -43,6 +45,7 @@ export function LargeScreenUpsellModalDrawer({
     <QueuedDrawerBottomSheet
       key="large-screen-upsell-modal-drawer"
       isRequestingToBeOpened={isOpen}
+      isForcingToBeOpened={isOpen && FORCE_LARGE_SCREEN_UPSELL_MODAL_PRIORITY_IN_DEV}
       onClose={onClose}
       enableDynamicSizing
     >

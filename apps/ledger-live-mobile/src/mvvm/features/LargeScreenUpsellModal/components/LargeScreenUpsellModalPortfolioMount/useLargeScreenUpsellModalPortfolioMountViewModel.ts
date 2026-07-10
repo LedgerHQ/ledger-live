@@ -21,6 +21,7 @@ import {
 
 const LARGE_SCREEN_UPSELL_MODAL_ID = "large-screen-upsell-modal";
 const LARGE_SCREEN_UPSELL_MODAL_IOS_BOTTOM_PADDING = 20;
+const FORCE_LARGE_SCREEN_UPSELL_IN_DEV = __DEV__ && process.env.NODE_ENV !== "test";
 
 let hasAutoOpenedThisSession = false;
 
@@ -45,18 +46,18 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
   const eligibility = useLargeScreenUpsellEligibility();
   const hasCompetingAppStartModal = useCompetingAppStartModalsPresent();
   const analyticsEnabled = useSelector(analyticsEnabledSelector);
-  const retries = useSelector((state: State) => state.largeScreenUpsellModal?.retries ?? 0);
-  const lastSeenAt = useSelector(
-    (state: State) => state.largeScreenUpsellModal?.lastSeenAt ?? null,
-  );
+  const retries = useSelector((state: State) => state.largeScreenUpsellModal.retries);
+  const lastSeenAt = useSelector((state: State) => state.largeScreenUpsellModal.lastSeenAt);
   const competingAtMountRef = useRef(hasCompetingAppStartModal);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(FORCE_LARGE_SCREEN_UPSELL_IN_DEV);
 
   const params = feature?.params;
-  const hasEnabledFeature = Boolean(feature?.enabled && params);
+  const hasEnabledFeature = Boolean(
+    (feature?.enabled || FORCE_LARGE_SCREEN_UPSELL_IN_DEV) && params,
+  );
 
   const isThrottled =
-    hasEnabledFeature && params
+    !FORCE_LARGE_SCREEN_UPSELL_IN_DEV && hasEnabledFeature && params
       ? shouldThrottle(
           retries,
           typeof lastSeenAt === "number" ? new Date(lastSeenAt) : null,
@@ -67,10 +68,16 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
       : false;
 
   const isEligible = Boolean(
-    hasEnabledFeature && params && eligibility.isEligible && params.modal.enabled && !isThrottled,
+    hasEnabledFeature &&
+    params &&
+    (eligibility.isEligible || FORCE_LARGE_SCREEN_UPSELL_IN_DEV) &&
+    (params.modal.enabled || FORCE_LARGE_SCREEN_UPSELL_IN_DEV) &&
+    !isThrottled,
   );
   const shouldAttemptAutoOpen =
-    isEligible && !competingAtMountRef.current && !hasAutoOpenedThisSession;
+    isEligible &&
+    (!competingAtMountRef.current || FORCE_LARGE_SCREEN_UPSELL_IN_DEV) &&
+    (!hasAutoOpenedThisSession || FORCE_LARGE_SCREEN_UPSELL_IN_DEV);
 
   const onClose = useCallback(() => {
     setIsOpen(false);
