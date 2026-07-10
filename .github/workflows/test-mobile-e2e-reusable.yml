@@ -848,7 +848,8 @@ jobs:
 
       - name: Setup Speculos image and Coin Apps
         id: setup-speculos
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        # TODO: revert to @develop before merge — pinned to the branch to test the coin-apps cache
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@ci/mobile-e2e-cache-coin-apps
         timeout-minutes: 20
         with:
           coinapps_path: ${{ env.COINAPPS }}
