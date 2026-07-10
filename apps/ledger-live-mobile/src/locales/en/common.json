@@ -9492,6 +9492,13 @@
       "openMenuA11yLabel": "Chart options",
       "hideTransactions": "Hide activity on price chart",
       "showTransactions": "Show activity on price chart"
+    },
+    "footer": {
+      "moreOptions": {
+        "accessibilityLabel": "More options",
+        "sell": "Sell",
+        "earn": "Earn"
+      }
     }
   },
   "assetSelection": {

@@ -15,6 +15,7 @@ const mockLedgerIds = (ledgerIds: string[], isLoading = false) =>
 const mockSwap = (availableOnSwap: boolean, isResolved = true) =>
   jest.mocked(useTradeAvailability).mockReturnValue({
     availableOnBuy: true,
+    availableOnSell: true,
     availableOnSwap,
     isCurrencySupported: availableOnSwap,
     isResolved,

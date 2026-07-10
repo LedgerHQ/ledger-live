@@ -37,6 +37,7 @@ describe("useTradeAvailability", () => {
 
     expect(result.current).toEqual({
       availableOnBuy: true,
+      availableOnSell: true,
       availableOnSwap: true,
       isCurrencySupported: true,
       isResolved: true,
