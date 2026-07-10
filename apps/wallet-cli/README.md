@@ -1,10 +1,10 @@
 # wallet-cli (`@ledgerhq/wallet-cli`)
 
-Command-line tool for Ledger Wallet flows over **USB**, built on the **Device Management Kit (DMK)** and [Bunli](https://www.npmjs.com/package/bunli). Version **1.0.1**.
+Command-line tool for Ledger Wallet flows over **USB**, built on the **Device Management Kit (DMK)** and [Bunli](https://www.npmjs.com/package/bunli). Version **2.0.1**.
 
-## Status (v1)
+## Status (v2)
 
-wallet-cli is the stable v1 CLI for USB-based Ledger Wallet flows. Its scope is intentionally focused: it does not aim for full Ledger Live desktop or mobile feature parity.
+wallet-cli is the stable CLI for USB-based Ledger Wallet flows. Its scope is intentionally focused: it does not aim for full Ledger Live desktop or mobile feature parity. The `2.0.0` release adds the **`earn`** (staking & DeFi yield) and **`ring`** (Ledger Key Ring / LKRP encryption) command groups.
 
 **Supported networks** today: **bitcoin**, **ethereum**, and **solana** (aligned with `live-common-setup.ts`). Token flows are supported for tokens on those networks.
 
@@ -23,6 +23,11 @@ wallet-cli is the stable v1 CLI for USB-based Ledger Wallet flows. Its scope is 
 | `swap status`                         | Read the current swap status from the partner API.                                                                                                                                                              |
 | `assets token` / `assets token-by-id` | Resolve token metadata by contract address or token id.                                                                                                                                                         |
 | `genuine-check`                       | Check whether the connected Ledger device is genuine.                                                                                                                                                           |
+| `earn yields` / `earn positions`      | List yield opportunities (per-network deposit targets with `-n ethereum`/`-n solana`) and active staking/vault positions for an account. **No device** required.                                                |
+| `earn deposit` / `earn withdraw`      | Stake / deposit into a vault, or unstake / redeem. Ethereum ERC-4626 vaults and Solana native staking. Signs on the **device**; `--dry-run` validates without signing.                                          |
+| `ring init`                           | One-time provisioning of your Ledger Key Ring (LKRP) via the device. Prompts for a password unless `--unsecure-no-password`.                                                                                     |
+| `ring encrypt` / `ring decrypt`       | AES-256-GCM encrypt/decrypt of files (`-i`/`-o`) or text (stdin/stdout) under a named key (`--key`). **No device** after `init`; requires network to restore the trustchain.                                     |
+| `ring keys` / `ring destroy`          | List the keys this machine has used, or tear down the ring (local credentials + remote LKRP application).                                                                                                        |
 
 Typical flow: run `account discover` with a currency id (e.g. `bitcoin`, `ethereum`), then pass the assigned **session label** (e.g. `--account ethereum-1`) to `balances`, `operations`, `send`, or `receive`. Use `session view` to see what's saved.
 
@@ -40,6 +45,13 @@ pnpm wallet-cli start -- genuine-check --help
 pnpm wallet-cli start -- swap quote --help
 pnpm wallet-cli start -- swap execute --help
 pnpm wallet-cli start -- swap status --help
+pnpm wallet-cli start -- earn yields --help
+pnpm wallet-cli start -- earn positions --help
+pnpm wallet-cli start -- earn deposit --help
+pnpm wallet-cli start -- earn withdraw --help
+pnpm wallet-cli start -- ring init --help
+pnpm wallet-cli start -- ring encrypt --help
+pnpm wallet-cli start -- ring decrypt --help
 ```
 
 From `apps/wallet-cli`, use `pnpm start` in place of `pnpm wallet-cli start` (same args after `--`).
@@ -50,7 +62,7 @@ Most commands support `--output human` (default) or `--output json`.
 
 - **[Bun](https://bun.sh)** ≥ 1.1.0 (`engines` in `package.json`)
 - **pnpm** and this monorepo checked out; install dependencies per [repo commands](../../docs/repo-commands.md) (e.g. `mise install`, `pnpm i`)
-- A **Ledger** on USB when using `account discover`, `send`, `swap execute`, or `receive --verify`
+- A **Ledger** on USB when using `account discover`, `send`, `swap execute`, `receive --verify`, `earn deposit`/`earn withdraw`, `genuine-check`, or `ring init`
 - **Linux:** USB/HID build deps, for example:
 
   ```bash
