@@ -12,6 +12,7 @@ import { TappableMask } from "./components/TappableMask";
 import { useWelcomeNavigation } from "./hooks/useWelcomeNavigation";
 import { useWelcomeStories } from "./hooks/useWelcomeStories";
 import { useMarkWalletV4TourSeenAtOnboardingStart } from "LLM/features/WalletV4Tour/hooks/useMarkWalletV4TourSeenAtOnboardingStart";
+import { useMarkQ2WalletV4TourSeenAtOnboardingStart } from "LLM/features/Q2WalletV4Tour/hooks/useMarkQ2WalletV4TourSeenAtOnboardingStart";
 import SafeAreaView from "~/components/SafeAreaView";
 
 export default function WelcomePage() {
@@ -20,6 +21,7 @@ export default function WelcomePage() {
   const isFocused = useIsFocused();
 
   useMarkWalletV4TourSeenAtOnboardingStart();
+  useMarkQ2WalletV4TourSeenAtOnboardingStart();
 
   const { welcomeVideos, currentVideoIndex, videoDurations, onLoad, onPrevious, onNext } =
     useWelcomeStories();
