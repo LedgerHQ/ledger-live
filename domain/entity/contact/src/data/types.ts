@@ -19,5 +19,9 @@ export type ContactAddressValue = z.infer<typeof ContactAddressValueSchema>;
 export type ContactAddress = z.infer<typeof ContactAddressSchema>;
 export type Contact = z.infer<typeof ContactSchema>;
 
+export type ContactsState = {
+  contacts: Contact[];
+};
+
 export type ContactAddressInput = z.input<typeof ContactAddressSchema>;
 export type ContactInput = z.input<typeof ContactSchema>;
