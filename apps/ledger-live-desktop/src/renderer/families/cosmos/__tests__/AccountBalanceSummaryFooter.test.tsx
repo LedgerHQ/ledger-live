@@ -31,7 +31,7 @@ describe("AccountBalanceSummaryFooter", () => {
         unbondingBalance: DELEGATE_UNBONDING_BALANCE,
       },
       currency: {
-        id: "some random id",
+        id: "cosmos",
       } as unknown as CryptoCurrency,
     } as CosmosAccount;
 
