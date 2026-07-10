@@ -13,7 +13,8 @@ export default class MarketPage {
   marketFilterSortButton = () => getElementById("market-filter-sort");
   marketFilterTimeButton = () => getElementById("market-filter-time");
   marketFilterCurrencyButton = () => getElementById("market-filter-currency");
-  searchBar = () => getElementById("search-box");
+  searchBarId = async () =>
+    (await isAssetDiscoverabilityEnabled()) ? "market-screen-search-bar" : "search-box";
   starButton = () => getElementById("star-asset");
   backButtonId = "market-back-btn";
   assetDetailBackBtn = () => getElementById(this.backButtonId);
@@ -46,8 +47,15 @@ export default class MarketPage {
   }
 
   @Step("Expect market detail page")
-  async expectMarketDetailPage() {
-    await detoxExpect(this.starButton()).toBeVisible();
+  async expectMarketDetailPage(currencyId?: string) {
+    if (await isAggregatedAssetsEnabled()) {
+      const scrollViewId = currencyId
+        ? `asset-detail-scroll-view-${currencyId.toLowerCase()}`
+        : /^asset-detail-scroll-view-.*/;
+      await waitForElementById(scrollViewId);
+    } else {
+      await detoxExpect(this.starButton()).toBeVisible();
+    }
   }
 
   @Step("Expect market list header left")
@@ -61,13 +69,18 @@ export default class MarketPage {
 
   @Step("Leave market detail page")
   async leaveMarketDetailPage() {
-    await waitForElementById(this.backButtonId, 5000);
-    await tapById(this.backButtonId);
+    if (await isAggregatedAssetsEnabled()) {
+      await waitForElementById(this.headerBackButtonId);
+      await tapById(this.headerBackButtonId);
+    } else {
+      await waitForElementById(this.backButtonId, 5000);
+      await tapById(this.backButtonId);
+    }
   }
 
   @Step("Search for asset")
   async searchAsset(asset: string) {
-    await typeTextByElement(this.searchBar(), asset);
+    await typeTextByElement(getElementById(await this.searchBarId()), asset);
   }
 
   @Step("Open asset page")
@@ -92,7 +105,9 @@ export default class MarketPage {
   @Step("Back to asset list")
   async backToAssetList() {
     if (await isAggregatedAssetsEnabled()) {
-      await this.goBack();
+      await waitForElementById(this.headerBackButtonId);
+      await tapById(this.headerBackButtonId);
+      await waitForElementById(await this.searchBarId());
     } else {
       await tapByElement(this.assetDetailBackBtn());
     }
@@ -101,6 +116,9 @@ export default class MarketPage {
   @Step("Filter starred asset")
   async filterStaredAsset() {
     if (await isAssetDiscoverabilityEnabled()) {
+      // CategorySwitcher is hidden while search is active — clear search bar first
+      await clearTextByElement(getElementById(await this.searchBarId()));
+      await waitForElementById(this.marketCategoryTabId("starred"));
       await tapById(this.marketCategoryTabId("starred"));
     } else {
       await tapByElement(this.starMarketListButton());
@@ -118,7 +136,18 @@ export default class MarketPage {
 
   @Step("Tap on market quick action button ")
   async tapOnMarketQuickActionButton(action: "send" | "receive" | "buy" | "sell" | "swap") {
-    await tapByElement(this.marketQuickActionButton(action));
+    if (await isAggregatedAssetsEnabled()) {
+      const q2TestIds: Partial<Record<typeof action, string>> = {
+        buy: "asset-detail-buy-button",
+        swap: "asset-detail-swap-button",
+        receive: "asset-detail-footer-receive-button",
+      };
+      const testId = q2TestIds[action] ?? `asset-quick-action-button-${action}`;
+      await waitForElementById(testId);
+      await tapById(testId);
+    } else {
+      await tapByElement(this.marketQuickActionButton(action));
+    }
   }
 
   @Step("Expect filters visible")

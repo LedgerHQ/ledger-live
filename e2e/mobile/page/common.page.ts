@@ -1,9 +1,10 @@
 import { Step } from "jest-allure2-reporter/api";
 import { removeSpeculosAndDeregisterKnownSpeculos } from "../utils/speculosUtils";
 import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { isIos } from "../helpers/commonHelpers";
+import { isIos, openDeeplink } from "../helpers/commonHelpers";
 import { device } from "detox";
 import ErrorPage from "./error.page";
+import { isAggregatedAssetsEnabled } from "../utils/featureFlagUtils";
 
 export default class CommonPage {
   assetScreenFlatlistId = "asset-screen-flatlist";
@@ -79,9 +80,20 @@ export default class CommonPage {
   }
 
   @Step("Go to the account")
-  async goToAccount(accountId: string) {
-    await scrollToId(this.accountItemRegExp(accountId), this.assetScreenFlatlistId);
-    await tapByElement(this.accountItem(accountId));
+  async goToAccount(accountId: string, currencyId?: string) {
+    if (await isAggregatedAssetsEnabled()) {
+      if (currencyId) {
+        await openDeeplink(`asset/${currencyId}`);
+        await waitForElementById(`asset-detail-scroll-view-${currencyId}`);
+      }
+      const itemId = `asset-detail-address-item-${accountId}`;
+      const scrollViewId = currencyId ? `asset-detail-scroll-view-${currencyId}` : undefined;
+      await scrollToId(itemId, scrollViewId);
+      await tapByElement(getElementById(itemId));
+    } else {
+      await scrollToId(this.accountItemRegExp(accountId), this.assetScreenFlatlistId);
+      await tapByElement(this.accountItem(accountId));
+    }
   }
 
   @Step("Tap on close with confirmation button")
