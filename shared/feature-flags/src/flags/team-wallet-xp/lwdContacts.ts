@@ -7,8 +7,10 @@ export const lwdContacts = flagWith(
   {
     newBadge: z.boolean(),
     eligibleAddressFamilies: z
-      .array(z.string())
-      .default(() => [...DEFAULT_ELIGIBLE_ADDRESS_FAMILIES]),
+      .array(z.string().trim().min(1))
+      .min(1)
+      .default(() => [...DEFAULT_ELIGIBLE_ADDRESS_FAMILIES])
+      .catch(() => [...DEFAULT_ELIGIBLE_ADDRESS_FAMILIES]),
   },
   {
     enabled: false,

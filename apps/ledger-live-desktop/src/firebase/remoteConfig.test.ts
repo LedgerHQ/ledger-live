@@ -42,7 +42,22 @@ describe("fetchRemoteFlags", () => {
   it("maps known Firebase keys to FeatureIds, drops unknown keys", async () => {
     mockGetAll.mockReturnValue({
       feature_counter_value: value(JSON.stringify({ enabled: true })),
-      feature_lwd_wallet_40: value(JSON.stringify({ enabled: false, params: { mainNav: true } })),
+      feature_lwd_wallet_40: value(
+        JSON.stringify({
+          enabled: false,
+          params: {
+            tour: true,
+            q2Tour: false,
+            lazyOnboarding: true,
+            assetSection: false,
+            operationsList: false,
+            aggregatedAssets: false,
+            myWallet: false,
+            pnl: false,
+            assetDiscoverability: false,
+          },
+        }),
+      ),
       config_unrelated: value('"ignored"'),
       stranger_key: value('"ignored"'),
       feature_unknown_flag: value('"ignored"'),
@@ -53,7 +68,20 @@ describe("fetchRemoteFlags", () => {
 
     expect(result).toEqual({
       counterValue: { enabled: true },
-      lwdWallet40: { enabled: false, params: { mainNav: true } },
+      lwdWallet40: {
+        enabled: false,
+        params: {
+          tour: true,
+          q2Tour: false,
+          lazyOnboarding: true,
+          assetSection: false,
+          operationsList: false,
+          aggregatedAssets: false,
+          myWallet: false,
+          pnl: false,
+          assetDiscoverability: false,
+        },
+      },
     });
   });
 
@@ -102,6 +130,17 @@ describe("fetchRemoteFlags", () => {
     const result = await fetchRemoteFlags();
 
     expect(result).toEqual({ counterValue: { enabled: true } });
+  });
+
+  it("silently drops values that do not match their registered schema", async () => {
+    mockGetAll.mockReturnValue({
+      feature_counter_value: value(JSON.stringify({ enabled: "true" })),
+    });
+
+    const { fetchRemoteFlags } = await loadModule();
+    const result = await fetchRemoteFlags();
+
+    expect(result).toEqual({});
   });
 
   it("propagates the fetchAndActivate failure (middleware swallows it)", async () => {

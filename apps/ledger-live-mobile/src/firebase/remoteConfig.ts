@@ -3,7 +3,7 @@ import snakeCase from "lodash/snakeCase";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
 import { formatDefaultFeatures } from "@features/platform-feature-flags";
-import { FEATURE_FLAGS_DEFAULTS, FeatureIdSchema } from "@shared/feature-flags";
+import { FEATURE_FLAGS_DEFAULTS, FeatureIdSchema, parseFeatureValue } from "@shared/feature-flags";
 import type { FeatureId, PartialFeatures } from "@shared/feature-flags";
 
 // Precomputed inverse of @features/platform-feature-flags' `formatToFirebaseFeatureId`
@@ -89,9 +89,10 @@ export function whenReady(): Promise<void> {
  * consumers hydrate from the same payload at the same tick.
  *
  * Maps each known Firebase key (`feature_${snakeCase(id)}`) back to its canonical
- * FeatureId via {@link FIREBASE_KEY_TO_FEATURE_ID}, then JSON-parses each value.
- * Unknown keys (`config_*`, stray entries) and malformed JSON are dropped
- * silently — at worst the slice falls back to defaults for that flag.
+ * FeatureId via {@link FIREBASE_KEY_TO_FEATURE_ID}, JSON-parses each value, and
+ * validates it with the registered schema. Unknown keys (`config_*`, stray
+ * entries) and invalid values are dropped silently — at worst the slice falls
+ * back to defaults for that flag.
  */
 export async function fetchRemoteFlags(): Promise<PartialFeatures> {
   try {
@@ -105,9 +106,12 @@ export async function fetchRemoteFlags(): Promise<PartialFeatures> {
       const featureId = FIREBASE_KEY_TO_FEATURE_ID[key.toLowerCase()];
       if (!featureId) continue;
       try {
-        flags[featureId] = JSON.parse(value.asString());
+        const parsedFeature = parseFeatureValue(featureId, JSON.parse(value.asString()));
+        if (parsedFeature) {
+          Object.assign(flags, { [featureId]: parsedFeature });
+        }
       } catch {
-        // Malformed JSON in remote config — drop this key, fall back to default.
+        // Invalid remote config — drop this key, fall back to default.
       }
     }
     const fetchedAt = Date.now();
