@@ -226,6 +226,9 @@
     },
     "./features/platform/style": {
       "entry": ["src/index.ts"]
+    },
+    "./features/platform/contacts": {
+      "entry": ["src/index.ts"]
     }
   }
 }
