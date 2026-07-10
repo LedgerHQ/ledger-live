@@ -67,6 +67,65 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
   });
 }
 
+export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+  setTeamOwner(Team.COIN_INTEGRATION);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  describe("Delegate", () => {
+    beforeAll(async () => {
+      await beforeAllFunction(delegation);
+    });
+
+    it(`Delegate on ${delegation.account.currency.name}`, async () => {
+      const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
+      const currencyId = delegation.account.currency.id;
+
+      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.common.goToAccountByName(delegation.account.accountName);
+      await app.account.tapEarn();
+
+      await app.stake.dismissDelegationStart(currencyId);
+      await app.stake.setAmount(currencyId, delegation.amount);
+      await app.stake.validateAmount(currencyId);
+      await app.stake.summaryContinue(currencyId);
+
+      await verifyAppValidationStakeInfo(delegation, amountWithCode);
+      await app.speculos.signDelegationTransaction(delegation);
+      await app.common.successViewDetails();
+
+      await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
+    });
+  });
+}
+
+export function runSuiUndelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+  setTeamOwner(Team.COIN_INTEGRATION);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  describe("Undelegate", () => {
+    beforeAll(async () => {
+      await beforeAllFunction(delegation);
+    });
+
+    it(`Undelegate on ${delegation.account.currency.name}`, async () => {
+      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.common.goToAccountByName(delegation.account.accountName);
+
+      await app.undelegate.tapStakingRow();
+      await app.undelegate.tapUnstakeAction();
+      await app.undelegate.enterAmount(delegation.amount);
+      await app.undelegate.continueFromAmount();
+
+      await app.speculos.signDelegationTransaction(delegation);
+      await app.common.successViewDetails();
+
+      await app.operationDetails.waitForOperationDetails();
+      await app.operationDetails.checkAccount(delegation.account.accountName);
+      await app.operationDetails.checkTransactionType("UNDELEGATE");
+    });
+  });
+}
+
 export function runDelegateDefaultValidatorTest(
   delegation: DelegateType,
   tmsLinks: string[],

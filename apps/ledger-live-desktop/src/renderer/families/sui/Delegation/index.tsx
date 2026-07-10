@@ -103,12 +103,13 @@ const Staking = ({ account }: { account: SuiAccount }) => {
       {hasStakingPositions ? (
         <>
           <Header />
-          {mappedStakingPositions.map(stakingPosition => (
+          {mappedStakingPositions.map((stakingPosition, rowIndex) => (
             <Row
               key={stakingPosition.stakedSuiId}
               stakingPosition={stakingPosition}
               onManageAction={onRedirect}
               onExternalLink={onExternalLink}
+              rowIndex={rowIndex}
             />
           ))}
         </>

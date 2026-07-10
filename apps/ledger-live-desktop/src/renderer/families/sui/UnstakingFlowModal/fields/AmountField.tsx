@@ -48,6 +48,7 @@ export default function AmountField({
   return (
     <Box my={2}>
       <InputCurrency
+        data-testid="sui-unstake-amount-input"
         autoFocus={false}
         error={error}
         warning={warning}
@@ -66,6 +67,7 @@ export default function AmountField({
                 active={value.eq(amount)}
                 key={label}
                 error={!!error}
+                data-testid={`sui-unstake-amount-pct-${label.replace("%", "")}`}
                 onClick={() => onChange(value)}
               >
                 {label}

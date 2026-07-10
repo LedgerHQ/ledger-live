@@ -39,6 +39,12 @@ const e2eDelegationAccounts = [
     transactionType: "Delegated",
     bugTicket: "NAPPS-1357",
   },
+  {
+    delegate: new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG"),
+    xrayTicket: "B2CQA-6115",
+    transactionType: "Delegated",
+    supportsLNS: false,
+  },
 ];
 
 const validators = [
@@ -96,7 +102,7 @@ for (const account of e2eDelegationAccounts) {
       {
         tag: [
           "@NanoSP",
-          "@LNS",
+          ...(account.supportsLNS !== false ? ["@LNS"] : []),
           "@NanoX",
           "@Stax",
           "@Flex",

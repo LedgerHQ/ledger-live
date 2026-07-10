@@ -12,6 +12,7 @@ export default class OperationDetailsPage {
   "operationsType" = {
     OUT: "Sent",
     DELEGATE: "Delegated",
+    UNDELEGATE: "Undelegated",
     STAKE: "Staked",
     UNSTAKE: "Unstaked",
     LOCK: "Locked",
