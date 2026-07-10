@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useTokensData } from "@features/platform-currencies";
-import { TOKEN_OUTPUT_FIELDS } from "@domain/api-currency-token";
-import { FAMILY_OPTIONS } from "../constants";
+import { FAMILY_OPTIONS, OUTPUT_FIELD_OPTIONS } from "../constants";
 import { FamilyOption } from "../types";
 
 export const useTokenList = (initialFamily: string = "ethereum") => {
@@ -11,9 +10,9 @@ export const useTokenList = (initialFamily: string = "ethereum") => {
     initialOption,
   );
   const [pageSize, setPageSize] = useState<number>(1000);
-  const [selectedOutputFields, setSelectedOutputFields] = useState<string[]>([
-    ...TOKEN_OUTPUT_FIELDS,
-  ]);
+  const [selectedOutputFields, setSelectedOutputFields] = useState<string[]>(
+    OUTPUT_FIELD_OPTIONS.map(o => o.value),
+  );
   const [isOptionsOpen, setIsOptionsOpen] = useState<boolean>(true);
   const [expandedTokenIds, setExpandedTokenIds] = useState<Set<string>>(new Set());
   const [limit, setLimit] = useState<string>("");
@@ -92,7 +91,7 @@ export const useTokenList = (initialFamily: string = "ethereum") => {
   };
 
   const selectAllOutputFields = () => {
-    setSelectedOutputFields([...TOKEN_OUTPUT_FIELDS]);
+    setSelectedOutputFields(OUTPUT_FIELD_OPTIONS.map(o => o.value));
   };
 
   const deselectAllOutputFields = () => {
@@ -102,7 +101,7 @@ export const useTokenList = (initialFamily: string = "ethereum") => {
   const handleReset = () => {
     setLimit("");
     setRef("");
-    setSelectedOutputFields([...TOKEN_OUTPUT_FIELDS]);
+    setSelectedOutputFields(OUTPUT_FIELD_OPTIONS.map(o => o.value));
     setPageSize(1000);
     setSelectedFamilyOption(FAMILY_OPTIONS[0]);
   };

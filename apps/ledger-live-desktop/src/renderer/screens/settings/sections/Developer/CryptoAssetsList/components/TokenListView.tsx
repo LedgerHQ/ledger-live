@@ -10,7 +10,6 @@ import {
 } from "@ledgerhq/react-ui/index";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
-import { TOKEN_OUTPUT_FIELDS } from "@domain/api-currency-token";
 import { FAMILY_OPTIONS, PAGE_SIZE_OPTIONS, OUTPUT_FIELD_OPTIONS } from "../constants";
 import {
   DrawerContainer,
@@ -187,7 +186,7 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ initialFamily = "e
                 <Flex alignItems="center" justifyContent="space-between">
                   <Text variant="small" fontWeight="medium" color="neutral.c100">
                     {t("settings.developer.cryptoAssetsList.drawer.outputFields")} (
-                    {selectedOutputFields.length}/{TOKEN_OUTPUT_FIELDS.length})
+                    {selectedOutputFields.length}/{OUTPUT_FIELD_OPTIONS.length})
                   </Text>
                   <Flex columnGap={2}>
                     <Button size="sm" appearance="transparent" onClick={selectAllOutputFields}>
