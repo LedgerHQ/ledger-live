@@ -17,7 +17,7 @@ test.use({
   cliCommands: [liveDataCommand(account.account)],
 });
 
-test.describe.only("SUI - Undelegate", () => {
+test.describe("SUI - Undelegate", () => {
   test(
     `[${account.account.currency.name}] Undelegate`,
     {

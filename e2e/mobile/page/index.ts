@@ -36,6 +36,7 @@ import BuySellPage from "./trade/buySell.page";
 import EarnV2DashboardPage from "./trade/earnV2Dashboard.page";
 import ModularDrawer from "./drawer/modular.drawer";
 import SwapTransactionStatusDrawer from "./drawer/swapTransactionStatus.drawer";
+import UndelegatePage from "./trade/undelegate.page";
 
 import path from "path";
 import fs from "fs";
@@ -94,6 +95,7 @@ export class Application {
   private modularDrawerPageInstance = lazyInit(ModularDrawer);
   private swapTransactionStatusDrawerInstance = lazyInit(SwapTransactionStatusDrawer);
   private readonly topBarSearchPageInstance = lazyInit(TopBarSearchPage);
+  private undelegatePageInstance = lazyInit(UndelegatePage);
 
   @Step("Account initialization")
   public async init(options: ApplicationOptions) {
@@ -253,5 +255,9 @@ export class Application {
 
   public get topBarSearch() {
     return this.topBarSearchPageInstance();
+  }
+
+  public get undelegate() {
+    return this.undelegatePageInstance();
   }
 }

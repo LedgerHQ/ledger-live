@@ -125,7 +125,7 @@ export function Row({
     [onExternalLink, suiAddress],
   );
   return (
-    <Wrapper data-testid="sui-staking-manage-row">
+    <Wrapper data-testid={`sui-staking-manage-row-${rowIndex}`}>
       <Column strong clickable onClick={onExternalLinkClick}>
         <Box mr={2}>
           <LedgerValidatorIcon validator={validator} validatorId={suiAddress} />
@@ -158,11 +158,7 @@ export function Row({
         </Ellipsis>
       </Column>
       <Column>
-        <DropDown
-          items={dropDownItems}
-          renderItem={ManageDropDownItem}
-          onChange={onSelect}
-        >
+        <DropDown items={dropDownItems} renderItem={ManageDropDownItem} onChange={onSelect}>
           {() => (
             <Box
               horizontal
