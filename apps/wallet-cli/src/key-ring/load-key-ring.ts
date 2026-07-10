@@ -1,4 +1,5 @@
-import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
+import type { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { Session, type TrustchainMeta, trustchainFromMeta } from "../session/session-store";
 import { loadMemberCredentials } from "./keychain";
 import { createLkrpSdk } from "./lkrp-sdk";
@@ -49,10 +50,23 @@ export async function loadDomainKey(
     preloadedSession,
   );
   const sdk = createLkrpSdk();
-  const restored = await sdk.restoreTrustchain(
-    trustchainFromMeta(trustchainMeta),
-    memberCredentials,
-  );
+  let restored: Trustchain;
+  try {
+    restored = await sdk.restoreTrustchain(trustchainFromMeta(trustchainMeta), memberCredentials);
+  } catch (e) {
+    // The wallet-cli application stream was closed (deactivated from another device, or this member
+    // was removed): restoreTrustchain rejects a closed stream with TrustchainEjected. Point the user
+    // at the recovery path rather than surfacing the raw protocol error.
+    if (e instanceof TrustchainEjected) {
+      throw new Error(
+        "The wallet-cli application is no longer active on this Ledger Key Ring (deactivated " +
+          "elsewhere, or this member was removed). Run `wallet-cli ring destroy` then " +
+          "`wallet-cli ring init` to reactivate.",
+        { cause: e },
+      );
+    }
+    throw e;
+  }
   if (restored.applicationPath !== trustchainMeta.applicationPath) {
     // The ring rotated (e.g. a member was removed), changing the encryption key: warn loudly since
     // data encrypted before the rotation can no longer be decrypted from the new application path.

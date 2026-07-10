@@ -59,6 +59,9 @@ export type RingDestroyResult = {
   remoteSucceeded: boolean;
   trustchainDestroyed: boolean;
   localWiped: boolean;
+  // Remote teardown hit TrustchainEjected: this member is no longer on the ring (removed, or the ring
+  // was destroyed remotely), so the remote is already gone. Only meaningful alongside remoteSucceeded.
+  memberEjected?: boolean;
 };
 
 export interface CommandOutput {
@@ -568,11 +571,20 @@ class HumanCommandOutput implements CommandOutput {
     }
   }
 
-  ringDestroy({ remoteSucceeded, trustchainDestroyed, localWiped }: RingDestroyResult): void {
+  ringDestroy({
+    remoteSucceeded,
+    trustchainDestroyed,
+    localWiped,
+    memberEjected,
+  }: RingDestroyResult): void {
     // Report the remote outcome first so a successful teardown is never hidden by a local-wipe
     // failure, then append the local-credentials warning when the keychain delete did not succeed.
     if (trustchainDestroyed) {
       writeStdout(`${colors.green("✔")} Ledger Key Ring destroyed.`);
+    } else if (remoteSucceeded && memberEjected) {
+      writeStdout(
+        `${colors.green("✔")} wallet-cli is no longer a member of this Ledger Key Ring — it was removed, or the ring was destroyed remotely.`,
+      );
     } else if (remoteSucceeded) {
       writeStdout(
         `${colors.green("✔")} wallet-cli application deactivated (Ledger Key Ring kept for other apps).`,
@@ -910,12 +922,18 @@ class JsonCommandOutput implements CommandOutput {
     );
   }
 
-  ringDestroy({ remoteSucceeded, trustchainDestroyed, localWiped }: RingDestroyResult): void {
+  ringDestroy({
+    remoteSucceeded,
+    trustchainDestroyed,
+    localWiped,
+    memberEjected,
+  }: RingDestroyResult): void {
     this._writeNdjson(
       this._envelope({
         destroyed: trustchainDestroyed,
         remote_succeeded: remoteSucceeded,
         local_wiped: localWiped,
+        member_ejected: remoteSucceeded && !!memberEjected,
       }),
     );
   }
