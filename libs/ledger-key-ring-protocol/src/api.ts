@@ -1,6 +1,6 @@
 import { z } from "zod";
 import network from "@ledgerhq/live-network";
-import { JWT } from "./types";
+import type { JWT } from "./types";
 import {
   type KeycloakToken,
   KeycloakTokenResponseSchema,

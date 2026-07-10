@@ -4,7 +4,8 @@
  * It essentially is the client's credentials that are only stored on the
  * client side and the trustchain returned by the backend.
  */
-import { MemberCredentials, Trustchain } from "./types";
+import { MemberCredentialsSchema, type MemberCredentials, type Trustchain } from "./types";
+import { initMemberCredentials } from "./utils";
 
 export type TrustchainStore = {
   trustchain: Trustchain | null;
@@ -31,7 +32,7 @@ export enum TrustchainHandlerType {
 
 export type TrustchainHandlersPayloads = {
   TRUSTCHAIN_STORE_IMPORT_STATE: { trustchain: TrustchainStore };
-  TRUSTCHAIN_STORE_RESET: never;
+  TRUSTCHAIN_STORE_RESET: { memberCredentials: MemberCredentials };
   TRUSTCHAIN_STORE_SET_TRUSTCHAIN: { trustchain: Trustchain };
   TRUSTCHAIN_STORE_SET_MEMBER_CREDENTIALS: { memberCredentials: MemberCredentials };
 };
@@ -53,8 +54,8 @@ export const trustchainHandlers: TrustchainHandlers = {
   TRUSTCHAIN_STORE_IMPORT_STATE: (_, { payload: { trustchain } }) => {
     return trustchain;
   },
-  TRUSTCHAIN_STORE_RESET: (): TrustchainStore => {
-    return { ...getInitialStore() };
+  TRUSTCHAIN_STORE_RESET: (_, { payload: { memberCredentials } }): TrustchainStore => {
+    return { ...INITIAL_STATE, memberCredentials };
   },
   TRUSTCHAIN_STORE_SET_TRUSTCHAIN: (state, { payload: { trustchain } }) => {
     return { ...state, trustchain };
@@ -66,13 +67,20 @@ export const trustchainHandlers: TrustchainHandlers = {
 
 // actions
 
-export const importTrustchainStoreState = (trustchain?: TrustchainStore) => ({
+export const importTrustchainStoreState = (persistedState?: TrustchainStore) => ({
   type: `${trustchainStoreActionTypePrefix}IMPORT_STATE`,
-  payload: { trustchain },
+  payload: {
+    trustchain: MemberCredentialsSchema.safeParse(persistedState?.memberCredentials).success
+      ? persistedState
+      : { ...INITIAL_STATE, memberCredentials: initMemberCredentials() },
+  },
 });
 
 export const resetTrustchainStore = () => ({
   type: `${trustchainStoreActionTypePrefix}RESET`,
+  payload: {
+    memberCredentials: initMemberCredentials(),
+  },
 });
 
 export const setTrustchain = (trustchain: Trustchain) => ({

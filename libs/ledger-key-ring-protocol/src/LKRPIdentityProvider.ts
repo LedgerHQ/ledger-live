@@ -12,8 +12,8 @@ import getApi, {
   LKRPChallengeSchema,
   type WeakChallengeSignature,
 } from "./api";
+import type { MemberCredentials, Trustchain } from "./types";
 import { convertLiveCredentialsToKeyPair, credentialForPubKey, liveAuthentication } from "./utils";
-import { MemberCredentials, Trustchain } from "./types";
 
 type PartialTrustchainStore = {
   trustchain: Pick<Trustchain, "rootId"> | null;

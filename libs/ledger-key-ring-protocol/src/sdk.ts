@@ -23,7 +23,6 @@ import {
   Device,
 } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import getApi from "./api";
-import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-ledger-key-ring-protocol/Crypto";
 import { log } from "@ledgerhq/logs";
 import {
   TrustchainAlreadyInitialized,
@@ -34,7 +33,12 @@ import {
 } from "./errors";
 import { HWDeviceProvider } from "./HWDeviceProvider";
 import { genericWithJWT } from "./auth";
-import { convertLiveCredentialsToKeyPair, credentialForPubKey, liveAuthentication } from "./utils";
+import {
+  convertLiveCredentialsToKeyPair,
+  credentialForPubKey,
+  initMemberCredentials,
+  liveAuthentication,
+} from "./utils";
 
 type WithJwt = <T>(job: (jwt: JWT) => Promise<T>) => Promise<T>;
 type WithDevice = <T>(job: (device: Device) => Promise<T>) => Promise<T>;
@@ -95,8 +99,7 @@ export class SDK implements TrustchainSDK {
   }
 
   async initMemberCredentials(): Promise<MemberCredentials> {
-    const kp = crypto.randomKeypair();
-    return convertKeyPairToLiveCredentials(kp);
+    return initMemberCredentials();
   }
 
   async getOrCreateTrustchain(
@@ -514,13 +517,6 @@ export class SDK implements TrustchainSDK {
     };
     return () => withJwt(jwt => this.api.putCommands(jwt, trustchainId, request));
   }
-}
-
-export function convertKeyPairToLiveCredentials(keyPair: CryptoKeyPair): MemberCredentials {
-  return {
-    pubkey: crypto.to_hex(keyPair.publicKey),
-    privatekey: crypto.to_hex(keyPair.privateKey),
-  };
 }
 
 function getSoftwareDevice(memberCredentials: MemberCredentials): SoftwareDevice {

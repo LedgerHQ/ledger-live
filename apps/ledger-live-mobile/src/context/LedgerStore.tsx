@@ -199,9 +199,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(importMarketBannerState(marketBannerState));
       }
 
-      if (trustchainStore) {
-        store.dispatch(importTrustchainStoreState(trustchainStore));
-      }
+      store.dispatch(importTrustchainStoreState(trustchainStore));
 
       if (walletStore) {
         store.dispatch(importWalletState(walletStore));
