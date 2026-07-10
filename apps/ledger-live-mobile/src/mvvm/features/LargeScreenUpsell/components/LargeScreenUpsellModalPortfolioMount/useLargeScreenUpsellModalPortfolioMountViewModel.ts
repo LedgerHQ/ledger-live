@@ -10,7 +10,7 @@ import {
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
 import { useTranslation } from "~/context/Locale";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { analyticsEnabledSelector } from "~/reducers/settings";
+import { personalizedRecommendationsEnabledSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { useLargeScreenUpsellEligibility } from "../../hooks/useLargeScreenUpsellEligibility";
 import { useCompetingAppStartModalsPresent } from "../../hooks/useCompetingAppStartModalsPresent";
@@ -18,6 +18,14 @@ import {
   buildLargeScreenUpsellContent,
   type LargeScreenUpsellVariant,
 } from "../../utils/upsellContent";
+import {
+  toLargeScreenUpsellDeviceModelAnalyticsValue,
+  trackLargeScreenUpsellModalCtaClicked,
+  trackLargeScreenUpsellModalDismissed,
+  trackLargeScreenUpsellModalViewed,
+  type LargeScreenUpsellDismissMethod,
+  type LargeScreenUpsellSharedAnalyticsProps,
+} from "../../analytics";
 
 const LARGE_SCREEN_UPSELL_MODAL_ID = "large-screen-upsell-modal";
 const LARGE_SCREEN_UPSELL_MODAL_IOS_BOTTOM_PADDING = 20;
@@ -31,7 +39,7 @@ export const __resetLargeScreenUpsellAutoOpenForTests = () => {
 type LargeScreenUpsellModalPortfolioMountViewModel = Readonly<{
   isEligible: boolean;
   isOpen: boolean;
-  onClose: () => void;
+  onDismiss: (dismissMethod: LargeScreenUpsellDismissMethod) => void;
   featureIntroViewModel: FeatureIntroViewModel;
   bottomInset: number;
 }>;
@@ -43,10 +51,14 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
   const feature = useFeature("largeScreenUpsell");
   const eligibility = useLargeScreenUpsellEligibility();
   const hasCompetingAppStartModal = useCompetingAppStartModalsPresent();
-  const analyticsEnabled = useSelector(analyticsEnabledSelector);
+  const personalizedRecommendationsEnabled = useSelector(
+    personalizedRecommendationsEnabledSelector,
+  );
   const retries = useSelector((state: State) => state.largeScreenUpsellModal.retries);
   const lastSeenAt = useSelector((state: State) => state.largeScreenUpsellModal.lastSeenAt);
   const hasSeenCompetingAppStartModalRef = useRef(hasCompetingAppStartModal);
+  const currentModalAnalyticsPropsRef = useRef<LargeScreenUpsellSharedAnalyticsProps | null>(null);
+  const hasHandledCurrentModalInteractionRef = useRef(false);
   const [isOpen, setIsOpen] = useState(false);
 
   if (hasCompetingAppStartModal) {
@@ -55,17 +67,20 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
 
   const params = feature?.params;
   const hasEnabledFeature = Boolean(feature?.enabled && params);
+  const lastSeenAtDate = typeof lastSeenAt === "number" ? new Date(lastSeenAt) : null;
 
   const isThrottled =
     hasEnabledFeature && params
       ? shouldThrottle(
           retries,
-          typeof lastSeenAt === "number" ? new Date(lastSeenAt) : null,
+          lastSeenAtDate,
           params.modal.killThreshold,
           params.modal.cadenceDays,
           new Date(),
         )
       : false;
+  const hasReachedFrequencyCap =
+    hasEnabledFeature && params ? retries >= params.modal.killThreshold : false;
 
   const isEligible = Boolean(
     hasEnabledFeature && params && eligibility.isEligible && params.modal.enabled && !isThrottled,
@@ -73,14 +88,62 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
   const shouldAttemptAutoOpen =
     isEligible && !hasSeenCompetingAppStartModalRef.current && !hasAutoOpenedThisSession;
 
-  const onClose = useCallback(() => {
-    setIsOpen(false);
-  }, []);
+  const variant: LargeScreenUpsellVariant = personalizedRecommendationsEnabled
+    ? "opted_in"
+    : "opted_out";
+
+  const sharedAnalyticsProps: LargeScreenUpsellSharedAnalyticsProps | null = useMemo(() => {
+    if (!("deviceModelId" in eligibility)) {
+      return null;
+    }
+
+    return {
+      deviceModel: toLargeScreenUpsellDeviceModelAnalyticsValue(eligibility.deviceModelId),
+      personalRecoOptIn: personalizedRecommendationsEnabled,
+      offerType: variant === "opted_in" ? "discount" : "none",
+      retriesUpsellModal: retries,
+      throttled: hasReachedFrequencyCap,
+    };
+  }, [eligibility, personalizedRecommendationsEnabled, variant, retries, hasReachedFrequencyCap]);
+
+  const getCurrentModalAnalyticsProps = useCallback(
+    () => currentModalAnalyticsPropsRef.current ?? sharedAnalyticsProps,
+    [sharedAnalyticsProps],
+  );
+
+  const onDismiss = useCallback(
+    (dismissMethod: LargeScreenUpsellDismissMethod) => {
+      if (hasHandledCurrentModalInteractionRef.current) {
+        setIsOpen(false);
+        return;
+      }
+
+      hasHandledCurrentModalInteractionRef.current = true;
+      const analyticsProps = getCurrentModalAnalyticsProps();
+      if (analyticsProps) {
+        trackLargeScreenUpsellModalDismissed(dismissMethod, analyticsProps);
+      }
+      currentModalAnalyticsPropsRef.current = null;
+      setIsOpen(false);
+    },
+    [getCurrentModalAnalyticsProps],
+  );
 
   const onCloseFromCta = useCallback(() => {
+    if (hasHandledCurrentModalInteractionRef.current) {
+      setIsOpen(false);
+      return;
+    }
+
+    hasHandledCurrentModalInteractionRef.current = true;
+    const analyticsProps = getCurrentModalAnalyticsProps();
+    if (analyticsProps) {
+      trackLargeScreenUpsellModalCtaClicked(analyticsProps);
+    }
+    currentModalAnalyticsPropsRef.current = null;
     dispatch(resetUpsellModalRetries());
     setIsOpen(false);
-  }, [dispatch]);
+  }, [dispatch, getCurrentModalAnalyticsProps]);
 
   useFocusEffect(
     useCallback(() => {
@@ -94,6 +157,11 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
         }
 
         hasAutoOpenedThisSession = true;
+        hasHandledCurrentModalInteractionRef.current = false;
+        currentModalAnalyticsPropsRef.current = sharedAnalyticsProps;
+        if (currentModalAnalyticsPropsRef.current) {
+          trackLargeScreenUpsellModalViewed(currentModalAnalyticsPropsRef.current);
+        }
         dispatch(recordUpsellModalDisplay());
         setIsOpen(true);
       });
@@ -101,10 +169,9 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
       return () => {
         cancelAnimationFrame(frame);
       };
-    }, [dispatch, shouldAttemptAutoOpen]),
+    }, [dispatch, shouldAttemptAutoOpen, sharedAnalyticsProps]),
   );
 
-  const variant: LargeScreenUpsellVariant = analyticsEnabled ? "opted_in" : "opted_out";
   const content = useMemo(
     () =>
       hasEnabledFeature && params
@@ -127,11 +194,11 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
   return {
     isEligible,
     isOpen,
-    onClose,
+    onDismiss,
     featureIntroViewModel: {
       content,
       onPrimaryPress: onCloseFromCta,
-      onSecondaryPress: onClose,
+      onSecondaryPress: () => onDismiss("outside_tap"),
     },
     bottomInset: bottom + LARGE_SCREEN_UPSELL_MODAL_IOS_BOTTOM_PADDING,
   };

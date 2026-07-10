@@ -2,11 +2,12 @@ import React, { useRef } from "react";
 import { View } from "react-native";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
 import { LargeScreenUpsellModalDrawer } from "../LargeScreenUpsellModalDrawer";
+import type { LargeScreenUpsellDismissMethod } from "../../analytics";
 
 type LargeScreenUpsellModalPortfolioMountViewProps = Readonly<{
   isEligible: boolean;
   isOpen: boolean;
-  onClose: () => void;
+  onDismiss: (dismissMethod: LargeScreenUpsellDismissMethod) => void;
   featureIntroViewModel: FeatureIntroViewModel;
   bottomInset: number;
 }>;
@@ -14,7 +15,7 @@ type LargeScreenUpsellModalPortfolioMountViewProps = Readonly<{
 export function LargeScreenUpsellModalPortfolioMountView({
   isEligible,
   isOpen,
-  onClose,
+  onDismiss,
   featureIntroViewModel,
   bottomInset,
 }: LargeScreenUpsellModalPortfolioMountViewProps) {
@@ -31,7 +32,7 @@ export function LargeScreenUpsellModalPortfolioMountView({
     <View testID="large-screen-upsell-portfolio-mount" collapsable={false}>
       <LargeScreenUpsellModalDrawer
         isOpen={isOpen}
-        onClose={onClose}
+        onDismiss={onDismiss}
         featureIntroViewModel={featureIntroViewModel}
         bottomInset={bottomInset}
       />
