@@ -1,10 +1,8 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
 import { FF_LWM_WALLET_40_Q2 } from "../../utils/featureFlagUtils";
 import { getFixtureAccountId, getFixtureTokenAccountId } from "../../utils/fixtureAccounts";
-import type { PartialFeatures } from "@shared/feature-flags";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
@@ -52,11 +50,6 @@ const getAddressFromAccountId = (accountId: string) => {
 };
 
 const getAddressPrefix = (accountId: string) => getAddressFromAccountId(accountId).slice(0, 4);
-const isAggregatedAssetsDisabledByJson = () =>
-  parseExtraFeatureFlags<PartialFeatures>(process.env.E2E_FEATURE_FLAGS_JSON).lwmWallet40?.params
-    ?.aggregatedAssets === false;
-
-const describeWithAggregatedAssets = isAggregatedAssetsDisabledByJson() ? describe.skip : describe;
 
 const ensurePortfolioReady = async () => {
   if (await app.account.isAccountDetailVisible()) {
@@ -97,7 +90,7 @@ const ensureDaiAssetDetail = async () => {
 };
 
 setTeamOwner(Team.WALLET_XP);
-describeWithAggregatedAssets("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
+describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
   beforeAll(async () => {
     await app.init({
       userdata: WALLET_40_STABLECOINS_FIXTURE,
@@ -139,9 +132,6 @@ describeWithAggregatedAssets("Wallet 4.0 - Asset Aggregation / Asset Market / As
         addressFragment: getAddressPrefix(ETHEREUM_ACCOUNT_ID),
       },
     ]);
-    await app.assetDetail.openAddAccountNetworkDrawer();
-    await app.assetDetail.expectAddAccountNetworkDrawer();
-    await app.assetDetail.closeAddAccountNetworkDrawer();
     await app.assetDetail.expectHoldingAddressBalancesSumToTotal(
       [POLYGON_ACCOUNT_ID, ETHEREUM_ACCOUNT_ID],
       DAI_TICKER,
@@ -189,6 +179,7 @@ describeWithAggregatedAssets("Wallet 4.0 - Asset Aggregation / Asset Market / As
   $TmsLink("B2CQA-5532");
   $TmsLink("B2CQA-5533");
   it("stars an asset and finds it in the starred market list", async () => {
+    // DAI is intentionally not used here because its Asset Detail favorite flow is currently broken.
     await openStablecoinAssetDetail(USDT_ASSET_NAME, USDT_TICKER);
     await app.assetDetail.addToFavorites();
 

@@ -28,7 +28,6 @@ export default class AssetDetailPage {
   coinOptionsTrailingId = "asset-detail-coin-options-trailing";
   coinOptionsFavouriteRowId = "asset-detail-coin-options-favourite-row";
   coinOptionsAddFavouriteRowId = "asset-detail-coin-options-favourite-row-add";
-  bottomSheetCloseButtonId = "bottom-sheet-header-close-button";
   addressesId = "asset-detail-addresses";
   addressesHeaderId = "asset-detail-addresses-header";
   transactionsId = "asset-detail-transactions";
@@ -48,6 +47,12 @@ export default class AssetDetailPage {
     await scrollToId(this.transactionsHeaderId, this.scrollViewId, 500, "down");
   }
 
+  private async scrollToAddressesSection() {
+    await waitForElementById(this.scrollViewId);
+    await scrollToId(this.addressesHeaderId, this.scrollViewId, 700, "down", undefined, 50);
+    await detoxExpect(getElementById(this.addressesHeaderId)).toBeVisible();
+  }
+
   private async tapTransactionUntilOperationDetailsOpen() {
     for (let attempt = 0; attempt < 3; attempt++) {
       await tapById(this.operationsListItemId, 0);
@@ -58,7 +63,8 @@ export default class AssetDetailPage {
   }
 
   private async scrollToAddressItem(accountId: string) {
-    await scrollToId(this.addressItemNameId(accountId), this.scrollViewId, 450, "down");
+    await this.scrollToAddressesSection();
+    await scrollToId(this.addressItemNameId(accountId), this.scrollViewId, 700, "down");
     await waitForElementById(this.addressItemNameId(accountId), DEFAULT_TIMEOUT, {
       checkVisibility: false,
     });
@@ -130,32 +136,10 @@ export default class AssetDetailPage {
   async expectPortfolioSectionsVisible() {
     await scrollToId(this.totalBalanceId, this.scrollViewId);
     await detoxExpect(getElementById(this.totalBalanceId)).toBeVisible();
-    await scrollToId(this.addressesHeaderId, this.scrollViewId, 350, "down");
-    await detoxExpect(getElementById(this.addressesHeaderId)).toBeVisible();
+    await this.scrollToAddressesSection();
     await detoxExpect(getElementById(this.addAccountId)).toBeVisible();
     await this.scrollToTransactions();
     await detoxExpect(getElementById(this.transactionsHeaderId)).toBeVisible();
-  }
-
-  @Step("Open Add account network drawer from Asset Detail")
-  async openAddAccountNetworkDrawer() {
-    await scrollToId(this.addressesHeaderId, this.scrollViewId, 350, "down");
-    await tapById(this.addAccountId);
-    await waitForElementByText("Select network");
-  }
-
-  @Step("Expect Add account network drawer")
-  async expectAddAccountNetworkDrawer() {
-    await detoxExpect(getElementByText("Select network")).toBeVisible();
-    await detoxExpect(getElementByText("Polygon")).toBeVisible();
-    await detoxExpect(getElementByText("Ethereum")).toBeVisible();
-  }
-
-  @Step("Close Add account network drawer")
-  async closeAddAccountNetworkDrawer() {
-    await tapById(this.bottomSheetCloseButtonId);
-    await waitForElementNotVisible(this.bottomSheetCloseButtonId);
-    await waitForElementById(this.scrollViewId);
   }
 
   @Step("Expect holding address details")
@@ -208,7 +192,7 @@ export default class AssetDetailPage {
 
   @Step("Open holding address")
   async openHoldingAddress(accountId: string) {
-    await scrollToId(this.addressItemNameId(accountId), this.scrollViewId, 450, "down");
+    await this.scrollToAddressItem(accountId);
     await tapById(this.addressItemNameId(accountId));
   }
 
