@@ -284,6 +284,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "multiversx",
     supportedCoins: ["elrond"],
     loadSetup: () => import("../families/multiversx/setup"),
+    loadLocalApi: () =>
+      import("../families/multiversx/coinModuleApi").then(m => m.createLocalMultiversxApi),
     loadTransaction: () => import("@ledgerhq/coin-multiversx/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-multiversx/deviceTransactionConfig").then(m => m.default),

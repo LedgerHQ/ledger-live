@@ -31,9 +31,9 @@ import {
   Transaction,
 } from "../types";
 import { BinaryUtils } from "../utils/binary.utils";
-import MultiversXApi from "./apiCalls";
+import { MultiversXNetworkApi } from "./api";
 import { MultiversXAccount } from "./dtos/multiversx-account";
-const api = new MultiversXApi(
+const api = new MultiversXNetworkApi(
   getEnv("MULTIVERSX_API_ENDPOINT"),
   getEnv("MULTIVERSX_DELEGATION_API_ENDPOINT"),
 );
@@ -367,5 +367,7 @@ export const getFees = async (t: Transaction): Promise<BigNumber> => {
  * Broadcast blob to blockchain
  */
 export const broadcastTransaction = async (signedOperation: SignedOperation): Promise<string> => {
-  return await api.submit(signedOperation);
+  return await api.submit(
+    JSON.stringify({ ...signedOperation.rawData, signature: signedOperation.signature }),
+  );
 };

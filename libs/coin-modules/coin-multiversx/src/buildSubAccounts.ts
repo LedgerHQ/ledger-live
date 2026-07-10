@@ -8,7 +8,7 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { ESDT_CONTRACT_ADDRESS_HEX } from "@multiversx/sdk-core/out/constants";
 import BigNumber from "bignumber.js";
-import { getESDTOperations, getAccountESDTTokens } from "./api";
+import { getESDTOperations, getAccountESDTTokens } from "./network";
 import { extractTokenId } from "./logic";
 import { ESDTToken } from "./types";
 import { Address } from "@multiversx/sdk-core/out";

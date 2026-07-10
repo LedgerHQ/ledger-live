@@ -758,6 +758,7 @@
     "src/families/internet_computer/config.ts",
     "src/families/kaspa/config.ts",
     "src/families/mina/config.ts",
+    "src/families/multiversx/coinModuleApi.ts",
     "src/families/multiversx/config.ts",
     "src/families/near/config.ts",
     "src/families/polkadot/config.ts",
