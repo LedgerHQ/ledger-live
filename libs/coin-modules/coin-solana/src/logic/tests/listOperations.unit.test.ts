@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { DeepPartialReturn } from "@ledgerhq/coin-module-framework/test/utils";
 import { PublicKey } from "@solana/web3.js";
 import type { ChainAPI } from "../../network";

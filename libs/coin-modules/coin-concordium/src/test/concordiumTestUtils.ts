@@ -32,7 +32,6 @@ export function generateMockKeyPair(): ConcordiumTestKeyPair {
   const rawPublicKey = publicKeyBuffer.subarray(-32); // Ed25519 public key is 32 bytes
   const publicKeyHex = rawPublicKey.toString("hex");
 
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const privateKeyPem = privateKey.export({ type: "pkcs8", format: "pem" }) as string;
   const privateKeyDer = privateKey.export({ type: "pkcs8", format: "der" });
   const privateKeyHex = privateKeyDer.toString("hex");

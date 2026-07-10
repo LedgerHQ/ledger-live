@@ -1031,7 +1031,6 @@ describe("splitPrivateAndPublicOperations", () => {
     const opNoExtra = getMockedOperation({
       id: "no-extra",
       // Intentionally omit `transactionType` to exercise the defaulting logic.
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       extra: {} as AleoOperationExtra,
     });
 

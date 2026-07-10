@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { VersionedTransaction } from "@solana/web3.js";
 import { getChainAPI } from "../../network";

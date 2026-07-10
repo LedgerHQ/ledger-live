@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import {
   createEmptyHistoryCache,

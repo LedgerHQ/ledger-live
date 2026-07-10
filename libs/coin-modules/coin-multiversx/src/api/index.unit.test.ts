@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 /**
  * Unit tests for the createApi factory — verifies the coin config is set, every
  * CoinModuleApi method is wired and delegates to its logic function with the

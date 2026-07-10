@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 jest.mock("@ledgerhq/ledger-wallet-framework/account/accountId");
 jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers");
 jest.mock("@ledgerhq/ledger-wallet-framework/operation");

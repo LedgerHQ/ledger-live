@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
-
 import { NetworkError } from "@ledgerhq/errors";
 import { Config, getChainAPI } from ".";
 import { Connection, SendTransactionError } from "@solana/web3.js";

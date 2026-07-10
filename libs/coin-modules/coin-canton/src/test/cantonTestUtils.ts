@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /**
  * Canton Testing Utilities for Ed25519 Key Generation
  *
@@ -44,7 +42,6 @@ export function generateMockKeyPair(): CantonTestKeyPair {
   const rawPublicKey = publicKeyBuffer.slice(-32);
   const publicKeyHex = rawPublicKey.toString("hex");
 
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const privateKeyPem = privateKey.export({ type: "pkcs8", format: "pem" }) as string;
   const privateKeyDer = privateKey.export({ type: "pkcs8", format: "der" });
   const privateKeyHex = privateKeyDer.toString("hex");

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
-
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Cluster } from "@solana/web3.js";
 import { firstValueFrom } from "rxjs";

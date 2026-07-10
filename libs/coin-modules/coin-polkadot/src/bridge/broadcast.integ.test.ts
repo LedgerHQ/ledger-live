@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
-
 import { Operation } from "@ledgerhq/types-live";
 import { ApiPromise, HttpProvider, Keyring } from "@polkadot/api";
 import { type ProviderInterface } from "@polkadot/rpc-provider/types";

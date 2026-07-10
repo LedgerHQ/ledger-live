@@ -586,12 +586,10 @@ const cases: Array<{
     // Cast via unknown to avoid direct any assertions
     tx: {
       ...baseTx,
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       payload: { type: "fake-type", as: "is" } as unknown as Transaction["payload"],
     },
     rawTx: {
       ...baseRawTx,
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       payload: { type: "fake-type", as: "is" } as unknown as TransactionRaw["payload"],
     },
   },
