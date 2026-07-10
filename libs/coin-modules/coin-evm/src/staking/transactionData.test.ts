@@ -119,6 +119,39 @@ describe("buildStakingTransactionParams", () => {
   });
 });
 
+describe("0G / zero_gravity delegate", () => {
+  it("encodes sender as the delegate(address) arg, routes to valAddress, carries amount as value", () => {
+    const intent = delegateIntent({
+      valAddress: "0x0000000000000000000000000000000000000001",
+      sender: "0x0000000000000000000000000000000000000002",
+    });
+
+    const { to, data, value } = buildStakingTransactionParams(asCurrency("zero_gravity"), intent);
+
+    const iface = new ethers.Interface(getStakingABI("zero_gravity") as ethers.InterfaceAbi);
+    expect("0x" + data.toString("hex")).toEqual(
+      iface.encodeFunctionData("delegate", ["0x0000000000000000000000000000000000000002"]),
+    );
+    expect(to).toEqual("0x0000000000000000000000000000000000000001");
+    expect(value).toEqual(1000000000000000000n);
+  });
+
+  it("throws when valAddress is missing", () => {
+    expect(() => {
+      buildStakingTransactionParams(asCurrency("zero_gravity"), delegateIntent({}));
+    }).toThrow("0G staking requires a validator address");
+  });
+
+  it("throws when delegator is missing", () => {
+    expect(() => {
+      buildStakingTransactionParams(
+        asCurrency("zero_gravity"),
+        delegateIntent({ valAddress: "0x0000000000000000000000000000000000000001", sender: "" }),
+      );
+    }).toThrow("zero_gravity staking requires delegator");
+  });
+});
+
 describe("0G / zero_gravity contractAddress resolver", () => {
   const config = STAKING_CONTRACTS["zero_gravity"];
 

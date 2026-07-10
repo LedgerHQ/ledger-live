@@ -2,12 +2,14 @@ import type { StakingOperation } from "../../types/staking";
 import celoProtocol from "./celo";
 import monadProtocol from "./monad";
 import seiProtocol from "./sei";
+import zeroGravityProtocol from "./zero_gravity";
 import type { OperationParams, StakingProtocol } from "./types";
 
 const STAKING_PROTOCOLS: Record<string, StakingProtocol> = {
   sei_evm: seiProtocol as StakingProtocol,
   celo: celoProtocol as StakingProtocol,
   monad: monadProtocol as StakingProtocol,
+  zero_gravity: zeroGravityProtocol as StakingProtocol,
 };
 
 export const buildTransactionParams = (
@@ -31,6 +33,10 @@ export const buildTransactionParams = (
 
   if (!params.valId && currencyId === "monad") {
     throw new Error(`${currencyId} staking requires valId`);
+  }
+
+  if (!params.delegator && currencyId === "zero_gravity") {
+    throw new Error(`${currencyId} staking requires delegator`);
   }
 
   if (
