@@ -56,6 +56,7 @@ const ManageDropDownItem = ({
     label?: React.ReactNode;
     disabled: boolean;
     content?: React.ReactNode;
+    rowIndex: number;
   };
   isActive: boolean;
 }) => {
@@ -66,7 +67,11 @@ const ManageDropDownItem = ({
         width: "100%",
       }}
     >
-      <DropDownItem disabled={item.disabled} isActive={isActive}>
+      <DropDownItem
+        disabled={item.disabled}
+        isActive={isActive}
+        data-testid={`sui-staking-unstake-item-${item.rowIndex}`}
+      >
         <Box horizontal alignItems="center" justifyContent="center">
           <Text ff="Inter|SemiBold">{item.label}</Text>
         </Box>
@@ -83,6 +88,7 @@ type Props = {
     action: "MODAL_SUI_UNSTAKE",
   ) => void;
   readonly onExternalLink: (address: string) => void;
+  readonly rowIndex: number;
 };
 export function Row({
   stakingPosition: {
@@ -95,6 +101,7 @@ export function Row({
   },
   onManageAction,
   onExternalLink,
+  rowIndex,
 }: Props) {
   const { suiAddress, name } = validator;
   const unstakingEnabled = status === "Active";
@@ -110,6 +117,7 @@ export function Row({
       label: <Trans i18nKey="sui.stake.unstake" />,
       tooltip: !unstakingEnabled ? <Trans i18nKey="sui.unstake.disabledTooltip" /> : null,
       disabled: false,
+      rowIndex,
     } as const,
   ];
   const onExternalLinkClick = useCallback(
@@ -117,7 +125,7 @@ export function Row({
     [onExternalLink, suiAddress],
   );
   return (
-    <Wrapper>
+    <Wrapper data-testid="sui-staking-manage-row">
       <Column strong clickable onClick={onExternalLinkClick}>
         <Box mr={2}>
           <LedgerValidatorIcon validator={validator} validatorId={suiAddress} />
@@ -150,9 +158,17 @@ export function Row({
         </Ellipsis>
       </Column>
       <Column>
-        <DropDown items={dropDownItems} renderItem={ManageDropDownItem} onChange={onSelect}>
+        <DropDown
+          items={dropDownItems}
+          renderItem={ManageDropDownItem}
+          onChange={onSelect}
+        >
           {() => (
-            <Box horizontal alignItems="center">
+            <Box
+              horizontal
+              alignItems="center"
+              data-testid={`sui-staking-manage-button-${rowIndex}`}
+            >
               <Trans i18nKey="common.manage" />
               <div
                 style={{

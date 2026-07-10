@@ -88,7 +88,7 @@ export default function StepAmount({
         />
       ) : null}
       {status.errors.fee && <ErrorDisplay error={status.errors.fee} />}
-      <Alert type="primary" mt={2}>
+      <Alert type="primary" mt={2} data-testid="sui-unstake-info-message">
         {t("sui.unstake.flow.steps.amount.warning")}
       </Alert>
     </Box>
@@ -117,6 +117,7 @@ export function StepAmountFooter({
           disabled={!canNext}
           isLoading={bridgePending}
           primary
+          data-testid="sui-unstake-amount-continue-button"
           onClick={() => transitionTo("connectDevice")}
         >
           {t("common.continue")}
