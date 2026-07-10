@@ -87,6 +87,7 @@
     "@datadog/mobile-react-navigation": "2.8.2",
     "@domain/api-currency-token": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:*",
+    "@features/flow-contacts": "workspace:^",
     "@features/platform-currencies": "workspace:^",
     "@devtools/shell": "workspace:^",
     "@devtools/bindings": "workspace:^",
