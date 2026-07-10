@@ -1,6 +1,6 @@
 import React from "react";
 import { TextInput, Button, DialogBody, DialogFooter } from "@ledgerhq/lumen-ui-react";
-import type { FeeAssetOption } from "@ledgerhq/live-common/bridge/descriptor/types";
+import type { FeeAssetUiOption } from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
 import type { CustomFeeInputState } from "../hooks/useCustomFeesViewModel";
 import { FeeAssetSelector } from "./FeeAssetSelector";
 
@@ -13,7 +13,7 @@ type CustomFeesScreenViewProps = Readonly<{
   onInputClear: (key: string) => void;
   onConfirm: () => void;
   hasCustomAssets: boolean;
-  assetOptions: readonly FeeAssetOption[];
+  assetOptions: readonly FeeAssetUiOption[];
   selectedAssetId: string;
   onAssetChange: (id: string) => void;
   confirmLabel: string;
