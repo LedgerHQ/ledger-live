@@ -1,5 +1,5 @@
 import type { FlashListProps } from "@shopify/flash-list";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useCallback, useMemo } from "react";
 import { useSelector } from "~/context/hooks";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";

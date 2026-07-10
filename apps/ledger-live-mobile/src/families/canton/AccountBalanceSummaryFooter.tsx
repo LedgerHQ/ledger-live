@@ -1,5 +1,5 @@
 import { isCantonAccount } from "@ledgerhq/coin-canton";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import { useWithdrawableBalance } from "@ledgerhq/live-common/families/canton/react";
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";

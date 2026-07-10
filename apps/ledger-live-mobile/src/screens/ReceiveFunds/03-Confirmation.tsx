@@ -6,7 +6,7 @@ import { useTranslation } from "~/context/Locale";
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { findCryptoCurrencyById, getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { findCryptoCurrencyById, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   makeEmptyTokenAccount,
   getMainAccount,

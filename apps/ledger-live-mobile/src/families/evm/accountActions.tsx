@@ -12,7 +12,7 @@ import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { NavigatorName, ScreenName } from "~/const";
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { StakingDrawerNavigationProps } from "~/components/Stake/types";
