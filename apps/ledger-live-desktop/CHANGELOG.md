@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.11.0-next.2
+
+### Minor Changes
+
+- [#19480](https://github.com/LedgerHQ/ledger-live/pull/19480) [`131e127`](https://github.com/LedgerHQ/ledger-live/commit/131e127e298147e7e7ea044e54ecb5ab853b0b17) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwd): open MAD on send from aggregated assets page
+
 ## 4.11.0-next.1
 
 ### Minor Changes
