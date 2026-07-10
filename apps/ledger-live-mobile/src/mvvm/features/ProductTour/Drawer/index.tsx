@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { Slides } from "@ledgerhq/native-ui";
 import Animated from "react-native-reanimated";
 import { FlatList } from "react-native-gesture-handler";
-import { Platform, StyleSheet } from "react-native";
+import { LayoutChangeEvent, Platform, StyleSheet, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, BottomSheetView, IconButton } from "@ledgerhq/lumen-ui-rnative";
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
@@ -16,8 +16,9 @@ import { SlideFooterButton } from "./components/SlideFooterButton";
 import { ProgressIndicator } from "./components/ProgressIndicator";
 import {
   PAGE_TRACKING_PRODUCT_TOUR,
-  PRODUCT_TOUR_SLIDES_CONTAINER_HEIGHT,
+  PRODUCT_TOUR_SHEET_CHROME_HEIGHT,
   PRODUCT_TOUR_SLIDES_LIST_HEIGHT,
+  PRODUCT_TOUR_SLIDES_LIST_MIN_HEIGHT,
   PRODUCT_TOUR_TOTAL_SLIDES,
 } from "./const";
 import ForceTheme from "~/components/theme/ForceTheme";
@@ -36,69 +37,80 @@ export const ProductTourDrawer = () => {
     completeProductTour,
   } = useProductTourControls();
   const { t } = useTranslation();
-  const { bottom: bottomInset } = useSafeAreaInsets();
+  const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
+
+  // Max content height before the sheet clips it; the layout pass shrinks the slides area to fit.
+  const contentCeiling = windowHeight - topInset - bottomInset - PRODUCT_TOUR_SHEET_CHROME_HEIGHT;
+
+  const [slidesListHeight, setSlidesListHeight] = useState(PRODUCT_TOUR_SLIDES_LIST_HEIGHT);
+
+  const handleContentLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      const overflow = event.nativeEvent.layout.height - contentCeiling;
+      if (overflow <= 0) {
+        return;
+      }
+      setSlidesListHeight(prev => Math.max(PRODUCT_TOUR_SLIDES_LIST_MIN_HEIGHT, prev - overflow));
+    },
+    [contentCeiling],
+  );
 
   return (
-    // Outer ForceTheme: the BottomSheet computes its background/handle styles via useTheme at this
-    // declaration site (passed in as resolved styles), so it must be wrapped here to render dark.
+    // Outer ForceTheme styles the sheet itself (background/handle resolved via useTheme).
     <ForceTheme selectedPalette={"dark"}>
       <QueuedDrawerBottomSheet
         isRequestingToBeOpened={isDrawerOpen}
         onClose={closeProductTour}
         noCloseButton
         enableDynamicSizing
-        maxDynamicContentSize="fullWithOffset"
       >
-        {/* Keep the sheet mounted and gate only the content: closing via `isDrawerOpen` lets the
-            modal dismiss cleanly instead of being unmounted mid-present, which would leave a stale
-            entry in the BottomSheetModalProvider and block every subsequent drawer. */}
         {isDrawerOpen ? (
-          // Inner ForceTheme: the BottomSheet portals its children to a PortalHost at the app root,
-          // which breaks React context propagation. The outer ForceTheme never reaches the portaled
-          // content, so without this wrapper the slides' Lumen tokens (e.g. `base`) would resolve
-          // against the app palette instead of dark.
+          // Inner ForceTheme: the sheet portals its children, so context must be re-applied here.
           <ForceTheme selectedPalette={"dark"}>
-            <BottomSheetView style={{ paddingBottom: bottomInset + 8 }}>
-              <Box lx={{ flexDirection: "row", justifyContent: "flex-end", paddingBottom: "s12" }}>
-                <IconButton
-                  icon={Close}
-                  appearance="transparent"
-                  size="xs"
-                  onPress={onCloseButtonPress}
-                  accessibilityLabel={t("common.close")}
-                  testID="product-tour-close-button"
-                />
-              </Box>
-              <TrackScreen page={PAGE_TRACKING_PRODUCT_TOUR} />
-              <Slides
-                bounces={false}
-                as={AnimatedGestureHandlerFlatList}
-                testID="product-tour-slides-container"
-                initialNumToRender={1}
-                maxToRenderPerBatch={Platform.OS === "ios" ? 1 : undefined}
-                onSlideChange={onSlideChange}
-                style={styles.slidesContainer}
-                contentContainerStyle={{ height: PRODUCT_TOUR_SLIDES_LIST_HEIGHT }}
-              >
-                <Slides.Content>
-                  {Array.from({ length: PRODUCT_TOUR_TOTAL_SLIDES }, (_, index) => (
-                    <Slides.Content.Item key={index}>
-                      <SlideItem index={index} />
-                    </Slides.Content.Item>
-                  ))}
-                </Slides.Content>
-
-                <Slides.ProgressIndicator style={styles.progressIndicator}>
-                  <ProgressIndicator />
-                </Slides.ProgressIndicator>
-
-                <Slides.Footer>
-                  <SlideFooterButton
-                    onPrimaryAction={onPrimaryAction}
-                    onComplete={completeProductTour}
+            <BottomSheetView>
+              <View onLayout={handleContentLayout} style={{ paddingBottom: bottomInset + 8 }}>
+                <Box lx={{ flexDirection: "row", justifyContent: "flex-end", paddingBottom: "s12" }}>
+                  <IconButton
+                    icon={Close}
+                    appearance="transparent"
+                    size="xs"
+                    onPress={onCloseButtonPress}
+                    accessibilityLabel={t("common.close")}
+                    testID="product-tour-close-button"
                   />
-                </Slides.Footer>
-              </Slides>
+                </Box>
+                <TrackScreen page={PAGE_TRACKING_PRODUCT_TOUR} />
+                <Slides
+                  bounces={false}
+                  as={AnimatedGestureHandlerFlatList}
+                  testID="product-tour-slides-container"
+                  initialNumToRender={1}
+                  maxToRenderPerBatch={Platform.OS === "ios" ? 1 : undefined}
+                  onSlideChange={onSlideChange}
+                  style={styles.slides}
+                  contentContainerStyle={{ height: slidesListHeight }}
+                >
+                  <Slides.Content>
+                    {Array.from({ length: PRODUCT_TOUR_TOTAL_SLIDES }, (_, index) => (
+                      <Slides.Content.Item key={index}>
+                        <SlideItem index={index} />
+                      </Slides.Content.Item>
+                    ))}
+                  </Slides.Content>
+
+                  <Slides.ProgressIndicator style={styles.progressIndicator}>
+                    <ProgressIndicator />
+                  </Slides.ProgressIndicator>
+
+                  <Slides.Footer>
+                    <SlideFooterButton
+                      onPrimaryAction={onPrimaryAction}
+                      onComplete={completeProductTour}
+                    />
+                  </Slides.Footer>
+                </Slides>
+              </View>
             </BottomSheetView>
           </ForceTheme>
         ) : null}
@@ -108,8 +120,11 @@ export const ProductTourDrawer = () => {
 };
 
 const styles = StyleSheet.create({
-  slidesContainer: {
-    height: PRODUCT_TOUR_SLIDES_CONTAINER_HEIGHT,
+  // Override Slides' default flex:1 so it wraps its content and can be measured.
+  slides: {
+    flexGrow: 0,
+    flexShrink: 0,
+    flexBasis: "auto",
   },
   progressIndicator: {
     marginVertical: 24,
