@@ -25,6 +25,7 @@ import { walletSelector } from "~/renderer/reducers/wallet";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { openModal } from "~/renderer/actions/modals";
+import { openAccountPublicKeyUnavailableDialog } from "LLD/features/AccountPublicKeyUnavailableDialog/accountPublicKeyUnavailableDialog";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import { NetworkErrorScreen } from "./NetworkError";
@@ -110,6 +111,10 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
             verifyAddress: true,
           }),
         );
+      },
+      "account.publicKeyUnavailable": () => {
+        ipcRenderer.send("show-app", {});
+        dispatch(openAccountPublicKeyUnavailableDialog());
       },
       "message.sign": ({ account, message, options, onSuccess, onError, onCancel }) => {
         ipcRenderer.send("show-app", {});

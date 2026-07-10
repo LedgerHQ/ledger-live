@@ -52,6 +52,7 @@ import { Linking } from "react-native";
 import { useCacheBustedLiveAppsDB } from "~/screens/Platform/v2/hooks";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { AccountPublicKeyUnavailable } from "@ledgerhq/live-common/errors";
 export function useWebView(
   {
     manifest,
@@ -110,9 +111,14 @@ export function useWebView(
   const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
 
+  // Set on getPublicKey failure; the consuming component renders it as a native bottom modal.
+  const [publicKeyUnavailableError, setPublicKeyUnavailableError] = useState<Error | null>(null);
+  const clearPublicKeyUnavailableError = useCallback(() => setPublicKeyUnavailableError(null), []);
+
   const uiHook = useUiHook({
     manifest,
     onTransactionBroadcast: onWalletApiTransactionBroadcast,
+    onPublicKeyUnavailable: setPublicKeyUnavailableError,
   });
 
   const trackingEnabled = useSelector(trackingEnabledSelector);
@@ -271,6 +277,8 @@ export function useWebView(
     webviewRef,
     noAccounts,
     isLoadingAccounts,
+    publicKeyUnavailableError,
+    clearPublicKeyUnavailableError,
   };
 }
 
@@ -470,9 +478,10 @@ export function useWebviewState(
 export interface Props {
   manifest: LiveAppManifest;
   onTransactionBroadcast?: () => void;
+  onPublicKeyUnavailable?: (error: Error) => void;
 }
 
-function useUiHook({ manifest, onTransactionBroadcast }: Props): UiHook {
+function useUiHook({ manifest, onTransactionBroadcast, onPublicKeyUnavailable }: Props): UiHook {
   const navigation = useNavigation();
   const [device, setDevice] = useState<Device>();
   const { createDrawerConfiguration } = useDrawerConfiguration();
@@ -535,6 +544,9 @@ function useUiHook({ manifest, onTransactionBroadcast }: Props): UiHook {
           onClose: onCancel,
           onError,
         });
+      },
+      "account.publicKeyUnavailable": () => {
+        onPublicKeyUnavailable?.(new AccountPublicKeyUnavailable());
       },
       "message.sign": ({ account, message, options, onSuccess, onError, onCancel }) => {
         navigation.navigate(NavigatorName.SignMessage, {
@@ -692,6 +704,7 @@ function useUiHook({ manifest, onTransactionBroadcast }: Props): UiHook {
       device,
       createDrawerConfiguration,
       onTransactionBroadcast,
+      onPublicKeyUnavailable,
     ],
   );
 }
