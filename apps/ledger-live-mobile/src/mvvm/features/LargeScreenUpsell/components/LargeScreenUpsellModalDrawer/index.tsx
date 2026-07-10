@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
-import { Platform, StyleSheet } from "react-native";
+import { Platform } from "react-native";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { LargeScreenUpsellModalContent } from "../LargeScreenUpsellModalContent";
@@ -46,7 +46,11 @@ export function LargeScreenUpsellModalDrawer({
     >
       {shouldRenderContent ? (
         <BottomSheetView
-          style={[styles.container, { paddingBottom: Platform.OS === "ios" ? bottomInset : 0 }]}
+          style={{
+            paddingHorizontal: 0,
+            paddingTop: 0,
+            paddingBottom: Platform.OS === "ios" ? bottomInset : 0,
+          }}
         >
           <Box testID="large-screen-upsell-modal-drawer">
             <BottomSheetHeader spacing />
@@ -57,10 +61,3 @@ export function LargeScreenUpsellModalDrawer({
     </QueuedDrawerBottomSheet>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 0,
-    paddingTop: 0,
-  },
-});

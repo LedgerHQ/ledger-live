@@ -1,17 +1,15 @@
 import React, { useCallback } from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
-import { Image, Linking, StyleSheet } from "react-native";
+import { Image, Linking } from "react-native";
 import { useThemedAwarenessModalImage } from "LLM/features/GenericAwarenessModal/hooks/useThemedAwarenessModalImage";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
 
-const CONTENT_MAX_WIDTH = 343;
-const HERO_HEIGHT = 305;
+const CONTENT_MAX_WIDTH = "s400";
+const HERO_HEIGHT = "s288";
 const HERO_ASPECT_RATIO = 343 / 473;
-const IMAGE_TEXT_SPACING = 24;
-const DESCRIPTION_TOP_PADDING = 8;
-const TEXT_BUTTON_SPACING = 36;
 const TITLE_NUMBER_OF_LINES = 2;
 const SUBTITLE_NUMBER_OF_LINES = 3;
+const HERO_IMAGE_STYLE = { flex: 1, width: "100%" } as const;
 
 type LargeScreenUpsellModalContentProps = Readonly<{
   viewModel: FeatureIntroViewModel;
@@ -37,44 +35,48 @@ export function LargeScreenUpsellModalContent({ viewModel }: LargeScreenUpsellMo
     }
   }, [onPrimaryPress, resolvedPrimaryButtonLink]);
 
-  const textContent = (
-    <Box style={styles.fullWidth}>
-      <Text
-        typography="heading3SemiBold"
-        lx={{ color: "base", textAlign: "center" }}
-        numberOfLines={TITLE_NUMBER_OF_LINES}
-      >
-        {title}
-      </Text>
-
-      <Box style={styles.subtitleContainer}>
-        <Text
-          typography="body2"
-          lx={{ color: "muted", textAlign: "center" }}
-          numberOfLines={SUBTITLE_NUMBER_OF_LINES}
-        >
-          {subtitle}
-        </Text>
-      </Box>
-    </Box>
-  );
-
   return (
     <Box lx={{ alignItems: "center", paddingHorizontal: "s16", paddingBottom: "s24" }}>
-      <Box style={styles.content}>
+      <Box lx={{ width: "full", maxWidth: CONTENT_MAX_WIDTH }}>
         {showImage ? (
-          <Image
-            source={{ uri: imageUrl }}
-            style={styles.heroImage}
-            resizeMode="contain"
-            testID="large-screen-upsell-modal-hero"
-          />
+          <Box
+            lx={{
+              alignSelf: "center",
+              aspectRatio: HERO_ASPECT_RATIO,
+              height: HERO_HEIGHT,
+            }}
+          >
+            <Image
+              source={{ uri: imageUrl }}
+              style={HERO_IMAGE_STYLE}
+              resizeMode="contain"
+              testID="large-screen-upsell-modal-hero"
+            />
+          </Box>
         ) : null}
 
-        <Box style={styles.textContainer}>{textContent}</Box>
+        <Box lx={{ paddingTop: "s24", width: "full" }}>
+          <Text
+            typography="heading3SemiBold"
+            lx={{ color: "base", textAlign: "center" }}
+            numberOfLines={TITLE_NUMBER_OF_LINES}
+          >
+            {title}
+          </Text>
+
+          <Box lx={{ paddingTop: "s8" }}>
+            <Text
+              typography="body2"
+              lx={{ color: "muted", textAlign: "center" }}
+              numberOfLines={SUBTITLE_NUMBER_OF_LINES}
+            >
+              {subtitle}
+            </Text>
+          </Box>
+        </Box>
 
         {showPrimaryButton ? (
-          <Box style={styles.ctaContainer}>
+          <Box lx={{ paddingTop: "s40", width: "full" }}>
             <Button
               appearance="base"
               size="lg"
@@ -90,29 +92,3 @@ export function LargeScreenUpsellModalContent({ viewModel }: LargeScreenUpsellMo
     </Box>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    width: "100%",
-    maxWidth: CONTENT_MAX_WIDTH,
-  },
-  fullWidth: {
-    width: "100%",
-  },
-  textContainer: {
-    width: "100%",
-    paddingTop: IMAGE_TEXT_SPACING,
-  },
-  subtitleContainer: {
-    paddingTop: DESCRIPTION_TOP_PADDING,
-  },
-  ctaContainer: {
-    width: "100%",
-    paddingTop: TEXT_BUTTON_SPACING,
-  },
-  heroImage: {
-    alignSelf: "center",
-    aspectRatio: HERO_ASPECT_RATIO,
-    height: HERO_HEIGHT,
-  },
-});
