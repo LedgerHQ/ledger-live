@@ -3,7 +3,11 @@ import { LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
 import type { InternalTxSourceList } from "./internalTxSources";
 
 export type { InternalTxSource, InternalTxSourceList, NonEmptySource } from "./internalTxSources";
-export { DEFAULT_INTERNAL_TX_SOURCES, internalTxSources } from "./internalTxSources";
+export {
+  DEFAULT_INTERNAL_TX_SOURCES,
+  internalTxSourcesFromList,
+  isInternalTxSource,
+} from "./internalTxSources";
 
 /**
  * Block finalization levels supported by EVM JSON-RPC API, used to fetch the latest block.
@@ -89,7 +93,7 @@ export type EvmConfig = {
    */
   feeHistoryRewardPercentile?: number;
   /**
-   * Ordered list of internal-tx sources for `getBlock`. Built via `internalTxSources()`.
+   * Ordered list of internal-tx sources for `getBlock`. Built via `internalTxSourcesFromList()`.
    * Defaults to explorer-first, then node traces, then `empty` (resolves only when no
    * real trace runtime error was remembered; trace failures still propagate for retry).
    * @see https://ledgerhq.atlassian.net/wiki/spaces/CF/pages/7297957892
