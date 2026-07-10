@@ -37,11 +37,12 @@ const mockedUseReceiveNetworkLedgerIds = jest.mocked(useReceiveNetworkLedgerIds)
 const setAvailability = (overrides: Partial<TradeAvailability> = {}) =>
   mockedUseTradeAvailability.mockReturnValue({
     availableOnBuy: true,
+    availableOnSell: true,
     availableOnSwap: true,
     isCurrencySupported: true,
     isResolved: true,
     ...overrides,
-  });
+  } as TradeAvailability);
 
 // useAccountBridgeMany suspends on the dynamic coin-module import — bypass it
 // so tests don't need a Suspense boundary and don't depend on import resolution timing.

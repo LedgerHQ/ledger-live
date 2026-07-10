@@ -16,6 +16,11 @@ jest.mock("~/reducers/accounts", () => ({
 
 const mockHandleOpenBuySell = jest.fn();
 const mockHandleOpenSwap = jest.fn();
+const mockGetCanStakeCurrency = jest.fn().mockReturnValue(true);
+const mockHandleOpenStakeDrawer = jest.fn();
+const mockUseOpenStakeDrawer = jest
+  .fn()
+  .mockReturnValue({ handleOpenStakeDrawer: mockHandleOpenStakeDrawer });
 
 jest.mock("@ledgerhq/asset-detail", () => ({
   ...jest.requireActual("@ledgerhq/asset-detail"),
@@ -30,10 +35,19 @@ jest.mock("LLM/features/Swap", () => ({
   useOpenSwap: () => ({ handleOpenSwap: mockHandleOpenSwap }),
 }));
 
+jest.mock("LLM/hooks/useStake/useStake", () => ({
+  useStake: () => ({ getCanStakeCurrency: mockGetCanStakeCurrency }),
+}));
+
+jest.mock("LLM/features/Stake", () => ({
+  useOpenStakeDrawer: (props: unknown) => mockUseOpenStakeDrawer(props),
+}));
+
 const mockedUseTradeAvailability = jest.mocked(useTradeAvailability);
 const setAvailability = (overrides: Partial<TradeAvailability> = {}) =>
   mockedUseTradeAvailability.mockReturnValue({
     availableOnBuy: true,
+    availableOnSell: true,
     availableOnSwap: true,
     isCurrencySupported: true,
     isResolved: true,
@@ -55,6 +69,7 @@ describe("useFooterViewModel", () => {
     jest.clearAllMocks();
     setAvailability();
     mockAccounts = [];
+    mockGetCanStakeCurrency.mockReturnValue(true);
   });
 
   describe("isBuyAvailable", () => {
@@ -97,6 +112,118 @@ describe("useFooterViewModel", () => {
 
       expect(buyableResult.current.isBuyAvailable).toBe(true);
       expect(notBuyableResult.current.isBuyAvailable).toBe(false);
+    });
+  });
+
+  describe("isSellAvailable", () => {
+    it("returns true when the asset is supported, sellable, and the currency has funds", () => {
+      setAvailability({ availableOnSell: true });
+      mockAccounts = [buildAccount("bitcoin", 1000)];
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.isSellAvailable).toBe(true);
+    });
+
+    it("returns false when the asset is not sellable", () => {
+      setAvailability({ availableOnSell: false });
+      mockAccounts = [buildAccount("bitcoin", 1000)];
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.isSellAvailable).toBe(false);
+    });
+
+    it("returns false when the currency has no accounts", () => {
+      setAvailability({ availableOnSell: true });
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.isSellAvailable).toBe(false);
+    });
+
+    it("returns false when all currency accounts have zero balance", () => {
+      setAvailability({ availableOnSell: true });
+      mockAccounts = [buildAccount("bitcoin")];
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.isSellAvailable).toBe(false);
+    });
+
+    it("returns false when the currency is not supported, even if sellable", () => {
+      setAvailability({ availableOnSell: true, isCurrencySupported: false });
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.isSellAvailable).toBe(false);
+    });
+
+    it("returns false when currency is undefined", () => {
+      const { result } = renderHook(() => useFooterViewModel(undefined));
+
+      expect(result.current.isSellAvailable).toBe(false);
+    });
+  });
+
+  describe("isEarnAvailable", () => {
+    it("returns true when the asset is supported and canStake is true", () => {
+      mockGetCanStakeCurrency.mockReturnValue(true);
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.isEarnAvailable).toBe(true);
+    });
+
+    it("returns false when canStake is false", () => {
+      mockGetCanStakeCurrency.mockReturnValue(false);
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.isEarnAvailable).toBe(false);
+    });
+
+    it("returns false when the currency is not supported even if canStake is true", () => {
+      setAvailability({ isCurrencySupported: false });
+      mockGetCanStakeCurrency.mockReturnValue(true);
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.isEarnAvailable).toBe(false);
+    });
+
+    it("returns false when currency is undefined", () => {
+      const { result } = renderHook(() => useFooterViewModel(undefined));
+
+      expect(result.current.isEarnAvailable).toBe(false);
+    });
+  });
+
+  describe("isMoreButtonVisible", () => {
+    it("is true when only sell is available", () => {
+      setAvailability({ availableOnSell: true });
+      mockGetCanStakeCurrency.mockReturnValue(false);
+      mockAccounts = [buildAccount("bitcoin", 1000)];
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.isMoreButtonVisible).toBe(true);
+    });
+
+    it("is true when only earn is available", () => {
+      setAvailability({ availableOnSell: false });
+      mockGetCanStakeCurrency.mockReturnValue(true);
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.isMoreButtonVisible).toBe(true);
+    });
+
+    it("is true when both sell and earn are available", () => {
+      setAvailability({ availableOnSell: true });
+      mockGetCanStakeCurrency.mockReturnValue(true);
+      mockAccounts = [buildAccount("bitcoin", 1000)];
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.isMoreButtonVisible).toBe(true);
+    });
+
+    it("is false when neither sell nor earn is available", () => {
+      setAvailability({ availableOnSell: false });
+      mockGetCanStakeCurrency.mockReturnValue(false);
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      expect(result.current.isMoreButtonVisible).toBe(false);
     });
   });
 
@@ -152,6 +279,19 @@ describe("useFooterViewModel", () => {
       expect(mockHandleOpenBuySell).toHaveBeenCalledWith("buy");
     });
 
+    it("onSellPress fires tracking and opens sell flow", () => {
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      act(() => result.current.onSellPress());
+
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "sell",
+        currency: "bitcoin",
+        page: "Asset Detail",
+      });
+      expect(mockHandleOpenBuySell).toHaveBeenCalledWith("sell");
+    });
+
     it("onSwapPress fires tracking and opens swap flow", () => {
       const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
 
@@ -175,5 +315,59 @@ describe("useFooterViewModel", () => {
         expect(track).not.toHaveBeenCalled();
       },
     );
+
+    it("onEarnPress fires tracking and calls handleOpenStakeDrawer", () => {
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      act(() => result.current.onEarnPress());
+
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "earn",
+        currency: "bitcoin",
+        page: "Asset Detail",
+      });
+      expect(mockHandleOpenStakeDrawer).toHaveBeenCalled();
+    });
+
+    it("onMorePress fires tracking and opens the more-options sheet", () => {
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      act(() => result.current.onMorePress());
+
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "more",
+        currency: "bitcoin",
+        page: "Asset Detail",
+      });
+      expect(result.current.isMoreOptionsRequestingToBeOpened).toBe(true);
+    });
+
+    it("onMoreOptionsClose closes the more-options sheet", () => {
+      const { result } = renderHook(() => useFooterViewModel(bitcoin, ["bitcoin"]));
+
+      act(() => result.current.onMorePress());
+      act(() => result.current.onMoreOptionsClose());
+
+      expect(result.current.isMoreOptionsRequestingToBeOpened).toBe(false);
+    });
+
+    it.each(["onSellPress", "onMorePress"] as const)(
+      "%s does nothing when currency is undefined",
+      handler => {
+        const { result } = renderHook(() => useFooterViewModel(undefined));
+
+        act(() => result.current[handler]());
+
+        expect(track).not.toHaveBeenCalled();
+      },
+    );
+
+    it.each(["onEarnPress"] as const)("%s does nothing when currency is undefined", handler => {
+      const { result } = renderHook(() => useFooterViewModel(undefined));
+
+      act(() => result.current[handler]());
+
+      expect(track).not.toHaveBeenCalled();
+    });
   });
 });

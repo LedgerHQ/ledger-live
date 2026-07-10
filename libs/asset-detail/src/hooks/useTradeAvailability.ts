@@ -4,12 +4,14 @@ import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/i
 import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
 import {
   isAvailableOnBuy,
+  isAvailableOnSell,
   isAvailableOnSwap,
   type MarketCurrencyRampLedgerIds,
 } from "../utils/tradeAvailability";
 
 export type TradeAvailability = Readonly<{
   availableOnBuy: boolean;
+  availableOnSell: boolean;
   availableOnSwap: boolean;
   isCurrencySupported: boolean;
   isResolved: boolean;
@@ -48,6 +50,11 @@ export function useTradeAvailability(ledgerIds: readonly string[] | undefined): 
     [currencyRef, isCurrencyAvailable],
   );
 
+  const availableOnSell = useMemo(
+    () => isAvailableOnSell(currencyRef, isCurrencyAvailable),
+    [currencyRef, isCurrencyAvailable],
+  );
+
   const availableOnSwap = useMemo(
     () => isAvailableOnSwap(currencyRef, swapSet),
     [currencyRef, swapSet],
@@ -55,6 +62,7 @@ export function useTradeAvailability(ledgerIds: readonly string[] | undefined): 
 
   return {
     availableOnBuy,
+    availableOnSell,
     availableOnSwap,
     isCurrencySupported: activeIds.length > 0,
     isResolved: currenciesForSwapAll != null && isRampCatalogResolved,
