@@ -166,8 +166,9 @@ function buildBlockTransactionFromDelegation(op: APIDelegationType): BlockTransa
     failed: !succeeded,
     fees: computeDelegationFees(op),
     ...(feesPayer && { feesPayer }),
-    // Always include operations even for failed txs — listOperations path
-    // always converts them, so getBlock must match for E2E reindex consistency.
+    // Include operations even for failed standalone txs — listOperations path
+    // always converts them. Note: mergeAuxiliaryTx still clears ops when a
+    // failed auxiliary tx is merged into an existing BlockTransaction.
     operations: buildDelegationOperations(op),
   };
 }
