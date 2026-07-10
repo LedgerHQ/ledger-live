@@ -21,7 +21,7 @@ export default class CommonPage {
   closeWithConfirmationButtonId = "button-close-add-account";
   errorPage = new ErrorPage();
   seeAllTransactionButton = "portfolio-seeAll-transaction";
-  assetDetailScrollViewId = "asset-detail-scroll-view";
+  assetDetailScrollViewId = /^asset-detail-scroll-view-.*/;
   assetDetailTransactionsHeaderId = "asset-detail-transactions-header";
 
   searchBar = () => getElementById(this.searchBarId);

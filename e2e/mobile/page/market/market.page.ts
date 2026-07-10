@@ -33,7 +33,7 @@ export default class MarketPage {
   marketCategorySwitcherId = "market-screen-assets-category-switcher";
   marketCategoryTabId = (value: string) => `${this.marketCategorySwitcherId}-${value}`;
   headerBackButtonId = "navigation-header-back-button";
-  assetDetailScrollViewId = "asset-detail-scroll-view";
+  assetDetailScrollViewId = /^asset-detail-scroll-view-.*/;
   assetDetailCoinCapsuleId = "asset-detail-coin-capsule";
   assetDetailMarketPriceId = "asset-detail-market-price";
   assetDetailCoinOptionsTrailingId = "asset-detail-coin-options-trailing";

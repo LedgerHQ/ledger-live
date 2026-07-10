@@ -19,7 +19,7 @@ export default class AssetDetailPage {
   screenId = "asset-detail-screen";
   coinCapsuleId = "asset-detail-coin-capsule";
   coinCapsuleIconId = (ticker: string) => `asset-detail-coin-capsule-icon-${ticker}`;
-  scrollViewId = "asset-detail-scroll-view";
+  scrollViewId = /^asset-detail-scroll-view-.*/;
   marketPriceId = "asset-detail-market-price";
   marketVariationId = "asset-detail-market-variation";
   totalBalanceId = "asset-detail-total-balance";
