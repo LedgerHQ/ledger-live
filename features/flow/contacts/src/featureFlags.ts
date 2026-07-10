@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import type { Features } from "@shared/feature-flags";
 import { useFeature, type WalletPlatform } from "@features/platform-feature-flags";
 
+export const DEFAULT_ELIGIBLE_ADDRESS_FAMILIES = ["evm"] as const;
+
 export type ContactsFeaturePlatform = WalletPlatform;
 
 export const CONTACTS_FEATURE_FLAG_KEYS = {
@@ -12,6 +14,7 @@ export const CONTACTS_FEATURE_FLAG_KEYS = {
 export type ContactsFeatureConfig = Readonly<{
   isEnabled: boolean;
   showNewBadge: boolean;
+  eligibleAddressFamilies: readonly string[];
 }>;
 
 export type ContactsFeatureValue = Features["lwdContacts"] | Features["lwmContacts"];
@@ -24,6 +27,8 @@ export function resolveContactsFeatureConfig(
   return {
     isEnabled,
     showNewBadge: isEnabled && feature?.params?.newBadge === true,
+    eligibleAddressFamilies:
+      feature?.params?.eligibleAddressFamilies ?? DEFAULT_ELIGIBLE_ADDRESS_FAMILIES,
   };
 }
 
