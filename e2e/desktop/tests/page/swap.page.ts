@@ -33,6 +33,7 @@ export class SwapPage extends WebViewAppPage {
   private fromAccountCoinSelector = "from-account-coin-selector";
   private fromAccountAmountInput = "from-account-amount-input";
   private readonly fromAccountError = "from-account-error";
+  private readonly noQuotesPlaceholder = "quotes-loading";
   private fromAccountBalance = "from-account-balance";
   private toAccountCoinSelector = "to-account-coin-selector";
   private readonly toAccountAccountNameTag = "to-account-account-name-tag";
@@ -484,11 +485,15 @@ export class SwapPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.toAccountAccountNameTag)).toContainText(expected);
   }
 
-  @step("Verify swap amount error message match: $0")
-  async verifySwapAmountErrorMessageIsCorrect(message: string | RegExp) {
+  @step("Verify swap error message match: $0 ($1)")
+  async verifySwapErrorMessageIsCorrect(
+    message: string | RegExp,
+    display: "banner" | "quotesPlaceholder",
+  ) {
     const webview = await this.getWebView();
-    const errorSpan = await webview.getByTestId(this.fromAccountError).textContent();
-    expect(errorSpan).toMatch(message);
+    const testId =
+      display === "quotesPlaceholder" ? this.noQuotesPlaceholder : this.fromAccountError;
+    await expect(webview.getByTestId(testId)).toContainText(message);
   }
 
   @step("Verify swap cross account error message match: $0")
@@ -496,12 +501,6 @@ export class SwapPage extends WebViewAppPage {
     const webview = await this.getWebView();
     // Auto-retrying locator assertion: waits for the cross-account warning to render before matching.
     await expect(webview.getByTestId(this.fromAccountError)).toContainText(message);
-  }
-
-  @step("Check insufficient funds warning banner is visible")
-  async checkInsufficientFundsBannerVisible() {
-    const webview = await this.getWebView();
-    await expect(webview.getByTestId(this.insufficientFundsWarning)).toBeVisible();
   }
 
   @step("verify quotes are displayed")
