@@ -1390,6 +1390,17 @@
       }
     }
   },
+  "largeScreenUpsellModal": {
+    "optedIn": {
+      "title": "See more. Tap less. Save {{discount}}%",
+      "subtitle": "Enjoy a larger screen, smarter transaction review, enhanced protection, and an exclusive {{discount}}% off."
+    },
+    "optedOut": {
+      "title": "Spot scams. See every detail",
+      "subtitle": "Review details on a touchscreen signer and pair slimmer wallets with advanced security checks."
+    },
+    "cta": "Explore touchscreen signers"
+  },
   "earn": {
     "simulator": {
       "title": "Rewards simulator"
