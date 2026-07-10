@@ -72,7 +72,7 @@ export default function useFinishOnboardingDialogViewModel(): FinishOnboardingDi
 
   const hasActions = actionList.length > 0;
   useEffect(() => {
-    if (!allActionsCompleted || !hasActions) return;
+    if (!allActionsCompleted || !hasActions || !isDialogOpen) return;
     track("Post-onboarding widget completed", {
       deviceModelId,
       flow: "post-onboarding",
@@ -80,7 +80,7 @@ export default function useFinishOnboardingDialogViewModel(): FinishOnboardingDi
     dispatch(closeFinishPostOnboarding());
     dispatch(hidePostOnboardingWalletEntryPoint());
     dispatch(postOnboardingSetFinished());
-  }, [allActionsCompleted, hasActions, deviceModelId, dispatch]);
+  }, [allActionsCompleted, hasActions, isDialogOpen, deviceModelId, dispatch]);
 
   useEffect(() => {
     if (isDialogOpen) {
