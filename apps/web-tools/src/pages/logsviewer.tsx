@@ -34,7 +34,7 @@ import {
   decodeAccountId,
   shortAddressPreview,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   getAddressExplorer,
