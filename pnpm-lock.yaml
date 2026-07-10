@@ -823,6 +823,9 @@ importers:
       '@features/flow-fear-and-greed':
         specifier: workspace:^
         version: link:../../features/flow/fear-and-greed
+      '@features/flow-contacts':
+        specifier: workspace:^
+        version: link:../../features/flow/contacts
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies

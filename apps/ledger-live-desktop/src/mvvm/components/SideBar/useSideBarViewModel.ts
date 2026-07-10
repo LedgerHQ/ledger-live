@@ -13,6 +13,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { setSidebarCollapsed } from "~/renderer/actions/settings";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
+import { useContactsEntryConfig } from "LLD/features/Contacts";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
@@ -144,6 +145,7 @@ export function useSideBarViewModel(): SideBarViewModel {
 
   const { shouldDisplayAssetSection, shouldDisplayMyWallet: isMyWalletEnabled } =
     useWalletFeaturesConfig("desktop");
+  const contactsEntryConfig = useContactsEntryConfig();
 
   const accountsSidebarPath = getAccountsSidebarPath(shouldDisplayAssetSection);
 
@@ -328,6 +330,7 @@ export function useSideBarViewModel(): SideBarViewModel {
     isAccountsDisabled: noAccounts,
     isLiveAppTabSelected,
     isMyWalletEnabled,
+    contactsEntryConfig,
     referralProgramConfig,
     recoverFeature,
     recoverHomePath,
