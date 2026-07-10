@@ -11,21 +11,29 @@ import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommand
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
+type TooLowAmountSwap = {
+  swap: Swap;
+  xrayTicket: string;
+  errorMessage: string;
+  quotesVisible: boolean;
+  errorDisplay: "banner" | "quotesPlaceholder";
+};
+
 // LedgerHQ/swap-live-app#1699 removed the insufficient-funds CTA banner from the Lumen desktop form.
-const tooLowAmountForQuoteSwaps = [
+const tooLowAmountForQuoteSwaps: TooLowAmountSwap[] = [
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "1"),
     xrayTicket: "B2CQA-3239, B2CQA-3136",
     errorMessage: "Insufficient balance",
     quotesVisible: true,
-    errorDisplay: "banner" as const,
+    errorDisplay: "banner",
   },
   {
     swap: new Swap(TokenAccount.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "200"),
     xrayTicket: "B2CQA-3240",
     errorMessage: "Insufficient balance",
     quotesVisible: true,
-    errorDisplay: "banner" as const,
+    errorDisplay: "banner",
   },
 
   {
@@ -33,14 +41,14 @@ const tooLowAmountForQuoteSwaps = [
     xrayTicket: "B2CQA-3242",
     errorMessage: "No quotes to show, yet",
     quotesVisible: false,
-    errorDisplay: "quotesPlaceholder" as const,
+    errorDisplay: "quotesPlaceholder",
   },
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "10000"),
     xrayTicket: "B2CQA-3243",
     errorMessage: "Insufficient balance",
     quotesVisible: false,
-    errorDisplay: "banner" as const,
+    errorDisplay: "banner",
   },
 ];
 
@@ -146,6 +154,18 @@ const swapEthNeededForNetworkFeesTestConfig = {
   swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "USE_MIN_AMOUNT"),
   errorMessage: new RegExp(`\\d+(\\.\\d{1,10})? ETH needed for network fees\\.\\s*$`),
   xrayTicket: "B2CQA-3241",
+  tags: [
+    "@NanoSP",
+    "@LNS",
+    "@NanoX",
+    "@Stax",
+    "@Flex",
+    "@NanoGen5",
+    "@ethereum",
+    "@family-evm",
+    "@bitcoin",
+    "@family-bitcoin",
+  ],
 };
 
 test.describe(`Swap - Error message when network fees are above account balance (${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToDebit.currency.name} to ${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToCredit.currency.name})`, () => {
@@ -228,7 +248,7 @@ test.describe(`Swap - Error message when network fees are above account balance 
   test.skip(
     `Swap too low quote amounts from ${swapEthNeededForNetworkFeesTestConfig.swap.accountToDebit.currency.name} to ${swapEthNeededForNetworkFeesTestConfig.swap.accountToCredit.currency.name} - ETH needed for network fees`,
     {
-      tag: swapNetworkFeesAboveAccountBalanceTestConfig.tags,
+      tag: swapEthNeededForNetworkFeesTestConfig.tags,
       annotation: {
         type: "TMS",
         description: swapEthNeededForNetworkFeesTestConfig.xrayTicket,

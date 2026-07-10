@@ -488,7 +488,7 @@ export class SwapPage extends WebViewAppPage {
   @step("Verify swap error message match: $0 ($1)")
   async verifySwapErrorMessageIsCorrect(
     message: string | RegExp,
-    display: "banner" | "quotesPlaceholder" = "banner",
+    display: "banner" | "quotesPlaceholder",
   ) {
     const webview = await this.getWebView();
     const testId =

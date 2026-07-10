@@ -16,15 +16,6 @@ const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\
 // Net value of a quote as shown on screen: amount received minus network fees (both in fiat).
 const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - quote.fees;
 
-// Strings match by substring, RegExps by pattern.
-const expectTextMatches = (actual: string, expected: string | RegExp) => {
-  if (typeof expected === "string") {
-    jestExpect(actual).toContain(expected);
-  } else {
-    jestExpect(actual).toMatch(expected);
-  }
-};
-
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -352,20 +343,19 @@ export default class SwapLiveAppPage {
   @Step("Verify swap error message match: $0 ($1)")
   async verifySwapErrorMessageIsCorrect(
     expectedMessage: string | RegExp,
-    display: "banner" | "buttonReplacement" = "banner",
+    display: "banner" | "buttonReplacement",
   ) {
     const testId =
       display === "buttonReplacement" ? this.swapErrorButtonReplacementId : this.fromAccountErrorId;
     await waitWebElementByTestId(testId);
     const errorText: string = await getWebElementText(testId);
-    expectTextMatches(errorText, expectedMessage);
+    jestExpect(errorText).toMatch(expectedMessage);
   }
 
   @Step("Verify swap cross account error message match: $0")
   async verifySwapCrossAccountErrorMessageIsCorrect(expectedMessage: string | RegExp) {
-    // Cross-account warnings render in the same from-account error slot as amount errors, so reuse
-    // the sibling check: a string stays a literal substring (toContain), only a RegExp is a pattern.
-    await this.verifySwapErrorMessageIsCorrect(expectedMessage);
+    // Cross-account warnings render in the same from-account error slot as amount errors.
+    await this.verifySwapErrorMessageIsCorrect(expectedMessage, "banner");
   }
 
   @Step("Verify swap CTA banner displayed")

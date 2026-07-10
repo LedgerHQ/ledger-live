@@ -225,7 +225,7 @@ export function runTooLowAmountForQuoteSwapsTest(
   ctaBanner: boolean,
   quotesVisible: boolean,
   tags: string[],
-  errorDisplay: "banner" | "buttonReplacement" = "banner",
+  errorDisplay: "banner" | "buttonReplacement",
 ) {
   describe(`Swap - with too low amount (throwing UI errors) - ${swap.amount} ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, () => {
     beforeAll(async () => {
@@ -586,7 +586,7 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
       );
       await app.swapLiveApp.checkQuotes();
       await app.swapLiveApp.selectExchange();
-      await app.swapLiveApp.verifySwapErrorMessageIsCorrect(errorMessage);
+      await app.swapLiveApp.verifySwapErrorMessageIsCorrect(errorMessage, "banner");
     });
   });
 }

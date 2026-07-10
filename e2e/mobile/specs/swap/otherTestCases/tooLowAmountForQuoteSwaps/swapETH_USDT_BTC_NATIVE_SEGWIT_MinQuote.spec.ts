@@ -7,6 +7,7 @@ const transactionE2E = {
   errorMessage: "Enter a higher amount and try again.",
   ctaBanner: false,
   quotesVisible: false,
+  errorDisplay: "banner" as const,
   tags: [
     "@NanoSP",
     "@LNS",
@@ -28,4 +29,5 @@ runTooLowAmountForQuoteSwapsTest(
   transactionE2E.ctaBanner,
   transactionE2E.quotesVisible,
   transactionE2E.tags,
+  transactionE2E.errorDisplay,
 );
