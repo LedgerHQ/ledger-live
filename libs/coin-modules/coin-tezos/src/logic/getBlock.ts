@@ -190,7 +190,7 @@ function buildStakingOperations(op: APIStakingType): BlockOperation[] {
       type: "other",
       ledgerOpType: operationType,
       operationType,
-      stakedAmount: Number(op.amount ?? 0),
+      stakedAmount: Number(op.amount ?? op.requestedAmount ?? 0),
       counter: op.counter,
       gasLimit: op.gasLimit,
       storageLimit: op.storageLimit,

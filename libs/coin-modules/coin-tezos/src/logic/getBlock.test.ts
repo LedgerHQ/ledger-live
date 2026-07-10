@@ -1130,14 +1130,19 @@ describe("staking operations", () => {
     },
   );
 
-  it("marks a staking op as failed but still includes operations", async () => {
+  it("marks a staking op as failed but still includes operations with requestedAmount fallback", async () => {
+    // TzKT omits `amount` on failed ops; only `requestedAmount` is present
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
-    mockFetchBlockStaking.mockResolvedValue([makeStaking({ status: "failed" })]);
+    mockFetchBlockStaking.mockResolvedValue([
+      makeStaking({ status: "failed", amount: undefined as unknown as number, requestedAmount: 750_000_000 }),
+    ]);
 
     const result = await getBlock(5_000_000);
 
     expect(result.transactions[0].failed).toBe(true);
     expect(result.transactions[0].operations).toHaveLength(1);
+    const op = result.transactions[0].operations[0] as Record<string, unknown>;
+    expect(op.stakedAmount).toBe(750_000_000);
   });
 
   it("skips a staking op without sender (no operations emitted)", async () => {
