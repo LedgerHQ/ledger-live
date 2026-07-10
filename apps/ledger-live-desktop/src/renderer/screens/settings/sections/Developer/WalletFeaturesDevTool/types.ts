@@ -21,8 +21,9 @@ export interface WalletFeaturesViewModel {
   readonly handleToggleQ2TourHasSeen: () => void;
 }
 
-export interface FeatureParamRowProps {
-  readonly paramKey: WalletFeatureParamKey;
+export interface FeatureParamRowProps<T extends string = WalletFeatureParamKey> {
+  readonly paramKey: T;
+  readonly switchName?: string;
   readonly label: string;
   readonly isEnabled: boolean;
   readonly isSelected: boolean;
@@ -41,6 +42,8 @@ export interface FeatureFlagPreviewProps {
 }
 
 export interface MainFeatureToggleProps {
+  readonly flagName: string;
+  readonly switchName: string;
   readonly isEnabled: boolean;
   readonly onToggle: () => void;
 }
