@@ -1,6 +1,6 @@
 {
-  "name": "@features/flow-market-banner",
-  "version": "0.8.0",
+  "name": "@features/flow-card",
+  "version": "0.1.0",
   "private": true,
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -16,21 +16,20 @@
     "lint:ci": "oxlint src --quiet && pnpm lint:tailwind",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet && pnpm lint:tailwind",
     "lint:tailwind": "eslint --no-eslintrc -c .eslintrc.tailwind.js --ext .ts,.tsx 'src/**/*.web.{ts,tsx}'",
+    "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/market-banner"
+    "unimported": "pnpm knip --directory ../../.. -W features/flow/card"
   },
-  "dependencies": {},
   "devDependencies": {
     "@features/platform-jest-config": "workspace:*",
-    "tailwindcss": "catalog:",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
-    "eslint": "8.57.0",
-    "eslint-plugin-better-tailwindcss": "catalog:",
-    "@typescript-eslint/parser": "catalog:",
+    "@features/platform-style": "workspace:*",
     "@gorhom/bottom-sheet": "catalog:",
+    "@ledgerhq/crypto-icons": "catalog:",
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
@@ -40,8 +39,13 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "eslint": "8.57.0",
+    "eslint-plugin-better-tailwindcss": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
@@ -49,10 +53,8 @@
     "react-native-safe-area-context": "catalog:",
     "react-native-svg": "catalog:",
     "react-test-renderer": "catalog:",
-    "typescript": "catalog:",
-    "@ledgerhq/lumen-design-core": "catalog:",
-    "@ledgerhq/lumen-ui-react": "catalog:",
-    "@ledgerhq/lumen-ui-rnative": "catalog:"
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:"
   },
   "optionalDependencies": {
     "@oxlint/binding-darwin-arm64": "1.51.0",
@@ -61,11 +63,11 @@
     "@oxlint/binding-win32-x64-msvc": "1.51.0"
   },
   "peerDependencies": {
-    "react": ">=19.0.0",
-    "react-native": ">=0.70.0",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
-    "@ledgerhq/lumen-ui-rnative": "catalog:"
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "react": ">=19.0.0",
+    "react-native": ">=0.70.0"
   },
   "peerDependenciesMeta": {
     "react-native": {
