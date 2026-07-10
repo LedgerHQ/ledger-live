@@ -58,6 +58,8 @@ export default class PortfolioPage {
   cryptoListId = "CryptoList";
   stablecoinListId = "StablecoinList";
   cryptosSectionHeaderId = "portfolio-cryptos-section-header";
+  cryptoAddressesListId = "CryptoAddressesList";
+  cryptoAddressItemId = (currencyId: string) => `crypto-address-item-${currencyId}`;
   stablecoinsSectionHeaderId = "portfolio-stablecoins-section-header";
   portfolioStocksListId = "PortfolioStocksList";
   stocksListId = "StocksList";
@@ -180,10 +182,20 @@ export default class PortfolioPage {
   }
 
   @Step("Go to asset's accounts from portfolio")
-  async goToAccounts(currencyName: string) {
+  async goToAccounts(currencyName: string, currencyId?: string) {
     await waitForElementById(this.accountsListView, 10000);
-    await scrollToId(this.assetItemId(currencyName), this.accountsListView);
-    await tapById(this.assetItemId(currencyName));
+    if (await isAggregatedAssetsEnabled()) {
+      await scrollToId("crypto-addresses-button");
+      await tapById("crypto-addresses-button");
+      await waitForElementById(this.cryptoAddressesListId);
+      if (currencyId) {
+        await scrollToId(this.cryptoAddressItemId(currencyId));
+        await tapById(this.cryptoAddressItemId(currencyId));
+      }
+    } else {
+      await scrollToId(this.assetItemId(currencyName), this.accountsListView);
+      await tapById(this.assetItemId(currencyName));
+    }
   }
 
   @Step("Check quick action buttons visibility")

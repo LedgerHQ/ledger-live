@@ -2,6 +2,7 @@ import { ApplicationOptions } from "page";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
+import { isQ2WithOperationsList } from "../../utils/featureFlagUtils";
 
 async function beforeAllFunction(options: ApplicationOptions) {
   await app.init({
@@ -18,7 +19,7 @@ export function runPortfolioTransactionsHistoryTest(
   tags: string[],
   operationRowAccountName?: string,
 ) {
-  describe("Portfolio transaction history", () => {
+  (isQ2WithOperationsList() ? describe.skip : describe)("Portfolio transaction history", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",

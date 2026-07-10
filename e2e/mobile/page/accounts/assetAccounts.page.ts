@@ -11,8 +11,15 @@ export default class AssetAccountsPage {
     getElementById(`asset-quick-action-button-${action}`);
 
   @Step("Wait for asset page to load")
-  async waitForAccountPageToLoad(assetName: string, currencyId?: string) {
+  async waitForAccountPageToLoad(
+    assetName: string,
+    currencyId?: string,
+    inCryptoAddressesList = false,
+  ) {
     if (await isAggregatedAssetsEnabled()) {
+      if (inCryptoAddressesList) {
+        return; // goToAccounts already navigated to the account page via CryptoAddressesScreen
+      }
       await waitForElementById(`asset-detail-scroll-view-${currencyId ?? assetName.toLowerCase()}`);
     } else {
       await waitForElementById(this.titleId(assetName.toLowerCase()));

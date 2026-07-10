@@ -84,6 +84,9 @@ export default class CommonPage {
   @Step("Go to the account")
   async goToAccount(accountId: string, currencyId?: string) {
     if (await isAggregatedAssetsEnabled()) {
+      if (await IsIdVisible(`account-graph-${accountId}`)) {
+        return; // already on the account page (e.g. navigated via CryptoAddressesScreen)
+      }
       if (currencyId) {
         await openDeeplink(`asset/${currencyId}`);
         await waitForElementById(`asset-detail-scroll-view-${currencyId}`);
@@ -123,7 +126,9 @@ export default class CommonPage {
   async goToAccountByName(name: string) {
     const accountTitle = getElementByText(name);
     const rowId = (await getIdOfElement(accountTitle)).replace("-name", ""); // Workaround on iOS (name on top of the return arrow clickable layout)
-    jestExpect(rowId).toContain(this.accountItemId);
+    if (!(await isAggregatedAssetsEnabled())) {
+      jestExpect(rowId).toContain(this.accountItemId);
+    }
     await tapById(rowId);
   }
 
