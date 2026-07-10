@@ -111,7 +111,11 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const [device, setDevice] = useState<Device>();
     const listAccounts = useListPlatformAccounts(walletState, accounts);
     const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
-    const listPlatformCurrencies = useListPlatformCurrencies(new Set(deactivatedCurrencyIds));
+    const deactivatedCurrencyIdsSet = useMemo(
+      () => new Set(deactivatedCurrencyIds),
+      [deactivatedCurrencyIds],
+    );
+    const listPlatformCurrencies = useListPlatformCurrencies(deactivatedCurrencyIdsSet);
 
     const { openDrawer: openModularDrawer } = useModularDrawerController();
 
