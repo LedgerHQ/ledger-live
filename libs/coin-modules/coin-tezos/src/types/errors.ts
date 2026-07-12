@@ -14,3 +14,9 @@ export const UnsupportedOperationKind = createCustomErrorClass<
 >("UnsupportedOperationKind");
 export const MustDelegateBeforeStaking = createCustomErrorClass("MustDelegateBeforeStaking");
 export const TezosNotEnoughStaked = createCustomErrorClass("TezosNotEnoughStaked");
+
+// Staking with a new delegate is rejected by the protocol while an unfinalizable unstake request
+// to the previous delegate still exists (~4 day freeze). Surfaced during stake fee estimation.
+export class TezosStakeBlockedByPendingUnstake extends Error {
+  override name = "TezosStakeBlockedByPendingUnstake";
+}

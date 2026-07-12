@@ -16,6 +16,7 @@ import {
   useBaker,
   useBakers,
   useStakingPositions,
+  useTezosStakingInfo,
 } from "@ledgerhq/live-common/families/tezos/react";
 import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
 import type { AccountLike } from "@ledgerhq/types-live";
@@ -165,6 +166,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const delegation = useDelegation(account);
   const stakingPositions = useStakingPositions(account);
+  const { unstakedBalance, delegateAddress } = useTezosStakingInfo(account);
   const addr =
     transaction.mode === "undelegate"
       ? delegation?.address || stakingPositions[0]?.delegate || ""
@@ -191,6 +193,14 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const notEnoughBalance = status.errors.amount instanceof NotEnoughBalanceToDelegate;
   const isUndelagating = route.params?.mode === "undelegate";
   const hasNotEnoughBalanceWhenUndelegating = notEnoughBalance && isUndelagating;
+
+  // Changing validator while an unfinalizable unstake to the current one is pending blocks staking
+  // with the new validator until that unstake finalizes (~4 days).
+  const hasPendingUnstakeToOtherBaker =
+    transaction.mode === "delegate" &&
+    unstakedBalance.gt(0) &&
+    !!transaction.recipient &&
+    transaction.recipient !== delegateAddress;
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
@@ -313,6 +323,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
         {hasNotEnoughBalanceWhenUndelegating && <NotEnoughFundFeesAlert account={account} />}
         {transaction.mode === "undelegate" ? (
           <Alert type="info" title={t("delegation.warnUndelegation")} />
+        ) : hasPendingUnstakeToOtherBaker ? (
+          <Alert type="warning" title={t("tezos.delegation.pendingUnstakeWarning")} />
         ) : (
           <Alert type="info" title={t("delegation.warnDelegation")} />
         )}

@@ -6,6 +6,7 @@ import {
   useBaker,
   useDelegation,
   useStakingPositions,
+  useTezosStakingInfo,
 } from "@ledgerhq/live-common/families/tezos/react";
 import { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { Trans } from "react-i18next";
@@ -19,6 +20,7 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Button from "~/renderer/components/Button";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import WarnBox from "~/renderer/components/WarnBox";
+import Alert from "~/renderer/components/Alert";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import BakerImage from "../../BakerImage";
@@ -60,6 +62,7 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
   const accountName = useAccountName(account);
   const delegation = useDelegation(account);
   const stakingPositions = useStakingPositions(account);
+  const { unstakedBalance, delegateAddress } = useTezosStakingInfo(account);
   const baker = useBaker(transaction.recipient);
   const currency = getAccountCurrency(account);
   const unit = useAccountUnit(account);
@@ -67,6 +70,11 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
     baker ? baker.name : fallback;
 
   const isDelegation = delegation || stakingPositions.length > 0;
+
+  // Changing validator while an unfinalizable unstake to the current one is pending blocks staking
+  // with the new validator until that unstake finalizes (~4 days).
+  const hasPendingUnstakeToOtherBaker =
+    unstakedBalance.gt(0) && !!transaction.recipient && transaction.recipient !== delegateAddress;
 
   return (
     <Box flow={4} mx={40}>
@@ -205,6 +213,11 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
       />
       {transaction.mode === "delegate" && (
         <Box mt={32}>
+          {hasPendingUnstakeToOtherBaker && (
+            <Alert type="warning" mb={4}>
+              <Trans i18nKey="tezos.delegation.pendingUnstakeWarning" />
+            </Alert>
+          )}
           <WarnBox>
             <Trans i18nKey="delegation.flow.steps.summary.termsAndPrivacy" />
           </WarnBox>
