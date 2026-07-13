@@ -132,6 +132,7 @@ export enum ScreenName {
   MyLedgerDevice = "MyLedgerDevice",
   MyWallet = "MyWallet",
   MyWalletHelp = "MyWalletHelp",
+  MyWalletContacts = "MyWalletContacts",
   BackupHub = "BackupHub",
   NotificationsSettings = "NotificationsSettings",
   OperationDetails = "OperationDetails",
