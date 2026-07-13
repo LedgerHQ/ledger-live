@@ -15,6 +15,7 @@ export function SwapTransactionStatusView({
   receiveStatus,
   sentAmount,
   receivedAmount,
+  showReceivedAmountEstimated,
   feesAmount,
   receiveAccountName,
   receiveAccountCurrency,
@@ -45,6 +46,7 @@ export function SwapTransactionStatusView({
           receiveStatus={receiveStatus}
           sentAmount={sentAmount}
           receivedAmount={receivedAmount}
+          showReceivedAmountEstimated={showReceivedAmountEstimated}
           isLoading={isStatusSectionLoading}
         />
 
