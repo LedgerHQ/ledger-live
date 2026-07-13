@@ -58,8 +58,7 @@ runJob() // Simple ping-pong test
       });
     },
     error => {
-      // in error case, we fallback to the default implementation
-      console.error("Failed to initialize publicKeyTweakAdd workers", error);
+      console.warn("publicKeyTweakAdd workers init failed, using default impl:", error);
     },
   );
 
