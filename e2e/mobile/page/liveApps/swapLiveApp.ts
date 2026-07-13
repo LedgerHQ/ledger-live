@@ -113,6 +113,12 @@ export default class SwapLiveAppPage {
     await tapWebElementByTestId(this.getQuotesButton);
   }
 
+  @Step("Verify get quotes CTA is hidden")
+  async expectQuotesButtonNotVisible() {
+    await expectWebElementNotVisible(this.getQuotesButton);
+    await expectWebElementNotVisible(this.quotesButtonDisabled);
+  }
+
   @Step("Wait for quotes")
   async waitForQuotes() {
     await waitWebElementByTestId(this.numberOfQuotes);
@@ -350,6 +356,8 @@ export default class SwapLiveAppPage {
     await waitWebElementByTestId(testId);
     const errorText: string = await getWebElementText(testId);
     jestExpect(errorText).toMatch(expectedMessage);
+
+    await this.expectQuotesButtonNotVisible();
   }
 
   @Step("Verify swap cross account error message match: $0")
