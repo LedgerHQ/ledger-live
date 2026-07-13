@@ -22,7 +22,11 @@ describe("parseDateOrOffset", () => {
   it("parses a day offset where today = 0", () => {
     jest.useFakeTimers().setSystemTime(new Date("2026-07-10T12:00:00.000Z"));
 
-    expect(parseDateOrOffset("0")?.toDateString()).toBe(new Date("2026-07-10T12:00:00.000Z").toDateString());
-    expect(parseDateOrOffset("1")?.toDateString()).toBe(new Date("2026-07-09T12:00:00.000Z").toDateString());
+    expect(parseDateOrOffset("0")?.toDateString()).toBe(
+      new Date("2026-07-10T12:00:00.000Z").toDateString(),
+    );
+    expect(parseDateOrOffset("1")?.toDateString()).toBe(
+      new Date("2026-07-09T12:00:00.000Z").toDateString(),
+    );
   });
 });

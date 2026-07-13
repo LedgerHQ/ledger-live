@@ -95,10 +95,17 @@ function LargeScreenUpsellDebug() {
           </Text>
         </SectionCard>
 
-        <SectionCard title="Decision breakdown" subtitle="Each gate must pass for the modal to show.">
+        <SectionCard
+          title="Decision breakdown"
+          subtitle="Each gate must pass for the modal to show."
+        >
           <StatusRow label="Feature flag enabled" ok={isFlagEnabled} />
           <StatusRow label="Modal enabled (flag)" ok={modalEnabled} />
-          <StatusRow label="Audience eligible" ok={breakdown.audienceOk} hint={breakdown.audienceHint} />
+          <StatusRow
+            label="Audience eligible"
+            ok={breakdown.audienceOk}
+            hint={breakdown.audienceHint}
+          />
           <StatusRow
             label="Cooldown elapsed"
             ok={breakdown.cooldownOk}
@@ -119,7 +126,9 @@ function LargeScreenUpsellDebug() {
             label="largeScreenUpsell"
             value={isFlagEnabled}
             onChange={handleToggleFlag}
-            description={isFlagEnabled ? "Enabled. Toggle to disable." : "Disabled. Toggle to enable."}
+            description={
+              isFlagEnabled ? "Enabled. Toggle to disable." : "Disabled. Toggle to enable."
+            }
           />
           <ToggleRow
             label="modal.enabled"
@@ -202,7 +211,7 @@ function LargeScreenUpsellDebug() {
       {previewViewModel ? (
         <LargeScreenUpsellModalDrawer
           isOpen={isPreviewOpen}
-          onClose={handleClosePreview}
+          onDismiss={handleClosePreview}
           featureIntroViewModel={previewViewModel}
           bottomInset={previewBottomInset}
         />

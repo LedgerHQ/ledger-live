@@ -108,11 +108,16 @@ describe("LargeScreenUpsellDebug", () => {
 
   it("toggles the previewed copy variant", () => {
     const handleTogglePreviewVariant = jest.fn();
-    mockedViewModel.mockReturnValue(buildViewModel({ handleTogglePreviewVariant }));
+    mockedViewModel.mockReturnValue(
+      buildViewModel({ handleTogglePreviewVariant, isPreviewOptedIn: false }),
+    );
 
     render(<LargeScreenUpsellDebug />);
 
     expect(screen.getByText("Opted-in copy variant")).toBeVisible();
+    fireEvent(screen.getAllByRole("switch")[0], "onCheckedChange", true);
+
+    expect(handleTogglePreviewVariant).toHaveBeenCalledWith(true);
   });
 
   it("edits a feature flag param", () => {

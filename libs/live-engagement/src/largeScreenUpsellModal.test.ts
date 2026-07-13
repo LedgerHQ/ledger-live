@@ -1,5 +1,6 @@
 import {
   initialState,
+  isStorableTimestamp,
   largeScreenUpsellModalReducer,
   lastSeenUpsellModalSelector,
   recordUpsellModalDisplay,
@@ -81,7 +82,7 @@ describe("largeScreenUpsellModal", () => {
     });
   });
 
-  it("restores only non-negative safe integer last display timestamps", () => {
+  it("restores only non-negative timestamps representable by JS Date", () => {
     const invalidLastSeenAtValues = [
       2.7,
       -1,
@@ -211,6 +212,25 @@ describe("largeScreenUpsellModal", () => {
 
     for (const invalid of [-1, 2.7, Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER + 1]) {
       expect(largeScreenUpsellModalReducer(state, setLastSeenUpsellModal(invalid))).toEqual(state);
+    }
+  });
+
+  it("accepts only non-negative timestamps within the JS Date range", () => {
+    const MAX_DATE_MS = 8.64e15;
+
+    expect(isStorableTimestamp(0)).toBe(true);
+    expect(isStorableTimestamp(Date.parse("2026-07-01T12:00:00.000Z"))).toBe(true);
+    expect(isStorableTimestamp(MAX_DATE_MS)).toBe(true);
+
+    for (const invalid of [
+      -1,
+      2.7,
+      NaN,
+      MAX_DATE_MS + 1,
+      Number.MAX_SAFE_INTEGER,
+      Number.MAX_SAFE_INTEGER + 1,
+    ]) {
+      expect(isStorableTimestamp(invalid)).toBe(false);
     }
   });
 

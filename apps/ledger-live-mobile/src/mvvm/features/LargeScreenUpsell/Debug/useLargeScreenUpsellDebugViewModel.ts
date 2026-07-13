@@ -6,11 +6,10 @@ import {
   isCooldownElapsed,
   shouldThrottle,
 } from "@ledgerhq/live-common/postOnboarding/logic/upsellFrequency";
+import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
+import { setPostOnboardingDate } from "@ledgerhq/live-common/postOnboarding/actions";
 import {
-  onboardingDateSelector,
-  setPostOnboardingDate,
-} from "@ledgerhq/live-common/postOnboarding/reducer";
-import {
+  isStorableTimestamp,
   lastSeenUpsellModalSelector,
   resetUpsellModalRetries,
   retriesUpsellModalSelector,
@@ -44,7 +43,9 @@ const parseNonNegativeInteger = (value: string): number | undefined => {
 const parseUnitInterval = (value: string): number | undefined => {
   const trimmed = value.trim();
   const parsed = Number(trimmed);
-  return trimmed !== "" && Number.isFinite(parsed) && parsed >= 0 && parsed <= 1 ? parsed : undefined;
+  return trimmed !== "" && Number.isFinite(parsed) && parsed >= 0 && parsed <= 1
+    ? parsed
+    : undefined;
 };
 
 const INELIGIBILITY_HINTS: Record<LargeScreenUpsellIneligibilityReason, string> = {
@@ -208,7 +209,11 @@ export function useLargeScreenUpsellDebugViewModel() {
     (value: string) => {
       const date = parseDateOrOffset(value);
       if (!date) return "Invalid date or offset.";
-      dispatch(setLastSeenUpsellModal(date.getTime()));
+      const timestamp = date.getTime();
+      if (!isStorableTimestamp(timestamp)) {
+        return "Enter a date between 1970-01-01 and the maximum JS Date.";
+      }
+      dispatch(setLastSeenUpsellModal(timestamp));
       return undefined;
     },
     [dispatch],

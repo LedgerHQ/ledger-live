@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { KeyboardTypeOptions } from "react-native";
+import type { KeyboardTypeOptions } from "react-native";
 import { Box, Button, TextInput } from "@ledgerhq/lumen-ui-rnative";
 
 interface EditableRowProps {
