@@ -1,6 +1,7 @@
 import { selectCurrency, selectCurrencyForMetaId } from "../currencySelection";
 import {
   mockAssetsDataWithPagination,
+  mockArbitrumTokenAssetsData,
   mockBitcoinAssetsData,
   mockUsdcAssetsData,
 } from "../../__mocks__/assets.mock";
@@ -64,6 +65,16 @@ describe("currencySelection", () => {
       const result = selectCurrencyForMetaId("usdc", data);
 
       expect(result).toBeDefined();
+      expect(result!.type).toBe("TokenCurrency");
+    });
+
+    it("prefers the ERC-20 token over a same-named L2 chain when their tickers differ", () => {
+      const data = { ...mockArbitrumTokenAssetsData, pagination: {} } as AssetsDataWithPagination;
+      const result = selectCurrencyForMetaId("arbitrum", data);
+
+      expect(result).toBeDefined();
+      expect(result!.id).toBe("ethereum/erc20/arbitrum");
+      expect(result!.ticker).toBe("ARB");
       expect(result!.type).toBe("TokenCurrency");
     });
   });
