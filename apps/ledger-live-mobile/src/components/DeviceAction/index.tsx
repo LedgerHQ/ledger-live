@@ -69,8 +69,7 @@ import {
 import { useStuckDeviceActionHint } from "../StuckDeviceActionHint/useStuckDeviceActionHint";
 import { ThorSwapIncompatibility } from "./ThorSwapIncompatibility";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import { DeviceId } from "@ledgerhq/client-ids/ids";
-import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import { DeviceId, identitiesSlice } from "@domain/entity-client-identity";
 import { SettingsState } from "~/reducers/types";
 import { Theme } from "~/colors";
 import { useTrackTransactionChecksFlow } from "~/analytics/hooks/useTrackTransactionChecksFlow";

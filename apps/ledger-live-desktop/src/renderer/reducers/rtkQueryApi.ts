@@ -7,7 +7,7 @@ import { cryptoAssetsApi } from "@domain/api-currency-token";
 import { currencyFiatApi } from "@domain/api-currency-fiat";
 import { marketSentimentApi } from "@domain/api-market-sentiment";
 import { altcoinsSentimentApi } from "@domain/api-altcoins-sentiment";
-import { pushDevicesApi } from "@ledgerhq/client-ids/api";
+import { pushDevicesApi } from "@domain/api-push-devices";
 import { counterValuesApi } from "@ledgerhq/live-common/counterValues/state-manager/api";
 
 // Add new RTK Query API here:

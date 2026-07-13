@@ -3589,16 +3589,16 @@ DEPENDENCIES:
   - "callstack-repack (from `../../../node_modules/.pnpm/@callstack+repack@5.2.5_patch_hash=8d7db4e65c89_38ee29790d10ce342ce468b57fca2803/node_modules/@callstack/repack`)"
   - "DatadogSDKReactNative (from `../../../node_modules/.pnpm/@datadog+mobile-react-native@2.8.2_react-native_dac9b2f3392a88191c9e162224291b30/node_modules/@datadog/mobile-react-native`)"
   - "DoubleConversion (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_12a649193cd6098ded35d7392a70864c/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)"
-  - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@18.0.13_f01b2d18c17d0631453b85a1bb6f3c63/node_modules/expo-constants/ios`)"
-  - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@6.0.0_f01b2d18c17d0631453b85a1bb6f3c63/node_modules/expo-image-loader/ios`)"
-  - "Expo (from `../../../node_modules/.pnpm/expo@54.0.33_@babel+core@7.28.5_expo-modules-co_cacb6b59b677ec4fab76c9254527f8eb/node_modules/expo`)"
-  - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@12.0.13_51b20fb2c48abbf95ece41c4d6cc12e9/node_modules/expo-asset/ios`)"
-  - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@15.0.8_f01b2d18c17d0631453b85a1bb6f3c63/node_modules/expo-crypto/ios`)"
-  - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@19.0.21_f01b2d18c17d0631453b85a1bb6f3c63/node_modules/expo-file-system/ios`)"
-  - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@14.0.12_da92767fece13d8e38a1aaa1550c8373/node_modules/expo-font/ios`)"
-  - "ExpoHaptics (from `../../../node_modules/.pnpm/expo-haptics@15.0.8_f01b2d18c17d0631453b85a1bb6f3c63/node_modules/expo-haptics/ios`)"
-  - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@14.0.8_f01b2d18c17d0631453b85a1bb6f3c63/node_modules/expo-image-manipulator/ios`)"
-  - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@15.0.8_f01b2d18c17d0631453b85a1bb6f3c63/node_modules/expo-keep-awake/ios`)"
+  - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@18.0.13_expo-modules-core@3.0.29_083180c0a5e10b2c5cb7be72cbb5cd78/node_modules/expo-constants/ios`)"
+  - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@6.0.0_expo-modules-core@3.0.2_d94c477aaef3a58976a7f715a0d05556/node_modules/expo-image-loader/ios`)"
+  - "Expo (from `../../../node_modules/.pnpm/expo@54.0.33_e3d4ca1b992720cacd23f6b729602745/node_modules/expo`)"
+  - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@12.0.13_expo-modules-core@3.0.29_rea_4dd6d0e3402a34b47bf630130064f619/node_modules/expo-asset/ios`)"
+  - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@15.0.8_expo-modules-core@3.0.29_rea_77401dd5864c9e0ede5576c5c69ee65f/node_modules/expo-crypto/ios`)"
+  - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@19.0.21_expo-modules-core@3.0._ccf77f6f454882980e5baab05c786638/node_modules/expo-file-system/ios`)"
+  - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@14.0.12_99443ef9edd0bb18e35d575cacf7a5e1/node_modules/expo-font/ios`)"
+  - "ExpoHaptics (from `../../../node_modules/.pnpm/expo-haptics@15.0.8_expo-modules-core@3.0.29_re_32e08640c19d06bdd218fddc257e55f5/node_modules/expo-haptics/ios`)"
+  - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@14.0.8_expo-modules-core_2b8317f4fe36dd0e87f66b10fa9aaf6d/node_modules/expo-image-manipulator/ios`)"
+  - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@15.0.8_expo-modules-core@3.0.29_7f844371c47f86efdbd92b0e0b2a20b7/node_modules/expo-keep-awake/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@3.0.29_react-native@0.81.6_pa_550a8cb069d781d95a6c9c0672aa1d30/node_modules/expo-modules-core`)"
   - "fast_float (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_12a649193cd6098ded35d7392a70864c/node_modules/react-native/third-party-podspecs/fast_float.podspec`)"
   - "FBLazyVector (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_12a649193cd6098ded35d7392a70864c/node_modules/react-native/Libraries/FBLazyVector`)"
@@ -3702,9 +3702,9 @@ DEPENDENCIES:
   - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.2.9_rea_d2a9b4567f5e99b0c24b51c092902db6/node_modules/@react-native-masked-view/masked-view`)"
   - "RNDeviceInfo (from `../../../node_modules/.pnpm/react-native-device-info@11.1.0_react-native@0._5724f53666b5af2469a5cee0b270e6f9/node_modules/react-native-device-info`)"
   - "RNFastImage (from `../../../node_modules/.pnpm/react-native-fast-image@8.6.3_react-native@0.81_47a704ad546b91bb8977ae9d783e4b3e/node_modules/react-native-fast-image`)"
-  - "RNFBApp (from `../../../node_modules/.pnpm/@react-native-firebase+app@22.2.0_17248f8019a48ef63fc6905d34b8dd63/node_modules/@react-native-firebase/app`)"
-  - "RNFBMessaging (from `../../../node_modules/.pnpm/@react-native-firebase+messaging@22.2.0_@react-_2dc4bbf0e8963959298036e65cb6a0ce/node_modules/@react-native-firebase/messaging`)"
-  - "RNFBRemoteConfig (from `../../../node_modules/.pnpm/@react-native-firebase+remote-config@22.2.0_@re_74bb500b809078d842aa37e4ad77a46d/node_modules/@react-native-firebase/remote-config`)"
+  - "RNFBApp (from `../../../node_modules/.pnpm/@react-native-firebase+app@22.2.0_@react-native_c192bbdbeae9249f162796c3b7538a5f/node_modules/@react-native-firebase/app`)"
+  - "RNFBMessaging (from `../../../node_modules/.pnpm/@react-native-firebase+messaging@22.2.0_@react-_dabe828c2e49223eba0f5a95996903fd/node_modules/@react-native-firebase/messaging`)"
+  - "RNFBRemoteConfig (from `../../../node_modules/.pnpm/@react-native-firebase+remote-config@22.2.0_@re_04281e1683014d79e974b7147ba08cc0/node_modules/@react-native-firebase/remote-config`)"
   - "RNGestureHandler (from `../../../node_modules/.pnpm/react-native-gesture-handler@2.28.0_react-nativ_89a916b3a09cb2b8cb8fed78fdb37973/node_modules/react-native-gesture-handler`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@10.0.0/node_modules/react-native-keychain`)"
   - "RNLocalize (from `../../../node_modules/.pnpm/react-native-localize@2.2.6_react-native@0.81.6_d1922cd6aa20c8732e0acf4d2e87e0e8/node_modules/react-native-localize`)"
@@ -3774,25 +3774,25 @@ EXTERNAL SOURCES:
   DoubleConversion:
     :podspec: "../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_12a649193cd6098ded35d7392a70864c/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   EXConstants:
-    :path: "../../../node_modules/.pnpm/expo-constants@18.0.13_f01b2d18c17d0631453b85a1bb6f3c63/node_modules/expo-constants/ios"
+    :path: "../../../node_modules/.pnpm/expo-constants@18.0.13_expo-modules-core@3.0.29_083180c0a5e10b2c5cb7be72cbb5cd78/node_modules/expo-constants/ios"
   EXImageLoader:
-    :path: "../../../node_modules/.pnpm/expo-image-loader@6.0.0_f01b2d18c17d0631453b85a1bb6f3c63/node_modules/expo-image-loader/ios"
+    :path: "../../../node_modules/.pnpm/expo-image-loader@6.0.0_expo-modules-core@3.0.2_d94c477aaef3a58976a7f715a0d05556/node_modules/expo-image-loader/ios"
   Expo:
-    :path: "../../../node_modules/.pnpm/expo@54.0.33_@babel+core@7.28.5_expo-modules-co_cacb6b59b677ec4fab76c9254527f8eb/node_modules/expo"
+    :path: "../../../node_modules/.pnpm/expo@54.0.33_e3d4ca1b992720cacd23f6b729602745/node_modules/expo"
   ExpoAsset:
-    :path: "../../../node_modules/.pnpm/expo-asset@12.0.13_51b20fb2c48abbf95ece41c4d6cc12e9/node_modules/expo-asset/ios"
+    :path: "../../../node_modules/.pnpm/expo-asset@12.0.13_expo-modules-core@3.0.29_rea_4dd6d0e3402a34b47bf630130064f619/node_modules/expo-asset/ios"
   ExpoCrypto:
-    :path: "../../../node_modules/.pnpm/expo-crypto@15.0.8_f01b2d18c17d0631453b85a1bb6f3c63/node_modules/expo-crypto/ios"
+    :path: "../../../node_modules/.pnpm/expo-crypto@15.0.8_expo-modules-core@3.0.29_rea_77401dd5864c9e0ede5576c5c69ee65f/node_modules/expo-crypto/ios"
   ExpoFileSystem:
-    :path: "../../../node_modules/.pnpm/expo-file-system@19.0.21_f01b2d18c17d0631453b85a1bb6f3c63/node_modules/expo-file-system/ios"
+    :path: "../../../node_modules/.pnpm/expo-file-system@19.0.21_expo-modules-core@3.0._ccf77f6f454882980e5baab05c786638/node_modules/expo-file-system/ios"
   ExpoFont:
-    :path: "../../../node_modules/.pnpm/expo-font@14.0.12_da92767fece13d8e38a1aaa1550c8373/node_modules/expo-font/ios"
+    :path: "../../../node_modules/.pnpm/expo-font@14.0.12_99443ef9edd0bb18e35d575cacf7a5e1/node_modules/expo-font/ios"
   ExpoHaptics:
-    :path: "../../../node_modules/.pnpm/expo-haptics@15.0.8_f01b2d18c17d0631453b85a1bb6f3c63/node_modules/expo-haptics/ios"
+    :path: "../../../node_modules/.pnpm/expo-haptics@15.0.8_expo-modules-core@3.0.29_re_32e08640c19d06bdd218fddc257e55f5/node_modules/expo-haptics/ios"
   ExpoImageManipulator:
-    :path: "../../../node_modules/.pnpm/expo-image-manipulator@14.0.8_f01b2d18c17d0631453b85a1bb6f3c63/node_modules/expo-image-manipulator/ios"
+    :path: "../../../node_modules/.pnpm/expo-image-manipulator@14.0.8_expo-modules-core_2b8317f4fe36dd0e87f66b10fa9aaf6d/node_modules/expo-image-manipulator/ios"
   ExpoKeepAwake:
-    :path: "../../../node_modules/.pnpm/expo-keep-awake@15.0.8_f01b2d18c17d0631453b85a1bb6f3c63/node_modules/expo-keep-awake/ios"
+    :path: "../../../node_modules/.pnpm/expo-keep-awake@15.0.8_expo-modules-core@3.0.29_7f844371c47f86efdbd92b0e0b2a20b7/node_modules/expo-keep-awake/ios"
   ExpoModulesCore:
     :path: "../../../node_modules/.pnpm/expo-modules-core@3.0.29_react-native@0.81.6_pa_550a8cb069d781d95a6c9c0672aa1d30/node_modules/expo-modules-core"
   fast_float:
@@ -3999,11 +3999,11 @@ EXTERNAL SOURCES:
   RNFastImage:
     :path: "../../../node_modules/.pnpm/react-native-fast-image@8.6.3_react-native@0.81_47a704ad546b91bb8977ae9d783e4b3e/node_modules/react-native-fast-image"
   RNFBApp:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+app@22.2.0_17248f8019a48ef63fc6905d34b8dd63/node_modules/@react-native-firebase/app"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+app@22.2.0_@react-native_c192bbdbeae9249f162796c3b7538a5f/node_modules/@react-native-firebase/app"
   RNFBMessaging:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+messaging@22.2.0_@react-_2dc4bbf0e8963959298036e65cb6a0ce/node_modules/@react-native-firebase/messaging"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+messaging@22.2.0_@react-_dabe828c2e49223eba0f5a95996903fd/node_modules/@react-native-firebase/messaging"
   RNFBRemoteConfig:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+remote-config@22.2.0_@re_74bb500b809078d842aa37e4ad77a46d/node_modules/@react-native-firebase/remote-config"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+remote-config@22.2.0_@re_04281e1683014d79e974b7147ba08cc0/node_modules/@react-native-firebase/remote-config"
   RNGestureHandler:
     :path: "../../../node_modules/.pnpm/react-native-gesture-handler@2.28.0_react-nativ_89a916b3a09cb2b8cb8fed78fdb37973/node_modules/react-native-gesture-handler"
   RNKeychain:

@@ -10,7 +10,7 @@ import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
 import { applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
 import { setupCryptoAssetsStore } from "~/config/bridge-setup";
 import { setupRecentAddressesStore } from "LLM/storage/recentAddresses";
-import { createIdentitiesSyncMiddleware } from "@ledgerhq/client-ids/store";
+import { createIdentitiesSyncMiddleware, pushDevicesApiExtra } from "@domain/api-push-devices";
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector, languageSelector } from "~/reducers/settings";
 import { getEnv } from "@ledgerhq/live-env";
@@ -44,6 +44,10 @@ export const store = configureStore({
             ...altcoinsSentimentApiExtra({
               coinMarketCapApiUrl: getEnv("CMC_API_URL"),
             }),
+            ...pushDevicesApiExtra({
+              pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
+              ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+            }),
           },
         },
       }),
@@ -51,6 +55,7 @@ export const store = configureStore({
       .concat(rebootMiddleware)
       .concat(
         createIdentitiesSyncMiddleware({
+          pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL").trim(),
           getIdentitiesState: (state: State) => state.identities,
           getAnalyticsConsent: canPushDeviceIdsSelector,
         }),

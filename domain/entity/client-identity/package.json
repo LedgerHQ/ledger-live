@@ -1,0 +1,35 @@
+{
+  "name": "@domain/entity-client-identity",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Domain entity for client identities: DeviceId, UserId, DatadogId value objects and Redux state",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "check-export-rules": "node scripts/check-export-rules.mjs",
+    "unimported": "pnpm knip --directory ../../.. -W domain/entity/client-identity"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "catalog:",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "catalog:",
+    "@types/node": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/uuid": "^9.0.0",
+    "jest": "catalog:",
+    "typescript": "catalog:"
+  }
+}

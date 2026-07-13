@@ -1,5 +1,8 @@
-import { identitiesSlice, exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
-import type { PersistedIdentities } from "@ledgerhq/client-ids/store";
+import {
+  identitiesSlice,
+  exportIdentitiesForPersistence,
+  type PersistedIdentities,
+} from "@domain/entity-client-identity";
 import type { Store } from "redux";
 import { saveIdentities, deleteUser } from "../db";
 import type { User } from "../types/store";

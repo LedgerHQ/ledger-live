@@ -1,4 +1,4 @@
-import type { DeviceId } from "@ledgerhq/client-ids/ids";
+import type { DeviceId } from "@domain/entity-client-identity";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Account, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";

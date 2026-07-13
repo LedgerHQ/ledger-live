@@ -37,7 +37,7 @@ import type { SwapTransactionStatusDrawerState } from "./swapTransactionStatusDr
 import type { PostOnboardingHubDrawerState } from "./postOnboardingHubDrawer";
 import type { SendFlowState } from "./sendFlow";
 import type { PayCardState } from "@domain/entity-pay-card";
-import { IdentitiesState } from "@ledgerhq/client-ids/store";
+import type { IdentitiesState } from "@domain/entity-client-identity";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
 import type { PortfolioRefreshState } from "./portfolioRefresh";
