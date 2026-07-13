@@ -249,7 +249,7 @@ window.saveLogs = async (path: string): Promise<void> => {
       memoryLogsStr,
     );
   } catch (error) {
-    console.error("Error while requesting to save logs from the renderer process", error);
+    console.warn("Failed to save logs:", error);
   }
 };
 

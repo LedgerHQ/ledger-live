@@ -18,7 +18,7 @@ export default function MockAccountGenerator({ count, title, desc }: Props) {
       const accounts = generateRandomAccounts(count);
       await injectMockAccounts(accounts, true);
     } catch (error) {
-      console.error("Failed to generate mock accounts:", error);
+      console.warn("Failed to generate mock accounts:", error);
       alert(t("settings.developer.mockAccounts.alerts.generateError"));
     }
   };

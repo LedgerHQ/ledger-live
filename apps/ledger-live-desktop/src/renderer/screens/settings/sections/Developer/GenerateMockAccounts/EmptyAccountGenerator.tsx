@@ -17,7 +17,7 @@ export default function EmptyAccountGenerator({ title, desc }: Props) {
       const account = createEmptyAccount();
       await injectMockAccounts([account], true);
     } catch (error) {
-      console.error("Failed to generate mock accounts:", error);
+      console.warn("Failed to generate mock accounts:", error);
       alert(t("settings.developer.mockAccounts.alerts.generateError"));
     }
   };
