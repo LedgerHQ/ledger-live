@@ -39,14 +39,21 @@ import {
 import type { ConcordiumConfig, ConcordiumMemo } from "../types";
 import { mapRawOperationToApiOperation } from "./utils";
 
+type UnsupportedCallApi = {
+  call: (_params: Record<string, unknown> | unknown[]) => Promise<never>;
+};
+
 export function createApi(
   config: ConcordiumConfig,
   currencyId: string,
-): CoinModuleApi<ConcordiumMemo> {
+): CoinModuleApi<ConcordiumMemo> & UnsupportedCallApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
     broadcast: (tx: string) => broadcast(tx, currencyId),
+    async call() {
+      throw new Error("call is not supported");
+    },
     combine,
     craftTransaction: (transactionIntent: TransactionIntent<ConcordiumMemo>) =>
       craftTransaction(transactionIntent, currencyId),

@@ -36,6 +36,17 @@ const ledgerConfig = { type: "ledger" as const, explorerId: "eth" as const, retr
 
 describe("EVM Family", () => {
   describe("network/node/ledger.ts", () => {
+    it("does not expose contract calls through ledger nodes", async () => {
+      const api = createLedgerNodeApi(ledgerConfig);
+
+      await expect(
+        api.call(currency, {
+          to: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+          data: "0x1234",
+        }),
+      ).rejects.toThrow("call is not supported");
+    });
+
     describe("createLedgerNodeApi / retries", () => {
       it("should retry on fail", async () => {
         const api = createLedgerNodeApi(ledgerConfig);

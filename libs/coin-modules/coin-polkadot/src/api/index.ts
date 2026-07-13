@@ -32,12 +32,19 @@ import {
 } from "../logic";
 import { validateAddress } from "../logic/validateAddress";
 
-export function createApi(config: PolkadotConfig): CoinModuleApi {
+type UnsupportedCallApi = {
+  call: (_params: Record<string, unknown> | unknown[]) => Promise<never>;
+};
+
+export function createApi(config: PolkadotConfig): CoinModuleApi & UnsupportedCallApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
     broadcast: (transaction: string, _broadcastConfig?: BroadcastConfig) =>
       broadcast(transaction, "polkadot"),
+    async call() {
+      throw new Error("call is not supported");
+    },
     combine: () => {
       throw new Error("UnsupportedMethod");
     },

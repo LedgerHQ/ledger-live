@@ -26,11 +26,18 @@ import {
   listOperations as logicListOperations,
 } from "../logic";
 
-export function createApi(config: SuiConfig): CoinModuleApi {
+type UnsupportedCallApi = {
+  call: (_params: Record<string, unknown> | unknown[]) => Promise<never>;
+};
+
+export function createApi(config: SuiConfig): CoinModuleApi & UnsupportedCallApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
     broadcast: (tx: string) => broadcast(tx),
+    async call() {
+      throw new Error("call is not supported");
+    },
     combine,
     craftTransaction: craft,
     craftRawTransaction: (

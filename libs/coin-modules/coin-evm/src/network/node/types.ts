@@ -165,7 +165,14 @@ export type BlockByHeightResult = {
   transactions?: PrefetchedBlockTransaction[];
 };
 
+export type EvmCallParams = {
+  to: string;
+  data: string;
+  block?: string | number;
+};
+
 export type NodeApi = {
+  call: (currency: CryptoCurrency, params: EvmCallParams) => Promise<string>;
   getTransaction: (currency: CryptoCurrency, hash: string) => Promise<TransactionInfo>;
   getCoinBalance: (currency: CryptoCurrency, address: string) => Promise<BigNumber>;
   getTokenBalance: (

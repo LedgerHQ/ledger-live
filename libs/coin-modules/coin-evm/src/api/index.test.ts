@@ -1,5 +1,5 @@
 import { EvmConfig } from "../config";
-import { createApi } from "./index";
+import { createApi, parseCallParams } from "./index";
 import { getValidatorsPage } from "../staking/validators";
 
 jest.mock("../staking/validators", () => ({
@@ -12,6 +12,7 @@ describe.each([
     { explorer: { type: "ledger" } },
     {
       broadcast: expect.any(Function),
+      call: expect.any(Function),
       combine: expect.any(Function),
       craftRawTransaction: expect.any(Function),
       craftTransaction: expect.any(Function),
@@ -35,6 +36,7 @@ describe.each([
     { explorer: { type: "none" } },
     {
       broadcast: expect.any(Function),
+      call: expect.any(Function),
       combine: expect.any(Function),
       craftRawTransaction: expect.any(Function),
       craftTransaction: expect.any(Function),
@@ -56,6 +58,63 @@ describe.each([
 ])("coin-framework methods %s", (_s, config, methods) => {
   it("ensures methods are presents", () => {
     expect(createApi(config as EvmConfig, "ethereum")).toEqual(methods);
+  });
+});
+
+describe("parseCallParams", () => {
+  it("accepts EVM call params", () => {
+    expect(
+      parseCallParams({
+        to: "0x0000000000000000000000000000000000000001",
+        data: "0x1234",
+        block: "latest",
+      }),
+    ).toEqual({
+      to: "0x0000000000000000000000000000000000000001",
+      data: "0x1234",
+      block: "latest",
+    });
+  });
+
+  it("accepts empty calldata", () => {
+    expect(
+      parseCallParams({
+        to: "0x0000000000000000000000000000000000000001",
+        data: "0x",
+      }),
+    ).toEqual({
+      to: "0x0000000000000000000000000000000000000001",
+      data: "0x",
+    });
+  });
+
+  it.each([
+    [],
+    { data: "0x1234" },
+    { to: "0x0000000000000000000000000000000000000001" },
+    {
+      to: "0x0000000000000000000000000000000000000001",
+      data: "0x1234",
+      block: -1,
+    },
+    {
+      to: "0x0000000000000000000000000000000000000001",
+      data: "0x1234",
+      block: "",
+    },
+    // "to" is not a 20-byte hex address
+    { to: "0x1234", data: "0x1234" },
+    { to: "not-an-address", data: "0x1234" },
+    // "data" is not 0x-prefixed hex calldata
+    { to: "0x0000000000000000000000000000000000000001", data: "1234" },
+    { to: "0x0000000000000000000000000000000000000001", data: "0xzz" },
+  ])("rejects invalid params %#", params => {
+    expect(() => parseCallParams(params)).toThrow("Invalid EVM call params");
+  });
+
+  it("rejects invalid params as a rejected promise, not a synchronous throw", async () => {
+    const api = createApi({ explorer: { type: "none" } } as EvmConfig, "ethereum");
+    await expect(api.call({})).rejects.toThrow("Invalid EVM call params");
   });
 });
 

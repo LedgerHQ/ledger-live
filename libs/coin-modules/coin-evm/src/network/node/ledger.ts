@@ -369,6 +369,9 @@ export function createLedgerNodeApi(config: LedgerNodeConfig): NodeApi {
     Batcher<{ address: string; contract: string }, BigNumber>
   >();
   return {
+    async call() {
+      throw new Error("call is not supported");
+    },
     getBlockByHeight: make(getBlockByHeight, config, fetch),
     getCoinBalance: make(getCoinBalance, config, fetch),
     getTokenBalance: makeGetTokenBalance(config, fetch, tokenBalancesBatchersMap),

@@ -44,6 +44,7 @@ describe("index", () => {
       const api = generateApi();
       expect(api).toEqual({
         broadcast: expect.any(Function),
+        call: expect.any(Function),
         combine: expect.any(Function),
         craftTransaction: expect.any(Function),
         craftRawTransaction: expect.any(Function),
@@ -61,6 +62,13 @@ describe("index", () => {
         getNextSequence: expect.any(Function),
         craftTransactionData: expect.any(Function),
       });
+    });
+  });
+
+  describe("call", () => {
+    it("should reject as unsupported", async () => {
+      const api = generateApi();
+      await expect(api.call({})).rejects.toThrow("call is not supported");
     });
   });
 

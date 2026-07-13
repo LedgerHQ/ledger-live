@@ -49,11 +49,18 @@ import {
 import type { TezosFeeEstimation } from "./types";
 import type { TezosOperationMode } from "../types/model";
 
-export function createApi(config: TezosConfig): CoinModuleApi {
+type UnsupportedCallApi = {
+  call: (_params: Record<string, unknown> | unknown[]) => Promise<never>;
+};
+
+export function createApi(config: TezosConfig): CoinModuleApi & UnsupportedCallApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
     broadcast,
+    async call() {
+      throw new Error("call is not supported");
+    },
     combine,
     craftTransaction: craft,
     craftRawTransaction: async (

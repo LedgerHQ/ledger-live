@@ -31,7 +31,9 @@ import { validateIntent } from "../logic/validateIntent";
 import { getChainAPI } from "../network";
 import { endpointByCurrencyId } from "../utils";
 
-type SolanaCoinModuleApi = CoinModuleApi<StringMemo | MemoNotSupported>;
+type SolanaCoinModuleApi = CoinModuleApi<StringMemo | MemoNotSupported> & {
+  call: (_params: Record<string, unknown> | unknown[]) => Promise<never>;
+};
 
 export function createApi(config: SolanaCoinConfig, currencyId: string): SolanaCoinModuleApi {
   coinConfig.setCoinConfig(() => ({
@@ -44,6 +46,9 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): SolanaC
   return {
     broadcast: (tx: string, _broadcastConfig?: BroadcastConfig) => {
       return broadcast(api, tx);
+    },
+    async call() {
+      throw new Error("call is not supported");
     },
     combine: (tx: string, signature: string, _pubkey?: string) => {
       return combine(tx, signature);

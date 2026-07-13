@@ -32,6 +32,7 @@ import {
   TransactionInfo,
   BlockByHeightResult,
   BlockReceiptInfo,
+  EvmCallParams,
 } from "./types";
 
 /**
@@ -252,6 +253,21 @@ async function getCoinBalance(
 ): Promise<BigNumber> {
   const balance = await api.getBalance(normalizeAddress(address));
   return new BigNumber(balance.toString());
+}
+
+async function call(
+  api: JsonRpcProvider,
+  _currency: CryptoCurrency,
+  params: EvmCallParams,
+): Promise<string> {
+  const block = typeof params.block === "number" ? ethers.toQuantity(params.block) : params.block;
+  return api.send("eth_call", [
+    {
+      to: normalizeAddress(params.to),
+      data: params.data,
+    },
+    block ?? "latest",
+  ]);
 }
 
 async function getTokenBalance(
@@ -862,6 +878,7 @@ function make<F extends (currency: CryptoCurrency, ...args: any[]) => any>(
 
 export function createNodeApi(config: ExternalNodeConfig): NodeApi {
   return {
+    call: make(call, config),
     getBlockByHeight: make(getBlockByHeight, config),
     getCoinBalance: make(getCoinBalance, config),
     getTokenBalance: make(getTokenBalance, config),

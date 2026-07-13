@@ -34,11 +34,19 @@ import type { TronMemo } from "../types";
 
 const MAX_TRONGRID_LIMIT = 200;
 
-export function createApi(config: TronConfig): CoinModuleApi<TronMemo> {
+type UnsupportedCallApi = {
+  call: (_params: Record<string, unknown> | unknown[]) => Promise<never>;
+};
+
+export function createApi(config: TronConfig): CoinModuleApi<TronMemo> & UnsupportedCallApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
     broadcast,
+    // Tron contract reads (triggerconstantcontract) are deferred; see ADR-044.
+    async call() {
+      throw new Error("call is not supported");
+    },
     combine,
     craftTransaction,
     craftRawTransaction: (
