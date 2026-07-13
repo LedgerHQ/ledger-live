@@ -41,6 +41,8 @@ function rewriteAsarUrlsRecursive(value: unknown, seen: Set<object>): void {
  * Builds the beforeSend callback for Datadog RUM / Log.
  * Drops events when opt-in is off or error message matches ignore list;
  * applies anonymization to the payload (parity with Sentry).
+ * If anonymization throws, the event is dropped (return false) to avoid
+ * sending potentially non-anonymized data.
  */
 export function buildBeforeSend(shouldSend: ShouldSendCallback) {
   return (event: unknown, _context?: unknown): boolean => {
@@ -55,14 +57,14 @@ export function buildBeforeSend(shouldSend: ShouldSendCallback) {
 
     try {
       anonymizer.filepathRecursiveReplacer(ev);
-    } catch (e) {
-      console.error("Datadog beforeSend: anonymization failed", e);
+    } catch {
+      return false;
     }
 
     try {
       rewriteAsarUrlsRecursive(ev, new Set());
     } catch (e) {
-      console.error("Datadog beforeSend: asar url rewrite failed", e);
+      console.warn("Datadog: asar URL rewrite failed (best-effort):", e);
     }
 
     return true;

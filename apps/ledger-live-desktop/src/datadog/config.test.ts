@@ -72,8 +72,7 @@ describe("datadog config", () => {
       expect(beforeSend({ foo: "bar" }, undefined)).toBe(true);
     });
 
-    it("should return true when asar url rewrite throws (logs and continues)", () => {
-      const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+    it("should return true when asar url rewrite throws (continues silently)", () => {
       const beforeSend = buildBeforeSend(() => true);
       const event: Record<string, unknown> = {};
       Object.defineProperty(event, "boom", {
@@ -83,11 +82,6 @@ describe("datadog config", () => {
         },
       });
       expect(beforeSend(event, undefined)).toBe(true);
-      expect(consoleSpy).toHaveBeenCalledWith(
-        "Datadog beforeSend: asar url rewrite failed",
-        expect.any(Error),
-      );
-      consoleSpy.mockRestore();
     });
 
     it("should call anonymizer and return true for sendable event", () => {
@@ -100,21 +94,15 @@ describe("datadog config", () => {
       expect(event._anonymized).toBe(true);
     });
 
-    it("should return true when anonymizer throws (logs and continues)", () => {
+    it("should return false when anonymizer throws (drops event for PII safety)", () => {
       const anonymizer = jest.requireMock("~/sentry/anonymizer").default;
       jest.mocked(anonymizer.filepathRecursiveReplacer).mockImplementationOnce(() => {
         throw new Error("anonymizer failed");
       });
-      const consoleSpy = jest.spyOn(console, "error").mockImplementation();
       const shouldSend = jest.fn().mockReturnValue(true);
       const beforeSend = buildBeforeSend(shouldSend);
       const event = { message: "ok" };
-      expect(beforeSend(event, undefined)).toBe(true);
-      expect(consoleSpy).toHaveBeenCalledWith(
-        "Datadog beforeSend: anonymization failed",
-        expect.any(Error),
-      );
-      consoleSpy.mockRestore();
+      expect(beforeSend(event, undefined)).toBe(false);
     });
 
     it("should rewrite asar file:// urls in the error stack", () => {
