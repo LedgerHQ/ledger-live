@@ -11,6 +11,7 @@
     "./hooks": "./src/hooks/index.ts",
     "./components/ContactsButton": "./src/components/ContactsButton/index.ts",
     "./components/ContactsPage": "./src/components/ContactsPage/index.ts",
+    "./list": "./src/list/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
