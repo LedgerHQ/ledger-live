@@ -1,5 +1,6 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
@@ -10,6 +11,7 @@ import { useClipboardRecipient } from "./useClipboardRecipient";
 type UseRecipientScreenViewProps = Readonly<{
   account: AccountLike;
   parentAccount?: Account | null;
+  transaction?: Transaction | null;
   currency: CryptoCurrency | TokenCurrency;
   onAddressSelected: (address: string, ensName?: string) => void;
   recipientSupportsDomain: boolean;
@@ -18,6 +20,7 @@ type UseRecipientScreenViewProps = Readonly<{
 export function useRecipientScreenView({
   account,
   parentAccount,
+  transaction,
   currency,
   onAddressSelected,
   recipientSupportsDomain,
@@ -31,6 +34,7 @@ export function useRecipientScreenView({
     currency,
     account,
     parentAccount,
+    transaction,
     currentAccountId: mainAccount.id,
     recipientSupportsDomain,
   });
@@ -43,6 +47,7 @@ export function useRecipientScreenView({
     currency,
     account,
     parentAccount,
+    transaction,
     currentAccountId: mainAccount.id,
     recipientSupportsDomain,
   });

@@ -5,6 +5,7 @@ import { useClipboardRecipient } from "../useClipboardRecipient";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { createMockAccount } from "./accounts";
 
 jest.mock("../useAddressValidation");
@@ -111,6 +112,27 @@ describe("useRecipientScreenView", () => {
     result.current.handleAddressSelect("new_address", "ens_name");
 
     expect(onAddressSelected).toHaveBeenCalledWith("new_address", "ens_name");
+  });
+
+  it("passes the current transaction to address and clipboard validation", () => {
+    const transaction = { family: "bitcoin", recipient: "" } as Transaction;
+
+    renderHook(() =>
+      useRecipientScreenView({
+        account: mockAccount,
+        transaction,
+        currency: mockAccount.currency,
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(mockedUseAddressValidation).toHaveBeenCalledWith(
+      expect.objectContaining({ transaction }),
+    );
+    expect(mockedUseClipboardRecipient).toHaveBeenCalledWith(
+      expect.objectContaining({ transaction }),
+    );
   });
 
   it("shows sanctioned banner when address is sanctioned", () => {

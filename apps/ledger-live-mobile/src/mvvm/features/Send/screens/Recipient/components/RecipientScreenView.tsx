@@ -1,6 +1,7 @@
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { SendFlowLayout } from "LLM/features/Send/components/SendFlowLayout";
 import { MemoControls } from "LLM/features/Send/components/Memo/MemoControls";
 import { useMemoViewModel } from "LLM/features/Send/components/Memo/hooks/useMemoViewModel";
@@ -19,6 +20,7 @@ import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework
 type RecipientScreenViewProps = Readonly<{
   account: AccountLike;
   parentAccount?: Account | null;
+  transaction?: Transaction | null;
   currency: CryptoOrTokenCurrency;
   onAddressSelected: (address: string, ensName?: string) => void;
   recipientSupportsDomain: boolean;
@@ -28,6 +30,7 @@ type RecipientScreenViewProps = Readonly<{
 export const RecipientScreenView = ({
   account,
   parentAccount,
+  transaction,
   currency,
   onAddressSelected,
   recipientSupportsDomain,
@@ -55,6 +58,7 @@ export const RecipientScreenView = ({
   } = useRecipientScreenView({
     account,
     parentAccount,
+    transaction,
     currency,
     onAddressSelected,
     recipientSupportsDomain,

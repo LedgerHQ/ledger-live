@@ -3375,6 +3375,9 @@ importers:
 
   domain/entity/contact:
     dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
       '@shared/schema-primitives':
         specifier: workspace:*
         version: link:../../../shared/schema-primitives
@@ -4027,16 +4030,6 @@ importers:
       '@oxlint/binding-win32-x64-msvc':
         specifier: 1.51.0
         version: 1.51.0
-
-  features/platform/contacts:
-    dependencies:
-      '@domain/entity-contact':
-        specifier: workspace:*
-        version: link:../../../domain/entity/contact
-    devDependencies:
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.2
 
   features/platform/currencies:
     dependencies:

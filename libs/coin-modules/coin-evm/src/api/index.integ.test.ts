@@ -6,7 +6,6 @@ import {
   Operation,
   StakingTransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { ethers } from "ethers";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
@@ -369,18 +368,6 @@ describe.each([
     const isEtherscanLike = (config as EvmConfig).explorer?.type === "etherscan";
 
     describe("pagination", () => {
-      let oldNftCurrencies: string[];
-
-      beforeAll(() => {
-        // Disable NFT fetching to speed up pagination tests
-        oldNftCurrencies = getEnv("NFT_CURRENCIES");
-        setEnv("NFT_CURRENCIES", []);
-      });
-
-      afterAll(() => {
-        setEnv("NFT_CURRENCIES", oldNftCurrencies);
-      });
-
       const expectUniqueOperationIds = (ops: Operation[]) => {
         const operationIds = ops.map(op => op.id);
         const uniqueOperationIds = new Set(operationIds);

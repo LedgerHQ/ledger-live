@@ -1,4 +1,4 @@
-import { renderHook } from "@tests/test-renderer";
+import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { useTransferDrawerViewModel } from "../useTransferDrawerViewModel";
 import { NavigatorName, ScreenName } from "~/const";
@@ -7,11 +7,16 @@ import { overrideStateWithFunds } from "LLM/features/QuickActions/__integrations
 import { State } from "~/reducers/types";
 import type { Account } from "@ledgerhq/types-live";
 import type { useOpenReceiveDrawer } from "LLM/features/Receive";
+import type { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
 
 const mockNavigate = jest.fn();
 const mockHandleOpenReceiveDrawer = jest.fn();
 const mockUseOpenReceiveDrawer = jest.fn((..._args: Parameters<typeof useOpenReceiveDrawer>) => ({
   handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
+}));
+const mockHandleOpenSendFlow = jest.fn();
+const mockUseOpenSendFlow = jest.fn((..._args: Parameters<typeof useOpenSendFlow>) => ({
+  handleOpenSendFlow: mockHandleOpenSendFlow,
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
@@ -30,6 +35,10 @@ jest.mock("@react-navigation/native", () => ({
 jest.mock("LLM/features/Receive", () => ({
   useOpenReceiveDrawer: (...args: Parameters<typeof useOpenReceiveDrawer>) =>
     mockUseOpenReceiveDrawer(...args),
+}));
+
+jest.mock("LLM/features/Send/hooks/useOpenSendFlow", () => ({
+  useOpenSendFlow: (...args: Parameters<typeof useOpenSendFlow>) => mockUseOpenSendFlow(...args),
 }));
 
 jest.mock("LLM/features/Noah/useNoahEntryPoint", () => ({
@@ -84,7 +93,7 @@ describe("TransferDrawer Navigation", () => {
     });
   });
 
-  it("send forwards selectedCurrency and currencyIds when opened from an asset", () => {
+  it("send keeps the legacy account selection when the new send flow is disabled", () => {
     const currency = getCryptoCurrencyById("ethereum");
     const ledgerIds = ["ethereum", "arbitrum", "base"];
 
@@ -96,6 +105,33 @@ describe("TransferDrawer Navigation", () => {
       screen: ScreenName.SendCoin,
       params: { selectedCurrency: currency, currencyIds: ledgerIds },
     });
+    expect(mockHandleOpenSendFlow).not.toHaveBeenCalled();
+  });
+
+  it("send opens account selection filtered to the asset when the new send flow is enabled", () => {
+    const currency = getCryptoCurrencyById("ethereum");
+    const ledgerIds = ["ethereum", "arbitrum", "base"];
+    const { result } = renderHook(() => useTransferDrawerViewModel({ currency, ledgerIds }), {
+      overrideInitialState: withFlagOverrides(
+        {
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["evm"], excludedCurrencyIds: [] },
+          },
+        },
+        overrideWithOpenDrawer,
+      ),
+    });
+
+    findAction(result, "send").onPress();
+
+    expect(mockUseOpenSendFlow).toHaveBeenCalledWith({
+      currency,
+      currencyIds: ledgerIds,
+      sourceScreenName: SOURCE_SCREEN,
+    });
+    expect(mockHandleOpenSendFlow).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it("bank_transfer navigates to ReceiveFunds/ReceiveProvider with noah manifest and tracks", () => {

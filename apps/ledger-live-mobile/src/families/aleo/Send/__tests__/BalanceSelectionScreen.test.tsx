@@ -76,6 +76,11 @@ describe("BalanceSelectionScreen", () => {
     parentAccount: ALEO_ACCOUNT_1,
     isSelfTransfer: false,
   });
+  const tokenSelfTransferRoute = makeRoute({
+    account: ALEO_TOKEN_ACCOUNT_1,
+    parentAccount: ALEO_ACCOUNT_1,
+    isSelfTransfer: true,
+  });
 
   beforeEach(() => {
     mockNavigation.navigate.mockClear();
@@ -133,6 +138,59 @@ describe("BalanceSelectionScreen", () => {
 
       expect(mockCreateTransaction).toHaveBeenCalledWith(ALEO_TOKEN_ACCOUNT_1);
       expect(mockCreateTransaction).not.toHaveBeenCalledWith(ALEO_ACCOUNT_1);
+      expect(mockNavigation.navigate).toHaveBeenCalledTimes(1);
+      expect(mockNavigation.navigate).toHaveBeenCalledWith(
+        ScreenName.SendSelectRecipient,
+        expect.objectContaining({
+          transaction: expect.objectContaining({ subAccountId: ALEO_TOKEN_ACCOUNT_1.id }),
+        }),
+      );
+    });
+
+    it("navigates to SendSelectRecipient with subAccountId for token private send", async () => {
+      const { user } = render(
+        <BalanceSelectionScreen
+          navigation={mockNavigation as never}
+          route={tokenSendRoute as never}
+        />,
+      );
+
+      await user.press(screen.getByText("Private"));
+      await user.press(screen.getByText("Send privately"));
+
+      expect(mockNavigation.navigate).toHaveBeenCalledTimes(1);
+      expect(mockNavigation.navigate).toHaveBeenCalledWith(
+        ScreenName.SendSelectRecipient,
+        expect.objectContaining({
+          transaction: expect.objectContaining({
+            mode: "transfer_token_private",
+            subAccountId: ALEO_TOKEN_ACCOUNT_1.id,
+          }),
+        }),
+      );
+    });
+
+    it("navigates to AleoMandatoryPrivateSync with subAccountId for token private self-transfer", async () => {
+      const { user } = render(
+        <BalanceSelectionScreen
+          navigation={mockNavigation as never}
+          route={tokenSelfTransferRoute as never}
+        />,
+      );
+
+      await user.press(screen.getByText("Private"));
+      await user.press(screen.getByText("Convert to public"));
+
+      expect(mockNavigation.navigate).toHaveBeenCalledTimes(1);
+      expect(mockNavigation.navigate).toHaveBeenCalledWith(
+        ScreenName.AleoMandatoryPrivateSync,
+        expect.objectContaining({
+          transaction: expect.objectContaining({
+            mode: "convert_token_private_to_public",
+            subAccountId: ALEO_TOKEN_ACCOUNT_1.id,
+          }),
+        }),
+      );
     });
   });
 
