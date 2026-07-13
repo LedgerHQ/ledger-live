@@ -3375,6 +3375,9 @@ importers:
 
   domain/entity/contact:
     dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
       '@shared/schema-primitives':
         specifier: workspace:*
         version: link:../../../shared/schema-primitives
