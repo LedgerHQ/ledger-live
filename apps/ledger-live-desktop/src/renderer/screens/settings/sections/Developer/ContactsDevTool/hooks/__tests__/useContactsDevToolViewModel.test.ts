@@ -64,7 +64,7 @@ describe("useContactsDevToolViewModel", () => {
     });
 
     act(() => {
-      result.current.setCustomFamiliesInput("evm, bitcoin, solana");
+      result.current.setCustomFamiliesInput("evm, stellar, aptos");
     });
 
     act(() => {
@@ -73,9 +73,9 @@ describe("useContactsDevToolViewModel", () => {
 
     expect(store.getState().featureFlags.overrides.lwdContacts).toEqual({
       enabled: true,
-      params: { newBadge: false, eligibleAddressFamilies: ["evm", "bitcoin", "solana"] },
+      params: { newBadge: false, eligibleAddressFamilies: ["evm", "stellar", "aptos"] },
     });
-    expect(result.current.customFamiliesInput).toBe("evm, bitcoin, solana");
+    expect(result.current.customFamiliesInput).toBe("evm, stellar, aptos");
   });
 
   it("should deduplicate and normalize custom eligibleAddressFamilies values", () => {
@@ -89,7 +89,7 @@ describe("useContactsDevToolViewModel", () => {
     });
 
     act(() => {
-      result.current.setCustomFamiliesInput("EVM, evm, bitcoin, Bitcoin");
+      result.current.setCustomFamiliesInput("EVM, evm, stellar, Stellar");
     });
 
     act(() => {
@@ -98,7 +98,7 @@ describe("useContactsDevToolViewModel", () => {
 
     expect(store.getState().featureFlags.overrides.lwdContacts).toEqual({
       enabled: true,
-      params: { newBadge: false, eligibleAddressFamilies: ["evm", "bitcoin"] },
+      params: { newBadge: false, eligibleAddressFamilies: ["evm", "stellar"] },
     });
   });
 
@@ -113,14 +113,14 @@ describe("useContactsDevToolViewModel", () => {
     });
 
     act(() => {
-      result.current.setCustomFamiliesInput("evm, bitcoin");
+      result.current.setCustomFamiliesInput("evm, stellar");
     });
 
     act(() => {
       result.current.handleToggleEnabled();
     });
 
-    expect(result.current.customFamiliesInput).toBe("evm, bitcoin");
+    expect(result.current.customFamiliesInput).toBe("evm, stellar");
   });
 
   it("should not reset in-progress custom families input when toggling newBadge", () => {
@@ -134,14 +134,14 @@ describe("useContactsDevToolViewModel", () => {
     });
 
     act(() => {
-      result.current.setCustomFamiliesInput("evm, solana");
+      result.current.setCustomFamiliesInput("evm, aptos");
     });
 
     act(() => {
       result.current.handleToggleNewBadge();
     });
 
-    expect(result.current.customFamiliesInput).toBe("evm, solana");
+    expect(result.current.customFamiliesInput).toBe("evm, aptos");
   });
 
   it("should reset the local override", () => {

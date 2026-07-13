@@ -9,7 +9,12 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { Transaction, TransactionRaw, TransactionStatus, TransactionStatusRaw } from "../types";
+import type {
+  Transaction,
+  TransactionRaw,
+  TransactionStatus,
+  TransactionStatusRaw,
+} from "../types";
 
 // These resource fields are live-derived and not persisted (absent from TransactionStatusRaw).
 // Default them to 0 on deserialization so the required BigNumber fields are never `undefined`.
