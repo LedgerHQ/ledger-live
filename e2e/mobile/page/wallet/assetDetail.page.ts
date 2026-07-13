@@ -43,13 +43,26 @@ export default class AssetDetailPage {
   operationByTicker = (ticker: string) =>
     getElementByIdWithDescendantTexts(this.operationsListItemId, ticker);
 
+  // The Asset Detail ScrollView testID is dynamic (`asset-detail-scroll-view-<currencyId>`).
+  // A regex matcher works for visibility waits but not as a scroll container for Detox
+  // scroll actions, so resolve the concrete id before every scroll.
+  private async getScrollViewId(): Promise<string> {
+    await waitForElementById(this.scrollViewId);
+    return getIdByRegexp(this.scrollViewId);
+  }
+
   private async scrollToTransactions() {
-    await scrollToId(this.transactionsHeaderId, this.scrollViewId, 500, "down");
+    const scrollViewId = await this.getScrollViewId();
+    await scrollToId(this.transactionsHeaderId, scrollViewId, 500, "down");
   }
 
   private async scrollToAddressesSection() {
-    await waitForElementById(this.scrollViewId);
-    await scrollToId(this.addressesHeaderId, this.scrollViewId, 700, "down", undefined, 50);
+    const scrollViewId = await this.getScrollViewId();
+    // Scroll until the header is at least 75% visible, matching the assertion below.
+    // Using the default visibility threshold (instead of a lenient locate + fixed slack)
+    // lets performScroll settle the header clear of the sticky Buy/Swap footer
+    // (absolutely positioned, ~CTAS_HEIGHT tall) without overshooting into the top nav.
+    await scrollToId(this.addressesHeaderId, scrollViewId, 300, "down");
     await detoxExpect(getElementById(this.addressesHeaderId)).toBeVisible();
   }
 
@@ -64,7 +77,8 @@ export default class AssetDetailPage {
 
   private async scrollToAddressItem(accountId: string) {
     await this.scrollToAddressesSection();
-    await scrollToId(this.addressItemNameId(accountId), this.scrollViewId, 700, "down");
+    const scrollViewId = await this.getScrollViewId();
+    await scrollToId(this.addressItemNameId(accountId), scrollViewId, 700, "down");
     await waitForElementById(this.addressItemNameId(accountId), DEFAULT_TIMEOUT, {
       checkVisibility: false,
     });
@@ -87,8 +101,8 @@ export default class AssetDetailPage {
 
   @Step("Expect Asset Detail page for ticker")
   async expectAssetDetailPageForTicker(ticker: string) {
-    await waitForElementById(this.scrollViewId);
-    await scrollToId(this.marketPriceId, this.scrollViewId, 1200, "up");
+    const scrollViewId = await this.getScrollViewId();
+    await scrollToId(this.marketPriceId, scrollViewId, 1200, "up");
     await waitForElementById(this.marketPriceId);
     await waitForElementById(this.coinOptionsTrailingId);
     await detoxExpect(getElementById(this.coinCapsuleIconId(ticker))).toBeVisible();
@@ -117,7 +131,8 @@ export default class AssetDetailPage {
 
   @Step("Expect Asset Detail market data")
   async expectMarketDataVisible() {
-    await scrollToId(this.marketPriceId, this.scrollViewId, 1200, "up");
+    const scrollViewId = await this.getScrollViewId();
+    await scrollToId(this.marketPriceId, scrollViewId, 1200, "up");
     await waitForElementById(this.marketPriceId);
     await detoxExpect(getElementById(this.marketPriceId)).toBeVisible();
     await detoxExpect(getElementById(this.marketVariationId)).toBeVisible();
@@ -125,7 +140,8 @@ export default class AssetDetailPage {
 
   @Step("Expect Asset Detail total crypto balance for ticker")
   async expectTotalBalanceCryptoForTicker(ticker: string) {
-    await scrollToId(this.totalBalanceId, this.scrollViewId);
+    const scrollViewId = await this.getScrollViewId();
+    await scrollToId(this.totalBalanceId, scrollViewId);
     await detoxExpect(getElementById(this.totalBalanceCryptoId)).toBeVisible();
     jestExpect(
       parseTickerAmount(await getTextOfElement(this.totalBalanceCryptoId), ticker),
@@ -134,7 +150,8 @@ export default class AssetDetailPage {
 
   @Step("Expect Asset Detail balance, addresses and transaction sections")
   async expectPortfolioSectionsVisible() {
-    await scrollToId(this.totalBalanceId, this.scrollViewId);
+    const scrollViewId = await this.getScrollViewId();
+    await scrollToId(this.totalBalanceId, scrollViewId);
     await detoxExpect(getElementById(this.totalBalanceId)).toBeVisible();
     await this.scrollToAddressesSection();
     await detoxExpect(getElementById(this.addAccountId)).toBeVisible();
@@ -169,7 +186,8 @@ export default class AssetDetailPage {
 
   @Step("Expect holding address balances to add up to total")
   async expectHoldingAddressBalancesSumToTotal(accountIds: string[], ticker: string) {
-    await scrollToId(this.totalBalanceId, this.scrollViewId);
+    const scrollViewId = await this.getScrollViewId();
+    await scrollToId(this.totalBalanceId, scrollViewId);
     const totalBalance = parseTickerAmount(
       await getTextOfElement(this.totalBalanceCryptoId),
       ticker,
@@ -199,7 +217,8 @@ export default class AssetDetailPage {
   @Step("Get visible Asset Detail transaction count for ticker")
   async getVisibleTransactionCountForTicker(ticker: string) {
     await this.scrollToTransactions();
-    await scrollToId(this.operationsListItemId, this.scrollViewId, 300, "down");
+    const scrollViewId = await this.getScrollViewId();
+    await scrollToId(this.operationsListItemId, scrollViewId, 300, "down");
     const visibleOperationsCount = await countElementsById(this.operationsListItemId);
     jestExpect(visibleOperationsCount).toBeGreaterThan(0);
 
@@ -214,17 +233,19 @@ export default class AssetDetailPage {
   @Step("Open first Asset Detail transaction")
   async openFirstTransaction(ticker: string) {
     await this.scrollToTransactions();
-    await scrollToId(this.operationsListItemId, this.scrollViewId, 300, "down");
+    const scrollViewId = await this.getScrollViewId();
+    await scrollToId(this.operationsListItemId, scrollViewId, 300, "down");
     // Extra "slack" scroll so the first operation is centered and not stuck behind the
     // sticky Buy/Swap footer, which would otherwise intercept the tap on Android.
-    await scrollByPixels(this.scrollViewId, 200, "down");
+    await scrollByPixels(scrollViewId, 200, "down");
     await detoxExpect(this.operationByTicker(ticker).atIndex(0)).toBeVisible();
     await this.tapTransactionUntilOperationDetailsOpen();
   }
 
   @Step("Open Asset Detail transactions history")
   async openTransactionsHistory() {
-    await scrollToId(this.transactionsHeaderId, this.scrollViewId, 500, "down");
+    const scrollViewId = await this.getScrollViewId();
+    await scrollToId(this.transactionsHeaderId, scrollViewId, 500, "down");
     await detoxExpect(getElementById(this.transactionsHeaderId)).toBeVisible();
     await tapById(this.transactionsHeaderId);
   }
