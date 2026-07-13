@@ -23,7 +23,7 @@ and are not exported as package subpaths.
 src/
 ├── components/
 │   ├── ContactsButton/   # My Wallet entry
-│   └── ContactsPage/     # Add contact button, Me row
+│   └── ContactsPage/     # Page content + platform-specific actions
 ├── hooks/
 ├── list/                 # Shared list view models
 ├── featureFlags.ts

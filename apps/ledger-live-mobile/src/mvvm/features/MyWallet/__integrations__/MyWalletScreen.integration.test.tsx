@@ -3,6 +3,45 @@ import { render, screen } from "@tests/test-renderer";
 import MyWalletNavigator from "../Navigator";
 import { useMyWalletHeaderViewModel } from "../views/Header/useMyWalletHeaderViewModel";
 
+jest.mock("@features/flow-contacts/components/ContactsButton", () => {
+  const React = require("react");
+  const { Pressable, Text } = require("react-native");
+
+  return {
+    ContactsButton: ({
+      title,
+      description,
+      newBadgeLabel,
+      onPress,
+    }: {
+      title: string;
+      description: string;
+      newBadgeLabel?: string;
+      onPress: () => void;
+    }) => (
+      <Pressable testID="my-wallet-contacts-button" onPress={onPress}>
+        <Text>{title}</Text>
+        <Text>{description}</Text>
+        {newBadgeLabel ? <Text testID="contacts-button-new-badge">{newBadgeLabel}</Text> : null}
+      </Pressable>
+    ),
+  };
+});
+
+jest.mock("@features/flow-contacts/components/ContactsPage", () => {
+  const React = require("react");
+  const { View, Text } = require("react-native");
+
+  return {
+    ContactsAddContactHeaderButton: () => null,
+    ContactsPageContent: () => (
+      <View testID="contacts-screen">
+        <Text>Contacts</Text>
+      </View>
+    ),
+  };
+});
+
 jest.mock("../views/Header/useMyWalletHeaderViewModel");
 
 const mockedViewModel = jest.mocked(useMyWalletHeaderViewModel);
