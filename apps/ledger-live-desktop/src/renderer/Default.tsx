@@ -57,6 +57,7 @@ import { hasCompletedOnboardingSelector, areSettingsLoaded } from "~/renderer/re
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage";
+import { useSuppressQ2TourForNewUsers } from "LLD/features/Q2Tour/hooks/useSuppressQ2TourForNewUsers";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
@@ -426,6 +427,7 @@ export default function Default() {
   useRecoverRestoreOnboarding();
   useAutoDismissPostOnboardingEntryPoint();
   useEnforceSupportedLanguage();
+  useSuppressQ2TourForNewUsers();
 
   useEffect(() => {
     if (typeof ldmkSolanaSignerFeatureFlag?.enabled === "boolean") {
