@@ -59,12 +59,15 @@ export function updateContactsFeatureValue(
   current: ContactsFeatureValue | null | undefined,
   patch: ContactsFeatureValuePatch,
 ): ContactsFeatureValue {
-  const params = resolveContactsFeatureParams(current?.params);
+  const currentParams = isRecord(current?.params) ? current.params : undefined;
+  const params = resolveContactsFeatureParams(currentParams);
   const patchParams = patch.params;
 
   return {
+    ...current,
     enabled: patch.enabled ?? current?.enabled === true,
     params: {
+      ...currentParams,
       newBadge: patchParams?.newBadge ?? params.newBadge,
       eligibleAddressFamilies:
         patchParams?.eligibleAddressFamilies === undefined
