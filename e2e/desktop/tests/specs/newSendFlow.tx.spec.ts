@@ -159,7 +159,7 @@ test.describe("New Send Flow", () => {
           if (requiresMemoStep) {
             await app.newSendFlow.skipMemo();
           } else {
-            await app.newSendFlow.clickOnSendToButton();
+            await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
           }
 
           await app.newSendFlow.fillCryptoAmount(tx.amount);
