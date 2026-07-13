@@ -43,8 +43,12 @@ export default class AssetAccountsPage {
 
   @Step("Open asset list via deeplink")
   async openViaDeeplink(currencyLong?: string) {
-    const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
-    await openDeeplink(link);
+    if (!currencyLong && (await isAggregatedAssetsEnabled())) {
+      await openDeeplink("crypto-addresses");
+    } else {
+      const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
+      await openDeeplink(link);
+    }
   }
 
   @Step("Tap on asset quick action button ")

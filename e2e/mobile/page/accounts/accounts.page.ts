@@ -54,7 +54,11 @@ export default class AccountsPage extends CommonPage {
 
   @Step("Expect no accounts screen")
   async expectNoAccount() {
-    const el = this.emptyAccountDisplay();
-    await detoxExpect(el).toBeVisible();
+    if (await isAggregatedAssetsEnabled()) {
+      await waitForElementById("crypto-addresses-empty-state");
+    } else {
+      const el = this.emptyAccountDisplay();
+      await detoxExpect(el).toBeVisible();
+    }
   }
 }
