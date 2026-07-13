@@ -81,10 +81,10 @@ describe("getBlock", () => {
         {
           type: "other",
           address: "tz29GPjgeRQTRX6mcPQXkiuHnq7jbya1Abnq",
-          asset: { type: "native", name: "XTZ" },
-          amount: 0n,
           ledgerOpType: "REVEAL",
-          details: { counter: 14472417, gasLimit: 581, storageLimit: 0 },
+          counter: 14472417,
+          gasLimit: 581,
+          storageLimit: 0,
         },
       ]),
     );
@@ -119,8 +119,8 @@ describe("getBlock — Shadownet Paris staking ops", () => {
   });
 
   it.each([
-    [STAKE_BLOCK, "STAKE", 500_000_000n],
-    [UNSTAKE_BLOCK, "UNSTAKE", 250_000_000n],
+    [STAKE_BLOCK, "STAKE", 500_000_000],
+    [UNSTAKE_BLOCK, "UNSTAKE", 250_000_000],
   ])(
     "block %s contains a staking op with ledgerOpType=%s and stakedAmount=%s",
     async (height, expectedOpType, expectedAmount) => {
