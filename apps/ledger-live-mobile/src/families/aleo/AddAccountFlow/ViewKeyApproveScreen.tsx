@@ -3,10 +3,11 @@ import { ScrollView, StyleSheet } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SafeAreaView from "~/components/SafeAreaView";
-import { Banner, Box, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Check, Close, Refresh } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { Alert } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import {
   useAleoViewKeyApproval,
@@ -14,7 +15,6 @@ import {
 } from "@ledgerhq/live-common/families/aleo/react";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { ScreenName } from "~/const";
-import { Loading } from "~/components/Loading";
 import Animation from "~/components/Animation";
 import Button from "~/components/wrappedUi/Button";
 import { DeviceActionDefaultRendering } from "~/components/DeviceAction";
@@ -40,7 +40,7 @@ function AccountStatusLabel({
 }>) {
   const accountName = useAccountName(account);
   return (
-    <Text typography="body2" numberOfLines={1} style={styles.accountLabel} lx={{ color: "muted" }}>
+    <Text typography="body2" numberOfLines={1} style={styles.accountLabel} lx={{ color: "base" }}>
       {accountName || fallbackLabel}
     </Text>
   );
@@ -171,60 +171,63 @@ export default function ViewKeyApproveScreen() {
     ],
   );
 
-  const renderApprovalContent = () => {
-    if (hookState.sharePending) {
-      return (
-        <Box style={[styles.overlay, { backgroundColor: colors.background.main }]}>
-          <ScrollView style={styles.list} contentContainerStyle={styles.contentContainer}>
-            <Box style={styles.animationContainer}>
-              <Animation
-                source={getDeviceAnimation({ modelId: device.modelId, key: "verify", theme })}
-                style={getDeviceAnimationStyles(device.modelId)}
-              />
-            </Box>
-            <Text typography="heading3SemiBold" style={styles.title} lx={{ color: "base" }}>
-              <Trans i18nKey="aleo.addAccount.stepViewKeyApprove.title" />
-            </Text>
-            <Text typography="body2" style={styles.description} lx={{ color: "base" }}>
-              <Trans i18nKey="aleo.addAccount.stepViewKeyApprove.description" />
-            </Text>
-            <Box style={styles.listContent}>
-              {accountsToAdd.map((account, index) => (
-                <Box
-                  style={[styles.row, { backgroundColor: colors.opacityDefault.c05 }]}
-                  key={account.id}
-                >
-                  <AccountStatusLabel account={account} fallbackLabel={account.freshAddress} />
-                  <Box style={styles.statusIcon}>{getAccountStatusIcon(index, account.id)}</Box>
-                </Box>
-              ))}
-            </Box>
-            <Banner
-              appearance="info"
-              description={t("aleo.addAccount.stepViewKeyApprove.cancelAlert")}
-            />
-          </ScrollView>
-          <Box style={[styles.footer, { bottom: insets.bottom + 24 }]}>
-            <Button
-              type="main"
-              outline
-              onPress={quitConfirmation.open}
-              event="AleoAddAccountViewKeyApproveCancelAll"
-            >
-              {t("aleo.addAccount.stepViewKeyApprove.cancelAllBtn", {
-                count: accountsToAdd.length,
-              })}
-            </Button>
-          </Box>
-        </Box>
-      );
-    }
+  const isRedirecting = !hookState.sharePending && payload !== null;
 
-    if (payload === null) {
+  const renderApprovalContent = () => {
+    if (!hookState.sharePending && !isRedirecting) {
       return null;
     }
 
-    return <Loading />;
+    return (
+      <Box style={[styles.overlay, { backgroundColor: colors.background.main }]}>
+        <ScrollView style={styles.list} contentContainerStyle={styles.contentContainer}>
+          <Box style={styles.animationContainer}>
+            <Animation
+              source={getDeviceAnimation({ modelId: device.modelId, key: "verify", theme })}
+              style={getDeviceAnimationStyles(device.modelId)}
+            />
+          </Box>
+          <Text typography="heading3SemiBold" style={styles.title} lx={{ color: "base" }}>
+            <Trans i18nKey="aleo.addAccount.stepViewKeyApprove.title" />
+          </Text>
+          <Text typography="body2" style={styles.description} lx={{ color: "muted" }}>
+            <Trans i18nKey="aleo.addAccount.stepViewKeyApprove.description" />
+          </Text>
+          <Box style={[styles.listContent, { borderColor: colors.opacityDefault.c05 }]}>
+            {accountsToAdd.map((account, index) => (
+              <Box
+                style={[
+                  styles.row,
+                  {
+                    borderTopColor: colors.opacityDefault.c05,
+                  },
+                ]}
+                key={account.id}
+              >
+                <AccountStatusLabel account={account} fallbackLabel={account.freshAddress} />
+                <Box style={styles.statusIcon}>{getAccountStatusIcon(index, account.id)}</Box>
+              </Box>
+            ))}
+          </Box>
+          <Alert type="secondary" title={t("aleo.addAccount.stepViewKeyApprove.cancelAlert")} />
+        </ScrollView>
+        <Box style={[styles.footer, { bottom: insets.bottom + 24 }]}>
+          <Button
+            type="main"
+            outline
+            disabled={isRedirecting}
+            onPress={quitConfirmation.open}
+            event="AleoAddAccountViewKeyApproveCancelAll"
+          >
+            {isRedirecting
+              ? t("aleo.addAccount.stepViewKeyApprove.redirecting")
+              : t("aleo.addAccount.stepViewKeyApprove.cancelAllBtn", {
+                  count: accountsToAdd.length,
+                })}
+          </Button>
+        </Box>
+      </Box>
+    );
   };
 
   return (
@@ -282,16 +285,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listContent: {
-    rowGap: 8,
-    marginBottom: 12,
+    marginTop: 12,
+    marginBottom: 24,
+    borderBottomWidth: 1,
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 12,
+    paddingVertical: 18,
     paddingHorizontal: 16,
-    borderRadius: 8,
+    borderTopWidth: 1,
   },
   accountLabel: {
     flex: 1,

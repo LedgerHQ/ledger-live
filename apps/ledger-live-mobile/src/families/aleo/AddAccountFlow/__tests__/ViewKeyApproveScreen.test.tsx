@@ -103,21 +103,19 @@ jest.mock("@ledgerhq/lumen-ui-rnative/symbols", () => ({
   Refresh: () => <View testID="icon-refresh" />,
 }));
 
-jest.mock("~/components/Loading", () => ({
-  Loading: () => <View testID="loading" />,
-}));
-
 jest.mock("~/components/wrappedUi/Button", () => {
   return ({
     children,
     onPress,
     event,
+    disabled,
   }: {
     children: React.ReactNode;
     onPress: () => void;
     event: string;
+    disabled?: boolean;
   }) => (
-    <TouchableOpacity testID={`button-${event}`} onPress={onPress}>
+    <TouchableOpacity testID={`button-${event}`} onPress={onPress} disabled={disabled}>
       <Text>{children}</Text>
     </TouchableOpacity>
   );
@@ -234,15 +232,22 @@ describe("ViewKeyApproveScreen", () => {
   });
 
   describe("when confirmation is complete (payload is set)", () => {
-    it("shows the full-screen loader instead of the account list", () => {
-      renderScreen({
+    it("keeps the account list visible and shows a disabled redirecting button instead of cancel", async () => {
+      const { user } = renderScreen({
         hookState: { sharePending: false, shareProgress: { completed: 2, total: 2 } },
         payload: { account1: "vk1", account2: "vk2" },
       });
 
-      expect(screen.getByTestId("loading")).toBeTruthy();
-      expect(screen.queryByTestId("device-animation")).toBeNull();
-      expect(screen.queryByTestId("button-AleoAddAccountViewKeyApproveCancelAll")).toBeNull();
+      expect(screen.getByTestId("device-animation")).toBeTruthy();
+      expect(screen.getByText("account1")).toBeTruthy();
+      const cancelButton = screen.getByTestId("button-AleoAddAccountViewKeyApproveCancelAll");
+      expect(cancelButton).toBeTruthy();
+      expect(screen.getByText("Redirecting...")).toBeTruthy();
+      expect(screen.queryByText("Cancel all")).toBeNull();
+
+      // Disabled: pressing it must not open the quit confirmation modal.
+      await user.press(cancelButton);
+      expect(screen.queryByTestId("enabled-confirmation-modal-confirm-button")).toBeNull();
     });
   });
 

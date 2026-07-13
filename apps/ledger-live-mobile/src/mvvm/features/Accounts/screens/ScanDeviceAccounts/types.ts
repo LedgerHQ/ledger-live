@@ -32,5 +32,5 @@ export type ScanDeviceAccountsFooterProps = {
   isDisabled: boolean;
   supportLink?: AddAccountSupportLink;
   returnToSwap?: boolean;
-  confirmI18nKey?: string;
+  confirmLabel: string;
 };

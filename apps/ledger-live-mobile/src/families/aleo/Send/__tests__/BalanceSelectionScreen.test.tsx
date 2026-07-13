@@ -227,7 +227,7 @@ describe("BalanceSelectionScreen", () => {
       mockUseRoute.mockReturnValue(selfTransferRoute as never);
       const { user } = render(<BalanceSelectionScreen />);
 
-      await user.press(screen.getByText("Convert to private"));
+      await user.press(screen.getByText("Transfer from public"));
 
       expect(mockNavigation.navigate).toHaveBeenCalledTimes(1);
       expect(mockNavigation.navigate).toHaveBeenCalledWith(
@@ -247,7 +247,7 @@ describe("BalanceSelectionScreen", () => {
       const { user } = render(<BalanceSelectionScreen />);
 
       await user.press(screen.getByText("Private"));
-      await user.press(screen.getByText("Convert to public"));
+      await user.press(screen.getByText("Transfer from private"));
 
       expect(mockNavigation.navigate).toHaveBeenCalledTimes(1);
       expect(mockNavigation.navigate).toHaveBeenCalledWith(

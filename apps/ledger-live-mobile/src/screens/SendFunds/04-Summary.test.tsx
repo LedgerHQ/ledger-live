@@ -48,6 +48,7 @@ const mockStatus = {
   warnings: {},
   amount: new BigNumber(100),
   totalSpent: new BigNumber(100),
+  estimatedFees: new BigNumber(1),
 };
 
 function makeNavigation() {
