@@ -115,11 +115,11 @@ describe("LargeScreenUpsellModalContent", () => {
   });
 
   it("should ignore repeated CTA presses while URL opening is in flight", async () => {
-    let resolveOpenURL: (() => void) | null = null;
+    let releaseOpenURL: (() => void) | undefined;
     openURLSpy.mockImplementation(
       () =>
         new Promise<void>(resolve => {
-          resolveOpenURL = resolve;
+          releaseOpenURL = () => resolve();
         }),
     );
 
@@ -135,7 +135,8 @@ describe("LargeScreenUpsellModalContent", () => {
     });
     expect(onPrimaryPress).not.toHaveBeenCalled();
 
-    resolveOpenURL?.();
+    expect(releaseOpenURL).toBeDefined();
+    releaseOpenURL!();
 
     await waitFor(() => {
       expect(onPrimaryPress).toHaveBeenCalledTimes(1);
