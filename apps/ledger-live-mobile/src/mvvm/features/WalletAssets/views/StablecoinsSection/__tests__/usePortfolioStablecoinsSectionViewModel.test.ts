@@ -28,6 +28,7 @@ jest.mock("LLM/hooks/useCategorizedAssetsFromPortfolio", () => ({
 
 const toCategorizedItem = (asset: Asset) => ({
   currency: asset.currency,
+  marketId: asset.marketId,
   balance: asset.amount,
   value: 0,
   distribution: 0,
@@ -72,6 +73,14 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
 
       expect(result.current.assetsCount).toBe(1);
       expect(result.current.assetsToDisplay[0].currency).toBe(ethereum);
+    });
+
+    it("should preserve the Market id when mapping a stablecoin to an asset", () => {
+      mockPortfolioWithStablecoins([{ ...createAsset(ethereum, 2000), marketId: "dai" }]);
+
+      const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel());
+
+      expect(result.current.assetsToDisplay[0]?.marketId).toBe("dai");
     });
 
     it("should cap display at 6, report total count, and set hasMore when list exceeds limit", () => {

@@ -12,6 +12,7 @@ export function categorizeAssets(
   for (const item of distribution) {
     const enriched: CategorizedAssetItem = {
       currency: item.currency,
+      marketId: item.marketId,
       balance: item.amount,
       value: item.countervalue ?? 0,
       distribution: item.distribution,

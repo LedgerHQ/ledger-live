@@ -709,6 +709,14 @@ const LEGACY_CRYPTO_COUNTERVALUE_TICKER_TO_ID: Record<string, string> = {
 export const migrateLegacyCryptoCounterValue = (counterValue: string): string =>
   LEGACY_CRYPTO_COUNTERVALUE_TICKER_TO_ID[counterValue] ?? counterValue;
 
+const LEGACY_DAI_V2_FAVORITE_ID = "ethereum/erc20/dai_stablecoin_v2_0";
+const DAI_MARKET_ID = "dai";
+
+export const migrateLegacyStarredMarketCoins = (starredMarketCoins: readonly string[]): string[] =>
+  Array.from(
+    new Set(starredMarketCoins.map(id => (id === LEGACY_DAI_V2_FAVORITE_ID ? DAI_MARKET_ID : id))),
+  );
+
 const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
   findFiatCurrencyByTicker(state.counterValue) ||
   findCryptoCurrencyById(state.counterValue) ||

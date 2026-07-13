@@ -44,6 +44,7 @@ import {
   INITIAL_STATE as settingsState,
   counterValueIdOf,
   migrateLegacyCryptoCounterValue,
+  migrateLegacyStarredMarketCoins,
 } from "~/reducers/settings";
 import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
 import { importMarket } from "~/actions/market";
@@ -150,6 +151,11 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       // Legacy crypto counter-values were persisted as ticker (BTC/ETH); migrate them to Ledger ids.
       if (settingsData && typeof settingsData.counterValue === "string") {
         settingsData.counterValue = migrateLegacyCryptoCounterValue(settingsData.counterValue);
+      }
+      if (settingsData?.starredMarketCoins) {
+        settingsData.starredMarketCoins = migrateLegacyStarredMarketCoins(
+          settingsData.starredMarketCoins,
+        );
       }
 
       store.dispatch(importSettings(settingsData));
