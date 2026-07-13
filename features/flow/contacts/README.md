@@ -17,6 +17,10 @@ Consume the package from `@features/flow-contacts`. The root entry point resolve
 appropriate Web or React Native API. Folders under `src/` are internal implementation details
 and are not exported as package subpaths.
 
+Web exports the full `ContactsPage` (with list) via `list/web.ts`. React Native exports the
+entry page shell (`ContactsPageContent`) and `ContactsAddContactHeaderButton` via
+`list/native.ts`.
+
 ## Structure
 
 ```
@@ -24,7 +28,13 @@ src/
 ├── components/
 │   └── ContactsButton/   # My Wallet entry
 ├── hooks/
-├── list/                 # Shared list view models and internal helpers
+├── list/                 # Shared list view models and page shells
+│   ├── components/
+│   │   ├── ContactsList/         # Web only
+│   │   ├── ContactsPage/
+│   │   └── ContactsPageLayout/   # Web only
+│   ├── web.ts            # Web ContactsPage export
+│   └── native.ts         # Native page shell + header button exports
 ├── featureFlags.ts
 ├── index.ts              # Web public API
 └── index.native.ts       # React Native public API
