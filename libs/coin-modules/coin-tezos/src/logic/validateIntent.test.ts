@@ -1224,6 +1224,37 @@ describe("validateIntent", () => {
       expect(result.amount).toBe(3_499_000n);
       expect(result.totalSpent).toBe(3_500_000n);
     });
+
+    it("resolves a positive send-max for a delegated account with staked funds (LIVE-28506)", async () => {
+      // Regression for LIVE-28506: a staking account (necessarily delegated, since you must
+      // delegate before staking) doing Send Max used to report max spendable = 0 — a soft
+      // "don't empty a delegated account" error short-circuited the amount computation. Send Max
+      // must now surface the liquid balance (total minus staked) minus fees, never 0.
+      mockGetAccountByAddress.mockResolvedValue(
+        makeUserAccount({
+          balance: 5_000_000,
+          stakedBalance: 3_000_000,
+          delegate: { alias: "baker", address: validRecipient, active: true },
+          delegationLevel: 1,
+        }),
+      );
+
+      const result = await validateIntent({
+        intentType: "transaction",
+        asset: { type: "native" },
+        type: "send",
+        sender: senderAddress,
+        recipient: validRecipient,
+        amount: 0n,
+        useAllAmount: true,
+      });
+
+      expect(result.errors).toEqual({});
+      expect(result.warnings).toEqual({});
+      // spendable = balance 5_000_000 - staked 3_000_000 = 2_000_000; minus fees 1_000
+      expect(result.amount).toBe(1_999_000n);
+      expect(result.totalSpent).toBe(2_000_000n);
+    });
   });
 
   describe("successful validation", () => {
