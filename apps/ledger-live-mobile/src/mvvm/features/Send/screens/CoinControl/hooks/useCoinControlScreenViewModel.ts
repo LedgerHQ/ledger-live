@@ -28,6 +28,7 @@ type UseCoinControlScreenViewModelParams = Readonly<{
   bridgePending: boolean;
   uiConfig: SendFlowUiConfig;
   transactionActions: SendFlowTransactionActions;
+  onSelectCustomFees: () => void;
 }>;
 
 export function useCoinControlScreenViewModel({
@@ -38,6 +39,7 @@ export function useCoinControlScreenViewModel({
   bridgePending,
   uiConfig,
   transactionActions,
+  onSelectCustomFees,
 }: UseCoinControlScreenViewModelParams) {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
@@ -56,6 +58,7 @@ export function useCoinControlScreenViewModel({
     status,
     uiConfig,
     transactionActions,
+    onSelectCustomFees,
   });
 
   const amountErrorTranslated = useTranslatedBridgeError(
@@ -106,9 +109,13 @@ export function useCoinControlScreenViewModel({
     onLearnMoreClick,
   });
 
+  const hasAmount = transaction.useAllAmount || transaction.amount?.gt(0) === true;
+
   return {
     ...core,
     coinControlStrategyLabel: core.strategyLabel,
     networkFees: core.networkFees,
+    hasAmount,
+    onInfoPress: onLearnMoreClick,
   };
 }

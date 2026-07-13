@@ -20,11 +20,9 @@ type CoinControlScreenViewProps = Readonly<{
   onAmountChange: (text: string) => void;
   amountError: string | undefined;
   strategyLabel: string;
-  learnMoreLabel: string;
-  onLearnMoreClick: () => void;
+  onInfoPress: () => void;
   coinToSendLabel: string;
   amountToSendLabel: string;
-  amountInputLabel: string;
   networkFees: NetworkFeesViewModel;
   reviewLabel: string;
   reviewShowIcon: boolean;
@@ -34,6 +32,7 @@ type CoinControlScreenViewProps = Readonly<{
   onGetFunds: () => void;
   isCustomPickingStrategy: boolean;
   onToggleUtxoExclusion?: (rowKey: string) => void;
+  hasAmount: boolean;
 }>;
 
 export function CoinControlScreenView({
@@ -45,11 +44,9 @@ export function CoinControlScreenView({
   onAmountChange,
   amountError,
   strategyLabel,
-  learnMoreLabel,
-  onLearnMoreClick,
+  onInfoPress,
   coinToSendLabel,
   amountToSendLabel,
-  amountInputLabel,
   networkFees,
   reviewLabel,
   reviewShowIcon,
@@ -59,30 +56,30 @@ export function CoinControlScreenView({
   onGetFunds,
   isCustomPickingStrategy,
   onToggleUtxoExclusion,
+  hasAmount,
 }: CoinControlScreenViewProps) {
   return (
     <SendFlowLayout>
-      <Box lx={{ marginHorizontal: "-s8", flex: 1, gap: "s24" }}>
+      <Box lx={{ marginHorizontal: "-s8", flex: 1, gap: "s16" }}>
         <StrategySelect
           value={utxoDisplayData?.pickingStrategyValue?.toString() ?? ""}
           options={strategyOptionsWithLabels}
           onValueChange={onSelectStrategy}
           strategyLabel={strategyLabel}
-          learnMoreLabel={learnMoreLabel}
-          onLearnMorePress={onLearnMoreClick}
         />
         <AmountInput
           onAmountChange={onAmountChange}
           amount={amountValue}
           errorMessage={amountError}
           amountToSendLabel={amountToSendLabel}
-          amountInputLabel={amountInputLabel}
         />
         <UtxoSelector
           utxoDisplayData={utxoDisplayData}
           coinToSendLabel={coinToSendLabel}
           isCustomPickingStrategy={isCustomPickingStrategy}
           onToggleUtxoExclusion={onToggleUtxoExclusion}
+          onInfoPress={onInfoPress}
+          hasAmount={hasAmount}
         />
       </Box>
       <CoinControlFooter
