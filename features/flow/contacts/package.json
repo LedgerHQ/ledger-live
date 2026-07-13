@@ -28,21 +28,30 @@
   },
   "peerDependencies": {
     "react": ">=19.0.0",
+    "react-native": ">=0.70.0",
     "react-redux": ">=9.0.0",
     "@ledgerhq/lumen-design-core": "catalog:",
-    "@ledgerhq/lumen-ui-react": "catalog:"
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:"
   },
   "peerDependenciesMeta": {
     "@ledgerhq/lumen-ui-react": {
       "optional": true
     },
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
     "@ledgerhq/lumen-design-core": {
+      "optional": true
+    },
+    "react-native": {
       "optional": true
     }
   },
   "devDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@radix-ui/react-checkbox": "catalog:",
     "@radix-ui/react-dialog": "catalog:",
     "@radix-ui/react-slot": "catalog:",
@@ -64,6 +73,10 @@
     "jest-environment-jsdom": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-native-reanimated": "catalog:",
+    "react-native-safe-area-context": "catalog:",
+    "react-native-svg": "catalog:",
     "react-redux": "catalog:",
     "tailwind-merge": "catalog:",
     "typescript": "catalog:"
