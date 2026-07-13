@@ -1,11 +1,12 @@
 import React, { useCallback } from "react";
 import { Linking, ScrollView, StyleSheet, View } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import LText from "~/components/LText";
 import Button from "~/components/wrappedUi/Button";
-import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { Trans, useTranslation } from "~/context/Locale";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
@@ -24,7 +25,9 @@ const bulletPointTranslationKeys = [
   "aleo.addAccount.stepViewKeyWarning.bullets.4",
 ];
 
-export default function ViewKeyWarningScreen({ route, navigation }: Props) {
+export default function ViewKeyWarningScreen() {
+  const navigation = useNavigation<Props["navigation"]>();
+  const route = useRoute<Props["route"]>();
   const { colors } = useTheme();
   const { t } = useTranslation();
 

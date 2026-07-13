@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Box, Button, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
 import { WarningFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
@@ -13,7 +14,9 @@ type Props = StackNavigatorProps<
   ScreenName.AleoMandatoryPrivateSync
 >;
 
-export function MandatoryPrivateSyncScreen({ navigation, route }: Props) {
+export function MandatoryPrivateSyncScreen() {
+  const navigation = useNavigation<Props["navigation"]>();
+  const route = useRoute<Props["route"]>();
   const { t } = useTranslation();
   const { account, parentAccount, transaction } = route.params;
   const mainAccount = getMainAccount(account, parentAccount);

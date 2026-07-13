@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Banner, Box, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
@@ -45,7 +46,9 @@ function AccountStatusLabel({
   );
 }
 
-export default function ViewKeyApproveScreen({ route, navigation }: Props) {
+export default function ViewKeyApproveScreen() {
+  const navigation = useNavigation<Props["navigation"]>();
+  const route = useRoute<Props["route"]>();
   const { colors, theme } = useTheme();
   const { t } = useTranslation();
   const dispatch = useDispatch();

@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Pressable } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { render, screen } from "@tests/test-renderer";
 import type { Account } from "@ledgerhq/types-live";
 import {
@@ -30,11 +31,19 @@ const defaultReturn: MockViewKeyApprovalReturn = {
 
 let mockViewKeyApprovalReturn: MockViewKeyApprovalReturn = { ...defaultReturn };
 
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useNavigation: jest.fn(),
+  useRoute: jest.fn(),
+}));
+
 jest.mock("@ledgerhq/live-common/families/aleo/react", () => ({
   useAleoViewKeyApproval: jest.fn(),
   buildAccountsWithViewKeys: jest.fn(),
 }));
 
+const mockUseNavigation = jest.mocked(useNavigation);
+const mockUseRoute = jest.mocked(useRoute);
 const mockUseAleoViewKeyApproval = jest.mocked(useAleoViewKeyApproval);
 const mockBuildAccountsWithViewKeys = jest.mocked(buildAccountsWithViewKeys);
 
@@ -157,14 +166,13 @@ const renderScreen = (
 ) => {
   mockViewKeyApprovalReturn = { ...defaultReturn, ...viewKeyOverrides };
   mockUseAleoViewKeyApproval.mockReturnValue(mockViewKeyApprovalReturn as never);
+  mockUseNavigation.mockReturnValue(mockNavigation as never);
+  mockUseRoute.mockReturnValue({
+    ...mockRoute,
+    params: { ...mockRoute.params, ...routeParamOverrides },
+  } as never);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return render(
-    <ViewKeyApproveScreen
-      route={{ ...mockRoute, params: { ...mockRoute.params, ...routeParamOverrides } } as any}
-      navigation={mockNavigation as any}
-    />,
-  );
+  return render(<ViewKeyApproveScreen />);
 };
 
 describe("ViewKeyApproveScreen", () => {
