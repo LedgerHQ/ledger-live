@@ -10,6 +10,14 @@ export const initialState: LargeScreenUpsellModalState = {
   lastSeenAt: null,
 };
 
+// The largest time value a JS Date can represent is ±8.64e15 ms (ECMA-262). A safe integer can
+// exceed that (e.g. Number.MAX_SAFE_INTEGER), which would yield an Invalid Date downstream and
+// throw when passed to toISOString()/date-fns. Reject those so we never persist an unusable value.
+const MAX_DATE_MS = 8.64e15;
+
+const isStorableTimestamp = (value: number): boolean =>
+  Number.isSafeInteger(value) && value >= 0 && value <= MAX_DATE_MS;
+
 const largeScreenUpsellModalSlice = createSlice({
   name: "largeScreenUpsellModal",
   initialState,
@@ -24,7 +32,7 @@ const largeScreenUpsellModalSlice = createSlice({
 
       state.retries = isRestorableRetryCount ? retries : initialState.retries;
       state.lastSeenAt =
-        typeof lastSeenAt === "number" && Number.isSafeInteger(lastSeenAt) && lastSeenAt >= 0
+        typeof lastSeenAt === "number" && isStorableTimestamp(lastSeenAt)
           ? lastSeenAt
           : initialState.lastSeenAt;
     },
@@ -52,7 +60,7 @@ const largeScreenUpsellModalSlice = createSlice({
         state.lastSeenAt = null;
         return;
       }
-      if (Number.isSafeInteger(lastSeenAt) && lastSeenAt >= 0) {
+      if (isStorableTimestamp(lastSeenAt)) {
         state.lastSeenAt = lastSeenAt;
       }
     },

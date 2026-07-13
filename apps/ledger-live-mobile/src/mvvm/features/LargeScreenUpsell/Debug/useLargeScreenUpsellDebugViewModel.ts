@@ -55,7 +55,8 @@ const INELIGIBILITY_HINTS: Record<LargeScreenUpsellIneligibilityReason, string> 
   cooldown: "Cooldown has not elapsed yet.",
 };
 
-const toIso = (date: Date | null) => (date ? date.toISOString() : "");
+const toIso = (date: Date | null) =>
+  date && !Number.isNaN(date.getTime()) ? date.toISOString() : "";
 
 export function useLargeScreenUpsellDebugViewModel() {
   const dispatch = useDispatch();

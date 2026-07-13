@@ -82,7 +82,12 @@ describe("largeScreenUpsellModal", () => {
   });
 
   it("restores only non-negative safe integer last display timestamps", () => {
-    const invalidLastSeenAtValues = [2.7, -1, Number.MAX_SAFE_INTEGER + 1];
+    const invalidLastSeenAtValues = [
+      2.7,
+      -1,
+      Number.MAX_SAFE_INTEGER,
+      Number.MAX_SAFE_INTEGER + 1,
+    ];
 
     for (const lastSeenAt of invalidLastSeenAtValues) {
       expect(
@@ -204,7 +209,7 @@ describe("largeScreenUpsellModal", () => {
   it("ignores invalid last display timestamps", () => {
     const state = { retries: 1, lastSeenAt: Date.parse("2026-07-01T12:00:00.000Z") };
 
-    for (const invalid of [-1, 2.7, Number.MAX_SAFE_INTEGER + 1]) {
+    for (const invalid of [-1, 2.7, Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER + 1]) {
       expect(largeScreenUpsellModalReducer(state, setLastSeenUpsellModal(invalid))).toEqual(state);
     }
   });
