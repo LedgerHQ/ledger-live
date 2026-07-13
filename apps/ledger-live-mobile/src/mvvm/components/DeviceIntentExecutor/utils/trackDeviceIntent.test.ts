@@ -78,6 +78,40 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
     });
   });
 
+  describe("extraProperties (generic analytics bag)", () => {
+    it("merges extraProperties into deviceflow_started on top of the base properties", () => {
+      trackDeviceflowStarted({
+        sourceFlow: "wallet_api",
+        extraProperties: { manifestId: "swap-live-app", manifestName: "Swap" },
+      });
+
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_started", {
+        ...layerABaseProperties,
+        sourceFlow: "wallet_api",
+        manifestId: "swap-live-app",
+        manifestName: "Swap",
+      });
+    });
+
+    it("merges extraProperties into deviceflow_completed alongside modelId / transport", () => {
+      trackDeviceflowCompleted({
+        sourceFlow: "wallet_api",
+        modelId: DeviceModelId.stax,
+        transport: "ble",
+        extraProperties: { manifestId: "swap-live-app", manifestName: "Swap" },
+      });
+
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_completed", {
+        ...layerABaseProperties,
+        sourceFlow: "wallet_api",
+        modelId: DeviceModelId.stax,
+        transport: "ble",
+        manifestId: "swap-live-app",
+        manifestName: "Swap",
+      });
+    });
+  });
+
   describe("trackDevicePrompted", () => {
     describe("Given a sourceFlow", () => {
       describe("When called", () => {

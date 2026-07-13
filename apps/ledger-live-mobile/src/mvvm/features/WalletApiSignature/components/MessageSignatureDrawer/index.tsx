@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { DeviceIntentExecutorLWM } from "LLM/components/DeviceIntentExecutor";
 import { useMessageSignatureDrawerViewModel } from "./useMessageSignatureDrawerViewModel";
@@ -29,6 +29,11 @@ function MessageSignatureDrawer({ request, onClose }: Props) {
     onUserCancel,
   } = useMessageSignatureDrawerViewModel({ request, onClose });
 
+  const analyticsProperties = useMemo(
+    () => ({ manifestId: request.manifestId, manifestName: request.manifestName }),
+    [request.manifestId, request.manifestName],
+  );
+
   if (!deviceInitializationInput || !signatureIntent) {
     return null;
   }
@@ -42,6 +47,7 @@ function MessageSignatureDrawer({ request, onClose }: Props) {
       <DeviceIntentExecutorLWM
         enabled
         sourceFlow="wallet_api"
+        analyticsProperties={analyticsProperties}
         deviceConnectionParams={deviceConnectionParams}
         deviceInitializationInput={deviceInitializationInput}
         intent={signatureIntent}

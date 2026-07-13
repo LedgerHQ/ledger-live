@@ -57,6 +57,8 @@ function setup(overrides?: {
     message,
     appName: undefined,
     dependencies: undefined,
+    manifestId: "swap-live-app",
+    manifestName: "Swap",
     onSuccess,
     onError,
     onCancel,

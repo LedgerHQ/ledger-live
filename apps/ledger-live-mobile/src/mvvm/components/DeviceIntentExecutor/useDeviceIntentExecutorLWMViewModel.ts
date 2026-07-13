@@ -12,6 +12,7 @@ import {
   trackDeviceflowCompleted,
   trackDeviceflowStarted,
   trackDrawerCloseButtonClicked,
+  type DeviceUxV2ExtraProperties,
 } from "./utils/trackDeviceIntent";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWM";
 import type { InitializationInput } from "./types";
@@ -28,6 +29,7 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
 > & {
   initializerConfig?: InitializerConfig;
   sourceFlow: SourceFlow;
+  analyticsProperties?: DeviceUxV2ExtraProperties;
 };
 
 export type DeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps> = {
@@ -64,7 +66,7 @@ function mapConnectionResult(result: DeviceConnectionResult): ConnectionTracking
 export function useDeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,
 ): DeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps> {
-  const { enabled, sourceFlow, onExecutorStateChanged, onUserCancel } = props;
+  const { enabled, sourceFlow, analyticsProperties, onExecutorStateChanged, onUserCancel } = props;
 
   const flowStartedRef = useRef(false);
   const initializationCompletedRef = useRef(false);
@@ -84,35 +86,40 @@ export function useDeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps>
     if (flowStartedRef.current) return;
     flowStartedRef.current = true;
     initializationCompletedRef.current = false;
-    trackDeviceflowStarted({ sourceFlow });
-  }, [enabled, sourceFlow]);
+    trackDeviceflowStarted({ sourceFlow, extraProperties: analyticsProperties });
+  }, [enabled, sourceFlow, analyticsProperties]);
 
   const wrappedOnExecutorStateChanged = useCallback(
     (state: ExecutorState) => {
       if (enabled && state.type === "executingIntent" && !initializationCompletedRef.current) {
         initializationCompletedRef.current = true;
         const { modelId, transport } = mapConnectionResult(state.connectionResult);
-        trackAppReady({ sourceFlow, modelId });
-        trackDeviceflowCompleted({ sourceFlow, modelId, transport });
+        trackAppReady({ sourceFlow, modelId, extraProperties: analyticsProperties });
+        trackDeviceflowCompleted({
+          sourceFlow,
+          modelId,
+          transport,
+          extraProperties: analyticsProperties,
+        });
       }
       onExecutorStateChanged(state);
     },
-    [enabled, onExecutorStateChanged, sourceFlow],
+    [enabled, onExecutorStateChanged, sourceFlow, analyticsProperties],
   );
 
   const trackClose = useCallback(() => {
-    trackDrawerCloseButtonClicked({ sourceFlow });
-  }, [sourceFlow]);
+    trackDrawerCloseButtonClicked({ sourceFlow, extraProperties: analyticsProperties });
+  }, [sourceFlow, analyticsProperties]);
 
   const wrappedOnUserCancel = useCallback(() => {
     if (!cancelTrackedRef.current) {
       cancelTrackedRef.current = true;
       if (!initializationCompletedRef.current) {
-        trackDeviceflowCanceled({ sourceFlow });
+        trackDeviceflowCanceled({ sourceFlow, extraProperties: analyticsProperties });
       }
     }
     onUserCancel();
-  }, [onUserCancel, sourceFlow]);
+  }, [onUserCancel, sourceFlow, analyticsProperties]);
 
   return {
     sourceFlow,

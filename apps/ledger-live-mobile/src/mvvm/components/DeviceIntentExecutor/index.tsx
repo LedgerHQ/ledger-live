@@ -17,6 +17,7 @@ import DeviceContextInitializerComponentLWM, {
 } from "./DeviceContextInitializerComponentLWM";
 import { SourceFlowProvider, type SourceFlow } from "./utils/SourceFlowContext";
 import { DeviceIntentExecutorHeaderContext } from "./utils/DeviceIntentExecutorHeaderContext";
+import type { DeviceUxV2ExtraProperties } from "./utils/trackDeviceIntent";
 import type { InitializationInput } from "./types";
 import { useDeviceIntentExecutorLWMViewModel } from "./useDeviceIntentExecutorLWMViewModel";
 
@@ -39,6 +40,11 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
    * Originating user intent that initiated the device flow. Required for analytics.
    */
   sourceFlow: SourceFlow;
+  /**
+   * Generic analytics bag merged into the deviceUxV2 funnel events emitted by this
+   * flow (e.g. wallet-api passes the calling live-app's manifestId / manifestName).
+   */
+  analyticsProperties?: DeviceUxV2ExtraProperties;
 };
 
 const platformConfig: ExecutorPlatformConfiguration<InitializationInput, InitializerConfig> = {

@@ -11,6 +11,10 @@ export type WalletApiDeviceIntentSignMessageRequest = {
   message: AnyMessage;
   appName?: string;
   dependencies?: string[];
+  /** Calling live-app manifest id, forwarded to deviceUxV2 analytics. */
+  manifestId: string;
+  /** Calling live-app manifest name, forwarded to deviceUxV2 analytics. */
+  manifestName: string;
   onSuccess: (signature: string) => void;
   onError: (error: Error) => void;
   onCancel: () => void;

@@ -597,6 +597,8 @@ export function useUiHook({
             message,
             appName: options?.hwAppId,
             dependencies: options?.dependencies,
+            manifestId: manifest.id,
+            manifestName: manifest.name,
             onSuccess,
             onError,
             onCancel,
@@ -647,6 +649,8 @@ export function useUiHook({
               transaction: tx,
               appName: options?.hwAppId,
               dependencies: options?.dependencies,
+              manifestId: manifest.id,
+              manifestName: manifest.name,
               onSuccess,
               onError,
             });
@@ -780,6 +784,8 @@ export function useUiHook({
       deviceIntentSignEnabled,
       requestDeviceIntentSign,
       requestDeviceIntentSignMessage,
+      manifest.id,
+      manifest.name,
     ],
   );
 }

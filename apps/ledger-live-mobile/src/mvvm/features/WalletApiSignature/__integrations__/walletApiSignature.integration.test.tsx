@@ -11,6 +11,7 @@ import type { WalletApiDeviceIntentSignMessageRequest } from "../components/Mess
 // forwards the executor callbacks to the wallet-api promise handlers.
 type ExecutorProps = {
   sourceFlow: string;
+  analyticsProperties?: Record<string, unknown>;
   intent: unknown;
   onIntentJobStateChanged: (state: { type: string; [key: string]: unknown }) => void;
   onUserCancel: () => void;
@@ -83,6 +84,8 @@ describe("WalletApiSignature feature", () => {
       transaction: { family: "ethereum" },
       appName: undefined,
       dependencies: undefined,
+      manifestId: "swap-live-app",
+      manifestName: "Swap",
       onSuccess,
       onError: jest.fn(),
     } as unknown as WalletApiDeviceIntentSignRequest;
@@ -93,6 +96,10 @@ describe("WalletApiSignature feature", () => {
 
     await waitFor(() => expect(getByTestId("device-intent-executor")).toBeTruthy());
     expect(mockExecutorProps?.sourceFlow).toBe("wallet_api");
+    expect(mockExecutorProps?.analyticsProperties).toEqual({
+      manifestId: "swap-live-app",
+      manifestName: "Swap",
+    });
     expect(mockPrepareTransaction).toHaveBeenCalledWith(account, { family: "ethereum" });
 
     const signedOperation = { operation: { id: "op-1" } };
@@ -112,6 +119,8 @@ describe("WalletApiSignature feature", () => {
       message: { message: "hello" },
       appName: undefined,
       dependencies: undefined,
+      manifestId: "swap-live-app",
+      manifestName: "Swap",
       onSuccess,
       onError: jest.fn(),
       onCancel,
@@ -121,6 +130,10 @@ describe("WalletApiSignature feature", () => {
 
     await waitFor(() => expect(getByTestId("device-intent-executor")).toBeTruthy());
     expect(mockExecutorProps?.sourceFlow).toBe("wallet_api");
+    expect(mockExecutorProps?.analyticsProperties).toEqual({
+      manifestId: "swap-live-app",
+      manifestName: "Swap",
+    });
 
     act(() => mockExecutorProps!.onIntentJobStateChanged({ type: "signed", signature: "0xsig" }));
 

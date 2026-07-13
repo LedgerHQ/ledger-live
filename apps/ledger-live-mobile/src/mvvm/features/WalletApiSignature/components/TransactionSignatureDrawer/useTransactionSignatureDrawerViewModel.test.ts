@@ -58,6 +58,8 @@ function setup(overrides?: { onSuccess?: jest.Mock; onError?: jest.Mock; onClose
     transaction: { family: "ethereum" },
     appName: undefined,
     dependencies: undefined,
+    manifestId: "swap-live-app",
+    manifestName: "Swap",
     onSuccess,
     onError,
   } as unknown as WalletApiDeviceIntentSignRequest;

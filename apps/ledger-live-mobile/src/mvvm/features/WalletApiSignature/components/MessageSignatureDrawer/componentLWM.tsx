@@ -76,5 +76,5 @@ export function SignMessageIntentComponentLWM({
 }
 
 function assertNever(value: never): never {
-  throw new Error(`Unhandled sign message intent state: ${String(value)}`);
+  throw new Error(`Unhandled sign message intent state: ${JSON.stringify(value)}`);
 }

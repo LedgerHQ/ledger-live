@@ -12,6 +12,10 @@ export type WalletApiDeviceIntentSignRequest = {
   transaction: Transaction;
   appName?: string;
   dependencies?: string[];
+  /** Calling live-app manifest id, forwarded to deviceUxV2 analytics. */
+  manifestId: string;
+  /** Calling live-app manifest name, forwarded to deviceUxV2 analytics. */
+  manifestName: string;
   onSuccess: (signedOperation: SignedOperation) => void;
   onError: (error: Error) => void;
 };

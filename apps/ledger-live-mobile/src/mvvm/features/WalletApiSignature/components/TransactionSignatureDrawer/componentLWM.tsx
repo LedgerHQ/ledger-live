@@ -79,5 +79,5 @@ export function SignTransactionIntentComponentLWM({
 }
 
 function assertNever(value: never): never {
-  throw new Error(`Unhandled sign transaction intent state: ${String(value)}`);
+  throw new Error(`Unhandled sign transaction intent state: ${JSON.stringify(value)}`);
 }

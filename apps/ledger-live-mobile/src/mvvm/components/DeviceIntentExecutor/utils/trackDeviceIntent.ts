@@ -128,7 +128,18 @@ const DEVICEFLOW_FAILED_CLOSE_PAGES = new Set<string>([
   PAGE_DEVICE_ACTION.InvalidState,
 ]);
 
-export const getDeviceUxV2BaseProperties = (sourceFlow: SourceFlow) => ({
+/**
+ * Generic, caller-owned analytics bag spread into every deviceUxV2 event. Lets any
+ * DIE caller attach arbitrary context (e.g. the wallet-api drawer adds the calling
+ * live-app's manifestId / manifestName) without the executor knowing the shape.
+ */
+export type DeviceUxV2ExtraProperties = Record<string, string | number | boolean | undefined>;
+
+export const getDeviceUxV2BaseProperties = (
+  sourceFlow: SourceFlow,
+  extraProperties?: DeviceUxV2ExtraProperties,
+) => ({
+  ...extraProperties,
   sourceFlow,
   deviceUxV2: true,
 });
@@ -154,8 +165,14 @@ export const getConnectedDeviceTrackingProperties = (
 export const getTrackingSubError = (errorType: ConnectDeviceErrorType): string =>
   TRACKING_SUB_ERRORS[errorType];
 
-export const trackDeviceflowStarted = (params: { sourceFlow: SourceFlow }): void => {
-  track("deviceflow_started", getDeviceUxV2BaseProperties(params.sourceFlow));
+export const trackDeviceflowStarted = (params: {
+  sourceFlow: SourceFlow;
+  extraProperties?: DeviceUxV2ExtraProperties;
+}): void => {
+  track(
+    "deviceflow_started",
+    getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
+  );
 };
 
 export const trackDevicePrompted = (params: { sourceFlow: SourceFlow }): void => {
@@ -188,9 +205,13 @@ export const trackDeviceConnected = (params: {
   });
 };
 
-export const trackAppReady = (params: { sourceFlow: SourceFlow; modelId: DeviceModelId }): void => {
+export const trackAppReady = (params: {
+  sourceFlow: SourceFlow;
+  modelId: DeviceModelId;
+  extraProperties?: DeviceUxV2ExtraProperties;
+}): void => {
   track("app_ready", {
-    ...getDeviceUxV2BaseProperties(params.sourceFlow),
+    ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
     modelId: params.modelId,
   });
 };
@@ -199,23 +220,39 @@ export const trackDeviceflowCompleted = (params: {
   sourceFlow: SourceFlow;
   modelId: DeviceModelId;
   transport: "ble" | "usb";
+  extraProperties?: DeviceUxV2ExtraProperties;
 }): void => {
   track("deviceflow_completed", {
-    ...getDeviceUxV2BaseProperties(params.sourceFlow),
+    ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
     modelId: params.modelId,
     transport: params.transport,
   });
 };
 
-export const trackDeviceflowAborted = (params: { sourceFlow: SourceFlow }): void => {
-  track("deviceflow_aborted", getDeviceUxV2BaseProperties(params.sourceFlow));
+export const trackDeviceflowAborted = (params: {
+  sourceFlow: SourceFlow;
+  extraProperties?: DeviceUxV2ExtraProperties;
+}): void => {
+  track(
+    "deviceflow_aborted",
+    getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
+  );
 };
 
-export const trackDeviceflowFailed = (params: { sourceFlow: SourceFlow }): void => {
-  track("deviceflow_failed", getDeviceUxV2BaseProperties(params.sourceFlow));
+export const trackDeviceflowFailed = (params: {
+  sourceFlow: SourceFlow;
+  extraProperties?: DeviceUxV2ExtraProperties;
+}): void => {
+  track(
+    "deviceflow_failed",
+    getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
+  );
 };
 
-export const trackDeviceflowCanceled = (params: { sourceFlow: SourceFlow }): void => {
+export const trackDeviceflowCanceled = (params: {
+  sourceFlow: SourceFlow;
+  extraProperties?: DeviceUxV2ExtraProperties;
+}): void => {
   const currentPage = currentRouteNameRef.current;
   const isTerminalConnectDeviceErrorPage =
     currentPage === PAGE_CONNECT_DEVICE.DiscoveryError ||
@@ -279,9 +316,12 @@ export const trackDeviceActionButtonClicked = (params: {
   });
 };
 
-export const trackDrawerCloseButtonClicked = (params: { sourceFlow: SourceFlow }): void => {
+export const trackDrawerCloseButtonClicked = (params: {
+  sourceFlow: SourceFlow;
+  extraProperties?: DeviceUxV2ExtraProperties;
+}): void => {
   track("button_clicked", {
-    ...getDeviceUxV2BaseProperties(params.sourceFlow),
+    ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
     button: DEVICE_ACTION_BUTTON.Close,
   });
 };
