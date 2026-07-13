@@ -212,7 +212,6 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                   onSuccess(operation.hash);
                 },
                 onCancel: (error: Error) => {
-                  console.error(error);
                   onCancel(error);
                 },
               }),
@@ -230,7 +229,6 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
             let cancelCalled = false;
             const safeOnCancel = (error: Error) => {
               if (!cancelCalled) {
-                console.error(error);
                 cancelCalled = true;
                 onCancel(error);
               }
