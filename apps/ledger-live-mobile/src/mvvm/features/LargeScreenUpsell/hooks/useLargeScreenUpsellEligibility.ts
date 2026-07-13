@@ -116,9 +116,10 @@ export function useLargeScreenUpsellEligibility(): LargeScreenUpsellEligibility 
 
   const deviceModelId = selectCooldownDeviceModelId(enabledNanoDeviceModelIds, params.cooldownDays);
   const cooldownDays = resolveCooldownDays(params.cooldownDays, deviceModelId);
-  const onboardingDateForEligibility = onboardingDate ?? new Date();
+  const now = new Date();
+  const onboardingDateForEligibility = onboardingDate ?? now;
 
-  if (!isCooldownElapsed(onboardingDateForEligibility, cooldownDays, new Date())) {
+  if (!isCooldownElapsed(onboardingDateForEligibility, cooldownDays, now)) {
     return { isEligible: false, reason: "cooldown", deviceModelId, cooldownDays };
   }
 
