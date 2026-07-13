@@ -1,9 +1,9 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { screen, track } from "~/analytics";
 
-export const LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME = "Upgrade modal";
+export const LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME = "Modal - Upgrade";
 
-export type LargeScreenUpsellDismissMethod = "close_button" | "outside_tap";
+export type LargeScreenUpsellDismissMethod = "close button" | "outside tap";
 
 export type LargeScreenUpsellNanoDeviceModelId =
   | DeviceModelId.nanoS
@@ -31,6 +31,7 @@ export type LargeScreenUpsellSharedAnalyticsProps = Readonly<{
   deviceModel: LargeScreenUpsellDeviceModelAnalyticsValue;
   personalRecoOptIn: boolean;
   offerType: "discount" | "none";
+  platform: "lwm";
   retriesUpsellModal: number;
   throttled: boolean;
 }>;
@@ -40,6 +41,8 @@ export function trackLargeScreenUpsellModalViewed(
 ) {
   screen(LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME, undefined, {
     name: LARGE_SCREEN_UPSELL_MODAL_PAGE_NAME,
+    sourceFlow: "app start",
+    modalFrequencyState: "every start",
     ...sharedProps,
   });
 }

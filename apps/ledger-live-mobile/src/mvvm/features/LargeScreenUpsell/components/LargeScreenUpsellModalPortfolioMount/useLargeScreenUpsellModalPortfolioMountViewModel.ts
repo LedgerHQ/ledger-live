@@ -101,6 +101,7 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
       deviceModel: toLargeScreenUpsellDeviceModelAnalyticsValue(eligibility.deviceModelId),
       personalRecoOptIn: personalizedRecommendationsEnabled,
       offerType: variant === "opted_in" ? "discount" : "none",
+      platform: "lwm",
       retriesUpsellModal: retries,
       throttled: hasReachedFrequencyCap,
     };
@@ -198,7 +199,7 @@ export function useLargeScreenUpsellModalPortfolioMountViewModel(): LargeScreenU
     featureIntroViewModel: {
       content,
       onPrimaryPress: onCloseFromCta,
-      onSecondaryPress: () => onDismiss("outside_tap"),
+      onSecondaryPress: () => onDismiss("outside tap"),
     },
     bottomInset: bottom + LARGE_SCREEN_UPSELL_MODAL_IOS_BOTTOM_PADDING,
   };

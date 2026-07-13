@@ -55,13 +55,13 @@ export function LargeScreenUpsellModalDrawer({
   );
 
   const handleHeaderClosePressed = useCallback(() => {
-    lastExplicitDismissMethodRef.current = "close_button";
-    reportDismiss("close_button");
+    lastExplicitDismissMethodRef.current = "close button";
+    reportDismiss("close button");
   }, [reportDismiss]);
 
   const handleBackdropPress = useCallback(() => {
-    lastExplicitDismissMethodRef.current = "outside_tap";
-    reportDismiss("outside_tap");
+    lastExplicitDismissMethodRef.current = "outside tap";
+    reportDismiss("outside tap");
   }, [reportDismiss]);
 
   const handleClose = useCallback(() => {
@@ -70,7 +70,7 @@ export function LargeScreenUpsellModalDrawer({
       return;
     }
 
-    reportDismiss("outside_tap");
+    reportDismiss("outside tap");
   }, [reportDismiss]);
 
   const shouldRenderContent = isOpen || hasRenderedContent;

@@ -103,14 +103,14 @@ describe("LargeScreenUpsellModalDrawer", () => {
     expect(onDismiss).not.toHaveBeenCalled();
   });
 
-  it("should report close_button exactly once when the header close button is pressed", () => {
+  it("should report close button exactly once when the header close button is pressed", () => {
     const onDismiss = jest.fn();
     renderLargeScreenUpsellModalDrawer(true, onDismiss);
 
     pressHeaderClose();
 
     expect(onDismiss).toHaveBeenCalledTimes(1);
-    expect(onDismiss).toHaveBeenCalledWith("close_button");
+    expect(onDismiss).toHaveBeenCalledWith("close button");
   });
 
   it("should ignore duplicate close signals for the same opening", () => {
@@ -123,26 +123,26 @@ describe("LargeScreenUpsellModalDrawer", () => {
     panDownToClose();
 
     expect(onDismiss).toHaveBeenCalledTimes(1);
-    expect(onDismiss).toHaveBeenCalledWith("close_button");
+    expect(onDismiss).toHaveBeenCalledWith("close button");
   });
 
-  it("should report outside_tap exactly once when the backdrop is pressed", () => {
+  it("should report outside tap exactly once when the backdrop is pressed", () => {
     const onDismiss = jest.fn();
     renderLargeScreenUpsellModalDrawer(true, onDismiss);
 
     pressBackdrop();
 
     expect(onDismiss).toHaveBeenCalledTimes(1);
-    expect(onDismiss).toHaveBeenCalledWith("outside_tap");
+    expect(onDismiss).toHaveBeenCalledWith("outside tap");
   });
 
-  it("should fall back to outside_tap when the sheet closes via pan-down gesture", () => {
+  it("should fall back to outside tap when the sheet closes via pan-down gesture", () => {
     const onDismiss = jest.fn();
     renderLargeScreenUpsellModalDrawer(true, onDismiss);
 
     panDownToClose();
 
     expect(onDismiss).toHaveBeenCalledTimes(1);
-    expect(onDismiss).toHaveBeenCalledWith("outside_tap");
+    expect(onDismiss).toHaveBeenCalledWith("outside tap");
   });
 });
