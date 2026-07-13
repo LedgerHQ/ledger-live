@@ -211,3 +211,53 @@ export const mockUsdcAssetsData = {
     metaCurrencyIds: ["usdc"],
   },
 };
+
+export const mockArbitrumTokenAssetsData = {
+  cryptoAssets: {
+    arbitrum: {
+      id: "arbitrum",
+      ticker: "ARB",
+      name: "Arbitrum",
+      assetsIds: {
+        ethereum: "ethereum/erc20/arbitrum",
+        arbitrum: "arbitrum",
+      },
+    },
+  },
+  networks: {
+    ethereum: { id: "ethereum", name: "Ethereum" },
+    arbitrum: { id: "arbitrum", name: "Arbitrum One" },
+  },
+  cryptoOrTokenCurrencies: {
+    "ethereum/erc20/arbitrum": {
+      type: "TokenCurrency" as const,
+      id: "ethereum/erc20/arbitrum",
+      name: "Arbitrum",
+      ticker: "ARB",
+      contractAddress: "0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1",
+      parentCurrencyId: "ethereum",
+      tokenType: "erc20",
+      units: [{ name: "ARB", code: "ARB", magnitude: 18 }],
+    },
+    arbitrum: {
+      type: "CryptoCurrency" as const,
+      id: "arbitrum",
+      name: "Arbitrum One",
+      ticker: "ETH",
+      units: [{ name: "ETH", code: "ETH", magnitude: 18 }],
+      family: "evm",
+      managerAppName: "Ethereum",
+      coinType: 60,
+      scheme: "arbitrum",
+      color: "#28A0F0",
+      explorerViews: [],
+    },
+  },
+  interestRates: {},
+  markets: {},
+  currenciesOrder: {
+    key: "marketCap",
+    order: "desc",
+    metaCurrencyIds: ["arbitrum"],
+  },
+};
