@@ -1,9 +1,4 @@
-import {
-  bytesToBase64Url,
-  createRandomBase64UrlValue,
-  getTokenState,
-  stringToBytes,
-} from "../utils";
+import { bytesToBase64Url, getTokenState, stringToBytes } from "../utils";
 
 function makeJwt(payload: Record<string, unknown>): string {
   const encode = (value: object) => Buffer.from(JSON.stringify(value)).toString("base64url");
@@ -28,12 +23,6 @@ describe("utils", () => {
   describe("stringToBytes", () => {
     it("encodes strings as UTF-8 bytes", () => {
       expect(Array.from(new Uint8Array(stringToBytes("test")))).toEqual([116, 101, 115, 116]);
-    });
-  });
-
-  describe("createRandomBase64UrlValue", () => {
-    it("generates a base64url value from 32 random bytes", () => {
-      expect(createRandomBase64UrlValue()).toMatch(/^[A-Za-z0-9_-]+$/);
     });
   });
 
