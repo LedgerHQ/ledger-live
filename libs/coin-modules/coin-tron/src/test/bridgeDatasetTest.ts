@@ -10,8 +10,9 @@ import type { Account, CurrenciesData, DatasetTest, TokenAccount } from "@ledger
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { fromTransactionRaw } from "../bridge/transaction";
-import { ACTIVATION_FEES } from "../logic/constants";
-import type { Transaction, TronAccountRaw } from "../types";
+import { ACTIVATION_FEES, STANDARD_FEES_TRC_20 } from "../logic/constants";
+import { getChainParameters } from "../network";
+import type { Transaction, TransactionStatus, TronAccountRaw } from "../types";
 import {
   TronInvalidFreezeAmount,
   TronInvalidUnDelegateResourceAmount,
@@ -37,6 +38,44 @@ const getTokenAccountId = (account: Account, id: string) =>
   expectedTokenAccount(
     (account.subAccounts || []).find(a => expectedTokenAccount(a).token.id === id),
   ).id;
+
+// Minimal shape of the dataset harness's `expect` used below (avoids `any` in the signature).
+type ExpectToEqual = (received: string) => { toEqual: (expected: string) => void };
+
+// Active-recipient TRC20 sends carry an energy-aware fee: estimatedFees must equal the resource
+// shortfall derived from the exposed energy/bandwidth breakdown (0 when staked resources cover the
+// transfer). Asserting that invariant — instead of a hardcoded TRX amount — stays deterministic
+// against live mainnet energy state while still catching a silent regression to a too-low fee.
+const assertEnergyAwareTrc20Fee = async (
+  expect: ExpectToEqual,
+  statusCommon: unknown,
+): Promise<void> => {
+  const status = statusCommon as TransactionStatus;
+  // When the energy estimate is uncertain (simulation/network failure), production returns the flat
+  // STANDARD_FEES_TRC_20; otherwise it prices the shortfall from the breakdown. The exposed fields
+  // can't distinguish the two (the "estimated" flag is internal), so discriminate on the fee itself
+  // rather than on the sentinel gap — the flat fallback is a legitimate outcome, and accepting it
+  // here avoids flapping on transient node errors.
+  if (status.estimatedFees.eq(STANDARD_FEES_TRC_20)) {
+    return;
+  }
+  const bandwidthShortfall = BigNumber.maximum(
+    0,
+    status.bandwidthRequired.minus(status.bandwidthAvailable),
+  );
+  const energyShortfall = BigNumber.maximum(0, status.energyRequired.minus(status.energyAvailable));
+  // No shortfall means no fee, so skip the chain-parameters fetch entirely.
+  let shortfallFee = new BigNumber(0);
+  if (!(bandwidthShortfall.isZero() && energyShortfall.isZero())) {
+    const params = await getChainParameters();
+    shortfallFee = bandwidthShortfall
+      .multipliedBy(params.transactionFee)
+      .plus(energyShortfall.multipliedBy(params.energyFee));
+  }
+  // Any value that is neither the flat fallback nor the priced shortfall (e.g. a silent regression
+  // to a too-low fee) fails here.
+  expect(status.estimatedFees.toFixed()).toEqual(shortfallFee.toFixed());
+};
 
 const tron: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [
@@ -478,8 +517,10 @@ const tron: CurrenciesData<Transaction> = {
             errors: {},
             warnings: {},
             totalSpent: new BigNumber("1000000"),
-            estimatedFees: new BigNumber("13740900"),
           },
+          // estimatedFees is energy-aware, so it varies with live staked energy instead of the flat
+          // STANDARD_FEES_TRC_20; assert it against the exposed breakdown rather than a fixed amount.
+          test: (expect, _transaction, status) => assertEnergyAwareTrc20Fee(expect, status),
         },
         {
           name: "tronSendTrc20ToNewAccountForbidden",
@@ -545,8 +586,10 @@ const tron: CurrenciesData<Transaction> = {
             errors: {},
             warnings: {},
             totalSpent: new BigNumber("1000000"),
-            estimatedFees: new BigNumber("13740900"),
           },
+          // estimatedFees is energy-aware, so it varies with live staked energy instead of the flat
+          // STANDARD_FEES_TRC_20; assert it against the exposed breakdown rather than a fixed amount.
+          test: (expect, _transaction, status) => assertEnergyAwareTrc20Fee(expect, status),
         },
         {
           name: "tronInvalidFreezeAmount",

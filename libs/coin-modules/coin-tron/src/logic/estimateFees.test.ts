@@ -9,7 +9,13 @@ import {
 import type { AccountTronAPI, ChainParameters } from "../network/types";
 import type { NetworkInfo } from "../types";
 import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "./constants";
-import { estimateFees } from "./estimateFees";
+import {
+  computeBandwidthFee,
+  computeEnergyFee,
+  estimateEnergy,
+  estimatedTxSize,
+  estimateFees,
+} from "./estimateFees";
 
 jest.mock("../network", () => ({
   fetchTronAccount: jest.fn(),
@@ -239,6 +245,124 @@ describe("estimateFees", () => {
       const result = await estimateFees(sendTrc20);
 
       expect(result).toBe(BigInt(STANDARD_FEES_TRC_20.toString()));
+    });
+  });
+
+  describe("estimatedTxSize (exported helper)", () => {
+    it("returns the TransferAssetContract size for a trc10 send", () => {
+      expect(estimatedTxSize(sendTrc10)).toBe(285);
+    });
+
+    it("returns the TriggerSmartContract size for a trc20 send", () => {
+      expect(estimatedTxSize(sendTrc20)).toBe(350);
+    });
+
+    it("returns the TransferContract size for a native send", () => {
+      expect(estimatedTxSize(sendNative)).toBe(270);
+    });
+
+    it("throws for an unsupported intent type", () => {
+      expect(() => estimatedTxSize({ ...sendNative, type: "unsupported" as never })).toThrow();
+    });
+  });
+
+  describe("estimateEnergy (exported helper)", () => {
+    it("returns 0 without calling triggerConstantContract for a non-trc20 asset", async () => {
+      const result = await estimateEnergy(sendNative);
+
+      expect(result).toBe(0);
+      expect(mockTriggerConstantContract).not.toHaveBeenCalled();
+    });
+
+    it("returns the simulated energy_used for a trc20 asset", async () => {
+      mockTriggerConstantContract.mockResolvedValue({ energy_used: 12_345 });
+
+      const result = await estimateEnergy(sendTrc20);
+
+      expect(result).toBe(12_345);
+    });
+
+    it("throws when the simulation reports a reverted result", async () => {
+      mockTriggerConstantContract.mockResolvedValue({
+        result: { result: false, code: "REVERT", message: "insufficient balance" },
+      });
+
+      await expect(estimateEnergy(sendTrc20)).rejects.toThrow(/triggerConstantContract failed/);
+    });
+
+    it("throws when a successful simulation omits energy_used", async () => {
+      mockTriggerConstantContract.mockResolvedValue({ result: { result: true } });
+
+      await expect(estimateEnergy(sendTrc20)).rejects.toThrow(/no energy_used/);
+    });
+  });
+
+  describe("computeBandwidthFee (exported helper)", () => {
+    it("returns 0 when the size fits within available bandwidth", () => {
+      const networkInfo = buildNetworkInfo({ freeNetLimit: new BigNumber(5000) });
+
+      expect(computeBandwidthFee(270, networkInfo, chainParams)).toEqual(new BigNumber(0));
+    });
+
+    it("charges (size - available) * transactionFee when bandwidth is insufficient", () => {
+      const networkInfo = buildNetworkInfo();
+
+      expect(computeBandwidthFee(270, networkInfo, chainParams)).toEqual(
+        new BigNumber(270 * chainParams.transactionFee),
+      );
+    });
+
+    it("does not overcharge when used > limit (available clamped to 0)", () => {
+      const networkInfo = buildNetworkInfo({
+        freeNetLimit: new BigNumber(0),
+        freeNetUsed: new BigNumber(500),
+      });
+
+      // available = -500 → clamped 0 → missing = size (270), not size + 500.
+      expect(computeBandwidthFee(270, networkInfo, chainParams)).toEqual(
+        new BigNumber(270 * chainParams.transactionFee),
+      );
+    });
+
+    it("clamps each bucket independently — a negative free bucket does not reduce staked", () => {
+      const networkInfo = buildNetworkInfo({
+        freeNetLimit: new BigNumber(0),
+        freeNetUsed: new BigNumber(500), // free = -500 → 0
+        netLimit: new BigNumber(1000),
+        netUsed: new BigNumber(0), // staked = 1000
+      });
+
+      // 800 fits within the 1000 staked bucket → 0 fee. (Clamping the *sum* would report 500
+      // available and wrongly charge for a 300 shortfall.)
+      expect(computeBandwidthFee(800, networkInfo, chainParams)).toEqual(new BigNumber(0));
+    });
+  });
+
+  describe("computeEnergyFee (exported helper)", () => {
+    it("returns 0 when energy needed fits within available energy", () => {
+      const networkInfo = buildNetworkInfo({ energyLimit: new BigNumber(100_000) });
+
+      expect(computeEnergyFee(31_895, networkInfo, chainParams)).toEqual(new BigNumber(0));
+    });
+
+    it("charges (needed - available) * energyFee when energy is insufficient", () => {
+      const networkInfo = buildNetworkInfo({ energyLimit: new BigNumber(20_000) });
+
+      expect(computeEnergyFee(31_895, networkInfo, chainParams)).toEqual(
+        new BigNumber((31_895 - 20_000) * chainParams.energyFee),
+      );
+    });
+
+    it("does not overcharge when energyUsed > energyLimit (available clamped to 0)", () => {
+      const networkInfo = buildNetworkInfo({
+        energyLimit: new BigNumber(0),
+        energyUsed: new BigNumber(5000),
+      });
+
+      // available = -5000 → clamped 0 → missing = energyNeeded (31_895), not 36_895.
+      expect(computeEnergyFee(31_895, networkInfo, chainParams)).toEqual(
+        new BigNumber(31_895 * chainParams.energyFee),
+      );
     });
   });
 
