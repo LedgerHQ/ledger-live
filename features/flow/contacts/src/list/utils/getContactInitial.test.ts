@@ -10,6 +10,12 @@ describe("getContactInitial", () => {
     expect(getContactInitial("💎 Ledger")).toBe("💎");
   });
 
+  it("preserves a multi-codepoint emoji initial", () => {
+    expect(getContactInitial("❤️ Ledger")).toBe("❤️");
+    expect(getContactInitial("👩🏽 Ledger")).toBe("👩🏽");
+    expect(getContactInitial("👩🏽‍💻 Ledger")).toBe("👩🏽‍💻");
+  });
+
   it("returns an empty string for an empty name", () => {
     expect(getContactInitial("")).toBe("");
   });
