@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import BigNumber from "bignumber.js";
 import { ScrollView } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import type { AccountBridge, AccountLike } from "@ledgerhq/types-live";
@@ -73,7 +74,9 @@ function getCtaLabelKey(isSelfTransfer: boolean, option: BalanceOption) {
     : "aleo.send.balanceSelection.sendPrivately";
 }
 
-export function BalanceSelectionScreen({ navigation, route }: Props) {
+export function BalanceSelectionScreen() {
+  const navigation = useNavigation<Props["navigation"]>();
+  const route = useRoute<Props["route"]>();
   const { account, parentAccount, isSelfTransfer } = route.params;
   const [selected, setSelected] = useState<BalanceOption>("public");
   const { t } = useTranslation();

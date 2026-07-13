@@ -1,14 +1,24 @@
 import React from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { act, render, screen } from "@tests/test-renderer";
 import { MandatoryPrivateSyncScreen } from "../MandatoryPrivateSyncScreen";
 import { ScreenName } from "~/const";
 import { ALEO_ACCOUNT_1 } from "../../__mocks__/account.mock";
 import { useAleoPrivateSync } from "../../hooks/useAleoPrivateSync";
 
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useNavigation: jest.fn(),
+  useRoute: jest.fn(),
+}));
+
 jest.mock("../../hooks/useAleoPrivateSync");
 
 const mockUseAleoPrivateSync = jest.mocked(useAleoPrivateSync);
-
+const mockUseNavigation = jest.mocked(useNavigation);
+const mockUseRoute = jest.mocked(useRoute);
+const mockStart = jest.fn();
+const mockStop = jest.fn();
 const mockTransaction = { family: "aleo", recipient: "aleo1abc" } as never;
 
 function makeNavigation() {
@@ -26,20 +36,22 @@ function makeRoute() {
 describe("MandatoryPrivateSyncScreen", () => {
   const mockNavigation = makeNavigation();
   const mockRoute = makeRoute();
-  let mockStart: jest.Mock;
 
   beforeEach(() => {
     jest.useFakeTimers();
     mockNavigation.replace.mockReset();
     mockUseAleoPrivateSync.mockReset();
-    mockStart = jest.fn();
+    mockStart.mockReset();
+    mockStop.mockReset();
     mockUseAleoPrivateSync.mockReturnValue({
       isSyncing: false,
       progress: 0,
       error: null,
       start: mockStart,
-      stop: jest.fn(),
+      stop: mockStop,
     });
+    mockUseNavigation.mockReturnValue(mockNavigation as never);
+    mockUseRoute.mockReturnValue(mockRoute as never);
   });
 
   afterEach(() => {
@@ -47,12 +59,7 @@ describe("MandatoryPrivateSyncScreen", () => {
   });
 
   it("wires the real sync hook with the main account, autoStart, and no keepAliveOnUnmount", () => {
-    render(
-      <MandatoryPrivateSyncScreen
-        navigation={mockNavigation as never}
-        route={mockRoute as never}
-      />,
-    );
+    render(<MandatoryPrivateSyncScreen />);
 
     expect(mockUseAleoPrivateSync).toHaveBeenCalledWith(
       expect.objectContaining({ account: ALEO_ACCOUNT_1, autoStart: true }),
@@ -68,15 +75,10 @@ describe("MandatoryPrivateSyncScreen", () => {
       progress: 42,
       error: null,
       start: mockStart,
-      stop: jest.fn(),
+      stop: mockStop,
     });
 
-    render(
-      <MandatoryPrivateSyncScreen
-        navigation={mockNavigation as never}
-        route={mockRoute as never}
-      />,
-    );
+    render(<MandatoryPrivateSyncScreen />);
 
     expect(screen.getByText("Syncing your private balance (42%)")).toBeOnTheScreen();
     expect(mockNavigation.replace).not.toHaveBeenCalled();
@@ -88,15 +90,10 @@ describe("MandatoryPrivateSyncScreen", () => {
       progress: 100,
       error: null,
       start: mockStart,
-      stop: jest.fn(),
+      stop: mockStop,
     });
 
-    render(
-      <MandatoryPrivateSyncScreen
-        navigation={mockNavigation as never}
-        route={mockRoute as never}
-      />,
-    );
+    render(<MandatoryPrivateSyncScreen />);
 
     act(() => {
       jest.advanceTimersByTime(1000);
@@ -116,15 +113,10 @@ describe("MandatoryPrivateSyncScreen", () => {
       progress: 100,
       error: new Error("sync failed"),
       start: mockStart,
-      stop: jest.fn(),
+      stop: mockStop,
     });
 
-    render(
-      <MandatoryPrivateSyncScreen
-        navigation={mockNavigation as never}
-        route={mockRoute as never}
-      />,
-    );
+    render(<MandatoryPrivateSyncScreen />);
 
     act(() => {
       jest.advanceTimersByTime(1000);
@@ -140,15 +132,10 @@ describe("MandatoryPrivateSyncScreen", () => {
       progress: 30,
       error: new Error("sync failed"),
       start: mockStart,
-      stop: jest.fn(),
+      stop: mockStop,
     });
 
-    render(
-      <MandatoryPrivateSyncScreen
-        navigation={mockNavigation as never}
-        route={mockRoute as never}
-      />,
-    );
+    render(<MandatoryPrivateSyncScreen />);
 
     expect(screen.getByText("Private sync failed")).toBeOnTheScreen();
     expect(screen.getByText("Retry")).toBeOnTheScreen();
@@ -161,15 +148,10 @@ describe("MandatoryPrivateSyncScreen", () => {
       progress: 30,
       error: new Error("sync failed"),
       start: mockStart,
-      stop: jest.fn(),
+      stop: mockStop,
     });
 
-    const { user } = render(
-      <MandatoryPrivateSyncScreen
-        navigation={mockNavigation as never}
-        route={mockRoute as never}
-      />,
-    );
+    const { user } = render(<MandatoryPrivateSyncScreen />);
 
     await user.press(screen.getByText("Retry"));
 
@@ -182,15 +164,10 @@ describe("MandatoryPrivateSyncScreen", () => {
       progress: 100,
       error: null,
       start: mockStart,
-      stop: jest.fn(),
+      stop: mockStop,
     });
 
-    const { unmount } = render(
-      <MandatoryPrivateSyncScreen
-        navigation={mockNavigation as never}
-        route={mockRoute as never}
-      />,
-    );
+    const { unmount } = render(<MandatoryPrivateSyncScreen />);
 
     unmount();
 

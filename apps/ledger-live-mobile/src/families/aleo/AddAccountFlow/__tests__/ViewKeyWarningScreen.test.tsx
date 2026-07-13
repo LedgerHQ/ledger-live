@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { screen, render } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import ViewKeyWarningScreen from "../ViewKeyWarningScreen";
@@ -8,6 +9,12 @@ import { aleoCurrency } from "../../__mocks__/currency.mock";
 // simulating the drawer's close animation via hooks.
 let capturedOnClose: (() => void) | undefined;
 let capturedOnModalHide: (() => void) | undefined;
+
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useNavigation: jest.fn(),
+  useRoute: jest.fn(),
+}));
 
 jest.mock("~/components/ConfirmationModal", () => {
   const { Pressable } = jest.requireActual<typeof import("react-native")>("react-native");
@@ -29,6 +36,8 @@ jest.mock("~/components/ConfirmationModal", () => {
   };
 });
 
+const mockUseNavigation = jest.mocked(useNavigation);
+const mockUseRoute = jest.mocked(useRoute);
 const mockParentNavigate = jest.fn();
 const mockOnCloseNavigation = jest.fn();
 
@@ -52,9 +61,12 @@ const mockRoute = {
   },
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const renderScreen = () =>
-  render(<ViewKeyWarningScreen route={mockRoute as any} navigation={mockNavigation as any} />);
+const renderScreen = () => {
+  mockUseNavigation.mockReturnValue(mockNavigation as never);
+  mockUseRoute.mockReturnValue(mockRoute as never);
+
+  return render(<ViewKeyWarningScreen />);
+};
 
 describe("ViewKeyWarningScreen", () => {
   beforeEach(() => {

@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
+import { useRoute } from "@react-navigation/native";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { WarningFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTheme } from "styled-components/native";
@@ -14,7 +15,8 @@ import type { AleoViewKeyFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<AleoViewKeyFlowParamList, ScreenName.AleoNoAccountsAdded>;
 
-export default function NoAccountsAddedScreen({ route }: Props) {
+export default function NoAccountsAddedScreen() {
+  const route = useRoute<Props["route"]>();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { currency, onCloseNavigation } = route.params;
