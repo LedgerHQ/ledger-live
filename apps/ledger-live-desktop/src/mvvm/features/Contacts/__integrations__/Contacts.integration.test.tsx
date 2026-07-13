@@ -108,7 +108,7 @@ describe("Contacts integration", () => {
     expect(screen.queryByTestId("contacts-page")).not.toBeInTheDocument();
   });
 
-  it("should render the Contacts page shell when lwdContacts is enabled", async () => {
+  it("should render the empty Contacts list when lwdContacts is enabled", async () => {
     render(
       <MemoryRouter initialEntries={["/contacts"]}>
         <Routes>
@@ -124,12 +124,17 @@ describe("Contacts integration", () => {
     );
 
     expect(screen.getByTestId("contacts-page")).toBeVisible();
-    expect(screen.getByTestId("page-header-title")).toHaveTextContent("Contacts");
-    expect(screen.getByTestId("contacts-add-contact-button")).toBeDisabled();
+    expect(screen.getByTestId("contacts-page-header")).toBeVisible();
+    expect(screen.getByTestId("contacts-list-pane")).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-pane")).toBeEmptyDOMElement();
+    expect(screen.getByRole("heading", { name: "Contacts" })).toBeVisible();
+    expect(screen.getByPlaceholderText("Search contact")).toBeVisible();
+    expect(screen.getByTestId("contacts-add-contact")).toBeVisible();
+    expect(screen.getByTestId("contacts-add-contact-header")).toBeVisible();
 
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-me-item")).toHaveTextContent("Me");
-      expect(screen.getByTestId("contacts-me-item")).toHaveTextContent("0 address");
+      expect(screen.getByTestId("contacts-empty-list-me-row")).toHaveTextContent("Me");
+      expect(screen.getByTestId("contacts-empty-list-me-row")).toHaveTextContent("0 address");
     });
   });
 });
