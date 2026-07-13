@@ -16,6 +16,8 @@
 #   QAA_ALLURE_HISTORY  — historyLevel, 1–200 (default: 50)
 #   QAA_ALLURE_JOB_URL  — when set, sent as multipart `jobUrl` so the portal can
 #                         deep-link back to the CI run that produced the report
+#   QAA_ALLURE_BRANCH   — when set, sent as multipart `branch` so the portal can
+#                         show/filter which git branch the run came from
 #   GITHUB_OUTPUT       — when set, writes report_id / report_url / view_url
 #
 # Exits 0 with a warning when the API key is empty or the path has no files,
@@ -30,6 +32,7 @@ QAA_ALLURE_HOST="${QAA_ALLURE_HOST:-https://allure-new.aws.sbx.ldg-tech.com}"
 QAA_ALLURE_TAGS="${QAA_ALLURE_TAGS:-}"
 QAA_ALLURE_HISTORY="${QAA_ALLURE_HISTORY:-50}"
 QAA_ALLURE_JOB_URL="${QAA_ALLURE_JOB_URL:-}"
+QAA_ALLURE_BRANCH="${QAA_ALLURE_BRANCH:-}"
 
 warn() { echo "::warning title=qaa-allure::$*"; }
 fail() { echo "::error title=qaa-allure::$*"; exit 1; }
@@ -93,6 +96,9 @@ if [ -n "${QAA_ALLURE_TAGS}" ]; then
 fi
 if [ -n "${QAA_ALLURE_JOB_URL}" ]; then
   curl_args+=(--form-string "jobUrl=${QAA_ALLURE_JOB_URL}")
+fi
+if [ -n "${QAA_ALLURE_BRANCH}" ]; then
+  curl_args+=(--form-string "branch=${QAA_ALLURE_BRANCH}")
 fi
 
 # Capture body + exit code separately so we can log the body when curl fails
