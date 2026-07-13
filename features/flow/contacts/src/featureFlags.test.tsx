@@ -12,7 +12,10 @@ import {
 import {
   CONTACTS_FEATURE_FLAG_KEYS,
   DEFAULT_ELIGIBLE_ADDRESS_FAMILIES,
+  parseEligibleAddressFamiliesInput,
   resolveContactsFeatureConfig,
+  resolveContactsFeatureParams,
+  updateContactsFeatureValue,
   useContactsFeature,
   type ContactsFeatureConfig,
   type ContactsFeaturePlatform,
@@ -26,10 +29,7 @@ const DEFAULT_CONFIG: ContactsFeatureConfig = {
   eligibleAddressFamilies: DEFAULT_ELIGIBLE_ADDRESS_FAMILIES,
 };
 
-function makeContactsFeatureValue(
-  enabled: boolean,
-  newBadge: boolean,
-): ContactsFeatureValue {
+function makeContactsFeatureValue(enabled: boolean, newBadge: boolean): ContactsFeatureValue {
   return {
     enabled,
     params: {
@@ -81,6 +81,98 @@ describe("resolveContactsFeatureConfig", () => {
     });
   });
 
+  it("normalizes eligible address families from the feature value", () => {
+    expect(
+      resolveContactsFeatureConfig({
+        enabled: true,
+        params: { newBadge: false, eligibleAddressFamilies: [" EVM ", "bitcoin", "evm"] },
+      }),
+    ).toEqual({
+      isEnabled: true,
+      showNewBadge: false,
+      eligibleAddressFamilies: ["evm", "bitcoin"],
+    });
+  });
+});
+
+describe("resolveContactsFeatureParams", () => {
+  it("falls back to the default families when the configured value is invalid", () => {
+    expect(resolveContactsFeatureParams({ eligibleAddressFamilies: ["evm", 1] })).toEqual({
+      newBadge: false,
+      eligibleAddressFamilies: ["evm"],
+    });
+  });
+
+  it("falls back to the default families when the configured value is empty", () => {
+    expect(resolveContactsFeatureParams({ eligibleAddressFamilies: [] })).toEqual({
+      newBadge: false,
+      eligibleAddressFamilies: ["evm"],
+    });
+  });
+});
+
+describe("parseEligibleAddressFamiliesInput", () => {
+  it("normalizes a comma-separated input", () => {
+    expect(parseEligibleAddressFamiliesInput(" EVM, bitcoin, evm ")).toEqual(["evm", "bitcoin"]);
+  });
+
+  it("falls back to the default families for empty input", () => {
+    expect(parseEligibleAddressFamiliesInput(" , ")).toEqual(["evm"]);
+  });
+});
+
+describe("updateContactsFeatureValue", () => {
+  it("preserves generic feature metadata", () => {
+    expect(
+      updateContactsFeatureValue(
+        {
+          ...makeContactsFeatureValue(true, false),
+          desktop_version: "1.0.0",
+          languages_whitelisted: ["fr"],
+        },
+        { params: { newBadge: true } },
+      ),
+    ).toEqual({
+      enabled: true,
+      desktop_version: "1.0.0",
+      languages_whitelisted: ["fr"],
+      params: { newBadge: true, eligibleAddressFamilies: ["evm"] },
+    });
+  });
+
+  it("preserves unmodified Contacts params", () => {
+    expect(
+      updateContactsFeatureValue(makeContactsFeatureValue(true, false), {
+        params: { newBadge: true },
+      }),
+    ).toEqual({
+      enabled: true,
+      params: { newBadge: true, eligibleAddressFamilies: ["evm"] },
+    });
+  });
+
+  it("normalizes an updated eligible address families value", () => {
+    expect(
+      updateContactsFeatureValue(makeContactsFeatureValue(true, false), {
+        params: { eligibleAddressFamilies: ["EVM", "bitcoin", "evm"] },
+      }),
+    ).toEqual({
+      enabled: true,
+      params: { newBadge: false, eligibleAddressFamilies: ["evm", "bitcoin"] },
+    });
+  });
+
+  it("does not copy malformed current params into the override", () => {
+    expect(
+      updateContactsFeatureValue(
+        { enabled: true, params: "invalid" } as unknown as ContactsFeatureValue,
+        { params: { newBadge: true } },
+      ),
+    ).toEqual({
+      enabled: true,
+      params: { newBadge: true, eligibleAddressFamilies: ["evm"] },
+    });
+  });
 });
 
 describe("useContactsFeature", () => {

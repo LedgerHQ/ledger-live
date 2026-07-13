@@ -1,16 +1,11 @@
-import { Feature } from "@shared/feature-flags";
+import type { ContactsFeatureParams, ContactsFeatureValue } from "@features/flow-contacts";
 
 export interface ContactsDevToolContentProps {
   readonly expanded: boolean;
 }
 
-export interface ContactsFeatureParams {
-  readonly newBadge: boolean;
-  readonly eligibleAddressFamilies: readonly string[];
-}
-
 export interface ContactsDevToolViewModel {
-  readonly featureFlag: Feature | null;
+  readonly featureFlag: ContactsFeatureValue | null;
   readonly isEnabled: boolean;
   readonly params: ContactsFeatureParams;
   readonly customFamiliesInput: string;

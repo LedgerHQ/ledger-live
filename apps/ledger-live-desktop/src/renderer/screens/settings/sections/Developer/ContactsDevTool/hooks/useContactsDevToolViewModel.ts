@@ -1,71 +1,41 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { useFeature } from "@features/platform-feature-flags";
-import { setOverride, type Features } from "@shared/feature-flags";
-import { CONTACTS_FLAG, DEFAULT_ELIGIBLE_ADDRESS_FAMILIES } from "../constants";
-import { ContactsDevToolViewModel, ContactsFeatureParams } from "../types";
-
-type ContactsFeatureFlag = Features["lwdContacts"];
-
-const parseFamiliesInput = (value: string): string[] => {
-  const seen = new Set<string>();
-  const families: string[] = [];
-
-  for (const part of value.split(",")) {
-    const family = part.trim().toLowerCase();
-    if (family && !seen.has(family)) {
-      seen.add(family);
-      families.push(family);
-    }
-  }
-
-  return families;
-};
+import {
+  parseEligibleAddressFamiliesInput,
+  resolveContactsFeatureParams,
+  updateContactsFeatureValue,
+  type ContactsFeatureValuePatch,
+} from "@features/flow-contacts";
+import { setOverride } from "@shared/feature-flags";
+import { CONTACTS_FLAG } from "../constants";
+import { ContactsDevToolViewModel } from "../types";
 
 export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
   const dispatch = useDispatch();
   const featureFlag = useFeature(CONTACTS_FLAG);
   const [customFamiliesInput, setCustomFamiliesInput] = useState("");
 
-  const isEnabled = featureFlag?.enabled ?? false;
-
-  const params = useMemo<ContactsFeatureParams>(() => {
-    const flagParams = featureFlag?.params;
-
-    return {
-      newBadge: flagParams?.newBadge ?? false,
-      eligibleAddressFamilies:
-        flagParams?.eligibleAddressFamilies ?? DEFAULT_ELIGIBLE_ADDRESS_FAMILIES,
-    };
-  }, [featureFlag?.params]);
+  const isEnabled = featureFlag?.enabled === true;
+  const params = useMemo(
+    () => resolveContactsFeatureParams(featureFlag?.params),
+    [featureFlag?.params],
+  );
+  const familiesInput = params.eligibleAddressFamilies.join(", ");
 
   useEffect(() => {
-    setCustomFamiliesInput(params.eligibleAddressFamilies.join(", "));
-  }, [params.eligibleAddressFamilies]);
+    setCustomFamiliesInput(familiesInput);
+  }, [familiesInput]);
 
   const setContactsOverride = useCallback(
-    (patch: { enabled?: boolean; params?: Partial<ContactsFeatureParams> }) => {
-      const currentFamilies: string[] = featureFlag?.params?.eligibleAddressFamilies ?? [
-        ...DEFAULT_ELIGIBLE_ADDRESS_FAMILIES,
-      ];
-
-      const nextEligibleAddressFamilies: string[] =
-        patch.params?.eligibleAddressFamilies !== undefined
-          ? [...patch.params.eligibleAddressFamilies]
-          : currentFamilies;
-
-      const nextValue: ContactsFeatureFlag = {
-        ...(featureFlag ?? {}),
-        enabled: patch.enabled ?? isEnabled,
-        params: {
-          newBadge: patch.params?.newBadge ?? params.newBadge,
-          eligibleAddressFamilies: nextEligibleAddressFamilies,
-        },
-      };
-
-      dispatch(setOverride({ key: CONTACTS_FLAG, value: nextValue }));
-    },
-    [dispatch, featureFlag, isEnabled, params],
+    (patch: ContactsFeatureValuePatch) =>
+      dispatch(
+        setOverride({
+          key: CONTACTS_FLAG,
+          value: updateContactsFeatureValue(featureFlag, patch),
+        }),
+      ),
+    [dispatch, featureFlag],
   );
 
   const handleToggleEnabled = useCallback(() => {
@@ -84,7 +54,7 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
   );
 
   const handleApplyCustomFamilies = useCallback(() => {
-    handleSetEligibleAddressFamilies(parseFamiliesInput(customFamiliesInput));
+    handleSetEligibleAddressFamilies(parseEligibleAddressFamiliesInput(customFamiliesInput));
   }, [customFamiliesInput, handleSetEligibleAddressFamilies]);
 
   const handleResetOverride = useCallback(() => {

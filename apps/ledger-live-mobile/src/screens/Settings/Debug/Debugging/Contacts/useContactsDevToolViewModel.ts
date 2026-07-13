@@ -1,33 +1,29 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { useFeature } from "@features/platform-feature-flags";
-import { DEFAULT_ELIGIBLE_ADDRESS_FAMILIES } from "@features/flow-contacts";
+import {
+  resolveContactsFeatureParams,
+  updateContactsFeatureValue,
+  type ContactsFeatureValuePatch,
+} from "@features/flow-contacts";
 import { setOverride } from "@shared/feature-flags";
 import { CONTACTS_FLAG } from "./constants";
 
 export function useContactsDevToolViewModel() {
   const dispatch = useDispatch();
   const featureFlag = useFeature(CONTACTS_FLAG);
-  const isEnabled = featureFlag?.enabled ?? false;
-  const newBadge = featureFlag?.params?.newBadge ?? false;
-
-  const eligibleAddressFamilies = useMemo(
-    () => featureFlag?.params?.eligibleAddressFamilies ?? [...DEFAULT_ELIGIBLE_ADDRESS_FAMILIES],
-    [featureFlag?.params?.eligibleAddressFamilies],
+  const isEnabled = featureFlag?.enabled === true;
+  const params = useMemo(
+    () => resolveContactsFeatureParams(featureFlag?.params),
+    [featureFlag?.params],
   );
 
-  const dispatchOverride = useCallback(
-    (value: {
-      enabled: boolean;
-      params: {
-        newBadge: boolean;
-        eligibleAddressFamilies: readonly string[];
-      };
-    }) => {
+  const setContactsOverride = useCallback(
+    (patch: ContactsFeatureValuePatch) => {
       dispatch(
         setOverride({
           key: CONTACTS_FLAG,
-          value: { ...featureFlag, ...value },
+          value: updateContactsFeatureValue(featureFlag, patch),
         }),
       );
     },
@@ -35,36 +31,18 @@ export function useContactsDevToolViewModel() {
   );
 
   const handleToggleEnabled = useCallback(() => {
-    dispatchOverride({
-      enabled: !isEnabled,
-      params: {
-        newBadge,
-        eligibleAddressFamilies,
-      },
-    });
-  }, [dispatchOverride, isEnabled, newBadge, eligibleAddressFamilies]);
+    setContactsOverride({ enabled: !isEnabled });
+  }, [isEnabled, setContactsOverride]);
 
   const handleToggleNewBadge = useCallback(() => {
-    dispatchOverride({
-      enabled: isEnabled,
-      params: {
-        newBadge: !newBadge,
-        eligibleAddressFamilies,
-      },
-    });
-  }, [dispatchOverride, isEnabled, newBadge, eligibleAddressFamilies]);
+    setContactsOverride({ params: { newBadge: !params.newBadge } });
+  }, [params.newBadge, setContactsOverride]);
 
   const handleSetEligibleAddressFamilies = useCallback(
     (families: readonly string[]) => {
-      dispatchOverride({
-        enabled: isEnabled,
-        params: {
-          newBadge,
-          eligibleAddressFamilies: [...families],
-        },
-      });
+      setContactsOverride({ params: { eligibleAddressFamilies: [...families] } });
     },
-    [dispatchOverride, isEnabled, newBadge],
+    [setContactsOverride],
   );
 
   const handleRestoreDefaults = useCallback(() => {
@@ -74,8 +52,8 @@ export function useContactsDevToolViewModel() {
   return {
     featureFlag,
     isEnabled,
-    newBadge,
-    eligibleAddressFamilies,
+    newBadge: params.newBadge,
+    eligibleAddressFamilies: params.eligibleAddressFamilies,
     handleToggleEnabled,
     handleToggleNewBadge,
     handleSetEligibleAddressFamilies,
