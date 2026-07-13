@@ -167,10 +167,14 @@ export default class PortfolioPage {
 
   @Step("Click on Add account button in portfolio")
   async addAccount() {
-    if (!(await isAggregatedAssetsEnabled())) {
+    if (await isAggregatedAssetsEnabled()) {
+      const emptyStateCtaId = "empty-state-add-account-cta";
+      await scrollToId(emptyStateCtaId, this.emptyPortfolioListId, 500);
+      await tapById(emptyStateCtaId);
+    } else {
       await scrollToId(this.addAccountCta, this.emptyPortfolioListId, 500);
+      await tapById(this.addAccountCta);
     }
-    await tapById(this.addAccountCta);
   }
 
   @Step("Expect Portfolio with accounts")
