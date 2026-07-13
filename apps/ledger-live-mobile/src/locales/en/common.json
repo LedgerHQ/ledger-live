@@ -10131,8 +10131,11 @@
         "lastUpdate": "Last update: {{label}}",
         "recently": "recently"
       },
-      "privateSync": {
-        "mockTitle": "Private sync mock"
+      "mandatoryPrivateSync": {
+        "title": "Syncing your private balance ({{percentage}}%)",
+        "desc": "Please wait",
+        "errorTitle": "Private sync failed",
+        "errorDesc": "Something went wrong, please try again"
       },
       "quickAmountSelector": {
         "mockTitle": "Quick amount selector mock"
