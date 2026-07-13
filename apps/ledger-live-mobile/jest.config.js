@@ -125,6 +125,7 @@ module.exports = {
   resolver: "<rootDir>/scripts/resolver.js",
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths),
+    "^@features/flow-contacts$": "<rootDir>/__mocks__/@features/flow-contacts.ts",
     "^@ledgerhq/lumen-ui-rnative$":
       "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/index.ts",
     "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",
