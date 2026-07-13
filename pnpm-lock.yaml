@@ -12070,8 +12070,8 @@ importers:
         specifier: 'catalog:'
         version: 1.7.1(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-zcash':
-        specifier: 0.4.0
-        version: 0.4.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        specifier: 0.4.1
+        version: 0.4.1(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -17764,8 +17764,8 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.5.1
 
-  '@ledgerhq/device-signer-kit-zcash@0.4.0':
-    resolution: {integrity: sha512-ipCVVjyWiRchK1iKu83v7VIc6IYQEIkgIseMSF1VLy/UpzEr3Ou29y8YsNFNTHoURznRUDqG5k6mF3xM64wPDg==}
+  '@ledgerhq/device-signer-kit-zcash@0.4.1':
+    resolution: {integrity: sha512-5syzQIqjsv8zMget2nJfVLJG6FpwebnVaV4Vk8TbaDQeZpN0O49KlKVXcxG5t6NqGh+uOP/8z6RpJdGm39obog==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.7.1
 
@@ -17921,6 +17921,11 @@ packages:
     resolution: {integrity: sha512-Ek4/NXGt6gfiZUmiAFE19534f8wnlQSHvZMsjmqCEktbJd/mYbzvTrvYeo0+PQPw2D/kTYD1fRC6ADKQRSBeGw==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.2.0
+
+  '@ledgerhq/signer-utils@1.3.0':
+    resolution: {integrity: sha512-qe+HQMgZxq6SPv8ghvlq4c33RchUwlf1qE/qp7MtUGPbKGAqD/0PKNyzx05sKLpmA8m6YZdtndHH4CEkikzqSQ==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': ^1.7.1
 
   '@ledgerhq/speculos-device-controller@0.3.0':
     resolution: {integrity: sha512-FCOGVs28pTxYEom+Yr8skQ1QUyj1+sC0YDvE+Xk+DfXQx8FMRI1l41x+XT8ZGPNUh8kRTd0hsZc2lqVpxD6a8w==}
@@ -46091,10 +46096,10 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-zcash@0.4.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-zcash@0.4.1(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@noble/hashes': 1.8.0
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
@@ -46439,6 +46444,11 @@ snapshots:
       semver: 7.7.2
 
   '@ledgerhq/signer-utils@1.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
+      semver: 7.7.2
+
+  '@ledgerhq/signer-utils@1.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
       semver: 7.7.2
