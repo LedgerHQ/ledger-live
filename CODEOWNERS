@@ -92,6 +92,9 @@ apps/ledger-live-desktop/src/renderer/screens/settings/sections/Accounts/ @ledge
 apps/ledger-live-mobile/src/mvvm/                        @ledgerhq/wallet-xp
 apps/ledger-live-mobile/src/screens/Portfolio/           @ledgerhq/wallet-xp
 
+# Wallet — Contacts
+features/flow/contacts/                                  @ledgerhq/wallet-xp
+
 # Platform — desktop mvvm overrides (override WXP mvvm catch-all)
 apps/ledger-live-desktop/src/mvvm/features/AppBlockers/  @ledgerhq/platform
 apps/ledger-live-desktop/src/mvvm/features/WalletSync/   @ledgerhq/platform
