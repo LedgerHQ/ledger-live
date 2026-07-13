@@ -257,6 +257,7 @@
     "fiat-domain-source-of-truth",
     "fiat-supported-slice",
     "filecoin-alpaca-api",
+    "fix-arb-token-eth-collision",
     "fix-content-card-displayed-position",
     "fix-flex-onboarding-confetti",
     "fix-swap-history-previous-transition",
