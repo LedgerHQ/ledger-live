@@ -25,14 +25,19 @@ export function LargeScreenUpsellModalContent({ viewModel }: LargeScreenUpsellMo
     primaryButtonLabel.trim().length > 0 && resolvedPrimaryButtonLink.length > 0;
 
   const handleCtaPress = useCallback(async () => {
-    onPrimaryPress();
     const canOpenPrimaryButtonLink = await Linking.canOpenURL(resolvedPrimaryButtonLink).catch(
       () => false,
     );
 
-    if (canOpenPrimaryButtonLink) {
-      await Linking.openURL(resolvedPrimaryButtonLink).catch(() => undefined);
-    }
+    if (!canOpenPrimaryButtonLink) return;
+
+    const hasOpenedPrimaryButtonLink = await Linking.openURL(resolvedPrimaryButtonLink)
+      .then(() => true)
+      .catch(() => false);
+
+    if (!hasOpenedPrimaryButtonLink) return;
+
+    onPrimaryPress();
   }, [onPrimaryPress, resolvedPrimaryButtonLink]);
 
   return (
