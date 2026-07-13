@@ -167,7 +167,9 @@ export default class PortfolioPage {
 
   @Step("Click on Add account button in portfolio")
   async addAccount() {
-    await scrollToId(this.addAccountCta, this.emptyPortfolioListId, 500);
+    if (!(await isAggregatedAssetsEnabled())) {
+      await scrollToId(this.addAccountCta, this.emptyPortfolioListId, 500);
+    }
     await tapById(this.addAccountCta);
   }
 
