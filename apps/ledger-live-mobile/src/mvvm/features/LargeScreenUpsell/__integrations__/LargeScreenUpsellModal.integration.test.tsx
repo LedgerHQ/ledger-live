@@ -14,6 +14,7 @@ const NANO_S_OPTED_OUT_ANALYTICS_PROPS = {
   deviceModel: "lns",
   personalRecoOptIn: false,
   offerType: "none",
+  platform: "lwm",
   retriesUpsellModal: 0,
   throttled: false,
 };
@@ -147,8 +148,10 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
       expect(screen.getByTestId("large-screen-upsell-modal-drawer")).toBeVisible();
     });
 
-    expect(jest.mocked(analyticsScreen)).toHaveBeenCalledWith("Upgrade modal", undefined, {
-      name: "Upgrade modal",
+    expect(jest.mocked(analyticsScreen)).toHaveBeenCalledWith("Modal - Upgrade", undefined, {
+      name: "Modal - Upgrade",
+      sourceFlow: "app start",
+      modalFrequencyState: "every start",
       ...NANO_S_OPTED_OUT_ANALYTICS_PROPS,
     });
   });
@@ -172,8 +175,10 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
       expect(screen.getByTestId("large-screen-upsell-modal-drawer")).toBeVisible();
     });
 
-    expect(jest.mocked(analyticsScreen)).toHaveBeenCalledWith("Upgrade modal", undefined, {
-      name: "Upgrade modal",
+    expect(jest.mocked(analyticsScreen)).toHaveBeenCalledWith("Modal - Upgrade", undefined, {
+      name: "Modal - Upgrade",
+      sourceFlow: "app start",
+      modalFrequencyState: "every start",
       ...NANO_S_OPTED_IN_ANALYTICS_PROPS,
     });
   });
@@ -199,13 +204,13 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "explore large screen devices",
-      page: "Upgrade modal",
+      page: "Modal - Upgrade",
       ...NANO_S_OPTED_OUT_ANALYTICS_PROPS,
     });
     expect(track).not.toHaveBeenCalledWith("modal_dismissed", expect.anything());
   });
 
-  it("should track modal_dismissed with dismissMethod close_button exactly once when the header close button is pressed", async () => {
+  it("should track modal_dismissed with dismissMethod close button exactly once when the header close button is pressed", async () => {
     const overrideInitialState = withFlagOverrides(
       {
         largeScreenUpsell: { enabled: true },
@@ -229,8 +234,8 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
 
     expect(track).toHaveBeenCalledWith("modal_dismissed", {
       modal: "upgrade modal",
-      page: "Upgrade modal",
-      dismissMethod: "close_button",
+      page: "Modal - Upgrade",
+      dismissMethod: "close button",
       ...NANO_S_OPTED_OUT_ANALYTICS_PROPS,
     });
     expect(
