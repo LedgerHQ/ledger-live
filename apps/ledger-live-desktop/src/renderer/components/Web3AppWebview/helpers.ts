@@ -231,7 +231,7 @@ export function useWebviewState(
       errorCode,
       url: fullURL.hostname,
     };
-    console.error("Web3AppView handleFailLoad", { errorInfo, isMainFrame });
+    console.warn("Web3AppWebview load failed:", { ...errorInfo, isMainFrame });
     track("useWebviewState", errorInfo);
 
     if (isMainFrame) {
