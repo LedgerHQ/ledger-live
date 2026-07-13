@@ -1,5 +1,5 @@
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
-import { DEFAULT_ELIGIBLE_ADDRESS_FAMILIES } from "@features/flow-contacts";
+import { DEFAULT_ELIGIBLE_ADDRESS_FAMILIES } from "@features/flow-contacts/featureFlags";
 import { resolveContactsEntryConfig, useContactsEntryConfig } from "../useContactsEntryConfig";
 
 const DEFAULT_CONFIG = {

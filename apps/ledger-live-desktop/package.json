@@ -61,6 +61,7 @@
     "@datadog/browser-logs": "6.30.1",
     "@datadog/browser-rum": "6.30.1",
     "@domain/api-currency-token": "workspace:^",
+    "@domain/entity-contact": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@devtools/shell": "workspace:^",
     "@devtools/bindings": "workspace:*",

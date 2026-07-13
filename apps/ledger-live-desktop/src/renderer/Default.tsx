@@ -111,6 +111,7 @@ const CryptoAssets = lazy(() => import("LLD/features/CryptoAddresses/CryptoAsset
 const CardW40 = lazy(() => import("LLD/features/Card"));
 const PayTab = lazy(() => import("LLD/features/PayTab"));
 const History = lazy(() => import("LLD/features/History"));
+const Contacts = lazy(() => import("LLD/features/Contacts"));
 
 const LoaderWrapper = styled.div`
   padding: 24px;
@@ -324,6 +325,7 @@ const MainAppContent = ({
         <Route path="/bank/*" element={withSuspense(Bank)({})} />
         <Route path="/analytics" element={withSuspense(Analytics)({})} />
         <Route path="/history" element={withSuspense(History)({})} />
+        <Route path="/contacts" element={withSuspense(Contacts)({})} />
       </Routes>
     </Page>
     <Drawer />
@@ -342,7 +344,9 @@ export const MainAppLayout = () => {
 
   const backgroundImage = getPageBackground(pathname, theme);
 
-  const useWallet40Layout = isWallet40Page(pathname, { shouldDisplayAggregatedAssets });
+  const useWallet40Layout = isWallet40Page(pathname, {
+    shouldDisplayAggregatedAssets,
+  });
 
   useEffect(() => {
     preloadBackgrounds();
@@ -369,7 +373,10 @@ export const MainAppLayout = () => {
         style={
           useWallet40Layout
             ? backgroundImage
-              ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: BACKGROUND_SIZE }
+              ? {
+                  backgroundImage: `url(${backgroundImage})`,
+                  backgroundSize: BACKGROUND_SIZE,
+                }
               : undefined
             : {
                 backgroundColor: styledComponentsTheme.colors.background.default,

@@ -1,1 +1,1 @@
-export type { ContactsFeatureConfig as ContactsEntryConfig } from "@features/flow-contacts";
+export type { ContactsFeatureConfig as ContactsEntryConfig } from "@features/flow-contacts/featureFlags";

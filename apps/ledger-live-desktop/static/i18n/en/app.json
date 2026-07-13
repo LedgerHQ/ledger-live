@@ -9289,7 +9289,21 @@
       "title": "My Ledger",
       "description": "Manage your Ledger device"
     },
+    "contacts": {
+      "title": "Contacts",
+      "description": "Manage your contacts"
+    },
     "explore": "Explore all Ledger devices"
+  },
+  "contacts": {
+    "title": "Contacts",
+    "addContact": "Add contact",
+    "me": {
+      "name": "Me",
+      "addressCount_zero": "0 address",
+      "addressCount_one": "{{count}} address",
+      "addressCount_other": "{{count}} addresses"
+    }
   },
   "assetDetails": {
     "header": {
