@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { isSelfTransferTransaction } from "@ledgerhq/live-common/families/aleo/utils";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -29,18 +29,21 @@ export function SummaryToSection({ transaction, currency, badge, account, parent
   const { t } = useTranslation();
   const allAccounts = useSelector(flattenAccountsSelector);
 
+  const accountCurrency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const isSelfTransfer = transaction.family === "aleo" && isSelfTransferTransaction(transaction);
+  const isTokenAccount = account.type === "TokenAccount";
 
-  const recipientAccount = isSelfTransfer
-    ? (allAccounts.find(
+  const selfTransferAccount = isTokenAccount
+    ? account
+    : (allAccounts.find(
         a =>
           a.type === "Account" &&
           a.currency.id === currency.id &&
           a.freshAddress === transaction.recipient,
-      ) ?? mainAccount)
-    : undefined;
+      ) ?? mainAccount);
 
+  const recipientAccount = isSelfTransfer ? selfTransferAccount : undefined;
   const recipientAccountName = useMaybeAccountName(recipientAccount);
 
   return (
@@ -56,7 +59,7 @@ export function SummaryToSection({ transaction, currency, badge, account, parent
         isSelfTransfer && recipientAccountName ? (
           <View style={styles.row}>
             <View style={styles.iconWrapper}>
-              <CurrencyIcon size={14} currency={currency} />
+              <CurrencyIcon size={14} currency={accountCurrency} />
             </View>
             <LText numberOfLines={1} style={styles.text}>
               {recipientAccountName}
