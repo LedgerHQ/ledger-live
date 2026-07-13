@@ -31,7 +31,7 @@ export default function AccountHeaderLeft({ currency }: Props) {
 
   return (
     <Flex flexDirection={"row"}>
-      <Touchable onPress={onBackButtonPress}>
+      <Touchable onPress={onBackButtonPress} testID="account-header-back-button">
         <Icons.ArrowLeft />
       </Touchable>
       {isWalletConnectActionDisplayable && <Flex ml={7} width={24} />}

@@ -10,6 +10,7 @@ import type { AnalyticsConsentPhase } from "@ledgerhq/live-common/analyticsConse
 import { DescriptionWithPreferencesLink } from "../components/DescriptionWithPreferencesLink";
 import { PrivacyUpdateSheet } from "../components/PrivacyUpdateSheet";
 import { TwoCtaConsentSheet } from "../components/TwoCtaConsentSheet";
+import { ANALYTICS_CONSENT_DRAWER_TEST_IDS } from "../testIds";
 
 export type AnalyticsConsentDrawerViewProps = Readonly<{
   phase: AnalyticsConsentPhase;
@@ -52,6 +53,8 @@ export function AnalyticsConsentDrawerView(props: AnalyticsConsentDrawerViewProp
         }
         primaryLabel={t("analyticsConsentDrawer.reconfirm.ctaContinue")}
         secondaryLabel={t("analyticsConsentDrawer.reconfirm.ctaStop")}
+        primaryTestID={ANALYTICS_CONSENT_DRAWER_TEST_IDS.primaryButton}
+        secondaryTestID={ANALYTICS_CONSENT_DRAWER_TEST_IDS.secondaryButton}
         onPrimary={applyOptIn}
         onSecondary={applyOptOut}
         privacyPolicyUrl={privacyPolicyUrl}
@@ -69,6 +72,8 @@ export function AnalyticsConsentDrawerView(props: AnalyticsConsentDrawerViewProp
         }
         primaryLabel={t("analyticsConsentDrawer.fresh.ctaAcceptAll")}
         secondaryLabel={t("analyticsConsentDrawer.fresh.ctaRefuseAll")}
+        primaryTestID={ANALYTICS_CONSENT_DRAWER_TEST_IDS.primaryButton}
+        secondaryTestID={ANALYTICS_CONSENT_DRAWER_TEST_IDS.secondaryButton}
         onPrimary={applyOptIn}
         onSecondary={applyOptOut}
         privacyPolicyUrl={privacyPolicyUrl}
@@ -90,7 +95,7 @@ export function AnalyticsConsentDrawerView(props: AnalyticsConsentDrawerViewProp
       preventBackdropClick
       enablePanDownToClose={false}
       noCloseButton
-      testID="analytics-consent-drawer"
+      testID={ANALYTICS_CONSENT_DRAWER_TEST_IDS.drawer}
     >
       <BottomSheetView style={{ paddingHorizontal: 0, paddingBottom }}>
         <>

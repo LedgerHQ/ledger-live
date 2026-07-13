@@ -1,9 +1,11 @@
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
-import { DEFAULT_TIMEOUT } from "../../helpers/elementHelpers";
+import { DEFAULT_TIMEOUT, VISIBILITY_PROBE_TIMEOUT } from "../../helpers/elementHelpers";
 import { getFlags } from "../../bridge/server";
 import { isAggregatedAssetsEnabled, isAssetSectionEnabled } from "../../utils/featureFlagUtils";
 import type { Features } from "@shared/feature-flags";
+
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 export default class PortfolioPage {
   addNewOrExistingAccount = "add-new-account-button";
   assetsListId = "AssetsList";
@@ -15,6 +17,8 @@ export default class PortfolioPage {
   accountsListView = "PortfolioAccountsList";
   emptyPortfolioListId = "PortfolioEmptyList";
   portfolioSettingsId = "topbar-settings";
+  myWalletHeaderSettingsButtonId = "my-wallet-header-settings-button";
+  topBarMyWalletId = "topbar-mywallet";
   portfolioListIdRegex = new RegExp(`portfolio-screen|${this.readOnlyItemsId}`);
   addAccountCta = "add-account-cta";
   transactionHistorySectionTitleId = "portfolio-transaction-history-section";
@@ -65,6 +69,10 @@ export default class PortfolioPage {
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
   assetItemBalanceId = (currencyName: string) => `${this.baseAssetItem}${currencyName}-balance`;
+  assetItemCountervalueId = (currencyName: string) =>
+    `${this.baseAssetItem}${currencyName}-countervalue`;
+  assetItemExactRegExp = (currencyName: string) =>
+    new RegExp(`^${this.baseAssetItem}${escapeRegExp(currencyName)}$`);
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
   walletTabSelector = (id: "Wallet" | "Market") =>
     getElementById(`${this.walletTabSelectorBase}${id}`);
@@ -299,12 +307,9 @@ export default class PortfolioPage {
   }
 
   @Step("Expect market banner to be visible")
-  async expectMarketBannerVisible() {
-    if (await isAggregatedAssetsEnabled()) {
-      await scrollToId(this.marketBannerTitle, undefined, undefined, "down");
-    } else {
-      await scrollToId(this.marketBannerTitle, this.accountsListView, undefined, "down");
-    }
+  async expectMarketBannerVisible(direction: "up" | "down" = "down") {
+    const scrollViewId = (await isAggregatedAssetsEnabled()) ? undefined : this.accountsListView;
+    await scrollToId(this.marketBannerTitle, scrollViewId, undefined, direction);
     await detoxExpect(getElementById(this.marketBannerList)).toBeVisible();
   }
 
@@ -482,6 +487,50 @@ export default class PortfolioPage {
     await detoxExpect(getElementById(`assetItem-${currencyName}`)).toExist();
   }
 
+  @Step("Check aggregated asset row is visible")
+  async checkAggregatedAssetRowVisible(currencyName: string, scrollViewId?: string) {
+    if (scrollViewId) {
+      await scrollToId(this.assetItemId(currencyName), scrollViewId);
+    }
+
+    await detoxExpect(getElementById(this.assetItemId(currencyName))).toBeVisible();
+  }
+
+  @Step("Get aggregated asset row count")
+  async getAggregatedAssetRowCount(currencyName: string) {
+    return await countElementsById(this.assetItemExactRegExp(currencyName));
+  }
+
+  @Step("Check asset countervalue is visible")
+  async checkAssetCountervalueVisible(currencyName: string, scrollViewId?: string) {
+    if (scrollViewId) {
+      await scrollToId(this.assetItemId(currencyName), scrollViewId);
+    }
+
+    await detoxExpect(getElementById(this.assetItemCountervalueId(currencyName))).toBeVisible();
+  }
+
+  @Step("Open Wallet 4.0 asset detail")
+  async openAssetDetailW40(currencyName: string, scrollViewId?: string) {
+    if (scrollViewId) {
+      await scrollToId(this.assetItemId(currencyName), scrollViewId);
+    }
+
+    await detoxExpect(getElementById(this.assetItemId(currencyName))).toBeVisible();
+    await tapById(this.assetItemId(currencyName));
+  }
+
+  @Step("Open Wallet 4.0 stablecoins list")
+  async openStablecoinsListW40() {
+    await this.tapStablecoinsSectionTitle();
+    await this.checkStablecoinListPageVisible();
+  }
+
+  @Step("Check if full stablecoin list page is visible")
+  async isStablecoinListPageVisible(timeout = VISIBILITY_PROBE_TIMEOUT) {
+    return await IsIdVisible(this.stablecoinListId, timeout);
+  }
+
   @Step("Tap cryptos section title")
   async tapCryptosSectionTitle() {
     await scrollToId(this.quickActionTransferButtonV4, this.accountsListView, 150, "up");
@@ -490,7 +539,9 @@ export default class PortfolioPage {
 
   @Step("Tap stablecoins section title")
   async tapStablecoinsSectionTitle() {
-    await scrollToId(this.stablecoinsSectionHeaderId, this.accountsListView);
+    await waitForElementById(this.accountsListView);
+    await scrollToId(this.stablecoinsSectionHeaderId, this.accountsListView, 700, "down");
+    await detoxExpect(getElementById(this.stablecoinsSectionHeaderId)).toBeVisible();
     await tapById(this.stablecoinsSectionHeaderId);
   }
 

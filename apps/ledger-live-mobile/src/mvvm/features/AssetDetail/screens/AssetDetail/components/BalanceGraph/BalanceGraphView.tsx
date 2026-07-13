@@ -185,6 +185,7 @@ export function BalanceGraphView({
                 percentage={priceChangePercentage}
                 formattedChange={formattedPriceChange}
                 timeLabel={timeLabel}
+                testID={ASSET_DETAIL_TEST_IDS.marketVariation}
               />
             </>
           )}

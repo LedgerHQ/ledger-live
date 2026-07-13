@@ -15,6 +15,7 @@ import OperationDetailsPage from "./trade/operationDetails.page";
 import PasswordEntryPage from "./passwordEntry.page";
 import PortfolioEmptyStatePage from "./wallet/portfolioEmptyState.page";
 import PortfolioPage from "./wallet/portfolio.page";
+import AssetDetailPage from "./wallet/assetDetail.page";
 import ReceivePage from "./trade/receive.page";
 import SendPage from "./trade/send.page";
 import SettingsGeneralPage from "./settings/settingsGeneral.page";
@@ -38,6 +39,7 @@ import EarnV2DashboardPage from "./trade/earnV2Dashboard.page";
 import ModularDrawer from "./drawer/modular.drawer";
 import SwapTransactionStatusDrawer from "./drawer/swapTransactionStatus.drawer";
 import UndelegatePage from "./trade/undelegate.page";
+import Wallet40DrawersPage from "./drawer/wallet40Drawers.drawer";
 
 import path from "path";
 import fs from "fs";
@@ -75,6 +77,7 @@ export class Application {
   private passwordEntryPageInstance = lazyInit(PasswordEntryPage);
   private portfolioEmptyStatePageInstance = lazyInit(PortfolioEmptyStatePage);
   private portfolioPageInstance = lazyInit(PortfolioPage);
+  private readonly assetDetailPageInstance = lazyInit(AssetDetailPage);
   private receivePageInstance = lazyInit(ReceivePage);
   private sendPageInstance = lazyInit(SendPage);
   private settingsPageInstance = lazyInit(SettingsPage);
@@ -96,6 +99,7 @@ export class Application {
   private readonly earnV2DashboardPageInstance = lazyInit(EarnV2DashboardPage);
   private modularDrawerPageInstance = lazyInit(ModularDrawer);
   private swapTransactionStatusDrawerInstance = lazyInit(SwapTransactionStatusDrawer);
+  private readonly wallet40DrawersPageInstance = lazyInit(Wallet40DrawersPage);
   private readonly topBarSearchPageInstance = lazyInit(TopBarSearchPage);
   private undelegatePageInstance = lazyInit(UndelegatePage);
 
@@ -169,6 +173,10 @@ export class Application {
 
   public get portfolio() {
     return this.portfolioPageInstance();
+  }
+
+  public get assetDetail() {
+    return this.assetDetailPageInstance();
   }
 
   public get portfolioEmptyState() {
@@ -257,6 +265,10 @@ export class Application {
 
   public get swapTransactionStatusDrawer() {
     return this.swapTransactionStatusDrawerInstance();
+  }
+
+  public get wallet40Drawers() {
+    return this.wallet40DrawersPageInstance();
   }
 
   public get topBarSearch() {
