@@ -30,6 +30,14 @@ const enableAssetDiscoverability = withFlagOverrides({
   lwmWallet40: { enabled: true, params: { assetDiscoverability: true } },
 });
 
+const daiMarket = {
+  ...marketsMock[0],
+  id: "dai",
+  ledgerIds: ["ethereum/erc20/dai_stablecoin_v2_0"],
+  ticker: "dai",
+  name: "Dai",
+};
+
 function withStarredMarketCoins(starredMarketCoins: string[] = []) {
   return withFlagOverrides(
     { lwmWallet40: { enabled: true, params: { assetDiscoverability: true } } },
@@ -212,6 +220,37 @@ describe("MarketScreen assets list (Block 3)", () => {
     );
 
     expect(screen.queryByTestId("marketItem-ethereum")).toBeNull();
+  });
+
+  it("renders DAI when its canonical Market id is starred", async () => {
+    const marketRequests: string[] = [];
+    server.use(
+      http.get("https://countervalues.live.ledger.com/v3/markets", ({ request }) => {
+        marketRequests.push(request.url);
+        const ids = new URL(request.url).searchParams.get("ids")?.split(",") ?? [];
+        const data =
+          ids.length > 0 ? [daiMarket].filter(({ id }) => ids.includes(id)) : [daiMarket];
+
+        return HttpResponse.json(data);
+      }),
+    );
+
+    const { user } = renderWithReactQuery(<NavigatorWrapper />, {
+      overrideInitialState: withStarredMarketCoins(["dai"]),
+    });
+
+    await waitFor(() => expect(screen.getByTestId("marketItem-dai")).toBeVisible(), {
+      timeout: 5000,
+    });
+
+    await user.press(
+      screen.getByTestId(`${MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher}-starred`),
+    );
+
+    await waitFor(() => expect(screen.getByTestId("marketItem-dai")).toBeVisible(), {
+      timeout: 5000,
+    });
+    expect(marketRequests.some(url => new URL(url).searchParams.get("ids") === "dai")).toBe(true);
   });
 
   it("renders CVS stock rows after selecting the Stocks category", async () => {
