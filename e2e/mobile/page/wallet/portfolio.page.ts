@@ -168,9 +168,9 @@ export default class PortfolioPage {
   @Step("Click on Add account button in portfolio")
   async addAccount() {
     if (await isAggregatedAssetsEnabled()) {
-      const emptyStateCtaId = "empty-state-add-account-cta";
-      await scrollToId(emptyStateCtaId, this.emptyPortfolioListId, 500);
-      await tapById(emptyStateCtaId);
+      const ctaId = "crypto-addresses-add-account-cta";
+      await scrollToId(ctaId, this.emptyPortfolioListId, 500);
+      await tapById(ctaId);
     } else {
       await scrollToId(this.addAccountCta, this.emptyPortfolioListId, 500);
       await tapById(this.addAccountCta);

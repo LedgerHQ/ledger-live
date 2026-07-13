@@ -32,7 +32,7 @@ export const AssetsButtonSection: React.FC<AssetsButtonSectionProps> = ({
           size="lg"
           lx={{ width: "full" }}
           onPress={open}
-          testID="empty-state-add-account-cta"
+          testID="add-account-cta"
         >
           {t("account.emptyState.addCryptoAccount")}
         </Button>
