@@ -1,11 +1,12 @@
 import type { Contact } from "@domain/entity-contact";
 import type { ContactsListItem, EmptyContactsListViewModel } from "./types";
+import { getContactInitial } from "./utils/getContactInitial";
 
 function createContactsListItem(contact: Contact): ContactsListItem {
   return {
     contactId: contact.id,
     name: contact.name,
-    initial: contact.name.slice(0, 1).toUpperCase(),
+    initial: getContactInitial(contact.name),
     addressCount: contact.addresses.length,
   };
 }
