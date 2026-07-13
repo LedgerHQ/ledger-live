@@ -43,58 +43,82 @@ export async function createTransactionId(
   }
 }
 
-function isValidRecipient(accountId: AccountId, recipients: string[]): boolean {
-  if (accountId.shard.eq(0) && accountId.realm.eq(0)) {
-    // account is a node, only add to list if we have none
-    if (accountId.num.lt(100)) {
-      return recipients.length === 0;
-    }
+type RecipientKind = "node" | "system" | "regular";
 
-    // account is a system account that is not a node, do NOT add
-    if (accountId.num.lt(1000)) {
-      return false;
-    }
+function classifyRecipient(accountId: AccountId): RecipientKind {
+  if (accountId.shard.eq(0) && accountId.realm.eq(0)) {
+    if (accountId.num.lt(100)) return "node";
+    if (accountId.num.lt(1000)) return "system";
   }
 
-  return true;
+  return "regular";
 }
 
 export function parseTransfers(
   mirrorTransfers: (HederaMirrorCoinTransfer | HederaMirrorTokenTransfer)[],
   address: string,
   stakingReward = new BigNumber(0),
-): Pick<Operation, "type" | "value" | "senders" | "recipients"> {
-  let value = new BigNumber(0);
-  let type: OperationType = "NONE";
+): Pick<Operation, "type" | "value" | "senders" | "recipients"> & {
+  netAmount: BigNumber;
+  /** net positive amount per account listed in `recipients` (exact per-receiver values) */
+  recipientNets: Map<string, BigNumber>;
+} {
+  const rewardPayerAddress = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
+
+  // Sum rather than overwrite: an account can appear on more than one row for the
+  // same asset (e.g. an allowance leg alongside a direct leg).
+  const netByAccount = new Map<string, BigNumber>();
+  for (const transfer of mirrorTransfers) {
+    const previous = netByAccount.get(transfer.account) ?? new BigNumber(0);
+    netByAccount.set(transfer.account, previous.plus(transfer.amount));
+  }
+
+  // staking reward is included in the transfer, so the user's net can be positive
+  // even if they sent more HBAR than they received; it is shown as a separate op.
+  const userNet = netByAccount.get(address);
+  const netAmount = (userNet ?? new BigNumber(0)).minus(stakingReward);
+
+  // "NONE" only when the user is not involved at all; a present-but-zero net keeps
+  // the incoming classification (matches historical behavior).
+  const type: OperationType = userNet === undefined ? "NONE" : netAmount.isNegative() ? "OUT" : "IN";
+  const value = netAmount.abs();
 
   const senders: string[] = [];
   const recipients: string[] = [];
-  const rewardPayerAddress = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
+  const recipientNets = new Map<string, BigNumber>();
+  // A node's fee share is a positive leg on every tx; only show it as recipient
+  // when nobody else received funds.
+  let nodeFallback: { account: string; net: BigNumber } | null = null;
 
-  for (const transfer of mirrorTransfers) {
-    const amount = new BigNumber(transfer.amount);
-    const accountId = AccountId.fromString(transfer.account);
+  for (const [account, rawNet] of netByAccount) {
+    const net = account === address ? rawNet.minus(stakingReward) : rawNet;
 
-    // staking reward is included in transfer, so it can be positive even if user sent less HBARs than the reward is
-    const amountWithoutReward = transfer.account === address ? amount.minus(stakingReward) : amount;
-
-    if (transfer.account === address) {
-      value = amountWithoutReward.abs();
-      type = amountWithoutReward.isNegative() ? "OUT" : "IN";
-    }
-
-    if (amountWithoutReward.isNegative()) {
+    if (net.isNegative()) {
       // exclude reward payer from senders list, because rewards are shown as separate operations
-      const shouldIgnoreAddress = transfer.account === rewardPayerAddress && stakingReward.gt(0);
+      const shouldIgnoreAddress = account === rewardPayerAddress && stakingReward.gt(0);
 
       if (shouldIgnoreAddress) {
         continue;
       }
 
-      senders.push(transfer.account);
-    } else if (isValidRecipient(accountId, recipients)) {
-      recipients.push(transfer.account);
+      senders.push(account);
+    } else if (net.isPositive()) {
+      const kind = classifyRecipient(AccountId.fromString(account));
+
+      if (kind === "system") continue;
+      if (kind === "node") {
+        nodeFallback ??= { account, net };
+        continue;
+      }
+
+      recipients.push(account);
+      recipientNets.set(account, net);
     }
+  }
+
+  if (recipients.length === 0 && nodeFallback) {
+    recipients.push(nodeFallback.account);
+    recipientNets.set(nodeFallback.account, nodeFallback.net);
   }
 
   // NOTE: earlier addresses are the "fee" addresses
@@ -106,6 +130,8 @@ export function parseTransfers(
     value,
     senders,
     recipients,
+    netAmount,
+    recipientNets,
   };
 }
 

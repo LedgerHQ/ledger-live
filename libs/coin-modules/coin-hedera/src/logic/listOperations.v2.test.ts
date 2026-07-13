@@ -56,6 +56,25 @@ describe("listOperationsV2", () => {
   const mockLimit = 10;
   const mockOrder = "desc";
 
+  function makeListOperationsParams(
+    overrides: Partial<Parameters<typeof listOperations>[0]> = {},
+  ): Parameters<typeof listOperations>[0] {
+    return {
+      limit: mockLimit,
+      order: mockOrder,
+      currencyId: mockCurrency.id,
+      address: mockMirrorAccount.account,
+      evmAddress: mockMirrorAccount.evm_address,
+      mirrorTokens: [],
+      tokenEvmAddresses: [],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+      ...overrides,
+    };
+  }
+
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -89,19 +108,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(makeListOperationsParams());
 
     expect(apiClient.getAccountTransactions).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTransactions).toHaveBeenCalledWith({
@@ -147,19 +154,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(makeListOperationsParams());
 
     expect(result.tokenOperations).toEqual([]);
     expect(result.coinOperations).toHaveLength(1);
@@ -185,6 +180,7 @@ describe("listOperationsV2", () => {
     const mockTokenHTS = getMockedHTSTokenCurrency();
     const mockTransaction = getMockedMirrorTransaction({
       consensus_timestamp: "1625097600.000000000",
+      transaction_id: `${mockMirrorAccount.account}-1625097600-000000000`,
       transaction_hash: "hash1",
       charged_tx_fee: 500000,
       result: "SUCCESS",
@@ -197,7 +193,10 @@ describe("listOperationsV2", () => {
         { token_id: mockTokenHTS.contractAddress, account: "0.0.67890", amount: 1000 },
       ],
       staking_reward_transfers: [],
-      transfers: [],
+      transfers: [
+        { account: mockMirrorAccount.account, amount: -500000 },
+        { account: "0.0.802", amount: 500000 },
+      ],
       name: "CRYPTOTRANSFER",
     });
 
@@ -205,29 +204,20 @@ describe("listOperationsV2", () => {
       transactions: [mockTransaction],
       nextCursor: null,
     });
+    (utils.extractFeesPayer as jest.Mock).mockReturnValue(mockMirrorAccount.account);
 
     setupMockCryptoAssetsStore({
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenHTS),
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(makeListOperationsParams());
 
     expect(result.coinOperations).toMatchObject([
       {
         type: "FEES",
         fee: expect.any(Object),
+        senders: [mockMirrorAccount.account],
+        recipients: ["0.0.67890"],
       },
     ]);
     expect(result.tokenOperations).toMatchObject([
@@ -301,19 +291,11 @@ describe("listOperationsV2", () => {
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [mockTokenERC20.contractAddress],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(
+      makeListOperationsParams({
+        tokenEvmAddresses: [mockTokenERC20.contractAddress],
+      }),
+    );
 
     expect(result.tokenOperations).toEqual([
       expect.objectContaining({
@@ -392,19 +374,11 @@ describe("listOperationsV2", () => {
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [mockTokenERC20.contractAddress],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(
+      makeListOperationsParams({
+        tokenEvmAddresses: [mockTokenERC20.contractAddress],
+      }),
+    );
 
     expect(result.tokenOperations).toEqual([
       expect.objectContaining({
@@ -456,19 +430,11 @@ describe("listOperationsV2", () => {
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [mockTokenERC20.contractAddress],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(
+      makeListOperationsParams({
+        tokenEvmAddresses: [mockTokenERC20.contractAddress],
+      }),
+    );
 
     expect(result.tokenOperations).toEqual([]);
     expect(result.coinOperations).toEqual([]);
@@ -491,19 +457,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(makeListOperationsParams());
 
     expect(result.tokenOperations).toEqual([]);
     expect(result.coinOperations).toMatchObject([
@@ -545,19 +499,11 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [mockMirrorToken],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(
+      makeListOperationsParams({
+        mirrorTokens: [mockMirrorToken],
+      }),
+    );
 
     expect(result.tokenOperations).toEqual([]);
     expect(result.coinOperations).toEqual([
@@ -575,6 +521,7 @@ describe("listOperationsV2", () => {
     const tokenId = "0.0.7890";
     const mockTransaction = getMockedMirrorTransaction({
       consensus_timestamp: "1625097600.000000000",
+      transaction_id: `${mockMirrorAccount.account}-1625097600-000000000`,
       transaction_hash: "hash1",
       charged_tx_fee: 500000,
       result: "SUCCESS",
@@ -583,7 +530,10 @@ describe("listOperationsV2", () => {
         { token_id: tokenId, account: "0.0.67890", amount: 1000 },
       ],
       staking_reward_transfers: [],
-      transfers: [],
+      transfers: [
+        { account: mockMirrorAccount.account, amount: -500000 },
+        { account: "0.0.802", amount: 500000 },
+      ],
       name: "CRYPTOTRANSFER",
     });
 
@@ -591,20 +541,9 @@ describe("listOperationsV2", () => {
       transactions: [mockTransaction],
       nextCursor: null,
     });
+    (utils.extractFeesPayer as jest.Mock).mockReturnValue(mockMirrorAccount.account);
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(makeListOperationsParams());
 
     expect(result.tokenOperations).toEqual([
       expect.objectContaining({
@@ -620,12 +559,11 @@ describe("listOperationsV2", () => {
     ]);
   });
 
-  it("should not emit FEES coin op for child HTS token transfer (nonce > 0)", async () => {
+  it("should emit only a token operation when a token transfer has no HBAR transfers and zero fee", async () => {
     const tokenId = "0.0.7890";
     const mockTransaction = getMockedMirrorTransaction({
       consensus_timestamp: "1625097600.000000000",
       transaction_hash: "hash1",
-      nonce: 1,
       charged_tx_fee: 0,
       token_transfers: [
         { token_id: tokenId, account: mockMirrorAccount.account, amount: -1000 },
@@ -640,19 +578,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(makeListOperationsParams());
 
     expect(result.coinOperations).toEqual([]);
     expect(result.tokenOperations).toEqual([
@@ -670,20 +596,13 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    await listOperations({
-      limit: customLimit,
-      order: customOrder,
-      cursor: lastPagingToken,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    await listOperations(
+      makeListOperationsParams({
+        limit: customLimit,
+        order: customOrder,
+        cursor: lastPagingToken,
+      }),
+    );
 
     expect(apiClient.getAccountTransactions).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTransactions).toHaveBeenCalledWith({
@@ -717,19 +636,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      currencyId: mockCurrency.id,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(makeListOperationsParams());
 
     expect(result.coinOperations).toMatchObject([{ hasFailed: true }]);
   });
@@ -746,7 +653,7 @@ describe("listOperationsV2", () => {
       token_transfers: [],
       staking_reward_transfers: [],
       transfers: [
-        { account: "0.0.23", amount: -40743 },
+        { account: mockMirrorAccount.account, amount: -40743 },
         { account: "0.0.801", amount: 40743 },
       ],
       name: "CRYPTOTRANSFER",
@@ -757,19 +664,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      currencyId: mockCurrency.id,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(makeListOperationsParams());
 
     expect(result.coinOperations).toMatchObject([
       {
@@ -799,19 +694,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      currencyId: mockCurrency.id,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(makeListOperationsParams());
 
     const rewardTimestamp = result.coinOperations[0].date.getTime();
     const mainTimestamp = result.coinOperations[1].date.getTime();
@@ -883,19 +766,11 @@ describe("listOperationsV2", () => {
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [mockTokenERC20.contractAddress],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(
+      makeListOperationsParams({
+        tokenEvmAddresses: [mockTokenERC20.contractAddress],
+      }),
+    );
 
     expect(result.tokenOperations).toEqual([
       expect.objectContaining({
@@ -946,19 +821,7 @@ describe("listOperationsV2", () => {
     });
     (networkUtils.analyzeStakingOperation as jest.Mock).mockResolvedValue(mockStakingAnalysis);
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(makeListOperationsParams());
 
     expect(result.tokenOperations).toEqual([]);
     expect(result.coinOperations).toEqual([
@@ -1001,19 +864,7 @@ describe("listOperationsV2", () => {
     });
     (networkUtils.analyzeStakingOperation as jest.Mock).mockResolvedValue(mockStakingAnalysis);
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(makeListOperationsParams());
 
     expect(result.tokenOperations).toEqual([]);
     expect(result.coinOperations).toEqual([
@@ -1059,19 +910,7 @@ describe("listOperationsV2", () => {
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenHTS),
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(makeListOperationsParams());
 
     expect(result.coinOperations).toEqual([]);
     expect(result.tokenOperations).toEqual([expect.objectContaining({ type: "IN" })]);
@@ -1123,19 +962,11 @@ describe("listOperationsV2", () => {
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [mockTokenERC20.contractAddress],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(
+      makeListOperationsParams({
+        tokenEvmAddresses: [mockTokenERC20.contractAddress],
+      }),
+    );
 
     expect(result.coinOperations).toEqual([]);
     expect(result.tokenOperations).toEqual([expect.objectContaining({ type: "IN" })]);
@@ -1192,19 +1023,11 @@ describe("listOperationsV2", () => {
         .mockResolvedValueOnce(mockTokenB), // for transfer in
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [mockTokenA.contractAddress, mockTokenB.contractAddress],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(
+      makeListOperationsParams({
+        tokenEvmAddresses: [mockTokenA.contractAddress, mockTokenB.contractAddress],
+      }),
+    );
 
     expect(result.coinOperations).toEqual([expect.objectContaining({ type: "FEES" })]);
     expect(result.tokenOperations).toEqual([
@@ -1242,23 +1065,49 @@ describe("listOperationsV2", () => {
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenHTS),
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: true,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(
+      makeListOperationsParams({
+        skipFeesForTokenOperations: true,
+      }),
+    );
 
     expect(result.coinOperations).toHaveLength(0);
     expect(result.tokenOperations).toHaveLength(1);
     expect(result.tokenOperations[0].type).toBe("OUT");
+  });
+
+  it("should keep the standalone FEES op of a fee-only tx when skipFeesForTokenOperations is true", async () => {
+    const mockTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1625097600.000000000",
+      transaction_hash: "hash1",
+      transaction_id: `${mockMirrorAccount.account}-1625097600-000000000`,
+      charged_tx_fee: 500000,
+      name: "CRYPTOAPPROVEALLOWANCE",
+      transfers: [
+        { account: mockMirrorAccount.account, amount: -500000 },
+        { account: "0.0.98", amount: 500000 },
+      ],
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+
+    const result = await listOperations(
+      makeListOperationsParams({
+        skipFeesForTokenOperations: true,
+      }),
+    );
+
+    expect(result.coinOperations).toEqual([
+      expect.objectContaining({
+        type: "FEES",
+        hash: "hash1",
+        value: new BigNumber(500000),
+      }),
+    ]);
+    expect(result.tokenOperations).toHaveLength(0);
   });
 
   it("should use encoded hash when useEncodedHash is true", async () => {
@@ -1282,19 +1131,11 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: true,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(
+      makeListOperationsParams({
+        useEncodedHash: true,
+      }),
+    );
 
     expect(result.coinOperations).toHaveLength(1);
     expect(result.coinOperations[0].hash).toBe("encoded-hash1");
@@ -1321,19 +1162,11 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: true,
-    });
+    const result = await listOperations(
+      makeListOperationsParams({
+        useSyntheticBlocks: true,
+      }),
+    );
 
     expect(utils.getSyntheticBlock).toHaveBeenCalledTimes(1);
     expect(result.coinOperations).toEqual([
@@ -1392,19 +1225,12 @@ describe("listOperationsV2", () => {
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [mockTokenERC20.contractAddress],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: true,
-    });
+    const result = await listOperations(
+      makeListOperationsParams({
+        tokenEvmAddresses: [mockTokenERC20.contractAddress],
+        useSyntheticBlocks: true,
+      }),
+    );
 
     expect(result.tokenOperations).toEqual([
       expect.objectContaining({
@@ -1462,19 +1288,11 @@ describe("listOperationsV2", () => {
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [mockTokenERC20.contractAddress],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(
+      makeListOperationsParams({
+        tokenEvmAddresses: [mockTokenERC20.contractAddress],
+      }),
+    );
 
     expect(result.coinOperations).toEqual([expect.objectContaining({ type: "FEES" })]);
     expect(result.tokenOperations).toEqual([
@@ -1519,19 +1337,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(makeListOperationsParams());
 
     expect(result.coinOperations.map(op => op.hash)).toEqual(["hash3", "hash2", "hash1"]);
   });
@@ -1594,19 +1400,11 @@ describe("listOperationsV2", () => {
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
     });
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [mockTokenERC20.contractAddress],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(
+      makeListOperationsParams({
+        tokenEvmAddresses: [mockTokenERC20.contractAddress],
+      }),
+    );
 
     expect(result.tokenOperations).toHaveLength(1);
     expect(result.coinOperations).toEqual([
@@ -1630,21 +1428,498 @@ describe("listOperationsV2", () => {
     });
     (networkUtils.analyzeStakingOperation as jest.Mock).mockResolvedValue(null);
 
-    const result = await listOperations({
-      limit: mockLimit,
-      order: mockOrder,
-      currencyId: mockCurrency.id,
-      address: mockMirrorAccount.account,
-      evmAddress: mockMirrorAccount.evm_address,
-      mirrorTokens: [],
-      tokenEvmAddresses: [],
-      fetchAllPages: true,
-      skipFeesForTokenOperations: false,
-      useEncodedHash: false,
-      useSyntheticBlocks: false,
-    });
+    const result = await listOperations(makeListOperationsParams());
 
     expect(result.coinOperations).toHaveLength(1);
     expect(result.coinOperations[0].recipients).toEqual([nodeAccountId]);
+  });
+
+  // Real-world data: https://mainnet.mirrornode.hedera.com/api/v1/transactions?timestamp=1760510879.300860000
+  it("should split a multi-asset CryptoTransfer into one op per (asset, direction) with no FEES", async () => {
+    const usdc = "0.0.456858";
+    const hbark = "0.0.5022567";
+    const receiver1 = "0.0.9124531";
+    const receiver2 = "0.0.9169746";
+    const fee = 1176695;
+
+    const mockTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1760510879.300860000",
+      transaction_id: `${mockMirrorAccount.account}-1760510879-300860000`,
+      transaction_hash: "multiasset",
+      charged_tx_fee: fee,
+      result: "SUCCESS",
+      name: "CRYPTOTRANSFER",
+      staking_reward_transfers: [],
+      // mirror sorts transfer rows by account id, so the node row (0.0.15) comes first
+      transfers: [
+        { account: "0.0.15", amount: 55631 },
+        { account: "0.0.801", amount: 1121064 },
+        { account: mockMirrorAccount.account, amount: -(2000000 + fee) },
+        { account: receiver1, amount: 1000000 },
+        { account: receiver2, amount: 1000000 },
+      ],
+      token_transfers: [
+        { token_id: usdc, account: mockMirrorAccount.account, amount: -10000 },
+        { token_id: usdc, account: receiver1, amount: 10000 },
+        { token_id: hbark, account: mockMirrorAccount.account, amount: -2 },
+        { token_id: hbark, account: receiver2, amount: 2 },
+      ],
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+    (utils.extractFeesPayer as jest.Mock).mockReturnValue(mockMirrorAccount.account);
+
+    const result = await listOperations(makeListOperationsParams());
+
+    expect(result.coinOperations).toEqual([
+      expect.objectContaining({
+        type: "OUT",
+        value: new BigNumber(1000000 + fee),
+        fee: new BigNumber(fee),
+        senders: [mockMirrorAccount.account],
+        recipients: [receiver2],
+      }),
+      expect.objectContaining({
+        type: "OUT",
+        value: new BigNumber(1000000 + fee),
+        fee: new BigNumber(fee),
+        senders: [mockMirrorAccount.account],
+        recipients: [receiver1],
+      }),
+    ]);
+    expect(result.tokenOperations).toEqual([
+      expect.objectContaining({
+        type: "OUT",
+        contract: usdc,
+        standard: "hts",
+        value: new BigNumber(10000),
+      }),
+      expect.objectContaining({
+        type: "OUT",
+        contract: hbark,
+        standard: "hts",
+        value: new BigNumber(2),
+      }),
+    ]);
+  });
+
+  it("should fold the fee into a simple HBAR OUT (fee-inclusive value, no FEES op)", async () => {
+    const fee = 500000;
+    const mockTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1625097600.000000000",
+      transaction_id: `${mockMirrorAccount.account}-1625097600-000000000`,
+      transaction_hash: "simpleout",
+      charged_tx_fee: fee,
+      result: "SUCCESS",
+      name: "CRYPTOTRANSFER",
+      staking_reward_transfers: [],
+      token_transfers: [],
+      transfers: [
+        { account: mockMirrorAccount.account, amount: -(1000000 + fee) },
+        { account: "0.0.67890", amount: 1000000 },
+        { account: "0.0.802", amount: fee },
+      ],
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+    (utils.extractFeesPayer as jest.Mock).mockReturnValue(mockMirrorAccount.account);
+
+    const result = await listOperations(makeListOperationsParams());
+
+    expect(result.coinOperations).toEqual([
+      expect.objectContaining({
+        type: "OUT",
+        value: new BigNumber(1000000 + fee),
+        fee: new BigNumber(fee),
+        senders: [mockMirrorAccount.account],
+        recipients: ["0.0.67890"],
+      }),
+    ]);
+  });
+
+  it("should emit HBAR IN + FEES for a swap where the user receives HBAR and pays the fee", async () => {
+    const token = "0.0.7890";
+    const fee = 100000;
+    const mockTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1625097600.000000000",
+      transaction_id: `${mockMirrorAccount.account}-1625097600-000000000`,
+      transaction_hash: "swap",
+      charged_tx_fee: fee,
+      result: "SUCCESS",
+      name: "CRYPTOTRANSFER",
+      staking_reward_transfers: [],
+      transfers: [
+        { account: "0.0.67890", amount: -500000 },
+        { account: mockMirrorAccount.account, amount: 500000 - fee },
+        { account: "0.0.802", amount: fee },
+      ],
+      token_transfers: [
+        { token_id: token, account: mockMirrorAccount.account, amount: -1000 },
+        { token_id: token, account: "0.0.67890", amount: 1000 },
+      ],
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+    (utils.extractFeesPayer as jest.Mock).mockReturnValue(mockMirrorAccount.account);
+
+    const result = await listOperations(makeListOperationsParams());
+
+    expect(result.coinOperations).toEqual([
+      expect.objectContaining({
+        type: "IN",
+        value: new BigNumber(500000),
+        fee: new BigNumber(fee),
+      }),
+      expect.objectContaining({ type: "FEES", value: new BigNumber(fee), fee: new BigNumber(fee) }),
+    ]);
+    expect(result.tokenOperations).toEqual([
+      expect.objectContaining({ type: "OUT", contract: token, standard: "hts" }),
+    ]);
+  });
+
+  it("should emit only IN (no FEES) for an incoming HBAR transfer when the user is not the payer", async () => {
+    const mockTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1625097600.000000000",
+      transaction_id: "0.0.67890-1625097600-000000000",
+      transaction_hash: "incoming",
+      charged_tx_fee: 100000,
+      result: "SUCCESS",
+      name: "CRYPTOTRANSFER",
+      staking_reward_transfers: [],
+      token_transfers: [],
+      transfers: [
+        { account: "0.0.67890", amount: -1100000 },
+        { account: mockMirrorAccount.account, amount: 1000000 },
+        { account: "0.0.802", amount: 100000 },
+      ],
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+    (utils.extractFeesPayer as jest.Mock).mockReturnValue("0.0.67890");
+
+    const result = await listOperations(makeListOperationsParams());
+
+    expect(result.coinOperations).toEqual([
+      expect.objectContaining({
+        type: "IN",
+        value: new BigNumber(1000000),
+        fee: new BigNumber(100000),
+        recipients: [mockMirrorAccount.account],
+        senders: ["0.0.67890"],
+      }),
+    ]);
+  });
+
+  it("should list all net counterparties and never fee/node/system rows", async () => {
+    const fee = 300000;
+    const mockTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1625097600.000000000",
+      transaction_id: `${mockMirrorAccount.account}-1625097600-000000000`,
+      transaction_hash: "multirecipient",
+      charged_tx_fee: fee,
+      result: "SUCCESS",
+      name: "CRYPTOTRANSFER",
+      staking_reward_transfers: [],
+      token_transfers: [],
+      transfers: [
+        { account: mockMirrorAccount.account, amount: -(3000000 + fee) },
+        { account: "0.0.9124531", amount: 1000000 },
+        { account: "0.0.9169746", amount: 1000000 },
+        { account: "0.0.9200000", amount: 1000000 },
+        { account: "0.0.800", amount: 100000 },
+        { account: "0.0.801", amount: 100000 },
+        { account: "0.0.802", amount: 100000 },
+      ],
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+    (utils.extractFeesPayer as jest.Mock).mockReturnValue(mockMirrorAccount.account);
+
+    const result = await listOperations(makeListOperationsParams());
+
+    expect(result.coinOperations.map(op => op.recipients)).toEqual([
+      ["0.0.9200000"],
+      ["0.0.9169746"],
+      ["0.0.9124531"],
+    ]);
+    const allRecipients = result.coinOperations.flatMap(op => op.recipients);
+    expect(allRecipients).not.toContain("0.0.800");
+    expect(allRecipients).not.toContain("0.0.801");
+    expect(allRecipients).not.toContain("0.0.802");
+  });
+
+  // Real-world data: testnet tx 0.0.6136753-1783676710-421838210
+  it("should split a sole-sender multi-receiver HBAR transfer into one OUT per recipient", async () => {
+    const fee = 284122;
+    const mockTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1783676722.704196728",
+      transaction_id: `${mockMirrorAccount.account}-1783676710-421838210`,
+      transaction_hash: "multireceiver",
+      charged_tx_fee: fee,
+      result: "SUCCESS",
+      name: "CRYPTOTRANSFER",
+      staking_reward_transfers: [],
+      token_transfers: [],
+      transfers: [
+        { account: "0.0.802", amount: fee },
+        { account: mockMirrorAccount.account, amount: -(2000000 + fee) },
+        { account: "0.0.6855655", amount: 1000000 },
+        { account: "0.0.9509310", amount: 1000000 },
+      ],
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+    (utils.extractFeesPayer as jest.Mock).mockReturnValue(mockMirrorAccount.account);
+
+    const result = await listOperations(makeListOperationsParams());
+
+    expect(result.tokenOperations).toEqual([]);
+    expect(result.coinOperations).toEqual([
+      expect.objectContaining({
+        id: "multireceiver:OUT:0.0.9509310",
+        type: "OUT",
+        value: new BigNumber(1000000 + fee),
+        fee: new BigNumber(fee),
+        senders: [mockMirrorAccount.account],
+        recipients: ["0.0.9509310"],
+      }),
+      expect.objectContaining({
+        id: "multireceiver:OUT:0.0.6855655",
+        type: "OUT",
+        value: new BigNumber(1000000 + fee),
+        fee: new BigNumber(fee),
+        senders: [mockMirrorAccount.account],
+        recipients: ["0.0.6855655"],
+      }),
+    ]);
+  });
+
+  it("should keep a single netted OUT when the user is not the sole sender (many-to-many)", async () => {
+    const fee = 300000;
+    const mockTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1625097600.000000000",
+      transaction_id: `${mockMirrorAccount.account}-1625097600-000000000`,
+      transaction_hash: "manytomany",
+      charged_tx_fee: fee,
+      result: "SUCCESS",
+      name: "CRYPTOTRANSFER",
+      staking_reward_transfers: [],
+      token_transfers: [],
+      transfers: [
+        { account: mockMirrorAccount.account, amount: -(1000000 + fee) },
+        { account: "0.0.55555", amount: -1000000 },
+        { account: "0.0.9124531", amount: 1500000 },
+        { account: "0.0.9169746", amount: 500000 },
+        { account: "0.0.802", amount: fee },
+      ],
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+    (utils.extractFeesPayer as jest.Mock).mockReturnValue(mockMirrorAccount.account);
+
+    const result = await listOperations(makeListOperationsParams());
+
+    expect(result.coinOperations).toEqual([
+      expect.objectContaining({
+        id: "manytomany:OUT",
+        type: "OUT",
+        value: new BigNumber(1000000 + fee),
+        fee: new BigNumber(fee),
+        senders: ["0.0.55555", mockMirrorAccount.account],
+        recipients: ["0.0.9169746", "0.0.9124531"],
+      }),
+    ]);
+  });
+
+  it("should not fold the fee into a co-sender's OUT value when another account paid it (many-to-many)", async () => {
+    const payerAccount = "0.0.55555";
+    const fee = 300000;
+    const recipient1 = "0.0.9124531";
+    const recipient2 = "0.0.9169746";
+
+    const mockTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1625097600.000000000",
+      transaction_id: `${payerAccount}-1625097600-000000000`,
+      transaction_hash: "manytomany-nonpayer",
+      charged_tx_fee: fee,
+      result: "SUCCESS",
+      name: "CRYPTOTRANSFER",
+      staking_reward_transfers: [],
+      token_transfers: [],
+      transfers: [
+        { account: payerAccount, amount: -(2000000 + fee) },
+        { account: mockMirrorAccount.account, amount: -1000000 },
+        { account: recipient1, amount: 1500000 },
+        { account: recipient2, amount: 1500000 },
+        { account: "0.0.802", amount: fee },
+      ],
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+    (utils.extractFeesPayer as jest.Mock).mockReturnValue(payerAccount);
+
+    const result = await listOperations(makeListOperationsParams());
+
+    expect(result.coinOperations).toEqual([
+      expect.objectContaining({
+        id: "manytomany-nonpayer:OUT",
+        type: "OUT",
+        value: new BigNumber(1000000),
+        fee: new BigNumber(fee),
+        senders: [mockMirrorAccount.account, payerAccount],
+        recipients: [recipient2, recipient1],
+      }),
+    ]);
+  });
+
+  it("should split a sole-sender multi-receiver token transfer into one OUT per recipient", async () => {
+    const tokenId = "0.0.7890";
+    const fee = 100000;
+    const mockTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1625097600.000000000",
+      transaction_id: `${mockMirrorAccount.account}-1625097600-000000000`,
+      transaction_hash: "tokenmultireceiver",
+      charged_tx_fee: fee,
+      result: "SUCCESS",
+      name: "CRYPTOTRANSFER",
+      staking_reward_transfers: [],
+      token_transfers: [
+        { token_id: tokenId, account: mockMirrorAccount.account, amount: -3000 },
+        { token_id: tokenId, account: "0.0.67890", amount: 1000 },
+        { token_id: tokenId, account: "0.0.67891", amount: 2000 },
+      ],
+      transfers: [
+        { account: mockMirrorAccount.account, amount: -fee },
+        { account: "0.0.802", amount: fee },
+      ],
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+    (utils.extractFeesPayer as jest.Mock).mockReturnValue(mockMirrorAccount.account);
+
+    const result = await listOperations(makeListOperationsParams());
+
+    expect(result.coinOperations).toEqual([expect.objectContaining({ type: "FEES" })]);
+    expect(result.tokenOperations).toEqual([
+      expect.objectContaining({
+        id: "tokenmultireceiver:OUT:0.0.7890:0.0.67891",
+        type: "OUT",
+        contract: tokenId,
+        standard: "hts",
+        value: new BigNumber(2000),
+        recipients: ["0.0.67891"],
+      }),
+      expect.objectContaining({
+        id: "tokenmultireceiver:OUT:0.0.7890:0.0.67890",
+        type: "OUT",
+        contract: tokenId,
+        standard: "hts",
+        value: new BigNumber(1000),
+        recipients: ["0.0.67890"],
+      }),
+    ]);
+  });
+
+  it("should flag isApproval on a token op when the user's tokens were moved via an allowance", async () => {
+    const token = "0.0.7890";
+    const mockTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1625097600.000000000",
+      transaction_id: "0.0.999999-1625097600-000000000",
+      transaction_hash: "allowance",
+      charged_tx_fee: 100000,
+      result: "SUCCESS",
+      name: "CRYPTOTRANSFER",
+      staking_reward_transfers: [],
+      transfers: [
+        { account: "0.0.999999", amount: -100000 },
+        { account: "0.0.802", amount: 100000 },
+      ],
+      token_transfers: [
+        { token_id: token, account: mockMirrorAccount.account, amount: -1000, is_approval: true },
+        { token_id: token, account: "0.0.67890", amount: 1000 },
+      ],
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+    (utils.extractFeesPayer as jest.Mock).mockReturnValue("0.0.999999");
+
+    const result = await listOperations(makeListOperationsParams());
+
+    expect(result.coinOperations).toEqual([]);
+    expect(result.tokenOperations).toEqual([
+      expect.objectContaining({
+        type: "OUT",
+        contract: token,
+        standard: "hts",
+        extra: expect.objectContaining({ isApproval: true }),
+      }),
+    ]);
+  });
+
+  it("should flag isApproval on a native HBAR OUT op when the user's HBAR was moved via an allowance", async () => {
+    const fee = 500000;
+    const mockTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1625097600.000000000",
+      transaction_id: "0.0.999999-1625097600-000000000",
+      transaction_hash: "hbarallowance",
+      charged_tx_fee: fee,
+      result: "SUCCESS",
+      name: "CRYPTOTRANSFER",
+      staking_reward_transfers: [],
+      token_transfers: [],
+      transfers: [
+        { account: mockMirrorAccount.account, amount: -1000000, is_approval: true },
+        { account: "0.0.67890", amount: 1000000 },
+        { account: "0.0.802", amount: fee },
+        { account: "0.0.999999", amount: -fee },
+      ],
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+    (utils.extractFeesPayer as jest.Mock).mockReturnValue("0.0.999999");
+
+    const result = await listOperations(makeListOperationsParams());
+
+    expect(result.coinOperations).toEqual([
+      expect.objectContaining({
+        type: "OUT",
+        value: new BigNumber(1000000),
+        recipients: ["0.0.67890"],
+        extra: expect.objectContaining({ isApproval: true }),
+      }),
+    ]);
   });
 });

@@ -5,6 +5,7 @@ type KycStatus = "NOT_APPLICABLE" | "GRANTED" | "REVOKED";
 export interface HederaMirrorCoinTransfer {
   account: string;
   amount: number;
+  is_approval?: boolean;
 }
 
 export interface HederaMirrorTokenTransfer {

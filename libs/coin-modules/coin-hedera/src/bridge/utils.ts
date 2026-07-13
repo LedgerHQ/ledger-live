@@ -12,7 +12,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { HEDERA_OPERATION_TYPES } from "../constants";
+import { HEDERA_OPERATION_TYPES, TOKEN_ANCHOR_HASH_SUFFIX } from "../constants";
 import { estimateFees } from "../logic/estimateFees";
 import { isTokenAssociateTransaction, isValidExtra } from "../logic/utils";
 import type {
@@ -116,8 +116,29 @@ export async function buildCalTokenMap({
   return tokenByAddress;
 }
 
+// Appends a discriminator (recipient, falling back to value) to ids shared by
+// several ops, so fan-out legs of the same hash+type don't collide.
+function assignBridgeOperationIds<O extends Operation<HederaOperationExtra>>(
+  operations: O[],
+  idHashOf: (op: O) => string = op => op.hash,
+): O[] {
+  const baseIdCounts = new Map<string, number>();
+  for (const op of operations) {
+    const baseId = encodeOperationId(op.accountId, idHashOf(op), op.type);
+    baseIdCounts.set(baseId, (baseIdCounts.get(baseId) ?? 0) + 1);
+  }
+
+  return operations.map(op => {
+    const baseId = encodeOperationId(op.accountId, idHashOf(op), op.type);
+    const needsDiscriminator = (baseIdCounts.get(baseId) ?? 0) > 1;
+    const discriminator = op.recipients[0] ?? op.value.toString();
+    return { ...op, id: needsDiscriminator ? `${baseId}-${discriminator}` : baseId };
+  });
+}
+
 /**
- * Re-encodes id and accountId for both coin and token operations into the bridge's format.
+ * Re-encodes accountId for both coin and token operations into the bridge's format,
+ * then delegates id assignment to `assignBridgeOperationIds`.
  * Token operations: accountId becomes encodeTokenAccountId, filtered to CAL-listed tokens only.
  * Coin operations: accountId becomes ledgerAccountId.
  */
@@ -136,33 +157,41 @@ export function resolveBridgeOperations({
   bridgeTokenOperations: Operation<HederaOperationExtra>[];
 } {
   const keptTokenOperationHashes = new Set<string>();
+  // A fee-only tx (no token ops at all) must keep its FEES op regardless of CAL.
+  const allTokenOperationHashes = new Set(tokenOperations.map(op => op.hash));
 
-  const bridgeTokenOperations = tokenOperations.flatMap(operation => {
+  // Token ops sharing a hash with one of these get an anchored id (see
+  // TOKEN_ANCHOR_HASH_SUFFIX) so they don't collide with the coin op's id.
+  const valueCoinOperationHashes = new Set(
+    coinOperations.filter(op => op.type !== "FEES").map(op => op.hash),
+  );
+
+  const resolvedTokenOperations = tokenOperations.flatMap(operation => {
     const tokenAddress = operation.contract?.toLowerCase();
     const token = tokenAddress ? calTokenByAddress.get(tokenAddress) : undefined;
     if (!token) return [];
 
     keptTokenOperationHashes.add(operation.hash);
     const tokenAccountId = encodeTokenAccountId(ledgerAccountId, token);
-    return [
-      {
-        ...operation,
-        accountId: tokenAccountId,
-        id: encodeOperationId(tokenAccountId, operation.hash, operation.type),
-      },
-    ];
+    return [{ ...operation, accountId: tokenAccountId }];
   });
 
-  // persist only FEES ops for token transfers that are in CAL
-  const bridgeCoinOperations = coinOperations
-    .filter(op => (op.type !== "FEES" ? true : keptTokenOperationHashes.has(op.hash)))
-    .map(op => ({
-      ...op,
-      id: encodeOperationId(ledgerAccountId, op.hash, op.type),
-      accountId: ledgerAccountId,
-    }));
+  // Drop a FEES op only if its tx had token ops and none survived the CAL filter.
+  const resolvedCoinOperations = coinOperations
+    .filter(
+      op =>
+        op.type !== "FEES" ||
+        keptTokenOperationHashes.has(op.hash) ||
+        !allTokenOperationHashes.has(op.hash),
+    )
+    .map(op => ({ ...op, accountId: ledgerAccountId }));
 
-  return { bridgeCoinOperations, bridgeTokenOperations };
+  return {
+    bridgeCoinOperations: assignBridgeOperationIds(resolvedCoinOperations),
+    bridgeTokenOperations: assignBridgeOperationIds(resolvedTokenOperations, op =>
+      valueCoinOperationHashes.has(op.hash) ? `${op.hash}${TOKEN_ANCHOR_HASH_SUFFIX}` : op.hash,
+    ),
+  };
 }
 
 export const getSubAccounts = async ({
@@ -301,9 +330,10 @@ const makeCoinOperationForOrphanChildOperation = async (
     subOperations: [],
     nftOperations: [],
     internalOperations: [],
-    accountId: "",
+    accountId,
     date: childOperation.date,
-    extra: {},
+    // carries the child's extra so the anchor row has its own explorer link/details
+    extra: { ...childOperation.extra },
   };
 };
 
@@ -317,15 +347,18 @@ export const prepareOperations = async (
   const preparedCoinOperations = coinOperations.map(op => ({ ...op }));
   const preparedTokenOperations = tokenOperations.map(op => ({ ...op }));
 
-  // loop through coin operations to prepare a map of hash => operations
+  // Map hash => FEES coin operations, the only valid parent for a token operation.
+  // A non-FEES coin op sharing the hash (multi-asset tx) means the token op
+  // renders on its own sub-account instead, so no NONE anchor is created for it.
   const coinOperationsByHash: Record<string, CoinOperationForOrphanChildOperation[]> = {};
+  const coinOperationHashes = new Set<string>();
   preparedCoinOperations.forEach(op => {
-    if (!coinOperationsByHash[op.hash]) {
-      coinOperationsByHash[op.hash] = [];
-    }
-
     op.subOperations = [];
-    coinOperationsByHash[op.hash].push(op as CoinOperationForOrphanChildOperation);
+    coinOperationHashes.add(op.hash);
+
+    if (op.type !== "FEES") return;
+
+    (coinOperationsByHash[op.hash] ??= []).push(op as CoinOperationForOrphanChildOperation);
   });
 
   // loop through token operations to potentially copy them as a child operation of a coin operation
@@ -336,9 +369,12 @@ export const prepareOperations = async (
     let mainOperations = coinOperationsByHash[tokenOperation.hash];
 
     if (!mainOperations?.length) {
+      if (coinOperationHashes.has(tokenOperation.hash)) continue;
+
       const noneOperation = await makeCoinOperationForOrphanChildOperation(tokenOperation);
       mainOperations = [noneOperation];
       preparedCoinOperations.push(noneOperation);
+      coinOperationsByHash[tokenOperation.hash] = mainOperations;
     }
 
     // ugly loop in loop but in theory, this can only be a 2 elements array maximum in the case of a self send

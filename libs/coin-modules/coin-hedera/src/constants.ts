@@ -127,6 +127,13 @@ export const OP_TYPES_EXCLUDING_FEES: OperationType[] = [
  */
 export const STAKING_REWARD_HASH_SUFFIX = "-staking-reward";
 
+/**
+ * Discriminator mixed into the `encodeOperationId` hash argument for token operations
+ * of a transaction that also moves HBAR. Affects only `operation.id`; `operation.hash`
+ * always stays the clean transaction hash.
+ */
+export const TOKEN_ANCHOR_HASH_SUFFIX = "-token-anchor";
+
 export const MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE: Record<string, OperationType> = {
   [HEDERA_TRANSACTION_NAMES.TokenAssociate]: "ASSOCIATE_TOKEN",
   [HEDERA_TRANSACTION_NAMES.ContractCall]: "CONTRACT_CALL",

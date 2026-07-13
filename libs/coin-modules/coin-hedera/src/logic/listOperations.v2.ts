@@ -14,6 +14,7 @@ import { parseTransfers, enrichERC20Transfers, analyzeStakingOperation } from ".
 import type {
   EnrichedERC20Transfer,
   HederaMirrorToken,
+  HederaMirrorTokenTransfer,
   HederaMirrorTransaction,
   HederaOperationExtra,
   MergedTransaction,
@@ -209,7 +210,61 @@ async function processERC20TokenTransfer({
   };
 }
 
-async function processHTSTokenTransfers({
+// Returns null when the mirror data doesn't support sender->receiver pairing
+// (e.g. many-to-many transfers); callers should then emit a single netted operation.
+function decomposeSoleSenderFanout({
+  address,
+  senders,
+  recipients,
+  recipientNets,
+  valueLeg,
+}: {
+  address: string;
+  senders: string[];
+  recipients: string[];
+  recipientNets: Map<string, BigNumber>;
+  valueLeg: BigNumber;
+}): { recipient: string; net: BigNumber }[] | null {
+  const isSoleSender = senders.length === 1 && senders[0] === address;
+  if (!isSoleSender || recipients.length <= 1) return null;
+
+  const recipientSum = [...recipientNets.values()].reduce(
+    (acc, amount) => acc.plus(amount),
+    new BigNumber(0),
+  );
+  if (!recipientSum.eq(valueLeg)) return null;
+
+  return recipients.map(recipient => ({
+    recipient,
+    net: recipientNets.get(recipient) ?? new BigNumber(0),
+  }));
+}
+
+// True when a third party moved this transfer via a granted allowance (Hedera "approval" transfer).
+function isApprovalTransfer(
+  transfer: { account: string; amount: number; is_approval?: boolean },
+  address: string,
+): boolean {
+  return transfer.account === address && transfer.amount < 0 && !!transfer.is_approval;
+}
+
+function groupTransfersByTokenId(
+  transfers: HederaMirrorTokenTransfer[],
+): Map<string, HederaMirrorTokenTransfer[]> {
+  const grouped = new Map<string, HederaMirrorTokenTransfer[]>();
+  for (const transfer of transfers) {
+    const group = grouped.get(transfer.token_id);
+    if (group) {
+      group.push(transfer);
+    } else {
+      grouped.set(transfer.token_id, [transfer]);
+    }
+  }
+  return grouped;
+}
+
+// The HBAR fee is attributed in processCoinTransfers; no FEES op is created here.
+function processHTSTokenTransfers({
   rawTx,
   address,
   ledgerAccountId,
@@ -219,44 +274,94 @@ async function processHTSTokenTransfers({
   address: string;
   ledgerAccountId: string;
   commonData: ReturnType<typeof getCommonMirrorOperationData>;
-}): Promise<{
-  coinOperation: Operation<HederaOperationExtra> | undefined;
-  tokenOperation: Operation<HederaOperationExtra>;
-} | null> {
+}): Operation<HederaOperationExtra>[] {
   const tokenTransfers = rawTx.token_transfers ?? [];
-  if (tokenTransfers.length === 0) return null;
+  if (tokenTransfers.length === 0) return [];
 
-  const tokenId = tokenTransfers[0].token_id;
-  const { type, value, senders, recipients } = parseTransfers(tokenTransfers, address);
   const { hash, fee, date, blockHeight, blockHash, hasFailed } = commonData;
-  const extra = { ...commonData.extra };
+  const transfersByTokenId = groupTransfersByTokenId(tokenTransfers);
+  const tokenOperations: Operation<HederaOperationExtra>[] = [];
 
-  let coinOperation: Operation<HederaOperationExtra> | undefined;
+  for (const [tokenId, group] of transfersByTokenId) {
+    const { type, value, senders, recipients, recipientNets } = parseTransfers(group, address);
 
-  // Add main FEES coin operation for parent tx representing a token transfer (nonce > 0 means child transaction like TOKENWIPE)
-  if (type === "OUT" && rawTx.nonce === 0) {
-    coinOperation = {
-      id: `${hash}:FEES`,
+    if (type === "NONE" || value.isZero()) continue;
+
+    const isApproval = group.some(transfer => isApprovalTransfer(transfer, address));
+
+    const commonFields = {
       accountId: ledgerAccountId,
-      type: "FEES",
-      value: fee,
-      recipients,
-      senders,
+      contract: tokenId,
+      standard: "hts",
+      type,
       hash,
       fee,
       date,
       blockHeight,
       blockHash,
       hasFailed,
-      extra,
-    } satisfies Operation<HederaOperationExtra>;
+      extra: {
+        ...commonData.extra,
+        ...(isApproval && { isApproval: true }),
+      },
+    } satisfies Partial<Operation<HederaOperationExtra>>;
+
+    const pushTokenOperation = (idSuffix: string, legValue: BigNumber, legRecipients: string[]) => {
+      tokenOperations.push({
+        ...commonFields,
+        id: `${hash}:${type}:${tokenId}${idSuffix}`,
+        value: legValue,
+        recipients: legRecipients,
+        senders,
+      } satisfies Operation<HederaOperationExtra>);
+    };
+
+    const fanout =
+      type === "OUT"
+        ? decomposeSoleSenderFanout({
+            address,
+            senders,
+            recipients,
+            recipientNets,
+            valueLeg: value,
+          })
+        : null;
+
+    if (fanout) {
+      for (const { recipient, net } of fanout) {
+        pushTokenOperation(`:${recipient}`, net, [recipient]);
+      }
+    } else {
+      pushTokenOperation("", value, recipients);
+    }
   }
 
-  const tokenOperation = {
-    id: `${hash}:${type}:${tokenId}`,
+  return tokenOperations;
+}
+
+function buildCoinOperation({
+  commonData,
+  ledgerAccountId,
+  idSuffix,
+  type,
+  value,
+  senders,
+  recipients,
+  extra,
+}: {
+  commonData: ReturnType<typeof getCommonMirrorOperationData>;
+  ledgerAccountId: string;
+  idSuffix: string;
+  type: OperationType;
+  value: BigNumber;
+  senders: string[];
+  recipients: string[];
+  extra: HederaOperationExtra;
+}): Operation<HederaOperationExtra> {
+  const { hash, fee, date, blockHeight, blockHash, hasFailed } = commonData;
+  return {
+    id: `${hash}:${idSuffix}`,
     accountId: ledgerAccountId,
-    contract: tokenId,
-    standard: "hts",
     type,
     value,
     recipients,
@@ -268,11 +373,6 @@ async function processHTSTokenTransfers({
     blockHash,
     hasFailed,
     extra,
-  } satisfies Operation<HederaOperationExtra>;
-
-  return {
-    coinOperation,
-    tokenOperation,
   };
 }
 
@@ -300,53 +400,150 @@ function processCoinTransfers({
     return [];
   }
 
-  const { type, value, senders, recipients } = parseTransfers(transfers, address, stakingReward);
+  const { senders, recipients, netAmount, recipientNets } = parseTransfers(
+    transfers,
+    address,
+    stakingReward,
+  );
+  const fee = commonData.fee;
 
-  const { hash, fee, date, blockHeight, blockHash, hasFailed } = commonData;
-  const extra = { ...commonData.extra };
-  let operationType = MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE[rawTx.name] ?? type;
+  const isApproval = transfers.some(transfer => isApprovalTransfer(transfer, address));
+  const customType = MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE[rawTx.name];
 
-  // update operation type and extra fields if staking analysis is available
-  if (stakingAnalysis) {
-    operationType = stakingAnalysis.operationType;
-    extra.previousStakingNodeId = stakingAnalysis.previousStakingNodeId;
-    extra.targetStakingNodeId = stakingAnalysis.targetStakingNodeId;
-    extra.stakedAmount = new BigNumber(stakingAnalysis.stakedAmount.toString());
+  if (customType || stakingAnalysis) {
+    const extra = { ...commonData.extra };
+    let operationType: OperationType =
+      customType ?? (netAmount.lt(0) ? "OUT" : netAmount.gt(0) ? "IN" : "NONE");
+
+    if (stakingAnalysis) {
+      operationType = stakingAnalysis.operationType;
+      extra.previousStakingNodeId = stakingAnalysis.previousStakingNodeId;
+      extra.targetStakingNodeId = stakingAnalysis.targetStakingNodeId;
+      extra.stakedAmount = new BigNumber(stakingAnalysis.stakedAmount.toString());
+    }
+
+    // if recipients array is empty, add the node where the transaction was submitted as recipient
+    if (recipients.length === 0 && rawTx.node) {
+      recipients.push(rawTx.node);
+    }
+
+    // try to enrich ASSOCIATE_TOKEN operation with extra.associatedTokenId
+    // this value is used by custom OperationDetails components in Hedera family
+    // accounts or contracts must first associate with an HTS token before they can receive or send that token; without association, token transfers fail
+    if (operationType === "ASSOCIATE_TOKEN") {
+      const relatedMirrorToken = mirrorTokens.find(t => {
+        return t.created_timestamp === rawTx.consensus_timestamp;
+      });
+
+      if (relatedMirrorToken) {
+        extra.associatedTokenId = relatedMirrorToken.token_id;
+      }
+    }
+
+    coinOperations.push(
+      buildCoinOperation({
+        commonData,
+        ledgerAccountId,
+        idSuffix: operationType,
+        type: operationType,
+        value: netAmount.abs(),
+        senders,
+        recipients,
+        extra,
+      }),
+    );
+
+    return coinOperations;
   }
 
-  // if recipients array is empty, add the node where the transaction was submitted as recipient
-  if (recipients.length === 0 && rawTx.node) {
-    recipients.push(rawTx.node);
-  }
+  // Mirror nets the payer's row as value+fee combined; add the fee back to
+  // recover the pre-fee transfer amount so direction/value can be classified.
+  const isPayer = extractFeesPayer(rawTx) === address;
+  const valueDelta = netAmount.plus(isPayer ? fee : new BigNumber(0));
 
-  // try to enrich ASSOCIATE_TOKEN operation with extra.associatedTokenId
-  // this value is used by custom OperationDetails components in Hedera family
-  // accounts or contracts must first associate with an HTS token before they can receive or send that token; without association, token transfers fail
-  if (operationType === "ASSOCIATE_TOKEN") {
-    const relatedMirrorToken = mirrorTokens.find(t => {
-      return t.created_timestamp === rawTx.consensus_timestamp;
+  const pushFeesOperation = (parties?: Pick<Operation, "senders" | "recipients">) => {
+    coinOperations.push(
+      buildCoinOperation({
+        commonData,
+        ledgerAccountId,
+        idSuffix: "FEES",
+        type: "FEES",
+        value: fee,
+        senders: parties?.senders ?? senders,
+        recipients:
+          parties?.recipients ??
+          (recipients.length === 0 && rawTx.node ? [rawTx.node] : recipients),
+        extra: { ...commonData.extra },
+      }),
+    );
+  };
+
+  if (valueDelta.lt(0)) {
+    // Fee is duplicated onto every fanned-out OUT leg (known limitation).
+    const fanout = decomposeSoleSenderFanout({
+      address,
+      senders,
+      recipients,
+      recipientNets,
+      valueLeg: valueDelta.abs(),
     });
 
-    if (relatedMirrorToken) {
-      extra.associatedTokenId = relatedMirrorToken.token_id;
+    if (fanout) {
+      for (const { recipient, net } of fanout) {
+        coinOperations.push(
+          buildCoinOperation({
+            commonData,
+            ledgerAccountId,
+            idSuffix: `OUT:${recipient}`,
+            type: "OUT",
+            // value is fee-inclusive only when this account paid the fee
+            value: net.plus(isPayer ? fee : new BigNumber(0)),
+            senders,
+            recipients: [recipient],
+            extra: { ...commonData.extra, ...(isApproval && { isApproval: true }) },
+          }),
+        );
+      }
+    } else {
+      // OUT value includes the fee (Ledger Live convention); no separate FEES op.
+      coinOperations.push(
+        buildCoinOperation({
+          commonData,
+          ledgerAccountId,
+          idSuffix: "OUT",
+          type: "OUT",
+          value: netAmount.abs(),
+          senders,
+          recipients: recipients.length === 0 && rawTx.node ? [rawTx.node] : recipients,
+          extra: { ...commonData.extra, ...(isApproval && { isApproval: true }) },
+        }),
+      );
     }
-  }
+  } else if (valueDelta.gt(0)) {
+    // IN excludes the fee; a fee paid by the user (e.g. swap) becomes a separate FEES op.
+    coinOperations.push(
+      buildCoinOperation({
+        commonData,
+        ledgerAccountId,
+        idSuffix: "IN",
+        type: "IN",
+        value: valueDelta,
+        senders,
+        recipients,
+        extra: { ...commonData.extra },
+      }),
+    );
 
-  coinOperations.push({
-    id: `${hash}:${operationType}`,
-    accountId: ledgerAccountId,
-    type: operationType,
-    value,
-    recipients,
-    senders,
-    hash,
-    fee,
-    date,
-    blockHeight,
-    blockHash,
-    hasFailed,
-    extra,
-  });
+    if (isPayer && fee.gt(0)) {
+      pushFeesOperation();
+    }
+  } else if (isPayer && fee.gt(0)) {
+    // token-only send: no HBAR leg, but attribute the FEES op to the token transfer's parties
+    const tokenTransfers = rawTx.token_transfers ?? [];
+    pushFeesOperation(
+      tokenTransfers.length > 0 ? parseTransfers(tokenTransfers, address) : undefined,
+    );
+  }
 
   return coinOperations;
 }
@@ -400,28 +597,25 @@ async function processTransactionItem({
       : null;
 
   if (mergedTx.type === "mirror") {
-    const htsTokenResult = await processHTSTokenTransfers({
+    // a single CryptoTransfer can move HBAR and HTS tokens at once, so run both paths
+    const tokenOps = processHTSTokenTransfers({
       rawTx: mirrorTx,
       address,
       ledgerAccountId,
       commonData,
     });
+    newTokenOperations.push(...tokenOps);
 
-    if (htsTokenResult?.tokenOperation) newTokenOperations.push(htsTokenResult.tokenOperation);
-    if (htsTokenResult?.coinOperation) newCoinOperations.push(htsTokenResult.coinOperation);
-
-    if (!htsTokenResult) {
-      const coinOps = processCoinTransfers({
-        rawTx: mirrorTx,
-        address,
-        ledgerAccountId,
-        commonData,
-        mirrorTokens,
-        stakingReward,
-        stakingAnalysis,
-      });
-      newCoinOperations.push(...coinOps);
-    }
+    const coinOps = processCoinTransfers({
+      rawTx: mirrorTx,
+      address,
+      ledgerAccountId,
+      commonData,
+      mirrorTokens,
+      stakingReward,
+      stakingAnalysis,
+    });
+    newCoinOperations.push(...coinOps);
   } else {
     const erc20TokenResult = await processERC20TokenTransfer({
       enrichedERC20Transfer: mergedTx.data,
@@ -536,10 +730,14 @@ export async function listOperationsV2({
     tokenOperations.push(...result.newTokenOperations);
   }
 
+  // Keep standalone FEES ops (e.g. allowance approve, netted self-send) — they're
+  // the tx's only trace, unlike FEES ops that accompany a token op of the same tx.
+  const tokenOperationHashes = new Set(tokenOperations.map(op => op.hash));
+
   return {
     tokenOperations,
     coinOperations: skipFeesForTokenOperations
-      ? coinOperations.filter(op => op.type !== "FEES")
+      ? coinOperations.filter(op => op.type !== "FEES" || !tokenOperationHashes.has(op.hash))
       : coinOperations,
     nextCursor: mergeResult.nextCursor,
   };
