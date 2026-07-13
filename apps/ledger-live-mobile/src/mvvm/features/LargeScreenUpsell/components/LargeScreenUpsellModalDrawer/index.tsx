@@ -4,35 +4,74 @@ import { Platform } from "react-native";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { LargeScreenUpsellModalContent } from "../LargeScreenUpsellModalContent";
+import type { LargeScreenUpsellDismissMethod } from "../../analytics";
 
 type LargeScreenUpsellModalDrawerProps = Readonly<{
   isOpen: boolean;
-  onClose: () => void;
+  onDismiss: (dismissMethod: LargeScreenUpsellDismissMethod) => void;
   featureIntroViewModel: FeatureIntroViewModel;
   bottomInset: number;
 }>;
 
 export function LargeScreenUpsellModalDrawer({
   isOpen,
-  onClose,
+  onDismiss,
   featureIntroViewModel,
   bottomInset,
 }: LargeScreenUpsellModalDrawerProps) {
   const [hasRenderedContent, setHasRenderedContent] = useState(isOpen);
   const isOpenRef = useRef(isOpen);
   isOpenRef.current = isOpen;
+  const lastExplicitDismissMethodRef = useRef<LargeScreenUpsellDismissMethod | null>(null);
+  const hasReportedDismissRef = useRef(false);
+  const hasActiveOpeningRef = useRef(isOpen);
 
   useEffect(() => {
     if (isOpen) {
       setHasRenderedContent(true);
+      hasReportedDismissRef.current = false;
+      lastExplicitDismissMethodRef.current = null;
+      hasActiveOpeningRef.current = true;
     }
   }, [isOpen]);
 
   const handleModalHide = useCallback(() => {
     if (!isOpenRef.current) {
       setHasRenderedContent(false);
+      hasActiveOpeningRef.current = false;
     }
   }, []);
+
+  const reportDismiss = useCallback(
+    (dismissMethod: LargeScreenUpsellDismissMethod) => {
+      if (!hasActiveOpeningRef.current || hasReportedDismissRef.current) {
+        return;
+      }
+
+      hasReportedDismissRef.current = true;
+      onDismiss(dismissMethod);
+    },
+    [onDismiss],
+  );
+
+  const handleHeaderClosePressed = useCallback(() => {
+    lastExplicitDismissMethodRef.current = "close_button";
+    reportDismiss("close_button");
+  }, [reportDismiss]);
+
+  const handleBackdropPress = useCallback(() => {
+    lastExplicitDismissMethodRef.current = "outside_tap";
+    reportDismiss("outside_tap");
+  }, [reportDismiss]);
+
+  const handleClose = useCallback(() => {
+    if (lastExplicitDismissMethodRef.current) {
+      lastExplicitDismissMethodRef.current = null;
+      return;
+    }
+
+    reportDismiss("outside_tap");
+  }, [reportDismiss]);
 
   const shouldRenderContent = isOpen || hasRenderedContent;
 
@@ -40,7 +79,9 @@ export function LargeScreenUpsellModalDrawer({
     <QueuedDrawerBottomSheet
       key="large-screen-upsell-modal-drawer"
       isRequestingToBeOpened={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
+      onHeaderClosePressed={handleHeaderClosePressed}
+      onBackdropPress={handleBackdropPress}
       onModalHide={handleModalHide}
       enableDynamicSizing
     >
