@@ -182,50 +182,32 @@ export class SwapPage extends WebViewAppPage {
   @step("Select available provider without KYC")
   async selectExchangeWithoutKyc(swap?: Swap) {
     const webview = await this.getWebView();
-
     const providersList = await this.getProviderList();
-
-    // Check if the swap is ETH <-> SOL pair (exclude LiFi for these pairs)
+    const isLns = process.env.SPECULOS_DEVICE === Device.LNS.name;
     const isEthSolPair =
-      swap &&
+      !!swap &&
       ((swap.accountToDebit.currency.id === Currency.ETH.id &&
         swap.accountToCredit.currency.id === Currency.SOL.id) ||
         (swap.accountToDebit.currency.id === Currency.SOL.id &&
           swap.accountToCredit.currency.id === Currency.ETH.id));
 
-    const providersWithoutKYC = providersList.filter(providerName => {
-      const provider = Object.values(SwapProvider).find(p => p.uiName === providerName);
-      if (!provider || provider.kyc) {
-        return false;
-      }
+    const provider = providersList
+      .map(uiName => SwapProvider.getByUiName(uiName))
+      .find(
+        p =>
+          !!p &&
+          !p.kyc &&
+          !p.app &&
+          !(isEthSolPair && p.name === SwapProvider.LIFI.name) &&
+          (!isLns || p.availableOnLns),
+      );
 
-      // Exclude LiFi for ETH <-> SOL pairs on all devices
-      if (isEthSolPair && provider.name === SwapProvider.LIFI.name) {
-        return false;
-      }
-
-      // Additional filter for LNS devices
-      if (process.env.SPECULOS_DEVICE === Device.LNS.name) {
-        return provider.availableOnLns;
-      }
-
-      return true;
-    });
-
-    for (const providerName of providersWithoutKYC) {
-      const provider = Object.values(SwapProvider).find(p => p.uiName === providerName);
-      if (provider && !provider.app) {
-        const providerLocator = webview
-          .locator(this.specificQuoteCardProviderName(provider.name))
-          .first();
-
-        await providerLocator.click();
-
-        return provider;
-      }
+    if (!provider) {
+      throw new Error(`No providers without KYC found: ${providersList.join(", ")}`);
     }
 
-    throw new Error(`No providers without KYC found: ${providersList.join(", ")}`);
+    await webview.locator(this.specificQuoteCardProviderName(provider.name)).first().click();
+    return provider;
   }
 
   @step("Select available provider")
