@@ -319,12 +319,7 @@ for (const transaction of transactionE2E) {
 
 const transactionsAddressInvalid = [
   {
-    transaction: new Transaction(
-      TokenAccount.ALGO_USDT_1,
-      TokenAccount.ALGO_USDT_2,
-      "0.1",
-      Fee.MEDIUM,
-    ),
+    transaction: new Transaction(TokenAccount.ALGO_USDT_1, Account.ALGO_3, "0.1", Fee.MEDIUM),
     recipient: undefined,
     expectedErrorMessage: "Recipient account has not opted in the selected ASA.",
     xrayTicket: "B2CQA-2702",
