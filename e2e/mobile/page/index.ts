@@ -1,5 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import AssetAccountsPage from "./accounts/assetAccounts.page";
+import AssetDetailPage from "./accounts/assetDetail.page";
 import AccountPage from "./accounts/account.page";
 import AccountsPage from "./accounts/accounts.page";
 import AddAccountDrawer from "./accounts/addAccount.drawer";
@@ -62,6 +63,7 @@ const lazyInit = <T>(PageClass: new () => T) => {
 
 export class Application {
   private assetAccountsPageInstance = lazyInit(AssetAccountsPage);
+  private assetDetailPageInstance = lazyInit(AssetDetailPage);
   private accountPageInstance = lazyInit(AccountPage);
   private accountsPageInstance = lazyInit(AccountsPage);
   private addAccountDrawerInstance = lazyInit(AddAccountDrawer);
@@ -117,6 +119,10 @@ export class Application {
 
   public get assetAccountsPage() {
     return this.assetAccountsPageInstance();
+  }
+
+  public get assetDetail() {
+    return this.assetDetailPageInstance();
   }
 
   public get account() {

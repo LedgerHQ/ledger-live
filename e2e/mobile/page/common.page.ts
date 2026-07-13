@@ -115,7 +115,12 @@ export default class CommonPage {
   @Step("Get the account name at index")
   async getAccountName(index = 0) {
     if (await isAggregatedAssetsEnabled()) {
-      await scrollToId(this.accountItemNameRegExp);
+      if (await IsIdVisible("CryptoAddressesList")) {
+        await scrollToId(this.accountItemNameRegExp, "CryptoAddressesList");
+        return await getTextOfElement(this.accountItemNameRegExp, index);
+      }
+      await app.assetDetail.scrollToAddressesHeader();
+      return await app.assetDetail.getAddressItemName(index);
     }
     return await getTextOfElement(this.accountItemNameRegExp, index);
   }
