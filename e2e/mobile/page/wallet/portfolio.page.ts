@@ -113,12 +113,8 @@ export default class PortfolioPage {
 
   @Step("Expect asset row to have the correct counter value")
   async expectAssetRowCounterValue(asset: string, counterValue: string) {
-    if (await isAggregatedAssetsEnabled()) {
-      await scrollToId(this.assetItemBalanceId(asset));
-    } else {
-      await scrollToId(this.assetItemBalanceId(asset), this.accountsListView);
-    }
-    const text = await getTextOfElement(this.assetItemBalanceId(asset));
+    await scrollToId(this.assetItemCountervalueId(asset), this.accountsListView);
+    const text = await getTextOfElement(this.assetItemCountervalueId(asset));
     jestExpect(text).toContain(counterValue);
   }
 
@@ -144,19 +140,21 @@ export default class PortfolioPage {
 
   @Step("Expect operation row to be visible")
   async expectOperationRowToBeVisible() {
-    if (await isAggregatedAssetsEnabled()) {
-      await scrollToId(this.operationRowCounterValue);
-    } else {
-      await scrollToId(this.operationRowCounterValue, this.accountsListView);
-    }
+    await scrollToId(this.operationRowCounterValue, this.accountsListView);
     await detoxExpect(getElementById(this.operationRowCounterValue)).toBeVisible();
   }
 
   @Step("Expect operation to contain counter value")
   async expectOperationCounterValue(counterValue: string) {
-    await this.expectOperationRowToBeVisible();
-    const text = await getTextOfElement(this.operationRowCounterValue);
-    jestExpect(text).toContain(counterValue);
+    if (await isAggregatedAssetsEnabled()) {
+      await app.mainNavigation.tapTopBarTransactionHistory();
+      const text = await app.operation.getOperationCounterValue();
+      jestExpect(text).toContain(counterValue);
+    } else {
+      await this.expectOperationRowToBeVisible();
+      const text = await getTextOfElement(this.operationRowCounterValue);
+      jestExpect(text).toContain(counterValue);
+    }
   }
 
   @Step("Open Portfolio via deeplink")

@@ -2,4 +2,4 @@
 "live-mobile": patch
 ---
 
-Add testIDs to CryptoAddressesListItem, AddressAccountItem, and CryptoAddressesButton (no-accounts state) for e2e test targeting
+Add testIDs to CryptoAddressesListItem, AddressAccountItem, CryptoAddressesButton, and OperationsListItem for e2e test targeting
