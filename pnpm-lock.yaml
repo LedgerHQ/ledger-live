@@ -4028,16 +4028,6 @@ importers:
         specifier: 1.51.0
         version: 1.51.0
 
-  features/platform/contacts:
-    dependencies:
-      '@domain/entity-contact':
-        specifier: workspace:*
-        version: link:../../../domain/entity/contact
-    devDependencies:
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.2
-
   features/platform/currencies:
     dependencies:
       '@domain/api-currency-token':
