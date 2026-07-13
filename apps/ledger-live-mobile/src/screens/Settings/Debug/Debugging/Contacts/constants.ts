@@ -12,6 +12,3 @@ export const ELIGIBLE_ADDRESS_FAMILIES_PRESETS = [
     families: [...DEFAULT_ELIGIBLE_ADDRESS_FAMILIES],
   },
 ] as const;
-
-export type EligibleAddressFamiliesPresetId =
-  (typeof ELIGIBLE_ADDRESS_FAMILIES_PRESETS)[number]["id"];

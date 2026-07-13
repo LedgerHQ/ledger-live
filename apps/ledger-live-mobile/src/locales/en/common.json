@@ -28,6 +28,7 @@
     "cryptoAsset": "Crypto asset",
     "skip": "Skip",
     "next": "Next",
+    "new": "New",
     "noCryptoFound": "No crypto assets found",
     "needHelp": "Do you need help?",
     "edit": "Edit",
@@ -10018,6 +10019,10 @@
       "help": "Help",
       "referral": "Referral"
     },
+    "contacts": {
+      "title": "Contacts",
+      "description": "Manage your contacts"
+    },
     "backupHub": {
       "title": "Backups of your Secret Recovery Phrase",
       "description": "Don't lose access to your assets — back up your secret recovery phrase across multiple formats.",
@@ -10174,6 +10179,17 @@
     },
     "shared": {
       "sponsoredByProvable": "Sponsored by Provable"
+    }
+  },
+  "contacts": {
+    "title": "Contacts",
+    "addContact": "Add contact",
+    "searchPlaceholder": "Search contact",
+    "me": {
+      "name": "Me",
+      "addressCount_zero": "0 address",
+      "addressCount_one": "{{count}} address",
+      "addressCount_other": "{{count}} addresses"
     }
   }
 }

@@ -16,7 +16,7 @@ App layers own routing, screen composition, i18n, and analytics.
 src/
 ├── components/
 │   ├── ContactsButton/   # My Wallet entry
-│   └── ContactsPage/     # Add contact button, Me row
+│   └── ContactsPage/     # Page content + platform-specific actions
 ├── hooks/
 ├── featureFlags.ts
 └── index.ts

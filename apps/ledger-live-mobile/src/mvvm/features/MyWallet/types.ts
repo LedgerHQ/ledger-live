@@ -11,4 +11,5 @@ export type MyWalletNavigatorStackParamList = {
       }
     | undefined;
   [ScreenName.MyWalletHelp]: undefined;
+  [ScreenName.MyWalletContacts]: undefined;
 };
