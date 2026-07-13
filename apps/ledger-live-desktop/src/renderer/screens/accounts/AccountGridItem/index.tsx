@@ -50,6 +50,7 @@ const Card = styled(Box).attrs(() => ({
   boxShadow: 0,
   borderRadius: 1,
 }))`
+  height: 100%;
   cursor: pointer;
   border: 1px solid transparent;
   transition: background-color ease-in-out 200ms;
