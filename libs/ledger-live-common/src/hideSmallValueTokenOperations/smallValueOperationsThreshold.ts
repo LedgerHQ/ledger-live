@@ -177,11 +177,11 @@ export function convertThresholdFromCountervalueMinorUnitToUsd({
 }
 
 /**
- * Returns `true` when an incoming operation should be hidden as a
+ * Returns `true` when an incoming or outgoing operation should be hidden as a
  * "small-value" (dust) transaction.
  *
  * An operation is considered dust when:
- * - its type is "IN" (incoming transfer), AND
+ * - its type is "IN" or "OUT", AND
  * - either its crypto value is exactly zero, OR its fiat countervalue is
  *   strictly below the configured USD threshold (defaults to $0.5,
  *   overridable via ff).
@@ -194,7 +194,7 @@ export function convertThresholdFromCountervalueMinorUnitToUsd({
  * we convert both the operation amount and the USD threshold to user-fiat
  * minor units, then compare those raw values.
  */
-export function isSmallValueIncomingOperation({
+export function isSmallValueOperation({
   operation,
   account,
   countervaluesState,
@@ -207,12 +207,12 @@ export function isSmallValueIncomingOperation({
   /** The user's selected countervalue (fiat) currency, e.g. EUR.
    *  Countervalues are computed from the operation currency (native or token) to this currency. */
   userCounterValueCurrency: Currency;
-  /** USD threshold below which an incoming operation is considered dust.
+  /** USD threshold below which an incoming or outgoing operation is considered dust.
    *  Defaults to MAX_SMALL_VALUE_OPERATIONS_THRESHOLD_USD ($0.5).
    *  Callers provide their product-specific dust-filter threshold. */
   thresholdUsd?: number;
 }): boolean {
-  if (operation.type !== "IN") return false;
+  if (operation.type !== "IN" && operation.type !== "OUT") return false;
 
   if (operation.value.isZero()) return true;
 
