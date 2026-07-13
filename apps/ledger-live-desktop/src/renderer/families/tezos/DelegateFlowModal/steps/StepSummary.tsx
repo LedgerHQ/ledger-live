@@ -214,7 +214,7 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
       {transaction.mode === "delegate" && (
         <Box mt={32}>
           {hasPendingUnstakeToOtherBaker && (
-            <Alert type="warning" mb={4}>
+            <Alert type="warning" mb={4} data-testid="tezos-pending-unstake-warning">
               <Trans i18nKey="tezos.delegation.pendingUnstakeWarning" />
             </Alert>
           )}
