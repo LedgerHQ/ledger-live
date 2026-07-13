@@ -208,6 +208,9 @@ async function init() {
     settingsToLoad.counterValue = migrateLegacyCryptoCounterValue(settingsToLoad.counterValue);
   }
 
+  // supportedCounterValues is now derived at runtime from @domain/entity-currency-fiat — strip stale persisted copy.
+  delete (settingsToLoad as Record<string, unknown>).supportedCounterValues;
+
   if (deepLinkUrl) {
     settingsToLoad.deepLinkUrl = deepLinkUrl;
   }

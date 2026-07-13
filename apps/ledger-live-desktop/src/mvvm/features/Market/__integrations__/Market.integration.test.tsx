@@ -69,46 +69,6 @@ const createMarketState = (overrides = {}) => ({
 
 const createSettingsState = (starredMarketCoins: string[] = []) => ({
   starredMarketCoins,
-  supportedCounterValues: [
-    {
-      value: "usd",
-      label: "US Dollar - USD",
-      currency: {
-        type: "FiatCurrency",
-        ticker: "USD",
-        name: "US Dollar",
-        symbol: "$",
-        units: [
-          {
-            code: "$",
-            name: "US Dollar",
-            magnitude: 2,
-            showAllDigits: true,
-            prefixCode: true,
-          },
-        ],
-      },
-    },
-    {
-      value: "eur",
-      label: "Euro - EUR",
-      currency: {
-        type: "FiatCurrency",
-        ticker: "EUR",
-        name: "Euro",
-        symbol: "€",
-        units: [
-          {
-            code: "€",
-            name: "Euro",
-            magnitude: 2,
-            showAllDigits: true,
-            prefixCode: true,
-          },
-        ],
-      },
-    },
-  ],
 });
 
 const marketFeatureFlagsState = withFlagOverrides({ lldRefreshMarketData: { enabled: false } });
