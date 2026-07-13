@@ -5,6 +5,7 @@ import { TrackScreen } from "~/analytics";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { ProfileSection } from "./views/ProfileSection";
 import { QuickActionsRow } from "./views/QuickActionsRow";
+import { ContactsButton } from "LLM/features/Contacts";
 import { DeviceSection } from "./views/DeviceSection";
 import { MyLedgerSection } from "./views/MyLedgerSection";
 
@@ -23,6 +24,7 @@ export function MyWalletScreen() {
             <ProfileSection />
             <QuickActionsRow />
           </Box>
+          <ContactsButton />
         </Box>
       )}
       {/* temporary hide the new UI until it's ready */}
