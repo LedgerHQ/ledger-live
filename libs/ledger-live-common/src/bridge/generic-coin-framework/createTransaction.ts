@@ -67,6 +67,7 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         mode: "send",
       };
     case "multiversx":
+    case "tron":
       return {
         family: currency.family,
         amount: new BigNumber(0),

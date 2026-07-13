@@ -8,7 +8,11 @@ export function fromTrongridTxInfoToOperation(
   block: Block,
   userAddress: string,
 ): Operation {
-  return {
+  const type = inferOperationType(trongridTxInfo, userAddress);
+  const value = fromBigNumberToBigInt<bigint>(trongridTxInfo.value, BigInt(0));
+  const asset = inferAssetInfo(trongridTxInfo, userAddress);
+
+  const operation: Operation = {
     id: trongridTxInfo.txID,
     tx: {
       hash: trongridTxInfo.txID,
@@ -22,12 +26,20 @@ export function fromTrongridTxInfoToOperation(
       date: trongridTxInfo.date,
       failed: trongridTxInfo.hasFailed,
     },
-    type: inferOperationType(trongridTxInfo, userAddress),
-    value: fromBigNumberToBigInt<bigint>(trongridTxInfo.value, BigInt(0)),
+    type,
+    value,
     senders: [trongridTxInfo.from],
     recipients: trongridTxInfo.to ? [trongridTxInfo.to] : [],
-    asset: inferAssetInfo(trongridTxInfo),
+    asset,
   };
+
+  // The generic coin framework reads `ledgerOpType` from `details` to type the token
+  // sub-account operation; the amount already comes from `value`.
+  if (asset.type !== "native") {
+    operation.details = { ledgerOpType: type };
+  }
+
+  return operation;
 }
 
 function inferOperationType(trongridTxInfo: TrongridTxInfo, userAddress: string): string {
@@ -43,19 +55,25 @@ function inferOperationType(trongridTxInfo: TrongridTxInfo, userAddress: string)
   }
 }
 
-export function inferAssetInfo(trongridTxInfo: TrongridTxInfo): AssetInfo {
+export function inferAssetInfo(trongridTxInfo: TrongridTxInfo, userAddress?: string): AssetInfo {
+  // `assetOwner` identifies the account holding the token sub-account. It is only
+  // meaningful when listing operations for a specific address (account sync); the
+  // block-level operations path leaves it undefined.
+  const owner = userAddress ? { assetOwner: userAddress } : {};
   switch (true) {
     case trongridTxInfo.tokenType === "trc10":
       return {
         type: "trc10",
         // if tokenType is trc10, tokenId is always defined
         assetReference: trongridTxInfo.tokenId as string,
+        ...owner,
       };
     case trongridTxInfo.tokenType === "trc20":
       return {
         type: "trc20",
         // if tokenType is trc20, contractAddress is always defined
         assetReference: trongridTxInfo.tokenAddress as string,
+        ...owner,
       };
     default:
       return { type: "native" };

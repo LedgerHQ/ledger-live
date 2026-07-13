@@ -1,7 +1,6 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
   CoinModuleApi,
-  Balance,
   CraftedTransaction,
   Cursor,
   FeeEstimation,
@@ -11,7 +10,6 @@ import {
   Reward,
   Stake,
   TransactionIntent,
-  TransactionValidation,
   Validator,
   BalanceOptions,
 } from "@ledgerhq/coin-module-framework/api/index";
@@ -29,6 +27,7 @@ import {
   listOperations as listOperationsLogic,
   validateAddress,
 } from "../logic";
+import { validateIntent } from "../logic/validateIntent";
 import { defaultFetchParams, getBlock as getBlockNetwork } from "../network";
 import type { TronMemo } from "../types";
 
@@ -69,16 +68,10 @@ export function createApi(config: TronConfig): CoinModuleApi<TronMemo> {
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
-    validateIntent: async (
-      _transactionIntent: TransactionIntent,
-      _balances: Balance[],
-      _customFees?: FeeEstimation,
-    ): Promise<TransactionValidation> => {
-      throw new Error("validateIntent is not supported");
-    },
-    getNextSequence: async (_address: string) => {
-      throw new Error("getNextSequence is not supported");
-    },
+    validateIntent,
+    // Tron uses (timestamp + ref_block_hash) for replay protection rather than
+    // a per-account nonce, so getNextSequence has no meaningful value here.
+    getNextSequence: async (_address: string) => 0n,
     validateAddress,
     craftTransactionData,
   };
@@ -99,16 +92,19 @@ async function listOperations(
   const effectiveLimit = limit ?? MAX_TRONGRID_LIMIT;
   const effectiveOrder = order ?? "asc";
 
-  let minTimestamp = defaultFetchParams.minTimestamp;
-  if (minHeight > 0) {
-    const block = await getBlockNetwork(minHeight);
-    minTimestamp = block.time?.getTime() ?? defaultFetchParams.minTimestamp;
-  }
-
   return listOperationsLogic(address, {
     limit: effectiveLimit,
-    minTimestamp,
+    minTimestamp: await resolveMinTimestamp(minHeight),
     order: effectiveOrder,
     cursor,
   });
+}
+
+// `minTimestamp` is only a pagination lower bound. When `minHeight` points just
+// past the chain tip the block does not exist yet and getBlock rejects; fall back
+// to the default bound rather than failing the whole operations listing.
+async function resolveMinTimestamp(minHeight: number): Promise<number> {
+  if (minHeight <= 0) return defaultFetchParams.minTimestamp;
+  const block = await getBlockNetwork(minHeight).catch(() => null);
+  return block?.time?.getTime() ?? defaultFetchParams.minTimestamp;
 }

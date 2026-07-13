@@ -20,4 +20,20 @@ describe("createTransaction", () => {
       nonce: new BigNumber(0),
     });
   });
+
+  it("returns the Tron default native send transaction", () => {
+    const account = {
+      type: "Account",
+      currency: getCryptoCurrencyById("tron"),
+    } as unknown as Account;
+
+    expect(createTransaction(account)).toEqual({
+      family: "tron",
+      amount: new BigNumber(0),
+      recipient: "",
+      fees: null,
+      useAllAmount: false,
+      mode: "send",
+    });
+  });
 });

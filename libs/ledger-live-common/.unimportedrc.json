@@ -784,6 +784,7 @@
     "src/families/tezos/signer.ts",
     "src/families/tezos/transaction.ts",
     "src/families/ton/config.ts",
+    "src/families/tron/bridge/api.ts",
     "src/families/tron/coinModuleApi.ts",
     "src/families/tron/config.ts",
     "src/families/vechain/config.ts",

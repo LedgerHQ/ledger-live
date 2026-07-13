@@ -403,7 +403,12 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-tron/deviceTransactionConfig").then(m => m.default),
     loadMockBridge: () => import("../families/tron/bridge/mock").then(m => m.default),
+    loadBridgeApi: () => import("../families/tron/bridge/api").then(m => m.default),
     loadBridgeExtensions: () => import("../families/tron/bridgeExtensions").then(m => m.default),
+    loadValidateAddress: () =>
+      import("@ledgerhq/coin-tron/logic/validateAddress").then(
+        ({ validateAddress }): ValidateAddressFn => validateAddress,
+      ),
   },
   {
     family: "vechain",
