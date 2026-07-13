@@ -121,7 +121,7 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
       withKnownDeviceModels([DeviceModelId.nanoS]),
     );
 
-    render(<IntegrationNavigator />, { overrideInitialState });
+    const { store } = render(<IntegrationNavigator />, { overrideInitialState });
 
     expect(await screen.findByTestId("large-screen-upsell-integration-portfolio")).toBeVisible();
     expect(screen.getByTestId("large-screen-upsell-portfolio-mount")).toBeVisible();
@@ -129,6 +129,7 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
     await waitFor(() => {
       expect(screen.getByTestId("large-screen-upsell-modal-drawer")).toBeVisible();
     });
+    expect(store.getState().largeScreenUpsellModal.retries).toBe(1);
   });
 
   it("should track the modal view with shared analytics properties when it auto-opens", async () => {
@@ -194,7 +195,7 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
       withKnownDeviceModels([DeviceModelId.nanoS]),
     );
 
-    const { user } = render(<IntegrationNavigator />, { overrideInitialState });
+    const { user, store } = render(<IntegrationNavigator />, { overrideInitialState });
 
     await waitFor(() => {
       expect(screen.getByTestId("large-screen-upsell-modal-drawer")).toBeVisible();
@@ -208,6 +209,7 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
       ...NANO_S_OPTED_OUT_ANALYTICS_PROPS,
     });
     expect(track).not.toHaveBeenCalledWith("modal_dismissed", expect.anything());
+    expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
   });
 
   it("should track modal_dismissed with dismissMethod close button exactly once when the header close button is pressed", async () => {
@@ -288,5 +290,33 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
       expect(store.getState().backupHubFeatureIntro.isOpen).toBe(true);
     });
     expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
+  });
+
+  it("should not auto-open when retries already reached threshold and cadence is still active", async () => {
+    const overrideInitialState = withFlagOverrides(
+      {
+        largeScreenUpsell: { enabled: true },
+        lwmProductTour: { enabled: false },
+        lwmGenericAwarenessModal: { enabled: false },
+        analyticsOptIn: { enabled: false },
+      },
+      state => {
+        const stateWithKnownDevice = withKnownDeviceModels([DeviceModelId.nanoS])(state);
+
+        return {
+          ...stateWithKnownDevice,
+          largeScreenUpsellModal: {
+            ...stateWithKnownDevice.largeScreenUpsellModal,
+            retries: 3,
+            lastSeenAt: NOW.getTime(),
+          },
+        };
+      },
+    );
+
+    render(<IntegrationNavigator />, { overrideInitialState });
+
+    expect(await screen.findByTestId("large-screen-upsell-integration-portfolio")).toBeVisible();
+    expect(screen.queryByTestId("large-screen-upsell-modal-drawer")).not.toBeOnTheScreen();
   });
 });
