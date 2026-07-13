@@ -26,6 +26,8 @@ import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
+import { getBlock } from "../logic/getBlock";
+import { getBlockInfo } from "../logic/getBlockInfo";
 import { lastBlock } from "../logic/lastBlock";
 import { listOperations } from "../logic/listOperations";
 import { validateIntent } from "../logic/validateIntent";
@@ -41,38 +43,22 @@ export function createApi(config: KaspaCoinConfig, _currencyId: string): CoinMod
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
+    // --- Blocks / chain state ---
     lastBlock: (): Promise<BlockInfo> => lastBlock(),
-    getBlockInfo: (_height: number): Promise<BlockInfo> => {
-      throw new Error("getBlockInfo is not supported");
-    },
-    getBlock: (_height: number): Promise<Block> => {
-      throw new Error("getBlock is not supported");
-    },
-    getValidators: (_cursor?: Cursor): Promise<Page<Validator>> => {
-      throw new Error("getValidators is not supported");
-    },
+    getBlockInfo: (height: number): Promise<BlockInfo> => getBlockInfo(height),
+    getBlock: (height: number): Promise<Block> => getBlock(height),
+
+    // --- Account state ---
     getBalance: (address: string, options?: BalanceOptions): Promise<Balance[]> =>
       rejectBalanceOptions(() => getBalance(address), options),
     listOperations: (address: string, options: ListOperationsOptions): Promise<Page<Operation>> =>
       listOperations(address, options),
-    getStakes: (_address: string, _cursor?: Cursor): Promise<Page<Stake>> => {
-      throw new Error("getStakes is not supported");
-    },
-    getRewards: (_address: string, _cursor?: Cursor): Promise<Page<Reward>> => {
-      throw new Error("getRewards is not supported");
-    },
+
+    // --- Transaction lifecycle ---
     craftTransaction: (
       transactionIntent: TransactionIntent,
       customFees?: FeeEstimation,
     ): Promise<CraftedTransaction> => craftTransaction(transactionIntent, customFees),
-    craftRawTransaction: (
-      _transaction: string,
-      _sender: string,
-      _publicKey: string,
-      _sequence: bigint,
-    ): Promise<CraftedTransaction> => {
-      throw new Error("craftRawTransaction is not supported");
-    },
     estimateFees: (
       transactionIntent: TransactionIntent,
       customFeesParameters?: FeeEstimation["parameters"],
@@ -85,9 +71,21 @@ export function createApi(config: KaspaCoinConfig, _currencyId: string): CoinMod
       balances: Balance[],
       customFees?: FeeEstimation,
     ): Promise<TransactionValidation> => validateIntent(transactionIntent, balances, customFees),
-    // Kaspa is UTXO-based: no per-account sequence/nonce to advance.
+    craftTransactionData,
+
+    // --- Not applicable to Kaspa's UTXO model ---
+    // No per-account sequence/nonce (replay protection comes from spending one-time UTXOs); no
+    // raw-transaction craft; on-device address validation is not exposed through this API.
     getNextSequence: (_address: string): Promise<bigint> => {
       throw new Error("getNextSequence is not applicable for Kaspa");
+    },
+    craftRawTransaction: (
+      _transaction: string,
+      _sender: string,
+      _publicKey: string,
+      _sequence: bigint,
+    ): Promise<CraftedTransaction> => {
+      throw new Error("craftRawTransaction is not supported");
     },
     validateAddress: (
       _address: string,
@@ -95,6 +93,16 @@ export function createApi(config: KaspaCoinConfig, _currencyId: string): CoinMod
     ): Promise<boolean> => {
       throw new Error("validateAddress is not supported");
     },
-    craftTransactionData,
+
+    // --- Not supported: no native staking, no in-module token standard (blockchain_txs: ["send"]) ---
+    getStakes: (_address: string, _cursor?: Cursor): Promise<Page<Stake>> => {
+      throw new Error("getStakes is not supported");
+    },
+    getRewards: (_address: string, _cursor?: Cursor): Promise<Page<Reward>> => {
+      throw new Error("getRewards is not supported");
+    },
+    getValidators: (_cursor?: Cursor): Promise<Page<Validator>> => {
+      throw new Error("getValidators is not supported");
+    },
   };
 }
