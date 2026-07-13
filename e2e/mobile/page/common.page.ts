@@ -118,11 +118,13 @@ export default class CommonPage {
       if (await IsIdVisible("CryptoAddressesList")) {
         await scrollToId(this.accountItemNameRegExp, "CryptoAddressesList");
         return await getTextOfElement(this.accountItemNameRegExp, index);
+      } else {
+        await app.assetDetail.scrollToAddressesHeader();
+        return await app.assetDetail.getAddressItemName(index);
       }
-      await app.assetDetail.scrollToAddressesHeader();
-      return await app.assetDetail.getAddressItemName(index);
+    } else {
+      return await getTextOfElement(this.accountItemNameRegExp, index);
     }
-    return await getTextOfElement(this.accountItemNameRegExp, index);
   }
 
   @Step("Expect the account name at index")
