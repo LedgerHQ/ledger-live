@@ -17,7 +17,6 @@ export default class AccountsPage extends CommonPage {
     if (await isAggregatedAssetsEnabled()) {
       await openDeeplink("crypto-addresses");
       await waitForElementById(this.cryptoAddressesListId);
-      await scrollToId(this.accountItemNameRegExp, this.cryptoAddressesListId);
     } else {
       await openDeeplink(this.baseLink);
     }
