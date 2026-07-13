@@ -19,6 +19,7 @@ import { QUICK_ACTIONS_TEST_IDS } from "../../testIds";
 import { useTranslation } from "~/context/Locale";
 import { useReceiveNoahEntry } from "LLM/features/Noah/useNoahEntryPoint";
 import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
+import { useOpenSendFlow } from "LLM/features/Send/hooks/useOpenSendFlow";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 
 // Fiat provider manifest ID for Noah integration
@@ -88,6 +89,11 @@ export const useTransferDrawerViewModel = ({
   }, [closeDrawer, handleOpenReceiveDrawer, sourceScreenName]);
 
   const { isEnabled: isNewSendFlowEnabled } = useNewSendFlowFeature();
+  const { handleOpenSendFlow } = useOpenSendFlow({
+    currency,
+    currencyIds: ledgerIds,
+    sourceScreenName,
+  });
   const trackingProperties = useMemo(() => {
     return getSendFlowTrackingProperties(null, null, isNewSendFlowEnabled);
   }, [isNewSendFlowEnabled]);
@@ -100,6 +106,10 @@ export const useTransferDrawerViewModel = ({
       page: sourceScreenName,
     });
     closeDrawer();
+    if (isNewSendFlowEnabled && (currency || ledgerIds?.length)) {
+      handleOpenSendFlow();
+      return;
+    }
     // When opened from an asset, filter the account list to that asset.
     // `currencyIds` covers every network of a multi-network asset (e.g. USDT on
     // Ethereum + Tron), which a single `selectedCurrency` cannot. Without a
@@ -114,7 +124,16 @@ export const useTransferDrawerViewModel = ({
         screen: ScreenName.SendCoin,
       });
     }
-  }, [closeDrawer, navigation, sourceScreenName, currency, ledgerIds, trackingProperties]);
+  }, [
+    closeDrawer,
+    currency,
+    handleOpenSendFlow,
+    isNewSendFlowEnabled,
+    ledgerIds,
+    navigation,
+    sourceScreenName,
+    trackingProperties,
+  ]);
 
   const handleBankTransferPress = useCallback(() => {
     track("button_clicked", {
