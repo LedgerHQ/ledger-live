@@ -1,8 +1,10 @@
+import { useEffect, useRef } from "react";
+import { setPostOnboardingDate } from "@ledgerhq/live-common/postOnboarding/actions";
 import { isCooldownElapsed } from "@ledgerhq/live-common/postOnboarding/logic/upsellFrequency";
 import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { DeviceModelId, DevicesWithTouchScreen } from "@ledgerhq/types-devices";
 import { useFeature } from "@features/platform-feature-flags";
-import { useSelector } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
 import { knownDeviceModelIdsSelector } from "~/reducers/settings";
 
 const NANO_DEVICE_MODEL_IDS = [
@@ -61,27 +63,52 @@ function selectCooldownDeviceModelId(
 }
 
 export function useLargeScreenUpsellEligibility(): LargeScreenUpsellEligibility {
+  const dispatch = useDispatch();
   const feature = useFeature("largeScreenUpsell");
   const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
   const onboardingDate = useSelector(onboardingDateSelector);
+  const hasBackfilledOnboardingDateRef = useRef(false);
 
   const params = feature?.params;
+  const hasSeenTouchscreen = hasSeenTouchscreenDevice(knownDeviceModelIds);
+  const seenNanoDeviceModelIds = getSeenNanoDeviceModelIds(knownDeviceModelIds);
+  const enabledNanoDeviceModelIds = params
+    ? seenNanoDeviceModelIds.filter(deviceModelId => params.audience.models[deviceModelId])
+    : [];
+
+  const shouldBackfillOnboardingDate = Boolean(
+    feature?.enabled &&
+    params &&
+    onboardingDate === null &&
+    !hasSeenTouchscreen &&
+    enabledNanoDeviceModelIds.length > 0,
+  );
+
+  useEffect(() => {
+    if (!shouldBackfillOnboardingDate) {
+      hasBackfilledOnboardingDateRef.current = false;
+      return;
+    }
+
+    if (hasBackfilledOnboardingDateRef.current) {
+      return;
+    }
+
+    hasBackfilledOnboardingDateRef.current = true;
+    dispatch(setPostOnboardingDate({ onboardingDate: new Date() }));
+  }, [dispatch, shouldBackfillOnboardingDate]);
+
   if (!feature?.enabled || !params) {
     return { isEligible: false, reason: "feature_disabled" };
   }
 
-  if (hasSeenTouchscreenDevice(knownDeviceModelIds)) {
+  if (hasSeenTouchscreen) {
     return { isEligible: false, reason: "touchscreen_seen" };
   }
 
-  const seenNanoDeviceModelIds = getSeenNanoDeviceModelIds(knownDeviceModelIds);
   if (seenNanoDeviceModelIds.length === 0) {
     return { isEligible: false, reason: "no_nano" };
   }
-
-  const enabledNanoDeviceModelIds = seenNanoDeviceModelIds.filter(
-    deviceModelId => params.audience.models[deviceModelId],
-  );
 
   if (enabledNanoDeviceModelIds.length === 0) {
     return { isEligible: false, reason: "model_disabled" };
@@ -89,8 +116,9 @@ export function useLargeScreenUpsellEligibility(): LargeScreenUpsellEligibility 
 
   const deviceModelId = selectCooldownDeviceModelId(enabledNanoDeviceModelIds, params.cooldownDays);
   const cooldownDays = resolveCooldownDays(params.cooldownDays, deviceModelId);
+  const onboardingDateForEligibility = onboardingDate ?? new Date();
 
-  if (!isCooldownElapsed(onboardingDate, cooldownDays, new Date())) {
+  if (!isCooldownElapsed(onboardingDateForEligibility, cooldownDays, new Date())) {
     return { isEligible: false, reason: "cooldown", deviceModelId, cooldownDays };
   }
 
