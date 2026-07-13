@@ -459,18 +459,7 @@ export default function Default() {
       return;
     }
 
-    const wasHardReset = window.localStorage.getItem("hard-reset") === "1";
-
-    // If we just did a hard reset and onboarding is not completed, force redirect to onboarding
-    // even if we're on the settings page (where the reset button is)
-    if (wasHardReset && !hasCompletedOnboarding) {
-      navigate("/onboarding", { replace: true });
-      window.localStorage.removeItem("hard-reset");
-      updateIdentify();
-      return;
-    }
-
-    // Normal onboarding check (when not after a reset)
+    // Normal onboarding check
     const userIsOnboardingOrSettingUp =
       pathname.includes("onboarding") ||
       pathname.includes("recover") ||

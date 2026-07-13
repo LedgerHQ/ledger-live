@@ -370,7 +370,9 @@ async function resetAll() {
   if (!DBPath) throw new NoDBPathGiven();
   memoryNamespaces.app = null;
   encryptionKeys = {}; // Clear encryption keys to prevent re-encryption of old data
-  await fs.unlink(path.resolve(DBPath, "app.json"));
+  await fs.unlink(path.resolve(DBPath, "app.json")).catch((e: NodeJS.ErrnoException) => {
+    if (e.code !== "ENOENT") throw e;
+  });
 }
 function isEncryptionKeyCorrect(encryptionKey: string) {
   const [ns, keyPath] = encryptedDataPaths[0]; // conventionally we check the first path

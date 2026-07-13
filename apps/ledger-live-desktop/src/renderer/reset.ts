@@ -20,17 +20,12 @@ export async function hardReset() {
   disableDBMiddleware();
   await resetAll();
   resetStore();
-  // Preserve the hard-reset flag across localStorage.clear() so init.tsx can detect it
-  const hardResetFlag = window.localStorage.getItem("hard-reset");
   window.localStorage.clear();
-  if (hardResetFlag === "1") {
-    window.localStorage.setItem("hard-reset", "1");
-  }
 }
 export function useHardReset() {
-  return () => {
-    window.localStorage.setItem("hard-reset", "1");
-    reload();
+  return async () => {
+    await hardReset();
+    ipcRenderer.send("app-relaunch");
   };
 }
 export function useSoftReset() {
