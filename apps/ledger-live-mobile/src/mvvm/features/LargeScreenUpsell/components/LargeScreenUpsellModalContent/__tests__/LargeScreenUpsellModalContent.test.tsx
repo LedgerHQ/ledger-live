@@ -75,9 +75,11 @@ describe("LargeScreenUpsellModalContent", () => {
   it("should open the primary CTA link when the platform can handle it", async () => {
     const { onPrimaryPress } = await renderAndPressPrimaryCta();
 
-    await waitFor(() => expect(canOpenURLSpy).toHaveBeenCalledWith("https://www.ledger.com"));
-    expect(openURLSpy).toHaveBeenCalledWith("https://www.ledger.com");
-    expect(onPrimaryPress).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(canOpenURLSpy).toHaveBeenCalledWith("https://www.ledger.com");
+      expect(openURLSpy).toHaveBeenCalledWith("https://www.ledger.com");
+      expect(onPrimaryPress).toHaveBeenCalledTimes(1);
+    });
   });
 
   it("should not open the primary CTA link when the platform cannot handle it", async () => {
@@ -85,9 +87,11 @@ describe("LargeScreenUpsellModalContent", () => {
 
     const { onPrimaryPress } = await renderAndPressPrimaryCta();
 
-    await waitFor(() => expect(canOpenURLSpy).toHaveBeenCalledWith("https://www.ledger.com"));
-    expect(openURLSpy).not.toHaveBeenCalled();
-    expect(onPrimaryPress).not.toHaveBeenCalled();
+    await waitFor(() => {
+      expect(canOpenURLSpy).toHaveBeenCalledWith("https://www.ledger.com");
+      expect(openURLSpy).not.toHaveBeenCalled();
+      expect(onPrimaryPress).not.toHaveBeenCalled();
+    });
   });
 
   it("should not open the primary CTA link when canOpenURL rejects", async () => {
@@ -95,9 +99,11 @@ describe("LargeScreenUpsellModalContent", () => {
 
     const { onPrimaryPress } = await renderAndPressPrimaryCta();
 
-    await waitFor(() => expect(canOpenURLSpy).toHaveBeenCalledWith("https://www.ledger.com"));
-    expect(openURLSpy).not.toHaveBeenCalled();
-    expect(onPrimaryPress).not.toHaveBeenCalled();
+    await waitFor(() => {
+      expect(canOpenURLSpy).toHaveBeenCalledWith("https://www.ledger.com");
+      expect(openURLSpy).not.toHaveBeenCalled();
+      expect(onPrimaryPress).not.toHaveBeenCalled();
+    });
   });
 
   it("should not trigger onPrimaryPress when openURL rejects", async () => {
@@ -105,9 +111,39 @@ describe("LargeScreenUpsellModalContent", () => {
 
     const { onPrimaryPress } = await renderAndPressPrimaryCta();
 
-    await waitFor(() => expect(canOpenURLSpy).toHaveBeenCalledWith("https://www.ledger.com"));
-    expect(openURLSpy).toHaveBeenCalledWith("https://www.ledger.com");
+    await waitFor(() => {
+      expect(canOpenURLSpy).toHaveBeenCalledWith("https://www.ledger.com");
+      expect(openURLSpy).toHaveBeenCalledWith("https://www.ledger.com");
+      expect(onPrimaryPress).not.toHaveBeenCalled();
+    });
+  });
+
+  it("should ignore repeated CTA presses while URL opening is in flight", async () => {
+    let resolveOpenURL: (() => void) | null = null;
+    openURLSpy.mockImplementation(
+      () =>
+        new Promise<void>(resolve => {
+          resolveOpenURL = resolve;
+        }),
+    );
+
+    const { onPrimaryPress, user } = renderLargeScreenUpsellModalContent();
+    const cta = screen.getByTestId("large-screen-upsell-modal-primary-button");
+
+    await user.press(cta);
+    await user.press(cta);
+
+    await waitFor(() => {
+      expect(canOpenURLSpy).toHaveBeenCalledTimes(1);
+      expect(openURLSpy).toHaveBeenCalledTimes(1);
+    });
     expect(onPrimaryPress).not.toHaveBeenCalled();
+
+    resolveOpenURL?.();
+
+    await waitFor(() => {
+      expect(onPrimaryPress).toHaveBeenCalledTimes(1);
+    });
   });
 
   it.each([

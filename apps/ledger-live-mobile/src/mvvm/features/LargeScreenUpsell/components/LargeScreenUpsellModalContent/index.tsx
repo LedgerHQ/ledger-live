@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Image, Linking } from "react-native";
 import { useThemedAwarenessModalImage } from "LLM/features/GenericAwarenessModal/hooks/useThemedAwarenessModalImage";
@@ -20,24 +20,40 @@ export function LargeScreenUpsellModalContent({ viewModel }: LargeScreenUpsellMo
   const { imageUrlLight, imageUrlDark, title, subtitle, primaryButtonLabel, primaryButtonLink } =
     content;
   const { imageUrl, showImage } = useThemedAwarenessModalImage({ imageUrlLight, imageUrlDark });
+  const isHandlingCtaPressRef = useRef(false);
   const resolvedPrimaryButtonLink = primaryButtonLink.trim();
   const showPrimaryButton =
     primaryButtonLabel.trim().length > 0 && resolvedPrimaryButtonLink.length > 0;
 
   const handleCtaPress = useCallback(async () => {
+    if (isHandlingCtaPressRef.current) {
+      return;
+    }
+
+    isHandlingCtaPressRef.current = true;
+
     const canOpenPrimaryButtonLink = await Linking.canOpenURL(resolvedPrimaryButtonLink).catch(
       () => false,
     );
 
-    if (!canOpenPrimaryButtonLink) return;
+    if (!canOpenPrimaryButtonLink) {
+      isHandlingCtaPressRef.current = false;
+      return;
+    }
 
-    const hasOpenedPrimaryButtonLink = await Linking.openURL(resolvedPrimaryButtonLink)
-      .then(() => true)
-      .catch(() => false);
+    try {
+      const hasOpenedPrimaryButtonLink = await Linking.openURL(resolvedPrimaryButtonLink)
+        .then(() => true)
+        .catch(() => false);
 
-    if (!hasOpenedPrimaryButtonLink) return;
+      if (!hasOpenedPrimaryButtonLink) {
+        return;
+      }
 
-    onPrimaryPress();
+      onPrimaryPress();
+    } finally {
+      isHandlingCtaPressRef.current = false;
+    }
   }, [onPrimaryPress, resolvedPrimaryButtonLink]);
 
   return (
