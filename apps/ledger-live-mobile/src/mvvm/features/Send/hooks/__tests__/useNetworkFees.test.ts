@@ -2,6 +2,7 @@
 import { BigNumber } from "bignumber.js";
 import { act, renderHook } from "@testing-library/react-native";
 import { createMockAccount } from "../../screens/Recipient/hooks/__tests__/accounts";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { useNetworkFees } from "../useNetworkFees";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
@@ -128,6 +129,49 @@ describe("useNetworkFees", () => {
       uiConfig: { hasCustomFees: false, hasCoinControl: false },
     });
     expect(result.current.feePresetLabelsOptions).toHaveLength(3);
+  });
+
+  it("exposes no networkFeesInfo for a non-TRON currency", () => {
+    const { result } = renderHook(() => useNetworkFees(buildParams()));
+    expect(result.current.networkFeesInfo).toBeNull();
+  });
+
+  it("exposes the TRON fee explanation derived from the status breakdown", () => {
+    const tron = getCryptoCurrencyById("tron");
+    const sufficient = renderHook(() =>
+      useNetworkFees(
+        buildParams({
+          account: { currency: tron },
+          transaction: { family: "tron" },
+          status: {
+            energyRequired: new BigNumber(0),
+            energyAvailable: new BigNumber(0),
+            bandwidthRequired: new BigNumber(270),
+            bandwidthAvailable: new BigNumber(1500),
+          },
+        }),
+      ),
+    );
+    expect(sufficient.result.current.networkFeesInfo?.translationKey).toBe("tronFees.sufficient");
+
+    const insufficient = renderHook(() =>
+      useNetworkFees(
+        buildParams({
+          account: { currency: tron },
+          transaction: { family: "tron" },
+          status: {
+            estimatedFees: new BigNumber(13_740_900),
+            energyRequired: new BigNumber(65000),
+            energyAvailable: new BigNumber(0),
+            bandwidthRequired: new BigNumber(270),
+            bandwidthAvailable: new BigNumber(1500),
+          },
+        }),
+      ),
+    );
+    expect(insufficient.result.current.networkFeesInfo?.translationKey).toBe(
+      "tronFees.insufficient",
+    );
   });
 
   it("maps fee preset options with translated labels and fiat values", () => {

@@ -7,6 +7,7 @@ import type {
   FeePresetOption,
   FeeUnitLabel,
   FlowEffect,
+  NetworkFeesInfo,
   SelfTransferPolicy,
   SendDescriptor,
 } from "../types";
@@ -94,6 +95,13 @@ export const sendFeatures = {
   ): string | null => {
     const d = getSendDescriptor(currency);
     return d?.fees.getFeeCurrencyAccountId?.(transaction) ?? null;
+  },
+  getNetworkFeesInfo: (
+    currency: CryptoOrTokenCurrency | undefined,
+    ctx: { transaction: unknown; status: unknown },
+  ): NetworkFeesInfo | null => {
+    const d = getSendDescriptor(currency);
+    return d?.fees.getNetworkFeesInfo?.(ctx) ?? null;
   },
   getMemoType: fromDescriptor(d => d.inputs.memo?.type, undefined),
   getMemoMaxLength: fromDescriptor(d => d.inputs.memo?.maxLength, undefined),

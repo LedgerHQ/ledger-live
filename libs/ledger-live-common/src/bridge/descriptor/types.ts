@@ -209,6 +209,18 @@ export type CoinControlConfig = Readonly<{
 }>;
 
 /**
+ * Family-agnostic content for the network-fees info affordance (tooltip/drawer): an i18n key
+ * *suffix* (each app prepends its namespace + `.title`/`.description`) plus interpolation values,
+ * mirroring the `fees.${presetId}` pattern so coin logic stays out of the apps.
+ */
+export type NetworkFeesInfo = Readonly<{
+  /** i18n key suffix (e.g. `tronFees.sufficient`); the UI prefixes and suffixes it. */
+  translationKey: string;
+  /** Interpolation values for the resolved translations (e.g. energy/bandwidth amounts). */
+  values?: Record<string, string | number>;
+}>;
+
+/**
  * Fee input options
  */
 export type FeeDescriptor = {
@@ -268,6 +280,8 @@ export type FeeDescriptor = {
    * inspecting `transaction.family`.
    */
   getFeeCurrencyAccountId?: (transaction: unknown) => string | null;
+  /** Family-specific network-fees explanation derived from the tx status; `null` ⇒ generic copy. */
+  getNetworkFeesInfo?: (ctx: { transaction: unknown; status: unknown }) => NetworkFeesInfo | null;
 };
 
 /**
