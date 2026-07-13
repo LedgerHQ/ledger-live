@@ -1115,7 +1115,8 @@ jobs:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ios-test-artifacts
           name: "mobile-e2e-ios-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}-#${{ github.run_id }}"
-          tags: ${{ format('["mobile","ios",{0},{1}]', toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual')), toJSON(inputs.ref || github.ref_name)) }}
+          tags: ${{ format('["mobile","ios",{0}]', toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
+          branch: ${{ inputs.ref || github.ref_name }}
 
   qaa-allure-upload-android:
     name: "QAA Allure Upload - Android (Experimental)"
@@ -1137,7 +1138,8 @@ jobs:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: android-test-artifacts
           name: "mobile-e2e-android-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}-#${{ github.run_id }}"
-          tags: ${{ format('["mobile","android",{0},{1}]', toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual')), toJSON(inputs.ref || github.ref_name)) }}
+          tags: ${{ format('["mobile","android",{0}]', toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
+          branch: ${{ inputs.ref || github.ref_name }}
 
   upload-to-xray:
     name: "Test Mobile E2E > XRAY Report"
