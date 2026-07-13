@@ -3,6 +3,8 @@ import type {
   Operation,
   Page,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { Address } from "@multiversx/sdk-core/out";
+import { ESDT_CONTRACT_ADDRESS_HEX } from "@multiversx/sdk-core/out/constants";
 import BigNumber from "bignumber.js";
 import type { MultiversXNetworkApi } from "../../network/api";
 import type {
@@ -13,6 +15,8 @@ import type {
 import { MultiversXTransferOptions } from "../../types";
 import { MULTIVERSX_STAKING_POOL } from "../../constants";
 import { BinaryUtils } from "../../utils/binary.utils";
+
+const ESDT_SYSTEM_SC_BECH32 = Address.fromHex(ESDT_CONTRACT_ADDRESS_HEX).toBech32();
 
 // Cap the number of concurrent per-token history fetches: an account holding
 // many ESDT tokens would otherwise fan out into a large burst of parallel
@@ -204,7 +208,11 @@ function esdtOpToFramework(
     senders: tx.sender ? [tx.sender] : [],
     recipients: tx.receiver ? [tx.receiver] : [],
     value: BigInt(value.toFixed(0)),
-    asset: { type: "esdt", assetReference: tokenIdentifier },
+    asset: {
+      type: "esdt",
+      assetReference: tokenIdentifier,
+      assetOwner: ESDT_SYSTEM_SC_BECH32,
+    },
     tx: {
       hash: tx.txHash ?? "",
       block: {
@@ -215,6 +223,12 @@ function esdtOpToFramework(
       fees: 0n, // ESDT fees are paid on the parent native op
       date: new Date((tx.timestamp ?? 0) * 1000),
       failed: hasFailed,
+    },
+    details: {
+      ledgerOpType: type,
+      assetAmount: value.toFixed(),
+      assetSenders: tx.sender ? [tx.sender] : [],
+      assetRecipients: tx.receiver ? [tx.receiver] : [],
     },
   };
 }

@@ -31,8 +31,8 @@ describe("Polkadot Deterministic Tester", () => {
   });
 });
 
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
-  process.on(e, async () => {
-    await killChopsticksAndSidecar();
+["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
+  process.on(e, () => {
+    killChopsticksAndSidecar().catch(() => {});
   }),
 );

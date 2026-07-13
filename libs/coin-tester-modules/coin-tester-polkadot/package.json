@@ -78,7 +78,6 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
-    "ts-node": "^10.9.2",
     "typescript": "catalog:",
     "oxlint": "catalog:",
     "oxfmt": "catalog:"
