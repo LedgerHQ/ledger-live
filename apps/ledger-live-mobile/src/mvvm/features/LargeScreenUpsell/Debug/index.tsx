@@ -1,7 +1,8 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { Banner, Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Banner, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { LargeScreenUpsellModalDrawer } from "../components/LargeScreenUpsellModalDrawer";
 import { EditableRow, ReadOnlyRow, SectionCard, StatusRow, ToggleRow } from "./components";
 import { useLargeScreenUpsellDebugViewModel } from "./useLargeScreenUpsellDebugViewModel";
 
@@ -10,9 +11,16 @@ function LargeScreenUpsellDebug() {
     wouldShow,
     isFlagEnabled,
     modalEnabled,
-    killThreshold,
-    cadenceDays,
-    cooldownDaysDefault,
+    discountValue,
+    killThresholdValue,
+    cadenceDaysValue,
+    cooldownDaysDefaultValue,
+    resolvedCooldownDaysValue,
+    handleToggleModalEnabled,
+    handleApplyKillThreshold,
+    handleApplyCadenceDays,
+    handleApplyCooldownDays,
+    handleApplyDiscount,
     breakdown,
     onboardingDateValue,
     onboardingDateHint,
@@ -27,6 +35,15 @@ function LargeScreenUpsellDebug() {
     handleResetRetries,
     handleApplyLastSeen,
     handleSetLastSeenNull,
+    isPreviewOpen,
+    isPreviewOptedIn,
+    previewVariantHint,
+    canPreview,
+    previewViewModel,
+    previewBottomInset,
+    handleOpenPreview,
+    handleClosePreview,
+    handleTogglePreviewVariant,
   } = useLargeScreenUpsellDebugViewModel();
 
   return (
@@ -39,6 +56,29 @@ function LargeScreenUpsellDebug() {
             description="Change any value below and watch the decision update live. All setters are pre-filled with the current persisted value."
           />
         </Box>
+
+        <SectionCard
+          title="Preview modal"
+          subtitle="Force the modal open now, bypassing eligibility and throttling, to preview both copy variants."
+        >
+          <ToggleRow
+            label="Opted-in copy variant"
+            value={isPreviewOptedIn}
+            onChange={handleTogglePreviewVariant}
+            description={previewVariantHint}
+          />
+          <Box lx={{ marginTop: "s8" }}>
+            <Button
+              size="md"
+              appearance="base"
+              isFull
+              disabled={!canPreview}
+              onPress={handleOpenPreview}
+            >
+              Show modal now
+            </Button>
+          </Box>
+        </SectionCard>
 
         <SectionCard>
           <Text typography="body3" lx={{ color: "muted", marginBottom: "s4" }}>
@@ -73,7 +113,7 @@ function LargeScreenUpsellDebug() {
 
         <SectionCard
           title="Feature flag"
-          subtitle="Toggle the flag and inspect the values that drive the decision."
+          subtitle="Toggle the flag and edit the params that drive the decision (local override)."
         >
           <ToggleRow
             label="largeScreenUpsell"
@@ -81,20 +121,46 @@ function LargeScreenUpsellDebug() {
             onChange={handleToggleFlag}
             description={isFlagEnabled ? "Enabled. Toggle to disable." : "Disabled. Toggle to enable."}
           />
+          <ToggleRow
+            label="modal.enabled"
+            value={modalEnabled}
+            onChange={handleToggleModalEnabled}
+            description="Master switch for the modal inside the flag params."
+          />
           <Box lx={{ marginTop: "s8" }}>
-            <ReadOnlyRow
-              label="killThreshold"
-              value={killThreshold != null ? String(killThreshold) : "-"}
+            <EditableRow
+              label="modal.killThreshold"
+              initialValue={killThresholdValue}
+              onApply={handleApplyKillThreshold}
+              description="Dismissals before throttling kicks in."
+              placeholder="3"
+              keyboardType="number-pad"
             />
-            <ReadOnlyRow
-              label="cooldownDays (default)"
-              value={cooldownDaysDefault != null ? String(cooldownDaysDefault) : "-"}
+            <EditableRow
+              label="modal.cadenceDays"
+              initialValue={cadenceDaysValue}
+              onApply={handleApplyCadenceDays}
+              description="Length of the throttle window, in days."
+              placeholder="30"
+              keyboardType="number-pad"
             />
-            <ReadOnlyRow
-              label="cadenceDays"
-              value={cadenceDays != null ? String(cadenceDays) : "-"}
+            <EditableRow
+              label="cooldownDays.default"
+              initialValue={cooldownDaysDefaultValue}
+              onApply={handleApplyCooldownDays}
+              description="Days after onboarding before the modal becomes eligible."
+              placeholder="30"
+              keyboardType="number-pad"
             />
-            <ReadOnlyRow label="modal.enabled" value={String(modalEnabled)} />
+            <EditableRow
+              label="discount"
+              initialValue={discountValue}
+              onApply={handleApplyDiscount}
+              description="Discount ratio shown in the copy (0 to 1)."
+              placeholder="0.2"
+              keyboardType="decimal-pad"
+            />
+            <ReadOnlyRow label="cooldownDays (resolved)" value={resolvedCooldownDaysValue} />
           </Box>
         </SectionCard>
 
@@ -132,6 +198,15 @@ function LargeScreenUpsellDebug() {
           />
         </SectionCard>
       </ScrollView>
+
+      {previewViewModel ? (
+        <LargeScreenUpsellModalDrawer
+          isOpen={isPreviewOpen}
+          onClose={handleClosePreview}
+          featureIntroViewModel={previewViewModel}
+          bottomInset={previewBottomInset}
+        />
+      ) : null}
     </View>
   );
 }

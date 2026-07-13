@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { fireEvent, render, screen } from "@tests/test-renderer";
 import LargeScreenUpsellDebug from "../index";
 import { useLargeScreenUpsellDebugViewModel } from "../useLargeScreenUpsellDebugViewModel";
 
@@ -14,9 +14,16 @@ function buildViewModel(overrides: Record<string, unknown> = {}) {
     wouldShow: false,
     isFlagEnabled: false,
     modalEnabled: true,
-    killThreshold: 3,
-    cadenceDays: 30,
-    cooldownDaysDefault: 30,
+    discountValue: "0.2",
+    killThresholdValue: "3",
+    cadenceDaysValue: "30",
+    cooldownDaysDefaultValue: "30",
+    resolvedCooldownDaysValue: "30",
+    handleToggleModalEnabled: jest.fn(),
+    handleApplyKillThreshold: jest.fn(() => undefined),
+    handleApplyCadenceDays: jest.fn(() => undefined),
+    handleApplyCooldownDays: jest.fn(() => undefined),
+    handleApplyDiscount: jest.fn(() => undefined),
     breakdown: {
       audienceOk: null,
       audienceHint: undefined,
@@ -38,6 +45,15 @@ function buildViewModel(overrides: Record<string, unknown> = {}) {
     handleResetRetries: jest.fn(),
     handleApplyLastSeen: jest.fn(),
     handleSetLastSeenNull: jest.fn(),
+    isPreviewOpen: false,
+    isPreviewOptedIn: false,
+    previewVariantHint: "Opted-out copy (analytics off). Toggle on for the opted-in copy.",
+    canPreview: true,
+    previewViewModel: null,
+    previewBottomInset: 20,
+    handleOpenPreview: jest.fn(),
+    handleClosePreview: jest.fn(),
+    handleTogglePreviewVariant: jest.fn(),
     ...overrides,
   };
 }
@@ -76,5 +92,39 @@ describe("LargeScreenUpsellDebug", () => {
     render(<LargeScreenUpsellDebug />);
 
     expect(screen.getByText("WILL SHOW")).toBeVisible();
+  });
+
+  it("forces the modal preview open on demand", () => {
+    const handleOpenPreview = jest.fn();
+    mockedViewModel.mockReturnValue(buildViewModel({ handleOpenPreview }));
+
+    render(<LargeScreenUpsellDebug />);
+
+    expect(screen.getByText("Preview modal")).toBeVisible();
+    fireEvent.press(screen.getByText("Show modal now"));
+
+    expect(handleOpenPreview).toHaveBeenCalled();
+  });
+
+  it("toggles the previewed copy variant", () => {
+    const handleTogglePreviewVariant = jest.fn();
+    mockedViewModel.mockReturnValue(buildViewModel({ handleTogglePreviewVariant }));
+
+    render(<LargeScreenUpsellDebug />);
+
+    expect(screen.getByText("Opted-in copy variant")).toBeVisible();
+  });
+
+  it("edits a feature flag param", () => {
+    const handleApplyKillThreshold = jest.fn(() => undefined);
+    mockedViewModel.mockReturnValue(buildViewModel({ handleApplyKillThreshold }));
+
+    render(<LargeScreenUpsellDebug />);
+
+    expect(screen.getByText("modal.killThreshold")).toBeVisible();
+    expect(screen.getByText("discount")).toBeVisible();
+    fireEvent.press(screen.getAllByText("Apply")[0]);
+
+    expect(handleApplyKillThreshold).toHaveBeenCalledWith("3");
   });
 });
