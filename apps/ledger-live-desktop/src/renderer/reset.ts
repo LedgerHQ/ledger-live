@@ -7,7 +7,7 @@ import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { resetAll, cleanCache } from "~/renderer/storage";
 import { resetStore } from "~/renderer/store";
 import { cleanAccountsCache } from "~/renderer/actions/accounts";
-import { disable as disableDBMiddleware } from "./middlewares/db";
+import { disable as disableDBMiddleware, enable as enableDBMiddleware } from "./middlewares/db";
 import { clearBridgeCache } from "./bridge/cache";
 
 function reload() {
@@ -18,7 +18,11 @@ export async function hardReset() {
   clearBridgeCache();
   log("clear-cache", "hardReset()");
   disableDBMiddleware();
-  await resetAll();
+  try {
+    await resetAll();
+  } finally {
+    enableDBMiddleware();
+  }
   resetStore();
   // Preserve the hard-reset flag across localStorage.clear() so init.tsx can detect it
   const hardResetFlag = window.localStorage.getItem("hard-reset");

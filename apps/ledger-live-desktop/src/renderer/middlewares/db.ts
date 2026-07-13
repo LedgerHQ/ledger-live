@@ -33,9 +33,12 @@ import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/ind
 let DB_MIDDLEWARE_ENABLED = true;
 
 /** Used during hard reset (reset.ts): disable persist so we don't re-write app.json while clearing. */
-export const disable = (ms = 1000) => {
+export const disable = () => {
   DB_MIDDLEWARE_ENABLED = false;
-  setTimeout(() => (DB_MIDDLEWARE_ENABLED = true), ms);
+};
+
+export const enable = () => {
+  DB_MIDDLEWARE_ENABLED = true;
 };
 
 function accountsExportSelector(state: State) {

@@ -1,7 +1,7 @@
 import type { Dispatch, MiddlewareAPI, UnknownAction } from "@reduxjs/toolkit";
 import { setKey } from "~/renderer/storage";
 import type { State } from "../../reducers";
-import DBMiddleware from "../db";
+import DBMiddleware, { disable, enable } from "../db";
 
 jest.mock("~/renderer/storage", () => ({
   setKey: jest.fn(),
@@ -184,6 +184,42 @@ describe("DBMiddleware - featureFlags branch", () => {
 
     const persisted = mockedSetKey.mock.calls[0][2] as Record<string, unknown>;
     expect(persisted).not.toHaveProperty("remoteFlagsReady");
+  });
+});
+
+describe("DBMiddleware - disable / enable", () => {
+  beforeEach(() => {
+    mockedSetKey.mockReset();
+    enable(); // ensure clean enabled state before each test
+  });
+
+  afterEach(() => {
+    enable(); // always re-enable so other suites are unaffected
+  });
+
+  it("skips all persistence writes when disabled", () => {
+    disable();
+    const state = baseState();
+    const after: FakeState = { ...state, history: { entries: ["/"] } };
+    runMiddleware([state, after], { type: "ROUTER_LOCATION_CHANGED" });
+    expect(mockedSetKey).not.toHaveBeenCalled();
+  });
+
+  it("resumes persistence writes after enable()", () => {
+    disable();
+    enable();
+    const before = baseState();
+    const after: FakeState = { ...before, history: { entries: ["/"] } };
+    runMiddleware([before, after], { type: "ROUTER_LOCATION_CHANGED" });
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "history", after.history);
+  });
+
+  it("calling enable() without a prior disable() is a no-op", () => {
+    enable();
+    const before = baseState();
+    const after: FakeState = { ...before, history: { entries: ["/"] } };
+    runMiddleware([before, after], { type: "ROUTER_LOCATION_CHANGED" });
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "history", after.history);
   });
 });
 
