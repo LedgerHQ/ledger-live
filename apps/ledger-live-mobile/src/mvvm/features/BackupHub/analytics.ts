@@ -5,6 +5,10 @@ export const BACKUP_HUB_FEATURE_INTRO_PAGE = "Ledger Recover Bottomsheet";
 
 export const BACKUP_HUB_FEATURE_INTRO_SOURCE = BACKUP_HUB_TRACKING_PAGE_NAME;
 
+export const BACKUP_HUB_FEATURE_INTRO_PRIMARY_BUTTON = "Try 1 month free";
+
+export const BACKUP_HUB_FEATURE_INTRO_SECONDARY_BUTTON = "Log in";
+
 let hasTrackedBackupHubFeatureIntroView = false;
 
 export const resetBackupHubFeatureIntroViewTracking = () => {
