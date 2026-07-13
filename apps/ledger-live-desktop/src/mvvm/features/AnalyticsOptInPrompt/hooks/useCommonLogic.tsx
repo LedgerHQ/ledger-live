@@ -74,9 +74,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     try {
       await updateIdentify({ force: true });
-    } catch (error) {
-      console.error("Failed to update analytics identify", error);
-    }
+    } catch {}
     if (entryPoint === EntryPoint.onboarding) {
       nextStep?.();
       setNextStep(null);

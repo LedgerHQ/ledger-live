@@ -38,7 +38,6 @@ const handleDownload = async (info: UpdateDownloadedEvent) => {
     await appUpdater.verify();
     sendStatus("check-success");
   } catch (err) {
-    console.error(err);
     if (UPDATE_CHECK_IGNORE) {
       sendStatus("check-success");
     } else {
@@ -53,7 +52,7 @@ const init = () => {
   autoUpdater.on("download-progress", p => sendStatus("download-progress", p));
   autoUpdater.on("update-downloaded", handleDownload);
   autoUpdater.on("error", err => {
-    console.error(err);
+    console.warn("Auto-updater error:", err);
   });
   autoUpdater.autoInstallOnAppQuit = true;
   autoUpdater.autoDownload = true;

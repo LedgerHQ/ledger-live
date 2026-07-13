@@ -55,15 +55,13 @@ export function buildBeforeSend(shouldSend: ShouldSendCallback) {
 
     try {
       anonymizer.filepathRecursiveReplacer(ev);
-    } catch (e) {
-      console.error("Datadog beforeSend: anonymization failed", e);
+    } catch (_e) {
+      return false;
     }
 
     try {
       rewriteAsarUrlsRecursive(ev, new Set());
-    } catch (e) {
-      console.error("Datadog beforeSend: asar url rewrite failed", e);
-    }
+    } catch (_e) {}
 
     return true;
   };

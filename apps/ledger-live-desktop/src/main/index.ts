@@ -105,7 +105,7 @@ app.on("ready", async () => {
   // Defer extension installation to not block startup
   if (__DEV__) {
     setImmediate(() => {
-      installExtensions().catch(console.error);
+      installExtensions().catch(e => console.warn("Dev extensions install failed:", e));
     });
   }
 
@@ -332,7 +332,7 @@ async function installExtensions() {
       loadExtensionOptions: {
         allowFileAccess: true,
       },
-    }).catch(console.error);
+    }).catch(e => console.warn("Dev extensions install failed:", e));
   });
 }
 

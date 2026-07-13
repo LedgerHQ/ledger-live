@@ -289,7 +289,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           dispatch(updateAccountWithUpdater(account.id, accountUpdater));
         },
         error(err) {
-          console.error(err);
+          console.warn("Zcash shielded sync error:", err);
         },
         complete() {
           console.log(`Zcash shielded sync completed on account ${account.id}`);

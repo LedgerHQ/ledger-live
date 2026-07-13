@@ -113,9 +113,7 @@ export function useAnalyticsConsentDialogViewModel() {
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     try {
       await updateIdentify({ force: true });
-    } catch (error) {
-      console.error("Failed to update analytics identify after consent change", error);
-    }
+    } catch {}
   };
 
   const applyOptIn = async () => {

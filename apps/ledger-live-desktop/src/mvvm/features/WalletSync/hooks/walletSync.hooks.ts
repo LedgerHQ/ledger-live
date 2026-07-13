@@ -30,8 +30,6 @@ export const useLifeCycle = () => {
   };
 
   function handleError(error: Error) {
-    console.error("GetMember :" + error);
-
     if (error instanceof TrustchainEjected) reset();
     if (error instanceof TrustchainNotAllowed) reset();
 
@@ -42,6 +40,7 @@ export const useLifeCycle = () => {
     );
 
     if (errorToHandle) errorToHandle[1]();
+    else console.warn("Unhandled WalletSync error:", error);
   }
 
   return {
