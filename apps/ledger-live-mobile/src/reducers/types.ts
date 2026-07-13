@@ -30,6 +30,7 @@ import type { ToastState } from "./toast";
 import type { ModularDrawerState } from "./modularDrawer";
 import type { LLMRTKApiState } from "~/context/rtkQueryApi";
 import type { SupportedFiatsState } from "@domain/entity-currency-fiat";
+import type { ContactsState } from "@domain/entity-contact";
 import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
 import type { TransferDrawerState } from "./transferDrawer";
 import type { SwapTransactionStatusDrawerState } from "./swapTransactionStatusDrawer";
@@ -482,4 +483,5 @@ export type State = LLMRTKApiState & {
   recoverState: RecoverStateSliceState;
   liveAppModal: LiveAppModalState;
   supportedFiats: SupportedFiatsState;
+  contacts: ContactsState;
 };
