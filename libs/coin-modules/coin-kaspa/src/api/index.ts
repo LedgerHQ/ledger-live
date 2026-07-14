@@ -21,16 +21,18 @@ import type {
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import coinConfig, { type KaspaCoinConfig } from "../config";
-import { broadcast } from "../logic/broadcast";
-import { combine } from "../logic/combine";
-import { craftTransaction } from "../logic/craftTransaction";
-import { estimateFees } from "../logic/estimateFees";
-import { getBalance } from "../logic/getBalance";
-import { getBlock } from "../logic/getBlock";
-import { getBlockInfo } from "../logic/getBlockInfo";
-import { lastBlock } from "../logic/lastBlock";
-import { listOperations } from "../logic/listOperations";
-import { validateIntent } from "../logic/validateIntent";
+import {
+  broadcast,
+  combine,
+  craftTransaction,
+  estimateFees,
+  getBalance,
+  getBlock,
+  getBlockInfo,
+  lastBlock,
+  listOperations,
+  validateIntent,
+} from "../logic";
 
 /**
  * Alpaca (CoinModuleApi) factory for native KAS. Kaspa is a UTXO / BlockDAG PoW chain: no
