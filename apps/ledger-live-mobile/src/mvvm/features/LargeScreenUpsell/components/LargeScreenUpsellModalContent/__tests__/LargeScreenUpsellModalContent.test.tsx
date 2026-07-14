@@ -51,17 +51,14 @@ const renderAndPressPrimaryCta = async () => {
 };
 
 describe("LargeScreenUpsellModalContent", () => {
-  let canOpenURLSpy: jest.SpiedFunction<typeof Linking.canOpenURL>;
   let openURLSpy: jest.SpiedFunction<typeof Linking.openURL>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    canOpenURLSpy = jest.spyOn(Linking, "canOpenURL").mockResolvedValue(true);
     openURLSpy = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
   });
 
   afterEach(() => {
-    canOpenURLSpy.mockRestore();
     openURLSpy.mockRestore();
   });
 
@@ -72,36 +69,13 @@ describe("LargeScreenUpsellModalContent", () => {
     expect(screen.getByText("Claim offer")).toBeOnTheScreen();
   });
 
-  it("should open the primary CTA link when the platform can handle it", async () => {
+  it("should open the primary CTA link", async () => {
     const { onPrimaryPress } = await renderAndPressPrimaryCta();
 
     await waitFor(() => {
-      expect(canOpenURLSpy).toHaveBeenCalledWith("https://www.ledger.com");
       expect(openURLSpy).toHaveBeenCalledWith("https://www.ledger.com");
       expect(onPrimaryPress).toHaveBeenCalledTimes(1);
     });
-  });
-
-  it("should not open the primary CTA link when the platform cannot handle it", async () => {
-    canOpenURLSpy.mockResolvedValue(false);
-
-    const { onPrimaryPress } = await renderAndPressPrimaryCta();
-
-    await waitFor(() => expect(canOpenURLSpy).toHaveBeenCalledWith("https://www.ledger.com"));
-    await expect(canOpenURLSpy.mock.results[0]?.value).resolves.toBe(false);
-    expect(openURLSpy).not.toHaveBeenCalled();
-    expect(onPrimaryPress).not.toHaveBeenCalled();
-  });
-
-  it("should not open the primary CTA link when canOpenURL rejects", async () => {
-    canOpenURLSpy.mockRejectedValue(new Error("Unsupported URL"));
-
-    const { onPrimaryPress } = await renderAndPressPrimaryCta();
-
-    await waitFor(() => expect(canOpenURLSpy).toHaveBeenCalledWith("https://www.ledger.com"));
-    await expect(canOpenURLSpy.mock.results[0]?.value).rejects.toThrow("Unsupported URL");
-    expect(openURLSpy).not.toHaveBeenCalled();
-    expect(onPrimaryPress).not.toHaveBeenCalled();
   });
 
   it("should not trigger onPrimaryPress when openURL rejects", async () => {
@@ -130,7 +104,6 @@ describe("LargeScreenUpsellModalContent", () => {
     await user.press(cta);
 
     await waitFor(() => {
-      expect(canOpenURLSpy).toHaveBeenCalledTimes(1);
       expect(openURLSpy).toHaveBeenCalledTimes(1);
     });
     expect(onPrimaryPress).not.toHaveBeenCalled();
