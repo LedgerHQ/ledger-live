@@ -980,6 +980,7 @@ describe("validateIntent", () => {
       });
 
       expect(result.errors.amount).toBeInstanceOf(TezosStakeBlockedByPendingUnstake);
+      expect(result.errors.amount?.name).toBe("TezosStakeBlockedByPendingUnstake");
     });
 
     it("maps unknown taquito errors to a generic Error on amount", async () => {

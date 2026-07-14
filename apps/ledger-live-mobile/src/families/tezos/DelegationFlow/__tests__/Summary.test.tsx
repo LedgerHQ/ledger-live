@@ -16,7 +16,7 @@ const mockAccount = {
 } as unknown as AccountLike;
 
 let mockTransaction: Record<string, unknown>;
-let mockStakingInfo: { unstakedBalance: BigNumber; delegateAddress: string | undefined };
+let mockStakingInfo: { unstakingPositions: { uid: string; delegate?: string }[] };
 const mockStatus = { errors: {}, warnings: {} };
 
 jest.mock("@react-navigation/native", () => ({
@@ -48,6 +48,7 @@ jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
   useStakingPositions: () => [],
   useBaker: () => null,
   useBakers: () => [],
+  isUnstakingPosition: (uid: string) => uid.startsWith("unstaking-"),
 }));
 
 jest.mock("@ledgerhq/live-common/families/tezos/staking", () => ({ whitelist: [] }));
@@ -91,14 +92,6 @@ jest.mock("~/logic/screenTransactionHooks", () => ({
 
 jest.mock("~/analytics", () => ({ TrackScreen: () => null }));
 
-jest.mock("react-native-safe-area-context", () => {
-  const { View } = jest.requireActual("react-native");
-  return {
-    SafeAreaView: ({ children }: { children?: React.ReactNode }) => <View>{children}</View>,
-    useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
-  };
-});
-
 // Body/footer siblings irrelevant to the warning under test (mocked via ~/ paths = same modules).
 jest.mock("~/families/tezos/DelegatingContainer", () => () => null);
 jest.mock("~/families/tezos/BakerImage", () => () => null);
@@ -137,24 +130,30 @@ const makeProps = () =>
 describe("Tezos DelegationSummary — pending-unstake warning", () => {
   beforeEach(() => {
     mockTransaction = { family: "tezos", mode: "delegate", recipient: "tz1NEW" };
-    mockStakingInfo = { unstakedBalance: new BigNumber(0), delegateAddress: undefined };
+    mockStakingInfo = { unstakingPositions: [] };
   });
 
-  it("warns when a pending unstake exists and a different validator is selected", () => {
-    mockStakingInfo = { unstakedBalance: new BigNumber(5), delegateAddress: "tz1OLD" };
+  it("warns when an unfinalizable unstake to a different validator is pending", () => {
+    mockStakingInfo = { unstakingPositions: [{ uid: "unstaking-1", delegate: "tz1OLD" }] };
     render(<DelegationSummary {...makeProps()} />);
-    expect(screen.getByText(WARNING_KEY)).toBeTruthy();
+    expect(screen.getByText(WARNING_KEY)).toBeVisible();
   });
 
   it("does not warn without a pending unstake", () => {
-    mockStakingInfo = { unstakedBalance: new BigNumber(0), delegateAddress: "tz1OLD" };
+    mockStakingInfo = { unstakingPositions: [] };
     render(<DelegationSummary {...makeProps()} />);
     expect(screen.queryByText(WARNING_KEY)).toBeNull();
   });
 
-  it("does not warn when the selected validator is unchanged", () => {
+  it("does not warn when the selected validator matches the pending unstake's delegate", () => {
     mockTransaction = { family: "tezos", mode: "delegate", recipient: "tz1SAME" };
-    mockStakingInfo = { unstakedBalance: new BigNumber(5), delegateAddress: "tz1SAME" };
+    mockStakingInfo = { unstakingPositions: [{ uid: "unstaking-1", delegate: "tz1SAME" }] };
+    render(<DelegationSummary {...makeProps()} />);
+    expect(screen.queryByText(WARNING_KEY)).toBeNull();
+  });
+
+  it("does not warn when the unstake is already finalizable", () => {
+    mockStakingInfo = { unstakingPositions: [{ uid: "finalizable-1", delegate: "tz1OLD" }] };
     render(<DelegationSummary {...makeProps()} />);
     expect(screen.queryByText(WARNING_KEY)).toBeNull();
   });

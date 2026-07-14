@@ -7,6 +7,7 @@ import {
   useDelegation,
   useStakingPositions,
   useTezosStakingInfo,
+  isUnstakingPosition,
 } from "@ledgerhq/live-common/families/tezos/react";
 import { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { Trans } from "react-i18next";
@@ -62,7 +63,7 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
   const accountName = useAccountName(account);
   const delegation = useDelegation(account);
   const stakingPositions = useStakingPositions(account);
-  const { unstakedBalance, delegateAddress } = useTezosStakingInfo(account);
+  const { unstakingPositions } = useTezosStakingInfo(account);
   const baker = useBaker(transaction.recipient);
   const currency = getAccountCurrency(account);
   const unit = useAccountUnit(account);
@@ -71,10 +72,13 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
 
   const isDelegation = delegation || stakingPositions.length > 0;
 
-  // Changing validator while an unfinalizable unstake to the current one is pending blocks staking
-  // with the new validator until that unstake finalizes (~4 days).
+  // Staking with the newly selected validator is blocked by the protocol while an unfinalizable
+  // unstake to a different validator is still pending; warn before the user commits to the change.
   const hasPendingUnstakeToOtherBaker =
-    unstakedBalance.gt(0) && !!transaction.recipient && transaction.recipient !== delegateAddress;
+    !!transaction.recipient &&
+    unstakingPositions.some(
+      p => isUnstakingPosition(p.uid) && !!p.delegate && p.delegate !== transaction.recipient,
+    );
 
   return (
     <Box flow={4} mx={40}>

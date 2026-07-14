@@ -4,9 +4,8 @@ import { render, screen } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import StepSummary from "./StepSummary";
 
-const mockStakingInfo: { unstakedBalance: BigNumber; delegateAddress: string | undefined } = {
-  unstakedBalance: new BigNumber(0),
-  delegateAddress: undefined,
+const mockStakingInfo: { unstakingPositions: { uid: string; delegate?: string }[] } = {
+  unstakingPositions: [],
 };
 
 jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
@@ -14,6 +13,7 @@ jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
   useDelegation: () => null,
   useStakingPositions: () => [],
   useBaker: () => null,
+  isUnstakingPosition: (uid: string) => uid.startsWith("unstaking-"),
 }));
 
 jest.mock("~/renderer/hooks/useAccountUnit", () => ({
@@ -46,28 +46,30 @@ const makeProps = ({ recipient = "tz1NEW", mode = "delegate" } = {}) =>
 
 describe("Tezos delegate StepSummary — pending-unstake warning", () => {
   beforeEach(() => {
-    mockStakingInfo.unstakedBalance = new BigNumber(0);
-    mockStakingInfo.delegateAddress = undefined;
+    mockStakingInfo.unstakingPositions = [];
   });
 
-  it("warns when a pending unstake exists and a different validator is selected", () => {
-    mockStakingInfo.unstakedBalance = new BigNumber(5);
-    mockStakingInfo.delegateAddress = "tz1OLD";
+  it("warns when an unfinalizable unstake to a different validator is pending", () => {
+    mockStakingInfo.unstakingPositions = [{ uid: "unstaking-1", delegate: "tz1OLD" }];
     render(<StepSummary {...makeProps({ recipient: "tz1NEW" })} />);
-    expect(screen.getByTestId("tezos-pending-unstake-warning")).toBeInTheDocument();
+    expect(screen.getByTestId("tezos-pending-unstake-warning")).toBeVisible();
   });
 
   it("does not warn without a pending unstake", () => {
-    mockStakingInfo.unstakedBalance = new BigNumber(0);
-    mockStakingInfo.delegateAddress = "tz1OLD";
+    mockStakingInfo.unstakingPositions = [];
     render(<StepSummary {...makeProps({ recipient: "tz1NEW" })} />);
     expect(screen.queryByTestId("tezos-pending-unstake-warning")).not.toBeInTheDocument();
   });
 
-  it("does not warn when the selected validator is unchanged", () => {
-    mockStakingInfo.unstakedBalance = new BigNumber(5);
-    mockStakingInfo.delegateAddress = "tz1SAME";
+  it("does not warn when the selected validator matches the pending unstake's delegate", () => {
+    mockStakingInfo.unstakingPositions = [{ uid: "unstaking-1", delegate: "tz1SAME" }];
     render(<StepSummary {...makeProps({ recipient: "tz1SAME" })} />);
+    expect(screen.queryByTestId("tezos-pending-unstake-warning")).not.toBeInTheDocument();
+  });
+
+  it("does not warn when the unstake is already finalizable", () => {
+    mockStakingInfo.unstakingPositions = [{ uid: "finalizable-1", delegate: "tz1OLD" }];
+    render(<StepSummary {...makeProps({ recipient: "tz1NEW" })} />);
     expect(screen.queryByTestId("tezos-pending-unstake-warning")).not.toBeInTheDocument();
   });
 });

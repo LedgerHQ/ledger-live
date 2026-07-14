@@ -16,7 +16,11 @@ export const MustDelegateBeforeStaking = createCustomErrorClass("MustDelegateBef
 export const TezosNotEnoughStaked = createCustomErrorClass("TezosNotEnoughStaked");
 
 // Staking with a new delegate is rejected by the protocol while an unfinalizable unstake request
-// to the previous delegate still exists (~4 day freeze). Surfaced during stake fee estimation.
+// to the previous delegate still exists (~4-day freeze). Surfaced during stake fee estimation.
+// Display is i18n-driven (via error.name); the message is a fallback for logs.
 export class TezosStakeBlockedByPendingUnstake extends Error {
   override name = "TezosStakeBlockedByPendingUnstake";
+  constructor() {
+    super("Cannot stake with the new validator while an unfinalizable unstake to the previous one is pending");
+  }
 }

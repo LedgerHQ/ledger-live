@@ -6770,7 +6770,7 @@
     "delegation": {
       "addCustomValidator": "+ Add custom validator",
       "sectionLabel": "Delegation",
-      "pendingUnstakeWarning": "You can change validator now, but you won't be able to stake with the new one until your pending unstake from your current validator finalizes, in ~4 days."
+      "pendingUnstakeWarning": "You can change validator now, but you won't be able to stake with the new one until your pending unstake from your current validator finalizes in ~4 days."
     },
     "staking": {
       "sectionLabel": "Staking",
