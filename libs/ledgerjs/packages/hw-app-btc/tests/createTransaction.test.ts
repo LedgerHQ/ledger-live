@@ -1,7 +1,23 @@
 import { ZCASH_ACTIVATION_HEIGHTS } from "../src/constants";
-import { getDefaultVersions } from "../src/createTransaction";
+import { getDefaultVersions, getZcashBranchId } from "../src/createTransaction";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import Btc from "../src/Btc";
+
+describe("getZcashBranchId", () => {
+  it("returns the NU6.3 branch id at and above its activation height", () => {
+    expect(getZcashBranchId(ZCASH_ACTIVATION_HEIGHTS.NU6_3)).toEqual(
+      Buffer.from([0x5b, 0x16, 0xa5, 0x37]),
+    );
+    expect(getZcashBranchId(ZCASH_ACTIVATION_HEIGHTS.NU6_3 - 1)).toEqual(
+      Buffer.from([0x30, 0xf3, 0x37, 0x54]),
+    );
+  });
+
+  it("defaults an unknown block height to the latest (NU6.3) branch id", () => {
+    expect(getZcashBranchId(undefined)).toEqual(Buffer.from([0x5b, 0x16, 0xa5, 0x37]));
+    expect(getZcashBranchId(null)).toEqual(Buffer.from([0x5b, 0x16, 0xa5, 0x37]));
+  });
+});
 
 describe("createTransaction", () => {
   describe("createTransaction", () => {
