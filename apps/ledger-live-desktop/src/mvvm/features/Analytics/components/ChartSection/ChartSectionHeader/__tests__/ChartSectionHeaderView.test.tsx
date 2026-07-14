@@ -5,6 +5,7 @@ import { ChartSectionHeaderView } from "../ChartSectionHeaderView";
 import type { ChartSectionHeaderViewModel } from "../types";
 
 const baseViewModel: ChartSectionHeaderViewModel = {
+  totalBalanceLabel: "Total balance",
   balance: mockPortfolioBalanceInfo.totalBalance,
   balanceAvailable: true,
   isLoading: false,
@@ -19,17 +20,19 @@ const baseViewModel: ChartSectionHeaderViewModel = {
   percentageValue: 12.34,
   variationText: "+$567.00",
   rangeLabel: "1 week",
+  scrubDateLabel: undefined,
 };
 
 describe("ChartSectionHeaderView", () => {
-  it("renders the balance and variation row", () => {
+  it("renders the total balance label, amount, and variation row", () => {
     render(<ChartSectionHeaderView viewModel={baseViewModel} />);
 
     expect(screen.getByTestId("analytics-chart-header")).toBeVisible();
+    expect(screen.getByTestId("analytics-total-balance-label")).toHaveTextContent("Total balance");
     expect(screen.getByTestId("analytics-balance-amount")).toBeVisible();
     expect(screen.getByTestId("analytics-balance-trend-percentage")).toHaveTextContent("12.34%");
     expect(screen.getByTestId("analytics-balance-trend-value")).toHaveTextContent("+$567.00");
-    expect(screen.getByTestId("analytics-balance-trend")).toHaveTextContent("1 week");
+    expect(screen.getByTestId("analytics-balance-trend-time")).toHaveTextContent("1 week");
   });
 
   it("shows a skeleton when the balance is unavailable", () => {
