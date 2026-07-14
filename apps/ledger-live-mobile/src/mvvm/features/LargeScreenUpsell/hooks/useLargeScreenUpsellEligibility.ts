@@ -1,10 +1,8 @@
-import { useEffect, useRef } from "react";
-import { setPostOnboardingDate } from "@ledgerhq/live-common/postOnboarding/actions";
 import { isCooldownElapsed } from "@ledgerhq/live-common/postOnboarding/logic/upsellFrequency";
 import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { DeviceModelId, DevicesWithTouchScreen } from "@ledgerhq/types-devices";
 import { useFeature } from "@features/platform-feature-flags";
-import { useDispatch, useSelector } from "~/context/hooks";
+import { useSelector } from "~/context/hooks";
 import { knownDeviceModelIdsSelector } from "~/reducers/settings";
 
 const NANO_DEVICE_MODEL_IDS = [
@@ -63,11 +61,9 @@ function selectCooldownDeviceModelId(
 }
 
 export function useLargeScreenUpsellEligibility(): LargeScreenUpsellEligibility {
-  const dispatch = useDispatch();
   const feature = useFeature("largeScreenUpsell");
   const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
   const onboardingDate = useSelector(onboardingDateSelector);
-  const hasBackfilledOnboardingDateRef = useRef(false);
 
   const params = feature?.params;
   const hasSeenTouchscreen = hasSeenTouchscreenDevice(knownDeviceModelIds);
@@ -75,28 +71,6 @@ export function useLargeScreenUpsellEligibility(): LargeScreenUpsellEligibility 
   const enabledNanoDeviceModelIds = params
     ? seenNanoDeviceModelIds.filter(deviceModelId => params.audience.models[deviceModelId])
     : [];
-
-  const shouldBackfillOnboardingDate = Boolean(
-    feature?.enabled &&
-    params &&
-    onboardingDate === null &&
-    !hasSeenTouchscreen &&
-    enabledNanoDeviceModelIds.length > 0,
-  );
-
-  useEffect(() => {
-    if (!shouldBackfillOnboardingDate) {
-      hasBackfilledOnboardingDateRef.current = false;
-      return;
-    }
-
-    if (hasBackfilledOnboardingDateRef.current) {
-      return;
-    }
-
-    hasBackfilledOnboardingDateRef.current = true;
-    dispatch(setPostOnboardingDate({ onboardingDate: new Date() }));
-  }, [dispatch, shouldBackfillOnboardingDate]);
 
   if (!feature?.enabled || !params) {
     return { isEligible: false, reason: "feature_disabled" };

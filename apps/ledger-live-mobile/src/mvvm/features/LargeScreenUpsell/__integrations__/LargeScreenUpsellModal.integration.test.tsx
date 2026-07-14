@@ -93,19 +93,16 @@ function IntegrationNavigatorWithDelayedCompetitor() {
 }
 
 describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
-  let canOpenURLSpy: jest.SpiedFunction<typeof Linking.canOpenURL>;
   let openURLSpy: jest.SpiedFunction<typeof Linking.openURL>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    canOpenURLSpy = jest.spyOn(Linking, "canOpenURL").mockResolvedValue(true);
     openURLSpy = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
     jest.useFakeTimers().setSystemTime(NOW);
     __resetLargeScreenUpsellAutoOpenForTests();
   });
 
   afterEach(() => {
-    canOpenURLSpy.mockRestore();
     openURLSpy.mockRestore();
     jest.useRealTimers();
   });
