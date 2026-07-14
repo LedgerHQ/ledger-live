@@ -10138,7 +10138,20 @@
         "errorDesc": "Something went wrong, please try again"
       },
       "quickAmountSelector": {
-        "mockTitle": "Quick amount selector mock"
+        "title": "Quick select",
+        "strategies": {
+          "fast": "Fast",
+          "balanced": "Balanced",
+          "full": "Full"
+        },
+        "recordCount_one": "{{count}} record",
+        "recordCount_other": "{{count}} records",
+        "unavailable": "Unavailable",
+        "spendableBalance": "Max Spendable Balance:"
+      },
+      "tooltip": {
+        "descPartOne": "Sender, amount and recipient hidden on-chain.",
+        "descPartTwo": "Up to {{max}} records per send."
       }
     },
     "balancesSection": "Balances",

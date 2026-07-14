@@ -5,11 +5,7 @@ import {
   formatCurrencyUnit,
   type formatCurrencyUnitOptions,
 } from "@ledgerhq/live-common/currencies/index";
-import {
-  MAX_PRIVATE_RECORDS_PER_TRANSACTION,
-  MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
-  PRIVATE_BALANCE_PLACEHOLDER,
-} from "@ledgerhq/live-common/families/aleo/constants";
+import { PRIVATE_BALANCE_PLACEHOLDER } from "@ledgerhq/live-common/families/aleo/constants";
 import {
   derivePrivateTransactionMode,
   derivePublicTransactionMode,
@@ -18,15 +14,17 @@ import {
   isSelfTransferTransaction,
 } from "@ledgerhq/live-common/families/aleo/utils";
 import type {
-  AleoAccount,
   AleoCoinConfig,
-  AleoTokenAccount,
   Transaction as AleoTransaction,
 } from "@ledgerhq/live-common/families/aleo/types";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { AccountLike } from "@ledgerhq/types-live";
+
+export {
+  isAleoAccount,
+  isAleoTransaction,
+  getMaxPrivateRecordsForAccount,
+} from "@ledgerhq/live-common/families/aleo/utils";
 
 export const getAleoCurrencyConfig = (
   currency: CryptoCurrency | TokenCurrency,
@@ -40,16 +38,6 @@ export const getAleoCurrencyConfig = (
     return undefined;
   }
 };
-
-export function isAleoAccount(acc: AccountLike): acc is AleoAccount | AleoTokenAccount {
-  const currency =
-    acc.type === "Account" ? acc.currency : getCryptoCurrencyById(acc.token.parentCurrencyId);
-  return currency.family === "aleo";
-}
-
-export function isAleoTransaction(tx: Transaction): tx is AleoTransaction {
-  return tx.family === "aleo";
-}
 
 export function getAleoAddressBadgeI18nKey(
   transaction: AleoTransaction,
@@ -107,10 +95,4 @@ export function formatAleoBalances({
       ? formatCurrencyUnit(unit, balances.privateBalance, formatConfig)
       : PRIVATE_BALANCE_PLACEHOLDER,
   };
-}
-
-export function getMaxPrivateRecordsForAccount(account: AleoAccount | AleoTokenAccount): number {
-  return account.type === "TokenAccount"
-    ? MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION
-    : MAX_PRIVATE_RECORDS_PER_TRANSACTION;
 }

@@ -1,8 +1,15 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  Operation,
+  OperationType,
+  TokenAccount,
+} from "@ledgerhq/types-live";
 import type {
   Operation as CoinFrameworkOperation,
   MemoNotSupported,
@@ -18,7 +25,9 @@ import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import aleoConfig from "../config";
 import {
+  BALANCED_PRIVATE_RECORDS_PER_TRANSACTION,
   EXPLORER_TRANSFER_TYPES,
+  FAST_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
   PROGRAM_ID,
@@ -978,6 +987,43 @@ export function sumPrivateRecords(records: AleoUnspentRecord[]): BigNumber {
     (sum, record) => sum.plus(new BigNumber(record.microcredits)),
     new BigNumber(0),
   );
+}
+
+export function getMaxPrivateRecordsForAccount(account: AleoAccount | AleoTokenAccount): number {
+  return account.type === "TokenAccount"
+    ? MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION
+    : MAX_PRIVATE_RECORDS_PER_TRANSACTION;
+}
+
+export type SigningStrategy = "fast" | "balanced" | "full";
+
+export interface StrategyConfig {
+  min: number;
+  max: number;
+}
+
+export function getStrategyConfig(
+  account: AleoAccount | AleoTokenAccount,
+): Record<SigningStrategy, StrategyConfig> {
+  const maxRecords = getMaxPrivateRecordsForAccount(account);
+
+  return {
+    fast: { min: 1, max: FAST_PRIVATE_RECORDS_PER_TRANSACTION },
+    balanced: {
+      min: FAST_PRIVATE_RECORDS_PER_TRANSACTION + 1,
+      max: BALANCED_PRIVATE_RECORDS_PER_TRANSACTION,
+    },
+    full: {
+      min: BALANCED_PRIVATE_RECORDS_PER_TRANSACTION + 1,
+      max: maxRecords,
+    },
+  };
+}
+
+export function isAleoAccount(acc: AccountLike): acc is AleoAccount | AleoTokenAccount {
+  const currency =
+    acc.type === "Account" ? acc.currency : getCryptoCurrencyById(acc.token.parentCurrencyId);
+  return currency.family === "aleo";
 }
 
 export const getNextSequenceNumber = (account: AleoAccount): BigNumber => {

@@ -1,6 +1,13 @@
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState, useEffect } from "react";
-import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, Linking } from "react-native";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Linking,
+} from "react-native";
 import Switch from "~/components/Switch";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Trans, useTranslation } from "~/context/Locale";
@@ -157,6 +164,25 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
       ? transaction.model.commandDescriptor.command.extensions?.transferFee
       : undefined;
 
+  const amountInputElement = (
+    <AmountInput
+      testID="amount-input"
+      editable={!useAllAmount}
+      account={account}
+      onChange={onChange}
+      value={amount}
+      transferFeeCalculated={transferFee}
+      error={
+        status.errors.dustLimit
+          ? status.errors.dustLimit
+          : amount.eq(0) && (bridgePending || !transaction.useAllAmount)
+            ? null
+            : status.errors.amount
+      }
+      warning={status.warnings.amount}
+    />
+  );
+
   return (
     <>
       <TrackScreen category="SendFunds" name="Amount" currencyName={currency.name} />
@@ -173,66 +199,63 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={styles.amountWrapper}>
-              <AmountInput
-                testID="amount-input"
-                editable={!useAllAmount}
-                account={account}
-                onChange={onChange}
-                value={amount}
-                transferFeeCalculated={transferFee}
-                error={
-                  status.errors.dustLimit
-                    ? status.errors.dustLimit
-                    : amount.eq(0) && (bridgePending || !transaction.useAllAmount)
-                      ? null
-                      : status.errors.amount
-                }
-                warning={status.warnings.amount}
-              />
+              {familySendFlow?.AfterAmountInput ? (
+                <View style={styles.amountInputProtected}>{amountInputElement}</View>
+              ) : (
+                amountInputElement
+              )}
 
               {familySendFlow?.AfterAmountInput && (
-                <View style={styles.afterAmountInputWrapper}>
+                <ScrollView
+                  style={styles.afterAmountInputWrapper}
+                  contentContainerStyle={styles.afterAmountInputContent}
+                  keyboardShouldPersistTaps="handled"
+                  showsVerticalScrollIndicator={false}
+                >
                   <familySendFlow.AfterAmountInput
                     account={account}
                     transaction={transaction}
                     updateTransaction={handleUpdateTransaction}
+                    maxSpendable={maxSpendable}
                   />
-                </View>
+                </ScrollView>
               )}
 
+              <View style={styles.bottomSpacer} />
+
+              <View style={[styles.available]}>
+                <Touchable
+                  style={styles.availableLeft}
+                  event={"MaxSpendableInfo"}
+                  onPress={() => setInfoModalOpen(true)}
+                >
+                  <View>
+                    <LText color="grey">
+                      <Trans i18nKey="send.amount.available" /> <InfoIcon size={12} color="grey" />
+                    </LText>
+                    {maxSpendable && (
+                      <LText semiBold color="grey">
+                        <CurrencyUnitValue showCode unit={unit} value={maxSpendable} />
+                      </LText>
+                    )}
+                  </View>
+                </Touchable>
+                {typeof useAllAmount === "boolean" ? (
+                  <View style={styles.availableRight}>
+                    <LText style={styles.maxLabel} color="grey">
+                      <Trans i18nKey="send.amount.useMax" />
+                    </LText>
+                    <Switch
+                      style={styles.switch}
+                      value={useAllAmount}
+                      onValueChange={toggleUseAllAmount}
+                      testID="send-amount-max-switch"
+                    />
+                  </View>
+                ) : null}
+              </View>
+
               <View style={styles.bottomWrapper}>
-                <View style={[styles.available]}>
-                  <Touchable
-                    style={styles.availableLeft}
-                    event={"MaxSpendableInfo"}
-                    onPress={() => setInfoModalOpen(true)}
-                  >
-                    <View>
-                      <LText color="grey">
-                        <Trans i18nKey="send.amount.available" />{" "}
-                        <InfoIcon size={12} color="grey" />
-                      </LText>
-                      {maxSpendable && (
-                        <LText semiBold color="grey">
-                          <CurrencyUnitValue showCode unit={unit} value={maxSpendable} />
-                        </LText>
-                      )}
-                    </View>
-                  </Touchable>
-                  {typeof useAllAmount === "boolean" ? (
-                    <View style={styles.availableRight}>
-                      <LText style={styles.maxLabel} color="grey">
-                        <Trans i18nKey="send.amount.useMax" />
-                      </LText>
-                      <Switch
-                        style={styles.switch}
-                        value={useAllAmount}
-                        onValueChange={toggleUseAllAmount}
-                        testID="send-amount-max-switch"
-                      />
-                    </View>
-                  ) : null}
-                </View>
                 <View style={styles.continueWrapper}>
                   <Button
                     testID={
@@ -306,7 +329,6 @@ const styles = StyleSheet.create({
   available: {
     flexDirection: "row",
     display: "flex",
-    flexGrow: 1,
     marginBottom: 16,
   },
   availableRight: {
@@ -321,13 +343,39 @@ const styles = StyleSheet.create({
   maxLabel: {
     marginRight: 4,
   },
+  // Guarantees AmountInput's two rows (crypto + fiat) always have enough height to render without
+  // clipping, even when the keyboard opens on a small-height device and shrinks this whole column.
+  // No flexGrow here on purpose — minHeight alone is what gives this box a real, non-zero size
+  // (breaking the flexBasis: 0% collapse that AmountInput's own internal `flex: 1` root is prone to
+  // when nested), so AmountInput settles at its natural compact content height instead of greedily
+  // claiming all leftover vertical space the way it does for other currencies.
+  amountInputProtected: {
+    flexShrink: 1,
+    minHeight: 160,
+  },
+  // Fixed viewport (not a proportional flex share) so it doesn't force AmountInput to grow to fill
+  // leftover space — its own content scrolls internally if it doesn't fit. flexShrink: 1 is required
+  // (RN Views default to flexShrink: 0, unlike web CSS) so this box gives space back instead of
+  // holding its full maxHeight when the keyboard opens and shrinks the whole column.
   afterAmountInputWrapper: {
-    flex: 1,
+    maxHeight: 340,
+    flexShrink: 1,
+    marginTop: 16,
+    marginBottom: 24,
+  },
+  afterAmountInputContent: {
+    flexGrow: 1,
   },
   bottomWrapper: {
     alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "flex-end",
+  },
+  // Absorbs whatever vertical space AmountInput and afterAmountInputWrapper don't use (neither of
+  // them grows anymore), pushing the "Total available" row and the Continue button down together
+  // as a pair so they stay pinned to the very bottom instead of floating above it.
+  bottomSpacer: {
+    flexGrow: 1,
   },
   continueWrapper: {
     alignSelf: "stretch",
