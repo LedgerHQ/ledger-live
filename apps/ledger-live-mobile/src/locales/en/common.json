@@ -10147,6 +10147,7 @@
         "recordCount_one": "{{count}} record",
         "recordCount_other": "{{count}} records",
         "unavailable": "Unavailable",
+        "noValue": "—",
         "spendableBalance": "Max Spendable Balance:"
       },
       "tooltip": {

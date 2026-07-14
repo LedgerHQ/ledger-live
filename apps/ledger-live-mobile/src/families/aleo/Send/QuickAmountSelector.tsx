@@ -139,7 +139,23 @@ export function QuickAmountSelector({
               t("time.second_short"),
               t("time.minute_short"),
             );
-            const labelColor = tile.disabled ? "disabled" : tile.selected ? "active" : "muted";
+            let labelColor: "disabled" | "active" | "muted";
+            if (tile.disabled) {
+              labelColor = "disabled";
+            } else if (tile.selected) {
+              labelColor = "active";
+            } else {
+              labelColor = "muted";
+            }
+
+            let tileVariantStyle: (typeof styles)["tileDefault" | "tileSelected" | "tileDisabled"];
+            if (tile.disabled) {
+              tileVariantStyle = styles.tileDisabled;
+            } else if (tile.selected) {
+              tileVariantStyle = styles.tileSelected;
+            } else {
+              tileVariantStyle = styles.tileDefault;
+            }
 
             return (
               <Pressable
@@ -148,11 +164,7 @@ export function QuickAmountSelector({
                 disabled={tile.disabled || isKeyboardVisible}
                 style={({ pressed }) => [
                   styles.tile,
-                  tile.disabled
-                    ? styles.tileDisabled
-                    : tile.selected
-                      ? styles.tileSelected
-                      : styles.tileDefault,
+                  tileVariantStyle,
                   pressed && !tile.disabled && styles.tilePressed,
                 ]}
               >
@@ -165,7 +177,7 @@ export function QuickAmountSelector({
 
                 {tile.disabled ? (
                   <Text typography="body3" lx={{ color: "disabled" }}>
-                    —
+                    {t("aleo.send.quickAmountSelector.noValue")}
                   </Text>
                 ) : (
                   <Text
@@ -224,6 +236,8 @@ export function QuickAmountSelector({
           <Box
             lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}
             style={{ opacity: selectedRecordsCount > 0 ? 1 : 0 }}
+            accessibilityElementsHidden={selectedRecordsCount === 0}
+            importantForAccessibility={selectedRecordsCount === 0 ? "no-hide-descendants" : "auto"}
           >
             <Text typography="body4" lx={{ color: "muted" }}>
               {`${t("aleo.send.quickAmountSelector.recordCount", {

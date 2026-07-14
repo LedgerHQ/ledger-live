@@ -343,20 +343,15 @@ const styles = StyleSheet.create({
   maxLabel: {
     marginRight: 4,
   },
-  // Guarantees AmountInput's two rows (crypto + fiat) always have enough height to render without
-  // clipping, even when the keyboard opens on a small-height device and shrinks this whole column.
-  // No flexGrow here on purpose — minHeight alone is what gives this box a real, non-zero size
-  // (breaking the flexBasis: 0% collapse that AmountInput's own internal `flex: 1` root is prone to
-  // when nested), so AmountInput settles at its natural compact content height instead of greedily
-  // claiming all leftover vertical space the way it does for other currencies.
+  // Keeps AmountInput's content from clipping when the keyboard shrinks this column;
+  // no flexGrow so it stays at its natural compact height instead of expanding.
+  // See: LIVE-30496
   amountInputProtected: {
     flexShrink: 1,
     minHeight: 160,
   },
-  // Fixed viewport (not a proportional flex share) so it doesn't force AmountInput to grow to fill
-  // leftover space — its own content scrolls internally if it doesn't fit. flexShrink: 1 is required
-  // (RN Views default to flexShrink: 0, unlike web CSS) so this box gives space back instead of
-  // holding its full maxHeight when the keyboard opens and shrinks the whole column.
+  // Caps this area's height so it doesn't force AmountInput to grow to fill leftover space.
+  // See: LIVE-30496
   afterAmountInputWrapper: {
     maxHeight: 340,
     flexShrink: 1,
@@ -371,9 +366,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
   },
-  // Absorbs whatever vertical space AmountInput and afterAmountInputWrapper don't use (neither of
-  // them grows anymore), pushing the "Total available" row and the Continue button down together
-  // as a pair so they stay pinned to the very bottom instead of floating above it.
+  // Pushes the "Total available" row and Continue button down as a pair, pinning them to the bottom.
+  // See: LIVE-30496
   bottomSpacer: {
     flexGrow: 1,
   },

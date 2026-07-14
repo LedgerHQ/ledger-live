@@ -1021,9 +1021,14 @@ export function getStrategyConfig(
 }
 
 export function isAleoAccount(acc: AccountLike): acc is AleoAccount | AleoTokenAccount {
-  const currency =
-    acc.type === "Account" ? acc.currency : getCryptoCurrencyById(acc.token.parentCurrencyId);
-  return currency.family === "aleo";
+  if (acc.type === "Account") {
+    return acc.currency.family === "aleo";
+  }
+  try {
+    return getCryptoCurrencyById(acc.token.parentCurrencyId).family === "aleo";
+  } catch {
+    return false;
+  }
 }
 
 export const getNextSequenceNumber = (account: AleoAccount): BigNumber => {
