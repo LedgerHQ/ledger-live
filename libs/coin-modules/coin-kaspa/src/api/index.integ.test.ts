@@ -66,6 +66,51 @@ describe("createApi (integration)", () => {
     });
   });
 
+  // Smoke tests through the createApi() surface — deep coverage lives in the logic/*.integ.test.ts;
+  // these verify the factory exposes and delegates each method correctly. Depend on FUNDED_SENDER
+  // (funded, never spent), same fixture as the craft → combine round trip below.
+  describe("account & fee methods (real network)", () => {
+    it("getBalance returns the native KAS balance for a funded account", async () => {
+      const balances = await api.getBalance(FUNDED_SENDER);
+
+      expect(balances).toHaveLength(1);
+      expect(balances[0].value).toBeGreaterThan(0n);
+      expect(balances[0].asset).toEqual({ type: "native", name: "KAS" });
+    });
+
+    it("lastBlock returns the latest confirmed block", async () => {
+      const info = await api.lastBlock();
+
+      expect(info.height).toBeGreaterThan(0);
+      expect(typeof info.hash).toBe("string");
+      expect(info.time).toBeInstanceOf(Date);
+    });
+
+    it("estimateFees returns a positive mass-based fee for a valid send", async () => {
+      const fees = await api.estimateFees({
+        intentType: "transaction",
+        type: "send",
+        sender: FUNDED_SENDER,
+        recipient: RECIPIENT,
+        amount: 100_000_000n,
+        asset: { type: "native" },
+      });
+
+      expect(fees.value).toBeGreaterThan(0n);
+    });
+
+    it("listOperations returns the funded account's operation history", async () => {
+      const page = await api.listOperations(FUNDED_SENDER, { minHeight: 0 });
+
+      expect(Array.isArray(page.items)).toBe(true);
+      expect(page.items.length).toBeGreaterThan(0);
+      for (const op of page.items) {
+        expect(["IN", "OUT"]).toContain(op.type);
+        expect(typeof op.value).toBe("bigint");
+      }
+    });
+  });
+
   it("getStakes throws (not supported)", () => {
     expect(() => api.getStakes(PRISTINE_SENDER)).toThrow("getStakes is not supported");
   });
