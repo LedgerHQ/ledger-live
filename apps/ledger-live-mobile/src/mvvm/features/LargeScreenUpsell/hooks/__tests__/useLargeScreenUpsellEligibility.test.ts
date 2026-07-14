@@ -164,6 +164,15 @@ describe("useLargeScreenUpsellEligibility", () => {
     });
   });
 
+  it("should not backfill a null onboarding date from the eligibility hook", () => {
+    const { store } = renderEligibility({
+      knownDeviceModelIds: [DeviceModelId.nanoX],
+      onboardingDate: null,
+    });
+
+    expect(store.getState().postOnboarding.onboardingDate).toBeNull();
+  });
+
   it("should use the longest cooldown when multiple eligible nano models have been seen", () => {
     const { result } = renderEligibility({
       knownDeviceModelIds: [DeviceModelId.nanoS, DeviceModelId.nanoX],

@@ -24,10 +24,14 @@ describe("backfillOnboardingDate", () => {
   it("should backfill onboardingDate for legacy users who completed onboarding", () => {
     const store = makeStore({ hasCompletedOnboarding: true, onboardingDate: null });
     const save = jest.fn().mockResolvedValue(undefined);
+    const postOnboardingBefore = store.getState().postOnboarding;
 
     backfillOnboardingDate(store, { now, save });
 
-    expect(store.getState().postOnboarding.onboardingDate).toBe(now.toISOString());
+    expect(store.getState().postOnboarding).toEqual({
+      ...postOnboardingBefore,
+      onboardingDate: now.toISOString(),
+    });
     expect(save).toHaveBeenCalledTimes(1);
   });
 
