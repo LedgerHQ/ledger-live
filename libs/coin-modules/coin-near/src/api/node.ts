@@ -6,6 +6,7 @@ import { BigNumber } from "bignumber.js";
 import * as nearAPI from "near-api-js";
 import { getCoinConfig } from "../config";
 import { MIN_ACCOUNT_BALANCE_BUFFER } from "../constants";
+import { NearGasPriceNotLoaded } from "../errors";
 import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
 import { getCurrentNearPreloadData } from "../preload-data";
 import { NearAccount } from "../types";
@@ -129,7 +130,12 @@ export const getGasPrice = async (): Promise<string> => {
     url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v1/stats`,
   });
 
-  return response.data.stats[0].gas_price;
+  const gasPrice = response.data?.stats?.[0]?.gas_price;
+  if (!gasPrice) {
+    throw new NearGasPriceNotLoaded(JSON.stringify(response.data)?.slice(0, 500));
+  }
+
+  return gasPrice;
 };
 
 export const getAccessKey = async ({

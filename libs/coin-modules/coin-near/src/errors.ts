@@ -44,3 +44,17 @@ export const NearRecommendUnstake = createCustomErrorClass("NearRecommendUnstake
  * When trying to stake, unstake, or withdraw less than the threshold.
  */
 export const NearStakingThresholdNotMet = createCustomErrorClass("NearStakingThresholdNotMet");
+
+/*
+ * When the gas price can not be read from the indexer's stats response.
+ * Typically an empty/degraded/rate-limited response from the NEARBLOCKS indexer.
+ */
+export class NearGasPriceNotLoaded extends Error {
+  override name = "NearGasPriceNotLoaded";
+  constructor(details?: string) {
+    super(
+      "NEAR gas price could not be loaded from the indexer stats response" +
+        (details ? `: ${details}` : ""),
+    );
+  }
+}
