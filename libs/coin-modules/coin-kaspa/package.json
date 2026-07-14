@@ -121,6 +121,7 @@
     "cross-env": "^7.0.3",
     "jest": "catalog:",
     "jest-sonar": "0.2.16",
+    "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "timemachine": "^0.3.2"

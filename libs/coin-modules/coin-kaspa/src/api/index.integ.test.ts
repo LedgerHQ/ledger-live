@@ -43,25 +43,26 @@ describe("createApi (integration)", () => {
     );
   });
 
-  it("getBlock throws (not supported)", () => {
-    expect(() => api.getBlock(1)).toThrow("getBlock is not supported");
-  });
+  describe("block methods (real network)", () => {
+    // A known, already-confirmed block. Seeding from lastBlock() flakes: the virtual-chain tip is
+    // not yet indexed by /blocks-from-bluescore (tip lag), so it can return no block at that score.
+    const MINTED_BLOCK = 480818084;
 
-  describe("getBlockInfo (real network)", () => {
-    it("fetches the block at the latest virtual-chain blue score", async () => {
-      // lastBlock().height is a real, current virtual-chain blue score -> guaranteed to exist,
-      // and cross-checks getBlockInfo against lastBlock for free. No hardcoded magic number.
-      const latest = await api.lastBlock();
-      console.log("[getBlockInfo] seed blueScore:", latest.height);
+    it("getBlockInfo fetches the block at a known blue score", async () => {
+      const info = await api.getBlockInfo(MINTED_BLOCK);
 
-      const info = await api.getBlockInfo(latest.height);
-      console.log("[getBlockInfo] result:", JSON.stringify(info, null, 2));
-
-      expect(info.height).toBe(latest.height);
-      expect(typeof info.hash).toBe("string");
+      expect(info.height).toBe(MINTED_BLOCK);
       expect(info.hash).toHaveLength(64); // Kaspa block hash = 64 hex chars
       expect(info.time).toBeInstanceOf(Date);
-      expect(info.time.getTime()).toBeGreaterThan(0); // proves timestamp parsing worked
+      expect(info.time.getTime()).toBeGreaterThan(0);
+    });
+
+    it("getBlock fetches the full block (metadata + transactions) at a known blue score", async () => {
+      const block = await api.getBlock(MINTED_BLOCK);
+
+      expect(block.info.height).toBe(MINTED_BLOCK);
+      expect(block.info.hash).toHaveLength(64);
+      expect(block.transactions.length).toBeGreaterThan(0); // at least the coinbase
     });
   });
 
