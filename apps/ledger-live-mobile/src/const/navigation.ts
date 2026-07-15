@@ -59,6 +59,7 @@ export enum ScreenName {
   DebugQueuedDrawerScreen2 = "DebugQueuedDrawerScreen2",
   DebugEnv = "DebugEnv",
   DebugFeatureFlags = "DebugFeatureFlags",
+  DebugLargeScreenUpsell = "DebugLargeScreenUpsell",
   DebugInstallSetOfApps = "DebugInstallSetOfApps",
   DebugFeatures = "DebugFeatures",
   DebugFetchCustomImage = "DebugFetchCustomImage",

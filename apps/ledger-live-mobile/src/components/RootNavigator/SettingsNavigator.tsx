@@ -13,6 +13,7 @@ import DebugCustomImageGraphics from "~/screens/Settings/Debug/Features/CustomIm
 import DebugDebugging from "~/screens/Settings/Debug/Debugging";
 import DebugDeviceIntentExecutor from "~/screens/Settings/Debug/Features/DeviceIntentExecutor";
 import DebugEnv from "~/screens/Settings/Debug/Configuration/DebugEnv";
+import DebugLargeScreenUpsell from "LLM/features/LargeScreenUpsell/Debug";
 import DebugFeatureFlags from "~/screens/FeatureFlagsSettings";
 import DebugFeatures from "~/screens/Settings/Debug/Features";
 import DebugFetchCustomImage, {
@@ -364,6 +365,13 @@ export default function SettingsNavigator() {
         component={DebugFeatureFlags}
         options={{
           title: "Feature Flags",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugLargeScreenUpsell}
+        component={DebugLargeScreenUpsell}
+        options={{
+          title: "Large-screen upsell",
         }}
       />
       <Stack.Screen
