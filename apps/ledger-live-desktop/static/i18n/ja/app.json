@@ -1336,17 +1336,6 @@
           "finalStepSuccessButtonLabel" : "終了する"
         }
       },
-      "installApplications" : {
-        "title" : "{{productName}}にアプリをインストール",
-        "titleCompleted" : "{{productName}}にアプリインストール済み",
-        "install" : "インストール",
-        "skip" : "後で",
-        "info" : "{{deviceName}}のアプリはトランザクションの承認に使用されます。これはいつでも追加、または削除できます。"
-      },
-      "endOfSetup" : {
-        "title" : "セットアップの終了",
-        "titleCompleted" : "{{deviceName}}の準備完了"
-      },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "「許可（Allow）」をタップして正規品チェックを開始"
       },
@@ -1463,7 +1452,6 @@
       "cta" : "キャッシュを削除する"
     },
     "migrate" : "Ledger Walletアカウントのアップデートが利用可能です。",
-    "genericTerminatedCrypto" : "{{coinName}} には対応していません。",
     "valentine" : {
       "title" : "バレンタインデー",
       "description" : "Ledgerは日頃の感謝を込めて、Ledger Walletの売買手数料割引キャンペーンを開催します。"
@@ -2538,6 +2526,7 @@
   "newSendFlow" : {
     "title" : "{{currency}}を送付",
     "available" : "利用可能: {{amount}}",
+    "to" : "宛先：",
     "placeholder" : "アドレスまたはENSを入力してください",
     "placeholderNoENS" : "アドレスを入力",
     "recent" : "再送信",
@@ -5820,10 +5809,6 @@
             "buttons" : {
               "next" : "OK、準備完了！",
               "prev" : "前のステップ"
-            },
-            "help" : {
-              "help" : "お困りですか？",
-              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "deviceHowTo" : {
@@ -5847,10 +5832,6 @@
               "next" : "次のステップ",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
-            },
-            "help" : {
-              "help" : "お困りですか？",
-              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "deviceHowTo2" : {
@@ -5875,10 +5856,6 @@
               "next" : "次のステップ",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
-            },
-            "help" : {
-              "help" : "お困りですか？",
-              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "pinCode" : {
@@ -5889,10 +5866,6 @@
               "next" : "PINの設定",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
-            },
-            "help" : {
-              "help" : "お困りですか？",
-              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "quizSuccess" : {
@@ -5910,10 +5883,6 @@
             "buttons" : {
               "next" : "次のステップ",
               "prev" : "前のステップ"
-            },
-            "help" : {
-              "help" : "お困りですか？",
-              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "pinCodeHowTo" : {
@@ -5929,10 +5898,6 @@
               "next" : "次のステップ",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
-            },
-            "help" : {
-              "help" : "お困りですか？",
-              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "recoverHowTo" : {
@@ -5983,10 +5948,6 @@
               "next" : "次のステップ",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
-            },
-            "help" : {
-              "help" : "お困りですか？",
-              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "newRecoveryPhrase" : {
@@ -5998,10 +5959,6 @@
               "next" : "リカバリーフレーズ",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
-            },
-            "help" : {
-              "help" : "お困りですか？",
-              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "recoveryHowTo" : {
@@ -6027,10 +5984,6 @@
               "next" : "次のステップ",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
-            },
-            "help" : {
-              "help" : "お困りですか？",
-              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "recoveryHowTo3" : {
@@ -6045,10 +5998,6 @@
               "next" : "次のステップ",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
-            },
-            "help" : {
-              "help" : "お困りですか？",
-              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "genuineCheck" : {
@@ -6072,10 +6021,6 @@
               "prev" : "前のステップ",
               "help" : "お困りですか？",
               "learn" : "安全に保管する方法"
-            },
-            "help" : {
-              "help" : "お困りですか？",
-              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "pairMyNano" : {
@@ -6085,10 +6030,6 @@
               "next" : "Nanoをチェックする",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
-            },
-            "help" : {
-              "help" : "お困りですか？",
-              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "enableSync" : {
@@ -6621,10 +6562,9 @@
           "title" : "確認事項",
           "description" : "Concordiumの利用には外部での本人確認が必要です。以下の重要なセキュリティ警告を必ずお読みください：",
           "list" : {
-            "1" : "<0>アドレスの確認ができません</0> – Ledgerデバイス上でConcordiumの受取アドレスを確認・検証することができません。資金を受け取る前に、必ず手動でアドレスを確認・検証してください。",
-            "2" : "<0>Concordium IDアプリは別のシードを使用します</0> – Concordiumアプリでは「新しい」24単語を作成してください。Ledgerのリカバリーフレーズ（シード）は「絶対に」入力しないでください。",
-            "3" : "<0>Ledger Wallet外部へ移動します</0> – 本人確認は外部のConcordiumウォレットアプリで行われます。これは、Concordiumのブロックチェーンプロトコルにより必須の手順です。",
-            "4" : "<0>取引署名のセキュリティは維持されます</0> – 取引の署名やアカウント作成は、引き続きLedgerデバイスのみで行われます。"
+            "separateSeed" : "<0>Concordium IDアプリは別のシードを使用します</0> – Concordiumアプリでは「新しい」24単語を作成してください。Ledgerのリカバリーフレーズは「絶対に」入力しないでください。",
+            "outsideLedgerLive" : "<0>Ledger Wallet外部へ移動します</0> – 本人確認は外部のConcordiumウォレットアプリで行われます。これは、Concordiumのブロックチェーンプロトコルにより必須の手順です。",
+            "signingSecure" : "<0>取引署名のセキュリティは維持されます</0> – 取引の署名やアカウント作成は、引き続きLedgerデバイスのみで行われます。"
           },
           "allow" : "同意する"
         },
@@ -7236,6 +7176,9 @@
     "InvalidAddress" : {
       "title" : "これは有効な{{currencyName}} アドレスではありません。"
     },
+    "ZcashSaplingRecipientNotSupported" : {
+      "title" : "Saplingアドレスへの送信は対応していません"
+    },
     "InvalidNonce" : {
       "title" : "ナンスは必須です"
     },
@@ -7295,6 +7238,9 @@
     "FeeRequired" : {
       "title" : "手数料がかかります。"
     },
+    "FeeTooLow" : {
+      "title" : "手数料が低すぎるため、ネットワークに承認されません。増額してください"
+    },
     "GasLessThanEstimate" : {
       "title" : "低すぎる可能性があります。増やしてください"
     },
@@ -7306,6 +7252,9 @@
     },
     "MaxFeeTooLow" : {
       "title" : "推奨値より低い手数料です"
+    },
+    "GasPriceTooLow" : {
+      "title" : "ガス代がネットワークの最低値を下回っています"
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "最大優先手数料は、最大手数料より高くすることはできません"
@@ -7441,6 +7390,9 @@
     "InvalidXRPTag" : {
       "title" : "無効なXRP宛先タグ"
     },
+    "XrpDestinationTagRequired" : {
+      "title" : "この受取人には宛先タグが必要です。"
+    },
     "InvalidExplorerResponse" : {
       "title" : "{{currencyName}}エクスプローラーからの応答が無効です"
     },
@@ -7559,6 +7511,9 @@
     },
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "今後のトランザクション手数料に十分な残高を確保してください"
+    },
+    "SolanaStakeAccountAmountTooLow" : {
+      "title" : "ステーキングには少なすぎる数量です。最小額は{{minimumAmount}}です。"
     },
     "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "前回のトランザクションはまだ処理されていません。しばらく待ってから、トランザクション履歴を確認した上でもう一度やり直してください。"
@@ -8333,6 +8288,20 @@
   "recoverRestore" : {
     "title" : "Ledgerを接続してロックを解除する"
   },
+  "analyticsOptInScreen" : {
+    "main" : {
+      "title" : "Ledgerの改善にご協力ください",
+      "description" : "お客様の同意のもと、機能の改善とバグ修正のために使用状況データを収集します。当社は、お客様の資産やポートフォリオの詳細をチェックすることはありません。",
+      "ctaAcceptAll" : "すべて受け入れる",
+      "ctaRefuseAll" : "すべて拒否する",
+      "ctaPrevious" : "前",
+      "setPreferencesLink" : "設定を選択してください"
+    },
+    "footer" : {
+      "lead" : "同意はアプリの設定からいつでも取り消すことができます。",
+      "trackingPolicyLink" : "当社の追跡ポリシーの詳細についてご覧ください"
+    }
+  },
   "analyticsConsentModal" : {
     "fresh" : {
       "title" : "Ledgerの改善にご協力ください",
@@ -8732,9 +8701,9 @@
       "cta" : "アプリ一覧"
     },
     "borrowEntry" : {
-      "title" : "ローン",
+      "title" : "暗号資産ローン",
       "cardTitle" : "ステーブルコインを借りる",
-      "cardDescription" : "資産を自由に使う",
+      "cardDescription" : "競争力のあるレートで借りる",
       "cta" : "探索"
     },
     "noDeviceTitle" : "安全な暗号資産ウォレット"
@@ -9194,7 +9163,11 @@
       "description" : "後ほど、トランザクションをご確認ください。"
     },
     "actionsBar" : {
-      "csv" : "エクスポート"
+      "csv" : "エクスポート",
+      "more" : "取引履歴オプション",
+      "hideDustTransactions" : "ダストトランザクションを非表示にする",
+      "showDustTransactions" : "ダストトランザクションを表示する",
+      "dustTransactionsDescription" : "{{threshold}}未満のトランザクションは非表示になります。"
     },
     "exportDialog" : {
       "title" : "トランザクション履歴をエクスポート",
@@ -9293,6 +9266,9 @@
     "fallbackBanner" : {
       "title" : "この資産は、スワップと購入に対応していません。"
     },
+    "robinhoodDisclaimerBanner" : {
+      "title" : "合計残高には配当や株式分割は含まれません。"
+    },
     "day" : "1日間",
     "week" : "1週間",
     "month" : "1か月",
@@ -9313,6 +9289,87 @@
       "earnBannerDefault" : "この資産で報酬獲得",
       "earnBannerSubtitle" : "この資産を保有して稼ぐ",
       "earnBannerAction" : "報酬獲得へ移動"
+    }
+  },
+  "deviceIntentExecutor" : {
+    "genericStates" : {
+      "retryableDeviceLocked" : {
+        "title" : "デバイスがロック済みです",
+        "description" : "デバイスのロックを解除して続行する。"
+      },
+      "unlockDevice" : {
+        "title" : "{{productName}}のロックを解除"
+      },
+      "continueOnDevice" : {
+        "title" : "あなたの{{productName}}で続ける",
+        "description" : "セキュアタッチスクリーンに表示される指示に従ってください。"
+      }
+    },
+    "errors" : {
+      "connectionError" : {
+        "title" : "デバイスが切断されました",
+        "description" : "Ledgerが接続されていません。デバイスの電源が入っていて、接続されていることを確認してください。"
+      },
+      "intentError" : {
+        "title" : "不明なエラー",
+        "description" : "エラーが発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+      },
+      "invalidOperation" : {
+        "title" : "無効な状態",
+        "description" : "エラーが発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+      }
+    },
+    "connectDevice" : {
+      "common" : {
+        "ledgerDevice" : "Ledgerデバイス",
+        "available" : "利用可能",
+        "notConnected" : "接続されていません"
+      },
+      "states" : {
+        "loading" : {
+          "title" : "読み込み中"
+        },
+        "connecting" : {
+          "title" : "読み込み中"
+        },
+        "connectionError" : {
+          "errors" : {
+            "unknown" : {
+              "title" : "ペアリングに失敗しました",
+              "description" : "もう一度お試しください。",
+              "tip" : "デバイスのロックが解除されていることを確認してください。",
+              "cta" : {
+                "retry" : "再試行",
+                "help" : "ヘルプ"
+              }
+            }
+          }
+        },
+        "discovering" : {
+          "title" : "デバイスを選択",
+          "noAvailableDeviceTitle" : "デバイスの電源を入れてロック解除する"
+        },
+        "discoveryError" : {
+          "errors" : {
+            "unknown" : {
+              "title" : "問題が発生しました。",
+              "description" : "もう一度お試しいただくか、Ledgerサポートにご連絡ください。",
+              "cta" : {
+                "retry" : "再試行"
+              }
+            }
+          }
+        },
+        "noKnownDevice" : {
+          "title" : "Ledgerデバイスが必要です",
+          "description" : "続行するには、署名用デバイスをセットアップまたは接続してください。",
+          "connectLedgerDevice" : "Ledgerデバイスを接続",
+          "noLedgerDevice" : "Ledgerデバイスを持っていません"
+        },
+        "waitingForSelectedDevice" : {
+          "title" : "{{productName}}の電源を入れ、ロックを解除してください。"
+        }
+      }
     }
   },
   "pnl" : {
