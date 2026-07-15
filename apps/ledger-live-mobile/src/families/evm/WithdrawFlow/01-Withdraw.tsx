@@ -8,6 +8,7 @@ import { Alert, Flex, Text } from "@ledgerhq/native-ui";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
+import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import { Trans } from "~/context/Locale";
@@ -39,17 +40,24 @@ function Withdraw() {
   const bridge = useAccountBridge<GenericTransaction>(account);
 
   const { transaction, status, bridgePending, bridgeError } = useBridgeTransaction(bridge, () => {
-    // Monad: finalize the matured withdrawal slot via `withdraw(validatorId, withdrawId)`.
+    const contractAddress = getStakingContractAddress(account.currency.id, {
+      mode: "withdraw",
+      valAddress: unbonding.validatorAddress,
+    });
     const withdrawTx = bridge.updateTransaction(bridge.createTransaction(account), {
       mode: "withdraw",
       valAddress: unbonding.validatorAddress,
       valId: unbonding.validatorId,
       withdrawId: unbonding.withdrawId?.toString(),
-      recipient: account.freshAddress,
+      recipient: contractAddress ?? account.freshAddress,
       amount: unbonding.amount,
       useAllAmount: false,
     });
-    return { account, parentAccount: undefined, transaction: withdrawTx as unknown as Transaction };
+    return {
+      account,
+      parentAccount: undefined,
+      transaction: withdrawTx as unknown as Transaction,
+    };
   });
 
   invariant(transaction, "transaction required");

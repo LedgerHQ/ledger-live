@@ -8,6 +8,7 @@ import {
   hasUnbondingPeriod,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
+import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
 import type { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import { Alert, Text } from "@ledgerhq/native-ui";
 import BigNumber from "bignumber.js";
@@ -58,6 +59,10 @@ export default function UndelegationAmount({ navigation, route }: Props) {
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
     bridge,
     () => {
+      const contractAddress = getStakingContractAddress(account.currency.id, {
+        mode: "undelegate",
+        valAddress: delegation.validatorAddress,
+      });
       const tx = bridge.createTransaction(account);
       return {
         account,
@@ -66,7 +71,7 @@ export default function UndelegationAmount({ navigation, route }: Props) {
           mode: "undelegate",
           valAddress: delegation.validatorAddress,
           valId: delegation.validatorId,
-          recipient: account.freshAddress,
+          recipient: contractAddress ?? account.freshAddress,
         }) as unknown as Transaction,
       };
     },

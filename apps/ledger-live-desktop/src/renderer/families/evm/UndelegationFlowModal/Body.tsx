@@ -26,6 +26,7 @@ import logger from "~/renderer/logger";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { useStakingContractAddress } from "@ledgerhq/live-common/families/evm/staking/react";
 
 export type Data = {
   account: StakingAccount;
@@ -83,6 +84,10 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
   const dispatch = useDispatch();
   const { account, validatorAddress, source = "Account Page" } = params;
   const bridge = useAccountBridge<EvmTransaction>(account, undefined);
+  const contractAddress = useStakingContractAddress(account.currency.id, {
+    mode: "undelegate",
+    valAddress: validatorAddress,
+  });
 
   const {
     transaction,
@@ -94,8 +99,6 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
     bridgePending,
   } = useBridgeTransaction(bridge, () => {
     invariant(isStakingAccount(account), "evm: account with staking resources required");
-    // Pre-populate the transaction with the existing delegation amount so the user starts
-    // on a valid "undelegate all" intent. The amount field lets them reduce it afterwards.
     const delegation = account.stakingResources.delegations.find(
       d => d.validatorAddress === validatorAddress,
     );
@@ -103,7 +106,7 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
     const transaction = bridge.updateTransaction(baseTransaction, {
       mode: "undelegate",
       valAddress: validatorAddress,
-      recipient: account.freshAddress,
+      recipient: contractAddress ?? account.freshAddress,
       amount: delegation?.amount,
       useAllAmount: false,
       valId: delegation?.validatorId,
