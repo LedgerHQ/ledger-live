@@ -221,6 +221,55 @@ describe("buildAssetDistribution", () => {
     expect(result.list).toHaveLength(2);
   });
 
+  it("does not canonicalize a token meta-currency to a same-named L2 chain when tickers differ", () => {
+    const arbChain = {
+      type: "CryptoCurrency" as const,
+      id: "arbitrum",
+      name: "Arbitrum One",
+      ticker: "ETH",
+      units: [{ name: "ETH", code: "ETH", magnitude: 18 }],
+    } as unknown as CryptoCurrency;
+
+    const arbToken = {
+      type: "TokenCurrency" as const,
+      id: "ethereum/erc20/arbitrum",
+      name: "Arbitrum",
+      ticker: "ARB",
+      units: [{ name: "ARB", code: "ARB", magnitude: 18 }],
+      parentCurrencyId: "ethereum",
+      tokenType: "erc20",
+      contractAddress: "0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1",
+    } as unknown as CryptoCurrency;
+
+    mockFindCryptoCurrencyById.mockImplementation((id: string) => {
+      if (id === "arbitrum") return arbChain;
+      return undefined;
+    });
+
+    const arbAssetsData: AssetsDataLike = {
+      cryptoAssets: {
+        arbitrum: {
+          id: "arbitrum",
+          ticker: "ARB",
+          assetsIds: {
+            ethereum: "ethereum/erc20/arbitrum",
+            arbitrum: "arbitrum",
+          },
+        },
+      },
+      markets: {
+        "ethereum/erc20/arbitrum": { id: "arbitrum-dao" },
+      },
+    };
+
+    const result = distribute([makeAccount("arb-1", arbToken, 1000)], undefined, arbAssetsData);
+
+    expect(result.list).toHaveLength(1);
+    expect(result.list[0].currency.id).toBe("ethereum/erc20/arbitrum");
+    expect(result.list[0].currency.ticker).toBe("ARB");
+    expect(result.list[0].marketId).toBe("arbitrum-dao");
+  });
+
   it("should normalize cross-network amounts when tokens have different magnitudes", () => {
     const ethUsdt = makeCurrency("ethereum/erc20/usd_tether__erc20_", "Tether USD", 6);
     const bscUsdt = makeCurrency("bsc/bep20/binance-peg_bsc-usd", "Tether USD", 18);
