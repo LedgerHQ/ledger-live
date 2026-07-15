@@ -23,6 +23,7 @@ export default class CommonPage {
   seeAllTransactionButton = "portfolio-seeAll-transaction";
   assetDetailScrollViewId = /^asset-detail-scroll-view-.*/;
   assetDetailTransactionsHeaderId = "asset-detail-transactions-header";
+  accountGraphId = (accountId: string) => `account-graph-${accountId}`;
 
   searchBar = () => getElementById(this.searchBarId);
   closeButton = () => getElementById("NavigationHeaderCloseButton");
@@ -84,7 +85,7 @@ export default class CommonPage {
   @Step("Go to the account")
   async goToAccount(accountId: string, currencyId?: string) {
     if (await isAggregatedAssetsEnabled()) {
-      if (await IsIdVisible(`account-graph-${accountId}`)) {
+      if (await IsIdVisible(this.accountGraphId(accountId))) {
         return; // already on the account page (e.g. navigated via CryptoAddressesScreen)
       }
       if (currencyId) {
