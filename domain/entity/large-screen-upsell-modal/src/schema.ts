@@ -11,11 +11,13 @@ export const defaultLargeScreenUpsellModalState: z.infer<typeof LargeScreenUpsel
     lastSeenAt: null,
   };
 
-export const RestorableLargeScreenUpsellModalStateSchema = z.object({
-  retries: LargeScreenUpsellModalStateSchema.shape.retries.catch(
-    defaultLargeScreenUpsellModalState.retries,
-  ),
-  lastSeenAt: LargeScreenUpsellModalStateSchema.shape.lastSeenAt.catch(
-    defaultLargeScreenUpsellModalState.lastSeenAt,
-  ),
-});
+export const RestorableLargeScreenUpsellModalStateSchema = z
+  .object({
+    retries: LargeScreenUpsellModalStateSchema.shape.retries.catch(
+      defaultLargeScreenUpsellModalState.retries,
+    ),
+    lastSeenAt: LargeScreenUpsellModalStateSchema.shape.lastSeenAt.catch(
+      defaultLargeScreenUpsellModalState.lastSeenAt,
+    ),
+  })
+  .catch(defaultLargeScreenUpsellModalState);

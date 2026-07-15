@@ -1,4 +1,8 @@
-import { LargeScreenUpsellModalStateSchema } from "./schema";
+import {
+  defaultLargeScreenUpsellModalState,
+  LargeScreenUpsellModalStateSchema,
+  RestorableLargeScreenUpsellModalStateSchema,
+} from "./schema";
 
 describe("LargeScreenUpsellModalStateSchema", () => {
   it.each([
@@ -27,4 +31,15 @@ describe("LargeScreenUpsellModalStateSchema", () => {
   it("rejects a state missing required fields", () => {
     expect(() => LargeScreenUpsellModalStateSchema.parse({})).toThrow();
   });
+});
+
+describe("RestorableLargeScreenUpsellModalStateSchema", () => {
+  it.each([null, undefined, "not-an-object", [1, 2, 3], 42])(
+    "falls back to defaults given the non-object payload %p",
+    payload => {
+      expect(RestorableLargeScreenUpsellModalStateSchema.parse(payload)).toEqual(
+        defaultLargeScreenUpsellModalState,
+      );
+    },
+  );
 });
