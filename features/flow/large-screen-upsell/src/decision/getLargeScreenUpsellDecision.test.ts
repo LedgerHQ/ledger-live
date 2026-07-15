@@ -114,4 +114,19 @@ describe("getLargeScreenUpsellDecision", () => {
       ),
     ).toEqual(expected);
   });
+
+  it("picks the same deviceModelId for tied cooldowns regardless of seenNanoModelIds order", () => {
+    const context = { ...baseContext };
+    const forward = getLargeScreenUpsellDecision(
+      { ...baseUserState, seenNanoModelIds: ["nanoSP", "nanoX"] },
+      context,
+    );
+    const reverse = getLargeScreenUpsellDecision(
+      { ...baseUserState, seenNanoModelIds: ["nanoX", "nanoSP"] },
+      context,
+    );
+
+    expect(forward).toEqual({ shouldShow: true, deviceModelId: "nanoSP" });
+    expect(reverse).toEqual(forward);
+  });
 });

@@ -6,6 +6,13 @@ import type {
   NanoDeviceModelId,
 } from "../types";
 
+// Canonical order (same as mobile) so longest-cooldown ties are order-independent.
+const NANO_DEVICE_MODEL_IDS = [
+  "nanoS",
+  "nanoSP",
+  "nanoX",
+] as const satisfies readonly NanoDeviceModelId[];
+
 function selectDeviceModelWithLongestCooldown(
   deviceModelIds: NanoDeviceModelId[],
   cooldownDays: LargeScreenUpsellContext["cooldownDays"],
@@ -13,7 +20,12 @@ function selectDeviceModelWithLongestCooldown(
   const resolveDays = (deviceModelId: NanoDeviceModelId) =>
     cooldownDays[deviceModelId] ?? cooldownDays.default;
 
-  const deviceModelId = deviceModelIds.reduce((longestId, candidateId) =>
+  const seenIds = new Set(deviceModelIds);
+  const orderedDeviceModelIds = NANO_DEVICE_MODEL_IDS.filter(deviceModelId =>
+    seenIds.has(deviceModelId),
+  );
+
+  const deviceModelId = orderedDeviceModelIds.reduce((longestId, candidateId) =>
     resolveDays(candidateId) > resolveDays(longestId) ? candidateId : longestId,
   );
 
