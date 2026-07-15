@@ -216,7 +216,7 @@
       "entry": ["src/index.ts", "src/components/MarketBanner/index.native.ts"]
     },
     "./features/flow/contacts": {
-      "entry": ["src/index.ts"]
+      "entry": ["src/index.ts", "src/index.native.ts"]
     },
     "./features/flow/fear-and-greed": {
       "entry": ["src/index.ts"]

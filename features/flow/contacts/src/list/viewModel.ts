@@ -1,6 +1,6 @@
 import type { Contact } from "@domain/entity-contact";
 import type { ContactsListItem, EmptyContactsListViewModel } from "./types";
-import { getContactInitial } from "./utils/getContactInitial";
+import { getContactInitial } from "./internals";
 
 function createContactsListItem(contact: Contact): ContactsListItem {
   return {

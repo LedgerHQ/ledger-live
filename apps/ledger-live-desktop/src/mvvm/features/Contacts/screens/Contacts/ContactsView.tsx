@@ -1,9 +1,6 @@
 import React from "react";
 import PageHeader from "LLD/components/PageHeader";
-import {
-  ContactsAddContactButton,
-  ContactsMeItem,
-} from "@features/flow-contacts/components/ContactsPage";
+import { ContactsAddContactButton, ContactsMeItem } from "@features/flow-contacts";
 
 export type ContactsViewProps = {
   title: string;

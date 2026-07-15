@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import { useContactsFeature } from "@features/flow-contacts/featureFlags";
+import { useContactsFeature } from "@features/flow-contacts";
 import { track } from "~/renderer/analytics/segment";
 import { useContextMenuClose } from "LLD/features/MyWallet/components/ContextMenuContext";
 import {
