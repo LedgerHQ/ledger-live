@@ -69,6 +69,7 @@
     "@electron/fuses": "2.0.0",
     "@features/flow-card": "workspace:^",
     "@features/flow-contacts": "workspace:^",
+    "@features/flow-large-screen-upsell": "workspace:^",
     "@features/platform-currencies": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
     "@features/platform-style": "workspace:^",

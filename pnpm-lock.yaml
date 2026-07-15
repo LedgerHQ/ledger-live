@@ -844,6 +844,9 @@ importers:
       '@features/flow-fear-and-greed':
         specifier: workspace:^
         version: link:../../features/flow/fear-and-greed
+      '@features/flow-large-screen-upsell':
+        specifier: workspace:^
+        version: link:../../features/flow/large-screen-upsell
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
@@ -4230,6 +4233,12 @@ importers:
         specifier: workspace:^
         version: link:../../../shared/feature-flags
     devDependencies:
+      '@ledgerhq/lumen-design-core':
+        specifier: 'catalog:'
+        version: 0.1.19
+      '@ledgerhq/lumen-ui-react':
+        specifier: 'catalog:'
+        version: 0.1.45(@ledgerhq/lumen-design-core@0.1.19)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
