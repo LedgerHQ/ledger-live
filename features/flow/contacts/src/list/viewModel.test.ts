@@ -15,15 +15,15 @@ describe("createEmptyContactsListViewModel", () => {
 
   it("derives the initial and address count from Me", () => {
     const me = mockMeContact({
-      name: "💎 Olive",
+      name: "Élodie",
       addresses: [mockContactAddress()],
     });
 
     expect(createEmptyContactsListViewModel(me)).toEqual({
       me: {
         contactId: "contact-me",
-        name: "💎 Olive",
-        initial: "💎",
+        name: "Élodie",
+        initial: "É",
         addressCount: 1,
       },
     });

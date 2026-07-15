@@ -3,6 +3,7 @@ import {
   ContactAddressSchema,
   ContactAddressValueSchema,
   ContactCurrencyIdSchema,
+  ContactNameSchema,
   ContactSchema,
 } from "./schema";
 import {
@@ -34,6 +35,20 @@ describe("ContactSchema", () => {
 
   it("rejects a contact without a name", () => {
     expect(() => ContactSchema.parse(mockContact({ name: "   " }))).toThrow();
+  });
+
+  it("accepts international contact names", () => {
+    expect(ContactNameSchema.parse(" E\u0301lodie ")).toBe("E\u0301lodie");
+    expect(ContactNameSchema.parse("Jean-Luc O'Connor")).toBe("Jean-Luc O'Connor");
+    expect(ContactNameSchema.parse("Алексей")).toBe("Алексей");
+    expect(ContactNameSchema.parse("مريم")).toBe("مريم");
+  });
+
+  it("rejects unsupported contact name characters", () => {
+    expect(() => ContactNameSchema.parse("\u0301")).toThrow();
+    expect(() => ContactNameSchema.parse("Olive2")).toThrow();
+    expect(() => ContactNameSchema.parse("Olive 💎")).toThrow();
+    expect(() => ContactNameSchema.parse("Olive@")).toThrow();
   });
 });
 
@@ -68,8 +83,18 @@ describe("ContactAddressSchema", () => {
     expect(() => ContactAddressValueSchema.parse("   ")).toThrow();
   });
 
-  it("rejects non-ASCII address labels", () => {
-    expect(() => ContactAddressLabelSchema.parse("Ethér")).toThrow();
+  it("accepts international and MAD-compatible address labels", () => {
+    expect(ContactAddressLabelSchema.parse(" محفظة ")).toBe("محفظة");
+    expect(ContactAddressLabelSchema.parse("Кошелек")).toBe("Кошелек");
+    expect(ContactAddressLabelSchema.parse("Ethér")).toBe("Ethér");
+    expect(ContactAddressLabelSchema.parse("Aave v3 1INCH")).toBe("Aave v3 1INCH");
+    expect(ContactAddressLabelSchema.parse("USDC.e")).toBe("USDC.e");
+  });
+
+  it("rejects emoji and control characters in address labels", () => {
+    expect(() => ContactAddressLabelSchema.parse("Ethereum 💎")).toThrow();
+    expect(() => ContactAddressLabelSchema.parse("Ethereum 1\uFE0F\u20E3")).toThrow();
+    expect(() => ContactAddressLabelSchema.parse("Ethereum\nWallet")).toThrow();
   });
 });
 

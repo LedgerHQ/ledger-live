@@ -1,19 +1,12 @@
 import { getContactInitial } from "./getContactInitial";
 
 describe("getContactInitial", () => {
-  it("returns the first character in uppercase", () => {
+  it("returns the first grapheme in uppercase", () => {
     expect(getContactInitial("olive")).toBe("O");
     expect(getContactInitial("eleonore")).toBe("E");
-  });
-
-  it("preserves a Unicode initial", () => {
-    expect(getContactInitial("💎 Ledger")).toBe("💎");
-  });
-
-  it("preserves a multi-codepoint emoji initial", () => {
-    expect(getContactInitial("❤️ Ledger")).toBe("❤️");
-    expect(getContactInitial("👩🏽 Ledger")).toBe("👩🏽");
-    expect(getContactInitial("👩🏽‍💻 Ledger")).toBe("👩🏽‍💻");
+    expect(getContactInitial("e\u0301lodie")).toBe("E\u0301");
+    expect(getContactInitial("Алексей")).toBe("А");
+    expect(getContactInitial("مريم")).toBe("م");
   });
 
   it("returns an empty string for an empty name", () => {
