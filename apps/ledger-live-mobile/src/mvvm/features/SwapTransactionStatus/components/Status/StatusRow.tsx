@@ -14,6 +14,7 @@ type StatusRowProps = Readonly<{
   title: string;
   subtitle: string;
   value: React.ReactNode;
+  valueCaption?: string;
   isLoading: boolean;
   lineStatus?: SwapTransactionStatusDisplayStatus;
   isLast?: boolean;
@@ -25,6 +26,7 @@ export function StatusRow({
   title,
   subtitle,
   value,
+  valueCaption,
   isLoading,
   lineStatus,
   isLast,
@@ -39,7 +41,13 @@ export function StatusRow({
         {isLast ? null : <StatusLine status={lineStatus ?? status} />}
       </Box>
       <Box lx={{ flex: 1, gap: "s2" }}>
-        <Box lx={{ flexDirection: "row", justifyContent: "space-between", gap: "s12" }}>
+        <Box
+          lx={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            gap: "s12",
+          }}
+        >
           {isLoading ? (
             <Skeleton lx={{ height: "s16", width: "s112" }} />
           ) : (
@@ -47,17 +55,24 @@ export function StatusRow({
               {title}
             </Text>
           )}
-          {typeof value === "string" ? (
-            <Text
-              testID={testId ? `${testId}-amount` : undefined}
-              typography="body2SemiBold"
-              lx={{ color: "base", textAlign: "right" }}
-            >
-              {value}
-            </Text>
-          ) : (
-            value
-          )}
+          <Box lx={{ alignItems: "flex-end", gap: "s2" }}>
+            {typeof value === "string" ? (
+              <Text
+                testID={testId ? `${testId}-amount` : undefined}
+                typography="body2SemiBold"
+                lx={{ color: "base", textAlign: "right" }}
+              >
+                {value}
+              </Text>
+            ) : (
+              value
+            )}
+            {!isLoading && valueCaption ? (
+              <Text typography="body3" lx={{ color: "muted", textAlign: "right" }}>
+                {valueCaption}
+              </Text>
+            ) : null}
+          </Box>
         </Box>
         {isLoading ? (
           <Skeleton lx={{ height: "s14", width: "s72" }} />

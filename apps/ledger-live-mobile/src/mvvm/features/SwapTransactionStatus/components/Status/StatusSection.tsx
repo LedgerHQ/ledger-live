@@ -12,6 +12,7 @@ type StatusSectionProps = Readonly<{
   receiveStatus: TransactionStatusValue;
   sentAmount?: string;
   receivedAmount?: string;
+  showReceivedAmountEstimated?: boolean;
   isLoading: boolean;
 }>;
 
@@ -22,9 +23,10 @@ export function StatusSection({
   receiveStatus,
   sentAmount,
   receivedAmount,
+  showReceivedAmountEstimated,
   isLoading,
 }: StatusSectionProps) {
-  const { heading, sendRow, receiveRow } = useStatusSectionViewModel({
+  const { heading, estimatedLabel, sendRow, receiveRow } = useStatusSectionViewModel({
     sendCurrency,
     receiveCurrency,
     sendStatus,
@@ -36,7 +38,14 @@ export function StatusSection({
       <Text typography="heading5SemiBold" lx={{ color: "base" }}>
         {heading}
       </Text>
-      <Box lx={{ gap: "s4", borderRadius: "md", backgroundColor: "surface", padding: "s12" }}>
+      <Box
+        lx={{
+          gap: "s4",
+          borderRadius: "md",
+          backgroundColor: "surface",
+          padding: "s12",
+        }}
+      >
         <StatusRow
           status={sendRow.status}
           title={sendRow.title}
@@ -51,6 +60,7 @@ export function StatusSection({
           title={receiveRow.title}
           subtitle={receiveRow.subtitle}
           value={receivedAmount ?? <Skeleton lx={{ height: "s16", width: "s96" }} />}
+          valueCaption={showReceivedAmountEstimated && receivedAmount ? estimatedLabel : undefined}
           isLoading={isLoading}
           isLast
           testId="swap-transaction-status-receive"

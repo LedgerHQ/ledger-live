@@ -5,6 +5,7 @@ import {
   type SwapTransactionStatusTransactionExplorerBuilder,
 } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import byFamiliesOperationDetails from "~/generated/operationDetails";
 import { flattenAccountsSelector } from "~/reducers/accounts";
@@ -22,8 +23,9 @@ export function useSwapTransactionStatusViewModel({
   const transactionStatus = useSwapTransactionStatus({ params, onClose });
   const accounts = useSelector(flattenAccountsSelector);
   const locale = useSelector(localeSelector);
+  const estimatedReceivedAmountFeature = useFeature("ptxSwapEstimatedReceivedAmount");
 
-  return useSwapTransactionStatusDisplayViewModel({
+  const viewModel = useSwapTransactionStatusDisplayViewModel({
     params,
     transactionStatus,
     accounts,
@@ -31,6 +33,15 @@ export function useSwapTransactionStatusViewModel({
     useReceiveAccountName: useMaybeAccountName,
     useTransactionExplorerBuilder: useMobileTransactionExplorerBuilder,
   });
+
+  const showReceivedAmountEstimated =
+    estimatedReceivedAmountFeature?.enabled === true &&
+    viewModel.receiveStatus === "finished" &&
+    (viewModel.provider
+      ? estimatedReceivedAmountFeature.params?.providers?.[viewModel.provider] === true
+      : false);
+
+  return { ...viewModel, showReceivedAmountEstimated };
 }
 
 export type SwapTransactionStatusViewModel = ReturnType<typeof useSwapTransactionStatusViewModel>;
