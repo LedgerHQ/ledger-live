@@ -1,7 +1,7 @@
-import { craftTransaction } from "../craftTransaction";
+import { craftTransaction } from "./craftTransaction";
 import { estimateFees } from "./estimateFees";
 
-jest.mock("../craftTransaction");
+jest.mock("./craftTransaction");
 
 const mockCraftTransaction = jest.mocked(craftTransaction);
 

@@ -1,7 +1,7 @@
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { ApiResponseTransaction } from "../types";
+import { ApiResponseTransaction } from "../../types";
 import { getAllTransactions } from "./getAllTransactions";
 
 const FETCH_CONCURRENCY = 5;

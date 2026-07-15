@@ -12,7 +12,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { isValidKaspaAddress } from "../kaspaAddresses";
+import { isValidKaspaAddress } from "./kaspaAddresses";
 
 // Fees are flagged "too high" once they exceed 1/RATIO of the sent amount (i.e. 10%),
 // matching coin-cardano's threshold.

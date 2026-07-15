@@ -7,7 +7,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import type { Operation as LegacyOperation } from "@ledgerhq/types-live";
 import { getTransactions } from "../../network";
-import { transactionToOperation } from "../scanOperations";
+import { transactionToOperation } from "./scanOperations";
 
 const NATIVE_ASSET: AssetInfo = { type: "native", name: "KAS" };
 

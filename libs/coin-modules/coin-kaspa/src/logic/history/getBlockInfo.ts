@@ -1,6 +1,6 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
 import { getBlocksFromBlueScore } from "../../network";
-import { pickChainBlock, toBlockInfo } from "../blockInfo";
+import { pickChainBlock, toBlockInfo } from "./blockInfo";
 
 /**
  * Block metadata at a given virtual-chain blue score. Kaspa is a BlockDAG: `height` here is the

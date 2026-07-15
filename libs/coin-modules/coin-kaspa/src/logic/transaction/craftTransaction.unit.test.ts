@@ -105,6 +105,28 @@ describe("craftTransaction", () => {
     ).rejects.toThrow("custom fee exceeds");
   });
 
+  it("throws when the custom fee is below the mass-based minimum for this transaction", async () => {
+    mockGetUtxosForAddresses.mockResolvedValue([utxo(200_000_000, 0)]);
+
+    const defaultCraft = await craftTransaction(intent({ amount: 150_000_000n }));
+    const defaultFee = BigInt(defaultCraft.details?.fee as string);
+
+    await expect(
+      craftTransaction(intent({ amount: 150_000_000n }), { value: defaultFee - 1n }),
+    ).rejects.toThrow("below the minimum required");
+  });
+
+  it("throws when the custom fee shrinks the change output into KIP-9 dust", async () => {
+    // 200M UTXO sending 150M — default fee ~2036, change ~49,997,964.
+    // A custom fee of 49,000,000 reduces change to ~1,000,000 sompi.
+    // storageMass(outputs=[150M, 1M]) ≈ 1,001,667 >> MASS_LIMIT_PER_TX (100,000).
+    mockGetUtxosForAddresses.mockResolvedValue([utxo(200_000_000, 0)]);
+
+    await expect(
+      craftTransaction(intent({ amount: 150_000_000n }), { value: 49_000_000n }),
+    ).rejects.toThrow("KIP-9 storage mass");
+  });
+
   it("throws for a non-positive amount", async () => {
     mockGetUtxosForAddresses.mockResolvedValue([utxo(50_000_000, 0)]);
 

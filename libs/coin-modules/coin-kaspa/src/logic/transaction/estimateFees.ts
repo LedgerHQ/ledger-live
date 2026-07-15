@@ -1,5 +1,5 @@
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import { craftTransaction } from "../craftTransaction";
+import { craftTransaction } from "./craftTransaction";
 
 /**
  * Estimate the mass-based fee for a Kaspa transaction intent. Kaspa's fee is a deterministic

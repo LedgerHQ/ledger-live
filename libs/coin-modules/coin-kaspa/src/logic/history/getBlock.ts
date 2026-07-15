@@ -1,7 +1,7 @@
 import type { Block, BlockOperation, BlockTransaction } from "@ledgerhq/coin-module-framework/api/index";
 import { getBlocksFromBlueScore } from "../../network";
 import type { ApiResponseBlockTransaction } from "../../types";
-import { pickChainBlock, toBlockInfo } from "../blockInfo";
+import { pickChainBlock, toBlockInfo } from "./blockInfo";
 
 /**
  * Full block (metadata + transactions) at a given virtual-chain blue score. Same block-selection
