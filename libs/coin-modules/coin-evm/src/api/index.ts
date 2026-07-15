@@ -46,7 +46,9 @@ import { isHexString } from "../utils";
 // TODO Change to Record<string, EvmConfig> once Celo bridge is removed
 const configs: Record<string, EvmConfig | (() => EvmCoinConfig)> = {};
 
-type CallParams = Record<string, unknown> | unknown[];
+// EVM only accepts the object form { to, data, block? }. The runtime guard in
+// parseCallParams still rejects arrays defensively, since the service boundary passes opaque params.
+type CallParams = Record<string, unknown>;
 type EvmCoinModuleApi = CoinModuleApi<MemoNotSupported, BufferTxData> & {
   call: (params: CallParams) => Promise<string>;
 };
@@ -116,12 +118,12 @@ export function createApi(
   };
 }
 
-export function parseCallParams(params: CallParams): EvmCallParams {
+export function parseCallParams(params: unknown): EvmCallParams {
   if (Array.isArray(params) || params === null || typeof params !== "object") {
     throw new TypeError("Invalid EVM call params: expected an object");
   }
 
-  const { to, data, block } = params;
+  const { to, data, block } = params as Record<string, unknown>;
   if (typeof to !== "string" || !isHexString(to, 20)) {
     throw new TypeError('Invalid EVM call params: "to" must be a 0x-prefixed 20-byte hex address');
   }
