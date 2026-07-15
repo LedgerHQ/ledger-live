@@ -13,4 +13,5 @@ export const MY_WALLET_TRACKING_BUTTON = {
   exploreAllLedger: "Explore all",
   changeAvatar: "Change avatar",
   myLedger: "My ledger",
+  contacts: "Contacts",
 } as const;

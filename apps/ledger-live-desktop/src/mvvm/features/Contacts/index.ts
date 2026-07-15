@@ -1,2 +1,2 @@
-export { resolveContactsEntryConfig, useContactsEntryConfig } from "./hooks/useContactsEntryConfig";
-export type { ContactsEntryConfig } from "./types";
+export { ContactsButton } from "./components/ContactsButton";
+export { default } from "./screens/Contacts";

@@ -25,6 +25,7 @@ import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 import { identitiesSlice, IdentitiesState } from "@ledgerhq/client-ids/store";
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
+import { contactsSlice, type ContactsState } from "@domain/entity-contact";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 import dialogs, { DialogsState } from "./dialogs";
 import dialogsWithData, { DialogsWithDataState } from "./dialogsWithData";
@@ -79,6 +80,7 @@ export type State = LLDRTKApiState & {
   coinConfigOverrides: CoinConfigOverridesState;
   knownDevices: KnownDevicesState;
   supportedFiats: SupportedFiatsState;
+  contacts: ContactsState;
 };
 
 const appReducer = combineReducers({
@@ -115,6 +117,7 @@ const appReducer = combineReducers({
   coinConfigOverrides,
   knownDevices,
   supportedFiats: supportedFiatsSlice.reducer,
+  contacts: contactsSlice.reducer,
   ...lldRTKApiReducers,
   ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_: unknown, action: PayloadAction) => action }),
 });

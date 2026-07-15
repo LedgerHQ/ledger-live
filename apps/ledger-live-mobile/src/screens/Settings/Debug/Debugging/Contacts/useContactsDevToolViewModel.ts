@@ -5,7 +5,7 @@ import {
   resolveContactsFeatureParams,
   updateContactsFeatureValue,
   type ContactsFeatureValuePatch,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts/featureFlags";
 import { setOverride } from "@shared/feature-flags";
 import { CONTACTS_FLAG } from "./constants";
 
