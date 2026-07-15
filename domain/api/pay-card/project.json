@@ -1,0 +1,8 @@
+{
+  "name": "@domain/api-pay-card",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

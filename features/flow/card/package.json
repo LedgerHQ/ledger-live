@@ -9,9 +9,6 @@
     "./package.json": "./package.json"
   },
   "sideEffects": false,
-  "dependencies": {
-    "@domain/entity-pay-card": "workspace:^"
-  },
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
@@ -24,6 +21,10 @@
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W features/flow/card"
+  },
+  "dependencies": {
+    "@domain/api-pay-card": "workspace:*",
+    "@domain/entity-pay-card": "workspace:^"
   },
   "devDependencies": {
     "@features/platform-jest-config": "workspace:*",
@@ -43,6 +44,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@typescript-eslint/parser": "catalog:",
+    "@reduxjs/toolkit": "catalog:",
     "eslint": "8.57.0",
     "eslint-plugin-better-tailwindcss": "catalog:",
     "jest": "catalog:",
@@ -55,8 +57,8 @@
     "react-native-reanimated": "catalog:",
     "react-native-safe-area-context": "catalog:",
     "react-native-svg": "catalog:",
-    "react-test-renderer": "catalog:",
     "react-redux": "catalog:",
+    "react-test-renderer": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
   },
