@@ -12,7 +12,6 @@ import {
   type LineChartSeries,
 } from "LLD/components/LineChart";
 import { createSmallestUnitFiatLineChartValueFormatter } from "LLD/components/LineChart/utils/createFiatLineChartValueFormatter";
-import { createLineChartTooltipTitle } from "LLD/components/LineChart/utils/createLineChartTooltipTitle";
 import { DEFAULT_LINE_CHART_HEIGHT } from "LLD/components/LineChart/constants";
 import {
   buildLineChartBottomPaddedYAxisConfig,
@@ -32,18 +31,12 @@ import {
   lineChartRangeToPortfolioRange,
   portfolioRangeToLineChartRange,
 } from "../../utils/portfolioRangeMapping";
+import type { ChartSectionViewModelResult, ScrubSelection } from "./types";
 
 type UseChartSectionViewModelProps = Readonly<{
   balanceInfo: PortfolioBalanceInfo;
   portfolio: Portfolio;
   isLoading: boolean;
-}>;
-
-export type ChartSectionViewModelResult = Readonly<{
-  balanceInfo: PortfolioBalanceInfo;
-  hoveredBalance: number | null;
-  isLoading: boolean;
-  chart: LineChartProps;
 }>;
 
 export function useChartSectionViewModel({
@@ -59,7 +52,7 @@ export function useChartSectionViewModel({
   const discreet = useSelector(discreetModeSelector);
   const selectedRange = portfolioRangeToLineChartRange(selectedTimeRange);
   const fiatUnit = counterValue.units[0];
-  const [hoveredBalance, setHoveredBalance] = useState<number | null>(null);
+  const [scrubSelection, setScrubSelection] = useState<ScrubSelection | undefined>(undefined);
 
   const { prices, timestamps } = useMemo(() => {
     const history = portfolio.balanceHistory;
@@ -81,11 +74,10 @@ export function useChartSectionViewModel({
     [prices, t],
   );
 
-  const color = resolveLineChartColorFromPercentChange(
+  const rangePercentageValue =
     balanceInfo.valueChange.percentage == null
       ? undefined
-      : balanceInfo.valueChange.percentage * 100,
-  );
+      : balanceInfo.valueChange.percentage * 100;
 
   const points = useMemo(() => getExtremaPointMarkers(series), [series]);
 
@@ -95,11 +87,6 @@ export function useChartSectionViewModel({
   );
 
   const formatDate = useAssetChartDateFormatter(selectedRange);
-
-  const tooltipTitle = useMemo(
-    () => createLineChartTooltipTitle(timestamps, formatDate),
-    [timestamps, formatDate],
-  );
 
   const xAxis = useMemo(
     () => buildLineChartXAxisConfig({ timestamps, selectedRange, formatDate }),
@@ -111,49 +98,68 @@ export function useChartSectionViewModel({
   const onScrubberPositionChange = useCallback<LineChartScrubberPositionChange>(
     index => {
       if (index == null) {
-        setHoveredBalance(null);
+        setScrubSelection(undefined);
         return;
       }
       const value = prices[index];
-      setHoveredBalance(Number.isFinite(value) ? value : null);
+      const timestamp = timestamps[index];
+      setScrubSelection(
+        Number.isFinite(value) && timestamp != null ? { balance: value, timestamp } : undefined,
+      );
     },
-    [prices],
+    [prices, timestamps],
   );
 
   const onRangeChange = useCallback(
     (range: LineChartRange) => {
       const portfolioRange = lineChartRangeToPortfolioRange(range);
       if (!portfolioRange || portfolioRange === selectedTimeRange) return;
-      setHoveredBalance(null);
+      setScrubSelection(undefined);
       dispatch(setSelectedTimeRange(portfolioRange));
       track("timeframe_clicked", { timeframe: portfolioRange });
     },
     [dispatch, selectedTimeRange],
   );
 
-  const isChartLoading = !balanceInfo.isAvailable;
-
-  return {
-    balanceInfo,
-    hoveredBalance,
-    isLoading,
-    chart: {
+  const chart = useMemo(
+    (): LineChartProps => ({
       series,
       selectedRange,
       onRangeChange,
-      color,
-      isLoading: isChartLoading,
+      color: resolveLineChartColorFromPercentChange(rangePercentageValue),
+      isLoading: !balanceInfo.isAvailable,
       height: DEFAULT_LINE_CHART_HEIGHT,
       formatValue,
-      tooltipTitle,
       onScrubberPositionChange,
+      showScrubberTooltip: false,
       showXAxis: false,
       showYAxis: false,
       xAxis,
       yAxis,
       points,
       ranges: ANALYTICS_CHART_RANGES,
-      showScrubberTooltip: true,
+    }),
+    [
+      series,
+      selectedRange,
+      onRangeChange,
+      rangePercentageValue,
+      balanceInfo.isAvailable,
+      formatValue,
+      onScrubberPositionChange,
+      xAxis,
+      yAxis,
+      points,
+    ],
+  );
+
+  return {
+    header: {
+      balanceInfo,
+      scrubSelection,
+      chartPrices: prices,
+      isLoading,
     },
+    chart,
   };
 }
