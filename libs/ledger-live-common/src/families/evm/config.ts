@@ -1191,6 +1191,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://chainscan.0g.ai/open/api",
       },
       showNfts: false,
+      minGasPrice: "2000000000",
     },
   },
   config_currency_adi: {
