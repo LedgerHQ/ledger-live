@@ -128,6 +128,11 @@ const teamLiveDevices = {
     parser: intParser,
     desc: "use a different provider for app store (for developers only)",
   },
+  MOCK_SERVER_TRANSPORT: {
+    def: false,
+    parser: boolParser,
+    desc: "enable the Device Management Kit mock server transport (connects to a local device mock server instead of a physical device)",
+  },
 };
 
 export default teamLiveDevices;

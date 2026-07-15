@@ -48,6 +48,19 @@ export function createDeviceSocket(
   });
   tracer.trace("Starting web socket communication", { url, unresponsiveExpectedDuringBulk });
 
+  // In mock server transport mode, the mock scriptrunner authenticates the
+  // WebSocket via the session token as a query param. The token is embedded in
+  // BASE_SOCKET_URL's `/secure-channel/<token>` path (set at boot), so we lift
+  // it into the query string for every scriptrunner flow (genuine, apps/list,
+  // install, mcu…).
+  let socketUrl = url;
+  if (getEnv("MOCK_SERVER_TRANSPORT")) {
+    const token = socketUrl.match(/\/secure-channel\/([^/?#]+)/)?.[1];
+    if (token && !/[?&]token=/.test(socketUrl)) {
+      socketUrl += `${socketUrl.includes("?") ? "&" : "?"}token=${token}`;
+    }
+  }
+
   return new Observable(o => {
     let deviceError: Error | null = null; // error originating from device (connection/response/rejection...)
     let unsubscribed = false; // subscriber wants to stops everything
@@ -56,7 +69,7 @@ export function createDeviceSocket(
     let inBulkMode = false; // we have an array of apdus to exchange, without the need of more WS messages.
     let allowSecureChannelTimeout: NodeJS.Timeout | null = null; // allows to delay/cancel the user confirmation event
     let deviceIdCaptured = false; // track if we've already captured the device id
-    const ws = new WS(url);
+    const ws = new WS(socketUrl);
 
     ws.onopen = () => {
       tracer.trace("Socket opened", { url });

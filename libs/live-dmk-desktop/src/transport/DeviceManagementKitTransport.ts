@@ -8,7 +8,16 @@ import {
 import Transport, { type DescriptorEvent } from "@ledgerhq/hw-transport";
 import { dmkToLedgerDeviceIdMap, activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { LocalTracer } from "@ledgerhq/logs";
-import { firstValueFrom, Observer, startWith, pairwise, map, Subscription } from "rxjs";
+import {
+  firstValueFrom,
+  Observer,
+  startWith,
+  pairwise,
+  map,
+  Subscription,
+  filter,
+  timeout,
+} from "rxjs";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 
 const tracer = new LocalTracer("live-dmk-tracer", { function: "DeviceManagementKitTransport" });
@@ -69,9 +78,19 @@ export class DeviceManagementKitTransport extends Transport {
     }
 
     tracer.trace("[open] No active session found, starting discovery");
-    const [discoveredDevice] = await firstValueFrom(
-      getDeviceManagementKit().listenToAvailableDevices({}),
+    // Discovery emits an empty array first (before transports report), so wait
+    // for the first non-empty emission instead of grabbing the initial []. Real
+    // devices are already discovered when open() runs, so this is a no-op for
+    // them; it lets the mock transport's first poll populate the list.
+    const discoveredDevices = await firstValueFrom(
+      getDeviceManagementKit()
+        .listenToAvailableDevices({})
+        .pipe(
+          filter(devices => devices.length > 0),
+          timeout({ first: 10000 }),
+        ),
     );
+    const [discoveredDevice] = discoveredDevices;
     const connectedSessionId = await getDeviceManagementKit().connect({
       device: discoveredDevice,
       sessionRefresherOptions: { isRefresherDisabled: true },
@@ -278,11 +297,7 @@ export class DeviceManagementKitTransport extends Transport {
         apdu: new Uint8Array(apdu),
       })
       .then((apduResponse: { data: Uint8Array; statusCode: Uint8Array }): Buffer => {
-        const response = Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
-        return response;
-      })
-      .catch(e => {
-        throw e;
+        return Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
       });
   }
 }

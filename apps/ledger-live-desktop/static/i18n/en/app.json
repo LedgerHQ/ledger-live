@@ -5521,6 +5521,13 @@
       "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page.",
       "enableCountervaluesStaging": "Countervalues API staging",
       "enableCountervaluesStagingDesc": "Use the staging countervalues API instead of production.",
+      "enableMockServerTransport": "Mock server transport",
+      "enableMockServerTransportDesc": "Enable the Device Management Kit mock server transport to connect to a local device mock server instead of a physical device. Requires an app restart to take effect.",
+      "mockServerStatus": {
+        "connected": "Mock server connected",
+        "disconnected": "Mock server unreachable",
+        "copySessionToken": "Mock server connected · click to copy session token"
+      },
       "openOnboardingAppInstallDebug": "Open onboarding app install debug screen",
       "openOnboardingAppInstallDebugDesc": "Open a screen with the components from the sync onboarding app installation step"
     },

@@ -20,6 +20,7 @@ import each from "lodash/each";
 import { reload, getKey } from "~/renderer/storage";
 import "~/renderer/styles/global";
 import { registerTransportModules } from "~/renderer/live-common-setup";
+import { bootstrapMockServerTransport } from "~/renderer/mockServerTransport";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/analytics/registerTransactionObserver";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
@@ -347,6 +348,9 @@ async function init() {
     store.dispatch(restoreReceiveVerifyHint(payCardState));
     store.dispatch(restorePayCardBalanceFilter(payCardState));
   }
+
+  // Seed the mock server session/device before the DMK is built (if enabled).
+  await bootstrapMockServerTransport();
 
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
 
