@@ -189,15 +189,16 @@ export default class PortfolioPage {
   async goToAccounts(currencyName: string, currencyId?: string) {
     await waitForElementById(this.accountsListView, 10000);
     if (await isAggregatedAssetsEnabled()) {
-      await scrollToId("crypto-addresses-button");
+      await scrollToId("crypto-addresses-button", this.accountsListView);
       await tapById("crypto-addresses-button");
       await waitForElementById(this.cryptoAddressesListId);
       if (currencyId) {
-        await scrollToId(this.cryptoAddressItemId(currencyId));
+        await scrollToId(this.cryptoAddressItemId(currencyId), this.cryptoAddressesListId);
         await tapById(this.cryptoAddressItemId(currencyId));
       }
     } else {
       await scrollToId(this.assetItemId(currencyName), this.accountsListView);
+      await scrollByPixels(this.accountsListView, 100, "down");
       await tapById(this.assetItemId(currencyName));
     }
   }
