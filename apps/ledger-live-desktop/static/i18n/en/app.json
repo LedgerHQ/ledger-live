@@ -8655,6 +8655,17 @@
       "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements."
     }
   },
+  "largeScreenUpsellModal": {
+    "optedIn": {
+      "title": "See more. Tap less. Save {{discount}}%",
+      "subtitle": "Enjoy a larger screen, smarter transaction reviews, enhanced protection, and an exclusive {{discount}}% off."
+    },
+    "optedOut": {
+      "title": "Spot scams. See every detail",
+      "subtitle": "Review clearly on a touchscreen signer and spot scams with advanced security checks."
+    },
+    "cta": "Explore touchscreen signers"
+  },
   "modularAssetDrawer": {
     "addAccounts": {
       "title": "Select the accounts you want to add",
