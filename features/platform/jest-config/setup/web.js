@@ -1,6 +1,6 @@
-// Setup file for Web (React) tests
+// Web (jsdom) setup shared across features/flow packages.
 
-// Mock window.matchMedia for components that use it
+// Mock window.matchMedia for components that read it.
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: jest.fn().mockImplementation(query => ({
