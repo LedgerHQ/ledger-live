@@ -4,8 +4,8 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { waitForAccountRenamed } from "tests/utils/userdata";
-import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { buildTags } from "tests/utils/tagsUtils";
 
 const accounts = [{ account: Account.ATOM_1, xrayTicket: "B2CQA-2996" }];
 
@@ -19,21 +19,10 @@ for (const account of accounts) {
       speculosForSetupOnly: true,
     });
 
-    const family = getFamilyByCurrencyId(account.account.currency.id);
-
     test(
       `[${account.account.currency.name}] Rename Account`,
       {
-        tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          `@${account.account.currency.id}`,
-          ...(family ? [`@family-${family}`] : []),
-        ],
+        tag: buildTags({ currencyId: account.account.currency.id }),
         annotation: {
           type: "TMS",
           description: account.xrayTicket,

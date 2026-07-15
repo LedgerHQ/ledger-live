@@ -4,11 +4,10 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { buildTags } from "tests/utils/tagsUtils";
 
 const account = new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG");
-const family = getFamilyByCurrencyId(Account.SUI_1.currency.id);
 
 test.use({
   teamOwner: Team.EARN,
@@ -21,15 +20,7 @@ test.describe("SUI - Undelegate", () => {
   test(
     `[${account.account.currency.name}] Undelegate`,
     {
-      tag: [
-        "@NanoSP",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        `@${account.account.currency.id}`,
-        ...(family ? [`@family-${family}`] : []),
-      ],
+      tag: buildTags({ currencyId: account.account.currency.id, skipLNS: true }),
       annotation: { type: "TMS", description: "B2CQA-387-2" },
     },
     async ({ app }) => {

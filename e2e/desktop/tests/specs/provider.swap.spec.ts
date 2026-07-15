@@ -14,6 +14,7 @@ import {
   revokeTokenApproval,
 } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 const app: AppInfos = AppInfos.ETHEREUM;
 
@@ -61,16 +62,7 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
     test(
       `Swap - ${provider.uiName} flow`,
       {
-        tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          "@ethereum",
-          "@family-evm",
-        ],
+        tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
         annotation: [
           {
             type: "TMS",
@@ -137,7 +129,7 @@ test.describe("Swap - Landing page and best offer", () => {
   test(
     `Swap landing page and best offer`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: { type: "TMS", description: "B2CQA-2918, B2CQA-2327" },
     },
     async ({ app }) => {

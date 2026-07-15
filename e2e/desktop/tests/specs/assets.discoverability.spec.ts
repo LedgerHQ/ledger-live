@@ -6,8 +6,7 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-
-const deviceTags = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 test.describe("Stocks - empty discovery state", () => {
   test.use({
@@ -19,7 +18,7 @@ test.describe("Stocks - empty discovery state", () => {
   test(
     "Explore stocks market from empty stocks category",
     {
-      tag: deviceTags,
+      tag: [...DEVICE_TAGS],
       annotation: {
         type: "TMS",
         description: "B2CQA-5955",
@@ -51,7 +50,7 @@ test.describe("Stocks - holdings", () => {
   test(
     "Open stocks assets page from stocks category",
     {
-      tag: deviceTags,
+      tag: [...DEVICE_TAGS],
       annotation: {
         type: "TMS",
         description: "B2CQA-5956",
@@ -81,7 +80,7 @@ test.describe("Stocks - global search", () => {
   test(
     "Navigate to markets from search categories",
     {
-      tag: deviceTags,
+      tag: [...DEVICE_TAGS],
       annotation: {
         type: "TMS",
         description: "B2CQA-5957",
@@ -107,7 +106,7 @@ test.describe("Stocks - global search", () => {
   test(
     "Match ticker to top search result",
     {
-      tag: deviceTags,
+      tag: [...DEVICE_TAGS],
       annotation: {
         type: "TMS",
         description: "B2CQA-5958",

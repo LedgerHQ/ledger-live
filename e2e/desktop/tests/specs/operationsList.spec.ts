@@ -3,6 +3,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 test.describe("Operations list", () => {
   test.use({
@@ -14,7 +15,7 @@ test.describe("Operations list", () => {
   test(
     "Validate operations list entrypoints, layout, row rendering, details drawer and CSV export",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [...DEVICE_TAGS],
       annotation: {
         type: "TMS",
         description: "B2CQA-5256, B2CQA-5266, B2CQA-5274, B2CQA-5276, B2CQA-5282, B2CQA-5331",

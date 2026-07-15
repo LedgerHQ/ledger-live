@@ -5,6 +5,7 @@ import test from "tests/fixtures/common";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { setupEnv } from "tests/utils/swapUtils";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 const xrayTicket = "B2CQA-2457";
 const fundedAssetsAccounts: AccountType[] = [
@@ -39,18 +40,7 @@ test.describe("Swap Discreet mode", () => {
   test(
     "No amount should be visible in the asset drawer",
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@ethereum",
-        "@family-evm",
-        "@bitcoin",
-        "@family-bitcoin",
-      ],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: [
         {
           type: "TMS",
@@ -70,18 +60,7 @@ test.describe("Swap Discreet mode", () => {
   test(
     "Balance should not be visible in the swap widget",
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@ethereum",
-        "@family-evm",
-        "@bitcoin",
-        "@family-bitcoin",
-      ],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: [
         {
           type: "TMS",

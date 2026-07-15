@@ -4,10 +4,8 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-
-const family = getFamilyByCurrencyId(Account.XTZ_1.currency.id);
+import { buildTags } from "tests/utils/tagsUtils";
 
 // Shared modal/test config for the Tezos staking specs. DISABLE_TRANSACTION_BROADCAST is off by
 // default (CI never broadcasts); set it to "0" locally to broadcast + confirm the op on-chain.
@@ -20,16 +18,7 @@ const tezosStakeUse = (account: Delegate) => ({
   featureFlags: { lldTezosStaking: { enabled: true } },
 });
 
-const tags = [
-  "@NanoSP",
-  "@LNS",
-  "@NanoX",
-  "@Stax",
-  "@Flex",
-  "@NanoGen5",
-  `@${Account.XTZ_1.currency.id}`,
-  ...(family ? [`@family-${family}`] : []),
-];
+const tags = buildTags({ currencyId: Account.XTZ_1.currency.id });
 
 // Accounts: XTZ_4 (index 3) funded + UNDELEGATED for the earning-choice chooser; XTZ_2 (index 1)
 // DELEGATED + STAKED for the stake flow; XTZ_3 (index 2) same, dedicated to unstake to avoid a settlement

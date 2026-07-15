@@ -8,6 +8,7 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { buildTags } from "tests/utils/tagsUtils";
 
 function getRequiredFamily(currencyId: string): string {
   const family = getFamilyByCurrencyId(currencyId);
@@ -121,16 +122,7 @@ test.describe("New Send Flow", () => {
       test(
         `Send ${tx.amount} ${tx.accountToDebit.currency.ticker} from ${tx.accountToDebit.accountName} to ${tx.accountToCredit.accountName}`,
         {
-          tag: [
-            "@NanoSP",
-            "@LNS",
-            "@NanoX",
-            "@Stax",
-            "@Flex",
-            "@NanoGen5",
-            `@${tx.accountToDebit.currency.id}`,
-            ...(family ? [`@family-${family}`] : []),
-          ],
+          tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
           annotation: { type: "TMS", description: entry.xrayTicket },
         },
         async ({ app }) => {
