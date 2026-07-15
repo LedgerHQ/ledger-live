@@ -8,6 +8,7 @@
 "@ledgerhq/coin-concordium": patch
 "@ledgerhq/coin-filecoin": patch
 "@ledgerhq/coin-hedera": patch
+"@ledgerhq/coin-multiversx": patch
 "@ledgerhq/coin-polkadot": patch
 "@ledgerhq/coin-solana": patch
 "@ledgerhq/coin-sui": patch
