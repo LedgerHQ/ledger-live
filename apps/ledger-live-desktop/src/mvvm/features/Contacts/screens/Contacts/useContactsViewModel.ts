@@ -5,7 +5,7 @@ import {
   useContactsMeContact,
   type ContactsEmptyListLabels,
 } from "@features/flow-contacts";
-import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/useUserAvatarViewModel";
+import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import type { ContactsViewProps } from "./ContactsView";
 
 export type ContactsViewModel = ContactsViewProps;

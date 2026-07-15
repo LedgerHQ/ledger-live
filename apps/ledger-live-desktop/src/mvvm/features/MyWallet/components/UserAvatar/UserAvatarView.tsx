@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar } from "@ledgerhq/lumen-ui-react";
-import { MY_WALLET_AVATAR_USER_URL } from "./useUserAvatarViewModel";
+import { MY_WALLET_AVATAR_USER_URL } from "./constants";
 import { UserAvatarViewProps } from "./types";
 
 export function UserAvatarView({
