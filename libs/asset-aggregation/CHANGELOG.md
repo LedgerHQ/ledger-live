@@ -1,5 +1,11 @@
 # @ledgerhq/asset-aggregation
 
+## 0.9.1-hotfix.0
+
+### Patch Changes
+
+- [#19580](https://github.com/LedgerHQ/ledger-live/pull/19580) [`641779c`](https://github.com/LedgerHQ/ledger-live/commit/641779c220abf623cfbe95e2980e131ec1f3300c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix resolveNormalizedCurrency mapping token meta-currencies to same-named L2 chains when their tickers differ
+
 ## 0.9.0
 
 ### Minor Changes

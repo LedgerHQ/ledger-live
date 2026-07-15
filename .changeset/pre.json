@@ -186,6 +186,8 @@
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
   "changesets": [
-    "brave-flowers-cover"
+    "brave-flowers-cover",
+    "fix-arb-token-eth-collision",
+    "tiny-lions-run"
   ]
 }
