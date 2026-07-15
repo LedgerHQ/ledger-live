@@ -5,25 +5,29 @@ type ChartSectionHeaderVariationProps = Readonly<{
   percentageValue: number;
   discreet: boolean;
   variationText: string;
-  rangeLabel: string;
+  timeLabel: string;
+  isScrubbing: boolean;
 }>;
 
 export function ChartSectionHeaderVariation({
   percentageValue,
   discreet,
   variationText,
-  rangeLabel,
+  timeLabel,
+  isScrubbing,
 }: ChartSectionHeaderVariationProps) {
   return (
     <div className="flex items-center gap-4" data-testid="analytics-balance-trend">
       {!discreet && (
-        <Trend value={percentageValue} size="sm" data-testid="analytics-balance-trend-percentage" />
+        <Trend value={percentageValue} size="md" data-testid="analytics-balance-trend-percentage" />
       )}
       <span className="body-2 text-muted" data-testid="analytics-balance-trend-value">
         {variationText}
       </span>
-      <span className="body-2 text-muted">·</span>
-      <span className="body-2 text-muted">{rangeLabel}</span>
+      {!isScrubbing && <span className="body-2 text-muted">·</span>}
+      <span className="body-2 text-muted" data-testid="analytics-balance-trend-time">
+        {timeLabel}
+      </span>
     </div>
   );
 }

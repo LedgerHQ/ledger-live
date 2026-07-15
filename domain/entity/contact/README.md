@@ -29,8 +29,8 @@ const ben = contact({
 ```
 
 The `contactsSlice` and selectors are exported from the package root. Implementation files are
-colocated in `src/data`. Address mutations accept the final `currencyId` selected by MAD; asset and
-network display data are not stored in Contacts state.
+colocated directly in `src`. Address mutations accept the final `currencyId` selected by MAD; asset
+and network display data are not stored in Contacts state.
 
 Mock factories are available for tests:
 

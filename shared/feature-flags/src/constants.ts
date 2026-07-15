@@ -1,4 +1,4 @@
-import type { Feature, FeatureId, Features, FeatureFlagsState } from "./data/schema";
+import type { Feature, Features, FeatureFlagsState } from "./data/schema";
 import * as flags from "./flags";
 
 /**
@@ -29,18 +29,3 @@ export const FEATURE_FLAGS_INITIAL_STATE: FeatureFlagsState = {
 
 /** Default polling interval for fetching remote flags, in milliseconds: 5 minutes. */
 export const FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS = 5 * 60 * 1000;
-
-/**
- * Resolves every known feature flag via the provided `getFeature` accessor, returning a map of
- * the non-null results. Used by debug tooling and E2E suites to snapshot the full flag state.
- */
-export const getAllFeatureFlags = (
-  getFeature: (key: FeatureId) => Feature | null,
-): Partial<{ [key in FeatureId]: Feature }> => {
-  const res: Partial<{ [key in FeatureId]: Feature }> = {};
-  (Object.keys(FEATURE_FLAGS_DEFAULTS) as FeatureId[]).forEach(key => {
-    const value = getFeature(key);
-    if (value !== null) res[key] = value;
-  });
-  return res;
-};
