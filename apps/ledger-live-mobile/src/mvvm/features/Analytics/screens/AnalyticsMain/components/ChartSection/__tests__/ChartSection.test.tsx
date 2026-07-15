@@ -40,6 +40,9 @@ describe("ChartSection", () => {
 
     expect(screen.getByTestId(CHART_SECTION_TEST_IDS.root)).toBeVisible();
     expect(screen.getByTestId(CHART_SECTION_TEST_IDS.header)).toBeVisible();
+    expect(screen.getByTestId(CHART_SECTION_TEST_IDS.totalBalanceLabel)).toHaveTextContent(
+      "Total balance",
+    );
     expect(screen.getByTestId("analytics-balance-amount")).toBeVisible();
     expect(screen.getByTestId(CHART_SECTION_TEST_IDS.trend)).toBeVisible();
     expect(screen.getByTestId("analytics-chart")).toBeVisible();

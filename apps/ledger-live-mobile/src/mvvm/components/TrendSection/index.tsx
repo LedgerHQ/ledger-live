@@ -32,7 +32,7 @@ export function TrendSection({
 
   return (
     <Box lx={rowStyle} testID={testID}>
-      {showTrend && <Trend value={percentage} size={trendSize} />}
+      {showTrend && <Trend size={trendSize} value={percentage} />}
       {formattedChange != null && (
         <Text typography="body2" lx={{ color: "muted" }}>
           {formattedChange}

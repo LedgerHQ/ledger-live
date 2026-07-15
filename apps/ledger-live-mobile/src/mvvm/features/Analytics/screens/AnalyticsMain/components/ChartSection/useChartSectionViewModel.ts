@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
+import { getScrubVariation } from "@ledgerhq/live-common/market/utils/scrubVariation";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useTranslation, useLocale } from "~/context/Locale";
 import { formatPrice, formatSignedFiatVariation } from "@ledgerhq/live-currency-format";
@@ -20,9 +21,9 @@ import {
   resolveLineChartColorFromPercentChange,
   type LineChartScrubberPositionChange,
   type LineChartSeries,
-  type LineChartTooltipTitle,
   type LineChartValueFormatter,
 } from "LLM/components/LineChart";
+import { buildChartDateFormatters } from "LLM/components/LineChart/utils/buildChartDateFormatters";
 import {
   ANALYTICS_CHART_RANGES,
   isAnalyticsChartRange,
@@ -36,6 +37,8 @@ import {
   buildAnalyticsChartYAxisConfig,
 } from "LLM/features/Analytics/utils/chartAxisConfig";
 import type { ChartSectionViewModel } from "./types";
+
+type ScrubSelection = Readonly<{ balance: number; timestamp: number }>;
 
 export function useChartSectionViewModel(): ChartSectionViewModel {
   const { t } = useTranslation();
@@ -51,7 +54,7 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
 
   const selectedRange = portfolioRangeToLineChartRange(selectedTimeRange);
   const fiatUnit = counterValue.units[0];
-  const [hoveredBalance, setHoveredBalance] = useState<number | null>(null);
+  const [selection, setSelection] = useState<ScrubSelection | undefined>(undefined);
 
   const valueChange = useMemo(
     () =>
@@ -96,75 +99,78 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
     [fiatUnit, locale, discreet],
   );
 
-  const dateFormatters = useMemo(
-    () => ({
-      hour: new Intl.DateTimeFormat(locale, { hour: "numeric", minute: "numeric" }),
-      day: new Intl.DateTimeFormat(locale, {
-        day: "numeric",
-        month: "numeric",
-        year: "numeric",
-      }),
-    }),
-    [locale],
-  );
+  const dateFormatters = useMemo(() => buildChartDateFormatters(locale), [locale]);
 
   const formatDate = useCallback(
-    (timestamp: number) =>
-      (selectedRange === "1d" ? dateFormatters.hour : dateFormatters.day).format(
-        new Date(timestamp),
-      ),
-    [selectedRange, dateFormatters],
+    (timestamp: number) => dateFormatters.formatAxisDate(timestamp, selectedRange),
+    [dateFormatters, selectedRange],
   );
 
-  const tooltipTitle = useMemo<LineChartTooltipTitle>(
-    () => dataIndex => {
-      const timestamp = timestamps[dataIndex];
-      if (timestamp == null) return undefined;
-      return formatDate(timestamp);
-    },
-    [timestamps, formatDate],
-  );
+  const scrubDateLabel =
+    selection != null
+      ? dateFormatters.formatScrubHeaderDate(selection.timestamp, selectedRange)
+      : undefined;
+  const hoveredBalance = selection?.balance ?? null;
 
   const onScrubberPositionChange = useCallback<LineChartScrubberPositionChange>(
     index => {
       if (index == null) {
-        setHoveredBalance(null);
+        setSelection(undefined);
         return;
       }
       const value = prices[index];
-      setHoveredBalance(Number.isFinite(value) ? value : null);
+      const timestamp = timestamps[index];
+      setSelection(
+        Number.isFinite(value) && timestamp != null ? { balance: value, timestamp } : undefined,
+      );
     },
-    [prices],
+    [prices, timestamps],
   );
 
   const onRangeChange = useCallback(
     (range: AnalyticsChartRange) => {
       const portfolioRange = lineChartRangeToPortfolioRange(range);
       if (!portfolioRange || portfolioRange === selectedTimeRange) return;
-      setHoveredBalance(null);
+      setSelection(undefined);
       dispatch(setSelectedTimeRange(portfolioRange));
       track("timeframe_clicked", { timeframe: portfolioRange });
     },
     [dispatch, selectedTimeRange],
   );
 
-  const percentageValue = valueChange.percentage == null ? NaN : valueChange.percentage * 100;
-  const mainUnitValue = new BigNumber(valueChange.value).shiftedBy(-fiatUnit.magnitude).toNumber();
-  const variationText = discreet
-    ? "***"
-    : formatSignedFiatVariation(mainUnitValue, fiatUnit, locale);
+  const rangePercentageValue = valueChange.percentage == null ? NaN : valueChange.percentage * 100;
+  const scrubVariation = useMemo(() => {
+    if (selection == null) return undefined;
+    const baselinePrice = prices[0];
+    if (!Number.isFinite(baselinePrice)) return undefined;
+    return getScrubVariation(baselinePrice, selection.balance, {
+      percentageUnit: "percentPoints",
+    });
+  }, [selection, prices]);
+
+  const percentageValue = scrubVariation?.percentage ?? rangePercentageValue;
+
+  const rangeVariationText = useMemo(() => {
+    if (discreet) return "***";
+    const mainUnitValue = new BigNumber(valueChange.value)
+      .shiftedBy(-fiatUnit.magnitude)
+      .toNumber();
+    return formatSignedFiatVariation(mainUnitValue, fiatUnit, locale);
+  }, [discreet, valueChange.value, fiatUnit, locale]);
+
+  const variationText = useMemo(() => {
+    if (scrubVariation == null) return rangeVariationText;
+    if (discreet) return "***";
+    const mainUnitValue = new BigNumber(scrubVariation.variationFiat)
+      .shiftedBy(-fiatUnit.magnitude)
+      .toNumber();
+    return formatSignedFiatVariation(mainUnitValue, fiatUnit, locale);
+  }, [scrubVariation, rangeVariationText, discreet, fiatUnit, locale]);
+
   const rangeLabel = t(`assetDetail.balanceGraph.timeLabel.${selectedRange}`);
 
-  return {
-    header: {
-      hoveredBalance,
-      isBalanceAvailable,
-      percentageValue,
-      variationText,
-      rangeLabel,
-      discreet,
-    },
-    chart: {
+  const chart = useMemo(
+    (): ChartSectionViewModel["chart"] => ({
       series,
       selectedRange,
       onRangeChange,
@@ -174,14 +180,13 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
       })),
       isRangeValue: isAnalyticsChartRange,
       color: resolveLineChartColorFromPercentChange(
-        valueChange.percentage == null ? undefined : percentageValue,
+        valueChange.percentage == null ? undefined : rangePercentageValue,
       ),
       isLoading: !isBalanceAvailable,
       height: DEFAULT_LINE_CHART_HEIGHT,
       formatValue,
-      tooltipTitle,
       onScrubberPositionChange,
-      showScrubberTooltip: true,
+      showScrubberTooltip: false,
       showScrubberBeacons: false,
       showXAxis: false,
       showYAxis: false,
@@ -190,6 +195,32 @@ export function useChartSectionViewModel(): ChartSectionViewModel {
       points: getExtremaPointMarkers(series),
       accessibilityLabel: t("assetDetail.balanceGraph.timeframeSelector"),
       testID: "analytics-chart",
+    }),
+    [
+      series,
+      selectedRange,
+      onRangeChange,
+      t,
+      valueChange.percentage,
+      rangePercentageValue,
+      isBalanceAvailable,
+      formatValue,
+      onScrubberPositionChange,
+      timestamps,
+      formatDate,
+    ],
+  );
+
+  return {
+    header: {
+      hoveredBalance,
+      scrubDateLabel,
+      isBalanceAvailable,
+      percentageValue,
+      variationText,
+      rangeLabel,
+      discreet,
     },
+    chart,
   };
 }

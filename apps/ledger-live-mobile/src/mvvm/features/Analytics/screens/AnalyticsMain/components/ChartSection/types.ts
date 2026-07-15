@@ -3,6 +3,7 @@ import type { AnalyticsChartRange } from "@ledgerhq/wallet-analytics";
 
 export type ChartSectionHeaderViewModel = Readonly<{
   hoveredBalance: number | null;
+  scrubDateLabel: string | undefined;
   isBalanceAvailable: boolean;
   percentageValue: number;
   variationText: string;
@@ -18,5 +19,6 @@ export type ChartSectionViewModel = Readonly<{
 export const CHART_SECTION_TEST_IDS = {
   root: "analytics-chart-section",
   header: "analytics-chart-header",
+  totalBalanceLabel: "analytics-total-balance-label",
   trend: "analytics-balance-trend",
 } as const;
