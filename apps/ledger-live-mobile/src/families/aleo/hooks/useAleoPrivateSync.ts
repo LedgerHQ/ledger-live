@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { useIsFocused } from "@react-navigation/native";
 import { useAleoPrivateSync as useAleoPrivateSyncCore } from "@ledgerhq/live-common/families/aleo/react";
 import { accountSelector } from "~/reducers/accounts";
@@ -10,13 +11,15 @@ type UseAleoPrivateSyncOptions = Omit<
 >;
 
 export const useAleoPrivateSync = ({ autoStart, ...options }: UseAleoPrivateSyncOptions) => {
+  const isFocused = useIsFocused();
   // Gating on focus keeps autoStart from firing on a screen the
   // user hasn't actually opened yet, on either platform.
-  const isFocused = useIsFocused();
+  const hasBeenFocusedRef = useRef(isFocused);
+  if (isFocused) hasBeenFocusedRef.current = true;
 
   return useAleoPrivateSyncCore({
     ...options,
-    autoStart: autoStart && isFocused,
+    autoStart: autoStart && hasBeenFocusedRef.current,
     accountSelector: (state, params) => accountSelector(state as State, params),
     updateAccountWithUpdater: (accountId, updater) =>
       updateAccountWithUpdater({ accountId, updater }),

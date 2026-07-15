@@ -74,6 +74,22 @@ describe("useAleoPrivateSync (mobile wrapper)", () => {
     expect(call.autoStart).toBe(false);
   });
 
+  it("latches focus: once focused, a later blur does not flip autoStart back to false", () => {
+    mockUseIsFocused.mockReturnValue(true);
+    const { rerender } = renderHook(() =>
+      useAleoPrivateSync({ account: ALEO_ACCOUNT_1, autoStart: true }),
+    );
+    expect(mockCore.mock.calls[0][0].autoStart).toBe(true);
+
+    mockUseIsFocused.mockReturnValue(false);
+    rerender(undefined);
+
+    // If this ANDed the live isFocused value directly, the core hook's autoStart effect
+    // would treat this as a stop() (or a restart on the next refocus) instead of a no-op —
+    // see libs/ledger-live-common/src/families/aleo/react.ts's autoStart effect.
+    expect(mockCore.mock.calls[1][0].autoStart).toBe(true);
+  });
+
   it("wires accountSelector through to the app's real selector", () => {
     renderHook(() => useAleoPrivateSync({ account: ALEO_ACCOUNT_1 }));
 
