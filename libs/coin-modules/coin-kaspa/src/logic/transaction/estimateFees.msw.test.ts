@@ -1,6 +1,13 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { http, HttpResponse } from "msw";
-import { FEE_ESTIMATE, RECIPIENT, SENDER, TEST_KASPA_ENDPOINT, makeApiUtxo, server } from "../../test/msw.mock";
+import {
+  FEE_ESTIMATE,
+  RECIPIENT,
+  SENDER,
+  TEST_KASPA_ENDPOINT,
+  makeApiUtxo,
+  server,
+} from "../../test/msw.mock";
 import { estimateFees } from "./estimateFees";
 
 const UTXOS_URL = `${TEST_KASPA_ENDPOINT}/addresses/utxos`;

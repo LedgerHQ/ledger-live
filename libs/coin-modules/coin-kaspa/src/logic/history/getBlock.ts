@@ -1,4 +1,8 @@
-import type { Block, BlockOperation, BlockTransaction } from "@ledgerhq/coin-module-framework/api/index";
+import type {
+  Block,
+  BlockOperation,
+  BlockTransaction,
+} from "@ledgerhq/coin-module-framework/api/index";
 import { getBlocksFromBlueScore } from "../../network";
 import type { ApiResponseBlockTransaction } from "../../types";
 import { pickChainBlock, toBlockInfo } from "./blockInfo";

@@ -5,46 +5,42 @@ import type {
   Operation,
   Page,
 } from "@ledgerhq/coin-module-framework/api/index";
-import type { Operation as LegacyOperation } from "@ledgerhq/types-live";
 import { getTransactions } from "../../network";
-import { transactionToOperation } from "./scanOperations";
+import { KaspaTransfer, parseKaspaTransfer } from "./scanOperations";
 
 const NATIVE_ASSET: AssetInfo = { type: "native", name: "KAS" };
 
 /**
- * Map a legacy `@ledgerhq/types-live` Operation (built by `transactionToOperation`, shared with
- * `scanOperations` so the amount/fee/type computation can't drift between the legacy bridge and
- * the Alpaca API) into the framework Operation shape. This is the single adapter boundary
- * between the two Operation types in this module.
+ * Map a convention-neutral KaspaTransfer into the framework Operation shape.
  *
- * Value conventions differ: the legacy `op.value` INCLUDES fees for OUT (amount + fees), whereas
- * the framework `Operation.value` must be the pure amount — the generic coin-module adapter re-adds
- * fees for OUT-family ops when converting back to `@ledgerhq/types-live` (see
- * `ledger-live-common/src/bridge/generic-coin-framework/utils.ts:381-388`). So we strip fees for OUT
- * here to avoid double-counting; IN carries no fee and is forwarded unchanged.
+ * Alpaca value convention: value = pure amount (fee excluded). The generic coin-module adapter
+ * re-adds fees for OUT-family ops when converting back to @ledgerhq/types-live
+ * (ledger-live-common/src/bridge/generic-coin-framework/utils.ts:381-388), so stripping them
+ * here avoids double-counting. IN carries no fee and is forwarded as-is.
  */
-function toFrameworkOperation(op: LegacyOperation): Operation<MemoNotSupported> {
-  const fees = BigInt(op.fee?.toFixed(0) ?? "0");
-  const legacyValue = BigInt(op.value?.toFixed(0) ?? "0");
-  // OUT legacy value = amount + fees; strip fees so the framework's re-add lands on the amount.
-  const value = op.type === "OUT" ? legacyValue - fees : legacyValue;
+function toFrameworkOperation(t: KaspaTransfer): Operation<MemoNotSupported> {
+  const fees = BigInt(t.fee.toFixed(0));
+  const value =
+    t.type === "OUT"
+      ? BigInt(t.netMovement.minus(t.fee).toFixed(0))
+      : BigInt(t.netMovement.toFixed(0));
 
   return {
-    id: op.id,
-    type: op.type,
-    senders: op.senders ?? [],
-    recipients: op.recipients ?? [],
+    id: t.id,
+    type: t.type,
+    senders: t.senders,
+    recipients: t.recipients,
     value,
     asset: NATIVE_ASSET,
     tx: {
-      hash: op.hash,
+      hash: t.id,
       block: {
-        height: op.blockHeight ?? 0,
-        hash: op.blockHash ?? "",
-        time: op.date,
+        height: t.blockHeight,
+        hash: t.blockHash,
+        time: t.date,
       },
       fees,
-      date: op.date,
+      date: t.date,
       failed: false,
     },
   };
@@ -57,7 +53,7 @@ function parseCursor(options: ListOperationsOptions): number {
       return parsed;
     }
   }
-  return options.minHeight > 0 ? options.minHeight : 1;
+  return 1;
 }
 
 /**
@@ -78,7 +74,7 @@ export async function listOperations(
 
   const items = (transactions ?? [])
     .filter(tx => !options.minHeight || tx.accepting_block_blue_score >= options.minHeight)
-    .map(tx => toFrameworkOperation(transactionToOperation(tx, addressSet, address)));
+    .map(tx => toFrameworkOperation(parseKaspaTransfer(tx, addressSet)));
 
   return {
     items,

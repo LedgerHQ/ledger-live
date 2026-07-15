@@ -77,7 +77,8 @@ describe("listOperations", () => {
           ],
           outputs: [
             {
-              script_public_key_address: "kaspa:qyp8y7hlk9uj5l9vqsyz78x90yt84cujdytg93s8q8malhpdq6c4hpg9dyesk65",
+              script_public_key_address:
+                "kaspa:qyp8y7hlk9uj5l9vqsyz78x90yt84cujdytg93s8q8malhpdq6c4hpg9dyesk65",
               amount: 700000,
             },
             {

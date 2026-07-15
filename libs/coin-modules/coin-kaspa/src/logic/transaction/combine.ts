@@ -3,7 +3,7 @@ import {
   KaspaHwTransactionInput,
   KaspaHwTransactionOutput,
 } from "../../types/kaspaHwTransaction";
-import type { UnsignedKaspaTransaction } from "../craftTransaction";
+import type { UnsignedKaspaTransaction } from "./craftTransaction";
 
 /**
  * Attach per-input device signatures to an unsigned Kaspa transaction (as produced by

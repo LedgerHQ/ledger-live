@@ -4,7 +4,6 @@ const MINTED_BLOCK = 480818084;
 
 describe("getBlockInfo (integration)", () => {
   it("fetches the block at the latest virtual-chain blue score", async () => {
-
     const result = await getBlockInfo(MINTED_BLOCK);
 
     expect(result.height).toBe(MINTED_BLOCK);

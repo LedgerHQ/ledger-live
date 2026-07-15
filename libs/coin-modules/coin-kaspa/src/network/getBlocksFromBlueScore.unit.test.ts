@@ -20,7 +20,9 @@ describe("getBlocksFromBlueScore", () => {
     await getBlocksFromBlueScore(480818084);
 
     expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining("/blocks-from-bluescore?blueScore=480818084&includeTransactions=false"),
+      expect.stringContaining(
+        "/blocks-from-bluescore?blueScore=480818084&includeTransactions=false",
+      ),
       expect.objectContaining({ method: "GET" }),
     );
   });

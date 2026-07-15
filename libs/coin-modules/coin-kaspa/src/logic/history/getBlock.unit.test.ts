@@ -18,7 +18,8 @@ function output(address: string | null, amount: number | null): ApiResponseBlock
   return {
     amount,
     scriptPublicKey: null,
-    verboseData: address === null ? null : { scriptPublicKeyType: "pubkey", scriptPublicKeyAddress: address },
+    verboseData:
+      address === null ? null : { scriptPublicKeyType: "pubkey", scriptPublicKeyAddress: address },
   };
 }
 
@@ -95,7 +96,17 @@ describe("getBlock", () => {
 
   it("maps each output to an incoming native transfer operation", async () => {
     mockGetBlocksFromBlueScore.mockResolvedValue([
-      makeBlock([tx([output(ADDR, 254705948)], { verboseData: { transactionId: "abc", hash: null, computeMass: 0, blockHash: null, blockTime: null } })]),
+      makeBlock([
+        tx([output(ADDR, 254705948)], {
+          verboseData: {
+            transactionId: "abc",
+            hash: null,
+            computeMass: 0,
+            blockHash: null,
+            blockTime: null,
+          },
+        }),
+      ]),
     ]);
 
     const { transactions } = await getBlock(480818084);

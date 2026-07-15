@@ -35,8 +35,14 @@ describe("combine", () => {
     const parsed = JSON.parse(signed);
 
     expect(parsed.transaction.outputs).toEqual([
-      { amount: 700000, scriptPublicKey: { version: 0, scriptPublicKey: "20" + "1".repeat(64) + "ac" } },
-      { amount: 250000, scriptPublicKey: { version: 0, scriptPublicKey: "20" + "2".repeat(64) + "ac" } },
+      {
+        amount: 700000,
+        scriptPublicKey: { version: 0, scriptPublicKey: "20" + "1".repeat(64) + "ac" },
+      },
+      {
+        amount: 250000,
+        scriptPublicKey: { version: 0, scriptPublicKey: "20" + "2".repeat(64) + "ac" },
+      },
     ]);
   });
 
