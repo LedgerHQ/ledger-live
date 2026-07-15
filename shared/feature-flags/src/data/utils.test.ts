@@ -1,13 +1,13 @@
 import { isValidFeatureId, getAllFeatureFlags } from "./utils";
-import { FEATURE_FLAGS_DEFAULTS } from "../constants";
-import type { Feature, FeatureId } from "./schema";
+import { FeatureIdSchema } from "./schema";
+import type { Feature } from "./schema";
 
 const mockFeature: Feature = { enabled: true };
 
 describe("getAllFeatureFlags", () => {
   it("includes all flags when getFeature always returns a value", () => {
     const result = getAllFeatureFlags(() => mockFeature);
-    const keys = Object.keys(FEATURE_FLAGS_DEFAULTS) as FeatureId[];
+    const keys = FeatureIdSchema.options;
     expect(Object.keys(result)).toEqual(keys);
     keys.forEach(key => expect(result[key]).toBe(mockFeature));
   });

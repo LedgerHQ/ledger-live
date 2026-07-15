@@ -1,5 +1,4 @@
 import { FeatureIdSchema, type Feature, type FeatureId } from "./schema";
-import { FEATURE_FLAGS_DEFAULTS } from "../constants";
 
 const FEATURE_ID_SET = new Set<string>(FeatureIdSchema.options);
 
@@ -16,9 +15,9 @@ export function getAllFeatureFlags(
   getFeature: (key: FeatureId) => Feature | null,
 ): Partial<{ [key in FeatureId]: Feature }> {
   const res: Partial<{ [key in FeatureId]: Feature }> = {};
-  (Object.keys(FEATURE_FLAGS_DEFAULTS) as FeatureId[]).forEach(key => {
+  for (const key of FeatureIdSchema.options) {
     const value = getFeature(key);
     if (value !== null) res[key] = value;
-  });
+  }
   return res;
 }
