@@ -62,7 +62,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | Tezos baker API | `tezos-bakers.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Tezos explorer | `xtz-explorer.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Tezos TzKT | `xtz-tzkt-explorer.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
-| Tezos node | `xtz-node.api.live.ledger.com`<br>_⚠️ `*.api.vault.ledger.com` variants also seen_ | [env](/libs/env/src/env.ts) | prod |
+| Tezos node | `xtz-node.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Tron RPC proxy | `tron.coin.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Solana RPC proxy | `solana.coin.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Ledger Earn API (grow `/v0/grow`, stakes `/v3/stakes`, DeFi vaults `/v1/defi/*`, Solana validators) | `earn.api.live.ledger.com` | [env](/libs/env/src/env.ts)<br>[wallet-cli](/apps/wallet-cli/src/wallet/earn/config.ts) | prod |

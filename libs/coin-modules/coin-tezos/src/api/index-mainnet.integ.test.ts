@@ -25,7 +25,7 @@ const defaultConfig: TezosConfig = {
     maxTxQuery: 100,
   },
   node: {
-    url: "https://xtz-node.api.vault.ledger.com",
+    url: "https://xtz-node.api.live.ledger.com",
   },
   fees: {
     minGasLimit: 600,
