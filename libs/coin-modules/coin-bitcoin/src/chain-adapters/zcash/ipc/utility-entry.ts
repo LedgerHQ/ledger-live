@@ -30,7 +30,11 @@ import type {
   UtilityInboundMessage,
   UtilityOutboundMessage,
 } from "./contract";
-import type { BuildTransactionArgs, FinalizeTransactionArgs, BroadcastTransactionArgs } from "../types";
+import type {
+  BuildTransactionArgs,
+  FinalizeTransactionArgs,
+  BroadcastTransactionArgs,
+} from "../types";
 
 /**
  * Minimal parentPort surface -- we don't depend on Electron types here so this
@@ -139,10 +143,7 @@ function handleCancelSync(args: CancelSyncArgs): void {
   }
 }
 
-async function handleBuildTransaction(
-  port: ParentPort,
-  args: BuildTransactionArgs,
-): Promise<void> {
+async function handleBuildTransaction(port: ParentPort, args: BuildTransactionArgs): Promise<void> {
   const { requestId, ...jobArgs } = args;
   try {
     const result = await buildTransactionJob(jobArgs);

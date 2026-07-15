@@ -560,7 +560,9 @@ describe("signOperation — error handling", () => {
   it("surfaces error when selectedNotes is missing", async () => {
     const account = makeAccount();
     // exactOptionalPropertyTypes requires a cast to pass explicit undefined
-    const tx = makeTx("shielded", { selectedNotes: undefined } as unknown as Partial<ZcashTransaction>);
+    const tx = makeTx("shielded", {
+      selectedNotes: undefined,
+    } as unknown as Partial<ZcashTransaction>);
     const signerContext = makeSignerContext();
 
     const obs = callSignOperation(account, tx, signerContext) as Observable<SignOperationEvent>;

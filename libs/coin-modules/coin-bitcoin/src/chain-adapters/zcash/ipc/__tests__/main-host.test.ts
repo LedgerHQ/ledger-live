@@ -431,9 +431,7 @@ describe("start-sync and stream routing", () => {
     };
     emitUtilityMessage({ type: "stream", event: streamEvent });
 
-    expect(mockRegistry.sent).toEqual([
-      { id: 9, channel: ZCASH_IPC.stream, payload: streamEvent },
-    ]);
+    expect(mockRegistry.sent).toEqual([{ id: 9, channel: ZCASH_IPC.stream, payload: streamEvent }]);
   });
 
   it("stops routing after a complete event (pending sync removed)", async () => {

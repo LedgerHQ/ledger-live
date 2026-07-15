@@ -209,11 +209,9 @@ describe("bootstrapUtility — existing sync/chain handlers", () => {
   });
 
   it("streams chunks then a complete event for start-sync", async () => {
-    mockStartSyncJob.mockImplementation(
-      async (_args: unknown, onChunk: (c: unknown) => void) => {
-        onChunk({ processedBlocks: 10, remainingBlocks: 0, transactions: [] });
-      },
-    );
+    mockStartSyncJob.mockImplementation(async (_args: unknown, onChunk: (c: unknown) => void) => {
+      onChunk({ processedBlocks: 10, remainingBlocks: 0, transactions: [] });
+    });
     const { posted, dispatch } = makePort();
     dispatch({
       type: "start-sync",
