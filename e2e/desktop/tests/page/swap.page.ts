@@ -194,12 +194,12 @@ export class SwapPage extends WebViewAppPage {
     const provider = providersList
       .map(uiName => SwapProvider.getByUiName(uiName))
       .find(
-        p =>
-          !!p &&
-          !p.kyc &&
-          !p.app &&
-          !(isEthSolPair && p.name === SwapProvider.LIFI.name) &&
-          (!isLns || p.availableOnLns),
+        providerEntry =>
+          !!providerEntry &&
+          !providerEntry.kyc &&
+          !providerEntry.app &&
+          !(isEthSolPair && providerEntry.name === SwapProvider.LIFI.name) &&
+          (!isLns || providerEntry.availableOnLns),
       );
 
     if (!provider) {

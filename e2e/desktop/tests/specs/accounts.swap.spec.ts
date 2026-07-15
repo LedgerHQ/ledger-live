@@ -82,6 +82,9 @@ test.describe("Swap - Default currency when landing on swap", () => {
 
       await test.step("Currencies persist after leaving and returning to swap", async () => {
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
+        if (!minAmount) {
+          throw new Error("Test failed: No quotes retrieved from swap API.");
+        }
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
         await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
