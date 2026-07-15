@@ -115,9 +115,12 @@ function parseCliFlag(command: string, flag: string): string | undefined {
 }
 
 /**
- * Transient failures (network, Speculos, gateway) where a CLI retry may help.
+ * Transient failures where a CLI re-spawn may help:
+ *  - network / Speculos / gateway errors, and
+ *  - nonce races when several workers broadcast from the same EOA concurrently
+ * A re-spawn re-fetches the confirmed nonce and re-broadcasts.
  */
-function isRetryableError(message: string): boolean {
+export function isRetryableError(message: string): boolean {
   const retryablePatterns = [
     /503/i,
     /502/i,
@@ -128,6 +131,10 @@ function isRetryableError(message: string): boolean {
     /ECONNRESET/i,
     /socket hang up/i,
     /timeout/i,
+    /replacement transaction underpriced/i,
+    // Matches the EVM bridge's "nonce is too low" (families/evm/bridge/api.ts) and a generic "nonce too low".
+    /nonce (is )?too low/i,
+    /not confirmed within/i,
   ];
   return retryablePatterns.some(pattern => pattern.test(message));
 }
@@ -233,7 +240,12 @@ export async function runCliGetAddress(opts: GetAddressOpts): Promise<GetAddress
   return parseGetAddressCliOutput(output);
 }
 
-export function runCliTokenApproval(opts: TokenApprovalOpts): Promise<string> {
+/**
+ * `retries` defaults to 3 for standalone callers. Token-approval flows that
+ * drive the device prompt themselves pass `retries: 1` and retry one level up
+ * (see {@link approveTokenCommand}), so each re-broadcast re-drives the device.
+ */
+export function runCliTokenApproval(opts: TokenApprovalOpts, retries: number = 3): Promise<string> {
   const cliOpts = ["tokenApproval"];
   cliOpts.push(`--currency+${opts.currency}`);
   cliOpts.push(`--mode+${opts.mode}`);
@@ -242,7 +254,7 @@ export function runCliTokenApproval(opts: TokenApprovalOpts): Promise<string> {
   cliOpts.push(`--index+${opts.index}`);
   if (opts.approveAmount) cliOpts.push(`--approveAmount+${opts.approveAmount}`);
   if (opts.waitConfirmation) cliOpts.push("--wait-confirmation");
-  return runCliCommandWithRetry(cliOpts.join("+"));
+  return runCliCommandWithRetry(cliOpts.join("+"), retries);
 }
 
 export function runCliGetTokenAllowance(opts: GetTokenAllowanceOpts): Promise<string> {
