@@ -756,6 +756,7 @@
     "src/families/hedera/config.ts",
     "src/families/icon/config.ts",
     "src/families/internet_computer/config.ts",
+    "src/families/kaspa/coinModuleApi.ts",
     "src/families/kaspa/config.ts",
     "src/families/mina/config.ts",
     "src/families/multiversx/bridge/api.ts",

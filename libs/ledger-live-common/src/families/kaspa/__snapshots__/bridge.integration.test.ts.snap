@@ -3,17 +3,17 @@
 exports[`kaspa currency bridge scanAccounts kaspa seed 1 1`] = `
 [
   {
-    "balance": "13370000",
+    "balance": "33370000",
     "currencyId": "kaspa",
     "derivationMode": "",
-    "freshAddress": "kaspa:qz49rpg0q6ywewxkwl76757ya79v6j556hcmrcy7mk9d36ewgp80cdrwlct2h",
-    "freshAddressPath": "44'/111111'/0'/0/1",
+    "freshAddress": "kaspa:qq8jze8j0lg84nem993vrcu680u8u27hj58vgavaxt55g857c9pkjfku6c3dz",
+    "freshAddressPath": "44'/111111'/0'/0/2",
     "id": "js:2:kaspa:41049d8002c08041d975ab58491c09cf8ced7b388a114ab2f5df73f2534d4d74d17ab8913b3cb3056bad63141cb63fb92e44401b691dee069dbdb2119861c18cc01b204340fcc305ab72e752cd347f4b6271ffe21da098d4f2a4749826857dda7a5576:",
     "index": 0,
-    "operationsCount": 1,
+    "operationsCount": 2,
     "pendingOperations": [],
     "seedIdentifier": "41049d8002c08041d975ab58491c09cf8ced7b388a114ab2f5df73f2534d4d74d17ab8913b3cb3056bad63141cb63fb92e44401b691dee069dbdb2119861c18cc01b204340fcc305ab72e752cd347f4b6271ffe21da098d4f2a4749826857dda7a5576",
-    "spendableBalance": "13370000",
+    "spendableBalance": "33370000",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
@@ -42,6 +42,23 @@ exports[`kaspa currency bridge scanAccounts kaspa seed 1 1`] = `
 exports[`kaspa currency bridge scanAccounts kaspa seed 1 2`] = `
 [
   [
+    {
+      "accountId": "js:2:kaspa:41049d8002c08041d975ab58491c09cf8ced7b388a114ab2f5df73f2534d4d74d17ab8913b3cb3056bad63141cb63fb92e44401b691dee069dbdb2119861c18cc01b204340fcc305ab72e752cd347f4b6271ffe21da098d4f2a4749826857dda7a5576:",
+      "blockHeight": 479100805,
+      "extra": {},
+      "fee": "203600",
+      "hash": "652a5ec87072c9b1eabbc9159bd83e4c8e5f9b0e6b83dac66a394075fc753570",
+      "id": "652a5ec87072c9b1eabbc9159bd83e4c8e5f9b0e6b83dac66a394075fc753570",
+      "recipients": [
+        "kaspa:qz49rpg0q6ywewxkwl76757ya79v6j556hcmrcy7mk9d36ewgp80cdrwlct2h",
+        "kaspa:qqr4nqcntg82ajmph2hfzsk8fy4fuky7e3k9vsmkk0tqcallxegpgj2c783yn",
+      ],
+      "senders": [
+        "kaspa:qqe8x6fg2wuqkcfzrd07glylfzjqppzqvgs3mr3jrfmfchqsrh57vfqnw60jq",
+      ],
+      "type": "IN",
+      "value": "20000000",
+    },
     {
       "accountId": "js:2:kaspa:41049d8002c08041d975ab58491c09cf8ced7b388a114ab2f5df73f2534d4d74d17ab8913b3cb3056bad63141cb63fb92e44401b691dee069dbdb2119861c18cc01b204340fcc305ab72e752cd347f4b6271ffe21da098d4f2a4749826857dda7a5576:",
       "blockHeight": 194187672,
