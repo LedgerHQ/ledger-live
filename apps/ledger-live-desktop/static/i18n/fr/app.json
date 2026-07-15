@@ -1336,17 +1336,6 @@
           "finalStepSuccessButtonLabel" : "Terminer"
         }
       },
-      "installApplications" : {
-        "title" : "Installez des apps sur votre {{productName}}",
-        "titleCompleted" : "Apps installées sur votre {{productName}}",
-        "install" : "Installer",
-        "skip" : "Plus tard",
-        "info" : "Les apps sur votre {{deviceName}} vous permettent de valider vos opérations. Vous pouvez les ajouter ou supprimer à tout moment."
-      },
-      "endOfSetup" : {
-        "title" : "Configuration terminée",
-        "titleCompleted" : "Votre {{deviceName}} est prêt"
-      },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "Touchez Autoriser pour lancer la vérification"
       },
@@ -1463,7 +1452,6 @@
       "cta" : "Vider le cache"
     },
     "migrate" : "Mise à jour des comptes Ledger Wallet disponible",
-    "genericTerminatedCrypto" : "{{coinName}} n’est plus pris en charge.",
     "valentine" : {
       "title" : "Saint-Valentin",
       "description" : "Ledger réduit les frais d’achat et de vente via Ledger Wallet."
@@ -2538,6 +2526,7 @@
   "newSendFlow" : {
     "title" : "Envoyer des {{currency}}",
     "available" : "Disponible : {{amount}}",
+    "to" : "À :",
     "placeholder" : "Entrer une adresse ou un ENS",
     "placeholderNoENS" : "Entrer l’adresse",
     "recent" : "Récent",
@@ -5820,10 +5809,6 @@
             "buttons" : {
               "next" : "Je suis prêt(e)",
               "prev" : "Étape précédente"
-            },
-            "help" : {
-              "help" : "Besoin d’aide",
-              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "deviceHowTo" : {
@@ -5847,10 +5832,6 @@
               "next" : "Étape suivante",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
-            },
-            "help" : {
-              "help" : "Besoin d’aide",
-              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "deviceHowTo2" : {
@@ -5875,10 +5856,6 @@
               "next" : "Étape suivante",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
-            },
-            "help" : {
-              "help" : "Besoin d’aide",
-              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "pinCode" : {
@@ -5889,10 +5866,6 @@
               "next" : "Définir le code PIN",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
-            },
-            "help" : {
-              "help" : "Besoin d’aide",
-              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "quizSuccess" : {
@@ -5910,10 +5883,6 @@
             "buttons" : {
               "next" : "Étape suivante",
               "prev" : "Étape précédente"
-            },
-            "help" : {
-              "help" : "Besoin d’aide",
-              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "pinCodeHowTo" : {
@@ -5929,10 +5898,6 @@
               "next" : "Étape suivante",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
-            },
-            "help" : {
-              "help" : "Besoin d’aide",
-              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "recoverHowTo" : {
@@ -5983,10 +5948,6 @@
               "next" : "Étape suivante",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
-            },
-            "help" : {
-              "help" : "Besoin d’aide",
-              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "newRecoveryPhrase" : {
@@ -5998,10 +5959,6 @@
               "next" : "Phrase de récupération",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
-            },
-            "help" : {
-              "help" : "Besoin d’aide",
-              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "recoveryHowTo" : {
@@ -6027,10 +5984,6 @@
               "next" : "Étape suivante",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
-            },
-            "help" : {
-              "help" : "Besoin d’aide",
-              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "recoveryHowTo3" : {
@@ -6045,10 +5998,6 @@
               "next" : "Étape suivante",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
-            },
-            "help" : {
-              "help" : "Besoin d’aide",
-              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "genuineCheck" : {
@@ -6072,10 +6021,6 @@
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide",
               "learn" : "Apprendre à cacher votre phrase de récupération"
-            },
-            "help" : {
-              "help" : "Besoin d’aide",
-              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "pairMyNano" : {
@@ -6085,10 +6030,6 @@
               "next" : "Vérifier mon Nano",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
-            },
-            "help" : {
-              "help" : "Besoin d’aide",
-              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "enableSync" : {
@@ -6621,10 +6562,9 @@
           "title" : "Avertissement",
           "description" : "Concordium requiert une vérification externe de votre identité. Veuillez lire ces avertissements de sécurité :",
           "list" : {
-            "1" : "<0>L’adresse n’est pas vérifiée</0> : votre appareil Ledger ne peut pas vérifier les adresses bénéficiaires sur Concordium. Vérifiez-les manuellement avant de recevoir des actifs.",
-            "2" : "<0>L’application Concordium ID utilise une phrase de récupération différente</0> : vous devrez créer une NOUVELLE phrase de 24 mots dans l’application. N’utilisez JAMAIS votre phrase Ledger.",
-            "3" : "<0>Vous quitterez automatiquement Ledger Wallet</0> : votre identité sera vérifiée dans l’application externe Concordium Wallet. Cette étape est requise par la blockchain Concordium.",
-            "4" : "<0>La signature des transactions reste sécurisée</0> : seul votre appareil Ledger peut signer des transactions et créer des comptes."
+            "separateSeed" : "<0>L’application Concordium ID utilise une phrase de récupération différente</0> : vous devrez créer une NOUVELLE phrase de 24 mots dans l’application. N’utilisez JAMAIS votre phrase Ledger.",
+            "outsideLedgerLive" : "<0>Vous quitterez automatiquement Ledger Wallet</0> : votre identité sera vérifiée dans l’application externe Concordium Wallet. Cette étape est requise par la blockchain Concordium.",
+            "signingSecure" : "<0>La signature des transactions reste sécurisée</0> : seul votre appareil Ledger peut signer des transactions et créer des comptes."
           },
           "allow" : "Accepter"
         },
@@ -7236,6 +7176,9 @@
     "InvalidAddress" : {
       "title" : "Adresse {{currencyName}} invalide"
     },
+    "ZcashSaplingRecipientNotSupported" : {
+      "title" : "L’envoi vers des adresses Sapling n’est pas pris en charge"
+    },
     "InvalidNonce" : {
       "title" : "Nonce requis"
     },
@@ -7295,6 +7238,9 @@
     "FeeRequired" : {
       "title" : "Des frais sont requis."
     },
+    "FeeTooLow" : {
+      "title" : "Les frais sont trop bas pour être acceptés par le réseau. Veuillez les augmenter"
+    },
     "GasLessThanEstimate" : {
       "title" : "Les frais risquent d’être trop bas. Veuillez les augmenter."
     },
@@ -7306,6 +7252,9 @@
     },
     "MaxFeeTooLow" : {
       "title" : "Les frais sont inférieurs au montant recommandé"
+    },
+    "GasPriceTooLow" : {
+      "title" : "Prix du gaz inférieur au minimum du réseau"
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "Les frais de priorité max. doivent être inférieurs aux frais max."
@@ -7441,6 +7390,9 @@
     "InvalidXRPTag" : {
       "title" : "Tag de destination XRP invalide"
     },
+    "XrpDestinationTagRequired" : {
+      "title" : "Un tag de destination est requis pour ce bénéficiaire"
+    },
     "InvalidExplorerResponse" : {
       "title" : "Réponse de l’explorateur {{currencyName}} invalide"
     },
@@ -7559,6 +7511,9 @@
     },
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir vos futurs frais de transaction."
+    },
+    "SolanaStakeAccountAmountTooLow" : {
+      "title" : "Montant insuffisant pour staker. Minimum : {{minimumAmount}}"
     },
     "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "Votre transaction précédente n’a pas encore été traitée. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
@@ -8333,6 +8288,20 @@
   "recoverRestore" : {
     "title" : "Connectez votre appareil Ledger et déverrouillez-le"
   },
+  "analyticsOptInScreen" : {
+    "main" : {
+      "title" : "Optimisons votre expérience",
+      "description" : "Avec votre consentement, nous collectons des données d’utilisation pour améliorer les fonctionnalités et corriger les bugs. Nous ne suivons pas vos actifs ni les détails de votre portefeuille.",
+      "ctaAcceptAll" : "Tout accepter",
+      "ctaRefuseAll" : "Tout refuser",
+      "ctaPrevious" : "Précédent",
+      "setPreferencesLink" : "Définir mes préférences"
+    },
+    "footer" : {
+      "lead" : "Vous pouvez retirer votre consentement à tout moment dans les Paramètres de l’application.",
+      "trackingPolicyLink" : "En savoir plus sur notre politique de suivi"
+    }
+  },
   "analyticsConsentModal" : {
     "fresh" : {
       "title" : "Optimisons votre expérience",
@@ -8732,9 +8701,9 @@
       "cta" : "Découvrir"
     },
     "borrowEntry" : {
-      "title" : "Prêts",
+      "title" : "Prêts crypto",
       "cardTitle" : "Empruntez des stablecoins",
-      "cardDescription" : "Accédez à des liquidités.",
+      "cardDescription" : "Empruntez avec des taux avantageux.",
       "cta" : "Explorer"
     },
     "noDeviceTitle" : "Votre wallet\ncrypto sécurisé"
@@ -9194,7 +9163,11 @@
       "description" : "Revenez plus tard pour voir vos transactions."
     },
     "actionsBar" : {
-      "csv" : "Exporter"
+      "csv" : "Exporter",
+      "more" : "Options de l’historique des opérations",
+      "hideDustTransactions" : "Masquer les transactions poussières",
+      "showDustTransactions" : "Afficher les transactions poussières",
+      "dustTransactionsDescription" : "Les transactions inférieures à {{threshold}} seront masquées."
     },
     "exportDialog" : {
       "title" : "Exporter l’historique",
@@ -9293,6 +9266,9 @@
     "fallbackBanner" : {
       "title" : "L’échange et l’achat ne sont pas pris en charge pour cet actif."
     },
+    "robinhoodDisclaimerBanner" : {
+      "title" : "Le solde total ne comprend pas les dividendes ni les fractionnements d’actions."
+    },
     "day" : "1 jour",
     "week" : "1 semaine",
     "month" : "1 mois",
@@ -9313,6 +9289,87 @@
       "earnBannerDefault" : "Faites fructifier cet actif",
       "earnBannerSubtitle" : "Faites fructifier cet actif",
       "earnBannerAction" : "Démarrer"
+    }
+  },
+  "deviceIntentExecutor" : {
+    "genericStates" : {
+      "retryableDeviceLocked" : {
+        "title" : "Appareil verrouillé",
+        "description" : "Veuillez déverrouiller votre appareil pour continuer."
+      },
+      "unlockDevice" : {
+        "title" : "Déverrouillez votre {{productName}}"
+      },
+      "continueOnDevice" : {
+        "title" : "Continuez sur votre {{productName}}",
+        "description" : "Consultez les instructions sur son écran sécurisé."
+      }
+    },
+    "errors" : {
+      "connectionError" : {
+        "title" : "Appareil déconnecté",
+        "description" : "Votre appareil Ledger n’est plus connecté. Assurez-vous qu’il est allumé et branché."
+      },
+      "intentError" : {
+        "title" : "Erreur inconnue",
+        "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+      },
+      "invalidOperation" : {
+        "title" : "État invalide",
+        "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, contactez l’Assistance Ledger."
+      }
+    },
+    "connectDevice" : {
+      "common" : {
+        "ledgerDevice" : "Appareil Ledger",
+        "available" : "Disponible",
+        "notConnected" : "Non connecté"
+      },
+      "states" : {
+        "loading" : {
+          "title" : "Chargement"
+        },
+        "connecting" : {
+          "title" : "Chargement"
+        },
+        "connectionError" : {
+          "errors" : {
+            "unknown" : {
+              "title" : "Échec de l’appairage",
+              "description" : "Veuillez réessayer.",
+              "tip" : "Assurez-vous que votre appareil est déverrouillé.",
+              "cta" : {
+                "retry" : "Réessayer",
+                "help" : "Obtenir de l’aide"
+              }
+            }
+          }
+        },
+        "discovering" : {
+          "title" : "Sélectionner un appareil",
+          "noAvailableDeviceTitle" : "Allumez et déverrouillez votre appareil"
+        },
+        "discoveryError" : {
+          "errors" : {
+            "unknown" : {
+              "title" : "Une erreur est survenue",
+              "description" : "Veuillez réessayer ou contacter l’Assistance Ledger.",
+              "cta" : {
+                "retry" : "Réessayer"
+              }
+            }
+          }
+        },
+        "noKnownDevice" : {
+          "title" : "Appareil Ledger requis",
+          "description" : "Pour continuer, configurez ou connectez votre appareil.",
+          "connectLedgerDevice" : "Connecter un appareil Ledger",
+          "noLedgerDevice" : "Je n’ai pas d’appareil Ledger"
+        },
+        "waitingForSelectedDevice" : {
+          "title" : "Allumez et déverrouillez votre {{productName}}"
+        }
+      }
     }
   },
   "pnl" : {
