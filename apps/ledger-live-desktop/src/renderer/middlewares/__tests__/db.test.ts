@@ -1,4 +1,5 @@
 import type { Dispatch, MiddlewareAPI, UnknownAction } from "@reduxjs/toolkit";
+import { LARGE_SCREEN_UPSELL_MODAL } from "@domain/entity-large-screen-upsell-modal";
 import { setKey } from "~/renderer/storage";
 import type { State } from "../../reducers";
 import DBMiddleware from "../db";
@@ -60,6 +61,7 @@ type FakeState = {
   history: unknown;
   featureFlags: { overrides: unknown; bannerVisible: unknown; remoteFlagsReady?: unknown };
   coinConfigOverrides: { overrides: Record<string, unknown> };
+  largeScreenUpsellModal: { retries: number; lastSeenAt: number | null };
   trustchain?: unknown;
 };
 
@@ -73,6 +75,7 @@ const baseState = (): FakeState => ({
   history: {},
   featureFlags: { overrides: {}, bannerVisible: false },
   coinConfigOverrides: { overrides: {} },
+  largeScreenUpsellModal: { retries: 0, lastSeenAt: null },
 });
 
 function runMiddleware(states: FakeState[], action: { type: string; payload?: unknown }) {
@@ -184,6 +187,31 @@ describe("DBMiddleware - featureFlags branch", () => {
 
     const persisted = mockedSetKey.mock.calls[0][2] as Record<string, unknown>;
     expect(persisted).not.toHaveProperty("remoteFlagsReady");
+  });
+});
+
+describe("DBMiddleware - largeScreenUpsellModal branch", () => {
+  beforeEach(() => {
+    mockedSetKey.mockReset();
+  });
+
+  it("persists largeScreenUpsellModal under app/largeScreenUpsellModal on largeScreenUpsellModal/* actions", () => {
+    const state: FakeState = {
+      ...baseState(),
+      largeScreenUpsellModal: { retries: 2, lastSeenAt: 1_720_000_000_000 },
+    };
+
+    runMiddleware([state, state], {
+      type: `${LARGE_SCREEN_UPSELL_MODAL}/recordUpsellModalDisplay`,
+      payload: 1_720_000_000_000,
+    });
+
+    expect(mockedSetKey).toHaveBeenCalledTimes(1);
+    expect(mockedSetKey).toHaveBeenCalledWith(
+      "app",
+      LARGE_SCREEN_UPSELL_MODAL,
+      state.largeScreenUpsellModal,
+    );
   });
 });
 

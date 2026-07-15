@@ -826,6 +826,9 @@ importers:
       '@domain/entity-currency-fiat':
         specifier: workspace:^
         version: link:../../domain/entity/currency-fiat
+      '@domain/entity-large-screen-upsell-modal':
+        specifier: workspace:*
+        version: link:../../domain/entity/large-screen-upsell-modal
       '@domain/entity-market-sentiment':
         specifier: workspace:^
         version: link:../../domain/entity/market-sentiment

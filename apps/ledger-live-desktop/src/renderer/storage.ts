@@ -21,6 +21,7 @@ import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 import type { PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@ledgerhq/client-ids/store";
 import type { FeatureFlagsState } from "@shared/feature-flags";
+import type { LargeScreenUpsellModalState } from "@domain/entity-large-screen-upsell-modal";
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
@@ -68,6 +69,7 @@ type DatabaseValues = {
   ptx: {
     lastScreen: string;
   };
+  largeScreenUpsellModal: LargeScreenUpsellModalState;
 };
 
 // Infers the type seen from the user side (non-raw).
