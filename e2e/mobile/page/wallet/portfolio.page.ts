@@ -113,9 +113,15 @@ export default class PortfolioPage {
 
   @Step("Expect asset row to have the correct counter value")
   async expectAssetRowCounterValue(asset: string, counterValue: string) {
-    await scrollToId(this.assetItemCountervalueId(asset), this.accountsListView);
-    const text = await getTextOfElement(this.assetItemCountervalueId(asset));
-    jestExpect(text).toContain(counterValue);
+    if (await isAggregatedAssetsEnabled()) {
+      await scrollToId(this.assetItemCountervalueId(asset));
+      const text = await getTextOfElement(this.assetItemCountervalueId(asset));
+      jestExpect(text).toContain(counterValue);
+    } else {
+      await scrollToId(this.assetItemBalanceId(asset), this.accountsListView);
+      const text = await getTextOfElement(this.assetItemBalanceId(asset));
+      jestExpect(text).toContain(counterValue);
+    }
   }
 
   @Step("Expect balance to be visible")
@@ -134,7 +140,7 @@ export default class PortfolioPage {
     if (await isAggregatedAssetsEnabled()) {
       return;
     } else {
-      await waitForElementById(this.portfolioBalanceDelta);
+      await waitForElementById(this.portfolioBalanceAnalyticsPill);
     }
   }
 
