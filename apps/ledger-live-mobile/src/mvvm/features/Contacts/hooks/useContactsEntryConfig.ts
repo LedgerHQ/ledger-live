@@ -1,8 +1,8 @@
 import {
   resolveContactsFeatureConfig,
   useContactsFeature,
-} from "@features/flow-contacts/featureFlags";
-import type { ContactsFeatureConfig as ContactsEntryConfig } from "@features/flow-contacts/featureFlags";
+  type ContactsFeatureConfig as ContactsEntryConfig,
+} from "@features/flow-contacts";
 
 export const resolveContactsEntryConfig = resolveContactsFeatureConfig;
 

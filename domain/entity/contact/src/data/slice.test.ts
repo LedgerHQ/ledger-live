@@ -121,16 +121,13 @@ describe("contactsSlice", () => {
     const store = makeStore();
     const ben = mockContact();
     const address = mockContactAddress();
+    const updatedAddress = mockContactAddress({ ...address, label: "Treasury" });
 
     store.dispatch(addContact(ben));
     store.dispatch(addAddress({ contactId: ben.id, address }));
-    store.dispatch(
-      updateAddress({ contactId: ben.id, address: { ...address, label: "Treasury" } }),
-    );
+    store.dispatch(updateAddress({ contactId: ben.id, address: updatedAddress }));
 
-    expect(store.getState().contacts.contacts[1]?.addresses).toEqual([
-      { ...address, label: "Treasury" },
-    ]);
+    expect(store.getState().contacts.contacts[1]?.addresses).toEqual([updatedAddress]);
   });
 
   it("deletes an address from the intended contact", () => {

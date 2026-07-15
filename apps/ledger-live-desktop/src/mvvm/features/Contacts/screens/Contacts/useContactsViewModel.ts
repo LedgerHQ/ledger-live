@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useContactsMeContact } from "@features/flow-contacts/hooks";
+import { useContactsMeContact } from "@features/flow-contacts";
 
 export type ContactsViewModel = {
   title: string;

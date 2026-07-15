@@ -4,13 +4,13 @@
   "private": true,
   "description": "Shared Contacts flow package",
   "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./featureFlags": "./src/featureFlags.ts",
-    "./hooks": "./src/hooks/index.ts",
-    "./components/ContactsButton": "./src/components/ContactsButton/index.ts",
-    "./components/ContactsPage": "./src/components/ContactsPage/index.ts",
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": false,

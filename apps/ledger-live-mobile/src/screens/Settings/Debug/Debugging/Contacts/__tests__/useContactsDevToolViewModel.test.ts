@@ -1,5 +1,5 @@
 import { act } from "@testing-library/react-native";
-import { CONTACTS_FEATURE_FLAG_KEYS } from "@features/flow-contacts/featureFlags";
+import { CONTACTS_FEATURE_FLAG_KEYS } from "@features/flow-contacts";
 import { renderHook } from "@tests/test-renderer";
 import { ELIGIBLE_ADDRESS_FAMILIES_PRESETS } from "../constants";
 import { useContactsDevToolViewModel } from "../useContactsDevToolViewModel";
