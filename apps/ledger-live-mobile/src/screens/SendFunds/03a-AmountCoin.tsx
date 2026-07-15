@@ -173,10 +173,28 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={styles.amountWrapper}>
-              {/* Guards AmountInput's height when a family widget below it (e.g. aleo's
-                  quick-amount tiles) is tall enough to compress this column under the
-                  keyboard. See: LIVE-30496 */}
-              <View style={familySendFlow?.AfterAmountInput && styles.amountInputProtected}>
+              {familySendFlow?.AfterAmountInput ? (
+                // Guards AmountInput's height when a family widget below it (e.g. aleo's
+                // quick-amount tiles) See: LIVE-30496
+                <View style={styles.amountInputProtected}>
+                  <AmountInput
+                    testID="amount-input"
+                    editable={!useAllAmount}
+                    account={account}
+                    onChange={onChange}
+                    value={amount}
+                    transferFeeCalculated={transferFee}
+                    error={
+                      status.errors.dustLimit
+                        ? status.errors.dustLimit
+                        : amount.eq(0) && (bridgePending || !transaction.useAllAmount)
+                          ? null
+                          : status.errors.amount
+                    }
+                    warning={status.warnings.amount}
+                  />
+                </View>
+              ) : (
                 <AmountInput
                   testID="amount-input"
                   editable={!useAllAmount}
@@ -193,7 +211,7 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
                   }
                   warning={status.warnings.amount}
                 />
-              </View>
+              )}
 
               {familySendFlow?.AfterAmountInput && (
                 <View style={styles.afterAmountInputWrapper}>
