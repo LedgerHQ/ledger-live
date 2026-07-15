@@ -9,6 +9,7 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 /** Minimal shape of DADA's CryptoAssetMeta needed by buildAssetDistribution. */
 export interface CryptoAssetMetaLike {
   id: string;
+  ticker?: string;
   assetsIds: Record<string, string>;
 }
 
