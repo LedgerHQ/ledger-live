@@ -2,8 +2,6 @@ export const LEAF_ANCHOR = "(?! [^@])";
 
 const REGEX_LITERAL_ESCAPE = /\\([\^$.*+?()[\]{}|,/\\-])/g;
 
-const LEAF_ANCHOR_MATCHER = new RegExp(LEAF_ANCHOR.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g");
-
 export function splitFilter(input) {
   return (String(input).match(/(?:\\.|[^|,])+/g) ?? []).map(part => part.trim()).filter(Boolean);
 }
@@ -13,7 +11,7 @@ export function joinFilter(parts) {
 }
 
 export function stripLeafAnchor(pattern) {
-  return pattern.replace(LEAF_ANCHOR_MATCHER, "");
+  return pattern.replaceAll(LEAF_ANCHOR, "");
 }
 
 export function unescapeLiteral(pattern) {
