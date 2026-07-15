@@ -23,6 +23,7 @@ import {
   resolveAccountDescriptorV1,
   resolveOutputFormat,
 } from "./inputs";
+import { trackAddressResolved } from "./accounts-analytics";
 
 export default defineCommand({
   name: "receive",
@@ -58,6 +59,7 @@ export default defineCommand({
               "Fresh address resolved",
               () => wallet.getFreshAddress(toV0(v1)),
             );
+      trackAddressResolved({ network: ctx.network, deviceRequired: flags.verify });
       if (flags.verify) {
         out.preVerifyAddress(address);
         const spin = out.spin(`Connect device and open ${colors.bold(managerAppName)} app…`);

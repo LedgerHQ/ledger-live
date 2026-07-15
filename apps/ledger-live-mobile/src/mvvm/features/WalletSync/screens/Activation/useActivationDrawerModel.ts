@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import { blockPasswordLock } from "~/actions/appstate";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { openRebornBuyDeviceDrawer } from "~/reducers/rebornBuyDeviceDrawer";
+import { closePostOnboardingHubDrawer } from "~/reducers/postOnboardingHubDrawer";
 import { useQueuedDrawerContext } from "LLM/components/QueuedDrawer/QueuedDrawersContext";
 
 type Props = {
@@ -88,6 +89,7 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
   const navigateToWalletSyncActivationProcess = () => {
     onCloseDrawer();
     closeAllDrawers();
+    dispatch(closePostOnboardingHubDrawer());
     navigation.navigate(NavigatorName.WalletSync, {
       screen: ScreenName.WalletSyncActivationProcess,
     });

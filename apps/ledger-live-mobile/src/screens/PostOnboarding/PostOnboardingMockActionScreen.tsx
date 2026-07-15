@@ -28,7 +28,7 @@ const PostOnboardingMockActionScreen = ({ navigation, route }: NavigationProps) 
   const navigateToWallet = useCallback(() => {
     navigation.navigate(NavigatorName.Main, {
       screen: NavigatorName.Portfolio,
-      params: { screen: NavigatorName.WalletTab },
+      params: { screen: ScreenName.Portfolio },
     });
   }, [navigation]);
 

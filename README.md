@@ -13,7 +13,6 @@ Download production apps from https://download.live.ledger.com
 - **[Ledger Wallet Desktop (LWD)](apps/ledger-live-desktop/README.md)** – Desktop app built with Electron.
 - **[Ledger Wallet Mobile (LWM)](apps/ledger-live-mobile/README.md)** – Android and iOS apps built with React Native.
 - **[Wallet CLI](apps/wallet-cli/README.md)** – Agent-optimized CLI toolset.
-- **[CLI](apps/cli/README.md)** – Legacy npm CLI for QA and power users.
 
 ## npm packages
 
@@ -39,6 +38,12 @@ pnpm i
 
 What to run next depends on the workspace you're targeting. See [repo commands](docs/repo-commands.md) for build, dev, lint, and test recipes, or check the README in the relevant workspace.
 
+
+### Contributing & reviewing
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) — for **PR authors**: branch conventions, the PR lifecycle, and quality gates before requesting review.
+- [REVIEWING.md](REVIEWING.md) — for **code-owner reviewers**: how to scope, what to look for, and how to give feedback.
+
 ### Finding documentation
 
 1. **Repo-wide** — [AGENTS.md](AGENTS.md), then [docs/](docs/)
@@ -56,14 +61,14 @@ What to run next depends on the workspace you're targeting. See [repo commands](
 | `domain/`   | Domain packages (`entity/`, `api/`)\*                                                                      |
 | `e2e/`      | E2E tests using [Detox](https://wix.github.io/Detox/) and [Speculos](https://github.com/LedgerHQ/speculos) |
 | `features/` | Features shared across apps\*                                                                              |
-| `libs/`     | Legacy shared code\*                                                                                       |
+| `libs/`     | Shared libraries — the home for new shared code; `ledger-live-common` is maintenance-only\*               |
 | `patches/`  | `patchedDependencies` auto-applied during pnpm install                                                     |
 | `scripts/`  | Repo-level utility scripts                                                                                 |
 | `shared/`   | Cross-cutting packages used in domain/, features/ and apps/\*                                              |
 | `tests/`    | Dummy apps for testing (dapps, wallet)                                                                     |
 | `tools/`    | CI actions, GitHub bots and Nx plugins                                                                     |
 
-\*Prefer `domain/`, `features/` and `shared/` over the legacy `libs/` directory.
+\*Adding new code? See [libs/README.md](./libs/README.md).
 
 ## Nightly releases
 

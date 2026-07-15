@@ -17,6 +17,9 @@ const SEI_OPERATIONS_ACTIONS = new Set([
   "token1155tx",
 ]);
 const SEI_EVM_CHAIN_ID = 1329;
+const SEI_ADDRESS_PRECOMPILE = "0x0000000000000000000000000000000000001004";
+const MOCKED_SEI_LINKED_ADDRESS = "sei1mockassociatedaddress0000000000000000000";
+let seiAccountAssociated = true;
 const MOCKED_NATIVE_BALANCE_HEX = "0x8ac7230489e80000";
 const MOCKED_GAS_LIMIT_HEX = "0x186a0";
 const MOCKED_GAS_PRICE_HEX = "0x3b9aca00";
@@ -53,6 +56,14 @@ const asciiToHex = (value: string) =>
   Array.from(value)
     .map(char => char.charCodeAt(0).toString(16).padStart(2, "0"))
     .join("");
+
+const encodeStringResult = (value: string): string => {
+  const dataHex = asciiToHex(value);
+  const paddedData = dataHex.padEnd(Math.ceil(dataHex.length / 64) * 64, "0");
+  const offset = (32).toString(16).padStart(64, "0");
+  const length = value.length.toString(16).padStart(64, "0");
+  return "0x" + offset + length + paddedData;
+};
 
 function getMockedSeiDelegationResult(params?: unknown[]): string {
   const callData =
@@ -120,8 +131,24 @@ function handleSeiEvmRpcCall(request: JsonRpcRequest): JsonRpcResponse {
       });
     case "eth_estimateGas":
       return respond(MOCKED_GAS_LIMIT_HEX);
-    case "eth_call":
+    case "eth_call": {
+      const to =
+        params?.[0] && typeof params[0] === "object" && "to" in params[0]
+          ? String((params[0] as { to?: unknown }).to).toLowerCase()
+          : "";
+      if (to === SEI_ADDRESS_PRECOMPILE.toLowerCase()) {
+        // Associated → return the linked Cosmos address (isSeiAccountUnassociated → false);
+        // unassociated → revert, which it treats as "not linked yet" (→ true).
+        return seiAccountAssociated
+          ? respond(encodeStringResult(MOCKED_SEI_LINKED_ADDRESS))
+          : {
+              id: id ?? null,
+              jsonrpc: "2.0",
+              error: { code: 3, message: "execution reverted: address not associated" },
+            };
+      }
       return respond(getMockedSeiDelegationResult(params));
+    }
     case "eth_getCode":
       return respond("0x");
     case "net_version":
@@ -205,6 +232,7 @@ async function mockSeiEvmRpc(page: Page) {
 }
 
 const MOCKED_SEI_EMPTY_REDELEGATIONS = { redelegation_responses: [] };
+const MOCKED_SEI_EMPTY_REWARDS = { rewards: [], total: [] };
 const MOCKED_SEI_VALIDATORS = {
   validators: [
     {
@@ -263,6 +291,20 @@ async function mockSeiValidatorsApi(page: Page) {
       return;
     }
 
+    const isRewardsRequest =
+      request.method() === "GET" &&
+      pathname.includes("/cosmos/distribution/v1beta1/delegators/") &&
+      pathname.endsWith("/rewards");
+
+    if (isRewardsRequest) {
+      await route.fulfill({
+        headers: { ...CORS_HEADERS, teststatus: "mocked" },
+        contentType: "application/json",
+        body: JSON.stringify(MOCKED_SEI_EMPTY_REWARDS),
+      });
+      return;
+    }
+
     throw new Error(`Unexpected SEI REST staking request: ${request.method()} ${url.toString()}`);
   });
 }
@@ -305,6 +347,7 @@ let delegate: EvmDelegateModal;
 let accountsPage: AccountsPage;
 
 test.beforeEach(async ({ page }) => {
+  seiAccountAssociated = true;
   await mockSeiValidatorsApi(page);
   await mockSeiOperationsApi(page);
   await mockSeiEvmRpc(page);
@@ -341,6 +384,25 @@ test("EVM Native Staking - Delegate happy path (sei_evm) @smoke", async ({ page 
     const filledMaxAmount = await delegate.getCryptoAmount();
     expect(filledMaxAmount).toEqual(availableMaxAmount);
     await expect.soft(modalPage.container).toHaveScreenshot(`evm-staking-max-amount-page.png`);
+  });
+});
+
+test("EVM Native Staking - Unassociated Sei account shows warning (sei_evm) @smoke", async ({
+  page,
+}) => {
+  seiAccountAssociated = false;
+
+  await accountsPage.navigateToAccountByName("SEI Network (EVM) 1");
+  delegate = new EvmDelegateModal(page);
+  await delegate.startFromEmptyState();
+
+  await test.step("association warning is shown and continue is disabled", async () => {
+    await expect(
+      page.getByText(
+        "To delegate, you need to activate your account by sending any amount to any address, including your own. This is a Sei network requirement.",
+      ),
+    ).toBeVisible();
+    await delegate.continueIsDisabled();
   });
 });
 

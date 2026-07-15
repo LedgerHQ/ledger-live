@@ -14,8 +14,8 @@ import {
   getCheckpoint,
   getLastBlock,
   getDelegatedStakes,
-  getOperationExtra,
   getOperations,
+  getStakingExtraByDigest,
   getValidators,
 } from "./sdk";
 import {
@@ -1139,14 +1139,59 @@ describe("getTransactionsWithCheckpointDigestsGraphQL", () => {
   });
 });
 
-// ---- getOperationExtra GraphQL branch ----
+// ---- getStakingExtraByDigest (legacy backfill) GraphQL branch ----
 
-describe("getOperationExtra on GraphQL transport", () => {
-  it("returns {} when the transaction is not found", async () => {
-    const query = jest.fn().mockResolvedValueOnce({ data: { transaction: null } });
+describe("getStakingExtraByDigest on GraphQL transport", () => {
+  const eventsResponse = (repr: string, json: Record<string, string>) => ({
+    data: {
+      transaction: { effects: { events: { nodes: [{ contents: { type: { repr }, json } }] } } },
+    },
+  });
+
+  it("reads validator_address + amount from StakingRequestEvent (DELEGATE)", async () => {
+    // Long-padded `repr` as the live GraphQL server actually returns it — exercises the
+    // `toShortStructTag` shortening the type-match in `getStakingEventsByDigestGraphQL` depends on.
+    const query = jest.fn().mockResolvedValueOnce(
+      eventsResponse(
+        "0x0000000000000000000000000000000000000000000000000000000000000003::validator::StakingRequestEvent",
+        {
+          validator_address: "0xval1",
+          amount: "1000000000",
+        },
+      ),
+    );
     mockNext({ query });
-    const out = await getOperationExtra("0xmissing-digest", "sui-gql-extra-miss");
-    expect(out).toEqual({});
+    const out = await getStakingExtraByDigest("0xdigest", "DELEGATE", "sui-gql-stake");
+    expect(out).toEqual({ validatorAddress: "0xval1", stakedAmount: "1000000000" });
+  });
+
+  it("reads validator_address + principal_amount from UnstakingRequestEvent (UNDELEGATE)", async () => {
+    const query = jest.fn().mockResolvedValueOnce(
+      eventsResponse("0x3::validator::UnstakingRequestEvent", {
+        validator_address: "0xval2",
+        principal_amount: "500000000",
+      }),
+    );
+    mockNext({ query });
+    const out = await getStakingExtraByDigest("0xdigest", "UNDELEGATE", "sui-gql-unstake");
+    expect(out).toEqual({ validatorAddress: "0xval2", stakedAmount: "500000000" });
+  });
+
+  it("returns null when the digest has no matching staking event", async () => {
+    const query = jest
+      .fn()
+      .mockResolvedValueOnce({ data: { transaction: { effects: { events: { nodes: [] } } } } });
+    mockNext({ query });
+    const out = await getStakingExtraByDigest("0xmissing", "DELEGATE", "sui-gql-stake-miss");
+    expect(out).toBeNull();
+  });
+
+  it("short-circuits to null without a network call for non-staking op types", async () => {
+    const query = jest.fn();
+    mockNext({ query });
+    const out = await getStakingExtraByDigest("0xdigest", "OUT", "sui-gql-noop");
+    expect(out).toBeNull();
+    expect(query).not.toHaveBeenCalled();
   });
 });
 

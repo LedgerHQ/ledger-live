@@ -11,6 +11,7 @@ export type AmountScreenQuickAction = Readonly<{
   onPress: () => void;
   active: boolean;
   disabled: boolean;
+  untracked?: boolean;
 }>;
 
 export type AmountInputViewModel = Readonly<{

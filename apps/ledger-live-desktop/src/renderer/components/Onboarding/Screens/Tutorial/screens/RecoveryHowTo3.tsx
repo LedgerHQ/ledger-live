@@ -1,10 +1,6 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Title, AsideFooter, Column, Bullet, AnimationContainer } from "../shared";
-import Animation from "~/renderer/animations";
-import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
-import { OnboardingContext } from "../../../index";
-import { useTheme } from "styled-components";
+import { Title, Column, Bullet } from "../shared";
 
 const steps = [
   {
@@ -34,31 +30,6 @@ export function RecoveryHowTo3() {
     </Column>
   );
 }
-
-const RecoveryHowTo3Animation = () => {
-  const { deviceModelId } = useContext(OnboardingContext);
-  const { theme } = useTheme();
-
-  return (
-    <AnimationContainer>
-      <Animation animation={getDeviceAnimation(deviceModelId!, theme, "plugAndPinCode")} />
-    </AnimationContainer>
-  );
-};
-
-RecoveryHowTo3.Illustration = <RecoveryHowTo3Animation />;
-
-const Footer = (props: object) => {
-  const { t } = useTranslation();
-  return (
-    <AsideFooter
-      {...props}
-      text={t("onboarding.screens.tutorial.screens.recoveryHowTo3.help.descr")}
-    />
-  );
-};
-
-RecoveryHowTo3.Footer = Footer;
 
 RecoveryHowTo3.continueLabel = (
   <Trans i18nKey="onboarding.screens.tutorial.screens.recoveryHowTo3.buttons.next" />

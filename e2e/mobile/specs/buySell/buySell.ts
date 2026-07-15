@@ -1,12 +1,11 @@
 import { setEnv } from "@ledgerhq/live-env";
-import { BuySell } from "@ledgerhq/live-common/e2e/models/BuySell";
+import { BuySell } from "@ledgerhq/live-e2e-shared/models/BuySell";
 import { ApplicationOptions } from "page";
-import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { isWallet40 } from "../../helpers/commonHelpers";
+import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { getMinimumSellAmount } from "@ledgerhq/live-common/e2e/buySell";
+import { getMinimumSellAmount } from "@ledgerhq/live-e2e-shared/buySell";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -16,6 +15,7 @@ export async function beforeAllFunction(options: ApplicationOptions) {
     speculosApp: options.speculosApp,
     cliCommands: options.cliCommands,
     featureFlags: options.featureFlags,
+    speculosForSetupOnly: true,
   });
   await app.mainNavigation.waitForWallet40Ready();
 }
@@ -39,13 +39,7 @@ export async function runNavigateToBuyFromPortfolioPageTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     test(`Buy / Sell [${buySell.crypto.currency.name}] asset from portfolio page`, async () => {
-      if (isWallet40) {
-        await app.portfolio.pressQuickActionBuyButton();
-      } else {
-        await app.transferMenuDrawer.open();
-        await app.transferMenuDrawer.navigateToBuy();
-      }
-
+      await app.portfolio.pressQuickActionBuyButton();
       await app.buySell.handleBuyFlow(buySell, paymentMethod);
     });
   });
@@ -100,14 +94,10 @@ export async function runNavigateToBuyFromMarketPageTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     test(`Navigate to Buy / Sell [${buySell.crypto.currency.name}] asset from market page`, async () => {
-      if (isWallet40) {
-        await app.portfolio.tapMarketBannerTitle();
-      } else {
-        await app.portfolio.tapWalletTabSelector("Market");
-      }
+      await app.portfolio.tapMarketBannerTitle();
       await app.market.searchAsset(buySell.crypto.currency.ticker);
-      await app.market.expectMarketRowTitle(buySell.crypto.currency.ticker);
-      await app.market.openAssetPage(buySell.crypto.currency.ticker);
+      await app.market.expectMarketRowTitle(buySell.crypto.currency);
+      await app.market.openAssetPage(buySell.crypto.currency);
       await app.market.tapOnMarketQuickActionButton("buy");
       await app.buySell.handleBuyFlow(buySell, paymentMethod);
     });

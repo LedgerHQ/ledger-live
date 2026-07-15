@@ -7,7 +7,7 @@ import {
   setOnboardingHasDevice,
   setReadOnlyMode,
 } from "~/actions/settings";
-import { NavigatorName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import {
   RootNavigationComposite,
   StackNavigatorNavigation,
@@ -35,7 +35,7 @@ export function useCompleteLazyOnboarding() {
           params: {
             screen: NavigatorName.Portfolio,
             params: {
-              screen: NavigatorName.WalletTab,
+              screen: ScreenName.Portfolio,
             },
           },
         };

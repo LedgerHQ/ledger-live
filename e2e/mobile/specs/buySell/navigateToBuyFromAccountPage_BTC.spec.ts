@@ -1,6 +1,6 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runNavigateToBuyFromAccountPageTest } from "./buySell";
-import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
+import { OperationType } from "@ledgerhq/live-e2e-shared/enum/OperationType";
 
 const btcBuySell = {
   crypto: Account.BTC_NATIVE_SEGWIT_1,

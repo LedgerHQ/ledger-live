@@ -37,7 +37,7 @@ pnpm typecheck     # tsc --noEmit
 Mock factory available in `src/schema.mock.ts`:
 
 ```ts
-import { mockUnit } from "@domain/entity-currency-unit/src/schema.mock";
+import { mockUnit } from "@domain/entity-currency-unit/schema.mock";
 
 // override individual fields
 const unit = mockUnit({ magnitude: 0 });

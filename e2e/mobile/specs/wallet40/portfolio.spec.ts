@@ -1,5 +1,5 @@
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 const testConfig = {
@@ -87,9 +87,7 @@ describe("Wallet 4.0 - Portfolio", () => {
     await app.portfolio.pressQuickActionTransferButton();
     await app.portfolio.checkTransferBottomSheetReceiveButtonVisibility();
     await app.portfolio.checkTransferBottomSheetSendButtonVisibility();
-    if (await app.portfolio.isNoahEnabled()) {
-      await app.portfolio.checkTransferBottomSheetBankTransferButtonVisibility();
-    }
+    await app.portfolio.checkTransferBottomSheetBankTransferButtonVisibility();
     await app.portfolio.pressTransferBottomSheetReceiveButton();
     await app.modularDrawer.checkSelectAssetPage();
     await app.portfolio.closeBottomSheet();

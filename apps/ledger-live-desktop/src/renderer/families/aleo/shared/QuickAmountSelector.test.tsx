@@ -2,7 +2,10 @@ import BigNumber from "bignumber.js";
 import React from "react";
 import { render, screen } from "tests/testSetup";
 import type { AleoAccount, AleoUnspentRecord } from "@ledgerhq/live-common/families/aleo/types";
-import { MAX_PRIVATE_RECORDS_PER_TRANSACTION } from "@ledgerhq/live-common/families/aleo/constants";
+import {
+  MAX_PRIVATE_RECORDS_PER_TRANSACTION,
+  MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+} from "@ledgerhq/live-common/families/aleo/constants";
 import { getEstimatedSigningTime } from "@ledgerhq/live-common/families/aleo/utils";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { ALEO_ACCOUNT_1, makeTokenAccount } from "../__mocks__/account.mock";
@@ -276,6 +279,33 @@ describe("QuickAmountSelector", () => {
       expect(updateTransaction).toHaveBeenCalledTimes(1);
       const updater = updateTransaction.mock.calls[0][0];
       expect(updater(transaction).useAllAmount).toBe(true);
+    });
+
+    it("sets useAllAmount when full tile is clicked with more token records than the token cap", async () => {
+      // MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION + 1 records — full tile fills exactly the cap → isSendMax
+      const records = Array.from(
+        { length: MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION + 1 },
+        (_, i) => makeRecord(String((i + 1) * 100)),
+      );
+      const account = makeTokenAccount(records);
+      const transaction = makeAleoTransaction();
+      const updateTransaction = jest.fn();
+
+      const { user } = render(
+        <QuickAmountSelector
+          account={account}
+          transaction={transaction}
+          updateTransaction={updateTransaction}
+        />,
+      );
+
+      await user.click(screen.getByText("Full"));
+
+      expect(updateTransaction).toHaveBeenCalledTimes(1);
+      const updater = updateTransaction.mock.calls[0][0];
+      const result = updater(transaction);
+      expect(result.useAllAmount).toBe(true);
+      expect(result.amount.isEqualTo(new BigNumber(0))).toBe(true);
     });
 
     it("all tiles are disabled when token account has null unspentPrivateRecords", async () => {

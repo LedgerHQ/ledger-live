@@ -10,7 +10,7 @@ import updateAccountSwapStatus from "@ledgerhq/live-common/exchange/swap/updateA
 import { MappedSwapOperation, SwapHistorySection } from "@ledgerhq/live-common/exchange/swap/types";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/exchange/swap/csvExport";
-import { fromSwapOperation } from "@ledgerhq/live-common/exchange/transactionStatus/index";
+import { fromSwapOperation } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { openSwapTransactionStatusDialog } from "LLD/features/SwapTransactionStatusDialog/swapTransactionStatusDialog";
 import useInterval from "~/renderer/hooks/useInterval";

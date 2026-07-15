@@ -76,7 +76,7 @@ Make sure the network being added is present under the `network_info_t` mapping 
 
 In Ledger Live, make sure the ethereum nano app version requirements match the latest version of the ethereum app handling the network being added:
 
-- `appVersion` in `getAppQuery` under [`libs/coin-modules/coin-evm/src/specs.ts`](../../src/specs.ts)
+- `appVersion` in `getAppQuery` under [`libs/coin-modules/coin-evm/src/specs.ts`](../../../../ledger-live-common/src/families/evm/bot/specs.ts)
 - `Ethereum` in `appVersionsRequired` under [`libs/ledger-live-common/src/apps/support.ts`](../../../../../libs/ledger-live-common/src/apps/support.ts)
 - related tests for the ethereum app version under [`libs/ledger-live-common/src/apps/support.test.ts`](../../../../../libs/ledger-live-common/src/apps/support.test.ts)
 
@@ -86,7 +86,7 @@ In Ledger Live, make sure the ethereum nano app version requirements match the l
 
 - Make sure to fund the appropriate bot(s) with coins and tokens of the new network being added. For local portfolio bot context, see [`libs/ledger-live-common/src/bot/portfolio/README.md`](../../../../../libs/ledger-live-common/src/bot/portfolio/README.md).
 - Make sure to make the bot run multiple times on your PR to make sure everything works fine with the new network
-- If the coin related to the network you are adding is somewhat expensive, you can tailor the minimum balance needed to test this coin by updating `minBalancePerCurrencyId` under [`libs/coin-modules/coin-evm/src/specs.ts`](../../src/specs.ts)
+- If the coin related to the network you are adding is somewhat expensive, you can tailor the minimum balance needed to test this coin by updating `minBalancePerCurrencyId` under [`libs/coin-modules/coin-evm/src/specs.ts`](../../../../ledger-live-common/src/families/evm/bot/specs.ts)
 
 ### Manual testing
 

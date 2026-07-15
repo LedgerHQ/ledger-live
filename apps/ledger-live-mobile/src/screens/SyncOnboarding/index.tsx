@@ -7,21 +7,17 @@ import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/h
 import { log } from "@ledgerhq/logs";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
-import {
-  NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
-  SyncOnboardingCompanion,
-} from "./SyncOnboardingCompanion";
+import { NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS } from "./constants";
 import { EarlySecurityCheck } from "./EarlySecurityCheck";
 import DesyncDrawer from "./DesyncDrawer";
 import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDrawer";
-import { PlainOverlay } from "./DesyncOverlay";
+import { PlainOverlay } from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/DesyncOverlay";
 import { track } from "~/analytics";
 import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
-import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
+import { type SyncOnboardingScreenProps } from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/types";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 import TwoStepSyncOnboardingCompanion from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/TwoStepSyncOnboardingCompanion";
-import { useFeature } from "@features/platform-feature-flags";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { NavigatorName, ScreenName } from "~/const";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";
@@ -73,8 +69,6 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   );
 
   const isFocused = useIsFocused();
-
-  const isSyncIncr1Enabled = useFeature("llmSyncOnboardingIncr1")?.enabled || false;
 
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
 
@@ -133,14 +127,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         </>
       ),
     });
-  }, [
-    device,
-    navigation,
-    isHeaderOverlayOpen,
-    headerOverlayDelayMs,
-    onCloseButtonPress,
-    isSyncIncr1Enabled,
-  ]);
+  }, [navigation, isHeaderOverlayOpen, headerOverlayDelayMs, onCloseButtonPress]);
 
   const {
     onboardingState,
@@ -355,17 +342,8 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       />
     );
   } else if (currentStep === "companion") {
-    stepContent = isSyncIncr1Enabled ? (
+    stepContent = (
       <TwoStepSyncOnboardingCompanion
-        navigation={navigation}
-        device={device}
-        notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
-        onLostDevice={onLostDevice}
-        onShouldHeaderBeOverlaid={setIsHeaderOverlayOpen}
-        updateHeaderOverlayDelay={setHeaderOverlayDelayMs}
-      />
-    ) : (
-      <SyncOnboardingCompanion
         navigation={navigation}
         device={device}
         notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}

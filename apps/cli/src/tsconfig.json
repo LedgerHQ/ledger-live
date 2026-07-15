@@ -15,7 +15,7 @@
     "rootDir": ".",
     "outDir": "../lib/",
     "types": ["node"],
-    "lib": ["es2020"]
+    "lib": ["es2022"]
   },
   "references": [{ "path": "../" }]
 }

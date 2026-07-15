@@ -27,7 +27,6 @@ describe.each([
       listOperations: expect.any(Function),
       validateAddress: expect.any(Function),
       validateIntent: expect.any(Function),
-      validateTransaction: expect.any(Function),
       craftTransactionData: expect.any(Function),
     },
   ],
@@ -51,8 +50,6 @@ describe.each([
       listOperations: expect.any(Function),
       validateAddress: expect.any(Function),
       validateIntent: expect.any(Function),
-      validateTransaction: expect.any(Function),
-      refreshOperations: expect.any(Function),
       craftTransactionData: expect.any(Function),
     },
   ],
@@ -63,15 +60,6 @@ describe.each([
 });
 
 describe("staking support capability", () => {
-  it("only exposes stakingSupported for currencies with staking configured", () => {
-    expect(createApi({ explorer: { type: "ledger" } } as EvmConfig, "ethereum")).not.toHaveProperty(
-      "stakingSupported",
-    );
-    expect(createApi({ explorer: { type: "ledger" } } as EvmConfig, "sei_evm")).toMatchObject({
-      stakingSupported: true,
-    });
-  });
-
   it("exposes validators through the api when staking validators are available", async () => {
     const mockGetValidatorsPage = jest.mocked(getValidatorsPage);
     const expectedPage = {

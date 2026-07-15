@@ -28,6 +28,8 @@ import { Exchange } from "../exchange/types";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/utils";
+import type { CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
@@ -350,6 +352,52 @@ export const bitcoinFamilyAccountGetPublicKeyLogic = async (
   );
   tracking.bitcoinFamilyAccountPublicKeySuccess(manifest);
   return publicKey.toString("hex");
+};
+
+type AccountPublicKeyResolver = (account: Account) => string | null;
+
+const ACCOUNT_PUBLIC_KEY_RESOLVERS: Record<string, AccountPublicKeyResolver> = {
+  tezos: account =>
+    normalizePublicKeyForAddress(account.seedIdentifier, account.freshAddress) ?? null,
+  // cosmos seedIdentifier is seed-level (shared across accounts), so the per-account
+  // compressed pubkey (hex) is persisted in cosmosResources at scan time.
+  cosmos: account => (account as CosmosAccount).cosmosResources?.publicKey || null,
+};
+
+export const accountGetPublicKeyLogic = async (
+  { manifest, accounts, tracking }: WalletAPIContext,
+  walletAccountId: string,
+): Promise<string> => {
+  tracking.accountGetPublicKeyRequested(manifest);
+
+  const accountId = getAccountIdFromWalletAccountId(walletAccountId);
+  if (!accountId) {
+    tracking.accountGetPublicKeyFail(manifest);
+    throw new Error(`accountId ${walletAccountId} unknown`);
+  }
+
+  const account = accounts.find(account => account.id === accountId);
+  if (account === undefined) {
+    tracking.accountGetPublicKeyFail(manifest);
+    throw new Error("account not found");
+  }
+
+  let mainAccount;
+  try {
+    mainAccount = getMainAccount(account, getParentAccount(account, accounts));
+  } catch {
+    tracking.accountGetPublicKeyFail(manifest);
+    throw new Error("account not found");
+  }
+
+  const publicKey = ACCOUNT_PUBLIC_KEY_RESOLVERS[mainAccount.currency.family]?.(mainAccount);
+  if (!publicKey) {
+    tracking.accountGetPublicKeyFail(manifest);
+    throw new Error("account.getPublicKey not implemented");
+  }
+
+  tracking.accountGetPublicKeySuccess(manifest);
+  return publicKey;
 };
 
 export const bitcoinFamilyAccountGetXPubLogic = (

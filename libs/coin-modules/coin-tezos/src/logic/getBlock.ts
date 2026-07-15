@@ -7,6 +7,8 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import {
   fetchBlockDelegations,
+  fetchBlockOriginations,
+  fetchBlockReveals,
   fetchBlockStaking,
   fetchBlockTokenTransfers,
   fetchBlockTransactions,
@@ -16,6 +18,8 @@ import { STAKING_ACTION_TO_OP_TYPE } from "../constants";
 import type {
   APIBlock,
   APIDelegationType,
+  APIOriginationType,
+  APIRevealType,
   APIStakingType,
   APITokenTransfer,
   APITransactionType,
@@ -40,6 +44,15 @@ function mapBlockInfo(block: APIBlock, parentBlock: APIBlock): BlockInfo {
 // Native XTZ helpers
 // ---------------------------------------------------------------------------
 
+/** Computes bakerFee + storageFee + allocationFee for a single operation. */
+function computeOpFees(op: {
+  bakerFee?: number;
+  storageFee?: number;
+  allocationFee?: number;
+}): bigint {
+  return BigInt(op.bakerFee ?? 0) + BigInt(op.storageFee ?? 0) + BigInt(op.allocationFee ?? 0);
+}
+
 /**
  * Computes the total fees for an operation group (all ops sharing the same hash).
  *
@@ -47,11 +60,7 @@ function mapBlockInfo(block: APIBlock, parentBlock: APIBlock): BlockInfo {
  * `allocationFee` can appear on internal ops emitted by contracts as well.
  */
 function computeFees(group: APITransactionType[]): bigint {
-  return group.reduce(
-    (sum, op) =>
-      sum + BigInt(op.bakerFee ?? 0) + BigInt(op.storageFee ?? 0) + BigInt(op.allocationFee ?? 0),
-    0n,
-  );
+  return group.reduce((sum, op) => sum + computeOpFees(op), 0n);
 }
 
 /**
@@ -121,15 +130,12 @@ function buildNativeOperations(group: APITransactionType[]): BlockOperation[] {
 // Delegation helpers
 // ---------------------------------------------------------------------------
 
-function computeDelegationFees(op: APIDelegationType): bigint {
-  return BigInt(op.bakerFee ?? 0) + BigInt(op.storageFee ?? 0) + BigInt(op.allocationFee ?? 0);
-}
+const computeDelegationFees = computeOpFees;
 
 function buildDelegationOperations(op: APIDelegationType): BlockOperation[] {
   const senderAddr = op.sender?.address;
   if (!senderAddr) return [];
 
-  const targetAddr = op.newDelegate?.address || op.prevDelegate?.address;
   const isDelegate = !!op.newDelegate?.address;
 
   return [
@@ -141,7 +147,6 @@ function buildDelegationOperations(op: APIDelegationType): BlockOperation[] {
       details: {
         operationType: isDelegate ? "DELEGATE" : "UNDELEGATE",
         stakedAmount: 0n,
-        ...(targetAddr && { delegate: targetAddr }),
         counter: op.counter,
         gasLimit: op.gasLimit,
         storageLimit: op.storageLimit,
@@ -169,16 +174,13 @@ function buildBlockTransactionFromDelegation(op: APIDelegationType): BlockTransa
 // Staking helpers (Paris adaptive issuance)
 // ---------------------------------------------------------------------------
 
-function computeStakingFees(op: APIStakingType): bigint {
-  return BigInt(op.bakerFee ?? 0) + BigInt(op.storageFee ?? 0) + BigInt(op.allocationFee ?? 0);
-}
+const computeStakingFees = computeOpFees;
 
 function buildStakingOperations(op: APIStakingType): BlockOperation[] {
   const senderAddr = op.sender?.address;
   if (!senderAddr) return [];
 
   const operationType = STAKING_ACTION_TO_OP_TYPE[op.action];
-  const bakerAddr = op.baker?.address;
 
   return [
     {
@@ -189,7 +191,6 @@ function buildStakingOperations(op: APIStakingType): BlockOperation[] {
       details: {
         operationType,
         stakedAmount: BigInt(op.amount ?? 0),
-        ...(bakerAddr && { delegate: bakerAddr }),
         counter: op.counter,
         gasLimit: op.gasLimit,
         storageLimit: op.storageLimit,
@@ -214,6 +215,86 @@ function buildBlockTransactionFromStaking(op: APIStakingType): BlockTransaction 
 }
 
 // ---------------------------------------------------------------------------
+// Origination helpers
+// ---------------------------------------------------------------------------
+
+const computeOriginationFees = computeOpFees;
+
+function buildOriginationOperations(op: APIOriginationType): BlockOperation[] {
+  const senderAddr = op.sender?.address;
+  if (!senderAddr) return [];
+
+  return [
+    {
+      type: "other",
+      address: senderAddr,
+      asset: NATIVE_ASSET,
+      amount: op.contractBalance > 0 ? -BigInt(op.contractBalance) : 0n,
+      details: {
+        counter: op.counter,
+        gasLimit: op.gasLimit,
+        storageLimit: op.storageLimit,
+        ledgerOpType: "ORIGINATION",
+      },
+    },
+  ];
+}
+
+function buildBlockTransactionFromOrigination(op: APIOriginationType): BlockTransaction | null {
+  if (!op.hash) return null;
+
+  const feesPayer = op.sender?.address;
+  const succeeded = !op.status || op.status === "applied";
+  return {
+    hash: op.hash,
+    failed: !succeeded,
+    fees: computeOriginationFees(op),
+    ...(feesPayer && { feesPayer }),
+    operations: succeeded ? buildOriginationOperations(op) : [],
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Reveal helpers
+// ---------------------------------------------------------------------------
+
+const computeRevealFees = computeOpFees;
+
+function buildRevealOperations(op: APIRevealType): BlockOperation[] {
+  const senderAddr = op.sender?.address;
+  if (!senderAddr) return [];
+
+  return [
+    {
+      type: "other",
+      address: senderAddr,
+      asset: NATIVE_ASSET,
+      amount: 0n,
+      details: {
+        counter: op.counter,
+        gasLimit: op.gasLimit,
+        storageLimit: op.storageLimit,
+        ledgerOpType: "REVEAL",
+      },
+    },
+  ];
+}
+
+function buildBlockTransactionFromReveal(op: APIRevealType): BlockTransaction | null {
+  if (!op.hash) return null;
+
+  const feesPayer = op.sender?.address;
+  const succeeded = !op.status || op.status === "applied";
+  return {
+    hash: op.hash,
+    failed: !succeeded,
+    fees: computeRevealFees(op),
+    ...(feesPayer && { feesPayer }),
+    operations: succeeded ? buildRevealOperations(op) : [],
+  };
+}
+
+// ---------------------------------------------------------------------------
 // FA token helpers
 // ---------------------------------------------------------------------------
 
@@ -232,7 +313,7 @@ function buildTokenOperations(transfer: APITokenTransfer): BlockOperation[] {
   // FA1.2 tokens always have tokenId "0", so this format is safe for both standards.
   const tokenId = transfer.token.tokenId ?? "0";
   const asset: AssetInfo = {
-    type: "token",
+    type: transfer.token.standard,
     assetReference: `${transfer.token.contract.address}:${tokenId}`,
     name: transfer.token.metadata?.name ?? transfer.token.metadata?.symbol,
   };
@@ -315,7 +396,11 @@ function attachTokenTransfer(
   if (tokenOps.length === 0) return;
 
   const parentHash =
-    transfer.transactionId === undefined ? undefined : txIdToHash.get(transfer.transactionId);
+    transfer.transactionId !== undefined
+      ? txIdToHash.get(transfer.transactionId)
+      : transfer.originationId !== undefined
+        ? txIdToHash.get(transfer.originationId)
+        : undefined;
 
   if (parentHash !== undefined && blockTxByHash.has(parentHash)) {
     const parent = blockTxByHash.get(parentHash)!;
@@ -323,11 +408,11 @@ function attachTokenTransfer(
     return;
   }
 
-  // No matching native tx: protocol-level mint/burn or origination-triggered transfer.
-  const key =
-    transfer.transactionId === undefined
-      ? `token-${transfer.id}`
-      : `txid-${transfer.transactionId}`;
+  // No matching BlockTransaction in this block. Use the resolved parent hash
+  // when available (cross-block origination) so the standalone entry carries the
+  // real origination hash — matching what listOperations would produce.
+  const parentId = transfer.transactionId ?? transfer.originationId;
+  const key = parentHash ?? (parentId === undefined ? `token-${transfer.id}` : `txid-${parentId}`);
 
   const existing = standaloneByKey.get(key);
   if (existing) {
@@ -356,6 +441,9 @@ function mergeAuxiliaryTx(
     return;
   }
 
+  // When an auxiliary op (reveal, delegation, etc.) failed, we mark the whole
+  // merged transaction as failed. This is a modeling choice: the auxiliary op
+  // shares the same hash and its failure typically means the batch was aborted.
   if (auxTx.failed) {
     existing.failed = true;
     existing.operations = [];
@@ -370,12 +458,21 @@ function groupAndMapTransactions(
   tokenTransfers: APITokenTransfer[],
   delegations: APIDelegationType[],
   stakings: APIStakingType[],
+  originations: APIOriginationType[],
+  reveals: APIRevealType[],
+  crossBlockIdToHash: Map<number, string> = new Map(),
 ): BlockTransaction[] {
   const groups = groupTransactionsByHash(transactions);
 
   const txIdToHash = new Map<number, string>();
   for (const tx of transactions) {
     if (tx.id && tx.hash) txIdToHash.set(tx.id, tx.hash);
+  }
+  for (const orig of originations) {
+    if (orig.id && orig.hash) txIdToHash.set(orig.id, orig.hash);
+  }
+  for (const [id, hash] of crossBlockIdToHash) {
+    txIdToHash.set(id, hash);
   }
 
   const blockTxByHash = new Map<string, BlockTransaction>();
@@ -391,6 +488,16 @@ function groupAndMapTransactions(
   for (const staking of stakings) {
     const stakingTx = buildBlockTransactionFromStaking(staking);
     if (stakingTx) mergeAuxiliaryTx(blockTxByHash, stakingTx);
+  }
+
+  for (const origination of originations) {
+    const originationTx = buildBlockTransactionFromOrigination(origination);
+    if (originationTx) mergeAuxiliaryTx(blockTxByHash, originationTx);
+  }
+
+  for (const reveal of reveals) {
+    const revealTx = buildBlockTransactionFromReveal(reveal);
+    if (revealTx) mergeAuxiliaryTx(blockTxByHash, revealTx);
   }
 
   const standaloneByKey = new Map<string, BlockTransaction>();
@@ -420,18 +527,59 @@ export async function getBlock(height: number): Promise<Block> {
     throw new Error(`getBlock: height must be a positive integer, got ${height}`);
   }
 
-  const [block, parentBlock, transactions, tokenTransfers, delegations, stakings] =
-    await Promise.all([
-      tzkt.getBlockByLevel(height),
-      tzkt.getBlockByLevel(height - 1),
-      fetchBlockTransactions(height),
-      fetchBlockTokenTransfers(height),
-      fetchBlockDelegations(height),
-      fetchBlockStaking(height),
-    ]);
+  const [
+    block,
+    parentBlock,
+    transactions,
+    tokenTransfers,
+    delegations,
+    stakings,
+    originations,
+    reveals,
+  ] = await Promise.all([
+    tzkt.getBlockByLevel(height),
+    tzkt.getBlockByLevel(height - 1),
+    fetchBlockTransactions(height),
+    fetchBlockTokenTransfers(height),
+    fetchBlockDelegations(height),
+    fetchBlockStaking(height),
+    fetchBlockOriginations(height),
+    fetchBlockReveals(height),
+  ]);
+
+  // Token transfers triggered by originations from other blocks carry an
+  // `originationId` that points outside this block's origination set. Resolve
+  // those hashes so the token ops attach to the correct parent BlockTransaction
+  // instead of becoming orphan `token-{id}` entries.
+  const knownIds = new Set([...transactions.map(t => t.id), ...originations.map(o => o.id)]);
+  const unresolvedOrigIds = [
+    ...new Set(
+      tokenTransfers
+        .filter(t => t.transactionId === undefined)
+        .map(t => t.originationId)
+        .filter((id): id is number => id !== undefined && !knownIds.has(id)),
+    ),
+  ];
+  const crossBlockIdToHash = new Map<number, string>();
+  if (unresolvedOrigIds.length > 0) {
+    const resolved = await tzkt.getOperationsOrigination(0, undefined, {
+      "id.in": unresolvedOrigIds.join(","),
+    });
+    for (const op of resolved) {
+      if (op.id && op.hash) crossBlockIdToHash.set(op.id, op.hash);
+    }
+  }
 
   return {
     info: mapBlockInfo(block, parentBlock),
-    transactions: groupAndMapTransactions(transactions, tokenTransfers, delegations, stakings),
+    transactions: groupAndMapTransactions(
+      transactions,
+      tokenTransfers,
+      delegations,
+      stakings,
+      originations,
+      reveals,
+      crossBlockIdToHash,
+    ),
   };
 }

@@ -18,8 +18,7 @@ export interface IdOwnershipProofs {
 /**
  * Credential deployment transaction format expected by Ledger device.
  *
- * This is the hw-app format, not the SDK CredentialDeploymentTransaction type.
- * Use coin-concordium/hw-serialization to transform SDK → hw-app format.
+ * This is the device format, not the SDK CredentialDeploymentTransaction type.
  */
 export interface CredentialDeploymentTransaction {
   credentialPublicKeys: {
@@ -35,7 +34,7 @@ export interface CredentialDeploymentTransaction {
     createdAt: string; // YearMonth format (YYYYMM)
     revealedAttributes: Record<string, string>; // Attribute tag → value mapping
   };
-  proofs: IdOwnershipProofs; // ID ownership proofs object (will be serialized by hw-app)
+  proofs: IdOwnershipProofs; // ID ownership proofs object (serialized for the device)
   expiry: bigint; // Transaction expiry as epoch seconds
 }
 
@@ -45,16 +44,6 @@ export interface CredentialDeploymentTransaction {
 export interface Address {
   address: string; // Base58 address or public key (hex) depending on display mode
   publicKey: string; // Ed25519 public key as hex string
-}
-
-/**
- * Verify address response from device
- */
-export interface VerifyAddressResponse {
-  status: string; // Status code (typically "9000" for success)
-  address?: string; // Verified Base58 address displayed on device
-  deviceCredId?: string; // Credential ID computed by device (hex string)
-  devicePrfKey?: string; // PRF key computed by device (hex string)
 }
 
 /**
@@ -108,8 +97,7 @@ export type TransactionPayload = TransferPayload | TransferWithMemoPayload;
 /**
  * Transaction
  *
- * This is the hw-app format that owns transaction structure definition.
- * Used by signTransfer() and signTransferWithMemo() methods.
+ * This is the device format that owns the transaction structure definition.
  *
  * The type field determines which payload structure is expected:
  * - TransactionType.Transfer → TransferPayload

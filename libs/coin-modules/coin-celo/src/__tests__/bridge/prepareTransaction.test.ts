@@ -119,6 +119,30 @@ describe("prepareTransaction", () => {
     });
   });
 
+  it("should preserve custom fees", async () => {
+    const transaction = await prepareTransaction(
+      { ...accountFixture, balance: BigNumber(222222), spendableBalance: BigNumber(222222) },
+      {
+        ...transactionFixture,
+        recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+        amount: BigNumber(22),
+        feesStrategy: "custom",
+        fees: BigNumber(123000000000),
+      },
+    );
+
+    expect(transaction).toMatchObject({
+      amount: BigNumber(22),
+      recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+      useAllAmount: false,
+      family: "celo",
+      mode: "send",
+      index: 0,
+      feesStrategy: "custom",
+      fees: BigNumber(123000000000),
+    });
+  });
+
   it("should return the prepared stable token transaction", async () => {
     const transaction = await prepareTransaction(
       {

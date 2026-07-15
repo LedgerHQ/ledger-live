@@ -4,6 +4,14 @@ import { UpdateEvent } from "../cloudsync/sdk";
 import { WalletSyncDataManagerResolutionContext } from "./types";
 import { WSState } from "../store";
 
+function logNonImportedAccountInfos(localState: LocalState) {
+  const { nonImportedAccountInfos } = localState.accounts;
+  if (nonImportedAccountInfos.length === 0) return;
+  log("walletsync", `${nonImportedAccountInfos.length} non-imported accounts`, {
+    nonImportedAccountInfos: nonImportedAccountInfos.map(({ id, attempts }) => ({ id, attempts })),
+  });
+}
+
 export function makeSaveNewUpdate<S>({
   ctx,
   getState,
@@ -40,6 +48,7 @@ export function makeSaveNewUpdate<S>({
           const localState = localStateSelector(getState()); // fetch again latest state because it might have changed
           const newLocalState = walletsync.applyUpdate(localState, resolved.update); // we resolve in sync the new local state to save
           await saveUpdate(data, version, newLocalState);
+          logNonImportedAccountInfos(newLocalState);
           log("walletsync", "resolved. changes applied.");
         } else {
           log("walletsync", "resolved. no changes to apply.");
@@ -89,6 +98,7 @@ export function makeLocalIncrementalUpdate<S>({
       const localState = localStateSelector(getState()); // fetch again latest state because it might have changed
       const newLocalState = walletsync.applyUpdate(localState, resolved.update); // we resolve in sync the new local state to save
       await saveUpdate(data, version, newLocalState);
+      logNonImportedAccountInfos(newLocalState);
       log("walletsync", "localIncrementalUpdate done.");
     }
   };

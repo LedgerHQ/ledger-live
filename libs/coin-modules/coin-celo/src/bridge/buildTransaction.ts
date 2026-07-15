@@ -6,83 +6,15 @@ import {
   CELO_STABLE_TOKENS,
   getStableTokenRegistryName,
   MAX_FEES_THRESHOLD_MULTIPLIER,
-  ZERO_ADDRESS,
 } from "../constants";
+import { CeloGroupNotVoted } from "../errors";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { celoEstimateGas, getCeloClient } from "../network/client";
 import { getRegistryAddressFor } from "../network/registry";
+import { voteSignerAccount } from "../network/sdk";
+import { getVoteNeighbors } from "../network/voteNeighbors";
 import type { CeloAccount, CeloTransactionRequest, Transaction } from "../types";
 import { valueToHex, isSameTokenAsFee, normalizeAndSubtract, convertNumberDecimals } from "./utils";
-
-/**
- * Find lesser/greater neighbor groups for Celo Election vote/revoke operations.
- * Returns the addresses that come just below and above the target group by total votes.
- */
-const getVoteNeighbors = async (
-  electionAddress: `0x${string}`,
-  group: `0x${string}`,
-  delta: bigint,
-  add: boolean,
-): Promise<{ lesser: `0x${string}`; greater: `0x${string}` }> => {
-  const client = getCeloClient();
-  // On networks where no validator groups are registered (e.g. some testnets)
-  // the call may revert. Treat that as an empty list so lesser/greater both
-  // resolve to the zero address.
-  let groups: readonly `0x${string}`[] = [];
-  let votes: readonly bigint[] = [];
-  try {
-    [groups, votes] = await client.readContract({
-      address: electionAddress,
-      abi: electionABI,
-      functionName: "getTotalVotesForEligibleValidatorGroups",
-    });
-  } catch {
-    // empty eligible list — keep defaults
-  }
-
-  const groupIdx = groups.findIndex(g => g.toLowerCase() === group.toLowerCase());
-  const currentVotes = groupIdx >= 0 ? votes[groupIdx] : BigInt(0);
-  const newVotes = computeUpdatedVotes(currentVotes, delta, add);
-
-  // Always include the target group in the sorted list. When groupIdx === -1 the
-  // group is not yet in the eligible set (first-time voter), so we insert it
-  // explicitly. Without this the group is missing from `sorted`, idx stays -1,
-  // and lesser/greater are always wrong — causing the Election contract to revert.
-  const normalizedGroup = group.toLowerCase();
-  const otherGroups: { address: `0x${string}`; votes: bigint }[] = groups.reduce(
-    (acc, addr, index) => {
-      if (addr.toLowerCase() !== normalizedGroup) {
-        acc.push({ address: addr, votes: votes[index] });
-      }
-      return acc;
-    },
-    [] as { address: `0x${string}`; votes: bigint }[],
-  );
-
-  const sorted: { address: `0x${string}`; votes: bigint }[] = [
-    ...otherGroups,
-    { address: group, votes: newVotes },
-  ].sort(compareVotesAscending);
-
-  const idx = sorted.findIndex(g => g.address.toLowerCase() === group.toLowerCase());
-
-  const lesser = idx > 0 ? sorted[idx - 1].address : ZERO_ADDRESS;
-  const greater = idx < sorted.length - 1 ? sorted[idx + 1].address : ZERO_ADDRESS;
-
-  return { lesser, greater };
-};
-
-const computeUpdatedVotes = (currentVotes: bigint, delta: bigint, add: boolean): bigint => {
-  if (add) return currentVotes + delta;
-  if (currentVotes > delta) return currentVotes - delta;
-  return BigInt(0);
-};
-
-const compareVotesAscending = (a: { votes: bigint }, b: { votes: bigint }): number => {
-  if (a.votes < b.votes) return -1;
-  if (a.votes > b.votes) return 1;
-  return 0;
-};
 
 const calcTokenTransferValue = (
   tokenAccount: NonNullable<ReturnType<typeof findSubAccountById>> & { type: "TokenAccount" },
@@ -196,6 +128,42 @@ const buildVoteTx = async (
   };
 };
 
+/**
+ * Resolve the index of `group` within the account's list of voted-for groups.
+ *
+ * Election.revokePending / revokeActive take this index as their 5th argument and
+ * enforce `group == groupsVoted[index]`, reverting with "Bad index" otherwise. It
+ * must NOT be confused with `transaction.index`, which this codebase uses only as a
+ * pending(0)/active(1) marker. Hard-coding it to 0 breaks revoke for any account that
+ * has voted for more than one group and revokes a non-first group.
+ *
+ * The vote-signer resolution mirrors `getVotes` in `network/sdk`, so the computed
+ * index lines up with the same vote list shown in the UI (and thus the group the user
+ * is revoking). The positional index isn't derivable from the preloaded
+ * `celoResources.votes` (which store a pending/active marker, not the group's
+ * position), so it's read on demand here.
+ */
+const getVotedGroupIndex = async (
+  electionAddress: `0x${string}`,
+  account: CeloAccount,
+  group: `0x${string}`,
+): Promise<bigint> => {
+  const client = getCeloClient();
+  const signerAddress = (await voteSignerAccount(account.freshAddress)) as `0x${string}`;
+  const groupsVotedFor = await client.readContract({
+    address: electionAddress,
+    abi: electionABI,
+    functionName: "getGroupsVotedForByAccount",
+    args: [signerAddress],
+  });
+
+  const index = groupsVotedFor.findIndex(g => g.toLowerCase() === group.toLowerCase());
+  if (index < 0) {
+    throw new CeloGroupNotVoted(`celo: group ${group} not found in account's voted groups`);
+  }
+  return BigInt(index);
+};
+
 const buildRevokeTx = async (
   account: CeloAccount,
   transaction: Transaction,
@@ -205,13 +173,11 @@ const buildRevokeTx = async (
   const recipient = transaction.recipient as `0x${string}`;
   const revokeValue = BigInt(value.toFixed());
 
-  const { lesser, greater } = await getVoteNeighbors(
-    electionAddress,
-    recipient,
-    revokeValue,
-    false,
-  );
-  const revokeArgs = [recipient, revokeValue, lesser, greater, BigInt(0)] as const;
+  const [{ lesser, greater }, groupIndex] = await Promise.all([
+    getVoteNeighbors(electionAddress, recipient, revokeValue, false),
+    getVotedGroupIndex(electionAddress, account, recipient),
+  ]);
+  const revokeArgs = [recipient, revokeValue, lesser, greater, groupIndex] as const;
   const functionName = transaction.index === 0 ? "revokePending" : "revokeActive";
 
   return {

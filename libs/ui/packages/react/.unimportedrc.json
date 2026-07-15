@@ -8,27 +8,39 @@
     "src/assets/cryptoIcons.ts",
     "src/components/animations/GlitchText/index.tsx"
   ],
-  "extensions": [".ts", ".js", ".jsx", ".tsx"],
-  "ignorePatterns": ["**/node_modules/**", "**/*.stories.*", "**/*.test.*"],
+  "extensions": [
+    ".ts",
+    ".js",
+    ".jsx",
+    ".tsx"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/*.stories.*",
+    "**/*.test.*"
+  ],
   "ignoreUnimported": [
     "src/assets/images/images.d.ts",
     "src/components/Table/stories.helper.tsx",
     "src/components/helpers.ts",
-    "src/helpers.types.ts",
     "src/components/navigation/Aside/stories.helper.tsx",
-    "src/pre-ldls/components/sharedStoryBook.tsx",
-    "src/pre-ldls/types.ts"
+    "src/helpers.types.ts",
+    "src/pre-ldls/components/sharedStoryBook.tsx"
   ],
   "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util",
     "@emotion/is-prop-valid",
     "@emotion/stylis",
     "@emotion/unitless",
+    "@jest/expect-utils",
+    "@jest/get-type",
     "hoist-non-react-statics",
+    "jest-util",
     "scheduler",
     "shallowequal"
   ],
-  "ignoreUnused": ["react", "react-dom", "styled-components"]
+  "ignoreUnused": [
+    "react",
+    "react-dom",
+    "styled-components"
+  ]
 }

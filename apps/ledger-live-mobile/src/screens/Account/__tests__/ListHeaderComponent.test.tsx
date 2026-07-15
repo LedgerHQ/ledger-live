@@ -119,12 +119,20 @@ describe("Testing ListHeaderComponent Component", () => {
       return hookResult;
     };
 
+    it("should not render AccountBalanceHeader for a family without one", () => {
+      const { listHeaderComponents } = getUseListHeaderComponentsResult(
+        {} as unknown as CurrencyConfig,
+      );
+
+      expect(listHeaderComponents[7]).toBeFalsy();
+    });
+
     it("should generate account earn header component when we do not disable delegation", () => {
       const { listHeaderComponents } = getUseListHeaderComponentsResult({
         disableDelegation: false,
       } as unknown as CurrencyConfig);
 
-      expect(listHeaderComponents[7]).toBeDefined();
+      expect(listHeaderComponents[8]).toBeDefined();
     });
 
     it("should generate account earn header component when disable delegation is not configured", () => {
@@ -136,7 +144,7 @@ describe("Testing ListHeaderComponent Component", () => {
         {} as unknown as CurrencyConfig,
       );
 
-      expect(listHeaderComponents[7]).toBeDefined();
+      expect(listHeaderComponents[8]).toBeDefined();
     });
 
     it("should not generate account earn header component when we disable delegation", () => {
@@ -144,7 +152,7 @@ describe("Testing ListHeaderComponent Component", () => {
         disableDelegation: true,
       } as unknown as CurrencyConfig);
 
-      expect(listHeaderComponents[7]).toBeUndefined();
+      expect(listHeaderComponents[8]).toBeUndefined();
     });
   });
 });

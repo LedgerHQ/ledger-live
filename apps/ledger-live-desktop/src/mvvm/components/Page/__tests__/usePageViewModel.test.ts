@@ -18,7 +18,7 @@ const createLocation = (pathname: string) => ({
 });
 
 const wallet40WithRightPanelFlags = {
-  lwdWallet40: { enabled: true, params: { mainNavigation: true } },
+  lwdWallet40: { enabled: true },
   ptxSwapLiveAppOnPortfolio: { enabled: true },
 };
 
@@ -45,7 +45,7 @@ describe("usePageViewModel", () => {
     mockedUseLocation.mockReturnValue(createLocation("/asset/bitcoin"));
     const { result } = renderHook(() => usePageViewModel(), {
       initialState: withFlagOverrides({
-        lwdWallet40: { enabled: true, params: { mainNavigation: true, aggregatedAssets: true } },
+        lwdWallet40: { enabled: true, params: { aggregatedAssets: true } },
         ptxSwapLiveAppOnPortfolio: { enabled: true },
       }),
     });
@@ -59,59 +59,13 @@ describe("usePageViewModel", () => {
       initialState: withFlagOverrides({
         lwdWallet40: {
           enabled: true,
-          params: { mainNavigation: true, aggregatedAssets: false },
+          params: { aggregatedAssets: false },
         },
         ptxSwapLiveAppOnPortfolio: { enabled: true },
       }),
     });
 
     expect(result.current.shouldRenderRightPanel).toBe(false);
-  });
-
-  it("tracks scroll state and scrolls to top on user action", () => {
-    mockedUseLocation.mockReturnValue(createLocation("/"));
-    const { result } = renderHook(() => usePageViewModel(), {
-      initialState: withFlagOverrides(wallet40WithRightPanelFlags),
-    });
-
-    let listener: ((event: Event) => void) | undefined;
-    const scroller = document.createElement("div");
-    Object.defineProperty(scroller, "scrollTop", { value: 0, writable: true });
-    scroller.scrollTo = jest.fn();
-    const addEventListenerSpy = jest
-      .spyOn(scroller, "addEventListener")
-      .mockImplementation((event, callback) => {
-        if (event === "scroll" && typeof callback === "function") {
-          listener = callback;
-        }
-      });
-
-    act(() => {
-      result.current.pageScrollerRef(scroller);
-    });
-
-    expect(addEventListenerSpy).toHaveBeenCalledWith("scroll", expect.any(Function), {
-      passive: true,
-    });
-    expect(result.current.isScrollAtUpperBound).toBe(true);
-    expect(result.current.isScrollUpButtonVisible).toBe(false);
-
-    act(() => {
-      scroller.scrollTop = 900;
-      listener?.(new Event("scroll"));
-    });
-
-    expect(result.current.isScrollAtUpperBound).toBe(false);
-    expect(result.current.isScrollUpButtonVisible).toBe(true);
-
-    act(() => {
-      result.current.onClickScrollUp();
-    });
-
-    expect(scroller.scrollTo).toHaveBeenCalledWith({
-      top: 0,
-      behavior: "smooth",
-    });
   });
 
   it("scrolls to top with smooth behavior when SCROLL_TO_TOP_EVENT is dispatched", () => {

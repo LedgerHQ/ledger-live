@@ -1,11 +1,12 @@
 import { useMemo } from "react";
-import { getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor/registry";
-import { resolveFeeUnitLabel } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  buildFeePresetLegendMap,
+  type FeePresetLegendMap,
+} from "@ledgerhq/live-common/flows/send/utils/feePresetLegends";
 import type { FeePresetOption } from "./useFeePresetOptions";
-import { formatFeeRate } from "../utils/gas";
 
-export type FeePresetLegendMap = Readonly<Record<string, string>>;
+export type { FeePresetLegendMap };
 
 type Params = Readonly<{
   currency: CryptoOrTokenCurrency | undefined;
@@ -13,22 +14,8 @@ type Params = Readonly<{
 }>;
 
 export function useFeePresetLegends({ currency, feePresetOptions }: Params): FeePresetLegendMap {
-  return useMemo(() => {
-    const descriptor = getSendDescriptor(currency);
-    const legendConfig = descriptor?.fees.presets?.legend;
-
-    if (!legendConfig || legendConfig.type === "none") return {};
-    if (legendConfig.type !== "feeRate" || legendConfig.valueFrom !== "presetAmount") return {};
-
-    const unit = resolveFeeUnitLabel(legendConfig.unit, currency)?.trim();
-    if (!unit) return {};
-
-    const next: Record<string, string> = {};
-    for (const option of feePresetOptions) {
-      const rate = formatFeeRate(option.amount);
-      if (!rate) continue;
-      next[option.id] = `${rate} ${unit}`;
-    }
-    return next;
-  }, [currency, feePresetOptions]);
+  return useMemo(
+    () => buildFeePresetLegendMap(currency, feePresetOptions),
+    [currency, feePresetOptions],
+  );
 }

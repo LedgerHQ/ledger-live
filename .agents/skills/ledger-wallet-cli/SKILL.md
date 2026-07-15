@@ -152,7 +152,7 @@ Fetches quotes in parallel from the built-in provider list (no device required; 
 
 **Currencies:** `--from` / `-f` and `--to` / `-t` are Ledger **currency IDs** — native assets (e.g. `ethereum`, `bitcoin`, `solana`) **or token IDs** when the token’s parent chain is a supported native swap currency (same IDs the CLI allows for swap). They are **not** session account labels — use `--from-account` / `--to-account` for accounts.
 
-**Default providers queried by `swap quote` and usable by `swap execute`:** `changelly`, `cic`, `exodus`, `nearintents`, `swapsxyz`.
+**Default providers queried by `swap quote` and usable by `swap execute`:** `changelly`, `changelly_v2`, `cic`, `cic_v2`, `exodus`, `lifi`, `nearintents`, `okx`, `oneinch`, `swapsxyz`, `uniswap`, `velora`. Some are CEX/aggregators run through the legacy Exchange-app pipeline; the DEX providers (`uniswap`, `oneinch`, `velora`, `okx`) execute in the partner's embedded coin app — see [swap execute — DEX providers](#swap-execute).
 
 **Accounts:** `--from-account` and `--to-account` accept a session label only; the CLI resolves a fresh receive address from the account like `receive`.
 
@@ -167,14 +167,23 @@ Required: `--from`, `--to`, `--from-account`, `--to-account`, `--amount`.
 
 **Currencies:** `--from` / `-f` and `--to` / `-t` are Ledger **currency IDs** (same as `swap quote`): native assets or **tokens** on an allowed parent chain. They must match the asset of the source `--account` and of `--to-account` respectively.
 
-**Providers:** Valid `--provider` values are `changelly`, `changelly_v2`, `cic`, `cic_v2`, `exodus`, `nearintents`, `swapsxyz`. Use the provider id shown on the quote line you pick from `swap quote`.
+**Providers:** Valid `--provider` values are `changelly`, `changelly_v2`, `cic`, `cic_v2`, `exodus`, `lifi`, `nearintents`, `okx`, `oneinch`, `swapsxyz`, `uniswap`, `velora`. Aliases: `changelly` → `changelly_v2`, `1inch` → `oneinch`. Use the provider id shown on the quote line you pick from `swap quote`.
 
-**Fee strategy:** `--fee-strategy` accepts `slow`, `medium` (default), or `fast`.
+**DEX providers (`uniswap`, `oneinch`, `velora`, `okx`):** these run end-to-end **in the partner's embedded coin app** on the device (via the Device Intent Executor), not the legacy Exchange app. The flow re-fetches a quote for the chosen provider, then drives an on-device approval + swap sequence (`sign-approval` / `sign-permit2` / `sign-swap` / broadcast), switching device apps as needed — confirm each `Open <app>` and signing prompt on the device.
+
+- **EVM only.** DEX execution requires an **EVM source account** (e.g. `ethereum`); a non-EVM `--account` falls through to the legacy pipeline.
+- **RFQ quotes are not supported in the CLI.** If the picked quote resolves to an RFQ plan (`rfq-order` / `approval-then-rfq-order`), the embedded flow is skipped and execution **falls back to the legacy Exchange-app pipeline** (you'll see a `falling back to legacy Exchange-app pipeline` progress line).
+
+All other providers (`changelly`, `cic`, `exodus`, `nearintents`, `swapsxyz`, `lifi`, …) run the legacy Exchange-app pipeline (nonce → payload → complete exchange → sign/broadcast).
+
+**Fee strategy:** `--fee-strategy` accepts `slow`, `medium` (default), or `fast`. On the legacy pipeline it sets the refund-chain transaction fee.
 
 ```bash
 pnpm --silent wallet-cli start swap execute --from ethereum --to bitcoin --account ethereum-1 --to-account bitcoin-native-1 --provider changelly --amount 0.1
 pnpm --silent wallet-cli start swap execute -f ethereum -t bitcoin --account ethereum-1 --to-account bitcoin-native-1 --provider changelly --amount 0.1 --fee-strategy fast
 pnpm --silent wallet-cli start swap execute --from ethereum --to bitcoin --account ethereum-1 --to-account bitcoin-native-1 --provider changelly --amount 0.1 --output json
+# DEX (embedded coin app): EVM-only, source and destination on an EVM chain
+pnpm --silent wallet-cli start swap execute --from ethereum --to ethereum/erc20/usd_tether__erc20_ --account ethereum-1 --to-account ethereum-1 --provider uniswap --amount 0.1
 ```
 
 Required flags: `--from`, `--to`, `--account`, `--to-account`, `--provider`, `--amount`. Use a `--provider` value that matches the provider id on the quote line you pick from `swap quote`.

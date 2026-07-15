@@ -21,7 +21,7 @@ import { createStructuredSelector } from "reselect";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import SectionTitle from "../SectionTitle";
 import OperationC from "../Operation";
-import TableContainer, { TableHeader } from "../../TableContainer";
+import { TableHeader } from "../../TableContainer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
@@ -53,7 +53,6 @@ export type Props = {
   withSubAccounts?: boolean;
   title?: string;
   filterOperation?: (b: Operation, a: AccountLike) => boolean;
-  isWallet40?: boolean;
 };
 type State = {
   nbToShow: number;
@@ -93,7 +92,6 @@ export class OperationsList extends PureComponent<Props, State> {
       withAccount,
       withSubAccounts,
       filterOperation,
-      isWallet40,
     } = this.props;
     const { nbToShow } = this.state;
     if (!account && !accounts) {
@@ -169,17 +167,11 @@ export class OperationsList extends PureComponent<Props, State> {
       </>
     );
 
-    const container = isWallet40 ? (
-      <div id="operation-list" className="overflow-hidden rounded-md bg-surface">
-        {tableContent}
-      </div>
-    ) : (
-      <TableContainer id="operation-list">{tableContent}</TableContainer>
-    );
-
     return (
       <>
-        {container}
+        <div id="operation-list" className="overflow-hidden rounded-md bg-surface">
+          {tableContent}
+        </div>
         {!groupedOperations?.completed ? (
           <ShowMore onClick={this.fetchMoreOperations}>
             <span>{t("common.showMore")}</span>

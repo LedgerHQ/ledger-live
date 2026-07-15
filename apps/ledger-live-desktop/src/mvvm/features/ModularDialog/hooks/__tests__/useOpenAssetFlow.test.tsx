@@ -1,9 +1,21 @@
+import React from "react";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useOpenAssetFlow } from "../useOpenAssetFlow";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { setDrawer } from "~/renderer/drawers/Provider";
+
+jest.mock("~/renderer/drawers/Provider", () => ({
+  __esModule: true,
+  default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  setDrawer: jest.fn(),
+}));
 
 describe("useOpenAssetFlow", () => {
+  beforeEach(() => {
+    jest.mocked(setDrawer).mockClear();
+  });
+
   it("should handle openAssetFlow", () => {
     const { result, store } = renderHook(
       () => useOpenAssetFlow({ location: ModularDrawerLocation.LIVE_APP, liveAppId: "" }, "test"),
@@ -75,7 +87,7 @@ describe("useOpenAssetFlow", () => {
     result.current.openAddAccountFlow(getCryptoCurrencyById("bitcoin"));
 
     expect(store.getState().modularDialog.isOpen).toBe(false);
-    expect(store.getState().modals.MODAL_ADD_ACCOUNTS?.isOpened).toBe(true);
+    expect(setDrawer).toHaveBeenCalledTimes(1);
   });
 
   it("should handle openAddAccountFlow", () => {
@@ -96,6 +108,6 @@ describe("useOpenAssetFlow", () => {
     result.current.openAddAccountFlow(getCryptoCurrencyById("bitcoin"));
 
     expect(store.getState().modularDialog.isOpen).toBe(false);
-    expect(store.getState().modals.MODAL_ADD_ACCOUNTS?.isOpened).toBe(true);
+    expect(setDrawer).toHaveBeenCalledTimes(1);
   });
 });

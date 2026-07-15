@@ -5,7 +5,6 @@ import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../context/SendFlowContext";
 import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
 import {
-  SEND_FLOW_STEP,
   type SendFlowStep,
   type SendFlowBusinessContext,
 } from "@ledgerhq/live-common/flows/send/types";
@@ -22,7 +21,7 @@ type SendFlowLayoutProps = Readonly<{
 
 export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
-  const { state, uiConfig } = useSendFlowData();
+  const { state } = useSendFlowData();
 
   const currentStepConfig = wizard.currentStepConfig;
   const StepComponent = wizard.currentStepRenderer;
@@ -45,10 +44,7 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
     [onClose, wizard.currentStep, sendFlowTrackingProperties],
   );
 
-  const hasAmountPlugins =
-    wizard.currentStep === SEND_FLOW_STEP.AMOUNT && uiConfig.hasAmountPlugins;
-
-  const dialogHeight = hasAmountPlugins ? "fixed" : (currentStepConfig?.height ?? "fixed");
+  const dialogHeight = currentStepConfig?.height ?? "fixed";
 
   const shouldShowStatusGradient =
     state.flowStatus === FLOW_STATUS.ERROR || state.flowStatus === FLOW_STATUS.SUCCESS;

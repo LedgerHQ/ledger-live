@@ -5,14 +5,18 @@ import { useNavigation } from "@react-navigation/native";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import SettingsRow from "~/components/SettingsRow";
 import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
-import { NavigatorName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
 import { usePostOnboardingHubCompletionContext } from "~/logic/postOnboarding/usePostOnboardingHubCompletionContext";
 import { setStoreValue } from "~/store";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
-import { removePostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
+import {
+  removePostOnboardingActionCompleted,
+  setPostOnboardingDate,
+} from "@ledgerhq/live-common/postOnboarding/actions";
+import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
-import { useDispatch } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
 import {
   setDisplayBanner,
   setRecoverState as setRecoverStateAction,
@@ -22,6 +26,8 @@ export default () => {
   const navigation = useNavigation();
   const startPostOnboarding = useStartPostOnboardingCallback();
   const dispatch = useDispatch();
+
+  const onboardingDate = useSelector(onboardingDateSelector);
 
   const { protectId } = usePostOnboardingHubCompletionContext();
   const setRecoverState = async (input: LedgerRecoverSubscriptionStateEnum) => {
@@ -40,7 +46,7 @@ export default () => {
         fallbackIfNoAction: () =>
           navigation.navigate(NavigatorName.Main, {
             screen: NavigatorName.Portfolio,
-            params: { screen: NavigatorName.WalletTab },
+            params: { screen: ScreenName.Portfolio },
           }),
       }),
     [navigation, startPostOnboarding],
@@ -91,6 +97,17 @@ export default () => {
           title="Recover - Complete"
           desc="Set recover local state to being complete"
           onPress={() => setRecoverState(LedgerRecoverSubscriptionStateEnum.BACKUP_DONE)}
+        />
+
+        <SettingsRow
+          title="onboardingDate - Set to today"
+          desc={`Current: ${onboardingDate ? onboardingDate.toISOString() : "null"}`}
+          onPress={() => dispatch(setPostOnboardingDate({ onboardingDate: new Date() }))}
+        />
+        <SettingsRow
+          title="onboardingDate - Reset to null"
+          desc="Clears onboardingDate to test the legacy backfill on next launch."
+          onPress={() => dispatch(setPostOnboardingDate({ onboardingDate: null }))}
         />
       </ScrollView>
     </SafeAreaViewFixed>

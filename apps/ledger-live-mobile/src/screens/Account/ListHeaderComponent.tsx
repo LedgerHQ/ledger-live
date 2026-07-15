@@ -23,6 +23,7 @@ import AccountGraphCard from "~/components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
 import perFamilyAccountHeader from "../../generated/AccountHeader";
 import perFamilyAccountSubHeader from "../../generated/AccountSubHeader";
+import perFamilyAccountBalanceHeader from "../../generated/AccountBalanceHeader";
 import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
 import perFamilyAccountBalanceSummaryFooter from "../../generated/AccountBalanceSummaryFooter";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
@@ -141,6 +142,9 @@ export function useListHeaderComponents({
     AccountBodyHeader && AccountBodyHeader({ account, parentAccount });
 
   const AccountSubHeader = (perFamilyAccountSubHeader as Record<string, MaybeComponent>)[family];
+  const AccountBalanceHeader = (perFamilyAccountBalanceHeader as Record<string, MaybeComponent>)[
+    family
+  ];
   const PendingTransferProposals = (
     perFamilyPendingTransferProposals as Record<string, MaybeComponent>
   )[family];
@@ -214,6 +218,9 @@ export function useListHeaderComponents({
         <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAccountMainActions account={account} parentAccount={parentAccount} />
       </SectionContainer>,
+      !!AccountBalanceHeader && (
+        <AccountBalanceHeader key="AccountBalanceHeader" account={account} />
+      ),
       ...(!empty &&
       !disableDelegation &&
       (AccountHeaderRendered || AccountBalanceSummaryFooterRendered || secondaryActions.length > 0)

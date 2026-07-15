@@ -1,14 +1,18 @@
 import { type Permission } from "react-native";
 import { State as BlePlxState } from "react-native-ble-plx";
 import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
-import { DiscoveryErrorTypes, type DiscoveryError } from "../../types";
+import {
+  BaseDiscoveryErrorTypes,
+  DiscoveryErrorTypes,
+  type MobileDiscoveryError,
+} from "../../types";
 
-type DiscoveryRetry = () => Promise<true | DiscoveryError>;
+type DiscoveryRetry = () => Promise<true | MobileDiscoveryError>;
 
 export const buildBluetoothPermissionPromptableError = (
   permissions: Permission[],
   retry: DiscoveryRetry,
-): DiscoveryError => ({
+): MobileDiscoveryError => ({
   type: DiscoveryErrorTypes.BluetoothPermissionDeniedPromptable,
   transportId: rnBleTransportIdentifier,
   permissions,
@@ -21,7 +25,7 @@ export const buildBluetoothPermissionPromptableError = (
 export const buildBluetoothPermissionManualSettingsError = (
   permissions: Permission[],
   retry: DiscoveryRetry,
-): DiscoveryError => ({
+): MobileDiscoveryError => ({
   type: DiscoveryErrorTypes.BluetoothPermissionDeniedManualSettings,
   transportId: rnBleTransportIdentifier,
   permissions,
@@ -31,7 +35,9 @@ export const buildBluetoothPermissionManualSettingsError = (
   },
 });
 
-export const buildBluetoothDisabledPromptableError = (retry: DiscoveryRetry): DiscoveryError => ({
+export const buildBluetoothDisabledPromptableError = (
+  retry: DiscoveryRetry,
+): MobileDiscoveryError => ({
   type: DiscoveryErrorTypes.BluetoothDisabledPromptable,
   transportId: rnBleTransportIdentifier,
   resolution: {
@@ -43,7 +49,7 @@ export const buildBluetoothDisabledPromptableError = (retry: DiscoveryRetry): Di
 export const buildBluetoothDisabledManualActionError = (
   retry: DiscoveryRetry,
   error?: unknown,
-): DiscoveryError => ({
+): MobileDiscoveryError => ({
   type: DiscoveryErrorTypes.BluetoothDisabledManualAction,
   transportId: rnBleTransportIdentifier,
   error,
@@ -56,7 +62,7 @@ export const buildBluetoothDisabledManualActionError = (
 export const buildBluetoothStateError = (
   state: BlePlxState,
   retry: DiscoveryRetry,
-): DiscoveryError => {
+): MobileDiscoveryError => {
   if (state === BlePlxState.Unauthorized) {
     return {
       type: DiscoveryErrorTypes.BluetoothPermissionUnauthorizedManualSettings,
@@ -90,7 +96,7 @@ export const buildBluetoothStateError = (
 export const buildLocationPermissionPromptableError = (
   permissions: Permission[],
   retry: DiscoveryRetry,
-): DiscoveryError => ({
+): MobileDiscoveryError => ({
   type: DiscoveryErrorTypes.LocationPermissionDeniedPromptable,
   transportId: rnBleTransportIdentifier,
   permission: permissions[0],
@@ -103,7 +109,7 @@ export const buildLocationPermissionPromptableError = (
 export const buildLocationPermissionManualSettingsError = (
   permissions: Permission[],
   retry: DiscoveryRetry,
-): DiscoveryError => ({
+): MobileDiscoveryError => ({
   type: DiscoveryErrorTypes.LocationPermissionDeniedManualSettings,
   transportId: rnBleTransportIdentifier,
   permission: permissions[0],
@@ -113,7 +119,9 @@ export const buildLocationPermissionManualSettingsError = (
   },
 });
 
-export const buildLocationDisabledPromptableError = (retry: DiscoveryRetry): DiscoveryError => ({
+export const buildLocationDisabledPromptableError = (
+  retry: DiscoveryRetry,
+): MobileDiscoveryError => ({
   type: DiscoveryErrorTypes.LocationDisabledPromptable,
   transportId: rnBleTransportIdentifier,
   resolution: {
@@ -125,7 +133,7 @@ export const buildLocationDisabledPromptableError = (retry: DiscoveryRetry): Dis
 export const buildLocationDisabledManualActionError = (
   retry: DiscoveryRetry,
   error?: unknown,
-): DiscoveryError => ({
+): MobileDiscoveryError => ({
   type: DiscoveryErrorTypes.LocationDisabledManualAction,
   transportId: rnBleTransportIdentifier,
   error,
@@ -137,7 +145,7 @@ export const buildLocationDisabledManualActionError = (
 
 export const buildLocationServicePermissionMissingError = (
   retry: DiscoveryRetry,
-): DiscoveryError => ({
+): MobileDiscoveryError => ({
   type: DiscoveryErrorTypes.LocationServicePermissionMissing,
   transportId: rnBleTransportIdentifier,
   resolution: {
@@ -149,8 +157,8 @@ export const buildLocationServicePermissionMissingError = (
 export const buildUnknownDiscoveryError = (
   error: unknown,
   retry: DiscoveryRetry,
-): DiscoveryError => ({
-  type: DiscoveryErrorTypes.Unknown,
+): MobileDiscoveryError => ({
+  type: BaseDiscoveryErrorTypes.Unknown,
   transportId: rnBleTransportIdentifier,
   error,
   resolution: {

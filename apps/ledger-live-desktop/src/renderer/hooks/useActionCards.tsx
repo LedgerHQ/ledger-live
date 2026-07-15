@@ -9,11 +9,12 @@ import {
   actionContentCardSelector,
   desktopContentCardSelector,
 } from "~/renderer/reducers/dynamicContent";
-import { track } from "../analytics/segment";
 import { trackingEnabledSelector } from "../reducers/settings";
 import { setDismissedContentCards } from "../actions/settings";
 import { ActionContentCard } from "~/types/dynamicContent";
 import { sanitizeExtras } from "./useBraze";
+import { trackContentCard } from "LLD/features/DynamicContent/utils/trackContentCard";
+import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 
 const useActionCards = () => {
   const dispatch = useDispatch();
@@ -44,14 +45,14 @@ const useActionCards = () => {
     dispatch(setActionCards(actionCards.filter((n: ActionContentCard) => n.id !== actionCard?.id)));
 
     if (actionCard && !actionCard.isMock) {
-      track("contentcard_dismissed", {
+      trackContentCard(ContentCardEvent.Dismissed, {
         ...sanitizeExtras(currentCard?.extras),
         contentcard: actionCard.title,
         campaign: actionCard.id,
         page: "Portfolio",
         type: "action_card",
-        displayedPosition,
         location: actionCard.location,
+        displayedPosition,
       });
     }
   };
@@ -70,7 +71,7 @@ const useActionCards = () => {
       if (link) openURL(link);
     }
     if (actionCard) {
-      track("contentcard_clicked", {
+      trackContentCard(ContentCardEvent.Clicked, {
         ...sanitizeExtras(currentCard?.extras),
         contentcard: actionCard.title,
         link: actionCard.link,

@@ -1,3 +1,4 @@
+const { parseExtraFeatureFlags } = require("@ledgerhq/live-e2e-shared/featureFlagsJsonUtils");
 const { compilerOptions } = require("./tsconfig.json");
 
 function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
@@ -40,6 +41,10 @@ const jestAllure2ReporterOptions = {
     SPECULOS_DEVICE: process.env.SPECULOS_DEVICE,
     SPECULOS_FIRMWARE_VERSION: process.env.SPECULOS_FIRMWARE_VERSION,
     MOBILE_DEVICE: process.env.DEVICE_INFO || "Unknown device",
+    E2E_MOBILE_FEATURE_FLAGS: process.env.E2E_MOBILE_FEATURE_FLAGS,
+    E2E_FEATURE_FLAGS_JSON: JSON.stringify(
+      parseExtraFeatureFlags(process.env.E2E_FEATURE_FLAGS_JSON),
+    ),
     path: process.cwd(),
     "version.node": process.version,
     "version.jest": await $.manifest("jest", ["version"]),
@@ -90,7 +95,8 @@ const config = {
     ],
   },
   moduleNameMapper: {
-    "^@ledgerhq/live-common/e2e/(.*)$": "<rootDir>/../../libs/ledger-live-common/src/e2e/$1",
+    "^@ledgerhq/live-e2e-shared/(.*)$": "<rootDir>/../shared/src/$1",
+    "^@ledgerhq/live-e2e-shared$": "<rootDir>/../shared/src/index",
     ...pathsToModuleNameMapper(compilerOptions.paths, {
       prefix: "<rootDir>/",
     }),

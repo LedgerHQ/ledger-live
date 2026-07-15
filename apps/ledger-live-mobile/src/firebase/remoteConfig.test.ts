@@ -57,11 +57,10 @@ describe("fetchRemoteFlags", () => {
 
   it("resolves Firebase keys whose snake_case ↔ camelCase round-trip is lossy", async () => {
     // `lodash.camelCase(lodash.snakeCase(id))` is not an identity for FeatureIds that
-    // contain digits or ≥2 consecutive uppercase letters. These four flags fail the
+    // contain digits or ≥2 consecutive uppercase letters. These flags fail the
     // round-trip and were silently dropped by the previous camelCase-based decoder.
     mockGetAll.mockReturnValue({
       feature_llm_account_list_ui: value(JSON.stringify({ enabled: true })),
-      feature_llm_reborn_lp: value(JSON.stringify({ enabled: true })),
       feature_web_3_hub: value(JSON.stringify({ enabled: true })),
       feature_ptx_swap_receive_trc_20_without_trx: value(JSON.stringify({ enabled: true })),
     });
@@ -71,7 +70,6 @@ describe("fetchRemoteFlags", () => {
 
     expect(result).toEqual({
       llmAccountListUI: { enabled: true },
-      llmRebornLP: { enabled: true },
       web3hub: { enabled: true },
       ptxSwapReceiveTRC20WithoutTrx: { enabled: true },
     });

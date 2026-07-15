@@ -1,14 +1,15 @@
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ScreenName } from "~/const";
-import { Device } from "@ledgerhq/types-devices";
-import { Account } from "@ledgerhq/types-live";
-import { Props as TouchableProps } from "~/components/Touchable";
+import type { Device } from "@ledgerhq/types-devices";
+import type { Account } from "@ledgerhq/types-live";
+import type { Props as TouchableProps } from "~/components/Touchable";
 import { AddAccountContexts } from "./enums";
-import { CantonOnboardAccountParamList } from "~/families/canton/Onboard/types";
+import type { CantonOnboardAccountParamList } from "~/families/canton/Onboard/types";
+import type { AleoAddAccountParamList } from "~/families/aleo/AddAccountFlow/types";
 
 export type AddAccountContextType = `${AddAccountContexts}`;
 
-type CommonParams = {
+export type CommonParams = {
   context?: AddAccountContextType;
   onCloseNavigation?: () => void;
   // Number of navigators to pop when closing the flow (calculated at entry point)
@@ -40,4 +41,5 @@ export type NetworkBasedAddAccountNavigator = {
     }) => React.JSX.Element;
   };
   [ScreenName.CantonOnboardAccount]: CantonOnboardAccountParamList[ScreenName.CantonOnboardAccount];
+  [ScreenName.AleoAddAccount]: AleoAddAccountParamList[ScreenName.AleoAddAccount];
 };

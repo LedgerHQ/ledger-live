@@ -6,13 +6,8 @@ import { setOverride } from "@shared/feature-flags";
 const WALLET_40_FLAG = "lwmWallet40";
 
 export const WALLET_40_PARAMS = [
-  { key: "marketBanner", label: "Market Banner" },
-  { key: "graphRework", label: "Graph & Balance Rework" },
-  { key: "quickActionCtas", label: "Quick Action CTAs" },
   { key: "tour", label: "Tour" },
-  { key: "mainNavigation", label: "Main Navigation" },
   { key: "lazyOnboarding", label: "Lazy Onboarding" },
-  { key: "balanceRefreshRework", label: "Balance Refresh Rework" },
   { key: "assetSection", label: "Asset Section" },
   { key: "brazePlacement", label: "Braze Placement (ContentBanner)" },
   { key: "operationsList", label: "TX History" },

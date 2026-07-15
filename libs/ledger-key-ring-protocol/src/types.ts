@@ -220,6 +220,18 @@ export interface TrustchainSDK {
   destroyTrustchain(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<void>;
 
   /**
+   * Deactivate the current application for this member.
+   * Normally this closes only the current application's stream (signed with the member's software key,
+   * no hardware device), preserving the other applications and the trustchain root.
+   * If the current application is the last open one, the whole trustchain is destroyed instead.
+   * @returns `trustchainDestroyed` true when the whole trustchain was destroyed (last open application).
+   */
+  destroyApplication(
+    trustchain: Trustchain,
+    memberCredentials: MemberCredentials,
+  ): Promise<{ trustchainDestroyed: boolean }>;
+
+  /**
    * encrypt data with the trustchain encryption key
    */
   encryptUserData(trustchain: Trustchain, obj: object): Promise<Uint8Array>;

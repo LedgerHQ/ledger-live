@@ -5,6 +5,7 @@
   "arrowParens": "avoid",
   "sortPackageJson": false,
   "ignorePatterns": [
-    "**/*.json"
+    "**/*.json",
+    "src/generated/**"
   ]
 }

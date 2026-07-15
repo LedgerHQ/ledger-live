@@ -3,7 +3,7 @@ import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Trans, withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import { connect } from "react-redux";
@@ -21,8 +21,6 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepValidatorGroup, { StepValidatorGroupFooter } from "./steps/StepValidatorGroup";
-import { defaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
-import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import { CeloAccount, Transaction } from "@ledgerhq/live-common/families/celo/types";
 import { Operation, Account, TokenAccount } from "@ledgerhq/types-live";
 import { St, StepProps, StepId } from "./types";
@@ -88,7 +86,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const dispatch = useDispatch();
   const { account, source } = params;
   const bridge = useAccountBridge<Transaction>(account, undefined);
-  const validatorGroups = useValidatorGroups();
   const {
     transaction,
     setTransaction,
@@ -100,7 +97,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   } = useBridgeTransaction(bridge, () => {
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
       mode: "vote",
-      recipient: validatorGroups[0]?.address ?? defaultValidatorGroupAddress(),
+      recipient: "",
     });
     return {
       account,
@@ -108,17 +105,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       transaction,
     };
   });
-
-  // Auto-select the first eligible validator group when the current recipient is no longer in the list
-  // (e.g. after preload filters out an ineligible default group like Ledger by Figment)
-  useEffect(() => {
-    if (!transaction || !validatorGroups.length) return;
-    if (!validatorGroups.find(vg => vg.address === transaction.recipient)) {
-      setTransaction(
-        bridge.updateTransaction(transaction, { recipient: validatorGroups[0].address }),
-      );
-    }
-  }, [validatorGroups, transaction, account, setTransaction, bridge]);
 
   const handleStepChange = useCallback((e: St) => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {

@@ -5,13 +5,13 @@ import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { localeSelector } from "~/renderer/reducers/settings";
 import styled from "styled-components";
-import { Button } from "..";
 import MarketCoinChart from "./components/MarketCoinChart";
 import MarketInfo from "./components/MarketInfo";
 import { useMarketCoin } from "LLD/features/Market/hooks/useMarketCoin";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
+import { Button } from "../components/Button";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 56px;

@@ -1,5 +1,7 @@
-import type { OptionalFeatureMap } from "@shared/feature-flags";
+import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
 import { Page } from "@playwright/test";
+
+import type { OptionalFeatureMap, Features } from "@shared/feature-flags";
 
 export const getFeatureFlags = async (page: Page): Promise<OptionalFeatureMap> => {
   const featureFlags = await page.evaluate(() => {
@@ -8,61 +10,94 @@ export const getFeatureFlags = async (page: Page): Promise<OptionalFeatureMap> =
   return featureFlags;
 };
 
-export const isAssetSectionEnabled = process.env.E2E_ENABLE_ASSET_SECTION !== "0";
-
-const lwdWallet40BaseParams = {
-  marketBanner: true,
-  graphRework: true,
-  quickActionCtas: true,
-  mainNavigation: true,
-} as const;
-
-// The Wallet 4.0 "Asset Section" is ON by default for all desktop E2E tests.
-// Force it OFF (the "assetSection OFF" test variant) by setting E2E_ENABLE_ASSET_SECTION=0 (used by CI).
-export const LWD_WALLET_40_FF_ENABLED: OptionalFeatureMap = {
-  lwdWallet40: {
-    enabled: true,
-    params: { ...lwdWallet40BaseParams, assetSection: isAssetSectionEnabled },
-  },
+const getLwdWallet40Params = async (
+  page: Page,
+): Promise<Features["lwdWallet40"]["params"] | undefined> => {
+  const featureFlags = await getFeatureFlags(page);
+  const lwdWallet40 = featureFlags.lwdWallet40 as Features["lwdWallet40"];
+  return lwdWallet40?.params;
 };
 
-// TODO: remove when wallet 4.0 Q2 is default
-export const LWD_WALLET_40_Q2_FF_ENABLED: OptionalFeatureMap = {
-  lwdWallet40: {
-    enabled: true,
-    params: {
-      ...lwdWallet40BaseParams,
-      assetSection: true,
-      operationsList: true,
-      myWallet: true,
-      aggregatedAssets: true,
-      assetDiscoverability: true,
-      pnl: true,
-    },
-  },
-};
+export const isAssetSectionEnabled = async (page: Page): Promise<boolean> =>
+  Boolean((await getLwdWallet40Params(page))?.assetSection);
 
-// Wallet 4.0 Q2 flags with the analytics consent dialog forced OFF, so the
-// "Help us improve Ledger" prompt never interrupts portfolio-landing E2E flows.
-export const LWD_WALLET_40_Q2_FF_ENABLED_NO_ANALYTICS_CONSENT: OptionalFeatureMap = {
-  ...LWD_WALLET_40_Q2_FF_ENABLED,
-  analyticsOptIn: { enabled: false },
-};
+export const isMyWalletEnabled = async (page: Page): Promise<boolean> =>
+  Boolean((await getLwdWallet40Params(page))?.myWallet);
+
+export const isOperationsListEnabled = async (page: Page): Promise<boolean> =>
+  Boolean((await getLwdWallet40Params(page))?.operationsList);
+
+export const isAggregatedAssetsEnabled = async (page: Page): Promise<boolean> =>
+  Boolean((await getLwdWallet40Params(page))?.aggregatedAssets);
+
+export const isAssetDiscoverabilityEnabled = async (page: Page): Promise<boolean> =>
+  Boolean((await getLwdWallet40Params(page))?.assetDiscoverability);
 
 export const useLocalEarnManifest = process.env.USE_LOCAL_EARN_MANIFEST === "1";
 
-export const EARN_V2_DESKTOP_FLAGS: OptionalFeatureMap = {
+export const FF_LWD_WALLET_40_Q1 = {
+  lwdWallet40: {
+    enabled: true,
+    params: {
+      newReceiveDialog: true,
+      lazyOnboarding: true,
+      assetSection: false,
+      brazePlacement: true,
+      operationsList: false,
+      aggregatedAssets: false,
+      myWallet: false,
+      pnl: false,
+      earnUpselling: false,
+      earnSimulator: false,
+      finishOnboardingWidget: false,
+      assetDiscoverability: false,
+      q2Tour: false,
+    },
+  },
+} satisfies OptionalFeatureMap;
+
+export const FF_LWD_WALLET_40_Q2 = {
+  lwdWallet40: {
+    enabled: true,
+    params: {
+      newReceiveDialog: true,
+      lazyOnboarding: true,
+      assetSection: true,
+      brazePlacement: true,
+      operationsList: true,
+      aggregatedAssets: true,
+      myWallet: true,
+      pnl: true,
+      earnUpselling: true,
+      earnSimulator: true,
+      finishOnboardingWidget: true,
+      assetDiscoverability: true,
+    },
+  },
+} satisfies OptionalFeatureMap;
+
+// Wallet 4.0 Q2 flags with the analytics consent dialog forced OFF, so the
+// "Help us improve Ledger" prompt never interrupts portfolio-landing E2E flows.
+export const FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT = {
+  ...FF_LWD_WALLET_40_Q2,
+  analyticsOptIn: { enabled: false },
+} satisfies OptionalFeatureMap;
+
+export const FF_EARN_V2_DESKTOP = {
   ...(useLocalEarnManifest && {
-    ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-local-manifest" } },
+    ptxEarnLiveApp: {
+      enabled: true,
+      params: { manifest_id: "earn-local-manifest" },
+    },
   }),
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
-};
+} satisfies OptionalFeatureMap;
 
-export const FF_STAKE_PROGRAMS_MODAL: OptionalFeatureMap = {
+export const FF_STAKE_PROGRAMS_MODAL = {
   stakePrograms: {
     enabled: true,
     params: {
-      list: ["cosmos"],
+      list: ["cosmos", "sei_evm"],
       redirects: {
         "ethereum/erc20/usd__coin": {
           platform: "earn",
@@ -85,4 +120,65 @@ export const FF_STAKE_PROGRAMS_MODAL: OptionalFeatureMap = {
       },
     },
   },
+} satisfies OptionalFeatureMap;
+
+export const FF_NEW_SEND_FLOW_DISABLED = {
+  newSendFlow: {
+    enabled: false,
+    params: {
+      families: [],
+      excludedCurrencyIds: [],
+    },
+  },
+} satisfies OptionalFeatureMap;
+
+export const getMergedFeatureFlags = ({
+  testFlags,
+}: { testFlags?: OptionalFeatureMap } = {}): OptionalFeatureMap => {
+  const ffEnvMapping: Record<string, OptionalFeatureMap> = {
+    /*
+     * The keys here are the values of the `E2E_DESKTOP_FEATURE_FLAGS` environment variable.
+     * We can add more mappings here in the future to test different feature flag combinations.
+     * For the GitHub Actions workflow we can add options and leave the input variable name as is.
+     * This will reduce friction and provide CI stability for any callers of the workflow.
+     * PLEASE NOTE: non-existing keys will return 'undefined' which spreads to an empty object.
+     */
+    "wallet40-q2": FF_LWD_WALLET_40_Q2,
+  };
+
+  const defaultFlags: OptionalFeatureMap = {
+    // explicit defaults
+    lldModularDrawer: {
+      enabled: true,
+      params: {
+        add_account: true,
+        earn_flow: true,
+        live_app: true,
+        receive_flow: false,
+        send_flow: false,
+        enableModularization: true,
+        enableDialogDesktop: true,
+        searchDebounceTime: 300,
+        backendEnvironment: "PROD",
+        live_apps_allowlist: [],
+        live_apps_blocklist: [],
+      },
+    },
+    // default flags for wallet 4.0
+    ...FF_LWD_WALLET_40_Q1,
+    // any flags from env variable (if set)
+    ...ffEnvMapping[process.env.E2E_DESKTOP_FEATURE_FLAGS || ""],
+  };
+
+  // parse JSON override flags for any overrides
+  const jsonOverrideFlags: OptionalFeatureMap = parseExtraFeatureFlags(
+    process.env.E2E_FEATURE_FLAGS_JSON,
+  );
+
+  return {
+    // use spread to override duplicate keys (last one wins)
+    ...defaultFlags,
+    ...jsonOverrideFlags,
+    ...testFlags,
+  };
 };

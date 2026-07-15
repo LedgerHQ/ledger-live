@@ -1,5 +1,5 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { runSendInvalidAddressTest } from "../send";
 
 const transaction = new Transaction(

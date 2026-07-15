@@ -102,6 +102,23 @@ describe("isPayable", () => {
     });
   });
 
+  describe("0G / zero_gravity", () => {
+    it("returns the zero_gravity ABI", () => {
+      const abi = getStakingABI("zero_gravity");
+      expect(abi).toBeInstanceOf(Array);
+      expect(abi?.length).toBeGreaterThan(0);
+    });
+
+    it.each([
+      ["delegate", true],
+      ["undelegate", true],
+      ["getDelegation", false],
+      ["convertToTokens", false],
+    ])("isPayable(%s) returns %s", (fn, expected) => {
+      expect(isPayable("zero_gravity", fn)).toBe(expected);
+    });
+  });
+
   describe("Edge cases", () => {
     it("should return false for unsupported currency", () => {
       const result = isPayable("unsupported_currency", "delegate");

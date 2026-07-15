@@ -14,6 +14,7 @@ interface UseQueuedDrawerBottomSheetProps {
   isForcingToBeOpened?: boolean;
   onClose?: () => void;
   onBack?: () => void;
+  onHeaderClosePressed?: () => void;
   onBackdropPress?: () => void;
   onModalHide?: () => void;
   preventBackdropClick?: boolean;
@@ -26,6 +27,7 @@ const useQueuedDrawerBottomSheet = ({
   isForcingToBeOpened = false,
   onClose,
   onBack,
+  onHeaderClosePressed,
   onBackdropPress,
   onModalHide,
   preventBackdropClick,
@@ -42,6 +44,9 @@ const useQueuedDrawerBottomSheet = ({
 
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
+
+  const onHeaderClosePressedRef = useRef(onHeaderClosePressed);
+  onHeaderClosePressedRef.current = onHeaderClosePressed;
 
   const onBackdropPressRef = useRef(onBackdropPress);
   onBackdropPressRef.current = onBackdropPress;
@@ -118,6 +123,15 @@ const useQueuedDrawerBottomSheet = ({
     handleUserClose();
   }, [handleUserClose]);
 
+  const handleHeaderClosePressed = useCallback(() => {
+    if (stateRef.current === "dismissing") return;
+
+    logDrawer("Header close pressed");
+    stateRef.current = "dismissing";
+    onHeaderClosePressedRef.current?.();
+    onCloseRef.current?.();
+  }, []);
+
   // Fired at the START of an animation. A close animation targets index -1, so this is the
   // earliest deterministic signal that the sheet is closing — for the X (close) button, the
   // backdrop and the pan-down gesture alike. We clear consumer state here rather than waiting for
@@ -192,6 +206,7 @@ const useQueuedDrawerBottomSheet = ({
     areDrawersLocked,
     handleUserClose,
     handleBackdropPress,
+    handleHeaderClosePressed,
     handleDismiss,
     handleCloseAnimationStart,
     onBack,

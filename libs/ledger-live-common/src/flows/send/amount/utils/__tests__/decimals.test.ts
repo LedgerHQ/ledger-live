@@ -12,6 +12,12 @@ describe("clampDecimals", () => {
     expect(clampDecimals("123.456789")).toBe("123.45");
   });
 
+  it("clamps decimals to the provided limit", () => {
+    expect(clampDecimals("0.003456789", 8)).toBe("0.00345678");
+    expect(clampDecimals("0.003", 8)).toBe("0.003");
+    expect(clampDecimals("123.45", 0)).toBe("123");
+  });
+
   it("handles comma as decimal separator", () => {
     expect(clampDecimals("123,456")).toBe("123,45");
     expect(clampDecimals("123,4")).toBe("123,4");
@@ -43,6 +49,13 @@ describe("isOverDecimalLimit", () => {
   it("returns true when decimals exceed 2", () => {
     expect(isOverDecimalLimit("123.456")).toBe(true);
     expect(isOverDecimalLimit("123.456789")).toBe(true);
+  });
+
+  it("uses the provided decimal limit", () => {
+    expect(isOverDecimalLimit("0.003", 8)).toBe(false);
+    expect(isOverDecimalLimit("0.00345678", 8)).toBe(false);
+    expect(isOverDecimalLimit("0.003456789", 8)).toBe(true);
+    expect(isOverDecimalLimit("123.4", 0)).toBe(true);
   });
 
   it("handles comma as decimal separator", () => {

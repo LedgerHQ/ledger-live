@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import {
+  BaseDiscoveryErrorTypes,
   ConnectDeviceUIStateTypes,
   DiscoveryErrorTypes,
   rnBleTransportIdentifier,
@@ -30,6 +31,7 @@ type DiscoveryErrorUIState = Extract<
   ConnectDeviceUIState,
   { type: ConnectDeviceUIStateTypes.DiscoveryError }
 >;
+type DiscoveryErrorType = DiscoveryError["type"];
 
 const errorCases = [
   {
@@ -98,7 +100,7 @@ const errorCases = [
     description: "Location permission seems missing. Tap below to try again.",
   },
   {
-    type: DiscoveryErrorTypes.Unknown,
+    type: BaseDiscoveryErrorTypes.Unknown,
     title: "Something went wrong",
     description:
       "We couldn’t start the Bluetooth scan. Please try again or contact Ledger support.",
@@ -157,13 +159,13 @@ const primaryCtaButtonCases = [
     button: "Retry",
   },
   {
-    type: DiscoveryErrorTypes.Unknown,
+    type: BaseDiscoveryErrorTypes.Unknown,
     label: "Try again",
     button: "Retry",
   },
 ] as const;
 
-function makeDiscoveryError(type: DiscoveryErrorTypes): DiscoveryError {
+function makeDiscoveryError(type: DiscoveryErrorType): DiscoveryError {
   const resolvable: {
     transportId: typeof rnBleTransportIdentifier;
     resolution: { type: "none" };
@@ -188,7 +190,7 @@ function makeDiscoveryError(type: DiscoveryErrorTypes): DiscoveryError {
     case DiscoveryErrorTypes.LocationDisabledManualAction:
     case DiscoveryErrorTypes.LocationServicePermissionMissing:
       return { ...resolvable, type };
-    case DiscoveryErrorTypes.Unknown:
+    case BaseDiscoveryErrorTypes.Unknown:
       return { type };
   }
 }
@@ -199,7 +201,7 @@ function renderState({
   platform = "android",
   error,
 }: {
-  type: DiscoveryErrorTypes;
+  type: DiscoveryErrorType;
   retry?: DiscoveryErrorUIState["retry"];
   platform?: Exclude<AppPlatform, "desktop">;
   error?: DiscoveryError;
@@ -319,7 +321,7 @@ describe("DiscoveryErrorState", () => {
 
   it("GIVEN an unknown discovery error without transport WHEN rendering THEN it does not invent a transport", () => {
     // GIVEN / WHEN
-    renderState({ type: DiscoveryErrorTypes.Unknown });
+    renderState({ type: BaseDiscoveryErrorTypes.Unknown });
 
     // THEN
     expect(mockedTrackScreen).toHaveBeenCalledWith(
@@ -336,7 +338,7 @@ describe("DiscoveryErrorState", () => {
 
   it("GIVEN an unknown discovery error without resolution WHEN cancelling THEN it tracks deviceflow_failed", () => {
     // GIVEN
-    renderState({ type: DiscoveryErrorTypes.Unknown });
+    renderState({ type: BaseDiscoveryErrorTypes.Unknown });
     mockedTrack.mockClear();
 
     // WHEN
@@ -388,7 +390,7 @@ describe("DiscoveryErrorState", () => {
 
   it("GIVEN a terminal discovery error unmounted WHEN cancelling THEN it tracks deviceflow_aborted", () => {
     // GIVEN
-    const { unmount } = renderState({ type: DiscoveryErrorTypes.Unknown });
+    const { unmount } = renderState({ type: BaseDiscoveryErrorTypes.Unknown });
     unmount();
     mockedTrack.mockClear();
 

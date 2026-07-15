@@ -107,6 +107,18 @@ describe("trackingWrapper", () => {
       method: "signMessageUserRefused",
       message: "WalletAPI sign message user refused",
     },
+    {
+      method: "accountGetPublicKeyRequested",
+      message: "WalletAPI account getPublicKey requested",
+    },
+    {
+      method: "accountGetPublicKeyFail",
+      message: "WalletAPI account getPublicKey fail",
+    },
+    {
+      method: "accountGetPublicKeySuccess",
+      message: "WalletAPI account getPublicKey success",
+    },
   ])(
     "calls once inner trackWalletAPI function $method with event named: $message",
     ({ method, message }) => {

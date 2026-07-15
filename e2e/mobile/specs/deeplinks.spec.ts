@@ -1,7 +1,6 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { swapSetup } from "../bridge/server";
-import { isWallet40 } from "../helpers/commonHelpers";
 import { setTeamOwner } from "../helpers/allure/allure-helper";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
@@ -81,9 +80,7 @@ describe("DeepLinks Tests", () => {
       await app.discover.openViaDeeplink();
       await app.discover.typeInCatalogSearchBar(randomLiveApp);
       await app.discover.expectCatalogAppCard(randomLiveApp);
-      if (isWallet40) await app.discover.catalogSearchCancelButton().tap();
-      else await app.discover.goBackFromCatalogSearch();
-
+      await app.discover.catalogSearchCancelButton().tap();
       await app.discover.expectDiscoverPage();
     },
   );

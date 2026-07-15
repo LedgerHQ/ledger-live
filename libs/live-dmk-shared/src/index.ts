@@ -1,4 +1,33 @@
-export type { KnownDevice } from "./connectDevice/types";
+export { DefaultDeviceDiscoveryService } from "./connectDevice/discoveryService/DefaultDeviceDiscoveryService";
+export {
+  BaseConnectionErrorTypes,
+  BaseDiscoveryErrorTypes,
+  ConnectDeviceUIStateTypes,
+} from "./connectDevice/types";
+export type {
+  BaseConnectionError,
+  BaseDiscoveryError,
+  ConnectDeviceMapConnectionError,
+  ConnectDeviceMatchDiscoveredDevices,
+  ConnectDeviceUIState,
+  DeviceConnectionResult,
+  DeviceDiscoveryService,
+  DeviceDiscoveryStartArgs,
+  DiscoveryErrorResolution,
+  DisplayedDevice,
+  KnownDevice,
+  MatchedDevice,
+  UnknownConnectionError,
+  UnknownDiscoveryError,
+} from "./connectDevice/types";
+export type {
+  DeviceDiscoverySource,
+  DeviceDiscoverySourceEvent,
+} from "./connectDevice/discoveryService/sources/DeviceDiscoverySource";
+export {
+  connectDeviceUseCase,
+  type ConnectDeviceUseCaseInput,
+} from "./connectDevice/connectDeviceUseCase";
 export { activeDeviceSessionSubject } from "./config/activeDeviceSession";
 export { dmkToLedgerDeviceIdMap, ledgerToDmkDeviceIdMap } from "./config/dmkToLedgerDeviceIdMap";
 export { LedgerLiveLogger } from "./services/LedgerLiveLogger";

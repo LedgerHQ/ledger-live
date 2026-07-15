@@ -5,6 +5,7 @@ import { useSignatureViewModel } from "./hooks/useSignatureViewModel";
 export function SignatureScreen() {
   const {
     account,
+    parentAccount,
     transaction,
     request,
     deviceInitializationInput,
@@ -25,6 +26,8 @@ export function SignatureScreen() {
       onIntentJobStateChanged={onIntentJobStateChanged}
       onIntentJobError={onIntentJobError}
       onUserCancel={onUserCancel}
+      account={account}
+      parentAccount={parentAccount ?? undefined}
     />
   );
 }

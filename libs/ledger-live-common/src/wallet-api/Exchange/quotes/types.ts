@@ -5,6 +5,7 @@
 export type {
   QuotesInput,
   QuotesAppPlatform,
+  QuoteSortBy,
   GetQuotesArgs,
   GetQuotesWireArgs,
   GetQuotesResponse,
@@ -23,6 +24,7 @@ export type {
   QuotePermitData,
   QuoteTags,
   QuoteTokenAllowance,
+  QuoteApprovalTransaction,
   QuoteEstimatedNetworkFee,
   QuoteApprovalNetworkFee,
 } from "@ledgerhq/wallet-api-exchange-module";

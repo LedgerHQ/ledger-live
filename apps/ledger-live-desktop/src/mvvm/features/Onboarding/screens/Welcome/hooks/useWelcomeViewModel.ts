@@ -15,23 +15,20 @@ import { useAnalyticsOptInPrompt } from "LLD/features/AnalyticsOptInPrompt/hooks
 import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export function useWelcomeViewModel() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const lldRebornABtest = useFeature("lldRebornABtest");
   const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("desktop");
 
   // URLs
-  const urlBuyNew = useLocalizedUrl(urls.buyNew);
   const urlReborn = useLocalizedUrl(urls.reborn);
   const urlTerms = useLocalizedUrl(urls.terms);
   const urlPrivacyPolicy = useLocalizedUrl(urls.privacyPolicy);
 
   // URL handlers
-  const buyNew = useCallback(() => openURL(urlBuyNew), [urlBuyNew]);
   const openReborn = useCallback(() => openURL(urlReborn), [urlReborn]);
   const openTermsAndConditions = useCallback(() => openURL(urlTerms), [urlTerms]);
   const openPrivacyPolicy = useCallback(() => openURL(urlPrivacyPolicy), [urlPrivacyPolicy]);
@@ -149,19 +146,12 @@ export function useWelcomeViewModel() {
   ]);
 
   const handleBuyNew = useCallback(() => {
-    const openUrl = lldRebornABtest?.enabled ? openReborn : buyNew;
     if (isFeatureFlagsAnalyticsPrefDisplayed) {
-      openAnalyticsOptInPrompt("Onboarding", openUrl);
+      openAnalyticsOptInPrompt("Onboarding", openReborn);
     } else {
-      openUrl();
+      openReborn();
     }
-  }, [
-    isFeatureFlagsAnalyticsPrefDisplayed,
-    openAnalyticsOptInPrompt,
-    buyNew,
-    openReborn,
-    lldRebornABtest,
-  ]);
+  }, [isFeatureFlagsAnalyticsPrefDisplayed, openAnalyticsOptInPrompt, openReborn]);
 
   const handleSetupLedgerSync = useCallback(() => {
     if (isFeatureFlagsAnalyticsPrefDisplayed) {

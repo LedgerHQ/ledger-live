@@ -1,6 +1,6 @@
 import React from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { Text, Flex } from "@ledgerhq/react-ui";
+import { Flex } from "@ledgerhq/react-ui";
 import { RecentlyUsed } from "./RecentlyUsed";
 import { Browse } from "./Browse";
 import { useTranslation } from "react-i18next";
@@ -9,7 +9,6 @@ import { LocalLiveAppSection } from "./LocalLiveAppSection";
 import { useLocation } from "react-router";
 import { Categories } from "@ledgerhq/live-common/wallet-api/react";
 import PageHeader from "LLD/components/PageHeader";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export function Catalog() {
   const recentlyUsedDB = useRecentlyUsedDB();
@@ -32,21 +31,13 @@ export function Catalog() {
     localLiveApps,
   } = useCatalog(recentlyUsedDB, deeplinkInitialCategory);
 
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
-
   return (
     <Flex flexDirection="column" paddingBottom={100}>
       <TrackPage category="Platform" name="Catalog" />
 
-      {shouldDisplayWallet40MainNav ? (
-        <div className="pb-24">
-          <PageHeader title={t("platform.catalog.title")} />
-        </div>
-      ) : (
-        <Text variant="h3" style={{ fontSize: 28 }}>
-          {t("platform.catalog.title")}
-        </Text>
-      )}
+      <div className="pb-24">
+        <PageHeader title={t("platform.catalog.title")} />
+      </div>
 
       {localLiveApps.length ? <LocalLiveAppSection localLiveApps={localLiveApps} /> : null}
 

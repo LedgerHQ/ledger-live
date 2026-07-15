@@ -12,6 +12,10 @@ jest.mock("@react-navigation/native", () => ({
   useNavigation: jest.fn().mockReturnValue({ navigate: jest.fn() }),
 }));
 
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: () => ({ isStrategyDisabled: jest.fn().mockReturnValue(false) }),
+}));
+
 describe("SelectFeesStrategy", () => {
   it("displays fees strategies along with estimated times", () => {
     render(

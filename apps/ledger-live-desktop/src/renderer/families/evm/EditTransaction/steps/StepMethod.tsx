@@ -1,6 +1,6 @@
-import { getEditTransactionPatch } from "@ledgerhq/coin-evm/editTransaction/index";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import React, { memo } from "react";
 import { urls } from "~/config/urls";
 import { SharedFooterContinueButton, SharedStepMethod } from "~/renderer/components/SpeedUpCancel";
@@ -56,6 +56,7 @@ export const StepMethodFooter: React.FC<StepProps> = ({
   updateTransaction,
   transitionTo,
 }: StepProps) => {
+  const bridge = useAccountBridge<EvmTransaction>(account, parentAccount);
   const canSpeedup = haveFundToSpeedup && isOldestEditableOperation;
   const canCancel = haveFundToCancel;
   const handleContinueClick = useStepMethodContinue<EvmTransaction>({
@@ -65,7 +66,7 @@ export const StepMethodFooter: React.FC<StepProps> = ({
     transactionToUpdate,
     updateTransaction,
     transitionTo,
-    getPatch: getEditTransactionPatch,
+    getPatch: bridge.getEditTransactionPatch,
   });
 
   return (

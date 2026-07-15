@@ -96,7 +96,7 @@ function account(): Account {
   } as Account;
 }
 
-function transaction(kind: string): Transaction {
+function transaction(kind: string, templateId?: string): Transaction {
   return {
     recipient: "any random value",
     model: {
@@ -109,7 +109,8 @@ function transaction(kind: string): Transaction {
         errors: {},
       },
     },
-    subAccountId: "any random value", // needed only for "token.transfer" kind
+    ...(kind === "token.transfer" ? { subAccountId: "any random value" } : {}), // needed only for "token.transfer" kind
+    ...(templateId ? { templateId } : {}),
   } as Transaction;
 }
 
@@ -191,6 +192,34 @@ describe("Testing signOperation", () => {
           expect(resolution.delayed).toEqual(true);
           expect(typeof resolution.fetchBlockhash).toEqual("function");
           expect(jest.mocked(testApi.getLatestBlockhash)).not.toHaveBeenCalled();
+          done();
+        },
+      });
+    });
+
+    it("passes template id to resolution when transaction contains one", done => {
+      const { context, signTransaction } = createSignContext();
+      const testApi = api();
+
+      mockBuildVersionedTransaction.mockResolvedValueOnce([...defaultBuildTuple([])]);
+      const templateId = "084c694669";
+      const transactionToSign = transaction("transfer", templateId);
+
+      buildSignOperation(
+        context,
+        testApi,
+      )({
+        account: account(),
+        deviceId: "d1",
+        deviceModelId: DeviceModelId.blue,
+        transaction: transactionToSign,
+      }).subscribe({
+        complete: () => {
+          expect(signTransaction).toHaveBeenCalledTimes(1);
+          const resolution = signTransaction.mock.calls[0][2] as {
+            templateId?: string;
+          };
+          expect(resolution.templateId).toEqual(templateId);
           done();
         },
       });

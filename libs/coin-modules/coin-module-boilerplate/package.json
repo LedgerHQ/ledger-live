@@ -1,6 +1,7 @@
 {
   "name": "@ledgerhq/coin-module-boilerplate",
-  "version": "4.22.0",
+  "version": "4.23.0-next.0",
+  "private": true,
   "description": "Boilerplate coin integration",
   "keywords": [
     "Ledger",
@@ -16,9 +17,6 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-module-boilerplate",
-  "publishConfig": {
-    "access": "public"
-  },
   "typesVersions": {
     "*": {
       "lib/*": [

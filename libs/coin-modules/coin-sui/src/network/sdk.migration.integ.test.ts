@@ -20,7 +20,6 @@ import {
   getLastBlock,
   getDelegatedStakes,
   getListOperations,
-  getOperationExtra,
   getOperations,
   getValidators,
   paymentInfo,
@@ -507,32 +506,6 @@ describe("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
         expect(g.fee.toFixed()).toBe(r.fee.toFixed());
         expect(g.recipients).toEqual(r.recipients);
         expect(g.extra).toEqual(r.extra);
-      }
-    });
-  });
-
-  describe("getOperationExtra", () => {
-    let sampleDigest: string;
-
-    beforeAll(async () => {
-      // Pick the newest finalised digest for the fixture account. Whether it's a
-      // staking event or a transfer, the handler is shape-stable across transports.
-      const accountId = `js:2:sui:${ACTIVE_ACCOUNT}:sui`;
-      const ops = await getOperations(accountId, ACTIVE_ACCOUNT, undefined, undefined, JSON_RPC_ID);
-      if (ops.length === 0) throw new Error("ACTIVE_ACCOUNT has no recent ops — refresh fixture");
-      sampleDigest = ops[0].hash;
-    });
-
-    it("returns the same Record<string,string> shape on both transports", async () => {
-      const rpc = await getOperationExtra(sampleDigest, JSON_RPC_ID);
-      const gql = await getOperationExtra(sampleDigest, GRAPHQL_ID);
-      // Both are `Record<string,string>` (possibly empty for non-staking txs).
-      assertShapeBoth(rpc, gql, { object: {} }, "getOperationExtra");
-      expect(Object.keys(gql).sort()).toEqual(Object.keys(rpc).sort());
-      for (const k of Object.keys(rpc)) {
-        expect(typeof (gql as Record<string, unknown>)[k]).toBe(
-          typeof (rpc as Record<string, unknown>)[k],
-        );
       }
     });
   });

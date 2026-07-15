@@ -1,6 +1,8 @@
 import { configureStore, Middleware, ThunkDispatch } from "@reduxjs/toolkit";
 import { UnknownAction } from "redux";
 import { getEnv } from "@ledgerhq/live-env";
+import { calApiExtra } from "@domain/api-currency-token";
+import { cvsApiExtra } from "@domain/api-currency-fiat";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
@@ -30,7 +32,21 @@ const customCreateStore = ({
     preloadedState: state,
     middleware: getDefaultMiddleware =>
       applyLldRTKApiMiddlewares(
-        getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
+        getDefaultMiddleware({
+          serializableCheck: false,
+          immutableCheck: false,
+          thunk: {
+            extraArgument: {
+              ...calApiExtra({
+                calServiceUrl: getEnv("CAL_SERVICE_URL"),
+                ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+              }),
+              ...cvsApiExtra({
+                countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API"),
+              }),
+            },
+          },
+        }),
       )
         .concat(logger)
         .concat(analyticsMiddleware ? [analyticsMiddleware] : [])

@@ -1,16 +1,16 @@
 import { WebViewAppPage } from "./webViewApp.page";
 import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
-import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
-import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
+import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { readFile } from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
-import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
+import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
@@ -27,12 +27,17 @@ export class SwapPage extends WebViewAppPage {
   private swapPageHeading = this.page
     .getByTestId("page-header")
     .getByRole("heading", { name: "Swap" });
+  // Wallet 4.0 AssetDetail (aggregatedAssets ON) reaches swap through the always-mounted embedded
+  // rail rather than the full swap page, so there is no "Swap" page header to wait for.
+  private readonly embeddedSwapContainer = this.page.getByTestId("embedded-swap-container");
 
   // Swap Amount and Currency components
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
   private fromAccountCoinSelector = "from-account-coin-selector";
   private fromAccountAmountInput = "from-account-amount-input";
+  private fromAccountBalance = "from-account-balance";
   private toAccountCoinSelector = "to-account-coin-selector";
+  private readonly toAccountAccountNameTag = "to-account-account-name-tag";
   private quoteCardProviderName = "compact-quote-card-provider-";
   private specificQuoteCardProviderName = (provider: string) =>
     `[data-testid^='compact-quote-card-provider-name-${provider.toLowerCase()}']`;
@@ -475,6 +480,12 @@ export class SwapPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.toAccountCoinSelector)).toContainText(expected);
   }
 
+  @step("Check currency to swap to account name contains $0")
+  async checkAssetToAccountNameContains(expected: string) {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.toAccountAccountNameTag)).toContainText(expected);
+  }
+
   @step("Verify swap amount error message match: $0")
   async verifySwapAmountErrorMessageIsCorrect(message: string | RegExp) {
     const webview = await this.getWebView();
@@ -501,9 +512,13 @@ export class SwapPage extends WebViewAppPage {
     // reset cached webview page to ensure we fetch the correct one after navigation
     this._webviewPage = undefined;
 
-    // perform passed in action and wait for the swap page and webview
+    // perform passed in action and wait for the swap page and webview. Swap renders either as the
+    // full swap page (legacy / left-menu entry) or the embedded rail on AssetDetail; accept both.
     await swapFunction();
-    await this.swapPageHeading.waitFor({ state: "visible", timeout: 60_000 });
+    await this.swapPageHeading
+      .or(this.embeddedSwapContainer)
+      .first()
+      .waitFor({ state: "visible", timeout: 60_000 });
     await this.getWebView();
   }
 
@@ -610,5 +625,12 @@ export class SwapPage extends WebViewAppPage {
   @step("Selected provider: $0")
   async logSelectedProvider(providerName: string) {
     expect(providerName).toBeDefined();
+  }
+
+  @step("Check swap widget balance is masked in discreet mode for $0")
+  async checkWidgetBalanceIsDiscreet(ticker: string) {
+    const webview = await this.getWebView();
+    const text = webview.getByTestId(this.fromAccountBalance);
+    await expect(text).toContainText(new RegExp(`\\*\\*\\*\\s+${ticker}`, "i"));
   }
 }

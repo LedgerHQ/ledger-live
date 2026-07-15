@@ -32,7 +32,7 @@ import {
   DeviceDeprecationConfigs,
   DeviceDeprecationError,
 } from "./types";
-import { isDeviceDeprecated } from "./deprecation";
+import { extractDeviceDeprecationRules } from "./extractDeviceDeprecationRules";
 
 type ConnectAppMachineInternalState = {
   readonly error: ConnectAppDAError | null;
@@ -123,13 +123,13 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           }
           return await this.input.requiredDerivation();
         }),
-        isDeviceDeprecated: fromPromise(async ({ input }) => {
+        extractDeviceDeprecationRules: fromPromise(async ({ input }) => {
           const { deprecationConfig, modelId } = input as {
             deprecationConfig: DeviceDeprecationConfigs;
             modelId: DeviceModelId;
           };
 
-          const payload = isDeviceDeprecated(deprecationConfig, modelId);
+          const payload = extractDeviceDeprecationRules(deprecationConfig, modelId);
 
           return payload;
         }),
@@ -146,22 +146,19 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
         }) => ConnectAppDeviceAction.isAppOpened(application, deviceStatus!, deviceModel!),
         requiresDerivation: ({ context }) => context.input.requiredDerivation !== undefined,
         hasError: ({ context }) => context._internalState.error !== null,
-        isDeprecation: ({ context }) => {
+        shouldShowDeviceDeprecation: ({ context }) => {
           const configs = context.input.deprecationConfig;
-          const today = new Date();
           const modelId = context._internalState.deviceModel;
 
           if (!modelId || !configs || configs.length === 0) return false;
           if (context._internalState.deprecationShown) return false;
 
-          const isPast = (dateStr?: string) => !!dateStr && new Date(dateStr) < today;
+          const deprecation = extractDeviceDeprecationRules(configs, modelId);
 
-          return configs.some(
-            config =>
-              config.deviceModelId === modelId &&
-              (isPast(config.errorScreen?.date) ||
-                isPast(config.warningScreen?.date) ||
-                isPast(config.warningClearSigningScreen?.date)),
+          return (
+            deprecation.errorScreenVisible ||
+            deprecation.warningScreenVisible ||
+            deprecation.clearSigningScreenVisible
           );
         },
       },
@@ -247,7 +244,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
               }),
             },
             onDone: {
-              target: "IsDeviceDeprecatedCheck",
+              target: "DeviceDeprecationCheck",
               actions: "assignDeviceStatusFromOutput",
             },
             onError: {
@@ -256,11 +253,11 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             },
           },
         },
-        IsDeviceDeprecatedCheck: {
+        DeviceDeprecationCheck: {
           always: [
             {
-              guard: "isDeprecation",
-              target: "DeviceDeprecated",
+              guard: "shouldShowDeviceDeprecation",
+              target: "ExtractDeviceDeprecationRules",
             },
             {
               guard: "hasError",
@@ -294,9 +291,9 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             },
           ],
         },
-        DeviceDeprecated: {
+        ExtractDeviceDeprecationRules: {
           invoke: {
-            src: "isDeviceDeprecated",
+            src: "extractDeviceDeprecationRules",
             input: ({ context }) => ({
               deprecationConfig: context.input.deprecationConfig,
               modelId: context._internalState.deviceModel,

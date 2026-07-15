@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getFormattedFeeFields } from "@ledgerhq/coin-evm/editTransaction/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import React from "react";
@@ -11,18 +10,15 @@ import { StepSummaryFooter } from "../steps/StepSummaryFooter";
 import type { StepProps } from "../types";
 import evmFamily from "../../index";
 
-jest.mock("@ledgerhq/coin-evm/editTransaction/index", () => ({
-  ...jest.requireActual("@ledgerhq/coin-evm/editTransaction/index"),
-  getFormattedFeeFields: jest.fn(),
-}));
-
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: jest.fn(),
 }));
 
 const mockGetStuckAccountAndOperation = jest.fn();
+const mockGetFormattedFeeFields = jest.fn();
 (useAccountBridge as jest.Mock).mockReturnValue({
   getStuckAccountAndOperation: mockGetStuckAccountAndOperation,
+  getFormattedFeeFields: mockGetFormattedFeeFields,
 });
 
 jest.mock("~/renderer/components/SpeedUpCancel/SharedStepFees", () => ({
@@ -148,7 +144,7 @@ describe("EVM EditTransaction components", () => {
   });
 
   it("StepFees renders EVM specific fee details for type 2 tx", () => {
-    (getFormattedFeeFields as jest.Mock).mockReturnValue({
+    mockGetFormattedFeeFields.mockReturnValue({
       formattedFeeValue: "1",
       formattedMaxPriorityFeePerGas: "2",
       formattedMaxFeePerGas: "3",

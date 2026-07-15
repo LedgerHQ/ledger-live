@@ -9,7 +9,6 @@ import type { MarketListCategory } from "@ledgerhq/live-common/market/utils/cate
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import type { DataOfUser, NotificationPromptTarget } from "LLM/features/NotificationsPrompt/types";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
-import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/types/WalletTabNavigator";
 import {
   WalletContentCard,
   AssetContentCard,
@@ -29,8 +28,10 @@ import type { CountervaluesState } from "./countervalues";
 import type { ToastState } from "./toast";
 import type { ModularDrawerState } from "./modularDrawer";
 import type { LLMRTKApiState } from "~/context/rtkQueryApi";
+import type { SupportedFiatsState } from "@domain/entity-currency-fiat";
 import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
 import type { TransferDrawerState } from "./transferDrawer";
+import type { SwapTransactionStatusDrawerState } from "./swapTransactionStatusDrawer";
 import type { PostOnboardingHubDrawerState } from "./postOnboardingHubDrawer";
 import type { SendFlowState } from "./sendFlow";
 import { IdentitiesState } from "@ledgerhq/client-ids/store";
@@ -226,6 +227,9 @@ export type supportedCountervaluesData = {
   currency: Currency;
 };
 
+/** Debug-only override for the OS update banner. */
+export type DebugOsUpdateBannerMode = "off" | "card" | "compact";
+
 export type SettingsState = {
   counterValue: string;
   counterValueExchange: string | null | undefined;
@@ -250,6 +254,7 @@ export type SettingsState = {
   graphCountervalueFirst: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
+  hideSmallValueTokenOperations: boolean;
   blacklistedTokenIds: string[];
   dismissedBanners: string[];
   hasAvailableUpdate: boolean;
@@ -282,7 +287,6 @@ export type SettingsState = {
   notifications: NotificationsSettings;
   /** True if user never clicked on the AllowNotifications button in the notifications settings */
   neverClickedOnAllowNotificationsButton: boolean;
-  walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
   debugAppLevelDrawerOpened: boolean;
   dateFormat: string;
   /* NB: Protect is the former codename for Ledger Recover */
@@ -295,6 +299,7 @@ export type SettingsState = {
   userNps: number | null;
   supportedCounterValues: supportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
+  debugOsUpdateBannerMode: DebugOsUpdateBannerMode;
   dismissedContentCards: { [id: string]: number };
   starredMarketCoins: string[];
   fromLedgerSyncOnboarding: boolean;
@@ -457,6 +462,7 @@ export type State = LLMRTKApiState & {
   receiveOptionsDrawer: ReceiveOptionsDrawerState;
   rebornBuyDeviceDrawer: RebornBuyDeviceDrawerState;
   transferDrawer: TransferDrawerState;
+  swapTransactionStatusDrawer: SwapTransactionStatusDrawerState;
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   postOnboardingHubDrawer: PostOnboardingHubDrawerState;
@@ -473,4 +479,5 @@ export type State = LLMRTKApiState & {
   portfolioBalanceDisplay: PortfolioBalanceDisplayState;
   recoverState: RecoverStateSliceState;
   liveAppModal: LiveAppModalState;
+  supportedFiats: SupportedFiatsState;
 };

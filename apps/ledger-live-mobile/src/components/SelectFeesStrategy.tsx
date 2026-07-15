@@ -5,7 +5,6 @@ import {
   FlatList,
   TouchableOpacity,
   TouchableOpacityProps,
-  SafeAreaView,
   ListRenderItemInfo,
 } from "react-native";
 import { useTranslation } from "~/context/Locale";
@@ -240,14 +239,14 @@ export default function SelectFeesStrategy({
             </Alert>
           </TouchableOpacity>
         ) : null}
-        <SafeAreaView style={styles.strategiesContainer}>
+        <View style={styles.strategiesContainer}>
           <FlatList
             data={strategies}
             renderItem={renderItem}
             keyExtractor={s => s.label}
             extraData={feesStrategy}
           />
-        </SafeAreaView>
+        </View>
         <TouchableOpacity
           style={[
             styles.customizeFeesButton,

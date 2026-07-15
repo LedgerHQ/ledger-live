@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import * as React from "react";
 import { TextInput as RNTextInput } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -7,7 +6,7 @@ import { BigNumber } from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { act, fireEvent, renderWithReactQuery, screen, waitFor } from "@tests/test-renderer";
+import { act, fireEvent, renderWithReactQuery, screen } from "@tests/test-renderer";
 import type { Account } from "@ledgerhq/types-live";
 import type { State } from "~/reducers/types";
 import { SendFlowOrchestrator } from "../SendFlowOrchestrator";
@@ -59,9 +58,12 @@ type DriveOpts = Readonly<{
 
 jest.mock("LLM/components/DeviceIntentExecutor", () => {
   const actual = jest.requireActual("LLM/components/DeviceIntentExecutor");
+  const ReactModule = jest.requireActual("react");
+  const { View } = jest.requireActual("react-native");
   return {
     ...actual,
-    DeviceIntentExecutorLWM: () => null,
+    DeviceIntentExecutorLWM: () =>
+      ReactModule.createElement(View, { testID: "device-intent-executor" }),
   };
 });
 
@@ -152,9 +154,10 @@ describe("Send flow integration tests", () => {
       await user.press(await screen.findByText("50%"));
       await user.press(screen.getByText("Review"));
 
-      await waitFor(() => {
-        expect(screen.queryByText("Review")).toBeNull();
-      });
+      // The signature step is now rendered as a co-located overlay (the Device Intent Executor and
+      // the bottom sheet it owns) instead of a dedicated navigation modal screen.
+      expect(await screen.findByTestId("send-signature-step")).toBeOnTheScreen();
+      expect(await screen.findByTestId("device-intent-executor")).toBeOnTheScreen();
     });
 
     it("Should stop with invalid recipient", async () => {

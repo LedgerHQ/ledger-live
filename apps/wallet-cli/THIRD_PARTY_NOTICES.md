@@ -10,6 +10,7 @@ The wallet-cli source code itself is licensed under Apache License 2.0; see the 
 
 | Package | Version | License | Copyright |
 |---|---|---|---|
+| @segment/analytics-node | 3.1.0 | MIT | Copyright © 2021 Segment |
 | bignumber.js | 9.1.2 | MIT | Copyright (c) 2023 Michael Mclaughlin |
 | debug | 4.4.3 | MIT | Copyright (c) 2014-2017 TJ Holowaychuk; Copyright (c) 2018-2021 Josh Junon |
 | purify-ts | 2.1.0 | ISC | Copyright (c) 2018, Stanislav Iliev |

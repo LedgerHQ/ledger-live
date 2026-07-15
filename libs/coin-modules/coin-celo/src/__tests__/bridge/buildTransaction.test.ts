@@ -10,6 +10,7 @@ import {
   tokenTransactionWithUsdcFeeFixture,
 } from "../../bridge/fixtures";
 import { ZERO_ADDRESS } from "../../constants";
+import { CeloGroupNotVoted } from "../../errors";
 
 const LOCKED_GOLD_ADDRESS = "0x0000000000000000000000000000000000001d00";
 const ELECTION_ADDRESS = "0x000000000000000000000000000000000000ce10";
@@ -24,6 +25,7 @@ const readContractMock = jest.fn<Promise<unknown>, [{ functionName: string }]>(
   async ({ functionName }) => {
     if (functionName === "canReceiveVotes") return true;
     if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
+    if (functionName === "getGroupsVotedForByAccount") return [VALID_RECIPIENT];
     return ZERO_ADDRESS;
   },
 );
@@ -62,6 +64,7 @@ describe("buildTransaction", () => {
     readContractMock.mockImplementation(async ({ functionName }) => {
       if (functionName === "canReceiveVotes") return true;
       if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
+      if (functionName === "getGroupsVotedForByAccount") return [VALID_RECIPIENT];
       return ZERO_ADDRESS;
     });
   });
@@ -399,6 +402,71 @@ describe("buildTransaction", () => {
       to: ELECTION_ADDRESS,
       data: expectedData,
     });
+  });
+
+  it("should encode the on-chain group index for a non-first voted group (LIVE-33177)", async () => {
+    // Regression: the Election contract's revoke functions take the index of the group
+    // within getGroupsVotedForByAccount as their 5th arg and revert with "Bad index" if
+    // it's wrong. When the account voted for several groups and revokes a non-first one,
+    // the encoded index must match its real position — not a hard-coded 0.
+    const OTHER_GROUP = "0x1111111111111111111111111111111111111111";
+    readContractMock.mockImplementation(async ({ functionName }: { functionName: string }) => {
+      if (functionName === "canReceiveVotes") return true;
+      if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
+      // VALID_RECIPIENT is the second group the account voted for → index 1.
+      if (functionName === "getGroupsVotedForByAccount") return [OTHER_GROUP, VALID_RECIPIENT];
+      return ZERO_ADDRESS;
+    });
+
+    const transaction = await buildTransaction(
+      { ...accountFixture, spendableBalance: BigNumber(123) },
+      // index: 0 → revokePending; the assertion below is about the on-chain group index (arg 5).
+      { ...transactionFixture, mode: "revoke", index: 0, recipient: VALID_RECIPIENT },
+    );
+
+    const expectedData = encodeFunctionData({
+      abi: electionABI,
+      functionName: "revokePending",
+      args: [
+        VALID_RECIPIENT as `0x${string}`,
+        BigInt(transactionFixture.amount.toFixed()),
+        ZERO_ADDRESS,
+        ZERO_ADDRESS,
+        BigInt(1),
+      ],
+    });
+
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      to: ELECTION_ADDRESS,
+      data: expectedData,
+    });
+    // The voted-groups list must be read for the vote *signer*, not the raw account,
+    // otherwise the computed index wouldn't match the vote list shown in the UI.
+    expect(readContractMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        functionName: "getGroupsVotedForByAccount",
+        args: ["signer_account"],
+      }),
+    );
+  });
+
+  it("should throw CeloGroupNotVoted when revoking a group the account never voted for", async () => {
+    const OTHER_GROUP = "0x1111111111111111111111111111111111111111";
+    readContractMock.mockImplementation(async ({ functionName }: { functionName: string }) => {
+      if (functionName === "canReceiveVotes") return true;
+      if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
+      // VALID_RECIPIENT is absent → no valid on-chain index exists for the revoke.
+      if (functionName === "getGroupsVotedForByAccount") return [OTHER_GROUP];
+      return ZERO_ADDRESS;
+    });
+
+    await expect(
+      buildTransaction(
+        { ...accountFixture, spendableBalance: BigNumber(123) },
+        { ...transactionFixture, mode: "revoke", index: 0, recipient: VALID_RECIPIENT },
+      ),
+    ).rejects.toThrow(CeloGroupNotVoted);
   });
 
   it("should build an activate transaction", async () => {

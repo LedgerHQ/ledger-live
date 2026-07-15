@@ -7,7 +7,6 @@ import type { Bridge } from "@ledgerhq/types-live";
 import { SuiCoinConfig } from "@ledgerhq/coin-sui/config";
 import { type SuiSigner } from "@ledgerhq/coin-sui/types";
 import { getAddress as suiResolver } from "@ledgerhq/coin-sui/signer/index";
-import makeCliTools, { type CliTools } from "@ledgerhq/coin-sui/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
@@ -41,6 +40,4 @@ const bridge: Bridge<Transaction, SuiAccount, TransactionStatus> = createBridges
 
 const resolver: Resolver = createResolver(createSigner, suiResolver);
 
-const cliTools: CliTools = makeCliTools();
-
-export { bridge, cliTools, resolver };
+export { bridge, resolver };

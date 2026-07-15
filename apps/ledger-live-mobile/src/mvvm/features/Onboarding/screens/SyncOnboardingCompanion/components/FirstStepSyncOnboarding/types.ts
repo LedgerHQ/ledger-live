@@ -2,8 +2,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { SeedOriginType } from "@ledgerhq/types-live";
 import type { RefObject } from "react";
 import type { ScrollView } from "react-native";
-import type { SyncOnboardingScreenProps } from "~/screens/SyncOnboarding/SyncOnboardingScreenProps";
-import type { SEED_STATE } from "../../types";
+import type { SEED_STATE, SyncOnboardingScreenProps } from "../../types";
 
 export type FirstStepSyncOnboardingProps = {
   analyticsSeedConfiguration: RefObject<SeedOriginType | undefined>;

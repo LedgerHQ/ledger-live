@@ -10,9 +10,19 @@ import { Platform } from "react-native";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/logic";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
+import { setCryptoCurrenciesStore, setFiatCurrenciesStore } from "@ledgerhq/cryptoassets";
+import {
+  CRYPTO_CURRENCIES_REGISTRY,
+  CRYPTO_CURRENCY_ALIASES,
+} from "@domain/entity-currency-crypto";
+import { FIAT_CURRENCIES_REGISTRY } from "@domain/entity-currency-fiat";
 import "./experimental";
 import logger, { ConsoleLogger } from "./logger";
 import BigNumber from "bignumber.js";
+
+// The domain registries are the runtime source of truth for currency data.
+setCryptoCurrenciesStore(Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES);
+setFiatCurrenciesStore(Object.values(FIAT_CURRENCIES_REGISTRY));
 
 registerAllCoins();
 

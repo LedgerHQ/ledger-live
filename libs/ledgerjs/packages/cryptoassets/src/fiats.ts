@@ -1,4 +1,9 @@
 import type { FiatCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  buildFiatCurrenciesStore,
+  type FiatCurrenciesStore,
+  getInjectedFiatCurrenciesStore,
+} from "./fiats-store";
 // inspired by https://github.com/smirzaei/currency-formatter/blob/master/currencies.json
 
 function fiat(name, ticker, defaultSymbol, defaultMagnitude): FiatCurrency {
@@ -20,6 +25,7 @@ function fiat(name, ticker, defaultSymbol, defaultMagnitude): FiatCurrency {
   };
 }
 
+// Dual-maintained with `@domain/entity-currency-fiat` (the primary registry); see its README.
 const byTicker: Record<string, FiatCurrency> = {
   AED: fiat("Emirati Dirham", "AED", "د.إ.", 2),
   AFN: fiat("Afghan Afghani", "AFN", "؋", 2),
@@ -185,14 +191,24 @@ const byTicker: Record<string, FiatCurrency> = {
   ZAR: fiat("South African Rand", "ZAR", "R", 2),
   ZMW: fiat("Zambian Kwacha", "ZMW", "ZK", 2),
 };
-const list = Object.keys(byTicker).map(k => byTicker[k]);
+// The bundled registry, used as fallback whenever no store has been injected. Built through the
+// same path as the injected store so both share the null-prototype map (no prototype pollution).
+const bundledFiatCurrenciesStore: FiatCurrenciesStore = buildFiatCurrenciesStore(
+  Object.values(byTicker),
+);
+
+// Returns the injected store (the app's source of truth) or the bundled fallback.
+function activeFiatCurrenciesStore(): FiatCurrenciesStore {
+  return getInjectedFiatCurrenciesStore() ?? bundledFiatCurrenciesStore;
+}
 
 /**
  *
  * @param {*} ticker
  */
 export function hasFiatCurrencyTicker(ticker: string): boolean {
-  return ticker in byTicker;
+  // null-prototype map: `in` checks own keys only, same guarantee as hasOwn but compatible with ES2017 lib
+  return ticker in activeFiatCurrenciesStore().fiatCurrenciesByTicker;
 }
 
 /**
@@ -200,7 +216,7 @@ export function hasFiatCurrencyTicker(ticker: string): boolean {
  * @param {*} ticker
  */
 export function findFiatCurrencyByTicker(ticker: string): FiatCurrency | null | undefined {
-  return byTicker[ticker];
+  return activeFiatCurrenciesStore().fiatCurrenciesByTicker[ticker];
 }
 
 /**
@@ -221,5 +237,5 @@ export function getFiatCurrencyByTicker(ticker: string): FiatCurrency {
  *
  */
 export function listFiatCurrencies(): FiatCurrency[] {
-  return list;
+  return activeFiatCurrenciesStore().fiatCurrenciesArray;
 }

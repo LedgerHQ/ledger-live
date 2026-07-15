@@ -1,8 +1,8 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
-import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
+import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
@@ -10,9 +10,10 @@ import {
   getAccountAddress,
   liveDataWithRecipientAddressCommand,
   liveDataCommand,
-} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { FF_NEW_SEND_FLOW_DISABLED } from "tests/utils/featureFlagUtils";
 
 const transactionsAmountInvalid = [
   {
@@ -242,6 +243,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.ZEC_1, Account.ZEC_2, "0.001"),
     xrayTicket: "B2CQA-4299",
+    disableBroadcast: true,
   },
   {
     transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "0.00001", undefined, "noTag"),
@@ -261,12 +263,16 @@ function shouldSkipLNSTag(currencyId: string): boolean {
 
 test.describe("Send flows", () => {
   for (const transaction of transactionE2E) {
-    test.describe("Send from 1 account to another", () => {
+    test.describe("legacy send flow - Send from 1 account to another", () => {
       test.use({
         teamOwner: Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
+        env: transaction.disableBroadcast ? { DISABLE_TRANSACTION_BROADCAST: "1" } : {},
+        featureFlags: {
+          ...FF_NEW_SEND_FLOW_DISABLED,
+        },
       });
 
       const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
@@ -320,12 +326,15 @@ test.describe("Send flows", () => {
   }
 
   for (const transaction of transactionsAmountInvalid) {
-    test.describe("Check invalid amount input error", () => {
+    test.describe("legacy send flow - Check invalid amount input error", () => {
       test.use({
         teamOwner: Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
+        featureFlags: {
+          ...FF_NEW_SEND_FLOW_DISABLED,
+        },
       });
 
       const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
@@ -369,7 +378,7 @@ test.describe("Send flows", () => {
     });
   }
 
-  test.describe("Verify send max user flow", () => {
+  test.describe("legacy send flow - Verify send max user flow", () => {
     const transactionInputValid = new Transaction(
       Account.ETH_1,
       Account.ETH_2,
@@ -382,6 +391,9 @@ test.describe("Send flows", () => {
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transactionInputValid.accountToDebit.currency.speculosApp,
       cliCommands: [liveDataWithRecipientAddressCommand(transactionInputValid)],
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     const family = getFamilyByCurrencyId(transactionInputValid.accountToDebit.currency.id);
@@ -423,7 +435,7 @@ test.describe("Send flows", () => {
   });
 
   for (const transaction of transactionAddressValid) {
-    test.describe("Send funds step 1 (Recipient) - positive cases (Button enabled)", () => {
+    test.describe("legacy send flow - Send funds step 1 (Recipient) - positive cases (Button enabled)", () => {
       test.use({
         teamOwner: Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
@@ -431,6 +443,9 @@ test.describe("Send flows", () => {
         cliCommands: [
           liveDataWithRecipientAddressCommand(transaction.transaction, { useScheme: true }),
         ],
+        featureFlags: {
+          ...FF_NEW_SEND_FLOW_DISABLED,
+        },
       });
 
       const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
@@ -482,7 +497,7 @@ test.describe("Send flows", () => {
   }
 
   for (const transaction of transactionsAddressInvalid) {
-    test.describe("Send funds step 1 (Recipient) - negative cases (Button disabled)", () => {
+    test.describe("legacy send flow - Send funds step 1 (Recipient) - negative cases (Button disabled)", () => {
       test.use({
         teamOwner: Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
@@ -506,6 +521,9 @@ test.describe("Send flows", () => {
             return transaction.address;
           },
         ],
+        featureFlags: {
+          ...FF_NEW_SEND_FLOW_DISABLED,
+        },
       });
 
       const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
@@ -552,7 +570,7 @@ test.describe("Send flows", () => {
     });
   }
 
-  test.describe("User sends funds to ENS address", () => {
+  test.describe("legacy send flow - User sends funds to ENS address", () => {
     const transactionEnsAddress = new Transaction(
       Account.ETH_1,
       Account.ETH_2_WITH_ENS,
@@ -566,6 +584,9 @@ test.describe("Send flows", () => {
       speculosApp: transactionEnsAddress.accountToDebit.currency.speculosApp,
       cliCommands: [liveDataWithRecipientAddressCommand(transactionEnsAddress)],
       env: { DISABLE_TRANSACTION_BROADCAST: "1" },
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     const family = getFamilyByCurrencyId(transactionEnsAddress.accountToDebit.currency.id);
@@ -611,8 +632,13 @@ test.describe("Send flows", () => {
     );
   });
 
-  test.describe("Send Concordium (Testnet)", () => {
-    const ccdTx = new Transaction(Account.CCD_TESTNET_1, Account.CCD_TESTNET_2, "50", undefined);
+  test.describe("legacy send flow - Send Concordium (Testnet)", () => {
+    const ccdTx = new Transaction(
+      Account.CCD_TESTNET_1,
+      Account.CCD_TESTNET_2,
+      "0.000005",
+      undefined,
+    );
 
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
@@ -632,6 +658,7 @@ test.describe("Send flows", () => {
         },
       ],
       featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
         currencyConcordiumTestnet: { enabled: true },
         analyticsOptIn: { enabled: true, params: { policyVersion: 1, consentValidityDays: 365 } },
       },

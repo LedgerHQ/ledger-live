@@ -1,42 +1,106 @@
 import React from "react";
-import { FlatList, ListRenderItemInfo } from "react-native";
+import {
+  FlatList,
+  ListRenderItemInfo,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+} from "react-native";
 import { Box, PageIndicator } from "@ledgerhq/lumen-ui-rnative";
-import SectionContainer from "~/screens/WalletCentricSections/SectionContainer";
 import { LNSUpsellBanner } from "LLM/features/LNSUpsell/components/LNSUpsellBanner";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
+import { width } from "~/helpers/normalizeSize";
+import SectionContainer from "~/screens/WalletCentricSections/SectionContainer";
 import RecoverBanner from "../RecoverBanner";
 import { OnboardingWidget } from "../OnboardingWidget";
 import { usePortfolioBannersSectionViewModel } from "./usePortfolioBannersSectionViewModel";
-import { width } from "~/helpers/normalizeSize";
 
-const WIDTH = width - 32;
+const CAROUSEL_SLIDE_WIDTH = width - 32;
 
-const CAROUSEL_ITEMS = [
+const ONBOARDING_RECOVER_SLIDES = [
   { key: "onboarding", slide: "onboarding" as const },
   { key: "recover", slide: "recover" as const },
-];
+] as const;
 
-function OnboardingRecoverBannerSeparator() {
-  return <Box style={{ width: 12 }} />;
-}
-
-function OnboardingRecoverBannerRow({ item }: ListRenderItemInfo<(typeof CAROUSEL_ITEMS)[number]>) {
-  return (
-    <Box style={{ width: WIDTH }}>
-      {item.slide === "onboarding" ? (
-        <OnboardingWidget />
-      ) : (
-        <RecoverBanner paddingHorizontal="s0" />
-      )}
-    </Box>
-  );
-}
+type CarouselSlide = (typeof ONBOARDING_RECOVER_SLIDES)[number];
 
 interface PortfolioBannersSectionProps {
   readonly isFirst: boolean;
   readonly isLNSUpsellBannerShown: boolean;
   readonly showAssets?: boolean;
+}
+
+type BannersSectionShellProps = {
+  readonly isFirst: boolean;
+  readonly children: React.ReactNode;
+};
+
+function BannersSectionShell({ isFirst, children }: BannersSectionShellProps) {
+  return (
+    <SectionContainer
+      py="0"
+      mt={0}
+      isFirst={isFirst}
+      key="BannersSection"
+      testID="portfolio-banners-section"
+    >
+      {children}
+    </SectionContainer>
+  );
+}
+
+type PaddedBannerProps = {
+  readonly children: React.ReactNode;
+};
+
+function PaddedBanner({ children }: PaddedBannerProps) {
+  return <Box lx={{ paddingTop: "s12" }}>{children}</Box>;
+}
+
+function OnboardingRecoverCarouselSeparator() {
+  return <Box style={{ width: 12 }} />;
+}
+
+type OnboardingRecoverCarouselProps = {
+  readonly carouselIndex: number;
+  readonly onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+};
+
+function OnboardingRecoverCarousel({ carouselIndex, onScroll }: OnboardingRecoverCarouselProps) {
+  return (
+    <Box lx={{ paddingTop: "s12", gap: "s8" }}>
+      <FlatList
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        onScroll={onScroll}
+        onMomentumScrollEnd={onScroll}
+        disableIntervalMomentum
+        snapToInterval={width}
+        decelerationRate={0}
+        scrollEventThrottle={16}
+        bounces={false}
+        data={ONBOARDING_RECOVER_SLIDES}
+        keyExtractor={item => item.key}
+        ItemSeparatorComponent={OnboardingRecoverCarouselSeparator}
+        renderItem={({ item }: ListRenderItemInfo<CarouselSlide>) => (
+          <Box style={{ width: CAROUSEL_SLIDE_WIDTH }}>
+            {item.slide === "onboarding" ? (
+              <OnboardingWidget />
+            ) : (
+              <RecoverBanner paddingHorizontal="s0" />
+            )}
+          </Box>
+        )}
+      />
+
+      <Box lx={{ alignItems: "center" }} testID="banners-page-indicator">
+        <PageIndicator
+          currentPage={Math.min(carouselIndex + 1, ONBOARDING_RECOVER_SLIDES.length)}
+          totalPages={ONBOARDING_RECOVER_SLIDES.length}
+        />
+      </Box>
+    </Box>
+  );
 }
 
 export const PortfolioBannersSection = ({
@@ -45,45 +109,32 @@ export const PortfolioBannersSection = ({
   showAssets,
 }: PortfolioBannersSectionProps) => {
   const {
-    shouldShowOnboardingWidget,
+    shouldShowOnboardingWidget: showOnboarding,
+    shouldDisplayRecover: showRecover,
     contentCardsPaddingTop,
     hasAssets,
-    shouldDisplayRecover,
     onScroll,
     carouselIndex,
-  } = usePortfolioBannersSectionViewModel({
-    showAssets,
-  });
+  } = usePortfolioBannersSectionViewModel({ showAssets });
 
   if (isLNSUpsellBannerShown) {
     return (
-      <SectionContainer
-        py="0"
-        mt={0}
-        isFirst={isFirst}
-        key="BannersSection"
-        testID="portfolio-banners-section"
-      >
+      <BannersSectionShell isFirst={isFirst}>
         <LNSUpsellBanner location="wallet" pt={4} />
-      </SectionContainer>
+      </BannersSectionShell>
     );
   }
-  if (!shouldShowOnboardingWidget && !shouldDisplayRecover && !hasAssets) return null;
 
-  if (hasAssets && !shouldShowOnboardingWidget) {
+  if (!showOnboarding && !showRecover && !hasAssets) return null;
+
+  if (hasAssets && !showOnboarding) {
     return (
-      <SectionContainer
-        py="0"
-        mt={0}
-        isFirst={isFirst}
-        key="BannersSection"
-        testID="portfolio-banners-section"
-      >
+      <BannersSectionShell isFirst={isFirst}>
         <Box>
-          {shouldDisplayRecover && (
-            <Box lx={{ paddingTop: "s12" }}>
+          {showRecover && (
+            <PaddedBanner>
               <RecoverBanner paddingHorizontal="s0" />
-            </Box>
+            </PaddedBanner>
           )}
           <Box lx={contentCardsPaddingTop ? { paddingTop: contentCardsPaddingTop } : undefined}>
             <ContentCardsLocation
@@ -93,70 +144,38 @@ export const PortfolioBannersSection = ({
             />
           </Box>
         </Box>
-      </SectionContainer>
+      </BannersSectionShell>
     );
   }
 
-  if (shouldShowOnboardingWidget && shouldDisplayRecover) {
+  // Onboarding + recover: horizontal carousel.
+  if (showOnboarding && showRecover) {
     return (
-      <SectionContainer
-        py="0"
-        mt={0}
-        isFirst={isFirst}
-        key="BannersSection"
-        testID="portfolio-banners-section"
-      >
-        <Box lx={{ paddingTop: "s12", gap: "s8" }}>
-          <FlatList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            onScroll={onScroll}
-            onMomentumScrollEnd={onScroll}
-            disableIntervalMomentum
-            snapToInterval={width}
-            decelerationRate={0}
-            scrollEventThrottle={16}
-            bounces={false}
-            data={CAROUSEL_ITEMS}
-            keyExtractor={item => item.key}
-            ItemSeparatorComponent={OnboardingRecoverBannerSeparator}
-            renderItem={OnboardingRecoverBannerRow}
-          />
-
-          <Box lx={{ alignItems: "center" }} testID="banners-page-indicator">
-            <PageIndicator
-              currentPage={Math.min(carouselIndex + 1, CAROUSEL_ITEMS.length)}
-              totalPages={CAROUSEL_ITEMS.length}
-            />
-          </Box>
-        </Box>
-      </SectionContainer>
+      <BannersSectionShell isFirst={isFirst}>
+        <OnboardingRecoverCarousel carouselIndex={carouselIndex} onScroll={onScroll} />
+      </BannersSectionShell>
     );
   }
 
-  if (shouldShowOnboardingWidget || shouldDisplayRecover) {
+  // Single banner: onboarding and/or recover, stacked.
+  if (showOnboarding || showRecover) {
     return (
-      <SectionContainer
-        py="0"
-        mt={0}
-        isFirst={isFirst}
-        key="BannersSection"
-        testID="portfolio-banners-section"
-      >
+      <BannersSectionShell isFirst={isFirst}>
         <Box>
-          {shouldShowOnboardingWidget && (
-            <Box lx={{ paddingTop: "s12" }}>
+          {showOnboarding && (
+            <PaddedBanner>
               <OnboardingWidget />
-            </Box>
+            </PaddedBanner>
           )}
-          {shouldDisplayRecover && (
-            <Box lx={{ paddingTop: "s12" }}>
+          {showRecover && (
+            <PaddedBanner>
               <RecoverBanner paddingHorizontal="s0" />
-            </Box>
+            </PaddedBanner>
           )}
         </Box>
-      </SectionContainer>
+      </BannersSectionShell>
     );
   }
+
   return null;
 };

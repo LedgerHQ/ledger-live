@@ -144,3 +144,15 @@ myFeature.skip.spec.ts
 - Use Page Object Model (POM) for writing tests
 - Keep tests independent and deterministic
 - Bookmark this README for quick reference
+
+### 8. Feature Flag presets
+
+It is possible to choose an optional Feature Flag set for the test run.
+
+Set the env var to the desired value, eg:
+
+```bash
+export E2E_MOBILE_FEATURE_FLAGS="wallet40-q2"
+```
+
+Or use the "Choose a feature flag set" options dropdown on the Github workflow.

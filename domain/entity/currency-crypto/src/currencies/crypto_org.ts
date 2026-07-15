@@ -9,6 +9,7 @@ export const crypto_org = currency({
   ticker: "CRO",
   scheme: "crypto_org",
   color: "#0e1c37",
+  keywords: ["cro", "cronos pos chain"],
   family: "cosmos",
   units: [
     {

@@ -4,12 +4,17 @@ import { USEI_TO_EVM_SCALE } from "../utils";
 export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
   // Sei EVM staking
   // Source: https://docs.sei.io/evm/precompiles/staking
+  // claimReward routes to the distribution precompile: https://docs.sei.io/evm/precompiles/distribution
   sei_evm: {
-    contractAddress: "0x0000000000000000000000000000000000001005",
-    specificContractAddressByOperation: {
-      // https://docs.sei.io/evm/precompiles/distribution
-      claimReward: "0x0000000000000000000000000000000000001007",
+    contractAddress: ctx => {
+      switch (ctx?.mode) {
+        case "claimReward":
+          return "0x0000000000000000000000000000000000001007";
+        default:
+          return "0x0000000000000000000000000000000000001005";
+      }
     },
+    value: ({ amount }) => amount,
     functions: {
       delegate: "delegate",
       undelegate: "undelegate",
@@ -69,7 +74,8 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
   // Celo staking
   // Source: https://celo.blockscout.com/address/0x55E1A0C8f376964bd339167476063bFED7f213d5?tab=contract_source_code
   celo: {
-    contractAddress: "0x55E1A0C8f376964bd339167476063bFED7f213d5",
+    contractAddress: () => "0x55E1A0C8f376964bd339167476063bFED7f213d5",
+    value: ({ amount }) => amount,
     functions: {
       delegate: "delegateGovernanceVotes",
       undelegate: "revokeDelegatedGovernanceVotes",
@@ -84,7 +90,8 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
   monad: {
     // Native staking precompile — address 0x1000
     // There is no bytecode at this address; it is a precompile, not a smart contract.
-    contractAddress: "0x0000000000000000000000000000000000001000",
+    contractAddress: () => "0x0000000000000000000000000000000000001000",
+    value: ({ amount }) => amount,
     functions: {
       // delegate(uint64 validatorId) payable — amount is msg.value (18-decimal MON wei).
       delegate: "delegate",
@@ -130,5 +137,33 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     unbondingPeriodDays: 0.75,
   },
 
-  // TODO: add 0G next
+  // 0G staking - factory-per-validator model.
+  // Source: https://docs.0g.ai/developer-hub/building-on-0g/contracts-on-0g/validator-contract-functions
+  zero_gravity: {
+    contractAddress: ctx => {
+      const addr = ctx?.valAddress;
+      if (!addr) throw new Error("0G staking requires a validator address");
+      return addr;
+    },
+    value: ({ mode, amount, txValue }) => {
+      return mode === "undelegate" ? (txValue ?? 0n) : amount;
+    },
+    functions: {
+      delegate: "delegate",
+      undelegate: "undelegate",
+      getStakedBalance: "getDelegation",
+    },
+    apiConfig: {
+      baseUrl: "https://api.0g.exploreme.pro",
+      validatorsEndpoint: "/api/v2/validators?limit=100",
+    },
+    // minWithdrawabilityDelay on registry 0xea224d = 0x30d40 = 200,000 blocks; at ~1 s/block = 2d 7h.
+    // curl https://zero-gravity.coin.ledger.com -sX POST -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","method":"eth_call","params":[{"to":"0xea224dBB52F57752044c0C86aD50930091F561B9","data":"0x279a0d76"},"latest"],"id":1}'
+    unbondingPeriodDays: 2.31,
+    explorerConfig: {
+      validatorUrl: "https://explorer.0g.ai/mainnet/validators/$address/delegators",
+    },
+  },
+
+  // TODO: add Somnia next
 };

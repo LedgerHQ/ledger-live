@@ -1,9 +1,9 @@
 import { expect } from "@playwright/test";
 import { test } from "tests/fixtures/common";
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { EarnProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { EarnProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import {
-  EARN_V2_DESKTOP_FLAGS,
+  FF_EARN_V2_DESKTOP,
   FF_STAKE_PROGRAMS_MODAL,
   useLocalEarnManifest,
 } from "tests/utils/featureFlagUtils";
@@ -14,7 +14,7 @@ import earnLocalManifestJson from "tests/utils/earnLocalManifest.json";
 import {
   liveDataCommand,
   liveDataWithAddressCommand,
-} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import type { Application } from "tests/page";
 
@@ -54,7 +54,7 @@ test.describe("Earn [v2]", () => {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: account.currency.speculosApp,
-      featureFlags: EARN_V2_DESKTOP_FLAGS,
+      featureFlags: FF_EARN_V2_DESKTOP,
     });
 
     const xrayTicket = "B2CQA-4639";
@@ -84,10 +84,11 @@ test.describe("Earn [v2]", () => {
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
         featureFlags: {
-          ...EARN_V2_DESKTOP_FLAGS,
+          ...FF_EARN_V2_DESKTOP,
           ...FF_STAKE_PROGRAMS_MODAL,
         },
         cliCommands: [liveDataCommand(account)],
+        speculosForSetupOnly: true,
       });
 
       test(
@@ -135,8 +136,9 @@ test.describe("Earn [v2]", () => {
       test.use({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
-        featureFlags: EARN_V2_DESKTOP_FLAGS,
+        featureFlags: FF_EARN_V2_DESKTOP,
         cliCommands: [liveDataCommand(account)],
+        speculosForSetupOnly: true,
       });
 
       test(
@@ -167,7 +169,7 @@ test.describe("Earn [v2]", () => {
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.currency.speculosApp,
       featureFlags: {
-        ...EARN_V2_DESKTOP_FLAGS,
+        ...FF_EARN_V2_DESKTOP,
         ...FF_STAKE_PROGRAMS_MODAL,
       },
     });
@@ -202,8 +204,9 @@ test.describe("Earn [v2]", () => {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: account.currency.speculosApp,
-      featureFlags: EARN_V2_DESKTOP_FLAGS,
+      featureFlags: FF_EARN_V2_DESKTOP,
       cliCommands: [liveDataWithAddressCommand(account)],
+      speculosForSetupOnly: true,
     });
 
     const xrayTicket = "B2CQA-4643";
@@ -227,8 +230,9 @@ test.describe("Earn [v2]", () => {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: account.currency.speculosApp,
-      featureFlags: EARN_V2_DESKTOP_FLAGS,
+      featureFlags: FF_EARN_V2_DESKTOP,
       cliCommands: [liveDataWithAddressCommand(account)],
+      speculosForSetupOnly: true,
     });
 
     const xrayTicket = "B2CQA-4645";
@@ -264,10 +268,11 @@ test.describe("Earn [v2]", () => {
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
         featureFlags: {
-          ...EARN_V2_DESKTOP_FLAGS,
+          ...FF_EARN_V2_DESKTOP,
           ...FF_STAKE_PROGRAMS_MODAL,
         },
         cliCommands: [liveDataWithAddressCommand(account)],
+        speculosForSetupOnly: true,
       });
 
       test(
@@ -299,7 +304,7 @@ test.describe("Earn [v2]", () => {
       userdata: "skip-onboarding",
       speculosApp: account.currency.speculosApp,
       featureFlags: {
-        ...EARN_V2_DESKTOP_FLAGS,
+        ...FF_EARN_V2_DESKTOP,
         // TODO: sync Firebase environments and remove this override when final variant is chosen
         stakePrograms: {
           enabled: true,
@@ -312,6 +317,7 @@ test.describe("Earn [v2]", () => {
         },
       },
       cliCommands: [liveDataWithAddressCommand(account)],
+      speculosForSetupOnly: true,
     });
 
     const xrayTicket = "B2CQA-4647";
@@ -340,8 +346,9 @@ test.describe("Earn [v2]", () => {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: parentAccount.currency.speculosApp,
-      featureFlags: EARN_V2_DESKTOP_FLAGS,
+      featureFlags: FF_EARN_V2_DESKTOP,
       cliCommands: [liveDataWithAddressCommand(parentAccount)],
+      speculosForSetupOnly: true,
     });
 
     const xrayTicket = "B2CQA-4648";

@@ -1,9 +1,3 @@
-import {
-  getEditTransactionPatch,
-  hasMinimumFundsToCancel,
-  hasMinimumFundsToSpeedUp,
-  isTransactionConfirmed,
-} from "@ledgerhq/coin-evm/editTransaction/index";
 import { EditType } from "@ledgerhq/coin-evm/types/editTransaction";
 import { Transaction as EvmTransaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
 import { isOldestPendingOperation } from "@ledgerhq/ledger-wallet-framework/operation";
@@ -61,17 +55,21 @@ function MethodSelectionComponent({ navigation, route }: Props) {
   const haveFundToCancel = useMemo(
     () =>
       transactionToEdit
-        ? hasMinimumFundsToCancel({ mainAccount, transactionToUpdate: transactionToEdit })
+        ? bridge.hasMinimumFundsToCancel({ mainAccount, transactionToUpdate: transactionToEdit })
         : false,
-    [mainAccount, transactionToEdit],
+    [bridge, mainAccount, transactionToEdit],
   );
 
   const haveFundToSpeedup = useMemo(
     () =>
       transactionToEdit
-        ? hasMinimumFundsToSpeedUp({ account, mainAccount, transactionToUpdate: transactionToEdit })
+        ? bridge.hasMinimumFundsToSpeedUp({
+            account,
+            mainAccount,
+            transactionToUpdate: transactionToEdit,
+          })
         : false,
-    [account, mainAccount, transactionToEdit],
+    [bridge, account, mainAccount, transactionToEdit],
   );
 
   const [selectedMethod, setSelectedMethod] = useState<EditType | null>();
@@ -90,7 +88,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
       if (!transactionToEdit || !transaction) return;
       log("Edit Transaction - Method Selection", "onSelect Cancel/Speed up", option);
 
-      const patch = await getEditTransactionPatch({
+      const patch = await bridge.getEditTransactionPatch({
         account: mainAccount,
         transaction: transactionToEdit,
         editType: option,
@@ -114,7 +112,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
    */
   useEffect(() => {
     const setTransactionHasBeenValidatedCallback = async () => {
-      const hasBeenConfirmed = await isTransactionConfirmed({
+      const hasBeenConfirmed = await bridge.isTransactionConfirmed({
         currency: mainAccount.currency,
         hash: operation.hash,
       });
@@ -136,7 +134,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     return () => {
       clearInterval(intervalId);
     };
-  }, [mainAccount.currency, operation.hash]);
+  }, [bridge, mainAccount.currency, operation.hash]);
 
   if (transactionHasBeenValidated) {
     navigation.navigate(ScreenName.TransactionAlreadyValidatedError, {

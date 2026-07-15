@@ -1,5 +1,5 @@
-import { TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { assetAvailableNetworks } from "@ledgerhq/live-common/e2e/data/assetsDrawer";
+import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { assetAvailableNetworks } from "@ledgerhq/live-e2e-shared/data/assetsDrawer";
 import { runSelectCryptoNetworkTest } from "./deposit";
 
 const testConfig = {

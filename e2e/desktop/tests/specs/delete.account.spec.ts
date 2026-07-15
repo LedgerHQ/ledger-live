@@ -1,10 +1,10 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 
 const accounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2548" },
@@ -31,6 +31,7 @@ for (const account of accounts) {
       userdata: "skip-onboarding-with-last-seen-device",
       cliCommands: [liveDataCommand(account.account)],
       speculosApp: account.account.currency.speculosApp,
+      speculosForSetupOnly: true,
     });
 
     const family = getFamilyByCurrencyId(account.account.currency.id);
@@ -47,7 +48,7 @@ for (const account of accounts) {
           "@NanoGen5",
           `@${account.account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(account.account === Account.XTZ_1 ? ["@smoke"] : []),
+          ...(account.account === Account.ETH_1 ? ["@smoke"] : []),
         ],
         annotation: {
           type: "TMS",

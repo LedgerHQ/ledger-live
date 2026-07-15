@@ -1,4 +1,5 @@
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { promiseAllBatched } from "@ledgerhq/live-promise";
 import {
   decodeTokenAccountId,
   emptyHistoryCache,
@@ -87,16 +88,95 @@ export const calculateAmount = ({
   return calculateCoinAmount({ account, transaction, operationType });
 };
 
+export async function buildCalTokenMap({
+  erc20Tokens,
+  mirrorTokens,
+  currencyId,
+}: {
+  erc20Tokens: HederaERC20TokenBalance[];
+  mirrorTokens: HederaMirrorToken[];
+  currencyId: string;
+}): Promise<Map<string, TokenCurrency>> {
+  const uniqueAddresses = [
+    ...new Set([
+      ...erc20Tokens.map(t => t.contractAddress.toLowerCase()),
+      ...mirrorTokens.map(t => t.token_id),
+    ]),
+  ];
+  const tokenByAddress = new Map<string, TokenCurrency>();
+
+  if (uniqueAddresses.length === 0) return tokenByAddress;
+
+  const store = getCryptoAssetsStore();
+  await promiseAllBatched(4, uniqueAddresses, async address => {
+    const token = await store.findTokenByAddressInCurrency(address, currencyId);
+    if (token) tokenByAddress.set(address, token);
+  });
+
+  return tokenByAddress;
+}
+
+/**
+ * Re-encodes id and accountId for both coin and token operations into the bridge's format.
+ * Token operations: accountId becomes encodeTokenAccountId, filtered to CAL-listed tokens only.
+ * Coin operations: accountId becomes ledgerAccountId.
+ */
+export function resolveBridgeOperations({
+  coinOperations,
+  tokenOperations,
+  ledgerAccountId,
+  calTokenByAddress,
+}: {
+  coinOperations: Operation<HederaOperationExtra>[];
+  tokenOperations: Operation<HederaOperationExtra>[];
+  ledgerAccountId: string;
+  calTokenByAddress: Map<string, TokenCurrency>;
+}): {
+  bridgeCoinOperations: Operation<HederaOperationExtra>[];
+  bridgeTokenOperations: Operation<HederaOperationExtra>[];
+} {
+  const keptTokenOperationHashes = new Set<string>();
+
+  const bridgeTokenOperations = tokenOperations.flatMap(operation => {
+    const tokenAddress = operation.contract?.toLowerCase();
+    const token = tokenAddress ? calTokenByAddress.get(tokenAddress) : undefined;
+    if (!token) return [];
+
+    keptTokenOperationHashes.add(operation.hash);
+    const tokenAccountId = encodeTokenAccountId(ledgerAccountId, token);
+    return [
+      {
+        ...operation,
+        accountId: tokenAccountId,
+        id: encodeOperationId(tokenAccountId, operation.hash, operation.type),
+      },
+    ];
+  });
+
+  // persist only FEES ops for token transfers that are in CAL
+  const bridgeCoinOperations = coinOperations
+    .filter(op => (op.type !== "FEES" ? true : keptTokenOperationHashes.has(op.hash)))
+    .map(op => ({
+      ...op,
+      id: encodeOperationId(ledgerAccountId, op.hash, op.type),
+      accountId: ledgerAccountId,
+    }));
+
+  return { bridgeCoinOperations, bridgeTokenOperations };
+}
+
 export const getSubAccounts = async ({
   ledgerAccountId,
   latestTokenOperations,
   mirrorTokens,
   erc20Tokens,
+  calTokenByAddress,
 }: {
   ledgerAccountId: string;
   latestTokenOperations: Operation[];
   mirrorTokens: HederaMirrorToken[];
   erc20Tokens: HederaERC20TokenBalance[];
+  calTokenByAddress: Map<string, TokenCurrency>;
 }): Promise<TokenAccount[]> => {
   // Creating a Map of Operations by TokenCurrencies in order to know which TokenAccounts should be synced as well
   const operationsByToken = new Map<TokenCurrency, Operation[]>();
@@ -105,12 +185,6 @@ export const getSubAccounts = async ({
   for (const tokenOperation of latestTokenOperations) {
     const { token } = await decodeTokenAccountId(tokenOperation.accountId);
     if (!token) continue;
-
-    const isTokenListedInCAL = await getCryptoAssetsStore().findTokenByAddressInCurrency(
-      token.contractAddress,
-      token.parentCurrencyId,
-    );
-    if (!isTokenListedInCAL) continue;
 
     if (!operationsByToken.has(token)) {
       operationsByToken.set(token, []);
@@ -125,7 +199,9 @@ export const getSubAccounts = async ({
     let balance: BigNumber | null = null;
 
     if (token.tokenType === "erc20") {
-      const rawBalance = erc20Tokens.find(t => t.token.contractAddress === token.contractAddress);
+      const rawBalance = erc20Tokens.find(
+        t => t.contractAddress.toLowerCase() === token.contractAddress.toLowerCase(),
+      );
       balance = rawBalance === undefined ? null : new BigNumber(rawBalance.balance);
     } else {
       const rawBalance = mirrorTokens.find(t => t.token_id === token.contractAddress)?.balance;
@@ -160,9 +236,9 @@ export const getSubAccounts = async ({
     const parentAccountId = ledgerAccountId;
     const rawBalance = rawToken.balance;
     const balance = new BigNumber(rawBalance);
-    const isERC20 = "token" in rawToken;
-    const tokenAddress = isERC20 ? rawToken.token.contractAddress : rawToken.token_id;
-    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(tokenAddress, "hedera");
+    const isERC20 = "contractAddress" in rawToken;
+    const tokenAddress = isERC20 ? rawToken.contractAddress : rawToken.token_id;
+    const token = calTokenByAddress.get(tokenAddress.toLowerCase());
 
     if (!token) {
       continue;

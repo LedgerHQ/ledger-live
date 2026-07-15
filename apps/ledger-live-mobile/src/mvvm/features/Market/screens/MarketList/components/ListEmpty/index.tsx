@@ -54,8 +54,11 @@ function ListEmpty({
         onButtonClick={resetSearch}
       />
     );
-  } else if (!isConnected) {
-    // Network down
+  } else if (hasEmptyStarredCoins) {
+    // Check before connectivity: a no-favorites list is empty regardless of network (LIVE-32173).
+    return <EmptyStarredCoins />;
+  } else if (isConnected === false) {
+    // Explicit `false` only: `useNetInfo` returns `null` until resolved, which isn't "down".
     return (
       <EmptyState
         illustrationSource={noNetworkIllustration}
@@ -63,9 +66,6 @@ function ListEmpty({
         description={t("errors.NetworkDown.description")}
       />
     );
-  } else if (hasEmptyStarredCoins) {
-    // Empty starred coins
-    return <EmptyStarredCoins />;
   } else {
     return null;
   }

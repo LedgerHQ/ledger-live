@@ -15,16 +15,12 @@ export const BalanceView = ({
   navigateToAnalytics,
   handleKeyDown,
   isLoading,
-  shouldDisplayBalanceRefreshRework,
   theme,
 }: BalanceViewProps) => {
   return (
     <button
       type="button"
-      className={cn(
-        "flex cursor-pointer border-0 bg-transparent p-0 text-inherit",
-        shouldDisplayBalanceRefreshRework && "group",
-      )}
+      className={cn("flex cursor-pointer border-0 bg-transparent p-0 text-inherit", "group")}
       data-testid="portfolio-balance"
       onClick={navigateToAnalytics}
       onKeyDown={handleKeyDown}
@@ -44,8 +40,8 @@ export const BalanceView = ({
             value={balance}
             formatter={formatter}
             hidden={discreet}
-            animate={shouldDisplayBalanceRefreshRework}
-            loading={shouldDisplayBalanceRefreshRework && isLoading}
+            animate
+            loading={isLoading}
             data-testid="portfolio-total-balance"
           />
         )}

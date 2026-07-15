@@ -1,6 +1,7 @@
 {
   "name": "@ledgerhq/coin-tester-tron",
-  "version": "0.2.2",
+  "version": "0.2.3-next.0",
+  "private": true,
   "description": "Ledger Tron Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [
@@ -17,9 +18,6 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-modules/coin-tester-tron",
-  "publishConfig": {
-    "access": "public"
-  },
   "typesVersions": {
     "*": {
       "lib/*": [

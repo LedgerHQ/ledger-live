@@ -60,7 +60,7 @@ function PortfolioScreen({
   const isPortfolioRoute =
     route.params?.screen === NavigatorName.Main &&
     route.params.params?.screen === NavigatorName.Portfolio &&
-    route.params.params.params?.screen === NavigatorName.WalletTab;
+    route.params.params.params?.screen === ScreenName.Portfolio;
 
   return (
     <>

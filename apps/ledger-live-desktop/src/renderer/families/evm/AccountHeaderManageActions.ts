@@ -3,7 +3,6 @@ import { useCallback } from "react";
 import { openModal } from "~/renderer/actions/modals";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeature } from "@features/platform-feature-flags";
-import { canDelegate } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useNavigate } from "react-router";
@@ -83,12 +82,19 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   }, [account, bridge, dispatch, parentAccount, getRouteToPlatformApp, walletState, navigate]);
 
   const onClickEvmNativeStake = useCallback(() => {
-    if (account.type === "Account" && isStakingAccount(account) && canDelegate(account)) {
+    if (account.type !== "Account" || !isStakingAccount(account)) return;
+
+    const hasDelegations = (account.stakingResources?.delegations?.length ?? 0) > 0;
+
+    // Route on whether the account already has delegations, not on spendable balance:
+    // a fully-staked account (0 spendable) still needs the delegate/manage flow, not the
+    // first-timer intro. The spendable-balance gate lives in the delegate flow itself.
+    if (hasDelegations) {
       dispatch(openModal("MODAL_EVM_DELEGATE", { account }));
     } else {
-      dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account, parentAccount }));
+      dispatch(openModal("MODAL_EVM_REWARDS_INFO", { account }));
     }
-  }, [account, dispatch, parentAccount]);
+  }, [account, dispatch]);
 
   const getStakeAction = useCallback(() => {
     if (isEthereumAccount) {

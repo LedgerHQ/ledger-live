@@ -1,92 +1,101 @@
-# Contributing
+# Contributing to Ledger Wallet
 
-:+1::tada: First off, thanks for taking the time to contribute! :tada::+1:
+Thanks for contributing! These guidelines apply to internal and external contributors, including agents. Please read fully before opening a pull request.
 
-This file will guide you through the local setup and contains the guidelines you will need
-to follow to get your code merged.
+> [!IMPORTANT]
+> For **Ledger Wallet** we are currently accepting bug fixes and invited contributions only. Feature PRs that do not align with our roadmap or long-term goals will be closed without extensive review.
 
-## Disclaimer
+## Getting Started
 
-Regarding Ledger Applications (Ledger Live Desktop, Ledger Live Mobile) we are only accepting bugfixes for the moment.
-There is a good chance that we will reject feature based PRs based on the fact that they do not fit our roadmap or our long-term goals.
+1. External contributors should fork the repository.
+2. Create your branch from `develop`.
+3. Follow the [main README](README.md) to get started.
+4. Follow additional setup instructions in the README files of the app or lib you are working on.
 
-## Guidelines
+## Branch & Commit Conventions
 
-### Important Steps
+### Branch naming
 
-**Before submitting a pull request, please make sure the following is done:**
+| Prefix | When to use |
+|--------|-------------|
+| `feat/` | Adding a new feature |
+| `bugfix/` | Fixing a bug |
+| `support/` | Refactors, tests, CI, tooling improvements |
 
-1. Fork the repository and create your branch from `develop` (check the git conventions for the naming of the branch).
-2. Follow the main installation steps. (https://github.com/LedgerHQ/ledger-live#installation)
-3. Follow additional installation steps depending on which package you want to contribute to.
-4. Make your changes.
-5. If you’ve fixed a bug or added code that should be tested, add tests!
-6. If needed, wait for the translations to be provided by the third party service.
-7. Add an entry to the changelog (`pnpm changeset`).
-8. Make sure that the code passes linter and type checks (`pnpm lint:fix` and `pnpm typecheck`).
-9. Make sure the code passes unit and end to end tests (`pnpm test`).
-10. Cleanup your branch - unless it contains merge commits (perform atomic commits, squash tiny commits…).
-11. Profit!
+### Commit messages
 
-### Git Conventions
+We follow [Conventional Commits](https://www.conventionalcommits.org/) and enforce it with [commitlint](https://commitlint.js.org/).
 
-We use the following git conventions for the `ledger-live` monorepo.
+Use `pnpm commit` for an interactive prompt, or `pnpm commitlint --from <target-branch>` to validate your branch.
 
-#### Branch naming
+### Rebase & merge strategy
 
-Depending on the purpose every git branch should be prefixed.
+**Always prefer rebasing** unless your branch contains merge commits from sub-features.
 
-- `feat/` when adding a new feature to the application or library
-- `bugfix/` when fixing an existing bug
-- `support/` for any other changes (refactor, tests, improvements, CI…)
+- Small, self-contained branches → rebase on `develop`.
+- Branches with cross-branch merges → merge `develop` into them to stay up to date.
 
-#### Changelogs
 
-We use [**changesets**](https://github.com/changesets/changesets) to handle the versioning of our libraries and apps. A detailed guide is available on the [**wiki**](https://github.com/LedgerHQ/ledger-live/wiki/Changesets).
+## The PR Lifecycle
 
-#### Commit message
+Open your PR as a **Draft** and pass all automated checks before making it **Ready for Review**.
 
-We use the standard [**Conventional Commits**](https://www.conventionalcommits.org/) specification and enforce it using [**commitlint**](https://commitlint.js.org/).
+```mermaid
+flowchart LR
+    S0[Create draft<br>pull request] --> S1[Pass all<br>automated checks]
+    S1 --> S2[Open pull request:<br>Ready for review]
+    S2 --> S3[Pass review<br>by code-owners]
+```
 
-You can use the `pnpm commit` prompt to ensure that your commit messages are valid, as well as the `pnpm commitlint --from <target branch>` command to check that every commit on your current branch are valid.
+### Automated checks
 
-#### Rebase & Merge strategies
+Before marking your PR ready for review, ensure all of the following pass:
 
-The rule of thumb is to **always favour rebasing** as long as your branch does not contain merge commits.
+- **lint, TypeScript** — all linter and type checks must pass.
+- **unit tests, e2e** — all tests must be green. See [testing requirements](https://developers.ledger.com/docs/ledger-live/contributing/reference/testing).
+- **SonarQube** — a green state is expected: meet the quality gate (expected test coverage, no unhandled code smells). See [SonarQube Guide](docs/contributing/sonarqube-guide.md).
+- **Copilot** — request a Copilot review, address or explicitly dismiss every comment, and resolve all threads.
 
-For instance:
+### Ready for review
 
-- bugfix branches that are small and self-contained should always get rebased on top of develop
-- feature branches that have merge commit from other branches (sub-features) should merge their target into them to be kept up to date
+- Click **"Ready for review"** to convert from Draft — this automatically requests the relevant code owners via `CODEOWNERS`.
+- When a reviewer leaves feedback and you push a fix, **re-request their review** (GitHub "Re-request" button).
+- If you receive a review request for files you don't own, feel free to remove yourself from the Reviewers panel.
 
-**⚠️ Important: do not rebase a branch that is waiting for translations from a third party service.**
 
-### Pull Request Conventions
+> [!IMPORTANT]
+> If you are a code owner, see [REVIEWING.md](REVIEWING.md) for reviewer guidance, including your daily review queue.
 
-#### Description
+## Changelogs
 
-- Fill-in the PR template.
-- Write a full description of what your pull request is about and why it was needed.
-- Add some screenshots or videos if relevant.
-- _For Ledger Employees:_ Add the JIRA issue number to link the issue with the PR.
+We use [changesets](https://github.com/changesets/changesets) for versioning. Run:
 
-### Workflow
+```bash
+pnpm changeset
+```
 
-- Github actions will trigger depending on which part of the codebase is impacted.
-- Your PR must pass the required CI actions.
-- Your PR must include a changelog (`pnpm changeset`).
+A changeset is **required** for any user-facing change or library API modification. See the [wiki](https://github.com/LedgerHQ/ledger-live/wiki/Changesets) for the full guide.
 
-### Translations
+## Translations
 
-We use a third party service called [**Smartling**](https://www.smartling.com/) to automate and manage translations for the Ledger Live applications (Desktop and Mobile).
+We use [Smartling](https://www.smartling.com/) for automated translations.
 
-**⚠️ Only add or edit translation files for the english language.**
+**Only edit the English source files.** Never commit files for other locales.
 
-You can find these files at the following locations:
+See the README files of [Ledger Wallet Desktop](apps/ledger-live-desktop) and [Ledger Wallet Mobile](apps/ledger-live-mobile) for the source file paths.
 
-- Ledger Live Desktop: `apps/ledger-live-desktop/static/i18n/en/app.json`
-- Ledger Live Mobile: `apps/ledger-live-mobile/src/locales/en/common.json`
+## Developer Portal
 
-### Developer Portal
+Tools and resources for building on Ledger are at the [Ledger Developer Portal](https://developers.ledger.com/).
 
-Ledger provides the tools and resources you need to build on top of our platform. They are accessible in the [Ledger Developer Portal](https://developers.ledger.com/).
+## Appendix: Tips
+
+#### Request Copilot while still in Draft
+
+> [!TIP]
+> <img width="500" alt="Request Copilot on a Draft PR" src="https://github.com/user-attachments/assets/1326c947-61bc-4793-b70c-9e39b04eb630" />
+
+#### Re-request review after pushing fixes
+
+> [!TIP]
+> <img width="500" alt="Re-request review on a reviewer that did the review" src="https://github.com/user-attachments/assets/80f83822-0557-4375-8ed6-a4aebfcb5d10" />

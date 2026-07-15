@@ -144,7 +144,7 @@ export function maxTxSizeCeil(
 }
 
 // refer to https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/api_impl/BitcoinLikeTransactionApi.cpp#L253
-export function computeDustAmount(currency: ICrypto, txSize: number): number {
+function legacyDustAmount(currency: ICrypto, txSize: number): number {
   let dustAmount = currency.network.dustThreshold;
   switch (currency.network.dustPolicy) {
     case "PER_KBYTE":
@@ -158,6 +158,37 @@ export function computeDustAmount(currency: ICrypto, txSize: number): number {
   }
 
   return dustAmount;
+}
+
+// Bitcoin Core dust model: dust = 3 × inputVBytes × minRelayFeeRate (sat/vB), floored at the legacy
+// threshold so a low relay fee never relaxes the historical protection. Falls back to the legacy
+// size-only computation for altcoins or when the relay fee / derivation mode is unknown.
+export function computeDustAmount(
+  currency: ICrypto,
+  txSize: number,
+  opts?: { derivationMode?: string | undefined; relayFeePerByteSatVb?: BigNumber | undefined },
+): number {
+  const legacyDust = legacyDustAmount(currency, txSize);
+
+  const { derivationMode, relayFeePerByteSatVb } = opts ?? {};
+  if (
+    currency.network.dustPolicy === "PER_KBYTE" &&
+    derivationMode !== undefined &&
+    Object.prototype.hasOwnProperty.call(INPUT_WEIGHT_SPECS, derivationMode) &&
+    relayFeePerByteSatVb !== undefined &&
+    relayFeePerByteSatVb.isFinite() &&
+    relayFeePerByteSatVb.gt(0)
+  ) {
+    const inputVBytes = vbytesCeilFromWeight(inputWeight(derivationMode));
+    const coreDust = relayFeePerByteSatVb
+      .times(3)
+      .times(inputVBytes)
+      .integerValue(BigNumber.ROUND_CEIL)
+      .toNumber();
+    return Math.max(coreDust, legacyDust);
+  }
+
+  return legacyDust;
 }
 
 export function isValidAddress(address: string, currency?: Currency): boolean {

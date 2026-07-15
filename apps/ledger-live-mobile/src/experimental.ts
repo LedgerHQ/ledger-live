@@ -120,12 +120,6 @@ export const developerFeatures: Feature[] = [
   },
   {
     type: "toggle",
-    name: "USE_LEARN_STAGING_URL",
-    title: i18nKeyDeveloper("staggingUrl", "title"),
-    description: i18nKeyDeveloper("staggingUrl", "description"),
-  },
-  {
-    type: "toggle",
     name: "MOCK_APP_UPDATE",
     title: i18nKeyDeveloper("mockAppUpdate", "title"),
     description: i18nKeyDeveloper("mockAppUpdate", "description"),

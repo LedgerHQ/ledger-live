@@ -6,7 +6,6 @@ import ICP from "@zondax/ledger-icp";
 import icpResolver from "@ledgerhq/coin-internet_computer/signer/index";
 import { signMessage } from "@ledgerhq/coin-internet_computer/hw-signMessage";
 import type { Account, Bridge } from "@ledgerhq/types-live";
-import makeCliTools from "@ledgerhq/coin-internet_computer/test/cli";
 import {
   CreateSigner,
   createMessageSigner,
@@ -52,6 +51,4 @@ const messageSigner = {
 
 const resolver: Resolver = createResolver(createSigner, icpResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, messageSigner, resolver };
+export { bridge, messageSigner, resolver };

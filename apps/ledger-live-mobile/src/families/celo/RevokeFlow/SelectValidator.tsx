@@ -68,7 +68,10 @@ export default function SelectValidator({ navigation, route }: Props) {
     );
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
+    <SafeAreaView
+      edges={["left", "right", "bottom"]}
+      style={[styles.root, { backgroundColor: colors.background }]}
+    >
       <TrackScreen
         category="CeloRevoke"
         name="SelectValidator"

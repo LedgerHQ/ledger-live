@@ -1,5 +1,6 @@
 import { render, screen } from "@tests/test-renderer";
 import React from "react";
+import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { fakeCategoryContentCards, landingPageStickyCtaCard, classicCards } from "./shared";
 import {
   LandingPageStickyCtaContentCard,
@@ -19,7 +20,7 @@ const Linking = {
 };
 
 const openLinkMock = jest.fn(async (card: LandingPageStickyCtaContentCard) => {
-  await trackContentCardEvent("contentcard_clicked", {
+  await trackContentCardEvent(ContentCardEvent.Clicked, {
     ...card.extras,
     campaign: card.id,
     contentcard: card.cta,
@@ -55,14 +56,6 @@ describe("GenericLandingPage", () => {
             ...state.settings,
             readOnlyModeEnabled: false,
           },
-          featureFlags: {
-            ...state.featureFlags,
-            overrides: {
-              flexibleContentCards: {
-                enabled: true,
-              },
-            },
-          },
           dynamicContent: {
             ...state.dynamicContent,
             mobileCards: classicCards,
@@ -91,7 +84,7 @@ describe("GenericLandingPage", () => {
     await user.press(screen.getByText(String(landingPageStickyCtaCard.cta)));
 
     expect(openLinkMock).toHaveBeenCalled();
-    expect(trackContentCardEvent).toHaveBeenCalledWith("contentcard_clicked", {
+    expect(trackContentCardEvent).toHaveBeenCalledWith(ContentCardEvent.Clicked, {
       campaign: "stickyCta001",
       cta: "Sign Up Now",
       link: "https://example.com/signup",

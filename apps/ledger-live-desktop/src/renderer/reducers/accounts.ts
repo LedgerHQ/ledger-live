@@ -91,14 +91,21 @@ export const hasAccountsSelector = createSelector(
 );
 // TODO: FIX RETURN TYPE
 export const currenciesSelector = createSelector(shallowAccountsSelector, accounts =>
-  [...new Set(flattenAccounts(accounts).map(a => getAccountCurrency(a)))].sort((a, b) =>
-    a.name.localeCompare(b.name),
-  ),
+  [
+    ...new Map(
+      flattenAccounts(accounts).map(a => {
+        const currency = getAccountCurrency(a);
+        return [currency.id, currency] as const;
+      }),
+    ).values(),
+  ].sort((a, b) => a.name.localeCompare(b.name)),
 );
 
 // TODO: FIX RETURN TYPE
 export const cryptoCurrenciesSelector = createSelector(shallowAccountsSelector, accounts =>
-  [...new Set(accounts.map(a => a.currency))].sort((a, b) => a.name.localeCompare(b.name)),
+  [...new Map(accounts.map(a => [a.currency.id, a.currency])).values()].sort((a, b) =>
+    a.name.localeCompare(b.name),
+  ),
 );
 export const accountSelector = createSelector(
   accountsSelector,

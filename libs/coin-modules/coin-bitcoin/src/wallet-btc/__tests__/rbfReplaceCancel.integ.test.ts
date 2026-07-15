@@ -24,6 +24,7 @@ import { buildTransaction } from "../../buildTransaction";
 import { removeReplaced } from "../../synchronisation";
 import type { BitcoinAccount, Transaction as BtcTransaction } from "../../types";
 import type { BtcOperation } from "../../types";
+import { bitcoinPickingStrategy } from "../../types";
 import {
   RbfFixtureResult,
   buildRbfFixtureTxs,
@@ -37,6 +38,7 @@ const CHANGE_ADDRESS = "1FHa4cuKdea21ByTngP9vz3KYDqqQe9SsA";
 const AMOUNT_TO_EXTERNAL = 50000;
 const CHANGE_AMOUNT = 40000;
 const FUNDING_OUTPUT_VALUE = 100000;
+const P2PKH_ADDRESS = /^1[1-9A-HJ-NP-Za-km-z]{25,34}$/;
 
 type TxHexMap = Record<string, string>;
 
@@ -159,10 +161,9 @@ describe("RBF replace and cancel integration (single UTXO)", () => {
     expect(tx.amount.isEqualTo(AMOUNT_TO_EXTERNAL)).toBe(true);
     expect(tx.replaceTxId).toBe(originalTxId);
     expect(tx.rbf).toBe(true);
-    expect(tx.feePerByte).toBeDefined();
     expect(tx.feePerByte?.gte(0)).toBe(true);
-    expect(tx.changeAddress).toBeDefined();
-    expect(tx.utxoStrategy?.strategy).toBeDefined();
+    expect(tx.changeAddress).toMatch(P2PKH_ADDRESS);
+    expect(tx.utxoStrategy?.strategy).toEqual(bitcoinPickingStrategy.OPTIMIZE_SIZE);
     expect(tx.utxoStrategy?.excludeUTXOs).toEqual([]);
 
     expect(mockExplorer.getTxHex).toHaveBeenCalledWith(originalTxId);
@@ -177,8 +178,8 @@ describe("RBF replace and cancel integration (single UTXO)", () => {
     expect(tx.amount.isEqualTo(AMOUNT_TO_EXTERNAL)).toBe(true);
     expect(tx.replaceTxId).toBe(originalTxId);
     expect(tx.rbf).toBe(true);
-    expect(tx.feePerByte).toBeDefined();
-    expect(tx.changeAddress).toBeDefined();
+    expect(tx.feePerByte?.gte(0)).toBe(true);
+    expect(tx.changeAddress).toMatch(P2PKH_ADDRESS);
     expect(tx.utxoStrategy?.excludeUTXOs).toEqual([]);
 
     expect(mockExplorer.getTxHex).toHaveBeenCalledWith(originalTxId);
@@ -203,10 +204,12 @@ describe("RBF replace and cancel integration (single UTXO)", () => {
     expect(patch.amount?.isEqualTo(AMOUNT_TO_EXTERNAL)).toBe(true);
     expect(patch.replaceTxId).toBe(originalTxId);
     expect(patch.rbf).toBe(true);
-    expect(patch.feePerByte).toBeDefined();
     expect(patch.feePerByte?.gte(0)).toBe(true);
-    expect(patch.changeAddress).toBeDefined();
-    expect(patch.utxoStrategy).toBeDefined();
+    expect(patch.changeAddress).toMatch(P2PKH_ADDRESS);
+    expect(patch.utxoStrategy).toEqual({
+      strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE,
+      excludeUTXOs: [],
+    });
   });
 
   it("getEditTransactionPatch(cancel) returns a patch with recipient as change address", async () => {
@@ -228,8 +231,8 @@ describe("RBF replace and cancel integration (single UTXO)", () => {
     expect(patch.amount?.isEqualTo(AMOUNT_TO_EXTERNAL)).toBe(true);
     expect(patch.replaceTxId).toBe(originalTxId);
     expect(patch.rbf).toBe(true);
-    expect(patch.feePerByte).toBeDefined();
-    expect(patch.changeAddress).toBeDefined();
+    expect(patch.feePerByte?.gte(0)).toBe(true);
+    expect(patch.changeAddress).toMatch(P2PKH_ADDRESS);
   });
 
   it("buildRbfSpeedUpTx uses pending operation recipient when available", async () => {
@@ -252,7 +255,6 @@ describe("RBF replace and cancel integration (single UTXO)", () => {
       feePerByte: cancelTx.feePerByte!,
       utxoStrategy: cancelTx.utxoStrategy!,
     } as BtcTransaction);
-    expect(txInfo).toBeDefined();
     expect(txInfo.inputs.length).toBeGreaterThan(0);
     expect(txInfo.outputs.length).toBeGreaterThan(0);
   });
@@ -270,9 +272,11 @@ describe("RBF replace and cancel integration (single UTXO)", () => {
       account: bitcoinAccount,
     });
     expect(patch.recipient).toBe(patch.changeAddress);
-    expect(patch.feePerByte).toBeDefined();
     expect(patch.feePerByte?.gte(0)).toBe(true);
-    expect(patch.utxoStrategy).toBeDefined();
+    expect(patch.utxoStrategy).toEqual({
+      strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE,
+      excludeUTXOs: [],
+    });
     expect(patch.replaceTxId).toBe(originalTxId);
   });
 
@@ -323,7 +327,6 @@ describe("RBF replace and cancel integration (single UTXO)", () => {
       feePerByte: speedupTx.feePerByte!,
       utxoStrategy: speedupTx.utxoStrategy!,
     } as BtcTransaction);
-    expect(txInfo).toBeDefined();
     expect(txInfo.inputs.length).toBeGreaterThan(0);
   });
 

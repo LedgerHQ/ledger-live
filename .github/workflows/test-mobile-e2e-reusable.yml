@@ -3,15 +3,18 @@ run-name: >
   @Mobile E2E • ${{ github.event_name == 'workflow_dispatch' && 'Manual' || github.event_name == 'schedule' && 'Scheduled' || github.event_name }} • ${{ inputs.tests_type || 'All' }} • ${{ inputs.ref || github.ref_name }} • ${{ github.actor }}
 
 # One concurrent run per: workflow definition ref (Use workflow from), code ref/sha under test,
-# test surface (tests_type or schedule cron), and filter. Matches checkout ref: inputs.ref || github.sha.
+# test surface (tests_type or schedule cron). Matches checkout ref: inputs.ref || github.sha.
+# NB: test_filter is intentionally reduced to a bounded "filtered"/"all" token rather than embedded verbatim.
+# It is free-text and can be very long; the concurrency group name must stay under 400 characters.
 concurrency:
   group: >-
-    mobile-e2e-${{ github.workflow_ref }}-${{ inputs.ref || github.sha }}-${{ github.event_name == 'schedule' && github.event.schedule || inputs.tests_type }}-${{ inputs.test_filter || '' }}
+    mobile-e2e-${{ github.ref_name }}-${{ inputs.ref || github.sha }}-${{ github.event_name == 'schedule' && github.event.schedule || inputs.tests_type }}-${{ inputs.test_filter && 'filtered' || 'all' }}
   cancel-in-progress: false
 
 on:
   schedule:
-    - cron: "0 3 * * 1-5" # Mon–Fri → Wallet 4.0 (default)
+    - cron: "0 3 * * 1,3,5"
+    - cron: "0 3 * * 2,4"
   workflow_dispatch:
     inputs:
       ref:
@@ -52,6 +55,11 @@ on:
         required: false
         type: boolean
         default: false
+      slack_notif:
+        description: "Send notification to Slack"
+        required: false
+        type: boolean
+        default: false
       export_to_xray:
         description: "Send results to Xray"
         required: false
@@ -70,16 +78,19 @@ on:
         required: false
         type: boolean
         default: false
-      enable_wallet40:
-        description: "Enable wallet 4.0 feature flag for tests"
-        required: false
-        type: boolean
-        default: true
       generate_ai_artifacts:
         description: "Generate AI analysis artifacts"
         required: false
         type: boolean
         default: false
+      feature_flags:
+        description: "Choose a feature flag set for the run"
+        required: false
+        type: choice
+        options:
+          - defaults
+          - wallet40-q2
+        default: defaults
       feature_flags_json:
         description: "JSON to override feature flags"
         required: false
@@ -115,21 +126,26 @@ on:
         required: false
         type: boolean
         default: false
+      slack_notif:
+        description: "Send notification to Slack"
+        required: false
+        type: boolean
+        default: false
       smoke_tests:
         description: "Run smoke tests"
         required: false
         type: boolean
         default: false
-      enable_wallet40:
-        description: "Enable wallet 4.0 feature flag for tests"
-        required: false
-        type: boolean
-        default: true
       generate_ai_artifacts:
         description: "Generate AI analysis artifacts"
         required: false
         type: boolean
         default: false
+      feature_flags:
+        description: "Choose a feature flag set for the run"
+        required: false
+        type: string
+        default: defaults
       feature_flags_json:
         description: "JSON to override feature flags"
         required: false
@@ -155,8 +171,11 @@ env:
   SPECULOS_IMAGE_TAG_IOS: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-83978f0' || 'latest' }}
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
-  E2E_ENABLE_WALLET40: ${{ inputs.enable_wallet40 == 'false' && '0' || '1' }}
+  ANDROID_FEATURE_FLAGS: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 3 * * 1,3,5' && 'wallet40-q2') || inputs.feature_flags || 'defaults' }}
+  IOS_FEATURE_FLAGS: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 3 * * 2,4' && 'wallet40-q2') || inputs.feature_flags || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
+  USERDATA_CACHE_ENABLED: ${{ !inputs.production_firebase }}
+  E2E_GENERATED_USERDATA_DIR: ${{ !inputs.production_firebase && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
   # iOS Simulator configuration
   IOS_SIMULATOR_DEVICE: iPhone 15
   # Android AVD configuration
@@ -201,9 +220,9 @@ jobs:
     steps:
       - name: generate token
         id: generate-token
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
           repositories: |
             coin-apps
@@ -291,8 +310,10 @@ jobs:
           echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
           echo "- **Firebase env to target:** $BUILD_TYPE"
           echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
-          echo "- **Wallet 4.0:** ${{ env.E2E_ENABLE_WALLET40 == '1' && 'enabled' || 'disabled' }}"
-          echo "- **Extra feature flags:** $EXTRA_FEATURE_FLAGS"
+          echo "- **Slack notification:** ${{ (inputs.slack_notif || github.event_name == 'schedule') && 'enabled' || 'disabled' }}"
+          echo "- **Android Feature Flags:** ${{ env.ANDROID_FEATURE_FLAGS }}"
+          echo "- **iOS Feature Flags:** ${{ env.IOS_FEATURE_FLAGS }}"
+          echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
           } >> $GITHUB_STEP_SUMMARY
 
       - name: Validate feature flags JSON input
@@ -320,9 +341,10 @@ jobs:
             PREFIX="develop/"
           fi
           echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
-          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
-          echo "ios_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
-          echo "android_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
+          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
+          HEAD_SHA=$(git rev-parse HEAD)
+          echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios" >> $GITHUB_OUTPUT
+          echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=${PREFIX}android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "ios_timing_cache_key=${PREFIX}ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_5-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
@@ -367,7 +389,7 @@ jobs:
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
           key: ${{ steps.cache-keys.outputs.ios_native_key }}
@@ -381,7 +403,7 @@ jobs:
 
       - name: Check if Android Native Build exists already
         id: check-android-native
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
           key: ${{ steps.cache-keys.outputs.android_native_key }}
@@ -395,7 +417,7 @@ jobs:
 
       - name: Check if iOS JS Build exists already
         id: check-ios-js
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: apps/ledger-live-mobile/main.jsbundle
           key: ${{ steps.cache-keys.outputs.ios_js_key }}
@@ -409,7 +431,7 @@ jobs:
 
       - name: Check if Android JS Build exists already
         id: check-android-js
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: apps/ledger-live-mobile/main.jsbundle
           key: ${{ steps.cache-keys.outputs.android_js_key }}
@@ -491,7 +513,7 @@ jobs:
   detox-tests-ios:
     name: iOS E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
     needs: [build-ios, determine-builds]
-    if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
+    if: ${{ always() && !cancelled() && needs.build-ios.result == 'success' && needs.determine-builds.result == 'success' && inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     runs-on: ["qaa", macOS, ARM64, "performance-pool"]
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
@@ -547,7 +569,7 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
-      - uses: nick-fields/retry@v3
+      - uses: nick-fields/retry@v4
         name: install dependencies
         id: install-dependencies
         with:
@@ -611,6 +633,28 @@ jobs:
           IOS_VERSION=$(xcrun simctl list runtimes iOS -j | jq -r '.runtimes[-1].version // "unknown"' || echo "unknown")
           echo "DEVICE_INFO=${{ env.IOS_SIMULATOR_DEVICE }} (iOS $IOS_VERSION)" >> $GITHUB_ENV
 
+      - name: Compute userdata cache key date
+        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
+        id: userdata-meta
+        shell: bash
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore pre-generated userdata (app.json) from S3 cache
+        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
+        continue-on-error: true
+        uses: tespkg/actions-cache/restore@v1.9.0
+        with:
+          path: e2e/userdata/generated
+          key: develop/e2e-userdata-mobile-${{ steps.userdata-meta.outputs.date }}
+          restore-keys: |
+            develop/e2e-userdata-mobile-
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
@@ -627,6 +671,7 @@ jobs:
           NX_SKIP_NX_CACHE: true
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_IOS }}
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
+          E2E_MOBILE_FEATURE_FLAGS: ${{ env.IOS_FEATURE_FLAGS }}
         run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
 
       - name: Upload iOS artifacts
@@ -807,7 +852,7 @@ jobs:
         timeout-minutes: 20
         with:
           coinapps_path: ${{ env.COINAPPS }}
-          bot_id: ${{ secrets.GH_BOT_APP_ID }}
+          bot_id: ${{ secrets.GH_BOT_CLIENT_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Build CLI
@@ -827,6 +872,28 @@ jobs:
           DEVICE_NAME=$(echo '${{ env.AVD_PROFILE }}' | sed 's/_/ /g; s/\b\w/\U&/g')
           echo "DEVICE_INFO=${DEVICE_NAME} (Android ${{ env.AVD_API }})" >> $GITHUB_ENV
 
+      - name: Compute userdata cache key date
+        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
+        id: userdata-meta
+        shell: bash
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore pre-generated userdata (app.json) from S3 cache
+        if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
+        continue-on-error: true
+        uses: tespkg/actions-cache/restore@v1.9.0
+        with:
+          path: e2e/userdata/generated
+          key: develop/e2e-userdata-mobile-${{ steps.userdata-meta.outputs.date }}
+          restore-keys: |
+            develop/e2e-userdata-mobile-
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
@@ -842,6 +909,7 @@ jobs:
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_ANDROID }}
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
+          E2E_MOBILE_FEATURE_FLAGS: ${{ env.ANDROID_FEATURE_FLAGS }}
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
 
       - name: Upload Android artifacts
@@ -884,9 +952,6 @@ jobs:
           path: ios-test-artifacts
           pattern: ios-test-artifacts*
           merge-multiple: true
-      - name: Remove Detox simulator artifacts
-        if: ${{ !cancelled() }}
-        run: rm -rf ios-test-artifacts/ios.sim.release.*
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
@@ -904,6 +969,12 @@ jobs:
           path: ios-test-artifacts
           report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
           summary_message: ${{ steps.summary.outputs.summary_message }}
+      - name: Write failed tests summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        with:
+          results-path: ios-test-artifacts
+          runner: detox
       - name: Aggregate test results
         if: ${{ !cancelled() }}
         id: aggregate
@@ -961,9 +1032,6 @@ jobs:
           path: android-test-artifacts
           pattern: android-test-artifacts*
           merge-multiple: true
-      - name: Remove Detox emulator artifacts
-        if: ${{ !cancelled() }}
-        run: rm -rf android-test-artifacts/android.emu.release.*
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
@@ -981,6 +1049,12 @@ jobs:
           path: android-test-artifacts
           report_path_suffix: ${{ github.event_name != 'schedule' && 'manual' || '' }}
           summary_message: ${{ steps.summary.outputs.summary_message }}
+      - name: Write failed tests summary
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        with:
+          results-path: android-test-artifacts
+          runner: detox
       - name: Aggregate test results
         if: ${{ !cancelled() }}
         id: aggregate
@@ -1148,7 +1222,7 @@ jobs:
       TESTS_TYPE: ${{ inputs.tests_type }}
     steps:
       - name: format message
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         id: message
         with:
           script: |
@@ -1273,7 +1347,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           payload-file-path: "./payload-slack-content.json"
       - name: post to a Slack channel
-        if: ${{ contains(fromJson('["release"]'), github.ref_name) || contains(fromJson('["release, develop"]'), inputs.ref) || github.event_name == 'schedule' }}
+        if: ${{ inputs.slack_notif || github.event_name == 'schedule' }}
         uses: slackapi/slack-github-action@v3.0.1
         with:
           method: chat.postMessage
@@ -1287,7 +1361,7 @@ jobs:
     if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure') }}
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         id: aws
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -1316,7 +1390,7 @@ jobs:
     if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') }}
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         id: aws
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}

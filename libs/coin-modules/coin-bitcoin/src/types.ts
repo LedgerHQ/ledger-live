@@ -117,10 +117,13 @@ export type FeeItemsRaw = {
 export type NetworkInfo = {
   family: "bitcoin";
   feeItems: FeeItems;
+  relayFeePerByte: BigNumber;
 };
 export type NetworkInfoRaw = {
   family: "bitcoin";
   feeItems: FeeItemsRaw;
+  // optional for back-compat with transactions serialized before this field existed
+  relayFeePerByte?: string;
 };
 export const bitcoinPickingStrategy = {
   DEEP_OUTPUTS_FIRST: 0,

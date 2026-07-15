@@ -8,10 +8,9 @@ import { useSharedValue } from "react-native-reanimated";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { Features } from "@shared/feature-flags";
 
-import { useRefreshAccountsOrdering } from "~/actions/general";
+import { useRefreshAccountsOrderingAfterInteractions } from "~/actions/general";
 import { track } from "~/analytics";
 import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
-import { useBorrowLiveConfig } from "LLM/features/Borrow/hooks/useBorrowLiveConfig";
 import {
   flattenAccountsSelector,
   hasNonTokenAccountsSelector,
@@ -36,16 +35,11 @@ interface UsePortfolioViewModelResult {
   isAWalletCardDisplayed: boolean;
   isAccountListUIEnabled: boolean;
   shouldDisplayAssetDiscoverability: boolean;
-  shouldDisplayQuickActionCtas: boolean;
-  shouldDisplayWallet40MainNav: boolean;
   shouldDisplayAssetSection: boolean;
-  shouldDisplayMarketBanner: boolean;
-  shouldDisplayBorrowSection: boolean;
   shouldDisplayOperationsList: boolean;
   showAssets: boolean;
   isLNSUpsellBannerShown: boolean;
   isAddModalOpened: boolean;
-  shouldDisplayGraphRework: boolean;
   backgroundColor: string;
   isSyncError: boolean;
   shouldAddBottomPaddingForLegacyAssets: boolean;
@@ -53,7 +47,6 @@ interface UsePortfolioViewModelResult {
   closeAddModal: () => void;
   handleHeightChange: (newHeight: number) => void;
   onBackFromUpdate: () => void;
-  goToAnalyticsAllocations: () => void;
 }
 
 const usePortfolioViewModel = (navigation: {
@@ -65,21 +58,15 @@ const usePortfolioViewModel = (navigation: {
   const { isAWalletCardDisplayed } = useDynamicContent();
   const accountListFF = useFeature("llmAccountListUI");
   const {
-    shouldDisplayGraphRework,
-    shouldDisplayQuickActionCtas,
-    shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
-    shouldDisplayMarketBanner,
     shouldDisplayOperationsList,
     shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
-  const borrowConfig = useBorrowLiveConfig();
-  const shouldDisplayBorrowSection = borrowConfig?.enabled ?? false;
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
   const isFocused = useIsFocused();
-  const { backgroundColor } = useWallet40Theme("mobile");
+  const { backgroundColor } = useWallet40Theme();
 
   const mmkvMigrationFF = useFeature("llmMmkvMigration");
 
@@ -100,6 +87,9 @@ const usePortfolioViewModel = (navigation: {
 
   usePortfolioAnalyticsOptInPrompt();
 
+  const refreshAccountsOrdering = useRefreshAccountsOrderingAfterInteractions();
+  useFocusEffect(refreshAccountsOrdering);
+
   const openAddModal = useCallback(() => {
     track("button_clicked", {
       button: "Add Account",
@@ -108,8 +98,6 @@ const usePortfolioViewModel = (navigation: {
   }, []);
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), []);
-  const refreshAccountsOrdering = useRefreshAccountsOrdering();
-  useFocusEffect(refreshAccountsOrdering);
 
   useEffect(() => {
     if (!llmDatadog?.enabled) return;
@@ -150,31 +138,22 @@ const usePortfolioViewModel = (navigation: {
 
   const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;
 
-  const goToAnalyticsAllocations = useCallback(() => {
-    navigation.navigate(ScreenName.AnalyticsAllocation);
-  }, [navigation]);
-
   const { syncPhase } = usePortfolioBalance();
   const isSyncError = syncPhase === "failed";
 
   const shouldAddBottomPaddingForLegacyAssets =
-    !isAWalletCardDisplayed && shouldDisplayGraphRework && shouldDisplayOperationsList;
+    !isAWalletCardDisplayed && shouldDisplayOperationsList;
 
   return {
     hideEmptyTokenAccount,
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
     shouldDisplayAssetDiscoverability,
-    shouldDisplayQuickActionCtas,
-    shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
-    shouldDisplayBorrowSection,
-    shouldDisplayMarketBanner,
     shouldDisplayOperationsList,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
-    shouldDisplayGraphRework,
     backgroundColor,
     isSyncError,
     shouldAddBottomPaddingForLegacyAssets,
@@ -182,7 +161,6 @@ const usePortfolioViewModel = (navigation: {
     closeAddModal,
     handleHeightChange,
     onBackFromUpdate,
-    goToAnalyticsAllocations,
   };
 };
 

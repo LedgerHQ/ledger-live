@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-near",
-  "version": "0.26.0",
+  "version": "0.27.0-next.0",
   "description": "Near Coin integration",
   "keywords": [
     "Ledger",
@@ -57,7 +57,6 @@
     "bignumber.js": "^9.1.2",
     "expect": "catalog:",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
     "near-api-js": "^3.0.2",
     "rxjs": "catalog:"
   },
@@ -67,7 +66,6 @@
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
     "@types/node": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",

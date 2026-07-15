@@ -1,10 +1,10 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { FileUtils } from "tests/utils/fileUtils";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 
 test.describe("Settings", () => {
   test.use({
@@ -44,6 +44,7 @@ test.describe("Password", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     cliCommands: [liveDataCommand(account)],
     speculosApp: account.currency.speculosApp,
+    speculosForSetupOnly: true,
   });
 
   test(
@@ -85,6 +86,7 @@ test.describe("counter value selection", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     cliCommands: [liveDataCommand(account)],
     speculosApp: account.currency.speculosApp,
+    speculosForSetupOnly: true,
   });
 
   test(
@@ -118,7 +120,7 @@ test.describe("counter value selection", () => {
 
       await app.portfolio.expectBalanceDiffCounterValue("%");
 
-      await app.portfolio.expectAssetRowCounterValue(account.currency.name, "€");
+      await app.portfolio.expectAssetValueToBe(account.currency, "€");
       await app.portfolio.expectOperationCounterValue("€");
     },
   );
@@ -174,7 +176,7 @@ test.describe("Reset app", () => {
       await app.settings.resetApp();
       await app.settingsModal.checkResetModal();
       await app.settingsModal.clickOnConfirmButton();
-      await app.onboarding.waitForLaunch();
+      await app.onboarding.clickGetStartedButton();
       const appJsonAfter = await FileUtils.getAppJsonSize(userdataFile);
       await FileUtils.compareAppJsonSize(appJsonBefore, appJsonAfter);
     },

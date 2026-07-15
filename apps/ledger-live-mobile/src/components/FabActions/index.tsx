@@ -63,6 +63,7 @@ export type ActionButtonEvent = ActionButtonEventProps & {
   buttonProps?: ButtonProps;
   disabled?: boolean;
   testId?: string;
+  additionalPropertiesByEventType?: Record<string, Record<string, unknown>>;
 };
 
 export type ActionButtonProps = {
@@ -150,6 +151,7 @@ export const FabButtonBarProvider = ({
         eventProperties,
         id,
         customHandler,
+        additionalPropertiesByEventType,
       } = data;
 
       const shouldUseLegacyRebornFlow = readOnlyModeEnabled && !shouldUseLazyOnboarding;
@@ -169,6 +171,7 @@ export const FabButtonBarProvider = ({
             ...globalEventProperties,
             ...eventProperties,
             button: id,
+            ...(additionalPropertiesByEventType?.button_clicked ?? {}),
           });
         }
         setInfoModalProps(undefined);

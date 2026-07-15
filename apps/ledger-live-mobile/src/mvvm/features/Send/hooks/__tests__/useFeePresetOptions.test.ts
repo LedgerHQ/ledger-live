@@ -20,24 +20,6 @@ const btcTransaction = {
   recipient: "",
 } as unknown as Transaction;
 
-const evmTransaction = {
-  family: "evm",
-  recipient: "",
-  gasOptions: null,
-} as unknown as Transaction;
-
-const distinctGasOptions = {
-  slow: { maxFeePerGas: 10, maxPriorityFeePerGas: 1 },
-  medium: { maxFeePerGas: 20, maxPriorityFeePerGas: 2 },
-  fast: { maxFeePerGas: 30, maxPriorityFeePerGas: 3 },
-};
-
-const identicalGasOptions = {
-  slow: { maxFeePerGas: 10 },
-  medium: { maxFeePerGas: 10 },
-  fast: { maxFeePerGas: 10 },
-};
-
 describe("useFeePresetOptions", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -46,153 +28,60 @@ describe("useFeePresetOptions", () => {
       .mockReturnValue(mockPresets as ReturnType<typeof sendFeatures.getFeePresetOptions>);
   });
 
-  describe("non-EVM transactions", () => {
-    it("delegates to sendFeatures.getFeePresetOptions", () => {
-      const { result } = renderHook(() => useFeePresetOptions(mockCurrency, btcTransaction));
+  it("delegates to sendFeatures.getFeePresetOptions with the current transaction", () => {
+    const { result } = renderHook(() => useFeePresetOptions(mockCurrency, btcTransaction));
 
-      expect(result.current).toEqual(mockPresets);
-      expect(sendFeatures.getFeePresetOptions).toHaveBeenCalledWith(mockCurrency, btcTransaction);
-    });
-
-    it("handles undefined currency", () => {
-      renderHook(() => useFeePresetOptions(undefined, btcTransaction));
-
-      expect(sendFeatures.getFeePresetOptions).toHaveBeenCalledWith(undefined, btcTransaction);
-    });
-
-    it("returns empty array when sendFeatures returns none", () => {
-      jest.mocked(sendFeatures.getFeePresetOptions).mockReturnValue([]);
-
-      const { result } = renderHook(() => useFeePresetOptions(mockCurrency, btcTransaction));
-
-      expect(result.current).toEqual([]);
-    });
+    expect(result.current).toEqual(mockPresets);
+    expect(sendFeatures.getFeePresetOptions).toHaveBeenCalledWith(mockCurrency, btcTransaction);
   });
 
-  describe("EVM transactions with distinct gasOptions", () => {
-    it("passes the transaction with gasOptions to sendFeatures", () => {
-      const evmTxWithOptions = {
-        ...evmTransaction,
-        gasOptions: distinctGasOptions,
-      } as unknown as Transaction;
+  it("handles undefined currency", () => {
+    renderHook(() => useFeePresetOptions(undefined, btcTransaction));
 
-      renderHook(() => useFeePresetOptions(mockCurrency, evmTxWithOptions));
-
-      expect(sendFeatures.getFeePresetOptions).toHaveBeenCalledWith(
-        mockCurrency,
-        expect.objectContaining({ gasOptions: distinctGasOptions }),
-      );
-    });
-
-    it("returns presets when gasOptions are distinct", () => {
-      const evmTxWithOptions = {
-        ...evmTransaction,
-        gasOptions: distinctGasOptions,
-      } as unknown as Transaction;
-
-      const { result } = renderHook(() => useFeePresetOptions(mockCurrency, evmTxWithOptions));
-
-      expect(result.current).toEqual(mockPresets);
-    });
+    expect(sendFeatures.getFeePresetOptions).toHaveBeenCalledWith(undefined, btcTransaction);
   });
 
-  describe("EVM gasOptions caching", () => {
-    it("uses cached distinct gasOptions when new ones are identical", () => {
-      const { rerender } = renderHook(
-        ({ gasOptions }: { gasOptions: unknown }) =>
-          useFeePresetOptions(mockCurrency, {
-            ...evmTransaction,
-            gasOptions,
-          } as unknown as Transaction),
-        { initialProps: { gasOptions: distinctGasOptions } },
-      );
+  it("returns empty array when sendFeatures returns none", () => {
+    jest.mocked(sendFeatures.getFeePresetOptions).mockReturnValue([]);
 
-      jest.mocked(sendFeatures.getFeePresetOptions).mockClear();
+    const { result } = renderHook(() => useFeePresetOptions(mockCurrency, btcTransaction));
 
-      rerender({ gasOptions: identicalGasOptions });
-
-      // Should be called with the cached distinct options, not the identical ones
-      expect(sendFeatures.getFeePresetOptions).toHaveBeenCalledWith(
-        mockCurrency,
-        expect.objectContaining({ gasOptions: distinctGasOptions }),
-      );
-    });
-
-    it("updates cache when distinct gasOptions change", () => {
-      const updatedDistinctGasOptions = {
-        slow: { maxFeePerGas: 100 },
-        medium: { maxFeePerGas: 200 },
-        fast: { maxFeePerGas: 300 },
-      };
-
-      const { rerender } = renderHook(
-        ({ gasOptions }: { gasOptions: unknown }) =>
-          useFeePresetOptions(mockCurrency, {
-            ...evmTransaction,
-            gasOptions,
-          } as unknown as Transaction),
-        { initialProps: { gasOptions: distinctGasOptions } },
-      );
-
-      jest.mocked(sendFeatures.getFeePresetOptions).mockClear();
-
-      rerender({ gasOptions: updatedDistinctGasOptions });
-
-      expect(sendFeatures.getFeePresetOptions).toHaveBeenCalledWith(
-        mockCurrency,
-        expect.objectContaining({ gasOptions: updatedDistinctGasOptions }),
-      );
-    });
-
-    it("falls back to transaction without gasOptions when cache is empty and options are identical", () => {
-      const { result } = renderHook(() =>
-        useFeePresetOptions(mockCurrency, {
-          ...evmTransaction,
-          gasOptions: identicalGasOptions,
-        } as unknown as Transaction),
-      );
-
-      // No cached distinct options yet → should still return presets (using whatever sendFeatures returns)
-      expect(result.current).toEqual(mockPresets);
-    });
+    expect(result.current).toEqual([]);
   });
 
-  describe("reactivity", () => {
-    it("recomputes when currency changes", () => {
-      const otherCurrency = { id: "ethereum", family: "evm" } as unknown as CryptoOrTokenCurrency;
+  it("recomputes when the transaction changes", () => {
+    const tx1 = { family: "bitcoin", amount: 1 } as unknown as Transaction;
+    const tx2 = { family: "bitcoin", amount: 2 } as unknown as Transaction;
 
-      const { rerender } = renderHook(
-        ({ currency }: { currency: CryptoOrTokenCurrency }) =>
-          useFeePresetOptions(currency, btcTransaction),
-        { initialProps: { currency: mockCurrency } },
-      );
+    const { rerender } = renderHook<ReturnType<typeof useFeePresetOptions>, { tx: Transaction }>(
+      ({ tx }) => useFeePresetOptions(mockCurrency, tx),
+      {
+        initialProps: { tx: tx1 },
+      },
+    );
 
-      rerender({ currency: otherCurrency });
+    expect(sendFeatures.getFeePresetOptions).toHaveBeenCalledWith(mockCurrency, tx1);
 
-      expect(sendFeatures.getFeePresetOptions).toHaveBeenLastCalledWith(
-        otherCurrency,
-        btcTransaction,
-      );
+    rerender({ tx: tx2 });
+
+    expect(sendFeatures.getFeePresetOptions).toHaveBeenCalledWith(mockCurrency, tx2);
+  });
+
+  it("recomputes when currency changes", () => {
+    const otherCurrency = { id: "ethereum", family: "evm" } as unknown as CryptoOrTokenCurrency;
+
+    const { rerender } = renderHook<
+      ReturnType<typeof useFeePresetOptions>,
+      { currency: CryptoOrTokenCurrency }
+    >(({ currency }) => useFeePresetOptions(currency, btcTransaction), {
+      initialProps: { currency: mockCurrency },
     });
 
-    it("recomputes when transaction family changes", () => {
-      const { rerender } = renderHook(
-        ({ transaction }: { transaction: Transaction }) =>
-          useFeePresetOptions(mockCurrency, transaction),
-        { initialProps: { transaction: btcTransaction } },
-      );
+    rerender({ currency: otherCurrency });
 
-      const evmTxWithOptions = {
-        ...evmTransaction,
-        gasOptions: distinctGasOptions,
-      } as unknown as Transaction;
-
-      rerender({ transaction: evmTxWithOptions });
-
-      expect(sendFeatures.getFeePresetOptions).toHaveBeenLastCalledWith(
-        mockCurrency,
-        expect.objectContaining({ family: "evm" }),
-      );
-    });
+    expect(sendFeatures.getFeePresetOptions).toHaveBeenLastCalledWith(
+      otherCurrency,
+      btcTransaction,
+    );
   });
 });

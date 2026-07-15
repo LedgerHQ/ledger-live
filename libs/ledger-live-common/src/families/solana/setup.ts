@@ -4,7 +4,6 @@ import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
 import { SolanaSigner } from "@ledgerhq/coin-solana/signer";
 import { createBridges } from "@ledgerhq/coin-solana/bridge/js";
-import makeCliTools from "@ledgerhq/coin-solana/cli-transaction";
 import solanaResolver from "@ledgerhq/coin-solana/hw-getAddress";
 import { SolanaAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-solana/types";
 import { createMessageSigner, createResolver, executeWithSigner } from "../../bridge/setup";
@@ -53,6 +52,4 @@ const messageSigner = {
 
 const resolver: Resolver = createResolver(getSolanaSignerInstance, solanaResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, messageSigner, resolver };
+export { bridge, messageSigner, resolver };

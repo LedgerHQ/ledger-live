@@ -22,7 +22,6 @@ const initialState = {
   ...withFlagOverrides({
     lwdWallet40: {
       enabled: true,
-      params: { balanceRefreshRework: true },
     },
   }),
 };

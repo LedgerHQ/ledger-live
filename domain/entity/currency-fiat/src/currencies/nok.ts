@@ -3,9 +3,16 @@ import { fiat } from "../define";
 export const nok = fiat({
   type: "FiatCurrency",
   id: "nok",
-  name: "Norwegian Krone",
   ticker: "NOK",
+  name: "Norwegian Krone",
   symbol: "kr",
-  units: [{ name: "Norwegian Krone", code: "NOK", magnitude: 2 }],
-  keywords: ["krone", "nok"],
+  units: [
+    {
+      code: "kr",
+      name: "Norwegian Krone",
+      magnitude: 2,
+      showAllDigits: true,
+      prefixCode: true,
+    },
+  ],
 });

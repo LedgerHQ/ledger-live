@@ -1,5 +1,5 @@
-import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 export function runDeleteAccountTest(account: AccountType, tmsLinks: string[], tags: string[]) {
@@ -8,6 +8,7 @@ export function runDeleteAccountTest(account: AccountType, tmsLinks: string[], t
       await app.init({
         speculosApp: account.currency.speculosApp,
         cliCommands: [liveDataCommand(account)],
+        speculosForSetupOnly: true,
       });
       await app.mainNavigation.waitForWallet40Ready();
     });

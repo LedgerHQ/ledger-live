@@ -3,7 +3,8 @@ import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { marketApi } from "@ledgerhq/live-common/market/state-manager/api";
 import { cgApi } from "@ledgerhq/live-common/cg-client/state-manager/api";
-import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
+import { cryptoAssetsApi } from "@domain/api-currency-token";
+import { currencyFiatApi } from "@domain/api-currency-fiat";
 import { pushDevicesApi } from "@ledgerhq/client-ids/api";
 import { cmcApi } from "@ledgerhq/live-common/cmc-client/state-manager/api";
 import { counterValuesApi } from "@ledgerhq/live-common/counterValues/state-manager/api";
@@ -13,6 +14,7 @@ const APIs = {
   [cmcApi.reducerPath]: cmcApi,
   [counterValuesApi.reducerPath]: counterValuesApi,
   [cryptoAssetsApi.reducerPath]: cryptoAssetsApi,
+  [currencyFiatApi.reducerPath]: currencyFiatApi,
   [cgApi.reducerPath]: cgApi,
   [marketApi.reducerPath]: marketApi,
   [ofacGeoBlockApi.reducerPath]: ofacGeoBlockApi,

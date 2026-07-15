@@ -2,7 +2,7 @@ import { Step } from "jest-allure2-reporter/api";
 import { log } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
-import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
 export default class AccountsPage extends CommonPage {
   private readonly baseLink = "accounts";

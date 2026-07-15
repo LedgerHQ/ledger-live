@@ -27,6 +27,7 @@ type MemberData = {
 
 class ResolvedCommandStreamInternals {
   public isCreated: boolean = false;
+  public isClosed: boolean = false;
   public members: Uint8Array[] = [];
   public membersData: MemberData[] = [];
   public topic: Uint8Array | null = null;
@@ -49,6 +50,10 @@ export class ResolvedCommandStream {
 
   public isCreated(): boolean {
     return this._internals.isCreated;
+  }
+
+  public isClosed(): boolean {
+    return this._internals.isClosed;
   }
 
   public getMembers(): Uint8Array[] {
@@ -235,6 +240,10 @@ export default class CommandStreamResolver {
           issuer: block.issuer,
           initialiationVector: (command as PublishKey).initializationVector,
         });
+        break;
+      case CommandType.CloseStream:
+        this.assertStreamIsCreated(internals);
+        internals.isClosed = true;
         break;
     }
     return internals;

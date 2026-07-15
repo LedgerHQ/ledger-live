@@ -6,6 +6,7 @@ import { createCommandOutput } from "../../output";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { mapSwapStatusLine } from "./status-shared";
 import { resolveSwapProvider } from "./providers";
+import { swapFlowId, trackSwapStatusPolled } from "../../analytics/swap-analytics";
 
 export default defineCommand({
   name: "status",
@@ -26,7 +27,9 @@ export default defineCommand({
     );
     const out = createCommandOutput(output, { command: "swap status", network: "swap" });
     const provider = resolveSwapProvider(flags.provider);
+    const flowId = swapFlowId();
     await out.run(async () => {
+      trackSwapStatusPolled({ flowId, swapId: flags["swap-id"], provider });
       const raw = await getMultipleStatus([
         {
           provider,

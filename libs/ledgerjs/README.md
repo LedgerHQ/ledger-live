@@ -18,62 +18,18 @@ Welcome to Ledger's JavaScript libraries.
 
 ## `@ledgerhq/hw-transport-*`
 
-**To communicate with a Ledger device, you first need to identify which transport(s) to use.**
+> [!IMPORTANT]
+> The recommended way to communicate with a Ledger device is now the [Ledger Device Management Kit (DMK)](https://developers.ledger.com/docs/device-interaction/integration/how_to/dmk). New integrations should use the DMK.
 
-> The _hw-transport_ libraries implement communication protocol for our [hardware wallet devices](https://www.ledger.com/) (Ledger Nano / Ledger Nano S / Ledger Nano X / Ledger Blue) in many platforms: **Web, Node, Electron, React Native,...** and using many different communication channels: **U2F, HID, WebUSB, Bluetooth,...**
+The _hw-transport_ libraries implement the communication protocol with our [hardware wallet devices](https://www.ledger.com/) over a given channel. Production device communication now goes through the [DMK](https://developers.ledger.com/docs/device-interaction/integration/how_to/dmk); the transports that remain in this repository are for development and testing:
 
-| Channels    | U2F/WebAuthn           | HID | WebUSB | Bluetooth |
-| ----------- | ---------------------- | --- | ------ | --------- |
-| Blue        | DEPRECATED<sup>1</sup> | YES | NO     | NO        |
-| Nano S      | DEPRECATED<sup>1</sup> | YES | YES    | NO        |
-| Nano S Plus | DEPRECATED<sup>1</sup> | YES | YES    | NO        |
-| Nano X      | DEPRECATED<sup>1</sup> | YES | YES    | YES       |
-
-1. U2F is deprecated. See [docs/migrate_webusb.md](docs/migrate_webusb.md).
-
-Summary of implementations available per platform
-
-| Platforms        | U2F/WebAuthn                             | HID                                           | WebUSB                                      | Bluetooth                                 |
-| ---------------- | ---------------------------------------- | --------------------------------------------- | ------------------------------------------- | ----------------------------------------- |
-| Web              | `@ledgerhq/hw-transport-u2f`             | `@ledgerhq/hw-transport-webhid`               | `@ledgerhq/hw-transport-webusb`             | `@ledgerhq/hw-transport-web-ble`          |
-| Electron/Node.js | NO                                       | `@ledgerhq/hw-transport-node-hid`<sup>1</sup> | NO                                          | NO                                        |
-| iOS              | NO                                       | NO                                            | NO                                          | `@ledgerhq/react-native-hw-transport-ble` |
-| Android          | `@ledgerhq/hw-transport-u2f`<sup>2</sup> | `@ledgerhq/react-native-hid`                  | `@ledgerhq/hw-transport-webusb`<sup>2</sup> | `@ledgerhq/react-native-hw-transport-ble` |
-
-1. 3 implementations available
-2. via Android Chrome
-
-**Beware the current web support:**
-
-| Channels | U2F                    | WebHID.         | WebUSB             | WebBluetooth |
-| -------- | ---------------------- | --------------- | ------------------ | ------------ |
-| Windows  | DEPRECATED<sup>1</sup> | YES             | OK BUT<sup>2</sup> | YES          |
-| Mac      | DEPRECATED<sup>1</sup> | YES             | YES                | YES          |
-| Linux    | DEPRECATED<sup>1</sup> | YES             | YES                | YES          |
-| Chrome   | DEPRECATED<sup>1</sup> | YES<sup>3</sup> | YES                | YES          |
-| Safari   | DEPRECATED<sup>1</sup> | NO              | NO                 | NO           |
-| Firefox  | DEPRECATED<sup>1</sup> | NO              | NO                 | NO           |
-| IE.      | DEPRECATED<sup>1</sup> | NO              | NO                 | NO           |
-
-1. U2F is deprecated. See [docs/migrate_webusb.md](docs/migrate_webusb.md).
-2. Instabilities have been reported
-3. WebHID supported under _Chrome experimental flags_
-
-**Please find respective documentation for each transport:**
-
-- [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-u2f.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-u2f) [@ledgerhq/hw-transport-u2f](https://github.com/LedgerHQ/ledgerjs-legacy/tree/master/packages/hw-transport-u2f) **[Web]** **(U2F)** (legacy but reliable) – FIDO U2F api. [check browser support](https://caniuse.com/u2f).
-- [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-webauthn.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-webauthn) [@ledgerhq/hw-transport-webauthn](https://github.com/LedgerHQ/ledgerjs-legacy/tree/master/packages/hw-transport-webauthn) **[Web]** **(WebAuthn)** (experimental) – WebAuthn api. [check browser support](https://caniuse.com/webauthn).
-- [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-webusb.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-webusb) [@ledgerhq/hw-transport-webusb](./packages/hw-transport-webusb) **[Web]** **(WebUSB)** – WebUSB [check browser support](https://caniuse.com/webusb).
-- [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-webhid.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-webhid) [@ledgerhq/hw-transport-webhid](./packages/hw-transport-webhid) **[Web]** **(WebHID)** – WebHID [check browser support](https://caniuse.com/webhid).
-- [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-web-ble.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-web-ble) [@ledgerhq/hw-transport-web-ble](./packages/hw-transport-web-ble) **[Web]** **(Bluetooth)** – [check browser support](https://caniuse.com/web-bluetooth).
-- [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-node-hid.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-node-hid) [@ledgerhq/hw-transport-node-hid](./packages/hw-transport-node-hid) **[Node]**/Electron **(HID)** – historical implementation – uses `node-hid` and `usb`.
-- [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-node-hid-noevents.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-node-hid-noevents) [@ledgerhq/hw-transport-node-hid-noevents](./packages/hw-transport-node-hid-noevents) **[Node]**/Electron **(HID)** – uses **only** `node-hid`. Does not provide USB events.
-- [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-node-hid-singleton.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-node-hid-singleton) [@ledgerhq/hw-transport-node-hid-singleton](./packages/hw-transport-node-hid-singleton) **[Node]**/Electron **(HID)** – uses `node-hid` and `node-usb`. Focus on supporting one device at a time (potentially will have more robust events and less blocking cases)
-- [![npm](https://img.shields.io/npm/v/@ledgerhq/react-native-hw-transport-ble.svg)](https://www.npmjs.com/package/@ledgerhq/react-native-hw-transport-ble) [@ledgerhq/react-native-hw-transport-ble](./packages/react-native-hw-transport-ble) **[React Native]** **(Bluetooth)** – uses `react-native-ble-plx`
-- [![npm](https://img.shields.io/npm/v/@ledgerhq/react-native-hid.svg)](https://www.npmjs.com/package/@ledgerhq/react-native-hid) [@ledgerhq/react-native-hid](./packages/react-native-hid) **[React Native]** **(HID)** _Android_ – Ledger's native implementation
 - [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-http.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-http) [@ledgerhq/hw-transport-http](./packages/hw-transport-http) **[DEV only]** universal HTTP channel. **NOT for PROD**.
+- [@ledgerhq/hw-transport-node-speculos](./packages/hw-transport-node-speculos) and [@ledgerhq/hw-transport-node-speculos-http](./packages/hw-transport-node-speculos-http) – communication with the Speculos device simulator.
+- [@ledgerhq/hw-transport-mocker](./packages/hw-transport-mocker) – record and replay APDU calls in tests.
 
-### An unified _Transport_ interface
+The legacy U2F / WebAuthn transports are archived in [ledgerjs-legacy](https://github.com/LedgerHQ/ledgerjs-legacy).
+
+### A unified _Transport_ interface
 
 All these transports implement a generic interface exposed by
 [@ledgerhq/hw-transport](./packages/hw-transport).
@@ -124,17 +80,16 @@ We also provide libraries that help implementing the low level exchanges. These 
 ## Basic gist
 
 ```js
-import Transport from "@ledgerhq/hw-transport-node-hid";
-// import Transport from "@ledgerhq/hw-transport-webusb";
-// import Transport from "@ledgerhq/react-native-hw-transport-ble";
 import AppBtc from "@ledgerhq/hw-app-btc";
-const getBtcAddress = async () => {
-  const transport = await Transport.create();
+
+// `transport` is a @ledgerhq/hw-transport instance. For new integrations, obtain it
+// from the Ledger Device Management Kit (DMK):
+// https://developers.ledger.com/docs/device-interaction/integration/how_to/dmk
+const getBtcAddress = async transport => {
   const btc = new AppBtc(transport);
   const result = await btc.getWalletPublicKey("44'/0'/0'/0/0");
   return result.bitcoinAddress;
 };
-getBtcAddress().then(a => console.log(a));
 ```
 
 ## Contributing

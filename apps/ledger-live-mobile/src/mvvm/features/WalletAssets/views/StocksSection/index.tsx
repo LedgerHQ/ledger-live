@@ -52,6 +52,7 @@ const PortfolioStocksSectionComponent: React.FC<PortfolioStocksSectionProps> = (
           onItemPress={onItemPress}
           skeletonCount={EMPTY_STATE_MAX_STOCKS}
           errorMessage={t("portfolio.assetSection.connectionFailed")}
+          rowTestIDPrefix="PortfolioStocksList"
         />
       </Box>
     </Box>

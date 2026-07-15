@@ -1,5 +1,6 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { Linking } from "react-native";
+import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { LandingPageUseCase } from "~/dynamicContent/types";
 import { useGeneralLandingPage } from "./useGeneralLandingPageViewModel";
@@ -56,7 +57,7 @@ describe("useGeneralLandingPage", () => {
       openLinkPromise = result.current.openLink(landingPageStickyCtaCard);
     });
 
-    expect(trackContentCardEvent).toHaveBeenCalledWith("contentcard_clicked", {
+    expect(trackContentCardEvent).toHaveBeenCalledWith(ContentCardEvent.Clicked, {
       campaign: "stickyCta001",
       cta: "Sign Up Now",
       link: "https://example.com/signup",

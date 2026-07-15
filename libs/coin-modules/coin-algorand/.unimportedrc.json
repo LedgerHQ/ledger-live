@@ -7,7 +7,6 @@
   "entry": [
     "src/account.ts",
     "src/bridge/js.ts",
-    "src/cli-transaction.ts",
     "src/deviceTransactionConfig.ts",
     "src/errors.ts",
     "src/formatters.ts",

@@ -44,7 +44,11 @@ export default function DelegationStarted({ navigation, route }: Props) {
   }, [mainAccount.currency.id]);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
+    <SafeAreaView
+      isFlex
+      edges={["bottom"]}
+      style={[styles.root, { backgroundColor: colors.background }]}
+    >
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen
           category="DelegationFlow"
@@ -87,7 +91,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
           />
         </View>
       </NavigationScrollView>
-      <View style={[styles.footer]}>
+      <View style={styles.footer}>
         <View>
           <Alert
             type="info"

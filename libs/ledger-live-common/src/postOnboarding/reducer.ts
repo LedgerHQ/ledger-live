@@ -13,6 +13,7 @@ export const initialState: PostOnboardingState = {
   actionsCompleted: {},
   lastActionCompleted: null,
   postOnboardingInProgress: false,
+  onboardingDate: null,
 };
 
 type PartialNewStatePayload = { newState: Partial<PostOnboardingState> };
@@ -26,22 +27,32 @@ type AddPayload = {
 type SetActionCompletedPayload = {
   actionId: PostOnboardingActionId;
 };
+type SetOnboardingDatePayload = {
+  onboardingDate: Date | string | null;
+};
 
 export type Payload =
   | undefined
   | PartialNewStatePayload
   | InitPayload
   | SetActionCompletedPayload
+  | SetOnboardingDatePayload
   | AddPayload
   | boolean;
 
 const handlers: ReducerMap<PostOnboardingState, Payload> = {
-  POST_ONBOARDING_IMPORT_STATE: (_, { payload }): PostOnboardingState => ({
-    ...initialState,
-    ...(payload as PartialNewStatePayload).newState,
-  }),
-  POST_ONBOARDING_INIT: (_, { payload }) => {
+  POST_ONBOARDING_IMPORT_STATE: (_, { payload }): PostOnboardingState => {
+    const { newState } = payload as PartialNewStatePayload;
+    return {
+      ...initialState,
+      ...newState,
+      onboardingDate: normalizeOnboardingDate(newState.onboardingDate),
+    };
+  },
+  POST_ONBOARDING_INIT: (state, { payload }) => {
     const { deviceModelId, actionsIds } = payload as InitPayload;
+    const isSameDeviceModel = sanitizeDeviceModelId(state.deviceModelId) === deviceModelId;
+    const currentOnboardingDate = normalizeOnboardingDate(state.onboardingDate);
     return {
       deviceModelId,
       walletEntryPointDismissed: false,
@@ -51,6 +62,10 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
       actionsCompleted: Object.fromEntries(actionsIds.map(id => [id, false])),
       lastActionCompleted: null,
       postOnboardingInProgress: true,
+      onboardingDate:
+        isSameDeviceModel && currentOnboardingDate
+          ? currentOnboardingDate
+          : new Date().toISOString(),
     };
   },
   POST_ONBOARDING_ADD_ACTION: (state, { payload }) => {
@@ -113,6 +128,14 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
     ...state,
     postOnboardingInProgress: false,
   }),
+
+  POST_ONBOARDING_SET_ONBOARDING_DATE: (state, { payload }) => {
+    const { onboardingDate } = payload as SetOnboardingDatePayload;
+    return {
+      ...state,
+      onboardingDate: normalizeOnboardingDate(onboardingDate),
+    };
+  },
 };
 
 export default handleActions<PostOnboardingState, Payload>(handlers, initialState);
@@ -130,6 +153,17 @@ function sanitizeDeviceModelId(deviceModelId: DeviceModelId | null): DeviceModel
   // @ts-ignore
   if (deviceModelId === "nanoFTS") return DeviceModelId.stax;
   return deviceModelId;
+}
+
+function normalizeOnboardingDate(onboardingDate: Date | string | null | undefined): string | null {
+  if (onboardingDate == null) return null;
+  const date = onboardingDate instanceof Date ? onboardingDate : new Date(onboardingDate);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+function parseOnboardingDate(onboardingDate: Date | string | null | undefined): Date | null {
+  const normalizedOnboardingDate = normalizeOnboardingDate(onboardingDate);
+  return normalizedOnboardingDate ? new Date(normalizedOnboardingDate) : null;
 }
 
 export const postOnboardingSelector: Selector<
@@ -178,4 +212,9 @@ export const entryPointFirstDisplayedDateSelector = createSelector(
 export const walletEntryPointEligibleForPortfolioSelector = createSelector(
   postOnboardingSelector,
   postOnboarding => postOnboarding.walletEntryPointEligibleForPortfolio,
+);
+
+export const onboardingDateSelector = createSelector(
+  (state: { postOnboarding: PostOnboardingState }) => state.postOnboarding.onboardingDate,
+  onboardingDate => parseOnboardingDate(onboardingDate),
 );

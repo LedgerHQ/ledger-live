@@ -1,6 +1,6 @@
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { runExportSwapHistoryOperationsTest } from "./swap.other";
 
 const solMinAmount = "0.07";

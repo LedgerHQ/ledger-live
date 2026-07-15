@@ -1,13 +1,34 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
 import BigNumber from "bignumber.js";
 import { type HederaCoinConfig } from "../config";
 import { HederaAddAccountError } from "../errors";
-import { resolveConfig } from "./utils";
 import { apiClient } from "../network/api";
 import { getERC20BalancesForAccountV2 } from "../network/utils";
+import type { HederaERC20TokenBalance, HederaMirrorToken } from "../types";
+import { resolveConfig } from "./utils";
+
+function mapMirrorTokenToBalance(token: HederaMirrorToken, address: string): Balance {
+  return {
+    value: BigInt(new BigNumber(token.balance).toFixed(0)),
+    asset: {
+      type: "hts",
+      assetReference: token.token_id,
+      assetOwner: address,
+    },
+  };
+}
+
+function mapErc20TokenToBalance(token: HederaERC20TokenBalance, address: string): Balance {
+  return {
+    value: BigInt(token.balance.toFixed(0)),
+    asset: {
+      type: "erc20",
+      assetReference: token.contractAddress,
+      assetOwner: address,
+    },
+  };
+}
 
 export async function getBalance({
   config,
@@ -38,8 +59,6 @@ export async function getBalance({
       validatorPromise,
     ]);
 
-    const mixedTokens = [...mirrorTokens, ...erc20TokenBalances];
-
     const nativeBalance: Balance = {
       asset: { type: "native" },
       value: BigInt(mirrorAccount.balance.balance),
@@ -61,40 +80,12 @@ export async function getBalance({
       }),
     };
 
-    const tokenBalances = await promiseAllBatched(
-      3,
-      mixedTokens,
-      async (item): Promise<Balance | null> => {
-        const tokenAddress = "token_id" in item ? item.token_id : item.token.contractAddress;
-        const calToken = await getCryptoAssetsStore().findTokenByAddressInCurrency(
-          tokenAddress,
-          currencyId,
-        );
+    const tokenBalances: Balance[] = [
+      ...mirrorTokens.map(token => mapMirrorTokenToBalance(token, address)),
+      ...erc20TokenBalances.map(token => mapErc20TokenToBalance(token, address)),
+    ];
 
-        if (!calToken || !calToken.units.length) {
-          return null;
-        }
-
-        const roundedValue = new BigNumber(item.balance).toFixed(0);
-
-        return {
-          value: BigInt(roundedValue),
-          asset: {
-            type: calToken.tokenType,
-            assetReference: calToken.contractAddress,
-            assetOwner: address,
-            name: calToken.name,
-            unit: calToken.units[0],
-          },
-        };
-      },
-    );
-
-    const balances: Balance[] = [nativeBalance, ...tokenBalances].filter(
-      (balance): balance is Balance => balance !== null,
-    );
-
-    return balances;
+    return [nativeBalance, ...tokenBalances];
   } catch (err) {
     const isNonExistentAccount =
       err instanceof HederaAddAccountError || (err instanceof LedgerAPI4xx && err.status === 404);

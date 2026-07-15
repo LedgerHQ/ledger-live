@@ -3,7 +3,7 @@ import { NavigatorName, ScreenName } from "~/const";
 /**
  * Handles deeplinks that require different navigation state in Wallet 4.0.
  *
- * In Wallet 4.0 (shouldDisplayWallet40MainNav ON), Discover and MyLedger are no longer
+ * In Wallet 4.0, Discover and MyLedger are no longer
  * bottom tabs — they are full-screen stack screens pushed from the BaseNavigator,
  * accessible via the TopBar buttons.
  *

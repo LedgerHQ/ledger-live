@@ -50,6 +50,13 @@ const mockCounterValueCurrency = {
   units: [usdUnit],
 };
 
+const mockBtcCounterValueCurrency = {
+  id: "bitcoin",
+  name: "Bitcoin",
+  ticker: "BTC",
+  units: [btcUnit],
+};
+
 const mockAccount = {
   id: "mock-account",
   balance: new BigNumber(100_000_000),
@@ -144,6 +151,16 @@ describe("useAmountInputController", () => {
       const { result } = renderHook(() => useAmountInputController(defaultParams));
 
       expect(result.current.maxDecimalLength).toBe(2);
+    });
+
+    it("uses countervalue unit magnitude for maxDecimalLength in fiat mode", () => {
+      jest
+        .mocked(useSelector)
+        .mockReturnValue(mockBtcCounterValueCurrency as ReturnType<typeof useSelector>);
+
+      const { result } = renderHook(() => useAmountInputController(defaultParams));
+
+      expect(result.current.maxDecimalLength).toBe(8);
     });
 
     it("exposes required callbacks", () => {

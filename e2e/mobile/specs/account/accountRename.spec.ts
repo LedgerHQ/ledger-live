@@ -1,5 +1,5 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { launchApp } from "../../helpers/commonHelpers";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { loadConfig } from "../../bridge/server";
@@ -27,6 +27,7 @@ describe("Account name change", () => {
     await app.init({
       speculosApp: account.currency.speculosApp,
       cliCommands: [liveDataCommand(account)],
+      speculosForSetupOnly: true,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });
@@ -41,7 +42,7 @@ describe("Account name change", () => {
     await app.accounts.openViaDeeplink();
     await app.common.expectAccountName(newAccountName);
     await device.terminateApp();
-    await launchApp();
+    await launchApp({ newInstance: true });
     await device.disableSynchronization();
     await loadConfig("skip-onboarding", true);
     await app.mainNavigation.waitForWallet40Ready();

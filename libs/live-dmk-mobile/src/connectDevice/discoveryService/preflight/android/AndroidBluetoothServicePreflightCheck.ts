@@ -1,6 +1,6 @@
 import { State as BlePlxState } from "react-native-ble-plx";
 import { BlePlxManager } from "../../../../transport/BlePlxManager";
-import type { DiscoveryError } from "../../../types";
+import type { MobileDiscoveryError } from "../../../types";
 import type { AndroidPreflightRequirements } from "./androidPreflightRequirements";
 import {
   buildBluetoothDisabledManualActionError,
@@ -30,7 +30,7 @@ const defaultBleStateProvider: BleStateProvider = {
  */
 export class AndroidBluetoothServicePreflightCheck {
   constructor(
-    private readonly retry: () => Promise<true | DiscoveryError>,
+    private readonly retry: () => Promise<true | MobileDiscoveryError>,
     private readonly bleStateProvider = defaultBleStateProvider,
     private readonly getBluetoothHelper = getBluetoothHelperModule,
   ) {}

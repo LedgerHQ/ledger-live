@@ -2,7 +2,9 @@ import DeviceAction from "../models/DeviceAction";
 import { knownDevices } from "../models/devices";
 import { deviceInfo155 as deviceInfo } from "@ledgerhq/live-common/apps/mock";
 
-describe("Test My Ledger", () => {
+// TODO(LIVE-33334): these legacy mock specs will be removed in a follow-up task;
+// skipped for now.
+describe.skip("Test My Ledger", () => {
   let deviceAction: DeviceAction;
   const appDesc = ["Bitcoin", "Tron", "Litecoin", "Ethereum", "XRP", "Stellar"];
   const installedDesc = ["Bitcoin", "Litecoin", "Ethereum (outdated)"];

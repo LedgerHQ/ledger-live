@@ -33,7 +33,7 @@ export const SelfTransferStepRecipient = ({
 
   // show only Aleo accounts
   const accountFilter = (acc: AccountLike) => {
-    return getAccountCurrency(acc) === mainAccount.currency;
+    return getAccountCurrency(acc).id === mainAccount.currency.id;
   };
 
   return (

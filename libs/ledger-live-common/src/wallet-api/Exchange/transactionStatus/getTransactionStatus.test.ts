@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import type { MappedSwapOperation } from "../../../exchange/swap/types";
 import getCompleteSwapHistory from "../../../exchange/swap/getCompleteSwapHistory";
-import { fetchTransactionSwapStatus } from "../../../exchange/transactionStatus/fetchSwapStatus";
+import { fetchTransactionSwapStatus } from "../../../exchange/swapTransactionStatus/transactionStatus";
 import { getTransactionStatus } from "./getTransactionStatus";
 
 jest.mock("../../../exchange/swap/getCompleteSwapHistory", () => ({
@@ -10,9 +10,13 @@ jest.mock("../../../exchange/swap/getCompleteSwapHistory", () => ({
   default: jest.fn(),
 }));
 
-jest.mock("../../../exchange/transactionStatus/fetchSwapStatus", () => ({
-  fetchTransactionSwapStatus: jest.fn(),
-}));
+jest.mock("../../../exchange/swapTransactionStatus/transactionStatus", () => {
+  const actual = jest.requireActual("../../../exchange/swapTransactionStatus/transactionStatus");
+  return {
+    ...actual,
+    fetchTransactionSwapStatus: jest.fn(),
+  };
+});
 
 const mockedGetCompleteSwapHistory = jest.mocked(getCompleteSwapHistory);
 const mockedFetchTransactionSwapStatus = jest.mocked(fetchTransactionSwapStatus);

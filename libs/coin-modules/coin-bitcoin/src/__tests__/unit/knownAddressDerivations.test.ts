@@ -137,13 +137,14 @@ describe("buildKnownAddressDerivationsMap", () => {
     const map = await buildKnownAddressDerivationsMap(walletAccount as any, ACCOUNT_PATH);
 
     const freshChangeEntry = map.get(scriptHashHex(1, 2)); // lastIndex+1
-    expect(freshChangeEntry).toBeDefined();
-    expect(freshChangeEntry!.pubkey).toEqual(makePubkey(1, 2));
 
     // Path = account base path + [chain, index] — uses the same pathStringToArray
     // as the implementation so the test tracks the contract, not the encoding.
     const basePath = pathStringToArray(ACCOUNT_PATH);
-    expect(freshChangeEntry!.path).toEqual([...basePath, 1, 2]);
+    expect(freshChangeEntry).toEqual({
+      pubkey: makePubkey(1, 2),
+      path: [...basePath, 1, 2],
+    });
   });
 
   it("handles empty storage by including index-0 address for each chain", async () => {

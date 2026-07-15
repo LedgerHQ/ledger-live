@@ -8,7 +8,7 @@ export class AssetPage extends AppPage {
   @step("Start stake flow")
   async startStakeFlow() {
     await this.stakeButton.click();
-    await this.page.getByText("Choose Account").waitFor({ state: "visible" });
+    await this.page.getByText("Select account").first().waitFor({ state: "visible" });
   }
 
   @step("Start buy flow")

@@ -6,7 +6,7 @@ import { ScreenName } from "~/const";
 import { useRoute } from "@react-navigation/native";
 import { useMarketData as useMarketDataHook } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { setMarketCurrentPage, setMarketRequestParams } from "~/actions/market";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import { useMarket } from "../../hooks/useMarket";
 import { getCurrentPage, isDataStale } from "../../utils";
 import { ViewToken } from "react-native";
@@ -49,9 +49,7 @@ function useMarketListViewModel() {
 
   const { search, counterCurrency, range } = marketParams;
 
-  const { shouldDisplayMarketBanner: filterBySupported } = useWalletFeaturesConfig("mobile");
-
-  const shouldDisplayLiveCompatible = filterBySupported || marketParams.liveCompatible;
+  const shouldDisplayLiveCompatible = marketParams.liveCompatible;
 
   const marketResult = useMarketDataHook({
     ...marketParams,
@@ -74,10 +72,10 @@ function useMarketListViewModel() {
         starred: [],
         order: Order.MarketCapDesc,
         search: "",
-        liveCompatible: filterBySupported,
+        liveCompatible: shouldDisplayLiveCompatible,
       });
     }
-  }, [initialTop100, updateMarketParams, filterBySupported]);
+  }, [initialTop100, updateMarketParams, shouldDisplayLiveCompatible]);
 
   const onEndReached = useCallback(() => {
     dispatch(setMarketRequestParams({ page: (marketParams?.page || 1) + 1 }));

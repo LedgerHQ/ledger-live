@@ -12,7 +12,6 @@ import type {
   HederaAccount,
 } from "@ledgerhq/coin-hedera/types/index";
 import type { Bridge } from "@ledgerhq/types-live";
-import makeCliTools from "@ledgerhq/coin-hedera/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { getCurrencyConfiguration } from "../../config";
 import { Resolver } from "../../hw/getAddress/types";
@@ -33,6 +32,4 @@ const bridge: Bridge<Transaction, HederaAccount, TransactionStatus> = createBrid
 
 const resolver: Resolver = createResolver(createSigner, hederaResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, resolver };
+export { bridge, resolver };

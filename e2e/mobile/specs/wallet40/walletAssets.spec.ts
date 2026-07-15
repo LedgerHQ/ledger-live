@@ -1,5 +1,5 @@
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
@@ -77,7 +77,7 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Open the app with accounts", ()
   it("should cap cryptos at 6, show only cryptos when clicking section title, and list all 6 crypto assets", async () => {
     await app.portfolio.scrollToTopOfPortfolioPage();
     await app.portfolio.checkCryptosListSectionVisible();
-    await app.portfolio.checkTotalAssetItemCount(12);
+    await app.portfolio.checkCryptosSectionAssetItemCount(6);
     await app.portfolio.checkAssetVisible("Ethereum");
     await app.portfolio.checkAssetVisible("Bitcoin");
     await app.portfolio.tapCryptosSectionTitle();

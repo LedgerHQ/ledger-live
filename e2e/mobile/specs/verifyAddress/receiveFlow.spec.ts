@@ -1,6 +1,6 @@
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
@@ -98,13 +98,18 @@ describe("Receive Flow", () => {
   );
 
   $TmsLink("B2CQA-1859");
-  $Tag("@smoke");
-  it("Should access to receive after selecting an existing XRP account", async () => {
-    await app.modularDrawer.selectCurrencyByTicker(Currency.XRP.ticker);
-    await app.modularDrawer.selectAccount(Account.XRP_2.accountName);
-    await app.receive.doNotVerifyAddress();
-    await app.receive.expectReceivePageIsDisplayed(Currency.XRP.ticker, Account.XRP_2.accountName);
-  });
+  (isSmokeTestRun ? it.skip : it)(
+    "Should access to receive after selecting an existing XRP account",
+    async () => {
+      await app.modularDrawer.selectCurrencyByTicker(Currency.XRP.ticker);
+      await app.modularDrawer.selectAccount(Account.XRP_2.accountName);
+      await app.receive.doNotVerifyAddress();
+      await app.receive.expectReceivePageIsDisplayed(
+        Currency.XRP.ticker,
+        Account.XRP_2.accountName,
+      );
+    },
+  );
 
   $TmsLink("B2CQA-1860");
   $Tag("@smoke");

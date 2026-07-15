@@ -80,6 +80,7 @@ async function getERC20Balances({
               }
           ) {
               token_id
+              token_evm_address
               balance
               balance_timestamp
               created_timestamp

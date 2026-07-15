@@ -31,10 +31,8 @@ jest.mock("@ledgerhq/live-common/flows/send/customFees/hooks/useStableGasOptions
   useStableGasOptions: jest.fn(tx => tx),
 }));
 
-jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
-  sendFeatures: {
-    getAmountPlugins: jest.fn(() => []),
-  },
+jest.mock("@ledgerhq/live-common/flows/send/effects/hooks/useFlowEffects", () => ({
+  useFlowEffects: jest.fn(),
 }));
 
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers", () => ({

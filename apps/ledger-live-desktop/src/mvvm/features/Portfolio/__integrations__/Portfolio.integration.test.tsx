@@ -153,18 +153,17 @@ const createPortfolioMock = (countervalueChange: {
   countervalueChange,
 });
 
-const defaultPortfolioMock = createPortfolioMock({ percentage: 0.0542, value: 5000 });
+const defaultPortfolioMock = createPortfolioMock({
+  percentage: 0.0542,
+  value: 5000,
+});
 
 describe("PortfolioView", () => {
   const defaultProps = {
-    isWallet40Enabled: true,
     totalAccounts: 5,
     totalOperations: 10,
     totalCurrencies: 3,
     hasExchangeBannerCTA: true,
-    shouldDisplayMarketBanner: true,
-    shouldDisplayGraphRework: true,
-    shouldDisplayQuickActionCtas: true,
     shouldDisplayAssetSection: true,
     shouldDisplayAssetDiscoverability: false,
     shouldDisplayOperationsList: true,
@@ -197,8 +196,8 @@ describe("PortfolioView", () => {
   });
 
   describe("Balance", () => {
-    it("should render Balance with total balance when shouldDisplayGraphRework is true", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+    it("should render Balance with total balance", () => {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: AFTER_ONBOARDING_STATE,
@@ -209,13 +208,8 @@ describe("PortfolioView", () => {
       expect(screen.getByTestId("portfolio-total-balance")).toBeVisible();
     });
 
-    it("should not render Balance when shouldDisplayGraphRework is false", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={false} />);
-      expect(screen.queryByTestId("portfolio-balance")).toBeNull();
-    });
-
     it("should navigate to analytics when clicking on balance", async () => {
-      const { user } = render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
+      const { user } = render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: AFTER_ONBOARDING_STATE,
@@ -228,7 +222,7 @@ describe("PortfolioView", () => {
     });
 
     it("should render NoBalanceView when user has no accounts", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [],
           settings: AFTER_ONBOARDING_STATE,
@@ -240,7 +234,7 @@ describe("PortfolioView", () => {
     });
 
     it("should render BalanceView when user has accounts but no funds", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [EMPTY_BTC_ACCOUNT],
           settings: AFTER_ONBOARDING_STATE,
@@ -251,7 +245,7 @@ describe("PortfolioView", () => {
     });
 
     it("should render NoDeviceView when no device has been onboarded", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [],
           settings: {
@@ -267,7 +261,7 @@ describe("PortfolioView", () => {
     });
 
     it("should render NoDeviceView when user completed lazy onboarding without a device", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [],
           settings: {
@@ -281,7 +275,7 @@ describe("PortfolioView", () => {
       expect(screen.queryByTestId("portfolio-balance")).toBeNull();
     });
     it("should display discreet placeholders when discreet mode is enabled", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: {
@@ -297,7 +291,7 @@ describe("PortfolioView", () => {
     });
 
     it("should render Balance with total balance and show actual amount when discreet mode is disabled", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: {
@@ -321,7 +315,7 @@ describe("PortfolioView", () => {
         pending: true,
       });
 
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: {
@@ -330,7 +324,6 @@ describe("PortfolioView", () => {
           ...withFlagOverrides({
             lwdWallet40: {
               enabled: true,
-              params: { balanceRefreshRework: true },
             },
           }),
         },
@@ -346,7 +339,7 @@ describe("PortfolioView", () => {
         balanceHistory: [],
       });
 
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={true} />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: {
@@ -355,7 +348,6 @@ describe("PortfolioView", () => {
           ...withFlagOverrides({
             lwdWallet40: {
               enabled: true,
-              params: { balanceRefreshRework: true },
             },
           }),
         },
@@ -373,7 +365,7 @@ describe("PortfolioView", () => {
         createPortfolioMock({ percentage: 0.0542, value: 5000 }),
       );
 
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: AFTER_ONBOARDING_STATE,
@@ -390,7 +382,7 @@ describe("PortfolioView", () => {
         createPortfolioMock({ percentage: -0.0315, value: -3000 }),
       );
 
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: AFTER_ONBOARDING_STATE,
@@ -404,7 +396,7 @@ describe("PortfolioView", () => {
     it("should show 0% when percentage is zero", () => {
       mockUsePortfolioThrottled.mockReturnValue(createPortfolioMock({ percentage: 0, value: 0 }));
 
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework />, {
+      render(<PortfolioView {...defaultProps} />, {
         initialState: {
           accounts: [BTC_ACCOUNT],
           settings: AFTER_ONBOARDING_STATE,
@@ -416,12 +408,6 @@ describe("PortfolioView", () => {
       expect(screen.getByText("0.00%")).toBeVisible();
       expect(screen.getByText(/today/i)).toBeVisible();
     });
-
-    it("should not render Trend when shouldDisplayGraphRework is false", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayGraphRework={false} />);
-
-      expect(screen.queryByTestId("portfolio-trend")).toBeNull();
-    });
   });
 
   describe("MarketBanner", () => {
@@ -432,7 +418,7 @@ describe("PortfolioView", () => {
         }),
       );
 
-      render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={true} />);
+      render(<PortfolioView {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByTestId("trending-assets-list")).toBeVisible();
@@ -449,7 +435,7 @@ describe("PortfolioView", () => {
         }),
       );
 
-      render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={true} />);
+      render(<PortfolioView {...defaultProps} />);
 
       expect(screen.getByTestId("skeleton-list")).toBeVisible();
     });
@@ -461,28 +447,18 @@ describe("PortfolioView", () => {
         }),
       );
 
-      render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={true} />);
+      render(<PortfolioView {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByTestId("generic-error")).toBeVisible();
       });
     });
-
-    it("should not render MarketBanner when shouldDisplayMarketBanner is false", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={false} />);
-      expect(screen.queryByText("Market")).toBeNull();
-    });
   });
 
   describe("QuickActions", () => {
-    it("should render QuickActions when shouldDisplayQuickActionCtas is true", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={true} />);
+    it("should render QuickActions", () => {
+      render(<PortfolioView {...defaultProps} />);
       expect(screen.getByTestId("quick-actions-actions-list")).toBeVisible();
-    });
-
-    it("should not render QuickActions when shouldDisplayQuickActionCtas is false", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayQuickActionCtas={false} />);
-      expect(screen.queryByTestId("quick-actions-actions-list")).toBeNull();
     });
   });
 
@@ -574,44 +550,21 @@ describe("PortfolioView", () => {
   describe("AddAccount CTA", () => {
     it("should render AddAccount CTA when user has zero accounts, Wallet 4.0 is enabled, and asset section is not displayed", () => {
       render(
-        <PortfolioView
-          {...defaultProps}
-          totalAccounts={0}
-          isWallet40Enabled={true}
-          shouldDisplayAssetSection={false}
-        />,
+        <PortfolioView {...defaultProps} totalAccounts={0} shouldDisplayAssetSection={false} />,
       );
 
       expect(screen.getByTestId("portfolio-add-account-button")).toBeVisible();
     });
 
     it("should not render AddAccount CTA when user has accounts", () => {
-      render(<PortfolioView {...defaultProps} totalAccounts={3} isWallet40Enabled={true} />);
-
-      expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
-    });
-
-    it("should not render AddAccount CTA when Wallet 4.0 is disabled", () => {
-      render(
-        <PortfolioView
-          {...defaultProps}
-          totalAccounts={0}
-          isWallet40Enabled={false}
-          shouldDisplayAssetSection={false}
-        />,
-      );
+      render(<PortfolioView {...defaultProps} totalAccounts={3} />);
 
       expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
     });
 
     it("should not render AddAccount CTA when asset section is displayed", () => {
       render(
-        <PortfolioView
-          {...defaultProps}
-          totalAccounts={0}
-          isWallet40Enabled={true}
-          shouldDisplayAssetSection={true}
-        />,
+        <PortfolioView {...defaultProps} totalAccounts={0} shouldDisplayAssetSection={true} />,
       );
 
       expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
@@ -686,7 +639,7 @@ describe("PortfolioView", () => {
 const walletV4TourFlagOverrides = withFlagOverrides({
   lwdWallet40: {
     enabled: true,
-    params: { tour: true, mainNavigation: true, marketBanner: true },
+    params: { tour: true },
   },
 });
 

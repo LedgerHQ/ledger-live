@@ -22,6 +22,9 @@ import {
   Commitment,
   GetLatestBlockhashConfig,
   SolanaJSONRPCError,
+  SimulateTransactionConfig,
+  RpcResponseAndContext,
+  SimulatedTransactionResponse,
 } from "@solana/web3.js";
 import ky from "ky";
 import { getTokenAccountProgramId } from "../../helpers/token";
@@ -86,6 +89,11 @@ export type ChainAPI = Readonly<{
     recentBlockhash?: BlockhashWithExpiryBlockHeight,
   ) => ReturnType<Connection["sendRawTransaction"]>;
 
+  simulateTransaction: (
+    transaction: VersionedTransaction,
+    config?: SimulateTransactionConfig,
+  ) => Promise<RpcResponseAndContext<SimulatedTransactionResponse>>;
+
   findAssocTokenAccAddress: (
     owner: string,
     mint: string,
@@ -95,6 +103,8 @@ export type ChainAPI = Readonly<{
   getAssocTokenAccMinNativeBalance: () => Promise<number>;
 
   getMinimumBalanceForRentExemption: (dataLength: number) => Promise<number>;
+
+  getStakeMinimumDelegation: () => Promise<number>;
 
   getEpochInfo: () => ReturnType<Connection["getEpochInfo"]>;
 
@@ -260,6 +270,9 @@ export function getChainAPI(
         .then(r => r.value)
         .catch(remapErrors),
 
+    simulateTransaction: (transaction: VersionedTransaction, config?: SimulateTransactionConfig) =>
+      connection.simulateTransaction(transaction, config).catch(remapErrors),
+
     sendRawTransaction: (buffer: Buffer, recentBlockhash?: BlockhashWithExpiryBlockHeight) => {
       return (async () => {
         const commitment = "confirmed";
@@ -309,6 +322,12 @@ export function getChainAPI(
 
     getMinimumBalanceForRentExemption: (dataLength: number) =>
       connection.getMinimumBalanceForRentExemption(dataLength).catch(remapErrors),
+
+    getStakeMinimumDelegation: () =>
+      connection
+        .getStakeMinimumDelegation()
+        .then(res => res.value)
+        .catch(remapErrors),
 
     getEpochInfo: () => connection.getEpochInfo().catch(remapErrors),
 

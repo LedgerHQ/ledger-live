@@ -1,43 +1,30 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
-import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
+import { SwapType } from "@ledgerhq/live-e2e-shared/models/Swap";
+import { Account, type AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
 import { beforeAllFunctionSwap } from "../swap.setup";
-import { isWallet40 } from "../../../helpers/commonHelpers";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
+import type { SwapTransactionStatusDetails } from "../../../page/drawer/swapTransactionStatus.drawer";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 async function handleAssetSwap(asset: Account, hasAccount: boolean) {
-  const isModularDrawer = await app.modularDrawer.isFlowEnabled("live_app");
-  if (isModularDrawer) {
-    await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
-    await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
-    const networkName = asset?.parentAccount
-      ? asset.parentAccount.currency.name
-      : asset.currency.speculosApp.name;
-    await app.modularDrawer.selectNetworkIfAsked(networkName);
+  await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
+  await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
+  const networkName = asset?.parentAccount
+    ? asset.parentAccount.currency.name
+    : asset.currency.speculosApp.name;
+  await app.modularDrawer.selectNetworkIfAsked(networkName);
 
-    if (hasAccount) {
-      await app.modularDrawer.selectFirstAccount();
-    } else {
-      await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
-      await app.addAccount.addAccountAtIndex(`${asset.currency.name} 1`, asset.currency.id, 0);
-    }
+  if (hasAccount) {
+    await app.modularDrawer.selectFirstAccount();
   } else {
-    await app.common.performSearch(asset.currency.name);
-    await app.stake.selectCurrency(asset.currency.id);
-    if (hasAccount) {
-      await app.common.selectFirstAccount();
-    } else {
-      await app.common.tapProceedButton();
-      await app.addAccount.addAccountAtIndex(`${asset.currency.name} 1`, asset.currency.id, 0);
-      await app.common.selectFirstAccount();
-    }
+    await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
+    await app.addAccount.addAccountAtIndex(`${asset.currency.name} 1`, asset.currency.id, 0);
   }
 }
 
@@ -281,9 +268,10 @@ export function runTooLowAmountForQuoteSwapsTest(
       }
       await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
 
-      if (ctaBanner) {
-        await app.swapLiveApp.checkCtaBanner(quotesVisible);
-      }
+      // CTA banner temporarily removed from UI — re-enable when it returns
+      // if (ctaBanner) {
+      //   await app.swapLiveApp.checkCtaBanner(quotesVisible);
+      // }
     });
   });
 }
@@ -339,6 +327,7 @@ export function runSwapHistoryOperationsTest(
   swapId: string,
   tmsLinks: string[],
   tags: string[],
+  details: SwapTransactionStatusDetails,
 ) {
   describe("Swap history", () => {
     beforeAll(async () => {
@@ -356,7 +345,11 @@ export function runSwapHistoryOperationsTest(
       await app.swap.goToSwapHistory();
       await app.swap.checkSwapOperation(swapId, swap);
       await app.swap.openSelectedOperation(swapId);
-      await app.swap.expectSwapDrawerInfos(swapId, swap, provider);
+      await app.swapTransactionStatusDrawer.expectSwapTransactionStatusDrawerInfos(
+        swapId.slice(0, 8),
+        provider,
+        details,
+      );
     });
   });
 }
@@ -443,33 +436,21 @@ export function runSwapWithSendMaxTest(
     tags.forEach(tag => $Tag(tag));
     it(`Swap max amount from ${fromAccount.currency.name} to ${toAccount.currency.name}`, async () => {
       await app.swapLiveApp.tapFromCurrency();
-
-      const isModularDrawer = await app.modularDrawer.isFlowEnabled("live_app");
-      if (isModularDrawer) {
-        await app.modularDrawer.performSearchByTicker(fromAccount.currency.ticker);
-        await app.modularDrawer.selectCurrencyByTicker(fromAccount.currency.ticker);
-        let networkName = fromAccount?.parentAccount
-          ? fromAccount.parentAccount.currency.name
-          : fromAccount.currency.speculosApp.name;
-        await app.modularDrawer.selectNetworkIfAsked(networkName);
-        await app.modularDrawer.selectFirstAccount();
-        await app.swapLiveApp.tapToCurrency();
-        await app.modularDrawer.performSearchByTicker(toAccount.currency.ticker);
-        await app.modularDrawer.selectCurrencyByTicker(toAccount.currency.ticker);
-        networkName = toAccount?.parentAccount
-          ? toAccount.parentAccount.currency.name
-          : toAccount.currency.speculosApp.name;
-        await app.modularDrawer.selectNetworkIfAsked(networkName);
-        await app.modularDrawer.selectFirstAccount();
-      } else {
-        await app.common.performSearch(fromAccount.currency.name);
-        await app.stake.selectCurrency(fromAccount.currency.id);
-        await app.common.selectFirstAccount();
-        await app.swapLiveApp.tapToCurrency();
-        await app.common.performSearch(toAccount.currency.name);
-        await app.stake.selectCurrency(toAccount.currency.id);
-        await app.common.selectFirstAccount();
-      }
+      await app.modularDrawer.performSearchByTicker(fromAccount.currency.ticker);
+      await app.modularDrawer.selectCurrencyByTicker(fromAccount.currency.ticker);
+      let networkName = fromAccount?.parentAccount
+        ? fromAccount.parentAccount.currency.name
+        : fromAccount.currency.speculosApp.name;
+      await app.modularDrawer.selectNetworkIfAsked(networkName);
+      await app.modularDrawer.selectFirstAccount();
+      await app.swapLiveApp.tapToCurrency();
+      await app.modularDrawer.performSearchByTicker(toAccount.currency.ticker);
+      await app.modularDrawer.selectCurrencyByTicker(toAccount.currency.ticker);
+      networkName = toAccount?.parentAccount
+        ? toAccount.parentAccount.currency.name
+        : toAccount.currency.speculosApp.name;
+      await app.modularDrawer.selectNetworkIfAsked(networkName);
+      await app.modularDrawer.selectFirstAccount();
 
       await app.swapLiveApp.clickSwapMax();
       const amountToSend = await app.swapLiveApp.getAmountToSend();
@@ -515,7 +496,7 @@ export function runSwapSwitchSendAndReceiveCurrenciesTest(
       );
       await app.swapLiveApp.switchYouSendAndYouReceive();
       await app.swapLiveApp.checkAssetFrom(swap.accountToCredit.currency.ticker, "");
-      await app.swapLiveApp.checkAssetTo(swap.accountToDebit.currency.ticker, "-");
+      await app.swapLiveApp.checkAssetTo(swap.accountToDebit.currency.ticker, "0");
     });
   });
 }
@@ -523,17 +504,12 @@ export function runSwapSwitchSendAndReceiveCurrenciesTest(
 async function validateSwapAssetsPage(accountFrom: string, accountTo: string) {
   await app.swapLiveApp.expectSwapLiveApp();
   await app.swapLiveApp.checkAssetFrom(accountFrom, "");
-  await app.swapLiveApp.checkAssetTo(accountTo, "-");
+  await app.swapLiveApp.checkAssetTo(accountTo, "0");
 }
 
 async function openSwapFromPortfolioEntryPoint() {
   await app.mainNavigation.openPortfolioViaDeeplink();
-  if (isWallet40) {
-    await app.mainNavigation.tapWallet40Tab("swap");
-  } else {
-    await app.transferMenuDrawer.open();
-    await app.transferMenuDrawer.navigateToSwap();
-  }
+  await app.mainNavigation.tapWallet40Tab("swap");
 }
 
 export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: string[]) {
@@ -610,6 +586,41 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
       await app.swapLiveApp.checkQuotes();
       await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
+    });
+  });
+}
+
+export function runSwapDiscreetModeTest(
+  accounts: AccountType[],
+  tmsLinks: string[],
+  tags: string[],
+) {
+  describe("Swap Discreet Mode", () => {
+    beforeAll(async () => {
+      await beforeAllFunctionSwap({
+        userdata: "discreet-mode",
+        cliCommandsOnApp: [
+          {
+            app: Account.BTC_NATIVE_SEGWIT_1.currency.speculosApp,
+            cmd: liveDataWithAddressCommand(Account.BTC_NATIVE_SEGWIT_1),
+          },
+          {
+            app: Account.ETH_1.currency.speculosApp,
+            cmd: liveDataWithAddressCommand(Account.ETH_1),
+          },
+        ],
+      });
+    });
+
+    setTeamOwner(Team.SWAP);
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+
+    it("Checks if the amount is hidden in the asset drawer", async () => {
+      const tickers = accounts.map(account => account.currency.ticker);
+      await app.swapLiveApp.tapFromCurrency();
+      await app.modularDrawer.checkSelectAssetPage();
+      await app.modularDrawer.checkAssetAmountsAreDiscreet(tickers);
     });
   });
 }

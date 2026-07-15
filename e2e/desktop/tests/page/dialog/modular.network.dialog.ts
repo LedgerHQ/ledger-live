@@ -1,5 +1,5 @@
 import { step } from "../../misc/reporters/step";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Dialog } from "../../component/dialog.component";
 import { expect } from "@playwright/test";
 
@@ -39,5 +39,15 @@ export class ModularNetworkDialog extends Dialog {
   @step("Check if network dialog is visible")
   async isNetworkDialogVisible() {
     return await this.networkSelectorListContainer.isVisible();
+  }
+
+  @step("Wait for the network dialog to appear (returns false if it does not)")
+  async waitForNetworkDialogVisible(timeout = 5000): Promise<boolean> {
+    try {
+      await this.networkSelectorListContainer.waitFor({ state: "visible", timeout });
+      return true;
+    } catch {
+      return false;
+    }
   }
 }

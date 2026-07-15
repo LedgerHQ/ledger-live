@@ -46,12 +46,12 @@ import type {
   CoreTransaction,
   CreateExtrinsicArg,
   Resolution,
+  SuiStakingExtra,
   SuiValidator,
   Transaction as TransactionType,
 } from "../types";
 import { ensureAddressFormat, toShortStructTag, normalizeSuiAddressForComparison } from "../utils";
 import { fetcher, inferNetworkFromUrl } from "./fetcher";
-import { getCurrentSuiPreloadData } from "./preload-data";
 import { mapDryRunError } from "../logic/mapDryRunError";
 import {
   type AsyncGraphQLApiFunction,
@@ -62,7 +62,7 @@ import {
   getCheckpointGraphQL,
   getLastBlockGraphQL,
   getDelegatedStakesGraphQL,
-  getTransactionByDigestGraphQL,
+  getStakingEventsByDigestGraphQL,
   getTransactionsByAddressGraphQL,
   getTransactionsWithCheckpointDigestsGraphQL,
   getValidatorsGraphQL,
@@ -92,11 +92,20 @@ export const DEFAULT_COIN_TYPE = "0x2::sui::SUI";
 const STAKING_REQUEST_EVENT = "0x3::validator::StakingRequestEvent";
 const UNSTAKING_REQUEST_EVENT = "0x3::validator::UnstakingRequestEvent";
 
-/** Default options for querying transactions. */
+/**
+ * Default options for querying transactions.
+ *
+ * `showEvents` is enabled at sync time so the staking events (DELEGATE:
+ * `StakingRequestEvent.amount`; UNDELEGATE: `UnstakingRequestEvent.principal_amount`,
+ * both with `validator_address`) can be parsed straight into `op.extra` —
+ * eliminates the per-operation by-digest re-fetch that `getOperationExtra` used
+ * to do on every operation-details drawer open.
+ */
 const TRANSACTIONS_QUERY_OPTIONS: SuiTransactionBlockResponseOptions = {
   showInput: true,
   showBalanceChanges: true,
   showEffects: true, // To get transaction status and gas fee details
+  showEvents: true,
 };
 
 /** Fresh JSON-RPC client per call — SuiJsonRpcClient is stateless. */
@@ -425,52 +434,74 @@ export const getOperationFee = (transaction: SuiTransactionBlockResponse): BigNu
   return computationCost.plus(storageCost).minus(storageRebate);
 };
 
-export const getOperationExtra = (
+/** Minimal view of a Sui event the staking extractor needs: struct tag + parsed Move fields. */
+type StakingEventLike = { type?: string; parsedJson?: unknown };
+
+/**
+ * Pull `{ validatorAddress, stakedAmount }` out of a transaction's events for an
+ * already-known operation kind. The staked-principal field name differs by event
+ * (`StakingRequestEvent.amount` vs `UnstakingRequestEvent.principal_amount`, per Sui
+ * `sui_system::validator`); both carry `validator_address`. Returns `null` when the
+ * matching event or its fields are absent.
+ */
+function stakingExtraFromEvents(
+  events: readonly StakingEventLike[] | null | undefined,
+  type: "DELEGATE" | "UNDELEGATE",
+): SuiStakingExtra | null {
+  const isUnstake = type === "UNDELEGATE";
+  const eventType = isUnstake ? UNSTAKING_REQUEST_EVENT : STAKING_REQUEST_EVENT;
+  const parsed = events?.find(e => e.type === eventType)?.parsedJson as
+    | { amount?: string | number; principal_amount?: string | number; validator_address?: string }
+    | undefined;
+  const validatorAddress = parsed?.validator_address;
+  const rawAmount = isUnstake ? parsed?.principal_amount : parsed?.amount;
+  // Sui serializes u64 as a string on both transports; String()-coerce defensively.
+  const stakedAmount = String(rawAmount ?? "");
+  if (!validatorAddress || !stakedAmount) return null;
+  return { validatorAddress, stakedAmount };
+}
+
+/**
+ * Extract `{ validatorAddress, stakedAmount }` from a staking/unstaking transaction's events for
+ * the **bridge** operation (`transactionToOperation`). The event is authoritative and present at
+ * sync on both transports (`showEvents: true` on JSON-RPC; the `events` selection in
+ * `TRANSACTIONS_BY_AFFECTED_ADDRESS` on GraphQL) — which is what lets the bridge fill `op.extra`
+ * and drop the per-drawer re-fetch. Distinct from `getStakingEventDetails` (coin-framework path,
+ * different shape). Module-internal; returns `null` when not staking or the fields are absent.
+ */
+function getStakingExtra(response: SuiTransactionBlockResponse): SuiStakingExtra | null {
+  const tx = response.transaction?.data?.transaction;
+  if (isStaking(tx)) return stakingExtraFromEvents(response.events, "DELEGATE");
+  if (isUnstaking(tx)) return stakingExtraFromEvents(response.events, "UNDELEGATE");
+  return null;
+}
+
+/**
+ * Backfill path for operations synced before staking extras were persisted on `op.extra`: the
+ * incremental sync never re-fetches them, so recover the extras on demand by digest. The caller
+ * knows the op `type`, so only the transaction's events are fetched, not the whole transaction.
+ *
+ * Transitional / internal-only: exposed via the `./getStakingExtraByDigest` subpath solely for the
+ * live-common drawer hook's legacy fallback; expected to be removed once pre-upgrade operations age
+ * out. Not a stable coin-sui API.
+ */
+export const getStakingExtraByDigest = (
   digest: string,
+  type: OperationType,
   currencyId?: string,
-): Promise<Record<string, string>> =>
-  withTransport(currencyId, {
+): Promise<SuiStakingExtra | null> => {
+  if (type !== "DELEGATE" && type !== "UNDELEGATE") return Promise.resolve(null);
+  return withTransport(currencyId, {
     jsonRpc: async api => {
-      const response = await api.getTransactionBlock({
-        digest,
-        options: {
-          showInput: true,
-          showBalanceChanges: true,
-          showEffects: true,
-          showEvents: true,
-        },
-      });
-      return extractStakingEventDetails(response);
+      const response = await api.getTransactionBlock({ digest, options: { showEvents: true } });
+      return stakingExtraFromEvents(response.events, type);
     },
     graphql: async api => {
-      const response = await getTransactionByDigestGraphQL(api, digest);
-      if (!response) return {};
-      return extractStakingEventDetails(response);
+      const events = await getStakingEventsByDigestGraphQL(api, digest);
+      return stakingExtraFromEvents(events, type);
     },
   });
-
-/** Shared between transports — staking/unstaking event extraction is transport-agnostic. */
-function extractStakingEventDetails(response: SuiTransactionBlockResponse): Record<string, string> {
-  const tx = response.transaction?.data?.transaction;
-  if (isStaking(tx)) {
-    const inputs = tx.inputs;
-    const pure = inputs.filter(x => x.type === "pure") as { valueType: string; value: string }[];
-    // Missing inputs default to "" rather than masquerading as a `string` so the
-    // declared `Record<string, string>` return contract holds at runtime.
-    const amount = pure.find(x => x.valueType === "u64")?.value ?? "";
-    const address = pure.find(x => x.valueType === "address")?.value ?? "";
-    const name = getCurrentSuiPreloadData().validators.find(x => x.suiAddress === address)?.name;
-    return { amount, address, name: name || "" };
-  }
-  if (isUnstaking(response.transaction?.data?.transaction)) {
-    const event = response.events?.find(e => e.type === UNSTAKING_REQUEST_EVENT);
-    const { principal_amount: amount = "", validator_address: address = "" } =
-      (event?.parsedJson as Record<string, string> | undefined) ?? {};
-    const name = getCurrentSuiPreloadData().validators.find(x => x.suiAddress === address)?.name;
-    return { amount, address, name: name || "" };
-  }
-  return {};
-}
+};
 
 /**
  * Extract date from transaction
@@ -525,6 +556,12 @@ export function transactionToOperation(
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
 
+  // Eagerly attach staking metadata at sync time so the operation-details
+  // drawer can render synchronously from `extra` instead of re-fetching the
+  // whole transaction by digest.
+  const stakingExtra =
+    type === "DELEGATE" || type === "UNDELEGATE" ? getStakingExtra(transaction) : null;
+
   return {
     id: encodeOperationId(accountId, hash, type),
     accountId,
@@ -534,6 +571,7 @@ export function transactionToOperation(
     date: getOperationDate(transaction),
     extra: {
       coinType,
+      ...(stakingExtra ?? {}),
     },
     fee: getOperationFee(transaction),
     hasFailed: transaction.effects?.status.status !== "success",
@@ -580,9 +618,12 @@ export const getOperationAmountCoinFramework = (
 };
 
 /**
- * Extract staking/unstaking event details from transaction events.
- * For DELEGATE: extracts validatorAddress, stakedObjectId from StakingRequestEvent
- * For UNDELEGATE: extracts validatorAddress, rewardAmount, withdrawnAmount (from principal_amount) from UnstakingRequestEvent
+ * Extract staking/unstaking event details for the **coin-framework** operation
+ * (`transactionToCoinFrameworkOperation`) — distinct from `getStakingExtra` above, which feeds the
+ * bridge op a `{ validatorAddress, stakedAmount }`; this returns `stakedObjectId`/`rewardAmount`/
+ * `withdrawnAmount`. `StakingRequestEvent` carries no `staked_sui_id`, so `stakedObjectId` is
+ * best-effort — the `v !== undefined` filter drops it when absent (the norm) and it's kept for
+ * forward-compat. `sdk.integ.test.ts` asserts that real-world absence.
  */
 export function getStakingEventDetails(
   transaction: SuiTransactionBlockResponse,

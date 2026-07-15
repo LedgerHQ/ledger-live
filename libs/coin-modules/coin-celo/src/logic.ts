@@ -63,8 +63,13 @@ export const getVote = (
   index: number | null | undefined,
 ): CeloVote | undefined => {
   const { votes } = account.celoResources || {};
+  // Match the validator group case-insensitively: the recipient on the
+  // transaction and the preloaded vote's validatorGroup may be checksummed
+  // differently. A case-sensitive `===` here silently misses the vote, leaving
+  // the revoke value at 0 and breaking fee estimation.
+  const normalizedGroup = validatorGroupAddress.toLowerCase();
   return votes?.find(
-    revoke => revoke.validatorGroup === validatorGroupAddress && revoke.index === index,
+    vote => vote.validatorGroup.toLowerCase() === normalizedGroup && vote.index === index,
   );
 };
 

@@ -4,7 +4,7 @@ import { AccountPage } from "../../page/account.page";
 import { AccountsPage } from "../../page/accounts.page";
 import { Layout } from "../../component/layout.component";
 import { DeviceAction } from "../../models/DeviceAction";
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { BigNumber } from "bignumber.js";
 import { Application } from "tests/page";
 import { StellarMemoType } from "tests/page/modal/new.send.modal";
@@ -267,8 +267,8 @@ test.describe("New Send Flow", () => {
 
     test.describe("Memo skip", () => {
       test("should be able to skip memo input and need to confirm it", async ({ app, page }) => {
-        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
-        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorandRecipient);
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.stellar);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
         await expect(app.newSendFlow.memoInput).toBeVisible();
 
         await app.newSendFlow.skipMemo({ confirm: false });
@@ -282,8 +282,8 @@ test.describe("New Send Flow", () => {
         app,
         page,
       }) => {
-        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
-        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorandRecipient);
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.stellar);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
         await expect(app.newSendFlow.memoInput).toBeVisible();
 
         await app.newSendFlow.skipMemo({ confirm: false });
@@ -296,8 +296,8 @@ test.describe("New Send Flow", () => {
 
         await app.newSendFlow.close();
 
-        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
-        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorandRecipient);
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.stellar);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
         await expect(app.newSendFlow.memoInput).toBeVisible();
 
         await app.newSendFlow.skipMemo({ confirm: false });
@@ -312,8 +312,8 @@ test.describe("New Send Flow", () => {
         await app.settings.goToAccountsTab();
         await app.settings.switchNeverAskAgainSkipMemo();
 
-        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
-        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorandRecipient);
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.stellar);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
         await expect(app.newSendFlow.memoInput).toBeVisible();
 
         await app.newSendFlow.skipMemo({ confirm: false });
@@ -324,8 +324,8 @@ test.describe("New Send Flow", () => {
         app,
         page,
       }) => {
-        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
-        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorandRecipient);
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.stellar);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
         await expect(app.newSendFlow.memoInput).toBeVisible();
 
         await app.newSendFlow.skipMemo({ confirm: false });
@@ -342,8 +342,8 @@ test.describe("New Send Flow", () => {
         await app.settings.goToAccountsTab();
         await app.settings.switchNeverAskAgainSkipMemo();
 
-        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.algorand);
-        await app.newSendFlow.typeAddress(TEST_ADDRESSES.algorandRecipient);
+        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.stellar);
+        await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
         await expect(app.newSendFlow.memoInput).toBeVisible();
 
         await app.newSendFlow.skipMemo({ confirm: false });
@@ -659,7 +659,7 @@ test.describe("New Send Flow", () => {
         page,
         ACCOUNT_NAMES.algorand,
         TEST_ADDRESSES.algorandRecipient,
-        true,
+        false,
       );
       await app.newSendFlow.fillCryptoAmount("0.1");
       await expect(app.newSendFlow.feesMenuTrigger).toBeHidden();
@@ -892,8 +892,6 @@ test.describe("New Send Flow", () => {
         accountName: ACCOUNT_NAMES.algorand,
         address: TEST_ADDRESSES.algorandRecipient,
         amount: "0.1",
-        hasMemo: true,
-        memoValue: "some random memo",
       },
       {
         name: "Bitcoin",

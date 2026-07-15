@@ -128,9 +128,7 @@ describe("LNSUpsellBanner", () => {
           ...withFlagOverrides({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             lldNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams as any },
-            ...(brazePlacement
-              ? { lwdWallet40: { enabled: true, params: { brazePlacement: true } } }
-              : {}),
+            lwdWallet40: { enabled: true, params: { brazePlacement } },
           }),
           settings: {
             shareAnalytics: true,

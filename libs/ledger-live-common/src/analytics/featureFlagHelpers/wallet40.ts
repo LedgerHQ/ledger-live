@@ -17,15 +17,9 @@ export const getWallet40Attributes = (
 
   return {
     isEnabled,
-    marketBanner: wallet40FeatureFlag?.params?.marketBanner ?? false,
-    graphRework: wallet40FeatureFlag?.params?.graphRework ?? false,
-    quickActionCtas: wallet40FeatureFlag?.params?.quickActionCtas ?? false,
     tour: wallet40FeatureFlag?.params?.tour ?? false,
     q2Tour: wallet40FeatureFlag?.params?.q2Tour ?? false,
-    mainNavigation: wallet40FeatureFlag?.params?.mainNavigation ?? false,
-    newReceiveDialog: wallet40FeatureFlag?.params?.newReceiveDialog ?? false,
     lazyOnboarding: wallet40FeatureFlag?.params?.lazyOnboarding ?? false,
-    balanceRefreshRework: wallet40FeatureFlag?.params?.balanceRefreshRework ?? false,
     assetSection: wallet40FeatureFlag?.params?.assetSection ?? false,
     brazePlacement: wallet40FeatureFlag?.params?.brazePlacement ?? false,
     operationsList: wallet40FeatureFlag?.params?.operationsList ?? false,

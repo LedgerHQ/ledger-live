@@ -3,7 +3,6 @@ import { createBridges } from "@ledgerhq/coin-concordium/bridge/index";
 import concordiumResolver from "@ledgerhq/coin-concordium/signer";
 import type { ConcordiumCoinConfig } from "@ledgerhq/coin-concordium/config";
 import { ConcordiumAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-concordium/types";
-import makeCliTools from "@ledgerhq/coin-concordium/test/cli";
 import { DmkSignerConcordium } from "@ledgerhq/live-signer-concordium";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
@@ -33,6 +32,4 @@ const bridge: Bridge<Transaction, ConcordiumAccount, TransactionStatus> = create
 
 const resolver: Resolver = createResolver(createSigner, concordiumResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, resolver };
+export { bridge, resolver };

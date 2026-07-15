@@ -20,8 +20,6 @@ import type {
   BalanceOptions,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
-import { Operation as LiveOperation } from "@ledgerhq/types-live";
 import { EvmCoinConfig, setCoinConfig, type EvmConfig } from "../config";
 import { craftTransactionData } from "../logic/craftTransactionData";
 import {
@@ -35,12 +33,9 @@ import {
   getNextSequence,
   lastBlock,
   listOperations,
-  refreshOperations,
   validateIntent,
-  validateTransaction,
 } from "../logic/index";
 import { validateAddress } from "../logic/validateAddress";
-import { STAKING_CONTRACTS } from "../staking";
 import { getValidatorsPage } from "../staking/validators";
 
 // NOTE Celo still relies on the EVM coin config and injects its own
@@ -51,7 +46,7 @@ const configs: Record<string, EvmConfig | (() => EvmCoinConfig)> = {};
 export function createApi(
   config: EvmConfig | (() => EvmCoinConfig),
   currencyId: string,
-): CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi {
+): CoinModuleApi<MemoNotSupported, BufferTxData> {
   configs[currencyId] = config;
   setCoinConfig(id => {
     const evmConfig = configs[id];
@@ -105,21 +100,6 @@ export function createApi(
       balances: Balance[],
       customFees?: FeeEstimation,
     ): Promise<TransactionValidation> => validateIntent(currency, intent, balances, customFees),
-    /**
-     * Only expose this method if the chain has no explorer (the only chain that passes a function
-     * is Celo that works with an explorer)
-     * Not exposing this methods ensures that we don't try to force the update of pending operations
-     * in the context of the generic adapter and wait for explorers more accurate results instead
-     */
-    ...(typeof config !== "function" && config.explorer.type === "none"
-      ? {
-          refreshOperations: (operations: LiveOperation[]): Promise<LiveOperation[]> =>
-            refreshOperations(currency, operations),
-        }
-      : {}),
-    validateTransaction: (signature: string): Promise<{ error: Error | undefined }> =>
-      validateTransaction(currency, { signature }),
-    ...(STAKING_CONTRACTS[currencyId] ? { stakingSupported: true } : {}),
     craftTransactionData,
   };
 }

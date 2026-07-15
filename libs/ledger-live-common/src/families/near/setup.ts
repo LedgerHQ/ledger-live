@@ -1,7 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
 import { createBridges } from "@ledgerhq/coin-near/bridge/js";
-import makeCliTools from "@ledgerhq/coin-near/cli-transaction";
 import nearResolver from "@ledgerhq/coin-near/hw-getAddress";
 import { NearAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-near/types";
 import Near from "@ledgerhq/hw-app-near";
@@ -27,6 +26,4 @@ const bridge: Bridge<Transaction, NearAccount, TransactionStatus> = createBridge
 
 const resolver: Resolver = createResolver(createSigner, nearResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, resolver };
+export { bridge, resolver };

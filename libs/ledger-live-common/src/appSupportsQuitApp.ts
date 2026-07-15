@@ -126,7 +126,6 @@ export const minAppVersion = {
   Sonic: "1.4.0",
   Stacks: "0.0.0",
   Stellar: "3.2.2",
-  Stratis: "1.5.0",
   Symbol: "0.0.0",
   Terra: "1.1.0",
   "Tezos Baking": "2.2.9",

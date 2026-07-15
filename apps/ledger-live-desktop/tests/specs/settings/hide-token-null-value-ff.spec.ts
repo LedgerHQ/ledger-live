@@ -3,7 +3,7 @@ import { expect } from "@playwright/test";
 import { SettingsPage } from "../../page/settings.page";
 import { Layout } from "../../component/layout.component";
 import { AccountsPage } from "tests/page/accounts.page";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AccountPage } from "tests/page/account.page";
 
 test.use({

@@ -546,7 +546,6 @@ describe("startSyncJob", () => {
 
     // Chunk 2's call to startSync must include NF1 in knownNullifiers
     const chunk2Args = mockStartSync.mock.calls[1][0];
-    expect(chunk2Args.knownNullifiers).toBeDefined();
     expect(chunk2Args.knownNullifiers).toContain(NF1);
   });
 

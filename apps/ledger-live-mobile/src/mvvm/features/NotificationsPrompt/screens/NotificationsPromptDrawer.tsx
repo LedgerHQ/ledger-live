@@ -9,8 +9,6 @@ import { resolveDrawerPromptTargetForAnalytics } from "LLM/features/Notification
 import { getNotificationsPromptCopy } from "LLM/features/NotificationsPrompt/utils/getNotificationsPromptCopy";
 import type { NotificationPromptTarget } from "LLM/features/NotificationsPrompt/types";
 import { TrackScreen } from "~/analytics";
-import { useFeature } from "@features/platform-feature-flags";
-import { AB_TESTING_VARIANTS } from "LLM/features/NotificationsPrompt/types/variants";
 import type { NotificationsState } from "~/reducers/types";
 
 type DrawerDisplayState = {
@@ -30,8 +28,6 @@ export const NotificationsPromptDrawer = () => {
     nextRepromptDelay,
     pushNotificationsDataOfUser,
   } = useNotifications();
-
-  const featureNewWordingNotificationsDrawer = useFeature("lwmNewWordingOptInNotificationsDrawer");
 
   const drawerDisplayStateRef = useRef<DrawerDisplayState>({
     drawerSource: undefined,
@@ -55,14 +51,7 @@ export const NotificationsPromptDrawer = () => {
     };
   }, []);
 
-  const canShowVariant = featureNewWordingNotificationsDrawer?.enabled;
-  const isVariantB =
-    featureNewWordingNotificationsDrawer?.enabled === true &&
-    featureNewWordingNotificationsDrawer?.params?.variant === AB_TESTING_VARIANTS.B;
-  const { allowKey, laterKey } = getNotificationsPromptCopy(
-    displayedDrawerPromptTarget,
-    isVariantB,
-  );
+  const { allowKey, laterKey } = getNotificationsPromptCopy(displayedDrawerPromptTarget);
 
   return (
     <QueuedDrawer
@@ -77,7 +66,6 @@ export const NotificationsPromptDrawer = () => {
         drawerPromptTarget={resolveDrawerPromptTargetForAnalytics(displayedDrawerPromptTarget)}
         repromptDelay={nextRepromptDelay}
         dismissedCount={pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0}
-        variant={canShowVariant ? featureNewWordingNotificationsDrawer?.params?.variant : undefined}
       />
 
       <Flex mb={4}>

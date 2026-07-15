@@ -36,9 +36,7 @@ jobs:
         run: pnpm i --filter="ledger-live-desktop-e2e-tests..." --filter="ledger-live-desktop..." --no-frozen-lockfile --unsafe-perm
 
       - name: Run format check
-        # TODO(LIVE-31553): remove continue-on-error once format:check exists on
-        # release HEAD (~2 weeks); kept non-blocking to not break release flows.
-        continue-on-error: true
+        if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop'
         run: pnpm exec nx run ledger-live-desktop-e2e-tests:format:check
 
       - name: Run lint and typecheck

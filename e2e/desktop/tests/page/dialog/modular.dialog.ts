@@ -1,6 +1,6 @@
 import { Page } from "@playwright/test";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Dialog } from "../../component/dialog.component";
 import { ModularAssetDialog } from "./modular.asset.dialog";
 import { ModularNetworkDialog } from "./modular.network.dialog";
@@ -55,6 +55,14 @@ export class ModularDialog extends Dialog {
     return await this.assetDialog.selectAssetByTicker(currency);
   }
 
+  async checkAssetAmountIsDiscreet(ticker: string) {
+    return await this.assetDialog.checkAssetAmountIsDiscreet(ticker);
+  }
+
+  async checkAssetAmountsAreDiscreet(tickers: string[]) {
+    return await this.assetDialog.checkAssetAmountsAreDiscreet(tickers);
+  }
+
   async selectNetwork(currency: Currency, networkIndex: number = 0) {
     if (await this.isNetworkDialogVisible()) {
       await this.networkDialog.selectNetwork(currency, networkIndex);
@@ -63,6 +71,14 @@ export class ModularDialog extends Dialog {
 
   async isNetworkDialogVisible(): Promise<boolean> {
     return await this.networkDialog.isNetworkDialogVisible();
+  }
+
+  async waitForNetworkDialogVisible(timeout?: number): Promise<boolean> {
+    return await this.networkDialog.waitForNetworkDialogVisible(timeout);
+  }
+
+  async waitForAccountSelectionVisible(timeout?: number): Promise<boolean> {
+    return await this.accountDialog.waitForAccountSelectionVisible(timeout);
   }
 
   async selectAccountByName(account: AccountType) {

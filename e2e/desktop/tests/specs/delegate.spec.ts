@@ -1,14 +1,14 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { getEnv } from "@ledgerhq/live-env";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
 
 import type { OptionalFeatureMap } from "@shared/feature-flags";
@@ -23,10 +23,6 @@ const e2eDelegationAccounts = [
   {
     delegate: new Delegate(Account.ATOM_1, "0.001", "Ledger"),
     xrayTicket: "B2CQA-2740, B2CQA-2770",
-  },
-  {
-    delegate: new Delegate(Account.SOL_2, "0.001", "Ledger by Figment"),
-    xrayTicket: "B2CQA-2742",
   },
   {
     delegate: new Delegate(Account.NEAR_1, "0.01", "ledgerbyfigment.poolv1.near"),
@@ -51,6 +47,10 @@ const e2eDelegationAccountsWithoutBroadcast = [
   {
     delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Figment"),
     xrayTicket: "B2CQA-3020",
+  },
+  {
+    delegate: new Delegate(Account.SOL_2, "1", "Ledger by Figment"),
+    xrayTicket: "B2CQA-2742",
   },
 ];
 
@@ -128,7 +128,6 @@ for (const account of e2eDelegationAccounts) {
           "@NanoGen5",
           `@${account.delegate.account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(account.delegate.account === Account.ATOM_1 ? ["@smoke"] : []),
         ],
         annotation: { type: "TMS", description: account.xrayTicket },
       },
@@ -219,32 +218,40 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
         await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
 
         await app.account.startStakingFlowFromMainStakeButton();
-        await app.delegate.continue();
 
-        if (account.delegate.account.currency.name == Currency.ADA.name) {
-          await app.delegate.openSearchProviderModal();
-          await app.delegate.inputProvider(account.delegate.provider);
+        if (account.delegate.account.currency.name == Currency.SOL.name) {
           await app.delegate.selectProviderByName(account.delegate.provider);
-        } else if (
-          [Currency.APT.name, Currency.MULTIVERS_X.name].includes(
-            account.delegate.account.currency.name,
-          )
-        ) {
-          await app.delegate.inputProvider(account.delegate.provider);
-          await app.delegate.selectProviderByName(account.delegate.provider);
-        } else {
-          await app.delegate.verifyFirstProviderName(account.delegate.provider);
-        }
-
-        await app.delegate.continue();
-
-        if (account.delegate.account.currency.name == Currency.ADA.name) {
-          await app.delegate.verifyValidatorName("Ledger by Figment 3 [LBF3]");
-          await app.delegate.verifyFeesVisible();
           await app.delegate.continue();
-        } else {
           await app.delegate.fillAmount(account.delegate.amount);
           await app.delegate.continue();
+        } else {
+          await app.delegate.continue();
+
+          if (account.delegate.account.currency.name == Currency.ADA.name) {
+            await app.delegate.openSearchProviderModal();
+            await app.delegate.inputProvider(account.delegate.provider);
+            await app.delegate.selectProviderByName(account.delegate.provider);
+          } else if (
+            [Currency.APT.name, Currency.MULTIVERS_X.name].includes(
+              account.delegate.account.currency.name,
+            )
+          ) {
+            await app.delegate.inputProvider(account.delegate.provider);
+            await app.delegate.selectProviderByName(account.delegate.provider);
+          } else {
+            await app.delegate.verifyFirstProviderName(account.delegate.provider);
+          }
+
+          await app.delegate.continue();
+
+          if (account.delegate.account.currency.name == Currency.ADA.name) {
+            await app.delegate.verifyValidatorName("Ledger by Figment 3 [LBF3]");
+            await app.delegate.verifyFeesVisible();
+            await app.delegate.continue();
+          } else {
+            await app.delegate.fillAmount(account.delegate.amount);
+            await app.delegate.continue();
+          }
         }
 
         await app.speculos.signDelegationTransaction(account.delegate);
@@ -270,6 +277,9 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
 }
 
 test.describe("e2e delegation - Tezos", () => {
+  // XTZ_1 (index 0) is the funded + UNDELEGATED account: with lldTezosStaking off (the default) this
+  // routes to the delegate starter ("delegate to earn rewards"). The delegated + staked account lives
+  // on XTZ_2 (index 1), used by the staking specs.
   const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
   setupEnv(true);
   test.use({
@@ -465,8 +475,15 @@ test.describe("Staking flow from different entry point", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.marketBanner.clickExploreMarketHeader();
-      await app.market.search(delegateAccount.account.currency.ticker);
-      await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
+      // The asset-discoverability Market has no search input and no per-row stake CTA: staking is
+      // reached by opening the asset detail page. Both entry points open the same stake flow.
+      if (await app.market.isLegacyMarketList()) {
+        await app.market.search(delegateAccount.account.currency.ticker);
+        await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
+      } else {
+        await app.market.openCoinPage(delegateAccount.account.currency.ticker);
+        await app.assetDetail.startEarnFlow();
+      }
 
       const selector = await getModularSelector(app, "ACCOUNT");
       if (selector) {
@@ -505,6 +522,7 @@ for (const currency of liveApps) {
           "@NanoGen5",
           `@${currency.delegate.account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
+          ...(currency.delegate.account === Account.ETH_1 ? ["@smoke"] : []),
         ],
         annotation: { type: "TMS", description: currency.xrayTicket },
       },

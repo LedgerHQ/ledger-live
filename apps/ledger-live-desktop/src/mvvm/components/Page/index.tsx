@@ -19,6 +19,3 @@ const Page = ({ children }: PageProps) => {
 };
 
 export default Page;
-
-// Re-export utilities for backward compatibility
-export { getPagePaddingLeft, getPagePaddingRight } from "./components";

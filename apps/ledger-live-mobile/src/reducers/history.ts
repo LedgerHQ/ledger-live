@@ -6,7 +6,12 @@ import {
 } from "LLM/features/OperationsHistory/utils/unreadOperations";
 import type { State } from "./types";
 import { accountsSelector } from "./accounts";
-import { filterTokenOperationsZeroAmountEnabledSelector } from "./settings";
+import {
+  counterValueCurrencySelector,
+  filterTokenOperationsZeroAmountEnabledSelector,
+  hideSmallValueTokenOperationsEffectiveSelector,
+} from "./settings";
+import { countervaluesStateSelector } from "./countervalues";
 
 export type HistoryState = {
   lastSeenOperationDate: string | null;
@@ -37,6 +42,16 @@ export default historySlice.reducer;
 export const lastSeenOperationDateSelector = (state: Pick<State, "history">): string | null =>
   state.history.lastSeenOperationDate;
 
+const dustFilterCountervaluesStateSelector = (state: State) =>
+  hideSmallValueTokenOperationsEffectiveSelector(state)
+    ? countervaluesStateSelector(state)
+    : undefined;
+
+const dustFilterCounterValueCurrencySelector = (state: State) =>
+  hideSmallValueTokenOperationsEffectiveSelector(state)
+    ? counterValueCurrencySelector(state)
+    : undefined;
+
 /**
  * Returns true when any operation shown in global History is newer than lastSeenOperationDate
  * (same pipeline as the History list: flattened accounts, pending ops, address-poisoning filter).
@@ -46,10 +61,29 @@ export const hasUnreadOperationsSelector = createSelector(
   accountsSelector,
   lastSeenOperationDateSelector,
   filterTokenOperationsZeroAmountEnabledSelector,
+  hideSmallValueTokenOperationsEffectiveSelector,
+  dustFilterCountervaluesStateSelector,
+  dustFilterCounterValueCurrencySelector,
   (state: State) => selectFeature(state, "addressPoisoningOperationsFilter"),
-  (accounts, lastSeenDate, shouldFilterTokenOps, poisoningFeature) => {
+  (
+    accounts,
+    lastSeenDate,
+    shouldFilterTokenOps,
+    shouldHideSmallValueTokenOperations,
+    countervaluesState,
+    userCounterValueCurrency,
+    poisoningFeature,
+  ) => {
     if (!lastSeenDate) return false;
     const families = getAddressPoisoningFamiliesForFilter(shouldFilterTokenOps, poisoningFeature);
-    return hasUnreadOperations(accounts, lastSeenDate, shouldFilterTokenOps, families);
+    return hasUnreadOperations(
+      accounts,
+      lastSeenDate,
+      shouldFilterTokenOps,
+      families,
+      shouldHideSmallValueTokenOperations,
+      countervaluesState,
+      userCounterValueCurrency,
+    );
   },
 );

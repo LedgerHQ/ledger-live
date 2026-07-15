@@ -15,7 +15,7 @@ import { getMockedMirrorToken } from "../test/fixtures/mirror.fixture";
 import { getMockedOperation } from "../test/fixtures/operation.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 import type { EstimateFeesResult } from "../types";
-import { calculateAmount, getSubAccounts } from "./utils";
+import { buildCalTokenMap, calculateAmount, getSubAccounts } from "./utils";
 
 describe("utils", () => {
   const address = "0.0.12345";
@@ -195,6 +195,7 @@ describe("utils", () => {
         latestTokenOperations: [mockedOperation1, mockedOperation2],
         mirrorTokens: [mockedMirrorToken1, mockedMirrorToken2],
         erc20Tokens: [],
+        calTokenByAddress: new Map(),
       });
       const uniqueSubAccountIds = new Set(result.map(sa => sa.id));
 
@@ -225,6 +226,7 @@ describe("utils", () => {
         latestTokenOperations: [mockedOperation],
         mirrorTokens: [],
         erc20Tokens: [],
+        calTokenByAddress: new Map(),
       });
 
       expect(result).toEqual([]);
@@ -237,11 +239,18 @@ describe("utils", () => {
         balance: 42,
       });
 
+      const calTokenByAddress = await buildCalTokenMap({
+        erc20Tokens: [],
+        mirrorTokens: [mockedTokenHTS],
+        currencyId: "hedera",
+      });
+
       const result = await getSubAccounts({
         ledgerAccountId: mockedAccount.id,
         latestTokenOperations: [],
         mirrorTokens: [mockedTokenHTS],
         erc20Tokens: [],
+        calTokenByAddress,
       });
 
       expect(result).toMatchObject([
@@ -255,12 +264,22 @@ describe("utils", () => {
 
     it("returns sub account for erc20 token with no operations yet", async () => {
       const tokenCurrencyFromCAL = getTokenCurrencyFromCALByType("erc20");
+      const erc20Tokens = [
+        { balance: new BigNumber(42), contractAddress: tokenCurrencyFromCAL.contractAddress },
+      ];
+
+      const calTokenByAddress = await buildCalTokenMap({
+        erc20Tokens,
+        mirrorTokens: [],
+        currencyId: "hedera",
+      });
 
       const result = await getSubAccounts({
         ledgerAccountId: mockedAccount.id,
         latestTokenOperations: [],
         mirrorTokens: [],
-        erc20Tokens: [{ balance: new BigNumber(42), token: tokenCurrencyFromCAL }],
+        erc20Tokens,
+        calTokenByAddress,
       });
 
       expect(result).toMatchObject([
@@ -270,6 +289,44 @@ describe("utils", () => {
           balance: new BigNumber(42),
         },
       ]);
+    });
+
+    it("resolves erc20 sub-account balance from erc20Tokens when token operations exist", async () => {
+      const tokenCurrencyFromCAL = getTokenCurrencyFromCALByType("erc20");
+      const operation = getMockedOperation({
+        accountId: encodeTokenAccountId(mockedAccount.id, tokenCurrencyFromCAL),
+      });
+
+      const result = await getSubAccounts({
+        ledgerAccountId: mockedAccount.id,
+        latestTokenOperations: [operation],
+        mirrorTokens: [],
+        erc20Tokens: [
+          { contractAddress: tokenCurrencyFromCAL.contractAddress, balance: new BigNumber(999) },
+        ],
+        calTokenByAddress: new Map(),
+      });
+
+      expect(result).toMatchObject([
+        { token: tokenCurrencyFromCAL, balance: new BigNumber(999), operations: [operation] },
+      ]);
+    });
+
+    it("drops erc20 sub-account when balance entry is missing in erc20Tokens", async () => {
+      const tokenCurrencyFromCAL = getTokenCurrencyFromCALByType("erc20");
+      const operation = getMockedOperation({
+        accountId: encodeTokenAccountId(mockedAccount.id, tokenCurrencyFromCAL),
+      });
+
+      const result = await getSubAccounts({
+        ledgerAccountId: mockedAccount.id,
+        latestTokenOperations: [operation],
+        mirrorTokens: [],
+        erc20Tokens: [],
+        calTokenByAddress: new Map(),
+      });
+
+      expect(result).toEqual([]);
     });
   });
 });

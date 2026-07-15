@@ -16,8 +16,9 @@ import logger from "./logger";
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { marketStoreSelector } from "./reducers/market";
 import { marketBannerStoreSelector } from "./reducers/marketBanner";
+import { knownDevicesStoreSelector } from "./reducers/knownDevices";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
-import type { PersistedCAL } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import type { PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@ledgerhq/client-ids/store";
 import type { FeatureFlagsState } from "@shared/feature-flags";
 
@@ -39,6 +40,7 @@ export type PostOnboarding = ReturnType<typeof hubStateSelector>;
 export type Settings = ReturnType<typeof settingsStoreSelector>;
 export type Market = ReturnType<typeof marketStoreSelector>;
 export type MarketBanner = ReturnType<typeof marketBannerStoreSelector>;
+export type KnownDevices = ReturnType<typeof knownDevicesStoreSelector>;
 
 export type TrustchainStore = ReturnType<typeof trustchainStoreSelector>;
 
@@ -53,6 +55,7 @@ type DatabaseValues = {
   wallet: ExportedWalletState;
   market: Market;
   marketBanner: MarketBanner;
+  knownDevices: KnownDevices;
   cryptoAssets: PersistedCAL;
   featureFlags: Pick<FeatureFlagsState, "overrides" | "bannerVisible">;
   coinConfigOverrides: { overrides: Record<string, unknown> };
@@ -108,7 +111,8 @@ const transforms: Transforms = {
       }
       return accounts;
     },
-    set: async accounts => Promise.all((accounts || []).map(accountModel.encode)),
+    set: async accounts =>
+      Promise.all((accounts || []).map(account => accountModel.encode(account))),
   },
 };
 

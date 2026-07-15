@@ -1,4 +1,4 @@
-import { EvmAddress } from "@ledgerhq/coin-evm/types/signer";
+import type { EvmAddress } from "@ledgerhq/live-signer-evm";
 import { Signer } from "@ledgerhq/live-common/families/evm/signer";
 import { HDNodeWallet, Transaction } from "ethers";
 import { generateMnemonic, mnemonicToSeed } from "bip39";

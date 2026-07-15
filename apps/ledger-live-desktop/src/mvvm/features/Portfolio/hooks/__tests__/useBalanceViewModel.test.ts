@@ -12,10 +12,9 @@ jest.mock("LLD/hooks/usePortfolioBalance");
 
 const mockUsePortfolioBalance = jest.mocked(usePortfolioBalanceModule.usePortfolioBalance);
 
-const wallet40WithBalanceRefreshRework = withFlagOverrides({
+const wallet40Enabled = withFlagOverrides({
   lwdWallet40: {
     enabled: true,
-    params: { balanceRefreshRework: true },
   },
 });
 
@@ -32,7 +31,7 @@ const initialState = {
     counterValueCurrency: mockCounterValue,
     selectedTimeRange: "week" as const,
   },
-  ...wallet40WithBalanceRefreshRework,
+  ...wallet40Enabled,
 };
 
 describe("useBalanceViewModel", () => {
@@ -52,7 +51,6 @@ describe("useBalanceViewModel", () => {
     expect(result.current.formatter(result.current.balance).integerPart).toContain("15");
     expect(result.current.valueChange).toEqual(portfolioWithBalance.countervalueChange);
     expect(result.current.isColdStart).toBe(false);
-    expect(result.current.shouldDisplayBalanceRefreshRework).toBe(true);
     expect(result.current.hasAccount).toBeDefined();
     expect(result.current.hasOnboardedDevice).toBeDefined();
   });
@@ -198,20 +196,5 @@ describe("useBalanceViewModel", () => {
     );
     rerender();
     expect(result.current.balanceAvailable).toBe(true);
-  });
-
-  it("should return shouldDisplayBalanceRefreshRework false when flag is disabled", () => {
-    const { result } = renderHook(() => useBalanceViewModel(), {
-      initialState: {
-        settings: {
-          ...initialState.settings,
-        },
-        ...withFlagOverrides({
-          lwdWallet40: { enabled: true, params: { balanceRefreshRework: false } },
-        }),
-      },
-    });
-
-    expect(result.current.shouldDisplayBalanceRefreshRework).toBe(false);
   });
 });

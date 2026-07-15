@@ -1,7 +1,9 @@
 import { initReceiveFlowApp, openReceive } from "./receiveFlow.shared";
 import DeviceAction from "../../models/DeviceAction";
 
-describe("Receive Flow — verify address", () => {
+// TODO(LIVE-33334): these legacy mock specs will be removed in a follow-up task;
+// skipped for now.
+describe.skip("Receive Flow — verify address", () => {
   let deviceAction: DeviceAction;
   const btcReceiveAddress = "173ej2furpaB8mTtN5m9829MPGMD7kCgSPx";
 

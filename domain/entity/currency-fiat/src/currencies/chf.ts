@@ -3,9 +3,16 @@ import { fiat } from "../define";
 export const chf = fiat({
   type: "FiatCurrency",
   id: "chf",
-  name: "Swiss Franc",
   ticker: "CHF",
-  symbol: "Fr",
-  units: [{ name: "Swiss Franc", code: "CHF", magnitude: 2 }],
-  keywords: ["franc", "chf"],
+  name: "Swiss Franc",
+  symbol: "CHF",
+  units: [
+    {
+      code: "CHF",
+      name: "Swiss Franc",
+      magnitude: 2,
+      showAllDigits: true,
+      prefixCode: true,
+    },
+  ],
 });

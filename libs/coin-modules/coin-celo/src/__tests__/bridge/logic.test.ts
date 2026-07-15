@@ -213,6 +213,33 @@ describe("logic", () => {
     });
   });
 
+  it("getVote matches the validator group case-insensitively", () => {
+    const account = {
+      ...accountFixture,
+      celoResources: {
+        ...accountFixture.celoResources,
+        votes: [
+          {
+            validatorGroup: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+            amount: BigNumber(10),
+            activatable: false,
+            revokable: true,
+            type: "active",
+            index: 0,
+          },
+        ],
+      },
+    } as CeloAccount;
+
+    // Recipient supplied in lowercase must still resolve the checksummed vote.
+    const result = getVote(account, "0x79d5a290d7ba4b99322d91b577589e8d0bf87072", 0);
+
+    expect(result).toMatchObject({
+      validatorGroup: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+      index: 0,
+    });
+  });
+
   it("voteStatus", () => {
     expect(
       voteStatus({

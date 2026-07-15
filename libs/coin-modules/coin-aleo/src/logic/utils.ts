@@ -315,11 +315,29 @@ function getAmountToSpend({
     return transaction.amount;
   }
 
+  const isTokenTx = isTokenTransaction(transaction);
+  const tokenAccount = getAleoSubAccount(account, transaction.subAccountId);
+
+  if (isTokenTx) {
+    invariant(tokenAccount, `aleo: token account is missing (${transaction.subAccountId})`);
+  }
+
+  // private native/token transfer: sum selected amount records
   if (isPrivateTransaction(transaction)) {
     return transaction.properties.amountRecordCommitments.reduce((sum, commitment) => {
-      const record = getRecordByCommitment({ account, commitment });
+      const record = getRecordByCommitment({
+        account,
+        commitment,
+        ...(isTokenTx && tokenAccount && { tokenAccount }),
+      });
+
       return record ? sum.plus(record.microcredits) : sum;
     }, new BigNumber(0));
+  }
+
+  // public token transfer: full transparent token balance as fees are paid with native ALEO
+  if (isTokenTx) {
+    return tokenAccount?.transparentBalance ?? new BigNumber(0);
   }
 
   const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
@@ -337,8 +355,7 @@ export function calculateAmount({
   estimatedFees: BigNumber;
 }) {
   const amount = getAmountToSpend({ account, transaction, estimatedFees });
-
-  const totalSpent = amount.plus(estimatedFees);
+  const totalSpent = isTokenTransaction(transaction) ? amount : amount.plus(estimatedFees);
 
   return {
     amount,
@@ -514,10 +531,15 @@ export function hasSpecificIntentData<Type extends AleoTransactionIntentData["ty
 }
 
 function validateRecordsCount(transactionType: TransactionType, recordsCount: number): void {
+  const isTokenTx = isTokenTransaction({ mode: transactionType });
+  const maxRecords = isTokenTx
+    ? MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION
+    : MAX_PRIVATE_RECORDS_PER_TRANSACTION;
+
   invariant(recordsCount > 0, `aleo: at least one record is required for ${transactionType}`);
   invariant(
-    recordsCount <= MAX_PRIVATE_RECORDS_PER_TRANSACTION,
-    `aleo: too many records for ${transactionType} (max: ${MAX_PRIVATE_RECORDS_PER_TRANSACTION})`,
+    recordsCount <= maxRecords,
+    `aleo: too many records for ${transactionType} (max: ${maxRecords})`,
   );
 }
 
@@ -624,6 +646,52 @@ export function mapTransactionIntentToSdkIntent(
         program_id: txIntent.data.programId,
       };
     }
+    case TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE: {
+      invariant(hasSpecificIntentData(txIntent, type), `aleo: intent data is required for ${type}`);
+      const records = txIntent.data.records;
+      validateRecordsCount(type, records.length);
+
+      if (records.length === 1) {
+        return {
+          type: "transfer_token_private",
+          amount,
+          to,
+          record: records[0],
+          program_id: txIntent.data.programId,
+        };
+      }
+
+      return {
+        type: `transfer_token_private_${records.length}`,
+        amount,
+        to,
+        records,
+        program_id: txIntent.data.programId,
+      };
+    }
+    case TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC: {
+      invariant(hasSpecificIntentData(txIntent, type), `aleo: intent data is required for ${type}`);
+      const records = txIntent.data.records;
+      validateRecordsCount(type, records.length);
+
+      if (records.length === 1) {
+        return {
+          type: "transfer_token_private_to_public",
+          amount,
+          to,
+          record: records[0],
+          program_id: txIntent.data.programId,
+        };
+      }
+
+      return {
+        type: `transfer_token_private_to_public_${records.length}`,
+        amount,
+        to,
+        records,
+        program_id: txIntent.data.programId,
+      };
+    }
     default: {
       throw new Error(`aleo: unsupported intent type: ${type}`);
     }
@@ -706,12 +774,12 @@ function resolveDecryptedAmountRecordsFromCommitments({
   maxRecords: number;
   findRecord: (commitment: string) => AleoUnspentRecord | null;
 }): AleoUnspentRecord["decryptedData"][] {
-  const logLabel = type === "native" ? "amount records" : "token amount records";
+  const label = type === "native" ? "amount records" : "token amount records";
 
   invariant(commitments.length > 0, "aleo: missing amount record commitments");
   invariant(
     commitments.length <= maxRecords,
-    `aleo: too many ${logLabel} selected (max: ${maxRecords})`,
+    `aleo: too many ${label} selected (max: ${maxRecords})`,
   );
 
   const missingCommitments: string[] = [];
@@ -726,10 +794,9 @@ function resolveDecryptedAmountRecordsFromCommitments({
     }
   }
 
-  invariant(decryptedRecords.length > 0, `aleo: missing ${logLabel}`);
   invariant(
     missingCommitments.length === 0,
-    `aleo: no ${logLabel} found for given commitments: ${missingCommitments.join(", ")}`,
+    `aleo: no ${label} found for given commitments: ${missingCommitments.join(", ")}`,
   );
 
   return decryptedRecords;
@@ -753,6 +820,16 @@ function buildTransactionIntentBase(
   };
 }
 
+function getRequiredTokenProgramId(
+  account: AleoAccount,
+  subAccountId: string | null | undefined,
+): string {
+  const tokenAccount = getAleoSubAccount(account, subAccountId);
+  invariant(tokenAccount, `aleo: token account is missing (${subAccountId})`);
+
+  return tokenAccount.token.contractAddress;
+}
+
 export function createTransactionIntent({
   account,
   transaction,
@@ -761,10 +838,6 @@ export function createTransactionIntent({
   transaction: Transaction;
 }): AleoTransactionIntent {
   const base = buildTransactionIntentBase(account, transaction);
-
-  if (isPrivateTokenTransaction(transaction)) {
-    throw new Error("aleo: private token transactions are not supported yet");
-  }
 
   switch (transaction.mode) {
     case TRANSACTION_TYPE.TRANSFER_PUBLIC:
@@ -787,22 +860,37 @@ export function createTransactionIntent({
       };
 
     case TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC:
-    case TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE: {
-      const tokenSubAccount = getAleoSubAccount(account, transaction.subAccountId);
-      invariant(
-        tokenSubAccount,
-        "aleo: token sub-account is required for public token transaction",
-      );
+    case TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE:
       return {
         ...base,
         data: {
           type: transaction.mode,
-          programId: tokenSubAccount.token.contractAddress,
+          programId: getRequiredTokenProgramId(account, transaction.subAccountId),
+        },
+      };
+
+    case TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE:
+    case TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC: {
+      const tokenAccount = getAleoSubAccount(account, transaction.subAccountId);
+      invariant(tokenAccount, `aleo: token account is missing (${transaction.subAccountId})`);
+
+      return {
+        ...base,
+        data: {
+          type: transaction.mode,
+          programId: tokenAccount.token.contractAddress,
+          records: resolveDecryptedAmountRecordsFromCommitments({
+            type: "token",
+            commitments: transaction.properties.amountRecordCommitments,
+            maxRecords: MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+            findRecord: commitment => getRecordByCommitment({ account, commitment, tokenAccount }),
+          }),
         },
       };
     }
 
     default:
+      // @ts-expect-error - runtime check to ensure all transaction types are handled
       throw new Error(`aleo: unsupported tx mode for transaction intent: ${transaction.mode}`);
   }
 }
@@ -863,13 +951,17 @@ export function createFeeTransactionIntent({
 export function getRecordByCommitment({
   account,
   commitment,
+  tokenAccount,
 }: {
   account: AleoAccount;
   commitment: string;
+  tokenAccount?: AleoTokenAccount;
 }): AleoUnspentRecord | null {
-  const unspentPrivateRecords = account.aleoResources?.unspentPrivateRecords ?? [];
+  const records = tokenAccount
+    ? (tokenAccount.unspentPrivateRecords ?? [])
+    : (account.aleoResources?.unspentPrivateRecords ?? []);
 
-  return unspentPrivateRecords.find(record => record.commitment === commitment) ?? null;
+  return records.find(record => record.commitment === commitment) ?? null;
 }
 
 export function sumPrivateRecords(records: AleoUnspentRecord[]): BigNumber {

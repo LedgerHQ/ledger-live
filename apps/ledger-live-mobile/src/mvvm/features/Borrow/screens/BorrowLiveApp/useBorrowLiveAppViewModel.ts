@@ -8,6 +8,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { Platform } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
@@ -28,6 +29,11 @@ export type BorrowWebviewInputs = {
   currencyTicker: string;
   OS: string;
   platform: "LLM";
+  // Safe-area insets (RN layout units) forwarded to the web app; stringified for query params.
+  safeAreaTop: string;
+  safeAreaBottom: string;
+  safeAreaLeft: string;
+  safeAreaRight: string;
 };
 
 type BorrowLiveAppViewModel = {
@@ -52,6 +58,7 @@ export function useBorrowLiveAppViewModel(): BorrowLiveAppViewModel {
   const { language } = useSettings();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const exportSettings = useSelector(exportSettingsSelector);
+  const insets = useSafeAreaInsets();
 
   const webviewRef = useRef<WebviewAPI>(null);
   const countryLocale = getCountryLocale();
@@ -85,8 +92,22 @@ export function useBorrowLiveAppViewModel(): BorrowLiveAppViewModel {
       currencyTicker,
       OS: Platform.OS,
       platform: "LLM",
+      safeAreaTop: insets.top.toString(),
+      safeAreaBottom: insets.bottom.toString(),
+      safeAreaLeft: insets.left.toString(),
+      safeAreaRight: insets.right.toString(),
     }),
-    [currencyTicker, countryLocale, exportSettings.developerModeEnabled, language, theme],
+    [
+      currencyTicker,
+      countryLocale,
+      exportSettings.developerModeEnabled,
+      language,
+      theme,
+      insets.top,
+      insets.bottom,
+      insets.left,
+      insets.right,
+    ],
   );
 
   const error: Error | null = useMemo(() => {

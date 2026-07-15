@@ -9,7 +9,6 @@ import {
   getTransactionType,
   insertAccountOwnershipProofs,
 } from "./serialization";
-import { pathToBuffer } from "./utils";
 import { AccountAddress } from "./address";
 import { TransactionType } from "./types";
 import type {
@@ -19,49 +18,6 @@ import type {
 } from "./types";
 
 describe("serialization", () => {
-  describe("pathToBuffer", () => {
-    it("should serialize standard Concordium path", () => {
-      // GIVEN
-      const path = "44'/919'/0'/0/0";
-
-      // WHEN
-      const result = pathToBuffer(path);
-
-      // THEN
-      expect(result[0]).toBe(5);
-      expect(result.readUInt32BE(1)).toBe(0x8000002c);
-      expect(result.readUInt32BE(5)).toBe(0x80000397);
-      expect(result.readUInt32BE(9)).toBe(0x80000000);
-      expect(result.readUInt32BE(13)).toBe(0);
-      expect(result.readUInt32BE(17)).toBe(0);
-      expect(result.length).toBe(21);
-    });
-
-    it("should serialize short path", () => {
-      // GIVEN
-      const path = "44'/919'";
-
-      // WHEN
-      const result = pathToBuffer(path);
-
-      // THEN
-      expect(result[0]).toBe(2);
-      expect(result.length).toBe(9);
-    });
-
-    it("should handle path with m/ prefix", () => {
-      // GIVEN
-      const path = "m/44'/919'/0'";
-
-      // WHEN
-      const result = pathToBuffer(path);
-
-      // THEN
-      expect(result[0]).toBe(3);
-      expect(result.length).toBe(13);
-    });
-  });
-
   describe("serializeCredentialDeploymentValues", () => {
     it("should serialize minimal credential deployment transaction", () => {
       // GIVEN

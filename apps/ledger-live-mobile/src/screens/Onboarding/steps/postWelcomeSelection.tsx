@@ -1,6 +1,6 @@
 import { Button, Icons } from "@ledgerhq/native-ui";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { useDispatch } from "~/context/hooks";
@@ -11,11 +11,11 @@ import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/O
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { SelectionCards } from "./Cards/SelectionCard";
-import { NoLedgerYetModal } from "./NoLedgerYetModal";
 import OnboardingView from "./OnboardingView";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { DETOX_ENABLED } from "~/utils/constants";
 
 type NavigationProps = StackNavigatorProps<
   OnboardingNavigatorParamList,
@@ -31,27 +31,8 @@ function PostWelcomeSelection() {
   const userHasDevice = route.params?.userHasDevice ?? false;
   const currentNavigation = navigation.getParent()?.getParent()?.getState().routes[0].name;
   const isInOnboarding = currentNavigation === NavigatorName.BaseOnboarding;
-  const llmRebornABtest = useFeature("llmRebornABtest");
   const localizedRebornUrl = useLocalizedUrl(urls.reborn);
   const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("mobile");
-
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const openModal = () => {
-    identifyUser(null);
-    track("button_clicked", {
-      button: "I don’t have a Ledger yet",
-    });
-    if (llmRebornABtest?.enabled) {
-      Linking.openURL(localizedRebornUrl);
-    } else {
-      setModalOpen(true);
-    }
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
-  };
 
   const identifyUser = useCallback(
     (hasDevice: boolean | null) => {
@@ -61,11 +42,24 @@ function PostWelcomeSelection() {
     [dispatch, isInOnboarding],
   );
 
-  useFocusEffect(() => {
-    if (!modalOpen) {
-      identifyUser(null);
+  const openNoLedgerYet = useCallback(() => {
+    identifyUser(null);
+    track("button_clicked", {
+      button: "I don’t have a Ledger yet",
+    });
+    // Detox: keep the discover-live read-only e2e path; production opens the Reborn URL
+    if (DETOX_ENABLED) {
+      navigation.navigate(ScreenName.OnboardingModalDiscoverLive);
+      return;
     }
-  });
+    Linking.openURL(localizedRebornUrl);
+  }, [identifyUser, localizedRebornUrl, navigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      identifyUser(null);
+    }, [identifyUser]),
+  );
 
   const setupLedger = () => {
     identifyUser(null);
@@ -88,7 +82,7 @@ function PostWelcomeSelection() {
       }}
       footer={
         isWallet40Enabled && userHasDevice ? undefined : (
-          <Button type="default" mb={10} onPress={openModal} testID="onboarding-noLedgerYet">
+          <Button type="default" mb={10} onPress={openNoLedgerYet} testID="onboarding-noLedgerYet">
             {t("onboarding.postWelcomeStep.noLedgerYet")}
           </Button>
         )
@@ -120,8 +114,6 @@ function PostWelcomeSelection() {
           },
         ]}
       />
-
-      <NoLedgerYetModal isOpen={modalOpen} onClose={closeModal} />
     </OnboardingView>
   );
 }

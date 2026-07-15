@@ -67,7 +67,7 @@ const renderRow = (row: OperationRowType, onRowClick = jest.fn()) => {
 describe("History/OperationRow", () => {
   it("uses the family-scoped label for a coin currency with an override", () => {
     renderRow(makeRow());
-    expect(screen.getByText("Unstaking")).toBeInTheDocument();
+    expect(screen.getByText("Unstaking")).toBeVisible();
   });
 
   it("resolves the family from the parent currency for token operations", () => {
@@ -79,7 +79,7 @@ describe("History/OperationRow", () => {
         operation: makeOperation({ type: "IN" }),
       }),
     );
-    expect(screen.getByText("Received")).toBeInTheDocument();
+    expect(screen.getByText("Received")).toBeVisible();
   });
 
   it("shows the failed label for failed operations", () => {
@@ -89,7 +89,7 @@ describe("History/OperationRow", () => {
         operation: makeOperation({ type: "OUT", hasFailed: true }),
       }),
     );
-    expect(screen.getByText("Failed")).toBeInTheDocument();
+    expect(screen.getByText("Failed")).toBeVisible();
   });
 
   it("forwards row clicks", async () => {

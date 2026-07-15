@@ -5,7 +5,6 @@
     "src/errors.ts",
     "src/hw-getAddress.ts",
     "src/types.ts",
-    "src/cli-transaction.ts",
     "src/synchronisation.ts",
     "src/specs.ts"
   ],

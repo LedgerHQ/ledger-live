@@ -15,6 +15,10 @@ export function HistoryView({
   onExportClick,
   operationsCount,
   hasPendingOperations,
+  showDustFilterOption,
+  hideSmallValueTokenOperations,
+  dustFilterThreshold,
+  onToggleHideSmallValueTokenOperations,
 }: Readonly<HistoryViewModel>) {
   const operationsCountRef = useRef(operationsCount);
   const hasPendingOperationsRef = useRef(hasPendingOperations);
@@ -24,11 +28,15 @@ export function HistoryView({
       <TrackPage
         category="OperationList"
         operationsCount={operationsCountRef.current}
-        has_pending_operations={hasPendingOperationsRef.current ? true : false}
+        has_pending_operations={hasPendingOperationsRef.current}
       />
       <HistoryPageHeader
         onBack={showBackButton ? navigateBack : undefined}
         onExportClick={onExportClick}
+        showDustFilterOption={showDustFilterOption}
+        hideSmallValueTokenOperations={hideSmallValueTokenOperations}
+        dustFilterThreshold={dustFilterThreshold}
+        onToggleHideSmallValueTokenOperations={onToggleHideSmallValueTokenOperations}
       />
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <HistoryList

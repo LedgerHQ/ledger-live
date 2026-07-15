@@ -280,7 +280,7 @@ describe("createApi", () => {
     };
     const result = await api.validateIntent(intent, [], undefined);
 
-    expect(validateIntent).toHaveBeenCalledWith(intent, [], undefined, mockChainAPI);
+    expect(validateIntent).toHaveBeenCalledWith(mockChainAPI, intent, [], undefined);
     expect(result).toEqual(mockResult);
   });
 

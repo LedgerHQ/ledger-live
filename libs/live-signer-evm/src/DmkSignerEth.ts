@@ -23,7 +23,7 @@ import {
   LockedDeviceError,
   UserRefusedOnDevice,
 } from "@ledgerhq/errors";
-import { EvmAddress, EvmSigner, EvmSignerEvent } from "@ledgerhq/coin-evm/types/signer";
+import type { EvmAddress, EvmSigner, EvmSignerEvent } from "./types";
 import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/services/types";
 import {
   buildDefaultHttpBlindSigningReporter,
@@ -37,14 +37,23 @@ export type DAError =
   | SignPersonalMessageDAError;
 
 export class DmkSignerEth implements EvmSigner {
-  private readonly signer: SignerEth;
+  /**
+   * CAL-wired {@link SignerEth}. Exposed as readonly so device-intent
+   * jobs can reuse the step-event observables without rebuilding a bare
+   * SignerEth (which would skip CAL and force blind signing).
+   */
+  readonly signer: SignerEth;
   constructor(
     readonly dmk: DeviceManagementKit,
     readonly sessionId: string,
   ) {
     const originToken = "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5"; // gitleaks:allow
     liveBlindSigningReporter.setInner(
-      buildDefaultHttpBlindSigningReporter(originToken, ContextModuleChainID.Ethereum, "ledger-wallet"),
+      buildDefaultHttpBlindSigningReporter(
+        originToken,
+        ContextModuleChainID.Ethereum,
+        "ledger-wallet",
+      ),
     );
     liveBlindSigningReporter.setContext({ sessionId });
     const contextModule = new ContextModuleBuilder({ originToken })

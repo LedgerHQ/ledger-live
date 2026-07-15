@@ -3,7 +3,8 @@ import invariant from "invariant";
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "~/context/Locale";
 import i18next from "i18next";
-import { Keyboard, StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
+import { Keyboard, StyleSheet, View, ScrollView } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "@react-navigation/native";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
@@ -67,7 +68,7 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
     });
   }, [customFee, account, bridge, route.params, navigation, transaction]);
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView edges={["left", "right", "bottom"]} style={styles.root}>
       <KeyboardView
         style={[
           styles.body,

@@ -3,7 +3,6 @@
 import Xrp from "@ledgerhq/hw-app-xrp";
 import Transport from "@ledgerhq/hw-transport";
 import xrpResolver from "./getAddress";
-import makeCliTools from "./cli";
 import { CreateSigner, createResolver } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 
@@ -13,6 +12,4 @@ const createSigner: CreateSigner<Xrp> = (transport: Transport) => {
 
 const resolver: Resolver = createResolver(createSigner, xrpResolver);
 
-const cliTools = makeCliTools();
-
-export { cliTools, resolver };
+export { resolver };

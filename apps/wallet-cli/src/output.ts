@@ -140,6 +140,17 @@ export interface CommandOutput {
     amountExpectedTo?: string;
     magnitudeAwareRate?: string;
   }): void;
+
+  swapExecuteDieResult(args: {
+    plan: string;
+    from: string;
+    to: string;
+    provider: string;
+    amount: string;
+    quoteId: string | null;
+    approvalTxHash?: string;
+    swapTxHash?: string;
+  }): void;
 }
 
 // ---------------------------------------------------------------------------
@@ -446,6 +457,30 @@ class HumanCommandOutput implements CommandOutput {
       writeStdout(`${colors.bold("Operation hash:")} ${args.operationHash}\n`);
     }
   }
+
+  swapExecuteDieResult(args: {
+    plan: string;
+    from: string;
+    to: string;
+    provider: string;
+    amount: string;
+    quoteId: string | null;
+    approvalTxHash?: string;
+    swapTxHash?: string;
+  }): void {
+    writeStdout(`${colors.bold("Pipeline:")} (${args.plan})\n`);
+    writeStdout(`${colors.bold("From:")} ${args.from}\n`);
+    writeStdout(`${colors.bold("To:")} ${args.to}\n`);
+    writeStdout(`${colors.bold("Provider:")} ${args.provider}\n`);
+    writeStdout(`${colors.bold("Amount:")} ${args.amount}\n`);
+    writeStdout(`${colors.bold("Quote ID:")} ${args.quoteId ?? "(none)"}\n`);
+    if (args.approvalTxHash) {
+      writeStdout(`${colors.bold("Approval tx hash:")} ${args.approvalTxHash}\n`);
+    }
+    if (args.swapTxHash) {
+      writeStdout(`${colors.bold("Swap tx hash:")} ${args.swapTxHash}\n`);
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -693,6 +728,30 @@ class JsonCommandOutput implements CommandOutput {
         swapId: args.swapId,
         amountExpectedTo: args.amountExpectedTo,
         magnitudeAwareRate: args.magnitudeAwareRate,
+      }),
+    );
+  }
+
+  swapExecuteDieResult(args: {
+    plan: string;
+    from: string;
+    to: string;
+    provider: string;
+    amount: string;
+    quoteId: string | null;
+    approvalTxHash?: string;
+    swapTxHash?: string;
+  }): void {
+    this._writeNdjson(
+      this._envelope({
+        plan: args.plan,
+        from: args.from,
+        to: args.to,
+        provider: args.provider,
+        amount: args.amount,
+        quoteId: args.quoteId,
+        approvalTxHash: args.approvalTxHash,
+        swapTxHash: args.swapTxHash,
       }),
     );
   }

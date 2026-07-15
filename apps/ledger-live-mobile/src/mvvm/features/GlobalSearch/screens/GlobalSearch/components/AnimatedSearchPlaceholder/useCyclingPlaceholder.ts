@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useReducedMotion } from "react-native-reanimated";
+import Config from "react-native-config";
 
 export const PLACEHOLDER_INTERVAL_MS = 4000;
 
@@ -12,9 +13,10 @@ export const PLACEHOLDER_INTERVAL_MS = 4000;
  */
 export function useCyclingPlaceholder(length: number, enabled: boolean) {
   const reduceMotion = useReducedMotion();
+  const isDetox = Config.DETOX === "1";
   const [index, setIndex] = useState(0);
 
-  const animate = !reduceMotion && length > 1;
+  const animate = !reduceMotion && !isDetox && length > 1;
 
   useEffect(() => {
     if (!animate || !enabled) return;

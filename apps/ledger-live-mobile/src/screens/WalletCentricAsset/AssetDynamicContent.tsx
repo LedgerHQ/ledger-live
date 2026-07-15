@@ -4,6 +4,7 @@ import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import LogContentCardWrapper from "LLM/features/DynamicContent/components/LogContentCardWrapper";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
+import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 
 type Props = {
   currency: CryptoOrTokenCurrency;
@@ -18,7 +19,7 @@ const AssetDynamicContent: React.FC<Props> = ({ currency }) => {
     if (!dynamicContentCard) return;
     if (!dynamicContentCard.link) return;
 
-    await trackContentCardEvent("contentcard_clicked", {
+    await trackContentCardEvent(ContentCardEvent.Clicked, {
       ...dynamicContentCard.extras,
       screen: dynamicContentCard.location,
       campaign: dynamicContentCard.id,
@@ -32,7 +33,7 @@ const AssetDynamicContent: React.FC<Props> = ({ currency }) => {
   const onPressDismiss = useCallback(() => {
     if (!dynamicContentCard) return;
 
-    trackContentCardEvent("contentcard_dismissed", {
+    trackContentCardEvent(ContentCardEvent.Dismissed, {
       ...dynamicContentCard.extras,
       screen: dynamicContentCard.location,
       campaign: dynamicContentCard.id,

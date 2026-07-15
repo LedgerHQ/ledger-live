@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
+import { Box, Flex, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { DesyncOverlay } from "./components/DesyncOverlay";
 import TwoStepCompanion from "./components/TwoStepCompanion";
@@ -12,7 +12,6 @@ const View = ({
   isDesyncOverlayOpen,
   desyncOverlayDelay,
   productName,
-  isSyncIncr1Enabled,
   deviceName,
   steps,
   stepKey,
@@ -39,25 +38,19 @@ const View = ({
         flexShrink={1}
       >
         <Text variant="h3Inter" fontSize="8" fontWeight="semiBold" mb="8">
-          {isSyncIncr1Enabled
-            ? t("syncOnboarding.manual.titleTwoStep")
-            : t("syncOnboarding.manual.title", { deviceName })}
+          {t("syncOnboarding.manual.titleTwoStep")}
         </Text>
         <Box>
-          {isSyncIncr1Enabled ? (
-            <TwoStepCompanion
-              deviceName={deviceName}
-              steps={steps}
-              activeStepKey={stepKey}
-              installStep={companionSteps.installStep}
-              isNewSeed={isNewSeed}
-              handleComplete={companionSteps.handleAppStepComplete}
-              seedConfiguration={analyticsSeedConfiguration.current}
-              hasSyncStep={companionSteps.hasSyncStep}
-            />
-          ) : (
-            <VerticalTimeline steps={steps} />
-          )}
+          <TwoStepCompanion
+            deviceName={deviceName}
+            steps={steps}
+            activeStepKey={stepKey}
+            installStep={companionSteps.installStep}
+            isNewSeed={isNewSeed}
+            handleComplete={companionSteps.handleAppStepComplete}
+            seedConfiguration={analyticsSeedConfiguration.current}
+            hasSyncStep={companionSteps.hasSyncStep}
+          />
         </Box>
       </Flex>
     </Flex>

@@ -1,6 +1,11 @@
 import BigNumber from "bignumber.js";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
-import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
+import {
+  MAX_PRIVATE_RECORDS_PER_TRANSACTION,
+  MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+  TRANSACTION_TYPE,
+  PRIVATE_BALANCE_PLACEHOLDER,
+} from "@ledgerhq/live-common/families/aleo/constants";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ALEO_ACCOUNT_1, ALEO_TOKEN_ACCOUNT } from "../__mocks__/account.mock";
@@ -10,12 +15,12 @@ import { makeAleoTransaction } from "../__mocks__/transaction.mock";
 import {
   getAleoAddressBadgeI18nKey,
   getAleoCurrencyConfig,
+  getMaxPrivateRecordsForAccount,
   isAleoAccount,
   isAleoTransaction,
   applyAleoBalanceSourceChange,
   formatAleoBalances,
 } from "./utils";
-import { PRIVATE_BALANCE_PLACEHOLDER } from "../constants";
 
 jest.mock("@ledgerhq/live-common/config/index");
 
@@ -220,6 +225,29 @@ describe("applyAleoBalanceSourceChange", () => {
       }
     },
   );
+});
+
+describe("getMaxPrivateRecordsForAccount", () => {
+  it("returns MAX_PRIVATE_RECORDS_PER_TRANSACTION for a coin account", () => {
+    const aleoAccount: AleoAccount = {
+      ...ALEO_ACCOUNT_1,
+      aleoResources: {
+        transparentBalance: new BigNumber(0),
+        privateBalance: new BigNumber(0),
+        unspentPrivateRecords: [],
+        provableApi: null,
+        lastPrivateSyncDate: null,
+      },
+    };
+
+    expect(getMaxPrivateRecordsForAccount(aleoAccount)).toBe(MAX_PRIVATE_RECORDS_PER_TRANSACTION);
+  });
+
+  it("returns MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION for a token account", () => {
+    expect(getMaxPrivateRecordsForAccount(ALEO_TOKEN_ACCOUNT)).toBe(
+      MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+    );
+  });
 });
 
 describe("formatAleoBalances", () => {

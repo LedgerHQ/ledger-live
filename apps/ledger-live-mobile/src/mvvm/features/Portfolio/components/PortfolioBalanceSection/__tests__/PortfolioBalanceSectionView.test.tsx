@@ -4,6 +4,21 @@ import { getFiatCurrencyByTicker } from "@ledgerhq/live-common/currencies/index"
 import { PortfolioBalanceSectionView } from "../PortfolioBalanceSectionView";
 import { PortfolioBalanceSectionViewProps } from "../types";
 
+let mockAmountDisplaySize: "sm" | "md" | undefined;
+jest.mock("@ledgerhq/lumen-ui-rnative", () => {
+  const actual = jest.requireActual("@ledgerhq/lumen-ui-rnative");
+  const ReactActual = jest.requireActual("react");
+  const { Text } = jest.requireActual("react-native");
+
+  return {
+    ...actual,
+    AmountDisplay: ({ size, testID }: { size?: "sm" | "md"; testID?: string }) => {
+      mockAmountDisplaySize = size;
+      return ReactActual.createElement(Text, { testID }, "amount");
+    },
+  };
+});
+
 const usd = getFiatCurrencyByTicker("USD");
 
 const baseProps: PortfolioBalanceSectionViewProps = {
@@ -14,7 +29,6 @@ const baseProps: PortfolioBalanceSectionViewProps = {
   isBalanceAvailable: true,
   isAnalyticPillVisible: true,
   isLoading: false,
-  shouldDisplayBalanceRefreshRework: false,
   onToggleDiscreetMode: jest.fn(),
 };
 
@@ -22,13 +36,25 @@ const renderView = (overrides: Partial<PortfolioBalanceSectionViewProps> = {}) =
   render(<PortfolioBalanceSectionView {...baseProps} {...overrides} />);
 
 describe("PortfolioBalanceSectionView", () => {
+  beforeEach(() => {
+    mockAmountDisplaySize = undefined;
+  });
+
   describe("state rendering", () => {
     it("should render balance and analytics pill when state is normal and balance is available", () => {
       renderView();
 
       expect(screen.getByTestId("portfolio-balance-normal")).toBeVisible();
       expect(screen.getByTestId("portfolio-balance-amount")).toBeVisible();
+      expect(mockAmountDisplaySize).toBe("md");
       expect(screen.getByTestId("portfolio-balance-analytics-pill")).toBeVisible();
+    });
+
+    it("should use small amount size when balance has more than nine integer digits", () => {
+      renderView({ balance: 1_000_000_000 });
+
+      expect(screen.getByTestId("portfolio-balance-amount")).toBeVisible();
+      expect(mockAmountDisplaySize).toBe("sm");
     });
 
     it("should render noSigner text when state is noSigner", () => {
@@ -57,12 +83,11 @@ describe("PortfolioBalanceSectionView", () => {
       expect(screen.queryByTestId("portfolio-balance-analytics-pill")).toBeNull();
     });
 
-    it("should show skeleton when balance refresh rework is enabled and loading", () => {
+    it("should show skeleton when balance is not available and loading", () => {
       renderView({
         isBalanceAvailable: false,
         isAnalyticPillVisible: true,
         isLoading: true,
-        shouldDisplayBalanceRefreshRework: true,
       });
 
       expect(screen.getByTestId("portfolio-balance-loading")).toBeVisible();
@@ -71,11 +96,10 @@ describe("PortfolioBalanceSectionView", () => {
       expect(screen.getByTestId("portfolio-balance-analytics-pill")).toBeVisible();
     });
 
-    it("should show shimmer on amount when balance is available and loading with rework enabled", () => {
+    it("should show shimmer on amount when balance is available and loading", () => {
       renderView({
         isBalanceAvailable: true,
         isLoading: true,
-        shouldDisplayBalanceRefreshRework: true,
       });
 
       expect(screen.getByTestId("portfolio-balance-normal")).toBeVisible();

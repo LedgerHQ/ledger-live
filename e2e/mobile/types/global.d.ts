@@ -14,16 +14,16 @@ import type {
   $ParentSuite as $ParentSuiteType,
 } from "jest-allure2-reporter/api";
 import { NativeElementHelpers, WebElementHelpers } from "../helpers/elementHelpers";
-import { Currency as CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { Delegate as DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
+import { Currency as CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { Delegate as DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import {
   Account as AccountType,
   TokenAccount as TokenAccountType,
-} from "@ledgerhq/live-common/e2e/enum/Account";
-import { Transaction as TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
-import { Fee as FeeType } from "@ledgerhq/live-common/e2e/enum/Fee";
-import { AppInfos as AppInfosType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { Swap as SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
+} from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Transaction as TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
+import { Fee as FeeType } from "@ledgerhq/live-e2e-shared/enum/Fee";
+import { AppInfos as AppInfosType } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { Swap as SwapType } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { CLI as CLIType } from "../utils/cliUtils";
 
 declare global {
@@ -104,20 +104,21 @@ declare global {
   var tapWebElementByTestId: typeof WebElementHelpers.tapWebElementByTestId;
   var typeTextByWebTestId: typeof WebElementHelpers.typeTextByWebTestId;
   var waitForCurrentWebviewUrlToContain: typeof WebElementHelpers.waitForCurrentWebviewUrlToContain;
+  var waitForWebviewContentToRender: typeof WebElementHelpers.waitForWebviewContentToRender;
   var waitForWebElementToBeEnabled: typeof WebElementHelpers.waitForWebElementToBeEnabled;
   var waitForWebElementToMatchRegex: typeof WebElementHelpers.waitForWebElementToMatchRegex;
   var waitWebElement: typeof WebElementHelpers.waitWebElement;
   var waitWebElementByTestId: typeof WebElementHelpers.waitWebElementByTestId;
 
-  var getAccountAddress: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").getAccountAddress;
-  var liveDataCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataCommand;
-  var liveDataWithAddressCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataWithAddressCommand;
-  var liveDataWithParentAddressCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataWithParentAddressCommand;
-  var liveDataWithRecipientAddressCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataWithRecipientAddressCommand;
-  var parseTokenAllowanceCliOutput: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").parseTokenAllowanceCliOutput;
-  var isTokenAllowanceSufficientCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").isTokenAllowanceSufficientCommand;
-  var getTokenAllowanceCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").getTokenAllowanceCommand;
-  var approveTokenCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").approveTokenCommand;
-  var revokeTokenCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").revokeTokenCommand;
-  var setDisableTransactionBroadcastEnv: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").setDisableTransactionBroadcastEnv;
+  var getAccountAddress: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").getAccountAddress;
+  var liveDataCommand: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").liveDataCommand;
+  var liveDataWithAddressCommand: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").liveDataWithAddressCommand;
+  var liveDataWithParentAddressCommand: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").liveDataWithParentAddressCommand;
+  var liveDataWithRecipientAddressCommand: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").liveDataWithRecipientAddressCommand;
+  var parseTokenAllowanceCliOutput: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").parseTokenAllowanceCliOutput;
+  var isTokenAllowanceSufficientCommand: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").isTokenAllowanceSufficientCommand;
+  var getTokenAllowanceCommand: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").getTokenAllowanceCommand;
+  var approveTokenCommand: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").approveTokenCommand;
+  var revokeTokenCommand: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").revokeTokenCommand;
+  var setDisableTransactionBroadcastEnv: typeof import("@ledgerhq/live-e2e-shared/cliCommandsUtils").setDisableTransactionBroadcastEnv;
 }

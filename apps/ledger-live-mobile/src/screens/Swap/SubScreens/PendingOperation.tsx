@@ -8,9 +8,11 @@ import { track, TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
 import { ScreenName } from "~/const";
+import { useDispatch } from "~/context/hooks";
 import IconCheck from "~/icons/Check";
 import IconClock from "~/icons/Clock";
 import { rgba } from "../../../colors";
+import { openSwapTransactionStatusDrawer } from "~/reducers/swapTransactionStatusDrawer";
 import { useSyncAllAccounts } from "../LiveApp/hooks/useSyncAllAccounts";
 import { PendingOperationParamList } from "../types";
 import { SWAP_VERSION } from "../utils";
@@ -19,6 +21,7 @@ import { hasSwapTabRoute, navigateBackToSwapTab } from "../navigation/navigateBa
 
 export function PendingOperation({ route, navigation }: PendingOperationParamList) {
   const { colors } = useTheme();
+  const dispatch = useDispatch();
   const { swapId, provider, toCurrency, fromCurrency } = route.params.swapOperation;
   const { isEmbeddedSwap, sponsored } = route.params;
   const syncAccounts = useSyncAllAccounts();
@@ -48,7 +51,14 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
   }, []);
 
   const onComplete = useCallback(() => {
-    if (!supportsSwapTabRoute) {
+    if (supportsSwapTabRoute) {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 1,
+          routes: [{ name: ScreenName.SwapTab }, { name: ScreenName.SwapHistory }],
+        }),
+      );
+    } else {
       // In SwapSubScreensNavigator, keep navigation local to avoid resetting with unknown routes.
       navigation.dispatch(
         CommonActions.reset({
@@ -56,16 +66,10 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
           routes: [{ name: ScreenName.SwapHistory }],
         }),
       );
-      return;
     }
 
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 1,
-        routes: [{ name: ScreenName.SwapTab }, { name: ScreenName.SwapHistory }],
-      }),
-    );
-  }, [navigation, supportsSwapTabRoute]);
+    dispatch(openSwapTransactionStatusDrawer({ swapId, provider }));
+  }, [dispatch, navigation, provider, supportsSwapTabRoute, swapId]);
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>

@@ -2,7 +2,6 @@ import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/accoun
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import {
   CeloValidatorGroup,
   Transaction as CeloTransaction,
@@ -13,7 +12,7 @@ import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Trans } from "~/context/Locale";
 import { Animated, StyleSheet, View } from "react-native";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -48,17 +47,10 @@ export default function VoteSummary({ navigation, route }: Props) {
 
   invariant(account, "account must be defined");
 
-  const validators = useValidatorGroups();
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = useAccountBridge<CeloTransaction>(account, undefined);
 
-  const chosenValidator = useMemo(() => {
-    if (validator !== undefined) {
-      return validator;
-    }
-
-    return validators[0];
-  }, [validators, validator]);
+  const chosenValidator = validator;
 
   const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(bridge, () => {
@@ -71,7 +63,7 @@ export default function VoteSummary({ navigation, route }: Props) {
           account,
           transaction: bridge.updateTransaction(t, {
             mode: "vote",
-            recipient: validators[0]?.address ?? defaultValidatorGroupAddress(),
+            recipient: "",
             amount: route.params.amount ?? new BigNumber(0),
           }),
         };
@@ -87,7 +79,7 @@ export default function VoteSummary({ navigation, route }: Props) {
     setTransaction(
       bridge.updateTransaction(transaction, {
         amount: new BigNumber(route.params.amount ?? new BigNumber(0)),
-        recipient: chosenValidator.address,
+        recipient: chosenValidator?.address ?? "",
       }),
     );
     // oxlint-disable-next-line react-hooks/exhaustive-deps
@@ -125,7 +117,10 @@ export default function VoteSummary({ navigation, route }: Props) {
   const hasErrors = Object.keys(status.errors).length > 0;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]} edges={["bottom"]}>
+    <SafeAreaView
+      edges={["left", "right", "bottom"]}
+      style={[styles.root, { backgroundColor: colors.background }]}
+    >
       <TrackScreen category="VoteFlow" name="Summary" flow="stake" action="vote" currency="celo" />
 
       <View style={styles.body}>
@@ -151,7 +146,7 @@ export default function VoteSummary({ navigation, route }: Props) {
                   }}
                 >
                   <ValidatorImage
-                    isLedger={chosenValidator.address === defaultValidatorGroupAddress()}
+                    isLedger={chosenValidator?.address === defaultValidatorGroupAddress()}
                     name={chosenValidator?.name ?? chosenValidator?.address}
                   />
                 </Animated.View>

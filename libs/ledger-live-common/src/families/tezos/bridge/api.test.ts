@@ -7,12 +7,17 @@ beforeAll(() => {
     findTokenById: async (_id: string) => {
       return undefined;
     },
-    findTokenByAddressInCurrency: async (token: string, currencyId: string) => {
+    findTokenByAddressInCurrency: async (
+      address: string,
+      currencyId: string,
+      tokenIdentifier?: string,
+    ) => {
       if (
-        (token === "USDt" || token === "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o") &&
-        currencyId === "tezos"
+        address === "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o" &&
+        currencyId === "tezos" &&
+        tokenIdentifier === "0"
       ) {
-        const usdc: TokenCurrency = {
+        const usdt: TokenCurrency = {
           type: "TokenCurrency",
           id: "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
           contractAddress: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o",
@@ -24,7 +29,26 @@ beforeAll(() => {
           disableCountervalue: false,
           units: [{ name: "Tether USD", code: "USDt", magnitude: 6 }],
         };
-        return usdc;
+        return usdt;
+      }
+      if (
+        address === "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ" &&
+        currencyId === "tezos" &&
+        tokenIdentifier === "17"
+      ) {
+        const wusdc: TokenCurrency = {
+          type: "TokenCurrency",
+          id: "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
+          contractAddress: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ",
+          parentCurrencyId: "tezos",
+          tokenType: "fa2",
+          name: "Wrapped USDC",
+          ticker: "wUSDC",
+          delisted: false,
+          disableCountervalue: false,
+          units: [{ name: "Wrapped USDC", code: "wUSDC", magnitude: 6 }],
+        };
+        return wusdc;
       }
       return undefined;
     },
@@ -36,11 +60,11 @@ beforeAll(() => {
 
 describe("generic-coin-framework Tezos token", () => {
   describe("Tezos token helpers", () => {
-    it("computes the token of a known asset", async () => {
+    it("resolves a single-asset FA2 token by contract:tokenId", async () => {
       await expect(
         getTokenFromAsset({
           type: "token",
-          assetReference: "USDt",
+          assetReference: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o:0",
           assetOwner: "tz1VUmqS38E45KZevtphpVF4cKiK1YJ1P9eL",
         }),
       ).resolves.toMatchObject({
@@ -51,9 +75,20 @@ describe("generic-coin-framework Tezos token", () => {
         tokenType: "fa2",
         name: "Tether USD",
         ticker: "USDt",
-        delisted: false,
-        disableCountervalue: false,
-        units: [{ name: "Tether USD", code: "USDt", magnitude: 6 }],
+      });
+    });
+
+    it("resolves a multi-asset FA2 token by contract:tokenId", async () => {
+      await expect(
+        getTokenFromAsset({
+          type: "token",
+          assetReference: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ:17",
+          assetOwner: "tz1VUmqS38E45KZevtphpVF4cKiK1YJ1P9eL",
+        }),
+      ).resolves.toMatchObject({
+        id: "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
+        name: "Wrapped USDC",
+        ticker: "wUSDC",
       });
     });
 
@@ -61,7 +96,7 @@ describe("generic-coin-framework Tezos token", () => {
       await expect(
         getTokenFromAsset({
           type: "token",
-          assetReference: "unknown-reference",
+          assetReference: "unknown-reference:0",
           assetOwner: "unknown-owner",
         }),
       ).resolves.toBeUndefined();
@@ -92,7 +127,7 @@ describe("generic-coin-framework Tezos token", () => {
   });
 
   describe("getAssetFromToken", () => {
-    it("returns asset with contractAddress as assetReference and owner as assetOwner", () => {
+    it("produces assetReference with :0 for single-asset tokens", () => {
       const token: TokenCurrency = {
         type: "TokenCurrency",
         id: "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
@@ -105,15 +140,56 @@ describe("generic-coin-framework Tezos token", () => {
         disableCountervalue: false,
         units: [{ name: "Tether USD", code: "USDt", magnitude: 6 }],
       };
-      const owner = "tz1VUmqS38E45KZevtphpVF4cKiK1YJ1P9eL";
 
-      expect(getAssetFromToken(token, owner)).toEqual({
+      expect(getAssetFromToken(token, "tz1owner")).toEqual({
         type: "fa2",
-        assetReference: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o",
-        assetOwner: owner,
+        assetReference: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o:0",
+        assetOwner: "tz1owner",
         name: "Tether USD",
         unit: { name: "Tether USD", code: "USDt", magnitude: 6 },
       });
+    });
+
+    it("produces assetReference with :tokenId for multi-asset tokens", () => {
+      const token: TokenCurrency = {
+        type: "TokenCurrency",
+        id: "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
+        contractAddress: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ",
+        parentCurrencyId: "tezos",
+        tokenType: "fa2",
+        name: "Wrapped USDC",
+        ticker: "wUSDC",
+        delisted: false,
+        disableCountervalue: false,
+        units: [{ name: "Wrapped USDC", code: "wUSDC", magnitude: 6 }],
+      };
+
+      expect(getAssetFromToken(token, "tz1owner")).toEqual({
+        type: "fa2",
+        assetReference: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ:17",
+        assetOwner: "tz1owner",
+        name: "Wrapped USDC",
+        unit: { name: "Wrapped USDC", code: "wUSDC", magnitude: 6 },
+      });
+    });
+
+    it("round-trips: getAssetFromToken → getTokenFromAsset", async () => {
+      const token: TokenCurrency = {
+        type: "TokenCurrency",
+        id: "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
+        contractAddress: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ",
+        parentCurrencyId: "tezos",
+        tokenType: "fa2",
+        name: "Wrapped USDC",
+        ticker: "wUSDC",
+        delisted: false,
+        disableCountervalue: false,
+        units: [{ name: "Wrapped USDC", code: "wUSDC", magnitude: 6 }],
+      };
+
+      const asset = getAssetFromToken(token, "tz1owner");
+      const resolved = await getTokenFromAsset(asset);
+      expect(resolved?.id).toBe(token.id);
     });
   });
 });

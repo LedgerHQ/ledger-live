@@ -1,5 +1,3 @@
-import type { TFunction } from "i18next";
-import { counterValueFormatter } from "LLM/features/Market/utils";
 import i18next from "i18next";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { findCryptoCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
@@ -27,24 +25,6 @@ function getTimeAgoCode(date: Date): string {
   return generatePath("seconds", seconds);
 }
 
-const formatCounterValue = (
-  value: number,
-  currency: string,
-  locale: string,
-  t: TFunction<"translation", undefined>,
-  extra?: { ticker?: string },
-) =>
-  counterValueFormatter({
-    value,
-    shorten: true,
-    currency,
-    locale,
-    t,
-    ...extra,
-  })
-    .replace(/ /g, "")
-    .replace(/n/g, "");
-
 const getColors = (priceChangePercentage: number) => {
   if (priceChangePercentage === 0) return { textColor: "neutral.c100", bgColor: "neutral.c20" };
 
@@ -68,4 +48,4 @@ function getCurrencyIdsFromTickers(tickers: string[]): string[] {
   });
 }
 
-export { formatCounterValue, getTimeAgoCode, getColors, rangeMap, getCurrencyIdsFromTickers };
+export { getTimeAgoCode, getColors, rangeMap, getCurrencyIdsFromTickers };

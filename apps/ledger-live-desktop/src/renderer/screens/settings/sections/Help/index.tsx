@@ -12,14 +12,13 @@ import RepairDeviceButton from "./RepairDeviceButton";
 import LaunchOnboardingBtn from "./LaunchOnboardingBtn";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 
 const SectionHelp = () => {
   const { t } = useTranslation();
 
   const urlFaq = useLocalizedUrl(urls.faq);
   const chatbotSupportFeature = useFeature("lldChatbotSupport");
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
 
   return (
     <>
@@ -39,22 +38,19 @@ const SectionHelp = () => {
             dataTestId={"ledgerSupport"}
           />
         )}
-        {shouldDisplayWallet40MainNav && (
-          <>
-            <RowItem
-              title={t("help.ledgerAcademy.title")}
-              desc={t("help.ledgerAcademy.desc")}
-              url={urls.helpModal.ledgerAcademy}
-              dataTestId="ledgerAcademy-link"
-            />
-            <RowItem
-              title={t("help.status.title")}
-              desc={t("help.status.desc")}
-              url={urls.helpModal.status}
-              dataTestId="status-link"
-            />
-          </>
-        )}
+        <RowItem
+          title={t("help.ledgerAcademy.title")}
+          desc={t("help.ledgerAcademy.desc")}
+          url={urls.helpModal.ledgerAcademy}
+          dataTestId="ledgerAcademy-link"
+        />
+        <RowItem
+          title={t("help.status.title")}
+          desc={t("help.status.desc")}
+          url={urls.helpModal.status}
+          dataTestId="status-link"
+        />
+
         <Row
           title={t("settings.profile.softResetTitle")}
           desc={t("settings.profile.softResetDesc")}

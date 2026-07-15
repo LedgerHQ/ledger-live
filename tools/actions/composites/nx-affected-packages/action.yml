@@ -26,7 +26,7 @@ runs:
         BASE: ${{ inputs.base }}
         HEAD: ${{ inputs.head }}
         ACTION_PATH: ${{ github.action_path }}
-      uses: actions/github-script@v7
+      uses: actions/github-script@v8
       with:
         script: |
           const path = require('path');

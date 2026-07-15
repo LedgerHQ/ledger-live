@@ -4,7 +4,7 @@ import {
   getCryptoCurrencyById,
   getFiatCurrencyByTicker,
   findFiatCurrencyByTicker,
-  findCryptoCurrencyByTicker,
+  findCryptoCurrencyById,
   listSupportedFiats,
   OFAC_CURRENCIES,
 } from "@ledgerhq/live-common/currencies/index";
@@ -97,6 +97,7 @@ export type SettingsState = {
   mevProtection: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
+  hideSmallValueTokenOperations: boolean;
   sidebarCollapsed: boolean;
   discreetMode: boolean;
   starredAccountIds?: string[];
@@ -194,6 +195,7 @@ export const INITIAL_STATE: SettingsState = {
   showAccountsHelperBanner: true,
   hideEmptyTokenAccounts: getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
   filterTokenOperationsZeroAmount: getEnv("FILTER_ZERO_AMOUNT_ERC20_EVENTS"),
+  hideSmallValueTokenOperations: false,
   sidebarCollapsed: false,
   discreetMode: false,
   preferredDeviceModel: DeviceModelId.nanoS,
@@ -339,7 +341,7 @@ const handlers: SettingsHandlers = {
   SAVE_SETTINGS: (state, { payload }) => {
     if (!payload) return state;
     const filteredPayload = filterValidSettings(payload);
-    const { analyticsConsentInfo, ...rest } = filteredPayload;
+    const { analyticsConsentInfo: _analyticsConsentInfo, ...rest } = filteredPayload;
 
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const changed = (Object.keys(rest) as (keyof typeof rest)[]).some(
@@ -439,7 +441,7 @@ const handlers: SettingsHandlers = {
     let activeCounterValue = state.counterValue;
     if (
       activeCounterValue &&
-      !payload.find(({ currency }) => currency.ticker === activeCounterValue)
+      !payload.find(({ currency }) => counterValueIdOf(currency) === activeCounterValue)
     ) {
       activeCounterValue = INITIAL_STATE.counterValue;
     }
@@ -624,6 +626,18 @@ const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
 export const possibleIntermediaries = [bitcoin, ethereum];
 
+// The persisted counterValue identifies fiats by ticker and cryptos by Ledger id.
+export const counterValueIdOf = (currency: Currency): string =>
+  currency.type === "CryptoCurrency" ? currency.id : currency.ticker;
+
+// One-time migration: legacy persisted crypto counterValues were stored as ticker.
+const LEGACY_CRYPTO_COUNTERVALUE_TICKER_TO_ID: Record<string, string> = {
+  BTC: "bitcoin",
+  ETH: "ethereum",
+};
+export const migrateLegacyCryptoCounterValue = (counterValue: string): string =>
+  LEGACY_CRYPTO_COUNTERVALUE_TICKER_TO_ID[counterValue] ?? counterValue;
+
 export type LangAndRegion = {
   language: string;
   region: string | undefined | null;
@@ -666,7 +680,7 @@ export const counterValueCurrencyLocalSelector = (state: SettingsState): Currenc
   }
   return (
     findFiatCurrencyByTicker(state.counterValue) ||
-    findCryptoCurrencyByTicker(state.counterValue) ||
+    findCryptoCurrencyById(state.counterValue) ||
     getFiatCurrencyByTicker("USD")
   );
 };
@@ -842,6 +856,8 @@ export const hideEmptyTokenAccountsSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 export const filterTokenOperationsZeroAmountSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
+export const hideSmallValueTokenOperationsSelector = (state: State) =>
+  state.settings.hideSmallValueTokenOperations;
 
 export const doNotAskAgainSkipMemoSelector = (state: State) => state.settings.doNotAskAgainSkipMemo;
 export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | undefined => {

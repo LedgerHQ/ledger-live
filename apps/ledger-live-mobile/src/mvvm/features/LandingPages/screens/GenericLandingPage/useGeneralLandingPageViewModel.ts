@@ -10,6 +10,7 @@ import {
   LandingPageUseCase,
 } from "~/dynamicContent/types";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
+import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { filterCategoriesByLocation, sanitizeExtras } from "~/dynamicContent/utils";
 import { isDynamicContentLoadingSelector } from "~/reducers/dynamicContent";
 
@@ -34,7 +35,7 @@ export const useGeneralLandingPage = (props: NavigationProps) => {
   const landingStickyCTA = getStickyCtaCardByLandingPage(useCase);
 
   const openLink = async (card: LandingPageStickyCtaContentCard) => {
-    await trackContentCardEvent("contentcard_clicked", {
+    await trackContentCardEvent(ContentCardEvent.Clicked, {
       ...sanitizeExtras(card.extras),
       campaign: card.id,
       contentcard: card.cta,

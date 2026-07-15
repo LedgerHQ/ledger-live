@@ -6,34 +6,59 @@ export class Layout extends Component {
   readonly renderError = this.page.getByTestId("render-error");
   readonly appVersion = this.page.getByTestId("app-version");
 
+  private readonly topbarActionButton = (action: string) =>
+    this.page.getByTestId(`topbar-action-button-${action}`);
+  private readonly sidebarNavigation = this.page.getByTestId("sidebar-navigation");
+  private readonly sidebarButton = (name: string | RegExp) =>
+    this.sidebarNavigation.getByRole("button", { name });
+  private readonly legacyDrawerButton = (testId: string) => this.page.getByTestId(testId);
+
   // side bar
-  readonly drawerCollapseButton = this.page.getByTestId("drawer-collapse-button");
-  readonly drawerPortfolioButton = this.page.getByTestId("drawer-dashboard-button");
-  readonly drawerMarketButton = this.page.getByTestId("drawer-market-button");
-  readonly drawerAccountsButton = this.page.getByTestId("drawer-accounts-button");
-  readonly drawerDiscoverButton = this.page.getByTestId("drawer-catalog-button");
-  readonly drawerSendButton = this.page.getByTestId("drawer-send-button");
-  readonly drawerReceiveButton = this.page.getByTestId("drawer-receive-button");
-  readonly drawerEarnButton = this.page.getByTestId("drawer-earn-button");
-  readonly drawerBuycryptoButton = this.page.getByTestId("drawer-exchange-button");
-  readonly drawerExperimentalButton = this.page.getByTestId("drawer-experimental-button");
-  readonly drawerManagerButton = this.page.getByTestId("drawer-manager-button");
-  readonly drawerRecoverButton = this.page.getByTestId("drawer-recover-button");
-  readonly recoverStatusIcon = this.page
-    .getByTestId("drawer-recover-button")
-    .locator("path")
-    .nth(1);
+  readonly drawerCollapseButton = this.sidebarNavigation
+    .getByRole("button")
+    .last()
+    .or(this.legacyDrawerButton("drawer-collapse-button"));
+  readonly drawerPortfolioButton = this.sidebarButton("home").or(
+    this.legacyDrawerButton("drawer-dashboard-button"),
+  );
+  readonly drawerMarketButton = this.legacyDrawerButton("drawer-market-button");
+  readonly drawerAccountsButton = this.sidebarButton("accounts").or(
+    this.legacyDrawerButton("drawer-accounts-button"),
+  );
+  readonly drawerDiscoverButton = this.sidebarButton("discover").or(
+    this.legacyDrawerButton("drawer-catalog-button"),
+  );
+  readonly drawerSendButton = this.legacyDrawerButton("drawer-send-button");
+  readonly drawerReceiveButton = this.legacyDrawerButton("drawer-receive-button");
+  readonly drawerEarnButton = this.sidebarButton(/^(earn|stake|yield)$/i).or(
+    this.legacyDrawerButton("drawer-earn-button"),
+  );
+  readonly drawerBuycryptoButton = this.legacyDrawerButton("drawer-exchange-button");
+  readonly drawerExperimentalButton = this.topbarActionButton("experimental");
+  readonly drawerManagerButton = this.topbarActionButton("my-ledger").or(
+    this.legacyDrawerButton("drawer-manager-button"),
+  );
+  readonly drawerRecoverButton = this.sidebarButton(/recover/i).or(
+    this.legacyDrawerButton("drawer-recover-button"),
+  );
+  readonly recoverStatusIcon = this.drawerRecoverButton.locator("path").nth(1);
 
   // topbar
-  readonly topbarDiscreetButton = this.page.getByTestId("topbar-discreet-button");
-  readonly topbarSynchronizeButton = this.page.getByTestId("topbar-synchronize-button");
-  readonly topbarSettingsButton = this.page.getByTestId("topbar-settings-button");
+  readonly topbarDiscreetButton = this.topbarActionButton("discreet").or(
+    this.page.getByTestId("topbar-discreet-button"),
+  );
+  readonly topbarSynchronizeButton = this.topbarActionButton("synchronize").or(
+    this.page.getByTestId("topbar-synchronize-button"),
+  );
+  readonly topbarSettingsButton = this.topbarActionButton("settings").or(
+    this.page.getByTestId("topbar-settings-button"),
+  );
+  readonly topbarMyLedgerButton = this.topbarActionButton("my-ledger");
   readonly topbarLockButton = this.page.getByTestId("topbar-password-lock-button");
   readonly topbarHelpButton = this.page.getByTestId("topbar-help-button");
-  readonly discreetTooltip = this.page.locator("#tippy-12"); // automatically generated tippy id but it's consistent
 
-  // updater
-  readonly appUpdateBanner = this.page.getByTestId("layout-app-update-banner");
+  // updater (rendered in Wallet40 TopBar via LLD/features/Updater)
+  readonly appUpdateBanner = this.page.getByTestId("updater-top-bar-button");
 
   @step("Close side bar")
   async closeSideBar() {
@@ -88,12 +113,19 @@ export class Layout extends Component {
 
   @step("Go to manager")
   async goToManager() {
-    await this.drawerManagerButton.click();
+    await this.topbarMyLedgerButton.click();
   }
 
   @step("Go to Settings")
   async goToSettings() {
-    await this.topbarSettingsButton.click();
+    const settingsButton = this.topbarSettingsButton;
+    if (await settingsButton.isVisible()) {
+      await settingsButton.click();
+      return;
+    }
+
+    await this.page.getByTestId("my-wallet-avatar").click();
+    await settingsButton.click();
   }
 
   @step("synchronize accounts")
@@ -104,27 +136,40 @@ export class Layout extends Component {
   @step("Toggle discreet mode")
   async toggleDiscreetMode() {
     await this.topbarDiscreetButton.click();
-    await this.discreetTooltip.waitFor({ state: "hidden" }); // makes sure the tooltip has disappeared to prevent flakiness
   }
 
-  @step("Expect top bar lock button to be visible")
+  @step("Expect password lock to be enabled")
   async expectTopBarLockButtonToBeVisible() {
-    await expect(this.topbarLockButton).toBeVisible();
+    await expect
+      .poll(async () =>
+        this.page.evaluate(() => window.ledger.store.getState().application.hasPassword === true),
+      )
+      .toBe(true);
   }
 
-  @step("Expect top bar lock button not to be visible")
+  @step("Expect password lock to be disabled")
   async expectTopBarLockButtonNotToBeVisible() {
-    await expect(this.topbarLockButton).not.toBeVisible();
+    await expect
+      .poll(async () =>
+        this.page.evaluate(() => window.ledger.store.getState().application.hasPassword !== true),
+      )
+      .toBe(true);
   }
 
   @step("Lock app")
   async lockAppFromTopBar() {
-    await this.topbarLockButton.click();
+    await this.page.evaluate(() => {
+      window.ledger.store.dispatch({
+        type: "APPLICATION_SET_DATA",
+        payload: { isLocked: true, hasPassword: true },
+      });
+    });
   }
 
   @step("open Help")
   async openHelp() {
-    await this.topbarHelpButton.click();
+    await this.goToSettings();
+    await this.page.getByTestId("settings-help-tab").click();
   }
 
   @step("Expect recover status icon to be visible")

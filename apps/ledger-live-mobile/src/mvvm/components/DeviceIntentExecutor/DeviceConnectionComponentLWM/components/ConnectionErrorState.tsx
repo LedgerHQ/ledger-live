@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Linking } from "react-native";
 import {
+  BaseConnectionErrorTypes,
   ConnectionErrorTypes,
   ConnectDeviceUIStateTypes,
   type ConnectDeviceUIState,
@@ -24,6 +25,7 @@ import { PeerRemovedPairingState } from "./PeerRemovedPairingState";
 type ConnectionErrorStateProps = {
   state: Extract<ConnectDeviceUIState, { type: ConnectDeviceUIStateTypes.ConnectionError }>;
 };
+type ConnectionErrorType = ConnectionErrorStateProps["state"]["error"]["type"];
 
 type InfoStateProps = React.ComponentProps<typeof InfoState>;
 type InfoStateCta = InfoStateProps["primaryCta"];
@@ -49,12 +51,12 @@ type BlePairingPeerRemovedPairingViewState = {
 type ConnectionErrorViewStates = {
   [ConnectionErrorTypes.BlePairingPeerRemovedPairing]: BlePairingPeerRemovedPairingViewState;
 } & Record<
-  Exclude<ConnectionErrorTypes, ConnectionErrorTypes.BlePairingPeerRemovedPairing>,
+  Exclude<ConnectionErrorType, ConnectionErrorTypes.BlePairingPeerRemovedPairing>,
   ConnectionErrorViewState
 >;
 
-function isTerminalConnectionError(errorType: ConnectionErrorTypes): boolean {
-  return errorType === ConnectionErrorTypes.Unknown;
+function isTerminalConnectionError(errorType: ConnectionErrorType): boolean {
+  return errorType === BaseConnectionErrorTypes.Unknown;
 }
 
 const connectionErrorTranslationBaseKey =
@@ -120,7 +122,7 @@ export function ConnectionErrorState({
       title: `${connectionErrorTranslationBaseKey}.blePairingRefused.title`,
       primaryCta: retryCta(`${connectionErrorTranslationBaseKey}.blePairingRefused.cta.retry`),
     },
-    [ConnectionErrorTypes.Unknown]: {
+    [BaseConnectionErrorTypes.Unknown]: {
       preset: "error",
       title: `${connectionErrorTranslationBaseKey}.unknown.title`,
       description: `${connectionErrorTranslationBaseKey}.unknown.description`,

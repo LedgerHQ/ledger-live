@@ -1,10 +1,11 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
+import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 
 const currencies = [
   {
@@ -23,7 +24,9 @@ const currencies = [
   { currency: Currency.ATOM, xrayTicket: "B2CQA-2501, B2CQA-2654, B2CQA-2682" },
   { currency: Currency.XTZ, xrayTicket: "B2CQA-2507, B2CQA-2655, B2CQA-2683" },
   { currency: Currency.SOL, xrayTicket: "B2CQA-2642, B2CQA-2656, B2CQA-2684" },
-  { currency: Currency.TON, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685" },
+  // TODO: TON E2E test disabled
+  // Re-enable when the renaming from TON to GRAM has been completed
+  // { currency: Currency.TON, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685" },
   { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646" },
   { currency: Currency.BASE, xrayTicket: "B2CQA-4226, B2CQA-4227, B2CQA-4228" },
   { currency: Currency.ZEC, xrayTicket: "B2CQA-4296, B2CQA-4297, B2CQA-4298" },
@@ -38,7 +41,6 @@ for (const currency of currencies) {
     });
 
     const family = getFamilyByCurrencyId(currency.currency.id);
-
     test(
       `[${currency.currency.name}] Add account`,
       {
@@ -81,6 +83,12 @@ for (const currency of currencies) {
 
         await app.portfolio.checkOperationHistory();
         await app.portfolio.expectBalanceVisibility();
+        if (await isAssetSectionEnabled(app.getPage())) {
+          await app.portfolio.assetsView.waitForAssetsToLoad();
+          await app.portfolio.assetsView.expectAssetVisibleInSection("cryptos", currency.currency);
+          await app.portfolio.cryptoAddressesBanner.expectBannerVisible();
+          await app.portfolio.cryptoAddressesBanner.expectAddAccountCTANotVisible();
+        }
         await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, 5000);
 
         await app.mainNavigation.openTargetFromMainNavigation("accounts");

@@ -111,7 +111,7 @@ const StepValidator = ({ account, parentAccount, transaction, onChangeTransactio
             <Trans i18nKey="delegation.yield" />
           </Text>
         </Box>
-        <Box style={{ maxHeight: 255, margin: -20, marginTop: 0 }}>
+        <Box style={{ maxHeight: 255, margin: -20, marginTop: 0 }} data-testid="validator-list">
           <ModalContent ref={contentRef}>
             {bakers.map(baker => (
               <BakerRow

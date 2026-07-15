@@ -22,7 +22,12 @@ export const prepareTransaction: AccountBridge<
   )
     return transaction;
 
-  const fees = await getFeesForTransaction({ account, transaction });
+  const fees =
+    transaction.feesStrategy === "custom" &&
+    BigNumber.isBigNumber(transaction.fees) &&
+    transaction.fees.gt(0)
+      ? transaction.fees
+      : await getFeesForTransaction({ account, transaction });
 
   const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
   const isTokenTransaction = tokenAccount?.type === "TokenAccount";

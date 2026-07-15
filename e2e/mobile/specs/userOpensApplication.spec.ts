@@ -1,4 +1,4 @@
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../helpers/allure/allure-helper";
 
 const testConfig = {
@@ -17,6 +17,7 @@ describe("User opens application", () => {
     await app.onboarding.expectProgressBarToBeVisible();
     await app.onboarding.tapOnGetStartedButton();
 
+    await app.onboarding.waitForAnalyticsButtonToBeVisible();
     await app.onboarding.acceptAnalytics();
     await app.onboarding.selectStartingOption("setupLedger");
 

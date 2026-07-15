@@ -1,19 +1,19 @@
 import test from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
-import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
+import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
   ensureTokenApproval,
   revokeTokenApproval,
 } from "tests/utils/swapUtils";
-import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 
 const app: AppInfos = AppInfos.ETHEREUM;
 

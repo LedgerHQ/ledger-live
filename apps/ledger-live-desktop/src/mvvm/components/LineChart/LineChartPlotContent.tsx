@@ -1,6 +1,6 @@
 import React from "react";
 import { LineChart as LumenLineChart } from "@ledgerhq/lumen-ui-react-visualization";
-import { LUMEN_CHART_OVERFLOW_MARGIN } from "./constants";
+import { LINE_CHART_DRAWING_INSET } from "./constants";
 import { LineChartPoints } from "./LineChartPoints";
 import { LineChartScrubber } from "./LineChartScrubber";
 import type {
@@ -54,17 +54,14 @@ export function LineChartPlotContent({
   yAxis,
 }: LineChartPlotContentProps) {
   return (
-    <div
-      data-testid="line-chart-plot"
-      className="w-full min-w-0"
-      style={{ paddingTop: LUMEN_CHART_OVERFLOW_MARGIN }}
-    >
+    <div data-testid="line-chart-plot" className="w-full min-w-0">
       <LumenLineChart
         series={chartSeries}
         loading={isLoading}
         emptyLabel={emptyLabel}
         height={height}
         width="100%"
+        inset={LINE_CHART_DRAWING_INSET}
         showArea={showArea}
         enableScrubbing={enableScrubber}
         onScrubberPositionChange={onScrubberPositionChange}

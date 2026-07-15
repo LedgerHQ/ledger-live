@@ -3,24 +3,5 @@
   "extends": ["../.oxlintrc.json"],
   "rules": {
     "import/no-cycle": "warn"
-  },
-  "overrides": [
-    {
-      "files": [
-        "src/**/*.test.{ts,tsx}",
-        "src/**/__tests__/**",
-        "**/*.integ.test.{ts,tsx}"
-      ],
-      "rules": {
-        "jest/no-restricted-matchers": [
-          "warn",
-          {
-            "toBeFalsy": null,
-            "toBeTruthy": null,
-            "toBeDefined": null
-          }
-        ]
-      }
-    }
-  ]
+  }
 }

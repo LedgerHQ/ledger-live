@@ -1,6 +1,6 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runSendSPLAddressInvalid } from "../subAccount";
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 
 const transactionE2E = {
   tx: new Transaction(Account.SOL_1, TokenAccount.SOL_GIGA_2, "0.1", undefined),

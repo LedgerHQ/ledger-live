@@ -1,5 +1,5 @@
-import { CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 const BST_ADD_ACCOUNT_CURRENCIES = new Set(["ton", "aptos", "cardano", "tezos"]);
@@ -20,17 +20,9 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], ta
     it(`Perform a Network Based add account - ${currency.name}`, async () => {
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();
-
-      const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
-      if (isModularDrawer) {
-        await app.modularDrawer.performSearchByTicker(currency.ticker);
-        await app.modularDrawer.selectCurrencyByTicker(currency.ticker);
-        await app.modularDrawer.selectNetworkIfAsked(currency.name);
-      } else {
-        await app.common.performSearch(currency.id);
-        await app.receive.selectCurrency(currency.id);
-        await app.receive.selectNetworkIfAsked(currency.id);
-      }
+      await app.modularDrawer.performSearchByTicker(currency.ticker);
+      await app.modularDrawer.selectCurrencyByTicker(currency.ticker);
+      await app.modularDrawer.selectNetworkIfAsked(currency.name);
 
       const accountId = await app.addAccount.addAccountAtIndex(
         `${currency.name} 1`,

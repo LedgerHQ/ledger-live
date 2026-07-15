@@ -8,9 +8,10 @@ import { AccountLike, Account, type TokenAccount } from "@ledgerhq/types-live";
 import styled from "styled-components";
 import React, { useCallback, useState, useMemo } from "react";
 import { connect } from "react-redux";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useSelector } from "LLD/hooks/redux";
 import { createFilter, components, MenuListProps } from "react-select";
 import { createStructuredSelector } from "reselect";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -21,7 +22,7 @@ import AccountTagDerivationMode from "./AccountTagDerivationMode";
 import Button from "~/renderer/components/Button";
 import Plus from "~/renderer/icons/Plus";
 import Text from "./Text";
-import { openModal } from "../actions/modals";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { useAccountUnit } from "../hooks/useAccountUnit";
 import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { useAccountName, walletSelector } from "../reducers/wallet";
@@ -203,10 +204,13 @@ function AddAccountButton() {
 const AddAccountFooter = (small?: boolean) =>
   function AddAccountFooter(props: MenuListProps<Option, false>) {
     const { children } = props;
-    const dispatch = useDispatch();
+    const { openAssetFlow } = useOpenAssetFlow(
+      { location: ModularDrawerLocation.ADD_ACCOUNT },
+      "select account",
+    );
     const openAddAccounts = useCallback(() => {
-      dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
-    }, [dispatch]);
+      openAssetFlow();
+    }, [openAssetFlow]);
     return (
       <>
         <components.MenuList {...props}>{children}</components.MenuList>

@@ -62,7 +62,6 @@
     "src/network/index.ts",
     "src/network/submitTransaction.ts",
     "src/test/bridgeDatasetTest.ts",
-    "src/test/cli.ts",
     "src/test/index.ts",
     "src/transaction.ts",
     "src/supportedFeatures.ts"
@@ -82,6 +81,7 @@
     "@ledgerhq/ledger-wallet-framework",
     "@ledgerhq/live-env",
     "@ledgerhq/live-network",
+    "@ledgerhq/live-promise",
     "@ledgerhq/logs",
     "@ledgerhq/types-cryptoassets",
     "bip32",

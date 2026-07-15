@@ -1,7 +1,6 @@
 import { sub } from "date-fns";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import type { Features } from "@shared/feature-flags";
-import { AB_TESTING_VARIANTS, type ABTestingVariants } from "../../types/variants";
 import {
   INACTIVITY_DRAWER_DELAY_MS,
   canPromptTransactionsAlertsForAction,
@@ -16,7 +15,6 @@ type BrazePushNotifications = Features["brazePushNotifications"];
 type BrazeNotificationsCategoryConfig = NonNullable<
   BrazePushNotifications["params"]
 >["notificationsCategories"][number];
-type LwmNewWordingOptInNotificationsDrawer = Features["lwmNewWordingOptInNotificationsDrawer"];
 
 const transactionsAlertsCategoryConfig: BrazeNotificationsCategoryConfig = {
   displayed: true,
@@ -73,17 +71,8 @@ const createBrazePushNotificationsWithTransactionsAlerts = () =>
     },
   });
 
-const createWordingFeature = (
-  variant: ABTestingVariants = AB_TESTING_VARIANTS.B,
-): LwmNewWordingOptInNotificationsDrawer =>
-  ({
-    enabled: true,
-    params: { variant },
-  }) as LwmNewWordingOptInNotificationsDrawer;
-
 type EvaluationContext = {
   brazePushNotifications: BrazePushNotifications;
-  wordingFeature: LwmNewWordingOptInNotificationsDrawer;
   isRatingsModalOpen: boolean;
   isDrawerPending: boolean;
   now: number;
@@ -91,13 +80,11 @@ type EvaluationContext = {
 
 const createEvaluationContext = ({
   brazePushNotifications = createBrazePushNotificationsFeature(),
-  wordingFeature = createWordingFeature(),
   isRatingsModalOpen = false,
   isDrawerPending = false,
   now = NOW,
 }: Partial<EvaluationContext> = {}): EvaluationContext => ({
   brazePushNotifications,
-  wordingFeature,
   isRatingsModalOpen,
   isDrawerPending,
   now,
@@ -124,7 +111,6 @@ describe("notificationsPromptEngine", () => {
         drawerPromptTarget: "globalPushNotifications",
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -146,7 +132,6 @@ describe("notificationsPromptEngine", () => {
         reason: "fully_opted_in",
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -172,7 +157,6 @@ describe("notificationsPromptEngine", () => {
         reason: "reprompt_delay_not_reached",
         dismissedCount: 1,
         nextRepromptDelay: { days: 7, hours: 0, minutes: 0, months: 0, seconds: 0 },
-        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -199,7 +183,6 @@ describe("notificationsPromptEngine", () => {
         drawerPromptTarget: "globalPushNotifications",
         dismissedCount: 1,
         nextRepromptDelay: { days: 7, hours: 0, minutes: 0, months: 0, seconds: 0 },
-        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -226,7 +209,6 @@ describe("notificationsPromptEngine", () => {
           reason: "reprompt_delay_not_reached",
           dismissedCount: 1,
           nextRepromptDelay: { days: 7, hours: 0, minutes: 0, months: 0, seconds: 0 },
-          variant: AB_TESTING_VARIANTS.B,
         });
       });
 
@@ -254,7 +236,6 @@ describe("notificationsPromptEngine", () => {
           reason: "configuration_missing",
           dismissedCount: 1,
           nextRepromptDelay: null,
-          variant: AB_TESTING_VARIANTS.B,
         });
       });
     });
@@ -280,7 +261,6 @@ describe("notificationsPromptEngine", () => {
         drawerPromptTarget: "transactionsAlertsCategory",
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -311,7 +291,6 @@ describe("notificationsPromptEngine", () => {
         drawerPromptTarget: "transactionsAlertsCategory",
         dismissedCount: 1,
         nextRepromptDelay: { days: 7, hours: 0, minutes: 0, months: 0, seconds: 0 },
-        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -339,7 +318,6 @@ describe("notificationsPromptEngine", () => {
         reason: "reprompt_delay_not_reached",
         dismissedCount: 1,
         nextRepromptDelay: { days: 7, hours: 0, minutes: 0, months: 0, seconds: 0 },
-        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -363,13 +341,10 @@ describe("notificationsPromptEngine", () => {
         reason: "transactions_alerts_not_eligible",
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
-    it("preserves variant A onboarding-only behavior", () => {
-      const wordingFeature = createWordingFeature(AB_TESTING_VARIANTS.A);
-
+    it("shows non-onboarding actions (new wording shows for all sources)", () => {
       const nonOnboardingDecision = evaluateAfterActionTrigger(
         {
           source: "send",
@@ -378,7 +353,7 @@ describe("notificationsPromptEngine", () => {
           ...defaultOptInState,
           pushNotificationsDataOfUser: null,
         },
-        createEvaluationContext({ wordingFeature }),
+        createEvaluationContext(),
       );
 
       const onboardingDecision = evaluateAfterActionTrigger(
@@ -389,16 +364,16 @@ describe("notificationsPromptEngine", () => {
           ...defaultOptInState,
           pushNotificationsDataOfUser: null,
         },
-        createEvaluationContext({ wordingFeature }),
+        createEvaluationContext(),
       );
 
       expect(nonOnboardingDecision).toEqual({
-        kind: "skip",
+        kind: "show",
         source: "send",
-        reason: "variant_a_only_onboarding",
+        delayMs: 200,
+        drawerPromptTarget: "globalPushNotifications",
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: AB_TESTING_VARIANTS.A,
       });
 
       expect(onboardingDecision).toEqual({
@@ -408,7 +383,6 @@ describe("notificationsPromptEngine", () => {
         drawerPromptTarget: "globalPushNotifications",
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: AB_TESTING_VARIANTS.A,
       });
     });
   });
@@ -433,7 +407,6 @@ describe("notificationsPromptEngine", () => {
         reason: "onboarding_incomplete",
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -456,7 +429,6 @@ describe("notificationsPromptEngine", () => {
         reason: "ratings_modal_open",
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -479,7 +451,6 @@ describe("notificationsPromptEngine", () => {
         reason: "drawer_already_pending",
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -503,7 +474,6 @@ describe("notificationsPromptEngine", () => {
         drawerPromptTarget: "globalPushNotifications",
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: AB_TESTING_VARIANTS.B,
       });
     });
 
@@ -528,7 +498,6 @@ describe("notificationsPromptEngine", () => {
         reason: "globally_opted_in_no_inactivity_drawer",
         dismissedCount: 0,
         nextRepromptDelay: null,
-        variant: AB_TESTING_VARIANTS.B,
       });
     });
   });

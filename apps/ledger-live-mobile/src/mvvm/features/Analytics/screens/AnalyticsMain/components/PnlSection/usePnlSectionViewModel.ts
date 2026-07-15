@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState, useRef } from "react";
 import { BigNumber } from "bignumber.js";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { usePortfolioPnL } from "@ledgerhq/wallet-pnl/hooks";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "~/context/hooks";
@@ -11,6 +10,7 @@ import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/s
 import { buildReturnCard } from "LLM/features/Pnl/builders/buildReturnCard";
 import { buildPnlDetail } from "LLM/features/Pnl/builders/buildPnlDetail";
 import { PNL_BUTTON, PNL_DETAIL_PAGE } from "LLM/features/Pnl/const";
+import { useShouldDisplayAnalyticsPnl } from "LLM/features/Analytics/hooks/useShouldDisplayAnalyticsPnl";
 import type { PnlSectionViewModel } from "./types";
 import { track } from "~/analytics";
 import { ANALYTICS_PAGE } from "../../../../const";
@@ -21,14 +21,14 @@ const EMPTY_ACCOUNTS: Parameters<typeof usePortfolioPnL>[0] = [];
 export function usePnlSectionViewModel(): PnlSectionViewModel {
   const { t } = useTranslation();
   const { locale } = useLocale();
-  const { shouldDisplayPnl: isPnlFlagOn } = useWalletFeaturesConfig("mobile");
+  const shouldDisplayPnl = useShouldDisplayAnalyticsPnl();
   const accounts = useSelector(shallowAccountsSelector);
   const countervalues = useCountervaluesState();
   const fiat = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
 
   // Skip the (potentially expensive) portfolio walk when the section is hidden.
-  const pnl = usePortfolioPnL(isPnlFlagOn ? accounts : EMPTY_ACCOUNTS, countervalues, fiat);
+  const pnl = usePortfolioPnL(shouldDisplayPnl ? accounts : EMPTY_ACCOUNTS, countervalues, fiat);
   const { unrealisedPnL = ZERO, realisedPnL = ZERO, totalPnL = ZERO } = pnl ?? {};
 
   const [isDrawerOpen, setDrawerOpen] = useState(false);
@@ -98,7 +98,7 @@ export function usePnlSectionViewModel(): PnlSectionViewModel {
   );
 
   return {
-    shouldDisplayPnl: isPnlFlagOn && accounts.length > 0,
+    shouldDisplayPnl,
     title: t("pnl.portfolio.title"),
     unrealised,
     realised,

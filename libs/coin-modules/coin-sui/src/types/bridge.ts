@@ -23,7 +23,6 @@ export type MappedStake = StakeObject & {
  */
 export type SuiResources = {
   stakes?: DelegatedStake[];
-  cachedOps?: Record<string, Record<string, string>>;
   /**
    * SIP-58 address-balance portion of the native SUI balance (in MIST). When real coin objects
    * can't cover the gas budget, gas is withdrawn from this address balance alongside the
@@ -142,8 +141,17 @@ export type SuiOperationRaw = OperationRaw<SuiOperationExtraRaw>;
 export type SuiOperationExtra = {
   coinType?: string;
   transferAmount?: BigNumber;
+  validatorAddress?: string;
+  stakedAmount?: string;
 };
 export type SuiOperationExtraRaw = Record<string, string>;
+
+/**
+ * Resolved staking metadata for a DELEGATE/UNDELEGATE operation — the validator
+ * staked to and the staked principal (both strings). Extracted from the staking
+ * events at sync time and surfaced to the operation-details drawer.
+ */
+export type SuiStakingExtra = { validatorAddress: string; stakedAmount: string };
 
 export type SuiSignedOperation = {
   operation: SuiOperation;

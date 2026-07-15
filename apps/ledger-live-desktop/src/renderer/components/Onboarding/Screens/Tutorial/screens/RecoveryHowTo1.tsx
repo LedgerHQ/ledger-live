@@ -1,7 +1,6 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Title, AsideFooter, Column, Bullet, IllustrationContainer } from "../shared";
-import RecoverySheet from "../assets/recoverySheet.png";
+import { Title, Column, Bullet } from "../shared";
 
 const steps = [
   {
@@ -31,22 +30,6 @@ export function RecoveryHowTo1() {
     </Column>
   );
 }
-
-RecoveryHowTo1.Illustration = (
-  <IllustrationContainer width="240px" height="245px" src={RecoverySheet} />
-);
-
-const Footer = (props: object) => {
-  const { t } = useTranslation();
-  return (
-    <AsideFooter
-      {...props}
-      text={t("onboarding.screens.tutorial.screens.recoveryHowTo.help.descr")}
-    />
-  );
-};
-
-RecoveryHowTo1.Footer = Footer;
 
 RecoveryHowTo1.continueLabel = (
   <Trans i18nKey="onboarding.screens.tutorial.screens.recoveryHowTo.buttons.next" />

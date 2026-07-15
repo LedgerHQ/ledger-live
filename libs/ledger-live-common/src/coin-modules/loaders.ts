@@ -97,9 +97,11 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "celo",
     supportedCoins: ["celo"],
     loadSetup: () => import("../families/celo/setup"),
+    loadLocalApi: () => import("../families/celo/coinModuleApi").then(m => m.createLocalCeloApi),
     loadTransaction: () => import("@ledgerhq/coin-celo/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-celo/deviceTransactionConfig").then(m => m.default),
+    loadBridgeApi: () => import("../families/celo/bridge/api").then(m => m.default),
   },
   {
     family: "concordium",
@@ -212,9 +214,9 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     ],
     loadSetup: () => import("../families/evm/setup"),
     loadLocalApi: () => import("../families/evm/coinModuleApi").then(m => m.createLocalEvmApi),
-    loadTransaction: () => import("@ledgerhq/coin-evm/transaction").then(m => m.default),
+    loadTransaction: () => import("../families/evm/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
-      import("@ledgerhq/coin-evm/deviceTransactionConfig").then(m => m.default),
+      import("../families/evm/deviceTransactionConfig").then(m => m.default),
     loadWalletApiAdapter: () => import("../families/evm/walletApiAdapter").then(m => m.default),
     loadPlatformAdapter: () => import("../families/evm/platformAdapter").then(m => m.default),
     loadMockBridge: () => import("../families/evm/bridge/mock").then(m => m.default),

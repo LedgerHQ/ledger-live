@@ -14,6 +14,9 @@ Follow architectural skills in `.agents/skills/` where applicable. Pay special a
 
 ## Core Process
 
+**0. Placement**
+Decide where new code lives before designing it: add a new `libs/*` package for new shared code; never add new features/folders to `libs/ledger-live-common`. State the chosen target package(s) up front.
+
 **1. Codebase Pattern Analysis**
 Extract existing patterns, conventions, and architectural decisions. Identify the technology stack, module boundaries, abstraction layers, and project rules. Find similar features to understand established approaches.
 

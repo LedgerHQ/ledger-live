@@ -1,0 +1,7 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../oxc-live-libs/.oxlintrc.json"],
+  "rules": {
+    "eslint/no-console": "off"
+  }
+}

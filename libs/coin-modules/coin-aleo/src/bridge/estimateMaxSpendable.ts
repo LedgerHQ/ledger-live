@@ -14,6 +14,7 @@ export const estimateMaxSpendable: AccountBridge<
   const preparedTransaction = await prepareTransaction(mainAccount, {
     ...t,
     useAllAmount: true,
+    ...(account.type === "TokenAccount" && { subAccountId: account.id }),
   });
 
   return preparedTransaction.amount;

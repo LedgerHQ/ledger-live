@@ -5,10 +5,13 @@ import { applyUsdRateToMarket } from "@ledgerhq/live-common/market/utils/applyUs
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { buildSearchMarketCurrencyData } from "./buildSearchMarketCurrencyData";
 
+const NO_DEACTIVATED_CURRENCIES = new Set<string>();
+
 /** DADA prices are USD-denominated; `usdToFiatRate` converts them into the counter currency (1 = no-op). */
 export function mapAssetsDataToMarketCurrencies(
   data: AssetsDataWithPagination | undefined,
   usdToFiatRate = 1,
+  deactivatedCurrencyIds: ReadonlySet<string> = NO_DEACTIVATED_CURRENCIES,
 ): MarketCurrencyData[] {
   if (!data) return [];
   const { cryptoAssets, markets, currenciesOrder } = data;
@@ -16,6 +19,13 @@ export function mapAssetsDataToMarketCurrencies(
   return currenciesOrder.metaCurrencyIds.flatMap(id => {
     const meta = cryptoAssets[id];
     if (!meta) return [];
+
+    // Hide an asset whose every network currency is disabled by a feature flag,
+    // mirroring how the receive flow filters out deactivated currencies.
+    const networks = Object.keys(meta.assetsIds);
+    if (networks.length > 0 && networks.every(network => deactivatedCurrencyIds.has(network))) {
+      return [];
+    }
 
     const currency = selectCurrencyForMetaId(id, data);
     const ledgerId = currency?.id ?? Object.values(meta.assetsIds)[0];

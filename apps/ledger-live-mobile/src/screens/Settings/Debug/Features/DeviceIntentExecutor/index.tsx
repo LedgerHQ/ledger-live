@@ -47,7 +47,7 @@ export default function DebugDeviceIntentExecutor() {
       />
       <DebugEntry
         title="Connect Device"
-        description="Run connectDeviceUseCase to inspect UI states, callbacks, and connection results."
+        description="Run connectDevice to inspect UI states, callbacks, and connection results."
         onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutorConnectDevice)}
       />
     </ScrollView>

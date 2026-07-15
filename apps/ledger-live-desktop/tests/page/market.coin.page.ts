@@ -13,7 +13,6 @@ export class MarketCoinPage extends AppPage {
 
   async startStakeFlow() {
     await this.stakeButton.click();
-    await this.page.getByText("choose account").waitFor({ state: "visible" });
-    await this.page.getByText("Add account").waitFor({ state: "visible" });
+    await this.page.getByText("Select account").first().waitFor({ state: "visible" });
   }
 }

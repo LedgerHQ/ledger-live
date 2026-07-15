@@ -56,17 +56,23 @@ export function formatSignedFiatVariation(fiatAmount: number, unit: Unit, locale
   const abs = Math.abs(fiatAmount);
   const opts = priceOptions(abs, unit);
   const resolution = 10 ** -(unit.magnitude + opts.subMagnitude);
-  const at = (v: number): string =>
+  const at = (v: number, alwaysShowSign = false): string =>
     formatCurrencyUnit(unit, valueFromUnit(new BigNumber(v), unit), {
       locale,
       showCode: true,
       showAllDigits: true,
+      alwaysShowSign,
       ...opts,
     });
 
   if (abs === 0) return at(0);
   const sign = fiatAmount < 0 ? "-" : "+";
-  return abs < resolution ? `${sign}<${at(resolution)}` : `${sign}${at(abs)}`;
+  const signedAmount = sign === "-" ? -abs : abs;
+  const signedResolution = sign === "-" ? -resolution : resolution;
+  if (abs < resolution) {
+    return at(signedResolution, true).replace(sign, `${sign}<`);
+  }
+  return at(signedAmount, true);
 }
 
 /** Pre-round a numeric fiat price using the shared digit rule. */

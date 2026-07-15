@@ -5,9 +5,13 @@ import type {
   SendFlowTransactionActions,
   SendFlowUiConfig,
 } from "@ledgerhq/live-common/flows/send/types";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { useFlowEffects } from "@ledgerhq/live-common/flows/send/effects/hooks/useFlowEffects";
 import { useAmountScreenViewModel } from "../hooks/useAmountScreenViewModel";
 import { AmountScreenView } from "./AmountScreenView";
-import { AmountPluginsHost } from "./AmountPluginsHost";
 import { track } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../../utils/tracking";
 
@@ -40,10 +44,23 @@ export function AmountScreenInner({
   onSelectCoinControl,
   onMessageLinkPress,
 }: AmountScreenInnerProps) {
+  const mainAccount = useMemo(
+    () => getMainAccount(account, parentAccount ?? undefined),
+    [account, parentAccount],
+  );
+  const currency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
   const sendFlowTrackingProperties = useMemo(
     () => getSendFlowTrackingProperties(account, parentAccount),
     [account, parentAccount],
   );
+
+  useFlowEffects({
+    account,
+    parentAccount,
+    transaction,
+    currency,
+    updateTransaction: transactionActions.updateTransaction,
+  });
 
   const viewModel = useAmountScreenViewModel({
     account,
@@ -68,18 +85,6 @@ export function AmountScreenInner({
     onReview();
   }, [onReview, viewModel.quickActions, viewModel.selectedFeeStrategy, sendFlowTrackingProperties]);
 
-  const pluginsSlot = useMemo(
-    () => (
-      <AmountPluginsHost
-        account={account}
-        parentAccount={parentAccount}
-        transaction={transaction}
-        transactionActions={transactionActions}
-      />
-    ),
-    [account, parentAccount, transaction, transactionActions],
-  );
-
   return (
     <AmountScreenView
       {...viewModel}
@@ -87,7 +92,6 @@ export function AmountScreenInner({
       onGetFunds={onGetFunds}
       onSelectCoinControl={onSelectCoinControl}
       onMessageLinkPress={onMessageLinkPress}
-      pluginsSlot={pluginsSlot}
     />
   );
 }

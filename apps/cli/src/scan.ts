@@ -34,8 +34,8 @@ export const deviceOpt = {
   name: "device",
   alias: "d",
   type: String,
-  descOpt: "usb path",
-  desc: "provide a specific HID path of a device",
+  descOpt: "speculos device id",
+  desc: "provide a specific Speculos device id (the CLI is Speculos-only)",
 };
 export type CurrencyCommonOpts = Partial<{
   currency: string;
@@ -120,15 +120,6 @@ export const scanCommonOpts = [
     desc: "if defined, will paginate operations",
   },
 ];
-export const inferManagerApp = (keyword: string): string => {
-  try {
-    const currency = findCryptoCurrencyByKeyword(keyword);
-    if (!currency || !currency.managerAppName) return keyword;
-    return currency.managerAppName;
-  } catch {
-    return keyword;
-  }
-};
 const implTypePerFamily = {
   tron: "js",
   ripple: "js",

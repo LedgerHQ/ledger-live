@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { cleanup, render, screen, waitFor, within } from "tests/testSetup";
+import { cleanup, render, screen, waitFor, within, withFlagOverrides } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useExportOperationsCsv } from "~/renderer/hooks/useExportOperationsCsv";
-import { BTC_ACCOUNT, ETH_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
+import { bitcoinCurrency, ethereumCurrency } from "../../__mocks__/useSelectAssetFlow.mock";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import type { Account } from "@ledgerhq/types-live";
 import History from "../index";
@@ -88,11 +90,12 @@ describe("History integration", () => {
     cleanup();
   });
 
-  function renderHistory(accounts: Account[] = [BTC_ACCOUNT]) {
+  function renderHistory(accounts: Account[] = [BTC_ACCOUNT], initialState = {}) {
     return render(<History />, {
       initialState: {
         accounts,
         settings: AFTER_ONBOARDING_STATE,
+        ...initialState,
       },
     });
   }
@@ -189,6 +192,27 @@ describe("History integration", () => {
 
     expect(screen.queryByRole("table")).not.toBeInTheDocument();
   });
+
+  it("toggles dust filtering from the actions menu", async () => {
+    const { user, store } = renderHistory(
+      [BTC_ACCOUNT],
+      withFlagOverrides({ lwdDustFiltering: { enabled: true } }),
+    );
+
+    await user.click(await screen.findByTestId("history-actions-menu-button"));
+    expect(await screen.findByText("Transactions below US$0.01 will be hidden.")).toBeVisible();
+    await user.click(await screen.findByTestId("history-toggle-dust-filter-button"));
+
+    expect(store.getState().settings.hideSmallValueTokenOperations).toBe(true);
+  });
+
+  it("does not render the dust filtering action when the feature flag is disabled", async () => {
+    const { user } = renderHistory();
+
+    await user.click(await screen.findByTestId("history-actions-menu-button"));
+
+    expect(screen.queryByTestId("history-toggle-dust-filter-button")).not.toBeInTheDocument();
+  });
 });
 
 describe("History export dialog integration", () => {
@@ -204,16 +228,27 @@ describe("History export dialog integration", () => {
     cleanup();
   });
 
+  const LIGHT_BTC_ACCOUNT = genAccount("bitcoin-1", {
+    currency: bitcoinCurrency,
+    operationsSize: 1,
+  });
+  const LIGHT_ETH_ACCOUNT = genAccount("ethereum-1", {
+    currency: ethereumCurrency,
+    operationsSize: 1,
+  });
+
   function renderHistoryWithAccounts() {
     return render(<History />, {
       initialState: {
-        accounts: [BTC_ACCOUNT, ETH_ACCOUNT],
+        accounts: [LIGHT_BTC_ACCOUNT, LIGHT_ETH_ACCOUNT],
         settings: AFTER_ONBOARDING_STATE,
       },
     });
   }
 
   async function openExportDialog(user: ReturnType<typeof renderHistoryWithAccounts>["user"]) {
+    const menuButton = await screen.findByTestId("history-actions-menu-button");
+    await user.click(menuButton);
     const exportButton = await screen.findByTestId("history-export-csv-button");
     await user.click(exportButton);
     return within(await screen.findByRole("dialog"));
@@ -224,7 +259,9 @@ describe("History export dialog integration", () => {
     dialog: ReturnType<typeof within>,
   ) {
     await user.click(dialog.getByText(/select all/i));
-    const exportButton = dialog.getByRole("button", { name: /export history/i });
+    const exportButton = dialog.getByRole("button", {
+      name: /export history/i,
+    });
     await waitFor(() => expect(exportButton).toBeEnabled());
     await user.click(exportButton);
   }
@@ -236,7 +273,9 @@ describe("History export dialog integration", () => {
     expect(dialog.getByText(/Bitcoin/)).toBeVisible();
     expect(dialog.getByText(/Ethereum/)).toBeVisible();
 
-    const exportButton = dialog.getByRole("button", { name: /export history/i });
+    const exportButton = dialog.getByRole("button", {
+      name: /export history/i,
+    });
     expect(exportButton).toBeDisabled();
 
     await user.click(dialog.getByText(/select all/i));

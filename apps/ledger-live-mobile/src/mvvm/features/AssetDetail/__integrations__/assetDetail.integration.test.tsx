@@ -1,6 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { render, screen, waitFor, within } from "@tests/test-renderer";
+import { render, screen, waitFor, within, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
@@ -9,7 +9,11 @@ import type { State } from "~/reducers/types";
 import AssetDetailNavigator from "../Navigator";
 import { ASSET_DETAIL_TEST_IDS } from "../testIds";
 import { QUICK_ACTIONS_TEST_IDS } from "LLM/features/QuickActions/testIds";
-import { useTradeAvailability, type TradeAvailability } from "@ledgerhq/asset-detail";
+import {
+  useReceiveNetworkLedgerIds,
+  useTradeAvailability,
+  type TradeAvailability,
+} from "@ledgerhq/asset-detail";
 
 const mockIsCurrencyAvailable = jest.fn().mockReturnValue(false);
 const mockIsAcceptedCurrency = jest.fn().mockReturnValue(false);
@@ -25,9 +29,11 @@ jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () =>
 jest.mock("@ledgerhq/asset-detail", () => ({
   ...jest.requireActual("@ledgerhq/asset-detail"),
   useTradeAvailability: jest.fn(),
+  useReceiveNetworkLedgerIds: jest.fn(),
 }));
 
 const mockedUseTradeAvailability = jest.mocked(useTradeAvailability);
+const mockedUseReceiveNetworkLedgerIds = jest.mocked(useReceiveNetworkLedgerIds);
 const setAvailability = (overrides: Partial<TradeAvailability> = {}) =>
   mockedUseTradeAvailability.mockReturnValue({
     availableOnBuy: true,
@@ -121,6 +127,10 @@ describe("AssetDetail screen layout", () => {
     mockIsCurrencyAvailable.mockReturnValue(false);
     mockIsAcceptedCurrency.mockReturnValue(false);
     setAvailability();
+    // Default passthrough: the receive network list resolves to the market fallback.
+    mockedUseReceiveNetworkLedgerIds.mockImplementation(
+      ({ fallbackLedgerIds }) => fallbackLedgerIds ?? [],
+    );
   });
 
   it("renders all section placeholders and BalanceGraph", () => {
@@ -376,6 +386,69 @@ describe("AssetDetail screen layout", () => {
         expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.hiddenAssetBanner)).toBeNull(),
       );
       expect(store.getState().settings.blacklistedTokenIds).not.toContain("bitcoin");
+    });
+  });
+
+  describe("Robinhood stock disclaimer banner", () => {
+    const ROBINHOOD_ONLY_LEDGER_IDS = [
+      "robinhood_testnet/erc20/amd_0x71178bac73cbeb415514eb542a8995b82669778d",
+    ];
+    // Enables the flag and funds the asset, so only the Robinhood-exclusivity gate is exercised.
+    const enableDisclaimer = () => ({
+      overrideInitialState: withFlagOverrides(
+        { llRobinhoodDisclaimer: { enabled: true } },
+        withBtcAccounts(1).overrideInitialState,
+      ),
+    });
+
+    it("shows the disclaimer banner when the flag is on, the balance is positive and the asset is exclusive to a Robinhood chain", async () => {
+      mockedUseReceiveNetworkLedgerIds.mockReturnValue(ROBINHOOD_ONLY_LEDGER_IDS);
+
+      render(<AssetDetailTestNavigator />, enableDisclaimer());
+
+      await waitFor(() =>
+        expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.stockDisclaimerBanner)).toBeVisible(),
+      );
+      expect(
+        screen.getByText("Total balance does not include dividends or stock splits."),
+      ).toBeVisible();
+    });
+
+    it("hides the disclaimer banner for a multi-network asset that also lives on Robinhood", () => {
+      mockedUseReceiveNetworkLedgerIds.mockReturnValue([
+        "ethereum/erc20/weth_0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+        "robinhood/erc20/weth_0x0bd7d308f8e1639fab988df18a8011f41eacad73",
+      ]);
+
+      render(<AssetDetailTestNavigator />, enableDisclaimer());
+
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.stockDisclaimerBanner)).toBeNull();
+    });
+
+    it("hides the disclaimer banner for a standard single-chain asset", () => {
+      mockedUseReceiveNetworkLedgerIds.mockReturnValue(["bitcoin"]);
+
+      render(<AssetDetailTestNavigator />, enableDisclaimer());
+
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.stockDisclaimerBanner)).toBeNull();
+    });
+
+    it("hides the disclaimer banner when the flag is off, even for a Robinhood-exclusive asset", () => {
+      mockedUseReceiveNetworkLedgerIds.mockReturnValue(ROBINHOOD_ONLY_LEDGER_IDS);
+
+      render(<AssetDetailTestNavigator />);
+
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.stockDisclaimerBanner)).toBeNull();
+    });
+
+    it("hides the disclaimer banner when the asset has no balance", () => {
+      mockedUseReceiveNetworkLedgerIds.mockReturnValue(ROBINHOOD_ONLY_LEDGER_IDS);
+
+      render(<AssetDetailTestNavigator />, {
+        overrideInitialState: withFlagOverrides({ llRobinhoodDisclaimer: { enabled: true } }),
+      });
+
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.stockDisclaimerBanner)).toBeNull();
     });
   });
 

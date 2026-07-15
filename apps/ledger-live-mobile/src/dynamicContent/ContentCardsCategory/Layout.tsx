@@ -13,6 +13,10 @@ import {
 } from "../types";
 import { Flex } from "@ledgerhq/native-ui";
 import { ContentCardMetadata, ContentCardProps } from "~/contentCards/cards/types";
+import {
+  buildContentCardTrackingProperties,
+  ContentCardEvent,
+} from "@ledgerhq/live-common/braze/contentCardExtras";
 import { contentCardItem } from "~/contentCards/cards/utils";
 import {
   compareCards,
@@ -21,7 +25,6 @@ import {
   mapAsMediumSquareContentCard,
   mapAsBigSquareContentCard,
   mapAsHeroContentCard,
-  sanitizeExtras,
 } from "~/dynamicContent/utils";
 import Carousel from "../../contentCards/layouts/carousel";
 import { WidthFactor } from "~/contentCards/layouts/types";
@@ -87,10 +90,13 @@ const Layout = ({ category, cards }: LayoutProps) => {
     ? ContentBannerActionCard
     : contentCardsType.contentCardComponent;
 
-  const onCardClick = async (card: AnyContentCard, displayedPosition?: number) => {
-    await trackContentCardEvent("contentcard_clicked", {
-      ...sanitizeExtras(card.extras),
-      page: card.location,
+  const onCardClick = async (card: AnyContentCard, displayedPosition: number) => {
+    await trackContentCardEvent(ContentCardEvent.Clicked, {
+      ...buildContentCardTrackingProperties({
+        cardExtras: card.extras,
+        categoryExtras: category.extras,
+        categoryLocation: category.location,
+      }),
       campaign: card.id,
       contentcard: card.title,
       type: category.cardsType,
@@ -107,10 +113,13 @@ const Layout = ({ category, cards }: LayoutProps) => {
     }
   };
 
-  const onCardDismiss = (card: AnyContentCard, displayedPosition?: number) => {
-    trackContentCardEvent("contentcard_dismissed", {
-      ...sanitizeExtras(card.extras),
-      page: card.location,
+  const onCardDismiss = (card: AnyContentCard, displayedPosition: number) => {
+    trackContentCardEvent(ContentCardEvent.Dismissed, {
+      ...buildContentCardTrackingProperties({
+        cardExtras: card.extras,
+        categoryExtras: category.extras,
+        categoryLocation: category.location,
+      }),
       campaign: card.id,
       contentcard: card.title,
       type: category.cardsType,
@@ -121,7 +130,11 @@ const Layout = ({ category, cards }: LayoutProps) => {
   };
 
   const cardsMapped = cards
-    .map(card => contentCardsType.mappingFunction(card))
+    .map(card => {
+      const mapped = contentCardsType.mappingFunction(card);
+      if (!mapped) return null;
+      return { ...mapped, location: mapped.location ?? category.location };
+    })
     .filter(card => card);
 
   const cardsSorted = (cardsMapped as AnyContentCard[]).sort(compareCards);
@@ -176,7 +189,7 @@ const Layout = ({ category, cards }: LayoutProps) => {
         <LogContentCardWrapper
           id={item.props.metadata.id}
           displayedPosition={item.props.metadata.displayedPosition}
-          location={card?.location}
+          location={category.location ?? card?.location}
         >
           <Flex mx={6}>{item.component(item.props)}</Flex>
         </LogContentCardWrapper>

@@ -356,7 +356,6 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
       ) : (
         <>
           <Header
-            device={lastSeenDevice}
             onClose={handleClose}
             displayTitle={currentStep === "companion" && lastSeenDevice && contentScroll > 30}
             companionStep={companionStep}

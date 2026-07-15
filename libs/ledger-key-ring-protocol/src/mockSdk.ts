@@ -15,9 +15,10 @@ import { TrustchainEjected } from "./errors";
 import getApi from "./api";
 
 const mockedLiveCredentialsPrivateKey = "mock-private-key";
+const ROOT_ID = "mock-root-id";
 
 function assertTrustchain(trustchain: Trustchain) {
-  if (!trustchain.rootId.startsWith("mock-root-id")) {
+  if (!trustchain.rootId.startsWith(ROOT_ID)) {
     throw new Error("in mock context, trustchain must be the mocked trustchain");
   }
 }
@@ -28,22 +29,42 @@ function assertLiveCredentials(memberCredentials: MemberCredentials) {
   }
 }
 
-function assertAllowedPermissions(trustchainId: string, memberId: string) {
-  const members = trustchainMembers.get(trustchainId) || [];
-  const member = members.find(m => m.id === memberId);
-  if (!member) {
-    throw new TrustchainEjected();
-  }
-}
-
 const mockedLiveJWT = {
   accessToken: "mock-live-jwt",
   permissions: {},
 };
 
+/**
+ * The mock models the backend as a tree of applications under a single root.
+ * Each application has its own derivation index (bumped on key rotation or reopen),
+ * its own members and an open/closed state, so a close on one application leaves the
+ * others (and the root) untouched.
+ */
+type MockAppState = {
+  index: number;
+  closed: boolean;
+  members: TrustchainMember[];
+};
+type MockRoot = {
+  apps: Map<number, MockAppState>;
+};
+
 // global states in memory
-const trustchains = new Map<string, Trustchain>();
-const trustchainMembers = new Map<string, TrustchainMember[]>();
+const roots = new Map<string, MockRoot>();
+
+function keyForIndex(index: number): string {
+  return index === 0
+    ? "mock-wallet-sync-encryption-key"
+    : "mock-wallet-sync-encryption-key-" + index;
+}
+
+function buildTrustchain(rootId: string, applicationId: number, app: MockAppState): Trustchain {
+  return {
+    rootId,
+    walletSyncEncryptionKey: keyForIndex(app.index),
+    applicationPath: `m/0'/${applicationId}'/${app.index}'`,
+  };
+}
 
 /**
  * to mock the encryption/decryption, we just xor the data with 0xff
@@ -95,16 +116,21 @@ export class MockSDK implements TrustchainSDK {
   ): Promise<TrustchainResult> {
     this.invalidateJwt();
     assertLiveCredentials(memberCredentials);
-    let type = trustchains.has("mock-root-id")
-      ? TrustchainResultType.restored
-      : TrustchainResultType.created;
+    const applicationId = this.context.applicationId;
 
-    const trustchain: Trustchain = trustchains.get("mock-root-id") || {
-      rootId: "mock-root-id",
-      walletSyncEncryptionKey: "mock-wallet-sync-encryption-key",
-      applicationPath: "m/0'/16'/0'",
-    };
-    trustchains.set(trustchain.rootId, trustchain);
+    let type = roots.has(ROOT_ID) ? TrustchainResultType.restored : TrustchainResultType.created;
+    const root = roots.get(ROOT_ID) ?? { apps: new Map<number, MockAppState>() };
+    roots.set(ROOT_ID, root);
+
+    let app = root.apps.get(applicationId);
+    if (!app) {
+      app = { index: 0, closed: false, members: [] };
+      root.apps.set(applicationId, app);
+    } else if (app.closed) {
+      // the application was deactivated (stream closed): reopen it on the next index
+      app = { index: app.index + 1, closed: false, members: [] };
+      root.apps.set(applicationId, app);
+    }
 
     if (!this.deviceJwtAcquired) {
       callbacks?.onStartRequestUserInteraction?.();
@@ -112,39 +138,49 @@ export class MockSDK implements TrustchainSDK {
       callbacks?.onEndRequestUserInteraction?.();
     }
 
-    const currentMembers = trustchainMembers.get(trustchain.rootId) || [];
     // add itself if not yet here
-    if (!currentMembers.some(m => m.id === memberCredentials.pubkey)) {
+    if (!app.members.some(m => m.id === memberCredentials.pubkey)) {
       if (type === TrustchainResultType.restored) type = TrustchainResultType.updated;
       callbacks?.onStartRequestUserInteraction?.();
       // simulate device add interaction
       callbacks?.onEndRequestUserInteraction?.();
-      currentMembers.push({
+      app.members.push({
         id: memberCredentials.pubkey,
         name: this.context.name,
         permissions: Permissions.OWNER,
       });
-      trustchainMembers.set(trustchain.rootId, currentMembers);
     }
-    return Promise.resolve({ type, trustchain });
+    return { type, trustchain: buildTrustchain(ROOT_ID, applicationId, app) };
   }
 
   async refreshAuth(jwt: JWT): Promise<JWT> {
     return jwt;
   }
 
+  /**
+   * Resolve the current application of an active member, or throw TrustchainEjected when the member
+   * is no longer part of the application (removed, application closed, or trustchain gone).
+   */
+  private getActiveContext(
+    trustchain: Trustchain,
+    memberCredentials: MemberCredentials,
+  ): { root: MockRoot; app: MockAppState } {
+    assertTrustchain(trustchain);
+    assertLiveCredentials(memberCredentials);
+    const root = roots.get(trustchain.rootId);
+    const app = root?.apps.get(this.context.applicationId);
+    if (!root || !app || app.closed || !app.members.some(m => m.id === memberCredentials.pubkey)) {
+      throw new TrustchainEjected();
+    }
+    return { root, app };
+  }
+
   async restoreTrustchain(
     trustchain: Trustchain,
     memberCredentials: MemberCredentials,
   ): Promise<Trustchain> {
-    assertTrustchain(trustchain);
-    assertLiveCredentials(memberCredentials);
-    assertAllowedPermissions(trustchain.rootId, memberCredentials.pubkey);
-    const latest = trustchains.get(trustchain.rootId);
-    if (!latest) {
-      throw new Error("trustchain not found");
-    }
-    return Promise.resolve(latest);
+    const { app } = this.getActiveContext(trustchain, memberCredentials);
+    return buildTrustchain(trustchain.rootId, this.context.applicationId, app);
   }
 
   async getMembers(
@@ -153,9 +189,12 @@ export class MockSDK implements TrustchainSDK {
   ): Promise<TrustchainMember[]> {
     assertTrustchain(trustchain);
     assertLiveCredentials(memberCredentials);
-    assertAllowedPermissions(trustchain.rootId, memberCredentials.pubkey);
-    const currentMembers = trustchainMembers.get(trustchain.rootId) || [];
-    return Promise.resolve([...currentMembers]);
+    // a closed application still exposes its members (matching the real SDK); only a removed member is ejected
+    const app = roots.get(trustchain.rootId)?.apps.get(this.context.applicationId);
+    if (!app?.members.some(m => m.id === memberCredentials.pubkey)) {
+      throw new TrustchainEjected();
+    }
+    return [...app.members];
   }
 
   async removeMember(
@@ -166,9 +205,8 @@ export class MockSDK implements TrustchainSDK {
     callbacks?: TrustchainDeviceCallbacks,
   ): Promise<Trustchain> {
     this.invalidateJwt();
-    assertTrustchain(trustchain);
-    assertLiveCredentials(memberCredentials);
-    assertAllowedPermissions(trustchain.rootId, memberCredentials.pubkey);
+    const { app } = this.getActiveContext(trustchain, memberCredentials);
+    const applicationId = this.context.applicationId;
     if (member.id === memberCredentials.pubkey) {
       throw new Error("cannot remove self");
     }
@@ -192,22 +230,14 @@ export class MockSDK implements TrustchainSDK {
     // simulate device interaction
     callbacks?.onEndRequestUserInteraction?.();
 
-    const currentMembers = (trustchainMembers.get(trustchain.rootId) || []).filter(
-      m => m.id !== member.id,
-    );
-    trustchainMembers.set(trustchain.rootId, currentMembers);
-    // we extract the index part to increment it and recreate a path
-    const index = 1 + parseInt(trustchain.applicationPath.split("/")[3].split("'")[0]);
-    const newTrustchain = {
-      rootId: trustchain.rootId,
-      walletSyncEncryptionKey: "mock-wallet-sync-encryption-key-" + index,
-      applicationPath: "m/0'/16'/" + index + "'",
-    };
-    trustchains.set(newTrustchain.rootId, newTrustchain);
+    // rotate the application: bump the index and drop the removed member
+    app.members = app.members.filter(m => m.id !== member.id);
+    app.index += 1;
+    const newTrustchain = buildTrustchain(trustchain.rootId, applicationId, app);
 
     if (afterRotation) await afterRotation(newTrustchain);
 
-    return Promise.resolve(newTrustchain);
+    return newTrustchain;
   }
 
   async destroyTrustchain(
@@ -216,9 +246,37 @@ export class MockSDK implements TrustchainSDK {
   ): Promise<void> {
     assertTrustchain(trustchain);
     assertLiveCredentials(memberCredentials);
-    trustchains.delete(trustchain.rootId);
-    trustchainMembers.delete(trustchain.rootId);
+    roots.delete(trustchain.rootId);
     return;
+  }
+
+  async destroyApplication(
+    trustchain: Trustchain,
+    memberCredentials: MemberCredentials,
+  ): Promise<{ trustchainDestroyed: boolean }> {
+    this.invalidateJwt();
+    assertTrustchain(trustchain);
+    assertLiveCredentials(memberCredentials);
+    const applicationId = this.context.applicationId;
+    const root = roots.get(trustchain.rootId);
+    const app = root?.apps.get(applicationId);
+    if (!root || !app?.members.some(m => m.id === memberCredentials.pubkey)) {
+      throw new TrustchainEjected();
+    }
+    if (app.closed) {
+      return { trustchainDestroyed: false }; // already deactivated
+    }
+
+    const anotherApplicationIsOpen = [...root.apps.entries()].some(
+      ([id, a]) => id !== applicationId && !a.closed,
+    );
+    if (!anotherApplicationIsOpen) {
+      // last open application: destroy the whole trustchain, as before
+      roots.delete(trustchain.rootId);
+      return { trustchainDestroyed: true };
+    }
+    app.closed = true;
+    return { trustchainDestroyed: false };
   }
 
   addMember(
@@ -228,12 +286,18 @@ export class MockSDK implements TrustchainSDK {
   ): Promise<void> {
     assertTrustchain(trustchain);
     assertLiveCredentials(memberCredentials);
-    const currentMembers = trustchainMembers.get(trustchain.rootId) || [];
-    if (currentMembers.find(m => m.id === member.id)) {
+    const applicationId = this.context.applicationId;
+    const root = roots.get(trustchain.rootId) ?? { apps: new Map<number, MockAppState>() };
+    roots.set(trustchain.rootId, root);
+    let app = root.apps.get(applicationId);
+    if (!app) {
+      app = { index: 0, closed: false, members: [] };
+      root.apps.set(applicationId, app);
+    }
+    if (app.members.some(m => m.id === member.id)) {
       return Promise.resolve();
     }
-    currentMembers.push(member);
-    trustchainMembers.set(trustchain.rootId, currentMembers);
+    app.members.push(member);
     return Promise.resolve();
   }
 

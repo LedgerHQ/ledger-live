@@ -268,7 +268,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       ],
       "transactionSequenceNumber": "0",
       "type": "OUT",
-      "value": "119900",
+      "value": "20000",
     },
   ],
   [

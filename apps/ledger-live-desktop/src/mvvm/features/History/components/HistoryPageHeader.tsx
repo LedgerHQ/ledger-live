@@ -1,35 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import PageHeader from "LLD/components/PageHeader";
-import { Button } from "@ledgerhq/lumen-ui-react";
-import { Csv } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "react-i18next";
 import { HistoryExportDialog } from "./HistoryExportDialog";
+import { ActionsMenu } from "./HistoryPageHeader/ActionsMenu";
 
 type Props = Readonly<{
   onBack?: () => void;
   onExportClick: () => void;
+  showDustFilterOption: boolean;
+  hideSmallValueTokenOperations: boolean;
+  dustFilterThreshold: string;
+  onToggleHideSmallValueTokenOperations: () => void;
 }>;
 
-export default function HistoryPageHeader({ onBack, onExportClick }: Props) {
+export default function HistoryPageHeader({
+  onBack,
+  onExportClick,
+  showDustFilterOption,
+  hideSmallValueTokenOperations,
+  dustFilterThreshold,
+  onToggleHideSmallValueTokenOperations,
+}: Props) {
   const { t } = useTranslation();
+  const [isExportDialogOpen, setExportDialogOpen] = useState(false);
 
   return (
-    <PageHeader
-      title={t("history.title")}
-      onBack={onBack}
-      trailing={
-        <HistoryExportDialog>
-          <Button
-            appearance="transparent"
-            size="sm"
-            icon={Csv}
-            onClick={onExportClick}
-            data-testid="history-export-csv-button"
-          >
-            {t("history.actionsBar.csv")}
-          </Button>
-        </HistoryExportDialog>
-      }
-    />
+    <>
+      <HistoryExportDialog open={isExportDialogOpen} onOpenChange={setExportDialogOpen} />
+      <PageHeader
+        title={t("history.title")}
+        onBack={onBack}
+        trailing={
+          <ActionsMenu
+            onExportClick={onExportClick}
+            onOpenExportDialog={() => setExportDialogOpen(true)}
+            showDustFilterOption={showDustFilterOption}
+            hideSmallValueTokenOperations={hideSmallValueTokenOperations}
+            dustFilterThreshold={dustFilterThreshold}
+            onToggleHideSmallValueTokenOperations={onToggleHideSmallValueTokenOperations}
+          />
+        }
+      />
+    </>
   );
 }

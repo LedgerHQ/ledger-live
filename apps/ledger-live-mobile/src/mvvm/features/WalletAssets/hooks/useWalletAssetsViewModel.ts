@@ -7,6 +7,8 @@ import {
   MAX_STABLECOINS_TO_DISPLAY,
 } from "LLM/features/WalletAssets/constants";
 import { usePortfolioSectionActions } from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
+import { useBorrowLiveConfig } from "LLM/features/Borrow/hooks/useBorrowLiveConfig";
+import { usePortfolioBorrowSectionViewModel } from "LLM/features/WalletAssets/views/BorrowSection/usePortfolioBorrowSectionViewModel";
 
 interface WalletAssetsViewModelResult {
   hasMore: boolean;
@@ -14,6 +16,8 @@ interface WalletAssetsViewModelResult {
   shouldAddBottomPadding: boolean;
   shouldDisplayAssetSection: boolean;
   shouldDisplayAssetDiscoverability: boolean;
+  shouldDisplayBorrowSection: boolean;
+  onBorrowPress: () => void;
 }
 
 export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
@@ -23,9 +27,10 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
   const {
     shouldDisplayOperationsList,
     shouldDisplayAssetSection,
-    shouldDisplayGraphRework,
     shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("mobile");
+  const borrowConfig = useBorrowLiveConfig();
+  const { onPress: onBorrowPress } = usePortfolioBorrowSectionViewModel();
 
   const hasMore = useMemo(
     () =>
@@ -34,14 +39,15 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
     [categorizedAssets],
   );
 
-  // Tx History in header: extra space under the last block — Accounts when carousel is absent and
-  // nothing is rendered below (no allocations row when graph rework is off).
+  // Tx History in header: extra space under the last block (Accounts) when the carousel is absent,
+  // since nothing is rendered below it.
   return {
     hasMore,
     onPressShowAll,
-    shouldAddBottomPadding:
-      shouldDisplayOperationsList && walletCardsDisplayed.length === 0 && shouldDisplayGraphRework,
+    shouldAddBottomPadding: shouldDisplayOperationsList && walletCardsDisplayed.length === 0,
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
+    shouldDisplayBorrowSection: borrowConfig?.enabled ?? false,
+    onBorrowPress,
   };
 }

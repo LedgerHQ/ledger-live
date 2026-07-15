@@ -4,18 +4,30 @@ import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 export async function getTokenFromAsset(asset: AssetInfo): Promise<TokenCurrency | undefined> {
-  return "assetReference" in asset
-    ? await getCryptoAssetsStore().findTokenByAddressInCurrency(
-        asset.assetReference as string,
-        "tezos",
-      )
-    : undefined;
+  if (!("assetReference" in asset) || typeof asset.assetReference !== "string") {
+    return undefined;
+  }
+  const [contractAddress, tokenIdentifier] = asset.assetReference.split(":");
+  const store = getCryptoAssetsStore();
+  return store.findTokenByAddressInCurrency(contractAddress, "tezos", tokenIdentifier);
+}
+
+/**
+ * Derives the FA2 tokenId from a TokenCurrency's CAL id.
+ * CAL ids follow the pattern `tezos/fa2/{name}_{contract}` (tokenId=0)
+ * or `tezos/fa2/{name}_{contract}_{tokenId}` (multi-asset).
+ */
+function deriveTokenId(token: TokenCurrency): string {
+  const contractLower = token.contractAddress.toLowerCase();
+  const suffix = token.id.split(contractLower)[1];
+  return suffix?.match(/^_(\d+)$/)?.[1] ?? "0";
 }
 
 export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInfo {
+  const tokenId = deriveTokenId(token);
   return {
     type: token.tokenType,
-    assetReference: token.contractAddress,
+    assetReference: `${token.contractAddress}:${tokenId}`,
     assetOwner: owner,
     name: token.name,
     unit: token.units[0],

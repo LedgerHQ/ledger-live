@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import { useFeature } from "@features/platform-feature-flags";
-import type { Features } from "@shared/feature-flags";
 import { track } from "~/analytics";
 import { useSelector } from "~/context/hooks";
 import { notificationsSelector } from "~/reducers/settings";
@@ -26,7 +24,6 @@ export type NotificationsOptInViewModel = {
   isAllowNotificationsDisabled: boolean;
   dismissedCount: number;
   nextRepromptDelay: ReturnType<typeof useNotifications>["nextRepromptDelay"];
-  variant?: NonNullable<Features["lwmNewWordingOptInNotificationsDrawer"]["params"]>["variant"];
 };
 
 export function useNotificationsOptInViewModel(): NotificationsOptInViewModel {
@@ -45,15 +42,9 @@ export function useNotificationsOptInViewModel(): NotificationsOptInViewModel {
     nextRepromptDelay,
     pushNotificationsDataOfUser,
   } = useNotifications();
-  const featureNewWordingNotificationsDrawer = useFeature("lwmNewWordingOptInNotificationsDrawer");
   const [state, setState] = useState<NotificationsOptInState>("default");
   const [isInitialized, setIsInitialized] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const variant =
-    featureNewWordingNotificationsDrawer?.enabled === true
-      ? featureNewWordingNotificationsDrawer.params?.variant
-      : undefined;
 
   const dismissedCount = pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0;
 
@@ -101,10 +92,9 @@ export function useNotificationsOptInViewModel(): NotificationsOptInViewModel {
         source: "onboarding",
         repromptDelay: nextRepromptDelay,
         dismissedCount,
-        variant,
       });
     },
-    [dismissedCount, nextRepromptDelay, variant],
+    [dismissedCount, nextRepromptDelay],
   );
 
   const onMaybeLater = useCallback(() => {
@@ -172,7 +162,6 @@ export function useNotificationsOptInViewModel(): NotificationsOptInViewModel {
       isAllowNotificationsDisabled: !isInitialized || isSubmitting,
       dismissedCount,
       nextRepromptDelay,
-      variant,
     }),
     [
       dismissedCount,
@@ -184,7 +173,6 @@ export function useNotificationsOptInViewModel(): NotificationsOptInViewModel {
       isSubmitting,
       navigation.goBack,
       state,
-      variant,
     ],
   );
 }

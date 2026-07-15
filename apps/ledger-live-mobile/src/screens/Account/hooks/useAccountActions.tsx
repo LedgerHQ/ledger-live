@@ -25,6 +25,7 @@ import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/i
 import { walletSelector } from "~/reducers/wallet";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { useOpenSwap } from "LLM/features/Swap";
+import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 
 type Props = {
   account: AccountLike;
@@ -211,6 +212,9 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
         component: ZeroBalanceDisabledModalContent,
       },
       ...extraSendActionParams,
+      additionalPropertiesByEventType: {
+        button_clicked: getSendFlowTrackingProperties(account, parentAccount, shouldUseNewFlow),
+      },
     }),
     [shouldUseNewFlow, account, parentAccount, extraSendActionParams, t, isZeroBalance],
   );

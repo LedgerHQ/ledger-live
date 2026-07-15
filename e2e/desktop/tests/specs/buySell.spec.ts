@@ -1,19 +1,19 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import {
   Account,
   TokenAccount,
   getParentAccountName,
-} from "@ledgerhq/live-common/e2e/enum/Account";
+} from "@ledgerhq/live-e2e-shared/enum/Account";
 import { setupEnv } from "tests/utils/swapUtils";
-import { BuySell } from "@ledgerhq/live-common/e2e/models/BuySell";
-import { BuySellProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
+import { BuySell } from "@ledgerhq/live-e2e-shared/models/BuySell";
+import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { OperationType } from "@ledgerhq/live-e2e-shared/enum/OperationType";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { getMinimumSellAmount } from "@ledgerhq/live-common/e2e/buySell";
+import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { getMinimumSellAmount } from "@ledgerhq/live-e2e-shared/buySell";
 
 const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: BuySellProvider }> = [
   {
@@ -61,10 +61,10 @@ for (const asset of assets) {
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: crypto.currency.speculosApp,
       cliCommands: [liveDataCommand(crypto)],
+      speculosForSetupOnly: true,
     });
 
     const family = getFamilyByCurrencyId(crypto.currency.id);
-
     test(
       `Entry Point - Asset Allocation page with [${crypto.currency.name}] asset`,
       {
@@ -86,8 +86,9 @@ for (const asset of assets) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.portfolio.clickOnSelectedAssetRow(crypto.currency.name);
+        await app.portfolio.clickAsset(crypto.currency);
         await app.assetPage.startBuyFlow();
+        await app.buyAndSell.selectNetworkAndAccountIfShown(crypto);
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
       },
@@ -107,6 +108,7 @@ for (const asset of assets) {
         await app.marketBanner.clickExploreMarketHeader();
         await app.market.search(crypto.currency.ticker);
         await app.market.openBuyPage(crypto.currency.ticker);
+        await app.buyAndSell.selectNetworkAndAccountIfShown(crypto);
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
       },
@@ -214,6 +216,7 @@ test.describe("Sell flow - ", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: crypto.currency.speculosApp,
     cliCommands: [liveDataCommand(crypto)],
+    speculosForSetupOnly: true,
   });
 
   const family = getFamilyByCurrencyId(crypto.currency.id);

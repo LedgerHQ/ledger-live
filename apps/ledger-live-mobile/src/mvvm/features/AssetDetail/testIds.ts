@@ -23,6 +23,7 @@ export const ASSET_DETAIL_TEST_IDS = {
   swapButton: "asset-detail-swap-button",
   footerReceiveButton: "asset-detail-footer-receive-button",
   fallbackBanner: "asset-detail-fallback-banner",
+  stockDisclaimerBanner: "asset-detail-stock-disclaimer-banner",
   hiddenAssetBanner: "asset-detail-hidden-asset-banner",
   hiddenAssetBannerShowAsset: "asset-detail-hidden-asset-banner-show-asset",
   coinOptionsTrailing: "asset-detail-coin-options-trailing",

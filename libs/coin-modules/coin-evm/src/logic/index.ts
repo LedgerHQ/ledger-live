@@ -8,7 +8,5 @@ export * from "./craftTransaction";
 export * from "./getNextSequence";
 export * from "./validateIntent";
 export * from "./getStakes";
-export * from "./refreshOperations";
 export * from "./getBlock";
 export * from "./getBlockInfo";
-export * from "./validateTransaction";

@@ -7,6 +7,7 @@ import { log } from "@ledgerhq/logs";
 import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
+import { backfillOnboardingDate } from "~/renderer/components/PostOnboardingHub/logic/backfillOnboardingDate";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import each from "lodash/each";
@@ -19,10 +20,7 @@ import "~/renderer/i18n/init";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
 import { setupCryptoAssetsStore } from "~/config/bridge-setup";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import {
-  restoreTokensToCache,
-  PERSISTENCE_VERSION,
-} from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
 import logger, { enableDebugLogger } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import sentry from "~/sentry/renderer";
@@ -41,6 +39,7 @@ import {
   trackingEnabledSelector,
   hideEmptyTokenAccountsSelector,
   filterTokenOperationsZeroAmountSelector,
+  migrateLegacyCryptoCounterValue,
 } from "~/renderer/reducers/settings";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import ReactRoot from "~/renderer/ReactRoot";
@@ -52,6 +51,7 @@ import { listCachedCurrencyIds } from "./bridge/cache";
 import { LogEntry } from "winston";
 import { importMarketState } from "./actions/market";
 import { importMarketBannerState } from "./reducers/marketBanner";
+import { importKnownDevices, mapPersistedKnownDeviceToKnownDevice } from "./reducers/knownDevices";
 import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
 import { setupRecentAddressesStore } from "./recentAddresses";
@@ -157,18 +157,12 @@ async function init() {
   // Hydrate persisted crypto assets tokens from app.json
   // Cross-caching is automatic: tokens are cached under both ID and address lookups
   try {
-    const persistedData = await getKey("app", "cryptoAssets");
+    // parsePersistedCAL validates version + schema; returns null for missing/corrupt/legacy blobs.
+    const persistedData = parsePersistedCAL(await getKey("app", "cryptoAssets"));
 
-    // Check version and restore tokens
-    if (persistedData?.tokens) {
-      if (persistedData.version === PERSISTENCE_VERSION) {
-        const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-        await restoreTokensToCache(store.dispatch, persistedData, TOKEN_CACHE_TTL);
-      } else {
-        logger.warn(
-          `Crypto assets cache version mismatch (expected ${PERSISTENCE_VERSION}, got ${persistedData.version}), skipping restore`,
-        );
-      }
+    if (persistedData) {
+      const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+      await restoreTokensToCache(store.dispatch, persistedData, TOKEN_CACHE_TTL);
     }
   } catch (error) {
     logger.error("Failed to load crypto assets tokens from app.json:", error);
@@ -180,7 +174,15 @@ async function init() {
   }
   // Initialize identities before Sentry so Sentry user id (datadogId) is set correctly
   await initIdentities(store);
-  sentry(() => sentryLogsSelector(store.getState()), store);
+  // lldDatadog XOR-switches the crash backend (see main/index.ts): when the flag is on, Datadog is
+  // active and Sentry is muted; both stay gated by the sentryLogs opt-in. Read live from the store
+  // so the backend flips as soon as the flag resolves.
+  sentry(
+    () =>
+      sentryLogsSelector(store.getState()) &&
+      !selectFeature(store.getState(), "lldDatadog").enabled,
+    store,
+  );
   let notifiedSentryLogs = false;
   store.subscribe(() => {
     const next = sentryLogsSelector(store.getState());
@@ -208,8 +210,27 @@ async function init() {
     settingsToLoad.hasCompletedOnboarding = false;
   }
 
+  // Legacy crypto counter-values were persisted as ticker (BTC/ETH); migrate them to Ledger ids.
+  if (typeof settingsToLoad.counterValue === "string") {
+    settingsToLoad.counterValue = migrateLegacyCryptoCounterValue(settingsToLoad.counterValue);
+  }
+
   if (deepLinkUrl) {
     settingsToLoad.deepLinkUrl = deepLinkUrl;
+  }
+
+  // Hydrate persisted known devices before settings so the settings-based
+  // migration only seeds the store for first-time users (empty known devices).
+  const persistedKnownDevices = await getKey("app", "knownDevices");
+  if (persistedKnownDevices?.knownDevices?.length) {
+    store.dispatch(
+      importKnownDevices({
+        knownDevices: persistedKnownDevices.knownDevices.flatMap(device => {
+          const knownDevice = mapPersistedKnownDeviceToKnownDevice(device);
+          return knownDevice ? [knownDevice] : [];
+        }),
+      }),
+    );
   }
 
   fetchSettings(settingsToLoad)(store.dispatch);
@@ -316,8 +337,6 @@ async function init() {
     check();
   });
 
-  r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
-
   const postOnboardingState = await getKey("app", "postOnboarding");
   if (postOnboardingState) {
     store.dispatch(
@@ -326,6 +345,10 @@ async function init() {
       }),
     );
   }
+
+  backfillOnboardingDate(store);
+
+  r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
 
   await dispatch(fetchTrustchain());
   await dispatch(fetchWallet());

@@ -124,6 +124,7 @@ const prepareTransaction = async (
       networkInfo: {
         family: "bitcoin",
         feeItems,
+        relayFeePerByte: new BigNumber(1),
       },
     };
   }

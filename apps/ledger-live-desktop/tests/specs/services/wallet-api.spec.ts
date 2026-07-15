@@ -1,7 +1,7 @@
 import "../../../src/live-common-set-supported-currencies";
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { DiscoverPage } from "../../page/discover.page";
 import { Layout } from "../../component/layout.component";
 import { Drawer } from "../../component/drawer.component";
@@ -32,6 +32,7 @@ const methods = [
   "bitcoin.getAddress",
   "bitcoin.getAddresses",
   "bitcoin.getPublicKey",
+  "account.getPublicKey",
   "bitcoin.getXPub",
   "exchange.start",
   "exchange.complete",
@@ -125,22 +126,20 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
 
     await liveAppWebview.accountRequest();
 
-    await drawer.waitForDrawerToBeVisible();
+    await drawer.waitForAssetAccountSelectorVisible();
     await expect(drawer.selectAssetTitle).toBeVisible();
 
     await drawer.selectCurrency("tether usd");
     await expect(drawer.selectAccountTitle).toBeVisible();
 
     // Test name and balance for tokens
-    await expect(drawer.getAccountButton("tether usd", 2)).toContainText(
-      "Ethereum 3 (USDT)71.8174 USDT",
-    );
+    await expect(drawer.getAccountButton("Ethereum 3")).toContainText("71.8174 USDT");
     await drawer.back();
     await expect(drawer.selectAssetTitle).toBeVisible();
 
     await drawer.selectCurrency("bitcoin");
     await expect(drawer.selectAccountTitle).toBeVisible();
-    await drawer.selectAccount("bitcoin");
+    await drawer.selectAccount("Bitcoin 1 (legacy)");
 
     await drawer.waitForDrawerToDisappear();
 
@@ -748,7 +747,9 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
       route.fulfill({
         headers: { teststatus: "mocked" },
         status: 200,
-        body: JSON.stringify({ bannedAddresses: [Addresses.SANCTIONED_ETHEREUM] }),
+        body: JSON.stringify({
+          bannedAddresses: [Addresses.SANCTIONED_ETHEREUM],
+        }),
       }),
     );
 

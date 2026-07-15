@@ -21,26 +21,24 @@ export interface FlagListViewProps {
   readonly setOverride: FeatureFlagsToolProps["setOverride"];
   readonly onSelectFlag: (id: FeatureId) => void;
   readonly selectedFlagId: FeatureId | null;
-  readonly onCloseSidebar: () => void;
+  readonly onCloseDetails: () => void;
   readonly clearSelectedOverride: () => void;
 }
 
 export function useFlagListViewModel(props: FeatureFlagsToolProps): FlagListViewProps {
   const { overrides, setOverride, clearAllOverrides } = props;
 
-  const exportOverrides =
-    props.exportOverrides ??
-    (() => {
-      const { content, filename } = buildOverridesExport(overrides);
-      saveFile(content, filename);
-    });
+  const exportOverrides = () => {
+    const { content, filename } = buildOverridesExport(overrides);
+    saveFile(content, filename);
+  };
 
   const importOverrides = () => {
     readFile()
       .then(parseOverridesImport)
       .then(({ overrides: imported, warnings }) => {
         warnings.forEach(warning => console.warn(warning));
-        props.importOverrides(imported);
+        props.setAllOverrides(imported);
       })
       .catch(error => {
         console.warn("Import cancelled or failed", error);
@@ -71,7 +69,7 @@ export function useFlagListViewModel(props: FeatureFlagsToolProps): FlagListView
     setOverride,
     onSelectFlag: selectFlag,
     selectedFlagId,
-    onCloseSidebar: clearSelection,
+    onCloseDetails: clearSelection,
     clearSelectedOverride: () => {
       if (selectedFlagId) setOverride(selectedFlagId, undefined);
     },

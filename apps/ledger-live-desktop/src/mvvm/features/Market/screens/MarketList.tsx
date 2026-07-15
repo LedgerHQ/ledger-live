@@ -6,7 +6,7 @@ import {
   MarketListRequestParams,
 } from "@ledgerhq/live-common/market/utils/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { NoCryptoPlaceholder } from "~/renderer/screens/market/MarketList/components/NoCryptoPlaceholder";
+import { NoCryptoPlaceholder } from "~/renderer/screens/market/components/NoCryptoPlaceholder";
 import { ScrollContainer } from "LLD/components/ScrollContainer";
 import { ListHeader } from "../components/ListHeader";
 import { ListSkeleton } from "../components/ListSkeleton";

@@ -130,6 +130,14 @@ describe("Build TON transaction", () => {
     mockServer.listen();
   });
 
+  beforeEach(() => {
+    jest.spyOn(Date, "now").mockReturnValue(1_000_000_000_000);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   afterAll(() => {
     mockServer.close();
   });

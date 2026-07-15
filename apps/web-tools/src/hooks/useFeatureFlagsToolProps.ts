@@ -11,7 +11,7 @@ export function useFeatureFlagsToolProps(): FeatureFlagsToolProps {
   const dispatch = useDispatch();
   const overrides = useSelector(featureFlagsOverridesSelector);
   const resolved = useFeatureFlags();
-  const importOverrides = useCallback(
+  const handleSetAllOverrides = useCallback(
     (overrides: Partial<Record<FeatureId, Feature | undefined>>) => {
       dispatch(setAllOverrides(overrides));
     },
@@ -35,17 +35,17 @@ export function useFeatureFlagsToolProps(): FeatureFlagsToolProps {
       overrides,
       resolved,
       setOverride: handleSetOverride,
+      setAllOverrides: handleSetAllOverrides,
       clearOverride: handleClearOverride,
       clearAllOverrides: handleClearAllOverrides,
-      importOverrides: importOverrides,
     }),
     [
       overrides,
       resolved,
       handleSetOverride,
+      handleSetAllOverrides,
       handleClearOverride,
       handleClearAllOverrides,
-      importOverrides,
     ],
   );
 }

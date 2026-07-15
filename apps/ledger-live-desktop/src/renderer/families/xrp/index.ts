@@ -7,6 +7,7 @@ import { Account, Operation } from "@ledgerhq/types-live";
 const family: LLDCoinFamily<Account, Transaction, TransactionStatus, Operation> = {
   operationDetails,
   sendRecipientFields,
+  sendRecipientCanNext: status => !status.errors.transaction,
 };
 
 export default family;

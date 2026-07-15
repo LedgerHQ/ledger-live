@@ -7,10 +7,19 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/types";
 import { InvalidAddress, NotEnoughBalance, NotEnoughGas } from "@ledgerhq/errors";
 import { getChainAPI } from "../../network";
+import type { ChainAPI } from "../../network";
+import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/index";
 import { endpointByCurrencyId } from "../../utils";
-import { validateIntent } from "../validateIntent";
+import { validateIntent as validateIntentRaw } from "../validateIntent";
 
 const api = getChainAPI({ endpoint: endpointByCurrencyId("solana") });
+
+const validateIntent = (
+  intent: TransactionIntent<StringMemo | MemoNotSupported>,
+  balances: Balance[],
+  customFees: FeeEstimation | undefined,
+  chainApi: ChainAPI,
+) => validateIntentRaw(chainApi, intent, balances, customFees);
 
 const VIBECODOOR_MINT = "Aj1mSpD4vJDN5r3xptnHsjHQgGWDLge8bRQi2W6pump";
 const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";

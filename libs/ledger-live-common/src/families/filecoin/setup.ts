@@ -6,7 +6,6 @@ import { FilecoinApp } from "@zondax/ledger-filecoin";
 import filecoinResolver from "@ledgerhq/coin-filecoin/signer/index";
 import { signMessage } from "@ledgerhq/coin-filecoin/hw-signMessage";
 import type { Account, Bridge } from "@ledgerhq/types-live";
-import makeCliTools from "@ledgerhq/coin-filecoin/test/cli";
 import {
   CreateSigner,
   createMessageSigner,
@@ -36,6 +35,4 @@ const messageSigner = {
 
 const resolver: Resolver = createResolver(createSigner, filecoinResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, messageSigner, resolver };
+export { bridge, messageSigner, resolver };

@@ -16,7 +16,8 @@ import { Alert, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
-import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
@@ -111,7 +112,10 @@ export default function SelectRedelegationValidator() {
   }
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      edges={["left", "right", "bottom"]}
+      style={[styles.root, { backgroundColor: colors.background }]}
+    >
       <TrackScreen
         category="EvmRedelegationFlow"
         name="SelectValidator"

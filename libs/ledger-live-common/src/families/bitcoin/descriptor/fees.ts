@@ -99,6 +99,16 @@ export const fees: FeeDescriptor = {
             return getSuggestedFeePerByteRange(transaction);
           },
         },
+        minValue: {
+          getValue: transaction => {
+            if (!isRecord(transaction)) return null;
+            const networkInfo = transaction.networkInfo;
+            const relayFeePerByte = isRecord(networkInfo) ? networkInfo.relayFeePerByte : undefined;
+            return isBigNumber(relayFeePerByte) && relayFeePerByte.gt(0)
+              ? relayFeePerByte.toFixed()
+              : null;
+          },
+        },
       },
     ],
     getInitialValues: (transaction): Record<string, string> => {

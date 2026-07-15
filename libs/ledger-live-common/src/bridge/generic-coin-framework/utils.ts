@@ -1,4 +1,8 @@
-import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import {
+  encodeOperationId,
+  OPERATION_TYPE_OUT_FAMILY,
+  OPERATION_TYPE_STAKE_FAMILY,
+} from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-module-framework/utils";
@@ -46,6 +50,47 @@ export function bigNumberToBigIntDeep<T>(obj: T): BigNumberToBigIntDeep<T> {
   return obj as BigNumberToBigIntDeep<T>;
 }
 
+function toFeeDataFromUnknown(value: unknown): FeeData {
+  const read = (key: keyof FeeData): BigNumber | null => {
+    if (!value || typeof value !== "object" || !(key in value)) return null;
+    const raw = (value as Record<string, unknown>)[key];
+    if (typeof raw === "bigint") return new BigNumber(raw.toString());
+    if (typeof raw === "number") return new BigNumber(raw);
+    if (typeof raw === "string") return new BigNumber(raw);
+    return null;
+  };
+  return {
+    gasPrice: read("gasPrice"),
+    maxFeePerGas: read("maxFeePerGas"),
+    maxPriorityFeePerGas: read("maxPriorityFeePerGas"),
+    nextBaseFee: read("nextBaseFee"),
+  };
+}
+
+/**
+ * Converts the fee-estimation `gasOptions` (API shape, numeric values as bigint)
+ * into the transaction's `GasOptions` shape (BigNumber). Returns `undefined` when
+ * the value does not expose the expected slow/medium/fast structure, so families
+ * that don't produce gas options are left untouched.
+ */
+export function toGasOptionsFromUnknown(value: unknown): GasOptions | undefined {
+  if (
+    !value ||
+    typeof value !== "object" ||
+    !("slow" in value) ||
+    !("medium" in value) ||
+    !("fast" in value)
+  ) {
+    return undefined;
+  }
+  const options = value as Record<"slow" | "medium" | "fast", unknown>;
+  return {
+    slow: toFeeDataFromUnknown(options.slow),
+    medium: toFeeDataFromUnknown(options.medium),
+    fast: toFeeDataFromUnknown(options.fast),
+  };
+}
+
 export function findCryptoCurrencyByNetwork(network: string): CryptoCurrency | undefined {
   const networksRemap = {
     xrp: "ripple",
@@ -62,17 +107,65 @@ export function extractBalance(balances: Balance[], type: string): Balance {
   );
 }
 
+// A sponsored (gasless) transaction has its fee paid by a third party, not by the
+// account, so the pending fee must not be locked against the native balance.
+function isSponsoredOperation(op: Operation): boolean {
+  const raw = op.transactionRaw;
+  return !!raw && "sponsored" in raw && raw.sponsored === true;
+}
+
+/**
+ * `pendingOperations` are optimistic and don’t affect `spendableBalance` until the next sync.
+ * Lock the native amount already committed by pending ops: fees for any non-sponsored op, plus outgoing value for OUT-family ops. See LIVE-33180.
+ */
+function getPendingNativeSpent(pendingOperations: Operation[]): BigNumber {
+  return pendingOperations.reduce((spent, op) => {
+    const withFee = isSponsoredOperation(op) ? spent : spent.plus(op.fee);
+    if (op.type === "FEES") return withFee;
+    if (OPERATION_TYPE_OUT_FAMILY.includes(op.type)) return withFee.plus(op.value);
+
+    return withFee;
+  }, new BigNumber(0));
+}
+
+// Used for token sub-accounts: lock `op.value` for pending ops that should reduce token spendable.
+// This includes OUT-family and STAKE-family types (stake-family is fee-only on native; see getOperationAmountNumber).
+function isOutgoingOperation(op: Operation): boolean {
+  return (
+    OPERATION_TYPE_OUT_FAMILY.includes(op.type) || OPERATION_TYPE_STAKE_FAMILY.includes(op.type)
+  );
+}
+
+/**
+ * Token equivalent of `getPendingNativeSpent`: returns how much of a token
+ * sub-account's balance is committed by pending operations. Fees are paid in the
+ * native currency, so only the operation `value` matters here. `buildOptimisticOperation`
+ * can append any outgoing sub-operation type to a token account (OUT, DELEGATE,
+ * STAKE, OPT_IN, ...), so we lock the value of every outgoing op rather than just
+ * plain "OUT" sends.
+ */
+export function getPendingTokenSpent(pendingOperations: Operation[]): BigNumber {
+  return pendingOperations.reduce(
+    (spent, op) => (isOutgoingOperation(op) ? spent.plus(op.value) : spent),
+    new BigNumber(0),
+  );
+}
+
 export function extractBalances(
   account: Account,
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo,
 ): Balance[] {
+  const nativeReserve = BigNumber.max(account.balance.minus(account.spendableBalance), 0);
+  const nativePending = getPendingNativeSpent(account.pendingOperations ?? []);
   const balances: Balance[] = [
     {
       // `value` is the total balance, `locked` is the non-spendable part of it.
       // Consumers must compute available funds as `value - locked`.
+      // We lock the chain reserve plus any funds already committed to pending
+      // (optimistic, not-yet-synced) transactions, capped at the total balance.
       value: BigInt(account.balance.toFixed()),
       asset: { type: "native" },
-      locked: BigInt(BigNumber.max(account.balance.minus(account.spendableBalance), 0).toFixed()),
+      locked: BigInt(BigNumber.min(nativeReserve.plus(nativePending), account.balance).toFixed()),
     },
   ];
 
@@ -82,12 +175,12 @@ export function extractBalances(
 
   for (const subAccount of account.subAccounts) {
     const asset = getAssetFromToken(subAccount.token, account.freshAddress);
+    const tokenReserve = BigNumber.max(subAccount.balance.minus(subAccount.spendableBalance), 0);
+    const tokenPending = getPendingTokenSpent(subAccount.pendingOperations ?? []);
     balances.push({
       value: BigInt(subAccount.balance.toFixed()),
       asset,
-      locked: BigInt(
-        BigNumber.max(subAccount.balance.minus(subAccount.spendableBalance), 0).toFixed(),
-      ),
+      locked: BigInt(BigNumber.min(tokenReserve.plus(tokenPending), subAccount.balance).toFixed()),
     });
   }
 
@@ -229,7 +322,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     const s = op.details.stake as { address?: string; amount?: bigint };
     extra.stake = {
       address: s.address ?? "",
-      amount: new BigNumber(s.amount !== undefined ? String(s.amount) : "0"),
+      amount: new BigNumber(typeof s.amount === "bigint" ? s.amount.toString() : "0"),
     };
   }
 
@@ -549,8 +642,10 @@ export const buildOptimisticOperation = (
   const { subAccounts } = account;
   const parentType = subAccountId ? "FEES" : type;
   const tokenAccount = subAccountId ? subAccounts?.find(ta => ta.id === subAccountId) : null;
-  const normalizedSequenceNumber = String(sequenceNumber ?? 0);
-  const nonce = sequenceNumber === undefined ? undefined : new BigNumber(normalizedSequenceNumber);
+  const transactionSequenceNumber = new BigNumber(
+    sequenceNumber === undefined ? "0" : sequenceNumber.toString(),
+  );
+  const nonce = sequenceNumber === undefined ? undefined : transactionSequenceNumber;
 
   const operation: Operation = {
     id: encodeOperationId(account.id, "", parentType),
@@ -562,7 +657,7 @@ export const buildOptimisticOperation = (
     blockHeight: null,
     senders: [account.freshAddress.toString()],
     recipients: [transaction.recipient],
-    transactionSequenceNumber: new BigNumber(normalizedSequenceNumber),
+    transactionSequenceNumber,
     accountId: account.id,
     date: new Date(),
     transactionRaw: toGenericTransactionRaw({
@@ -591,7 +686,7 @@ export const buildOptimisticOperation = (
         blockHeight: null,
         senders: [account.freshAddress],
         recipients: [transaction.recipient],
-        transactionSequenceNumber: new BigNumber(normalizedSequenceNumber),
+        transactionSequenceNumber,
         accountId: subAccountId,
         date: new Date(),
         transactionRaw: toGenericTransactionRaw({

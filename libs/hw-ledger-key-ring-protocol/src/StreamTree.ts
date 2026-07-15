@@ -98,6 +98,53 @@ export class StreamTree {
   }
 
   /**
+   * Enumerate the current (highest index) stream of each application branch
+   * derived under the tree root (m/{treeIndex}'/{applicationId}'/{index}').
+   * Used to decide, on deactivation, whether the application being closed is
+   * the last open one of the trustchain.
+   */
+  public getApplicationStreams(): {
+    applicationId: number;
+    index: number;
+    stream: CommandStream;
+  }[] {
+    // tree index is always 0 in the current implementation
+    const treeIndex = 0;
+    const applicationsNode = this.tree.getChild(DerivationPath.hardenedIndex(treeIndex));
+    if (!applicationsNode) return [];
+    const result: { applicationId: number; index: number; stream: CommandStream }[] = [];
+    for (const [applicationHardened, applicationNode] of applicationsNode.getChildren()) {
+      const highestIndex = applicationNode.getHighestIndex();
+      const stream = applicationNode.getChild(highestIndex)?.getValue();
+      if (stream) {
+        result.push({
+          applicationId: DerivationPath.reverseHardenedIndex(applicationHardened),
+          index: DerivationPath.reverseHardenedIndex(highestIndex),
+          stream,
+        });
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Returns true if an application other than `applicationId` still has an open (not closed) stream.
+   * Stops at the first open application found. A stream that fails to resolve is treated as open, so an
+   * unrelated broken application never causes the caller to destroy the whole trustchain on uncertainty.
+   */
+  public async hasAnotherOpenApplication(applicationId: number): Promise<boolean> {
+    for (const application of this.getApplicationStreams()) {
+      if (application.applicationId === applicationId) continue;
+      try {
+        if (!(await application.stream.resolve()).isClosed()) return true;
+      } catch {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Share a private key with a member
    */
   public async share(

@@ -2,8 +2,9 @@ import { loadConfig, setFeatureFlags } from "../bridge/server";
 import { isObservable, lastValueFrom, Observable } from "rxjs";
 import { log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
-import { SpeculosAppType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { isSpeculosRemote, isWallet40 } from "../helpers/commonHelpers";
+import { SpeculosAppType } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { getMergedFeatureFlags } from "./featureFlagUtils";
+import { isSpeculosRemote } from "../helpers/commonHelpers";
 import {
   deleteSpeculos,
   launchSpeculos,
@@ -11,10 +12,10 @@ import {
   registerSpeculos,
   removeSpeculosAndDeregisterKnownSpeculos,
 } from "./speculosUtils";
-import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
-import type { PartialFeatures } from "@shared/feature-flags";
-import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
-import { parseExtraFeatureFlags } from "@ledgerhq/live-common/e2e/featureFlagsJsonUtils";
+import { waitForSpeculosReady } from "@ledgerhq/live-e2e-shared/speculosCI";
+import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
+
+import type { Features, PartialFeatures } from "@shared/feature-flags";
 
 function checkTestFailed(): void {
   if (globalThis.IS_FAILED) {
@@ -22,10 +23,12 @@ function checkTestFailed(): void {
   }
 }
 
-type CliCommand = (
+type CliCommand = ((
   userdataPath?: string,
   speculosAddress?: string,
-) => Observable<unknown> | Promise<unknown> | string;
+) => Observable<unknown> | Promise<unknown> | string) & {
+  canUseGeneratedUserdata?: () => boolean;
+};
 
 export let isMyWalletEnabled = false;
 
@@ -39,6 +42,7 @@ export type InitOptions = {
   userdata?: string;
   testedCurrencies?: string[];
   featureFlags?: PartialFeatures;
+  speculosForSetupOnly?: boolean;
 };
 
 type Entry = {
@@ -305,9 +309,27 @@ export class InitializationManager {
     userdataPath: string,
     userdataSpeculos: string,
   ): Promise<void> {
-    const { speculosApp, cliCommands = [], cliCommandsOnApp = [], featureFlags = {} } = options;
+    const {
+      speculosApp,
+      cliCommands = [],
+      cliCommandsOnApp = [],
+      featureFlags = {},
+      speculosForSetupOnly,
+    } = options;
 
     await InitializationManager.setFeatureFlags(featureFlags);
+
+    const skipSpeculos =
+      !!speculosForSetupOnly &&
+      cliCommandsOnApp.length === 0 &&
+      cliCommands.length > 0 &&
+      cliCommands.every(cmd => cmd.canUseGeneratedUserdata?.() ?? false);
+
+    if (skipSpeculos) {
+      await executeCliCommands(cliCommands, userdataPath);
+      await InitializationManager.finalizeSetup(userdataSpeculos);
+      return;
+    }
 
     // Group commands by app name
     const commandsByAppMap = new Map<string, { app: SpeculosAppType; cmds: CliCommand[] }>();
@@ -347,57 +369,16 @@ export class InitializationManager {
     // Execute global commands with internal full-run retry and Speculos re-initialization
     await executeCliCommands(cliCommands, userdataPath, speculosApp, speculosDevices);
 
-    // Finalize setup only after successful global CLI run
+    await InitializationManager.finalizeSetup(userdataSpeculos);
+  }
+
+  private static async finalizeSetup(userdataSpeculos: string): Promise<void> {
     await loadConfig(userdataSpeculos, true);
   }
 
   static async setFeatureFlags(featureFlags: PartialFeatures) {
-    const defaultFlags = {
-      lwmWallet40: {
-        enabled: isWallet40,
-        params: {
-          mainNavigation: isWallet40,
-          marketBanner: isWallet40,
-          graphRework: isWallet40,
-          quickActionCtas: isWallet40,
-          tour: false,
-          lazyOnboarding: isWallet40,
-          balanceRefreshRework: isWallet40,
-          assetSection: false,
-          operationsList: false,
-          aggregatedAssets: false,
-          myWallet: isWallet40,
-          pnl: false,
-          assetDiscoverability: false,
-        },
-      },
-      onboardingWidget: {
-        enabled: true,
-      },
-      llmModularDrawer: {
-        enabled: true,
-        params: {
-          add_account: true,
-          live_app: true,
-          live_apps_allowlist: [],
-          live_apps_blocklist: ["revoke-cash"],
-          receive_flow: true,
-          send_flow: false,
-          enableModularization: true,
-          searchDebounceTime: 300,
-          backendEnvironment: "PROD",
-        },
-      },
-    };
-    const extraFeatureFlags = parseExtraFeatureFlags<PartialFeatures>(
-      process.env.E2E_FEATURE_FLAGS_JSON,
-    );
-    const mergedFeatureFlags = {
-      ...defaultFlags,
-      ...extraFeatureFlags,
-      ...featureFlags,
-    };
-    const wallet40 = mergedFeatureFlags.lwmWallet40;
+    const mergedFeatureFlags = getMergedFeatureFlags({ testFlags: featureFlags });
+    const wallet40 = mergedFeatureFlags.lwmWallet40 as Features["lwmWallet40"];
     isMyWalletEnabled = Boolean(wallet40?.enabled && wallet40?.params?.myWallet);
 
     await allure.attachment(

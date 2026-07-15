@@ -58,7 +58,8 @@ describe("getBlock", () => {
     const tx0 = block.transactions[0];
     expect(tx0.hash).toBe("onktfPphnYKAm7yJ2DLWPn3ZHKmx9U6sAiSYSwrpUUimL6ivbr5");
     expect(tx0.failed).toBe(false);
-    expect(tx0.fees).toBe(1500n);
+    // 1500 (transaction) + 332 (reveal batched in the same hash) = 1832
+    expect(tx0.fees).toBe(1832n);
     expect(tx0.feesPayer).toBe("tz29GPjgeRQTRX6mcPQXkiuHnq7jbya1Abnq");
 
     expect(tx0.operations).toEqual(
@@ -76,6 +77,18 @@ describe("getBlock", () => {
           peer: "tz29GPjgeRQTRX6mcPQXkiuHnq7jbya1Abnq",
           asset: { type: "native", name: "XTZ" },
           amount: 1n,
+        },
+        {
+          type: "other",
+          address: "tz29GPjgeRQTRX6mcPQXkiuHnq7jbya1Abnq",
+          asset: { type: "native", name: "XTZ" },
+          amount: 0n,
+          details: {
+            counter: 14472417,
+            gasLimit: 581,
+            storageLimit: 0,
+            ledgerOpType: "REVEAL",
+          },
         },
       ]),
     );
@@ -133,8 +146,8 @@ describe("getBlock — Shadownet Paris staking ops", () => {
       expect(stakingOp.type).toBe("other");
       expect(details.operationType).toBe(expectedOpType);
       expect(details.stakedAmount).toBe(expectedAmount);
-      expect(details.delegate).toBe(SHADOWNET_BAKER);
       expect(details.ledgerOpType).toBe(expectedOpType);
+      expect(details).not.toHaveProperty("delegate");
     },
   );
 

@@ -4,15 +4,16 @@ import { useLargeMover } from "./hooks/useLargeMover";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Card } from "./components/Card";
 import { LandingPagesNavigatorParamList } from "~/components/RootNavigator/types/LandingPagesNavigator";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { StickyHeader } from "./components/StickyHeader";
-import { SafeAreaView } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "styled-components/native";
 import { rangeMap } from "./utils";
 import { SwiperComponent } from "LLM/components/Swiper/components/Swiper";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { LoadingIndicator } from "./components/Loading";
 import { CardType } from "./types";
 import { track, TrackScreen } from "~/analytics";
@@ -55,7 +56,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
   const loadingMarket = marketDataArray.some(entry => entry.isLoading);
   const isLoading = loading || loadingMarket;
 
-  const navigation = useNavigation<NavigationProp<WalletTabNavigatorStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
 
   const { colors } = useTheme();
   const height = getWindowDimensions().height * 0.78;
@@ -134,10 +135,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
   };
 
   if (isError) {
-    navigation.navigate(NavigatorName.Market, {
-      screen: ScreenName.MarketList,
-      params: { top100: true },
-    });
+    navigation.navigate(ScreenName.MarketList, { top100: true });
   }
   return (
     <>

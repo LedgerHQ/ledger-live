@@ -1,6 +1,7 @@
 {
   "name": "@ledgerhq/coin-tester-bitcoin",
-  "version": "1.10.7",
+  "version": "1.10.8-next.0",
+  "private": true,
   "description": "Ledger BTC Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [
@@ -18,9 +19,6 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-modules/coin-tester-bitcoin",
-  "publishConfig": {
-    "access": "public"
-  },
   "typesVersions": {
     "*": {
       "lib/*": [

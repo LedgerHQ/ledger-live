@@ -171,7 +171,7 @@ describe("assignToAccountRaw", () => {
     it("should include privateInfo", () => {
       accountZcashMock.privateInfo = privateInfoMock;
       assignToAccountRaw(accountZcashMock, accountZcashRawMock);
-      expect(accountZcashRawMock.privateInfo).toBeDefined();
+      expect(accountZcashRawMock.privateInfo).toEqual(privateInfoRawMock);
     });
 
     it("should include privateInfo, and convert shielded balances", () => {
@@ -305,7 +305,7 @@ describe("assignFromAccountRaw", () => {
     it("should include privateInfo", () => {
       accountZcashRawMock.privateInfo = privateInfoRawMock;
       assignFromAccountRaw(accountZcashRawMock, accountZcashMock);
-      expect(accountZcashMock.privateInfo).toBeDefined();
+      expect(accountZcashMock.privateInfo).toEqual(privateInfoMock);
     });
 
     it("should include privateInfo, and convert shielded balances", () => {

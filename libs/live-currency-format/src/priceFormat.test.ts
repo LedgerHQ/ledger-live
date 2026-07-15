@@ -16,6 +16,17 @@ const usdUnit: Unit = {
   prefixCode: true,
 };
 
+const sarUnit: Unit = {
+  code: "﷼",
+  name: "Saudi Riyal",
+  magnitude: 2,
+  showAllDigits: true,
+  prefixCode: true,
+};
+
+const LRI = "\u2066";
+const PDI = "\u2069";
+
 // Convert a fiat amount (e.g. $50,000) into the unit's smallest atom (5,000,000).
 const atoms = (fiat: number): BigNumber => new BigNumber(fiat).shiftedBy(usdUnit.magnitude);
 
@@ -128,6 +139,24 @@ describe("formatSignedFiatVariation", () => {
 
     it("emits a signed '<' threshold marker for a tiny positive variation", () => {
       expect(formatSignedFiatVariation(5e-8, usdUnit, "en-US")).toBe("+<$0.000001");
+    });
+  });
+
+  describe("with RTL currency symbols", () => {
+    it("wraps a positive variation with the sign inside the LTR isolate", () => {
+      expect(formatSignedFiatVariation(1.2, sarUnit, "en-US")).toBe(`${LRI}+﷼1.20${PDI}`);
+    });
+
+    it("wraps a negative variation with the sign inside the LTR isolate", () => {
+      expect(formatSignedFiatVariation(-3.46, sarUnit, "en-US")).toBe(`${LRI}-﷼3.46${PDI}`);
+    });
+
+    it("wraps a tiny positive variation with the sign and threshold marker inside the LTR isolate", () => {
+      expect(formatSignedFiatVariation(5e-8, sarUnit, "en-US")).toBe(`${LRI}+<﷼0.000001${PDI}`);
+    });
+
+    it("wraps a tiny negative variation with the sign and threshold marker inside the LTR isolate", () => {
+      expect(formatSignedFiatVariation(-6e-9, sarUnit, "en-US")).toBe(`${LRI}-<﷼0.000001${PDI}`);
     });
   });
 });

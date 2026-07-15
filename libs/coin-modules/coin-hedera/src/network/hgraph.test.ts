@@ -94,12 +94,14 @@ describe("hgraphClient", () => {
       const mockBalances = [
         {
           token_id: "0.0.5001",
+          token_evm_address: "0xabc123",
           balance: "1000000",
           balance_timestamp: "1234567890.123456789",
           created_timestamp: "1234567800.000000000",
         },
         {
           token_id: "0.0.5002",
+          token_evm_address: "0xabc321",
           balance: "2000000",
           balance_timestamp: "1234567890.123456789",
           created_timestamp: "1234567800.000000000",

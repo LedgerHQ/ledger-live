@@ -1,5 +1,5 @@
 import React, { createRef } from "react";
-import { act, renderHook, withFlagOverrides } from "tests/testSetup";
+import { act, renderHook } from "tests/testSetup";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import useSyncOnboardingCompanionViewModel from "../useSyncOnboardingCompanionViewModel";
@@ -48,14 +48,9 @@ const mockOnboardingState = {
 
 const hookState = {
   minimal: false,
-  initialState: withFlagOverrides({
-    lldSyncOnboardingIncr1: {
-      enabled: true,
-    },
-  }),
 };
 
-const getMockSteps = (isTwoStep: boolean, hasSync: boolean): Step[] => {
+const getMockSteps = (hasSync: boolean): Step[] => {
   const steps = [
     {
       key: StepKey.Paired,
@@ -76,80 +71,19 @@ const getMockSteps = (isTwoStep: boolean, hasSync: boolean): Step[] => {
       renderBody: () => <Flex data-testid="step-3" />,
     },
   ];
-  if (isTwoStep) {
-    if (hasSync) {
-      steps.push({
-        key: StepKey.Sync,
-        status: InactiveStep,
-        title: "Step 4",
-        renderBody: () => <Flex data-testid="step-4" />,
-      });
-    }
-    return steps;
-  }
-
-  steps.push(
-    {
-      key: StepKey.Apps,
+  if (hasSync) {
+    steps.push({
+      key: StepKey.Sync,
       status: InactiveStep,
       title: "Step 4",
       renderBody: () => <Flex data-testid="step-4" />,
-    },
-    {
-      key: StepKey.Ready,
-      status: InactiveStep,
-      title: "Step 5",
-      renderBody: () => <Flex data-testid="step-5" />,
-    },
-  );
+    });
+  }
 
   return steps;
 };
 
 describe("useSyncOnboardingCompanionViewModel", () => {
-  it("should return correct amount of steps when single timeline version", () => {
-    jest.spyOn(UseOnboardingStatePolling, "useOnboardingStatePolling").mockReturnValue({
-      onboardingState: mockOnboardingState,
-      allowedError: null,
-      lockedDevice: false,
-      fatalError: null,
-      resetStates: jest.fn(),
-    });
-
-    const defaultSteps = getMockSteps(false, false);
-    jest.mocked(useCompanionSteps).mockReturnValue({
-      defaultSteps,
-      hasSyncStep: false,
-      installStep: <Flex />,
-      handleAppStepComplete: jest.fn(),
-      isLedgerSyncActive: false,
-    });
-
-    const { result } = renderHook(
-      () =>
-        useSyncOnboardingCompanionViewModel({
-          device: mockDevice,
-          onLostDevice: jest.fn(),
-          notifySyncOnboardingShouldReset: jest.fn(),
-          parentRef: createRef(),
-          setCompanionStep: jest.fn(),
-        }),
-      {
-        minimal: false,
-      },
-    );
-
-    expect(result.current.isDesyncOverlayOpen).toBe(false);
-    expect(result.current.desyncOverlayDelay).toBe(1000);
-    expect(result.current.productName).toBe("Ledger Stax");
-    expect(result.current.isSyncIncr1Enabled).toBe(false);
-    expect(result.current.deviceName).toBe("Ledger Stax");
-    expect(result.current.steps).toHaveLength(5);
-    expect(result.current.stepKey).toBe(StepKey.Paired);
-    expect(result.current.analyticsSeedConfiguration.current).toBeUndefined();
-    expect(result.current.isNewSeed).toBe(false);
-  });
-
   describe("Two step sync companion", () => {
     it("should return correct amount of steps when two step version", () => {
       jest.spyOn(UseOnboardingStatePolling, "useOnboardingStatePolling").mockReturnValue({
@@ -160,7 +94,7 @@ describe("useSyncOnboardingCompanionViewModel", () => {
         resetStates: jest.fn(),
       });
 
-      const defaultSteps = getMockSteps(true, false);
+      const defaultSteps = getMockSteps(false);
       jest.mocked(useCompanionSteps).mockReturnValue({
         defaultSteps,
         hasSyncStep: false,
@@ -183,9 +117,8 @@ describe("useSyncOnboardingCompanionViewModel", () => {
 
       expect(result.current.isDesyncOverlayOpen).toBe(false);
       expect(result.current.desyncOverlayDelay).toBe(1000);
-      expect(result.current.productName).toBe("Ledger Stax");
-      expect(result.current.isSyncIncr1Enabled).toBe(true);
-      expect(result.current.deviceName).toBe("Ledger Stax");
+      expect(result.current.productName).toBe("Ledger\u00A0Stax");
+      expect(result.current.deviceName).toBe("Ledger\u00A0Stax");
       expect(result.current.steps).toHaveLength(3);
       expect(result.current.stepKey).toBe(StepKey.Paired);
       expect(result.current.analyticsSeedConfiguration.current).toBeUndefined();
@@ -201,7 +134,7 @@ describe("useSyncOnboardingCompanionViewModel", () => {
         resetStates: jest.fn(),
       });
 
-      const defaultSteps = getMockSteps(true, true);
+      const defaultSteps = getMockSteps(true);
       jest.mocked(useCompanionSteps).mockReturnValue({
         defaultSteps,
         hasSyncStep: true,
@@ -237,7 +170,7 @@ describe("useSyncOnboardingCompanionViewModel", () => {
         resetStates: jest.fn(),
       });
 
-      const defaultSteps = getMockSteps(true, true);
+      const defaultSteps = getMockSteps(true);
       jest.mocked(useCompanionSteps).mockReturnValue({
         defaultSteps,
         hasSyncStep: true,
@@ -277,7 +210,7 @@ describe("useSyncOnboardingCompanionViewModel", () => {
         resetStates: jest.fn(),
       });
 
-      const defaultSteps = getMockSteps(true, true);
+      const defaultSteps = getMockSteps(true);
       jest.mocked(useCompanionSteps).mockReturnValue({
         defaultSteps,
         hasSyncStep: true,
@@ -317,7 +250,7 @@ describe("useSyncOnboardingCompanionViewModel", () => {
         resetStates: jest.fn(),
       });
 
-      const defaultSteps = getMockSteps(true, true);
+      const defaultSteps = getMockSteps(true);
       jest.mocked(useCompanionSteps).mockReturnValue({
         defaultSteps,
         hasSyncStep: true,
@@ -357,7 +290,7 @@ describe("useSyncOnboardingCompanionViewModel", () => {
         resetStates: jest.fn(),
       });
 
-      const defaultSteps = getMockSteps(true, true);
+      const defaultSteps = getMockSteps(true);
       jest.mocked(useCompanionSteps).mockReturnValue({
         defaultSteps,
         hasSyncStep: true,
@@ -397,7 +330,7 @@ describe("useSyncOnboardingCompanionViewModel", () => {
         resetStates: jest.fn(),
       });
 
-      const defaultSteps = getMockSteps(true, true);
+      const defaultSteps = getMockSteps(true);
       jest.mocked(useCompanionSteps).mockReturnValue({
         defaultSteps,
         hasSyncStep: true,
@@ -437,7 +370,7 @@ describe("useSyncOnboardingCompanionViewModel", () => {
         resetStates: jest.fn(),
       });
 
-      const defaultSteps = getMockSteps(true, true);
+      const defaultSteps = getMockSteps(true);
       jest.mocked(useCompanionSteps).mockReturnValue({
         defaultSteps,
         hasSyncStep: true,
@@ -477,7 +410,7 @@ describe("useSyncOnboardingCompanionViewModel", () => {
         resetStates: jest.fn(),
       });
 
-      const defaultSteps = getMockSteps(true, true);
+      const defaultSteps = getMockSteps(true);
       jest.mocked(useCompanionSteps).mockReturnValue({
         defaultSteps,
         hasSyncStep: true,
@@ -517,7 +450,7 @@ describe("useSyncOnboardingCompanionViewModel", () => {
         resetStates: jest.fn(),
       });
 
-      const defaultSteps = getMockSteps(true, true);
+      const defaultSteps = getMockSteps(true);
       jest.mocked(useCompanionSteps).mockReturnValue({
         defaultSteps,
         hasSyncStep: true,
@@ -558,7 +491,7 @@ describe("useSyncOnboardingCompanionViewModel", () => {
           resetStates: jest.fn(),
         });
 
-        const defaultSteps = getMockSteps(true, true);
+        const defaultSteps = getMockSteps(true);
         jest.mocked(useCompanionSteps).mockReturnValue({
           defaultSteps,
           hasSyncStep: true,
@@ -598,7 +531,7 @@ describe("useSyncOnboardingCompanionViewModel", () => {
           resetStates: jest.fn(),
         });
 
-        const defaultSteps = getMockSteps(true, true);
+        const defaultSteps = getMockSteps(true);
         jest.mocked(useCompanionSteps).mockReturnValue({
           defaultSteps,
           hasSyncStep: false,
@@ -641,7 +574,7 @@ describe("useSyncOnboardingCompanionViewModel", () => {
             resetStates: jest.fn(),
           });
 
-          const defaultSteps = getMockSteps(true, true);
+          const defaultSteps = getMockSteps(true);
 
           jest.mocked(useCompanionSteps).mockReturnValue({
             defaultSteps,

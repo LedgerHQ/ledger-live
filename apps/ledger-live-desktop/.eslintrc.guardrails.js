@@ -1,4 +1,4 @@
-// Rules that need excludedFiles or complex selectors (not supported in oxlint). Run: eslint -c .eslintrc.guardrails.js src tests
+// shell.openExternal guard — uses a no-restricted-syntax AST selector that oxlint cannot express.
 
 const shellOpenExternalRestrictions = [
   {
@@ -13,29 +13,32 @@ const shellOpenExternalRestrictions = [
   },
 ];
 
-// Blocks named re-introductions of feature-flag hooks/data from live-common's barrel.
-// Hooks/components live in @features/platform-feature-flags; actions/selectors/types/constants
-// live in @shared/feature-flags. Pure utilities (formatDefaultFeatures, formatToFirebaseFeatureId,
-// isRecoverDisplayed, etc.) and subpath imports (featureFlags/stakePrograms, featureFlags/mock)
-// remain on live-common.
-const featureFlagsRestrictions = {
-  patterns: [
-    {
-      group: [
-        "@ledgerhq/live-common/featureFlags",
-        "@ledgerhq/live-common/featureFlags/index",
-        "@ledgerhq/live-common/featureFlags/FeatureFlagsContext",
-        "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/*",
-        "@ledgerhq/live-common/featureFlags/defaultFeatures",
-        "@ledgerhq/live-common/featureFlags/groupedFeatures",
-      ],
-      importNamePattern:
-        "^(useFeature|useFeatureFlags|useHasLocallyOverriddenFeatureFlags|useWalletFeaturesConfig|FeatureToggle|DEFAULT_FEATURES|groupedFeatures|GroupedFeature)$",
-      message:
-        "Use @features/platform-feature-flags for hooks/FeatureToggle, @shared/feature-flags for actions/selectors/types/constants (e.g. FEATURE_FLAGS_DEFAULTS, groupedFeatures, GroupedFeature).",
-    },
-  ],
-};
+const sendRestrictions = [
+  {
+    selector: "BinaryExpression[operator=/^[=!]==?$/] MemberExpression[property.name='family']",
+    message:
+      "Send must not branch on `.family`. Move family-specific behavior behind the send flow/families contract.",
+  },
+  {
+    selector: "CallExpression[callee.property.name='includes'] MemberExpression[property.name='family']",
+    message:
+      "Send must not check `.family` with includes(). Move family-specific behavior behind the send flow/families contract.",
+  },
+  {
+    selector:
+      "SwitchStatement[discriminant.property.name='family'], SwitchStatement[discriminant.expression.property.name='family']",
+    message:
+      "Send must not switch on `.family`. Move family-specific behavior behind the send flow/families contract.",
+  },
+];
+
+const sendImportRestrictions = [
+  {
+    group: ["@ledgerhq/coin-*", "@ledgerhq/coin-*/**"],
+    message:
+      "Send must not import coin modules. Move family-specific behavior behind the send flow/families contract.",
+  },
+];
 
 module.exports = {
   env: { browser: true, es2022: true, node: true },
@@ -55,9 +58,10 @@ module.exports = {
       },
     },
     {
-      files: ["src/**/*.ts", "src/**/*.tsx", "tests/**/*.ts", "tests/**/*.tsx"],
+      files: ["src/mvvm/features/Send/**/*.ts", "src/mvvm/features/Send/**/*.tsx"],
       rules: {
-        "no-restricted-imports": ["error", featureFlagsRestrictions],
+        "no-restricted-imports": ["error", { patterns: sendImportRestrictions }],
+        "no-restricted-syntax": ["error", ...sendRestrictions],
       },
     },
   ],

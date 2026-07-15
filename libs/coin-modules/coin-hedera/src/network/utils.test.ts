@@ -1,15 +1,9 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
-import { SUPPORTED_ERC20_TOKENS } from "../constants";
 import { HederaRecipientInvalidChecksum } from "../errors";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
-import {
-  getMockedCurrency,
-  getMockedERC20TokenCurrency,
-  getMockedHTSTokenCurrency,
-} from "../test/fixtures/currency.fixture";
+import { getMockedCurrency, getMockedHTSTokenCurrency } from "../test/fixtures/currency.fixture";
 import {
   getMockedERC20TokenBalance,
   getMockedERC20TokenTransfer,
@@ -302,19 +296,17 @@ describe("network utils", () => {
   });
 
   describe("getERC20BalancesForAccountV2", () => {
-    it("returns balances only for supported ERC20 tokens and calls hgraphClient.getERC20Balances accordingly", async () => {
+    it("returns token balances and calls hgraphClient.getERC20Balances accordingly", async () => {
       const mockAccount = getMockedAccount();
-      const erc20Token = getMockedERC20TokenCurrency();
+      const mockRawToken1 = { token_id: 1, token_evm_address: "0x000000001" };
+      const mockRawToken2 = { token_id: 2, token_evm_address: "0x000000002" };
+      const mockRawToken3 = { token_id: 3, token_evm_address: "0x000000003" };
 
       (hgraphClient.getERC20Balances as jest.Mock).mockResolvedValue([
-        getMockedERC20TokenBalance({ token_id: 0, balance: 100 }),
-        getMockedERC20TokenBalance({ token_id: 2, balance: 200 }),
-        // token id from SUPPORTED_ERC20_TOKENS
-        getMockedERC20TokenBalance({ token_id: 9470869, balance: 300 }),
+        getMockedERC20TokenBalance({ ...mockRawToken1, balance: 100 }),
+        getMockedERC20TokenBalance({ ...mockRawToken2, balance: 200 }),
+        getMockedERC20TokenBalance({ ...mockRawToken3, balance: 300 }),
       ]);
-      setupMockCryptoAssetsStore({
-        findTokenById: jest.fn().mockReturnValue(erc20Token),
-      });
 
       const res = await getERC20BalancesForAccountV2({
         configOrCurrencyId: mockCurrency.id,
@@ -328,10 +320,16 @@ describe("network utils", () => {
       });
       expect(res).toEqual([
         {
+          balance: new BigNumber(100),
+          contractAddress: mockRawToken1.token_evm_address,
+        },
+        {
+          balance: new BigNumber(200),
+          contractAddress: mockRawToken2.token_evm_address,
+        },
+        {
           balance: new BigNumber(300),
-          token: expect.objectContaining({
-            contractAddress: erc20Token.contractAddress,
-          }),
+          contractAddress: mockRawToken3.token_evm_address,
         },
       ]);
     });
@@ -339,7 +337,7 @@ describe("network utils", () => {
 
   describe("enrichERC20Transfers", () => {
     const payerAccountId = 1234;
-    const erc20Token = SUPPORTED_ERC20_TOKENS[0];
+    const erc20Token = { tokenId: "0.0.1", contractAddress: "0x000000001" };
     const mockMirrorTransaction = getMockedMirrorTransaction({
       entity_id: erc20Token.tokenId,
       consensus_timestamp: "1704067200.000000000",

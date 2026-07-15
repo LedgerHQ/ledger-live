@@ -60,8 +60,7 @@ export function useOnboardingNavigation({
               // Already-onboarded Canton accounts are importable even when unfunded (used=false). LIVE-32985
               const importableAccounts = accountsToAdd.filter(
                 account =>
-                  account.used ||
-                  (isCantonAccount(account) && account.cantonResources.isOnboarded),
+                  account.used || (isCantonAccount(account) && account.cantonResources.isOnboarded),
               );
               const completedAccount = onboardResult.account;
 

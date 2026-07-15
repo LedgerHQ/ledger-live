@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, Pressable } from "react-native";
 import {
   Text,
@@ -13,6 +13,9 @@ import { Information, ChevronDown, Check } from "@ledgerhq/lumen-ui-rnative/symb
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
 import type { NetworkFeesViewModel } from "../types";
+import { useSendFlowData } from "../context/SendFlowContext";
+import { useAnalytics } from "~/analytics";
+import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 
 type NetworkFeesRowProps = Readonly<{
   viewModel: NetworkFeesViewModel;
@@ -79,6 +82,18 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
     [],
   );
 
+  const { state } = useSendFlowData();
+  const { account, parentAccount } = state.account;
+
+  const { track } = useAnalytics();
+  const trackingProperties = useMemo(() => {
+    return {
+      ...getSendFlowTrackingProperties(account, parentAccount),
+      page: "step amount",
+      flow: "send",
+    };
+  }, [account, parentAccount]);
+
   const handleOpenInfo = useCallback(() => {
     infoBottomSheetRef.current?.present();
   }, [infoBottomSheetRef]);
@@ -91,10 +106,15 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
 
   const handleSelectStrategy = useCallback(
     (strategy: string) => {
+      track("button_clicked", {
+        ...trackingProperties,
+        button: strategy,
+      });
+
       viewModel.onSelectFeeStrategy(strategy);
       selectorBottomSheetRef.current?.dismiss();
     },
-    [viewModel, selectorBottomSheetRef],
+    [viewModel, selectorBottomSheetRef, track, trackingProperties],
   );
 
   const handleSelectCoinControl = useCallback(() => {
@@ -103,9 +123,13 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
   }, [viewModel, selectorBottomSheetRef]);
 
   const handleSelectCustomFees = useCallback(() => {
+    track("button_clicked", {
+      ...trackingProperties,
+      button: "custom",
+    });
     viewModel.onSelectCustomFees?.();
     selectorBottomSheetRef.current?.dismiss();
-  }, [viewModel, selectorBottomSheetRef]);
+  }, [viewModel, selectorBottomSheetRef, track, trackingProperties]);
 
   const handleCloseInfo = useCallback(() => {
     infoBottomSheetRef.current?.dismiss();

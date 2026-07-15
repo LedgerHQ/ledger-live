@@ -2,7 +2,6 @@ import invariant from "invariant";
 import { AccountId, TransactionId } from "@hashgraph/sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/fiats";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { InvalidAddress } from "@ledgerhq/errors";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import { getEnv } from "@ledgerhq/live-env";
@@ -11,7 +10,6 @@ import type { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { HederaCoinConfig } from "../config";
-import { SUPPORTED_ERC20_TOKENS } from "../constants";
 import { HederaRecipientInvalidChecksum } from "../errors";
 import { getChecksum, nanosToSeconds, toEntityId, toTimestamp } from "../logic/utils";
 import type {
@@ -123,24 +121,9 @@ export async function getERC20BalancesForAccountV2({
   const rawBalances = await hgraphClient.getERC20Balances({ configOrCurrencyId, address });
 
   for (const rawBalance of rawBalances) {
-    const rawBalanceTokenId = toEntityId({ num: rawBalance.token_id });
-
-    const supportedToken = SUPPORTED_ERC20_TOKENS.find(token => {
-      return token.tokenId === rawBalanceTokenId;
-    });
-
-    if (!supportedToken) {
-      continue;
-    }
-
-    const calToken = await getCryptoAssetsStore().findTokenById(supportedToken.id);
-
-    if (!calToken) {
-      continue;
-    }
-
+    if (!rawBalance?.token_evm_address) continue;
     balances.push({
-      token: calToken,
+      contractAddress: rawBalance.token_evm_address,
       balance: new BigNumber(rawBalance.balance),
     });
   }

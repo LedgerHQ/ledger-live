@@ -21,7 +21,6 @@ import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { Item } from "./Graph/types";
 import { GestureResponderEvent } from "react-native";
 import GraphSection from "./GraphSection";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { AnalyticsBalanceDisplay } from "LLM/features/Analytics/components/AnalyticsBalanceDisplay";
 
 type Props = {
@@ -39,11 +38,6 @@ const Placeholder = styled(Flex).attrs({
   backgroundColor: "neutral.c40",
   borderRadius: "4px",
 })``;
-const BigPlaceholder = styled(Placeholder).attrs({
-  width: 189,
-  height: 18,
-})``;
-
 const SmallPlaceholder = styled(Placeholder).attrs({
   width: 109,
   height: 8,
@@ -60,10 +54,8 @@ function GraphCard({
   hideGraph,
 }: Props) {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
 
   const { countervalueChange, balanceHistory } = portfolio;
-  const item = balanceHistory[balanceHistory.length - 1];
 
   const unit = counterValueCurrency.units[0];
 
@@ -132,27 +124,7 @@ function GraphCard({
             ) : (
               <>
                 <Flex px={6}>
-                  {shouldDisplayBalanceRefreshRework ? (
-                    <AnalyticsBalanceDisplay hoveredValue={hoveredItem?.value ?? null} />
-                  ) : !balanceHistory ? (
-                    <BigPlaceholder mt="8px" />
-                  ) : (
-                    <Text
-                      fontFamily="Inter"
-                      fontWeight="semiBold"
-                      fontSize="42px"
-                      color={"neutral.c100"}
-                      numberOfLines={1}
-                      adjustsFontSizeToFit
-                      testID={"graphCard-balance"}
-                    >
-                      <CurrencyUnitValue
-                        unit={unit}
-                        value={hoveredItem ? hoveredItem.value : item.value}
-                        joinFragmentsSeparator=""
-                      />
-                    </Text>
-                  )}
+                  <AnalyticsBalanceDisplay hoveredValue={hoveredItem?.value ?? null} />
                   <TransactionsPendingConfirmationWarningAllAccounts />
                 </Flex>
                 <Flex flexDirection={"row"}>

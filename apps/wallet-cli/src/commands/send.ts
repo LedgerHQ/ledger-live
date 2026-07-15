@@ -1,6 +1,9 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import {
+  findCryptoCurrencyById,
+  getCryptoCurrencyById,
+} from "@ledgerhq/live-common/currencies/index";
 import { WalletAdapter } from "../wallet";
 import { TransactionIntentSchema } from "../wallet/intents";
 import type { AccountDescriptor } from "../wallet/models";
@@ -17,6 +20,13 @@ import { networkStringFromCurrencyId } from "../shared/accountDescriptor";
 import { colors } from "../shared/ui";
 import { createCommandOutput } from "../output";
 import { runObservable } from "./run-observable";
+import {
+  trackSendCompleted,
+  trackSendFailed,
+  trackSendRejected,
+  trackSendStarted,
+  type SendAssetClass,
+} from "../analytics/send-analytics";
 import {
   accountOption,
   deviceTimeoutOption,
@@ -68,6 +78,16 @@ const INTENT_BUILDERS: Record<string, IntentBuilder> = {
   }),
 };
 
+function sendErrorCode(error: unknown): string {
+  if (error instanceof WalletCliDeviceError) {
+    return error.state.code;
+  }
+  if (error instanceof Error) {
+    return error.name;
+  }
+  return "unknown";
+}
+
 function buildIntentData(currencyId: string, flags: SendFlags) {
   const { family } = getCryptoCurrencyById(currencyId);
   const builder = INTENT_BUILDERS[family];
@@ -77,6 +97,14 @@ function buildIntentData(currencyId: string, flags: SendFlags) {
     );
   }
   return builder(flags);
+}
+
+/**
+ * Best-effort native/token classification for analytics: ids that resolve to a known
+ * crypto-currency are treated as native sends, anything else as a token send.
+ */
+function classifySendAssetClass(currencyId: string): SendAssetClass {
+  return findCryptoCurrencyById(currencyId) ? "native" : "token";
 }
 
 async function runDryRunSend(
@@ -98,6 +126,9 @@ type RunLiveSendParams = {
   managerAppName: string;
   deviceTimeoutMs: number | undefined;
   out: ReturnType<typeof createCommandOutput>;
+  network: string;
+  assetClass: SendAssetClass;
+  amount: string;
 };
 
 async function runLiveSend({
@@ -107,6 +138,9 @@ async function runLiveSend({
   managerAppName,
   deviceTimeoutMs,
   out,
+  network,
+  assetClass,
+  amount,
 }: RunLiveSendParams): Promise<void> {
   out.spin(`Connect device and open ${colors.bold(managerAppName)} app…`);
   await withCurrencyDeviceSession(
@@ -131,10 +165,12 @@ async function runLiveSend({
           WalletCliDeviceError.fromKnownDeviceError(error, {
             expectedApp: managerAppName,
             rejectedContext: "sign",
+            deviceModelId,
           }) ?? error,
       });
 
       out.sendComplete();
+      trackSendCompleted({ network, assetClass, amount, device: deviceModelId });
     },
     {
       deviceTimeoutMs,
@@ -211,25 +247,43 @@ export default defineCommand({
       ctx.network = networkStringFromCurrencyId(descriptor.currencyId);
       ctx.account = descriptor.id;
       const managerAppName = getManagerAppNameForCurrencyId(descriptor.currencyId);
+      const assetClass = classifySendAssetClass(descriptor.currencyId);
 
-      // Build the TransactionIntent based on the currency family
-      const intentData = buildIntentData(descriptor.currencyId, flags as SendFlags);
+      trackSendStarted({ network: ctx.network, assetClass, dryRun });
 
-      // Intent schema parse may throw (ZodError) — out.run catches it in json mode
-      const intent = TransactionIntentSchema.parse(intentData);
+      try {
+        // Build the TransactionIntent based on the currency family
+        const intentData = buildIntentData(descriptor.currencyId, flags as SendFlags);
 
-      if (dryRun) {
-        await runDryRunSend(wallet, descriptor, intent, out);
-        return;
+        // Intent schema parse may throw (ZodError) — out.run catches it in json mode
+        const intent = TransactionIntentSchema.parse(intentData);
+
+        if (dryRun) {
+          await runDryRunSend(wallet, descriptor, intent, out);
+          return;
+        }
+        await runLiveSend({
+          wallet,
+          descriptor,
+          intent,
+          managerAppName,
+          deviceTimeoutMs: flags["device-timeout"],
+          out,
+          network: ctx.network,
+          assetClass,
+          amount: flags.amount,
+        });
+      } catch (error) {
+        if (error instanceof WalletCliDeviceError && error.state.code === "rejected") {
+          trackSendRejected({ network: ctx.network, device: error.state.deviceModelId });
+        } else {
+          trackSendFailed({
+            errorCode: sendErrorCode(error),
+            errorName: error instanceof Error ? error.name : "unknown",
+          });
+        }
+        throw error;
       }
-      await runLiveSend({
-        wallet,
-        descriptor,
-        intent,
-        managerAppName,
-        deviceTimeoutMs: flags["device-timeout"],
-        out,
-      });
     });
   },
 });

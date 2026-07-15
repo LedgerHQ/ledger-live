@@ -1,15 +1,15 @@
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import {
   ensureTokenApproval,
   performSwapUntilQuoteSelectionStep,
   revokeTokenApproval,
 } from "../../../utils/swapUtils";
-import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 import BigNumber from "bignumber.js";
-import { pickRotatingProvider } from "@ledgerhq/live-common/e2e/swap";
+import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
 
 export function runSwapTokenReapprovalFlow(
   fromAccount: TokenAccount,

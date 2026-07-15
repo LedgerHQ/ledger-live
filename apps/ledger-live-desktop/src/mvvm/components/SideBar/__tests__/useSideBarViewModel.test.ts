@@ -57,9 +57,19 @@ const ACTIVE_CHANGE_NAV_CASES = Object.keys(SIDEBAR_VALUE_TO_PATH)
   }));
 
 describe("useSideBarViewModel", () => {
+  const originalInnerWidth = window.innerWidth;
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseNavigate.mockReturnValue(mockNavigate);
+    // The sidebar auto-collapses below HIDE_BAR_THRESHOLD (1250px); jsdom's default
+    // innerWidth (1024px) is narrower than that, so force a wide viewport here to
+    // keep the default (expanded) sidebar state deterministic across tests.
+    window.innerWidth = 1440;
+  });
+
+  afterEach(() => {
+    window.innerWidth = originalInnerWidth;
   });
 
   it("should return correct default state", () => {
@@ -329,7 +339,7 @@ describe("useSideBarViewModel", () => {
       const dispatchEventSpy = jest.spyOn(window, "dispatchEvent");
       const { result } = renderViewModel(
         withFeatureFlags({
-          lwdWallet40: { enabled: true, params: { mainNavigation: true } },
+          lwdWallet40: { enabled: true },
         }),
       );
 

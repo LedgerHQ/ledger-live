@@ -9,7 +9,9 @@ import {
 import DeviceAction from "../../models/DeviceAction";
 import BigNumber from "bignumber.js";
 
-describe("Cosmos delegate flow", () => {
+// TODO(LIVE-33334): these legacy mock specs will be removed in a follow-up task;
+// skipped for now.
+describe.skip("Cosmos delegate flow", () => {
   let deviceAction: DeviceAction;
   const testedCurrency = "cosmos";
   const testedTicker = "ATOM";

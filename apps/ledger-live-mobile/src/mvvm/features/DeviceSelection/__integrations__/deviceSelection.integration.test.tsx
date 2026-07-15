@@ -2,6 +2,7 @@ import * as React from "react";
 import { render, screen, withReadOnlyDisabled } from "@tests/test-renderer";
 import DeviceSelectionNavigator from "../Navigator";
 import { useRoute, useNavigation } from "@react-navigation/native";
+import { useNavigation as useNavigationCore } from "@react-navigation/core";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { of } from "rxjs";
@@ -16,15 +17,37 @@ const mockDiscoverDevices = discoverDevices as jest.Mock;
   addListener: jest.fn(),
 });
 
+(useNavigationCore as jest.Mock).mockReturnValue({
+  navigate: mockNavigate,
+  addListener: jest.fn(),
+});
+
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useRoute: jest.fn(),
   useNavigation: jest.fn(),
 }));
 
+jest.mock("@react-navigation/core", () => ({
+  ...jest.requireActual("@react-navigation/core"),
+  useNavigation: jest.fn(),
+}));
+
 jest.mock("@ledgerhq/live-common/hw/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/hw/index"),
   discoverDevices: jest.fn(),
+}));
+
+jest.mock("LLM/features/Accounts/utils/customAddAccountFlow", () => ({
+  getCustomAddAccountFlow: jest.fn(),
+}));
+
+jest.mock("~/hooks/deviceActions", () => ({
+  useAppDeviceAction: jest.fn().mockReturnValue(jest.fn()),
+}));
+
+jest.mock("~/bridge/cache", () => ({
+  prepareCurrency: jest.fn(),
 }));
 
 describe("Device Selection feature integration test", () => {

@@ -11,6 +11,7 @@ import Box from "~/renderer/components/Box";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import Text from "~/renderer/components/Text";
+import Spinner from "~/renderer/components/Spinner";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import EvmFamilyValidatorRow from "~/renderer/families/evm/shared/components/EvmFamilyValidatorRow";
@@ -51,9 +52,9 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr, status 
   // Must run in an effect: updating parent transaction during render breaks React rules
   // (StrictMode warnings, possible flicker / inconsistent state).
   useEffect(() => {
-    if (chosenVoteAccAddr !== "" || validators.length === 0) return;
+    if (chosenVoteAccAddr !== "" || validators.length === 0 || loading) return;
     onChangeValidator(validators[0].validatorAddress, validators[0].validatorId);
-  }, [chosenVoteAccAddr, onChangeValidator, validators]);
+  }, [chosenVoteAccAddr, onChangeValidator, validators, loading]);
 
   const valAddressError = status.errors.valAddress;
 
@@ -76,24 +77,30 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr, status 
       )}
       <ValidatorsFieldContainer>
         <Box p={1} data-testid="validator-list">
-          <ScrollLoadingList
-            data={showAll ? validators : chosenValidator}
-            style={{
-              flex: showAll ? "1 0 256px" : "1 0 64px",
-              marginBottom: 0,
-              paddingLeft: 0,
-            }}
-            renderItem={renderItem}
-            noResultPlaceholder={
-              loading || error ? null : (
-                <Box p={4} alignItems="center">
-                  <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
-                    <Trans i18nKey="ethereum.evmStaking.delegation.flow.steps.validator.noResults" />
-                  </Text>
-                </Box>
-              )
-            }
-          />
+          {loading ? (
+            <Box p={4} alignItems="center" justifyContent="center">
+              <Spinner size={24} />
+            </Box>
+          ) : (
+            <ScrollLoadingList
+              data={showAll ? validators : chosenValidator}
+              style={{
+                flex: showAll ? "1 0 256px" : "1 0 64px",
+                marginBottom: 0,
+                paddingLeft: 0,
+              }}
+              renderItem={renderItem}
+              noResultPlaceholder={
+                error ? null : (
+                  <Box p={4} alignItems="center">
+                    <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
+                      <Trans i18nKey="ethereum.evmStaking.delegation.flow.steps.validator.noResults" />
+                    </Text>
+                  </Box>
+                )
+              }
+            />
+          )}
         </Box>
         <SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
           <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>

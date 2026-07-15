@@ -3,9 +3,16 @@ import { fiat } from "../define";
 export const gbp = fiat({
   type: "FiatCurrency",
   id: "gbp",
-  name: "British Pound",
   ticker: "GBP",
+  name: "British Pound",
   symbol: "£",
-  units: [{ name: "British Pound", code: "GBP", magnitude: 2 }],
-  keywords: ["pound", "sterling", "gbp"],
+  units: [
+    {
+      code: "£",
+      name: "British Pound",
+      magnitude: 2,
+      showAllDigits: true,
+      prefixCode: true,
+    },
+  ],
 });

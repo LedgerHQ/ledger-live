@@ -3,9 +3,16 @@ import { fiat } from "../define";
 export const rub = fiat({
   type: "FiatCurrency",
   id: "rub",
-  name: "Russian Ruble",
   ticker: "RUB",
+  name: "Russian Rouble",
   symbol: "₽",
-  units: [{ name: "Russian Ruble", code: "RUB", magnitude: 2 }],
-  keywords: ["ruble", "rub"],
+  units: [
+    {
+      code: "₽",
+      name: "Russian Rouble",
+      magnitude: 2,
+      showAllDigits: true,
+      prefixCode: true,
+    },
+  ],
 });

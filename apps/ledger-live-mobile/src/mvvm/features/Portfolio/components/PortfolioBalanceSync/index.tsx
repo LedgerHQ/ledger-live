@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useBalanceSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
@@ -24,7 +23,6 @@ import { usePersistedPortfolioBalance } from "../PortfolioBalanceSection/usePers
 export function PortfolioBalanceSync(): null {
   const dispatch = useDispatch();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
 
   const {
     portfolio,
@@ -48,8 +46,8 @@ export function PortfolioBalanceSync(): null {
     rawBalanceAvailable: effectiveRawBalanceAvailable,
     syncPhase,
     latestBalance: effectiveLatestBalance,
-    shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
-    cvPending: shouldDisplayBalanceRefreshRework ? isCvPending : undefined,
+    shouldFreezeOnSync: true,
+    cvPending: isCvPending,
   });
 
   useEffect(() => {

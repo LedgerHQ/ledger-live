@@ -30,8 +30,10 @@
     "**/*.config.*",
     "**/scripts/**",
     "**/tools/**",
+    "**/*.mock.*",
     "**/.eslintrc.guardrails.js",
-    "**/.eslintrc.i18n.js"
+    "**/.eslintrc.i18n.js",
+    "**/.eslintrc.tailwind.js"
   ],
   "workspaces": {
     "./apps/ledger-live-desktop": {
@@ -125,6 +127,9 @@
     "./libs/promise": {
       "entry": ["src/index.ts"]
     },
+    "./libs/wallet-analytics": {
+      "entry": ["src/index.ts"]
+    },
     "./libs/ui/packages/native": {
       "entry": [
         "src/assets/cryptoIcons.ts",
@@ -156,6 +161,43 @@
       "entry": ["src/index.ts"]
     },
     "./libs/asset-aggregation": {
+      "entry": ["src/index.ts"]
+    },
+    "./libs/coin-tester-modules/coin-tester-cosmos": {
+      "entry": ["src/scenarii/Babylon.ts", "src/scenarii/Cosmos.ts"],
+      "ignoreDependencies": ["expect"]
+    },
+    "./domain/entity/currency": {
+      "entry": ["src/index.ts"]
+    },
+    "./domain/entity/currency-crypto": {
+      "entry": ["src/index.ts"]
+    },
+    "./domain/entity/currency-fiat": {
+      "entry": ["src/index.ts"]
+    },
+    "./domain/entity/currency-token": {
+      "entry": ["src/index.ts"]
+    },
+    "./domain/entity/currency-unit": {
+      "entry": ["src/index.ts"]
+    },
+    "./domain/api/currency-fiat": {
+      "entry": ["src/index.ts"]
+    },
+    "./domain/api/currency-token": {
+      "entry": ["src/index.ts"]
+    },
+    "./shared/schema-primitives": {
+      "entry": ["src/index.ts"]
+    },
+    "./shared/feature-flags": {
+      "entry": ["src/index.ts"]
+    },
+    "./features/flow/market-banner": {
+      "entry": ["src/index.ts", "src/components/MarketBanner/index.native.ts"]
+    },
+    "./features/platform/feature-flags": {
       "entry": ["src/index.ts"]
     }
   }

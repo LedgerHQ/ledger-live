@@ -88,7 +88,6 @@ export const urls = {
     SyncError: "https://support.ledger.com/article/360012207759-zd",
     LedgerAPIErrorWithMessage:
       "https://status.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=error_apierrorwithmessage",
-    StratisDown2021Warning: "https://support.ledger.com/article/115005175329-zd",
     TronSendTrc20ToNewAccountForbidden: "https://support.ledger.com/article/6516823445533-zd",
     AddressesSanctionedError:
       "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
@@ -270,6 +269,9 @@ export const urls = {
       "https://support.ledger.com/article/How-to-manage-Hedera-tokens-with-Ledger-Live",
     evmAddressVerification: "https://ledger.com/e14",
     staking: "https://support.ledger.com/article/Staking-Hedera-HBAR-through-Ledger-Live",
+  },
+  aleo: {
+    learnMore: "https://support.ledger.com/article/Aleo-ALEO",
   },
   canton: {
     learnMore: "https://support.ledger.com/article/Canton-Network",

@@ -51,6 +51,7 @@ const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> =
           onItemPress={onItemPress}
           skeletonCount={EMPTY_STATE_MAX_ASSETS}
           errorMessage={t("portfolio.assetSection.connectionFailed")}
+          rowTestIDPrefix="PortfolioCryptosList"
         />
       </Box>
     </Box>

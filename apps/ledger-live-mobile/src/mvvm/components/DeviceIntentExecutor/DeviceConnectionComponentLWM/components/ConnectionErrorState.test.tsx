@@ -4,6 +4,7 @@ import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import {
+  BaseConnectionErrorTypes,
   ConnectionErrorTypes,
   ConnectDeviceUIStateTypes,
   type ConnectDeviceUIState,
@@ -35,6 +36,7 @@ type ConnectionErrorUIState = Extract<
   ConnectDeviceUIState,
   { type: ConnectDeviceUIStateTypes.ConnectionError }
 >;
+type ConnectionErrorType = ConnectionErrorUIState["error"]["type"];
 
 function makeKnownDevice(overrides: Partial<KnownDevice> = {}): KnownDevice {
   return {
@@ -61,14 +63,14 @@ const errorCases = [
     cta: "Learn how to fix",
   },
   {
-    type: ConnectionErrorTypes.Unknown,
+    type: BaseConnectionErrorTypes.Unknown,
     title: "Pairing unsuccessful",
     description: "Please try again or read our Bluetooth troubleshooting article below.",
     cta: "Try again",
   },
 ] as const;
 
-function renderState(errorType: ConnectionErrorTypes) {
+function renderState(errorType: ConnectionErrorType) {
   const retry = jest.fn();
   const ignore = jest.fn();
   const state: ConnectionErrorUIState = {
@@ -120,13 +122,13 @@ describe("ConnectionErrorState", () => {
   );
 
   it("should render the unknown error tip", () => {
-    renderState(ConnectionErrorTypes.Unknown);
+    renderState(BaseConnectionErrorTypes.Unknown);
 
     expect(screen.getByText("Make sure your device is unlocked.")).toBeVisible();
   });
 
   it("should call retry when the retry button is pressed", async () => {
-    const { user, retry } = renderState(ConnectionErrorTypes.Unknown);
+    const { user, retry } = renderState(BaseConnectionErrorTypes.Unknown);
 
     await user.press(screen.getByText("Try again"));
 
@@ -139,7 +141,7 @@ describe("ConnectionErrorState", () => {
   });
 
   it("should open the generic pairing help article", async () => {
-    const { user } = renderState(ConnectionErrorTypes.Unknown);
+    const { user } = renderState(BaseConnectionErrorTypes.Unknown);
 
     await user.press(screen.getByText("Get help"));
 
@@ -153,7 +155,7 @@ describe("ConnectionErrorState", () => {
 
   it("GIVEN a connection error WHEN rendering THEN it tracks the Device UX V2 page event", () => {
     // GIVEN / WHEN
-    renderState(ConnectionErrorTypes.Unknown);
+    renderState(BaseConnectionErrorTypes.Unknown);
 
     // THEN
     expect(mockedTrackScreen).toHaveBeenCalledWith(
@@ -171,7 +173,7 @@ describe("ConnectionErrorState", () => {
 
   it("GIVEN an unknown connection error WHEN cancelling THEN it tracks deviceflow_failed", () => {
     // GIVEN
-    renderState(ConnectionErrorTypes.Unknown);
+    renderState(BaseConnectionErrorTypes.Unknown);
     mockedTrack.mockClear();
 
     // WHEN

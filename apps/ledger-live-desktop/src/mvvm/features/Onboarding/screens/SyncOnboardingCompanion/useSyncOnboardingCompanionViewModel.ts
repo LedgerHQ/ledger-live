@@ -83,7 +83,6 @@ const useSyncOnboardingCompanionViewModel = ({
 }: SyncOnboardingCompanionProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isSyncIncr1Enabled = useFeature("lldSyncOnboardingIncr1")?.enabled || false;
   const servicesConfig = useFeature("protectServicesDesktop");
   const recoverRestoreStaxPath = useCustomPath(servicesConfig, "restore", "lld-onboarding-24");
 
@@ -150,7 +149,6 @@ const useSyncOnboardingCompanionViewModel = ({
     productName,
     charonStatus: deviceOnboardingState?.charonStatus,
     charonSupported: deviceOnboardingState?.charonSupported,
-    isTwoStep: isSyncIncr1Enabled,
     seedConfiguration: analyticsSeedConfiguration.current,
   });
 
@@ -261,10 +259,7 @@ const useSyncOnboardingCompanionViewModel = ({
         deviceOnboardingState.currentOnboardingStep,
       )
     ) {
-      let nextStepKey = StepKey.Apps;
-      if (isSyncIncr1Enabled) {
-        nextStepKey = companionSteps.hasSyncStep ? StepKey.Sync : StepKey.Success;
-      }
+      const nextStepKey = companionSteps.hasSyncStep ? StepKey.Sync : StepKey.Success;
       setStepKey(nextStepKey);
       seededDeviceHandled.current = true;
       return;
@@ -331,12 +326,7 @@ const useSyncOnboardingCompanionViewModel = ({
       default:
         break;
     }
-  }, [
-    deviceOnboardingState,
-    notifySyncOnboardingShouldReset,
-    isSyncIncr1Enabled,
-    companionSteps.hasSyncStep,
-  ]);
+  }, [deviceOnboardingState, notifySyncOnboardingShouldReset, companionSteps.hasSyncStep]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
   // and timers to a higher value. It avoids having a warning message while the connection is lost
@@ -365,7 +355,7 @@ const useSyncOnboardingCompanionViewModel = ({
       seedConfiguration: analyticsSeedConfiguration.current,
     };
 
-    if (isSyncIncr1Enabled ? stepKey === StepKey.Success : stepKey === StepKey.Exit) {
+    if (stepKey === StepKey.Success) {
       trackPage(
         `Set up ${productName}: Final Step ${productName} is ready`,
         undefined,
@@ -373,10 +363,10 @@ const useSyncOnboardingCompanionViewModel = ({
         true,
         true,
       );
-    } else if (isSyncIncr1Enabled && stepKey === StepKey.Apps) {
+    } else if (stepKey === StepKey.Apps) {
       trackPage(`Set up ${productName}: Secure your crypto`, undefined, properties, true, true);
     }
-  }, [stepKey, productName, isSyncIncr1Enabled]);
+  }, [stepKey, productName]);
 
   useEffect(() => {
     if (stepKey >= StepKey.Sync) {
@@ -385,19 +375,11 @@ const useSyncOnboardingCompanionViewModel = ({
 
     if (stepKey === StepKey.Ready) {
       // Only app install route will go to this step
-      if (isSyncIncr1Enabled) {
-        setTimeout(() => setStepKey(StepKey.Exit), READY_REDIRECT_DELAY_MS);
-      } else {
-        setStepKey(StepKey.Exit);
-      }
+      setTimeout(() => setStepKey(StepKey.Exit), READY_REDIRECT_DELAY_MS);
     }
 
     if (stepKey === StepKey.Exit) {
-      if (isSyncIncr1Enabled) {
-        handleDeviceReady();
-      } else {
-        setTimeout(handleDeviceReady, READY_REDIRECT_DELAY_MS);
-      }
+      handleDeviceReady();
     }
 
     setSteps(
@@ -417,7 +399,7 @@ const useSyncOnboardingCompanionViewModel = ({
         };
       }),
     );
-  }, [stepKey, companionSteps.defaultSteps, handleDeviceReady, productName, isSyncIncr1Enabled]);
+  }, [stepKey, companionSteps.defaultSteps, handleDeviceReady, productName]);
 
   // Fatal error from the polling is not recoverable automatically
   useEffect(() => {
@@ -485,7 +467,6 @@ const useSyncOnboardingCompanionViewModel = ({
     isDesyncOverlayOpen,
     desyncOverlayDelay,
     productName,
-    isSyncIncr1Enabled,
     deviceName,
     steps,
     stepKey,

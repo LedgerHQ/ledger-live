@@ -1,5 +1,18 @@
 # @ledgerhq/live-signer-cosmos
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#18814](https://github.com/LedgerHQ/ledger-live/pull/18814) [`fa0123a`](https://github.com/LedgerHQ/ledger-live/commit/fa0123a1da7b053d58afab498266cf830958e2ff) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate remaining lint scripts from ESLint to oxlint and drop Prettier (oxfmt is now the sole formatter)
+
+### Patch Changes
+
+- Updated dependencies [[`3cb6159`](https://github.com/LedgerHQ/ledger-live/commit/3cb615918166922059304724f560c566d2671ac3), [`c5763f6`](https://github.com/LedgerHQ/ledger-live/commit/c5763f6171f49d2b9e679b982804e68843800450), [`1e17c12`](https://github.com/LedgerHQ/ledger-live/commit/1e17c127178a871b665b25d6f4208d4613826dd1), [`607b032`](https://github.com/LedgerHQ/ledger-live/commit/607b03228d5e648a0611c316c6ab71a60365f349)]:
+  - @ledgerhq/coin-cosmos@0.38.0-next.0
+  - @ledgerhq/hw-transport@6.35.6-next.0
+  - @ledgerhq/hw-app-cosmos@6.36.6-next.0
+
 ## 0.3.0
 
 ### Minor Changes

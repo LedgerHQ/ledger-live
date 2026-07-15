@@ -184,7 +184,6 @@ export type CurrencyFeatures = {
  * @deprecated Moved to `@shared/feature-flags`. Use `Features` from `@shared/feature-flags` instead.
  */
 export type Features = CurrencyFeatures & {
-  nanoOnboardingFundWallet: DefaultFeature;
   mixpanelAnalytics: DefaultFeature;
   brazePushNotifications: Feature_BrazePushNotifications;
   ratingsPrompt: Feature_RatingsPrompt;
@@ -235,7 +234,6 @@ export type Features = CurrencyFeatures & {
   ptxEarnDrawerConfiguration: Feature_PtxEarnDrawerConfiguration;
   ptxEarnUi: Feature_PtxEarnUi;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
-  flexibleContentCards: Feature_FlexibleContentCards;
   analyticsOptIn: DefaultFeature;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
   ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
@@ -254,7 +252,6 @@ export type Features = CurrencyFeatures & {
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
-  llmRebornLP: Feature_LlmRebornLP;
   llmAccountListUI: DefaultFeature;
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
@@ -262,7 +259,6 @@ export type Features = CurrencyFeatures & {
   lwdLedgerSyncOptimisation: DefaultFeature;
   lwdProductTour: DefaultFeature;
   lwdBackupHub: DefaultFeature;
-  lwmNewWordingOptInNotificationsDrawer: Feature_LwmNewWordingOptInNotificationsDrawer;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
   llmThai: DefaultFeature;
@@ -319,15 +315,11 @@ export type Features = CurrencyFeatures & {
   llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
   supportDeviceApex: DefaultFeature;
-  llmSyncOnboardingIncr1: DefaultFeature;
-  lldSyncOnboardingIncr1: DefaultFeature;
   onboardingWidget: DefaultFeature;
   noah: Feature_Noah;
   newSendFlow: Feature_NewSendFlow;
   zcashShielded: DefaultFeature;
   llmNanoOnboardingFundWallet: DefaultFeature;
-  lldRebornABtest: DefaultFeature;
-  llmRebornABtest: DefaultFeature;
   lifiSolana: DefaultFeature;
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
   lldOnboardingEnableSync: Feature_OnboardingEnableSync;
@@ -344,7 +336,6 @@ export type Features = CurrencyFeatures & {
   lwdWallet40: Feature_LwdWallet40;
   addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
   concordiumIdAppLinks: Feature_ConcordiumIdAppLinks;
-  concordiumVerifyAddress: DefaultFeature;
   lldHideSmallValueTokenOperations: Feature_LldHideSmallValueTokenOperations;
   llmTransferButtonCopyVariant: Feature_LlmTransferButtonCopyVariant;
   lldTezosStaking: DefaultFeature;
@@ -864,8 +855,6 @@ export type Feature_PtxServiceCtaScreens = DefaultFeature;
 export type Feature_PortfolioExchangeBanner = DefaultFeature;
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["ptxSwapReceiveTRC20WithoutTrx"]` from `@shared/feature-flags` instead. */
 export type Feature_PtxSwapReceiveTRC20WithoutTrx = DefaultFeature;
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["flexibleContentCards"]` from `@shared/feature-flags` instead. */
-export type Feature_FlexibleContentCards = DefaultFeature;
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["myLedgerDisplayAppDeveloperName"]` from `@shared/feature-flags` instead. */
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldChatbotSupport"]` from `@shared/feature-flags` instead. */
@@ -901,11 +890,6 @@ export type Feature_PtxSwapExodusProvider = DefaultFeature;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["ptxSwapDetailedView"]` from `@shared/feature-flags` instead. */
 export type Feature_PtxSwapDetailedView = Feature<{
-  variant: ABTestingVariants;
-}>;
-
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmRebornLP"]` from `@shared/feature-flags` instead. */
-export type Feature_LlmRebornLP = Feature<{
   variant: ABTestingVariants;
 }>;
 
@@ -959,13 +943,8 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 }>;
 
 type Feature_Wallet40_Params = {
-  marketBanner: boolean;
-  graphRework: boolean;
-  quickActionCtas: boolean;
-  mainNavigation: boolean;
   tour: boolean;
   lazyOnboarding: boolean;
-  balanceRefreshRework: boolean;
   assetSection: boolean;
   operationsList: boolean;
   aggregatedAssets: boolean;
@@ -974,7 +953,6 @@ type Feature_Wallet40_Params = {
   assetDiscoverability: boolean;
   // Specifics
   brazePlacement?: boolean;
-  newReceiveDialog?: boolean;
   earnUpselling?: boolean;
   earnSimulator?: boolean;
   q2Tour?: boolean;
@@ -983,16 +961,7 @@ type Feature_Wallet40_Params = {
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwmWallet40"]` from `@shared/feature-flags` instead. */
 export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params>;
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwdWallet40"]` from `@shared/feature-flags` instead. */
-export type Feature_LwdWallet40 = Feature<
-  {
-    newReceiveDialog: boolean;
-  } & Feature_Wallet40_Params
->;
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lwmNewWordingOptInNotificationsDrawer"]` from `@shared/feature-flags` instead. */
-export type Feature_LwmNewWordingOptInNotificationsDrawer = Feature<{
-  variant: ABTestingVariants;
-}>;
-
+export type Feature_LwdWallet40 = Feature<Feature_Wallet40_Params>;
 /**
  * Utils types.
  * @deprecated Moved to `@shared/feature-flags`. Use `FeatureMap` from `@shared/feature-flags` instead.

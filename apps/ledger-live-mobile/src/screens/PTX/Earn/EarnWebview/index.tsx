@@ -1,5 +1,6 @@
 import React, { ComponentProps, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { View, StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
+import { View, StyleSheet, BackHandler, Platform } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "~/context/hooks";
 
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -162,20 +163,24 @@ export const EarnWebview = ({
     };
   }, [customEarnHandlers, customDeeplinkHandlers, customLiveAppModalHandlers]);
 
-  const Container = isLwm40Enabled ? View : SafeAreaView;
+  const webview = (
+    <Web3AppWebview
+      ref={webviewAPIRef}
+      manifest={manifest}
+      inputs={inputs}
+      onStateChange={handleStateChange}
+      customHandlers={customHandlers}
+      onScroll={onScroll}
+      Loader={() => <Loading backgroundColor="transparent" />}
+    />
+  );
 
-  return (
-    <Container style={[styles.root]}>
-      <Web3AppWebview
-        ref={webviewAPIRef}
-        manifest={manifest}
-        inputs={inputs}
-        onStateChange={handleStateChange}
-        customHandlers={customHandlers}
-        onScroll={onScroll}
-        Loader={() => <Loading backgroundColor="transparent" />}
-      />
-    </Container>
+  return isLwm40Enabled ? (
+    <View style={[styles.root]}>{webview}</View>
+  ) : (
+    <SafeAreaView edges={["top", "left", "right", "bottom"]} style={[styles.root]}>
+      {webview}
+    </SafeAreaView>
   );
 };
 

@@ -12,6 +12,7 @@ import { createMockAccount } from "../../Recipient/hooks/__tests__/accounts";
 type SignatureViewModel = ReturnType<typeof UseSignatureViewModelModule.useSignatureViewModel>;
 
 const mockAccount = createMockAccount({ id: "account-1" });
+const mockParentAccount = createMockAccount({ id: "account-0" });
 const mockTransaction = createBitcoinTransaction();
 const mockRequest: SignatureRequest = {
   account: mockAccount,
@@ -69,6 +70,7 @@ jest.mock("../hooks/useSignatureViewModel", () => ({
 function buildViewModel(overrides: Partial<SignatureViewModel> = {}): SignatureViewModel {
   return {
     account: mockAccount,
+    parentAccount: mockParentAccount,
     transaction: mockTransaction,
     request: mockRequest,
     deviceInitializationInput: mockDeviceInitializationInput,

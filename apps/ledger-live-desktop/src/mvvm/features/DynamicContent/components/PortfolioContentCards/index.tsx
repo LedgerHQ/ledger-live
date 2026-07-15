@@ -15,15 +15,11 @@ import Slide from "./Slide";
 
 export default PortfolioContentCards;
 
-const CarouselWrapper = styled.div<{ $isWallet40Enabled: boolean }>`
+const CarouselWrapper = styled.div`
   & > div > div > button {
-    ${({ $isWallet40Enabled, theme }) =>
-      $isWallet40Enabled &&
-      `
-      translate: 0 -50%;
-      margin: 0 -12px;
-      background-color: ${theme.colors.neutral.c00};
-    `}
+    translate: 0 -50%;
+    margin: 0 -12px;
+    background-color: ${({ theme }) => theme.colors.neutral.c00};
   }
 `;
 
@@ -90,8 +86,7 @@ const PortfolioBrazePlacementSlide = memo(function PortfolioBrazePlacementSlide(
 
 function PortfolioContentCards() {
   const { portfolioCards, logSlideClick, dismissCard } = usePortfolioCarouselCards("top");
-  const { isEnabled: isWallet40Enabled, shouldDisplayBrazePlacement } =
-    useWalletFeaturesConfig("desktop");
+  const { shouldDisplayBrazePlacement } = useWalletFeaturesConfig("desktop");
   const handlePrevButton = () => trackSlide("prev");
   const handleNextButton = () => trackSlide("next");
 
@@ -121,7 +116,7 @@ function PortfolioContentCards() {
   }
 
   return (
-    <CarouselWrapper $isWallet40Enabled={isWallet40Enabled}>
+    <CarouselWrapper>
       <Carousel
         initialDelay={2500}
         autoPlay={6000}
@@ -135,7 +130,6 @@ function PortfolioContentCards() {
             index={index}
             logSlideClick={logSlideClick}
             dismissCard={dismissCard}
-            isWallet40Enabled={isWallet40Enabled}
           />
         ))}
       </Carousel>

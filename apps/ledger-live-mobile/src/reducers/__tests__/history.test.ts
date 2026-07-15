@@ -1,7 +1,9 @@
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import BigNumber from "bignumber.js";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
 import historyReducer, {
   type HistoryState,
   markOperationsAsSeen,
@@ -9,6 +11,8 @@ import historyReducer, {
   lastSeenOperationDateSelector,
   hasUnreadOperationsSelector,
 } from "../history";
+import { INITIAL_STATE as COUNTERVALUES_INITIAL_STATE } from "../countervalues";
+import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "../settings";
 import type { State } from "../types";
 
 const SEEN = "2024-06-01T00:00:00.000Z";
@@ -33,10 +37,72 @@ function mapAllOperationsDate<T extends AccountLike>(accountLike: T, date: Date)
 function makeState(lastSeenDate: string | null, accounts: Account[]): State {
   return {
     accounts: { active: accounts },
+    countervalues: COUNTERVALUES_INITIAL_STATE,
     history: { lastSeenOperationDate: lastSeenDate },
-    settings: { filterTokenOperationsZeroAmount: false },
+    settings: {
+      ...SETTINGS_INITIAL_STATE,
+      filterTokenOperationsZeroAmount: false,
+    },
     featureFlags: FEATURE_FLAGS_INITIAL_STATE,
   } as unknown as State;
+}
+
+function createAccountWithUnreadZeroValueTokenOperation(): Account {
+  const parentAccount = genAccount("history-test-dust", {
+    currency: ethereum,
+    operationsSize: 0,
+    subAccountsCount: 0,
+  });
+  const tokenAccount = genTokenAccount(0, parentAccount, usdcToken);
+  const operation: Operation = {
+    id: "history-test-dust-zero-value-token-op",
+    hash: "0xdust",
+    type: "IN",
+    value: new BigNumber(0),
+    fee: new BigNumber(0),
+    senders: ["0xsender"],
+    recipients: ["0xrecipient"],
+    blockHash: "0xblock",
+    blockHeight: 1,
+    accountId: tokenAccount.id,
+    date: new Date("2024-12-01T00:00:00.000Z"),
+    extra: {},
+  };
+  const tokenAccountWithOperation: TokenAccount = {
+    ...tokenAccount,
+    operations: [operation],
+    operationsCount: 1,
+  };
+
+  return {
+    ...parentAccount,
+    subAccounts: [tokenAccountWithOperation],
+  };
+}
+
+function withDustPreferenceEnabled(state: State): State {
+  return {
+    ...state,
+    settings: {
+      ...state.settings,
+      hideSmallValueTokenOperations: true,
+    },
+  };
+}
+
+function withDustFeatureEnabled(state: State): State {
+  return {
+    ...state,
+    featureFlags: {
+      ...state.featureFlags,
+      resolved: {
+        ...state.featureFlags.resolved,
+        lwmDustFiltering: {
+          enabled: true,
+        },
+      },
+    },
+  };
 }
 
 describe("historyReducer", () => {
@@ -113,5 +179,27 @@ describe("hasUnreadOperationsSelector", () => {
       operations: [{ ...rootOp, nftOperations: [nftOp] }, ...rest],
     };
     expect(hasUnreadOperationsSelector(makeState(SEEN, [accountWithNft]))).toBe(true);
+  });
+
+  it("ignores the dust preference when the dust filter feature flag is disabled", () => {
+    const accountWithDustOperation = createAccountWithUnreadZeroValueTokenOperation();
+
+    expect(
+      hasUnreadOperationsSelector(
+        withDustPreferenceEnabled(makeState(SEEN, [accountWithDustOperation])),
+      ),
+    ).toBe(true);
+  });
+
+  it("filters dust operations when the dust preference and feature flag are enabled", () => {
+    const accountWithDustOperation = createAccountWithUnreadZeroValueTokenOperation();
+
+    expect(
+      hasUnreadOperationsSelector(
+        withDustFeatureEnabled(
+          withDustPreferenceEnabled(makeState(SEEN, [accountWithDustOperation])),
+        ),
+      ),
+    ).toBe(false);
   });
 });

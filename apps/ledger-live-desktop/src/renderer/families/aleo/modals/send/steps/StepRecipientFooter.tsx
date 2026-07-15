@@ -1,6 +1,5 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
 import Button from "~/renderer/components/Button";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
@@ -17,10 +16,8 @@ const StepRecipientFooter = ({
   if (!account || transaction?.family !== "aleo") return null;
 
   const { errors } = status;
-  const mainAccount = getMainAccount(account, parentAccount ?? undefined);
-  const isTerminated = mainAccount.currency.terminated;
   const hasFieldError = Object.keys(errors).some(name => ["recipient", "sender"].includes(name));
-  const canNext = !bridgePending && !hasFieldError && !isTerminated;
+  const canNext = !bridgePending && !hasFieldError;
 
   const onNext = () => {
     if (isPrivateTransaction(transaction)) {

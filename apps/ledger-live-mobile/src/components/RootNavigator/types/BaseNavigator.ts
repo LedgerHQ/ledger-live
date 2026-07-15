@@ -96,7 +96,6 @@ import type { GlobalSearchNavigatorParamList } from "LLM/features/GlobalSearch/t
 import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
-import type { WalletTabNavigatorStackParamList } from "./WalletTabNavigator";
 import { SignRawTransactionNavigatorParamList } from "./SignRawTransactionNavigator";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import type { BackupHubNavigatorParamList } from "LLM/features/BackupHub/types";
@@ -379,7 +378,7 @@ export type BaseNavigatorStackParamList = {
     isBeforeOnboarding?: boolean;
   };
   [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
-  [NavigatorName.WalletTab]: NavigatorScreenParams<WalletTabNavigatorStackParamList>;
+  [ScreenName.Portfolio]: undefined;
   [NavigatorName.DeviceSelection]?: Partial<
     NavigatorScreenParams<DeviceSelectionNavigatorParamsList>
   >;

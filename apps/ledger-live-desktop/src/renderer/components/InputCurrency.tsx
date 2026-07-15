@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useCallback } from "react";
+import React, { useState, useLayoutEffect, useCallback, useRef, useImperativeHandle } from "react";
 import { BigNumber } from "bignumber.js";
 import { uncontrollable } from "uncontrollable";
 import styled from "styled-components";
@@ -115,6 +115,12 @@ function InputCurrency(props: Props) {
     return { isFocused, displayValue, rawValue: "" };
   });
 
+  // Hold the DOM input via an object ref so Input's click-to-focus (which needs a
+  // ref exposing `.current`) keeps working, and expose it to any forwarded ref.
+  const innerRef = useRef<HTMLInputElement | null>(null);
+  const caretRef = useRef<number | null>(null);
+  useImperativeHandle(forwardedRef, () => innerRef.current as HTMLInputElement, []);
+
   const syncInput = useCallback(
     (isFocused: boolean) => {
       setState(prev => {
@@ -155,8 +161,22 @@ function InputCurrency(props: Props) {
 
   const handleChange = useCallback(
     (val: string) => {
-      const v = decimals === 0 ? val.replace(/[.,]/g, "") : val;
+      const stripSeparators = (s: string) => (decimals === 0 ? s.replace(/[.,]/g, "") : s);
+      const v = stripSeparators(val);
       const r = sanitizeValueString(unit, v, locale);
+
+      // Capture the caret before onChange can schedule a parent re-render.
+      // sanitizeValueString can drop overflow chars (e.g. the 10th Gwei decimal),
+      // so React reassigns the value and would push the caret to the end; re-map it
+      // through the same sanitizer on the pre-caret text so it lands correctly.
+      const selectionStart = innerRef.current?.selectionStart;
+      if (selectionStart == null) {
+        caretRef.current = null;
+      } else {
+        const beforeCaret = stripSeparators(val.slice(0, selectionStart));
+        caretRef.current = sanitizeValueString(unit, beforeCaret, locale).display.length;
+      }
+
       const satoshiValue = BigNumber(r.value);
       if (!value || !value.isEqualTo(satoshiValue)) {
         onChange(satoshiValue, unit);
@@ -165,6 +185,16 @@ function InputCurrency(props: Props) {
     },
     [unit, value, locale, decimals, onChange],
   );
+
+  // Restore the caret after commit (React moved it to the end). No deps: must also
+  // fire when the sanitized value is unchanged. Only acts right after a user edit.
+  useLayoutEffect(() => {
+    const caret = caretRef.current;
+    if (caret == null || !innerRef.current) return;
+    caretRef.current = null;
+    const pos = Math.min(caret, state.displayValue.length);
+    innerRef.current.setSelectionRange(pos, pos);
+  });
 
   const handleBlur = useCallback(() => {
     syncInput(false);
@@ -203,7 +233,7 @@ function InputCurrency(props: Props) {
       {...rest}
       disabled={disabled}
       ff="Inter"
-      ref={forwardedRef}
+      ref={innerRef}
       value={state.displayValue}
       onChange={handleChange}
       onFocus={handleFocus}

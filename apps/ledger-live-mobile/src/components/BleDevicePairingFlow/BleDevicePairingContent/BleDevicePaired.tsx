@@ -37,8 +37,7 @@ export const BleDevicePaired = ({
             deviceName: device.deviceName,
           })}
         </Text>
-        {/* Transparent text in order to have a smooth transition between loading and success */}
-        <Text variant="body" textAlign="center" color="transparent">
+        <Text variant="body" textAlign="center" style={{ opacity: 0 }}>
           {t("blePairingFlow.pairing.loading.subtitle", { productName })}
         </Text>
       </Flex>

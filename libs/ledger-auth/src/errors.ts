@@ -2,6 +2,14 @@ export class WalletAuthError extends Error {
   override name = "WalletAuthError";
 }
 
+export class WalletAuthNoCredentialsError extends WalletAuthError {
+  override name = "WalletAuthNoCredentialsError";
+
+  constructor(broker: string) {
+    super(`No credentials found for broker ${broker}`);
+  }
+}
+
 export class WalletAuthInvalidChallengeError extends WalletAuthError {
   override name = "WalletAuthInvalidChallengeError";
 

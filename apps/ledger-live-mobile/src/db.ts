@@ -28,7 +28,7 @@ import {
 import type { FeatureFlagsState } from "@shared/feature-flags";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
-import { type PersistedCAL } from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { type PersistedCAL } from "@domain/api-currency-token";
 import { PersistedIdentities } from "@ledgerhq/client-ids/store";
 
 const ACCOUNTS_KEY = "accounts";

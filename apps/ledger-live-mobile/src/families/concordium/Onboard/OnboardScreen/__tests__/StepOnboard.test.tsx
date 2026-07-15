@@ -20,9 +20,8 @@ describe("StepOnboard", () => {
     expect(screen.getByText("Acknowledgement")).toBeDefined();
   });
 
-  it("should render all four warning items with bold titles", () => {
+  it("should render all three warning items with bold titles", () => {
     render(<StepOnboard onAgree={onAgree} onCancel={onCancel} />);
-    expect(screen.getByText(/No address verification/)).toBeDefined();
     expect(screen.getByText(/separate seed/)).toBeDefined();
     expect(screen.getByText(/redirected outside Ledger Live/)).toBeDefined();
     expect(screen.getByText(/Transaction signing stays secure/)).toBeDefined();
