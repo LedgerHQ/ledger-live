@@ -9,6 +9,9 @@ export { getCurrentNearPreloadData };
 
 const PRELOAD_MAX_AGE = 30 * 60 * 1000;
 
+/** NEAR genesis minimum gas price in yoctoNEAR. Used only when the API is unreachable and no cached value exists. */
+export const NEAR_MIN_GAS_PRICE_FALLBACK = "100000000";
+
 function fromHydratePreloadData(data: any): NearPreloadedData {
   const hydratedData = Object.assign({}, getCurrentNearPreloadData());
 
@@ -61,7 +64,12 @@ export const preload = async (): Promise<NearPreloadedData> => {
   const [protocolConfig, rawValidators, gasPrice] = await Promise.all([
     getProtocolConfig(),
     getValidators({ per_page: 200, page: 1 }), // get first 200 validators
-    getGasPrice(),
+    getGasPrice().catch((e: unknown) => {
+      const message = e instanceof Error ? e.message : String(e);
+      log("near/preload", `getGasPrice failed (${message}), using cached fallback`);
+      const cached = getCurrentNearPreloadData().gasPrice;
+      return cached.gt(0) ? cached.toString() : NEAR_MIN_GAS_PRICE_FALLBACK;
+    }),
   ]);
 
   const validators = await Promise.all(

@@ -2,10 +2,14 @@ import { BigNumber } from "bignumber.js";
 import { getGasPrice } from "./api/node";
 import { isImplicitAccount, getStakingFees } from "./logic";
 import { getCurrentNearPreloadData } from "./preload-data";
+import { NEAR_MIN_GAS_PRICE_FALLBACK } from "./preload";
 import { Transaction } from "./types";
 
 const getEstimatedFees = async (transaction: Transaction): Promise<BigNumber> => {
-  const rawGasPrice = await getGasPrice();
+  const rawGasPrice = await getGasPrice().catch(() => {
+    const cached = getCurrentNearPreloadData().gasPrice;
+    return cached.gt(0) ? cached.toString() : NEAR_MIN_GAS_PRICE_FALLBACK;
+  });
   const gasPrice = new BigNumber(rawGasPrice);
 
   if (["stake", "unstake", "withdraw"].includes(transaction.mode)) {

@@ -129,7 +129,13 @@ export const getGasPrice = async (): Promise<string> => {
     url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v1/stats`,
   });
 
-  return response.data.stats[0].gas_price;
+  const firstStat = response.data.stats?.[0];
+  if (!firstStat?.gas_price) {
+    throw new Error(
+      `NEAR nearblocks /v1/stats returned missing gas_price (stats length: ${response.data.stats?.length ?? 0})`,
+    );
+  }
+  return firstStat.gas_price;
 };
 
 export const getAccessKey = async ({
