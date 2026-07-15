@@ -1336,17 +1336,6 @@
           "finalStepSuccessButtonLabel" : "Tamamla"
         }
       },
-      "installApplications" : {
-        "title" : "{{productName}} cihazında uygulamalar yükleyin",
-        "titleCompleted" : "Uygulamalar {{productName}} cihazına yüklendi",
-        "install" : "Yükle",
-        "skip" : "Daha sonra yapacağım",
-        "info" : "{{deviceName}} cihazındaki uygulamalar işlemleri onaylamak için kullanılır. İstediğiniz zaman bu uygulamaları ekleyebilir ve silebilirsiniz."
-      },
-      "endOfSetup" : {
-        "title" : "Kurulum sonu",
-        "titleCompleted" : "{{deviceName}} hazır"
-      },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "Ledger Orijinallik Denetimini başlatmak için “İzin Ver” seçeneğine dokunun"
       },
@@ -1463,7 +1452,6 @@
       "cta" : "Önbelleği temizleyin"
     },
     "migrate" : "Ledger Wallet hesap güncellemesi mevcut",
-    "genericTerminatedCrypto" : "{{coinName}} artık desteklenmiyor",
     "valentine" : {
       "title" : "Sevgililer Günü",
       "description" : "Sevgimizin bir ispatı olarak, Ledger Wallet alım ve satım işlem ücretlerini azaltıyoruz"
@@ -2538,6 +2526,7 @@
   "newSendFlow" : {
     "title" : "{{currency}} gönder",
     "available" : "Mevcut: {{amount}}",
+    "to" : "Alıcı:",
     "placeholder" : "Adres ya da ENS adı girin",
     "placeholderNoENS" : "Adresi girin",
     "recent" : "Son kullanılanlar",
@@ -5820,10 +5809,6 @@
             "buttons" : {
               "next" : "Tamam, hazırım!",
               "prev" : "Önceki adım"
-            },
-            "help" : {
-              "help" : "Yardım gerekli",
-              "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
             }
           },
           "deviceHowTo" : {
@@ -5847,10 +5832,6 @@
               "next" : "Sonraki adım",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
-            },
-            "help" : {
-              "help" : "Yardım gerekli",
-              "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
             }
           },
           "deviceHowTo2" : {
@@ -5875,10 +5856,6 @@
               "next" : "Sonraki adım",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
-            },
-            "help" : {
-              "help" : "Yardım gerekli",
-              "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
             }
           },
           "pinCode" : {
@@ -5889,10 +5866,6 @@
               "next" : "PIN'i belirleyin",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
-            },
-            "help" : {
-              "help" : "Yardım gerekli",
-              "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
             }
           },
           "quizSuccess" : {
@@ -5910,10 +5883,6 @@
             "buttons" : {
               "next" : "Sonraki adım",
               "prev" : "Önceki adım"
-            },
-            "help" : {
-              "help" : "Yardım gerekli",
-              "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
             }
           },
           "pinCodeHowTo" : {
@@ -5929,10 +5898,6 @@
               "next" : "Sonraki adım",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
-            },
-            "help" : {
-              "help" : "Yardım gerekli",
-              "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
             }
           },
           "recoverHowTo" : {
@@ -5983,10 +5948,6 @@
               "next" : "Sonraki adım",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
-            },
-            "help" : {
-              "help" : "Yardım gerekli",
-              "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
             }
           },
           "newRecoveryPhrase" : {
@@ -5998,10 +5959,6 @@
               "next" : "Kurtarma ifadesi",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
-            },
-            "help" : {
-              "help" : "Yardım gerekli",
-              "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
             }
           },
           "recoveryHowTo" : {
@@ -6027,10 +5984,6 @@
               "next" : "Sonraki adım",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
-            },
-            "help" : {
-              "help" : "Yardım gerekli",
-              "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
             }
           },
           "recoveryHowTo3" : {
@@ -6045,10 +5998,6 @@
               "next" : "Sonraki adım",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
-            },
-            "help" : {
-              "help" : "Yardım gerekli",
-              "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
             }
           },
           "genuineCheck" : {
@@ -6072,10 +6021,6 @@
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli",
               "learn" : "Nasıl gizleyeceğinizi öğrenin"
-            },
-            "help" : {
-              "help" : "Yardım gerekli",
-              "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
             }
           },
           "pairMyNano" : {
@@ -6085,10 +6030,6 @@
               "next" : "Nano cihazımı kontrol et",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
-            },
-            "help" : {
-              "help" : "Yardım gerekli",
-              "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
             }
           },
           "enableSync" : {
@@ -6391,12 +6332,12 @@
     "recipientWording" : {
       "send" : "alıcı",
       "transfer_public" : "açık alıcı",
-      "transfer_private" : "özel alıcı",
-      "convert_public_to_private" : "özel alıcı",
+      "transfer_private" : "gizli alıcı",
+      "convert_public_to_private" : "gizli alıcı",
       "convert_private_to_public" : "açık alıcı",
       "transfer_token_public" : "açık alıcı",
-      "transfer_token_private" : "özel alıcı",
-      "convert_token_public_to_private" : "özel alıcı",
+      "transfer_token_private" : "gizli alıcı",
+      "convert_token_public_to_private" : "gizli alıcı",
       "convert_token_private_to_public" : "açık alıcı",
       "delegate" : "doğrulayıcı",
       "redelegate" : "doğrulayıcı",
@@ -6621,10 +6562,9 @@
           "title" : "Bilgilendirme",
           "description" : "Concordium, haricî kimlik doğrulaması gerektirir. Lütfen şu önemli güvenlik uyarılarını okuyun:",
           "list" : {
-            "1" : "<0>Adres doğrulaması yoktur</0> - Ledger cihazınız, Concordium alıcı adreslerini doğrulayamaz. Fonları almadan önce adresleri manuel olarak doğrulayın.",
-            "2" : "<0>Concordium ID Uygulaması ayrı bir anahtar cümle kullanır</0> - Concordium uygulamasında YENİ 24 kelime oluşturacaksınız. Ledger anahtar cümlenizi ASLA kullanmayın.",
-            "3" : "<0>Ledger Wallet’ın dışına yönlendirileceksiniz</0> - Kimlik doğrulama işlemi, haricî Concordium Wallet uygulamasında gerçekleşir. Concordium’un blok zinciri protokolü bunu gerekli kılar.",
-            "4" : "<0>İşlemleri imzalamak hâlâ güvenlidir</0> – Sadece Ledger cihazınız işlemleri imzalayabilir ve hesaplar oluşturabilir."
+            "separateSeed" : "<0>Concordium ID Uygulaması ayrı bir anahtar cümle kullanır</0> – Concordium uygulamasında YENİ 24 kelime oluşturacaksınız. Ledger kurtarma ifadenizi ASLA kullanmayın.",
+            "outsideLedgerLive" : "<0>Ledger Wallet’ın dışına yönlendirileceksiniz</0> – Kimlik doğrulama işlemi, haricî Concordium Wallet uygulamasında gerçekleşir. Concordium’un blok zinciri protokolü bunu gerekli kılar.",
+            "signingSecure" : "<0>İşlemleri imzalamak hâlâ güvenlidir</0> – Sadece Ledger cihazınız işlemleri imzalayabilir ve hesaplar oluşturabilir."
           },
           "allow" : "Kabul Ediyorum"
         },
@@ -7236,6 +7176,9 @@
     "InvalidAddress" : {
       "title" : "Bu geçerli bir {{currencyName}} adresi değil"
     },
+    "ZcashSaplingRecipientNotSupported" : {
+      "title" : "Sapling adreslerine gönderim desteklenmiyor"
+    },
     "InvalidNonce" : {
       "title" : "Nonce gerekiyor"
     },
@@ -7295,6 +7238,9 @@
     "FeeRequired" : {
       "title" : "Ücretler zorunludur"
     },
+    "FeeTooLow" : {
+      "title" : "Ücret ağ tarafından kabul edilemeyecek kadar düşük. Lütfen artırın"
+    },
     "GasLessThanEstimate" : {
       "title" : "Bu çok düşük olabilir. Lütfen arttırın"
     },
@@ -7306,6 +7252,9 @@
     },
     "MaxFeeTooLow" : {
       "title" : "Ücret, önerilen değerden düşük"
+    },
+    "GasPriceTooLow" : {
+      "title" : "Gas ücreti, ağın belirlediği minimum değerin altında"
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "Öncelik ücreti üst limiti, ücret üst limitinden yüksek olamaz"
@@ -7441,6 +7390,9 @@
     "InvalidXRPTag" : {
       "title" : "Geçersiz XRP Hedef etiketi (Destination tag)"
     },
+    "XrpDestinationTagRequired" : {
+      "title" : "Bu alıcı için bir hedef etiketi gereklidir"
+    },
     "InvalidExplorerResponse" : {
       "title" : "{{currencyName}} tarayıcısından geçersiz yanıt"
     },
@@ -7559,6 +7511,9 @@
     },
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenin kaldığından emin olun"
+    },
+    "SolanaStakeAccountAmountTooLow" : {
+      "title" : "Tutar staking için çok düşük. Minimum değer: {{minimumAmount}}"
     },
     "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "Önceki işleminiz henüz tamamlanmadı. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
@@ -8333,6 +8288,20 @@
   "recoverRestore" : {
     "title" : "Ledger'ınızı bağlayın ve kilidini açın"
   },
+  "analyticsOptInScreen" : {
+    "main" : {
+      "title" : "Ledger'ın geliştirilmesine yardımcı olun",
+      "description" : "Onayınızla, özellikleri geliştirmek ve hataları düzeltmek için kullanım verilerini toplayacağız. Varlık veya portföy bilgilerinizi takip etmeyeceğiz.",
+      "ctaAcceptAll" : "Tümünü kabul et",
+      "ctaRefuseAll" : "Tümünü reddet",
+      "ctaPrevious" : "Geri",
+      "setPreferencesLink" : "Tercihlerinizi belirleyin"
+    },
+    "footer" : {
+      "lead" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
+      "trackingPolicyLink" : "Takip Politikamız hakkında daha fazla bilgi edinin"
+    }
+  },
   "analyticsConsentModal" : {
     "fresh" : {
       "title" : "Ledger'ın geliştirilmesine yardımcı olun",
@@ -8732,9 +8701,9 @@
       "cta" : "Keşfet"
     },
     "borrowEntry" : {
-      "title" : "Borçlar",
-      "cardTitle" : "Stabil coin ile borç alın",
-      "cardDescription" : "Likidite elinizin altında",
+      "title" : "Kripto kredileri",
+      "cardTitle" : "Stabil coin kredisi alın",
+      "cardDescription" : "Rekabetçi kurlarla kredi alın",
       "cta" : "Keşfedin"
     },
     "noDeviceTitle" : "Güvenli kripto cüzdanınız"
@@ -9067,7 +9036,7 @@
     "operations" : {
       "type" : {
         "public" : "Açık",
-        "private" : "Özel"
+        "private" : "Gizli"
       }
     },
     "send" : {
@@ -9194,7 +9163,11 @@
       "description" : "İşlemlerinizi görmek için daha sonra geri dönün."
     },
     "actionsBar" : {
-      "csv" : "Dışa aktar"
+      "csv" : "Dışa aktar",
+      "more" : "İşlem geçmişi seçenekleri",
+      "hideDustTransactions" : "Toz işlemleri gizle",
+      "showDustTransactions" : "Toz işlemleri göster",
+      "dustTransactionsDescription" : "{{threshold}} tutarının altındaki işlemler gizlenecektir."
     },
     "exportDialog" : {
       "title" : "İşlem geçmişini dışa aktarın",
@@ -9293,6 +9266,9 @@
     "fallbackBanner" : {
       "title" : "Takas ve Satın Alma bu varlıkta desteklenmemektedir."
     },
+    "robinhoodDisclaimerBanner" : {
+      "title" : "Temettüler veya hisse bölünmeleri toplam bakiyeye dahil edilmez."
+    },
     "day" : "1 gün",
     "week" : "1 hafta",
     "month" : "1 ay",
@@ -9313,6 +9289,87 @@
       "earnBannerDefault" : "Bu varlıkla kazanın",
       "earnBannerSubtitle" : "Bu varlığı elinizde tutarak kazanın",
       "earnBannerAction" : "Kazan bölümüne gidin"
+    }
+  },
+  "deviceIntentExecutor" : {
+    "genericStates" : {
+      "retryableDeviceLocked" : {
+        "title" : "Cihaz kilitli",
+        "description" : "Devam etmek için cihazınızın kilidini açın."
+      },
+      "unlockDevice" : {
+        "title" : "{{productName}} kilidini açın"
+      },
+      "continueOnDevice" : {
+        "title" : "{{productName}} üzerinde devam edin",
+        "description" : "Güvenli Ekranınızda gösterilen yönergeleri izleyin."
+      }
+    },
+    "errors" : {
+      "connectionError" : {
+        "title" : "Cihaz bağlantısı kesildi",
+        "description" : "Ledger cihazınız artık bağlı değil. Cihazınızın açık olduğundan ve bağlı olduğundan emin olun."
+      },
+      "intentError" : {
+        "title" : "Bilinmeyen hata",
+        "description" : "Bir hata oluştu Lütfen tekrar deneyin veya sorun sürerse Ledger destek ekibi ile iletişime geçin."
+      },
+      "invalidOperation" : {
+        "title" : "Geçersiz durum",
+        "description" : "Bir hata oluştu Lütfen tekrar deneyin veya sorun sürerse Ledger destek ekibi ile iletişime geçin."
+      }
+    },
+    "connectDevice" : {
+      "common" : {
+        "ledgerDevice" : "Ledger cihazı",
+        "available" : "Mevcut",
+        "notConnected" : "Bağlı değil"
+      },
+      "states" : {
+        "loading" : {
+          "title" : "Yükleniyor"
+        },
+        "connecting" : {
+          "title" : "Yükleniyor"
+        },
+        "connectionError" : {
+          "errors" : {
+            "unknown" : {
+              "title" : "Eşleme başarısız",
+              "description" : "Lütfen tekrar deneyin.",
+              "tip" : "Cihazınızın kilidinin açık olduğundan emin olun.",
+              "cta" : {
+                "retry" : "Tekrar deneyin",
+                "help" : "Yardım alın"
+              }
+            }
+          }
+        },
+        "discovering" : {
+          "title" : "Cihaz seçin",
+          "noAvailableDeviceTitle" : "Bir cihazı açın ve kilidini açın"
+        },
+        "discoveryError" : {
+          "errors" : {
+            "unknown" : {
+              "title" : "Bir hata oluştu",
+              "description" : "Lütfen tekrar deneyin veya Ledger destek ekibiyle iletişime geçin.",
+              "cta" : {
+                "retry" : "Tekrar deneyin"
+              }
+            }
+          }
+        },
+        "noKnownDevice" : {
+          "title" : "Ledger cihazı gerekli",
+          "description" : "Devam etmek için imzalayıcınızı kurun veya bağlayın.",
+          "connectLedgerDevice" : "Ledger cihazı bağlayın",
+          "noLedgerDevice" : "Ledger cihazım yok"
+        },
+        "waitingForSelectedDevice" : {
+          "title" : "{{productName}} cihazınızı çalıştırın ve kilidini açın"
+        }
+      }
     }
   },
   "pnl" : {
