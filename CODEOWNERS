@@ -150,6 +150,8 @@ libs/ledgerjs/packages/cryptoassets/src/currencies.ts    @ledgerhq/coin-integrat
 domain/entity/currency-crypto/src/currencies/            @ledgerhq/coin-integration
 libs/ledgerjs/packages/types-live/src/lnsUpsell.ts       @ledgerhq/engagement
 libs/ledgerjs/packages/types-live/src/postOnboarding.ts  @ledgerhq/engagement
+domain/entity/large-screen-upsell-modal/                 @ledgerhq/engagement
+features/platform/large-screen-upsell/                   @ledgerhq/engagement
 
 ### ... market/altcoins sentiment => @ledgerhq/wallet-xp ... ###
 domain/entity/market-sentiment/                          @ledgerhq/wallet-xp
