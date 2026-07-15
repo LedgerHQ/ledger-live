@@ -27,6 +27,8 @@ export class SwapTransactionStatusDialog extends Dialog {
       receivedAmount: string;
       networkFees: string;
       receiveAccount: string;
+      // Present when the provider is expected to expose a website link; absent when it should show name-only.
+      providerUrl?: string;
     },
   ) {
     await expect(this.dialog).toBeVisible();
@@ -46,6 +48,13 @@ export class SwapTransactionStatusDialog extends Dialog {
     await expect(this.receiveAccount).toHaveText(details.receiveAccount);
     await expect(this.swapId).toContainText(swapIdPrefix);
     await expect(this.provider).toHaveText(provider.uiName);
+    // Only providers with a configured URL render the provider name as a link (data-href).
+    // Verify the link when expected, and assert its absence otherwise (see QAA-721 / LIVE-18412).
+    if (details.providerUrl) {
+      await expect(this.provider).toHaveAttribute("data-href", details.providerUrl);
+    } else {
+      await expect(this.provider).not.toHaveAttribute("data-href");
+    }
     await expect(this.viewExplorerBtn).toBeVisible();
     await expect(this.viewExplorerBtn).toHaveAttribute("data-href", /^https:\/\/.+/);
   }
