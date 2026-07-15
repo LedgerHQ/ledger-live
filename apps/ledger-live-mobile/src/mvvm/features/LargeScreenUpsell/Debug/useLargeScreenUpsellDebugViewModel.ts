@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFeature } from "@features/platform-feature-flags";
 import { setOverride } from "@shared/feature-flags";
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId, DevicesWithTouchScreen } from "@ledgerhq/types-devices";
 import {
   isCooldownElapsed,
   shouldThrottle,
@@ -42,6 +42,8 @@ const NANO_DEVICE_MODEL_IDS = [
   DeviceModelId.nanoSP,
   DeviceModelId.nanoX,
 ] as const;
+
+const ALL_DEVICE_MODEL_IDS = Object.values(DeviceModelId);
 
 const parseNonNegativeInteger = (value: string): number | undefined => {
   const trimmed = value.trim();
@@ -145,6 +147,7 @@ export function useLargeScreenUpsellDebugViewModel() {
   const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
 
   const isNanoSeen = NANO_DEVICE_MODEL_IDS.some(id => knownDeviceModelIds[id]);
+  const hasSeenTouchscreen = DevicesWithTouchScreen.some(id => knownDeviceModelIds[id]);
 
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewVariant, setPreviewVariant] = useState<LargeScreenUpsellVariant>(
@@ -203,6 +206,14 @@ export function useLargeScreenUpsellDebugViewModel() {
     },
     [dispatch],
   );
+
+  const handleClearSeenDevices = useCallback(() => {
+    dispatch(
+      unsafe_setKnownDeviceModelIds(
+        Object.fromEntries(ALL_DEVICE_MODEL_IDS.map(id => [id, false])),
+      ),
+    );
+  }, [dispatch]);
 
   const overrideParams = useCallback(
     (nextParams: NonNullable<typeof params>) => {
@@ -376,6 +387,11 @@ export function useLargeScreenUpsellDebugViewModel() {
       ? "A Nano has been seen. Toggle off to clear the audience gate."
       : "No Nano seen. Toggle on to simulate a seen Nano (audience gate).",
     handleToggleNanoSeen,
+    hasSeenTouchscreen,
+    seenDevicesHint: hasSeenTouchscreen
+      ? "A touchscreen device (Flex/Stax) has been seen — it blocks the upsell. Clear to reset."
+      : "Clears every seen device model (removes any touchscreen that blocks the upsell).",
+    handleClearSeenDevices,
     handleApplyOnboardingDate,
     handleSetOnboardingDateNull,
     handleApplyRetries,

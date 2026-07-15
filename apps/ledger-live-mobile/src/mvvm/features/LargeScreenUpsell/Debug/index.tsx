@@ -32,6 +32,9 @@ function LargeScreenUpsellDebug() {
     isNanoSeen,
     nanoSeenHint,
     handleToggleNanoSeen,
+    hasSeenTouchscreen,
+    seenDevicesHint,
+    handleClearSeenDevices,
     handleApplyOnboardingDate,
     handleSetOnboardingDateNull,
     handleApplyRetries,
@@ -188,6 +191,15 @@ function LargeScreenUpsellDebug() {
             onChange={handleToggleNanoSeen}
             description={nanoSeenHint}
           />
+          <StatusRow label="Touchscreen seen (blocks upsell)" ok={!hasSeenTouchscreen} />
+          <Box lx={{ marginTop: "s8" }}>
+            <Button size="md" appearance="base" isFull onPress={handleClearSeenDevices}>
+              Clear seen devices
+            </Button>
+            <Text typography="body3" lx={{ color: "muted", marginTop: "s4" }}>
+              {seenDevicesHint}
+            </Text>
+          </Box>
         </SectionCard>
 
         <SectionCard title="Onboarding date" subtitle="Drives the cooldown gate.">

@@ -44,6 +44,10 @@ function buildViewModel(overrides: Record<string, unknown> = {}) {
     isNanoSeen: false,
     nanoSeenHint: "No Nano seen. Toggle on to simulate a seen Nano (audience gate).",
     handleToggleNanoSeen: jest.fn(),
+    hasSeenTouchscreen: false,
+    seenDevicesHint:
+      "Clears every seen device model (removes any touchscreen that blocks the upsell).",
+    handleClearSeenDevices: jest.fn(),
     handleApplyOnboardingDate: jest.fn(),
     handleSetOnboardingDateNull: jest.fn(),
     handleApplyRetries: jest.fn(),
@@ -138,5 +142,16 @@ describe("LargeScreenUpsellDebug", () => {
     fireEvent.press(screen.getAllByText("Apply")[0]);
 
     expect(handleApplyKillThreshold).toHaveBeenCalledWith("3");
+  });
+
+  it("clears the seen devices", () => {
+    const handleClearSeenDevices = jest.fn();
+    mockedViewModel.mockReturnValue(buildViewModel({ handleClearSeenDevices }));
+
+    render(<LargeScreenUpsellDebug />);
+
+    fireEvent.press(screen.getByText("Clear seen devices"));
+
+    expect(handleClearSeenDevices).toHaveBeenCalled();
   });
 });
