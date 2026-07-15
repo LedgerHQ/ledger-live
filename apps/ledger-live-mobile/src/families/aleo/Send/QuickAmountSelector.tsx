@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Linking, Pressable } from "react-native";
+import { Linking, Pressable, ScrollView, StyleSheet } from "react-native";
 import { Flex, Link } from "@ledgerhq/native-ui";
 import { ExternalLinkMedium, InformationFill } from "@ledgerhq/native-ui/assets/icons";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
@@ -28,6 +28,14 @@ const STRATEGY_ICONS: Record<SigningStrategy, typeof SpeedFast> = {
   balanced: SpeedMedium,
   full: SpeedLow,
 };
+
+const selectorStyles = StyleSheet.create({
+  // Mirrors the height cap the Send Amount screen used to hardcode for this widget.
+  // See: LIVE-30496
+  scrollContainer: {
+    maxHeight: 340,
+  },
+});
 
 export function QuickAmountSelector({
   account,
@@ -119,134 +127,147 @@ export function QuickAmountSelector({
 
   return (
     <Box>
-      <Pressable
-        onPress={() => setInfoOpen(true)}
-        disabled={isKeyboardVisible}
-        style={{ marginBottom: 8, flexDirection: "row", alignItems: "center", gap: 4 }}
+      {/* Bounded + scrollable so the tile grid never forces the Send Amount screen to grow
+          past what's left under the keyboard on short devices. See: LIVE-30496 */}
+      <ScrollView
+        style={selectorStyles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <Text typography="body4SemiBold" lx={{ color: "muted" }}>
-          {t("aleo.send.quickAmountSelector.title")}
-        </Text>
-        <InfoIcon size={12} color="grey" />
-      </Pressable>
+        <Pressable
+          onPress={() => setInfoOpen(true)}
+          disabled={isKeyboardVisible}
+          style={{ marginBottom: 8, flexDirection: "row", alignItems: "center", gap: 4 }}
+        >
+          <Text typography="body4SemiBold" lx={{ color: "muted" }}>
+            {t("aleo.send.quickAmountSelector.title")}
+          </Text>
+          <InfoIcon size={12} color="grey" />
+        </Pressable>
 
-      <Box lx={{ gap: "s16" }}>
-        <Box lx={{ flexDirection: "row", gap: "s12" }}>
-          {strategyData.map(tile => {
-            const Icon = STRATEGY_ICONS[tile.strategy];
-            const signingTime = getEstimatedSigningTime(
-              tile.availableCount,
-              t("time.second_short"),
-              t("time.minute_short"),
-            );
-            let labelColor: "disabled" | "active" | "muted";
-            if (tile.disabled) {
-              labelColor = "disabled";
-            } else if (tile.selected) {
-              labelColor = "active";
-            } else {
-              labelColor = "muted";
-            }
+        <Box lx={{ gap: "s16" }}>
+          <Box lx={{ flexDirection: "row", gap: "s12" }}>
+            {strategyData.map(tile => {
+              const Icon = STRATEGY_ICONS[tile.strategy];
+              const signingTime = getEstimatedSigningTime(
+                tile.availableCount,
+                t("time.second_short"),
+                t("time.minute_short"),
+              );
+              let labelColor: "disabled" | "active" | "muted";
+              if (tile.disabled) {
+                labelColor = "disabled";
+              } else if (tile.selected) {
+                labelColor = "active";
+              } else {
+                labelColor = "muted";
+              }
 
-            let tileVariantStyle: (typeof styles)["tileDefault" | "tileSelected" | "tileDisabled"];
-            if (tile.disabled) {
-              tileVariantStyle = styles.tileDisabled;
-            } else if (tile.selected) {
-              tileVariantStyle = styles.tileSelected;
-            } else {
-              tileVariantStyle = styles.tileDefault;
-            }
+              let tileVariantStyle: (typeof styles)[
+                | "tileDefault"
+                | "tileSelected"
+                | "tileDisabled"];
+              if (tile.disabled) {
+                tileVariantStyle = styles.tileDisabled;
+              } else if (tile.selected) {
+                tileVariantStyle = styles.tileSelected;
+              } else {
+                tileVariantStyle = styles.tileDefault;
+              }
 
-            return (
-              <Pressable
-                key={tile.strategy}
-                onPress={() => selectStrategy(tile)}
-                disabled={tile.disabled || isKeyboardVisible}
-                style={({ pressed }) => [
-                  styles.tile,
-                  tileVariantStyle,
-                  pressed && !tile.disabled && styles.tilePressed,
-                ]}
-              >
-                <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}>
-                  <Icon size={16} color={labelColor} />
-                  <Text typography="body4SemiBold" lx={{ color: labelColor }}>
-                    {t(`aleo.send.quickAmountSelector.strategies.${tile.strategy}`)}
-                  </Text>
-                </Box>
-
-                {tile.disabled ? (
-                  <Text typography="body3" lx={{ color: "disabled" }}>
-                    {t("aleo.send.quickAmountSelector.noValue")}
-                  </Text>
-                ) : (
-                  <Text
-                    typography="body3SemiBold"
-                    lx={{ color: tile.selected ? "active" : "base" }}
-                    numberOfLines={1}
-                    adjustsFontSizeToFit
-                  >
-                    <CurrencyUnitValue unit={unit} value={tile.rangeSum} showCode />
-                  </Text>
-                )}
-
-                {!tile.disabled && (
-                  <Text typography="body4" lx={{ color: tile.selected ? "active" : "muted" }}>
-                    {signingTime}
-                  </Text>
-                )}
-
-                <Box
-                  style={[
-                    styles.badge,
-                    tile.selected && styles.badgeSelected,
-                    tile.disabled && styles.badgeDisabled,
+              return (
+                <Pressable
+                  key={tile.strategy}
+                  onPress={() => selectStrategy(tile)}
+                  disabled={tile.disabled || isKeyboardVisible}
+                  style={({ pressed }) => [
+                    styles.tile,
+                    tileVariantStyle,
+                    pressed && !tile.disabled && styles.tilePressed,
                   ]}
                 >
-                  <Text
-                    typography="body4SemiBold"
-                    lx={{ color: tile.disabled ? "disabled" : "onInteractive" }}
-                  >
-                    {tile.disabled
-                      ? t("aleo.send.quickAmountSelector.unavailable")
-                      : t("aleo.send.quickAmountSelector.recordCount", {
-                          count: tile.availableCount,
-                        })}
-                  </Text>
-                </Box>
-              </Pressable>
-            );
-          })}
-        </Box>
+                  <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}>
+                    <Icon size={16} color={labelColor} />
+                    <Text typography="body4SemiBold" lx={{ color: labelColor }}>
+                      {t(`aleo.send.quickAmountSelector.strategies.${tile.strategy}`)}
+                    </Text>
+                  </Box>
 
-        <Box lx={{ gap: "s4" }}>
-          <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}>
-            <Text typography="body4" lx={{ color: "muted" }}>
-              {t("aleo.send.quickAmountSelector.spendableBalance")}
-            </Text>
-            <Text
-              typography="body4SemiBold"
-              lx={{ color: "muted" }}
-              numberOfLines={1}
-              adjustsFontSizeToFit
-            >
-              <CurrencyUnitValue unit={unit} value={spendableBalance} showCode />
-            </Text>
+                  {tile.disabled ? (
+                    <Text typography="body3" lx={{ color: "disabled" }}>
+                      {t("aleo.send.quickAmountSelector.noValue")}
+                    </Text>
+                  ) : (
+                    <Text
+                      typography="body3SemiBold"
+                      lx={{ color: tile.selected ? "active" : "base" }}
+                      numberOfLines={1}
+                      adjustsFontSizeToFit
+                    >
+                      <CurrencyUnitValue unit={unit} value={tile.rangeSum} showCode />
+                    </Text>
+                  )}
+
+                  {!tile.disabled && (
+                    <Text typography="body4" lx={{ color: tile.selected ? "active" : "muted" }}>
+                      {signingTime}
+                    </Text>
+                  )}
+
+                  <Box
+                    style={[
+                      styles.badge,
+                      tile.selected && styles.badgeSelected,
+                      tile.disabled && styles.badgeDisabled,
+                    ]}
+                  >
+                    <Text
+                      typography="body4SemiBold"
+                      lx={{ color: tile.disabled ? "disabled" : "onInteractive" }}
+                    >
+                      {tile.disabled
+                        ? t("aleo.send.quickAmountSelector.unavailable")
+                        : t("aleo.send.quickAmountSelector.recordCount", {
+                            count: tile.availableCount,
+                          })}
+                    </Text>
+                  </Box>
+                </Pressable>
+              );
+            })}
           </Box>
-          <Box
-            lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}
-            style={{ opacity: selectedRecordsCount > 0 ? 1 : 0 }}
-            accessibilityElementsHidden={selectedRecordsCount === 0}
-            importantForAccessibility={selectedRecordsCount === 0 ? "no-hide-descendants" : "auto"}
-          >
-            <Text typography="body4" lx={{ color: "muted" }}>
-              {`${t("aleo.send.quickAmountSelector.recordCount", {
-                count: selectedRecordsCount,
-              })} · ${selectedRecordsSigningTime}`}
-            </Text>
+
+          <Box lx={{ gap: "s4" }}>
+            <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}>
+              <Text typography="body4" lx={{ color: "muted" }}>
+                {t("aleo.send.quickAmountSelector.spendableBalance")}
+              </Text>
+              <Text
+                typography="body4SemiBold"
+                lx={{ color: "muted" }}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+              >
+                <CurrencyUnitValue unit={unit} value={spendableBalance} showCode />
+              </Text>
+            </Box>
+            <Box
+              lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}
+              style={{ opacity: selectedRecordsCount > 0 ? 1 : 0 }}
+              accessibilityElementsHidden={selectedRecordsCount === 0}
+              importantForAccessibility={
+                selectedRecordsCount === 0 ? "no-hide-descendants" : "auto"
+              }
+            >
+              <Text typography="body4" lx={{ color: "muted" }}>
+                {`${t("aleo.send.quickAmountSelector.recordCount", {
+                  count: selectedRecordsCount,
+                })} · ${selectedRecordsSigningTime}`}
+              </Text>
+            </Box>
           </Box>
         </Box>
-      </Box>
+      </ScrollView>
 
       <QueuedDrawer isRequestingToBeOpened={infoOpen} onClose={() => setInfoOpen(false)}>
         <Flex>
