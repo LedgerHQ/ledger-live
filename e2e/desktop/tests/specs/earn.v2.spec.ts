@@ -15,17 +15,10 @@ import {
   liveDataCommand,
   liveDataWithAddressCommand,
 } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { buildTags } from "tests/utils/tagsUtils";
 import type { Application } from "tests/page";
 
 const EARN_LOCAL_MANIFEST: LiveAppManifest = earnLocalManifestJson as LiveAppManifest;
-
-const DEVICE_TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
-
-function getTags(account: Account) {
-  const family = getFamilyByCurrencyId(account.currency.id);
-  return [...DEVICE_TAGS, `@${account.currency.id}`, ...(family ? [`@family-${family}`] : [])];
-}
 
 function setupEnv(disableBroadcast?: boolean) {
   test.use({
@@ -61,7 +54,7 @@ test.describe("Earn [v2]", () => {
     test(
       "Earn v2 ice cold start page displays correctly",
       {
-        tag: getTags(account),
+        tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app }) => {
@@ -94,7 +87,7 @@ test.describe("Earn [v2]", () => {
       test(
         `Earn v2 cold start page shows ${account.currency.ticker} ready to earn`,
         {
-          tag: getTags(account),
+          tag: buildTags({ currencyId: account.currency.id }),
           annotation: { type: "TMS", description: xrayTicket },
         },
         async ({ app }) => {
@@ -144,7 +137,7 @@ test.describe("Earn [v2]", () => {
       test(
         `Earn v2 hot start page shows ${account.currency.ticker} with rewards and navigates to account`,
         {
-          tag: getTags(account),
+          tag: buildTags({ currencyId: account.currency.id }),
           annotation: { type: "TMS", description: xrayTickets.join(", ") },
         },
         async ({ app }) => {
@@ -177,7 +170,7 @@ test.describe("Earn [v2]", () => {
     test(
       "Earn v2 ice cold start allows inline account addition",
       {
-        tag: getTags(account),
+        tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app }) => {
@@ -213,7 +206,7 @@ test.describe("Earn [v2]", () => {
     test(
       "Earn v2 CTA → Native staking (SOL)",
       {
-        tag: getTags(account),
+        tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app }) => {
@@ -239,7 +232,7 @@ test.describe("Earn [v2]", () => {
     test(
       "Earn v2 CTA → Earn staking (USDT)",
       {
-        tag: getTags(account),
+        tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app }) => {
@@ -278,7 +271,7 @@ test.describe("Earn [v2]", () => {
       test(
         `Earn v2 ETH staking flow - ${provider.name}`,
         {
-          tag: getTags(account),
+          tag: buildTags({ currencyId: account.currency.id }),
           annotation: { type: "TMS", description: xrayTickets.join(", ") },
         },
         async ({ app, page }) => {
@@ -324,7 +317,7 @@ test.describe("Earn [v2]", () => {
     test(
       "Earn v2 position row navigates to dapp for ETH",
       {
-        tag: getTags(account),
+        tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app, page }) => {
@@ -355,7 +348,7 @@ test.describe("Earn [v2]", () => {
     test(
       "Earn v2 position row navigates to withdrawal for USDT",
       {
-        tag: getTags(parentAccount),
+        tag: buildTags({ currencyId: parentAccount.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app }) => {
@@ -382,7 +375,7 @@ test.describe("LiveApp delegate - ETH", () => {
   test(
     "[Ethereum] - Select validator",
     {
-      tag: [...getTags(account), "@smoke"],
+      tag: buildTags({ currencyId: account.currency.id, extraTags: ["@smoke"] }),
       annotation: { type: "TMS", description: "B2CQA-3024" },
     },
     async ({ app }) => {

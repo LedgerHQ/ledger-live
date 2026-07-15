@@ -29,9 +29,14 @@ on:
         default: true
         type: boolean
       bypass_label:
-        description: "PR label that bypasses the sync check"
+        description: "PR label that bypasses the sync check (last-resort escape hatch; normally not needed since intentional PR changes are auto-detected)"
         required: false
         default: "skip-sync-check"
+        type: string
+      pr_number:
+        description: "PR number to fetch changed files from (optional, used to filter intentional changes)"
+        required: false
+        default: ""
         type: string
     outputs:
       workflows_changed:
@@ -54,6 +59,7 @@ jobs:
       workflows_changed: ${{ steps.analyze.outputs.workflows_changed || (steps.bypass-check.outputs.should_skip == 'true' && 'unknown') }}
       can_proceed: ${{ steps.analyze.outputs.can_proceed || (steps.bypass-check.outputs.should_skip == 'true' && 'true') }}
       changed_files: ${{ steps.analyze.outputs.changed_files || '' }}
+      unintentional_files: ${{ steps.analyze.outputs.unintentional_files || '' }}
     steps:
       - name: Checkout PR
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -70,12 +76,15 @@ jobs:
             echo "check_folders=.github/workflows/" >> $GITHUB_OUTPUT
             echo "fail_on_changes=true" >> $GITHUB_OUTPUT
             echo "bypass_label=skip-sync-check" >> $GITHUB_OUTPUT
+            # For pull_request events, the PR number is always available
+            echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
           else
             echo "base_branch=${{ inputs.base_branch }}" >> $GITHUB_OUTPUT
             echo "skip_check=${{ inputs.skip_check }}" >> $GITHUB_OUTPUT
             echo "check_folders=${{ inputs.check_folders }}" >> $GITHUB_OUTPUT
             echo "fail_on_changes=${{ inputs.fail_on_changes }}" >> $GITHUB_OUTPUT
             echo "bypass_label=${{ inputs.bypass_label }}" >> $GITHUB_OUTPUT
+            echo "pr_number=${{ inputs.pr_number }}" >> $GITHUB_OUTPUT
           fi
 
       - name: Check for bypass conditions
@@ -92,7 +101,7 @@ jobs:
             exit 0
           fi
 
-          # Check for bypass label on PR (for pull_request events)
+          # Check for bypass label on PR (for pull_request events) - last-resort escape hatch
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             if echo '${{ toJson(github.event.pull_request.labels.*.name) }}' | jq -r '.[]' | grep -q "^${BYPASS_LABEL}$"; then
               echo "should_skip=true" >> $GITHUB_OUTPUT
@@ -108,10 +117,13 @@ jobs:
       - name: Analyze workflow synchronization
         id: analyze
         if: steps.bypass-check.outputs.should_skip == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BASE_BRANCH="${{ steps.set-defaults.outputs.base_branch }}"
           CHECK_FOLDERS="${{ steps.set-defaults.outputs.check_folders }}"
           FAIL_ON_CHANGES="${{ steps.set-defaults.outputs.fail_on_changes }}"
+          PR_NUMBER="${{ steps.set-defaults.outputs.pr_number }}"
 
           # Fetch base branch for comparison
           git fetch origin $BASE_BRANCH
@@ -119,24 +131,22 @@ jobs:
           echo "🔍 Checking synchronization against $BASE_BRANCH..."
           echo "📁 Monitoring folders: $CHECK_FOLDERS"
 
-          # Convert comma-separated folders to array and build git diff arguments
+          # Build git diff path arguments
           IFS=',' read -ra FOLDERS <<< "$CHECK_FOLDERS"
           DIFF_ARGS=""
           for folder in "${FOLDERS[@]}"; do
-            # Trim whitespace
             folder=$(echo "$folder" | xargs)
             if [ -n "$folder" ]; then
               DIFF_ARGS="$DIFF_ARGS -- '$folder'"
             fi
           done
 
-          # Get all changed files in specified folders
-          CHANGED_FILES_CMD="git diff --name-only origin/$BASE_BRANCH...HEAD $DIFF_ARGS"
-          echo "🔍 Running: $CHANGED_FILES_CMD"
+          # Get all files that have drifted from base in monitored folders
+          DRIFTED_CMD="git diff --name-only origin/$BASE_BRANCH HEAD $DIFF_ARGS"
+          echo "🔍 Running: $DRIFTED_CMD"
+          DRIFTED=$(eval $DRIFTED_CMD || true)
 
-          CHANGED_FILES=$(eval $CHANGED_FILES_CMD || true)
-
-          if [ -z "$CHANGED_FILES" ]; then
+          if [ -z "$DRIFTED" ]; then
             echo "workflows_changed=false" >> $GITHUB_OUTPUT
             echo "can_proceed=true" >> $GITHUB_OUTPUT
             echo "changed_files=" >> $GITHUB_OUTPUT
@@ -145,19 +155,53 @@ jobs:
           fi
 
           echo "workflows_changed=true" >> $GITHUB_OUTPUT
-          # Set changed_files output (replace newlines with commas for output)
-          CHANGED_FILES_COMMA=$(echo "$CHANGED_FILES" | tr '\n' ',' | sed 's/,$//')
-          echo "changed_files=$CHANGED_FILES_COMMA" >> $GITHUB_OUTPUT
+          DRIFTED_COMMA=$(echo "$DRIFTED" | tr '\n' ',' | sed 's/,$//')
+          echo "changed_files=$DRIFTED_COMMA" >> $GITHUB_OUTPUT
+          echo "📝 Drifted files in monitored folders:"
+          echo "$DRIFTED"
 
-          echo "📝 Changed files in monitored folders:"
-          echo "$CHANGED_FILES"
+          # If we have a PR number, fetch the files the PR itself changed and subtract them
+          # so that intentional workflow changes don't trigger a failure
+          PR_CHANGED=""
+          if [ -n "$PR_NUMBER" ] && [ "${{ github.event_name }}" != "" ]; then
+            echo "🔍 Fetching PR #$PR_NUMBER files from GitHub API..."
+            PR_CHANGED=$(gh api "repos/${{ github.repository }}/pulls/${PR_NUMBER}/files" \
+              --paginate --jq '.[].filename' 2>/dev/null || true)
 
-          if [ "$FAIL_ON_CHANGES" = "true" ]; then
+            # Filter to only monitored folders
+            PR_CHANGED_FILTERED=""
+            for folder in "${FOLDERS[@]}"; do
+              folder=$(echo "$folder" | xargs)
+              if [ -n "$folder" ]; then
+                MATCHED=$(echo "$PR_CHANGED" | grep "^${folder}" || true)
+                PR_CHANGED_FILTERED="$PR_CHANGED_FILTERED"$'\n'"$MATCHED"
+              fi
+            done
+            PR_CHANGED=$(echo "$PR_CHANGED_FILTERED" | sort -u | grep -v '^$' || true)
+
+            if [ -n "$PR_CHANGED" ]; then
+              echo "ℹ️  Files intentionally changed in this PR (will not be flagged):"
+              echo "$PR_CHANGED"
+            fi
+          fi
+
+          # Subtract intentional PR changes from drifted files
+          UNINTENTIONAL=$(comm -23 <(echo "$DRIFTED" | sort) <(echo "$PR_CHANGED" | sort) | grep -v '^$' || true)
+
+          UNINTENTIONAL_COMMA=$(echo "$UNINTENTIONAL" | tr '\n' ',' | sed 's/,$//')
+          echo "unintentional_files=$UNINTENTIONAL_COMMA" >> $GITHUB_OUTPUT
+
+          if [ -z "$UNINTENTIONAL" ]; then
+            echo "can_proceed=true" >> $GITHUB_OUTPUT
+            echo "✅ All drifted workflow files were intentionally changed in this PR"
+          elif [ "$FAIL_ON_CHANGES" = "true" ]; then
             echo "can_proceed=false" >> $GITHUB_OUTPUT
-            echo "❌ Files changed in monitored folders - action required"
+            echo "❌ Unintentional workflow drift detected - rebase required:"
+            echo "$UNINTENTIONAL"
           else
             echo "can_proceed=true" >> $GITHUB_OUTPUT
-            echo "⚠️  Files changed in monitored folders - proceeding anyway"
+            echo "⚠️  Unintentional workflow drift detected - proceeding anyway:"
+            echo "$UNINTENTIONAL"
           fi
 
       - name: Show file differences
@@ -178,7 +222,7 @@ jobs:
             fi
           done
 
-          DIFF_CMD="git diff origin/$BASE_BRANCH...HEAD $DIFF_ARGS"
+          DIFF_CMD="git diff origin/$BASE_BRANCH HEAD $DIFF_ARGS"
           eval $DIFF_CMD || true
           echo "::endgroup::"
 
@@ -196,10 +240,13 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const canProceed = '${{ steps.analyze.outputs.can_proceed }}' === 'true';
-            const changedFiles = '${{ steps.analyze.outputs.changed_files }}'.split(',').filter(f => f.length > 0);
+            const changedFiles = canProceed
+              ? '${{ steps.analyze.outputs.changed_files }}'.split(',').filter(f => f.length > 0)
+              : '${{ steps.analyze.outputs.unintentional_files }}'.split(',').filter(f => f.length > 0);
             const baseBranch = '${{ steps.set-defaults.outputs.base_branch }}';
 
-            const status = canProceed ? '⚠️ Warning' : '❌ Action Required';
+            // canProceed=true with workflows_changed=true means intentional changes in this PR
+            const status = canProceed ? 'ℹ️ Info' : '❌ Action Required';
             const filesList = changedFiles.map(f => `- \`${f}\``).join('\n');
 
             const body = `## ${status}: Monitored Files Changed
@@ -209,7 +256,7 @@ jobs:
             ${filesList}
 
             ${canProceed ?
-              '**Note**: This is informational only. The workflow will continue.' :
+              '**Note**: These files were intentionally changed in this PR. This is informational only.' :
               `**Action Required**: Please rebase your branch against \`${baseBranch}\` to ensure consistency:\n\n\`\`\`bash\ngit rebase origin/${baseBranch}\n\`\`\`\n\n`
             }
 

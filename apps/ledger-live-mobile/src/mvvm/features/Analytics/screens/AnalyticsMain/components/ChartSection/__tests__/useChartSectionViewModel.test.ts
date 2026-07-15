@@ -29,7 +29,9 @@ describe("useChartSectionViewModel", () => {
     expect(result.current.chart.series[0].data).toEqual([1000, 1200]);
     expect(result.current.chart.selectedRange).toBe("1w");
     expect(result.current.header.hoveredBalance).toBeNull();
+    expect(result.current.header.scrubDateLabel).toBeUndefined();
     expect(result.current.header.isBalanceAvailable).toBe(true);
+    expect(result.current.chart.showScrubberTooltip).toBe(false);
   });
 
   it("uses balance availability for the chart loading state", () => {
@@ -105,19 +107,42 @@ describe("useChartSectionViewModel", () => {
     expect(result.current.header.variationText).toBe("***");
   });
 
-  it("updates hoveredBalance when scrubbing the chart", () => {
+  it("updates hovered balance, scrub date, and range variation when scrubbing the chart", () => {
     const { result } = renderHook(() => useChartSectionViewModel(), {
       overrideInitialState: chartSectionInitialState,
     });
+
+    expect(result.current.header.variationText).toBe("+$2.00");
+    expect(result.current.header.percentageValue).toBe(20);
 
     act(() => {
       result.current.chart.onScrubberPositionChange?.(0);
     });
     expect(result.current.header.hoveredBalance).toBe(1000);
+    expect(result.current.header.scrubDateLabel).toBeDefined();
+    expect(result.current.header.percentageValue).toBe(0);
+    expect(result.current.header.variationText).toBe("$0.00");
 
     act(() => {
       result.current.chart.onScrubberPositionChange?.(undefined);
     });
     expect(result.current.header.hoveredBalance).toBeNull();
+    expect(result.current.header.scrubDateLabel).toBeUndefined();
+    expect(result.current.header.percentageValue).toBe(20);
+    expect(result.current.header.variationText).toBe("+$2.00");
+  });
+
+  it("keeps chart props stable while scrubbing so the chart is not re-rendered", () => {
+    const { result } = renderHook(() => useChartSectionViewModel(), {
+      overrideInitialState: chartSectionInitialState,
+    });
+
+    const chartBeforeScrub = result.current.chart;
+
+    act(() => {
+      result.current.chart.onScrubberPositionChange?.(0);
+    });
+
+    expect(result.current.chart).toBe(chartBeforeScrub);
   });
 });

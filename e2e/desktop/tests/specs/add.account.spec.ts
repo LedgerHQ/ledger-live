@@ -3,9 +3,9 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
+import { buildTags } from "tests/utils/tagsUtils";
 
 const currencies = [
   {
@@ -38,21 +38,13 @@ for (const currency of currencies) {
       speculosApp: currency.currency.speculosApp,
     });
 
-    const family = getFamilyByCurrencyId(currency.currency.id);
     test(
       `[${currency.currency.name}] Add account`,
       {
-        tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          `@${currency.currency.id}`,
-          ...(family ? [`@family-${family}`] : []),
-          ...(currency.currency === Currency.ETH ? ["@smoke"] : []),
-        ],
+        tag: buildTags({
+          currencyId: currency.currency.id,
+          extraTags: currency.currency === Currency.ETH ? ["@smoke"] : [],
+        }),
         annotation: {
           type: "TMS",
           description: currency.xrayTicket,
@@ -114,20 +106,10 @@ test.describe("Add Accounts - Aleo", () => {
     },
   });
 
-  const family = getFamilyByCurrencyId(Currency.ALEO.id);
-
   test(
     `[${Currency.ALEO.name}] Add account`,
     {
-      tag: [
-        "@NanoSP",
-        "@Flex",
-        "@NanoGen5",
-        "@NanoX",
-        "@Stax",
-        `@${Currency.ALEO.id}`,
-        ...(family ? [`@family-${family}`] : []),
-      ],
+      tag: buildTags({ currencyId: Currency.ALEO.id, skipLNS: true }),
       annotation: {
         type: "TMS",
         description: "B2CQA-4450, B2CQA-4451, B2CQA-4452",

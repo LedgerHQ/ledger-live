@@ -28,6 +28,8 @@ export type CustomAddAccountFlow = {
   onDeviceConnected?: (params: DeviceConnectedParams) => void;
   onScanDeviceAccountsBack?: (params: ScanBackParams) => void;
   scanDeviceAccountsCtaI18nKey?: string;
+  // Extended account id comparison method for chains where a plain id comparison would fail to recognize a rescanned account as already imported.
+  isAlreadyImportedAccount?: (existing: Account, scanned: Account) => boolean;
 };
 
 const isCustomAddAccountFlowFamily = (

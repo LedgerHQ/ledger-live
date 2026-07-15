@@ -94,7 +94,7 @@ jobs:
           production: ${{ inputs.vercel-production }}
 
       - name: Check formatting web-tools
-        if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop'
+        if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch'
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
           command: pnpm exec nx run @ledgerhq/web-tools:format:check

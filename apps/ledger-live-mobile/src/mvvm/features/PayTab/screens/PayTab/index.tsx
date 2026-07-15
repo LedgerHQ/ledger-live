@@ -1,11 +1,14 @@
 import React from "react";
-import { View } from "react-native";
-import SafeAreaView from "~/components/SafeAreaView";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { CardScreen } from "@features/flow-card";
+import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 
 export const PayTabScreen = () => {
+  const { top } = useNavigationBarHeights();
+
   return (
-    <SafeAreaView isFlex testID="paytab-screen">
-      <View />
-    </SafeAreaView>
+    <Box style={{ flex: 1, paddingTop: top }} testID="paytab-screen">
+      <CardScreen />
+    </Box>
   );
 };

@@ -244,7 +244,7 @@ const envDefinitions = {
   },
   SOLANA_VALIDATORS_SUMMARY_BASE_URL: {
     parser: stringParser,
-    def: "https://earn-dashboard.aws.stg.ldg-tech.com/figment/solana/validators_summary",
+    def: "https://earn.api.live.ledger.com/figment/solana/validators_summary",
     desc: "base url for validators.app validator summary",
   },
   SOLANA_TESTNET_VALIDATORS_APP_BASE_URL: {

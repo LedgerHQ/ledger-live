@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import BigNumber from "bignumber.js";
 import { ScrollView } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Button, Divider, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import type { AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -128,7 +128,7 @@ export function BalanceSelectionScreen() {
 
   return (
     <Box lx={wrapperStyle}>
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ flex: 1, justifyContent: "center" }}>
         <Box lx={cardsStyle}>
           <BalanceCard
             label={t("aleo.send.balanceSelector.public")}
@@ -139,6 +139,13 @@ export function BalanceSelectionScreen() {
             selected={selected === "public"}
             onPress={() => setSelected("public")}
           />
+          <Box lx={dividerRowStyle}>
+            <Divider lx={dividerStyle} />
+            <Text typography="body3" lx={{ color: "muted" }}>
+              {t("common.or")}
+            </Text>
+            <Divider lx={dividerStyle} />
+          </Box>
           <BalanceCard
             label={t("aleo.send.balanceSelector.private")}
             lastUpdateLabel={
@@ -175,7 +182,19 @@ const wrapperStyle: LumenViewStyle = {
 
 const cardsStyle: LumenViewStyle = {
   padding: "s16",
+  gap: "s24",
+};
+
+const dividerRowStyle: LumenViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
   gap: "s12",
+};
+
+const dividerStyle: LumenViewStyle = {
+  flex: 1,
+  alignSelf: "center",
 };
 
 const footerStyle: LumenViewStyle = {

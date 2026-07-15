@@ -14,6 +14,7 @@ import {
   revokeTokenApproval,
 } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 const app: AppInfos = AppInfos.ETHEREUM;
 
@@ -61,16 +62,7 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
     test(
       `Swap - ${provider.uiName} flow`,
       {
-        tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          "@ethereum",
-          "@family-evm",
-        ],
+        tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
         annotation: [
           {
             type: "TMS",
@@ -101,69 +93,7 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
   });
 }
 
-test.describe("Swap - Check Best Offer", () => {
-  const fromAccount = Account.ETH_1;
-  const toAccount = Account.BTC_NATIVE_SEGWIT_1;
-  setupEnv(true);
-
-  test.beforeEach(async () => {
-    const accountPair: string[] = [fromAccount, toAccount].map(acc =>
-      acc.currency.speculosApp.name.replace(/ /g, "_"),
-    );
-    setExchangeDependencies(accountPair.map(name => ({ name })));
-  });
-
-  test.use({
-    teamOwner: Team.SWAP,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: app,
-
-    cliCommandsOnApp: [
-      [
-        {
-          app: fromAccount.currency.speculosApp,
-          cmd: liveDataWithAddressCommand(fromAccount),
-        },
-        {
-          app: toAccount.currency.speculosApp,
-          cmd: liveDataWithAddressCommand(toAccount),
-        },
-      ],
-      { scope: "test" },
-    ],
-  });
-
-  test(
-    `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Check "Best Offer"`,
-    {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@ethereum",
-        "@family-evm",
-        "@bitcoin",
-        "@family-bitcoin",
-      ],
-      annotation: { type: "TMS", description: "B2CQA-2327" },
-    },
-    async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
-      const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
-      const swap = new Swap(fromAccount, toAccount, minAmount);
-
-      await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
-      await app.swap.selectExchangeWithoutKyc();
-      await app.swap.checkBestOffer();
-    },
-  );
-});
-
-test.describe("Swap - Landing page", () => {
+test.describe("Swap - Landing page and best offer", () => {
   const fromAccount = Account.ETH_1;
   const toAccount = TokenAccount.ETH_USDC_1;
 
@@ -197,10 +127,10 @@ test.describe("Swap - Landing page", () => {
   });
 
   test(
-    `Swap landing page`,
+    `Swap landing page and best offer`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
-      annotation: { type: "TMS", description: "B2CQA-2918" },
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
+      annotation: { type: "TMS", description: "B2CQA-2918, B2CQA-2327" },
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));

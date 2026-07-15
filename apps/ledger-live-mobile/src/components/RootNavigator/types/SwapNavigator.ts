@@ -40,6 +40,7 @@ import { ScreenName } from "~/const";
 import type {
   DefaultAccountSwapParamList,
   DetailsSwapParamList,
+  SwapHistoryParams,
   SwapOperationDetails,
   SwapPendingOperation,
   SwapSelectCurrency,
@@ -51,7 +52,7 @@ export type SwapNavigatorParamList = {
     | DefaultAccountSwapParamList
     | SwapSelectCurrency
     | SwapPendingOperation;
-  [ScreenName.SwapHistory]: undefined;
+  [ScreenName.SwapHistory]: SwapHistoryParams | undefined;
   [ScreenName.SwapPendingOperation]: SwapPendingOperation;
   [ScreenName.SwapOperationDetails]: {
     swapOperation: SwapOperationDetails;

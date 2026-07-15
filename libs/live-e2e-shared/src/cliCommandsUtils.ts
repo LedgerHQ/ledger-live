@@ -11,7 +11,11 @@ import {
   runCliGetTokenAllowance,
   runCliLiveData,
   runCliTokenApproval,
+  isRetryableError,
 } from "./runCli";
+import type { TokenApprovalOpts } from "./runCli";
+import { sleep } from "./index";
+import { runWithCrossProcessLock } from "./crossProcessLock";
 import { getCcdAccountAddress } from "./families/concordium";
 import { approveToken } from "./families/evm";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -354,10 +358,10 @@ export const isTokenAllowanceSufficientCommand = async (
  * is exactly zero after a revoke). Use {@link isTokenAllowanceSufficientCommand}
  * when only a threshold check is needed.
  */
-export const getTokenAllowanceCommand = async (
+export async function getTokenAllowanceCommand(
   account: TokenAccount,
   spenderAddress: string,
-): Promise<string> => {
+): Promise<string> {
   const ownerAddress = account.parentAccount?.address ?? account.address;
   if (!ownerAddress) throw new Error("Token allowance check requires the main account address");
 
@@ -372,20 +376,78 @@ export const getTokenAllowanceCommand = async (
 
   const { allowanceStr } = parseTokenAllowanceCliOutput(output);
   return allowanceStr;
-};
+}
+
+const MAX_BROADCAST_ATTEMPTS = 3;
+const BROADCAST_RETRY_DELAY_MS = 5_000;
 
 /**
- * Runs ledger-live CLI token approval with Speculos device confirmation, managing
- * `DISABLE_TRANSACTION_BROADCAST` around the CLI call.
+ * Broadcasts one token approve/revoke and retries transient nonce/broadcast
+ * failures (underpriced, nonce too low, not confirmed). The CLI runs with
+ * `retries: 1` because each re-broadcast re-presents the device prompt, which we
+ * must drive again via {@link approveToken} — so the retry lives here, not inside
+ * the CLI helper. `DISABLE_TRANSACTION_BROADCAST` is forced to "0" per attempt.
  */
-export const approveTokenCommand = async (
-  account: TokenAccount,
-  spender: string,
-  approveAmount: string,
-) => {
-  const original = setDisableTransactionBroadcastEnv("0");
+async function runTokenApprovalWithRetry(opts: TokenApprovalOpts): Promise<string> {
+  for (let attempt = 1; attempt <= MAX_BROADCAST_ATTEMPTS; attempt++) {
+    const original = setDisableTransactionBroadcastEnv("0");
+    const result = runCliTokenApproval(opts, 1);
+    // The CLI child has already spawned and inherited the env, so restore it now:
+    // holding the flag set across the awaits below could leak it into unrelated
+    // work in the same worker process. The finally is kept as a safety net.
+    setDisableTransactionBroadcastEnv(original);
+    const cliSettled = result.catch(() => undefined);
 
-  const result = runCliTokenApproval({
+    try {
+      await approveToken();
+      return await result;
+    } catch (err) {
+      // Retry only once the previous CLI has actually exited. Its child has no
+      // timeout/kill (see runCliCommand), so cap the wait; if it's still running
+      // we must NOT spawn a second CLI on the same device — bail instead of looping.
+      const cliDidSettle = await Promise.race([
+        cliSettled.then(() => true),
+        sleep(BROADCAST_RETRY_DELAY_MS).then(() => false),
+      ]);
+      const message = err instanceof Error ? err.message : String(err);
+      if (!cliDidSettle) {
+        console.warn(
+          `⚠️ Token ${opts.mode}: previous CLI still running after ${BROADCAST_RETRY_DELAY_MS}ms – aborting retry`,
+          message,
+        );
+        throw err;
+      }
+      if (attempt === MAX_BROADCAST_ATTEMPTS || !isRetryableError(message)) throw err;
+
+      console.warn(
+        `⚠️ Token ${opts.mode} attempt ${attempt}/${MAX_BROADCAST_ATTEMPTS} failed with retryable error – retrying in ${BROADCAST_RETRY_DELAY_MS}ms…`,
+        message,
+      );
+      await sleep(BROADCAST_RETRY_DELAY_MS);
+    } finally {
+      setDisableTransactionBroadcastEnv(original);
+    }
+  }
+  throw new Error(`Token ${opts.mode} broadcast failed after ${MAX_BROADCAST_ATTEMPTS} attempts`);
+}
+
+/**
+ * Serializes the broadcast under a cross-worker lock on the parent EOA so two
+ * Playwright workers never grab the same nonce (QAA-1323).
+ */
+async function broadcastTokenApproval(
+  account: TokenAccount,
+  opts: TokenApprovalOpts,
+): Promise<string> {
+  const owner = account.parentAccount ?? account;
+  const eoa = (owner.address ?? (await getAccountAddress(owner))).toLowerCase();
+  const lockKey = `${owner.currency.id}:${eoa}`;
+  // Prevent nonce races across workers (QAA-1323).
+  return runWithCrossProcessLock(lockKey, () => runTokenApprovalWithRetry(opts));
+}
+
+export function approveTokenCommand(account: TokenAccount, spender: string, approveAmount: string) {
+  return broadcastTokenApproval(account, {
     currency: account.currency.speculosApp.name,
     index: account.index,
     spender,
@@ -394,19 +456,10 @@ export const approveTokenCommand = async (
     approveAmount,
     waitConfirmation: true,
   });
+}
 
-  try {
-    await approveToken();
-  } finally {
-    setDisableTransactionBroadcastEnv(original);
-  }
-  return await result;
-};
-
-export const revokeTokenCommand = async (account: TokenAccount, spender: string) => {
-  const original = setDisableTransactionBroadcastEnv("0");
-
-  const result = runCliTokenApproval({
+export function revokeTokenCommand(account: TokenAccount, spender: string) {
+  return broadcastTokenApproval(account, {
     currency: account.currency.speculosApp.name,
     index: account.index,
     spender,
@@ -414,14 +467,7 @@ export const revokeTokenCommand = async (account: TokenAccount, spender: string)
     mode: "revokeApproval",
     waitConfirmation: true,
   });
-
-  try {
-    await approveToken();
-  } finally {
-    setDisableTransactionBroadcastEnv(original);
-  }
-  return await result;
-};
+}
 
 const ENV_KEY = "DISABLE_TRANSACTION_BROADCAST";
 

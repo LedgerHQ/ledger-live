@@ -23,6 +23,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@features/platform-jest-config": "workspace:*",
     "tailwindcss": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
