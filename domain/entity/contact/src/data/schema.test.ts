@@ -89,9 +89,11 @@ describe("ContactAddressSchema", () => {
     expect(ContactAddressLabelSchema.parse("Ethér")).toBe("Ethér");
     expect(ContactAddressLabelSchema.parse("Aave v3 1INCH")).toBe("Aave v3 1INCH");
     expect(ContactAddressLabelSchema.parse("USDC.e")).toBe("USDC.e");
+    expect(ContactAddressLabelSchema.parse("123")).toBe("123");
   });
 
-  it("rejects emoji and control characters in address labels", () => {
+  it("rejects punctuation-only, emoji, and control-character address labels", () => {
+    expect(() => ContactAddressLabelSchema.parse("---")).toThrow();
     expect(() => ContactAddressLabelSchema.parse("Ethereum 💎")).toThrow();
     expect(() => ContactAddressLabelSchema.parse("Ethereum 1\uFE0F\u20E3")).toThrow();
     expect(() => ContactAddressLabelSchema.parse("Ethereum\nWallet")).toThrow();

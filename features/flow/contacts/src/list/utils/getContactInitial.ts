@@ -1,16 +1,7 @@
-const graphemeSegmenter =
-  typeof Intl.Segmenter === "function"
-    ? new Intl.Segmenter(undefined, { granularity: "grapheme" })
-    : undefined;
+const ContactInitialPattern = /^\p{L}[\p{Mn}\p{Mc}]*/u;
 
 export function getContactInitial(name: string): string {
-  const initial = graphemeSegmenter?.segment(name).containing(0)?.segment;
+  const initial = name.match(ContactInitialPattern)?.[0];
 
-  if (initial !== undefined) {
-    return initial.toUpperCase();
-  }
-
-  const initialCodePoint = name.codePointAt(0);
-
-  return initialCodePoint === undefined ? "" : String.fromCodePoint(initialCodePoint).toUpperCase();
+  return initial?.toUpperCase() ?? "";
 }
