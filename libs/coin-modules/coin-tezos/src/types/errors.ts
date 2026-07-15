@@ -19,8 +19,10 @@ export const TezosNotEnoughStaked = createCustomErrorClass("TezosNotEnoughStaked
 // to the previous delegate still exists (~4-day freeze). Surfaced during stake fee estimation.
 // Display is i18n-driven (via error.name); the message is a fallback for logs.
 export class TezosStakeBlockedByPendingUnstake extends Error {
-  override name = "TezosStakeBlockedByPendingUnstake";
   constructor() {
-    super("Cannot stake with the new validator while an unfinalizable unstake to the previous one is pending");
+    super(
+      "Cannot stake with the new validator while an unfinalizable unstake to the previous one is pending",
+    );
+    this.name = "TezosStakeBlockedByPendingUnstake";
   }
 }
