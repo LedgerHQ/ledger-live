@@ -37,6 +37,7 @@ describe("createApi", () => {
     // Check that methods are set with what we expect
     expect(api).toEqual({
       broadcast: expect.any(Function),
+      call: expect.any(Function),
       combine: expect.any(Function),
       craftTransaction: expect.any(Function),
       estimateFees: expect.any(Function),
