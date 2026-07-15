@@ -46,7 +46,7 @@ jobs:
       - name: build cli
         run: pnpm exec nx run @ledgerhq/live-cli:build
       - name: format check cli
-        if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || inputs.ref == 'develop'
+        if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch'
         run: pnpm exec nx run @ledgerhq/live-cli:format:check
       - name: lint cli
         run: pnpm exec nx run @ledgerhq/live-cli:lint -- --quiet
