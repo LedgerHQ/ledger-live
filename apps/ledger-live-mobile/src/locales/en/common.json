@@ -4219,7 +4219,8 @@
               "sendPending": "Sending {{ticker}}",
               "sendCompleted": "Sent {{ticker}}",
               "receivePending": "Receiving {{ticker}}",
-              "receiveCompleted": "Received {{ticker}}"
+              "receiveCompleted": "Received {{ticker}}",
+              "estimated": "(Estimated)"
             },
             "details": {
               "networkFees": "Network fees",
