@@ -6,7 +6,7 @@ import { openURL } from "~/renderer/linking";
 import {
   LEDGER_VALIDATORS_VOTE_ACCOUNTS,
   LEDGER_VALIDATOR_BY_FIGMENT,
-  LEDGER_VALIDATOR_BY_CHORUS_ONE,
+  LEDGER_VALIDATOR_BY_BITWISE,
 } from "@ledgerhq/live-common/families/solana/staking";
 
 import { Transaction } from "@ledgerhq/live-common/families/solana/types";
@@ -43,9 +43,9 @@ const shouldShowTC = ({ model }: Transaction) => {
 
 const getTCInfo = ({ model }: Transaction) => {
   const TC_INFO: Record<string, { label: string; url: string }> = {
-    [LEDGER_VALIDATOR_BY_CHORUS_ONE.voteAccount]: {
-      label: "solana.delegation.ledgerByChorusOneTC",
-      url: urls.solana.ledgerByChorusOneTC,
+    [LEDGER_VALIDATOR_BY_BITWISE.voteAccount]: {
+      label: "solana.delegation.ledgerByBitwiseTC",
+      url: urls.solana.ledgerByBitwiseTC,
     },
     [LEDGER_VALIDATOR_BY_FIGMENT.voteAccount]: {
       label: "solana.delegation.ledgerByFigmentTC",

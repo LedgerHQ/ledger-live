@@ -184,7 +184,7 @@ URLs the app hands to the OS browser (`openURL` / `Linking.openURL`) — **not**
 | Chatbot support | `ledgercustomersuccess.my.salesforce-sites.com` | Feature-flagged (`llmChatbotSupport` / `lldChatbotSupport`). |
 | Feedback survey | `form.typeform.com` | Swap completed feedback (LLD); ratings modal (LLM). |
 | Tezos baker directory | `baking-bad.org` | Delegation flow (both apps). |
-| Chorus One ToS | `chorus.one` | "Ledger by Chorus One" terms of service link. |
+| Bitwise ToS | `onchain.bitwiseinvestments.com` | "Ledger by Bitwise" terms of service link. |
 
 ---
 
