@@ -160,6 +160,36 @@ describe("useDynamicContent", () => {
     });
   });
 
+  it("should ignore duplicate clicked events while the first is in flight", async () => {
+    let resolveTrack: (() => void) | undefined;
+    mockedTrack.mockImplementation(
+      () =>
+        new Promise<void>(resolve => {
+          resolveTrack = resolve;
+        }),
+    );
+
+    const { result } = renderHook(() => useDynamicContent());
+
+    let firstClick: Promise<void> | undefined;
+    let secondClick: Promise<void> | undefined;
+    act(() => {
+      firstClick = result.current.trackContentCardEvent(ContentCardEvent.Clicked, {
+        campaign: "card-1",
+      });
+      secondClick = result.current.trackContentCardEvent(ContentCardEvent.Clicked, {
+        campaign: "card-1",
+      });
+    });
+
+    expect(mockedTrack).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      resolveTrack?.();
+      await Promise.all([firstClick, secondClick]);
+    });
+  });
+
   it("should swallow analytics errors", async () => {
     mockedTrack.mockRejectedValueOnce(new Error("track failed"));
 
