@@ -1,5 +1,16 @@
 # @ledgerhq/live-common
 
+## 36.3.1
+
+### Patch Changes
+
+- [#19580](https://github.com/LedgerHQ/ledger-live/pull/19580) [`91b83cf`](https://github.com/LedgerHQ/ledger-live/commit/91b83cf8af507a92d2ff535af4e62264a7c142a1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix selectCurrencyForMetaId returning Arbitrum One chain instead of ARB ERC-20 token
+
+- Updated dependencies [[`7c0729b`](https://github.com/LedgerHQ/ledger-live/commit/7c0729b140c2d1e7bfb929eac701a4c6bba2f9a9), [`641779c`](https://github.com/LedgerHQ/ledger-live/commit/641779c220abf623cfbe95e2980e131ec1f3300c)]:
+  - @ledgerhq/coin-solana@0.56.1
+  - @ledgerhq/asset-aggregation@0.9.1
+  - @ledgerhq/live-signer-solana@0.16.1
+
 ## 36.3.1-hotfix.1
 
 ### Patch Changes
