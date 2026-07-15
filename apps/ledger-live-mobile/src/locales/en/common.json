@@ -913,6 +913,9 @@
     "TezosNotEnoughStaked": {
       "title": "Insufficient staked balance"
     },
+    "TezosStakeBlockedByPendingUnstake": {
+      "title": "Unstaking from your previous validator must finish first"
+    },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
     },
@@ -6767,7 +6770,8 @@
     },
     "delegation": {
       "addCustomValidator": "+ Add custom validator",
-      "sectionLabel": "Delegation"
+      "sectionLabel": "Delegation",
+      "pendingUnstakeWarning": "You can change validator now, but you won't be able to stake with the new one until your pending unstake from your current validator finalizes in ~4 days."
     },
     "staking": {
       "sectionLabel": "Staking",

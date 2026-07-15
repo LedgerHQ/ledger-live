@@ -6,6 +6,8 @@ import {
   useBaker,
   useDelegation,
   useStakingPositions,
+  useTezosStakingInfo,
+  isUnstakingPosition,
 } from "@ledgerhq/live-common/families/tezos/react";
 import { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { Trans } from "react-i18next";
@@ -19,6 +21,7 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Button from "~/renderer/components/Button";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import WarnBox from "~/renderer/components/WarnBox";
+import Alert from "~/renderer/components/Alert";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import BakerImage from "../../BakerImage";
@@ -60,6 +63,7 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
   const accountName = useAccountName(account);
   const delegation = useDelegation(account);
   const stakingPositions = useStakingPositions(account);
+  const { unstakingPositions } = useTezosStakingInfo(account);
   const baker = useBaker(transaction.recipient);
   const currency = getAccountCurrency(account);
   const unit = useAccountUnit(account);
@@ -67,6 +71,14 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
     baker ? baker.name : fallback;
 
   const isDelegation = delegation || stakingPositions.length > 0;
+
+  // Staking with the newly selected validator is blocked by the protocol while an unfinalizable
+  // unstake to a different validator is still pending; warn before the user commits to the change.
+  const hasPendingUnstakeToOtherBaker =
+    !!transaction.recipient &&
+    unstakingPositions.some(
+      p => isUnstakingPosition(p.uid) && !!p.delegate && p.delegate !== transaction.recipient,
+    );
 
   return (
     <Box flow={4} mx={40}>
@@ -205,6 +217,11 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
       />
       {transaction.mode === "delegate" && (
         <Box mt={32}>
+          {hasPendingUnstakeToOtherBaker && (
+            <Alert type="warning" mb={4} data-testid="tezos-pending-unstake-warning">
+              <Trans i18nKey="tezos.delegation.pendingUnstakeWarning" />
+            </Alert>
+          )}
           <WarnBox>
             <Trans i18nKey="delegation.flow.steps.summary.termsAndPrivacy" />
           </WarnBox>
