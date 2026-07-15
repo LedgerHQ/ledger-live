@@ -158,12 +158,11 @@ describe("useCoinControlScreenViewModel", () => {
     });
     expect(typeof result.current.onAmountChange).toBe("function");
     expect(typeof result.current.onSelectStrategy).toBe("function");
-    expect(typeof result.current.onLearnMoreClick).toBe("function");
+    expect(typeof result.current.onInfoPress).toBe("function");
     expect(result.current.strategyOptionsWithLabels).toBeDefined();
     expect(result.current.utxoDisplayData).toBeDefined();
     expect(result.current.changeToReturn.value).toBe("");
     expect(result.current.reviewLabel).toBeDefined();
-    expect(result.current.learnMoreLabel).toBeDefined();
     expect(result.current.coinToSendLabel).toBeDefined();
     expect(result.current.changeToReturn.changeToReturnLabel).toBeDefined();
     expect(result.current.enterAmountPlaceholder).toBeDefined();
@@ -387,7 +386,7 @@ describe("useCoinControlScreenViewModel", () => {
     const { result } = renderHook(() => useCoinControlScreenViewModel(params));
 
     act(() => {
-      result.current.onLearnMoreClick();
+      result.current.onInfoPress();
     });
 
     expect(openURLSpy).toHaveBeenCalledTimes(1);

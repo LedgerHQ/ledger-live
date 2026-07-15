@@ -19,10 +19,9 @@ type CoinControlScreenViewProps = Readonly<{
   onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   amountError: string | undefined;
   strategyLabel: string;
-  learnMoreLabel: string;
-  onLearnMoreClick: () => void;
+  hasAmount: boolean;
+  onInfoPress: () => void;
   coinToSendLabel: string;
-  amountToSendLabel: string;
   amountInputLabel: string;
   networkFees: NetworkFeesViewModel;
   reviewLabel: string;
@@ -45,10 +44,9 @@ export function CoinControlScreenView({
   onAmountChange,
   amountError,
   strategyLabel,
-  learnMoreLabel,
-  onLearnMoreClick,
+  hasAmount,
+  onInfoPress,
   coinToSendLabel,
-  amountToSendLabel,
   amountInputLabel,
   networkFees,
   reviewLabel,
@@ -63,20 +61,20 @@ export function CoinControlScreenView({
 }: CoinControlScreenViewProps) {
   return (
     <>
-      <DialogBody scrollbarWidth="auto" className="flex flex-col gap-12">
+      <DialogBody
+        scrollbarWidth="auto"
+        className="flex flex-col gap-16 [scrollbar-gutter:stable] -mt-4"
+      >
         <StrategySelect
           value={utxoDisplayData?.pickingStrategyValue?.toString() ?? ""}
           options={strategyOptionsWithLabels}
           onValueChange={onSelectStrategy}
           strategyLabel={strategyLabel}
-          learnMoreLabel={learnMoreLabel}
-          onLearnMoreClick={onLearnMoreClick}
         />
         <AmountInput
           onAmountChange={onAmountChange}
           amount={amountValue}
           errorMessage={amountError}
-          amountToSendLabel={amountToSendLabel}
           amountInputLabel={amountInputLabel}
         />
         <UtxoSelector
@@ -84,6 +82,8 @@ export function CoinControlScreenView({
           coinToSendLabel={coinToSendLabel}
           isCustomPickingStrategy={isCustomPickingStrategy}
           onToggleUtxoExclusion={onToggleUtxoExclusion}
+          onInfoPress={onInfoPress}
+          hasAmount={hasAmount}
         />
       </DialogBody>
 

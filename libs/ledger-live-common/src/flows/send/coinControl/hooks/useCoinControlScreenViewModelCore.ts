@@ -16,7 +16,6 @@ export type CoinControlScreenViewModelLabels = Readonly<{
   reviewCta: string;
   getCtaLabel: (currency: string) => string;
   strategyLabel: string;
-  learnMoreLabel: string;
   coinToSendLabel: string;
   changeToReturnLabel: string;
   enterAmountPlaceholder: string;
@@ -62,7 +61,6 @@ export type CoinControlScreenViewModelCoreResult<TNetworkFees = unknown> = Reado
   reviewLoading: boolean;
   strategyLabel: string;
   onLearnMoreClick: () => void;
-  learnMoreLabel: string;
   coinToSendLabel: string;
   enterAmountPlaceholder: string;
   amountToSendLabel: string;
@@ -70,6 +68,7 @@ export type CoinControlScreenViewModelCoreResult<TNetworkFees = unknown> = Reado
   networkFees: TNetworkFees;
   /** True when the active UTXO picking strategy is the coin’s “custom selection” mode. */
   isCustomPickingStrategy: boolean;
+  hasAmount: boolean;
   onToggleUtxoExclusion?: (rowKey: string) => void;
 }>;
 
@@ -127,6 +126,8 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
   }, [account, coinControlConfig, locale, status, transaction]);
 
   const customStrategyValue = coinControlConfig?.customStrategyValue;
+
+  const hasAmount = transaction.useAllAmount || transaction.amount?.gt(0) === true;
 
   const isCustomPickingStrategy = useMemo(
     () =>
@@ -285,13 +286,13 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     reviewLoading: amountComputationPending,
     strategyLabel: labels.strategyLabel,
     onLearnMoreClick,
-    learnMoreLabel: labels.learnMoreLabel,
     coinToSendLabel: labels.coinToSendLabel,
     enterAmountPlaceholder: labels.enterAmountPlaceholder,
     amountToSendLabel: labels.amountToSendLabel,
     amountInputLabel: labels.amountInputLabel,
     networkFees,
     isCustomPickingStrategy,
+    hasAmount,
     onToggleUtxoExclusion,
   };
 }

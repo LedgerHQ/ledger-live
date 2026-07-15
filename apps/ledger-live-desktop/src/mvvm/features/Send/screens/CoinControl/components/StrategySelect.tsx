@@ -1,14 +1,10 @@
 import {
-  Link,
   Select,
   SelectContent,
   SelectItem,
   SelectItemText,
   SelectList,
   SelectTrigger,
-  Subheader,
-  SubheaderRow,
-  SubheaderTitle,
 } from "@ledgerhq/lumen-ui-react";
 import React from "react";
 
@@ -19,8 +15,6 @@ type StrategySelectProps = Readonly<{
   options: readonly StrategyOptionWithLabel[];
   value: string;
   strategyLabel: string;
-  learnMoreLabel: string;
-  onLearnMoreClick: () => void;
 }>;
 
 export const StrategySelect = ({
@@ -28,8 +22,6 @@ export const StrategySelect = ({
   options,
   value,
   strategyLabel,
-  learnMoreLabel,
-  onLearnMoreClick,
 }: StrategySelectProps) => {
   const items = options.map(option => ({
     value: String(option.value),
@@ -37,17 +29,7 @@ export const StrategySelect = ({
   }));
 
   return (
-    <div className="flex flex-col gap-12">
-      <Subheader>
-        <div className="flex items-center gap-24">
-          <SubheaderRow className="min-w-0 flex-1">
-            <SubheaderTitle>{strategyLabel}</SubheaderTitle>
-          </SubheaderRow>
-          <Link appearance="accent" underline={false} size="md" onClick={onLearnMoreClick}>
-            {learnMoreLabel}
-          </Link>
-        </div>
-      </Subheader>
+    <div className="flex flex-col gap-12 pt-8">
       <Select
         value={value}
         onValueChange={v => {
@@ -55,7 +37,7 @@ export const StrategySelect = ({
         }}
         items={items}
       >
-        <SelectTrigger />
+        <SelectTrigger label={strategyLabel} />
         <SelectContent>
           <SelectList
             renderItem={item => (
