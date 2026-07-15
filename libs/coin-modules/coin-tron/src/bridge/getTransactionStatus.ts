@@ -15,7 +15,6 @@ import { validateAddress } from "../logic/validateAddress";
 import {
   fetchTronAccount,
   fetchTronContract,
-  getContractUserEnergyRatioConsumption,
   getDelegatedResource,
   getTronSuperRepresentatives,
 } from "../network";
@@ -37,7 +36,7 @@ import {
   TronUnfreezeNotExpired,
   TronVoteRequired,
 } from "../types/errors";
-import getEstimatedFees from "./getEstimateFees";
+import getEstimatedFees, { getFeeResourceBreakdown } from "./getEstimateFees";
 
 const getTransactionStatus = async (
   acc: TronAccount,
@@ -189,10 +188,25 @@ const getTransactionStatus = async (
     }
   }
 
-  const estimatedFees =
-    Object.entries(errors).length > 0
-      ? new BigNumber(0)
-      : await getEstimatedFees(acc, transaction, tokenAccount);
+  // Only when no error has been detected so far (the recipient/resource checks above): compute the
+  // breakdown once and reuse it for both the status fields and the fee, so they can't disagree.
+  // (Amount validation runs later; the zero-amount case is guarded inside getFeeResourceBreakdown.)
+  const hasErrors = Object.entries(errors).length > 0;
+  let energyRequired = new BigNumber(0);
+  let energyAvailable = new BigNumber(0);
+  let bandwidthRequired = new BigNumber(0);
+  let bandwidthAvailable = new BigNumber(0);
+  let estimatedFees = new BigNumber(0);
+
+  if (!hasErrors) {
+    const resourceBreakdown = await getFeeResourceBreakdown(acc, transaction, tokenAccount);
+    energyRequired = resourceBreakdown.energyRequired;
+    energyAvailable = resourceBreakdown.energyAvailable;
+    bandwidthRequired = resourceBreakdown.bandwidthRequired;
+    bandwidthAvailable = resourceBreakdown.bandwidthAvailable;
+    estimatedFees = await getEstimatedFees(acc, transaction, tokenAccount, resourceBreakdown);
+  }
+
   const balance =
     account.type === "Account"
       ? BigNumber.max(0, account.spendableBalance.minus(estimatedFees))
@@ -219,25 +233,14 @@ const getTransactionStatus = async (
       errors.amount = new NotEnoughBalance();
     }
 
-    const energy = (acc.tronResources && acc.tronResources.energy) || new BigNumber(0);
-
-    // For the moment, we rely on this rule:
-    // Add a 'TronNotEnoughEnergy' warning only if the account sastifies theses 3 conditions:
-    // - no energy
-    // - balance is lower than 1 TRX
-    // - contract consumes user energy (ie: user's ratio > 0%)
+    // Warn when the real energy requirement exceeds available energy (replaces the former
+    // hardcoded-47619 heuristic).
     if (
       account.type === "TokenAccount" &&
       account.token.tokenType === "trc20" &&
-      energy.lt(47619) // temporary value corresponding to usdt trc20 energy
+      energyRequired.gt(energyAvailable)
     ) {
-      const contractUserEnergyConsumption = await getContractUserEnergyRatioConsumption(
-        account.token.contractAddress,
-      );
-
-      if (contractUserEnergyConsumption > 0) {
-        warnings.amount = new TronNotEnoughEnergy();
-      }
+      warnings.amount = new TronNotEnoughEnergy();
     }
   }
 
@@ -254,9 +257,14 @@ const getTransactionStatus = async (
   const parentAccountBalance = account.type === "Account" ? account.balance : acc.spendableBalance;
   //
   // Not enough gas check
-  // PTX swap uses this to support deeplink to buy additional currency
+  // PTX swap uses this to support deeplink to buy additional currency.
+  // Only require TRX when a fee is actually owed: an energy-aware TRC20 transfer covered by the
+  // account's staked resources costs 0 TRX, so a zero-balance account can still broadcast it.
   //
-  if (parentAccountBalance.lt(estimatedFees) || parentAccountBalance.isZero()) {
+  if (
+    parentAccountBalance.lt(estimatedFees) ||
+    (parentAccountBalance.isZero() && estimatedFees.gt(0))
+  ) {
     const query = new URLSearchParams({
       ...(acc?.id ? { account: acc.id } : {}),
     });
@@ -275,6 +283,10 @@ const getTransactionStatus = async (
     estimatedFees,
     totalSpent,
     family,
+    energyRequired,
+    energyAvailable,
+    bandwidthRequired,
+    bandwidthAvailable,
   });
 };
 

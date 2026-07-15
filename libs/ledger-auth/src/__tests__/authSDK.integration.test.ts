@@ -1,9 +1,9 @@
 import { HttpResponse, http } from "msw";
 import { setupServer, type SetupServerApi } from "msw/node";
 import { AuthSDK } from "../authSDK";
-import { CustomIdentityProvider } from "./__mocks__/CustomIdentityProvider.mock";
-import type { CustomChallenge, Signer } from "./__mocks__/CustomIdentityProvider.mock";
 import { bytesToBase64Url, stringToBytes } from "../utils";
+import { CustomIdentityProvider } from "./__mocks__/CustomIdentityProvider.mock";
+import type { CustomChallenge } from "./__mocks__/CustomIdentityProvider.mock";
 
 type SignedChallengeRequest = {
   challenge: string;
@@ -26,10 +26,12 @@ describe("AuthSDK (integration, MSW)", () => {
   let keyPair: CryptoKeyPair;
   let server: SetupServerApi;
 
-  const signer: Signer = {
+  const queryFn = jest.fn().mockResolvedValue({ ok: true });
+
+  const identityProvider = new CustomIdentityProvider({
     jwk: { kty: "EC", crv: "P-256", x: "x", y: "y" },
     sign: async (algorithm, data) => crypto.subtle.sign(algorithm, keyPair.privateKey, data),
-  };
+  });
 
   beforeAll(async () => {
     keyPair = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, false, [
@@ -44,14 +46,13 @@ describe("AuthSDK (integration, MSW)", () => {
     server.close();
   });
 
-  afterEach(() => {
+  beforeEach(() => {
+    jest.clearAllMocks();
     server.resetHandlers();
   });
 
   it("retrieves a Keycloak JWT without PKCE", async () => {
-    const identityProvider = new CustomIdentityProvider(signer);
-
-    const token = await new AuthSDK(
+    await new AuthSDK(
       {
         clientId: CLIENT_ID,
         keycloakBaseUrl: KEYCLOAK_BASE_URL,
@@ -59,9 +60,9 @@ describe("AuthSDK (integration, MSW)", () => {
         disablePkce: true,
       },
       { provider: identityProvider },
-    ).authenticate();
+    ).withToken({ queryFn });
 
-    expect(token).toEqual({
+    expect(queryFn).toHaveBeenCalledWith({
       accessToken: EXPECTED_JWT,
       tokenType: "Bearer",
       scope: "openid",
@@ -72,9 +73,7 @@ describe("AuthSDK (integration, MSW)", () => {
   });
 
   it("retrieves a Keycloak JWT", async () => {
-    const identityProvider = new CustomIdentityProvider(signer);
-
-    const token = await new AuthSDK(
+    await new AuthSDK(
       {
         clientId: CLIENT_ID,
         keycloakBaseUrl: KEYCLOAK_BASE_URL,
@@ -82,9 +81,9 @@ describe("AuthSDK (integration, MSW)", () => {
         disablePkce: false,
       },
       { provider: identityProvider },
-    ).authenticate();
+    ).withToken({ queryFn });
 
-    expect(token).toEqual({
+    expect(queryFn).toHaveBeenCalledWith({
       accessToken: EXPECTED_JWT,
       tokenType: "Bearer",
       scope: "openid",
@@ -150,7 +149,9 @@ function initServer(publicKey: CryptoKey): SetupServerApi {
         return HttpResponse.json({ error: "invalid_request" }, { status: 400 });
       }
 
-      sessionStore.set(AUTHORIZATION_CODE, { codeChallenge: pendingCodeChallenge });
+      sessionStore.set(AUTHORIZATION_CODE, {
+        codeChallenge: pendingCodeChallenge,
+      });
       pendingCodeChallenge = undefined;
 
       return HttpResponse.json(AUTHORIZATION_CODE);

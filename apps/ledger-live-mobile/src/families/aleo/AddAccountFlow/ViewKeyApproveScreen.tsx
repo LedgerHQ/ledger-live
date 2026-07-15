@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Banner, Box, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Check, Close, Refresh } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { Account } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useTheme } from "styled-components/native";
 import {
   useAleoViewKeyApproval,
@@ -25,6 +26,8 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import type { AleoViewKeyFlowParamList } from "./types";
+import QuitConfirmationModal from "./QuitConfirmationModal";
+import useQuitConfirmation from "./useQuitConfirmation";
 
 type Props = StackNavigatorProps<AleoViewKeyFlowParamList, ScreenName.AleoViewKeyApprove>;
 
@@ -43,7 +46,9 @@ function AccountStatusLabel({
   );
 }
 
-export default function ViewKeyApproveScreen({ route, navigation }: Props) {
+export default function ViewKeyApproveScreen() {
+  const navigation = useNavigation<Props["navigation"]>();
+  const route = useRoute<Props["route"]>();
   const { colors, theme } = useTheme();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -90,6 +95,13 @@ export default function ViewKeyApproveScreen({ route, navigation }: Props) {
       onCloseNavigation?.();
     }
   }, [hasAccountsToAdd, onCloseNavigation]);
+
+  const quitConfirmation = useQuitConfirmation({
+    onCloseNavigation,
+    onConfirm: useCallback(() => {
+      abortedRef.current = true;
+    }, []),
+  });
 
   const onResult = useCallback(() => {
     if (abortedRef.current) return;
@@ -159,11 +171,6 @@ export default function ViewKeyApproveScreen({ route, navigation }: Props) {
     ],
   );
 
-  const onCancel = useCallback(() => {
-    abortedRef.current = true;
-    onCloseNavigation?.();
-  }, [onCloseNavigation]);
-
   const renderApprovalContent = () => {
     if (hookState.sharePending) {
       return (
@@ -201,7 +208,7 @@ export default function ViewKeyApproveScreen({ route, navigation }: Props) {
             <Button
               type="main"
               outline
-              onPress={onCancel}
+              onPress={quitConfirmation.open}
               event="AleoAddAccountViewKeyApproveCancelAll"
             >
               {t("aleo.addAccount.stepViewKeyApprove.cancelAllBtn", {
@@ -235,6 +242,12 @@ export default function ViewKeyApproveScreen({ route, navigation }: Props) {
         onResult={onResult}
       />
       {renderApprovalContent()}
+      <QuitConfirmationModal
+        isOpened={quitConfirmation.isOpened}
+        onClose={quitConfirmation.close}
+        onConfirm={quitConfirmation.confirm}
+        onModalHide={quitConfirmation.onModalHide}
+      />
     </SafeAreaView>
   );
 }

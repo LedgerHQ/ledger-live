@@ -11,6 +11,8 @@ export class Currency {
     public readonly speculosApp: AppInfos,
     public readonly networks: Network[],
     public readonly contractAddress?: string,
+    public readonly aggregatedName?: string,
+    public readonly market?: { readonly id: string; readonly name: string },
   ) {}
 
   toString(): string {
@@ -98,7 +100,7 @@ export class Currency {
   static readonly BSC = new Currency("BNB Chain", "BNB", "bsc", AppInfos.BNB_CHAIN, [
     Network.BNB_CHAIN,
   ]);
-  static readonly TON = new Currency("Gram", "GRAM", "ton", AppInfos.TON, [Network.TON]);
+  static readonly GRAM = new Currency("Gram", "GRAM", "ton", AppInfos.TON, [Network.TON]);
   static readonly ETH_USDT = new Currency(
     "Tether USD",
     "USDT",
@@ -113,6 +115,8 @@ export class Currency {
       Network.SCROLL,
     ],
     "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    undefined,
+    { id: "tether", name: "Tether" },
   );
   static readonly ETH_USDC = new Currency(
     "USD Coin",
@@ -161,6 +165,8 @@ export class Currency {
     "polygon",
     AppInfos.POLYGON,
     [Network.POLYGON],
+    undefined,
+    "Dai Stablecoin v2.0",
   );
   static readonly POL_UNI = new Currency("Uniswap (PoS)", "UNI", "polygon", AppInfos.POLYGON, [
     Network.POLYGON,

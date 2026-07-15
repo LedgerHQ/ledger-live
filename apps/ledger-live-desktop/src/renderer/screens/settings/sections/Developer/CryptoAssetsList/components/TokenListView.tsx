@@ -10,7 +10,6 @@ import {
 } from "@ledgerhq/react-ui/index";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
-import { TOKEN_OUTPUT_FIELDS } from "@ledgerhq/cryptoassets/cal-client/state-manager/fields";
 import { FAMILY_OPTIONS, PAGE_SIZE_OPTIONS, OUTPUT_FIELD_OPTIONS } from "../constants";
 import {
   DrawerContainer,
@@ -44,7 +43,6 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ initialFamily = "e
 
   const {
     selectedFamilyOption,
-    isStaging,
     pageSize,
     selectedOutputFields,
     isOptionsOpen,
@@ -61,7 +59,6 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ initialFamily = "e
     handleFamilyChange,
     handlePageSizeChange,
     handleRefresh,
-    handleToggleStaging,
     handleLoadMore,
     toggleOptionsPanel,
     toggleTokenExpanded,
@@ -169,22 +166,6 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ initialFamily = "e
               {t("settings.developer.cryptoAssetsList.drawer.advanced").toUpperCase()}
             </Text>
             <Flex flexDirection="column" rowGap={3}>
-              <StyledCheckbox onClick={handleToggleStaging}>
-                <Checkbox
-                  isChecked={isStaging}
-                  name="staging-toggle"
-                  onChange={handleToggleStaging}
-                />
-                <Flex flexDirection="column" rowGap={0}>
-                  <Text variant="small" fontWeight="medium">
-                    {t("settings.developer.cryptoAssetsList.drawer.useStaging")}
-                  </Text>
-                  <Text variant="tiny" color="neutral.c70">
-                    {t("settings.developer.cryptoAssetsList.drawer.useStagingDesc")}
-                  </Text>
-                </Flex>
-              </StyledCheckbox>
-
               <Flex flexDirection="column" rowGap={1}>
                 <Text variant="small" fontWeight="medium" color="neutral.c100">
                   {t("settings.developer.cryptoAssetsList.drawer.calReference")}
@@ -205,7 +186,7 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ initialFamily = "e
                 <Flex alignItems="center" justifyContent="space-between">
                   <Text variant="small" fontWeight="medium" color="neutral.c100">
                     {t("settings.developer.cryptoAssetsList.drawer.outputFields")} (
-                    {selectedOutputFields.length}/{TOKEN_OUTPUT_FIELDS.length})
+                    {selectedOutputFields.length}/{OUTPUT_FIELD_OPTIONS.length})
                   </Text>
                   <Flex columnGap={2}>
                     <Button size="sm" appearance="transparent" onClick={selectAllOutputFields}>

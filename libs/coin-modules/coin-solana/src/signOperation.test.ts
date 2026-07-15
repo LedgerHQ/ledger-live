@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { DeviceModelId } from "@ledgerhq/devices";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { Account, Operation, OperationType, SignOperationEvent } from "@ledgerhq/types-live";

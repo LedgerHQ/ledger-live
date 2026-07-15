@@ -145,7 +145,7 @@ const cryptoAssetsApiInstance = createApi({
       queryFn: async currencyId => {
         try {
           const baseUrl = getEnv("CAL_SERVICE_URL");
-          const url = new URL("/v1/currencies", baseUrl);
+          const url = new URL(`${baseUrl}/v1/currencies`);
           url.searchParams.set("output", "id");
           url.searchParams.set("limit", "1");
           url.searchParams.set("id", currencyId);

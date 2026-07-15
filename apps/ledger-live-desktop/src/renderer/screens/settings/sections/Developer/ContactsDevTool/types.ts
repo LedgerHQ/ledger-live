@@ -1,0 +1,18 @@
+import type { ContactsFeatureParams, ContactsFeatureValue } from "@features/flow-contacts";
+
+export interface ContactsDevToolContentProps {
+  readonly expanded: boolean;
+}
+
+export interface ContactsDevToolViewModel {
+  readonly featureFlag: ContactsFeatureValue | null;
+  readonly isEnabled: boolean;
+  readonly params: ContactsFeatureParams;
+  readonly customFamiliesInput: string;
+  readonly handleToggleEnabled: () => void;
+  readonly handleToggleNewBadge: () => void;
+  readonly handleSetEligibleAddressFamilies: (families: readonly string[]) => void;
+  readonly setCustomFamiliesInput: (value: string) => void;
+  readonly handleApplyCustomFamilies: () => void;
+  readonly handleResetOverride: () => void;
+}

@@ -1,7 +1,7 @@
 import { renderHook, act } from "tests/testSetup";
 import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { buildDistributionItem } from "tests/utils/distributionTestUtils";
 import { track } from "~/renderer/analytics/segment";
 import { computeFiatPortionsFromDistribution } from "LLD/features/AssetDetail/utils/computeFiatPortionsFromDistribution";

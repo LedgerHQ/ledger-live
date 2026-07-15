@@ -155,19 +155,19 @@ describe("BlacklistedTokens", () => {
   it("handles async loading errors gracefully", async () => {
     mockFindTokenById.mockRejectedValue(new Error("Token not found"));
 
-    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 
     render(<BlacklistedTokens />, {
       initialState: { settings: { blacklistedTokenIds: ["ethereum/erc20/invalid"] } },
     });
 
     await waitFor(() => {
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
         "Failed to load blacklisted tokens:",
         expect.any(Error),
       );
     });
 
-    consoleErrorSpy.mockRestore();
+    consoleWarnSpy.mockRestore();
   });
 });

@@ -22,10 +22,7 @@ function buildSigningDevice(connectionResult: DeviceConnectionResult): SigningDe
   };
 }
 
-function isUserRefusalError(
-  error: unknown,
-  currency: CryptoOrTokenCurrency | undefined,
-): boolean {
+function isUserRefusalError(error: unknown, currency: CryptoOrTokenCurrency | undefined): boolean {
   return (
     sendFeatures.isUserRefusedTransactionError(currency, error) ||
     error instanceof TransactionRefusedOnDevice ||

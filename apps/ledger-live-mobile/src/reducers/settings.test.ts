@@ -13,6 +13,7 @@ import reducer, {
   counterValueCurrencySelector,
   counterValueIdOf,
   migrateLegacyCryptoCounterValue,
+  migrateLegacyStarredMarketCoins,
   INITIAL_STATE as SETTINGS_INITIAL_STATE,
   filterValidSettings,
 } from "./settings";
@@ -720,5 +721,23 @@ describe("migrateLegacyCryptoCounterValue", () => {
   it("leaves fiat tickers and already-migrated ids untouched", () => {
     expect(migrateLegacyCryptoCounterValue("USD")).toBe("USD");
     expect(migrateLegacyCryptoCounterValue("bitcoin")).toBe("bitcoin");
+  });
+});
+
+describe("migrateLegacyStarredMarketCoins", () => {
+  it("migrates the legacy DAI V2 identifier", () => {
+    expect(migrateLegacyStarredMarketCoins(["ethereum/erc20/dai_stablecoin_v2_0"])).toEqual([
+      "dai",
+    ]);
+  });
+
+  it("keeps the canonical DAI identifier unchanged", () => {
+    expect(migrateLegacyStarredMarketCoins(["dai"])).toEqual(["dai"]);
+  });
+
+  it("deduplicates legacy and canonical DAI identifiers while preserving order", () => {
+    expect(
+      migrateLegacyStarredMarketCoins(["bitcoin", "ethereum/erc20/dai_stablecoin_v2_0", "dai"]),
+    ).toEqual(["bitcoin", "dai"]);
   });
 });

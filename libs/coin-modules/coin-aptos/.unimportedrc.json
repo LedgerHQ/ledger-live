@@ -1,5 +1,10 @@
 {
-  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util",
+    "@ledgerhq/types-cryptoassets"
+  ],
   "entry": [
     "src/index.ts",
     "src/api/index.ts",
@@ -10,7 +15,6 @@
   "ignoreUnused": [
     "@ledgerhq/devices",
     "@ledgerhq/types-cryptoassets",
-    "expect",
     "invariant",
     "got"
   ],
@@ -20,10 +24,8 @@
     "src/bridge/transaction.ts",
     "src/config.ts",
     "src/errors.ts",
-    "src/test/bot-specs.ts",
     "src/test/bridgeDatasetTest.ts",
     "src/test/index.ts",
-    "src/test/speculos-deviceActions.ts",
     "src/types/assets.ts",
     "src/supportedFeatures.ts",
     "src/utils/IconGenerator.ts",

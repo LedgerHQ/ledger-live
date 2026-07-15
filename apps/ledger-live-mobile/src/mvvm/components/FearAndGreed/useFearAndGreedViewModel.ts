@@ -1,8 +1,5 @@
 import { useState, useCallback } from "react";
-import {
-  useGetFearAndGreedLatestQuery,
-  FIFTEEN_MINUTES_IN_MS,
-} from "@ledgerhq/live-common/cmc-client/state-manager/api";
+import { useGetFearAndGreedLatestQuery, FIFTEEN_MINUTES_IN_MS } from "@domain/api-market-sentiment";
 import type { FearAndGreedViewModel } from "./types";
 import { track } from "~/analytics";
 

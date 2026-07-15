@@ -7,7 +7,7 @@ import { TrustchainsResponse } from "./api";
  */
 export type JWT = {
   accessToken: string;
-  permissions: {
+  permissions?: {
     [trustchainId: string]: {
       [path: string]: string;
     };

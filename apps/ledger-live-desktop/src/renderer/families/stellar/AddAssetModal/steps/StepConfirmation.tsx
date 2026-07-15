@@ -12,7 +12,7 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
-import { useTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/hooks";
+import { useFindTokenByAddressInCurrencyQuery } from "@domain/api-currency-token";
 import invariant from "invariant";
 
 const Container = styled(Box).attrs(() => ({
@@ -28,10 +28,10 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
   invariant(account, "Account should be present");
   invariant(transaction, "Transaction should be present");
 
-  const { token, loading } = useTokenByAddressInCurrency(
-    transaction.assetOwner!,
-    account.currency.id,
-  );
+  const { data: token, isLoading: loading } = useFindTokenByAddressInCurrencyQuery({
+    contract_address: transaction.assetOwner!,
+    network: account.currency.id,
+  });
 
   if (optimisticOperation) {
     return (

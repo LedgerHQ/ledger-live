@@ -46,6 +46,6 @@ export const saveLogs = async (path: Electron.SaveDialogReturnValue) => {
     // Requests the main process to save logs in a file
     await ipcRenderer.invoke("save-logs", path, memoryLogsStr);
   } catch (error) {
-    console.error("Error while requesting to save logs from the renderer process", error);
+    console.warn("Failed to save logs:", error);
   }
 };

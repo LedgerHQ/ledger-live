@@ -1,9 +1,9 @@
 import React from "react";
-import type { FearAndGreedIndex } from "@ledgerhq/live-common/cmc-client/state-manager/types";
+import type { FearAndGreedIndex } from "@domain/entity-market-sentiment";
 import {
   getFearAndGreedColorKey,
   getFearAndGreedTranslationKey,
-} from "@ledgerhq/live-common/cmc-client/utils/fearAndGreed";
+} from "@features/flow-fear-and-greed";
 import { Tile, TileContent, TileTitle } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { FearAndGreedIndicator } from "./FearAndGreedIndicator";

@@ -13,8 +13,9 @@ export class PageScroller {
     pixels = 300,
     initialDirection: Direction = "down",
     timeout = ANDROID_SCROLL_DELAY,
+    visibilityPercentage?: number,
   ): Promise<void> {
-    if (await this.isVisible(matcher, timeout)) {
+    if (await this.isVisible(matcher, timeout, visibilityPercentage)) {
       return;
     }
 
@@ -28,7 +29,7 @@ export class PageScroller {
     for (let attempt = 0; attempt < MAX_ATTEMPTS_PER_DIRECTION * 2; attempt++) {
       await this.scrollOnce(scrollContainer, direction, pixels);
 
-      if (await this.isVisible(matcher, timeout)) {
+      if (await this.isVisible(matcher, timeout, visibilityPercentage)) {
         await this.waitForScrollToSettle();
         return;
       }
@@ -47,9 +48,30 @@ export class PageScroller {
     throw new Error(`Failed to find element after scrolling. Matcher: ${JSON.stringify(matcher)}`);
   }
 
-  private async isVisible(matcher: NativeMatcher, timeout: number): Promise<boolean> {
+  /**
+   * Performs a single fixed scroll of a given amount of pixels, without targeting any element.
+   * Useful to add extra "slack" so a located element is not stuck at the edge of the viewport
+   * (e.g. hidden behind a sticky footer) before interacting with it.
+   */
+  async scrollByPixels(
+    scrollViewId: string | RegExp | undefined,
+    pixels: number,
+    direction: Direction = "down",
+  ): Promise<void> {
+    const scrollContainer = await this.getScrollElement(scrollViewId);
+    await this.scrollOnce(scrollContainer, direction, pixels);
+    await this.waitForScrollToSettle();
+  }
+
+  private async isVisible(
+    matcher: NativeMatcher,
+    timeout: number,
+    visibilityPercentage?: number,
+  ): Promise<boolean> {
     try {
-      await waitFor(element(matcher).atIndex(0)).toBeVisible().withTimeout(timeout);
+      await waitFor(element(matcher).atIndex(0))
+        .toBeVisible(visibilityPercentage)
+        .withTimeout(timeout);
       return true;
     } catch {
       return false;

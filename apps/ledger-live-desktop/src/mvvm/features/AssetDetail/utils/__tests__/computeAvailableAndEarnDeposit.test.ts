@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { computeAvailableAndEarnDeposit } from "../computeAvailableAndEarnDeposit";
 
 const btc = getCryptoCurrencyById("bitcoin");

@@ -1,5 +1,4 @@
-import BigNumber from "bignumber.js";
-import { Operation } from "@ledgerhq/types-live";
+import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { enrichRewardOperationsValue, sumRewardFromReceiptLogs } from "./rewardsFromReceipt";
 import { STAKING_CONTRACTS } from "./contracts";
 import { LogWithAddress } from "../network/node/types";
@@ -83,15 +82,22 @@ describe("sumRewardFromReceiptLogs", () => {
 });
 
 describe("enrichRewardOperationsValue", () => {
-  const rewardOp = (hash: string, sender: string): Operation =>
+  const rewardOp = (hash: string, sender: string): Operation<MemoNotSupported> =>
     ({
-      id: `js:2:monad:${sender}:${hash}-REWARD`,
-      hash,
+      id: `${sender}-${hash}-REWARD`,
       type: "REWARD",
-      value: new BigNumber(0),
+      value: 0n,
       senders: [sender],
       recipients: [MONAD_STAKING],
-    }) as Operation;
+      asset: { type: "native" as const },
+      tx: {
+        hash,
+        block: { height: 0, hash: "0x", time: new Date() },
+        fees: 0n,
+        date: new Date(),
+        failed: false,
+      },
+    }) as Operation<MemoNotSupported>;
 
   it("patches the REWARD op value from the receipt logs", async () => {
     const op = rewardOp("0xabc", MONAD_DELEGATOR);
@@ -102,7 +108,7 @@ describe("enrichRewardOperationsValue", () => {
     await enrichRewardOperationsValue("monad", [op], getReceipt);
 
     expect(getReceipt).toHaveBeenCalledWith("0xabc");
-    expect(op.value).toStrictEqual(new BigNumber("3315814008974"));
+    expect(op.value).toStrictEqual(3315814008974n);
   });
 
   it("is a no-op for a currency without a rewardsEventDecoder", async () => {
@@ -112,12 +118,18 @@ describe("enrichRewardOperationsValue", () => {
     await enrichRewardOperationsValue("ethereum", [op], getReceipt);
 
     expect(getReceipt).not.toHaveBeenCalled();
-    expect(op.value).toStrictEqual(new BigNumber(0));
+    expect(op.value).toStrictEqual(0n);
   });
 
   it("only fetches receipts for zero-value REWARD ops", async () => {
-    const out = { ...rewardOp("0xout", MONAD_DELEGATOR), type: "OUT" } as Operation;
-    const nonZero = { ...rewardOp("0xnz", MONAD_DELEGATOR), value: new BigNumber(5) } as Operation;
+    const out = {
+      ...rewardOp("0xout", MONAD_DELEGATOR),
+      type: "OUT",
+    } as Operation<MemoNotSupported>;
+    const nonZero = {
+      ...rewardOp("0xnz", MONAD_DELEGATOR),
+      value: 5n,
+    } as Operation<MemoNotSupported>;
     const getReceipt = jest.fn().mockResolvedValue(null);
 
     await enrichRewardOperationsValue("monad", [out, nonZero], getReceipt);
@@ -131,6 +143,6 @@ describe("enrichRewardOperationsValue", () => {
 
     await enrichRewardOperationsValue("monad", [op], getReceipt);
 
-    expect(op.value).toStrictEqual(new BigNumber(0));
+    expect(op.value).toStrictEqual(0n);
   });
 });

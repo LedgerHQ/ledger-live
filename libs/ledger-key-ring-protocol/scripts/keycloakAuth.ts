@@ -36,7 +36,7 @@ async function main(): Promise<void> {
   console.log("[CHECK] keycloak realm:", KEYCLOAK_REALM);
   console.log("[CHECK] client id:", CLIENT_ID);
 
-  const token = await new AuthSDK(
+  await new AuthSDK(
     {
       clientId: CLIENT_ID,
       keycloakBaseUrl: KEYCLOAK_BASE_URL,
@@ -46,11 +46,13 @@ async function main(): Promise<void> {
       provider,
       fetch: makeFetchCookie(fetch),
     },
-  ).authenticate();
-
-  console.log("[CHECK] token:", token);
-  if (!token.accessToken) {
-    throw new Error("Authentication succeeded but returned an empty access token");
-  }
-  console.log("\nAuth flow OK: received an access token.");
+  ).withToken({
+    queryFn: async token => {
+      console.log("[CHECK] token:", token);
+      if (!token.accessToken) {
+        throw new Error("Authentication succeeded but returned an empty access token");
+      }
+      console.log("\nAuth flow OK: received an access token.");
+    },
+  });
 }

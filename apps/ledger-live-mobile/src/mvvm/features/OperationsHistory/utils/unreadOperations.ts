@@ -3,7 +3,7 @@ import type { Features } from "@shared/feature-flags";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
-import { isSmallValueIncomingOperation } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
+import { isSmallValueOperation } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import {
   flattenOperationWithInternalsAndNfts,
   isAddressPoisoningOperation,
@@ -72,7 +72,7 @@ export function hasUnreadOperations(
       shouldHideSmallValueTokenOperations &&
       countervaluesState &&
       userCounterValueCurrency &&
-      isSmallValueIncomingOperation({
+      isSmallValueOperation({
         operation,
         account,
         countervaluesState,

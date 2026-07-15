@@ -16,15 +16,23 @@ type Props = {
   readonly currency: Currency;
   readonly onPress: (_: MappedStake) => void;
   readonly isLast?: boolean;
+  readonly rowIndex?: number;
 };
 
-export default function StakingRow({ stakingPosition, currency, onPress, isLast = false }: Props) {
+export default function StakingRow({
+  stakingPosition,
+  currency,
+  onPress,
+  isLast = false,
+  rowIndex = 0,
+}: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { validator, formattedAmount, principal } = stakingPosition;
 
   return (
     <TouchableOpacity
+      testID={`sui-staking-row-${rowIndex}`}
       style={[
         styles.row,
         styles.wrapper,

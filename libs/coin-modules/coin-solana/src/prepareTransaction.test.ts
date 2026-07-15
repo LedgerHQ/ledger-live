@@ -60,7 +60,6 @@ describe("testing prepareTransaction", () => {
 
   it("packs a 'NotEnoughGas' error if the sender can not afford the fees during a token transfer", async () => {
     const preparedTransaction = await prepareTransaction(
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       {
         currency: { units: [{ magnitude: 2 }] },
         spendableBalance: new BigNumber(0),
@@ -73,7 +72,6 @@ describe("testing prepareTransaction", () => {
         ],
       } as unknown as SolanaAccount,
       transaction({ kind: "token.transfer", subAccountId: "subAccountId" }),
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       {
         getAccountInfo: () => ({
           data: {
@@ -427,7 +425,6 @@ describe("testing prepareTransaction", () => {
 
     // When
     const preparedTransaction = await prepareTransaction(
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       {} as SolanaAccount,
       rawTransaction,
       chainAPI,
@@ -471,7 +468,6 @@ describe("testing prepareTransaction", () => {
 
     // When
     const preparedTransaction = await prepareTransaction(
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       {} as SolanaAccount,
       rawTransaction,
       chainAPI,
@@ -507,10 +503,8 @@ describe("testing prepareTransaction", () => {
   it("should return a new transaction when user does not provide a raw one", async () => {
     const nonRawTransaction = transaction();
     const preparedTransaction = await prepareTransaction(
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       {} as SolanaAccount,
       nonRawTransaction,
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       {} as ChainAPI,
     );
 
@@ -562,7 +556,6 @@ describe("testing prepareTransaction", () => {
         subAccountId: "subAccountId",
       });
       const preparedTransaction = await prepareTransaction(
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         {
           currency: { units: [{ magnitude: 2 }] },
           spendableBalance: new BigNumber(0),
@@ -575,7 +568,6 @@ describe("testing prepareTransaction", () => {
           ],
         } as unknown as SolanaAccount,
         transactionToPrepare,
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         {
           getAccountInfo: () => ({
             data: {
@@ -613,7 +605,6 @@ describe("testing prepareTransaction", () => {
         subAccountId: "subAccountId",
       });
       const preparedTransaction = await prepareTransaction(
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         {
           currency: { units: [{ magnitude: 2 }] },
           spendableBalance: new BigNumber(0),
@@ -626,7 +617,6 @@ describe("testing prepareTransaction", () => {
           ],
         } as unknown as SolanaAccount,
         transactionToPrepare,
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         {
           getAccountInfo: () => ({
             data: {
@@ -874,7 +864,6 @@ describe("testing prepareTransaction", () => {
 });
 
 function api(estimatedFees?: number) {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return {
     getLatestBlockhash: () => {
       return Promise.resolve({

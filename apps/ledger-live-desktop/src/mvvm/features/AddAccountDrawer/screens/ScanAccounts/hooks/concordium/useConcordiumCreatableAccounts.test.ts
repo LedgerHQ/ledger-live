@@ -5,7 +5,7 @@ import {
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { renderHook } from "tests/testSetup";

@@ -4,9 +4,10 @@ import { runTooLowAmountForQuoteSwapsTest } from "../swap.other";
 const transactionE2E = {
   swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "10000"),
   tmsLinks: ["B2CQA-3243"],
-  errorMessage: "Not enough balance, including network fee",
-  ctaBanner: true,
+  errorMessage: "Insufficient balance",
+  ctaBanner: false,
   quotesVisible: false,
+  errorDisplay: "buttonReplacement" as const,
   tags: [
     "@NanoSP",
     "@LNS",
@@ -28,4 +29,5 @@ runTooLowAmountForQuoteSwapsTest(
   transactionE2E.ctaBanner,
   transactionE2E.quotesVisible,
   transactionE2E.tags,
+  transactionE2E.errorDisplay,
 );

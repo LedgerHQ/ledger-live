@@ -28,8 +28,7 @@ export default function StepAsset({
   const onUpdateAsset = useCallback(
     (token?: TokenCurrency | null) => {
       if (!token) return;
-      const { id: assetId } = token;
-      const { assetCode, assetIssuer } = getAssetObject(assetId);
+      const { assetCode, assetIssuer } = getAssetObject(token);
       onUpdateTransaction(transaction =>
         bridge.updateTransaction(transaction, {
           assetReference: assetCode,
@@ -63,11 +62,13 @@ export function StepAssetFooter({
   onClose,
   status,
   bridgePending,
+  transaction,
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
-  const canNext = !bridgePending && !hasErrors;
+  const hasSelectedAsset = !!transaction?.assetReference && !!transaction?.assetOwner;
+  const canNext = !bridgePending && !hasErrors && hasSelectedAsset;
   return (
     <>
       <AccountFooter parentAccount={parentAccount} account={account} status={status} />

@@ -127,6 +127,10 @@
       "title": "Please try again",
       "description": "Account is outdated. A synchronisation is needed"
     },
+    "AccountPublicKeyUnavailable": {
+      "title": "Account needs to be added again",
+      "description": "Ledger Wallet could not retrieve this account's public key. Please remove the account and add it again to continue"
+    },
     "AlgorandASANotOptInInRecipient": {
       "title": "Recipient account has not opted in the selected ASA."
     },
@@ -1385,6 +1389,17 @@
         }
       }
     }
+  },
+  "largeScreenUpsellModal": {
+    "optedIn": {
+      "title": "See more. Tap less. Save {{discount}}%",
+      "subtitle": "Enjoy a larger screen, smarter transaction review, enhanced protection, and an exclusive {{discount}}% off."
+    },
+    "optedOut": {
+      "title": "Spot scams. See every detail",
+      "subtitle": "Review details on a touchscreen signer and pair slimmer wallets with advanced security checks."
+    },
+    "cta": "Explore touchscreen signers"
   },
   "earn": {
     "simulator": {
@@ -4204,7 +4219,8 @@
               "sendPending": "Sending {{ticker}}",
               "sendCompleted": "Sent {{ticker}}",
               "receivePending": "Receiving {{ticker}}",
-              "receiveCompleted": "Received {{ticker}}"
+              "receiveCompleted": "Received {{ticker}}",
+              "estimated": "(Estimated)"
             },
             "details": {
               "networkFees": "Network fees",
@@ -4622,6 +4638,7 @@
         "maxPriorityFee": "Max priority fee ({{unit}})",
         "gasLimit": "Gas limit ({{unit}})",
         "feePerByte": "Fees amount ({{unit}})",
+        "feesAmount": "Fees amount ({{unit}})",
         "suggested": "Suggested",
         "nextBlock": "Next block",
         "networkFeesInFiat": "Network fees in {{currency}}",
@@ -9500,6 +9517,13 @@
       "openMenuA11yLabel": "Chart options",
       "hideTransactions": "Hide activity on price chart",
       "showTransactions": "Show activity on price chart"
+    },
+    "footer": {
+      "moreOptions": {
+        "accessibilityLabel": "More options",
+        "sell": "Sell",
+        "earn": "Earn"
+      }
     }
   },
   "assetSelection": {
@@ -10132,8 +10156,11 @@
         "lastUpdate": "Last update: {{label}}",
         "recently": "recently"
       },
-      "privateSync": {
-        "mockTitle": "Private sync mock"
+      "mandatoryPrivateSync": {
+        "title": "Syncing your private balance ({{percentage}}%)",
+        "desc": "Please wait",
+        "errorTitle": "Private sync failed",
+        "errorDesc": "Something went wrong, please try again"
       },
       "quickAmountSelector": {
         "mockTitle": "Quick amount selector mock"

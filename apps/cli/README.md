@@ -80,7 +80,6 @@ The CLI exposes a small, fixed set of commands consumed by e2e and CI. Run
 | `generateAddresses` | e2e (`generate-e2e-userdata.yml`) — generates the address cache for account-based coins |
 | `generateUtxoAddresses` | e2e (`generate-e2e-userdata.yml`) — generates the address cache for UTXO-based coins |
 | `generateAppJson` | e2e (`generate-e2e-userdata.yml`) — generates the app dataset (userdata) for the desktop/mobile e2e suites |
-| `botTransfer` | CI (`bot-transfer.yml`) — transfers funds between Speculos seeds |
 | `version` | the package's own smoke test |
 
 All of these run against a Speculos device (`SPECULOS_API_PORT` or `SPECULOS_APDU_PORT`).

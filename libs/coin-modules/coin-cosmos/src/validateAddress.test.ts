@@ -34,7 +34,6 @@ describe("validateAddress", () => {
         currencyId: "cosmos id",
       };
 
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       mockedCryptoFactory.mockReturnValueOnce({
         prefix: expectedValue ? "cosmos" : "other",
       } as unknown as cosmosBase);
@@ -61,7 +60,6 @@ describe("validateAddress", () => {
       currencyId: "cosmos id",
     };
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     mockedCryptoFactory.mockReturnValueOnce({
       prefix: "juno:",
     } as unknown as cosmosBase);

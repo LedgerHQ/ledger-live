@@ -12,9 +12,8 @@
  * - Single UTXO and multiple UTXO account fixtures.
  */
 import { BigNumber } from "bignumber.js";
-import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { DerivationModes } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import BitcoinLikeWallet from "@ledgerhq/coin-bitcoin/wallet-btc/wallet";
 import type { Account as WalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
@@ -66,7 +65,7 @@ function createBitcoinAccount(
   walletAccount: WalletAccount,
   pendingOp: { hash: string; recipients: string[]; value: number },
 ): BitcoinAccount {
-  const currency = listCryptoCurrencies(true).find(c => c.id === "bitcoin")!;
+  const currency = getCryptoCurrencyById("bitcoin");
   return {
     type: "Account",
     id: "test-btc-account-rbf",

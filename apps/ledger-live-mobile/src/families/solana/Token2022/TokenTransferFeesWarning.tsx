@@ -6,7 +6,7 @@ import BigNumber from "bignumber.js";
 import { Text } from "@ledgerhq/native-ui";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";

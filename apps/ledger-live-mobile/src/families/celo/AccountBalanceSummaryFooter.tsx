@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { useTranslation } from "~/context/Locale";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import { withdrawableBalance } from "@ledgerhq/live-common/families/celo/logic";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";

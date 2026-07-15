@@ -1,6 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import { Observable, Subject } from "rxjs";
-import { getProviders } from "./api";
+import { getProviders } from "./network";
 import type { MultiversXPreloadData, MultiversXProvider } from "./types";
 const PRELOAD_MAX_AGE = 30 * 60 * 1000; // 30 minutes
 

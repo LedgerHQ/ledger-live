@@ -1,9 +1,7 @@
 import { renderHook } from "tests/testSetup";
 import { usePriceCellViewModel } from "../usePriceCellViewModel";
-import {
-  getCryptoCurrencyById,
-  getFiatCurrencyByTicker,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { formatPrice } from "@ledgerhq/live-currency-format";
 import { usePrice } from "~/renderer/hooks/usePrice";
 import { BigNumber } from "bignumber.js";

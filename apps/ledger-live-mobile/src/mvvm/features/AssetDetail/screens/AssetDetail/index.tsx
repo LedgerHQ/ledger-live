@@ -38,7 +38,15 @@ export default function AssetDetail() {
       lumenNavBar: {
         coinCapsule: {
           ticker: currency.ticker,
-          leadingContent: <CurrencyIcon currency={currency} hideNetwork size={24} />,
+          leadingContent: (
+            <CurrencyIcon
+              currency={currency}
+              hideNetwork
+              size={24}
+              testID={`${ASSET_DETAIL_TEST_IDS.coinCapsuleIcon}-${currency.ticker}`}
+            />
+          ),
+          testID: ASSET_DETAIL_TEST_IDS.coinCapsule,
         },
         renderTrailing,
         navBarTrailingProps: {

@@ -110,6 +110,21 @@ export const isAssetDiscoverabilityEnabled = async (): Promise<boolean> => {
 
 // Distinct from `assetDiscoverability`: gates the new MVVM AssetDetail (with
 // coin-options) vs the legacy MarketDetail screen (see useAssetDetailNavigation).
+export const isAssetSectionEnabled = async (): Promise<boolean> => {
+  const lwmFlag = await getLwmFlag();
+  return Boolean(lwmFlag?.enabled && lwmFlag?.params?.assetSection);
+};
+
+export const isMyWalletEnabled = async (): Promise<boolean> => {
+  const lwmFlag = await getLwmFlag();
+  return Boolean(lwmFlag?.enabled && lwmFlag?.params?.myWallet);
+};
+
+export const isOperationsListEnabled = async (): Promise<boolean> => {
+  const lwmFlag = await getLwmFlag();
+  return Boolean(lwmFlag?.enabled && lwmFlag?.params?.operationsList);
+};
+
 export const isAggregatedAssetsEnabled = async (): Promise<boolean> => {
   const lwmFlag = await getLwmFlag();
   return Boolean(lwmFlag?.enabled && lwmFlag?.params?.aggregatedAssets);

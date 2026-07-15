@@ -99,7 +99,6 @@ describe("getAccount", () => {
 
     jest
       .spyOn(node.default, "fetchStakingInfo")
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       .mockResolvedValue(undefined as unknown as SidecarStakingInfo);
 
     mockServer.use(
@@ -185,7 +184,6 @@ describe("getAccount", () => {
 
     jest
       .spyOn(node.default, "fetchStakingInfo")
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       .mockResolvedValue(stakingInfoResponseStub as SidecarStakingInfo);
 
     mockServer.use(

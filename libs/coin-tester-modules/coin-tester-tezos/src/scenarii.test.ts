@@ -2,9 +2,9 @@ import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { scenarioTezosTz1, scenarioTezosTz2 } from "./scenarii/tezos";
 import { killFlextesa } from "./flextesa";
 
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
-  process.on(e, async () => {
-    await killFlextesa();
+["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
+  process.on(e, () => {
+    killFlextesa().catch(() => {});
   }),
 );
 

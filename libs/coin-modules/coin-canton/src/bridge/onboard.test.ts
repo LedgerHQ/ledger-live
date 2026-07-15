@@ -135,7 +135,6 @@ describe("onboard", () => {
         party_id: newPartyId,
         party_name: "test-party-name",
         public_key_fingerprint: "test-fingerprint",
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         transactions: {} as any,
         challenge_nonce: "test-nonce",
         challenge_deadline: 1735689599,

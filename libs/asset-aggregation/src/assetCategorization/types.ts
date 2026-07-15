@@ -3,6 +3,7 @@ import type { AccountLike } from "@ledgerhq/types-live";
 
 export type CategorizedAssetItem = {
   currency: CryptoCurrency | TokenCurrency;
+  marketId?: string;
   balance: number;
   value: number;
   distribution: number;

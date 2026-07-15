@@ -37,6 +37,12 @@ describe("cryptoFactory test", () => {
     });
   });
 
+  it("should resolve the crypto_org_croeseid testnet to crypto_org chain params", () => {
+    const chain = cryptoFactory("crypto_org_croeseid");
+    expect(chain.prefix).toBe("cro");
+    expect(chain.unbondingPeriod).toBe(28);
+  });
+
   it("should throw an error when currency id is unknown", () => {
     expect(() => cryptoFactory("unknown")).toThrow();
   });

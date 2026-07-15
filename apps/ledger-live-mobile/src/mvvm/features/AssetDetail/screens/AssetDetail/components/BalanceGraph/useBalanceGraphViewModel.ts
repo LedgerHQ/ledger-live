@@ -266,16 +266,17 @@ export function useBalanceGraphViewModel({
   // funded token asset.
   const flatAccounts = useSelector(flattenAccountsSelector);
 
+  const assetCurrencyIds = useMemo(
+    () =>
+      new Set(currency ? [currency.id, ...(effectiveLedgerIds ?? [])] : (effectiveLedgerIds ?? [])),
+    [currency, effectiveLedgerIds],
+  );
+
   const showReceive = useMemo(() => {
     if (hideReceive || !currency) return false;
-    const hasAssetFunds = flatAccounts.some(
-      a => getAccountCurrency(a).id === currency.id && a.balance.gt(0),
-    );
-    const hasFundsElsewhere = flatAccounts.some(
-      a => getAccountCurrency(a).id !== currency.id && a.balance.gt(0),
-    );
-    return !hasAssetFunds && hasFundsElsewhere;
-  }, [hideReceive, flatAccounts, currency]);
+    const hasAssetAccounts = flatAccounts.some(a => assetCurrencyIds.has(getAccountCurrency(a).id));
+    return !hasAssetAccounts;
+  }, [hideReceive, flatAccounts, currency, assetCurrencyIds]);
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     currency,

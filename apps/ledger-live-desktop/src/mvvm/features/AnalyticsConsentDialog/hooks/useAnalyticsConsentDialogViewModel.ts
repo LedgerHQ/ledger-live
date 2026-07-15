@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import logger from "~/renderer/logger";
 import { useTranslation } from "react-i18next";
 import { useMatch } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -113,8 +114,8 @@ export function useAnalyticsConsentDialogViewModel() {
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     try {
       await updateIdentify({ force: true });
-    } catch (error) {
-      console.error("Failed to update analytics identify after consent change", error);
+    } catch (e) {
+      logger.critical(e, "Failed to update analytics identify after consent change");
     }
   };
 

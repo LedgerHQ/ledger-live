@@ -1,4 +1,8 @@
-import type { DeviceActionState, DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import type {
+  ApplicationDependency,
+  DeviceActionState,
+  DeviceManagementKit,
+} from "@ledgerhq/device-management-kit";
 import { DeviceActionStatus, UserInteractionRequired } from "@ledgerhq/device-management-kit";
 import {
   ConnectAppDeviceAction,
@@ -73,6 +77,12 @@ export type ConnectLedgerAppOptions = {
   onStateChange?: (state: DeviceState) => void;
   /** Max time to wait for the device to be unlocked. Defaults to DEFAULT_DEVICE_TIMEOUT_MS. */
   deviceTimeoutMs?: number;
+  /**
+   * Extra apps that must be installed alongside `managerAppName` before opening it. ConnectApp
+   * ensures each one is present (installing if missing). Used for clear-signing plugins the main
+   * app calls into — e.g. the "Kiln" app for EVM earn vault calldata. Defaults to none.
+   */
+  dependencies?: ApplicationDependency[];
 };
 
 /**
@@ -94,6 +104,7 @@ export async function connectLedgerApp(
       onStateChange: options.onStateChange,
       deviceTimeoutMs,
       silenceTimeoutMs,
+      dependencies: options.dependencies ?? [],
     });
     if (result.status === "success") return;
 
@@ -123,16 +134,18 @@ async function connectLedgerAppOnce(
     onStateChange,
     deviceTimeoutMs,
     silenceTimeoutMs,
+    dependencies,
   }: {
     onStateChange?: (state: DeviceState) => void;
     deviceTimeoutMs: number;
     silenceTimeoutMs: number;
+    dependencies: ApplicationDependency[];
   },
 ): Promise<ConnectAppOnceResult> {
   const deviceAction = new ConnectAppDeviceAction({
     input: {
       application: { name: managerAppName },
-      dependencies: [],
+      dependencies,
       requireLatestFirmware: false,
       allowMissingApplication: false,
       unlockTimeout: deviceTimeoutMs,

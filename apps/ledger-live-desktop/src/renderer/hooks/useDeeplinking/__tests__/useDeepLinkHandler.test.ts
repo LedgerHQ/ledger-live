@@ -3,8 +3,7 @@
 import { renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById, findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import {
   FEATURE_INTRO_CAMPAIGN_ID,
@@ -72,8 +71,12 @@ jest.mock("LLD/features/Send/hooks/useOpenSendFlow", () => ({
 
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
-  findCryptoCurrencyByKeyword: jest.fn(),
   parseCurrencyUnit: jest.fn((unit, amount) => amount),
+}));
+
+jest.mock("@domain/entity-currency-crypto", () => ({
+  ...jest.requireActual("@domain/entity-currency-crypto"),
+  findCryptoCurrencyByKeyword: jest.fn(),
 }));
 
 const mockFindCryptoCurrencyByKeyword = jest.mocked(findCryptoCurrencyByKeyword);
@@ -154,7 +157,7 @@ describe("useDeepLinkHandler", () => {
     });
 
     it("does not open add account flow with unknown currency", async () => {
-      mockFindCryptoCurrencyByKeyword.mockReturnValue(null);
+      mockFindCryptoCurrencyByKeyword.mockReturnValue(undefined);
 
       await testDeeplink("ledgerwallet://add-account?currency=unknowncoin");
 

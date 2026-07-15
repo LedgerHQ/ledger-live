@@ -1,6 +1,6 @@
 import { getRevealFee } from "@taquito/taquito";
 import coinConfig from "../config";
-import { STAKE_USE_ALL_RESERVE_MUTEZ } from "../utils";
+import { normalizePublicKeyForAddress, STAKE_USE_ALL_RESERVE_MUTEZ } from "../utils";
 import { estimateFees } from "./estimateFees";
 import { getTezosToolkit } from "./tezosToolkit";
 
@@ -60,6 +60,38 @@ describe("estimateFees", () => {
     (getTezosToolkit as jest.Mock).mockReturnValue(mockTezosToolkit);
     (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
       fees: defaultFeesConfig,
+    });
+  });
+
+  describe("signer public key from account.xpub", () => {
+    it("builds the mock signer from the account public key so reveal estimation is enabled", async () => {
+      // xpub holds the account public key (hex or base58; estimateFees normalizes it).
+      mockTezosToolkit.estimate.setDelegate.mockResolvedValue({
+        suggestedFeeMutez: 100,
+        gasLimit: 10000,
+        storageLimit: 0,
+        burnFeeMutez: 0,
+        opSize: 100,
+      });
+
+      await estimateFees({
+        account: { ...unrevealedAccount },
+        transaction: {
+          mode: "delegate",
+          recipient: "tz3Vq38qYD3GEbWcXHMLt5PaASZrkDtEiA8D",
+          amount: BigInt(0),
+        },
+      });
+
+      const signer = mockTezosToolkit.setProvider.mock.calls.at(-1)?.[0]?.signer;
+      // Signer carries the account's public key (normalized from xpub) so the reveal fee is
+      // accounted for; an empty signer key would mean reveal estimation is skipped.
+      const expectedPublicKey = normalizePublicKeyForAddress(
+        unrevealedAccount.xpub,
+        unrevealedAccount.address,
+      );
+      expect(expectedPublicKey?.length).toBeGreaterThan(0);
+      await expect(signer.publicKey()).resolves.toBe(expectedPublicKey);
     });
   });
 

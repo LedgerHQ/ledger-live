@@ -8,7 +8,7 @@ import { getCeloTransactionFeeCurrency } from "@ledgerhq/live-common/families/ce
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import { CeloAccount, CeloOperation } from "@ledgerhq/live-common/families/celo/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/hooks";
+import { useFindTokenByAddressInCurrencyQuery } from "@domain/api-currency-token";
 import { useQuery } from "@tanstack/react-query";
 import BigNumber from "bignumber.js";
 import React from "react";
@@ -162,9 +162,10 @@ const useFeesCurrency = (
   const contract = option?.contractAddress?.toLowerCase() ?? adapter?.toLowerCase() ?? "";
 
   // CAL fallback for received txs where the user doesn't hold the fee token.
-  const { token: tokenFromCal } = useTokenByAddressInCurrency(contract, account.currency.id, {
-    skip: !contract,
-  });
+  const { data: tokenFromCal } = useFindTokenByAddressInCurrencyQuery(
+    { contract_address: contract, network: account.currency.id },
+    { skip: !contract },
+  );
 
   if (!adapter) return undefined;
   return resolveFeeTokenFromAdapter(adapter, account) ?? tokenFromCal;

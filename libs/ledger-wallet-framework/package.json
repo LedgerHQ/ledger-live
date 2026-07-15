@@ -48,11 +48,6 @@
       "require": "./lib/account/index.js",
       "default": "./lib-es/account/index.js"
     },
-    "./bot": {
-      "@ledgerhq/source": "./src/bot/index.ts",
-      "require": "./lib/bot/index.js",
-      "default": "./lib-es/bot/index.js"
-    },
     "./bridge": {
       "@ledgerhq/source": "./src/bridge/index.ts",
       "require": "./lib/bridge/index.js",

@@ -39,6 +39,12 @@ const e2eDelegationAccounts = [
     transactionType: "Delegated",
     bugTicket: "NAPPS-1357",
   },
+  {
+    delegate: new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG"),
+    xrayTicket: "B2CQA-6115",
+    transactionType: "Delegated",
+    supportsLNS: false,
+  },
 ];
 
 const validators = [
@@ -48,7 +54,7 @@ const validators = [
   },
   {
     delegate: new Delegate(Account.SOL_3, "0.001", "Ledger by Figment"),
-    xrayTicket: "B2CQA-2730, B2CQA-2764",
+    xrayTicket: "B2CQA-2764",
   },
   {
     delegate: new Delegate(Account.NEAR_2, "0.01", "ledgerbyfigment.poolv1.near"),
@@ -96,7 +102,7 @@ for (const account of e2eDelegationAccounts) {
       {
         tag: [
           "@NanoSP",
-          "@LNS",
+          ...(account.supportsLNS !== false ? ["@LNS"] : []),
           "@NanoX",
           "@Stax",
           "@Flex",
@@ -498,13 +504,13 @@ for (const validator of validators) {
           await app.delegate.checkValidatorListIsVisible();
           await app.delegate.selectProviderOnRow(Number.parseInt(validator.delegate.provider, 10));
           await app.delegate.closeProviderList(Number.parseInt(validator.delegate.provider, 10));
+        } else if (validator.delegate.account.currency.name == Currency.SOL.name) {
+          await app.delegate.verifyContinueDisabled();
+          await app.delegate.selectProviderByName(validator.delegate.provider);
+          await app.delegate.verifyProviderTC(validator.delegate.provider);
         } else {
           await app.delegate.verifyFirstProviderName(validator.delegate.provider);
-          if (validator.delegate.account.currency.name == Currency.SOL.name) {
-            await app.delegate.verifyContinueDisabled();
-            await app.delegate.selectProviderByName(validator.delegate.provider);
-            await app.delegate.verifyProviderTC(validator.delegate.provider);
-          } else await app.delegate.verifyContinueEnabled();
+          await app.delegate.verifyContinueEnabled();
         }
         await app.delegate.verifyProvider(1);
         await app.delegate.openSearchProviderModal();

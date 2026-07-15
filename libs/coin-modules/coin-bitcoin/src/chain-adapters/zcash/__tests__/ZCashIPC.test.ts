@@ -1,4 +1,3 @@
-/* eslint @typescript-eslint/consistent-type-assertions: 0 */
 import type { Subscription } from "rxjs";
 import type { ShieldedSyncResultRaw, SyncShieldedArgs } from "../types";
 import type {

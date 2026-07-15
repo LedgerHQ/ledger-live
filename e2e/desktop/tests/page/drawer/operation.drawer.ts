@@ -4,11 +4,11 @@ import { expect } from "@playwright/test";
 import type { ClickedHistoryOperationSnapshot } from "../history.page";
 
 export class OperationDrawer extends Drawer {
-  readonly transactionIdLabel = this.page.getByText("Transaction ID");
+  readonly transactionIdLabel = this.page.getByTestId("operation-id-label");
   readonly transactionIdValue = this.page.getByTestId("operation-id");
   readonly dateLabel = this.page.getByTestId("operation-date-label");
   readonly dateValue = this.page.getByTestId("operation-date");
-  readonly amountLabel = this.page.getByText("Amount", { exact: true });
+  readonly amountLabel = this.page.getByTestId("operation-amount-label");
   readonly amountValue = this.page.getByTestId("operation-amount");
   readonly transactionType = this.page.getByTestId("transaction-type");
   readonly accountName = this.page.getByTestId("account-name");

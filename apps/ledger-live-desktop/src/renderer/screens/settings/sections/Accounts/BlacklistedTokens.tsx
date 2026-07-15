@@ -54,7 +54,7 @@ export default function BlacklistedTokens() {
         }
       })
       .catch(error => {
-        console.error("Failed to load blacklisted tokens:", error);
+        console.warn("Failed to load blacklisted tokens:", error);
         if (mounted) {
           setSections([]);
         }

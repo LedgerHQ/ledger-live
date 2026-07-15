@@ -109,7 +109,11 @@ export default function UnstakeAmount() {
       />
       <KeyboardView style={styles.container}>
         {!isKeyboardVisible && (
-          <Alert type="primary" title={t("tezos.unstake.flow.amount.unbondingNotice")} />
+          <Alert
+            type="primary"
+            title={t("tezos.unstake.flow.amount.unbondingNotice")}
+            testID="tezos-unstake-unbonding-notice"
+          />
         )}
         <TouchableWithoutFeedback onPress={blur}>
           <View style={styles.amountWrapper}>
@@ -133,7 +137,11 @@ export default function UnstakeAmount() {
                   <Text color="neutral.c70">
                     <Trans i18nKey="tezos.unstake.flow.amount.staked" />
                   </Text>
-                  <Text fontWeight="semiBold" color="neutral.c70">
+                  <Text
+                    fontWeight="semiBold"
+                    color="neutral.c70"
+                    testID="tezos-unstake-staked-balance"
+                  >
                     <CurrencyUnitValue showCode unit={unit} value={stakedBalance} />
                   </Text>
                 </View>

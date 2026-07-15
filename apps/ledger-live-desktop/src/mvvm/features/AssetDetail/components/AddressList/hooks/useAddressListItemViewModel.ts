@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";

@@ -2,7 +2,16 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"],
-  "ignoreUnused": ["@ledgerhq/hw-transport", "jest-sonar"],
-  "ignoreUnimported": ["src/Hedera.ts"]
+    "jest-util"
+  ],
+  "ignoreUnused": [
+    "@ledgerhq/hw-transport",
+    "jest-sonar"
+  ],
+  "ignoreUnimported": [
+    "src/Hedera.ts"
+  ],
+  "entry": [
+    "src/Hedera.ts"
+  ]
 }

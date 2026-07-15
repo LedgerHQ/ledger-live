@@ -2,7 +2,7 @@ import React from "react";
 import type { Transaction } from "@ledgerhq/live-common/families/aleo/types";
 import { render, screen } from "@tests/test-renderer";
 import { SummaryToSection } from "../SummaryToSection";
-import { ALEO_ACCOUNT_1 } from "../../__mocks__/account.mock";
+import { ALEO_ACCOUNT_1, ALEO_TOKEN_ACCOUNT_1 } from "../../__mocks__/account.mock";
 
 const mockUseMaybeAccountName = jest.fn();
 
@@ -57,5 +57,27 @@ describe("SummaryToSection", () => {
     );
 
     expect(screen.getByText("My Aleo Account")).toBeOnTheScreen();
+  });
+
+  it("shows token account name for a token self-transfer, not the parent account name", () => {
+    mockUseMaybeAccountName.mockReturnValue("My USAD Token");
+
+    const transaction = {
+      family: "aleo",
+      mode: "convert_token_private_to_public",
+      recipient: ALEO_ACCOUNT_1.freshAddress,
+    } as Transaction;
+
+    render(
+      <SummaryToSection
+        transaction={transaction}
+        currency={currency}
+        account={ALEO_TOKEN_ACCOUNT_1}
+        parentAccount={ALEO_ACCOUNT_1}
+      />,
+    );
+
+    expect(mockUseMaybeAccountName).toHaveBeenCalledWith(ALEO_TOKEN_ACCOUNT_1);
+    expect(screen.getByText("My USAD Token")).toBeOnTheScreen();
   });
 });

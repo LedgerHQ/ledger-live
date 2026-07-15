@@ -1,7 +1,7 @@
 import {
   FIFTEEN_MINUTES_IN_MS,
   useGetAltcoinSeasonIndexLatestQuery,
-} from "@ledgerhq/live-common/cmc-client/state-manager/api";
+} from "@domain/api-altcoins-sentiment";
 import { track } from "~/renderer/analytics/segment";
 
 const getAltSeasonTranslationKey = (value: number) =>

@@ -4,7 +4,7 @@ import axios from "axios";
 import { TFunction } from "i18next";
 import BigNumber from "bignumber.js";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";

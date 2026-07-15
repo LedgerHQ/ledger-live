@@ -4,7 +4,6 @@ import type {
   MemoNotSupported,
   Operation,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import type { EvmConfig } from "../config";
 import { createApi } from "./index";
 
@@ -22,7 +21,6 @@ describe("EVM Api (Arc Testnet)", () => {
   let operations: Operation[];
 
   beforeAll(async () => {
-    setupCalClientStore();
     module = createApi(
       {
         node: { type: "external", uri: "https://rpc.testnet.arc.network" },

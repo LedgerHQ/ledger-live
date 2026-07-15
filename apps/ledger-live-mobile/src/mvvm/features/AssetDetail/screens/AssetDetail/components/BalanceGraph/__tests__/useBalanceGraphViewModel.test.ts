@@ -12,6 +12,7 @@ import {
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
@@ -104,6 +105,7 @@ type AccountFunds = { currencyId: string; balance: number; tokens?: TokenFunds[]
 const CURRENCY_BY_ID: Record<string, CryptoCurrency> = {
   bitcoin: mockBtcCryptoCurrency,
   ethereum: mockEthCryptoCurrency,
+  optimism: getCryptoCurrencyById("optimism"),
 };
 
 function buildAccount({ currencyId, balance, tokens }: AccountFunds, index: number) {
@@ -264,7 +266,16 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.showReceive).toBe(false);
     });
 
-    it("is true when the asset has no funds but another asset does", () => {
+    it("is true when the asset has no account", () => {
+      const { result } = renderVM(
+        { currency: mockBtcCryptoCurrency },
+        withFunds([{ currencyId: "ethereum", balance: 1000 }]),
+      );
+
+      expect(result.current.showReceive).toBe(true);
+    });
+
+    it("is false when the asset already has an account without funds", () => {
       const { result } = renderVM(
         { currency: mockBtcCryptoCurrency },
         withFunds([
@@ -273,7 +284,7 @@ describe("useBalanceGraphViewModel", () => {
         ]),
       );
 
-      expect(result.current.showReceive).toBe(true);
+      expect(result.current.showReceive).toBe(false);
     });
 
     it("is false when the asset already has funds", () => {
@@ -288,7 +299,19 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.showReceive).toBe(false);
     });
 
-    it("is false when the wallet has no funds at all", () => {
+    it("is false when a multi-network asset has funds on another ledger id", () => {
+      const { result } = renderVM(
+        { currency: mockEthCryptoCurrency, ledgerIds: ["ethereum", "optimism"] },
+        withFunds([
+          { currencyId: "ethereum", balance: 0 },
+          { currencyId: "optimism", balance: 500 },
+        ]),
+      );
+
+      expect(result.current.showReceive).toBe(false);
+    });
+
+    it("is false when the wallet has an asset account with no funds at all", () => {
       const { result } = renderVM(
         { currency: mockBtcCryptoCurrency },
         withFunds([

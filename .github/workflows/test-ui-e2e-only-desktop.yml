@@ -505,7 +505,8 @@ jobs:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ${{ env.ALLURE_RESULTS }}
           name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_1 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}-#${{ github.run_id }}"
-          tags: ${{ format('["desktop","speculos",{0},{1},{2}]', toJSON(needs.prepare-devices.outputs.device_1), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual')), toJSON(inputs.ref || github.ref_name)) }}
+          tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_1), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
+          branch: ${{ inputs.ref || github.ref_name }}
 
   qaa-allure-upload-device2:
     name: "QAA Allure Upload - device 2 (Experimental)"
@@ -529,7 +530,8 @@ jobs:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ${{ env.ALLURE_RESULTS }}
           name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_2 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}-#${{ github.run_id }}"
-          tags: ${{ format('["desktop","speculos",{0},{1},{2}]', toJSON(needs.prepare-devices.outputs.device_2), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual')), toJSON(inputs.ref || github.ref_name)) }}
+          tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_2), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
+          branch: ${{ inputs.ref || github.ref_name }}
 
   upload-to-xray:
     name: "Upload to Xray"

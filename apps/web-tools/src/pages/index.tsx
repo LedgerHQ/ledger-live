@@ -1,12 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import {
-  ThemeProvider,
-  Tile,
-  TileContent,
-  TileTitle,
-  TileDescription,
-  Spot,
-} from "@ledgerhq/lumen-ui-react";
+import { Tile, TileContent, TileTitle, TileDescription, Spot } from "@ledgerhq/lumen-ui-react";
 import {
   ChartPie,
   ColorPalette,
@@ -81,35 +74,33 @@ export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <ThemeProvider colorScheme="system">
-      <main className="bg-canvas min-h-screen px-24 py-48">
-        <div className="mx-auto flex w-full max-w-960 flex-col gap-32">
-          <header className="flex flex-col items-center gap-8 text-center">
-            <div className="flex items-center gap-12">
-              <LedgerLogo size={32} className="text-base" />
-              <h1 className="heading-2 text-base">Web Tools</h1>
-            </div>
-            <p className="body-2 text-muted">Internal utilities for Ledger Live developers.</p>
-          </header>
-
-          <div className="grid grid-cols-1 gap-16 sm:grid-cols-2 lg:grid-cols-3">
-            {tools.map(tool => (
-              <Tile
-                key={tool.to}
-                appearance="card"
-                aria-label={tool.title}
-                onClick={() => navigate(tool.to)}
-              >
-                <Spot appearance="icon" icon={tool.icon} />
-                <TileContent>
-                  <TileTitle>{tool.title}</TileTitle>
-                  <TileDescription>{tool.description}</TileDescription>
-                </TileContent>
-              </Tile>
-            ))}
+    <main className="bg-canvas min-h-screen px-24 py-48">
+      <div className="mx-auto flex w-full max-w-960 flex-col gap-32">
+        <header className="flex flex-col items-center gap-8 text-center">
+          <div className="flex items-center gap-12">
+            <LedgerLogo size={32} className="text-base" />
+            <h1 className="heading-2 text-base">Web Tools</h1>
           </div>
+          <p className="body-2 text-muted">Internal utilities for Ledger Live developers.</p>
+        </header>
+
+        <div className="grid grid-cols-1 gap-16 sm:grid-cols-2 lg:grid-cols-3">
+          {tools.map(tool => (
+            <Tile
+              key={tool.to}
+              appearance="card"
+              aria-label={tool.title}
+              onClick={() => navigate(tool.to)}
+            >
+              <Spot appearance="icon" icon={tool.icon} />
+              <TileContent>
+                <TileTitle>{tool.title}</TileTitle>
+                <TileDescription>{tool.description}</TileDescription>
+              </TileContent>
+            </Tile>
+          ))}
         </div>
-      </main>
-    </ThemeProvider>
+      </div>
+    </main>
   );
 }

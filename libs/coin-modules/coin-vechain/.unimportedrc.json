@@ -4,7 +4,6 @@
     "src/errors.ts",
     "src/hw-getAddress.ts",
     "src/serialization.ts",
-    "src/specs.ts",
     "src/transaction.ts"
   ],
   "ignorePatterns": [
@@ -58,8 +57,6 @@
     "src/signer/getAddress.ts",
     "src/signer/index.ts",
     "src/signer/signMessage.ts",
-    "src/test/bot-deviceActions.ts",
-    "src/test/bot-specs.ts",
     "src/test/bridgeDatasetTest.ts",
     "src/test/index.ts",
     "src/types/bridge.ts",

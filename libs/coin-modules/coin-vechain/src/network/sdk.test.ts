@@ -18,7 +18,6 @@ const mockAccount = {
   energy: "",
   hasCode: false,
 };
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const mockTransaction: VechainSDKTransaction = {
   get encoded() {
     return new Uint8Array();
@@ -158,7 +157,6 @@ describe("sdk", () => {
         try {
           await submit(mockTransaction);
         } catch (err: unknown) {
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           const error = err as { message: string };
           expect(error.message).toMatch("Expected an ID");
         }
@@ -183,7 +181,6 @@ describe("sdk", () => {
             LAST_BLOCK_COUNT,
           );
         } catch (err: unknown) {
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           const error = err as { message: string };
           expect(error.message).toMatch(/internal server error/);
         }
@@ -221,7 +218,6 @@ describe("sdk", () => {
               LAST_BLOCK_COUNT,
             );
           } catch (err: unknown) {
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             const error = err as { message: string };
             expect(error.message).toMatch(/Unable to split/);
           }
@@ -261,7 +257,6 @@ describe("sdk", () => {
             LAST_BLOCK_COUNT,
           );
         } catch (err: unknown) {
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           const error = err as { message: string };
           expect(error.message).toMatch(/internal server error/);
         }
@@ -301,7 +296,6 @@ describe("sdk", () => {
               LAST_BLOCK_COUNT,
             );
           } catch (err: unknown) {
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             const error = err as { message: string };
             expect(error.message).toMatch(/Unable to split/);
           }

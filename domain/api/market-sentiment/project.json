@@ -1,0 +1,8 @@
+{
+  "name": "@domain/api-market-sentiment",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

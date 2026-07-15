@@ -11,7 +11,7 @@ import ToolTip from "~/renderer/components/Tooltip";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/families/stellar/types";
-import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
+import { useTokensData } from "@features/platform-currencies";
 
 const EllipsisMiddle = ({ children }: { children: string }) => {
   const Start = styled(Box)`
@@ -36,14 +36,12 @@ const EllipsisMiddle = ({ children }: { children: string }) => {
   );
 };
 const renderItem = ({
-  data: { id, name },
+  data: { id, name, contractAddress: assetIssuer },
   isDisabled,
 }: {
   data: TokenCurrency;
   isDisabled: boolean;
 }) => {
-  const tokenId = id.split("/")[2];
-  const assetIssuer = tokenId.split(":")[1];
   return (
     <Box
       key={id}
@@ -75,14 +73,11 @@ const renderItem = ({
   );
 };
 
-export const getAssetObject = (assetId: string) => {
-  const assetString = assetId.split("/")[2];
-  const [assetCode, assetIssuer] = assetString.split(":");
-  return {
-    assetCode,
-    assetIssuer,
-  };
-};
+// The CAL id is lowercased; read the case-sensitive code/issuer from token fields (as getAssetFromToken does).
+export const getAssetObject = (token: TokenCurrency) => ({
+  assetCode: token.name,
+  assetIssuer: token.contractAddress,
+});
 
 export default function DelegationSelectorField({
   account,
@@ -107,8 +102,8 @@ export default function DelegationSelectorField({
 
   const value = useMemo(
     () =>
-      options.find(({ id }) => {
-        const { assetCode, assetIssuer } = getAssetObject(id);
+      options.find(option => {
+        const { assetCode, assetIssuer } = getAssetObject(option);
         return assetCode === transaction.assetReference && assetIssuer === transaction.assetOwner;
       }),
     [options, transaction.assetOwner, transaction.assetReference],

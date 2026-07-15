@@ -225,6 +225,7 @@ export function runTooLowAmountForQuoteSwapsTest(
   ctaBanner: boolean,
   quotesVisible: boolean,
   tags: string[],
+  errorDisplay: "banner" | "buttonReplacement",
 ) {
   describe(`Swap - with too low amount (throwing UI errors) - ${swap.amount} ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, () => {
     beforeAll(async () => {
@@ -266,12 +267,12 @@ export function runTooLowAmountForQuoteSwapsTest(
         await app.swapLiveApp.checkQuotes();
         await app.swapLiveApp.selectExchange();
       }
-      await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
+      // See LedgerHQ/swap-live-app#1699 for the banner vs. buttonReplacement error-display split.
+      await app.swapLiveApp.verifySwapErrorMessageIsCorrect(errorMessage, errorDisplay);
 
-      // CTA banner temporarily removed from UI — re-enable when it returns
-      // if (ctaBanner) {
-      //   await app.swapLiveApp.checkCtaBanner(quotesVisible);
-      // }
+      if (ctaBanner) {
+        await app.swapLiveApp.checkCtaBanner(quotesVisible);
+      }
     });
   });
 }
@@ -586,7 +587,7 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
       );
       await app.swapLiveApp.checkQuotes();
       await app.swapLiveApp.selectExchange();
-      await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
+      await app.swapLiveApp.verifySwapErrorMessageIsCorrect(errorMessage, "banner");
     });
   });
 }

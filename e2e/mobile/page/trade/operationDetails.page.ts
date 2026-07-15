@@ -12,7 +12,9 @@ export default class OperationDetailsPage {
   "operationsType" = {
     OUT: "Sent",
     DELEGATE: "Delegated",
+    UNDELEGATE: "Undelegated",
     STAKE: "Staked",
+    UNSTAKE: "Unstaked",
     LOCK: "Locked",
     VOTE: "Voted",
   };
@@ -23,6 +25,7 @@ export default class OperationDetailsPage {
   operationDetailsDate = "operationDetails-date";
   operationDetailsScrollViewId = "operation-details-scroll-view";
   celoValidatorGroupId = "celo-operationDetails-validatorGroup";
+  viewInExplorerButtonId = "operation-detail-view-in-explorer-button";
 
   title = () => getElementById(this.titleId);
   account = () => getElementById(this.operationDetailsAccount);
@@ -32,7 +35,7 @@ export default class OperationDetailsPage {
 
   @Step("Wait for operation details")
   async waitForOperationDetails() {
-    await waitForElementById(this.titleId, 10000);
+    await waitForElementById(this.titleId);
   }
 
   @Step("Check account details")
@@ -89,6 +92,11 @@ export default class OperationDetailsPage {
     await detoxExpect(getElementById(this.titleId)).toHaveText(this.operationsType[type]);
   }
 
+  @Step("Check transaction title $0")
+  async checkTransactionTitle(title: string) {
+    await detoxExpect(getElementById(this.titleId)).toHaveText(title);
+  }
+
   @Step("Check CELO validator group in operation details")
   async checkCeloValidatorGroup(validatorGroup: string) {
     await scrollToId(this.celoValidatorGroupId, this.operationDetailsScrollViewId);
@@ -120,5 +128,18 @@ export default class OperationDetailsPage {
     await scrollToId(this.operationDetailsIdentifier, this.operationDetailsScrollViewId);
     await detoxExpect(this.operation()).toBeVisible();
     await detoxExpect(this.date()).toBeVisible();
+  }
+
+  @Step("Expect operation amount ticker")
+  async expectOperationAmountTicker(ticker: string) {
+    await this.waitForOperationDetails();
+    const amountText = await getTextOfElement(this.operationDetailsAmount);
+    jestExpect(amountText).toContain(ticker);
+  }
+
+  @Step("Check view in explorer button")
+  async checkViewInExplorerButtonVisible() {
+    await scrollToId(this.viewInExplorerButtonId, this.operationDetailsScrollViewId);
+    await detoxExpect(getElementById(this.viewInExplorerButtonId)).toBeVisible();
   }
 }

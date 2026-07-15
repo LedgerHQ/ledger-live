@@ -1,0 +1,32 @@
+services:
+  chain-simulator:
+    # MultiversX Chain Simulator: runs the full protocol/VM with all shards
+    # collapsed, exposing the standard gateway/proxy REST API plus the
+    # /simulator/* control endpoints (on-demand block generation + set-state).
+    #
+    # NOTE: Intentionally uses :latest; update the tag if upstream changes break CI.
+    # See https://github.com/multiversx/mx-chain-simulator-go (default API/proxy port: 8085).
+    image: multiversx/chainsimulator:latest
+    container_name: multiversx-chain-simulator
+    ports:
+      - "8085:8085"
+    # Run a single shard so every address lives in shard 0 — transfers are then
+    # intra-shard and settle in one block, keeping the scenario deterministic
+    # (cross-shard settlement timing otherwise makes captured tx state flaky).
+    # The entrypoint is `./chainsimulator`, so this is appended as a flag.
+    command: ["--num-of-shards", "1"]
+    # `compose up --wait` blocks until this healthcheck reports `healthy`, so the
+    # spawn helper needs no in-process readiness polling. Probing /network/config
+    # is enough: it only answers once the node is primed.
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -sS -o /dev/null -w '%{http_code}' http://127.0.0.1:8085/network/config | grep -qE '^[2]'",
+        ]
+      interval: 5s
+      timeout: 10s
+      retries: 60
+    # The simulator does not produce blocks on a timer; tests drive block
+    # production explicitly via POST /simulator/generate-blocks/:n. This keeps
+    # the scenario fully deterministic.

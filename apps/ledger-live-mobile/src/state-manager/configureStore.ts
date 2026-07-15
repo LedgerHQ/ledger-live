@@ -16,6 +16,8 @@ import { canPushDeviceIdsSelector, languageSelector } from "~/reducers/settings"
 import { getEnv } from "@ledgerhq/live-env";
 import { calApiExtra } from "@domain/api-currency-token";
 import { cvsApiExtra } from "@domain/api-currency-fiat";
+import { marketSentimentApiExtra } from "@domain/api-market-sentiment";
+import { altcoinsSentimentApiExtra } from "@domain/api-altcoins-sentiment";
 import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags } from "~/firebase/remoteConfig";
 
@@ -35,6 +37,12 @@ export const store = configureStore({
             }),
             ...cvsApiExtra({
               countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API"),
+            }),
+            ...marketSentimentApiExtra({
+              coinMarketCapApiUrl: getEnv("CMC_API_URL"),
+            }),
+            ...altcoinsSentimentApiExtra({
+              coinMarketCapApiUrl: getEnv("CMC_API_URL"),
             }),
           },
         },

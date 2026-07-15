@@ -62,8 +62,8 @@ const saveCryptoAssetsCache = throttle((state: State) => {
       setKey("app", "cryptoAssets", persistedData);
       lastPersistedCryptoAssets = persistedData;
     }
-  } catch (error) {
-    console.error("Failed to save crypto assets cache:", error);
+  } catch (e) {
+    console.warn("crypto assets cache write failed:", e);
   }
 }, 5000);
 

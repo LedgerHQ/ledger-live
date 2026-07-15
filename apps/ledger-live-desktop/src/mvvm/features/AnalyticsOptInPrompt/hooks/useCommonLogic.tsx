@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
+import logger from "~/renderer/logger";
 import { useFeature } from "@features/platform-feature-flags";
 import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
 import {
@@ -74,8 +75,8 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     try {
       await updateIdentify({ force: true });
-    } catch (error) {
-      console.error("Failed to update analytics identify", error);
+    } catch (e) {
+      logger.critical(e, "Failed to update analytics identify");
     }
     if (entryPoint === EntryPoint.onboarding) {
       nextStep?.();

@@ -17,6 +17,7 @@ export * from "./ptxPerpsLiveAppMobile";
 export * from "./ptxServiceCtaExchangeDrawer";
 export * from "./ptxServiceCtaScreens";
 export * from "./ptxSwapDetailedView";
+export * from "./ptxSwapEstimatedReceivedAmount";
 export * from "./ptxSwapExodusProvider";
 export * from "./ptxSwapLiveApp";
 export * from "./ptxSwapLiveAppKycWarning";

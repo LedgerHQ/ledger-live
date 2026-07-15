@@ -1,6 +1,6 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { getFees } from "./api";
+import { getFees } from "./network";
 import { GAS } from "./constants";
 import { MultiversXEncodeTransaction } from "./encode";
 import { isAmountSpentFromBalance } from "./logic";

@@ -5,7 +5,7 @@ import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/
 import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { selectSupportedFiats } from "@domain/entity-currency-fiat";
 import { buildSupportedCounterValues } from "~/logic/buildSupportedCounterValues";
 import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";
@@ -44,6 +44,7 @@ import {
   INITIAL_STATE as settingsState,
   counterValueIdOf,
   migrateLegacyCryptoCounterValue,
+  migrateLegacyStarredMarketCoins,
 } from "~/reducers/settings";
 import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
 import { importMarket } from "~/actions/market";
@@ -150,6 +151,11 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       // Legacy crypto counter-values were persisted as ticker (BTC/ETH); migrate them to Ledger ids.
       if (settingsData && typeof settingsData.counterValue === "string") {
         settingsData.counterValue = migrateLegacyCryptoCounterValue(settingsData.counterValue);
+      }
+      if (settingsData?.starredMarketCoins) {
+        settingsData.starredMarketCoins = migrateLegacyStarredMarketCoins(
+          settingsData.starredMarketCoins,
+        );
       }
 
       store.dispatch(importSettings(settingsData));

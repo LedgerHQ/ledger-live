@@ -76,10 +76,9 @@ const subAccountReceive: Array<{
     shouldSelectReceiveCryptoOption: true,
   },
   { account: TokenAccount.TRX_USDT, xrayTicket: "B2CQA-2496" },
-  //TODO: re-enable tests when https://ledgerhq.atlassian.net/browse/LIVE-25852 is fixed
-  // { account: TokenAccount.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
-  // { account: TokenAccount.POL_DAI_1, xrayTicket: "B2CQA-2493" },
-  // { account: TokenAccount.POL_UNI, xrayTicket: "B2CQA-2494" },
+  { account: TokenAccount.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
+  { account: TokenAccount.POL_DAI_1, xrayTicket: "B2CQA-2493" },
+  { account: TokenAccount.POL_UNI, xrayTicket: "B2CQA-2494" },
   { account: TokenAccount.SUI_USDC_1, xrayTicket: "B2CQA-3906" },
 ];
 
@@ -320,12 +319,7 @@ for (const transaction of transactionE2E) {
 
 const transactionsAddressInvalid = [
   {
-    transaction: new Transaction(
-      TokenAccount.ALGO_USDT_1,
-      TokenAccount.ALGO_USDT_2,
-      "0.1",
-      Fee.MEDIUM,
-    ),
+    transaction: new Transaction(TokenAccount.ALGO_USDT_1, Account.ALGO_3, "0.1", Fee.MEDIUM),
     recipient: undefined,
     expectedErrorMessage: "Recipient account has not opted in the selected ASA.",
     xrayTicket: "B2CQA-2702",

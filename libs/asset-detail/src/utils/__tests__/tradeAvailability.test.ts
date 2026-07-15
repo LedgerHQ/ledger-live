@@ -1,5 +1,6 @@
 import {
   isAvailableOnBuy,
+  isAvailableOnSell,
   isAvailableOnSwap,
   ledgerIdsFromLedgerCurrency,
 } from "../tradeAvailability";
@@ -18,6 +19,22 @@ describe("tradeAvailability", () => {
 
     it("returns false when no ledger id is available on ramp", () => {
       expect(isAvailableOnBuy({ ledgerIds: ["bitcoin"] }, () => false)).toBe(false);
+    });
+  });
+
+  describe("isAvailableOnSell", () => {
+    it("returns false when the currency is nullish", () => {
+      expect(isAvailableOnSell(undefined, () => true)).toBe(false);
+    });
+
+    it("returns true when any ledger id is available on off-ramp", () => {
+      expect(
+        isAvailableOnSell({ ledgerIds: ["bitcoin", "ethereum"] }, id => id === "ethereum"),
+      ).toBe(true);
+    });
+
+    it("returns false when no ledger id is available on off-ramp", () => {
+      expect(isAvailableOnSell({ ledgerIds: ["bitcoin"] }, () => false)).toBe(false);
     });
   });
 

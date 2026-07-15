@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Box, Pressable, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme, type LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
-import { getFearAndGreedTranslationKey } from "@ledgerhq/live-common/cmc-client/utils/fearAndGreed";
+import { getFearAndGreedTranslationKey } from "@features/flow-fear-and-greed";
 import { useTranslation } from "~/context/Locale";
 import FearAndGreedArc from "../FearAndGreedArc";
 import type { FearAndGreedExpandedCardProps, FearAndGreedExpandedCardSkeletonProps } from "./types";

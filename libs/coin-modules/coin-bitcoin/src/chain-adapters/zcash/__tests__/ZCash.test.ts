@@ -1,4 +1,3 @@
-/* eslint @typescript-eslint/consistent-type-assertions: 0 */
 import { Observable } from "rxjs";
 import type { ShieldedSyncResult, ShieldedSyncResultRaw, SyncShieldedArgs } from "../types";
 import type { StartSyncJobArgs } from "../native-engine/engine";

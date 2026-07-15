@@ -13,6 +13,7 @@ import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds
 import { useFeature } from "@features/platform-feature-flags";
 import { INJECTED_JAVASCRIPT } from "./dappInject";
 import { DappAccountGate } from "./DappAccountGate";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import { E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT } from "~/e2e/webviewNetworkLogCapture";
 import { webviewLogStore } from "~/e2e/webviewLogStore";
 
@@ -52,6 +53,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       clearDeviceIntentSignRequest,
       deviceIntentSignMessageRequest,
       clearDeviceIntentSignMessageRequest,
+      publicKeyUnavailableError,
+      clearPublicKeyUnavailableError,
     } = useWebView(
       {
         manifest,
@@ -154,6 +157,10 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             onClose={clearDeviceIntentSignMessageRequest}
           />
         )}
+        <GenericErrorBottomModal
+          error={publicKeyUnavailableError}
+          onClose={clearPublicKeyUnavailableError}
+        />
       </>
     );
   },

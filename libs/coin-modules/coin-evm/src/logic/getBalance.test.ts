@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
@@ -65,7 +64,11 @@ describe("getBalance", () => {
     [
       "native and token balances", // test description
       {
-        lastTokenOperations: [{ contract: "0x123" }, { contract: "0x123" }, { contract: "0x456" }],
+        lastTokenOperations: [
+          { asset: { type: "erc20", assetReference: "0x123" } },
+          { asset: { type: "erc20", assetReference: "0x123" } },
+          { asset: { type: "erc20", assetReference: "0x456" } },
+        ],
         nextPagingToken: "",
       }, // operations
       { "0x123": "1000000", "0x456": "2000000" }, // token balances
@@ -130,7 +133,10 @@ describe("getBalance", () => {
     {
       title: "only one token",
       operations: {
-        lastTokenOperations: [{ contract: "0x123" }, { contract: "0x456" }],
+        lastTokenOperations: [
+          { asset: { type: "erc20", assetReference: "0x123" } },
+          { asset: { type: "erc20", assetReference: "0x456" } },
+        ],
         nextPagingToken: "",
       },
       includeAssets: (assetInfo: AssetInfo) => {
@@ -148,7 +154,11 @@ describe("getBalance", () => {
     {
       title: "all tokens except one",
       operations: {
-        lastTokenOperations: [{ contract: "0x123" }, { contract: "0x456" }, { contract: "0x789" }],
+        lastTokenOperations: [
+          { asset: { type: "erc20", assetReference: "0x123" } },
+          { asset: { type: "erc20", assetReference: "0x456" } },
+          { asset: { type: "erc20", assetReference: "0x789" } },
+        ],
         nextPagingToken: "",
       },
       includeAssets: (assetInfo: AssetInfo) => {
@@ -192,7 +202,7 @@ describe("getBalance", () => {
       }
 
       const notSupportedTokens = operations.lastTokenOperations.filter(
-        token => !expected.some(item => item.asset.assetReference === token.contract),
+        token => !expected.some(item => item.asset.assetReference === token.asset.assetReference),
       );
 
       expect(notSupportedTokens).not.toHaveLength(0);
@@ -200,7 +210,7 @@ describe("getBalance", () => {
         expect(nodeApiMock.getTokenBalance).not.toHaveBeenCalledWith(
           currency,
           userAddress,
-          token.contract,
+          token.asset.assetReference,
         );
       }
     },
@@ -220,9 +230,9 @@ describe("getBalance", () => {
       getOperations: () =>
         Promise.resolve({
           lastTokenOperations: [
-            { contract: "contract1" },
-            { contract: "contract1" },
-            { contract: "contract2" },
+            { asset: { type: "erc20", assetReference: "contract1" } },
+            { asset: { type: "erc20", assetReference: "contract1" } },
+            { asset: { type: "erc20", assetReference: "contract2" } },
           ],
         } as any),
     });
@@ -256,7 +266,10 @@ describe("getBalance", () => {
       mockGetStakes.mockResolvedValue({ items: [] });
       mockGetExplorerApi.mockReturnValue({
         getOperations: jest.fn().mockResolvedValue({
-          lastTokenOperations: [{ contract: NATIVE_CONTRACT }, { contract: REGULAR_CONTRACT }],
+          lastTokenOperations: [
+            { asset: { type: "erc20", assetReference: NATIVE_CONTRACT } },
+            { asset: { type: "erc20", assetReference: REGULAR_CONTRACT } },
+          ],
           nextPagingToken: "",
         }),
       });
@@ -289,7 +302,9 @@ describe("getBalance", () => {
       mockGetStakes.mockResolvedValue({ items: [] });
       mockGetExplorerApi.mockReturnValue({
         getOperations: jest.fn().mockResolvedValue({
-          lastTokenOperations: [{ contract: NATIVE_CONTRACT.toLowerCase() }],
+          lastTokenOperations: [
+            { asset: { type: "erc20", assetReference: NATIVE_CONTRACT.toLowerCase() } },
+          ],
           nextPagingToken: "",
         }),
       });
@@ -306,7 +321,10 @@ describe("getBalance", () => {
       mockGetStakes.mockResolvedValue({ items: [] });
       mockGetExplorerApi.mockReturnValue({
         getOperations: jest.fn().mockResolvedValue({
-          lastTokenOperations: [{ contract: NATIVE_CONTRACT }, { contract: REGULAR_CONTRACT }],
+          lastTokenOperations: [
+            { asset: { type: "erc20", assetReference: NATIVE_CONTRACT } },
+            { asset: { type: "erc20", assetReference: REGULAR_CONTRACT } },
+          ],
           nextPagingToken: "",
         }),
       });

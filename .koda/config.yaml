@@ -3,3 +3,6 @@ setup: |
   mise install
   pnpm i --frozen-lockfile
 lint: pnpm nx affected -t lint
+github:
+  draft_pull_requests: true
+  assign_pr_initiator: true

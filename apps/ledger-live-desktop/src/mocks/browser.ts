@@ -4,7 +4,7 @@ import { mockAssets } from "./dada/mockAssets";
 import { mockStablecoinsResponse } from "@ledgerhq/live-common/dada-client/mocks/stablecoins.mock";
 import { mockStocksResponse } from "@ledgerhq/live-common/dada-client/mocks/stocks.mock";
 import { mockLedgerStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/mocks/ledgerStatus";
-import { mockFearAndGreedLatest } from "@ledgerhq/live-common/cmc-client/__mocks__/fearAndGreed.mock";
+import { mockFearAndGreedLatest } from "@domain/api-market-sentiment/mock";
 import countervaluesHandlers from "../../tests/handlers/countervalues";
 
 const assetsHandler = ({ request }: { request: Request }) => {

@@ -5,7 +5,8 @@ import monadAbi from "../../abis/monad.abi.json";
 import { getCoinConfig } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
 import { clearValidatorsCache, getValidators } from "./index";
-import { fetchMonadStakes, getValidatorAddressById } from "./monad";
+import { fetchMonadStakes } from "./monad";
+import { getValidatorAddressById } from "./monadResolver";
 
 jest.mock("../../config", () => ({
   __esModule: true,
@@ -216,7 +217,6 @@ describe("staking/validators/monad", () => {
     // Repo filename is the lowercase secp hex without the `0x` prefix.
     mockedNetwork.mockResolvedValueOnce({
       data: { name: "GalaxyDigital" },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
     const page = await getValidators("monad");
@@ -541,7 +541,6 @@ describe("staking/validators/monad", () => {
       );
       mockedNetwork.mockResolvedValueOnce({
         data: { name: "GalaxyDigital" },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any);
 
       const stakes = await fetchStakes();

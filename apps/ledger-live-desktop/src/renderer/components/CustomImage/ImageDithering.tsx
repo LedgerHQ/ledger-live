@@ -76,8 +76,7 @@ const ImageDithering: React.FC<Props> = props => {
         setPreviewResult(previewResult);
         onResult({ previewResult, rawResult });
         setLoading(false);
-      } catch (e) {
-        console.error(e);
+      } catch {
         onError(new ImageProcessingError());
       }
     }

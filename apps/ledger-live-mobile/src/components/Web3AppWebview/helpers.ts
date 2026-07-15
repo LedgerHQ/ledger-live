@@ -55,6 +55,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useFeature } from "@features/platform-feature-flags";
 import type { WalletApiDeviceIntentSignRequest } from "LLM/features/WalletApiSignature/components/TransactionSignatureDrawer";
 import type { WalletApiDeviceIntentSignMessageRequest } from "LLM/features/WalletApiSignature/components/MessageSignatureDrawer";
+import { AccountPublicKeyUnavailable } from "@ledgerhq/live-common/errors";
 export function useWebView(
   {
     manifest,
@@ -129,12 +130,16 @@ export function useWebView(
     () => setDeviceIntentSignMessageRequest(null),
     [],
   );
+  // Set on getPublicKey failure; the consuming component renders it as a native bottom modal.
+  const [publicKeyUnavailableError, setPublicKeyUnavailableError] = useState<Error | null>(null);
+  const clearPublicKeyUnavailableError = useCallback(() => setPublicKeyUnavailableError(null), []);
 
   const uiHook = useUiHook({
     manifest,
     onTransactionBroadcast: onWalletApiTransactionBroadcast,
     requestDeviceIntentSign: setDeviceIntentSignRequest,
     requestDeviceIntentSignMessage: setDeviceIntentSignMessageRequest,
+    onPublicKeyUnavailable: setPublicKeyUnavailableError,
   });
 
   const trackingEnabled = useSelector(trackingEnabledSelector);
@@ -297,6 +302,8 @@ export function useWebView(
     clearDeviceIntentSignRequest,
     deviceIntentSignMessageRequest,
     clearDeviceIntentSignMessageRequest,
+    publicKeyUnavailableError,
+    clearPublicKeyUnavailableError,
   };
 }
 
@@ -496,6 +503,7 @@ export function useWebviewState(
 export interface Props {
   manifest: LiveAppManifest;
   onTransactionBroadcast?: () => void;
+  onPublicKeyUnavailable?: (error: Error) => void;
   /**
    * Surfaces a pending `transaction.sign` request so the Device Intent Executor can be
    * mounted as a bottom-sheet drawer over the live app (used when the device-intent sign
@@ -513,6 +521,7 @@ export interface Props {
 export function useUiHook({
   manifest,
   onTransactionBroadcast,
+  onPublicKeyUnavailable,
   requestDeviceIntentSign,
   requestDeviceIntentSignMessage,
 }: Props): UiHook {
@@ -584,6 +593,9 @@ export function useUiHook({
           onClose: onCancel,
           onError,
         });
+      },
+      "account.publicKeyUnavailable": () => {
+        onPublicKeyUnavailable?.(new AccountPublicKeyUnavailable());
       },
       "message.sign": ({ account, message, options, onSuccess, onError, onCancel }) => {
         // When enabled, skip the SignMessage stack and connect to the device directly
@@ -786,6 +798,7 @@ export function useUiHook({
       requestDeviceIntentSignMessage,
       manifest.id,
       manifest.name,
+      onPublicKeyUnavailable,
     ],
   );
 }

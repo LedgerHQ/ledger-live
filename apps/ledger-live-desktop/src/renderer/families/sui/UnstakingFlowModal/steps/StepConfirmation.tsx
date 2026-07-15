@@ -101,6 +101,7 @@ export function StepConfirmationFooter({
           primary
           ml={2}
           event="Unstake Sui Flow Step 3 View OpD Clicked"
+          data-testid="sui-unstake-view-details-button"
           onClick={onViewDetails}
         >
           {t("sui.unstake.flow.steps.confirmation.success.cta")}

@@ -23,6 +23,7 @@ export default function UnstakingRow({ position, unit, currency, onPress, isLast
 
   return (
     <DelegationRow
+      testID={`tezos-unstaking-row-${position.uid}`}
       baker={baker}
       address={address}
       amount={position.amount}

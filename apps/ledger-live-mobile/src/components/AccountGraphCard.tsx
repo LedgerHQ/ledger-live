@@ -306,7 +306,7 @@ const GraphCardHeader = ({
           </Flex>
         </Flex>
       </Touchable>
-      <Touchable onPress={openReceive}>
+      <Touchable onPress={openReceive} touchableTestID={`account-address-${account.id}`}>
         <Tag
           Icon={QrCodeMedium}
           numberOfLines={1}

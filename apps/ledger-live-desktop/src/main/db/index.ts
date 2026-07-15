@@ -224,7 +224,6 @@ async function setEncryptionKey(encryptionKey: string): Promise<void> {
       decryptEncryptedPathInMemory(ns, keyPath, encryptionKey);
     } catch (err) {
       log("db", "setEncryptionKey failure: " + String(err));
-      console.error(err);
       throw new DBWrongPassword();
     }
   }
@@ -244,7 +243,6 @@ async function removeEncryptionKey() {
         decryptEncryptedPathInMemory(ns, keyPath, encryptionKey);
       } catch (err) {
         log("db", "removeEncryptionKey failure: " + String(err));
-        console.error(err);
         throw err;
       }
     }

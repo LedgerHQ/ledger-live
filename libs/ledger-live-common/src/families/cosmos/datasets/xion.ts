@@ -28,7 +28,7 @@ const dataset: CurrenciesData<Transaction> = {
         xpub: "xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez",
         freshAddress: "xion1gyauvl44q2apn3u3aujm36q8zrj74vryh3y4ez",
         freshAddressPath: "44'/118'/0'/0/0",
-        name: "Xion 1",
+        name: "Verona 1",
         derivationMode: "",
         index: 0,
         currencyId: "xion",

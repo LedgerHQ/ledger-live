@@ -1,5 +1,5 @@
 import React from "react";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { render, screen } from "tests/testSetup";
 import Row from "./Row";
 import type { DistributionItem } from "@ledgerhq/types-live";

@@ -66,22 +66,23 @@ export function useLargeScreenUpsellEligibility(): LargeScreenUpsellEligibility 
   const onboardingDate = useSelector(onboardingDateSelector);
 
   const params = feature?.params;
+  const hasSeenTouchscreen = hasSeenTouchscreenDevice(knownDeviceModelIds);
+  const seenNanoDeviceModelIds = getSeenNanoDeviceModelIds(knownDeviceModelIds);
+  const enabledNanoDeviceModelIds = params
+    ? seenNanoDeviceModelIds.filter(deviceModelId => params.audience.models[deviceModelId])
+    : [];
+
   if (!feature?.enabled || !params) {
     return { isEligible: false, reason: "feature_disabled" };
   }
 
-  if (hasSeenTouchscreenDevice(knownDeviceModelIds)) {
+  if (hasSeenTouchscreen) {
     return { isEligible: false, reason: "touchscreen_seen" };
   }
 
-  const seenNanoDeviceModelIds = getSeenNanoDeviceModelIds(knownDeviceModelIds);
   if (seenNanoDeviceModelIds.length === 0) {
     return { isEligible: false, reason: "no_nano" };
   }
-
-  const enabledNanoDeviceModelIds = seenNanoDeviceModelIds.filter(
-    deviceModelId => params.audience.models[deviceModelId],
-  );
 
   if (enabledNanoDeviceModelIds.length === 0) {
     return { isEligible: false, reason: "model_disabled" };
@@ -89,8 +90,10 @@ export function useLargeScreenUpsellEligibility(): LargeScreenUpsellEligibility 
 
   const deviceModelId = selectCooldownDeviceModelId(enabledNanoDeviceModelIds, params.cooldownDays);
   const cooldownDays = resolveCooldownDays(params.cooldownDays, deviceModelId);
+  const now = new Date();
+  const onboardingDateForEligibility = onboardingDate ?? now;
 
-  if (!isCooldownElapsed(onboardingDate, cooldownDays, new Date())) {
+  if (!isCooldownElapsed(onboardingDateForEligibility, cooldownDays, now)) {
     return { isEligible: false, reason: "cooldown", deviceModelId, cooldownDays };
   }
 

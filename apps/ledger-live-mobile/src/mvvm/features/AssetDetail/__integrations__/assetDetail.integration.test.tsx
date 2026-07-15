@@ -37,11 +37,12 @@ const mockedUseReceiveNetworkLedgerIds = jest.mocked(useReceiveNetworkLedgerIds)
 const setAvailability = (overrides: Partial<TradeAvailability> = {}) =>
   mockedUseTradeAvailability.mockReturnValue({
     availableOnBuy: true,
+    availableOnSell: true,
     availableOnSwap: true,
     isCurrencySupported: true,
     isResolved: true,
     ...overrides,
-  });
+  } as TradeAvailability);
 
 // useAccountBridgeMany suspends on the dynamic coin-module import — bypass it
 // so tests don't need a Suspense boundary and don't depend on import resolution timing.
@@ -177,7 +178,7 @@ describe("AssetDetail screen layout", () => {
     // While market data is loading, the header is rendered as a skeleton (no
     // "Market price" text). The chart container is still mounted.
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.chart)).toBeVisible();
-    expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeNull();
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeVisible();
   });
 
   it("hides the addresses section when there are no accounts", () => {
@@ -277,7 +278,7 @@ describe("AssetDetail screen layout", () => {
   });
 
   describe("floating bar CTAs", () => {
-    it("shows Buy + Swap when buyable, swappable and the asset has funds", () => {
+    it("shows Buy + Swap in the footer and hides graph Receive when the asset has an account", () => {
       setAvailability({ availableOnBuy: true, availableOnSwap: true });
 
       render(
@@ -289,25 +290,28 @@ describe("AssetDetail screen layout", () => {
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.buyButton)).toBeVisible();
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeVisible();
       expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeNull();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeNull();
       expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.fallbackBanner)).toBeNull();
     });
 
-    it("shows Buy + Receive when buyable but the wallet has no funds", () => {
+    it("shows Buy + Swap in the footer and Receive in the graph when the asset has no account", () => {
       setAvailability({ availableOnBuy: true, availableOnSwap: true });
 
       render(<AssetDetailTestNavigator />);
 
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.buyButton)).toBeVisible();
-      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeVisible();
-      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeNull();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeVisible();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeVisible();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeNull();
     });
 
-    it("shows Receive and the fallback banner when supported but neither buyable nor swappable", () => {
+    it("shows graph Receive and the fallback banner when supported but neither buyable nor swappable", () => {
       setAvailability({ availableOnBuy: false, availableOnSwap: false });
 
       render(<AssetDetailTestNavigator />);
 
-      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeVisible();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeVisible();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeNull();
       expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.buyButton)).toBeNull();
       expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeNull();
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.fallbackBanner)).toBeVisible();
@@ -332,16 +336,16 @@ describe("AssetDetail screen layout", () => {
       expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.fallbackBanner)).toBeNull();
     });
 
-    it("hides the BalanceGraph Receive when the footer shows Receive (no funds)", () => {
+    it("shows the BalanceGraph Receive when the asset has no account and no footer CTA", () => {
       setAvailability({ availableOnBuy: false, availableOnSwap: false });
 
       render(<AssetDetailTestNavigator />);
 
-      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeVisible();
-      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeNull();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeVisible();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeNull();
     });
 
-    it("shows the BalanceGraph Receive when the footer shows Swap (funds elsewhere)", () => {
+    it("shows the BalanceGraph Receive when the footer shows Swap and only another asset has an account", () => {
       setAvailability({ availableOnSwap: true });
 
       render(
@@ -352,6 +356,20 @@ describe("AssetDetail screen layout", () => {
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeVisible();
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeVisible();
       expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeNull();
+    });
+
+    it("hides the BalanceGraph Receive when the asset account exists without funds", () => {
+      setAvailability({ availableOnBuy: true, availableOnSwap: true });
+
+      render(
+        <AssetDetailTestNavigator />,
+        withAccounts([{ seed: "btc-0", currencyId: "bitcoin", balance: 0 }]),
+      );
+
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeNull();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.ctas)).toBeVisible();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.buyButton)).toBeVisible();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeVisible();
     });
   });
 

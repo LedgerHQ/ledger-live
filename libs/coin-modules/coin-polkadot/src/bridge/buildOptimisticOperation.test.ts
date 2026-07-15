@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
-
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { PolkadotAccount, Transaction } from "../types";

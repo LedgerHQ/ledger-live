@@ -75,7 +75,7 @@ export const accountDataToAccount = ({
     // In bitcoin implementation, xpubOrAddress field always go in the xpub
     xpub = xpubOrAddress;
   } else {
-    if (currency.family === "tezos" || currency.family === "stacks") {
+    if (currency.family === "stacks") {
       xpub = xpubOrAddress;
     } else if (!freshAddress) {
       // otherwise, it's the freshAddress

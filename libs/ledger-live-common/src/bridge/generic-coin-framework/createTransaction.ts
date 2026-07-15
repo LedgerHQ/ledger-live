@@ -66,6 +66,15 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         fees: null,
         mode: "send",
       };
+    case "multiversx":
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        useAllAmount: false,
+        mode: "send",
+      };
     case "cardano":
       return {
         family: currency.family,

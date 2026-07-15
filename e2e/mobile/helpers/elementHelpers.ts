@@ -31,6 +31,9 @@ function hasMatcherProperty(obj: unknown): obj is WebElementWithMatcher {
 const scroller = new PageScroller();
 
 export const DEFAULT_TIMEOUT = 60000;
+export const VISIBILITY_PROBE_TIMEOUT = 1000;
+export const QUICK_VISIBILITY_PROBE_TIMEOUT = 500;
+
 const DEFAULT_WEB_ELEMENT_INTERVAL = 2000;
 
 export type WaitForElementOptions = {
@@ -306,8 +309,24 @@ export const NativeElementHelpers = {
     pixels?: number,
     direction?: Direction,
     androidDelay?: number,
+    visibilityPercentage?: number,
   ): Promise<void> {
-    await scroller.performScroll(by.id(id), scrollViewId, pixels, direction, androidDelay);
+    await scroller.performScroll(
+      by.id(id),
+      scrollViewId,
+      pixels,
+      direction,
+      androidDelay,
+      visibilityPercentage,
+    );
+  },
+
+  async scrollByPixels(
+    scrollViewId: string | RegExp | undefined,
+    pixels: number,
+    direction: Direction = "down",
+  ): Promise<void> {
+    await scroller.scrollByPixels(scrollViewId, pixels, direction);
   },
 
   async getAttributesOfElement(id: string | RegExp, index = 0): Promise<Detox.ElementAttributes> {

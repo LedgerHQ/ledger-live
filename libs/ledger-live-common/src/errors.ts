@@ -96,6 +96,10 @@ export const CurrencyNotSupportedByProviderError = createCustomErrorClass(
 export const TradeMethodNotSupportedError = createCustomErrorClass("TradeMethodNotSupportedError");
 export const UnexpectedError = createCustomErrorClass("UnexpectedError");
 export const NotImplementedError = createCustomErrorClass("NotImplementedError");
+// Thrown by account.getPublicKey when no usable public key is available for the account. The
+// class name is a stable identifier consumers match on across the wallet-api transport (e.g.
+// WalletConnect).
+export const AccountPublicKeyUnavailable = createCustomErrorClass("AccountPublicKeyUnavailable");
 export const ValidationError = createCustomErrorClass("ValidationError");
 export const AccessDeniedError = createCustomErrorClass("AccessDeniedError");
 export const OutdatedApp = createCustomErrorClass("OutdatedApp");

@@ -111,6 +111,7 @@
     "stop": "Stop",
     "updateNow": "Update now",
     "close": "Close",
+    "ok": "OK",
     "eastern": "Eastern",
     "western": "Western",
     "reverify": "Re-verify",
@@ -5254,6 +5255,17 @@
         "showJson": "Show JSON",
         "hideJson": "Hide JSON"
       },
+      "contactsDevTool": {
+        "title": "Contacts Dev Tool",
+        "description": "Toggle Contacts rollout settings for desktop (lwdContacts feature flag).",
+        "mainFeatureToggle": "Main Feature Toggle",
+        "featureParameters": "Feature Parameters",
+        "eligibleAddressFamilies": "Eligible address families",
+        "customFamiliesHint": "Comma-separated families for custom multi-family testing.",
+        "customFamiliesPlaceholder": "evm, stellar, aptos",
+        "applyFamilies": "Apply",
+        "resetOverride": "Reset override"
+      },
       "cryptoAssetsList": {
         "title": "Crypto Assets List",
         "description": "Browse and manage crypto assets from the Crypto Assets List (CAL) service.",
@@ -6730,6 +6742,10 @@
     "AccountNotSupported": {
       "title": "Account not supported.",
       "description": "Please retry or contact Support ({{reason}})"
+    },
+    "AccountPublicKeyUnavailable": {
+      "title": "Account needs to be added again",
+      "description": "Ledger Wallet could not retrieve this account's public key. Please remove the account and add it again to continue"
     },
     "AlgorandASANotOptInInRecipient": {
       "title": "Recipient account has not opted in the selected ASA."

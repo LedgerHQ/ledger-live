@@ -954,12 +954,12 @@ const envDefinitions = {
     desc: "bucket S3 of the dynamic cryptoassets list",
   },
   CAL_SERVICE_URL: {
-    def: "https://crypto-assets-service.api.ledger.com",
+    def: "https://global.api.prd.ledger.com/cal",
     parser: stringParser,
     desc: "Cryptoassets list service url",
   },
   CAL_SERVICE_URL_STAGING: {
-    def: "https://crypto-assets-service.api.ledger-test.com",
+    def: "https://global.api.stg.ledger-test.com/cal",
     parser: stringParser,
     desc: "Cryptoassets list service url (staging)",
   },

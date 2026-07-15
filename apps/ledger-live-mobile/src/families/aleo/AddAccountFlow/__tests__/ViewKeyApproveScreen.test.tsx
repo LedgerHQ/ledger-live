@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { render, screen, fireEvent } from "@tests/test-renderer";
+import { View, Text, TouchableOpacity, Pressable } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { render, screen } from "@tests/test-renderer";
 import type { Account } from "@ledgerhq/types-live";
 import {
   useAleoViewKeyApproval,
@@ -30,15 +31,44 @@ const defaultReturn: MockViewKeyApprovalReturn = {
 
 let mockViewKeyApprovalReturn: MockViewKeyApprovalReturn = { ...defaultReturn };
 
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useNavigation: jest.fn(),
+  useRoute: jest.fn(),
+}));
+
 jest.mock("@ledgerhq/live-common/families/aleo/react", () => ({
   useAleoViewKeyApproval: jest.fn(),
   buildAccountsWithViewKeys: jest.fn(),
 }));
 
+const mockUseNavigation = jest.mocked(useNavigation);
+const mockUseRoute = jest.mocked(useRoute);
 const mockUseAleoViewKeyApproval = jest.mocked(useAleoViewKeyApproval);
 const mockBuildAccountsWithViewKeys = jest.mocked(buildAccountsWithViewKeys);
 
 let capturedOnResult: (() => void) | undefined;
+let capturedOnClose: (() => void) | undefined;
+let capturedOnModalHide: (() => void) | undefined;
+
+jest.mock("~/components/ConfirmationModal", () => {
+  return function MockConfirmationModal({
+    isOpened,
+    onClose,
+    onConfirm,
+    onModalHide,
+  }: {
+    isOpened: boolean;
+    onClose?: () => void;
+    onConfirm?: () => void;
+    onModalHide?: () => void;
+  }) {
+    capturedOnClose = onClose;
+    capturedOnModalHide = onModalHide;
+    if (!isOpened) return null;
+    return <Pressable testID="enabled-confirmation-modal-confirm-button" onPress={onConfirm} />;
+  };
+});
 
 jest.mock("~/components/DeviceAction", () => ({
   DeviceActionDefaultRendering: jest.fn(({ onResult }: { onResult: () => void }) => {
@@ -75,13 +105,6 @@ jest.mock("@ledgerhq/lumen-ui-rnative/symbols", () => ({
 
 jest.mock("~/components/Loading", () => ({
   Loading: () => <View testID="loading" />,
-}));
-
-// TrackScreen uses the real useIsFocused(), which subscribes to navigation focus
-// events outside of a Screen context here — stub it out so the test doesn't depend
-// on that subscription's behavior.
-jest.mock("~/analytics", () => ({
-  TrackScreen: () => null,
 }));
 
 jest.mock("~/components/wrappedUi/Button", () => {
@@ -143,20 +166,21 @@ const renderScreen = (
 ) => {
   mockViewKeyApprovalReturn = { ...defaultReturn, ...viewKeyOverrides };
   mockUseAleoViewKeyApproval.mockReturnValue(mockViewKeyApprovalReturn as never);
+  mockUseNavigation.mockReturnValue(mockNavigation as never);
+  mockUseRoute.mockReturnValue({
+    ...mockRoute,
+    params: { ...mockRoute.params, ...routeParamOverrides },
+  } as never);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return render(
-    <ViewKeyApproveScreen
-      route={{ ...mockRoute, params: { ...mockRoute.params, ...routeParamOverrides } } as any}
-      navigation={mockNavigation as any}
-    />,
-  );
+  return render(<ViewKeyApproveScreen />);
 };
 
 describe("ViewKeyApproveScreen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     capturedOnResult = undefined;
+    capturedOnClose = undefined;
+    capturedOnModalHide = undefined;
     mockBuildAccountsWithViewKeys.mockReturnValue([]);
     mockViewKeyApprovalReturn = { ...defaultReturn };
   });
@@ -265,22 +289,80 @@ describe("ViewKeyApproveScreen", () => {
   });
 
   describe("cancel button", () => {
-    it("sets abortedRef on cancel so onResult becomes a no-op", () => {
-      renderScreen({
+    it("opens a confirmation modal instead of aborting immediately", async () => {
+      mockBuildAccountsWithViewKeys.mockReturnValue([ACCOUNT_1]);
+      const { user } = renderScreen({
         hookState: { sharePending: true, shareProgress: { completed: 0, total: 2 } },
+        payload: { account1: "vk1" },
       });
-      fireEvent.press(screen.getByTestId("button-AleoAddAccountViewKeyApproveCancelAll"));
-      capturedOnResult!();
+      await user.press(screen.getByTestId("button-AleoAddAccountViewKeyApproveCancelAll"));
+
+      expect(screen.getByTestId("enabled-confirmation-modal-confirm-button")).toBeTruthy();
+      // Not yet aborted: onResult still proceeds normally.
+      capturedOnResult?.();
+      expect(mockDispatch).toHaveBeenCalledTimes(1);
+    });
+
+    it("sets abortedRef and calls onCloseNavigation once quit is confirmed", async () => {
+      const mockOnCloseNavigation = jest.fn();
+      const { user } = renderScreen(
+        { hookState: { sharePending: true, shareProgress: { completed: 0, total: 2 } } },
+        { onCloseNavigation: mockOnCloseNavigation },
+      );
+
+      await user.press(screen.getByTestId("button-AleoAddAccountViewKeyApproveCancelAll"));
+      await user.press(screen.getByTestId("enabled-confirmation-modal-confirm-button"));
+      capturedOnModalHide?.();
+
+      capturedOnResult?.();
       expect(mockNavigation.replace).not.toHaveBeenCalled();
       expect(mockParentNavigate).not.toHaveBeenCalled();
       expect(mockDispatch).not.toHaveBeenCalled();
+      expect(mockOnCloseNavigation).toHaveBeenCalledTimes(1);
+    });
+
+    it("still calls onCloseNavigation when the drawer re-invokes onClose before onModalHide", async () => {
+      // The drawer fires onClose (sync) before onModalHide (animated); order matters here.
+      const mockOnCloseNavigation = jest.fn();
+      const { user } = renderScreen(
+        { hookState: { sharePending: true, shareProgress: { completed: 0, total: 2 } } },
+        { onCloseNavigation: mockOnCloseNavigation },
+      );
+
+      await user.press(screen.getByTestId("button-AleoAddAccountViewKeyApproveCancelAll"));
+      await user.press(screen.getByTestId("enabled-confirmation-modal-confirm-button"));
+      capturedOnClose?.();
+      capturedOnModalHide?.();
+
+      expect(mockOnCloseNavigation).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not call onCloseNavigation when the confirmation modal is dismissed without confirming", async () => {
+      const mockOnCloseNavigation = jest.fn();
+      mockBuildAccountsWithViewKeys.mockReturnValue([ACCOUNT_1]);
+      const { user } = renderScreen(
+        {
+          hookState: { sharePending: true, shareProgress: { completed: 0, total: 2 } },
+          payload: { account1: "vk1" },
+        },
+        { onCloseNavigation: mockOnCloseNavigation },
+      );
+
+      await user.press(screen.getByTestId("button-AleoAddAccountViewKeyApproveCancelAll"));
+      capturedOnClose?.();
+      capturedOnModalHide?.();
+
+      expect(mockOnCloseNavigation).not.toHaveBeenCalled();
+      // Not aborted: onResult still proceeds normally.
+      capturedOnResult?.();
+      expect(mockDispatch).toHaveBeenCalledTimes(1);
     });
   });
 
   describe("onResult", () => {
     it("does nothing when payload is null", () => {
       renderScreen({ payload: null });
-      capturedOnResult!();
+      capturedOnResult?.();
       expect(mockDispatch).not.toHaveBeenCalled();
       expect(mockParentNavigate).not.toHaveBeenCalled();
     });
@@ -288,7 +370,7 @@ describe("ViewKeyApproveScreen", () => {
     it("navigates to AleoNoAccountsAdded when buildAccountsWithViewKeys returns empty", () => {
       mockBuildAccountsWithViewKeys.mockReturnValue([]);
       renderScreen({ payload: {} });
-      capturedOnResult!();
+      capturedOnResult?.();
       const { accountsToAdd: _accountsToAdd, ...expectedParams } = mockRoute.params;
       expect(mockNavigation.replace).toHaveBeenCalledTimes(1);
       expect(mockNavigation.replace).toHaveBeenCalledWith(
@@ -301,7 +383,7 @@ describe("ViewKeyApproveScreen", () => {
     it("dispatches addAccountsAction and navigates to AddAccountsSuccess", () => {
       mockBuildAccountsWithViewKeys.mockReturnValue([ACCOUNT_1]);
       renderScreen({ payload: { account1: "vk1" } });
-      capturedOnResult!();
+      capturedOnResult?.();
       expect(mockDispatch).toHaveBeenCalledTimes(1);
       expect(mockDispatch).toHaveBeenCalledWith({ type: "ADD_ACCOUNTS" });
       expect(mockParentNavigate).toHaveBeenCalledTimes(1);

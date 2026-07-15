@@ -11,49 +11,49 @@ import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommand
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
-const tooLowAmountForQuoteSwaps = [
+type TooLowAmountSwap = {
+  swap: Swap;
+  xrayTicket: string;
+  errorMessage: string;
+  quotesVisible: boolean;
+  errorDisplay: "banner" | "quotesPlaceholder";
+};
+
+// LedgerHQ/swap-live-app#1699 removed the insufficient-funds CTA banner from the Lumen desktop form.
+const tooLowAmountForQuoteSwaps: TooLowAmountSwap[] = [
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "1"),
     xrayTicket: "B2CQA-3239, B2CQA-3136",
-    errorMessage: "Not enough balance, including network fee",
-    ctaBanner: true,
+    errorMessage: "Insufficient balance",
     quotesVisible: true,
+    errorDisplay: "banner",
   },
   {
     swap: new Swap(TokenAccount.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "200"),
     xrayTicket: "B2CQA-3240",
-    errorMessage: "Not enough balance",
-    ctaBanner: false,
+    errorMessage: "Insufficient balance",
     quotesVisible: true,
+    errorDisplay: "banner",
   },
 
-  // Enable test when "Sponsored" program is over
-
-  // {
-  //   swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "USE_MIN_AMOUNT"),
-  //   xrayTicket: "B2CQA-3241",
-  //   errorMessage: new RegExp(`\\d+(\\.\\d{1,10})? ETH needed for network fees\\.\\s*$`),
-  //   ctaBanner: true,
-  //   quotesVisible: true,
-  // },
   {
     swap: new Swap(TokenAccount.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "0.000001"),
     xrayTicket: "B2CQA-3242",
-    errorMessage: new RegExp(`Minimum \\d+(\\.\\d{1,10})? USDT needed for quotes\\.\\s*$`),
-    ctaBanner: false,
+    errorMessage: "No quotes to show, yet",
     quotesVisible: false,
+    errorDisplay: "quotesPlaceholder",
   },
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "10000"),
     xrayTicket: "B2CQA-3243",
-    errorMessage: new RegExp(/Not enough balance, including network fee\./),
-    ctaBanner: true,
+    errorMessage: "Insufficient balance",
     quotesVisible: false,
+    errorDisplay: "banner",
   },
 ];
 
 for (const swap of tooLowAmountForQuoteSwaps) {
-  test.describe("Swap - with too low amount (throwing UI errors)", () => {
+  test.describe(`Swap - with too low amount (throwing UI errors) - ${swap.swap.amount} ${swap.swap.accountToDebit.currency.name} to ${swap.swap.accountToCredit.currency.name}`, () => {
     setupEnv(true);
 
     const accPair: string[] = [swap.swap.accountToDebit, swap.swap.accountToCredit].map(acc =>
@@ -123,10 +123,7 @@ for (const swap of tooLowAmountForQuoteSwaps) {
           await app.swap.checkQuotes();
           await app.swap.selectExchange();
         }
-        await app.swap.verifySwapAmountErrorMessageIsCorrect(swap.errorMessage);
-        if (swap.ctaBanner) {
-          await app.swap.checkInsufficientFundsBannerVisible();
-        }
+        await app.swap.verifySwapErrorMessageIsCorrect(swap.errorMessage, swap.errorDisplay);
       },
     );
   });
@@ -138,6 +135,25 @@ const swapNetworkFeesAboveAccountBalanceTestConfig = {
     `Your account .+ doesn't have enough balance to cover the network fees\\.`,
   ),
   xrayTicket: "B2CQA-2363",
+  tags: [
+    "@NanoSP",
+    "@LNS",
+    "@NanoX",
+    "@Stax",
+    "@Flex",
+    "@NanoGen5",
+    "@ethereum",
+    "@family-evm",
+    "@bitcoin",
+    "@family-bitcoin",
+  ],
+};
+
+// Unreachable while ptxSponsoredTransactions covers this pair — see B2CQA-3241.
+const swapEthNeededForNetworkFeesTestConfig = {
+  swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "USE_MIN_AMOUNT"),
+  errorMessage: new RegExp(`\\d+(\\.\\d{1,10})? ETH needed for network fees\\.\\s*$`),
+  xrayTicket: "B2CQA-3241",
   tags: [
     "@NanoSP",
     "@LNS",
@@ -225,6 +241,34 @@ test.describe(`Swap - Error message when network fees are above account balance 
       await app.swap.checkFeeErrorMessage(
         swapNetworkFeesAboveAccountBalanceTestConfig.errorMessage,
       );
+    },
+  );
+
+  // Enable once ptxSponsoredTransactions no longer covers this provider/chain pair.
+  test.skip(
+    `Swap too low quote amounts from ${swapEthNeededForNetworkFeesTestConfig.swap.accountToDebit.currency.name} to ${swapEthNeededForNetworkFeesTestConfig.swap.accountToCredit.currency.name} - ETH needed for network fees`,
+    {
+      tag: swapEthNeededForNetworkFeesTestConfig.tags,
+      annotation: {
+        type: "TMS",
+        description: swapEthNeededForNetworkFeesTestConfig.xrayTicket,
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      const minAmount = await app.swap.getMinimumAmount(
+        swapEthNeededForNetworkFeesTestConfig.swap.accountToDebit,
+        swapEthNeededForNetworkFeesTestConfig.swap.accountToCredit,
+      );
+
+      await performSwapUntilQuoteSelectionStep(
+        app,
+        swapEthNeededForNetworkFeesTestConfig.swap,
+        minAmount,
+      );
+      await app.swap.checkQuotes();
+      await app.swap.selectExchange();
+      await app.swap.checkFeeErrorMessage(swapEthNeededForNetworkFeesTestConfig.errorMessage);
     },
   );
 });
