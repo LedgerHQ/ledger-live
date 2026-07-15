@@ -1,11 +1,27 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
-import type { Account, AccountRaw, Operation, SignOperationEvent, SignedOperation } from "@ledgerhq/types-live";
-import { encodeOperationId, patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
+import type {
+  Account,
+  AccountRaw,
+  Operation,
+  SignOperationEvent,
+  SignedOperation,
+} from "@ledgerhq/types-live";
+import {
+  encodeOperationId,
+  patchOperationWithHash,
+} from "@ledgerhq/ledger-wallet-framework/operation";
 import { pathStringToArray } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { ChainAdapter } from "../types";
 import type { BitcoinAddress, BitcoinSigner, BitcoinXPub, SignerContext } from "../../signer";
-import type { Transaction, TransactionStatus, BitcoinAccount, BitcoinOutput, BtcInputRef, BtcOperationExtra } from "../../types";
+import type {
+  Transaction,
+  TransactionStatus,
+  BitcoinAccount,
+  BitcoinOutput,
+  BtcInputRef,
+  BtcOperationExtra,
+} from "../../types";
 import { DmkSignerZcash } from "@ledgerhq/live-signer-zcash";
 import type {
   ZcashAddress,
@@ -453,8 +469,10 @@ const zcashChainAdapter: ChainAdapter = {
       (async () => {
         const ufvk = zcashAccount.privateInfo?.ufvk;
         if (!ufvk) throw new Error("Missing UFVK — account not yet synced");
-        if (!tx.selectedNotes) throw new Error("Missing selectedNotes — run prepareTransaction first");
-        if (tx.zcashFee === undefined) throw new Error("Missing zcashFee — run prepareTransaction first");
+        if (!tx.selectedNotes)
+          throw new Error("Missing selectedNotes — run prepareTransaction first");
+        if (tx.zcashFee === undefined)
+          throw new Error("Missing zcashFee — run prepareTransaction first");
 
         // ── Step 1: resolve the ZCash client via lazy module import ──────────
         // Resolve the endpoint once so build, finalize and broadcast all target
@@ -468,7 +486,11 @@ const zcashChainAdapter: ChainAdapter = {
         // React Native stub omits them entirely. Fail with a clear message
         // rather than a cryptic "client.buildTransaction is not a function"
         // TypeError if a client without shielded-signing support is resolved.
-        if (!client.buildTransaction || !client.finalizeTransaction || !client.broadcastTransaction) {
+        if (
+          !client.buildTransaction ||
+          !client.finalizeTransaction ||
+          !client.broadcastTransaction
+        ) {
           throw new Error("Shielded Zcash transactions are not supported in this environment");
         }
 
@@ -521,9 +543,7 @@ const zcashChainAdapter: ChainAdapter = {
           account.currency,
           async (signer: BitcoinSigner) => {
             const zcashSigner = signer as unknown as {
-              signPcztTransaction?: (
-                pczt: PcztTransaction,
-              ) => Promise<SignPcztTransactionResult>;
+              signPcztTransaction?: (pczt: PcztTransaction) => Promise<SignPcztTransactionResult>;
             };
             if (typeof zcashSigner.signPcztTransaction !== "function") {
               throw new ZcashSignerNotSupported(

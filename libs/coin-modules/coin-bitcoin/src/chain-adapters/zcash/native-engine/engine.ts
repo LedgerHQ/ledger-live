@@ -200,10 +200,7 @@ export async function finalizeTransactionJob(
  * Broadcasts a signed V5 transaction to the Zaino gRPC endpoint.
  * Returns the txid (64-char hex, big-endian display order).
  */
-export async function broadcastTransactionJob(
-  grpcUrl: string,
-  txHex: string,
-): Promise<string> {
+export async function broadcastTransactionJob(grpcUrl: string, txHex: string): Promise<string> {
   const native = await getPcztModule();
   return native.broadcastTransaction(grpcUrl, txHex);
 }
