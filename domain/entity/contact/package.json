@@ -7,7 +7,7 @@
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./schema.mock": "./src/data/schema.mock.ts",
+    "./schema.mock": "./src/schema.mock.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
