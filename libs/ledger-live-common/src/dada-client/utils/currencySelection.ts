@@ -1,37 +1,40 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetsDataWithPagination } from "../state-manager/types";
 
-/**
- * Selects the best currency for a given meta-currency ID based on priority:
- * 1. Main currency (matching metaCurrencyId)
- * 2. CryptoCurrency type
- * 3. First available network
- */
 export function selectCurrencyForMetaId(
   metaCurrencyId: string,
   data: AssetsDataWithPagination,
 ): CryptoOrTokenCurrency | undefined {
-  const assetsIds = data.cryptoAssets[metaCurrencyId]?.assetsIds;
+  const meta = data.cryptoAssets[metaCurrencyId];
+  const assetsIds = meta?.assetsIds;
   if (!assetsIds) return undefined;
+
+  const metaTicker = meta.ticker?.toUpperCase();
 
   let fallback: CryptoOrTokenCurrency | undefined;
   let crypto: CryptoOrTokenCurrency | undefined;
+  let token: CryptoOrTokenCurrency | undefined;
 
   for (const id of Object.values(assetsIds)) {
     const currency = data.cryptoOrTokenCurrencies[id];
     if (!currency) continue;
 
-    if (currency.id === metaCurrencyId) return currency;
+    const tickerMatches = currency.ticker?.toUpperCase() === metaTicker;
+
+    // Require both id and ticker to match: some L2 chains share their ledger id with a
+    // token meta-currency id but use a different native ticker (e.g. an L2 that uses ETH
+    // as gas). Id alone would pick the chain when we actually want the token.
+    if (currency.id === metaCurrencyId && tickerMatches) return currency;
     if (!fallback) fallback = currency;
-    if (!crypto && currency.type === "CryptoCurrency") crypto = currency;
+    // Prefer chain coins over tokens when the ticker matches — the chain is the primary
+    // form of the asset. Skip chains whose ticker differs: they are unrelated assets.
+    if (!crypto && currency.type === "CryptoCurrency" && tickerMatches) crypto = currency;
+    if (!token && currency.type === "TokenCurrency" && tickerMatches) token = currency;
   }
 
-  return crypto ?? fallback;
+  return crypto ?? token ?? fallback;
 }
 
-/**
- * Selects the best currency from the first meta-currency in the asset data result.
- */
 export function selectCurrency(
   result: AssetsDataWithPagination,
 ): CryptoOrTokenCurrency | undefined {

@@ -6,11 +6,9 @@
 
 import { PublicKey } from "@solana/web3.js";
 
-// Max off-chain message length supported by Ledger
+// Max off-chain message length supported by Ledger (= app-solana MAX_OFFCHAIN_MESSAGE_LENGTH)
 const OFFCM_MAX_LEDGER_LEN = 15 * 1024 - 40 - 8;
 const LEGACY_OFFCM_MAX_LEDGER_LEN = 1280 - 40 - 8;
-// Max length of version 0 off-chain message
-const OFFCM_MAX_V0_LEN = 65515;
 
 const MAX_PRINTABLE_ASCII = 0x7e;
 const MIN_PRINTABLE_ASCII = 0x20;
@@ -37,32 +35,72 @@ function isUTF8(buffer: Buffer) {
 
 function findMessageFormat(messageBuffer: Buffer, isLegacy: boolean): number {
   const maxLedgerLen = isLegacy ? LEGACY_OFFCM_MAX_LEDGER_LEN : OFFCM_MAX_LEDGER_LEN;
-
-  if (messageBuffer.length <= maxLedgerLen) {
-    if (isPrintableASCII(messageBuffer, isLegacy)) {
-      return 0;
-    } else if (isUTF8(messageBuffer)) {
-      return 1;
-    }
-  } else if (messageBuffer.length <= OFFCM_MAX_V0_LEN) {
-    if (isUTF8(messageBuffer)) {
-      return 2;
-    }
+  if (messageBuffer.length > maxLedgerLen) {
+    throw new Error(`Message too long: ${messageBuffer.length} bytes (max is ${maxLedgerLen})`);
   }
+  if (isPrintableASCII(messageBuffer, isLegacy)) return 0;
+  if (isUTF8(messageBuffer)) return 1;
   return 0;
 }
 
-/**
- * 1. Signing domain (16 bytes)
- * 2. Header version (1 byte)
- * 3. Application domain (32 bytes)
- * 4. Message format (1 byte)
- * 5. Signer count (1 bytes)
- * 6. Signers (signer_count *  32 bytes) - assume that only one signer is present
- * 7. Message length (2 bytes)
- */
 const signingDomain = Buffer.concat([Buffer.from([255]), Buffer.from("solana offchain")]);
-const headerVersion = Buffer.alloc(1);
+
+/**
+ * V1 wire format (sRFC 38, per app-solana parser):
+ *   signing domain  (16 B): 0xFF + "solana offchain"
+ *   version         ( 1 B): 0x01
+ *   signer count    ( 1 B): 1
+ *   signer          (32 B)
+ *   [message length ( 2 B): little-endian uint16] — only when includeLengthPrefix
+ *   message body    (variable)
+ *
+ * The finalised sRFC 38 layout drops the length prefix. `includeLengthPrefix`
+ * reproduces the pre-spec-update layout for backward compatibility with older
+ * firmware that rejects the no-prefix form with 6a81.
+ */
+export function toOffChainMessageV1(
+  message: string,
+  signerAddress: string,
+  includeLengthPrefix = false,
+): Buffer {
+  const messageBuffer = Buffer.from(message);
+  if (messageBuffer.length > OFFCM_MAX_LEDGER_LEN) {
+    throw new Error(
+      `Message too long: ${messageBuffer.length} bytes (max is ${OFFCM_MAX_LEDGER_LEN})`,
+    );
+  }
+
+  const version = Buffer.from([0x01]);
+  const signerCount = Buffer.from([0x01]);
+  const signer = new PublicKey(signerAddress).toBuffer();
+
+  if (includeLengthPrefix) {
+    const messageLength = Buffer.alloc(2);
+    messageLength.writeUInt16LE(messageBuffer.length);
+    return Buffer.concat([signingDomain, version, signerCount, signer, messageLength, messageBuffer]);
+  }
+  return Buffer.concat([signingDomain, version, signerCount, signer, messageBuffer]);
+}
+
+/**
+ * V0 wire format:
+ *   signing domain  (16 B): 0xFF + "solana offchain"
+ *   version         ( 1 B): 0x00
+ *   application domain (32 B): zero-padded
+ *   format          ( 1 B): 0 = ASCII, 1 = UTF-8
+ *   signer count    ( 1 B): 1
+ *   signer          (32 B)
+ *   message length  ( 2 B): little-endian uint16
+ *   message body    (variable)
+ *
+ * Legacy format (Nano S / old firmware):
+ *   signing domain  (16 B)
+ *   version         ( 1 B): 0x00
+ *   format          ( 1 B)
+ *   message length  ( 2 B): always present
+ *   message body    (variable)
+ */
+const v0HeaderVersion = Buffer.alloc(1); // 0x00
 const applicationDomain = Buffer.alloc(32);
 const messageFormat = Buffer.alloc(1);
 const signerCount = Buffer.alloc(1);
@@ -79,20 +117,26 @@ export function toOffChainMessage(
 
   const signers = new PublicKey(signerAddress).toBuffer();
 
-  messageLength.writeUint16LE(messageBuffer.length);
+  messageLength.writeUInt16LE(messageBuffer.length);
 
-  return Buffer.concat(
-    isLegacy
-      ? [signingDomain, headerVersion, messageFormat, messageLength, messageBuffer]
-      : [
-          signingDomain,
-          headerVersion,
-          applicationDomain,
-          messageFormat,
-          signerCount,
-          signers,
-          messageLength,
-          messageBuffer,
-        ],
-  );
+  if (isLegacy) {
+    return Buffer.concat([
+      signingDomain,
+      v0HeaderVersion,
+      messageFormat,
+      messageLength,
+      messageBuffer,
+    ]);
+  }
+
+  return Buffer.concat([
+    signingDomain,
+    v0HeaderVersion,
+    applicationDomain,
+    messageFormat,
+    signerCount,
+    signers,
+    messageLength,
+    messageBuffer,
+  ]);
 }
