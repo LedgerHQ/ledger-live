@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Box, type IconButtonProps } from "@ledgerhq/lumen-ui-rnative";
 import {
   TOP_BAR_CONTENT_HEIGHT,
   TOP_BAR_WRAPPER_PADDING_TOP,
@@ -14,9 +16,13 @@ import {
 } from "LLM/components/CustomTopBar";
 import { MyWalletTopBarAction } from "LLM/components/TopBar/components/MyWalletTopBarAction";
 import { SyncErrorBottomSheet } from "LLM/components/TopBar/components/SyncErrorBottomSheet";
-import { buildSyncStatusIcon } from "LLM/components/TopBar/components/SyncStatusIcon";
+import { ICON_SIZE } from "LLM/components/TopBar/const";
 
-import { Clock } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Clock, Warning } from "@ledgerhq/lumen-ui-rnative/symbols";
+
+const syncIcon: IconButtonProps["icon"] = ({ size, style }) => (
+  <Warning size={size ?? ICON_SIZE} style={style} color="base" />
+);
 
 export function SwapTopBarHeader() {
   const insets = useAdjustedSafeAreaInsets();
@@ -57,13 +63,14 @@ export function SwapTopBarHeader() {
     const icons: TopBarActionIcon[] = [];
 
     if (displaySyncStatusIcon) {
-      icons.push(
-        buildSyncStatusIcon({
-          callback: openSyncDrawer,
-          accessibilityLabel: syncAccessibilityLabel,
-          loading: isSyncPending,
-        }),
-      );
+      icons.push({
+        id: "sync",
+        icon: syncIcon,
+        callback: openSyncDrawer,
+        testID: "topbar-sync",
+        accessibilityLabel: syncAccessibilityLabel,
+        loading: isSyncPending,
+      });
     }
 
     icons.push({
