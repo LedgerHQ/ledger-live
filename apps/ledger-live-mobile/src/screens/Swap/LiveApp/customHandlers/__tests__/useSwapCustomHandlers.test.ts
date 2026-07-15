@@ -210,6 +210,26 @@ describe("useSwapCustomHandlers", () => {
         screen: ScreenName.SwapHistory,
       });
     });
+
+    it("passes swapId to SwapHistory when swapRedirectToHistory handler is called with params", () => {
+      const { result } = render();
+
+      const handler = (result.current as Record<string, unknown>)["custom.swapRedirectToHistory"];
+      expect(typeof handler).toBe("function");
+
+      (handler as (request: unknown) => void)({
+        params: {
+          swapId: "swap-123",
+        },
+      });
+
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SwapSubScreens, {
+        screen: ScreenName.SwapHistory,
+        params: {
+          swapId: "swap-123",
+        },
+      });
+    });
   });
 
   describe("returned handlers shape", () => {
