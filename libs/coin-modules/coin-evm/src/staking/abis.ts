@@ -3,18 +3,21 @@ import monadAbi from "../abis/monad.abi.json";
 import seiAbi from "../abis/sei.abi.json";
 import seiDistributionAbi from "../abis/sei-distribution.abi.json";
 import zeroGravityValidatorAbi from "../abis/zero_gravity-validator.abi.json";
+import somniaAbi from "../abis/somnia.abi.json";
 
 type StakingABI =
   | typeof seiDistributionAbi
   | typeof seiAbi
   | typeof celoAbi
   | typeof monadAbi
-  | typeof zeroGravityValidatorAbi;
+  | typeof zeroGravityValidatorAbi
+  | typeof somniaAbi;
 
 interface ABIFunction {
   type: string;
-  name: string;
+  name?: string;
   stateMutability?: string;
+  anonymous?: boolean;
 }
 
 const STAKING_ABIS: Record<string, StakingABI> = {
@@ -35,6 +38,7 @@ const STAKING_ABIS: Record<string, StakingABI> = {
   // 0G validator contract (per-validator dynamic address - factory-per-validator model).
   // Source: https://docs.0g.ai/developer-hub/building-on-0g/contracts-on-0g/validator-contract-functions
   zero_gravity: zeroGravityValidatorAbi,
+  somnia: somniaAbi,
 };
 
 export const getStakingABI = (currencyId: string): StakingABI | undefined => {

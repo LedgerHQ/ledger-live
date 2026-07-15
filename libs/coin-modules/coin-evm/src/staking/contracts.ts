@@ -182,6 +182,17 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       return contractAddress ? ethers.getAddress(contractAddress) : null;
     },
   },
-
-  // TODO: add Somnia next
+  somnia: {
+    contractAddress: () => "0xBe367d410D96E1cAeF68C0632251072CDf1b8250",
+    functions: {
+      delegate: "delegateStake",
+      undelegate: "undelegateStake",
+      getStakedBalance: "getDelegationInfo",
+      claimReward: "claimDelegatorRewards",
+    },
+    value: ({ mode, amount }) => (mode === "delegate" ? amount : 0n),
+    resolveValidatorAddress: async parameters => {
+      return typeof parameters[0] === "string" ? parameters[0] : null;
+    },
+  },
 };

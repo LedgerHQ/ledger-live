@@ -3,6 +3,7 @@ import celoProtocol from "./celo";
 import monadProtocol from "./monad";
 import seiProtocol from "./sei";
 import zeroGravityProtocol from "./zero_gravity";
+import somniaProtocol from "./somnia";
 import type { OperationParams, StakingProtocol } from "./types";
 
 const STAKING_PROTOCOLS: Record<string, StakingProtocol> = {
@@ -10,6 +11,7 @@ const STAKING_PROTOCOLS: Record<string, StakingProtocol> = {
   celo: celoProtocol as StakingProtocol,
   monad: monadProtocol as StakingProtocol,
   zero_gravity: zeroGravityProtocol as StakingProtocol,
+  somnia: somniaProtocol as StakingProtocol,
 };
 
 export const buildTransactionParams = (
