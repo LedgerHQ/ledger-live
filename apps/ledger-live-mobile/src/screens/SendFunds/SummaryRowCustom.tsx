@@ -21,6 +21,9 @@ const styles = StyleSheet.create({
   right: {
     flex: 1,
   },
+  dataWithBadge: {
+    marginTop: 6,
+  },
 });
 
 type Props = {
@@ -41,7 +44,7 @@ const SummaryRowCustom = ({ label, data, iconLeft, labelBadge }: Props) => {
           </LText>
           {labelBadge}
         </View>
-        {data}
+        <View style={labelBadge ? styles.dataWithBadge : undefined}>{data}</View>
       </View>
     </View>
   );

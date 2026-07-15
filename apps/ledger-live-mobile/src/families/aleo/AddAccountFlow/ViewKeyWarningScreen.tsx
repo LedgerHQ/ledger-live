@@ -49,28 +49,30 @@ export default function ViewKeyWarningScreen() {
       style={[styles.root, { backgroundColor: colors.background.main }]}
     >
       <TrackScreen category="AleoAddAccountFlow" name="View key warning" />
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-        <LText semiBold style={styles.title} color="neutral.c100">
-          <Trans i18nKey="aleo.addAccount.stepViewKeyWarning.title" />
-        </LText>
-        <LText secondary style={styles.description} color="neutral.c70">
-          <Trans i18nKey="aleo.addAccount.stepViewKeyWarning.description">
-            <LText
-              onPress={() => Linking.openURL(learnMoreUrl)}
-              accessibilityRole="link"
-              color="primary.c80"
-            />
-          </Trans>
-        </LText>
-        <View style={styles.bullets}>
-          {bulletPointTranslationKeys.map(i18nKey => (
-            <View key={i18nKey} style={styles.bulletRow}>
-              <View style={[styles.bulletDot, { backgroundColor: colors.neutral.c70 }]} />
-              <LText secondary style={styles.bullet} color="neutral.c70">
-                <Trans i18nKey={i18nKey} />
-              </LText>
-            </View>
-          ))}
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+        <View style={[styles.card, { backgroundColor: colors.opacityDefault.c05 }]}>
+          <LText semiBold style={styles.title} color="neutral.c100">
+            <Trans i18nKey="aleo.addAccount.stepViewKeyWarning.title" />
+          </LText>
+          <LText secondary style={styles.description} color="neutral.c80">
+            <Trans i18nKey="aleo.addAccount.stepViewKeyWarning.description">
+              <LText
+                onPress={() => Linking.openURL(learnMoreUrl)}
+                accessibilityRole="link"
+                color="primary.c80"
+              />
+            </Trans>
+          </LText>
+          <View style={styles.bullets}>
+            {bulletPointTranslationKeys.map(i18nKey => (
+              <View key={i18nKey} style={styles.bulletRow}>
+                <View style={[styles.bulletDot, { backgroundColor: colors.neutral.c80 }]} />
+                <LText secondary style={styles.bullet} color="neutral.c100">
+                  <Trans i18nKey={i18nKey} />
+                </LText>
+              </View>
+            ))}
+          </View>
         </View>
       </ScrollView>
       <View style={styles.footer}>
@@ -109,19 +111,21 @@ const styles = StyleSheet.create({
   scroll: {
     flex: 1,
   },
-  content: {
-    paddingHorizontal: 16,
-    paddingVertical: 24,
+  scrollContent: {
+    padding: 16,
+  },
+  card: {
+    padding: 20,
+    borderRadius: 16,
     rowGap: 16,
   },
   title: {
-    fontSize: 24,
-    lineHeight: 32,
-    textAlign: "center",
+    fontSize: 18,
+    lineHeight: 24,
   },
   description: {
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: 13,
+    lineHeight: 20,
     textAlign: "left",
   },
   bullets: {

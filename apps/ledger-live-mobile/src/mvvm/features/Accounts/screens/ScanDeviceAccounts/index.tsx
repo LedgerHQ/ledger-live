@@ -82,7 +82,7 @@ function ScanDeviceAccounts() {
     viewAllCreatedAccounts,
     currency,
     returnToSwap,
-    confirmI18nKey,
+    confirmLabel,
     scanDeviceAccountsBack,
   } = useScanDeviceAccountsViewModel({
     existingAccounts,
@@ -217,7 +217,7 @@ function ScanDeviceAccounts() {
           onContinue={importAccounts}
           isDisabled={selectedIds.length === 0}
           returnToSwap={returnToSwap}
-          confirmI18nKey={confirmI18nKey}
+          confirmLabel={confirmLabel}
         />
       )}
       <GenericErrorBottomModal

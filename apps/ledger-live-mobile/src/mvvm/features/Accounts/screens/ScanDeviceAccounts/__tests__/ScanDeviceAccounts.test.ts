@@ -112,6 +112,45 @@ describe("ScanDeviceAccounts (common coins)", () => {
     expect(replace).not.toHaveBeenCalledWith(ScreenName.NoAssociatedAccounts, expect.anything());
   });
 
+  it("falls back to the default Confirm label when no custom flow provides a confirm i18n key", async () => {
+    const { result } = renderHook(() =>
+      useScanDeviceAccountsViewModel({
+        existingAccounts: [],
+        blacklistedTokenIds: [],
+        analyticsMetadata: {},
+      }),
+    );
+
+    await waitFor(() => expect(result.current.scanning).toBe(false));
+    expect(result.current.confirmLabel).toBe("Confirm");
+  });
+
+  it("does not treat a rescanned account with the same address as already imported when its id differs (no custom flow)", async () => {
+    // Unlike Aleo (which overrides isAlreadyImportedAccount because it reassigns ids on view-key
+    // grant), common coins keep the plain id-based check: a different id is a different account.
+    const existingAccount = createAccount({ id: "js:eth:existing-id:eth", freshAddress: "0xabc" });
+    const rescannedAccount = createAccount({
+      id: "js:eth:different-id:eth",
+      freshAddress: "0xabc",
+      used: false,
+    });
+    setScanObservable(of(makeDiscoveredEvent(rescannedAccount)));
+
+    const { result } = renderHook(() =>
+      useScanDeviceAccountsViewModel({
+        existingAccounts: [existingAccount],
+        blacklistedTokenIds: [],
+        analyticsMetadata: {},
+      }),
+    );
+
+    await waitFor(() => expect(result.current.scannedAccounts).toHaveLength(1));
+    await waitFor(() => expect(result.current.scanning).toBe(false));
+
+    // Treated as a new, not-yet-imported account, so it gets auto-selected.
+    expect(result.current.selectedIds).toEqual([rescannedAccount.id]);
+  });
+
   it("does not navigate to NoAssociatedAccounts when no accounts found for ETH", async () => {
     setScanObservable(EMPTY);
 

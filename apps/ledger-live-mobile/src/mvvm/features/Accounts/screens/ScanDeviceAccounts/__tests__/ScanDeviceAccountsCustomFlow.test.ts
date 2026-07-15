@@ -2,7 +2,9 @@ import BigNumber from "bignumber.js";
 import { of, EMPTY } from "rxjs";
 import type { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { sameAccountIdentity } from "@ledgerhq/live-wallet/addAccounts";
 import { renderHook, waitFor } from "@tests/test-renderer";
+import { act } from "@testing-library/react-native";
 import { setupScanDeviceTests } from "./shared";
 import useScanDeviceAccountsViewModel from "../useScanDeviceAccountsViewModel";
 import { track } from "~/analytics";
@@ -14,7 +16,10 @@ jest.mock("LLM/features/Accounts/utils/customAddAccountFlow", () => ({
   getCustomAddAccountFlow: jest.fn(() => ({
     onImportAccounts: mockOnImportAccounts,
     onScanDeviceAccountsBack: mockOnScanDeviceAccountsBack,
-    scanDeviceAccountsCtaI18nKey: "aleo.addAccount.stepScanAccounts.cta.shareViewKeys",
+    scanDeviceAccountsCtaI18nKey: "aleo.addAccount.stepScanAccounts.cta.shareKey",
+    // Mirrors families/aleo/customAddAccountFlow.ts: Aleo reassigns an account's id once the
+    // view key is granted, so it needs its own already-imported check.
+    isAlreadyImportedAccount: sameAccountIdentity,
   })),
 }));
 
@@ -113,6 +118,60 @@ describe("ScanDeviceAccounts - customAddAccountFlow delegation", () => {
     expect(mockTrack.mock.invocationCallOrder[0]).toBeLessThan(
       mockOnImportAccounts.mock.invocationCallOrder[0],
     );
+  });
+
+  it("pluralizes the custom flow's confirm label based on the number of selected accounts", async () => {
+    const aleoAccount = createAleoAccount({ used: false });
+    setScanObservable(of(makeDiscoveredEvent(aleoAccount)));
+
+    const { result } = renderHook(() =>
+      useScanDeviceAccountsViewModel({
+        existingAccounts: [],
+        blacklistedTokenIds: [],
+        analyticsMetadata,
+      }),
+    );
+
+    // A single new account is auto-selected on scan.
+    await waitFor(() => expect(result.current.selectedIds).toEqual([aleoAccount.id]));
+    expect(result.current.confirmLabel).toBe("Share view key");
+
+    await act(async () => {
+      result.current.onPressAccount(aleoAccount);
+    });
+    expect(result.current.selectedIds).toEqual([]);
+    expect(result.current.confirmLabel).toBe("Share view keys");
+  });
+
+  it("treats a rescanned Aleo account with the same address as already imported even when its id differs", async () => {
+    // Aleo's isAlreadyImportedAccount (sameAccountIdentity) matches by (currency, freshAddress)
+    // as well as id — Aleo reassigns the account id once the view key is granted, so a plain id
+    // comparison would miss the match on rescan.
+    const existingAccount = createAleoAccount({
+      id: "js:2:aleo:existing-id:aleo",
+      freshAddress: "aleo1abc",
+      used: true,
+    });
+    const rescannedAccount = createAleoAccount({
+      id: "js:2:aleo:different-id:aleo",
+      freshAddress: "aleo1abc",
+      used: false,
+    });
+    setScanObservable(of(makeDiscoveredEvent(rescannedAccount)));
+
+    const { result } = renderHook(() =>
+      useScanDeviceAccountsViewModel({
+        existingAccounts: [existingAccount],
+        blacklistedTokenIds: [],
+        analyticsMetadata,
+      }),
+    );
+
+    await waitFor(() => expect(result.current.scannedAccounts).toHaveLength(1));
+    await waitFor(() => expect(result.current.scanning).toBe(false));
+
+    // Recognized as already imported by address, so it must not be auto-selected.
+    expect(result.current.selectedIds).toEqual([]);
   });
 
   it("exposes a scanDeviceAccountsBack callback that tracks ScanDeviceAccounts.onBack before delegating to the custom flow handler", async () => {

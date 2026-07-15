@@ -25,7 +25,7 @@ export function BalanceCard({ label, lastUpdateLabel, balance, selected, onPress
         minHeight: 64,
       },
       cardDefault: {
-        backgroundColor: t.colors.bg.muted,
+        backgroundColor: t.colors.bg.surfaceTransparent,
         borderColor: "transparent",
       },
       cardSelected: {
@@ -33,7 +33,7 @@ export function BalanceCard({ label, lastUpdateLabel, balance, selected, onPress
         borderColor: t.colors.border.active,
       },
       cardPressed: {
-        backgroundColor: t.colors.bg.surfacePressed,
+        backgroundColor: t.colors.bg.surfaceTransparentPressed,
       },
       content: {
         flex: 1,
@@ -51,7 +51,7 @@ export function BalanceCard({ label, lastUpdateLabel, balance, selected, onPress
       style={({ pressed }) => [
         styles.card,
         selected ? styles.cardSelected : styles.cardDefault,
-        pressed && styles.cardPressed,
+        pressed && !selected && styles.cardPressed,
       ]}
     >
       <View style={styles.content}>
