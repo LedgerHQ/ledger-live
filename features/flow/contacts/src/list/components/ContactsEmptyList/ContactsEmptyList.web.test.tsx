@@ -32,9 +32,11 @@ describe("ContactsEmptyList", () => {
     expect((screen.getByPlaceholderText("Search contact") as HTMLInputElement).value).toBe("");
     expect(screen.getByText("Me")).toBeVisible();
     expect(screen.getByText("0 address")).toBeVisible();
-    expect(
-      screen.getByTestId("contacts-empty-list-me-avatar").querySelector("img")?.getAttribute("src"),
-    ).toBe("https://example.com/black/user.png");
+    const meAvatar = screen.getByTestId("contacts-empty-list-me-avatar");
+    expect(meAvatar).toHaveAttribute("aria-hidden", "true");
+    expect(meAvatar.querySelector("img")?.getAttribute("src")).toBe(
+      "https://example.com/black/user.png",
+    );
 
     fireEvent.click(screen.getByTestId("contacts-empty-list-me-row"));
     fireEvent.click(screen.getByTestId("contacts-add-contact"));

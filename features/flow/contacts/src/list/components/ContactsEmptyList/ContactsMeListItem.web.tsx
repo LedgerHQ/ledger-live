@@ -29,7 +29,7 @@ export function ContactsMeListItem({
       data-testid="contacts-empty-list-me-row"
     >
       <ListItemLeading>
-        <Avatar size="md" src={avatarSrc} data-testid="contacts-empty-list-me-avatar" />
+        <Avatar size="md" src={avatarSrc} aria-hidden data-testid="contacts-empty-list-me-avatar" />
         <ListItemContent>
           <ListItemTitle>{contact.name}</ListItemTitle>
           <ListItemDescription>{formatAddressCount(contact.addressCount)}</ListItemDescription>

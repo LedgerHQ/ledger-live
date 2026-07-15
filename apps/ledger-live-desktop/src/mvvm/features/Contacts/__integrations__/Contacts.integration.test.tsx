@@ -137,4 +137,26 @@ describe("Contacts integration", () => {
       expect(screen.getByTestId("contacts-empty-list-me-row")).toHaveTextContent("0 address");
     });
   });
+
+  it("should render the default Me contact when the persisted Contacts state has none", () => {
+    render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: {
+          ...withFlagOverrides({
+            lwdContacts: { enabled: true, params: { newBadge: false } },
+          }),
+          contacts: { contacts: [] },
+        },
+      },
+    );
+
+    expect(screen.getByTestId("contacts-page")).toBeVisible();
+    expect(screen.getByTestId("contacts-empty-list-me-row")).toHaveTextContent("Me");
+  });
 });

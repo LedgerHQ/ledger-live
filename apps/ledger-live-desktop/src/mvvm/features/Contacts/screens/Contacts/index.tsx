@@ -7,7 +7,7 @@ import { useContactsViewModel } from "./useContactsViewModel";
 function ContactsScreen() {
   const viewModel = useContactsViewModel();
 
-  return viewModel ? <ContactsView {...viewModel} /> : null;
+  return <ContactsView {...viewModel} />;
 }
 
 const Contacts = () => {

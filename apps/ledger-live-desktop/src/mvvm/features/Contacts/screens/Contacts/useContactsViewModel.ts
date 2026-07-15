@@ -8,7 +8,7 @@ import {
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/useUserAvatarViewModel";
 import type { ContactsViewProps } from "./ContactsView";
 
-export type ContactsViewModel = ContactsViewProps | undefined;
+export type ContactsViewModel = ContactsViewProps;
 
 export function useContactsViewModel(): ContactsViewModel {
   const { t } = useTranslation();
@@ -22,12 +22,8 @@ export function useContactsViewModel(): ContactsViewModel {
     }),
     [t],
   );
-  const onOpenMe = useCallback(() => undefined, []);
+  const onOpenMe = useCallback<ContactsViewProps["onOpenMe"]>(_contactId => undefined, []);
   const onAddContact = useCallback(() => undefined, []);
-
-  if (!meContact) {
-    return undefined;
-  }
 
   return {
     viewModel: createEmptyContactsListViewModel(meContact),
