@@ -1,0 +1,8 @@
+{
+  "name": "@domain/entity-card",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

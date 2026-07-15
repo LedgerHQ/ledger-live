@@ -9,6 +9,9 @@
     "./package.json": "./package.json"
   },
   "sideEffects": false,
+  "dependencies": {
+    "@domain/entity-card": "workspace:^"
+  },
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
