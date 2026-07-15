@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { CardFlowParams, CardState } from "./types";
+import type { CardParams, CardState } from "./types";
 
 export const initialState: CardState = {
   isOpen: false,
@@ -10,21 +10,21 @@ export const cardSlice = createSlice({
   name: "card",
   initialState,
   reducers: {
-    openCardFlow: (state, action: PayloadAction<CardFlowParams>) => {
+    openCard: (state, action: PayloadAction<CardParams>) => {
       state.isOpen = true;
       state.params = action.payload;
     },
-    closeCardFlow: state => {
+    closeCard: state => {
       state.isOpen = false;
       state.params = null;
     },
   },
   selectors: {
-    cardFlowSelector: state => state,
-    selectCardFlowIsOpen: state => state.isOpen,
-    selectCardFlowParams: state => state.params,
+    cardSelector: state => state,
+    selectCardIsOpen: state => state.isOpen,
+    selectCardParams: state => state.params,
   },
 });
 
-export const { openCardFlow, closeCardFlow } = cardSlice.actions;
-export const { cardFlowSelector, selectCardFlowIsOpen, selectCardFlowParams } = cardSlice.selectors;
+export const { openCard, closeCard } = cardSlice.actions;
+export const { cardSelector, selectCardIsOpen, selectCardParams } = cardSlice.selectors;

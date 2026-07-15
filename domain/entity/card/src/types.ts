@@ -1,4 +1,4 @@
-export type CardFlowParams = Readonly<{
+export type CardParams = Readonly<{
   platform: string;
   name: string;
   path?: string;
@@ -6,5 +6,5 @@ export type CardFlowParams = Readonly<{
 
 export type CardState = Readonly<{
   isOpen: boolean;
-  params: CardFlowParams | null;
+  params: CardParams | null;
 }>;
