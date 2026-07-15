@@ -22,8 +22,14 @@ import Zenrock from "./Zenrock";
 import CosmosBase from "./cosmosBase";
 
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
+
+const CURRENCY_ID_ALIASES: Record<string, string> = {
+  osmosis: "osmo",
+  crypto_org_croeseid: "crypto_org", // croeseid testnet reuses crypto_org's params
+};
+
 export default function cryptoFactory(currencyId: string): CosmosBase {
-  currencyId = currencyId === "osmosis" ? "osmo" : currencyId;
+  currencyId = CURRENCY_ID_ALIASES[currencyId] ?? currencyId;
   if (!cosmosChainParams[currencyId]) {
     let chain: CosmosBase;
     switch (currencyId) {
