@@ -10,7 +10,6 @@ import {
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import type {
-  CoinModuleApi,
   BalanceOptions,
   FeeEstimation,
   TransactionIntent,
@@ -46,10 +45,10 @@ import {
   parseTezosTokenAsset,
   resolveTezosOperationMode,
 } from "../utils";
-import type { TezosFeeEstimation } from "./types";
+import type { TezosAccountInfo, TezosApi, TezosFeeEstimation } from "./types";
 import type { TezosOperationMode } from "../types/model";
 
-export function createApi(config: TezosConfig): CoinModuleApi {
+export function createApi(config: TezosConfig): TezosApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -75,6 +74,12 @@ export function createApi(config: TezosConfig): CoinModuleApi {
     getNextSequence: async (address: string) => {
       const accountInfo = await api.getAccountByAddress(address);
       return accountInfo.type === "user" ? BigInt(accountInfo.counter + 1) : 0n;
+    },
+    getAccountInfo: async (address: string): Promise<TezosAccountInfo> => {
+      const account = await api.getAccountByAddress(address);
+      // Only "user" accounts carry a reveal state; empty / non-existent accounts are
+      // treated as unrevealed (no public key published on-chain yet).
+      return { type: "tezos", revealed: account.type === "user" ? account.revealed : false };
     },
     getBlock,
     getBlockInfo,

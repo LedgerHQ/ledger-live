@@ -952,3 +952,71 @@ describe("getBalance", () => {
     );
   });
 });
+
+describe("getAccountInfo", () => {
+  afterEach(() => {
+    (networkApi.getAccountByAddress as jest.Mock).mockClear();
+  });
+
+  it("returns revealed:true for a revealed user account", async () => {
+    (networkApi.getAccountByAddress as jest.Mock).mockResolvedValueOnce({
+      type: "user",
+      balance: 1000,
+      revealed: true,
+      address: "tz1test",
+      publicKey: "edpktest",
+      counter: 0,
+      delegationLevel: 0,
+      delegationTime: "2021-01-01T00:00:00Z",
+      numTransactions: 0,
+      firstActivityTime: "2021-01-01T00:00:00Z",
+    } as APIAccount);
+
+    await expect(api.getAccountInfo("tz1test")).resolves.toEqual({
+      type: "tezos",
+      revealed: true,
+    });
+    expect(networkApi.getAccountByAddress).toHaveBeenCalledWith("tz1test");
+  });
+
+  it("returns revealed:false for an unrevealed user account", async () => {
+    (networkApi.getAccountByAddress as jest.Mock).mockResolvedValueOnce({
+      type: "user",
+      balance: 1000,
+      revealed: false,
+      address: "tz2unrevealed",
+      publicKey: "",
+      counter: 0,
+      delegationLevel: 0,
+      delegationTime: "2021-01-01T00:00:00Z",
+      numTransactions: 0,
+      firstActivityTime: "2021-01-01T00:00:00Z",
+    } as APIAccount);
+
+    await expect(api.getAccountInfo("tz2unrevealed")).resolves.toEqual({
+      type: "tezos",
+      revealed: false,
+    });
+    expect(networkApi.getAccountByAddress).toHaveBeenCalledWith("tz2unrevealed");
+  });
+
+  it("returns revealed:false for an empty / non-existent account", async () => {
+    (networkApi.getAccountByAddress as jest.Mock).mockResolvedValueOnce({
+      type: "empty",
+      address: "tz1empty",
+      counter: 0,
+    } as APIAccount);
+
+    await expect(api.getAccountInfo("tz1empty")).resolves.toEqual({
+      type: "tezos",
+      revealed: false,
+    });
+    expect(networkApi.getAccountByAddress).toHaveBeenCalledWith("tz1empty");
+  });
+
+  it("propagates errors from getAccountByAddress", async () => {
+    (networkApi.getAccountByAddress as jest.Mock).mockRejectedValueOnce(new Error("boom"));
+
+    await expect(api.getAccountInfo("tz1boom")).rejects.toThrow("boom");
+  });
+});
