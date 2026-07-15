@@ -8985,6 +8985,20 @@
             "subtitle": "Shielded",
             "unavailable": "Private balance unavailable"
           }
+        },
+        "syncBanner": {
+          "stopped": {
+            "message": "Private balance is not synchronized",
+            "cta": "Resume sync"
+          },
+          "running": {
+            "message": "Private balance is synchronizing ({{progress}}%)",
+            "timeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}"
+          },
+          "outdated": {
+            "message": "Balance may be slightly out of date",
+            "cta": "Sync balance"
+          }
         }
       },
       "state": {
