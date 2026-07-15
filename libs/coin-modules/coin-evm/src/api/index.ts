@@ -5,6 +5,7 @@ import type {
   BlockInfo,
   BroadcastConfig,
   BufferTxData,
+  CallParams,
   CraftedTransaction,
   Cursor,
   FeeEstimation,
@@ -46,9 +47,8 @@ import { isHexString } from "../utils";
 // TODO Change to Record<string, EvmConfig> once Celo bridge is removed
 const configs: Record<string, EvmConfig | (() => EvmCoinConfig)> = {};
 
-// EVM only accepts the object form { to, data, block? }. The runtime guard in
-// parseCallParams still rejects arrays defensively, since the service boundary passes opaque params.
-type CallParams = Record<string, unknown>;
+// The framework contract passes opaque params (object or array); EVM only accepts the object
+// form { to, data, block? }, and parseCallParams rejects arrays defensively at runtime.
 type EvmCoinModuleApi = CoinModuleApi<MemoNotSupported, BufferTxData> & {
   call: (params: CallParams) => Promise<string>;
 };

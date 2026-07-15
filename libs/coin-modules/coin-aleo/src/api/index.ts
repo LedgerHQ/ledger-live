@@ -32,6 +32,9 @@ export function createApi(
   const currency = getCryptoCurrencyById(currencyId);
 
   return {
+    async call() {
+      throw new Error("call is not supported");
+    },
     broadcast: (_signature: string): Promise<string> => {
       throw new Error("broadcast is not supported");
     },

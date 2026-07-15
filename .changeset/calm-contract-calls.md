@@ -1,6 +1,12 @@
 ---
 "@ledgerhq/coin-evm": minor
+"@ledgerhq/coin-algorand": patch
+"@ledgerhq/coin-aleo": patch
+"@ledgerhq/coin-aptos": patch
+"@ledgerhq/coin-canton": patch
+"@ledgerhq/coin-cardano": patch
 "@ledgerhq/coin-concordium": patch
+"@ledgerhq/coin-filecoin": patch
 "@ledgerhq/coin-hedera": patch
 "@ledgerhq/coin-polkadot": patch
 "@ledgerhq/coin-solana": patch
