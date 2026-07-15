@@ -10,7 +10,6 @@ import {
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import invariant from "invariant";
-import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import {
   liveDataWithParentAddressCommand,
@@ -20,6 +19,7 @@ import {
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { FF_NEW_SEND_FLOW_DISABLED } from "tests/utils/featureFlagUtils";
+import { buildTags } from "tests/utils/tagsUtils";
 
 const subAccounts = [
   {
@@ -93,22 +93,14 @@ for (const token of subAccounts) {
       },
     });
 
-    const family = getFamilyByCurrencyId(token.account.currency.id);
-
     test(
       `Add Sub Account without parent (${token.account.currency.speculosApp.name}) - ${token.account.currency.ticker}`,
       {
-        tag: [
-          "@NanoSP",
-          ...(token.account.parentAccount?.currency.id === Currency.SUI.id ? [] : ["@LNS"]),
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          `@${token.account.currency.id}`,
-          ...(family ? [`@family-${family}`] : []),
-          ...(token.account === TokenAccount.ETH_USDT_1 ? ["@smoke"] : []),
-        ],
+        tag: buildTags({
+          currencyId: token.account.currency.id,
+          skipLNS: token.account.parentAccount?.currency.id === Currency.SUI.id,
+          extraTags: token.account === TokenAccount.ETH_USDT_1 ? ["@smoke"] : [],
+        }),
         annotation: {
           type: "TMS",
           description: token.xrayTicket1,
@@ -156,21 +148,13 @@ for (const token of subAccountReceive) {
       },
     });
 
-    const family = getFamilyByCurrencyId(token.account.currency.id);
-
     test(
       `[${token.account.currency.speculosApp.name}] Add subAccount when parent exists (${token.account.currency.ticker})`,
       {
-        tag: [
-          "@NanoSP",
-          ...(token.account.parentAccount?.currency.id === Currency.SUI.id ? [] : ["@LNS"]),
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          `@${token.account.currency.id}`,
-          ...(family ? [`@family-${family}`] : []),
-        ],
+        tag: buildTags({
+          currencyId: token.account.currency.id,
+          skipLNS: token.account.parentAccount?.currency.id === Currency.SUI.id,
+        }),
         annotation: {
           type: "TMS",
           description: token.xrayTicket,
@@ -215,22 +199,14 @@ for (const token of subAccounts) {
       },
     });
 
-    const family = getFamilyByCurrencyId(token.account.currency.id);
-
     test(
       `Token visible in parent account (${token.account.currency.speculosApp.name}) - ${token.account.currency.ticker}`,
       {
-        tag: [
-          "@NanoSP",
-          ...(token.account.parentAccount?.currency.id === Currency.SUI.id ? [] : ["@LNS"]),
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          `@${token.account.currency.id}`,
-          ...(family ? [`@family-${family}`] : []),
-          ...(token.account === TokenAccount.ETH_USDT_1 ? ["@smoke"] : []),
-        ],
+        tag: buildTags({
+          currencyId: token.account.currency.id,
+          skipLNS: token.account.parentAccount?.currency.id === Currency.SUI.id,
+          extraTags: token.account === TokenAccount.ETH_USDT_1 ? ["@smoke"] : [],
+        }),
         annotation: {
           type: "TMS",
           description: token.xrayTicket2,
@@ -281,7 +257,7 @@ for (const transaction of transactionE2E) {
     test(
       `Send from ${transaction.tx.accountToDebit.accountName} to ${transaction.tx.accountToCredit.accountName} - ${transaction.tx.accountToDebit.currency.name} - E2E test`,
       {
-        tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@solana", "@family-solana"],
+        tag: buildTags({ skipLNS: true, extraTags: ["@solana", "@family-solana"] }),
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,
@@ -379,21 +355,10 @@ for (const transaction of transactionsAddressInvalid) {
       },
     });
 
-    const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
-
     test(
       `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - ${transaction.transaction.accountToCredit.currency.name} - ${transaction.expectedErrorMessage}`,
       {
-        tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          `@${transaction.transaction.accountToDebit.currency.id}`,
-          ...(family ? [`@family-${family}`] : []),
-        ],
+        tag: buildTags({ currencyId: transaction.transaction.accountToDebit.currency.id }),
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,
@@ -443,16 +408,7 @@ for (const transaction of transactionsAddressValid) {
     test(
       `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - ${transaction.transaction.accountToDebit.currency.name} - valid address input`,
       {
-        tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          "@solana",
-          "@family-solana",
-        ],
+        tag: buildTags({ currencyId: transaction.transaction.accountToDebit.currency.id }),
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,
@@ -527,21 +483,10 @@ for (const transaction of tokenTransactionInvalid) {
       },
     });
 
-    const family = getFamilyByCurrencyId(transaction.tx.accountToDebit.currency.id);
-
     test(
       `Send from ${transaction.tx.accountToDebit.accountName} ${transaction.tx.accountToDebit.index} to ${transaction.tx.accountToCredit.accountName} - invalid amount input`,
       {
-        tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          `@${transaction.tx.accountToDebit.currency.id}`,
-          ...(family ? [`@family-${family}`] : []),
-        ],
+        tag: buildTags({ currencyId: transaction.tx.accountToDebit.currency.id }),
         annotation: {
           type: "TMS",
           description: transaction.xrayTicket,
@@ -593,7 +538,7 @@ test.describe("legacy send flow - Send token (subAccount) - valid address & amou
   test(
     `Send from ${tokenTransactionValid.accountToDebit.accountName} to ${tokenTransactionValid.accountToCredit.accountName} - valid address & amount input`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+      tag: buildTags({ extraTags: ["@ethereum", "@family-evm"] }),
       annotation: {
         type: "TMS",
         description: "B2CQA-2703, B2CQA-475, B2CQA-3901",

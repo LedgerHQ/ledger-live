@@ -11,6 +11,7 @@ import {
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
 
 const xrayTicket = "B2CQA-5632";
@@ -56,7 +57,7 @@ test.describe("Token approval - flow", () => {
   test(
     "Swap - token approval flow",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: [
         {
           type: "TMS",

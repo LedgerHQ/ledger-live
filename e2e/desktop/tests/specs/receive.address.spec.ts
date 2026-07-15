@@ -7,12 +7,12 @@ import {
 } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import type { Application } from "tests/page";
 import {
   addEmptyAccountCommand,
   liveDataCommand,
 } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { buildTags } from "tests/utils/tagsUtils";
 
 const nativeAccounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2559, B2CQA-2687" },
@@ -54,22 +54,13 @@ for (const receive of nativeAccounts) {
       cliCommands: [liveDataCommand(receive.account)],
     });
 
-    const family = getFamilyByCurrencyId(receive.account.currency.id);
-
     test(
       `[${receive.account.currency.name}] Receive`,
       {
-        tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          `@${receive.account.currency.id}`,
-          ...(family ? [`@family-${family}`] : []),
-          ...(receive.account === Account.ETH_1 ? ["@smoke"] : []),
-        ],
+        tag: buildTags({
+          currencyId: receive.account.currency.id,
+          extraTags: receive.account === Account.ETH_1 ? ["@smoke"] : [],
+        }),
         annotation: {
           type: "TMS",
           description: receive.xrayTicket,
@@ -101,21 +92,10 @@ test.describe("Receive TRX empty balance", () => {
     cliCommands: [addEmptyAccountCommand(account)],
   });
 
-  const family = getFamilyByCurrencyId(account.currency.id);
-
   test(
     `${account.currency.ticker} empty balance Receive displays address activation warning message`,
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        `@${account.currency.id}`,
-        ...(family ? [`@family-${family}`] : []),
-      ],
+      tag: buildTags({ currencyId: account.currency.id }),
       annotation: {
         type: "TMS",
         description: "B2CQA-1551",
@@ -141,21 +121,10 @@ test.describe("Receive token", () => {
     speculosApp: tokenAccount.account.currency.speculosApp,
   });
 
-  const family = getFamilyByCurrencyId(tokenAccount.account.currency.id);
-
   test(
     `[${tokenAccount.account.currency.name}] Receive`,
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        `@${tokenAccount.account.currency.id}`,
-        ...(family ? [`@family-${family}`] : []),
-      ],
+      tag: buildTags({ currencyId: tokenAccount.account.currency.id }),
       annotation: {
         type: "TMS",
         description: tokenAccount.xrayTicket,

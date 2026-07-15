@@ -8,6 +8,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
@@ -93,18 +94,7 @@ for (const swap of tooLowAmountForQuoteSwaps) {
     test(
       `Swap too low quote amounts from ${swap.swap.accountToDebit.currency.name} to ${swap.swap.accountToCredit.currency.name} - ${swap.errorMessage}`,
       {
-        tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          "@ethereum",
-          "@family-evm",
-          "@bitcoin",
-          "@family-bitcoin",
-        ],
+        tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
         annotation: {
           type: "TMS",
           description: swap.xrayTicket,
@@ -135,18 +125,7 @@ const swapNetworkFeesAboveAccountBalanceTestConfig = {
     `Your account .+ doesn't have enough balance to cover the network fees\\.`,
   ),
   xrayTicket: "B2CQA-2363",
-  tags: [
-    "@NanoSP",
-    "@LNS",
-    "@NanoX",
-    "@Stax",
-    "@Flex",
-    "@NanoGen5",
-    "@ethereum",
-    "@family-evm",
-    "@bitcoin",
-    "@family-bitcoin",
-  ],
+  tags: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
 };
 
 // Unreachable while ptxSponsoredTransactions covers this pair — see B2CQA-3241.
@@ -154,18 +133,7 @@ const swapEthNeededForNetworkFeesTestConfig = {
   swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "USE_MIN_AMOUNT"),
   errorMessage: new RegExp(`\\d+(\\.\\d{1,10})? ETH needed for network fees\\.\\s*$`),
   xrayTicket: "B2CQA-3241",
-  tags: [
-    "@NanoSP",
-    "@LNS",
-    "@NanoX",
-    "@Stax",
-    "@Flex",
-    "@NanoGen5",
-    "@ethereum",
-    "@family-evm",
-    "@bitcoin",
-    "@family-bitcoin",
-  ],
+  tags: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
 };
 
 test.describe(`Swap - Error message when network fees are above account balance (${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToDebit.currency.name} to ${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToCredit.currency.name})`, () => {
@@ -210,18 +178,7 @@ test.describe(`Swap - Error message when network fees are above account balance 
   test.skip(
     `Swap - Network fees above account balance`,
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@ethereum",
-        "@family-evm",
-        "@bitcoin",
-        "@family-bitcoin",
-      ],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
         type: "TMS",
         description: swapNetworkFeesAboveAccountBalanceTestConfig.xrayTicket,

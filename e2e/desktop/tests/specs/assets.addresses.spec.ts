@@ -5,6 +5,7 @@ import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { coinDetailUrlPattern } from "tests/utils/urlUtils";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import {
@@ -49,7 +50,7 @@ test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
     test(
       "Empty state: verify placeholder assets, market navigation, and Add account CTA",
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+        tag: [...DEVICE_TAGS],
         annotation: {
           type: "TMS",
           description: "B2CQA-4839, B2CQA-4840, B2CQA-4841",
@@ -120,7 +121,7 @@ test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
     test(
       "Validate assets section with less than 6 cryptos/stablecoins added",
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+        tag: [...DEVICE_TAGS],
         annotation: {
           type: "TMS",
           description: "B2CQA-4841",
@@ -148,7 +149,7 @@ test.describe("Wallet 4.0 - Portfolio-Asset/Address", () => {
     test(
       "validate assets section with more than 6 cryptos/stablecoins",
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+        tag: [...DEVICE_TAGS],
         annotation: {
           type: "TMS",
           description: "B2CQA-4834, B2CQA-4837, B2CQA-4838",

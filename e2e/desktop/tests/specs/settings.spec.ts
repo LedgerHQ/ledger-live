@@ -4,6 +4,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { FileUtils } from "tests/utils/fileUtils";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 
 test.describe("Settings", () => {
@@ -15,7 +16,7 @@ test.describe("Settings", () => {
   test(
     `ERC20 token with 0 balance is hidden if 'hide empty token accounts' is ON`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: [{ type: "TMS", description: "B2CQA-817" }],
     },
     async ({ app }) => {
@@ -50,7 +51,7 @@ test.describe("Password", () => {
   test(
     "The user enter his password to access to the app",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@ethereum`, "@family-evm"],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2343, B2CQA-1763, B2CQA-826",
@@ -92,16 +93,7 @@ test.describe("counter value selection", () => {
   test(
     "User can select a counter value to display amount",
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@bitcoin",
-        "@family-bitcoin",
-      ],
+      tag: [...DEVICE_TAGS, "@bitcoin", "@family-bitcoin"],
       annotation: {
         type: "TMS",
         description: "B2CQA-804",
@@ -135,7 +127,7 @@ test.describe("Ledger Support (web link)", () => {
   test(
     "Verify that user can access to Ledger Support (Web Link)",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [...DEVICE_TAGS],
       annotation: {
         type: "TMS",
         description: "B2CQA-820",
@@ -161,7 +153,7 @@ test.describe("Reset app", () => {
   test(
     "Verify that user can Reset app",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: {
         type: "TMS",
         description: "B2CQA-821",
@@ -192,7 +184,7 @@ test.describe("Settings - Export Log", () => {
   test(
     "Verify that user can view user data folder and export logs",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: {
         type: "TMS",
         description: "B2CQA-825, B2CQA-2074",
@@ -248,7 +240,7 @@ test.describe("Language change", () => {
     test(
       `Settings — change app language to ${l10n.lang}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+        tag: [...DEVICE_TAGS],
         annotation: { type: "TMS", description: "B2CQA-2344" },
       },
       async ({ app }) => {

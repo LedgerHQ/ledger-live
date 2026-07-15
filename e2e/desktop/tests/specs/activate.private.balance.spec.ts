@@ -4,7 +4,7 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { buildTags } from "tests/utils/tagsUtils";
 
 const accounts = [
   { account: Account.ZEC_1, xrayTicket: "B2CQA-4300", birthdayHeight: "2026-01-01" },
@@ -25,21 +25,10 @@ for (const account of accounts) {
       },
     });
 
-    const family = getFamilyByCurrencyId(account.account.currency.id);
-
     test(
       `[${account.account.currency.name}] Activate Private Balance`,
       {
-        tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          `@${account.account.currency.id}`,
-          ...(family ? [`@family-${family}`] : []),
-        ],
+        tag: buildTags({ currencyId: account.account.currency.id }),
         annotation: {
           type: "TMS",
           description: account.xrayTicket,

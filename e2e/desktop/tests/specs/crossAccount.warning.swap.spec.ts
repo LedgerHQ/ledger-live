@@ -8,6 +8,7 @@ import { keepRunningProviders } from "@ledgerhq/live-e2e-shared/swap";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 const dexProviders = [
   SwapProvider.ONE_INCH,
@@ -44,16 +45,7 @@ test.describe("Swap cross account warning", () => {
     test(
       `A warning should be visible for a cross account swap with ${provider.uiName}`,
       {
-        tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          "@ethereum",
-          "@family-evm",
-        ],
+        tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
         annotation: [
           {
             type: "TMS",
