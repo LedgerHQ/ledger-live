@@ -7,20 +7,17 @@ export const ContactCurrencyIdSchema = z.union([CurrencyIdSchema, TokenIdSchema]
 
 const ContactNamePattern =
   /^\p{L}[\p{L}\p{Mn}\p{Mc}]*(?:[\p{Zs}'\u2019-]\p{L}[\p{L}\p{Mn}\p{Mc}]*)*$/u;
-const ContactAddressLabelPattern =
-  /^(?=.*[\p{L}\p{N}])[\p{L}\p{Mn}\p{Mc}\p{N}\p{P}\p{Zs}]+$/u;
+const ContactAddressLabelPattern = /^(?=.*[\p{L}\p{N}])[\p{L}\p{Mn}\p{Mc}\p{N}\p{P}\p{Zs}]+$/u;
 
-export const ContactNameSchema = z
-  .string()
-  .trim()
-  .min(1)
-  .regex(ContactNamePattern, "Expected letters, spaces, apostrophes, or hyphens");
+export const ContactNameSchema = NonEmptyStringSchema.regex(
+  ContactNamePattern,
+  "Expected letters, spaces, apostrophes, or hyphens",
+);
 
-export const ContactAddressLabelSchema = z
-  .string()
-  .trim()
-  .min(1)
-  .regex(ContactAddressLabelPattern, "Expected letters, numbers, punctuation, or spaces");
+export const ContactAddressLabelSchema = NonEmptyStringSchema.regex(
+  ContactAddressLabelPattern,
+  "Expected letters, numbers, punctuation, or spaces",
+);
 
 export const ContactAddressValueSchema = NonEmptyStringSchema;
 
