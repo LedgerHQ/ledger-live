@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import {
   createEmptyContactsListViewModel,
   useContactsMeContact,
-  type ContactsEmptyListLabels,
+  type ContactsPageLabels,
 } from "@features/flow-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import type { ContactsViewProps } from "./ContactsView";
@@ -13,7 +13,7 @@ export type ContactsViewModel = ContactsViewProps;
 export function useContactsViewModel(): ContactsViewModel {
   const { t } = useTranslation();
   const meContact = useContactsMeContact();
-  const labels = useMemo<ContactsEmptyListLabels>(
+  const labels = useMemo<ContactsPageLabels>(
     () => ({
       title: t("contacts.title"),
       searchPlaceholder: t("contacts.searchPlaceholder"),

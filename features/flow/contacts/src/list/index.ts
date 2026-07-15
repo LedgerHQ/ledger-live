@@ -1,7 +1,7 @@
 export { createEmptyContactsListViewModel } from "./viewModel";
 export type {
-  ContactsEmptyListLabels,
-  ContactsEmptyListProps,
+  ContactsPageLabels,
+  ContactsPageProps,
   ContactsListItem,
   EmptyContactsListViewModel,
 } from "./types";

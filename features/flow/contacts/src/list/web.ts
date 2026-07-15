@@ -1,1 +1,1 @@
-export { ContactsEmptyList } from "./components/ContactsEmptyList/ContactsEmptyList.web";
+export { ContactsPage } from "./components/ContactsPage/ContactsPage.web";

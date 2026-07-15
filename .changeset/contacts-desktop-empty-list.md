@@ -3,4 +3,4 @@
 "ledger-live-desktop": minor
 ---
 
-Add the Contacts empty-list master-detail shell to the Desktop Contacts page.
+Add the Contacts page shell with an empty list to the Desktop Contacts page.

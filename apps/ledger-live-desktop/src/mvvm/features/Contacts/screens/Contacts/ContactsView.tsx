@@ -1,8 +1,8 @@
 import React from "react";
-import { ContactsEmptyList, type ContactsEmptyListProps } from "@features/flow-contacts";
+import { ContactsPage, type ContactsPageProps } from "@features/flow-contacts";
 
-export type ContactsViewProps = ContactsEmptyListProps;
+export type ContactsViewProps = ContactsPageProps;
 
 export function ContactsView(props: Readonly<ContactsViewProps>) {
-  return <ContactsEmptyList {...props} />;
+  return <ContactsPage {...props} />;
 }

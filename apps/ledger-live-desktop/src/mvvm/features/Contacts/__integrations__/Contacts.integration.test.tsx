@@ -133,8 +133,8 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-add-contact-header")).toBeVisible();
 
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-empty-list-me-row")).toHaveTextContent("Me");
-      expect(screen.getByTestId("contacts-empty-list-me-row")).toHaveTextContent("0 address");
+      expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("Me");
+      expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("0 address");
     });
   });
 
@@ -157,6 +157,6 @@ describe("Contacts integration", () => {
     );
 
     expect(screen.getByTestId("contacts-page")).toBeVisible();
-    expect(screen.getByTestId("contacts-empty-list-me-row")).toHaveTextContent("Me");
+    expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("Me");
   });
 });
