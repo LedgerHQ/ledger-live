@@ -1,23 +1,39 @@
-import { useContactsMeContact } from "@features/flow-contacts";
+import {
+  createEmptyContactsListViewModel,
+  type ContactsPageLabels,
+  type ContactsPageProps,
+  useContactsMeContact,
+} from "@features/flow-contacts";
+import { useCallback, useMemo } from "react";
+import { MY_WALLET_AVATAR_USER_URL } from "LLM/features/MyWallet/components/UserAvatar/constants";
 import { useTranslation } from "~/context/Locale";
 
-export type ContactsViewModel = {
-  searchPlaceholder: string;
-  addContactLabel: string;
-  meName: string;
-  meAddressCountLabel: string;
-};
+export type ContactsViewModel = ContactsPageProps;
 
 export function useContactsViewModel(): ContactsViewModel {
   const { t } = useTranslation();
   const meContact = useContactsMeContact();
+  const labels = useMemo<ContactsPageLabels>(
+    () => ({
+      title: t("contacts.title"),
+      searchPlaceholder: t("contacts.searchPlaceholder"),
+      addContact: t("contacts.addContact"),
+      formatAddressCount: count => t("contacts.me.addressCount", { count }),
+    }),
+    [t],
+  );
+  const viewModel = useMemo(
+    () => createEmptyContactsListViewModel(meContact!),
+    [meContact],
+  );
+  const onOpenMe = useCallback(() => undefined, []);
+  const onAddContact = useCallback(() => undefined, []);
 
   return {
-    searchPlaceholder: t("contacts.searchPlaceholder"),
-    addContactLabel: t("contacts.addContact"),
-    meName: meContact?.name ?? t("contacts.me.name"),
-    meAddressCountLabel: t("contacts.me.addressCount", {
-      count: meContact?.addresses.length ?? 0,
-    }),
+    viewModel,
+    labels,
+    meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
+    onOpenMe,
+    onAddContact,
   };
 }

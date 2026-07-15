@@ -1,85 +1,34 @@
 import React from "react";
-import { ScrollView } from "react-native";
-import {
-  Box,
-  ListItem,
-  ListItemContent,
-  ListItemDescription,
-  ListItemLeading,
-  ListItemTitle,
-  SearchInput,
-} from "@ledgerhq/lumen-ui-rnative";
-import { Plus, UserCircle } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Box, SearchInput } from "@ledgerhq/lumen-ui-rnative";
+import type { ContactsPageProps } from "../..";
+import { ContactsAddContactListItem } from "./ContactsAddContactListItem.native";
+import { ContactsMeListItem } from "./ContactsMeListItem.native";
 
-export type ContactsPageContentProps = {
-  searchPlaceholder: string;
-  addContactLabel: string;
-  meName: string;
-  meAddressCountLabel: string;
-};
-
-export function ContactsPageContent({
-  searchPlaceholder,
-  addContactLabel,
-  meName,
-  meAddressCountLabel,
-}: Readonly<ContactsPageContentProps>) {
+export function ContactsPage({
+  viewModel,
+  labels,
+  meAvatarSrc,
+  onOpenMe,
+  onAddContact,
+}: Readonly<ContactsPageProps>): React.JSX.Element {
   return (
-    <ScrollView testID="contacts-screen">
-      <Box lx={{ paddingHorizontal: "s16", paddingTop: "s8", gap: "s16" }}>
+    <Box testID="contacts-screen" lx={{ flex: 1, backgroundColor: "base" }}>
+      <Box lx={{ gap: "s8", paddingHorizontal: "s16", paddingTop: "s8" }}>
         <SearchInput
-          appearance="plain"
-          placeholder={searchPlaceholder}
+          testID="contacts-search-input"
           value=""
           editable={false}
-          testID="contacts-search-input"
+          placeholder={labels.searchPlaceholder}
+          accessibilityLabel={labels.searchPlaceholder}
         />
-        <ListItem
-          lx={{ backgroundColor: "surface", borderRadius: "md", paddingVertical: "s4" }}
-          testID="contacts-me-item"
-        >
-          <ListItemLeading>
-            <Box
-              lx={{
-                backgroundColor: "muted",
-                borderRadius: "full",
-                width: "s48",
-                height: "s48",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <UserCircle size={20} color="base" />
-            </Box>
-            <ListItemContent>
-              <ListItemTitle>{meName}</ListItemTitle>
-              <ListItemDescription>{meAddressCountLabel}</ListItemDescription>
-            </ListItemContent>
-          </ListItemLeading>
-        </ListItem>
-        <ListItem
-          lx={{ backgroundColor: "surface", borderRadius: "md", paddingVertical: "s4" }}
-          testID="contacts-add-contact-row"
-        >
-          <ListItemLeading>
-            <Box
-              lx={{
-                backgroundColor: "muted",
-                borderRadius: "full",
-                width: "s48",
-                height: "s48",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Plus size={20} color="base" />
-            </Box>
-            <ListItemContent>
-              <ListItemTitle>{addContactLabel}</ListItemTitle>
-            </ListItemContent>
-          </ListItemLeading>
-        </ListItem>
+        <ContactsMeListItem
+          contact={viewModel.me}
+          avatarSrc={meAvatarSrc}
+          addressCountLabel={labels.formatAddressCount(viewModel.me.addressCount)}
+          onOpen={onOpenMe}
+        />
+        <ContactsAddContactListItem label={labels.addContact} onPress={onAddContact} />
       </Box>
-    </ScrollView>
+    </Box>
   );
 }

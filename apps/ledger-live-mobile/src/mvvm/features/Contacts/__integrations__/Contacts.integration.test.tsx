@@ -10,7 +10,7 @@ import { useMyWalletHeaderViewModel } from "LLM/features/MyWallet/views/Header/u
 jest.mock("@features/flow-contacts", () => {
   const flowContacts = jest.requireActual("@features/flow-contacts");
   const React = require("react");
-  const { Pressable, ScrollView, Text, View } = require("react-native");
+  const { Pressable, Text, View } = require("react-native");
 
   return {
     ...flowContacts,
@@ -31,37 +31,42 @@ jest.mock("@features/flow-contacts", () => {
         {newBadgeLabel ? <Text testID="contacts-button-new-badge">{newBadgeLabel}</Text> : null}
       </Pressable>
     ),
-    ContactsAddContactHeaderButton: ({ addContactLabel }: { addContactLabel: string }) => (
+    ContactsAddContactHeaderButton: ({
+      addContactLabel,
+      onPress,
+    }: {
+      addContactLabel: string;
+      onPress: () => void;
+    }) => (
       <Pressable
-        testID="contacts-add-contact-button"
+        testID="contacts-add-contact-header"
         accessibilityLabel={addContactLabel}
-        disabled
-        accessibilityState={{ disabled: true }}
+        onPress={onPress}
       >
         <Text>{addContactLabel}</Text>
       </Pressable>
     ),
-    ContactsPageContent: ({
-      searchPlaceholder,
-      addContactLabel,
-      meName,
-      meAddressCountLabel,
+    ContactsPage: ({
+      viewModel,
+      labels,
+      onOpenMe,
+      onAddContact,
     }: {
-      searchPlaceholder: string;
-      addContactLabel: string;
-      meName: string;
-      meAddressCountLabel: string;
+      viewModel: { me: { contactId: string; name: string; addressCount: number } };
+      labels: { searchPlaceholder: string; addContact: string; formatAddressCount: (count: number) => string };
+      onOpenMe: (contactId: string) => void;
+      onAddContact: () => void;
     }) => (
-      <ScrollView testID="contacts-screen">
-        <Text testID="contacts-search-input">{searchPlaceholder}</Text>
-        <View testID="contacts-me-item">
-          <Text>{meName}</Text>
-          <Text>{meAddressCountLabel}</Text>
-        </View>
-        <View testID="contacts-add-contact-row">
-          <Text>{addContactLabel}</Text>
-        </View>
-      </ScrollView>
+      <View testID="contacts-screen">
+        <Text testID="contacts-search-input">{labels.searchPlaceholder}</Text>
+        <Pressable testID="contacts-me-item" onPress={() => onOpenMe(viewModel.me.contactId)}>
+          <Text>{viewModel.me.name}</Text>
+          <Text>{labels.formatAddressCount(viewModel.me.addressCount)}</Text>
+        </Pressable>
+        <Pressable testID="contacts-add-contact-row" onPress={onAddContact}>
+          <Text>{labels.addContact}</Text>
+        </Pressable>
+      </View>
     ),
   };
 });
@@ -167,7 +172,7 @@ describe("Contacts integration", () => {
     });
   });
 
-  it("should render the Contacts page shell when navigated from My Wallet", async () => {
+  it("should render the empty Contacts list when navigated from My Wallet", async () => {
     const { user } = render(<MyWalletNavigator />, {
       overrideInitialState: withFlagOverrides({
         lwmContacts: { enabled: true, params: { newBadge: false } },
@@ -178,9 +183,10 @@ describe("Contacts integration", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-screen")).toBeVisible();
-      expect(screen.getByTestId("contacts-add-contact-button")).toBeDisabled();
+      expect(screen.getByTestId("contacts-add-contact-header")).toBeEnabled();
       expect(screen.getByTestId("contacts-me-item")).toHaveTextContent(/Me/);
       expect(screen.getByTestId("contacts-me-item")).toHaveTextContent(/0 address/);
+      expect(screen.getByTestId("contacts-add-contact-row")).toBeVisible();
     });
   });
 });
