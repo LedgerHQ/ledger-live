@@ -26,9 +26,13 @@ permissions:
 jobs:
   test-libraries:
     name: "Libraries Test"
-    timeout-minutes: 40
+    timeout-minutes: 60
     env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
+      # DIAGNOSTIC (ci/diagnose-libs-coverage-crash): turn a fatal unhandled rejection into a
+      # visible warning so the live-common coverage crash (exit 1, no FATAL, no summary) reveals
+      # its cause instead of just killing the process. Minimal set (no stack-trace flags) to avoid
+      # any extra log verbosity around secrets.
+      NODE_OPTIONS: "--max-old-space-size=7168 --unhandled-rejections=warn"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
     outputs:
@@ -63,7 +67,9 @@ jobs:
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
 
-          pnpm exec nx run-many -t coverage --projects=tag:scope:libs-non-ui --parallel=6 -- --runInBand=1
+          # DIAGNOSTIC: --skip-nx-cache forces live-common to actually run (a cache hit = no repro);
+          # --logHeapUsage prints per-suite heap so an OOM climb toward the 7GB cap is visible.
+          pnpm exec nx run-many -t coverage --projects=tag:scope:libs-non-ui --parallel=6 --skip-nx-cache -- --runInBand=1 --logHeapUsage
 
       - name: Test libraries without coverage script & Process coverage files
         id: test-libs
