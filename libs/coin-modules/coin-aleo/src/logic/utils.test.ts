@@ -93,6 +93,10 @@ import {
   getEstimatedSigningTime,
   sumPrivateRecords,
   getCalTokens,
+  getMaxPrivateRecordsForAccount,
+  getStrategyConfig,
+  isAleoAccount,
+  isAleoTransaction,
 } from "./utils";
 
 jest.mock("../config");
@@ -403,7 +407,9 @@ describe("toCoinFrameworkOperation", () => {
   });
 
   it("should set failed to true when transaction_status is not Accepted", () => {
-    const rawTx = getMockedPublicTransaction({ transaction_status: "Rejected" });
+    const rawTx = getMockedPublicTransaction({
+      transaction_status: "Rejected",
+    });
 
     const result = toCoinFrameworkOperation(rawTx, recipientAddress);
 
@@ -547,7 +553,9 @@ describe("resolveConfig", () => {
 describe("getTransactionType", () => {
   it("should return valid transaction type from intent", () => {
     // @ts-expect-error - only intent type is required for this test
-    const mockTx: TransactionIntent = { type: TRANSACTION_TYPE.TRANSFER_PUBLIC };
+    const mockTx: TransactionIntent = {
+      type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+    };
 
     expect(getTransactionType(mockTx)).toBe(TRANSACTION_TYPE.TRANSFER_PUBLIC);
   });
@@ -971,7 +979,9 @@ describe("toPrivateBridgeOperation", () => {
   });
 
   it("should set value from enriched.value", () => {
-    const enriched = getMockedEnrichedPrivateRecord({ value: new BigNumber(42000000) });
+    const enriched = getMockedEnrichedPrivateRecord({
+      value: new BigNumber(42000000),
+    });
 
     const result = toPrivateBridgeOperation(mockLedgerAccountId, enriched, mockRecipientAddress);
 
@@ -981,7 +991,10 @@ describe("toPrivateBridgeOperation", () => {
 
 describe("splitPrivateAndPublicOperations", () => {
   const makePublicOp = (id: string) =>
-    getMockedOperation({ id, extra: { functionId: "transfer_public", transactionType: "public" } });
+    getMockedOperation({
+      id,
+      extra: { functionId: "transfer_public", transactionType: "public" },
+    });
   const makePrivateOp = (id: string) =>
     getMockedOperation({
       id,
@@ -1425,7 +1438,9 @@ describe("toHex", () => {
 
   it("should produce different hex strings for different transactions", () => {
     const tx1 = getMockedPreparedRequestResponse({ program_id: "custom.aleo" });
-    const tx2 = getMockedPreparedRequestResponse({ program_id: "another.aleo" });
+    const tx2 = getMockedPreparedRequestResponse({
+      program_id: "another.aleo",
+    });
 
     expect(toHex(tx1)).not.toBe(toHex(tx2));
   });
@@ -1524,6 +1539,16 @@ describe("isSelfTransferTransaction", () => {
     const transaction = getMockedTransaction({ mode });
 
     expect(isSelfTransferTransaction(transaction)).toBe(expected);
+  });
+});
+
+describe("isAleoTransaction", () => {
+  it("returns true for an aleo transaction", () => {
+    expect(isAleoTransaction({ family: "aleo" })).toBe(true);
+  });
+
+  it("returns false for a non-aleo transaction", () => {
+    expect(isAleoTransaction({ family: "bitcoin" })).toBe(false);
   });
 });
 
@@ -1633,7 +1658,10 @@ describe("createTransactionIntent", () => {
         recipient: "aleo1recipient",
       });
 
-      const result = createTransactionIntent({ account: mockAccount, transaction });
+      const result = createTransactionIntent({
+        account: mockAccount,
+        transaction,
+      });
 
       expect(result).toEqual({
         intentType: "transaction",
@@ -1654,7 +1682,10 @@ describe("createTransactionIntent", () => {
       useAllAmount: true,
     });
 
-    const result = createTransactionIntent({ account: mockAccount, transaction });
+    const result = createTransactionIntent({
+      account: mockAccount,
+      transaction,
+    });
 
     expect(result.useAllAmount).toBe(true);
   });
@@ -1670,7 +1701,10 @@ describe("createTransactionIntent", () => {
         },
       });
 
-      const result = createTransactionIntent({ account: mockAccount, transaction });
+      const result = createTransactionIntent({
+        account: mockAccount,
+        transaction,
+      });
 
       expect(result).toMatchObject({
         type: transaction.mode,
@@ -2096,10 +2130,16 @@ describe("getRecordByCommitment", () => {
       unspentPrivateRecords: [mockUnspentTokenRecord1],
     });
     // Put a native record with the same commitment to catch any incorrect fallback.
-    const nativeDecoy = { ...mockUnspentRecord1, commitment: missingCommitment };
+    const nativeDecoy = {
+      ...mockUnspentRecord1,
+      commitment: missingCommitment,
+    };
     const account = getMockedAccount({
       subAccounts: [tokenAccount],
-      aleoResources: { ...mockAleoResources, unspentPrivateRecords: [nativeDecoy] },
+      aleoResources: {
+        ...mockAleoResources,
+        unspentPrivateRecords: [nativeDecoy],
+      },
     });
 
     const result = getRecordByCommitment({
@@ -2116,7 +2156,10 @@ describe("getRecordByCommitment", () => {
       unspentPrivateRecords: [],
     });
     const account = getMockedAccount({
-      aleoResources: { ...mockAleoResources, unspentPrivateRecords: [mockUnspentRecord1] },
+      aleoResources: {
+        ...mockAleoResources,
+        unspentPrivateRecords: [mockUnspentRecord1],
+      },
       subAccounts: [tokenAccount],
     });
 
@@ -2130,12 +2173,20 @@ describe("getRecordByCommitment", () => {
   });
 
   it("should return null when tokenAccount.unspentPrivateRecords is null", () => {
-    const tokenAccount = getMockedTokenAccount(undefined, { unspentPrivateRecords: null });
+    const tokenAccount = getMockedTokenAccount(undefined, {
+      unspentPrivateRecords: null,
+    });
     // Put a native record with the same commitment to catch any incorrect fallback.
-    const nativeDecoy = { ...mockUnspentRecord1, commitment: mockUnspentTokenRecord1.commitment };
+    const nativeDecoy = {
+      ...mockUnspentRecord1,
+      commitment: mockUnspentTokenRecord1.commitment,
+    };
     const account = getMockedAccount({
       subAccounts: [tokenAccount],
-      aleoResources: { ...mockAleoResources, unspentPrivateRecords: [nativeDecoy] },
+      aleoResources: {
+        ...mockAleoResources,
+        unspentPrivateRecords: [nativeDecoy],
+      },
     });
 
     const result = getRecordByCommitment({
@@ -2261,7 +2312,10 @@ describe("selectPrivateRecordsForAmount", () => {
       microcredits: `${(i + 1) * 10}`,
     }));
 
-    const result = selectPrivateRecordsForAmount({ unspentRecords: records, targetAmount: null });
+    const result = selectPrivateRecordsForAmount({
+      unspentRecords: records,
+      targetAmount: null,
+    });
     const expectedMicrocredits = [...records]
       .sort((a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits)))
       .slice(0, MAX_PRIVATE_RECORDS_PER_TRANSACTION)
@@ -2271,7 +2325,10 @@ describe("selectPrivateRecordsForAmount", () => {
   });
 
   it("should return empty array when targetAmount is null and input is empty", () => {
-    const result = selectPrivateRecordsForAmount({ unspentRecords: [], targetAmount: null });
+    const result = selectPrivateRecordsForAmount({
+      unspentRecords: [],
+      targetAmount: null,
+    });
 
     expect(result).toEqual([]);
   });
@@ -2391,10 +2448,16 @@ describe("selectPrivateRecordsForAmount", () => {
     const unspentRecords = [{ ...mockUnspentRecord1, microcredits: "100" }];
 
     expect(
-      selectPrivateRecordsForAmount({ unspentRecords, targetAmount: new BigNumber(0) }),
+      selectPrivateRecordsForAmount({
+        unspentRecords,
+        targetAmount: new BigNumber(0),
+      }),
     ).toEqual([]);
     expect(
-      selectPrivateRecordsForAmount({ unspentRecords, targetAmount: new BigNumber(-1) }),
+      selectPrivateRecordsForAmount({
+        unspentRecords,
+        targetAmount: new BigNumber(-1),
+      }),
     ).toEqual([]);
   });
 
@@ -2533,6 +2596,58 @@ describe("sumPrivateRecords", () => {
       { ...mockUnspentRecord1, microcredits: "58" },
     ];
     expect(sumPrivateRecords(records).isEqualTo(new BigNumber(100))).toBe(true);
+  });
+});
+
+describe("getMaxPrivateRecordsForAccount", () => {
+  it("returns 14 for a native Aleo account", () => {
+    expect(getMaxPrivateRecordsForAccount(getMockedAccount())).toBe(14);
+  });
+
+  it("returns 13 for an Aleo token account", () => {
+    expect(getMaxPrivateRecordsForAccount(getMockedTokenAccount())).toBe(13);
+  });
+});
+
+describe("getStrategyConfig", () => {
+  it("returns fast/balanced/full boundaries for a native account", () => {
+    expect(getStrategyConfig(getMockedAccount())).toEqual({
+      fast: { min: 1, max: 4 },
+      balanced: { min: 5, max: 8 },
+      full: { min: 9, max: 14 },
+    });
+  });
+
+  it("caps the full tier at 13 for a token account", () => {
+    expect(getStrategyConfig(getMockedTokenAccount())).toEqual({
+      fast: { min: 1, max: 4 },
+      balanced: { min: 5, max: 8 },
+      full: { min: 9, max: 13 },
+    });
+  });
+});
+
+describe("isAleoAccount", () => {
+  it("returns true for a native Aleo account", () => {
+    expect(isAleoAccount(getMockedAccount())).toBe(true);
+  });
+
+  it("returns true for an Aleo token account", () => {
+    expect(isAleoAccount(getMockedTokenAccount())).toBe(true);
+  });
+
+  it("returns false for an account of another family", () => {
+    const nonAleoAccount = getMockedAccount({
+      currency: { ...getMockedCurrency(), family: "bitcoin" },
+    });
+    expect(isAleoAccount(nonAleoAccount)).toBe(false);
+  });
+
+  it("returns false instead of throwing for a token account with an unregistered parentCurrencyId", () => {
+    const unknownTokenAccount = getMockedTokenAccount(undefined, {
+      token: { ...getMockedTokenCurrency(), parentCurrencyId: "unregistered_currency_id" },
+    });
+    expect(isAleoAccount(unknownTokenAccount)).toBe(false);
   });
 });
 

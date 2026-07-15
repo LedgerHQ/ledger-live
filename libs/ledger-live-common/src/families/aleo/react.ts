@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
+import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import { useFeature } from "@features/platform-feature-flags";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type Transport from "@ledgerhq/hw-transport";
 import { asyncScheduler, from, mergeMap, throttleTime, type Observable } from "rxjs";
+import type { Transaction } from "../../generated/types";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../../hw/connectApp";
 import connectApp from "../../hw/connectApp";
 import type { Device } from "../../hw/actions/types";
@@ -17,10 +20,160 @@ import {
   type ViewKeyProgress,
   type ViewKeysByAccountId,
 } from "./hw/getViewKey/index";
-import { patchAccountWithViewKey } from "./utils";
-import type { AleoAccount } from "./types";
+import {
+  getStrategyConfig,
+  isAleoAccount,
+  isAleoTransaction,
+  isPrivateTransaction,
+  patchAccountWithViewKey,
+  sumPrivateRecords,
+} from "./utils";
+import type { AleoAccount, AleoTokenAccount, AleoUnspentRecord, SigningStrategy } from "./types";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
 import { MANDATORY_SYNC_POLLING_DELAY, PROGRESS_THROTTLE_INTERVAL_MS } from "./constants";
+
+const QUICK_AMOUNT_STRATEGIES: SigningStrategy[] = ["fast", "balanced", "full"];
+
+interface QuickAmountStrategyTile {
+  strategy: SigningStrategy;
+  min: number;
+  max: number;
+  availableCount: number;
+  rangeSum: BigNumber;
+  disabled: boolean;
+  selected: boolean;
+  isSendMax: boolean;
+}
+
+export interface UseAleoQuickAmountSelectorResult {
+  /** Narrowed from the input `AccountLike` — safe to pass to Aleo-only components. */
+  account: AleoAccount | AleoTokenAccount;
+  strategyData: QuickAmountStrategyTile[];
+  totalSpendableBalance: BigNumber;
+  selectedRecordsCount: number;
+  selectStrategy: (tile: QuickAmountStrategyTile) => void;
+}
+
+function getUnspentPrivateRecords(account: AleoAccount | AleoTokenAccount): AleoUnspentRecord[] {
+  return (
+    (account.type === "TokenAccount"
+      ? account.unspentPrivateRecords
+      : account.aleoResources?.unspentPrivateRecords) ?? []
+  );
+}
+
+/**
+ * Derives the fast/balanced/full quick-amount tiles for an Aleo account's private records,
+ * shared between the desktop and mobile QuickAmountSelector components so only rendering
+ * differs. Whether the widget should be shown for the current transaction mode is up to callers.
+ *
+ * Only meant to be called from the Aleo send flow — throws if `account` isn't an Aleo account.
+ */
+export function useAleoQuickAmountSelector({
+  account,
+  transaction,
+  updateTransaction,
+}: {
+  account: AccountLike;
+  transaction: Transaction;
+  updateTransaction: (updater: (t: Transaction) => Transaction) => void;
+}): UseAleoQuickAmountSelectorResult {
+  const sortedRecords = useMemo(() => {
+    if (!isAleoAccount(account)) return [];
+    return getUnspentPrivateRecords(account)
+      .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
+      .sort((a, b) => new BigNumber(b.microcredits).comparedTo(a.microcredits));
+  }, [account]);
+
+  const strategyConfig = useMemo(
+    () => (isAleoAccount(account) ? getStrategyConfig(account) : null),
+    [account],
+  );
+
+  const totalRecords = sortedRecords.length;
+
+  const totalSpendableBalance = useMemo(
+    () =>
+      strategyConfig
+        ? sumPrivateRecords(sortedRecords.slice(0, strategyConfig.full.max))
+        : new BigNumber(0),
+    [sortedRecords, strategyConfig],
+  );
+
+  const selectedRecordsCount =
+    isAleoTransaction(transaction) && isPrivateTransaction(transaction)
+      ? (transaction.properties?.amountRecordCommitments.length ?? 0)
+      : 0;
+
+  const strategyData = useMemo(() => {
+    if (!strategyConfig) return [];
+
+    return QUICK_AMOUNT_STRATEGIES.map(strategy => {
+      const { min, max } = strategyConfig[strategy];
+      const rangeRecords = sortedRecords.slice(0, max);
+      const availableCount = rangeRecords.length;
+      const rangeSum = sumPrivateRecords(rangeRecords);
+
+      const disabled = totalRecords < min;
+      const coversAllRecords = availableCount === totalRecords;
+      const isFullTierAtCap = max === strategyConfig.full.max && availableCount === max;
+      const isSendMax = !disabled && (coversAllRecords || isFullTierAtCap);
+
+      const matchesTierRangeSum =
+        !disabled &&
+        !isSendMax &&
+        !rangeSum.isZero() &&
+        transaction.amount.isEqualTo(rangeSum) &&
+        !transaction.useAllAmount;
+      const selected =
+        !disabled && (isSendMax ? transaction.useAllAmount === true : matchesTierRangeSum);
+
+      return {
+        strategy,
+        min,
+        max,
+        availableCount,
+        rangeSum,
+        disabled,
+        selected,
+        isSendMax,
+      };
+    });
+  }, [sortedRecords, totalRecords, transaction.amount, transaction.useAllAmount, strategyConfig]);
+
+  const selectStrategy = useCallback(
+    (tile: QuickAmountStrategyTile) => {
+      if (tile.disabled) return;
+      if (tile.isSendMax) {
+        updateTransaction(tx => ({
+          ...tx,
+          useAllAmount: true,
+          amount: new BigNumber(0),
+        }));
+      } else {
+        updateTransaction(tx => ({
+          ...tx,
+          amount: tile.rangeSum,
+          useAllAmount: false,
+        }));
+      }
+    },
+    [updateTransaction],
+  );
+
+  invariant(
+    isAleoAccount(account),
+    "aleo: useAleoQuickAmountSelector called with a non-Aleo account",
+  );
+
+  return {
+    account,
+    strategyData,
+    totalSpendableBalance,
+    selectedRecordsCount,
+    selectStrategy,
+  };
+}
 
 type ConnectAppExec = (input: ConnectAppInput) => Observable<ConnectAppEvent>;
 type GetViewKeyExec = (transport: Transport, request: Request) => Observable<ViewKeyProgress>;
@@ -72,7 +225,13 @@ export function useAleoViewKeyApproval({
     return { confirmedAccountIds: confirmed, rejectedAccountIds: rejected };
   }, [hookState.shareProgress.viewKeys]);
 
-  return { hookState, payload, request, confirmedAccountIds, rejectedAccountIds };
+  return {
+    hookState,
+    payload,
+    request,
+    confirmedAccountIds,
+    rejectedAccountIds,
+  };
 }
 
 export function buildAccountsWithViewKeys(
@@ -85,10 +244,6 @@ export function buildAccountsWithViewKeys(
     acc.push(patchAccountWithViewKey(account, viewKey));
     return acc;
   }, []);
-}
-
-function isAleoAccount(acc: Account): acc is AleoAccount {
-  return acc.currency.family === "aleo";
 }
 
 /**
@@ -206,7 +361,10 @@ export const useAleoPrivateSync = ({
     const sub = from(Promise.resolve(getAccountBridge(acc)))
       .pipe(
         mergeMap(bridge =>
-          bridge.sync(acc, { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED }),
+          bridge.sync(acc, {
+            paginationConfig: {},
+            syncType: SYNC_TYPE_SHIELDED,
+          }),
         ),
       )
       .subscribe({
@@ -292,7 +450,9 @@ export const useAleoPrivateSync = ({
       // Subscribe to the Redux store so we can cancel the sync if the account
       // is deleted while the component is unmounted.
       const storeUnsubscribe = store.subscribe(() => {
-        const found = accountSelectorRef.current(store.getState(), { accountId: id });
+        const found = accountSelectorRef.current(store.getState(), {
+          accountId: id,
+        });
         if (!found) {
           const entry = keepAliveRegistry.get(id);
           if (entry) {
@@ -302,7 +462,12 @@ export const useAleoPrivateSync = ({
           }
         }
       });
-      keepAliveRegistry.set(id, { isSyncing: true, progress: 0, sub: null, storeUnsubscribe });
+      keepAliveRegistry.set(id, {
+        isSyncing: true,
+        progress: 0,
+        sub: null,
+        storeUnsubscribe,
+      });
     }
     runSync();
   }, [runSync, store]);
