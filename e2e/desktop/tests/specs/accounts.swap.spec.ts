@@ -53,7 +53,7 @@ test.describe("Swap - Default currency when landing on swap", () => {
   });
 
   test(
-    `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Default currency`,
+    `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Default currency and previous set up`,
     {
       tag: [
         "@NanoSP",
@@ -67,50 +67,35 @@ test.describe("Swap - Default currency when landing on swap", () => {
         "@bitcoin",
         "@family-bitcoin",
       ],
-      annotation: { type: "TMS", description: "B2CQA-3079" },
+      annotation: { type: "TMS", description: "B2CQA-3079, B2CQA-3080" },
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.swap.goAndWaitForSwapToBeReady(() =>
-        app.mainNavigation.openTargetFromMainNavigation("swap"),
-      );
-      await app.swap.checkAssetFromContains("BTC");
-      await app.swap.checkAssetToContains("Choose asset");
-    },
-  );
+      await test.step("Default currency is set when landing on swap", async () => {
+        await app.swap.goAndWaitForSwapToBeReady(() =>
+          app.mainNavigation.openTargetFromMainNavigation("swap"),
+        );
+        await app.swap.checkAssetFromContains("BTC");
+        await app.swap.checkAssetToContains("Choose asset");
+      });
 
-  test(
-    `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Previous set up`,
-    {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@ethereum",
-        "@family-evm",
-        "@bitcoin",
-        "@family-bitcoin",
-      ],
-      annotation: { type: "TMS", description: "B2CQA-3080" },
-    },
-    async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await test.step("Currencies persist after leaving and returning to swap", async () => {
+        const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
+        if (!minAmount) {
+          throw new Error("Test failed: No quotes retrieved from swap API.");
+        }
+        const swap = new Swap(fromAccount, toAccount, minAmount);
 
-      const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
-      const swap = new Swap(fromAccount, toAccount, minAmount);
-
-      await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.expectAccountsTitleVisibility();
-      await app.swap.goAndWaitForSwapToBeReady(() =>
-        app.mainNavigation.openTargetFromMainNavigation("swap"),
-      );
-      await app.swap.checkAssetFromContains(swap.accountToDebit.currency.ticker);
-      await app.swap.checkAssetToContains(swap.accountToCredit.currency.ticker);
+        await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
+        await app.accounts.expectAccountsTitleVisibility();
+        await app.swap.goAndWaitForSwapToBeReady(() =>
+          app.mainNavigation.openTargetFromMainNavigation("swap"),
+        );
+        await app.swap.checkAssetFromContains(swap.accountToDebit.currency.ticker);
+        await app.swap.checkAssetToContains(swap.accountToCredit.currency.ticker);
+      });
     },
   );
 });
