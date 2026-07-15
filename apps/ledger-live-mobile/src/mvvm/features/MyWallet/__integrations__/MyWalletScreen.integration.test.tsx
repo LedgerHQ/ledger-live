@@ -4,16 +4,12 @@ import MyWalletNavigator from "../Navigator";
 import { useMyWalletHeaderViewModel } from "../views/Header/useMyWalletHeaderViewModel";
 
 jest.mock("@features/flow-contacts", () => {
-  const featureFlags = jest.requireActual(
-    "<rootDir>/../../features/flow/contacts/src/featureFlags",
-  );
-  const hooks = jest.requireActual("<rootDir>/../../features/flow/contacts/src/hooks");
+  const flowContacts = jest.requireActual("@features/flow-contacts");
   const React = require("react");
   const { Pressable, Text, View } = require("react-native");
 
   return {
-    ...featureFlags,
-    ...hooks,
+    ...flowContacts,
     ContactsButton: ({
       title,
       description,

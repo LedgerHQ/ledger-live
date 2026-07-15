@@ -11,6 +11,13 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./jest": "./src/jest.native.ts",
+    "./featureFlags": "./src/featureFlags.ts",
+    "./hooks": "./src/hooks/index.ts",
+    "./components/*": {
+      "react-native": "./src/components/*/index.native.ts",
+      "default": "./src/components/*/index.ts"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
