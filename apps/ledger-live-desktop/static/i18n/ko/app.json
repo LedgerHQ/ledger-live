@@ -1336,17 +1336,6 @@
           "finalStepSuccessButtonLabel" : "완료"
         }
       },
-      "installApplications" : {
-        "title" : "{{productName}}에 앱 설치하기",
-        "titleCompleted" : "{{productName}}에 설치된 앱",
-        "install" : "설치",
-        "skip" : "나중에",
-        "info" : "{{deviceName}}의 앱은 트랜잭션 승인에 사용됩니다. 언제든지 추가나 삭제가 가능합니다."
-      },
-      "endOfSetup" : {
-        "title" : "설정 종료",
-        "titleCompleted" : "{{deviceName}} 장치가 준비되었습니다."
-      },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "Ledger 정품 확인을 시작하려면 \"Allow(허용)\"을 탭하세요."
       },
@@ -1463,7 +1452,6 @@
       "cta" : "캐시 삭제"
     },
     "migrate" : "Ledger Wallet 계정을 업데이트할 수 있습니다",
-    "genericTerminatedCrypto" : "{{coinName}}은(는) 더 이상 지원되지 않습니다",
     "valentine" : {
       "title" : "발렌타인 데이",
       "description" : "감사의 표시로, Ledger에서 Ledger Wallet의 구매 및 판매 수수료를 인하합니다"
@@ -2538,6 +2526,7 @@
   "newSendFlow" : {
     "title" : "{{currency}} 전송",
     "available" : "사용 가능 {{amount}}",
+    "to" : "받는 사람:",
     "placeholder" : "주소 또는 ENS를 입력하세요",
     "placeholderNoENS" : "주소 입력",
     "recent" : "최근 항목",
@@ -5820,10 +5809,6 @@
             "buttons" : {
               "next" : "네, 준비되었습니다!",
               "prev" : "이전 단계"
-            },
-            "help" : {
-              "help" : "도움 요청",
-              "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
             }
           },
           "deviceHowTo" : {
@@ -5847,10 +5832,6 @@
               "next" : "다음 단계",
               "prev" : "이전 단계",
               "help" : "도움 요청"
-            },
-            "help" : {
-              "help" : "도움 요청",
-              "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
             }
           },
           "deviceHowTo2" : {
@@ -5875,10 +5856,6 @@
               "next" : "다음 단계",
               "prev" : "이전 단계",
               "help" : "도움 요청"
-            },
-            "help" : {
-              "help" : "도움 요청",
-              "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
             }
           },
           "pinCode" : {
@@ -5889,10 +5866,6 @@
               "next" : "PIN 설정",
               "prev" : "이전 단계",
               "help" : "도움 요청"
-            },
-            "help" : {
-              "help" : "도움 요청",
-              "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
             }
           },
           "quizSuccess" : {
@@ -5910,10 +5883,6 @@
             "buttons" : {
               "next" : "다음 단계",
               "prev" : "이전 단계"
-            },
-            "help" : {
-              "help" : "도움 요청",
-              "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
             }
           },
           "pinCodeHowTo" : {
@@ -5929,10 +5898,6 @@
               "next" : "다음 단계",
               "prev" : "이전 단계",
               "help" : "도움 요청"
-            },
-            "help" : {
-              "help" : "도움 요청",
-              "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
             }
           },
           "recoverHowTo" : {
@@ -5983,10 +5948,6 @@
               "next" : "다음 단계",
               "prev" : "이전 단계",
               "help" : "도움 요청"
-            },
-            "help" : {
-              "help" : "도움 요청",
-              "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
             }
           },
           "newRecoveryPhrase" : {
@@ -5998,10 +5959,6 @@
               "next" : "복구 문구",
               "prev" : "이전 단계",
               "help" : "도움 요청"
-            },
-            "help" : {
-              "help" : "도움 요청",
-              "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
             }
           },
           "recoveryHowTo" : {
@@ -6027,10 +5984,6 @@
               "next" : "다음 단계",
               "prev" : "이전 단계",
               "help" : "도움 요청"
-            },
-            "help" : {
-              "help" : "도움 요청",
-              "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
             }
           },
           "recoveryHowTo3" : {
@@ -6045,10 +5998,6 @@
               "next" : "다음 단계",
               "prev" : "이전 단계",
               "help" : "도움 요청"
-            },
-            "help" : {
-              "help" : "도움 요청",
-              "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
             }
           },
           "genuineCheck" : {
@@ -6072,10 +6021,6 @@
               "prev" : "이전 단계",
               "help" : "도움 요청",
               "learn" : "숨겨두는 방법 알아보기"
-            },
-            "help" : {
-              "help" : "도움 요청",
-              "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
             }
           },
           "pairMyNano" : {
@@ -6085,10 +6030,6 @@
               "next" : "내 Nano 확인하기",
               "prev" : "이전 단계",
               "help" : "도움 요청"
-            },
-            "help" : {
-              "help" : "도움 요청",
-              "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
             }
           },
           "enableSync" : {
@@ -6621,10 +6562,9 @@
           "title" : "확인",
           "description" : "Concordium은 외부 신원 확인을 요구합니다. 다음의 보안 경고를 세심히 읽어 보세요.",
           "list" : {
-            "1" : "<0>주소 확인 불가</0> – Ledger 장치에서 Concordium 수신 주소를 확인할 수 없습니다. 자금을 수령하기 전에 주소를 수동으로 확인하세요.",
-            "2" : "<0>Concordium ID 앱은 별도의 시드 문구를 사용합니다</0> – Concordium 앱에서 새로운 24개의 단어를 생성해야 합니다. 절대 Ledger 시드 문구를 사용하지 마세요.",
-            "3" : "<0>Ledger Wallet 외부로 리디렉션됩니다</0> – 신원 확인은 외부의 Concordium Wallet 앱에서 진행되며, 이는 Concordium 블록체인 프로토콜에 필요한 절차입니다.",
-            "4" : "<0>트랜잭션 서명은 안전하게 관리됩니다</0> – 트랜잭션 서명과 계정 생성은 오직 Ledger 장치를 통해서만 가능합니다."
+            "separateSeed" : "<0>Concordium ID 앱은 별도의 시드 문구를 사용합니다</0> – Concordium 앱에서 새로운 24개의 단어를 생성해야 합니다. 절대 Ledger 시드 문구를 사용하지 마세요.",
+            "outsideLedgerLive" : "<0>Ledger Wallet 외부로 리디렉션됩니다</0> – 신원 확인은 Ledger 외부 Concordium Wallet 앱에서 진행되며, 이는 Concordium 블록체인 프로토콜에 필요한 절차입니다.",
+            "signingSecure" : "<0>트랜잭션 서명은 안전하게 관리됩니다</0> – 트랜잭션 서명과 계정 생성은 오직 Ledger 장치를 통해서만 가능합니다."
           },
           "allow" : "허용"
         },
@@ -7236,6 +7176,9 @@
     "InvalidAddress" : {
       "title" : "유효한 {{currencyName}} 주소가 아닙니다"
     },
+    "ZcashSaplingRecipientNotSupported" : {
+      "title" : "Sapling 주소로의 전송은 지원되지 않습니다."
+    },
     "InvalidNonce" : {
       "title" : "논스가 필요합니다"
     },
@@ -7295,6 +7238,9 @@
     "FeeRequired" : {
       "title" : "수수료가 필요합니다"
     },
+    "FeeTooLow" : {
+      "title" : "수수료가 너무 낮아 네트워크에서 트랜잭션을 승인할 수 없습니다. 수수료를 높여주세요"
+    },
     "GasLessThanEstimate" : {
       "title" : "너무 낮은 것 같습니다. 조금 높여주세요"
     },
@@ -7306,6 +7252,9 @@
     },
     "MaxFeeTooLow" : {
       "title" : "수수료가 권장 값보다 낮습니다."
+    },
+    "GasPriceTooLow" : {
+      "title" : "설정한 가스비가 네트워크 최소 기준보다 낮습니다."
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "최대 우선 수수료가 최대 수수료보다 높아서는 안됩니다."
@@ -7441,6 +7390,9 @@
     "InvalidXRPTag" : {
       "title" : "유효하지 않은 XRP 데스티네이션 태그"
     },
+    "XrpDestinationTagRequired" : {
+      "title" : "이 수취인 주소는 데스티네이션 태그(Destination Tag) 입력이 필수입니다."
+    },
     "InvalidExplorerResponse" : {
       "title" : "{{currencyName}} 탐색기의 응답이 유효하지 않습니다"
     },
@@ -7559,6 +7511,9 @@
     },
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "향후 트랜잭션 수수료 지불에 필요한 잔액을 충분히 남겨 두세요"
+    },
+    "SolanaStakeAccountAmountTooLow" : {
+      "title" : "스테이킹 최소 금액 미만입니다. 최소 {{minimumAmount}}부터 가능합니다."
     },
     "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "이전 트랜잭션이 아직 처리되지 않았습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
@@ -8333,6 +8288,20 @@
   "recoverRestore" : {
     "title" : "Ledger를 연결하고 잠금을 해제하세요"
   },
+  "analyticsOptInScreen" : {
+    "main" : {
+      "title" : "Ledger 서비스 개선에 참여해 주세요",
+      "description" : "Ledger는 사용자의 동의하에 기능 개선 및 버그 수정을 위한 앱 사용 데이터를 수집합니다. 사용자의 자산 정보나 포트폴리오 세부 내역은 절대 추적하지 않습니다.",
+      "ctaAcceptAll" : "모두 동의",
+      "ctaRefuseAll" : "모두 거부",
+      "ctaPrevious" : "이전",
+      "setPreferencesLink" : "맞춤 설정"
+    },
+    "footer" : {
+      "lead" : "당사 앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
+      "trackingPolicyLink" : "추적 정책 자세히 살펴보기"
+    }
+  },
   "analyticsConsentModal" : {
     "fresh" : {
       "title" : "Ledger 개선에 참여해 주세요",
@@ -8732,9 +8701,9 @@
       "cta" : "탐색"
     },
     "borrowEntry" : {
-      "title" : "대출",
-      "cardTitle" : "스테이블코인 대출하기",
-      "cardDescription" : "유동성 활용하기",
+      "title" : "암호화폐 대출",
+      "cardTitle" : "스테이블코인 대출받기",
+      "cardDescription" : "최적의 금리로 대출을 받아보세요",
       "cta" : "탐색"
     },
     "noDeviceTitle" : "안전한 암호화폐 지갑"
@@ -9194,7 +9163,11 @@
       "description" : "트랜잭션 내역을 확인하려면 나중에 다시 방문하세요."
     },
     "actionsBar" : {
-      "csv" : "내보내기"
+      "csv" : "내보내기",
+      "more" : "거래 내역 설정",
+      "hideDustTransactions" : "더스트 트랜잭션 숨기기",
+      "showDustTransactions" : "더스트 트랜잭션 표시하기",
+      "dustTransactionsDescription" : "{{threshold}} 미만의 소액 트랜잭션을 숨깁니다."
     },
     "exportDialog" : {
       "title" : "트랜잭션 내역 내보내기",
@@ -9293,6 +9266,9 @@
     "fallbackBanner" : {
       "title" : "스왑 및 매수가 지원되지 않는 자산입니다."
     },
+    "robinhoodDisclaimerBanner" : {
+      "title" : "총 잔액에는 배당금이나 주식 분할 내역이 포함되지 않습니다."
+    },
     "day" : "1일",
     "week" : "1주",
     "month" : "1달",
@@ -9313,6 +9289,87 @@
       "earnBannerDefault" : "이 자산으로 수익 창출",
       "earnBannerSubtitle" : "이 자산을 보유하고 추가 수익 창출하기",
       "earnBannerAction" : "수익 창출로 이동"
+    }
+  },
+  "deviceIntentExecutor" : {
+    "genericStates" : {
+      "retryableDeviceLocked" : {
+        "title" : "장치가 잠겨 있습니다",
+        "description" : "계속하려면 장치 잠금을 해제하세요."
+      },
+      "unlockDevice" : {
+        "title" : "{{productName}} 잠금 해제"
+      },
+      "continueOnDevice" : {
+        "title" : "{{productName}}에서 계속하기",
+        "description" : "보안 스크린에 표시된 안내를 따라주세요."
+      }
+    },
+    "errors" : {
+      "connectionError" : {
+        "title" : "장치 연결 해제됨",
+        "description" : "Ledger 장치 연결이 해제되었습니다. 장치의 전원이 켜져 있고, 케이블이 올바르게 연결되어 있는지 확인해 주세요."
+      },
+      "intentError" : {
+        "title" : "알 수 없는 오류",
+        "description" : "오류가 발생했습니다. 다시 시도해 주세요. 문제가 계속 발생하면 Ledger 지원 팀에 문의하시기 바랍니다."
+      },
+      "invalidOperation" : {
+        "title" : "잘못된 상태",
+        "description" : "오류가 발생했습니다. 다시 시도해 주세요. 문제가 계속 발생하면 Ledger 지원 팀에 문의하시기 바랍니다."
+      }
+    },
+    "connectDevice" : {
+      "common" : {
+        "ledgerDevice" : "Ledger 장치",
+        "available" : "이용 가능",
+        "notConnected" : "연결되지 않음"
+      },
+      "states" : {
+        "loading" : {
+          "title" : "로딩중"
+        },
+        "connecting" : {
+          "title" : "로딩중"
+        },
+        "connectionError" : {
+          "errors" : {
+            "unknown" : {
+              "title" : "페어링 실패",
+              "description" : "다시 시도해 주세요.",
+              "tip" : "장치가 잠금 해제되어 있는지 확인하세요.",
+              "cta" : {
+                "retry" : "다시 시도하세요",
+                "help" : "도움 받기"
+              }
+            }
+          }
+        },
+        "discovering" : {
+          "title" : "장치 선택",
+          "noAvailableDeviceTitle" : "장치 전원을 켜고 잠금을 해제하세요"
+        },
+        "discoveryError" : {
+          "errors" : {
+            "unknown" : {
+              "title" : "문제가 발생했습니다",
+              "description" : "다시 시도하거나 Ledger 지원 부서로 문의하세요.",
+              "cta" : {
+                "retry" : "다시 시도하세요"
+              }
+            }
+          }
+        },
+        "noKnownDevice" : {
+          "title" : "Ledger 장치가 필요합니다",
+          "description" : "계속하려면 사이너를 설정하거나 연결하세요.",
+          "connectLedgerDevice" : "Ledger 장치 연결하기",
+          "noLedgerDevice" : "Ledger 장치가 없습니다"
+        },
+        "waitingForSelectedDevice" : {
+          "title" : "{{productName}}의 전원을 켜고 잠금을 해제하세요"
+        }
+      }
     }
   },
   "pnl" : {
