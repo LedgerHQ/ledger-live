@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFeature } from "@features/platform-feature-flags";
 import { setOverride } from "@shared/feature-flags";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   isCooldownElapsed,
   shouldThrottle,
@@ -17,13 +18,15 @@ import {
   setUpsellModalRetries,
 } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
+import { unsafe_setKnownDeviceModelIds } from "~/actions/settings";
 import { useTranslation } from "~/context/Locale";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { analyticsEnabledSelector } from "~/reducers/settings";
+import { analyticsEnabledSelector, knownDeviceModelIdsSelector } from "~/reducers/settings";
 import {
   useLargeScreenUpsellEligibility,
   type LargeScreenUpsellIneligibilityReason,
 } from "../hooks/useLargeScreenUpsellEligibility";
+import { useCompetingAppStartModalsPresent } from "../hooks/useCompetingAppStartModalsPresent";
 import {
   buildLargeScreenUpsellContent,
   type LargeScreenUpsellVariant,
@@ -33,6 +36,12 @@ import { parseDateOrOffset } from "./utils";
 const FLAG_KEY = "largeScreenUpsell";
 const PREVIEW_MODAL_ID = "large-screen-upsell-modal-debug-preview";
 const PREVIEW_IOS_BOTTOM_PADDING = 20;
+
+const NANO_DEVICE_MODEL_IDS = [
+  DeviceModelId.nanoS,
+  DeviceModelId.nanoSP,
+  DeviceModelId.nanoX,
+] as const;
 
 const parseNonNegativeInteger = (value: string): number | undefined => {
   const trimmed = value.trim();
@@ -59,17 +68,83 @@ const INELIGIBILITY_HINTS: Record<LargeScreenUpsellIneligibilityReason, string> 
 const toIso = (date: Date | null) =>
   date && !Number.isNaN(date.getTime()) ? date.toISOString() : "";
 
+type DebugDecisionInput = {
+  eligibility: ReturnType<typeof useLargeScreenUpsellEligibility>;
+  onboardingDate: Date | null;
+  retries: number;
+  lastSeenDate: Date | null;
+  now: Date;
+  isFlagEnabled: boolean;
+  modalEnabled: boolean;
+  killThreshold: number | undefined;
+  cadenceDays: number | undefined;
+  cooldownDaysDefault: number | undefined;
+  hasCompetingModal: boolean;
+};
+
+function deriveDebugDecision({
+  eligibility,
+  onboardingDate,
+  retries,
+  lastSeenDate,
+  now,
+  isFlagEnabled,
+  modalEnabled,
+  killThreshold,
+  cadenceDays,
+  cooldownDaysDefault,
+  hasCompetingModal,
+}: DebugDecisionInput) {
+  const resolvedCooldownDays =
+    "cooldownDays" in eligibility ? eligibility.cooldownDays : cooldownDaysDefault;
+
+  const cooldownElapsed = isCooldownElapsed(onboardingDate, resolvedCooldownDays ?? 0, now);
+
+  const throttled =
+    killThreshold != null && cadenceDays != null
+      ? shouldThrottle(retries, lastSeenDate, killThreshold, cadenceDays, now)
+      : false;
+
+  const wouldShow = eligibility.isEligible && modalEnabled && !throttled && !hasCompetingModal;
+
+  const audienceOk = isFlagEnabled
+    ? eligibility.isEligible || eligibility.reason === "cooldown"
+    : null;
+  const cooldownOk = audienceOk === true ? cooldownElapsed : null;
+  const notThrottledOk = isFlagEnabled ? !throttled : null;
+  const noCompetingModalOk = isFlagEnabled ? !hasCompetingModal : null;
+
+  const audienceHint =
+    audienceOk === false && !eligibility.isEligible
+      ? INELIGIBILITY_HINTS[eligibility.reason]
+      : undefined;
+
+  return {
+    resolvedCooldownDays,
+    wouldShow,
+    audienceOk,
+    cooldownOk,
+    notThrottledOk,
+    noCompetingModalOk,
+    audienceHint,
+  };
+}
+
 export function useLargeScreenUpsellDebugViewModel() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { bottom } = useSafeAreaInsets();
   const feature = useFeature(FLAG_KEY);
   const eligibility = useLargeScreenUpsellEligibility();
+  const hasCompetingModal = useCompetingAppStartModalsPresent();
 
   const onboardingDate = useSelector(onboardingDateSelector);
   const retries = useSelector(retriesUpsellModalSelector);
   const lastSeenAt = useSelector(lastSeenUpsellModalSelector);
   const analyticsEnabled = useSelector(analyticsEnabledSelector);
+  const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
+
+  const isNanoSeen = NANO_DEVICE_MODEL_IDS.some(id => knownDeviceModelIds[id]);
 
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewVariant, setPreviewVariant] = useState<LargeScreenUpsellVariant>(
@@ -86,28 +161,27 @@ export function useLargeScreenUpsellDebugViewModel() {
   const now = new Date();
   const lastSeenDate = lastSeenAt != null ? new Date(lastSeenAt) : null;
 
-  const resolvedCooldownDays =
-    "cooldownDays" in eligibility ? eligibility.cooldownDays : cooldownDaysDefault;
-
-  const cooldownElapsed = isCooldownElapsed(onboardingDate, resolvedCooldownDays ?? 0, now);
-
-  const throttled =
-    killThreshold != null && cadenceDays != null
-      ? shouldThrottle(retries, lastSeenDate, killThreshold, cadenceDays, now)
-      : false;
-
-  const wouldShow = eligibility.isEligible && modalEnabled && !throttled;
-
-  const audienceOk = isFlagEnabled
-    ? eligibility.isEligible || eligibility.reason === "cooldown"
-    : null;
-  const cooldownOk = audienceOk === true ? cooldownElapsed : null;
-  const notThrottledOk = isFlagEnabled ? !throttled : null;
-
-  const audienceHint =
-    audienceOk === false && !eligibility.isEligible
-      ? INELIGIBILITY_HINTS[eligibility.reason]
-      : undefined;
+  const {
+    resolvedCooldownDays,
+    wouldShow,
+    audienceOk,
+    cooldownOk,
+    notThrottledOk,
+    noCompetingModalOk,
+    audienceHint,
+  } = deriveDebugDecision({
+    eligibility,
+    onboardingDate,
+    retries,
+    lastSeenDate,
+    now,
+    isFlagEnabled,
+    modalEnabled,
+    killThreshold,
+    cadenceDays,
+    cooldownDaysDefault,
+    hasCompetingModal,
+  });
 
   const handleToggleFlag = useCallback(
     (enabled: boolean) => {
@@ -115,6 +189,19 @@ export function useLargeScreenUpsellDebugViewModel() {
       dispatch(setOverride({ key: FLAG_KEY, value: { ...feature, enabled } }));
     },
     [dispatch, feature],
+  );
+
+  const handleToggleNanoSeen = useCallback(
+    (seen: boolean) => {
+      dispatch(
+        unsafe_setKnownDeviceModelIds({
+          [DeviceModelId.nanoS]: seen,
+          [DeviceModelId.nanoSP]: seen,
+          [DeviceModelId.nanoX]: seen,
+        }),
+      );
+    },
+    [dispatch],
   );
 
   const overrideParams = useCallback(
@@ -272,6 +359,10 @@ export function useLargeScreenUpsellDebugViewModel() {
       cooldownHint: `Onboarding + ${resolvedCooldownDays ?? "?"} day(s).`,
       notThrottledOk,
       throttleHint: `Kill threshold ${killThreshold ?? "?"} within ${cadenceDays ?? "?"} day(s).`,
+      noCompetingModalOk,
+      competingModalHint: hasCompetingModal
+        ? "Another app-start modal is showing (product tour, awareness, analytics consent, backup hub); the upsell is suppressed this session."
+        : "No competing app-start modal.",
     },
     onboardingDateValue: toIso(onboardingDate),
     onboardingDateHint: `Now: ${toIso(onboardingDate) || "null"} — enter an ISO date or a day offset (today = 0, yesterday = 1).`,
@@ -280,6 +371,11 @@ export function useLargeScreenUpsellDebugViewModel() {
     lastSeenValue: toIso(lastSeenDate),
     lastSeenHint: `Now: ${toIso(lastSeenDate) || "null"} — enter an ISO date or a day offset (today = 0, yesterday = 1).`,
     handleToggleFlag,
+    isNanoSeen,
+    nanoSeenHint: isNanoSeen
+      ? "A Nano has been seen. Toggle off to clear the audience gate."
+      : "No Nano seen. Toggle on to simulate a seen Nano (audience gate).",
+    handleToggleNanoSeen,
     handleApplyOnboardingDate,
     handleSetOnboardingDateNull,
     handleApplyRetries,

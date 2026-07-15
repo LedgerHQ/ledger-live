@@ -13,8 +13,13 @@ const STATUS = {
   unknown: { color: "muted", label: "—" },
 } as const;
 
+const getStatus = (ok: boolean | null) => {
+  if (ok === null) return STATUS.unknown;
+  return ok ? STATUS.yes : STATUS.no;
+};
+
 export const StatusRow = ({ label, ok, hint }: StatusRowProps) => {
-  const status = ok === null ? STATUS.unknown : ok ? STATUS.yes : STATUS.no;
+  const status = getStatus(ok);
 
   return (
     <Box

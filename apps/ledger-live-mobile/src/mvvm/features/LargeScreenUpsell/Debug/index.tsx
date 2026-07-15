@@ -29,6 +29,9 @@ function LargeScreenUpsellDebug() {
     lastSeenValue,
     lastSeenHint,
     handleToggleFlag,
+    isNanoSeen,
+    nanoSeenHint,
+    handleToggleNanoSeen,
     handleApplyOnboardingDate,
     handleSetOnboardingDateNull,
     handleApplyRetries,
@@ -116,6 +119,11 @@ function LargeScreenUpsellDebug() {
             ok={breakdown.notThrottledOk}
             hint={breakdown.throttleHint}
           />
+          <StatusRow
+            label="No competing app-start modal"
+            ok={breakdown.noCompetingModalOk}
+            hint={breakdown.competingModalHint}
+          />
         </SectionCard>
 
         <SectionCard
@@ -171,6 +179,15 @@ function LargeScreenUpsellDebug() {
             />
             <ReadOnlyRow label="cooldownDays (resolved)" value={resolvedCooldownDaysValue} />
           </Box>
+        </SectionCard>
+
+        <SectionCard title="Device audience" subtitle="Drives the audience gate.">
+          <ToggleRow
+            label="Nano seen"
+            value={isNanoSeen}
+            onChange={handleToggleNanoSeen}
+            description={nanoSeenHint}
+          />
         </SectionCard>
 
         <SectionCard title="Onboarding date" subtitle="Drives the cooldown gate.">
