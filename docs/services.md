@@ -150,6 +150,7 @@ Services **not** operated by Ledger, including domains baked into SDKs we ship. 
 | ICON testnet | `solidwallet.io` | [env](/libs/env/src/env.ts) | testnet |
 | Cosmos LCDs (third-party) | `api.mainnet.desmos.network`, `rest.core.persistence.one`, `lcd.quicksilver.zone`, `api.nyx.nodes.guru`, `verona-api.polkachu.com` | [code](/libs/coin-modules/coin-cosmos/src/config.ts) | prod |
 | 0G validators (ExploreMe) | `api.0g.exploreme.pro` | [code](/libs/coin-modules/coin-evm/src/staking/contracts.ts) | prod |
+| Somnia validator names | `staking.somnia.network`<br>_display-name overlay for on-chain validators (`/api/validator-names`)_ | [code](/libs/coin-modules/coin-evm/src/staking/contracts.ts) | prod |
 | ICP gateway | `ic0.app` | [SDK](https://www.npmjs.com/package/@zondax/ledger-live-icp) | prod |
 | **Engagement** | | | |
 | Segment | `api.segment.io`, `cdn.segment.com`<br>_[@segment/analytics-next](https://www.npmjs.com/package/@segment/analytics-next) / [-react-native](https://www.npmjs.com/package/@segment/analytics-react-native)_ | [code](/apps/ledger-live-desktop/src/renderer/analytics/segment.ts) | prod |
