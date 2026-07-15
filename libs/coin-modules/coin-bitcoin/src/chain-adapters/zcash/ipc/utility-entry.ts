@@ -14,7 +14,14 @@
 
 import { log } from "@ledgerhq/logs";
 import { ZCASH_LOG_TYPE } from "../constants";
-import { findBlockHeightJob, getChainTipJob, startSyncJob } from "../native-engine/engine";
+import {
+  findBlockHeightJob,
+  getChainTipJob,
+  startSyncJob,
+  buildTransactionJob,
+  finalizeTransactionJob,
+  broadcastTransactionJob,
+} from "../native-engine/engine";
 import type {
   CancelSyncArgs,
   FindBlockHeightArgs,
@@ -23,6 +30,7 @@ import type {
   UtilityInboundMessage,
   UtilityOutboundMessage,
 } from "./contract";
+import type { BuildTransactionArgs, FinalizeTransactionArgs, BroadcastTransactionArgs } from "../types";
 
 /**
  * Minimal parentPort surface -- we don't depend on Electron types here so this
@@ -131,6 +139,56 @@ function handleCancelSync(args: CancelSyncArgs): void {
   }
 }
 
+async function handleBuildTransaction(
+  port: ParentPort,
+  args: BuildTransactionArgs,
+): Promise<void> {
+  const { requestId, ...jobArgs } = args;
+  try {
+    const result = await buildTransactionJob(jobArgs);
+    send(port, { type: "build-transaction-result", requestId, result });
+  } catch (err) {
+    send(port, {
+      type: "build-transaction-error",
+      requestId,
+      message: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
+async function handleFinalizeTransaction(
+  port: ParentPort,
+  args: FinalizeTransactionArgs,
+): Promise<void> {
+  const { requestId, ...jobArgs } = args;
+  try {
+    const result = await finalizeTransactionJob(jobArgs);
+    send(port, { type: "finalize-transaction-result", requestId, result });
+  } catch (err) {
+    send(port, {
+      type: "finalize-transaction-error",
+      requestId,
+      message: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
+async function handleBroadcastTransaction(
+  port: ParentPort,
+  args: BroadcastTransactionArgs,
+): Promise<void> {
+  try {
+    const txid = await broadcastTransactionJob(args.grpcUrl, args.txHex);
+    send(port, { type: "broadcast-transaction-result", requestId: args.requestId, txid });
+  } catch (err) {
+    send(port, {
+      type: "broadcast-transaction-error",
+      requestId: args.requestId,
+      message: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
 /**
  * Wires up a {@link ParentPort} to the ZCash engine. Exported for testing --
  * production code calls this once below with Electron's `process.parentPort`.
@@ -150,6 +208,15 @@ export function bootstrapUtility(port: ParentPort): void {
         break;
       case "cancel-sync":
         handleCancelSync(message.args);
+        break;
+      case "build-transaction":
+        void handleBuildTransaction(port, message.args);
+        break;
+      case "finalize-transaction":
+        void handleFinalizeTransaction(port, message.args);
+        break;
+      case "broadcast-transaction":
+        void handleBroadcastTransaction(port, message.args);
         break;
       default: {
         const exhaustive: never = message;

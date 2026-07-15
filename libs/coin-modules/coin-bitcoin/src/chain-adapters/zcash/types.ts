@@ -1,6 +1,7 @@
 import type { BigNumber } from "bignumber.js";
 import type { Observable } from "rxjs";
-import type { BitcoinAccount, BitcoinAccountRaw, Transaction } from "../../types";
+import type { BitcoinAccount, BitcoinAccountRaw, BitcoinOutput, Transaction } from "../../types";
+import type { PcztTransaction } from "@ledgerhq/live-signer-zcash";
 
 export type SyncShieldedArgs = {
   startBlockHeight: number;
@@ -29,6 +30,11 @@ export interface ZCashClient {
   findBlockHeight(timestamp: number): Promise<number>;
   estimatedSyncTime(totalBlocks: number): Promise<(processedBlocks: number) => SyncEstimatedTime>;
   syncShielded(args: SyncShieldedArgs): Observable<ShieldedSyncResult>;
+  buildTransaction?(args: Omit<BuildTransactionArgs, "requestId">): Promise<BuildTransactionResult>;
+  finalizeTransaction?(
+    args: Omit<FinalizeTransactionArgs, "requestId">,
+  ): Promise<FinalizeTransactionResult>;
+  broadcastTransaction?(grpcUrl: string, txHex: string): Promise<string>;
 }
 
 /** Common constructor args shared by both ZCash client factories. */
@@ -186,9 +192,9 @@ export type ZcashTransferType =
 
 export type ZcashTransaction = Transaction & {
   transferType: ZcashTransferType;
-  /** Source balance pool selected on the Recipient step (UI-01). */
+  /** Source balance pool selected on the Recipient step. */
   sender?: "public" | "private";
-  /** Recipient privacy class derived from the address (UI-02). */
+  /** Recipient privacy class derived from the address. */
   recipientType?: "public" | "private";
   /** Optional 512-byte memo field for shielded outputs. */
   memo?: string;
@@ -196,6 +202,12 @@ export type ZcashTransaction = Transaction & {
   selectedNotes?: SpendableNote[];
   zcashFee?: BigNumber; // ZIP-317 computed fee
   changeAmount?: BigNumber; // Change returning to self
+  /**
+   * Optional transparent UTXO override for Public→* flows, provided by callers.
+   * When set, it takes precedence over `account.bitcoinResources.utxos` during
+   * transparent-input mapping. Not populated by prepareTransaction.
+   */
+  selectedUtxos?: BitcoinOutput[];
 };
 
 export function isZcashTransaction(tx: Transaction): tx is ZcashTransaction {
@@ -207,3 +219,77 @@ export function isShieldedTransfer(tx: ZcashTransaction): boolean {
     tx.transferType !== null && tx.transferType !== undefined && tx.transferType !== "transparent"
   );
 }
+
+// ── IPC-safe signing types ──────────────────────────────────────────────
+//
+// All fields are structuredClone-safe: string amounts, hex-encoded bytes,
+// primitive numbers. No BigNumber, no Buffer subclasses, no functions.
+// PcztTransaction carries Uint8Array and bigint — both are structuredClone-safe.
+
+export type BuildTransactionArgs = {
+  requestId: string;
+  grpcUrl: string;
+  ufvk: string;
+  network?: string;
+  seedFingerprint: string;
+  accountIndex: number;
+  feeZat: string;
+  spends: Array<{
+    recipient: string;
+    valueZat: string;
+    rho: string;
+    rseed: string;
+    cmx: string;
+    position: string;
+  }>;
+  transparentInputs: Array<{
+    txid: string;
+    vout: number;
+    scriptPubKey: string;
+    valueZat: string;
+    pubkey: string;
+    derivationScope: number;
+    addressIndex: number;
+  }>;
+  outputs: Array<{ address: string; valueZat: string; memo?: string }>;
+  anchorHeight?: number;
+};
+
+export type BuildTransactionResult = {
+  /** Hex-encoded canonical PCZT bytes — passed unchanged to finalizeTransaction. */
+  pcztHex: string;
+  /**
+   * Adapter-applied output of parsePczt(); ready for signPcztTransaction.
+   * parsePczt runs in the UtilityProcess (engine.ts) so Uint8Array + bigint
+   * values are structuredClone-safe across the IPC boundary.
+   */
+  pcztTransaction: PcztTransaction;
+  feeZat: string;
+  anchorHeight: number;
+  nActionsOrchard: number;
+  nTransparentInputs: number;
+  nTransparentOutputs: number;
+};
+
+export type FinalizeTransactionArgs = {
+  requestId: string;
+  /** Hex-encoded canonical PCZT bytes from buildTransaction — passed unchanged. */
+  pczt: string;
+  /** One 128-hex-char RedPallas spendAuthSig per real Orchard spend, in PCZT-action order. */
+  orchardSignatures: string[];
+  /** One DER-hex secp256k1 signature per transparent input (empty for pure Orchard). */
+  transparentSignatures: string[];
+};
+
+export type FinalizeTransactionResult = {
+  /** Hex-encoded signed V5 transaction bytes (ready for broadcast). */
+  txHex: string;
+  /** 64-char hex txid, big-endian display order (matches ShieldedTransaction.txid). */
+  txid: string;
+};
+
+export type BroadcastTransactionArgs = {
+  requestId: string;
+  grpcUrl: string;
+  txHex: string;
+};

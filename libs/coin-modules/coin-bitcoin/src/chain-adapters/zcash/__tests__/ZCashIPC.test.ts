@@ -7,13 +7,18 @@ import type {
   FindBlockHeightArgs,
 } from "../ipc/contract";
 import { ZCASH_IPC } from "../ipc/contract";
-import { createZCashIPCClient, type IpcRendererLike } from "../ZCashIPC";
+import { createZCashClient, createZCashIPCClient, type IpcRendererLike } from "../ZCashIPC";
 
 // ── Suppress log output ─────────────────────────────────────────────────
 
 jest.mock("@ledgerhq/logs", () => ({
   log: jest.fn(),
 }));
+
+// electron is not a dependency of this lib — provide a virtual mock so the
+// production factory's lazy `require("electron")` resolves in tests.
+const mockElectronIpcRenderer = { invoke: jest.fn(), on: jest.fn(), removeListener: jest.fn() };
+jest.mock("electron", () => ({ ipcRenderer: mockElectronIpcRenderer }), { virtual: true });
 
 // ── Constants ───────────────────────────────────────────────────────────
 
@@ -439,6 +444,97 @@ describe("createZCashIPCClient", () => {
         expect(received).toHaveLength(0);
         expect(errors).toHaveLength(0);
       });
+    });
+  });
+
+  // -- buildTransaction ---------------------------------------------------
+
+  describe("buildTransaction", () => {
+    it("invokes ipc with the buildTransaction channel, forwards args and adds a requestId", async () => {
+      const ipc = makeIpcRenderer();
+      const buildResult = { pcztHex: "deadbeef" };
+      ipc.invoke.mockResolvedValueOnce(buildResult);
+      const client = createZCashIPCClient(makeDeps(ipc), { grpcUrl: GRPC_URL });
+
+      const args = {
+        grpcUrl: GRPC_URL,
+        ufvk: "uview1test",
+        seedFingerprint: "00",
+        accountIndex: 0,
+        feeZat: "10000",
+        spends: [],
+        transparentInputs: [],
+        outputs: [{ address: "u1recipient", valueZat: "50000" }],
+      };
+      const result = await client.buildTransaction!(args);
+
+      expect(result).toBe(buildResult);
+      expect(ipc.invoke).toHaveBeenCalledTimes(1);
+      const [channel, payload] = ipc.invoke.mock.calls[0];
+      expect(channel).toBe(ZCASH_IPC.buildTransaction);
+      expect(payload).toMatchObject(args);
+      expect((payload as { requestId: string }).requestId).toMatch(ZCASH_REQUEST_ID_PATTERN);
+    });
+  });
+
+  // -- finalizeTransaction ------------------------------------------------
+
+  describe("finalizeTransaction", () => {
+    it("invokes ipc with the finalizeTransaction channel, forwards args and adds a requestId", async () => {
+      const ipc = makeIpcRenderer();
+      const finalizeResult = { txHex: "ff00", txid: "cc" };
+      ipc.invoke.mockResolvedValueOnce(finalizeResult);
+      const client = createZCashIPCClient(makeDeps(ipc), { grpcUrl: GRPC_URL });
+
+      const args = { pczt: "cafebabe", orchardSignatures: ["aa"], transparentSignatures: ["bb"] };
+      const result = await client.finalizeTransaction!(args);
+
+      expect(result).toBe(finalizeResult);
+      expect(ipc.invoke).toHaveBeenCalledTimes(1);
+      const [channel, payload] = ipc.invoke.mock.calls[0];
+      expect(channel).toBe(ZCASH_IPC.finalizeTransaction);
+      expect(payload).toMatchObject(args);
+      expect((payload as { requestId: string }).requestId).toMatch(ZCASH_REQUEST_ID_PATTERN);
+    });
+  });
+
+  // -- broadcastTransaction -----------------------------------------------
+
+  describe("broadcastTransaction", () => {
+    it("invokes ipc with the broadcastTransaction channel, grpcUrl, txHex and a requestId", async () => {
+      const ipc = makeIpcRenderer();
+      ipc.invoke.mockResolvedValueOnce("dd");
+      const client = createZCashIPCClient(makeDeps(ipc), { grpcUrl: GRPC_URL });
+
+      const txid = await client.broadcastTransaction!(GRPC_URL, "abcd");
+
+      expect(txid).toBe("dd");
+      expect(ipc.invoke).toHaveBeenCalledTimes(1);
+      const [channel, payload] = ipc.invoke.mock.calls[0];
+      expect(channel).toBe(ZCASH_IPC.broadcastTransaction);
+      const typed = payload as { grpcUrl: string; txHex: string; requestId: string };
+      expect(typed.grpcUrl).toBe(GRPC_URL);
+      expect(typed.txHex).toBe("abcd");
+      expect(typed.requestId).toMatch(ZCASH_REQUEST_ID_PATTERN);
+    });
+  });
+
+  // -- Production factory -------------------------------------------------
+
+  describe("createZCashClient (production factory)", () => {
+    it("wires the real Electron ipcRenderer and produces a working client", async () => {
+      mockElectronIpcRenderer.invoke.mockResolvedValueOnce(999);
+      const client = createZCashClient({ grpcUrl: GRPC_URL });
+
+      expect(client.grpcUrl).toBe(GRPC_URL);
+      expect(client.network).toBe("mainnet");
+
+      const tip = await client.getChainTip();
+      expect(tip).toBe(999);
+      expect(mockElectronIpcRenderer.invoke).toHaveBeenCalledWith(
+        ZCASH_IPC.getChainTip,
+        expect.objectContaining({ grpcUrl: GRPC_URL }),
+      );
     });
   });
 
