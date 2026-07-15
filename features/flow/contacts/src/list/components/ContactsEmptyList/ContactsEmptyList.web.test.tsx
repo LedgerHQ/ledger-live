@@ -24,14 +24,14 @@ describe("ContactsEmptyList", () => {
       />,
     );
 
-    expect(screen.getByTestId("contacts-page-layout")).toBeTruthy();
-    expect(screen.getByTestId("contacts-page-header")).toBeTruthy();
-    expect(screen.getByTestId("contacts-list-pane")).toBeTruthy();
+    expect(screen.getByTestId("contacts-page-layout")).toBeVisible();
+    expect(screen.getByTestId("contacts-page-header")).toBeVisible();
+    expect(screen.getByTestId("contacts-list-pane")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-pane").childElementCount).toBe(0);
-    expect(screen.getByRole("heading", { name: "Contacts" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Contacts" })).toBeVisible();
     expect((screen.getByPlaceholderText("Search contact") as HTMLInputElement).value).toBe("");
-    expect(screen.getByText("Me")).toBeTruthy();
-    expect(screen.getByText("0 address")).toBeTruthy();
+    expect(screen.getByText("Me")).toBeVisible();
+    expect(screen.getByText("0 address")).toBeVisible();
     expect(
       screen.getByTestId("contacts-empty-list-me-avatar").querySelector("img")?.getAttribute("src"),
     ).toBe("https://example.com/black/user.png");
