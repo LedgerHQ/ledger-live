@@ -61,7 +61,7 @@ When `getBlockInternalTxsSources` is absent, the default is:
 
 `["explorer", "trace_block", "debug_traceBlockByNumber", "empty"]`
 
-Built via `internalTxSources().addSource("explorer").addSource("trace_block").addSource("debug_traceBlockByNumber").addSource("empty").build()` in `internalTxSources.ts`.
+Built via `internalTxSourcesFromList(["explorer", "trace_block", "debug_traceBlockByNumber", "empty"])` in `internalTxSources.ts`.
 
 ## Source semantics
 

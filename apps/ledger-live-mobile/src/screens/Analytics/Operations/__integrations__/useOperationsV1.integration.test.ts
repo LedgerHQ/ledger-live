@@ -3,11 +3,18 @@ import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { calculate } from "@ledgerhq/live-countervalues/logic";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useOperationsV1 } from "../useOperationsV1";
 import { State } from "~/reducers/types";
 
+jest.mock("@ledgerhq/live-countervalues/logic", () => ({
+  ...jest.requireActual("@ledgerhq/live-countervalues/logic"),
+  calculate: jest.fn(),
+}));
+
 const ETH = getCryptoCurrencyById("ethereum");
+const mockCalculate = calculate as jest.MockedFunction<typeof calculate>;
 
 const EVM_TOKEN: TokenCurrency = {
   type: "TokenCurrency",
@@ -25,6 +32,8 @@ const EVM_TOKEN: TokenCurrency = {
 const ZERO_VALUE_TOKEN_OP_ID = "zero-value-token-op-id";
 const ZERO_VALUE_NATIVE_OP_ID = "zero-value-native-op-id";
 const NON_ZERO_VALUE_NATIVE_OP_ID = "non-zero-value-native-op-id";
+const SMALL_NATIVE_OUT_OP_ID = "small-native-out-op-id";
+const LARGE_NATIVE_OUT_OP_ID = "large-native-out-op-id";
 
 function createZeroValueTokenOperation(tokenAccountId: string): Operation {
   return {
@@ -73,11 +82,16 @@ function createAccountWithZeroValueTokenOperation(): Account {
   };
 }
 
-function createNativeOperation(accountId: string, id: string, value: BigNumber): Operation {
+function createNativeOperation(
+  accountId: string,
+  id: string,
+  type: Operation["type"],
+  value: BigNumber,
+): Operation {
   return {
     id,
     hash: id,
-    type: "IN",
+    type,
     value,
     fee: new BigNumber(0),
     senders: ["0xsender"],
@@ -96,7 +110,12 @@ function createAccountWithZeroValueNativeOperation(): Account {
     operationsSize: 0,
   });
 
-  const zeroValueOp = createNativeOperation(account.id, ZERO_VALUE_NATIVE_OP_ID, new BigNumber(0));
+  const zeroValueOp = createNativeOperation(
+    account.id,
+    ZERO_VALUE_NATIVE_OP_ID,
+    "IN",
+    new BigNumber(0),
+  );
 
   return {
     ...account,
@@ -107,6 +126,33 @@ function createAccountWithZeroValueNativeOperation(): Account {
         id: NON_ZERO_VALUE_NATIVE_OP_ID,
         hash: NON_ZERO_VALUE_NATIVE_OP_ID,
         value: new BigNumber(1),
+      },
+    ],
+    operationsCount: 2,
+  };
+}
+
+function createAccountWithNativeOutgoingDustOperations(): Account {
+  const account = genAccount("eth-outgoing-dust", {
+    currency: ETH,
+    operationsSize: 0,
+  });
+  const smallOutgoingOperation = createNativeOperation(
+    account.id,
+    SMALL_NATIVE_OUT_OP_ID,
+    "OUT",
+    new BigNumber(1),
+  );
+
+  return {
+    ...account,
+    operations: [
+      smallOutgoingOperation,
+      {
+        ...smallOutgoingOperation,
+        id: LARGE_NATIVE_OUT_OP_ID,
+        hash: LARGE_NATIVE_OUT_OP_ID,
+        value: new BigNumber(2),
       },
     ],
     operationsCount: 2,
@@ -242,5 +288,22 @@ describe("useOperationsV1 integration", () => {
 
     expect(result.current.sections[0].data.length).toBe(1);
     expect(result.current.sections[0].data[0].id).toBe(NON_ZERO_VALUE_NATIVE_OP_ID);
+  });
+
+  it("should filter out outgoing native operations below the dust threshold", () => {
+    const accountWithNativeOutgoingDust = createAccountWithNativeOutgoingDustOperations();
+    mockCalculate.mockImplementation((_state, query) => {
+      if (query.from === ETH && query.value === 1) return 0.5;
+      if (query.from === ETH && query.value === 2) return 2;
+      if (query.from.ticker === "USD") return 1;
+      return null;
+    });
+
+    const { result } = renderHook(() => useOperationsV1([accountWithNativeOutgoingDust], 50), {
+      overrideInitialState: initialStateWithDustFilterEnabled,
+    });
+
+    expect(result.current.sections[0].data.length).toBe(1);
+    expect(result.current.sections[0].data[0].id).toBe(LARGE_NATIVE_OUT_OP_ID);
   });
 });

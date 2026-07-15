@@ -31,6 +31,7 @@ export default class SwapLiveAppPage {
   executeSwapButtonStepApproval = "execute-swap-button-step-approval";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
   fromAccountErrorId = "from-account-error";
+  swapErrorButtonReplacementId = "swap-error-button-replacement";
   showDetailslink = "show-details-link";
   quotesContainerErrorIcon = "quotes-container-error-icon";
   insufficientFundsBuyButton = "insufficient-funds-buy-button";
@@ -339,22 +340,22 @@ export default class SwapLiveAppPage {
     };
   }
 
-  @Step("Verify swap amount error message match: $0")
-  async verifySwapAmountErrorMessageIsCorrect(expectedMessage: string | RegExp) {
-    await waitWebElementByTestId(this.fromAccountErrorId);
-    const errorText: string = await getWebElementText(this.fromAccountErrorId);
-    if (typeof expectedMessage === "string") {
-      jestExpect(errorText).toContain(expectedMessage);
-    } else {
-      jestExpect(errorText).toMatch(expectedMessage);
-    }
+  @Step("Verify swap error message match: $0 ($1)")
+  async verifySwapErrorMessageIsCorrect(
+    expectedMessage: string | RegExp,
+    display: "banner" | "buttonReplacement",
+  ) {
+    const testId =
+      display === "buttonReplacement" ? this.swapErrorButtonReplacementId : this.fromAccountErrorId;
+    await waitWebElementByTestId(testId);
+    const errorText: string = await getWebElementText(testId);
+    jestExpect(errorText).toMatch(expectedMessage);
   }
 
   @Step("Verify swap cross account error message match: $0")
   async verifySwapCrossAccountErrorMessageIsCorrect(expectedMessage: string | RegExp) {
-    // Cross-account warnings render in the same from-account error slot as amount errors, so reuse
-    // the sibling check: a string stays a literal substring (toContain), only a RegExp is a pattern.
-    await this.verifySwapAmountErrorMessageIsCorrect(expectedMessage);
+    // Cross-account warnings render in the same from-account error slot as amount errors.
+    await this.verifySwapErrorMessageIsCorrect(expectedMessage, "banner");
   }
 
   @Step("Verify swap CTA banner displayed")

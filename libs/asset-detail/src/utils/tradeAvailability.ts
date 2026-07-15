@@ -12,6 +12,14 @@ export function isAvailableOnBuy(
   return currency.ledgerIds.some(lrId => isCurrencyAvailable(lrId, "onRamp"));
 }
 
+export function isAvailableOnSell(
+  currency: MarketCurrencyRampLedgerIds | null | undefined,
+  isCurrencyAvailable: (currencyId: string, mode: "offRamp") => boolean,
+): boolean {
+  if (!currency) return false;
+  return currency.ledgerIds.some(lrId => isCurrencyAvailable(lrId, "offRamp"));
+}
+
 export function isAvailableOnSwap(
   currency: MarketCurrencyRampLedgerIds | null | undefined,
   currenciesForSwapAllSet: Set<string>,

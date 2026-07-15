@@ -173,6 +173,23 @@ describe("usePrecomputedAssetListData", () => {
     expect(result.current.get(bitcoin.id)?.formattedCounterValue).toBeNull();
   });
 
+  it("uses the pre-computed countervalue when present and skips calculate", () => {
+    const assets: Asset[] = [{ ...createCryptoAsset(bitcoin, 100_000), countervalue: 42_000 }];
+
+    const { result } = renderHook(() => usePrecomputedAssetListData(assets));
+
+    expect(mockedCalculate).not.toHaveBeenCalled();
+    expect(result.current.get(bitcoin.id)?.formattedCounterValue).toBe("$420.00");
+  });
+
+  it("falls back to calculate when countervalue is not set", () => {
+    const assets: Asset[] = [createCryptoAsset(bitcoin, 100_000)];
+
+    renderHook(() => usePrecomputedAssetListData(assets));
+
+    expect(mockedCalculate).toHaveBeenCalledTimes(1);
+  });
+
   it("should pass through negative countervalueChange", () => {
     const btcAccount = genAccount("btc-neg", { currency: getCryptoCurrencyById("bitcoin") });
     mockedGetCurrencyPortfolio.mockReturnValue(makePortfolio(-0.012));

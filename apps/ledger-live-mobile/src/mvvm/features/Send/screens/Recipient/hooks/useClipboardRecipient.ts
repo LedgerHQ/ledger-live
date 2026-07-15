@@ -1,5 +1,6 @@
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useFocusEffect } from "@react-navigation/native";
@@ -25,6 +26,7 @@ type UseClipboardRecipientProps = Readonly<{
   currency: CryptoCurrency | TokenCurrency;
   account?: AccountLike;
   parentAccount?: Account | null;
+  transaction?: Transaction | null;
   currentAccountId?: string;
   recipientSupportsDomain: boolean;
 }>;
@@ -51,6 +53,7 @@ export function useClipboardRecipient({
   currency,
   account,
   parentAccount,
+  transaction,
   currentAccountId,
   recipientSupportsDomain,
 }: UseClipboardRecipientProps): UseClipboardRecipientResult {
@@ -89,6 +92,7 @@ export function useClipboardRecipient({
     currency,
     account,
     parentAccount,
+    transaction,
     currentAccountId,
     recipientSupportsDomain,
     // One-shot clipboard read: skip the typing debounce so the banner appears as

@@ -1,7 +1,7 @@
 import React, { useCallback, memo } from "react";
 import { DotIndicator, TableRow, TableCell, TableCellContent } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import TransactionalIcon from "LLD/components/TransactionalIcon";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";

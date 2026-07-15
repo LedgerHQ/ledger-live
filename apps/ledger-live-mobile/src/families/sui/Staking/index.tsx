@@ -214,6 +214,7 @@ function StakingPositions({ account }: Props) {
                 currency={currency}
                 onPress={() => setStakingPosition(sp)}
                 isLast={i === stakingPositions.length - 1}
+                rowIndex={i}
               />
             </View>
           ))}

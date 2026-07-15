@@ -37,6 +37,7 @@ import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
 import AppJsonImporter from "./AppJsonImporter";
 import CustomLockScreenTester from "./CustomLockScreenTester";
 import WalletFeaturesDevTool from "./WalletFeaturesDevTool";
+import ContactsDevTool from "./ContactsDevTool";
 import FeaturesAndFlowsDevTool from "./FeaturesAndFlowsDevTool";
 import AnalyticsConsentOptInDevTool from "./AnalyticsConsentOptInDevTool";
 import { AnalyticsConsentOptInDevScreen } from "./AnalyticsConsentOptInDevTool/AnalyticsConsentOptInDevScreen";
@@ -152,6 +153,7 @@ const Default = () => {
       )}
       <OpenDevToolsRow />
       <WalletFeaturesDevTool />
+      <ContactsDevTool />
       <FeaturesAndFlowsDevTool />
       <AnalyticsConsentOptInDevTool />
       <GenericAwarenessModalDevTool />

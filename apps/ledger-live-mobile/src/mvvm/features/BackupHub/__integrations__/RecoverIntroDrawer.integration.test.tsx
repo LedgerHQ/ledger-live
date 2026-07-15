@@ -11,6 +11,8 @@ import { handleBackupHubDeeplink } from "~/navigation/deeplinks/handleBackupHubD
 import { RecoverIntroDrawer } from "../components/RecoverIntroDrawer";
 import {
   BACKUP_HUB_FEATURE_INTRO_PAGE,
+  BACKUP_HUB_FEATURE_INTRO_PRIMARY_BUTTON,
+  BACKUP_HUB_FEATURE_INTRO_SECONDARY_BUTTON,
   BACKUP_HUB_FEATURE_INTRO_SOURCE,
   resetBackupHubFeatureIntroViewTracking,
 } from "../analytics";
@@ -107,7 +109,7 @@ describe("RecoverIntroDrawer", () => {
     await user.press(await screen.findByText("Try 1 month free"));
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "Try 1 month free",
+      button: BACKUP_HUB_FEATURE_INTRO_PRIMARY_BUTTON,
       page: BACKUP_HUB_FEATURE_INTRO_PAGE,
       source: BACKUP_HUB_FEATURE_INTRO_SOURCE,
       link: "ledgerlive://recover/protect-prod?redirectTo=resumeActivate",
@@ -127,7 +129,7 @@ describe("RecoverIntroDrawer", () => {
     await user.press(await screen.findByText("Log in"));
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "Log in",
+      button: BACKUP_HUB_FEATURE_INTRO_SECONDARY_BUTTON,
       page: BACKUP_HUB_FEATURE_INTRO_PAGE,
       source: BACKUP_HUB_FEATURE_INTRO_SOURCE,
       link: "ledgerlive://recover/protect-prod?redirectTo=login",

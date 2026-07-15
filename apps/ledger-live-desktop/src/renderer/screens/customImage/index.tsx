@@ -126,8 +126,7 @@ const CustomImage: React.FC<Props> = props => {
           setLoadedImage({ imageBase64DataUri: res });
           setStepWrapper(Step.adjustImage);
         })
-        .catch(e => {
-          console.error(e);
+        .catch(() => {
           if (dead) return;
           setStepError({ [Step.chooseImage]: new ImageDownloadError() });
         });

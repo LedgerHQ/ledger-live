@@ -122,7 +122,7 @@ const defaultCategorizedAssetsMock = () => ({
 });
 
 jest.mock("~/renderer/hooks/usePrice", () => {
-  const { getFiatCurrencyByTicker } = jest.requireActual("@ledgerhq/live-common/currencies/index");
+  const { getFiatCurrencyByTicker } = jest.requireActual("@domain/entity-currency-fiat");
   const usd = getFiatCurrencyByTicker("USD");
   return {
     usePrice: () => ({

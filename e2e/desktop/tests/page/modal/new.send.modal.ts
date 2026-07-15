@@ -1,5 +1,7 @@
 import { expect } from "@playwright/test";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
+import type { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { step } from "tests/misc/reporters/step";
 import { Modal } from "tests/component/modal.component";
 import { looksLikeFiatValue } from "tests/utils/looksLikeFiatValue";
@@ -8,10 +10,9 @@ export class NewSendModal extends Modal {
   readonly dialog = this.page.getByRole("dialog");
 
   readonly recipientInput = this.dialog.getByTestId("send-recipient-input");
-  readonly visibleSendToButton = this.dialog
+  readonly matchedAddressButtons = this.dialog
     .locator('[data-testid="send-matched-address-button"]')
-    .filter({ visible: true })
-    .first();
+    .filter({ visible: true });
   readonly skipMemoLink = this.dialog.getByTestId("send-skip-memo-link");
   readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm-button");
   readonly amountInput = this.dialog.getByTestId("send-amount-input");
@@ -57,9 +58,18 @@ export class NewSendModal extends Modal {
   }
 
   @step("Select address from list")
-  async clickOnSendToButton() {
-    await this.visibleSendToButton.scrollIntoViewIfNeeded();
-    await this.visibleSendToButton.click();
+  async clickOnSendToButton(account?: AccountType) {
+    const label =
+      account?.ensName ??
+      (account?.address
+        ? formatAddress(account.address, { prefixLength: 5, suffixLength: 5 })
+        : undefined);
+
+    const button = label
+      ? this.matchedAddressButtons.filter({ hasText: label }).first()
+      : this.matchedAddressButtons.first();
+
+    await button.click();
   }
 
   @step("Skip memo")

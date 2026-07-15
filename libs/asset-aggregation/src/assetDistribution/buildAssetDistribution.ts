@@ -38,8 +38,20 @@ function buildCurrencyLookups(cryptoAssets: AssetsDataLike["cryptoAssets"]): Cur
   return { currencyToMetaId, primaryAssets };
 }
 
-function resolveNormalizedCurrency(metaCurrencyId: string): CryptoCurrency | undefined {
-  return findCryptoCurrencyById(toSlug(metaCurrencyId));
+function resolveNormalizedCurrency(
+  metaCurrencyId: string,
+  cryptoAssets: AssetsDataLike["cryptoAssets"],
+): CryptoCurrency | undefined {
+  const candidate = findCryptoCurrencyById(toSlug(metaCurrencyId));
+  if (!candidate) return undefined;
+
+  // Reject the candidate if its ticker differs from the meta-currency ticker: a chain
+  // (e.g. Arbitrum One, ticker "ETH") must not represent a token meta-currency that
+  // shares its name (e.g. ARB governance token, ticker "ARB").
+  const metaTicker = cryptoAssets[metaCurrencyId]?.ticker?.toUpperCase();
+  if (metaTicker && candidate.ticker.toUpperCase() !== metaTicker) return undefined;
+
+  return candidate;
 }
 
 function computeDistribution(countervalue: number, sum: number, fallback: number): number {
@@ -137,7 +149,10 @@ export function buildAssetDistribution(
   let sum = 0;
   for (const group of groups.values()) {
     const primaryAssetId = primaryAssets[group.metaCurrencyId];
-    const normalizedCurrency = resolveNormalizedCurrency(group.metaCurrencyId);
+    const normalizedCurrency = resolveNormalizedCurrency(
+      group.metaCurrencyId,
+      assetsData.cryptoAssets,
+    );
     const primaryCurrency = currencyById.get(primaryAssetId);
     if (normalizedCurrency) {
       group.currency = normalizedCurrency;

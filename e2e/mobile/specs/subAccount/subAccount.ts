@@ -167,7 +167,10 @@ export function runAddSubAccountTest(testConfig: {
         asset.index,
       );
 
-      await app.common.goToAccount(accountId);
+      await app.common.goToAccount(
+        accountId,
+        asset.parentAccount?.currency.id ?? asset.currency.id,
+      );
       await app.account.expectAccountBalanceVisible(accountId);
       await app.account.expectOperationHistoryVisible(accountId);
       await app.account.expectAddressIndex(0);

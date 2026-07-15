@@ -42,6 +42,7 @@ export function RecipientScreen() {
     <RecipientScreenView
       account={account}
       parentAccount={parentAccount}
+      transaction={state.transaction.transaction}
       currency={currency}
       onAddressSelected={handleAddressSelected}
       recipientSupportsDomain={uiConfig.recipientSupportsDomain}

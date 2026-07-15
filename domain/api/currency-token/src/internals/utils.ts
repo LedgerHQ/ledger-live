@@ -1,15 +1,9 @@
 import type { FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { ApiResponseSchema, ApiTokenResponseSchema } from "../schema";
+import { ApiResponseSchema } from "../schema";
 import { convertApiToken } from "../converter";
 import type { ApiTokenResponse, TokensDataWithPagination } from "../types";
 import { HEADER_X_LEDGER_NEXT } from "./constants";
-
-/**
- * Request field projection sent as the CAL `output` param. Derived from the response schema so the
- * requested fields and the validated fields can never drift apart.
- */
-export const TOKEN_OUTPUT_FIELDS = Object.keys(ApiTokenResponseSchema.shape);
 
 /** Maps a paginated CAL token response to {@link TokenCurrency} entities + the next-page cursor. */
 export function transformTokensResponse(

@@ -177,7 +177,11 @@ function SendSummary({ navigation, route }: Props) {
   const displayedError = mergeErrors();
 
   const isSolanaRawTransaction = "raw" in transaction && transaction.raw;
-  const shouldShowTotal = !amount.eq(totalSpent) && !hideTotal && !isSolanaRawTransaction;
+  const shouldShowTotal =
+    !amount.eq(totalSpent) &&
+    !hideTotal &&
+    !isSolanaRawTransaction &&
+    !familySendFlow?.hideSummaryTotalSection;
 
   const renderToSection = useCallback(() => {
     if (!transaction.recipient) {

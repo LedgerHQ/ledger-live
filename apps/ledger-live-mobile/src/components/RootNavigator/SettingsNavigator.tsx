@@ -30,6 +30,7 @@ import DebugLottie from "~/screens/Settings/Debug/Features/Lottie";
 import DebugLumen from "~/screens/Settings/Debug/Debugging/Lumen";
 import DebugLumenVisualization from "~/screens/Settings/Debug/Debugging/LumenVisualization";
 import DebugWallet40 from "~/screens/Settings/Debug/Debugging/Wallet40";
+import DebugContacts from "~/screens/Settings/Debug/Debugging/Contacts";
 import DebugDevTools from "LLM/features/DevTools/screens/DevToolsScreen";
 import DebugNetwork from "~/screens/Settings/Debug/Debugging/Network";
 import DebugCommandSender from "~/screens/Settings/Debug/Connectivity/CommandSender";
@@ -412,6 +413,13 @@ export default function SettingsNavigator() {
         component={DebugWallet40}
         options={{
           title: "Wallet 4.0",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugContacts}
+        component={DebugContacts}
+        options={{
+          title: "Contacts",
         }}
       />
       <Stack.Screen

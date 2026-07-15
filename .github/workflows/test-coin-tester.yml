@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 env:
-  COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron xrp stellar"
+  COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron xrp stellar multiversx cosmos cardano"
 
 jobs:
   is-affected:

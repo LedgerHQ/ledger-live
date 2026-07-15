@@ -129,7 +129,7 @@ export class ConsoleLogger {
         );
       }
     } catch {
-      console.error("Badly formatted log");
+      console.warn("Badly formatted log");
     }
   }
 }

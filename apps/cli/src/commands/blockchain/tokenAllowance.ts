@@ -2,11 +2,8 @@ import { BigNumber } from "bignumber.js";
 import { from } from "rxjs";
 import { concatMap } from "rxjs/operators";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
-import {
-  formatCurrencyUnit,
-  findCryptoCurrencyByKeyword,
-  getCryptoCurrencyById,
-} from "@ledgerhq/live-common/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyByKeyword, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   encodeAccountId,
   decodeAccountId,

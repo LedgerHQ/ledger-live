@@ -124,7 +124,10 @@ export async function runNavigateToBuyFromAssetPageTest(
     tags.forEach(tag => $Tag(tag));
     test(`Navigate to Buy / Sell [${buySell.crypto.currency.name}] asset from asset page`, async () => {
       await app.portfolio.goToSpecificAsset(buySell.crypto.currency.name);
-      await app.assetAccountsPage.waitForAccountPageToLoad(buySell.crypto.currency.name);
+      await app.assetAccountsPage.waitForAccountPageToLoad(
+        buySell.crypto.currency.name,
+        buySell.crypto.currency.id,
+      );
       await app.assetAccountsPage.tapOnAssetQuickActionButton("buy");
       await app.buySell.handleBuyFlow(buySell, paymentMethod);
     });

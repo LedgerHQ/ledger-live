@@ -3402,7 +3402,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   bittensor: {
     type: "CryptoCurrency",
     id: "bittensor",
-    coinType: CoinType.BITTENSOR,
+    // Polkadot coin type (354), not the SLIP-0044 1005 slot: Bittensor reuses the Polkadot app.
+    coinType: CoinType.POLKADOT,
     name: "Bittensor",
     managerAppName: "Polkadot",
     ticker: "TAO",

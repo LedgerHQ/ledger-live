@@ -29,7 +29,9 @@ describe("Wallet 4.0 Q2 - Operations History", () => {
       userdata: "speculos-x-other-account",
       featureFlags: FF_OPERATION_HISTORY,
     });
+    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible(10_000);
     await app.mainNavigation.waitForWallet40Ready();
+    await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });
 
   it("should open Tx History from the top bar clock icon", async () => {
@@ -47,12 +49,10 @@ describe("Wallet 4.0 Q2 - Operations History", () => {
     await app.operationDetails.checkTransactionDetailsVisibility();
   });
 
-  // This test will evolve later once the asset/address page is implemented in W40
-  // For the moment, we are using the legacy account page to navigate to the transaction history
   it("should open Tx History from within an asset page", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
     await app.portfolio.goToAccounts(CURRENCY.name);
-    await app.common.pressOnSeeAllOperationsButton();
+    await app.common.pressOnSeeAllOperationsButtonFromAssetPage();
     await app.operation.expectOperationsListVisible();
   });
 });

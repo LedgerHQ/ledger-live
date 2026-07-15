@@ -151,6 +151,11 @@ export type StakingContractConfig = {
    * Defaults to 0n when omitted.
    */
   delegationMaxAmountReserve?: bigint;
+  /** Extract the validator address from the decoded calldata args and the called contract address (operation recipient). */
+  resolveValidatorAddress: (
+    decoded: readonly unknown[],
+    contractAddress: string | undefined,
+  ) => Promise<string | null>;
 };
 
 export type StakeCreate = {

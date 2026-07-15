@@ -215,6 +215,9 @@
     "./features/flow/market-banner": {
       "entry": ["src/index.ts", "src/components/MarketBanner/index.native.ts"]
     },
+    "./features/flow/card": {
+      "entry": ["src/index.ts"]
+    },
     "./features/flow/contacts": {
       "entry": ["src/index.ts"]
     },
@@ -226,6 +229,9 @@
     },
     "./features/platform/style": {
       "entry": ["src/index.ts"]
+    },
+    "./libs/coin-tester-modules/coin-tester-multiversx": {
+      "entry": ["src/scenarii/multiversx.ts"]
     }
   }
 }

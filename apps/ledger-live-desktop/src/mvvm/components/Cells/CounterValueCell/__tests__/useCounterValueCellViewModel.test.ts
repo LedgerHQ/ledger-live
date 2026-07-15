@@ -1,6 +1,7 @@
 import { renderHook } from "tests/testSetup";
 import { useCounterValueCellViewModel } from "../useCounterValueCellViewModel";
-import { formatCurrencyUnit, getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
 

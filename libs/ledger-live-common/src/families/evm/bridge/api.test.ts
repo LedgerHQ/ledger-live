@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getCryptoAssetsStore, setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { setCoinConfig } from "@ledgerhq/coin-evm/config";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";

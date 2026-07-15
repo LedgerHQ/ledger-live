@@ -1,10 +1,7 @@
 import { handleActions, ReducerMap } from "redux-actions";
 import type { Action } from "redux-actions";
-import {
-  getFiatCurrencyByTicker,
-  findFiatCurrencyByTicker,
-  findCryptoCurrencyById,
-} from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getFiatCurrencyByTicker, findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { getEnv } from "@ledgerhq/live-env";
 import { createSelector } from "~/context/selectors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
@@ -711,6 +708,14 @@ const LEGACY_CRYPTO_COUNTERVALUE_TICKER_TO_ID: Record<string, string> = {
 };
 export const migrateLegacyCryptoCounterValue = (counterValue: string): string =>
   LEGACY_CRYPTO_COUNTERVALUE_TICKER_TO_ID[counterValue] ?? counterValue;
+
+const LEGACY_DAI_V2_FAVORITE_ID = "ethereum/erc20/dai_stablecoin_v2_0";
+const DAI_MARKET_ID = "dai";
+
+export const migrateLegacyStarredMarketCoins = (starredMarketCoins: readonly string[]): string[] =>
+  Array.from(
+    new Set(starredMarketCoins.map(id => (id === LEGACY_DAI_V2_FAVORITE_ID ? DAI_MARKET_ID : id))),
+  );
 
 const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
   findFiatCurrencyByTicker(state.counterValue) ||

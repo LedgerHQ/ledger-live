@@ -21,18 +21,16 @@ export function FooterSection({ explorerUrl, isLoading }: FooterSectionProps) {
   }
 
   return (
-    <div className="pb-4">
-      <Button
-        appearance="transparent"
-        isFull
-        size="md"
-        icon={ExternalLink}
-        data-testid="swap-transaction-view-explorer-btn"
-        data-href={explorerUrl}
-        onClick={() => openURL(explorerUrl, "SwapTransactionStatus_ViewExplorer")}
-      >
-        {t("swap2.modals.transactionStatus.actions.viewInExplorer")}
-      </Button>
-    </div>
+    <Button
+      appearance="transparent"
+      isFull
+      size="md"
+      icon={ExternalLink}
+      data-testid="swap-transaction-view-explorer-btn"
+      data-href={explorerUrl}
+      onClick={() => openURL(explorerUrl, "SwapTransactionStatus_ViewExplorer")}
+    >
+      {t("swap2.modals.transactionStatus.actions.viewInExplorer")}
+    </Button>
   );
 }

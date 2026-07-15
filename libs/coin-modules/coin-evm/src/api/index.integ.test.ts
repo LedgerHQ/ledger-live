@@ -6,8 +6,6 @@ import {
   Operation,
   StakingTransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { ethers } from "ethers";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
@@ -39,8 +37,6 @@ describe.each([
   let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
-    // Setup CAL client store (automatically set as global store)
-    setupCalClientStore();
     module = createApi(config as EvmConfig, "ethereum");
   });
 
@@ -372,18 +368,6 @@ describe.each([
     const isEtherscanLike = (config as EvmConfig).explorer?.type === "etherscan";
 
     describe("pagination", () => {
-      let oldNftCurrencies: string[];
-
-      beforeAll(() => {
-        // Disable NFT fetching to speed up pagination tests
-        oldNftCurrencies = getEnv("NFT_CURRENCIES");
-        setEnv("NFT_CURRENCIES", []);
-      });
-
-      afterAll(() => {
-        setEnv("NFT_CURRENCIES", oldNftCurrencies);
-      });
-
       const expectUniqueOperationIds = (ops: Operation[]) => {
         const operationIds = ops.map(op => op.id);
         const uniqueOperationIds = new Set(operationIds);
@@ -790,7 +774,6 @@ describe("EVM Api: external node and explorer ONLY", () => {
   let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
-    setupCalClientStore();
     module = createApi(
       {
         node: { type: "external", uri: "https://ethereum-rpc.publicnode.com" },
@@ -881,7 +864,6 @@ describe("EVM Api (Moonbeam Network)", () => {
   let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
-    setupCalClientStore();
     module = createApi(
       {
         node: { type: "external", uri: "https://rpc.api.moonbeam.network" },
@@ -929,8 +911,6 @@ describe("EVM Api (SEI Network)", () => {
   const seiStakingDelegationAmount = 1000000000000000n; // 0.001 SEI
 
   beforeAll(() => {
-    // Setup CAL client store (automatically set as global store)
-    setupCalClientStore();
     const config = {
       node: {
         type: "external",
@@ -1053,7 +1033,6 @@ describe("EVM Api (Zero Gravity)", () => {
   let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
-    setupCalClientStore();
     const config = {
       node: {
         type: "external",

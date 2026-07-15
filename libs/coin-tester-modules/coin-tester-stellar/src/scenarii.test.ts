@@ -2,9 +2,9 @@ import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { scenarioStellar } from "./scenarii/stellar";
 import { killStellarQuickstart } from "./stellar-quickstart";
 
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
-  process.on(e, async () => {
-    await killStellarQuickstart();
+["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
+  process.on(e, () => {
+    killStellarQuickstart().catch(() => {});
   }),
 );
 

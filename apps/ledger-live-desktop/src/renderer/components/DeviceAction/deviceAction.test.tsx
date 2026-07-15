@@ -5,7 +5,7 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { DeviceDeprecationRules } from "@ledgerhq/live-common/hw/connectApp";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DmkError } from "@ledgerhq/live-dmk-desktop";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 
 jest.mock("~/renderer/hooks/useBuyDeviceIntercept", () => ({

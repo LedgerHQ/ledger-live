@@ -7,7 +7,7 @@ jest.mock("../../hw/dmkUtils");
 import { LegacySignerSolana, DmkSignerSol } from "@ledgerhq/live-signer-solana";
 import { isDmkTransport } from "../../hw/dmkUtils";
 import Transport from "@ledgerhq/hw-transport";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 
 const MockedLegacySignerSolana = LegacySignerSolana as jest.MockedClass<typeof LegacySignerSolana>;

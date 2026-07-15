@@ -1,6 +1,7 @@
 import camelCase from "lodash/fp/camelCase";
 import type { App } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
 import { type FeatureId, type Features, FeatureIdSchema } from "@shared/feature-flags";
 
 /**

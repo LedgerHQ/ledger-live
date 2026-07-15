@@ -4,8 +4,8 @@ import { Trans, useTranslation } from "~/context/Locale";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { useTokensData } from "@features/platform-currencies";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import invariant from "invariant";
 

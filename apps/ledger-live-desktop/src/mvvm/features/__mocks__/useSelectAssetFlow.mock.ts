@@ -1,5 +1,5 @@
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AssetType } from "../ModularDialog/types";
 
@@ -81,7 +81,7 @@ export enum LoadingStatus {
   Success = "success",
 }
 
-export { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+export { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 export const formatCurrencyUnit = (
   _unit: unknown,

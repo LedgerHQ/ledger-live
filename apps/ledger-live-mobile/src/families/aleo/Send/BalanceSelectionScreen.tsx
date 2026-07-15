@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from "react";
 import BigNumber from "bignumber.js";
 import { ScrollView } from "react-native";
-import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { Box, Button, Divider, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import type { AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -57,6 +58,7 @@ function buildTransaction({
   return bridge.updateTransaction(tx, {
     mode,
     recipient: isSelfTransfer ? mainAccount.freshAddress : "",
+    ...(account.type === "TokenAccount" && { subAccountId: account.id }),
   });
 }
 
@@ -72,7 +74,9 @@ function getCtaLabelKey(isSelfTransfer: boolean, option: BalanceOption) {
     : "aleo.send.balanceSelection.sendPrivately";
 }
 
-export function BalanceSelectionScreen({ navigation, route }: Props) {
+export function BalanceSelectionScreen() {
+  const navigation = useNavigation<Props["navigation"]>();
+  const route = useRoute<Props["route"]>();
   const { account, parentAccount, isSelfTransfer } = route.params;
   const [selected, setSelected] = useState<BalanceOption>("public");
   const { t } = useTranslation();
@@ -124,7 +128,7 @@ export function BalanceSelectionScreen({ navigation, route }: Props) {
 
   return (
     <Box lx={wrapperStyle}>
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ flex: 1, justifyContent: "center" }}>
         <Box lx={cardsStyle}>
           <BalanceCard
             label={t("aleo.send.balanceSelector.public")}
@@ -135,6 +139,13 @@ export function BalanceSelectionScreen({ navigation, route }: Props) {
             selected={selected === "public"}
             onPress={() => setSelected("public")}
           />
+          <Box lx={dividerRowStyle}>
+            <Divider lx={dividerStyle} />
+            <Text typography="body3" lx={{ color: "muted" }}>
+              {t("common.or")}
+            </Text>
+            <Divider lx={dividerStyle} />
+          </Box>
           <BalanceCard
             label={t("aleo.send.balanceSelector.private")}
             lastUpdateLabel={
@@ -171,7 +182,19 @@ const wrapperStyle: LumenViewStyle = {
 
 const cardsStyle: LumenViewStyle = {
   padding: "s16",
+  gap: "s24",
+};
+
+const dividerRowStyle: LumenViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
   gap: "s12",
+};
+
+const dividerStyle: LumenViewStyle = {
+  flex: 1,
+  alignSelf: "center",
 };
 
 const footerStyle: LumenViewStyle = {

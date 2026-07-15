@@ -4,7 +4,7 @@ import type { RouteProp } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import {

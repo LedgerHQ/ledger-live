@@ -11,6 +11,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";
+import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 import type { AddressAccountData } from "../useAddressesViewModel";
 
 type Props = Readonly<{
@@ -33,17 +34,31 @@ export const AddressAccountItem = memo(function AddressAccountItem({ data, onPre
       <CardHeader>
         <CardLeading>
           <CardContent>
-            <CardContentTitle>{name}</CardContentTitle>
+            <CardContentTitle testID={`${ASSET_DETAIL_TEST_IDS.addressItemName}-${account.id}`}>
+              {name}
+            </CardContentTitle>
             <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}>
-              <CardContentDescription>{truncatedAddress}</CardContentDescription>
+              <CardContentDescription
+                testID={`${ASSET_DETAIL_TEST_IDS.addressItemAddress}-${account.id}`}
+              >
+                {truncatedAddress}
+              </CardContentDescription>
               <CurrencyIcon currency={account.currency} size={16} squared />
             </Box>
           </CardContent>
         </CardLeading>
         <CardTrailing>
           <CardContent>
-            <CardContentTitle>{formattedCounterValue}</CardContentTitle>
-            <CardContentDescription>{formattedBalance}</CardContentDescription>
+            <CardContentTitle
+              testID={`${ASSET_DETAIL_TEST_IDS.addressItemCounterValue}-${account.id}`}
+            >
+              {formattedCounterValue}
+            </CardContentTitle>
+            <CardContentDescription
+              testID={`${ASSET_DETAIL_TEST_IDS.addressItemBalance}-${account.id}`}
+            >
+              {formattedBalance}
+            </CardContentDescription>
           </CardContent>
         </CardTrailing>
       </CardHeader>

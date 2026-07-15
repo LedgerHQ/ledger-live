@@ -60,7 +60,7 @@ export enum DeviceLabels {
   TYPE_SEND = "Type Send",
   VALUE = "Value",
   VERIFY_ADDRESS = "Verify address",
-  VERIFY_BSC = "Verify BSC",
+  VERIFY_BSC = "Verify Binance Smart",
   VERIFY_ETHEREUM = "Verify Ethereum",
   VERIFY_POLYGON = "Verify Polygon",
   VERIFY_COSMOS = "Verify Cosmos",

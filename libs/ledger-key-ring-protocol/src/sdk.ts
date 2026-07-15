@@ -75,7 +75,7 @@ export class SDK implements TrustchainSDK {
       jwt => {
         this.jwt = jwt;
         if (!ignorePermissionsChecks) {
-          const permissions = jwt.permissions[trustchain.rootId];
+          const permissions = jwt?.permissions?.[trustchain.rootId];
           if (!permissions) {
             throw new TrustchainNotAllowed("permissions not available for current trustchain");
           }

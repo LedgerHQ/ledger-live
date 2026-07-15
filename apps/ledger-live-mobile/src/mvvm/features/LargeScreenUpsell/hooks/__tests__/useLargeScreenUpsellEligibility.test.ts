@@ -150,17 +150,27 @@ describe("useLargeScreenUpsellEligibility", () => {
     expect(result.current).toEqual({ isEligible: false, reason: "model_disabled" });
   });
 
-  it("should treat a null onboarding date as eligible defensively", () => {
+  it("should treat a null onboarding date as today and apply cooldown", () => {
     const { result } = renderEligibility({
       knownDeviceModelIds: [DeviceModelId.nanoX],
       onboardingDate: null,
     });
 
     expect(result.current).toEqual({
-      isEligible: true,
+      isEligible: false,
+      reason: "cooldown",
       deviceModelId: DeviceModelId.nanoX,
       cooldownDays: 30,
     });
+  });
+
+  it("should not backfill a null onboarding date from the eligibility hook", () => {
+    const { store } = renderEligibility({
+      knownDeviceModelIds: [DeviceModelId.nanoX],
+      onboardingDate: null,
+    });
+
+    expect(store.getState().postOnboarding.onboardingDate).toBeNull();
   });
 
   it("should use the longest cooldown when multiple eligible nano models have been seen", () => {

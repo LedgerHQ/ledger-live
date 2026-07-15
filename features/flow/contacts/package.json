@@ -8,6 +8,9 @@
   "exports": {
     ".": "./src/index.ts",
     "./featureFlags": "./src/featureFlags.ts",
+    "./hooks": "./src/hooks/index.ts",
+    "./components/ContactsButton": "./src/components/ContactsButton/index.ts",
+    "./components/ContactsPage": "./src/components/ContactsPage/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -19,14 +22,27 @@
     "unimported": "pnpm knip --directory ../../.. -W features/flow/contacts"
   },
   "dependencies": {
+    "@domain/entity-contact": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
     "@shared/feature-flags": "workspace:^"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
-    "react-redux": ">=9.0.0"
+    "react-redux": ">=9.0.0",
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-design-core": {
+      "optional": true
+    }
   },
   "devDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
@@ -34,11 +50,14 @@
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-redux": "catalog:",
+    "tailwind-merge": "catalog:",
     "typescript": "catalog:"
   }
 }

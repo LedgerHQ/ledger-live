@@ -127,6 +127,10 @@
       "title": "Please try again",
       "description": "Account is outdated. A synchronisation is needed"
     },
+    "AccountPublicKeyUnavailable": {
+      "title": "Account needs to be added again",
+      "description": "Ledger Wallet could not retrieve this account's public key. Please remove the account and add it again to continue"
+    },
     "AlgorandASANotOptInInRecipient": {
       "title": "Recipient account has not opted in the selected ASA."
     },
@@ -1385,6 +1389,17 @@
         }
       }
     }
+  },
+  "largeScreenUpsellModal": {
+    "optedIn": {
+      "title": "See more. Tap less. Save {{discount}}%",
+      "subtitle": "Enjoy a larger screen, smarter transaction reviews, enhanced protection, and an exclusive {{discount}}% off."
+    },
+    "optedOut": {
+      "title": "Spot scams. See every detail",
+      "subtitle": "Review clearly on a touchscreen signer and spot scams with advanced security checks."
+    },
+    "cta": "Explore touchscreen signers"
   },
   "earn": {
     "simulator": {
@@ -4204,7 +4219,8 @@
               "sendPending": "Sending {{ticker}}",
               "sendCompleted": "Sent {{ticker}}",
               "receivePending": "Receiving {{ticker}}",
-              "receiveCompleted": "Received {{ticker}}"
+              "receiveCompleted": "Received {{ticker}}",
+              "estimated": "(Estimated)"
             },
             "details": {
               "networkFees": "Network fees",
@@ -4598,6 +4614,7 @@
         "maxPriorityFee": "Max priority fee ({{unit}})",
         "gasLimit": "Gas limit ({{unit}})",
         "feePerByte": "Fees amount ({{unit}})",
+        "feesAmount": "Fees amount ({{unit}})",
         "suggested": "Suggested",
         "nextBlock": "Next block",
         "networkFeesInFiat": "Network fees in {{currency}}",
@@ -9476,6 +9493,13 @@
       "openMenuA11yLabel": "Chart options",
       "hideTransactions": "Hide activity on price chart",
       "showTransactions": "Show activity on price chart"
+    },
+    "footer": {
+      "moreOptions": {
+        "accessibilityLabel": "More options",
+        "sell": "Sell",
+        "earn": "Earn"
+      }
     }
   },
   "assetSelection": {
@@ -10079,7 +10103,8 @@
         "description": "Confirm sharing the view key on your device",
         "cancelAlert": "You can reject individual accounts on your device. Cancelling all will stop adding any accounts to your portfolio.",
         "cancelAllBtn_one": "Cancel",
-        "cancelAllBtn_other": "Cancel all"
+        "cancelAllBtn_other": "Cancel all",
+        "redirecting": "Redirecting..."
       },
       "stepNoAccountsAdded": {
         "title": "No {{currency}} accounts were added",
@@ -10087,7 +10112,8 @@
       },
       "stepScanAccounts": {
         "cta": {
-          "shareViewKeys": "Share view keys"
+          "shareKey_one": "Share view key",
+          "shareKey_other": "Share view keys"
         }
       }
     },
@@ -10097,8 +10123,8 @@
     "send": {
       "balanceSelection": {
         "title": "Select balance",
-        "convertToPrivate": "Convert to private",
-        "convertToPublic": "Convert to public",
+        "convertToPrivate": "Transfer from public",
+        "convertToPublic": "Transfer from private",
         "sendPublicly": "Send publicly",
         "sendPrivately": "Send privately"
       },
@@ -10108,11 +10134,17 @@
         "lastUpdate": "Last update: {{label}}",
         "recently": "recently"
       },
-      "privateSync": {
-        "mockTitle": "Private sync mock"
+      "mandatoryPrivateSync": {
+        "title": "Syncing your private balance ({{percentage}}%)",
+        "desc": "Please wait",
+        "errorTitle": "Private sync failed",
+        "errorDesc": "Something went wrong, please try again"
       },
       "quickAmountSelector": {
         "mockTitle": "Quick amount selector mock"
+      },
+      "summary": {
+        "proofGenerationNotice": "Aleo transaction requires proof generation. This may take some time."
       }
     },
     "balancesSection": "Balances",
@@ -10139,6 +10171,9 @@
         "public": "Public",
         "private": "Private"
       }
+    },
+    "shared": {
+      "sponsoredByProvable": "Sponsored by Provable"
     }
   }
 }

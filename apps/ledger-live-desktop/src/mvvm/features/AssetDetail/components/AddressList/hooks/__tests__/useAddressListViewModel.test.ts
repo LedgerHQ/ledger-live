@@ -1,5 +1,5 @@
 import { renderHook, act, withFlagOverrides } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { getAccountUrl } from "~/renderer/utils/accountUrl";

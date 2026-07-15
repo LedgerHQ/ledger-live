@@ -296,7 +296,12 @@ function Delegations({ account }: Props) {
             size={size}
           />
         )}
-        amount={new BigNumber(selectedStakeWithMeta?.stake?.delegation?.stake ?? 0)}
+        amount={
+          new BigNumber(
+            (selectedStakeWithMeta?.stake?.delegation?.stake ?? 0) ||
+              (selectedStakeWithMeta?.stake?.withdrawable ?? 0),
+          )
+        }
         data={data}
         actions={delegationActions}
       />

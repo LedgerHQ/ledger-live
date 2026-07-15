@@ -3,6 +3,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 test.describe("Market", () => {
   test.use({
@@ -13,7 +14,7 @@ test.describe("Market", () => {
   test(
     "Filters behavior",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [...DEVICE_TAGS],
       annotation: {
         type: "TMS",
         description: "B2CQA-4315, B2CQA-4316, B2CQA-1879",

@@ -1,5 +1,5 @@
 import { categorizeAssets } from "../categorizeAssets";
-import { btc, eth, usdtEth, usdcEth, makeDistItem, mockAccounts } from "./fixtures";
+import { btc, eth, usdtEth, usdcEth, makeDistItem, makeToken, mockAccounts } from "./fixtures";
 
 describe("categorizeAssets", () => {
   const stablecoinTickers = new Set(["USDT", "USDC"]);
@@ -40,6 +40,16 @@ describe("categorizeAssets", () => {
     expect(btcItem?.balance).toBe(1e8);
     expect(btcItem?.value).toBe(60000);
     expect(btcItem?.distribution).toBe(0.6);
+  });
+
+  it("should preserve the canonical Market id for DAI V2", () => {
+    const daiV2 = makeToken("ethereum/erc20/dai_stablecoin_v2_0", "DAI", "Dai Stablecoin v2.0");
+    const result = categorizeAssets([makeDistItem(daiV2, { marketId: "dai" })], new Set(["DAI"]));
+
+    expect(result.stablecoins[0]).toMatchObject({
+      currency: daiV2,
+      marketId: "dai",
+    });
   });
 
   it("should handle empty distribution", () => {

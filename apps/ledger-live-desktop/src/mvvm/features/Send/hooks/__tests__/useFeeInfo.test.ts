@@ -7,7 +7,7 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { createMockAccount } from "../../screens/Recipient/__integrations__/__fixtures__/accounts";
 import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";

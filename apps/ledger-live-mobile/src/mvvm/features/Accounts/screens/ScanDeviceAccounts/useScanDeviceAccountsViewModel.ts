@@ -3,12 +3,13 @@ import { useEffect, useCallback, useState, useRef, useMemo } from "react";
 import { concat, from, Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
 import { useDispatch } from "~/context/hooks";
+import { useTranslation } from "~/context/Locale";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import uniq from "lodash/uniq";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCurrencyBridge } from "@ledgerhq/live-common/bridge/useCurrencyBridge";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { isCryptoCurrency, isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import logger from "~/logger";
 import { NavigatorName, ScreenName } from "~/const";
@@ -41,6 +42,7 @@ export default function useScanDeviceAccountsViewModel({
   blacklistedTokenIds,
   analyticsMetadata,
 }: ScanDeviceAccountsViewModelProps) {
+  const { t } = useTranslation();
   const [scanning, setScanning] = useState(true);
   const navigation = useNavigation<ScanDeviceAccountsNavigationProps["navigation"]>();
   const [error, setError] = useState(null);
@@ -365,7 +367,11 @@ export default function useScanDeviceAccountsViewModel({
   useEffect(() => {
     if (!latestScannedAccount || !latestScannedAccountBridge) return;
     const hasAlreadyBeenScanned = scannedAccounts.some(a => latestScannedAccount.id === a.id);
-    const hasAlreadyBeenImported = existingAccounts.some(a => latestScannedAccount.id === a.id);
+    const isAlreadyImportedAccount =
+      customFlow?.isAlreadyImportedAccount ?? ((a: Account, b: Account) => a.id === b.id);
+    const hasAlreadyBeenImported = existingAccounts.some(a =>
+      isAlreadyImportedAccount(a, latestScannedAccount),
+    );
     const isNewAccount = latestScannedAccountBridge.isAccountEmpty(latestScannedAccount);
 
     if (!isNewAccount && !hasAlreadyBeenImported) {
@@ -385,6 +391,7 @@ export default function useScanDeviceAccountsViewModel({
       );
     }
   }, [
+    customFlow,
     existingAccounts,
     latestScannedAccount,
     latestScannedAccountBridge,
@@ -464,7 +471,10 @@ export default function useScanDeviceAccountsViewModel({
     returnToSwap,
     currency,
     onCloseNavigation,
-    confirmI18nKey: customFlow?.scanDeviceAccountsCtaI18nKey,
+    confirmLabel: t(
+      customFlow?.scanDeviceAccountsCtaI18nKey ?? "addAccounts.scanDeviceAccounts.confirm",
+      { count: selectedIds.length },
+    ),
     scanDeviceAccountsBack,
   };
 }

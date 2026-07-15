@@ -13,14 +13,15 @@ type Props = Readonly<{
   title: string;
   Icon: ComponentType<IconProps>;
   testID?: string;
+  stateTestID?: string;
 }>;
 
-export function CoinOptionRow({ onPress, title, Icon, testID }: Props) {
+export function CoinOptionRow({ onPress, title, Icon, testID, stateTestID }: Props) {
   return (
     <ListItem onPress={onPress} testID={testID}>
       <ListItemLeading>
         <Spot appearance="icon" icon={Icon} />
-        <ListItemContent>
+        <ListItemContent testID={stateTestID}>
           <ListItemTitle>{title}</ListItemTitle>
         </ListItemContent>
       </ListItemLeading>

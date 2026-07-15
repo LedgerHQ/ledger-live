@@ -1,11 +1,18 @@
 import React from "react";
 import { Text, TouchableOpacity } from "react-native";
+import { useRoute } from "@react-navigation/native";
 import { screen, render } from "@tests/test-renderer";
 import NoAccountsAddedScreen from "../NoAccountsAddedScreen";
 import { aleoCurrency } from "../../__mocks__/currency.mock";
 
 let capturedCategory: string | undefined;
 let capturedName: string | undefined;
+
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useRoute: jest.fn(),
+}));
+
 jest.mock("~/analytics", () => ({
   TrackScreen: ({ category, name }: { category: string; name?: string }) => {
     capturedCategory = category;
@@ -30,6 +37,8 @@ jest.mock("LLM/components/CloseWithConfirmation", () => {
   };
 });
 
+const mockUseRoute = jest.mocked(useRoute);
+
 const makeMockRoute = (overrides: { onCloseNavigation?: () => void } = {}) => ({
   params: {
     currency: aleoCurrency,
@@ -39,13 +48,10 @@ const makeMockRoute = (overrides: { onCloseNavigation?: () => void } = {}) => ({
   },
 });
 
-const renderScreen = (routeOverrides: { onCloseNavigation?: () => void } = {}) =>
-  render(
-    <NoAccountsAddedScreen
-      route={makeMockRoute(routeOverrides) as never}
-      navigation={{} as never}
-    />,
-  );
+const renderScreen = (routeOverrides: { onCloseNavigation?: () => void } = {}) => {
+  mockUseRoute.mockReturnValue(makeMockRoute(routeOverrides) as never);
+  return render(<NoAccountsAddedScreen />);
+};
 
 describe("NoAccountsAddedScreen", () => {
   beforeEach(() => {

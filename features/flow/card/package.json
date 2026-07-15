@@ -1,0 +1,86 @@
+{
+  "name": "@features/flow-card",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint src && pnpm lint:tailwind",
+    "lint:ci": "oxlint src --quiet && pnpm lint:tailwind",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet && pnpm lint:tailwind",
+    "lint:tailwind": "eslint --no-eslintrc -c .eslintrc.tailwind.js --ext .ts,.tsx 'src/**/*.web.{ts,tsx}'",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W features/flow/card"
+  },
+  "devDependencies": {
+    "@features/platform-jest-config": "workspace:*",
+    "@features/platform-style": "workspace:*",
+    "@gorhom/bottom-sheet": "catalog:",
+    "@ledgerhq/crypto-icons": "catalog:",
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "eslint": "8.57.0",
+    "eslint-plugin-better-tailwindcss": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-native-reanimated": "catalog:",
+    "react-native-safe-area-context": "catalog:",
+    "react-native-svg": "catalog:",
+    "react-test-renderer": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:"
+  },
+  "optionalDependencies": {
+    "@oxlint/binding-darwin-arm64": "1.51.0",
+    "@oxlint/binding-darwin-x64": "1.51.0",
+    "@oxlint/binding-linux-x64-gnu": "1.51.0",
+    "@oxlint/binding-win32-x64-msvc": "1.51.0"
+  },
+  "peerDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "react": ">=19.0.0",
+    "react-native": ">=0.70.0"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-design-core": {
+      "optional": true
+    }
+  }
+}

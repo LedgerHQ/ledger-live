@@ -4,6 +4,7 @@ import { useAnalyticsBalanceDisplayViewModel } from "./useAnalyticsBalanceDispla
 
 type Props = {
   hoveredValue?: number | null;
+  animate?: boolean;
 };
 
 /**
@@ -16,7 +17,7 @@ type Props = {
  * value is shown instead of the portfolio balance, and the loading indicator is
  * suppressed because a historical value is already resolved.
  */
-export function AnalyticsBalanceDisplay({ hoveredValue }: Readonly<Props>) {
+export function AnalyticsBalanceDisplay({ hoveredValue, animate = true }: Readonly<Props>) {
   const { value, formatter, discreet, isHovering, isLoading, isBalanceAvailable } =
     useAnalyticsBalanceDisplayViewModel({ hoveredValue });
 
@@ -30,6 +31,8 @@ export function AnalyticsBalanceDisplay({ hoveredValue }: Readonly<Props>) {
       formatter={formatter}
       hidden={discreet}
       loading={!isHovering && isLoading}
+      size="md"
+      animate={animate}
       testID="analytics-balance-amount"
     />
   );

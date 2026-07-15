@@ -11,6 +11,7 @@ import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds
 import { useFeature } from "@features/platform-feature-flags";
 import { INJECTED_JAVASCRIPT } from "./dappInject";
 import { DappAccountGate } from "./DappAccountGate";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import { E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT } from "~/e2e/webviewNetworkLogCapture";
 import { webviewLogStore } from "~/e2e/webviewLogStore";
 
@@ -46,6 +47,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewCacheOptions,
       noAccounts,
       isLoadingAccounts,
+      publicKeyUnavailableError,
+      clearPublicKeyUnavailableError,
     } = useWebView(
       {
         manifest,
@@ -88,53 +91,59 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     }
 
     return (
-      <RNWebView
-        ref={webviewRef}
-        onScroll={onScroll}
-        decelerationRate={Platform.OS === "ios" ? "normal" : 0.998}
-        startInLoadingState={true}
-        showsHorizontalScrollIndicator={false}
-        allowsBackForwardNavigationGestures={allowsBackForwardNavigationGestures}
-        showsVerticalScrollIndicator={false}
-        renderLoading={Loader}
-        originWhitelist={manifestDomainCheckEnabled ? undefined : manifest.domains}
-        onShouldStartLoadWithRequest={
-          manifestDomainCheckEnabled ? onShouldStartLoadWithRequest : undefined
-        }
-        allowsInlineMediaPlayback
-        onMessage={onMessage}
-        onError={(event: { nativeEvent?: { description?: string; code?: number } }) => {
-          if (Config.DETOX) {
-            const desc = event?.nativeEvent?.description;
-            const code = event?.nativeEvent?.code;
-            webviewLogStore.addLoadError({
-              timestamp: new Date().toISOString(),
-              source: "WalletAPIWebview",
-              message: desc ?? "WebView onError fired",
-              details: `manifestId=${manifest.id} url=${manifest.url}${code != null ? ` code=${code}` : ""}`,
-            });
+      <>
+        <RNWebView
+          ref={webviewRef}
+          onScroll={onScroll}
+          decelerationRate={Platform.OS === "ios" ? "normal" : 0.998}
+          startInLoadingState={true}
+          showsHorizontalScrollIndicator={false}
+          allowsBackForwardNavigationGestures={allowsBackForwardNavigationGestures}
+          showsVerticalScrollIndicator={false}
+          renderLoading={Loader}
+          originWhitelist={manifestDomainCheckEnabled ? undefined : manifest.domains}
+          onShouldStartLoadWithRequest={
+            manifestDomainCheckEnabled ? onShouldStartLoadWithRequest : undefined
           }
-          onLoadError();
-          setError(true);
-        }}
-        onOpenWindow={onOpenWindow}
-        overScrollMode="content"
-        bounces={false}
-        mediaPlaybackRequiresUserAction={false}
-        automaticallyAdjustContentInsets={false}
-        scrollEnabled={true}
-        style={[styles.webview, { display: error ? "none" : "flex" }]}
-        renderError={() => <NetworkError handleTryAgain={reloadWebView} />}
-        testID="wallet-api-webview"
-        applicationNameForUserAgent={APPLICATION_NAME}
-        webviewDebuggingEnabled={__DEV__}
-        allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
-        javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
-        injectedJavaScriptBeforeContentLoaded={manifest.dapp ? INJECTED_JAVASCRIPT : undefined}
-        injectedJavaScript={Config.DETOX ? E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT : undefined}
-        {...webviewProps}
-        {...webviewCacheOptions}
-      />
+          allowsInlineMediaPlayback
+          onMessage={onMessage}
+          onError={(event: { nativeEvent?: { description?: string; code?: number } }) => {
+            if (Config.DETOX) {
+              const desc = event?.nativeEvent?.description;
+              const code = event?.nativeEvent?.code;
+              webviewLogStore.addLoadError({
+                timestamp: new Date().toISOString(),
+                source: "WalletAPIWebview",
+                message: desc ?? "WebView onError fired",
+                details: `manifestId=${manifest.id} url=${manifest.url}${code != null ? ` code=${code}` : ""}`,
+              });
+            }
+            onLoadError();
+            setError(true);
+          }}
+          onOpenWindow={onOpenWindow}
+          overScrollMode="content"
+          bounces={false}
+          mediaPlaybackRequiresUserAction={false}
+          automaticallyAdjustContentInsets={false}
+          scrollEnabled={true}
+          style={[styles.webview, { display: error ? "none" : "flex" }]}
+          renderError={() => <NetworkError handleTryAgain={reloadWebView} />}
+          testID="wallet-api-webview"
+          applicationNameForUserAgent={APPLICATION_NAME}
+          webviewDebuggingEnabled={__DEV__}
+          allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
+          javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
+          injectedJavaScriptBeforeContentLoaded={manifest.dapp ? INJECTED_JAVASCRIPT : undefined}
+          injectedJavaScript={Config.DETOX ? E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT : undefined}
+          {...webviewProps}
+          {...webviewCacheOptions}
+        />
+        <GenericErrorBottomModal
+          error={publicKeyUnavailableError}
+          onClose={clearPublicKeyUnavailableError}
+        />
+      </>
     );
   },
 );

@@ -16,6 +16,10 @@ export type OperationParamsMonad = OperationParams & {
   withdrawId?: string | undefined;
 };
 
+export type OperationParamsZeroGravity = OperationParams & {
+  delegator: string;
+};
+
 export type OperationFn<P extends OperationParams = OperationParams> = (
   params: P,
 ) => Array<string | bigint>;

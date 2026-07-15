@@ -62,11 +62,11 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | Tezos baker API | `tezos-bakers.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Tezos explorer | `xtz-explorer.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Tezos TzKT | `xtz-tzkt-explorer.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
-| Tezos node | `xtz-node.api.live.ledger.com`<br>_⚠️ `*.api.vault.ledger.com` variants also seen_ | [env](/libs/env/src/env.ts) | prod |
+| Tezos node | `xtz-node.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Tron RPC proxy | `tron.coin.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Solana RPC proxy | `solana.coin.ledger.com` | [env](/libs/env/src/env.ts) | prod |
-| Solana validators | `earn.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
-| Solana validators summary | `earn-dashboard.aws.stg.ldg-tech.com`<br>_⚠️ staging host set as default_ | [env](/libs/env/src/env.ts) | staging |
+| Ledger Earn API (grow `/v0/grow`, stakes `/v3/stakes`, DeFi vaults `/v1/defi/*`, Solana validators) | `earn.api.live.ledger.com` | [env](/libs/env/src/env.ts)<br>[wallet-cli](/apps/wallet-cli/src/wallet/earn/config.ts) | prod |
+| Solana validators summary | `earn.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Solana testnet validators | `validators-solana.coin.ledger.com` | [env](/libs/env/src/env.ts) | testnet |
 | Sui node / GraphQL | `sui.coin.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Hedera mirror | `hedera.coin.ledger.com` | [env](/libs/env/src/env.ts) | prod |
@@ -95,7 +95,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | Provider session | `buy.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Swap backend | `swap.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Ramp catalog | `cdn.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
-| Partner signatures (CAL) | `crypto-assets-service.api.ledger.com` | [env](/libs/env/src/env.ts) | prod |
+| Partner signatures (CAL) | `global.api.prd.ledger.com`<br>_path: `/cal`; staging: `global.api.stg.ledger-test.com`_ | [env](/libs/env/src/env.ts) | prod |
 | Buy/Sell limits | `buy.api.aws.prd.ldg-tech.com`<br>_E2E only_ | [code](/libs/ledger-live-common/src/e2e/buySell.ts) | test |
 | Live app — Swap | `swap-live-app.ledger.com`<br>_manifest [`swap-live-app-aws`](https://live-app-catalog.ledger.com/api/v1/apps)_ | feature-flag | prod |
 | Live app — Buy / Sell | `buy-sell.live.ledger.com`<br>_manifest [`buy-sell`](https://live-app-catalog.ledger.com/api/v1/apps)_ | feature-flag | prod |
@@ -107,7 +107,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | Countervalues / prices | `countervalues.live.ledger.com`<br>_also `countervalues.api.live`, `countervalues-service.api`_ | [env](/libs/env/src/env.ts) | prod |
 | CoinMarketCap proxy | `proxycmc.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | CoinGecko proxy | `proxycg.api.live.ledger.com`<br>_`proxycgassets.api.live` also seen_ | [env](/libs/env/src/env.ts) | prod |
-| Crypto Assets List (CAL) | `crypto-assets-service.api.ledger.com`<br>_`cal.api.*` also seen_ | [env](/libs/env/src/env.ts) | prod |
+| Crypto Assets List (CAL) | `global.api.prd.ledger.com`<br>_path: `/cal`; staging: `global.api.stg.ledger-test.com`_ | [env](/libs/env/src/env.ts) | prod |
 | CAL dynamic CDN | `cdn.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | DADA (assets data aggregator) | `dada.api.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Mapping service | `mapping-service.api.ledger.com` | [env](/libs/env/src/env.ts) | prod |
@@ -184,7 +184,7 @@ URLs the app hands to the OS browser (`openURL` / `Linking.openURL`) — **not**
 | Chatbot support | `ledgercustomersuccess.my.salesforce-sites.com` | Feature-flagged (`llmChatbotSupport` / `lldChatbotSupport`). |
 | Feedback survey | `form.typeform.com` | Swap completed feedback (LLD); ratings modal (LLM). |
 | Tezos baker directory | `baking-bad.org` | Delegation flow (both apps). |
-| Chorus One ToS | `chorus.one` | "Ledger by Chorus One" terms of service link. |
+| Bitwise ToS | `onchain.bitwiseinvestments.com` | "Ledger by Bitwise" terms of service link. |
 
 ---
 

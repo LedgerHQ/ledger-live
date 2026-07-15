@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { TFunction } from "i18next";
 import { Trans } from "react-i18next";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
+import { useTokensData } from "@features/platform-currencies";
 import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";
 import Box from "~/renderer/components/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";

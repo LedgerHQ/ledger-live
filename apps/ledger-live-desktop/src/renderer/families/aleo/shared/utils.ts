@@ -25,7 +25,7 @@ import type {
 } from "@ledgerhq/live-common/families/aleo/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { AccountLike } from "@ledgerhq/types-live";
 
 export const getAleoCurrencyConfig = (

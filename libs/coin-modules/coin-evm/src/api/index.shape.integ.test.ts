@@ -1,13 +1,8 @@
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { fail } from "assert";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
 describe("Shape (external node)", () => {
-  beforeAll(() => {
-    setupCalClientStore();
-  });
-
   describe("getBlock", () => {
     const shapeConfig: EvmConfig = {
       node: {

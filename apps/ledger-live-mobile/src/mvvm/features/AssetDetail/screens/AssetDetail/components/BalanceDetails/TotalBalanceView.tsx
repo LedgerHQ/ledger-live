@@ -37,7 +37,11 @@ export function TotalBalanceView({
             size="sm"
           />
         )}
-        <Text typography="body3" lx={{ color: "muted" }}>
+        <Text
+          typography="body3"
+          lx={{ color: "muted" }}
+          testID={ASSET_DETAIL_TEST_IDS.totalBalanceCrypto}
+        >
           {formattedTotalBalance}
         </Text>
       </Box>

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-transfer.json";
 import { craftTransaction } from "../common-logic";
 import {

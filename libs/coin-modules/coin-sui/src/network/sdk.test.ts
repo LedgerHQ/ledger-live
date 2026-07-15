@@ -1614,7 +1614,6 @@ describe("Staking Operations", () => {
       };
       const operation = sdk.transactionToCoinFrameworkOperation(
         senderAddress,
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         sponsoredTx as unknown as SuiTransactionBlockResponse,
         "mockCheckpointHash",
       );
@@ -3468,10 +3467,7 @@ describe("filterOperations", () => {
 
     test("toBlockTransaction should map transactions correctly", () => {
       expect(
-        sdk.toBlockTransaction(
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          mockTransaction as unknown as SuiTransactionBlockResponse,
-        ),
+        sdk.toBlockTransaction(mockTransaction as unknown as SuiTransactionBlockResponse),
       ).toEqual({
         hash: "DhKLpX5kwuKuyRa71RGqpX5EY2M8Efw535ZVXYXsRiDt",
         failed: false,
@@ -3520,10 +3516,7 @@ describe("filterOperations", () => {
           },
         },
       };
-      const result = sdk.toBlockTransaction(
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        sponsoredTx as unknown as SuiTransactionBlockResponse,
-      );
+      const result = sdk.toBlockTransaction(sponsoredTx as unknown as SuiTransactionBlockResponse);
       expect(result.feesPayer).toBe(sponsorAddress);
     });
 
@@ -3556,11 +3549,9 @@ describe("filterOperations", () => {
       };
 
       const resultWithoutOwner = sdk.toBlockTransaction(
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         txWithoutOwner as unknown as SuiTransactionBlockResponse,
       );
       const resultWithEmptyOwner = sdk.toBlockTransaction(
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         txWithEmptyOwner as unknown as SuiTransactionBlockResponse,
       );
 

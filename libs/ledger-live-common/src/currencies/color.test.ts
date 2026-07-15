@@ -1,5 +1,5 @@
 import { getCurrencyColor } from "./color";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const defaultColor = "#999";

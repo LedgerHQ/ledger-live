@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
-
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Cluster } from "@solana/web3.js";
 import { firstValueFrom } from "rxjs";
@@ -7,7 +5,7 @@ import { ChainAPI } from "./network";
 import { getValidators, ValidatorsAppValidator } from "./network/validator-app";
 import { preloadWithAPI } from "./preload";
 import { getSolanaPreloadData } from "./preload-data";
-import { LEDGER_VALIDATOR_BY_CHORUS_ONE, LEDGER_VALIDATOR_BY_FIGMENT } from "./utils";
+import { LEDGER_VALIDATOR_BY_BITWISE, LEDGER_VALIDATOR_BY_FIGMENT } from "./utils";
 
 jest.mock("./network/validator-app");
 
@@ -44,7 +42,7 @@ describe("preloadWithAPI", () => {
       validators: expect.arrayContaining([
         ...validators,
         LEDGER_VALIDATOR_BY_FIGMENT,
-        LEDGER_VALIDATOR_BY_CHORUS_ONE,
+        LEDGER_VALIDATOR_BY_BITWISE,
       ]),
       validatorsWithMeta: [],
       version: "1",

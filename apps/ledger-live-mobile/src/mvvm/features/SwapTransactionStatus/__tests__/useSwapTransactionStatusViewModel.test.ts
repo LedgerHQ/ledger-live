@@ -1,6 +1,7 @@
-import { renderHook, waitFor } from "@tests/test-renderer";
+import { renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import type { TransactionStatusValue } from "@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index";
 import type { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getSwapProvider } from "@ledgerhq/live-common/exchange/providers/swap";
@@ -56,6 +57,29 @@ const withTestAccounts =
     accounts: { ...state.accounts, active: accounts },
     settings: { ...state.settings, locale: "en-US" },
   });
+
+function mockSwapStatus(provider: string, receiveStatus: TransactionStatusValue) {
+  mockedUseSwapTransactionStatus.mockReturnValue({
+    phase: "settled_visible",
+    latestStatus: {
+      provider,
+      swapId: "swap-1",
+      status: receiveStatus,
+    },
+    details: {
+      provider,
+      swapId: "swap-1",
+      status: receiveStatus,
+      sendStatus: "finished",
+      receiveStatus,
+      fromAccountId: sendAccount.id,
+      toAccountId: receiveAccount.id,
+      receivedAmount: "2000000000000000000",
+    },
+    isInitialLoading: false,
+    isSettled: true,
+  });
+}
 
 describe("useSwapTransactionStatusViewModel", () => {
   beforeEach(() => {
@@ -127,10 +151,86 @@ describe("useSwapTransactionStatusViewModel", () => {
     expect(result.current.explorerUrl).toBe("https://scan.li.fi/tx/hash-1");
     expect(result.current.isStatusSectionLoading).toBe(false);
     expect(result.current.isFooterLoading).toBe(false);
+    expect(result.current.showReceivedAmountEstimated).toBe(false);
 
     await waitFor(() => {
       expect(result.current.providerData?.mainUrl).toBe("https://provider.test");
     });
+  });
+
+  it("should mark a finished received amount as estimated when enabled for the provider", () => {
+    mockSwapStatus("moonpay", "finished");
+
+    const { result } = renderHook(
+      () =>
+        useSwapTransactionStatusViewModel({
+          params: { swapId: "swap-1", provider: "moonpay" },
+          onClose: jest.fn(),
+        }),
+      {
+        overrideInitialState: withFlagOverrides(
+          {
+            ptxSwapEstimatedReceivedAmount: {
+              enabled: true,
+              params: { providers: { moonpay: true } },
+            },
+          },
+          withTestAccounts([sendAccount, receiveAccount]),
+        ),
+      },
+    );
+
+    expect(result.current.showReceivedAmountEstimated).toBe(true);
+  });
+
+  it("should not mark a pending received amount as estimated", () => {
+    mockSwapStatus("moonpay", "pending");
+
+    const { result } = renderHook(
+      () =>
+        useSwapTransactionStatusViewModel({
+          params: { swapId: "swap-1", provider: "moonpay" },
+          onClose: jest.fn(),
+        }),
+      {
+        overrideInitialState: withFlagOverrides(
+          {
+            ptxSwapEstimatedReceivedAmount: {
+              enabled: true,
+              params: { providers: { moonpay: true } },
+            },
+          },
+          withTestAccounts([sendAccount, receiveAccount]),
+        ),
+      },
+    );
+
+    expect(result.current.showReceivedAmountEstimated).toBe(false);
+  });
+
+  it("should not mark a received amount as estimated when the feature is disabled", () => {
+    mockSwapStatus("moonpay", "finished");
+
+    const { result } = renderHook(
+      () =>
+        useSwapTransactionStatusViewModel({
+          params: { swapId: "swap-1", provider: "moonpay" },
+          onClose: jest.fn(),
+        }),
+      {
+        overrideInitialState: withFlagOverrides(
+          {
+            ptxSwapEstimatedReceivedAmount: {
+              enabled: false,
+              params: { providers: { moonpay: true } },
+            },
+          },
+          withTestAccounts([sendAccount, receiveAccount]),
+        ),
+      },
+    );
+
+    expect(result.current.showReceivedAmountEstimated).toBe(false);
   });
 
   it("should fall back to pending loading state when details are unavailable", () => {

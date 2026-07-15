@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import BigNumber from "bignumber.js";
 import { renderHook } from "tests/testSetup";

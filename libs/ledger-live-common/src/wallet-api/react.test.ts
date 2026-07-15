@@ -6,6 +6,9 @@ import { initialState as walletState } from "@ledgerhq/live-wallet/store";
 import { createFixtureAccount } from "../mock/fixtures/cryptoCurrencies";
 import type { TrackingAPI } from "./tracking";
 import type { useWalletAPIServerOptions } from "./react";
+import { AccountPublicKeyUnavailable } from "../errors";
+import { accountGetPublicKeyLogic } from "./logic";
+import { getAccountIdFromWalletAccountId } from "./converters";
 
 const mockSetHandler = jest.fn();
 const mockSetConfig = jest.fn();
@@ -43,6 +46,12 @@ jest.mock("./FeatureFlags", () => ({
 jest.mock("./converters", () => ({
   ...jest.requireActual("./converters"),
   setWalletApiIdForAccountId: jest.fn(),
+  getAccountIdFromWalletAccountId: jest.fn(),
+}));
+
+jest.mock("./logic", () => ({
+  ...jest.requireActual("./logic"),
+  accountGetPublicKeyLogic: jest.fn(),
 }));
 
 jest.mock("../hw/openTransportAsSubject", () => ({
@@ -258,6 +267,103 @@ describe("useWalletAPIServer", () => {
 
     const registeredHandlers = mockSetHandler.mock.calls.map(([name]) => name);
     expect(registeredHandlers).not.toContain("account.request");
+  });
+});
+
+describe("account.getPublicKey handler", () => {
+  const getHandler = () => {
+    const calls = mockSetHandler.mock.calls.filter(([name]) => name === "account.getPublicKey");
+    return calls[calls.length - 1]?.[1] as (arg: { accountId: string }) => Promise<string>;
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  afterEach(() => cleanup());
+
+  it("fires the account.publicKeyUnavailable uiHook and still rejects when the key is unavailable", async () => {
+    const account = createFixtureAccount("01");
+    const uiPublicKeyUnavailable = jest.fn();
+    const options = createDefaultOptions({
+      accounts: [account],
+      uiHook: { "account.publicKeyUnavailable": uiPublicKeyUnavailable },
+    });
+    (accountGetPublicKeyLogic as jest.Mock).mockRejectedValueOnce(
+      new AccountPublicKeyUnavailable(),
+    );
+    (getAccountIdFromWalletAccountId as jest.Mock).mockReturnValueOnce(account.id);
+
+    renderHook(() => useWalletAPIServer(options));
+
+    await expect(getHandler()({ accountId: "wallet-account-id" })).rejects.toBeInstanceOf(
+      AccountPublicKeyUnavailable,
+    );
+    expect(uiPublicKeyUnavailable).toHaveBeenCalledTimes(1);
+    expect(uiPublicKeyUnavailable).toHaveBeenCalledWith({ account, parentAccount: undefined });
+  });
+
+  it("fires the uiHook when a serialized error carries the name but lost its prototype", async () => {
+    const account = createFixtureAccount("01");
+    const uiPublicKeyUnavailable = jest.fn();
+    const options = createDefaultOptions({
+      accounts: [account],
+      uiHook: { "account.publicKeyUnavailable": uiPublicKeyUnavailable },
+    });
+    (accountGetPublicKeyLogic as jest.Mock).mockRejectedValueOnce({
+      name: "AccountPublicKeyUnavailable",
+    });
+    (getAccountIdFromWalletAccountId as jest.Mock).mockReturnValueOnce(account.id);
+
+    renderHook(() => useWalletAPIServer(options));
+
+    await expect(getHandler()({ accountId: "wallet-account-id" })).rejects.toEqual({
+      name: "AccountPublicKeyUnavailable",
+    });
+    expect(uiPublicKeyUnavailable).toHaveBeenCalledTimes(1);
+  });
+
+  it("still rejects with the original error when the uiHook itself throws", async () => {
+    const account = createFixtureAccount("01");
+    const uiPublicKeyUnavailable = jest.fn(() => {
+      throw new Error("ui render failure");
+    });
+    const options = createDefaultOptions({
+      accounts: [account],
+      uiHook: { "account.publicKeyUnavailable": uiPublicKeyUnavailable },
+    });
+    (accountGetPublicKeyLogic as jest.Mock).mockRejectedValueOnce(
+      new AccountPublicKeyUnavailable(),
+    );
+    (getAccountIdFromWalletAccountId as jest.Mock).mockReturnValueOnce(account.id);
+
+    renderHook(() => useWalletAPIServer(options));
+
+    await expect(getHandler()({ accountId: "wallet-account-id" })).rejects.toBeInstanceOf(
+      AccountPublicKeyUnavailable,
+    );
+    expect(uiPublicKeyUnavailable).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not fire the uiHook for unrelated errors but still rejects", async () => {
+    const uiPublicKeyUnavailable = jest.fn();
+    const options = createDefaultOptions({
+      uiHook: { "account.publicKeyUnavailable": uiPublicKeyUnavailable },
+    });
+    (accountGetPublicKeyLogic as jest.Mock).mockRejectedValueOnce(new Error("account not found"));
+
+    renderHook(() => useWalletAPIServer(options));
+
+    await expect(getHandler()({ accountId: "x" })).rejects.toThrow("account not found");
+    expect(uiPublicKeyUnavailable).not.toHaveBeenCalled();
+  });
+
+  it("resolves with the public key on success", async () => {
+    const options = createDefaultOptions();
+    (accountGetPublicKeyLogic as jest.Mock).mockResolvedValueOnce("edpkTestKey");
+
+    renderHook(() => useWalletAPIServer(options));
+
+    await expect(getHandler()({ accountId: "x" })).resolves.toBe("edpkTestKey");
   });
 });
 

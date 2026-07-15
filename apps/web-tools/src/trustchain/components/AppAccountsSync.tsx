@@ -26,12 +26,11 @@ import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridg
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { Account, BridgeCacheSystem, ScanAccountEvent } from "@ledgerhq/types-live";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
-import { listCryptoCurrencies } from "@ledgerhq/cryptoassets";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
+import { listCryptoCurrencies, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { Loading } from "./Loading";
 import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";

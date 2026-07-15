@@ -15,7 +15,7 @@ import {
   getCustomFeeLabelKey,
   getCustomFeeHelperLabelKey,
 } from "@ledgerhq/live-common/flows/send/customFees/utils/customFeeUtils";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 
 type UseCustomFeesViewModelParams = Readonly<{
   account: AccountLike;
@@ -31,6 +31,7 @@ export function useCustomFeesViewModel(params: UseCustomFeesViewModelParams): Cu
   const { t } = useTranslation();
   const { locale } = useLocale();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const discreet = useSelector(discreetModeSelector);
   const calculateCountervalue = useCalculateCountervalueCallback({ to: counterValueCurrency });
 
   const labels: CustomFeesViewModelLabels = useMemo(
@@ -56,6 +57,7 @@ export function useCustomFeesViewModel(params: UseCustomFeesViewModelParams): Cu
   return useCustomFeesViewModelCore({
     ...params,
     locale,
+    discreet,
     counterValueCurrency,
     calculateCountervalue,
     labels,

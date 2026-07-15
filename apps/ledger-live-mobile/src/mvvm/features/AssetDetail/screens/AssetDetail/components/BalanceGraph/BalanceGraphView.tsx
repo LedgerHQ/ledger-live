@@ -185,6 +185,7 @@ export function BalanceGraphView({
                 percentage={priceChangePercentage}
                 formattedChange={formattedPriceChange}
                 timeLabel={timeLabel}
+                testID={ASSET_DETAIL_TEST_IDS.marketVariation}
               />
             </>
           )}
@@ -216,7 +217,7 @@ export function BalanceGraphView({
         <Box lx={receiveContainerStyle}>
           <Button
             appearance="gray"
-            size="lg"
+            size="md"
             isFull
             icon={ArrowDown}
             onPress={onReceivePress}

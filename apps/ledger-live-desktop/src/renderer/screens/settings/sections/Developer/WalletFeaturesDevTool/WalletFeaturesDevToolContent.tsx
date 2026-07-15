@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { WALLET_FEATURES_PARAMS } from "./constants";
+import { WALLET_FEATURES_FLAG, WALLET_FEATURES_PARAMS } from "./constants";
 import { WalletFeaturesDevToolContentProps } from "./types";
 import { useWalletFeaturesDevToolViewModel } from "./hooks/useWalletFeaturesDevToolViewModel";
 import {
@@ -56,7 +56,12 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
                 {t("settings.developer.walletFeaturesDevTool.mainFeatureToggle")}
               </span>
               <Divider />
-              <MainFeatureToggle isEnabled={isEnabled} onToggle={handleToggleEnabled} />
+              <MainFeatureToggle
+                flagName={WALLET_FEATURES_FLAG}
+                switchName="wallet-features-enabled"
+                isEnabled={isEnabled}
+                onToggle={handleToggleEnabled}
+              />
             </div>
             <div className="flex flex-col gap-4">
               <span className="body-2-semi-bold text-muted">

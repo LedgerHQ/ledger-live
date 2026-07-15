@@ -8,7 +8,7 @@ import { walletSelector } from "~/reducers/wallet";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { getAccountSpendableBalance } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useFeature } from "@features/platform-feature-flags";
 
 /** Open the family main actions stake flow for a given account from any navigator. Returns to parent route on completion. */

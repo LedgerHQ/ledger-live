@@ -125,8 +125,8 @@ export async function pollUtxos(
 
 // Best-effort teardown on process exit/interruption (matches flextesa.ts/anvil.ts/agave.ts) so an
 // aborted run doesn't leak a running devnet. killYaci never throws.
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
-  process.on(e, async () => {
-    await killYaci();
+["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
+  process.on(e, () => {
+    killYaci().catch(() => {});
   }),
 );

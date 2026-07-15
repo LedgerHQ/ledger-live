@@ -41,7 +41,7 @@ export default function CustomMockAccountGenerator({ title, desc }: Props) {
         const accounts = generateAccountsForCurrencies(currencies, tokens);
         await injectMockAccounts(accounts, true);
       } catch (error) {
-        console.error("Failed to generate mock accounts:", error);
+        console.warn("Failed to generate mock accounts:", error);
         alert(t("settings.developer.mockAccounts.alerts.generateError"));
       }
     }

@@ -80,15 +80,15 @@ function createAccountWithUnreadZeroValueTokenOperation(): Account {
   };
 }
 
-function createAccountWithUnreadZeroValueNativeOperation(): Account {
+function createAccountWithUnreadZeroValueNativeOperation(type: Operation["type"] = "IN"): Account {
   const account = genAccount("history-test-native-dust", {
     currency: ethereum,
     operationsSize: 0,
   });
   const operation: Operation = {
-    id: "history-test-dust-zero-value-native-op",
-    hash: "0xnative-dust",
-    type: "IN",
+    id: `history-test-dust-zero-value-native-${type.toLowerCase()}-op`,
+    hash: `0xnative-dust-${type.toLowerCase()}`,
+    type,
     value: new BigNumber(0),
     fee: new BigNumber(0),
     senders: ["0xsender"],
@@ -232,6 +232,18 @@ describe("hasUnreadOperationsSelector", () => {
 
   it("filters native dust operations when the dust preference and feature flag are enabled", () => {
     const accountWithDustOperation = createAccountWithUnreadZeroValueNativeOperation();
+
+    expect(
+      hasUnreadOperationsSelector(
+        withDustFeatureEnabled(
+          withDustPreferenceEnabled(makeState(SEEN, [accountWithDustOperation])),
+        ),
+      ),
+    ).toBe(false);
+  });
+
+  it("filters outgoing native dust operations when the dust preference and feature flag are enabled", () => {
+    const accountWithDustOperation = createAccountWithUnreadZeroValueNativeOperation("OUT");
 
     expect(
       hasUnreadOperationsSelector(

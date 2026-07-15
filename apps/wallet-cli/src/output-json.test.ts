@@ -1,5 +1,5 @@
 import "./live-common-setup";
-import { beforeEach, describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { installOutputCapture } from "./shared/ui";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { USDT_TOKEN_INFO } from "./test/helpers/cal-fixtures";
@@ -27,32 +27,30 @@ describe("JsonCommandOutput", () => {
     });
   });
 
-  // afterEach is not strictly needed since installOutputCapture is stacked, but keeps state clean
-  // We restore after each test to avoid leaking capture across tests
-  const restore = () => {
+  afterEach(() => {
     restoreCapture?.();
     restoreCapture = null;
-  };
+  });
 
-  it("emits device-state events as NDJSON before the final envelope", () => {
-    try {
-      const out = createCommandOutput("json", {
-        command: "receive",
-        network: "ethereum:main",
-        account: "js:2:ethereum:0x123",
-      });
-
-      out.deviceState({ code: "awaiting_approval", reason: "unlock" });
-      out.address("0xabc", true);
-    } finally {
-      restore();
-    }
-
-    const lines = writes
+  function parseLines(): unknown[] {
+    return writes
       .join("")
       .trim()
       .split("\n")
       .map(line => JSON.parse(line));
+  }
+
+  it("emits device-state events as NDJSON before the final envelope", () => {
+    const out = createCommandOutput("json", {
+      command: "receive",
+      network: "ethereum:main",
+      account: "js:2:ethereum:0x123",
+    });
+
+    out.deviceState({ code: "awaiting_approval", reason: "unlock" });
+    out.address("0xabc", true);
+
+    const lines = parseLines();
     expect(lines).toHaveLength(2);
     expect(lines[0]).toEqual({
       type: "device-state",
@@ -74,23 +72,15 @@ describe("JsonCommandOutput", () => {
   });
 
   it("emits a pre-verify-address NDJSON event so agents can surface the address", () => {
-    try {
-      const out = createCommandOutput("json", {
-        command: "receive",
-        network: "ethereum:main",
-        account: "js:2:ethereum:0x123",
-      });
+    const out = createCommandOutput("json", {
+      command: "receive",
+      network: "ethereum:main",
+      account: "js:2:ethereum:0x123",
+    });
 
-      out.preVerifyAddress("0xabc");
-    } finally {
-      restore();
-    }
+    out.preVerifyAddress("0xabc");
 
-    const lines = writes
-      .join("")
-      .trim()
-      .split("\n")
-      .map(line => JSON.parse(line));
+    const lines = parseLines();
     expect(lines).toHaveLength(1);
     expect(lines[0]).toEqual({
       type: "pre-verify-address",
@@ -102,26 +92,18 @@ describe("JsonCommandOutput", () => {
   });
 
   it("emits a signature-requested device-state event during send before the final envelope", () => {
-    try {
-      const out = createCommandOutput("json", {
-        command: "send",
-        network: "ethereum:main",
-        account: "js:2:ethereum:0x123",
-      });
+    const out = createCommandOutput("json", {
+      command: "send",
+      network: "ethereum:main",
+      account: "js:2:ethereum:0x123",
+    });
 
-      out.sendEvent({ type: "prepared", recipient: "0xabc", amount: "0.1 ETH", fees: "0.001 ETH" });
-      out.sendEvent({ type: "device-signature-requested" });
-      out.sendEvent({ type: "broadcasted", txHash: "0xdeadbeef" });
-      out.sendComplete();
-    } finally {
-      restore();
-    }
+    out.sendEvent({ type: "prepared", recipient: "0xabc", amount: "0.1 ETH", fees: "0.001 ETH" });
+    out.sendEvent({ type: "device-signature-requested" });
+    out.sendEvent({ type: "broadcasted", txHash: "0xdeadbeef" });
+    out.sendComplete();
 
-    const lines = writes
-      .join("")
-      .trim()
-      .split("\n")
-      .map(line => JSON.parse(line));
+    const lines = parseLines();
     expect(lines).toHaveLength(2);
     expect(lines[0]).toEqual({
       type: "device-state",
@@ -144,22 +126,14 @@ describe("JsonCommandOutput", () => {
   });
 
   it("emits genuine check output as a success envelope", () => {
-    try {
-      const out = createCommandOutput("json", {
-        command: "genuine-check",
-        network: "device",
-      });
+    const out = createCommandOutput("json", {
+      command: "genuine-check",
+      network: "device",
+    });
 
-      out.genuineCheck();
-    } finally {
-      restore();
-    }
+    out.genuineCheck();
 
-    const lines = writes
-      .join("")
-      .trim()
-      .split("\n")
-      .map(line => JSON.parse(line));
+    const lines = parseLines();
     expect(lines).toHaveLength(1);
     expect(lines[0]).toMatchObject({
       status: "success",
@@ -167,41 +141,33 @@ describe("JsonCommandOutput", () => {
       network: "device",
       genuine: true,
     });
-    expect(lines[0].timestamp).toEqual(expect.any(String));
+    expect((lines[0] as Record<string, unknown>).timestamp).toEqual(expect.any(String));
   });
 
   it("emits swap quote output as NDJSON with provider errors", () => {
-    try {
-      const out = createCommandOutput("json", {
-        command: "swap quote",
-        network: "ethereum",
-      });
+    const out = createCommandOutput("json", {
+      command: "swap quote",
+      network: "ethereum",
+    });
 
-      out.swapQuotes({
-        quotes: [
-          {
-            quoteId: "quote-1",
-            from: "ethereum",
-            to: "bitcoin",
-            rate: 3000,
-            providerFee: null,
-            networkFee: "gas 21000 (ETH)",
-            receiveAmount: 0.05,
-            provider: "paraswap",
-            amountFrom: "0.1",
-          },
-        ],
-        partialErrors: [providerError],
-      });
-    } finally {
-      restore();
-    }
+    out.swapQuotes({
+      quotes: [
+        {
+          quoteId: "quote-1",
+          from: "ethereum",
+          to: "bitcoin",
+          rate: 3000,
+          providerFee: null,
+          networkFee: "gas 21000 (ETH)",
+          receiveAmount: 0.05,
+          provider: "paraswap",
+          amountFrom: "0.1",
+        },
+      ],
+      partialErrors: [providerError],
+    });
 
-    const lines = writes
-      .join("")
-      .trim()
-      .split("\n")
-      .map(line => JSON.parse(line));
+    const lines = parseLines();
     expect(lines).toHaveLength(1);
     expect(lines[0]).toMatchObject({
       status: "success",
@@ -209,25 +175,20 @@ describe("JsonCommandOutput", () => {
       network: "ethereum",
       provider_errors: [providerError],
     });
-    expect(lines[0].quotes[0]).toMatchObject({ quoteId: "quote-1", provider: "paraswap" });
+    expect((lines[0] as Record<string, unknown[]>).quotes[0]).toMatchObject({
+      quoteId: "quote-1",
+      provider: "paraswap",
+    });
   });
 
   it("emits a token() envelope containing the resolved TokenInfo", () => {
-    try {
-      const out = createCommandOutput("json", {
-        command: "assets token",
-        network: "ethereum",
-      });
-      out.token(USDT_TOKEN_INFO);
-    } finally {
-      restore();
-    }
+    const out = createCommandOutput("json", {
+      command: "assets token",
+      network: "ethereum",
+    });
+    out.token(USDT_TOKEN_INFO);
 
-    const lines = writes
-      .join("")
-      .trim()
-      .split("\n")
-      .map(line => JSON.parse(line));
+    const lines = parseLines();
     expect(lines).toHaveLength(1);
     expect(lines[0]).toMatchObject({
       status: "success",
@@ -237,25 +198,172 @@ describe("JsonCommandOutput", () => {
     });
   });
 
+  it("ringInit emits member and snake_case root_id in envelope", () => {
+    const out = createCommandOutput("json", { command: "ring init", network: "all" });
+    out.ringInit({ memberName: "my-machine (darwin)", rootId: "root-abc" });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      command: "ring init",
+      network: "all",
+      member: "my-machine (darwin)",
+      root_id: "root-abc",
+    });
+  });
+
+  it("ringKeys emits keys array in envelope", () => {
+    const out = createCommandOutput("json", { command: "ring keys", network: "all" });
+    out.ringKeys([
+      { domain: "prod", firstUsed: "2026-04-27T00:00:00.000Z" },
+      { domain: "staging", firstUsed: "2026-04-28T00:00:00.000Z" },
+    ]);
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      command: "ring keys",
+      keys: [
+        { domain: "prod", first_used: "2026-04-27T00:00:00.000Z" },
+        { domain: "staging", first_used: "2026-04-28T00:00:00.000Z" },
+      ],
+    });
+  });
+
+  it("ringKeys emits empty keys array when no keys tracked", () => {
+    const out = createCommandOutput("json", { command: "ring keys", network: "all" });
+    out.ringKeys([]);
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({ status: "success", keys: [] });
+  });
+
+  it("ringDestroy emits destroyed=true when trustchain was destroyed", () => {
+    const out = createCommandOutput("json", { command: "ring destroy", network: "all" });
+    out.ringDestroy({ remoteSucceeded: true, trustchainDestroyed: true, localWiped: true });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      destroyed: true,
+      remote_succeeded: true,
+      local_wiped: true,
+    });
+  });
+
+  it("ringDestroy emits destroyed=false and remote_succeeded=true when only app was deactivated", () => {
+    const out = createCommandOutput("json", { command: "ring destroy", network: "all" });
+    out.ringDestroy({ remoteSucceeded: true, trustchainDestroyed: false, localWiped: true });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      destroyed: false,
+      remote_succeeded: true,
+      local_wiped: true,
+    });
+  });
+
+  it("ringDestroy emits member_ejected=true when the member was ejected from the ring", () => {
+    const out = createCommandOutput("json", { command: "ring destroy", network: "all" });
+    out.ringDestroy({
+      remoteSucceeded: true,
+      trustchainDestroyed: false,
+      localWiped: true,
+      memberEjected: true,
+    });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      destroyed: false,
+      remote_succeeded: true,
+      member_ejected: true,
+      local_wiped: true,
+    });
+  });
+
+  it("ringDestroy reports member_ejected=false when the remote teardown did not succeed", () => {
+    const out = createCommandOutput("json", { command: "ring destroy", network: "all" });
+    // member_ejected is only meaningful alongside remote_succeeded, so a failed teardown must not
+    // report it even if a caller mis-populates memberEjected.
+    out.ringDestroy({
+      remoteSucceeded: false,
+      trustchainDestroyed: false,
+      localWiped: true,
+      memberEjected: true,
+    });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({ remote_succeeded: false, member_ejected: false });
+  });
+
+  it("ringDestroy emits destroyed=false and remote_succeeded=false when only local wipe", () => {
+    const out = createCommandOutput("json", { command: "ring destroy", network: "all" });
+    out.ringDestroy({ remoteSucceeded: false, trustchainDestroyed: false, localWiped: true });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      destroyed: false,
+      remote_succeeded: false,
+      local_wiped: true,
+    });
+  });
+
+  it("ringDestroy emits local_wiped=false when the keychain delete failed", () => {
+    const out = createCommandOutput("json", { command: "ring destroy", network: "all" });
+    out.ringDestroy({ remoteSucceeded: false, trustchainDestroyed: false, localWiped: false });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      destroyed: false,
+      remote_succeeded: false,
+      local_wiped: false,
+    });
+  });
+
+  it("ringDestroyCancelled emits cancelled:true envelope", () => {
+    const out = createCommandOutput("json", { command: "ring destroy", network: "all" });
+    out.ringDestroyCancelled();
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({
+      status: "success",
+      command: "ring destroy",
+      network: "all",
+      cancelled: true,
+    });
+  });
+
+  it("ringEncrypt emits output path and byte count", () => {
+    const out = createCommandOutput("json", { command: "ring encrypt", network: "all" });
+    out.ringEncrypt({ dest: "/tmp/out.enc", bytes: 64 });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({ status: "success", output: "/tmp/out.enc", bytes: 64 });
+  });
+
+  it("ringDecrypt emits output path", () => {
+    const out = createCommandOutput("json", { command: "ring decrypt", network: "all" });
+    out.ringDecrypt({ dest: "/tmp/out.txt" });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({ status: "success", output: "/tmp/out.txt" });
+  });
+
   it("emits swap quote unavailability as an NDJSON error envelope", () => {
-    try {
-      const out = createCommandOutput("json", {
-        command: "swap quote",
-        network: "ethereum",
-      });
+    const out = createCommandOutput("json", {
+      command: "swap quote",
+      network: "ethereum",
+    });
 
-      expect(() => out.swapQuotesUnavailable("No quotes available", [providerError])).toThrow(
-        CliProcessExitError,
-      );
-    } finally {
-      restore();
-    }
+    expect(() => out.swapQuotesUnavailable("No quotes available", [providerError])).toThrow(
+      CliProcessExitError,
+    );
 
-    const lines = writes
-      .join("")
-      .trim()
-      .split("\n")
-      .map(line => JSON.parse(line));
+    const lines = parseLines();
     expect(lines).toHaveLength(1);
     expect(lines[0]).toEqual({
       ok: false,

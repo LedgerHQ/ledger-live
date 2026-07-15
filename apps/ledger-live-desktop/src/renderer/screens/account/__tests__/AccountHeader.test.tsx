@@ -1,6 +1,6 @@
 import React from "react";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { render, screen, waitFor } from "tests/testSetup";
 import AccountHeader from "../AccountHeader";

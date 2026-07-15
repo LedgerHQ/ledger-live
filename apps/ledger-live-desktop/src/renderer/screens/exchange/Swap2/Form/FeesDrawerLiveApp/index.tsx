@@ -72,8 +72,7 @@ export default function FeesDrawerLiveApp({
             isPreparingRef.current = false;
           });
         })
-        .catch(error => {
-          console.error("Error preparing transaction:", error);
+        .catch(() => {
           isPreparingRef.current = false;
         });
     },
@@ -112,8 +111,7 @@ export default function FeesDrawerLiveApp({
             isPreparingRef.current = false;
           });
         })
-        .catch(error => {
-          console.error("Error updating transaction:", error);
+        .catch(() => {
           isPreparingRef.current = false;
         });
     },

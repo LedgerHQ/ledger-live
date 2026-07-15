@@ -243,7 +243,7 @@ const MOCKED_SEI_VALIDATORS = {
     },
     {
       operator_address: MOCKED_SEI_VALIDATOR_2,
-      description: { moniker: "Chorus One" },
+      description: { moniker: "Bitwise" },
       commission: { commission_rates: { rate: "0.070000000000000000" } },
       tokens: "99000000000000",
     },

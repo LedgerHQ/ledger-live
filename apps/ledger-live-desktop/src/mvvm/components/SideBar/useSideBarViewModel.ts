@@ -144,7 +144,6 @@ export function useSideBarViewModel(): SideBarViewModel {
 
   const { shouldDisplayAssetSection, shouldDisplayMyWallet: isMyWalletEnabled } =
     useWalletFeaturesConfig("desktop");
-
   const accountsSidebarPath = getAccountsSidebarPath(shouldDisplayAssetSection);
 
   const wasNarrowRef = useRef<boolean | null>(null);

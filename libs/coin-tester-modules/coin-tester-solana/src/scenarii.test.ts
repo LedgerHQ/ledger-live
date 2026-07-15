@@ -4,9 +4,9 @@ import { killAgave } from "./agave";
 // Import fixtures to setup mock store
 import "./fixtures";
 
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
-  process.on(e, async () => {
-    await killAgave();
+["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
+  process.on(e, () => {
+    killAgave().catch(() => {});
   }),
 );
 

@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { decodeAccountId, emptyHistoryCache } from "@ledgerhq/live-common/account/index";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { lastValueFrom } from "rxjs";
 import { reduce } from "rxjs/operators";

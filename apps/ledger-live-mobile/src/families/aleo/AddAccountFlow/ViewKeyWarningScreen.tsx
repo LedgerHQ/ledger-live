@@ -1,16 +1,18 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { Linking, ScrollView, StyleSheet, View } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import LText from "~/components/LText";
 import Button from "~/components/wrappedUi/Button";
-import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { Trans, useTranslation } from "~/context/Locale";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import type { AleoViewKeyFlowParamList } from "./types";
-import ConfirmationModal from "~/components/ConfirmationModal";
+import QuitConfirmationModal from "./QuitConfirmationModal";
+import useQuitConfirmation from "./useQuitConfirmation";
 import { TrackScreen } from "~/analytics";
 
 type Props = StackNavigatorProps<AleoViewKeyFlowParamList, ScreenName.AleoViewKeyWarning>;
@@ -23,24 +25,15 @@ const bulletPointTranslationKeys = [
   "aleo.addAccount.stepViewKeyWarning.bullets.4",
 ];
 
-const confirmationTitleStyle: Record<string, unknown> = {
-  textAlign: "left",
-  fontSize: 18,
-  fontWeight: "600",
-  lineHeight: 32.4,
-  letterSpacing: -0.72,
-  marginBottom: 16,
-  marginTop: -45,
-};
-
-export default function ViewKeyWarningScreen({ route, navigation }: Props) {
+export default function ViewKeyWarningScreen() {
+  const navigation = useNavigation<Props["navigation"]>();
+  const route = useRoute<Props["route"]>();
   const { colors } = useTheme();
   const { t } = useTranslation();
 
   const { onCloseNavigation } = route.params;
   const learnMoreUrl = useLocalizedUrl(urls.aleo.learnMore);
-  const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(false);
-  const [shouldNavigateOnHide, setShouldNavigateOnHide] = useState(false);
+  const quitConfirmation = useQuitConfirmation({ onCloseNavigation });
 
   const onContinue = useCallback(() => {
     navigation.getParent()?.navigate(ScreenName.ScanDeviceAccounts, {
@@ -49,20 +42,6 @@ export default function ViewKeyWarningScreen({ route, navigation }: Props) {
     });
   }, [navigation, onCloseNavigation, route.params]);
 
-  const onCancel = useCallback(() => {
-    setIsConfirmationModalOpened(true);
-  }, []);
-
-  const closeConfirmationModal = useCallback(() => {
-    setShouldNavigateOnHide(false);
-    setIsConfirmationModalOpened(false);
-  }, []);
-
-  const onConfirmCancel = useCallback(() => {
-    setShouldNavigateOnHide(true);
-    setIsConfirmationModalOpened(false);
-  }, []);
-
   return (
     <SafeAreaView
       edges={["bottom"]}
@@ -70,28 +49,30 @@ export default function ViewKeyWarningScreen({ route, navigation }: Props) {
       style={[styles.root, { backgroundColor: colors.background.main }]}
     >
       <TrackScreen category="AleoAddAccountFlow" name="View key warning" />
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-        <LText semiBold style={styles.title} color="neutral.c100">
-          <Trans i18nKey="aleo.addAccount.stepViewKeyWarning.title" />
-        </LText>
-        <LText secondary style={styles.description} color="neutral.c70">
-          <Trans i18nKey="aleo.addAccount.stepViewKeyWarning.description">
-            <LText
-              onPress={() => Linking.openURL(learnMoreUrl)}
-              accessibilityRole="link"
-              color="primary.c80"
-            />
-          </Trans>
-        </LText>
-        <View style={styles.bullets}>
-          {bulletPointTranslationKeys.map(i18nKey => (
-            <View key={i18nKey} style={styles.bulletRow}>
-              <View style={[styles.bulletDot, { backgroundColor: colors.neutral.c70 }]} />
-              <LText secondary style={styles.bullet} color="neutral.c70">
-                <Trans i18nKey={i18nKey} />
-              </LText>
-            </View>
-          ))}
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+        <View style={[styles.card, { backgroundColor: colors.opacityDefault.c05 }]}>
+          <LText semiBold style={styles.title} color="neutral.c100">
+            <Trans i18nKey="aleo.addAccount.stepViewKeyWarning.title" />
+          </LText>
+          <LText secondary style={styles.description} color="neutral.c80">
+            <Trans i18nKey="aleo.addAccount.stepViewKeyWarning.description">
+              <LText
+                onPress={() => Linking.openURL(learnMoreUrl)}
+                accessibilityRole="link"
+                color="primary.c80"
+              />
+            </Trans>
+          </LText>
+          <View style={styles.bullets}>
+            {bulletPointTranslationKeys.map(i18nKey => (
+              <View key={i18nKey} style={styles.bulletRow}>
+                <View style={[styles.bulletDot, { backgroundColor: colors.neutral.c80 }]} />
+                <LText secondary style={styles.bullet} color="neutral.c100">
+                  <Trans i18nKey={i18nKey} />
+                </LText>
+              </View>
+            ))}
+          </View>
         </View>
       </ScrollView>
       <View style={styles.footer}>
@@ -107,22 +88,17 @@ export default function ViewKeyWarningScreen({ route, navigation }: Props) {
           type="main"
           outline
           mt={4}
-          onPress={onCancel}
+          onPress={quitConfirmation.open}
           event="AleoAddAccountViewKeyWarningCancel"
         >
           {t("aleo.addAccount.stepViewKeyWarning.cta.cancel")}
         </Button>
       </View>
-      <ConfirmationModal
-        isOpened={isConfirmationModalOpened}
-        onClose={closeConfirmationModal}
-        onConfirm={onConfirmCancel}
-        onModalHide={shouldNavigateOnHide ? onCloseNavigation : undefined}
-        confirmationTitle={<Trans i18nKey="addAccounts.quitConfirmation.v2.title" />}
-        confirmButtonText={<Trans i18nKey="addAccounts.quitConfirmation.v2.cancel" />}
-        rejectButtonText={<Trans i18nKey="addAccounts.quitConfirmation.v2.continue" />}
-        cancelCTAConfig={{ type: "primary", outline: true }}
-        customTitleStyle={confirmationTitleStyle}
+      <QuitConfirmationModal
+        isOpened={quitConfirmation.isOpened}
+        onClose={quitConfirmation.close}
+        onConfirm={quitConfirmation.confirm}
+        onModalHide={quitConfirmation.onModalHide}
       />
     </SafeAreaView>
   );
@@ -135,19 +111,21 @@ const styles = StyleSheet.create({
   scroll: {
     flex: 1,
   },
-  content: {
-    paddingHorizontal: 16,
-    paddingVertical: 24,
+  scrollContent: {
+    padding: 16,
+  },
+  card: {
+    padding: 20,
+    borderRadius: 16,
     rowGap: 16,
   },
   title: {
-    fontSize: 24,
-    lineHeight: 32,
-    textAlign: "center",
+    fontSize: 18,
+    lineHeight: 24,
   },
   description: {
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: 13,
+    lineHeight: 20,
     textAlign: "left",
   },
   bullets: {

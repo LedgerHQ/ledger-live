@@ -8,7 +8,6 @@
     "src/operation.ts",
     "src/config.ts",
     "src/api/index.ts",
-    "src/network/nft/index.ts",
     "src/logic/validateAddress.ts"
   ],
   "ignoreUnimported": [

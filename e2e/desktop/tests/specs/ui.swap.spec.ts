@@ -8,20 +8,10 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 const exchangeAppInfo: AppInfos = AppInfos.EXCHANGE;
-const swapUiTags = [
-  "@NanoSP",
-  "@LNS",
-  "@NanoX",
-  "@Stax",
-  "@Flex",
-  "@NanoGen5",
-  "@ethereum",
-  "@family-evm",
-  "@bitcoin",
-  "@family-bitcoin",
-];
+const swapUiTags = [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"];
 
 const kycFromAccount = Account.BTC_NATIVE_SEGWIT_1;
 const kycToAccount = Account.ETH_1;

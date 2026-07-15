@@ -132,6 +132,31 @@ describe("connectLedgerApp", () => {
     });
   });
 
+  it("forwards extra app dependencies to ConnectAppDeviceAction", async () => {
+    let captured: { sessionId: string; deviceAction: ConnectAppDeviceAction } | undefined;
+    const dmk = {
+      _unsafeBypassIntentQueue: (): void => {},
+      executeDeviceAction: (args: { sessionId: string; deviceAction: ConnectAppDeviceAction }) => {
+        captured = args;
+        return completedAction();
+      },
+    };
+
+    await expect(
+      connectLedgerApp(dmk as never, "sess-deps", "Ethereum", {
+        dependencies: [{ name: "Kiln" }],
+      }),
+    ).resolves.toBeUndefined();
+
+    if (!captured) {
+      throw new Error("expected executeDeviceAction to be called");
+    }
+    expect(captured.deviceAction.input).toMatchObject({
+      application: { name: "Ethereum" },
+      dependencies: [{ name: "Kiln" }],
+    });
+  });
+
   it("throws a WalletCliDeviceError when the device action ends with a tagged DMK error", async () => {
     const err = new UnknownDAError("test");
     const dmk = makeDmk(() => errorAction(err));

@@ -6,12 +6,10 @@ jest.mock("../converter", () => ({
 
 import { convertApiToken } from "../converter";
 import {
-  TOKEN_OUTPUT_FIELDS,
   transformTokensResponse,
   transformApiTokenToTokenCurrency,
   validateAndTransformSingleTokenResponse,
 } from "./utils";
-import { ApiTokenResponseSchema } from "../schema";
 import { mockApiTokenResponse, mockTokenCurrency } from "../fixtures";
 
 const mockConvert = convertApiToken as jest.MockedFunction<typeof convertApiToken>;
@@ -19,18 +17,6 @@ const mockConvert = convertApiToken as jest.MockedFunction<typeof convertApiToke
 beforeEach(() => {
   jest.clearAllMocks();
   mockConvert.mockReturnValue(mockTokenCurrency);
-});
-
-describe("TOKEN_OUTPUT_FIELDS", () => {
-  it("is derived from the response schema (no drift)", () => {
-    expect(TOKEN_OUTPUT_FIELDS).toEqual(Object.keys(ApiTokenResponseSchema.shape));
-  });
-
-  it("covers the fields the converter needs", () => {
-    expect(TOKEN_OUTPUT_FIELDS).toEqual(
-      expect.arrayContaining(["id", "contract_address", "units", "live_signature"]),
-    );
-  });
 });
 
 describe("transformTokensResponse", () => {

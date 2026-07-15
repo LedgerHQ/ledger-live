@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, afterEach } from "bun:test";
-import { isInteractive, withSpinner } from "./ui";
+import { hyperlink, isInteractive, withSpinner } from "./ui";
 
 describe("isInteractive", () => {
   const envVars = [
@@ -36,6 +36,80 @@ describe("isInteractive", () => {
   it("returns false when AGENT=amp", () => {
     process.env.AGENT = "amp";
     expect(isInteractive()).toBe(false);
+  });
+});
+
+describe("hyperlink", () => {
+  const agentVars = [
+    "CLAUDECODE",
+    "CLAUDE_CODE",
+    "CURSOR_AGENT",
+    "CODEX_ENABLED",
+    "GEMINI_CLI",
+    "OPENCODE",
+    "AMP_CURRENT_THREAD_ID",
+    "AGENT",
+  ];
+
+  let savedIsTTY: boolean | undefined;
+  let savedEnv: Record<string, string | undefined> = {};
+  beforeEach(() => {
+    savedIsTTY = process.stdout.isTTY;
+    savedEnv = {};
+    for (const k of agentVars) {
+      savedEnv[k] = process.env[k];
+      delete process.env[k];
+    }
+  });
+
+  afterEach(() => {
+    process.stdout.isTTY = savedIsTTY as boolean;
+    for (const [k, v] of Object.entries(savedEnv)) {
+      if (v === undefined) delete process.env[k];
+      else process.env[k] = v;
+    }
+  });
+
+  it("wraps the url in an OSC 8 hyperlink on an interactive TTY", () => {
+    process.stdout.isTTY = true;
+    expect(hyperlink("ledgerlive://discover/lido")).toBe(
+      "\x1b]8;;ledgerlive://discover/lido\x1b\\ledgerlive://discover/lido\x1b]8;;\x1b\\",
+    );
+  });
+
+  it("uses a custom label when provided", () => {
+    process.stdout.isTTY = true;
+    expect(hyperlink("ledgerlive://discover/lido", "Lido")).toBe(
+      "\x1b]8;;ledgerlive://discover/lido\x1b\\Lido\x1b]8;;\x1b\\",
+    );
+  });
+
+  it("strips control chars from url and label so they can't inject their own escape sequences", () => {
+    process.stdout.isTTY = true;
+    // ESC/BEL smuggled into a backend-derived url/label must be scrubbed so the only real escape
+    // sequences in the output are the ones hyperlink() itself emits (the inert `]8;;` text is
+    // harmless once its ESC is gone).
+    expect(hyperlink("ledgerlive://x\x1b]8;;evil", "La\x07bel\x1b")).toBe(
+      "\x1b]8;;ledgerlive://x]8;;evil\x1b\\Label\x1b]8;;\x1b\\",
+    );
+  });
+
+  it("returns the plain url when stdout is not a TTY", () => {
+    process.stdout.isTTY = false as unknown as true;
+    expect(hyperlink("ledgerlive://discover/lido")).toBe("ledgerlive://discover/lido");
+  });
+
+  it("keeps the url copy-pasteable when a custom label is used off a TTY", () => {
+    process.stdout.isTTY = false as unknown as true;
+    expect(hyperlink("ledgerlive://discover/lido", "Lido")).toBe(
+      "Lido (ledgerlive://discover/lido)",
+    );
+  });
+
+  it("returns the plain url under an AI agent even on a TTY", () => {
+    process.stdout.isTTY = true;
+    process.env.CLAUDECODE = "1";
+    expect(hyperlink("ledgerlive://discover/lido")).toBe("ledgerlive://discover/lido");
   });
 });
 

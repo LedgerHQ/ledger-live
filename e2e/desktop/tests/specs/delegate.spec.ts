@@ -6,9 +6,9 @@ import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { getEnv } from "@ledgerhq/live-env";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { buildTags } from "tests/utils/tagsUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   test.use({
@@ -28,6 +28,7 @@ const e2eDelegationAccounts = [
     transactionType: "Staked",
   },
   {
+    // on-chain validator moniker still reads "Ledger by Chorus One"; flip back to "Ledger by Bitwise" once renamed on-chain
     delegate: new Delegate(Account.INJ_1, "0.0000001", "Ledger by Chorus One"),
     xrayTicket: "B2CQA-3021",
     transactionType: "Delegated",
@@ -39,6 +40,12 @@ const e2eDelegationAccounts = [
     transactionType: "Delegated",
     bugTicket: "NAPPS-1357",
   },
+  {
+    delegate: new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG"),
+    xrayTicket: "B2CQA-6115",
+    transactionType: "Delegated",
+    supportsLNS: false,
+  },
 ];
 
 const validators = [
@@ -48,7 +55,7 @@ const validators = [
   },
   {
     delegate: new Delegate(Account.SOL_3, "0.001", "Ledger by Figment"),
-    xrayTicket: "B2CQA-2730, B2CQA-2764",
+    xrayTicket: "B2CQA-2764",
   },
   {
     delegate: new Delegate(Account.NEAR_2, "0.01", "ledgerbyfigment.poolv1.near"),
@@ -89,21 +96,13 @@ for (const account of e2eDelegationAccounts) {
       cliCommands: [liveDataCommand(account.delegate.account)],
     });
 
-    const family = getFamilyByCurrencyId(account.delegate.account.currency.id);
-
     test(
       `[${account.delegate.account.currency.name}] Delegate`,
       {
-        tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          `@${account.delegate.account.currency.id}`,
-          ...(family ? [`@family-${family}`] : []),
-        ],
+        tag: buildTags({
+          currencyId: account.delegate.account.currency.id,
+          skipLNS: account.supportsLNS === false,
+        }),
         annotation: { type: "TMS", description: account.xrayTicket },
       },
       async ({ app }) => {
@@ -160,21 +159,10 @@ test.describe("Delegate without Broadcasting", () => {
     cliCommands: [liveDataCommand(account.account)],
   });
 
-  const family = getFamilyByCurrencyId(account.account.currency.id);
-
   test(
     `[${account.account.currency.name}] Delegate without broadcasting`,
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        `@${account.account.currency.id}`,
-        ...(family ? [`@family-${family}`] : []),
-      ],
+      tag: buildTags({ currencyId: account.account.currency.id }),
       annotation: { type: "TMS", description: "B2CQA-3023" },
     },
     async ({ app }) => {
@@ -209,20 +197,10 @@ test.describe("Delegate without Broadcasting", () => {
     cliCommands: [liveDataCommand(account.account)],
   });
 
-  const family = getFamilyByCurrencyId(account.account.currency.id);
-
   test(
     `[${account.account.currency.name}] Delegate without broadcasting`,
     {
-      tag: [
-        "@NanoSP",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        `@${account.account.currency.id}`,
-        ...(family ? [`@family-${family}`] : []),
-      ],
+      tag: buildTags({ currencyId: account.account.currency.id, skipLNS: true }),
       annotation: { type: "TMS", description: "B2CQA-3020" },
     },
     async ({ app }) => {
@@ -264,21 +242,10 @@ test.describe("Delegate without Broadcasting", () => {
     cliCommands: [liveDataCommand(account.account)],
   });
 
-  const family = getFamilyByCurrencyId(account.account.currency.id);
-
   test(
     `[${account.account.currency.name}] Delegate without broadcasting`,
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        `@${account.account.currency.id}`,
-        ...(family ? [`@family-${family}`] : []),
-      ],
+      tag: buildTags({ currencyId: account.account.currency.id }),
       annotation: { type: "TMS", description: "B2CQA-2742" },
     },
     async ({ app }) => {
@@ -321,21 +288,10 @@ test.describe("e2e delegation - Tezos", () => {
     cliCommands: [liveDataCommand(account.account)],
   });
 
-  const family = getFamilyByCurrencyId(account.account.currency.id);
-
   test(
     "Tezos Delegation",
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        `@${account.account.currency.id}`,
-        ...(family ? [`@family-${family}`] : []),
-      ],
+      tag: buildTags({ currencyId: account.account.currency.id }),
       annotation: {
         type: "TMS",
         description: "B2CQA-3041",
@@ -371,20 +327,10 @@ test.describe("e2e delegation - Celo", () => {
     cliCommands: [liveDataCommand(account.account)],
   });
 
-  const family = getFamilyByCurrencyId(account.account.currency.id);
-
   test(
     "Celo Delegation",
     {
-      tag: [
-        "@NanoSP",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        `@${account.account.currency.id}`,
-        ...(family ? [`@family-${family}`] : []),
-      ],
+      tag: buildTags({ currencyId: account.account.currency.id, skipLNS: true }),
       annotation: {
         type: "TMS",
         description: "B2CQA-3042",
@@ -416,15 +362,7 @@ test.describe("e2e delegation - Celo", () => {
   test(
     "Celo Vote",
     {
-      tag: [
-        "@NanoSP",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        `@${account.account.currency.id}`,
-        ...(family ? [`@family-${family}`] : []),
-      ],
+      tag: buildTags({ currencyId: account.account.currency.id, skipLNS: true }),
       annotation: {
         type: "TMS",
         description: "B2CQA-201",
@@ -464,21 +402,13 @@ for (const validator of validators) {
       cliCommands: [liveDataCommand(validator.delegate.account)],
     });
 
-    const family = getFamilyByCurrencyId(validator.delegate.account.currency.id);
-
     test(
       `[${validator.delegate.account.currency.name}] - Select validator`,
       {
-        tag: [
-          "@NanoSP",
-          ...(validator.delegate.account.currency.id !== Currency.MULTIVERS_X.id ? ["@LNS"] : []),
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          `@${validator.delegate.account.currency.id}`,
-          ...(family ? [`@family-${family}`] : []),
-        ],
+        tag: buildTags({
+          currencyId: validator.delegate.account.currency.id,
+          skipLNS: validator.delegate.account.currency.id === Currency.MULTIVERS_X.id,
+        }),
         annotation: { type: "TMS", description: validator.xrayTicket },
       },
       async ({ app }) => {
@@ -498,13 +428,13 @@ for (const validator of validators) {
           await app.delegate.checkValidatorListIsVisible();
           await app.delegate.selectProviderOnRow(Number.parseInt(validator.delegate.provider, 10));
           await app.delegate.closeProviderList(Number.parseInt(validator.delegate.provider, 10));
+        } else if (validator.delegate.account.currency.name == Currency.SOL.name) {
+          await app.delegate.verifyContinueDisabled();
+          await app.delegate.selectProviderByName(validator.delegate.provider);
+          await app.delegate.verifyProviderTC(validator.delegate.provider);
         } else {
           await app.delegate.verifyFirstProviderName(validator.delegate.provider);
-          if (validator.delegate.account.currency.name == Currency.SOL.name) {
-            await app.delegate.verifyContinueDisabled();
-            await app.delegate.selectProviderByName(validator.delegate.provider);
-            await app.delegate.verifyProviderTC(validator.delegate.provider);
-          } else await app.delegate.verifyContinueEnabled();
+          await app.delegate.verifyContinueEnabled();
         }
         await app.delegate.verifyProvider(1);
         await app.delegate.openSearchProviderModal();
@@ -517,6 +447,7 @@ for (const validator of validators) {
 }
 
 test.describe("Staking flow from different entry point", () => {
+  // on-chain validator moniker still reads "Ledger by Chorus One"; flip back to "Ledger by Bitwise" once renamed on-chain
   const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger by Chorus One");
   test.use({
     teamOwner: Team.EARN,
@@ -525,21 +456,10 @@ test.describe("Staking flow from different entry point", () => {
     cliCommands: [liveDataCommand(delegateAccount.account)],
   });
 
-  const family = getFamilyByCurrencyId(delegateAccount.account.currency.id);
-
   test(
     "Staking flow from market entry point",
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        `@${delegateAccount.account.currency.id}`,
-        ...(family ? [`@family-${family}`] : []),
-      ],
+      tag: buildTags({ currencyId: delegateAccount.account.currency.id }),
       annotation: {
         type: "TMS",
         description: "B2CQA-2771, B2CQA-3289",
@@ -580,21 +500,10 @@ for (const currency of liveApps) {
       cliCommands: [liveDataCommand(currency.delegate.account)],
     });
 
-    const family = getFamilyByCurrencyId(currency.delegate.account.currency.id);
-
     test(
       `[${currency.delegate.account.currency.name}] - Select validator`,
       {
-        tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          `@${currency.delegate.account.currency.id}`,
-          ...(family ? [`@family-${family}`] : []),
-        ],
+        tag: buildTags({ currencyId: currency.delegate.account.currency.id }),
         annotation: { type: "TMS", description: currency.xrayTicket },
       },
       async ({ app }) => {

@@ -30,6 +30,7 @@ const aleoSendFlow = {
   SummaryToBadge,
   SummaryToSection,
   AfterAmountInput: QuickAmountSelector,
+  hideSummaryTotalSection: true,
   buildSendEntrypoint: ({ account, parentAccount }) => ({
     screen: ScreenName.AleoSendBalanceSelection,
     params: { account, parentAccount, isSelfTransfer: false },

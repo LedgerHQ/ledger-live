@@ -1,4 +1,10 @@
-import type { Balance, AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
+import type {
+  Balance,
+  AssetInfo,
+  BalanceOptions,
+  MemoNotSupported,
+  Operation,
+} from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { getCoinConfig } from "../config";
@@ -58,7 +64,7 @@ async function getTokenBalances(
   // Execute staking and token operations in parallel for better performance
   const [stakingResult, tokenOperationsResult] = await Promise.allSettled([
     getStakes(currency, address),
-    explorerApi.getOperations(currency, address, `js:2:${currency.id}:${address}:`, 0),
+    explorerApi.getOperations(currency, address, 0),
   ]);
 
   // Add staking positions to balances (with error handling)
@@ -117,7 +123,7 @@ async function getTokenBalances(
  * (their balance is the native balance, returned upstream).
  */
 async function collectTokenAssets(
-  lastTokenOperations: { contract?: string; standard?: string }[],
+  lastTokenOperations: Array<Operation<MemoNotSupported>>,
   address: string,
   nativeContractsSet: Set<string>,
   options: BalanceOptions | undefined,
@@ -126,34 +132,25 @@ async function collectTokenAssets(
   const assets = new Map<string, AssetInfo>();
 
   for (const operation of lastTokenOperations) {
-    if (!operation.contract) continue;
-    if (nativeContractsSet.has(operation.contract.toLowerCase())) continue;
+    if (!("assetReference" in operation.asset)) continue;
+    const contract = operation.asset.assetReference;
+    if (!contract) continue;
+    if (nativeContractsSet.has(contract.toLowerCase())) continue;
 
     const assetInfo: AssetInfo = {
-      type: assetTypeFromStandard(operation.standard),
-      assetReference: operation.contract,
+      type: operation.asset.type,
+      assetReference: contract,
       assetOwner: address,
     };
 
     const includeAssets = !options?.includeAssets || (await options.includeAssets(assetInfo));
     if (includeAssets) {
-      contracts.add(operation.contract);
-      assets.set(operation.contract, assetInfo);
+      contracts.add(contract);
+      assets.set(contract, assetInfo);
     }
   }
 
   return { contracts, assets };
-}
-
-function assetTypeFromStandard(standard: string | undefined): string {
-  switch (standard) {
-    case "ERC721":
-      return "erc721";
-    case "ERC1155":
-      return "erc1155";
-    default:
-      return "erc20";
-  }
 }
 
 export default getBalance;

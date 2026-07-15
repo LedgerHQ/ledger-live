@@ -33,6 +33,7 @@ export class SwapPage extends WebViewAppPage {
   private fromAccountCoinSelector = "from-account-coin-selector";
   private fromAccountAmountInput = "from-account-amount-input";
   private readonly fromAccountError = "from-account-error";
+  private readonly noQuotesPlaceholder = "quotes-loading";
   private fromAccountBalance = "from-account-balance";
   private toAccountCoinSelector = "to-account-coin-selector";
   private readonly toAccountAccountNameTag = "to-account-account-name-tag";
@@ -181,50 +182,32 @@ export class SwapPage extends WebViewAppPage {
   @step("Select available provider without KYC")
   async selectExchangeWithoutKyc(swap?: Swap) {
     const webview = await this.getWebView();
-
     const providersList = await this.getProviderList();
-
-    // Check if the swap is ETH <-> SOL pair (exclude LiFi for these pairs)
+    const isLns = process.env.SPECULOS_DEVICE === Device.LNS.name;
     const isEthSolPair =
-      swap &&
+      !!swap &&
       ((swap.accountToDebit.currency.id === Currency.ETH.id &&
         swap.accountToCredit.currency.id === Currency.SOL.id) ||
         (swap.accountToDebit.currency.id === Currency.SOL.id &&
           swap.accountToCredit.currency.id === Currency.ETH.id));
 
-    const providersWithoutKYC = providersList.filter(providerName => {
-      const provider = Object.values(SwapProvider).find(p => p.uiName === providerName);
-      if (!provider || provider.kyc) {
-        return false;
-      }
+    const provider = providersList
+      .map(uiName => SwapProvider.getByUiName(uiName))
+      .find(
+        providerEntry =>
+          !!providerEntry &&
+          !providerEntry.kyc &&
+          !providerEntry.app &&
+          !(isEthSolPair && providerEntry.name === SwapProvider.LIFI.name) &&
+          (!isLns || providerEntry.availableOnLns),
+      );
 
-      // Exclude LiFi for ETH <-> SOL pairs on all devices
-      if (isEthSolPair && provider.name === SwapProvider.LIFI.name) {
-        return false;
-      }
-
-      // Additional filter for LNS devices
-      if (process.env.SPECULOS_DEVICE === Device.LNS.name) {
-        return provider.availableOnLns;
-      }
-
-      return true;
-    });
-
-    for (const providerName of providersWithoutKYC) {
-      const provider = Object.values(SwapProvider).find(p => p.uiName === providerName);
-      if (provider && !provider.app) {
-        const providerLocator = webview
-          .locator(this.specificQuoteCardProviderName(provider.name))
-          .first();
-
-        await providerLocator.click();
-
-        return provider;
-      }
+    if (!provider) {
+      throw new Error(`No providers without KYC found: ${providersList.join(", ")}`);
     }
 
-    throw new Error(`No providers without KYC found: ${providersList.join(", ")}`);
+    await webview.locator(this.specificQuoteCardProviderName(provider.name)).first().click();
+    return provider;
   }
 
   @step("Select available provider")
@@ -484,11 +467,15 @@ export class SwapPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.toAccountAccountNameTag)).toContainText(expected);
   }
 
-  @step("Verify swap amount error message match: $0")
-  async verifySwapAmountErrorMessageIsCorrect(message: string | RegExp) {
+  @step("Verify swap error message match: $0 ($1)")
+  async verifySwapErrorMessageIsCorrect(
+    message: string | RegExp,
+    display: "banner" | "quotesPlaceholder",
+  ) {
     const webview = await this.getWebView();
-    const errorSpan = await webview.getByTestId(this.fromAccountError).textContent();
-    expect(errorSpan).toMatch(message);
+    const testId =
+      display === "quotesPlaceholder" ? this.noQuotesPlaceholder : this.fromAccountError;
+    await expect(webview.getByTestId(testId)).toContainText(message);
   }
 
   @step("Verify swap cross account error message match: $0")
@@ -496,12 +483,6 @@ export class SwapPage extends WebViewAppPage {
     const webview = await this.getWebView();
     // Auto-retrying locator assertion: waits for the cross-account warning to render before matching.
     await expect(webview.getByTestId(this.fromAccountError)).toContainText(message);
-  }
-
-  @step("Check insufficient funds warning banner is visible")
-  async checkInsufficientFundsBannerVisible() {
-    const webview = await this.getWebView();
-    await expect(webview.getByTestId(this.insufficientFundsWarning)).toBeVisible();
   }
 
   @step("verify quotes are displayed")

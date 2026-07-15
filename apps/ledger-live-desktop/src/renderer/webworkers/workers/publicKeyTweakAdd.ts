@@ -33,7 +33,6 @@ onmessage = (e: MessageEvent<{ publicKey?: string; tweak?: string; id: string }>
       postMessage({ response: uint8ArrayToHex(r), id });
     })
     .catch((e: unknown) => {
-      console.error(e);
       const errorMessage = e instanceof Error ? e.message : String(e);
       postMessage({ error: errorMessage, id });
     });

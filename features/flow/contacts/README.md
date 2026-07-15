@@ -1,24 +1,23 @@
 # @features/flow-contacts
 
-Shared Contacts flow package.
+Shared Contacts flow package for Desktop and Mobile.
 
-This package owns Contacts-specific flow logic shared by Desktop and Mobile. It may depend on feature platform packages, domain packages, and shared packages when a flow needs them, but it must not contain app routing, app screen composition, persistence, Ledger Sync, device actions, or signer payloads.
+## Scope
 
-## Current scope
+- Feature-flag configuration (`useContactsFeature`, resolvers)
+- `useContactsMeContact` hook (`@domain/entity-contact`)
+- Shared UI components (`.web.tsx` / `.native.tsx`)
 
-- Contacts feature-flag configuration hook.
-- Minimal pure resolver used by the hook.
+App layers own routing, screen composition, i18n, and analytics.
 
-UI screens and scenario state will be added by the dedicated Contacts scenario tickets.
+## Structure
 
-## Usage
-
-```ts
-import { useContactsFeature } from "@features/flow-contacts";
-
-export function ContactsEntryPoint() {
-  const { isEnabled, showNewBadge } = useContactsFeature("desktop");
-
-  return null;
-}
+```
+src/
+├── components/
+│   ├── ContactsButton/   # My Wallet entry
+│   └── ContactsPage/     # Add contact button, Me row
+├── hooks/
+├── featureFlags.ts
+└── index.ts
 ```

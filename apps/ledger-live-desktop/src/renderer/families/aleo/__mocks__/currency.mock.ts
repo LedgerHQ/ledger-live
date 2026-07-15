@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const aleoCurrency = getCryptoCurrencyById("aleo");

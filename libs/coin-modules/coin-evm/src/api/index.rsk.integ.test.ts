@@ -3,7 +3,6 @@ import {
   BufferTxData,
   MemoNotSupported,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
@@ -11,7 +10,6 @@ describe("EVM RSK Network", () => {
   let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
-    setupCalClientStore();
     const config = {
       node: {
         type: "external",

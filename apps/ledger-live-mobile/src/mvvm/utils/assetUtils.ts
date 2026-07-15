@@ -3,8 +3,10 @@ import { Asset } from "~/types/asset";
 
 export const toAsset = (item: CategorizedAssetItem): Asset => ({
   currency: item.currency,
+  marketId: item.marketId,
   accounts: item.accounts,
   amount: item.balance,
+  countervalue: item.value,
   distribution: item.distribution,
   isPlaceholder: false,
 });

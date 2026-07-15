@@ -78,17 +78,14 @@ describe("saveLogs", () => {
     const error = new Error("IPC error");
     (memoryLogger.getMemoryLogs as jest.Mock).mockReturnValue({ log: "test" });
     (ipcRenderer.invoke as jest.Mock).mockRejectedValue(error);
-    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 
     // when
     await saveLogs(fakePath);
 
     // then
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "Error while requesting to save logs from the renderer process",
-      error,
-    );
+    expect(consoleWarnSpy).toHaveBeenCalledWith("Failed to save logs:", error);
 
-    consoleErrorSpy.mockRestore();
+    consoleWarnSpy.mockRestore();
   });
 });

@@ -29,6 +29,7 @@ export function useStatusSectionViewModel({
 
   return {
     heading: t(`${TRANSLATION_PREFIX}.sections.status.heading`),
+    estimatedLabel: t(`${TRANSLATION_PREFIX}.sections.status.estimated`),
     sendRow: {
       status: statusItems.send.displayStatus,
       title: t(statusItems.send.titleKey, statusItems.send.titleValues),

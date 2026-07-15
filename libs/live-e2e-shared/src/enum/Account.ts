@@ -21,6 +21,9 @@ export class Account {
   static readonly ALGO_1 = new Account(Currency.ALGO, "Algorand 1", 0, "44'/283'/0'/0/0");
   static readonly ALGO_2 = new Account(Currency.ALGO, "Algorand 2", 1, "44'/283'/1'/0/0");
 
+  // Algorand account without ASA (tokens) for specific scenarios
+  static readonly ALGO_3 = new Account(Currency.ALGO, "Algorand 3", 2, "44'/283'/2'/0/0");
+
   static readonly APTOS_1 = new Account(Currency.APT, "Aptos 1", 0, "44'/637'/0'/0'/0'");
   static readonly APTOS_2 = new Account(Currency.APT, "Aptos 2", 1, "44'/637'/1'/0'/0'");
 

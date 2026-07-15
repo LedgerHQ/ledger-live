@@ -64,6 +64,8 @@ export type CustomSendFlow = {
   SummaryToBadge?: ComponentType<{ transaction: Transaction }>;
   SummaryToSection?: ComponentType<SummaryToSectionProps>;
   AfterAmountInput?: ComponentType<AfterAmountInputProps>;
+  /** Suppresses the generic Amount + Fees "Total" row on the Summary screen (e.g. when the family renders its own inside SendRowsFee). */
+  hideSummaryTotalSection?: boolean;
   /** Imperative navigation from within the SendFunds navigator after account selection. */
   navigateToInitialScreen?: (params: InitialScreenNavParams) => void;
   /** Imperative navigation from within the SendFunds navigator after recipient selection. */

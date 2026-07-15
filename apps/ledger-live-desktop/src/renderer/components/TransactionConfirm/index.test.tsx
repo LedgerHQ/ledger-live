@@ -12,7 +12,7 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/
 import { BigNumber } from "bignumber.js";
 import { getDeviceAnimation } from "../DeviceAction/animations";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
 jest.mock("@ledgerhq/live-common/hooks/useDeviceTransactionConfig");
