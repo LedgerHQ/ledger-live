@@ -103,7 +103,10 @@ export const prefetchValidators = (currencyId: string): void => {
 };
 
 export const getValidatorExplorerUrl = (currencyId: string, address: string): string | undefined =>
-  STAKING_CONTRACTS[currencyId]?.explorerConfig?.validatorUrl?.replace("$address", address);
+  STAKING_CONTRACTS[currencyId]?.explorerConfig?.validatorUrl?.replace(
+    "$address",
+    address.toLowerCase(),
+  );
 
 export const getUnbondingPeriodDays = (currencyId: string): number | undefined =>
   STAKING_CONTRACTS[currencyId]?.unbondingPeriodDays;
