@@ -17,6 +17,7 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
 import TransactionalIcon from "LLM/components/TransactionalIcon";
 import { useOperationsListItemViewModel } from "./useOperationsListItemViewModel";
+import { OPERATIONS_HISTORY_TEST_IDS } from "LLM/features/OperationsHistory/testIds";
 
 type Props = {
   operation: Operation;
@@ -73,7 +74,11 @@ function OperationsListItem({
   const subtitle = getSubtitle();
 
   return (
-    <LumenListItem onPress={onPress} lx={listItemStyle} testID="operations-list-item">
+    <LumenListItem
+      onPress={onPress}
+      lx={listItemStyle}
+      testID={OPERATIONS_HISTORY_TEST_IDS.listItem}
+    >
       <ListItemLeading>
         <TransactionalIcon
           operationType={operationType}
@@ -96,7 +101,11 @@ function OperationsListItem({
             <Text typography="body2SemiBold" lx={{ color: amountColor }}>
               <CurrencyUnitValue showCode unit={unit} value={amount} alwaysShowSign />
             </Text>
-            <Text typography="body3" lx={counterValueStyle}>
+            <Text
+              typography="body3"
+              lx={counterValueStyle}
+              testID={OPERATIONS_HISTORY_TEST_IDS.counterValue}
+            >
               <CounterValue
                 showCode
                 date={operation.date}

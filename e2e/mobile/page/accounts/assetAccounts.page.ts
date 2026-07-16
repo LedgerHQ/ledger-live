@@ -11,8 +11,15 @@ export default class AssetAccountsPage {
     getElementById(`asset-quick-action-button-${action}`);
 
   @Step("Wait for asset page to load")
-  async waitForAccountPageToLoad(assetName: string, currencyId?: string) {
+  async waitForAccountPageToLoad(
+    assetName: string,
+    currencyId?: string,
+    inCryptoAddressesList = false,
+  ) {
     if (await isAggregatedAssetsEnabled()) {
+      if (inCryptoAddressesList) {
+        return; // goToAccounts already navigated to the account page via CryptoAddressesScreen
+      }
       await waitForElementById(`asset-detail-scroll-view-${currencyId ?? assetName.toLowerCase()}`);
     } else {
       await waitForElementById(this.titleId(assetName.toLowerCase()));
@@ -36,8 +43,12 @@ export default class AssetAccountsPage {
 
   @Step("Open asset list via deeplink")
   async openViaDeeplink(currencyLong?: string) {
-    const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
-    await openDeeplink(link);
+    if (!currencyLong && (await isAggregatedAssetsEnabled())) {
+      await openDeeplink("crypto-addresses");
+    } else {
+      const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
+      await openDeeplink(link);
+    }
   }
 
   @Step("Tap on asset quick action button ")

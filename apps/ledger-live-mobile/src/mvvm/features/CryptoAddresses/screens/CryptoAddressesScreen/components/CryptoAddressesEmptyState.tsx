@@ -8,7 +8,7 @@ type Props = Readonly<{
 
 export default function CryptoAddressesEmptyState({ label }: Props) {
   return (
-    <Box lx={containerStyle}>
+    <Box lx={containerStyle} testID="crypto-addresses-empty-state">
       <Text typography="body2" lx={{ color: "muted" }}>
         {label}
       </Text>

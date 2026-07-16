@@ -35,7 +35,7 @@ jest.mock("LLM/features/Accounts/screens/AddAccount", () => {
 
 const mockedViewModel = jest.mocked(useCryptoAddressesViewModel);
 
-const mockAccount = { type: "Account", id: "account-1" } as Account;
+const mockAccount = { type: "Account", id: "account-1", currency: { id: "bitcoin" } } as Account;
 
 const baseViewModel: ReturnType<typeof useCryptoAddressesViewModel> = {
   accounts: [],
