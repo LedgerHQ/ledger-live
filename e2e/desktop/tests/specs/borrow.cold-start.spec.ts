@@ -4,6 +4,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
   FF_BORROW_DESKTOP,
   FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
@@ -25,6 +26,7 @@ const tags = [
 
 test.describe("Borrow cold start", () => {
   test.use({
+    teamOwner: Team.EARN,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.currency.speculosApp,
     cliCommands: [liveDataCommand(account)],
