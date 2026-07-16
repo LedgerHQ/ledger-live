@@ -770,7 +770,12 @@ describe("getBlockV2", () => {
     expect(result.transactions[0].operations).toEqual([
       {
         type: "other",
+        address: "0.0.999",
         ledgerOpType: "ASSOCIATE_TOKEN",
+        pagingToken: consensusTimestamp,
+        consensusTimestamp,
+        transactionId: mockTx.transaction_id,
+        feesPayer: "0.0.999",
         associatedTokenId: mockToken.token_id,
       },
     ]);

@@ -262,8 +262,14 @@ export async function getBlockV2({
       operations = [
         {
           type: "other",
+          address: payerAccount,
           ledgerOpType: "ASSOCIATE_TOKEN",
+          pagingToken: mirrorTx.consensus_timestamp,
+          consensusTimestamp: mirrorTx.consensus_timestamp,
+          transactionId: mirrorTx.transaction_id,
+          feesPayer: payerAccount,
           ...(associatedTokenId && { associatedTokenId }),
+          ...(memo && { memo }),
         },
       ];
     } else {
