@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import networkRequest from "@ledgerhq/live-network/network";
 import type {
   ChainwatchNetwork,
   ChainwatchAccount,
@@ -22,7 +22,7 @@ class ChainwatchAccountManager {
 
   async getChainwatchAccount(): Promise<ChainwatchAccount | undefined> {
     try {
-      const { data } = await network({
+      const { data } = await networkRequest({
         method: "GET",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
       });
@@ -34,7 +34,7 @@ class ChainwatchAccountManager {
 
   async removeChainwatchAccount() {
     try {
-      await network({
+      await networkRequest({
         method: "DELETE",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
       });
@@ -44,15 +44,11 @@ class ChainwatchAccountManager {
   }
 
   async registerNewChainwatchAccount() {
-    try {
-      const { data } = await network({
-        method: "PUT",
-        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
-      });
-      return data;
-    } catch {
-      return;
-    }
+    const { data } = await networkRequest({
+      method: "PUT",
+      url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
+    });
+    return data;
   }
 
   getAccountAddress(account: Account) {
@@ -68,46 +64,34 @@ class ChainwatchAccountManager {
   }
 
   async registerNewAccountsAddresses(accountsToRegister: Account[]) {
-    try {
-      const addresses = accountsToRegister
-        .filter(
-          account => this.getAccountAddress(account) && !this.accountAlreadySubscribed(account),
-        )
-        .map(account => this.getAccountAddress(account));
-      if (addresses.length > 0) {
-        await network({
-          method: "PUT",
-          url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
-          data: addresses,
-        });
-      }
-    } catch {
-      return;
+    const addresses = accountsToRegister
+      .filter(account => this.getAccountAddress(account) && !this.accountAlreadySubscribed(account))
+      .map(account => this.getAccountAddress(account));
+    if (addresses.length > 0) {
+      await networkRequest({
+        method: "PUT",
+        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
+        data: addresses,
+      });
     }
   }
 
   async removeAccountsAddresses(accountsToRemove: Account[]) {
-    try {
-      const addresses = accountsToRemove
-        .filter(
-          account => this.getAccountAddress(account) && this.accountAlreadySubscribed(account),
-        )
-        .map(account => this.getAccountAddress(account));
-      if (addresses.length > 0) {
-        await network({
-          method: "DELETE",
-          url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
-          data: addresses,
-        });
-      }
-    } catch {
-      return;
+    const addresses = accountsToRemove
+      .filter(account => this.getAccountAddress(account) && this.accountAlreadySubscribed(account))
+      .map(account => this.getAccountAddress(account));
+    if (addresses.length > 0) {
+      await networkRequest({
+        method: "DELETE",
+        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
+        data: addresses,
+      });
     }
   }
 
   async registerNewMonitor(monitor: ChainwatchMonitorType) {
     try {
-      await network({
+      await networkRequest({
         method: "PUT",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/monitor/`,
         data: {
@@ -122,7 +106,7 @@ class ChainwatchAccountManager {
 
   async registerNewTarget(target: ChainwatchTargetType) {
     try {
-      await network({
+      await networkRequest({
         method: "PUT",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/target/`,
         data: {

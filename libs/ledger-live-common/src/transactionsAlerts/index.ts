@@ -23,6 +23,9 @@ const formatAccountsByCurrencies = (newAccounts: Account[], removedAccounts: Acc
   return accountsByCurrencies;
 };
 
+const getAccountAddressKey = (account: Account) =>
+  `${account.currency.id}:${account.freshAddress.toLowerCase()}`;
+
 export const getSupportedChainsAccounts = (
   userId: string,
   chainwatchBaseUrl: string,
@@ -40,16 +43,24 @@ export const getSupportedChainsAccounts = (
   );
 };
 
-export const updateTransactionsAlertsAddresses = async (
+export const reconcileTransactionsAlertsAddresses = async (
   userId: string,
   chainwatchBaseUrl: string,
   supportedChains: ChainwatchNetwork[],
-  newAccounts: Account[],
-  removedAccounts: Account[],
+  accounts: Account[],
+  previousAccounts: Account[],
 ) => {
-  const accountsByCurrencies = formatAccountsByCurrencies(newAccounts, removedAccounts);
+  const accountsByAddress = new Map(
+    accounts.map(account => [getAccountAddressKey(account), account]),
+  );
+  const accountsToRegister = Array.from(accountsByAddress.values());
+  const accountAddressKeys = new Set(accountsByAddress.keys());
+  const removedAccounts = previousAccounts.filter(
+    account => !accountAddressKeys.has(getAccountAddressKey(account)),
+  );
+  const accountsByCurrencies = formatAccountsByCurrencies(accountsToRegister, removedAccounts);
 
-  for (const [currencyId, accounts] of Object.entries(accountsByCurrencies)) {
+  for (const [currencyId, currencyAccounts] of Object.entries(accountsByCurrencies)) {
     const network = supportedChains.find(
       (chain: ChainwatchNetwork) => chain.ledgerLiveId === currencyId,
     );
@@ -58,8 +69,8 @@ export const updateTransactionsAlertsAddresses = async (
 
       await accountManager.setupChainwatchAccount();
       await Promise.all([
-        accountManager.registerNewAccountsAddresses(accounts.newAccounts),
-        accountManager.removeAccountsAddresses(accounts.removedAccounts),
+        accountManager.registerNewAccountsAddresses(currencyAccounts.newAccounts),
+        accountManager.removeAccountsAddresses(currencyAccounts.removedAccounts),
       ]);
     }
   }

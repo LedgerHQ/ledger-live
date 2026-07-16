@@ -1,0 +1,93 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import type { Account, ChainwatchNetwork } from "@ledgerhq/types-live";
+import ChainwatchAccountManager from "./ChainwatchAccountManager";
+import { reconcileTransactionsAlertsAddresses } from ".";
+
+jest.mock("./ChainwatchAccountManager");
+
+const MockedChainwatchAccountManager = jest.mocked(ChainwatchAccountManager);
+const avalanche = getCryptoCurrencyById("avalanche_c_chain");
+const network: ChainwatchNetwork = {
+  ledgerLiveId: avalanche.id,
+  chainwatchId: "avax",
+  nbConfirmations: 1,
+};
+
+const makeAccount = (id: string, freshAddress: string): Account => ({
+  ...genAccount(id, { currency: avalanche }),
+  freshAddress,
+});
+
+describe("reconcileTransactionsAlertsAddresses", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should reconcile every current address when accounts were already known locally", async () => {
+    const accounts = [makeAccount("account-1", "0x01"), makeAccount("account-2", "0x02")];
+
+    await reconcileTransactionsAlertsAddresses(
+      "user-id",
+      "https://chainwatch",
+      [network],
+      accounts,
+      [...accounts],
+    );
+
+    const accountManager = jest.mocked(MockedChainwatchAccountManager.mock.instances[0]);
+    expect(accountManager.setupChainwatchAccount).toHaveBeenCalledTimes(1);
+    expect(accountManager.registerNewAccountsAddresses).toHaveBeenCalledWith(accounts);
+    expect(accountManager.removeAccountsAddresses).toHaveBeenCalledWith([]);
+  });
+
+  it("should remove an old address when an account address changes", async () => {
+    const previousAccount = makeAccount("account", "0x01");
+    const currentAccount = makeAccount("account", "0x02");
+
+    await reconcileTransactionsAlertsAddresses(
+      "user-id",
+      "https://chainwatch",
+      [network],
+      [currentAccount],
+      [previousAccount],
+    );
+
+    const accountManager = jest.mocked(MockedChainwatchAccountManager.mock.instances[0]);
+    expect(accountManager.registerNewAccountsAddresses).toHaveBeenCalledWith([currentAccount]);
+    expect(accountManager.removeAccountsAddresses).toHaveBeenCalledWith([previousAccount]);
+  });
+
+  it("should not remove an address that is still present under another account id", async () => {
+    const previousAccount = makeAccount("previous-account", "0x01");
+    const currentAccount = makeAccount("current-account", "0x01");
+
+    await reconcileTransactionsAlertsAddresses(
+      "user-id",
+      "https://chainwatch",
+      [network],
+      [currentAccount],
+      [previousAccount],
+    );
+
+    const accountManager = jest.mocked(MockedChainwatchAccountManager.mock.instances[0]);
+    expect(accountManager.registerNewAccountsAddresses).toHaveBeenCalledWith([currentAccount]);
+    expect(accountManager.removeAccountsAddresses).toHaveBeenCalledWith([]);
+  });
+
+  it("should reconcile a shared address only once", async () => {
+    const firstAccount = makeAccount("first-account", "0x01");
+    const secondAccount = makeAccount("second-account", "0x01");
+
+    await reconcileTransactionsAlertsAddresses(
+      "user-id",
+      "https://chainwatch",
+      [network],
+      [firstAccount, secondAccount],
+      [],
+    );
+
+    const accountManager = jest.mocked(MockedChainwatchAccountManager.mock.instances[0]);
+    expect(accountManager.registerNewAccountsAddresses).toHaveBeenCalledWith([secondAccount]);
+  });
+});

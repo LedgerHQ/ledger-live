@@ -4,7 +4,7 @@ import { accountsSelector } from "~/reducers/accounts";
 import { userIdSelector } from "@domain/entity-client-identity";
 import { useFeature } from "@features/platform-feature-flags";
 import {
-  updateTransactionsAlertsAddresses,
+  reconcileTransactionsAlertsAddresses,
   deleteUserChainwatchAccounts,
 } from "@ledgerhq/live-common/transactionsAlerts/index";
 import type { ChainwatchNetwork, Account } from "@ledgerhq/types-live";
@@ -29,6 +29,7 @@ const TransactionsAlerts = () => {
   const refAccounts = useRef<Account[]>([]);
   const refFeatureEnabled = useRef<boolean>(false);
   const refNotifSettings = useRef<boolean>(false);
+  const refReconciliationKey = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     if (!chainwatchBaseUrl) return;
@@ -38,40 +39,46 @@ const TransactionsAlerts = () => {
       (!featureTransactionsAlerts?.enabled && refFeatureEnabled.current) ||
       (!notifications.transactionsAlertsCategory && refNotifSettings.current)
     ) {
+      refReconciliationKey.current = undefined;
       deleteUserChainwatchAccounts(
         userId.exportUserIdForChainwatch(),
         chainwatchBaseUrl,
         supportedChains,
       );
     }
-    const newAccounts =
-      notifications.transactionsAlertsCategory && !refNotifSettings.current
-        ? accountsFilteredBySupportedChains
-        : accountsFilteredBySupportedChains.filter(
-            account => !refAccounts.current.find(refAccount => refAccount.id === account.id),
-          );
-    const removedAccounts = refAccounts.current.filter(
-      refAccount =>
-        !accountsFilteredBySupportedChains.find(account => account.id === refAccount.id),
-    );
-
     refFeatureEnabled.current = featureTransactionsAlerts?.enabled;
     refNotifSettings.current = notifications.transactionsAlertsCategory;
 
     if (!featureTransactionsAlerts?.enabled || !notifications.transactionsAlertsCategory) return;
 
-    if (newAccounts.length > 0 || removedAccounts.length > 0) {
-      updateTransactionsAlertsAddresses(
-        userId.exportUserIdForChainwatch(),
-        chainwatchBaseUrl,
-        supportedChains,
-        newAccounts,
-        removedAccounts,
-      );
-    }
-    refAccounts.current = accountsFilteredBySupportedChains;
-    refFeatureEnabled.current = featureTransactionsAlerts?.enabled;
-    refNotifSettings.current = notifications.transactionsAlertsCategory;
+    const reconciliationKey = JSON.stringify({
+      accounts: accountsFilteredBySupportedChains
+        .map(account => `${account.currency.id}:${account.freshAddress.toLowerCase()}`)
+        .sort(),
+      chainwatchBaseUrl,
+      supportedChains,
+      userId: userId.exportUserIdForChainwatch(),
+    });
+    if (refReconciliationKey.current === reconciliationKey) return;
+
+    refReconciliationKey.current = reconciliationKey;
+    void reconcileTransactionsAlertsAddresses(
+      userId.exportUserIdForChainwatch(),
+      chainwatchBaseUrl,
+      supportedChains,
+      accountsFilteredBySupportedChains,
+      refAccounts.current,
+    )
+      .then(() => {
+        if (refReconciliationKey.current === reconciliationKey) {
+          refAccounts.current = accountsFilteredBySupportedChains;
+        }
+      })
+      .catch(() => {
+        if (refReconciliationKey.current === reconciliationKey) {
+          refReconciliationKey.current = undefined;
+        }
+      });
   }, [
     featureTransactionsAlerts?.enabled,
     chainwatchBaseUrl,
