@@ -49,9 +49,9 @@ test.describe("Borrow cold start", () => {
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.expectBorrowEntryPointVisible();
 
-      await app.borrow.goAndWaitForBorrowToBeReady(async () => {
-        await app.portfolio.clickBorrowEntryPoint();
-      });
+      await app.borrow.goAndWaitForBorrowToBeReady(async () =>
+        app.portfolio.clickBorrowEntryPoint(),
+      );
 
       await app.borrow.verifyIntroModalVisible();
     },
