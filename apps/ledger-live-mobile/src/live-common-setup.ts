@@ -14,8 +14,14 @@ import { setCryptoCurrenciesStore, setFiatCurrenciesStore } from "@ledgerhq/cryp
 import {
   CRYPTO_CURRENCIES_REGISTRY,
   CRYPTO_CURRENCY_ALIASES,
+  getCryptoCurrencyById,
+  findCryptoCurrencyById,
+  findCryptoCurrencyByScheme,
+  listCryptoCurrencies,
+  hasCryptoCurrencyId,
 } from "@domain/entity-currency-crypto";
 import { FIAT_CURRENCIES_REGISTRY } from "@domain/entity-currency-fiat";
+import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import "./experimental";
 import logger, { ConsoleLogger } from "./logger";
 import BigNumber from "bignumber.js";
@@ -23,6 +29,13 @@ import BigNumber from "bignumber.js";
 // The domain registries are the runtime source of truth for currency data.
 setCryptoCurrenciesStore(Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES);
 setFiatCurrenciesStore(Object.values(FIAT_CURRENCIES_REGISTRY));
+setCurrenciesResolver({
+  getCryptoCurrencyById,
+  findCryptoCurrencyById,
+  findCryptoCurrencyByScheme,
+  listCryptoCurrencies,
+  hasCryptoCurrencyId,
+});
 
 registerAllCoins();
 

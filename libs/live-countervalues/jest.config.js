@@ -1,5 +1,6 @@
 module.exports = {
   globalSetup: "<rootDir>/jest-global-setup.js",
+  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup", "<rootDir>/jest-setup.ts"],
   transform: {
     "^.+\\.(ts|tsx)?$": [
       "@swc/jest",

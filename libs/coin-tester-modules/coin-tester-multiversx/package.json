@@ -68,6 +68,7 @@
     "msw": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",

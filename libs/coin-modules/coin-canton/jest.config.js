@@ -12,7 +12,7 @@ module.exports = {
     ],
   },
   passWithNoTests: true,
-  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
+  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup", "@ledgerhq/disable-network-setup"],
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.ts",

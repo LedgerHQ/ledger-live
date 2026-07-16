@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "../types";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import {
   emptyHistoryCache,

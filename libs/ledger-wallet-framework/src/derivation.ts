@@ -1,6 +1,6 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCurrenciesResolver } from "./currencies/resolver";
 import { getEnv } from "@ledgerhq/live-env";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "./types";
 import { DerivationMode } from "@ledgerhq/types-live";
 
 type ModeSpec = {
@@ -346,7 +346,9 @@ export const getDerivationScheme = ({
   };
   if (overridesDerivation) return overridesDerivation;
   const splitFrom = isUnsplitDerivationMode(derivationMode) && currency.forkedFrom;
-  const coinType = splitFrom ? getCryptoCurrencyById(splitFrom).coinType : "<coin_type>";
+  const coinType = splitFrom
+    ? getCurrenciesResolver().getCryptoCurrencyById(splitFrom).coinType
+    : "<coin_type>";
   const purpose = getPurposeDerivationMode(derivationMode);
   return `${purpose}'/${coinType}'/<account>'/<node>/<address>`;
 };
@@ -470,7 +472,9 @@ export const getSeedIdentifierDerivation = (
 ): string => {
   const unsplitFork = isUnsplitDerivationMode(derivationMode) ? currency.forkedFrom : null;
   const purpose = getPurposeDerivationMode(derivationMode);
-  const { coinType } = unsplitFork ? getCryptoCurrencyById(unsplitFork) : currency;
+  const { coinType } = unsplitFork
+    ? getCurrenciesResolver().getCryptoCurrencyById(unsplitFork)
+    : currency;
   const f = seedIdentifierPath(currency.id);
   return f({
     purpose,

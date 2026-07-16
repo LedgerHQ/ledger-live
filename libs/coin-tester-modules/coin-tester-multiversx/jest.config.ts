@@ -25,6 +25,7 @@ const config: Config = {
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   testMatch: ["**/?(*.)+(spec|test).[jt]s?(x)"],
   transformIgnorePatterns: [`node_modules/.pnpm/(?!(${esmDeps.join("|")}))`],
+  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
   reporters: ["default", ...(process.env.CI ? ["github-actions"] : [])],
 };
 

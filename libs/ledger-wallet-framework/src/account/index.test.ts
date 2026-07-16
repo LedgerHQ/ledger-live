@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
@@ -11,11 +11,7 @@ import {
 import { genAccount } from "../mocks/account";
 import "../test-helpers/staticTime";
 import tokenData from "./__fixtures__/ethereum-erc20-0x_project.json";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-
-// Setup mock store for unit tests (automatically set as global store)
-setupMockCryptoAssetsStore();
+import type { CryptoCurrency, TokenCurrency } from "../types";
 
 // oxlint-disable-next-line typescript/consistent-type-assertions
 const TOKEN = tokenData as TokenCurrency;
@@ -23,7 +19,7 @@ const TOKEN = tokenData as TokenCurrency;
 describe("groupAccountOperationsByDay", () => {
   test("basic", () => {
     const account = genAccount("seed_7", {
-      currency: getCryptoCurrencyById("zcash"),
+      currency: getCryptoCurrencyById("zcash") as unknown as CryptoCurrency,
       operationsSize: 20,
     });
     const res1 = groupAccountOperationsByDay(account, {
@@ -112,7 +108,7 @@ describe("groupAccountOperationsByDay", () => {
   });
   test("provide at least the requested count even if some op yield nothing", () => {
     const ethAccount = genAccount("eth_1", {
-      currency: getCryptoCurrencyById("ethereum"),
+      currency: getCryptoCurrencyById("ethereum") as unknown as CryptoCurrency,
       operationsSize: 300,
     });
     ethAccount.operations = Array(50)
@@ -152,7 +148,7 @@ test("shortAddressPreview", () => {
   );
 });
 test("accountWithMandatoryTokens ethereum", () => {
-  const currency = getCryptoCurrencyById("ethereum");
+  const currency = getCryptoCurrencyById("ethereum") as unknown as CryptoCurrency;
   // Create 5 mock tokens for the test
   const mockTokens: TokenCurrency[] = Array(5)
     .fill(null)
