@@ -40,7 +40,7 @@ const tooLowAmountForQuoteSwaps: TooLowAmountSwap[] = [
   {
     swap: new Swap(TokenAccount.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "0.000001"),
     xrayTicket: "B2CQA-3242",
-    errorMessage: "No quotes to show, yet",
+    errorMessage: "Enter a higher amount and try again.",
     quotesVisible: false,
     errorDisplay: "quotesPlaceholder",
   },
