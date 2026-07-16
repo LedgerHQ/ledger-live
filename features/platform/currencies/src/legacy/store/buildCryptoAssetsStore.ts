@@ -19,12 +19,40 @@ export interface BuildCryptoAssetsStoreConfig {
 }
 
 /**
- * Builds a {@link CryptoAssetsStore} over the `@domain/api-currency-token` RTK-Query
- * api — the runtime reimplementation of the legacy `createRtkCryptoAssetsStore`.
+ * Builds a {@link CryptoAssetsStore} bound to an **existing** Redux store, over the
+ * `@domain/api-currency-token` CAL RTK-Query api.
  *
- * Each method dispatches the matching endpoint's `initiate` thunk, remaps RTK-Query
- * errors to the local error taxonomy, and returns the cached data. Apps inject the
- * result through the legacy `setCryptoAssetsStore` singleton.
+ * Use this from an application composition root that already owns a configured store:
+ * pass that store's `dispatch`. The CAL api's reducer and middleware must be
+ * registered in the store, and its base URL + client version supplied through the
+ * store's thunk `extraArgument` (see `calApiExtra`). Each method dispatches the
+ * matching endpoint's `initiate` thunk, maps RTK-Query errors to the local error
+ * taxonomy, and resolves with the cached data. Apps inject the result through the
+ * legacy `setCryptoAssetsStore` singleton.
+ *
+ * For runtimes that do **not** own a Redux store (CLI scripts, monitoring, tests),
+ * use {@link buildStandaloneCryptoAssetsStore}, which configures its own store from
+ * the CAL configuration.
+ *
+ * @param config.dispatch
+ * The host store's `dispatch`. Its reducer must include `cryptoAssetsApi.reducer`, its
+ * middleware `cryptoAssetsApi.middleware`, and its thunk `extraArgument` the CAL
+ * configuration (`calApiExtra`).
+ *
+ * @param config.api
+ * The CAL token api. Defaults to the shared `cryptoAssetsApi`; override only to inject
+ * a mock in tests.
+ *
+ * @returns
+ * A {@link CryptoAssetsStore} — async `findTokenById`, `findTokenByAddressInCurrency`,
+ * and `getTokensSyncHash`.
+ *
+ * @example
+ * ```ts
+ * // Inside an app that already configured its store:
+ * const store = buildCryptoAssetsStore({ dispatch: reduxStore.dispatch });
+ * const token = await store.findTokenById("ethereum/erc20/usd__coin");
+ * ```
  */
 export function buildCryptoAssetsStore({
   dispatch,
