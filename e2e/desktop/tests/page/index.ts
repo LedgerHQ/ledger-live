@@ -5,6 +5,7 @@ import { AddAccountModal } from "./modal/add.account.modal";
 import { AssetDrawer } from "./drawer/asset.drawer";
 import { AssetDetailPage } from "./assetDetail.page";
 import { AssetPage } from "./asset.page";
+import { BorrowPage } from "./borrow.page";
 import { BuyAndSellPage } from "./buyAndSell.page";
 import { DelegateDrawer } from "./drawer/delegate.drawer";
 import { DelegateModal } from "./modal/delegate.modal";
@@ -58,6 +59,7 @@ export class Application extends PageHolder {
   public assetDrawer = new AssetDrawer(this.page);
   public assetDetail = new AssetDetailPage(this.page);
   public assetPage = new AssetPage(this.page);
+  public borrow = new BorrowPage(this.page, this.electronApp);
   public buyAndSell = new BuyAndSellPage(this.page, this.electronApp);
   public delegate = new DelegateModal(this.page);
   public evmDelegate = new EvmDelegateModal(this.page);
