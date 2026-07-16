@@ -4,7 +4,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { encodeTokenAccountId } from "./accountId";
 import { emptyHistoryCache } from "./balanceHistoryCache";
 import type { Account, AccountLike, AccountLikeArray, TokenAccount } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency, Unit } from "../types";
 
 // By convention, a main account is the top level account
 // - in case of an Account is the account itself

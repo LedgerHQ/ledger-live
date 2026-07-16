@@ -9,7 +9,8 @@ import type {
   TokenAccountRaw,
   TransactionCommon,
 } from "@ledgerhq/types-live";
-import { findCryptoCurrencyById, getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCurrenciesResolver } from "../currencies/resolver";
+import { getCryptoAssetsStore } from "../cryptoAssetsStore";
 import { emptyHistoryCache, generateHistoryFromOperations } from "../account/balanceHistoryCache";
 import {
   compressBalanceHistoryCache,
@@ -23,7 +24,6 @@ import {
   toOperationRaw,
   toSwapOperationRaw,
 } from "./operation";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import invariant from "invariant";
 
 export type FromFamiliyRaw = {
@@ -86,9 +86,10 @@ export async function fromAccountRaw(
   const convertOperation = (op: OperationRaw) =>
     fromOperationRaw(op, id, subAccounts as TokenAccount[], fromRaw?.fromOperationExtraRaw);
 
-  const currency = getCryptoCurrencyById(currencyId);
+  const currency = getCurrenciesResolver().getCryptoCurrencyById(currencyId);
   const feesCurrency = feesCurrencyId
-    ? findCryptoCurrencyById(feesCurrencyId) || (await store.findTokenById(feesCurrencyId))
+    ? getCurrenciesResolver().findCryptoCurrencyById(feesCurrencyId) ||
+      (await store.findTokenById(feesCurrencyId))
     : undefined;
 
   const res: Account = {

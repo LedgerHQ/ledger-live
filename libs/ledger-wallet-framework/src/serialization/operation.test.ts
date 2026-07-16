@@ -1,12 +1,13 @@
 import BigNumber from "bignumber.js";
 import Prando from "prando";
 import { OperationType } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import type { CryptoCurrency } from "../types";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genOperation } from "../mocks/account";
 import { toOperationRaw, fromOperationRaw } from "./operation";
 
-const ethereum = getCryptoCurrencyById("ethereum");
-const stellar = getCryptoCurrencyById("stellar");
+const ethereum = getCryptoCurrencyById("ethereum") as unknown as CryptoCurrency;
+const stellar = getCryptoCurrencyById("stellar") as unknown as CryptoCurrency;
 
 describe("Operation.ts", () => {
   describe("convert from/to Operation", () => {

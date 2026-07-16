@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "../../types";
 import type {
   Account,
   AccountLike,
@@ -8,7 +8,7 @@ import type {
   Operation,
   ProtoNFT,
 } from "@ledgerhq/types-live";
-import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
+import { getCurrenciesResolver } from "../../currencies/resolver";
 import Prando from "prando";
 import { inferSubOperations } from "../../serialization";
 import { genAddress, genHex } from "../helpers";
@@ -22,8 +22,6 @@ import {
   NFTs_SOLANA,
   NFTs_OPTIMISM,
 } from "./nftsSamples";
-
-const defaultEthCryptoFamily = cryptocurrenciesById["ethereum"];
 
 const MAX_SUPPLY = 1000;
 
@@ -48,22 +46,23 @@ const getNFTsForCurrency = (currencyId: string, useStaxNFTs?: boolean) => {
 
 export function createFixtureNFT(
   accountId: string,
-  currency: CryptoCurrency = defaultEthCryptoFamily,
+  currency?: CryptoCurrency,
   useStaxNFTs?: boolean,
 ): ProtoNFT {
-  const nfts = getNFTsForCurrency(currency.id, useStaxNFTs);
+  const resolvedCurrency = currency ?? getCurrenciesResolver().getCryptoCurrencyById("ethereum");
+  const nfts = getNFTsForCurrency(resolvedCurrency.id, useStaxNFTs);
 
   const index = Math.floor(Math.random() * nfts.length);
   const tokenId = useStaxNFTs ? String(13) : String(Math.floor(Math.random() * MAX_SUPPLY) + 1);
   const nft = nfts[index];
 
   return {
-    id: encodeNftId(accountId, nft.collection.contract, tokenId, currency.id),
+    id: encodeNftId(accountId, nft.collection.contract, tokenId, resolvedCurrency.id),
     tokenId: tokenId,
     amount: new BigNumber(0),
     contract: nft.collection.contract,
     standard: nft.collection.standard as NFTStandard,
-    currencyId: currency.id,
+    currencyId: resolvedCurrency.id,
     metadata: useStaxNFTs
       ? ({ staxImage: "https://example.com/image.png" } as NFTMetadata)
       : undefined,

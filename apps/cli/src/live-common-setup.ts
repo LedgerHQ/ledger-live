@@ -10,6 +10,7 @@ import {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/live-dmk-speculos";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 const NON_SPECULOS_DEVICE_ERROR =
   "This CLI only supports Speculos devices (set SPECULOS_API_PORT or SPECULOS_APDU_PORT). " +
@@ -72,4 +73,4 @@ export function closeAllDevices() {
 }
 
 // Setup CAL client store for CLI (automatically set as global store)
-setupCalClientStore();
+setFrameworkCryptoAssetsStore(setupCalClientStore());

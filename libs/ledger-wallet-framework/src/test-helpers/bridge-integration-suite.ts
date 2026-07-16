@@ -21,8 +21,8 @@ import type {
   CryptoCurrencyIds,
   AccountTestData,
 } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import type { CryptoCurrency } from "../types";
+import { getCurrenciesResolver } from "../currencies/resolver";
 import {
   decodeAccountId,
   encodeAccountId,
@@ -101,7 +101,7 @@ export async function testBridge<T extends TransactionCommon, U extends Transact
   await Promise.all(
     Object.keys(currencies).map(async currencyId => {
       const currencyData = currencies[currencyId];
-      const currency = getCryptoCurrencyById(currencyId);
+      const currency = getCurrenciesResolver().getCryptoCurrencyById(currencyId);
       currenciesRelated.push({
         currencyData,
         currency,

@@ -1,7 +1,7 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import axios from "axios";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "../types";
 import { getEnv } from "@ledgerhq/live-env";
 
 const cache = makeLRUCache(fetchSanctionedAddresses, () => "all_sanctioned_addresses", minutes(15));

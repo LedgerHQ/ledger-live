@@ -1,7 +1,7 @@
 import Prando from "prando";
 import { BigNumber } from "bignumber.js";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/index";
+import type { CryptoCurrency, TokenCurrency } from "../types";
+import { getCurrenciesResolver } from "../currencies/resolver";
 import { getOperationAmountNumber } from "../operation";
 import { isAccountEmpty, emptyHistoryCache } from "../account";
 import { generateHistoryFromOperations } from "../account/balanceHistoryCache";
@@ -177,8 +177,6 @@ const currencyIdApproxMarketPrice: Record<string, number> = {
   bsc: 5.0e-14,
   optimism: 2.0e-15,
 };
-// mock only use subset of cryptocurrencies to not affect tests when adding coins
-const currencies = listCryptoCurrencies().filter(c => currencyIdApproxMarketPrice[c.id]);
 // TODO fix the mock to never generate negative balance...
 
 /**
@@ -301,7 +299,14 @@ export function genAccount(
   genAccountEnhanceOperations?: GenAccountEnhanceOperations,
 ): Account {
   const rng = new Prando(id);
-  const currency = opts.currency || rng.nextArrayItem(currencies);
+  // mock only uses subset of cryptocurrencies to not affect tests when adding coins
+  const currency =
+    opts.currency ||
+    rng.nextArrayItem(
+      getCurrenciesResolver()
+        .listCryptoCurrencies()
+        .filter(c => currencyIdApproxMarketPrice[c.id]),
+    );
   const operationsSize = opts.operationsSize ?? rng.nextInt(1, 200);
   const swapHistorySize = opts.swapHistorySize || 0;
   const withNft = opts.withNft ?? false;
