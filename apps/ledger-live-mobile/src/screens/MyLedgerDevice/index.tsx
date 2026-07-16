@@ -55,12 +55,10 @@ const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   useEffect(() => {
     // refresh the manager if an USB device gets plugged while we're on a bluetooth connection
-    if (lastConnectedDevice?.deviceId.startsWith("usb|") && !device.deviceId.startsWith("usb|")) {
-      navigation.replace(ScreenName.MyLedgerChooseDevice, {
-        device: lastConnectedDevice,
-      });
+    if (lastConnectedDevice?.wired && !device.wired) {
+      navigation.replace(ScreenName.MyLedgerChooseDevice, { device: lastConnectedDevice });
     }
-  }, [device.deviceId, lastConnectedDevice, navigation]);
+  }, [device.wired, lastConnectedDevice, navigation]);
 
   const refreshDeviceInfo = useCallback(() => {
     firstValueFrom(withDevice(deviceId)(transport => from(getDeviceInfo(transport)))).then(

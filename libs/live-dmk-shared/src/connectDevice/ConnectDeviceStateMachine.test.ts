@@ -123,6 +123,7 @@ type SetupTestOptions = {
   readonly mapConnectionError?: ConnectDeviceMapConnectionError;
   readonly matchDiscoveredDevices?: ConnectDeviceMatchDiscoveredDevices;
   readonly onConnected?: jest.Mock;
+  readonly buildCompatDeviceId?: (device: ConnectedDevice) => string;
 };
 
 const defaultMatchDiscoveredDevices: ConnectDeviceMatchDiscoveredDevices = (
@@ -157,6 +158,7 @@ const setupTest = (options: SetupTestOptions = {}) => {
     mapConnectionError = jest.fn(error => ({ type: BaseConnectionErrorTypes.Unknown, error })),
     matchDiscoveredDevices = defaultMatchDiscoveredDevices,
     onConnected = jest.fn(),
+    buildCompatDeviceId,
   } = options;
   const discoveredDevices = new Subject<Array<DiscoveredDevice>>();
   const errors = new Subject<UnknownDiscoveryError>();
@@ -190,6 +192,7 @@ const setupTest = (options: SetupTestOptions = {}) => {
     mapConnectionError,
     matchDiscoveredDevices,
     onConnected,
+    ...(buildCompatDeviceId ? { buildCompatDeviceId } : {}),
   });
 
   const discoverDevices = (devices: Array<DiscoveredDevice>) => discoveredDevices.next(devices);
@@ -478,6 +481,34 @@ describe("ConnectDeviceStateMachine", () => {
         compatDeviceName: connectedDevice.name,
         compatDeviceWired: false,
       });
+    });
+
+    it("uses the configured compat device id builder for the connected device result", async () => {
+      // Arrange
+      const connectedDevice = makeConnectedDevice({ id: "usb_1002", type: "USB" });
+      const buildCompatDeviceId = jest.fn(() => "custom-compat-id");
+      const dmk = {
+        connect: jest.fn().mockResolvedValue("session-id"),
+        getConnectedDevice: jest.fn(() => connectedDevice),
+      } as unknown as DeviceManagementKit;
+      const { discoverDevices, machine, onConnected } = setupTest({ dmk, buildCompatDeviceId });
+
+      // Act
+      machine.start();
+      discoverDevices([makeDiscoveredDeviceFromKnownDevice(knownDeviceA)]);
+
+      // Wait for the connection to complete
+      await Promise.resolve();
+      await Promise.resolve();
+
+      // Assert
+      expect(buildCompatDeviceId).toHaveBeenCalledWith(connectedDevice);
+      expect(onConnected).toHaveBeenCalledWith(
+        expect.objectContaining({
+          compatDeviceId: "custom-compat-id",
+          compatDeviceWired: true,
+        }),
+      );
     });
 
     it("connects to the selected available displayed device", () => {
