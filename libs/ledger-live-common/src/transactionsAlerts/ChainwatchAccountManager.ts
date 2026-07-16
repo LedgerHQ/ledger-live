@@ -13,10 +13,10 @@ class ChainwatchAccountManager {
   network: ChainwatchNetwork;
   suffixes: string[];
 
-  constructor(chainwatchBaseUrl: string, userId: string, chainwatchNetwork: ChainwatchNetwork) {
+  constructor(chainwatchBaseUrl: string, userId: string, network: ChainwatchNetwork) {
     this.chainwatchBaseUrl = chainwatchBaseUrl;
     this.userId = userId;
-    this.network = chainwatchNetwork;
+    this.network = network;
     this.suffixes = [];
   }
 
@@ -44,11 +44,15 @@ class ChainwatchAccountManager {
   }
 
   async registerNewChainwatchAccount() {
-    const { data } = await network({
-      method: "PUT",
-      url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
-    });
-    return data;
+    try {
+      const { data } = await network({
+        method: "PUT",
+        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
+      });
+      return data;
+    } catch {
+      return;
+    }
   }
 
   getAccountAddress(account: Account) {
@@ -64,28 +68,40 @@ class ChainwatchAccountManager {
   }
 
   async registerNewAccountsAddresses(accountsToRegister: Account[]) {
-    const addresses = accountsToRegister
-      .filter(account => this.getAccountAddress(account) && !this.accountAlreadySubscribed(account))
-      .map(account => this.getAccountAddress(account));
-    if (addresses.length > 0) {
-      await network({
-        method: "PUT",
-        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
-        data: addresses,
-      });
+    try {
+      const addresses = accountsToRegister
+        .filter(
+          account => this.getAccountAddress(account) && !this.accountAlreadySubscribed(account),
+        )
+        .map(account => this.getAccountAddress(account));
+      if (addresses.length > 0) {
+        await network({
+          method: "PUT",
+          url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
+          data: addresses,
+        });
+      }
+    } catch {
+      return;
     }
   }
 
   async removeAccountsAddresses(accountsToRemove: Account[]) {
-    const addresses = accountsToRemove
-      .filter(account => this.getAccountAddress(account) && this.accountAlreadySubscribed(account))
-      .map(account => this.getAccountAddress(account));
-    if (addresses.length > 0) {
-      await network({
-        method: "DELETE",
-        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
-        data: addresses,
-      });
+    try {
+      const addresses = accountsToRemove
+        .filter(
+          account => this.getAccountAddress(account) && this.accountAlreadySubscribed(account),
+        )
+        .map(account => this.getAccountAddress(account));
+      if (addresses.length > 0) {
+        await network({
+          method: "DELETE",
+          url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
+          data: addresses,
+        });
+      }
+    } catch {
+      return;
     }
   }
 
