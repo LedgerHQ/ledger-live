@@ -75,14 +75,15 @@
     "msw": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "rimraf": "^5",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
-    "typescript": "catalog:",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "oxfmt": "catalog:"
+    "rimraf": "^5",
+    "typescript": "catalog:"
   }
 }

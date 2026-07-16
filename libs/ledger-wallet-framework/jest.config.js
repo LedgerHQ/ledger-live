@@ -15,8 +15,11 @@ module.exports = {
     ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
-  setupFilesAfterEnv: ["<rootDir>/src/setup.ts"],
+  setupFilesAfterEnv: ["<rootDir>/src/setup.ts", "@ledgerhq/wallet-framework-test-setup"],
   testEnvironment: "node",
+  moduleNameMapper: {
+    "^@ledgerhq/ledger-wallet-framework/(.*)$": "<rootDir>/src/$1",
+  },
   testPathIgnorePatterns: ["lib/", "lib-es/", "\\.integration\\.test\\.ts$"],
   transform: {
     "^.+\\.(t|j)sx?$": [
