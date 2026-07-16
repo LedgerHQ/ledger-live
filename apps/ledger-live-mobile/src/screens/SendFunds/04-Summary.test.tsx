@@ -1,6 +1,12 @@
 import React from "react";
 import { View, ScrollView } from "react-native";
 import { BigNumber } from "bignumber.js";
+import {
+  FeeNotLoaded,
+  GasLessThanEstimate,
+  NotEnoughBalance,
+  NotEnoughGas,
+} from "@ledgerhq/errors";
 import { render, screen } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -130,5 +136,76 @@ describe("SendSummary — custom send flow", () => {
     );
 
     expect(screen.getByTestId("enabled-summary-continue-button")).toBeOnTheScreen();
+  });
+});
+
+describe("SendSummary — status errors", () => {
+  const mockNavigation = makeNavigation();
+  const mockRoute = makeRoute();
+
+  beforeEach(() => {
+    mockGetCustomSendFlow.mockReturnValue(null);
+    mockUseAccountScreen.mockReturnValue({ account: ALEO_ACCOUNT_1, parentAccount: null });
+  });
+
+  function mockStatusWithErrors(errors: Record<string, Error>) {
+    mockUseBridgeTransaction.mockReturnValue({
+      transaction: { family: "aleo", recipient: "aleo1abc", useAllAmount: false },
+      setTransaction: jest.fn(),
+      status: { ...mockStatus, errors },
+      bridgePending: false,
+      bridgeError: null,
+    } as never);
+  }
+
+  it("disables Continue and shows the fee message when gas estimation failed (FeeNotLoaded)", () => {
+    // A FeeNotLoaded error on gasLimit must block the CTA and be visible to the user.
+    mockStatusWithErrors({ gasLimit: new FeeNotLoaded() });
+
+    render(<SendSummary navigation={mockNavigation as never} route={mockRoute as never} />);
+
+    expect(screen.getByTestId("disabled-summary-continue-button")).toBeOnTheScreen();
+    expect(screen.getByText("Could not load fee rates")).toBeOnTheScreen();
+  });
+
+  it("disables Continue and shows the balance message when funds are insufficient", () => {
+    mockStatusWithErrors({ amount: new NotEnoughBalance() });
+
+    render(<SendSummary navigation={mockNavigation as never} route={mockRoute as never} />);
+
+    expect(screen.getByTestId("disabled-summary-continue-button")).toBeOnTheScreen();
+    expect(screen.getByText("Sorry, insufficient funds")).toBeOnTheScreen();
+  });
+
+  it("keeps Continue enabled and shows no error message when there are no errors", () => {
+    mockStatusWithErrors({});
+
+    render(<SendSummary navigation={mockNavigation as never} route={mockRoute as never} />);
+
+    expect(screen.getByTestId("enabled-summary-continue-button")).toBeOnTheScreen();
+    expect(screen.queryByText("Could not load fee rates")).not.toBeOnTheScreen();
+  });
+
+  it("disables Continue when the native balance can't cover gas (NotEnoughGas on gasPrice)", () => {
+    mockStatusWithErrors({ gasPrice: new NotEnoughGas() });
+
+    render(<SendSummary navigation={mockNavigation as never} route={mockRoute as never} />);
+
+    expect(screen.getByTestId("disabled-summary-continue-button")).toBeOnTheScreen();
+  });
+
+  it("disables Continue when the blocking error is not the first key (ordering slip-through)", () => {
+    const errors = { gasLimit: new GasLessThanEstimate(), gasPrice: new NotEnoughGas() };
+
+    const firstError = errors[Object.keys(errors)[0] as keyof typeof errors];
+    expect(firstError instanceof NotEnoughGas || firstError instanceof NotEnoughBalance).toBe(
+      false,
+    );
+
+    mockStatusWithErrors(errors);
+
+    render(<SendSummary navigation={mockNavigation as never} route={mockRoute as never} />);
+
+    expect(screen.getByTestId("disabled-summary-continue-button")).toBeOnTheScreen();
   });
 });
