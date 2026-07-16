@@ -26,7 +26,7 @@ export async function validateIntent(
   const warnings: Record<string, Error> = {};
 
   const estimatedFees =
-    customFees?.value !== undefined ? customFees.value : await estimateFees(intent);
+    typeof customFees?.value === "bigint" ? customFees.value : await estimateFees(intent);
 
   if (!intent.recipient) {
     errors.recipient = new RecipientRequired();
@@ -76,5 +76,6 @@ function findAssetBalance(asset: AssetInfo, balances: Balance[]): bigint {
       "assetReference" in b.asset &&
       b.asset.assetReference === asset.assetReference,
   );
-  return (match?.value ?? 0n) - (match?.locked ?? 0n);
+  const available = (match?.value ?? 0n) - (match?.locked ?? 0n);
+  return available > 0n ? available : 0n;
 }

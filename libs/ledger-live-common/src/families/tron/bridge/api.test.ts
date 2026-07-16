@@ -5,7 +5,7 @@ import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { getAssetFromToken, getTokenFromAsset, computeIntentType } from "./api";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
-jest.mock("@ledgerhq/cryptoassets/state");
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
 const trc20Token = {
   id: "tron/trc20/tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
@@ -46,11 +46,15 @@ describe("tron bridge", () => {
     const mockFindTokenByAddressInCurrency = jest.fn() as jest.MockedFunction<
       CryptoAssetsStore["findTokenByAddressInCurrency"]
     >;
+    const mockFindTokenById = jest.fn() as jest.MockedFunction<CryptoAssetsStore["findTokenById"]>;
 
     (
-      jest.requireMock("@ledgerhq/cryptoassets/state") as { getCryptoAssetsStore: jest.Mock }
+      jest.requireMock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore") as {
+        getCryptoAssetsStore: jest.Mock;
+      }
     ).getCryptoAssetsStore.mockReturnValue({
       findTokenByAddressInCurrency: mockFindTokenByAddressInCurrency,
+      findTokenById: mockFindTokenById,
     });
 
     afterEach(() => {
@@ -91,13 +95,14 @@ describe("tron bridge", () => {
       expect(result).toBe(trc20Token);
     });
 
-    it("should resolve a TRC10 token by its asset id", async () => {
-      mockFindTokenByAddressInCurrency.mockResolvedValue(trc10Token);
+    it("should resolve a TRC10 token by its id (mirrors the legacy synchronization lookup)", async () => {
+      mockFindTokenById.mockResolvedValue(trc10Token);
       const asset: AssetInfo = { type: "trc10", assetReference: "1002000" };
 
       const result = await getTokenFromAsset(tron, asset);
 
-      expect(mockFindTokenByAddressInCurrency).toHaveBeenCalledWith("1002000", tron.id);
+      expect(mockFindTokenById).toHaveBeenCalledWith(`${tron.id}/trc10/1002000`);
+      expect(mockFindTokenByAddressInCurrency).not.toHaveBeenCalled();
       expect(result).toBe(trc10Token);
     });
 

@@ -27,6 +27,19 @@ describe("broadcast function", () => {
     expect(result).toBe("mockedTxID");
   });
 
+  it("encodes multi-byte varint lengths for raw_data >= 128 bytes", async () => {
+    mockBroadcastHexTron.mockResolvedValue("mockedTxID");
+
+    const rawTx = "ab".repeat(130); // 130 bytes → varint 0x82 0x01
+    const signature = "cd".repeat(4);
+    const lengthPrefix = rawTx.length.toString(16).padStart(4, "0"); // "0104"
+
+    await broadcast(`${lengthPrefix}${rawTx}${signature}`);
+
+    // field 1 (raw_data): 0x0a + varint(130)=0x8201 ; field 2 (signature): 0x12 + varint(4)=0x04
+    expect(mockBroadcastHexTron).toHaveBeenCalledWith(`0a8201${rawTx}1204${signature}`);
+  });
+
   it("should broadcast a TxObject successfully", async () => {
     const txObject = {
       txID: "mockedTxID",

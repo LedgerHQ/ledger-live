@@ -9,7 +9,7 @@ export function fromTrongridTxInfoToOperation(
   userAddress: string,
 ): Operation {
   const type = inferOperationType(trongridTxInfo, userAddress);
-  const value = fromBigNumberToBigInt<bigint>(trongridTxInfo.value, BigInt(0));
+  const value = fromBigNumberToBigInt(trongridTxInfo.value, BigInt(0));
   const asset = inferAssetInfo(trongridTxInfo, userAddress);
 
   const operation: Operation = {
@@ -21,7 +21,7 @@ export function fromTrongridTxInfoToOperation(
         hash: block.hash,
         time: block.time || new Date(0),
       },
-      fees: fromBigNumberToBigInt<bigint>(trongridTxInfo.fee, BigInt(0)),
+      fees: fromBigNumberToBigInt(trongridTxInfo.fee, BigInt(0)),
       feesPayer: trongridTxInfo.feesPayer ?? trongridTxInfo.from,
       date: trongridTxInfo.date,
       failed: trongridTxInfo.hasFailed,

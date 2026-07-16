@@ -92,19 +92,18 @@ async function listOperations(
   const effectiveLimit = limit ?? MAX_TRONGRID_LIMIT;
   const effectiveOrder = order ?? "asc";
 
+  let minTimestamp = defaultFetchParams.minTimestamp;
+  if (minHeight > 0) {
+    // getBlock rejects when minHeight points just past the chain tip (block not yet
+    // produced); fall back to the default bound instead of failing the whole listing.
+    const block = await getBlockNetwork(minHeight).catch(() => null);
+    minTimestamp = block?.time?.getTime() ?? defaultFetchParams.minTimestamp;
+  }
+
   return listOperationsLogic(address, {
     limit: effectiveLimit,
-    minTimestamp: await resolveMinTimestamp(minHeight),
+    minTimestamp,
     order: effectiveOrder,
     cursor,
   });
-}
-
-// `minTimestamp` is only a pagination lower bound. When `minHeight` points just
-// past the chain tip the block does not exist yet and getBlock rejects; fall back
-// to the default bound rather than failing the whole operations listing.
-async function resolveMinTimestamp(minHeight: number): Promise<number> {
-  if (minHeight <= 0) return defaultFetchParams.minTimestamp;
-  const block = await getBlockNetwork(minHeight).catch(() => null);
-  return block?.time?.getTime() ?? defaultFetchParams.minTimestamp;
 }

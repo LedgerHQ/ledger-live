@@ -1,5 +1,5 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -10,9 +10,13 @@ export async function getTokenFromAsset(
   if (asset.type === "native" || !("assetReference" in asset) || !asset.assetReference) {
     return undefined;
   }
-  // Tron indexes TRC10 by its numeric asset id and TRC20 by its contract address;
-  // in both cases the value is carried in `contractAddress` on the token currency.
-  return getCryptoAssetsStore().findTokenByAddressInCurrency(asset.assetReference, currency.id);
+  const store = getCryptoAssetsStore();
+  // Mirror the legacy synchronization lookup: TRC10 tokens are keyed by their numeric
+  // asset id (`<currency>/trc10/<id>`), TRC20 tokens by their contract address.
+  if (asset.type === "trc10") {
+    return store.findTokenById(`${currency.id}/trc10/${asset.assetReference}`);
+  }
+  return store.findTokenByAddressInCurrency(asset.assetReference, currency.id);
 }
 
 export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInfo {
