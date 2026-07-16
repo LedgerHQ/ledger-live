@@ -128,6 +128,7 @@ function buildBaseParams(overrides?: {
     bridgeError: null as Error | null,
     uiConfig: { hasFeePresets: false } as never,
     transactionActions: { updateTransaction: mockUpdateTransaction } as never,
+    onSelectCustomFees: jest.fn(),
   };
 }
 
@@ -347,6 +348,36 @@ describe("useCoinControlScreenViewModel", () => {
     const { result } = renderHook(() => useCoinControlScreenViewModel(params));
 
     expect(result.current.amountError).toBeUndefined();
+  });
+
+  it("should set hasAmount to true when the transaction amount is greater than zero", () => {
+    const params = buildBaseParams({
+      transaction: { amount: new BigNumber(1000), useAllAmount: false },
+    });
+
+    const { result } = renderHook(() => useCoinControlScreenViewModel(params));
+
+    expect(result.current.hasAmount).toBe(true);
+  });
+
+  it("should set hasAmount to false when the transaction amount is zero and not using all amount", () => {
+    const params = buildBaseParams({
+      transaction: { amount: new BigNumber(0), useAllAmount: false },
+    });
+
+    const { result } = renderHook(() => useCoinControlScreenViewModel(params));
+
+    expect(result.current.hasAmount).toBe(false);
+  });
+
+  it("should set hasAmount to true when useAllAmount is enabled even with a zero amount", () => {
+    const params = buildBaseParams({
+      transaction: { amount: new BigNumber(0), useAllAmount: true },
+    });
+
+    const { result } = renderHook(() => useCoinControlScreenViewModel(params));
+
+    expect(result.current.hasAmount).toBe(true);
   });
 
   it("should open the localized coin control support URL when learn more is pressed", () => {
