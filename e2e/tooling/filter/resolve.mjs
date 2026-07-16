@@ -5,9 +5,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { joinFilter, splitFilter } from "./escaping.mjs";
+
 const currentFile = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(currentFile);
-const repoRoot = path.resolve(currentDir, "..");
+const repoRoot = path.resolve(currentDir, "../../..");
 const genericCoinFrameworkFamiliesPath = path.join(
   repoRoot,
   "libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json",
@@ -25,17 +27,6 @@ function readEnabledGenericCoinFrameworkFamilies() {
   return Object.entries(familyFlags)
     .filter(([, isEnabled]) => isEnabled)
     .map(([family]) => family);
-}
-
-function splitFilter(input) {
-  return input
-    .split(/[|,]/)
-    .map(part => part.trim())
-    .filter(Boolean);
-}
-
-function joinFilterParts(parts) {
-  return [...new Set(parts)].join("|");
 }
 
 export function resolveBaseFilter(
@@ -59,7 +50,7 @@ export function resolveBaseFilter(
   }
 
   return {
-    filter: joinFilterParts(resolvedParts),
+    filter: joinFilter(resolvedParts),
     expandedTags: expandedGenericCoinFramework ? genericCoinFrameworkTags : [],
   };
 }
