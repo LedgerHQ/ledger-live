@@ -50,6 +50,7 @@ export const reconcileTransactionsAlertsAddresses = async (
   accounts: Account[],
   previousAccounts: Account[],
 ) => {
+  // Chainwatch subscriptions follow addresses, independently of local account ids.
   const accountsByAddress = new Map(
     accounts.map(account => [getAccountAddressKey(account), account]),
   );

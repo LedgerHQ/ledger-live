@@ -51,6 +51,7 @@ const TransactionsAlerts = () => {
 
     if (!featureTransactionsAlerts?.enabled || !notifications.transactionsAlertsCategory) return;
 
+    // Ignore balance-only syncs while allowing failed reconciliations to retry.
     const reconciliationKey = JSON.stringify({
       accounts: accountsFilteredBySupportedChains
         .map(account => `${account.currency.id}:${account.freshAddress.toLowerCase()}`)
