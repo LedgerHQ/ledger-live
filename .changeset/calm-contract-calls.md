@@ -5,6 +5,7 @@
 "@ledgerhq/coin-aptos": patch
 "@ledgerhq/coin-canton": patch
 "@ledgerhq/coin-cardano": patch
+"@ledgerhq/coin-celo": patch
 "@ledgerhq/coin-concordium": patch
 "@ledgerhq/coin-filecoin": patch
 "@ledgerhq/coin-hedera": patch

@@ -89,7 +89,8 @@ describe("parseCallParams", () => {
   });
 
   it.each([
-    [],
+    // wrapped so Jest passes the empty array as the single `params` arg (covers the array-rejection path)
+    [[]],
     { data: "0x1234" },
     { to: "0x0000000000000000000000000000000000000001" },
     {
