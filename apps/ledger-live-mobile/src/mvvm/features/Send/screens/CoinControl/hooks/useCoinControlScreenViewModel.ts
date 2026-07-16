@@ -79,7 +79,6 @@ export function useCoinControlScreenViewModel({
       reviewCta: t("send.newSendFlow.reviewCta"),
       getCtaLabel: (currency: string) => t("send.newSendFlow.getCta", { currency }),
       strategyLabel: t("send.newSendFlow.coinControl.strategy"),
-      learnMoreLabel: t("send.newSendFlow.coinControl.learnMore"),
       coinToSendLabel: t("send.newSendFlow.coinControl.coinToSend"),
       changeToReturnLabel: t("send.newSendFlow.coinControl.changeToReturn"),
       enterAmountPlaceholder: t("send.newSendFlow.coinControl.enterAmount"),

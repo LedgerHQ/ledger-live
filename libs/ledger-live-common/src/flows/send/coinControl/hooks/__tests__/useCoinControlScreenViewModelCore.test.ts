@@ -102,7 +102,6 @@ const mockLabels = {
   reviewCta: "Review",
   getCtaLabel: (currency: string) => `Get ${currency}`,
   strategyLabel: "Strategy",
-  learnMoreLabel: "Learn more",
   coinToSendLabel: "Coin to send",
   changeToReturnLabel: "Change to return",
   enterAmountPlaceholder: "Enter amount",
@@ -254,7 +253,6 @@ describe("useCoinControlScreenViewModelCore", () => {
       amountError: undefined,
       reviewShowIcon: true,
       strategyLabel: "Strategy",
-      learnMoreLabel: "Learn more",
       isCustomPickingStrategy: false,
     });
     expect(typeof result.current.onAmountChange).toBe("function");
@@ -498,6 +496,44 @@ describe("useCoinControlScreenViewModelCore", () => {
       expect(result.current.changeToReturn.value).toBe("3500 BTC");
       expect(result.current.enterAmountPlaceholder).toBe("Enter amount");
       expect(result.current.changeToReturn.placeholder).toBe("Enter amount");
+    });
+  });
+
+  describe("hasAmount", () => {
+    it("is false when amount is zero and useAllAmount is false", () => {
+      const { result } = renderCoinControlCore({ transaction: createTransaction() });
+      expect(result.current.hasAmount).toBe(false);
+    });
+
+    it("is true when amount is greater than zero", () => {
+      const { result } = renderCoinControlCore({
+        transaction: {
+          ...createTransaction(),
+          amount: new BigNumber(1000),
+        } as unknown as Transaction,
+      });
+      expect(result.current.hasAmount).toBe(true);
+    });
+
+    it("is true when useAllAmount is set even if amount is zero", () => {
+      const { result } = renderCoinControlCore({
+        transaction: {
+          ...createTransaction(),
+          useAllAmount: true,
+          amount: new BigNumber(0),
+        } as unknown as Transaction,
+      });
+      expect(result.current.hasAmount).toBe(true);
+    });
+
+    it("is false when amount is undefined", () => {
+      const { result } = renderCoinControlCore({
+        transaction: {
+          ...createTransaction(),
+          amount: undefined,
+        } as unknown as Transaction,
+      });
+      expect(result.current.hasAmount).toBe(false);
     });
   });
 });
