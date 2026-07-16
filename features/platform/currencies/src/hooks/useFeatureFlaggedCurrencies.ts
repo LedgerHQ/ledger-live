@@ -98,6 +98,7 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
   const seiNetworkEvm = useFeature("currencySeiNetworkEvm");
   const berachain = useFeature("currencyBerachain");
   const hyperevm = useFeature("currencyHyperevm");
+  const hypercore = useFeature("currencyHypercore");
   const canton = useFeature("currencyCantonNetwork");
   const cantonDevnet = useFeature("currencyCantonNetworkDevnet");
   const cantonTestnet = useFeature("currencyCantonNetworkTestnet");
@@ -159,6 +160,7 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       sei_evm: seiNetworkEvm,
       berachain: berachain,
       hyperevm: hyperevm,
+      hypercore: hypercore,
       coreum,
       polygon_amoy: polygonAmoy,
       polygon_zk_evm: polygonZkEvm,
@@ -254,6 +256,7 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       seiNetworkEvm,
       berachain,
       hyperevm,
+      hypercore,
       coreum,
       polygonAmoy,
       polygonZkEvm,

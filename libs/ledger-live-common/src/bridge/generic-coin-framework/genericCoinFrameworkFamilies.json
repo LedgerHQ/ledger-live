@@ -1,5 +1,6 @@
 {
   "evm": true,
+  "hypercore": true,
   "xrp": true,
   "stellar": true,
   "tezos": true,

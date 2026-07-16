@@ -1,0 +1,55 @@
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { formatTransactionStatus } from "@ledgerhq/ledger-wallet-framework/formatters";
+import {
+  fromTransactionCommonRaw,
+  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
+  toTransactionCommonRaw,
+  toTransactionStatusRawCommon as toTransactionStatusRaw,
+} from "@ledgerhq/ledger-wallet-framework/serialization/transaction";
+import type { Account } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import type { Transaction, TransactionRaw } from "./types";
+
+export const formatTransaction = (
+  { amount, recipient, useAllAmount }: Transaction,
+  account: Account,
+): string => `
+SEND ${
+  useAllAmount
+    ? "MAX"
+    : formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
+        showCode: true,
+        disableRounding: true,
+      })
+}
+TO ${recipient}`;
+
+export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
+  const common = fromTransactionCommonRaw(tr);
+  return {
+    ...common,
+    family: tr.family,
+    fees: tr.fees ? new BigNumber(tr.fees) : null,
+    mode: tr.mode,
+  };
+};
+
+export const toTransactionRaw = (t: Transaction): TransactionRaw => {
+  const common = toTransactionCommonRaw(t);
+  return {
+    ...common,
+    family: t.family,
+    fees: t.fees ? t.fees.toString() : null,
+    mode: t.mode,
+  };
+};
+
+export default {
+  formatTransaction,
+  fromTransactionRaw,
+  toTransactionRaw,
+  fromTransactionStatusRaw,
+  toTransactionStatusRaw,
+  formatTransactionStatus,
+};
