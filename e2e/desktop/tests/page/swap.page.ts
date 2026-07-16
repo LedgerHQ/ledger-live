@@ -11,6 +11,7 @@ import { readFile } from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
+import { expectAmountCloseTo } from "tests/utils/amountUtils";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
@@ -655,6 +656,21 @@ export class SwapPage extends WebViewAppPage {
   async isPercentageEnabled(key: PercentageKey) {
     await this.hoverAmountField();
     return this.isEnabledByCursorClass(this.percentageButtonTestId(key));
+  }
+
+  @step("Check percentage buttons enabled: $0")
+  async checkPercentageButtonsEnabled(expected: boolean) {
+    for (const key of ["25%", "50%", "75%"] as const) {
+      expect(await this.isPercentageEnabled(key)).toBe(expected);
+    }
+  }
+
+  @step("Check percentage button $0 fills the correct amount")
+  async checkPercentageFillsBalance(key: PercentageKey, balance: number) {
+    await this.clickPercentage(key);
+    const amountToSend = Number(await this.getAmountToSend());
+    const expectedAmount = (balance * parseFloat(key)) / 100;
+    expectAmountCloseTo(amountToSend, expectedAmount);
   }
 
   @step("Expect reset allowance screen to be displayed")
