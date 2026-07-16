@@ -7,7 +7,7 @@ import {
   VoteAccountInfo,
 } from "@solana/web3.js";
 import { createAssociatedTokenAccountIdempotent, mintTo } from "@solana/spl-token";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { SolanaTokenProgram } from "@ledgerhq/coin-solana/types";
 import { getTokenAccountProgramId } from "@ledgerhq/coin-solana/helpers/token";
 

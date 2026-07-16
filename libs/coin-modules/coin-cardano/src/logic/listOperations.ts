@@ -5,7 +5,7 @@ import {
   Operation,
   ListOperationsOptions,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { OperationType } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import network from "@ledgerhq/live-network/network";

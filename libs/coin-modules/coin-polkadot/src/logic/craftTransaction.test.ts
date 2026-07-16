@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { TypeRegistry } from "@polkadot/types";
 import { createFixtureAccount } from "../types/bridge.fixture";
 import { craftTransaction, defaultExtrinsicArg } from "./craftTransaction";

@@ -6,7 +6,7 @@ import BitcoinLikeStorage from "../storage";
 import BitcoinLikeExplorer from "../explorer";
 import Crypto from "../crypto/digibyte";
 import Xpub from "../xpub";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { TX } from "../storage/types";
 
 describe("test transactin pagination", () => {

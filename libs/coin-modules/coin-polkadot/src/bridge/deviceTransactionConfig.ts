@@ -1,11 +1,10 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
 import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { PolkadotAccount, Transaction, TransactionStatus } from "../types";
 import { isStash } from "./utils";
-const currency = getCryptoCurrencyById("polkadot");
 export type ExtraDeviceTransactionField = {
   type: "polkadot.validators";
   label: string;
@@ -19,6 +18,7 @@ const getSendFields = ({
   transaction: Transaction;
   status: TransactionStatus;
 }): Array<DeviceTransactionField> => {
+  const currency = getCryptoCurrencyById("polkadot");
   const fields: Array<DeviceTransactionField> = [];
   fields.push({
     type: "text",
@@ -49,6 +49,7 @@ async function getDeviceTransactionConfig({
 }): Promise<Array<DeviceTransactionField>> {
   const { mode, rewardDestination } = transaction;
   const { amount } = status;
+  const currency = getCryptoCurrencyById("polkadot");
   const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
   let fields: { type: string; label: string; value?: string }[] = [];
 

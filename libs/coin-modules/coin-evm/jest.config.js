@@ -22,7 +22,12 @@ module.exports = {
       },
     ],
   },
-  setupFilesAfterEnv: ["jest-expect-message", "dotenv/config", "@ledgerhq/disable-network-setup"],
+  setupFilesAfterEnv: [
+    "@ledgerhq/wallet-framework-test-setup",
+    "jest-expect-message",
+    "dotenv/config",
+    "@ledgerhq/disable-network-setup",
+  ],
   reporters: [
     "default",
     ...(process.env.CI ? ["github-actions"] : []),

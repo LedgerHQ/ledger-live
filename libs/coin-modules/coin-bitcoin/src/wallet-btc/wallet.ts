@@ -1,8 +1,8 @@
 import flatten from "lodash/flatten";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types";
 import { Currency } from "./crypto/types";
 import { TransactionInfo, DerivationModes } from "./types";

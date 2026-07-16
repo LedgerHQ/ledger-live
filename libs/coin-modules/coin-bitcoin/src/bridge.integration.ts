@@ -23,7 +23,7 @@ Object.defineProperty(globalThis, "Buffer", {
 
 /*
 import { createBridges } from "./bridge/js";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import {
   AddressFormat,
   BitcoinAddress,

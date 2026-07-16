@@ -1,4 +1,4 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BehaviorSubject, Observable } from "rxjs";
 import type { HederaPreloadData } from "./types";
 

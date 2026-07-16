@@ -1,5 +1,5 @@
 import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getNodeApi } from "../network/node/index";
 
 export async function broadcast(

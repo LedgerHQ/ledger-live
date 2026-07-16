@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js"; // Assuming BigNumber is used for value and fee
 import { PolkadotOperation, PolkadotOperationExtra } from "../types";
 import { listOperations } from "./listOperations";

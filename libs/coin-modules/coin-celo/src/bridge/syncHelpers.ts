@@ -1,7 +1,7 @@
 import { getSyncHash as baseGetSyncHash } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import murmurhash from "imurmurhash";
 import { getCoinConfig } from "@ledgerhq/coin-evm/config";

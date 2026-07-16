@@ -14,8 +14,8 @@ import {
   encodeERC721OperationId,
 } from "@ledgerhq/ledger-wallet-framework/nft/nftOperationId";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account, DerivationMode, Operation, ProtoNFT, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 

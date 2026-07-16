@@ -7,7 +7,7 @@
  */
 import BigNumber from "bignumber.js";
 import type { Account, Operation } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { ConcordiumCoinConfig, ConcordiumConfig, Transaction } from "../types";
 import coinConfig from "../config";
 

@@ -2,7 +2,7 @@ import { TransportStatusError, UserRefusedOnDevice, LockedDeviceError } from "@l
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { log } from "@ledgerhq/logs";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 

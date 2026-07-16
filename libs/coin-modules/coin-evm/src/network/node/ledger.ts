@@ -2,7 +2,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { makeBatcher } from "@ledgerhq/live-network/batcher/index";
 import { Batcher } from "@ledgerhq/live-network/batcher/types";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import axios, { AxiosRequestConfig } from "axios";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";

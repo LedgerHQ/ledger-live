@@ -1,5 +1,5 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getCoinConfig } from "../config";
 import { getNodeApi } from "../network/node";
 

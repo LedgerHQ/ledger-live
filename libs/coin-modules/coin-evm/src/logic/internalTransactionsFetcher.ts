@@ -1,6 +1,6 @@
 import type { BlockOperation } from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { traceBlockItemsToOperationsByHash } from "../adapters/blockOperations";
 import { internalTxsToOperationsByHash } from "../adapters/etherscan";
 import { getCoinConfig } from "../config";

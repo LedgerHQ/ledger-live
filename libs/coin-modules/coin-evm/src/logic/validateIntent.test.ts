@@ -23,7 +23,7 @@ import {
   ValAddressRequired,
 } from "@ledgerhq/errors";
 import { GasPriceTooLow } from "../errors";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import ledgerExplorer from "../network/explorer/ledger";

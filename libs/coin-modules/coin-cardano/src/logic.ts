@@ -1,6 +1,6 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { OperationType } from "@ledgerhq/types-live";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
 import {

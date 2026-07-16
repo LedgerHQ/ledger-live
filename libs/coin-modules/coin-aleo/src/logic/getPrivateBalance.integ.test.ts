@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import aleoConfig from "../config";
 import { mockFeeByTransactionType } from "../__tests__/fixtures/config.fixture";
 import { testnetViewKey, testnetPrivateRecord } from "../__tests__/fixtures/api.fixture";

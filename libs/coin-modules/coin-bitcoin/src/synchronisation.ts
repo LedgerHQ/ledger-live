@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type {
   AccountShapeInfo,
   GetAccountShapeStream,

@@ -1,13 +1,11 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import { log } from "@ledgerhq/logs";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 
 import { methodToString } from "../common-logic/utils";
 import { Transaction, TransactionStatus } from "../types";
-
-const currency = getCryptoCurrencyById("internet_computer");
 
 async function getDeviceTransactionConfig({
   transaction,
@@ -17,6 +15,7 @@ async function getDeviceTransactionConfig({
   transaction: Transaction;
   status: TransactionStatus;
 }): Promise<Array<CommonDeviceTransactionField>> {
+  const currency = getCryptoCurrencyById("internet_computer");
   const fields: Array<CommonDeviceTransactionField> = [];
   fields.push({
     type: "text",

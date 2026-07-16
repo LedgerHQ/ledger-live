@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account";
 import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { HEDERA_OPERATION_TYPES } from "../constants";

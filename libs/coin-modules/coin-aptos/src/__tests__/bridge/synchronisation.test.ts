@@ -1,9 +1,9 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountShapeInfo, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { createFixtureAccount } from "../../bridge/bridge.fixture";

@@ -1,5 +1,5 @@
 import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { EvmConfigInfo } from "../../config";
 
 /** Constant representing no pagination token (end of pagination or first page) */

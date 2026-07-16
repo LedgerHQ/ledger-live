@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { ApiPromise, HttpProvider, WsProvider } from "@polkadot/api";
 import { type ProviderInterface } from "@polkadot/rpc-provider/types";
 import polkadotCoinConfig, { type PolkadotCoinConfig } from "../../config";

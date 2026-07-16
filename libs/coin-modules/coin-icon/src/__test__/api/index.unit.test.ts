@@ -1,6 +1,6 @@
 import querystring from "querystring";
 import network from "@ledgerhq/live-network/network";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 
 import { fetchOperationList } from "../../api";
 import { IconTransactionType } from "../../api/api-type";
@@ -11,7 +11,6 @@ import { isTestnet } from "../../logic";
 // Mock the necessary modules and functions
 jest.mock("@ledgerhq/live-network/network");
 jest.mock("@ledgerhq/ledger-wallet-framework/operation");
-jest.mock("@ledgerhq/cryptoassets");
 jest.mock("../../logic");
 jest.mock("../../config");
 jest.mock("querystring");

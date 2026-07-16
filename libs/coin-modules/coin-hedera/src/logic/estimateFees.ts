@@ -1,5 +1,5 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import type { HederaCoinConfig } from "../config";

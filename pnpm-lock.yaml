@@ -4749,12 +4749,12 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../wallet-framework-test-setup
       '@rslib/core':
         specifier: 'catalog:'
         version: 0.22.0(typescript@6.0.2)
@@ -4812,9 +4812,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -4885,9 +4882,6 @@ importers:
       '@ledgerhq/live-promise':
         specifier: workspace:^
         version: link:../../promise
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -5004,9 +4998,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -5052,9 +5043,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -5076,9 +5064,6 @@ importers:
       '@ledgerhq/psbtv2':
         specifier: workspace:^
         version: link:../../psbtv2
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -5264,9 +5249,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -5330,9 +5312,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -5403,9 +5382,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -5440,9 +5416,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
+      '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5549,9 +5525,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -5603,9 +5576,6 @@ importers:
       '@ledgerhq/concordium-core':
         specifier: workspace:^
         version: link:../../concordium-core
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -5646,9 +5616,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
+      '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5700,9 +5670,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -5721,9 +5688,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -5755,6 +5719,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5794,9 +5761,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -5840,12 +5804,12 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5909,9 +5873,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -6037,9 +5998,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -6076,9 +6034,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -6097,9 +6052,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -6119,6 +6071,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6149,9 +6104,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -6192,6 +6144,9 @@ importers:
       '@dfinity/principal':
         specifier: 2.4.1
         version: 2.4.1
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6255,9 +6210,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -6295,6 +6247,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-transport-node-speculos
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6340,9 +6295,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -6355,9 +6307,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -6380,6 +6329,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6422,9 +6374,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -6456,9 +6405,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
+      '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6522,9 +6471,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -6598,9 +6544,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -6613,9 +6556,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -6632,6 +6572,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6665,9 +6608,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -6680,9 +6620,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -6723,6 +6660,9 @@ importers:
       '@ledgerhq/hw-app-polkadot':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-polkadot
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@polkadot/rpc-provider':
         specifier: 'catalog:'
         version: 16.5.4
@@ -6795,9 +6735,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7010,9 +6947,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7108,6 +7042,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7168,9 +7105,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7281,9 +7215,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -7372,9 +7303,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7469,9 +7397,6 @@ importers:
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/hw-app-btc':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-btc
@@ -7487,9 +7412,6 @@ importers:
       '@ledgerhq/psbtv2':
         specifier: workspace:^
         version: link:../../psbtv2
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7572,9 +7494,6 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7651,15 +7570,9 @@ importers:
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7730,9 +7643,6 @@ importers:
       '@ledgerhq/live-signer-evm':
         specifier: workspace:^
         version: link:../../live-signer-evm
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7803,9 +7713,6 @@ importers:
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../live-config
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7870,15 +7777,9 @@ importers:
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7961,9 +7862,6 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -8049,9 +7947,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -8207,9 +8102,6 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live

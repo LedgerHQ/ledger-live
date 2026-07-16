@@ -17,7 +17,7 @@ import {
   RecipientRequired,
   ValAddressRequired,
 } from "@ledgerhq/errors";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";

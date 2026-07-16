@@ -1,13 +1,14 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
 import cosmosCoinConfig, { cosmosConfig } from "../config";
 import { asSafeCosmosPreloadData, setCosmosPreloadData } from "../preloadedData";
 import { CosmosCurrencyConfig, CosmosValidatorItem } from "../types";
 import { hydrate } from "./preload";
 
-jest.mock("@ledgerhq/cryptoassets", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/currencies", () => ({
+  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/currencies"),
   getCryptoCurrencyById: jest.fn(),
 }));
 

@@ -11,7 +11,7 @@ import {
   CosmosOperationExtra,
   Transaction as CosmosTransaction,
 } from "@ledgerhq/coin-cosmos/types/index";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { makeAccount } from "../fixtures";
 import { buildSigner } from "../signer";
 

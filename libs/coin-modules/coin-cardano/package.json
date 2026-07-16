@@ -60,7 +60,6 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@stricahq/bip32ed25519": "^1.0.3",
     "@stricahq/cbors": "1.0.2",

@@ -26,5 +26,5 @@ module.exports = {
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   coveragePathIgnorePatterns: ["src/test", "src/types", "src/index.ts"],
-  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
+  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup", "@ledgerhq/disable-network-setup"],
 };

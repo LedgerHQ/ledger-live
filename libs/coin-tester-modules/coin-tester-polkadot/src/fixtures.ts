@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/bridge";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {

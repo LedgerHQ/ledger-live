@@ -4,7 +4,7 @@ import type {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { sdkClient } from "../network/sdk";
 import type { AleoTransactionIntentData, FeeConfiguration } from "../types";
 import { mapTransactionIntentToSdkIntent, toHex } from "./utils";

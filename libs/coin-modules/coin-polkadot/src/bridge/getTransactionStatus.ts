@@ -1,5 +1,5 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import {
   NotEnoughBalance,
   RecipientRequired,
@@ -9,7 +9,7 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
   FeeNotLoaded,
 } from "@ledgerhq/errors";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { isValidAddress } from "../common";

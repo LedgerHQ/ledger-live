@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { stringCamelCase } from "@polkadot/util";
 import { hexToU8a } from "@polkadot/util";
 import BigNumber from "bignumber.js";

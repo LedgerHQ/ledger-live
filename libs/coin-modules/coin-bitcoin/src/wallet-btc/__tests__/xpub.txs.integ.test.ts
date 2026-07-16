@@ -15,7 +15,7 @@ import BitcoinLikeStorage from "../storage";
 import * as utils from "../utils";
 import { InputInfo, OutputInfo, DerivationModes } from "../types";
 import { Merge } from "../pickingstrategies/Merge";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 
 const bip32 = BIP32Factory(ecc);
 const ECPair = ECPairFactory(ecc);

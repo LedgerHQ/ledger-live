@@ -4,7 +4,7 @@ import type {
   Operation,
   ListOperationsOptions,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getExplorerApi } from "../network/explorer";
 
 // the sort parameter has a double meaning:

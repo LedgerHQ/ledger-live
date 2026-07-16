@@ -3,7 +3,7 @@ import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import type { Page } from "@ledgerhq/coin-module-framework/api/index";
 import type { AssetInfo, Stake } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import { getCoinConfig } from "../../config";
 import { withApi } from "../../network/node/rpc.common";

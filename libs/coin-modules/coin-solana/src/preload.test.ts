@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Cluster } from "@solana/web3.js";
 import { firstValueFrom } from "rxjs";
 import { ChainAPI } from "./network";

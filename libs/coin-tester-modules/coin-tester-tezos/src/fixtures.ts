@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import {
   getDerivationScheme,
   runDerivationScheme,

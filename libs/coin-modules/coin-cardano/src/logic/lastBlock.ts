@@ -1,5 +1,5 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { fetchLatestBlock } from "../api/getLatestBlock";
 
 export async function lastBlock(currency: CryptoCurrency): Promise<BlockInfo> {

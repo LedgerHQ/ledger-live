@@ -1,6 +1,6 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { isStakingTransactionIntent } from "@ledgerhq/coin-module-framework/utils";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { PublicKey } from "@solana/web3.js";
 import { StakeMeta } from "./network/chain/account/stake";
 import { SolanaStake, StakeAction } from "./types";

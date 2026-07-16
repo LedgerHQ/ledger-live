@@ -1,7 +1,7 @@
 import { createHash } from "crypto";
 import { Transaction as SDKTransaction, TransactionId } from "@hashgraph/sdk";
 import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import hederaConfig from "../config";
