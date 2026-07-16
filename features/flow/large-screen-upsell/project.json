@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-large-screen-upsell",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}
