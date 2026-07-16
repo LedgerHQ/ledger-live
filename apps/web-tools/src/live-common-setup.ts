@@ -11,12 +11,26 @@ import { store } from "./store";
 import {
   CRYPTO_CURRENCIES_REGISTRY,
   CRYPTO_CURRENCY_ALIASES,
+  getCryptoCurrencyById,
+  findCryptoCurrencyById,
+  findCryptoCurrencyByScheme,
+  listCryptoCurrencies,
+  hasCryptoCurrencyId,
 } from "@domain/entity-currency-crypto";
 import { FIAT_CURRENCIES_REGISTRY } from "@domain/entity-currency-fiat";
+import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 // The domain registries are the runtime source of truth for currency data.
 setCryptoCurrenciesStore(Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES);
 setFiatCurrenciesStore(Object.values(FIAT_CURRENCIES_REGISTRY));
+setCurrenciesResolver({
+  getCryptoCurrencyById,
+  findCryptoCurrencyById,
+  findCryptoCurrencyByScheme,
+  listCryptoCurrencies,
+  hasCryptoCurrencyId,
+});
 
 LiveConfig.setConfig(liveConfig);
 LiveConfig.setAppinfo({
@@ -31,7 +45,9 @@ setWalletAPIVersion(WALLET_API_VERSION);
 registerAllCoins();
 
 export function setupCryptoAssetsStore(): void {
-  setCryptoAssetsStore(buildCryptoAssetsStore({ dispatch: store.dispatch }));
+  const cryptoAssetsStore = buildCryptoAssetsStore({ dispatch: store.dispatch });
+  setCryptoAssetsStore(cryptoAssetsStore);
+  setFrameworkCryptoAssetsStore(cryptoAssetsStore);
 }
 
 setupCryptoAssetsStore();

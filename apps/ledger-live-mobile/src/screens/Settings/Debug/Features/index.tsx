@@ -95,6 +95,12 @@ export default function Features() {
         onPress={() => navigation.navigate(ScreenName.PostOnboardingDebugScreen)}
       />
       <SettingsRow
+        title="Large-screen upsell"
+        desc="Simulate and inspect the large-screen upsell show/throttle decision"
+        iconLeft={<IconsLegacy.NanoXFoldedMedium size={24} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugLargeScreenUpsell)}
+      />
+      <SettingsRow
         title="Lotties"
         desc="See all lottie animations per device in one screen"
         iconLeft={<IconsLegacy.VideoMedium size={24} color="black" />}

@@ -2,7 +2,8 @@ import BigNumber from "bignumber.js";
 import { InvalidTransactionError } from "@ledgerhq/errors";
 import { broadcast } from "./broadcast";
 import wallet, { getWalletAccount } from "./wallet-btc";
-import type { Account, SignedOperation } from "@ledgerhq/types-live";
+import { registerChainAdapter } from "./chain-adapters/registry";
+import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 
 jest.mock("./wallet-btc");
 
@@ -130,6 +131,85 @@ describe("broadcast", () => {
 
       mockBroadcastTx.mockClear();
     }
+  });
+
+  describe("chain-adapter broadcast delegation", () => {
+    const adapterCurrencyId = "dummy-chain-adapter-currency-test";
+    const adapterAccount = {
+      ...mockAccount,
+      currency: { id: adapterCurrencyId },
+    } as unknown as Account;
+
+    it("returns the adapter result and does not call the explorer broadcast when an adapter owns broadcasting", async () => {
+      const mockBroadcastTx = jest.spyOn(wallet, "broadcastTx").mockResolvedValue("explorer-hash");
+      const adapterOperation = {
+        ...mockSignedOperation.operation,
+        hash: "adapter-hash",
+        id: "adapter-op-id",
+      } as Operation;
+      const adapterBroadcast = jest.fn().mockResolvedValue(adapterOperation);
+
+      registerChainAdapter({ id: adapterCurrencyId, broadcast: adapterBroadcast });
+
+      const result = await broadcast({
+        account: adapterAccount,
+        signedOperation: mockSignedOperation,
+      });
+
+      expect(adapterBroadcast).toHaveBeenCalledWith(adapterAccount, mockSignedOperation);
+      expect(result).toBe(adapterOperation);
+      expect(mockBroadcastTx).not.toHaveBeenCalled();
+    });
+
+    it("falls through to the explorer broadcast when the adapter broadcast returns undefined", async () => {
+      const mockBroadcastTx = jest.spyOn(wallet, "broadcastTx").mockResolvedValue("explorer-hash");
+      const adapterBroadcast = jest.fn().mockReturnValue(undefined);
+
+      registerChainAdapter({ id: adapterCurrencyId, broadcast: adapterBroadcast });
+
+      const result = await broadcast({
+        account: adapterAccount,
+        signedOperation: mockSignedOperation,
+      });
+
+      expect(adapterBroadcast).toHaveBeenCalledWith(adapterAccount, mockSignedOperation);
+      expect(mockBroadcastTx).toHaveBeenCalledWith(expect.any(Object), "mock-signature", undefined);
+      expect(result.hash).toBe("explorer-hash");
+    });
+
+    // Ordering guarantee: the double-spend guard is deliberately placed BEFORE the
+    // adapter delegation, so a Zcash Public→* flow (which carries transparent
+    // inputRefs but broadcasts over gRPC via the adapter) is still protected. This
+    // exercises the guard + delegation together — the two are otherwise tested only
+    // in isolation.
+    it("rejects via the double-spend guard BEFORE delegating to an adapter that owns broadcasting", async () => {
+      const mockBroadcastTx = jest.spyOn(wallet, "broadcastTx").mockResolvedValue("explorer-hash");
+      const adapterBroadcast = jest.fn().mockResolvedValue({
+        ...mockSignedOperation.operation,
+        hash: "adapter-hash",
+      } as Operation);
+
+      registerChainAdapter({ id: adapterCurrencyId, broadcast: adapterBroadcast });
+
+      // The referenced UTXO is already confirmed-spent (spent_at_height > 0).
+      mockExplorer.fetchUtxoTx.mockResolvedValue({ outputs: [makeTxOutput(0, 949619)] });
+
+      const signedOp: SignedOperation = {
+        ...mockSignedOperation,
+        operation: {
+          ...mockSignedOperation.operation,
+          extra: { inputRefs: [{ hash: "tx-hash", outputIndex: 0, address: "addr-a" }] },
+        },
+      };
+
+      await expect(
+        broadcast({ account: adapterAccount, signedOperation: signedOp }),
+      ).rejects.toMatchObject({ name: "InvalidTransactionError", message: "utxos already spent" });
+
+      // Guard short-circuits before either broadcast path runs.
+      expect(adapterBroadcast).not.toHaveBeenCalled();
+      expect(mockBroadcastTx).not.toHaveBeenCalled();
+    });
   });
 
   describe("UTXO spent detection", () => {

@@ -7,7 +7,10 @@ import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index
 import type { SyncConfig } from "@ledgerhq/types-live";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import type { ShieldedTransaction, ShieldedSyncResult, ZcashPrivateInfo } from "./types";
-import { DEFAULT_ZCASH_PRIVATE_INFO, ZCASH_GRPC_URL_MAINNET } from "./constants";
+import { DEFAULT_ZCASH_PRIVATE_INFO, getZainoEndpoint } from "./constants";
+// Re-exported so existing importers (and tests) can keep importing the override
+// from this module even though the state now lives in ./constants.
+export { setZainoGrpcUrl } from "./constants";
 import type { ZCashClient } from "./types";
 import type { BtcOperation } from "../../types";
 import { removeReplaced } from "../../synchronisation";
@@ -19,17 +22,12 @@ import { computeZcashBalance, getTransparentBalance } from "./balance";
 
 const ZCASH_NATIVE_CHUNK_SIZE = 5_000;
 
-let ZCASH_GRPC_URL_CUSTOM: string | null = null;
-
-/** Override the Zaino gRPC URL used for shielded sync. */
-export const setZainoGrpcUrl = (url: string | null): void => {
-  ZCASH_GRPC_URL_CUSTOM = url;
-};
-
 // Lazy import to avoid loading @ledgerhq/zcash-utils at module initialization.
 // The import path is resolved at build time; the desktop renderer's rspack config
 // aliases it to ZCashIPC for Electron IPC.
-type ZCashModule = { createZCashClient: (args: { grpcUrl: string }) => ZCashClient };
+type ZCashModule = {
+  createZCashClient: (args: { grpcUrl: string; network?: string }) => ZCashClient;
+};
 
 let nativeModuleCache: Promise<ZCashModule> | null = null;
 
@@ -85,9 +83,7 @@ export const zcashSyncShielded = (
 
     return from(getNativeModule()).pipe(
       mergeMap(({ createZCashClient }) => {
-        const client = createZCashClient({
-          grpcUrl: ZCASH_GRPC_URL_CUSTOM ?? ZCASH_GRPC_URL_MAINNET,
-        });
+        const client = createZCashClient(getZainoEndpoint());
         return from(
           resolveStartBlockHeight(lastProcessedBlock, birthday, ts => client.findBlockHeight(ts)),
         ).pipe(
@@ -309,7 +305,8 @@ export function buildExtraSyncObservable(
   syncConfig: SyncConfig,
 ): Observable<Partial<ZcashAccount>> | undefined {
   const syncType = syncConfig.syncType ?? 0;
-  if (!(syncType & SYNC_TYPE_SHIELDED)) return undefined;
+  const includesShielded = (syncType & SYNC_TYPE_SHIELDED) !== 0;
+  if (!includesShielded) return undefined;
 
   const zcashInitialAccount = info.initialAccount as ZcashAccount | undefined;
 

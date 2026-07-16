@@ -52,6 +52,9 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="./domain/**" --filter="./shared/**"
 
+      - name: Check export rules
+        run: pnpm exec nx run-many -t check-export-rules
+
       - name: Run coverage on domain packages
         run: |
           mkdir -p ${{ github.workspace }}/coverage

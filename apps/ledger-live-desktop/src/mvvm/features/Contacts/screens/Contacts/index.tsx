@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate } from "react-router";
-import { useContactsFeature } from "@features/flow-contacts/featureFlags";
+import { useContactsFeature } from "@features/flow-contacts";
 import { ContactsView } from "./ContactsView";
 import { useContactsViewModel } from "./useContactsViewModel";
 

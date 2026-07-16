@@ -6,6 +6,7 @@ export default class OperationPage {
   operationsListId = "operations-list-section-list";
   sectionHeaderId = "operations-section-header";
   operationItemId = "operations-list-item";
+  operationCounterValueId = "operations-list-item-counter-value";
   emptyStateId = "operations-empty-state";
 
   @Step("Expect Operations List to be visible")
@@ -27,6 +28,12 @@ export default class OperationPage {
   async tapFirstOperationItem() {
     await scrollToId(this.operationItemId, this.operationsListId);
     await tapByElement(element(by.id(this.operationItemId)).atIndex(0));
+  }
+
+  @Step("Get operation counter value text")
+  async getOperationCounterValue() {
+    await waitForElementById(this.operationsListId);
+    return await getTextOfElement(this.operationCounterValueId);
   }
 
   @Step("Expect empty state to be visible")

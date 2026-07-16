@@ -1,17 +1,17 @@
 import BigNumber from "bignumber.js";
 import Prando from "prando";
 import { Operation } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genOperation, genTokenAccount } from "./mocks/account";
 import {
   isAddressPoisoningOperation,
   isOldestPendingOperation,
   isOldestBitcoinPendingOperation,
 } from "./operation";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "./types";
 
-const ethereum = getCryptoCurrencyById("ethereum");
-const bitcoin = getCryptoCurrencyById("bitcoin");
+const ethereum = getCryptoCurrencyById("ethereum") as unknown as CryptoCurrency;
+const bitcoin = getCryptoCurrencyById("bitcoin") as unknown as CryptoCurrency;
 // oxlint-disable-next-line typescript/consistent-type-assertions
 const usdc = { parentCurrencyId: "ethereum" } as TokenCurrency;
 // oxlint-disable-next-line typescript/consistent-type-assertions

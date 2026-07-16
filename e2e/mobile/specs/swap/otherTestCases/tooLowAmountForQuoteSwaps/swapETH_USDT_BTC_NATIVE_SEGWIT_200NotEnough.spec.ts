@@ -7,7 +7,6 @@ const transactionE2E = {
   errorMessage: "Insufficient balance",
   ctaBanner: false,
   quotesVisible: false,
-  errorDisplay: "buttonReplacement" as const,
   tags: [
     "@NanoSP",
     "@LNS",
@@ -29,5 +28,4 @@ runTooLowAmountForQuoteSwapsTest(
   transactionE2E.ctaBanner,
   transactionE2E.quotesVisible,
   transactionE2E.tags,
-  transactionE2E.errorDisplay,
 );

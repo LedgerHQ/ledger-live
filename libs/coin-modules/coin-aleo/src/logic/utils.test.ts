@@ -93,6 +93,10 @@ import {
   getEstimatedSigningTime,
   sumPrivateRecords,
   getCalTokens,
+  getMaxPrivateRecordsForAccount,
+  getStrategyConfig,
+  isAleoAccount,
+  isAleoTransaction,
 } from "./utils";
 
 jest.mock("../config");
@@ -1527,6 +1531,16 @@ describe("isSelfTransferTransaction", () => {
   });
 });
 
+describe("isAleoTransaction", () => {
+  it("returns true for an aleo transaction", () => {
+    expect(isAleoTransaction({ family: "aleo" })).toBe(true);
+  });
+
+  it("returns false for a non-aleo transaction", () => {
+    expect(isAleoTransaction({ family: "bitcoin" })).toBe(false);
+  });
+});
+
 describe("isPublicTransaction", () => {
   it.each([
     [true, TRANSACTION_TYPE.TRANSFER_PUBLIC],
@@ -2533,6 +2547,58 @@ describe("sumPrivateRecords", () => {
       { ...mockUnspentRecord1, microcredits: "58" },
     ];
     expect(sumPrivateRecords(records).isEqualTo(new BigNumber(100))).toBe(true);
+  });
+});
+
+describe("getMaxPrivateRecordsForAccount", () => {
+  it("returns 14 for a native Aleo account", () => {
+    expect(getMaxPrivateRecordsForAccount(getMockedAccount())).toBe(14);
+  });
+
+  it("returns 13 for an Aleo token account", () => {
+    expect(getMaxPrivateRecordsForAccount(getMockedTokenAccount())).toBe(13);
+  });
+});
+
+describe("getStrategyConfig", () => {
+  it("returns fast/balanced/full boundaries for a native account", () => {
+    expect(getStrategyConfig(getMockedAccount())).toEqual({
+      fast: { min: 1, max: 4 },
+      balanced: { min: 5, max: 8 },
+      full: { min: 9, max: 14 },
+    });
+  });
+
+  it("caps the full tier at 13 for a token account", () => {
+    expect(getStrategyConfig(getMockedTokenAccount())).toEqual({
+      fast: { min: 1, max: 4 },
+      balanced: { min: 5, max: 8 },
+      full: { min: 9, max: 13 },
+    });
+  });
+});
+
+describe("isAleoAccount", () => {
+  it("returns true for a native Aleo account", () => {
+    expect(isAleoAccount(getMockedAccount())).toBe(true);
+  });
+
+  it("returns true for an Aleo token account", () => {
+    expect(isAleoAccount(getMockedTokenAccount())).toBe(true);
+  });
+
+  it("returns false for an account of another family", () => {
+    const nonAleoAccount = getMockedAccount({
+      currency: { ...getMockedCurrency(), family: "bitcoin" },
+    });
+    expect(isAleoAccount(nonAleoAccount)).toBe(false);
+  });
+
+  it("returns false instead of throwing for a token account with an unregistered parentCurrencyId", () => {
+    const unknownTokenAccount = getMockedTokenAccount(undefined, {
+      token: { ...getMockedTokenCurrency(), parentCurrencyId: "unregistered_currency_id" },
+    });
+    expect(isAleoAccount(unknownTokenAccount)).toBe(false);
   });
 });
 

@@ -16,6 +16,8 @@ import {
   useBaker,
   useBakers,
   useStakingPositions,
+  useTezosStakingInfo,
+  isUnstakingPosition,
 } from "@ledgerhq/live-common/families/tezos/react";
 import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
 import type { AccountLike } from "@ledgerhq/types-live";
@@ -165,6 +167,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const delegation = useDelegation(account);
   const stakingPositions = useStakingPositions(account);
+  const { unstakingPositions } = useTezosStakingInfo(account);
   const addr =
     transaction.mode === "undelegate"
       ? delegation?.address || stakingPositions[0]?.delegate || ""
@@ -191,6 +194,15 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const notEnoughBalance = status.errors.amount instanceof NotEnoughBalanceToDelegate;
   const isUndelagating = route.params?.mode === "undelegate";
   const hasNotEnoughBalanceWhenUndelegating = notEnoughBalance && isUndelagating;
+
+  // Staking with the newly selected validator is blocked by the protocol while an unfinalizable
+  // unstake to a different validator is still pending; warn before the user commits to the change.
+  const hasPendingUnstakeToOtherBaker =
+    transaction.mode === "delegate" &&
+    !!transaction.recipient &&
+    unstakingPositions.some(
+      p => isUnstakingPosition(p.uid) && !!p.delegate && p.delegate !== transaction.recipient,
+    );
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
@@ -313,6 +325,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
         {hasNotEnoughBalanceWhenUndelegating && <NotEnoughFundFeesAlert account={account} />}
         {transaction.mode === "undelegate" ? (
           <Alert type="info" title={t("delegation.warnUndelegation")} />
+        ) : hasPendingUnstakeToOtherBaker ? (
+          <Alert type="warning" title={t("tezos.delegation.pendingUnstakeWarning")} />
         ) : (
           <Alert type="info" title={t("delegation.warnDelegation")} />
         )}

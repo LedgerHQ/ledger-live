@@ -9,4 +9,5 @@ export const MY_WALLET_TRACKING_BUTTON = {
   backup: "Backup",
   help: "Help",
   referral: "Referral",
+  contacts: "Contacts",
 } as const;

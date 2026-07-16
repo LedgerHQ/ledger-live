@@ -41,7 +41,7 @@ catalog:
   "@ledgerhq/lumen-ui-rnative": 0.1.48
   "@ledgerhq/lumen-ui-rnative-visualization": 0.1.25
   "@ledgerhq/lumen-ui-react-visualization": 0.1.24
-  "@ledgerhq/zcash-utils": 0.3.1
+  "@ledgerhq/zcash-utils": 1.0.1
   # React Native
   react-native: 0.81.6
   "@react-native/assets-registry": 0.81.6
@@ -178,10 +178,12 @@ catalog:
   "@xstate/react": 5.0.2
   tailwindcss: ^4.1.0
   tailwind-merge: 3.4.0
+  tsx: 4.20.6
   ws: 8.18.3
   zod: 4.3.6
   semver: 7.7.3
   "@types/semver": 7.7.1
+  "@types/ws": ^8.5.10
   undici: 7.18.2
   "styled-components": 6.1.19
   "styled-system": 5.1.5

@@ -1,8 +1,8 @@
 import invariant from "invariant";
 import { asDerivationMode } from "../derivation";
 import type { AccountIdParams } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { TokenCurrency } from "../types";
+import { getCryptoAssetsStore } from "../cryptoAssetsStore";
 
 function ensureNoColon(value: string, ctx: string): string {
   invariant(!value.includes(":"), "AccountId '%s' component must not use colon", ctx);
@@ -85,8 +85,15 @@ export async function decodeTokenAccountId(id: string): Promise<{
   const decodedTokenId = safeDecodeTokenId(tokenId);
   let token = await store.findTokenById(decodedTokenId);
   if (!token) {
-    const { currencyId } = decodeAccountId(accountId);
-    token = await store.findTokenByAddressInCurrency(decodedTokenId, currencyId);
+    let currencyId: string | undefined;
+    try {
+      currencyId = decodeAccountId(accountId).currencyId;
+    } catch {
+      // accountId is malformed; address-based lookup not possible
+    }
+    if (currencyId !== undefined) {
+      token = await store.findTokenByAddressInCurrency(decodedTokenId, currencyId);
+    }
   }
   return {
     accountId,

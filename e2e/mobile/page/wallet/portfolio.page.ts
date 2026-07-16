@@ -58,6 +58,8 @@ export default class PortfolioPage {
   cryptoListId = "CryptoList";
   stablecoinListId = "StablecoinList";
   cryptosSectionHeaderId = "portfolio-cryptos-section-header";
+  cryptoAddressesListId = "CryptoAddressesList";
+  cryptoAddressItemId = (currencyId: string) => `crypto-address-item-${currencyId}`;
   stablecoinsSectionHeaderId = "portfolio-stablecoins-section-header";
   portfolioStocksListId = "PortfolioStocksList";
   stocksListId = "StocksList";
@@ -112,12 +114,14 @@ export default class PortfolioPage {
   @Step("Expect asset row to have the correct counter value")
   async expectAssetRowCounterValue(asset: string, counterValue: string) {
     if (await isAggregatedAssetsEnabled()) {
-      await scrollToId(this.assetItemBalanceId(asset));
+      await scrollToId(this.assetItemCountervalueId(asset));
+      const text = await getTextOfElement(this.assetItemCountervalueId(asset));
+      jestExpect(text).toContain(counterValue);
     } else {
       await scrollToId(this.assetItemBalanceId(asset), this.accountsListView);
+      const text = await getTextOfElement(this.assetItemBalanceId(asset));
+      jestExpect(text).toContain(counterValue);
     }
-    const text = await getTextOfElement(this.assetItemBalanceId(asset));
-    jestExpect(text).toContain(counterValue);
   }
 
   @Step("Expect balance to be visible")
@@ -136,25 +140,27 @@ export default class PortfolioPage {
     if (await isAggregatedAssetsEnabled()) {
       return;
     } else {
-      await waitForElementById(this.portfolioBalanceDelta);
+      await waitForElementById(this.portfolioBalanceAnalyticsPill);
     }
   }
 
   @Step("Expect operation row to be visible")
   async expectOperationRowToBeVisible() {
-    if (await isAggregatedAssetsEnabled()) {
-      await scrollToId(this.operationRowCounterValue);
-    } else {
-      await scrollToId(this.operationRowCounterValue, this.accountsListView);
-    }
+    await scrollToId(this.operationRowCounterValue, this.accountsListView);
     await detoxExpect(getElementById(this.operationRowCounterValue)).toBeVisible();
   }
 
   @Step("Expect operation to contain counter value")
   async expectOperationCounterValue(counterValue: string) {
-    await this.expectOperationRowToBeVisible();
-    const text = await getTextOfElement(this.operationRowCounterValue);
-    jestExpect(text).toContain(counterValue);
+    if (await isAggregatedAssetsEnabled()) {
+      await app.mainNavigation.tapTopBarTransactionHistory();
+      const text = await app.operation.getOperationCounterValue();
+      jestExpect(text).toContain(counterValue);
+    } else {
+      await this.expectOperationRowToBeVisible();
+      const text = await getTextOfElement(this.operationRowCounterValue);
+      jestExpect(text).toContain(counterValue);
+    }
   }
 
   @Step("Open Portfolio via deeplink")
@@ -165,8 +171,14 @@ export default class PortfolioPage {
 
   @Step("Click on Add account button in portfolio")
   async addAccount() {
-    await scrollToId(this.addAccountCta, this.emptyPortfolioListId, 500);
-    await tapById(this.addAccountCta);
+    if (await isAggregatedAssetsEnabled()) {
+      const ctaId = "crypto-addresses-add-account-cta";
+      await scrollToId(ctaId, this.emptyPortfolioListId, 500);
+      await tapById(ctaId);
+    } else {
+      await scrollToId(this.addAccountCta, this.emptyPortfolioListId, 500);
+      await tapById(this.addAccountCta);
+    }
   }
 
   @Step("Expect Portfolio with accounts")
@@ -180,10 +192,21 @@ export default class PortfolioPage {
   }
 
   @Step("Go to asset's accounts from portfolio")
-  async goToAccounts(currencyName: string) {
+  async goToAccounts(currencyName: string, currencyId?: string) {
     await waitForElementById(this.accountsListView, 10000);
-    await scrollToId(this.assetItemId(currencyName), this.accountsListView);
-    await tapById(this.assetItemId(currencyName));
+    if (await isAggregatedAssetsEnabled()) {
+      await scrollToId("crypto-addresses-button", this.accountsListView);
+      await tapById("crypto-addresses-button");
+      await waitForElementById(this.cryptoAddressesListId);
+      if (currencyId) {
+        await scrollToId(this.cryptoAddressItemId(currencyId), this.cryptoAddressesListId);
+        await tapById(this.cryptoAddressItemId(currencyId));
+      }
+    } else {
+      await scrollToId(this.assetItemId(currencyName), this.accountsListView);
+      await scrollByPixels(this.accountsListView, 100, "down");
+      await tapById(this.assetItemId(currencyName));
+    }
   }
 
   @Step("Check quick action buttons visibility")

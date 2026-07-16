@@ -1,7 +1,7 @@
 import querystring from "querystring";
 import { BigNumber } from "bignumber.js";
-import { findCryptoCurrencyByScheme } from "@ledgerhq/cryptoassets";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCurrenciesResolver } from "./resolver";
+import type { CryptoCurrency } from "../types";
 // see https://github.com/bitcoin/bips/blob/master/bip-0021.mediawiki
 type Data = {
   address: string;
@@ -55,7 +55,7 @@ export function decodeURIScheme(str: string): Data {
 
   const [, , scheme, address, , queryStr] = m;
   const query: Record<string, any> = queryStr ? querystring.parse(queryStr) : {};
-  const currency = findCryptoCurrencyByScheme(scheme);
+  const currency = getCurrenciesResolver().findCryptoCurrencyByScheme(scheme);
 
   if (!currency) {
     return {

@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Account, AccountLike, TransactionStatusCommon } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { parseCurrencyUnit } from "@ledgerhq/live-currency-format";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 
 const inferAmount = (account: AccountLike, str: string): BigNumber => {

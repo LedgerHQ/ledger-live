@@ -12,6 +12,7 @@ import {
   InvalidAddressBecauseAlreadyDelegated,
   MustDelegateBeforeStaking,
   TezosNotEnoughStaked,
+  TezosStakeBlockedByPendingUnstake,
 } from "../types/errors";
 import { STAKE_USE_ALL_RESERVE_MUTEZ } from "../utils";
 import { validateIntent } from "./validateIntent";
@@ -951,6 +952,35 @@ describe("validateIntent", () => {
       });
 
       expect(result.errors.amount).toBeInstanceOf(MustDelegateBeforeStaking);
+    });
+
+    it("maps cannot_stake_with_unfinalizable_unstake_requests_to_another_delegate to TezosStakeBlockedByPendingUnstake for stake", async () => {
+      mockGetAccountByAddress.mockResolvedValue(
+        makeUserAccount({
+          delegate: { alias: "baker", address: validRecipient, active: true },
+          delegationLevel: 1,
+        }),
+      );
+      mockEstimateFees.mockResolvedValue({
+        fees: 0n,
+        gasLimit: 0n,
+        storageLimit: 0n,
+        estimatedFees: 500n,
+        taquitoError:
+          "proto.alpha.cannot_stake_with_unfinalizable_unstake_requests_to_another_delegate",
+      });
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "stake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 1000n,
+      });
+
+      expect(result.errors.amount).toBeInstanceOf(TezosStakeBlockedByPendingUnstake);
+      expect(result.errors.amount?.name).toBe("TezosStakeBlockedByPendingUnstake");
     });
 
     it("maps unknown taquito errors to a generic Error on amount", async () => {

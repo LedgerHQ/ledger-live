@@ -9,6 +9,7 @@ type ChartSectionHeaderViewProps = Readonly<{
 
 export function ChartSectionHeaderView({ viewModel }: ChartSectionHeaderViewProps) {
   const {
+    totalBalanceLabel,
     balance,
     balanceAvailable,
     isLoading,
@@ -17,29 +18,39 @@ export function ChartSectionHeaderView({ viewModel }: ChartSectionHeaderViewProp
     percentageValue,
     variationText,
     rangeLabel,
+    scrubDateLabel,
   } = viewModel;
 
+  const isScrubbing = scrubDateLabel != null;
+
   return (
-    <div className="flex items-end gap-12" data-testid="analytics-chart-header">
-      {balanceAvailable ? (
-        <AmountDisplay
-          value={balance}
-          formatter={balanceFormatter}
-          hidden={discreet}
-          loading={isLoading}
-          data-testid="analytics-balance-amount"
-        />
-      ) : (
-        <Skeleton className="h-48 w-256 rounded-md" data-testid="analytics-balance-skeleton" />
-      )}
-      {balanceAvailable && (
-        <ChartSectionHeaderVariation
-          percentageValue={percentageValue}
-          discreet={discreet}
-          variationText={variationText}
-          rangeLabel={rangeLabel}
-        />
-      )}
+    <div className="flex flex-col gap-8" data-testid="analytics-chart-header">
+      <span className="body-2 text-muted" data-testid="analytics-total-balance-label">
+        {totalBalanceLabel}
+      </span>
+      <div className="flex items-end gap-12">
+        {balanceAvailable ? (
+          <AmountDisplay
+            value={balance}
+            formatter={balanceFormatter}
+            hidden={discreet}
+            loading={isLoading}
+            animate={!isScrubbing}
+            data-testid="analytics-balance-amount"
+          />
+        ) : (
+          <Skeleton className="h-48 w-256 rounded-md" data-testid="analytics-balance-skeleton" />
+        )}
+        {balanceAvailable && (
+          <ChartSectionHeaderVariation
+            percentageValue={percentageValue}
+            discreet={discreet}
+            variationText={variationText}
+            timeLabel={scrubDateLabel ?? rangeLabel}
+            isScrubbing={isScrubbing}
+          />
+        )}
+      </div>
     </div>
   );
 }

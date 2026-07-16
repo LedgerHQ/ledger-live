@@ -28,6 +28,7 @@ type UseCoinControlScreenViewModelParams = Readonly<{
   bridgePending: boolean;
   uiConfig: SendFlowUiConfig;
   transactionActions: SendFlowTransactionActions;
+  onSelectCustomFees: () => void;
 }>;
 
 export function useCoinControlScreenViewModel({
@@ -38,6 +39,7 @@ export function useCoinControlScreenViewModel({
   bridgePending,
   uiConfig,
   transactionActions,
+  onSelectCustomFees,
 }: UseCoinControlScreenViewModelParams) {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
@@ -56,6 +58,7 @@ export function useCoinControlScreenViewModel({
     status,
     uiConfig,
     transactionActions,
+    onSelectCustomFees,
   });
 
   const amountErrorTranslated = useTranslatedBridgeError(
@@ -76,7 +79,6 @@ export function useCoinControlScreenViewModel({
       reviewCta: t("send.newSendFlow.reviewCta"),
       getCtaLabel: (currency: string) => t("send.newSendFlow.getCta", { currency }),
       strategyLabel: t("send.newSendFlow.coinControl.strategy"),
-      learnMoreLabel: t("send.newSendFlow.coinControl.learnMore"),
       coinToSendLabel: t("send.newSendFlow.coinControl.coinToSend"),
       changeToReturnLabel: t("send.newSendFlow.coinControl.changeToReturn"),
       enterAmountPlaceholder: t("send.newSendFlow.coinControl.enterAmount"),
@@ -106,9 +108,13 @@ export function useCoinControlScreenViewModel({
     onLearnMoreClick,
   });
 
+  const hasAmount = transaction.useAllAmount || transaction.amount?.gt(0) === true;
+
   return {
     ...core,
     coinControlStrategyLabel: core.strategyLabel,
     networkFees: core.networkFees,
+    hasAmount,
+    onInfoPress: onLearnMoreClick,
   };
 }

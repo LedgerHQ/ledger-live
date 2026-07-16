@@ -545,7 +545,11 @@ describe("SUI SDK Integration tests", () => {
   // Legacy flow pins to mainnet (long retention); SIP-58 stays on testnet
   // since the accumulator-event shape is testnet-only at the moment. Each
   // inner block sets its own RPC URL; afterAll restores the suite default.
-  describe("Transfer flow comparison: legacy coin vs SIP-58 address balance", () => {
+  // SKIP — Sui JSON-RPC public-endpoint shutdown. Only this block leaves the Ledger proxy
+  // for the public testnet/mainnet fullnodes (fullnode.*.sui.io via getJsonRpcFullnodeUrl),
+  // retired by the Sui Foundation as JSON-RPC is deprecated for gRPC/GraphQL. The rest of
+  // the suite runs on the Ledger proxy and stays enabled. Re-enable after porting to GraphQL.
+  describe.skip("Transfer flow comparison: legacy coin vs SIP-58 address balance", () => {
     beforeAll(() => {
       coinConfig.setCoinConfig(() => ({
         status: { type: "active" },

@@ -6,7 +6,11 @@ import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.
 
 import { buildTransaction } from "./buildTransaction";
 
-describe("buildTransaction", () => {
+// SKIP — Sui JSON-RPC public-endpoint shutdown. This suite targets the public mainnet
+// fullnode (fullnode.mainnet.sui.io), which the Sui Foundation retired (testnet wk of
+// 2026-07-06, mainnet wk of 2026-07-20) as JSON-RPC is deprecated for gRPC/GraphQL.
+// Re-enable after porting the integ config to the GraphQL transport.
+describe.skip("buildTransaction", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
       status: {

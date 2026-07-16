@@ -339,15 +339,13 @@ export default {
         message: context,
       });
     }
-    if (error instanceof Error) {
-      logger.log("error", error?.message, {
-        stack: error?.stack,
-
-        ...error,
-      });
-      captureException(error);
-      datadog.captureException(error);
-    }
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.log("error", err.message, {
+      stack: err.stack,
+      ...err,
+    });
+    captureException(err);
+    datadog.captureException(err);
   },
   add,
   onLog: (log: LogEntry | string) => {

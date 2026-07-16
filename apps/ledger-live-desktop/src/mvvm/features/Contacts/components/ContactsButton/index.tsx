@@ -1,5 +1,5 @@
 import React from "react";
-import { ContactsButton as ContactsButtonView } from "@features/flow-contacts/components/ContactsButton";
+import { ContactsButton as ContactsButtonView } from "@features/flow-contacts";
 import { useContactsButtonViewModel } from "./useContactsButtonViewModel";
 
 export function ContactsButton() {

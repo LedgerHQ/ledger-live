@@ -2,11 +2,32 @@ import { setEnv } from "@ledgerhq/live-env";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
+import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import {
+  getCryptoCurrencyById,
+  findCryptoCurrencyById,
+  findCryptoCurrencyByScheme,
+  listCryptoCurrencies,
+  hasCryptoCurrencyId,
+} from "@domain/entity-currency-crypto";
 // The crypto-assets token store validates a non-empty LEDGER_CLIENT_VERSION (calApiExtra) at store
 // creation; the app sets it at boot, so tests must provide one too.
 setEnv("LEDGER_CLIENT_VERSION", "jest");
 registerAllCoins();
 LiveConfig.setConfig(liveConfig);
+setCurrenciesResolver({
+  getCryptoCurrencyById,
+  findCryptoCurrencyById,
+  findCryptoCurrencyByScheme,
+  listCryptoCurrencies,
+  hasCryptoCurrencyId,
+});
+setFrameworkCryptoAssetsStore({
+  findTokenById: () => Promise.resolve(undefined),
+  findTokenByAddressInCurrency: () => Promise.resolve(undefined),
+  getTokensSyncHash: () => Promise.resolve(""),
+});
 import "react-native-gesture-handler/jestSetup";
 import "@shopify/flash-list/jestSetup";
 import "@mocks/console";

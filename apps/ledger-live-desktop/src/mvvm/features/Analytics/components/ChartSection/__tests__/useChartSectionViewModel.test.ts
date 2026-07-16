@@ -10,26 +10,30 @@ jest.mock("~/renderer/analytics/segment", () => ({
 
 const mockTrack = jest.mocked(track);
 
+const renderChartSectionViewModel = () =>
+  renderHook(
+    () =>
+      useChartSectionViewModel({
+        balanceInfo: mockPortfolioBalanceInfo,
+        portfolio: portfolioWithHistory,
+        isLoading: false,
+      }),
+    { initialState: chartSectionInitialState },
+  );
+
 describe("useChartSectionViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("builds chart series from portfolio balance history and maps the selected range", () => {
-    const { result } = renderHook(
-      () =>
-        useChartSectionViewModel({
-          balanceInfo: mockPortfolioBalanceInfo,
-          portfolio: portfolioWithHistory,
-          isLoading: false,
-        }),
-      { initialState: chartSectionInitialState },
-    );
+    const { result } = renderChartSectionViewModel();
 
     expect(result.current.chart.series[0].data).toEqual([1000, 1200]);
     expect(result.current.chart.selectedRange).toBe("1w");
-    expect(result.current.balanceInfo).toBe(mockPortfolioBalanceInfo);
-    expect(result.current.hoveredBalance).toBeNull();
+    expect(result.current.header.balanceInfo).toBe(mockPortfolioBalanceInfo);
+    expect(result.current.header.scrubSelection).toBeUndefined();
+    expect(result.current.chart.showScrubberTooltip).toBe(false);
   });
 
   it("uses balanceInfo availability for the chart loading state", () => {
@@ -47,15 +51,7 @@ describe("useChartSectionViewModel", () => {
   });
 
   it("dispatches the portfolio range and tracks when the chart range changes", () => {
-    const { result, store } = renderHook(
-      () =>
-        useChartSectionViewModel({
-          balanceInfo: mockPortfolioBalanceInfo,
-          portfolio: portfolioWithHistory,
-          isLoading: false,
-        }),
-      { initialState: chartSectionInitialState },
-    );
+    const { result, store } = renderChartSectionViewModel();
 
     act(() => {
       result.current.chart.onRangeChange("1m");
@@ -83,25 +79,32 @@ describe("useChartSectionViewModel", () => {
     expect(result.current.chart.formatValue?.(1000)).toBe("$***");
   });
 
-  it("updates hoveredBalance when scrubbing the chart", () => {
-    const { result } = renderHook(
-      () =>
-        useChartSectionViewModel({
-          balanceInfo: mockPortfolioBalanceInfo,
-          portfolio: portfolioWithHistory,
-          isLoading: false,
-        }),
-      { initialState: chartSectionInitialState },
-    );
+  it("updates scrub selection when scrubbing the chart", () => {
+    const { result } = renderChartSectionViewModel();
 
     act(() => {
       result.current.chart.onScrubberPositionChange?.(0);
     });
-    expect(result.current.hoveredBalance).toBe(1000);
+    expect(result.current.header.scrubSelection).toEqual({
+      balance: 1000,
+      timestamp: portfolioWithHistory.balanceHistory[0].date.getTime(),
+    });
 
     act(() => {
       result.current.chart.onScrubberPositionChange?.(undefined);
     });
-    expect(result.current.hoveredBalance).toBeNull();
+    expect(result.current.header.scrubSelection).toBeUndefined();
+  });
+
+  it("keeps chart props stable while scrubbing so the chart is not re-rendered", () => {
+    const { result } = renderChartSectionViewModel();
+
+    const chartBeforeScrub = result.current.chart;
+
+    act(() => {
+      result.current.chart.onScrubberPositionChange?.(0);
+    });
+
+    expect(result.current.chart).toBe(chartBeforeScrub);
   });
 });

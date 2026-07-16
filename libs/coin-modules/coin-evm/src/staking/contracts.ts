@@ -1,7 +1,20 @@
 import { ethers } from "ethers";
-import type { StakingContractConfig } from "../types/staking";
+import type { StakingContractConfig, StakingOperation } from "../types/staking";
 import { USEI_TO_EVM_SCALE } from "../utils";
 import { getValidatorAddressById } from "./validators/monadResolver";
+
+export function getStakingContractAddress(
+  currencyId: string,
+  ctx?: { mode: StakingOperation; valAddress?: string },
+): string | undefined {
+  const config = STAKING_CONTRACTS[currencyId];
+  if (!config) return undefined;
+  try {
+    return config.contractAddress(ctx);
+  } catch {
+    return undefined;
+  }
+}
 
 export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
   // Sei EVM staking
@@ -182,6 +195,17 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       return contractAddress ? ethers.getAddress(contractAddress) : null;
     },
   },
-
-  // TODO: add Somnia next
+  somnia: {
+    contractAddress: () => "0xBe367d410D96E1cAeF68C0632251072CDf1b8250",
+    functions: {
+      delegate: "delegateStake",
+      undelegate: "undelegateStake",
+      getStakedBalance: "getDelegationInfo",
+      claimReward: "claimDelegatorRewards",
+    },
+    value: ({ mode, amount }) => (mode === "delegate" ? amount : 0n),
+    resolveValidatorAddress: async parameters => {
+      return typeof parameters[0] === "string" ? parameters[0] : null;
+    },
+  },
 };

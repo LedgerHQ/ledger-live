@@ -30,6 +30,10 @@ import type {
   SyncShieldedArgs,
   ZCashClient,
   ZCashClientArgs,
+  BuildTransactionArgs,
+  BuildTransactionResult,
+  FinalizeTransactionArgs,
+  FinalizeTransactionResult,
 } from "./types";
 import type { StartSyncJobArgs } from "./native-engine/engine";
 import {
@@ -37,6 +41,9 @@ import {
   findBlockHeightJob,
   startSyncJob,
   validateStartSyncArgs,
+  buildTransactionJob,
+  finalizeTransactionJob,
+  broadcastTransactionJob,
 } from "./native-engine/engine";
 import { rehydrateSyncResult } from "./serialization/rehydrate";
 import { createSyncTimeEstimator } from "./sync-estimator";
@@ -59,6 +66,13 @@ export type ZCashClientDeps = {
   ) => Promise<void>;
   rehydrateSyncResult: (raw: ShieldedSyncResultRaw) => ShieldedSyncResult;
   createSyncTimeEstimator: (totalBlocks: number) => (processedBlocks: number) => SyncEstimatedTime;
+  buildTransactionJob?: (
+    args: Omit<BuildTransactionArgs, "requestId">,
+  ) => Promise<BuildTransactionResult>;
+  finalizeTransactionJob?: (
+    args: Omit<FinalizeTransactionArgs, "requestId">,
+  ) => Promise<FinalizeTransactionResult>;
+  broadcastTransactionJob?: (grpcUrl: string, txHex: string) => Promise<string>;
 };
 
 // ── DI factory (for tests) ──────────────────────────────────────────────
@@ -66,6 +80,12 @@ export type ZCashClientDeps = {
 export function createZCashClientWith(deps: ZCashClientDeps, args: ZCashClientArgs): ZCashClient {
   const grpcUrl = args.grpcUrl;
   const network = args.network ?? "mainnet";
+
+  // Capture optional jobs as consts so their presence narrows inside closures.
+  // When a job is absent (e.g. RN stubs) we omit the corresponding client
+  // method entirely rather than defining one that throws, so capability checks
+  // like `if (!client.buildTransaction)` behave consistently across environments.
+  const { buildTransactionJob, finalizeTransactionJob, broadcastTransactionJob } = deps;
 
   return {
     grpcUrl,
@@ -84,6 +104,23 @@ export function createZCashClientWith(deps: ZCashClientDeps, args: ZCashClientAr
     ): Promise<(processedBlocks: number) => SyncEstimatedTime> {
       return deps.createSyncTimeEstimator(totalBlocks);
     },
+
+    ...(buildTransactionJob && {
+      buildTransaction: (
+        args: Omit<BuildTransactionArgs, "requestId">,
+      ): Promise<BuildTransactionResult> => buildTransactionJob(args),
+    }),
+
+    ...(finalizeTransactionJob && {
+      finalizeTransaction: (
+        args: Omit<FinalizeTransactionArgs, "requestId">,
+      ): Promise<FinalizeTransactionResult> => finalizeTransactionJob(args),
+    }),
+
+    ...(broadcastTransactionJob && {
+      broadcastTransaction: (grpcUrl: string, txHex: string): Promise<string> =>
+        broadcastTransactionJob(grpcUrl, txHex),
+    }),
 
     syncShielded(syncArgs: SyncShieldedArgs): Observable<ShieldedSyncResult> {
       return new Observable<ShieldedSyncResult>(subscriber => {
@@ -154,6 +191,9 @@ const defaultDeps: ZCashClientDeps = {
   validateStartSyncArgs,
   rehydrateSyncResult,
   createSyncTimeEstimator,
+  buildTransactionJob,
+  finalizeTransactionJob,
+  broadcastTransactionJob,
 };
 
 // ── Convenience factory (production — deps pre-wired) ───────────────────

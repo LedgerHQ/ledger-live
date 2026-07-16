@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById, listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById, listCryptoCurrencies } from "@domain/entity-currency-crypto";
 import type {
   Account,
   Operation,
@@ -6,6 +6,7 @@ import type {
   TokenAccount,
   TransactionCommon,
 } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "../types";
 import BigNumber from "bignumber.js";
 import { firstValueFrom, Observable, of, Subscription, throwError } from "rxjs";
 import {
@@ -367,7 +368,7 @@ describe("makeScanAccounts", () => {
       path: "m/44'/0'/0'/0/0",
       publicKey: "publicKey",
     };
-    const currency = getCryptoCurrencyById("algorand");
+    const currency = getCryptoCurrencyById("algorand") as unknown as CryptoCurrency;
 
     const postSync = jest.fn((_initial, synced) => ({
       ...synced,
@@ -415,7 +416,7 @@ describe("makeScanAccounts", () => {
       paginationConfig: {},
     };
     const deviceId = "deviceId";
-    const currency = getCryptoCurrencyById("algorand");
+    const currency = getCryptoCurrencyById("algorand") as unknown as CryptoCurrency;
 
     // When
     const scanAccounts = makeScanAccounts({
@@ -489,7 +490,7 @@ describe("makeScanAccounts", () => {
     expect(
       firstValueFrom(
         scanAccounts({
-          currency: getCryptoCurrencyById("algorand"),
+          currency: getCryptoCurrencyById("algorand") as unknown as CryptoCurrency,
           deviceId: "deviceId",
           syncConfig: {
             paginationConfig: {},
@@ -522,7 +523,7 @@ describe("makeScanAccounts", () => {
     expect(
       firstValueFrom(
         scanAccounts({
-          currency: getCryptoCurrencyById("algorand"),
+          currency: getCryptoCurrencyById("algorand") as unknown as CryptoCurrency,
           deviceId: "deviceId",
           syncConfig: {
             paginationConfig: {},
@@ -557,7 +558,7 @@ describe("makeScanAccounts", () => {
       path: "path",
       publicKey: "publicKey",
     };
-    const currency = getCryptoCurrencyById("algorand");
+    const currency = getCryptoCurrencyById("algorand") as unknown as CryptoCurrency;
 
     // When
     const scanAccounts = makeScanAccounts({
@@ -620,7 +621,7 @@ describe("makeScanAccounts", () => {
         path: "path",
         publicKey: "publicKey",
       };
-      const currency = getCryptoCurrencyById("algorand");
+      const currency = getCryptoCurrencyById("algorand") as unknown as CryptoCurrency;
 
       // When
       const scanAccounts = makeScanAccounts({
@@ -674,7 +675,7 @@ describe("makeScanAccounts", () => {
     // When
     let subscribeCalled = 0;
     scanAccounts({
-      currency: getCryptoCurrencyById("algorand"),
+      currency: getCryptoCurrencyById("algorand") as unknown as CryptoCurrency,
       deviceId: "deviceId",
       syncConfig: {
         paginationConfig: {},
@@ -709,7 +710,7 @@ describe("makeScanAccounts", () => {
       path: "path",
       publicKey: "publicKey",
     };
-    const currency = getCryptoCurrencyById("algorand");
+    const currency = getCryptoCurrencyById("algorand") as unknown as CryptoCurrency;
     const events: Array<{ type: string; account?: Account }> = [];
     const scanAccounts = makeScanAccounts({
       getAccountShape: info =>
@@ -743,7 +744,7 @@ describe("makeScanAccounts", () => {
       path: "path",
       publicKey: "publicKey",
     };
-    const currency = getCryptoCurrencyById("algorand");
+    const currency = getCryptoCurrencyById("algorand") as unknown as CryptoCurrency;
     const scanAccounts = makeScanAccounts({
       getAccountShape: () =>
         of({
@@ -769,7 +770,7 @@ describe("makeScanAccounts", () => {
       path: "path",
       publicKey: "publicKey",
     };
-    const currency = getCryptoCurrencyById("algorand");
+    const currency = getCryptoCurrencyById("algorand") as unknown as CryptoCurrency;
     const events: Array<{ type: string; account?: Account }> = [];
     const scanAccounts = makeScanAccounts({
       getAccountShape: (info: AccountShapeInfo) =>
@@ -808,7 +809,7 @@ describe("makeScanAccounts", () => {
       path: "path",
       publicKey: "publicKey",
     };
-    const currency = getCryptoCurrencyById("algorand");
+    const currency = getCryptoCurrencyById("algorand") as unknown as CryptoCurrency;
     const scanAccounts = makeScanAccounts({
       getAccountShape: () => throwError(() => new Error("Observable shape error")),
       getAddressFn: () => Promise.resolve(addressResolver),
@@ -825,7 +826,7 @@ describe("makeScanAccounts", () => {
   });
 
   it("when empty account skip is hit, continues to next derivation mode and still emits accounts", async () => {
-    const currency = getCryptoCurrencyById("ethereum");
+    const currency = getCryptoCurrencyById("ethereum") as unknown as CryptoCurrency;
     const resolversByPath: Record<string, { address: string; path: string; publicKey: string }> =
       {};
     const getAddressFn = jest.fn((_deviceId: string, opts: { path: string }) => {
@@ -881,7 +882,7 @@ describe("makeScanAccounts", () => {
       path: "path",
       publicKey: "publicKey",
     };
-    const currency = getCryptoCurrencyById("algorand");
+    const currency = getCryptoCurrencyById("algorand") as unknown as CryptoCurrency;
     let resolveFirstShape: (value: Partial<Account>) => void;
     const firstShapePromise = new Promise<Partial<Account>>(resolve => {
       resolveFirstShape = resolve;
@@ -934,7 +935,9 @@ describe("bip32asBuffer", () => {
 });
 
 // Call once for all tests the currencies. Relies on real implementation to check also consistency.
-const bitcoinCurrency = listCryptoCurrencies(true).find(c => c.id === "bitcoin")!;
+const bitcoinCurrency = listCryptoCurrencies(true).find(
+  c => c.id === "bitcoin",
+)! as unknown as CryptoCurrency;
 function createAccount(init: Partial<Account>): Account {
   const currency = bitcoinCurrency;
 

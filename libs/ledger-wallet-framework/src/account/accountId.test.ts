@@ -9,9 +9,12 @@ import {
   safeEncodeXpubOrAddress,
 } from "./accountId";
 import tokenData from "./__fixtures__/binance-peg_dai_token.json";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
-import type { AccountIdParams, CryptoAssetsStore } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "../types";
+import { getCryptoAssetsStore } from "../cryptoAssetsStore";
+import type { FrameworkCryptoAssetsStore } from "../cryptoAssetsStore";
+import type { AccountIdParams } from "@ledgerhq/types-live";
+
+jest.mock("../cryptoAssetsStore");
 
 // oxlint-disable-next-line typescript/consistent-type-assertions
 const TOKEN = tokenData as TokenCurrency;
@@ -68,13 +71,11 @@ describe("ledger-wallet-framework", () => {
 
     describe("decodeTokenAccountId", () => {
       it("should return an accountId and a token", async () => {
-        jest
-          .spyOn(cryptoAssets, "getCryptoAssetsStore")
-          // oxlint-disable-next-line typescript/consistent-type-assertions
-          .mockReturnValue({
-            findTokenById: (_: unknown) => Promise.resolve(TOKEN),
-            findTokenByAddressInCurrency: (_: unknown, __: unknown) => Promise.resolve(TOKEN),
-          } as CryptoAssetsStore);
+        // oxlint-disable-next-line typescript/consistent-type-assertions
+        jest.mocked(getCryptoAssetsStore).mockReturnValue({
+          findTokenById: (_: unknown) => Promise.resolve(TOKEN),
+          findTokenByAddressInCurrency: (_: unknown, __: unknown) => Promise.resolve(TOKEN),
+        } as unknown as FrameworkCryptoAssetsStore);
 
         expect(
           await decodeTokenAccountId(

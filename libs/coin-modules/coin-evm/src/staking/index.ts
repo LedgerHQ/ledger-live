@@ -1,4 +1,4 @@
-export { STAKING_CONTRACTS } from "./contracts";
+export { STAKING_CONTRACTS, getStakingContractAddress } from "./contracts";
 export { STAKING_CONFIG } from "./fetchers";
 export { buildTransactionParams } from "./operations";
 export { buildStakingTransactionParams } from "./transactionData";

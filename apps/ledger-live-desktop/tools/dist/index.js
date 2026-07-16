@@ -72,13 +72,15 @@ const buildTasks = args => [
   {
     title: "Compiling assets",
     task: async () => {
+      // Matches mobile: prerelease (--pre) shares prod config with release,
+      // nightly uses staging.
       if (args.release || args.pre) {
         require("dotenv").config({
-          path: path.resolve(
-            __dirname,
-            rootFolder,
-            args.release ? ".env.production" : ".env.staging",
-          ),
+          path: path.resolve(__dirname, rootFolder, ".env.production"),
+        });
+      } else if (args.nightly) {
+        require("dotenv").config({
+          path: path.resolve(__dirname, rootFolder, ".env.staging"),
         });
       }
       const baseEnv = args.release
@@ -97,7 +99,16 @@ const buildTasks = args => [
               DATADOG_SITE: process.env.DATADOG_SITE || defaultDatadogSite,
               DATADOG_ENV: "staging",
             }
-          : {};
+          : args.nightly
+            ? {
+                // Required for tools/rspack/utils.ts to pick .env.staging.
+                STAGING: "1",
+                DATADOG_APPLICATION_ID: process.env.DATADOG_APPLICATION_ID,
+                DATADOG_CLIENT_TOKEN: process.env.DATADOG_CLIENT_TOKEN,
+                DATADOG_SITE: process.env.DATADOG_SITE || defaultDatadogSite,
+                DATADOG_ENV: "nightly",
+              }
+            : {};
       await exec("pnpm", ["run", "build:js"], { env: { ...process.env, ...baseEnv } });
     },
   },

@@ -3,7 +3,14 @@ import type { Observable } from "rxjs";
 import type { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account, AccountRaw, SignOperationEvent, SyncConfig } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountRaw,
+  Operation,
+  SignedOperation,
+  SignOperationEvent,
+  SyncConfig,
+} from "@ledgerhq/types-live";
 import type { BitcoinAddress, BitcoinSigner, BitcoinXPub, SignerContext } from "../signer";
 import type { BitcoinAccount, Transaction, TransactionStatus } from "../types";
 
@@ -61,6 +68,17 @@ export interface ChainAdapter {
     transaction: Transaction,
     signerContext: SignerContext,
   ): Observable<SignOperationEvent> | undefined;
+
+  /**
+   * Override broadcasting for chains whose signed transactions cannot be
+   * submitted through the standard Bitcoin explorer (e.g. Zcash shielded V5
+   * transactions, which are broadcast via gRPC).
+   *
+   * Return `undefined` to fall through to the standard `wallet.broadcastTx`
+   * explorer path. Returning a Promise means the adapter owns the broadcast for
+   * this signed operation and resolves to the patched, broadcast operation.
+   */
+  broadcast?(account: Account, signedOperation: SignedOperation): Promise<Operation> | undefined;
 
   /**
    * Override transaction status computation (validation + fee estimation).

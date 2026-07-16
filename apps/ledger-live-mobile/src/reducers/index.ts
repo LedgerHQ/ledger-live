@@ -43,6 +43,8 @@ import recoverState from "./recoverState";
 import liveAppModal from "./liveAppModal";
 import { identitiesSlice } from "@ledgerhq/client-ids/store";
 import { supportedFiatsSlice } from "@domain/entity-currency-fiat";
+import { payCardSlice } from "@domain/entity-pay-card";
+import { contactsSlice } from "@domain/entity-contact";
 import type { UnknownAction } from "@reduxjs/toolkit";
 
 export type AppStore = Store<State>;
@@ -81,6 +83,7 @@ const appReducer = combineReducers({
   ratings,
   settings,
   sendFlow,
+  payCard: payCardSlice.reducer,
   toasts,
   trustchain,
   wallet,
@@ -91,6 +94,7 @@ const appReducer = combineReducers({
   recoverState,
   liveAppModal,
   supportedFiats: supportedFiatsSlice.reducer,
+  contacts: contactsSlice.reducer,
   ...llmRTKApiReducers,
 });
 

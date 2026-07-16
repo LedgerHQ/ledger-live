@@ -44,7 +44,11 @@ describe("Broadcast", () => {
 
     await expect(
       broadcast({
-        account: { id: "js:2:bitcoin", bitcoinResources: { walletAccount: { xpub } } },
+        account: {
+          id: "js:2:bitcoin",
+          currency: { id: "bitcoin" },
+          bitcoinResources: { walletAccount: { xpub } },
+        },
         signedOperation: {
           signature: txHex,
           operation: { senders: [address], extra: {} },
@@ -70,7 +74,11 @@ describe("Broadcast", () => {
 
     await expect(
       broadcast({
-        account: { id: "js:2:bitcoin", bitcoinResources: { walletAccount: { xpub } } },
+        account: {
+          id: "js:2:bitcoin",
+          currency: { id: "bitcoin" },
+          bitcoinResources: { walletAccount: { xpub } },
+        },
         signedOperation: {
           signature: txHex,
           operation: {
@@ -104,7 +112,11 @@ describe("Broadcast", () => {
 
     await expect(
       broadcast({
-        account: { id: "js:2:bitcoin", bitcoinResources: { walletAccount: { xpub } } },
+        account: {
+          id: "js:2:bitcoin",
+          currency: { id: "bitcoin" },
+          bitcoinResources: { walletAccount: { xpub } },
+        },
         signedOperation: {
           signature: txHex,
           operation: {

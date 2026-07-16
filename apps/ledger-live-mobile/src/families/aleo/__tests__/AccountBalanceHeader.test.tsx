@@ -1,8 +1,8 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import BigNumber from "bignumber.js";
-import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
-import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
+import type { AleoAccount, AleoTokenAccount } from "@ledgerhq/live-common/families/aleo/types";
+import { ALEO_ACCOUNT_1, ALEO_TOKEN_ACCOUNT_1 } from "../__mocks__/account.mock";
 import AccountBalanceHeader from "../AccountBalanceHeader";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "@ledgerhq/live-common/families/aleo/constants";
 import { useAleoPrivateSync } from "../hooks/useAleoPrivateSync";
@@ -109,5 +109,69 @@ describe("AccountBalanceHeader", () => {
 
     const { toJSON } = render(<AccountBalanceHeader account={account} />);
     expect(toJSON()).toBeNull();
+  });
+
+  it("shows the private sync button for a regular account", () => {
+    render(<AccountBalanceHeader account={baseAccount} />);
+
+    expect(screen.getByTestId("start-private-sync-button")).toBeOnTheScreen();
+  });
+
+  describe("token account", () => {
+    const tokenAccount: AleoTokenAccount = {
+      ...(ALEO_TOKEN_ACCOUNT_1 as AleoTokenAccount),
+      balance: new BigNumber(1000000),
+      transparentBalance: new BigNumber(600000),
+      privateBalance: new BigNumber(400000),
+      unspentPrivateRecords: null,
+    };
+
+    it("renders balances from the token account's own fields", () => {
+      render(<AccountBalanceHeader account={tokenAccount} parentAccount={baseAccount} />);
+
+      expect(screen.getByText("aleo.balancesSection")).toBeOnTheScreen();
+      expect(screen.getByText("aleo.info.transparent.title")).toBeOnTheScreen();
+      expect(screen.getByText("aleo.info.private.title")).toBeOnTheScreen();
+    });
+
+    it("hides the private sync button", () => {
+      render(<AccountBalanceHeader account={tokenAccount} parentAccount={baseAccount} />);
+
+      expect(screen.queryByTestId("start-private-sync-button")).not.toBeOnTheScreen();
+    });
+
+    it("shows placeholder text when the token's privateBalance is null (not yet synced)", () => {
+      const account: AleoTokenAccount = { ...tokenAccount, privateBalance: null };
+
+      render(<AccountBalanceHeader account={account} parentAccount={baseAccount} />);
+
+      expect(screen.getByText(PRIVATE_BALANCE_PLACEHOLDER)).toBeOnTheScreen();
+    });
+
+    it("returns null when the token account has no transparentBalance yet", () => {
+      const account = {
+        ...tokenAccount,
+        transparentBalance: undefined,
+      } as unknown as AleoTokenAccount;
+
+      const { toJSON } = render(
+        <AccountBalanceHeader account={account} parentAccount={baseAccount} />,
+      );
+      expect(toJSON()).toBeNull();
+    });
+
+    it("returns null when the token's balance is zero", () => {
+      const account: AleoTokenAccount = { ...tokenAccount, balance: new BigNumber(0) };
+
+      const { toJSON } = render(
+        <AccountBalanceHeader account={account} parentAccount={baseAccount} />,
+      );
+      expect(toJSON()).toBeNull();
+    });
+
+    it("returns null instead of throwing when parentAccount is missing", () => {
+      const { toJSON } = render(<AccountBalanceHeader account={tokenAccount} />);
+      expect(toJSON()).toBeNull();
+    });
   });
 });

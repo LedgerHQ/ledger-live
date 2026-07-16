@@ -3,6 +3,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { useFeature } from "@features/platform-feature-flags";
 import { useEvmStakingValidators } from "@ledgerhq/live-common/families/evm/staking/react";
+import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   canRedelegate,
@@ -83,6 +84,10 @@ export default function SelectRedelegationValidator() {
   const onItemPress = useCallback(
     (validator: StakingValidatorItem) => {
       invariant(sourceDelegation, "source delegation required");
+      const contractAddress = getStakingContractAddress(account.currency.id, {
+        mode: "redelegate",
+        valAddress: sourceDelegation.validatorAddress,
+      });
       const baseTransaction = bridge.createTransaction(account);
       navigation.navigate(ScreenName.EvmRedelegationAmount, {
         ...route.params,
@@ -91,7 +96,7 @@ export default function SelectRedelegationValidator() {
           valAddress: sourceDelegation.validatorAddress,
           dstValAddress: validator.validatorAddress,
           amount: sourceDelegation.amount,
-          recipient: account.freshAddress,
+          recipient: contractAddress ?? account.freshAddress,
         }) as unknown as Transaction,
         validator,
         validatorSrc: sourceValidator,

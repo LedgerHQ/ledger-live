@@ -1,0 +1,20 @@
+# @ledgerhq/wallet-framework-test-setup
+
+Jest bootstrap for `@ledgerhq/ledger-wallet-framework`. Wires both framework ports for tests:
+
+- **`CurrenciesResolver`** — real domain currencies from `@domain/entity-currency-crypto`
+- **`FrameworkCryptoAssetsStore`** — forwarding proxy to `@ledgerhq/cryptoassets/state`, so `setupMockCryptoAssetsStore()` overrides in individual tests propagate automatically through the framework port
+
+## Usage
+
+```js
+// jest.config.js
+setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"]
+```
+
+```json
+// package.json
+"devDependencies": {
+  "@ledgerhq/wallet-framework-test-setup": "workspace:^"
+}
+```

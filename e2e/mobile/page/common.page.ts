@@ -23,6 +23,7 @@ export default class CommonPage {
   seeAllTransactionButton = "portfolio-seeAll-transaction";
   assetDetailScrollViewId = /^asset-detail-scroll-view-.*/;
   assetDetailTransactionsHeaderId = "asset-detail-transactions-header";
+  accountGraphId = (accountId: string) => `account-graph-${accountId}`;
 
   searchBar = () => getElementById(this.searchBarId);
   closeButton = () => getElementById("NavigationHeaderCloseButton");
@@ -84,6 +85,9 @@ export default class CommonPage {
   @Step("Go to the account")
   async goToAccount(accountId: string, currencyId?: string) {
     if (await isAggregatedAssetsEnabled()) {
+      if (await IsIdVisible(this.accountGraphId(accountId))) {
+        return; // already on the account page (e.g. navigated via CryptoAddressesScreen)
+      }
       if (currencyId) {
         await openDeeplink(`asset/${currencyId}`);
         await waitForElementById(`asset-detail-scroll-view-${currencyId}`);
@@ -111,7 +115,17 @@ export default class CommonPage {
 
   @Step("Get the account name at index")
   async getAccountName(index = 0) {
-    return await getTextOfElement(this.accountItemNameRegExp, index);
+    if (await isAggregatedAssetsEnabled()) {
+      if (await IsIdVisible("CryptoAddressesList")) {
+        await scrollToId(this.accountItemNameRegExp, "CryptoAddressesList");
+        return await getTextOfElement(this.accountItemNameRegExp, index);
+      } else {
+        await app.assetDetail.scrollToAddressesHeader();
+        return await app.assetDetail.getAddressItemName(index);
+      }
+    } else {
+      return await getTextOfElement(this.accountItemNameRegExp, index);
+    }
   }
 
   @Step("Expect the account name at index")
@@ -123,7 +137,9 @@ export default class CommonPage {
   async goToAccountByName(name: string) {
     const accountTitle = getElementByText(name);
     const rowId = (await getIdOfElement(accountTitle)).replace("-name", ""); // Workaround on iOS (name on top of the return arrow clickable layout)
-    jestExpect(rowId).toContain(this.accountItemId);
+    if (!(await isAggregatedAssetsEnabled())) {
+      jestExpect(rowId).toContain(this.accountItemId);
+    }
     await tapById(rowId);
   }
 

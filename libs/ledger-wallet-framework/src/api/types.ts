@@ -1,5 +1,5 @@
 import type { AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "../types";
 import type { Operation as LiveOperation, StakingResources } from "@ledgerhq/types-live";
 
 export type ChainSpecificRules = {

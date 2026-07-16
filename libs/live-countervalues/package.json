@@ -30,11 +30,12 @@
     "@ledgerhq/live-env": "workspace:*"
   },
   "devDependencies": {
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
     "prando": "6"
   },
   "scripts": {

@@ -1,15 +1,15 @@
-import { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { FrameworkCryptoAssetsStore } from "../cryptoAssetsStore";
+import { getCryptoAssetsStore } from "../cryptoAssetsStore";
 import { getSyncHash } from "./sync";
 
-jest.mock("@ledgerhq/cryptoassets/state");
+jest.mock("../cryptoAssetsStore");
 
 const mockedGetTokensSyncHash = jest.fn();
 jest.mocked(getCryptoAssetsStore).mockImplementation(
   () =>
     ({
       getTokensSyncHash: (currencyId: string) => mockedGetTokensSyncHash(currencyId),
-    }) as unknown as CryptoAssetsStore,
+    }) as unknown as FrameworkCryptoAssetsStore,
 );
 
 describe("getSyncHash", () => {

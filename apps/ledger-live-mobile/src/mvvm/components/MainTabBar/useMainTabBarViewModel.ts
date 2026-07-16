@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { useContactsEntryConfig } from "LLM/features/Contacts";
 import {
   Home,
   HomeFill,
@@ -13,7 +12,6 @@ import {
   DollarConvert,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { NavigatorName } from "~/const";
-import type { ContactsEntryConfig } from "LLM/features/Contacts";
 import type { TabItemConfig, MainTabBarViewProps } from "./types";
 import { useTranslation } from "~/context/Locale";
 import { track } from "~/analytics";
@@ -25,9 +23,7 @@ type UseMainTabBarViewModelParams = Pick<BottomTabBarProps, "state" | "navigatio
 type UseMainTabBarViewModelReturn = Pick<
   MainTabBarViewProps,
   "activeRouteName" | "tabItems" | "onTabPress"
-> & {
-  readonly contactsEntryConfig: ContactsEntryConfig;
-};
+>;
 
 type TabIconConfig = { icon: TabItemConfig["icon"]; activeIcon?: TabItemConfig["activeIcon"] };
 
@@ -65,7 +61,6 @@ export const useMainTabBarViewModel = ({
 }: UseMainTabBarViewModelParams): UseMainTabBarViewModelReturn => {
   const activeRouteName = state.routes[state.index].name;
   const { t } = useTranslation();
-  const contactsEntryConfig = useContactsEntryConfig();
 
   const tabItems: readonly TabItemConfig[] = useMemo(
     () =>
@@ -109,5 +104,5 @@ export const useMainTabBarViewModel = ({
     [state.routes, activeRouteName, navigateToTab],
   );
 
-  return { activeRouteName, tabItems, onTabPress, contactsEntryConfig };
+  return { activeRouteName, tabItems, onTabPress };
 };
