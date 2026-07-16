@@ -636,6 +636,11 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
       - uses: nick-fields/retry@v3
         name: install dependencies
         id: install-dependencies
@@ -812,6 +817,11 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies
         run: |
