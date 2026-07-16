@@ -7,7 +7,11 @@ import "./utils/tanstack-setup";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useMemo, useEffect, useRef } from "react";
 import { StyleSheet, LogBox, Appearance, AppState, View } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  SafeAreaProvider,
+  SafeAreaInsetsContext,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
@@ -42,7 +46,9 @@ import SegmentSetup from "~/analytics/SegmentSetup";
 import HookNotifications from "~/notifications/HookNotifications";
 import RootNavigator from "~/components/RootNavigator";
 import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
-import ExperimentalHeader from "~/screens/Settings/Experimental/ExperimentalHeader";
+import ExperimentalHeader, {
+  useIsExperimentalHeaderVisible,
+} from "~/screens/Settings/Experimental/ExperimentalHeader";
 import Modals from "~/screens/Modals";
 import NavBarColorHandler from "~/components/NavBarColorHandler";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
@@ -265,6 +271,16 @@ function App() {
  * SafeAreaView).
  */
 function AppView() {
+  const insets = useSafeAreaInsets();
+  const isExperimentalHeaderVisible = useIsExperimentalHeaderVisible();
+
+  // When ExperimentalHeader is visible it occupies the top safe-area space so
+  // components inside the navigator must not re-apply insets.top.
+  const adjustedInsets = useMemo(
+    () => (isExperimentalHeaderVisible ? { ...insets, top: 0 } : insets),
+    [insets, isExperimentalHeaderVisible],
+  );
+
   // TODO: Normally, we should use a SafeAreaView as root view to avoid
   // importing it everywhere and recalculating the insets.
   return (
@@ -277,9 +293,11 @@ function AppView() {
       }}
     >
       <ExperimentalHeader />
-      <View style={{ flex: 1 }}>
-        <RootNavigator />
-      </View>
+      <SafeAreaInsetsContext.Provider value={adjustedInsets}>
+        <View style={{ flex: 1 }}>
+          <RootNavigator />
+        </View>
+      </SafeAreaInsetsContext.Provider>
     </View>
   );
 }
