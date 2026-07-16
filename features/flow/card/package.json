@@ -70,8 +70,8 @@
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "react": ">=19.0.0",
-    "react-native": ">=0.70.0",
+    "react": "catalog:",
+    "react-native": "catalog:",
     "react-redux": "catalog:"
   },
   "peerDependenciesMeta": {
