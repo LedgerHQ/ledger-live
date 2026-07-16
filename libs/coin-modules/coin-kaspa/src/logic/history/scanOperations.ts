@@ -66,7 +66,10 @@ export function parseKaspaTransfer(
     id: tx.transaction_id,
     type,
     netMovement: myOutputAmount.minus(myInputAmount).absoluteValue(),
-    fee: inputs.length > 0 ? totalInputAmount.minus(totalOutputAmount) : BigNumber(0),
+    fee:
+      inputs.length > 0
+        ? BigNumber.maximum(0, totalInputAmount.minus(totalOutputAmount))
+        : BigNumber(0),
     senders: inputs
       .filter(inp => inp.previous_outpoint_address !== null)
       .map(inp => inp.previous_outpoint_address),

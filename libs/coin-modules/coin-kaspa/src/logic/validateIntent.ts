@@ -46,11 +46,8 @@ export async function validateIntent(
   }
 
   const spendableForAmount = available - estimatedFees;
-  const amount = intent.useAllAmount
-    ? spendableForAmount > 0n
-      ? spendableForAmount
-      : 0n
-    : intent.amount;
+  const maxAmount = spendableForAmount > 0n ? spendableForAmount : 0n;
+  const amount = intent.useAllAmount ? maxAmount : intent.amount;
 
   if (!intent.useAllAmount && amount <= 0n) {
     errors.amount = new AmountRequired();

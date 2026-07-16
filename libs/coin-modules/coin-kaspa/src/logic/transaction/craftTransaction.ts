@@ -53,6 +53,35 @@ async function resolveFeeRate(feesStrategy: TransactionIntent["feesStrategy"]): 
   return estimate.normalBuckets[0]?.feerate ?? estimate.priorityBucket.feerate;
 }
 
+function validateCustomFees(
+  fee: BigNumber,
+  changeAmount: BigNumber,
+  selection: ReturnType<typeof selectUtxos>,
+  amount: BigNumber,
+): void {
+  // Lower-bound: a custom fee below selectUtxos's mass-based minimum crafts a tx that
+  // underpays for its mass — the change inflation hides it until broadcast rejection.
+  if (fee.isLessThan(selection.fee)) {
+    throw new Error("kaspa: custom fee is below the minimum required for this transaction");
+  }
+  if (changeAmount.isNegative()) {
+    throw new Error("kaspa: custom fee exceeds the amount available from the selected UTXOs");
+  }
+  // KIP-9 guard: a large custom fee can shrink the change output into dust that exceeds
+  // the storage mass limit and is rejected on-chain (mirrors coin-cardano's min-UTXO check).
+  if (changeAmount.isGreaterThan(0)) {
+    const storageMass = calcStorageMass(
+      selection.utxos.map(u => u.utxoEntry.amount),
+      [amount, changeAmount],
+    );
+    if (storageMass > MASS_LIMIT_PER_TX) {
+      throw new Error(
+        "kaspa: custom fee creates a dust change output that violates KIP-9 storage mass",
+      );
+    }
+  }
+}
+
 /**
  * Craft an unsigned native KAS transaction from a CoinModule intent: selects UTXOs for
  * `intent.sender` (via the shared `logic/utxos/selection` primitive) and computes a mass-based
@@ -98,27 +127,7 @@ export async function craftTransaction(
   const changeAmount = selection.changeAmount.plus(selection.fee).minus(fee);
 
   if (customFees) {
-    // Lower-bound: a custom fee below selectUtxos's mass-based minimum crafts a tx that
-    // underpays for its mass — the change inflation hides it until broadcast rejection.
-    if (fee.isLessThan(selection.fee)) {
-      throw new Error("kaspa: custom fee is below the minimum required for this transaction");
-    }
-    if (changeAmount.isNegative()) {
-      throw new Error("kaspa: custom fee exceeds the amount available from the selected UTXOs");
-    }
-    // KIP-9 guard: a large custom fee can shrink the change output into dust that exceeds
-    // the storage mass limit and is rejected on-chain (mirrors coin-cardano's min-UTXO check).
-    if (changeAmount.isGreaterThan(0)) {
-      const storageMass = calcStorageMass(
-        selection.utxos.map(u => u.utxoEntry.amount),
-        [amount, changeAmount],
-      );
-      if (storageMass > MASS_LIMIT_PER_TX) {
-        throw new Error(
-          "kaspa: custom fee creates a dust change output that violates KIP-9 storage mass",
-        );
-      }
-    }
+    validateCustomFees(fee, changeAmount, selection, amount);
   }
 
   const inputs: UnsignedKaspaInput[] = selection.utxos.map(utxo => ({

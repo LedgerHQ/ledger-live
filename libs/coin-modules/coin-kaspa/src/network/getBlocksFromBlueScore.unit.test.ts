@@ -1,8 +1,11 @@
 import { getBlocksFromBlueScore } from "./getBlocksFromBlueScore";
 
 describe("getBlocksFromBlueScore", () => {
-  beforeEach(() => {
+  const originalFetch = global.fetch;
+
+  afterEach(() => {
     jest.clearAllMocks();
+    global.fetch = originalFetch;
   });
 
   it("returns the parsed array of blocks on a 200 response", async () => {
