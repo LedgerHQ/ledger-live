@@ -59,7 +59,7 @@ describe("listOperations", () => {
     expect(page.items).toEqual([]);
   });
 
-  it("maps an OUT transaction to a framework Operation with value = amount + fees", async () => {
+  it("maps an OUT transaction to a framework Operation with value = amount (fee excluded)", async () => {
     mockGetTransactions.mockResolvedValue({
       nextPageAfter: null,
       transactions: [

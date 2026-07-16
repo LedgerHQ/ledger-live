@@ -1,5 +1,5 @@
 import { combine } from "./combine";
-import type { UnsignedKaspaTransaction } from "../craftTransaction";
+import type { UnsignedKaspaTransaction } from "./craftTransaction";
 
 function unsignedTx(overrides: Partial<UnsignedKaspaTransaction> = {}): string {
   const tx: UnsignedKaspaTransaction = {
