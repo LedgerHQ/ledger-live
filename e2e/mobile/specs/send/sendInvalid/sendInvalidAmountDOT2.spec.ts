@@ -13,7 +13,7 @@ runSendInvalidAmountTest(
     "@Stax",
     "@Flex",
     "@NanoGen5",
-    "@assethub_polkadot",
+    "@polkadot",
     "@family-polkadot",
   ],
 );
