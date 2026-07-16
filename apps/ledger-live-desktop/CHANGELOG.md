@@ -270,6 +270,34 @@
   - @ledgerhq/device-intent@4.0.1-next.0
   - @ledgerhq/hw-transport-http@6.36.6-next.0
   - @ledgerhq/hw-transport-vault@1.7.6-next.0
+## 4.10.1
+
+### Patch Changes
+
+- Updated dependencies [[`91b83cf`](https://github.com/LedgerHQ/ledger-live/commit/91b83cf8af507a92d2ff535af4e62264a7c142a1), [`641779c`](https://github.com/LedgerHQ/ledger-live/commit/641779c220abf623cfbe95e2980e131ec1f3300c)]:
+  - @ledgerhq/live-common@36.3.1
+  - @ledgerhq/asset-aggregation@0.9.1
+  - @ledgerhq/asset-detail@0.7.1
+  - @ledgerhq/live-dmk-desktop@0.19.1
+
+## 4.10.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`91b83cf`](https://github.com/LedgerHQ/ledger-live/commit/91b83cf8af507a92d2ff535af4e62264a7c142a1), [`641779c`](https://github.com/LedgerHQ/ledger-live/commit/641779c220abf623cfbe95e2980e131ec1f3300c)]:
+  - @ledgerhq/live-common@36.3.1-hotfix.1
+  - @ledgerhq/asset-aggregation@0.9.1-hotfix.0
+  - @ledgerhq/asset-detail@0.7.1-hotfix.1
+  - @ledgerhq/live-dmk-desktop@0.19.1-hotfix.1
+
+## 4.10.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@36.3.1-hotfix.0
+  - @ledgerhq/asset-detail@0.7.1-hotfix.0
+  - @ledgerhq/live-dmk-desktop@0.19.1-hotfix.0
 
 ## 4.10.0
 

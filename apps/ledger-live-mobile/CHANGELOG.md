@@ -259,6 +259,17 @@
   - @ledgerhq/hw-transport@6.35.6-next.0
   - @ledgerhq/device-intent@4.0.1-next.0
   - @ledgerhq/hw-transport-http@6.36.6-next.0
+## 4.10.1
+
+### Patch Changes
+
+- [#19602](https://github.com/LedgerHQ/ledger-live/pull/19602) [`5528d15`](https://github.com/LedgerHQ/ledger-live/commit/5528d15573b9ac1c54ce590b1b26b5cdfdf8eefa) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix asset aggreg for L2
+
+## 4.10.1-hotfix.0
+
+### Patch Changes
+
+- [#19602](https://github.com/LedgerHQ/ledger-live/pull/19602) [`5528d15`](https://github.com/LedgerHQ/ledger-live/commit/5528d15573b9ac1c54ce590b1b26b5cdfdf8eefa) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix asset aggreg for L2
 
 ## 4.10.0
 

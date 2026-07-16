@@ -20,6 +20,28 @@
   - @ledgerhq/ledger-wallet-framework@2.3.0-next.0
   - @ledgerhq/types-cryptoassets@7.39.0-next.0
   - @ledgerhq/coin-tester@0.20.0
+## 1.21.3
+
+### Patch Changes
+
+- Updated dependencies [[`7c0729b`](https://github.com/LedgerHQ/ledger-live/commit/7c0729b140c2d1e7bfb929eac701a4c6bba2f9a9), [`91b83cf`](https://github.com/LedgerHQ/ledger-live/commit/91b83cf8af507a92d2ff535af4e62264a7c142a1)]:
+  - @ledgerhq/coin-solana@0.56.1
+  - @ledgerhq/live-common@36.3.1
+
+## 1.21.3-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`91b83cf`](https://github.com/LedgerHQ/ledger-live/commit/91b83cf8af507a92d2ff535af4e62264a7c142a1)]:
+  - @ledgerhq/live-common@36.3.1-hotfix.1
+
+## 1.21.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`7c0729b`](https://github.com/LedgerHQ/ledger-live/commit/7c0729b140c2d1e7bfb929eac701a4c6bba2f9a9)]:
+  - @ledgerhq/coin-solana@0.56.1-hotfix.0
+  - @ledgerhq/live-common@36.3.1-hotfix.0
 
 ## 1.21.2
 
