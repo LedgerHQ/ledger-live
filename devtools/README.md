@@ -105,6 +105,57 @@ DevTools packages do **not** run Tailwind themselves — they rely on the host a
 
 If a class doesn't render, check those two points first.
 
+## TypeScript configuration
+
+### Platform resolution
+
+Packages that contain both `.web` and `.native` files use two separate tsconfig files to give the IDE and `tsc` the correct resolution context per platform:
+
+```
+my-tool/
+├── tsconfig.json          ← base: shared compilerOptions, files: []
+├── tsconfig.web.json      ← extends base, moduleSuffixes: [".web", ""], includes src/**/* excluding .native.*
+└── tsconfig.native.json   ← extends base, moduleSuffixes: [".native", ""], includes src/**/* excluding .web.*
+```
+
+`moduleSuffixes` is the mechanism that makes bare imports platform-aware. A bare import `./Foo` resolves to `Foo.web.tsx` under the web config and `Foo.native.tsx` under the native config — no explicit extension needed in the import path.
+
+The base `tsconfig.json` acts as a pure compilerOptions bag with `files: []`. This prevents it from claiming any files, ensuring the IDE always assigns source files to the correct platform config rather than the base.
+
+### Scripts
+
+Any script that invokes `tsc` must target a platform config explicitly, not the base:
+
+```json
+"typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json"
+```
+
+Omitting `-p` resolves to `tsconfig.json`, which has `files: []` and checks nothing.
+
+### Registering in the solution tsconfig
+
+Register the package in `devtools/tsconfig.json`:
+
+```json
+{ "path": "./my-tool" },
+```
+
+The package's `tsconfig.json` is itself a [solution-style tsconfig](https://www.typescriptlang.org/docs/handbook/project-references.html) (`files: []` + `references`) that delegates to the platform-specific configs:
+
+```json
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.web.json" },
+    { "path": "./tsconfig.native.json" }
+  ]
+}
+```
+
+This is required because VS Code assigns each source file to whichever referenced project claims it — it does not auto-discover `tsconfig.*.json` files outside the reference graph. A file that falls outside the graph gets an inferred project with the wrong resolution context.
+
+Packages that have only web files (no native variants) follow the same base + web split but only need `tsconfig.web.json` in the package references.
+
 ## Packages
 
 - `@devtools/shell` — `<DevTools />`, navigation, layout, lazy-load runtime, `DevToolsProvider` / `useToolProps`
