@@ -9,13 +9,12 @@ import {
 } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { setupEnv } from "tests/utils/swapUtils";
 import { BuySell } from "@ledgerhq/live-e2e-shared/models/BuySell";
-import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { OperationType } from "@ledgerhq/live-e2e-shared/enum/OperationType";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { getMinimumSellAmount } from "@ledgerhq/live-e2e-shared/buySell";
 import { buildTags, DEVICE_TAGS } from "tests/utils/tagsUtils";
 
-const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: BuySellProvider }> = [
+const assets: Array<{ buySell: BuySell; xrayTicket: string }> = [
   {
     buySell: {
       crypto: Account.BTC_NATIVE_SEGWIT_1,
@@ -25,7 +24,6 @@ const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: BuySellPro
     },
     xrayTicket:
       "B2CQA-3391, B2CQA-3412, B2CQA-3467, B2CQA-3520, B2CQA-3521, B2CQA-3449, B2CQA-3282",
-    provider: BuySellProvider.MOONPAY,
   },
   {
     buySell: {
@@ -36,7 +34,6 @@ const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: BuySellPro
     },
     xrayTicket:
       "B2CQA-3392, B2CQA-3413, B2CQA-3466, B2CQA-3519, B2CQA-3522, B2CQA-3449, B2CQA-3289",
-    provider: BuySellProvider.MOONPAY,
   },
   {
     buySell: {
@@ -46,7 +43,6 @@ const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: BuySellPro
       operation: OperationType.Buy,
     },
     xrayTicket: "B2CQA-3393, B2CQA-3414, B2CQA-3468, B2CQA-3518, B2CQA-3523, B2CQA-3449",
-    provider: BuySellProvider.MOONPAY,
   },
 ];
 
@@ -152,13 +148,9 @@ for (const asset of assets) {
         await app.buyAndSell.verifyBuyInfoBox();
         await app.buyAndSell.verifyProviderInfoIsNotVisible();
         await app.buyAndSell.setAmountToPay(amount, operation);
-        await app.buyAndSell.selectProviderQuote(operation, asset.provider.uiName);
+        const provider = await app.buyAndSell.selectRandomProvider(operation);
         await app.buyAndSell.selectQuote();
-        await app.buyAndSell.verifyProviderUrl(
-          asset.provider.uiName,
-          asset.buySell,
-          userdataDestinationPath,
-        );
+        await app.buyAndSell.verifyProviderUrl(provider, asset.buySell, userdataDestinationPath);
       },
     );
   });
@@ -167,7 +159,6 @@ for (const asset of assets) {
 const sellAsset: {
   buySell: Omit<BuySell, "amount">;
   xrayTicket: string;
-  provider: BuySellProvider;
 } = {
   buySell: {
     crypto: Account.BTC_NATIVE_SEGWIT_1,
@@ -175,7 +166,6 @@ const sellAsset: {
     operation: OperationType.Sell,
   },
   xrayTicket: "B2CQA-3524",
-  provider: BuySellProvider.MOONPAY,
 };
 
 test.describe("Sell flow - ", () => {
@@ -212,13 +202,9 @@ test.describe("Sell flow - ", () => {
       const amount = await getMinimumSellAmount(crypto.currency.id);
       const buySell = { ...sellAsset.buySell, amount };
       await app.buyAndSell.setAmountToPay(amount, operation);
-      await app.buyAndSell.selectProviderQuote(operation, sellAsset.provider.uiName);
+      const provider = await app.buyAndSell.selectRandomProvider(operation);
       await app.buyAndSell.selectQuote();
-      await app.buyAndSell.verifyProviderUrl(
-        sellAsset.provider.uiName,
-        buySell,
-        userdataDestinationPath,
-      );
+      await app.buyAndSell.verifyProviderUrl(provider, buySell, userdataDestinationPath);
     },
   );
 });

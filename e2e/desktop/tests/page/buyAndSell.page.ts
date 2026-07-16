@@ -41,6 +41,8 @@ export class BuyAndSellPage extends WebViewAppPage {
   private fiatDrawerInput = "fiat-drawer-search-input";
   private saveRegionFiatOptionsSelector = "save-region-and-fiat-options";
   private showMoreQuotes = "SHOW MORE QUOTES";
+  private providerTitleCssSelector =
+    "[data-testid^='provider_title_'][data-testid$='_title_container']";
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
   private modularDialog = new ModularDialog(this.page);
@@ -60,32 +62,6 @@ export class BuyAndSellPage extends WebViewAppPage {
       },
       sellParams: this.standardSellParams,
       addressParam: "walletaddress",
-    },
-    [BuySellProvider.TRANSAK.uiName]: {
-      buyParams: {
-        fiatAmount: buySell => buySell.amount,
-        cryptoCurrencyCode: buySell => buySell.crypto.currency.ticker,
-        fiatCurrency: buySell => buySell.fiat.currencyTicker,
-      },
-      sellParams: this.standardSellParams,
-      addressParam: "walletaddress",
-    },
-    [BuySellProvider.COINBASE.uiName]: {
-      buyParams: {
-        presetFiatAmount: buySell => buySell.amount,
-        defaultAsset: buySell => buySell.crypto.currency.ticker,
-        fiatCurrency: buySell => buySell.fiat.currencyTicker,
-      },
-      sellParams: this.standardSellParams,
-      addressParam: "destinationwallets",
-      parseAddress: (value: string) => {
-        const wallets = JSON.parse(decodeURIComponent(value)) as Array<{
-          address: string;
-          blockchains: string[];
-        }>;
-        if (!wallets[0]?.address) throw new Error("No address found in destinationwallets");
-        return wallets[0].address.toLowerCase();
-      },
     },
   };
 
@@ -227,14 +203,41 @@ export class BuyAndSellPage extends WebViewAppPage {
     await this.verifyElementIsVisible(this.providersList);
   }
 
-  @step("Select provider quote for $1")
-  async selectProviderQuote(operation: string, providerName: string) {
+  @step("Select provider quote")
+  async selectProviderQuote(operation: string, provider: BuySellProvider) {
     if (await this.isTextVisible(this.showMoreQuotes)) {
       await this.clickElementByText(this.showMoreQuotes);
     }
-    await this.scrollToElement(this.provider(providerName));
-    await this.clickElement(this.provider(providerName));
-    await this.verifyElementText(this.formCta, `${operation} with ${providerName}`);
+    await this.scrollToElement(this.provider(provider.name));
+    await this.clickElement(this.provider(provider.name));
+    await this.verifyElementText(this.formCta, `${operation} with ${provider.uiName}`);
+  }
+
+  @step("Get available providers")
+  async getAvailableProviders(): Promise<string[]> {
+    if (await this.isTextVisible(this.showMoreQuotes)) {
+      await this.clickElementByText(this.showMoreQuotes);
+    }
+    const titles = await this.getTextsByCssSelector(this.providerTitleCssSelector);
+    return titles.map(title => title.trim());
+  }
+
+  @step("Select random provider")
+  async selectRandomProvider(operation: string): Promise<BuySellProvider> {
+    const uiNamesFromQuotes = await this.getAvailableProviders();
+    const testedProviders = uiNamesFromQuotes
+      .map(uiName => BuySellProvider.getByUiName(uiName))
+      .filter((p): p is BuySellProvider => Boolean(p?.isTested));
+
+    if (testedProviders.length === 0) {
+      throw new Error(
+        `No known tested providers in quotes. UI listed: ${uiNamesFromQuotes.join(", ") || "(none)"}`,
+      );
+    }
+
+    const selected = testedProviders[Math.floor(Math.random() * testedProviders.length)];
+    await this.selectProviderQuote(operation, selected);
+    return selected;
   }
 
   @step("Select quote")
@@ -243,17 +246,25 @@ export class BuyAndSellPage extends WebViewAppPage {
     await this.clickElement(this.formCta);
   }
 
-  @step("Verify provider URL for $0")
-  async verifyProviderUrl(providerName: string, buySell: BuySell, userdataDestinationPath: string) {
+  @step("Verify provider URL")
+  async verifyProviderUrl(
+    provider: BuySellProvider,
+    buySell: BuySell,
+    userdataDestinationPath: string,
+  ) {
     const addresses = await getAccountAddressesFromAppJson(userdataDestinationPath);
 
     const rawUrl = await this.waitForGoToUrl();
     const decodedUrl = decodeGoToUrl(rawUrl);
     const url = new URL(decodedUrl);
 
-    this.verifyBaseUrl(url, providerName, buySell.operation);
-    this.verifyQueryParams(url, providerName, buySell);
-    await this.verifyDestinationAddress(url, providerName, buySell, addresses);
+    this.verifyProviderInUrl(url, provider.uiName);
+
+    const config = this.providerConfigs[provider.uiName];
+    if (!config) return;
+
+    this.verifyQueryParams(url, config, buySell);
+    await this.verifyDestinationAddress(url, config, buySell, addresses);
   }
 
   private async waitForGoToUrl(): Promise<string> {
@@ -279,21 +290,14 @@ export class BuyAndSellPage extends WebViewAppPage {
     return stableUrl;
   }
 
-  private verifyBaseUrl(url: URL, providerName: string, operation: OperationType) {
-    const hrefLower = url.href.toLowerCase();
-
-    expect(
-      hrefLower.includes(operation.toLowerCase()),
-      `Operation "${operation}" should appear in URL`,
-    ).toBe(true);
-    expect(
-      hrefLower.includes(providerName.toLowerCase()),
-      `Provider "${providerName}" should appear in URL`,
-    ).toBe(true);
+  private verifyProviderInUrl(url: URL, providerUiName: string) {
+    const href = url.href.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const provider = providerUiName.toLowerCase().replace(/[^a-z0-9]/g, "");
+    expect(href.includes(provider), `Provider "${providerUiName}" should appear in URL`).toBe(true);
   }
 
-  private verifyQueryParams(url: URL, providerName: string, buySell: BuySell) {
-    const expectations = this.getExpectedQueryParams(providerName, buySell);
+  private verifyQueryParams(url: URL, config: ProviderConfig, buySell: BuySell) {
+    const expectations = this.getExpectedQueryParams(config, buySell);
     const params = Object.fromEntries(
       Array.from(url.searchParams).map(([k, v]) => [k.toLowerCase(), v]),
     );
@@ -310,10 +314,7 @@ export class BuyAndSellPage extends WebViewAppPage {
     }
   }
 
-  private getExpectedQueryParams(providerName: string, buySell: BuySell): Record<string, string> {
-    const config = this.providerConfigs[providerName];
-    if (!config) throw new Error(`Unsupported provider: ${providerName}`);
-
+  private getExpectedQueryParams(config: ProviderConfig, buySell: BuySell): Record<string, string> {
     const paramMap = buySell.operation === OperationType.Buy ? config.buyParams : config.sellParams;
 
     return Object.fromEntries(
@@ -326,12 +327,10 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   private async verifyDestinationAddress(
     url: URL,
-    providerName: string,
+    config: ProviderConfig,
     buySell: BuySell,
     addresses: string[],
   ) {
-    const config = this.providerConfigs[providerName];
-    if (!config) throw new Error(`Unsupported provider: ${providerName}`);
     const normalizedAddresses = addresses.map(a => a.toLowerCase());
 
     const expectedParam = buySell.operation === OperationType.Buy ? config.addressParam : "address";
