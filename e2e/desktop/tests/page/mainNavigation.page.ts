@@ -152,6 +152,7 @@ export class MainNavigationPage extends AppPage {
 
   @step("Click Activity indicator from top navigation")
   async clickActivityIndicator() {
+    await this.layout.waitForSyncButtonToBeEnabled();
     await this.layout.topbarSynchronizeButton.click();
   }
 
