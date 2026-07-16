@@ -1,7 +1,20 @@
 import { ethers } from "ethers";
-import type { StakingContractConfig } from "../types/staking";
+import type { StakingContractConfig, StakingOperation } from "../types/staking";
 import { USEI_TO_EVM_SCALE } from "../utils";
 import { getValidatorAddressById } from "./validators/monadResolver";
+
+export function getStakingContractAddress(
+  currencyId: string,
+  ctx?: { mode: StakingOperation; valAddress?: string },
+): string | undefined {
+  const config = STAKING_CONTRACTS[currencyId];
+  if (!config) return undefined;
+  try {
+    return config.contractAddress(ctx);
+  } catch {
+    return undefined;
+  }
+}
 
 export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
   // Sei EVM staking

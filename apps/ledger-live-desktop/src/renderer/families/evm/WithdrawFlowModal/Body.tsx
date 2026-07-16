@@ -26,6 +26,7 @@ import logger from "~/renderer/logger";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { useStakingContractAddress } from "@ledgerhq/live-common/families/evm/staking/react";
 import { BigNumber } from "bignumber.js";
 
 export type Data = {
@@ -95,19 +96,22 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
     source = "Account Page",
   } = params;
   const bridge = useAccountBridge<EvmTransaction>(account, undefined);
+  const contractAddress = useStakingContractAddress(account.currency.id, {
+    mode: "withdraw",
+    valAddress: validatorAddress,
+  });
 
   const { transaction, parentAccount, status, bridgeError, bridgePending } = useBridgeTransaction(
     bridge,
     () => {
       invariant(isStakingAccount(account), "evm: account with staking resources required");
-      // Monad: finalize the matured withdrawal slot via `withdraw(validatorId, withdrawId)`.
       const baseTransaction = bridge.createTransaction(account);
       const transaction = bridge.updateTransaction(baseTransaction, {
         mode: "withdraw",
         valAddress: validatorAddress,
         valId: validatorId,
         withdrawId: withdrawId?.toString(),
-        recipient: account.freshAddress,
+        recipient: contractAddress ?? account.freshAddress,
         amount,
         useAllAmount: false,
       } as unknown as Partial<EvmTransaction>);

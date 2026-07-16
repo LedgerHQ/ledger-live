@@ -2,7 +2,11 @@
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { useFeature } from "@features/platform-feature-flags";
-import { useEvmStakingValidators } from "@ledgerhq/live-common/families/evm/staking/react";
+import {
+  useEvmStakingValidators,
+  useStakingContractAddress,
+} from "@ledgerhq/live-common/families/evm/staking/react";
+import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
 import { sortLedgerValidatorFirst } from "@ledgerhq/live-common/families/evm/staking/ledgerValidator";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
@@ -78,19 +82,27 @@ export default function SelectValidator({ navigation, route }: Props) {
 
     return sortLedgerValidatorFirst(sorted, account.currency.id);
   }, [account.currency.id, account.stakingResources?.validators, fetchedValidators, searchQuery]);
+  const contractAddress = useStakingContractAddress(account.currency.id, {
+    mode: "delegate",
+  });
   const baseTransaction = useMemo(() => {
     const transaction = bridge.createTransaction(account);
     return bridge.updateTransaction(transaction, {
-      recipient: account.freshAddress,
+      recipient: contractAddress ?? account.freshAddress,
     });
-  }, [account, bridge]);
+  }, [account, bridge, contractAddress]);
 
   const onItemPress = useCallback(
     (validator: StakingValidatorItem) => {
+      const contractAddress = getStakingContractAddress(account.currency.id, {
+        mode: "delegate",
+        valAddress: validator.validatorAddress,
+      });
       const transaction = bridge.updateTransaction(baseTransaction, {
         mode: "delegate",
         valAddress: validator.validatorAddress,
         valId: validator.validatorId,
+        recipient: contractAddress ?? account.freshAddress,
       }) as unknown as Transaction;
 
       navigation.navigate(ScreenName.EvmDelegationAmount, {
@@ -99,7 +111,7 @@ export default function SelectValidator({ navigation, route }: Props) {
         validator,
       });
     },
-    [baseTransaction, bridge, navigation, route.params],
+    [account.currency.id, account.freshAddress, baseTransaction, bridge, navigation, route.params],
   );
 
   const renderItem = useCallback(
