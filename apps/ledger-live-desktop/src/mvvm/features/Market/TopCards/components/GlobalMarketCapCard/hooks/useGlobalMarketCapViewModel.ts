@@ -6,7 +6,9 @@ import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducer
 import { track } from "~/renderer/analytics/segment";
 
 export const useGlobalMarketCapViewModel = () => {
-  const counterCurrency = useSelector(counterValueCurrencySelector).ticker.toLowerCase();
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const counterCurrency = counterValueCurrency.ticker.toLowerCase();
+  const counterValueUnit = counterValueCurrency.units[0];
   const locale = useSelector(localeSelector);
 
   // /v3/markets/global currently returns a USD-denominated market cap regardless of `to`.
@@ -23,7 +25,7 @@ export const useGlobalMarketCapViewModel = () => {
   return {
     value: marketCap
       ? counterValueFormatter({
-          currency: counterCurrency.toUpperCase(),
+          unit: counterValueUnit,
           value: marketCap,
           shorten: true,
           locale,

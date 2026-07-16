@@ -118,6 +118,7 @@ export function useChartSectionViewModel({
   } = useAssetDetailChartSeries({
     id,
     counterCurrency,
+    isCryptoCountervalue: counterValueCurrency.type === "CryptoCurrency",
     selectedRange,
     ath,
     atl,

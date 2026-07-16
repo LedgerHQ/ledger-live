@@ -34,12 +34,17 @@ describe("useAssetDetailChartSeries", () => {
   describe("counter value fallback", () => {
     it("builds the series from the counter-value-aware chart data and forwards request args", () => {
       const { result } = renderHook(() =>
-        useAssetDetailChartSeries({ id: "bitcoin", counterCurrency: "btc", selectedRange: "1d" }),
+        useAssetDetailChartSeries({
+          id: "bitcoin",
+          counterCurrency: "btc",
+          isCryptoCountervalue: false,
+          selectedRange: "1d",
+        }),
       );
 
       // The chart now goes through the USD-fallback wrapper instead of useAssetChartData.
       expect(mockedUseAssetChartData).toHaveBeenCalledWith(
-        { id: "bitcoin", counterCurrency: "btc", range: "1d" },
+        { id: "bitcoin", counterCurrency: "btc", range: "1d", isCryptoCountervalue: false },
         { skip: false },
       );
       // The series is derived from the (rescaled) currentData the wrapper returns.
@@ -57,11 +62,16 @@ describe("useAssetDetailChartSeries", () => {
 
     it("skips the request and uses an empty id when no id is provided", () => {
       renderHook(() =>
-        useAssetDetailChartSeries({ id: undefined, counterCurrency: "usd", selectedRange: "1d" }),
+        useAssetDetailChartSeries({
+          id: undefined,
+          counterCurrency: "usd",
+          isCryptoCountervalue: false,
+          selectedRange: "1d",
+        }),
       );
 
       expect(mockedUseAssetChartData).toHaveBeenCalledWith(
-        { id: "", counterCurrency: "usd", range: "1d" },
+        { id: "", counterCurrency: "usd", range: "1d", isCryptoCountervalue: false },
         { skip: true },
       );
     });
@@ -70,7 +80,12 @@ describe("useAssetDetailChartSeries", () => {
       mockChartData({ isLoading: true, isFetching: true, isError: true });
 
       const { result } = renderHook(() =>
-        useAssetDetailChartSeries({ id: "bitcoin", counterCurrency: "cop", selectedRange: "1d" }),
+        useAssetDetailChartSeries({
+          id: "bitcoin",
+          counterCurrency: "cop",
+          isCryptoCountervalue: false,
+          selectedRange: "1d",
+        }),
       );
 
       expect(result.current.isLoading).toBe(true);

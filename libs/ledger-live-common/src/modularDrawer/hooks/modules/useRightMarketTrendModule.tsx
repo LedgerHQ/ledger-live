@@ -43,7 +43,7 @@ export const useRightMarketTrendModule = (
 
       const priceFormatted = counterValueFormatter({
         value: roundFiatPrice(currencyMarket.price * rate),
-        currency: counterValueCurrency.ticker,
+        unit: counterValueCurrency.units[0],
         locale,
       });
 
@@ -61,7 +61,7 @@ export const useRightMarketTrendModule = (
     marketByCurrencies,
     status,
     rate,
-    counterValueCurrency.ticker,
+    counterValueCurrency.units,
     locale,
     MarketPriceIndicator,
   ]);

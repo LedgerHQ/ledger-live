@@ -1,4 +1,13 @@
+import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import { counterValueFormatter } from "../countervalueFormatter";
+
+const usd = findFiatCurrencyByTicker("USD")!.units[0];
+const cad = findFiatCurrencyByTicker("CAD")!.units[0];
+const eur = findFiatCurrencyByTicker("EUR")!.units[0];
+// BTC and ETH exist in the fiat list (with Ledger-pinned signs ₿ / ETH),
+// mirroring what the formatter's old fiat-first lookup returned.
+const btc = findFiatCurrencyByTicker("BTC")!.units[0];
+const eth = findCryptoCurrencyByTicker("ETH")!.units[0];
 
 describe("counterValueFormatter (live-common)", () => {
   it("returns '-' for falsy values", () => {
@@ -10,7 +19,7 @@ describe("counterValueFormatter (live-common)", () => {
     const result = counterValueFormatter({
       value: 1234.56,
       locale: "en-US",
-      currency: "USD",
+      unit: usd,
     });
     expect(result).toContain("$");
     expect(result).toContain("1,234.56");
@@ -46,21 +55,17 @@ describe("counterValueFormatter (live-common)", () => {
 
   it("renders the Ledger fiat sign instead of the localized code", () => {
     // USD: previously rendered US$/$US in non-US locales
-    expect(counterValueFormatter({ value: 1234.56, locale: "en-GB", currency: "usd" })).toBe(
-      "$1,234.56",
-    );
-    expect(counterValueFormatter({ value: 1234.56, locale: "en-US", currency: "usd" })).toBe(
-      "$1,234.56",
-    );
+    expect(counterValueFormatter({ value: 1234.56, locale: "en-GB", unit: usd })).toBe("$1,234.56");
+    expect(counterValueFormatter({ value: 1234.56, locale: "en-US", unit: usd })).toBe("$1,234.56");
   });
 
   it("uses the same fiat sign regardless of locale so Market matches price and balances", () => {
     // CAD: Intl narrowSymbol is locale-dependent ("$" in en-CA, "CA$" in en-US),
     // but the Ledger fiat definition pins it to "CA$" everywhere.
-    expect(counterValueFormatter({ value: 1234.56, locale: "en-US", currency: "cad" })).toBe(
+    expect(counterValueFormatter({ value: 1234.56, locale: "en-US", unit: cad })).toBe(
       "CA$1,234.56",
     );
-    expect(counterValueFormatter({ value: 1234.56, locale: "en-CA", currency: "cad" })).toBe(
+    expect(counterValueFormatter({ value: 1234.56, locale: "en-CA", unit: cad })).toBe(
       "CA$1,234.56",
     );
   });
@@ -70,7 +75,7 @@ describe("counterValueFormatter (live-common)", () => {
       counterValueFormatter({
         value: 21_000_000,
         locale: "en-US",
-        currency: "btc",
+        unit: btc,
         shorten: true,
       }),
     ).toContain("₿");
@@ -81,9 +86,36 @@ describe("counterValueFormatter (live-common)", () => {
       counterValueFormatter({
         value: 21_000_000,
         locale: "en-US",
-        currency: "eth",
+        unit: eth,
         shorten: true,
       }),
     ).toContain("ETH");
+  });
+
+  it("formats EUR with the Ledger-pinned sign", () => {
+    const result = counterValueFormatter({
+      value: 1234.56,
+      locale: "en-US",
+      unit: eur,
+    });
+    expect(result).toContain("1,234.56");
+    expect(result).toMatch(/€/);
+  });
+
+  it("formats BTC without shorten using magnitude-based fraction digits (8 decimals)", () => {
+    const result = counterValueFormatter({
+      value: 1.123456789,
+      locale: "en-US",
+      unit: btc,
+      shorten: false,
+    });
+    // BTC magnitude is 8 → maximumFractionDigits = 8, Intl rounds (not truncates)
+    expect(result).toContain("₿");
+    expect(result).toMatch(/1\.12345679/);
+  });
+
+  it("formats a value without currency as plain decimal", () => {
+    const result = counterValueFormatter({ value: 1234.56, locale: "en-US" });
+    expect(result).toBe("1,234.56");
   });
 });

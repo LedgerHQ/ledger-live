@@ -1,7 +1,6 @@
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { getSortParam } from "@ledgerhq/live-common/market/utils/index";
 import { rangeDataTable } from "@ledgerhq/live-common/cg-client/utils/rangeDataTable";
-import { findCryptoCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
 import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { TFunction } from "i18next";
@@ -73,33 +72,26 @@ type NumberFormatterResult = {
 
 const getNumberFormatter = (
   locale: string,
-  currency?: string,
+  unit?: Unit,
   shorten?: boolean,
 ): NumberFormatterResult => {
-  if (!currency) return { formatter: new Intl.NumberFormat(locale) };
+  if (!unit) {
+    return {
+      formatter: new Intl.NumberFormat(locale, {
+        style: "decimal",
+        maximumFractionDigits: shorten ? 3 : MAXIMUM_FRACTION_DIGITS,
+      }),
+    };
+  }
 
-  const normalizedCurrency = currency.toUpperCase();
-  const fiat = findFiatCurrencyByTicker(normalizedCurrency);
-  const crypto = findCryptoCurrencyByTicker(normalizedCurrency);
-  const unit = fiat?.units[0] ?? crypto?.units[0];
-  const formatterKey = `${normalizedCurrency}:${shorten ? "short" : "full"}`;
+  const formatterKey = `${unit.code}:${shorten ? "short" : "full"}`;
 
   if (!formatters[locale]) formatters[locale] = {};
   if (!formatters[locale][formatterKey]) {
-    formatters[locale][formatterKey] = new Intl.NumberFormat(
-      locale,
-      unit
-        ? {
-            style: "decimal",
-            ...getFractionDigitOptions(unit, shorten),
-          }
-        : {
-            style: "currency",
-            currency: normalizedCurrency,
-            ...getFractionDigitOptions(undefined, shorten),
-            maximumSignificantDigits: 8,
-          },
-    );
+    formatters[locale][formatterKey] = new Intl.NumberFormat(locale, {
+      style: "decimal",
+      ...getFractionDigitOptions(unit, shorten),
+    });
   }
 
   return { formatter: formatters[locale][formatterKey], unit };
@@ -135,6 +127,7 @@ const formatShortenedValue = (
 
 export const counterValueFormatter = ({
   currency,
+  unit: providedUnit,
   value,
   shorten,
   locale,
@@ -143,6 +136,7 @@ export const counterValueFormatter = ({
   ticker = "",
 }: {
   currency?: string;
+  unit?: Unit;
   value: number;
   shorten?: boolean;
   locale: string;
@@ -154,8 +148,12 @@ export const counterValueFormatter = ({
     return "-";
   }
 
-  const { formatter, unit } = getNumberFormatter(locale, currency, shorten);
-  const upperCaseTicker = ticker.trim().toUpperCase();
+  const resolvedUnit =
+    providedUnit ??
+    (currency ? findFiatCurrencyByTicker(currency.toUpperCase())?.units[0] : undefined);
+  const { formatter, unit } = getNumberFormatter(locale, resolvedUnit, shorten);
+  const upperCaseTicker =
+    ticker.trim().toUpperCase() || (!resolvedUnit && currency ? currency.trim().toUpperCase() : "");
 
   if (shorten && t) {
     return `${formatShortenedValue(formatter, value, t, unit)} ${upperCaseTicker}`.trim();
