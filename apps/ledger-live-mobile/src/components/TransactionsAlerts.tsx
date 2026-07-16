@@ -30,9 +30,19 @@ const TransactionsAlerts = () => {
   const refFeatureEnabled = useRef<boolean>(false);
   const refNotifSettings = useRef<boolean>(false);
   const refReconciliationKey = useRef<string | undefined>(undefined);
+  // Keep Chainwatch mutations ordered so stale requests cannot overwrite newer state.
+  const refChainwatchOperations = useRef<Promise<void>>(Promise.resolve());
 
   useEffect(() => {
     if (!chainwatchBaseUrl) return;
+
+    const enqueueChainwatchOperation = (operation: () => Promise<void>) => {
+      const queuedOperation = refChainwatchOperations.current
+        .catch(() => undefined)
+        .then(operation);
+      refChainwatchOperations.current = queuedOperation;
+      return queuedOperation;
+    };
 
     // If the FF is disabled or if the transactionsAlerts toggle is turned off in the settings we stop tracking all addresses for this user
     if (
@@ -40,11 +50,14 @@ const TransactionsAlerts = () => {
       (!notifications.transactionsAlertsCategory && refNotifSettings.current)
     ) {
       refReconciliationKey.current = undefined;
-      deleteUserChainwatchAccounts(
-        userId.exportUserIdForChainwatch(),
-        chainwatchBaseUrl,
-        supportedChains,
-      );
+      void enqueueChainwatchOperation(async () => {
+        await deleteUserChainwatchAccounts(
+          userId.exportUserIdForChainwatch(),
+          chainwatchBaseUrl,
+          supportedChains,
+        );
+        refAccounts.current = [];
+      }).catch(() => undefined);
     }
     refFeatureEnabled.current = featureTransactionsAlerts?.enabled;
     refNotifSettings.current = notifications.transactionsAlertsCategory;
@@ -62,23 +75,26 @@ const TransactionsAlerts = () => {
     if (refReconciliationKey.current === reconciliationKey) return;
 
     refReconciliationKey.current = reconciliationKey;
-    void reconcileTransactionsAlertsAddresses(
-      userId.exportUserIdForChainwatch(),
-      chainwatchBaseUrl,
-      supportedChains,
-      accountsFilteredBySupportedChains,
-      refAccounts.current,
-    )
-      .then(() => {
-        if (refReconciliationKey.current === reconciliationKey) {
-          refAccounts.current = accountsFilteredBySupportedChains;
-        }
-      })
-      .catch(() => {
-        if (refReconciliationKey.current === reconciliationKey) {
-          refReconciliationKey.current = undefined;
-        }
-      });
+    void enqueueChainwatchOperation(async () => {
+      const previousAccounts = refAccounts.current;
+      try {
+        await reconcileTransactionsAlertsAddresses(
+          userId.exportUserIdForChainwatch(),
+          chainwatchBaseUrl,
+          supportedChains,
+          accountsFilteredBySupportedChains,
+          previousAccounts,
+        );
+        refAccounts.current = accountsFilteredBySupportedChains;
+      } catch (error) {
+        refAccounts.current = [...previousAccounts, ...accountsFilteredBySupportedChains];
+        throw error;
+      }
+    }).catch(() => {
+      if (refReconciliationKey.current === reconciliationKey) {
+        refReconciliationKey.current = undefined;
+      }
+    });
   }, [
     featureTransactionsAlerts?.enabled,
     chainwatchBaseUrl,

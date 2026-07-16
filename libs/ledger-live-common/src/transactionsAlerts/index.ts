@@ -26,6 +26,9 @@ const formatAccountsByCurrencies = (newAccounts: Account[], removedAccounts: Acc
 const getAccountAddressKey = (account: Account) =>
   `${account.currency.id}:${account.freshAddress.toLowerCase()}`;
 
+const deduplicateAccountsByAddress = (accounts: Account[]) =>
+  Array.from(new Map(accounts.map(account => [getAccountAddressKey(account), account])).values());
+
 export const getSupportedChainsAccounts = (
   userId: string,
   chainwatchBaseUrl: string,
@@ -51,13 +54,10 @@ export const reconcileTransactionsAlertsAddresses = async (
   previousAccounts: Account[],
 ) => {
   // Chainwatch subscriptions follow addresses, independently of local account ids.
-  const accountsByAddress = new Map(
-    accounts.map(account => [getAccountAddressKey(account), account]),
-  );
-  const accountsToRegister = Array.from(accountsByAddress.values());
-  const accountAddressKeys = new Set(accountsByAddress.keys());
-  const removedAccounts = previousAccounts.filter(
-    account => !accountAddressKeys.has(getAccountAddressKey(account)),
+  const accountsToRegister = deduplicateAccountsByAddress(accounts);
+  const accountAddressKeys = new Set(accountsToRegister.map(getAccountAddressKey));
+  const removedAccounts = deduplicateAccountsByAddress(
+    previousAccounts.filter(account => !accountAddressKeys.has(getAccountAddressKey(account))),
   );
   const accountsByCurrencies = formatAccountsByCurrencies(accountsToRegister, removedAccounts);
 
