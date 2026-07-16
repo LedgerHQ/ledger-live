@@ -18,11 +18,11 @@ interface NetworkLog {
   failureText?: string;
 }
 
-export class WebviewLogCollector {
+export class PageLogCollector {
   private readonly consoleLogs: ConsoleLog[] = [];
   private readonly requestsMap: Map<Request, NetworkLog> = new Map();
 
-  private webviewPage: Page | null = null;
+  private targetPage: Page | null = null;
 
   private readonly onConsole = (msg: ConsoleMessage) => {
     this.consoleLogs.push({
@@ -33,10 +33,13 @@ export class WebviewLogCollector {
   };
 
   private readonly onRequest = (request: Request) => {
+    const url = request.url();
+    // skip file://, data:, devtools:, ...
+    if (!/^https?:\/\//.test(url)) return;
     this.requestsMap.set(request, {
       timestamp: new Date().toISOString(),
       method: request.method(),
-      url: request.url(),
+      url,
       pending: true,
     });
   };
@@ -93,8 +96,8 @@ export class WebviewLogCollector {
     }
   };
 
-  private attachToWebview(page: Page): void {
-    this.webviewPage = page;
+  attach(page: Page): void {
+    this.targetPage = page;
     page.on("console", this.onConsole);
     page.on("request", this.onRequest);
     page.on("response", this.onResponse);
@@ -105,7 +108,7 @@ export class WebviewLogCollector {
   start(electronApp: ElectronApplication): void {
     electronApp.on("window", (page: Page) => {
       // Exit early if we've already attached to a webview
-      if (this.webviewPage) return;
+      if (this.targetPage) return;
 
       // In the current implementation, the webview is the second window opened by the app.
       // If this changes in the future, we may need a more robust way to identify the webview.
@@ -113,7 +116,7 @@ export class WebviewLogCollector {
       if (windows.length <= 1) return;
 
       // Attach to the webview page
-      this.attachToWebview(page);
+      this.attach(page);
     });
   }
 
