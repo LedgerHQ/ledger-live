@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 import { test } from "tests/fixtures/common";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { EarnProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
   FF_EARN_V2_DESKTOP,
   FF_STAKE_PROGRAMS_MODAL,
@@ -36,6 +37,7 @@ async function navigateToEarn(app: Application) {
 test.describe("Earn [v2]", () => {
   setupEnv(true);
   test.use({
+    teamOwner: Team.EARN,
     localManifestOverride: useLocalEarnManifest ? [EARN_LOCAL_MANIFEST] : undefined,
   });
 
@@ -366,6 +368,7 @@ test.describe("LiveApp delegate - ETH", () => {
   const account = Account.ETH_1;
 
   test.use({
+    teamOwner: Team.EARN,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.currency.speculosApp,
     cliCommands: [liveDataCommand(account)],
