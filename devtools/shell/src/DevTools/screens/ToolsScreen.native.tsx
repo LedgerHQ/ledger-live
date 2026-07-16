@@ -1,5 +1,5 @@
 import { Box, SearchInput } from "@ledgerhq/lumen-ui-rnative";
-import Catalog from "../../components/Catalog/Catalog";
+import { Catalog } from "../../components";
 import { useToolsScreenViewModel } from "./useToolsScreenViewModel";
 import type { ToolsScreenProps } from "../navigation";
 

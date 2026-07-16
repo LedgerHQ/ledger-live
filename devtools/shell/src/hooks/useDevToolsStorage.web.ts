@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { ToolId } from "@devtools/registry";
-import { STORAGE_KEY, serialize, deserialize, addToRecent } from "../utils/devToolsStorageUtils";
+import { STORAGE_KEY, serialize, deserialize, addToRecent } from "../utils";
 
 export function useDevToolsStorage(
   activeToolId: ToolId | undefined,

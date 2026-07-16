@@ -12,8 +12,8 @@ import type { FeatureId } from "@shared/feature-flags";
 import {
   useFeatureFlagsToolActions,
   useFeatureFlagsToolState,
-} from "../../context/FeatureFlagsToolContext";
-import { useFlagSelectionActions } from "../../context/FlagSelectionContext";
+  useFlagSelectionActions,
+} from "../../context";
 import { FlagEnableIndicator } from "../flagEnableIndicator/FlagEnableIndicator";
 
 export interface FlagRowProps {

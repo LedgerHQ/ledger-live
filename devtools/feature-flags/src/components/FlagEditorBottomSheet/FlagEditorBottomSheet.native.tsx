@@ -2,8 +2,9 @@ import { BottomSheet } from "@ledgerhq/lumen-ui-rnative";
 import {
   useFeatureFlagsToolActions,
   useFeatureFlagsToolState,
-} from "../../context/FeatureFlagsToolContext";
-import { useFlagSelectionActions, useFlagSelectionState } from "../../context/FlagSelectionContext";
+  useFlagSelectionActions,
+  useFlagSelectionState,
+} from "../../context";
 import { FlagEditorBottomSheetContent } from "./FlagEditorBottomSheetContent";
 
 export function FlagEditorBottomSheet() {

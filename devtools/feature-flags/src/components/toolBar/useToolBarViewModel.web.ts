@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import type { FlagFilter } from "../../types";
-import { FILTERS } from "../../hooks/useFeatureFlagsFilters";
-import type { SortCategory, SortDirection } from "../../hooks/useSortFlag";
+import { FILTERS } from "../../hooks";
+import type { SortCategory, SortDirection } from "../../hooks";
 import type { FilterOption, ToolBarInput, ToolBarViewProps } from "./types";
 
 const FILTER_LABELS: Record<FlagFilter, string> = {

@@ -1,8 +1,8 @@
 import { useLayoutEffect, useMemo } from "react";
-import { type CatalogItem } from "../../components/Catalog/Catalog";
+import { type CatalogItem } from "../../components";
 import { CATEGORY_ICONS } from "../../categoryConfig";
 import { useDevToolsShell } from "../../context";
-import { filterToolsByQuery } from "../../utils/toolsUtils";
+import { filterToolsByQuery } from "../../utils";
 import type { CategoriesScreenProps } from "../navigation";
 
 export interface CategoriesScreenViewProps {

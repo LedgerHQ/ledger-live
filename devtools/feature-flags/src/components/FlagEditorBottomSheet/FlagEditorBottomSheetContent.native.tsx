@@ -7,7 +7,7 @@ import {
   BottomSheetScrollView,
 } from "@ledgerhq/lumen-ui-rnative";
 import { FlagJsonEditor } from "../flagJsonEditor/flagJsonEditor";
-import { useJsonEditor } from "../../hooks/useJsonEditor";
+import { useJsonEditor } from "../../hooks";
 import type { FeatureFlagsToolProps, FlagDisplayState } from "../../types";
 
 interface FlagEditorBottomSheetContentProps {
