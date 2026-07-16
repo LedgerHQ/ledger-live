@@ -10,6 +10,14 @@ import {
 import type { ChainwatchNetwork, Account } from "@ledgerhq/types-live";
 import { notificationsSelector } from "~/reducers/settings";
 
+const haveSameAccountAddresses = (previousAccounts: Account[], nextAccounts: Account[]) =>
+  previousAccounts.length === nextAccounts.length &&
+  previousAccounts.every(
+    (account, index) =>
+      account.currency.id === nextAccounts[index].currency.id &&
+      account.freshAddress.toLowerCase() === nextAccounts[index].freshAddress.toLowerCase(),
+  );
+
 const TransactionsAlerts = () => {
   const featureTransactionsAlerts = useFeature("transactionsAlerts");
   const chainwatchBaseUrl = featureTransactionsAlerts?.params?.chainwatchBaseUrl;
@@ -17,19 +25,22 @@ const TransactionsAlerts = () => {
     () => featureTransactionsAlerts?.params?.networks || [],
     [featureTransactionsAlerts?.params],
   );
-  const supportedChainsIds = supportedChains.map((chain: ChainwatchNetwork) => chain.ledgerLiveId);
+  const supportedChainsIds = useMemo(
+    () => supportedChains.map((chain: ChainwatchNetwork) => chain.ledgerLiveId),
+    [supportedChains],
+  );
 
   const notifications = useSelector(notificationsSelector);
-  const accounts = useSelector(accountsSelector);
   const userId = useSelector(userIdSelector);
-  const accountsFilteredBySupportedChains = useMemo(
-    () => accounts.filter(account => supportedChainsIds.includes(account?.currency?.id)),
-    [accounts, supportedChainsIds],
+  // Only address changes should trigger reconciliation.
+  const accountsFilteredBySupportedChains = useSelector(
+    state =>
+      accountsSelector(state).filter(account => supportedChainsIds.includes(account.currency.id)),
+    haveSameAccountAddresses,
   );
   const refAccounts = useRef<Account[]>([]);
   const refFeatureEnabled = useRef<boolean>(false);
   const refNotifSettings = useRef<boolean>(false);
-  const refReconciliationKey = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     if (!chainwatchBaseUrl) return;
@@ -39,7 +50,6 @@ const TransactionsAlerts = () => {
       (!featureTransactionsAlerts?.enabled && refFeatureEnabled.current) ||
       (!notifications.transactionsAlertsCategory && refNotifSettings.current)
     ) {
-      refReconciliationKey.current = undefined;
       deleteUserChainwatchAccounts(
         userId.exportUserIdForChainwatch(),
         chainwatchBaseUrl,
@@ -51,18 +61,7 @@ const TransactionsAlerts = () => {
 
     if (!featureTransactionsAlerts?.enabled || !notifications.transactionsAlertsCategory) return;
 
-    // Ignore balance-only syncs while allowing failed reconciliations to retry.
-    const reconciliationKey = JSON.stringify({
-      accounts: accountsFilteredBySupportedChains
-        .map(account => `${account.currency.id}:${account.freshAddress.toLowerCase()}`)
-        .sort(),
-      chainwatchBaseUrl,
-      supportedChains,
-      userId: userId.exportUserIdForChainwatch(),
-    });
-    if (refReconciliationKey.current === reconciliationKey) return;
-
-    refReconciliationKey.current = reconciliationKey;
+    let isCurrentReconciliation = true;
     void reconcileTransactionsAlertsAddresses(
       userId.exportUserIdForChainwatch(),
       chainwatchBaseUrl,
@@ -71,15 +70,15 @@ const TransactionsAlerts = () => {
       refAccounts.current,
     )
       .then(() => {
-        if (refReconciliationKey.current === reconciliationKey) {
+        if (isCurrentReconciliation) {
           refAccounts.current = accountsFilteredBySupportedChains;
         }
       })
-      .catch(() => {
-        if (refReconciliationKey.current === reconciliationKey) {
-          refReconciliationKey.current = undefined;
-        }
-      });
+      .catch(() => undefined);
+
+    return () => {
+      isCurrentReconciliation = false;
+    };
   }, [
     featureTransactionsAlerts?.enabled,
     chainwatchBaseUrl,
