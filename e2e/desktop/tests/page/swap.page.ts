@@ -660,8 +660,9 @@ export class SwapPage extends WebViewAppPage {
 
   @step("Check percentage buttons enabled: $0")
   async checkPercentageButtonsEnabled(expected: boolean) {
+    await this.hoverAmountField();
     for (const key of ["25%", "50%", "75%"] as const) {
-      expect(await this.isPercentageEnabled(key)).toBe(expected);
+      expect(await this.isEnabledByCursorClass(this.percentageButtonTestId(key))).toBe(expected);
     }
   }
 
