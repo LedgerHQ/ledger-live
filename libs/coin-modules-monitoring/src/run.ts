@@ -2,7 +2,16 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountBridgeByFamily } from "@ledgerhq/live-common/bridge/impl";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import {
+  getCryptoCurrencyById,
+  findCryptoCurrencyById,
+  findCryptoCurrencyByScheme,
+  listCryptoCurrencies,
+  hasCryptoCurrencyId,
+} from "@domain/entity-currency-crypto";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { firstValueFrom, reduce } from "rxjs";
 import {
   decodeAccountId,
@@ -151,6 +160,21 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
 
   // Setup CAL client store for monitoring (automatically set as global store)
   setupCalClientStore();
+
+  // Wire wallet-framework ports to the same cryptoassets global store
+  setFrameworkCryptoAssetsStore({
+    findTokenById: id => getCryptoAssetsStore().findTokenById(id),
+    findTokenByAddressInCurrency: (addr, currencyId) =>
+      getCryptoAssetsStore().findTokenByAddressInCurrency(addr, currencyId),
+    getTokensSyncHash: currencyId => getCryptoAssetsStore().getTokensSyncHash(currencyId),
+  });
+  setCurrenciesResolver({
+    getCryptoCurrencyById,
+    findCryptoCurrencyById,
+    findCryptoCurrencyByScheme,
+    listCryptoCurrencies,
+    hasCryptoCurrencyId,
+  });
   const result: RunResult = {
     entries: [],
     failed: false,
@@ -250,7 +274,7 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
         );
       } catch (err) {
         console.error(
-          `Skipping failing run. Error: ${err instanceof Error ? err.stack ?? err.message : err}`,
+          `Skipping failing run. Error: ${err instanceof Error ? (err.stack ?? err.message) : err}`,
         );
         // We may miss some parameters added to the error on runtime
         // We display only the message on the top for convenience and better readability
