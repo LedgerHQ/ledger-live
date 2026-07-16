@@ -288,6 +288,9 @@ catalogs:
     '@types/semver':
       specifier: 7.7.1
       version: 7.7.1
+    '@types/ws':
+      specifier: ^8.5.10
+      version: 8.5.10
     '@typescript-eslint/parser':
       specifier: 8.48.1
       version: 8.48.1
@@ -471,6 +474,9 @@ catalogs:
     tailwindcss:
       specifier: ^4.1.0
       version: 4.1.18
+    tsx:
+      specifier: 4.20.6
+      version: 4.20.6
     typescript:
       specifier: 6.0.2
       version: 6.0.2
@@ -3027,6 +3033,40 @@ importers:
       react:
         specifier: 19.1.4
         version: 19.1.4
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+
+  devtools/relay:
+    dependencies:
+      '@devtools/transport':
+        specifier: workspace:*
+        version: link:../transport
+      ws:
+        specifier: 'catalog:'
+        version: 8.18.3
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@types/ws':
+        specifier: 'catalog:'
+        version: 8.5.10
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+      tsx:
+        specifier: 'catalog:'
+        version: 4.20.6
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
@@ -35477,9 +35517,6 @@ packages:
   shell-quote@1.8.0:
     resolution: {integrity: sha512-QHsz8GgQIGKlRi24yFc6a6lN69Idnx634w49ay6+jA5yFh7a1UY+4Rp6HPx/L/1zcEDPEij8cIsiqR6bQsE5VQ==}
 
-  shell-quote@1.8.1:
-    resolution: {integrity: sha512-6j1W9l1iAs/4xYBI1SYOVZyFcCis9b4KCLQ8fgAGG07QvzaRLVVRQvAy85yNmmZSjYjg4MWh4gNvlPujU/5LpA==}
-
   shell-quote@1.8.4:
     resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
     engines: {node: '>= 0.4'}
@@ -58381,7 +58418,7 @@ snapshots:
       date-fns: 2.30.0
       lodash: 4.17.21
       rxjs: 7.8.2
-      shell-quote: 1.8.1
+      shell-quote: 1.8.4
       spawn-command: 0.0.2
       supports-color: 8.1.1
       tree-kill: 1.2.2
@@ -70576,8 +70613,6 @@ snapshots:
   shebang-regex@3.0.0: {}
 
   shell-quote@1.8.0: {}
-
-  shell-quote@1.8.1: {}
 
   shell-quote@1.8.4: {}
 
