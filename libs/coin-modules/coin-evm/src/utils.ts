@@ -82,6 +82,9 @@ export function isEthAddress(address: string): boolean {
 /**
  * True when `value` is a 0x-prefixed, even-length hex string (the empty payload `"0x"` is valid).
  * When `byteLength` is provided, also checks the payload is exactly that many bytes.
+ *
+ * Unlike {@link isEthAddress}, this requires the `0x` prefix, which is why it is used to validate
+ * untrusted `call` params rather than reusing the more lenient address matcher.
  */
 export function isHexString(value: string, byteLength?: number): boolean {
   if (!/^0x([0-9a-fA-F]{2})*$/.test(value)) {

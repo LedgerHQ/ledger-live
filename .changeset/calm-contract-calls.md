@@ -14,6 +14,7 @@
 "@ledgerhq/coin-sui": patch
 "@ledgerhq/coin-tezos": patch
 "@ledgerhq/coin-tron": patch
+"@ledgerhq/live-common": patch
 ---
 
 Expose the read-only smart-contract call API on EVM external RPC nodes and explicitly reject it on unsupported coin modules.
