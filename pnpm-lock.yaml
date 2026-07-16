@@ -7466,6 +7466,9 @@ importers:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@6.0.2)
     devDependencies:
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7621,6 +7624,9 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0
     devDependencies:
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7694,6 +7700,9 @@ importers:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@6.0.2)
     devDependencies:
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7843,6 +7852,9 @@ importers:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@6.0.2)
     devDependencies:
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@polkadot/rpc-provider':
         specifier: 'catalog:'
         version: 16.5.4
@@ -8095,6 +8107,9 @@ importers:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@6.0.2)
     devDependencies:
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -8253,6 +8268,9 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
     devDependencies:
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
