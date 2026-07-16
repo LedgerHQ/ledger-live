@@ -8,7 +8,7 @@ type ChangeToReturnProps = Readonly<{
 export const ChangeToReturn = ({ changeToReturn }: ChangeToReturnProps) => {
   return (
     <div
-      className="flex w-full items-center justify-between py-8"
+      className="flex w-full items-center justify-between pt-8"
       data-testid="send-change-to-return-row"
     >
       <span className="flex items-center gap-8">
