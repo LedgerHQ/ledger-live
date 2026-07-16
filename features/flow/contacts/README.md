@@ -38,6 +38,7 @@ src/
 │   │   ├── ContactsList/         # Web only
 │   │   ├── ContactsPage/
 │   │   └── ContactsPageLayout/   # Web only
+│   ├── ledgerSync/       # Web Ledger Sync presentation variants
 │   ├── web.ts            # Web ContactsPage export
 │   └── native.ts         # Native ContactsPage + header button exports
 ├── jest.native.ts        # Mobile Jest logic-only entry

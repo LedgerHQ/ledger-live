@@ -9308,6 +9308,10 @@
       "addressCount_zero": "0 address",
       "addressCount_one": "{{count}} address",
       "addressCount_other": "{{count}} addresses"
+    },
+    "ledgerSyncIntroduction": {
+      "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
+      "dismiss": "Got it"
     }
   },
   "assetDetails": {
