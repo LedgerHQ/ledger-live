@@ -65,7 +65,6 @@ module.exports = {
   verbose: !process.env.CI,
   preset: "react-native",
   workerIdleMemoryLimit: "1GB",
-  modulePaths: [compilerOptions.baseUrl ?? "."],
   setupFilesAfterEnv: [
     "./node_modules/react-native-gesture-handler/jestSetup.js",
     "./__tests__/jest-setup.js",
@@ -100,6 +99,16 @@ module.exports = {
   ],
   testPathIgnorePatterns: ["<rootDir>/node_modules/"],
   moduleDirectories: ["node_modules"],
+  // pnpm installs peer deps (e.g. expo-haptics) in the app node_modules, but
+  // @ledgerhq/lumen-ui-rnative source resolves from the root .pnpm store where
+  // those peers are absent. modulePaths makes Jest search the app node_modules
+  // for any unresolved package.
+  modulePaths: ["<rootDir>/node_modules"],
+  testEnvironmentOptions: {
+    // Resolve @features/flow-* react-native export conditions and
+    // @ledgerhq/lumen-ui-rnative source entry points in Jest.
+    customExportConditions: ["react-native", "default"],
+  },
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
     "!src/**/*.test.{ts,tsx}",
@@ -125,9 +134,18 @@ module.exports = {
   resolver: "<rootDir>/scripts/resolver.js",
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths),
-    "^@features/flow-contacts$": "<rootDir>/__mocks__/@features/flow-contacts.ts",
+    // Logic-only stub — integration tests overlay UI components via jest.mock.
+    "^@features/flow-contacts$": "<rootDir>/../../features/flow/contacts/src/jest.native.ts",
+    // Map Lumen RN source entry points to a single module graph. The root
+    // mapping alone is not enough: subpath imports (/symbols, /styles) must
+    // target the same source tree or Jest loads duplicate @ledgerhq/lumen-ui-rnative
+    // instances and theme context breaks when rendering flow components.
     "^@ledgerhq/lumen-ui-rnative$":
       "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/index.ts",
+    "^@ledgerhq/lumen-ui-rnative/symbols$":
+      "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/lib/Symbols/index.ts",
+    "^@ledgerhq/lumen-ui-rnative/styles$":
+      "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/styles/index.ts",
     "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",
     "^react$": "<rootDir>/node_modules/react",
     "^react/(.*)$": "<rootDir>/node_modules/react/$1",
