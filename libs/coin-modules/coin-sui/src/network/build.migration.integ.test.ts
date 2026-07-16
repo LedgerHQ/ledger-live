@@ -97,7 +97,12 @@ const assertShapeBothBuilt = (rpcBytes: Uint8Array, gqlBytes: Uint8Array, label:
   expect(label).not.toBe("");
 };
 
-describe("createTransactionFor* parity (live mainnet)", () => {
+// SKIP — Sui JSON-RPC public-endpoint shutdown. The JSON-RPC reference leg of this parity
+// suite hits the public mainnet fullnode (fullnode.mainnet.sui.io), retired by the Sui
+// Foundation (mainnet wk of 2026-07-20) as JSON-RPC is deprecated for gRPC/GraphQL, so
+// cross-transport parity can no longer run. Re-enable once a GraphQL-only live baseline
+// replaces the JSON-RPC reference.
+describe.skip("createTransactionFor* parity (live mainnet)", () => {
   test("transfer: same TransactionData shape across transports", async () => {
     const transaction = {
       amount: new BigNumber("1000000"),
