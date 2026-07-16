@@ -25,6 +25,15 @@ import { featureFlagsBannerVisibleSelector } from "@shared/feature-flags";
 export const HEIGHT = 30;
 export const PADDING = 8;
 
+export function useIsExperimentalHeaderVisible(): boolean {
+  const isExperimental = useExperimental();
+  const hasLocallyOverriddenFlags = useHasLocallyOverriddenFeatureFlags();
+  const featureFlagsBannerVisible = useSelector(featureFlagsBannerVisibleSelector);
+  const isMock = !!Config.MOCK;
+  const areFeatureFlagsOverridden = featureFlagsBannerVisible && hasLocallyOverriddenFlags;
+  return isMock || isExperimental || areFeatureFlagsOverridden;
+}
+
 const ANIMATION_DURATION = 200;
 const ANIMATION_CONFIG = { duration: ANIMATION_DURATION };
 const CLOSED_STATE = 0;
