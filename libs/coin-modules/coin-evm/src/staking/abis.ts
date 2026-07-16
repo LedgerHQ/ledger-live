@@ -15,7 +15,7 @@ type StakingABI =
 
 interface ABIFunction {
   type: string;
-  name?: string;
+  name: string;
   stateMutability?: string;
   anonymous?: boolean;
 }
