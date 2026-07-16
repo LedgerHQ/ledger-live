@@ -49,6 +49,7 @@
     "transactionDate" : "트랜잭션 날짜",
     "outdated" : "오래됨",
     "satPerByte" : "sat/bytes",
+    "satPerVByte" : "sat/vByte",
     "sompiPerByte" : "sompi/바이트",
     "notAvailable" : "이용할 수 없습니다",
     "import" : "가져오기",
@@ -477,6 +478,9 @@
     },
     "FeeRequired" : {
       "title" : "수수료가 필요합니다"
+    },
+    "FeeTooLow" : {
+      "title" : "수수료가 너무 낮아 네트워크에서 트랜잭션을 승인할 수 없습니다. 수수료를 높여주세요"
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "펌웨어 또는 앱 업데이트가 필요합니다",
@@ -910,9 +914,6 @@
     "DustLimit" : {
       "title" : "금액이 더스트(소액) 한도보다 낮습니다."
     },
-    "StratisDown2021Warning" : {
-      "description" : "Stratis 블록체인 진화로 더 이상 제대로 작동하지 않을 수 있습니다. 기존 Stratis 블록체인은 2021년 10월 16일까지 지원됩니다."
-    },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "금액은 {{minAmountFromFormatted}} 보다 높아야 합니다"
     },
@@ -1006,6 +1007,9 @@
     },
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "향후 트랜잭션 수수료 지불에 필요한 잔액을 충분히 남겨 두세요"
+    },
+    "SolanaStakeAccountAmountTooLow" : {
+      "title" : "스테이킹 최소 금액 미만입니다. 최소 {{minimumAmount}}부터 가능합니다."
     },
     "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "이전 트랜잭션이 아직 처리되지 않았습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
@@ -1173,6 +1177,9 @@
     "XrpInvalidMemo" : {
       "title" : "메모 형식 오류. 4294967296보다 작아야 합니다."
     },
+    "XrpDestinationTagRequired" : {
+      "title" : "이 수취인 주소는 데스티네이션 태그(Destination Tag) 입력이 필수입니다."
+    },
     "HederaMemoExceededSizeError" : {
       "title" : "메모 길이 초과. 최대 100자까지 지원됩니다"
     },
@@ -1187,6 +1194,9 @@
     },
     "MaxFeeTooLow" : {
       "title" : "최대 수수료가 권장 값보다 낮습니다."
+    },
+    "GasPriceTooLow" : {
+      "title" : "설정한 가스비가 네트워크 최소 기준보다 낮습니다."
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "최대 우선 수수료가 최대 수수료보다 높아서는 안됩니다."
@@ -1864,12 +1874,6 @@
     "postWelcomeStep" : {
       "title" : "시작해봅시다",
       "noLedgerYet" : "아직 Ledger 장치가 없습니다",
-      "noLedgerYetModal" : {
-        "title" : "수백만 명의 사용자 보유 해킹 성공 0건",
-        "desc" : "안심하고 Ledger에게 디지털 자산 관리를 맡겨보세요.",
-        "buy" : "Ledger 구매",
-        "explore" : "이 앱 살펴보기"
-      },
       "setupLedger" : {
         "title" : "Ledger 설정",
         "subtitle" : "Ledger가 신규 장치인지 리셋된 것인지 여부를 선택합니다."
@@ -1877,18 +1881,6 @@
       "accessWallet" : {
         "title" : "지갑에 액세스",
         "subtitle" : "Ledger의 설정이 완료되어 있는 경우 선택합니다."
-      },
-      "buyNano" : {
-        "title" : "Ledger Nano X 구매하기",
-        "subtitle" : "Ledger 장치는 자산을 안전하게 보호할 수 있는 유일한 방법입니다. "
-      },
-      "discoverLedger" : {
-        "title" : "Ledger 장치 살펴보기",
-        "subtitle" : "앱을 살펴보고 다양한 혜택을 알아보세요 "
-      },
-      "desktopSync" : {
-        "title" : "데스크탑 앱과 동기화하세요",
-        "subtitle" : "Ledger Wallet 데스크탑의 자산을 모바일과 동기화하세요."
       }
     },
     "welcomeBackStep" : {
@@ -2791,13 +2783,6 @@
         "cta" : "이해합니다"
       }
     },
-    "appsStep" : {
-      "title" : "{{productName}}에 앱 설치하기"
-    },
-    "readyStep" : {
-      "title" : "설정 종료",
-      "doneTitle" : "{{productName}} 장치가 준비되었습니다."
-    },
     "completion" : {
       "title" : "이제 통제권은 귀하에게 있습니다"
     },
@@ -2811,7 +2796,6 @@
     }
   },
   "tabs" : {
-    "portfolio" : "지갑",
     "accounts" : "계정",
     "transfer" : "전송",
     "manager" : "내 Ledger",
@@ -2849,10 +2833,7 @@
         "addAccounts" : "자산 추가",
         "title" : "시작하기",
         "description" : "당사 파트너로부터 암호화폐를 구매하거나 지갑을 설정할 수 있습니다"
-      },
-      "title" : "지갑에 좋아하는 자산을 추가하고 시작하기",
-      "subtitle" : "Ledger는 6,000가지 이상의 코인과 토큰을 지원합니다",
-      "addAccount" : "또는 계정 추가"
+      }
     },
     "noOpState" : {
       "title" : "아직 거래가 없나요?",
@@ -2866,9 +2847,9 @@
       "description" : "레버리지로 거래하기"
     },
     "borrowEntry" : {
-      "title" : "대출",
-      "cardTitle" : "스테이블코인 대출하기",
-      "cardDescription" : "유동성 활용하기",
+      "title" : "암호화폐 대출",
+      "cardTitle" : "스테이블코인 대출받기",
+      "cardDescription" : "최적의 금리로 대출을 받아보세요",
       "cta" : "탐색"
     },
     "recommended" : {
@@ -3056,7 +3037,13 @@
   "operationsList" : {
     "to" : "입금 주소",
     "from" : "출금 주소",
-    "pending" : "Pending(대기 중)"
+    "pending" : "Pending(대기 중)",
+    "options" : {
+      "more" : "거래 내역 설정",
+      "hideDustTransactions" : "더스트 트랜잭션 숨기기",
+      "showDustTransactions" : "더스트 트랜잭션 표시",
+      "dustTransactionsDescription" : "기본 통화 기준 {{threshold}} 미만의 소액 트랜잭션을 숨깁니다."
+    }
   },
   "operationDetails" : {
     "title" : "트랜잭션 세부 사항",
@@ -3129,7 +3116,8 @@
       "targetStakingNodeId" : "대상 노드 ID",
       "previousStakingNodeId" : "이전 노드 ID",
       "gasConsumed" : "소모된 가스비",
-      "gasUsed" : "사용된 가스비"
+      "gasUsed" : "사용된 가스비",
+      "functionId" : "함수 ID"
     },
     "multipleAddresses" : "왜 주소가 여러 개인가요?"
   },
@@ -3798,10 +3786,8 @@
   },
   "notifications" : {
     "prompt" : {
-      "title" : "알림 켜기",
-      "titleVariantB" : "중요한 소식을 놓치지 마세요",
-      "desc" : "Ledger Wallet, Ledger 제품, 맞춤형 제안 및 시장에 대한 최신 업데이트를 받아보세요.  해제는 언제든지 가능합니다.",
-      "descVariantB" : "새로운 토큰, 수익 창출 기회, 시장 변동성에 대한 실시간 알림을 받아보세요. 해제는 언제든지 가능합니다.",
+      "title" : "중요한 소식을 놓치지 마세요",
+      "desc" : "새로운 토큰, 수익 창출 기회, 시장 변동성에 대한 실시간 알림을 받아보세요. 알림 수신은 설정에서 언제든지 해지하실 수 있습니다.",
       "allow" : "알림 허용",
       "later" : "다음에 결정하기",
       "transactionsAlerts" : {
@@ -4196,6 +4182,42 @@
       "history" : {
         "title" : "스왑 내역"
       },
+      "modals" : {
+        "transactionStatus" : {
+          "title" : "{{sendTicker}} → {{receiveTicker}}스왑",
+          "sections" : {
+            "status" : {
+              "heading" : "상태",
+              "sendPending" : "{{ticker}} 전송",
+              "sendCompleted" : "{{ticker}} 전송 완료",
+              "receivePending" : "{{ticker}} 수령",
+              "receiveCompleted" : "{{ticker}} 수령"
+            },
+            "details" : {
+              "networkFees" : "네트워크 수수료",
+              "receiveAccount" : "전송 받을 계정",
+              "provider" : "공급자",
+              "swapId" : "스왑 ID"
+            }
+          },
+          "statusLabels" : {
+            "pending" : "진행 중",
+            "onhold" : "보류 중",
+            "expired" : "만료됨",
+            "finished" : "완료",
+            "refunded" : "환불 처리됨",
+            "cancelled" : "취소 완료",
+            "unknown" : "알려지지 않음"
+          },
+          "actions" : {
+            "viewInExplorer" : "탐색기에서 보기",
+            "copied" : "복사됨"
+          },
+          "accessibility" : {
+            "copySwapId" : "스왑 ID 복사"
+          }
+        }
+      },
       "wrongDevice" : {
         "title" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다",
         "description" : "Ledger Nano S™는 {{provider}} 사용을 지원하지 않습니다 Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, Ledger Flex™에서는 Ledger Live를 통해 {{provider}}의 크로스체인 스왑을 경험할 수 있습니다",
@@ -4455,6 +4477,7 @@
     "newSendFlow" : {
       "title" : "{{currency}} 전송",
       "available" : "가용 수량: {{amount}}",
+      "to" : "받는 사람:",
       "placeholder" : "주소 또는 ENS를 입력하세요",
       "placeholderNoENS" : "주소 입력",
       "pasteFromClipboard" : {
@@ -4462,15 +4485,12 @@
         "cta" : "붙여넣기"
       },
       "editRecipientAccessibilityLabel" : "수령인 변경",
-      "recent" : "최근",
-      "recentDetail" : "최근 상세 정보",
-      "myAccounts" : "내 계정",
-      "account" : "계정",
       "sendTo" : "{{address}}로 보내기",
       "addressMatched" : "주소 일치함",
       "addressNotFound" : "주소를 찾을 수 없음",
+      "account" : "계정",
       "alreadyUsed" : "이미 사용됨 · {{date}}",
-      "recentSendWillAppear" : "최근 전송 내역이 여기에 표시됩니다",
+      "notInRecentHistory" : "최근 거래 내역에 없음",
       "relativeDate" : {
         "justNow" : "방금 전",
         "minutesAgo_one" : "1분 전",
@@ -4480,12 +4500,13 @@
         "daysAgo_one" : "1일 전",
         "daysAgo_other" : "{{count}}일 전"
       },
-      "remove" : "제거",
-      "enterTag" : "{{tag}} 입력",
       "firstInteraction" : {
-        "title" : "새로운 주소로 전송 중입니다",
-        "description" : "올바른 주소인지 확인하세요. 확신할 수 없다면 소액을 먼저 보내보세요."
+        "description" : "최근 거래한 적 없는 주소입니다. 주소가 확실하지 않다면 먼저 소액만 전송해 확인하세요.",
+        "learnMore" : "자세히 알아보기",
+        "helpTitle" : "최근 전송 내역",
+        "helpDescription" : "최근 전송 내역에서 과거에 암호화폐를 전송한 적 있는 주소인지 즉시 확인할 수 있습니다. 이를 통해 복사/붙여넣기 오류나 해킹 피해를 방지할 수 있습니다. 최근 내역에는 Ledger Wallet을 사용해 암호화폐를 전송한 마지막 12개 주소가 표시됩니다."
       },
+      "enterTag" : "{{tag}} 입력",
       "sanctioned" : {
         "title" : "경고 표시된 주소",
         "description" : "이 주소는 위험이 감지된 주소로 분류되어 Ledger에서 전송을 허용하지 않습니다.",
@@ -4537,7 +4558,7 @@
       "transactionSigned" : "트랜잭션 서명 완료",
       "processingTransaction" : "트랜잭션을 처리 중입니다",
       "sign" : {
-        "title" : "Ledger {{wording}}에서 계속하기",
+        "title" : "{{wording}}에서 계속하기",
         "description" : "보안 터치스크린에 표시된 안내를 따라주세요.",
         "cancelled" : {
           "title" : "트랜잭션 취소됨",
@@ -8986,8 +9007,7 @@
     "setPreferencesCTA" : "설정 관리",
     "refuseCTA" : "모두 거부",
     "acceptCTA" : "모두 수락",
-    "privacyPolicy" : "설정에서 언제든지 동의를 철회하실 수 있습니다.",
-    "privacyPolicyCTA" : "개인 정보 보호 정책",
+    "privacyPolicy" : "설정에서 언제든지 동의를 철회하실 수 있습니다. <PrivacyPolicy>개인 정보 보호 정책</PrivacyPolicy>",
     "setPreferences" : {
       "title" : "설정 관리",
       "performance" : "앱 성능",
@@ -9404,6 +9424,9 @@
     "fallbackBanner" : {
       "title" : "스왑 및 매수가 지원되지 않는 자산입니다."
     },
+    "stockDisclaimerBanner" : {
+      "title" : "총 잔액에는 배당금이나 주식 분할 내역이 포함되지 않습니다."
+    },
     "hiddenAssetBanner" : {
       "title" : "이 자산은 포트폴리오에서 숨김 처리되었습니다.",
       "showAsset" : "자산 표시"
@@ -9781,31 +9804,23 @@
     }
   },
   "concordium" : {
-    "receive" : {
-      "messageIfSkipped" : "현재 Concordium 주소를 확인할 수 없습니다. Concordium 탐색기에 주소를 붙여넣어 다시 확인하세요.",
-      "verifyLink" : "확인"
-    },
     "onboard" : {
       "title" : "Concordium 온보딩",
       "acknowledge" : {
         "title" : "확인",
         "description" : "Concordium은 외부 신원 확인을 요구합니다. 다음의 보안 경고를 세심히 읽어 보세요.",
         "list" : {
-          "1" : {
-            "title" : "주소 확인 불가",
-            "description" : "Ledger 장치에서 Concordium 수신 주소를 확인할 수 없습니다. 자금을 수령하기 전에 주소를 직접 확인하세요."
-          },
-          "2" : {
+          "separateSeed" : {
             "title" : "Concordium ID 앱은 별도의 시드를 사용합니다.",
             "description" : "Concordium 앱에서 새로운 24개 단어를 생성합니다. 절대 Ledger 시드 문구를 사용하지 마세요."
           },
-          "3" : {
+          "outsideLedgerLive" : {
             "title" : "Ledger Wallet 외부 페이지로 이동합니다.",
             "description" : "신원 확인은 외부 Concordium Wallet 앱에서 진행됩니다. 이는 Concordium 블록체인 프로토콜에 필요한 절차입니다."
           },
-          "4" : {
-            "title" : "트랜잭션 서명은 안전하게 관리됩니다.",
-            "description" : "Ledger 장치에서만 거래 서명과 계정을 생성할 수 있습니다."
+          "signingSecure" : {
+            "title" : "트랜잭션 서명은 안전하게 관리됩니다",
+            "description" : "트랜잭션 서명과 게정 생성은 오직 Ledger 장치를 통해서만 가능합니다."
           }
         },
         "guide" : "계속 진행하기 전에 안내 사항을 읽어주세요.",
@@ -10016,6 +10031,45 @@
       "available" : "이용 가능",
       "unavailable" : "연결되지 않음",
       "menuAccessibilityLabel" : "장치 옵션"
+    }
+  },
+  "aleo" : {
+    "addAccount" : {
+      "stepViewKeyWarning" : {
+        "title" : "Aleo 비공개 잔액 설정하기",
+        "description" : "Ledger Wallet은 조회 키(view Key)를 통해 비공개 잔액을 표시하고 타사 서비스를 통해 비공개 트랜잭션을 처리합니다. <0>자세히 알아보기</0>",
+        "bullets" : ["읽기 전용 권한을 통한 비공개 잔액 표시", "Ledger는 사용자의 자금을 전송하거나 사용할 수 없으며,", "자금 사용이나 서명은 사용자 본인만 가능합니다.", "빠른 처리를 위해 증명 생성은 제3자 증명 서비스를 통해 처리되지만,", "이들 서비스는 사용자의 자금에 액세스하거나 사용할 권한은 없습니다."],
+        "cta" : {
+          "allow" : "허용",
+          "cancel" : "취소"
+        }
+      },
+      "stepViewKeyApprove" : {
+        "title" : "Ledger 장치에서 승인하기",
+        "description" : "장치에서 뷰 키 공유 확인하기",
+        "cancelAlert" : "장치에서 개별 계정을 거부할 수 있습니다. 전체 취소 시 포트폴리오에 계정이 추가되지 않습니다.",
+        "cancelAllBtn_one" : "취소",
+        "cancelAllBtn_other" : "전체 취소하기"
+      },
+      "stepScanAccounts" : {
+        "cta" : {
+          "shareViewKeys" : "뷰 키 공유하기"
+        }
+      }
+    },
+    "accountActions" : {
+      "publicToPrivate" : "내 계좌로 보내기"
+    },
+    "balancesSection" : "수량",
+    "info" : {
+      "transparent" : {
+        "title" : "공개 수량",
+        "description" : "Aleo 네트워크에서 공개적으로 표시되는 수량입니다. 이 수량은 직접 보내거나 받을 수 있으며 누구나 확인할 수 있습니다."
+      },
+      "private" : {
+        "title" : "비공개 수량",
+        "description" : "Aleo 네트워크에서 암호화되어 보호되는 비공개 수량입니다. 이 수량은 본인에게만 표시되며 프라이빗 트랜잭션 시 증명 생성 과정이 필요합니다."
+      }
     }
   }
 }
