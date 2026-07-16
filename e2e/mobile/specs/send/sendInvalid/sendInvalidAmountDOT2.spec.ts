@@ -6,14 +6,5 @@ runSendInvalidAmountTest(
   transaction,
   "Minimum of 1 DOT needed to activate recipient address",
   ["B2CQA-2570"],
-  [
-    "@NanoSP",
-    "@LNS",
-    "@NanoX",
-    "@Stax",
-    "@Flex",
-    "@NanoGen5",
-    "@polkadot",
-    "@family-polkadot",
-  ],
+  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@polkadot", "@family-polkadot"],
 );
