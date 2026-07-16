@@ -15,7 +15,7 @@ export function useContactsViewModel(): ContactsViewModel {
   const { t } = useTranslation();
   const meContact = useContactsMeContact();
   const [isIntroductionOpen, setIsIntroductionOpen] = useState(false);
-  const ledgerSyncStatus: ContactsLedgerSyncStatus = "ready";
+  const ledgerSyncStatus: ContactsLedgerSyncStatus = "checking";
   const labels = useMemo<ContactsPageLabels>(
     () => ({
       title: t("contacts.title"),
