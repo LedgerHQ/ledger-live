@@ -131,10 +131,7 @@ describe("isAleoTransaction", () => {
   });
 
   it("should return false for a non-aleo transaction", () => {
-    expect(
-      // @ts-expect-error - testing invalid family
-      isAleoTransaction({ ...makeAleoTransaction(), family: "bitcoin" }),
-    ).toBe(false);
+    expect(isAleoTransaction({ ...makeAleoTransaction(), family: "bitcoin" })).toBe(false);
   });
 });
 

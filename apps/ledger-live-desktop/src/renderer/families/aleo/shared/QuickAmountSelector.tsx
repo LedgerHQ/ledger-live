@@ -1,5 +1,4 @@
-import BigNumber from "bignumber.js";
-import React, { memo, useMemo } from "react";
+import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { rgba } from "@ledgerhq/react-ui/styles/helpers";
@@ -14,46 +13,11 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import type {
   AleoAccount,
   AleoTokenAccount,
-  AleoUnspentRecord,
+  SigningStrategy,
 } from "@ledgerhq/live-common/families/aleo/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import {
-  getEstimatedSigningTime,
-  isPrivateTransaction,
-  sumPrivateRecords,
-} from "@ledgerhq/live-common/families/aleo/utils";
-import { getMaxPrivateRecordsForAccount, isAleoTransaction } from "./utils";
-
-type SigningStrategy = "fast" | "balanced" | "full";
-
-interface StrategyConfig {
-  min: number;
-  max: number;
-}
-
-// The maximum number of records that can be selected for a transaction based on signing time constraints.
-const FAST_PRIVATE_RECORDS_PER_TRANSACTION = 4;
-const BALANCED_PRIVATE_RECORDS_PER_TRANSACTION = 8;
-
-function getStrategyConfig(
-  account: AleoAccount | AleoTokenAccount,
-): Record<SigningStrategy, StrategyConfig> {
-  const maxRecords = getMaxPrivateRecordsForAccount(account);
-
-  return {
-    fast: { min: 1, max: FAST_PRIVATE_RECORDS_PER_TRANSACTION },
-    balanced: {
-      min: FAST_PRIVATE_RECORDS_PER_TRANSACTION + 1,
-      max: BALANCED_PRIVATE_RECORDS_PER_TRANSACTION,
-    },
-    full: {
-      min: BALANCED_PRIVATE_RECORDS_PER_TRANSACTION + 1,
-      max: maxRecords,
-    },
-  };
-}
-
-const STRATEGIES: SigningStrategy[] = ["fast", "balanced", "full"];
+import { getEstimatedSigningTime } from "@ledgerhq/live-common/families/aleo/utils";
+import { useAleoQuickAmountSelector } from "@ledgerhq/live-common/families/aleo/react";
 
 const STRATEGY_ICONS: Record<SigningStrategy, React.ReactElement> = {
   fast: <TachometerHigh size={13} />,
@@ -121,62 +85,13 @@ const QuickAmountSelector = ({ account, transaction, updateTransaction, onSelect
   const { t } = useTranslation();
   const accountUnit = useAccountUnit(account);
 
-  const sortedRecords: AleoUnspentRecord[] = useMemo(() => {
-    const unspentPrivateRecords =
-      (account.type === "TokenAccount"
-        ? account.unspentPrivateRecords
-        : account.aleoResources?.unspentPrivateRecords) ?? [];
-
-    return unspentPrivateRecords
-      .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
-      .sort((a, b) => new BigNumber(b.microcredits).comparedTo(a.microcredits));
-  }, [account]);
-
-  const strategyConfig = useMemo(() => getStrategyConfig(account), [account]);
-
-  const spendableRecords = useMemo(
-    () => sortedRecords.slice(0, strategyConfig.full.max),
-    [sortedRecords, strategyConfig],
-  );
-
-  const totalSpendableBalance = sumPrivateRecords(spendableRecords);
-  const totalRecords = sortedRecords.length;
-  const selectedRecordsCount =
-    isAleoTransaction(transaction) && isPrivateTransaction(transaction)
-      ? transaction.properties.amountRecordCommitments.length
-      : 0;
+  const { strategyData, totalSpendableBalance, selectedRecordsCount, selectStrategy } =
+    useAleoQuickAmountSelector({ account, transaction, updateTransaction });
 
   const selectedRecordsSigningTime = getEstimatedSigningTime(
     selectedRecordsCount,
     t("time.second_short"),
     t("time.minute_short"),
-  );
-
-  const strategyData = useMemo(
-    () =>
-      STRATEGIES.map(strategy => {
-        const { min, max } = strategyConfig[strategy];
-
-        const rangeRecords = sortedRecords.slice(0, max);
-        const availableCount = rangeRecords.length;
-        const rangeSum = sumPrivateRecords(rangeRecords);
-
-        const disabled = totalRecords < min;
-        const isSendMax =
-          !disabled &&
-          (availableCount === totalRecords ||
-            (max === strategyConfig.full.max && availableCount === max));
-        const selected =
-          !disabled &&
-          (isSendMax
-            ? transaction.useAllAmount === true
-            : !rangeSum.isZero() &&
-              transaction.amount.isEqualTo(rangeSum) &&
-              !transaction.useAllAmount);
-
-        return { strategy, min, max, availableCount, rangeSum, disabled, selected, isSendMax };
-      }),
-    [sortedRecords, totalRecords, transaction.amount, transaction.useAllAmount, strategyConfig],
   );
 
   return (
@@ -211,86 +126,81 @@ const QuickAmountSelector = ({ account, transaction, updateTransaction, onSelect
         </Box>
       </Box>
       <Box horizontal justifyContent="center" flexWrap="wrap" gap="16px">
-        {strategyData.map(
-          ({ strategy, min, max, availableCount, rangeSum, disabled, selected, isSendMax }) => {
-            const signingTime = getEstimatedSigningTime(
-              availableCount,
-              t("time.second_short"),
-              t("time.minute_short"),
-            );
+        {strategyData.map(tile => {
+          const { strategy, min, max, availableCount, rangeSum, disabled, selected } = tile;
+          const signingTime = getEstimatedSigningTime(
+            availableCount,
+            t("time.second_short"),
+            t("time.minute_short"),
+          );
 
-            const disabledBadgeColor = disabled ? "neutral.c40" : "neutral.c100";
-            const badgeTextColor = selected ? "neutral.c00" : disabledBadgeColor;
+          const disabledBadgeColor = disabled ? "neutral.c40" : "neutral.c100";
+          const badgeTextColor = selected ? "neutral.c00" : disabledBadgeColor;
 
-            const handleClick = () => {
-              if (disabled) return;
-              if (isSendMax) {
-                updateTransaction(tx => ({ ...tx, useAllAmount: true, amount: new BigNumber(0) }));
-              } else {
-                updateTransaction(tx => ({ ...tx, amount: rangeSum, useAllAmount: false }));
-              }
-              onSelect?.();
-            };
+          const handleClick = () => {
+            if (disabled) return;
+            selectStrategy(tile);
+            onSelect?.();
+          };
 
-            return (
-              <QuickAmountWrapper
-                key={strategy}
+          return (
+            <QuickAmountWrapper
+              key={strategy}
+              selected={selected}
+              disabled={disabled}
+              onClick={handleClick}
+            >
+              <QuickAmountHeader
+                horizontal
+                alignItems="center"
                 selected={selected}
                 disabled={disabled}
-                onClick={handleClick}
               >
-                <QuickAmountHeader
-                  horizontal
-                  alignItems="center"
-                  selected={selected}
-                  disabled={disabled}
-                >
-                  {STRATEGY_ICONS[strategy]}
-                  <Text fontSize={0} ff="Inter|ExtraBold" uppercase ml={1} letterSpacing="0.1em">
-                    {t(`aleo.shared.quickAmountSelector.strategies.${strategy}`)}
-                  </Text>
-                </QuickAmountHeader>
+                {STRATEGY_ICONS[strategy]}
+                <Text fontSize={0} ff="Inter|ExtraBold" uppercase ml={1} letterSpacing="0.1em">
+                  {t(`aleo.shared.quickAmountSelector.strategies.${strategy}`)}
+                </Text>
+              </QuickAmountHeader>
 
-                <QuickAmountValue>
-                  {disabled ? (
-                    <Text fontSize={3} color="neutral.c40">
-                      —
-                    </Text>
-                  ) : (
-                    <WrappedFormattedVal>
-                      <FormattedVal
-                        inline
-                        ellipsis={false}
-                        color={selected ? "primary.c80" : "neutral.c100"}
-                        fontSize={3}
-                        fontWeight="600"
-                        val={rangeSum}
-                        unit={accountUnit}
-                        showCode
-                        alwaysShowValue
-                        showAllDigits
-                      />
-                    </WrappedFormattedVal>
-                  )}
-                </QuickAmountValue>
-
-                {!disabled && (
-                  <Text fontSize={2} color={selected ? "primary.c80" : "neutral.c70"}>
-                    {signingTime}
+              <QuickAmountValue>
+                {disabled ? (
+                  <Text fontSize={3} color="neutral.c40">
+                    —
                   </Text>
+                ) : (
+                  <WrappedFormattedVal>
+                    <FormattedVal
+                      inline
+                      ellipsis={false}
+                      color={selected ? "primary.c80" : "neutral.c100"}
+                      fontSize={3}
+                      fontWeight="600"
+                      val={rangeSum}
+                      unit={accountUnit}
+                      showCode
+                      alwaysShowValue
+                      showAllDigits
+                    />
+                  </WrappedFormattedVal>
                 )}
+              </QuickAmountValue>
 
-                <QuickAmountBadge selected={selected} disabled={disabled}>
-                  <Text fontSize={2} fontWeight="500" color={badgeTextColor}>
-                    {disabled
-                      ? t("aleo.shared.quickAmountSelector.unavailable", { min, max })
-                      : t("aleo.shared.quickAmountSelector.recordCount", { count: availableCount })}
-                  </Text>
-                </QuickAmountBadge>
-              </QuickAmountWrapper>
-            );
-          },
-        )}
+              {!disabled && (
+                <Text fontSize={2} color={selected ? "primary.c80" : "neutral.c70"}>
+                  {signingTime}
+                </Text>
+              )}
+
+              <QuickAmountBadge selected={selected} disabled={disabled}>
+                <Text fontSize={2} fontWeight="500" color={badgeTextColor}>
+                  {disabled
+                    ? t("aleo.shared.quickAmountSelector.unavailable", { min, max })
+                    : t("aleo.shared.quickAmountSelector.recordCount", { count: availableCount })}
+                </Text>
+              </QuickAmountBadge>
+            </QuickAmountWrapper>
+          );
+        })}
       </Box>
     </>
   );

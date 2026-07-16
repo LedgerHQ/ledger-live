@@ -87,3 +87,10 @@ export interface SignedAleoTransaction {
   authorization: string;
   feeAuthorization: string | null;
 }
+
+export type SigningStrategy = "fast" | "balanced" | "full";
+
+export interface StrategyConfig {
+  min: number;
+  max: number;
+}
