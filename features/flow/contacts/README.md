@@ -7,7 +7,7 @@ Shared Contacts flow package for Desktop and Mobile.
 - Feature-flag configuration (`useContactsFeature`, resolvers)
 - `useContactsMeContact` hook (`@domain/entity-contact`)
 - Shared UI components (`.web.tsx` / `.native.tsx`)
-- Empty Contacts list view model
+- Contacts list view models and the Desktop Contacts page shell
 
 App layers own routing, screen composition, i18n, and analytics.
 
@@ -22,10 +22,10 @@ and are not exported as package subpaths.
 ```
 src/
 ├── components/
-│   ├── ContactsButton/   # My Wallet entry
-│   └── ContactsPage/     # Add contact button, Me row
+│   └── ContactsButton/   # My Wallet entry
 ├── hooks/
-├── list/                 # Shared list view models
+├── list/                 # Shared list view models and internal helpers
 ├── featureFlags.ts
-└── index.ts
+├── index.ts              # Web public API
+└── index.native.ts       # React Native public API
 ```

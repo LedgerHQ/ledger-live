@@ -9302,6 +9302,7 @@
   "contacts": {
     "title": "Contacts",
     "addContact": "Add contact",
+    "searchPlaceholder": "Search contact",
     "me": {
       "name": "Me",
       "addressCount_zero": "0 address",
