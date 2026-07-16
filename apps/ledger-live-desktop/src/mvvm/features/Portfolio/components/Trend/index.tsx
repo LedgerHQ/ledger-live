@@ -5,9 +5,9 @@ import { useTranslation } from "react-i18next";
 import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
 import { trendPercentageBody2Styles } from "LLD/shared/trendPercentageStyles";
 
-interface TrendProps {
-  readonly valueChange: ValueChange;
-}
+type TrendProps = Readonly<{
+  valueChange: ValueChange;
+}>;
 
 export const Trend = ({ valueChange }: TrendProps) => {
   const { percentageText, variant } = useTrendViewModel({

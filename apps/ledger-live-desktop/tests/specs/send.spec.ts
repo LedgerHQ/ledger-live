@@ -1,9 +1,9 @@
-import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
+import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import test from "../fixtures/common";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { expect } from "@playwright/test";
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 
 test.use({
   userdata: "sanctioned-addresses",

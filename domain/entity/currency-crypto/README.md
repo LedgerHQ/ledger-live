@@ -10,6 +10,18 @@ Zod-first canonical schema and static registry for the `CryptoCurrency` domain e
 
 No Redux slice, no selectors — the currency list is fully static. Consumers resolve currencies directly from the registry.
 
+## Source of truth & dual maintenance
+
+This registry is the **primary** source of truth for crypto-currency data. During the migration off
+`@ledgerhq/cryptoassets`, the legacy registry (`libs/ledgerjs/packages/cryptoassets/src/currencies.ts`)
+still ships to external consumers, so the two are **dual-maintained**: when you add or edit a currency,
+update **both** this registry and the legacy `cryptocurrenciesById` map until legacy is dropped.
+
+A CI parity test — `libs/ledgerjs/packages/cryptoassets/src/currencies.domain-parity.test.ts` — fails if
+the two diverge (a missing/extra currency, or any changed field), so neither can drift unnoticed. After
+changing legacy you can re-sync this registry by re-running the generator (see [Codegen](#codegen)); the
+parity test compares by `.id`.
+
 ## Dependencies
 
 | Package | Why |

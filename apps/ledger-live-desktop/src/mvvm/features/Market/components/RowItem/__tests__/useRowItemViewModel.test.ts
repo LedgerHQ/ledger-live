@@ -1,4 +1,4 @@
-import { renderHook, act } from "tests/testSetup";
+import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { MOCK_MARKET_CURRENCY_DATA } from "@ledgerhq/live-common/market/utils/fixtures";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { useRowItemViewModel } from "../useRowItemViewModel";
@@ -31,15 +31,13 @@ jest.mock("~/renderer/hooks/useGetStakeLabelLocaleBased", () => ({
   useGetStakeLabelLocaleBased: () => "Earn",
 }));
 
-const mockShouldDisplayAggregatedAssets = jest.fn(() => true);
-jest.mock("@features/platform-feature-flags", () => ({
-  ...jest.requireActual("@features/platform-feature-flags"),
-  useWalletFeaturesConfig: () => ({
-    shouldDisplayAggregatedAssets: mockShouldDisplayAggregatedAssets(),
-    shouldDisplayAssetSection: true,
-    shouldDisplayWallet40MainNav: true,
-  }),
-}));
+const aggregatedAssetsEnabled = withFlagOverrides({
+  lwdWallet40: { enabled: true, params: { aggregatedAssets: true } },
+});
+
+const aggregatedAssetsDisabled = withFlagOverrides({
+  lwdWallet40: { enabled: true, params: { aggregatedAssets: false } },
+});
 
 const mockedUseMarketActions = jest.mocked(useMarketActions);
 
@@ -167,13 +165,14 @@ describe("useRowItemViewModel", () => {
   });
 
   it("onCurrencyClick navigates to /asset/ when shouldDisplayAggregatedAssets is true", () => {
-    mockShouldDisplayAggregatedAssets.mockReturnValue(true);
-    const { result } = renderHook(() =>
-      useRowItemViewModel({
-        currency: bitcoinCurrency,
-        toggleStar: jest.fn(),
-        range: "24h",
-      }),
+    const { result } = renderHook(
+      () =>
+        useRowItemViewModel({
+          currency: bitcoinCurrency,
+          toggleStar: jest.fn(),
+          range: "24h",
+        }),
+      { initialState: aggregatedAssetsEnabled },
     );
 
     act(() => {
@@ -186,13 +185,14 @@ describe("useRowItemViewModel", () => {
   });
 
   it("onCurrencyClick navigates to /market/ when shouldDisplayAggregatedAssets is false", () => {
-    mockShouldDisplayAggregatedAssets.mockReturnValue(false);
-    const { result } = renderHook(() =>
-      useRowItemViewModel({
-        currency: bitcoinCurrency,
-        toggleStar: jest.fn(),
-        range: "24h",
-      }),
+    const { result } = renderHook(
+      () =>
+        useRowItemViewModel({
+          currency: bitcoinCurrency,
+          toggleStar: jest.fn(),
+          range: "24h",
+        }),
+      { initialState: aggregatedAssetsDisabled },
     );
 
     act(() => {

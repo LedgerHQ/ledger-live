@@ -81,10 +81,4 @@ describe("CryptoCurrencySchema", () => {
     expect(result.supportsSegwit).toBe(true);
     expect(result.keywords).toEqual(["btc", "bitcoin"]);
   });
-
-  it("accepts terminated field", () => {
-    const currency = mockCryptoCurrency({ terminated: { link: "https://example.com" } });
-    const result = CryptoCurrencySchema.parse(currency);
-    expect(result.terminated?.link).toBe("https://example.com");
-  });
 });

@@ -1,0 +1,111 @@
+name: "Failed Tests Summary"
+description: "Writes a GitHub job summary with a ready-to-copy Filter pattern that reruns only the failed/broken E2E tests. Shared by mobile and desktop e2e workflows."
+inputs:
+  results-path:
+    description: "Directory containing the test results (Allure *-result.json for Playwright, Jest --json e2e-test-results-*.json for Detox)"
+    required: true
+  runner:
+    description: >-
+      Which test runner produced the results, so the Filter pattern is built the way that runner selects tests:
+      'playwright' matches test titles (--grep), 'detox' matches spec files (regex over file path/content).
+    required: true
+outputs:
+  failed_count:
+    description: "Number of failed items (tests for playwright, spec files for detox)"
+    value: ${{ steps.collect.outputs.failed_count }}
+  filter_pattern:
+    description: "Failed items joined with '|', reusable as the workflow Filter pattern input"
+    value: ${{ steps.collect.outputs.filter_pattern }}
+runs:
+  using: composite
+  steps:
+    - name: Collect failed tests and write job summary
+      id: collect
+      shell: bash
+      env:
+        RESULTS_DIR: ${{ inputs['results-path'] }}
+        RUNNER: ${{ inputs.runner }}
+      run: |
+        set -euo pipefail
+
+        # jq filter escaping every char that is special in a JS regex, so the emitted
+        # Filter pattern is a literal alternation once split on '|' by the workflow.
+        JQ_ESC='def esc: gsub("(?<c>[.^$*+?()\\[\\]{}|\\\\/-])"; "\\" + .c);'
+
+        case "$RUNNER" in
+          detox)
+            # Detox selects whole spec files via a regex tested against file path/content,
+            # so the reusable unit is the failed spec file (basename). Source: Jest --json.
+            shopt -s nullglob
+            files=("$RESULTS_DIR"/e2e-test-results-*.json)
+            shopt -u nullglob
+            ;;
+          playwright)
+            # Playwright selects by test title (--grep), so the reusable unit is the test title.
+            shopt -s nullglob
+            files=("$RESULTS_DIR"/*-result.json)
+            shopt -u nullglob
+            ;;
+          *)
+            echo "::error title=Failed tests summary::Unknown runner '$RUNNER' (expected 'detox' or 'playwright')"
+            exit 1
+            ;;
+        esac
+
+        if [ ${#files[@]} -eq 0 ]; then
+          echo "No result files found in '$RESULTS_DIR' for runner '$RUNNER'."
+          echo "failed_count=0" >> "$GITHUB_OUTPUT"
+          echo "filter_pattern=" >> "$GITHUB_OUTPUT"
+          {
+            echo "_No results were found for this run._"
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 0
+        fi
+
+        if [ "$RUNNER" = "detox" ]; then
+          # Failed spec files (basename), deduplicated.
+          FAILED_LIST=$(jq -rs '
+            [ .[].testResults[]? | select(.status == "failed") | .name | sub(".*/"; "") ]
+            | unique | .[]
+          ' "${files[@]}")
+          FILTER_PATTERN=$(jq -rs "$JQ_ESC"'
+            [ .[].testResults[]? | select(.status == "failed") | .name | sub(".*/"; "") | esc ]
+            | unique | join("|")
+          ' "${files[@]}")
+        else
+          # Failed/broken test titles that never passed (a pass on retry clears the failure).
+          FAILED_LIST=$(jq -rs '
+            [ .[] | { name: .name, status: .status } ] as $all
+            | ( $all | map(select(.status == "passed") | .name) | unique ) as $passed
+            | $all | map(select(.status == "failed" or .status == "broken") | .name)
+              | unique | map(select(. as $n | ($passed | index($n)) | not)) | .[]
+          ' "${files[@]}")
+          FILTER_PATTERN=$(jq -rs "$JQ_ESC"'
+            [ .[] | { name: .name, status: .status } ] as $all
+            | ( $all | map(select(.status == "passed") | .name) | unique ) as $passed
+            | $all | map(select(.status == "failed" or .status == "broken") | .name)
+              | unique | map(select(. as $n | ($passed | index($n)) | not)) | map(esc) | join("|")
+          ' "${files[@]}")
+        fi
+
+        FAILED_COUNT=0
+        [ -n "$FAILED_LIST" ] && FAILED_COUNT=$(printf '%s\n' "$FAILED_LIST" | grep -c '' || true)
+
+        echo "failed_count=$FAILED_COUNT" >> "$GITHUB_OUTPUT"
+
+        if [ "$FAILED_COUNT" -eq 0 ]; then
+          echo "filter_pattern=" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        echo "filter_pattern=$FILTER_PATTERN" >> "$GITHUB_OUTPUT"
+
+        {
+          echo "<details><summary>Copy this into the **Filter pattern** input to rerun:</summary>"
+          echo ""
+          echo '```'
+          echo "$FILTER_PATTERN"
+          echo '```'
+          echo ""
+          echo "</details>"
+        } >> "$GITHUB_STEP_SUMMARY"

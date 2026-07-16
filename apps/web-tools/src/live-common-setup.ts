@@ -5,6 +5,16 @@ import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoCurrenciesStore, setFiatCurrenciesStore } from "@ledgerhq/cryptoassets";
+import {
+  CRYPTO_CURRENCIES_REGISTRY,
+  CRYPTO_CURRENCY_ALIASES,
+} from "@domain/entity-currency-crypto";
+import { FIAT_CURRENCIES_REGISTRY } from "@domain/entity-currency-fiat";
+
+// The domain registries are the runtime source of truth for currency data.
+setCryptoCurrenciesStore(Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES);
+setFiatCurrenciesStore(Object.values(FIAT_CURRENCIES_REGISTRY));
 
 LiveConfig.setConfig(liveConfig);
 LiveConfig.setAppinfo({

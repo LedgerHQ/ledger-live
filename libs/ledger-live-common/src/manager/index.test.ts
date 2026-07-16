@@ -35,6 +35,6 @@ test("firmwareUnsupported", () => {
     expect(manager.firmwareUnsupported(modelId, deviceInfo)).toBe(true);
   });
 });
-test("A terminated currency is still installable", () => {
+test("An app not in the disabled list is installable", () => {
   expect(manager.canHandleInstall({ name: "Stratis" })).toBe(true);
 });

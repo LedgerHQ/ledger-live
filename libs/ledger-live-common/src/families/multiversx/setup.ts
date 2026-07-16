@@ -1,7 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
 import { createBridges } from "@ledgerhq/coin-multiversx/bridge/js";
-import makeCliTools from "@ledgerhq/coin-multiversx/cli-transaction";
 import multiversxResolver from "@ledgerhq/coin-multiversx/hw-getAddress";
 import {
   MultiversXAccount,
@@ -24,6 +23,4 @@ const bridge: Bridge<Transaction, MultiversXAccount, TransactionStatus, Multiver
 
 const resolver: Resolver = createResolver(createSigner, multiversxResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, resolver };
+export { bridge, resolver };

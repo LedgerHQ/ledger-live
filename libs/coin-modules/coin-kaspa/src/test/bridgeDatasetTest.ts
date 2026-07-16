@@ -2,10 +2,13 @@ import { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import { Transaction } from "../types";
 
 const kaspa: CurrenciesData<Transaction> = {
+  FIXME_ignoreOperationFields: ["blockHash"],
   scanAccounts: [
     {
       name: "kaspa seed 1",
       apdus: `
+      => e00500000d038000002c8001b20780000000
+      <= 41049d8002c08041d975ab58491c09cf8ced7b388a114ab2f5df73f2534d4d74d17ab8913b3cb3056bad63141cb63fb92e44401b691dee069dbdb2119861c18cc01b204340fcc305ab72e752cd347f4b6271ffe21da098d4f2a4749826857dda7a55769000
       => e00500000d038000002c8001b20780000000
       <= 41049d8002c08041d975ab58491c09cf8ced7b388a114ab2f5df73f2534d4d74d17ab8913b3cb3056bad63141cb63fb92e44401b691dee069dbdb2119861c18cc01b204340fcc305ab72e752cd347f4b6271ffe21da098d4f2a4749826857dda7a55769000
       => e00500000d038000002c8001b20780000001

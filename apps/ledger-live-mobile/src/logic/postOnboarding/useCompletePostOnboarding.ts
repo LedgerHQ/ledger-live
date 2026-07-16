@@ -3,7 +3,7 @@ import { useDispatch } from "~/context/hooks";
 
 import { useNavigation } from "@react-navigation/native";
 import { postOnboardingSetFinished } from "@ledgerhq/live-common/postOnboarding/actions";
-import { NavigatorName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 export type CompletePostOnboardingOptions = {
@@ -25,7 +25,7 @@ export function useCompletePostOnboarding() {
       if (!options?.skipPortfolioNavigation) {
         navigation.navigate(NavigatorName.Main, {
           screen: NavigatorName.Portfolio,
-          params: { screen: NavigatorName.WalletTab },
+          params: { screen: ScreenName.Portfolio },
         });
       }
     },

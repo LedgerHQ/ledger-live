@@ -50,7 +50,6 @@ module.exports = defineConfig({
         "src/renderer/analytics/__mocks__/segment.ts",
       ),
       "~/renderer/analytics/TrackPage": resolve(__dirname, ".storybook/stub.ts"),
-      "@ledgerhq/live-common/e2e/speculosAppVersion": resolve(__dirname, ".storybook/stub.ts"),
       LLD: resolve(__dirname, "src/mvvm"),
 
       "@ledgerhq/live-common/wallet-api/react": detailedAccountsMockDir,

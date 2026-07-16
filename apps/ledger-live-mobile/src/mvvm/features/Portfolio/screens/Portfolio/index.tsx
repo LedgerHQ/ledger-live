@@ -12,10 +12,9 @@ import { useWalletV4TourDrawer, WalletV4TourDrawer } from "LLM/features/WalletV4
 import { renderItem } from "LLM/utils/renderItem";
 import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
+import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
 import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
 import TrackScreen from "~/analytics/TrackScreen";
-import { usePortfolioBorrowSectionViewModel } from "../../components/PortfolioBorrowSection/usePortfolioBorrowSectionViewModel";
 import {
   PROGRESS_VIEW_OFFSET_LEGACY_ANDROID,
   PROGRESS_VIEW_OFFSET_LEGACY_IOS,
@@ -30,7 +29,6 @@ import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/
 import { RecoverIntroPortfolioMount } from "LLM/features/BackupHub";
 
 import {
-  PortfolioAllocationsSection,
   PortfolioAssetsSection,
   WalletAssetsView,
   PortfolioCarouselSection,
@@ -39,11 +37,10 @@ import {
   PortfolioOperationsSection,
   PortfolioBannersSection,
   PortfolioPerpsEntryPoint,
-  PortfolioBorrowSection,
 } from "../../components";
 import { Box } from "@ledgerhq/native-ui";
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
+  StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
 >;
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(CollapsibleHeaderFlatList, {
@@ -58,30 +55,23 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     hideEmptyTokenAccount,
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
-    shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
-    shouldDisplayBorrowSection,
-    shouldDisplayMarketBanner,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
-    shouldDisplayGraphRework,
     backgroundColor,
     isSyncError,
     openAddModal,
     closeAddModal,
     handleHeightChange,
     onBackFromUpdate,
-    goToAnalyticsAllocations,
-    shouldDisplayWallet40MainNav,
     shouldDisplayOperationsList,
     shouldAddBottomPaddingForLegacyAssets,
   } = usePortfolioViewModel(navigation);
 
-  const progressViewOffset = getProgressViewOffset(Platform.OS, shouldDisplayWallet40MainNav);
+  const progressViewOffset = getProgressViewOffset(Platform.OS);
 
   const { handleFlatListRef } = useScrollToTop();
-  const { onPress: onPortfolioBorrowPress } = usePortfolioBorrowSectionViewModel();
 
   const { isDrawerOpen, handleCloseDrawer, closeDrawer, onSlideChange, slides } =
     useWalletV4TourDrawer();
@@ -95,19 +85,17 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
   const data = useMemo(() => {
     const sections: React.JSX.Element[] = [];
 
-    const heroCtasNode =
-      showAssets && shouldDisplayQuickActionCtas && shouldDisplayGraphRework ? (
-        <>
-          <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
-          <TransferDrawer />
-        </>
-      ) : undefined;
+    const heroCtasNode = showAssets ? (
+      <>
+        <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
+        <TransferDrawer />
+      </>
+    ) : undefined;
 
     sections.push(
       <PortfolioHeaderSection
         key="header"
         showAssets={showAssets}
-        hideGraph={shouldDisplayGraphRework}
         onBackFromUpdate={onBackFromUpdate}
         ctas={heroCtasNode}
       />,
@@ -122,15 +110,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
 
     sections.push(<TrackScreen key="trackWallet" category="Wallet" />);
 
-    if (shouldDisplayQuickActionCtas && !shouldDisplayGraphRework) {
-      sections.push(
-        <Box px={6} pt={6} key="quickActions">
-          <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
-          <TransferDrawer />
-        </Box>,
-      );
-    }
-
     sections.push(
       <Box key="portfolioBannersSection" px={6} backgroundColor="background.contrast">
         <PortfolioBannersSection
@@ -142,13 +121,11 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       </Box>,
     );
 
-    if (shouldDisplayMarketBanner) {
-      sections.push(
-        <Box key="marketBanner" px={6}>
-          <MarketBanner />
-        </Box>,
-      );
-    }
+    sections.push(
+      <Box key="marketBanner" px={6}>
+        <MarketBanner />
+      </Box>,
+    );
 
     sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
 
@@ -171,20 +148,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       sections.push(<PortfolioCarouselSection key="carousel" backgroundColor={backgroundColor} />);
     }
 
-    if (!shouldDisplayGraphRework) {
-      sections.push(
-        <PortfolioAllocationsSection
-          key="allocations"
-          isFirst={!isAWalletCardDisplayed}
-          onPress={goToAnalyticsAllocations}
-        />,
-      );
-    }
-
-    if (shouldDisplayBorrowSection) {
-      sections.push(<PortfolioBorrowSection key="borrow" onPress={onPortfolioBorrowPress} />);
-    }
-
     if (!shouldDisplayOperationsList) {
       sections.push(<PortfolioOperationsSection key="operations" />);
     }
@@ -192,23 +155,17 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     return sections;
   }, [
     showAssets,
-    shouldDisplayGraphRework,
     shouldDisplayAssetSection,
-    shouldDisplayBorrowSection,
-    shouldDisplayMarketBanner,
     onBackFromUpdate,
     isLNSUpsellBannerShown,
-    shouldDisplayQuickActionCtas,
     isAccountListUIEnabled,
     hideEmptyTokenAccount,
     openAddModal,
     handleHeightChange,
     isAWalletCardDisplayed,
     backgroundColor,
-    goToAnalyticsAllocations,
     shouldDisplayOperationsList,
     shouldAddBottomPaddingForLegacyAssets,
-    onPortfolioBorrowPress,
   ]);
 
   return (
@@ -223,7 +180,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           keyExtractor={(_: unknown, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
           testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
-          useSafeArea={!shouldDisplayWallet40MainNav}
+          useSafeArea={false}
           overrideRefreshControlProps={{ progressViewOffset }}
           isError={isSyncError}
         />

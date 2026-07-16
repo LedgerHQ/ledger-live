@@ -20,7 +20,7 @@ export type MyLedgerViewProps = {
 
 export function MyLedgerView({ title, description, icon, onClick }: MyLedgerViewProps) {
   return (
-    <ListItem onClick={onClick} className="bg-surface">
+    <ListItem onClick={onClick} className="bg-surface" data-testid="my-wallet-my-ledger">
       <ListItemLeading>
         <Spot icon={icon} appearance="icon" />
         <ListItemContent>

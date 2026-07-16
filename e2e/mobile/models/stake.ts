@@ -1,4 +1,4 @@
-import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
+import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 
 export async function verifyAppValidationStakeInfo(
   delegation: DelegateType,
@@ -61,6 +61,7 @@ export async function verifyStakeOperationDetailsInfo(
     Currency.OSMO,
     Currency.ADA,
     Currency.MULTIVERS_X,
+    Currency.SEI_EVM,
   ];
   const currenciesForStakeType = [Currency.NEAR];
   const currenciesForLockType = [Currency.CELO];

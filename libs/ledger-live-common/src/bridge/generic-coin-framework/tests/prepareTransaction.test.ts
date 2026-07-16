@@ -111,6 +111,72 @@ describe("genericPrepareTransaction", () => {
     expect(result).toBe(baseTransaction); // still same reference
   });
 
+  it("propagates gasOptions from estimation parameters", async () => {
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: new BigNumber(491),
+        parameters: {
+          gasOptions: {
+            slow: { maxFeePerGas: 20n, maxPriorityFeePerGas: 2n, nextBaseFee: 15n },
+            medium: { maxFeePerGas: 24n, maxPriorityFeePerGas: 3n, nextBaseFee: 18n },
+            fast: { maxFeePerGas: 30n, maxPriorityFeePerGas: 5n, nextBaseFee: 22n },
+          },
+        },
+      }),
+    });
+
+    const txWithoutCustomFees = { ...baseTransaction, customFees: undefined };
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, txWithoutCustomFees);
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        fees: new BigNumber(491),
+        gasOptions: {
+          slow: {
+            gasPrice: null,
+            maxFeePerGas: new BigNumber(20),
+            maxPriorityFeePerGas: new BigNumber(2),
+            nextBaseFee: new BigNumber(15),
+          },
+          medium: {
+            gasPrice: null,
+            maxFeePerGas: new BigNumber(24),
+            maxPriorityFeePerGas: new BigNumber(3),
+            nextBaseFee: new BigNumber(18),
+          },
+          fast: {
+            gasPrice: null,
+            maxFeePerGas: new BigNumber(30),
+            maxPriorityFeePerGas: new BigNumber(5),
+            nextBaseFee: new BigNumber(22),
+          },
+        },
+      }),
+    );
+  });
+
+  it("does not set gasOptions when estimation parameters omit them", async () => {
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: new BigNumber(491),
+        parameters: { gasLimit: 21000n },
+      }),
+    });
+
+    const txWithoutCustomFees = { ...baseTransaction, customFees: undefined };
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, txWithoutCustomFees);
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        fees: new BigNumber(491),
+        gasLimit: new BigNumber(21000),
+      }),
+    );
+    expect(result).not.toHaveProperty("gasOptions");
+  });
+
   it.each([
     ["type", 2, 2],
     ["storageLimit", 300n, new BigNumber(300)],

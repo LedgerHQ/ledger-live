@@ -151,6 +151,41 @@ describe("formatCurrencyUnit", () => {
     });
   });
 
+  describe("RTL currencies", () => {
+    const LRI = "\u2066";
+    const PDI = "\u2069";
+    const sar: Unit = {
+      name: "Saudi Riyal",
+      code: "﷼",
+      magnitude: 2,
+      showAllDigits: true,
+      prefixCode: true,
+    };
+
+    test("wraps a negative amount in a LTR isolate keeping sign -> symbol -> value", () => {
+      expect(formatCurrencyUnit(sar, new BigNumber("-10698"), { showCode: true })).toBe(
+        `${LRI}-﷼106.98${PDI}`,
+      );
+    });
+
+    test("wraps a positive amount with alwaysShowSign", () => {
+      expect(
+        formatCurrencyUnit(sar, new BigNumber("22668"), { showCode: true, alwaysShowSign: true }),
+      ).toBe(`${LRI}+﷼226.68${PDI}`);
+    });
+
+    test("does not wrap when the symbol is hidden (no RTL character in output)", () => {
+      expect(formatCurrencyUnit(sar, new BigNumber("10698"), { showCode: false })).toBe("106.98");
+    });
+
+    test("leaves Latin-symbol currencies untouched", () => {
+      const usd: Unit = { ...sar, code: "USD" };
+      expect(formatCurrencyUnit(usd, new BigNumber("-10698"), { showCode: true })).toBe(
+        "-USD106.98",
+      );
+    });
+  });
+
   describe("formatCurrencyUnitFragment", () => {
     const unit: Unit = {
       name: "Test",

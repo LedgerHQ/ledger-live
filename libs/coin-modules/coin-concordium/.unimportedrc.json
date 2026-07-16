@@ -26,5 +26,5 @@
     "src/test/walletConnectFixtures.ts",
     "src/types/errors.ts"
   ],
-  "ignoreUnused": []
+  "ignoreUnused": ["invariant"]
 }

@@ -1,4 +1,4 @@
-import type { DiscoveryError } from "../../../types";
+import type { MobileDiscoveryError } from "../../../types";
 import type { AndroidPreflightRequirements } from "./androidPreflightRequirements";
 import {
   buildLocationDisabledManualActionError,
@@ -21,7 +21,7 @@ import {
  */
 export class AndroidLocationServicePreflightCheck {
   constructor(
-    private readonly retry: () => Promise<true | DiscoveryError>,
+    private readonly retry: () => Promise<true | MobileDiscoveryError>,
     private readonly getLocationHelper = getLocationHelperModule,
   ) {}
 

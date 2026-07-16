@@ -1,18 +1,13 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Layout } from "../../component/layout.component";
-import { Drawer } from "../../component/drawer.component";
 import { SettingsPage } from "../../page/settings.page";
 import { DiscoverPage } from "../../page/discover.page";
 import path from "path";
-import { SendModal } from "../../page/modal/send.modal";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
   featureFlags: {
-    lwdWallet40: {
-      enabled: false,
-    },
     noah: { enabled: false },
   },
   simulateCamera: path.join(
@@ -24,25 +19,8 @@ test.use({
 
 test("Layout @smoke", async ({ page }) => {
   const layout = new Layout(page);
-  const drawer = new Drawer(page);
   const settingsPage = new SettingsPage(page);
-  const sendModal = new SendModal(page);
   const discoverPage = new DiscoverPage(page);
-
-  await test.step("can open send modal and use a qr code from camera", async () => {
-    await layout.openSendModalFromSideBar();
-    await sendModal.container.waitFor({ state: "visible" });
-    const sendButtonLoader = sendModal.container
-      .locator("id=send-recipient-continue-button")
-      .getByTestId("loading-spinner");
-    await sendButtonLoader.waitFor({ state: "detached" });
-
-    await sendModal.selectAccount("Bitcoin 1");
-    await sendModal.clickOnCameraButton();
-
-    await expect(sendModal.recipientInput).toHaveValue("19qAJ5F2eH7CRPFfj5c94x22zFcXpa8rZ77");
-    await sendModal.closeModal();
-  });
 
   await test.step("go to accounts", async () => {
     await layout.goToAccounts();
@@ -95,8 +73,9 @@ test("Layout @smoke", async ({ page }) => {
     });
   });
 
-  await test.step("can display the help modal", async () => {
+  await test.step("can display the help section", async () => {
     await layout.openHelp();
-    await expect.soft(drawer.content).toHaveScreenshot("help-drawer.png");
+    await expect(page).toHaveURL(/\/settings\/help/);
+    await expect.soft(page).toHaveScreenshot("help-drawer.png");
   });
 });

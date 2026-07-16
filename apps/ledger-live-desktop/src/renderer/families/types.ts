@@ -26,7 +26,6 @@ import {
 // FIXME: ideally we need to have <A,T,TS> parametric version of StepProps
 import { StepProps as SendStepProps } from "../modals/Send/types";
 import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
-import { StepProps as AddAccountsStepProps } from "../modals/AddAccounts";
 import { ModularDrawerAddAccountFlowManagerProps } from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
 import type { SplitAddressProps } from "../components/OperationsList/AddressCellShared";
 import type { Step } from "~/renderer/components/Stepper";
@@ -479,7 +478,7 @@ export type LLDCoinFamily<
   /**
    * It was for Hedera specifc, when we do not find any account it show a specific component
    */
-  NoAssociatedAccounts?: React.ComponentType<AddAccountsStepProps>;
+  NoAssociatedAccounts?: React.ComponentType<{ t: TFunction }>;
 
   /**
    * Component banner before Account body header

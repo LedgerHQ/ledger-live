@@ -35,13 +35,7 @@ const makeConfig = (
   overrides?: Partial<WalletFeaturesConfig>,
 ): WalletFeaturesConfig => ({
   isEnabled: value,
-  shouldDisplayMarketBanner: value,
-  shouldDisplayGraphRework: value,
-  shouldDisplayQuickActionCtas: value,
-  shouldDisplayNewReceiveDialog: value,
-  shouldDisplayWallet40MainNav: value,
   shouldUseLazyOnboarding: value,
-  shouldDisplayBalanceRefreshRework: value,
   shouldDisplayTour: value,
   shouldDisplayQ2Tour: value,
   shouldDisplayAssetSection: value,
@@ -57,13 +51,7 @@ const makeConfig = (
 });
 
 const makeParams = (value: boolean): Wallet40Params => ({
-  marketBanner: value,
-  graphRework: value,
-  quickActionCtas: value,
-  newReceiveDialog: value,
-  mainNavigation: value,
   lazyOnboarding: value,
-  balanceRefreshRework: value,
   tour: value,
   q2Tour: value,
   assetSection: value,
@@ -115,17 +103,7 @@ describe("useWalletFeaturesConfig hook", () => {
 
     describe.each(PLATFORMS)("on %s platform", platform => {
       it.each<[string, Wallet40Params, Partial<WalletFeaturesConfig>]>([
-        ["marketBanner", { marketBanner: true }, { shouldDisplayMarketBanner: true }],
-        ["graphRework", { graphRework: true }, { shouldDisplayGraphRework: true }],
-        ["quickActionCtas", { quickActionCtas: true }, { shouldDisplayQuickActionCtas: true }],
-        ["newReceiveDialog", { newReceiveDialog: true }, { shouldDisplayNewReceiveDialog: true }],
-        ["mainNavigation", { mainNavigation: true }, { shouldDisplayWallet40MainNav: true }],
         ["lazyOnboarding", { lazyOnboarding: true }, { shouldUseLazyOnboarding: true }],
-        [
-          "balanceRefreshRework",
-          { balanceRefreshRework: true },
-          { shouldDisplayBalanceRefreshRework: true },
-        ],
         ["tour", { tour: true }, { shouldDisplayTour: true }],
         ["q2Tour", { q2Tour: true }, { shouldDisplayQ2Tour: true }],
         ["assetSection", { assetSection: true }, { shouldDisplayAssetSection: true }],
@@ -149,9 +127,9 @@ describe("useWalletFeaturesConfig hook", () => {
       it("handles partial params", () => {
         const { result } = renderWalletFeaturesConfig(platform, {
           enabled: true,
-          params: { marketBanner: true },
+          params: { lazyOnboarding: true },
         });
-        expectConfig(result, { ...ENABLED_NO_PARAMS_CONFIG, shouldDisplayMarketBanner: true });
+        expectConfig(result, { ...ENABLED_NO_PARAMS_CONFIG, shouldUseLazyOnboarding: true });
       });
     });
   });

@@ -4,7 +4,7 @@ export const concordium_testnet = currency({
   type: "CryptoCurrency",
   id: "concordium_testnet",
   managerAppName: "Concordium",
-  coinType: 919,
+  coinType: 1,
   name: "Concordium (Testnet)",
   ticker: "CCD",
   scheme: "concordium_testnet",

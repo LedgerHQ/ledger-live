@@ -1,6 +1,6 @@
 import { State as BlePlxState } from "react-native-ble-plx";
 import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
-import { DiscoveryErrorTypes } from "../../../types";
+import { BaseDiscoveryErrorTypes, DiscoveryErrorTypes } from "../../../types";
 import { BlePlxManager } from "../../../../transport/BlePlxManager";
 import { getBluetoothHelperModule } from "../nativeModules";
 import { IosBleDiscoveryPreflightChecks } from "./IosBleDiscoveryPreflightChecks";
@@ -150,14 +150,14 @@ describe("IosBleDiscoveryPreflightChecks", () => {
     expect(result).toMatchObject({
       success: false,
       discoveryError: {
-        type: DiscoveryErrorTypes.Unknown,
+        type: BaseDiscoveryErrorTypes.Unknown,
         transportId: rnBleTransportIdentifier,
         error,
         resolution: { type: "check-only" },
       },
     });
     await expect(callRetry(result)).resolves.toMatchObject({
-      type: DiscoveryErrorTypes.Unknown,
+      type: BaseDiscoveryErrorTypes.Unknown,
     });
   });
 });

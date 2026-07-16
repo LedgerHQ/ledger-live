@@ -1,5 +1,32 @@
+import { getMainAccount, getRecentAddressesStore } from "../../account/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Transaction } from "../../coin-modules/transaction-types";
 import { formatAddress } from "../../utils/addressUtils";
 import type { RecipientData } from "./types";
+
+function getEnsNameFromTransaction(transaction: Transaction): string | undefined {
+  if (!("recipientDomain" in transaction)) return undefined;
+  const domain = transaction.recipientDomain?.domain?.trim();
+  return domain || undefined;
+}
+
+/**
+ * Persists the send recipient in the Ledger Sync recent-addresses store after a successful broadcast.
+ */
+export function saveRecentSendRecipient(
+  account: AccountLike,
+  parentAccount: Account | null | undefined,
+  transaction: Transaction,
+  recipientEnsName?: string | null,
+): void {
+  const recipient = transaction.recipient?.trim();
+  if (!recipient) return;
+
+  const mainAccount = getMainAccount(account, parentAccount ?? undefined);
+  const ensName = recipientEnsName?.trim() || getEnsNameFromTransaction(transaction);
+
+  getRecentAddressesStore().addAddress(mainAccount.currency.id, recipient, ensName);
+}
 
 /**
  * Get the display value for a recipient (formatted address with optional ENS name).

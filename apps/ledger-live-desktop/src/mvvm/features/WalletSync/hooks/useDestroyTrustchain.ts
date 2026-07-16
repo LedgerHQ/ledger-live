@@ -26,7 +26,7 @@ export function useDestroyTrustchain() {
         return;
       }
       await cloudSyncSDK.destroy(trustchain, memberCredentials);
-      await sdk.destroyTrustchain(trustchain, memberCredentials);
+      await sdk.destroyApplication(trustchain, memberCredentials);
     },
     mutationKey: [QueryKey.destroyTrustchain, trustchain],
     onSuccess: () => {

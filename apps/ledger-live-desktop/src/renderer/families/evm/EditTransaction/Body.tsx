@@ -1,10 +1,4 @@
-import {
-  getEditTransactionStatus,
-  hasMinimumFundsToCancel,
-  hasMinimumFundsToSpeedUp,
-  isTransactionConfirmed,
-} from "@ledgerhq/coin-evm/editTransaction/index";
-import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
+import { fromTransactionRaw } from "@ledgerhq/live-common/families/evm/transaction";
 import { Transaction, TransactionRaw, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
@@ -202,7 +196,7 @@ const Body = ({
 
   useEffect(() => {
     const setTransactionHasBeenValidatedCallback = async () => {
-      const hasBeenConfirmed = await isTransactionConfirmed({
+      const hasBeenConfirmed = await bridge.isTransactionConfirmed({
         currency: mainAccount.currency,
         hash: params.transactionHash,
       });
@@ -224,10 +218,14 @@ const Body = ({
     return () => {
       clearInterval(intervalId);
     };
-  }, [mainAccount.currency, params.transactionHash]);
+  }, [bridge, mainAccount.currency, params.transactionHash]);
 
-  const haveFundToCancel = hasMinimumFundsToCancel({ transactionToUpdate, mainAccount });
-  const haveFundToSpeedup = hasMinimumFundsToSpeedUp({ transactionToUpdate, mainAccount, account });
+  const haveFundToCancel = bridge.hasMinimumFundsToCancel({ transactionToUpdate, mainAccount });
+  const haveFundToSpeedup = bridge.hasMinimumFundsToSpeedUp({
+    transactionToUpdate,
+    mainAccount,
+    account,
+  });
 
   // if we are at this step (i.e: in this screen) it means the transaction is editable
   const isOldestEditableOperation = isOldestPendingOperation(
@@ -273,12 +271,12 @@ const Body = ({
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [editType]);
 
-  const updatedStatus = getEditTransactionStatus({
+  const updatedStatus = bridge.getEditTransactionStatus({
     editType,
     transaction,
     transactionToUpdate,
     status: status as TransactionStatus,
-  });
+  }) as TransactionStatus;
 
   const stepperProps = {
     title: t(getEditTransactionStepTitleKey(stepId, editType)),

@@ -1,7 +1,7 @@
 import { electionABI, lockedGoldABI } from "@celo/abis";
 import { createApi } from "@ledgerhq/coin-evm/api/index";
 import { getCoinConfig } from "@ledgerhq/coin-evm/config";
-import { createSwapHistoryMap, mergeSubAccounts, getSyncHash } from "@ledgerhq/coin-evm/logic";
+import { createSwapHistoryMap, mergeSubAccounts, getSyncHash } from "./syncHelpers";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {

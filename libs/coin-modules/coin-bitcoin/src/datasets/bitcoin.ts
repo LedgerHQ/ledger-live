@@ -210,6 +210,7 @@ const dataset: CurrenciesData<Transaction> = {
                   ],
                   defaultFeePerByte: new BigNumber(1),
                 },
+                relayFeePerByte: new BigNumber(1),
               },
               rbf: false,
               utxoStrategy: {
@@ -258,6 +259,7 @@ const dataset: CurrenciesData<Transaction> = {
                   ],
                   defaultFeePerByte: new BigNumber(1),
                 },
+                relayFeePerByte: new BigNumber(1),
               },
               rbf: false,
               utxoStrategy: {
@@ -309,6 +311,7 @@ const dataset: CurrenciesData<Transaction> = {
                   ],
                   defaultFeePerByte: new BigNumber(1),
                 },
+                relayFeePerByte: new BigNumber(1),
               },
               rbf: false,
               utxoStrategy: {

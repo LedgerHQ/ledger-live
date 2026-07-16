@@ -3,16 +3,10 @@ import { flagWith } from "../../define";
 
 export const lwdWallet40 = flagWith(
   {
-    marketBanner: z.boolean(),
-    graphRework: z.boolean(),
-    quickActionCtas: z.boolean(),
-    mainNavigation: z.boolean(),
     tour: z.boolean(),
     q2Tour: z.boolean(),
     lazyOnboarding: z.boolean(),
-    balanceRefreshRework: z.boolean(),
     assetSection: z.boolean(),
-    newReceiveDialog: z.boolean(),
     operationsList: z.boolean(),
     brazePlacement: z.boolean().optional(),
     aggregatedAssets: z.boolean(),
@@ -23,17 +17,11 @@ export const lwdWallet40 = flagWith(
     earnSimulator: z.boolean().optional(),
   },
   {
-    enabled: false,
+    enabled: true,
     params: {
-      marketBanner: true,
-      graphRework: true,
-      quickActionCtas: true,
-      mainNavigation: true,
       tour: true,
       q2Tour: false,
       lazyOnboarding: true,
-      newReceiveDialog: true,
-      balanceRefreshRework: true,
       assetSection: false,
       operationsList: false,
       brazePlacement: true,

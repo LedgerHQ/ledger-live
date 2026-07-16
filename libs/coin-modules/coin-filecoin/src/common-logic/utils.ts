@@ -8,7 +8,7 @@ import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
-import { fetchBalances, fetchBlockHeight, fetchTxsWithPages } from "../api/api";
+import { fetchBalances, fetchBlockHeight, fetchTxsWithPages } from "../network/api";
 import { buildTokenAccounts } from "../erc20/tokenAccounts";
 import { BroadcastTransactionRequest, TransactionResponse, TxStatus, Transaction } from "../types";
 

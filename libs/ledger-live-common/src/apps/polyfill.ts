@@ -114,7 +114,7 @@ const getCurrencyIdFromAppName = (
 ): CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo" | undefined => {
   const crypto =
     // try to find the "official" currency when possible (2 currencies can have the same manager app and ticker)
-    listCryptoCurrencies(true, true).find(
+    listCryptoCurrencies(true).find(
       c => c.name === appName || matchAppNameAndCryptoCurrency(appName, c),
     );
   return crypto?.id;
@@ -156,7 +156,7 @@ export const mapApplicationV2ToApp = ({
 });
 
 export const calculateDependencies = (): void => {
-  listCryptoCurrencies(true, true).forEach((currency: CryptoCurrency) => {
+  listCryptoCurrencies(true).forEach((currency: CryptoCurrency) => {
     if (!currency.managerAppName) return; // no app for this currency
 
     /**

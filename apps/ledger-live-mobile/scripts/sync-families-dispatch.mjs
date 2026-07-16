@@ -27,6 +27,7 @@ const targets = [
   "AccountHeader",
   "AccountBodyHeader",
   "AccountSubHeader",
+  "AccountBalanceHeader",
   "SendRowsCustom",
   "SendRowsFee",
   "SendSelectRecipient",
@@ -44,6 +45,7 @@ const targets = [
   "ExpiryDurationInput",
   "ShouldUseReceiveOptions",
   "PendingTransferProposals",
+  "customAddAccountFlow",
 ];
 
 async function genTarget(target) {

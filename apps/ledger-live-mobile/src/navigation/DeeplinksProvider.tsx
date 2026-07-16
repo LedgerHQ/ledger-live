@@ -355,8 +355,6 @@ export const DeeplinksProvider = ({
   const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
 
   const {
-    shouldDisplayMarketBanner,
-    shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayAggregatedAssets,
     shouldDisplayAssetDiscoverability,
@@ -449,19 +447,7 @@ export const DeeplinksProvider = ({
                                   },
                                 },
                               }),
-                              [NavigatorName.WalletTab]: {
-                                screens: {
-                                  [ScreenName.Portfolio]: "portfolio",
-                                  [NavigatorName.Market]: {
-                                    screens: {
-                                      /**
-                                       * ie: "ledgerlive://market" will open the market screen
-                                       */
-                                      [ScreenName.MarketList]: "market",
-                                    },
-                                  },
-                                },
-                              },
+                              [ScreenName.Portfolio]: "portfolio",
                             },
                           },
 
@@ -567,14 +553,13 @@ export const DeeplinksProvider = ({
                            */
                           [ScreenName.Asset]: "asset/:currencyId",
                           /**
-                           * if shouldDisplayWallet40MainNav and shouldDisplayAssetSection are enabled
+                           * if shouldDisplayAssetSection is enabled
                            * @params ?sourceScreenName: string
                            * ie: "ledgerlive://crypto-addresses" will open the crypto addresses screen.
                            */
-                          ...(shouldDisplayWallet40MainNav &&
-                            shouldDisplayAssetSection && {
-                              [ScreenName.CryptoAddresses]: "crypto-addresses",
-                            }),
+                          ...(shouldDisplayAssetSection && {
+                            [ScreenName.CryptoAddresses]: "crypto-addresses",
+                          }),
                         },
                       },
                     },
@@ -687,7 +672,7 @@ export const DeeplinksProvider = ({
               url.searchParams.delete("ledgerIds");
               url.searchParams.set("currencyIds", validatedCurrencyIds);
             } else {
-              return getStateFromPath("market", config);
+              return handleMarketBannerDeeplink();
             }
             return getStateFromPath(url.href?.split("://")[1], config);
           }
@@ -698,7 +683,7 @@ export const DeeplinksProvider = ({
               const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
 
               if (!validatedCurrencyId) {
-                return getStateFromPath("market", config);
+                return handleMarketBannerDeeplink();
               }
 
               if (shouldDisplayAggregatedAssets) {
@@ -714,13 +699,7 @@ export const DeeplinksProvider = ({
             const validatedCategory = shouldDisplayAssetDiscoverability
               ? validateMarketListCategory(searchParams.get("category"))
               : undefined;
-            if (shouldDisplayMarketBanner) {
-              return handleMarketBannerDeeplink(validatedCategory);
-            }
-            return getStateFromPath(
-              validatedCategory ? `market?category=${validatedCategory}` : "market",
-              config,
-            );
+            return handleMarketBannerDeeplink(validatedCategory);
           }
 
           // Handle asset deeplink - validate currencyId before navigation
@@ -919,10 +898,8 @@ export const DeeplinksProvider = ({
             return getStateFromPath(url.href?.split("://")[1], config);
           }
 
-          if (shouldDisplayWallet40MainNav) {
-            const w40State = handleWallet40Deeplink(hostname, platform, query);
-            if (w40State) return w40State;
-          }
+          const w40State = handleWallet40Deeplink(hostname, platform, query);
+          if (w40State) return w40State;
 
           return getStateFromPath(path, config);
         },
@@ -936,8 +913,6 @@ export const DeeplinksProvider = ({
     onDeeplinkReceived,
     buySellUiManifestId,
     dispatch,
-    shouldDisplayMarketBanner,
-    shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayAggregatedAssets,
     shouldDisplayAssetDiscoverability,

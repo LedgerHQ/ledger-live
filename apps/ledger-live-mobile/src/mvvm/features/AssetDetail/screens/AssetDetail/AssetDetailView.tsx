@@ -14,6 +14,7 @@ import { Addresses } from "./components/Addresses";
 import { Transactions } from "./components/Transactions";
 import { Footer } from "./components/Footer";
 import { FallbackBanner } from "./components/FallbackBanner";
+import { StockDisclaimerBanner } from "./components/StockDisclaimerBanner";
 import { HiddenAssetBanner } from "./components/HiddenAssetBanner";
 import { MarketData } from "./components/MarketData";
 import { CTAS_HEIGHT } from "./utils/constants";
@@ -32,6 +33,7 @@ type Props = Readonly<{
   hasFooter: boolean;
   hideReceiveInBalanceGraph: boolean;
   showFallbackBanner: boolean;
+  showStockDisclaimerBanner: boolean;
   coinOptions: AssetCoinOptionsViewModel;
   isLoading: boolean;
   ledgerIds: string[];
@@ -49,6 +51,7 @@ export function AssetDetailView({
   hasFooter,
   hideReceiveInBalanceGraph,
   showFallbackBanner,
+  showStockDisclaimerBanner,
   coinOptions,
   isLoading,
   ledgerIds,
@@ -83,6 +86,7 @@ export function AssetDetailView({
             distributionItem={distributionItem}
             isLoading={isLoading}
           />
+          <StockDisclaimerBanner show={showStockDisclaimerBanner} />
           <Addresses
             currency={currency}
             distributionItem={distributionItem}

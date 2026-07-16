@@ -6,9 +6,7 @@
     "**/node_modules/**",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
-  "ignoreUnimported": [
-    "src/bip32-path.d.ts"
-  ],
+  "ignoreUnimported": [],
   "ignoreUnresolved": [],
   "ignoreUnused": []
 }

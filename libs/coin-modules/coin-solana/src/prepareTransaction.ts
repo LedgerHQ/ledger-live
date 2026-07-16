@@ -1,4 +1,3 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
   AmountRequired,
@@ -8,7 +7,7 @@ import {
   NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { findSubAccountById, getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -20,6 +19,7 @@ import {
   SolanaInvalidValidator,
   SolanaMemoIsTooLong,
   SolanaRecipientAssociatedTokenAccountWillBeFunded,
+  SolanaStakeAccountAmountTooLow,
   SolanaStakeAccountIsNotDelegatable,
   SolanaStakeAccountIsNotUndelegatable,
   SolanaStakeAccountNotFound,
@@ -44,6 +44,7 @@ import {
   decodeAccountIdWithTokenAccountAddress,
   isEd25519Address,
   isValidBase58Address,
+  withdrawableFromStake,
 } from "./logic";
 import { MAX_MEMO_LENGTH, validateMemo } from "./logic/validateMemo";
 import { ChainAPI } from "./network";
@@ -57,6 +58,7 @@ import {
   getMaybeVoteAccount,
   getStakeAccountAddressWithSeed,
   getStakeAccountMinimumBalanceForRentExemption,
+  getStakeMinimumDelegation,
   ParsedOnChainMintWithInfo,
 } from "./network/chain/web3";
 import { deriveRawCommandDescriptor, toLiveTransaction } from "./rawTransaction";
@@ -85,6 +87,7 @@ import type {
   TransferTransaction,
 } from "./types";
 import { assertUnreachable } from "./utils";
+import { formatAPIValue, formatAPIValueWithCode } from "./common";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,
@@ -126,7 +129,7 @@ const prepareTransaction = async (
   api: ChainAPI,
 ): Promise<Transaction> => {
   if (tx.raw) {
-    return toLiveTransaction(api, tx.raw);
+    return toLiveTransaction(api, tx.raw, tx.templateId);
   }
 
   const txToDeriveFrom = updateModelIfSubAccountIdPresent(tx);
@@ -235,7 +238,7 @@ const deriveTokenTransferCommandDescriptor = async (
       ...(mainAccount?.id ? { account: mainAccount.id } : {}),
     });
     errors.gasPrice = new NotEnoughGas(undefined, {
-      fees: formatCurrencyUnit(getFeesUnit(mainAccount.currency), requiredSol),
+      fees: formatAPIValue(requiredSol),
       ticker: mainAccount.currency.ticker,
       cryptoName: mainAccount.currency.name,
       links: [`ledgerlive://buy?${query.toString()}`],
@@ -458,11 +461,8 @@ async function deriveTransferCommandDescriptor(
   if (!errors.amount && warnings.recipient instanceof SolanaAccountNotFunded && txAmount.gt(0)) {
     const recipientMinAmount = await api.getMinimumBalanceForRentExemption(0);
     if (txAmount.lt(recipientMinAmount)) {
-      const feesUnit = getFeesUnit(mainAccount.currency);
-      const ticker = mainAccount.currency.ticker ?? feesUnit.code ?? "";
       errors.amount = new SolanaRecipientAccountNotFunded("", {
-        minimumAmount:
-          `${formatCurrencyUnit(feesUnit, new BigNumber(recipientMinAmount))} ${ticker}`.trim(),
+        minimumAmount: formatAPIValueWithCode(recipientMinAmount),
       });
     }
   }
@@ -645,15 +645,30 @@ async function deriveStakeCreateAccountCommandDescriptor(
   const { fee, spendable } = await estimateFeeAndSpendable(api, mainAccount, tx);
   const txAmount = tx.useAllAmount ? spendable : tx.amount;
 
+  const amountTooLowError = (stakeMinimumDelegation: number) =>
+    new SolanaStakeAccountAmountTooLow("", {
+      minimumAmount: formatAPIValueWithCode(stakeMinimumDelegation),
+    });
+
   if (tx.useAllAmount) {
     if (txAmount.eq(0)) {
       errors.amount = new NotEnoughBalance();
+    } else {
+      const stakeMinimumDelegation = await getStakeMinimumDelegation(api);
+      if (txAmount.lt(stakeMinimumDelegation)) {
+        errors.amount = amountTooLowError(stakeMinimumDelegation);
+      }
     }
   } else {
     if (txAmount.lte(0)) {
       errors.amount = new AmountRequired();
     } else if (txAmount.gt(spendable)) {
       errors.amount = new NotEnoughBalance();
+    } else {
+      const stakeMinimumDelegation = await getStakeMinimumDelegation(api);
+      if (txAmount.lt(stakeMinimumDelegation)) {
+        errors.amount = amountTooLowError(stakeMinimumDelegation);
+      }
     }
   }
 
@@ -799,11 +814,25 @@ async function deriveStakeWithdrawCommandDescriptor(
 
   const stake = validateAndTryGetStakeAccount(mainAccount, uiState.stakeAccAddr, errors);
 
+  let withdrawable = stake?.withdrawable ?? 0;
+
   if (!errors.stakeAccAddr && stake !== undefined) {
     if (!stake.hasWithdrawAuth) {
+      withdrawable = 0;
       errors.stakeAccAddr = new SolanaStakeNoWithdrawAuth();
-    } else if (stake.withdrawable <= 0) {
-      errors.stakeAccAddr = new SolanaStakeAccountNothingToWithdraw();
+    } else {
+      const liveLamports = await api.getBalance(uiState.stakeAccAddr);
+      withdrawable = Math.max(
+        0,
+        withdrawableFromStake({
+          stakeAccBalance: liveLamports,
+          activation: stake.activation,
+          rentExemptReserve: stake.rentExemptReserve,
+        }),
+      );
+      if (withdrawable <= 0) {
+        errors.stakeAccAddr = new SolanaStakeAccountNothingToWithdraw();
+      }
     }
   }
 
@@ -817,7 +846,7 @@ async function deriveStakeWithdrawCommandDescriptor(
       kind: "stake.withdraw",
       authorizedAccAddr: mainAccount.freshAddress,
       stakeAccAddr: uiState.stakeAccAddr,
-      amount: stake?.withdrawable ?? 0,
+      amount: withdrawable,
       toAccAddr: mainAccount.freshAddress,
     },
     fee,

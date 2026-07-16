@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
@@ -39,11 +39,23 @@ export default function EvmEarnRewardsInfoModal({ account }: Props) {
   }, [account, dispatch]);
 
   const showLockupWarning = hasUnbondingPeriod(currencyId);
-  const showSeiAssociationWarning = isSeiAccountUnassociated(
-    account.currency.id,
-    account.freshAddress,
-    account.operations,
-  );
+  const [showSeiAssociationWarning, setShowSeiAssociationWarning] = useState(false);
+  const [checkingSeiAssociation, setCheckingSeiAssociation] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setCheckingSeiAssociation(true);
+    isSeiAccountUnassociated(account.currency.id, account.freshAddress)
+      .then(unassociated => {
+        if (!cancelled) setShowSeiAssociationWarning(unassociated);
+      })
+      .finally(() => {
+        if (!cancelled) setCheckingSeiAssociation(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [account.currency.id, account.freshAddress]);
 
   return (
     <EarnRewardsInfoModal
@@ -80,7 +92,7 @@ export default function EvmEarnRewardsInfoModal({ account }: Props) {
         </>
       }
       currency={account.currency.id}
-      nextDisabled={showSeiAssociationWarning}
+      nextDisabled={showSeiAssociationWarning || checkingSeiAssociation}
     />
   );
 }

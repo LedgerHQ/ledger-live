@@ -16,12 +16,13 @@ import {
   shareViewKey,
   approveToken,
   signTypedMessage as signTypedMessageDevice,
-} from "@ledgerhq/live-common/e2e/speculos";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
-import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
+  acceptEnableTransactionCheck as acceptEnableTransactionCheckDevice,
+} from "@ledgerhq/live-e2e-shared/speculos";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
+import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 
-import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 export class SpeculosPage extends AppPage {
   @step("Verify receive address correctness on device")
   async expectValidAddressDevice(account: Account, addressDisplayed: string) {
@@ -97,8 +98,18 @@ export class SpeculosPage extends AppPage {
     await approveToken();
   }
 
+  @step("Sign EVM contract transaction")
+  async signEvmContractTransaction() {
+    await approveToken();
+  }
+
   @step("Sign typed message on device")
   async signTypedMessage() {
     await signTypedMessageDevice();
+  }
+
+  @step("Check and accept if available enable transaction check")
+  async acceptEnableTransactionCheck() {
+    await acceptEnableTransactionCheckDevice();
   }
 }

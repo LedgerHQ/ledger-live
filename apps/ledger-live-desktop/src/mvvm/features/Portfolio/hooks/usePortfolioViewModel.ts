@@ -18,15 +18,11 @@ export interface PortfolioViewModelResult {
   readonly totalOperations: number;
   readonly totalCurrencies: number;
   readonly hasExchangeBannerCTA: boolean;
-  readonly shouldDisplayMarketBanner: boolean;
-  readonly shouldDisplayGraphRework: boolean;
-  readonly shouldDisplayQuickActionCtas: boolean;
   readonly shouldDisplayAssetSection: boolean;
   readonly shouldDisplayAssetDiscoverability: boolean;
   readonly shouldDisplayBorrowSection: boolean;
   readonly shouldDisplayOperationsList: boolean;
   readonly shouldDisplayBrazePlacement: boolean;
-  readonly isWallet40Enabled: boolean;
   readonly filterOperations: (operation: Operation, account: AccountLike) => boolean;
   readonly accounts: AccountLike[];
   readonly t: TFunction;
@@ -41,14 +37,10 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
   useResumeAddAccountAfterOnboarding();
 
   const {
-    shouldDisplayMarketBanner,
-    shouldDisplayGraphRework,
-    shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
     shouldDisplayOperationsList,
     shouldDisplayBrazePlacement,
-    isEnabled: isWallet40Enabled,
   } = useWalletFeaturesConfig("desktop");
   const borrowConfig = useBorrowLiveConfig();
   const shouldDisplayBorrowSection = borrowConfig?.enabled ?? false;
@@ -90,15 +82,11 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     totalOperations,
     totalCurrencies,
     hasExchangeBannerCTA,
-    shouldDisplayMarketBanner,
-    shouldDisplayGraphRework,
-    shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
     shouldDisplayBorrowSection,
     shouldDisplayOperationsList,
     shouldDisplayBrazePlacement,
-    isWallet40Enabled,
     filterOperations,
     accounts,
     t,

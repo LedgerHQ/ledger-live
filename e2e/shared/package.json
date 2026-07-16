@@ -1,0 +1,79 @@
+{
+  "name": "@ledgerhq/live-e2e-shared",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Shared E2E test-support code (enums, models, families, speculos/device helpers) for Ledger Live Desktop & Mobile E2E suites",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/e2e/shared",
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/device-core": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/speculos-device-controller": "catalog:",
+    "@ledgerhq/speculos-transport": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-devices": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "@shared/feature-flags": "workspace:*",
+    "axios": "catalog:",
+    "expect": "catalog:",
+    "invariant": "^2.2.4",
+    "rxjs": "catalog:",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/invariant": "2.2.37",
+    "@types/node": "catalog:",
+    "@types/uuid": "^9.0.0",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:"
+  },
+  "optionalDependencies": {
+    "@oxlint/binding-darwin-arm64": "1.51.0",
+    "@oxlint/binding-darwin-x64": "1.51.0",
+    "@oxlint/binding-linux-x64-gnu": "1.51.0",
+    "@oxlint/binding-win32-x64-msvc": "1.51.0"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "lint": "oxlint .",
+    "lint:fix": "oxfmt . && oxlint . --fix",
+    "format": "oxfmt .",
+    "format:check": "oxfmt . --check",
+    "typecheck": "tsc --noEmit -p tsconfig.json --customConditions node"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "import": "./lib-es/index.js",
+      "require": "./lib/index.js",
+      "default": "./lib/index.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib-es/*.js",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
+  }
+}

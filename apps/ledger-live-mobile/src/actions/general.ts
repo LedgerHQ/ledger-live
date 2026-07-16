@@ -1,4 +1,5 @@
 import { useMemo, useCallback, useEffect, useState } from "react";
+import { InteractionManager } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import {
   flattenSortAccounts,
@@ -89,6 +90,17 @@ export function useRefreshAccountsOrdering() {
   return useCallback(() => {
     setIsRefreshing(true);
   }, []);
+}
+export function useRefreshAccountsOrderingAfterInteractions() {
+  const refreshAccountsOrdering = useRefreshAccountsOrdering();
+
+  return useCallback(() => {
+    const interactionTask = InteractionManager.runAfterInteractions(refreshAccountsOrdering);
+
+    return () => {
+      interactionTask.cancel();
+    };
+  }, [refreshAccountsOrdering]);
 }
 export function useRefreshAccountsOrderingEffect({
   onMount = false,

@@ -6,11 +6,6 @@ import { AppUpdater } from "../../component/app.updater.component";
 test.use({
   userdata: "1AccountBTC1AccountETHwCarousel",
   env: { DEBUG_UPDATE: "true" },
-  featureFlags: {
-    lwdWallet40: {
-      enabled: false,
-    },
-  },
 });
 
 test("Updater", async ({ page }) => {
@@ -25,8 +20,9 @@ test("Updater", async ({ page }) => {
     });
   });
 
-  await test.step("[checking] state should be visible", async () => {
+  await test.step("[checking] state should not show the top bar updater button", async () => {
     await appUpdater.setStatus("checking");
+    await expect(layout.appUpdateBanner).toBeHidden();
     await expect.soft(page).toHaveScreenshot("app-updater-layout.png", {
       mask: [page.locator("canvas")],
     });
@@ -34,16 +30,19 @@ test("Updater", async ({ page }) => {
 
   await test.step("[check-success] state should be visible", async () => {
     await appUpdater.setStatus("check-success");
+    await expect(layout.appUpdateBanner).toBeVisible();
     await expect.soft(layout.appUpdateBanner).toHaveScreenshot("app-updater-check-success.png");
   });
 
   await test.step("[update-available] state should be visible", async () => {
     await appUpdater.setStatus("update-available");
+    await expect(layout.appUpdateBanner).toBeVisible();
     await expect.soft(layout.appUpdateBanner).toHaveScreenshot("app-updater-update-available.png");
   });
 
   await test.step("[download-progress] state should be visible", async () => {
     await appUpdater.setStatus("download-progress");
+    await expect(layout.appUpdateBanner).toBeVisible();
     await expect.soft(layout.appUpdateBanner).toHaveScreenshot("app-updater-download-progress.png");
   });
 

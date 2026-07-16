@@ -1,7 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
 import { createBridges } from "@ledgerhq/coin-cosmos/bridge/index";
-import makeCliTools from "@ledgerhq/coin-cosmos/cli";
 import { CosmosCoinConfig } from "@ledgerhq/coin-cosmos/config";
 import cosmosResolver from "@ledgerhq/coin-cosmos/hw-getAddress";
 import {
@@ -44,6 +43,4 @@ const bridge: Bridge<Transaction, CosmosAccount, TransactionStatus, CosmosOperat
 
 const resolver: Resolver = createResolver(createSigner, cosmosResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, resolver };
+export { bridge, resolver };

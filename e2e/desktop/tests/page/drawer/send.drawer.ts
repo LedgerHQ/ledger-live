@@ -1,7 +1,7 @@
 import { step } from "../../misc/reporters/step";
 import { Drawer } from "../../component/drawer.component";
 import { expect } from "@playwright/test";
-import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
+import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 
 export class SendDrawer extends Drawer {
   private sendDrawer = this.page.getByTestId("drawer-content");

@@ -3,18 +3,34 @@ import { step } from "../misc/reporters/step";
 import { expect } from "@playwright/test";
 
 export class MyWalletPage extends AppPage {
-  private readonly avatar = this.page.getByTestId("my-wallet-avatar");
+  private readonly avatarTrigger = this.page.getByRole("button", { name: "My Wallet" });
   private readonly popoverActionsList = this.page.getByTestId("my-wallet-actions-list");
-  private readonly recoverTile = this.page.getByTestId("my-wallet-action-recover");
-  private readonly helpTile = this.page.getByTestId("my-wallet-action-help");
-  private readonly referralTile = this.page.getByTestId("my-wallet-action-refer");
-  private readonly settingsButtonInPopover = this.page.getByTestId("topbar-action-button-settings");
+  private readonly myWalletPopover = this.page
+    .getByRole("dialog")
+    .filter({ has: this.popoverActionsList });
+  private readonly recoverTile = this.myWalletPopover.getByTestId("my-wallet-action-recover");
+  private readonly helpTile = this.myWalletPopover.getByTestId("my-wallet-action-help");
+  private readonly referralTile = this.myWalletPopover.getByTestId("my-wallet-action-refer");
+  private readonly settingsButtonInPopover = this.myWalletPopover.getByTestId(
+    "topbar-action-button-settings",
+  );
+  private readonly notificationButtonInPopover = this.myWalletPopover.getByTestId(
+    "topbar-action-button-notifications",
+  );
+  private readonly myLedgerItemInPopover = this.myWalletPopover.getByTestId("my-wallet-my-ledger");
   private readonly modalCloseButton = this.page.getByTestId("modal-close-button");
 
   @step("Open My Wallet popover from avatar")
   async openMyWalletPopover() {
-    await this.avatar.click();
+    if (!(await this.popoverActionsList.isVisible())) {
+      await this.avatarTrigger.click();
+    }
     await expect(this.popoverActionsList).toBeVisible();
+  }
+
+  @step("Expect My Wallet popover to be closed")
+  async waitForMyWalletPopoverToClose() {
+    await expect(this.popoverActionsList).toBeHidden();
   }
 
   @step("Click Backup (Recover) tile")
@@ -35,6 +51,17 @@ export class MyWalletPage extends AppPage {
   @step("Click Settings from My Wallet popover")
   async clickSettingsFromPopover() {
     await this.settingsButtonInPopover.click();
+  }
+
+  @step("Click Notifications from My Wallet popover")
+  async clickNotificationsFromPopover() {
+    await this.notificationButtonInPopover.click();
+  }
+
+  @step("Click My Ledger from My Wallet popover")
+  async clickMyLedgerFromPopover() {
+    await this.myLedgerItemInPopover.click();
+    await this.waitForMyWalletPopoverToClose();
   }
 
   @step("Expect Ledger Recover discovery modal to be displayed")

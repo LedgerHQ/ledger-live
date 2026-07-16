@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/cryptoassets",
-  "version": "13.53.0",
+  "version": "13.54.0",
   "description": "Ledger crypto-assets list",
   "keywords": [
     "Ledger"
@@ -43,6 +43,8 @@
     "lodash": "^4.17.21"
   },
   "devDependencies": {
+    "@domain/entity-currency-crypto": "workspace:^",
+    "@domain/entity-currency-fiat": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",

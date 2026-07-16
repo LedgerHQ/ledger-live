@@ -3,7 +3,8 @@ import invariant from "invariant";
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "~/context/Locale";
 import i18next from "i18next";
-import { Keyboard, StyleSheet, View, SafeAreaView } from "react-native";
+import { Keyboard, StyleSheet, View } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction as BitcoinTransaction } from "@ledgerhq/live-common/families/bitcoin/types";
@@ -59,12 +60,16 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
   const bridge = useAccountBridge<BitcoinTransaction>(account, parentAccount);
   const [ownSatPerByte, setOwnSatPerByte] = useState(satPerByte ? satPerByte.toString() : "");
 
+  const relayFeePerByte = transaction.networkInfo?.relayFeePerByte;
+  const feeValue = BigNumber(ownSatPerByte || 0);
+  const isBelowRelayFee = !!relayFeePerByte && feeValue.gt(0) && feeValue.lt(relayFeePerByte);
+
   const onChange = useCallback((text: string) => {
     setOwnSatPerByte(text.replace(/\D/g, ""));
   }, []);
 
   const onValidateText = useCallback(() => {
-    if (BigNumber(ownSatPerByte || 0).isZero()) return;
+    if (BigNumber(ownSatPerByte || 0).isZero() || isBelowRelayFee) return;
     Keyboard.dismiss();
     if (setSatPerByte) {
       setSatPerByte(BigNumber(ownSatPerByte || 0));
@@ -89,9 +94,19 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
     }
 
     popToScreen(navigation, currentNavigation, nextParams);
-  }, [setSatPerByte, ownSatPerByte, account, bridge, route.params, navigation, transaction]);
+  }, [
+    setSatPerByte,
+    ownSatPerByte,
+    isBelowRelayFee,
+    account,
+    bridge,
+    route.params,
+    navigation,
+    transaction,
+  ]);
   return (
     <SafeAreaView
+      edges={["left", "right", "bottom"]}
       style={{
         flex: 1,
       }}
@@ -129,9 +144,14 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
                 },
               ]}
             >
-              {t("common.satPerByte")}
+              {t("common.satPerVByte")}
             </LText>
           </View>
+          {isBelowRelayFee ? (
+            <LText style={[styles.error, { color: colors.alert }]}>
+              {t("errors.FeeTooLow.title")}
+            </LText>
+          ) : null}
           <View style={styles.flex}>
             <Button
               event="BitcoinSetSatPerByte"
@@ -139,7 +159,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
               title={t("common.continue")}
               onPress={onValidateText}
               containerStyle={styles.buttonContainer}
-              disabled={BigNumber(ownSatPerByte || 0).isZero()}
+              disabled={feeValue.isZero() || isBelowRelayFee}
             />
           </View>
         </NavigationScrollView>
@@ -170,6 +190,10 @@ const styles = StyleSheet.create({
   currency: {
     fontSize: 20,
     padding: 6,
+  },
+  error: {
+    textAlign: "center",
+    paddingHorizontal: 20,
   },
   buttonContainer: {
     marginHorizontal: 16,

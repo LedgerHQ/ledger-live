@@ -9,9 +9,9 @@ import {
   Switch,
   Keyboard,
   TouchableOpacity,
-  SafeAreaView,
   Linking,
 } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "~/context/Locale";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
@@ -175,6 +175,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
     <>
       <TrackScreen category="BondFlow" name="Amount" flow="stake" action="bond" currency="dot" />
       <SafeAreaView
+        edges={["left", "right", "bottom"]}
         style={[
           styles.root,
           {

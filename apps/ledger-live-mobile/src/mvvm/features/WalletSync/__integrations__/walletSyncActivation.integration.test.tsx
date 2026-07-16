@@ -94,6 +94,45 @@ describe("WalletSyncActivation", () => {
     // });
   });
 
+  it("Should close the post-onboarding hub drawer when entering the activation process (LIVE-32168)", async () => {
+    setEnv("MOCK", "1");
+
+    const { user, store } = render(<WalletSyncSharedNavigator />, {
+      overrideInitialState: withFlagOverrides(
+        {
+          llmWalletSync: {
+            enabled: true,
+            params: {
+              environment: "STAGING",
+              watchConfig: {},
+            },
+          },
+        },
+        state => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            readOnlyModeEnabled: false,
+          },
+          // Simulate the post-onboarding flow where the global hub drawer is open.
+          postOnboardingHubDrawer: { isOpen: true },
+        }),
+      ),
+    });
+
+    expect(store.getState().postOnboardingHubDrawer.isOpen).toBe(true);
+
+    // Open the activation drawer (the post-onboarding entry path) at the "choose method" step.
+    await user.press(await screen.findByText("I already turned it on"));
+
+    // Pick "Use my Ledger device" → navigateToWalletSyncActivationProcess.
+    await user.press(await screen.findByTestId("walletsync-choose-sync-method-connect-device"));
+
+    // The global hub BottomSheet must fully unmount so it cannot overlay the WalletSync
+    // success screen and swallow touches on the Close button.
+    expect(store.getState().postOnboardingHubDrawer.isOpen).toBe(false);
+  });
+
   it("Should open WalletSyncActivation Flow with learn More link", async () => {
     render(<WalletSyncSharedNavigator />, {
       overrideInitialState: INITIAL_TEST,

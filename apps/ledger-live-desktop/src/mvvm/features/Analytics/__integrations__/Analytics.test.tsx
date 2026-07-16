@@ -4,7 +4,7 @@ import Analytics from "../index";
 import useAnalyticsViewModel from "../useAnalyticsViewModel";
 import { useAllocationData } from "../hooks/useAllocationData";
 import { makeAllocationViewProps } from "../__fixtures__/allocationFixtures";
-import { mockPortfolioBalanceInfo } from "LLD/hooks/__tests__/fixtures";
+import { mockPortfolioBalanceInfo, defaultPortfolio } from "LLD/hooks/__tests__/fixtures";
 
 jest.mock("../useAnalyticsViewModel");
 const mockedUseAnalyticsViewModel = useAnalyticsViewModel as jest.Mock;
@@ -15,6 +15,10 @@ const mockedUseAllocationData = useAllocationData as jest.Mock;
 jest.mock("~/renderer/screens/dashboard/GlobalSummary", () => ({
   __esModule: true,
   default: () => <div data-testid="portfolio-balance-summary">PortfolioBalanceSummary</div>,
+}));
+
+jest.mock("../components/ChartSection", () => ({
+  ChartSection: () => <div data-testid="analytics-chart-section">ChartSection</div>,
 }));
 
 let intersectionCallback: IntersectionObserverCallback;
@@ -44,6 +48,9 @@ const defaultViewModel = {
   selectedTimeRange: "month",
   navigateToDashboard: mockNavigateToDashboard,
   balanceInfo: mockPortfolioBalanceInfo,
+  portfolio: defaultPortfolio,
+  isLoading: false,
+  shouldDisplayPnl: false,
 };
 
 describe("Analytics", () => {
@@ -58,6 +65,19 @@ describe("Analytics", () => {
 
     expect(screen.getByText("Analytics")).toBeVisible();
     expect(screen.getByTestId("analytics-chart")).toBeVisible();
+    expect(screen.getByTestId("portfolio-balance-summary")).toBeVisible();
+  });
+
+  it("should render the Lumen chart section when shouldDisplayPnl is true", () => {
+    mockedUseAnalyticsViewModel.mockReturnValue({
+      ...defaultViewModel,
+      shouldDisplayPnl: true,
+    });
+
+    render(<Analytics />);
+
+    expect(screen.getByTestId("analytics-chart-section")).toBeVisible();
+    expect(screen.queryByTestId("portfolio-balance-summary")).not.toBeInTheDocument();
   });
 
   it("should call navigateToDashboard when back button is clicked", async () => {

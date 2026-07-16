@@ -109,13 +109,12 @@ function computeAssetItemData(asset: Asset, state: SharedState): AssetListItemVi
 
   const unit = asset.currency.units?.[0];
   const formattedBalance = unit ? formatCurrencyUnit(unit, balance, fmtOpts) : "";
-  const counterValue = getCounterValue(
-    asset,
-    balance,
-    state.cvState,
+  const counterValue = getCounterValue(asset, balance, state.cvState, state.counterValueCurrency);
+  const formattedCounterValue = formatCounterValue(
+    counterValue,
     state.counterValueCurrency,
+    fmtOpts,
   );
-  const formattedCounterValue = formatCounterValue(counterValue, state.counterValueCurrency, fmtOpts);
   const countervalueChange = getCountervalueChange(asset, state, counterValue);
 
   return { formattedBalance, formattedCounterValue, countervalueChange };

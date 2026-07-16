@@ -21,16 +21,16 @@ import {
 } from "./helpers/commonHelpers";
 import { config as detoxConfig } from "detox/internals";
 import { Subject } from "rxjs";
-import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
-import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
+import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
+import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
+import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { CLI } from "./utils/cliUtils";
-import * as cliCommandsUtils from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import * as cliCommandsUtils from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { NativeElementHelpers, WebElementHelpers } from "./helpers/elementHelpers";
 import expect from "expect";
 import { Application } from "./page/index";
@@ -215,6 +215,7 @@ export default class TestEnvironment extends DetoxEnvironment {
       tapWebElementByTestId: WebElementHelpers.tapWebElementByTestId,
       typeTextByWebTestId: WebElementHelpers.typeTextByWebTestId,
       waitForCurrentWebviewUrlToContain: WebElementHelpers.waitForCurrentWebviewUrlToContain,
+      waitForWebviewContentToRender: WebElementHelpers.waitForWebviewContentToRender,
       waitForWebElementToBeEnabled: WebElementHelpers.waitForWebElementToBeEnabled,
       waitForWebElementToMatchRegex: WebElementHelpers.waitForWebElementToMatchRegex,
       waitWebElement: WebElementHelpers.waitWebElement,

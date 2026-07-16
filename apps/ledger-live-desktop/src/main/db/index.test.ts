@@ -98,16 +98,23 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     await expect(db.setKey("app", "settings.deep", { x: 1 })).resolves.toBeUndefined();
   });
 
+  it("allows knownDevices persistence", async () => {
+    readFileMock.mockResolvedValueOnce(appJson({}));
+    await expect(db.setKey("app", "knownDevices", { knownDevices: [] })).resolves.toBeUndefined();
+  });
+
   it("preserves allowed and keepLegacy keys on load", async () => {
     readFileMock.mockResolvedValueOnce(
       appJson({
         settings: { a: 1 },
         identities: { userId: "u" },
+        knownDevices: { knownDevices: [] },
         user: { id: "legacy" },
       }),
     );
     expect(await db.getKey("app", "settings", undefined)).toEqual({ a: 1 });
     expect(await db.getKey("app", "identities", undefined)).toEqual({ userId: "u" });
+    expect(await db.getKey("app", "knownDevices", undefined)).toEqual({ knownDevices: [] });
     expect(await db.getKey("app", "user", undefined)).toEqual({ id: "legacy" });
   });
 

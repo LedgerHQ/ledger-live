@@ -1,7 +1,7 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import test from "../fixtures/common";
 import { expect } from "@playwright/test";
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 
 test.use({
   userdata: "sanctioned-addresses",

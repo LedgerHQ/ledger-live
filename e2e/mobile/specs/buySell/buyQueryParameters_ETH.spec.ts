@@ -1,6 +1,6 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runQueryParametersTest } from "./buySell";
-import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
+import { OperationType } from "@ledgerhq/live-e2e-shared/enum/OperationType";
 
 const testConfig = {
   buySell: {
@@ -11,17 +11,7 @@ const testConfig = {
   },
   tmsLinks: ["B2CQA-3522"],
   paymentMethod: "card",
-  tags: [
-    "@NanoSP",
-    "@LNS",
-    "@NanoX",
-    "@Stax",
-    "@Flex",
-    "@NanoGen5",
-    "@smoke",
-    "@ethereum",
-    "@family-evm",
-  ],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
 runQueryParametersTest(

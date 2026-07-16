@@ -1,0 +1,3 @@
+# Test private keys used in ledger-key-ring-protocol unit/integration tests — not real secrets.
+libs/ledger-key-ring-protocol/src/__tests__/unit/utils.test.ts:generic-api-key:11
+libs/ledger-key-ring-protocol/src/__tests__/LKRPIdentityProvider.integration.test.ts:generic-api-key:28

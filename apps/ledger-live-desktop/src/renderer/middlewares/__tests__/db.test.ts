@@ -31,7 +31,7 @@ jest.mock("@ledgerhq/ledger-key-ring-protocol/store", () => ({
   trustchainStoreSelector: jest.fn(state => state.trustchain),
 }));
 
-jest.mock("@ledgerhq/cryptoassets/cal-client/persistence", () => ({
+jest.mock("@domain/api-currency-token", () => ({
   extractPersistedCALFromState: jest.fn(() => ({ tokens: [] })),
   persistedCALContentEqual: jest.fn(() => true),
 }));

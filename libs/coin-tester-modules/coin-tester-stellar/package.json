@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-stellar",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "private": true,
   "description": "Ledger Stellar Coin Tester",
   "keywords": [
@@ -57,9 +57,12 @@
     "unimported": "pnpm knip --directory ../../.. -W libs/coin-tester-modules/coin-tester-stellar"
   },
   "dependencies": {
-    "@ledgerhq/coin-stellar": "workspace:^",
+    "@ledgerhq/coin-stellar": "catalog:",
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",

@@ -1,5 +1,5 @@
-import { DeviceModelId } from "@ledgerhq/device-management-kit";
 import { FlowName } from "@ledgerhq/live-common/device-action/utils";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { InitializerConfig } from "LLM/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWM";
 import type { InitializationInput } from "LLM/components/DeviceIntentExecutor/types";
 
@@ -56,12 +56,12 @@ const PAST_DATE = "2000-01-01T00:00:00.000Z";
 const FUTURE_DATE = "2999-01-01T00:00:00.000Z";
 
 const deprecatedDeviceModels = [
-  DeviceModelId.NANO_S,
-  DeviceModelId.NANO_SP,
-  DeviceModelId.NANO_X,
-  DeviceModelId.STAX,
-  DeviceModelId.FLEX,
-  DeviceModelId.APEX,
+  DeviceModelId.nanoS,
+  DeviceModelId.nanoSP,
+  DeviceModelId.nanoX,
+  DeviceModelId.stax,
+  DeviceModelId.europa,
+  DeviceModelId.apex,
 ];
 
 type ScreenTrigger = {

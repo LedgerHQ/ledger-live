@@ -68,6 +68,7 @@ export function useLineChartViewModel({
   xAxis,
   yAxis,
   rangeSelectorTrailing,
+  ranges,
 }: LineChartProps): LineChartViewModelResult {
   const { t } = useTranslation();
   const stroke = LINE_CHART_COLOR_TO_STROKE[color];
@@ -101,9 +102,10 @@ export function useLineChartViewModel({
     return map;
   }, [resolvedPoints]);
 
+  const effectiveRanges = ranges ?? LINE_CHART_RANGES;
   const rangeButtons = useMemo(
-    () => LINE_CHART_RANGES.map(range => ({ value: range, label: t(`lineChart.range.${range}`) })),
-    [t],
+    () => effectiveRanges.map(range => ({ value: range, label: t(`lineChart.range.${range}`) })),
+    [effectiveRanges, t],
   );
 
   return {

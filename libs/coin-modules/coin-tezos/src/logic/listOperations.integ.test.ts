@@ -87,8 +87,8 @@ describe("listOperations — mainnet FA2 / convertTokenOperation", () => {
     expect(tokenOp.tx.block.height).toBeGreaterThan(0);
     expect(tokenOp.tx.date).toBeInstanceOf(Date);
     const idParts = tokenOp.id.match(/^(.+)-token-(\d+)$/);
-    expect(idParts).not.toBeNull();
-    expect(idParts![1]).toBe(tokenOp.tx.hash);
+    expect(idParts?.[1]).toBe(tokenOp.tx.hash);
+    expect(idParts?.[2]).toMatch(/^\d+$/);
     expect(Number.parseInt(idParts![2], 10)).toBeGreaterThanOrEqual(0);
   });
 
@@ -380,5 +380,84 @@ describe("listOperations — mainnet origination ops", () => {
     // Total origination fees should be at least the known historical balance gap (~5.48M mutez)
     const totalFees = originations.reduce((sum, op) => sum + op.tx.fees, 0n);
     expect(totalFees).toBeGreaterThanOrEqual(5_480_510n);
+  });
+
+  it("native ops (including internal sub-tx fees) sum to the on-chain balance", async () => {
+    // Paginate until all ops are fetched
+    let allOps: Awaited<ReturnType<typeof listOperations>>[0] = [];
+    let token: string | undefined;
+    do {
+      const [ops, next] = await listOperations(ORIGINATOR, {
+        sort: "Ascending",
+        minHeight: 0,
+        limit: 200,
+        token,
+      });
+      allOps = allOps.concat(ops);
+      token = next || undefined;
+    } while (token);
+
+    const nativeOps = allOps.filter(op => op.asset.type === "native");
+
+    let balance = 0n;
+    for (const op of nativeOps) {
+      if (op.type === "IN") balance += op.value;
+      else if (op.type === "OUT") balance -= op.value;
+    }
+
+    // Subtract fees only when this account is the fee payer
+    for (const op of nativeOps) {
+      if (op.tx.feesPayer === ORIGINATOR && op.tx.fees > 0n) {
+        balance -= op.tx.fees;
+      }
+    }
+
+    const explorerUrl = mainnetConfig().explorer.url;
+    const resp = await fetch(`${explorerUrl}/v1/accounts/${ORIGINATOR}`);
+    if (!resp.ok) throw new Error(`TzKT returned ${resp.status}: ${await resp.text()}`);
+    const account = await resp.json();
+
+    expect(balance).toEqual(BigInt(account.balance));
+  }, 60_000);
+});
+
+/**
+ * Multi-asset FA2 integration tests (LIVE-29210).
+ * Uses tz1ZB8hpQJZdQeEPc3uG2cL1NXwLTPkqeAD6 which holds multiple tokens
+ * on the Wrapped Tokens Contract (KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ).
+ */
+const MULTI_ASSET_ADDRESS = "tz1ZB8hpQJZdQeEPc3uG2cL1NXwLTPkqeAD6";
+const WRAPPED_CONTRACT = "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ";
+
+describe("listOperations — mainnet multi-asset FA2 (LIVE-29210)", () => {
+  let originalGetCoinConfig: () => TezosCoinConfig;
+
+  beforeAll(() => {
+    originalGetCoinConfig = coinConfig.getCoinConfig;
+    coinConfig.setCoinConfig(mainnetConfig);
+  });
+
+  afterAll(() => {
+    if (originalGetCoinConfig) {
+      coinConfig.setCoinConfig(originalGetCoinConfig);
+    }
+  });
+
+  it("returns a known multi-asset FA2 operation with tokenId=11", async () => {
+    const [operations] = await listOperations(MULTI_ASSET_ADDRESS, { ...baseOpts, limit: 200 });
+
+    // Known on-chain transfer: tokenId=11 (wMATIC), OUT to KT1V5X...
+    const op = operations.find(
+      op =>
+        "assetReference" in op.asset &&
+        op.asset.assetReference === `${WRAPPED_CONTRACT}:11` &&
+        op.tx.hash === "ooMtaw5H7dtrgAyW5ky4jFzhQjayWn6La2h3BadHvZd56p6jm9g",
+    )!;
+
+    expect(op.type).toBe("OUT");
+    expect(op.asset.type).toBe("fa2");
+    expect(op.value).toBe(18423705864886566n);
+    expect(op.senders).toEqual([MULTI_ASSET_ADDRESS]);
+    expect(op.recipients).toEqual(["KT1V5XKmeypanMS9pR65REpqmVejWBZURuuT"]);
   });
 });

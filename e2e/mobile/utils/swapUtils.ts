@@ -1,7 +1,7 @@
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { allure } from "jest-allure2-reporter/api";
-import { floatNumberRegex } from "@ledgerhq/live-common/e2e/data/regexes";
+import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import { deleteSpeculos, launchSpeculos, registerSpeculos } from "./speculosUtils";
@@ -21,13 +21,8 @@ async function selectCurrency(account: Account, isFromCurrency: boolean = true) 
   } else {
     await app.swapLiveApp.tapToCurrency();
   }
-  if (await app.modularDrawer.isFlowEnabled("live_app")) {
-    await app.modularDrawer.selectAsset(account);
-  } else {
-    await app.common.performSearch(account.currency.name);
-    await app.stake.selectCurrency(account.currency.id);
-    await app.common.selectFirstAccount();
-  }
+
+  await app.modularDrawer.selectAsset(account);
   await app.swapLiveApp.verifyCurrencyIsSelected(account.currency.ticker, isFromCurrency);
 }
 
@@ -70,7 +65,7 @@ export async function ensureTokenApproval(
       provider.contractAddress,
       new BigNumber(minAmount).times(12).div(10).toFixed(),
     );
-    await allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
+    allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
   } finally {
     await deleteSpeculos(speculos.id);
     if (previousSpeculosPort > 0) {
@@ -92,7 +87,7 @@ export async function revokeTokenApproval(
     await registerSpeculos(speculos.port);
     try {
       const result = await revokeTokenCommand(fromAccount, provider.contractAddress);
-      await allure.description(`Token revoke result for ${provider.uiName}:\n\n ${result}`);
+      allure.description(`Token revoke result for ${provider.uiName}:\n\n ${result}`);
     } finally {
       await deleteSpeculos(speculos.id);
       if (previousSpeculosPort > 0) {

@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from "react";
-import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useNavigate, useLocation } from "react-router";
 import { stakeDefaultTrack } from "./constants";
@@ -9,8 +8,6 @@ import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { useStake } from "LLD/hooks/useStake";
 import { useNavigateToStakeForAccount } from "LLD/hooks/useNavigateToStakeForAccount";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
-import { useModularDrawerVisibility } from "@ledgerhq/live-common/modularDrawer/useModularDrawerVisibility";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
@@ -39,15 +36,6 @@ const useStakeFlow = () => {
     return enabledCurrencies.concat(partnerSupportedAssets);
   }, [enabledCurrencies, partnerSupportedAssets]);
   const earnDrawerConfigurationFlag = useFeature("ptxEarnDrawerConfiguration");
-
-  const { isModularDrawerVisible } = useModularDrawerVisibility({
-    modularDrawerFeatureFlagKey: "lldModularDrawer",
-  });
-
-  const modularDrawerVisible = isModularDrawerVisible({
-    location: ModularDrawerLocation.LIVE_APP,
-    liveAppId: "earn",
-  });
 
   const handleAccountSelected = useCallback(
     (
@@ -138,42 +126,18 @@ const useStakeFlow = () => {
         );
       };
 
-      if (modularDrawerVisible) {
-        // Add APY configuration for earn/stake functionality
-        const earnDrawerConfiguration = earnDrawerConfigurationFlag?.enabled
-          ? earnDrawerConfigurationFlag.params
-          : {};
-        openAssetAndAccount({
-          currencies: cryptoCurrencies,
-          useCase: "earn",
-          onSuccess,
-          onCancel: handleRequestClose,
-          areCurrenciesFiltered: cryptoCurrencies.length > 0,
-          drawerConfiguration: earnDrawerConfiguration,
-        });
-      } else {
-        setDrawer(
-          SelectAccountAndCurrencyDrawer,
-          {
-            currencyIds: cryptoCurrencies,
-            flow: DRAWER_FLOW,
-            source: source ?? "",
-            onAccountSelected: (account, parentAccount) =>
-              handleAccountSelected(
-                account,
-                parentAccount,
-                alwaysShowNoFunds,
-                entryPoint,
-                source,
-                shouldRedirect,
-                returnTo,
-              ),
-          },
-          {
-            onRequestClose: handleRequestClose,
-          },
-        );
-      }
+      // Add APY configuration for earn/stake functionality
+      const earnDrawerConfiguration = earnDrawerConfigurationFlag?.enabled
+        ? earnDrawerConfigurationFlag.params
+        : {};
+      openAssetAndAccount({
+        currencies: cryptoCurrencies,
+        useCase: "earn",
+        onSuccess,
+        onCancel: handleRequestClose,
+        areCurrenciesFiltered: cryptoCurrencies.length > 0,
+        drawerConfiguration: earnDrawerConfiguration,
+      });
     },
     [
       dispatch,
@@ -182,7 +146,6 @@ const useStakeFlow = () => {
       handleRequestClose,
       location.pathname,
       list,
-      modularDrawerVisible,
       openAssetAndAccount,
     ],
   );

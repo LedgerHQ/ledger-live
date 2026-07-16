@@ -1,5 +1,19 @@
 # @ledgerhq/client-ids
 
+## 0.11.1
+
+### Patch Changes
+
+- Updated dependencies [[`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11)]:
+  - @ledgerhq/live-env@2.41.0
+
+## 0.11.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11)]:
+  - @ledgerhq/live-env@2.41.0-next.0
+
 ## 0.11.0
 
 ### Minor Changes

@@ -4,10 +4,19 @@ type MemoApplicationFn = (
   currentTransaction: Record<string, unknown>,
 ) => Record<string, unknown>;
 
+type SendRecipientPatchInput = Readonly<{
+  address?: string;
+  memo?: Readonly<{ value: string; type?: string }>;
+  destinationTag?: string;
+}>;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
 const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
   solana: (memo, _type, transaction) => {
-    const currentModel = (transaction.model as Record<string, unknown> | undefined) || {};
-    const currentUiState = (currentModel.uiState as Record<string, unknown> | undefined) || {};
+    const currentModel = isRecord(transaction.model) ? transaction.model : {};
+    const currentUiState = isRecord(currentModel.uiState) ? currentModel.uiState : {};
     return {
       model: {
         ...currentModel,
@@ -26,7 +35,7 @@ const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
   },
   stellar: (memo, type) => ({ memoValue: memo, memoType: type }),
   ton: (memo, _type, transaction) => {
-    const currentComment = (transaction.comment as Record<string, unknown> | undefined) || {};
+    const currentComment = isRecord(transaction.comment) ? transaction.comment : {};
     return {
       comment: {
         ...currentComment,
@@ -42,9 +51,6 @@ export function applyMemoToTransaction(
   memoTypeOrTransaction?: string | Record<string, unknown> | null,
   currentTransaction?: Record<string, unknown>,
 ): Record<string, unknown> {
-  const isRecord = (value: unknown): value is Record<string, unknown> =>
-    typeof value === "object" && value !== null;
-
   const memoType =
     memoTypeOrTransaction === undefined || typeof memoTypeOrTransaction === "string"
       ? memoTypeOrTransaction
@@ -61,4 +67,37 @@ export function applyMemoToTransaction(
     return { memo: value };
   }
   return applyFn(value, memoType, transaction);
+}
+
+export function buildRecipientTransactionPatch(
+  transaction: Record<string, unknown> & { family: string },
+  recipient: SendRecipientPatchInput,
+): Record<string, unknown> {
+  const patch: Record<string, unknown> = { recipient: recipient.address };
+
+  if (recipient.memo !== undefined) {
+    Object.assign(
+      patch,
+      applyMemoToTransaction(
+        transaction.family,
+        recipient.memo.value,
+        recipient.memo.type,
+        transaction,
+      ),
+    );
+  }
+
+  if (recipient.destinationTag !== undefined) {
+    const trimmedDestinationTag = recipient.destinationTag.trim();
+    if (trimmedDestinationTag === "") {
+      Object.assign(patch, applyMemoToTransaction(transaction.family, undefined, transaction));
+    } else {
+      const parsedTag = Number(trimmedDestinationTag);
+      if (Number.isFinite(parsedTag)) {
+        Object.assign(patch, applyMemoToTransaction(transaction.family, parsedTag, transaction));
+      }
+    }
+  }
+
+  return patch;
 }

@@ -1,4 +1,4 @@
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runSwapLandingPageTest } from "./swap.other";
 
 const swapTestConfig = {

@@ -1,14 +1,14 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { LWD_WALLET_40_Q2_FF_ENABLED } from "tests/utils/featureFlagUtils";
+import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
 
 test.describe("Operations list", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "1AccountBTC1AccountETH",
-    featureFlags: LWD_WALLET_40_Q2_FF_ENABLED,
+    featureFlags: FF_LWD_WALLET_40_Q2,
   });
 
   test(

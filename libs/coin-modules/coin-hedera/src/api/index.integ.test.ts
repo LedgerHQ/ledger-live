@@ -10,7 +10,6 @@ import {
   ContractFunctionParameters,
 } from "@hashgraph/sdk";
 import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
 import { createApi } from "../api";
@@ -32,11 +31,6 @@ describe("createApi", () => {
     },
     "hedera",
   );
-
-  beforeAll(() => {
-    // Setup CAL client store (automatically set as global store)
-    setupCalClientStore();
-  });
 
   afterAll(async () => {
     await rpcClient._resetInstance();

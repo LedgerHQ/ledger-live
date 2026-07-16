@@ -421,6 +421,10 @@ export enum ScreenName {
   CantonOnboardAccount = "CantonOnboardAccount",
   // Concordium
   ConcordiumOnboardAccount = "ConcordiumOnboardAccount",
+  // Aleo
+  AleoAddAccount = "AleoAddAccount",
+  AleoViewKeyWarning = "AleoViewKeyWarning",
+  AleoViewKeyApprove = "AleoViewKeyApprove",
 
   OnboardingWelcome = "OnboardingWelcome",
   OnboardingPostWelcomeSelection = "OnboardingPostWelcomeSelection",
@@ -766,7 +770,6 @@ export enum NavigatorName {
   // Tab
   Main = "Main",
   CardTab = "CardTab",
-  WalletTab = "WalletTabNavigator",
   // Root
   RootNavigator = "RootNavigator",
   Discover = "Discover",

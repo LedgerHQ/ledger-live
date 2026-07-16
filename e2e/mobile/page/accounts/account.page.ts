@@ -1,6 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
-import { Account, AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 
 export default class AccountPage {
   baseLink = "account";

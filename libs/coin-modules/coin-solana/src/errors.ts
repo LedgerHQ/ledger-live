@@ -58,6 +58,10 @@ export const SolanaStakeAccountValidatorIsUnchangeable = createCustomErrorClass(
   "SolanaStakeAccountValidatorIsUnchangeable",
 );
 
+export const SolanaStakeAccountAmountTooLow = createCustomErrorClass(
+  "SolanaStakeAccountAmountTooLow",
+);
+
 export const SolanaStakeNoWithdrawAuth = createCustomErrorClass("SolanaStakeNoWithdrawAuth");
 
 export const SolanaStakeNoStakeAuth = createCustomErrorClass("SolanaStakeNoStakeAuth");

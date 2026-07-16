@@ -45,7 +45,7 @@ describe("useTabBarVisibility", () => {
 
   describe("when lwmWallet40 feature flag is enabled", () => {
     const getStateWithFeatureFlag = (isMainNavigatorVisible: boolean) => (state: State) => ({
-      ...withFeatureFlag(true, { mainNavigation: true })(state),
+      ...withFeatureFlag(true)(state),
       appstate: {
         ...state.appstate,
         isMainNavigatorVisible,
@@ -117,7 +117,7 @@ describe("useTabBarVisibility", () => {
 
   describe("useHideTabBar", () => {
     const getStateWithVisibility = (isVisible: boolean) => (state: State) => ({
-      ...withFeatureFlag(true, { mainNavigation: true })(state),
+      ...withFeatureFlag(true)(state),
       appstate: {
         ...state.appstate,
         isMainNavigatorVisible: isVisible,

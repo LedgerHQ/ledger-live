@@ -29,14 +29,13 @@ function fromDescriptor<T>(
 ): (currency: CryptoOrTokenCurrency | undefined) => T {
   return currency => {
     const d = getSendDescriptor(currency);
-    return d ? getter(d) ?? fallback : fallback;
+    return d ? (getter(d) ?? fallback) : fallback;
   };
 }
 
 const noCustomFeeConfig: CustomFeeConfig | null = null;
 const noFeeAssetsConfig: FeeAssetsConfig | null = null;
 const noCoinControlConfig: CoinControlConfig | null = null;
-const noAmountPlugins: readonly string[] = [];
 const noAmountEffects: readonly FlowEffect[] = [];
 const defaultSelfTransferPolicy: SelfTransferPolicy = "impossible";
 
@@ -71,6 +70,10 @@ export const sendFeatures = {
     const d = getSendDescriptor(currency);
     return d?.fees.presets?.estimation?.fallbackPresetIds ?? [];
   },
+  hasFeeRateLegend: (currency: CryptoOrTokenCurrency | undefined): boolean => {
+    const d = getSendDescriptor(currency);
+    return d?.fees.presets?.legend?.type === "feeRate";
+  },
   canEstimateFeePresetsWithZeroAmount: (
     currency: CryptoOrTokenCurrency | undefined,
     transaction: unknown,
@@ -84,7 +87,6 @@ export const sendFeatures = {
 
     return allowZeroAmount ?? false;
   },
-  getAmountPlugins: fromDescriptor(d => d.amount?.getPlugins?.(), noAmountPlugins),
   getAmountEffects: fromDescriptor(d => d.amount?.effects, noAmountEffects),
   getFeeCurrencyAccountId: (
     currency: CryptoOrTokenCurrency | undefined,

@@ -2,7 +2,7 @@ const esmPackages = ["@mysten", "@scure", "@noble"];
 
 module.exports = {
   collectCoverageFrom: ["src/**/*.ts"],
-  coveragePathIgnorePatterns: ["test/cli.ts", ".*\\.integ\\.test\\.[tj]s"],
+  coveragePathIgnorePatterns: [".*\\.integ\\.test\\.[tj]s"],
   coverageDirectory: "coverage",
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",

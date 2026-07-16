@@ -4,10 +4,10 @@ import { flattenAccounts, getAccountCurrency } from "../../../account";
 import getCompleteSwapHistory from "../../../exchange/swap/getCompleteSwapHistory";
 import { swapProviderRequiresOperationId } from "../../../exchange/swap/providersRequiringOperationId";
 import {
+  fetchTransactionSwapStatus,
   getSwapTransactionLegStatusesFromAccounts,
   isTransactionStatusValue,
-} from "../../../exchange/transactionStatus";
-import { fetchTransactionSwapStatus } from "../../../exchange/transactionStatus/fetchSwapStatus";
+} from "../../../exchange/swapTransactionStatus/transactionStatus";
 import type {
   MappedSwapOperation,
   SwapStatus,

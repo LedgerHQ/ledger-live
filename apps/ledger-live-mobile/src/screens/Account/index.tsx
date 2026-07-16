@@ -65,7 +65,7 @@ function AccountScreen({ route }: Props) {
         params: {
           screen: NavigatorName.Portfolio,
           params: {
-            screen: NavigatorName.WalletTab,
+            screen: ScreenName.Portfolio,
           },
         },
       });

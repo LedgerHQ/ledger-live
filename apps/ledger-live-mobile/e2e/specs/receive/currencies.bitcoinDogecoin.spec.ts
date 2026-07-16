@@ -4,7 +4,9 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 $TmsLink("B2CQA-651");
 $TmsLink("B2CQA-1854");
-describe("Receive different currency (bitcoin, dogecoin)", () => {
+// TODO(LIVE-33334): these legacy mock specs will be removed in a follow-up task;
+// skipped for now.
+describe.skip("Receive different currency (bitcoin, dogecoin)", () => {
   let deviceAction: DeviceAction;
   let first = true;
   const knownDevice = knownDevices.nanoX;

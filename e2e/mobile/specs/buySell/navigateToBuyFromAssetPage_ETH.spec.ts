@@ -1,6 +1,6 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runNavigateToBuyFromAssetPageTest } from "./buySell";
-import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
+import { OperationType } from "@ledgerhq/live-e2e-shared/enum/OperationType";
 
 const ethBuySell = {
   crypto: Account.ETH_1,
@@ -22,4 +22,4 @@ const tags = [
   "@family-evm",
 ];
 
-runNavigateToBuyFromAssetPageTest(ethBuySell, paymentMethod, ["B2CQA-3392"], [...tags, "@smoke"]);
+runNavigateToBuyFromAssetPageTest(ethBuySell, paymentMethod, ["B2CQA-3392"], tags);

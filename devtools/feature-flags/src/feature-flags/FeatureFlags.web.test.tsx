@@ -9,9 +9,9 @@ const baseProps: FeatureFlagsToolProps = {
   resolved,
   overrides: {},
   setOverride: jest.fn(),
+  setAllOverrides: jest.fn(),
   clearOverride: jest.fn(),
   clearAllOverrides: jest.fn(),
-  importOverrides: jest.fn(),
 };
 
 describe("FeatureFlags", () => {

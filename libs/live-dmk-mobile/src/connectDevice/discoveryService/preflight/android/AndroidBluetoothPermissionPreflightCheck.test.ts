@@ -1,5 +1,5 @@
 import type { Permission } from "react-native";
-import type { DiscoveryError } from "../../../types";
+import type { MobileDiscoveryError } from "../../../types";
 import { AndroidBluetoothPermissionPreflightCheck } from "./AndroidBluetoothPermissionPreflightCheck";
 import type { AndroidPreflightRequirements } from "./androidPreflightRequirements";
 import {
@@ -13,7 +13,7 @@ jest.mock("./permissionHelpers", () => ({
   runPermissionPreflight: jest.fn(),
 }));
 
-const retry = jest.fn<Promise<true | DiscoveryError>, []>();
+const retry = jest.fn<Promise<true | MobileDiscoveryError>, []>();
 
 describe("AndroidBluetoothPermissionPreflightCheck", () => {
   beforeEach(() => {

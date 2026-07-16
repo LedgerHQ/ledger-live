@@ -1,7 +1,7 @@
 import { CryptoOrTokenCurrencySchema, CurrencySchema } from "./index";
-import { mockCryptoCurrency } from "@domain/entity-currency-crypto/src/schema.mock";
-import { mockTokenCurrency } from "@domain/entity-currency-token/src/schema.mock";
-import { mockFiatCurrency } from "@domain/entity-currency-fiat/src/schema.mock";
+import { mockCryptoCurrency } from "@domain/entity-currency-crypto/schema.mock";
+import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
+import { mockFiatCurrency } from "@domain/entity-currency-fiat/schema.mock";
 
 describe("CryptoOrTokenCurrencySchema", () => {
   it("accepts a CryptoCurrency", () => {

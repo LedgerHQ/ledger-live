@@ -1,6 +1,6 @@
 import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { EarnBasePage } from "./earn.base.page";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import type { Application } from "./index";

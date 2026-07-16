@@ -2,7 +2,7 @@ import { expect } from "@playwright/test";
 import { Layout } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
-import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
+import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 
 export class AccountPage extends AppPage {
   private readonly layout = new Layout(this.page);
@@ -29,8 +29,6 @@ export class AccountPage extends AppPage {
   private operationRows = this.page.locator("[data-testid^='operation-row-']");
   private operationStatus = this.page.locator("[data-testid^='operation-status-']");
   private closeModal = this.page.getByTestId("modal-close-button");
-  private accountButton = (accountName: string) =>
-    this.page.getByRole("button", { name: `${accountName}` });
   private tokenRow = (tokenTicker: string) => this.page.getByTestId(`token-row-${tokenTicker}`);
   private showAllTokensButton = this.page.getByTestId("account-tokens-show-all-button");
   private addTokenButton = this.page.getByRole("button", { name: "Add token" });
@@ -179,10 +177,7 @@ export class AccountPage extends AppPage {
 
   @step("Expect token Account to be visible")
   async expectTokenAccount(account: AccountType) {
-    const tokenButton = this.accountButton(account.currency.name).or(
-      this.accountButton(account.currency.ticker),
-    );
-    await expect(tokenButton).toBeVisible();
+    await this.waitForAccountHeaderName(account.currency.name, account.currency.ticker);
   }
 
   @step("Expect `show more` button to show more operations")

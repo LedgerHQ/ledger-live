@@ -7,6 +7,7 @@ import {
   lastSeenDeviceSelector,
   hasCompletedOnboardingSelector,
   lastConnectedDeviceSelector,
+  debugOsUpdateBannerModeSelector,
 } from "~/reducers/settings";
 import { hasConnectedDeviceSelector } from "~/reducers/appstate";
 import { FirmwareUpdateBannerProps } from ".";
@@ -18,7 +19,6 @@ import {
 import { navigateToNewUpdateFlow } from "../../utils/navigateToNewUpdateFlow";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { track } from "~/analytics";
 
 export function useUpdateBannerViewModel({
@@ -32,8 +32,14 @@ export function useUpdateBannerViewModel({
   const hasCompletedOnboarding: boolean = useSelector(hasCompletedOnboardingSelector);
   const latestFirmware = useLatestFirmware(lastSeenDeviceModelInfo?.deviceInfo);
 
-  const bannerVisible = Boolean(latestFirmware) && hasCompletedOnboarding && hasConnectedDevice;
-  const version = latestFirmware?.final?.name ?? "";
+  // Debug override (Settings > Debug > Features): force-show a banner variant.
+  const debugBannerMode = useSelector(debugOsUpdateBannerModeSelector);
+
+  const bannerVisible =
+    debugBannerMode !== "off" ||
+    (Boolean(latestFirmware) && hasCompletedOnboarding && hasConnectedDevice);
+  // Mock version for the debug-forced banner.
+  const version = latestFirmware?.final?.name ?? (debugBannerMode !== "off" ? "1.1.1" : "");
   const connectionType = lastConnectedDevice?.wired ? "usb" : "bluetooth";
 
   const isNewUxSupported = isNewFirmwareUpdateUxSupported(
@@ -49,30 +55,27 @@ export function useUpdateBannerViewModel({
     setUnsupportedUpdateDrawerOpened(false);
   }, []);
 
-  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const route = useRoute();
   const isInMyLedgerDeviceScreen = route.name === ScreenName.MyLedgerDevice;
 
   const impressionTracked = useRef(false);
   useFocusEffect(
     useCallback(() => {
-      if (!shouldDisplayWallet40MainNav || impressionTracked.current) return;
+      if (impressionTracked.current) return;
       impressionTracked.current = true;
       track("banner_impression", {
         banner: "OS update",
         page: isInMyLedgerDeviceScreen ? "my ledger" : "portfolio",
       });
-    }, [shouldDisplayWallet40MainNav, isInMyLedgerDeviceScreen]),
+    }, [isInMyLedgerDeviceScreen]),
   );
 
   const onClickUpdate = useCallback(() => {
-    if (shouldDisplayWallet40MainNav) {
-      track("button_clicked", {
-        page: isInMyLedgerDeviceScreen ? "my ledger" : "portfolio",
-        banner: "OS update",
-        button: "click(update)",
-      });
-    }
+    track("button_clicked", {
+      page: isInMyLedgerDeviceScreen ? "my ledger" : "portfolio",
+      banner: "OS update",
+      button: "click(update)",
+    });
 
     if (isNewUxSupported) {
       if (connectionType === "bluetooth" && !bleUpdateSupported) {
@@ -99,7 +102,6 @@ export function useUpdateBannerViewModel({
     onBackFromUpdate,
     bleUpdateSupported,
     connectionType,
-    shouldDisplayWallet40MainNav,
   ]);
 
   return {
@@ -111,7 +113,7 @@ export function useUpdateBannerViewModel({
     closeUnsupportedUpdateDrawer,
     isUpdateSupportedButDeviceNotWired:
       Platform.OS === "android" && isNewUxSupported && !bleUpdateSupported,
-    shouldDisplayWallet40MainNav,
     isInMyLedgerDeviceScreen,
+    debugBannerMode,
   };
 }

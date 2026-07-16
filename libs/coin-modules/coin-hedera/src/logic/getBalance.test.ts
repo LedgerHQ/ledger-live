@@ -1,17 +1,11 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import hederaCoinConfig from "../config";
 import { HederaAddAccountError } from "../errors";
 import { apiClient } from "../network/api";
 import * as networkUtils from "../network/utils";
 import { getMockedConfig } from "../test/fixtures/config.fixture";
-import {
-  getMockedCurrency,
-  getMockedERC20TokenCurrency,
-  getMockedHTSTokenCurrency,
-} from "../test/fixtures/currency.fixture";
+import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 import type { HederaERC20TokenBalance } from "../types";
 import { getBalance } from "./getBalance";
 
@@ -61,35 +55,19 @@ describe("getBalance", () => {
     ]);
   });
 
-  it("should return native balance and token balances", async () => {
+  it("should return native balance and raw token balances", async () => {
     const mockMirrorTokens = [
       {
         token_id: "0.0.7890",
         balance: "5000",
       },
     ];
-    const mockTokenHTS = getMockedHTSTokenCurrency({ contractAddress: "0.0.7890" });
-    const mockTokenERC20 = getMockedERC20TokenCurrency({ contractAddress: "0x12345" });
     const mockERC20Balances: HederaERC20TokenBalance[] = [
       {
+        contractAddress: "0x12345",
         balance: new BigNumber(100),
-        token: mockTokenERC20,
       },
     ];
-
-    const findTokenByAddressInCurrencyMock = jest
-      .fn()
-      .mockImplementation(
-        async (tokenId: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
-          if (tokenId === mockTokenHTS.contractAddress) return mockTokenHTS;
-          if (tokenId === mockTokenERC20.contractAddress) return mockTokenERC20;
-          return undefined;
-        },
-      );
-
-    setupMockCryptoAssetsStore({
-      findTokenByAddressInCurrency: findTokenByAddressInCurrencyMock,
-    });
 
     (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
     (apiClient.getAccountTokens as jest.Mock).mockResolvedValue(mockMirrorTokens);
@@ -109,9 +87,6 @@ describe("getBalance", () => {
       configOrCurrencyId: mockConfig,
       address,
     });
-    expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledTimes(2);
-    expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledWith("0.0.7890", "hedera");
-    expect(findTokenByAddressInCurrencyMock).toHaveBeenCalledWith("0x12345", "hedera");
     expect(result).toEqual(
       expect.arrayContaining([
         {
@@ -121,21 +96,17 @@ describe("getBalance", () => {
         {
           value: BigInt("5000"),
           asset: {
-            type: mockTokenHTS.tokenType,
-            assetReference: mockTokenHTS.contractAddress,
+            type: "hts",
+            assetReference: "0.0.7890",
             assetOwner: address,
-            name: mockTokenHTS.name,
-            unit: mockTokenHTS.units[0],
           },
         },
         {
           value: BigInt("100"),
           asset: {
-            type: mockTokenERC20.tokenType,
-            assetReference: mockTokenERC20.contractAddress,
+            type: "erc20",
+            assetReference: "0x12345",
             assetOwner: address,
-            name: mockTokenERC20.name,
-            unit: mockTokenERC20.units[0],
           },
         },
       ]),
@@ -191,7 +162,7 @@ describe("getBalance", () => {
     });
   });
 
-  it("should skip tokens without units or not found in CAL", async () => {
+  it("should return all token balances without CAL filtering", async () => {
     const mockMirrorTokens = [
       {
         token_id: "0.0.7890",
@@ -202,56 +173,16 @@ describe("getBalance", () => {
         balance: "10000",
       },
     ];
-    const mockTokenHTS1: TokenCurrency = {
-      type: "TokenCurrency",
-      id: "token1",
-      contractAddress: "0.0.7890",
-      tokenType: "hts",
-      name: "Test Token 1",
-      ticker: "TT1",
-      parentCurrencyId: "hedera",
-      units: [{ name: "TT1", code: "tt1", magnitude: 6 }],
-      delisted: false,
-      disableCountervalue: false,
-    };
-    const mockTokenHTS2: TokenCurrency = {
-      type: "TokenCurrency",
-      id: "token2",
-      contractAddress: "0.0.1111",
-      tokenType: "hts",
-      name: "Test Token 2",
-      ticker: "TT1",
-      parentCurrencyId: "hedera",
-      units: [],
-      delisted: false,
-      disableCountervalue: false,
-    };
-    const mockTokenERC20 = getMockedERC20TokenCurrency({ contractAddress: "0x12345" });
     const mockERC20Balances: HederaERC20TokenBalance[] = [
       {
+        contractAddress: "0x12345",
         balance: new BigNumber(100),
-        token: mockTokenERC20,
       },
       {
+        contractAddress: "0x54321",
         balance: new BigNumber(200),
-        token: getMockedERC20TokenCurrency({ contractAddress: "0x54321" }),
       },
     ];
-
-    const findTokenByAddressInCurrencyMock = jest
-      .fn()
-      .mockImplementation(
-        async (tokenId: string, _currencyId: string): Promise<TokenCurrency | undefined> => {
-          if (tokenId === mockTokenHTS1.contractAddress) return mockTokenHTS1;
-          if (tokenId === mockTokenHTS2.contractAddress) return mockTokenHTS2;
-          if (tokenId === mockTokenERC20.contractAddress) return mockTokenERC20;
-          return undefined;
-        },
-      );
-
-    setupMockCryptoAssetsStore({
-      findTokenByAddressInCurrency: findTokenByAddressInCurrencyMock,
-    });
 
     (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
     (apiClient.getAccountTokens as jest.Mock).mockResolvedValue(mockMirrorTokens);
@@ -259,32 +190,23 @@ describe("getBalance", () => {
 
     const result = await getBalance({ currencyId: mockCurrency.id, address });
 
-    expect(result).toEqual([
-      {
-        asset: { type: "native" },
-        value: BigInt("1000000000"),
-      },
-      {
-        value: BigInt("5000"),
-        asset: {
-          type: mockTokenHTS1.tokenType,
-          assetReference: mockTokenHTS1.contractAddress,
-          assetOwner: address,
-          name: mockTokenHTS1.name,
-          unit: mockTokenHTS1.units[0],
-        },
-      },
-      {
-        value: BigInt("100"),
-        asset: {
-          type: mockTokenERC20.tokenType,
-          assetReference: mockTokenERC20.contractAddress,
-          assetOwner: address,
-          name: mockTokenERC20.name,
-          unit: mockTokenERC20.units[0],
-        },
-      },
-    ]);
+    expect(result).toEqual(
+      expect.arrayContaining([
+        { asset: { type: "native" }, value: BigInt("1000000000") },
+        expect.objectContaining({
+          asset: { type: "hts", assetReference: "0.0.7890", assetOwner: address },
+        }),
+        expect.objectContaining({
+          asset: { type: "hts", assetReference: "0.0.9876", assetOwner: address },
+        }),
+        expect.objectContaining({
+          asset: { type: "erc20", assetReference: "0x12345", assetOwner: address },
+        }),
+        expect.objectContaining({
+          asset: { type: "erc20", assetReference: "0x54321", assetOwner: address },
+        }),
+      ]),
+    );
   });
 
   it("should throw when failing to getAccount data", async () => {

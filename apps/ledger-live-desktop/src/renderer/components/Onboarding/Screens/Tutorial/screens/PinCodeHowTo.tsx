@@ -1,12 +1,9 @@
-import React, { useContext } from "react";
-import { useTranslation, Trans } from "react-i18next";
-import { Title, AsideFooter, Column, Bullet, AnimationContainer } from "../shared";
+import React from "react";
+import { Trans } from "react-i18next";
+import { Title, Column, Bullet } from "../shared";
 import NanoDeviceCheckIcon from "~/renderer/icons/NanoDeviceCheckIcon";
 import NanoDeviceCancelIcon from "~/renderer/icons/NanoDeviceCancelIcon";
 import { useTheme } from "styled-components";
-import Animation from "~/renderer/animations";
-import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
-import { OnboardingContext } from "../../../index";
 
 export function PinCodeHowTo() {
   const { colors } = useTheme();
@@ -38,33 +35,6 @@ export function PinCodeHowTo() {
     </Column>
   );
 }
-
-const PinCodeHowToAnimation = () => {
-  const { deviceModelId } = useContext(OnboardingContext);
-  const { theme } = useTheme();
-
-  return (
-    deviceModelId && (
-      <AnimationContainer>
-        <Animation animation={getDeviceAnimation(deviceModelId, theme, "plugAndPinCode")} />
-      </AnimationContainer>
-    )
-  );
-};
-
-PinCodeHowTo.Illustration = <PinCodeHowToAnimation />;
-
-const Footer = (props: object) => {
-  const { t } = useTranslation();
-  return (
-    <AsideFooter
-      {...props}
-      text={t("onboarding.screens.tutorial.screens.pinCodeHowTo.help.descr")}
-    />
-  );
-};
-
-PinCodeHowTo.Footer = Footer;
 
 PinCodeHowTo.continueLabel = (
   <Trans i18nKey="onboarding.screens.tutorial.screens.pinCodeHowTo.buttons.next" />

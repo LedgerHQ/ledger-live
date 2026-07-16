@@ -1336,17 +1336,6 @@
           "finalStepSuccessButtonLabel": "Finish"
         }
       },
-      "installApplications": {
-        "title": "Install apps on {{productName}}",
-        "titleCompleted": "Apps installed on {{productName}}",
-        "install": "Install",
-        "skip": "I'll do that later",
-        "info": "Apps on {{deviceName}} are used to approve transactions. You can add or remove them at any time."
-      },
-      "endOfSetup": {
-        "title": "End of setup",
-        "titleCompleted": "{{deviceName}} is Ready"
-      },
       "softwareCheckAllowSecureChannelDrawer": {
         "title": "Tap on “Allow” to start Ledger Genuine Check"
       },
@@ -1463,7 +1452,6 @@
       "cta": "Clear cache"
     },
     "migrate": "Ledger Wallet accounts update available",
-    "genericTerminatedCrypto": "{{coinName}} is not supported anymore",
     "valentine": {
       "title": "Valentine’s day",
       "description": "As a proof of our love, Ledger is reducing buy & sell fees on Ledger Wallet"
@@ -2538,6 +2526,7 @@
   "newSendFlow": {
     "title": "Send {{currency}}",
     "available": "Available {{amount}}",
+    "to": "To:",
     "placeholder": "Enter address or ENS",
     "placeholderNoENS": "Enter address",
     "recent": "Recent",
@@ -5853,10 +5842,6 @@
             "buttons": {
               "next": "OK, I'm ready!",
               "prev": "Previous step"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "deviceHowTo": {
@@ -5880,10 +5865,6 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "deviceHowTo2": {
@@ -5908,10 +5889,6 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "pinCode": {
@@ -5922,10 +5899,6 @@
               "next": "Set up PIN",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "quizSuccess": {
@@ -5943,10 +5916,6 @@
             "buttons": {
               "next": "Next step",
               "prev": "Previous step"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "pinCodeHowTo": {
@@ -5962,10 +5931,6 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "recoverHowTo": {
@@ -6016,10 +5981,6 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "newRecoveryPhrase": {
@@ -6031,10 +5992,6 @@
               "next": "Recovery phrase",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "recoveryHowTo": {
@@ -6060,10 +6017,6 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "recoveryHowTo3": {
@@ -6078,10 +6031,6 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "genuineCheck": {
@@ -6105,10 +6054,6 @@
               "prev": "Previous step",
               "help": "Need help",
               "learn": "Learn how to hide it"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "pairMyNano": {
@@ -6118,10 +6063,6 @@
               "next": "Check my Nano",
               "prev": "Previous step",
               "help": "Need help"
-            },
-            "help": {
-              "help": "Need help",
-              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "enableSync": {
@@ -6657,10 +6598,9 @@
           "title": "Acknowledgement",
           "description": "Concordium requires external identity verification. Please read these important security warnings:",
           "list": {
-            "1": "<0>No address verification</0> – Your Ledger cannot verify Concordium receive addresses. Manually verify addresses before receiving funds.",
-            "2": "<0>Concordium ID App uses a separate seed</0> – You'll create NEW 24 words in Concordium app. NEVER use your Ledger seed.",
-            "3": "<0>You'll be redirected outside Ledger Live</0> – Identity verification happens in the external Concordium Wallet app. This is required by Concordium's blockchain protocol.",
-            "4": "<0>Transaction signing stays secure</0> – Only your Ledger device can sign transactions and create accounts."
+            "separateSeed": "<0>Concordium ID App uses a separate seed</0> – You'll create NEW 24 words in Concordium app. NEVER use your Ledger seed.",
+            "outsideLedgerLive": "<0>You'll be redirected outside Ledger Live</0> – Identity verification happens in the external Concordium Wallet app. This is required by Concordium's blockchain protocol.",
+            "signingSecure": "<0>Transaction signing stays secure</0> – Only your Ledger device can sign transactions and create accounts."
           },
           "allow": "Agree"
         },
@@ -7272,6 +7212,9 @@
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
     },
+    "ZcashSaplingRecipientNotSupported": {
+      "title": "Sending to Sapling addresses is not supported"
+    },
     "InvalidNonce": {
       "title": "Nonce is required"
     },
@@ -7331,6 +7274,9 @@
     "FeeRequired": {
       "title": "Fees are required"
     },
+    "FeeTooLow": {
+      "title": "Fees are too low to be accepted by the network. Please increase them"
+    },
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
     },
@@ -7342,6 +7288,9 @@
     },
     "MaxFeeTooLow": {
       "title": "Fee is lower than the recommended value"
+    },
+    "GasPriceTooLow": {
+      "title": "Gas price is lower than the network minimum"
     },
     "PriorityFeeHigherThanMaxFee": {
       "title": "Max priority fee cannot be higher than max fee"
@@ -7477,6 +7426,9 @@
     "InvalidXRPTag": {
       "title": "Invalid XRP Destination tag"
     },
+    "XrpDestinationTagRequired": {
+      "title": "A destination tag is required for this recipient"
+    },
     "InvalidExplorerResponse": {
       "title": "Invalid response from {{currencyName}} explorer"
     },
@@ -7595,6 +7547,9 @@
     },
     "SolanaUseAllAmountStakeWarning": {
       "title": "Ensure you have enough balance left for future transactions fees"
+    },
+    "SolanaStakeAccountAmountTooLow": {
+      "title": "Amount is too low for staking. Minimum is {{minimumAmount}}."
     },
     "SolanaTxSimulationFailedWhilePendingOp": {
       "title": "Your previous transaction hasn't been processed yet. Please wait a moment then check the transaction history before trying again."
@@ -8369,6 +8324,20 @@
   "recoverRestore": {
     "title": "Connect and unlock your Ledger"
   },
+  "analyticsOptInScreen": {
+    "main": {
+      "title": "Help us improve Ledger",
+      "description": "With your consent, we'll collect usage data to improve features and fix bugs. We won't track your assets or portfolio details",
+      "ctaAcceptAll": "Accept all",
+      "ctaRefuseAll": "Refuse all",
+      "ctaPrevious": "Previous",
+      "setPreferencesLink": "Set preferences"
+    },
+    "footer": {
+      "lead": "You can revoke your consent any time in the app settings.",
+      "trackingPolicyLink": "Learn more about our Tracking Policy"
+    }
+  },
   "analyticsConsentModal": {
     "fresh": {
       "title": "Help us improve Ledger",
@@ -8768,9 +8737,9 @@
       "cta": "Discover"
     },
     "borrowEntry": {
-      "title": "Loans",
-      "cardTitle": "Borrow Stablecoin",
-      "cardDescription": "Unlock liquidity",
+      "title": "Crypto loans",
+      "cardTitle": "Borrow stablecoins",
+      "cardDescription": "Borrow at competitive rates",
       "cta": "Explore"
     },
     "noDeviceTitle": "Your secure crypto wallet"
@@ -9236,7 +9205,11 @@
       "description": "Come back later to see your transactions."
     },
     "actionsBar": {
-      "csv": "Export"
+      "csv": "Export",
+      "more": "Transaction history options",
+      "hideDustTransactions": "Hide dust transactions",
+      "showDustTransactions": "Show dust transactions",
+      "dustTransactionsDescription": "Transactions below {{threshold}} will be hidden."
     },
     "exportDialog": {
       "title": "Export transaction history",
@@ -9335,6 +9308,9 @@
     "fallbackBanner": {
       "title": "Swap and Buy are not supported for this asset."
     },
+    "robinhoodDisclaimerBanner": {
+      "title": "Total balance does not include dividends or stock splits."
+    },
     "day": "1 day",
     "week": "1 week",
     "month": "1 month",
@@ -9355,6 +9331,87 @@
       "earnBannerDefault": "Earn with this asset",
       "earnBannerSubtitle": "Hold and earn with this asset",
       "earnBannerAction": "Go to Earn"
+    }
+  },
+  "deviceIntentExecutor": {
+    "genericStates": {
+      "retryableDeviceLocked": {
+        "title": "Device is locked",
+        "description": "Unlock your device to continue."
+      },
+      "unlockDevice": {
+        "title": "Unlock your {{productName}}"
+      },
+      "continueOnDevice": {
+        "title": "Continue on your {{productName}}",
+        "description": "Follow the instructions displayed on your Secure Screen."
+      }
+    },
+    "errors": {
+      "connectionError": {
+        "title": "Device disconnected",
+        "description": "Your Ledger is no longer connected. Make sure it's powered on and plugged in."
+      },
+      "intentError": {
+        "title": "Unknown error",
+        "description": "An error occurred. Please try again or contact Ledger support if the issue persists."
+      },
+      "invalidOperation": {
+        "title": "Invalid state",
+        "description": "An error occurred. Please try again or contact Ledger support if the issue persists."
+      }
+    },
+    "connectDevice": {
+      "common": {
+        "ledgerDevice": "Ledger device",
+        "available": "Available",
+        "notConnected": "Not connected"
+      },
+      "states": {
+        "loading": {
+          "title": "Loading"
+        },
+        "connecting": {
+          "title": "Loading"
+        },
+        "connectionError": {
+          "errors": {
+            "unknown": {
+              "title": "Pairing unsuccessful",
+              "description": "Please try again.",
+              "tip": "Make sure your device is unlocked.",
+              "cta": {
+                "retry": "Try again",
+                "help": "Get help"
+              }
+            }
+          }
+        },
+        "discovering": {
+          "title": "Select a device",
+          "noAvailableDeviceTitle": "Power on and unlock a device"
+        },
+        "discoveryError": {
+          "errors": {
+            "unknown": {
+              "title": "Something went wrong",
+              "description": "Please try again or contact Ledger support.",
+              "cta": {
+                "retry": "Try again"
+              }
+            }
+          }
+        },
+        "noKnownDevice": {
+          "title": "Ledger device required",
+          "description": "To continue, set up or connect your signer.",
+          "connectLedgerDevice": "Connect Ledger device",
+          "noLedgerDevice": "I don't have a Ledger device"
+        },
+        "waitingForSelectedDevice": {
+          "title": "Power on and unlock your {{productName}}"
+        }
+      }
     }
   },
   "pnl": {

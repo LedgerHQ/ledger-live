@@ -4,8 +4,7 @@
     "src/bridge/index.ts",
     "src/signer/index.ts",
     "src/index.ts",
-    "src/bridge/transaction.ts",
-    "src/test/cli.ts"
+    "src/bridge/transaction.ts"
   ],
   "ignorePatterns": [
     "**/node_modules/**",
@@ -13,7 +12,7 @@
     "**/*.fixtures.ts",
     "**/fixtures.ts",
     "**/*.mock.ts",
-    "**/getOperationExtra.ts",
+    "**/getStakingExtraByDigest.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
   "ignoreUnresolved": [

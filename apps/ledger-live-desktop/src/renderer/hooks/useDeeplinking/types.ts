@@ -4,13 +4,14 @@ import type { AppDispatch } from "~/state-manager/configureStore";
 
 export type NavigateFn = (
   pathname: string,
-  state?: { [k: string]: string | number | boolean | object | null | undefined },
+  state?: {
+    [k: string]: string | number | boolean | object | null | undefined;
+  },
   search?: string,
 ) => void;
 
 export type OpenAddAccountFlowFn = (
   currency: CryptoOrTokenCurrency,
-  skipFirstStep?: boolean,
   onAccountCreated?: (account: Account | TokenAccount, parentAccount?: Account) => void,
 ) => void;
 

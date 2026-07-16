@@ -34,7 +34,6 @@ describe("notificationsPromptAnalytics", () => {
     expect(track).toHaveBeenCalledWith("attempt_to_trigger_push_notification_drawer_after_action", {
       action: "send",
       shouldPrompt: true,
-      variant: undefined,
       repromptDelay: null,
       dismissedCount: 0,
       skipReason: undefined,
@@ -54,7 +53,6 @@ describe("notificationsPromptAnalytics", () => {
     expect(track).toHaveBeenCalledWith("attempt_to_trigger_push_notification_drawer_after_action", {
       action: "send",
       shouldPrompt: false,
-      variant: undefined,
       repromptDelay: null,
       dismissedCount: 0,
       skipReason: "fully_opted_in",
@@ -76,7 +74,6 @@ describe("notificationsPromptAnalytics", () => {
       "attempt_to_trigger_push_notification_drawer_after_inactivity",
       {
         shouldPrompt: true,
-        variant: undefined,
         repromptDelay: null,
         dismissedCount: 1,
         skipReason: undefined,

@@ -1,6 +1,7 @@
 {
   "name": "@ledgerhq/asset-aggregation",
-  "version": "0.9.1",
+  "version": "0.10.0",
+  "private": true,
   "description": "Ledger Live asset-aggregation module – asset aggregation & categorization",
   "keywords": [
     "Ledger"
@@ -13,9 +14,6 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/asset-aggregation",
-  "publishConfig": {
-    "access": "public"
-  },
   "main": "lib/index.js",
   "module": "lib-es/index.js",
   "types": "lib/index.d.ts",

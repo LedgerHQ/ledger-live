@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { applyMemoToTransaction } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
+import { buildRecipientTransactionPatch } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type {
@@ -43,29 +43,10 @@ export function useSendFlowTransaction({
     (recipient: RecipientData) => {
       if (!account || !transaction || !bridge) return;
 
-      const updates: Partial<Transaction> = { recipient: recipient.address };
-
-      if (recipient.memo !== undefined) {
-        Object.assign(
-          updates,
-          applyMemoToTransaction(
-            transaction.family,
-            recipient.memo.value,
-            recipient.memo.type,
-            transaction,
-          ),
-        );
-      }
-
-      if (recipient.destinationTag !== undefined) {
-        const parsedTag = Number(recipient.destinationTag.trim());
-        if (Number.isFinite(parsedTag)) {
-          Object.assign(
-            updates,
-            applyMemoToTransaction(transaction.family, parsedTag, transaction),
-          );
-        }
-      }
+      const updates = buildRecipientTransactionPatch(
+        transaction,
+        recipient,
+      ) as Partial<Transaction>;
 
       setTransaction(bridge.updateTransaction(transaction, updates));
     },

@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useBalanceSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { useSelector } from "~/context/hooks";
 import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
@@ -18,7 +17,6 @@ export const usePortfolioBalanceSectionViewModel = ({
 }: PortfolioBalanceSectionProps): UsePortfolioBalanceSectionViewModelResult => {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { toggleDiscreetMode } = useToggleDiscreetMode();
-  const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
 
   const {
     portfolio,
@@ -50,8 +48,8 @@ export const usePortfolioBalanceSectionViewModel = ({
     rawBalanceAvailable: effectiveRawBalanceAvailable,
     syncPhase,
     latestBalance: effectiveLatestBalance,
-    shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
-    cvPending: shouldDisplayBalanceRefreshRework ? isCvPending : undefined,
+    shouldFreezeOnSync: true,
+    cvPending: isCvPending,
   });
 
   const state: PortfolioBalanceState = useMemo(() => {
@@ -64,9 +62,7 @@ export const usePortfolioBalanceSectionViewModel = ({
     return "normal";
   }, [isReadOnlyMode, showAssets]);
 
-  const isAnalyticPillVisible =
-    state === "normal" &&
-    (balanceAvailable || (shouldDisplayBalanceRefreshRework && effectiveIsLoading));
+  const isAnalyticPillVisible = state === "normal" && (balanceAvailable || effectiveIsLoading);
 
   return {
     state,
@@ -76,7 +72,6 @@ export const usePortfolioBalanceSectionViewModel = ({
     isBalanceAvailable: balanceAvailable,
     isAnalyticPillVisible,
     isLoading: effectiveIsLoading,
-    shouldDisplayBalanceRefreshRework,
     onToggleDiscreetMode: toggleDiscreetMode,
   };
 };

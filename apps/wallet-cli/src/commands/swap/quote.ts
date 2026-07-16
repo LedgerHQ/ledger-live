@@ -13,6 +13,11 @@ import {
   resolveOutputFormat,
 } from "../inputs";
 import { mapSwapQuoteLine, WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./quote-shared";
+import {
+  swapFlowId,
+  trackSwapQuoteRequested,
+  trackSwapQuoteReturned,
+} from "../../analytics/swap-analytics";
 
 const walletCliSupportedSwapCurrencyIds = new Set<string>(WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS);
 
@@ -84,6 +89,14 @@ export default defineCommand({
     walletCliDebug(`quote: from=${flags.from} to=${flags.to} output=${output}`);
     const out = createCommandOutput(output, { command: "swap quote", network: flags.from });
 
+    const flowId = swapFlowId();
+    trackSwapQuoteRequested({
+      flowId,
+      fromCurrency: flags.from,
+      toCurrency: flags.to,
+      deviceRequired: false,
+    });
+
     await out.run(async () => {
       await assertWalletCliSwapCurrencyId(flags.from, "from");
       await assertWalletCliSwapCurrencyId(flags.to, "to");
@@ -123,6 +136,12 @@ export default defineCommand({
         mapSwapQuoteLine(q, flags.from, flags.to, flags.amount),
       );
       s?.success(`${result.quotes.length} quote(s) received`);
+      trackSwapQuoteReturned({
+        flowId,
+        fromCurrency: flags.from,
+        toCurrency: flags.to,
+        providersCount: result.quotes.length,
+      });
       out.swapQuotes({ quotes: mapped, partialErrors: result.providerErrors });
     });
   },

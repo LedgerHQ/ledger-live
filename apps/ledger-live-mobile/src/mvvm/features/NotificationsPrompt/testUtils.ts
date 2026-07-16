@@ -1,12 +1,8 @@
 import type { Features } from "@shared/feature-flags";
-import { AB_TESTING_VARIANTS } from "./types/variants";
 
 type BrazePushNotificationsParams = NonNullable<Features["brazePushNotifications"]["params"]>;
 type BrazeNotificationsCategoryConfig =
   BrazePushNotificationsParams["notificationsCategories"][number];
-type WordingFeatureParams = NonNullable<
-  Features["lwmNewWordingOptInNotificationsDrawer"]["params"]
->;
 
 export const transactionsAlertsDrawerPromptCategoryConfig: BrazeNotificationsCategoryConfig = {
   displayed: true,
@@ -63,13 +59,11 @@ export const notificationsPromptActionEvents: BrazePushNotificationsParams["acti
 };
 
 export function createNotificationsPromptFeatureFlags({
-  variant = AB_TESTING_VARIANTS.B,
   repromptSchedule = defaultRepromptSchedule,
   inactivityEnabled = false,
   inactivityReprompt = defaultInactivityReprompt,
   notificationsCategories = [],
 }: {
-  variant?: WordingFeatureParams["variant"];
   repromptSchedule?: BrazePushNotificationsParams["reprompt_schedule"];
   inactivityEnabled?: BrazePushNotificationsParams["inactivity_enabled"];
   inactivityReprompt?: BrazePushNotificationsParams["inactivity_reprompt"];
@@ -84,12 +78,6 @@ export function createNotificationsPromptFeatureFlags({
         inactivity_enabled: inactivityEnabled,
         inactivity_reprompt: inactivityReprompt,
         notificationsCategories,
-      },
-    },
-    lwmNewWordingOptInNotificationsDrawer: {
-      enabled: true,
-      params: {
-        variant,
       },
     },
   };

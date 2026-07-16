@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-icon",
-  "version": "0.24.0",
+  "version": "0.25.0",
   "description": "Ledger Icon Coin integration",
   "keywords": [
     "Ledger",
@@ -60,7 +60,6 @@
     "expect": "catalog:",
     "icon-sdk-js": "1.5.2",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
     "prando": "^6.0.1",
     "rxjs": "catalog:"
   },
@@ -70,7 +69,6 @@
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
     "@types/node": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",

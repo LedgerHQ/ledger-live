@@ -37,7 +37,8 @@ export const StickyTabBar = styled.div`
   top: -${p => p.theme.space[3]}px;
   left: 0;
   right: 0;
-  padding: ${p => p.theme.space[3]}px ${p => p.theme.space[3]}px 0 ${p => p.theme.space[3]}px;
+  padding: ${p => p.theme.space[3]}px ${p => p.theme.space[3]}px 0
+    ${p => p.theme.space[3]}px;
   margin-left: -${p => p.theme.space[3]}px;
   height: ${p => p.theme.sizes.topBarHeight}px;
   width: 100%;
@@ -120,7 +121,7 @@ const AppsList = ({
   const addAccount = useCallback(
     (currency: CryptoOrTokenCurrency) => {
       navigate(accountsPath);
-      openAddAccountFlow(currency, true);
+      openAddAccountFlow(currency);
     },
     [accountsPath, navigate, openAddAccountFlow],
   );

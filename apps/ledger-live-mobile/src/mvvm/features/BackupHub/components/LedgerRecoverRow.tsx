@@ -41,10 +41,7 @@ export function LedgerRecoverRow({
         />
         <ListItemContent>
           <ListItemTitle>{title}</ListItemTitle>
-          <ListItemDescription
-            numberOfLines={2}
-            lx={isWarning ? { color: "warning" } : undefined}
-          >
+          <ListItemDescription numberOfLines={2} lx={isWarning ? { color: "warning" } : undefined}>
             {description}
           </ListItemDescription>
         </ListItemContent>

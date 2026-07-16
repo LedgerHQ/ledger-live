@@ -10,7 +10,6 @@ import {
 } from "@ledgerhq/errors";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { useFeature } from "@features/platform-feature-flags";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled, { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
@@ -54,7 +53,6 @@ const AnimationContainer = styled(Flex).attrs({
 })``;
 
 export default function ConcordiumReceiveVerifyAddress({ navigation, route }: Props) {
-  const verifyAddressFeature = useFeature("concordiumVerifyAddress");
   const { theme: themeKind } = useTheme();
   const { account, parentAccount } = useAccountScreen(route);
   const { t } = useTranslation();
@@ -170,24 +168,13 @@ export default function ConcordiumReceiveVerifyAddress({ navigation, route }: Pr
   }, []);
 
   useEffect(() => {
-    // When the on-device verify flag is off, skip the device prompt and route
-    // straight to Confirmation — the family-specific PostAlert renders the
-    // "it is not possible to verify…" notice there.
-    if (verifyAddressFeature?.enabled !== true) {
-      navigation.navigate(ScreenName.ReceiveConfirmation, {
-        ...route.params,
-        verified: false,
-      });
-      return;
-    }
     if (device) {
       verifyOnDevice(device);
     }
     return () => sub.current?.unsubscribe();
-  }, [verifyAddressFeature?.enabled, device, verifyOnDevice, navigation, route.params]);
+  }, [device, verifyOnDevice]);
 
   if (!account || !currency || !mainAccount || !device) return null;
-  if (verifyAddressFeature?.enabled !== true) return null;
 
   // Retrying a terminal address-verification refusal would just hit the same
   // 4xx again — hide the button for that class of error.

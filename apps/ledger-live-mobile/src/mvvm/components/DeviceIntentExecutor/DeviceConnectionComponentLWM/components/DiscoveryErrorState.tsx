@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  BaseDiscoveryErrorTypes,
   ConnectDeviceUIStateTypes,
   DiscoveryErrorTypes,
   type ConnectDeviceUIState,
@@ -35,10 +36,12 @@ type DiscoveryErrorViewState = {
   secondaryCta?: InfoStateCta;
 };
 
+type DiscoveryErrorType = DiscoveryError["type"];
+
 type DiscoveryErrorViewStates = {
   [DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly]: { title: string };
 } & Record<
-  Exclude<DiscoveryErrorTypes, DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly>,
+  Exclude<DiscoveryErrorType, DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly>,
   DiscoveryErrorViewState
 >;
 
@@ -240,7 +243,7 @@ export function DiscoveryErrorState({
         `${discoveryErrorTranslationBaseKey}.locationServicePermissionMissing.cta.ignore`,
       ),
     },
-    [DiscoveryErrorTypes.Unknown]: {
+    [BaseDiscoveryErrorTypes.Unknown]: {
       preset: "error",
       title: `${discoveryErrorTranslationBaseKey}.unknown.title`,
       description: `${discoveryErrorTranslationBaseKey}.unknown.description`,

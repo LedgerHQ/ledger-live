@@ -1,6 +1,10 @@
+import { setEnv } from "@ledgerhq/live-env";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
+// The crypto-assets token store validates a non-empty LEDGER_CLIENT_VERSION (calApiExtra) at store
+// creation; the app sets it at boot, so tests must provide one too.
+setEnv("LEDGER_CLIENT_VERSION", "jest");
 registerAllCoins();
 LiveConfig.setConfig(liveConfig);
 import "react-native-gesture-handler/jestSetup";

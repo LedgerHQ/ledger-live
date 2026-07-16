@@ -1,7 +1,6 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Title, AsideFooter, Column, Bullet, IllustrationContainer } from "../shared";
-import writeRecoverySheet from "../assets/writeRecoverySheet.png";
+import { Title, Column, Bullet } from "../shared";
 
 const steps = [
   {
@@ -32,22 +31,6 @@ export function UseRecoverySheet() {
     </Column>
   );
 }
-
-UseRecoverySheet.Illustration = (
-  <IllustrationContainer width="240px" height="245px" src={writeRecoverySheet} />
-);
-
-const Footer = (props: object) => {
-  const { t } = useTranslation();
-  return (
-    <AsideFooter
-      {...props}
-      text={t("onboarding.screens.tutorial.screens.useRecoverySheet.help.descr")}
-    />
-  );
-};
-
-UseRecoverySheet.Footer = Footer;
 
 UseRecoverySheet.continueLabel = (
   <Trans i18nKey="onboarding.screens.tutorial.screens.useRecoverySheet.buttons.next" />

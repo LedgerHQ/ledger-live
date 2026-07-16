@@ -28,6 +28,7 @@ export const LedgerGasTrackerUsedIncorrectly = createCustomErrorClass(
 export const NoGasTrackerFound = createCustomErrorClass("NoGasTrackerFound");
 
 // Gas
+export const GasPriceTooLow = createCustomErrorClass("GasPriceTooLow");
 export const GasEstimationError = createCustomErrorClass("GasEstimationError");
 export const InsufficientFunds = createCustomErrorClass("InsufficientFunds");
 

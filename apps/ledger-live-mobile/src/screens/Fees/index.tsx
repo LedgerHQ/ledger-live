@@ -1,10 +1,10 @@
-import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
+import { getTypedTransaction } from "@ledgerhq/live-common/families/evm/transaction";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/utils";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import React from "react";
-import { SafeAreaView } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { FeesNavigatorParamsList } from "~/components/RootNavigator/types/FeesNavigator";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
@@ -22,7 +22,7 @@ export function FeesScreen({ route: { params } }: Props) {
   });
   const { t } = useTranslation();
   return (
-    <SafeAreaView>
+    <SafeAreaView edges={["left", "right", "bottom"]}>
       <Flex flexDirection="column" rowGap={12} margin={16} alignItems="stretch">
         <Text color={"neutral.c70"} fontSize={14} fontWeight="medium">
           {t("transfer.swap2.form.details.label.feesDescription")}

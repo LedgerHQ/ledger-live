@@ -1,7 +1,9 @@
 import { initReceiveFlowApp, openReceive } from "./receiveFlow.shared";
 import DeviceAction from "../../models/DeviceAction";
 
-describe("Receive Flow — create account on OP Mainnet", () => {
+// TODO(LIVE-33334): these legacy mock specs will be removed in a follow-up task;
+// skipped for now.
+describe.skip("Receive Flow — create account on OP Mainnet", () => {
   let deviceAction: DeviceAction;
 
   beforeAll(async () => {

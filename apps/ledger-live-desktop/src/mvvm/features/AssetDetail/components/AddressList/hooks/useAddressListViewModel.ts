@@ -90,7 +90,7 @@ export function useAddressListViewModel(distributionItem: DistributionItem) {
   const onAccountClick = (account: AccountLike, parentAccount?: Account | null) => {
     const mainAccount =
       account.type === "TokenAccount"
-        ? parentAccount ?? lookupParentAccount(account.parentId)
+        ? (parentAccount ?? lookupParentAccount(account.parentId))
         : account;
     setTrackingSource(ASSET_DETAIL_TRACKING_PAGE_NAME);
     track("button_clicked", {

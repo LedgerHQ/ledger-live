@@ -9,7 +9,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/live-currency-format";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import {
   formatAmountForInput,
@@ -243,7 +243,8 @@ export function useAmountInput({
     [accountCurrency, accountUnit, calculateFiatFromCrypto, fiatUnit, locale],
   );
 
-  const amountInputMaxDecimalLength = inputMode === "fiat" ? 2 : Math.max(0, accountUnit.magnitude);
+  const activeInputUnit = inputMode === "fiat" ? fiatUnit : accountUnit;
+  const amountInputMaxDecimalLength = Math.max(0, activeInputUnit.magnitude);
 
   return {
     amountValue,

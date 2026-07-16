@@ -74,8 +74,10 @@ describe("PortfolioBalanceSync", () => {
     expect(state.portfolioBalanceDisplay.isBalanceAvailable).toBe(true);
   });
 
-  it("sets isLoading true when syncPhase is syncing", () => {
-    mockUsePortfolioBalance.mockReturnValue(makeReturn({ syncPhase: "syncing" }));
+  it("sets isLoading true while CVS is pending", () => {
+    mockUsePortfolioBalance.mockReturnValue(
+      makeReturn({ syncPhase: "syncing", isCvPending: true }),
+    );
 
     const { store } = render(<PortfolioBalanceSync />);
     const state = store.getState() as State;

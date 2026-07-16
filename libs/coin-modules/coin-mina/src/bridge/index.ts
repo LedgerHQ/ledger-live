@@ -11,7 +11,6 @@ import { MinaCoinConfig, setCoinConfig } from "../config";
 import { MINA_DUMMY_ADDRESS } from "../constants";
 import { validateAddress } from "../logic/validateAddress";
 import resolver from "../signer/getAddress";
-import makeCliTools from "../test/cli";
 import type {
   MinaAccount,
   MinaAccountRaw,
@@ -27,8 +26,6 @@ import getTransactionStatus from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import buildSignOperation from "./signOperation";
 import { sync, getAccountShape, assignToAccountRaw, assignFromAccountRaw } from "./synchronisation";
-
-export { makeCliTools };
 
 export function buildCurrencyBridge(signerContext: SignerContext<MinaSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);

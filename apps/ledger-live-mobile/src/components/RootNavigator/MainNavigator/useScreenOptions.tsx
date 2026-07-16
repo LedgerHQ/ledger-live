@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
-import { MainNavigatorTopBarHeader } from "../MainNavigatorTopBarHeader";
 import type { ColorPalette } from "@ledgerhq/native-ui";
+import { MainNavigatorTopBarHeader } from "../MainNavigatorTopBarHeader";
 
 function getCommonScreenOptions(colors: ColorPalette) {
   return {
@@ -28,21 +28,16 @@ const wallet40ScreenOptions = {
   header: () => <MainNavigatorTopBarHeader />,
 };
 
-const legacyScreenOptions = {
-  headerShown: false,
-};
-
 type Params = {
   colors: ColorPalette;
-  shouldDisplayWallet40MainNav: boolean;
 };
 
-export function useScreenOptions({ colors, shouldDisplayWallet40MainNav }: Params) {
+export function useScreenOptions({ colors }: Params) {
   return useMemo(
     () => ({
       ...getCommonScreenOptions(colors),
-      ...(shouldDisplayWallet40MainNav ? wallet40ScreenOptions : legacyScreenOptions),
+      ...wallet40ScreenOptions,
     }),
-    [colors, shouldDisplayWallet40MainNav],
+    [colors],
   );
 }

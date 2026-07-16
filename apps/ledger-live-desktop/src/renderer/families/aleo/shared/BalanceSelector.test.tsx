@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { render, screen } from "tests/testSetup";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { PRIVATE_BALANCE_PLACEHOLDER } from "../constants";
+import { PRIVATE_BALANCE_PLACEHOLDER } from "@ledgerhq/live-common/families/aleo/constants";
 import BalanceSelector from "./BalanceSelector";
 import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
 import { makeAleoTransaction } from "../__mocks__/transaction.mock";

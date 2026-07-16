@@ -1,8 +1,6 @@
 import React, { useMemo } from "react";
 import { View } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
-import { Box } from "@ledgerhq/lumen-ui-rnative";
-import PortfolioGraphCard from "~/screens/Portfolio/PortfolioGraphCard";
 import TrackScreen from "~/analytics/TrackScreen";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
@@ -12,7 +10,7 @@ import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderF
 import { ScreenHeroSectionView } from "LLM/components/ScreenHeroSection/ScreenHeroSectionView";
 import { PortfolioBalanceSection } from "../../components/PortfolioBalanceSection";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
+import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
 import { ScreenName } from "~/const";
 import { PortfolioNoSignerContent } from "../../components/PortfolioEmptySection/PortfolioNoSignerContent";
 import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
@@ -21,56 +19,34 @@ import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/
 import { RecoverIntroPortfolioMount } from "LLM/features/BackupHub";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
+  StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
 >;
 
 function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
-  const {
-    safeAreaTop,
-    shouldDisplayGraphRework,
-    shouldDisplayWallet40MainNav,
-    isLNSUpsellBannerShown,
-    source,
-    onBackFromUpdate,
-  } = useReadOnlyPortfolioViewModel(navigation);
+  const { safeAreaTop, isLNSUpsellBannerShown, source, onBackFromUpdate } =
+    useReadOnlyPortfolioViewModel(navigation);
 
   const data = useMemo(
     () => [
-      shouldDisplayGraphRework ? (
-        <View key="header" style={{ paddingTop: safeAreaTop }}>
-          <Flex px={6}>
-            <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-          </Flex>
-          <ScreenHeroSectionView>
-            <PortfolioBalanceSection showAssets={false} isReadOnlyMode />
-          </ScreenHeroSectionView>
-        </View>
-      ) : (
-        <Box key="PortfolioGraphCard">
-          <PortfolioGraphCard
-            showAssets={false}
-            screenName="Wallet"
-            hideGraph={false}
-            isReadOnlyMode
-          />
-        </Box>
-      ),
+      <View key="header" style={{ paddingTop: safeAreaTop }}>
+        <Flex px={6}>
+          <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+        </Flex>
+        <ScreenHeroSectionView>
+          <PortfolioBalanceSection showAssets={false} isReadOnlyMode />
+        </ScreenHeroSectionView>
+      </View>,
       <PortfolioNoSignerContent
         key="noSigner"
         isLNSUpsellBannerShown={isLNSUpsellBannerShown}
         variant="readOnly"
       />,
     ],
-    [shouldDisplayGraphRework, isLNSUpsellBannerShown, onBackFromUpdate, safeAreaTop],
+    [isLNSUpsellBannerShown, onBackFromUpdate, safeAreaTop],
   );
 
   return (
     <>
-      {!shouldDisplayGraphRework && (
-        <Flex px={6} py={4}>
-          <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-        </Flex>
-      )}
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
       <TrackScreen category="Wallet" source={source} />
@@ -80,7 +56,7 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
         renderItem={({ item }) => item}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
-        useSafeArea={!shouldDisplayWallet40MainNav}
+        useSafeArea={false}
         testID="PortfolioReadOnlyItems"
       />
       <AnalyticsConsentDrawer />

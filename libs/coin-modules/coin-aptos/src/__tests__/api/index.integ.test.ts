@@ -334,7 +334,7 @@ describe("createApi", () => {
 
       expect(operationOUT).toMatchObject({
         type: "OUT",
-        value: 951100n,
+        value: 950000n,
         recipients: ["0x24dbf71ba20209753035505c51d4607ed67aa0c81b930d9ef4483ec84b349fcb"],
         senders: [tokenAccount.freshAddress],
         asset: { type: "native" },

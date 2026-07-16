@@ -2,6 +2,7 @@ import React, { useEffect, useState, ReactNode, useCallback } from "react";
 import { Provider } from "react-redux";
 import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
+import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import {
   findCryptoCurrencyById,
@@ -39,7 +40,11 @@ import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { importBle } from "~/actions/ble";
 import { importKnownDevices } from "~/reducers/knownDevices";
 import { updateProtectData, updateProtectStatus } from "~/actions/protect";
-import { INITIAL_STATE as settingsState } from "~/reducers/settings";
+import {
+  INITIAL_STATE as settingsState,
+  counterValueIdOf,
+  migrateLegacyCryptoCounterValue,
+} from "~/reducers/settings";
 import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
 import { importMarket } from "~/actions/market";
 import { importMarketListConfig } from "~/reducers/market";
@@ -49,10 +54,7 @@ import { importWalletState } from "@ledgerhq/live-wallet/store";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
 import { initHistory } from "~/reducers/history";
 import type { SettingsState } from "~/reducers/types";
-import {
-  restoreTokensToCache,
-  PERSISTENCE_VERSION,
-} from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
 import { setAllOverrides, setBannerVisible, type PartialFeatures } from "@shared/feature-flags";
 import { initIdentities } from "../helpers/identities";
 
@@ -143,21 +145,21 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(importKnownDevices(persistedKnownDevices));
       }
 
+      // Legacy crypto counter-values were persisted as ticker (BTC/ETH); migrate them to Ledger ids.
+      if (settingsData && typeof settingsData.counterValue === "string") {
+        settingsData.counterValue = migrateLegacyCryptoCounterValue(settingsData.counterValue);
+      }
+
       store.dispatch(importSettings(settingsData));
 
       // Hydrate persisted crypto assets tokens BEFORE importing accounts
       // This ensures tokens are available when decoding accounts (which now uses findTokenById)
       // Cross-caching is automatic: tokens are cached under both ID and address lookups
-      if (cryptoAssetsCache?.tokens) {
-        if (cryptoAssetsCache.version === PERSISTENCE_VERSION) {
-          const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-          await restoreTokensToCache(store.dispatch, cryptoAssetsCache, TOKEN_CACHE_TTL);
-        } else {
-          // eslint-disable-next-line no-console
-          console.warn(
-            `Crypto assets cache version mismatch (expected ${PERSISTENCE_VERSION}, got ${cryptoAssetsCache.version}), skipping restore`,
-          );
-        }
+      // parsePersistedCAL validates version + schema; returns null for missing/corrupt/legacy blobs.
+      const persistedCryptoAssets = parsePersistedCAL(cryptoAssetsCache);
+      if (persistedCryptoAssets) {
+        const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+        await restoreTokensToCache(store.dispatch, persistedCryptoAssets, TOKEN_CACHE_TTL);
       }
 
       // Handle account import with error recovery for async issues
@@ -173,6 +175,8 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       if (postOnboardingState) {
         store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
       }
+
+      backfillOnboardingDate(store);
 
       if (marketState) {
         store.dispatch(importMarket(marketState));
@@ -338,7 +342,9 @@ async function updateSupportedCountervalues(store: Store, settingsData: Partial<
 
   if (
     settingsData?.counterValue &&
-    !supportedCounterValues.find(({ ticker }) => ticker === settingsData.counterValue) &&
+    !supportedCounterValues.find(
+      ({ currency }) => counterValueIdOf(currency) === settingsData.counterValue,
+    ) &&
     settingsData.counterValue !== settingsState.counterValue
   ) {
     settingsData.counterValue = settingsState.counterValue;

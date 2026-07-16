@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.46.1",
+  "version": "0.47.0",
   "private": true,
   "browser": {
     "dns": false,
@@ -20,12 +20,14 @@
   },
   "dependencies": {
     "@devtools/shell": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/feature-flags": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
     "react-redux": "catalog:",
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/view": "^6.39.5",
+    "@domain/entity-currency-fiat": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",

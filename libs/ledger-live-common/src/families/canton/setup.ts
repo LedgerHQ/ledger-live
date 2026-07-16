@@ -6,7 +6,6 @@ import Transport from "@ledgerhq/hw-transport";
 import { CantonSigner } from "@ledgerhq/coin-canton";
 import cantonResolver from "@ledgerhq/coin-canton/signer";
 import type { Bridge } from "@ledgerhq/types-live";
-import makeCliTools from "@ledgerhq/coin-canton/test/cli";
 import { CantonCoinConfig } from "@ledgerhq/coin-canton/config";
 import { TransactionStatus, Transaction, CantonAccount } from "@ledgerhq/coin-canton/types";
 import { LegacySignerCanton } from "@ledgerhq/live-signer-canton";
@@ -32,6 +31,4 @@ const bridge: Bridge<Transaction, CantonAccount, TransactionStatus> = getEnv("MO
 
 const resolver: Resolver = createResolver(createSigner, cantonResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, resolver };
+export { bridge, resolver };

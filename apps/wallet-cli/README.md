@@ -90,7 +90,7 @@ If `USER_ID` is unset, it defaults to `wallet-cli` so DMK firmware distribution 
 
 ## Relation to `ledger-live` CLI
 
-This package is DMK-focused and is separate from `@ledgerhq/live-cli` ([`apps/cli`](../cli)); that tool has a different scope and distribution model.
+This package is DMK-focused and is separate from `@ledgerhq/live-cli` ([`apps/cli`](../cli)), which is now an internal, Speculos-only tool used by the monorepo's e2e suites and CI. For human/manual hardware-wallet flows, use this `wallet-cli` (or the Ledger Live desktop/mobile app).
 
 ## Agent guidance
 

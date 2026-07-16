@@ -1,5 +1,5 @@
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import { PortfolioRange } from "@ledgerhq/types-live";
+import { Portfolio, PortfolioRange } from "@ledgerhq/types-live";
 import type { PortfolioBalanceInfo } from "LLD/hooks/usePortfolioBalanceDisplayState";
 
 export type AllocationTableItem = {
@@ -20,6 +20,8 @@ export type AnalyticsViewModel = {
   counterValue: Currency;
   selectedTimeRange: PortfolioRange;
   balanceInfo: PortfolioBalanceInfo;
-  shouldDisplayGraphRework?: boolean;
+  portfolio: Portfolio;
+  isLoading: boolean;
   shouldDisplayAssetSection?: boolean;
+  shouldDisplayPnl: boolean;
 };

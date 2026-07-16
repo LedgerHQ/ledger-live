@@ -1,25 +1,35 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 
 export class AccountsPage extends AppPage {
   private accountsTitle = this.page.getByRole("heading", { name: "Accounts" });
-  // Accounts-page add-account button differs per Asset Section variant:
-  //   ON  → Cryptos page header button (`crypto-add-address-button`)
-  //   OFF → legacy Accounts page header button (`accounts-add-account-button`)
-  private cryptoAddAddressButton = this.page.getByTestId("crypto-add-address-button");
-  private accountsAddAccountButton = this.page.getByTestId("accounts-add-account-button");
-  // Account-list row test ids differ per Asset Section variant:
-  //   ON  → CryptoAddresses rows: `crypto-account-row-<sanitized name>`
-  //   OFF → legacy Accounts rows: `account-component-<raw name>`
-  private readonly accountRowTestIdPrefix = isAssetSectionEnabled
-    ? "crypto-account-row-"
-    : "account-component-";
-  private readonly visibleAccountsList = this.page
-    .locator(`[data-testid^="${this.accountRowTestIdPrefix}"]`)
-    .filter({ visible: true });
+
+  private async getAddAccountButton() {
+    // Accounts-page add-account button differs per Asset Section variant:
+    //   ON  → Cryptos page header button (`crypto-add-address-button`)
+    //   OFF → legacy Accounts page header button (`accounts-add-account-button`)
+    const assetSectionEnabled = await isAssetSectionEnabled(this.page);
+    return assetSectionEnabled
+      ? this.page.getByTestId("crypto-add-address-button")
+      : this.page.getByTestId("accounts-add-account-button");
+  }
+
+  private async getAccountRowTestIdPrefix() {
+    // Account-list row test ids differ per Asset Section variant:
+    //   ON  → CryptoAddresses rows: `crypto-account-row-<sanitized name>`
+    //   OFF → legacy Accounts rows: `account-component-<raw name>`
+    const assetSectionEnabled = await isAssetSectionEnabled(this.page);
+    return assetSectionEnabled ? "crypto-account-row-" : "account-component-";
+  }
+
+  private async getVisibleAccountsList() {
+    const rowPrefix = await this.getAccountRowTestIdPrefix();
+
+    return this.page.locator(`[data-testid^="${rowPrefix}"]`).filter({ visible: true });
+  }
 
   private readonly getSanitizedAccountName = (accountName: string) =>
     accountName.replaceAll(/\s+/g, "-");
@@ -34,8 +44,8 @@ export class AccountsPage extends AppPage {
   }
 
   // Account-list row matching the active Asset Section variant (crypto vs legacy).
-  private accountRow(accountName: string) {
-    return isAssetSectionEnabled
+  private async getAccountRow(accountName: string) {
+    return (await isAssetSectionEnabled(this.page))
       ? this.cryptoAccountRow(accountName)
       : this.legacyAccountRow(accountName);
   }
@@ -48,9 +58,7 @@ export class AccountsPage extends AppPage {
 
   @step("Click add account button from accounts page")
   async clickAddAccountButtonFromAccountsPage() {
-    const addAccountButton = isAssetSectionEnabled
-      ? this.cryptoAddAddressButton
-      : this.accountsAddAccountButton;
+    const addAccountButton = await this.getAddAccountButton();
     await addAccountButton.click();
   }
 
@@ -61,7 +69,8 @@ export class AccountsPage extends AppPage {
 
   @step("Open Account $0")
   async navigateToAccountByName(accountName: string) {
-    await this.accountRow(accountName).click();
+    const row = await this.getAccountRow(accountName);
+    await row.click();
   }
 
   @step("Click sync account button for: $0")
@@ -101,18 +110,22 @@ export class AccountsPage extends AppPage {
 
   @step("Check $0 account was deleted ")
   async expectAccountAbsence(accountName: string) {
-    await expect(this.accountRow(accountName).filter({ visible: true })).toHaveCount(0);
-    expect(await this.getAccountsName()).not.toContain(accountName);
+    const row = await this.getAccountRow(accountName);
+    await expect(row.filter({ visible: true })).toHaveCount(0);
+    const names = await this.getAccountsName();
+    expect(names).not.toContain(accountName);
   }
 
   @step("Get number of accounts in the list")
   async countAccounts(): Promise<number> {
-    return await this.visibleAccountsList.count();
+    const visibleAccountsList = await this.getVisibleAccountsList();
+    return visibleAccountsList.count();
   }
 
   @step("Expect number of accounts to be $0")
   async expectAccountsCount(count: number, timeout = 30_000) {
-    await expect(this.visibleAccountsList).toHaveCount(count, { timeout });
+    const visibleAccountsList = await this.getVisibleAccountsList();
+    await expect(visibleAccountsList).toHaveCount(count, { timeout });
   }
 
   private async getReduxAccountIds(): Promise<string[]> {
@@ -138,7 +151,9 @@ export class AccountsPage extends AppPage {
   @step("Expect Redux accounts length to be $0")
   async expectReduxAccountsLength(count: number) {
     await expect
-      .poll(async () => (await this.getReduxAccountIds()).length, { timeout: 60_000 })
+      .poll(async () => (await this.getReduxAccountIds()).length, {
+        timeout: 60_000,
+      })
       .toBe(count);
   }
 
@@ -160,7 +175,7 @@ export class AccountsPage extends AppPage {
 
   @step("Expect account row for $0 to be visible")
   async expectCryptoAccountRowVisible(accountName: string) {
-    const row = this.accountRow(accountName);
+    const row = await this.getAccountRow(accountName);
     await row.waitFor({ state: "attached", timeout: 120_000 });
     await row.scrollIntoViewIfNeeded();
     await expect(row).toBeVisible({ timeout: 60_000 });
@@ -168,18 +183,23 @@ export class AccountsPage extends AppPage {
 
   @step("Expect at least one visible account in the list")
   async expectAtLeastOneAccountVisible() {
-    await expect(this.visibleAccountsList).not.toHaveCount(0);
+    const visibleAccountsList = await this.getVisibleAccountsList();
+    await expect(visibleAccountsList).not.toHaveCount(0);
   }
 
   async getAccountsName() {
-    const accountElements = await this.visibleAccountsList.all();
+    const visibleAccountsList = await this.getVisibleAccountsList();
+    const accountElements = await visibleAccountsList.all();
+    const testIdPrefix = await this.getAccountRowTestIdPrefix();
+    const assetSectionEnabled = await isAssetSectionEnabled(this.page);
     const accountNames = [];
     for (const element of accountElements) {
       const testId = await element.getAttribute("data-testid");
       if (testId) {
-        const rawName = testId.replace(this.accountRowTestIdPrefix, "");
-        // ON sanitizes spaces to dashes in the test id; OFF keeps the raw account name.
-        accountNames.push(isAssetSectionEnabled ? rawName.replaceAll("-", " ") : rawName);
+        const rawName = testId.replace(testIdPrefix, "");
+        // Asset Section ON sanitizes spaces to dashes in the test id; OFF keeps the raw account name.
+        const accountName = assetSectionEnabled ? rawName.replaceAll("-", " ") : rawName;
+        accountNames.push(accountName);
       }
     }
     return accountNames;

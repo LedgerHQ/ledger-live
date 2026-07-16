@@ -12,6 +12,7 @@ import type {
   SignOperationEvent,
   SignedOperation,
   TransactionCommon,
+  TransactionEditType,
   TransactionStatusCommon,
   TransactionSource,
 } from "./transaction";
@@ -282,7 +283,7 @@ type AccountBridgeWithExchange<A extends Account = Account> = {
   getSerializedAddressParameters: (account: A, addressFormat?: string) => Buffer;
 };
 
-export interface AccountBridgeExtensions {
+export interface AccountBridgeExtensions<T extends TransactionCommon = TransactionCommon> {
   getEstimationRecipient?: (account: Account) => string;
   isAccountEmpty?: (account: AccountLike) => boolean;
   clearAccount?: <A extends AccountLike>(account: A) => A;
@@ -292,7 +293,33 @@ export interface AccountBridgeExtensions {
   getStuckAccountAndOperation?: (
     account: AccountLike,
     parentAccount: Account | null | undefined,
-  ) => { account: AccountLike; parentAccount: Account | undefined; operation: Operation } | undefined;
+  ) =>
+    | { account: AccountLike; parentAccount: Account | undefined; operation: Operation }
+    | undefined;
+  getEditTransactionPatch?: (args: {
+    editType: TransactionEditType;
+    transaction: T;
+    account: Account;
+  }) => Promise<Partial<T>>;
+  getEditTransactionStatus?: (args: {
+    transaction: T;
+    transactionToUpdate: T;
+    status: TransactionStatusCommon;
+    editType?: TransactionEditType;
+  }) => TransactionStatusCommon;
+  getFormattedFeeFields?: (args: {
+    transaction: T;
+    mainAccount: Account;
+    locale: string;
+  }) => Record<string, string>;
+  hasMinimumFundsToCancel?: (args: { mainAccount: Account; transactionToUpdate: T }) => boolean;
+  hasMinimumFundsToSpeedUp?: (args: {
+    account: AccountLike;
+    mainAccount: Account;
+    transactionToUpdate: T;
+  }) => boolean;
+  isStrategyDisabled?: (args: { transaction: T; feeData: unknown }) => boolean;
+  isTransactionConfirmed?: (args: { currency: CryptoCurrency; hash: string }) => Promise<boolean>;
 }
 
 export type AccountBridge<
@@ -304,7 +331,7 @@ export type AccountBridge<
 > = SendReceiveAccountBridge<T, A, U> &
   AccountBridgeWithExchange<A> &
   Partial<SerializationAccountBridge<A, O, R>> &
-  AccountBridgeExtensions;
+  AccountBridgeExtensions<T>;
 
 export type ResolvedAccountBridge<
   T extends TransactionCommon,
@@ -312,7 +339,7 @@ export type ResolvedAccountBridge<
   U extends TransactionStatusCommon = TransactionStatusCommon,
   O extends Operation = Operation,
   R extends AccountRaw = AccountRaw,
-> = AccountBridge<T, A, U, O, R> & Required<AccountBridgeExtensions>;
+> = AccountBridge<T, A, U, O, R> & Required<AccountBridgeExtensions<T>>;
 
 type ExpectFn = (...args: Array<any>) => any;
 

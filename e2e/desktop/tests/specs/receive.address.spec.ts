@@ -1,10 +1,10 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
   Account,
   TokenAccount,
   getParentAccountName,
-} from "@ledgerhq/live-common/e2e/enum/Account";
+} from "@ledgerhq/live-e2e-shared/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
@@ -12,7 +12,7 @@ import type { Application } from "tests/page";
 import {
   addEmptyAccountCommand,
   liveDataCommand,
-} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 
 const nativeAccounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2559, B2CQA-2687" },
@@ -69,7 +69,7 @@ for (const receive of nativeAccounts) {
           "@NanoGen5",
           `@${receive.account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(receive.account === Account.SOL_1 ? ["@smoke"] : []),
+          ...(receive.account === Account.ETH_1 ? ["@smoke"] : []),
         ],
         annotation: {
           type: "TMS",

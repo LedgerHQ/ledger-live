@@ -1,6 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { createBridges, makeCliTools } from "@ledgerhq/coin-mina/bridge";
+import { createBridges } from "@ledgerhq/coin-mina/bridge";
 import minaResolver from "@ledgerhq/coin-mina/signer";
 import {
   Transaction,
@@ -30,6 +30,4 @@ const bridge: Bridge<Transaction, MinaAccount, TransactionStatus, MinaOperation,
 
 const resolver: Resolver = createResolver(createSigner, minaResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, resolver };
+export { bridge, resolver };

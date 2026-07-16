@@ -220,6 +220,14 @@ const getCustomDataFromAccountId = (accountId: string): string | undefined => {
   }
 };
 
+const getXpubOrAddressFromAccountId = (accountId: string): string | undefined => {
+  try {
+    return decodeAccountId(accountId).xpubOrAddress;
+  } catch {
+    return undefined;
+  }
+};
+
 export const makeSync =
   <
     T extends TransactionCommon = TransactionCommon,
@@ -247,7 +255,11 @@ export const makeSync =
           type: "js",
           version: "2",
           currencyId: initial.currency.id,
-          xpubOrAddress: initial.xpub || initial.freshAddress,
+          // Identity comes from the immutable account id, decoupled from the mutable `xpub` field
+          // (so healing xpub to the public key never re-keys the account). Only if the id is
+          // undecodable (malformed) do we fall back to the pre-existing recovery behaviour.
+          xpubOrAddress:
+            getXpubOrAddressFromAccountId(initial.id) ?? (initial.xpub || initial.freshAddress),
           derivationMode: initial.derivationMode,
           ...(customData && { customData }),
         });

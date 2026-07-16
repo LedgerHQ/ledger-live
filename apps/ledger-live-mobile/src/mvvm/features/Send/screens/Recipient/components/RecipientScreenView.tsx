@@ -1,23 +1,20 @@
-import { RecentAddress as RecentAddressType } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { SendFlowLayout } from "LLM/features/Send/components/SendFlowLayout";
 import { MemoControls } from "LLM/features/Send/components/Memo/MemoControls";
 import { useMemoViewModel } from "LLM/features/Send/components/Memo/hooks/useMemoViewModel";
 import { shouldShowMatchedAddress } from "@ledgerhq/live-common/flows/send/recipient/utils/shouldShowMatchedAddress";
 import { useSendFlowData } from "LLM/features/Send/context/SendFlowContext";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useRecipientScreenView } from "../hooks/useRecipientScreenView";
 import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import { LoadingState } from "./LoadingState";
-import { MyAccountsSection } from "./MyAccountsSection";
 import { PasteFromClipboard } from "./PasteFromClipboard";
-import { RecentAddressBottomSheet } from "./RecentAddressBottomSheet";
-import { RecentAddressesSection } from "./RecentAddressesSection";
 import { ValidationBanner } from "./ValidationBanner";
+import { useAnalytics } from "~/analytics";
+import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
 
 type RecipientScreenViewProps = Readonly<{
   account: AccountLike;
@@ -37,14 +34,11 @@ export const RecipientScreenView = ({
   onMemoProceed,
 }: RecipientScreenViewProps) => {
   const {
-    recentAddresses,
     isLoading,
     showInitialState,
     showMatchedAddress,
     result,
     searchValue,
-    showEmptyState,
-    showInitialEmptyState,
     showBridgeSenderError,
     bridgeSenderError,
     showSanctionedBanner,
@@ -54,10 +48,7 @@ export const RecipientScreenView = ({
     bridgeRecipientError,
     bridgeRecipientWarning,
     handleAddressSelect,
-    selectedRecentAddress,
-    setSelectedRecentAddress,
     isAddressComplete,
-    handleRemoveAddress,
     addressValidationErrorType,
     clipboardAddress,
     handlePasteFromClipboard,
@@ -69,12 +60,30 @@ export const RecipientScreenView = ({
     recipientSupportsDomain,
   });
 
-  const { uiConfig, recipientSearch } = useSendFlowData();
+  const { uiConfig } = useSendFlowData();
+  const { track } = useAnalytics();
+  const trackingProperties = useMemo(() => {
+    return {
+      ...getSendFlowTrackingProperties(account, parentAccount),
+      button: "my accounts",
+      page: "step recipient",
+    };
+  }, [account, parentAccount]);
+
+  const handleSkipMemo = useCallback(() => {
+    track("button_clicked", {
+      ...trackingProperties,
+      button: "skip",
+      page: "step memo",
+    });
+    onMemoProceed();
+  }, [track, onMemoProceed, trackingProperties]);
+
   const resolvedAddress = result?.resolvedAddress ?? searchValue;
   const showMemo = uiConfig.hasMemo && isAddressComplete;
   const memoVm = useMemoViewModel({
     address: showMemo ? resolvedAddress : "",
-    onSkip: onMemoProceed,
+    onSkip: handleSkipMemo,
   });
   const showMatched = shouldShowMatchedAddress({
     showMatchedAddress,
@@ -83,15 +92,12 @@ export const RecipientScreenView = ({
     hasMemoError: !!memoVm.memoError,
   });
 
-  const revealAddress = useCallback(
+  const handleMatchedAddress = useCallback(
     (address: string, ensName?: string) => {
-      if (uiConfig.hasMemo) {
-        recipientSearch.setValue(address);
-      } else {
-        onAddressSelected(address, ensName);
-      }
+      track("button_clicked", trackingProperties);
+      handleAddressSelect(address, ensName);
     },
-    [uiConfig.hasMemo, recipientSearch, onAddressSelected],
+    [track, trackingProperties, handleAddressSelect],
   );
 
   const shouldShowErrorBanner =
@@ -101,103 +107,72 @@ export const RecipientScreenView = ({
       showBridgeRecipientError ||
       showBridgeRecipientWarning);
 
-  const handleRecentAddressLongPress = useCallback(
-    (recentAddress: RecentAddressType) => {
-      setSelectedRecentAddress(recentAddress);
-    },
-    [setSelectedRecentAddress],
-  );
+  useEffect(() => {
+    if (showMemo) {
+      track("send_modal", { ...trackingProperties, name: "step memo" });
+    }
+  }, [showMemo, track, trackingProperties]);
 
-  const handleRemoveRecentAddress = useCallback(
-    (recentAddress: string) => {
-      handleRemoveAddress(recentAddress);
-      setSelectedRecentAddress(null);
-    },
-    [handleRemoveAddress, setSelectedRecentAddress],
-  );
+  useEffect(() => {
+    if (uiConfig.hasMemo && memoVm.hasFilledMemo && !memoVm.memoError) {
+      track("send_modal", {
+        ...trackingProperties,
+        button: "skip",
+        name: "step memo",
+      });
+    }
+  }, [track, trackingProperties, uiConfig.hasMemo, memoVm.hasFilledMemo, memoVm.memoError]);
 
   return (
-    <>
-      <SendFlowLayout>
-        <Box style={{ flex: 1, marginHorizontal: -8 }}>
-          {isLoading && <LoadingState />}
+    <SendFlowLayout>
+      <Box style={{ flex: 1, marginHorizontal: -8 }}>
+        {isLoading && <LoadingState />}
 
-          {showInitialState && (
-            <>
-              {clipboardAddress && (
-                <PasteFromClipboard address={clipboardAddress} onPaste={handlePasteFromClipboard} />
-              )}
-              <RecentAddressesSection
-                recentAddresses={recentAddresses}
-                onSelect={recent => revealAddress(recent.address, recent.ensName)}
-                onLongPress={handleRecentAddressLongPress}
-              />
-              <MyAccountsSection
-                currentAccountId={account.id}
-                currency={currency}
-                onSelect={selectedAccount => revealAddress(selectedAccount.freshAddress)}
-              />
-            </>
-          )}
+        {showInitialState && clipboardAddress && (
+          <PasteFromClipboard address={clipboardAddress} onPaste={handlePasteFromClipboard} />
+        )}
 
-          {showMemo && <MemoControls vm={memoVm} />}
+        {showMemo && <MemoControls vm={memoVm} />}
 
-          {showMatched && (
-            <AddressMatchedSection
-              searchResult={result}
-              searchValue={searchValue}
-              onSelect={handleAddressSelect}
-              isSanctioned={showSanctionedBanner}
-              isAddressComplete={isAddressComplete}
-              hasBridgeError={showBridgeRecipientError}
-            />
-          )}
-
-          {showAddressValidationError && (
-            <AddressValidationError error={addressValidationErrorType} />
-          )}
-
-          {(showEmptyState || showInitialEmptyState) && (
-            <AddressValidationError translationKey="send.newSendFlow.recentSendWillAppear" />
-          )}
-
-          {shouldShowErrorBanner && (
-            <Box lx={{ marginHorizontal: "s8", gap: "s16" }}>
-              {showBridgeSenderError && (
-                <ValidationBanner type="error" error={bridgeSenderError} variant="sender" />
-              )}
-              {showSanctionedBanner && <ValidationBanner type="sanctioned" />}
-              {showBridgeRecipientError && (
-                <ValidationBanner
-                  type="error"
-                  error={bridgeRecipientError}
-                  variant="recipient"
-                  excludeRecipientRequired
-                />
-              )}
-              {showBridgeRecipientWarning && (
-                <ValidationBanner
-                  type="warning"
-                  warning={bridgeRecipientWarning}
-                  variant="recipient"
-                />
-              )}
-            </Box>
-          )}
-        </Box>
-      </SendFlowLayout>
-      {selectedRecentAddress && (
-        <QueuedDrawerBottomSheet
-          snapPoints={["25%"]}
-          isRequestingToBeOpened={!!selectedRecentAddress}
-          onClose={() => setSelectedRecentAddress(null)}
-        >
-          <RecentAddressBottomSheet
-            selectedRecentAddress={selectedRecentAddress}
-            handleRemoveAddress={handleRemoveRecentAddress}
+        {showMatched && (
+          <AddressMatchedSection
+            searchResult={result}
+            searchValue={searchValue}
+            onSelect={handleMatchedAddress}
+            isSanctioned={showSanctionedBanner}
+            isAddressComplete={isAddressComplete}
+            hasBridgeError={showBridgeRecipientError}
           />
-        </QueuedDrawerBottomSheet>
-      )}
-    </>
+        )}
+
+        {showAddressValidationError && (
+          <AddressValidationError error={addressValidationErrorType} />
+        )}
+
+        {shouldShowErrorBanner && (
+          <Box lx={{ marginHorizontal: "s8", gap: "s16" }}>
+            {showBridgeSenderError && (
+              <ValidationBanner type="error" error={bridgeSenderError} variant="sender" />
+            )}
+            {showSanctionedBanner && <ValidationBanner type="sanctioned" />}
+            {showBridgeRecipientError && (
+              <ValidationBanner
+                type="error"
+                error={bridgeRecipientError}
+                variant="recipient"
+                excludeRecipientRequired
+              />
+            )}
+            {showBridgeRecipientWarning && (
+              <ValidationBanner
+                type="warning"
+                warning={bridgeRecipientWarning}
+                variant="recipient"
+              />
+            )}
+          </Box>
+        )}
+      </Box>
+    </SendFlowLayout>
   );
 };

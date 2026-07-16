@@ -2,8 +2,6 @@
 import { createBridges } from "@ledgerhq/coin-tron/bridge";
 import { TronCoinConfig } from "@ledgerhq/coin-tron/config";
 import tronResolver from "@ledgerhq/coin-tron/signer";
-import type { CliTools } from "@ledgerhq/coin-tron/test/cli";
-import makeCliTools from "@ledgerhq/coin-tron/test/cli";
 import type { Transaction, TronAccount, TronSigner } from "@ledgerhq/coin-tron/types/index";
 import Trx from "@ledgerhq/hw-app-trx";
 import Transport from "@ledgerhq/hw-transport";
@@ -31,6 +29,4 @@ const bridge: Bridge<Transaction, TronAccount> = createBridges(
 
 const resolver: Resolver = createResolver(createSigner, tronResolver);
 
-const cliTools: CliTools = makeCliTools();
-
-export { bridge, cliTools, resolver };
+export { bridge, resolver };

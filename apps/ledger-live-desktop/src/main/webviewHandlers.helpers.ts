@@ -70,8 +70,13 @@ export function mergeCspHeaders(
  * Scoped narrowly to the attack surface we care about (external-protocol
  * handoff from framed content and form submissions). We intentionally do
  * NOT set `default-src` / `script-src` here so we don't break Live App JS.
+ *
+ * `worker-src` is set explicitly so that web workers (e.g. Shopify Checkout
+ * UI Extensions running inside Worker sandboxes) are not blocked by the
+ * `child-src` fallback.
  */
 export const WEBVIEW_GUEST_CSP =
   "frame-src 'self' http: https: blob:; " +
   "child-src 'self' http: https: blob:; " +
+  "worker-src 'self' http: https: blob: data:; " +
   "form-action 'self' http: https:;";

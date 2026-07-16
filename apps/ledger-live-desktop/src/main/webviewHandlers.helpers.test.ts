@@ -157,9 +157,10 @@ describe("mergeCspHeaders", () => {
 });
 
 describe("WEBVIEW_GUEST_CSP", () => {
-  it("contains frame-src, child-src and form-action directives", () => {
+  it("contains frame-src, child-src, worker-src and form-action directives", () => {
     expect(WEBVIEW_GUEST_CSP).toContain("frame-src");
     expect(WEBVIEW_GUEST_CSP).toContain("child-src");
+    expect(WEBVIEW_GUEST_CSP).toContain("worker-src");
     expect(WEBVIEW_GUEST_CSP).toContain("form-action");
   });
 
@@ -174,7 +175,15 @@ describe("WEBVIEW_GUEST_CSP", () => {
     expect(WEBVIEW_GUEST_CSP).not.toContain("file:");
   });
 
-  it("does not allow data document sources", () => {
-    expect(WEBVIEW_GUEST_CSP).not.toContain("data:");
+  it("does not allow data document sources in frame-src, child-src or form-action", () => {
+    const directives = Object.fromEntries(
+      WEBVIEW_GUEST_CSP.split(";")
+        .map(d => d.trim())
+        .filter(Boolean)
+        .map(d => [d.split(" ")[0], d]),
+    );
+    expect(directives["frame-src"]).not.toContain("data:");
+    expect(directives["child-src"]).not.toContain("data:");
+    expect(directives["form-action"]).not.toContain("data:");
   });
 });

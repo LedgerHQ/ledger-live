@@ -53,6 +53,7 @@ const PortfolioStablecoinsSectionComponent: React.FC<PortfolioStablecoinsSection
           onItemPress={onItemPress}
           skeletonCount={EMPTY_STATE_MAX_STABLECOINS}
           errorMessage={t("portfolio.assetSection.connectionFailed")}
+          rowTestIDPrefix="PortfolioStablecoinsList"
         />
       </Box>
     </Box>

@@ -63,11 +63,6 @@ export default class DiscoverPage {
     await typeTextByElement(this.catalogSearchBar(), text);
   }
 
-  @Step("Go back from catalog search")
-  async goBackFromCatalogSearch() {
-    await tapByElement(this.catalogSearchArrowLeft());
-  }
-
   @Step("Expect catalog app card")
   async expectCatalogAppCard(appName: DiscoverAppName) {
     await detoxExpect(this.catalogAppCard(appName)).toBeVisible();

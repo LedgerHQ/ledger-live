@@ -1,14 +1,14 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import {
   Account,
   TokenAccount,
   getParentAccountName,
-} from "@ledgerhq/live-common/e2e/enum/Account";
-import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
-import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
+} from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
+import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import invariant from "invariant";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
@@ -16,9 +16,10 @@ import {
   liveDataWithParentAddressCommand,
   liveDataCommand,
   getAccountAddress,
-} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { FF_NEW_SEND_FLOW_DISABLED } from "tests/utils/featureFlagUtils";
 
 const subAccounts = [
   {
@@ -26,21 +27,54 @@ const subAccounts = [
     xrayTicket1: "B2CQA-2577, B2CQA-1079",
     xrayTicket2: "B2CQA-2583",
   },
-  { account: TokenAccount.XLM_USDC, xrayTicket1: "B2CQA-2579", xrayTicket2: "B2CQA-2585" },
-  { account: TokenAccount.ALGO_USDT_1, xrayTicket1: "B2CQA-2575", xrayTicket2: "B2CQA-2581" },
-  { account: TokenAccount.TRX_USDT, xrayTicket1: "B2CQA-2580", xrayTicket2: "B2CQA-2586" },
-  { account: TokenAccount.BSC_BUSD_1, xrayTicket1: "B2CQA-2576", xrayTicket2: "B2CQA-2582" },
-  { account: TokenAccount.POL_DAI_1, xrayTicket1: "B2CQA-2578", xrayTicket2: "B2CQA-2584" },
-  { account: TokenAccount.SUI_USDC_1, xrayTicket1: "B2CQA-3904", xrayTicket2: "B2CQA-3905" },
+  {
+    account: TokenAccount.XLM_USDC,
+    xrayTicket1: "B2CQA-2579",
+    xrayTicket2: "B2CQA-2585",
+  },
+  {
+    account: TokenAccount.ALGO_USDT_1,
+    xrayTicket1: "B2CQA-2575",
+    xrayTicket2: "B2CQA-2581",
+  },
+  {
+    account: TokenAccount.TRX_USDT,
+    xrayTicket1: "B2CQA-2580",
+    xrayTicket2: "B2CQA-2586",
+  },
+  {
+    account: TokenAccount.BSC_BUSD_1,
+    xrayTicket1: "B2CQA-2576",
+    xrayTicket2: "B2CQA-2582",
+  },
+  {
+    account: TokenAccount.POL_DAI_1,
+    xrayTicket1: "B2CQA-2578",
+    xrayTicket2: "B2CQA-2584",
+  },
+  {
+    account: TokenAccount.SUI_USDC_1,
+    xrayTicket1: "B2CQA-3904",
+    xrayTicket2: "B2CQA-3905",
+  },
 ];
 
 const subAccountReceive: Array<{
   account: TokenAccount;
   xrayTicket: string;
   shouldSelectTokenOnReceiveFlow?: boolean;
+  shouldSelectReceiveCryptoOption?: boolean;
 }> = [
-  { account: TokenAccount.ETH_USDT_1, xrayTicket: "B2CQA-2492" },
-  { account: TokenAccount.ETH_LIDO, xrayTicket: "B2CQA-2491" },
+  {
+    account: TokenAccount.ETH_USDT_1,
+    xrayTicket: "B2CQA-2492",
+    shouldSelectReceiveCryptoOption: true,
+  },
+  {
+    account: TokenAccount.ETH_LIDO,
+    xrayTicket: "B2CQA-2491",
+    shouldSelectReceiveCryptoOption: true,
+  },
   { account: TokenAccount.TRX_USDT, xrayTicket: "B2CQA-2496" },
   //TODO: re-enable tests when https://ledgerhq.atlassian.net/browse/LIVE-25852 is fixed
   // { account: TokenAccount.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
@@ -50,11 +84,14 @@ const subAccountReceive: Array<{
 ];
 
 for (const token of subAccounts) {
-  test.describe("Add subAccount without parent", () => {
+  test.describe("legacy send flow - Add subAccount without parent", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: token.account.parentAccount?.currency.speculosApp,
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     const family = getFamilyByCurrencyId(token.account.currency.id);
@@ -71,7 +108,7 @@ for (const token of subAccounts) {
           "@NanoGen5",
           `@${token.account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(token.account === TokenAccount.XLM_USDC ? ["@smoke"] : []),
+          ...(token.account === TokenAccount.ETH_USDT_1 ? ["@smoke"] : []),
         ],
         annotation: {
           type: "TMS",
@@ -110,11 +147,14 @@ for (const token of subAccounts) {
 }
 
 for (const token of subAccountReceive) {
-  test.describe("Add subAccount when parent exists", () => {
+  test.describe("legacy send flow - Add subAccount when parent exists", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "speculos-subAccount",
       speculosApp: token.account.currency.speculosApp,
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     const family = getFamilyByCurrencyId(token.account.currency.id);
@@ -145,6 +185,10 @@ for (const token of subAccountReceive) {
         await app.account.expectAccountVisibility(getParentAccountName(token.account));
 
         await app.account.clickAddToken();
+        if (token.shouldSelectReceiveCryptoOption) {
+          await app.receive.expectRecieveMenu();
+          await app.receive.clickReceive();
+        }
         if (token.shouldSelectTokenOnReceiveFlow) {
           // e.g. for Hedera. This works together with the fact a family activate or not the receiveTokensConfig
           await app.receive.selectToken(token.account);
@@ -163,10 +207,13 @@ for (const token of subAccountReceive) {
 }
 
 for (const token of subAccounts) {
-  test.describe("Token visible in parent account", () => {
+  test.describe("legacy send flow - Token visible in parent account", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "speculos-subAccount",
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     const family = getFamilyByCurrencyId(token.account.currency.id);
@@ -183,7 +230,7 @@ for (const token of subAccounts) {
           "@NanoGen5",
           `@${token.account.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
-          ...(token.account === TokenAccount.SUI_USDC_1 ? ["@smoke"] : []),
+          ...(token.account === TokenAccount.ETH_USDT_1 ? ["@smoke"] : []),
         ],
         annotation: {
           type: "TMS",
@@ -216,7 +263,7 @@ const transactionE2E = [
 ];
 
 for (const transaction of transactionE2E) {
-  test.describe("Send token - E2E", () => {
+  test.describe("legacy send flow - Send token - E2E", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -227,6 +274,9 @@ for (const transaction of transactionE2E) {
           transaction.tx.accountToCredit,
         ),
       ],
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     test(
@@ -313,16 +363,16 @@ const transactionsAddressInvalid = [
 ];
 
 for (const transaction of transactionsAddressInvalid) {
-  test.describe("Send token - invalid address input", () => {
+  test.describe("legacy send flow - Send token - invalid address input", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
         async (userdataPath?: string) => {
-          await liveDataCommand(transaction.transaction.accountToDebit, { useScheme: false })(
-            userdataPath,
-          );
+          await liveDataCommand(transaction.transaction.accountToDebit, {
+            useScheme: false,
+          })(userdataPath);
           if (transaction.recipient === undefined) {
             const receiveAddress = await getAccountAddress(transaction.transaction.accountToCredit);
             transaction.recipient = receiveAddress;
@@ -330,6 +380,9 @@ for (const transaction of transactionsAddressInvalid) {
           return transaction.recipient;
         },
       ],
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
@@ -382,12 +435,15 @@ const transactionsAddressValid = [
 ];
 
 for (const transaction of transactionsAddressValid) {
-  test.describe("Send token - valid address input", () => {
+  test.describe("legacy send flow - Send token - valid address input", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [liveDataCommand(transaction.transaction.accountToDebit)],
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     test(
@@ -400,7 +456,6 @@ for (const transaction of transactionsAddressValid) {
           "@Stax",
           "@Flex",
           "@NanoGen5",
-          "@smoke",
           "@solana",
           "@family-solana",
         ],
@@ -462,7 +517,7 @@ const tokenTransactionInvalid = [
 ];
 
 for (const transaction of tokenTransactionInvalid) {
-  test.describe("Send token (subAccount) - invalid amount input", () => {
+  test.describe("legacy send flow - Send token (subAccount) - invalid amount input", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -473,6 +528,9 @@ for (const transaction of tokenTransactionInvalid) {
           transaction.tx.accountToCredit,
         ),
       ],
+      featureFlags: {
+        ...FF_NEW_SEND_FLOW_DISABLED,
+      },
     });
 
     const family = getFamilyByCurrencyId(transaction.tx.accountToDebit.currency.id);
@@ -516,7 +574,7 @@ for (const transaction of tokenTransactionInvalid) {
   });
 }
 
-test.describe("Send token (subAccount) - valid address & amount input", () => {
+test.describe("legacy send flow - Send token (subAccount) - valid address & amount input", () => {
   const tokenTransactionValid = new Transaction(
     TokenAccount.ETH_USDT_1,
     TokenAccount.ETH_USDT_3,
@@ -533,6 +591,9 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
         tokenTransactionValid.accountToCredit,
       ),
     ],
+    featureFlags: {
+      ...FF_NEW_SEND_FLOW_DISABLED,
+    },
   });
 
   test(

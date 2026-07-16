@@ -1,5 +1,5 @@
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 setTeamOwner(Team.WALLET_XP);
@@ -40,7 +40,7 @@ describe("Wallet 4.0 - Operations History", () => {
   // For the moment, we are using the legacy account page to navigate to the transaction history
   it("should open Tx History from within an asset page", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
-    await app.portfolio.goToAccountsW40(CURRENCY.name);
+    await app.portfolio.goToAccounts(CURRENCY.name);
     await app.common.pressOnSeeAllOperationsButton();
     await app.operation.expectOperationsListVisible();
   });

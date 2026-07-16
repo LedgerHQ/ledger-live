@@ -3,9 +3,16 @@ import { fiat } from "../define";
 export const cny = fiat({
   type: "FiatCurrency",
   id: "cny",
-  name: "Chinese Yuan",
   ticker: "CNY",
+  name: "Chinese Yuan Renminbi",
   symbol: "¥",
-  units: [{ name: "Chinese Yuan", code: "CNY", magnitude: 2 }],
-  keywords: ["yuan", "renminbi", "cny"],
+  units: [
+    {
+      code: "¥",
+      name: "Chinese Yuan Renminbi",
+      magnitude: 2,
+      showAllDigits: true,
+      prefixCode: true,
+    },
+  ],
 });

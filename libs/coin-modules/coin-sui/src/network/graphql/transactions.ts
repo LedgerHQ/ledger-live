@@ -8,7 +8,7 @@
  */
 import type { SuiTransactionBlockResponse } from "@mysten/sui/jsonRpc";
 import { fromBase64 } from "@mysten/sui/utils";
-import type { TransactionByDigestResult, TransactionsByAffectedAddressResult } from "./queries";
+import type { TransactionsByAffectedAddressResult } from "./queries";
 import { extractFailureError } from "./utils";
 import { toShortStructTag } from "../../utils";
 
@@ -73,7 +73,7 @@ function protoArgToJsonRpc(raw: unknown): unknown {
  * proto `Input` → JSON-RPC `SuiCallArg`. Pure inputs are raw BCS bytes with no type info; the
  * JSON-RPC `valueType` is recovered by length (u64 = 8 bytes, address = 32 bytes) — the only two
  * pure shapes Ledger Live transactions produce and the only two downstream consumers
- * (`getOperationRecipients`, `extractStakingEventDetails`) match on. Other sizes stay inert
+ * (`getOperationRecipients`) match on. Other sizes stay inert
  * (`valueType: null`) rather than guessing.
  */
 function protoInputToJsonRpc(raw: unknown): unknown {
@@ -189,10 +189,23 @@ function protoGasPaymentToGasData(raw: unknown): ProtoRecord {
   };
 }
 
-/** GraphQL Transaction node — both single and paginated query share this shape. */
-export type GraphQLTransactionNode =
-  | NonNullable<TransactionByDigestResult["transaction"]>
-  | NonNullable<NonNullable<TransactionsByAffectedAddressResult["transactions"]>["nodes"]>[number];
+/** GraphQL Transaction node — emitted by `TRANSACTIONS_BY_AFFECTED_ADDRESS`. */
+export type GraphQLTransactionNode = NonNullable<
+  NonNullable<TransactionsByAffectedAddressResult["transactions"]>["nodes"]
+>[number];
+
+/**
+ * Project a GraphQL event node's `contents` to the JSON-RPC `{ type, parsedJson }` core. `repr`
+ * arrives long-padded; shortened so downstream `type ===` checks match the short struct tags.
+ */
+export function mapEventNodeContents(node: {
+  contents?: { type?: { repr?: string | null } | null; json?: unknown } | null;
+}): { type: string; parsedJson: unknown } {
+  return {
+    type: node.contents?.type?.repr ? toShortStructTag(node.contents.type.repr) : "",
+    parsedJson: node.contents?.json ?? {},
+  };
+}
 
 /**
  * Project a GraphQL `Transaction` into the JSON-RPC `SuiTransactionBlockResponse` shape that
@@ -255,8 +268,7 @@ export function graphqlTxToJsonRpcResponse(
       packageId: "0x0",
       transactionModule: "",
       sender: "",
-      type: node.contents?.type?.repr ? toShortStructTag(node.contents.type.repr) : "",
-      parsedJson: node.contents?.json ?? {},
+      ...mapEventNodeContents(node),
       bcs: "",
       bcsEncoding: "base64",
     })),

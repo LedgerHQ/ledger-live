@@ -6,7 +6,9 @@ import * as ReactQuery from "@tanstack/react-query";
 
 jest.mock("../hooks/useTrustchainSdk", () => ({
   useTrustchainSdk: () => ({
-    destroyTrustchain: (mockedSdk.destroyTrustchain = jest.fn()),
+    destroyApplication: (mockedSdk.destroyApplication = jest
+      .fn()
+      .mockResolvedValue({ trustchainDestroyed: true })),
     getMembers: (mockedSdk.getMembers = jest.fn()),
     initMemberCredentials: (mockedSdk.initMemberCredentials = jest.fn()),
   }),

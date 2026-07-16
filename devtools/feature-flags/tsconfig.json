@@ -3,6 +3,7 @@
     "compilerOptions": {
         "paths": {
             "jest/*": ["./jest/*"],
+            "jest/render.native": ["./jest/render/index.native.tsx"]
         },
         "lib": ["ES2024", "DOM"],
         "target": "ESNext",
@@ -14,5 +15,5 @@
         "types": ["jest"]
     },
     "include": ["src/**/*", "jest.setup.ts", "jest/**/*", "**/*.d.ts"],
-    "exclude": ["node_modules"]
+    "exclude": ["node_modules", "jest/setup.native.ts", "src/**/*.native.*"]
 }

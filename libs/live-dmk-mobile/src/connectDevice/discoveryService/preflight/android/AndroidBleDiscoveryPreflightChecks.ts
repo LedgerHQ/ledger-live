@@ -1,4 +1,4 @@
-import type { DiscoveryError } from "../../../types";
+import type { MobileDiscoveryError } from "../../../types";
 import { AndroidBluetoothPermissionPreflightCheck } from "./AndroidBluetoothPermissionPreflightCheck";
 import { AndroidBluetoothServicePreflightCheck } from "./AndroidBluetoothServicePreflightCheck";
 import { AndroidLocationPermissionPreflightCheck } from "./AndroidLocationPermissionPreflightCheck";
@@ -15,7 +15,7 @@ import {
   type DiscoveryPreflightResult,
 } from "../preflightResult";
 
-type PreflightRetry = () => Promise<true | DiscoveryError>;
+type PreflightRetry = () => Promise<true | MobileDiscoveryError>;
 
 type AndroidPreflightCheckRunner = {
   run(requirements: AndroidPreflightRequirements): Promise<DiscoveryPreflightResult>;

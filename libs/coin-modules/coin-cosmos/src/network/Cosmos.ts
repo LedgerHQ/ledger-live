@@ -417,21 +417,36 @@ export class CosmosAPI {
     try {
       let allTxs: CosmosTx[] = [];
       let paginationOffset = 0;
+      let page = 1;
       let maxTxs = 0;
 
-      do {
-        const { txs, total } = await this.fetchTransactions(
-          this.defaultEndpoint,
-          filterOn,
-          address,
-          {
-            "pagination.limit": paginationSize,
-            "pagination.offset": paginationOffset,
-            "pagination.reverse": true,
-          },
-        );
+      let cosmosSDKVersion = await this.cosmosSDKVersion;
+      const coerceResult = semver.coerce(cosmosSDKVersion);
+      if (coerceResult !== null) {
+        cosmosSDKVersion = coerceResult.version;
+      }
+      const useModernParams = semver.gte(cosmosSDKVersion, "0.50.0");
+      const queryParam = useModernParams ? "query" : "events";
 
-        paginationOffset += paginationSize;
+      do {
+        const params = new URLSearchParams({ [queryParam]: `${filterOn}='${address}'` });
+        if (useModernParams) {
+          params.set("page", String(page));
+          params.set("limit", String(paginationSize));
+          params.set("order_by", "ORDER_BY_DESC");
+        } else {
+          params.set("pagination.limit", String(paginationSize));
+          params.set("pagination.offset", String(paginationOffset));
+          params.set("pagination.reverse", "true");
+        }
+
+        const { txs, total } = await this.fetchTransactions(params);
+
+        if (useModernParams) {
+          page += 1;
+        } else {
+          paginationOffset += paginationSize;
+        }
         maxTxs = total;
         allTxs = allTxs.concat(txs);
       } while (allTxs.length < maxTxs);
@@ -447,43 +462,19 @@ export class CosmosAPI {
   /**
    * @sdk https://docs.cosmos.network/api#tag/Service/operation/GetTxsEvent
    * @warning query param { ..., events } (Deprecated: post v0.47.x use query instead, which should contain a valid events query)
+   * @warning query param { ..., pagination } (Deprecated: post v0.46.x use page and limit instead)
    * @warning returns { ..., pagination } (Deprecated: post v0.46.x use total instead)
    * @notice returns { ..., total } (Since: cosmos-sdk 0.46.x)
    * @notice query params { ..., query } (Since: cosmos-sdk 0.50)
-   * @notice query params { pagination: { ..., reverse } } (Since: cosmos-sdk 0.43)
+   * @notice query params { ..., page, limit, order_by } (Since: cosmos-sdk 0.47)
    */
-  private async fetchTransactions(
-    nodeUrl: string,
-    filterOn: "message.sender" | "transfer.recipient",
-    address: string,
-    options: {
-      "pagination.limit"?: number;
-      "pagination.offset"?: number;
-      "pagination.reverse"?: boolean;
-    },
-  ): Promise<{
+  private async fetchTransactions(params: URLSearchParams): Promise<{
     txs: CosmosTx[];
     total: number;
   }> {
-    let cosmosSDKVersion = await this.cosmosSDKVersion;
-    const coerceResult = semver.coerce(cosmosSDKVersion);
-    if (coerceResult !== null) {
-      cosmosSDKVersion = coerceResult.version;
-    }
-    let queryparam = "events";
-    if (semver.gte(cosmosSDKVersion, "0.50.0")) {
-      queryparam = "query";
-    }
-    let serializedOptions = "";
-    for (const key of Object.keys(options) as Array<keyof typeof options>) {
-      serializedOptions += key in options ? `&${key}=${options[key]}` : "";
-    }
     const { data } = await network<CosmosSDKTypes.GetTxsEvents>({
       method: "GET",
-      url:
-        `${nodeUrl}/cosmos/tx/${this.version}/txs?${queryparam}=` +
-        encodeURI(`${filterOn}='${address}'`) +
-        serializedOptions,
+      url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?${params.toString()}`,
     });
 
     return {

@@ -6,12 +6,10 @@ import {
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { fetchBalances, fetchEstimatedFees } from "../api";
+import { fetchBalances, fetchEstimatedFees, isFilEthAddress, validateAddress } from "../network";
 import { getAddress, getSubAccount } from "../common-logic";
 import { encodeTxnParams, generateTokenTxnParams } from "../erc20/tokenAccounts";
-import { isFilEthAddress, validateAddress } from "../network";
-import { BroadcastBlockIncl } from "../types";
-import { Transaction } from "../types";
+import { BroadcastBlockIncl, Transaction } from "../types";
 import { AccountType, Methods, calculateEstimatedFees } from "./utils";
 
 export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({

@@ -1,19 +1,15 @@
-import React, { useContext } from "react";
-import { Trans, useTranslation } from "react-i18next";
-import { AnimationContainer, AsideFooter, Bullet, Column, Title } from "../shared";
+import React from "react";
+import { Trans } from "react-i18next";
+import { Bullet, Column, Title } from "../shared";
 
 import { useTheme } from "styled-components";
 import NanoDeviceCancelIcon from "~/renderer/icons/NanoDeviceCancelIcon";
 import NanoDeviceCheckIcon from "~/renderer/icons/NanoDeviceCheckIcon";
 
 import { Box, Button, IconsLegacy, Link, Popin, Text } from "@ledgerhq/react-ui";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import { urls } from "~/config/urls";
-import Animation from "~/renderer/animations";
-import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { openURL } from "~/renderer/linking";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
-import { OnboardingContext } from "../../../index";
 
 export function RecoverHowTo() {
   const theme = useTheme();
@@ -87,36 +83,6 @@ export function RecoverHowTo() {
     </Column>
   );
 }
-
-const PinCodeHowToAnimation = () => {
-  const { deviceModelId } = useContext(OnboardingContext);
-
-  return (
-    <AnimationContainer>
-      <Animation
-        animation={getDeviceAnimation(
-          deviceModelId || DeviceModelId.nanoS,
-          "light",
-          "recoverWithProtect",
-        )}
-      />
-    </AnimationContainer>
-  );
-};
-
-RecoverHowTo.Illustration = <PinCodeHowToAnimation />;
-
-const Footer = (props: React.ComponentProps<typeof AsideFooter>) => {
-  const { t } = useTranslation();
-  return (
-    <AsideFooter
-      {...props}
-      text={t("onboarding.screens.tutorial.screens.pinCodeHowTo.help.descr")}
-    />
-  );
-};
-
-RecoverHowTo.Footer = Footer;
 
 RecoverHowTo.continueLabel = (
   <Trans i18nKey="onboarding.screens.tutorial.screens.pinCodeHowTo.buttons.next" />

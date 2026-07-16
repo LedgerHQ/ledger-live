@@ -5,7 +5,12 @@ import { track } from "~/analytics";
 import { setDismissedContentCard } from "~/actions/settings";
 import { trackingEnabledSelector } from "~/reducers/settings";
 import { localMobileCardsSelector, localWalletCardsSelector } from "~/reducers/dynamicContent";
-import { sanitizeExtras } from "~/dynamicContent/utils";
+import {
+  buildContentCardTrackingProperties,
+  ContentCardEvent,
+  finalizeContentCardEventProperties,
+  isCategoryContentCardExtras,
+} from "@ledgerhq/live-common/braze/contentCardExtras";
 
 const isLocalCard = (
   cardId: string,
@@ -21,7 +26,19 @@ export const useBrazeContentCard = (mobileCards: Braze.ContentCard[]) => {
     () => new Set(localWalletCards.map(c => c.id)),
     [localWalletCards],
   );
-  const mobileCardRef = useRef(mobileCards);
+  const cardIndex = useMemo(() => {
+    const byId = new Map<string, Braze.ContentCard>();
+    const categoryExtrasById = new Map<string, Record<string, string>>();
+    for (const card of mobileCards) {
+      byId.set(card.id, card);
+      if (isCategoryContentCardExtras(card.extras) && card.extras.id) {
+        categoryExtrasById.set(card.extras.id, card.extras);
+      }
+    }
+    return { byId, categoryExtrasById };
+  }, [mobileCards]);
+  const cardIndexRef = useRef(cardIndex);
+  cardIndexRef.current = cardIndex;
   const dispatch = useDispatch();
 
   const logDismissCard = useCallback(
@@ -49,22 +66,23 @@ export const useBrazeContentCard = (mobileCards: Braze.ContentCard[]) => {
 
   const logImpressionCard = useCallback(
     (cardId: string, displayedPosition?: number) => {
-      if (!isTrackedUser) return;
+      if (!isTrackedUser || isLocalCard(cardId, localMobileCards, localWalletCardIds)) return;
 
-      const card = mobileCardRef.current.find(card => card.id === cardId);
-
-      const isLocal = isLocalCard(cardId, localMobileCards, localWalletCardIds);
-
-      if (isLocal) return;
+      const card = cardIndexRef.current.byId.get(cardId);
+      if (!card || isCategoryContentCardExtras(card.extras)) return;
 
       Braze.logContentCardImpression(cardId);
 
-      if (!card) return;
-      track("contentcard_impression", {
-        ...sanitizeExtras(card.extras),
-        page: card.extras.location,
-        displayedPosition,
-      });
+      const categoryExtras = card.extras.categoryId
+        ? cardIndexRef.current.categoryExtrasById.get(card.extras.categoryId)
+        : undefined;
+      track(
+        ContentCardEvent.Impression,
+        finalizeContentCardEventProperties({
+          ...buildContentCardTrackingProperties({ cardExtras: card.extras, categoryExtras }),
+          displayedPosition,
+        }),
+      );
     },
     [isTrackedUser, localMobileCards, localWalletCardIds],
   );

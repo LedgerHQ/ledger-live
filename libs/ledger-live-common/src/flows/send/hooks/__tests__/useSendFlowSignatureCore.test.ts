@@ -8,6 +8,7 @@ import type { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq
 import type { Transaction, TransactionStatus } from "../../../../coin-modules/transaction-types";
 import { getMainAccount } from "../../../../account/index";
 import { sendFeatures } from "../../../../bridge/descriptor/send/features";
+import { saveRecentSendRecipient } from "../../utils";
 import {
   useSendFlowSignatureCore,
   type UseSendFlowSignatureCoreParams,
@@ -15,6 +16,10 @@ import {
 
 jest.mock("../../../../account/index", () => ({
   getMainAccount: jest.fn(),
+}));
+
+jest.mock("../../utils", () => ({
+  saveRecentSendRecipient: jest.fn(),
 }));
 
 jest.mock("../../../../bridge/descriptor/send/features", () => ({
@@ -117,6 +122,7 @@ const createParams = (overrides: ParamsOverrides = {}): UseSendFlowSignatureCore
 };
 
 const mockedGetMainAccount = jest.mocked(getMainAccount);
+const mockedSaveRecentSendRecipient = jest.mocked(saveRecentSendRecipient);
 const mockedIsUserRefusedTransactionError = jest.mocked(sendFeatures.isUserRefusedTransactionError);
 
 describe("useSendFlowSignatureCore", () => {
@@ -159,7 +165,8 @@ describe("useSendFlowSignatureCore", () => {
   it("should register the pending operation when finishing with success", () => {
     const account = createAccount();
     const operation = createOperation();
-    const params = createParams({ account });
+    const transaction = createTransaction();
+    const params = createParams({ account, transaction });
 
     const { result } = renderHook(() => useSendFlowSignatureCore(params));
 
@@ -169,9 +176,35 @@ describe("useSendFlowSignatureCore", () => {
 
     expect(mockedGetMainAccount).toHaveBeenCalledWith(account, undefined);
     expect(params.registerPendingOperation).toHaveBeenCalledWith(account, operation);
+    expect(mockedSaveRecentSendRecipient).toHaveBeenCalledWith(
+      account,
+      params.parentAccount,
+      transaction,
+      undefined,
+    );
     expect(params.operation.onOperationBroadcasted).toHaveBeenCalledWith(operation);
     expect(params.statusActions.setSuccess).toHaveBeenCalledTimes(1);
     expect(params.onFinish).toHaveBeenCalledTimes(1);
+  });
+
+  it("should pass the flow ENS name when saving the recent recipient", () => {
+    const account = createAccount();
+    const operation = createOperation();
+    const transaction = createTransaction();
+    const params = createParams({ account, transaction, recipientEnsName: "vitalik.eth" });
+
+    const { result } = renderHook(() => useSendFlowSignatureCore(params));
+
+    act(() => {
+      result.current.finishWithSuccess(operation);
+    });
+
+    expect(mockedSaveRecentSendRecipient).toHaveBeenCalledWith(
+      account,
+      params.parentAccount,
+      transaction,
+      "vitalik.eth",
+    );
   });
 
   it("should reset status when finishing with a user-refused error", () => {

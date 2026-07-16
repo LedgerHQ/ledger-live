@@ -289,7 +289,7 @@ describe("Aptos sync logic", () => {
             type: "entry_function_payload",
             function: "0x1::coin::transfer",
             type_arguments: [],
-            arguments: ["0x11", 100],
+            arguments: ["0x99", 100],
           } as EntryFunctionPayloadResponse,
           events: [],
           changes: [],

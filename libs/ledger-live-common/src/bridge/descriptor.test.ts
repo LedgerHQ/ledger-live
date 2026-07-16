@@ -5,6 +5,7 @@ import { getDescriptor, getSendDescriptor } from "./descriptor/registry";
 import { resolveFeeUnitLabel, sendFeatures } from "./descriptor/send/features";
 import { applyMemoToTransaction } from "./descriptor/send/memo";
 import * as configModule from "../config/index";
+import { genAccount } from "../mock/account";
 
 jest.mock("../config/index");
 
@@ -71,7 +72,7 @@ describe("getDescriptor", () => {
       },
     });
     expect(typeof descriptor?.send.fees.presets?.getOptions).toBe("function");
-    expect(typeof descriptor?.send.amount?.getPlugins).toBe("function");
+    expect(descriptor?.send.amount?.effects?.map(e => e.id)).toEqual(["syncGasOptions"]);
   });
 
   it("should return descriptor for solana", () => {
@@ -206,6 +207,7 @@ describe("sendFeatures", () => {
 
   it.each([
     ["solana", true],
+    ["algorand", false],
     ["bitcoin", false],
   ])("should check memo support for %s", (currencyId, expected) => {
     const currency = getCryptoCurrencyById(currencyId);
@@ -412,14 +414,99 @@ describe("sendFeatures", () => {
     expect(sendFeatures.canEstimateFeePresetsWithZeroAmount(ethereum, {})).toBe(true);
   });
 
-  it("should return empty plugins when not specified", () => {
-    const bitcoin = getCryptoCurrencyById("bitcoin");
-    expect(sendFeatures.getAmountPlugins(bitcoin)).toEqual([]);
+  it("should expose the fee asset selection config for celo on the custom fees step", () => {
+    const celo = getCryptoCurrencyById("celo");
+    expect(sendFeatures.hasCustomAssets(celo)).toBe(true);
+
+    const config = sendFeatures.getCustomAssetsConfig(celo);
+    expect(typeof config?.getOptions).toBe("function");
+    expect(typeof config?.getSelectedOptionId).toBe("function");
+    expect(typeof config?.buildPatch).toBe("function");
+
+    // Native CELO is always offered as the first fee asset option.
+    const options = config?.getOptions({
+      mainAccount: genAccount("celo-fee-assets", { currency: celo }),
+      transaction: {},
+    });
+    expect(options?.map(option => option.id)).toEqual(["celo"]);
   });
 
-  it("should expose amount plugins for evm", () => {
+  it("should keep the selected celo fee asset option while token accounts hydrate", () => {
+    const celo = getCryptoCurrencyById("celo");
+    const config = sendFeatures.getCustomAssetsConfig(celo);
+    if (!config) throw new Error("Expected Celo fee asset config");
+
+    const options = config.getOptions({
+      mainAccount: {
+        ...genAccount("celo-fee-assets-hydrating", { currency: celo }),
+        subAccounts: undefined,
+      },
+      transaction: {
+        feeCurrencyAccountId: "celo-token-account-id",
+        feeCurrencyUnwrapped: "0xcebA9300f2b948710d2653dD7B07f33A8B32118C",
+      },
+    });
+
+    expect(options.map(option => [option.id, option.ticker])).toEqual([
+      ["celo", "CELO"],
+      ["celo-token-account-id", "USDC"],
+    ]);
+  });
+
+  it("should expose token-decimal fee value transforms for celo fee assets", () => {
+    const celo = getCryptoCurrencyById("celo");
+    const config = sendFeatures.getCustomAssetsConfig(celo);
+    if (!config) throw new Error("Expected Celo fee asset config");
+
+    const options = config.getOptions({
+      mainAccount: {
+        ...genAccount("celo-fee-assets-with-usdt", { currency: celo }),
+        subAccounts: [
+          {
+            type: "TokenAccount",
+            id: "celo-usdt-token-account-id",
+            balance: new BigNumber(1),
+            spendableBalance: new BigNumber(1),
+            token: {
+              id: "celo/erc20/usdt",
+              type: "TokenCurrency",
+              name: "Tether USD",
+              ticker: "USDT",
+              contractAddress: "0x48065fbbe25f71c9282ddf5e1cd6d6a887483d5e",
+              units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
+            },
+          } as never,
+        ],
+      },
+      transaction: {},
+    });
+
+    const usdtOption = options.find(option => option.ticker === "USDT");
+    const transform = usdtOption?.customFeeInputValueTransform;
+
+    expect(usdtOption?.unitLabel).toBeUndefined();
+    expect(transform?.fromCanonicalValue("20160084")).toBe("0.020160084");
+    expect(transform?.toCanonicalValue("0.020160084")).toBe("20160084");
+    expect(transform?.fromCanonicalValue("Infinity")).toBe("Infinity");
+    expect(transform?.toCanonicalValue("Infinity")).toBe("Infinity");
+  });
+
+  it("should not derive Celo suggested fees from an already-custom fee value", () => {
+    const celo = getCryptoCurrencyById("celo");
+    const config = sendFeatures.getCustomFeeConfig(celo);
+    const feesInput = config?.inputs.find(input => input.key === "fees");
+
+    expect(
+      feesInput?.suggestedRange?.getRange({
+        feesStrategy: "custom",
+        fees: new BigNumber("2006769410934648000"),
+      }),
+    ).toBeNull();
+  });
+
+  it("should expose the gas options sync effect for evm", () => {
     const ethereum = getCryptoCurrencyById("ethereum");
-    expect(sendFeatures.getAmountPlugins(ethereum)).toEqual(["evmGasOptionsSync"]);
+    expect(sendFeatures.getAmountEffects(ethereum).map(e => e.id)).toEqual(["syncGasOptions"]);
   });
 
   it("should get memo type", () => {
@@ -452,7 +539,7 @@ describe("sendFeatures", () => {
 
   describe("applyMemoToTransaction", () => {
     describe("fallback behavior", () => {
-      it.each(["algorand", "cosmos", "hedera", "stacks", "internet_computer", "mina"])(
+      it.each(["cosmos", "hedera", "stacks", "internet_computer", "mina"])(
         "should use default memo field for %s",
         family => {
           const result = applyMemoToTransaction(family, "test memo");

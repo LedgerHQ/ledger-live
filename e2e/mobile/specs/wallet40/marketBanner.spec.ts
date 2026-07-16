@@ -1,5 +1,5 @@
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 const testConfig = {
@@ -16,7 +16,7 @@ const testConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
-const TICKER = "BTC";
+const CURRENCY = Currency.BTC;
 
 setTeamOwner(Team.WALLET_XP);
 describe("Wallet 4.0 - Market Banner", () => {
@@ -46,20 +46,20 @@ describe("Wallet 4.0 - Market Banner", () => {
 
     await app.portfolio.expectMarketBannerVisible();
     await app.portfolio.tapMarketBannerTitle();
-    await app.market.expectMarketRowTitle(TICKER);
+    await app.market.expectMarketRowTitle(CURRENCY);
     await app.market.goBackToPortfolio();
 
     await app.portfolio.expectMarketBannerVisible();
     await app.portfolio.swipeMarketBannerToViewAll();
     await app.portfolio.tapMarketBannerViewAll();
-    await app.market.expectMarketRowTitle(TICKER);
+    await app.market.expectMarketRowTitle(CURRENCY);
 
     await app.market.expectFiltersVisible();
 
-    await app.market.openAssetPage(TICKER);
+    await app.market.openAssetPage(CURRENCY);
     await app.market.starFavoriteCoin();
     await app.market.backToAssetList();
     await app.market.filterStaredAsset();
-    await app.market.expectMarketRowTitle(TICKER);
+    await app.market.expectMarketRowTitle(CURRENCY);
   });
 });

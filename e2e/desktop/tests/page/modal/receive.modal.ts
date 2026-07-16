@@ -1,8 +1,8 @@
 import { expect } from "@playwright/test";
 import { Modal } from "tests/component/modal.component";
 import { step } from "tests/misc/reporters/step";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { ReceiveFundsOptionsType } from "@ledgerhq/live-common/e2e/enum/ReceiveFundsOptions";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { ReceiveFundsOptionsType } from "@ledgerhq/live-e2e-shared/enum/ReceiveFundsOptions";
 
 export class ReceiveModal extends Modal {
   private verifyAddressOnDeviceLabel = this.page.locator(

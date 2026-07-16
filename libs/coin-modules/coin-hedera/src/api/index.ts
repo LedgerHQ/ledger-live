@@ -125,7 +125,7 @@ export function createApi(
         ...(typeof cursor === "string" && { cursor }),
         ...(typeof limit === "number" && { limit }),
         ...(typeof order === "string" && { order }),
-        erc20Tokens: erc20TokenBalances,
+        tokenEvmAddresses: erc20TokenBalances.map(t => t.contractAddress.toLowerCase()),
         fetchAllPages: false,
         skipFeesForTokenOperations: true,
         useEncodedHash: false,

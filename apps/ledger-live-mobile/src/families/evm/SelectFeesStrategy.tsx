@@ -1,8 +1,8 @@
-import { isStrategyDisabled } from "@ledgerhq/coin-evm/editTransaction/index";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/utils";
-import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
+import { getTypedTransaction } from "@ledgerhq/live-common/families/evm/transaction";
 import type { FeeData, GasOptions, Strategy, Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Account, AccountLike, TransactionStatusCommon } from "@ledgerhq/types-live";
 import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
@@ -12,7 +12,6 @@ import { useTranslation } from "~/context/Locale";
 import {
   FlatList,
   ListRenderItemInfo,
-  SafeAreaView,
   StyleSheet,
   TouchableOpacity,
   TouchableOpacityProps,
@@ -79,6 +78,7 @@ export default function SelectFeesStrategy({
   const { t } = useTranslation();
   const { colors } = useTheme();
   const mainAccount = getMainAccount(account, parentAccount);
+  const bridge = useAccountBridge(account, parentAccount);
   const currency = getFeesCurrency(mainAccount);
   const unit = getFeesUnit(currency);
   const { feesStrategy } = transaction;
@@ -143,7 +143,7 @@ export default function SelectFeesStrategy({
     const isDisabled =
       disabledStrategies?.includes(strategy) ||
       (!!transactionToUpdate &&
-        isStrategyDisabled({
+        bridge.isStrategyDisabled({
           transaction: transactionToUpdate,
           feeData,
         }));
@@ -246,14 +246,14 @@ export default function SelectFeesStrategy({
             </Alert>
           </TouchableOpacity>
         )}
-        <SafeAreaView style={styles.strategiesContainer}>
+        <View style={styles.strategiesContainer}>
           <FlatList
             data={customFees ? strategiesWithCustom : strategies}
             renderItem={renderItem}
             keyExtractor={s => s}
             extraData={feesStrategy}
           />
-        </SafeAreaView>
+        </View>
         <TouchableOpacity
           style={[
             styles.customizeFeesButton,

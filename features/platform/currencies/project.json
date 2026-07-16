@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-currencies",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

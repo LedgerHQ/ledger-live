@@ -1,9 +1,13 @@
 {
   "name": "@features/flow-market-banner",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
   "main": "src/index.ts",
   "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "scripts": {
     "format": "oxfmt src",
@@ -11,15 +15,13 @@
     "lint": "oxlint src && pnpm lint:tailwind",
     "lint:ci": "oxlint src --quiet && pnpm lint:tailwind",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet && pnpm lint:tailwind",
-    "lint:tailwind": "eslint -c .eslintrc.tailwind.js --ext .ts,.tsx 'src/**/*.web.{ts,tsx}'",
+    "lint:tailwind": "eslint --no-eslintrc -c .eslintrc.tailwind.js --ext .ts,.tsx 'src/**/*.web.{ts,tsx}'",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W features/flow/market-banner"
   },
-  "dependencies": {
-    "clsx": "catalog:",
-    "tailwind-merge": "catalog:"
-  },
+  "dependencies": {},
   "devDependencies": {
     "tailwindcss": "catalog:",
     "oxfmt": "catalog:",

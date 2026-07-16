@@ -16,10 +16,9 @@ import { Flex, Text, Alert } from "@ledgerhq/native-ui";
 import AlertComponent from "~/components/Alert";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTheme } from "styled-components/native";
 import {
-  SafeAreaView,
   Keyboard,
   KeyboardAvoidingViewProps,
   Platform,
@@ -28,6 +27,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Trans, useTranslation } from "~/context/Locale";
 import Button from "~/components/Button";
 import CurrencyInput from "~/components/CurrencyInput";
@@ -86,10 +86,22 @@ export default function SelectAmount({ navigation, route }: Props) {
   const canContinue =
     !bridgePending && !bridgeError && !hasErrors && amount.gt(0) && maxSpendable.gte(amount);
   const showLockUpWarning = hasUnbondingPeriod(account.currency.id);
-  const showSeiAssociationWarning = useMemo(
-    () => isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations),
-    [account],
-  );
+  const [showSeiAssociationWarning, setShowSeiAssociationWarning] = useState(false);
+  const [checkingSeiAssociation, setCheckingSeiAssociation] = useState(true);
+  useEffect(() => {
+    let cancelled = false;
+    setCheckingSeiAssociation(true);
+    isSeiAccountUnassociated(account.currency.id, account.freshAddress)
+      .then(unassociated => {
+        if (!cancelled) setShowSeiAssociationWarning(unassociated);
+      })
+      .finally(() => {
+        if (!cancelled) setCheckingSeiAssociation(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [account.currency.id, account.freshAddress]);
 
   const updateAmount = useCallback(
     (amount: BigNumber, useAllAmount = false) => {
@@ -123,7 +135,10 @@ export default function SelectAmount({ navigation, route }: Props) {
   }
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
+    <SafeAreaView
+      edges={["left", "right", "bottom"]}
+      style={[styles.root, { backgroundColor: colors.background.main }]}
+    >
       <KeyboardView behavior={behaviorParam}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.container}>
@@ -205,7 +220,7 @@ export default function SelectAmount({ navigation, route }: Props) {
                 </View>
               ) : null}
               <Button
-                disabled={!canContinue}
+                disabled={!canContinue || showSeiAssociationWarning || checkingSeiAssociation}
                 pending={bridgePending}
                 event="Evm DelegationAmountContinueBtn"
                 onPress={onContinue}

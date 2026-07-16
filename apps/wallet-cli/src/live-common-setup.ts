@@ -7,6 +7,12 @@ import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setEnv } from "@ledgerhq/live-env";
 import { registerWalletCliDmkTransport } from "./device/register-dmk-transport";
+import { setCryptoCurrenciesStore, setFiatCurrenciesStore } from "@ledgerhq/cryptoassets";
+import {
+  CRYPTO_CURRENCIES_REGISTRY,
+  CRYPTO_CURRENCY_ALIASES,
+} from "@domain/entity-currency-crypto";
+import { FIAT_CURRENCIES_REGISTRY } from "@domain/entity-currency-fiat";
 import pkg from "../package.json" with { type: "json" };
 import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
@@ -47,9 +53,10 @@ const walletCliLoaders: CoinModuleLoader[] = [
     family: "evm",
     supportedCoins: ["ethereum"],
     loadSetup: () => import("@ledgerhq/live-common/families/evm/setup"),
-    loadTransaction: () => import("@ledgerhq/coin-evm/transaction").then(m => m.default),
+    loadTransaction: () =>
+      import("@ledgerhq/live-common/families/evm/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
-      import("@ledgerhq/coin-evm/deviceTransactionConfig").then(m => m.default),
+      import("@ledgerhq/live-common/families/evm/deviceTransactionConfig").then(m => m.default),
     loadWalletApiAdapter: () =>
       import("@ledgerhq/live-common/families/evm/walletApiAdapter").then(m => m.default),
     loadPlatformAdapter: () =>
@@ -96,6 +103,9 @@ export const WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS: readonly CryptoCurrencyId
   "solana",
 ];
 
+// The domain registries are the runtime source of truth for currency data.
+setCryptoCurrenciesStore(Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES);
+setFiatCurrenciesStore(Object.values(FIAT_CURRENCIES_REGISTRY));
 setWalletAPIVersion(WALLET_API_VERSION);
 registerCoinModules(walletCliLoaders);
 LiveConfig.setConfig(walletCliConfig);

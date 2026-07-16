@@ -61,6 +61,7 @@ import {
   useFetchCurrencyFrom,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
+import { useTrackFundsReceived } from "LLM/features/Analytics/hooks/useTrackFundsReceived";
 import { updateIdentify } from "./analytics";
 import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
 import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
@@ -225,6 +226,7 @@ function App() {
   const checkAccountsWithFunds = useCheckAccountWithFunds();
 
   useAccountsWithFundsListener(accounts, updateIdentify, checkAccountsWithFunds);
+  useTrackFundsReceived();
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useAutoDismissPostOnboardingEntryPoint();

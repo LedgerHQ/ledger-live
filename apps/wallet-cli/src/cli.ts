@@ -9,7 +9,8 @@ import { emitTestingBuildBannerIfNeeded } from "./shared/testing-build-banner";
 // This side-effect import registers commands in the standalone binary.
 import "../.bunli/commands.gen";
 import bunliConfig from "../bunli.config";
-import { getCliProcessExitCode } from "./cli-process-exit-error";
+import { disposeAnalytics, startAnalytics } from "./analytics/segment";
+import { withCommandLifecycleAnalytics } from "./analytics/lifecycle-analytics";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
 import AccountGroup from "./commands/account/index";
 import AssetsGroup from "./commands/assets/index";
@@ -51,15 +52,12 @@ function normalizeNegatedFlags(argv: string[]): string[] {
 }
 
 if (import.meta.main) {
-  let exitCode = 0;
+  const argv = normalizeNegatedFlags(process.argv.slice(2));
   try {
-    exitCode = await runMain();
-  } catch (e) {
-    const code = getCliProcessExitCode(e);
-    if (code === null) throw e;
-    exitCode = code;
+    startAnalytics();
+    process.exitCode = await withCommandLifecycleAnalytics(argv, () => runMain(argv));
   } finally {
     await disposeWalletCliDmkTransportFully();
+    await disposeAnalytics();
   }
-  process.exitCode = exitCode;
 }

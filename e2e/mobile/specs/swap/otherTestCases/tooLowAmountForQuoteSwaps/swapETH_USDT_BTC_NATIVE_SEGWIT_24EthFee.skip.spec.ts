@@ -1,4 +1,4 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runTooLowAmountForQuoteSwapsTest } from "../swap.other";
 
 // Enable test when "Sponsored" program is over
@@ -6,7 +6,7 @@ import { runTooLowAmountForQuoteSwapsTest } from "../swap.other";
 const transactionE2E = {
   swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "USE_MIN_AMOUNT"),
   tmsLinks: ["B2CQA-3241"],
-  errorMessage: new RegExp(/\d+(\.\d{1,10})? ETH needed for network fees\.[\s\S]*Learn More/),
+  errorMessage: new RegExp(/\d+(\.\d{1,10})? ETH needed for network fees\./),
   ctaBanner: true,
   quotesVisible: true,
   tags: [

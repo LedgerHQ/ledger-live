@@ -3,14 +3,10 @@ import { useTranslation } from "react-i18next";
 import { Link, Flex, Text } from "@ledgerhq/react-ui";
 import ExitIcon from "~/renderer/icons/ExitIcon";
 import { track } from "~/renderer/analytics/segment";
-import { getDeviceModel } from "@ledgerhq/devices";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled, { useTheme } from "styled-components";
-import { useFeature } from "@features/platform-feature-flags";
 
 export type Props = {
   onClose: () => void;
-  device: Device | null;
   displayTitle: boolean | null;
   companionStep: "first-step" | "second-step";
 };
@@ -20,13 +16,8 @@ const AnimatedText = styled.div<{ visible?: boolean | null }>`
   transition: opacity 0.6s linear;
 `;
 
-const Header = ({ onClose, device, displayTitle, companionStep }: Props) => {
+const Header = ({ onClose, displayTitle, companionStep }: Props) => {
   const { t } = useTranslation();
-  const isSyncIncr1Enabled = useFeature("lldSyncOnboardingIncr1")?.enabled || false;
-  const productName = device
-    ? getDeviceModel(device.modelId).productName || device.modelId
-    : "Ledger Device";
-  const deviceName = device?.deviceName || productName;
   const { theme } = useTheme();
 
   const palette = theme;
@@ -53,9 +44,7 @@ const Header = ({ onClose, device, displayTitle, companionStep }: Props) => {
       <Flex my={10} ml={120}>
         <AnimatedText visible={displayTitle}>
           <Text variant="h3Inter" fontSize="8" fontWeight="semiBold">
-            {isSyncIncr1Enabled
-              ? t(`syncOnboarding.manual.${title}`)
-              : t("syncOnboarding.manual.title", { deviceName })}
+            {t(`syncOnboarding.manual.${title}`)}
           </Text>
         </AnimatedText>
       </Flex>

@@ -31,6 +31,7 @@ export default function ValidationError({ navigation, route }: Props) {
   const error = route.params.error;
   return (
     <SafeAreaView
+      isFlex
       style={[
         styles.root,
         {

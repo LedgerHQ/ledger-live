@@ -64,7 +64,7 @@ pnpm typecheck     # tsc --noEmit
 Mock factory available in `src/schema.mock.ts`:
 
 ```ts
-import { mockTokenCurrency } from "@domain/entity-currency-token/src/schema.mock";
+import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 
 const token = mockTokenCurrency({ delisted: true });
 ```

@@ -65,6 +65,26 @@ Object.defineProperties(global, {
   clearInterval: { value: timer => clearInterval(unwrapTimer(timer)) },
 });
 
+// React DOM's scheduler otherwise opens a MessagePort in jsdom-focused tests.
+Object.defineProperties(global, {
+  setImmediate: {
+    value:
+      typeof global.setImmediate === "function"
+        ? global.setImmediate
+        : (callback, ...args) => global.setTimeout(() => callback(...args), 0),
+    writable: true,
+    configurable: true,
+  },
+  clearImmediate: {
+    value:
+      typeof global.clearImmediate === "function"
+        ? global.clearImmediate
+        : timer => global.clearTimeout(timer),
+    writable: true,
+    configurable: true,
+  },
+});
+
 // Polyfill for 'self' (needed for tronweb in Node.js environment)
 if (typeof global.self === "undefined") {
   global.self = global;

@@ -109,7 +109,7 @@ export const serializeTransferWithMemo = (tx: Transaction): Buffer => {
 /**
  * Serializes credential deployment values from CredentialDeploymentTransaction.
  *
- * Extracts and serializes the core credential data from hw-app format where:
+ * Extracts and serializes the core credential data from the device format where:
  * - all hex fields (credId, verifyKey, etc.) are strings
  * - numeric fields are primitive types (number/bigint)
  *
@@ -117,7 +117,7 @@ export const serializeTransferWithMemo = (tx: Transaction): Buffer => {
  * in serializeCredentialDeployment() via serializeIdOwnershipProofs().
  *
  * @private
- * @param payload The credential deployment transaction in hw-app format
+ * @param payload The credential deployment transaction in device format
  * @returns Serialized credential data ready for chunking
  */
 export function serializeCredentialDeploymentValues(
@@ -510,6 +510,3 @@ export function serializeTransaction(transaction: Transaction): Buffer {
       throw new Error(`Unsupported transaction type for serialization: ${transaction.type}`);
   }
 }
-
-// Re-export chunkBuffer for convenience (used in hw-app-concordium)
-export { chunkBuffer } from "./utils";

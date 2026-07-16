@@ -1,10 +1,10 @@
 import { test } from "tests/fixtures/common";
 import { expect } from "@playwright/test";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { LWD_WALLET_40_Q2_FF_ENABLED_NO_ANALYTICS_CONSENT } from "tests/utils/featureFlagUtils";
+import { FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT } from "tests/utils/featureFlagUtils";
 
 /**
  * Suite: Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail
@@ -23,7 +23,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "portfolioWithManyStablecoins",
-      featureFlags: LWD_WALLET_40_Q2_FF_ENABLED_NO_ANALYTICS_CONSENT,
+      featureFlags: FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
     });
 
     test(
@@ -39,10 +39,10 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.assets.waitForAssetsToLoad();
-        await app.assets.expectSingleAggregatedRow("stablecoins", "USD Coin");
+        await app.portfolio.assetsView.waitForAssetsToLoad();
+        await app.portfolio.assetsView.expectSingleAggregatedRow("stablecoins", "USD Coin");
 
-        await app.assets.clickAssetInStablecoinsSection("USD Coin");
+        await app.portfolio.assetsView.clickAggregatedAssetInSection("stablecoins", "USD Coin");
         await expect(app.layout.getPage()).toHaveURL(/\/asset\//);
         await app.assetDetail.expectLoaded();
         await app.assetDetail.expectAddressListVisible();
@@ -50,7 +50,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
         await app.assetDetail.expectAddressRowsHaveBalance();
 
         await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.assets.waitForAssetsToLoad();
+        await app.portfolio.assetsView.waitForAssetsToLoad();
       },
     );
   });
@@ -59,7 +59,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "1AccountBTC1AccountETH",
-      featureFlags: LWD_WALLET_40_Q2_FF_ENABLED_NO_ANALYTICS_CONSENT,
+      featureFlags: FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
     });
 
     test(
@@ -75,8 +75,8 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.assets.waitForAssetsToLoad();
-        await app.assets.clickAssetInCryptosSection(Currency.BTC.name);
+        await app.portfolio.assetsView.waitForAssetsToLoad();
+        await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.BTC);
         await expect(app.layout.getPage()).toHaveURL(/\/asset\//);
         await app.assetDetail.expectLoaded();
 
@@ -96,7 +96,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
         await app.assetDetail.closePnlCardDetail();
 
         await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.assets.waitForAssetsToLoad();
+        await app.portfolio.assetsView.waitForAssetsToLoad();
       },
     );
   });
@@ -105,7 +105,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "1AccountBTC1AccountETH",
-      featureFlags: LWD_WALLET_40_Q2_FF_ENABLED_NO_ANALYTICS_CONSENT,
+      featureFlags: FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
     });
 
     test(
@@ -123,14 +123,14 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
         const ticker = Currency.BTC.ticker;
 
         await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.assets.waitForAssetsToLoad();
-        await app.assets.clickAssetInCryptosSection(Currency.BTC.name);
+        await app.portfolio.assetsView.waitForAssetsToLoad();
+        await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.BTC);
         await app.assetDetail.expectLoaded();
         await app.assetDetail.addToFavorites();
         await app.assetDetail.expectFavorited();
 
         await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.assets.waitForAssetsToLoad();
+        await app.portfolio.assetsView.waitForAssetsToLoad();
         await app.marketBanner.clickExploreMarketHeader();
         await app.market.validateMarketList();
         await app.market.selectStarredCategory();
@@ -144,7 +144,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
         await app.assetDetail.removeFromFavorites();
         await app.assetDetail.expectNotFavorited();
         await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.assets.waitForAssetsToLoad();
+        await app.portfolio.assetsView.waitForAssetsToLoad();
         await app.marketBanner.clickExploreMarketHeader();
         await app.market.selectAllCategory();
         await app.market.validateMarketList();
@@ -158,7 +158,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "1AccountBTC1AccountETH",
-      featureFlags: LWD_WALLET_40_Q2_FF_ENABLED_NO_ANALYTICS_CONSENT,
+      featureFlags: FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
     });
 
     test(
@@ -174,8 +174,8 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.assets.waitForAssetsToLoad();
-        await app.assets.clickAssetInCryptosSection(Currency.ETH.name);
+        await app.portfolio.assetsView.waitForAssetsToLoad();
+        await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.ETH);
         await app.assetDetail.expectLoaded();
         await app.assetDetail.expectAddressListVisible();
         await app.assetDetail.clickFirstAddressRow();

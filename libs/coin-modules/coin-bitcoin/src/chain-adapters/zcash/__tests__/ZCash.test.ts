@@ -316,7 +316,7 @@ describe("createZCashClientWith", () => {
 
         await new Promise(resolve => setTimeout(resolve, 0));
 
-        expect(capturedHooks).toBeDefined();
+        expect(capturedHooks).toMatchObject({ isCancelled: expect.any(Function) });
         expect(capturedHooks!.isCancelled()).toBe(false);
 
         sub.unsubscribe();

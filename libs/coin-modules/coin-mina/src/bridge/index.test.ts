@@ -3,7 +3,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { SignRawOperationArg0 } from "@ledgerhq/types-live";
 import { MinaCoinConfig } from "../config";
 import { MinaAccount, MinaSigner } from "../types";
-import { createBridges, buildCurrencyBridge, buildAccountBridge, makeCliTools } from ".";
+import { createBridges, buildCurrencyBridge, buildAccountBridge } from ".";
 
 describe("buildCurrencyBridge", () => {
   const currencyBridge = buildCurrencyBridge(jest.fn() as SignerContext<MinaSigner>);
@@ -24,12 +24,6 @@ describe("buildAccountBridge", () => {
     expect(() => accountBridge.signRawOperation({} as SignRawOperationArg0<MinaAccount>)).toThrow(
       "signRawOperation is not supported",
     );
-  });
-});
-
-describe("makeCliTools", () => {
-  it("is a function", () => {
-    expect(typeof makeCliTools).toBe("function");
   });
 });
 

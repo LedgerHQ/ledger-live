@@ -8,7 +8,8 @@ import {
   desktopContentCardSelector,
   notificationsContentCardSelector,
 } from "~/renderer/reducers/dynamicContent";
-import { track } from "../analytics/segment";
+import { trackContentCard } from "LLD/features/DynamicContent/utils/trackContentCard";
+import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { trackingEnabledSelector } from "../reducers/settings";
 import { sanitizeExtras } from "./useBraze";
 
@@ -70,7 +71,7 @@ export function useNotifications() {
         currentCard.url = currentCard.id;
         if (isTrackedUser) {
           braze.logContentCardClick(currentCard);
-          track("contentcard_clicked", {
+          trackContentCard(ContentCardEvent.Clicked, {
             ...sanitizeExtras(currentCard.extras),
             contentcard: card.title,
             link: card.path || card.url,

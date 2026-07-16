@@ -75,6 +75,7 @@ test("Live App SDK methods @smoke", async ({ page, electronApp }) => {
 
   await test.step("Request Account drawer - open", async () => {
     await liveAppWebview.requestAsset();
+    await drawer.waitForAssetAccountSelectorVisible();
     await expect(drawer.selectAssetTitle).toBeVisible();
   });
 
@@ -84,7 +85,7 @@ test("Live App SDK methods @smoke", async ({ page, electronApp }) => {
   });
 
   await test.step("Request Account - select BTC", async () => {
-    await drawer.selectAccount("Bitcoin", 0);
+    await drawer.selectAccount("Bitcoin 1 (legacy)");
     await drawer.waitForDrawerToDisappear();
     await liveAppWebview.waitForText("mock:1:bitcoin:true_bitcoin_0:");
   });

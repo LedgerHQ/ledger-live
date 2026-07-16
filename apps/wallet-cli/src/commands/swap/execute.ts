@@ -5,8 +5,11 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { findCryptoCurrencyById, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getQuotes } from "@ledgerhq/live-common/wallet-api/Exchange/index";
+import type { Quote } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCurrencyForAccount, type AccountLike } from "@ledgerhq/types-live";
+import { getCurrencyForAccount, type Account, type AccountLike } from "@ledgerhq/types-live";
+import { getMainAccount, getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { integrateNewAccountDescriptor } from "@ledgerhq/live-wallet/walletsync/modules/accounts";
 import { createCommandOutput } from "../../output";
 import {
@@ -19,10 +22,18 @@ import {
 import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
 import { OutputFormatSchema } from "../../wallet/models";
 import { runFullSwapPipeline as runFullSwapPipelineDefault } from "./cli-swap-pipeline";
+import { runCliSwapDie as runCliSwapDiePipelineDefault } from "./cli-swap-die-pipeline";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { resolveSwapProvider, WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./providers";
+import {
+  isDieExecutionProvider,
+  resolveSwapProvider,
+  WALLET_CLI_DEFAULT_SWAP_PROVIDERS,
+} from "./providers";
+import { swapFlowId, trackSwapFailed, trackSwapSimulated } from "../../analytics/swap-analytics";
+import { getErrorDetails } from "@ledgerhq/live-common/exchange/error";
 
 type RunFullSwapPipeline = typeof runFullSwapPipelineDefault;
+type RunCliSwapDiePipeline = typeof runCliSwapDiePipelineDefault;
 
 type CryptoOrTokenCurrency = CryptoCurrency | TokenCurrency;
 type FindTokenById = (id: string) => Promise<TokenCurrency | null | undefined>;
@@ -83,6 +94,7 @@ export type SwapExecuteFlags = z.infer<typeof swapExecuteFlagsSchema>;
 
 export type SwapExecuteDependencies = {
   runFullSwapPipeline: RunFullSwapPipeline;
+  runCliSwapDiePipeline?: RunCliSwapDiePipeline;
   resolveAccountDescriptor?: typeof resolveAccountDescriptor;
   integrateNewAccountDescriptor?: typeof integrateNewAccountDescriptor;
   getAccountBridge?: typeof getAccountBridge;
@@ -90,10 +102,47 @@ export type SwapExecuteDependencies = {
   findTokenById?: FindTokenById;
 };
 
+async function selectDieQuote(args: {
+  provider: string;
+  from: string;
+  to: string;
+  amount: string;
+  sendAddress: string;
+  receiveAddress: string;
+}): Promise<Quote> {
+  const { quotes, providerErrors } = await getQuotes(
+    {
+      providers: [args.provider],
+      data: {
+        amount: args.amount,
+        uniswapOrderType: "all",
+        sendCurrencyId: args.from,
+        receiveCurrencyId: args.to,
+        sendAddress: args.sendAddress,
+        receiveAddress: args.receiveAddress,
+        sendAccountId: "",
+        receiveAccountId: "",
+      },
+    },
+    { accounts: [], spotPrices: {}, locale: "en", counterValueCurrency: "USD" },
+  );
+
+  const match = quotes.find(q => q.provider === args.provider) ?? quotes[0];
+  if (!match) {
+    const summary =
+      providerErrors.length > 0
+        ? providerErrors.map(e => `${e.provider}: ${e.message}`).join("; ")
+        : "no quotes returned";
+    throw new Error(`No quote from '${args.provider}': ${summary}`);
+  }
+  return match;
+}
+
 export async function executeSwapCommand({
   flags,
   positional,
   runFullSwapPipeline,
+  runCliSwapDiePipeline = runCliSwapDiePipelineDefault,
   resolveAccountDescriptor: resolveDescriptor = resolveAccountDescriptor,
   integrateNewAccountDescriptor: integrateDescriptor = integrateNewAccountDescriptor,
   getAccountBridge: getBridge = getAccountBridge,
@@ -103,19 +152,46 @@ export async function executeSwapCommand({
   flags: SwapExecuteFlags;
   positional: readonly string[];
 } & SwapExecuteDependencies): Promise<void> {
-  const fromDescriptor = await resolveDescriptor(resolveAccountArg(flags.account, positional));
-  const fromCurrency = findCryptoCurrencyById(flags.from) ?? (await findTokenById(flags.from));
-  const toCurrency = findCryptoCurrencyById(flags.to) ?? (await findTokenById(flags.to));
+  const flowId = swapFlowId();
+  const resolveSwapExecuteContext = async () => {
+    const fromDescriptor = await resolveDescriptor(resolveAccountArg(flags.account, positional));
+    const fromCurrency = findCryptoCurrencyById(flags.from) ?? (await findTokenById(flags.from));
+    const toCurrency = findCryptoCurrencyById(flags.to) ?? (await findTokenById(flags.to));
 
-  if (!fromCurrency) {
-    throw new Error(`Unknown source currency (--from): ${flags.from}`);
+    if (!fromCurrency) {
+      throw new Error(`Unknown source currency (--from): ${flags.from}`);
+    }
+
+    if (!toCurrency) {
+      throw new Error(`Unknown destination currency (--to): ${flags.to}`);
+    }
+
+    const provider = resolveSwapProvider(flags.provider);
+    return { fromDescriptor, fromCurrency, toCurrency, provider };
+  };
+
+  let context: Awaited<ReturnType<typeof resolveSwapExecuteContext>>;
+  try {
+    context = await resolveSwapExecuteContext();
+  } catch (err) {
+    const { name, cause } = getErrorDetails(err);
+    trackSwapFailed({
+      flowId,
+      fromCurrency: flags.from,
+      toCurrency: flags.to,
+      errorCode: cause?.swapCode ?? name ?? "UnknownError",
+    });
+    throw err;
   }
+  const { fromDescriptor, fromCurrency, toCurrency, provider } = context;
 
-  if (!toCurrency) {
-    throw new Error(`Unknown destination currency (--to): ${flags.to}`);
-  }
+  trackSwapSimulated({
+    flowId,
+    fromCurrency: flags.from,
+    toCurrency: flags.to,
+    provider,
+  });
 
-  const provider = resolveSwapProvider(flags.provider);
   const networkCurrencyId =
     fromCurrency.type === "TokenCurrency" ? fromCurrency.parentCurrencyId : fromCurrency.id;
   const network = networkStringFromCurrencyId(networkCurrencyId);
@@ -133,7 +209,7 @@ export async function executeSwapCommand({
 
     const toAccountArg = flags["to-account"];
     if (typeof toAccountArg !== "string" || toAccountArg.trim().length === 0) {
-      throw new Error("Swap execute requires --to-account <session-label>.");
+      throw new Error("Swap execute requires --to-account <descriptor-or-session-label>.");
     }
     const toDescriptor = await resolveDescriptor(toAccountArg);
 
@@ -156,6 +232,61 @@ export async function executeSwapCommand({
 
     const amountInAtomicUnit: BigNumber = parseCurrencyUnit(fromCurrency.units[0], flags.amount);
 
+    const accounts: AccountLike[] = [
+      fromAccount,
+      toParentAccount,
+      fromParentAccount,
+      toAccount,
+    ].filter((a): a is AccountLike => a != null);
+    const fromParent = getParentAccount(fromAccount, accounts);
+    const mainFromAccount: Account = getMainAccount(fromAccount, fromParent);
+
+    if (isDieExecutionProvider(provider) && mainFromAccount.currency.family === "evm") {
+      out.swapExecuteProgress(`[i] Using provider=${provider}; fetching quote…`);
+
+      const toParent = getParentAccount(toAccount, accounts);
+      const mainToAccount: Account = getMainAccount(toAccount, toParent);
+      const receiveAddress = mainToAccount.freshAddress;
+
+      const quote = await selectDieQuote({
+        provider,
+        from: flags.from,
+        to: flags.to,
+        amount: flags.amount,
+        sendAddress: mainFromAccount.freshAddress,
+        receiveAddress,
+      });
+
+      const dieResult = await runCliSwapDiePipeline({
+        out,
+        quote,
+        mainAccount: mainFromAccount,
+        fromCurrencyId:
+          fromAccount.type === "TokenAccount" ? fromAccount.token.id : fromAccount.currency.id,
+        toCurrencyId: flags.to,
+        flowId,
+        feeStrategy: flags["fee-strategy"],
+      });
+
+      if (dieResult.plan !== "skip") {
+        out.swapExecuteDieResult({
+          plan: dieResult.plan,
+          from: flags.from,
+          to: flags.to,
+          provider: quote.provider,
+          amount: flags.amount,
+          quoteId: quote.id ?? null,
+          approvalTxHash: dieResult.result.approvalTxHash,
+          swapTxHash: dieResult.result.swapTxHash,
+        });
+        return;
+      }
+
+      out.swapExecuteProgress(
+        `[i] Embedded coin-app flow skipped (${dieResult.skipReason ?? "no reason"}); falling back to legacy Exchange-app pipeline.`,
+      );
+    }
+
     const result = await runFullSwapPipeline({
       out,
       provider,
@@ -167,6 +298,7 @@ export async function executeSwapCommand({
       fromParentAccount,
       toParentAccount,
       getAccountBridge: getBridge,
+      flowId,
     });
 
     out.swapExecuteFullResult({
@@ -187,7 +319,7 @@ export async function executeSwapCommand({
 export default defineCommand({
   name: "execute",
   description:
-    "Swap flow with Ledger device + API pipeline (nonce → payload → complete exchange → sign/broadcast).",
+    "Swap flow on the connected Ledger. DEX providers (uniswap, 1inch/oneinch, velora, okx) run end-to-end in the partner's embedded coin app; every other provider runs the legacy Exchange-app pipeline (nonce → payload → complete exchange → sign/broadcast).",
   options: {
     from: option(swapExecuteFlagsSchema.shape.from, {
       description:
@@ -206,7 +338,7 @@ export default defineCommand({
       description: "Swap source amount in human units",
     }),
     "to-account": option(swapExecuteFlagsSchema.shape["to-account"], {
-      description: "Destination account session label (required for full pipeline)",
+      description: "Destination account descriptor or session label (required for full pipeline)",
     }),
     account: accountOption,
     "fee-strategy": option(swapExecuteFlagsSchema.shape["fee-strategy"], {
@@ -219,6 +351,7 @@ export default defineCommand({
       flags,
       positional,
       runFullSwapPipeline: runFullSwapPipelineDefault,
+      runCliSwapDiePipeline: runCliSwapDiePipelineDefault,
     });
   },
 });

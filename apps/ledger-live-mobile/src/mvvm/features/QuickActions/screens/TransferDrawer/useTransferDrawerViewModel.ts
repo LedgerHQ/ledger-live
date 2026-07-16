@@ -18,6 +18,9 @@ import { TransferAction } from "../../types";
 import { QUICK_ACTIONS_TEST_IDS } from "../../testIds";
 import { useTranslation } from "~/context/Locale";
 import { useReceiveNoahEntry } from "LLM/features/Noah/useNoahEntryPoint";
+import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
+import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+
 // Fiat provider manifest ID for Noah integration
 const FIAT_PROVIDER_MANIFEST_ID = "noah";
 
@@ -84,8 +87,14 @@ export const useTransferDrawerViewModel = ({
     handleOpenReceiveDrawer();
   }, [closeDrawer, handleOpenReceiveDrawer, sourceScreenName]);
 
+  const { isEnabled: isNewSendFlowEnabled } = useNewSendFlowFeature();
+  const trackingProperties = useMemo(() => {
+    return getSendFlowTrackingProperties(null, null, isNewSendFlowEnabled);
+  }, [isNewSendFlowEnabled]);
+
   const handleSendPress = useCallback(() => {
     track("button_clicked", {
+      ...trackingProperties,
       button: "send",
       buttonLocation: BUTTON_LOCATION,
       page: sourceScreenName,
@@ -105,7 +114,7 @@ export const useTransferDrawerViewModel = ({
         screen: ScreenName.SendCoin,
       });
     }
-  }, [closeDrawer, navigation, sourceScreenName, currency, ledgerIds]);
+  }, [closeDrawer, navigation, sourceScreenName, currency, ledgerIds, trackingProperties]);
 
   const handleBankTransferPress = useCallback(() => {
     track("button_clicked", {

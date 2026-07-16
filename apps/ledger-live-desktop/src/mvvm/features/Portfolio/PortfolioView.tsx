@@ -25,27 +25,22 @@ export const PortfolioView = memo(function PortfolioView({
   totalOperations,
   totalCurrencies,
   hasExchangeBannerCTA,
-  shouldDisplayMarketBanner,
-  shouldDisplayGraphRework,
-  shouldDisplayQuickActionCtas,
   shouldDisplayAssetSection,
   shouldDisplayAssetDiscoverability,
   shouldDisplayBorrowSection,
   shouldDisplayOperationsList,
   shouldDisplayBrazePlacement,
-  isWallet40Enabled,
   accounts,
   filterOperations,
   t,
   isClearCacheBannerVisible,
 }: PortfolioViewModelResult) {
-  const shouldDisplayAddAccountCta =
-    totalAccounts === 0 && isWallet40Enabled && !shouldDisplayAssetSection;
+  const shouldDisplayAddAccountCta = totalAccounts === 0 && !shouldDisplayAssetSection;
   const shouldRenderLegacyOperationsList = !shouldDisplayOperationsList && totalOperations > 0;
 
   return (
     <>
-      <div className={isClearCacheBannerVisible && isWallet40Enabled ? "mb-32" : undefined}>
+      <div className={isClearCacheBannerVisible ? "mb-32" : undefined}>
         <BannerSection topBannerAlerts={true} portfolioBannerContent={false} />
       </div>
       <TrackPage
@@ -60,15 +55,16 @@ export const PortfolioView = memo(function PortfolioView({
         <div className="flex flex-1 flex-col gap-32 pb-32">
           <div className="flex flex-col gap-24">
             <PageHeader title={t("portfolio.title")} />
-            {shouldDisplayGraphRework && <Balance />}
-            {shouldDisplayQuickActionCtas && (
-              <QuickActions trackingPageName={PORTFOLIO_TRACKING_PAGE_NAME} />
-            )}
-            {shouldDisplayQuickActionCtas && <Divider orientation="horizontal" className="mb-8" />}
+            <Balance />
+
+            <QuickActions trackingPageName={PORTFOLIO_TRACKING_PAGE_NAME} />
+
+            <Divider orientation="horizontal" className="mb-8" />
           </div>
 
           <PortfolioBannerContent />
-          {shouldDisplayMarketBanner && <MarketBanner />}
+
+          <MarketBanner />
 
           <PerpsEntryPoint />
 
@@ -86,7 +82,6 @@ export const PortfolioView = memo(function PortfolioView({
               withSubAccounts
               filterOperation={filterOperations}
               t={t}
-              isWallet40={isWallet40Enabled}
             />
           )}
         </div>

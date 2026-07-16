@@ -11,7 +11,6 @@ import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import Label from "~/renderer/components/Label";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { MAX_PRIVATE_RECORDS_PER_TRANSACTION } from "@ledgerhq/live-common/families/aleo/constants";
 import type {
   AleoAccount,
   AleoTokenAccount,
@@ -23,7 +22,7 @@ import {
   isPrivateTransaction,
   sumPrivateRecords,
 } from "@ledgerhq/live-common/families/aleo/utils";
-import { isAleoTransaction } from "./utils";
+import { getMaxPrivateRecordsForAccount, isAleoTransaction } from "./utils";
 
 type SigningStrategy = "fast" | "balanced" | "full";
 
@@ -36,17 +35,23 @@ interface StrategyConfig {
 const FAST_PRIVATE_RECORDS_PER_TRANSACTION = 4;
 const BALANCED_PRIVATE_RECORDS_PER_TRANSACTION = 8;
 
-const STRATEGY_CONFIG: Record<SigningStrategy, StrategyConfig> = {
-  fast: { min: 1, max: FAST_PRIVATE_RECORDS_PER_TRANSACTION },
-  balanced: {
-    min: FAST_PRIVATE_RECORDS_PER_TRANSACTION + 1,
-    max: BALANCED_PRIVATE_RECORDS_PER_TRANSACTION,
-  },
-  full: {
-    min: BALANCED_PRIVATE_RECORDS_PER_TRANSACTION + 1,
-    max: MAX_PRIVATE_RECORDS_PER_TRANSACTION,
-  },
-};
+function getStrategyConfig(
+  account: AleoAccount | AleoTokenAccount,
+): Record<SigningStrategy, StrategyConfig> {
+  const maxRecords = getMaxPrivateRecordsForAccount(account);
+
+  return {
+    fast: { min: 1, max: FAST_PRIVATE_RECORDS_PER_TRANSACTION },
+    balanced: {
+      min: FAST_PRIVATE_RECORDS_PER_TRANSACTION + 1,
+      max: BALANCED_PRIVATE_RECORDS_PER_TRANSACTION,
+    },
+    full: {
+      min: BALANCED_PRIVATE_RECORDS_PER_TRANSACTION + 1,
+      max: maxRecords,
+    },
+  };
+}
 
 const STRATEGIES: SigningStrategy[] = ["fast", "balanced", "full"];
 
@@ -127,9 +132,11 @@ const QuickAmountSelector = ({ account, transaction, updateTransaction, onSelect
       .sort((a, b) => new BigNumber(b.microcredits).comparedTo(a.microcredits));
   }, [account]);
 
+  const strategyConfig = useMemo(() => getStrategyConfig(account), [account]);
+
   const spendableRecords = useMemo(
-    () => sortedRecords.slice(0, MAX_PRIVATE_RECORDS_PER_TRANSACTION),
-    [sortedRecords],
+    () => sortedRecords.slice(0, strategyConfig.full.max),
+    [sortedRecords, strategyConfig],
   );
 
   const totalSpendableBalance = sumPrivateRecords(spendableRecords);
@@ -148,7 +155,7 @@ const QuickAmountSelector = ({ account, transaction, updateTransaction, onSelect
   const strategyData = useMemo(
     () =>
       STRATEGIES.map(strategy => {
-        const { min, max } = STRATEGY_CONFIG[strategy];
+        const { min, max } = strategyConfig[strategy];
 
         const rangeRecords = sortedRecords.slice(0, max);
         const availableCount = rangeRecords.length;
@@ -158,7 +165,7 @@ const QuickAmountSelector = ({ account, transaction, updateTransaction, onSelect
         const isSendMax =
           !disabled &&
           (availableCount === totalRecords ||
-            (max === MAX_PRIVATE_RECORDS_PER_TRANSACTION && availableCount === max));
+            (max === strategyConfig.full.max && availableCount === max));
         const selected =
           !disabled &&
           (isSendMax
@@ -169,7 +176,7 @@ const QuickAmountSelector = ({ account, transaction, updateTransaction, onSelect
 
         return { strategy, min, max, availableCount, rangeSum, disabled, selected, isSendMax };
       }),
-    [sortedRecords, totalRecords, transaction.amount, transaction.useAllAmount],
+    [sortedRecords, totalRecords, transaction.amount, transaction.useAllAmount, strategyConfig],
   );
 
   return (

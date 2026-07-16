@@ -3,9 +3,16 @@ import { fiat } from "../define";
 export const sgd = fiat({
   type: "FiatCurrency",
   id: "sgd",
-  name: "Singapore Dollar",
   ticker: "SGD",
+  name: "Singapore Dollar",
   symbol: "S$",
-  units: [{ name: "Singapore Dollar", code: "SGD", magnitude: 2 }],
-  keywords: ["singapore dollar", "sgd"],
+  units: [
+    {
+      code: "S$",
+      name: "Singapore Dollar",
+      magnitude: 2,
+      showAllDigits: true,
+      prefixCode: true,
+    },
+  ],
 });

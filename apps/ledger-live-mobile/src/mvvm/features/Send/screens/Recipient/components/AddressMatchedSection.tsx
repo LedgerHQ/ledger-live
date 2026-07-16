@@ -1,7 +1,19 @@
 import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
-import { Banner, Box, Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-rnative";
-import React from "react";
+import {
+  Banner,
+  BottomSheet,
+  BottomSheetHeader,
+  BottomSheetView,
+  Box,
+  Button,
+  Subheader,
+  SubheaderRow,
+  SubheaderTitle,
+  Text,
+  useBottomSheetRef,
+} from "@ledgerhq/lumen-ui-rnative";
+import React, { useCallback } from "react";
 import { useTranslation } from "~/context/Locale";
 import { AccountRowWithBalance } from "./AccountRowWithBalance";
 import { AddressListItem } from "./AddressListItem";
@@ -26,6 +38,10 @@ export function AddressMatchedSection({
 }: AddressMatchedSectionProps) {
   const { t } = useTranslation();
   const formatRelativeDate = useFormatRelativeDate();
+  const helpSheetRef = useBottomSheetRef();
+  const openHelpSheet = useCallback(() => {
+    helpSheetRef.current?.present();
+  }, [helpSheetRef]);
 
   const { matchedAccounts, ensName, matchedRecentAddress, status, resolvedAddress } = searchResult;
 
@@ -115,10 +131,10 @@ export function AddressMatchedSection({
           <AddressListItem
             address={searchValue}
             name={formattedAddress}
+            description={t("send.newSendFlow.notInRecentHistory")}
             onSelect={() => onSelect(searchValue)}
             showSendTo
             disabled={false}
-            hideDescription
           />
         )}
 
@@ -139,12 +155,29 @@ export function AddressMatchedSection({
           !hasBridgeError &&
           isAddressComplete && (
             <Banner
-              appearance="warning"
-              title={t("send.newSendFlow.firstInteraction.title")}
+              appearance="info"
               description={t("send.newSendFlow.firstInteraction.description")}
+              primaryAction={
+                <Button appearance="transparent" size="sm" onPress={openHelpSheet}>
+                  {t("send.newSendFlow.firstInteraction.learnMore")}
+                </Button>
+              }
             />
           )}
       </Box>
+      <BottomSheet ref={helpSheetRef} enableDynamicSizing snapPoints={null}>
+        <BottomSheetView>
+          <BottomSheetHeader />
+          <Box lx={{ paddingHorizontal: "s16", paddingBottom: "s48", gap: "s12" }}>
+            <Text typography="heading2SemiBold" lx={{ color: "base" }}>
+              {t("send.newSendFlow.firstInteraction.helpTitle")}
+            </Text>
+            <Text typography="body1" lx={{ color: "base" }}>
+              {t("send.newSendFlow.firstInteraction.helpDescription")}
+            </Text>
+          </Box>
+        </BottomSheetView>
+      </BottomSheet>
     </Box>
   );
 }

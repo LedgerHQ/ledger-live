@@ -6,7 +6,6 @@ import Casper from "@zondax/ledger-casper";
 import casperResolver from "@ledgerhq/coin-casper/signer";
 import { signMessage } from "@ledgerhq/coin-casper/hw-signMessage";
 import type { Account, Bridge } from "@ledgerhq/types-live";
-import makeCliTools from "@ledgerhq/coin-casper/test/cli";
 import {
   CreateSigner,
   createMessageSigner,
@@ -58,6 +57,4 @@ const messageSigner = {
 
 const resolver: Resolver = createResolver(createSigner, casperResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, messageSigner, resolver };
+export { bridge, messageSigner, resolver };

@@ -21,6 +21,12 @@ import {
   WalletContentCard,
 } from "./types";
 import { flush, track } from "../analytics";
+import {
+  finalizeContentCardEventProperties,
+  ContentCardEvent,
+  type ContentCardEventProperties,
+  type ContentCardInteractionEvent,
+} from "@ledgerhq/live-common/braze/contentCardExtras";
 import { setDismissedDynamicCards } from "../actions/settings";
 import { setDynamicContentMobileCards, removeLocalCard } from "~/actions/dynamicContent";
 
@@ -97,10 +103,7 @@ const useDynamicContent = () => {
   );
 
   const trackContentCardEvent = useCallback(
-    async (
-      event: "contentcard_clicked" | "contentcard_dismissed",
-      params: Record<string, string | number | undefined>,
-    ) => {
+    async (event: ContentCardInteractionEvent, params: ContentCardEventProperties) => {
       const cardId = params.campaign;
       if (
         typeof cardId === "string" &&
@@ -108,8 +111,8 @@ const useDynamicContent = () => {
       )
         return;
       try {
-        await track(event, params);
-        if (event === "contentcard_clicked") {
+        await track(event, finalizeContentCardEventProperties(params));
+        if (event === ContentCardEvent.Clicked) {
           // Flush immediately because content card clicks often open a link
           // and background the app before Segment flushes queued events itself.
           await flush();

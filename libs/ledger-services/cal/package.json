@@ -1,6 +1,7 @@
 {
   "name": "@ledgerhq/ledger-cal-service",
-  "version": "1.18.2",
+  "version": "1.18.3",
+  "private": true,
   "description": "Ledger CAL service client",
   "keywords": [
     "Ledger",

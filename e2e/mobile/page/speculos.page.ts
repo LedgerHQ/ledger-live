@@ -11,12 +11,13 @@ import {
   verifyAmountsAndRejectSwap,
   approveToken,
   signTypedMessage as signTypedMessageDevice,
-} from "@ledgerhq/live-common/e2e/speculos";
+  acceptEnableTransactionCheck as acceptEnableTransactionCheckDevice,
+} from "@ledgerhq/live-e2e-shared/speculos";
 import { setExchangeDependencies } from "../utils/speculosUtils";
-import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
-import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
-import { Account, AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
-import { SwapType, Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
+import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
+import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { SwapType, Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 
 function isSwap(value: SwapType | Account): value is SwapType {
   return value instanceof Swap;
@@ -77,9 +78,19 @@ export default class SpeculosPage {
     await approveToken();
   }
 
+  @Step("Sign EVM contract transaction on device")
+  async signEvmContractTransaction() {
+    await approveToken();
+  }
+
   @Step("Sign typed message on device")
   async signTypedMessage() {
     await signTypedMessageDevice();
+  }
+
+  @Step("Check and accept if available enable transaction check")
+  async acceptEnableTransactionCheck() {
+    await acceptEnableTransactionCheckDevice();
   }
 
   async setExchangeDependencies(swapOrFromAccount: SwapType | Account, toAccount?: Account) {

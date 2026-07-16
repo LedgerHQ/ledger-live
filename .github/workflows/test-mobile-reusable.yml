@@ -63,9 +63,7 @@ jobs:
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
 
       - name: Run format check
-        # TODO(LIVE-31553): remove continue-on-error once format:check exists on
-        # release HEAD (~2 weeks); kept non-blocking to not break release flows.
-        continue-on-error: true
+        if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop'
         run: pnpm exec nx run live-mobile:format:check
 
       - name: Run linter

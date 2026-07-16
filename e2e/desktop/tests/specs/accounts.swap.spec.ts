@@ -1,9 +1,9 @@
 import test from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
-import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
+import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import {
@@ -15,8 +15,8 @@ import {
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
@@ -363,8 +363,8 @@ test.describe("Swap a coin for which you have no account yet - from present to n
         await app.addAccount.done();
         await app.swapDrawer.selectAccountByName(account2);
       }
-      await app.swap.checkAssetFromContains(account1.currency.name);
-      await app.swap.checkAssetToContains(account2.currency.name);
+      await app.swap.checkAssetFromContains(account1.currency.ticker);
+      await app.swap.checkAssetToContains(account2.currency.ticker);
     },
   );
 });
@@ -436,8 +436,8 @@ test.describe("Swap a coin for which you have no account yet - from not present 
         await app.swap.selectAssetTo(account2.currency.name);
         await app.swapDrawer.selectAccountByName(account2);
       }
-      await app.swap.checkAssetFromContains(account1.currency.name);
-      await app.swap.checkAssetToContains(account2.currency.name);
+      await app.swap.checkAssetFromContains(account1.currency.ticker);
+      await app.swap.checkAssetToContains(account2.currency.ticker);
     },
   );
 });
@@ -495,8 +495,8 @@ test.describe("Swap a coin for which you have no account yet - both not present"
 
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
-        await app.swap.checkAssetFromContains(account1.currency.name);
-        await app.swap.checkAssetToContains(account2.currency.name);
+        await app.swap.checkAssetFromContains(account1.currency.ticker);
+        await app.swap.checkAssetToContains(account2.currency.ticker);
       }
     },
   );

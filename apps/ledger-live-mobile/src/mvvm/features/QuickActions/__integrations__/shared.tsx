@@ -9,10 +9,9 @@ import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { State } from "~/reducers/types";
 import { ScreenName } from "~/const";
-import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { QUICK_ACTIONS_TEST_IDS } from "../testIds";
 
-type TestStackParamList = WalletTabNavigatorStackParamList;
+type TestStackParamList = { [ScreenName.Portfolio]: undefined };
 
 const Stack = createNativeStackNavigator<TestStackParamList>();
 
@@ -125,7 +124,6 @@ export const overrideStateWithFundsVariant = withFlagOverrides(
   {
     lwmWallet40: {
       enabled: true,
-      params: { quickActionCtas: true },
     },
     lwmQuickActionsCtasVariant: { enabled: true },
   },
@@ -136,7 +134,6 @@ export const overrideStateWithoutFundsVariant = withFlagOverrides(
   {
     lwmWallet40: {
       enabled: true,
-      params: { quickActionCtas: true },
     },
     lwmQuickActionsCtasVariant: { enabled: true },
   },

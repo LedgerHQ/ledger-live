@@ -4,18 +4,26 @@ import type {
   ZcashViewKey,
   ZcashTrustedInput,
   ZcashSigner,
-  ZcashSignerEvent,
+  ZcashSignature,
+  SignerTransactionLike,
+  BitcoinCreateTransactionLike,
 } from "./types";
+import { lastValueFrom, type Observable } from "rxjs";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import {
   DeviceActionStatus,
   type DeviceActionState,
   type DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
 import {
-  GetAddressDAError,
-  GetFullViewingKeyDAError,
-  SignerZcash,
   SignerZcashBuilder,
+  type GetAddressDAError,
+  type GetFullViewingKeyDAError,
+  type SignerZcash,
+  type LegacyCreateTransactionArg,
+  type LegacyTransaction,
+  type SignTransactionDAError,
+  type SignTransactionDAOutput,
 } from "@ledgerhq/device-signer-kit-zcash";
 
 type ZcashGetAddressResult = {
@@ -37,30 +45,38 @@ export class DmkSignerZcash implements ZcashSigner {
   }
 
   private mapError<E extends { _tag: string }>(error: E): Error {
+    if ("errorCode" in error && (error as { errorCode?: unknown }).errorCode === "6985") {
+      return new UserRefusedOnDevice();
+    }
     return new Error(error._tag);
   }
 
-  private resolveDeviceAction<T, E extends { _tag: string }>(observable: {
-    subscribe: (observer: {
-      next: (state: DeviceActionState<T, E, unknown>) => void;
-      error: (err: unknown) => void;
-    }) => unknown;
-  }): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-      observable.subscribe({
-        next: state => {
-          if (state.status === DeviceActionStatus.Error) {
-            reject(this.mapError(state.error));
-          }
-          if (state.status === DeviceActionStatus.Completed) {
-            resolve(state.output);
-          }
-        },
-        error: err => {
-          reject(err);
-        },
-      });
-    });
+  private mapResult<T, E extends { _tag: string }>(state: DeviceActionState<T, E, unknown>): T {
+    switch (state.status) {
+      case DeviceActionStatus.Completed:
+        return state.output;
+      case DeviceActionStatus.Error:
+        throw this.mapError(state.error);
+      case DeviceActionStatus.Stopped:
+      case DeviceActionStatus.NotStarted:
+      case DeviceActionStatus.Pending:
+      default:
+        throw new Error(`Unexpected device action status: ${state.status}`);
+    }
+  }
+
+  /**
+   * Awaits a DMK device action to completion.
+   *
+   * `lastValueFrom` resolves with the action's final state once the observable
+   * completes (and rejects if it errors or completes without emitting), so any
+   * terminal status — including `Stopped` — settles the promise instead of
+   * hanging. `mapResult` then turns that final state into the output or an error.
+   */
+  private async resolveDeviceAction<T, E extends { _tag: string }>(
+    observable: Observable<DeviceActionState<T, E, unknown>>,
+  ): Promise<T> {
+    return this.mapResult(await lastValueFrom(observable));
   }
 
   async getAppConfig(): Promise<ZcashAppConfig> {
@@ -127,11 +143,80 @@ export class DmkSignerZcash implements ZcashSigner {
     throw new Error("Not implemented");
   }
 
-  async signTransaction(_path: string, _rawTxHex: string): Promise<ZcashSignerEvent> {
-    throw new Error("Not implemented");
+  private toLegacyTransaction(tx: SignerTransactionLike): LegacyTransaction {
+    return {
+      version: tx.version,
+      inputs: tx.inputs.map(input => ({
+        prevout: input.prevout,
+        script: input.script,
+        sequence: input.sequence,
+        ...(input.tree !== undefined ? { tree: input.tree } : {}),
+      })),
+      ...(tx.outputs !== undefined
+        ? { outputs: tx.outputs.map(output => ({ amount: output.amount, script: output.script })) }
+        : {}),
+      ...(tx.locktime !== undefined ? { locktime: tx.locktime } : {}),
+      ...(tx.timestamp !== undefined ? { timestamp: tx.timestamp } : {}),
+      ...(tx.nVersionGroupId !== undefined ? { nVersionGroupId: tx.nVersionGroupId } : {}),
+      ...(tx.nExpiryHeight !== undefined ? { nExpiryHeight: tx.nExpiryHeight } : {}),
+      ...(tx.extraData !== undefined ? { extraData: tx.extraData } : {}),
+    };
   }
 
-  async signMessage(_path: string, _rawTxHex: string): Promise<ZcashSignerEvent> {
+  /**
+   * Sign a transparent Zcash transaction via the DMK signer.
+   *
+   * Maps the Bitcoin signer's `CreateTransaction` (produced by the coin module's
+   * `wallet.signAccountTx`) onto the DMK `LegacyCreateTransactionArg`, runs the
+   * `signTransaction` device action, and returns the fully serialized signed
+   * transaction. The DMK output is `0x`-prefixed (`HexaString`); the prefix is
+   * stripped so the result matches what the Bitcoin broadcast path expects.
+   */
+  async createPaymentTransaction(arg: BitcoinCreateTransactionLike): Promise<string> {
+    const legacyArg: LegacyCreateTransactionArg = {
+      inputs: arg.inputs.map(([tx, outputIndex, script, sequence, blockHeight]) => [
+        this.toLegacyTransaction(tx),
+        outputIndex,
+        script,
+        sequence,
+        blockHeight,
+      ]),
+      associatedKeysets: arg.associatedKeysets,
+      outputScriptHex: arg.outputScriptHex,
+      additionals: arg.additionals,
+      ...(arg.changePath !== undefined ? { changePath: arg.changePath } : {}),
+      ...(arg.lockTime !== undefined ? { lockTime: arg.lockTime } : {}),
+      ...(arg.blockHeight !== undefined ? { blockHeight: arg.blockHeight } : {}),
+      ...(arg.sigHashType !== undefined ? { sigHashType: arg.sigHashType } : {}),
+      ...(arg.expiryHeight !== undefined ? { expiryHeight: arg.expiryHeight } : {}),
+    };
+
+    // `onDeviceStreaming` (declared on the arg for legacy parity) is intentionally
+    // not invoked here: DMK's `signTransaction` device action exposes no per-chunk
+    // progress — its `SignTransactionDAIntermediateValue` carries only
+    // `requiredUserInteraction`, with no progress/index/total to report. The legacy
+    // hw-app-btc path derives those numbers from raw APDU round-trips, which DMK
+    // abstracts away. The on-device signing milestone is surfaced instead via the
+    // signature-requested/granted callbacks below.
+    const { onDeviceSignatureRequested, onDeviceSignatureGranted } = arg;
+
+    const { observable } = this.signer.signTransaction(legacyArg, { skipOpenApp: true });
+
+    // The device action is already running by now; surface the on-device signature
+    // request to the UI (see method doc for why this can't be observed from state).
+    onDeviceSignatureRequested?.();
+
+    const signedTx = await this.resolveDeviceAction<
+      SignTransactionDAOutput,
+      SignTransactionDAError
+    >(observable);
+
+    onDeviceSignatureGranted?.();
+
+    return signedTx.startsWith("0x") ? signedTx.slice(2) : signedTx;
+  }
+
+  async signMessage(_path: string, _messageHex: string): Promise<ZcashSignature> {
     throw new Error("Not implemented");
   }
 }

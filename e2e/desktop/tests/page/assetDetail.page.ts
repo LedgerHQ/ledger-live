@@ -25,6 +25,11 @@ export class AssetDetailPage extends AppPage {
   private readonly optionsTrigger = this.page.getByTestId("asset-detail-header-options-trigger");
   private readonly addFavoriteMenuItem = this.page.getByTestId("asset-detail-add-favorite");
   private readonly removeFavoriteMenuItem = this.page.getByTestId("asset-detail-remove-favorite");
+  // The staking section renders either the "earn banner" (not yet staked) or the "earn deposit"
+  // card (already staked); both open the same stake flow.
+  private readonly earnEntry = this.page
+    .getByTestId("asset-detail-earn-banner")
+    .or(this.page.getByTestId("asset-detail-earn-deposit"));
 
   @step("Wait for asset detail page to load")
   async expectLoaded() {
@@ -133,5 +138,10 @@ export class AssetDetailPage extends AppPage {
     await this.openOptionsMenu();
     await expect(this.addFavoriteMenuItem).toBeVisible();
     await this.page.keyboard.press("Escape");
+  }
+
+  @step("Start the staking flow from the asset detail page")
+  async startEarnFlow() {
+    await this.earnEntry.first().click();
   }
 }

@@ -12,7 +12,6 @@ import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalL
 import React, { useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
-import Card from "~/renderer/components/Box/Card";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -48,11 +47,8 @@ const Earn = () => {
   const themeType = useTheme().theme;
   const discreetMode = useDiscreetMode();
   const countryLocale = getParsedSystemDeviceLocale().region;
-  const {
-    isEnabled: isLwd40Enabled,
-    shouldDisplayEarnUpselling,
-    shouldDisplayEarnSimulator,
-  } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayEarnUpselling, shouldDisplayEarnSimulator } =
+    useWalletFeaturesConfig("desktop");
 
   const computedUiVersion = computeEarnUiVersion({
     baseUiVersion: earnUiVersion,
@@ -86,8 +82,8 @@ const Earn = () => {
       currencyTicker: fiatCurrency.ticker,
       discreetMode: discreetMode ? "true" : "false",
       OS: "web",
-      uiVersion: isLwd40Enabled ? computedUiVersion : "v1",
-      lw40enabled: isLwd40Enabled ? "true" : "false",
+      uiVersion: computedUiVersion,
+      lw40enabled: "true",
       stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
       stakeCurrenciesParam: stakeCurrenciesParam ? JSON.stringify(stakeCurrenciesParam) : undefined,
       ethDepositCohort,
@@ -109,7 +105,6 @@ const Earn = () => {
     fiatCurrency.ticker,
     discreetMode,
     devMode,
-    isLwd40Enabled,
     computedUiVersion,
     stakeProgramsParam,
     stakeCurrenciesParam,
@@ -120,10 +115,8 @@ const Earn = () => {
     return <NetworkErrorScreen refresh={updateManifests} type="warning" />;
   }
 
-  const Container = isLwd40Enabled ? Box : Card;
-
   return (
-    <Container grow style={{ overflow: "hidden" }} data-testid="earn-app-container">
+    <Box grow style={{ overflow: "hidden" }} data-testid="earn-app-container">
       <WebPlatformPlayer
         config={{
           topBarConfig: {
@@ -136,7 +129,7 @@ const Earn = () => {
         manifest={manifest}
         inputs={inputs}
       />
-    </Container>
+    </Box>
   );
 };
 

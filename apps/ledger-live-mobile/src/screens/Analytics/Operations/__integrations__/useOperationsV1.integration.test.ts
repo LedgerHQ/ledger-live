@@ -3,7 +3,7 @@ import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { renderHook } from "@tests/test-renderer";
+import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { useOperationsV1 } from "../useOperationsV1";
 import { State } from "~/reducers/types";
 
@@ -107,6 +107,33 @@ const initialStateWithFilterEnabledButNoEvmFamily = (state: State): State => ({
   },
 });
 
+const initialStateWithDustPreferenceEnabled = (state: State): State => ({
+  ...state,
+  settings: {
+    ...state.settings,
+    filterTokenOperationsZeroAmount: false,
+    hideSmallValueTokenOperations: true,
+  },
+});
+
+const initialStateWithDustFilterEnabled = withFlagOverrides(
+  {
+    lwmDustFiltering: {
+      enabled: true,
+    },
+  },
+  initialStateWithDustPreferenceEnabled,
+);
+
+const initialStateWithDesktopDustFilterEnabled = withFlagOverrides(
+  {
+    lwdDustFiltering: {
+      enabled: true,
+    },
+  },
+  initialStateWithDustPreferenceEnabled,
+);
+
 describe("useOperationsV1 integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -131,5 +158,36 @@ describe("useOperationsV1 integration", () => {
     });
 
     expect(result.current.sections[0].data.length).toBe(2);
+  });
+
+  it("should not filter zero-value token operations when dust preference is enabled but the feature flag is disabled", () => {
+    const accountWithZeroValueTokenOp = createAccountWithZeroValueTokenOperation();
+
+    const { result } = renderHook(() => useOperationsV1([accountWithZeroValueTokenOp], 50), {
+      overrideInitialState: initialStateWithDustPreferenceEnabled,
+    });
+
+    expect(result.current.sections[0].data).toHaveLength(2);
+  });
+
+  it("should not filter zero-value token operations when only the desktop dust filter param is enabled", () => {
+    const accountWithZeroValueTokenOp = createAccountWithZeroValueTokenOperation();
+
+    const { result } = renderHook(() => useOperationsV1([accountWithZeroValueTokenOp], 50), {
+      overrideInitialState: initialStateWithDesktopDustFilterEnabled,
+    });
+
+    expect(result.current.sections[0].data).toHaveLength(2);
+  });
+
+  it("should filter out zero-value token operations when dust preference and feature flag are enabled", () => {
+    const accountWithZeroValueTokenOp = createAccountWithZeroValueTokenOperation();
+
+    const { result } = renderHook(() => useOperationsV1([accountWithZeroValueTokenOp], 50), {
+      overrideInitialState: initialStateWithDustFilterEnabled,
+    });
+
+    expect(result.current.sections[0].data.length).toBe(1);
+    expect(result.current.sections[0].data[0].id).toBe("non-zero-value-token-op-id");
   });
 });

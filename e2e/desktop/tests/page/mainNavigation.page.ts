@@ -4,7 +4,8 @@ import { Drawer } from "tests/component/drawer.component";
 import { Layout } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
-import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
+import { MyWalletPage } from "./myWallet.page";
+import { isAssetSectionEnabled, isMyWalletEnabled } from "tests/utils/featureFlagUtils";
 
 type NavigationTarget = {
   readonly expectedPath?: RegExp;
@@ -24,6 +25,7 @@ export type TargetName =
 export class MainNavigationPage extends AppPage {
   private readonly drawer = new Drawer(this.page);
   private readonly layout = new Layout(this.page);
+  private readonly myWallet = new MyWalletPage(this.page);
   private readonly sidebarNavigation = this.page.getByTestId("sidebar-navigation");
 
   private readonly homeSideBarButton = this.sidebarNavigation.getByRole("button", { name: "home" });
@@ -50,7 +52,7 @@ export class MainNavigationPage extends AppPage {
     });
   }
 
-  private get sidebarTargets(): Readonly<Record<TargetName, NavigationTarget>> {
+  private async getSidebarTargets(): Promise<Readonly<Record<TargetName, NavigationTarget>>> {
     return {
       home: {
         expectActive: true,
@@ -59,7 +61,9 @@ export class MainNavigationPage extends AppPage {
       accounts: {
         expectActive: true,
         // Asset Section ON routes to /cryptos; OFF redirects to the legacy /accounts page.
-        expectedPath: isAssetSectionEnabled ? /^\/cryptos(?:\/|$|\?)/ : /^\/accounts(?:\/|$|\?)/,
+        expectedPath: (await isAssetSectionEnabled(this.page))
+          ? /^\/cryptos(?:\/|$|\?)/
+          : /^\/accounts(?:\/|$|\?)/,
         selector: this.accountsSideBarButton,
       },
       swap: {
@@ -91,15 +95,27 @@ export class MainNavigationPage extends AppPage {
   }
   @step("Open $0 from main navigation")
   async openTargetFromMainNavigation(target: TargetName) {
-    const { selector } = this.sidebarTargets[target];
-    await expect(selector).toBeEnabled();
-    await selector.click();
+    // With My Wallet ON, "refer a friend" is removed from the sidebar and lives in the My Wallet popover.
+    if (target === "refer a friend" && (await isMyWalletEnabled(this.page))) {
+      await this.myWallet.openMyWalletPopover();
+      await this.myWallet.clickReferralTile();
+    } else {
+      const { selector } = (await this.getSidebarTargets())[target];
+      await expect(selector).toBeEnabled();
+      await selector.click();
+    }
   }
 
   @step("Validate $0 target from main navigation is selected and redirect to the expected path")
   async validateTargetFromMainNavigation(target: TargetName) {
-    const targetConfig = this.sidebarTargets[target];
-    if (targetConfig.expectActive) {
+    const targetConfig = (await this.getSidebarTargets())[target];
+
+    // The My Wallet popover refer entry navigates without leaving a persistent active sidebar item.
+    const expectActive =
+      targetConfig.expectActive &&
+      !(target === "refer a friend" && (await isMyWalletEnabled(this.page)));
+
+    if (expectActive) {
       await expect(targetConfig.selector).toHaveAttribute("aria-current", "page");
     }
 
@@ -108,9 +124,28 @@ export class MainNavigationPage extends AppPage {
     }
   }
 
+  /**
+   * Trigger a top-navigation action that, with My Wallet ON, moves from the topbar into the
+   * My Wallet popover. Falls back to the legacy topbar button when My Wallet is OFF.
+   */
+  private async triggerTopNavigationAction(
+    popoverAction: () => Promise<void>,
+    legacyTopbarButton: Locator,
+  ) {
+    if (await isMyWalletEnabled(this.page)) {
+      await this.myWallet.openMyWalletPopover();
+      await popoverAction();
+    } else {
+      await legacyTopbarButton.click();
+    }
+  }
+
   @step("Open Notification center from top navigation")
   async openNotificationCenter() {
-    await this.layout.topbarNotificationButton.click();
+    await this.triggerTopNavigationAction(
+      () => this.myWallet.clickNotificationsFromPopover(),
+      this.layout.topbarNotificationButton,
+    );
     await expect(this.drawer.content).toBeVisible();
     await this.drawer.closeDrawer();
   }
@@ -122,13 +157,19 @@ export class MainNavigationPage extends AppPage {
 
   @step("Open My Ledger from top navigation")
   async openMyLedger() {
-    await this.layout.topbarMyLedgerButton.click();
+    await this.triggerTopNavigationAction(
+      () => this.myWallet.clickMyLedgerFromPopover(),
+      this.layout.topbarMyLedgerButton,
+    );
     await this.expectPath(/^\/manager(?:\/|$|\?)/);
   }
 
   @step("Open Settings from top navigation")
   async openSettings() {
-    await this.layout.topbarSettingsButton.click();
+    await this.triggerTopNavigationAction(
+      () => this.myWallet.clickSettingsFromPopover(),
+      this.layout.topbarSettingsButton,
+    );
     await this.expectPath(/^\/settings(?:\/|$|\?)/);
   }
 }

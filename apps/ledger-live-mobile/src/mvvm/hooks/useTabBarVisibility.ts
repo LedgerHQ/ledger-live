@@ -91,12 +91,6 @@ export function useTabBarVisibility() {
 }
 
 /**
- * Type representing the return value of useTabBarVisibility hook.
- * Useful for type-safe prop passing and testing.
- */
-export type TabBarVisibility = ReturnType<typeof useTabBarVisibility>;
-
-/**
  * Hook to automatically hide the tab bar on mount and restore it on unmount.
  *
  * This is a convenience hook that wraps `useTabBarVisibility` and handles the

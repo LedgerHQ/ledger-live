@@ -96,15 +96,6 @@ const defaultConfig = {
     "^react$": require.resolve("react"),
     "react-test-renderer": require.resolve("react-test-renderer"),
   },
-  /**
-   * Added because of this error happening when using toMatchInlineSnapshot:
-   *     TypeError: prettier.resolveConfig.sync is not a function
-
-      at runPrettier (../../node_modules/.pnpm/jest-snapshot@28.1.3/node_modules/jest-snapshot/build/InlineSnapshots.js:319:30)
-   *
-   * See: https://github.com/jestjs/jest/issues/14305#issuecomment-1627346697
-   */
-  prettierPath: null,
 };
 
 export default {

@@ -4,7 +4,7 @@ import { shallowEqual } from "react-redux";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { GestureResponderEvent } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Button, IconsLegacy, Box } from "@ledgerhq/native-ui";
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDistribution } from "~/actions/general";
 import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
@@ -14,11 +14,9 @@ import {
 } from "~/reducers/settings";
 import { setSelectedTabPortfolioAssets } from "~/actions/settings";
 import Assets from "./Assets";
-import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import TabSection, { TAB_OPTIONS, type TabListType } from "./TabSection";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import { MarketBanner as MarketBannerFeature } from "@features/flow-market-banner";
 import { PortfolioPerpsEntryPoint } from "LLM/features/Portfolio/components";
 
 type Props = {
@@ -85,12 +83,8 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
 
   const showAssets = selectedTab === TAB_OPTIONS.Assets;
 
-  const {
-    isEnabled: isWallet40Enabled,
-    shouldDisplayQuickActionCtas,
-    shouldDisplayMarketBanner,
-    shouldDisplayAssetSection,
-  } = useWalletFeaturesConfig("mobile");
+  const { isEnabled: isWallet40Enabled, shouldDisplayAssetSection } =
+    useWalletFeaturesConfig("mobile");
 
   const onPressButton = useCallback(
     (_uiEvent: GestureResponderEvent) => {
@@ -139,19 +133,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
 
   return (
     <>
-      {!shouldDisplayQuickActionCtas && (
-        <Box pt={24}>
-          <PortfolioQuickActionsBar />
-        </Box>
-      )}
-
       {!isWallet40Enabled && <PortfolioPerpsEntryPoint />}
-
-      {shouldDisplayMarketBanner && __DEV__ && (
-        <Box pb={24}>
-          <MarketBannerFeature />
-        </Box>
-      )}
 
       {isAccountListUIEnabled ? (
         <TabSection

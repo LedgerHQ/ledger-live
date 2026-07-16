@@ -3,7 +3,7 @@ import { TransferLog, EventLog } from "../types";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 
 // Mock dependencies before importing the function under test
-jest.mock("../network", () => ({
+jest.mock("../network/getFees", () => ({
   getFees: jest.fn(),
 }));
 jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => ({
@@ -24,7 +24,7 @@ import {
   mapVetTransfersToOperations,
   mapTokenTransfersToOperations,
 } from "./mapTransfersToOperations";
-import { getFees } from "../network";
+import { getFees } from "../network/getFees";
 
 const { ABIEvent, Hex, VIP180_ABI } = jest.requireMock("@vechain/sdk-core");
 

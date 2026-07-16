@@ -10,16 +10,7 @@ const transactionE2E = [
       "noTag",
     ),
     xrayTicket: ["B2CQA-3055", "B2CQA-3057"],
-    tag: [
-      "@NanoSP",
-      "@NanoX",
-      "@Stax",
-      "@Flex",
-      "@NanoGen5",
-      "@smoke",
-      "@solana",
-      "@family-solana",
-    ],
+    tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@solana", "@family-solana"],
   },
 ];
 

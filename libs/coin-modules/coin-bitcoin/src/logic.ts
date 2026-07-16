@@ -21,7 +21,6 @@ const minFees: Partial<Record<CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo",
   bitcoin: 1000,
   bitcoin_gold: 1000,
   qtum: 4000,
-  stratis: 2000,
 };
 export const getMinRelayFee = (currency: CryptoCurrency): number => minFees[currency.id] || 0;
 export const inferFeePerByte = (t: Transaction, networkInfo: NetworkInfo): BigNumber => {

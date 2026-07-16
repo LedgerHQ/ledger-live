@@ -7,6 +7,8 @@ import {
   APIBlock,
   APIDelegationType,
   APIOperation,
+  APIOriginationType,
+  APIRevealType,
   APIStakingType,
   APITokenTransfer,
   APITransactionType,
@@ -222,7 +224,14 @@ const api = {
   async getBlockTokenTransfersPage(level: number, cursor?: number): Promise<APITokenTransfer[]> {
     // Same rationale as getBlockTransactionsPage: explicit ascending sort keeps the
     // offset.cr cursor advancing forward regardless of the API's default ordering.
-    const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE, "sort.asc": "id" };
+    // Filter to FA2 tokenId=0 to match listOperations (getAccountTokenTransfers).
+    const params: Record<string, unknown> = {
+      level,
+      limit: BLOCK_PAGE_SIZE,
+      "sort.asc": "id",
+      "token.standard": "fa2",
+      "token.tokenId": "0",
+    };
     if (cursor !== undefined) params["offset.cr"] = cursor;
     const { data } = await network<APITokenTransfer[]>({
       url: `${getExplorerUrl()}/v1/tokens/transfers`,
@@ -243,6 +252,36 @@ const api = {
     };
     const { data } = await network<APITokenTransfer[]>({
       url: `${getExplorerUrl()}/v1/tokens/transfers`,
+      params,
+    });
+    return data;
+  },
+
+  /**
+   * Fetches a single page of `origination` operations at the given block level.
+   * Internal — used by `fetchBlockOriginations` which handles pagination.
+   * https://api.tzkt.io/#operation/Operations_GetOriginations
+   */
+  async getBlockOriginationsPage(level: number, cursor?: number): Promise<APIOriginationType[]> {
+    const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE, "sort.asc": "id" };
+    if (cursor !== undefined) params["offset.cr"] = cursor;
+    const { data } = await network<APIOriginationType[]>({
+      url: `${getExplorerUrl()}/v1/operations/originations`,
+      params,
+    });
+    return data;
+  },
+
+  /**
+   * Fetches a single page of `reveal` operations at the given block level.
+   * Internal — used by `fetchBlockReveals` which handles pagination.
+   * https://api.tzkt.io/#operation/Operations_GetReveals
+   */
+  async getBlockRevealsPage(level: number, cursor?: number): Promise<APIRevealType[]> {
+    const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE, "sort.asc": "id" };
+    if (cursor !== undefined) params["offset.cr"] = cursor;
+    const { data } = await network<APIRevealType[]>({
+      url: `${getExplorerUrl()}/v1/operations/reveals`,
       params,
     });
     return data;
@@ -279,8 +318,7 @@ const api = {
   },
 
   /**
-   * Fetches FA2 token transfers (tokenId = 0 only) for a given account.
-   * This is limited to `token.standard=fa2` and `token.tokenId=0` on the TzKT API.
+   * Fetches FA2 token transfers for a given account.
    * Translates `query.sort` to TzKT's `sort.asc=id` / `sort.desc=id`.
    * The lower-level `getTokenTransfers` helper is a generic pass-through and does not pin the sort.
    * https://api.tzkt.io/#operation/Tokens_GetTokenTransfers
@@ -292,7 +330,6 @@ const api = {
     const sortKey = query.sort === "Descending" ? "sort.desc" : "sort.asc";
     const params: Record<string, unknown> = {
       "anyof.from.to": address,
-      "token.tokenId": "0",
       "token.standard": "fa2",
       [sortKey]: "id",
       limit: query.limit,
@@ -352,8 +389,8 @@ const api = {
   },
 
   /**
-   * Fetches FA token balances for a given account.
-   * When `tokenFilter` is omitted, only FA2 tokenId 0 balances are returned (legacy behaviour).
+   * Fetches FA2 token balances for a given account.
+   * When `tokenFilter` is omitted, all FA2 token balances are returned.
    * Pass `tokenFilter` to query a specific FA2 contract + token id (e.g. send-max for FA2).
    * https://api.tzkt.io/#operation/Tokens_GetTokenBalances
    */
@@ -368,8 +405,6 @@ const api = {
     if (tokenFilter) {
       params["token.contract"] = tokenFilter.contractAddress;
       params["token.tokenId"] = String(tokenFilter.tokenId);
-    } else {
-      params["token.tokenId"] = "0";
     }
     const { data } = await network<APITokenBalance[]>({
       url: `${getExplorerUrl()}/v1/tokens/balances`,
@@ -406,107 +441,49 @@ export const fetchAllTransactions = async (
 };
 
 /**
- * Fetches ALL `transaction` operations for a given block level, paginating through
- * TzKT's cursor-based pages (`offset.cr`) until exhausted.
+ * Generic paginated fetcher for block-level operations.
  *
  * TzKT hard-caps a single request at 10 000 items. This function issues multiple
  * requests when needed and is therefore safe for dense blocks.
  * A safety cap (`maxTxQuery`) prevents infinite loops on pathological responses.
  */
-export const fetchBlockTransactions = async (level: number): Promise<APITransactionType[]> => {
-  const txs: APITransactionType[] = [];
+async function fetchBlockPaginated<T extends { id: number }>(
+  pageFn: (level: number, cursor?: number) => Promise<T[]>,
+  level: number,
+  label: string,
+): Promise<T[]> {
+  const items: T[] = [];
   let cursor: number | undefined;
   let maxIteration = coinConfig.getCoinConfig().explorer.maxTxQuery;
   do {
-    const page = await api.getBlockTransactionsPage(level, cursor);
+    const page = await pageFn(level, cursor);
     if (page.length === 0) break;
-    txs.push(...page);
-    if (page.length < BLOCK_PAGE_SIZE) break; // last page: no need for another round-trip
-    cursor = page.at(-1)!.id;
-  } while (--maxIteration > 0);
-  if (maxIteration === 0) {
-    log(
-      "tezos",
-      `fetchBlockTransactions: maxTxQuery limit reached at level ${level}, result may be incomplete`,
-    );
-  }
-  return txs;
-};
-
-/**
- * Fetches ALL FA token transfers for a given block level, paginating through
- * TzKT's cursor-based pages (`offset.cr`) until exhausted.
- *
- * TzKT hard-caps a single request at 10 000 items. This function issues multiple
- * requests when needed and is therefore safe for airdrop / DeFi-heavy blocks.
- * A safety cap (`maxTxQuery`) prevents infinite loops on pathological responses.
- */
-export const fetchBlockTokenTransfers = async (level: number): Promise<APITokenTransfer[]> => {
-  const transfers: APITokenTransfer[] = [];
-  let cursor: number | undefined;
-  let maxIteration = coinConfig.getCoinConfig().explorer.maxTxQuery;
-  do {
-    const page = await api.getBlockTokenTransfersPage(level, cursor);
-    if (page.length === 0) break;
-    transfers.push(...page);
-    if (page.length < BLOCK_PAGE_SIZE) break; // last page
-    cursor = page.at(-1)!.id;
-  } while (--maxIteration > 0);
-  if (maxIteration === 0) {
-    log(
-      "tezos",
-      `fetchBlockTokenTransfers: maxTxQuery limit reached at level ${level}, result may be incomplete`,
-    );
-  }
-  return transfers;
-};
-
-/**
- * Fetches ALL `delegation` operations for a given block level, paginating through
- * TzKT's cursor-based pages (`offset.cr`) until exhausted.
- */
-export const fetchBlockDelegations = async (level: number): Promise<APIDelegationType[]> => {
-  const delegations: APIDelegationType[] = [];
-  let cursor: number | undefined;
-  let maxIteration = coinConfig.getCoinConfig().explorer.maxTxQuery;
-  do {
-    const page = await api.getBlockDelegationsPage(level, cursor);
-    if (page.length === 0) break;
-    delegations.push(...page);
+    items.push(...page);
     if (page.length < BLOCK_PAGE_SIZE) break;
     cursor = page.at(-1)!.id;
   } while (--maxIteration > 0);
   if (maxIteration === 0) {
-    log(
-      "tezos",
-      `fetchBlockDelegations: maxTxQuery limit reached at level ${level}, result may be incomplete`,
-    );
+    log("tezos", `${label}: maxTxQuery limit reached at level ${level}, result may be incomplete`);
   }
-  return delegations;
-};
+  return items;
+}
 
-/**
- * Fetches ALL `staking` operations for a given block level, paginating through
- * TzKT's cursor-based pages (`offset.cr`) until exhausted.
- */
-export const fetchBlockStaking = async (level: number): Promise<APIStakingType[]> => {
-  const stakingOps: APIStakingType[] = [];
-  let cursor: number | undefined;
-  let maxIteration = coinConfig.getCoinConfig().explorer.maxTxQuery;
-  do {
-    const page = await api.getBlockStakingPage(level, cursor);
-    if (page.length === 0) break;
-    stakingOps.push(...page);
-    if (page.length < BLOCK_PAGE_SIZE) break;
-    cursor = page.at(-1)!.id;
-  } while (--maxIteration > 0);
-  if (maxIteration === 0) {
-    log(
-      "tezos",
-      `fetchBlockStaking: maxTxQuery limit reached at level ${level}, result may be incomplete`,
-    );
-  }
-  return stakingOps;
-};
+export const fetchBlockTransactions = (level: number) =>
+  fetchBlockPaginated(api.getBlockTransactionsPage, level, "fetchBlockTransactions");
+
+export const fetchBlockTokenTransfers = (level: number) =>
+  fetchBlockPaginated(api.getBlockTokenTransfersPage, level, "fetchBlockTokenTransfers");
+
+export const fetchBlockDelegations = (level: number) =>
+  fetchBlockPaginated(api.getBlockDelegationsPage, level, "fetchBlockDelegations");
+
+export const fetchBlockStaking = (level: number) =>
+  fetchBlockPaginated(api.getBlockStakingPage, level, "fetchBlockStaking");
+
+export const fetchBlockOriginations = (level: number) =>
+  fetchBlockPaginated(api.getBlockOriginationsPage, level, "fetchBlockOriginations");
+
+export const fetchBlockReveals = (level: number) =>
+  fetchBlockPaginated(api.getBlockRevealsPage, level, "fetchBlockReveals");
 
 export default api;

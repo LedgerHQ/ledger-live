@@ -133,9 +133,6 @@ function readPackage(pkg, context) {
       addPeerDependencies("@cspotcode/source-map-support", {
         "source-map-support": "*",
       }),
-      addPeerDependencies("eslint-plugin-jest", {
-        jest: "*",
-      }),
       addPeerDependencies("jest-worker", {
         metro: "*",
       }),

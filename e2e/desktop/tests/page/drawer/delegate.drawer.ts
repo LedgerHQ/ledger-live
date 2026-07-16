@@ -1,7 +1,7 @@
 import { step } from "tests/misc/reporters/step";
 import { Drawer } from "tests/component/drawer.component";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { expect } from "@playwright/test";
 
 export class DelegateDrawer extends Drawer {

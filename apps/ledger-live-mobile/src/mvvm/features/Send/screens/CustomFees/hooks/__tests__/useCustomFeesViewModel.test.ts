@@ -52,13 +52,18 @@ const mockCustomFeeConfig = {
   }),
 };
 
-jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/bridge/descriptor/send/features"),
-  sendFeatures: {
-    getCustomFeeConfig: () => mockCustomFeeConfig,
-    getCustomAssetsConfig: () => null,
-  },
-}));
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => {
+  const actual = jest.requireActual("@ledgerhq/live-common/bridge/descriptor/send/features");
+  return {
+    ...actual,
+    sendFeatures: {
+      ...actual.sendFeatures,
+      getCustomFeeConfig: () => mockCustomFeeConfig,
+      getCustomAssetsConfig: () => null,
+      getFeeCurrencyAccountId: () => null,
+    },
+  };
+});
 
 function createTransaction(): Transaction {
   return {

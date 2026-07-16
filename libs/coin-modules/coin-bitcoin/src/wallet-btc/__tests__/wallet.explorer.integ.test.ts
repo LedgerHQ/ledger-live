@@ -30,7 +30,7 @@ describe("Integration tests for bitcoin v4 explorer api", () => {
 
     const currentBlock = await explorer.getCurrentBlock();
     expect(currentBlock?.height).toBeGreaterThan(10000);
-    expect(currentBlock?.hash.startsWith("0000")).toBeTruthy();
+    expect(currentBlock?.hash.startsWith("0000")).toEqual(true);
 
     const hex = await explorer.getTxHex(
       "8bae12b5f4c088d940733dcd1455efc6a3a69cf9340e17a981286d3778615684",

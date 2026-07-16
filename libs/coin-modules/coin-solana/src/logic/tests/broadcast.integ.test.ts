@@ -14,7 +14,7 @@ describe("broadcast", () => {
   it("should reject an invalid transaction with a deserialization error", async () => {
     const invalidTx = Buffer.from("invalid-transaction-bytes").toString("base64");
 
-    await expect(api.broadcast(invalidTx)).rejects.toThrow(/failed to deserialize/i);
+    await expect(api.broadcast(invalidTx)).rejects.toThrow(/Reached end of buffer unexpectedly/i);
   });
 
   it("throws on insufficient funds", async () => {

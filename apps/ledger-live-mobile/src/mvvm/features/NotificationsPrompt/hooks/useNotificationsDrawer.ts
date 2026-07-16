@@ -20,7 +20,6 @@ import { ratingsModalOpenSelector } from "~/reducers/ratings";
 import { notificationsSelector } from "~/reducers/settings";
 import { type NotificationsState } from "~/reducers/types";
 import { type DataOfUser, type NotificationPromptTarget } from "../types";
-import { AB_TESTING_VARIANTS } from "../types/variants";
 import { resolveDrawerPromptTargetForAnalytics } from "../new/notificationsPromptAnalytics";
 import { isTransactionsAlertsPromptTarget } from "../utils/getNotificationsPromptCopy";
 
@@ -55,7 +54,6 @@ export const useNotificationsDrawer = ({
   updateUserLastInactiveTime,
 }: UseNotificationsDrawerParams) => {
   const featureBrazePushNotifications = useFeature("brazePushNotifications");
-  const featureNewWordingNotificationsDrawer = useFeature("lwmNewWordingOptInNotificationsDrawer");
   const actionEvents = featureBrazePushNotifications?.params?.action_events;
 
   const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
@@ -103,14 +101,6 @@ export const useNotificationsDrawer = ({
         return;
       }
 
-      // Group A (variant A) never sees inactivity drawer
-      const variant = featureNewWordingNotificationsDrawer?.params?.variant;
-      const isVariantA =
-        featureNewWordingNotificationsDrawer?.enabled && variant === AB_TESTING_VARIANTS.A;
-      if (isVariantA) {
-        return;
-      }
-
       const isOptOut =
         data.osPermissionStatus !== AuthorizationStatus.AUTHORIZED ||
         !data.areAppNotificationsEnabled;
@@ -123,14 +113,7 @@ export const useNotificationsDrawer = ({
         openDrawer("inactivity", 1000);
       }
     },
-    [
-      featureBrazePushNotifications?.enabled,
-      isRatingsModalOpen,
-      featureNewWordingNotificationsDrawer?.enabled,
-      featureNewWordingNotificationsDrawer?.params?.variant,
-      openDrawer,
-      checkIsInactive,
-    ],
+    [featureBrazePushNotifications?.enabled, isRatingsModalOpen, openDrawer, checkIsInactive],
   );
 
   const tryTriggerPushNotificationDrawerAfterAction = useCallback(
@@ -144,7 +127,6 @@ export const useNotificationsDrawer = ({
       track("attempt_to_trigger_push_notification_drawer_after_action", {
         action: actionSource,
         shouldPrompt,
-        variant: featureNewWordingNotificationsDrawer?.params?.variant,
         repromptDelay: nextRepromptDelay,
         dismissedCount: pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0,
         drawerPromptTarget: shouldPrompt
@@ -153,15 +135,6 @@ export const useNotificationsDrawer = ({
       });
 
       if (!shouldPrompt) {
-        return;
-      }
-
-      const variant = featureNewWordingNotificationsDrawer?.params?.variant;
-      const isVariantA =
-        featureNewWordingNotificationsDrawer?.enabled && variant === AB_TESTING_VARIANTS.A;
-
-      // For non-onboarding actions, Group A (variant A) never shows drawer
-      if (actionSource !== "onboarding" && isVariantA) {
         return;
       }
 
@@ -237,8 +210,6 @@ export const useNotificationsDrawer = ({
       isRatingsModalOpen,
       actionEvents,
       shouldPromptOptInDrawerAfterAction,
-      featureNewWordingNotificationsDrawer?.enabled,
-      featureNewWordingNotificationsDrawer?.params?.variant,
       openDrawer,
       nextRepromptDelay,
       pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length,
@@ -247,8 +218,6 @@ export const useNotificationsDrawer = ({
 
   const trackButtonClicked = useCallback(
     (eventName: string) => {
-      const canShowVariant = featureNewWordingNotificationsDrawer?.enabled;
-
       track("button_clicked", {
         button: eventName,
         page: "Drawer push notification opt-in",
@@ -256,14 +225,11 @@ export const useNotificationsDrawer = ({
         drawerPromptTarget: resolveDrawerPromptTargetForAnalytics(drawerPromptTarget),
         repromptDelay: nextRepromptDelay,
         dismissedCount: pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0,
-        variant: canShowVariant ? featureNewWordingNotificationsDrawer?.params?.variant : undefined,
       });
     },
     [
       drawerSource,
       drawerPromptTarget,
-      featureNewWordingNotificationsDrawer?.enabled,
-      featureNewWordingNotificationsDrawer?.params?.variant,
       nextRepromptDelay,
       pushNotificationsDataOfUser?.dismissedOptInDrawerAtList,
     ],

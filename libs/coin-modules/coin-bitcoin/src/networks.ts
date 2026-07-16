@@ -115,20 +115,6 @@ export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkPar
       sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
       additionalBIPs: [],
     };
-  } else if (networkName === "hcash") {
-    return {
-      identifier: "hsr",
-      P2PKHVersion: Buffer.from([0x28]),
-      P2SHVersion: Buffer.from([0x78]),
-      xpubVersion: Buffer.from([0x04, 0x88, 0xc2, 0x1e]),
-      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
-      dustAmount: new BigNumber(10000),
-      messagePrefix: "HShare Signed Message:\n",
-      usesTimestampedTransaction: true,
-      timestampDelay: new BigNumber(0),
-      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
-      additionalBIPs: [],
-    };
   } else if (networkName === "qtum") {
     return {
       identifier: "qtum",
@@ -171,20 +157,6 @@ export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkPar
       sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
       additionalBIPs: [],
     };
-  } else if (networkName === "stratis") {
-    return {
-      identifier: "strat",
-      P2PKHVersion: Buffer.from([0x3f]),
-      P2SHVersion: Buffer.from([0x7d]),
-      xpubVersion: Buffer.from([0x04, 0x88, 0xc2, 0x1e]),
-      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
-      dustAmount: new BigNumber(10000),
-      messagePrefix: "Stratis Signed Message:\n",
-      usesTimestampedTransaction: true,
-      timestampDelay: new BigNumber(15),
-      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
-      additionalBIPs: [],
-    };
   } else if (networkName === "komodo") {
     return {
       identifier: "kmd",
@@ -195,34 +167,6 @@ export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkPar
       dustAmount: new BigNumber(10000),
       messagePrefix: "Komodo Signed Message:\n",
       usesTimestampedTransaction: false,
-      timestampDelay: new BigNumber(0),
-      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
-      additionalBIPs: [],
-    };
-  } else if (networkName === "poswallet") {
-    return {
-      identifier: "posw",
-      P2PKHVersion: Buffer.from([0x37]),
-      P2SHVersion: Buffer.from([0x55]),
-      xpubVersion: Buffer.from([0x04, 0x88, 0xb2, 0x1e]),
-      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
-      dustAmount: new BigNumber(10000),
-      messagePrefix: "PosWallet Signed Message:\n",
-      usesTimestampedTransaction: true,
-      timestampDelay: new BigNumber(0),
-      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
-      additionalBIPs: [],
-    };
-  } else if (networkName === "clubcoin") {
-    return {
-      identifier: "club",
-      P2PKHVersion: Buffer.from([0x1c]),
-      P2SHVersion: Buffer.from([0x55]),
-      xpubVersion: Buffer.from([0x04, 0x88, 0xb2, 0x1e]),
-      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
-      dustAmount: new BigNumber(10000),
-      messagePrefix: "Clubcoin Signed Message:\n",
-      usesTimestampedTransaction: true,
       timestampDelay: new BigNumber(0),
       sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
       additionalBIPs: [],

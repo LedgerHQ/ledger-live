@@ -37,7 +37,7 @@ describe("AssetDistribution Row", () => {
   });
 
   it("should render price and countervalue components", () => {
-    render(<Row item={makeItem()} isVisible={false} isResponsiveLayout={false} />);
+    render(<Row item={makeItem()} isVisible={false} />);
 
     expect(screen.getByTestId("asset-price")).toBeVisible();
     expect(screen.getByTestId("asset-countervalue")).toBeVisible();
@@ -47,11 +47,7 @@ describe("AssetDistribution Row", () => {
 
   it("should render percentage text and bar even when distribution is 0", () => {
     render(
-      <Row
-        item={makeItem({ distribution: 0, amount: 1, countervalue: 0 })}
-        isVisible={false}
-        isResponsiveLayout={false}
-      />,
+      <Row item={makeItem({ distribution: 0, amount: 1, countervalue: 0 })} isVisible={false} />,
     );
 
     expect(screen.getByText("0%")).toBeVisible();
@@ -60,26 +56,20 @@ describe("AssetDistribution Row", () => {
   });
 
   it("should display the correct percentage for a given distribution", () => {
-    render(
-      <Row
-        item={makeItem({ distribution: 0.4567 })}
-        isVisible={false}
-        isResponsiveLayout={false}
-      />,
-    );
+    render(<Row item={makeItem({ distribution: 0.4567 })} isVisible={false} />);
 
     expect(screen.getByText("45.67%")).toBeVisible();
   });
 
   it("should render the currency name", () => {
-    render(<Row item={makeItem()} isVisible={false} isResponsiveLayout={false} />);
+    render(<Row item={makeItem()} isVisible={false} />);
 
     expect(screen.getByText("Bitcoin")).toBeVisible();
   });
 
   it("should pass currency and value props to CounterValue", () => {
     const item = makeItem({ amount: 200000000 });
-    render(<Row item={item} isVisible={false} isResponsiveLayout={false} />);
+    render(<Row item={item} isVisible={false} />);
 
     expect(mockedCounterValue).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -90,7 +80,7 @@ describe("AssetDistribution Row", () => {
   });
 
   it("should pass from prop to Price", () => {
-    render(<Row item={makeItem()} isVisible={false} isResponsiveLayout={false} />);
+    render(<Row item={makeItem()} isVisible={false} />);
 
     expect(mockedPrice).toHaveBeenCalledWith(
       expect.objectContaining({

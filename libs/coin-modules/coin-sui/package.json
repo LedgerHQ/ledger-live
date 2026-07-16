@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-sui",
-  "version": "0.38.0",
+  "version": "0.39.0",
   "description": "Ledger Sui Coin integration",
   "keywords": [
     "Ledger",
@@ -71,10 +71,10 @@
       "require": "./lib/bridge/preload.js",
       "default": "./lib-es/bridge/preload.js"
     },
-    "./getOperationExtra": {
-      "@ledgerhq/source": "./src/bridge/getOperationExtra.ts",
-      "require": "./lib/bridge/getOperationExtra.js",
-      "default": "./lib-es/bridge/getOperationExtra.js"
+    "./getStakingExtraByDigest": {
+      "@ledgerhq/source": "./src/bridge/getStakingExtraByDigest.ts",
+      "require": "./lib/bridge/getStakingExtraByDigest.js",
+      "default": "./lib-es/bridge/getStakingExtraByDigest.js"
     },
     "./serialization": {
       "@ledgerhq/source": "./src/bridge/serialization.ts",

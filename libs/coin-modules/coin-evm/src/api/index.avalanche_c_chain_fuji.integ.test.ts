@@ -4,12 +4,11 @@ import {
   MemoNotSupported,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
 describe("EVM Avalanche C-Chain Fuji", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
     setupCalClientStore();

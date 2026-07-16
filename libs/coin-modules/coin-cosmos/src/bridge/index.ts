@@ -25,6 +25,7 @@ import {
   toOperationExtraRaw,
 } from "../serialization";
 import { buildSignOperation } from "../signOperation";
+import { buildSignRawOperation } from "../signRawOperation";
 import { getAccountShape } from "../synchronisation";
 import type { CosmosAccount, CosmosOperation, Transaction, TransactionStatus } from "../types";
 import { CosmosSigner } from "../types/signer";
@@ -67,9 +68,7 @@ function buildAccountBridge(
     sync,
     receive,
     signOperation,
-    signRawOperation: () => {
-      throw new Error("signRawOperation is not supported");
-    },
+    signRawOperation: buildSignRawOperation(signerContext),
     assignFromAccountRaw,
     assignToAccountRaw,
     broadcast: async ({ account, signedOperation }) => {

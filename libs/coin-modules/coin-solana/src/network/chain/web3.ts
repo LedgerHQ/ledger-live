@@ -406,6 +406,10 @@ export function getStakeAccountMinimumBalanceForRentExemption(api: ChainAPI) {
   return api.getMinimumBalanceForRentExemption(StakeProgram.space);
 }
 
+export function getStakeMinimumDelegation(api: ChainAPI) {
+  return api.getStakeMinimumDelegation();
+}
+
 export async function getAccountMinimumBalanceForRentExemption(api: ChainAPI, address: string) {
   const accInfo = await api.getAccountInfo(address);
   const accSpace = accInfo !== null && "parsed" in accInfo.data ? accInfo.data.space : 0;

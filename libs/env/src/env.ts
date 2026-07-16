@@ -948,11 +948,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Coingecko API",
   },
-  USE_LEARN_STAGING_URL: {
-    def: false,
-    parser: boolParser,
-    desc: "use the staging URL for the learn page",
-  },
   DYNAMIC_CAL_BASE_URL: {
     def: "https://cdn.live.ledger.com/cryptoassets",
     parser: stringParser,

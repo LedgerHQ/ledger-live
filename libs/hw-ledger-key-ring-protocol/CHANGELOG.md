@@ -1,5 +1,47 @@
 # @ledgerhq/live-wallet
 
+## 0.11.0
+
+### Minor Changes
+
+- [#18568](https://github.com/LedgerHQ/ledger-live/pull/18568) [`6ddd641`](https://github.com/LedgerHQ/ledger-live/commit/6ddd64113a4c360a091fc1fd54256cfabaab5220) Thanks [@gre-ledger](https://github.com/gre-ledger)! - feat(lkrp): per-application close on Wallet Sync deactivation
+
+  Deactivating Wallet Sync now closes only the current application's stream instead of destroying the whole trustchain root, so other applications sharing the same root (e.g. wallet-cli `ring`) keep working. If the application being closed is the last open one, the whole trustchain is still destroyed (previous behaviour).
+
+  - `CommandStreamResolver` now observes `CloseStream` (`ResolvedCommandStream.isClosed()`).
+  - `StreamTree.getApplicationStreams()` / `hasAnotherOpenApplication()` enumerate application streams to detect the last open application.
+  - New `TrustchainSDK.destroyApplication()` primitive, software-key signed (no hardware device): closes only the current application's stream, or destroys the whole trustchain when it is the last open application (`{ trustchainDestroyed }`).
+  - `restoreTrustchain` throws `TrustchainEjected` when the application stream is closed, and `getOrCreateTrustchain` reopens on the next index after a close.
+  - LLD/LLM `useDestroyTrustchain` hooks now call `destroyApplication`.
+  - web-tools trustchain playground exposes a `sdk.destroyApplication` action to exercise the per-application close.
+
+### Patch Changes
+
+- Updated dependencies [[`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11)]:
+  - @ledgerhq/live-env@2.41.0
+  - @ledgerhq/hw-transport@6.35.6
+
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#18568](https://github.com/LedgerHQ/ledger-live/pull/18568) [`6ddd641`](https://github.com/LedgerHQ/ledger-live/commit/6ddd64113a4c360a091fc1fd54256cfabaab5220) Thanks [@gre-ledger](https://github.com/gre-ledger)! - feat(lkrp): per-application close on Wallet Sync deactivation
+
+  Deactivating Wallet Sync now closes only the current application's stream instead of destroying the whole trustchain root, so other applications sharing the same root (e.g. wallet-cli `ring`) keep working. If the application being closed is the last open one, the whole trustchain is still destroyed (previous behaviour).
+
+  - `CommandStreamResolver` now observes `CloseStream` (`ResolvedCommandStream.isClosed()`).
+  - `StreamTree.getApplicationStreams()` / `hasAnotherOpenApplication()` enumerate application streams to detect the last open application.
+  - New `TrustchainSDK.destroyApplication()` primitive, software-key signed (no hardware device): closes only the current application's stream, or destroys the whole trustchain when it is the last open application (`{ trustchainDestroyed }`).
+  - `restoreTrustchain` throws `TrustchainEjected` when the application stream is closed, and `getOrCreateTrustchain` reopens on the next index after a close.
+  - LLD/LLM `useDestroyTrustchain` hooks now call `destroyApplication`.
+  - web-tools trustchain playground exposes a `sdk.destroyApplication` action to exercise the per-application close.
+
+### Patch Changes
+
+- Updated dependencies [[`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11)]:
+  - @ledgerhq/live-env@2.41.0-next.0
+  - @ledgerhq/hw-transport@6.35.6-next.0
+
 ## 0.10.7
 
 ### Patch Changes

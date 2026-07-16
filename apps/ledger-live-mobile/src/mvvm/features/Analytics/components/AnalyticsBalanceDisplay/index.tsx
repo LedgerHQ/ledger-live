@@ -17,15 +17,8 @@ type Props = {
  * suppressed because a historical value is already resolved.
  */
 export function AnalyticsBalanceDisplay({ hoveredValue }: Readonly<Props>) {
-  const {
-    value,
-    formatter,
-    discreet,
-    isHovering,
-    isLoading,
-    isBalanceAvailable,
-    shouldDisplayBalanceRefreshRework,
-  } = useAnalyticsBalanceDisplayViewModel({ hoveredValue });
+  const { value, formatter, discreet, isHovering, isLoading, isBalanceAvailable } =
+    useAnalyticsBalanceDisplayViewModel({ hoveredValue });
 
   if (!isBalanceAvailable) {
     return <Skeleton testID="analytics-balance-skeleton" lx={{ height: "s48", width: "s256" }} />;
@@ -36,7 +29,7 @@ export function AnalyticsBalanceDisplay({ hoveredValue }: Readonly<Props>) {
       value={value}
       formatter={formatter}
       hidden={discreet}
-      loading={!isHovering && shouldDisplayBalanceRefreshRework && isLoading}
+      loading={!isHovering && isLoading}
       testID="analytics-balance-amount"
     />
   );

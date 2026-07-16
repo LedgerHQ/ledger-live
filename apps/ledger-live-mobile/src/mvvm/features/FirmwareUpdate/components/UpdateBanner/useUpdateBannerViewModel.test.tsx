@@ -1,5 +1,5 @@
 import ReactNative from "react-native";
-import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { act, renderHook } from "@tests/test-renderer";
 import { useUpdateBannerViewModel } from "./useUpdateBannerViewModel";
 import { State } from "~/reducers/types";
 
@@ -51,7 +51,6 @@ function withState(overrides: {
   hasCompletedOnboarding?: boolean;
   lastConnectedDevice?: Record<string, unknown> | null;
   seenDevices?: Record<string, unknown>[];
-  withWallet40MainNav?: boolean;
 }) {
   return {
     overrideInitialState: (state: State): State => {
@@ -77,11 +76,6 @@ function withState(overrides: {
           }),
         },
       };
-      if (overrides.withWallet40MainNav) {
-        return withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { mainNavigation: true } },
-        })(base);
-      }
       return base;
     },
   };
@@ -279,7 +273,7 @@ describe("useUpdateBannerViewModel", () => {
   });
 
   describe("analytics", () => {
-    it("should track banner impression when shouldDisplayWallet40MainNav is true and screen is focused", () => {
+    it("should track banner impression when screen is focused", () => {
       useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
 
       renderHook(
@@ -287,7 +281,6 @@ describe("useUpdateBannerViewModel", () => {
         withState({
           hasConnectedDevice: true,
           hasCompletedOnboarding: true,
-          withWallet40MainNav: true,
         }),
       );
 
@@ -306,7 +299,6 @@ describe("useUpdateBannerViewModel", () => {
         withState({
           hasConnectedDevice: true,
           hasCompletedOnboarding: true,
-          withWallet40MainNav: true,
         }),
       );
 
@@ -314,20 +306,6 @@ describe("useUpdateBannerViewModel", () => {
         banner: "OS update",
         page: "my ledger",
       });
-    });
-
-    it("should not track banner impression when shouldDisplayWallet40MainNav is false", () => {
-      useLatestFirmware.mockReturnValue({ final: { name: "mockVersion" } });
-
-      renderHook(
-        () => useUpdateBannerViewModel({ onBackFromUpdate: jest.fn() }),
-        withState({
-          hasConnectedDevice: true,
-          hasCompletedOnboarding: true,
-        }),
-      );
-
-      expect(mockTrack).not.toHaveBeenCalledWith("banner_impression", expect.anything());
     });
 
     it("should not track banner impression when screen is not focused", () => {
@@ -339,7 +317,6 @@ describe("useUpdateBannerViewModel", () => {
         withState({
           hasConnectedDevice: true,
           hasCompletedOnboarding: true,
-          withWallet40MainNav: true,
         }),
       );
 
@@ -354,7 +331,6 @@ describe("useUpdateBannerViewModel", () => {
         withState({
           hasConnectedDevice: true,
           hasCompletedOnboarding: true,
-          withWallet40MainNav: true,
         }),
       );
 
@@ -375,7 +351,6 @@ describe("useUpdateBannerViewModel", () => {
         withState({
           hasConnectedDevice: true,
           hasCompletedOnboarding: true,
-          withWallet40MainNav: true,
         }),
       );
 
@@ -398,7 +373,6 @@ describe("useUpdateBannerViewModel", () => {
         withState({
           hasConnectedDevice: true,
           hasCompletedOnboarding: true,
-          withWallet40MainNav: true,
         }),
       );
 

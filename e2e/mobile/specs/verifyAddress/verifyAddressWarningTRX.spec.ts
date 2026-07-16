@@ -1,4 +1,4 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { runVerifyAddressWarningTest } from "./verifyAddressWarning";
 
 runVerifyAddressWarningTest(

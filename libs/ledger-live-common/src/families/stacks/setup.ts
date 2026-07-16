@@ -2,7 +2,6 @@
 
 import { createBridges } from "@ledgerhq/coin-stacks";
 import stacksResolver, { signMessage } from "@ledgerhq/coin-stacks/signer/index";
-import makeCliTools from "@ledgerhq/coin-stacks/test/cli";
 import Transport from "@ledgerhq/hw-transport";
 import { Bridge } from "@ledgerhq/types-live";
 import BlockstackApp from "@zondax/ledger-stacks";
@@ -27,6 +26,4 @@ const messageSigner = {
 
 const resolver: Resolver = createResolver(createSigner, stacksResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, messageSigner, resolver };
+export { bridge, messageSigner, resolver };

@@ -1,10 +1,10 @@
 import { verifyAppValidationSendInfo } from "../../models/send";
-import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
-import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
-import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
+import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
+import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { getEnv } from "@ledgerhq/live-env";
-import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
+import { TransactionStatus } from "@ledgerhq/live-e2e-shared/enum/TransactionStatus";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import invariant from "invariant";
 
@@ -149,34 +149,14 @@ export function runAddSubAccountTest(testConfig: {
     tags.forEach(tag => $Tag(tag));
     it(`Add Sub Account without parent (${asset.currency.speculosApp.name}) - ${asset.currency.ticker}`, async () => {
       await app.portfolio.addAccount();
-
-      const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
-
-      if (isModularDrawer) {
-        await app.addAccount.importWithYourLedger();
-        await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
-        await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
-        if (networks) {
-          await app.modularDrawer.validateNetworksScreen(networks);
-          await app.modularDrawer.selectNetwork(asset.parentAccount!.currency.name);
-        } else {
-          await app.modularDrawer.selectNetworkIfAsked(asset.parentAccount!.currency.name);
-        }
+      await app.addAccount.importWithYourLedger();
+      await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
+      await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
+      if (networks) {
+        await app.modularDrawer.validateNetworksScreen(networks);
+        await app.modularDrawer.selectNetwork(asset.parentAccount!.currency.name);
       } else {
-        await app.addAccount.importWithYourLedger();
-        await app.common.performSearch(
-          asset?.parentAccount === undefined ? asset.currency.id : asset.currency.name,
-        );
-        if (asset.tokenType) {
-          await app.receive.selectCurrencyByType(asset.tokenType);
-        } else {
-          await app.receive.selectCurrency(asset.currency.id);
-        }
-        const networkId =
-          asset?.parentAccount === undefined
-            ? asset.currency.speculosApp.name.toLowerCase()
-            : asset?.parentAccount?.currency.id;
-        await app.receive.selectNetworkIfAsked(networkId);
+        await app.modularDrawer.selectNetworkIfAsked(asset.parentAccount!.currency.name);
       }
 
       const accountId = await app.addAccount.addAccountAtIndex(

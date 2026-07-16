@@ -154,6 +154,7 @@ const getPtxAttributes = () => {
   const ptxSwapLiveAppOnPortfolio = analyticsFeatureFlagMethod("ptxSwapLiveAppOnPortfolio");
   const ptxSwapLiveAppOnAsset = analyticsFeatureFlagMethod("ptxSwapLiveAppOnAsset");
   const ptxBorrowLiveApp = analyticsFeatureFlagMethod("ptxBorrowLiveApp");
+
   const isBatch1Enabled: boolean =
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
   const isBatch2Enabled: boolean =
@@ -246,17 +247,11 @@ const extraProperties = (store: ReduxStore) => {
   const ldmkConnectApp = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkConnectApp")
     : { enabled: false };
-  const lldSyncOnboardingIncr1 = analyticsFeatureFlagMethod
-    ? analyticsFeatureFlagMethod("lldSyncOnboardingIncr1")
-    : { enabled: false };
   const ldmkSolanaSigner = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkSolanaSigner")
     : { enabled: false };
   const ldmkCosmosSigner = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkCosmosSigner")
-    : { enabled: false };
-  const nanoOnboardingFundWallet = analyticsFeatureFlagMethod
-    ? analyticsFeatureFlagMethod("nanoOnboardingFundWallet")
     : { enabled: false };
 
   const ledgerSyncAttributes = getLedgerSyncAttributes(state);
@@ -337,8 +332,6 @@ const extraProperties = (store: ReduxStore) => {
     madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
-    lldSyncOnboardingIncr1: Boolean(lldSyncOnboardingIncr1?.enabled),
-    nanoOnboardingFundWallet: Boolean(nanoOnboardingFundWallet?.enabled),
     // For tracking receive flow events during onboarding
     ...getOnboardingStatusAttributes(
       postOnboardingInProgress,

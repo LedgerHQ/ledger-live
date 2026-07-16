@@ -7,7 +7,7 @@ import type { Transaction } from "../../coin-modules/transaction-types";
  * Memo field type configuration
  */
 export type MemoType =
-  | "text" // Simple text memo (cosmos, solana, algorand)
+  | "text" // Simple text memo (cosmos, solana)
   | "tag" // Numeric tag (xrp destination tag, casper transfer id)
   | "typed"; // Typed memo with predefined options (stellar)
 
@@ -67,8 +67,18 @@ export type CustomFeeConfig = Readonly<{
   buildTransactionPatch: (values: Record<string, string>) => Record<string, unknown>;
 }>;
 
+export type CustomFeeInputValueTransform = Readonly<{
+  /** Restrict the transform to specific custom fee input keys. Applies to all inputs when omitted. */
+  inputKeys?: readonly string[];
+  /** Converts descriptor-native values to values displayed in the input. */
+  fromCanonicalValue: (value: string) => string;
+  /** Converts user-entered values back to descriptor-native values. */
+  toCanonicalValue: (value: string) => string;
+}>;
+
 /**
- * Option for a fee-paying asset (for Celo WIP)
+ * A single selectable fee-paying asset displayed in the "Pay fees in" control
+ * of the Custom Fees step (e.g. native CELO or an allowlisted token).
  */
 export type FeeAssetOption = Readonly<{
   id: string;
@@ -76,14 +86,41 @@ export type FeeAssetOption = Readonly<{
   label: string;
   /** Unit label to display in the fee input when this asset is selected (ex: "Gwei", "sat") */
   unitLabel?: string;
+  /** Optional conversion between descriptor-native fee values and selected-asset display values. */
+  customFeeInputValueTransform?: CustomFeeInputValueTransform;
 }>;
 
 /**
- * Configuration for coins that support paying fees with alternative assets/tokens.
+ * Context handed to a fee asset config. Exposes the resolved main account (so a
+ * config can read sub-accounts, balances, ...) and the current transaction.
+ * `transaction` is intentionally `unknown`: the owning coin-module narrows it,
+ * the generic UI never reads it.
+ */
+export type FeeAssetContext = Readonly<{
+  mainAccount: Account;
+  transaction: unknown;
+}>;
+
+/**
+ * Declarative, family agnostic configuration for coins that let users pay fees
+ * with an alternative asset/token (e.g. Celo's fee abstraction). The coin-module
+ * owns the options, the selected value and the resulting opaque transaction
+ * patch; the generic Custom Fees UI only renders the "Pay fees in" select and
+ * forwards the user's choice — no coin code lives in the apps.
  */
 export type FeeAssetsConfig = Readonly<{
-  options: readonly FeeAssetOption[];
-  defaultId: string;
+  /** Computes the selectable fee assets from the current account/transaction. */
+  getOptions: (context: FeeAssetContext) => readonly FeeAssetOption[];
+  /** Resolves the currently-selected option id from the transaction. */
+  getSelectedOptionId: (context: FeeAssetContext) => string;
+  /** Builds an opaque transaction patch for the chosen option, or `null`. */
+  buildPatch: (optionId: string, context: FeeAssetContext) => TransactionPatch | null;
+  /**
+   * Optional reconciliation run by the generic UI when the account/transaction
+   * change. Returns a patch to apply when the current selection became invalid
+   * (e.g. the selected sub-account disappeared), or `null` to leave it as-is.
+   */
+  reconcile?: (context: FeeAssetContext) => TransactionPatch | null;
 }>;
 
 export type FeePresetOption = Readonly<{
@@ -214,8 +251,8 @@ export type FeeDescriptor = {
   /**
    * Configuration for fee asset selection.
    * When `hasCustomAssets` is true, this describes which assets can be used
-   * to pay transaction fees (e.g. Celo's cUSD, cEUR).
-   * (Not yet implemented)
+   * to pay transaction fees (e.g. Celo's fee abstraction tokens) and how the
+   * selection maps to an opaque transaction patch.
    */
   customAssets?: FeeAssetsConfig;
   /** When `hasCoinControl` is true, describes rows and patches for the coin control step. */
@@ -266,11 +303,6 @@ export type FlowEffect = Readonly<{
 }>;
 
 export type SendAmountDescriptor = Readonly<{
-  /**
-   * Optional list of plugins that should run on the Amount step.
-   * These are executed by the UI layer through a plugin registry.
-   */
-  getPlugins?: () => readonly string[];
   canSendMax?: boolean;
   /**
    * Generic and family agnostic effects executed by the `useFlowEffects` runner

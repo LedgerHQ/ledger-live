@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Pressable } from "react-native";
 
 import { NavigatorName, ScreenName } from "~/const";
 import { SyncOnboardingStackParamList } from "~/components/RootNavigator/types/SyncOnboardingNavigator";
@@ -22,7 +21,6 @@ import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { useIsFocused, useNavigation } from "@react-navigation/core";
 import Button from "~/components/Button";
 import styled from "styled-components/native";
-import { useFeature } from "@features/platform-feature-flags";
 import { Trans } from "~/context/Locale";
 import { TrackScreen, track } from "~/analytics";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
@@ -47,7 +45,6 @@ const CompletionScreen = ({ route }: Props) => {
   const isFocused = useIsFocused();
   const navigation = useNavigation<RootNavigation>();
   const dispatch = useDispatch();
-  const isSyncIncr1Enabled = useFeature("llmSyncOnboardingIncr1")?.enabled ?? false;
   const { isOpen: isModularDrawerOpen } = useModularDrawerController();
 
   const preventNavigation = useRef(true);
@@ -80,9 +77,9 @@ const CompletionScreen = ({ route }: Props) => {
   useEffect(
     () =>
       navigation.addListener("beforeRemove", e => {
-        if (isSyncIncr1Enabled && preventNavigation.current) e.preventDefault();
+        if (preventNavigation.current) e.preventDefault();
       }),
-    [navigation, isSyncIncr1Enabled],
+    [navigation],
   );
 
   useEffect(() => {
@@ -100,73 +97,50 @@ const CompletionScreen = ({ route }: Props) => {
     }
   }, [dispatch, isFocused]);
 
-  if (isSyncIncr1Enabled) {
-    return (
-      <Flex width="100%" height="100%" alignItems="center" justifyContent="center">
-        <TrackScreen
-          category="End of onboarding"
-          flow="onboarding"
-          seedConfiguration={seedConfiguration}
-        />
-        {/* If the modular drawer is enabled and open, we don't want to show the onboarding success view */}
-        {!isModularDrawerOpen && (
-          <OnboardingSuccessView deviceModelId={device.modelId} loop={true} />
-        )}
-        <CTAWrapper>
-          <Button
-            event="CompletionScreenContinue"
-            containerStyle={{ flexGrow: 1 }}
-            type={"secondary"}
-            title={<Trans i18nKey="common.continue" />}
-            testID="completion-screen-continue-button"
-            onPress={() => {
-              track("button_clicked", {
-                button: "Finish onboarding",
-                flow: "onboarding",
-                seedConfiguration,
-              });
-              redirectToMainScreen();
-            }}
-          />
-        </CTAWrapper>
-      </Flex>
-    );
-  }
-
   return (
-    <Pressable onPress={redirectToMainScreen}>
-      <Flex width="100%" height="100%" alignItems="center" justifyContent="center">
-        <TrackScreen
-          category="End of onboarding"
-          flow="onboarding"
-          seedConfiguration={seedConfiguration}
+    <Flex width="100%" height="100%" alignItems="center" justifyContent="center">
+      <TrackScreen
+        category="End of onboarding"
+        flow="onboarding"
+        seedConfiguration={seedConfiguration}
+      />
+      {/* If the modular drawer is enabled and open, we don't want to show the onboarding success view */}
+      {!isModularDrawerOpen && <OnboardingSuccessView deviceModelId={device.modelId} loop={true} />}
+      <CTAWrapper>
+        <Button
+          event="CompletionScreenContinue"
+          containerStyle={{ flexGrow: 1 }}
+          type={"secondary"}
+          title={<Trans i18nKey="common.continue" />}
+          testID="completion-screen-continue-button"
+          onPress={() => {
+            track("button_clicked", {
+              button: "Finish onboarding",
+              flow: "onboarding",
+              seedConfiguration,
+            });
+            redirectToMainScreen();
+          }}
         />
-        <OnboardingSuccessView
-          deviceModelId={device.modelId}
-          loop={false}
-          redirectToMainScreen={redirectToMainScreen}
-        />
-      </Flex>
-    </Pressable>
+      </CTAWrapper>
+    </Flex>
   );
 };
 
 const OnboardingSuccessView = ({
   deviceModelId,
   loop,
-  redirectToMainScreen,
 }: {
   deviceModelId: DeviceModelId;
   loop: boolean;
-  redirectToMainScreen?: () => void;
 }) => {
   switch (deviceModelId) {
     case DeviceModelId.europa:
-      return <EuropaOnboardingSuccessView onAnimationFinish={redirectToMainScreen} loop={loop} />;
+      return <EuropaOnboardingSuccessView loop={loop} />;
     case DeviceModelId.stax:
-      return <StaxOnboardingSuccessView onAnimationFinish={redirectToMainScreen} />;
+      return <StaxOnboardingSuccessView />;
     case DeviceModelId.apex:
-      return <ApexOnboardingSuccessView onAnimationFinish={redirectToMainScreen} />;
+      return <ApexOnboardingSuccessView />;
     default:
       return null;
   }

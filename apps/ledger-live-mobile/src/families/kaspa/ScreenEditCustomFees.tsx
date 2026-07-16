@@ -3,7 +3,8 @@ import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import i18next from "i18next";
-import { Keyboard, SafeAreaView, StyleSheet, View } from "react-native";
+import { Keyboard, StyleSheet, View } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction as KaspaTransaction } from "@ledgerhq/live-common/families/kaspa/types";
@@ -69,6 +70,7 @@ function KaspaEditCustomFees({ navigation, route }: Props) {
   }, [setSompiPerByte, ownSompiPerByte, account, bridge, route.params, navigation, transaction]);
   return (
     <SafeAreaView
+      edges={["left", "right", "bottom"]}
       style={{
         flex: 1,
       }}

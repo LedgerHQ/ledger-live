@@ -170,7 +170,7 @@ const TransactionConfirm = ({
   const Footer = r?.footer;
 
   return (
-    <Container style={{ paddingBottom: 0 }}>
+    <Container style={{ paddingBottom: 0 }} data-testid="device-action-transaction-confirm">
       <Container paddingX={26}>
         <DeviceBlocker />
         <Animation animation={getDeviceAnimation(device.modelId, type, "verify")} />

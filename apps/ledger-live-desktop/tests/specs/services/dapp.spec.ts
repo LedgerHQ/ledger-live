@@ -84,9 +84,8 @@ test.describe("Local Test Dapp", () => {
     await drawer.continue();
     await page.getByTestId("drawer-continue-button").waitFor({ state: "detached" });
 
-    await drawer.waitForDrawerToBeVisible();
-    await expect(drawer.selectAccountTitle).toBeVisible();
-    await drawer.selectAccount("Ethereum", 0);
+    await drawer.waitForAccountSelectionStep();
+    await drawer.selectAccount("Ethereum 1");
     await drawer.waitForDrawerToDisappear();
 
     // Wait for webview window - React 19's concurrent rendering may delay its creation

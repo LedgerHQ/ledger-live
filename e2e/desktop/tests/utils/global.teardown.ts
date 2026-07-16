@@ -1,15 +1,19 @@
-import { formatFlagsData, formatEnvData } from "@ledgerhq/live-common/e2e/index";
+import { formatFlagsData, formatEnvData } from "@ledgerhq/live-e2e-shared/index";
 import { writeFileSync } from "fs";
 import { ElectronApplication, expect } from "@playwright/test";
 import { launchApp } from "./electronUtils";
-import { getFeatureFlags } from "./featureFlagUtils";
+import { getFeatureFlags, getMergedFeatureFlags } from "./featureFlagUtils";
 
 const environmentFilePath = "allure-results/environment.properties";
 
 export default async function globalTeardown() {
   if (process.env.CI) {
     const electronApp: ElectronApplication = await launchApp({
-      env: { ...process.env, PLAYWRIGHT_RUN: "true" },
+      env: {
+        ...process.env,
+        PLAYWRIGHT_RUN: "true",
+        FEATURE_FLAGS: JSON.stringify(getMergedFeatureFlags()),
+      },
       lang: "en-US",
       theme: "dark",
       userdataDestinationPath: "",

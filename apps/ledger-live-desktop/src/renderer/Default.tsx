@@ -18,7 +18,6 @@ import IsNewVersion from "~/renderer/components/IsNewVersion";
 import IsSystemLanguageAvailable from "~/renderer/components/IsSystemLanguageAvailable";
 import IsTermOfUseUpdated from "./components/IsTermOfUseUpdated";
 import KeyboardContent from "~/renderer/components/KeyboardContent";
-import MainSideBar from "~/renderer/components/MainSideBar";
 import SideBar from "LLD/components/SideBar";
 import TriggerAppReady from "~/renderer/components/TriggerAppReady";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
@@ -37,7 +36,6 @@ import useUSBTroubleshooting from "~/renderer/hooks/useUSBTroubleshooting";
 import ModalsLayer from "./ModalsLayer";
 import { ToastOverlay } from "~/renderer/components/ToastOverlay";
 import Drawer from "~/renderer/drawers/Drawer";
-import UpdateBanner from "~/renderer/components/Updater/Banner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { updateIdentify } from "./analytics/segment";
 import {
@@ -52,6 +50,7 @@ import {
 import { Flex } from "@ledgerhq/react-ui";
 import { Spinner } from "@ledgerhq/lumen-ui-react";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
+import { useTrackFundsReceived } from "LLD/features/Analytics/hooks/useTrackFundsReceived";
 import { accountsSelector } from "./reducers/accounts";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { hasCompletedOnboardingSelector, areSettingsLoaded } from "~/renderer/reducers/settings";
@@ -75,9 +74,8 @@ import {
   BACKGROUND_SIZE,
   preloadBackgrounds,
 } from "LLD/components/Page/backgrounds";
-import FirmwareUpdateBanner from "./components/FirmwareUpdateBanner";
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
-const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
+const PortfolioPage = lazy(() => import("LLD/features/Portfolio/screens/PortfolioPage"));
 const Settings = lazy(() => import("~/renderer/screens/settings"));
 const Accounts = lazy(() => import("~/renderer/screens/accounts"));
 const Card = lazy(() => import("~/renderer/screens/card"));
@@ -89,8 +87,7 @@ const SwapWeb = lazy(() => import("~/renderer/screens/swapWeb"));
 const Swap2 = lazy(() => import("~/renderer/screens/exchange/Swap2"));
 const Perps = lazy(() => import("LLD/features/Perps"));
 const Borrow = lazy(() => import("LLD/features/Borrow"));
-const Market40 = lazy(() => import("LLD/features/Market"));
-const Market = lazy(() => import("~/renderer/screens/market"));
+const Market = lazy(() => import("LLD/features/Market"));
 
 const MarketCoin = lazy(() => import("~/renderer/screens/market/MarketCoin"));
 const WelcomeScreenSettings = lazy(
@@ -254,33 +251,25 @@ const RecoverPlayerWithFeatureToggle = () => {
 
 // Shared content for the main app layout
 const MainAppContent = ({
-  shouldDisplayMarketBanner,
-  shouldDisplayWallet40MainNav,
   shouldDisplayAssetSection,
   shouldDisplayAggregatedAssets,
-  shouldDisplayAssetDiscoverability,
 }: {
-  shouldDisplayMarketBanner: boolean;
-  shouldDisplayWallet40MainNav: boolean;
   shouldDisplayAssetSection: boolean;
   shouldDisplayAggregatedAssets: boolean;
-  shouldDisplayAssetDiscoverability: boolean;
 }) => (
   <>
     <Routes>
       <Route path="/recover/:appId" element={<RecoverPlayerWithFeatureToggle />} />
       <Route path="/perps/*" element={withFullscreenSuspense(Perps)({})} />
     </Routes>
-    {shouldDisplayWallet40MainNav ? <SideBar /> : <MainSideBar />}
+    <SideBar />
 
     <Page>
       <TopBannerContainer>
-        {shouldDisplayWallet40MainNav ? null : <FirmwareUpdateBanner />}
-        {!shouldDisplayWallet40MainNav && <UpdateBanner />}
         <VaultSignerBanner />
       </TopBannerContainer>
       <Routes>
-        <Route path="/" element={withSuspense(Dashboard)({})} />
+        <Route path="/" element={withSuspense(PortfolioPage)({})} />
         <Route path="/settings/*" element={withSuspense(Settings)({})} />
         <Route path="/accounts" element={withSuspense(Accounts)({})} />
         <Route
@@ -326,10 +315,7 @@ const MainAppContent = ({
             shouldDisplayAggregatedAssets ? <RedirectMarketToAsset /> : withSuspense(MarketCoin)({})
           }
         />
-        <Route
-          path="/market"
-          element={withSuspense(shouldDisplayMarketBanner ? Market40 : Market)({})}
-        />
+        <Route path="/market" element={withSuspense(Market)({})} />
         <Route path="/bank/*" element={withSuspense(Bank)({})} />
         <Route path="/analytics" element={withSuspense(Analytics)({})} />
         <Route path="/history" element={withSuspense(History)({})} />
@@ -345,26 +331,17 @@ export const MainAppLayout = () => {
   const { pathname } = useLocation();
   const theme = useSelector(themeSelector);
   const styledComponentsTheme = useTheme();
-  const {
-    shouldDisplayMarketBanner,
-    isEnabled: isWallet40Enabled,
-    shouldDisplayWallet40MainNav,
-    shouldDisplayAssetSection,
-    shouldDisplayAggregatedAssets,
-    shouldDisplayAssetDiscoverability,
-  } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAssetSection, shouldDisplayAggregatedAssets } =
+    useWalletFeaturesConfig("desktop");
   const shouldShowDeferredModals = useShouldShowDeferredModals();
 
-  const backgroundImage = shouldDisplayWallet40MainNav
-    ? getPageBackground(pathname, theme)
-    : undefined;
+  const backgroundImage = getPageBackground(pathname, theme);
 
-  const useWallet40Layout =
-    isWallet40Enabled && isWallet40Page(pathname, { shouldDisplayAggregatedAssets });
+  const useWallet40Layout = isWallet40Page(pathname, { shouldDisplayAggregatedAssets });
 
   useEffect(() => {
-    if (shouldDisplayWallet40MainNav) preloadBackgrounds();
-  }, [shouldDisplayWallet40MainNav]);
+    preloadBackgrounds();
+  }, []);
 
   return (
     <>
@@ -396,11 +373,8 @@ export const MainAppLayout = () => {
         }
       >
         <MainAppContent
-          shouldDisplayMarketBanner={shouldDisplayMarketBanner}
-          shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
           shouldDisplayAssetSection={shouldDisplayAssetSection}
           shouldDisplayAggregatedAssets={shouldDisplayAggregatedAssets}
-          shouldDisplayAssetDiscoverability={shouldDisplayAssetDiscoverability}
         />
       </div>
 
@@ -439,6 +413,7 @@ export default function Default() {
   const checkAccountsWithFunds = useCheckAccountWithFunds();
 
   useAccountsWithFundsListener(accounts, updateIdentify, checkAccountsWithFunds);
+  useTrackFundsReceived();
   useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();

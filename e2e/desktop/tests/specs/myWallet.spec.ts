@@ -1,15 +1,15 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { LWD_WALLET_40_Q2_FF_ENABLED } from "tests/utils/featureFlagUtils";
+import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
 
 test.describe("Wallet 4.0 - My Wallet", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding",
     featureFlags: {
-      ...LWD_WALLET_40_Q2_FF_ENABLED,
+      ...FF_LWD_WALLET_40_Q2,
       protectServicesDesktop: { enabled: true },
       referralProgramDesktopSidebar: {
         enabled: true,

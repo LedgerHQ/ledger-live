@@ -20,7 +20,6 @@ import StepConnectDevice, { StepConnectDeviceFooter } from "./steps/StepConnectD
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import StepReceiveFunds from "./steps/StepReceiveFunds";
 import StepReceiveStakingFlow, { StepReceiveStakingFooter } from "./steps/StepReceiveStakingFlow";
-import StepOptions from "./steps/StepOptions";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import { getReceiveFlowError } from "@ledgerhq/live-common/account/index";
@@ -56,7 +55,6 @@ export type OwnProps = {
   verifyAddressError: Error | undefined | null;
   onChangeAddressVerified: (isAddressVerified?: boolean | null, err?: Error | null) => void;
   params: Data;
-  useLegacyReceiveOptions?: boolean;
 };
 export type StateProps = {
   t: TFunction;
@@ -90,12 +88,7 @@ export type StepProps = {
   sourcePage?: string;
 };
 export type St = Step<StepId, StepProps>;
-function createSteps(useLegacyReceiveOptions: boolean): Array<St> {
-  const legacyOptionsStep: St = {
-    id: "receiveOptions",
-    excludeFromBreadcrumb: true,
-    component: StepOptions,
-  };
+function createSteps(): Array<St> {
   const steps: Array<St> = [
     {
       id: "warning",
@@ -128,7 +121,7 @@ function createSteps(useLegacyReceiveOptions: boolean): Array<St> {
       footer: StepReceiveStakingFooter,
     },
   ];
-  return useLegacyReceiveOptions ? [legacyOptionsStep, ...steps] : steps;
+  return steps;
 }
 const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
@@ -148,9 +141,8 @@ const Body = ({
   verifyAddressError,
   onChangeAddressVerified,
   params,
-  useLegacyReceiveOptions = true,
 }: Props) => {
-  const steps = useMemo(() => createSteps(!!useLegacyReceiveOptions), [useLegacyReceiveOptions]);
+  const steps = useMemo(() => createSteps(), []);
   const [account, setAccount] = useState(() => (params && params.account) || accounts[0]);
   const [parentAccount, setParentAccount] = useState(() => params && params.parentAccount);
   const [disabledSteps, setDisabledSteps] = useState<number[]>([]);

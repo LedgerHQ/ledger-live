@@ -1,10 +1,6 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Bullet, Title, Column, AnimationContainer, AsideFooter } from "../shared";
-import Animation from "~/renderer/animations";
-import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
-import { OnboardingContext } from "../../../index";
-import useTheme from "~/renderer/hooks/useTheme";
+import { Bullet, Title, Column } from "../shared";
 
 const steps = [
   {
@@ -37,35 +33,6 @@ export function DeviceHowTo() {
     </Column>
   );
 }
-
-const DeviceHowToAnimation = () => {
-  const { deviceModelId } = useContext(OnboardingContext);
-  const { theme } = useTheme();
-
-  return (
-    <AnimationContainer>
-      {deviceModelId && (
-        <Animation
-          animation={getDeviceAnimation(deviceModelId, theme, "plugAndPinCode") as object}
-        />
-      )}
-    </AnimationContainer>
-  );
-};
-
-DeviceHowTo.Illustration = <DeviceHowToAnimation />;
-
-const Footer = (props: object) => {
-  const { t } = useTranslation();
-  return (
-    <AsideFooter
-      {...props}
-      text={t("onboarding.screens.tutorial.screens.deviceHowTo.help.descr")}
-    />
-  );
-};
-
-DeviceHowTo.Footer = Footer;
 
 DeviceHowTo.continueLabel = (
   <Trans i18nKey="onboarding.screens.tutorial.screens.deviceHowTo.buttons.next" />

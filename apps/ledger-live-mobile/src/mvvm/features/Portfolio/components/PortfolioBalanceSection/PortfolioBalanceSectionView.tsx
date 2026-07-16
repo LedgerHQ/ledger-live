@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { AmountDisplay, Box, Pressable, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { DiscreetModeIcon } from "./DiscreetModeIcon";
-import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
+import type { AmountDisplaySize, FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
@@ -16,6 +16,17 @@ const containerStyle: LumenViewStyle = {
   justifyContent: "center",
 };
 
+const MAX_MEDIUM_BALANCE_DIGITS = 9;
+
+const getAmountDisplaySize = (value: number): AmountDisplaySize => {
+  const integerDigitCount = new BigNumber(value)
+    .abs()
+    .integerValue(BigNumber.ROUND_FLOOR)
+    .toFixed(0).length;
+
+  return integerDigitCount > MAX_MEDIUM_BALANCE_DIGITS ? "sm" : "md";
+};
+
 export const PortfolioBalanceSectionView = ({
   state,
   balance,
@@ -24,7 +35,6 @@ export const PortfolioBalanceSectionView = ({
   isBalanceAvailable,
   isAnalyticPillVisible,
   isLoading,
-  shouldDisplayBalanceRefreshRework,
   onToggleDiscreetMode,
 }: PortfolioBalanceSectionViewProps) => {
   const { t } = useTranslation();
@@ -79,8 +89,9 @@ export const PortfolioBalanceSectionView = ({
                 key={unit.code}
                 value={balance}
                 formatter={formatter}
+                size={getAmountDisplaySize(balance)}
                 hidden={discreet}
-                loading={shouldDisplayBalanceRefreshRework && isLoading}
+                loading={isLoading}
                 testID="portfolio-balance-amount"
               />
             ) : (

@@ -1,6 +1,7 @@
 {
   "name": "@ledgerhq/hw-transport-vault",
-  "version": "1.7.5",
+  "version": "1.7.6",
+  "private": true,
   "description": "Ledger Vault transport",
   "keywords": [
     "Ledger",
@@ -19,9 +20,6 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-transport-vault",
-  "publishConfig": {
-    "access": "public"
-  },
   "main": "lib/index.js",
   "module": "lib-es/index.js",
   "types": "lib/index.d.ts",

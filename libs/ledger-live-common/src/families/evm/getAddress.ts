@@ -1,0 +1,23 @@
+import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
+import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
+import eip55 from "eip55";
+import { EvmSigner } from "@ledgerhq/live-signer-evm";
+
+const resolver = (signerContext: SignerContext<Pick<EvmSigner, "getAddress">>): GetAddressFn => {
+  return async (deviceId: string, { path, verify, currency }: GetAddressOptions) => {
+    const { address, publicKey } = await signerContext(deviceId, signer => {
+      /* istanbul ignore next: optional chaining + undefined is a valid value */
+      const chainId = currency?.ethereumLikeInfo?.chainId.toString();
+      return signer.getAddress(path, verify, false, chainId);
+    });
+
+    return {
+      address: eip55.encode(address),
+      publicKey,
+      path,
+    };
+  };
+};
+
+export default resolver;

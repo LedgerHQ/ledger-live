@@ -2,7 +2,12 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../account";
 import { getCoinModuleApi } from "./api";
 import { createTransaction } from "./createTransaction";
-import { bigNumberToBigIntDeep, extractBalances, transactionToIntent } from "./utils";
+import {
+  bigNumberToBigIntDeep,
+  extractBalances,
+  getPendingTokenSpent,
+  transactionToIntent,
+} from "./utils";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
 import { getBridgeApi } from "./bridge";
@@ -13,7 +18,8 @@ export function genericEstimateMaxSpendable(
 ): AccountBridge<GenericTransaction>["estimateMaxSpendable"] {
   return async ({ account, parentAccount, transaction }) => {
     if (account.type === "TokenAccount") {
-      return account.spendableBalance;
+      const pendingSpent = getPendingTokenSpent(account.pendingOperations ?? []);
+      return BigNumber.max(0, account.spendableBalance.minus(pendingSpent));
     }
     const mainAccount = getMainAccount(account, parentAccount);
     const coinModuleApi = await getCoinModuleApi(mainAccount.currency.id, kind);

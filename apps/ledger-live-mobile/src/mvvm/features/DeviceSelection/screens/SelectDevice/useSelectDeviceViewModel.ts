@@ -7,6 +7,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { DeviceSelectionNavigationProps, DeviceSelectionNavigatorParamsList } from "../../types";
+import { getCustomAddAccountFlow } from "LLM/features/Accounts/utils/customAddAccountFlow";
 import { NetworkBasedAddAccountNavigator } from "LLM/features/Accounts/screens/AddAccount/types";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
@@ -48,22 +49,28 @@ export default function useSelectDeviceViewModel(
     (meta: AppResult) => {
       setDevice(null);
 
-      const params = {
+      const navigationParams = {
         ...route.params,
         ...meta,
         context,
         sourceScreenName: ScreenName.SelectDevice,
       };
 
+      const customFlow = currency ? getCustomAddAccountFlow(currency) : null;
+      if (customFlow?.onDeviceConnected) {
+        customFlow.onDeviceConnected({ navigation, routeParams: navigationParams });
+        return;
+      }
+
       // Always use navigate instead of replace to keep SelectDevice in the stack.
       // This allows retry navigation when device errors occur (e.g., device locked).
       // Previously, inline flows used replace which prevented retry navigation.
       navigation.navigate(NavigatorName.AddAccounts, {
         screen: ScreenName.ScanDeviceAccounts,
-        params,
+        params: navigationParams,
       });
     },
-    [navigation, route, context],
+    [navigation, route, context, currency],
   );
 
   useEffect(() => {

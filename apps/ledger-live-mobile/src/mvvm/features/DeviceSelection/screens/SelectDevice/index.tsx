@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
-import { StyleSheet, SafeAreaView } from "react-native";
+import { StyleSheet } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
@@ -77,6 +78,7 @@ export default function SelectDeviceScreen({
 
   return (
     <SafeAreaView
+      edges={["left", "right", "bottom"]}
       style={[
         styles.root,
         {

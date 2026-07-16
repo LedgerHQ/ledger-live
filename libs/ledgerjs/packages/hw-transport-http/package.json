@@ -1,6 +1,7 @@
 {
   "name": "@ledgerhq/hw-transport-http",
-  "version": "6.36.5",
+  "version": "6.36.6",
+  "private": true,
   "description": "Ledger Hardware Wallet communication layer over http",
   "keywords": [
     "Ledger",
@@ -19,9 +20,6 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-transport-http",
-  "publishConfig": {
-    "access": "public"
-  },
   "exports": {
     ".": {
       "@ledgerhq/source": "./src/withStaticURLs.ts",

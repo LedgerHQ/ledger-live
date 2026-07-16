@@ -132,10 +132,13 @@ describe("useMarketCoinData hooks", () => {
       withMarketState({ marketParams: { counterCurrency: "btc" } }),
     );
 
-    expect(mockedUseCurrencyData).toHaveBeenCalledWith({
-      counterCurrency: "usd",
-      id: "bitcoin",
-    }, { skip: false });
+    expect(mockedUseCurrencyData).toHaveBeenCalledWith(
+      {
+        counterCurrency: "usd",
+        id: "bitcoin",
+      },
+      { skip: false },
+    );
     expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("btc", { skip: false });
     expect(result.current.counterCurrency).toBe("btc");
     expect(result.current.currency?.price).toBeCloseTo(0.001);

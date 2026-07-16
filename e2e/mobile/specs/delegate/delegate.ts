@@ -1,6 +1,6 @@
 import { setEnv } from "@ledgerhq/live-env";
-import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "../../models/stake";
 import { getCurrencyManagerApp } from "../../models/currencies";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
@@ -94,11 +94,7 @@ export function runDelegateDefaultValidatorTest(
   });
 }
 
-export async function runLockCelo(
-  delegation: DelegateType,
-  tmsLinks: string[],
-  tags: string[] = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@celo`, `@family-celo`],
-) {
+export function runLockCelo(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
   setTeamOwner(Team.COIN_INTEGRATION);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -130,11 +126,7 @@ export async function runLockCelo(
   });
 }
 
-export async function runVoteCelo(
-  delegation: DelegateType,
-  tmsLinks: string[],
-  tags: string[] = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@celo`, `@family-celo`],
-) {
+export function runVoteCelo(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
   setTeamOwner(Team.COIN_INTEGRATION);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -170,20 +162,7 @@ export async function runVoteCelo(
   });
 }
 
-export async function runDelegateTezos(
-  delegation: DelegateType,
-  tmsLinks: string[],
-  tags: string[] = [
-    "@NanoSP",
-    "@LNS",
-    "@NanoX",
-    "@Stax",
-    "@Flex",
-    "@NanoGen5",
-    `@tezos`,
-    `@family-tezos`,
-  ],
-) {
+export function runDelegateTezos(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
   setTeamOwner(Team.BST);
   tags.forEach(tag => $Tag(tag));

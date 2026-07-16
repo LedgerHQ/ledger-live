@@ -5,7 +5,6 @@ import Transport from "@ledgerhq/hw-transport";
 import Aptos from "@ledgerhq/hw-app-aptos";
 import type { Bridge } from "@ledgerhq/types-live";
 import aptosResolver from "@ledgerhq/coin-aptos/signer/index";
-import makeCliTools from "@ledgerhq/coin-aptos/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 
@@ -19,6 +18,4 @@ const bridge: Bridge<Transaction, AptosAccount, TransactionStatus> = createBridg
 
 const resolver: Resolver = createResolver(createSigner, aptosResolver);
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, resolver };
+export { bridge, resolver };

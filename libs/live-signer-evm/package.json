@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-evm",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "private": true,
   "description": "Ledger Hardware Wallet Ethereum Application API",
   "keywords": [
@@ -27,7 +27,6 @@
   "types": "lib-es/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/context-module": "catalog:",
     "@ledgerhq/device-signer-kit-ethereum": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",

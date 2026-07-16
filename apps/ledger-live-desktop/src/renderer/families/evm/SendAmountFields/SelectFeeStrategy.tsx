@@ -1,12 +1,12 @@
-import { isStrategyDisabled } from "@ledgerhq/coin-evm/editTransaction/index";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/utils";
-import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
+import { getTypedTransaction } from "@ledgerhq/live-common/families/evm/transaction";
 import {
   Transaction as EvmTransaction,
   GasOptions,
   Strategy,
 } from "@ledgerhq/coin-evm/types/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Account } from "@ledgerhq/types-live";
 import React, { memo, useMemo } from "react";
 import { Trans } from "react-i18next";
@@ -98,6 +98,7 @@ const SelectFeeStrategy = ({
   status,
 }: Props) => {
   const accountUnit = useAccountUnit(account);
+  const bridge = useAccountBridge(account);
   const feesCurrency = getAccountCurrency(account);
   const { errors } = status;
   const { gasPrice: messageGas } = errors;
@@ -110,7 +111,7 @@ const SelectFeeStrategy = ({
 
         const disabled =
           (!!transactionToUpdate &&
-            isStrategyDisabled({
+            bridge.isStrategyDisabled({
               transaction: transactionToUpdate,
               feeData: gasOption,
             })) ||
@@ -202,6 +203,7 @@ const SelectFeeStrategy = ({
       }),
     [
       accountUnit,
+      bridge,
       feesCurrency,
       gasOptions,
       messageGas,

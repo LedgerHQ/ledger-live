@@ -5,7 +5,7 @@ import { delay, isAndroid, isIos } from "./commonHelpers";
 import { retryUntilTimeout } from "../utils/retry";
 import { PageScroller } from "./pageScroller";
 import { checkForErrorElement } from "./errorHelpers";
-import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
 interface IndexedWebElement extends WebElement {
   atIndex(index: number): WebElement;
@@ -30,7 +30,7 @@ function hasMatcherProperty(obj: unknown): obj is WebElementWithMatcher {
 
 const scroller = new PageScroller();
 
-const DEFAULT_TIMEOUT = 60000;
+export const DEFAULT_TIMEOUT = 60000;
 const DEFAULT_WEB_ELEMENT_INTERVAL = 2000;
 
 export type WaitForElementOptions = {
@@ -558,6 +558,48 @@ export const WebElementHelpers = {
       DEFAULT_WEB_ELEMENT_INTERVAL,
     );
     return currentUrl;
+  },
+
+  /**
+   * Asserts the current webview actually rendered something and is not a blank
+   * Polls the webview <body> until it has a non-zero height and either enough
+   * visible text or at least one meaningful content element (iframe, input,
+   * button, form, image, link). Throws if it stays blank until `timeout`.
+   */
+  async waitForWebviewContentToRender(
+    timeout = DEFAULT_TIMEOUT,
+  ): Promise<{ height: number; textLength: number; contentElements: number }> {
+    let snapshot = { height: 0, textLength: 0, contentElements: 0 };
+    await retryUntilTimeout(
+      async () => {
+        const raw = await WebElementHelpers.getWebElementByTag("body").runScript(() => {
+          const body = document.body;
+          if (!body) return JSON.stringify({ height: 0, textLength: 0, contentElements: 0 });
+          const height = Math.round(body.getBoundingClientRect().height);
+          const textLength = (body.innerText || body.textContent || "").trim().length;
+          const contentElements = document.querySelectorAll(
+            "iframe, input, button, form, img, a[href], [role='button']",
+          ).length;
+          return JSON.stringify({ height, textLength, contentElements });
+        });
+        const json =
+          raw != null && typeof raw === "object" && "result" in raw ? raw["result"] : raw;
+        try {
+          snapshot = JSON.parse(String(json));
+        } catch {
+          throw new Error(`Unexpected webview content payload (not JSON): ${String(json)}`);
+        }
+        const rendered =
+          snapshot.height > 0 && (snapshot.textLength >= 20 || snapshot.contentElements >= 1);
+        if (!rendered) {
+          throw new Error(`Webview appears blank (no content rendered): ${String(json)}`);
+        }
+        return snapshot;
+      },
+      timeout,
+      DEFAULT_WEB_ELEMENT_INTERVAL,
+    );
+    return snapshot;
   },
 
   async waitForWebElementToMatchRegex(

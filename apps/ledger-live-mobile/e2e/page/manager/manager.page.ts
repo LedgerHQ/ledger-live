@@ -3,7 +3,9 @@ import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class ManagerPage {
   baseLink = "myledger";
-  managerTitleId = "manager-title";
+  // Wallet 4.0 renders the My Ledger title in the native header ("header-title") rather
+  // than an inline "manager-title" text.
+  managerTitleId = "header-title";
   connectDevice = () => getElementById("manager_connect_device");
   deviceNameId = "manager-device-name";
   deviceName = () => getElementById(this.deviceNameId);

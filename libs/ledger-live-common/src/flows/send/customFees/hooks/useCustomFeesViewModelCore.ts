@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { BigNumber } from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Currency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -8,7 +8,11 @@ import {
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { Transaction, TransactionStatus } from "../../../../coin-modules/transaction-types";
-import type { FeeAssetOption } from "../../../../bridge/descriptor/types";
+import type {
+  CustomFeeInputValueTransform,
+  FeeAssetContext,
+  FeeAssetOption,
+} from "../../../../bridge/descriptor/types";
 import { resolveFeeUnitLabel, sendFeatures } from "../../../../bridge/descriptor/send/features";
 import type { SendFlowTransactionActions } from "../../types";
 import { useBridgeFeeEstimation } from "./useBridgeFeeEstimation";
@@ -18,6 +22,7 @@ import {
   computeSuggestedRange,
   computeMinValue,
 } from "../utils/customFeeUtils";
+import { resolveFeeDisplayContext } from "../../utils/networkFeesDisplay";
 
 export type CustomFeeInputState = Readonly<{
   key: string;
@@ -81,6 +86,42 @@ export type UseCustomFeesViewModelCoreParams = Readonly<{
   labels: CustomFeesViewModelLabels;
 }>;
 
+function shouldTransformInput(key: string, transform: CustomFeeInputValueTransform): boolean {
+  return transform.inputKeys === undefined || transform.inputKeys.includes(key);
+}
+
+function transformInputValues(
+  values: Record<string, string>,
+  transform: CustomFeeInputValueTransform | null,
+  direction: "fromCanonical" | "toCanonical",
+): Record<string, string> {
+  if (!transform) return values;
+
+  return Object.fromEntries(
+    Object.entries(values).map(([key, value]) => {
+      if (!shouldTransformInput(key, transform)) return [key, value];
+      return [
+        key,
+        direction === "fromCanonical"
+          ? transform.fromCanonicalValue(value)
+          : transform.toCanonicalValue(value),
+      ];
+    }),
+  );
+}
+
+function transformInputValue(
+  key: string,
+  value: string,
+  transform: CustomFeeInputValueTransform | null,
+  direction: "fromCanonical" | "toCanonical",
+): string {
+  if (!transform || !shouldTransformInput(key, transform)) return value;
+  return direction === "fromCanonical"
+    ? transform.fromCanonicalValue(value)
+    : transform.toCanonicalValue(value);
+}
+
 export function useCustomFeesViewModelCore({
   account,
   parentAccount,
@@ -106,30 +147,105 @@ export function useCustomFeesViewModelCore({
     () => sendFeatures.getCustomAssetsConfig(currency),
     [currency],
   );
-  const hasCustomAssetsFlag = Boolean(customAssetsConfig?.options.length);
 
-  const [selectedAssetId, setSelectedAssetId] = useState<string>(
-    () => customAssetsConfig?.defaultId ?? "",
+  const feeAssetContext = useMemo<FeeAssetContext>(
+    () => ({ mainAccount, transaction }),
+    [mainAccount, transaction],
   );
-  const onAssetChange = useCallback((id: string) => setSelectedAssetId(id), []);
+
+  // The coin-module owns the options, the selected value and the resulting patch.
+  // This view model only renders the "Pay fees in" select and forwards the choice.
+  const assetOptions = useMemo(
+    () => customAssetsConfig?.getOptions(feeAssetContext) ?? [],
+    [customAssetsConfig, feeAssetContext],
+  );
+  const hasCustomAssetsFlag = assetOptions.length > 0;
+
+  const selectedAssetId = useMemo(
+    () => customAssetsConfig?.getSelectedOptionId(feeAssetContext) ?? "",
+    [customAssetsConfig, feeAssetContext],
+  );
+
+  const onAssetChange = useCallback(
+    (id: string) => {
+      const patch = customAssetsConfig?.buildPatch(id, feeAssetContext);
+      if (!patch) return;
+      transactionActions.updateTransaction(tx => ({ ...tx, ...patch }) as Transaction);
+    },
+    [customAssetsConfig, feeAssetContext, transactionActions],
+  );
+
+  // Let the coin-module reset an invalid fee asset selection (e.g. the selected
+  // token sub-account vanished). Reconciliation logic stays in the descriptor.
+  useEffect(() => {
+    const patch = customAssetsConfig?.reconcile?.(feeAssetContext);
+    if (!patch) return;
+    transactionActions.updateTransaction(tx => ({ ...tx, ...patch }) as Transaction);
+  }, [customAssetsConfig, feeAssetContext, transactionActions]);
+
+  const selectedAsset = useMemo(
+    () => assetOptions.find(o => o.id === selectedAssetId),
+    [assetOptions, selectedAssetId],
+  );
+
+  const selectedInputValueTransform = selectedAsset?.customFeeInputValueTransform ?? null;
+  const selectedInputValueTransformId = selectedInputValueTransform ? selectedAssetId : null;
+  const feeCurrencyAccountId = sendFeatures.getFeeCurrencyAccountId(accountCurrency, transaction);
+  const { displayCurrency } = useMemo(
+    () =>
+      resolveFeeDisplayContext({
+        mainAccount,
+        accountCurrency,
+        accountUnit: accountCurrency.units[0],
+        feeCurrencyAccountId,
+      }),
+    [accountCurrency, feeCurrencyAccountId, mainAccount],
+  );
 
   // When hasCustomAssets, the unit label comes from the selected asset (eg. "Gwei" for CELO)
   const effectiveUnitLabel = useMemo(() => {
-    if (!hasCustomAssetsFlag || !customAssetsConfig) return null;
-    const selectedAsset = customAssetsConfig.options.find(o => o.id === selectedAssetId);
+    if (!hasCustomAssetsFlag) return null;
     return selectedAsset?.unitLabel ?? selectedAsset?.ticker ?? null;
-  }, [hasCustomAssetsFlag, customAssetsConfig, selectedAssetId]);
+  }, [hasCustomAssetsFlag, selectedAsset]);
 
   const [values, setValues] = useState<Record<string, string>>(() => {
     if (!customFeeConfig) return {};
-    return customFeeConfig.getInitialValues(transaction);
+    return transformInputValues(
+      customFeeConfig.getInitialValues(transaction),
+      selectedInputValueTransform,
+      "fromCanonical",
+    );
   });
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const previousInputValueTransformRef = useRef<CustomFeeInputValueTransform | null>(
+    selectedInputValueTransform,
+  );
+  const previousInputValueTransformIdRef = useRef<string | null>(selectedInputValueTransformId);
+
+  useEffect(() => {
+    if (previousInputValueTransformIdRef.current === selectedInputValueTransformId) return;
+
+    const previousTransform = previousInputValueTransformRef.current;
+    setValues(prev =>
+      transformInputValues(
+        transformInputValues(prev, previousTransform, "toCanonical"),
+        selectedInputValueTransform,
+        "fromCanonical",
+      ),
+    );
+    previousInputValueTransformRef.current = selectedInputValueTransform;
+    previousInputValueTransformIdRef.current = selectedInputValueTransformId;
+  }, [selectedInputValueTransform, selectedInputValueTransformId]);
 
   const activeInputs = useMemo(() => {
     if (!customFeeConfig) return [];
     return customFeeConfig.inputs.filter(input => input.key in values);
   }, [customFeeConfig, values]);
+
+  const canonicalValues = useMemo(
+    () => transformInputValues(values, selectedInputValueTransform, "toCanonical"),
+    [selectedInputValueTransform, values],
+  );
 
   const onInputChange = useCallback((key: string, value: string) => {
     setValues(prev => ({ ...prev, [key]: value }));
@@ -144,16 +260,18 @@ export function useCustomFeesViewModelCore({
   const allInputsValid = useMemo(
     () =>
       Boolean(customFeeConfig) &&
-      activeInputs.every(input => isValidNumberForInput(input.key, values[input.key] ?? "")),
-    [customFeeConfig, activeInputs, values],
+      activeInputs.every(input =>
+        isValidNumberForInput(input.key, canonicalValues[input.key] ?? ""),
+      ),
+    [customFeeConfig, activeInputs, canonicalValues],
   );
 
   // Local fee estimation shortcut — avoids a bridge round-trip when fees can be
   // derived directly from the user inputs using the transaction gas limit.
   const estimatedFeesFromInputs = useMemo(() => {
-    if (!customFeeConfig || !allInputsValid) return null;
+    if (!customFeeConfig || !allInputsValid || selectedInputValueTransform) return null;
 
-    const patch = customFeeConfig.buildTransactionPatch(values);
+    const patch = customFeeConfig.buildTransactionPatch(canonicalValues);
 
     const directFees = patch["fees"];
     if (BigNumber.isBigNumber(directFees) && directFees.gt(0)) return directFees;
@@ -170,14 +288,14 @@ export function useCustomFeesViewModelCore({
     }
 
     return null;
-  }, [allInputsValid, customFeeConfig, transaction, values]);
+  }, [allInputsValid, canonicalValues, customFeeConfig, selectedInputValueTransform, transaction]);
 
   const { estimatedFeesFromBridge, bridgeHasInsufficientBalance, bridgeEstimationKey } =
     useBridgeFeeEstimation({
       account,
       parentAccount,
       transaction,
-      values,
+      values: canonicalValues,
       allInputsValid,
       estimatedFeesFromInputs,
       customFeeConfig: customFeeConfig ?? null,
@@ -199,7 +317,7 @@ export function useCustomFeesViewModelCore({
     transaction,
     status,
     activeInputs,
-    values,
+    values: canonicalValues,
     estimatedFeesForValidation,
     bridgeHasInsufficientBalance,
     hasCustomFeeConfig: Boolean(customFeeConfig),
@@ -210,17 +328,28 @@ export function useCustomFeesViewModelCore({
 
     return activeInputs.map(input => {
       const value = values[input.key] ?? "";
+      const canonicalValue = canonicalValues[input.key] ?? "";
       const isTouched = touched[input.key] ?? false;
 
       let error: string | null = null;
 
-      if (isTouched && value.trim() !== "" && !isValidNumberForInput(input.key, value)) {
+      if (
+        isTouched &&
+        canonicalValue.trim() !== "" &&
+        !isValidNumberForInput(input.key, canonicalValue)
+      ) {
         error = labels.invalidValue;
       }
 
       const minVal = computeMinValue(input, transaction);
-      if (minVal && isValidNumberForInput(input.key, value) && new BigNumber(value).lt(minVal)) {
-        error = labels.belowMinimum(minVal);
+      if (
+        minVal &&
+        isValidNumberForInput(input.key, canonicalValue) &&
+        new BigNumber(canonicalValue).lt(minVal)
+      ) {
+        error = labels.belowMinimum(
+          transformInputValue(input.key, minVal, selectedInputValueTransform, "fromCanonical"),
+        );
       }
 
       if (input.key === "maxFeePerGas" && hasMaxFeeViolation && allInputsValid) {
@@ -238,6 +367,22 @@ export function useCustomFeesViewModelCore({
       }
 
       const suggestedRange = computeSuggestedRange(input, transaction);
+      const displaySuggestedRange = suggestedRange
+        ? {
+            min: transformInputValue(
+              input.key,
+              suggestedRange.min,
+              selectedInputValueTransform,
+              "fromCanonical",
+            ),
+            max: transformInputValue(
+              input.key,
+              suggestedRange.max,
+              selectedInputValueTransform,
+              "fromCanonical",
+            ),
+          }
+        : null;
 
       return {
         key: input.key,
@@ -247,7 +392,7 @@ export function useCustomFeesViewModelCore({
         ),
         value,
         error,
-        suggestedRange,
+        suggestedRange: displaySuggestedRange,
         helperLabel: input.helperInfo ? labels.getHelperLabel(input.key) : null,
         helperValue: input.helperInfo ? input.helperInfo.getValue(transaction) : null,
       };
@@ -257,6 +402,7 @@ export function useCustomFeesViewModelCore({
     activeInputs,
     transaction,
     values,
+    canonicalValues,
     touched,
     allInputsValid,
     hasMinValueViolation,
@@ -264,13 +410,14 @@ export function useCustomFeesViewModelCore({
     hasInsufficientBalance,
     insufficientBalanceTargetInputKey,
     effectiveUnitLabel,
+    selectedInputValueTransform,
     currency,
     labels,
   ]);
 
   const estimatedFeesCountervalue = useMemo(
-    () => calculateCountervalue(accountCurrency, estimatedFeesForValidation),
-    [calculateCountervalue, accountCurrency, estimatedFeesForValidation],
+    () => calculateCountervalue(displayCurrency, estimatedFeesForValidation),
+    [calculateCountervalue, displayCurrency, estimatedFeesForValidation],
   );
   const estimatedFeesFiat = useMemo(
     () => new BigNumber(estimatedFeesCountervalue ?? 0),
@@ -297,7 +444,7 @@ export function useCustomFeesViewModelCore({
   const handleConfirm = useCallback(() => {
     if (!customFeeConfig || isConfirmDisabled) return;
 
-    const patch = customFeeConfig.buildTransactionPatch(values);
+    const patch = customFeeConfig.buildTransactionPatch(canonicalValues);
     transactionActions.updateTransaction(tx => ({
       ...tx,
       ...patch,
@@ -306,7 +453,7 @@ export function useCustomFeesViewModelCore({
       ...(tx.useAllAmount ? { amount: new BigNumber(0) } : {}),
     }));
     onConfirm();
-  }, [customFeeConfig, isConfirmDisabled, values, transactionActions, onConfirm]);
+  }, [canonicalValues, customFeeConfig, isConfirmDisabled, transactionActions, onConfirm]);
 
   return {
     inputs: inputStates,
@@ -317,7 +464,7 @@ export function useCustomFeesViewModelCore({
     onInputClear,
     onConfirm: handleConfirm,
     hasCustomAssets: hasCustomAssetsFlag,
-    assetOptions: customAssetsConfig?.options ?? [],
+    assetOptions,
     selectedAssetId,
     onAssetChange,
     confirmLabel: labels.confirm,

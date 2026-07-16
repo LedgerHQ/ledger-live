@@ -1,5 +1,17 @@
 # @ledgerhq/live-env
 
+## 2.41.0
+
+### Minor Changes
+
+- [#19231](https://github.com/LedgerHQ/ledger-live/pull/19231) [`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove unused USE_LEARN_STAGING_URL env var
+
+## 2.41.0-next.0
+
+### Minor Changes
+
+- [#19231](https://github.com/LedgerHQ/ledger-live/pull/19231) [`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove unused USE_LEARN_STAGING_URL env var
+
 ## 2.40.0
 
 ### Minor Changes

@@ -1,0 +1,10 @@
+# build
+lib
+lib-es
+
+# dependencies
+node_modules/
+
+# misc
+.DS_Store
+*.tsbuildinfo

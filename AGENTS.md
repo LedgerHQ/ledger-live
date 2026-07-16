@@ -6,6 +6,10 @@
 
 We are working towards consistency across all those packages but each workspace has it's own details. Read local README files relevant to where you are working.
 
+## Where to add new code
+
+New shared code goes in a new `libs/*` package; `libs/ledger-live-common` is maintenance-only (no new features/folders). See [libs/README.md](./libs/README.md).
+
 ## Repo Commands
 
 Prefer commands given in local README files. For example appls like [Ledger Wallet Desktop](./apps/ledger-live-desktop/README.md) and [Ledger Wallet Mobile](./apps/ledger-live-mobile/README.md) have very specific commands for setup, dev and build commands.
@@ -15,3 +19,16 @@ For general test, build and check recipes see [/docs/repo-commands.md](/docs/rep
 ## Validate Before Finishing
 
 Always follow the [validate-before-finishing](/docs/validate-before-finishing.md) instructions before completing code changes.
+
+## Keep the external services catalog up to date
+
+- [/docs/services.md](/docs/services.md) lists every external service the apps contact (domain, how it's managed, scope/team).
+- When you add, remove, or change a service — a new entry in `libs/env/src/env.ts`, a hardcoded endpoint, a coin/family config change, or a new SDK dependency that phones home — update the matching table in `docs/services.md`.
+
+## Read READMEs for packages where you're working
+
+See examples:
+
+- **Entity packages** (`domain/entity/`): read `domain/entity/README.md`
+- **API packages** (`domain/api/`): read `domain/api/README.md`
+- **Shared packages** (`shared/**`): read `shared/README.md`

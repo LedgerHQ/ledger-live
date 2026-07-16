@@ -7,7 +7,6 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Acre from "@blooo/hw-app-acre/lib/index";
 import { createBridges } from "@ledgerhq/coin-bitcoin/bridge/js";
 import type { BitcoinSignature, SignerContext } from "@ledgerhq/coin-bitcoin/signer";
-import makeCliTools from "@ledgerhq/coin-bitcoin/cli-transaction";
 import bitcoinResolver from "@ledgerhq/coin-bitcoin/hw-getAddress";
 import { signMessage } from "@ledgerhq/coin-bitcoin/hw-signMessage";
 import { BitcoinAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-bitcoin/types";
@@ -119,6 +118,4 @@ const resolver: Resolver = (
   return bitcoinResolver(signerContext)("", addressOpt);
 };
 
-const cliTools = makeCliTools();
-
-export { bridge, cliTools, resolver, messageSigner, signerContext };
+export { bridge, resolver, messageSigner, signerContext };

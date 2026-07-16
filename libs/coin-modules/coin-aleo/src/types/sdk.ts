@@ -90,6 +90,38 @@ interface TransferTokenPublicToPrivateIntent {
   program_id: string;
 }
 
+type TransferTokenPrivateIntent =
+  | {
+      type: "transfer_token_private";
+      amount: string;
+      to: string;
+      record: AleoDecryptedRecordResponse;
+      program_id: string;
+    }
+  | {
+      type: `transfer_token_private_${number}`;
+      amount: string;
+      to: string;
+      records: AleoDecryptedRecordResponse[];
+      program_id: string;
+    };
+
+type TransferTokenPrivateToPublicIntent =
+  | {
+      type: "transfer_token_private_to_public";
+      amount: string;
+      to: string;
+      record: AleoDecryptedRecordResponse;
+      program_id: string;
+    }
+  | {
+      type: `transfer_token_private_to_public_${number}`;
+      amount: string;
+      to: string;
+      records: AleoDecryptedRecordResponse[];
+      program_id: string;
+    };
+
 export type Intent =
   | TransferPrivateIntent
   | TransferPublicIntent
@@ -97,6 +129,8 @@ export type Intent =
   | TransferPublicToPrivateIntent
   | TransferTokenPublicIntent
   | TransferTokenPublicToPrivateIntent
+  | TransferTokenPrivateIntent
+  | TransferTokenPrivateToPublicIntent
   | FeePrivateIntent
   | FeePublicIntent;
 

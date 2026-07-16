@@ -1,4 +1,4 @@
-import type { DiscoveryError } from "../../../types";
+import type { MobileDiscoveryError } from "../../../types";
 import type { AndroidPreflightRequirements } from "./androidPreflightRequirements";
 import {
   buildLocationPermissionManualSettingsError,
@@ -14,7 +14,7 @@ import { type DiscoveryPreflightResult } from "../preflightResult";
  * the shared permission preflight helper so the chain can continue successfully.
  */
 export class AndroidLocationPermissionPreflightCheck {
-  constructor(private readonly retry: () => Promise<true | DiscoveryError>) {}
+  constructor(private readonly retry: () => Promise<true | MobileDiscoveryError>) {}
 
   async run(requirements: AndroidPreflightRequirements): Promise<DiscoveryPreflightResult> {
     return runPermissionPreflight({

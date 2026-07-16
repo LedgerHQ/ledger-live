@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getValidators, mapDelegations } from "@ledgerhq/coin-evm/staking/index";
 import type { Cursor } from "@ledgerhq/coin-module-framework/api/index";
 import type { StakingValidatorItem } from "@ledgerhq/types-live";
+import { sortLedgerValidatorFirst } from "./ledgerValidator";
 import type { StakingAccount, StakingMappedDelegation } from "./types";
 import { getAccountCurrency } from "../../../account";
 import { GenericTransaction } from "../../../bridge/generic-coin-framework/types";
@@ -43,9 +44,9 @@ export function useEvmStakingValidators(
 
     setFetchState({ items: [], loading: true, error: null });
 
-    // Walk every page: keep fetching while the API hands back a cursor. Items are
-    // appended progressively so the list grows as pages arrive (a warm LRU entry
-    // resolves on the next microtask, so for single-page chains this is momentary).
+    // Walk every page before surfacing results. The list is reordered (Ledger-first)
+    // and a validator is selected by default, so emitting partial pages would let the
+    // list and the default selection reshuffle as later pages arrive.
     const getAllValidators = async () => {
       try {
         const items: StakingValidatorItem[] = [];
@@ -57,8 +58,10 @@ export function useEvmStakingValidators(
 
           items.push(...result.items);
           cursor = result.next;
-          setFetchState({ items: [...items], loading: typeof cursor === "string", error: null });
         } while (typeof cursor === "string");
+
+        if (cancelled) return;
+        setFetchState({ items, loading: false, error: null });
       } catch (err) {
         if (cancelled) return;
         setFetchState(s => ({
@@ -78,7 +81,7 @@ export function useEvmStakingValidators(
 
   const filtered = useMemo(() => {
     const query = searchInput?.toLowerCase().trim() ?? "";
-    return fetchState.items
+    const sorted = fetchState.items
       .filter(v => {
         if (v.commission === 1) return false;
         if (!query) return true;
@@ -92,7 +95,8 @@ export function useEvmStakingValidators(
         if (bTokens < aTokens) return -1;
         return 0;
       });
-  }, [fetchState.items, searchInput]);
+    return sortLedgerValidatorFirst(sorted, currencyId);
+  }, [fetchState.items, searchInput, currencyId]);
 
   return {
     validators: filtered,

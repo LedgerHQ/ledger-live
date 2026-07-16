@@ -1,14 +1,14 @@
 import { Flex, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
-import { TouchableOpacity } from "react-native";
+import { Pressable } from "react-native";
 import Logo from "./assets/Logo";
 
 export default function CardEntryPoint({ onPress }: { onPress: () => void }) {
   const { t } = useTranslation();
 
   return (
-    <TouchableOpacity onPress={onPress}>
+    <Pressable onPress={onPress} style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}>
       <Flex
         flexDirection={"row"}
         alignItems={"center"}
@@ -40,6 +40,6 @@ export default function CardEntryPoint({ onPress }: { onPress: () => void }) {
           </Text>
         </Flex>
       </Flex>
-    </TouchableOpacity>
+    </Pressable>
   );
 }

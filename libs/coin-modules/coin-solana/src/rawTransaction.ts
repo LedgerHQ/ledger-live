@@ -3,8 +3,13 @@ import BigNumber from "bignumber.js";
 import { ChainAPI } from "./network";
 import { Transaction } from "./types";
 
-function buildRawTransaction(raw: string, estimatedFees: number | null): Transaction {
+function buildRawTransaction(
+  raw: string,
+  estimatedFees: number | null,
+  templateId?: string,
+): Transaction {
   return {
+    ...(templateId ? { templateId } : {}),
     raw,
     family: "solana",
     amount: BigNumber(0),
@@ -28,6 +33,7 @@ function buildRawTransaction(raw: string, estimatedFees: number | null): Transac
 export async function toLiveTransaction(
   api: ChainAPI,
   serializedTransaction: string,
+  templateId?: string,
 ): Promise<Transaction> {
   const solanaTransaction = VersionedTransaction.deserialize(
     Buffer.from(serializedTransaction, "base64"),
@@ -35,7 +41,7 @@ export async function toLiveTransaction(
 
   const estimatedFees = await api.getFeeForMessage(solanaTransaction.message);
 
-  return buildRawTransaction(serializedTransaction, estimatedFees);
+  return buildRawTransaction(serializedTransaction, estimatedFees, templateId);
 }
 
 export async function deriveRawCommandDescriptor(tx: Transaction, api: ChainAPI) {

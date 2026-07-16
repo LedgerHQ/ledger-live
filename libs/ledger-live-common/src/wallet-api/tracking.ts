@@ -1,8 +1,4 @@
-import type {
-  AppManifest,
-  BroadcastTrackingData,
-  DAppTrackingData,
-} from "./types";
+import type { AppManifest, BroadcastTrackingData, DAppTrackingData } from "./types";
 
 /**
  * This signature is to be compatible with track method of `segment.js` file in LLM and LLD
@@ -12,7 +8,7 @@ import type {
 type TrackWalletAPI = (
   event: string,
   properties: Record<string, any> | null,
-  mandatory: boolean | null
+  mandatory: boolean | null,
 ) => void;
 
 /**
@@ -29,7 +25,7 @@ function getSignTrackingPayload(
   manifest: AppManifest,
   isEmbeddedSwap?: boolean,
   partner?: string,
-  swapEntryPoint?: string
+  swapEntryPoint?: string,
 ) {
   return {
     ...getEventData(manifest),
@@ -80,16 +76,11 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       manifest: AppManifest,
       isEmbeddedSwap?: boolean,
       partner?: string,
-      swapEntryPoint?: string
+      swapEntryPoint?: string,
     ) => {
       track(
         "WalletAPI SignTransaction",
-        getSignTrackingPayload(
-          manifest,
-          isEmbeddedSwap,
-          partner,
-          swapEntryPoint
-        )
+        getSignTrackingPayload(manifest, isEmbeddedSwap, partner, swapEntryPoint),
       );
     },
 
@@ -98,16 +89,11 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       manifest: AppManifest,
       isEmbeddedSwap?: boolean,
       partner?: string,
-      swapEntryPoint?: string
+      swapEntryPoint?: string,
     ) => {
       track(
         "WalletAPI SignTransaction Fail",
-        getSignTrackingPayload(
-          manifest,
-          isEmbeddedSwap,
-          partner,
-          swapEntryPoint
-        )
+        getSignTrackingPayload(manifest, isEmbeddedSwap, partner, swapEntryPoint),
       );
     },
 
@@ -116,16 +102,11 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       manifest: AppManifest,
       isEmbeddedSwap?: boolean,
       partner?: string,
-      swapEntryPoint?: string
+      swapEntryPoint?: string,
     ) => {
       track(
         "WalletAPI SignTransaction Success",
-        getSignTrackingPayload(
-          manifest,
-          isEmbeddedSwap,
-          partner,
-          swapEntryPoint
-        )
+        getSignTrackingPayload(manifest, isEmbeddedSwap, partner, swapEntryPoint),
       );
     },
 
@@ -179,13 +160,10 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       const properties: Record<string, unknown> = getEventData(manifest);
       if (data?.isEmbeddedSwap !== undefined)
         properties.isEmbeddedSwap = String(data.isEmbeddedSwap);
-      if (data?.swapEntryPoint !== undefined)
-        properties.swapEntryPoint = data.swapEntryPoint;
+      if (data?.swapEntryPoint !== undefined) properties.swapEntryPoint = data.swapEntryPoint;
       if (data?.partner !== undefined) properties.partner = data.partner;
-      if (data?.sourceCurrency !== undefined)
-        properties.sourceCurrency = data.sourceCurrency;
-      if (data?.targetCurrency !== undefined)
-        properties.targetCurrency = data.targetCurrency;
+      if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
+      if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
       if (data?.network !== undefined) properties.network = data.network;
       track("WalletAPI Broadcast Fail", properties);
     },
@@ -195,13 +173,10 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       const properties: Record<string, unknown> = getEventData(manifest);
       if (data?.isEmbeddedSwap !== undefined)
         properties.isEmbeddedSwap = String(data.isEmbeddedSwap);
-      if (data?.swapEntryPoint !== undefined)
-        properties.swapEntryPoint = data.swapEntryPoint;
+      if (data?.swapEntryPoint !== undefined) properties.swapEntryPoint = data.swapEntryPoint;
       if (data?.partner !== undefined) properties.partner = data.partner;
-      if (data?.sourceCurrency !== undefined)
-        properties.sourceCurrency = data.sourceCurrency;
-      if (data?.targetCurrency !== undefined)
-        properties.targetCurrency = data.targetCurrency;
+      if (data?.sourceCurrency !== undefined) properties.sourceCurrency = data.sourceCurrency;
+      if (data?.targetCurrency !== undefined) properties.targetCurrency = data.targetCurrency;
       if (data?.network !== undefined) properties.network = data.network;
       track("WalletAPI Broadcast Success", properties);
     },
@@ -295,100 +270,64 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       track("WalletAPI device close fail", getEventData(manifest));
     },
     bitcoinFamilyAccountAddressRequested: (manifest: AppManifest) => {
-      track(
-        "WalletAPI bitcoin family account address requested",
-        getEventData(manifest)
-      );
+      track("WalletAPI bitcoin family account address requested", getEventData(manifest));
     },
     bitcoinFamilyAccountAddressFail: (manifest: AppManifest) => {
-      track(
-        "WalletAPI bitcoin family account address fail",
-        getEventData(manifest)
-      );
+      track("WalletAPI bitcoin family account address fail", getEventData(manifest));
     },
     bitcoinFamilyAccountAddressSuccess: (manifest: AppManifest) => {
-      track(
-        "WalletAPI bitcoin family account address success",
-        getEventData(manifest)
-      );
+      track("WalletAPI bitcoin family account address success", getEventData(manifest));
     },
     bitcoinFamilyAccountPublicKeyRequested: (manifest: AppManifest) => {
-      track(
-        "WalletAPI bitcoin family account publicKey requested",
-        getEventData(manifest)
-      );
+      track("WalletAPI bitcoin family account publicKey requested", getEventData(manifest));
     },
     bitcoinFamilyAccountPublicKeyFail: (manifest: AppManifest) => {
-      track(
-        "WalletAPI bitcoin family account publicKey fail",
-        getEventData(manifest)
-      );
+      track("WalletAPI bitcoin family account publicKey fail", getEventData(manifest));
     },
     bitcoinFamilyAccountPublicKeySuccess: (manifest: AppManifest) => {
-      track(
-        "WalletAPI bitcoin family account publicKey success",
-        getEventData(manifest)
-      );
+      track("WalletAPI bitcoin family account publicKey success", getEventData(manifest));
+    },
+    accountGetPublicKeyRequested: (manifest: AppManifest) => {
+      track("WalletAPI account getPublicKey requested", getEventData(manifest));
+    },
+    accountGetPublicKeyFail: (manifest: AppManifest) => {
+      track("WalletAPI account getPublicKey fail", getEventData(manifest));
+    },
+    accountGetPublicKeySuccess: (manifest: AppManifest) => {
+      track("WalletAPI account getPublicKey success", getEventData(manifest));
     },
     bitcoinFamilyAccountXpubRequested: (manifest: AppManifest) => {
-      track(
-        "WalletAPI bitcoin family account xpub requested",
-        getEventData(manifest)
-      );
+      track("WalletAPI bitcoin family account xpub requested", getEventData(manifest));
     },
     bitcoinFamilyAccountXpubFail: (manifest: AppManifest) => {
-      track(
-        "WalletAPI bitcoin family account xpub fail",
-        getEventData(manifest)
-      );
+      track("WalletAPI bitcoin family account xpub fail", getEventData(manifest));
     },
     bitcoinFamilyAccountXpubSuccess: (manifest: AppManifest) => {
-      track(
-        "WalletAPI bitcoin family account xpub success",
-        getEventData(manifest)
-      );
+      track("WalletAPI bitcoin family account xpub success", getEventData(manifest));
     },
     bitcoinFamilyAccountAddressesRequested: (manifest: AppManifest) => {
-      track(
-        "WalletAPI bitcoin family account addresses requested",
-        getEventData(manifest)
-      );
+      track("WalletAPI bitcoin family account addresses requested", getEventData(manifest));
     },
     bitcoinFamilyAccountAddressesFail: (manifest: AppManifest) => {
-      track(
-        "WalletAPI bitcoin family account addresses fail",
-        getEventData(manifest)
-      );
+      track("WalletAPI bitcoin family account addresses fail", getEventData(manifest));
     },
     bitcoinFamilyAccountAddressesSuccess: (manifest: AppManifest) => {
-      track(
-        "WalletAPI bitcoin family account addresses success",
-        getEventData(manifest)
-      );
+      track("WalletAPI bitcoin family account addresses success", getEventData(manifest));
     },
 
-    dappSendTransactionRequested: (
-      manifest: AppManifest,
-      trackingData: DAppTrackingData
-    ) => {
+    dappSendTransactionRequested: (manifest: AppManifest, trackingData: DAppTrackingData) => {
       track("dApp SendTransaction requested", {
         ...getEventData(manifest),
         ...trackingData,
       });
     },
-    dappSendTransactionSuccess: (
-      manifest: AppManifest,
-      trackingData: DAppTrackingData
-    ) => {
+    dappSendTransactionSuccess: (manifest: AppManifest, trackingData: DAppTrackingData) => {
       track("dApp SendTransaction success", {
         ...getEventData(manifest),
         ...trackingData,
       });
     },
-    dappSendTransactionFail: (
-      manifest: AppManifest,
-      trackingData?: DAppTrackingData
-    ) => {
+    dappSendTransactionFail: (manifest: AppManifest, trackingData?: DAppTrackingData) => {
       track("dApp SendTransaction fail", {
         ...getEventData(manifest),
         ...(trackingData || {}),

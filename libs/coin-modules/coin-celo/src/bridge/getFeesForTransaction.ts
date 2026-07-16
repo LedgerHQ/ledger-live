@@ -9,7 +9,7 @@ import {
   MIN_GAS_FOR_NATIVE_TRANSFER,
   ZERO_ADDRESS,
 } from "../constants";
-import { getPendingStakingOperationAmounts, getVote } from "../logic";
+import { getPendingStakingOperationAmounts } from "../logic";
 import { celoEstimateGas, celoGasPrice, getCeloClient } from "../network/client";
 import { getRegistryAddressFor } from "../network/registry";
 import type { CeloAccount, Transaction } from "../types";
@@ -28,6 +28,10 @@ const getFeesForTransaction = async ({
 
   // A workaround - estimating gas throws an error if value > funds
   let value: BigNumber = new BigNumber(0);
+
+  // Gas to assume when on-chain estimation reverts/fails, so the fee is never 0
+  // (a 0 fee trips FeeNotLoaded and disables Continue).
+  const fallbackGas = MIN_GAS_FOR_NATIVE_TRANSFER * MAX_FEES_THRESHOLD_MULTIPLIER;
 
   const pendingOperationAmounts = getPendingStakingOperationAmounts(account);
   const lockedGoldAddress = await getRegistryAddressFor("LockedGold");
@@ -65,11 +69,10 @@ const getFeesForTransaction = async ({
     value = transaction.useAllAmount
       ? totalNonVotingLockedBalance
       : BigNumber.minimum(amount, totalNonVotingLockedBalance);
-  } else if (transaction.mode === "revoke" && account.celoResources) {
-    const vote = getVote(account, transaction.recipient, transaction.index);
-    if (vote) {
-      value = transaction.useAllAmount ? vote.amount : BigNumber.minimum(amount, vote.amount);
-    }
+  } else if (transaction.mode === "revoke") {
+    // No-op: the revoke value is computed inside buildTransaction (see the revoke
+    // branch below). Kept explicit so revoke doesn't fall into the spendable-balance
+    // branch and compute a `value` that is never used.
   } else {
     value = transaction.useAllAmount
       ? totalSpendableBalance
@@ -135,32 +138,23 @@ const getFeesForTransaction = async ({
         }),
       );
     } catch {
-      gas = MIN_GAS_FOR_NATIVE_TRANSFER * MAX_FEES_THRESHOLD_MULTIPLIER;
+      gas = fallbackGas;
     }
   } else if (transaction.mode === "revoke") {
-    const electionAddress = await getRegistryAddressFor("Election");
-    const isPending = transaction.index === 0;
-    const revokeArgs = [
-      transaction.recipient as `0x${string}`,
-      BigInt(value.toFixed()),
-      ZERO_ADDRESS,
-      ZERO_ADDRESS,
-      BigInt(0),
-    ] as const;
-    const data = isPending
-      ? encodeFunctionData({ abi: electionABI, functionName: "revokePending", args: revokeArgs })
-      : encodeFunctionData({ abi: electionABI, functionName: "revokeActive", args: revokeArgs });
-
+    // Reuse buildTransaction so the fee estimate uses the SAME revoke call as the
+    // real transaction — crucially the correct lesser/greater neighbors computed
+    // by getVoteNeighbors, and the revoke value (when useAllAmount is set, falling
+    // back to the entered amount if the vote can't be matched). Estimating with
+    // placeholder zero-address neighbors or a 0 value reverts on-chain, which
+    // previously returned a 0 fee and left the Continue button disabled.
     try {
-      gas = Number(
-        await client.estimateGas({
-          account: account.freshAddress as `0x${string}`,
-          to: electionAddress,
-          data,
-        }),
-      );
+      const tx = await buildTransaction(account, transaction);
+      // buildTransaction returns gas as a string; "0" is truthy, so compare
+      // numerically to ensure a 0 estimate still falls back instead of yielding a 0 fee.
+      const estimatedGas = Number(tx.gas);
+      gas = estimatedGas > 0 ? estimatedGas : fallbackGas;
     } catch {
-      return new BigNumber(0);
+      gas = fallbackGas;
     }
   } else if (transaction.mode === "activate") {
     const electionAddress = await getRegistryAddressFor("Election");
@@ -178,7 +172,9 @@ const getFeesForTransaction = async ({
         }),
       );
     } catch {
-      return new BigNumber(0);
+      // Fall back to a minimum gas estimate rather than returning a 0 fee, which
+      // would trip FeeNotLoaded and disable Continue with no explanation.
+      gas = fallbackGas;
     }
   } else if (transaction.mode === "register") {
     const accountsAddress = await getRegistryAddressFor("Accounts");
@@ -226,7 +222,7 @@ const getFeesForTransaction = async ({
       const tx = await buildTransaction(account, transaction);
       gas = tx.gas ? Number(tx.gas) : 0;
     } catch {
-      gas = MIN_GAS_FOR_NATIVE_TRANSFER * MAX_FEES_THRESHOLD_MULTIPLIER;
+      gas = fallbackGas;
     }
   }
 

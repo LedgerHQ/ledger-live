@@ -1,8 +1,8 @@
 import type { CustomFeeInputDescriptor, FeeDescriptor } from "../../../bridge/descriptor/types";
 import type { Transaction as CeloTransaction } from "../types";
 import { BigNumber } from "bignumber.js";
-
-const GWEI_DIVISOR = new BigNumber(10).pow(9);
+import { GWEI_DIVISOR } from "./constants";
+import { celoFeeAssets } from "./feeAssets";
 
 function isBigNumber(value: unknown): value is BigNumber {
   return BigNumber.isBigNumber(value);
@@ -35,6 +35,8 @@ function getSuggestedFeesRange(
     };
   }
 
+  if (transaction.feesStrategy === "custom") return null;
+
   const fees = transaction.fees;
   if (isBigNumber(fees) && fees.gt(0)) {
     return {
@@ -63,7 +65,8 @@ const celoCustomInputs: readonly CustomFeeInputDescriptor[] = [
 export const fees: FeeDescriptor = {
   hasPresets: false,
   hasCustom: true,
-  hasCustomAssets: false,
+  hasCustomAssets: true,
+  customAssets: celoFeeAssets,
   custom: {
     inputs: celoCustomInputs,
     getInitialValues: (transaction): Record<string, string> => {

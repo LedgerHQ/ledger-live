@@ -1,4 +1,5 @@
 import { renderHook, act } from "@tests/test-renderer";
+import Config from "react-native-config";
 import { useCyclingPlaceholder, PLACEHOLDER_INTERVAL_MS } from "../useCyclingPlaceholder";
 
 describe("useCyclingPlaceholder", () => {
@@ -9,6 +10,21 @@ describe("useCyclingPlaceholder", () => {
   afterEach(() => {
     jest.clearAllTimers();
     jest.useRealTimers();
+  });
+
+  it("does not cycle in Detox builds", () => {
+    const configMock = jest.replaceProperty(Config, "DETOX", "1");
+
+    try {
+      const { result } = renderHook(() => useCyclingPlaceholder(4, true));
+
+      expect(result.current.animate).toBe(false);
+
+      act(() => jest.advanceTimersByTime(PLACEHOLDER_INTERVAL_MS * 2));
+      expect(result.current.index).toBe(0);
+    } finally {
+      configMock.restore();
+    }
   });
 
   it("starts on the first phrase and animates when there are several phrases", () => {

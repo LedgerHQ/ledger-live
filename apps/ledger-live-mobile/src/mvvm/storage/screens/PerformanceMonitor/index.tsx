@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, ScrollView, TouchableOpacity } from "react-native";
+import { ScrollView, TouchableOpacity } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { performanceTracker } from "LLM/storage/utils/performance";
 import { STORAGE_TYPE } from "LLM/storage/constants";
 import FloatingDebugButton from "~/components/FloatingDebugButton";

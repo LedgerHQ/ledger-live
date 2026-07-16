@@ -1,5 +1,5 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { EarnProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { EarnProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { runPartnerDappCTATest } from "./earnV2";
 
 const testConfig = {

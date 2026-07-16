@@ -1,10 +1,10 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
+import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
 
 test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
   test.use({
@@ -31,26 +31,23 @@ test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
       await app.portfolio.checkBuyButtonVisibility();
       await app.portfolio.checkSellButtonDisabled();
       await app.portfolio.checkSendButtonDisabled();
-      await app.portfolio.checkAddAccountButtonVisibility();
+
+      await app.portfolio.expectAddAccountButtonVisible();
       await app.portfolio.clickAddAccountButton();
     },
   );
 });
 
 test.describe("Portfolio Wallet 4.0 - With Account", () => {
-  test.use({
-    teamOwner: Team.WALLET_XP,
-    userdata: "1AccountSOL0Balance",
-  });
-
   // With the Asset Section OFF, a single zero-balance account's countervalue is not resolved,
   // so the Wallet 4.0 balance view stays in its loading state and never renders the "$0.00"
   // total nor the performance pill. Every assertion below depends on that resolved balance,
-  // so this scenario is only meaningful with the Asset Section enabled.
-  test.skip(
-    !isAssetSectionEnabled,
-    "Asset Section disabled (E2E_ENABLE_ASSET_SECTION=0): zero-balance total/trend not displayed",
-  );
+  // so this scenario opts into the Q2 feature-flag set (Asset Section ON).
+  test.use({
+    teamOwner: Team.WALLET_XP,
+    userdata: "1AccountSOL0Balance",
+    featureFlags: FF_LWD_WALLET_40_Q2,
+  });
 
   test(
     "Portfolio happy path: with zero-balance account, then verify balance and analytics",
@@ -72,7 +69,7 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
       await app.portfolio.checkOneDayPerformanceIndicatorVisibility();
       await app.portfolio.clickOnPerformancePill();
       await app.analytics.expectAnalyticsScreenToBeVisible();
-      await app.analytics.clickBackButton();
+      await app.analytics.header.clickBack();
       await app.portfolio.expectPortfolioScreenToBeVisible();
     },
   );

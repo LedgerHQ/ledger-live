@@ -13,7 +13,6 @@ import {
   setOnboardingHasDevice,
   setReadOnlyMode,
 } from "~/actions/settings";
-import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { NavigatorName, ScreenName } from "~/const";
 import { screen, track } from "~/analytics";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
@@ -60,7 +59,6 @@ const Item = ({
   const navigation = useNavigation<NavigationProp>();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow();
 
   const screenName = useMemo(() => `Reborn Story Step ${currentIndex}`, [currentIndex]);
 
@@ -75,11 +73,6 @@ const Item = ({
     },
     [screenName],
   );
-
-  const buyLedger = useCallback(() => {
-    onClick("Buy a Ledger");
-    navigateToRebornFlow();
-  }, [navigateToRebornFlow, onClick]);
 
   const exploreLedger = useCallback(() => {
     dispatch(completeOnboarding());
@@ -99,10 +92,6 @@ const Item = ({
     onClick("Explore without a device");
     tryTriggerPushNotificationDrawerAfterAction("onboarding");
   }, [dispatch, exploreLedger, onClick, tryTriggerPushNotificationDrawerAfterAction]);
-
-  const pressBuy = useCallback(() => {
-    buyLedger();
-  }, [buyLedger]);
 
   return (
     <Flex flex={1} backgroundColor={`background.main`} accessible={true}>
@@ -150,11 +139,6 @@ const Item = ({
           >
             {t("onboarding.discoverLive.exploreWithoutADevice")}
           </Button>
-          {!rebornFeatureFlagEnabled && (
-            <Button onPress={pressBuy} type={"shade"} outline={true}>
-              {t("onboarding.discoverLive.buyALedgerNow")}
-            </Button>
-          )}
         </Box>
       )}
     </Flex>

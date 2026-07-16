@@ -8,7 +8,7 @@ import { GenericInformationBody } from "~/components/GenericInformationBody";
 import { BluetoothRequired, FirmwareNotRecognized } from "@ledgerhq/errors";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
-import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
+import type { SyncOnboardingScreenProps } from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/types";
 import { DmkError, isDmkError } from "@ledgerhq/live-dmk-mobile";
 
 export type Props = {

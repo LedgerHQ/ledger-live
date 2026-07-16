@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useCurrencyById } from "@ledgerhq/cryptoassets/hooks";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { useFeature } from "@features/platform-feature-flags";
 import { useRoute } from "@react-navigation/native";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
@@ -14,6 +15,7 @@ import { useAssetActionsAvailability } from "./components/Footer/useFooterViewMo
 import { useAssetCoinOptionsViewModel } from "./components/CoinOptions/useAssetCoinOptionsViewModel";
 import { useAssetMarketData } from "./hooks/useAssetMarketData";
 import { useReceiveNetworkLedgerIds } from "./hooks/useReceiveNetworkLedgerIds";
+import { isRobinhoodExclusiveAsset } from "./utils/isRobinhoodExclusiveAsset";
 
 type Route = StackNavigatorProps<AssetDetailNavigatorParamsList, ScreenName.AssetDetail>["route"];
 
@@ -75,6 +77,12 @@ export function useAssetDetailViewModel() {
   const hasFooter = isBuyAvailable || secondaryButton !== null;
   const hideReceiveInBalanceGraph = !isCurrencySupported || secondaryButton === "receive";
   const showFallbackBanner = isCurrencySupported && !isBuyAvailable && !availableOnSwap;
+  const robinhoodDisclaimer = useFeature("llRobinhoodDisclaimer");
+  const hasPositiveBalance = (distributionItem?.amount ?? 0) > 0;
+  const showStockDisclaimerBanner =
+    !!robinhoodDisclaimer?.enabled &&
+    hasPositiveBalance &&
+    isRobinhoodExclusiveAsset(receiveLedgerIds);
 
   const coinOptions = useAssetCoinOptionsViewModel({ currency, currencyId, marketId });
 
@@ -90,6 +98,7 @@ export function useAssetDetailViewModel() {
     hasFooter,
     hideReceiveInBalanceGraph,
     showFallbackBanner,
+    showStockDisclaimerBanner,
     coinOptions,
     isLoading,
     ledgerIds: receiveLedgerIds,

@@ -10,13 +10,6 @@ import type {
   SendFlowUiConfig,
 } from "@ledgerhq/live-common/flows/send/types";
 import { useSelector } from "~/context/hooks";
-const usdUnit = { name: "US Dollar", code: "USD", magnitude: 2 };
-const mockCounterValueCurrency = {
-  id: "USD",
-  name: "US Dollar",
-  ticker: "USD",
-  units: [usdUnit],
-};
 
 const mockT = (key: string) => key;
 
@@ -25,45 +18,16 @@ jest.mock("~/context/Locale", () => ({
   useTranslation: () => ({ t: mockT }),
   useLocale: () => ({ locale: "en" }),
 }));
-jest.mock("../useFeePresetOptions");
-jest.mock("../useFeePresetFiatValues");
-jest.mock("@ledgerhq/live-common/bridge/useAccountBridge");
-jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
-jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
-jest.mock("@ledgerhq/live-countervalues-react");
-jest.mock("LLM/hooks/useAccountUnit", () => ({
-  useMaybeAccountUnit: jest.fn(() => ({ magnitude: 8, code: "BTC", name: "Bitcoin" })),
+jest.mock("@ledgerhq/live-countervalues-react", () => ({
+  useCalculateCountervalueCallback: jest.fn(() => jest.fn()),
 }));
-jest.mock("@ledgerhq/live-common/currencies/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
-  formatCurrencyUnit: jest.fn(
-    (_unit: unknown, value: BigNumber) => `FORMATTED_${value.toString()}`,
-  ),
-}));
+jest.mock("@ledgerhq/live-common/flows/send/hooks/useNetworkFeesCore");
 
-const mockUseFeePresetOptions = jest.requireMock("../useFeePresetOptions").useFeePresetOptions;
-const mockUseFeePresetFiatValues = jest.requireMock(
-  "../useFeePresetFiatValues",
-).useFeePresetFiatValues;
-const { getMainAccount, getAccountCurrency } = jest.requireMock(
-  "@ledgerhq/ledger-wallet-framework/account/helpers",
-);
-const { useAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/useAccountBridge");
-const sendFeatures = jest.requireMock(
-  "@ledgerhq/live-common/bridge/descriptor/send/features",
-).sendFeatures;
-const useCalculate = jest.requireMock("@ledgerhq/live-countervalues-react").useCalculate;
+const mockUseNetworkFeesCore = jest.requireMock(
+  "@ledgerhq/live-common/flows/send/hooks/useNetworkFeesCore",
+).useNetworkFeesCore;
 
 const mockUpdateTransaction = jest.fn();
-
-function isAccount(account: unknown): account is Account {
-  return (
-    typeof account === "object" &&
-    account !== null &&
-    "type" in account &&
-    (account as Account).type === "Account"
-  );
-}
 
 function createTransaction(overrides?: Partial<Transaction>): Transaction {
   return {
@@ -92,14 +56,9 @@ function buildParams(overrides?: {
   status?: Partial<TransactionStatus>;
   uiConfig?: Partial<SendFlowUiConfig>;
   onSelectCoinControl?: () => void;
+  onSelectCustomFees?: () => void;
 }) {
   const account = createMockAccount(overrides?.account);
-  getMainAccount.mockImplementation((acc: Account | unknown) => {
-    if (!isAccount(acc)) throw new Error("TokenAccount not supported");
-    return acc;
-  });
-  getAccountCurrency.mockReturnValue(account.currency);
-
   const transaction = createTransaction(overrides?.transaction);
   const status = createTransactionStatus(overrides?.status);
   const uiConfig: SendFlowUiConfig = {
@@ -108,7 +67,6 @@ function buildParams(overrides?: {
     hasFeePresets: false,
     hasCustomFees: false,
     hasCoinControl: false,
-    hasAmountPlugins: false,
     ...overrides?.uiConfig,
   };
   const transactionActions: SendFlowTransactionActions = {
@@ -126,339 +84,112 @@ function buildParams(overrides?: {
     uiConfig,
     transactionActions,
     onSelectCoinControl: overrides?.onSelectCoinControl,
+    onSelectCustomFees: overrides?.onSelectCustomFees,
   };
 }
 
 describe("useNetworkFees", () => {
-  const defaultPresetOptions = [
-    { id: "slow", amount: new BigNumber(1000), estimatedMs: undefined, disabled: undefined },
-    { id: "medium", amount: new BigNumber(2000), estimatedMs: undefined, disabled: undefined },
-    { id: "fast", amount: new BigNumber(3000), estimatedMs: undefined, disabled: undefined },
-  ];
-  const defaultFiatValues: Record<string, string | null> = {
-    slow: "$1.00",
-    medium: "$2.00",
-    fast: "$3.00",
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
-    jest
-      .mocked(useSelector)
-      .mockReturnValue(mockCounterValueCurrency as ReturnType<typeof useSelector>);
-    useAccountBridge.mockReturnValue({
-      updateTransaction: jest.fn((tx: Transaction, patch: Partial<Transaction>) => ({
-        ...tx,
-        ...patch,
-      })),
+    jest.mocked(useSelector).mockReturnValue({
+      id: "USD",
+      ticker: "USD",
+      units: [{ name: "US Dollar", code: "USD", magnitude: 2 }],
     });
-    sendFeatures.shouldEstimateFeePresetsWithBridge = jest.fn(() => false);
-    sendFeatures.getFeePresetFallbackIds = jest.fn(() => []);
-    sendFeatures.canEstimateFeePresetsWithZeroAmount = jest.fn(() => false);
-    sendFeatures.getFeeCurrencyAccountId = jest.fn(
-      (_currency: unknown, transaction: { feeCurrencyAccountId?: string | null }) =>
-        transaction?.feeCurrencyAccountId ?? null,
+    mockUseNetworkFeesCore.mockReturnValue({
+      feePresetOptions: [
+        { id: "slow", amount: new BigNumber(1000) },
+        { id: "medium", amount: new BigNumber(2000) },
+        { id: "fast", amount: new BigNumber(3000) },
+      ],
+      fiatByPreset: {
+        slow: "$1.00",
+        medium: "$2.00",
+        fast: "$3.00",
+      },
+      selectedFeeStrategy: null,
+      selectedPresetFiatValue: null,
+      onSelectFeeStrategy: jest.fn(),
+      displayFeesValue: "-",
+      showFeePresets: false,
+    });
+  });
+
+  it("returns the expected mobile view model shape", () => {
+    const { result } = renderHook(() => useNetworkFees(buildParams()));
+
+    expect(result.current).toMatchObject({
+      label: "send.fees.title",
+      value: "-",
+      strategyLabel: "send.fees.medium",
+      showFeePresets: false,
+      selectedFeeStrategy: null,
+      feePresetLabelsOptions: expect.any(Array),
+      uiConfig: { hasCustomFees: false, hasCoinControl: false },
+    });
+    expect(result.current.feePresetLabelsOptions).toHaveLength(3);
+  });
+
+  it("maps fee preset options with translated labels and fiat values", () => {
+    const { result } = renderHook(() => useNetworkFees(buildParams()));
+
+    expect(result.current.feePresetLabelsOptions[0]).toEqual({
+      id: "slow",
+      label: "send.fees.slow",
+      fiatValue: "$1.00",
+      legendValue: null,
+    });
+  });
+
+  it("uses core displayFeesValue and selected strategy label", () => {
+    mockUseNetworkFeesCore.mockReturnValue({
+      feePresetOptions: [],
+      fiatByPreset: {},
+      selectedFeeStrategy: "fast",
+      selectedPresetFiatValue: "$3.00",
+      onSelectFeeStrategy: jest.fn(),
+      displayFeesValue: "$15.00 USD",
+      showFeePresets: true,
+    });
+
+    const { result } = renderHook(() =>
+      useNetworkFees(buildParams({ uiConfig: { hasFeePresets: true } })),
     );
-    mockUseFeePresetOptions.mockReturnValue(defaultPresetOptions);
-    mockUseFeePresetFiatValues.mockReturnValue(defaultFiatValues);
-    useCalculate.mockReturnValue(undefined);
-    mockUpdateTransaction.mockImplementation((fn: (tx: Transaction) => Transaction) => {
-      const tx = createTransaction();
-      return fn(tx);
-    });
+
+    expect(result.current.value).toBe("$15.00 USD");
+    expect(result.current.strategyLabel).toBe("send.fees.fast");
+    expect(result.current.showFeePresets).toBe(true);
   });
 
-  describe("view model shape", () => {
-    it("returns the expected view model keys and types", () => {
-      const params = buildParams();
-      const { result } = renderHook(() => useNetworkFees(params));
+  it("forwards onSelectCoinControl and onSelectCustomFees", () => {
+    const onSelectCoinControl = jest.fn();
+    const onSelectCustomFees = jest.fn();
+    const { result } = renderHook(() =>
+      useNetworkFees(buildParams({ onSelectCoinControl, onSelectCustomFees })),
+    );
 
-      expect(result.current).toMatchObject({
-        label: expect.any(String),
-        value: expect.any(String),
-        strategyLabel: expect.any(String),
-        showFeePresets: false,
-        selectedFeeStrategy: null,
-        feePresetLabelsOptions: expect.any(Array),
-        uiConfig: { hasCustomFees: false, hasCoinControl: false },
-      });
-      expect(typeof result.current.onSelectFeeStrategy).toBe("function");
-      expect(result.current.feePresetLabelsOptions.length).toBe(3);
-    });
+    expect(result.current.onSelectCoinControl).toBe(onSelectCoinControl);
+    expect(result.current.onSelectCustomFees).toBe(onSelectCustomFees);
   });
 
-  describe("selectedFeeStrategy and showFeePresets", () => {
-    it("selectedFeeStrategy equals transaction.feesStrategy when set", () => {
-      const params = buildParams({ transaction: { feesStrategy: "medium" } });
-      const { result } = renderHook(() => useNetworkFees(params));
-
-      expect(result.current.selectedFeeStrategy).toBe("medium");
+  it("delegates onSelectFeeStrategy to the core hook", () => {
+    const onSelectFeeStrategy = jest.fn();
+    mockUseNetworkFeesCore.mockReturnValue({
+      feePresetOptions: [],
+      fiatByPreset: {},
+      selectedFeeStrategy: null,
+      selectedPresetFiatValue: null,
+      onSelectFeeStrategy,
+      displayFeesValue: "-",
+      showFeePresets: false,
     });
 
-    it("selectedFeeStrategy is null when transaction.feesStrategy is not set", () => {
-      const params = buildParams();
-      const { result } = renderHook(() => useNetworkFees(params));
+    const { result } = renderHook(() => useNetworkFees(buildParams()));
 
-      expect(result.current.selectedFeeStrategy).toBeNull();
+    act(() => {
+      result.current.onSelectFeeStrategy("fast");
     });
 
-    it("showFeePresets equals uiConfig.hasFeePresets", () => {
-      const params = buildParams({ uiConfig: { hasFeePresets: true } });
-      const { result } = renderHook(() => useNetworkFees(params));
-
-      expect(result.current.showFeePresets).toBe(true);
-    });
-  });
-
-  describe("uiConfig passthrough", () => {
-    it("passes hasCustomFees and hasCoinControl to view model", () => {
-      const params = buildParams({
-        uiConfig: { hasCustomFees: true, hasCoinControl: true },
-      });
-      const { result } = renderHook(() => useNetworkFees(params));
-
-      expect(result.current.uiConfig).toEqual({
-        hasCustomFees: true,
-        hasCoinControl: true,
-      });
-    });
-  });
-
-  describe("onSelectFeeStrategy", () => {
-    it("calls transactionActions.updateTransaction and bridge.updateTransaction with valid strategy", () => {
-      const bridgeUpdateTransaction = jest.fn((tx: Transaction, patch: Partial<Transaction>) => ({
-        ...tx,
-        ...patch,
-      }));
-      useAccountBridge.mockReturnValue({ updateTransaction: bridgeUpdateTransaction });
-      const params = buildParams();
-
-      const { result } = renderHook(() => useNetworkFees(params));
-
-      act(() => {
-        result.current.onSelectFeeStrategy("fast");
-      });
-
-      expect(mockUpdateTransaction).toHaveBeenCalled();
-      const updater = mockUpdateTransaction.mock.calls[0][0];
-      const currentTx = createTransaction();
-      const nextTx = updater(currentTx);
-      expect(bridgeUpdateTransaction).toHaveBeenCalledWith(currentTx, { feesStrategy: "fast" });
-      expect(nextTx.feesStrategy).toBe("fast");
-    });
-
-    it("updates with feesStrategy null when given invalid strategy", () => {
-      const bridgeUpdateTransaction = jest.fn((tx: Transaction, patch: Partial<Transaction>) => ({
-        ...tx,
-        ...patch,
-      }));
-      useAccountBridge.mockReturnValue({ updateTransaction: bridgeUpdateTransaction });
-      const params = buildParams();
-
-      const { result } = renderHook(() => useNetworkFees(params));
-
-      act(() => {
-        result.current.onSelectFeeStrategy("invalid");
-      });
-
-      expect(mockUpdateTransaction).toHaveBeenCalled();
-      const updater = mockUpdateTransaction.mock.calls[0][0];
-      const currentTx = createTransaction();
-      updater(currentTx);
-      expect(bridgeUpdateTransaction).toHaveBeenCalledWith(currentTx, { feesStrategy: null });
-    });
-  });
-
-  describe("onSelectCoinControl", () => {
-    it("returns the provided onSelectCoinControl on the view model", () => {
-      const onSelectCoinControl = jest.fn();
-      const params = buildParams({ onSelectCoinControl });
-      const { result } = renderHook(() => useNetworkFees(params));
-
-      expect(result.current.onSelectCoinControl).toBe(onSelectCoinControl);
-    });
-  });
-
-  describe("value (feesValue)", () => {
-    it('returns "-" when status.estimatedFees is missing or lte 0', () => {
-      const paramsNoFees = buildParams({
-        status: { estimatedFees: undefined },
-      });
-      const { result: resultNo } = renderHook(() => useNetworkFees(paramsNoFees));
-      expect(resultNo.current.value).toBe("-");
-
-      const paramsZero = buildParams({
-        status: { estimatedFees: new BigNumber(0) },
-      });
-      const { result: resultZero } = renderHook(() => useNetworkFees(paramsZero));
-      expect(resultZero.current.value).toBe("-");
-    });
-
-    it("returns formatted fiat value when estimatedFees > 0 and countervalue present", () => {
-      const { formatCurrencyUnit } = jest.requireMock("@ledgerhq/live-common/currencies/index");
-      formatCurrencyUnit.mockReturnValue("$15.00 USD");
-      useCalculate.mockReturnValue(500);
-
-      const params = buildParams({
-        status: { estimatedFees: new BigNumber(1000) },
-      });
-      const { result } = renderHook(() => useNetworkFees(params));
-
-      expect(result.current.value).toBe("$15.00 USD");
-      expect(formatCurrencyUnit).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.any(BigNumber),
-        expect.objectContaining({ showCode: true, disableRounding: true, locale: "en" }),
-      );
-    });
-
-    it("returns formatted account unit when estimatedFees > 0 and no countervalue", () => {
-      const { formatCurrencyUnit } = jest.requireMock("@ledgerhq/live-common/currencies/index");
-      formatCurrencyUnit.mockReturnValue("1000 BTC");
-      useCalculate.mockReturnValue(undefined);
-
-      const params = buildParams({
-        status: { estimatedFees: new BigNumber(1000) },
-      });
-      const { result } = renderHook(() => useNetworkFees(params));
-
-      expect(result.current.value).toBe("1000 BTC");
-    });
-  });
-
-  describe("fee preset options mapping", () => {
-    it("maps feePresetOptions with labels and fiatValues from child hooks", () => {
-      mockUseFeePresetOptions.mockReturnValue(defaultPresetOptions);
-      mockUseFeePresetFiatValues.mockReturnValue(defaultFiatValues);
-
-      const params = buildParams();
-      const { result } = renderHook(() => useNetworkFees(params));
-
-      expect(result.current.feePresetLabelsOptions).toHaveLength(3);
-      expect(result.current.feePresetLabelsOptions[0]).toMatchObject({
-        id: "slow",
-        label: expect.any(String),
-        fiatValue: "$1.00",
-        legendValue: null,
-      });
-      expect(result.current.feePresetLabelsOptions[1]).toMatchObject({
-        id: "medium",
-        fiatValue: "$2.00",
-        legendValue: null,
-      });
-      expect(result.current.feePresetLabelsOptions[2]).toMatchObject({
-        id: "fast",
-        fiatValue: "$3.00",
-        legendValue: null,
-      });
-    });
-  });
-
-  describe("Celo fee currency", () => {
-    const usdcUnit = { name: "USD Coin", code: "USDC", magnitude: 6 };
-    const usdcToken = {
-      type: "TokenCurrency",
-      id: "celo/erc20/usdc",
-      contractAddress: "0xceba9300f2b948710d2653dd7b07f33a8b32118c",
-      name: "USD Coin",
-      ticker: "USDC",
-      disableCountervalue: false,
-      units: [usdcUnit],
-    };
-    const usdcSubAccount = {
-      type: "TokenAccount",
-      id: "usdc-sub-account-id",
-      token: usdcToken,
-      balance: new BigNumber(100000),
-    };
-
-    it("formats fee with token unit when feeCurrencyAccountId is set", () => {
-      const { formatCurrencyUnit } = jest.requireMock("@ledgerhq/live-common/currencies/index");
-      formatCurrencyUnit.mockReturnValue("0.5 USDC");
-      useCalculate.mockReturnValue(undefined);
-
-      const params = buildParams({
-        account: { subAccounts: [usdcSubAccount] } as Partial<Account>,
-        transaction: {
-          family: "celo",
-          feeCurrencyAccountId: "usdc-sub-account-id",
-        } as Partial<Transaction>,
-        status: { estimatedFees: new BigNumber(500000) },
-      });
-      const { result } = renderHook(() => useNetworkFees(params));
-
-      expect(result.current.value).toBe("0.5 USDC");
-      expect(formatCurrencyUnit).toHaveBeenCalledWith(
-        expect.objectContaining({ code: "USDC", magnitude: 6 }),
-        expect.any(BigNumber),
-        expect.anything(),
-      );
-      expect(useCalculate).toHaveBeenCalledWith(
-        expect.objectContaining({ from: expect.objectContaining({ ticker: "USDC" }) }),
-      );
-    });
-
-    it("falls back to account unit when feeCurrencyAccountId is null", () => {
-      const { formatCurrencyUnit } = jest.requireMock("@ledgerhq/live-common/currencies/index");
-      formatCurrencyUnit.mockReturnValue("0.5 BTC");
-      useCalculate.mockReturnValue(undefined);
-
-      const params = buildParams({
-        transaction: {
-          family: "celo",
-          feeCurrencyAccountId: null,
-        } as Partial<Transaction>,
-        status: { estimatedFees: new BigNumber(500000) },
-      });
-      renderHook(() => useNetworkFees(params));
-
-      expect(formatCurrencyUnit).toHaveBeenCalledWith(
-        expect.objectContaining({ code: "BTC", magnitude: 8 }),
-        expect.any(BigNumber),
-        expect.anything(),
-      );
-    });
-
-    it("falls back to account unit when feeCurrencyAccountId references a missing sub-account", () => {
-      const { formatCurrencyUnit } = jest.requireMock("@ledgerhq/live-common/currencies/index");
-      formatCurrencyUnit.mockReturnValue("0.5 BTC");
-      useCalculate.mockReturnValue(undefined);
-
-      const params = buildParams({
-        account: { subAccounts: [] } as Partial<Account>,
-        transaction: {
-          family: "celo",
-          feeCurrencyAccountId: "missing-id",
-        } as Partial<Transaction>,
-        status: { estimatedFees: new BigNumber(500000) },
-      });
-      renderHook(() => useNetworkFees(params));
-
-      expect(formatCurrencyUnit).toHaveBeenCalledWith(
-        expect.objectContaining({ code: "BTC", magnitude: 8 }),
-        expect.any(BigNumber),
-        expect.anything(),
-      );
-    });
-  });
-
-  describe("descriptor fallback presets", () => {
-    it("calls useFeePresetFiatValues with descriptor fallbackPresetIds when fee preset options are empty", () => {
-      mockUseFeePresetOptions.mockReturnValue([]);
-      mockUseFeePresetFiatValues.mockReturnValue({});
-      sendFeatures.getFeePresetFallbackIds = jest.fn(() => ["slow", "medium", "fast"]);
-
-      const params = buildParams({
-        uiConfig: { hasFeePresets: true },
-      });
-
-      renderHook(() => useNetworkFees(params));
-
-      expect(mockUseFeePresetFiatValues).toHaveBeenCalledWith(
-        expect.objectContaining({
-          fallbackPresetIds: ["slow", "medium", "fast"],
-        }),
-      );
-    });
+    expect(onSelectFeeStrategy).toHaveBeenCalledWith("fast");
   });
 });

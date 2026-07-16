@@ -1,7 +1,7 @@
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
-import { TouchableOpacity } from "react-native";
+import { Pressable } from "react-native";
 import Logo from "./assets/Logo";
 
 type Props = Readonly<{
@@ -12,7 +12,7 @@ export default function OptimisedCardEntryPoint({ onPress }: Props) {
   const { t } = useTranslation();
 
   return (
-    <TouchableOpacity onPress={onPress}>
+    <Pressable onPress={onPress} style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}>
       <Flex
         flexDirection={"row"}
         alignItems={"center"}
@@ -42,6 +42,6 @@ export default function OptimisedCardEntryPoint({ onPress }: Props) {
         </Flex>
         <Icons.ChevronRight size="M" color="neutral.c80" />
       </Flex>
-    </TouchableOpacity>
+    </Pressable>
   );
 }

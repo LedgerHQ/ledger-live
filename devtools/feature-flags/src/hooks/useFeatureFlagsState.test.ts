@@ -10,9 +10,9 @@ const defaultProps: FeatureFlagsToolProps = {
   resolved,
   overrides: {},
   setOverride: jest.fn(),
+  setAllOverrides: jest.fn(),
   clearOverride: jest.fn(),
   clearAllOverrides: jest.fn(),
-  importOverrides: jest.fn(),
 };
 
 const testFlagId: FeatureId = "mockFeature";
@@ -31,16 +31,5 @@ describe("useFeatureFlagsState", () => {
     const state = result.current.getFlagDisplayState(testFlagId);
     expect(state.isOverridden).toBe(false);
     expect(state.override).toBeUndefined();
-  });
-
-  it("includes remote and default values in display state when provided", () => {
-    const remote: PartialFeatures = { mockFeature: { enabled: true } };
-    const defaults: PartialFeatures = { mockFeature: { enabled: false } };
-    const { result } = renderHook(() =>
-      useFeatureFlagsState({ ...defaultProps, remote, defaults }),
-    );
-    const state = result.current.getFlagDisplayState(testFlagId);
-    expect(state.remote).toEqual({ enabled: true });
-    expect(state.default).toEqual({ enabled: false });
   });
 });

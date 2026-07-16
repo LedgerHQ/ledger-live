@@ -1,0 +1,27 @@
+services:
+  gaiad:
+    platform: linux/amd64
+    image: coin-tester-gaiad:latest
+    build:
+      context: .
+      dockerfile: gaiad.Dockerfile
+    # The tester-derived address to pre-fund at genesis (see entrypoint.sh).
+    # Set by scenarii/Cosmos.ts on process.env before `compose up`.
+    environment:
+      - DEV_ADDRESS=${DEV_ADDRESS:-}
+    ports:
+      - "1317:1317"
+      - "26657:26657"
+      - "9090:9090"
+    healthcheck:
+      # LCD `latest block` endpoint — only responds once the chain has produced
+      # a block, which a single validator does on its own within a few seconds.
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:1317/cosmos/base/tendermint/v1beta1/blocks/latest >/dev/null"]
+      interval: 5s
+      timeout: 10s
+      retries: 24
+      start_period: 30s
+
+# No named volume: a single node keeps its state in the container filesystem,
+# and `down --volumes` (killGaiad) discards the container — each run sees a
+# fresh chain from genesis.

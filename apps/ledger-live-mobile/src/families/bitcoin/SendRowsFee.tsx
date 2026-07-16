@@ -94,7 +94,7 @@ export default function BitcoinSendRowsFee({
       account={account}
       parentAccount={parentAccount}
       transaction={transaction}
-      forceUnitLabel={<Trans i18nKey="common.satPerByte" />}
+      forceUnitLabel={<Trans i18nKey="common.satPerVByte" />}
       status={status}
     />
   );

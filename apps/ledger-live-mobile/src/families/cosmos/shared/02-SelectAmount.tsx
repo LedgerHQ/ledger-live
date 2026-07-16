@@ -19,8 +19,8 @@ import { getMaxEstimatedBalance } from "@ledgerhq/live-common/families/cosmos/lo
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
-import Button from "~/components/Button";
 import SafeAreaView from "~/components/SafeAreaView";
+import Button from "~/components/Button";
 import CurrencyInput from "~/components/CurrencyInput";
 import LText from "~/components/LText";
 import Warning from "~/icons/Warning";
@@ -142,13 +142,14 @@ function DelegationAmount({ navigation, route }: Props) {
 
   return (
     <SafeAreaView
+      isFlex
+      edges={["bottom"]}
       style={[
         styles.root,
         {
           backgroundColor: colors.background.main,
         },
       ]}
-      edges={["bottom"]}
     >
       <KeyboardView behavior={behaviorParam}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -293,7 +294,6 @@ function DelegationAmount({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    padding: 16,
   },
   main: {
     flex: 1,
@@ -303,6 +303,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    paddingTop: 16,
     paddingHorizontal: 16,
     alignItems: "stretch",
   },

@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { useLLDCoinFamily } from "~/renderer/families";
@@ -18,14 +18,9 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridgeOrNull: jest.fn(() => ({ isAccountEmpty: () => false })),
 }));
 
-jest.mock("@features/platform-feature-flags", () => ({
-  useFeature: jest.fn(() => null),
-  useWalletFeaturesConfig: () => ({
-    shouldDisplayAssetSection: false,
-    shouldDisplayAggregatedAssets: false,
-    shouldDisplayWallet40MainNav: false,
-  }),
-}));
+const accountPageFlags = withFlagOverrides({
+  lwdWallet40: { enabled: true, params: { assetSection: false, aggregatedAssets: false } },
+});
 
 jest.mock("./hooks/useAccountBackNavigation", () => ({
   useAccountBackNavigation: () => ({ showBackButton: false, navigateBack: jest.fn() }),
@@ -69,7 +64,7 @@ describe("AccountPage — useLLDCoinFamily slots", () => {
     } as never);
 
     render(<AccountPageWrapper />, {
-      initialState: { accounts: [account] },
+      initialState: { ...accountPageFlags, accounts: [account] },
     });
 
     expect(screen.getByTestId("body-header")).toBeInTheDocument();
@@ -80,7 +75,7 @@ describe("AccountPage — useLLDCoinFamily slots", () => {
     mockFamily.mockReturnValue({} as never);
 
     render(<AccountPageWrapper />, {
-      initialState: { accounts: [account] },
+      initialState: { ...accountPageFlags, accounts: [account] },
     });
 
     expect(screen.queryByTestId("body-header")).not.toBeInTheDocument();

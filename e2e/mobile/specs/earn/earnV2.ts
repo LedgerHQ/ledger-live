@@ -1,5 +1,5 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
 import { waitEarnReady } from "../../bridge/server";
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
@@ -51,8 +51,6 @@ const FF_STAKE_PROGRAMS_MODAL: PartialFeatures = {
 let earnReady: Promise<string>;
 
 async function navigateToEarn() {
-  // EARN_V2_FLAGS always enables lwmWallet40 with mainNavigation: true,
-  // so the app always renders the Wallet 4.0 navigator for earnV2 tests.
   await app.mainNavigation.tapWallet40Tab("earn");
   await earnReady;
 }
@@ -95,6 +93,7 @@ export function runColdStartTest(account: Account, tmsLinks: string[], tags: str
         speculosApp: account.currency.speculosApp,
         featureFlags: EARN_V2_FLAGS,
         cliCommands: [liveDataCommand(account)],
+        speculosForSetupOnly: true,
       });
     });
 
@@ -120,6 +119,7 @@ export function runHotStartTest(account: Account, tmsLinks: string[], tags: stri
         speculosApp: account.currency.speculosApp,
         featureFlags: EARN_V2_FLAGS,
         cliCommands: [liveDataCommand(account)],
+        speculosForSetupOnly: true,
       });
     });
 
@@ -149,6 +149,7 @@ export function runNativeStakingCTATest(account: Account, tmsLinks: string[], ta
         speculosApp: account.currency.speculosApp,
         featureFlags: EARN_V2_FLAGS,
         cliCommands: [liveDataWithAddressCommand(account)],
+        speculosForSetupOnly: true,
       });
     });
 
@@ -171,6 +172,7 @@ export function runScyStakingCTATest(account: Account, tmsLinks: string[], tags:
         speculosApp: account.currency.speculosApp,
         featureFlags: EARN_V2_FLAGS,
         cliCommands: [liveDataWithAddressCommand(account)],
+        speculosForSetupOnly: true,
       });
     });
 
@@ -207,6 +209,7 @@ export function runPartnerDappCTATest(
         speculosApp: account.currency.speculosApp,
         featureFlags,
         cliCommands: [liveDataWithAddressCommand(account)],
+        speculosForSetupOnly: true,
       });
     });
 
@@ -245,6 +248,7 @@ export function runPartnerDappPositionTest(
         speculosApp: account.currency.speculosApp,
         featureFlags: EARN_V2_FLAGS,
         cliCommands: [liveDataWithAddressCommand(account)],
+        speculosForSetupOnly: true,
       });
     });
 
@@ -273,6 +277,7 @@ export function runPositionToWithdrawalTest(account: Account, tmsLinks: string[]
         speculosApp: account.currency.speculosApp,
         featureFlags: EARN_V2_FLAGS,
         cliCommands: [liveDataWithAddressCommand(account)],
+        speculosForSetupOnly: true,
       });
     });
 

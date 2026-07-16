@@ -16,6 +16,9 @@ permissions:
 
 jobs:
   pre_job:
+    permissions:
+      contents: write
+      pull-requests: write
     name: "Skip Check"
     if: ${{!github.event.pull_request.head.repo.fork}}
     runs-on: ubuntu-latest
@@ -34,7 +37,7 @@ jobs:
         if: ${{ env.IS_SMARTLING == 'true' }}
         run: |
           echo "should_skip=true" >> $GITHUB_OUTPUT
-          gh pr close ${{ github.event.pull_request.number }} -R LedgerHQ/ledger-live
+          gh pr close ${{ github.event.pull_request.number }} -R LedgerHQ/ledger-live --delete-branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

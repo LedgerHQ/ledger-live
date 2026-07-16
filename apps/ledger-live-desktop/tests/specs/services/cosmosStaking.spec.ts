@@ -27,9 +27,6 @@ test.use({
         },
       },
     },
-    lwdWallet40: {
-      enabled: false,
-    },
   },
 });
 

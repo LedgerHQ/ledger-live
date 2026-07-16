@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { ManagePreferencesBody } from "./components";
+import React from "react";
 import { HeaderTitle } from "LLD/features/AnalyticsOptInPrompt/screens/components";
 import { Flex } from "@ledgerhq/react-ui";
-import { FieldKeySwitch } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import Track from "~/renderer/analytics/Track";
+import {
+  ANALYTICS_OPT_IN_PREFERENCES_COPY_KEYS,
+  AnalyticsOptInPreferencesLegacySetup,
+} from "LLD/features/AnalyticsOptInPrompt/components/AnalyticsOptInPreferencesSetup";
+import { FieldKeySwitch } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 
 interface ManagePreferencesProps {
   onPreferencesChange: (preferences: Record<FieldKeySwitch, boolean>) => void;
@@ -17,32 +20,18 @@ const ManagePreferences = ({
   onPreferencesChange,
   shouldWeTrack,
   handleOpenPrivacyPolicy,
-}: ManagePreferencesProps) => {
-  const [preferencesChecked, setPreferencesChecked] = useState<Record<FieldKeySwitch, boolean>>({
-    AnalyticsData: false,
-    PersonalizationData: false,
-  });
-
-  const handleSwitchChange = (key: FieldKeySwitch) => {
-    setPreferencesChecked(prevState => ({ ...prevState, [key]: !prevState[key] }));
-  };
-
-  useEffect(() => {
-    onPreferencesChange(preferencesChecked);
-  }, [preferencesChecked, onPreferencesChange]);
-
-  return (
-    <>
-      <Track onMount mandatory={shouldWeTrack} event={page} page={page} />
-      <Flex flexDirection={"column"} rowGap={"32px"} mx={"40px"} height={"100%"}>
-        <HeaderTitle title={"analyticsOptInPrompt.screen.managePreferences"} />
-        <ManagePreferencesBody
-          onSwitchChange={handleSwitchChange}
-          handleOpenPrivacyPolicy={() => handleOpenPrivacyPolicy(page)}
-        />
-      </Flex>
-    </>
-  );
-};
+}: ManagePreferencesProps) => (
+  <>
+    <Track onMount mandatory={shouldWeTrack} event={page} page={page} />
+    <Flex flexDirection={"column"} rowGap={"32px"} mx={"40px"} height={"100%"}>
+      <HeaderTitle title={"analyticsOptInPrompt.screen.managePreferences"} />
+      <AnalyticsOptInPreferencesLegacySetup
+        copyKeys={ANALYTICS_OPT_IN_PREFERENCES_COPY_KEYS.legacy}
+        onPreferencesChange={onPreferencesChange}
+        onOpenTrackingPolicy={() => handleOpenPrivacyPolicy(page)}
+      />
+    </Flex>
+  </>
+);
 
 export default ManagePreferences;

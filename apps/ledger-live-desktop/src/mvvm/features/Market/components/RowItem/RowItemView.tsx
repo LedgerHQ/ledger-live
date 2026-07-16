@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { Text, Tooltip } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
-import { SmallMarketItemChart } from "~/renderer/screens/market/MarketList/components/MarketItemChart";
+import { SmallMarketItemChart } from "~/renderer/screens/market/components/MarketItemChart";
 import { Button, IconButton } from "@ledgerhq/lumen-ui-react";
 import { TableRow, TableCell } from "~/renderer/screens/market/components/Table";
 import { formatPercentage } from "~/renderer/screens/market/utils";

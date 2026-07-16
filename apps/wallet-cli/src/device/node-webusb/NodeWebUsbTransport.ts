@@ -140,6 +140,10 @@ export class NodeWebUsbTransport implements Transport {
     WebUSBDevice,
     DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>
   >();
+  private readonly _deviceConnectionSetupsByWebUsbDevice = new Map<
+    WebUSBDevice,
+    Promise<DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>>
+  >();
   // Mirrors the values of _deviceConnectionsByWebUsbDevice so that membership
   // checks (e.g. isConnectionMachineRoutable) are O(1) instead of O(n).
   private readonly _activeConnectionMachines = new Set<
@@ -579,6 +583,16 @@ export class NodeWebUsbTransport implements Transport {
       return Right(this.makeTransportConnectedDevice({ row, machine: existing }));
     }
 
+    const pendingSetup = this._deviceConnectionSetupsByWebUsbDevice.get(row.webUsbDevice);
+    if (pendingSetup) {
+      try {
+        const machine = await pendingSetup;
+        return Right(this.makeTransportConnectedDevice({ row, machine }));
+      } catch (e) {
+        return Left(new OpeningConnectionError(e));
+      }
+    }
+
     const apduSender = this._deviceApduSenderFactory({
       dependencies: { device: row.webUsbDevice, interfaceNumber: row.interfaceNumber },
       apduSenderFactory: this._apduSenderFactory,
@@ -619,15 +633,24 @@ export class NodeWebUsbTransport implements Transport {
     });
     this._deviceApduSendersByConnectionMachine.set(machine, apduSender);
 
-    try {
+    const setupConnection = (async () => {
       await machine.setupConnection();
+      this.setActiveConnection(row.webUsbDevice, machine);
+      return machine;
+    })();
+    this._deviceConnectionSetupsByWebUsbDevice.set(row.webUsbDevice, setupConnection);
+
+    try {
+      await setupConnection;
     } catch (e) {
       this._deviceApduSendersByConnectionMachine.delete(machine);
       this._logger.error("Error while setting up device connection", { data: { error: e } });
       return Left(new OpeningConnectionError(e));
+    } finally {
+      if (this._deviceConnectionSetupsByWebUsbDevice.get(row.webUsbDevice) === setupConnection) {
+        this._deviceConnectionSetupsByWebUsbDevice.delete(row.webUsbDevice);
+      }
     }
-
-    this.setActiveConnection(row.webUsbDevice, machine);
 
     return Right(this.makeTransportConnectedDevice({ row, machine }));
   }

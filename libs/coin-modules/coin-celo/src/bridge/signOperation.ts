@@ -1,4 +1,4 @@
-import { EvmSignature } from "@ledgerhq/coin-evm/types/signer";
+import { CeloSignature } from "../signer/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
@@ -80,7 +80,7 @@ const runSignOperation = async ({
 
   const response = (await signerContext(deviceId, signer =>
     signer.signTransaction(account.freshAddressPath, rawTxHex),
-  )) as EvmSignature;
+  )) as CeloSignature;
 
   if (isCancelled()) return;
 

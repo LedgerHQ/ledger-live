@@ -3,9 +3,16 @@ import { fiat } from "../define";
 export const jpy = fiat({
   type: "FiatCurrency",
   id: "jpy",
-  name: "Japanese Yen",
   ticker: "JPY",
+  name: "Japanese Yen",
   symbol: "¥",
-  units: [{ name: "Japanese Yen", code: "JPY", magnitude: 0 }],
-  keywords: ["yen", "jpy"],
+  units: [
+    {
+      code: "¥",
+      name: "Japanese Yen",
+      magnitude: 0,
+      showAllDigits: true,
+      prefixCode: true,
+    },
+  ],
 });

@@ -1,5 +1,5 @@
-import { getFormattedFeeFields } from "@ledgerhq/coin-evm/editTransaction/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import React, { memo } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import BuyButton from "~/renderer/components/BuyButton";
@@ -33,6 +33,7 @@ const StepFees = ({
   updateTransaction,
 }: StepFeesProps) => {
   const mainAccount = getMainAccount(account, parentAccount);
+  const bridge = useAccountBridge(account, parentAccount);
   const locale = useSelector(localeSelector);
 
   // log fees info
@@ -49,7 +50,7 @@ const StepFees = ({
     formattedMaxPriorityFeePerGas,
     formattedMaxFeePerGas,
     formattedGasPrice,
-  } = getFormattedFeeFields({ transaction: transactionToUpdate, mainAccount, locale });
+  } = bridge.getFormattedFeeFields({ transaction: transactionToUpdate, mainAccount, locale });
 
   return (
     <SharedStepFees

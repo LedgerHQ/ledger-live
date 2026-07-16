@@ -4,7 +4,7 @@ import Transport from "@ledgerhq/hw-transport";
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 
 jest.mock("@ledgerhq/live-signer-evm");
-jest.mock("@ledgerhq/coin-evm/hw-getAddress", () => jest.fn());
+jest.mock("./getAddress", () => jest.fn());
 
 const MockedLegacySignerEth = LegacySignerEth as jest.MockedClass<typeof LegacySignerEth>;
 const mockTransport = {} as Transport;

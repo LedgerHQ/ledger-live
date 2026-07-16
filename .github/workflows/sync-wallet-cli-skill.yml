@@ -41,13 +41,26 @@ jobs:
     steps:
       - name: Generate token
         id: generate-token
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
           repositories: |
             ledger-live
             agent-skills
+          permission-contents: write
+          permission-pull-requests: write
+
+      # agent-skills is checked out at the workspace root because
+      # planetscale/ghcommit-action reads the working tree from $GITHUB_WORKSPACE.
+      # It is checked out first so the ledger-live checkout below can nest under
+      # it without being wiped by git clean.
+      - name: Checkout agent-skills
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          repository: ${{ env.TARGET_REPOSITORY }}
+          ref: ${{ env.TARGET_BASE }}
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: Checkout ledger-live
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -55,21 +68,14 @@ jobs:
           ref: ${{ inputs.source_ref || github.sha }}
           token: ${{ steps.generate-token.outputs.token }}
           path: ledger-live
-
-      - name: Checkout agent-skills
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          repository: ${{ env.TARGET_REPOSITORY }}
-          ref: ${{ env.TARGET_BASE }}
-          token: ${{ steps.generate-token.outputs.token }}
-          path: agent-skills
+          persist-credentials: false
 
       - name: Export wallet-cli skill
         run: |
           set -euo pipefail
 
           source_skill_dir="$GITHUB_WORKSPACE/ledger-live/$SOURCE_SKILL_DIR"
-          target_skill_dir="$GITHUB_WORKSPACE/agent-skills/$TARGET_SKILL_DIR"
+          target_skill_dir="$GITHUB_WORKSPACE/$TARGET_SKILL_DIR"
 
           rm -rf "$target_skill_dir"
           mkdir -p "$target_skill_dir"
@@ -102,39 +108,54 @@ jobs:
             exit 1
           fi
 
-      - name: Commit and push changes
-        id: commit
-        working-directory: agent-skills
+      # ghcommit-action (below) creates the commit through GitHub's API so it is
+      # signed server-side — agent-skills' `main` ruleset requires signed commits.
+      # Stage the export first: the action skips untracked files, so new skill
+      # files must be in the index to be committed; the staged diff also drives
+      # the no-op check that leaves any open sync PR untouched.
+      - name: Stage exported skill
+        id: stage
         run: |
           set -euo pipefail
 
-          # NOTE: $SYNC_BRANCH is fully managed by this workflow and force-pushed on every run.
-          # Do not commit to it directly — manual commits will be lost.
-          git checkout -B "$SYNC_BRANCH"
-          git add "$TARGET_SKILL_DIR"
-
-          if git diff --cached --quiet; then
+          git add -A -- "$TARGET_SKILL_DIR"
+          if git diff --cached --quiet -- "$TARGET_SKILL_DIR"; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "No agent-skills changes to sync."
             exit 0
           fi
+          echo "changed=true" >> "$GITHUB_OUTPUT"
 
-          git config user.name "ledgerlive-bot"
-          git config user.email "ledgerlive-bot@ledger.fr"
-          git commit -m "chore: sync wallet-cli skill"
+      # Reset the managed branch to the base tip so the single ghcommit-action
+      # commit lands on top (branch = base + one commit), matching the release
+      # workflows. NOTE: $SYNC_BRANCH is fully managed and rewritten on every
+      # run — do not commit to it directly, manual commits will be lost.
+      - name: Reset sync branch to base
+        if: steps.stage.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
 
           remote_sha=$(git ls-remote --heads origin "$SYNC_BRANCH" | awk '{print $1}')
           if [ -n "$remote_sha" ]; then
-            git push --force-with-lease="refs/heads/$SYNC_BRANCH:$remote_sha" origin "HEAD:$SYNC_BRANCH"
+            git push --force-with-lease="refs/heads/$SYNC_BRANCH:$remote_sha" origin "HEAD:refs/heads/$SYNC_BRANCH"
           else
-            git push origin "HEAD:$SYNC_BRANCH"
+            git push origin "HEAD:refs/heads/$SYNC_BRANCH"
           fi
 
-          echo "changed=true" >> "$GITHUB_OUTPUT"
+      - name: Create signed commit
+        id: commit
+        if: steps.stage.outputs.changed == 'true'
+        uses: planetscale/ghcommit-action@c6125dee9e9c0daebc4adea9f68ead8293414174 # v0.2.9
+        with:
+          commit_message: "chore: sync wallet-cli skill"
+          repo: ${{ env.TARGET_REPOSITORY }}
+          branch: ${{ env.SYNC_BRANCH }}
+          file_pattern: ${{ env.TARGET_SKILL_DIR }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
       - name: Open or update pull request
-        if: steps.commit.outputs.changed == 'true'
-        working-directory: agent-skills
+        if: steps.stage.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
@@ -148,7 +169,7 @@ jobs:
           EOF
           )
 
-          pr_number=$(gh pr list \
+          open_pr=$(gh pr list \
             --repo "$TARGET_REPOSITORY" \
             --head "$SYNC_BRANCH" \
             --base "$TARGET_BASE" \
@@ -156,10 +177,25 @@ jobs:
             --json number \
             --jq '.[0].number // empty')
 
-          if [ -n "$pr_number" ]; then
-            gh pr edit "$pr_number" \
-              --repo "$TARGET_REPOSITORY" \
-              --body "$body"
+          if [ -n "$open_pr" ]; then
+            gh pr edit "$open_pr" --repo "$TARGET_REPOSITORY" --body "$body"
+            exit 0
+          fi
+
+          # Resetting the branch to base momentarily leaves it with no commits
+          # ahead of base, which auto-closes an open sync PR. Reopen that PR
+          # instead of opening a duplicate.
+          closed_pr=$(gh pr list \
+            --repo "$TARGET_REPOSITORY" \
+            --head "$SYNC_BRANCH" \
+            --base "$TARGET_BASE" \
+            --state closed \
+            --json number,state \
+            --jq 'map(select(.state == "CLOSED")) | .[0].number // empty')
+
+          if [ -n "$closed_pr" ]; then
+            gh pr reopen "$closed_pr" --repo "$TARGET_REPOSITORY"
+            gh pr edit "$closed_pr" --repo "$TARGET_REPOSITORY" --body "$body"
           else
             gh pr create \
               --repo "$TARGET_REPOSITORY" \

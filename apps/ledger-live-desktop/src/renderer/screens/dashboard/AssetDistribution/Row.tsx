@@ -21,12 +21,7 @@ import { DistributionItem } from "@ledgerhq/types-live";
 type Props = {
   item: DistributionItem;
   isVisible: boolean;
-  isResponsiveLayout?: boolean;
 };
-
-interface ResponsiveProps {
-  $isResponsiveLayout?: boolean;
-}
 
 const Wrapper = styled.div`
   display: flex;
@@ -81,7 +76,7 @@ const distributionResponsiveStyles = css`
   }
 `;
 
-const Distribution = styled.div<ResponsiveProps>`
+const Distribution = styled.div`
   width: 20%;
   text-align: right;
   > :first-child {
@@ -90,7 +85,7 @@ const Distribution = styled.div<ResponsiveProps>`
     text-align: right;
   }
 
-  ${p => p.$isResponsiveLayout && distributionResponsiveStyles}
+  ${distributionResponsiveStyles}
 `;
 
 const amountResponsiveStyles = css`
@@ -99,11 +94,11 @@ const amountResponsiveStyles = css`
   }
 `;
 
-const Amount = styled.div<ResponsiveProps>`
+const Amount = styled.div`
   width: 25%;
   justify-content: flex-end;
 
-  ${p => p.$isResponsiveLayout && amountResponsiveStyles}
+  ${amountResponsiveStyles}
 `;
 
 const valueResponsiveStyles = css`
@@ -112,7 +107,7 @@ const valueResponsiveStyles = css`
   }
 `;
 
-const Value = styled.div<ResponsiveProps>`
+const Value = styled.div`
   width: 15%;
   box-sizing: border-box;
   padding-left: 24px;
@@ -121,13 +116,9 @@ const Value = styled.div<ResponsiveProps>`
   overflow: hidden;
   text-overflow: ellipsis;
 
-  ${p => p.$isResponsiveLayout && valueResponsiveStyles}
+  ${valueResponsiveStyles}
 `;
-const Row = ({
-  item: { currency, amount, distribution },
-  isVisible,
-  isResponsiveLayout,
-}: Props) => {
+const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const locale = useSelector(localeSelector);
@@ -155,7 +146,7 @@ const Row = ({
       <PriceSection>
         <Price from={currency} color="neutral.c80" fontSize={3} />
       </PriceSection>
-      <Distribution $isResponsiveLayout={isResponsiveLayout}>
+      <Distribution>
         <Text ff="Inter" color="neutral.c100" fontSize={3}>
           {`${percentageWording}%`}
         </Text>
@@ -164,7 +155,7 @@ const Row = ({
           progressColor={color}
         />
       </Distribution>
-      <Amount $isResponsiveLayout={isResponsiveLayout}>
+      <Amount>
         <Ellipsis>
           <FormattedVal
             color={"neutral.c80"}
@@ -175,7 +166,7 @@ const Row = ({
           />
         </Ellipsis>
       </Amount>
-      <Value $isResponsiveLayout={isResponsiveLayout}>
+      <Value>
         <Ellipsis>
           <CounterValue
             currency={currency}

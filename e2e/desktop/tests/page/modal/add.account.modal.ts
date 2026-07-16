@@ -1,8 +1,8 @@
 import { expect } from "@playwright/test";
 import { Modal } from "tests/component/modal.component";
 import { step } from "tests/misc/reporters/step";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
 export class AddAccountModal extends Modal {
   private selectAccount = this.page.locator("text=Choose a crypto asset"); // FIXME: I need an id

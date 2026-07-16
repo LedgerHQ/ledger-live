@@ -358,7 +358,6 @@ describe("CosmosApi", () => {
   });
 
   describe("fetchTransactions", () => {
-    const nodeUrl = "nodeURL";
     const sender = "cosmos1mzuuwf9djp25vkcjwc08g3tjsv64d94zj3txfp";
     const pagination = {
       limit: 100,
@@ -571,59 +570,37 @@ describe("CosmosApi", () => {
       total: "1",
     };
     it("should fetch a pre v0.47 payload", async () => {
+      const params = new URLSearchParams({
+        events: `message.sender='${sender}'`,
+        "pagination.limit": String(pagination.limit),
+        "pagination.offset": String(pagination.offset),
+        "pagination.reverse": String(pagination.reverse),
+      });
       // @ts-expect-error method is mocked
       network.mockImplementation(({ url }) => {
-        if (
-          url ===
-          `${nodeUrl}/cosmos/tx/v1beta1/txs?events=message.sender='${sender}'&pagination.limit=${pagination.limit}&pagination.offset=${pagination.offset}&pagination.reverse=${pagination.reverse}`
-        ) {
-          return {
-            data: mockNetworkTxsResponse,
-          };
-        } else if (url.includes("node_info")) {
-          return Promise.resolve({
-            data: {
-              application_version: {
-                cosmos_sdk_version: "0.44.0",
-              },
-            },
-          });
+        if (url === `${cosmosApi["defaultEndpoint"]}/cosmos/tx/v1beta1/txs?${params.toString()}`) {
+          return { data: mockNetworkTxsResponse };
         }
       });
       // using as object to access private method
-      const result = await cosmosApi["fetchTransactions"](nodeUrl, "message.sender", sender, {
-        "pagination.limit": pagination.limit,
-        "pagination.offset": pagination.offset,
-        "pagination.reverse": pagination.reverse,
-      });
+      const result = await cosmosApi["fetchTransactions"](params);
       expect(result).toEqual(expectedTxs);
     });
     it("should fetch a v0.50 payload", async () => {
+      const params = new URLSearchParams({
+        query: `message.sender='${sender}'`,
+        page: "1",
+        limit: String(pagination.limit),
+        order_by: "ORDER_BY_DESC",
+      });
       // @ts-expect-error method is mocked
       network.mockImplementation(({ url }) => {
-        if (
-          url ===
-          `${nodeUrl}/cosmos/tx/v1beta1/txs?query=message.sender='${sender}'&pagination.limit=${pagination.limit}&pagination.offset=${pagination.offset}&pagination.reverse=${pagination.reverse}`
-        ) {
-          return {
-            data: mockNetworkTxsResponse,
-          };
-        } else if (url.includes("node_info")) {
-          return Promise.resolve({
-            data: {
-              application_version: {
-                cosmos_sdk_version: "0.50.0",
-              },
-            },
-          });
+        if (url === `${cosmosApi["defaultEndpoint"]}/cosmos/tx/v1beta1/txs?${params.toString()}`) {
+          return { data: mockNetworkTxsResponse };
         }
       });
       // using as object to access private method
-      const result = await cosmosApi["fetchTransactions"](nodeUrl, "message.sender", sender, {
-        "pagination.limit": pagination.limit,
-        "pagination.offset": pagination.offset,
-        "pagination.reverse": pagination.reverse,
-      });
+      const result = await cosmosApi["fetchTransactions"](params);
       expect(result).toEqual(expectedTxs);
     });
   });

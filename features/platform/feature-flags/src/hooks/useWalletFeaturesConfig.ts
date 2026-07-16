@@ -25,13 +25,7 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
 
     return {
       isEnabled,
-      shouldDisplayMarketBanner: isEnabled && Boolean(params?.marketBanner),
-      shouldDisplayGraphRework: isEnabled && Boolean(params?.graphRework),
-      shouldDisplayQuickActionCtas: isEnabled && Boolean(params?.quickActionCtas),
-      shouldDisplayNewReceiveDialog: isEnabled && Boolean(params?.newReceiveDialog),
-      shouldDisplayWallet40MainNav: isEnabled && Boolean(params?.mainNavigation),
       shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
-      shouldDisplayBalanceRefreshRework: isEnabled && Boolean(params?.balanceRefreshRework),
       shouldDisplayTour: isEnabled && Boolean(params?.tour),
       shouldDisplayQ2Tour: isEnabled && Boolean(params?.q2Tour),
       shouldDisplayAssetSection: isEnabled && Boolean(params?.assetSection),
@@ -70,20 +64,8 @@ export type Wallet40Params = Partial<
 export interface WalletFeaturesConfig {
   /** Whether the feature flag is enabled */
   readonly isEnabled: boolean;
-  /** Whether to show the market banner on portfolio */
-  readonly shouldDisplayMarketBanner: boolean;
-  /** Whether to show the graph rework UI */
-  readonly shouldDisplayGraphRework: boolean;
-  /** Whether to show quick action CTAs */
-  readonly shouldDisplayQuickActionCtas: boolean;
-  /** Whether to show the new receive options dialog (Lumen) */
-  readonly shouldDisplayNewReceiveDialog: boolean;
-  /** Whether to show the wallet 4.0 main navigation */
-  readonly shouldDisplayWallet40MainNav: boolean;
   /** Whether onboarding should skip device setup and open portfolio in read-only mode */
   readonly shouldUseLazyOnboarding: boolean;
-  /** Whether to show the balance refresh rework */
-  readonly shouldDisplayBalanceRefreshRework: boolean;
   /** Whether to show the Wallet V4 Tour (e.g. drawer/dialog on Portfolio) */
   readonly shouldDisplayTour: boolean;
   /** Whether to show the Q2 Tour on Portfolio */

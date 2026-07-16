@@ -27,6 +27,7 @@ import { AppMemberRow } from "./AppMemberRow";
 import { AppDecryptUserData } from "./AppDecryptUserData";
 import { AppEncryptUserData } from "./AppEncryptUserData";
 import { AppDestroyTrustchain } from "./AppDestroyTrustchain";
+import { AppDestroyApplication } from "./AppDestroyApplication";
 import { AppGetMembers } from "./AppGetMembers";
 import { AppGetOrCreateTrustchain } from "./AppGetOrCreateTrustchain";
 import { AppInitLiveCredentials } from "./AppInitLiveCredentials";
@@ -262,6 +263,12 @@ const App = () => {
               <AppEncryptUserData trustchain={trustchain} />
 
               <AppDecryptUserData trustchain={trustchain} />
+
+              <AppDestroyApplication
+                trustchain={trustchain}
+                setTrustchain={setTrustchain}
+                memberCredentials={memberCredentials}
+              />
 
               <AppDestroyTrustchain
                 trustchain={trustchain}

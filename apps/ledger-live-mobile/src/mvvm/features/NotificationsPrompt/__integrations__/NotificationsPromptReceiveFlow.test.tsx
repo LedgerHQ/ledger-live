@@ -1,7 +1,6 @@
 import React from "react";
 import { View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { AB_TESTING_VARIANTS } from "../types/variants";
 import {
   renderWithReactQuery,
   screen,
@@ -154,7 +153,6 @@ describe("NotificationsPrompt receive flow", () => {
     expect(track).toHaveBeenCalledWith("attempt_to_trigger_push_notification_drawer_after_action", {
       action: "receive",
       shouldPrompt: true,
-      variant: AB_TESTING_VARIANTS.B,
       repromptDelay: null,
       dismissedCount: 0,
       skipReason: undefined,
@@ -170,7 +168,6 @@ describe("NotificationsPrompt receive flow", () => {
       drawerPromptTarget: "globalPushNotifications",
       repromptDelay: null,
       dismissedCount: 0,
-      variant: AB_TESTING_VARIANTS.B,
     });
   });
 

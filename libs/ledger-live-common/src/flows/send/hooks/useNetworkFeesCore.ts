@@ -1,0 +1,159 @@
+import { useCallback, useMemo } from "react";
+import { BigNumber } from "bignumber.js";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import { sendFeatures } from "../../../bridge/descriptor/send/features";
+import type { FeePresetOption } from "../../../bridge/descriptor/types";
+import { useAccountBridge } from "../../../bridge/useAccountBridge";
+import type { Transaction, TransactionStatus } from "../../../coin-modules/transaction-types";
+import type { SendFlowTransactionActions, SendFlowUiConfig } from "../types";
+import { buildFeePresetLegendMap, type FeePresetLegendMap } from "../utils/feePresetLegends";
+import { asFeesStrategy } from "../utils/feesStrategy";
+import {
+  formatDisplayFeesValue,
+  getFeePresetEstimationConfig,
+  getSelectedPresetFiatValue,
+  resolveFeeDisplayContext,
+} from "../utils/networkFeesDisplay";
+import { useFeePresetFiatValuesCore, type FeeFiatMap } from "./useFeePresetFiatValuesCore";
+
+export type { FeeFiatMap, FeePresetLegendMap };
+
+export type UseNetworkFeesCoreParams = Readonly<{
+  account: AccountLike;
+  parentAccount: Account | null;
+  transaction: Transaction;
+  status: TransactionStatus;
+  uiConfig: SendFlowUiConfig;
+  transactionActions: SendFlowTransactionActions;
+  fiatUnit: Unit;
+  accountUnit: Unit;
+  locale?: string;
+  calculateCountervalue: (from: Currency, value: BigNumber) => BigNumber | null | undefined;
+}>;
+
+export type UseNetworkFeesCoreResult = Readonly<{
+  mainAccount: Account;
+  accountCurrency: ReturnType<typeof getAccountCurrency>;
+  feePresetOptions: readonly FeePresetOption[];
+  fiatByPreset: FeeFiatMap;
+  legendByPreset: FeePresetLegendMap;
+  selectedFeeStrategy: string | null;
+  selectedPresetFiatValue: string | null;
+  onSelectFeeStrategy: (strategy: string) => void;
+  displayFeesValue: string;
+  formattedEstimatedFeesFiat: string | null;
+  showFeePresets: boolean;
+}>;
+
+export function useNetworkFeesCore({
+  account,
+  parentAccount,
+  transaction,
+  status,
+  uiConfig,
+  transactionActions,
+  fiatUnit,
+  accountUnit,
+  locale,
+  calculateCountervalue,
+}: UseNetworkFeesCoreParams): UseNetworkFeesCoreResult {
+  const mainAccount = useMemo(
+    () => getMainAccount(account, parentAccount ?? undefined),
+    [account, parentAccount],
+  );
+  const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
+
+  const presetEstimation = useMemo(
+    () => getFeePresetEstimationConfig(accountCurrency, transaction),
+    [accountCurrency, transaction],
+  );
+
+  const fiatByPreset = useFeePresetFiatValuesCore({
+    account,
+    parentAccount,
+    mainAccount,
+    transaction,
+    feePresetOptions: presetEstimation.feePresetOptions,
+    fallbackPresetIds: presetEstimation.fallbackPresetIds,
+    fiatUnit,
+    locale,
+    enabled: uiConfig.hasFeePresets && presetEstimation.hasFeePresets,
+    shouldEstimateWithBridge: presetEstimation.shouldEstimateFeePresets,
+    allowZeroAmountEstimation: presetEstimation.allowZeroAmountEstimation,
+    calculateCountervalue,
+  });
+
+  const legendByPreset = useMemo(
+    () => buildFeePresetLegendMap(accountCurrency, presetEstimation.feePresetOptions),
+    [accountCurrency, presetEstimation.feePresetOptions],
+  );
+
+  const feeCurrencyAccountId = sendFeatures.getFeeCurrencyAccountId(accountCurrency, transaction);
+  const { displayUnit, displayCurrency } = useMemo(
+    () =>
+      resolveFeeDisplayContext({
+        mainAccount,
+        accountCurrency,
+        accountUnit,
+        feeCurrencyAccountId,
+      }),
+    [accountCurrency, accountUnit, feeCurrencyAccountId, mainAccount],
+  );
+
+  const estimatedFees = useMemo(
+    () => status.estimatedFees ?? new BigNumber(0),
+    [status.estimatedFees],
+  );
+  const estimatedFeesCountervalue = useMemo(
+    () => calculateCountervalue(displayCurrency, estimatedFees),
+    [calculateCountervalue, displayCurrency, estimatedFees],
+  );
+  const { displayFeesValue, formattedEstimatedFeesFiat } = useMemo(
+    () =>
+      formatDisplayFeesValue({
+        estimatedFees,
+        estimatedFeesCountervalue,
+        fiatUnit,
+        displayUnit,
+        locale,
+      }),
+    [displayUnit, estimatedFees, estimatedFeesCountervalue, fiatUnit, locale],
+  );
+
+  const updateTransactionWithPatch = useCallback(
+    (patch: Partial<Transaction>) => {
+      transactionActions.updateTransaction(currentTx => bridge.updateTransaction(currentTx, patch));
+    },
+    [bridge, transactionActions],
+  );
+
+  const selectedFeeStrategy = transaction.feesStrategy ?? null;
+  const selectedPresetFiatValue = getSelectedPresetFiatValue(selectedFeeStrategy, fiatByPreset);
+
+  const onSelectFeeStrategy = useCallback(
+    (strategy: string) => {
+      updateTransactionWithPatch({ feesStrategy: asFeesStrategy(strategy) });
+    },
+    [updateTransactionWithPatch],
+  );
+
+  return {
+    mainAccount,
+    accountCurrency,
+    feePresetOptions: presetEstimation.feePresetOptions,
+    fiatByPreset,
+    legendByPreset,
+    selectedFeeStrategy,
+    selectedPresetFiatValue,
+    onSelectFeeStrategy,
+    displayFeesValue,
+    formattedEstimatedFeesFiat,
+    showFeePresets: uiConfig.hasFeePresets,
+  };
+}

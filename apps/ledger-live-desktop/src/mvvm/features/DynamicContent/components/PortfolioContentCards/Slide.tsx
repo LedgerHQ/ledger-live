@@ -10,19 +10,14 @@ import LogContentCardWrapper from "../LogContentCardWrapper";
 
 export default memo(Slide);
 
-const SlideContainer = styled.div<{ $isWallet40Enabled: boolean }>`
-  ${({ $isWallet40Enabled }) =>
-    $isWallet40Enabled &&
-    `
-    border-radius: 12px;
-    overflow: hidden;
-  `}
+const SlideContainer = styled.div`
+  border-radius: 12px;
+  overflow: hidden;
 `;
 
 type Props = PortfolioContentCard &
   CarouselActions & {
     index: number;
-    isWallet40Enabled: boolean;
   };
 
 function Slide({
@@ -38,7 +33,6 @@ function Slide({
   location,
   logSlideClick,
   dismissCard,
-  isWallet40Enabled,
 }: Props) {
   const navigate = useNavigate();
 
@@ -53,7 +47,7 @@ function Slide({
   };
 
   return (
-    <SlideContainer $isWallet40Enabled={isWallet40Enabled}>
+    <SlideContainer>
       <LogContentCardWrapper id={id} displayedPosition={index} location={location}>
         <Card
           title={title}
