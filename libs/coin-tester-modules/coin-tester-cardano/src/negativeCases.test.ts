@@ -1,3 +1,4 @@
+import { CardanoMinAmountError } from "@ledgerhq/coin-cardano/errors";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { CardanoMinAmountError } from "@ledgerhq/coin-cardano/errors";
 import type { Account } from "@ledgerhq/types-live";
