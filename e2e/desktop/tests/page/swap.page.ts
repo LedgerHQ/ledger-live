@@ -33,7 +33,7 @@ export class SwapPage extends WebViewAppPage {
   private fromAccountCoinSelector = "from-account-coin-selector";
   private fromAccountAmountInput = "from-account-amount-input";
   private readonly fromAccountError = "from-account-error";
-  private readonly noQuotesPlaceholder = "quotes-loading";
+  private readonly noQuotesPlaceholder = "quotes-error-state";
   private fromAccountBalance = "from-account-balance";
   private toAccountCoinSelector = "to-account-coin-selector";
   private readonly toAccountAccountNameTag = "to-account-account-name-tag";
