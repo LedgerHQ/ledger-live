@@ -1,8 +1,8 @@
-import { createPkcePair } from "../pkce";
+import { createPkcePairWithWebCrypto } from "../pkce";
 
 describe("pkce", () => {
   it("generates an S256 code challenge from the verifier", async () => {
-    const pkce = await createPkcePair("dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk");
+    const pkce = await createPkcePairWithWebCrypto("dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk");
 
     expect(pkce.codeChallengeMethod).toBe("S256");
     expect(pkce.codeVerifier).toBe("dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk");
@@ -10,7 +10,7 @@ describe("pkce", () => {
   });
 
   it("generates a verifier when none is provided", async () => {
-    const pkce = await createPkcePair();
+    const pkce = await createPkcePairWithWebCrypto();
 
     expect(pkce.codeChallengeMethod).toBe("S256");
     expect(pkce.codeVerifier).toMatch(/^[A-Za-z0-9_-]+$/);

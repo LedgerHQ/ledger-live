@@ -1,18 +1,20 @@
 import { WalletAuthInvalidChallengeError, WalletAuthInvalidTokenError } from "./errors";
 import { HttpKeycloakService } from "./keycloakService";
-import { createPkcePair } from "./pkce";
+import { createPkcePairWithWebCrypto, type CreatePkcePair } from "./pkce";
 import type { AuthConfig, IdentityProvider, KeycloakService, KeycloakToken } from "./types";
 import { getTokenState } from "./utils";
 
 export class AuthSDK {
   private token?: Promise<KeycloakToken>;
   private readonly idP: IdentityProvider;
+  private readonly createPkcePair: CreatePkcePair;
   private readonly keycloakService: KeycloakService;
 
   constructor(
     private readonly config: AuthConfig,
     {
       provider,
+      createPkcePair = createPkcePairWithWebCrypto,
       fetch = globalThis.fetch,
       keycloakService = new HttpKeycloakService(
         config.keycloakBaseUrl,
@@ -21,11 +23,13 @@ export class AuthSDK {
       ),
     }: {
       provider: IdentityProvider;
+      createPkcePair?: CreatePkcePair;
       fetch?: typeof globalThis.fetch;
       keycloakService?: KeycloakService;
     },
   ) {
     this.idP = provider;
+    this.createPkcePair = createPkcePair;
     this.keycloakService = keycloakService;
   }
 
@@ -77,7 +81,7 @@ export class AuthSDK {
   }
 
   private async fetchToken(): Promise<KeycloakToken> {
-    const pkce = this.config.disablePkce ? undefined : await createPkcePair();
+    const pkce = this.config.disablePkce ? undefined : await this.createPkcePair();
     const redirectUri = `${this.keycloakService.realmBaseUrl}/broker/${this.idP.brokerId}/endpoint`;
 
     const challenge = await this.keycloakService.getChallenge({
