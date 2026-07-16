@@ -34,11 +34,7 @@ import type { TronMemo } from "../types";
 
 const MAX_TRONGRID_LIMIT = 200;
 
-type UnsupportedCallApi = {
-  call: (_params: Record<string, unknown> | unknown[]) => Promise<never>;
-};
-
-export function createApi(config: TronConfig): CoinModuleApi<TronMemo> & UnsupportedCallApi {
+export function createApi(config: TronConfig): CoinModuleApi<TronMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

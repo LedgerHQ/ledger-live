@@ -49,11 +49,7 @@ import {
 import type { TezosFeeEstimation } from "./types";
 import type { TezosOperationMode } from "../types/model";
 
-type UnsupportedCallApi = {
-  call: (_params: Record<string, unknown> | unknown[]) => Promise<never>;
-};
-
-export function createApi(config: TezosConfig): CoinModuleApi & UnsupportedCallApi {
+export function createApi(config: TezosConfig): CoinModuleApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

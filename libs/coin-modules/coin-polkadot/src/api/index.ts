@@ -32,11 +32,7 @@ import {
 } from "../logic";
 import { validateAddress } from "../logic/validateAddress";
 
-type UnsupportedCallApi = {
-  call: (_params: Record<string, unknown> | unknown[]) => Promise<never>;
-};
-
-export function createApi(config: PolkadotConfig): CoinModuleApi & UnsupportedCallApi {
+export function createApi(config: PolkadotConfig): CoinModuleApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

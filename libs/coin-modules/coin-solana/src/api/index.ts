@@ -31,9 +31,7 @@ import { validateIntent } from "../logic/validateIntent";
 import { getChainAPI } from "../network";
 import { endpointByCurrencyId } from "../utils";
 
-type SolanaCoinModuleApi = CoinModuleApi<StringMemo | MemoNotSupported> & {
-  call: (_params: Record<string, unknown> | unknown[]) => Promise<never>;
-};
+type SolanaCoinModuleApi = CoinModuleApi<StringMemo | MemoNotSupported>;
 
 export function createApi(config: SolanaCoinConfig, currencyId: string): SolanaCoinModuleApi {
   coinConfig.setCoinConfig(() => ({

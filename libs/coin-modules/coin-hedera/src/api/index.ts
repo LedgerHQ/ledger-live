@@ -41,14 +41,10 @@ import { apiClient } from "../network/api";
 import { getERC20BalancesForAccountV2, toEVMAddress } from "../network/utils";
 import type { EstimateFeesParams, HederaMemo, HederaTxData } from "../types";
 
-type UnsupportedCallApi = {
-  call: (_params: Record<string, unknown> | unknown[]) => Promise<never>;
-};
-
 export function createApi(
   config: HederaConfig,
   currencyId: string,
-): CoinModuleApi<HederaMemo, HederaTxData> & BridgeApi & UnsupportedCallApi {
+): CoinModuleApi<HederaMemo, HederaTxData> & BridgeApi {
   const coinConfig: HederaCoinConfig = { ...config, status: { type: "active" } };
   hederaCoinConfig.setCoinConfig(() => coinConfig);
 

@@ -26,11 +26,7 @@ import {
   listOperations as logicListOperations,
 } from "../logic";
 
-type UnsupportedCallApi = {
-  call: (_params: Record<string, unknown> | unknown[]) => Promise<never>;
-};
-
-export function createApi(config: SuiConfig): CoinModuleApi & UnsupportedCallApi {
+export function createApi(config: SuiConfig): CoinModuleApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
