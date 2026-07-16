@@ -1,4 +1,4 @@
-import networkRequest from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network/network";
 import type {
   ChainwatchNetwork,
   ChainwatchAccount,
@@ -13,16 +13,16 @@ class ChainwatchAccountManager {
   network: ChainwatchNetwork;
   suffixes: string[];
 
-  constructor(chainwatchBaseUrl: string, userId: string, network: ChainwatchNetwork) {
+  constructor(chainwatchBaseUrl: string, userId: string, chainwatchNetwork: ChainwatchNetwork) {
     this.chainwatchBaseUrl = chainwatchBaseUrl;
     this.userId = userId;
-    this.network = network;
+    this.network = chainwatchNetwork;
     this.suffixes = [];
   }
 
   async getChainwatchAccount(): Promise<ChainwatchAccount | undefined> {
     try {
-      const { data } = await networkRequest({
+      const { data } = await network({
         method: "GET",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
       });
@@ -34,7 +34,7 @@ class ChainwatchAccountManager {
 
   async removeChainwatchAccount() {
     try {
-      await networkRequest({
+      await network({
         method: "DELETE",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
       });
@@ -44,7 +44,7 @@ class ChainwatchAccountManager {
   }
 
   async registerNewChainwatchAccount() {
-    const { data } = await networkRequest({
+    const { data } = await network({
       method: "PUT",
       url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
     });
@@ -68,7 +68,7 @@ class ChainwatchAccountManager {
       .filter(account => this.getAccountAddress(account) && !this.accountAlreadySubscribed(account))
       .map(account => this.getAccountAddress(account));
     if (addresses.length > 0) {
-      await networkRequest({
+      await network({
         method: "PUT",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
         data: addresses,
@@ -81,7 +81,7 @@ class ChainwatchAccountManager {
       .filter(account => this.getAccountAddress(account) && this.accountAlreadySubscribed(account))
       .map(account => this.getAccountAddress(account));
     if (addresses.length > 0) {
-      await networkRequest({
+      await network({
         method: "DELETE",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
         data: addresses,
@@ -91,7 +91,7 @@ class ChainwatchAccountManager {
 
   async registerNewMonitor(monitor: ChainwatchMonitorType) {
     try {
-      await networkRequest({
+      await network({
         method: "PUT",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/monitor/`,
         data: {
@@ -106,7 +106,7 @@ class ChainwatchAccountManager {
 
   async registerNewTarget(target: ChainwatchTargetType) {
     try {
-      await networkRequest({
+      await network({
         method: "PUT",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/target/`,
         data: {
