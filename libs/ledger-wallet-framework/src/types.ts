@@ -1,3 +1,7 @@
+export type CryptoCurrencyId = string;
+
+export type LedgerExplorerId = string;
+
 export interface Unit {
   name: string;
   code: string;
@@ -7,6 +11,10 @@ export interface Unit {
 }
 
 export interface ExplorerView {
+  tx?: string;
+  address?: string;
+  token?: string;
+  stakePool?: string;
   [key: string]: unknown;
 }
 
@@ -38,6 +46,8 @@ export interface CryptoCurrency {
   disableCountervalue?: boolean;
   delisted?: boolean;
   keywords?: string[];
+  explorerId?: string;
+  tokenTypes?: string[];
 }
 
 export interface TokenCurrency {
@@ -52,4 +62,19 @@ export interface TokenCurrency {
   delisted?: boolean;
   disableCountervalue?: boolean;
   ledgerSignature?: string;
+  symbol?: string;
+  keywords?: string[];
 }
+
+export interface FiatCurrency {
+  type: "FiatCurrency";
+  name: string;
+  ticker: string;
+  units: Unit[];
+  symbol?: string;
+  disableCountervalue?: boolean;
+  delisted?: boolean;
+  keywords?: string[];
+}
+
+export type Currency = FiatCurrency | CryptoCurrency | TokenCurrency;
