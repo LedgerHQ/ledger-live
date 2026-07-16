@@ -15,6 +15,9 @@ catalogs:
     '@jest/reporters':
       specifier: 30.2.0
       version: 30.2.0
+    '@ledgerhq/coin-hypercore':
+      specifier: 0.4.1
+      version: 0.4.1
     '@ledgerhq/coin-module-framework':
       specifier: 4.0.0
       version: 4.0.0
@@ -8968,6 +8971,9 @@ importers:
       '@ledgerhq/coin-hedera':
         specifier: workspace:^
         version: link:../coin-modules/coin-hedera
+      '@ledgerhq/coin-hypercore':
+        specifier: 'catalog:'
+        version: 0.4.1(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
       '@ledgerhq/coin-icon':
         specifier: workspace:^
         version: link:../coin-modules/coin-icon
@@ -18210,8 +18216,20 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
+  '@ledgerhq/coin-hypercore@0.4.1':
+    resolution: {integrity: sha512-+pa9TlRlmaxsZCuCNR7F/Ew1s0ALLt7hUL2xBP0glnnGick7rf4K1qU9rLJSQ2F8Zzi75chQlZSCe+z6HLwXRQ==}
+    peerDependencies:
+      '@ledgerhq/errors': ^6.33.0
+      '@ledgerhq/live-network': ^2.4.0
+      '@ledgerhq/logs': ^6.17.0
+
   '@ledgerhq/coin-module-framework@4.0.0':
     resolution: {integrity: sha512-V0kXnykw2M+J+EtWP7lB7qZLX/HSlbNBalQx7dxiNFPlCxNqUvjOZ6HkuCOZTEXA0Sk96svBFkrZVHGG4VOvHg==}
+    peerDependencies:
+      '@ledgerhq/errors': ^6.33.0
+
+  '@ledgerhq/coin-module-framework@4.0.1':
+    resolution: {integrity: sha512-29NKr4BrNvPcZAaVDylkEbJPqlVsj0JjqPVHRsLGG9AhTDuHZK0vGRVx8LD9QSvlKrlILw/YDpmLhLWZqQd2rg==}
     peerDependencies:
       '@ledgerhq/errors': ^6.33.0
 
@@ -46399,11 +46417,23 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
+  '@ledgerhq/coin-hypercore@0.4.1(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
+    dependencies:
+      '@ledgerhq/coin-module-framework': 4.0.1(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
+      '@ledgerhq/live-network': link:libs/live-network
+      '@ledgerhq/logs': link:libs/ledgerjs/packages/logs
+
   '@ledgerhq/coin-module-framework@4.0.0':
     dependencies:
       bignumber.js: 9.1.2
 
   '@ledgerhq/coin-module-framework@4.0.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)':
+    dependencies:
+      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
+      bignumber.js: 9.1.2
+
+  '@ledgerhq/coin-module-framework@4.0.1(@ledgerhq/errors@libs+ledgerjs+packages+errors)':
     dependencies:
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       bignumber.js: 9.1.2

@@ -66,6 +66,15 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         fees: null,
         mode: "send",
       };
+    case "hypercore":
+      // HyperCore has no send on Ledger Wallet; a minimal default keeps (de)serialization working.
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        mode: "send",
+      };
     case "multiversx":
     case "tron":
       return {
