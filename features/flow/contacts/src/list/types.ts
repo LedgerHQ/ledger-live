@@ -18,12 +18,23 @@ export type ContactsPageLabels = Readonly<{
   formatAddressCount: (count: number) => string;
 }>;
 
+export type ContactsLedgerSyncStatus = "ready" | "checking" | "inactive";
+
+export type ContactsLedgerSyncIntroduction = Readonly<{
+  isOpen: boolean;
+  description: string;
+  dismissLabel: string;
+  onDismiss: () => void;
+}>;
+
 export type ContactsPageProps = Readonly<{
   viewModel: EmptyContactsListViewModel;
   labels: ContactsPageLabels;
   meAvatarSrc: string;
   onOpenMe: (contactId: ContactId) => void;
   onAddContact: () => void;
+  ledgerSyncStatus: ContactsLedgerSyncStatus;
+  ledgerSyncIntroduction: ContactsLedgerSyncIntroduction;
 }>;
 
 export type PopulatedContactsListViewModel = Readonly<{

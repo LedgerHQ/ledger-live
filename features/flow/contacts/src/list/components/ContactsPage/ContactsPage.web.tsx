@@ -1,11 +1,11 @@
 import React from "react";
-import { ContactsLedgerSyncIntroductionDialog } from "../../ledgerSync/ContactsLedgerSyncIntroductionDialog.web";
-import { ContactsLedgerSyncLoadingOverlay } from "../../ledgerSync/ContactsLedgerSyncLoadingOverlay.web";
-import type { ContactsPageWebProps } from "../../ledgerSync/types";
+import { ContactsLedgerSyncIntroductionDialog } from "../ContactsLedgerSyncIntroduction/ContactsLedgerSyncIntroductionDialog.web";
+import type { ContactsPageProps } from "../../types";
+import { ContactsLedgerSyncLoadingOverlay } from "./ContactsLedgerSyncLoadingOverlay.web";
 import { ContactsList } from "../ContactsList/ContactsList.web";
 import { ContactsPageLayout } from "../ContactsPageLayout/ContactsPageLayout.web";
 
-export function ContactsPage(props: ContactsPageWebProps): React.ReactNode {
+export function ContactsPage(props: ContactsPageProps): React.ReactNode {
   const isIntroductionOpen =
     props.ledgerSyncStatus === "inactive" && props.ledgerSyncIntroduction.isOpen;
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import type { ContactsLedgerSyncIntroduction } from "./types";
+import type { ContactsLedgerSyncIntroduction } from "../../types";
 
 type ContactsLedgerSyncIntroductionDialogProps = Readonly<
   ContactsLedgerSyncIntroduction & {

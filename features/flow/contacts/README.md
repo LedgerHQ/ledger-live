@@ -36,9 +36,9 @@ src/
 ├── list/                 # Shared list view models and page shells
 │   ├── components/
 │   │   ├── ContactsList/         # Web only
-│   │   ├── ContactsPage/
+│   │   ├── ContactsPage/         # Web page and Ledger Sync loading variants
+│   │   ├── ContactsLedgerSyncIntroduction/
 │   │   └── ContactsPageLayout/   # Web only
-│   ├── ledgerSync/       # Web Ledger Sync presentation variants
 │   ├── web.ts            # Web ContactsPage export
 │   └── native.ts         # Native ContactsPage + header button exports
 ├── jest.native.ts        # Mobile Jest logic-only entry

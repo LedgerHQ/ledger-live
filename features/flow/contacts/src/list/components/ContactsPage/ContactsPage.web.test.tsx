@@ -1,7 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { mockMeContact } from "@domain/entity-contact/schema.mock";
-import type { ContactsLedgerSyncStatus } from "../../ledgerSync/types";
+import type { ContactsLedgerSyncStatus } from "../../types";
 import { createEmptyContactsListViewModel } from "../../viewModel";
 import { ContactsPage } from "./ContactsPage.web";
 
