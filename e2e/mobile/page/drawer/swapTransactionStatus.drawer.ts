@@ -10,7 +10,6 @@ export type SwapTransactionStatusDetails = {
   receivedAmount?: string;
   networkFees: string;
   receiveAccount: string;
-  // Present when the provider is expected to expose a website link; absent when it should show name-only.
   providerUrl?: string;
 };
 
@@ -67,8 +66,6 @@ export default class SwapTransactionStatusDrawer {
     jestExpect(normalizeText(await getTextOfElement(this.providerId))).toEqual(
       normalizeText(provider.uiName),
     );
-    // Only providers with a configured URL render the provider name as a link (QAA-721 / LIVE-18412).
-    // Verify the link (and its URL) when expected; assert its absence otherwise.
     if (details.providerUrl) {
       await scrollToId(this.providerLinkId, this.scrollViewId);
       await detoxExpect(getElementById(this.providerLinkId)).toBeVisible();
