@@ -41,7 +41,7 @@ catalog:
   "@ledgerhq/lumen-ui-rnative": 0.1.48
   "@ledgerhq/lumen-ui-rnative-visualization": 0.1.25
   "@ledgerhq/lumen-ui-react-visualization": 0.1.24
-  "@ledgerhq/zcash-utils": 0.3.1
+  "@ledgerhq/zcash-utils": 1.0.1
   # React Native
   react-native: 0.81.6
   "@react-native/assets-registry": 0.81.6
