@@ -1,9 +1,9 @@
 import { Star, Clock } from "@ledgerhq/lumen-ui-react/symbols";
 import { Category } from "@devtools/registry";
 import type { Tool, ToolId, ValueOf } from "@devtools/registry";
-import { SectionHeader } from "../SectionHeader/SectionHeader.web";
-import { CategoryCard } from "../CategoryCard/CategoryCard.web";
-import { ToolCard } from "../ToolCard/ToolCard.web";
+import { SectionHeader } from "../SectionHeader/SectionHeader";
+import { CategoryCard } from "../CategoryCard/CategoryCard";
+import { ToolCard } from "../ToolCard/ToolCard";
 
 interface OverviewProps {
   categories: Array<{ category: ValueOf<typeof Category>; tools: Tool[] }>;

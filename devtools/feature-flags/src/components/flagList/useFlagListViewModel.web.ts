@@ -9,7 +9,7 @@ import { buildOverridesExport } from "../../utils/exportOverrides";
 import { parseOverridesImport } from "../../utils/importOverrides";
 import { saveFile } from "../../utils/saveFile";
 import { readFile } from "../../utils/readFile";
-import type { ToolBarInput } from "../toolBar/types.web";
+import type { ToolBarInput } from "../toolBar/types";
 
 export interface FlagListViewProps {
   readonly toolBarProps: ToolBarInput;

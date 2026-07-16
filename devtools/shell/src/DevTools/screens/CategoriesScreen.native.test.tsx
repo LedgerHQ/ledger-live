@@ -1,7 +1,7 @@
 import { renderScreen, screen, userEvent } from "jest/render.native";
 import { Category } from "@devtools/registry";
 import { makeTool } from "jest/fixtures";
-import { CategoriesScreen } from "./CategoriesScreen.native";
+import { CategoriesScreen } from "./CategoriesScreen";
 
 const categories = [
   {

@@ -1,7 +1,7 @@
 import { Divider, Button, Box, Text, useTheme } from "@ledgerhq/lumen-ui-rnative";
 import { TextInput } from "react-native";
 import { useState } from "react";
-import { FlagDiffView } from "../flagDiffView/FlagDiffView.native";
+import { FlagDiffView } from "../flagDiffView/FlagDiffView";
 import type { DiffLine } from "../../utils";
 import type { DiffBaseline } from "../../hooks";
 

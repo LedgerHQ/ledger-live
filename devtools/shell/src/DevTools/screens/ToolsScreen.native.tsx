@@ -1,7 +1,7 @@
 import { Box, SearchInput } from "@ledgerhq/lumen-ui-rnative";
-import Catalog from "../../components/Catalog/Catalog.native";
-import { useToolsScreenViewModel } from "./useToolsScreenViewModel.native";
-import type { ToolsScreenProps } from "../navigation.native";
+import Catalog from "../../components/Catalog/Catalog";
+import { useToolsScreenViewModel } from "./useToolsScreenViewModel";
+import type { ToolsScreenProps } from "../navigation";
 
 /** Lists the tools of a single category, drilling into the selected tool. */
 export function ToolsScreen(props: ToolsScreenProps) {

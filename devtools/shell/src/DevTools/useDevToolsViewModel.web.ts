@@ -1,5 +1,5 @@
 import { useToolsFromConfig } from "../hooks";
-import { useDevToolsStorage } from "../hooks/useDevToolsStorage.web";
+import { useDevToolsStorage } from "../hooks/useDevToolsStorage";
 import type { Category, DevToolsConfig, Tool, ToolId } from "@devtools/registry";
 
 interface DevToolsInput {

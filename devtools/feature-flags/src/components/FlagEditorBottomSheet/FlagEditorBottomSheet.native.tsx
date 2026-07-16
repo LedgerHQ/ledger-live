@@ -2,12 +2,9 @@ import { BottomSheet } from "@ledgerhq/lumen-ui-rnative";
 import {
   useFeatureFlagsToolActions,
   useFeatureFlagsToolState,
-} from "../../context/FeatureFlagsToolContext.native";
-import {
-  useFlagSelectionActions,
-  useFlagSelectionState,
-} from "../../context/FlagSelectionContext.native";
-import { FlagEditorBottomSheetContent } from "./FlagEditorBottomSheetContent.native";
+} from "../../context/FeatureFlagsToolContext";
+import { useFlagSelectionActions, useFlagSelectionState } from "../../context/FlagSelectionContext";
+import { FlagEditorBottomSheetContent } from "./FlagEditorBottomSheetContent";
 
 export function FlagEditorBottomSheet() {
   const { setOverride, clearOverride } = useFeatureFlagsToolActions();

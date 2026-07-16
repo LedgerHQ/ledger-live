@@ -1,8 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { DiffLine } from "../../utils";
-import { FlagJsonEditor } from "./flagJsonEditor.web";
-import type { FlagJsonEditorProps } from "./flagJsonEditor.web";
+import { FlagJsonEditor } from "./flagJsonEditor";
+import type { FlagJsonEditorProps } from "./flagJsonEditor";
 
 const diffJson: DiffLine[] = [
   { state: "none", text: "{" },

@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import { Divider } from "@ledgerhq/lumen-ui-react";
 import { Sidebar, ToolShell, Overview } from "../components";
-import { Loading } from "../components/Loading/Loading.web";
-import { useDevToolsViewModel, type DevToolsViewProps } from "./useDevToolsViewModel.web";
+import { Loading } from "../components/Loading/Loading";
+import { useDevToolsViewModel, type DevToolsViewProps } from "./useDevToolsViewModel";
 import { DevToolsProvider } from "../context";
 import { type DevToolsBaseProps } from "./DevTools.types";
 

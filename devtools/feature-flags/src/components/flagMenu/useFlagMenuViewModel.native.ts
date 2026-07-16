@@ -3,11 +3,11 @@ import { useBottomSheetRef } from "@ledgerhq/lumen-ui-rnative";
 import {
   useFeatureFlagsToolActions,
   useFeatureFlagsToolState,
-} from "../../context/FeatureFlagsToolContext.native";
+} from "../../context/FeatureFlagsToolContext";
 import { buildOverridesExport } from "../../utils/exportOverrides";
 import { parseOverridesImport } from "../../utils/importOverrides";
-import { saveFile } from "../../utils/saveFile.native";
-import { readFile } from "../../utils/readFile.native";
+import { saveFile } from "../../utils/saveFile";
+import { readFile } from "../../utils/readFile";
 
 export interface FlagMenuViewProps {
   readonly menuRef: ReturnType<typeof useBottomSheetRef>;

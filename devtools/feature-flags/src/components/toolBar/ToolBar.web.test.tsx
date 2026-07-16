@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ToolBar } from "./ToolBar.web";
-import type { ToolBarInput, ToolBarFilters, ToolBarSort, ToolBarActions } from "./types.web";
+import { ToolBar } from "./ToolBar";
+import type { ToolBarInput, ToolBarFilters, ToolBarSort, ToolBarActions } from "./types";
 
 interface PropsOverrides {
   filters?: Partial<ToolBarFilters>;

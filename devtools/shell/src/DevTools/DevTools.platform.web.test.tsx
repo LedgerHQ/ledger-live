@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { DevTools } from "./DevTools.web";
+import { DevTools } from "./DevTools";
 import { mockDevToolsConfig } from "../../jest/test-utils";
 
 jest.mock("@devtools/registry", () => {

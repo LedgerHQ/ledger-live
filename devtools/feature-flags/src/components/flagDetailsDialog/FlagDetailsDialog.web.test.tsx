@@ -1,8 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { FlagDisplayState } from "../../types";
-import { FlagDetailsDialog } from "./FlagDetailsDialog.web";
-import type { FlagDetailsDialogProps } from "./FlagDetailsDialog.web";
+import { FlagDetailsDialog } from "./FlagDetailsDialog";
+import type { FlagDetailsDialogProps } from "./FlagDetailsDialog";
 
 const baseDisplay: FlagDisplayState = {
   id: "mockFeature",

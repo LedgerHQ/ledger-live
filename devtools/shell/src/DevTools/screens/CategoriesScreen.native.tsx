@@ -1,8 +1,8 @@
 import { Box, SearchInput } from "@ledgerhq/lumen-ui-rnative";
-import { WarningBanner } from "../../components/WarningBanner/WarningBanner.native";
-import Catalog from "../../components/Catalog/Catalog.native";
-import { useCategoriesScreenViewModel } from "./useCategoriesScreenViewModel.native";
-import type { CategoriesScreenProps } from "../navigation.native";
+import { WarningBanner } from "../../components/WarningBanner/WarningBanner";
+import Catalog from "../../components/Catalog/Catalog";
+import { useCategoriesScreenViewModel } from "./useCategoriesScreenViewModel";
+import type { CategoriesScreenProps } from "../navigation";
 
 export function CategoriesScreen(props: CategoriesScreenProps) {
   const { items, query, onQueryChange } = useCategoriesScreenViewModel(props);

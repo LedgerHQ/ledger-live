@@ -12,9 +12,9 @@ import type { FeatureId } from "@shared/feature-flags";
 import {
   useFeatureFlagsToolActions,
   useFeatureFlagsToolState,
-} from "../../context/FeatureFlagsToolContext.native";
-import { useFlagSelectionActions } from "../../context/FlagSelectionContext.native";
-import { FlagEnableIndicator } from "../flagEnableIndicator/FlagEnableIndicator.native";
+} from "../../context/FeatureFlagsToolContext";
+import { useFlagSelectionActions } from "../../context/FlagSelectionContext";
+import { FlagEnableIndicator } from "../flagEnableIndicator/FlagEnableIndicator";
 
 export interface FlagRowProps {
   readonly id: FeatureId;
