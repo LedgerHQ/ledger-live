@@ -1,5 +1,6 @@
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import {
+  createContactsSearchViewModel,
   createEmptyContactsListViewModel,
   createPopulatedContactsListViewModel,
 } from "./viewModel";
@@ -98,5 +99,79 @@ describe("createPopulatedContactsListViewModel", () => {
         addressCount: 2,
       },
     ]);
+  });
+});
+
+describe("createContactsSearchViewModel", () => {
+  const me = mockMeContact();
+  const contacts = [
+    mockContact({ id: "contact-olive", name: "Olive" }),
+    me,
+    mockContact({ id: "contact-ben", name: "Ben" }),
+    mockContact({ id: "contact-ada", name: "Ada" }),
+  ];
+
+  it("should return the populated list for an empty query", () => {
+    expect(createContactsSearchViewModel(me, contacts, "  ")).toEqual({
+      status: "results",
+      me: {
+        contactId: "contact-me",
+        name: "Me",
+        initial: "M",
+        addressCount: 0,
+      },
+      savedContacts: [
+        {
+          contactId: "contact-ada",
+          name: "Ada",
+          initial: "A",
+          addressCount: 0,
+        },
+        {
+          contactId: "contact-ben",
+          name: "Ben",
+          initial: "B",
+          addressCount: 0,
+        },
+        {
+          contactId: "contact-olive",
+          name: "Olive",
+          initial: "O",
+          addressCount: 0,
+        },
+      ],
+    });
+  });
+
+  it("should return case-insensitive saved contact matches", () => {
+    expect(createContactsSearchViewModel(me, contacts, "bEn")).toEqual({
+      status: "results",
+      me: {
+        contactId: "contact-me",
+        name: "Me",
+        initial: "M",
+        addressCount: 0,
+      },
+      savedContacts: [
+        {
+          contactId: "contact-ben",
+          name: "Ben",
+          initial: "B",
+          addressCount: 0,
+        },
+      ],
+    });
+  });
+
+  it("should return no results when only Me matches the query", () => {
+    expect(createContactsSearchViewModel(me, contacts, "Me")).toEqual({
+      status: "no-results",
+      me: {
+        contactId: "contact-me",
+        name: "Me",
+        initial: "M",
+        addressCount: 0,
+      },
+    });
   });
 });
