@@ -1,23 +1,17 @@
 module.exports = {
-  testEnvironment: "jsdom",
+  testEnvironment: "node",
   roots: ["<rootDir>/src"],
-  testMatch: ["**/*.test.ts?(x)"],
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  testMatch: ["**/*.test.ts"],
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",
       {
         jsc: {
           target: "esnext",
-          parser: { syntax: "typescript", tsx: true },
-          transform: { react: { runtime: "automatic" } },
         },
       },
     ],
   },
-  transformIgnorePatterns: [
-    "node_modules/.pnpm/(?!(@ledgerhq\\+lumen-ui-react|@ledgerhq\\+lumen-design-core|@ledgerhq\\+lumen-utils-shared))",
-  ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   reporters: [
     "default",

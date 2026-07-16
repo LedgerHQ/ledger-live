@@ -35,6 +35,7 @@ import type { TransferDrawerState } from "./transferDrawer";
 import type { SwapTransactionStatusDrawerState } from "./swapTransactionStatusDrawer";
 import type { PostOnboardingHubDrawerState } from "./postOnboardingHubDrawer";
 import type { SendFlowState } from "./sendFlow";
+import type { PayCardState } from "@domain/entity-pay-card";
 import { IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
@@ -471,6 +472,7 @@ export type State = LLMRTKApiState & {
   protect: ProtectState;
   ratings: RatingsState;
   sendFlow: SendFlowState;
+  payCard: PayCardState;
   settings: SettingsState;
   toasts: ToastState;
   trustchain: TrustchainStore;
