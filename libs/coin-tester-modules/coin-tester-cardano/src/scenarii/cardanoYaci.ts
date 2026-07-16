@@ -6,7 +6,7 @@ import BigNumber from "bignumber.js";
 import { CARDANO_TESTNET, FRESH_ADDRESS_PATH, makeAccount } from "../fixtures";
 import { getBridges, TESTNET } from "../helpers";
 import { buildSigner } from "../signer";
-import { killYaci, spawnYaci, topup } from "../yaci";
+import { resetDevnet, topup } from "../yaci";
 import { initYaciIndexer, registerAddress, resetRegisteredAddresses } from "../yaciIndexer";
 
 const FUNDING_ADA = 10_000;
@@ -45,7 +45,7 @@ export const scenarioCardanoYaci: Scenario<GenericTransaction, Account> = {
       },
     });
 
-    await spawnYaci();
+    await resetDevnet();
     closeIndexer = initYaciIndexer();
 
     const signer = await buildSigner();
@@ -126,9 +126,8 @@ export const scenarioCardanoYaci: Scenario<GenericTransaction, Account> = {
     },
   ],
 
-  teardown: async () => {
+  teardown: () => {
     closeIndexer?.();
     resetRegisteredAddresses();
-    await killYaci();
   },
 };

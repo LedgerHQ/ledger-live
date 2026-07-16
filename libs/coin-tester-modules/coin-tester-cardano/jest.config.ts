@@ -1,10 +1,10 @@
 import type { Config } from "jest";
 
-// Single config, shaped like the sibling coin-testers (e.g. coin-tester-tezos/jest.config.ts). The two
-// Cardano-specific options are `setupFiles` (env.setup must run before coin-cardano's constants.ts
-// captures CARDANO_API_ENDPOINT) and the `@ledgerhq/source` condition (resolve workspace @ledgerhq/*
-// from TypeScript source so the tester runs without a prior `pnpm build`; mirrors ledger-live-common).
-const config: Config = {
+// Split into two projects so unit-only files don't require the Yaci devnet: the `devnet` project owns the
+// devnet-backed suites (globalSetup boots the devnet once for them), while `unit` (pure logic /
+// fixture-backed) runs with no devnet. Shared base mirrors the sibling coin-testers — env.setup +
+// the @ledgerhq/source condition (resolve workspace @ledgerhq/* from TS source, no prior build).
+const base = {
   testEnvironment: "node",
   setupFiles: ["<rootDir>/src/env.setup.ts"],
   setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
@@ -14,17 +14,38 @@ const config: Config = {
   transform: {
     "^.+\\.(t|j)sx?$": ["@swc/jest", { jsc: { target: "esnext" } }],
   },
-  // @ledgerhq packages resolve to their TS source (via the condition above), so swc must
-  // transform them even inside node_modules; everything else there stays ignored.
   transformIgnorePatterns: ["/node_modules/.pnpm/(?!@ledgerhq\\+)"],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
-  // @ledgerhq sources use ESM ".js" specifiers on ".ts" files; strip the extension so jest
-  // resolves the TypeScript source.
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
-  testMatch: ["**/?(*.)+(spec|test).[jt]s?(x)"],
+};
+
+const config: Config = {
   reporters: ["default", ...(process.env.CI ? ["github-actions"] : [])],
+  projects: [
+    {
+      ...base,
+      displayName: "unit",
+      testMatch: [
+        "<rootDir>/src/getValidators.test.ts",
+        "<rootDir>/src/signer.test.ts",
+        "<rootDir>/src/yaciAdapter.test.ts",
+      ],
+    },
+    {
+      ...base,
+      displayName: "devnet",
+      // Add new devnet-backed suites here so they share the one globalSetup-booted devnet.
+      testMatch: [
+        "<rootDir>/src/mintToken.test.ts",
+        "<rootDir>/src/negativeCases.test.ts",
+        "<rootDir>/src/scenarii.test.ts",
+      ],
+      globalSetup: "<rootDir>/src/globalSetup.ts",
+      globalTeardown: "<rootDir>/src/globalTeardown.ts",
+    },
+  ],
 };
 
 export default config;

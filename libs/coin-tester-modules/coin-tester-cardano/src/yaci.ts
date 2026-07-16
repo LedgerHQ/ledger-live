@@ -1,56 +1,97 @@
-// Lifecycle for a local Yaci DevKit Cardano devnet, driven through the `@bloxbean/yaci-devkit` CLI:
-//   yaci-devkit up --enable-yaci-store   → non-interactive single-node devnet + Blockfrost-compatible store
-//   yaci-devkit down                     → tear down
-// `@bloxbean/yaci-devkit` is a devDependency, so the `yaci-devkit` binary resolves from node_modules/.bin
-// when run via `pnpm` (locally and in CI — same pattern as the siblings' `docker-compose` devDep). Docker
-// must be running — the distro manages the `bloxbean/yaci-cli` containers.
-//
-// Endpoints (Yaci DevKit defaults):
-//   :8080/api/v1  — Yaci Store, Blockfrost-compatible indexer (reads)
-//   :10000/local-cluster/api — local-cluster admin/faucet (topup, devnet reset)
+// Local Yaci DevKit Cardano devnet via the `@bloxbean/yaci-devkit` CLI. Runs native host processes under
+// `~/.yaci-cli/` (NOT Docker); `down` doesn't reliably reap them — hence the reap + port-free wait in
+// killYaci. Endpoints: :8080 store (reads), :10000 admin/faucet.
 import { spawn } from "node:child_process";
 
-/** Yaci Store, Blockfrost-compatible indexer base URL (reads). */
 export const YACI_STORE_API = "http://localhost:8080/api/v1";
-/** local-cluster admin/faucet API base URL (topup + devnet reset). */
 const YACI_ADMIN_API = "http://localhost:10000/local-cluster/api";
 
-// Match Yaci's reference CI wait loop: poll :8080 for up to ~30 × 5s before giving up.
-const READY_TIMEOUT_MS = 150_000;
+// Generous ceiling: a cold `up` downloads components + cold-starts the node before serving a block.
+const READY_TIMEOUT_MS = 300_000;
 const READY_POLL_MS = 5_000;
+const PORT_FREE_TIMEOUT_MS = 20_000;
 
 const debug = Boolean(process.env.DEBUG);
 export const sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
-// The store accepts connections a few seconds before it serves data, so port-open is not enough:
-// require a real latest block (the devnet is actually producing blocks) before declaring ready.
+// Ready = a produced block on :8080 (port-open precedes data). AbortSignal bounds each poll so a hung
+// socket can't stall the loop past READY_TIMEOUT_MS.
 async function isStoreUp(): Promise<boolean> {
   try {
-    const res = await fetch(`${YACI_STORE_API}/blocks/latest`);
+    const res = await fetch(`${YACI_STORE_API}/blocks/latest`, {
+      signal: AbortSignal.timeout(2_000),
+    });
     if (!res.ok) return false;
     const block = (await res.json()) as { height?: number };
-    // The node reports height -1 at genesis before the socket is ready; require a produced block.
+    // height -1 at genesis; require a produced block.
     return typeof block.height === "number" && block.height >= 0;
   } catch {
     return false;
   }
 }
 
-function runDevkit(args: string[]): ReturnType<typeof spawn> {
-  return spawn("yaci-devkit", args, { stdio: debug ? "inherit" : "ignore" });
+// Run a yaci-devkit subcommand; when `capture` is given (non-DEBUG), tee stdout/stderr into it (ring
+// buffer) so a startup timeout is diagnosable from CI logs.
+function runDevkit(args: string[], capture?: string[]): ReturnType<typeof spawn> {
+  const proc = spawn("yaci-devkit", args, {
+    stdio: debug ? "inherit" : capture ? ["ignore", "pipe", "pipe"] : "ignore",
+  });
+  if (capture && !debug) {
+    const onData = (d: Buffer) => {
+      capture.push(d.toString());
+      if (capture.length > 400) capture.splice(0, capture.length - 400);
+    };
+    proc.stdout?.on("data", onData);
+    proc.stderr?.on("data", onData);
+  }
+  return proc;
 }
 
-/** Start a single-node devnet with the Blockfrost-compatible store and wait until it is ready. */
+// Free = ECONNREFUSED (store gone). AbortSignal bounds the probe; any other error (timeout / hung
+// socket) counts as still-in-use so killYaci's loop can't stall.
+async function isPortFree(): Promise<boolean> {
+  try {
+    await fetch(`${YACI_STORE_API}/blocks/latest`, { signal: AbortSignal.timeout(2_000) });
+    return false;
+  } catch (e) {
+    return (e as { cause?: { code?: string } })?.cause?.code === "ECONNREFUSED";
+  }
+}
+
+// `down` doesn't reliably reap the native host processes; SIGKILL any `yaci-cli` survivor so the next
+// `up` can bind :8080. Never throws (a "nothing matched" exit is expected).
+function reapYaciProcesses(): Promise<void> {
+  return new Promise<void>(resolve => {
+    const proc = spawn("pkill", ["-9", "-f", "yaci-cli"], { stdio: "ignore" });
+    proc.on("error", () => resolve());
+    proc.on("exit", () => resolve());
+  });
+}
+
+/** Boot the devnet and wait until the store is ready. */
 export async function spawnYaci(): Promise<void> {
   console.log("Starting Yaci DevKit...");
+  // Clean slate: a leaked devnet still holding :8080 would make this `up` fail to bind (the CI flake).
+  await killYaci();
+
   let spawnError: Error | undefined;
-  const proc = runDevkit(["up", "--enable-yaci-store"]);
-  // Capture (don't throw) the spawn error — throwing inside the handler is an uncaught exception;
-  // it's rethrown from the loop so spawnYaci() rejects promptly and in a controlled way.
+  const output: string[] = [];
+  const proc = runDevkit(["up", "--enable-yaci-store"], output);
+  // Capture, don't throw (throwing in the handler = uncaught); rethrown from the loop below.
   proc.on("error", e => {
     spawnError = new Error(
-      `Failed to spawn yaci-devkit (install @bloxbean/yaci-devkit and ensure Docker is running): ${e.message}`,
+      `Failed to spawn yaci-devkit (install @bloxbean/yaci-devkit): ${e.message}`,
     );
+  });
+  // Non-zero exit before readiness = `up` failed; fail fast instead of polling to READY_TIMEOUT_MS.
+  // Exit 0 is fine (background launch: the devnet keeps running).
+  proc.on("exit", code => {
+    if (code != null && code !== 0) {
+      if (!debug && output.length > 0) {
+        console.error("yaci-devkit up failed. Last devkit output:\n" + output.join(""));
+      }
+      spawnError = new Error(`yaci-devkit up exited with code ${code} before the store was ready`);
+    }
   });
 
   const deadline = Date.now() + READY_TIMEOUT_MS;
@@ -62,15 +103,16 @@ export async function spawnYaci(): Promise<void> {
     }
     await sleep(READY_POLL_MS);
   }
-  // Timed out: `up` may have partially started containers. The process-exit handlers below only
-  // fire on process exit, not when the runner catches this throw — so tear down here to avoid
-  // leaking a half-started devnet into the next run. killYaci never throws.
+  // Timed out: dump captured output for CI, then tear down (exit handlers only fire on process exit).
+  if (!debug && output.length > 0) {
+    console.error("Yaci DevKit startup timed out. Last devkit output:\n" + output.join(""));
+  }
   await killYaci();
   throw new Error("Yaci DevKit did not become ready on :8080 within the timeout");
 }
 
-/** Tear down the devnet. Best-effort: `down` can exit noisily (stale PID cleanup) yet still stop the
- *  node, so teardown never throws — it would only mask the real test outcome. */
+/** Tear down the devnet — best-effort, never throws: `down`, then SIGKILL survivors and wait for :8080
+ *  to free so a later spawnYaci doesn't race a half-dead devnet. */
 export async function killYaci(): Promise<void> {
   console.log("Stopping Yaci DevKit...");
   await new Promise<void>(resolve => {
@@ -78,33 +120,57 @@ export async function killYaci(): Promise<void> {
     proc.on("error", () => resolve());
     proc.on("exit", () => resolve());
   });
+  await reapYaciProcesses();
+  const deadline = Date.now() + PORT_FREE_TIMEOUT_MS;
+  while (Date.now() < deadline) {
+    if (await isPortFree()) return;
+    await sleep(1_000);
+  }
+  console.warn(`Yaci DevKit: :8080 still in use ${PORT_FREE_TIMEOUT_MS}ms after teardown`);
 }
 
+// The faucet/admin API can transiently 5xx right after boot. Retry transient failures (5xx / network);
+// fail fast on 4xx. AbortSignal bounds each attempt.
+const ADMIN_RETRY_LIMIT = 5;
+const ADMIN_RETRY_DELAY_MS = 1_000;
+
 async function adminPost(path: string, body?: unknown): Promise<void> {
-  const res = await fetch(`${YACI_ADMIN_API}${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
-  if (!res.ok) {
-    throw new Error(`Yaci admin POST ${path} failed: ${res.status} ${res.statusText}`);
+  for (let attempt = 1; ; attempt++) {
+    let retryable = false;
+    let error: Error;
+    try {
+      const res = await fetch(`${YACI_ADMIN_API}${path}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: body === undefined ? undefined : JSON.stringify(body),
+        signal: AbortSignal.timeout(10_000),
+      });
+      if (res.ok) return;
+      error = new Error(`Yaci admin POST ${path} failed: ${res.status} ${res.statusText}`);
+      retryable = res.status >= 500;
+    } catch (e) {
+      error = e instanceof Error ? e : new Error(String(e));
+      retryable = true;
+    }
+    if (!retryable || attempt >= ADMIN_RETRY_LIMIT) throw error;
+    console.warn(`Yaci admin POST ${path} attempt ${attempt} failed (${error.message}); retrying`);
+    await sleep(ADMIN_RETRY_DELAY_MS);
   }
 }
 
-/** Fund an address from the devnet faucet. `adaAmount` is whole ADA (not lovelace). */
+/** Fund an address from the faucet; `adaAmount` is whole ADA (not lovelace). */
 export async function topup(address: string, adaAmount: number): Promise<void> {
   await adminPost("/addresses/topup", { address, adaAmount });
 }
 
-/** Reset the devnet to a clean state (clears the ledger between scenarios). */
+/** Reset the devnet ledger to a clean state. */
 export async function resetDevnet(): Promise<void> {
   await adminPost("/admin/devnet/reset");
 }
 
 export type Utxo = { amount: { unit: string; quantity: string }[] };
 
-/** Poll the store's UTXOs for an address until `predicate` holds (or time out). Blocks accept a few
- *  seconds after submission, so callers wait on a balance/token condition rather than a fixed delay. */
+/** Poll the store's UTXOs for `address` until `predicate` holds (blocks land a few seconds after submit). */
 export async function pollUtxos(
   address: string,
   predicate: (utxos: Utxo[]) => boolean,
@@ -112,19 +178,20 @@ export async function pollUtxos(
   for (let i = 0; i < 30; i++) {
     try {
       const utxos = (await (
-        await fetch(`${YACI_STORE_API}/addresses/${address}/utxos`)
+        await fetch(`${YACI_STORE_API}/addresses/${address}/utxos`, {
+          signal: AbortSignal.timeout(2_000),
+        })
       ).json()) as Utxo[];
       if (predicate(utxos)) return utxos;
     } catch {
-      // Store still warming up or briefly unavailable — keep polling rather than failing fast.
+      // Store warming up; keep polling.
     }
     await sleep(2_000);
   }
   throw new Error("pollUtxos: condition not met in time");
 }
 
-// Best-effort teardown on process exit/interruption (matches flextesa.ts/anvil.ts/agave.ts) so an
-// aborted run doesn't leak a running devnet. killYaci never throws.
+// Best-effort teardown on exit/interrupt (matches flextesa/anvil/agave) so an aborted run doesn't leak.
 ["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
   process.on(e, () => {
     killYaci().catch(() => {});
