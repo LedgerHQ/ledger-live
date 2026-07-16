@@ -1,5 +1,16 @@
 # @ledgerhq/live-signer-solana
 
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#19627](https://github.com/LedgerHQ/ledger-live/pull/19627) [`8e3b521`](https://github.com/LedgerHQ/ledger-live/commit/8e3b521c9604cf0b753f056a2c65556d9f91ae79) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merge release branch into hotfix support branch, resolving version and changelog conflicts
+
+### Patch Changes
+
+- Updated dependencies [[`8e3b521`](https://github.com/LedgerHQ/ledger-live/commit/8e3b521c9604cf0b753f056a2c65556d9f91ae79)]:
+  - @ledgerhq/coin-solana@0.57.0-next.0
+
 ## 0.16.1-next.0
 
 ### Patch Changes
@@ -12,6 +23,7 @@
   - @ledgerhq/hw-transport@6.35.6-next.0
   - @ledgerhq/hw-app-solana@7.10.6-next.0
   - @ledgerhq/hw-bolos@6.36.6-next.0
+
 ## 0.16.1
 
 ### Patch Changes

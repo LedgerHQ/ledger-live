@@ -1,5 +1,16 @@
 # web-tools
 
+## 0.47.0-next.0
+
+### Minor Changes
+
+- [#19627](https://github.com/LedgerHQ/ledger-live/pull/19627) [`8e3b521`](https://github.com/LedgerHQ/ledger-live/commit/8e3b521c9604cf0b753f056a2c65556d9f91ae79) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merge release branch into hotfix support branch, resolving version and changelog conflicts
+
+### Patch Changes
+
+- Updated dependencies [[`8e3b521`](https://github.com/LedgerHQ/ledger-live/commit/8e3b521c9604cf0b753f056a2c65556d9f91ae79)]:
+  - @ledgerhq/live-common@36.4.0-next.0
+
 ## 0.47.0-next.1
 
 ### Patch Changes
@@ -49,6 +60,7 @@
   - @ledgerhq/wallet-pnl@0.7.1-next.0
   - @ledgerhq/domain-service@1.8.9-next.0
   - @ledgerhq/hw-app-eth@7.8.9-next.0
+
 ## 0.46.1
 
 ### Patch Changes

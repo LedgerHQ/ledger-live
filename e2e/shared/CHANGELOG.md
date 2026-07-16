@@ -1,5 +1,12 @@
 # @ledgerhq/live-e2e-shared
 
+## 0.2.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`8e3b521`](https://github.com/LedgerHQ/ledger-live/commit/8e3b521c9604cf0b753f056a2c65556d9f91ae79)]:
+  - @ledgerhq/live-common@36.4.0-next.0
+
 ## 0.2.0-next.1
 
 ### Patch Changes

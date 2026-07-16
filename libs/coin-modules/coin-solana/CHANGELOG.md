@@ -4,6 +4,12 @@
 
 ### Minor Changes
 
+- [#19627](https://github.com/LedgerHQ/ledger-live/pull/19627) [`8e3b521`](https://github.com/LedgerHQ/ledger-live/commit/8e3b521c9604cf0b753f056a2c65556d9f91ae79) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merge release branch into hotfix support branch, resolving version and changelog conflicts
+
+## 0.57.0-next.0
+
+### Minor Changes
+
 - [#19145](https://github.com/LedgerHQ/ledger-live/pull/19145) [`1e17c12`](https://github.com/LedgerHQ/ledger-live/commit/1e17c127178a871b665b25d6f4208d4613826dd1) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the per-coin `cli.ts` / `cli-transaction.ts` / `test/cli.ts` (`makeCliTools`) contract from coin families and the `cliTools` field of `FamilySetup`. The only consumer was the `apps/cli` `send` command, and the only e2e path that used it was the EVM ERC20 token approval. That flow is now a dedicated, self-contained `tokenApproval` CLI command; the generic `send` command keeps the cross-family options only.
 
 - [#18813](https://github.com/LedgerHQ/ledger-live/pull/18813) [`559f694`](https://github.com/LedgerHQ/ledger-live/commit/559f694fa73a2f68ac3fc867291a0fce99969552) Thanks [@qperrot](https://github.com/qperrot)! - Fix: fetch withdrawable value at runtime
@@ -24,6 +30,7 @@
   - @ledgerhq/types-cryptoassets@7.39.0-next.0
   - @ledgerhq/devices@8.17.0-next.0
   - @ledgerhq/live-network@2.6.7-next.0
+
 ## 0.56.1
 
 ### Patch Changes

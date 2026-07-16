@@ -1,5 +1,16 @@
 # @ledgerhq/live-dmk-desktop
 
+## 0.20.0-next.0
+
+### Minor Changes
+
+- [#19627](https://github.com/LedgerHQ/ledger-live/pull/19627) [`8e3b521`](https://github.com/LedgerHQ/ledger-live/commit/8e3b521c9604cf0b753f056a2c65556d9f91ae79) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merge release branch into hotfix support branch, resolving version and changelog conflicts
+
+### Patch Changes
+
+- Updated dependencies [[`8e3b521`](https://github.com/LedgerHQ/ledger-live/commit/8e3b521c9604cf0b753f056a2c65556d9f91ae79)]:
+  - @ledgerhq/live-common@36.4.0-next.0
+
 ## 0.20.0-next.1
 
 ### Patch Changes
@@ -20,6 +31,7 @@
   - @ledgerhq/live-env@2.41.0-next.0
   - @ledgerhq/live-dmk-shared@0.28.0-next.0
   - @ledgerhq/hw-transport@6.35.6-next.0
+
 ## 0.19.1
 
 ### Patch Changes

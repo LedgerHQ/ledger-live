@@ -4,6 +4,12 @@
 
 ### Minor Changes
 
+- [#19627](https://github.com/LedgerHQ/ledger-live/pull/19627) [`8e3b521`](https://github.com/LedgerHQ/ledger-live/commit/8e3b521c9604cf0b753f056a2c65556d9f91ae79) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merge release branch into hotfix support branch, resolving version and changelog conflicts
+
+## 4.11.0-next.0
+
+### Minor Changes
+
 - [#19030](https://github.com/LedgerHQ/ledger-live/pull/19030) [`9af0e8a`](https://github.com/LedgerHQ/ledger-live/commit/9af0e8a926ac4d0c7b7dccd43c0d913b3d805f42) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Fix hasEnabledOsNotifications being intermittently tracked as false after the user enabled OS notifications
 
 - [#19029](https://github.com/LedgerHQ/ledger-live/pull/19029) [`a832b69`](https://github.com/LedgerHQ/ledger-live/commit/a832b69720b286c106002c5ef8b6742c76900b30) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - selfTransfer button for Aleo (without any logic)
@@ -259,6 +265,7 @@
   - @ledgerhq/hw-transport@6.35.6-next.0
   - @ledgerhq/device-intent@4.0.1-next.0
   - @ledgerhq/hw-transport-http@6.36.6-next.0
+
 ## 4.10.1
 
 ### Patch Changes

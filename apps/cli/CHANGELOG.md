@@ -1,5 +1,17 @@
 # @ledgerhq/live-cli
 
+## 24.46.0-next.0
+
+### Minor Changes
+
+- [#19627](https://github.com/LedgerHQ/ledger-live/pull/19627) [`8e3b521`](https://github.com/LedgerHQ/ledger-live/commit/8e3b521c9604cf0b753f056a2c65556d9f91ae79) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merge release branch into hotfix support branch, resolving version and changelog conflicts
+
+### Patch Changes
+
+- Updated dependencies [[`8e3b521`](https://github.com/LedgerHQ/ledger-live/commit/8e3b521c9604cf0b753f056a2c65556d9f91ae79)]:
+  - @ledgerhq/live-common@36.4.0-next.0
+  - @ledgerhq/live-e2e-shared@0.2.0-next.2
+
 ## 25.0.0-next.1
 
 ### Patch Changes
@@ -46,6 +58,7 @@
   - @ledgerhq/live-countervalues@0.22.0-next.0
   - @ledgerhq/live-dmk-speculos@0.10.1-next.0
   - @ledgerhq/hw-transport-node-speculos@6.34.6-next.0
+
 ## 24.45.2
 
 ### Patch Changes
