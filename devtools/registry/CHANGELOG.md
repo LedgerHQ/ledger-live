@@ -1,5 +1,12 @@
 # @devtools/registry
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies [[`f8d5212`](https://github.com/LedgerHQ/ledger-live/commit/f8d5212153829a32fcafc6fded768e5468251413), [`3711e2b`](https://github.com/LedgerHQ/ledger-live/commit/3711e2bfdcc0be2cdb7c8d4567242fb14875ab1c), [`5e081d3`](https://github.com/LedgerHQ/ledger-live/commit/5e081d349639537e0f3eb8536218a55f2f0ee241)]:
+  - @devtools/feature-flags@0.6.0
+
 ## 0.1.5-next.0
 
 ### Patch Changes

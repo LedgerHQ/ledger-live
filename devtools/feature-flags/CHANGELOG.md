@@ -1,5 +1,20 @@
 # @devtools/feature-flags
 
+## 0.6.0
+
+### Minor Changes
+
+- [#18820](https://github.com/LedgerHQ/ledger-live/pull/18820) [`f8d5212`](https://github.com/LedgerHQ/ledger-live/commit/f8d5212153829a32fcafc6fded768e5468251413) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Add mobile ui
+
+- [#19205](https://github.com/LedgerHQ/ledger-live/pull/19205) [`3711e2b`](https://github.com/LedgerHQ/ledger-live/commit/3711e2bfdcc0be2cdb7c8d4567242fb14875ab1c) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Prepare shell and components for LWD wiring. Add onClose to shell props and a back arrow in the sidebar. In feature-flags, replace the sidebar with a dialog.
+
+- [#19147](https://github.com/LedgerHQ/ledger-live/pull/19147) [`5e081d3`](https://github.com/LedgerHQ/ledger-live/commit/5e081d349639537e0f3eb8536218a55f2f0ee241) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Remove unused parameters
+
+### Patch Changes
+
+- Updated dependencies [[`a2621e2`](https://github.com/LedgerHQ/ledger-live/commit/a2621e2c6c6369c7109af72e1cb59df2448951ff), [`8b6614e`](https://github.com/LedgerHQ/ledger-live/commit/8b6614eaff423aaeb50b7eb44ba5916a941a573d), [`714411f`](https://github.com/LedgerHQ/ledger-live/commit/714411fcbf054244444ec97f2e53039417cba54e), [`ca07aac`](https://github.com/LedgerHQ/ledger-live/commit/ca07aac857c58e3d85beab71b246d8af687431f3), [`5ccd2a9`](https://github.com/LedgerHQ/ledger-live/commit/5ccd2a9c229e8007851c6eb8b01c866c8e605932), [`9f8ab96`](https://github.com/LedgerHQ/ledger-live/commit/9f8ab9672ababc02909e7553d433ee326c37762e), [`7914bd1`](https://github.com/LedgerHQ/ledger-live/commit/7914bd123d4f3b990db035f28dca4904420562ec), [`addef52`](https://github.com/LedgerHQ/ledger-live/commit/addef52ed445008c16e3f94d66f46222c8c535f7), [`81373c1`](https://github.com/LedgerHQ/ledger-live/commit/81373c1ca46cf2094cfd4f98958eff2114f02cea), [`34bccb5`](https://github.com/LedgerHQ/ledger-live/commit/34bccb5268c8b27f87f2ab0395e372d4f1d5d926), [`966d6a1`](https://github.com/LedgerHQ/ledger-live/commit/966d6a198412c12548575516a2ac72456c380181), [`e820e40`](https://github.com/LedgerHQ/ledger-live/commit/e820e402fb57d52b31dcd6de26f8d31d9564e2a4), [`007f27e`](https://github.com/LedgerHQ/ledger-live/commit/007f27e81cce353a3ee6648543d54d06ae6e7a11), [`b10ca6a`](https://github.com/LedgerHQ/ledger-live/commit/b10ca6ab5e80889b24805b460f81eff5748f0170), [`df6ca42`](https://github.com/LedgerHQ/ledger-live/commit/df6ca422fa70171162974ea71519da5c5eeb55d8), [`e3c0327`](https://github.com/LedgerHQ/ledger-live/commit/e3c032795a0432500a447b756503ce0aefd8c0f6), [`628f21f`](https://github.com/LedgerHQ/ledger-live/commit/628f21f5acf7d5866c0c956d41d69c760caf0caa), [`5aada6f`](https://github.com/LedgerHQ/ledger-live/commit/5aada6f1a72df070770f4b67112f51b5ced58cff), [`69b201e`](https://github.com/LedgerHQ/ledger-live/commit/69b201e2b1e01b2c6bfb6eaf9e0aa60088f175fc), [`3da6b44`](https://github.com/LedgerHQ/ledger-live/commit/3da6b4439d61a7ad7f06e04be12aa1e92b9cdb55), [`f9411d1`](https://github.com/LedgerHQ/ledger-live/commit/f9411d1e2a06b031555cda9e26ecba37b4cf045e), [`6eea36b`](https://github.com/LedgerHQ/ledger-live/commit/6eea36bfafeba265672a96b37981e2c7e629ef33), [`35d4af9`](https://github.com/LedgerHQ/ledger-live/commit/35d4af90e7bee849814cd98358c80e20ef4e4f2a)]:
+  - @shared/feature-flags@0.13.0
+
 ## 0.6.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/live-promise
 
+## 0.3.0
+
+### Minor Changes
+
+- [#18814](https://github.com/LedgerHQ/ledger-live/pull/18814) [`fa0123a`](https://github.com/LedgerHQ/ledger-live/commit/fa0123a1da7b053d58afab498266cf830958e2ff) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate remaining lint scripts from ESLint to oxlint and drop Prettier (oxfmt is now the sole formatter)
+
 ## 0.3.0-next.0
 
 ### Minor Changes

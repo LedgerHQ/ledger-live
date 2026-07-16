@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.53.0
+
+### Minor Changes
+
+- [#18950](https://github.com/LedgerHQ/ledger-live/pull/18950) [`5f735a2`](https://github.com/LedgerHQ/ledger-live/commit/5f735a2c3c8f961c508c41908c4ce78974a709ef) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - cleanup dead code in react-ui lib
+
 ## 0.53.0-next.0
 
 ### Minor Changes

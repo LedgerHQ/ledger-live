@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.64.0
+
+### Minor Changes
+
+- [#17924](https://github.com/LedgerHQ/ledger-live/pull/17924) [`360cea4`](https://github.com/LedgerHQ/ledger-live/commit/360cea435daf7093d853f4ad6402327c6a285895) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - Upgrade React Native to 0.81.6, Expo SDK 54 for LWM; React 19.1.4 for LWM and LWD
+
 ## 0.64.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # @ledgerhq/live-signer-evm
 
+## 0.21.0
+
+### Minor Changes
+
+- [#19071](https://github.com/LedgerHQ/ledger-live/pull/19071) [`3b35b5e`](https://github.com/LedgerHQ/ledger-live/commit/3b35b5ea8a0c67c215150f2aee008fd1c1993463) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - coin-evm: move the EVM signer (types + getAddress/signMessage) out to live-signer-evm and ledger-live-common
+
+### Patch Changes
+
+- Updated dependencies [[`d91f849`](https://github.com/LedgerHQ/ledger-live/commit/d91f849185c7a30514349be655bba69dd77bb8c8), [`0225804`](https://github.com/LedgerHQ/ledger-live/commit/0225804cd0f39b90050f52b14e1b159340f0530e)]:
+  - @ledgerhq/live-dmk-shared@0.28.0
+  - @ledgerhq/hw-app-eth@7.8.9
+
 ## 0.21.0-next.0
 
 ### Minor Changes

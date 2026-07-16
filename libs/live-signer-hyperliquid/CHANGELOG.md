@@ -1,5 +1,13 @@
 # @ledgerhq/live-signer-hyperliquid
 
+## 1.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`df96477`](https://github.com/LedgerHQ/ledger-live/commit/df964774bdaccd897e5e7414c172e9c26ff21f67)]:
+  - @ledgerhq/devices@8.17.0
+  - @ledgerhq/hw-transport@6.35.6
+
 ## 1.3.1-next.0
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # @ledgerhq/live-dmk
 
+## 0.28.0
+
+### Minor Changes
+
+- [#19226](https://github.com/LedgerHQ/ledger-live/pull/19226) [`d91f849`](https://github.com/LedgerHQ/ledger-live/commit/d91f849185c7a30514349be655bba69dd77bb8c8) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Match device deprecation configs against Ledger Live device model ids.
+
+- [#18978](https://github.com/LedgerHQ/ledger-live/pull/18978) [`0225804`](https://github.com/LedgerHQ/ledger-live/commit/0225804cd0f39b90050f52b14e1b159340f0530e) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Extract connectDevice shared core from live-dmk-mobile to live-dmk-shared
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.6
+
 ## 0.28.0-next.0
 
 ### Minor Changes

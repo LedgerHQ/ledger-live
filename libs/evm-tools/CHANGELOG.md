@@ -1,5 +1,16 @@
 # @ledgerhq/evm-tools
 
+## 1.13.0
+
+### Minor Changes
+
+- [#18814](https://github.com/LedgerHQ/ledger-live/pull/18814) [`fa0123a`](https://github.com/LedgerHQ/ledger-live/commit/fa0123a1da7b053d58afab498266cf830958e2ff) Thanks [@ysitbon](https://github.com/ysitbon)! - Migrate remaining lint scripts from ESLint to oxlint and drop Prettier (oxfmt is now the sole formatter)
+
+### Patch Changes
+
+- Updated dependencies [[`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11)]:
+  - @ledgerhq/live-env@2.41.0
+
 ## 1.13.0-next.0
 
 ### Minor Changes

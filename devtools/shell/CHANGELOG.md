@@ -1,5 +1,16 @@
 # @devtools/shell
 
+## 0.5.0
+
+### Minor Changes
+
+- [#19205](https://github.com/LedgerHQ/ledger-live/pull/19205) [`3711e2b`](https://github.com/LedgerHQ/ledger-live/commit/3711e2bfdcc0be2cdb7c8d4567242fb14875ab1c) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Prepare shell and components for LWD wiring. Add onClose to shell props and a back arrow in the sidebar. In feature-flags, replace the sidebar with a dialog.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @devtools/registry@0.1.5
+
 ## 0.5.0-next.0
 
 ### Minor Changes

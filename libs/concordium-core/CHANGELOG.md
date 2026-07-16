@@ -1,5 +1,11 @@
 # @ledgerhq/concordium-core
 
+## 0.5.0
+
+### Minor Changes
+
+- [#18900](https://github.com/LedgerHQ/ledger-live/pull/18900) [`67c6acb`](https://github.com/LedgerHQ/ledger-live/commit/67c6acb22afafa7671eebe94e60e672480b71728) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Remove unused exports left over after the `@ledgerhq/hw-app-concordium` removal: `chunkBuffer`, `pathToBuffer`, and `serializePath` (no consumer used them), and the `VerifyAddressResponse` type. The `bip32-path` dependency, only needed by `pathToBuffer`, is dropped.
+
 ## 0.5.0-next.0
 
 ### Minor Changes

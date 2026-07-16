@@ -1,5 +1,17 @@
 # @ledgerhq/live-currency-format
 
+## 0.12.0
+
+### Minor Changes
+
+- [#18746](https://github.com/LedgerHQ/ledger-live/pull/18746) [`e97314e`](https://github.com/LedgerHQ/ledger-live/commit/e97314e0d8201195a91e5eeb0fcde9e2b1dfff76) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix currency symbol and +/- sign rendering on the wrong side for right-to-left (Arabic) currencies by forcing LTR layout of formatted amounts.
+
+### Patch Changes
+
+- Updated dependencies [[`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11), [`f495213`](https://github.com/LedgerHQ/ledger-live/commit/f495213e811477c99d62f0d93cc7c513b951a303), [`b3ffa2f`](https://github.com/LedgerHQ/ledger-live/commit/b3ffa2f4bf735f2cfeed2a8028ea92d4bc3588e3)]:
+  - @ledgerhq/live-env@2.41.0
+  - @ledgerhq/types-cryptoassets@7.39.0
+
 ## 0.12.0-next.0
 
 ### Minor Changes

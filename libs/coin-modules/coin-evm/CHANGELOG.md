@@ -1,5 +1,51 @@
 # @ledgerhq/coin-evm
 
+## 4.5.0
+
+### Minor Changes
+
+- [#19278](https://github.com/LedgerHQ/ledger-live/pull/19278) [`a7734c2`](https://github.com/LedgerHQ/ledger-live/commit/a7734c23a635ddde880176ee04ff409a67eae613) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Refactor `StakingContractConfig.contractAddress` and `value` to resolver functions to support dynamic per-validator contract addressing
+
+- [#19140](https://github.com/LedgerHQ/ledger-live/pull/19140) [`19aa0b4`](https://github.com/LedgerHQ/ledger-live/commit/19aa0b499c3c4a9f6348f4af367636492a8023d1) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - coin-evm: move the Celo-only sync helpers (getSyncHash / createSwapHistoryMap / mergeSubAccounts) out of coin-evm into coin-celo, their sole consumer
+
+- [#19113](https://github.com/LedgerHQ/ledger-live/pull/19113) [`f9caf32`](https://github.com/LedgerHQ/ledger-live/commit/f9caf322be2e3b652e8ec06fb40aeb8e02e08c8a) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - coin-evm: createApi returns a pure CoinModuleApi; move refreshOperations/validateTransaction/stakingSupported to the ledger-live-common EVM bridge api
+
+- [#19071](https://github.com/LedgerHQ/ledger-live/pull/19071) [`3b35b5e`](https://github.com/LedgerHQ/ledger-live/commit/3b35b5ea8a0c67c215150f2aee008fd1c1993463) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - coin-evm: move the EVM signer (types + getAddress/signMessage) out to live-signer-evm and ledger-live-common
+
+- [#19184](https://github.com/LedgerHQ/ledger-live/pull/19184) [`6400154`](https://github.com/LedgerHQ/ledger-live/commit/6400154daa131b225c6ec62c9134f1cd06370729) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Promote the EVM edit-transaction (speed-up / cancel) helpers to the bridge contract.
+
+  `AccountBridgeExtensions` is now generic over the transaction type and exposes the app-facing edit-transaction methods (`getEditTransactionPatch`, `getEditTransactionStatus`, `getFormattedFeeFields`, `hasMinimumFundsToCancel`, `hasMinimumFundsToSpeedUp`, `isStrategyDisabled`, `isTransactionConfirmed`). The implementations move out of `@ledgerhq/coin-evm` into `ledger-live-common` (`families/evm`), and every app/LLC call site now reaches them through `getAccountBridge(account)` instead of importing `@ledgerhq/coin-evm/editTransaction/*`. The contract uses only base types so other families (e.g. Bitcoin RBF) can implement the same surface later.
+
+- [#19272](https://github.com/LedgerHQ/ledger-live/pull/19272) [`e2d74f7`](https://github.com/LedgerHQ/ledger-live/commit/e2d74f7c5fe9883d6a141ce790a0b0aa92d7e53a) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): raise an error if gas price is less than the network minimum
+
+- [#19297](https://github.com/LedgerHQ/ledger-live/pull/19297) [`973118a`](https://github.com/LedgerHQ/ledger-live/commit/973118a511dbdf862387c94272a89739a011e797) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): register 0g staking contract ABI
+
+- [#19092](https://github.com/LedgerHQ/ledger-live/pull/19092) [`fa25271`](https://github.com/LedgerHQ/ledger-live/commit/fa252719220ca27fa4556ce9a02b84ccfca835c3) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - coin-evm: move deviceTransactionConfig, bot specs and speculos device actions to ledger-live-common families/evm
+
+- [#19196](https://github.com/LedgerHQ/ledger-live/pull/19196) [`edacd7c`](https://github.com/LedgerHQ/ledger-live/commit/edacd7c60413812e13a20d6451d5870ff5ced34e) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Relocate EVM operation helpers (`isEditableOperation`, `isStuckOperation`, `getStuckAccountAndOperation`) from `@ledgerhq/coin-evm/operation` to `families/evm/editTransaction/` in `ledger-live-common`
+
+- [#18928](https://github.com/LedgerHQ/ledger-live/pull/18928) [`b2e12ce`](https://github.com/LedgerHQ/ledger-live/commit/b2e12ce7b72de43efe8c8ff5290d617fff7f8e31) Thanks [@qperrot](https://github.com/qperrot)! - fix(sei): determine Sei EVM account association via on-chain RPC
+
+  `isSeiAccountUnassociated` now resolves whether a Sei EVM (0x) address is linked
+  on-chain to its Cosmos (sei1) address by querying the chain's address precompile
+  (`getSeiAddr`) instead of inferring it from the local operation history. The
+  function is now async and no longer takes an `operations` argument; the delegation
+  flow screens (desktop & mobile) resolve the warning asynchronously.
+
+- [#19321](https://github.com/LedgerHQ/ledger-live/pull/19321) [`b9f3ba5`](https://github.com/LedgerHQ/ledger-live/commit/b9f3ba5707e25d4ef50a7f7ffd4471678aa836ef) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): add validator list 0g
+
+- [#19078](https://github.com/LedgerHQ/ledger-live/pull/19078) [`363ac4d`](https://github.com/LedgerHQ/ledger-live/commit/363ac4d27f4e71b1e6e00b1c128bc199d1170839) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - coin-evm: move transaction serialization helpers and CLI tools to ledger-live-common families/evm
+
+### Patch Changes
+
+- Updated dependencies [[`6df2017`](https://github.com/LedgerHQ/ledger-live/commit/6df20171a84b54e5b67eabefc938a98d7e3c3e43), [`70a706e`](https://github.com/LedgerHQ/ledger-live/commit/70a706e4efe3a6fa176f9827a4a06949ba185f11), [`38728f9`](https://github.com/LedgerHQ/ledger-live/commit/38728f9d9ac879c276def56ce88c5e49549e4b9d), [`86ca231`](https://github.com/LedgerHQ/ledger-live/commit/86ca231ea9e0ec5996258b1abfa9742a7df3f9ec), [`e6566ff`](https://github.com/LedgerHQ/ledger-live/commit/e6566ff55d95ff36832d5f77899d67d80842f418), [`996c76b`](https://github.com/LedgerHQ/ledger-live/commit/996c76b157553c547f83d877d25199b311ee0f63), [`7fe5f11`](https://github.com/LedgerHQ/ledger-live/commit/7fe5f1129d6ac218ad274f2187a1a3dd83b8855a), [`7c39ea3`](https://github.com/LedgerHQ/ledger-live/commit/7c39ea39ca8999bcb8ce2294f4884430b6d1b2dc), [`d686e93`](https://github.com/LedgerHQ/ledger-live/commit/d686e93f8a548ff4e9ab3c877ad1f815510b35d9), [`f495213`](https://github.com/LedgerHQ/ledger-live/commit/f495213e811477c99d62f0d93cc7c513b951a303), [`c8b4ee7`](https://github.com/LedgerHQ/ledger-live/commit/c8b4ee77c03ca2117cbad039331b7b52e50d9620), [`fa0123a`](https://github.com/LedgerHQ/ledger-live/commit/fa0123a1da7b053d58afab498266cf830958e2ff), [`b3ffa2f`](https://github.com/LedgerHQ/ledger-live/commit/b3ffa2f4bf735f2cfeed2a8028ea92d4bc3588e3), [`376915c`](https://github.com/LedgerHQ/ledger-live/commit/376915ca520ecc1708090ed9b3eba1ff7e780540)]:
+  - @ledgerhq/cryptoassets@13.54.0
+  - @ledgerhq/live-env@2.41.0
+  - @ledgerhq/ledger-wallet-framework@2.3.0
+  - @ledgerhq/evm-tools@1.13.0
+  - @ledgerhq/live-promise@0.3.0
+  - @ledgerhq/live-network@2.6.7
+
 ## 4.5.0-next.0
 
 ### Minor Changes

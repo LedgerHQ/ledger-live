@@ -1,5 +1,34 @@
 # @ledgerhq/coin-tezos
 
+## 7.8.0
+
+### Minor Changes
+
+- [#19013](https://github.com/LedgerHQ/ledger-live/pull/19013) [`7a11615`](https://github.com/LedgerHQ/ledger-live/commit/7a11615e8a37a35a0410e4f89f18f064e7ac2ee5) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - Fix: accumulate storage/baker fees from internal contract sub-transactions onto the initiating operation so that fee-only balance impacts are not silently dropped
+
+- [#19266](https://github.com/LedgerHQ/ledger-live/pull/19266) [`94fcc69`](https://github.com/LedgerHQ/ledger-live/commit/94fcc69009b7e07aab43afdc7214b486b2c7811a) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - Remove extra delegate/originatedContract fields from getBlock details so reindexing produces identical event data as initial indexation
+
+- [#19225](https://github.com/LedgerHQ/ledger-live/pull/19225) [`3973f11`](https://github.com/LedgerHQ/ledger-live/commit/3973f1109d66996b728ecb63489eced25b967838) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - Add origination and reveal operation support to tezos getBlock, fixing missing fees and operation events
+
+- [#19120](https://github.com/LedgerHQ/ledger-live/pull/19120) [`73b6013`](https://github.com/LedgerHQ/ledger-live/commit/73b60134a199c19606a7d1be3d0fc41f15cf99c2) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - Fix getBlock to fetch originations, use correct FA2 token standard (fa2 instead of token), filter block token transfers to fa2/tokenId=0 (matching listOperations), and resolve cross-block origination hashes for token transfers.
+
+- [#18915](https://github.com/LedgerHQ/ledger-live/pull/18915) [`dff6ecf`](https://github.com/LedgerHQ/ledger-live/commit/dff6ecff5201a942a9dc61a51c729c47b53052dc) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - Fix native balance double-counting in listOperations by filtering out internal contract sub-transactions and zeroing token op fees
+
+- [#17890](https://github.com/LedgerHQ/ledger-live/pull/17890) [`df088d2`](https://github.com/LedgerHQ/ledger-live/commit/df088d26908b24e936bc8d6f508a438d151222f0) Thanks [@cted-ledger](https://github.com/cted-ledger)! - feat(coin-tezos): support multi-asset FA2 contracts (wrapped tokens)
+
+  Remove the tokenId=0 filter in TzKT queries so balances and operations
+  for all FA2 tokens are returned, including multi-asset contracts like
+  the Wrapped Tokens Contract (KT18fp5rc…).
+
+  Parse the assetReference (contract:tokenId) in the Tezos bridge to pass
+  tokenIdentifier to findTokenByAddressInCurrency, enabling correct CAL
+  token resolution for multi-asset contracts.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.6.7
+
 ## 7.8.0-next.0
 
 ### Minor Changes
