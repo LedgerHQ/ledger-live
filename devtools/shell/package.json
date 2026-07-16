@@ -6,6 +6,13 @@
   "main": "src/index.ts",
   "react-native": "src/index.native.ts",
   "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "scripts": {
     "format": "oxfmt src jest",

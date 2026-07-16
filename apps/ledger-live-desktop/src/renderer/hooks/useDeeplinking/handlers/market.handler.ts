@@ -1,15 +1,13 @@
 import { DeeplinkHandler } from "../types";
-import {
-  getMarketOrAssetDetailPath,
-  resolveLegacyCryptoCurrencyId,
-} from "LLD/utils/marketAssetNavigation";
+import { getMarketOrAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 import { parseMarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { setMarketCategory } from "~/renderer/actions/market";
+import { navigateLedgerAssetDeeplink } from "./navigateLedgerAssetDeeplink";
 
 /**
- * Market deeplinks. When Wallet 4.0 aggregated assets is on, navigates with the raw path so
- * Asset Detail can resolve market-api slugs (no `location.state`; unlike in-app Market row clicks).
- * When off, validates the id and falls back to the market list — aligned with mobile (af91289).
+ * Market deeplinks. When Wallet 4.0 aggregated assets is on, `/market/:currencyId` opens the
+ * coin detail and `/market/:currencyId/...tokenPath` opens the token detail using its Ledger id.
+ * When off, only coin ids are supported and invalid paths fall back to the market list.
  *
  * A `?category=` param pre-selects the Market category before navigating; unknown values
  * fall back to `all`.
@@ -29,16 +27,11 @@ export const marketHandler: DeeplinkHandler<"market"> = (
     return;
   }
 
-  if (assetsPath === "/asset") {
-    navigate(getMarketOrAssetDetailPath(path, true));
-    return;
-  }
-
-  const currencyId = resolveLegacyCryptoCurrencyId(path);
-  if (currencyId) {
-    navigate(getMarketOrAssetDetailPath(currencyId, false));
-    return;
-  }
-
-  navigate("/market");
+  navigateLedgerAssetDeeplink({
+    path,
+    assetsPath,
+    navigate,
+    fallbackPath: "/market",
+    legacyDetailPath: currencyId => getMarketOrAssetDetailPath(currencyId, false),
+  });
 };

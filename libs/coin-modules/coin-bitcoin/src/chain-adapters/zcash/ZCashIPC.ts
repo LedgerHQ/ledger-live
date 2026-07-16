@@ -38,6 +38,10 @@ import type {
   SyncShieldedArgs,
   ZCashClient,
   ZCashClientArgs,
+  BuildTransactionArgs,
+  BuildTransactionResult,
+  FinalizeTransactionArgs,
+  FinalizeTransactionResult,
 } from "./types";
 import {
   ZCASH_IPC,
@@ -124,6 +128,35 @@ export function createZCashIPCClient(
       totalBlocks: number,
     ): Promise<(processedBlocks: number) => SyncEstimatedTime> {
       return deps.createSyncTimeEstimator(totalBlocks);
+    },
+
+    async buildTransaction(
+      args: Omit<BuildTransactionArgs, "requestId">,
+    ): Promise<BuildTransactionResult> {
+      const requestId = nextRequestId();
+      return (await ipcRenderer.invoke(ZCASH_IPC.buildTransaction, {
+        ...args,
+        requestId,
+      })) as BuildTransactionResult;
+    },
+
+    async finalizeTransaction(
+      args: Omit<FinalizeTransactionArgs, "requestId">,
+    ): Promise<FinalizeTransactionResult> {
+      const requestId = nextRequestId();
+      return (await ipcRenderer.invoke(ZCASH_IPC.finalizeTransaction, {
+        ...args,
+        requestId,
+      })) as FinalizeTransactionResult;
+    },
+
+    async broadcastTransaction(grpcUrl: string, txHex: string): Promise<string> {
+      const requestId = nextRequestId();
+      return (await ipcRenderer.invoke(ZCASH_IPC.broadcastTransaction, {
+        grpcUrl,
+        txHex,
+        requestId,
+      })) as string;
     },
 
     syncShielded(syncArgs: SyncShieldedArgs): Observable<ShieldedSyncResult> {

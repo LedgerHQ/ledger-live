@@ -54,6 +54,7 @@ export default function PnlSection() {
         description={drawer.description}
         items={drawer.items}
         footer={drawer.footer}
+        discreet={drawer.discreet}
         pageName={drawer.pageName}
         source={drawer.source}
         testID={PNL_SECTION_TEST_IDS.detailDrawer}

@@ -14,6 +14,7 @@ import type {
   MatchedAccount,
   RecentAddress,
 } from "@ledgerhq/live-common/flows/send/recipient/types";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
@@ -68,6 +69,7 @@ type UseAddressValidationProps = Readonly<{
   currency: CryptoCurrency | TokenCurrency;
   account?: AccountLike;
   parentAccount?: Account;
+  transaction?: Transaction | null;
   currentAccountId?: string;
   recipientSupportsDomain?: boolean;
 }>;
@@ -83,6 +85,7 @@ export function useAddressValidation({
   currency,
   account,
   parentAccount,
+  transaction,
   currentAccountId,
   recipientSupportsDomain = false,
 }: UseAddressValidationProps): UseAddressValidationResult {
@@ -127,6 +130,7 @@ export function useAddressValidation({
     recipient: addressForBridgeValidation,
     account: account ?? null,
     parentAccount: parentAccount ?? null,
+    transaction,
     enabled: Boolean(
       addressForBridgeValidation &&
       account &&

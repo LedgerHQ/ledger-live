@@ -298,5 +298,13 @@ export function isTronAccount(account: Account): account is TronAccount {
 }
 export type TronAccount = Account & { tronResources: TronResources };
 export type TronAccountRaw = AccountRaw & { tronResources: TronResourcesRaw };
-export type TransactionStatus = TransactionStatusCommon;
+// Additive resource-breakdown fields for the send-flow UI. Sufficiency is: energyRequired <=
+// energyAvailable && bandwidthRequired <= bandwidthAvailable. On a failed energy estimate,
+// energyRequired is a safe insufficient sentinel. Not mirrored to TransactionStatusRaw.
+export type TransactionStatus = TransactionStatusCommon & {
+  energyRequired: BigNumber;
+  energyAvailable: BigNumber;
+  bandwidthRequired: BigNumber;
+  bandwidthAvailable: BigNumber;
+};
 export type TransactionStatusRaw = TransactionStatusCommonRaw;

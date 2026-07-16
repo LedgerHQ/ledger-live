@@ -42,8 +42,6 @@ export function createBridges(
   const pairWalletConnect = buildPairWalletConnect();
 
   const currencyBridge: ConcordiumCurrencyBridge = {
-    preload: () => Promise.resolve({}),
-    hydrate: () => {},
     scanAccounts,
     pairWalletConnect,
     onboardAccount,

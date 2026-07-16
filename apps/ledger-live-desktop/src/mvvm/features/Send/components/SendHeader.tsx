@@ -26,9 +26,11 @@ export function SendHeader() {
   const { close, transaction } = useSendFlowActions();
   const { displayMode } = useSendAmountDisplayMode();
   const { t } = useTranslation();
-  const availableText = useAvailableBalance(state.account.account, displayMode);
-
   const { navigation, currentStep } = wizard;
+
+  const headerDisplayMode = currentStep === SEND_FLOW_STEP.COIN_CONTROL ? "crypto" : displayMode;
+  const availableText = useAvailableBalance(state.account.account, headerDisplayMode);
+
   const currencyId = state.account.currency?.id;
 
   const sendFlowTrackingProperties = useMemo(

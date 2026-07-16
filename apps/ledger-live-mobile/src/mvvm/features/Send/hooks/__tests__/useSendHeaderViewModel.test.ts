@@ -131,4 +131,24 @@ describe("useSendHeaderViewModel", () => {
     expect(result.current.descriptionText).toBe("Base 1 · 0.0596983 ETH");
     expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "crypto");
   });
+
+  it("forces the header balance to crypto on the coin control step, ignoring the fiat display mode", () => {
+    mockedUseSendAmountDisplayMode.mockReturnValue({
+      displayMode: "fiat",
+      setDisplayMode: jest.fn(),
+    });
+    mockedUseCurrentSendFlowStep.mockReturnValue([
+      SEND_FLOW_STEP.COIN_CONTROL,
+      {
+        id: SEND_FLOW_STEP.COIN_CONTROL,
+        canGoBack: true,
+        showTitle: true,
+        showHeaderRight: false,
+      },
+    ]);
+
+    renderHook(() => useSendHeaderViewModel());
+
+    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "crypto");
+  });
 });

@@ -41,26 +41,26 @@ describe("hasMinimumFunds", () => {
       { label: "Legacy", type: 1, envVar: "EVM_REPLACE_TX_LEGACY_GASPRICE_FACTOR" },
     ])("$label", ({ type, envVar }) => {
       const transactionToUpdate: Transaction = { type } as Transaction;
-      test("should return true if has enough funds", () => {
+      test("should return true if has enough funds", async () => {
         // Mock the necessary dependencies
         mockGetEnv.mockReturnValue(new BigNumber(2) as any);
         mockGetEstimatedFees.mockReturnValue(new BigNumber(100));
         mainAccount.balance = new BigNumber(201);
 
-        const result = hasMinimumFundsToCancel({ mainAccount, transactionToUpdate });
+        const result = await hasMinimumFundsToCancel({ mainAccount, transactionToUpdate });
 
         expect(result).toBe(true);
         expect(mockGetEnv).toHaveBeenCalledWith(envVar);
         expect(mockGetEstimatedFees).toHaveBeenCalledWith(transactionToUpdate);
       });
 
-      test("should return false if does not have enough funds", () => {
+      test("should return false if does not have enough funds", async () => {
         // Mock the necessary dependencies
         mockGetEnv.mockReturnValue(new BigNumber(2) as any);
         mockGetEstimatedFees.mockReturnValue(new BigNumber(100));
         mainAccount.balance = new BigNumber(200);
 
-        const result = hasMinimumFundsToCancel({ mainAccount, transactionToUpdate });
+        const result = await hasMinimumFundsToCancel({ mainAccount, transactionToUpdate });
 
         expect(result).toBe(false);
         expect(mockGetEnv).toHaveBeenCalledWith(envVar);
@@ -97,13 +97,13 @@ describe("hasMinimumFunds", () => {
           type,
         } as Transaction;
 
-        test("should return true if has enough funds", () => {
+        test("should return true if has enough funds", async () => {
           // Mock the necessary dependencies
           mockGetEnv.mockReturnValue(new BigNumber(2) as any);
           mockGetEstimatedFees.mockReturnValue(new BigNumber(100));
           mainAccount.balance = new BigNumber(defaultBalance + 1);
 
-          const result = hasMinimumFundsToSpeedUp({
+          const result = await hasMinimumFundsToSpeedUp({
             account,
             mainAccount,
             transactionToUpdate,
@@ -114,13 +114,13 @@ describe("hasMinimumFunds", () => {
           expect(mockGetEstimatedFees).toHaveBeenCalledWith(transactionToUpdate);
         });
 
-        test("should return false if does not have enough funds", () => {
+        test("should return false if does not have enough funds", async () => {
           // Mock the necessary dependencies
           mockGetEnv.mockReturnValue(new BigNumber(2) as any);
           mockGetEstimatedFees.mockReturnValue(new BigNumber(100));
           mainAccount.balance = new BigNumber(defaultBalance);
 
-          const result = hasMinimumFundsToSpeedUp({
+          const result = await hasMinimumFundsToSpeedUp({
             account,
             mainAccount,
             transactionToUpdate,

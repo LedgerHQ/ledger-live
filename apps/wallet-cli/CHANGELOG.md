@@ -1,20 +1,34 @@
 # @ledgerhq/wallet-cli
 
-## 1.2.0
+## 2.0.1
+
+### Patch Changes
+
+- Refresh README documentation for the `2.0.0` release: bump the version, retitle the status section to v2, and document the `earn` (staking & DeFi yield) and `ring` (Ledger Key Ring / LKRP encryption) command groups in the commands table, `--help` list, and prerequisites.
+
+## 2.0.0
+
+> This is a manual major version bump. There are no breaking changes; the `2.0.0` release marks the addition of the `earn` and `ring` command groups as a product milestone. All entries below are additive (minor) or fixes (patch).
 
 ### Minor Changes
 
-- [#19220](https://github.com/LedgerHQ/ledger-live/pull/19220) [`996c76b`](https://github.com/LedgerHQ/ledger-live/commit/996c76b157553c547f83d877d25199b311ee0f63) Thanks [@ysitbon](https://github.com/ysitbon)! - Make the `@ledgerhq/cryptoassets` fiat registry injectable (`setFiatCurrenciesStore`) and inject the `@domain/entity-currency-fiat` registry at each app's bootstrap, so the domain registry is the single runtime source of truth for fiat currency data. The bundled fiat list stays as the fallback and is kept in sync by the existing parity test.
+- Add `ring` command group: a developer surface to your Ledger Key Ring (LKRP) for trustless, hardware-rooted encryption of files and text.
 
-- [#19313](https://github.com/LedgerHQ/ledger-live/pull/19313) [`abc6cc1`](https://github.com/LedgerHQ/ledger-live/commit/abc6cc1be7b14c0a8462ce7010499beac8739079) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Add fromCurrency and toCurrency fields to swap_completed analytics event
+  Commands: `ring init`, `ring encrypt`, `ring decrypt`, `ring keys`, `ring destroy`. Files via `-i/-o`, text via stdin/stdout. Keys are AES-256-GCM, derived per-name with HKDF-SHA256 from the LKRP-shared root key; the ring is recoverable from your Ledger.
 
-## 1.2.0-next.0
+- Earn: add `earn deposit`, `earn withdraw`, and `earn positions` commands. `earn deposit`/`earn withdraw` support EVM ERC-4626 Kiln vaults (the backend-built approve→deposit / redeem calldata is run through the EVM bridge, opening the Ethereum app with the `Kiln` clear-signing app as a dependency, with a gas-limit buffer for the gas-heavy vault calls and on-chain status polling) and Solana native staking (`stake.createAccount` to delegate; a two-phase unstake that undelegates first and then withdraws the inactive lamports with `--finalize`). `earn positions` lists backend stake views and enriches Solana with on-chain stake accounts so `earn withdraw --stake-account` has a concrete target. Positions still being refreshed are flagged with a `(stale)` marker, and `--fresh` triggers a background refresh whose results show up on a re-run. All three accept `--output json`, and deposit/withdraw accept `--dry-run` to prepare and validate without signing or broadcasting.
 
-### Minor Changes
+  Earn yields: source Solana validators from the validator-details endpoint and merge Figment APY (Net APY now shown for validators), surface more validators with a configurable `--limit`, and separate informational grow/provider rows from concrete `earn deposit --product` targets in the output. Without `--network`, the listing is now restricted to CLI-supported earn networks (ethereum, solana) and narrowed to the user's discovered accounts, with `--all` to bypass the account filter. Rows the CLI cannot deposit into directly now carry a `ledgerlive://` deeplink to act on in the wallet: provider rows link to their live app (`ledgerlive://discover/<liveAppId>`), and grow rows link to the Earn deposit flow for the asset (`ledgerlive://earn/deposit?cryptoAssetId=<deposit_token>&accountId=<walletApiId>`, defaulting to the first discovered account per network with `--account` to override). For ERC-20 deposit tokens the deeplink targets the token sub-account id (not the parent) so the deposit page selects the right token. Solana delegation does not go through a live app (the Earn live app itself opens the native modal), so SOL rows instead link to the native delegation modal (`ledgerlive://earn?action=stake-account&accountId=<walletApiId>`, falling back to `action=stake` when no account is known). Deeplinks render as OSC 8 hyperlinks (clickable in terminals that support it, plain copy-pasteable URL when piped or unsupported)
 
-- [#19220](https://github.com/LedgerHQ/ledger-live/pull/19220) [`996c76b`](https://github.com/LedgerHQ/ledger-live/commit/996c76b157553c547f83d877d25199b311ee0f63) Thanks [@ysitbon](https://github.com/ysitbon)! - Make the `@ledgerhq/cryptoassets` fiat registry injectable (`setFiatCurrenciesStore`) and inject the `@domain/entity-currency-fiat` registry at each app's bootstrap, so the domain registry is the single runtime source of truth for fiat currency data. The bundled fiat list stays as the fallback and is kept in sync by the existing parity test.
+- Make the `@ledgerhq/cryptoassets` fiat registry injectable (`setFiatCurrenciesStore`) and inject the `@domain/entity-currency-fiat` registry at each app's bootstrap, so the domain registry is the single runtime source of truth for fiat currency data. The bundled fiat list stays as the fallback and is kept in sync by the existing parity test.
 
-- [#19313](https://github.com/LedgerHQ/ledger-live/pull/19313) [`abc6cc1`](https://github.com/LedgerHQ/ledger-live/commit/abc6cc1be7b14c0a8462ce7010499beac8739079) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Add fromCurrency and toCurrency fields to swap_completed analytics event
+### Patch Changes
+
+- `ring destroy` now handles the non-destructive application deactivation introduced by the LKRP per-application close: it calls `destroyApplication` directly (which is idempotent on an already-closed stream) and, when the member has been ejected from the ring (`TrustchainEjected` — removed by another owner, or the trustchain destroyed remotely), treats the remote as already gone and proceeds to the local credential wipe instead of aborting as a transient network failure. `ring encrypt`/`ring decrypt` now surface actionable guidance when the wallet-cli application has been deactivated on the ring.
+
+- Add `fromCurrency` and `toCurrency` fields to the `swap_completed` analytics event.
+
+- Add tests for the Device Intent Executor (DIE).
 
 ## 1.1.0
 

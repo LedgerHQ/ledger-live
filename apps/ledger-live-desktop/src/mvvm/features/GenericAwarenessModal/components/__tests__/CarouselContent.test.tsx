@@ -48,9 +48,20 @@ describe("CarouselContent", () => {
     mockUseTheme.mockReturnValue({ theme: "light" } as ReturnType<typeof useTheme>);
   });
 
-  it("should hide the primary button when label or link is empty", () => {
+  it("should show the primary button when label is present and link is empty", () => {
     renderCarousel({
       slides: [{ ...slides[0], primaryButtonLabel: "Primary A", primaryButtonLink: "" }],
+    });
+
+    expect(screen.getByTestId("generic-awareness-modal-primary-button")).toBeVisible();
+    expect(screen.getByTestId("generic-awareness-modal-continue-button")).toBeVisible();
+  });
+
+  it("should hide the primary button when label is empty", () => {
+    renderCarousel({
+      slides: [
+        { ...slides[0], primaryButtonLabel: "", primaryButtonLink: "https://www.ledger.com" },
+      ],
     });
 
     expect(screen.queryByTestId("generic-awareness-modal-primary-button")).not.toBeInTheDocument();

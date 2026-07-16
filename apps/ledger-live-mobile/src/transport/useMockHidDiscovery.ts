@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { HIDDiscoveryState } from "@ledgerhq/live-dmk-mobile";
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
-import { e2eBridgeClient } from "../../e2e/bridge/client";
+import { e2eBridgeClient } from "~/e2e/bridge/client";
 import { filter } from "rxjs/operators";
 import { makeMockDiscoveredDevice } from "./mockDiscoveredDevice";
 

@@ -136,12 +136,14 @@ export function useSideBarViewModel(): SideBarViewModel {
   const displayBlueDot = useDeviceHasUpdatesAvailable(lastSeenDevice);
 
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
+  const payTabFeature = useFeature("lwdPayTab");
   const recoverFeature = useFeature("protectServicesDesktop");
   const recoverHomePath = useAccountPath(recoverFeature);
 
+  const isPayTabEnabled = !!payTabFeature?.enabled;
+
   const { shouldDisplayAssetSection, shouldDisplayMyWallet: isMyWalletEnabled } =
     useWalletFeaturesConfig("desktop");
-
   const accountsSidebarPath = getAccountsSidebarPath(shouldDisplayAssetSection);
 
   const wasNarrowRef = useRef<boolean | null>(null);
@@ -321,6 +323,7 @@ export function useSideBarViewModel(): SideBarViewModel {
     displayBlueDot,
     earnLabel,
     isCardDisabled,
+    isPayTabEnabled,
     isAccountsDisabled: noAccounts,
     isLiveAppTabSelected,
     isMyWalletEnabled,

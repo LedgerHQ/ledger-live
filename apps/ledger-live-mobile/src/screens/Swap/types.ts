@@ -46,6 +46,10 @@ export type SwapPendingOperation = {
   sponsored?: boolean;
 };
 
+export type SwapHistoryParams = {
+  swapId?: string;
+};
+
 export interface DefaultAccountSwapParamList {
   defaultAccount?: AccountLike;
   defaultParentAccount?: Account;

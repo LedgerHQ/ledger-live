@@ -17,6 +17,7 @@ import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigatio
 import StepHeader from "../StepHeader";
 import type { SendFundsNavigatorStackParamList } from "./types/SendFundsNavigator";
 import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import perFamilySendFlow from "~/generated/customSendFlow";
 
 const totalSteps = "5";
 
@@ -165,6 +166,17 @@ export default function SendFundsNavigator() {
             headerShown: false,
           }}
         />
+        {Object.values(perFamilySendFlow).flatMap(family =>
+          (family?.screens ?? []).map(({ name, component, options, initialParams }) => (
+            <Stack.Screen
+              key={name}
+              name={name}
+              component={component}
+              options={options}
+              initialParams={initialParams}
+            />
+          )),
+        )}
       </Stack.Navigator>
     </DomainServiceProvider>
   );

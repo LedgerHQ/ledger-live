@@ -55,7 +55,6 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
@@ -68,13 +67,14 @@
     "@stricahq/typhonjs": "^3.0.0",
     "bech32": "^1.1.3",
     "bignumber.js": "^9.1.2",
-    "expect": "catalog:",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@domain/entity-currency-crypto": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",

@@ -1,10 +1,9 @@
+import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { AssertionError, fail } from "assert";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios from "axios";
-import BigNumber from "bignumber.js";
 
 import {
   etherscanERC1155EventToOperations,
@@ -27,10 +26,6 @@ import {
   etherscanTokenOperations,
 } from "../../fixtures/etherscan.fixtures";
 import * as ETHERSCAN_API from "./etherscan";
-
-setupMockCryptoAssetsStore({
-  getTokensSyncHash: async () => "0",
-});
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");
@@ -62,7 +57,6 @@ const createFetchWithLimit =
     return apiFn({
       currency,
       address: account.freshAddress,
-      accountId: account.id,
       fromBlock: 0,
       sort,
       ...(limit !== undefined ? { limit } : {}),
@@ -192,7 +186,6 @@ describe("EVM Family", () => {
             },
           },
           address: account.freshAddress,
-          accountId: account.id,
           fromBlock: 0,
           sort: "desc",
         });
@@ -215,7 +208,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getCoinOperations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 0,
         sort: "desc",
       });
@@ -223,7 +215,7 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: etherscanCoinOperations
-          .map(op => etherscanOperationToOperations(account.id, op))
+          .map(op => etherscanOperationToOperations(account.freshAddress, currency.id, op))
           .flat(),
         isDone: true,
         boundBlock: 14923692,
@@ -252,7 +244,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getCoinOperations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 50,
         sort: "desc",
       });
@@ -260,7 +251,7 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: etherscanCoinOperations
-          .map(op => etherscanOperationToOperations(account.id, op))
+          .map(op => etherscanOperationToOperations(account.freshAddress, currency.id, op))
           .flat(),
         isDone: true,
         boundBlock: 14923692,
@@ -289,7 +280,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getCoinOperations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 50,
         toBlock: 100,
         sort: "desc",
@@ -298,7 +288,7 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: etherscanCoinOperations
-          .map(op => etherscanOperationToOperations(account.id, op))
+          .map(op => etherscanOperationToOperations(account.freshAddress, currency.id, op))
           .flat(),
         isDone: true,
         boundBlock: 14923692,
@@ -425,7 +415,6 @@ describe("EVM Family", () => {
             },
           },
           address: account.freshAddress,
-          accountId: account.id,
           fromBlock: 0,
           sort: "desc",
         });
@@ -448,7 +437,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getTokenOperations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 0,
         sort: "desc",
       });
@@ -456,9 +444,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[0], 0),
-          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
-          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
+          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[0], 0),
+          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[1], 0),
+          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 4764973,
@@ -487,7 +475,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getTokenOperations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 50,
         sort: "desc",
       });
@@ -495,9 +482,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[0], 0),
-          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
-          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
+          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[0], 0),
+          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[1], 0),
+          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 4764973,
@@ -526,7 +513,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getTokenOperations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 50,
         toBlock: 100,
         sort: "desc",
@@ -535,9 +521,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[0], 0),
-          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
-          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
+          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[0], 0),
+          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[1], 0),
+          etherscanERC20EventToOperations(account.freshAddress, etherscanTokenOperations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 4764973,
@@ -653,7 +639,6 @@ describe("EVM Family", () => {
         const response = await ETHERSCAN_API.getTokenOperations({
           currency,
           address: account.freshAddress,
-          accountId: account.id,
           fromBlock: 0,
           sort: "desc",
         });
@@ -670,7 +655,6 @@ describe("EVM Family", () => {
         const response = await ETHERSCAN_API.getTokenOperations({
           currency,
           address: account.freshAddress,
-          accountId: account.id,
           fromBlock: 0,
           sort: "desc",
         });
@@ -687,7 +671,6 @@ describe("EVM Family", () => {
         const response = await ETHERSCAN_API.getTokenOperations({
           currency,
           address: account.freshAddress,
-          accountId: account.id,
           fromBlock: 0,
           sort: "desc",
         });
@@ -705,7 +688,6 @@ describe("EVM Family", () => {
         const response = await ETHERSCAN_API.getTokenOperations({
           currency,
           address: account.freshAddress,
-          accountId: account.id,
           fromBlock: 0,
           sort: "desc",
         });
@@ -748,7 +730,6 @@ describe("EVM Family", () => {
             },
           },
           address: account.freshAddress,
-          accountId: account.id,
           fromBlock: 0,
           sort: "desc",
         });
@@ -771,7 +752,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getERC721Operations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 0,
         sort: "desc",
       });
@@ -779,9 +759,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC721EventToOperations(account.id, etherscanERC721Operations[0], 0),
-          etherscanERC721EventToOperations(account.id, etherscanERC721Operations[1], 0),
-          etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
+          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[0], 0),
+          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[1], 0),
+          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 4708161,
@@ -809,7 +789,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getERC721Operations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 50,
         sort: "desc",
       });
@@ -817,9 +796,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC721EventToOperations(account.id, etherscanERC721Operations[0], 0),
-          etherscanERC721EventToOperations(account.id, etherscanERC721Operations[1], 0),
-          etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
+          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[0], 0),
+          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[1], 0),
+          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 4708161,
@@ -847,7 +826,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getERC721Operations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 50,
         toBlock: 100,
         sort: "desc",
@@ -856,9 +834,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC721EventToOperations(account.id, etherscanERC721Operations[0], 0),
-          etherscanERC721EventToOperations(account.id, etherscanERC721Operations[1], 0),
-          etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
+          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[0], 0),
+          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[1], 0),
+          etherscanERC721EventToOperations(account.freshAddress, etherscanERC721Operations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 4708161,
@@ -985,7 +963,6 @@ describe("EVM Family", () => {
             },
           },
           address: account.freshAddress,
-          accountId: account.id,
           fromBlock: 0,
           sort: "desc",
         });
@@ -1008,7 +985,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getERC1155Operations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 0,
         sort: "desc",
       });
@@ -1016,9 +992,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[0], 0),
-          etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[1], 0),
-          etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
+          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[0], 0),
+          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[1], 0),
+          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 14049909,
@@ -1046,7 +1022,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getERC1155Operations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 50,
         sort: "desc",
       });
@@ -1054,9 +1029,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[0], 0),
-          etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[1], 0),
-          etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
+          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[0], 0),
+          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[1], 0),
+          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 14049909,
@@ -1084,7 +1059,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getERC1155Operations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 50,
         toBlock: 100,
         sort: "desc",
@@ -1093,9 +1067,9 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(4);
       expect(response).toEqual({
         operations: [
-          etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[0], 0),
-          etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[1], 0),
-          etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
+          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[0], 0),
+          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[1], 0),
+          etherscanERC1155EventToOperations(account.freshAddress, etherscanERC1155Operations[2], 1),
         ].flat(),
         isDone: true,
         boundBlock: 14049909,
@@ -1202,7 +1176,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getNftOperations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 0,
         sort: "desc",
       });
@@ -1210,7 +1183,7 @@ describe("EVM Family", () => {
       // Verify operations are sorted by date descending
       const sortedOps = response.operations
         .slice()
-        .sort((a, b) => b.date.getTime() - a.date.getTime());
+        .sort((a, b) => b.tx.date.getTime() - a.tx.date.getTime());
       expect(response.operations.length).toBe(8);
       expect(response).toEqual({
         operations: sortedOps,
@@ -1235,7 +1208,6 @@ describe("EVM Family", () => {
         return ETHERSCAN_API.getNftOperations({
           currency,
           address: account.freshAddress,
-          accountId: account.id,
           fromBlock: 0,
           sort,
           ...(limit !== undefined ? { limit } : {}),
@@ -1306,7 +1278,6 @@ describe("EVM Family", () => {
         return ETHERSCAN_API.getNftOperations({
           currency,
           address: account.freshAddress,
-          accountId: account.id,
           fromBlock: 0,
           sort,
         });
@@ -1355,7 +1326,6 @@ describe("EVM Family", () => {
             },
           },
           address: account.freshAddress,
-          accountId: account.id,
           fromBlock: 0,
           sort: "desc",
         });
@@ -1378,7 +1348,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getInternalOperations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 0,
         sort: "desc",
       });
@@ -1386,9 +1355,21 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(3);
       expect(response).toEqual({
         operations: [
-          etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[0], 0),
-          etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
-          etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
+          etherscanInternalTransactionToOperations(
+            account.freshAddress,
+            etherscanInternalOperations[0],
+            0,
+          ),
+          etherscanInternalTransactionToOperations(
+            account.freshAddress,
+            etherscanInternalOperations[1],
+            1,
+          ),
+          etherscanInternalTransactionToOperations(
+            account.freshAddress,
+            etherscanInternalOperations[2],
+            0,
+          ),
         ].flat(),
         isDone: true,
         boundBlock: 15214745,
@@ -1417,7 +1398,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getInternalOperations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 50,
         sort: "desc",
       });
@@ -1425,9 +1405,21 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(3);
       expect(response).toEqual({
         operations: [
-          etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[0], 0),
-          etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
-          etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
+          etherscanInternalTransactionToOperations(
+            account.freshAddress,
+            etherscanInternalOperations[0],
+            0,
+          ),
+          etherscanInternalTransactionToOperations(
+            account.freshAddress,
+            etherscanInternalOperations[1],
+            1,
+          ),
+          etherscanInternalTransactionToOperations(
+            account.freshAddress,
+            etherscanInternalOperations[2],
+            0,
+          ),
         ].flat(),
         isDone: true,
         boundBlock: 15214745,
@@ -1456,7 +1448,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getInternalOperations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 50,
         toBlock: 100,
         sort: "desc",
@@ -1465,9 +1456,21 @@ describe("EVM Family", () => {
       expect(response.operations.length).toBe(3);
       expect(response).toEqual({
         operations: [
-          etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[0], 0),
-          etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
-          etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
+          etherscanInternalTransactionToOperations(
+            account.freshAddress,
+            etherscanInternalOperations[0],
+            0,
+          ),
+          etherscanInternalTransactionToOperations(
+            account.freshAddress,
+            etherscanInternalOperations[1],
+            1,
+          ),
+          etherscanInternalTransactionToOperations(
+            account.freshAddress,
+            etherscanInternalOperations[2],
+            0,
+          ),
         ].flat(),
         isDone: true,
         boundBlock: 15214745,
@@ -1502,16 +1505,27 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getInternalOperations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 0,
         sort: "desc",
       });
 
       expect(response.operations).toEqual(
         [
-          etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[0], 0),
-          etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
-          etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
+          etherscanInternalTransactionToOperations(
+            account.freshAddress,
+            etherscanInternalOperations[0],
+            0,
+          ),
+          etherscanInternalTransactionToOperations(
+            account.freshAddress,
+            etherscanInternalOperations[1],
+            1,
+          ),
+          etherscanInternalTransactionToOperations(
+            account.freshAddress,
+            etherscanInternalOperations[2],
+            0,
+          ),
         ].flat(),
       );
     });
@@ -1526,7 +1540,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getInternalOperations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 0,
         sort: "asc",
       });
@@ -1836,7 +1849,6 @@ describe("EVM Family", () => {
       const response = await ETHERSCAN_API.getNftOperations({
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 0,
         sort: "desc",
       });
@@ -1975,7 +1987,6 @@ describe("EVM Family", () => {
         return ETHERSCAN_API.getOperations.force(
           currency,
           account.freshAddress,
-          account.id,
           fromBlock,
           toBlock,
           pagingToken,
@@ -1986,15 +1997,16 @@ describe("EVM Family", () => {
 
     // Helper to extract result summary for assertions
     const summarize = (result: {
-      lastCoinOperations: { blockHeight?: number | null | undefined }[];
-      lastTokenOperations: { blockHeight?: number | null | undefined }[];
-      lastInternalOperations: { blockHeight?: number | null | undefined }[];
+      lastCoinOperations: Array<Operation<MemoNotSupported>>;
+      lastTokenOperations: Array<Operation<MemoNotSupported>>;
+      lastInternalOperations: Array<Operation<MemoNotSupported>>;
+      lastNftOperations: Array<Operation<MemoNotSupported>>;
       nextPagingToken?: string;
     }): { ops: string[]; pagingState: PagingState | undefined } => {
       const tagged = [
-        ...result.lastCoinOperations.map(op => ({ type: "C", block: op.blockHeight })),
-        ...result.lastInternalOperations.map(op => ({ type: "I", block: op.blockHeight })),
-        ...result.lastTokenOperations.map(op => ({ type: "T", block: op.blockHeight })),
+        ...result.lastCoinOperations.map(op => ({ type: "C", block: op.tx.block.height })),
+        ...result.lastInternalOperations.map(op => ({ type: "I", block: op.tx.block.height })),
+        ...result.lastTokenOperations.map(op => ({ type: "T", block: op.tx.block.height })),
       ];
       // Secondary sort order: C < I < T (coin first at same block)
       const typeOrder = { C: 0, I: 1, T: 2 } as Record<string, number>;
@@ -2563,20 +2575,23 @@ describe("EVM Family", () => {
   describe("exhaustEndpoint", () => {
     const LIMIT = 3;
 
-    const createOps = (blockHeights: number[]): ETHERSCAN_API.EndpointResult["operations"] =>
+    const createOps = (blockHeights: number[]): Array<Operation<MemoNotSupported>> =>
       blockHeights.map((blockHeight, i) => ({
         id: `op-${blockHeight}-${i}`,
-        hash: `0x${blockHeight}${i}`,
-        accountId: account.id,
-        blockHash: `0xblock${blockHeight}`,
-        blockHeight,
-        recipients: ["0x123"],
-        senders: ["0x456"],
-        value: new BigNumber(100),
-        fee: new BigNumber(10),
-        date: new Date(),
         type: "OUT" as const,
-        extra: {},
+        senders: ["0x456"],
+        recipients: ["0x123"],
+        value: 100n,
+        asset: { type: "native" as const },
+        tx: {
+          hash: `0x${blockHeight}${i}`,
+          block: { height: blockHeight, hash: `0xblock${blockHeight}`, time: new Date() },
+          fees: 10n,
+          feesPayer: "0x456",
+          date: new Date(),
+          failed: false,
+        },
+        details: {},
       }));
 
     // Smart mock that paginates based on the page and limit parameters
@@ -2594,7 +2609,7 @@ describe("EVM Family", () => {
           return Promise.resolve({
             operations: ops,
             isDone: ops.length === 0 || !isPageFull || !hasMore,
-            boundBlock: ops.length > 0 ? Math.max(...ops.map(op => op.blockHeight ?? 0)) : 0,
+            boundBlock: ops.length > 0 ? Math.max(...ops.map(op => op.tx.block.height ?? 0)) : 0,
             isPageFull,
           });
         },
@@ -2614,7 +2629,6 @@ describe("EVM Family", () => {
       await ETHERSCAN_API.exhaustEndpoint(mockFetch, {
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 0,
         limit: 100,
         sort: "desc",
@@ -2689,7 +2703,6 @@ describe("EVM Family", () => {
       const result = await ETHERSCAN_API.exhaustEndpoint(mockFetch, {
         currency,
         address: account.freshAddress,
-        accountId: account.id,
         fromBlock: 0,
         limit: LIMIT,
         sort: "desc",
@@ -2699,7 +2712,7 @@ describe("EVM Family", () => {
         isPageFull: result.isPageFull,
         isDone: result.isDone,
         boundBlock: result.boundBlock,
-        blocks: result.operations.map(op => op.blockHeight),
+        blocks: result.operations.map(op => op.tx.block.height),
       }).toEqual(expected);
     });
   });

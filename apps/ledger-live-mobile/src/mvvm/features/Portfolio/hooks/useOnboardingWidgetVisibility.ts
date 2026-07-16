@@ -1,5 +1,5 @@
-import { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "~/context/hooks";
+import { useMemo } from "react";
+import { useSelector } from "~/context/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useFeature } from "@features/platform-feature-flags";
 import {
@@ -7,15 +7,16 @@ import {
   usePostOnboardingPortfolioWidgetVisibility,
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { usePostOnboardingHubStepperDisplay } from "~/logic/postOnboarding/usePostOnboardingHubStepperDisplay";
-import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
+import {
+  isPostOnboardingBeforeCutoffTime,
+  usePostOnboardingCompletionDateBackfill,
+} from "LLM/features/PostOnboarding/utils/postOnboardingCompletionWindow";
 import {
   hasCompletedOnboardingSelector,
   onboardingCompletionDateSelector,
 } from "~/reducers/settings";
-import { addCompletionDate } from "~/actions/settings";
 
 export const useOnboardingWidgetVisibility = () => {
-  const dispatch = useDispatch();
   const onboardingWidgetFeature = useFeature("onboardingWidget");
   const shouldDisplayOnboardingWidget = onboardingWidgetFeature?.enabled ?? false;
   const onboardingCompletionDate = useSelector(onboardingCompletionDateSelector);
@@ -27,19 +28,12 @@ export const useOnboardingWidgetVisibility = () => {
   const { actionsState } = usePostOnboardingHubState();
   const { areAllActionsCompleted } = usePostOnboardingHubStepperDisplay(actionsState);
 
-  const isBeforeCutoffTime = useMemo(() => {
-    return onboardingCompletionDate === null
-      ? hasCompletedOnboarding
-      : differenceInCalendarDays(new Date(), new Date(onboardingCompletionDate)) <= 15;
-  }, [onboardingCompletionDate, hasCompletedOnboarding]);
+  const isBeforeCutoffTime = useMemo(
+    () => isPostOnboardingBeforeCutoffTime({ onboardingCompletionDate, hasCompletedOnboarding }),
+    [onboardingCompletionDate, hasCompletedOnboarding],
+  );
 
-  useEffect(() => {
-    // Populate completion dates for all users that have already completed onboarding
-    // before completion date was introduced
-    if (hasCompletedOnboarding && onboardingCompletionDate === null) {
-      dispatch(addCompletionDate());
-    }
-  }, [hasCompletedOnboarding, onboardingCompletionDate, dispatch]);
+  usePostOnboardingCompletionDateBackfill();
 
   const areHubStepsDone = actionsState.length > 0 && areAllActionsCompleted;
 

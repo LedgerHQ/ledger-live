@@ -1,4 +1,4 @@
-import { TOKEN_OUTPUT_FIELDS } from "@ledgerhq/cryptoassets/cal-client/state-manager/fields";
+import { ApiTokenResponseSchema } from "@domain/api-currency-token";
 import { FamilyOption } from "./types";
 
 export const FAMILY_OPTIONS: FamilyOption[] = [
@@ -16,7 +16,7 @@ export const PAGE_SIZE_OPTIONS = [
   { value: "1000", label: "1000" },
 ];
 
-export const OUTPUT_FIELD_OPTIONS = TOKEN_OUTPUT_FIELDS.map(field => ({
+export const OUTPUT_FIELD_OPTIONS = Object.keys(ApiTokenResponseSchema.shape).map(field => ({
   value: field,
   label: field.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()),
 }));

@@ -643,9 +643,9 @@ describe("sendFeatures", () => {
     ["bitcoin", "free"],
     ["ethereum", "free"],
     ["filecoin", "free"],
-    ["cardano", "free"],
     ["solana", "impossible"],
     ["cosmos", "impossible"],
+    ["cardano", "warning"],
     ["near", "warning"],
     ["vechain", "warning"],
   ])("should get self transfer policy for %s", (currencyId, expected) => {

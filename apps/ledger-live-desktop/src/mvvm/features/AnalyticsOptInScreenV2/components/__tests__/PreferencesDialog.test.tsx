@@ -4,6 +4,7 @@ import { PreferencesDialog } from "../PreferencesDialog";
 
 const baseProps = {
   isOpen: true,
+  shouldWeTrack: false,
   onBackFromPreferences: jest.fn(),
   onClosed: jest.fn(),
   draftShareAnalytics: false,

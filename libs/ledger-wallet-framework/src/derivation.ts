@@ -1,6 +1,6 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCurrenciesResolver } from "./currencies/resolver";
 import { getEnv } from "@ledgerhq/live-env";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "./types";
 import { DerivationMode } from "@ledgerhq/types-live";
 
 type ModeSpec = {
@@ -238,6 +238,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   westend: ["polkadotbip44"],
   assethub_polkadot: ["polkadotbip44"],
   assethub_westend: ["polkadotbip44"],
+  bittensor: ["polkadotbip44"],
   hedera: ["hederaBip44"],
   hedera_testnet: ["hederaBip44"],
   filecoin: ["glifLegacy", "filecoinBIP44", "glif"],
@@ -345,7 +346,9 @@ export const getDerivationScheme = ({
   };
   if (overridesDerivation) return overridesDerivation;
   const splitFrom = isUnsplitDerivationMode(derivationMode) && currency.forkedFrom;
-  const coinType = splitFrom ? getCryptoCurrencyById(splitFrom).coinType : "<coin_type>";
+  const coinType = splitFrom
+    ? getCurrenciesResolver().getCryptoCurrencyById(splitFrom).coinType
+    : "<coin_type>";
   const purpose = getPurposeDerivationMode(derivationMode);
   return `${purpose}'/${coinType}'/<account>'/<node>/<address>`;
 };
@@ -395,6 +398,7 @@ const disableBIP44: Record<string, boolean> = {
   assethub_polkadot: true,
   westend: true,
   assethub_westend: true,
+  bittensor: true,
   solana: true,
   hedera: true,
   hedera_testnet: true,
@@ -468,7 +472,9 @@ export const getSeedIdentifierDerivation = (
 ): string => {
   const unsplitFork = isUnsplitDerivationMode(derivationMode) ? currency.forkedFrom : null;
   const purpose = getPurposeDerivationMode(derivationMode);
-  const { coinType } = unsplitFork ? getCryptoCurrencyById(unsplitFork) : currency;
+  const { coinType } = unsplitFork
+    ? getCurrenciesResolver().getCryptoCurrencyById(unsplitFork)
+    : currency;
   const f = seedIdentifierPath(currency.id);
   return f({
     purpose,

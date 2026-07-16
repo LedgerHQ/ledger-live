@@ -15,7 +15,10 @@ export type AleoAddAccountParams = {
   inline?: boolean;
   returnToSwap?: boolean;
   onSuccess?: (res: { scannedAccounts: Account[]; selected: Account[] }) => void;
-  initialRouteName?: ScreenName.AleoViewKeyWarning | ScreenName.AleoViewKeyApprove;
+  initialRouteName?:
+    | ScreenName.AleoViewKeyWarning
+    | ScreenName.AleoViewKeyApprove
+    | ScreenName.AleoNoAccountsAdded;
 };
 
 export type AleoAddAccountParamList = {
@@ -27,4 +30,5 @@ export type AleoViewKeyFlowParamList = {
   [ScreenName.AleoViewKeyApprove]: AleoAddAccountParams & {
     accountsToAdd: Account[];
   };
+  [ScreenName.AleoNoAccountsAdded]: Omit<AleoAddAccountParams, "accountsToAdd">;
 };

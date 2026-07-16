@@ -3,6 +3,7 @@ import { render, screen } from "tests/testSetup";
 import { AnalyticsConsentScreen } from "../AnalyticsConsentScreen";
 
 const baseProps = {
+  shouldWeTrack: false,
   onAcceptAll: jest.fn(),
   onRefuseAll: jest.fn(),
   onPrevious: jest.fn(),

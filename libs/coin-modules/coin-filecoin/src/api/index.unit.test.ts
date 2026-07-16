@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import {

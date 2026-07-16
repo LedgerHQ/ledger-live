@@ -228,6 +228,17 @@ describe("coin-framework utils", () => {
       ],
       [
         "coin",
+        "redelegate",
+        {},
+        {
+          parentType: "REDELEGATE",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
+        },
+      ],
+      [
+        "coin",
         "stake",
         {},
         {

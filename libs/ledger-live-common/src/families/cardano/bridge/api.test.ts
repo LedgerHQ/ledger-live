@@ -3,7 +3,7 @@ import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import cardanoBridge, { getAssetFromToken, getTokenFromAsset } from "./api";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 jest.mock("@ledgerhq/cryptoassets/state");
 

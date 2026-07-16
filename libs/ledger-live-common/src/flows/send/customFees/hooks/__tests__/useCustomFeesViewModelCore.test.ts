@@ -48,6 +48,14 @@ const customFeeConfig = {
   }),
 };
 
+const usdtCurrencyForAssetOption = {
+  id: "celo/erc20/usdt",
+  type: "TokenCurrency",
+  name: "Tether USD",
+  ticker: "USDT",
+  units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
+};
+
 jest.mock("../../../../../bridge/descriptor/send/features", () => ({
   resolveFeeUnitLabel: (unitLabel: string | undefined) => unitLabel,
   sendFeatures: {
@@ -61,6 +69,8 @@ jest.mock("../../../../../bridge/descriptor/send/features", () => ({
           ticker: "USDT",
           label: "USDT",
           customFeeInputValueTransform: feeAssetInputValueTransform,
+          currency: usdtCurrencyForAssetOption,
+          balance: new BigNumber("1234500000"), // 1,234.5 USDT (6 decimals)
         },
       ],
       getSelectedOptionId: () => "usdt-account-id",
@@ -187,6 +197,7 @@ describe("useCustomFeesViewModelCore", () => {
         transactionActions,
         onConfirm: jest.fn(),
         locale: "en",
+        discreet: false,
         counterValueCurrency: usdCurrency,
         calculateCountervalue,
         labels,
@@ -230,6 +241,89 @@ describe("useCustomFeesViewModelCore", () => {
 
     expect(nextTransaction.feesStrategy).toBe("custom");
     expect(nextTransaction.fees.toFixed()).toBe("30000000000000000");
+  });
+
+  it("derives each asset option's formattedBalance from balance + currency + locale", async () => {
+    const transaction = createTransaction();
+    const transactionActions = createTransactionActions();
+    const calculateCountervalue = jest.fn(() => new BigNumber(0));
+
+    const { result } = renderHook(() =>
+      useCustomFeesViewModelCore({
+        account: createAccount(),
+        parentAccount: null,
+        transaction,
+        status: createStatus(),
+        currency: celoCurrency,
+        transactionActions,
+        onConfirm: jest.fn(),
+        locale: "en",
+        discreet: false,
+        counterValueCurrency: usdCurrency,
+        calculateCountervalue,
+        labels,
+      }),
+    );
+
+    // Native CELO option in the mock has no `balance`/`currency` -> no formattedBalance.
+    const celoOption = result.current.assetOptions.find(option => option.id === "celo");
+    expect(celoOption?.formattedBalance).toBeUndefined();
+
+    // USDT option carries `balance` (raw BigNumber) + `currency` -> formatted with locale.
+    const usdtOption = result.current.assetOptions.find(option => option.id === "usdt-account-id");
+    expect(usdtOption?.formattedBalance).toBe("1,234.5");
+
+    const { result: resultFr } = renderHook(() =>
+      useCustomFeesViewModelCore({
+        account: createAccount(),
+        parentAccount: null,
+        transaction,
+        status: createStatus(),
+        currency: celoCurrency,
+        transactionActions,
+        onConfirm: jest.fn(),
+        locale: "fr-FR",
+        discreet: false,
+        counterValueCurrency: usdCurrency,
+        calculateCountervalue,
+        labels,
+      }),
+    );
+
+    const usdtOptionFr = resultFr.current.assetOptions.find(
+      option => option.id === "usdt-account-id",
+    );
+    // Different locale -> different grouping/decimal separators, same underlying value.
+    // fr-FR groups with a narrow no-break space (U+202F), not a plain ASCII space.
+    expect(usdtOptionFr?.formattedBalance).not.toBe(usdtOption?.formattedBalance);
+    expect(usdtOptionFr?.formattedBalance).toBe("1 234,5");
+  });
+
+  it("masks asset option balances when discreet mode is on", async () => {
+    const transaction = createTransaction();
+    const transactionActions = createTransactionActions();
+    const calculateCountervalue = jest.fn(() => new BigNumber(0));
+
+    const { result } = renderHook(() =>
+      useCustomFeesViewModelCore({
+        account: createAccount(),
+        parentAccount: null,
+        transaction,
+        status: createStatus(),
+        currency: celoCurrency,
+        transactionActions,
+        onConfirm: jest.fn(),
+        locale: "en",
+        discreet: true,
+        counterValueCurrency: usdCurrency,
+        calculateCountervalue,
+        labels,
+      }),
+    );
+
+    const usdtOption = result.current.assetOptions.find(option => option.id === "usdt-account-id");
+    // discreet mode masks the value regardless of the underlying balance/locale.
+    expect(usdtOption?.formattedBalance).toBe("***");
   });
 
   it("should re-estimate bridge fees when the selected fee asset changes", async () => {

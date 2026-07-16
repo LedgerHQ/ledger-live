@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { mockFearAndGreedLatest } from "@ledgerhq/live-common/cmc-client/__mocks__/fearAndGreed.mock";
+import { mockFearAndGreedLatest } from "@domain/api-market-sentiment/mock";
 
 const handler = () => {
   return HttpResponse.json(mockFearAndGreedLatest);

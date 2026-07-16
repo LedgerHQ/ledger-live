@@ -6,6 +6,7 @@ import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { isCompoundRewardSupported } from "@ledgerhq/live-common/families/cosmos/logic";
 import { localeSelector } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -53,6 +54,7 @@ export default function StepClaimRewards({
     },
     [updateClaimRewards, transaction],
   );
+  const compoundSupported = isCompoundRewardSupported(account.currency.id);
   const selectedValidator = transaction.validators && transaction.validators[0];
   const amount =
     selectedValidator &&
@@ -90,7 +92,7 @@ export default function StepClaimRewards({
       />
       {warning && !error ? <ErrorBanner error={warning} warning /> : null}
       {error ? <ErrorBanner error={error} /> : null}
-      <ModeSelectorField mode={transaction.mode} onChange={onChangeMode} />
+      {compoundSupported && <ModeSelectorField mode={transaction.mode} onChange={onChangeMode} />}
       {amount && (
         <Text fontSize={4} ff="Inter|Medium" textAlign="center">
           <Trans

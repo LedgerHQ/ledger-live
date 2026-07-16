@@ -1,4 +1,4 @@
-import type { FearAndGreedIndex } from "@ledgerhq/live-common/cmc-client/state-manager/types";
+import type { FearAndGreedIndex } from "@domain/entity-market-sentiment";
 
 export type FearAndGreedExpandedCardProps = Readonly<{
   data: FearAndGreedIndex;

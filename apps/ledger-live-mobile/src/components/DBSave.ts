@@ -1,4 +1,5 @@
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { largeScreenUpsellModalSelector } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
 import isEqual from "lodash/isEqual";
@@ -17,6 +18,7 @@ import {
   saveIdentities,
   saveKnownDevices,
   saveLargeMoverState,
+  saveLargeScreenUpsellModalState,
   saveMarketState,
   saveMarketListConfig,
   saveMarketBannerState,
@@ -172,6 +174,8 @@ const knownDevicesNotEquals = (a: State, b: State) => a.knownDevices !== b.known
 
 const getPostOnboardingStateChanged = (a: State, b: State) =>
   !isEqual(a.postOnboarding, b.postOnboarding);
+const getLargeScreenUpsellModalStateChanged = (a: State, b: State) =>
+  !isEqual(a.largeScreenUpsellModal, b.largeScreenUpsellModal);
 
 const marketNotEquals = (a: State, b: State) => a.market !== b.market;
 const marketListConfigNotEquals = (a: State, b: State) => a.marketListConfig !== b.marketListConfig;
@@ -251,6 +255,13 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: getPostOnboardingStateChanged,
     lense: postOnboardingSelector,
+  });
+  useDBSaveEffect({
+    stateSelector: (state: State) => state.largeScreenUpsellModal,
+    save: saveLargeScreenUpsellModalState,
+    throttle: 500,
+    getChangesStats: getLargeScreenUpsellModalStateChanged,
+    lense: largeScreenUpsellModalSelector,
   });
 
   useDBSaveEffect({

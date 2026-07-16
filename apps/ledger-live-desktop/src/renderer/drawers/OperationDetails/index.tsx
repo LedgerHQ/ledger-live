@@ -9,7 +9,7 @@ import {
   getDefaultExplorerView,
   getTransactionExplorer as getDefaultTransactionExplorer,
 } from "@ledgerhq/live-common/explorers";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   findOperationInAccount,
@@ -510,7 +510,9 @@ const OperationD = (props: Props) => {
       ) : null}
 
       <OpDetailsSection>
-        <OpDetailsTitle>{t("operationDetails.amount")}</OpDetailsTitle>
+        <OpDetailsTitle data-testid="operation-amount-label">
+          {t("operationDetails.amount")}
+        </OpDetailsTitle>
         <OpDetailsData onClick={openAmountDetails}>
           <OpDetailsSideButton mt={0}>
             <Box mr={2}>
@@ -753,7 +755,9 @@ const OperationD = (props: Props) => {
       </OpDetailsSection>
       <Divider />
       <OpDetailsSection>
-        <OpDetailsTitle>{t("operationDetails.identifier")}</OpDetailsTitle>
+        <OpDetailsTitle data-testid="operation-id-label">
+          {t("operationDetails.identifier")}
+        </OpDetailsTitle>
         <OpDetailsData>
           <HashContainer data-testid="operation-id">
             <SplitAddress value={hash} />

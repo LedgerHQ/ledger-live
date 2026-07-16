@@ -1,11 +1,4 @@
-import {
-  getEditTransactionPatch,
-  hasMinimumFundsToCancel,
-  hasMinimumFundsToSpeedUp,
-  isTransactionConfirmed,
-} from "@ledgerhq/coin-bitcoin/editTransaction/index";
 import type {
-  BitcoinAccount,
   EditType,
   Transaction as BtcTransaction,
   TransactionRaw,
@@ -19,7 +12,6 @@ import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { Flex } from "@ledgerhq/native-ui";
 import { urls } from "~/utils/urls";
-import invariant from "invariant";
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { TrackScreen } from "~/analytics";
 import MethodSelectionList from "~/components/EditTransaction/MethodSelectionList";
@@ -79,20 +71,24 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     if (!transactionToEdit) return;
     let cancelled = false;
     const run = async () => {
-      const [cancel, speedup] = await Promise.all([
-        hasMinimumFundsToCancel({ mainAccount, transactionToUpdate: transactionToEdit }),
-        hasMinimumFundsToSpeedUp({ mainAccount, transactionToUpdate: transactionToEdit }),
-      ]);
-      if (!cancelled) {
-        setHaveFundToCancel(cancel);
-        setHaveFundToSpeedup(speedup);
+      try {
+        const [cancel, speedup] = await Promise.all([
+          bridge.hasMinimumFundsToCancel({ mainAccount, transactionToUpdate: transactionToEdit }),
+          bridge.hasMinimumFundsToSpeedUp({ mainAccount, transactionToUpdate: transactionToEdit }),
+        ]);
+        if (!cancelled) {
+          setHaveFundToCancel(cancel);
+          setHaveFundToSpeedup(speedup);
+        }
+      } catch {
+        // ignore: leave the funds flags unchanged on failure
       }
     };
-    run();
+    void run();
     return () => {
       cancelled = true;
     };
-  }, [mainAccount, transactionToEdit]);
+  }, [bridge, mainAccount, transactionToEdit]);
 
   const [selectedMethod, setSelectedMethod] = useState<EditType | null>(null);
 
@@ -101,7 +97,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
   const onSelect = useCallback(
     async (option: EditType) => {
       if (!transactionToEdit || !transaction) return;
-      const patch = await getEditTransactionPatch({
+      const patch = await bridge.getEditTransactionPatch({
         account: mainAccount,
         transaction: transactionToEdit,
         editType: option,
@@ -113,19 +109,30 @@ function MethodSelectionComponent({ navigation, route }: Props) {
   );
 
   useEffect(() => {
+    let intervalId: ReturnType<typeof setInterval> | undefined;
     const setTransactionHasBeenValidatedCallback = async () => {
-      const walletAccount = (mainAccount as BitcoinAccount).bitcoinResources?.walletAccount;
-      if (!walletAccount) return;
-      const hasBeenConfirmed = await isTransactionConfirmed(walletAccount, operation.hash);
-      if (hasBeenConfirmed) {
-        clearInterval(intervalId);
-        setTransactionHasBeenValidated(true);
+      try {
+        const hasBeenConfirmed = await bridge.isTransactionConfirmed({
+          account: mainAccount,
+          hash: operation.hash,
+        });
+        if (hasBeenConfirmed) {
+          clearInterval(intervalId);
+          setTransactionHasBeenValidated(true);
+        }
+      } catch {
+        // best-effort polling: swallow transient errors and keep polling
       }
     };
 
-    setTransactionHasBeenValidatedCallback();
-    const intervalId = setInterval(
-      () => setTransactionHasBeenValidatedCallback(),
+    void setTransactionHasBeenValidatedCallback();
+    // blockAvgTime is in seconds. We intentionally poll faster than the block
+    // interval (x100 instead of the usual seconds->ms x1000) so a confirmation is
+    // surfaced promptly rather than after a full ~15min Bitcoin block time.
+    intervalId = setInterval(
+      () => {
+        void setTransactionHasBeenValidatedCallback();
+      },
       mainAccount.currency.blockAvgTime
         ? mainAccount.currency.blockAvgTime * 100
         : getEnv("DEFAULT_TRANSACTION_POLLING_INTERVAL"),
@@ -134,13 +141,19 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     return () => {
       clearInterval(intervalId);
     };
-  }, [mainAccount, operation.hash]);
+  }, [bridge, mainAccount, operation.hash]);
 
-  if (transactionHasBeenValidated) {
+  useEffect(() => {
+    if (!transactionHasBeenValidated) return;
+    // Only surface the "already validated" screen while the user is still on the
+    // method selection screen (mirrors desktop where the banner only gates the
+    // form). Once the user has moved forward to sign/broadcast, the broadcast
+    // handler owns the error, so we must not navigate over it.
+    if (!navigation.isFocused()) return;
     navigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
       error: new TransactionHasBeenValidatedError(),
     });
-  }
+  }, [transactionHasBeenValidated, navigation]);
 
   useEffect(() => {
     if (!selectedMethod || !transaction) {

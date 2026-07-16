@@ -1,10 +1,11 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
-
+import { isQ2WithAggregatedAssets } from "../../utils/featureFlagUtils";
 const tags = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet Page", () => {
+// In Q2 the tab layout (Assets/Accounts tabs) no longer exists — skip the whole suite
+(isQ2WithAggregatedAssets() ? describe.skip : describe)("Wallet Page", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "speculos-tests-app",

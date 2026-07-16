@@ -3,7 +3,7 @@ import VersionNumber from "react-native-version-number";
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import { selectCurrencyForMetaId } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
 import { useSearchCommon } from "@ledgerhq/live-common/modularDrawer/hooks/useSearch";
-import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
+import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
@@ -43,7 +43,7 @@ export function useGlobalSearchResults(): GlobalSearchResults {
   const isStaging = modularDrawer?.params?.backendEnvironment === "STAGING";
   const includeTestNetworks = useEnv("MANAGER_DEV_MODE");
   // Hide currencies disabled by a feature flag, mirroring the receive flow.
-  const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+  const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
 
   const handleTrackSearch = useCallback(
     (query: string) => track("search_query", { query, page: ScreenName.GlobalSearch }),

@@ -12,6 +12,7 @@ import {
   approveToken,
   signTypedMessage as signTypedMessageDevice,
   acceptEnableTransactionCheck as acceptEnableTransactionCheckDevice,
+  shareViewKey,
 } from "@ledgerhq/live-e2e-shared/speculos";
 import { setExchangeDependencies } from "../utils/speculosUtils";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
@@ -91,6 +92,11 @@ export default class SpeculosPage {
   @Step("Check and accept if available enable transaction check")
   async acceptEnableTransactionCheck() {
     await acceptEnableTransactionCheckDevice();
+  }
+
+  @Step("Confirm view key sharing on device")
+  async shareViewKey() {
+    await shareViewKey();
   }
 
   async setExchangeDependencies(swapOrFromAccount: SwapType | Account, toAccount?: Account) {

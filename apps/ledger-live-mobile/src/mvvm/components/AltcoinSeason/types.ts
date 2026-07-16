@@ -1,4 +1,4 @@
-import type { AltcoinSeasonIndex } from "@ledgerhq/live-common/cmc-client/state-manager/types";
+import type { AltcoinSeasonIndex } from "@domain/entity-altcoins-sentiment";
 
 export interface AltcoinSeasonViewModel {
   readonly data: AltcoinSeasonIndex | undefined;

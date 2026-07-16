@@ -1,6 +1,6 @@
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { BigNumber } from "bignumber.js";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";

@@ -80,6 +80,33 @@ function createAccountWithUnreadZeroValueTokenOperation(): Account {
   };
 }
 
+function createAccountWithUnreadZeroValueNativeOperation(type: Operation["type"] = "IN"): Account {
+  const account = genAccount("history-test-native-dust", {
+    currency: ethereum,
+    operationsSize: 0,
+  });
+  const operation: Operation = {
+    id: `history-test-dust-zero-value-native-${type.toLowerCase()}-op`,
+    hash: `0xnative-dust-${type.toLowerCase()}`,
+    type,
+    value: new BigNumber(0),
+    fee: new BigNumber(0),
+    senders: ["0xsender"],
+    recipients: ["0xrecipient"],
+    blockHash: "0xblock",
+    blockHeight: 1,
+    accountId: account.id,
+    date: new Date("2024-12-01T00:00:00.000Z"),
+    extra: {},
+  };
+
+  return {
+    ...account,
+    operations: [operation],
+    operationsCount: 1,
+  };
+}
+
 function withDustPreferenceEnabled(state: State): State {
   return {
     ...state,
@@ -193,6 +220,30 @@ describe("hasUnreadOperationsSelector", () => {
 
   it("filters dust operations when the dust preference and feature flag are enabled", () => {
     const accountWithDustOperation = createAccountWithUnreadZeroValueTokenOperation();
+
+    expect(
+      hasUnreadOperationsSelector(
+        withDustFeatureEnabled(
+          withDustPreferenceEnabled(makeState(SEEN, [accountWithDustOperation])),
+        ),
+      ),
+    ).toBe(false);
+  });
+
+  it("filters native dust operations when the dust preference and feature flag are enabled", () => {
+    const accountWithDustOperation = createAccountWithUnreadZeroValueNativeOperation();
+
+    expect(
+      hasUnreadOperationsSelector(
+        withDustFeatureEnabled(
+          withDustPreferenceEnabled(makeState(SEEN, [accountWithDustOperation])),
+        ),
+      ),
+    ).toBe(false);
+  });
+
+  it("filters outgoing native dust operations when the dust preference and feature flag are enabled", () => {
+    const accountWithDustOperation = createAccountWithUnreadZeroValueNativeOperation("OUT");
 
     expect(
       hasUnreadOperationsSelector(

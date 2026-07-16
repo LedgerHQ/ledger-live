@@ -5,6 +5,7 @@ import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT } from "tests/utils/featureFlagUtils";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 /**
  * Suite: Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail
@@ -15,8 +16,6 @@ import { FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT } from "tests/utils/featureFla
  * - /market/:id redirects to /asset/:id.
  *
  */
-
-const DEVICE_TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
 test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
   test.describe("Scenario 1: Asset aggregation on portfolio", () => {
@@ -29,7 +28,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     test(
       "Aggregated assets show a single row per asset and list holding addresses per network",
       {
-        tag: DEVICE_TAGS,
+        tag: [...DEVICE_TAGS],
         annotation: {
           type: "TMS",
           description: "B2CQA-5519, B2CQA-5520",
@@ -65,7 +64,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     test(
       "Asset detail shows market info, balance, addresses, add-address and transaction history",
       {
-        tag: DEVICE_TAGS,
+        tag: [...DEVICE_TAGS],
         annotation: {
           type: "TMS",
           description: "B2CQA-5523, B2CQA-5526",
@@ -111,7 +110,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     test(
       "Star an asset from its detail page and filter the market list by starred",
       {
-        tag: DEVICE_TAGS,
+        tag: [...DEVICE_TAGS],
         annotation: {
           type: "TMS",
           description: "B2CQA-5532, B2CQA-5533",
@@ -164,7 +163,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     test(
       "Opening a holding address shows the address detail page",
       {
-        tag: DEVICE_TAGS,
+        tag: [...DEVICE_TAGS],
         annotation: {
           type: "TMS",
           description: "B2CQA-5535",

@@ -103,8 +103,7 @@ const TestImage: React.FC<Props> = props => {
   useEffect(() => {
     try {
       if (result) setReconstructedImage(reconstructImage({ ...result.rawResult, bitsPerPixel }));
-    } catch (e) {
-      console.error(e);
+    } catch {
       onError(new ImageProcessingError());
     }
   }, [result, setReconstructedImage, onError, bitsPerPixel]);

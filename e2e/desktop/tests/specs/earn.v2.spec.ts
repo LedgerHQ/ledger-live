@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 import { test } from "tests/fixtures/common";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { EarnProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
   FF_EARN_V2_DESKTOP,
   FF_STAKE_PROGRAMS_MODAL,
@@ -15,17 +16,10 @@ import {
   liveDataCommand,
   liveDataWithAddressCommand,
 } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { buildTags } from "tests/utils/tagsUtils";
 import type { Application } from "tests/page";
 
 const EARN_LOCAL_MANIFEST: LiveAppManifest = earnLocalManifestJson as LiveAppManifest;
-
-const DEVICE_TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
-
-function getTags(account: Account) {
-  const family = getFamilyByCurrencyId(account.currency.id);
-  return [...DEVICE_TAGS, `@${account.currency.id}`, ...(family ? [`@family-${family}`] : [])];
-}
 
 function setupEnv(disableBroadcast?: boolean) {
   test.use({
@@ -43,6 +37,7 @@ async function navigateToEarn(app: Application) {
 test.describe("Earn [v2]", () => {
   setupEnv(true);
   test.use({
+    teamOwner: Team.EARN,
     localManifestOverride: useLocalEarnManifest ? [EARN_LOCAL_MANIFEST] : undefined,
   });
 
@@ -61,7 +56,7 @@ test.describe("Earn [v2]", () => {
     test(
       "Earn v2 ice cold start page displays correctly",
       {
-        tag: getTags(account),
+        tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app }) => {
@@ -94,7 +89,7 @@ test.describe("Earn [v2]", () => {
       test(
         `Earn v2 cold start page shows ${account.currency.ticker} ready to earn`,
         {
-          tag: getTags(account),
+          tag: buildTags({ currencyId: account.currency.id }),
           annotation: { type: "TMS", description: xrayTicket },
         },
         async ({ app }) => {
@@ -144,7 +139,7 @@ test.describe("Earn [v2]", () => {
       test(
         `Earn v2 hot start page shows ${account.currency.ticker} with rewards and navigates to account`,
         {
-          tag: getTags(account),
+          tag: buildTags({ currencyId: account.currency.id }),
           annotation: { type: "TMS", description: xrayTickets.join(", ") },
         },
         async ({ app }) => {
@@ -177,7 +172,7 @@ test.describe("Earn [v2]", () => {
     test(
       "Earn v2 ice cold start allows inline account addition",
       {
-        tag: getTags(account),
+        tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app }) => {
@@ -213,7 +208,7 @@ test.describe("Earn [v2]", () => {
     test(
       "Earn v2 CTA → Native staking (SOL)",
       {
-        tag: getTags(account),
+        tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app }) => {
@@ -239,7 +234,7 @@ test.describe("Earn [v2]", () => {
     test(
       "Earn v2 CTA → Earn staking (USDT)",
       {
-        tag: getTags(account),
+        tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app }) => {
@@ -278,7 +273,7 @@ test.describe("Earn [v2]", () => {
       test(
         `Earn v2 ETH staking flow - ${provider.name}`,
         {
-          tag: getTags(account),
+          tag: buildTags({ currencyId: account.currency.id }),
           annotation: { type: "TMS", description: xrayTickets.join(", ") },
         },
         async ({ app, page }) => {
@@ -324,7 +319,7 @@ test.describe("Earn [v2]", () => {
     test(
       "Earn v2 position row navigates to dapp for ETH",
       {
-        tag: getTags(account),
+        tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app, page }) => {
@@ -355,7 +350,7 @@ test.describe("Earn [v2]", () => {
     test(
       "Earn v2 position row navigates to withdrawal for USDT",
       {
-        tag: getTags(parentAccount),
+        tag: buildTags({ currencyId: parentAccount.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app }) => {
@@ -367,4 +362,32 @@ test.describe("Earn [v2]", () => {
       },
     );
   });
+});
+
+test.describe("LiveApp delegate - ETH", () => {
+  const account = Account.ETH_1;
+
+  test.use({
+    teamOwner: Team.EARN,
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: account.currency.speculosApp,
+    cliCommands: [liveDataCommand(account)],
+    featureFlags: { ...FF_STAKE_PROGRAMS_MODAL },
+  });
+
+  test(
+    "[Ethereum] - Select validator",
+    {
+      tag: buildTags({ currencyId: account.currency.id, extraTags: ["@smoke"] }),
+      annotation: { type: "TMS", description: "B2CQA-3024" },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.navigateToAccountByName(account.accountName);
+      await app.account.startStakingFlowFromMainStakeButton();
+      await app.earnV2Dashboard.verifyDepositFlowVisible();
+      await app.earnV2Dashboard.selectEthProvider(EarnProvider.LIDO.name);
+    },
+  );
 });

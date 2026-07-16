@@ -22,6 +22,7 @@ type SwapWebviewContentProps = {
   params: DefaultAccountSwapParamList | null;
   webviewRef: RefObject<WebviewAPI | null>;
   setWebviewState: (state: WebviewState) => void;
+  resetWebview: () => void;
 };
 
 function SwapWebviewContent({
@@ -29,8 +30,9 @@ function SwapWebviewContent({
   params,
   webviewRef,
   setWebviewState,
+  resetWebview,
 }: Readonly<SwapWebviewContentProps>) {
-  const { customHandlers, inputs } = useSwapWebviewProps({ manifest, params });
+  const { customHandlers, inputs } = useSwapWebviewProps({ manifest, params, resetWebview });
 
   return (
     <Web3AppWebview
@@ -57,8 +59,17 @@ export function SwapLiveAppWallet40({
 
   const { theme: lumenTheme } = useLumenTheme();
 
-  const { manifest, error, isLoading, webviewRef, webviewState, setWebviewState, defaultParams } =
-    useSwapLiveAppState(params);
+  const {
+    manifest,
+    error,
+    isLoading,
+    webviewRef,
+    webviewState,
+    setWebviewState,
+    defaultParams,
+    webviewResetKey,
+    resetWebview,
+  } = useSwapLiveAppState(params);
 
   const updateWallet40HeaderState = useSwapWallet40HeaderStateUpdater(webviewRef);
 
@@ -94,10 +105,12 @@ export function SwapLiveAppWallet40({
       <View style={styles.contentContainer} pointerEvents="box-none">
         {manifest && (
           <SwapWebviewContent
+            key={webviewResetKey}
             manifest={manifest}
             params={defaultParams}
             webviewRef={webviewRef}
             setWebviewState={handleWebviewStateChange}
+            resetWebview={resetWebview}
           />
         )}
       </View>

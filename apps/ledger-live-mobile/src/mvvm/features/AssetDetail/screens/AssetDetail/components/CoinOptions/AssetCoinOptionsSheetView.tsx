@@ -30,6 +30,9 @@ export function AssetCoinOptionsSheetView({
   const favouriteTitle = isStarred
     ? t("assetDetail.coinOptions.removeFavourite")
     : t("assetDetail.coinOptions.addFavourite");
+  const favouriteStateTestID = isStarred
+    ? ASSET_DETAIL_TEST_IDS.coinOptionsRemoveFavouriteRow
+    : ASSET_DETAIL_TEST_IDS.coinOptionsAddFavouriteRow;
   const hideTitle = isHidden
     ? t("assetDetail.coinOptions.showInPortfolio")
     : t("assetDetail.coinOptions.hideFromPortfolio");
@@ -48,6 +51,7 @@ export function AssetCoinOptionsSheetView({
           title={favouriteTitle}
           Icon={isStarred ? StarFill : Star}
           testID={ASSET_DETAIL_TEST_IDS.coinOptionsFavouriteRow}
+          stateTestID={favouriteStateTestID}
         />
         <CoinOptionRow
           onPress={onToggleHideFromPortfolio}

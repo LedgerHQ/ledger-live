@@ -315,16 +315,44 @@ describe("native XTZ operations", () => {
     });
   });
 
-  it("produces no operations for a zero-amount transaction (e.g. delegation reveal)", async () => {
+  it("produces no operations for a zero-amount, zero-fee transaction", async () => {
     // Given
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
-    mockFetchBlockTransactions.mockResolvedValue([makeTx({ amount: 0 })]);
+    mockFetchBlockTransactions.mockResolvedValue([makeTx({ amount: 0, bakerFee: 0 })]);
 
     // When
     const result = await getBlock(5_000_000);
 
-    // Then
+    // Then — no balance impact, no operations
     expect(result.transactions[0].operations).toEqual([]);
+  });
+
+  it("produces operations for a zero-amount transaction that carries fees", async () => {
+    // Given
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockTransactions.mockResolvedValue([makeTx({ amount: 0, bakerFee: 1500 })]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then — fees are a balance change, so operations must be emitted for fee attribution
+    expect(result.transactions[0].fees).toBe(1500n);
+    expect(result.transactions[0].operations).toEqual([
+      {
+        type: "transfer",
+        address: "tz1Sender",
+        peer: "tz1Target",
+        asset: { type: "native", name: "XTZ" },
+        amount: 0n,
+      },
+      {
+        type: "transfer",
+        address: "tz1Target",
+        peer: "tz1Sender",
+        asset: { type: "native", name: "XTZ" },
+        amount: 0n,
+      },
+    ]);
   });
 
   it("produces only an incoming operation when sender is null, with no peer field", async () => {
@@ -854,17 +882,12 @@ describe("delegation operations", () => {
     expect(tx.operations).toHaveLength(1);
     expect(tx.operations[0]).toEqual({
       type: "other",
-      address: "tz1Delegator",
-      asset: { type: "native", name: "XTZ" },
-      amount: 0n,
-      details: {
-        operationType: "DELEGATE",
-        stakedAmount: 0n,
-        counter: 42,
-        gasLimit: 1000,
-        storageLimit: 257,
-        ledgerOpType: "DELEGATE",
-      },
+      ledgerOpType: "DELEGATE",
+      operationType: "DELEGATE",
+      stakedAmount: 0,
+      counter: 42,
+      gasLimit: 1000,
+      storageLimit: 257,
     });
   });
 
@@ -891,17 +914,12 @@ describe("delegation operations", () => {
     expect(tx.operations).toHaveLength(1);
     expect(tx.operations[0]).toEqual({
       type: "other",
-      address: "tz1Delegator",
-      asset: { type: "native", name: "XTZ" },
-      amount: 0n,
-      details: {
-        operationType: "UNDELEGATE",
-        stakedAmount: 0n,
-        counter: 7,
-        gasLimit: 500,
-        storageLimit: 100,
-        ledgerOpType: "UNDELEGATE",
-      },
+      ledgerOpType: "UNDELEGATE",
+      operationType: "UNDELEGATE",
+      stakedAmount: 0,
+      counter: 7,
+      gasLimit: 500,
+      storageLimit: 100,
     });
   });
 
@@ -927,9 +945,9 @@ describe("delegation operations", () => {
     // When
     const result = await getBlock(5_000_000);
 
-    // Then
+    // Then — failed but operations still present (listOperations path always includes them)
     expect(result.transactions[0].failed).toBe(true);
-    expect(result.transactions[0].operations).toEqual([]);
+    expect(result.transactions[0].operations).toHaveLength(1);
   });
 
   it("skips delegations without a hash", async () => {
@@ -1057,7 +1075,7 @@ describe("delegation operations", () => {
     expect(result.transactions[0].feesPayer).toBeUndefined();
   });
 
-  it("omits delegate field from details when neither newDelegate nor prevDelegate is present", async () => {
+  it("omits delegate field when neither newDelegate nor prevDelegate is present", async () => {
     // Given - edge case: both delegates are null
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockDelegations.mockResolvedValue([
@@ -1068,12 +1086,9 @@ describe("delegation operations", () => {
     const result = await getBlock(5_000_000);
 
     // Then
-    const details = (result.transactions[0].operations[0] as OtherBlockOperation).details as Record<
-      string,
-      unknown
-    >;
-    expect(details).not.toHaveProperty("delegate");
-    expect(details.operationType).toBe("UNDELEGATE");
+    const op = result.transactions[0].operations[0] as Record<string, unknown>;
+    expect(op).not.toHaveProperty("delegate");
+    expect(op.ledgerOpType).toBe("UNDELEGATE");
   });
 });
 
@@ -1083,11 +1098,11 @@ describe("delegation operations", () => {
 
 describe("staking operations", () => {
   it.each([
-    ["stake", "STAKE", 500_000_000n],
-    ["unstake", "UNSTAKE", 250_000_000n],
-    ["finalize", "FINALIZE_UNSTAKE", 0n],
+    ["stake", "STAKE", 500_000_000],
+    ["unstake", "UNSTAKE", 250_000_000],
+    ["finalize", "FINALIZE_UNSTAKE", 0],
   ] as const)(
-    "creates a BlockTransaction for action=%s with operationType=%s",
+    "creates a BlockTransaction for action=%s with ledgerOpType=%s",
     async (action, expectedOpType, expectedStakedAmount) => {
       mockGetBlockByLevel.mockResolvedValue(makeBlock());
       mockFetchBlockStaking.mockResolvedValue([
@@ -1105,29 +1120,29 @@ describe("staking operations", () => {
       expect(tx.operations).toHaveLength(1);
       expect(tx.operations[0]).toEqual({
         type: "other",
-        address: "tz1Staker",
-        asset: { type: "native", name: "XTZ" },
-        amount: 0n,
-        details: {
-          operationType: expectedOpType,
-          stakedAmount: expectedStakedAmount,
-          counter: 1,
-          gasLimit: 3630,
-          storageLimit: 0,
-          ledgerOpType: expectedOpType,
-        },
+        ledgerOpType: expectedOpType,
+        operationType: expectedOpType,
+        stakedAmount: expectedStakedAmount,
+        counter: 1,
+        gasLimit: 3630,
+        storageLimit: 0,
       });
     },
   );
 
-  it("marks a staking op as failed and clears operations when status is not 'applied'", async () => {
+  it("marks a staking op as failed but still includes operations with requestedAmount fallback", async () => {
+    // TzKT omits `amount` on failed ops; only `requestedAmount` is present
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
-    mockFetchBlockStaking.mockResolvedValue([makeStaking({ status: "failed" })]);
+    mockFetchBlockStaking.mockResolvedValue([
+      makeStaking({ status: "failed", amount: undefined, requestedAmount: 750_000_000 }),
+    ]);
 
     const result = await getBlock(5_000_000);
 
     expect(result.transactions[0].failed).toBe(true);
-    expect(result.transactions[0].operations).toEqual([]);
+    expect(result.transactions[0].operations).toHaveLength(1);
+    const op = result.transactions[0].operations[0] as Record<string, unknown>;
+    expect(op.stakedAmount).toBe(750_000_000);
   });
 
   it("skips a staking op without sender (no operations emitted)", async () => {
@@ -1171,18 +1186,15 @@ describe("staking operations", () => {
     expect(tx.fees).toBe(800n);
   });
 
-  it("omits delegate field from details when baker is missing", async () => {
+  it("omits delegate field when baker is missing", async () => {
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockStaking.mockResolvedValue([makeStaking({ baker: null })]);
 
     const result = await getBlock(5_000_000);
 
-    const details = (result.transactions[0].operations[0] as OtherBlockOperation).details as Record<
-      string,
-      unknown
-    >;
-    expect(details).not.toHaveProperty("delegate");
-    expect(details.operationType).toBe("STAKE");
+    const op = result.transactions[0].operations[0] as Record<string, unknown>;
+    expect(op).not.toHaveProperty("delegate");
+    expect(op.ledgerOpType).toBe("STAKE");
   });
 });
 
@@ -1209,13 +1221,15 @@ describe("origination operations", () => {
     expect(tx.operations[0]).toMatchObject({
       type: "other",
       address: "tz1Deployer",
-      amount: 0n,
-      details: { ledgerOpType: "ORIGINATION", counter: 42, gasLimit: 3494, storageLimit: 5852 },
+      ledgerOpType: "ORIGINATION",
+      counter: 42,
+      gasLimit: 3494,
+      storageLimit: 5852,
     });
-    expect((tx.operations[0] as any).details).not.toHaveProperty("originatedContract");
+    expect(tx.operations[0]).not.toHaveProperty("originatedContract");
   });
 
-  it("produces negative amount for an origination with contractBalance > 0", async () => {
+  it("produces an origination with contractBalance > 0 (no amount field)", async () => {
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockOriginations.mockResolvedValue([makeOrigination({ contractBalance: 500_000 })]);
 
@@ -1226,21 +1240,21 @@ describe("origination operations", () => {
     expect(tx.operations).toHaveLength(1);
     const op = tx.operations[0] as OtherBlockOperation;
     expect(op.type).toBe("other");
-    expect(op.amount).toBe(-500_000n);
     expect(op.address).toBe("tz1Deployer");
-    expect((op.details as any).ledgerOpType).toBe("ORIGINATION");
+    expect((op as Record<string, unknown>).ledgerOpType).toBe("ORIGINATION");
+    expect(op).not.toHaveProperty("amount");
   });
 
-  it("treats negative contractBalance as zero (defensive guard)", async () => {
+  it("treats negative contractBalance same as zero (no amount field)", async () => {
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockOriginations.mockResolvedValue([makeOrigination({ contractBalance: -500 })]);
 
     const result = await getBlock(5_000_000);
 
-    expect(result.transactions[0].operations[0]).toMatchObject({ amount: 0n });
+    expect(result.transactions[0].operations[0]).not.toHaveProperty("amount");
   });
 
-  it("marks a failed origination and emits no operations", async () => {
+  it("marks a failed origination but still includes operations", async () => {
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockOriginations.mockResolvedValue([
       makeOrigination({ status: "failed", contractBalance: 500_000 }),
@@ -1251,7 +1265,7 @@ describe("origination operations", () => {
     expect(result.transactions).toHaveLength(1);
     const tx = result.transactions[0];
     expect(tx.failed).toBe(true);
-    expect(tx.operations).toEqual([]);
+    expect(tx.operations).toHaveLength(1);
     expect(tx.fees).toBe(1_069_250n);
   });
 
@@ -1341,9 +1355,10 @@ describe("reveal operations", () => {
     expect(tx.operations[0]).toEqual({
       type: "other",
       address: "tz1Revealer",
-      asset: { type: "native", name: "XTZ" },
-      amount: 0n,
-      details: { counter: 10, gasLimit: 10600, storageLimit: 0, ledgerOpType: "REVEAL" },
+      ledgerOpType: "REVEAL",
+      counter: 10,
+      gasLimit: 10600,
+      storageLimit: 0,
     });
   });
 
@@ -1362,18 +1377,18 @@ describe("reveal operations", () => {
     const tx = result.transactions[0];
     expect(tx.fees).toBe(6535n); // 5115 + 1420
     expect(tx.operations.some(op => op.type === "other")).toBe(true);
-    const revealOp = tx.operations.find(op => op.type === "other") as OtherBlockOperation;
-    expect(revealOp.details).toMatchObject({ ledgerOpType: "REVEAL" });
+    const revealOp = tx.operations.find(op => op.type === "other") as Record<string, unknown>;
+    expect(revealOp).toMatchObject({ ledgerOpType: "REVEAL" });
   });
 
-  it("marks a reveal as failed when status is not 'applied'", async () => {
+  it("marks a reveal as failed but still includes operations", async () => {
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockReveals.mockResolvedValue([makeReveal({ status: "failed" })]);
 
     const result = await getBlock(5_000_000);
 
     expect(result.transactions[0].failed).toBe(true);
-    expect(result.transactions[0].operations).toEqual([]);
+    expect(result.transactions[0].operations).toHaveLength(1);
   });
 
   it("skips reveals without a hash", async () => {

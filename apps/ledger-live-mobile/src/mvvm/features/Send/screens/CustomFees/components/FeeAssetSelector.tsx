@@ -8,6 +8,8 @@ import {
   OptionListContent,
   OptionListItem,
   OptionListItemContent,
+  OptionListItemDescription,
+  OptionListItemLeading,
   OptionListItemText,
   OptionListTrigger,
   Subheader,
@@ -16,14 +18,24 @@ import {
   Text,
   useBottomSheetRef,
 } from "@ledgerhq/lumen-ui-rnative";
-import type { FeeAssetOption } from "@ledgerhq/live-common/bridge/descriptor/types";
+import type { OptionListItemData } from "@ledgerhq/lumen-ui-rnative";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { FeeAssetUiOption } from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
+import CurrencyIcon from "~/components/CurrencyIcon";
 
 type FeeAssetSelectorProps = Readonly<{
-  options: readonly FeeAssetOption[];
+  options: readonly FeeAssetUiOption[];
   selectedId: string;
   onChange: (id: string) => void;
   payFeesInLabel: string;
 }>;
+
+type FeeAssetMeta = Readonly<{
+  currency: CryptoOrTokenCurrency | undefined;
+  formattedBalance: string | undefined;
+}>;
+
+type FeeAssetListItem = OptionListItemData<string, FeeAssetMeta>;
 
 export function FeeAssetSelector({
   options,
@@ -33,8 +45,16 @@ export function FeeAssetSelector({
 }: FeeAssetSelectorProps) {
   const bottomSheetRef = useBottomSheetRef();
 
-  const items = useMemo(
-    () => options.map(option => ({ value: option.id, label: option.ticker })),
+  const items = useMemo<FeeAssetListItem[]>(
+    () =>
+      options.map(option => ({
+        value: option.id,
+        label: option.ticker,
+        meta: {
+          currency: option.currency,
+          formattedBalance: option.formattedBalance,
+        },
+      })),
     [options],
   );
 
@@ -69,7 +89,14 @@ export function FeeAssetSelector({
         </SubheaderRow>
       </Subheader>
       <OptionListTrigger onPress={handleOpenSheet}>
-        {selectedOption != null && <Text lx={{ color: "base" }}>{selectedOption.ticker}</Text>}
+        {selectedOption != null && (
+          <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s8" }}>
+            {selectedOption.currency && (
+              <CurrencyIcon currency={selectedOption.currency} size={16} />
+            )}
+            <Text lx={{ color: "base" }}>{selectedOption.ticker}</Text>
+          </Box>
+        )}
       </OptionListTrigger>
       <BottomSheet
         ref={bottomSheetRef}
@@ -80,15 +107,29 @@ export function FeeAssetSelector({
         <BottomSheetView>
           <BottomSheetHeader title={payFeesInLabel} />
           <OptionList items={items} value={selectedId || null} onValueChange={handleValueChange}>
-            <OptionListContent
+            <OptionListContent<string, FeeAssetMeta>
               lx={{ marginBottom: "s24" }}
-              renderItem={item => (
-                <OptionListItem value={item.value}>
-                  <OptionListItemContent>
-                    <OptionListItemText>{item.label}</OptionListItemText>
-                  </OptionListItemContent>
-                </OptionListItem>
-              )}
+              renderItem={item => {
+                const currency = item.meta?.currency;
+                const formattedBalance = item.meta?.formattedBalance;
+                return (
+                  <OptionListItem value={item.value}>
+                    {currency && (
+                      <OptionListItemLeading testID={`send-fee-asset-icon-${item.value}`}>
+                        <CurrencyIcon currency={currency} size={32} />
+                      </OptionListItemLeading>
+                    )}
+                    <OptionListItemContent>
+                      <OptionListItemText>{item.label}</OptionListItemText>
+                      {formattedBalance !== undefined && (
+                        <OptionListItemDescription testID={`send-fee-asset-balance-${item.value}`}>
+                          {formattedBalance}
+                        </OptionListItemDescription>
+                      )}
+                    </OptionListItemContent>
+                  </OptionListItem>
+                );
+              }}
             />
           </OptionList>
         </BottomSheetView>

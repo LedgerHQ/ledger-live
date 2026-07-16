@@ -32,9 +32,9 @@ export const LEDGER_VALIDATOR_BY_FIGMENT: ValidatorsAppValidator = {
   apy: 0.078107,
 };
 
-export const LEDGER_VALIDATOR_BY_CHORUS_ONE: ValidatorsAppValidator = {
+export const LEDGER_VALIDATOR_BY_BITWISE: ValidatorsAppValidator = {
   voteAccount: "CpfvLiiPALdzZTP3fUrALg2TXwEDSAknRh1sn5JCt9Sr",
-  name: "Ledger by Chorus One",
+  name: "Ledger by Bitwise",
   avatarUrl:
     "https://s3.amazonaws.com/keybase_processed_uploads/3c47b62f3d28ecfd821536f69be82905_360_360.jpg",
   wwwUrl: "https://www.ledger.com/staking",
@@ -49,7 +49,7 @@ export const LEDGER_VALIDATOR_DEFAULT = LEDGER_VALIDATOR_BY_FIGMENT;
 // default validator first
 export const LEDGER_VALIDATOR_LIST: ValidatorsAppValidator[] = [
   LEDGER_VALIDATOR_BY_FIGMENT,
-  LEDGER_VALIDATOR_BY_CHORUS_ONE,
+  LEDGER_VALIDATOR_BY_BITWISE,
 ];
 
 export const LEDGER_VALIDATORS_VOTE_ACCOUNTS = LEDGER_VALIDATOR_LIST.map(v => v.voteAccount);

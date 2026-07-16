@@ -1,8 +1,15 @@
-/* eslint @typescript-eslint/consistent-type-assertions: 0 */
 import { Observable } from "rxjs";
-import type { ShieldedSyncResult, ShieldedSyncResultRaw, SyncShieldedArgs } from "../types";
+import type {
+  BuildTransactionArgs,
+  BuildTransactionResult,
+  FinalizeTransactionArgs,
+  FinalizeTransactionResult,
+  ShieldedSyncResult,
+  ShieldedSyncResultRaw,
+  SyncShieldedArgs,
+} from "../types";
 import type { StartSyncJobArgs } from "../native-engine/engine";
-import { createZCashClientWith, type ZCashClientDeps } from "../ZCash";
+import { createZCashClient, createZCashClientWith, type ZCashClientDeps } from "../ZCash";
 
 // ── Constants ────────────────────────────────────────────────────────
 
@@ -430,5 +437,107 @@ describe("createZCashClientWith", () => {
         expect(completed).toBe(false);
       });
     });
+  });
+
+  // ── PCZT signing methods (buildTransaction / finalizeTransaction / broadcastTransaction) ──
+  //
+  // These are conditionally attached to the client only when the matching
+  // optional job dep is provided (RN stubs omit them entirely).
+
+  describe("buildTransaction()", () => {
+    const args: Omit<BuildTransactionArgs, "requestId"> = {
+      grpcUrl: GRPC_URL,
+      ufvk: "uview1test",
+      seedFingerprint: "00".repeat(32),
+      accountIndex: 0,
+      feeZat: "10000",
+      spends: [],
+      transparentInputs: [],
+      outputs: [{ address: "u1recipient", valueZat: "50000" }],
+    };
+    const buildResult = { pcztHex: "deadbeef" } as unknown as BuildTransactionResult;
+
+    it("is omitted when buildTransactionJob dep is absent", () => {
+      const client = createZCashClientWith(makeDeps(), { grpcUrl: GRPC_URL });
+      expect(client.buildTransaction).toBeUndefined();
+    });
+
+    it("delegates to buildTransactionJob and returns its result when the dep is present", async () => {
+      const buildTransactionJob = jest
+        .fn<Promise<BuildTransactionResult>, [Omit<BuildTransactionArgs, "requestId">]>()
+        .mockResolvedValue(buildResult);
+      const client = createZCashClientWith(makeDeps({ buildTransactionJob }), {
+        grpcUrl: GRPC_URL,
+      });
+
+      const result = await client.buildTransaction!(args);
+
+      expect(buildTransactionJob).toHaveBeenCalledWith(args);
+      expect(result).toBe(buildResult);
+    });
+  });
+
+  describe("finalizeTransaction()", () => {
+    const args: Omit<FinalizeTransactionArgs, "requestId"> = {
+      pczt: "cafebabe",
+      orchardSignatures: [],
+      transparentSignatures: [],
+    };
+    const finalizeResult: FinalizeTransactionResult = { txHex: "ff00", txid: "cc".repeat(32) };
+
+    it("is omitted when finalizeTransactionJob dep is absent", () => {
+      const client = createZCashClientWith(makeDeps(), { grpcUrl: GRPC_URL });
+      expect(client.finalizeTransaction).toBeUndefined();
+    });
+
+    it("delegates to finalizeTransactionJob and returns its result when the dep is present", async () => {
+      const finalizeTransactionJob = jest
+        .fn<Promise<FinalizeTransactionResult>, [Omit<FinalizeTransactionArgs, "requestId">]>()
+        .mockResolvedValue(finalizeResult);
+      const client = createZCashClientWith(makeDeps({ finalizeTransactionJob }), {
+        grpcUrl: GRPC_URL,
+      });
+
+      const result = await client.finalizeTransaction!(args);
+
+      expect(finalizeTransactionJob).toHaveBeenCalledWith(args);
+      expect(result).toBe(finalizeResult);
+    });
+  });
+
+  describe("broadcastTransaction()", () => {
+    it("is omitted when broadcastTransactionJob dep is absent", () => {
+      const client = createZCashClientWith(makeDeps(), { grpcUrl: GRPC_URL });
+      expect(client.broadcastTransaction).toBeUndefined();
+    });
+
+    it("delegates to broadcastTransactionJob and returns the txid when the dep is present", async () => {
+      const broadcastTransactionJob = jest
+        .fn<Promise<string>, [string, string]>()
+        .mockResolvedValue("dd".repeat(32));
+      const client = createZCashClientWith(makeDeps({ broadcastTransactionJob }), {
+        grpcUrl: GRPC_URL,
+      });
+
+      const txid = await client.broadcastTransaction!(GRPC_URL, "abcd");
+
+      expect(broadcastTransactionJob).toHaveBeenCalledWith(GRPC_URL, "abcd");
+      expect(txid).toBe("dd".repeat(32));
+    });
+  });
+});
+
+// ── Production factory ──────────────────────────────────────────────────
+
+describe("createZCashClient", () => {
+  it("wires the default deps and exposes the PCZT signing methods", () => {
+    const client = createZCashClient({ grpcUrl: GRPC_URL });
+
+    expect(client.grpcUrl).toBe(GRPC_URL);
+    expect(client.network).toBe("mainnet");
+    // Production deps include the PCZT jobs, so these methods are present.
+    expect(typeof client.buildTransaction).toBe("function");
+    expect(typeof client.finalizeTransaction).toBe("function");
+    expect(typeof client.broadcastTransaction).toBe("function");
   });
 });

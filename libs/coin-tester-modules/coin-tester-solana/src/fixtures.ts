@@ -156,7 +156,7 @@ export const makeAccount = (
 
 export function initMSW(): () => void {
   const mockServer = setupServer(
-    http.get("https://crypto-assets-service.api.ledger.com/v1/certificates", ({ request }) => {
+    http.get("https://global.api.prd.ledger.com/cal/v1/certificates", ({ request }) => {
       const url = new URL(request.url);
 
       if (url.searchParams.get("target_device") !== "nanox") {
@@ -292,7 +292,7 @@ export function initMSW(): () => void {
     http.get("https://earn-dashboard.aws.stg.ldg-tech.com/figment/solana/validators_summary", () =>
       HttpResponse.json([]),
     ),
-    http.get("https://crypto-assets-service.api.ledger.com/v1/tokens", ({ request }) => {
+    http.get("https://global.api.prd.ledger.com/cal/v1/tokens", ({ request }) => {
       const url = new URL(request.url);
       switch (url.searchParams.get("id")) {
         case "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v": // USDC

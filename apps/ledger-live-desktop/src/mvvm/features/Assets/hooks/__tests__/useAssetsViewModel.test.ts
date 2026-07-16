@@ -19,7 +19,7 @@ import {
 } from "../../constants";
 import { buildAssetsPagePath } from "../../utils/buildAssetsPagePath";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { AssetTableItem } from "../../types";
 import type { AssetsDataWithPagination } from "@ledgerhq/live-common/dada-client/state-manager/types";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";

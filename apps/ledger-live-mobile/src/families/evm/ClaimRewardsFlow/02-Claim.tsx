@@ -8,6 +8,7 @@ import { useTheme } from "@react-navigation/native";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { hasCompound } from "@ledgerhq/live-common/families/evm/staking/logic";
+import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
 import type {
   GenericTransaction,
   GenericTransactionMode,
@@ -67,10 +68,12 @@ function ClaimRewardsClaim({ navigation, route }: Props) {
 
   const { transaction, status, bridgePending, bridgeError, updateTransaction } =
     useBridgeTransaction(bridge, () => {
-      const base = bridge.updateTransaction(bridge.createTransaction(account), {
-        recipient: account.freshAddress,
+      const contractAddress = getStakingContractAddress(account.currency.id, {
+        mode: "claimReward",
+        valAddress: validator.validatorAddress,
       });
-      const claimTx = bridge.updateTransaction(base, {
+      const claimTx = bridge.updateTransaction(bridge.createTransaction(account), {
+        recipient: contractAddress ?? account.freshAddress,
         mode: "claimReward",
         valAddress: validator.validatorAddress,
         valId: validator.validatorId,
@@ -83,16 +86,22 @@ function ClaimRewardsClaim({ navigation, route }: Props) {
 
   const evmTransaction = transaction as unknown as GenericTransaction;
   const mode = evmTransaction.mode ?? "claimReward";
+
   const onChangeMode = useCallback(
     (nextMode: string) => {
+      const contractAddress = getStakingContractAddress(account.currency.id, {
+        mode: nextMode === "compoundReward" ? "compoundReward" : "claimReward",
+        valAddress: evmTransaction.valAddress,
+      });
       updateTransaction(
         () =>
           bridge.updateTransaction(evmTransaction, {
             mode: nextMode as GenericTransactionMode,
+            recipient: contractAddress ?? account.freshAddress,
           }) as unknown as Transaction,
       );
     },
-    [bridge, updateTransaction, evmTransaction],
+    [bridge, updateTransaction, evmTransaction, account.currency.id, account.freshAddress],
   );
 
   const [infoModalOpen, setInfoModalOpen] = useState(false);

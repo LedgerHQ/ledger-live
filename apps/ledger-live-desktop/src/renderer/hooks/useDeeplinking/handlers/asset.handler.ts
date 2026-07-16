@@ -1,9 +1,11 @@
 import { DeeplinkHandler } from "../types";
-import { getAssetDetailPath, resolveLegacyCryptoCurrencyId } from "LLD/utils/marketAssetNavigation";
+import { getAssetDetailPath } from "LLD/utils/marketAssetNavigation";
+import { navigateLedgerAssetDeeplink } from "./navigateLedgerAssetDeeplink";
 
 /**
- * Asset deeplinks. Empty path → portfolio (`/`). When Wallet 4.0 is on, passes the raw path to
- * Asset Detail; when off, validates and falls back to portfolio for unknown ids (mobile parity).
+ * Asset deeplinks. Empty path → portfolio (`/`). When Wallet 4.0 is on, `/asset/:currencyId`
+ * opens the coin detail and `/asset/:currencyId/...tokenPath` opens the token detail using its
+ * Ledger id. When off, only coin ids are supported and invalid paths fall back to portfolio.
  */
 export const assetHandler: DeeplinkHandler<"asset"> = (route, { navigate, assetsPath }) => {
   const path = route.path.trim();
@@ -13,16 +15,11 @@ export const assetHandler: DeeplinkHandler<"asset"> = (route, { navigate, assets
     return;
   }
 
-  if (assetsPath === "/asset") {
-    navigate(getAssetDetailPath(path));
-    return;
-  }
-
-  const currencyId = resolveLegacyCryptoCurrencyId(path);
-  if (currencyId) {
-    navigate(getAssetDetailPath(currencyId));
-    return;
-  }
-
-  navigate("/");
+  navigateLedgerAssetDeeplink({
+    path,
+    assetsPath,
+    navigate,
+    fallbackPath: "/",
+    legacyDetailPath: getAssetDetailPath,
+  });
 };

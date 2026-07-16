@@ -8,7 +8,6 @@
     "src/operation.ts",
     "src/config.ts",
     "src/api/index.ts",
-    "src/network/nft/index.ts",
     "src/logic/validateAddress.ts"
   ],
   "ignoreUnimported": [
@@ -36,6 +35,8 @@
     "@ethersproject/signing-key",
     "@ledgerhq/cryptoassets-evm-signatures/data/evm/index",
     "bn.js",
-    "lru-cache"
+    "lru-cache",
+    "@ledgerhq/types-cryptoassets",
+    "@ledgerhq/types-live"
   ]
 }

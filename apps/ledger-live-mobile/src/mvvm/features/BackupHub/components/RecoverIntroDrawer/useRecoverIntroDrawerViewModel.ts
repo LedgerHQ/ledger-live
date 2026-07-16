@@ -16,6 +16,8 @@ import {
 } from "~/reducers/backupHubFeatureIntro";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
 import {
+  BACKUP_HUB_FEATURE_INTRO_PRIMARY_BUTTON,
+  BACKUP_HUB_FEATURE_INTRO_SECONDARY_BUTTON,
   trackBackupHubFeatureIntroButtonClicked,
   trackBackupHubFeatureIntroDismissed,
   trackBackupHubFeatureIntroViewed,
@@ -99,17 +101,17 @@ export function useRecoverIntroDrawerViewModel(): UseRecoverIntroDrawerViewModel
 
   const onPrimaryPress = useCallback(() => {
     trackBackupHubFeatureIntroButtonClicked({
-      button: content.primaryButtonLabel,
+      button: BACKUP_HUB_FEATURE_INTRO_PRIMARY_BUTTON,
       link: content.primaryButtonLink,
     });
-  }, [content.primaryButtonLabel, content.primaryButtonLink]);
+  }, [content.primaryButtonLink]);
 
   const onSecondaryPress = useCallback(() => {
     trackBackupHubFeatureIntroButtonClicked({
-      button: content.secondaryButtonLabel,
+      button: BACKUP_HUB_FEATURE_INTRO_SECONDARY_BUTTON,
       link: content.secondaryButtonLink,
     });
-  }, [content.secondaryButtonLabel, content.secondaryButtonLink]);
+  }, [content.secondaryButtonLink]);
 
   const closeDrawer = useCallback(() => {
     if (hasClosedRef.current) {

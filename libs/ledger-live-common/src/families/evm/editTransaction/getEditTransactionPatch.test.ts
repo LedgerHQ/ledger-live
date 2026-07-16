@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
 import { getCoinConfig } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../common.fixtures";

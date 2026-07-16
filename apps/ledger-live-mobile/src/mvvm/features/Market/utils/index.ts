@@ -1,10 +1,8 @@
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { getSortParam } from "@ledgerhq/live-common/market/utils/index";
 import { rangeDataTable } from "@ledgerhq/live-common/cg-client/utils/rangeDataTable";
-import {
-  findCryptoCurrencyByTicker,
-  findFiatCurrencyByTicker,
-} from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
+import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { TFunction } from "i18next";
 

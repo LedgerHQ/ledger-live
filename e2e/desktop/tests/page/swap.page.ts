@@ -15,6 +15,7 @@ import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
 const APPROVAL_PROCESSING_TIMEOUT = 300_000;
+type SwapSurface = "full" | "embedded";
 
 export class SwapPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "swap";
@@ -24,17 +25,15 @@ export class SwapPage extends WebViewAppPage {
     "../artifacts/ledgerwallet-swap-history.csv",
   );
 
-  private swapPageHeading = this.page
-    .getByTestId("page-header")
-    .getByRole("heading", { name: "Swap" });
-  // Wallet 4.0 AssetDetail (aggregatedAssets ON) reaches swap through the always-mounted embedded
-  // rail rather than the full swap page, so there is no "Swap" page header to wait for.
-  private readonly embeddedSwapContainer = this.page.getByTestId("embedded-swap-container");
+  private readonly fullSwapContainer = this.page.getByTestId("swap-web-app-container-full");
+  private readonly embeddedSwapContainer = this.page.getByTestId("swap-web-app-container-embedded");
 
   // Swap Amount and Currency components
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
   private fromAccountCoinSelector = "from-account-coin-selector";
   private fromAccountAmountInput = "from-account-amount-input";
+  private readonly fromAccountError = "from-account-error";
+  private readonly noQuotesPlaceholder = "quotes-error-state";
   private fromAccountBalance = "from-account-balance";
   private toAccountCoinSelector = "to-account-coin-selector";
   private readonly toAccountAccountNameTag = "to-account-account-name-tag";
@@ -183,50 +182,32 @@ export class SwapPage extends WebViewAppPage {
   @step("Select available provider without KYC")
   async selectExchangeWithoutKyc(swap?: Swap) {
     const webview = await this.getWebView();
-
     const providersList = await this.getProviderList();
-
-    // Check if the swap is ETH <-> SOL pair (exclude LiFi for these pairs)
+    const isLns = process.env.SPECULOS_DEVICE === Device.LNS.name;
     const isEthSolPair =
-      swap &&
+      !!swap &&
       ((swap.accountToDebit.currency.id === Currency.ETH.id &&
         swap.accountToCredit.currency.id === Currency.SOL.id) ||
         (swap.accountToDebit.currency.id === Currency.SOL.id &&
           swap.accountToCredit.currency.id === Currency.ETH.id));
 
-    const providersWithoutKYC = providersList.filter(providerName => {
-      const provider = Object.values(SwapProvider).find(p => p.uiName === providerName);
-      if (!provider || provider.kyc) {
-        return false;
-      }
+    const provider = providersList
+      .map(uiName => SwapProvider.getByUiName(uiName))
+      .find(
+        providerEntry =>
+          !!providerEntry &&
+          !providerEntry.kyc &&
+          !providerEntry.app &&
+          !(isEthSolPair && providerEntry.name === SwapProvider.LIFI.name) &&
+          (!isLns || providerEntry.availableOnLns),
+      );
 
-      // Exclude LiFi for ETH <-> SOL pairs on all devices
-      if (isEthSolPair && provider.name === SwapProvider.LIFI.name) {
-        return false;
-      }
-
-      // Additional filter for LNS devices
-      if (process.env.SPECULOS_DEVICE === Device.LNS.name) {
-        return provider.availableOnLns;
-      }
-
-      return true;
-    });
-
-    for (const providerName of providersWithoutKYC) {
-      const provider = Object.values(SwapProvider).find(p => p.uiName === providerName);
-      if (provider && !provider.app) {
-        const providerLocator = webview
-          .locator(this.specificQuoteCardProviderName(provider.name))
-          .first();
-
-        await providerLocator.click();
-
-        return provider;
-      }
+    if (!provider) {
+      throw new Error(`No providers without KYC found: ${providersList.join(", ")}`);
     }
 
-    throw new Error(`No providers without KYC found: ${providersList.join(", ")}`);
+    await webview.locator(this.specificQuoteCardProviderName(provider.name)).first().click();
+    return provider;
   }
 
   @step("Select available provider")
@@ -486,17 +467,22 @@ export class SwapPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.toAccountAccountNameTag)).toContainText(expected);
   }
 
-  @step("Verify swap amount error message match: $0")
-  async verifySwapAmountErrorMessageIsCorrect(message: string | RegExp) {
+  @step("Verify swap error message match: $0 ($1)")
+  async verifySwapErrorMessageIsCorrect(
+    message: string | RegExp,
+    display: "banner" | "quotesPlaceholder",
+  ) {
     const webview = await this.getWebView();
-    const errorSpan = await webview.getByTestId("from-account-error").textContent();
-    expect(errorSpan).toMatch(message);
+    const testId =
+      display === "quotesPlaceholder" ? this.noQuotesPlaceholder : this.fromAccountError;
+    await expect(webview.getByTestId(testId)).toContainText(message);
   }
 
-  @step("Check insufficient funds warning banner is visible")
-  async checkInsufficientFundsBannerVisible() {
+  @step("Verify swap cross account error message match: $0")
+  async verifySwapCrossAccountErrorMessageIsCorrect(message: string | RegExp) {
     const webview = await this.getWebView();
-    await expect(webview.getByTestId(this.insufficientFundsWarning)).toBeVisible();
+    // Auto-retrying locator assertion: waits for the cross-account warning to render before matching.
+    await expect(webview.getByTestId(this.fromAccountError)).toContainText(message);
   }
 
   @step("verify quotes are displayed")
@@ -508,17 +494,17 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Go and wait for Swap app to be ready")
-  async goAndWaitForSwapToBeReady(swapFunction: () => Promise<void>) {
+  async goAndWaitForSwapToBeReady(
+    swapFunction: () => Promise<void>,
+    surface: SwapSurface = "full",
+  ) {
     // reset cached webview page to ensure we fetch the correct one after navigation
     this._webviewPage = undefined;
 
-    // perform passed in action and wait for the swap page and webview. Swap renders either as the
-    // full swap page (legacy / left-menu entry) or the embedded rail on AssetDetail; accept both.
     await swapFunction();
-    await this.swapPageHeading
-      .or(this.embeddedSwapContainer)
-      .first()
-      .waitFor({ state: "visible", timeout: 60_000 });
+    const swapContainer =
+      surface === "embedded" ? this.embeddedSwapContainer : this.fullSwapContainer;
+    await swapContainer.waitFor();
     await this.getWebView();
   }
 

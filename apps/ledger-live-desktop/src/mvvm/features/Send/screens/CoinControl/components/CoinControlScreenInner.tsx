@@ -68,10 +68,8 @@ export function CoinControlScreenInner({
         onAmountChange={onAmountChange}
         amountError={viewModel.amountError}
         strategyLabel={viewModel.strategyLabel}
-        learnMoreLabel={viewModel.learnMoreLabel}
-        onLearnMoreClick={viewModel.onLearnMoreClick}
+        onInfoPress={viewModel.onInfoPress}
         coinToSendLabel={viewModel.coinToSendLabel}
-        amountToSendLabel={viewModel.amountToSendLabel}
         amountInputLabel={viewModel.amountInputLabel}
         networkFees={viewModel.networkFees}
         reviewLabel={viewModel.reviewLabel}
@@ -83,6 +81,7 @@ export function CoinControlScreenInner({
         isCustomPickingStrategy={viewModel.isCustomPickingStrategy}
         onToggleUtxoExclusion={viewModel.onToggleUtxoExclusion}
         onSelectCustomFees={onSelectCustomFees}
+        hasAmount={viewModel.hasAmount}
       />
     </>
   );

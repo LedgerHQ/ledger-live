@@ -1,15 +1,19 @@
 import { useState, useCallback, useEffect, useMemo, type ComponentType } from "react";
-import BigNumber from "bignumber.js";
 import { useDustFilteringFeature } from "@features/platform-feature-flags";
 import { flattenAccounts, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { floorThresholdToCurrencyMinorUnit } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
+import {
+  formatSmallValueOperationsThreshold,
+  SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
+} from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import type { IconProps } from "@ledgerhq/lumen-ui-rnative";
 import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { addExtraSessionTrackingPair } from "~/actions/general";
 import { setHideSmallValueTokenOperations } from "~/actions/settings";
+import { track } from "~/analytics";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useLocale, useTranslation } from "~/context/Locale";
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/accounts";
+import { countervaluesStateSelector } from "~/reducers/countervalues";
 import { lastSeenOperationDateSelector, markOperationsAsSeen } from "~/reducers/history";
 import {
   counterValueCurrencySelector,
@@ -45,8 +49,27 @@ export function useOperationsListViewModel(accountIds?: string[]) {
   const counterValueCurrency = useSelector(state =>
     isDustFilterFeatureEnabled ? counterValueCurrencySelector(state) : undefined,
   );
+  const isReferenceCounterValue =
+    counterValueCurrency?.ticker === SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY.ticker;
+  const countervaluesState = useSelector(state =>
+    isDustFilterFeatureEnabled && counterValueCurrency && !isReferenceCounterValue
+      ? countervaluesStateSelector(state)
+      : undefined,
+  );
   const { locale } = useLocale();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (!isDustFilterFeatureEnabled || !counterValueCurrency || isReferenceCounterValue) {
+      return;
+    }
+
+    addExtraSessionTrackingPair({
+      from: SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
+      to: counterValueCurrency,
+      startDate: new Date(),
+    });
+  }, [counterValueCurrency, isDustFilterFeatureEnabled, isReferenceCounterValue]);
 
   const allowedIds = useMemo(
     () => (accountIds && accountIds.length > 0 ? new Set(accountIds) : null),
@@ -108,15 +131,14 @@ export function useOperationsListViewModel(accountIds?: string[]) {
   const dustFilterThreshold = useMemo(() => {
     if (!counterValueCurrency) return undefined;
 
-    const thresholdMinorUnit =
-      floorThresholdToCurrencyMinorUnit(HISTORY_DUST_FILTER_THRESHOLD_USD, counterValueCurrency) ??
-      new BigNumber(0);
-
-    return formatCurrencyUnit(counterValueCurrency.units[0], thresholdMinorUnit, {
-      showCode: true,
+    return formatSmallValueOperationsThreshold({
+      countervaluesState,
+      counterValueCurrency,
       locale,
+      thresholdUsd: HISTORY_DUST_FILTER_THRESHOLD_USD,
     });
-  }, [counterValueCurrency, locale]);
+  }, [countervaluesState, counterValueCurrency, locale]);
+
   const dustFilterOption: OperationsHistoryDustFilterOption | undefined = useMemo(() => {
     if (!isDustFilterFeatureEnabled || !dustFilterThreshold) return undefined;
 
@@ -124,11 +146,14 @@ export function useOperationsListViewModel(accountIds?: string[]) {
     const title = userHideSmallValueTokenOperations
       ? t("operationsList.options.showDustTransactions")
       : t("operationsList.options.hideDustTransactions");
+    const descriptionKey = userHideSmallValueTokenOperations
+      ? "operationsList.options.dustTransactionsDisplayedDescription"
+      : "operationsList.options.dustTransactionsHiddenDescription";
 
     return {
       Icon,
       title,
-      description: t("operationsList.options.dustTransactionsDescription", {
+      description: t(descriptionKey, {
         threshold: dustFilterThreshold,
       }),
     };
@@ -143,7 +168,13 @@ export function useOperationsListViewModel(accountIds?: string[]) {
   const onToggleHideSmallValueTokenOperations = useCallback(() => {
     if (!isDustFilterFeatureEnabled) return;
 
-    dispatch(setHideSmallValueTokenOperations(!userHideSmallValueTokenOperations));
+    const isEnabled = !userHideSmallValueTokenOperations;
+
+    track("button_clicked", {
+      button: "dust_filter",
+      enabled: isEnabled,
+    });
+    dispatch(setHideSmallValueTokenOperations(isEnabled));
     closeOptionsSheet();
   }, [dispatch, isDustFilterFeatureEnabled, userHideSmallValueTokenOperations, closeOptionsSheet]);
 

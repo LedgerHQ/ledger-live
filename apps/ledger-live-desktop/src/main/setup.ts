@@ -42,8 +42,8 @@ ipcMain.handle(
       let rendererLogsChronological: Array<{ timestamp: string }> = [];
       try {
         rendererLogsChronological = JSON.parse(rendererLogsStr).reverse(); // The logs are in reverse order.
-      } catch (error) {
-        console.error("Error while parsing logs from the renderer process", error);
+      } catch (e) {
+        console.warn("Error while parsing logs from the renderer process", e);
         return;
       }
 

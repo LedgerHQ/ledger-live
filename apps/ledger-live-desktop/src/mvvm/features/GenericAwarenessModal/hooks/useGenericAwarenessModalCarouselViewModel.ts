@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import {
   GenericAwarenessModalLayout,
+  resolveAwarenessModalActionLink,
   type GenericAwarenessModalCarousel,
   type GenericAwarenessModalCarouselSlide,
   type GenericAwarenessModalContentCard,
@@ -91,7 +92,10 @@ const useGenericAwarenessModalCarouselViewModel = (
       if (context) {
         trackCarouselPrimaryClick(context, slide.primaryButtonLabel, slide.primaryButtonLink);
       }
-      openURL(slide.primaryButtonLink);
+      const actionLink = resolveAwarenessModalActionLink(slide.primaryButtonLink);
+      if (actionLink) {
+        openURL(actionLink);
+      }
       closeDialog({ dismissAppStart: true });
     },
     [closeDialog, getContext],

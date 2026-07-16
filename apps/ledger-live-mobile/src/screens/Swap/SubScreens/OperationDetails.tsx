@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Icon, Text } from "@ledgerhq/native-ui";
 import { Trans } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";

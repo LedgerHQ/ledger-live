@@ -1,5 +1,6 @@
 import React from "react";
 import { useTheme } from "styled-components/native";
+import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import { useTabBar } from "./useTabBar";
@@ -9,6 +10,7 @@ import { Wallet40TabNavigator } from "./Wallet40TabNavigator";
 export default function MainNavigator() {
   const { colors } = useTheme();
   const isMainNavigatorVisible = useSelector(isMainNavigatorVisibleSelector);
+  const isPayTabEnabled = !!useFeature("lwmPayTab")?.enabled;
 
   const tabBar = useTabBar({
     isMainNavigatorVisible,
@@ -18,5 +20,11 @@ export default function MainNavigator() {
     colors,
   });
 
-  return <Wallet40TabNavigator tabBar={tabBar} screenOptions={screenOptions} />;
+  return (
+    <Wallet40TabNavigator
+      tabBar={tabBar}
+      screenOptions={screenOptions}
+      isPayTabEnabled={isPayTabEnabled}
+    />
+  );
 }

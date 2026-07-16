@@ -37,11 +37,13 @@ import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
 import AppJsonImporter from "./AppJsonImporter";
 import CustomLockScreenTester from "./CustomLockScreenTester";
 import WalletFeaturesDevTool from "./WalletFeaturesDevTool";
+import ContactsDevTool from "./ContactsDevTool";
 import FeaturesAndFlowsDevTool from "./FeaturesAndFlowsDevTool";
 import AnalyticsConsentOptInDevTool from "./AnalyticsConsentOptInDevTool";
 import { AnalyticsConsentOptInDevScreen } from "./AnalyticsConsentOptInDevTool/AnalyticsConsentOptInDevScreen";
 import GenericAwarenessModalDevTool from "./GenericAwarenessModalDevTool";
 import GenericAwarenessModalDevScreen from "./GenericAwarenessModalDevTool/screens/GenericAwarenessModalDevScreen";
+import OpenDevToolsRow from "./OpenDevToolsRow";
 import InfoStateDevTool from "./InfoStateDevTool";
 import InfoStateDevScreen from "./InfoStateDevTool/screens/InfoStateDevScreen";
 import DeviceActionContentDevTool from "./DeviceActionContentDevTool";
@@ -149,7 +151,9 @@ const Default = () => {
           <AllowDebugReactQueryToggle />
         </Row>
       )}
+      <OpenDevToolsRow />
       <WalletFeaturesDevTool />
+      <ContactsDevTool />
       <FeaturesAndFlowsDevTool />
       <AnalyticsConsentOptInDevTool />
       <GenericAwarenessModalDevTool />

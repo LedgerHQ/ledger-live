@@ -5,6 +5,8 @@ import { LayoutChangeEvent, Linking, StyleSheet } from "react-native";
 import Animated, { interpolate, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useTranslation } from "~/context/Locale";
 import {
+  hasAwarenessModalActionButton,
+  resolveAwarenessModalActionLink,
   resolveCarouselNavigationButtonLabel,
   type GenericAwarenessModalCarouselSlide,
 } from "@ledgerhq/live-common/genericAwarenessModal";
@@ -20,7 +22,7 @@ type CarouselFooterButtonProps = Readonly<{
 const PRIMARY_BUTTON_SPACING = 12;
 
 const hasPrimaryButton = (slide: GenericAwarenessModalCarouselSlide) =>
-  Boolean(slide.primaryButtonLink && slide.primaryButtonLabel);
+  hasAwarenessModalActionButton(slide.primaryButtonLabel, slide.primaryButtonLink);
 
 export function CarouselFooterButton({
   slides,
@@ -74,15 +76,18 @@ export function CarouselFooterButton({
     slide: GenericAwarenessModalCarouselSlide,
     slideIndex: number,
   ) => {
-    if (!slide.primaryButtonLink) {
+    const actionLink = resolveAwarenessModalActionLink(slide.primaryButtonLink);
+    onPrimaryPress(slideIndex);
+
+    if (!actionLink) {
+      onClose();
       return;
     }
 
-    const isExternalLink = slide.primaryButtonLink.startsWith("http");
-    onPrimaryPress(slideIndex);
+    const isExternalLink = actionLink.startsWith("http");
 
     try {
-      await Linking.openURL(slide.primaryButtonLink);
+      await Linking.openURL(actionLink);
       if (!isExternalLink) {
         requestAnimationFrame(onClose);
       }
@@ -176,7 +181,12 @@ function CarouselPrimaryButton({ slide, slideIndex, onPress }: CarouselPrimaryBu
       accessibilityElementsHidden={!isCurrentSlide}
       importantForAccessibility={isCurrentSlide ? "auto" : "no-hide-descendants"}
     >
-      <Button appearance="gray" size="lg" onPress={() => onPress(slide, slideIndex)}>
+      <Button
+        appearance="gray"
+        size="lg"
+        testID="generic-awareness-modal-primary-button"
+        onPress={() => onPress(slide, slideIndex)}
+      >
         {slide.primaryButtonLabel}
       </Button>
     </Animated.View>

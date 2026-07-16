@@ -20,7 +20,7 @@ const mainnetConfig = (): TezosCoinConfig =>
     status: { type: "active" },
     baker: { url: "https://tezos-bakers.api.live.ledger.com" },
     explorer: { url: "https://xtz-tzkt-explorer.api.vault.ledger.com", maxTxQuery: 100 },
-    node: { url: "https://xtz-node.api.vault.ledger.com" },
+    node: { url: "https://xtz-node.api.live.ledger.com" },
     fees: {
       minGasLimit: 0,
       minRevealGasLimit: 0,

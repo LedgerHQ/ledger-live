@@ -10,6 +10,7 @@ import type {
   AssetInfo,
   Balance,
   Operation as CoreOperation,
+  FeeEstimation,
   StakingOperation,
   TransactionIntent,
   TxData,
@@ -118,7 +119,7 @@ function isSponsoredOperation(op: Operation): boolean {
  * `pendingOperations` are optimistic and don’t affect `spendableBalance` until the next sync.
  * Lock the native amount already committed by pending ops: fees for any non-sponsored op, plus outgoing value for OUT-family ops. See LIVE-33180.
  */
-function getPendingNativeSpent(pendingOperations: Operation[]): BigNumber {
+export function getPendingNativeSpent(pendingOperations: Operation[]): BigNumber {
   return pendingOperations.reduce((spent, op) => {
     const withFee = isSponsoredOperation(op) ? spent : spent.plus(op.fee);
     if (op.type === "FEES") return withFee;
@@ -126,6 +127,18 @@ function getPendingNativeSpent(pendingOperations: Operation[]): BigNumber {
 
     return withFee;
   }, new BigNumber(0));
+}
+
+/**
+ * Native spendable balance once funds committed by pending (optimistic, not-yet-synced)
+ * operations are removed. `spendableBalance` alone ignores pending ops until the next
+ * sync, so send-max computed from it would overestimate while a previous send is pending.
+ * This keeps the generic `computeUseAllAmount` path in sync with `validateIntent`
+ * (used by `getTransactionStatus`), which already accounts for pending via `extractBalances`.
+ */
+export function getNativeSpendableAfterPending(account: Account): BigNumber {
+  const pendingSpent = getPendingNativeSpent(account.pendingOperations ?? []);
+  return BigNumber.max(0, account.spendableBalance.minus(pendingSpent));
 }
 
 // Used for token sub-accounts: lock `op.value` for pending ops that should reduce token spendable.
@@ -185,6 +198,39 @@ export function extractBalances(
   }
 
   return balances;
+}
+
+/** Reads a numeric `parameters` field (bigint/number/string) as BigNumber, else `fallback`. */
+function numericParam(value: unknown, fallback: bigint): BigNumber {
+  return typeof value === "bigint" || typeof value === "number" || typeof value === "string"
+    ? new BigNumber(value.toString())
+    : new BigNumber(fallback.toString());
+}
+
+/** Base fee plus any `additionalFees` from parameters (e.g. EVM L2 data fees). */
+function totalFeesFromEstimation(estimation: FeeEstimation): BigNumber {
+  return new BigNumber(estimation.value.toString()).plus(
+    numericParam(estimation.parameters?.additionalFees, 0n),
+  );
+}
+
+/**
+ * Send-max amount: `parameters.amount` if the coin exposes it (e.g. Tezos), else
+ * `spendableBalance - max(reserve, fees)` floored to `amountScale` (both optional, default 0/1).
+ */
+export function computeUseAllAmount(
+  estimation: FeeEstimation,
+  spendableBalance: BigNumber,
+): BigNumber {
+  if (estimation.parameters?.amount !== undefined) {
+    return BigNumber.max(0, numericParam(estimation.parameters.amount, 0n));
+  }
+  const reserve = numericParam(estimation.parameters?.reserve, 0n);
+  const scaleParam = numericParam(estimation.parameters?.amountScale, 1n);
+  const scale = scaleParam.gt(0) ? scaleParam : new BigNumber(1);
+  const effectiveReserve = BigNumber.max(reserve, totalFeesFromEstimation(estimation));
+  const raw = BigNumber.max(0, spendableBalance.minus(effectiveReserve));
+  return raw.idiv(scale).times(scale);
 }
 
 function isStringArray(value: unknown): value is string[] {
@@ -435,12 +481,10 @@ export function transactionToIntent(
     amount,
     asset: { type: "native", name: account.currency.name, unit: account.currency.units[0] },
     useAllAmount,
-    feesStrategy: transaction.feesStrategy ?? undefined,
     sequence:
       transaction.nonce !== null && transaction.nonce !== undefined
         ? BigInt(transaction.nonce.toString())
         : undefined,
-    sponsored: transaction.sponsored,
     ...getDelegationIntentFields(delegationMode, transaction),
   };
   if (transaction.assetReference && transaction.assetOwner) {
@@ -611,8 +655,10 @@ export const buildOptimisticOperation = (
       type = "OPT_IN";
       break;
     case "delegate":
-    case "redelegate":
       type = "DELEGATE";
+      break;
+    case "redelegate":
+      type = "REDELEGATE";
       break;
     case "undelegate":
       type = "UNDELEGATE";

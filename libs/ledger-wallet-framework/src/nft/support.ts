@@ -5,7 +5,7 @@ import type {
   ProtoNFT,
 } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "../types";
 import { CollectionMetadataInput, NftMetadataInput, NftRequestsBatcher } from "./types";
 import { makeBatcher } from "@ledgerhq/live-network/batcher";
 

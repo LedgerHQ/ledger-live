@@ -1,5 +1,5 @@
 import React from "react";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TransactionStatusValue } from "@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index";
 import { render, screen } from "tests/testSetup";
 import { StatusSection } from "../components/Status/StatusSection";

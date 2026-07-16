@@ -19,7 +19,7 @@ import {
   findCryptoCurrencyByKeyword,
   findCryptoCurrencyById,
   getCryptoCurrencyById,
-} from "@ledgerhq/live-common/currencies/index";
+} from "@domain/entity-currency-crypto";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";

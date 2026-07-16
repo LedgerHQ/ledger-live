@@ -8,6 +8,7 @@ export const descriptor: CoinDescriptor = {
       hasPresets: false,
       hasCustom: false,
     },
-    selfTransfer: "free",
+    // Self-send is valid on-chain but almost always a mistake — warn without blocking. LIVE-33176.
+    selfTransfer: "warning",
   },
 };

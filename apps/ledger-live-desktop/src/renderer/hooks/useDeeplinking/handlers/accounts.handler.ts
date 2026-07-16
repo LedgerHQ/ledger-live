@@ -1,4 +1,4 @@
-import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { DeeplinkHandler } from "../types";
 import { getAccountsOrSubAccountsByCurrency } from "../utils";

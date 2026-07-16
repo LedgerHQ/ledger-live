@@ -34,6 +34,9 @@ export type CustomFeeInputState = Readonly<{
   helperValue: string | null;
 }>;
 
+/** A `FeeAssetOption` enriched with a locale-formatted balance for display. */
+export type FeeAssetUiOption = Readonly<FeeAssetOption & { formattedBalance?: string }>;
+
 export type CustomFeesViewModel = Readonly<{
   inputs: readonly CustomFeeInputState[];
   fiatLabel: string | null;
@@ -43,7 +46,7 @@ export type CustomFeesViewModel = Readonly<{
   onInputClear: (key: string) => void;
   onConfirm: () => void;
   hasCustomAssets: boolean;
-  assetOptions: readonly FeeAssetOption[];
+  assetOptions: readonly FeeAssetUiOption[];
   selectedAssetId: string;
   onAssetChange: (id: string) => void;
   confirmLabel: string;
@@ -80,6 +83,7 @@ export type UseCustomFeesViewModelCoreParams = Readonly<{
   transactionActions: SendFlowTransactionActions;
   onConfirm: () => void;
   locale: string;
+  discreet: boolean;
   counterValueCurrency: Currency;
   /** Reactive countervalue calculator (e.g. from useCalculateCountervalueCallback). */
   calculateCountervalue: (from: Currency, value: BigNumber) => BigNumber | null | undefined;
@@ -131,6 +135,7 @@ export function useCustomFeesViewModelCore({
   transactionActions,
   onConfirm,
   locale,
+  discreet,
   counterValueCurrency,
   calculateCountervalue,
   labels,
@@ -155,10 +160,22 @@ export function useCustomFeesViewModelCore({
 
   // The coin-module owns the options, the selected value and the resulting patch.
   // This view model only renders the "Pay fees in" select and forwards the choice.
-  const assetOptions = useMemo(
-    () => customAssetsConfig?.getOptions(feeAssetContext) ?? [],
-    [customAssetsConfig, feeAssetContext],
-  );
+  // The raw `balance` is formatted here (locale-aware); the descriptor stays locale-blind.
+  const assetOptions = useMemo<readonly FeeAssetUiOption[]>(() => {
+    const options = customAssetsConfig?.getOptions(feeAssetContext) ?? [];
+    return options.map(option => ({
+      ...option,
+      formattedBalance:
+        option.balance !== undefined && option.currency
+          ? formatCurrencyUnit(option.currency.units[0], option.balance, {
+              showCode: false,
+              disableRounding: true,
+              discreet,
+              locale,
+            })
+          : undefined,
+    }));
+  }, [customAssetsConfig, feeAssetContext, locale, discreet]);
   const hasCustomAssetsFlag = assetOptions.length > 0;
 
   const selectedAssetId = useMemo(

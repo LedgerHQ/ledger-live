@@ -15,7 +15,6 @@
     "src/errors.ts",
     "src/hw-getAddress.ts",
     "src/serialization.ts",
-    "src/specs.ts",
     "src/transaction.ts"
   ],
   "ignoreUnimported": [

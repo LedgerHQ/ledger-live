@@ -1,6 +1,7 @@
-import {
+import type {
   BufferTxData,
   MemoNotSupported,
+  Operation,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
 import {
@@ -23,7 +24,6 @@ import {
 } from "@ledgerhq/errors";
 import { GasPriceTooLow } from "../errors";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import ledgerExplorer from "../network/explorer/ledger";
@@ -331,7 +331,12 @@ describe("validateIntent", () => {
         lastInternalOperations: [],
         lastNftOperations: [],
         lastTokenOperations: [
-          { contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" } as Operation,
+          {
+            asset: {
+              type: "erc20" as const,
+              assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+            },
+          } as unknown as Operation<MemoNotSupported>,
         ],
         nextPagingToken: "",
       });
@@ -342,13 +347,19 @@ describe("validateIntent", () => {
           sender: "sender-address",
           recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
           amount: 20n,
-          asset: { type: "erc20", assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" },
+          asset: {
+            type: "erc20",
+            assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+          },
         }),
         [
           { value: 50n, asset: { type: "native" } },
           {
             value: 10n,
-            asset: { type: "erc20", assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" },
+            asset: {
+              type: "erc20",
+              assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+            },
           },
         ],
       );
@@ -371,7 +382,11 @@ describe("validateIntent", () => {
         [{ value: 100n, locked: 50n, asset: { type: "native" } }],
         {
           value: 5n,
-          parameters: { gasLimit: 1n, maxFeePerGas: 5n, maxPriorityFeePerGas: 1n },
+          parameters: {
+            gasLimit: 1n,
+            maxFeePerGas: 5n,
+            maxPriorityFeePerGas: 1n,
+          },
         },
       );
 
@@ -691,10 +706,17 @@ describe("validateIntent", () => {
       { value: 10_000_000n, asset: { type: "native" as const } },
       ...(native ? [] : [{ value: 1_000n, asset: tokenAsset }]),
     ];
-    const claimRewardFees = { value: 150n, parameters: { gasLimit: 21000n, gasPrice: 1n } };
+    const claimRewardFees = {
+      value: 150n,
+      parameters: { gasLimit: 21000n, gasPrice: 1n },
+    };
 
     it.each([
-      { name: "fires when network fees exceed claim reward amount", amount: 100n, native: true },
+      {
+        name: "fires when network fees exceed claim reward amount",
+        amount: 100n,
+        native: true,
+      },
     ])("$name", async ({ amount, native }) => {
       const res = await validateIntent(
         stakingCurrency,
@@ -706,9 +728,21 @@ describe("validateIntent", () => {
     });
 
     it.each([
-      { name: "does not fire when claim rewards exceed fees", amount: 1_000_000n, native: true },
-      { name: "does not fire when claim reward amount is zero", amount: 0n, native: true },
-      { name: "does not fire when claim reward asset is not native", amount: 100n, native: false },
+      {
+        name: "does not fire when claim rewards exceed fees",
+        amount: 1_000_000n,
+        native: true,
+      },
+      {
+        name: "does not fire when claim reward amount is zero",
+        amount: 0n,
+        native: true,
+      },
+      {
+        name: "does not fire when claim reward asset is not native",
+        amount: 100n,
+        native: false,
+      },
     ])("$name", async ({ amount, native }) => {
       const res = await validateIntent(
         stakingCurrency,
@@ -797,7 +831,9 @@ describe("validateIntent", () => {
 
         it("if the recipient has been set, detects fees being too high for the account balance with an error", async () => {
           const notEnoughBalanceRes = await validateIntent(
-            { units: [{ code: "ETH", name: "ETH", magnitude: 18 }] } as CryptoCurrency,
+            {
+              units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
+            } as CryptoCurrency,
             createIntent({ recipient: "recipient-address" }),
             [{ value: 10n, asset: { type: "native" } }],
             {
@@ -811,12 +847,15 @@ describe("validateIntent", () => {
             },
           );
           const notEnoughBalanceSponsoredRes = await validateIntent(
-            { units: [{ code: "ETH", name: "ETH", magnitude: 18 }] } as CryptoCurrency,
-            createIntent({ recipient: "recipient-address", sponsored: true }),
+            {
+              units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
+            } as CryptoCurrency,
+            createIntent({ recipient: "recipient-address" }),
             [{ value: 10n, asset: { type: "native" } }],
             {
               value: 11n,
               parameters: {
+                sponsored: true,
                 gasLimit: 11n,
                 gasPrice: 1n,
                 maxFeePerGas: 1n,
@@ -825,7 +864,9 @@ describe("validateIntent", () => {
             },
           );
           const enoughBalanceRes = await validateIntent(
-            { units: [{ code: "ETH", name: "ETH", magnitude: 18 }] } as CryptoCurrency,
+            {
+              units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
+            } as CryptoCurrency,
             createIntent({ recipient: "recipient-address" }),
             [{ value: 10n, asset: { type: "native" } }],
             {
@@ -860,7 +901,9 @@ describe("validateIntent", () => {
           // gas fee alone fits in the available balance, but the additionalFees
           // (e.g. L1 data fee on L2s) push the total above the native balance.
           const res = await validateIntent(
-            { units: [{ code: "ETH", name: "ETH", magnitude: 18 }] } as CryptoCurrency,
+            {
+              units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
+            } as CryptoCurrency,
             createIntent({ recipient: "recipient-address" }),
             [{ value: 10n, asset: { type: "native" } }],
             {
@@ -884,21 +927,33 @@ describe("validateIntent", () => {
 
         it("if the recipient has not been set, does not detect gas being too high", async () => {
           const notEnoughBalanceRes = await validateIntent(
-            { units: [{ code: "ETH", name: "ETH", magnitude: 18 }] } as CryptoCurrency,
+            {
+              units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
+            } as CryptoCurrency,
             createIntent({ recipient: "" }),
             [{ value: 10n, asset: { type: "native" } }],
             {
               value: 11n,
-              parameters: { gasPrice: 1n, maxFeePerGas: 1n, maxPriorityFeePerGas: 1n },
+              parameters: {
+                gasPrice: 1n,
+                maxFeePerGas: 1n,
+                maxPriorityFeePerGas: 1n,
+              },
             },
           );
           const enoughBalanceRes = await validateIntent(
-            { units: [{ code: "ETH", name: "ETH", magnitude: 18 }] } as CryptoCurrency,
+            {
+              units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
+            } as CryptoCurrency,
             createIntent({ recipient: "" }),
             [{ value: 10n, asset: { type: "native" } }],
             {
               value: 9n,
-              parameters: { gasPrice: 1n, maxFeePerGas: 1n, maxPriorityFeePerGas: 1n },
+              parameters: {
+                gasPrice: 1n,
+                maxFeePerGas: 1n,
+                maxPriorityFeePerGas: 1n,
+              },
             },
           );
 
@@ -1255,56 +1310,88 @@ describe("validateIntent", () => {
       { type: "native" },
       { amount: 10000000n },
       { additionalFees: undefined },
-      { expectedTotalFees: 105000n, expectedTotalSpent: 10105000n, expectedAmount: 10000000n },
+      {
+        expectedTotalFees: 105000n,
+        expectedTotalSpent: 10105000n,
+        expectedAmount: 10000000n,
+      },
     ],
     [
       "native asset and additional fees",
       { type: "native" },
       { amount: 10000000n },
       { additionalFees: 4000n },
-      { expectedTotalFees: 109000n, expectedTotalSpent: 10109000n, expectedAmount: 10000000n },
+      {
+        expectedTotalFees: 109000n,
+        expectedTotalSpent: 10109000n,
+        expectedAmount: 10000000n,
+      },
     ],
     [
       "native asset and no additional fees, using all amounts",
       { type: "native" },
       { useAllAmount: true },
       { additionalFees: undefined },
-      { expectedTotalFees: 105000n, expectedTotalSpent: 20000000n, expectedAmount: 19895000n },
+      {
+        expectedTotalFees: 105000n,
+        expectedTotalSpent: 20000000n,
+        expectedAmount: 19895000n,
+      },
     ],
     [
       "native asset and additional fees, using all amounts",
       { type: "native" },
       { useAllAmount: true },
       { additionalFees: 4000n },
-      { expectedTotalFees: 109000n, expectedTotalSpent: 20000000n, expectedAmount: 19891000n },
+      {
+        expectedTotalFees: 109000n,
+        expectedTotalSpent: 20000000n,
+        expectedAmount: 19891000n,
+      },
     ],
     [
       "token asset and no additional fees",
       { type: "erc20", assetReference: "contract-address" },
       { amount: 2n },
       { additionalFees: undefined },
-      { expectedTotalFees: 105000n, expectedTotalSpent: 2n, expectedAmount: 2n },
+      {
+        expectedTotalFees: 105000n,
+        expectedTotalSpent: 2n,
+        expectedAmount: 2n,
+      },
     ],
     [
       "token asset and additional fees",
       { type: "erc20", assetReference: "contract-address" },
       { amount: 2n },
       { additionalFees: 4000n },
-      { expectedTotalFees: 109000n, expectedTotalSpent: 2n, expectedAmount: 2n },
+      {
+        expectedTotalFees: 109000n,
+        expectedTotalSpent: 2n,
+        expectedAmount: 2n,
+      },
     ],
     [
       "token asset and no additional fees, using all amounts",
       { type: "erc20", assetReference: "contract-address" },
       { useAllAmount: true },
       { additionalFees: undefined },
-      { expectedTotalFees: 105000n, expectedTotalSpent: 10n, expectedAmount: 10n },
+      {
+        expectedTotalFees: 105000n,
+        expectedTotalSpent: 10n,
+        expectedAmount: 10n,
+      },
     ],
     [
       "token asset and additional fees, using all amounts",
       { type: "erc20", assetReference: "contract-address" },
       { useAllAmount: true },
       { additionalFees: 4000n },
-      { expectedTotalFees: 109000n, expectedTotalSpent: 10n, expectedAmount: 10n },
+      {
+        expectedTotalFees: 109000n,
+        expectedTotalSpent: 10n,
+        expectedAmount: 10n,
+      },
     ],
   ])(
     "valid intent with %s",
@@ -1320,7 +1407,11 @@ describe("validateIntent", () => {
           lastCoinOperations: [],
           lastInternalOperations: [],
           lastNftOperations: [],
-          lastTokenOperations: [{ contract: "contract-address" } as Operation],
+          lastTokenOperations: [
+            {
+              asset: { type: "erc20" as const, assetReference: "contract-address" },
+            } as unknown as Operation<MemoNotSupported>,
+          ],
           nextPagingToken: "",
         });
 
@@ -1333,7 +1424,10 @@ describe("validateIntent", () => {
           }),
           [
             { value: 20000000n, asset: { type: "native" } },
-            { value: 10n, asset: { type: "erc20", assetReference: "contract-address" } },
+            {
+              value: 10n,
+              asset: { type: "erc20", assetReference: "contract-address" },
+            },
           ],
           {
             value: 105000n,
@@ -1356,7 +1450,11 @@ describe("validateIntent", () => {
           lastCoinOperations: [],
           lastInternalOperations: [],
           lastNftOperations: [],
-          lastTokenOperations: [{ contract: "contract-address" } as Operation],
+          lastTokenOperations: [
+            {
+              asset: { type: "erc20" as const, assetReference: "contract-address" },
+            } as unknown as Operation<MemoNotSupported>,
+          ],
           nextPagingToken: "",
         });
         jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
@@ -1389,7 +1487,10 @@ describe("validateIntent", () => {
           }),
           [
             { value: 20000000n, asset: { type: "native" } },
-            { value: 10n, asset: { type: "erc20", assetReference: "contract-address" } },
+            {
+              value: 10n,
+              asset: { type: "erc20", assetReference: "contract-address" },
+            },
           ],
           {
             value: 105000n,
@@ -1417,7 +1518,11 @@ describe("validateIntent", () => {
           lastCoinOperations: [],
           lastInternalOperations: [],
           lastNftOperations: [],
-          lastTokenOperations: [{ contract: "contract-address" } as Operation],
+          lastTokenOperations: [
+            {
+              asset: { type: "erc20" as const, assetReference: "contract-address" },
+            } as unknown as Operation<MemoNotSupported>,
+          ],
           nextPagingToken: "",
         });
         const getGasOptions = jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
@@ -1450,7 +1555,10 @@ describe("validateIntent", () => {
           }),
           [
             { value: 20000000n, asset: { type: "native" } },
-            { value: 10n, asset: { type: "erc20", assetReference: "contract-address" } },
+            {
+              value: 10n,
+              asset: { type: "erc20", assetReference: "contract-address" },
+            },
           ],
           {
             value: 105000n,
@@ -1511,7 +1619,10 @@ describe("validateIntent", () => {
           }),
           [
             { value: 20000000n, asset: { type: "native" } },
-            { value: 10n, asset: { type: "erc20", assetReference: "contract-address" } },
+            {
+              value: 10n,
+              asset: { type: "erc20", assetReference: "contract-address" },
+            },
           ],
           estimation,
         ),

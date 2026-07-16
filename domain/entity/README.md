@@ -1,10 +1,8 @@
 # domain/entity/
 
+> Part of the [DDD monorepo architecture](../../docs/ddd-monorepo-architecture.md).
+
 Business domain entity packages. Each subdirectory is an independent pnpm workspace package containing Zod schemas, RTK slices, selectors, and tests for a single domain concept.
-
-## Scope
-
-`@domain/entity-<name>` (e.g. `@domain/entity-market`, `@domain/entity-crypto-assets`)
 
 ## Responsibility
 
@@ -15,12 +13,11 @@ Business domain entity packages. Each subdirectory is an independent pnpm worksp
 
 ## Conventions
 
-- One entity per package
-- Package name: `@domain/entity-<name>`
-- Directory name: `domain/entity/<name>/`
-- `package.json` must have `"private": true`
-- for schema definition use `zod` as dependency
-- for slice definition use `@reduxjs/toolkit` as dependency
+For the standard package checklist (private flag, tsconfig, naming…) see [docs/new-library.md](../../docs/new-library.md).
+
+Entity-specific:
+- One entity per package — `domain/entity/<name>/`
+- Use `zod` for schema definition, `@reduxjs/toolkit` for the slice
 - Barrel export via `src/index.ts` (default export = reducer when applicable)
 - Mock and test files are not re-exported from the barrel
 

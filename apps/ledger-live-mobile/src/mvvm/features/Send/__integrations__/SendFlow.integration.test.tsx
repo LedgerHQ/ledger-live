@@ -75,7 +75,7 @@ jest.mock("expo-keep-awake", () => ({
 
 async function flushTimers(): Promise<void> {
   await act(async () => {
-    jest.advanceTimersByTime(600);
+    await jest.advanceTimersByTimeAsync(600);
   });
 }
 
@@ -120,12 +120,12 @@ describe("Send flow integration tests", () => {
   ): Promise<void> {
     // EVM enables ENS resolution so the placeholder is "Enter address or ENS";
     // every other family uses "Enter address".
-    await user.type(
-      await screen.findByPlaceholderText(/^Enter address( or ENS)?$/),
-      opts.recipient,
-    );
+    const recipientInput = await screen.findByPlaceholderText(/^Enter address( or ENS)?$/);
+    await user.paste(recipientInput, opts.recipient);
+    await flushTimers();
     if (opts.memo !== undefined) {
-      await user.type(await screen.findByTestId("send-memo-input"), opts.memo);
+      const memoInput = await screen.findByTestId("send-memo-input");
+      await user.paste(memoInput, opts.memo);
     }
     await user.press(await screen.findByText(/^Send to /));
     await screen.findByText("Review");

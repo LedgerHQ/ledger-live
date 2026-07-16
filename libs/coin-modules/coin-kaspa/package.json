@@ -55,10 +55,6 @@
       "require": "./lib/batcher/*.js",
       "default": "./lib-es/batcher/*.js"
     },
-    "./bot": {
-      "require": "./lib/bot/index.js",
-      "default": "./lib-es/bot/index.js"
-    },
     "./bridge": {
       "@ledgerhq/source": "./src/bridge/index.ts",
       "require": "./lib/bridge/index.js",

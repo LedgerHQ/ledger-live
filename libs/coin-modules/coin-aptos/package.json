@@ -107,7 +107,6 @@
     "@ledgerhq/types-live": "workspace:^",
     "@noble/hashes": "1.8.0",
     "bignumber.js": "^9.1.2",
-    "expect": "catalog:",
     "got": "11.8.5",
     "graphql": "^16.10.0",
     "invariant": "^2.2.4",
@@ -117,6 +116,7 @@
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.37",

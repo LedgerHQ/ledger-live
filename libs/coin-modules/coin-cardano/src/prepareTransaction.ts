@@ -28,7 +28,6 @@ export const prepareTransaction: AccountBridge<
 
   try {
     const cardanoTransaction = await buildTransaction(account, transaction);
-    const transactionFees = cardanoTransaction.getFee();
     const transactionAmount = transaction.subAccountId
       ? transaction.amount
       : cardanoTransaction
@@ -40,6 +39,15 @@ export const prepareTransaction: AccountBridge<
               o.address.paymentCredential.bipPath === undefined,
           )
           .reduce((total, o) => total.plus(o.amount), new BigNumber(0));
+
+    // When no spendable output forms (low balance / no amount entered yet), Typhon's dust guard
+    // folds the whole balance into the fee; report the real protocol-minimum fee instead. A real
+    // send (amount > 0) keeps getFee() so a legitimately dust-folded fee is still disclosed.
+    // See LIVE-33176.
+    const transactionFees =
+      !transaction.subAccountId && transactionAmount.isZero()
+        ? cardanoTransaction.calculateFee()
+        : cardanoTransaction.getFee();
 
     patch = { fees: transactionFees, amount: transactionAmount };
   } catch {

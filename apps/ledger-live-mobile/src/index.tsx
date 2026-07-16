@@ -17,7 +17,7 @@ import "./config/configInit";
 import "./config/bridge-setup";
 import Config from "react-native-config";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { init } from "../e2e/bridge/client";
+import { init } from "~/e2e/bridge/client";
 import logger from "./logger";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import {
@@ -99,6 +99,7 @@ import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setu
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
 import { setSuiGraphqlEnabled } from "@ledgerhq/live-common/families/sui/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
+import { useAutoFinishPostOnboarding } from "LLM/features/PostOnboarding/hooks/useAutoFinishPostOnboarding";
 logStartupEvent("After js imports");
 
 if (Config.DISABLE_YELLOW_BOX) {
@@ -230,6 +231,7 @@ function App() {
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useAutoDismissPostOnboardingEntryPoint();
+  useAutoFinishPostOnboarding();
 
   return (
     <>

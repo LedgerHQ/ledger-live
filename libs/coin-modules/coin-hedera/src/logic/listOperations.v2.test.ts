@@ -745,9 +745,10 @@ describe("listOperationsV2", () => {
       result: "INSUFFICIENT_PAYER_BALANCE",
       token_transfers: [],
       staking_reward_transfers: [],
+      // account must be a transfer participant so the op survives the NONE filter; fee payer stays a different account
       transfers: [
         { account: "0.0.23", amount: -40743 },
-        { account: "0.0.801", amount: 40743 },
+        { account: mockMirrorAccount.account, amount: 40743 },
       ],
       name: "CRYPTOTRANSFER",
     });
@@ -1075,6 +1076,49 @@ describe("listOperationsV2", () => {
 
     expect(result.coinOperations).toEqual([]);
     expect(result.tokenOperations).toEqual([expect.objectContaining({ type: "IN" })]);
+  });
+
+  it("should drop NONE operations for HTS transfers between third parties (account not a participant)", async () => {
+    const mockTokenHTS = getMockedHTSTokenCurrency();
+    const mockTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1625097600.000000000",
+      transaction_hash: "hash1",
+      charged_tx_fee: 500000,
+      result: "SUCCESS",
+      token_transfers: [
+        { token_id: mockTokenHTS.contractAddress, account: "0.0.67890", amount: -1000 },
+        { token_id: mockTokenHTS.contractAddress, account: "0.0.99999", amount: 1000 },
+      ],
+      staking_reward_transfers: [],
+      transfers: [],
+      name: "CRYPTOTRANSFER",
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+
+    setupMockCryptoAssetsStore({
+      findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenHTS),
+    });
+
+    const result = await listOperations({
+      limit: mockLimit,
+      order: mockOrder,
+      currencyId: mockCurrency.id,
+      address: mockMirrorAccount.account,
+      evmAddress: mockMirrorAccount.evm_address,
+      mirrorTokens: [],
+      tokenEvmAddresses: [],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+    });
+
+    expect(result.coinOperations).toEqual([]);
+    expect(result.tokenOperations).toEqual([]);
   });
 
   it("should skip FEES operations for ERC20 IN transfers", async () => {

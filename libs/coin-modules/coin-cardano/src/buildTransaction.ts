@@ -8,7 +8,7 @@ import {
 import BigNumber from "bignumber.js";
 import { decodeTokenAssetId, decodeTokenCurrencyId, getTokenAssetId } from "./buildSubAccounts";
 import { CARDANO_MAX_SUPPLY } from "./constants";
-import { CardanoInvalidProtoParams } from "./errors";
+import { CardanoInvalidProtoParams, CardanoMinAmountError } from "./errors";
 import {
   getAccountStakeCredential,
   getBaseAddress,
@@ -211,10 +211,41 @@ const buildSendAdaTransaction = async ({
     const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(account);
     if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
 
-    return typhonTx.prepareTransaction({
-      inputs: [],
-      changeAddress: receiverAddress,
+    // Send Max: compute the fee + recipient amount explicitly instead of routing the recipient
+    // through Typhon's change mechanism, whose <2 ADA dust guard would fold the whole low balance
+    // into the fee (the ~10× inflated fee in LIVE-33176). Raise a clear min-UTXO error when the
+    // balance can't fund a valid output rather than silently over-paying.
+    const availableAda = typhonTx.getInputAmount().ada.plus(typhonTx.getAdditionalInputAda());
+    const committedAda = typhonTx.getOutputAmount().ada.plus(typhonTx.getAdditionalOutputAda());
+    const spendableAda = availableAda.minus(committedAda);
+
+    const fee = typhonTx.calculateFee([
+      { address: receiverAddress, amount: spendableAda, tokens: [] },
+    ]);
+    const recipientAmount = spendableAda.minus(fee);
+
+    const minRecipientUtxo = typhonTx.calculateMinUtxoAmountBabbage({
+      address: receiverAddress,
+      amount: new BigNumber(CARDANO_MAX_SUPPLY),
+      tokens: [],
     });
+    if (recipientAmount.lt(minRecipientUtxo)) {
+      // After fees the balance can't fund an output above the Babbage min-UTXO floor: the funds
+      // are below the network's economic dust threshold and cannot be sent (they are NOT lost to
+      // an inflated fee). Recoverable — the status layer maps this to a clear amount error.
+      throw new CardanoMinAmountError("", {
+        amount: minRecipientUtxo.div(1e6).toString(),
+      });
+    }
+
+    typhonTx.setFee(fee);
+    typhonTx.addOutput({
+      address: receiverAddress,
+      amount: recipientAmount,
+      tokens: [],
+    });
+
+    return typhonTx;
   }
 
   // Prefer pure ADA UTXOs first to avoid unnecessarily pulling in native

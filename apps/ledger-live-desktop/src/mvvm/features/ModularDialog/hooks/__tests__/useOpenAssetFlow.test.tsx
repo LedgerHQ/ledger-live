@@ -2,7 +2,7 @@ import React from "react";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useOpenAssetFlow } from "../useOpenAssetFlow";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
 jest.mock("~/renderer/drawers/Provider", () => ({

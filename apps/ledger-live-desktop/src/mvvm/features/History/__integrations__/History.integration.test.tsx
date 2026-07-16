@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useExportOperationsCsv } from "~/renderer/hooks/useExportOperationsCsv";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { track } from "~/renderer/analytics/segment";
 import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
 import { bitcoinCurrency, ethereumCurrency } from "../../__mocks__/useSelectAssetFlow.mock";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
@@ -204,6 +205,25 @@ describe("History integration", () => {
     await user.click(await screen.findByTestId("history-toggle-dust-filter-button"));
 
     expect(store.getState().settings.hideSmallValueTokenOperations).toBe(true);
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "dust_filter",
+      enabled: true,
+    });
+  });
+
+  it("describes dust transactions as displayed when dust filtering is active", async () => {
+    const { user } = renderHistory([BTC_ACCOUNT], {
+      ...withFlagOverrides({ lwdDustFiltering: { enabled: true } }),
+      settings: {
+        ...AFTER_ONBOARDING_STATE,
+        hideSmallValueTokenOperations: true,
+      },
+    });
+
+    await user.click(await screen.findByTestId("history-actions-menu-button"));
+
+    expect(await screen.findByText("Show dust transactions")).toBeVisible();
+    expect(screen.getByText("Transactions below US$0.01 will be displayed.")).toBeVisible();
   });
 
   it("does not render the dust filtering action when the feature flag is disabled", async () => {

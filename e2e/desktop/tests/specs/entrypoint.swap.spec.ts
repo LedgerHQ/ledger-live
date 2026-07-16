@@ -17,6 +17,8 @@ import { overrideNetworkPayload } from "tests/utils/networkUtils";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
+import { isAggregatedAssetsEnabled } from "tests/utils/featureFlagUtils";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
@@ -52,18 +54,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Asset Allocation",
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@ethereum",
-        "@family-evm",
-        "@bitcoin",
-        "@family-bitcoin",
-      ],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2986",
@@ -73,7 +64,10 @@ test.describe("Swap flow from different entry point", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.clickAsset(swapEntryPoint.swap.accountToDebit.currency);
-      await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow());
+      // aggregatedAssets ON opens swap as the AssetDetail embedded rail; otherwise the legacy
+      // asset page's Swap CTA navigates to the full /swap page.
+      const swapSurface = (await isAggregatedAssetsEnabled(app.getPage())) ? "embedded" : "full";
+      await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow(), swapSurface);
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
     },
   );
@@ -81,18 +75,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Market page - Click on swap for any coin",
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@ethereum",
-        "@family-evm",
-        "@bitcoin",
-        "@family-bitcoin",
-      ],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2987",
@@ -114,18 +97,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Market page - More than one account for an asset",
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@ethereum",
-        "@family-evm",
-        "@bitcoin",
-        "@family-bitcoin",
-      ],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2988",
@@ -135,10 +107,14 @@ test.describe("Swap flow from different entry point", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.marketBanner.clickExploreMarketHeader();
       await app.market.clickCoinRow(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      await app.marketCoin.expectMarketCoinPageToBeVisible(
-        swapEntryPoint.swap.accountToDebit.currency.id,
-      );
-      await app.swap.goAndWaitForSwapToBeReady(() => app.marketCoin.clickSwapButton());
+      if (await isAggregatedAssetsEnabled(app.getPage())) {
+        await app.assetDetail.expectMarketInfoVisible();
+      } else {
+        await app.marketCoin.expectMarketCoinPageToBeVisible(
+          swapEntryPoint.swap.accountToDebit.currency.id,
+        );
+        await app.swap.goAndWaitForSwapToBeReady(() => app.marketCoin.clickSwapButton());
+      }
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
     },
   );
@@ -146,18 +122,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Account page",
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@ethereum",
-        "@family-evm",
-        "@bitcoin",
-        "@family-bitcoin",
-      ],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2989",
@@ -180,18 +145,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - left menu",
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@ethereum",
-        "@family-evm",
-        "@bitcoin",
-        "@family-bitcoin",
-      ],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2990, B2CQA-523",
@@ -260,18 +214,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
     test(
       `Swap max amount from ${fromAccount.currency.name} to ${toAccount.currency.name}`,
       {
-        tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          "@ethereum",
-          "@family-evm",
-          "@bitcoin",
-          "@family-bitcoin",
-        ],
+        tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
         annotation: {
           type: "TMS",
           description: xrayTicket,
@@ -353,18 +296,7 @@ test.describe("Swap history", () => {
   test(
     `User can export all history operations`,
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@solana",
-        "@family-solana",
-        "@ethereum",
-        "@family-evm",
-      ],
+      tag: [...DEVICE_TAGS, "@solana", "@family-solana", "@ethereum", "@family-evm"],
       annotation: { type: "TMS", description: "B2CQA-604" },
     },
     async ({ app }) => {
@@ -390,18 +322,7 @@ test.describe("Swap history", () => {
   test(
     `User should be able to see their swap history from the swap history page`,
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@solana",
-        "@family-solana",
-        "@ethereum",
-        "@family-evm",
-      ],
+      tag: [...DEVICE_TAGS, "@solana", "@family-solana", "@ethereum", "@family-evm"],
       annotation: { type: "TMS", description: "B2CQA-602" },
     },
     async ({ app }) => {
@@ -455,18 +376,7 @@ test.describe("Swap - Block blacklisted addresses", () => {
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name}`,
     {
-      tag: [
-        "@NanoSP",
-        "@LNS",
-        "@NanoX",
-        "@Stax",
-        "@Flex",
-        "@NanoGen5",
-        "@ethereum",
-        "@family-evm",
-        "@bitcoin",
-        "@family-bitcoin",
-      ],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
         type: "TMS",
         description: "B2CQA-3655",

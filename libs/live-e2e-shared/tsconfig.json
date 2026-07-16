@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "lib": ["es2022", "dom"],
+    "types": ["node"],
+    "outDir": "lib",
+    "rootDir": "src"
+  },
+  "include": ["src/**/*"]
+}

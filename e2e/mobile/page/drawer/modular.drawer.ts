@@ -122,13 +122,23 @@ export default class ModularDrawer {
     }
   }
 
-  @Step("Select currency in modular drawer")
-  async selectAsset(account: Account): Promise<void> {
+  private async selectAssetCurrencyAndNetwork(account: Account): Promise<void> {
     await this.performSearchByTicker(account.currency.ticker);
     await this.selectCurrencyByTicker(account.currency.ticker);
     const networkName = this.getNetworkNameForAccount(account);
     await this.selectNetworkIfAsked(networkName);
+  }
+
+  @Step("Select currency in modular drawer")
+  async selectAsset(account: Account): Promise<void> {
+    await this.selectAssetCurrencyAndNetwork(account);
     await this.selectFirstAccount();
+  }
+
+  @Step("Select currency then a specific account in modular drawer")
+  async selectAssetAndAccount(account: Account): Promise<void> {
+    await this.selectAssetCurrencyAndNetwork(account);
+    await this.selectAccount(account.accountName);
   }
 
   @Step("Validate account(s) present on account list")

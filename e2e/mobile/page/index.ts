@@ -15,6 +15,7 @@ import OperationDetailsPage from "./trade/operationDetails.page";
 import PasswordEntryPage from "./passwordEntry.page";
 import PortfolioEmptyStatePage from "./wallet/portfolioEmptyState.page";
 import PortfolioPage from "./wallet/portfolio.page";
+import AssetDetailPage from "./wallet/assetDetail.page";
 import ReceivePage from "./trade/receive.page";
 import SendPage from "./trade/send.page";
 import SettingsGeneralPage from "./settings/settingsGeneral.page";
@@ -23,6 +24,7 @@ import SettingsPage from "./settings/settings.page";
 import SpeculosPage from "./speculos.page";
 import StakePage from "./trade/stake.page";
 import EvmStakePage from "./trade/evmStake.page";
+import TezosStakePage from "./trade/tezosStake.page";
 import SwapPage from "./trade/swap.page";
 import SwapLiveAppPage from "./liveApps/swapLiveApp";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
@@ -36,6 +38,8 @@ import BuySellPage from "./trade/buySell.page";
 import EarnV2DashboardPage from "./trade/earnV2Dashboard.page";
 import ModularDrawer from "./drawer/modular.drawer";
 import SwapTransactionStatusDrawer from "./drawer/swapTransactionStatus.drawer";
+import UndelegatePage from "./trade/undelegate.page";
+import Wallet40DrawersPage from "./drawer/wallet40Drawers.drawer";
 
 import path from "path";
 import fs from "fs";
@@ -73,6 +77,7 @@ export class Application {
   private passwordEntryPageInstance = lazyInit(PasswordEntryPage);
   private portfolioEmptyStatePageInstance = lazyInit(PortfolioEmptyStatePage);
   private portfolioPageInstance = lazyInit(PortfolioPage);
+  private readonly assetDetailPageInstance = lazyInit(AssetDetailPage);
   private receivePageInstance = lazyInit(ReceivePage);
   private sendPageInstance = lazyInit(SendPage);
   private settingsPageInstance = lazyInit(SettingsPage);
@@ -80,6 +85,7 @@ export class Application {
   private speculosPageInstance = lazyInit(SpeculosPage);
   private stakePageInstance = lazyInit(StakePage);
   private evmStakePageInstance = lazyInit(EvmStakePage);
+  private readonly tezosStakePageInstance = lazyInit(TezosStakePage);
   private swapLiveAppInstance = lazyInit(SwapLiveAppPage);
   private swapPageInstance = lazyInit(SwapPage);
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
@@ -93,7 +99,9 @@ export class Application {
   private readonly earnV2DashboardPageInstance = lazyInit(EarnV2DashboardPage);
   private modularDrawerPageInstance = lazyInit(ModularDrawer);
   private swapTransactionStatusDrawerInstance = lazyInit(SwapTransactionStatusDrawer);
+  private readonly wallet40DrawersPageInstance = lazyInit(Wallet40DrawersPage);
   private readonly topBarSearchPageInstance = lazyInit(TopBarSearchPage);
+  private undelegatePageInstance = lazyInit(UndelegatePage);
 
   @Step("Account initialization")
   public async init(options: ApplicationOptions) {
@@ -167,6 +175,10 @@ export class Application {
     return this.portfolioPageInstance();
   }
 
+  public get assetDetail() {
+    return this.assetDetailPageInstance();
+  }
+
   public get portfolioEmptyState() {
     return this.portfolioEmptyStatePageInstance();
   }
@@ -197,6 +209,10 @@ export class Application {
 
   public get evmStake() {
     return this.evmStakePageInstance();
+  }
+
+  public get tezosStake() {
+    return this.tezosStakePageInstance();
   }
 
   public get swap() {
@@ -251,7 +267,15 @@ export class Application {
     return this.swapTransactionStatusDrawerInstance();
   }
 
+  public get wallet40Drawers() {
+    return this.wallet40DrawersPageInstance();
+  }
+
   public get topBarSearch() {
     return this.topBarSearchPageInstance();
+  }
+
+  public get undelegate() {
+    return this.undelegatePageInstance();
   }
 }

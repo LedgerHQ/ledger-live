@@ -1,4 +1,5 @@
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
+import { largeScreenUpsellModalReducer } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import postOnboardingHubDrawer from "./postOnboardingHubDrawer";
 import { combineReducers, type Store } from "redux";
 import { llmRTKApiReducers } from "~/context/rtkQueryApi";
@@ -42,6 +43,7 @@ import recoverState from "./recoverState";
 import liveAppModal from "./liveAppModal";
 import { identitiesSlice } from "@ledgerhq/client-ids/store";
 import { supportedFiatsSlice } from "@domain/entity-currency-fiat";
+import { payCardSlice } from "@domain/entity-pay-card";
 import type { UnknownAction } from "@reduxjs/toolkit";
 
 export type AppStore = Store<State>;
@@ -73,12 +75,14 @@ const appReducer = combineReducers({
   transferDrawer,
   swapTransactionStatusDrawer,
   notifications,
+  largeScreenUpsellModal: largeScreenUpsellModalReducer,
   postOnboarding,
   postOnboardingHubDrawer,
   protect,
   ratings,
   settings,
   sendFlow,
+  payCard: payCardSlice.reducer,
   toasts,
   trustchain,
   wallet,

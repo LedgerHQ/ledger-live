@@ -150,7 +150,6 @@ describe("sdk", () => {
             LAST_BLOCK_COUNT,
           );
         } catch (err: unknown) {
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           const error = err as { message: string };
           expect(error.message).toMatch("something went wrong");
         }
@@ -207,7 +206,6 @@ describe("sdk", () => {
             LAST_BLOCK_COUNT,
           );
         } catch (err: unknown) {
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           const error = err as { message: string };
           expect(error.message).toMatch("something went wrong");
         }

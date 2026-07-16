@@ -30,7 +30,7 @@ export type AddAccountsSectionResult = {
   alreadyEmptyAccount: Account | null | undefined;
 };
 
-function sameAccountIdentity(a: Account, b: Account) {
+export function sameAccountIdentity(a: Account, b: Account) {
   return (
     a.id === b.id ||
     (a.freshAddress ? a.currency === b.currency && a.freshAddress === b.freshAddress : false) ||

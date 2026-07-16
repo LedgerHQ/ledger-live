@@ -20,6 +20,7 @@ Pay special attention to:
 - `.agents/skills/coin-families-contract/SKILL.md` — Coin-families contract: no coin-specific branches (`if (family === "evm")` etc.) in generic UI; extend the families contract and implement in `families/<family>/` instead
 - `.agents/skills/codeownership/SKILL.md` — Team-split convention: multi-team files should be split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; suggest this when a touched file clearly involves many teams
 - `.agents/skills/knip-migration/SKILL.md` — Dead-code detection is moving to `knip`, which needs explicit (non-`./*`) `package.json#exports`; new packages must use explicit exports + knip, not `.unimportedrc.json`
+- `.agents/skills/console-log/SKILL.md` — Console logging levels: `console.error` is forwarded to monitoring tools as an error event; flag any new `console.error` that isn't an illegal/unexpected state
 
 ## Review Scope
 

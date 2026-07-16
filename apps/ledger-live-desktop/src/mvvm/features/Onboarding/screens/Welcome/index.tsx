@@ -3,7 +3,8 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { useTheme } from "styled-components";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
-import { AnalyticsOptInScreenV2 } from "LLD/features/AnalyticsOptInScreenV2";
+import { useShouldUseAnalyticsOptInScreenV2 } from "LLD/features/AnalyticsOptInPrompt/hooks/useShouldUseAnalyticsOptInScreenV2";
+import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
 import { EntryPoint as LSEntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 
@@ -21,7 +22,7 @@ import {
   TermsAndConditionsText,
   StyledLink,
 } from "./components/WelcomeStyles";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export function Welcome() {
   const {
@@ -53,10 +54,9 @@ export function Welcome() {
   const { colors } = useTheme();
 
   const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("desktop");
-  const lwdAnalyticsOptInScreenV2 = useFeature("lwdAnalyticsOptInScreenV2");
+  const shouldUseAnalyticsOptInScreenV2 = useShouldUseAnalyticsOptInScreenV2(EntryPoint.onboarding);
   const isAnalyticsOptInOpen = extendedAnalyticsOptInPromptProps.isOpened;
-  const shouldHideWelcomeCarousel =
-    isAnalyticsOptInOpen && Boolean(lwdAnalyticsOptInScreenV2?.enabled);
+  const shouldHideWelcomeCarousel = isAnalyticsOptInOpen && shouldUseAnalyticsOptInScreenV2;
 
   return (
     <WelcomeContainer ref={containerRef}>
@@ -168,12 +168,9 @@ export function Welcome() {
           </ContentOverlay>
         </>
       ) : null}
-      {isFeatureFlagsAnalyticsPrefDisplayed &&
-        (lwdAnalyticsOptInScreenV2?.enabled ? (
-          <AnalyticsOptInScreenV2 {...extendedAnalyticsOptInPromptProps} />
-        ) : (
-          <AnalyticsOptInPrompt {...extendedAnalyticsOptInPromptProps} />
-        ))}
+      {isFeatureFlagsAnalyticsPrefDisplayed && (
+        <AnalyticsOptInPrompt {...extendedAnalyticsOptInPromptProps} />
+      )}
     </WelcomeContainer>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";

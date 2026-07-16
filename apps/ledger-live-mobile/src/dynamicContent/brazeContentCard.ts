@@ -35,8 +35,16 @@ export const useBrazeContentCard = (mobileCards: Braze.ContentCard[]) => {
         categoryExtrasById.set(card.extras.id, card.extras);
       }
     }
+    // Local/debug cards (Settings > Debug > Content Cards) aren't in `mobileCards`; index them
+    // too so logImpressionCard can find them by id.
+    for (const card of localMobileCards) {
+      byId.set(card.id, card);
+    }
+    for (const card of localWalletCards) {
+      byId.set(card.id, card as unknown as Braze.ContentCard);
+    }
     return { byId, categoryExtrasById };
-  }, [mobileCards]);
+  }, [mobileCards, localMobileCards, localWalletCards]);
   const cardIndexRef = useRef(cardIndex);
   cardIndexRef.current = cardIndex;
   const dispatch = useDispatch();
@@ -66,12 +74,14 @@ export const useBrazeContentCard = (mobileCards: Braze.ContentCard[]) => {
 
   const logImpressionCard = useCallback(
     (cardId: string, displayedPosition?: number) => {
-      if (!isTrackedUser || isLocalCard(cardId, localMobileCards, localWalletCardIds)) return;
+      if (!isTrackedUser) return;
 
       const card = cardIndexRef.current.byId.get(cardId);
       if (!card || isCategoryContentCardExtras(card.extras)) return;
 
-      Braze.logContentCardImpression(cardId);
+      if (!isLocalCard(cardId, localMobileCards, localWalletCardIds)) {
+        Braze.logContentCardImpression(cardId);
+      }
 
       const categoryExtras = card.extras.categoryId
         ? cardIndexRef.current.categoryExtrasById.get(card.extras.categoryId)
@@ -79,7 +89,10 @@ export const useBrazeContentCard = (mobileCards: Braze.ContentCard[]) => {
       track(
         ContentCardEvent.Impression,
         finalizeContentCardEventProperties({
-          ...buildContentCardTrackingProperties({ cardExtras: card.extras, categoryExtras }),
+          ...buildContentCardTrackingProperties({
+            cardExtras: card.extras,
+            categoryExtras,
+          }),
           displayedPosition,
         }),
       );

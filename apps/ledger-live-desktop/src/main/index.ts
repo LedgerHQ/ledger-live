@@ -105,7 +105,7 @@ app.on("ready", async () => {
   // Defer extension installation to not block startup
   if (__DEV__) {
     setImmediate(() => {
-      installExtensions().catch(console.error);
+      installExtensions().catch(e => console.warn("Dev extensions install failed:", e));
     });
   }
 
@@ -263,6 +263,11 @@ ipcMain.on("app-quit", () => {
   app.quit();
 });
 
+ipcMain.once("app-relaunch", () => {
+  app.relaunch();
+  app.quit();
+});
+
 ipcMain.handle("show-open-dialog", (_, opts) => dialog.showOpenDialog(opts));
 ipcMain.handle("show-save-dialog", (_, opts) => dialog.showSaveDialog(opts));
 
@@ -327,12 +332,11 @@ function setUserDataPath() {
 
 async function installExtensions() {
   // https://github.com/MarshallOfSound/electron-devtools-installer#usage
-  app.whenReady().then(() => {
-    installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS], {
-      loadExtensionOptions: {
-        allowFileAccess: true,
-      },
-    }).catch(console.error);
+  await app.whenReady();
+  await installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS], {
+    loadExtensionOptions: {
+      allowFileAccess: true,
+    },
   });
 }
 

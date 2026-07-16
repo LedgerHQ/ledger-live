@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { PublicKey } from "@solana/web3.js";
 import { getBalance } from "../getBalance";
 import { server, rpcHandler, createTestChainApi } from "../tests/helpers/msw-rpc.mock";

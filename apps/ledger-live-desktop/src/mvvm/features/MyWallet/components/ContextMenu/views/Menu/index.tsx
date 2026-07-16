@@ -1,4 +1,5 @@
 import React from "react";
+import { ContactsButton } from "LLD/features/Contacts";
 import TopBar from "../../../TopBar";
 import { ActionsList } from "../../../ActionsList";
 import { MyLedger } from "../../../MyLedger";
@@ -13,6 +14,7 @@ export function MenuView() {
       <TopBar />
       <ActionsList onRecoverClick={onRecoverClick} />
       <div className="flex flex-col gap-12">
+        <ContactsButton />
         <MyLedger />
         <Explore />
       </div>

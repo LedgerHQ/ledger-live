@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import React, { useMemo } from "react";
 import BigNumber from "bignumber.js";
 import styled from "styled-components";

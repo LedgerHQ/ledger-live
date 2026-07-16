@@ -6,7 +6,7 @@ import Box from "~/renderer/components/Box";
 import { TFunction } from "i18next";
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import ConfirmationCell from "./ConfirmationCell";
 import DateCell from "./DateCell";

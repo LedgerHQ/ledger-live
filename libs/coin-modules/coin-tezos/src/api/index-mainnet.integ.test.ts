@@ -25,7 +25,7 @@ const defaultConfig: TezosConfig = {
     maxTxQuery: 100,
   },
   node: {
-    url: "https://xtz-node.api.vault.ledger.com",
+    url: "https://xtz-node.api.live.ledger.com",
   },
   fees: {
     minGasLimit: 600,
@@ -120,7 +120,6 @@ describe("Tezos Api - Mainnet", () => {
 
       expect(decoded.contents.length).toBe(2);
 
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const reveal = decoded.contents[0] as DecodedOperation;
       expect(reveal.kind).toBe(OpKind.REVEAL);
       expect(BigInt(reveal.fee ?? "0")).toBeGreaterThanOrEqual(500);
@@ -128,7 +127,6 @@ describe("Tezos Api - Mainnet", () => {
       expect(Number(reveal.storage_limit ?? "0")).toBeGreaterThanOrEqual(0);
       expect(reveal.source).toEqual(sender);
 
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const delegation = decoded.contents[1] as DecodedOperation;
       expect(delegation.kind).toBe(OpKind.DELEGATION);
       expect(BigInt(delegation.fee ?? "0")).toBeGreaterThanOrEqual(500);
@@ -190,12 +188,10 @@ describe("Tezos Api - Mainnet", () => {
           );
           const decoded = await localForger.parse(encodedTransaction.slice(2));
 
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           const reveal = decoded.contents[0] as DecodedOperation;
           expect(reveal.kind).toBe(OpKind.REVEAL);
           expect(BigInt(reveal.fee ?? "0")).toEqual(1200n);
 
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           const delegation = decoded.contents[1] as DecodedOperation;
           expect(delegation.kind).toBe(OpKind.DELEGATION);
           expect(BigInt(delegation.fee ?? "0")).toBeGreaterThanOrEqual(1800n);
@@ -221,12 +217,10 @@ describe("Tezos Api - Mainnet", () => {
           );
           const decoded = await localForger.parse(encodedTransaction.slice(2));
 
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           const reveal = decoded.contents[0] as DecodedOperation;
           expect(reveal.kind).toBe(OpKind.REVEAL);
           expect(BigInt(reveal.fee ?? "0")).toEqual(1200n);
 
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           const delegation = decoded.contents[1] as DecodedOperation;
           expect(delegation.kind).toBe(OpKind.DELEGATION);
           expect(BigInt(delegation.fee ?? "0")).toBeGreaterThanOrEqual(800n);

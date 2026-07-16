@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-jest-config",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

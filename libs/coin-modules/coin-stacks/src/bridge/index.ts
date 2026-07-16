@@ -29,8 +29,6 @@ function buildCurrencyBridge(signerContext: SignerContext<StacksSigner>): Curren
   });
 
   return {
-    preload: () => Promise.resolve({}),
-    hydrate: () => {},
     scanAccounts,
   };
 }

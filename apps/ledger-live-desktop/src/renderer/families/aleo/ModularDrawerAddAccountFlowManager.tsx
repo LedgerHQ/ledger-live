@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { ViewKeysByAccountId } from "@ledgerhq/live-common/families/aleo/hw/getViewKey/index";
 import { buildAccountsWithViewKeys } from "@ledgerhq/live-common/families/aleo/react";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";

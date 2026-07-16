@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 jest.mock("@ledgerhq/coin-module-framework/currencies/index", () => ({
   formatCurrencyUnit: jest.fn().mockReturnValue("1000 MINA"),
 }));

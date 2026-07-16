@@ -3,6 +3,8 @@ import { UnknownAction } from "redux";
 import { getEnv } from "@ledgerhq/live-env";
 import { calApiExtra } from "@domain/api-currency-token";
 import { cvsApiExtra } from "@domain/api-currency-fiat";
+import { marketSentimentApiExtra } from "@domain/api-market-sentiment";
+import { altcoinsSentimentApiExtra } from "@domain/api-altcoins-sentiment";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
@@ -43,6 +45,12 @@ const customCreateStore = ({
               }),
               ...cvsApiExtra({
                 countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API"),
+              }),
+              ...marketSentimentApiExtra({
+                coinMarketCapApiUrl: getEnv("CMC_API_URL"),
+              }),
+              ...altcoinsSentimentApiExtra({
+                coinMarketCapApiUrl: getEnv("CMC_API_URL"),
               }),
             },
           },

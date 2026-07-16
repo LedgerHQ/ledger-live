@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { OFAC_FIAT_TICKERS } from "./constants";
-import { setFiats, supportedFiatsSlice } from "./slice";
-import { selectSupportedFiats } from "./selector";
+import { setFiats, setFiatsReady, supportedFiatsSlice } from "./slice";
+import { selectSupportedFiats, selectSupportedFiatsReady } from "./selector";
 import { mockFiatCurrency } from "./schema.mock";
 
 function makeStore() {
@@ -67,5 +67,31 @@ describe("selectSupportedFiats", () => {
     const currency = mockFiatCurrency();
     store.dispatch(setFiats([currency]));
     expect(selectSupportedFiats(store.getState())).toEqual([currency]);
+  });
+});
+
+describe("fiatsReady", () => {
+  it("starts false", () => {
+    const store = makeStore();
+    expect(selectSupportedFiatsReady(store.getState())).toBe(false);
+  });
+
+  it("setFiatsReady sets it to true", () => {
+    const store = makeStore();
+    store.dispatch(setFiatsReady());
+    expect(selectSupportedFiatsReady(store.getState())).toBe(true);
+  });
+
+  it("setFiatsReady is idempotent", () => {
+    const store = makeStore();
+    store.dispatch(setFiatsReady());
+    store.dispatch(setFiatsReady());
+    expect(selectSupportedFiatsReady(store.getState())).toBe(true);
+  });
+
+  it("setFiats does not flip fiatsReady", () => {
+    const store = makeStore();
+    store.dispatch(setFiats([mockFiatCurrency()]));
+    expect(selectSupportedFiatsReady(store.getState())).toBe(false);
   });
 });

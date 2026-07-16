@@ -34,8 +34,6 @@ export function createBridges(
 
   const scanAccounts = makeScanAccounts({ getAccountShape, getAddressFn: getAddress });
   const currencyBridge: CurrencyBridge = {
-    preload: () => Promise.resolve({}),
-    hydrate: () => {},
     scanAccounts,
   };
 

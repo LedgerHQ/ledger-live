@@ -17,6 +17,8 @@ import { buildTransactionParams } from "./operations";
 import { fetchRewards } from "./rewards";
 import { getValidators } from "./validators";
 import { fetchMonadStakes } from "./validators/monad";
+import { fetchZeroGravityStakes } from "./validators/zero_gravity";
+import { fetchSomniaStakes } from "./validators/somnia";
 
 /**
  * Generic staking fetcher that adapts to different blockchain requirements
@@ -61,6 +63,12 @@ export const STAKING_CONFIG: Record<string, StakingStrategy> = {
   },
   monad: {
     fetcher: fetchMonadStakes,
+  },
+  zero_gravity: {
+    fetcher: fetchZeroGravityStakes,
+  },
+  somnia: {
+    fetcher: fetchSomniaStakes,
   },
 };
 

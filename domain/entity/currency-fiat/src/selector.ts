@@ -9,3 +9,11 @@ export function selectSupportedFiats(state: {
 }): FiatCurrency[] {
   return state.supportedFiats.fiats;
 }
+
+/**
+ * `true` once the first CVS query has settled (success or failure).
+ * Use to distinguish fallback state from live CVS data.
+ */
+export function selectSupportedFiatsReady(state: { supportedFiats: SupportedFiatsState }): boolean {
+  return state.supportedFiats.fiatsReady;
+}

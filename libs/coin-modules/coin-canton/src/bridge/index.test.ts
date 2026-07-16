@@ -24,8 +24,6 @@ describe("createBridges", () => {
         authorizePreapproval: expect.any(Function),
         onboardAccount: expect.any(Function),
         transferInstruction: expect.any(Function),
-        preload: expect.any(Function),
-        hydrate: expect.any(Function),
         scanAccounts: expect.any(Function),
       },
     });

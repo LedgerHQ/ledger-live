@@ -2,7 +2,6 @@ import {
   getAssetDetailPath,
   getMarketOrAssetDetailPath,
   isAssetOrMarketDetailPath,
-  resolveLegacyCryptoCurrencyId,
 } from "../marketAssetNavigation";
 
 describe("marketAssetNavigation", () => {
@@ -66,20 +65,6 @@ describe("marketAssetNavigation", () => {
 
     it("returns false for an unrelated path", () => {
       expect(isAssetOrMarketDetailPath("/accounts")).toBe(false);
-    });
-  });
-
-  describe("resolveLegacyCryptoCurrencyId", () => {
-    it("returns canonical id for a known currency", () => {
-      expect(resolveLegacyCryptoCurrencyId("BiTcOiN")).toBe("bitcoin");
-    });
-
-    it("returns null for unknown currency", () => {
-      expect(resolveLegacyCryptoCurrencyId("unknown_coin")).toBeNull();
-    });
-
-    it("returns null for whitespace-only input", () => {
-      expect(resolveLegacyCryptoCurrencyId("   ")).toBeNull();
     });
   });
 });

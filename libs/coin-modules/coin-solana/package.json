@@ -66,7 +66,6 @@
     "@solana/web3.js": "catalog:",
     "bignumber.js": "^9.1.2",
     "bs58": "catalog:",
-    "expect": "catalog:",
     "invariant": "^2.2.2",
     "ky": "1.7.5",
     "lodash": "^4.17.21",
@@ -77,6 +76,7 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/bs58": "catalog:",

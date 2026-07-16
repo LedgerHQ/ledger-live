@@ -1,5 +1,7 @@
 # features/flow/
 
+> Part of the [DDD monorepo architecture](../../docs/ddd-monorepo-architecture.md).
+
 User-facing feature packages shared across desktop and mobile apps. Each subdirectory is an independent pnpm workspace package providing the UI building blocks that each app assembles into its own screens.
 
 ## Scope

@@ -5,7 +5,7 @@ import { MappedSwapOperation, SwapHistorySection } from "@ledgerhq/live-common/e
 import updateAccountSwapStatus from "@ledgerhq/live-common/exchange/swap/updateAccountSwapStatus";
 import { getParentAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useTheme } from "@react-navigation/native";
+import { RouteProp, useRoute, useTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "~/context/Locale";
 import {
@@ -34,9 +34,12 @@ import { useSyncAllAccounts } from "../LiveApp/hooks/useSyncAllAccounts";
 import EmptyState from "./EmptyState";
 import OperationRow from "./OperationRow";
 import { getEnv } from "@ledgerhq/live-env";
-import { sendFile } from "../../../../e2e/bridge/client";
+import { sendFile } from "~/e2e/bridge/client";
 import ExternalLink from "@ledgerhq/icons-ui/native/ExternalLink";
 import SafeAreaView from "~/components/SafeAreaView";
+import { ScreenName } from "~/const";
+import type { SwapSubScreensNavigatorParamList } from "~/components/RootNavigator/types/SwapSubScreensNavigator";
+import { useAutoOpenSwapDrawer } from "./useAutoOpenSwapDrawer";
 
 // const SList : SectionList<MappedSwapOperation, SwapHistorySection> = SectionList;
 const AnimatedSectionList: typeof SectionList = Animated.createAnimatedComponent(
@@ -44,6 +47,8 @@ const AnimatedSectionList: typeof SectionList = Animated.createAnimatedComponent
 ) as unknown as typeof SectionList;
 const feedbackFormUrl =
   "https://form.typeform.com/to/FIHc3fk2?typeform-source=ledger.typeform.com#source=mobile";
+
+type SwapHistoryRoute = RouteProp<SwapSubScreensNavigatorParamList, ScreenName.SwapHistory>;
 
 // Helper function to ensure parent account is set for token accounts
 const ensureParentAccount = (
@@ -67,6 +72,8 @@ const History = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const ref = useRef(null);
   const syncAccounts = useSyncAllAccounts();
+  const route = useRoute<SwapHistoryRoute>();
+  const autoOpenSwapId = route.params?.swapId;
 
   // fix token account parent
   const [sections, setSections] = useState<SwapHistorySection[]>([]);
@@ -137,6 +144,8 @@ const History = () => {
       updateSwapStatus();
     }
   }, 10000);
+
+  useAutoOpenSwapDrawer(autoOpenSwapId, sections);
 
   const renderItem = ({ item }: ListRenderItemInfo<MappedSwapOperation>) => (
     <OperationRow item={item} />

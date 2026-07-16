@@ -5,7 +5,7 @@
 import React from "react";
 import { cleanup, render, screen, waitFor } from "tests/testSetup";
 import { server } from "tests/server";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import coinConfig from "@ledgerhq/coin-concordium/config";
 import OnboardModal from "../index";
 import {

@@ -17,7 +17,7 @@ import {
 } from "tests/utils/distributionTestUtils";
 import { hoverChartSvg, mockLumenChartResizeObserver } from "tests/utils/lumenChartTestUtils";
 import { mockDada, mockMarket } from "tests/utils/assetDetailMocks";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
@@ -78,8 +78,8 @@ jest.mock("@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies"
   useInterestRatesByCurrencies: (...args: unknown[]) => mockUseInterestRatesByCurrencies(...args),
 }));
 
-jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
-  useCurrenciesUnderFeatureFlag: () => ({
+jest.mock("@features/platform-currencies", () => ({
+  useFeatureFlaggedCurrencies: () => ({
     deactivatedCurrencyIds: new Set<string>(),
   }),
 }));

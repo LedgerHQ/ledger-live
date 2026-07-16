@@ -32,6 +32,7 @@
     "bignumber.js": "9"
   },
   "devDependencies": {
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "@testing-library/dom": "catalog:",

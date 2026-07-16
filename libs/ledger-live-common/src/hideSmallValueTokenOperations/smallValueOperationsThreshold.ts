@@ -1,8 +1,9 @@
 import BigNumber from "bignumber.js";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { getFiatCurrencyByTicker } from "../currencies";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import { getAccountCurrency } from "../account";
+import { formatCurrencyUnit, getFiatCurrencyByTicker } from "../currencies";
+import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 
 export const MAX_SMALL_VALUE_OPERATIONS_THRESHOLD_USD = 0.5;
@@ -38,6 +39,86 @@ export const formatThresholdMinorUnitForInput = (
   thresholdMinorUnit: BigNumber,
   currency: Currency,
 ) => convertThresholdMinorUnitToMajor(thresholdMinorUnit, currency).toFixed();
+
+const formatCounterValueThreshold = ({
+  currency,
+  locale,
+  thresholdMinorUnit,
+}: {
+  currency: Currency;
+  locale: string | null | undefined;
+  thresholdMinorUnit: BigNumber;
+}) => {
+  const unit = currency.units[0];
+  const amount = convertThresholdMinorUnitToMajor(thresholdMinorUnit, currency);
+  const fractionDigits = Math.min(Math.max(unit.magnitude + 2, 4), 8);
+  const formattedAmount = new Intl.NumberFormat(locale ?? undefined, {
+    maximumFractionDigits: fractionDigits,
+    minimumFractionDigits: 0,
+    useGrouping: false,
+  }).format(amount.toNumber());
+
+  return unit.prefixCode
+    ? `${unit.code}${formattedAmount}`
+    : `${formattedAmount}\u00A0${unit.code}`;
+};
+
+const formatReferenceThreshold = ({
+  locale,
+  thresholdUsd,
+}: {
+  locale: string | null | undefined;
+  thresholdUsd: number;
+}) => {
+  const unit: Unit = {
+    ...SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY.units[0],
+    code: "US$",
+  };
+  const thresholdMinorUnit =
+    floorThresholdToCurrencyMinorUnit(
+      thresholdUsd,
+      SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
+    ) ?? new BigNumber(0);
+
+  return formatCurrencyUnit(unit, thresholdMinorUnit, {
+    showCode: true,
+    locale: locale ?? undefined,
+  });
+};
+
+export function formatSmallValueOperationsThreshold({
+  countervaluesState,
+  counterValueCurrency,
+  locale,
+  thresholdUsd,
+}: {
+  countervaluesState?: CounterValuesState;
+  counterValueCurrency: Currency;
+  locale: string | null | undefined;
+  thresholdUsd: number;
+}) {
+  const referenceThreshold = formatReferenceThreshold({ locale, thresholdUsd });
+
+  if (counterValueCurrency.ticker === SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY.ticker) {
+    return referenceThreshold;
+  }
+
+  if (!countervaluesState) return referenceThreshold;
+
+  const counterValueThresholdMinorUnit = convertThresholdFromUsdToCountervalueMinorUnit({
+    counterValueCurrency,
+    countervaluesState,
+    thresholdUsd,
+  });
+
+  if (!counterValueThresholdMinorUnit) return referenceThreshold;
+
+  return `${referenceThreshold} (${formatCounterValueThreshold({
+    currency: counterValueCurrency,
+    locale,
+    thresholdMinorUnit: counterValueThresholdMinorUnit,
+  })})`;
+}
 
 export function convertThresholdFromUsdToCountervalueMinorUnit({
   counterValueCurrency,
@@ -96,12 +177,11 @@ export function convertThresholdFromCountervalueMinorUnitToUsd({
 }
 
 /**
- * Returns `true` when an incoming token operation should be hidden as a
+ * Returns `true` when an incoming or outgoing operation should be hidden as a
  * "small-value" (dust) transaction.
  *
  * An operation is considered dust when:
- * - it belongs to a TokenAccount, AND
- * - its type is "IN" (incoming transfer), AND
+ * - its type is "IN" or "OUT", AND
  * - either its crypto value is exactly zero, OR its fiat countervalue is
  *   strictly below the configured USD threshold (defaults to $0.5,
  *   overridable via ff).
@@ -114,7 +194,7 @@ export function convertThresholdFromCountervalueMinorUnitToUsd({
  * we convert both the operation amount and the USD threshold to user-fiat
  * minor units, then compare those raw values.
  */
-export function isSmallValueTokenOperation({
+export function isSmallValueOperation({
   operation,
   account,
   countervaluesState,
@@ -125,19 +205,21 @@ export function isSmallValueTokenOperation({
   account: AccountLike;
   countervaluesState: CounterValuesState;
   /** The user's selected countervalue (fiat) currency, e.g. EUR.
-   *  The countervalues state stores `{from: token, to: this currency}` pairs. */
+   *  Countervalues are computed from the operation currency (native or token) to this currency. */
   userCounterValueCurrency: Currency;
-  /** USD threshold below which an incoming token operation is considered dust.
+  /** USD threshold below which an incoming or outgoing operation is considered dust.
    *  Defaults to MAX_SMALL_VALUE_OPERATIONS_THRESHOLD_USD ($0.5).
-   *  Pass the value from the `lldHideSmallValueTokenOperations` feature flag */
+   *  Callers provide their product-specific dust-filter threshold. */
   thresholdUsd?: number;
 }): boolean {
-  if (account.type !== "TokenAccount" || operation.type !== "IN") return false;
+  if (operation.type !== "IN" && operation.type !== "OUT") return false;
 
   if (operation.value.isZero()) return true;
 
+  const operationCurrency = getAccountCurrency(account);
+
   const rawOpFiatValue = calculate(countervaluesState, {
-    from: account.token,
+    from: operationCurrency,
     to: userCounterValueCurrency,
     value: operation.value.toNumber(),
     disableRounding: true,

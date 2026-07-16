@@ -131,6 +131,7 @@ function StakingAmount({ navigation, route }: Props) {
                 {ratioButtons.map(({ label, value: v }) => (
                   <TouchableOpacity
                     key={label}
+                    testID={`sui-delegation-ratio-${label.replace("%", "")}`}
                     style={[
                       styles.ratioButton,
                       value.eq(v)
@@ -175,7 +176,7 @@ function StakingAmount({ navigation, route }: Props) {
                 </View>
               )}
               {transaction.mode === "undelegate" && (
-                <Alert type="primary">
+                <Alert type="primary" testID="sui-unstaking-amount-warning">
                   <Trans i18nKey="sui.unstaking.flow.steps.amount.warning" />
                 </Alert>
               )}

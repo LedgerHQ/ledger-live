@@ -1,5 +1,9 @@
 import React from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import {
+  hasAwarenessModalActionButton,
+  resolveAwarenessModalActionLink,
+} from "@ledgerhq/live-common/genericAwarenessModal";
 import { Linking, StyleSheet } from "react-native";
 import FastImage from "react-native-fast-image";
 import { useTranslation } from "~/context/Locale";
@@ -17,7 +21,7 @@ export function PromptLayout({ onClose, viewModel }: PromptLayoutProps) {
   const { imageUrlLight, imageUrlDark, title, subtitle, primaryButtonLabel, primaryButtonLink } =
     content;
   const { imageUrl, showImage } = useThemedAwarenessModalImage({ imageUrlLight, imageUrlDark });
-  const shouldShowPrimaryButton = Boolean(primaryButtonLabel && primaryButtonLink);
+  const showPrimaryButton = hasAwarenessModalActionButton(primaryButtonLabel, primaryButtonLink);
 
   const handleClosePress = () => {
     viewModel.onClosePress();
@@ -25,15 +29,18 @@ export function PromptLayout({ onClose, viewModel }: PromptLayoutProps) {
   };
 
   const handlePrimaryPress = async () => {
-    if (!primaryButtonLink) {
+    const actionLink = resolveAwarenessModalActionLink(primaryButtonLink);
+    viewModel.onPrimaryPress();
+
+    if (!actionLink) {
+      onClose();
       return;
     }
 
-    const isExternalLink = primaryButtonLink.startsWith("http");
-    viewModel.onPrimaryPress();
+    const isExternalLink = actionLink.startsWith("http");
 
     try {
-      await Linking.openURL(primaryButtonLink);
+      await Linking.openURL(actionLink);
       if (!isExternalLink) {
         requestAnimationFrame(onClose);
       }
@@ -70,8 +77,13 @@ export function PromptLayout({ onClose, viewModel }: PromptLayoutProps) {
         <Button appearance="base" size="lg" onPress={handleClosePress}>
           {t("common.close")}
         </Button>
-        {shouldShowPrimaryButton ? (
-          <Button appearance="gray" size="lg" onPress={handlePrimaryPress}>
+        {showPrimaryButton ? (
+          <Button
+            appearance="gray"
+            size="lg"
+            testID="generic-awareness-modal-secondary-button"
+            onPress={handlePrimaryPress}
+          >
             {primaryButtonLabel}
           </Button>
         ) : null}

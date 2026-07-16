@@ -111,6 +111,7 @@
     "stop": "Stop",
     "updateNow": "Update now",
     "close": "Close",
+    "ok": "OK",
     "eastern": "Eastern",
     "western": "Western",
     "reverify": "Re-verify",
@@ -303,6 +304,7 @@
   },
   "sidebar": {
     "card": "Card",
+    "paytab": "Pay",
     "menu": "Menu",
     "stars": "Starred accounts",
     "accounts": "Accounts",
@@ -3320,7 +3322,7 @@
         "validatorGroup": {
           "title": "Validator Group",
           "ledgerByFigmentTC": "Ledger by Figment T&Cs",
-          "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
+          "ledgerByBitwiseTC": "Ledger by Bitwise T&Cs",
           "totalVotes": "Total Votes",
           "commission": "Commission"
         }
@@ -3921,7 +3923,7 @@
       "withdrawableTitle": "Withdrawable",
       "statusUpdateNotice": "The status of the delegation will be updated when the transaction is confirmed.",
       "ledgerByFigmentTC": "Ledger by Figment T&Cs",
-      "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
+      "ledgerByBitwiseTC": "Ledger by Bitwise T&Cs",
       "emptyState": {
         "description": "You can earn SOL rewards by delegating your assets.",
         "info": "How Delegation works",
@@ -4145,7 +4147,7 @@
           },
           "validator": {
             "title": "Validators",
-            "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
+            "ledgerByBitwiseTC": "Ledger by Bitwise T&Cs",
             "ledgerByFigmentTC": "Ledger by Figment T&Cs"
           },
           "connectDevice": {
@@ -4588,7 +4590,7 @@
           },
           "validator": {
             "title": "Validators",
-            "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
+            "ledgerByBitwiseTC": "Ledger by Bitwise T&Cs",
             "ledgerByFigmentTC": "Ledger by Figment T&Cs"
           },
           "connectDevice": {
@@ -4717,7 +4719,7 @@
           },
           "validator": {
             "title": "Validators",
-            "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
+            "ledgerByBitwiseTC": "Ledger by Bitwise T&Cs",
             "ledgerByFigmentTC": "Ledger by Figment T&Cs"
           },
           "connectDevice": {
@@ -4886,7 +4888,8 @@
     "delegation": {
       "contextMenu": {
         "stake": "Stake your XTZ"
-      }
+      },
+      "pendingUnstakeWarning": "You can change validator now, but you won't be able to stake with the new one until your pending unstake from your current validator finalizes in ~4 days."
     },
     "staking": {
       "header": "Staking",
@@ -5083,6 +5086,10 @@
         "rowTitle": "Analytics opt-in consent (QA)",
         "rowDesc": "Inspect stored privacy consent version and consent date; simulate outdated states for the portfolio analytics consent modal."
       },
+      "devTools": {
+        "rowTitle": "DevTools",
+        "rowDesc": "Open the DevTools shell (feature flags and dev tools panel)."
+      },
       "brazeTools": {
         "title": "Braze Tools",
         "description": "Generate local braze cards",
@@ -5248,6 +5255,17 @@
         "openDrawer": "Open Drawer",
         "showJson": "Show JSON",
         "hideJson": "Hide JSON"
+      },
+      "contactsDevTool": {
+        "title": "Contacts Dev Tool",
+        "description": "Toggle Contacts rollout settings for desktop (lwdContacts feature flag).",
+        "mainFeatureToggle": "Main Feature Toggle",
+        "featureParameters": "Feature Parameters",
+        "eligibleAddressFamilies": "Eligible address families",
+        "customFamiliesHint": "Comma-separated families for custom multi-family testing.",
+        "customFamiliesPlaceholder": "evm, stellar, aptos",
+        "applyFamilies": "Apply",
+        "resetOverride": "Reset override"
       },
       "cryptoAssetsList": {
         "title": "Crypto Assets List",
@@ -6726,6 +6744,10 @@
       "title": "Account not supported.",
       "description": "Please retry or contact Support ({{reason}})"
     },
+    "AccountPublicKeyUnavailable": {
+      "title": "Account needs to be added again",
+      "description": "Ledger Wallet could not retrieve this account's public key. Please remove the account and add it again to continue"
+    },
     "AlgorandASANotOptInInRecipient": {
       "title": "Recipient account has not opted in the selected ASA."
     },
@@ -7324,6 +7346,9 @@
     },
     "TezosNotEnoughStaked": {
       "title": "Insufficient staked balance"
+    },
+    "TezosStakeBlockedByPendingUnstake": {
+      "title": "Unstaking from your previous validator must finish first"
     },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
@@ -9209,7 +9234,8 @@
       "more": "Transaction history options",
       "hideDustTransactions": "Hide dust transactions",
       "showDustTransactions": "Show dust transactions",
-      "dustTransactionsDescription": "Transactions below {{threshold}} will be hidden."
+      "dustTransactionsDescription": "Transactions below {{threshold}} will be hidden.",
+      "dustTransactionsDisplayedDescription": "Transactions below {{threshold}} will be displayed."
     },
     "exportDialog": {
       "title": "Export transaction history",
@@ -9267,7 +9293,22 @@
       "title": "My Ledger",
       "description": "Manage your Ledger device"
     },
+    "contacts": {
+      "title": "Contacts",
+      "description": "Manage your contacts"
+    },
     "explore": "Explore all Ledger devices"
+  },
+  "contacts": {
+    "title": "Contacts",
+    "addContact": "Add contact",
+    "searchPlaceholder": "Search contact",
+    "me": {
+      "name": "Me",
+      "addressCount_zero": "0 address",
+      "addressCount_one": "{{count}} address",
+      "addressCount_other": "{{count}} addresses"
+    }
   },
   "assetDetails": {
     "header": {

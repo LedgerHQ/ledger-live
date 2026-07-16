@@ -4,6 +4,7 @@ const esmDeps = ["ky"];
 
 const config: Config = {
   testEnvironment: "node",
+  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",

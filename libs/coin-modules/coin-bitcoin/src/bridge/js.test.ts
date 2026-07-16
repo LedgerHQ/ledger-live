@@ -23,8 +23,6 @@ describe("createBridges", () => {
         validateAddress: expect.any(Function),
       },
       currencyBridge: {
-        preload: expect.any(Function),
-        hydrate: expect.any(Function),
         scanAccounts: expect.any(Function),
       },
     });

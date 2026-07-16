@@ -44,8 +44,8 @@ describe("EVM Deterministic Tester", () => {
   it("scenario Robinhood Testnet", () => safeExecuteScenario(scenarioRobinhoodTestnet));
 });
 
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
-  process.on(e, async () => {
-    await killAnvil();
+["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
+  process.on(e, () => {
+    killAnvil().catch(() => {});
   }),
 );

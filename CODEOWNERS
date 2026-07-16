@@ -72,7 +72,6 @@ libs/live-wallet/src/walletsync/                          @ledgerhq/platform
 libs/ledger-live-common/src/featureFlags/walletFeaturesConfig/ @ledgerhq/wallet-xp
 libs/ledger-live-common/src/modularDrawer/               @ledgerhq/wallet-xp
 libs/ledger-live-common/src/cg-client/                   @ledgerhq/wallet-xp
-libs/ledger-live-common/src/cmc-client/                  @ledgerhq/wallet-xp
 libs/ledger-live-common/src/dada-client/                 @ledgerhq/wallet-xp
 libs/ledger-live-common/src/account/                     @ledgerhq/wallet-xp
 libs/ledger-live-common/src/deposit/                     @ledgerhq/wallet-xp
@@ -92,6 +91,9 @@ apps/ledger-live-desktop/src/renderer/screens/settings/sections/Accounts/ @ledge
 # Wallet — mobile
 apps/ledger-live-mobile/src/mvvm/                        @ledgerhq/wallet-xp
 apps/ledger-live-mobile/src/screens/Portfolio/           @ledgerhq/wallet-xp
+
+# Wallet — Contacts
+features/flow/contacts/                                  @ledgerhq/wallet-xp
 
 # Platform — desktop mvvm overrides (override WXP mvvm catch-all)
 apps/ledger-live-desktop/src/mvvm/features/AppBlockers/  @ledgerhq/platform
@@ -118,6 +120,7 @@ libs/domain-service/                                                @ledgerhq/co
 libs/evm-tools/                                                     @ledgerhq/coin-integration
 libs/ledger-live-common/src/bot/                                    @ledgerhq/coin-integration
 libs/ledger-live-common/src/bridge/                                 @ledgerhq/coin-integration
+libs/ledger-live-common/src/coin-modules/                           @ledgerhq/coin-integration
 libs/ledger-live-common/src/apps/config.ts                          @ledgerhq/coin-integration
 libs/ledger-live-common/src/families/                               @ledgerhq/coin-integration
 libs/ledger-live-common/src/flows/                                  @ledgerhq/coin-integration
@@ -144,8 +147,18 @@ apps/ledger-live-mobile/src/screens/SignTransaction/                @ledgerhq/co
 ### ... cryptoassets ongoing rework => the lib now belongs to @ledgerhq/wallet-xp (with currencies owned by @ledgerhq/coin-integration) ... ###
 libs/ledgerjs/packages/cryptoassets                      @ledgerhq/wallet-xp
 libs/ledgerjs/packages/cryptoassets/src/currencies.ts    @ledgerhq/coin-integration
+domain/entity/currency-crypto/src/currencies/            @ledgerhq/coin-integration
 libs/ledgerjs/packages/types-live/src/lnsUpsell.ts       @ledgerhq/engagement
 libs/ledgerjs/packages/types-live/src/postOnboarding.ts  @ledgerhq/engagement
+domain/entity/large-screen-upsell-modal/                 @ledgerhq/engagement
+features/flow/large-screen-upsell/                       @ledgerhq/engagement
+
+### ... market/altcoins sentiment => @ledgerhq/wallet-xp ... ###
+domain/entity/market-sentiment/                          @ledgerhq/wallet-xp
+domain/entity/altcoins-sentiment/                        @ledgerhq/wallet-xp
+domain/api/market-sentiment/                             @ledgerhq/wallet-xp
+domain/api/altcoins-sentiment/                           @ledgerhq/wallet-xp
+features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
 
 libs/psbtv2/                                             @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
@@ -198,8 +211,6 @@ libs/coin-modules/coin-celo/                                             @ledger
 
 # PTX team
 apps/cli/src/commands/ptx                                            					@ledgerhq/ptx
-apps/wallet-cli/src/commands/swap/                                            @ledgerhq/ptx
-apps/wallet-cli/src/test/commands/swap/                                       @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/ProviderIcon/       					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/WebPTXPlayer/       					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/hooks/swap-migrations/         					@ledgerhq/ptx
@@ -249,6 +260,11 @@ apps/ledger-live-mobile/src/mvvm/features/Borrow/                               
 apps/ledger-live-mobile/src/mvvm/features/WalletAssets/views/BorrowSection/             @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Borrow/							            @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Portfolio/components/BorrowEntryPoint/       @ledgerhq/ptx
+
+# wallet-cli
+apps/wallet-cli/                                                              @Justkant
+apps/wallet-cli/src/commands/swap/                                            @ledgerhq/ptx @Justkant
+apps/wallet-cli/src/test/commands/swap/                                       @ledgerhq/ptx @Justkant
 
 # Wallet API team > coin-integration
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/coin-integration
@@ -434,6 +450,7 @@ apps/ledger-live-mobile/src/mvvm/features/ProductTour/                          
 apps/ledger-live-mobile/src/mvvm/features/Q2WalletV4Tour/                                       @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/BackupHub/                                           @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/LNSUpsell/                                           @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/LargeScreenUpsell/                                   @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Reborn/                                              @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/GenericAwarenessModal/                               @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/components/FeatureIntroLayout/                                @ledgerhq/engagement
@@ -456,6 +473,9 @@ apps/ledger-live-mobile/src/navigation/deeplinks/__tests__/handleBackupHubDeepli
 apps/ledger-live-mobile/src/reducers/dynamicContent.ts                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/reducers/largeMover.ts                                             @ledgerhq/engagement
 apps/ledger-live-mobile/src/screens/Settings/AnalyticsPreferencesSettings/                     @ledgerhq/engagement
+
+## Libs
+libs/live-engagement/                                                                          @ledgerhq/engagement
 
 ## Common
 libs/ledger-live-common/src/braze/                                                             @ledgerhq/engagement
@@ -504,6 +524,7 @@ mise.toml                                             @ledgerhq/platform
 
 # Platform — Agent files
 .agents/                           @ledgerhq/platform
+.agents/skills/ledger-wallet-cli/                                             @Justkant
 .claude/                           @ledgerhq/platform
 .codex                             @ledgerhq/platform
 .cursor/                           @ledgerhq/platform

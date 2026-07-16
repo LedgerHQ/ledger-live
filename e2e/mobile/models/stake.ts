@@ -56,6 +56,7 @@ export async function verifyStakeOperationDetailsInfo(
   const currenciesForDelegateType = [
     Currency.ATOM,
     Currency.SOL,
+    Currency.SUI,
     Currency.XTZ,
     Currency.INJ,
     Currency.OSMO,
@@ -104,5 +105,28 @@ export async function verifyStakeOperationDetailsInfo(
     await app.operationDetails.checkCeloValidatorGroup(provider);
   } else if (currenciesForLockType.includes(currency)) {
     await app.operationDetails.checkTransactionType("LOCK");
+  }
+}
+
+// Matches the sibling XTZ op-details shape (account + sender + type); the principal amount is
+// verified on the device screen (delegateTezos), not re-checked here.
+export async function verifyTezosStakingOperationDetails(
+  delegation: DelegateType,
+  kind: "stake" | "unstake",
+) {
+  const address = delegation.account.address;
+  if (!address) {
+    throw new Error("Account address is undefined");
+  }
+
+  await app.operationDetails.waitForOperationDetails();
+  await app.operationDetails.checkAccount(delegation.account.accountName);
+  await app.operationDetails.checkSender(address);
+  if (kind === "stake") {
+    await app.operationDetails.checkTransactionType("STAKE");
+  } else {
+    // Tezos renders UNSTAKE as "Unstaking" (its own i18n override, since funds stay pending ~4
+    // days); the shared operationsType map keeps the generic "Unstaked" for other families.
+    await app.operationDetails.checkTransactionTitle("Unstaking");
   }
 }

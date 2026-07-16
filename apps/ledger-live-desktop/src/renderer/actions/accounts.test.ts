@@ -1,5 +1,5 @@
 import type { Account, AccountUserData } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { initAccounts } from "./accounts";
 
 function fakeTuple(

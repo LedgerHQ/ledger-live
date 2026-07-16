@@ -118,14 +118,19 @@ export type ScanInfo = {
  * Abstraction related to a currency
  */
 export interface CurrencyBridge {
-  // Preload data required for the bridges to work. (e.g. tokens, delegators,...)
-  // Assume to call it at every load time but as lazy as possible (if user have such account already AND/OR if user is about to scanAccounts)
-  // returned value is a serializable object
-  // fail if data was not able to load.
-  preload(currency: CryptoCurrency): Promise<Record<string, any> | Array<unknown> | void>;
-  // reinject the preloaded data (typically if it was cached)
-  // method need to treat the data object as unsafe and validate all fields / be backward compatible.
-  hydrate(data: unknown, currency: CryptoCurrency): void;
+  /**
+   * @deprecated Prefer loading data lazily in the UI/flows that need it.
+   * Eagerly fetches data required by the bridge (e.g. validators, delegators).
+   * Should be called as late as possible — only when the user has such an account or is about to scan.
+   * Returns a serializable object, or undefined if no data needs to be preloaded. Throws if data could not be loaded.
+   */
+  preload?(currency: CryptoCurrency): Promise<Record<string, any> | Array<unknown> | void>;
+  /**
+   * @deprecated Prefer loading data lazily in the UI/flows that need it.
+   * Re-injects previously preloaded data (e.g. from a cache).
+   * Must treat the data as untrusted: validate all fields and handle missing/unknown keys gracefully.
+   */
+  hydrate?(data: unknown, currency: CryptoCurrency): void;
   // Scan all available accounts with a device
   scanAccounts(info: ScanInfo): Observable<ScanAccountEvent>;
   getPreloadStrategy?: (currency: CryptoCurrency) => PreloadStrategy;
@@ -312,14 +317,17 @@ export interface AccountBridgeExtensions<T extends TransactionCommon = Transacti
     mainAccount: Account;
     locale: string;
   }) => Record<string, string>;
-  hasMinimumFundsToCancel?: (args: { mainAccount: Account; transactionToUpdate: T }) => boolean;
-  hasMinimumFundsToSpeedUp?: (args: {
-    account: AccountLike;
+  hasMinimumFundsToCancel?: (args: {
     mainAccount: Account;
     transactionToUpdate: T;
-  }) => boolean;
+  }) => Promise<boolean>;
+  hasMinimumFundsToSpeedUp?: (args: {
+    account?: AccountLike;
+    mainAccount: Account;
+    transactionToUpdate: T;
+  }) => Promise<boolean>;
   isStrategyDisabled?: (args: { transaction: T; feeData: unknown }) => boolean;
-  isTransactionConfirmed?: (args: { currency: CryptoCurrency; hash: string }) => Promise<boolean>;
+  isTransactionConfirmed?: (args: { account: AccountLike; hash: string }) => Promise<boolean>;
 }
 
 export type AccountBridge<

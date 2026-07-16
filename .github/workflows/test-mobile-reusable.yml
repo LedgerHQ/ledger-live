@@ -63,7 +63,7 @@ jobs:
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
 
       - name: Run format check
-        if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop'
+        if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch'
         run: pnpm exec nx run live-mobile:format:check
 
       - name: Run linter

@@ -4,10 +4,8 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-
-const family = getFamilyByCurrencyId(Account.XTZ_1.currency.id);
+import { buildTags } from "tests/utils/tagsUtils";
 
 // Shared modal/test config for the Tezos staking specs. DISABLE_TRANSACTION_BROADCAST is off by
 // default (CI never broadcasts); set it to "0" locally to broadcast + confirm the op on-chain.
@@ -20,25 +18,16 @@ const tezosStakeUse = (account: Delegate) => ({
   featureFlags: { lldTezosStaking: { enabled: true } },
 });
 
-const tags = [
-  "@NanoSP",
-  "@LNS",
-  "@NanoX",
-  "@Stax",
-  "@Flex",
-  "@NanoGen5",
-  `@${Account.XTZ_1.currency.id}`,
-  ...(family ? [`@family-${family}`] : []),
-];
+const tags = buildTags({ currencyId: Account.XTZ_1.currency.id });
 
-// Two accounts: XTZ_1 (index 0) funded + UNDELEGATED for the earning-choice chooser; XTZ_2 (index 1)
-// DELEGATED + STAKED for the stake (Earn -> stake modal) and unstake (staking-section menu) flows.
-// (index 0 must stay undelegated: the legacy receive/add-account/delegate Tezos specs rely on it.)
+// Accounts: XTZ_4 (index 3) funded + UNDELEGATED for the earning-choice chooser; XTZ_2 (index 1)
+// DELEGATED + STAKED for the stake flow; XTZ_3 (index 2) same, dedicated to unstake to avoid a settlement
+// race. (idx0/XTZ_1 stays with the legacy Tezos delegation spec, which relies on it being undelegated.)
 test.describe("e2e staking - Tezos - earning choice", () => {
-  const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
+  const account = new Delegate(Account.XTZ_4, "N/A", "Ledger by Kiln");
 
-  // With DISABLE_TRANSACTION_BROADCAST=0 this delegates idx0 on-chain — undelegate after to reset.
-  test.use(tezosStakeUse(account));
+  // Force no broadcast: signing here would otherwise delegate XTZ_4 (idx3) on-chain.
+  test.use({ ...tezosStakeUse(account), env: { DISABLE_TRANSACTION_BROADCAST: "1" } });
 
   test(
     "Earning choice routes to delegate and stake",
@@ -100,7 +89,7 @@ test.describe("e2e staking - Tezos - stake", () => {
 });
 
 test.describe("e2e staking - Tezos - unstake", () => {
-  const account = new Delegate(Account.XTZ_2, "0.005", "Ledger by Kiln");
+  const account = new Delegate(Account.XTZ_3, "0.005", "Ledger by Kiln");
 
   test.use(tezosStakeUse(account));
 

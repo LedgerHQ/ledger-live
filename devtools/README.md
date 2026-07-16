@@ -20,6 +20,7 @@ DevTools is unaware of its environment. Every piece of host-specific information
 devtools/
 ├── shell/            # @devtools/shell — <DevTools /> entry point, navigation, layout
 ├── registry/         # @devtools/registry — static tool metadata + DevToolsConfig union
+├── bindings/         # @devtools/bindings — app-specific prop builders
 ├── feature-flags/    # @devtools/feature-flags — Feature Flags tool
 └── <tool-name>/      # @devtools/<tool-name> — any future tool
 ```
@@ -88,7 +89,7 @@ For any component with non-trivial interaction logic, extract a `useXxxViewModel
 ### Tool boundaries
 
 - **Tools never import other tools.** No cross-tool dependencies, ever.
-- **External dependencies are limited to `shared/`, `domain/`, and `features/`** for truly generic types or utilities (Zod schemas, RTK slices, selectors). If the import feels specific to your tool's domain, it belongs in the tool itself.
+- **Keep tools decoupled from the app.** App state and wiring arrive as props, built in `@devtools/bindings` — the only bridge between app implementation and debug tools. Pure, app-agnostic code (types, utilities, a lib the tool exercises) can be imported directly.
 - **A tool's component never imports from `@devtools/shell` or `@devtools/registry`.** It takes its props directly so it can also be rendered standalone, outside the shell.
 
 ### Lazy loading
@@ -108,6 +109,7 @@ If a class doesn't render, check those two points first.
 
 - `@devtools/shell` — `<DevTools />`, navigation, layout, lazy-load runtime, `DevToolsProvider` / `useToolProps`
 - `@devtools/registry` — static map of tool metadata + `loader`s, and the `DevToolConfig` discriminated union that types host configs
+- `@devtools/bindings` — app-specific prop builders (one hook per tool) that adapt Ledger Live state into each tool's props
 - `@devtools/<tool>` — each tool package, default-exporting its React component
 
 ## Usage
@@ -116,7 +118,7 @@ The host imports `DevTools` and `DevToolsConfig` from the shell, and builds a ty
 
 ```tsx
 import { DevTools, type DevToolsConfig } from "@devtools/shell";
-import { useFeatureFlagsToolProps } from "../hooks/useFeatureFlagsToolProps";
+import { useFeatureFlagsToolProps } from "@devtools/bindings";
 
 export default function DevToolsPage() {
   const featureFlagsProps = useFeatureFlagsToolProps();

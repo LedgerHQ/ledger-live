@@ -7,6 +7,7 @@ import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import type { MarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { PostOnboardingState } from "@ledgerhq/types-live";
+import type { LargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import type { DataOfUser, NotificationPromptTarget } from "LLM/features/NotificationsPrompt/types";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import {
@@ -34,6 +35,7 @@ import type { TransferDrawerState } from "./transferDrawer";
 import type { SwapTransactionStatusDrawerState } from "./swapTransactionStatusDrawer";
 import type { PostOnboardingHubDrawerState } from "./postOnboardingHubDrawer";
 import type { SendFlowState } from "./sendFlow";
+import type { PayCardState } from "@domain/entity-pay-card";
 import { IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
@@ -454,6 +456,7 @@ export type State = LLMRTKApiState & {
   identities: IdentitiesState;
   inView: InViewState;
   knownDevices: KnownDevicesState;
+  largeScreenUpsellModal: LargeScreenUpsellModalState;
   largeMover: LargeMoverState;
   market: MarketState;
   marketListConfig: MarketListConfigState;
@@ -469,6 +472,7 @@ export type State = LLMRTKApiState & {
   protect: ProtectState;
   ratings: RatingsState;
   sendFlow: SendFlowState;
+  payCard: PayCardState;
   settings: SettingsState;
   toasts: ToastState;
   trustchain: TrustchainStore;

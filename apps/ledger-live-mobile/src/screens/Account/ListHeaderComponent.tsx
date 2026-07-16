@@ -219,7 +219,11 @@ export function useListHeaderComponents({
         <FabAccountMainActions account={account} parentAccount={parentAccount} />
       </SectionContainer>,
       !!AccountBalanceHeader && (
-        <AccountBalanceHeader key="AccountBalanceHeader" account={account} />
+        <AccountBalanceHeader
+          key="AccountBalanceHeader"
+          account={account}
+          parentAccount={parentAccount}
+        />
       ),
       ...(!empty &&
       !disableDelegation &&

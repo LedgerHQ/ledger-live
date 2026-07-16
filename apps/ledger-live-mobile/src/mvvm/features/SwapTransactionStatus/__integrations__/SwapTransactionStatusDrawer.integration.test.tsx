@@ -39,6 +39,7 @@ describe("SwapTransactionStatusDrawer", () => {
       receiveStatus: "finished",
       sentAmount: "0.1 BTC",
       receivedAmount: "2 ETH",
+      showReceivedAmountEstimated: true,
       feesAmount: "0.0001 BTC",
       receiveAccountName: "Ethereum 1",
       provider: "lifi",
@@ -63,6 +64,7 @@ describe("SwapTransactionStatusDrawer", () => {
     });
 
     expect(await screen.findByText("Swap BTC → ETH")).toBeOnTheScreen();
+    expect(screen.getByText("(Estimated)")).toBeVisible();
     expect(mockedUseSwapTransactionStatusViewModel).toHaveBeenCalledWith({
       params: { provider: "lifi", swapId: "swap-1" },
       onClose: expect.any(Function),

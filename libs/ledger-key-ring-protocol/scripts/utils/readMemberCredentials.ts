@@ -1,37 +1,39 @@
+import { createECDH } from "node:crypto";
 import type { MemberCredentials } from "../../src/types";
 
-type Credentials = MemberCredentials & { trustchainId: string };
+type Credentials = MemberCredentials & { trustchainId?: string };
 
 export async function readMemberCredentials(): Promise<Credentials> {
   const credentials = await readObjectFromStdin(
-    'Paste JSON credentials (multi-line ok) { "trustchainId": "...", "pubkey": "...", "privatekey": "..." }:\n> ',
+    [
+      'Paste JSON credentials (multi-line ok) { "trustchainId": "...", "privatekey": "..." }:',
+      "(all fields are optional enter {} to continue)",
+      "> ",
+    ].join("\n"),
   );
-  validateMemberCredentials(credentials);
-  return credentials;
+  return getCredentials(credentials);
 }
 
-function validateMemberCredentials(credentials: unknown): asserts credentials is Credentials {
-  if (typeof credentials !== "object" || credentials === null) {
-    throw new TypeError("Credentials must be a JSON object");
+function getCredentials(input: unknown): Credentials {
+  const _input =
+    typeof input !== "object" || input === null ? {} : (input as Record<string, string>);
+
+  const trustchainId = _input.trustchainId;
+  const { pubkey, privatekey } = getKeyPair(_input.privatekey);
+  return { trustchainId, pubkey, privatekey };
+}
+
+function getKeyPair(privatekey?: string): MemberCredentials {
+  const ecdh = createECDH("secp256k1");
+  if (typeof privatekey === "string") {
+    ecdh.setPrivateKey(Buffer.from(privatekey.replace(/^0x/, ""), "hex"));
+  } else {
+    ecdh.generateKeys();
   }
-  const { trustchainId, pubkey, privatekey } = credentials as Record<string, unknown>;
-  if (
-    typeof trustchainId !== "string" ||
-    typeof pubkey !== "string" ||
-    typeof privatekey !== "string"
-  ) {
-    throw new TypeError(
-      'Credentials must contain string "trustchainId", "pubkey" and "privatekey"',
-    );
-  }
-  if (pubkey.length !== 66) {
-    // LKRP public keys have a 1 byte prefix, so 33 bytes = 66 hex chars.
-    throw new RangeError(`Expected pubkey to be 66 hex chars, got ${pubkey.length}`);
-  }
-  if (privatekey.length !== 64) {
-    throw new RangeError(`Expected privatekey to be 64 hex chars, got ${privatekey.length}`);
-  }
-  console.log("[CHECK] Received valid member credentials!");
+  return {
+    pubkey: ecdh.getPublicKey("hex", "compressed"),
+    privatekey: ecdh.getPrivateKey("hex"),
+  };
 }
 
 async function readObjectFromStdin(prompt: string): Promise<unknown> {

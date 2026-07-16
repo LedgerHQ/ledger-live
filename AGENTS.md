@@ -8,7 +8,7 @@ We are working towards consistency across all those packages but each workspace 
 
 ## Where to add new code
 
-New shared code goes in a new `libs/*` package; `libs/ledger-live-common` is maintenance-only (no new features/folders). See [libs/README.md](./libs/README.md).
+When creating a new package, follow [docs/new-library.md](./docs/new-library.md) guidelines.
 
 ## Repo Commands
 

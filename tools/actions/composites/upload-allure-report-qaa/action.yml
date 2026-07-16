@@ -22,6 +22,10 @@ inputs:
     required: false
     default: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
     description: "URL pointing back to the CI run that produced this report. Pass empty string to disable."
+  branch:
+    required: false
+    default: ""
+    description: "Git branch the run came from, shown/filterable on the portal."
 outputs:
   report_id:
     description: "ID of the uploaded report."
@@ -46,4 +50,5 @@ runs:
         QAA_ALLURE_TAGS: ${{ inputs.tags }}
         QAA_ALLURE_HISTORY: ${{ inputs.history_level }}
         QAA_ALLURE_JOB_URL: ${{ inputs.job_url }}
+        QAA_ALLURE_BRANCH: ${{ inputs.branch }}
       run: ${{ github.action_path }}/upload.sh

@@ -3,7 +3,7 @@ import type { WalletState } from "@ledgerhq/live-wallet/store";
 import { renderHook } from "tests/testSetup";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useAddressListItemViewModel } from "../useAddressListItemViewModel";
 import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 

@@ -14,6 +14,22 @@ const testPathIgnorePatterns = [
 
 const esmDeps = ["ky", "@mysten", "@scure", "@noble"];
 
+// Integration tests that depend on flaky third-party/external nodes and explorers.
+// Excluded from the per-PR and daily integration runs; executed weekly instead
+// (see .github/workflows/test-integration-weekly.yml).
+const weeklyIntegrationTests = [
+  "src/families/cosmos/lastBlock.integration.test.ts",
+  "src/families/cosmos/datasets/persistence.integration.test.ts",
+  "src/families/cosmos/datasets/stargaze.integration.test.ts",
+  "src/families/cosmos/datasets/quicksilver.integration.test.ts",
+  "src/families/cosmos/datasets/xion.integration.test.ts",
+  "src/families/mina/bridge.integration.test.ts",
+];
+
+const weeklyIntegrationTestsRegex = weeklyIntegrationTests.map(
+  p => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\//g, "[/\\\\]") + "$",
+);
+
 let testRegex: string | string[] = "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$";
 if (process.env.IGNORE_INTEGRATION_TESTS) {
   testPathIgnorePatterns.push(".*\\.integration\\.test\\.[tj]s");
@@ -21,6 +37,12 @@ if (process.env.IGNORE_INTEGRATION_TESTS) {
 
 if (process.env.ONLY_INTEGRATION_TESTS) {
   testRegex = "(/__tests__/.*|(\\.|/)integration\\.(test|spec))\\.[jt]sx?$";
+  // Keep flaky network-only tests out of PR + daily runs.
+  testPathIgnorePatterns.push(...weeklyIntegrationTestsRegex);
+}
+
+if (process.env.ONLY_WEEKLY_INTEGRATION_TESTS) {
+  testRegex = weeklyIntegrationTestsRegex;
 }
 
 if (process.env.USE_BACKEND_MOCKS) {
@@ -51,7 +73,10 @@ const defaultConfig = {
   testEnvironment: "node",
   reporters,
   setupFiles: ["./jest.polyfills.js"],
-  setupFilesAfterEnv: ["<rootDir>/src/__tests__/test-helpers/setup-registry.ts"],
+  setupFilesAfterEnv: [
+    "@ledgerhq/wallet-framework-test-setup",
+    "<rootDir>/src/__tests__/test-helpers/setup-registry.ts",
+  ],
   coveragePathIgnorePatterns: ["src/__tests__/test-helpers", "src/wallet-api/SmartWebsocket.ts"], // Type issue with event in SmartWebsocket.ts breaking coverage report
   modulePathIgnorePatterns: [
     "__tests__/fixtures",
@@ -85,6 +110,7 @@ const defaultConfig = {
   transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],
   moduleDirectories: ["node_modules", "cli/node_modules"],
   moduleNameMapper: {
+    "^buffer$": "<rootDir>/jest.buffer-shim.js",
     "^(\\.{1,2}/.+)\\.js$": "$1",
     "^@tests/(.*)$": "<rootDir>/src/__tests__/$1",
     "^@tests$": "<rootDir>/src/__tests__/server",

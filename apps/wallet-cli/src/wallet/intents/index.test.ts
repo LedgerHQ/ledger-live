@@ -149,13 +149,14 @@ describe("SolanaTransactionIntentSchema", () => {
     if (result.success) expect(result.data.mode).toBe("send");
   });
 
-  it("parses stake.delegate mode with validator", () => {
+  it("parses stake.delegate mode with validator and stake account", () => {
     const result = SolanaTransactionIntentSchema.safeParse({
       family: "solana",
       recipient: "7xCU4XQfL8589X6vVt8q5F7J3Z9T1z6W6X6X6X6X6X",
       amount: "1 SOL",
       mode: "stake.delegate",
       validator: "validatorPubkey",
+      stakeAccount: "stakeAccountPubkey",
     });
     expect(result.success).toBe(true);
     if (result.success) {
@@ -174,6 +175,34 @@ describe("SolanaTransactionIntentSchema", () => {
       }).success,
     ).toBe(false);
   });
+
+  it.each(["stake.createAccount", "stake.delegate"])("rejects %s without a validator", mode => {
+    const result = SolanaTransactionIntentSchema.safeParse({
+      family: "solana",
+      recipient: "addr",
+      amount: "1 SOL",
+      mode,
+      stakeAccount: "stakeAccountPubkey",
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) expect(result.error.issues[0].path).toEqual(["validator"]);
+  });
+
+  it.each(["stake.delegate", "stake.undelegate", "stake.withdraw"])(
+    "rejects %s without a stake account",
+    mode => {
+      const result = SolanaTransactionIntentSchema.safeParse({
+        family: "solana",
+        recipient: "addr",
+        amount: "1 SOL",
+        mode,
+        validator: "validatorPubkey",
+      });
+      expect(result.success).toBe(false);
+      if (!result.success)
+        expect(result.error.issues.some(i => i.path[0] === "stakeAccount")).toBe(true);
+    },
+  );
 });
 
 describe("TransactionIntentSchema", () => {

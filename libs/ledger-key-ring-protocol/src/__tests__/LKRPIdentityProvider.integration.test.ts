@@ -2,14 +2,14 @@ import { Challenge, crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { AuthSDK } from "@ledgerhq/ledger-auth";
 import { HttpResponse, http } from "msw";
 import { setupServer, type SetupServerApi } from "msw/node";
-import type { Challenge as ChallengeJson, ChallengeSignature } from "../api";
+import type { Challenge as ChallengeJson, WeakChallengeSignature } from "../api";
 import { LkrpIdentityProvider } from "../LKRPIdentityProvider";
 import type { MemberCredentials } from "../types";
 import { credentialForPubKey, liveAuthentication } from "../utils";
 
 type SignedChallengeRequest = {
   challenge: ChallengeJson;
-  signature: ChallengeSignature;
+  signature: WeakChallengeSignature;
 };
 
 const CLIENT_ID = "ledger-keycloak";
@@ -22,6 +22,7 @@ const AUTHORIZATION_CODE = "auth-code-xyz";
 const IDP_TOKEN = makeJwt({ sub: "idp", exp: 4102444800 });
 const EXPECTED_JWT = makeJwt({ sub: "keycloak", exp: 4102444800 });
 const REFRESH_TOKEN = makeJwt({ sub: "refresh", exp: 4102444800 });
+const EXPECTED_ATTESTATION = crypto.to_hex(liveAuthentication(TRUSTCHAIN_ID));
 
 const MEMBER_CREDENTIALS: MemberCredentials = {
   pubkey: "02e3311a12c450604725f02d1a775ef5cdb4a1b832eb41ac6b1302adbe92a612fc",
@@ -35,10 +36,11 @@ const CHALLENGE_JSON = toApiChallenge(PARSED_CHALLENGE);
 const IDP_HOST = CHALLENGE_JSON.host;
 
 describe("LkrpIdentityProvider (integration, MSW)", () => {
-  let server: SetupServerApi;
+  const oidcAuthenticateMock = jest.fn<void, [SignedChallengeRequest]>();
+  const server: SetupServerApi = initServer(oidcAuthenticateMock);
+  const queryFn = jest.fn().mockResolvedValue({ ok: true });
 
   beforeAll(() => {
-    server = initServer();
     server.listen({ onUnhandledRequest: "error" });
   });
 
@@ -46,22 +48,23 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
     server.close();
   });
 
-  afterEach(() => {
+  beforeEach(() => {
+    jest.clearAllMocks();
     server.resetHandlers();
   });
 
   it("retrieves a Keycloak JWT without PKCE", async () => {
-    const token = await new AuthSDK(
+    await new AuthSDK(
       {
         clientId: CLIENT_ID,
         keycloakBaseUrl: KEYCLOAK_BASE_URL,
         keycloakRealm: REALM,
         disablePkce: true,
       },
-      { provider: createIdentityProvider() },
-    ).authenticate();
+      { provider: createIdentityProvider(TRUSTCHAIN_ID) },
+    ).withToken({ queryFn });
 
-    expect(token).toEqual({
+    expect(queryFn).toHaveBeenCalledWith({
       accessToken: EXPECTED_JWT,
       tokenType: "Bearer",
       scope: "openid",
@@ -69,20 +72,28 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
       refreshToken: REFRESH_TOKEN,
       refreshExpiresIn: 1800,
     });
+    expect(oidcAuthenticateMock).toHaveBeenCalledTimes(1);
+    expect(oidcAuthenticateMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        signature: expect.objectContaining({
+          attestation: EXPECTED_ATTESTATION,
+        }),
+      }),
+    );
   });
 
   it("retrieves a Keycloak JWT with PKCE", async () => {
-    const token = await new AuthSDK(
+    await new AuthSDK(
       {
         clientId: CLIENT_ID,
         keycloakBaseUrl: KEYCLOAK_BASE_URL,
         keycloakRealm: REALM,
         disablePkce: false,
       },
-      { provider: createIdentityProvider() },
-    ).authenticate();
+      { provider: createIdentityProvider(TRUSTCHAIN_ID) },
+    ).withToken({ queryFn });
 
-    expect(token).toEqual({
+    expect(queryFn).toHaveBeenCalledWith({
       accessToken: EXPECTED_JWT,
       tokenType: "Bearer",
       scope: "openid",
@@ -90,17 +101,51 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
       refreshToken: REFRESH_TOKEN,
       refreshExpiresIn: 1800,
     });
+    expect(oidcAuthenticateMock).toHaveBeenCalledTimes(1);
+    expect(oidcAuthenticateMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        signature: expect.objectContaining({
+          attestation: EXPECTED_ATTESTATION,
+        }),
+      }),
+    );
+  });
+
+  it("retrieves a Keycloak JWT without attestation when no trustchain id is set", async () => {
+    await new AuthSDK(
+      {
+        clientId: CLIENT_ID,
+        keycloakBaseUrl: KEYCLOAK_BASE_URL,
+        keycloakRealm: REALM,
+        disablePkce: true,
+      },
+      { provider: createIdentityProvider(undefined) },
+    ).withToken({ queryFn });
+
+    expect(queryFn).toHaveBeenCalledWith({
+      accessToken: EXPECTED_JWT,
+      tokenType: "Bearer",
+      scope: "openid",
+      expiresIn: 300,
+      refreshToken: REFRESH_TOKEN,
+      refreshExpiresIn: 1800,
+    });
+    expect(oidcAuthenticateMock).toHaveBeenCalledTimes(1);
+    const request = oidcAuthenticateMock.mock.calls[0]?.[0];
+    expect(request?.signature).not.toHaveProperty("attestation");
   });
 });
 
-function createIdentityProvider(): LkrpIdentityProvider {
+function createIdentityProvider(trustchainId: string | undefined): LkrpIdentityProvider {
   const provider = new LkrpIdentityProvider();
   provider.setKeypair(MEMBER_CREDENTIALS);
-  provider.setTrustchainId(TRUSTCHAIN_ID);
+  provider.setTrustchainId(trustchainId);
   return provider;
 }
 
-function initServer(): SetupServerApi {
+function initServer(
+  oidcAuthenticateMock: jest.Mock<void, [SignedChallengeRequest]>,
+): SetupServerApi {
   const sessionStore = new Map<string, { codeChallenge?: string }>();
   let pendingCodeChallenge: string | undefined;
 
@@ -126,6 +171,7 @@ function initServer(): SetupServerApi {
 
     http.post(`https://${IDP_HOST}/openid/v1/authenticate`, async ({ request }) => {
       const body = (await request.json()) as SignedChallengeRequest;
+      oidcAuthenticateMock(body);
       if (!isValidSignedChallengeRequest(body)) {
         return HttpResponse.json({ error: "invalid_request" }, { status: 400 });
       }
@@ -174,11 +220,12 @@ function initServer(): SetupServerApi {
         return HttpResponse.json({ error: "invalid_request" }, { status: 400 });
       }
 
-      return HttpResponse.json({
+      const tokenResponse: Record<string, unknown> = {
         access_token: IDP_TOKEN,
-        permissions: { [TRUSTCHAIN_ID]: { "m/0'/16'/0'": "ffffffff" } },
         token_type: "Bearer",
-      });
+      };
+
+      return HttpResponse.json(tokenResponse);
     }),
 
     http.post(`https://${IDP_HOST}/openid/v1/exchange`, async ({ request }) => {
@@ -215,7 +262,10 @@ function isValidSignedChallengeRequest(body: SignedChallengeRequest): boolean {
     return false;
   }
 
-  if (body.signature.attestation !== crypto.to_hex(liveAuthentication(TRUSTCHAIN_ID))) {
+  if (
+    body.signature.attestation !== undefined &&
+    body.signature.attestation !== EXPECTED_ATTESTATION
+  ) {
     return false;
   }
 

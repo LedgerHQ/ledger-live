@@ -55,7 +55,6 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/psbtv2": "workspace:^",
@@ -76,7 +75,6 @@
     "cashaddrjs": "^0.4.4",
     "coininfo": "^5.1.0",
     "create-hmac": "^1.1.7",
-    "expect": "catalog:",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "rxjs": "catalog:",
@@ -86,7 +84,9 @@
   },
   "devDependencies": {
     "@bitcoinerlab/secp256k1": "1.2.0",
+    "@domain/entity-currency-crypto": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/bchaddrjs": "^0.4.3",

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
-
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";

@@ -1,5 +1,3 @@
-/* eslint @typescript-eslint/consistent-type-assertions: 0 */
-
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import * as sanction from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { Operation } from "@ledgerhq/types-live";
