@@ -79,7 +79,7 @@ export default class SwapTransactionStatusDrawer {
         jestExpect(label).toContain(details.providerUrl);
       }
     } else {
-      await detoxExpect(getElementById(this.providerLinkId)).not.toBeVisible();
+      await detoxExpect(getElementById(this.providerLinkId)).not.toExist();
     }
     jestExpect(normalizeText(await getTextOfElement(this.swapIdId))).toContain(swapIdPrefix);
 
