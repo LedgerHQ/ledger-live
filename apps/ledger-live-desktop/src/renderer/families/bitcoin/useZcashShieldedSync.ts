@@ -11,7 +11,7 @@ import {
 } from "~/renderer/reducers/shieldedSyncSubscriptions";
 import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { ZcashPrivateInfo } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
-import type { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import type { Currency } from "@ledgerhq/wallet-btc/index";
 import { syncStateUpdater } from "./ZCashExportKeyFlowModal/sync";
 
 export function useZcashShieldedSync(account: ZcashAccount) {
