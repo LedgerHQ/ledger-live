@@ -2,14 +2,14 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { PayCardParams } from "./schema";
 import type { PayCardState } from "./types";
 
-export const initialState: PayCardState = {
+export const payCardInitialState: PayCardState = {
   isOpen: false,
   params: null,
 };
 
 export const payCardSlice = createSlice({
   name: "payCard",
-  initialState,
+  initialState: payCardInitialState,
   reducers: {
     openPayCard: (state, action: PayloadAction<PayCardParams>) => {
       state.isOpen = true;
