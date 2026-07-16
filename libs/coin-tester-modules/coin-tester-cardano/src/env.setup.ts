@@ -2,6 +2,8 @@ import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/te
 import { setEnv } from "@ledgerhq/live-env";
 import { MOCK_API, TEST_TOKEN } from "./fixtures";
 
+global.console = require("console");
+
 // Must run before coin-cardano's constants.ts loads — it captures CARDANO_API_ENDPOINT /
 // CARDANO_TESTNET_API_ENDPOINT at module-eval time, so setting them inside setup() is too late.
 // Both point at MOCK_API: the mainnet (mock) scenarios hit CARDANO_API_ENDPOINT, the testnet (Yaci)

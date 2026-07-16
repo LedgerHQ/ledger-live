@@ -62,7 +62,7 @@ export const scenarioCardanoToken: Scenario<GenericTransaction, Account> = {
     const account = makeAccount(address);
     tokenSubAccountId = encodeTokenAccountId(account.id, TEST_TOKEN);
 
-    return { accountBridge, currencyBridge, account, retryLimit: 0 };
+    return { accountBridge, currencyBridge, account, retryLimit: 3 };
   },
 
   beforeAll: account => {

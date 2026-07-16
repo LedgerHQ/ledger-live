@@ -137,7 +137,21 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
     );
     console.log("Synchronization completed ✓");
 
-    await scenario.beforeAll?.(scenarioAccount, strategy);
+    const beforeAllRetries = retryLimit ?? 10;
+    for (let attempt = beforeAllRetries; ; attempt--) {
+      try {
+        await scenario.beforeAll?.(scenarioAccount, strategy);
+        break;
+      } catch (e) {
+        if (attempt === 0) throw e;
+        await new Promise(resolve => setTimeout(resolve, retryInterval ?? 3 * 1000));
+        scenarioAccount = await firstValueFrom(
+          accountBridge
+            .sync(scenarioAccount, { paginationConfig: {} })
+            .pipe(reduce((acc, f) => f(acc), scenarioAccount)),
+        );
+      }
+    }
     console.log("BeforeAll completed ✓");
 
     console.log("\n\n");

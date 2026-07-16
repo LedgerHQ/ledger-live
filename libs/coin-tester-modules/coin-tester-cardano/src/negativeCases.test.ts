@@ -1,10 +1,11 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { CardanoMinAmountError } from "@ledgerhq/coin-cardano/errors";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CARDANO_TESTNET, FRESH_ADDRESS_PATH, makeAccount } from "./fixtures";
 import { getBridges, TESTNET } from "./helpers";
 import { buildSigner } from "./signer";
-import { killYaci, spawnYaci, topup } from "./yaci";
+import { resetDevnet, topup } from "./yaci";
 import { initYaciIndexer, registerAddress, resetRegisteredAddresses } from "./yaciIndexer";
 
 // Validation/craft errors the real node + coin-cardano enforce but the in-memory mock could not.
@@ -29,7 +30,7 @@ describe("Cardano negative cases (Yaci devnet)", () => {
         default: { status: { type: "active" }, maxFeesWarning: 0, maxFeesError: 0 },
       },
     });
-    await spawnYaci();
+    await resetDevnet();
     closeIndexer = initYaciIndexer();
 
     const signer = await buildSigner();
@@ -60,10 +61,9 @@ describe("Cardano negative cases (Yaci devnet)", () => {
     expect(account.balance.gt(0)).toBe(true);
   });
 
-  afterAll(async () => {
+  afterAll(() => {
     closeIndexer?.();
     resetRegisteredAddresses();
-    await killYaci();
   });
 
   const build = (patch: Record<string, unknown>) =>
@@ -83,6 +83,8 @@ describe("Cardano negative cases (Yaci devnet)", () => {
 
   it("rejects a below-min-UTXO amount at craft", async () => {
     const tx = build({ recipient, amount: new BigNumber(100), nonce: 0 });
-    await expect(accountBridge.prepareTransaction(account, tx)).rejects.toThrow(/minimum/i);
+    await expect(accountBridge.prepareTransaction(account, tx)).rejects.toThrow(
+      CardanoMinAmountError,
+    );
   });
 });
