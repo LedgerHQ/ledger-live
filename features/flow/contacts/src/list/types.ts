@@ -25,3 +25,8 @@ export type ContactsPageProps = Readonly<{
   onOpenMe: (contactId: ContactId) => void;
   onAddContact: () => void;
 }>;
+
+export type PopulatedContactsListViewModel = Readonly<{
+  me: ContactsListItem;
+  savedContacts: readonly ContactsListItem[];
+}>;
