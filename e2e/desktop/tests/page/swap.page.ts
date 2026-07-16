@@ -603,7 +603,7 @@ export class SwapPage extends WebViewAppPage {
   private async isEnabledByCursorClass(testId: string) {
     const webview = await this.getWebView();
     const classAttr = await webview.getByTestId(testId).getAttribute("class");
-    return !classAttr?.includes("cursor-not-allowed");
+    return classAttr !== null && !classAttr.includes("cursor-not-allowed");
   }
 
   // Hovers a trigger and asserts the tooltip text. Radix keeps a just-left
@@ -611,9 +611,9 @@ export class SwapPage extends WebViewAppPage {
   // trigger's tooltip finishes its open delay, so "read whichever tooltip is
   // open" returns the stale one when moving between the 25/50/75 buttons.
   // Polling allTextContents (which never throws strict-mode on multiple matches)
-  // until the expected text appears waits that transition out. We read the
-  // visually-hidden span[role="tooltip"] that mirrors the content, so the text
-  // comes back once (the visible wrapper's own textContent would be doubled).
+  // until the expected text appears waits that transition out. openTooltipSelector
+  // scopes to the visually-hidden [role="tooltip"] node(s) that mirror the content,
+  // so the text comes back once (the visible wrapper's own textContent would be doubled).
   private async checkTooltipText(hoverTrigger: () => Promise<void>, expected: string) {
     const webview = await this.getWebView();
     await hoverTrigger();

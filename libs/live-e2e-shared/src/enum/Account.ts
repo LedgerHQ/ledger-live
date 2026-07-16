@@ -347,7 +347,7 @@ export class TokenAccount extends Account {
     Account.ETH_1,
   );
 
-  // Never funded with USDC; used to test the zero-balance disabled state of Max/% buttons
+  // Never funded with USDC; used to test the zero-balance disabled state of Max/% buttons (B2CQA-5582)
   static readonly ETH_USDC_2 = new TokenAccount(
     Currency.ETH_USDC,
     "USD Coin 2",
