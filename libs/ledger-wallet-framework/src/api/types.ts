@@ -1,6 +1,10 @@
 import type { AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency, TokenCurrency } from "../types";
-import type { Operation as LiveOperation, StakingResources } from "@ledgerhq/types-live";
+import type {
+  AccountReadiness,
+  Operation as LiveOperation,
+  StakingResources,
+} from "@ledgerhq/types-live";
 
 export type ChainSpecificRules = {
   getAccountShape: (address: string) => void;
@@ -47,4 +51,14 @@ export type BridgeApi = {
     operations: LiveOperation[],
     stakingResources: StakingResources,
   ) => Promise<StakingResources>;
+  /**
+   * Optional hook returning the account's generic readiness projection, written to
+   * `account.readiness` during sync. Omit for chains with no readiness concept — the
+   * field is then left undefined (consumers treat undefined as ready/unknown).
+   *
+   * @param currency - The crypto currency of the account being synced.
+   * @param address - The account address.
+   * @returns The readiness of the account (ready flag + optional reason).
+   */
+  getAccountReadiness?: (currency: CryptoCurrency, address: string) => Promise<AccountReadiness>;
 };

@@ -13,6 +13,7 @@ import type { Balance, Operation, Stake } from "@ledgerhq/coin-module-framework/
 import type { OperationCommon } from "./types";
 import type {
   Account,
+  AccountReadiness,
   StakingDelegation,
   StakingResources,
   StakingUnbonding,
@@ -358,10 +359,15 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           .catch(() => [])
       : Promise.resolve([]);
 
-    const [blockInfo, balanceRes, validators] = await Promise.all([
+    const readinessPromise: Promise<AccountReadiness | undefined> = bridgeApi.getAccountReadiness
+      ? bridgeApi.getAccountReadiness(currency, address).catch(() => undefined)
+      : Promise.resolve(undefined);
+
+    const [blockInfo, balanceRes, validators, readiness] = await Promise.all([
       coinModuleApi.lastBlock(),
       coinModuleApi.getBalance(address, bridgeApi.balanceOptions),
       validatorsPromise,
+      readinessPromise,
     ]);
 
     const nativeAsset = extractBalance(balanceRes, "native");
@@ -557,6 +563,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       subAccounts,
       operationsCount: operations.length,
       syncHash,
+      ...(readiness !== undefined ? { readiness } : {}),
       ...stakingShape,
     };
     return res;

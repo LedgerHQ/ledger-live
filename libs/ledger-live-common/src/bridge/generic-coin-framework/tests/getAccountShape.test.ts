@@ -78,6 +78,48 @@ describe("genericGetAccountShape", () => {
     jest.clearAllMocks();
   });
 
+  describe("readiness", () => {
+    const network = "mainnet";
+    const currency = { id: "tezos", name: "Tezos" };
+
+    beforeEach(() => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 0 });
+      mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
+      cleanedOperationMock.mockImplementation((op: any) => op);
+      inferSubOperationsMock.mockReturnValue([]);
+    });
+
+    test("sets account.readiness from bridgeApi.getAccountReadiness", async () => {
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        getAccountReadiness: async () => ({ ready: false, reason: "unrevealed" }),
+      }));
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "tz1ready", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect((result as any).readiness).toEqual({ ready: false, reason: "unrevealed" });
+    });
+
+    test("leaves readiness undefined when the bridge has no getAccountReadiness hook", async () => {
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "tz1noready", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect((result as any).readiness).toBeUndefined();
+    });
+  });
+
   describe.each(chains)("$currency.id", ({ currency, network }) => {
     test.each([
       [
