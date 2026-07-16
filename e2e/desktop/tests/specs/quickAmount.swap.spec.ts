@@ -10,21 +10,11 @@ import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUt
 import { parseBalanceAmount } from "tests/utils/amountUtils";
 import { expect } from "@playwright/test";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
-const maxBalanceTags = [
-  "@NanoSP",
-  "@LNS",
-  "@NanoX",
-  "@Stax",
-  "@Flex",
-  "@NanoGen5",
-  "@ethereum",
-  "@family-evm",
-  "@bitcoin",
-  "@family-bitcoin",
-];
+const maxBalanceTags = [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"];
 
 const swapMaxBalancePairs = [
   { fromAccount: Account.ETH_1, toAccount: Account.BTC_NATIVE_SEGWIT_1 },
