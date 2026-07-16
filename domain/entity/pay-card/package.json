@@ -1,8 +1,8 @@
 {
-  "name": "@domain/entity-card",
+  "name": "@domain/entity-pay-card",
   "version": "0.1.0",
   "private": true,
-  "description": "Domain entity for the card flow Redux state",
+  "description": "Domain entity for the Ledger Pay Card flow Redux state",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -15,10 +15,11 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/entity/card"
+    "unimported": "pnpm knip --directory ../../.. -W domain/entity/pay-card"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "catalog:"
+    "@reduxjs/toolkit": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@jest/globals": "catalog:",

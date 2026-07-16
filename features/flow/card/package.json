@@ -10,7 +10,7 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@domain/entity-card": "workspace:^"
+    "@domain/entity-pay-card": "workspace:^"
   },
   "scripts": {
     "format": "oxfmt src",

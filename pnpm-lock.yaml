@@ -1524,9 +1524,6 @@ importers:
       '@domain/entity-altcoins-sentiment':
         specifier: workspace:^
         version: link:../../domain/entity/altcoins-sentiment
-      '@domain/entity-card':
-        specifier: workspace:^
-        version: link:../../domain/entity/card
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
@@ -1536,6 +1533,9 @@ importers:
       '@domain/entity-market-sentiment':
         specifier: workspace:^
         version: link:../../domain/entity/market-sentiment
+      '@domain/entity-pay-card':
+        specifier: workspace:^
+        version: link:../../domain/entity/pay-card
       '@features/flow-card':
         specifier: workspace:^
         version: link:../../features/flow/card
@@ -3388,31 +3388,6 @@ importers:
         specifier: 'catalog:'
         version: 6.0.2
 
-  domain/entity/card:
-    dependencies:
-      '@reduxjs/toolkit':
-        specifier: 'catalog:'
-        version: 2.11.2
-    devDependencies:
-      '@jest/globals':
-        specifier: 'catalog:'
-        version: 30.2.0
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.2
-
   domain/entity/contact:
     dependencies:
       '@reduxjs/toolkit':
@@ -3623,6 +3598,34 @@ importers:
 
   domain/entity/market-sentiment:
     dependencies:
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+
+  domain/entity/pay-card:
+    dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -3925,9 +3928,9 @@ importers:
 
   features/flow/card:
     dependencies:
-      '@domain/entity-card':
+      '@domain/entity-pay-card':
         specifier: workspace:^
-        version: link:../../../domain/entity/card
+        version: link:../../../domain/entity/pay-card
     devDependencies:
       '@features/platform-jest-config':
         specifier: workspace:*

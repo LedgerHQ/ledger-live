@@ -115,7 +115,7 @@
     "@domain/entity-market-sentiment": "workspace:^",
     "@domain/api-altcoins-sentiment": "workspace:^",
     "@domain/entity-altcoins-sentiment": "workspace:^",
-    "@domain/entity-card": "workspace:^",
+    "@domain/entity-pay-card": "workspace:^",
     "@features/flow-fear-and-greed": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
