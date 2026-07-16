@@ -56,6 +56,7 @@
     "react-native-safe-area-context": "catalog:",
     "react-native-svg": "catalog:",
     "react-test-renderer": "catalog:",
+    "react-redux": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
   },
@@ -70,7 +71,8 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": ">=19.0.0",
-    "react-native": ">=0.70.0"
+    "react-native": ">=0.70.0",
+    "react-redux": "catalog:"
   },
   "peerDependenciesMeta": {
     "react-native": {
