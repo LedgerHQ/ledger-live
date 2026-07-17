@@ -9,3 +9,8 @@ export { LargeScreenUpsellModal } from "./screens/LargeScreenUpsellModal";
 export type { LargeScreenUpsellModalProps } from "./screens/LargeScreenUpsellModal";
 export type { LargeScreenUpsellModalViewModel } from "./screens/LargeScreenUpsellModal/types";
 export type { UseLargeScreenUpsellModalViewModelInput } from "./screens/LargeScreenUpsellModal/useLargeScreenUpsellModalViewModel";
+export type {
+  LargeScreenUpsellDismissMethod,
+  LargeScreenUpsellModalAnalyticsPorts,
+  LargeScreenUpsellModalViewedContext,
+} from "./screens/LargeScreenUpsellModal/analyticsPorts";

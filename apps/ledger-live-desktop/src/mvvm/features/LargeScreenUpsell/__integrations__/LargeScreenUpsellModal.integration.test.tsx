@@ -1,14 +1,38 @@
 import React from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { act, render, screen, waitFor, withFlagOverrides, type DeepPartial } from "tests/testSetup";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  withFlagOverrides,
+  type DeepPartial,
+} from "tests/testSetup";
 import type { State } from "~/renderer/reducers";
 import { closeDialog, openDialog } from "~/renderer/reducers/dialogs";
 import { openURL } from "~/renderer/linking";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { LargeScreenUpsellModalMount } from "..";
 
 jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
 }));
+
+const NANO_S_OPTED_OUT_ANALYTICS_PROPS = {
+  deviceModel: "lns",
+  personalRecoOptIn: false,
+  offerType: "none",
+  platform: "lwd",
+  retriesUpsellModal: 0,
+  throttled: false,
+};
+
+const NANO_S_OPTED_IN_ANALYTICS_PROPS = {
+  ...NANO_S_OPTED_OUT_ANALYTICS_PROPS,
+  personalRecoOptIn: true,
+  offerType: "discount",
+};
 
 const NOW = new Date("2026-07-15T12:00:00.000Z");
 
@@ -42,6 +66,8 @@ function eligibleState(settingsOverrides: Partial<State["settings"]> = {}): Deep
 describe("LargeScreenUpsellModalMount (integration)", () => {
   beforeEach(() => {
     jest.mocked(openURL).mockClear();
+    jest.mocked(track).mockClear();
+    jest.mocked(trackPage).mockClear();
     jest
       .useFakeTimers({
         doNotFake: [
@@ -91,6 +117,18 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
       ),
     ).toBeVisible();
     expect(screen.getByRole("button", { name: "Explore touchscreen signers" })).toBeVisible();
+    expect(trackPage).toHaveBeenCalledWith(
+      "Modal - Upgrade",
+      undefined,
+      {
+        name: "Modal - Upgrade",
+        sourceFlow: "app start",
+        modalFrequencyState: "every start",
+        ...NANO_S_OPTED_OUT_ANALYTICS_PROPS,
+      },
+      true,
+      false,
+    );
   });
 
   it("should open with opted-in copy when personalized recommendations are on", async () => {
@@ -110,6 +148,18 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
         "Enjoy a larger screen, smarter transaction reviews, enhanced protection, and an exclusive 20% off.",
       ),
     ).toBeVisible();
+    expect(trackPage).toHaveBeenCalledWith(
+      "Modal - Upgrade",
+      undefined,
+      {
+        name: "Modal - Upgrade",
+        sourceFlow: "app start",
+        modalFrequencyState: "every start",
+        ...NANO_S_OPTED_IN_ANALYTICS_PROPS,
+      },
+      true,
+      false,
+    );
   });
 
   it("should open the opted-out shop link with desktop UTMs when the CTA is pressed", async () => {
@@ -147,6 +197,12 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     expect(openedUrl.searchParams.get("utm_campaign")).toBe("upsell_large_screen");
     expect(openedUrl.searchParams.get("utm_content")).toBe("app_start_modal");
     expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "explore large screen devices",
+      page: "Modal - Upgrade",
+      ...NANO_S_OPTED_OUT_ANALYTICS_PROPS,
+    });
+    expect(track).not.toHaveBeenCalledWith("modal_dismissed", expect.anything());
   });
 
   it("should open the opted-in shop link with desktop UTMs when the CTA is pressed", async () => {
@@ -185,6 +241,11 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     expect(openedUrl.searchParams.get("utm_medium")).toBe("desktop");
     expect(openedUrl.searchParams.get("utm_campaign")).toBe("upsell_large_screen");
     expect(openedUrl.searchParams.get("utm_content")).toBe("app_start_modal");
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "explore large screen devices",
+      page: "Modal - Upgrade",
+      ...NANO_S_OPTED_IN_ANALYTICS_PROPS,
+    });
   });
 
   it("should increment retries and set lastSeenAt when the modal opens", async () => {
@@ -220,6 +281,15 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     expect(openURL).not.toHaveBeenCalled();
     expect(store.getState().largeScreenUpsellModal.retries).toBe(1);
     expect(screen.queryByTestId("large-screen-upsell-modal")).not.toBeInTheDocument();
+    expect(track).toHaveBeenCalledWith("modal_dismissed", {
+      modal: "upgrade modal",
+      page: "Modal - Upgrade",
+      dismissMethod: "close button",
+      ...NANO_S_OPTED_OUT_ANALYTICS_PROPS,
+    });
+    expect(
+      jest.mocked(track).mock.calls.filter(([event]) => event === "modal_dismissed"),
+    ).toHaveLength(1);
   });
 
   it("should close and reset retries without opening a URL when the CTA link is empty", async () => {
@@ -290,6 +360,17 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     await waitFor(() => {
       expect(screen.getByTestId("large-screen-upsell-modal")).toBeVisible();
     });
+
+    expect(trackPage).toHaveBeenCalledWith(
+      "Modal - Upgrade",
+      undefined,
+      expect.objectContaining({
+        retriesUpsellModal: 2,
+        throttled: false,
+      }),
+      true,
+      false,
+    );
   });
 
   it("should render opted-in copy with the configured discount", async () => {
@@ -457,6 +538,17 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     await waitFor(() => {
       expect(screen.getByTestId("large-screen-upsell-modal")).toBeVisible();
     });
+
+    expect(trackPage).toHaveBeenCalledWith(
+      "Modal - Upgrade",
+      undefined,
+      expect.objectContaining({
+        retriesUpsellModal: 3,
+        throttled: true,
+      }),
+      true,
+      false,
+    );
   });
 
   it("should not open when a product tour is competing", async () => {
@@ -553,5 +645,51 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
       expect(screen.queryByTestId("large-screen-upsell-modal")).not.toBeInTheDocument();
     });
     expect(store.getState().largeScreenUpsellModal.retries).toBe(1);
+  });
+
+  it("should dismiss via Escape and outside tap with the matching dismissMethod", async () => {
+    const { unmount: unmountEscape } = renderMount();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("large-screen-upsell-modal")).toBeVisible();
+    });
+
+    fireEvent.keyDown(screen.getByTestId("large-screen-upsell-modal"), {
+      key: "Escape",
+      code: "Escape",
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("large-screen-upsell-modal")).not.toBeInTheDocument();
+    });
+
+    expect(track).toHaveBeenCalledWith("modal_dismissed", {
+      modal: "upgrade modal",
+      page: "Modal - Upgrade",
+      dismissMethod: "escape key down",
+      ...NANO_S_OPTED_OUT_ANALYTICS_PROPS,
+    });
+    expect(track).not.toHaveBeenCalledWith("button_clicked", expect.anything());
+
+    unmountEscape();
+    jest.mocked(track).mockClear();
+    jest.mocked(trackPage).mockClear();
+
+    renderMount();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("large-screen-upsell-modal")).toBeVisible();
+    });
+
+    fireEvent.pointerDown(document.body, { button: 0, clientX: 0, clientY: 0 });
+
+    await waitFor(() => {
+      expect(track).toHaveBeenCalledWith("modal_dismissed", {
+        modal: "upgrade modal",
+        page: "Modal - Upgrade",
+        dismissMethod: "outside tap",
+        ...NANO_S_OPTED_OUT_ANALYTICS_PROPS,
+      });
+    });
   });
 });

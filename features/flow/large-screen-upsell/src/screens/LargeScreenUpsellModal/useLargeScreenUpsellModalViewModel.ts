@@ -15,6 +15,10 @@ import {
   type BuildLargeScreenUpsellContentInput,
   type LargeScreenUpsellVariant,
 } from "../../utils/upsellContent";
+import type {
+  LargeScreenUpsellDismissMethod,
+  LargeScreenUpsellModalAnalyticsPorts,
+} from "./analyticsPorts";
 import type { LargeScreenUpsellModalViewModel } from "./types";
 
 const LARGE_SCREEN_UPSELL_MODAL_ID = "large-screen-upsell-modal";
@@ -25,6 +29,7 @@ export type UseLargeScreenUpsellModalViewModelInput = UseLargeScreenUpsellDecisi
   variant: LargeScreenUpsellVariant;
   t: BuildLargeScreenUpsellContentInput["t"];
   openUrl: (url: string) => void;
+  analytics?: LargeScreenUpsellModalAnalyticsPorts;
 };
 
 export function useLargeScreenUpsellModalViewModel({
@@ -37,6 +42,7 @@ export function useLargeScreenUpsellModalViewModel({
   variant,
   t,
   openUrl,
+  analytics,
 }: UseLargeScreenUpsellModalViewModelInput): LargeScreenUpsellModalViewModel {
   const dispatch = useDispatch();
   const feature = useFeature("largeScreenUpsell");
@@ -48,6 +54,7 @@ export function useLargeScreenUpsellModalViewModel({
   });
   const [isOpen, setIsOpen] = useState(false);
   const hasOpenedRef = useRef(false);
+  const hasHandledCurrentModalInteractionRef = useRef(false);
 
   const params = feature?.params;
   const content = useMemo(() => {
@@ -69,29 +76,50 @@ export function useLargeScreenUpsellModalViewModel({
   }, [medium, params, t, variant]);
 
   const hasContent = content !== null;
+  const viewedDeviceModelId = decision.shouldShow ? decision.deviceModelId : undefined;
 
   useEffect(() => {
-    if (!decision.shouldShow || !hasContent || hasOpenedRef.current) {
+    if (viewedDeviceModelId === undefined || !hasContent || hasOpenedRef.current) {
       return;
     }
 
     hasOpenedRef.current = true;
+    hasHandledCurrentModalInteractionRef.current = false;
+    analytics?.onModalViewed({ deviceModelId: viewedDeviceModelId });
     setIsOpen(true);
     dispatch(recordUpsellModalDisplay());
-  }, [decision.shouldShow, dispatch, hasContent]);
+  }, [viewedDeviceModelId, dispatch, hasContent, analytics]);
 
-  const onClose = useCallback(() => {
-    setIsOpen(false);
-  }, []);
+  const onDismiss = useCallback(
+    (method: LargeScreenUpsellDismissMethod) => {
+      if (hasHandledCurrentModalInteractionRef.current) {
+        setIsOpen(false);
+        return;
+      }
+
+      hasHandledCurrentModalInteractionRef.current = true;
+      analytics?.onDismissed(method);
+      setIsOpen(false);
+    },
+    [analytics],
+  );
 
   const onCtaPress = useCallback(() => {
+    if (hasHandledCurrentModalInteractionRef.current) {
+      setIsOpen(false);
+      return;
+    }
+
+    hasHandledCurrentModalInteractionRef.current = true;
+    analytics?.onCtaClicked();
+
     const link = content?.primaryButtonLink?.trim();
     if (link) {
       openUrl(link);
     }
     dispatch(resetUpsellModalRetries());
     setIsOpen(false);
-  }, [content?.primaryButtonLink, dispatch, openUrl]);
+  }, [analytics, content?.primaryButtonLink, dispatch, openUrl]);
 
   return {
     isOpen,
@@ -102,7 +130,7 @@ export function useLargeScreenUpsellModalViewModel({
     title: content?.title ?? "",
     subtitle: content?.subtitle ?? "",
     primaryButtonLabel: content?.primaryButtonLabel ?? "",
-    onClose,
+    onDismiss,
     onCtaPress,
   };
 }

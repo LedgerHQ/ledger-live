@@ -154,6 +154,21 @@ const getProductTourAttributes = () => {
   };
 };
 
+const getLargeScreenUpsellAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return {};
+  const flag = analyticsFeatureFlagMethod("largeScreenUpsell");
+  const params = flag?.params;
+
+  return {
+    enabled: !!flag?.enabled,
+    modalEnabled: !!params?.modal?.enabled,
+    killThreshold: params?.modal?.killThreshold,
+    cadenceDays: params?.modal?.cadenceDays,
+    cooldownDays: params?.cooldownDays,
+    discount: params?.discount,
+  };
+};
+
 const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
@@ -269,6 +284,7 @@ const extraProperties = (store: ReduxStore) => {
   const addAccountAttributes = getAddAccountAttributes();
   const backupHubAttributes = getBackupHubAttributes();
   const productTourAttributes = getProductTourAttributes();
+  const largeScreenUpsellAttributes = getLargeScreenUpsellAttributes();
 
   const deviceInfo = device
     ? {
@@ -340,6 +356,7 @@ const extraProperties = (store: ReduxStore) => {
     ...addAccountAttributes,
     ...backupHubAttributes,
     ...productTourAttributes,
+    largeScreenUpsellAttributes,
     madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
