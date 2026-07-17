@@ -53,7 +53,11 @@ jest.mock("@features/flow-contacts", () => {
       onAddContact,
     }: {
       viewModel: { me: { contactId: string; name: string; addressCount: number } };
-      labels: { searchPlaceholder: string; addContact: string; formatAddressCount: (count: number) => string };
+      labels: {
+        searchPlaceholder: string;
+        addContact: string;
+        formatAddressCount: (count: number) => string;
+      };
       onOpenMe: (contactId: string) => void;
       onAddContact: () => void;
     }) => (

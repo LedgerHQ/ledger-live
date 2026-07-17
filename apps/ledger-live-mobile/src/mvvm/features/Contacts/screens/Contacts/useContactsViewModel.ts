@@ -22,10 +22,7 @@ export function useContactsViewModel(): ContactsViewModel {
     }),
     [t],
   );
-  const viewModel = useMemo(
-    () => createEmptyContactsListViewModel(meContact!),
-    [meContact],
-  );
+  const viewModel = useMemo(() => createEmptyContactsListViewModel(meContact!), [meContact]);
   const onOpenMe = useCallback(() => undefined, []);
   const onAddContact = useCallback(() => undefined, []);
 
