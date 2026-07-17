@@ -44,7 +44,9 @@ export async function getBalance(address: string): Promise<Balance[]> {
     };
   });
 
-  // Non-manager accounts (empty / contract / ghost / rollup) hold no native balance or stakes.
+  // We don't compute native/stake balances for non-manager account types (empty / contract /
+  // ghost / rollup). KT1 contracts can hold XTZ, but they aren't user-facing wallet accounts
+  // here, so we report a 0 native balance alongside any token balances.
   if (!hasManagerKey(apiAccount)) {
     return [{ value: 0n, asset: { type: "native" } }, ...tokensBalance];
   }

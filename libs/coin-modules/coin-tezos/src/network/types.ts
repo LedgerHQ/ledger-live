@@ -1,7 +1,8 @@
 /**
  * Fields common to tzkt account types that own a manager key (`user` and `delegate`):
- * both publish a public key on-chain and therefore carry a reveal state, counter,
- * balance, and (un)staked balances.
+ * these types carry manager-key metadata — a public key, its on-chain reveal state
+ * (`revealed`), a counter, a balance, and (un)staked balances. The key is not necessarily
+ * published yet: an unrevealed account still has these fields but reports `revealed: false`.
  * See https://api.tzkt.io/#operation/Accounts_GetByAddress (schemas `User` / `Delegate`).
  */
 type APIManagerAccountBase = {
@@ -59,11 +60,13 @@ export type APIAccount =
 export type APIManagerAccount = Extract<APIAccount, { type: "user" | "delegate" }>;
 
 /**
- * True for accounts that have published a public key on-chain and therefore carry
- * `revealed`, `publicKey`, `counter`, and `balance`: plain wallets (`user`) and
- * registered bakers (`delegate`). `empty` accounts (and the non-manager `contract` /
- * `ghost` / `rollup` types we don't model) do not qualify. Use this instead of a bare
- * `type === "user"` check so baker accounts aren't mistaken for empty/unrevealed ones.
+ * True for account *types* that own a manager key and therefore carry the `revealed`,
+ * `publicKey`, `counter`, and `balance` fields: plain wallets (`user`) and registered bakers
+ * (`delegate`). This narrows on the account type, not on whether the key is already published —
+ * it returns true for unrevealed `user` accounts too (check `revealed` separately for that).
+ * `empty` accounts (and the non-manager `contract` / `ghost` / `rollup` types we don't model)
+ * do not qualify. Use this instead of a bare `type === "user"` check so baker accounts aren't
+ * mistaken for non-manager ones.
  */
 export function hasManagerKey(account: APIAccount): account is APIManagerAccount {
   return account.type === "user" || account.type === "delegate";
