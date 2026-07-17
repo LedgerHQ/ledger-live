@@ -118,6 +118,23 @@ describe("genericGetAccountShape", () => {
 
       expect((result as any).readiness).toBeUndefined();
     });
+
+    test("leaves readiness undefined when getAccountReadiness rejects", async () => {
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        getAccountReadiness: async () => {
+          throw new Error("boom");
+        },
+      }));
+
+      const getShape = genericGetAccountShape(network, currency.id);
+      const result = await getShape(
+        { address: "tz1boom", initialAccount: undefined, currency, derivationMode: "" } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect((result as any).readiness).toBeUndefined();
+    });
   });
 
   describe.each(chains)("$currency.id", ({ currency, network }) => {

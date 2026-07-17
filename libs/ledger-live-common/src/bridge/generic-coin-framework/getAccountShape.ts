@@ -360,7 +360,12 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       : Promise.resolve([]);
 
     const readinessPromise: Promise<AccountReadiness | undefined> = bridgeApi.getAccountReadiness
-      ? bridgeApi.getAccountReadiness(currency, address).catch(() => undefined)
+      ? bridgeApi.getAccountReadiness(currency, address).catch(e => {
+          log("generic-coin-framework", "getAccountReadiness failed, leaving readiness undefined", {
+            error: e instanceof Error ? e.message : String(e),
+          });
+          return undefined;
+        })
       : Promise.resolve(undefined);
 
     const [blockInfo, balanceRes, validators, readiness] = await Promise.all([
