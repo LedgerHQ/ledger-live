@@ -54,7 +54,6 @@
   "dependencies": {
     "@ledgerhq/coin-multiversx": "workspace:^",
     "@ledgerhq/coin-tester": "workspace:^",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",

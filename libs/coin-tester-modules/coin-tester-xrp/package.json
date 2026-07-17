@@ -60,7 +60,6 @@
   "dependencies": {
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/coin-xrp": "catalog:",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
