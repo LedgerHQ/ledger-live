@@ -7,8 +7,7 @@ import LoadingPlaceholder from "~/renderer/components/LoadingPlaceholder";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { dayAndHourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import { useSelector } from "LLD/hooks/redux";
-import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 const Title = styled(Text).attrs({ variant: "h5", color: "neutral.c100", mb: 2 })`
   font-size: 20px;
@@ -95,6 +94,7 @@ type Props = {
   atl?: number;
   atlDate?: string | Date;
   counterCurrency: string;
+  counterValueUnit: Unit;
   loading: boolean;
   locale: string;
   range: string;
@@ -116,12 +116,12 @@ function MarketInfo({
   athDate,
   atl,
   atlDate,
+  counterValueUnit,
   loading,
   locale,
   range,
 }: Props) {
   const { t } = useTranslation();
-  const counterValueUnit = useSelector(counterValueCurrencySelector).units[0];
 
   const athDateD = useMemo(() => (athDate ? new Date(athDate) : undefined), [athDate]);
   const atlDateD = useMemo(() => (atlDate ? new Date(atlDate) : undefined), [atlDate]);

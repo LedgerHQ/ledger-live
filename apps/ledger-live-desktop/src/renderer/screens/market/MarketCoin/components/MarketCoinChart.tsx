@@ -13,9 +13,7 @@ import { useTranslation } from "react-i18next";
 import { MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
 import { formatPercentage } from "../../utils";
 import { roundFiatPrice } from "@ledgerhq/live-currency-format";
-import { useSelector } from "LLD/hooks/redux";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 
 const Title = styled(Text).attrs({ variant: "h3", color: "neutral.c100", mt: 1, mb: 5 })`
   font-size: 28px;
@@ -84,6 +82,7 @@ type Props = {
   chartData?: MarketCoinDataChart;
   range: string;
   counterCurrency: string;
+  counterValueUnit: Unit;
   refreshChart: (range: string) => void;
   color?: string;
   locale: string;
@@ -98,6 +97,7 @@ function MarkeCoinChartComponent({
   priceChangePercentage,
   range,
   counterCurrency,
+  counterValueUnit,
   refreshChart,
   color,
   locale,
@@ -106,7 +106,6 @@ function MarkeCoinChartComponent({
   supportedCounterCurrencies,
 }: Props) {
   const { t } = useTranslation();
-  const counterValueUnit = useSelector(counterValueCurrencySelector).units[0];
   const nodeRef = useRef(null);
 
   const { scale } = rangeDataTable[range] || { scale: undefined };

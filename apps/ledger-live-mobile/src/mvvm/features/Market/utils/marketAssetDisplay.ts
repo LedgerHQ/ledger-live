@@ -7,7 +7,6 @@ import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { counterValueFormatter } from "./index";
 
 interface MapOptions {
-  counterCurrency: string;
   counterValueUnit: Unit;
   range: KeysPriceChange;
   locale: string;

@@ -16,7 +16,6 @@ const COMPACT_SUFFIXES: Record<string, string> = {
 const t = ((key: string) => COMPACT_SUFFIXES[key.split(".")[1]] ?? "") as unknown as TFunction;
 
 const opts = {
-  counterCurrency: "usd",
   counterValueUnit: usdUnit,
   range: KeysPriceChange.day,
   locale: "en-US",

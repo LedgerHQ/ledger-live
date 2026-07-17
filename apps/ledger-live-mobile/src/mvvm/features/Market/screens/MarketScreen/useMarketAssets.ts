@@ -127,14 +127,13 @@ export function useMarketAssets({
         ? []
         : getMarketAssets({
             marketData,
-            counterCurrency: displayCounterCurrency,
             counterValueUnit,
             rate,
             displayRange,
             locale,
             t,
           }),
-    [counterValueUnit, displayCounterCurrency, displayRange, locale, marketData, rate, t],
+    [counterValueUnit, displayRange, locale, marketData, rate, t],
   );
 
   const hasData = assets.length > 0;

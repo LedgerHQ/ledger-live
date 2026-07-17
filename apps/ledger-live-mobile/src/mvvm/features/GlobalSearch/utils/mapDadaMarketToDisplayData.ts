@@ -16,7 +16,6 @@ type AssetMeta = {
 };
 
 type MapOptions = {
-  counterCurrency: string;
   counterValueUnit: Unit;
   /** USD → counter-value spot rate (DADA prices are in USD). `null` while it resolves. */
   usdToFiatRate: number | null;

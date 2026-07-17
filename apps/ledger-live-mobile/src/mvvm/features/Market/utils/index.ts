@@ -84,7 +84,7 @@ const getNumberFormatter = (
     };
   }
 
-  const formatterKey = `${unit.code}:${shorten ? "short" : "full"}`;
+  const formatterKey = `${unit.code}:${unit.magnitude}:${unit.prefixCode ? "1" : "0"}:${shorten ? "short" : "full"}`;
 
   if (!formatters[locale]) formatters[locale] = {};
   if (!formatters[locale][formatterKey]) {

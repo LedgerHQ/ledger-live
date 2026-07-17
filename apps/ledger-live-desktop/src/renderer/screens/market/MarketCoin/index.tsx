@@ -59,6 +59,7 @@ export default function MarketCoinScreen() {
     isLoadingCurrency,
     range,
     counterCurrency,
+    counterValueUnit,
     currency,
     supportedCounterCurrencies,
     changeRange,
@@ -154,6 +155,7 @@ export default function MarketCoinScreen() {
         chartData={dataChart}
         range={range}
         counterCurrency={counterCurrency}
+        counterValueUnit={counterValueUnit}
         refreshChart={changeRange}
         color={color}
         locale={locale}
@@ -164,6 +166,7 @@ export default function MarketCoinScreen() {
       <MarketInfo
         locale={locale}
         counterCurrency={counterCurrency}
+        counterValueUnit={counterValueUnit}
         loading={isLoadingCurrency}
         range={range}
         {...currency}

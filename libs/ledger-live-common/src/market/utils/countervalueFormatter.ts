@@ -44,7 +44,11 @@ export const counterValueFormatter = ({
       ...baseOptions,
       style: "decimal",
     }).format(value);
-    formatted = unit.prefixCode ? `${unit.code}${number}` : `${number} ${unit.code}`;
+    formatted = unit.prefixCode
+      ? number.startsWith("-")
+        ? `-${unit.code}${number.slice(1)}`
+        : `${unit.code}${number}`
+      : `${number} ${unit.code}`;
   } else {
     formatted = new Intl.NumberFormat(locale, {
       ...baseOptions,

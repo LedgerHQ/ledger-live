@@ -37,14 +37,14 @@ describe("useAssetDetailChartSeries", () => {
         useAssetDetailChartSeries({
           id: "bitcoin",
           counterCurrency: "btc",
-          isCryptoCountervalue: false,
+          isCryptoCountervalue: true,
           selectedRange: "1d",
         }),
       );
 
       // The chart now goes through the USD-fallback wrapper instead of useAssetChartData.
       expect(mockedUseAssetChartData).toHaveBeenCalledWith(
-        { id: "bitcoin", counterCurrency: "btc", range: "1d", isCryptoCountervalue: false },
+        { id: "bitcoin", counterCurrency: "btc", range: "1d", isCryptoCountervalue: true },
         { skip: false },
       );
       // The series is derived from the (rescaled) currentData the wrapper returns.
