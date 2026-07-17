@@ -19,9 +19,8 @@ import {
   ConcordiumAddressVerificationFailedError,
   ConcordiumInvalidMaxFeeError,
   ConcordiumTrustedMetadataServiceError,
-  LockedDeviceError,
-  UserRefusedOnDevice,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/coin-concordium/types";
+import { LockedDeviceError, UserRefusedOnDevice } from "./errors";
 import {
   type SignerConcordium,
   SignerConcordiumBuilder,

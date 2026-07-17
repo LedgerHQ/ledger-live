@@ -1,5 +1,6 @@
 /* eslint-disable no-bitwise */
-import { DeviceOnDashboardExpected, StatusCodes, TransportStatusError } from "@ledgerhq/errors";
+import { StatusCodes } from "@ledgerhq/hw-transport/errors";
+import { DeviceNotOnboarded, DeviceOnDashboardExpected } from "../errors";
 import { LocalTracer, log } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
 import { getVersion } from "../device/use-cases/getVersionUseCase";
@@ -7,7 +8,6 @@ import isDevFirmware from "./isDevFirmware";
 import getAppAndVersion from "./getAppAndVersion";
 import { PROVIDERS } from "../manager/provider";
 import { isDashboardName } from "./isDashboardName";
-import { DeviceNotOnboarded } from "../errors";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 
 const ManagerAllowedFlag = 0x08;
@@ -24,15 +24,16 @@ export default async function (transport: Transport): Promise<DeviceInfo> {
     .then(({ name }) => isDashboardName(name))
     .catch(e => {
       tracer.trace(`Error from getAppAndVersion: ${e}`, { error: e });
-      if (e instanceof TransportStatusError) {
+      if ((e as Error).name === "TransportStatusError") {
+        const statusCode = (e as { statusCode?: number }).statusCode;
         if (
-          e.statusCode === StatusCodes.CLA_NOT_SUPPORTED ||
-          e.statusCode === StatusCodes.CLA_NOT_SUPPORTED_BOOTLOADER
+          statusCode === StatusCodes.CLA_NOT_SUPPORTED ||
+          statusCode === StatusCodes.CLA_NOT_SUPPORTED_BOOTLOADER
         ) {
           return true;
         }
 
-        if (e.statusCode === StatusCodes.INS_NOT_SUPPORTED) {
+        if (statusCode === StatusCodes.INS_NOT_SUPPORTED) {
           return false;
         }
       }
@@ -47,8 +48,9 @@ export default async function (transport: Transport): Promise<DeviceInfo> {
 
   const res = await getVersion(transport).catch(e => {
     tracer.trace(`Error from getVersion: ${e}`, { error: e });
-    if (e instanceof TransportStatusError) {
-      if (e.statusCode === 0x6d06 || e.statusCode === 0x6d07) {
+    if ((e as Error).name === "TransportStatusError") {
+      const statusCode = (e as { statusCode?: number }).statusCode;
+      if (statusCode === 0x6d06 || statusCode === 0x6d07) {
         throw new DeviceNotOnboarded();
       }
     }

@@ -7,7 +7,7 @@ import { useTranslation, Trans } from "~/context/Locale";
 import {
   ConcordiumAddressVerificationFailedError,
   ConcordiumTrustedMetadataServiceError,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/coin-concordium/types";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -122,7 +122,7 @@ export default function ConcordiumReceiveVerifyAddress({ navigation, route }: Pr
           // malformed response). Route to Confirmation with verified: false —
           // the native "skipped verification" path that shows the cached
           // address with the security modal prompt.
-          if (error instanceof ConcordiumTrustedMetadataServiceError) {
+          if ((error as Error).name === "ConcordiumTrustedMetadataServiceError") {
             navigation.navigate(ScreenName.ReceiveConfirmation, {
               ...route.params,
               verified: false,
@@ -178,7 +178,7 @@ export default function ConcordiumReceiveVerifyAddress({ navigation, route }: Pr
 
   // Retrying a terminal address-verification refusal would just hit the same
   // 4xx again — hide the button for that class of error.
-  const canRetry = !(error instanceof ConcordiumAddressVerificationFailedError);
+  const canRetry = (error as Error).name !== "ConcordiumAddressVerificationFailedError";
 
   return (
     <SafeAreaViewFixed isFlex edges={["left", "right", "bottom"]}>

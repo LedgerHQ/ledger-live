@@ -1,28 +1,55 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+/** Cardano error thrown when transaction amount is less then minUtxo */
+export class CardanoMinAmountError extends Error {
+  override name = "CardanoMinAmountError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-/**
- * Cardano error thrown when transaction amount is less then minUtxo
- */
-export const CardanoMinAmountError = createCustomErrorClass("CardanoMinAmountError");
+/** Cardano error thrown when user don't have enough fund for deposit */
+export class CardanoStakeKeyDepositError extends Error {
+  override name = "CardanoStakeKeyDepositError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-/**
- * Cardano error thrown when user don't have enough fund for deposit
- */
-export const CardanoStakeKeyDepositError = createCustomErrorClass("CardanoStakeKeyDepositError");
+/** Cardano error thrown when not enough funds to perform transaction */
+export class CardanoNotEnoughFunds extends Error {
+  override name = "CardanoNotEnoughFunds";
+}
 
-/**
- * Cardano error thrown when not enough funds to perform transaction
- */
-export const CardanoNotEnoughFunds = createCustomErrorClass("CardanoNotEnoughFunds");
+export class CardanoInvalidPoolId extends Error {
+  override name = "CardanoInvalidPoolId";
+}
 
-export const CardanoInvalidPoolId = createCustomErrorClass("CardanoInvalidPoolId");
+/** Cardano warning/error for high fees */
+export class CardanoFeeHigh extends Error {
+  override name = "CardanoFeeHigh";
+}
 
-/**
- * Cardano warning/error for high fees
- */
-export const CardanoFeeHigh = createCustomErrorClass("CardanoFeeHigh");
-export const CardanoFeeTooHigh = createCustomErrorClass("CardanoFeeTooHigh");
+export class CardanoFeeTooHigh extends Error {
+  override name = "CardanoFeeTooHigh";
+}
 
-export const CardanoInvalidProtoParams = createCustomErrorClass("CardanoInvalidProtoParams");
+export class CardanoInvalidProtoParams extends Error {
+  override name = "CardanoInvalidProtoParams";
+}
 
-export const CardanoMemoExceededSizeError = createCustomErrorClass("CardanoMemoExceededSizeError");
+export class CardanoMemoExceededSizeError extends Error {
+  override name = "CardanoMemoExceededSizeError";
+}
+
+export class ValAddressRequired extends Error {
+  override name = "ValAddressRequired";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class AccountAwaitingSendPendingOperations extends Error {
+  override name = "AccountAwaitingSendPendingOperations";
+}

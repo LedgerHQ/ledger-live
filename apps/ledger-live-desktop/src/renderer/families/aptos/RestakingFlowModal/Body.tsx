@@ -6,7 +6,6 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { useDispatch } from "LLD/hooks/redux";
 import { createStructuredSelector } from "reselect";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { getDelegationOpMaxAmount } from "@ledgerhq/live-common/families/aptos/staking";
@@ -130,7 +129,7 @@ function Body({
   );
 
   const handleTransactionError = useCallback((error: Error) => {
-    if (!(error instanceof UserRefusedOnDevice)) {
+    if ((error as Error).name !== "UserRefusedOnDevice") {
       logger.critical(error);
     }
     setTransactionError(error);

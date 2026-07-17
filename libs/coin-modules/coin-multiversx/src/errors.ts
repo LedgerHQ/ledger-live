@@ -1,19 +1,31 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class MultiversXDecimalsLimitReached extends Error {
+  override name = "MultiversXDecimalsLimitReached";
+}
 
-export const MultiversXDecimalsLimitReached = createCustomErrorClass(
-  "MultiversXDecimalsLimitReached",
-);
+export class MultiversXMinDelegatedAmountError extends Error {
+  override name = "MultiversXMinDelegatedAmountError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const MultiversXMinDelegatedAmountError = createCustomErrorClass(
-  "MultiversXMinDelegatedAmountError",
-);
+export class MultiversXMinUndelegatedAmountError extends Error {
+  override name = "MultiversXMinUndelegatedAmountError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const MultiversXMinUndelegatedAmountError = createCustomErrorClass(
-  "MultiversXMinUndelegatedAmountError",
-);
+export class MultiversXDelegationBelowMinimumError extends Error {
+  override name = "MultiversXDelegationBelowMinimumError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const MultiversXDelegationBelowMinimumError = createCustomErrorClass(
-  "MultiversXDelegationBelowMinimumError",
-);
-
-export const NotEnoughEGLDForFees = createCustomErrorClass("NotEnoughEGLDForFees");
+export class NotEnoughEGLDForFees extends Error {
+  override name = "NotEnoughEGLDForFees";
+}

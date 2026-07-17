@@ -38,7 +38,6 @@ import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";
 import { useFeature } from "@features/platform-feature-flags";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
-import { TrustchainEjected, TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
 
 const latestWalletStateSelector = (s: State): WSState => walletSyncStateSelector(walletSelector(s));
 
@@ -146,8 +145,8 @@ export function useWatchWalletSync(): WalletSyncUserState {
 
   useEffect(() => {
     if (walletSyncError) {
-      if (walletSyncError instanceof TrustchainNotAllowed) resetLedgerSync();
-      if (walletSyncError instanceof TrustchainEjected) resetLedgerSync();
+      if ((walletSyncError as Error).name === "TrustchainNotAllowed") resetLedgerSync();
+      if ((walletSyncError as Error).name === "TrustchainEjected") resetLedgerSync();
     }
   }, [dispatch, resetLedgerSync, walletSyncError]);
 

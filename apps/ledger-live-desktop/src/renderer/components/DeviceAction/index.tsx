@@ -4,25 +4,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
 import type { Theme } from "@ledgerhq/react-ui";
-import {
-  EConnResetError,
-  ImageDoesNotExistOnDevice,
-  LanguageInstallRefusedOnDevice,
-  NoSuchAppOnProvider,
-  OutdatedApp,
-} from "@ledgerhq/live-common/errors";
-import {
-  LatestFirmwareVersionRequired,
-  ManagerNotEnoughSpaceError,
-  TransportRaceCondition,
-  UnresponsiveDeviceError,
-  UpdateYourApp,
-  UserRefusedAddress,
-  UserRefusedAllowManager,
-  UserRefusedDeviceNameChange,
-  UserRefusedFirmwareUpdate,
-  UserRefusedOnDevice,
-} from "@ledgerhq/errors";
+import { EConnResetError, UnresponsiveDeviceError } from "@ledgerhq/live-common/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import {
   addNewDeviceModel,
@@ -73,7 +55,7 @@ import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { AppAndVersion, DeviceDeprecationRules } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
-import { LedgerErrorConstructor } from "@ledgerhq/errors/helpers";
+import { LedgerErrorConstructor } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   FlowName,
@@ -509,8 +491,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     return renderAllowLanguageInstallation({ modelId, type, t });
   }
   if (imageRemoveRequested) {
-    const refused = error instanceof UserRefusedOnDevice;
-    const noImage = error instanceof ImageDoesNotExistOnDevice;
+    const refused = (error as Error).name === "UserRefusedOnDevice";
+    const noImage = (error as Error).name === "ImageDoesNotExistOnDevice";
     if (error) {
       if (refused || noImage) {
         return renderError({
@@ -600,7 +582,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     return renderInWrongAppForAccount({ t, onRetry });
   }
 
-  if (unresponsive || error instanceof TransportRaceCondition) {
+  if (unresponsive || (error as Error).name === "TransportRaceCondition") {
     return renderError({
       t,
       error: new UnresponsiveDeviceError(),
@@ -612,9 +594,9 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   if (!isLoading && error) {
     const e = error as unknown;
     if (
-      e instanceof ManagerNotEnoughSpaceError ||
-      e instanceof OutdatedApp ||
-      e instanceof UpdateYourApp
+      (e as Error).name === "ManagerNotEnoughSpaceError" ||
+      (e as Error).name === "OutdatedApp" ||
+      (e as Error).name === "UpdateYourApp"
     ) {
       return renderError({
         t,
@@ -623,7 +605,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       });
     }
 
-    if (e instanceof LatestFirmwareVersionRequired) {
+    if ((e as Error).name === "LatestFirmwareVersionRequired") {
       return renderError({
         t,
         error,
@@ -637,7 +619,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       return <DeviceNotOnboardedErrorComponent t={t} device={device} location={location} />;
     }
 
-    if (e instanceof NoSuchAppOnProvider) {
+    if ((e as Error).name === "NoSuchAppOnProvider") {
       return renderError({
         t,
         error,
@@ -665,18 +647,18 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     // All the error rendering needs to be unified, the same way we do for ErrorIcon
     // not handled here.
     if (
-      (error as unknown) instanceof UserRefusedFirmwareUpdate ||
-      (error as unknown) instanceof UserRefusedAllowManager ||
-      (error as unknown) instanceof UserRefusedOnDevice ||
-      (error as unknown) instanceof UserRefusedAddress ||
-      (error as unknown) instanceof UserRefusedDeviceNameChange ||
-      (error as unknown) instanceof LanguageInstallRefusedOnDevice
+      (error as Error).name === "UserRefusedFirmwareUpdate" ||
+      (error as Error).name === "UserRefusedAllowManager" ||
+      (error as Error).name === "UserRefusedOnDevice" ||
+      (error as Error).name === "UserRefusedAddress" ||
+      (error as Error).name === "UserRefusedDeviceNameChange" ||
+      (error as Error).name === "LanguageInstallRefusedOnDevice"
     ) {
       withExportLogs = false;
       warning = true;
     }
 
-    if ((error as unknown) instanceof UserRefusedDeviceNameChange) {
+    if ((error as Error).name === "UserRefusedDeviceNameChange") {
       withDescription = false;
     }
     return renderError({

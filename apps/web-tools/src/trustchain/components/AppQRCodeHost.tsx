@@ -1,9 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import {
-  InvalidDigitsError,
-  NoTrustchainInitialized,
-} from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { RenderActionable } from "./Actionable";
 import QRCode from "./QRCode";
@@ -44,7 +41,7 @@ export function AppQRCodeHost({
       initialTrustchainId: trustchain.rootId,
     })
       .catch(e => {
-        if (e instanceof InvalidDigitsError) {
+        if ((e as Error).name === "InvalidDigitsError") {
           return;
         }
         setError(e);

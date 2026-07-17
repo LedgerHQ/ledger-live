@@ -2,11 +2,8 @@ import Solana from "@ledgerhq/hw-app-solana";
 import { LegacySignerSolana } from "../src/LegacySignerSolana";
 import { PubKeyDisplayMode } from "@ledgerhq/coin-solana/signer";
 import * as loadPKIModule from "@ledgerhq/hw-bolos";
-import {
-  LatestFirmwareVersionRequired,
-  TransportStatusError,
-  UpdateYourApp,
-} from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
+import { LatestFirmwareVersionRequired, UpdateYourApp } from "@ledgerhq/live-common/errors";
 import { DeviceModelId } from "@ledgerhq/devices/index";
 import calService from "@ledgerhq/ledger-cal-service";
 import trustService from "@ledgerhq/ledger-trust-service";

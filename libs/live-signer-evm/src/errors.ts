@@ -1,5 +1,3 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
-export const EthAppPleaseEnableContractData = createCustomErrorClass(
-  "EthAppPleaseEnableContractData",
-);
+export class EthAppPleaseEnableContractData extends Error {
+  override name = "EthAppPleaseEnableContractData";
+}

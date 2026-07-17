@@ -1,21 +1,39 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class ImageLoadFromGalleryError extends Error {
+  override name = "ImageLoadFromGalleryError";
+}
 
-export const ImageLoadFromGalleryError = createCustomErrorClass("ImageLoadFromGalleryError");
+export class ImageLoadFromFileError extends Error {
+  override name = "ImageLoadFromFileError";
+}
 
-export const ImageLoadFromFileError = createCustomErrorClass("ImageLoadFromFileError");
+export class ImageIncorrectFileTypeError extends Error {
+  override name = "ImageIncorrectFileTypeError";
+}
 
-export const ImageIncorrectFileTypeError = createCustomErrorClass("ImageIncorrectFileTypeError");
+export class ImageDownloadError extends Error {
+  override name = "ImageDownloadError";
+}
 
-export const ImageDownloadError = createCustomErrorClass("ImageDownloadError");
+export class ImageTooLargeError extends Error {
+  override name = "ImageTooLargeError";
+}
 
-export const ImageTooLargeError = createCustomErrorClass("ImageTooLargeError");
+export class ImageSizeLoadingError extends Error {
+  override name = "ImageSizeLoadingError";
+}
 
-export const ImageSizeLoadingError = createCustomErrorClass("ImageSizeLoadingError");
+export class ImageCropError extends Error {
+  override name = "ImageCropError";
+}
 
-export const ImageCropError = createCustomErrorClass("ImageCropError");
+export class ImageResizeError extends Error {
+  override name = "ImageResizeError";
+}
 
-export const ImageResizeError = createCustomErrorClass("ImageResizeError");
+export class ImagePreviewError extends Error {
+  override name = "ImagePreviewError";
+}
 
-export const ImagePreviewError = createCustomErrorClass("ImagePreviewError");
-
-export const ImageProcessingError = createCustomErrorClass("ImageProcessingError");
+export class ImageProcessingError extends Error {
+  override name = "ImageProcessingError";
+}

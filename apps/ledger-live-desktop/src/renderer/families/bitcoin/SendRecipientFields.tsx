@@ -1,4 +1,4 @@
-import { PendingOperation } from "@ledgerhq/errors";
+import { PendingOperation } from "@ledgerhq/live-common/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";

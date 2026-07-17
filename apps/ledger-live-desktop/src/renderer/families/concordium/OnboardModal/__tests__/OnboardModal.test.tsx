@@ -1,8 +1,10 @@
 import React from "react";
 import { cleanup, render, screen, waitFor } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
-import { ConcordiumPairingExpiredError } from "@ledgerhq/errors";
+import {
+  AccountOnboardStatus,
+  ConcordiumPairingExpiredError,
+} from "@ledgerhq/coin-concordium/types";
 import { Account } from "@ledgerhq/types-live";
 import OnboardModal from "../index";
 import {

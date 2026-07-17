@@ -1,4 +1,4 @@
-import { CurrencyNotSupported } from "@ledgerhq/errors";
+import { CurrencyNotSupported } from "../errors";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { checkAccountSupported as checkAccountDerivationSupported } from "@ledgerhq/ledger-wallet-framework/account/support";
 import { isCoinModuleRegistered } from "../coin-modules/registry";

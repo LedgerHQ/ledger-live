@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { BluetoothRequired } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { Flex } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";
@@ -88,7 +87,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
     // By setting back the device to `undefined` it gives back the responsibilities to those select components to check for the bluetooth requirements
     // and avoids a duplicated error drawers/messages.
     // The only drawback: the user has to select again their device once the bluetooth requirements are respected.
-    if (error instanceof BluetoothRequired) {
+    if ((error as Error).name === "BluetoothRequired") {
       setDevice(undefined);
     }
   };

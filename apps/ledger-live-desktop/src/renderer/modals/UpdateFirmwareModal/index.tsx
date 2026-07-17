@@ -10,7 +10,6 @@ import { Flex, FlowStepper, Text } from "@ledgerhq/react-ui";
 import Disclaimer from "./Disclaimer";
 import Cancel from "./errors/Cancel";
 import DeviceCancel from "./errors/DeviceError";
-import { DisconnectedDevice, DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
 import SideDrawerHeader from "~/renderer/components/SideDrawerHeader";
 import { createFirmwareUpdateSteps } from "./helpers/createFirmwareUpdateSteps";
 import { StepId, STEPS } from "./types";
@@ -59,8 +58,9 @@ const UpdateModal = ({
   const withFinal = useMemo(() => hasFinalFirmware(firmware.final), [firmware]);
   const [cancel, setCancel] = useState<boolean>(false);
 
-  const isDisconnectedDeviceError = err instanceof DisconnectedDevice;
-  const isDisconnectedDeviceDuringOperationError = err instanceof DisconnectedDeviceDuringOperation;
+  const isDisconnectedDeviceError = (err as Error).name === "DisconnectedDevice";
+  const isDisconnectedDeviceDuringOperationError =
+    (err as Error).name === "DisconnectedDeviceDuringOperation";
   const isDeviceDisconnected =
     isDisconnectedDeviceError ||
     isDisconnectedDeviceDuringOperationError ||

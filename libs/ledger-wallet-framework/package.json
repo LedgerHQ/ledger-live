@@ -32,6 +32,9 @@
       "currencies": [
         "lib/currencies/index"
       ],
+      "errors": [
+        "lib/errors"
+      ],
       "serialization": [
         "lib/serialization/index"
       ],
@@ -52,6 +55,11 @@
       "@ledgerhq/source": "./src/bridge/index.ts",
       "require": "./lib/bridge/index.js",
       "default": "./lib-es/bridge/index.js"
+    },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
     },
     "./currencies": {
       "@ledgerhq/source": "./src/currencies/index.ts",
@@ -91,6 +99,7 @@
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-currency-format": "workspace:^",

@@ -2,7 +2,11 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { reduce, filter, map } from "rxjs/operators";
 import omit from "lodash/omit";
-import { InvalidAddress, RecipientRequired, AmountRequired } from "@ledgerhq/errors";
+import {
+  InvalidAddress,
+  RecipientRequired,
+  AmountRequired,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import {
   fromAccountRaw,
   toAccountRaw,

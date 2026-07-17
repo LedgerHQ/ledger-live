@@ -1,4 +1,4 @@
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { AccountBridge, SignOperationEvent } from "@ledgerhq/types-live";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";

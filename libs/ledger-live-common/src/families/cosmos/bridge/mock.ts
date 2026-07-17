@@ -23,7 +23,7 @@ import {
   InvalidAddress,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { getCosmosDummyRecipient } from "@ledgerhq/coin-cosmos/logic";

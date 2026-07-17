@@ -1,4 +1,4 @@
-import { CurrencyNotSupported } from "@ledgerhq/errors";
+import { CurrencyNotSupported } from "../errors";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import type { CoinModuleLoader, MockAccountModule } from "./types";

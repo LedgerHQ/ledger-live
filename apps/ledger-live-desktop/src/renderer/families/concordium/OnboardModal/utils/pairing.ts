@@ -2,8 +2,8 @@ import {
   AccountOnboardStatus,
   ConcordiumPairingProgress,
   ConcordiumPairingStatus,
+  ConcordiumPairingExpiredError,
 } from "@ledgerhq/coin-concordium/types";
-import { ConcordiumPairingExpiredError } from "@ledgerhq/errors";
 
 export const MAX_EXPIRED_RETRIES = 3;
 export const CONFIRMATION_CODE_LENGTH = 4;
@@ -22,7 +22,7 @@ export function shouldRetryPairing(error: unknown, retryCount: number): boolean 
     return false;
   }
 
-  return error instanceof ConcordiumPairingExpiredError;
+  return (error as Error).name === "ConcordiumPairingExpiredError";
 }
 
 export type PairingStateUpdate = {

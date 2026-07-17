@@ -1,5 +1,4 @@
 import React from "react";
-import { createCustomErrorClass } from "@ledgerhq/errors";
 import { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import ErrorBanner from "./ErrorBanner";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
@@ -7,7 +6,9 @@ type Props = {
   currencies: Array<CryptoCurrency | TokenCurrency>;
   hideStatusIncidents?: boolean;
 };
-const ServiceStatusWarning = createCustomErrorClass("ServiceStatusWarning");
+class ServiceStatusWarning extends Error {
+  override name = "ServiceStatusWarning";
+}
 const CurrencyDownStatusAlert = ({ currencies, hideStatusIncidents }: Props) => {
   const errors: Error[] = [];
 

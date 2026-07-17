@@ -1,26 +1,56 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class AccountNeedResync extends Error {
+  override name = "AccountNeedResync";
+}
 
-export const AccountNeedResync = createCustomErrorClass("AccountNeedResync");
+export class TaprootNotActivated extends Error {
+  override name = "TaprootNotActivated";
+}
 
-export const TaprootNotActivated = createCustomErrorClass("TaprootNotActivated");
+export class BitcoinInfrastructureError extends Error {
+  override name = "InfrastructureError";
+}
 
-export const BitcoinInfrastructureError = createCustomErrorClass("InfrastructureError");
+export class RbfBuildError extends Error {
+  override name = "RbfBuildError";
+}
 
-export const RbfBuildError = createCustomErrorClass("RbfBuildError");
+export class FeeTooLow extends Error {
+  override name = "FeeTooLow";
+}
 
-export const FeeTooLow = createCustomErrorClass("FeeTooLow");
+export class ZcashSaplingRecipientNotSupported extends Error {
+  override name = "ZcashSaplingRecipientNotSupported";
+}
 
-export const ZcashSaplingRecipientNotSupported = createCustomErrorClass(
-  "ZcashSaplingRecipientNotSupported",
-);
+export class ZcashSignerNotSupported extends Error {
+  override name = "ZcashSignerNotSupported";
+}
 
-export const ZcashSignerNotSupported = createCustomErrorClass("ZcashSignerNotSupported");
+/** Typed cancellation marker for the shielded (PCZT) signOperation flow. */
+export class ZcashSigningCancelled extends Error {
+  override name = "ZcashSigningCancelled";
+}
 
-// Typed cancellation marker for the shielded (PCZT) signOperation flow.
-export const ZcashSigningCancelled = createCustomErrorClass("ZcashSigningCancelled");
+/** Raised when a transparent UTXO about to be spent by a Public→* PCZT flow
+ * cannot be mapped to a known account key (missing address, or an address
+ * outside the synced receive/change gap limit). Fail-closed: we refuse to sign
+ * rather than risk producing an unsignable or wrong input. */
+export class ZcashUtxoNotInAccount extends Error {
+  override name = "ZcashUtxoNotInAccount";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-// Raised when a transparent UTXO about to be spent by a Public→* PCZT flow
-// cannot be mapped to a known account key (missing address, or an address
-// outside the synced receive/change gap limit). Fail-closed: we refuse to sign
-// rather than risk producing an unsignable or wrong input.
-export const ZcashUtxoNotInAccount = createCustomErrorClass("ZcashUtxoNotInAccount");
+export class DustLimit extends Error {
+  override name = "DustLimit";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class OpReturnDataSizeLimit extends Error {
+  override name = "OpReturnSizeLimit";
+}

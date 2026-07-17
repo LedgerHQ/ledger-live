@@ -1,6 +1,6 @@
 import cashaddr from "cashaddrjs";
 import { Currency, isValidAddress } from "./wallet-btc";
-import { RecipientRequired, InvalidAddress } from "@ledgerhq/errors";
+import { RecipientRequired, InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import type {
   BitcoinOutput,
   BitcoinResources,

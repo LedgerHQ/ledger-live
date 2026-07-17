@@ -9,8 +9,6 @@ import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
 import { useTheme } from "@react-navigation/native";
 import { TransactionResult } from "@ledgerhq/live-common/hw/actions/transaction";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import DeviceAction from "~/components/DeviceAction";
 import { TrackScreen } from "~/analytics";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
@@ -57,7 +55,10 @@ function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps)
         navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
       } catch (error) {
         if (
-          !(error instanceof UserRefusedOnDevice || error instanceof TransactionRefusedOnDevice)
+          !(
+            (error as Error).name === "UserRefusedOnDevice" ||
+            (error as Error).name === "TransactionRefusedOnDevice"
+          )
         ) {
           logger.critical(error as Error);
         }

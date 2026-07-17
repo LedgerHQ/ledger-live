@@ -36,9 +36,7 @@ import { DelegationAction, SolanaDelegationFlowParamList } from "./types";
 import TranslatedError from "../../../components/TranslatedError";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
-import { NotEnoughBalance } from "@ledgerhq/errors";
 import { useChangeValidatorRotateAnim } from "../../shared/useChangeValidatorRotateAnim";
-import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import SupportLinkError from "~/components/SupportLinkError";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
@@ -139,7 +137,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const error = Object.values(status.errors)[0];
   const feeError = status.errors.fee;
   const isUndelagating = transaction.model.kind === "stake.undelegate";
-  const hasErrorWhileDesactivating = isUndelagating && feeError instanceof NotEnoughBalance;
+  const hasErrorWhileDesactivating =
+    isUndelagating && (feeError as Error).name === "NotEnoughBalance";
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
@@ -206,7 +205,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
       <View style={styles.footer}>
         {hasErrorWhileDesactivating && <NotEnoughFundFeesAlert account={account} />}
 
-        {status.errors.sender && status.errors.sender instanceof AddressesSanctionedError ? (
+        {status.errors.sender &&
+        (status.errors.sender as Error).name === "AddressesSanctionedError" ? (
           <>
             <Text color="alert">
               <TranslatedError error={status.errors.sender} />

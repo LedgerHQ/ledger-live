@@ -8,23 +8,23 @@ import {
 import { Observable } from "rxjs";
 import { useCallback, useMemo, useEffect, useState } from "react";
 import { DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
+import { CustomErrorClassType } from "@ledgerhq/errors";
 import {
   CantOpenDevice,
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
   LockedDeviceError,
-  UnresponsiveDeviceError,
-  UserRefusedAllowManager,
-  WebsocketConnectionError,
-  WebsocketConnectionFailed,
-  CustomErrorClassType,
   TransportStatusErrorClassType,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/hw-transport/errors";
 import {
   ConnectManagerTimeout,
   ImageCommitRefusedOnDevice,
   ImageLoadRefusedOnDevice,
   LanguageInstallRefusedOnDevice,
+  UnresponsiveDeviceError,
+  UserRefusedAllowManager,
+  WebsocketConnectionError,
+  WebsocketConnectionFailed,
 } from "@ledgerhq/live-common/errors";
 import {
   useAppDeviceAction,
@@ -413,7 +413,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     if (
       updateStep === "languageRestore" &&
       installLanguageState.error &&
-      installLanguageState.error instanceof LanguageInstallRefusedOnDevice
+      (installLanguageState.error as Error).name === "LanguageInstallRefusedOnDevice"
     ) {
       return installLanguageState.error;
     }
@@ -421,8 +421,8 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     if (
       updateStep === "imageRestore" &&
       loadImageState.error &&
-      (loadImageState.error instanceof ImageLoadRefusedOnDevice ||
-        (loadImageState.error as unknown) instanceof ImageCommitRefusedOnDevice)
+      ((loadImageState.error as Error).name === "ImageLoadRefusedOnDevice" ||
+        (loadImageState.error as Error).name === "ImageCommitRefusedOnDevice")
     ) {
       return loadImageState.error;
     }
@@ -430,7 +430,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     if (
       updateStep === "appsRestore" &&
       restoreAppsState.error &&
-      restoreAppsState.error instanceof UserRefusedAllowManager
+      (restoreAppsState.error as Error).name === "UserRefusedAllowManager"
     ) {
       return restoreAppsState.error;
     }

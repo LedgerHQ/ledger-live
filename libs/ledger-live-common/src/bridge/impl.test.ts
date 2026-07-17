@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { BigNumber } from "bignumber.js";
-import { AccountNotSupported, CurrencyNotSupported } from "@ledgerhq/errors";
+import { AccountNotSupported, CurrencyNotSupported } from "../errors";
 import { initialBitcoinResourcesValue } from "@ledgerhq/coin-bitcoin/types";
 import type { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
 import type { DerivationMode } from "@ledgerhq/types-live";

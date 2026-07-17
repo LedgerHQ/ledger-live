@@ -32,6 +32,8 @@
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "rxjs": "catalog:"
   },

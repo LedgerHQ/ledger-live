@@ -1,83 +1,140 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class SolanaAccountNotFunded extends Error {
+  override name = "SolanaAccountNotFunded";
+}
 
-export const SolanaAccountNotFunded = createCustomErrorClass("SolanaAccountNotFunded");
+export class SolanaRecipientAccountNotFunded extends Error {
+  override name = "SolanaRecipientAccountNotFunded";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const SolanaRecipientAccountNotFunded = createCustomErrorClass(
-  "SolanaRecipientAccountNotFunded",
-);
+export class SolanaRecipientAssociatedTokenAccountWillBeFunded extends Error {
+  override name = "SolanaAssociatedTokenAccountWillBeFunded";
+}
 
-export const SolanaRecipientAssociatedTokenAccountWillBeFunded = createCustomErrorClass(
-  "SolanaAssociatedTokenAccountWillBeFunded",
-);
+export class SolanaMemoIsTooLong extends Error {
+  override name = "SolanaMemoIsTooLong";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const SolanaMemoIsTooLong = createCustomErrorClass("SolanaMemoIsTooLong");
+export class SolanaTokenAccountHoldsAnotherToken extends Error {
+  override name = "SolanaTokenAccountHoldsAnotherToken";
+}
 
-export const SolanaTokenAccountHoldsAnotherToken = createCustomErrorClass(
-  "SolanaTokenAccountHoldsAnotherToken",
-);
+export class SolanaTokenAccountWarning extends Error {
+  override name = "SolanaTokenAccountWarning";
+}
 
-export const SolanaTokenAccountWarning = createCustomErrorClass("SolanaTokenAccountWarning");
+export class SolanaTokenAccountNotAllowed extends Error {
+  override name = "SolanaTokenAccountNotAllowed";
+}
 
-export const SolanaTokenAccountNotAllowed = createCustomErrorClass("SolanaTokenAccountNotAllowed");
+export class SolanaMintAccountNotAllowed extends Error {
+  override name = "SolanaMintAccountNotAllowed";
+}
 
-export const SolanaMintAccountNotAllowed = createCustomErrorClass("SolanaMintAccountNotAllowed");
+export class SolanaTokenAccounNotInitialized extends Error {
+  override name = "SolanaTokenAccounNotInitialized";
+}
 
-export const SolanaTokenAccounNotInitialized = createCustomErrorClass(
-  "SolanaTokenAccounNotInitialized",
-);
+export class SolanaTokenAccountFrozen extends Error {
+  override name = "SolanaTokenAccountFrozen";
+}
 
-export const SolanaTokenAccountFrozen = createCustomErrorClass("SolanaTokenAccountFrozen");
+export class SolanaAddressOffEd25519 extends Error {
+  override name = "SolanaAddressOfEd25519";
+}
 
-export const SolanaAddressOffEd25519 = createCustomErrorClass("SolanaAddressOfEd25519");
+export class SolanaTokenRecipientIsSenderATA extends Error {
+  override name = "SolanaTokenRecipientIsSenderATA";
+}
 
-export const SolanaTokenRecipientIsSenderATA = createCustomErrorClass(
-  "SolanaTokenRecipientIsSenderATA",
-);
+export class SolanaValidatorRequired extends Error {
+  override name = "SolanaValidatorRequired";
+}
 
-export const SolanaValidatorRequired = createCustomErrorClass("SolanaValidatorRequired");
+export class SolanaInvalidValidator extends Error {
+  override name = "SolanaInvalidValidator";
+}
 
-export const SolanaInvalidValidator = createCustomErrorClass("SolanaInvalidValidator");
+export class SolanaStakeAccountRequired extends Error {
+  override name = "SolanaStakeAccountRequired";
+}
 
-export const SolanaStakeAccountRequired = createCustomErrorClass("SolanaStakeAccountRequired");
+export class SolanaStakeAccountNotFound extends Error {
+  override name = "SolanaStakeAccountNotFound";
+}
 
-export const SolanaStakeAccountNotFound = createCustomErrorClass("SolanaStakeAccountNotFound");
+export class SolanaStakeAccountNothingToWithdraw extends Error {
+  override name = "SolanaStakeAccountNothingToWithdraw";
+}
 
-export const SolanaStakeAccountNothingToWithdraw = createCustomErrorClass(
-  "SolanaStakeAccountNothingToWithdraw",
-);
+export class SolanaStakeAccountIsNotDelegatable extends Error {
+  override name = "SolanaStakeAccountIsNotDelegatable";
+}
 
-export const SolanaStakeAccountIsNotDelegatable = createCustomErrorClass(
-  "SolanaStakeAccountIsNotDelegatable",
-);
+export class SolanaStakeAccountIsNotUndelegatable extends Error {
+  override name = "SolanaStakeAccountIsNotUndelegatable";
+}
 
-export const SolanaStakeAccountIsNotUndelegatable = createCustomErrorClass(
-  "SolanaStakeAccountIsNotUndelegatable",
-);
+export class SolanaStakeAccountValidatorIsUnchangeable extends Error {
+  override name = "SolanaStakeAccountValidatorIsUnchangeable";
+}
 
-export const SolanaStakeAccountValidatorIsUnchangeable = createCustomErrorClass(
-  "SolanaStakeAccountValidatorIsUnchangeable",
-);
+export class SolanaStakeAccountAmountTooLow extends Error {
+  override name = "SolanaStakeAccountAmountTooLow";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const SolanaStakeAccountAmountTooLow = createCustomErrorClass(
-  "SolanaStakeAccountAmountTooLow",
-);
+export class SolanaStakeNoWithdrawAuth extends Error {
+  override name = "SolanaStakeNoWithdrawAuth";
+}
 
-export const SolanaStakeNoWithdrawAuth = createCustomErrorClass("SolanaStakeNoWithdrawAuth");
+export class SolanaStakeNoStakeAuth extends Error {
+  override name = "SolanaStakeNoStakeAuth";
+}
 
-export const SolanaStakeNoStakeAuth = createCustomErrorClass("SolanaStakeNoStakeAuth");
+export class SolanaUseAllAmountStakeWarning extends Error {
+  override name = "SolanaUseAllAmountStakeWarning";
+}
 
-export const SolanaUseAllAmountStakeWarning = createCustomErrorClass(
-  "SolanaUseAllAmountStakeWarning",
-);
+export class SolanaTxSimulationFailedWhilePendingOp extends Error {
+  override name = "SolanaTxSimulationFailedWhilePendingOp";
+}
 
-export const SolanaTxSimulationFailedWhilePendingOp = createCustomErrorClass(
-  "SolanaTxSimulationFailedWhilePendingOp",
-);
+export class SolanaTxConfirmationTimeout extends Error {
+  override name = "SolanaTxConfirmationTimeout";
+}
 
-export const SolanaTxConfirmationTimeout = createCustomErrorClass("SolanaTxConfirmationTimeout");
+export class SolanaRecipientMemoIsRequired extends Error {
+  override name = "SolanaRecipientMemoIsRequired";
+}
 
-export const SolanaRecipientMemoIsRequired = createCustomErrorClass(
-  "SolanaRecipientMemoIsRequired",
-);
+export class SolanaTokenNonTransferable extends Error {
+  override name = "SolanaTokenNonTransferable";
+}
 
-export const SolanaTokenNonTransferable = createCustomErrorClass("SolanaTokenNonTransferable");
+export class NotEnoughGas extends Error {
+  override name = "NotEnoughGas";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class NetworkError extends Error {
+  override name = "NetworkError";
+  constructor(message?: string, fields?: Record<string, unknown>, options?: { cause?: unknown }) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+    if (options?.cause !== undefined) Object.assign(this, { cause: options.cause });
+  }
+}

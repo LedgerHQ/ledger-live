@@ -5,12 +5,11 @@ import {
   InvalidAddress,
   FeeTooHigh,
   InvalidAddressBecauseDestinationIsAlsoSource,
-  NotSupportedLegacyAddress,
   NotEnoughBalanceInParentAccount,
   AmountRequired,
-  RecommendSubAccountsToEmpty,
   NotEnoughBalanceToDelegate,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
+import { NotSupportedLegacyAddress, RecommendSubAccountsToEmpty } from "../../../errors";
 import type { TezosAccount, Transaction } from "../types";
 import type { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
 import { TEZOS_DUMMY_ADDRESS } from "@ledgerhq/coin-tezos/constants";
@@ -145,7 +144,7 @@ const getTransactionStatus = (a: Account, t: Transaction) => {
     }
   } else {
     // delegation case, we remap NotEnoughBalance to a more precise error
-    if (errors.amount instanceof NotEnoughBalance) {
+    if ((errors.amount as Error).name === "NotEnoughBalance") {
       errors.amount = new NotEnoughBalanceToDelegate();
     }
   }

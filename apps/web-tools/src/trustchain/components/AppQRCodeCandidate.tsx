@@ -1,9 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import {
-  InvalidDigitsError,
-  NoTrustchainInitialized,
-} from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { TextInput } from "@ledgerhq/lumen-ui-react";
 import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Actionable } from "./Actionable";
@@ -56,7 +53,7 @@ export function AppQRCodeCandidate({
           return true;
         })
         .catch(e => {
-          if (e instanceof InvalidDigitsError) {
+          if ((e as Error).name === "InvalidDigitsError") {
             alert("Invalid digits");
             return;
           }

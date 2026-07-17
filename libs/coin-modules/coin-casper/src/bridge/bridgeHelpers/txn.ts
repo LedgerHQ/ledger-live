@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { InvalidAddress } from "@ledgerhq/errors";
+import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { Unit } from "@ledgerhq/ledger-wallet-framework/types";
@@ -101,7 +101,7 @@ export const createNewTransaction = async (
   log("debug", `Creating new Transaction: ${sender}, ${recipient}, ${network}`);
 
   if (recipient && !isAddressValid(recipient)) {
-    throw InvalidAddress(`Invalid recipient Address ${recipient}`);
+    throw new InvalidAddress(`Invalid recipient Address ${recipient}`);
   }
 
   const client = getCasperNodeRpcClient();

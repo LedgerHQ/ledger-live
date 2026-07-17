@@ -21,7 +21,6 @@ import { useChangeLanguagePrompt } from "./EarlySecurityChecks/useChangeLanguage
 import DeviceAction from "../../DeviceAction";
 import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import LockedDeviceDrawer from "./LockedDeviceDrawer";
-import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
 import { FinalFirmware } from "@ledgerhq/types-live";
 import { useConnectManagerAction } from "~/renderer/hooks/useConnectAppAction";
 
@@ -201,7 +200,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
 
   // A fatal error during polling triggers directly an error message
   useEffect(() => {
-    if ((fatalError as unknown) instanceof UnexpectedBootloader) {
+    if ((fatalError as Error).name === "UnexpectedBootloader") {
       setIsBootloader(true);
     } else if (fatalError) {
       setIsPollingOn(false);
@@ -213,7 +212,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
 
-    if (allowedError && !(allowedError instanceof LockedDeviceError)) {
+    if (allowedError && (allowedError as Error).name !== "LockedDeviceError") {
       timeout = setTimeout(() => {
         setIsPollingOn(false);
         setTroubleshootingDrawerOpen(true);

@@ -31,7 +31,6 @@ import { SuiUnstakingFlowParamList } from "../UnstakingFlow/types";
 import { useSettings } from "~/hooks";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
-import { NotEnoughBalance } from "@ledgerhq/errors";
 import AmountInput from "~/screens/SendFunds/AmountInput";
 import Alert from "~/components/Alert";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
@@ -96,7 +95,7 @@ function StakingAmount({ navigation, route }: Props) {
   }
 
   const errorDuringUnstaking =
-    error instanceof NotEnoughBalance && transaction.mode === "undelegate";
+    (error as Error).name === "NotEnoughBalance" && transaction.mode === "undelegate";
 
   return (
     <View

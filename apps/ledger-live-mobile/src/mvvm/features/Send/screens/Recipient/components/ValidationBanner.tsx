@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import { Banner, Button } from "@ledgerhq/lumen-ui-rnative";
-import { RecipientRequired } from "@ledgerhq/errors";
 import { useTranslation } from "~/context/Locale";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
@@ -53,7 +52,7 @@ export function ValidationBanner(props: ValidationBannerProps) {
 
   if (!error) return null;
 
-  if (excludeRecipientRequired && error instanceof RecipientRequired) return null;
+  if (excludeRecipientRequired && (error as Error).name === "RecipientRequired") return null;
 
   if (!translatedError) return null;
 

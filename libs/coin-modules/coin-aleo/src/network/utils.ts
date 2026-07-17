@@ -1,8 +1,7 @@
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
-import { AleoApiConfigurationResetError } from "../errors";
+import { AleoApiConfigurationResetError, LedgerAPI4xx } from "../errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import {
   AMOUNT_ARG_INDEX,

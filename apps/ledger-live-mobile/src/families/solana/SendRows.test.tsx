@@ -4,7 +4,7 @@ import { render } from "@tests/test-renderer";
 import SolanaFeeRow from "./SendRowsFee";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/solana/types";
-import { NotEnoughGas } from "@ledgerhq/errors";
+import { NotEnoughGas } from "@ledgerhq/coin-solana/errors";
 import BigNumber from "bignumber.js";
 
 describe("SolanaFeeRow", () => {

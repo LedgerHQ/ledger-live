@@ -1,5 +1,9 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
-export const CeloAllFundsWarning = createCustomErrorClass("CeloAllFundsWarning");
-export const CeloGroupNotVotable = createCustomErrorClass("CeloGroupNotVotable");
-export const CeloGroupNotVoted = createCustomErrorClass("CeloGroupNotVoted");
+export class CeloAllFundsWarning extends Error {
+  override name = "CeloAllFundsWarning";
+}
+export class CeloGroupNotVotable extends Error {
+  override name = "CeloGroupNotVotable";
+}
+export class CeloGroupNotVoted extends Error {
+  override name = "CeloGroupNotVoted";
+}

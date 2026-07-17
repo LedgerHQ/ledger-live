@@ -1,7 +1,8 @@
 import { log } from "@ledgerhq/logs";
 import { Observable, from, of, EMPTY, concat, throwError } from "rxjs";
 import { concatMap, delay, scan, distinctUntilChanged, throttleTime } from "rxjs/operators";
-import { CantOpenDevice, DeviceInOSUExpected } from "@ledgerhq/errors";
+import { CantOpenDevice } from "@ledgerhq/hw-transport/errors";
+import { DeviceInOSUExpected } from "../errors";
 import { withDevicePolling, withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 import flash from "./flash";
@@ -30,7 +31,7 @@ const main = (
   const withDeviceInstall = install =>
     withDevicePolling(deviceId)(
       install,
-      e => e instanceof CantOpenDevice, // this can happen if withDevicePolling was still seeing the device but it was then interrupted by a device reboot
+      e => (e as Error).name === "CantOpenDevice", // this can happen if withDevicePolling was still seeing the device but it was then interrupted by a device reboot
     );
 
   const waitForBootloader = withDeviceInfo.pipe(

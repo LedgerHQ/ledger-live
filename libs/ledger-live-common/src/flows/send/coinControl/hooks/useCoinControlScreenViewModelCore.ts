@@ -1,5 +1,5 @@
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { SendFlowTransactionActions, SendFlowUiConfig } from "../../types";
@@ -154,7 +154,8 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
       rows != null &&
       rows.length > 0 &&
       utxoData.totalExcludedUTXOS === rows.length;
-    const isInsufficientFundsBridgeError = status.errors?.amount instanceof NotEnoughBalance;
+    const isInsufficientFundsBridgeError =
+      (status.errors?.amount as Error).name === "NotEnoughBalance";
 
     return isInsufficientFundsBridgeError || hasNoSelectedUtxo;
   }, [customStrategyValue, status, transaction, utxoDisplayData]);
@@ -224,7 +225,8 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     const hasFilledAmount = transaction.useAllAmount || transaction.amount?.gt(0);
     if (isCustomStrategy && !hasFilledAmount) return undefined;
 
-    const isInsufficientFundsBridgeError = status.errors?.amount instanceof NotEnoughBalance;
+    const isInsufficientFundsBridgeError =
+      (status.errors?.amount as Error).name === "NotEnoughBalance";
     // Transaction patches (e.g. toggling custom exclusions) apply before the next bridge sync;
     // status can briefly still reflect the previous pick and show a stale NotEnoughBalance.
     if (isCustomStrategy && hasFilledAmount && bridgePending && isInsufficientFundsBridgeError) {

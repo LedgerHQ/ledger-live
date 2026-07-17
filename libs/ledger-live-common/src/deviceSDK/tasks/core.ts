@@ -1,12 +1,12 @@
+import { CustomErrorClassType } from "@ledgerhq/errors";
 import {
   CantOpenDevice,
   DisconnectedDevice,
   LockedDeviceError,
   TransportRaceCondition,
-  UnresponsiveDeviceError,
   TransportStatusErrorClassType,
-  CustomErrorClassType,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/hw-transport/errors";
+import { UnresponsiveDeviceError } from "../../errors";
 import { Observable, from, of, throwError, timer } from "rxjs";
 import { catchError, concatMap, retry, switchMap, timeout } from "rxjs/operators";
 import { Transport, TransportRef } from "../transports/core";
@@ -45,11 +45,11 @@ export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
               // - CantOpenDevice: it can come from a transport when no device is found
               // - DisconnectedDevice: it can come from a transport while switching app
               if (
-                error instanceof LockedDeviceError ||
-                error instanceof UnresponsiveDeviceError ||
-                error instanceof CantOpenDevice ||
-                error instanceof DisconnectedDevice ||
-                error instanceof TransportRaceCondition
+                (error as Error).name === "LockedDeviceError" ||
+                (error as Error).name === "UnresponsiveDeviceError" ||
+                (error as Error).name === "CantOpenDevice" ||
+                (error as Error).name === "DisconnectedDevice" ||
+                (error as Error).name === "TransportRaceCondition"
               ) {
                 // Emits to the action an error event so it is aware of it (for ex locked device) before retrying
                 const event: SharedTaskEvent = {
@@ -73,7 +73,10 @@ export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
   };
 }
 
-type ErrorClass = CustomErrorClassType | TransportStatusErrorClassType;
+type ErrorClass =
+  | (new (...args: any[]) => Error)
+  | CustomErrorClassType
+  | TransportStatusErrorClassType;
 
 // To be able to retry a command, the command needs to take an object containing a transport as its argument
 type CommandTransportArgs = { transport: Transport };

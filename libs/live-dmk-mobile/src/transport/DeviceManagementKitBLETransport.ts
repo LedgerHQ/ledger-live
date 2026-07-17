@@ -29,10 +29,10 @@ import type {
   Observer as TransportObserver,
   Subscription as TransportSubscription,
 } from "@ledgerhq/hw-transport";
-import { HwTransportError, PairingFailed, PeerRemovedPairing } from "@ledgerhq/errors";
+import { HwTransportError } from "@ledgerhq/hw-transport/errors";
+import { PairingFailed, PeerRemovedPairing, isPeerRemovedPairingError } from "../errors";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { BlePlxManager } from "./BlePlxManager";
-import { isPeerRemovedPairingError } from "../errors";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { findMatchingDiscoveredDevice, matchDeviceByName } from "../utils/matchDevicesByNameOrId";
 
@@ -234,7 +234,7 @@ export class DeviceManagementKitBLETransport extends Transport {
               // NB: in LLM, we don't have a specific error for pairing refused, so we remap it to PairingFailed
               return throwError(() => new PairingFailed());
             } else if (
-              error instanceof PeerRemovedPairing ||
+              (error as Error).name === "PeerRemovedPairing" ||
               error instanceof OpeningConnectionError
             ) {
               return throwError(() => error);

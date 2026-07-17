@@ -1,8 +1,7 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { HederaAddAccountError, LedgerAPI4xx } from "../errors";
 import BigNumber from "bignumber.js";
 import { type HederaCoinConfig } from "../config";
-import { HederaAddAccountError } from "../errors";
 import { apiClient } from "../network/api";
 import { getERC20BalancesForAccountV2 } from "../network/utils";
 import type { HederaERC20TokenBalance, HederaMirrorToken } from "../types";

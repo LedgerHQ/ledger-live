@@ -1,4 +1,5 @@
-import { NotEnoughGas, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { TransactionHasBeenValidatedError } from "@ledgerhq/live-common/errors";
+import { NotEnoughGas } from "@ledgerhq/coin-evm/errors";
 import React from "react";
 import { render } from "tests/testSetup";
 import ErrorBanner from "~/renderer/components/ErrorBanner";

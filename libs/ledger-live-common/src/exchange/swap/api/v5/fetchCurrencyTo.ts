@@ -3,7 +3,7 @@ import { fetchCurrencyToMock } from "./__mocks__/fetchCurrencyTo.mocks";
 import { isIntegrationTestEnv } from "../../utils/isIntegrationTestEnv";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { LedgerAPI4xx } from "../../../../errors";
 import { flattenV5CurrenciesToAndFrom } from "../../utils/flattenV5CurrenciesToAndFrom";
 import { getSwapAPIBaseURL, getSwapUserIP } from "../..";
 

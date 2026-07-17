@@ -8,7 +8,7 @@ import {
   AmountRequired,
   NotEnoughBalanceBecauseDestinationNotCreated,
   FeeNotLoaded,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -77,7 +77,7 @@ const getSendTransactionStatus: AccountBridge<
     errors.amount = new AmountRequired();
   }
 
-  if (!(errors.amount instanceof AmountRequired)) {
+  if ((errors.amount as Error).name !== "AmountRequired") {
     if (
       (!transaction.useAllAmount && account.spendableBalance.isZero()) ||
       totalSpent.gt(account.spendableBalance)
@@ -308,7 +308,10 @@ export const getTransactionStatus: AccountBridge<
     errors.amount = new NotEnoughBalance();
   }
 
-  if (!(errors.amount instanceof AmountRequired) && totalSpent.gt(account.spendableBalance)) {
+  if (
+    (errors.amount as Error).name !== "AmountRequired" &&
+    totalSpent.gt(account.spendableBalance)
+  ) {
     errors.amount = new NotEnoughBalance();
   }
 

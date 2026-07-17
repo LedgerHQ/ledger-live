@@ -1,7 +1,7 @@
 import bs58check from "bs58check";
 import * as bjs from "bitcoinjs-lib";
 import type { BitcoinJS } from "coininfo";
-import { InvalidAddress } from "@ledgerhq/errors";
+import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import Base from "./base";
 
 class ZCash extends Base {

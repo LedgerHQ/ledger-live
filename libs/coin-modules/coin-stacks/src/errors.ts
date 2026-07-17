@@ -1,3 +1,7 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class StacksMemoTooLong extends Error {
+  override name = "StacksMemoTooLong";
+}
 
-export const StacksMemoTooLong = createCustomErrorClass("StacksMemoTooLong");
+export class InvalidNonce extends Error {
+  override name = "InvalidNonce";
+}

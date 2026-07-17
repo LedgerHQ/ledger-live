@@ -2,17 +2,8 @@ import { Observable, throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { LocalTracer, TraceContext, trace } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
-import {
-  BluetoothRequired,
-  CantOpenDevice,
-  DeviceHalted,
-  FirmwareOrAppUpdateRequired,
-  PairingFailed,
-  PeerRemovedPairing,
-  TransportInterfaceNotAvailable,
-  TransportStatusError,
-  TransportWebUSBGestureRequired,
-} from "@ledgerhq/errors";
+import { CantOpenDevice } from "@ledgerhq/hw-transport/errors";
+import { DeviceHalted, FirmwareOrAppUpdateRequired } from "../../errors";
 import { open, close } from "../../hw/index";
 
 export { Transport };
@@ -105,11 +96,11 @@ export const withTransport = (
       // This catch is here only for errors that might happen at open or at clean up of the transport before doing the job
       const onErrorDuringTransportSetup = (error: unknown) => {
         tracer.trace("Error while setting up a transport: ", { error });
-        if (error instanceof BluetoothRequired) throw error;
-        if (error instanceof TransportWebUSBGestureRequired) throw error;
-        if (error instanceof TransportInterfaceNotAvailable) throw error;
-        if (error instanceof PeerRemovedPairing) throw error;
-        if (error instanceof PairingFailed) throw error;
+        if ((error as Error).name === "BluetoothRequired") throw error;
+        if ((error as Error).name === "TransportWebUSBGestureRequired") throw error;
+        if ((error as Error).name === "TransportInterfaceNotAvailable") throw error;
+        if ((error as Error).name === "PeerRemovedPairing") throw error;
+        if ((error as Error).name === "PairingFailed") throw error;
         if (error instanceof Error) throw new CantOpenDevice(error.message);
         else throw new CantOpenDevice("Unknown error");
       };
@@ -230,11 +221,12 @@ const transportFinally =
 const initialErrorRemapping = (error: unknown, context?: TraceContext) => {
   let mappedError = error;
 
-  if (error && error instanceof TransportStatusError) {
-    if (error.statusCode === 0x6faa) {
-      mappedError = new DeviceHalted(error.message);
-    } else if (error.statusCode === 0x6b00) {
-      mappedError = new FirmwareOrAppUpdateRequired(error.message);
+  if ((error as Error).name === "TransportStatusError") {
+    const tse = error as { statusCode?: number; message?: string };
+    if (tse.statusCode === 0x6faa) {
+      mappedError = new DeviceHalted(tse.message);
+    } else if (tse.statusCode === 0x6b00) {
+      mappedError = new FirmwareOrAppUpdateRequired(tse.message);
     }
   }
 

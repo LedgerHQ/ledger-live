@@ -1,9 +1,15 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class AlgorandASANotOptInInRecipient extends Error {
+  override name = "AlgorandASANotOptInInRecipient";
+}
 
-export const AlgorandASANotOptInInRecipient = createCustomErrorClass(
-  "AlgorandASANotOptInInRecipient",
-);
+export class AlgorandMemoExceededSizeError extends Error {
+  override name = "AlgorandMemoExceededSizeError";
+}
 
-export const AlgorandMemoExceededSizeError = createCustomErrorClass(
-  "AlgorandMemoExceededSizeError",
-);
+export class ClaimRewardsFeesWarning extends Error {
+  override name = "ClaimRewardsFeesWarning";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}

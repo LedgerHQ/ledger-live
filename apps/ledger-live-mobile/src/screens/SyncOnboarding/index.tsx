@@ -6,7 +6,6 @@ import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState"
 import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/hooks/useToggleOnboardingEarlyChecks";
 import { log } from "@ledgerhq/logs";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
 import { NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS } from "./constants";
 import { EarlySecurityCheck } from "./EarlySecurityCheck";
 import DesyncDrawer from "./DesyncDrawer";
@@ -232,7 +231,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   // A fatal error during polling triggers directly an error message (or the auto repair)
   useEffect(() => {
     if (isFocused && fatalError) {
-      if (fatalError instanceof UnexpectedBootloader) {
+      if ((fatalError as Error).name === "UnexpectedBootloader") {
         log("SyncOnboardingIndex", "Device in bootloader mode. Trying to auto repair", {
           fatalError,
         });
@@ -250,7 +249,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
 
-    if (isFocused && allowedError && !(allowedError instanceof LockedDeviceError)) {
+    if (isFocused && allowedError && (allowedError as Error).name !== "LockedDeviceError") {
       log("SyncOnboardingIndex", "Polling allowed error", { allowedError });
 
       timeout = setTimeout(() => {

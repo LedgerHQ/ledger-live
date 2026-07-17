@@ -1,7 +1,6 @@
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { LedgerAPI4xx, TrustchainNotAllowed, TrustchainOutdated } from "./errors";
 import { log } from "@ledgerhq/logs";
 import { AuthCachePolicy, JWT } from "./types";
-import { TrustchainNotAllowed, TrustchainOutdated } from "./errors";
 
 export async function genericWithJWT<T>(
   job: (jwt: JWT) => Promise<T>,

@@ -701,10 +701,10 @@ export const handlers = ({
               const causeSuffix = rawErrorCause ? `, ${JSON.stringify(rawErrorCause)}` : "";
               const errorMessageWithCause = rawErrorMessage + causeSuffix;
 
-              const completeExchangeError =
+              const completeExchangeError: CompleteExchangeError =
                 // step provided in libs/ledger-live-common/src/exchange/platform/transfer/completeExchange.ts
-                error instanceof CompleteExchangeError
-                  ? error
+                (error as Error).name === "CompleteExchangeError"
+                  ? (error as CompleteExchangeError)
                   : new CompleteExchangeError("INIT", rawErrorName, errorMessageWithCause);
 
               postSwapCancelled({

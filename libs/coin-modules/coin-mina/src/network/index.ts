@@ -1,4 +1,4 @@
-import { LedgerAPI5xx } from "@ledgerhq/errors";
+import { LedgerAPI5xx } from "../errors";
 import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 

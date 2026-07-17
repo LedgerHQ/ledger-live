@@ -3,7 +3,6 @@ import { bindActionCreators } from "redux";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Operation } from "@ledgerhq/types-live";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -146,7 +145,7 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
 
   const handleTransactionError = useCallback(
     (error: Error) => {
-      if (!(error instanceof UserRefusedOnDevice)) {
+      if ((error as Error).name !== "UserRefusedOnDevice") {
         logger.critical(error);
       }
       setTransactionError(error);

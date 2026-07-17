@@ -1,5 +1,5 @@
 import { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/errors";
+import { InvalidParameterError } from "@ledgerhq/live-common/errors";
 import { createApi } from ".";
 import type { AptosConfig as AptosConfigApi } from "../config";
 

@@ -1,7 +1,9 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
-export const NotEnoughVTHO = createCustomErrorClass("NotEnoughVTHO");
-export const MustBeVechain = createCustomErrorClass("MustBeVechain");
-export const ImpossibleToCalculateAmountAndFees = createCustomErrorClass(
-  "ImpossibleToCalculateAmountAndFees",
-);
+export class NotEnoughVTHO extends Error {
+  override name = "NotEnoughVTHO";
+}
+export class MustBeVechain extends Error {
+  override name = "MustBeVechain";
+}
+export class ImpossibleToCalculateAmountAndFees extends Error {
+  override name = "ImpossibleToCalculateAmountAndFees";
+}

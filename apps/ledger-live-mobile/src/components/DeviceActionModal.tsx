@@ -8,7 +8,6 @@ import { PartialNullable } from "~/types/helpers";
 import QueuedDrawer from "./QueuedDrawer";
 import DeviceAction from "./DeviceAction";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import { PeerRemovedPairing } from "@ledgerhq/errors";
 import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError";
 
 const DeviceActionContainer = styled(Flex).attrs({
@@ -74,7 +73,7 @@ export default function DeviceActionModal<Req, Stt, Res>({
 
   const onDeviceActionError = useCallback(
     (e: Error) => {
-      if (e instanceof PeerRemovedPairing || isCounterfeitError(e)) {
+      if ((e as Error).name === "PeerRemovedPairing" || isCounterfeitError(e)) {
         setShowInfo(false);
       }
       onError?.(e);

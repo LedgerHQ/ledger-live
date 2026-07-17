@@ -19,7 +19,6 @@ import { trackPage } from "~/renderer/analytics/segment";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import LockedDeviceDrawer from "~/renderer/components/SyncOnboarding/Manual/LockedDeviceDrawer";
-import { LockedDeviceError } from "@ledgerhq/errors";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { useTrackOnboardingFlow } from "~/renderer/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
@@ -413,7 +412,7 @@ const useSyncOnboardingCompanionViewModel = ({
   useEffect(() => {
     let desyncTimer: NodeJS.Timeout | null = null;
 
-    if (allowedError && !(allowedError instanceof LockedDeviceError)) {
+    if (allowedError && (allowedError as Error).name !== "LockedDeviceError") {
       setIsDesyncOverlayOpen(true);
       desyncTimer = setTimeout(handleDesyncTimerRunsOut, desyncTimeout);
     } else {

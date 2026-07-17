@@ -1,18 +1,52 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class ScannedOldImportQrCode extends Error {
+  override name = "ScannedOldImportQrCode";
+}
+export class ScannedNewImportQrCode extends Error {
+  override name = "ScannedNewImportQrCode";
+}
+export class ScannedInvalidQrCode extends Error {
+  override name = "ScannedInvalidQrCode";
+}
+export class InvalidDigitsError extends Error {
+  override name = "InvalidDigitsError";
+}
+export class InvalidEncryptionKeyError extends Error {
+  override name = "InvalidEncryptionKeyError";
+}
+export class TrustchainEjected extends Error {
+  override name = "TrustchainEjected";
+}
+export class TrustchainNotAllowed extends Error {
+  override name = "TrustchainNotAllowed";
+}
+export class TrustchainOutdated extends Error {
+  override name = "TrustchainOutdated";
+}
+export class TrustchainNotFound extends Error {
+  override name = "TrustchainNotFound";
+}
+export class NoTrustchainInitialized extends Error {
+  override name = "NoTrustchainInitialized";
+}
+export class TrustchainAlreadyInitialized extends Error {
+  override name = "TrustchainAlreadyInitialized";
+}
+export class TrustchainAlreadyInitializedWithOtherSeed extends Error {
+  override name = "TrustchainAlreadyInitializedWithOtherSeed";
+}
 
-export const ScannedOldImportQrCode = createCustomErrorClass("ScannedOldImportQrCode");
-export const ScannedNewImportQrCode = createCustomErrorClass("ScannedNewImportQrCode");
-export const ScannedInvalidQrCode = createCustomErrorClass("ScannedInvalidQrCode");
-export const InvalidDigitsError = createCustomErrorClass("InvalidDigitsError");
-export const InvalidEncryptionKeyError = createCustomErrorClass("InvalidEncryptionKeyError");
-export const TrustchainEjected = createCustomErrorClass("TrustchainEjected");
-export const TrustchainNotAllowed = createCustomErrorClass("TrustchainNotAllowed");
-export const TrustchainOutdated = createCustomErrorClass("TrustchainOutdated");
-export const TrustchainNotFound = createCustomErrorClass("TrustchainNotFound");
-export const NoTrustchainInitialized = createCustomErrorClass("NoTrustchainInitialized");
-export const TrustchainAlreadyInitialized = createCustomErrorClass("TrustchainAlreadyInitialized");
-export const TrustchainAlreadyInitializedWithOtherSeed = createCustomErrorClass(
-  "TrustchainAlreadyInitializedWithOtherSeed",
-);
+export class QRCodeWSClosed extends Error {
+  override name = "QRCodeWSClosed";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const QRCodeWSClosed = createCustomErrorClass<{ time: number }>("QRCodeWSClosed");
+export class LedgerAPI4xx extends Error {
+  override name = "LedgerAPI4xx";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}

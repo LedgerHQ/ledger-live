@@ -1,11 +1,6 @@
 import { useCallback, useState } from "react";
 import { createQRCodeHostInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import {
-  InvalidDigitsError,
-  NoTrustchainInitialized,
-  QRCodeWSClosed,
-  TrustchainAlreadyInitialized,
-} from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setDrawerVisibility, setFlow, setQrCodePinCode } from "~/renderer/actions/walletSync";
@@ -71,17 +66,17 @@ export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
 
     // Don't use retry here because it always uses a delay despite setting it to 0
     onError(e) {
-      if (e instanceof QRCodeWSClosed) {
+      if ((e as Error).name === "QRCodeWSClosed") {
         const { time } = e as unknown as { time: number };
         if (time >= MIN_TIME_TO_REFRESH) startQRCodeProcessing();
       }
-      if (e instanceof InvalidDigitsError) {
+      if ((e as Error).name === "InvalidDigitsError") {
         dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCodeError }));
       }
-      if (e instanceof NoTrustchainInitialized) {
+      if ((e as Error).name === "NoTrustchainInitialized") {
         dispatch(setFlow({ flow: Flow.Synchronize, step: Step.UnbackedError }));
       }
-      if (e instanceof TrustchainAlreadyInitialized) {
+      if ((e as Error).name === "TrustchainAlreadyInitialized") {
         dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeWithQRCode }));
       }
     },

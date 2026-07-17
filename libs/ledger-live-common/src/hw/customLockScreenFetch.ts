@@ -1,11 +1,7 @@
 import { Observable, from, of, throwError } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
-import {
-  DeviceOnDashboardExpected,
-  TransportError,
-  TransportStatusError,
-  StatusCodes,
-} from "@ledgerhq/errors";
+import { TransportError, StatusCodes } from "@ledgerhq/hw-transport/errors";
+import { DeviceOnDashboardExpected, ImageDoesNotExistOnDevice } from "../errors";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
@@ -17,7 +13,6 @@ import customLockScreenFetchHash from "./customLockScreenFetchHash";
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
-import { ImageDoesNotExistOnDevice } from "../errors";
 
 const MAX_APDU_SIZE = 240;
 
@@ -163,10 +158,12 @@ export default function fetchImage({
             }),
             catchError((e: unknown) => {
               if (
-                e instanceof DeviceOnDashboardExpected ||
+                (e as Error).name === "DeviceOnDashboardExpected" ||
                 (e &&
-                  e instanceof TransportStatusError &&
-                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(e.statusCode))
+                  (e as Error).name === "TransportStatusError" &&
+                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(
+                    (e as { statusCode: number }).statusCode,
+                  ))
               ) {
                 return from(getAppAndVersion(transport)).pipe(
                   concatMap(appAndVersion => {

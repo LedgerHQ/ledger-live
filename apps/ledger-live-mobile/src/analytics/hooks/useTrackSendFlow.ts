@@ -2,13 +2,6 @@ import { useEffect, useRef } from "react";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
-import {
-  UserRefusedOnDevice,
-  TransportRaceCondition,
-  LockedDeviceError,
-  CantOpenDevice,
-  TransportError,
-} from "@ledgerhq/errors";
 import { LedgerError } from "~/types/error";
 
 export type UseTrackSendFlow = {
@@ -49,7 +42,11 @@ export const useTrackSendFlow = ({
       page: "Send",
     };
 
-    if (previousRequestOpenApp.current && !requestOpenApp && error instanceof UserRefusedOnDevice) {
+    if (
+      previousRequestOpenApp.current &&
+      !requestOpenApp &&
+      (error as Error).name === "UserRefusedOnDevice"
+    ) {
       // user refused to open app
       track("Open app denied", defaultPayload);
     } else if (previousRequestOpenApp.current && !requestOpenApp && !error) {
@@ -57,22 +54,22 @@ export const useTrackSendFlow = ({
       track("Open app accepted", defaultPayload);
     }
 
-    if (error instanceof TransportRaceCondition) {
+    if ((error as Error).name === "TransportRaceCondition") {
       // transport race condition
       track("Transport race condition", defaultPayload);
     }
 
-    if (error instanceof CantOpenDevice) {
+    if ((error as Error).name === "CantOpenDevice") {
       // device disconnected during send flow
       track("Connection failed", defaultPayload);
     }
 
-    if (error instanceof TransportError) {
+    if ((error as Error).name === "TransportError") {
       // transport error during send flow
       track("Transport error", defaultPayload);
     }
 
-    if (isLocked || error instanceof LockedDeviceError) {
+    if (isLocked || (error as Error).name === "LockedDeviceError") {
       // device locked during send flow
       track("Device locked", defaultPayload);
     }

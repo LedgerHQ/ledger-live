@@ -1,4 +1,4 @@
-import { DeviceSocketFail } from "@ledgerhq/errors";
+import { DeviceSocketFail } from "../errors";
 
 /**
  * Detects whether an error from the HSM socket indicates a counterfeit device.

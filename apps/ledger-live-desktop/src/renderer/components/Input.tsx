@@ -16,7 +16,6 @@ import Box from "~/renderer/components/Box";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import { BoxProps } from "./Box/Box";
-import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 
 export type InputError = Error | boolean | null | undefined;
 
@@ -302,7 +301,9 @@ const Input = function Input(
               <ErrorDisplay id="input-error" data-testid="input-error">
                 <TranslatedError
                   error={error}
-                  field={error instanceof AddressesSanctionedError ? "description" : undefined}
+                  field={
+                    (error as Error).name === "AddressesSanctionedError" ? "description" : undefined
+                  }
                 />
               </ErrorDisplay>
             )

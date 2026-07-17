@@ -4,7 +4,7 @@ import * as bech32 from "bech32";
 import { bech32m } from "../../bech32m";
 import * as bjs from "bitcoinjs-lib";
 import { getSecp256k1Instance } from "./secp256k1";
-import { InvalidAddress } from "@ledgerhq/errors";
+import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import { DerivationModes } from "../types";
 import Base from "./base";
 

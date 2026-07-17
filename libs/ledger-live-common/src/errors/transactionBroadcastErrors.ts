@@ -1,8 +1,10 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
-export const TransactionBroadcastError = createCustomErrorClass<{ url?: string } & TxData>(
-  "TransactionBroadcastError",
-);
+export class TransactionBroadcastError extends Error {
+  override name = "TransactionBroadcastError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
 
 export interface TransactionBroadcastError extends Error, TxData {
   url?: string;

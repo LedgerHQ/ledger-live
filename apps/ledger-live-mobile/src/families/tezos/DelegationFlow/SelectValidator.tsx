@@ -13,7 +13,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation, Trans } from "~/context/Locale";
 import { Icons } from "@ledgerhq/native-ui";
-import { RecipientRequired } from "@ledgerhq/errors";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type {
@@ -172,7 +171,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   invariant(transaction, "transaction is undefined");
   let error: Error | null = bridgeError || status.errors.recipient;
 
-  if (error instanceof RecipientRequired) {
+  if ((error as Error).name === "RecipientRequired") {
     error = null;
   }
 

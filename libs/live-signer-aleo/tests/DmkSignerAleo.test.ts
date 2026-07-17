@@ -1,5 +1,6 @@
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { LockedDeviceError } from "@ledgerhq/hw-transport/errors";
+import { UserRefusedOnDevice } from "../src/errors";
 import { SignerAleoBuilder } from "@ledgerhq/device-signer-kit-aleo";
 import { of } from "rxjs";
 import { DmkSignerAleo } from "../src/DmkSignerAleo";

@@ -5,7 +5,6 @@ import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { setLastSeenCustomImage, clearLastSeenCustomImage } from "~/actions/settings";
 import { DeviceActionDefaultRendering } from "../DeviceAction";
 import { ImageSourceContext } from "../CustomImage/FramedPicture";
@@ -117,12 +116,12 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   }, [CLSError]);
   const isError = !!error;
   const refusedOnDevice =
-    (error as unknown) instanceof ImageLoadRefusedOnDevice ||
-    (error as unknown) instanceof ImageCommitRefusedOnDevice;
+    (error as Error).name === "ImageLoadRefusedOnDevice" ||
+    (error as Error).name === "ImageCommitRefusedOnDevice";
 
   useEffect(() => {
     // Once transferred the old image is wiped, we need to clear it from the data.
-    if (error instanceof ImageCommitRefusedOnDevice) {
+    if ((error as Error).name === "ImageCommitRefusedOnDevice") {
       dispatch(clearLastSeenCustomImage());
     }
   }, [dispatch, error]);

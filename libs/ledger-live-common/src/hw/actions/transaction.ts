@@ -2,7 +2,7 @@ import { of, Observable } from "rxjs";
 import { scan, catchError, tap } from "rxjs/operators";
 import { useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
-import { TransportStatusError } from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
 import type { Transaction, TransactionStatus } from "../../coin-modules/transaction-types";
 import { TransactionRefusedOnDevice } from "../../errors";
 import { getMainAccount } from "../../account";
@@ -92,7 +92,8 @@ const reducer = (state: State, e: Event): State => {
     case "error": {
       const { error } = e;
       const transactionSignError =
-        error instanceof TransportStatusError && error.statusCode === 0x6985
+        (error as { name?: string; statusCode?: number }).name === "TransportStatusError" &&
+        (error as { statusCode?: number }).statusCode === 0x6985
           ? new TransactionRefusedOnDevice()
           : error;
       return { ...initialState, transactionSignError };

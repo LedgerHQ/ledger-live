@@ -9,7 +9,6 @@ import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { TrustchainMember, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
 
 type Props = {
   device: Device | null;
@@ -71,7 +70,7 @@ export function useRemoveMember({ device, member }: Props) {
         transitionToNextScreen(newTrustchain);
       } catch (error) {
         if (error instanceof Error) setError(error);
-        if (error instanceof TrustchainNotAllowed) {
+        if ((error as Error).name === "TrustchainNotAllowed") {
           dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.UnsecuredLedger }));
         }
       }

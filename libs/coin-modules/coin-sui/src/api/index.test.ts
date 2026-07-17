@@ -1,5 +1,5 @@
 import { BalanceOptions, Page, Reward, Stake } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/errors";
+import { InvalidParameterError } from "@ledgerhq/live-common/errors";
 import type { SuiCoinConfig } from "../config";
 import * as logic from "../logic";
 import { createApi } from "./index";

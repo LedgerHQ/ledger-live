@@ -1,4 +1,4 @@
-import { TransportStatusError } from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
 import { DeviceNotOnboarded } from "../errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
@@ -49,8 +49,8 @@ export function isDeviceNotOnboardedError(e: unknown) {
   const maybeMessage = (e as { message?: string })?.message;
 
   return (
-    e instanceof DeviceNotOnboarded ||
-    (e instanceof TransportStatusError &&
+    (e as Error).name === "DeviceNotOnboarded" ||
+    ((e as Error).name === "TransportStatusError" &&
       (maybeMessage?.includes("0x6d06") || maybeMessage?.includes("0x6d07")))
   );
 }

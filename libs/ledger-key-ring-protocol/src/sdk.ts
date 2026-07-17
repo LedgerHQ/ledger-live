@@ -25,8 +25,8 @@ import {
 import getApi from "./api";
 import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-ledger-key-ring-protocol/Crypto";
 import { log } from "@ledgerhq/logs";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 import {
+  LedgerAPI4xx,
   TrustchainAlreadyInitialized,
   TrustchainAlreadyInitializedWithOtherSeed,
   TrustchainEjected,

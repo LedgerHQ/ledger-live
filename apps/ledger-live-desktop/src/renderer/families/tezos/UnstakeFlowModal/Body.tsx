@@ -2,7 +2,6 @@ import React, { useCallback, useState } from "react";
 import invariant from "invariant";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Operation } from "@ledgerhq/types-live";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -87,7 +86,7 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
   }, [onChangeStepId]);
 
   const handleTransactionError = useCallback((error: Error) => {
-    if (!(error instanceof UserRefusedOnDevice)) {
+    if ((error as Error).name !== "UserRefusedOnDevice") {
       logger.critical(error);
     }
     setTransactionError(error);

@@ -1,13 +1,6 @@
 import { useRef, useEffect } from "react";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
-import {
-  UserRefusedOnDevice,
-  LockedDeviceError,
-  CantOpenDevice,
-  TransportRaceCondition,
-  TransportError,
-} from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import { LedgerError } from "~/renderer/components/DeviceAction";
 
@@ -67,22 +60,22 @@ export const useTrackAddAccountModal = ({
       page: "Add account modal",
     };
 
-    if (error instanceof CantOpenDevice) {
+    if ((error as Error).name === "CantOpenDevice") {
       // device disconnected during account creation
       track("Connection failed", defaultPayload, isTrackingEnabled);
     }
 
-    if (error instanceof TransportRaceCondition) {
+    if ((error as Error).name === "TransportRaceCondition") {
       // transport race condition during account creation
       track("Transport race condition", defaultPayload, isTrackingEnabled);
     }
 
-    if (error instanceof TransportError) {
+    if ((error as Error).name === "TransportError") {
       // transport error during account creation
       track("Transport error", defaultPayload, isTrackingEnabled);
     }
 
-    if (previousOpenAppRequested.current && error instanceof UserRefusedOnDevice) {
+    if (previousOpenAppRequested.current && (error as Error).name === "UserRefusedOnDevice") {
       // user refused to open app during account creation
       track("Open app denied", defaultPayload, isTrackingEnabled);
     }
@@ -92,7 +85,7 @@ export const useTrackAddAccountModal = ({
       track("Device connection lost", defaultPayload, isTrackingEnabled);
     }
 
-    if (isLocked || error instanceof LockedDeviceError) {
+    if (isLocked || (error as Error).name === "LockedDeviceError") {
       // device locked during account creation
       track("Device locked", defaultPayload, isTrackingEnabled);
     }

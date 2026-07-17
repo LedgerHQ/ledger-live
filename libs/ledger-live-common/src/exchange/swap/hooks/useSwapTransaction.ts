@@ -1,12 +1,7 @@
 import { getAccountCurrency, getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
-import {
-  AmountRequired,
-  FeeNotLoaded,
-  NotEnoughBalanceSwap,
-  NotEnoughGas,
-  NotEnoughGasSwap,
-} from "@ledgerhq/errors";
+import { AmountRequired, FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
+import { NotEnoughBalanceSwap, NotEnoughGasSwap } from "../../../errors";
 import { Account } from "@ledgerhq/types-live";
 import { useEffect, useMemo, useState } from "react";
 import useBridgeTransaction, { Result } from "../../../bridge/useBridgeTransaction";
@@ -64,8 +59,8 @@ export const useFromAmountStatusMessage = (
 
     const [relevantStatus] = statusEntries
       .filter(maybeError => maybeError instanceof Error)
-      .filter(errorOrWarning => !(errorOrWarning instanceof AmountRequired));
-    const isRelevantStatus = (relevantStatus as Error) instanceof NotEnoughGas;
+      .filter(errorOrWarning => (errorOrWarning as Error).name !== "AmountRequired");
+    const isRelevantStatus = (relevantStatus as Error).name === "NotEnoughGas";
 
     // Skip gas validation for sponsored transactions since gas fees are covered by sponsor
 
@@ -85,7 +80,7 @@ export const useFromAmountStatusMessage = (
     }
 
     // convert to swap variation of error to display correct message to frontend.
-    if (relevantStatus instanceof FeeNotLoaded) {
+    if ((relevantStatus as Error).name === "FeeNotLoaded") {
       return new NotEnoughBalanceSwap();
     }
 

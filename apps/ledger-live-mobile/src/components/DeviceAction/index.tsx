@@ -1,15 +1,3 @@
-import {
-  TransportStatusError,
-  UserRefusedDeviceNameChange,
-  UserRefusedOnDevice,
-  LatestFirmwareVersionRequired,
-  UnsupportedFeatureError,
-} from "@ledgerhq/errors";
-import {
-  DeviceNotOnboarded,
-  ImageDoesNotExistOnDevice,
-  NoSuchAppOnProvider,
-} from "@ledgerhq/live-common/errors";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
@@ -533,8 +521,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   // level instead of being an exception here.
   if (imageRemoveRequested) {
     if (error) {
-      const refused = (error as Status["error"]) instanceof UserRefusedOnDevice;
-      const noImage = (error as Status["error"]) instanceof ImageDoesNotExistOnDevice;
+      const refused = (error as Error).name === "UserRefusedOnDevice";
+      const noImage = (error as Error).name === "ImageDoesNotExistOnDevice";
       if (refused || noImage) {
         return renderError({
           t,
@@ -652,30 +640,33 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     // into another handled case.
     if (
       device &&
-      (error instanceof DeviceNotOnboarded ||
-        ((error as unknown) instanceof TransportStatusError &&
+      ((error as Error).name === "DeviceNotOnboarded" ||
+        ((error as Error).name === "TransportStatusError" &&
           ((error as Error).message.includes("0x6d06") ||
             (error as Error).message.includes("0x6d07"))))
     ) {
       return renderDeviceNotOnboarded({ t, device, navigation });
     }
 
-    if (error instanceof LatestFirmwareVersionRequired) {
+    if ((error as Error).name === "LatestFirmwareVersionRequired") {
       return <RequiredFirmwareUpdate navigation={navigation} device={selectedDevice} />;
     }
 
-    if (error instanceof UnsupportedFeatureError) {
+    if ((error as Error).name === "UnsupportedFeatureError") {
       return <UnsupportedFeatureComponent error={error} />;
     }
 
-    if (error instanceof NoSuchAppOnProvider && device?.modelId === DeviceModelId.nanoS) {
+    if (
+      (error as Error).name === "NoSuchAppOnProvider" &&
+      device?.modelId === DeviceModelId.nanoS
+    ) {
       // This should be only happening for Nano S devices, but in order to make sure we don't miss any
       // use case for other devices we keep the check and will consider to remove it later after complete
       // checks.
       return <NanoSNotSupportedComponent />;
     }
 
-    if ((error as Status["error"]) instanceof UserRefusedDeviceNameChange) {
+    if ((error as Error).name === "UserRefusedDeviceNameChange") {
       return renderError({
         t,
         navigation,

@@ -4,7 +4,6 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Linking } from "react-native";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { disconnect } from "@ledgerhq/live-common/hw/index";
-import { BluetoothRequired } from "@ledgerhq/errors";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { findMatchingNewDevice, useBleDevicesScanning } from "@ledgerhq/live-dmk-mobile";
@@ -137,7 +136,7 @@ export const useDeviceSectionViewModel = (): DeviceSectionViewModel => {
   }, []);
 
   const onDeviceActionError = useCallback((error: Error) => {
-    if (error instanceof BluetoothRequired) {
+    if ((error as Error).name === "BluetoothRequired") {
       setSelectedDevice(null);
     }
   }, []);

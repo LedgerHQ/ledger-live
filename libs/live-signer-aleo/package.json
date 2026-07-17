@@ -32,6 +32,7 @@
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-aleo": "catalog:",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
     "rxjs": "catalog:"
   },
   "scripts": {

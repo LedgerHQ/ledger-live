@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
-import { UserRefusedAllowManager, UserRefusedDeviceNameChange } from "@ledgerhq/errors";
 import { LedgerError } from "~/types/error";
 
 export type UseTrackMyLedgerSectionEvents = {
@@ -70,10 +69,10 @@ export const useTrackMyLedgerSectionEvents = ({
       track("Custom Lock Screen Image removed", defaultPayload);
     }
 
-    if ((error as unknown) instanceof UserRefusedAllowManager) {
+    if ((error as Error).name === "UserRefusedAllowManager") {
       // user refused secure channel
       track("Secure Channel denied", defaultPayload);
-    } else if ((error as unknown) instanceof UserRefusedDeviceNameChange) {
+    } else if ((error as Error).name === "UserRefusedDeviceNameChange") {
       // user refused device name change
       track("Renamed Device cancelled", { ...defaultPayload, page: "Manager RenamedDevice" });
     }

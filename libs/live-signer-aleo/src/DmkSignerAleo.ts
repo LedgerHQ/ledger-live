@@ -14,7 +14,7 @@ import {
   DeviceActionStatus,
   type DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { LockedDeviceError, UserRefusedOnDevice } from "./errors";
 import {
   SignerAleo,
   SignerAleoBuilder,

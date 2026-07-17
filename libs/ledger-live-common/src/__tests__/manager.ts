@@ -1,4 +1,4 @@
-import { FirmwareNotRecognized } from "@ledgerhq/errors";
+import { FirmwareNotRecognized } from "../errors";
 import Manager from "../manager/api";
 import "./test-helpers/setup";
 describe("getDeviceVersion", () => {

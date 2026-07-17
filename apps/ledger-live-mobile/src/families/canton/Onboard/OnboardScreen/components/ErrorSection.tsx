@@ -1,4 +1,3 @@
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import React from "react";
@@ -44,7 +43,7 @@ function getErrorInfo(error: Error | null): ErrorInfo {
     };
   }
 
-  if (error instanceof UserRefusedOnDevice) {
+  if ((error as Error).name === "UserRefusedOnDevice") {
     return {
       titleKey: `errors.${error.name}.title`,
       descriptionKey: `errors.${error.name}.description`,
@@ -53,7 +52,7 @@ function getErrorInfo(error: Error | null): ErrorInfo {
     };
   }
 
-  if (error instanceof LockedDeviceError) {
+  if ((error as Error).name === "LockedDeviceError") {
     return {
       titleKey: `errors.${error.name}.title`,
       descriptionKey: `errors.${error.name}.description`,

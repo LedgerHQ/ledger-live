@@ -1,27 +1,60 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class HederaAddAccountError extends Error {
+  override name = "HederaAddAccountError";
+}
 
-export const HederaAddAccountError = createCustomErrorClass("HederaAddAccountError");
-export const HederaRecipientInvalidChecksum = createCustomErrorClass(
-  "HederaRecipientInvalidChecksum",
-);
-export const HederaInsufficientFundsForAssociation = createCustomErrorClass(
-  "HederaInsufficientFundsForAssociation",
-);
-export const HederaRecipientTokenAssociationRequired = createCustomErrorClass(
-  "HederaRecipientTokenAssociationRequired",
-);
-export const HederaRecipientTokenAssociationUnverified = createCustomErrorClass(
-  "HederaRecipientTokenAssociationUnverified",
-);
-export const HederaRecipientEvmAddressVerificationRequired = createCustomErrorClass(
-  "HederaRecipientEvmAddressVerificationRequired",
-);
-export const HederaRedundantStakingNodeIdError = createCustomErrorClass(
-  "HederaRedundantStakingNodeIdError",
-);
-export const HederaInvalidStakingNodeIdError = createCustomErrorClass(
-  "HederaInvalidStakingNodeIdError",
-);
-export const HederaNoStakingRewardsError = createCustomErrorClass("HederaNoStakingRewardsError");
+export class HederaRecipientInvalidChecksum extends Error {
+  override name = "HederaRecipientInvalidChecksum";
+}
 
-export const HederaMemoExceededSizeError = createCustomErrorClass("HederaMemoExceededSizeError");
+export class HederaInsufficientFundsForAssociation extends Error {
+  override name = "HederaInsufficientFundsForAssociation";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class HederaRecipientTokenAssociationRequired extends Error {
+  override name = "HederaRecipientTokenAssociationRequired";
+}
+
+export class HederaRecipientTokenAssociationUnverified extends Error {
+  override name = "HederaRecipientTokenAssociationUnverified";
+}
+
+export class HederaRecipientEvmAddressVerificationRequired extends Error {
+  override name = "HederaRecipientEvmAddressVerificationRequired";
+}
+
+export class HederaRedundantStakingNodeIdError extends Error {
+  override name = "HederaRedundantStakingNodeIdError";
+}
+
+export class HederaInvalidStakingNodeIdError extends Error {
+  override name = "HederaInvalidStakingNodeIdError";
+}
+
+export class HederaNoStakingRewardsError extends Error {
+  override name = "HederaNoStakingRewardsError";
+}
+
+export class HederaMemoExceededSizeError extends Error {
+  override name = "HederaMemoExceededSizeError";
+}
+
+export class ClaimRewardsFeesWarning extends Error {
+  override name = "ClaimRewardsFeesWarning";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class LedgerAPI4xx extends Error {
+  override name = "LedgerAPI4xx";
+  status?: number;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}

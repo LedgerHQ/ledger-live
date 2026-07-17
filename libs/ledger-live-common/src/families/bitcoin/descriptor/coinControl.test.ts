@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { BigNumber } from "bignumber.js";
 import type { TransactionStatus as BtcTransactionStatus } from "@ledgerhq/coin-bitcoin/types";
 import type { AccountLike } from "@ledgerhq/types-live";

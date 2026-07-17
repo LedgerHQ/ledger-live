@@ -1,19 +1,26 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-import { LedgerErrorConstructor } from "@ledgerhq/errors/helpers";
-
-export const InvalidAddressBecauseAlreadyDelegated = createCustomErrorClass(
-  "InvalidAddressBecauseAlreadyDelegated",
-);
-export const UnsupportedTransactionMode = createCustomErrorClass<
-  { mode: string },
-  LedgerErrorConstructor<{ mode: string }>
->("UnsupportedTransactionMode");
-export const UnsupportedOperationKind = createCustomErrorClass<
-  { kind: string },
-  LedgerErrorConstructor<{ kind: string }>
->("UnsupportedOperationKind");
-export const MustDelegateBeforeStaking = createCustomErrorClass("MustDelegateBeforeStaking");
-export const TezosNotEnoughStaked = createCustomErrorClass("TezosNotEnoughStaked");
+export class InvalidAddressBecauseAlreadyDelegated extends Error {
+  override name = "InvalidAddressBecauseAlreadyDelegated";
+}
+export class UnsupportedTransactionMode extends Error {
+  override name = "UnsupportedTransactionMode";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
+export class UnsupportedOperationKind extends Error {
+  override name = "UnsupportedOperationKind";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
+export class MustDelegateBeforeStaking extends Error {
+  override name = "MustDelegateBeforeStaking";
+}
+export class TezosNotEnoughStaked extends Error {
+  override name = "TezosNotEnoughStaked";
+}
 
 // Staking with a new delegate is rejected by the protocol while an unfinalizable unstake request
 // to the previous delegate still exists (~4-day freeze). Surfaced during stake fee estimation.

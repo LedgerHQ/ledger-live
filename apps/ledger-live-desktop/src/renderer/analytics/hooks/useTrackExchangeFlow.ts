@@ -1,12 +1,4 @@
 import { useRef, useEffect } from "react";
-import {
-  UserRefusedAllowManager,
-  UserRefusedOnDevice,
-  LockedDeviceError,
-  CantOpenDevice,
-  TransportError,
-  TransportRaceCondition,
-} from "@ledgerhq/errors";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
 import { LedgerError } from "~/renderer/components/DeviceAction";
@@ -71,30 +63,30 @@ export const useTrackExchangeFlow = ({
       track("Wrong device association", defaultPayload, isTrackingEnabled);
     }
 
-    if ((error as unknown) instanceof UserRefusedOnDevice) {
+    if ((error as Error).name === "UserRefusedOnDevice") {
       // user refused to open exchange app
       track("Open app denied", defaultPayload, isTrackingEnabled);
-    } else if ((error as unknown) instanceof UserRefusedAllowManager) {
+    } else if ((error as Error).name === "UserRefusedAllowManager") {
       // user refused secure channel
       track("Secure Channel denied", defaultPayload, isTrackingEnabled);
     }
 
-    if (error instanceof CantOpenDevice) {
+    if ((error as Error).name === "CantOpenDevice") {
       // device disconnected during swap
       track("Connection failed", defaultPayload, isTrackingEnabled);
     }
 
-    if (error instanceof TransportError) {
+    if ((error as Error).name === "TransportError") {
       // transport error during swap
       track("Transport error", defaultPayload, isTrackingEnabled);
     }
 
-    if (error instanceof TransportRaceCondition) {
+    if ((error as Error).name === "TransportRaceCondition") {
       // transport race condition
       track("Transport race condition", defaultPayload, isTrackingEnabled);
     }
 
-    if (isLocked || error instanceof LockedDeviceError) {
+    if (isLocked || (error as Error).name === "LockedDeviceError") {
       // device locked during swap
       track("Device locked", defaultPayload, isTrackingEnabled);
     }

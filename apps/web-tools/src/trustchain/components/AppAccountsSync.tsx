@@ -33,7 +33,6 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/f
 import { listCryptoCurrencies, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { Loading } from "./Loading";
-import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { Tick } from "./Tick";
 import { State } from "./types";
 import { Actionable } from "./Actionable";
@@ -149,7 +148,7 @@ export default function AppAccountsSync({
         const newTrustchain = await trustchainSdk.restoreTrustchain(trustchain, memberCredentials);
         setTrustchain(newTrustchain);
       } catch (e) {
-        if (e instanceof TrustchainEjected) {
+        if ((e as Error).name === "TrustchainEjected") {
           setTrustchain(null);
         }
       }
