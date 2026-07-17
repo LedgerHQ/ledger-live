@@ -52,13 +52,16 @@ export const toTransactionCommonRaw = (raw: TransactionCommon): TransactionCommo
 const fromErrorRaw = (raw: string): Error => {
   try {
     const obj = JSON.parse(raw);
-    const error = new Error(typeof obj.message === "string" ? obj.message : String(obj));
-    if (typeof obj.name === "string") error.name = obj.name;
-    if (typeof obj.stack === "string") error.stack = obj.stack;
-    return error;
+    if (obj !== null && typeof obj === "object") {
+      const error = new Error(typeof obj.message === "string" ? obj.message : "unknown");
+      if (typeof obj.name === "string") error.name = obj.name;
+      if (typeof obj.stack === "string") error.stack = obj.stack;
+      return error;
+    }
   } catch {
-    return new Error("unknown reason");
+    // fall through
   }
+  return new Error("unknown reason");
 };
 
 export const toErrorRaw = (raw: Error): string => {

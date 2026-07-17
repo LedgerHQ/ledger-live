@@ -95,9 +95,10 @@ process.on("SIGINT", () => {
       const e: Error =
         error instanceof Error
           ? error
-          : Object.assign(new Error(error?.message ?? String(error)), {
-              name: error?.name ?? "Error",
-            });
+          : Object.assign(
+              new Error(typeof error?.message === "string" ? error.message : String(error)),
+              { name: typeof error?.name === "string" ? error.name : "Error" },
+            );
       if (process.env.VERBOSE || process.env.VERBOSE_FILE) console.error(e);
       else console.error(String((e && e.message) || e));
       process.exit(1);
