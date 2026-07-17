@@ -58,7 +58,10 @@ jest.mock("@ledgerhq/live-common/wallet-api/react/useWalletAPIServer", () => {
         callTransactionBroadcast = uiHook["transaction.broadcast"];
 
         return {
+          widgetLoaded: false,
           onMessage: jest.fn(),
+          onLoad: jest.fn(),
+          onReload: jest.fn(),
           onLoadError: jest.fn(),
           server: undefined,
         };
