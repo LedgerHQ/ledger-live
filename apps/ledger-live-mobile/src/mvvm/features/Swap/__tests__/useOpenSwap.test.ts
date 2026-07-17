@@ -34,10 +34,15 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
   });
 
   describe("wallet 4.0 navigation", () => {
-    test("should navigate via Main → Swap when account for currency exists", () => {
+    test("should navigate directly when defaultAccount is provided", () => {
       const account = createBitcoinAccount("account-1");
       const { result } = renderHook(
-        () => useOpenSwap({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
+        () =>
+          useOpenSwap({
+            currency: bitcoin,
+            sourceScreenName: SOURCE_SCREEN,
+            defaultAccount: account,
+          }),
         {
           overrideInitialState: state => ({
             ...state,
@@ -59,14 +64,13 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
             defaultCurrency: bitcoin,
             fromPath: SOURCE_SCREEN,
             defaultAccount: account,
-            defaultParentAccount: undefined,
           }),
         },
       });
       expect(mockOpenDrawer).not.toHaveBeenCalled();
     });
 
-    test("should navigate via Main → Swap when no account for currency", () => {
+    test("should open drawer with currency when no accounts", () => {
       const { result } = renderHook(
         () => useOpenSwap({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
         {
@@ -81,27 +85,27 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
         result.current.handleOpenSwap();
       });
 
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Main, {
-        screen: NavigatorName.Swap,
-        params: {
-          screen: ScreenName.SwapTab,
-          params: expect.objectContaining({
-            defaultCurrency: bitcoin,
-            fromPath: SOURCE_SCREEN,
-          }),
-        },
-      });
-      expect(mockNavigate.mock.calls[0][1].params.params.defaultAccount).toBeUndefined();
-      expect(mockOpenDrawer).not.toHaveBeenCalled();
+      expect(mockOpenDrawer).toHaveBeenCalledTimes(1);
+      expect(mockOpenDrawer).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currencies: [bitcoin.id],
+          flow: "swap",
+          source: SOURCE_SCREEN,
+          areCurrenciesFiltered: true,
+          enableAccountSelection: true,
+        }),
+      );
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
 
-    test("should navigate via Main → Swap with toTokenId when no account for token", () => {
+    test("should open drawer with currency when single account exists", () => {
+      const account = createBitcoinAccount("account-1");
       const { result } = renderHook(
-        () => useOpenSwap({ currency: usdcToken, sourceScreenName: SOURCE_SCREEN }),
+        () => useOpenSwap({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
         {
           overrideInitialState: state => ({
             ...state,
-            accounts: { ...state.accounts, active: [] },
+            accounts: { ...state.accounts, active: [account] },
           }),
         },
       );
@@ -110,21 +114,20 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
         result.current.handleOpenSwap();
       });
 
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Main, {
-        screen: NavigatorName.Swap,
-        params: {
-          screen: ScreenName.SwapTab,
-          params: expect.objectContaining({
-            defaultCurrency: usdcToken,
-            fromPath: SOURCE_SCREEN,
-            toTokenId: usdcToken.id,
-          }),
-        },
-      });
-      expect(mockOpenDrawer).not.toHaveBeenCalled();
+      expect(mockOpenDrawer).toHaveBeenCalledTimes(1);
+      expect(mockOpenDrawer).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currencies: [bitcoin.id],
+          flow: "swap",
+          source: SOURCE_SCREEN,
+          areCurrenciesFiltered: true,
+          enableAccountSelection: true,
+        }),
+      );
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
 
-    test("should open drawer for account selection when multiple accounts (no direct nav)", () => {
+    test("should open drawer when multiple accounts exist", () => {
       const account1 = createBitcoinAccount("btc-1");
       const account2 = createBitcoinAccount("btc-2");
       const { result } = renderHook(

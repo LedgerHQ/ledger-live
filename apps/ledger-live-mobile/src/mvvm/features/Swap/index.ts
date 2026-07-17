@@ -8,7 +8,7 @@ import { isAccount, isAccountEmpty } from "@ledgerhq/ledger-wallet-framework/acc
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { DefaultAccountSwapParamList } from "~/screens/Swap/types";
-import { shallowAccountsSelector, flattenAccountsSelector } from "~/reducers/accounts";
+import { shallowAccountsSelector } from "~/reducers/accounts";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useModularDrawerController } from "../ModularDrawer";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
@@ -21,30 +21,6 @@ type UseOpenSwapProps = {
   ledgerIds?: string[];
 };
 
-type AccountWithParent = {
-  account: AccountLike;
-  parentAccount?: Account;
-};
-
-function getAccountsForCurrencies(
-  flattenedAccounts: AccountLike[],
-  shallowAccounts: Account[],
-  currencyIds: string[],
-): AccountWithParent[] {
-  const ids = new Set(currencyIds);
-  return flattenedAccounts
-    .filter(account => {
-      const currencyId = account.type === "TokenAccount" ? account.token.id : account.currency.id;
-      return ids.has(currencyId) && !isAccountEmpty(account);
-    })
-    .map(account => {
-      const parentId = isTokenAccount(account) ? account.parentId : undefined;
-      const parent = parentId ? shallowAccounts.find(a => a.id === parentId) : undefined;
-      const parentAccount = parent && isAccount(parent) ? parent : undefined;
-      return { account, parentAccount };
-    });
-}
-
 export function useOpenSwap({
   currency,
   sourceScreenName,
@@ -54,17 +30,11 @@ export function useOpenSwap({
 }: UseOpenSwapProps) {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const shallowAccounts = useSelector(shallowAccountsSelector);
-  const flattenedAccounts = useSelector(flattenAccountsSelector);
   const { openDrawer } = useModularDrawerController();
 
   const currencyIds = useMemo(
     () => ledgerIds ?? (currency ? [currency.id] : []),
     [currency, ledgerIds],
-  );
-
-  const accountsForCurrency = useMemo(
-    () => getAccountsForCurrencies(flattenedAccounts, shallowAccounts, currencyIds),
-    [currencyIds, flattenedAccounts, shallowAccounts],
   );
 
   const navigateToSwap = useCallback(
@@ -120,32 +90,8 @@ export function useOpenSwap({
       return;
     }
 
-    const accountCount = accountsForCurrency.length;
-
-    if (accountCount === 0) {
-      if (currencyIds.length > 1) {
-        openCurrencyDrawer();
-        return;
-      }
-      navigateToSwap();
-      return;
-    }
-
-    if (accountCount === 1) {
-      const { account, parentAccount } = accountsForCurrency[0];
-      navigateToSwap(account, parentAccount);
-      return;
-    }
-
     openCurrencyDrawer();
-  }, [
-    accountsForCurrency,
-    currencyIds,
-    defaultAccount,
-    defaultParentAccount,
-    navigateToSwap,
-    openCurrencyDrawer,
-  ]);
+  }, [defaultAccount, defaultParentAccount, navigateToSwap, openCurrencyDrawer]);
 
   return { handleOpenSwap };
 }
