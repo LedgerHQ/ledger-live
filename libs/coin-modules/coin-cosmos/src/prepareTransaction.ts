@@ -84,7 +84,7 @@ export const getEstimatedFees = async (
   }
 
   const gasWanted = gasUsed
-    .times(getEnv("COSMOS_GAS_AMPLIFIER"))
+    .times(getEnv<number>("COSMOS_GAS_AMPLIFIER"))
     .integerValue(BigNumber.ROUND_CEIL);
 
   const gasWantedFees = gasWanted

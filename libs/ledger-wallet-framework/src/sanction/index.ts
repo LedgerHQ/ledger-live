@@ -25,7 +25,7 @@ export async function isAddressSanctioned(
     return false;
   }
 
-  const data: Record<string, string[]> = getEnv<boolean>("MOCK")
+  const data: Record<string, string[]> = getEnv<string>("MOCK")
     ? await fetchSanctionedAddresses()
     : await cache();
   const addresses = data["bannedAddresses"] || [];

@@ -12,7 +12,7 @@ export const getCeloClient = (): PublicClient => {
   if (!client) {
     client = createPublicClient({
       chain: celo,
-      transport: http(getEnv("API_CELO_NODE")),
+      transport: http(getEnv<string>("API_CELO_NODE")),
     }) as unknown as PublicClient;
   }
   return client;

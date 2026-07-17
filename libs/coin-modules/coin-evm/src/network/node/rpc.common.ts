@@ -347,7 +347,7 @@ async function getFeeData(
   transaction: Pick<EvmTransaction, "type" | "feesStrategy">,
 ): Promise<FeeData> {
   const block = await api.getBlock("latest");
-  const currencySupports1559 = getEnv("EVM_FORCE_LEGACY_TRANSACTIONS")
+  const currencySupports1559 = getEnv<boolean>("EVM_FORCE_LEGACY_TRANSACTIONS")
     ? false
     : transaction.type === 2 && Boolean(block?.baseFeePerGas);
 

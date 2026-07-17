@@ -15,7 +15,7 @@ import {
 } from "../common-logic";
 import { getEnv } from "@ledgerhq/live-env";
 
-const BASE_URL = getEnv("API_VECHAIN_THOREST");
+const BASE_URL = getEnv<string>("API_VECHAIN_THOREST");
 const NET_ERROR_LOG_TRANSFERS_LIMIT = {
   status: 403,
   msgPattern: /exceeds the maximum allowed/,

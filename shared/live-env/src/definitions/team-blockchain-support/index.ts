@@ -4,7 +4,7 @@ const teamBlockchainSupport = {
   APTOS_API_ENDPOINT: {
     def: "https://apt.coin.ledger.com/node/v1",
     parser: stringParser,
-    desc: "API enpoint for Aptos",
+    desc: "API endpoint for Aptos",
   },
   APTOS_TESTNET_API_ENDPOINT: {
     def: "https://api.testnet.aptoslabs.com/v1",

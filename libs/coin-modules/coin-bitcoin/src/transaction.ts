@@ -114,7 +114,7 @@ export const formatTransactionStatus = (
   let str = "";
   const txInputs = ts.txInputs || [];
   const txOutputs = ts.txOutputs || [];
-  const n = getEnv("DEBUG_UTXO_DISPLAY");
+  const n = getEnv<number>("DEBUG_UTXO_DISPLAY");
   const displayAll = txInputs.length <= n;
   str +=
     `\nTX INPUTS (${txInputs.length}):\n` +
@@ -151,7 +151,7 @@ const formatNetworkInfo = (
 };
 
 export const formatTransaction = (t: Transaction, account: Account): string => {
-  const n = getEnv("DEBUG_UTXO_DISPLAY");
+  const n = getEnv<number>("DEBUG_UTXO_DISPLAY");
   const { excludeUTXOs, strategy } = t.utxoStrategy;
   const displayAll = excludeUTXOs.length <= n;
   return `

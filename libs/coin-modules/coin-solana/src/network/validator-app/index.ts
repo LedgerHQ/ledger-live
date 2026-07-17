@@ -36,14 +36,14 @@ type ValidatorApyRaw = {
 const URLS = {
   validatorList: (cluster: Extract<Cluster, "mainnet-beta" | "testnet">) => {
     if (cluster === "testnet") {
-      const baseUrl = getEnv("SOLANA_TESTNET_VALIDATORS_APP_BASE_URL");
+      const baseUrl = getEnv<string>("SOLANA_TESTNET_VALIDATORS_APP_BASE_URL");
       return `${baseUrl}/${cluster}.json?order=score&limit=${MAX_VALIDATORS_NB}`;
     }
 
-    const baseUrl = getEnv("SOLANA_VALIDATORS_APP_BASE_URL");
+    const baseUrl = getEnv<string>("SOLANA_VALIDATORS_APP_BASE_URL");
     return baseUrl;
   },
-  validatorApylist: getEnv("SOLANA_VALIDATORS_SUMMARY_BASE_URL"),
+  validatorApylist: getEnv<string>("SOLANA_VALIDATORS_SUMMARY_BASE_URL"),
 };
 
 async function fetchFigmentApy(

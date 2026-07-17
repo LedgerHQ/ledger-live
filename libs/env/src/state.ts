@@ -7,31 +7,42 @@ type State = {
   defaults: Record<string, unknown>;
 };
 
-let s: State | null = null;
-
 export type EnvChange = { name: string; value: unknown; oldValue: unknown };
 type Listener = (change: EnvChange) => void;
 
-const _listeners = new Set<Listener>();
+type LedgerGlobal = typeof globalThis & {
+  __ledgerLiveEnvState?: State;
+  __ledgerLiveEnvListeners?: Set<Listener>;
+};
+const g = globalThis as LedgerGlobal;
+
+function getListeners(): Set<Listener> {
+  if (!g.__ledgerLiveEnvListeners) {
+    g.__ledgerLiveEnvListeners = new Set();
+  }
+  return g.__ledgerLiveEnvListeners;
+}
 
 export const changes = {
   subscribe(fn: Listener): { unsubscribe(): void } {
-    _listeners.add(fn);
-    return { unsubscribe: () => void _listeners.delete(fn) };
+    getListeners().add(fn);
+    return { unsubscribe: () => void getListeners().delete(fn) };
   },
 };
 
 export function notifyChange(change: EnvChange): void {
-  _listeners.forEach(fn => fn(change));
+  getListeners().forEach(fn => fn(change));
 }
 
 export function injectDefinitions(defs: EnvDefs): void {
-  if (s !== null) throw new Error("[live-env] injectDefinitions() called twice");
+  if (g.__ledgerLiveEnvState !== undefined)
+    throw new Error("[live-env] injectDefinitions() called twice");
   const defaults = Object.fromEntries(Object.entries(defs).map(([k, d]) => [k, d.def]));
-  s = { definitions: defs, env: { ...defaults }, defaults };
+  g.__ledgerLiveEnvState = { definitions: defs, env: { ...defaults }, defaults };
 }
 
 export function configured(): State {
-  if (s === null) throw new Error("[live-env] Call injectDefinitions() before using live-env");
-  return s;
+  if (g.__ledgerLiveEnvState === undefined)
+    throw new Error("[live-env] Call injectDefinitions() before using live-env");
+  return g.__ledgerLiveEnvState;
 }

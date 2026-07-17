@@ -40,7 +40,7 @@ async function fetchFigmentApy(): Promise<Record<string, number>> {
   try {
     const response = await network<ValidatorApyRaw[]>({
       method: "GET",
-      url: getEnv("SOLANA_VALIDATORS_SUMMARY_BASE_URL"),
+      url: getEnv<string>("SOLANA_VALIDATORS_SUMMARY_BASE_URL"),
     });
     if (response.status === 200 && Array.isArray(response.data)) {
       return Object.fromEntries(

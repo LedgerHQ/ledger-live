@@ -96,7 +96,7 @@ function createStakingRewardOperation({
     type: stakingRewardType,
     value: stakingReward,
     recipients: [address],
-    senders: [getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID")],
+    senders: [getEnv<string>("HEDERA_STAKING_REWARD_ACCOUNT_ID")],
     hash: stakingRewardHash,
     fee: new BigNumber(0),
     date: stakingRewardTimestamp,

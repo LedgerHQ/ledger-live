@@ -24,7 +24,7 @@ const currentVersion = "/v2";
 const fromHeightQueryParam = "from_height";
 
 const getFilecoinURL = (version: string = currentVersion, path?: string): string => {
-  const baseUrl = getEnv("API_FILECOIN_ENDPOINT");
+  const baseUrl = getEnv<string>("API_FILECOIN_ENDPOINT");
   if (!baseUrl) throw new Error("API base URL not available");
 
   return `${baseUrl}${version ? version : ""}${path ? path : ""}`;

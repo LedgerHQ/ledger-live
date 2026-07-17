@@ -208,7 +208,7 @@ export const getAccountShape: GetAccountShape<AptosAccount> = async (
   let inactiveBalance = BigNumber(0);
   let pendingInactiveBalance = BigNumber(0);
 
-  if (getEnv("APTOS_ENABLE_STAKING") === true) {
+  if (getEnv<boolean>("APTOS_ENABLE_STAKING") === true) {
     const stakingPoolAddresses = getStakingPoolAddresses(stakingOperations);
     for (const stakingPoolAddress of stakingPoolAddresses) {
       const [active_string, inactive_string, pending_inactive_string] =

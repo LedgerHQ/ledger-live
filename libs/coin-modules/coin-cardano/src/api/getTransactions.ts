@@ -20,7 +20,7 @@ async function getSyncedTransactionsByChain(
   latestBlockHeight: number;
   paymentCredentials: Array<PaymentCredential>;
 }> {
-  const keyChainRange = getEnv("KEYCHAIN_OBSERVABLE_RANGE") || 20;
+  const keyChainRange = getEnv<number>("KEYCHAIN_OBSERVABLE_RANGE") || 20;
 
   // credentialsMap for efficient use
   const initialPaymentCredentialMap: Record<string, PaymentCredential> = {};

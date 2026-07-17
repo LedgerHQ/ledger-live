@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import network from "@ledgerhq/live-network";
 import { getEnv } from "@ledgerhq/live-env";
 
-const BASE_URL = getEnv("API_VECHAIN_THOREST");
+const BASE_URL = getEnv<string>("API_VECHAIN_THOREST");
 
 /**
  * Get fees paid for the transaction

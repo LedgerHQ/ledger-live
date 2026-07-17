@@ -15,13 +15,13 @@ const findCurrencyExplorer = (currency: CryptoCurrency): LedgerExplorer | null |
 
   if (currency.id === "bitcoin_regtest") {
     return {
-      endpoint: getEnv("EXPLORER_REGTEST"),
+      endpoint: getEnv<string>("EXPLORER_REGTEST"),
       id: "btc_regtest",
       version: "v4",
     };
   }
   return {
-    endpoint: getEnv("EXPLORER"),
+    endpoint: getEnv<string>("EXPLORER"),
     id: currency.explorerId ?? currency.id,
     version: "v4",
   };

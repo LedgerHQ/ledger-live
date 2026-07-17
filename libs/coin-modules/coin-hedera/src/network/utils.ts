@@ -69,7 +69,7 @@ export function parseTransfers(
 
   const senders: string[] = [];
   const recipients: string[] = [];
-  const rewardPayerAddress = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
+  const rewardPayerAddress = getEnv<string>("HEDERA_STAKING_REWARD_ACCOUNT_ID");
 
   for (const transfer of mirrorTransfers) {
     const amount = new BigNumber(transfer.amount);

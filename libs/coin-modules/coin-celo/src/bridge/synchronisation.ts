@@ -335,7 +335,7 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
   const blockInfo = await api.lastBlock();
   const balance = await nodeApi.getCoinBalance(currency, address);
 
-  const isTokensEnabled = getEnv("ENABLE_CELO_TOKENS");
+  const isTokensEnabled = getEnv<boolean>("ENABLE_CELO_TOKENS");
 
   const { operations: operationsList, feeCurrencyByHash } = await getOperationsList({
     info,

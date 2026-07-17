@@ -31,7 +31,7 @@ function formatAccountSpecifics(account: BitcoinAccount): string {
   if (!account.bitcoinResources) return "";
   const { utxos } = account.bitcoinResources;
   let str = `\n${utxos.length} UTXOs`;
-  const n = getEnv("DEBUG_UTXO_DISPLAY");
+  const n = getEnv<number>("DEBUG_UTXO_DISPLAY");
   const displayAll = utxos.length <= n;
   str += utxos
     .slice(0)

@@ -23,7 +23,7 @@ import {
 } from "./transformers";
 
 export const StacksNetwork = {
-  mainnet: new StacksMainnet({ url: getEnv("API_STACKS_ENDPOINT") }),
+  mainnet: new StacksMainnet({ url: getEnv<string>("API_STACKS_ENDPOINT") }),
   testnet: new StacksTestnet(),
 };
 
@@ -31,7 +31,7 @@ export const StacksNetwork = {
  * Builds the Stacks API URL with an optional path
  */
 const getStacksURL = (path?: string): string => {
-  const baseUrl = getEnv("API_STACKS_ENDPOINT");
+  const baseUrl = getEnv<string>("API_STACKS_ENDPOINT");
   if (!baseUrl) throw new Error("API base URL not available");
 
   return `${baseUrl}${path ? path : ""}`;

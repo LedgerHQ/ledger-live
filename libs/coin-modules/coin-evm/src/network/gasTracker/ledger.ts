@@ -59,7 +59,7 @@ export const getGasOptions = async ({
 
   const { low, medium, high, next_base } = await network({
     method: "GET",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${gasTracker.explorerId}/gastracker/barometer${
+    url: `${getEnv<string>("EXPLORER")}/blockchain/v4/${gasTracker.explorerId}/gastracker/barometer${
       useEIP1559 ? "?display=eip1559" : ""
     }`,
   }).then(({ data }) => ({
@@ -73,7 +73,7 @@ export const getGasOptions = async ({
     next_base: new BigNumber(data.next_base).integerValue(),
   }));
 
-  const EIP1559_BASE_FEE_MULTIPLIER: number = getEnv("EIP1559_BASE_FEE_MULTIPLIER");
+  const EIP1559_BASE_FEE_MULTIPLIER: number = getEnv<number>("EIP1559_BASE_FEE_MULTIPLIER");
 
   /**
    * Since our use of BigNumber implies only using integers, we need to round up to

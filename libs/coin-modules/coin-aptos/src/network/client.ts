@@ -56,11 +56,13 @@ import type {
 } from "./graphql/types";
 
 const getApiEndpoint = (currencyId: string) =>
-  isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
+  isTestnet(currencyId)
+    ? getEnv<string>("APTOS_TESTNET_API_ENDPOINT")
+    : getEnv<string>("APTOS_API_ENDPOINT");
 const getIndexerEndpoint = (currencyId: string) =>
   isTestnet(currencyId)
-    ? getEnv("APTOS_TESTNET_INDEXER_ENDPOINT")
-    : getEnv("APTOS_INDEXER_ENDPOINT");
+    ? getEnv<string>("APTOS_TESTNET_INDEXER_ENDPOINT")
+    : getEnv<string>("APTOS_INDEXER_ENDPOINT");
 const getNetwork = (currencyId: string) =>
   isTestnet(currencyId) ? Network.TESTNET : Network.MAINNET;
 
@@ -71,7 +73,7 @@ export class AptosAPI {
   readonly apolloClient: ApolloClient<object>;
 
   constructor(currencyIdOrSettings: AptosSettings | string) {
-    const appVersion = getEnv("LEDGER_CLIENT_VERSION");
+    const appVersion = getEnv<string>("LEDGER_CLIENT_VERSION");
 
     if (typeof currencyIdOrSettings === "string") {
       this.aptosConfig = new AptosConfig({

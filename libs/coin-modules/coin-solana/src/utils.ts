@@ -87,7 +87,7 @@ export function endpointByCurrencyId(currencyId: string): string {
     // coin config not initialized, fall back to defaults
   }
   const endpoints: Record<string, string> = {
-    solana: rpcUrls?.solana ?? getEnv("API_SOLANA_PROXY"),
+    solana: rpcUrls?.solana ?? getEnv<string>("API_SOLANA_PROXY"),
     solana_devnet: rpcUrls?.solana_devnet ?? clusterApiUrl("devnet"),
     solana_testnet: rpcUrls?.solana_testnet ?? clusterApiUrl("testnet"),
   };

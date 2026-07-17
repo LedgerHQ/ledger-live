@@ -179,7 +179,7 @@ export function getChainAPI(
     ...(fetchMiddleware ? { fetchMiddleware } : {}),
     fetch: kyNoTimeout as typeof fetch, // Type cast for jest test having an issue with the type
     commitment: "confirmed",
-    confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
+    confirmTransactionInitialTimeout: getEnv<number>("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
   });
 
   return {

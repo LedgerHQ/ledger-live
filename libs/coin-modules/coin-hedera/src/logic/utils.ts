@@ -363,7 +363,7 @@ export const extractCompanyFromNodeDescription = (description: string): string =
 };
 
 export const sortValidators = (validators: HederaValidator[]): HederaValidator[] => {
-  const ledgerNodeId = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
+  const ledgerNodeId = getEnv<number>("HEDERA_STAKING_LEDGER_NODE_ID");
 
   // sort validators by active stake in DESC order, with Ledger node first if it exists
   return [...validators].sort((a, b) => {
@@ -406,7 +406,7 @@ export const getValidatorFromAccount = (account: HederaAccount): HederaValidator
 };
 
 export const getDefaultValidator = (validators: HederaValidator[]): HederaValidator | null => {
-  const ledgerNodeId = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
+  const ledgerNodeId = getEnv<number>("HEDERA_STAKING_LEDGER_NODE_ID");
 
   return validators.find(v => v.nodeId === ledgerNodeId) ?? null;
 };

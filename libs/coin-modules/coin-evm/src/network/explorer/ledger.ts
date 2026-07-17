@@ -43,9 +43,9 @@ export async function fetchPaginatedOpsWithRetries(
       data: LedgerExplorerOperation[];
       token: string;
     }>({
-      headers: { "X-Ledger-Client-Version": getEnv("LEDGER_CLIENT_VERSION") },
+      headers: { "X-Ledger-Client-Version": getEnv<string>("LEDGER_CLIENT_VERSION") },
       method: "GET",
-      url: `${getEnv("EXPLORER")}/blockchain/v4/${params.explorerId}/address/${params.address}/txs`,
+      url: `${getEnv<string>("EXPLORER")}/blockchain/v4/${params.explorerId}/address/${params.address}/txs`,
       params: {
         filtering: true,
         from_height: params.fromBlock ?? 0,

@@ -26,7 +26,7 @@ const fetchWithRetry = (
   options: RequestInit | undefined,
   retry: number,
 ): Promise<Response> => {
-  const version = getEnv("LEDGER_CLIENT_VERSION") || "";
+  const version = getEnv<string>("LEDGER_CLIENT_VERSION") || "";
   const isCI = version.includes("ll-ci") || version === "";
   const headers = {
     ...options?.headers,

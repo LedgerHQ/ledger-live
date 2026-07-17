@@ -11,7 +11,7 @@ const getNodeUrl = () => coinConfig.getCoinConfig().nodeUrl;
 // txPayload needs to be unsigned
 export const simulate = async (serializedTx: string): Promise<number> => {
   // @ts-expect-error: add NODE_BOILERPLATE to libs/env/src/env.ts
-  const url = `${getEnv("NODE_BOILERPLATE")}/simulate`;
+  const url = `${getEnv<string>("NODE_BOILERPLATE")}/simulate`;
   const { data } = await network({
     url,
     method: "POST",
@@ -28,7 +28,7 @@ export const simulate = async (serializedTx: string): Promise<number> => {
 // can be called nonce or sequence
 export const getNextSequence = async (address: string): Promise<number> => {
   // @ts-expect-error: add NODE_BOILERPLATE to libs/env/src/env.ts
-  const url = `${getEnv("NODE_BOILERPLATE")}/${address}/sequence`;
+  const url = `${getEnv<string>("NODE_BOILERPLATE")}/${address}/sequence`;
   try {
     const { data } = await network({
       url,
@@ -42,7 +42,7 @@ export const getNextSequence = async (address: string): Promise<number> => {
 
 export const getBlockHeight = async (): Promise<number> => {
   // @ts-expect-error: add NODE_BOILERPLATE to libs/env/src/env.ts
-  const url = `${getEnv("NODE_BOILERPLATE")}/blockheight`;
+  const url = `${getEnv<string>("NODE_BOILERPLATE")}/blockheight`;
   const { data } = await network({
     url,
     method: "GET",
@@ -56,7 +56,7 @@ export const getLastBlock = async (): Promise<{
   timestamp: number;
 }> => {
   // @ts-expect-error: add NODE_BOILERPLATE to libs/env/src/env.ts
-  const url = `${getEnv("NODE_BOILERPLATE")}/block/current`;
+  const url = `${getEnv<string>("NODE_BOILERPLATE")}/block/current`;
   const { data } = await network({
     url,
     method: "GET",
@@ -66,7 +66,7 @@ export const getLastBlock = async (): Promise<{
 
 export const submit = async (signedTx: string): Promise<SubmitReponse> => {
   // @ts-expect-error: add NODE_BOILERPLATE to libs/env/src/env.ts
-  const url = `${getEnv("NODE_BOILERPLATE")}/submit`;
+  const url = `${getEnv<string>("NODE_BOILERPLATE")}/submit`;
   const { data } = await network<SubmitReponse>({
     url,
     method: "GET",

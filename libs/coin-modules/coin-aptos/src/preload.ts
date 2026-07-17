@@ -8,7 +8,7 @@ export const PRELOAD_MAX_AGE = 15 * 60 * 1000; // 15min
 
 export async function preloadWithValidators(currency: CryptoCurrency): Promise<AptosPreloadData> {
   let validators: AptosValidator[] = [];
-  if (getEnv("APTOS_ENABLE_STAKING") === true) {
+  if (getEnv<boolean>("APTOS_ENABLE_STAKING") === true) {
     validators = await getValidators(currency.id);
   }
 

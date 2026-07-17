@@ -93,7 +93,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
     // claiming staking rewards is triggered by sending 1 tinybar to staking reward account
     if (transaction.mode === HEDERA_TRANSACTION_MODES.ClaimRewards) {
-      transaction.recipient = getEnv("HEDERA_CLAIM_REWARDS_RECIPIENT_ACCOUNT_ID");
+      transaction.recipient = getEnv<string>("HEDERA_CLAIM_REWARDS_RECIPIENT_ACCOUNT_ID");
       transaction.amount = new BigNumber(1);
     }
   }

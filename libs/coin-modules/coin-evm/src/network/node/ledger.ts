@@ -31,7 +31,7 @@ function makeFetchWithRetries(config: LedgerNodeConfig): LedgerFetch {
           ...params,
           headers: {
             ...(params.headers || {}),
-            "X-Ledger-Client-Version": getEnv("LEDGER_CLIENT_VERSION"),
+            "X-Ledger-Client-Version": getEnv<string>("LEDGER_CLIENT_VERSION"),
           },
         });
         return data;
@@ -58,7 +58,7 @@ async function getTransaction(
 ): Promise<TransactionInfo> {
   const ledgerTransaction = await fetch<LedgerExplorerOperation>({
     method: "GET",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/tx/${hash}`,
+    url: `${getEnv<string>("EXPLORER")}/blockchain/v4/${config.explorerId}/tx/${hash}`,
   });
 
   return {
@@ -116,7 +116,7 @@ async function getCoinBalance(
 ): Promise<BigNumber> {
   const { balance } = await fetch<{ address: string; balance: string }>({
     method: "GET",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/address/${address}/balance`,
+    url: `${getEnv<string>("EXPLORER")}/blockchain/v4/${config.explorerId}/address/${address}/balance`,
   });
   return new BigNumber(balance);
 }
@@ -137,7 +137,7 @@ function makeGetBatchTokenBalances(
       }>
     >({
       method: "POST",
-      url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/erc20/balances`,
+      url: `${getEnv<string>("EXPLORER")}/blockchain/v4/${config.explorerId}/erc20/balances`,
       data: input,
     });
     return balances.map(({ balance }) => new BigNumber(balance));
@@ -152,7 +152,7 @@ async function getTransactionCount(
 ): Promise<number> {
   const { nonce } = await fetch<{ address: string; nonce: number }>({
     method: "GET",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/address/${address}/nonce`,
+    url: `${getEnv<string>("EXPLORER")}/blockchain/v4/${config.explorerId}/address/${address}/nonce`,
   });
   return nonce;
 }
@@ -170,7 +170,7 @@ function makeGetGasEstimation(
       }>({
         method: "POST",
         timeout: LEDGER_TIMEOUT,
-        url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/tx/estimate-gas-limit`,
+        url: `${getEnv<string>("EXPLORER")}/blockchain/v4/${config.explorerId}/tx/estimate-gas-limit`,
         data: {
           from: account.freshAddress,
           to,
@@ -200,7 +200,7 @@ async function getFeeData(
       },
     },
     options: {
-      useEIP1559: getEnv("EVM_FORCE_LEGACY_TRANSACTIONS") ? false : transaction.type === 2,
+      useEIP1559: getEnv<boolean>("EVM_FORCE_LEGACY_TRANSACTIONS") ? false : transaction.type === 2,
       overrideGasTracker: { type: "ledger", explorerId: config.explorerId },
     },
   });
@@ -225,7 +225,7 @@ async function broadcastTransaction(
   }
   const { result: hash } = await fetch<{ result: string }>({
     method: "POST",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/tx/send`,
+    url: `${getEnv<string>("EXPLORER")}/blockchain/v4/${config.explorerId}/tx/send`,
     data: { tx: signedTxHex },
     params,
     headers,
@@ -249,7 +249,7 @@ async function getBlockByHeight(
       prevHash?: string;
     }>({
       method: "GET",
-      url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/block/current`,
+      url: `${getEnv<string>("EXPLORER")}/blockchain/v4/${config.explorerId}/block/current`,
     });
     return {
       hash,
@@ -263,7 +263,7 @@ async function getBlockByHeight(
     [{ hash: string; height: number; time: string; txs: string[]; prevHash?: string }]
   >({
     method: "GET",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/block/${blockHeight}`,
+    url: `${getEnv<string>("EXPLORER")}/blockchain/v4/${config.explorerId}/block/${blockHeight}`,
   });
   return {
     hash,
@@ -295,7 +295,7 @@ async function getOptimismAdditionalFees(
     }>
   >({
     method: "POST",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/contract/read`,
+    url: `${getEnv<string>("EXPLORER")}/blockchain/v4/${config.explorerId}/contract/read`,
     data: [
       {
         contract: "0x420000000000000000000000000000000000000F",
@@ -323,7 +323,7 @@ function makeGetTokenAllowance(
       }>
     >({
       method: "POST",
-      url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/contract/read`,
+      url: `${getEnv<string>("EXPLORER")}/blockchain/v4/${config.explorerId}/contract/read`,
       data: [{ contract: contractAddress, data }],
     });
     return new BigNumber(result.response);
@@ -351,7 +351,7 @@ async function getScrollAdditionalFees(
     }>
   >({
     method: "POST",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/contract/read`,
+    url: `${getEnv<string>("EXPLORER")}/blockchain/v4/${config.explorerId}/contract/read`,
     data: [
       {
         contract: "0x5300000000000000000000000000000000000002",

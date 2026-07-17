@@ -34,12 +34,12 @@ import { BinaryUtils } from "../utils/binary.utils";
 import { MultiversXNetworkApi } from "./api";
 import { MultiversXAccount } from "./dtos/multiversx-account";
 const api = new MultiversXNetworkApi(
-  getEnv("MULTIVERSX_API_ENDPOINT"),
-  getEnv("MULTIVERSX_DELEGATION_API_ENDPOINT"),
+  getEnv<string>("MULTIVERSX_API_ENDPOINT"),
+  getEnv<string>("MULTIVERSX_DELEGATION_API_ENDPOINT"),
 );
 
 const networkConfig = { clientName: "ledger-live" };
-const proxy = new ApiNetworkProvider(getEnv("MULTIVERSX_API_ENDPOINT"), networkConfig);
+const proxy = new ApiNetworkProvider(getEnv<string>("MULTIVERSX_API_ENDPOINT"), networkConfig);
 
 /**
  * Get account balances and nonce

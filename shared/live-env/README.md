@@ -8,7 +8,7 @@ This package wraps `@ledgerhq/live-env` (the type-lossy framework) and adds:
 
 - **All env var definitions** (~200 vars), split by CODEOWNERS team
 - **Typed API**: `getEnv<K>`, `setEnv<K>`, `EnvName`, `EnvValue<K>` inferred from the definitions
-- **React hook**: `useEnv<K>` via the `./hooks` subpath
+- **React hook**: `useEnv<K>` via `@features/platform-env`
 
 `injectDefinitions(allDefinitions)` is called at module load, so importing `@shared/live-env` is the only setup needed.
 
@@ -23,9 +23,9 @@ const timeout = getEnv("GET_CALLS_TIMEOUT"); // number
 ```
 
 ```ts
-// React hook (./hooks subpath)
-import useEnv from "@shared/live-env/hooks";
-const isMock = useEnv("MOCK"); // boolean
+// React hook — separate package for React-only consumers
+import { useEnv } from "@features/platform-env";
+const isMock = useEnv("MOCK"); // string (MOCK is a seed string)
 ```
 
 ## Who can import this

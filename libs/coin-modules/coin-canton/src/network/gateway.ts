@@ -41,7 +41,7 @@ export const getKey = (id: string, adminId: string) => `${id}${SEPARATOR}${admin
 const getGatewayUrl = (currency: CryptoCurrency) =>
   coinConfig.getCoinConfig(currency.id).gatewayUrl;
 const getNodeId = (currency: CryptoCurrency) => {
-  const overrideNodeId = getEnv("CANTON_NODE_ID_OVERRIDE");
+  const overrideNodeId = getEnv<string>("CANTON_NODE_ID_OVERRIDE");
   if (overrideNodeId) {
     return overrideNodeId;
   }
@@ -73,7 +73,7 @@ export const isPartyAlreadyExists = (error: unknown): boolean => {
 const gatewayNetwork = async <T, U = unknown>(
   req: LiveNetworkRequest<U>,
 ): Promise<LiveNetworkResponse<T>> => {
-  const API_KEY = getEnv("CANTON_API_KEY");
+  const API_KEY = getEnv<string>("CANTON_API_KEY");
   try {
     return await network<T, U>({
       ...req,
@@ -446,7 +446,7 @@ export type CalToken = {
  * Fetch Canton tokens from CAL service and create a map of id -> token_identifier
  */
 async function getCalTokens(currency: CryptoCurrency): Promise<Map<string, string>> {
-  const calUrl = getEnv("CAL_SERVICE_URL");
+  const calUrl = getEnv<string>("CAL_SERVICE_URL");
   const { data: calTokens } = await gatewayNetwork<CalToken[]>({
     method: "GET",
     url: `${calUrl}/v1/tokens?network=${currency.id}&output=id,name,ticker,network,contract_address,token_identifier,units,standard`,

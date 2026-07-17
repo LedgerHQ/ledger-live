@@ -94,7 +94,7 @@ async function handleTokenAssociateTransaction(
   if (isAssociationFlow) {
     const hbarBalance = account.balance.dividedBy(10 ** account.currency.units[0].magnitude);
     const currentWorthInUSD = usdRate ? hbarBalance.multipliedBy(usdRate) : new BigNumber(0);
-    const requiredWorthInUSD = getEnv("HEDERA_TOKEN_ASSOCIATION_MIN_USD");
+    const requiredWorthInUSD = getEnv<number>("HEDERA_TOKEN_ASSOCIATION_MIN_USD");
 
     if (currentWorthInUSD.isLessThan(requiredWorthInUSD)) {
       errors.insufficientAssociateBalance = new HederaInsufficientFundsForAssociation("", {

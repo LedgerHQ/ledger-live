@@ -12,7 +12,7 @@ import { CONCORDIUM_CHAIN_IDS } from "../constants";
 const REQUEST_CREATE_ACCOUNT_EXPIRY = 7 * 24 * 60 * 60; // 7 days in seconds
 
 const CLIENT_CONFIG = {
-  projectId: getEnv("WALLETCONNECT_PROJECT_ID"),
+  projectId: getEnv<string>("WALLETCONNECT_PROJECT_ID"),
   relayUrl: "wss://relay.walletconnect.com",
 };
 

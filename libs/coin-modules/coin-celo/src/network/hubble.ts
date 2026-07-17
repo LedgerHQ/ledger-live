@@ -7,7 +7,7 @@ import { CeloValidatorGroup } from "../types/types";
 import { getCeloClient } from "./client";
 import { getRegistryAddressFor } from "./registry";
 
-const getUrl = (route: string): string => `${getEnv("API_CELO_INDEXER")}${route || ""}`;
+const getUrl = (route: string): string => `${getEnv<string>("API_CELO_INDEXER")}${route || ""}`;
 
 const fetchValidatorGroups = async () => {
   const { data } = await network({

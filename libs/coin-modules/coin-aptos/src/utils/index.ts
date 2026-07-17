@@ -4,8 +4,8 @@ export * from "./IconGenerator";
 
 export function endpointByCurrencyId(currencyId: string): string {
   const endpoints: Record<string, string> = {
-    aptos: getEnv("APTOS_API_ENDPOINT"),
-    aptos_testnet: getEnv("APTOS_TESTNET_API_ENDPOINT"),
+    aptos: getEnv<string>("APTOS_API_ENDPOINT"),
+    aptos_testnet: getEnv<string>("APTOS_TESTNET_API_ENDPOINT"),
   };
 
   if (currencyId in endpoints) {
