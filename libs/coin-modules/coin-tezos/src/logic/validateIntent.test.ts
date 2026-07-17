@@ -274,7 +274,7 @@ describe("validateIntent", () => {
       expect(mockEstimateFees).not.toHaveBeenCalled();
     });
 
-    it("does not return MustDelegateBeforeStaking for a registered baker (delegate account)", async () => {
+    it("allows a registered baker (delegate account) to stake without MustDelegateBeforeStaking", async () => {
       // A baker is self-delegated: tzkt returns type "delegate" with no `delegate` field, but it
       // must still be allowed to stake. Regression for LIVE-34256.
       mockGetAccountByAddress.mockResolvedValue({
@@ -295,7 +295,10 @@ describe("validateIntent", () => {
         amount: 1000n,
       });
 
-      expect(result.errors.amount).not.toBeInstanceOf(MustDelegateBeforeStaking);
+      // No validation errors at all, and fee estimation was reached — a MustDelegateBeforeStaking
+      // short-circuit would return before estimation (see the "no delegate" case above).
+      expect(result.errors).toEqual({});
+      expect(mockEstimateFees).toHaveBeenCalled();
     });
 
     it("should return AmountRequired when stake amount is zero", async () => {
