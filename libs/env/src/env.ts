@@ -1,5 +1,6 @@
 // set and get environment & config variables
 import { configured, changes, injectDefinitions } from "./state";
+import type { EnvDef } from "./state";
 export type { EnvDef, EnvDefs } from "./state";
 export { injectDefinitions, changes };
 
@@ -41,7 +42,8 @@ export type EnvName = string;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type EnvValue<_K extends string = string> = unknown;
 
-export const getDefinition = (name: string) => configured().definitions[name];
+export const getDefinition = (name: string): EnvDef<any> | undefined =>
+  configured().definitions[name];
 
 export const getAllEnvNames = (): string[] => Object.keys(configured().definitions);
 
