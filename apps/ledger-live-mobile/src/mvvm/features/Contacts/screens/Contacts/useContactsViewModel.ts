@@ -5,7 +5,7 @@ import {
   useContactsMeContact,
 } from "@features/flow-contacts";
 import { useCallback, useMemo } from "react";
-import { MY_WALLET_AVATAR_USER_URL } from "LLM/features/MyWallet/components/UserAvatar/constants";
+import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import { useTranslation } from "~/context/Locale";
 
 export type ContactsViewModel = ContactsPageProps;
@@ -29,7 +29,7 @@ export function useContactsViewModel(): ContactsViewModel {
   return {
     viewModel,
     labels,
-    meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
+    meAvatarSrc: USER_AVATAR_URL,
     onOpenMe,
     onAddContact,
   };

@@ -1,5 +1,5 @@
 import React from "react";
-import { UserAvatar } from "LLM/features/MyWallet/components/UserAvatar";
+import { UserAvatar } from "LLM/components/UserAvatar";
 import { Pressable } from "@ledgerhq/lumen-ui-rnative";
 import { Platform } from "react-native";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
