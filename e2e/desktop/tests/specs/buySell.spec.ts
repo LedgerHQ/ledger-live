@@ -156,55 +156,73 @@ for (const asset of assets) {
   });
 }
 
-const sellAsset: {
-  buySell: Omit<BuySell, "amount">;
-  xrayTicket: string;
-} = {
-  buySell: {
-    crypto: Account.BTC_NATIVE_SEGWIT_1,
-    fiat: { locale: "fr-FR", currencyTicker: "EUR" },
-    operation: OperationType.Sell,
+const sellAssets: Array<{ buySell: Omit<BuySell, "amount">; xrayTicket: string }> = [
+  {
+    buySell: {
+      crypto: Account.BTC_NATIVE_SEGWIT_1,
+      fiat: { locale: "fr-FR", currencyTicker: "EUR" },
+      operation: OperationType.Sell,
+    },
+    xrayTicket: "B2CQA-6131",
   },
-  xrayTicket: "B2CQA-3524",
-};
+  {
+    buySell: {
+      crypto: Account.ETH_1,
+      fiat: { locale: "fr-FR", currencyTicker: "EUR" },
+      operation: OperationType.Sell,
+    },
+    xrayTicket: "B2CQA-6132",
+  },
+  {
+    buySell: {
+      crypto: TokenAccount.ETH_USDT_1,
+      fiat: { locale: "fr-FR", currencyTicker: "EUR" },
+      operation: OperationType.Sell,
+    },
+    xrayTicket: "B2CQA-6133",
+  },
+];
 
-test.describe("Sell flow - ", () => {
-  setupEnv(true);
+for (const sellAsset of sellAssets) {
+  test.describe("Sell flow - ", () => {
+    setupEnv(true);
 
-  const { crypto, fiat, operation } = sellAsset.buySell;
+    const { crypto, fiat, operation } = sellAsset.buySell;
 
-  test.use({
-    teamOwner: Team.BUY_AND_SELL,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: crypto.currency.speculosApp,
-    cliCommands: [liveDataCommand(crypto)],
-    speculosForSetupOnly: true,
-  });
+    test.use({
+      teamOwner: Team.BUY_AND_SELL,
+      userdata: "skip-onboarding-with-last-seen-device",
+      speculosApp: crypto.currency.speculosApp,
+      cliCommands: [liveDataCommand(crypto)],
+      speculosForSetupOnly: true,
+    });
 
-  test(
-    `Sell [${crypto.currency.name}] asset`,
-    {
-      tag: buildTags({ currencyId: crypto.currency.id }),
-      annotation: {
-        type: "TMS",
-        description: sellAsset.xrayTicket,
+    test(
+      `Sell [${crypto.currency.name}] asset`,
+      {
+        tag: buildTags({ currencyId: crypto.currency.id }),
+        annotation: {
+          type: "TMS",
+          description: sellAsset.xrayTicket,
+        },
       },
-    },
-    async ({ app, userdataDestinationPath }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.portfolio.clickSellButton();
-      await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, OperationType.Sell);
-      await app.buyAndSell.verifyFiatAssetSelector("USD");
-      await app.buyAndSell.verifySellInfoBox();
-      await app.buyAndSell.verifyProviderInfoIsNotVisible();
-      await app.buyAndSell.changeRegionAndCurrency(fiat);
-      await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
-      const amount = await getMinimumSellAmount(crypto.currency.id);
-      const buySell = { ...sellAsset.buySell, amount };
-      await app.buyAndSell.setAmountToPay(amount, operation);
-      const provider = await app.buyAndSell.selectRandomProvider(operation);
-      await app.buyAndSell.selectQuote();
-      await app.buyAndSell.verifyProviderUrl(provider, buySell, userdataDestinationPath);
-    },
-  );
-});
+      async ({ app, userdataDestinationPath }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+        await app.portfolio.clickSellButton();
+        await app.buyAndSell.chooseAssetIfNotSelected(crypto);
+        await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, OperationType.Sell);
+        await app.buyAndSell.verifyFiatAssetSelector("USD");
+        await app.buyAndSell.verifySellInfoBox();
+        await app.buyAndSell.verifyProviderInfoIsNotVisible();
+        await app.buyAndSell.changeRegionAndCurrency(fiat);
+        await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
+        const amount = await getMinimumSellAmount(crypto.currency.id);
+        const buySell = { ...sellAsset.buySell, amount };
+        await app.buyAndSell.setAmountToPay(amount, operation);
+        const provider = await app.buyAndSell.selectRandomProvider(operation);
+        await app.buyAndSell.selectQuote();
+        await app.buyAndSell.verifyProviderUrl(provider, buySell, userdataDestinationPath);
+      },
+    );
+  });
+}

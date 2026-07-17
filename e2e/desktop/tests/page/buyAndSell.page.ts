@@ -65,6 +65,10 @@ export class BuyAndSellPage extends WebViewAppPage {
     },
   };
 
+  private providerUrlAliases: Record<string, string> = {
+    [BuySellProvider.MERCURYO.uiName]: "mrcr",
+  };
+
   @step("Expect Buy / Sell screen to be visible")
   async verifyBuySellScreenIsVisible() {
     await this.verifyElementIsVisible(this.navigationTabs);
@@ -252,19 +256,27 @@ export class BuyAndSellPage extends WebViewAppPage {
     buySell: BuySell,
     userdataDestinationPath: string,
   ) {
-    const addresses = await getAccountAddressesFromAppJson(userdataDestinationPath);
-
     const rawUrl = await this.waitForGoToUrl();
-    const decodedUrl = decodeGoToUrl(rawUrl);
-    const url = new URL(decodedUrl);
+    const url = new URL(decodeGoToUrl(rawUrl));
 
-    this.verifyProviderInUrl(url, provider.uiName);
+    this.verifyProviderInUrl(url, provider);
 
     const config = this.providerConfigs[provider.uiName];
     if (!config) return;
 
+    const addresses = await getAccountAddressesFromAppJson(userdataDestinationPath);
     this.verifyQueryParams(url, config, buySell);
     await this.verifyDestinationAddress(url, config, buySell, addresses);
+  }
+
+  private verifyProviderInUrl(url: URL, provider: BuySellProvider) {
+    const href = url.href.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const expected = (this.providerUrlAliases[provider.uiName] ?? provider.uiName)
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "");
+    expect(href.includes(expected), `Provider "${provider.uiName}" should appear in URL`).toBe(
+      true,
+    );
   }
 
   private async waitForGoToUrl(): Promise<string> {
@@ -288,12 +300,6 @@ export class BuyAndSellPage extends WebViewAppPage {
 
     if (!stableUrl) throw new Error("No GoTo URL found in webviewUrlHistory after waiting.");
     return stableUrl;
-  }
-
-  private verifyProviderInUrl(url: URL, providerUiName: string) {
-    const href = url.href.toLowerCase().replace(/[^a-z0-9]/g, "");
-    const provider = providerUiName.toLowerCase().replace(/[^a-z0-9]/g, "");
-    expect(href.includes(provider), `Provider "${providerUiName}" should appear in URL`).toBe(true);
   }
 
   private verifyQueryParams(url: URL, config: ProviderConfig, buySell: BuySell) {
