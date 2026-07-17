@@ -84,7 +84,7 @@ describe("quote command", () => {
       ],
       { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
     );
-    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    expect(exitCode, `stdout: ${stdout}\nstderr: ${stderr}`).toBe(0);
     expect(stdout).toMatch(/ethereum\s*→\s*bitcoin/i);
     expect(stdout).toMatch(/ethereum/i);
     expect(stdout).toMatch(/bitcoin/i);
@@ -111,7 +111,7 @@ describe("quote command", () => {
       ],
       { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
     );
-    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    expect(exitCode, `stdout: ${stdout}\nstderr: ${stderr}`).toBe(0);
 
     const data = JSON.parse(stdout);
     expect(data.command).toBe("swap quote");
