@@ -14,7 +14,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage --passWithNoTests",
+    "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../.. -W shared/live-env"
   },
   "dependencies": {
