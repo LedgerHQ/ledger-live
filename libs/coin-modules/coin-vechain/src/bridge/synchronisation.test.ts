@@ -1,7 +1,7 @@
 import { createEmptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account";
 import { makeScanAccounts } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";

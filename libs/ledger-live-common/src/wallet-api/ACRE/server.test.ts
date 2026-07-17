@@ -3,7 +3,7 @@ import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { AppPlatform, AppBranch, Visibility } from "../types";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 // Mock dependencies
 jest.mock("@ledgerhq/wallet-api-server", () => ({
@@ -15,7 +15,7 @@ jest.mock("@ledgerhq/cryptoassets", () => ({
   getCryptoCurrencyById: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/cryptoassets/state", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
   getCryptoAssetsStore: jest.fn(),
 }));
 

@@ -85,8 +85,8 @@ const mockGetCryptoAssetsStore = {
   findTokenById: jest.fn(),
 };
 
-jest.mock("@ledgerhq/cryptoassets/state", () => ({
-  ...jest.requireActual("@ledgerhq/cryptoassets/state"),
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
+  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore"),
   getCryptoAssetsStore: () => mockGetCryptoAssetsStore,
 }));
 

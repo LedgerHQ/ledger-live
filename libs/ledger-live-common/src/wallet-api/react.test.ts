@@ -65,7 +65,7 @@ jest.mock("@ledgerhq/cryptoassets/cal-client/state-manager/api", () => ({
   },
 }));
 
-jest.mock("@ledgerhq/cryptoassets/state", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
   getCryptoAssetsStore: jest.fn().mockReturnValue({
     findTokenById: jest.fn().mockResolvedValue(null),
   }),

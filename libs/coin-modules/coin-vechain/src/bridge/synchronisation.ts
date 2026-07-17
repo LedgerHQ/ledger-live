@@ -12,7 +12,7 @@ import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bri
 import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "./helpers";
 import { VTHO_ADDRESS } from "@vechain/sdk-core";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 export const getAccountShape: GetAccountShape<Account> = async info => {
   const { initialAccount, currency, derivationMode } = info;

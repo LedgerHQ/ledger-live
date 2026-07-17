@@ -4,7 +4,7 @@ import {
   getParentAccount,
   makeEmptyTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { decodeSwapPayload } from "@ledgerhq/hw-app-exchange";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";

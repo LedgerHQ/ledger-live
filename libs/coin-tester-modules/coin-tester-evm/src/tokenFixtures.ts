@@ -1,5 +1,5 @@
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 

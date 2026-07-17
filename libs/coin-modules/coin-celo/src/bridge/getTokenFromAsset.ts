@@ -1,5 +1,5 @@
 import { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import eip55 from "eip55";
 

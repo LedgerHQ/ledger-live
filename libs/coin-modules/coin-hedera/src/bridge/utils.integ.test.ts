@@ -1,5 +1,5 @@
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import BigNumber from "bignumber.js";
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";

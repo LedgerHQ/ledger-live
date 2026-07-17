@@ -1,7 +1,7 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 export async function getTokenFromAsset(asset: AssetInfo): Promise<TokenCurrency | undefined> {
   if (!("assetReference" in asset) || typeof asset.assetReference !== "string") {

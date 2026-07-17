@@ -9,9 +9,8 @@ import {
   listCryptoCurrencies,
   hasCryptoCurrencyId,
 } from "@domain/entity-currency-crypto";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { firstValueFrom, reduce } from "rxjs";
 import {
   decodeAccountId,
@@ -158,16 +157,8 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
 
   LiveConfig.setConfig(liveConfig);
 
-  // Setup CAL client store for monitoring (automatically set as global store)
-  setupCalClientStore();
-
-  // Wire wallet-framework ports to the same cryptoassets global store
-  setFrameworkCryptoAssetsStore({
-    findTokenById: id => getCryptoAssetsStore().findTokenById(id),
-    findTokenByAddressInCurrency: (addr, currencyId) =>
-      getCryptoAssetsStore().findTokenByAddressInCurrency(addr, currencyId),
-    getTokensSyncHash: currencyId => getCryptoAssetsStore().getTokensSyncHash(currencyId),
-  });
+  // Setup CAL client store and wire it to the wallet-framework port.
+  setCryptoAssetsStore(setupCalClientStore());
   setCurrenciesResolver({
     getCryptoCurrencyById,
     findCryptoCurrencyById,

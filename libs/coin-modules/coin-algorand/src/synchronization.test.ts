@@ -1,4 +1,4 @@
-import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import BigNumber from "bignumber.js";
 
 // Mock the network module

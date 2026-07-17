@@ -1,5 +1,5 @@
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import network from "@ledgerhq/live-network";
 import { Address } from "@multiversx/sdk-core/out";

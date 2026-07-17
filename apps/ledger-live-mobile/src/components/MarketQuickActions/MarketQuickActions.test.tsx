@@ -7,7 +7,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { isCurrencySupported } from "@ledgerhq/live-common/coin-modules/registry";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const Stack = createNativeStackNavigator();
