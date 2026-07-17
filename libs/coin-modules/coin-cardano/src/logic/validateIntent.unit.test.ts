@@ -3,7 +3,7 @@ import type {
   StringMemo,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { validateIntent } from "./validateIntent";
 

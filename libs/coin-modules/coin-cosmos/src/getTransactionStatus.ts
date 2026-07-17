@@ -1,4 +1,4 @@
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import {
   AmountRequired,
   FeeNotLoaded,

@@ -1,8 +1,10 @@
-import { CoinType } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import bs58check from "bs58check";
 import { MINA_DECODED_ADDRESS_LENGTH } from "../consts";
 import { Transaction, MinaAccount } from "../types/common";
+
+// MINA coin type per slip44.
+const COIN_TYPE_MINA = 12586;
 
 /*
  * Validate a Mina address.
@@ -27,7 +29,7 @@ export const getAccountNumFromPath = (path: string): number | undefined => {
     return;
   }
 
-  if (parts[1] !== `${CoinType.MINA}`) {
+  if (parts[1] !== `${COIN_TYPE_MINA}`) {
     return;
   }
 

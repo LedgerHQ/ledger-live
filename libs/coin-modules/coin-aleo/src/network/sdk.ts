@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getNetworkConfig } from "../logic/utils";
 import type { AleoDecryptedCiphertextResponse } from "../types";
 import type {

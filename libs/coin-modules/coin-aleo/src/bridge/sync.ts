@@ -10,7 +10,7 @@ import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accou
 import { log } from "@ledgerhq/logs";
 import { concat, merge, Observable, of } from "rxjs";
 import { concatMap } from "rxjs/operators";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { SyncConfig, SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import invariant from "invariant";

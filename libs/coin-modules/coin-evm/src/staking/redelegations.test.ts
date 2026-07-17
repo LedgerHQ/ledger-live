@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { BigNumber } from "bignumber.js";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation } from "@ledgerhq/types-live";
 import {
   fetchRedelegations,

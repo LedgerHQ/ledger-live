@@ -28,7 +28,7 @@ import {
 } from "@ledgerhq/errors";
 import { GasPriceTooLow } from "../errors";
 import { getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { getCoinConfig } from "../config";
 import { getGasTracker } from "../network/gasTracker";

@@ -1,6 +1,6 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { mapDelegations, mapRedelegations, mapUnbondings } from "./logic";

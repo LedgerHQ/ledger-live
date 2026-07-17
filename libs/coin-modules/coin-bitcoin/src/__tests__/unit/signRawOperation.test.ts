@@ -3,7 +3,7 @@ import { firstValueFrom, skip, toArray } from "rxjs";
 import buildSignRawOperation from "../../signRawOperation";
 import { extractHashFromScriptPubKey } from "@ledgerhq/psbtv2";
 import type { Account, Operation } from "@ledgerhq/types-live";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 
 // ---- Mocks ---------------------------------------------------------------
 

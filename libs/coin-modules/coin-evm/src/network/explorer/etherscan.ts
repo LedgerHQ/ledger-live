@@ -3,7 +3,7 @@ import type { MemoNotSupported, Operation } from "@ledgerhq/coin-module-framewor
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { delay } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import axios, { AxiosRequestConfig } from "axios";
 import {
   etherscanOperationToOperations,

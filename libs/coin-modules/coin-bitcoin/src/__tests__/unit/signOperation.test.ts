@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { firstValueFrom, toArray } from "rxjs";
 import buildSignOperation from "../../signOperation";
 import type { Account, Operation } from "@ledgerhq/types-live";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { Transaction } from "../../types";
 
 // ---- Mocks ---------------------------------------------------------------

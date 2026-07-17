@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { extractCompanyFromNodeDescription, getChecksum, sortValidators } from "./logic/utils";
 import { apiClient } from "./network/api";

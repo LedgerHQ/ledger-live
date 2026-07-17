@@ -4,7 +4,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

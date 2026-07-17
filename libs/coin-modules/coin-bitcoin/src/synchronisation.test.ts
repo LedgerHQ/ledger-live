@@ -18,7 +18,7 @@ import {
 } from "./synchronisation";
 import { BtcOperation } from "./types";
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { SyncConfig } from "@ledgerhq/types-live";
 import { SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
 import { firstValueFrom } from "rxjs";

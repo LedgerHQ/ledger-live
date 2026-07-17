@@ -1,7 +1,7 @@
 import { Wallet } from "ethers";
 import broadcast from "./broadcast";
 import { setCoinConfig } from "../config";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 
 describe("Broadcast", () => {
   beforeAll(() => {

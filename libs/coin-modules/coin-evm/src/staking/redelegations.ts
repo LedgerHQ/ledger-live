@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation, StakingRedelegation } from "@ledgerhq/types-live";
 import type { RedelegationStrategy } from "../types/staking";
 import { STAKING_CONTRACTS } from "./contracts";

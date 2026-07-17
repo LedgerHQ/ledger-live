@@ -139,12 +139,10 @@
   },
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@polkadot/api": "catalog:",
     "@polkadot/api-augment": "catalog:",
@@ -160,6 +158,7 @@
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/hw-app-polkadot": "workspace:^",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@polkadot/rpc-provider": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

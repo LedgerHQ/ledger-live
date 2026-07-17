@@ -6,7 +6,7 @@ import {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Transaction, TransactionLike } from "ethers";
 import { getNodeApi } from "../network/node";
 import { TransactionTypes } from "../types";

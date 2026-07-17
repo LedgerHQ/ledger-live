@@ -1,5 +1,5 @@
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
-import { LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
+import { LedgerExplorerId } from "@ledgerhq/ledger-wallet-framework/types";
 import type { InternalTxSourceList } from "./internalTxSources";
 
 export type { InternalTxSource, InternalTxSourceList, NonEmptySource } from "./internalTxSources";

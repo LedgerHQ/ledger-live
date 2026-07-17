@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { makeSync, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";

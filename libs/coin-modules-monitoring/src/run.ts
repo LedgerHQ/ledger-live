@@ -1,8 +1,8 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountBridgeByFamily } from "@ledgerhq/live-common/bridge/impl";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import {
+  type CryptoCurrency,
   getCryptoCurrencyById,
   findCryptoCurrencyById,
   findCryptoCurrencyByScheme,

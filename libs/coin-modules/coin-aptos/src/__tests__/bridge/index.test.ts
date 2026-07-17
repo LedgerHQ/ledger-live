@@ -2,7 +2,7 @@ jest.mock("../../network/validators", () => ({
   getValidators: jest.fn(() => Promise.resolve([])),
 }));
 
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import { createBridges } from "../../bridge";

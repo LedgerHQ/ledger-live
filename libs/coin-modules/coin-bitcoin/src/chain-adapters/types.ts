@@ -2,7 +2,7 @@ import type { BigNumber } from "bignumber.js";
 import type { Observable } from "rxjs";
 import type { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type {
   Account,
   AccountRaw,

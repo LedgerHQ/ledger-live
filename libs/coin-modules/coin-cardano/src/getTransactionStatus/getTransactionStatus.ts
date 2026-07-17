@@ -1,7 +1,7 @@
 import { AccountAwaitingSendPendingOperations } from "@ledgerhq/errors";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import coinConfig from "../config";

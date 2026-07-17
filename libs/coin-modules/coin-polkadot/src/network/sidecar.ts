@@ -2,7 +2,7 @@ import { makeLRUCache, hours } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network";
 import { hexToBn } from "@polkadot/util";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import { BigNumber } from "bignumber.js";

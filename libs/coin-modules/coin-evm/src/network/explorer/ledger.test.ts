@@ -1,7 +1,7 @@
 import { AssertionError, fail } from "assert";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import axios from "axios";
 import eip55 from "eip55";
 import { getCoinConfig } from "../../config";

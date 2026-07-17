@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { isNFTActive, metadataCallBatcher } from "@ledgerhq/ledger-wallet-framework/nft/support";
 import { CurrencyBridge } from "@ledgerhq/types-live";
 import NftApi from "./network/nft";

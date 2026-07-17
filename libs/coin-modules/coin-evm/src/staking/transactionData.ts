@@ -2,7 +2,7 @@ import type {
   TransactionIntent,
   MemoNotSupported,
 } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { isStakingIntent } from "../utils";
 import { isPayable } from "./abis";
 import { STAKING_CONTRACTS } from "./contracts";

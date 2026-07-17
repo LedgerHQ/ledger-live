@@ -7,7 +7,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { APTOS_DUMMY_ADDRESS } from "../constants";
 import createTransaction from "../logic/createTransaction";

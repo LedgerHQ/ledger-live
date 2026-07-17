@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { ApiPromise } from "@polkadot/api";
 import { EraIndex } from "@polkadot/types/interfaces";
 import type { SpStakingPagedExposureMetadata } from "@polkadot/types/lookup";

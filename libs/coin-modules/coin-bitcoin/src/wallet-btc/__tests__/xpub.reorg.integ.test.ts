@@ -12,7 +12,7 @@ import Xpub from "../xpub";
 import Crypto from "../crypto/bitcoin";
 import Explorer from "../explorer";
 import BitcoinLikeStorage from "../storage";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 
 const bip32 = BIP32Factory(ecc);
 const ECPair = ECPairFactory(ecc);

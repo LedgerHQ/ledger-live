@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { getEnv } from "@ledgerhq/live-env";
 import aleoConfig from "../config";
 import { testnetViewKey } from "../__tests__/fixtures/api.fixture";

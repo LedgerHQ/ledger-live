@@ -1,4 +1,4 @@
-import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
+import { listCryptoCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import BigNumber from "bignumber.js";
 import {

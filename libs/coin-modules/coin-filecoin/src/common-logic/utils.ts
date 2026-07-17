@@ -4,7 +4,7 @@ import {
   AccountShapeInfo,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";

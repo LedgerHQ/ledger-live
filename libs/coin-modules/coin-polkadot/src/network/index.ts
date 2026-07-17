@@ -1,5 +1,5 @@
 import { makeLRUCache, minutes, hours } from "@ledgerhq/live-network/cache";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
 import { getOperations as bisonGetOperations } from "./bisontrails";

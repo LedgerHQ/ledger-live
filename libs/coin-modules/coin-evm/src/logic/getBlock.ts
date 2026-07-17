@@ -7,7 +7,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { rpcTransactionToBlockOperations } from "../adapters/blockOperations";
 import { DEFAULT_INTERNAL_TX_SOURCES, getCoinConfig } from "../config";
 import { UnsupportedRpcMethodError } from "../errors";
