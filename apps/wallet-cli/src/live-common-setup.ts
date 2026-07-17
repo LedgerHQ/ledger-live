@@ -1,4 +1,4 @@
-import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies";
+import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
 import { walletCliConfig } from "./config";
 import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry";
 import type { CoinModuleLoader } from "@ledgerhq/live-common/coin-modules/types";

@@ -9,7 +9,7 @@ import {
   DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/live-dmk-speculos";
-import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies";
+import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
 import { getEnv } from "@ledgerhq/live-env";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 

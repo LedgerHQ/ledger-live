@@ -1,6 +1,6 @@
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountBridgeByFamily } from "@ledgerhq/live-common/bridge/impl";
-import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies";
+import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
 import {
   type CryptoCurrency,
   getCryptoCurrencyById,
