@@ -8,7 +8,13 @@ export type ServiceOption = {
 export const DEFAULT_OPTION: ServiceOption = {
   env: "prod",
   signatureKind: "prod",
-  ref: getEnv<string>("CAL_REF") || undefined,
+  ref: (() => {
+    try {
+      return String(getEnv("CAL_REF") ?? "") || undefined;
+    } catch {
+      return undefined;
+    }
+  })(),
 };
 export const STAGING_ENV = { env: "test" } satisfies ServiceOption;
 
