@@ -5,6 +5,8 @@ type LargeScreenUpsellParams = NonNullable<Features["largeScreenUpsell"]["params
 
 export type NanoDeviceModelId = keyof LargeScreenUpsellParams["audience"]["models"];
 
+export type TouchscreenDeviceModelId = "stax" | "europa" | "apex";
+
 export type LargeScreenUpsellDecision =
   | { shouldShow: true; deviceModelId: NanoDeviceModelId }
   | {

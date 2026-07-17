@@ -850,6 +850,9 @@ importers:
       '@features/flow-fear-and-greed':
         specifier: workspace:^
         version: link:../../features/flow/fear-and-greed
+      '@features/flow-large-screen-upsell':
+        specifier: workspace:^
+        version: link:../../features/flow/large-screen-upsell
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
@@ -4310,6 +4313,12 @@ importers:
         specifier: workspace:^
         version: link:../../../shared/feature-flags
     devDependencies:
+      '@ledgerhq/lumen-design-core':
+        specifier: 'catalog:'
+        version: 0.1.19
+      '@ledgerhq/lumen-ui-react':
+        specifier: 'catalog:'
+        version: 0.1.45(@ledgerhq/lumen-design-core@0.1.19)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4331,6 +4340,9 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 19.0.0(@types/react@19.0.14)
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -4343,6 +4355,9 @@ importers:
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
+      tailwind-merge:
+        specifier: 'catalog:'
+        version: 3.4.0
       typescript:
         specifier: 'catalog:'
         version: 6.0.2

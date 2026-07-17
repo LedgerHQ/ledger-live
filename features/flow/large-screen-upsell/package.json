@@ -2,7 +2,7 @@
   "name": "@features/flow-large-screen-upsell",
   "version": "0.1.0",
   "private": true,
-  "description": "Pure eligibility + frequency-throttle decision for the large-screen upsell modal, and the hook that composes them",
+  "description": "Large-screen upsell decision engine plus portable modal screen/content/utils scaffold",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -23,10 +23,22 @@
     "@shared/feature-flags": "workspace:^"
   },
   "peerDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
     "react": ">=19.0.0",
     "react-redux": ">=9.0.0"
   },
+  "peerDependenciesMeta": {
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-design-core": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
@@ -34,10 +46,12 @@
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "clsx": "catalog:",
     "jest": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-redux": "catalog:",
+    "tailwind-merge": "catalog:",
     "typescript": "catalog:"
   }
 }
