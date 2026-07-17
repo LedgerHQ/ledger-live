@@ -88,7 +88,7 @@ const baseQueryWithRetry = retry(
     baseUrl: "",
     prepareHeaders: headers => {
       headers.set("Content-Type", "application/json");
-      headers.set("X-Ledger-Client-Version", getEnv("LEDGER_CLIENT_VERSION") as string);
+      headers.set("X-Ledger-Client-Version", getEnv<string>("LEDGER_CLIENT_VERSION"));
       return headers;
     },
   }),
@@ -153,7 +153,7 @@ const cryptoAssetsApiInstance = createApi({
           const response = await fetch(url.toString(), {
             headers: {
               "Content-Type": "application/json",
-              "X-Ledger-Client-Version": getEnv("LEDGER_CLIENT_VERSION") as string,
+              "X-Ledger-Client-Version": getEnv<string>("LEDGER_CLIENT_VERSION"),
             },
           });
 

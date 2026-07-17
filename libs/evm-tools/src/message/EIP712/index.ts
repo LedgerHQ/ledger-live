@@ -186,7 +186,7 @@ function formatDate(timestamp: string) {
  */
 export const getEIP712FieldsDisplayedOnNano = async (
   messageData: EIP712Message,
-  calServiceURL: string = getEnv("CAL_SERVICE_URL") as string,
+  calServiceURL: string = getEnv<string>("CAL_SERVICE_URL"),
   staticEIP712SignaturesV1?: Record<string, any> | null,
   staticEIP712SignaturesV2?: Record<string, any> | null,
 ): Promise<{ label: string; value: string | string[] }[] | null> => {

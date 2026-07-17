@@ -13,11 +13,11 @@ export type EnvName = keyof typeof allDefinitions;
 type InferDef<K extends EnvName> = NonNullable<ReturnType<(typeof allDefinitions)[K]["parser"]>>;
 
 export function getEnv<K extends EnvName>(name: K): InferDef<K> {
-  return _getEnv(name as string) as InferDef<K>;
+  return _getEnv<InferDef<K>>(name);
 }
 
 export function setEnv<K extends EnvName>(name: K, value: InferDef<K>): void {
-  _setEnv(name as string, value);
+  _setEnv(name, value);
 }
 
 export function setEnvUnsafe(name: string, raw: unknown): boolean {

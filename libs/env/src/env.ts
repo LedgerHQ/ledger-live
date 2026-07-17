@@ -48,7 +48,7 @@ export const getAllEnvNames = (): string[] => Object.keys(configured().definitio
 export const getAllEnvs = (): Record<string, unknown> => ({ ...configured().env });
 
 // Usage: you must use getEnv at runtime because the env might be settled over time. typically will allow us to dynamically change them on the interface (e.g. some sort of experimental flags system)
-export const getEnv = (name: string): unknown => configured().env[name];
+export const getEnv = <T = unknown>(name: string): T => configured().env[name] as T;
 
 export const getEnvDefault = (name: string): unknown => configured().defaults[name];
 

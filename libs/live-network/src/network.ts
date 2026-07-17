@@ -108,9 +108,7 @@ axios.interceptors.response.use(responseInterceptor, errorInterceptor);
  * We only allow HTTPS agent on platforms other than LLM because
  * https library is not compatible with react native
  */
-const NETWORK_USE_HTTPS_KEEP_ALIVE = !(
-  getEnv("LEDGER_CLIENT_VERSION") as string | undefined
-)?.startsWith("llm-");
+const NETWORK_USE_HTTPS_KEEP_ALIVE = !getEnv<string>("LEDGER_CLIENT_VERSION").startsWith("llm-");
 if (NETWORK_USE_HTTPS_KEEP_ALIVE) {
   // the keepAlive is necessary when we make a lot of request in in parallel, especially for bitcoin sync. Otherwise, it may raise "connect ETIMEDOUT" error
   // this should only be needed in Windows as UNIX systems reuse TCP packets by default
@@ -199,11 +197,11 @@ export const newImplementation = async <T = unknown, U = unknown>(
 
   if (request.method === "GET") {
     if (!("timeout" in request)) {
-      request.timeout = getEnv("GET_CALLS_TIMEOUT") as number;
+      request.timeout = getEnv<number>("GET_CALLS_TIMEOUT");
     }
 
     response = await retry(() => axios(request), {
-      maxRetry: getEnv("GET_CALLS_RETRY") as number,
+      maxRetry: getEnv<number>("GET_CALLS_RETRY"),
       retryCondition: error => {
         if (error && error.status) {
           // not all status codes are retryable
@@ -232,11 +230,11 @@ const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
 
   if (arg.method === "GET") {
     if (!("timeout" in arg)) {
-      arg.timeout = getEnv("GET_CALLS_TIMEOUT") as number;
+      arg.timeout = getEnv<number>("GET_CALLS_TIMEOUT");
     }
 
     promise = retry(() => axios(arg), {
-      maxRetry: getEnv("GET_CALLS_RETRY") as number,
+      maxRetry: getEnv<number>("GET_CALLS_RETRY"),
       retryCondition: error => {
         if (error && error.status) {
           // A 422 shouldn't be retried without change as explained in this documentation
@@ -272,7 +270,7 @@ function setAxiosLedgerClientVersionHeader(value: string) {
     }
   }
 }
-setAxiosLedgerClientVersionHeader(getEnv("LEDGER_CLIENT_VERSION") as string);
+setAxiosLedgerClientVersionHeader(getEnv<string>("LEDGER_CLIENT_VERSION"));
 changes.subscribe(e => {
   if (e.name === "LEDGER_CLIENT_VERSION") {
     setAxiosLedgerClientVersionHeader(e.value as string);
