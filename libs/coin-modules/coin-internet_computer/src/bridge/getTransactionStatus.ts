@@ -6,7 +6,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { validateAddress } from "@zondax/ledger-live-icp/utils";
+import { validateAddress } from "../logic/validation";
 import BigNumber from "bignumber.js";
 import { InvalidMemoICP } from "../errors";
 import { validateMemo } from "../logic/validateMemo";
@@ -27,7 +27,7 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
 
   if (!recipient) {
     errors.recipient = new RecipientRequired();
-  } else if (!(await validateAddress(recipient)).isValid) {
+  } else if (!validateAddress(recipient).isValid) {
     errors.recipient = new InvalidAddress("", {
       currencyName: account.currency.name,
     });
@@ -35,7 +35,7 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
-  if (!(await validateAddress(address)).isValid) {
+  if (!validateAddress(address).isValid) {
     errors.sender = new InvalidAddress("", {
       currencyName: account.currency.name,
     });
