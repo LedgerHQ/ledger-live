@@ -1016,7 +1016,9 @@ describe("getAccountInfo", () => {
       type: "tezos",
       revealed: true,
     });
-    expect(networkApi.getAccountByAddress).toHaveBeenCalledWith("tz3RDC3Jdn4j15J7bBHZd29EUee9gVB1CxD9");
+    expect(networkApi.getAccountByAddress).toHaveBeenCalledWith(
+      "tz3RDC3Jdn4j15J7bBHZd29EUee9gVB1CxD9",
+    );
   });
 
   it("returns revealed:false for an empty / non-existent account", async () => {
