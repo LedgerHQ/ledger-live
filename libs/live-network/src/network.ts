@@ -276,7 +276,11 @@ function setAxiosLedgerClientVersionHeader(value: string) {
     }
   }
 }
-setAxiosLedgerClientVersionHeader(getEnv<string>("LEDGER_CLIENT_VERSION"));
+try {
+  setAxiosLedgerClientVersionHeader(String(getEnv("LEDGER_CLIENT_VERSION") ?? ""));
+} catch {
+  // injectDefinitions not yet called; header will be set once LEDGER_CLIENT_VERSION is set via setEnv
+}
 changes.subscribe(e => {
   if (e.name === "LEDGER_CLIENT_VERSION") {
     setAxiosLedgerClientVersionHeader(e.value as string);
