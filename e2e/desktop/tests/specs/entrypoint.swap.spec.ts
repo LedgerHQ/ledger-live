@@ -386,7 +386,7 @@ test.describe("Swap - Block blacklisted addresses", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      const sanctionedAddressUrl = getEnv("SANCTIONED_ADDRESSES_URL");
+      const sanctionedAddressUrl = getEnv<string>("SANCTIONED_ADDRESSES_URL");
       await overrideNetworkPayload(app, sanctionedAddressUrl, (json: any) => {
         json.bannedAddresses = [fromAccount.address];
         return json;

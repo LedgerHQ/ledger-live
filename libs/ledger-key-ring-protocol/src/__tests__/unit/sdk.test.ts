@@ -58,7 +58,7 @@ describe("Trustchain SDK", () => {
     mswServer.close();
   });
 
-  const apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING");
+  const apiBaseUrl = getEnv<string>("TRUSTCHAIN_API_STAGING");
   const sdkContext = { applicationId: 16, name: "alice", apiBaseUrl };
 
   beforeEach(() => {

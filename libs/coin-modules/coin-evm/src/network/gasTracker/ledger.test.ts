@@ -43,7 +43,9 @@ describe("EVM Family", () => {
   });
 
   describe("network/gasTracker/index.ts", () => {
-    const originalEIP1559_BASE_FEE_MULTIPLIER: number = getEnv("EIP1559_BASE_FEE_MULTIPLIER");
+    const originalEIP1559_BASE_FEE_MULTIPLIER: number = getEnv<number>(
+      "EIP1559_BASE_FEE_MULTIPLIER",
+    );
 
     beforeAll(() => {
       setEnv("EIP1559_BASE_FEE_MULTIPLIER", TEST_EIP1559_BASE_FEE_MULTIPLIER);

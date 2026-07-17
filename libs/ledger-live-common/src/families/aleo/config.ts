@@ -55,8 +55,8 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       },
       networkType: "mainnet",
       apiUrls: {
-        node: getEnv("ALEO_NODE_ENDPOINT"),
-        sdk: getEnv("ALEO_MAINNET_SDK_ENDPOINT"),
+        node: getEnv<string>("ALEO_NODE_ENDPOINT"),
+        sdk: getEnv<string>("ALEO_MAINNET_SDK_ENDPOINT"),
       },
       feeByTransactionType: DEFAULT_FEE_BY_TRANSACTION_TYPE,
       feeSafetyMultiplier: DEFAULT_FEE_SAFETY_MULTIPLIER,
@@ -74,8 +74,8 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       },
       networkType: "testnet",
       apiUrls: {
-        node: getEnv("ALEO_NODE_ENDPOINT"),
-        sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
+        node: getEnv<string>("ALEO_NODE_ENDPOINT"),
+        sdk: getEnv<string>("ALEO_TESTNET_SDK_ENDPOINT"),
       },
       feeByTransactionType: DEFAULT_FEE_BY_TRANSACTION_TYPE,
       feeSafetyMultiplier: DEFAULT_FEE_SAFETY_MULTIPLIER,

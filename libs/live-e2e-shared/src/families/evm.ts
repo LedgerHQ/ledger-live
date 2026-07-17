@@ -124,7 +124,7 @@ async function getEnsScreenTexts(ensName: string): Promise<string[]> {
   events.push(...(await pressUntilTextFound(ensName)));
   const { x: ensX, y: ensY } = getDeviceCoordinates("ensArrowOpen");
   await pressAndRelease(">", ensX, ensY);
-  const ensScreenTexts = await fetchCurrentScreenTexts(getEnv("SPECULOS_API_PORT"));
+  const ensScreenTexts = await fetchCurrentScreenTexts(getEnv<number>("SPECULOS_API_PORT"));
   events.push(...ensScreenTexts);
   const { x: backX, y: backY } = getDeviceCoordinates("arrowBack");
   await pressAndRelease("<", backX, backY);

@@ -4,7 +4,7 @@ import { MockSDK } from "@ledgerhq/ledger-key-ring-protocol/mockSdk";
 
 describe("makeCipher on static data set", () => {
   const trustchainSdk = new MockSDK({
-    apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+    apiBaseUrl: getEnv<string>("TRUSTCHAIN_API_STAGING"),
     applicationId: 16,
     name: "test",
   });

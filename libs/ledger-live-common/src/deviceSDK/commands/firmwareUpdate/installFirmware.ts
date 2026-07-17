@@ -71,7 +71,7 @@ export function installFirmwareCommand(
 
   return createDeviceSocket(transport, {
     url: URL.format({
-      pathname: `${getEnv("BASE_SOCKET_URL")}/install`,
+      pathname: `${getEnv<string>("BASE_SOCKET_URL")}/install`,
       query: {
         targetId,
         livecommonversion,

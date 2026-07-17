@@ -141,7 +141,7 @@ export async function attachMergedFeatureFlags(
 }
 
 async function attachSpeculosScreenshots(testInfo: TestInfo): Promise<void> {
-  const speculosPort = getEnv("SPECULOS_API_PORT");
+  const speculosPort = getEnv<number>("SPECULOS_API_PORT");
   const navigatedScreenshots = drainSpeculosScreenshots(speculosPort);
 
   let screenshots: Buffer[];

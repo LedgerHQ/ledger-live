@@ -103,7 +103,7 @@ describe("logic utils", () => {
   });
 
   beforeAll(() => {
-    oldStakingLedgerNodeIdEnv = getEnv("HEDERA_STAKING_LEDGER_NODE_ID");
+    oldStakingLedgerNodeIdEnv = getEnv<number>("HEDERA_STAKING_LEDGER_NODE_ID");
   });
 
   afterAll(async () => {

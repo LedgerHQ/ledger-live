@@ -243,7 +243,7 @@ export const retryWhileErrors =
           return throwError(() => error);
         }
 
-        return timer(getEnv("WITH_DEVICE_POLLING_DELAY"));
+        return timer(getEnv<number>("WITH_DEVICE_POLLING_DELAY"));
       }),
     );
 

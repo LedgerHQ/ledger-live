@@ -13,14 +13,14 @@ export const tezosConfig: Record<string, ConfigInfo> = {
         ],
       },
       baker: {
-        url: getEnv("API_TEZOS_BAKER"),
+        url: getEnv<string>("API_TEZOS_BAKER"),
       },
       explorer: {
-        url: getEnv("API_TEZOS_TZKT_API"),
-        maxTxQuery: getEnv("TEZOS_MAX_TX_QUERIES"),
+        url: getEnv<string>("API_TEZOS_TZKT_API"),
+        maxTxQuery: getEnv<number>("TEZOS_MAX_TX_QUERIES"),
       },
       node: {
-        url: getEnv("API_TEZOS_NODE"),
+        url: getEnv<string>("API_TEZOS_NODE"),
       },
       fees: {
         minGasLimit: 600,

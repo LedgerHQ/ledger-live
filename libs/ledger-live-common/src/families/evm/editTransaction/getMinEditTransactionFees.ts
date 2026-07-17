@@ -12,7 +12,7 @@ export const getMinLegacyFees = ({
 }: {
   gasPrice: BigNumber;
 }): { gasPrice: BigNumber } => {
-  const gasPriceFactor: number = getEnv("EVM_REPLACE_TX_LEGACY_GASPRICE_FACTOR");
+  const gasPriceFactor: number = getEnv<number>("EVM_REPLACE_TX_LEGACY_GASPRICE_FACTOR");
   return {
     gasPrice: gasPrice.times(gasPriceFactor).integerValue(BigNumber.ROUND_CEIL),
   };
@@ -33,8 +33,10 @@ export const getMinEip1559Fees = ({
   maxFeePerGas: BigNumber;
   maxPriorityFeePerGas: BigNumber;
 } => {
-  const maxFeePerGasFactor: number = getEnv("EVM_REPLACE_TX_EIP1559_MAXFEE_FACTOR");
-  const maxPriorityFeePerGasFactor: number = getEnv("EVM_REPLACE_TX_EIP1559_MAXPRIORITYFEE_FACTOR");
+  const maxFeePerGasFactor: number = getEnv<number>("EVM_REPLACE_TX_EIP1559_MAXFEE_FACTOR");
+  const maxPriorityFeePerGasFactor: number = getEnv<number>(
+    "EVM_REPLACE_TX_EIP1559_MAXPRIORITYFEE_FACTOR",
+  );
 
   return {
     maxFeePerGas: maxFeePerGas.times(maxFeePerGasFactor).integerValue(BigNumber.ROUND_CEIL),

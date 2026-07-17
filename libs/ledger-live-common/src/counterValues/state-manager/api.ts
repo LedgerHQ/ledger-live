@@ -17,7 +17,7 @@ const apiName = "counterValuesApi";
 
 export const counterValuesApi = createApi({
   reducerPath: apiName,
-  baseQuery: fetchBaseQuery({ baseUrl: getEnv("LEDGER_COUNTERVALUES_API") }),
+  baseQuery: fetchBaseQuery({ baseUrl: getEnv<string>("LEDGER_COUNTERVALUES_API") }),
   tagTypes: [Tags.CounterValueIdsSortedByMarketCap, Tags.UsdToFiatRate],
   onSchemaFailure: (error, { endpoint }) => onSchemaFailure({ apiName, endpoint, error }),
   endpoints: build => ({

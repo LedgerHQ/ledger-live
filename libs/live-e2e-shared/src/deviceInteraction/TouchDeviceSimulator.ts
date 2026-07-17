@@ -7,7 +7,7 @@ function getSpeculosInfo(): {
   speculosApiPort: number;
   speculosAddress: string;
 } {
-  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  const speculosApiPort = getEnv<number>("SPECULOS_API_PORT");
   const speculosAddress = getSpeculosAddress();
   return { speculosApiPort, speculosAddress };
 }

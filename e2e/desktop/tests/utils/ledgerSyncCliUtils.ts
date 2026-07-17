@@ -49,13 +49,13 @@ export class LedgerSyncCliHelper {
 
   private static cloudSyncApiBaseUrl =
     LedgerSyncCliHelper.environment == "PROD"
-      ? getEnv("CLOUD_SYNC_API_PROD")
-      : getEnv("CLOUD_SYNC_API_STAGING");
+      ? getEnv<string>("CLOUD_SYNC_API_PROD")
+      : getEnv<string>("CLOUD_SYNC_API_STAGING");
 
   private static apiBaseUrl =
     LedgerSyncCliHelper.environment == "PROD"
-      ? getEnv("TRUSTCHAIN_API_PROD")
-      : getEnv("TRUSTCHAIN_API_STAGING");
+      ? getEnv<string>("TRUSTCHAIN_API_PROD")
+      : getEnv<string>("TRUSTCHAIN_API_STAGING");
 
   static ledgerKeyRingProtocolArgs: LedgerKeyRingProtocolArgs = {
     pubKey: "",

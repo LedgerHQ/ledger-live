@@ -8,7 +8,7 @@ jest.mock("axios");
 const mockedAxios = jest.mocked(axios);
 
 // Add solana manually to the env until officially supported
-setEnv("NFT_CURRENCIES", [...getEnv("NFT_CURRENCIES"), "solana"]);
+setEnv("NFT_CURRENCIES", [...getEnv<string[]>("NFT_CURRENCIES"), "solana"]);
 
 const currencyId = "solana";
 const wrongCurrencyId = "bitcoin";

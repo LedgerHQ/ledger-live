@@ -38,7 +38,7 @@ fs.readdirSync(scenarioFolder).forEach(file => {
             {
               applicationId: opts?.applicationId ?? 16,
               name,
-              apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+              apiBaseUrl: getEnv<string>("TRUSTCHAIN_API_STAGING"),
             },
             withDevice,
           ),

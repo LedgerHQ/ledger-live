@@ -7,6 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default {
   ...baseConfig,
   rootDir: __dirname,
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   transform: {
     "^.+\.(t|j)sx?$": [
       "@swc/jest",

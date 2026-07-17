@@ -32,7 +32,7 @@ export function genuineCheckCommand(
 
   return createDeviceSocket(transport, {
     url: URL.format({
-      pathname: `${getEnv("BASE_SOCKET_URL")}/genuine`,
+      pathname: `${getEnv<string>("BASE_SOCKET_URL")}/genuine`,
       query: {
         targetId,
         perso,

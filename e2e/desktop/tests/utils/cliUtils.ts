@@ -26,7 +26,7 @@ import {
 export const CLI = {
   ledgerKeyRingProtocol: function (opts: LedgerKeyRingProtocolOpts) {
     const {
-      apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
+      apiBaseUrl = getEnv<string>("TRUSTCHAIN_API_STAGING"),
       applicationId = 16,
       name = "CLI",
       initMemberCredentials,
@@ -81,7 +81,7 @@ export const CLI = {
     const {
       applicationId = 16,
       name = "CLI",
-      apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING"),
+      apiBaseUrl = getEnv<string>("TRUSTCHAIN_API_STAGING"),
       pubKey,
       privateKey,
       rootId,

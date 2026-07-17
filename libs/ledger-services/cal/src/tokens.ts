@@ -89,7 +89,7 @@ export async function findToken(
   {
     env = "prod",
     signatureKind = "prod",
-    ref = getEnv("CAL_REF") || undefined,
+    ref = getEnv<string>("CAL_REF") || undefined,
   }: ServiceOption = DEFAULT_OPTION,
 ): Promise<TokenData> {
   let params: TokenRequest = {

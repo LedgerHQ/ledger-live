@@ -1,5 +1,7 @@
 import { getEnv } from "@ledgerhq/live-env";
 
 export function getTrustedDomain(env: "prod" | "test"): string {
-  return env === "prod" ? getEnv("NFT_METADATA_SERVICE") : "https://nft.api.live.ledger-test.com";
+  return env === "prod"
+    ? getEnv<string>("NFT_METADATA_SERVICE")
+    : "https://nft.api.live.ledger-test.com";
 }

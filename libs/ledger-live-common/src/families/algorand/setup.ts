@@ -18,7 +18,7 @@ import type { Resolver } from "../../hw/getAddress/types";
 
 // Initialize coin configuration
 setCoinConfig(() => {
-  const baseUrl = getEnv("API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT");
+  const baseUrl = getEnv<string>("API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT");
   return {
     status: { type: "active" },
     node: `${baseUrl}/ps2/v2`,

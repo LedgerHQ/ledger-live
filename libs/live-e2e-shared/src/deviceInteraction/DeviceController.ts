@@ -20,7 +20,7 @@ type DeviceControllerContext = {
   getButtonsController: () => ButtonsController;
 };
 
-const endpointKey = () => `${getSpeculosAddress()}:${getEnv("SPECULOS_API_PORT")}`;
+const endpointKey = () => `${getSpeculosAddress()}:${getEnv<number>("SPECULOS_API_PORT")}`;
 
 export const getDeviceControllerWithMemo = (() => {
   let cache: { key: string; client: DeviceControllerClient } | null = null;

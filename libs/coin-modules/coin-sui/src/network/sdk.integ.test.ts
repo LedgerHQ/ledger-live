@@ -30,8 +30,8 @@ describe("SUI SDK Integration tests", () => {
         type: "active",
       },
       node: {
-        url: getEnv("API_SUI_NODE_PROXY"),
-        graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
+        url: getEnv<string>("API_SUI_NODE_PROXY"),
+        graphqlUrl: getEnv<string>("API_SUI_GRAPHQL_PROXY"),
       },
       features: { graphql: false },
     }));
@@ -565,8 +565,8 @@ describe("SUI SDK Integration tests", () => {
       coinConfig.setCoinConfig(() => ({
         status: { type: "active" },
         node: {
-          url: getEnv("API_SUI_NODE_PROXY"),
-          graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
+          url: getEnv<string>("API_SUI_NODE_PROXY"),
+          graphqlUrl: getEnv<string>("API_SUI_GRAPHQL_PROXY"),
         },
         features: { graphql: false },
       }));

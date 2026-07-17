@@ -25,8 +25,8 @@ describe("createApi", () => {
       ...getMockedConfig(),
       useNetworkTimestamp: true,
       apiUrls: {
-        mirrorNode: getEnv("API_HEDERA_MIRROR"),
-        hgraph: getEnv("API_HEDERA_HGRAPH"),
+        mirrorNode: getEnv<string>("API_HEDERA_MIRROR"),
+        hgraph: getEnv<string>("API_HEDERA_HGRAPH"),
       },
     },
     "hedera",
@@ -863,7 +863,7 @@ describe("createApi", () => {
   });
 
   describe("listOperations", () => {
-    const rewardPayerAddress = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
+    const rewardPayerAddress = getEnv<string>("HEDERA_STAKING_REWARD_ACCOUNT_ID");
 
     it("returns empty array for pristine account", async () => {
       const { items: operations } = await api.listOperations(

@@ -48,7 +48,7 @@ export function flashMcuOrBootloaderCommand(
 
   return createDeviceSocket(transport, {
     url: URL.format({
-      pathname: `${getEnv("BASE_SOCKET_URL")}/mcu`,
+      pathname: `${getEnv<string>("BASE_SOCKET_URL")}/mcu`,
       query: {
         targetId,
         livecommonversion,

@@ -16,9 +16,9 @@ export function listAppsUseCase(
   return listApps({
     transport,
     deviceInfo,
-    deviceProxyModel: getEnv("DEVICE_PROXY_MODEL") as DeviceModelId,
+    deviceProxyModel: getEnv<string>("DEVICE_PROXY_MODEL") as DeviceModelId,
     managerApiRepository,
-    forceProvider: getEnv("FORCE_PROVIDER"),
-    managerDevModeEnabled: getEnv("MANAGER_DEV_MODE"),
+    forceProvider: getEnv<number>("FORCE_PROVIDER"),
+    managerDevModeEnabled: getEnv<boolean>("MANAGER_DEV_MODE"),
   });
 }

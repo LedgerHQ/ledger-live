@@ -33,8 +33,8 @@ describe("craftTransaction", () => {
       status: { type: "active" },
       networkType: "testnet",
       apiUrls: {
-        node: getEnv("ALEO_NODE_ENDPOINT"),
-        sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
+        node: getEnv<string>("ALEO_NODE_ENDPOINT"),
+        sdk: getEnv<string>("ALEO_TESTNET_SDK_ENDPOINT"),
       },
       feeByTransactionType: mockFeeByTransactionType,
       feeSafetyMultiplier: 1,

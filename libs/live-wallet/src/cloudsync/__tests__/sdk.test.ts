@@ -121,7 +121,7 @@ describe("CloudSyncSDK basics", () => {
     trustchainSdk = new MockSDK({
       applicationId: 16,
       name: "user",
-      apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+      apiBaseUrl: getEnv<string>("TRUSTCHAIN_API_STAGING"),
     });
 
     creds = await trustchainSdk.initMemberCredentials();
@@ -148,7 +148,7 @@ describe("CloudSyncSDK basics", () => {
     };
 
     sdk = new CloudSyncSDK({
-      apiBaseUrl: getEnv("CLOUD_SYNC_API_STAGING"),
+      apiBaseUrl: getEnv<string>("CLOUD_SYNC_API_STAGING"),
       slug: "test",
       schema: z.object({
         value: z.string(),
@@ -245,7 +245,7 @@ describe("CloudSyncSDK basics", () => {
     const trustchainSdk = new MockSDK({
       applicationId: 16,
       name: "user",
-      apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+      apiBaseUrl: getEnv<string>("TRUSTCHAIN_API_STAGING"),
     });
 
     const getCurrentVersion = () => version2;
@@ -266,7 +266,7 @@ describe("CloudSyncSDK basics", () => {
     };
 
     const sdk2 = new CloudSyncSDK({
-      apiBaseUrl: getEnv("CLOUD_SYNC_API_STAGING"),
+      apiBaseUrl: getEnv<string>("CLOUD_SYNC_API_STAGING"),
       slug: "test",
       schema: z.object({
         value: z.string(),

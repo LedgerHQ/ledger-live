@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 
-// @ts-expect-error sanity check on getEnv() not accepting incorrect key names
+// @ledgerhq/live-env is type-lossy by design; typed access is via @shared/live-env
 getEnv("yolo");
 
 test("typecheck env", () => {

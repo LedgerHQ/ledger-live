@@ -21,12 +21,12 @@ const getCurrencyConfig = (): IconCoinConfig => {
       type: "active",
     },
     infra: {
-      indexer: getEnv("ICON_INDEXER_ENDPOINT"),
-      indexer_testnet: getEnv("ICON_TESTNET_INDEXER_ENDPOINT"),
-      node_endpoint: getEnv("ICON_NODE_ENDPOINT"),
-      node_testnet_endpoint: getEnv("ICON_TESTNET_NODE_ENDPOINT"),
-      debug_endpoint: getEnv("ICON_DEBUG_ENDPOINT"),
-      debug_testnet_endpoint: getEnv("ICON_TESTNET_DEBUG_ENDPOINT"),
+      indexer: getEnv<string>("ICON_INDEXER_ENDPOINT"),
+      indexer_testnet: getEnv<string>("ICON_TESTNET_INDEXER_ENDPOINT"),
+      node_endpoint: getEnv<string>("ICON_NODE_ENDPOINT"),
+      node_testnet_endpoint: getEnv<string>("ICON_TESTNET_NODE_ENDPOINT"),
+      debug_endpoint: getEnv<string>("ICON_DEBUG_ENDPOINT"),
+      debug_testnet_endpoint: getEnv<string>("ICON_TESTNET_DEBUG_ENDPOINT"),
     },
   };
 };

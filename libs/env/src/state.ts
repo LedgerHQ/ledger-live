@@ -41,8 +41,8 @@ export function notifyChange(change: EnvChange): void {
 }
 
 export function injectDefinitions(defs: EnvDefs): void {
-  if (g.__ledgerLiveEnvState !== undefined)
-    throw new Error("[live-env] injectDefinitions() called twice");
+  // Idempotent: Jest reloads modules per test file but globalThis persists, so skip if already set.
+  if (g.__ledgerLiveEnvState !== undefined) return;
   const defaults = Object.fromEntries(Object.entries(defs).map(([k, d]) => [k, d.def]));
   g.__ledgerLiveEnvState = { definitions: defs, env: { ...defaults }, defaults };
 }

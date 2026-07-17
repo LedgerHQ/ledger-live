@@ -53,6 +53,7 @@
     "crypto-js": "4.2.0"
   },
   "devDependencies": {
+    "@shared/live-env": "workspace:*",
     "@ledgerhq/types-live": "workspace:^",
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "catalog:",

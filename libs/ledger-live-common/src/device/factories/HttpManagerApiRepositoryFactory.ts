@@ -8,7 +8,7 @@ export class HttpManagerApiRepositoryFactory {
 
   static getInstance() {
     if (!this.instance) {
-      this.instance = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), version);
+      this.instance = new HttpManagerApiRepository(getEnv<string>("MANAGER_API_BASE"), version);
     }
     return this.instance;
   }

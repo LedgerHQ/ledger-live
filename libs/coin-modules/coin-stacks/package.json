@@ -109,6 +109,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@shared/live-env": "workspace:*",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",

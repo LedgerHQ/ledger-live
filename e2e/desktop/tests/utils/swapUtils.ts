@@ -126,7 +126,7 @@ export async function ensureTokenApproval(
   console.log("CLI result: Current Allowance: ", currentAllowance);
   if (currentAllowance) return;
 
-  const previousSpeculosPort = getEnv("SPECULOS_API_PORT");
+  const previousSpeculosPort = getEnv<number>("SPECULOS_API_PORT");
   const speculos = await launchSpeculos(fromAccount.currency.speculosApp.name);
   try {
     const result = await approveTokenCommand(
@@ -148,7 +148,7 @@ export async function revokeTokenApproval(
 
   let allowance = await getTokenAllowanceCommand(fromAccount, provider.contractAddress);
   if (allowance !== "0") {
-    const previousSpeculosPort = getEnv("SPECULOS_API_PORT");
+    const previousSpeculosPort = getEnv<number>("SPECULOS_API_PORT");
     const speculos = await launchSpeculos(fromAccount.currency.speculosApp.name);
     try {
       const result = await revokeTokenCommand(fromAccount, provider.contractAddress);

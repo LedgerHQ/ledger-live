@@ -3,6 +3,7 @@ import {
   getEnv as _getEnv,
   setEnv as _setEnv,
   setEnvUnsafe as _setEnvUnsafe,
+  getEnvDefault as _getEnvDefault,
   changes,
 } from "@ledgerhq/live-env";
 import { allDefinitions } from "./definitions";
@@ -28,6 +29,10 @@ export type EnvValue<K extends EnvName> = InferDef<K>;
 
 export { changes };
 
+export function getEnvDefault<K extends EnvName>(name: K): InferDef<K> {
+  return _getEnvDefault(name) as InferDef<K>;
+}
+
 // Re-export framework utilities for consumers
 export {
   intParser,
@@ -36,7 +41,6 @@ export {
   stringParser,
   jsonParser,
   stringArrayParser,
-  getEnvDefault,
   isEnvDefault,
   getEnvDesc,
   getDefinition,

@@ -8,10 +8,12 @@ export type ServiceOption = {
 export const DEFAULT_OPTION: ServiceOption = {
   env: "prod",
   signatureKind: "prod",
-  ref: getEnv("CAL_REF") || undefined,
+  ref: getEnv<string>("CAL_REF") || undefined,
 };
 export const STAGING_ENV = { env: "test" } satisfies ServiceOption;
 
 export function getCALDomain(env: "prod" | "test"): string {
-  return env === "prod" ? getEnv("CAL_SERVICE_URL") : getEnv("CAL_SERVICE_URL_STAGING");
+  return env === "prod"
+    ? getEnv<string>("CAL_SERVICE_URL")
+    : getEnv<string>("CAL_SERVICE_URL_STAGING");
 }

@@ -11,8 +11,8 @@ describe("signOperation", () => {
         type: "active",
       },
       node: {
-        url: getEnv("API_SUI_NODE_PROXY"),
-        graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
+        url: getEnv<string>("API_SUI_NODE_PROXY"),
+        graphqlUrl: getEnv<string>("API_SUI_GRAPHQL_PROXY"),
       },
       features: { graphql: false },
     }));

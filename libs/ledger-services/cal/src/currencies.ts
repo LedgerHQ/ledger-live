@@ -55,7 +55,7 @@ export async function findCurrencyData(
   {
     env = "prod",
     signatureKind = "prod",
-    ref = getEnv("CAL_REF") || undefined,
+    ref = getEnv<string>("CAL_REF") || undefined,
   }: ServiceOption = DEFAULT_OPTION,
 ): Promise<CurrencyData> {
   // https://github.com/LedgerHQ/crypto-assets-service/blob/master/modules/service/src/main/scala/co/ledger/cal/service/api/ApiCALService.scala#L237

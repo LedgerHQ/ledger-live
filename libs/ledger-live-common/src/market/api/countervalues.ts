@@ -9,7 +9,7 @@ import {
 import URL from "url";
 import { getSortParam } from "../utils";
 
-const baseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
+const baseURL = () => getEnv<string>("LEDGER_COUNTERVALUES_API");
 
 // fetches currencies data for selected currencies ids
 export async function fetchList({

@@ -73,7 +73,7 @@ export const useBroadcast = ({
       }
 
       const commonLogEvent: CommonLogEvent = {
-        appVersion: getEnv("LEDGER_CLIENT_VERSION"),
+        appVersion: getEnv<string>("LEDGER_CLIENT_VERSION"),
         source: broadcastConfig?.source,
         currencyId: mainAccount.currency.id,
         family: mainAccount.currency.family,

@@ -8,7 +8,7 @@ const mockRemove = jest.fn();
 
 let mockNow = 0;
 
-jest.mock("@ledgerhq/live-common/hooks/useEnv", () => ({
+jest.mock("@features/platform-env", () => ({
   __esModule: true,
   default: jest.fn(),
 }));

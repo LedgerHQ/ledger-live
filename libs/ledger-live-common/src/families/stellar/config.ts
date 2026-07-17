@@ -10,11 +10,11 @@ export const stellarConfig: Record<string, ConfigInfo> = {
         features: [{ id: "blockchain_txs", status: "active" }],
       },
       explorer: {
-        url: getEnv("API_STELLAR_HORIZON"),
-        fetchLimit: getEnv("API_STELLAR_HORIZON_FETCH_LIMIT"),
+        url: getEnv<string>("API_STELLAR_HORIZON"),
+        fetchLimit: getEnv<number>("API_STELLAR_HORIZON_FETCH_LIMIT"),
       },
-      useStaticFees: getEnv("API_STELLAR_HORIZON_STATIC_FEE"),
-      enableNetworkLogs: getEnv("ENABLE_NETWORK_LOGS"),
+      useStaticFees: getEnv<boolean>("API_STELLAR_HORIZON_STATIC_FEE"),
+      enableNetworkLogs: getEnv<boolean>("ENABLE_NETWORK_LOGS"),
     },
   },
 };

@@ -122,6 +122,7 @@
   },
   "devDependencies": {
     "@ledgerhq/cryptoassets": "workspace:^",
+    "@shared/live-env": "workspace:*",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",

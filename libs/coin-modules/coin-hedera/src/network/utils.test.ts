@@ -109,7 +109,7 @@ describe("network utils", () => {
 
   describe("parseTransfers", () => {
     const userAddress = "0.0.1234";
-    const rewardPayer = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
+    const rewardPayer = getEnv<string>("HEDERA_STAKING_REWARD_ACCOUNT_ID");
 
     it("should correctly identify an incoming transfer", () => {
       const transfers = [

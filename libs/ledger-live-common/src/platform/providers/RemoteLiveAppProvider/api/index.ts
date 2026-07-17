@@ -11,7 +11,7 @@ const api = {
       if (getEnv("MOCK_REMOTE_LIVE_MANIFEST")) {
         return [
           ...mockData,
-          ...JSON.parse(getEnv("MOCK_REMOTE_LIVE_MANIFEST")),
+          ...JSON.parse(getEnv<string>("MOCK_REMOTE_LIVE_MANIFEST")),
         ] as LiveAppManifest[];
       }
       return mockData as LiveAppManifest[];

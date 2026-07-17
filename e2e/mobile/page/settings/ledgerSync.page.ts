@@ -86,9 +86,13 @@ export default class LedgerSyncPage {
   async initializeLedgerKeyRingProtocol() {
     const environment = JSON.parse(await getFlags()).llmWalletSync.params?.environment;
     this.ledgerKeyRingProtocolArgs.apiBaseUrl =
-      environment == "PROD" ? getEnv("TRUSTCHAIN_API_PROD") : getEnv("TRUSTCHAIN_API_STAGING");
+      environment == "PROD"
+        ? getEnv<string>("TRUSTCHAIN_API_PROD")
+        : getEnv<string>("TRUSTCHAIN_API_STAGING");
     this.ledgerSyncPushDataArgs.cloudSyncApiBaseUrl =
-      environment == "PROD" ? getEnv("CLOUD_SYNC_API_PROD") : getEnv("CLOUD_SYNC_API_STAGING");
+      environment == "PROD"
+        ? getEnv<string>("CLOUD_SYNC_API_PROD")
+        : getEnv<string>("CLOUD_SYNC_API_STAGING");
 
     return CLI.ledgerKeyRingProtocol({
       initMemberCredentials: true,

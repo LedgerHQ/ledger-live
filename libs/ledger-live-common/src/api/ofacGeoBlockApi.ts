@@ -4,7 +4,7 @@ import { getEnv } from "@ledgerhq/live-env";
 export const ofacGeoBlockApi = createApi({
   reducerPath: "ofacGeoBlockApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: getEnv("LEDGER_COUNTERVALUES_API"),
+    baseUrl: getEnv<string>("LEDGER_COUNTERVALUES_API"),
     validateStatus: response => [200, 451].includes(response.status), // Treat both 200 (not blocked) and 451 (blocked) as successful responses
   }),
 

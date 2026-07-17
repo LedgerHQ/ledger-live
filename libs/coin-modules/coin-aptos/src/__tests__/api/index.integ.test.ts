@@ -10,8 +10,8 @@ describe("createApi", () => {
   const api = createApi({
     aptosSettings: {
       network: Network.MAINNET,
-      fullnode: getEnv("APTOS_API_ENDPOINT"),
-      indexer: getEnv("APTOS_INDEXER_ENDPOINT"),
+      fullnode: getEnv<string>("APTOS_API_ENDPOINT"),
+      indexer: getEnv<string>("APTOS_INDEXER_ENDPOINT"),
     },
   });
   const assetTypeNative = "native";

@@ -8,7 +8,7 @@ import {
 import { rangeDataTable } from "../utils/rangeDataTable";
 import URL from "url";
 
-const baseURL = getEnv("COINGECKO_API_URL");
+const baseURL = getEnv<string>("COINGECKO_API_URL");
 
 export async function supportedCounterCurrencies(): Promise<string[]> {
   const url = `${baseURL}/simple/supported_vs_currencies`;

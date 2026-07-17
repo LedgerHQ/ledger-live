@@ -48,7 +48,7 @@ export const syncNewAccountsToImport = async (
   const selectedItems = items.filter(item => selectedAccounts.includes(item.account.id));
   const synchronized: Record<string, Account> = {};
   const failed: Record<string, Error> = {};
-  await promiseAllBatched(getEnv("SYNC_MAX_CONCURRENT"), selectedItems, async ({ account }) => {
+  await promiseAllBatched(getEnv<number>("SYNC_MAX_CONCURRENT"), selectedItems, async ({ account }) => {
     try {
       const bridge = await getAccountBridge(account);
       await bridgeCache.prepareCurrency(account.currency);

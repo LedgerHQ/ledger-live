@@ -15,7 +15,7 @@ let instance: DeviceManagementKit | null = null;
 
 export const getDeviceManagementKit = (): DeviceManagementKit => {
   if (!instance) {
-    const userId = getEnv("USER_ID");
+    const userId = getEnv<string>("USER_ID");
     const firmwareDistributionSalt = UserHashService.compute(userId).firmwareSalt;
     tracer.trace("Initialize DeviceManagementKit", {
       firmwareDistributionSalt,

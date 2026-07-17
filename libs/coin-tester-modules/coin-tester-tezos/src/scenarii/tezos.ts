@@ -145,7 +145,7 @@ export const scenarioTezosTz1: Scenario<GenericTransaction, Account> = {
     // Configure the coin module to talk to our local node and mock TzKT.
     const localConfig = {
       status: { type: "active" as const },
-      baker: { url: getEnv("API_TEZOS_BAKER") },
+      baker: { url: getEnv<string>("API_TEZOS_BAKER") },
       explorer: { url: TZKT_MOCK_URL, maxTxQuery: 100 },
       node: { url: TEZOS_RPC },
       fees: {
@@ -234,7 +234,7 @@ export const scenarioTezosTz2: Scenario<GenericTransaction, Account> = {
 
     const localConfig = {
       status: { type: "active" as const },
-      baker: { url: getEnv("API_TEZOS_BAKER") },
+      baker: { url: getEnv<string>("API_TEZOS_BAKER") },
       explorer: { url: TZKT_MOCK_URL, maxTxQuery: 100 },
       node: { url: TEZOS_RPC },
       fees: {

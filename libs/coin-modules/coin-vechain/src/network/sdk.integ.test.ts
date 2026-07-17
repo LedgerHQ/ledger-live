@@ -4,7 +4,7 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { EventLog, TransferLog, VetTxsQuery } from "../types";
 
-const BASE_URL = getEnv("API_VECHAIN_THOREST");
+const BASE_URL = getEnv<string>("API_VECHAIN_THOREST");
 const LAST_BLOCK_COUNT = 24580112;
 const MAX_OPS_IN_BLOCK_RANGE = 1000;
 const N_OPS_IN_BLOCK = 3;

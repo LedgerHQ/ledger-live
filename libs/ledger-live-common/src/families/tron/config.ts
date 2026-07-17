@@ -13,7 +13,7 @@ export const tronConfig: Record<string, ConfigInfo> = {
         ],
       },
       explorer: {
-        url: getEnv("API_TRONGRID_PROXY"),
+        url: getEnv<string>("API_TRONGRID_PROXY"),
       },
     },
   },

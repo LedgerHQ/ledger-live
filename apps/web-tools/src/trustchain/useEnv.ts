@@ -7,7 +7,7 @@ export default function useEnv<Name extends EnvName>(type: Name): EnvValue<Name>
   useEffect(() => {
     const sub = changes.subscribe(({ name, value }) => {
       if (type === name) {
-        setEnv(value);
+        setEnv(value as EnvValue<Name>);
       }
     });
     return () => sub.unsubscribe();

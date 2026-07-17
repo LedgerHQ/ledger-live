@@ -1,4 +1,3 @@
-import "@shared/live-env";
 import Config from "react-native-config";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 import { listen } from "@ledgerhq/logs";

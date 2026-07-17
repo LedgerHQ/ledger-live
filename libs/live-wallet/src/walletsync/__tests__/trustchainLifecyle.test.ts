@@ -54,7 +54,7 @@ describe("trustchainLifecycle", () => {
     const mockTrustchainSdk = new MockSDK({
       applicationId: 16,
       name: "user",
-      apiBaseUrl: getEnv("TRUSTCHAIN_API_STAGING"),
+      apiBaseUrl: getEnv<string>("TRUSTCHAIN_API_STAGING"),
     });
     const creds = await mockTrustchainSdk.initMemberCredentials();
 

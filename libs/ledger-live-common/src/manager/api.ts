@@ -112,7 +112,7 @@ const listApps: () => Promise<Array<Application>> = makeLRUCache(
     const { data } = await network({
       method: "GET",
       url: URL.format({
-        pathname: `${getEnv("MANAGER_API_BASE")}/applications`,
+        pathname: `${getEnv<string>("MANAGER_API_BASE")}/applications`,
         query: {
           livecommonversion,
         },
@@ -125,14 +125,14 @@ const listApps: () => Promise<Array<Application>> = makeLRUCache(
 
     return data;
   },
-  () => getEnv("MANAGER_API_BASE"),
+  () => getEnv<string>("MANAGER_API_BASE"),
 );
 
 const listCategories = async (): Promise<Array<Category>> => {
   const r = await network({
     method: "GET",
     url: URL.format({
-      pathname: `${getEnv("MANAGER_API_BASE")}/categories`,
+      pathname: `${getEnv<string>("MANAGER_API_BASE")}/categories`,
       query: {
         livecommonversion,
       },
@@ -177,7 +177,7 @@ const getLanguagePackagesForDevice = async (deviceInfo: DeviceInfo): Promise<Lan
   const { data }: { data: LanguagePackageResponse[] } = await network({
     method: "GET",
     url: URL.format({
-      pathname: `${getEnv("MANAGER_API_BASE")}/language-package`,
+      pathname: `${getEnv<string>("MANAGER_API_BASE")}/language-package`,
       query: {
         livecommonversion,
       },
@@ -213,7 +213,7 @@ const getCurrentOSU: (input: {
     const { data } = await network({
       method: "GET",
       url: URL.format({
-        pathname: `${getEnv("MANAGER_API_BASE")}/get_osu_version`,
+        pathname: `${getEnv<string>("MANAGER_API_BASE")}/get_osu_version`,
         query: {
           livecommonversion,
           device_version: input.deviceId,
@@ -224,7 +224,7 @@ const getCurrentOSU: (input: {
     });
     return data;
   },
-  a => `${getEnv("MANAGER_API_BASE")}_${a.version}_${a.deviceId}_${a.provider}`,
+  a => `${getEnv<string>("MANAGER_API_BASE")}_${a.version}_${a.deviceId}_${a.provider}`,
 );
 const getCurrentFirmware: (input: {
   version: string;
@@ -239,7 +239,7 @@ const getCurrentFirmware: (input: {
     } = await network({
       method: "GET",
       url: URL.format({
-        pathname: `${getEnv("MANAGER_API_BASE")}/get_firmware_version`,
+        pathname: `${getEnv<string>("MANAGER_API_BASE")}/get_firmware_version`,
         query: {
           livecommonversion,
           device_version: input.deviceId,
@@ -256,7 +256,7 @@ const getCurrentFirmware: (input: {
     });
     return data;
   },
-  a => `${getEnv("MANAGER_API_BASE")}_${a.version}_${a.deviceId}_${a.provider}`,
+  a => `${getEnv<string>("MANAGER_API_BASE")}_${a.version}_${a.deviceId}_${a.provider}`,
 );
 const getFinalFirmwareById: (id: number) => Promise<FinalFirmware> = makeLRUCache(
   async id => {
@@ -267,7 +267,7 @@ const getFinalFirmwareById: (id: number) => Promise<FinalFirmware> = makeLRUCach
     } = await network({
       method: "GET",
       url: URL.format({
-        pathname: `${getEnv("MANAGER_API_BASE")}/firmware_final_versions/${id}`,
+        pathname: `${getEnv<string>("MANAGER_API_BASE")}/firmware_final_versions/${id}`,
         query: {
           livecommonversion,
         },
@@ -275,7 +275,7 @@ const getFinalFirmwareById: (id: number) => Promise<FinalFirmware> = makeLRUCach
     });
     return data;
   },
-  id => `${getEnv("MANAGER_API_BASE")}}_${String(id)}`,
+  id => `${getEnv<string>("MANAGER_API_BASE")}}_${String(id)}`,
 );
 
 const getDeviceVersion: (targetId: string | number, provider: number) => Promise<DeviceVersion> =
@@ -288,7 +288,7 @@ const getDeviceVersion: (targetId: string | number, provider: number) => Promise
       } = await network({
         method: "GET",
         url: URL.format({
-          pathname: `${getEnv("MANAGER_API_BASE")}/get_device_version`,
+          pathname: `${getEnv<string>("MANAGER_API_BASE")}/get_device_version`,
           query: {
             livecommonversion,
             provider,
@@ -307,7 +307,7 @@ const getDeviceVersion: (targetId: string | number, provider: number) => Promise
       });
       return data;
     },
-    (targetId, provider) => `${getEnv("MANAGER_API_BASE")}_${targetId}_${provider}`,
+    (targetId, provider) => `${getEnv<string>("MANAGER_API_BASE")}_${targetId}_${provider}`,
   );
 
 const install = (
@@ -323,7 +323,7 @@ const install = (
   log("manager", "install " + context, params);
   return createDeviceSocket(transport, {
     url: URL.format({
-      pathname: `${getEnv("BASE_SOCKET_URL")}/install`,
+      pathname: `${getEnv<string>("BASE_SOCKET_URL")}/install`,
       query: { ...params, livecommonversion },
     }),
     unresponsiveExpectedDuringBulk,
@@ -350,7 +350,7 @@ const genuineCheck = (
   });
   return createDeviceSocket(transport, {
     url: URL.format({
-      pathname: `${getEnv("BASE_SOCKET_URL")}/genuine`,
+      pathname: `${getEnv<string>("BASE_SOCKET_URL")}/genuine`,
       query: {
         targetId,
         perso,
@@ -404,7 +404,7 @@ const listInstalledApps = (
   });
   return createDeviceSocket(transport, {
     url: URL.format({
-      pathname: `${getEnv("BASE_SOCKET_URL")}/apps/list`,
+      pathname: `${getEnv<string>("BASE_SOCKET_URL")}/apps/list`,
       query: {
         targetId,
         perso,
@@ -458,7 +458,7 @@ const installMcu = (
 
   return createDeviceSocket(transport, {
     url: URL.format({
-      pathname: `${getEnv("BASE_SOCKET_URL")}/mcu`,
+      pathname: `${getEnv<string>("BASE_SOCKET_URL")}/mcu`,
       query: {
         targetId,
         version,

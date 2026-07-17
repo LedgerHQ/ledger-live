@@ -41,7 +41,7 @@ function transformSupportedCounterCurrenciesResponse(response: unknown): string[
 export const cgApi = createApi({
   reducerPath: "cgApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: getEnv("COINGECKO_API_URL"),
+    baseUrl: getEnv<string>("COINGECKO_API_URL"),
   }),
   tagTypes: [GcDataTags.Coins, GcDataTags.CounterCurrencies],
   endpoints: build => ({

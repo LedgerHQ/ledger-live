@@ -19,12 +19,12 @@ const api = {
       }>({
         method: "GET",
         headers,
-        url: `${getEnv("BUY_API_BASE")}/provider/currencies?${currencyParam}`,
+        url: `${getEnv<string>("BUY_API_BASE")}/provider/currencies?${currencyParam}`,
       }),
       network<CurrenciesPerProvider>({
         method: "GET",
         headers,
-        url: `${getEnv("SELL_API_BASE")}/provider/currencies?${currencyParam}`,
+        url: `${getEnv<string>("SELL_API_BASE")}/provider/currencies?${currencyParam}`,
       }),
     ]);
 

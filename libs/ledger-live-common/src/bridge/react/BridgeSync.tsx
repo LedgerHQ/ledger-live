@@ -264,7 +264,7 @@ function useSyncQueue({
   const [syncQueue] = useState(() =>
     priorityQueue(
       (job: SyncJob, next: () => void) => synchronizeRef.current(job, next),
-      getEnv("SYNC_MAX_CONCURRENT"),
+      getEnv<number>("SYNC_MAX_CONCURRENT"),
     ),
   );
   return [syncQueue, bridgeSyncState];
@@ -373,10 +373,10 @@ function useSyncBackground({ sync }) {
         type: "BACKGROUND_TICK",
         reason,
       });
-      syncTimeout = setTimeout(syncLoop, getEnv("SYNC_ALL_INTERVAL"), "background");
+      syncTimeout = setTimeout(syncLoop, getEnv<number>("SYNC_ALL_INTERVAL"), "background");
     };
 
-    syncTimeout = setTimeout(syncLoop, getEnv("SYNC_BOOT_DELAY"), "initial");
+    syncTimeout = setTimeout(syncLoop, getEnv<number>("SYNC_BOOT_DELAY"), "initial");
     return () => clearTimeout(syncTimeout);
   }, [sync]);
 }
@@ -395,7 +395,7 @@ function useSyncContinouslyPendingOperations({ sync, accounts }) {
     let timeout;
 
     const update = () => {
-      timeout = setTimeout(update, getEnv("SYNC_PENDING_INTERVAL"));
+      timeout = setTimeout(update, getEnv<number>("SYNC_PENDING_INTERVAL"));
       if (!refIds.current.length) return;
       sync({
         type: "SYNC_SOME_ACCOUNTS",
@@ -405,7 +405,7 @@ function useSyncContinouslyPendingOperations({ sync, accounts }) {
       });
     };
 
-    timeout = setTimeout(update, getEnv("SYNC_PENDING_INTERVAL"));
+    timeout = setTimeout(update, getEnv<number>("SYNC_PENDING_INTERVAL"));
     return () => clearTimeout(timeout);
   }, [sync]);
 }

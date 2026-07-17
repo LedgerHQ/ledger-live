@@ -33,7 +33,7 @@ const TRENDING_MARKETS_PAGE_SIZE = 50;
 export const marketApi = createApi({
   reducerPath: "marketApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: getEnv("LEDGER_COUNTERVALUES_API"),
+    baseUrl: getEnv<string>("LEDGER_COUNTERVALUES_API"),
   }),
   tagTypes: [
     MarketDataTags.Performers,

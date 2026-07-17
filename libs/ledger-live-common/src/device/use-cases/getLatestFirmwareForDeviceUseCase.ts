@@ -13,7 +13,7 @@ export function getLatestFirmwareForDeviceUseCase(
   return getLatestFirmwareForDevice({
     deviceInfo,
     providerId: getProviderId(deviceInfo),
-    userId: getEnv("USER_ID"),
+    userId: getEnv<string>("USER_ID"),
     managerApiRepository,
   });
 }

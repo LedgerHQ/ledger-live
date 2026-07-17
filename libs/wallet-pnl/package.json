@@ -37,6 +37,7 @@
     }
   },
   "devDependencies": {
+    "@shared/live-env": "workspace:*",
     "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",

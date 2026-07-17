@@ -104,7 +104,7 @@ const cryptoAssetsApiInstance = createApi({
   endpoints: build => ({
     findTokenById: build.query<TokenCurrency | undefined, TokenByIdParams>({
       query: params => {
-        const baseUrl = getEnv("CAL_SERVICE_URL");
+        const baseUrl = getEnv<string>("CAL_SERVICE_URL");
         return {
           url: `${baseUrl}/v1/tokens`,
           params: {
@@ -123,7 +123,7 @@ const cryptoAssetsApiInstance = createApi({
       TokenByAddressInCurrencyParams
     >({
       query: params => {
-        const baseUrl = getEnv("CAL_SERVICE_URL");
+        const baseUrl = getEnv<string>("CAL_SERVICE_URL");
         return {
           url: `${baseUrl}/v1/tokens`,
           params: {
@@ -144,7 +144,7 @@ const cryptoAssetsApiInstance = createApi({
     getTokensSyncHash: build.query<string, string>({
       queryFn: async currencyId => {
         try {
-          const baseUrl = getEnv("CAL_SERVICE_URL");
+          const baseUrl = getEnv<string>("CAL_SERVICE_URL");
           const url = new URL(`${baseUrl}/v1/currencies`);
           url.searchParams.set("output", "id");
           url.searchParams.set("limit", "1");
@@ -234,7 +234,7 @@ const cryptoAssetsApiInstance = createApi({
           ...(ref && { ref }),
         };
 
-        const baseUrl = isStaging ? getEnv("CAL_SERVICE_URL_STAGING") : getEnv("CAL_SERVICE_URL");
+        const baseUrl = isStaging ? getEnv<string>("CAL_SERVICE_URL_STAGING") : getEnv<string>("CAL_SERVICE_URL");
 
         return {
           url: `${baseUrl}/v1/tokens`,

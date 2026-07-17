@@ -13,17 +13,17 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         ],
       },
       sidecar: {
-        url: getEnv("API_POLKADOT_SIDECAR"),
-        credentials: getEnv("API_POLKADOT_SIDECAR_CREDENTIALS"),
+        url: getEnv<string>("API_POLKADOT_SIDECAR"),
+        credentials: getEnv<string>("API_POLKADOT_SIDECAR_CREDENTIALS"),
       },
       indexer: {
-        url: getEnv("API_POLKADOT_INDEXER"),
+        url: getEnv<string>("API_POLKADOT_INDEXER"),
       },
       node: {
-        url: getEnv("API_POLKADOT_NODE"),
+        url: getEnv<string>("API_POLKADOT_NODE"),
       },
       staking: {
-        electionStatusThreshold: getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD"),
+        electionStatusThreshold: getEnv<number>("POLKADOT_ELECTION_STATUS_THRESHOLD"),
       },
     },
   },
@@ -44,7 +44,7 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com",
       },
       staking: {
-        electionStatusThreshold: getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD"),
+        electionStatusThreshold: getEnv<number>("POLKADOT_ELECTION_STATUS_THRESHOLD"),
       },
       indexer: {
         url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",

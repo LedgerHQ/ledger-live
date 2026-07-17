@@ -25,6 +25,7 @@
     "@ledgerhq/types-live": "workspace:*"
   },
   "devDependencies": {
+    "@shared/live-env": "workspace:*",
     "@ledgerhq/cryptoassets": "workspace:*",
     "@types/node": "catalog:",
     "@types/jest": "catalog:",

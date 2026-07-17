@@ -28,7 +28,7 @@ export function troubleshoot(): Troubleshoot[] {
       title: "My Ledger services (scriptrunner)",
       translationKey: "troubleshootNetwork.myLedgerServices",
       ...websocketConnects(
-        `${getEnv(
+        `${getEnv<string>(
           "BASE_SOCKET_URL",
         )}/apps/list?targetId=856686596&perso=perso_11&livecommonversion=27.7.2`, // TODO have a dummy echo endpoint
       ),
@@ -36,17 +36,19 @@ export function troubleshoot(): Troubleshoot[] {
     {
       title: "Bitcoin explorers",
       translationKey: "troubleshootNetwork.bitcoinExplorers",
-      ...httpGet(getEnv("EXPLORER") + "/blockchain/v4/btc/block/current"),
+      ...httpGet(getEnv<string>("EXPLORER") + "/blockchain/v4/btc/block/current"),
     },
     {
       title: "Ethereum explorers",
       translationKey: "troubleshootNetwork.ethereumExplorers",
-      ...httpGet(getEnv("EXPLORER") + "/blockchain/v4/eth/block/current"),
+      ...httpGet(getEnv<string>("EXPLORER") + "/blockchain/v4/eth/block/current"),
     },
     {
       title: "Countervalues API",
       translationKey: "troubleshootNetwork.countervaluesApi",
-      ...httpGet(`${getEnv("LEDGER_COUNTERVALUES_API")}/v3/spot/simple?froms=bitcoin&to=eur`),
+      ...httpGet(
+        `${getEnv<string>("LEDGER_COUNTERVALUES_API")}/v3/spot/simple?froms=bitcoin&to=eur`,
+      ),
     },
     {
       title: "Status",

@@ -12,8 +12,8 @@ export const hederaConfig: Record<string, ConfigInfo> = {
       useNetworkTimestamp: true,
       networkType: "mainnet",
       apiUrls: {
-        mirrorNode: getEnv("API_HEDERA_MIRROR"),
-        hgraph: getEnv("API_HEDERA_HGRAPH"),
+        mirrorNode: getEnv<string>("API_HEDERA_MIRROR"),
+        hgraph: getEnv<string>("API_HEDERA_HGRAPH"),
       },
     },
   },
@@ -27,8 +27,8 @@ export const hederaConfig: Record<string, ConfigInfo> = {
       useNetworkTimestamp: true,
       networkType: "testnet",
       apiUrls: {
-        mirrorNode: getEnv("API_HEDERA_MIRROR_TESTNET"),
-        hgraph: getEnv("API_HEDERA_HGRAPH_TESTNET"),
+        mirrorNode: getEnv<string>("API_HEDERA_MIRROR_TESTNET"),
+        hgraph: getEnv<string>("API_HEDERA_HGRAPH_TESTNET"),
       },
     },
   },

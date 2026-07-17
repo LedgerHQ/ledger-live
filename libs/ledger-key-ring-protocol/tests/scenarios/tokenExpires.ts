@@ -4,7 +4,7 @@ import { SDK } from "../../src/sdk";
 import { getEnv } from "@ledgerhq/live-env";
 
 export async function scenario(deviceId: string, { withDevice, pauseRecorder }: ScenarioOptions) {
-  const apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING");
+  const apiBaseUrl = getEnv<string>("TRUSTCHAIN_API_STAGING");
   const hwDeviceProvider = new HWDeviceProvider(apiBaseUrl, withDevice);
   const applicationId = 16;
   const sdk = new SDK({ applicationId, name: "Foo", apiBaseUrl }, hwDeviceProvider);

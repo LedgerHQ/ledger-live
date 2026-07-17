@@ -13,8 +13,8 @@ export const suiConfig: Record<string, ConfigInfo> = {
         features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
-        url: getEnv("API_SUI_NODE_PROXY"),
-        graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
+        url: getEnv<string>("API_SUI_NODE_PROXY"),
+        graphqlUrl: getEnv<string>("API_SUI_GRAPHQL_PROXY"),
       },
     },
   },
@@ -26,8 +26,8 @@ export const suiConfig: Record<string, ConfigInfo> = {
         features: [{ id: "blockchain_txs", status: "active" }],
       },
       node: {
-        url: getEnv("API_SUI_TESTNET_NODE_PROXY"),
-        graphqlUrl: getEnv("API_SUI_TESTNET_GRAPHQL_PROXY"),
+        url: getEnv<string>("API_SUI_TESTNET_NODE_PROXY"),
+        graphqlUrl: getEnv<string>("API_SUI_TESTNET_GRAPHQL_PROXY"),
       },
     },
   },

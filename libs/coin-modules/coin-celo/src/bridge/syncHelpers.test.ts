@@ -279,7 +279,7 @@ describe("Celo sync helpers", () => {
 
     let oldEnv: string[];
     beforeAll(() => {
-      oldEnv = getEnv("NFT_CURRENCIES");
+      oldEnv = getEnv<string[]>("NFT_CURRENCIES");
     });
 
     beforeEach(() => {

@@ -46,7 +46,7 @@ export const runAppOp = ({
       type: "runStart",
       appOp,
     }), // we need to allow a 1s delay for the action to be achieved without glitch (bug in old firmware when you do things too closely)
-    defer(() => delay(getEnv("MANAGER_INSTALL_DELAY"))).pipe(ignoreElements()),
+    defer(() => delay(getEnv<number>("MANAGER_INSTALL_DELAY"))).pipe(ignoreElements()),
     defer(() =>
       exec({
         appOp,

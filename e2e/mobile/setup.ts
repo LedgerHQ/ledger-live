@@ -1,3 +1,4 @@
+import "@shared/live-env";
 import { device, log } from "detox";
 import { launchApp, setupEnvironment } from "./helpers/commonHelpers";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";

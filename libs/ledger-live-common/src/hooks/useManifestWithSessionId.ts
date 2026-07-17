@@ -30,7 +30,7 @@ export function useManifestWithSessionId({ manifest, shareAnalytics }: Options):
       setLoading(true);
 
       try {
-        const response = await fetch(getEnv("PROVIDER_SESSION_ID_ENDPOINT"), {
+        const response = await fetch(getEnv<string>("PROVIDER_SESSION_ID_ENDPOINT"), {
           method: "GET",
           headers: {
             Accept: "application/json",

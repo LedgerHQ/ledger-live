@@ -837,7 +837,7 @@ describe("listOperationsV2", () => {
         hash: utils.createStakingRewardOperationHash(mockTransaction.transaction_hash ?? ""),
         value: new BigNumber(1000000),
         fee: new BigNumber(0),
-        senders: [getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID")],
+        senders: [getEnv<string>("HEDERA_STAKING_REWARD_ACCOUNT_ID")],
         recipients: [mockMirrorAccount.account],
       },
       {

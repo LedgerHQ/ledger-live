@@ -6,7 +6,7 @@ import { formatPerGranularity, inferCurrencyAPIID, pairId } from "../helpers";
 import type { BatchStrategySolver, CounterValuesAPI, TrackingPair } from "../types";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 
-const baseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
+const baseURL = () => getEnv<string>("LEDGER_COUNTERVALUES_API");
 
 const LATEST_CHUNK = 50;
 

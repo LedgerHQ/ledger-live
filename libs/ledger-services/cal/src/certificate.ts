@@ -101,7 +101,7 @@ export async function getCertificate(
   {
     env = "prod",
     signatureKind = "prod",
-    ref = getEnv("CAL_REF") || undefined,
+    ref = getEnv<string>("CAL_REF") || undefined,
   }: ServiceOption = DEFAULT_OPTION,
 ): Promise<CertificateInfo> {
   let params: Record<string, string | boolean | number | undefined> = {

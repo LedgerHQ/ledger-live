@@ -173,8 +173,11 @@ export const enabledExperimentalFeatures = (): string[] =>
     }
   };
 
+  let saveQueue = Promise.resolve();
   changes.subscribe(({ name, value }) => {
-    saveEnvs(name, value).catch(console.error);
+    saveQueue = saveQueue
+      .then(() => saveEnvs(name, value))
+      .catch(err => logger.critical(err as Error));
   });
 })();
 

@@ -46,6 +46,7 @@
     "@domain/entity-currency-crypto": "workspace:^",
     "@domain/entity-currency-fiat": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@shared/live-env": "workspace:*",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
