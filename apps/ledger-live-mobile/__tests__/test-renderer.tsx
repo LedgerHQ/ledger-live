@@ -1,5 +1,6 @@
 import { BottomSheetModalProvider } from "@ledgerhq/lumen-ui-rnative";
 import { initialIdentitiesState } from "@ledgerhq/client-ids/store";
+import { contactsInitialState } from "@domain/entity-contact";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
@@ -64,6 +65,7 @@ const INITIAL_STATE: State = {
   ble: BLE_INITIAL_STATE,
   borrow: BORROW_INITIAL_STATE,
   countervalues: COUNTERVALUES_INITIAL_STATE,
+  contacts: contactsInitialState,
   dynamicContent: DYNAMIC_CONTENT_INITIAL_STATE,
   earn: EARN_INITIAL_STATE,
   // Seed the boot-readiness gate as settled so tests mounting `WaitForAppReady` don't block.
