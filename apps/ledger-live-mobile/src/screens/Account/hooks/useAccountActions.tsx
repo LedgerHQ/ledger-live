@@ -4,6 +4,8 @@ import {
   getAccountCurrency,
   getMainAccount,
   getAccountSpendableBalance,
+  isSendDisabledForFamily,
+  isReceiveDisabledForFamily,
 } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useSelector } from "~/context/hooks";
@@ -292,8 +294,12 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     ],
   );
 
-  const mainActions = useMemo(
-    () => [
+  const mainActions = useMemo(() => {
+    const family = mainAccount.currency.family;
+    const canSend = !readOnlyModeEnabled && !isSendDisabledForFamily(family);
+    const canReceive = !isReceiveDisabledForFamily(family);
+
+    return [
       ...(availableOnSwap ? [actionButtonSwap] : []),
       ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
       ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
@@ -303,25 +309,25 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
             action => action.id !== "stake" || shouldShowLedgerLiveStakeAction,
           ) // keep the Ledger Live stake action only when no platform app stake action is available
         : []),
-      ...(!readOnlyModeEnabled ? [SendAction] : []),
-      ReceiveAction,
-    ],
-    [
-      availableOnSwap,
-      readOnlyModeEnabled,
-      canBeBought,
-      canBeSold,
-      canStakeUsingPlatformApp,
-      StakeAction,
-      familySpecificMainActions,
-      shouldShowLedgerLiveStakeAction,
-      actionButtonSwap,
-      actionButtonBuy,
-      actionButtonSell,
-      SendAction,
-      ReceiveAction,
-    ],
-  );
+      ...(canSend ? [SendAction] : []),
+      ...(canReceive ? [ReceiveAction] : []),
+    ];
+  }, [
+    availableOnSwap,
+    readOnlyModeEnabled,
+    canBeBought,
+    canBeSold,
+    canStakeUsingPlatformApp,
+    StakeAction,
+    familySpecificMainActions,
+    shouldShowLedgerLiveStakeAction,
+    actionButtonSwap,
+    actionButtonBuy,
+    actionButtonSell,
+    SendAction,
+    ReceiveAction,
+    mainAccount.currency.family,
+  ]);
 
   const familySpecificSecondaryActions = useMemo(
     () =>
