@@ -123,6 +123,10 @@ export function useOpenSwap({
     const accountCount = accountsForCurrency.length;
 
     if (accountCount === 0) {
+      if (currencyIds.length > 1) {
+        openCurrencyDrawer();
+        return;
+      }
       navigateToSwap();
       return;
     }
@@ -136,6 +140,7 @@ export function useOpenSwap({
     openCurrencyDrawer();
   }, [
     accountsForCurrency,
+    currencyIds,
     defaultAccount,
     defaultParentAccount,
     navigateToSwap,

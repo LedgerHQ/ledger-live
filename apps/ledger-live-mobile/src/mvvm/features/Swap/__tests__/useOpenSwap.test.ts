@@ -145,6 +145,35 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
       expect(mockNavigate).not.toHaveBeenCalled();
     });
 
+    test("should open drawer with all ledgerIds for multi-network token when no accounts", () => {
+      const ledgerIds = [usdcToken.id, "polygon/erc20/usd_coin"];
+      const { result } = renderHook(
+        () => useOpenSwap({ currency: usdcToken, sourceScreenName: SOURCE_SCREEN, ledgerIds }),
+        {
+          overrideInitialState: state => ({
+            ...state,
+            accounts: { ...state.accounts, active: [] },
+          }),
+        },
+      );
+
+      act(() => {
+        result.current.handleOpenSwap();
+      });
+
+      expect(mockOpenDrawer).toHaveBeenCalledTimes(1);
+      expect(mockOpenDrawer).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currencies: ledgerIds,
+          flow: "swap",
+          source: SOURCE_SCREEN,
+          areCurrenciesFiltered: true,
+          enableAccountSelection: true,
+        }),
+      );
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
     test("should open drawer with all ledgerIds for multi-network token when multiple accounts exist", () => {
       const ledgerIds = [usdcToken.id, "polygon/erc20/usd_coin"];
       const ethUsdcAccount: TokenAccount = {
