@@ -3,7 +3,8 @@ import { useOpenSwap } from "../index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { NavigatorName, ScreenName } from "~/const";
 
 const SOURCE_SCREEN = "Market";
@@ -141,6 +142,61 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
       });
 
       expect(mockOpenDrawer).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    test("should open drawer with all ledgerIds for multi-network token when multiple accounts exist", () => {
+      const ledgerIds = [usdcToken.id, "polygon/erc20/usd_coin"];
+      const ethUsdcAccount: TokenAccount = {
+        type: "TokenAccount",
+        id: "eth-usdc-account-1",
+        parentId: "eth-parent",
+        token: usdcToken,
+        balance: new BigNumber(100),
+        spendableBalance: new BigNumber(100),
+        creationDate: new Date(),
+        operationsCount: 0,
+        operations: [],
+        pendingOperations: [],
+        starred: false,
+        balanceHistoryCache: {
+          HOUR: { latestDate: null, balances: [] },
+          DAY: { latestDate: null, balances: [] },
+          WEEK: { latestDate: null, balances: [] },
+        },
+        swapHistory: [],
+      } as unknown as TokenAccount;
+      const polygonUsdcToken = { ...usdcToken, id: "polygon/erc20/usd_coin" };
+      const polygonUsdcAccount: TokenAccount = {
+        ...ethUsdcAccount,
+        id: "polygon-usdc-account-1",
+        token: polygonUsdcToken,
+      } as unknown as TokenAccount;
+
+      const { result } = renderHook(
+        () => useOpenSwap({ currency: usdcToken, sourceScreenName: SOURCE_SCREEN, ledgerIds }),
+        {
+          overrideInitialState: state => ({
+            ...state,
+            accounts: { ...state.accounts, active: [ethUsdcAccount, polygonUsdcAccount] },
+          }),
+        },
+      );
+
+      act(() => {
+        result.current.handleOpenSwap();
+      });
+
+      expect(mockOpenDrawer).toHaveBeenCalledTimes(1);
+      expect(mockOpenDrawer).toHaveBeenCalledWith(
+        expect.objectContaining({
+          currencies: ledgerIds,
+          flow: "swap",
+          source: SOURCE_SCREEN,
+          areCurrenciesFiltered: true,
+          enableAccountSelection: true,
+        }),
+      );
       expect(mockNavigate).not.toHaveBeenCalled();
     });
   });

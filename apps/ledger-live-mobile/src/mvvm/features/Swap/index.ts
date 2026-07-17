@@ -26,15 +26,16 @@ type AccountWithParent = {
   parentAccount?: Account;
 };
 
-function getAccountsForCurrency(
+function getAccountsForCurrencies(
   flattenedAccounts: AccountLike[],
   shallowAccounts: Account[],
-  currency: CryptoOrTokenCurrency,
+  currencyIds: string[],
 ): AccountWithParent[] {
+  const ids = new Set(currencyIds);
   return flattenedAccounts
     .filter(account => {
       const currencyId = account.type === "TokenAccount" ? account.token.id : account.currency.id;
-      return currencyId === currency.id && !isAccountEmpty(account);
+      return ids.has(currencyId) && !isAccountEmpty(account);
     })
     .map(account => {
       const parentId = isTokenAccount(account) ? account.parentId : undefined;
@@ -56,10 +57,15 @@ export function useOpenSwap({
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   const { openDrawer } = useModularDrawerController();
 
-  const accountsForCurrency = useMemo(() => {
-    if (!currency) return [];
-    return getAccountsForCurrency(flattenedAccounts, shallowAccounts, currency);
-  }, [currency, flattenedAccounts, shallowAccounts]);
+  const currencyIds = useMemo(
+    () => ledgerIds ?? (currency ? [currency.id] : []),
+    [currency, ledgerIds],
+  );
+
+  const accountsForCurrency = useMemo(
+    () => getAccountsForCurrencies(flattenedAccounts, shallowAccounts, currencyIds),
+    [currencyIds, flattenedAccounts, shallowAccounts],
+  );
 
   const navigateToSwap = useCallback(
     (account?: AccountLike, parentAccount?: Account) => {
@@ -97,36 +103,20 @@ export function useOpenSwap({
     [currency, sourceScreenName, shallowAccounts, navigation],
   );
 
-  const openAccountSelectionDrawer = useCallback(() => {
+  const openCurrencyDrawer = useCallback(() => {
     openDrawer({
-      currencies: currency ? [currency.id] : [],
+      currencies: currencyIds,
       flow: "swap",
       source: sourceScreenName,
-      areCurrenciesFiltered: !!currency,
+      areCurrenciesFiltered: currencyIds.length > 0,
       enableAccountSelection: true,
       onAccountSelected: navigateToSwap,
     });
-  }, [currency, openDrawer, sourceScreenName, navigateToSwap]);
-
-  const openMultiNetworkDrawer = useCallback(() => {
-    openDrawer({
-      currencies: ledgerIds,
-      flow: "swap",
-      source: sourceScreenName,
-      areCurrenciesFiltered: true,
-      enableAccountSelection: true,
-      onAccountSelected: navigateToSwap,
-    });
-  }, [ledgerIds, openDrawer, sourceScreenName, navigateToSwap]);
+  }, [currencyIds, openDrawer, sourceScreenName, navigateToSwap]);
 
   const handleOpenSwap = useCallback(() => {
     if (defaultAccount && !isAccountEmpty(defaultAccount)) {
       navigateToSwap(defaultAccount, defaultParentAccount);
-      return;
-    }
-
-    if (ledgerIds && ledgerIds.length > 1) {
-      openMultiNetworkDrawer();
       return;
     }
 
@@ -143,15 +133,13 @@ export function useOpenSwap({
       return;
     }
 
-    openAccountSelectionDrawer();
+    openCurrencyDrawer();
   }, [
     accountsForCurrency,
     defaultAccount,
     defaultParentAccount,
-    ledgerIds,
     navigateToSwap,
-    openAccountSelectionDrawer,
-    openMultiNetworkDrawer,
+    openCurrencyDrawer,
   ]);
 
   return { handleOpenSwap };
