@@ -274,6 +274,7 @@ test.describe("Swap history", () => {
       receivedAmount: "751.0672 ETH",
       networkFees: "0.000005 SOL",
       receiveAccount: "Ethereum 1",
+      providerUrl: "https://www.exodus.com/",
     },
   };
 

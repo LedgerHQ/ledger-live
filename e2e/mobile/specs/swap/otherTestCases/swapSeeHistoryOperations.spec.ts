@@ -24,6 +24,7 @@ const swapHistoryTestConfig = {
     sentAmount: "0.07 SOL",
     networkFees: "0.000005 SOL",
     receiveAccount: "Ethereum 1",
+    providerUrl: "https://www.exodus.com/",
   },
 };
 

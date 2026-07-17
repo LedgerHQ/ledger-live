@@ -27,6 +27,7 @@ export class SwapTransactionStatusDialog extends Dialog {
       receivedAmount: string;
       networkFees: string;
       receiveAccount: string;
+      providerUrl?: string;
     },
   ) {
     await expect(this.dialog).toBeVisible();
@@ -46,6 +47,11 @@ export class SwapTransactionStatusDialog extends Dialog {
     await expect(this.receiveAccount).toHaveText(details.receiveAccount);
     await expect(this.swapId).toContainText(swapIdPrefix);
     await expect(this.provider).toHaveText(provider.uiName);
+    if (details.providerUrl) {
+      await expect(this.provider).toHaveAttribute("data-href", details.providerUrl);
+    } else {
+      await expect(this.provider).not.toHaveAttribute("data-href");
+    }
     await expect(this.viewExplorerBtn).toBeVisible();
     await expect(this.viewExplorerBtn).toHaveAttribute("data-href", /^https:\/\/.+/);
   }

@@ -162,6 +162,7 @@ function renderProviderValue({
 
   return (
     <Pressable
+      testID="swap-transaction-details-provider-link"
       onPress={() =>
         Linking.openURL(providerMainUrl).catch(error => {
           log("swap-transaction-status", "Failed to open provider URL", {
@@ -171,6 +172,8 @@ function renderProviderValue({
         })
       }
       accessibilityRole="link"
+      accessibilityLabel={providerName}
+      accessibilityValue={{ text: providerMainUrl }}
     >
       {providerValue}
     </Pressable>
