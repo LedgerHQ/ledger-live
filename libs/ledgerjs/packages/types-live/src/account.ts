@@ -134,9 +134,7 @@ export type Account = {
   freshAddressPath: string;
   // says if the account essentially "exists". an account has been used in the past, but for some reason the blockchain finds it empty (no ops, no balance,..)
   used: boolean;
-  // whether the account is fully operational: a generic, cross-chain readiness projection.
-  // Populated per-family during sync via BridgeApi.getAccountReadiness; undefined when the
-  // family provides no readiness (consumers treat undefined as ready/unknown).
+  // generic, cross-chain readiness projection (see AccountReadiness)
   readiness?: AccountReadiness;
   // account balance in satoshi
   balance: BigNumber;

@@ -58,8 +58,7 @@ export function computeIntentType(transaction: Record<string, unknown>): string 
 
 /**
  * Readiness for a Tezos account: not ready (reason "unrevealed") until the account's
- * public key is revealed on-chain. Delegates to the coin-module `getAccountInfo`, which
- * is typed here (concrete `TezosApi`) before the generic bridge erases it.
+ * public key is revealed on-chain.
  */
 export async function getAccountReadiness(
   currency: CryptoCurrency,
