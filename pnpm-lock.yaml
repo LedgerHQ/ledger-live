@@ -2665,6 +2665,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:*
         version: link:../../shared/feature-flags
+      '@shared/live-env':
+        specifier: workspace:*
+        version: link:../../shared/live-env
       '@tanstack/react-table':
         specifier: 'catalog:'
         version: 8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
