@@ -90,6 +90,7 @@ export function useFooterViewModel(currency: AssetDetailCurrencyProps, ledgerIds
   const { handleOpenSwap } = useOpenSwap({
     currency,
     sourceScreenName: "Asset Detail",
+    ledgerIds,
   });
 
   const { handleOpenStakeDrawer } = useOpenStakeDrawer({

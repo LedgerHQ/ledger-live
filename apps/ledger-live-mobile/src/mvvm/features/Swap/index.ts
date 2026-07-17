@@ -18,6 +18,7 @@ type UseOpenSwapProps = {
   sourceScreenName: string;
   defaultAccount?: AccountLike;
   defaultParentAccount?: Account;
+  ledgerIds?: string[];
 };
 
 type AccountWithParent = {
@@ -48,6 +49,7 @@ export function useOpenSwap({
   sourceScreenName,
   defaultAccount,
   defaultParentAccount,
+  ledgerIds,
 }: UseOpenSwapProps) {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const shallowAccounts = useSelector(shallowAccountsSelector);
@@ -106,9 +108,25 @@ export function useOpenSwap({
     });
   }, [currency, openDrawer, sourceScreenName, navigateToSwap]);
 
+  const openMultiNetworkDrawer = useCallback(() => {
+    openDrawer({
+      currencies: ledgerIds,
+      flow: "swap",
+      source: sourceScreenName,
+      areCurrenciesFiltered: true,
+      enableAccountSelection: true,
+      onAccountSelected: navigateToSwap,
+    });
+  }, [ledgerIds, openDrawer, sourceScreenName, navigateToSwap]);
+
   const handleOpenSwap = useCallback(() => {
     if (defaultAccount && !isAccountEmpty(defaultAccount)) {
       navigateToSwap(defaultAccount, defaultParentAccount);
+      return;
+    }
+
+    if (ledgerIds && ledgerIds.length > 1) {
+      openMultiNetworkDrawer();
       return;
     }
 
@@ -130,8 +148,10 @@ export function useOpenSwap({
     accountsForCurrency,
     defaultAccount,
     defaultParentAccount,
+    ledgerIds,
     navigateToSwap,
     openAccountSelectionDrawer,
+    openMultiNetworkDrawer,
   ]);
 
   return { handleOpenSwap };
