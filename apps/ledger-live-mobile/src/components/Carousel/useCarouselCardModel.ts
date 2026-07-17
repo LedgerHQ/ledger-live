@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { Linking } from "react-native";
 
 import {
-  sanitizeExtras,
+  buildContentCardTrackingProperties,
   ContentCardEvent,
   type ContentCardEventProperties,
   type ContentCardInteractionEvent,
@@ -36,7 +36,10 @@ export function useCarouselCardModel({
 }: Args) {
   const trackingBase = useMemo(
     () => ({
-      ...sanitizeExtras(cardProps.extras),
+      ...buildContentCardTrackingProperties({
+        cardExtras: cardProps.extras,
+        categoryLocation: cardProps.location,
+      }),
       screen: cardProps.location,
       campaign: cardProps.id,
     }),

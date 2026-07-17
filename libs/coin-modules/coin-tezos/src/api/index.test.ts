@@ -547,6 +547,31 @@ describe("estimateFees", () => {
     });
   });
 
+  it("should not throw for cannot_stake_with_unfinalizable_unstake errors", async () => {
+    logicEstimateFees.mockResolvedValue({
+      estimatedFees: DEFAULT_ESTIMATED_FEES,
+      gasLimit: DEFAULT_GAS_LIMIT,
+      storageLimit: DEFAULT_STORAGE_LIMIT,
+      taquitoError:
+        "proto.alpha.cannot_stake_with_unfinalizable_unstake_requests_to_another_delegate",
+    });
+    const result = await api.estimateFees({
+      intentType: "staking",
+      type: "stake",
+      sender: "tz1test",
+      recipient: "tz1validator",
+      amount: 1000n,
+    } as TransactionIntent);
+
+    expect(result).toEqual({
+      value: DEFAULT_ESTIMATED_FEES,
+      parameters: {
+        gasLimit: DEFAULT_GAS_LIMIT,
+        storageLimit: DEFAULT_STORAGE_LIMIT,
+      },
+    });
+  });
+
   it("returns total estimation for unrevealed delegate when minFees applied (composite)", async () => {
     const unrevealedSender = "tz2TaTpo31sAiX2HBJUTLLdUnqVJR4QjLy1V";
     (networkApi.getAccountByAddress as jest.Mock).mockResolvedValueOnce({

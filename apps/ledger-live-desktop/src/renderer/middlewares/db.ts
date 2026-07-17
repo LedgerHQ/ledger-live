@@ -26,8 +26,12 @@ import {
 
 import { marketStoreSelector } from "../reducers/market";
 import { marketBannerStoreSelector } from "../reducers/marketBanner";
+import {
+  LARGE_SCREEN_UPSELL_MODAL,
+  largeScreenUpsellModalSelector,
+} from "@domain/entity-large-screen-upsell-modal";
 import { knownDevicesStoreSelector } from "../reducers/knownDevices";
-import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
+import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
 import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 
 let DB_MIDDLEWARE_ENABLED = true;
@@ -116,6 +120,13 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
       setKey("app", "marketBanner", marketBannerStoreSelector(newState));
     }
 
+    return res;
+  }
+
+  if (action.type.startsWith(`${LARGE_SCREEN_UPSELL_MODAL}/`)) {
+    const res = next(action);
+    const state = store.getState();
+    setKey("app", LARGE_SCREEN_UPSELL_MODAL, largeScreenUpsellModalSelector(state));
     return res;
   }
 

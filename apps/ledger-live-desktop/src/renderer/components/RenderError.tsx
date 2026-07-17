@@ -50,7 +50,6 @@ export default function RenderError({ error, withoutAppData, children }: Props) 
     setIsHardResetting(true);
     try {
       await hardReset();
-      window.api?.reloadRenderer();
     } catch {
       setIsHardResetting(false);
     }

@@ -1,5 +1,5 @@
 import { datadogRum } from "@datadog/browser-rum";
-import { datadogIdSelector, isDummyDatadogId } from "@ledgerhq/client-ids/store";
+import { datadogIdSelector, isDummyDatadogId } from "@domain/entity-client-identity";
 import { getOperatingSystemSupportStatus } from "~/support/os";
 import { getDatadogBuildConfig, buildBeforeSend } from "./config";
 import type { Store } from "redux";

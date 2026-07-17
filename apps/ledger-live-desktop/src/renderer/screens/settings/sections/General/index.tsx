@@ -15,7 +15,6 @@ import ShareAnalyticsButton from "./ShareAnalyticsButton";
 import SharePersonnalRecoButtonFF from "./SharePersonalRecoButtonFF";
 import ShareAnalyticsButtonFF from "./ShareAnalyticsButtonFF";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
-import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
 import { useFeature } from "@features/platform-feature-flags";
 import MevProtectionRow from "./MevProtection";
 import { useEntryPoint } from "LLD/features/LedgerSyncEntryPoints/hooks/useEntryPoint";
@@ -27,7 +26,6 @@ import { urls } from "~/config/urls";
 const SectionGeneral = () => {
   const hasPassword = useSelector(hasPasswordSelector);
   const { t } = useTranslation();
-  useInitSupportedCounterValues();
   const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
   const { shouldDisplayEntryPoint } = useEntryPoint(EntryPoint.settings);
   const ledgerSyncOptimisationFlag = useFeature("lwdLedgerSyncOptimisation");

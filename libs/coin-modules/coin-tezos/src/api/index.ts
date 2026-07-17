@@ -287,7 +287,10 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
       !estimation.taquitoError.includes("delegate.unchanged") &&
       !estimation.taquitoError.includes("subtraction_underflow") &&
       !estimation.taquitoError.includes("balance_too_low") &&
-      !estimation.taquitoError.includes("script_rejected")
+      !estimation.taquitoError.includes("script_rejected") &&
+      !estimation.taquitoError.includes(
+        "cannot_stake_with_unfinalizable_unstake_requests_to_another_delegate",
+      )
     ) {
       throw new Error(`Fees estimation failed: ${estimation.taquitoError}`);
     }

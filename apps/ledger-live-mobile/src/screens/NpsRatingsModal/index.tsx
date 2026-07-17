@@ -11,7 +11,7 @@ import DisappointedDone from "./DisappointedDone";
 import { DimensionValue, LayoutChangeEvent } from "react-native";
 import { useSelector } from "~/context/hooks";
 import { trackingEnabledSelector } from "~/reducers/settings";
-import { userIdSelector } from "@ledgerhq/client-ids/store";
+import { userIdSelector } from "@domain/entity-client-identity";
 
 const eventNameByPage: Record<string, string> = {
   form: "NPS Step 1 Rating",

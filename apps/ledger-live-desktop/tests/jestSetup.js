@@ -1,6 +1,15 @@
 import { setEnv } from "@ledgerhq/live-env";
 import "../src/live-common-set-supported-currencies";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import {
+  getCryptoCurrencyById,
+  findCryptoCurrencyById,
+  findCryptoCurrencyByScheme,
+  listCryptoCurrencies,
+  hasCryptoCurrencyId,
+} from "@domain/entity-currency-crypto";
 
 // The crypto-assets token store validates a non-empty LEDGER_CLIENT_VERSION (calApiExtra) at store
 // creation; the app sets it at boot, so tests must provide one too.
@@ -9,6 +18,18 @@ import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import { setCoinConfig } from "@ledgerhq/coin-evm/config";
 LiveConfig.setConfig(liveConfig);
 setCoinConfig(() => ({ info: {} }));
+setCurrenciesResolver({
+  getCryptoCurrencyById,
+  findCryptoCurrencyById,
+  findCryptoCurrencyByScheme,
+  listCryptoCurrencies,
+  hasCryptoCurrencyId,
+});
+setFrameworkCryptoAssetsStore({
+  findTokenById: () => Promise.resolve(undefined),
+  findTokenByAddressInCurrency: () => Promise.resolve(undefined),
+  getTokensSyncHash: () => Promise.resolve(""),
+});
 import "@jest/globals";
 import "@testing-library/jest-dom";
 import { server } from "./server";

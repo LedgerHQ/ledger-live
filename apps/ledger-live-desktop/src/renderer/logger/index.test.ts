@@ -37,10 +37,10 @@ describe("renderer logger", () => {
       });
     });
 
-    it("should not call captureException when error is not an Error instance", () => {
+    it("should wrap non-Error values in Error and still call captureException", () => {
       logger.critical("string error");
-      expect(sentryRenderer.captureException).not.toHaveBeenCalled();
-      expect(datadogRenderer.captureException).not.toHaveBeenCalled();
+      expect(sentryRenderer.captureException).toHaveBeenCalledWith(new Error("string error"));
+      expect(datadogRenderer.captureException).toHaveBeenCalledWith(new Error("string error"));
     });
   });
 

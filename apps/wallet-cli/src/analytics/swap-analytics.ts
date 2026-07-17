@@ -90,6 +90,7 @@ export function trackSwapCompleted(p: {
   flowId: string;
   fromCurrency: string;
   toCurrency: string;
+  provider: string;
   fromAmount: string;
   toAmount?: string;
 }): void {
@@ -98,6 +99,7 @@ export function trackSwapCompleted(p: {
     flowId: p.flowId,
     fromCurrency: p.fromCurrency,
     toCurrency: p.toCurrency,
+    provider: p.provider,
     fromAmount: p.fromAmount,
     toAmount: p.toAmount,
   });

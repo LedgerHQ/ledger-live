@@ -49,10 +49,14 @@ type FeeCalculation = {
 // classifyZcashRecipient checks only the prefix + length (not the Base58Check
 // checksum), so clearing errors here would let a malformed address slip through.
 //
-// TODO(zcash transparent-to-shielded): validation-only workaround. When PCZT
-// building lands and the Zcash chain adapter handles "transparent-to-shielded" in
-// its own getTransactionStatus, REMOVE this: the adapter short-circuits before
-// reaching this default path. See chain-adapters/zcash/index.ts.
+// NOTE: In the running app the Zcash chain adapter now handles the shielded
+// flows ("shielded", "shielded-to-transparent", "transparent-to-shielded") in
+// its own getTransactionStatus and short-circuits before this default path — so
+// the private-recipient (skip) branch below is only reachable when the adapter
+// is not registered. This refinement is still required for recipients that
+// resolve to transferType "transparent" (Sapling/invalid UAs), which the adapter
+// intentionally leaves to this legacy path, so it maps them to the precise error
+// (ZcashSaplingRecipientNotSupported / InvalidAddress).
 function refineZcashRecipient(
   account: Account,
   transaction: Transaction,

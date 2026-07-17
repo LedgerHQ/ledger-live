@@ -89,7 +89,6 @@ export function useCoinControlScreenViewModel({
       reviewCta: t("newSendFlow.reviewCta"),
       getCtaLabel: (currency: string) => t("newSendFlow.getCta", { currency }),
       strategyLabel: t("newSendFlow.coinControl.strategy"),
-      learnMoreLabel: t("newSendFlow.coinControl.learnMore"),
       coinToSendLabel: t("newSendFlow.coinControl.coinToSend"),
       changeToReturnLabel: t("newSendFlow.coinControl.changeToReturn"),
       enterAmountPlaceholder: t("newSendFlow.coinControl.enterAmount"),
@@ -97,7 +96,9 @@ export function useCoinControlScreenViewModel({
       amountToSendLabel: t("newSendFlow.coinControl.amountToSendInCurrency", {
         ticker: accountCurrency?.ticker ?? "CRYPTO",
       }),
-      amountInputLabel: t("newSendFlow.coinControl.amountInputLabel"),
+      amountInputLabel: t("newSendFlow.coinControl.amountToSendInCurrency", {
+        ticker: accountCurrency?.ticker ?? "CRYPTO",
+      }),
       getStrategyOptionLabel: (labelKey: string) => t(labelKey),
     }),
     [t, accountCurrency?.ticker],
@@ -119,5 +120,8 @@ export function useCoinControlScreenViewModel({
     onLearnMoreClick,
   });
 
-  return core;
+  return {
+    ...core,
+    onInfoPress: onLearnMoreClick,
+  };
 }

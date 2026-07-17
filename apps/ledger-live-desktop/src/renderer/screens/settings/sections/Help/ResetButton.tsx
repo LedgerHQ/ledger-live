@@ -20,11 +20,11 @@ export default function ResetButton() {
   const { opened, pending, fallbackOpened } = state as ActionModalState;
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const { open, close, closeFallback, handleConfirm, handleError } = actions as ActionModalReducer;
-  const onConfirm = useCallback(() => {
+  const onConfirm = useCallback(async () => {
     if (pending) return;
     try {
       handleConfirm();
-      hardReset();
+      await hardReset();
     } catch (err) {
       logger.error(err);
       handleError();

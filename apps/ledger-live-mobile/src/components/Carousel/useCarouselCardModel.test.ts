@@ -40,6 +40,7 @@ describe("useCarouselCardModel", () => {
 
     expect(trackContentCardEvent).toHaveBeenCalledWith(ContentCardEvent.Clicked, {
       location: ContentCardLocation.Wallet,
+      page: ContentCardLocation.Wallet,
       order: 1,
       screen: ContentCardLocation.Wallet,
       campaign: "wallet-card-1",
@@ -47,6 +48,7 @@ describe("useCarouselCardModel", () => {
     });
     expect(trackContentCardEvent).toHaveBeenCalledWith(ContentCardEvent.Dismissed, {
       location: ContentCardLocation.Wallet,
+      page: ContentCardLocation.Wallet,
       order: 1,
       screen: ContentCardLocation.Wallet,
       campaign: "wallet-card-1",

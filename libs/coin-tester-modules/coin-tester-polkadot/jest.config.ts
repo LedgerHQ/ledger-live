@@ -2,6 +2,7 @@ import type { Config } from "jest";
 
 const config: Config = {
   testEnvironment: "node",
+  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
   transform: {
     "^.+\\.tsx?$": [
       "@swc/jest",

@@ -20,6 +20,20 @@ The repo is also home to 150+ library packages that are consumed both internally
 
 Public packages are published to npm by [ldg-github-ci](https://www.npmjs.com/~ldg-github-ci).
 
+## Sibling repositories
+
+Several `@ledgerhq/*` packages consumed here are published from separate repositories:
+
+| Repository | Key packages |
+| --- | --- |
+| [device-sdk-ts](https://github.com/LedgerHQ/device-sdk-ts) | `@ledgerhq/device-management-kit`, `@ledgerhq/context-module`, `@ledgerhq/device-signer-kit-*`, `@ledgerhq/device-transport-kit-*`, `@ledgerhq/speculos-device-controller` |
+| [wallet-api](https://github.com/LedgerHQ/wallet-api) | `@ledgerhq/wallet-api-client`, `@ledgerhq/wallet-api-client-react`, `@ledgerhq/wallet-api-core`, `@ledgerhq/wallet-api-server`, `@ledgerhq/wallet-api-simulator` |
+| [coin-modules](https://github.com/LedgerHQ/coin-modules) | `@ledgerhq/coin-stellar`, `@ledgerhq/coin-xrp` |
+| [lumen](https://github.com/LedgerHQ/lumen) | `@ledgerhq/lumen-ui-react`, `@ledgerhq/lumen-ui-rnative`, `@ledgerhq/lumen-utils-shared`, `@ledgerhq/lumen-ui-*-visualization` |
+| [crypto-icons](https://github.com/LedgerHQ/crypto-icons) | `@ledgerhq/crypto-icons` |
+| [ledger-zcash-utils](https://github.com/LedgerHQ/ledger-zcash-utils) | `@ledgerhq/zcash-utils` |
+| [alpaca-coin-module](https://github.com/LedgerHQ/alpaca-coin-module) | `@ledgerhq/coin-module-framework` |
+
 ## Getting started
 
 The repo uses:

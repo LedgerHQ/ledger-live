@@ -28,6 +28,7 @@
     "cryptoAsset": "Crypto asset",
     "skip": "Skip",
     "next": "Next",
+    "new": "New",
     "noCryptoFound": "No crypto assets found",
     "needHelp": "Do you need help?",
     "edit": "Edit",
@@ -912,6 +913,9 @@
     },
     "TezosNotEnoughStaked": {
       "title": "Insufficient staked balance"
+    },
+    "TezosStakeBlockedByPendingUnstake": {
+      "title": "Unstaking from your previous validator must finish first"
     },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
@@ -6791,7 +6795,8 @@
     },
     "delegation": {
       "addCustomValidator": "+ Add custom validator",
-      "sectionLabel": "Delegation"
+      "sectionLabel": "Delegation",
+      "pendingUnstakeWarning": "You can change validator now, but you won't be able to stake with the new one until your pending unstake from your current validator finalizes in ~4 days."
     },
     "staking": {
       "sectionLabel": "Staking",
@@ -10042,6 +10047,10 @@
       "help": "Help",
       "referral": "Referral"
     },
+    "contacts": {
+      "title": "Contacts",
+      "description": "Manage your contacts"
+    },
     "backupHub": {
       "title": "Backups of your Secret Recovery Phrase",
       "description": "Don't lose access to your assets — back up your secret recovery phrase across multiple formats.",
@@ -10198,6 +10207,17 @@
     },
     "shared": {
       "sponsoredByProvable": "Sponsored by Provable"
+    }
+  },
+  "contacts": {
+    "title": "Contacts",
+    "addContact": "Add contact",
+    "searchPlaceholder": "Search contact",
+    "me": {
+      "name": "Me",
+      "addressCount_zero": "0 address",
+      "addressCount_one": "{{count}} address",
+      "addressCount_other": "{{count}} addresses"
     }
   }
 }

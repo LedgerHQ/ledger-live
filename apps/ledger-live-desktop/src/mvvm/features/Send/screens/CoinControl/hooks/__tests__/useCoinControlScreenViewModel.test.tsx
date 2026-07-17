@@ -179,15 +179,15 @@ describe("useCoinControlScreenViewModel", () => {
       reviewDisabled: true,
       reviewLoading: false,
       isCustomPickingStrategy: false,
+      hasAmount: false,
     });
     expect(typeof result.current.onAmountChange).toBe("function");
     expect(typeof result.current.onSelectStrategy).toBe("function");
-    expect(typeof result.current.onLearnMoreClick).toBe("function");
+    expect(typeof result.current.onInfoPress).toBe("function");
     expect(result.current.strategyOptionsWithLabels).toBeDefined();
     expect(result.current.utxoDisplayData).toBeDefined();
     expect(result.current.changeToReturn.value).toBe("");
     expect(result.current.reviewLabel).toBeDefined();
-    expect(result.current.learnMoreLabel).toBeDefined();
     expect(result.current.coinToSendLabel).toBeDefined();
     expect(result.current.changeToReturn.changeToReturnLabel).toBeDefined();
     expect(result.current.enterAmountPlaceholder).toBeDefined();
@@ -346,14 +346,14 @@ describe("useCoinControlScreenViewModel", () => {
     }).not.toThrow();
   });
 
-  it("should open coin control URL when onLearnMoreClick is called", () => {
+  it("should open coin control URL when onInfoPress is called", () => {
     const params = buildBaseParams();
 
     const { result } = renderHook(() => useCoinControlScreenViewModel(params), {
       initialState: defaultInitialState,
     });
 
-    result.current.onLearnMoreClick();
+    result.current.onInfoPress();
 
     expect(mockOpenURL).toHaveBeenCalledWith("https://support.ledger.com/coin-control");
   });
@@ -408,5 +408,43 @@ describe("useCoinControlScreenViewModel", () => {
     });
 
     expect(result.current.amountError).toBeUndefined();
+  });
+
+  describe("hasAmount", () => {
+    it("should be false when amount is zero and useAllAmount is false", () => {
+      const params = buildBaseParams({
+        transaction: { amount: new BigNumber(0), useAllAmount: false },
+      });
+
+      const { result } = renderHook(() => useCoinControlScreenViewModel(params), {
+        initialState: defaultInitialState,
+      });
+
+      expect(result.current.hasAmount).toBe(false);
+    });
+
+    it("should be true when amount is greater than zero", () => {
+      const params = buildBaseParams({
+        transaction: { amount: new BigNumber(1000) },
+      });
+
+      const { result } = renderHook(() => useCoinControlScreenViewModel(params), {
+        initialState: defaultInitialState,
+      });
+
+      expect(result.current.hasAmount).toBe(true);
+    });
+
+    it("should be true when useAllAmount is set even if amount is zero", () => {
+      const params = buildBaseParams({
+        transaction: { amount: new BigNumber(0), useAllAmount: true },
+      });
+
+      const { result } = renderHook(() => useCoinControlScreenViewModel(params), {
+        initialState: defaultInitialState,
+      });
+
+      expect(result.current.hasAmount).toBe(true);
+    });
   });
 });

@@ -71,6 +71,7 @@ export function DetailsSection({
                 <button
                   type="button"
                   data-testid="swap-transaction-details-provider"
+                  data-href={providerMainUrl}
                   className="inline-flex cursor-pointer items-center gap-6 border-0 bg-transparent p-0 body-3 text-base"
                   onClick={() => openURL(providerMainUrl, "SwapTransactionStatus_Provider")}
                 >

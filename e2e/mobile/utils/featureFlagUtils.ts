@@ -95,6 +95,19 @@ export const getMergedFeatureFlags = ({
   };
 };
 
+export const getLwmWallet40StaticFlag = (): Features["lwmWallet40"] | undefined =>
+  getMergedFeatureFlags().lwmWallet40 as Features["lwmWallet40"] | undefined;
+
+export const isQ2WithAggregatedAssets = (): boolean => {
+  const lwmWallet40 = getLwmWallet40StaticFlag();
+  return lwmWallet40?.enabled === true && lwmWallet40?.params?.aggregatedAssets === true;
+};
+
+export const isQ2WithOperationsList = (): boolean => {
+  const lwmWallet40 = getLwmWallet40StaticFlag();
+  return lwmWallet40?.enabled === true && lwmWallet40?.params?.operationsList === true;
+};
+
 export const getLwmFlag = async (): Promise<Features["lwmWallet40"] | undefined> => {
   const flags = await getFlags();
   if (!flags.trim()) {

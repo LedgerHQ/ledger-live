@@ -1,14 +1,11 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
-import { getMergedFeatureFlags } from "../../utils/featureFlagUtils";
-import type { Features } from "@shared/feature-flags";
+import { isQ2WithAggregatedAssets } from "../../utils/featureFlagUtils";
 const tags = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
-const lwmWallet40 = getMergedFeatureFlags().lwmWallet40 as Features["lwmWallet40"] | undefined;
-const isQ2 = lwmWallet40?.enabled === true && lwmWallet40?.params?.aggregatedAssets === true;
 
 setTeamOwner(Team.WALLET_XP);
 // In Q2 the tab layout (Assets/Accounts tabs) no longer exists — skip the whole suite
-(isQ2 ? describe.skip : describe)("Wallet Page", () => {
+(isQ2WithAggregatedAssets() ? describe.skip : describe)("Wallet Page", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "speculos-tests-app",

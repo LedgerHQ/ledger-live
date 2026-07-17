@@ -71,5 +71,10 @@ export const MAX_PRIVATE_RECORDS_PER_TRANSACTION = 14;
 // Token batcher programs only support up to 13 records (no _14 variant exists).
 export const MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION = 13;
 
+// The record-count boundary between the "Fast" and "Balanced" quick-amount tiers.
+export const FAST_PRIVATE_RECORDS_PER_TRANSACTION = 4;
+// The record-count boundary between the "Balanced" and "Full" quick-amount tiers.
+export const BALANCED_PRIVATE_RECORDS_PER_TRANSACTION = 8;
+
 // The estimated time in milliseconds it takes to sign a single record during transaction signing.
 export const SINGLE_CALL_SIGNING_TIME = 12500;

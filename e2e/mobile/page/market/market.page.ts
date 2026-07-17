@@ -41,8 +41,9 @@ export default class MarketPage {
   marketScreenFilterButton = () => getElementById("market-screen-assets-filter-button");
   coinOptionsTrigger = () => getElementById("asset-detail-coin-options-trailing");
   coinOptionsFavouriteRow = () => getElementById("asset-detail-coin-options-favourite-row");
-  // The new MarketScreen keys rows by ledger currency id, the legacy list by ticker.
-  marketScreenRow = (currency: CurrencyType) => getElementById(this.marketItemId(currency.id));
+  // New MarketScreen keys rows by CoinGecko market.id; ERC20s differ from their ledger currency.id.
+  marketScreenRow = (currency: CurrencyType) =>
+    getElementById(this.marketItemId(currency.market?.id ?? currency.id));
 
   @Step("Go back from the market screen")
   async goBack() {

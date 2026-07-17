@@ -1,0 +1,19 @@
+{
+  "name": "@ledgerhq/wallet-framework-test-setup",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Jest setup for wallet-framework tests — wires CurrenciesResolver and CryptoAssetsStore (forwarding proxy) for all coin-module and shared-lib test environments",
+  "keywords": [
+    "Ledger"
+  ],
+  "main": "./src/index.js",
+  "dependencies": {
+    "@domain/entity-currency-crypto": "workspace:^",
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^"
+  },
+  "exports": {
+    ".": "./src/index.js",
+    "./package.json": "./package.json"
+  }
+}

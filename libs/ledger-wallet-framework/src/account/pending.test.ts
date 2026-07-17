@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/index";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency, TokenCurrency } from "../types";
 import { addPendingOperation, shouldRetainPendingOperation } from "./pending";
 import { emptyHistoryCache } from "./balanceHistoryCache";
 import { getEnv } from "@ledgerhq/live-env";
@@ -246,7 +246,7 @@ describe("shouldRetainPendingOperation", () => {
 });
 
 export function createAccount(id: string): Account {
-  const currency = listCryptoCurrencies(true)[0];
+  const currency = listCryptoCurrencies(true)[0] as unknown as CryptoCurrency;
 
   return {
     type: "Account",

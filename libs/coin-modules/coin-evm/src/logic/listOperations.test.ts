@@ -2119,6 +2119,106 @@ describe("listOperations", () => {
       expect(result.items[0]!.details?.internal).toBeUndefined();
     });
 
+    it("Case: incoming root trace internal tx is deduplicated against parent operation", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const sharedTxHash = "0xIncomingRootTrace";
+      mockGetOperations(
+        {
+          lastCoinOperations: [
+            { type: "IN", senders: ["validator"], recipients: ["user"], value: 50, fee: 0 },
+          ],
+          lastInternalOperations: [
+            { type: "IN", senders: ["validator"], recipients: ["user"], value: 50, fee: 0 },
+          ],
+        },
+        sharedTxHash,
+      );
+
+      const result = await listOperations({} as CryptoCurrency, "user", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      expect(result.items).toEqual([
+        expect.objectContaining({
+          type: "IN",
+          senders: ["validator"],
+          recipients: ["user"],
+          value: 50n,
+          asset: { type: "native" },
+          details: expect.not.objectContaining({ internal: true }),
+        }),
+      ]);
+    });
+
+    it("Case: incoming internal tx with different value is NOT filtered", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const sharedTxHash = "0xIncomingDiffValue";
+      mockGetOperations(
+        {
+          lastCoinOperations: [
+            { type: "IN", senders: ["contract"], recipients: ["user"], value: 100, fee: 0 },
+          ],
+          lastInternalOperations: [
+            { type: "IN", senders: ["contract"], recipients: ["user"], value: 40, fee: 0 },
+          ],
+        },
+        sharedTxHash,
+      );
+
+      const result = await listOperations({} as CryptoCurrency, "user", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      expect(result.items).toEqual([
+        expect.objectContaining({
+          type: "IN",
+          value: 100n,
+          details: expect.not.objectContaining({ internal: true }),
+        }),
+        expect.objectContaining({
+          type: "IN",
+          value: 40n,
+          details: expect.objectContaining({ internal: true }),
+        }),
+      ]);
+    });
+
+    it("Case: incoming internal tx with same value but different sender is NOT filtered", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const sharedTxHash = "0xIncomingSameValueDiffSender";
+      mockGetOperations(
+        {
+          lastCoinOperations: [
+            { type: "IN", senders: ["contractA"], recipients: ["user"], value: 50, fee: 0 },
+          ],
+          lastInternalOperations: [
+            { type: "IN", senders: ["contractB"], recipients: ["user"], value: 50, fee: 0 },
+          ],
+        },
+        sharedTxHash,
+      );
+
+      const result = await listOperations({} as CryptoCurrency, "user", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      expect(result.items).toEqual([
+        expect.objectContaining({
+          type: "IN",
+          value: 50n,
+          details: expect.not.objectContaining({ internal: true }),
+        }),
+        expect.objectContaining({
+          type: "IN",
+          value: 50n,
+          details: expect.objectContaining({ internal: true }),
+        }),
+      ]);
+    });
+
     it("Case: legitimate internal tx is NOT filtered when parent sender differs (smart contract wallet)", async () => {
       setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
       const sharedTxHash = "0xSCWCase";

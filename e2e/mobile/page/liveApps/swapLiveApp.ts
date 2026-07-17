@@ -31,7 +31,6 @@ export default class SwapLiveAppPage {
   executeSwapButtonStepApproval = "execute-swap-button-step-approval";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
   fromAccountErrorId = "from-account-error";
-  swapErrorButtonReplacementId = "swap-error-button-replacement";
   showDetailslink = "show-details-link";
   quotesContainerErrorIcon = "quotes-container-error-icon";
   insufficientFundsBuyButton = "insufficient-funds-buy-button";
@@ -111,6 +110,12 @@ export default class SwapLiveAppPage {
   async tapGetQuotesButton() {
     await getValueByWebTestId(this.toAmountInput);
     await tapWebElementByTestId(this.getQuotesButton);
+  }
+
+  @Step("Verify get quotes CTA is hidden")
+  async expectQuotesButtonNotVisible() {
+    await expectWebElementNotVisible(this.getQuotesButton);
+    await expectWebElementNotVisible(this.quotesButtonDisabled);
   }
 
   @Step("Wait for quotes")
@@ -340,22 +345,19 @@ export default class SwapLiveAppPage {
     };
   }
 
-  @Step("Verify swap error message match: $0 ($1)")
-  async verifySwapErrorMessageIsCorrect(
-    expectedMessage: string | RegExp,
-    display: "banner" | "buttonReplacement",
-  ) {
-    const testId =
-      display === "buttonReplacement" ? this.swapErrorButtonReplacementId : this.fromAccountErrorId;
-    await waitWebElementByTestId(testId);
-    const errorText: string = await getWebElementText(testId);
+  @Step("Verify swap amount error message match: $0")
+  async verifySwapAmountErrorMessageIsCorrect(expectedMessage: string | RegExp) {
+    await waitWebElementByTestId(this.fromAccountErrorId);
+    const errorText: string = await getWebElementText(this.fromAccountErrorId);
     jestExpect(errorText).toMatch(expectedMessage);
+
+    await this.expectQuotesButtonNotVisible();
   }
 
   @Step("Verify swap cross account error message match: $0")
   async verifySwapCrossAccountErrorMessageIsCorrect(expectedMessage: string | RegExp) {
     // Cross-account warnings render in the same from-account error slot as amount errors.
-    await this.verifySwapErrorMessageIsCorrect(expectedMessage, "banner");
+    await this.verifySwapAmountErrorMessageIsCorrect(expectedMessage);
   }
 
   @Step("Verify swap CTA banner displayed")

@@ -362,6 +362,7 @@ export async function runCliSwapDie(input: CliSwapDieInput): Promise<CliSwapDieR
         flowId,
         fromCurrency: trackingFromCurrency,
         toCurrency: trackingToCurrency,
+        provider: quote.provider,
         fromAmount: String(quote.quoteDetails.sendAmount),
         toAmount: String(quote.quoteDetails.receiveAmount),
       });

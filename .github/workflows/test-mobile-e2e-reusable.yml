@@ -235,8 +235,8 @@ jobs:
           sparse-checkout: |
             apps/ledger-live-mobile
             e2e/mobile
+            e2e/tooling/filter
             libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json
-            scripts/resolve-e2e-test-filter.mjs
             .pnpmfile.cjs
             tools
             .mise/tasks
@@ -296,6 +296,8 @@ jobs:
           if [ -z "$EXTRA_FEATURE_FLAGS" ]; then
             EXTRA_FEATURE_FLAGS="(none)"
           fi
+
+          FILTER_SUMMARY="$(node e2e/tooling/filter/format-summary.mjs "$FILTER_PATTERN")"
           {
           echo "## Workflow Context"
           echo ""
@@ -304,7 +306,7 @@ jobs:
           echo "- **Commit SHA:** ${{ github.sha }}"
           echo "- **iOS device:** $IOS_DEVICE"
           echo "- **Android device:** $ANDROID_DEVICE"
-          echo "- **Filtered pattern:** $FILTER_PATTERN"
+          echo "$FILTER_SUMMARY"
           echo "- **Smoke tests:** $SMOKE_TESTS"
           echo "- **Test Execution ticket ID (Android):** $TEST_EXECUTION_ANDROID"
           echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
@@ -352,7 +354,7 @@ jobs:
       - name: Prepare test filter
         id: test-filter
         run: |
-          RESOLVED_FILTER="$(node scripts/resolve-e2e-test-filter.mjs \
+          RESOLVED_FILTER="$(node e2e/tooling/filter/resolve.mjs \
             --input "$TEST_FILTER_INPUT" \
             --smoke-tests "$SMOKE_TESTS_INPUT" \
             --check-dir "e2e/mobile/specs")"

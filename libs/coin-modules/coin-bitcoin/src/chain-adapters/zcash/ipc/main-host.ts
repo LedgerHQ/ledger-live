@@ -37,6 +37,13 @@ import {
   type UtilityInboundMessage,
   type UtilityOutboundMessage,
 } from "./contract";
+import type {
+  BuildTransactionArgs,
+  BuildTransactionResult,
+  FinalizeTransactionArgs,
+  FinalizeTransactionResult,
+  BroadcastTransactionArgs,
+} from "../types";
 import { OneShotResolver } from "./one-shot-router";
 
 const LOG_TYPE = "zcash-native-host";
@@ -140,6 +147,9 @@ type HostState = {
   resolvers: {
     chainTip: OneShotResolver<number>;
     blockHeight: OneShotResolver<number>;
+    buildTx: OneShotResolver<BuildTransactionResult>;
+    finalizeTx: OneShotResolver<FinalizeTransactionResult>;
+    broadcastTx: OneShotResolver<string>;
   };
 };
 
@@ -150,6 +160,9 @@ const state: HostState = {
   resolvers: {
     chainTip: new OneShotResolver<number>("chain-tip"),
     blockHeight: new OneShotResolver<number>("block-height"),
+    buildTx: new OneShotResolver<BuildTransactionResult>("build-transaction"),
+    finalizeTx: new OneShotResolver<FinalizeTransactionResult>("finalize-transaction"),
+    broadcastTx: new OneShotResolver<string>("broadcast-transaction"),
   },
 };
 
@@ -219,47 +232,73 @@ function failAllPending(err: Error): void {
   }
 }
 
+/**
+ * Resolves a one-shot resolver, logging a warning if the reply arrived for a
+ * requestId we no longer track (e.g. after a timeout or utility restart).
+ */
+function resolveOneShot<T>(
+  resolver: OneShotResolver<T>,
+  requestId: RequestId,
+  value: T,
+  label: string,
+): void {
+  if (!resolver.resolve(requestId, value)) {
+    log(LOG_TYPE, `${label} for unknown requestId`, { requestId });
+  }
+}
+
+/** Rejects a one-shot resolver, with the same unknown-requestId logging as {@link resolveOneShot}. */
+function rejectOneShot<T>(
+  resolver: OneShotResolver<T>,
+  requestId: RequestId,
+  message: string,
+  label: string,
+): void {
+  if (!resolver.reject(requestId, new Error(message))) {
+    log(LOG_TYPE, `${label} for unknown requestId`, { requestId });
+  }
+}
+
+function handleStreamMessage(event: StreamEvent): void {
+  const sync = state.pendingSyncs.get(event.requestId);
+  if (!sync) {
+    log(LOG_TYPE, "stream event for unknown requestId", {
+      requestId: event.requestId,
+      kind: event.kind,
+    });
+    return;
+  }
+  sendStreamEvent(sync.webContentsId, event);
+  if (event.kind === "complete" || event.kind === "error") {
+    state.pendingSyncs.delete(event.requestId);
+  }
+}
+
 function handleUtilityMessage(msg: UtilityOutboundMessage): void {
+  const { chainTip, blockHeight, buildTx, finalizeTx, broadcastTx } = state.resolvers;
   switch (msg.type) {
-    case "chain-tip": {
-      if (!state.resolvers.chainTip.resolve(msg.requestId, msg.height)) {
-        log(LOG_TYPE, "chain-tip reply for unknown requestId", { requestId: msg.requestId });
-      }
-      return;
-    }
-    case "chain-tip-error": {
-      if (!state.resolvers.chainTip.reject(msg.requestId, new Error(msg.message))) {
-        log(LOG_TYPE, "chain-tip-error for unknown requestId", { requestId: msg.requestId });
-      }
-      return;
-    }
-    case "block-height": {
-      if (!state.resolvers.blockHeight.resolve(msg.requestId, msg.height)) {
-        log(LOG_TYPE, "block-height reply for unknown requestId", { requestId: msg.requestId });
-      }
-      return;
-    }
-    case "block-height-error": {
-      if (!state.resolvers.blockHeight.reject(msg.requestId, new Error(msg.message))) {
-        log(LOG_TYPE, "block-height-error for unknown requestId", { requestId: msg.requestId });
-      }
-      return;
-    }
-    case "stream": {
-      const sync = state.pendingSyncs.get(msg.event.requestId);
-      if (!sync) {
-        log(LOG_TYPE, "stream event for unknown requestId", {
-          requestId: msg.event.requestId,
-          kind: msg.event.kind,
-        });
-        return;
-      }
-      sendStreamEvent(sync.webContentsId, msg.event);
-      if (msg.event.kind === "complete" || msg.event.kind === "error") {
-        state.pendingSyncs.delete(msg.event.requestId);
-      }
-      return;
-    }
+    case "chain-tip":
+      return resolveOneShot(chainTip, msg.requestId, msg.height, "chain-tip reply");
+    case "chain-tip-error":
+      return rejectOneShot(chainTip, msg.requestId, msg.message, "chain-tip-error");
+    case "block-height":
+      return resolveOneShot(blockHeight, msg.requestId, msg.height, "block-height reply");
+    case "block-height-error":
+      return rejectOneShot(blockHeight, msg.requestId, msg.message, "block-height-error");
+    case "stream":
+      return handleStreamMessage(msg.event);
+    case "build-transaction-result":
+      return resolveOneShot(buildTx, msg.requestId, msg.result, "build-transaction-result");
+    case "build-transaction-error":
+      return rejectOneShot(buildTx, msg.requestId, msg.message, "build-transaction-error");
+    case "finalize-transaction-result":
+      return resolveOneShot(finalizeTx, msg.requestId, msg.result, "finalize-transaction-result");
+    case "finalize-transaction-error":
+      return rejectOneShot(finalizeTx, msg.requestId, msg.message, "finalize-transaction-error");
+    case "broadcast-transaction-result":
+      return resolveOneShot(broadcastTx, msg.requestId, msg.txid, "broadcast-transaction-result");
+    case "broadcast-transaction-error":
+      return rejectOneShot(broadcastTx, msg.requestId, msg.message, "broadcast-transaction-error");
     default: {
       const exhaustive: never = msg;
       log(LOG_TYPE, "unknown utility message", { msg: exhaustive });
@@ -331,6 +370,30 @@ function registerHandlers(): void {
         state.pendingSyncs.delete(args.requestId);
       }
     },
+  );
+
+  ipcMain.handle<BuildTransactionArgs, BuildTransactionResult>(
+    ZCASH_IPC.buildTransaction,
+    (_event, args): Promise<BuildTransactionResult> =>
+      state.resolvers.buildTx.register(args.requestId, () =>
+        postToUtility({ type: "build-transaction", args }),
+      ),
+  );
+
+  ipcMain.handle<FinalizeTransactionArgs, FinalizeTransactionResult>(
+    ZCASH_IPC.finalizeTransaction,
+    (_event, args): Promise<FinalizeTransactionResult> =>
+      state.resolvers.finalizeTx.register(args.requestId, () =>
+        postToUtility({ type: "finalize-transaction", args }),
+      ),
+  );
+
+  ipcMain.handle<BroadcastTransactionArgs, string>(
+    ZCASH_IPC.broadcastTransaction,
+    (_event, args): Promise<string> =>
+      state.resolvers.broadcastTx.register(args.requestId, () =>
+        postToUtility({ type: "broadcast-transaction", args }),
+      ),
   );
 }
 

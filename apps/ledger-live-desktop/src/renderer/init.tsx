@@ -8,11 +8,14 @@ import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { backfillOnboardingDate } from "~/renderer/components/PostOnboardingHub/logic/backfillOnboardingDate";
+import {
+  LARGE_SCREEN_UPSELL_MODAL,
+  restoreLargeScreenUpsellModalState,
+} from "@domain/entity-large-screen-upsell-modal";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import each from "lodash/each";
 import { reload, getKey } from "~/renderer/storage";
-import { hardReset } from "~/renderer/reset";
 import "~/renderer/styles/global";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
@@ -127,14 +130,6 @@ async function init() {
       });
     }
   }
-  const hardResetFlag = window.localStorage.getItem("hard-reset");
-  const wasHardReset = hardResetFlag === "1";
-
-  if (wasHardReset) {
-    await hardReset();
-    // Keep the flag so Default.tsx can detect it for redirect, it will be cleared there
-  }
-
   const store = createStore({
     dbMiddleware,
   });
@@ -206,16 +201,15 @@ async function init() {
 
   liveBlindSigningReporter.setConsentSource(() => trackingEnabledSelector(store.getState()));
 
-  // Build settings to load, ensuring hasCompletedOnboarding is false after a hard reset
   const settingsToLoad = { ...initialSettings };
-  if (wasHardReset) {
-    settingsToLoad.hasCompletedOnboarding = false;
-  }
 
   // Legacy crypto counter-values were persisted as ticker (BTC/ETH); migrate them to Ledger ids.
   if (typeof settingsToLoad.counterValue === "string") {
     settingsToLoad.counterValue = migrateLegacyCryptoCounterValue(settingsToLoad.counterValue);
   }
+
+  // supportedCounterValues is now derived at runtime from @domain/entity-currency-fiat — strip stale persisted copy.
+  delete (settingsToLoad as Record<string, unknown>).supportedCounterValues;
 
   if (deepLinkUrl) {
     settingsToLoad.deepLinkUrl = deepLinkUrl;
@@ -349,6 +343,11 @@ async function init() {
   }
 
   backfillOnboardingDate(store);
+
+  const largeScreenUpsellModalState = await getKey("app", LARGE_SCREEN_UPSELL_MODAL);
+  if (largeScreenUpsellModalState !== undefined) {
+    store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
+  }
 
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
 

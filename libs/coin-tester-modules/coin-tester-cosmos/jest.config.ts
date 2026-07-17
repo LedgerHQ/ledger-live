@@ -6,12 +6,9 @@ import type { Config } from "jest";
 // TypeScript SOURCE, so this tester exercises the coin module's current source
 // without a prior `pnpm build` of lib/.
 //
-// Unlike coin-tester-cardano there is no `setupFiles`: the Babylon scenario
-// injects its config through `createBridges(() => coinConfig)` and points the
-// LCD at the local node, so nothing needs to be set in the environment before
-// coin-cosmos modules evaluate.
 const config: Config = {
   testEnvironment: "node",
+  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
   testEnvironmentOptions: {
     customExportConditions: ["@ledgerhq/source", "node", "require", "default"],
   },

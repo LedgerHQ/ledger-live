@@ -2,7 +2,7 @@ import React from "react";
 import { Observable, Subject } from "rxjs";
 import { act, renderHook } from "@tests/test-renderer";
 import type { DeviceConnectionResult } from "@ledgerhq/device-intent";
-import { DeviceId } from "@ledgerhq/client-ids/ids";
+import { DeviceId } from "@domain/entity-client-identity";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import {

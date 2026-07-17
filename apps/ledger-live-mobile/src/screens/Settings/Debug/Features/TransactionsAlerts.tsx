@@ -8,7 +8,7 @@ import styled from "styled-components/native";
 import { useSelector } from "~/context/hooks";
 import { notificationsSelector } from "~/reducers/settings";
 import { getSupportedChainsAccounts } from "@ledgerhq/live-common/transactionsAlerts/index";
-import { userIdSelector } from "@ledgerhq/client-ids/store";
+import { userIdSelector } from "@domain/entity-client-identity";
 
 export const TagEnabled = styled(Tag).attrs({
   bg: "success.c50",

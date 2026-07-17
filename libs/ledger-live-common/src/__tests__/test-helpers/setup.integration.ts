@@ -1,9 +1,12 @@
-import { setupCalClientStore } from "../../test-helpers/cryptoAssetsStore";
-import "./environment";
 import BigNumber from "bignumber.js";
+import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import "./environment";
 
-// Integration tests use the real CAL API
-setupCalClientStore();
+// wallet-framework-test-setup (in setupFilesAfterEnv) already wired CurrenciesResolver.
+// Override the CryptoAssetsStore with the real CAL RTK store for integration tests.
+const calStore = setupCalClientStore();
+setCryptoAssetsStore(calStore);
 
 jest.setTimeout(360000);
 

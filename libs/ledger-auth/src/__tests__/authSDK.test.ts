@@ -67,6 +67,37 @@ describe("AuthSDK", () => {
     });
   });
 
+  it("should use the injected PKCE pair factory", async () => {
+    const pkcePair = {
+      codeVerifier: "injected-code-verifier",
+      codeChallenge: "injected-code-challenge",
+      codeChallengeMethod: "S256" as const,
+    };
+    const createPkcePair = jest.fn(() => pkcePair);
+
+    await new AuthSDK(config, {
+      provider: identityProvider,
+      createPkcePair,
+      keycloakService,
+    }).withToken({ queryFn });
+
+    expect(createPkcePair).toHaveBeenCalledTimes(1);
+    expect(keycloakService.getChallenge).toHaveBeenLastCalledWith({
+      responseType: "code",
+      clientId: "ledger-keycloak",
+      scope: "openid",
+      redirectUri: "https://keycloak.test/realms/ledger-bc-customers/broker/lkrp/endpoint",
+      codeChallenge: pkcePair.codeChallenge,
+      codeChallengeMethod: pkcePair.codeChallengeMethod,
+    });
+    expect(identityProvider.authenticate).toHaveBeenCalledWith({
+      challenge: "challenge",
+      clientId: "ledger-keycloak",
+      redirectUri: "https://keycloak.test/realms/ledger-bc-customers/broker/lkrp/endpoint",
+      codeVerifier: pkcePair.codeVerifier,
+    });
+  });
+
   it("disable PKCE values when configured", async () => {
     await new AuthSDK(
       { ...config, disablePkce: true },

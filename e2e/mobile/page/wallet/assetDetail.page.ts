@@ -250,6 +250,16 @@ export default class AssetDetailPage {
     await tapById(this.transactionsHeaderId);
   }
 
+  @Step("Scroll to addresses section header")
+  async scrollToAddressesHeader() {
+    await this.scrollToAddressesSection();
+  }
+
+  @Step("Get address item name at index")
+  async getAddressItemName(index = 0) {
+    return await getTextOfElement(/asset-detail-address-item-name-.*/, index);
+  }
+
   @Step("Add asset to favorites from Asset Detail")
   async addToFavorites() {
     await this.openCoinOptions();

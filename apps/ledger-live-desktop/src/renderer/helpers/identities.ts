@@ -1,5 +1,5 @@
 import { getKey } from "~/renderer/storage";
-import { identitiesSlice, shouldUsePersistedId } from "@ledgerhq/client-ids/store";
+import { identitiesSlice, shouldUsePersistedId } from "@domain/entity-client-identity";
 import type { ReduxStore } from "~/state-manager/configureStore";
 
 type LegacyUser = { id: string; datadogId?: string } | null;

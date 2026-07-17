@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { normalizeText } from "../../helpers/commonHelpers";
+import { normalizeText, isIos } from "../../helpers/commonHelpers";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { DEFAULT_TIMEOUT } from "../../helpers/elementHelpers";
 
@@ -10,6 +10,7 @@ export type SwapTransactionStatusDetails = {
   receivedAmount?: string;
   networkFees: string;
   receiveAccount: string;
+  providerUrl?: string;
 };
 
 export default class SwapTransactionStatusDrawer {
@@ -23,6 +24,7 @@ export default class SwapTransactionStatusDrawer {
   networkFeesId = "swap-transaction-details-network-fees";
   receiveAccountId = "swap-transaction-details-receive-account";
   providerId = "swap-transaction-details-provider";
+  providerLinkId = "swap-transaction-details-provider-link";
   swapIdId = "swap-transaction-details-swap-id";
   viewInExplorerButtonId = "swap-transaction-view-explorer-btn";
 
@@ -64,6 +66,18 @@ export default class SwapTransactionStatusDrawer {
     jestExpect(normalizeText(await getTextOfElement(this.providerId))).toEqual(
       normalizeText(provider.uiName),
     );
+    if (details.providerUrl) {
+      await scrollToId(this.providerLinkId, this.scrollViewId);
+      await detoxExpect(getElementById(this.providerLinkId)).toBeVisible();
+      const { value, label } = await getAttributesOfElement(this.providerLinkId);
+      if (isIos()) {
+        jestExpect(value).toContain(details.providerUrl);
+      } else {
+        jestExpect(label).toContain(details.providerUrl);
+      }
+    } else {
+      await detoxExpect(getElementById(this.providerLinkId)).not.toExist();
+    }
     jestExpect(normalizeText(await getTextOfElement(this.swapIdId))).toContain(swapIdPrefix);
 
     await waitForElementById(this.viewInExplorerButtonId, DEFAULT_TIMEOUT, {

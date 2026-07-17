@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { getValidators, mapDelegations } from "@ledgerhq/coin-evm/staking/index";
+import {
+  getStakingContractAddress,
+  getValidators,
+  mapDelegations,
+} from "@ledgerhq/coin-evm/staking/index";
+import type { StakingOperation } from "@ledgerhq/coin-evm/types/staking";
 import type { Cursor } from "@ledgerhq/coin-module-framework/api/index";
 import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import { sortLedgerValidatorFirst } from "./ledgerValidator";
@@ -164,4 +169,20 @@ export function useEvmFamilyDelegationsQuerySelector(
     options,
     value,
   };
+}
+
+export function useStakingContractAddress(
+  currencyId: string,
+  ctx?: { mode: StakingOperation; valAddress?: string },
+): string | undefined {
+  const mode = ctx?.mode;
+  const valAddress = ctx?.valAddress;
+  return useMemo(
+    () =>
+      getStakingContractAddress(
+        currencyId,
+        typeof mode === "string" ? { mode, valAddress } : undefined,
+      ),
+    [currencyId, mode, valAddress],
+  );
 }

@@ -7,6 +7,7 @@ import type { Config } from "jest";
 const config: Config = {
   testEnvironment: "node",
   setupFiles: ["<rootDir>/src/env.setup.ts"],
+  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
   testEnvironmentOptions: {
     customExportConditions: ["@ledgerhq/source", "node", "require", "default"],
   },

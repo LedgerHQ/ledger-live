@@ -41,8 +41,8 @@ describe("Add accounts - Aleo", () => {
     await app.speculos.shareViewKey();
     await app.addAccount.tapCloseAddAccountCta();
 
-    await app.portfolio.goToAccounts(Currency.ALEO.name);
-    await app.assetAccountsPage.waitForAccountPageToLoad(Currency.ALEO.name);
+    await app.portfolio.goToAccounts(Currency.ALEO.name, Currency.ALEO.id);
+    await app.assetAccountsPage.waitForAccountPageToLoad(Currency.ALEO.name, undefined, true);
     await app.assetAccountsPage.expectAccountsBalanceVisible();
   });
 });

@@ -93,10 +93,10 @@ pnpm nx affected -t test --base=HEAD~1 --head=HEAD --exclude=tag:scope:apps
 #### ✅ Good
 
 Nx builds a project's dependencies before running the target, so
-`@ledgerhq/client-ids` is built before its `test` target runs:
+`@domain/entity-client-identity` is built before its `test` target runs:
 
 ```bash
-pnpm nx test @ledgerhq/client-ids
+pnpm nx test @domain/entity-client-identity
 ```
 
 #### ❌ Bad
@@ -104,5 +104,5 @@ pnpm nx test @ledgerhq/client-ids
 ⚠️ Skipping `nx` risks dependencies being out of date:
 
 ```bash
-pnpm --filter @ledgerhq/client-ids test
+pnpm --filter @domain/entity-client-identity test
 ```

@@ -17,6 +17,7 @@ import {
   InvalidAddressBecauseAlreadyDelegated,
   MustDelegateBeforeStaking,
   TezosNotEnoughStaked,
+  TezosStakeBlockedByPendingUnstake,
 } from "../types/errors";
 import {
   computeMaxStakeAmount,
@@ -147,6 +148,12 @@ function mapTaquitoErrors(taquitoError: string, intentType: string): Record<stri
     errors.amount = new TezosNotEnoughStaked();
   } else if (taquitoError.endsWith("contract.must_be_delegated_to_stake")) {
     errors.amount = new MustDelegateBeforeStaking();
+  } else if (
+    taquitoError.endsWith("cannot_stake_with_unfinalizable_unstake_requests_to_another_delegate")
+  ) {
+    // Changing delegate implicitly unstakes the frozen deposit toward the old delegate; the
+    // protocol blocks staking with the new delegate until that unstake finalizes (~4 days).
+    errors.amount = new TezosStakeBlockedByPendingUnstake();
   } else if (taquitoError.endsWith("delegate.unchanged")) {
     // Re-delegating (or staking) to the current baker leaves the delegate unchanged; the node
     // rejects it. Surfaces for both `delegate` and `stake` intents as "already delegated".

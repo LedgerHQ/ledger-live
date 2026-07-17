@@ -4,13 +4,13 @@
   "private": true,
   "description": "Shared Contacts flow package",
   "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./featureFlags": "./src/featureFlags.ts",
-    "./hooks": "./src/hooks/index.ts",
-    "./components/ContactsButton": "./src/components/ContactsButton/index.ts",
-    "./components/ContactsPage": "./src/components/ContactsPage/index.ts",
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -28,34 +28,55 @@
   },
   "peerDependencies": {
     "react": ">=19.0.0",
+    "react-native": ">=0.70.0",
     "react-redux": ">=9.0.0",
     "@ledgerhq/lumen-design-core": "catalog:",
-    "@ledgerhq/lumen-ui-react": "catalog:"
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:"
   },
   "peerDependenciesMeta": {
     "@ledgerhq/lumen-ui-react": {
       "optional": true
     },
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
     "@ledgerhq/lumen-design-core": {
+      "optional": true
+    },
+    "react-native": {
       "optional": true
     }
   },
   "devDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@radix-ui/react-checkbox": "catalog:",
+    "@radix-ui/react-dialog": "catalog:",
+    "@radix-ui/react-slot": "catalog:",
+    "@radix-ui/react-switch": "catalog:",
+    "@radix-ui/react-tooltip": "catalog:",
     "@reduxjs/toolkit": "catalog:",
+    "@tanstack/react-table": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-native-reanimated": "catalog:",
+    "react-native-safe-area-context": "catalog:",
+    "react-native-svg": "catalog:",
     "react-redux": "catalog:",
     "tailwind-merge": "catalog:",
     "typescript": "catalog:"

@@ -1,0 +1,42 @@
+import React, { useLayoutEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useContactsFeature } from "@features/flow-contacts";
+import { TrackScreen } from "~/analytics";
+import { ContactsView } from "./ContactsView";
+import { useContactsScreenViewModel } from "./useContactsScreenViewModel";
+import { useContactsViewModel } from "./useContactsViewModel";
+
+function ContactsScreenRedirect() {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
+
+  useLayoutEffect(() => {
+    navigation.goBack();
+  }, [navigation]);
+
+  return null;
+}
+
+function ContactsScreenContent() {
+  const viewModel = useContactsViewModel();
+
+  useContactsScreenViewModel(viewModel.labels.addContact, viewModel.onAddContact);
+
+  return <ContactsView {...viewModel} />;
+}
+
+export function ContactsScreen() {
+  const { isEnabled } = useContactsFeature("mobile");
+
+  if (!isEnabled) {
+    return <ContactsScreenRedirect />;
+  }
+
+  return (
+    <>
+      <TrackScreen category="Contacts" />
+      <ContactsScreenContent />
+    </>
+  );
+}
