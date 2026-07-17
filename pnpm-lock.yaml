@@ -733,6 +733,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2
+      '@shared/live-env':
+        specifier: workspace:*
+        version: link:../../shared/live-env
       bigint-buffer:
         specifier: '*'
         version: 1.1.5(patch_hash=8b68e3a6ff85b08428e730e15c185b6ef716497a858ca1f30f6e628828bac536)
@@ -1054,6 +1057,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:*
         version: link:../../shared/feature-flags
+      '@shared/live-env':
+        specifier: workspace:*
+        version: link:../../shared/live-env
       '@tanstack/react-query':
         specifier: 5.28.9
         version: 5.28.9(react@19.1.4)
@@ -1827,6 +1833,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:*
         version: link:../../shared/feature-flags
+      '@shared/live-env':
+        specifier: workspace:*
+        version: link:../../shared/live-env
       '@shopify/flash-list':
         specifier: 2.2.0
         version: 2.2.0(@babel/runtime@7.28.4)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -2464,6 +2473,9 @@ importers:
       '@segment/analytics-node':
         specifier: 3.1.0
         version: 3.1.0
+      '@shared/live-env':
+        specifier: workspace:*
+        version: link:../../shared/live-env
       '@shared/schema-primitives':
         specifier: workspace:^
         version: link:../../shared/schema-primitives
@@ -8648,13 +8660,6 @@ importers:
         version: 19.1.4(react@19.1.4)
 
   libs/env:
-    dependencies:
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
-      utility-types:
-        specifier: ^3.10.0
-        version: 3.11.0
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -12528,6 +12533,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
+      '@shared/live-env':
+        specifier: workspace:*
+        version: link:../../shared/live-env
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13519,6 +13527,9 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:^
         version: link:../../domain/entity/currency-crypto
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/cryptoassets
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework
@@ -13654,6 +13665,31 @@ importers:
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+
+  shared/live-env:
+    dependencies:
+      '@ledgerhq/live-env':
+        specifier: workspace:*
+        version: link:../../libs/env
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
       jest:
         specifier: 'catalog:'
         version: 30.2.0
