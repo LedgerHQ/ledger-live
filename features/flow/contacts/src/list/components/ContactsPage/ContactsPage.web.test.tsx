@@ -2,8 +2,9 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import type { ContactId } from "@domain/entity-contact";
 import { mockMeContact, mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
-import type { ContactsLedgerSyncStatus, ContactsListViewModel } from "../../types";
+import type { ContactsLedgerSyncStatus, ContactsPageViewModel } from "../../types";
 import {
+  createContactsSearchViewModel,
   createEmptyContactsListViewModel,
   createPopulatedContactsListViewModel,
 } from "../../viewModel";
@@ -12,17 +13,21 @@ import { ContactsPage } from "./ContactsPage.web";
 const labels = {
   title: "Contacts",
   searchPlaceholder: "Search contact",
+  searchNoResults: "No contact found",
   addContact: "Add contact",
   formatAddressCount: (count: number) => `${count} address`,
 };
 
 type RenderContactsPageOptions = Readonly<{
-  viewModel?: ContactsListViewModel;
+  viewModel?: ContactsPageViewModel;
   ledgerSyncStatus?: ContactsLedgerSyncStatus;
   isIntroductionOpen?: boolean;
   onDismissIntroduction?: () => void;
+  onOpenMe?: (contactId: ContactId) => void;
   onOpenContact?: (contactId: ContactId) => void;
   onAddContact?: () => void;
+  searchQuery?: string;
+  onSearchInputChange?: React.ChangeEventHandler<HTMLInputElement>;
 }>;
 
 function renderContactsPage({
@@ -30,16 +35,22 @@ function renderContactsPage({
   ledgerSyncStatus = "ready",
   isIntroductionOpen = false,
   onDismissIntroduction = jest.fn(),
+  onOpenMe = jest.fn(),
   onOpenContact = jest.fn(),
   onAddContact = jest.fn(),
+  searchQuery = "",
+  onSearchInputChange = jest.fn(),
 }: RenderContactsPageOptions = {}) {
   render(
     <ContactsPage
       viewModel={viewModel}
       labels={labels}
       meAvatarSrc="https://example.com/black/user.png"
+      onOpenMe={onOpenMe}
       onOpenContact={onOpenContact}
       onAddContact={onAddContact}
+      searchQuery={searchQuery}
+      onSearchInputChange={onSearchInputChange}
       ledgerSyncStatus={ledgerSyncStatus}
       ledgerSyncIntroduction={{
         isOpen: isIntroductionOpen,
@@ -51,12 +62,16 @@ function renderContactsPage({
     />,
   );
 
-  return { onDismissIntroduction, onOpenContact, onAddContact };
+  return { onDismissIntroduction, onOpenMe, onOpenContact, onAddContact, onSearchInputChange };
 }
 
 describe("ContactsPage", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("renders the empty contacts list inside the page and delegates row actions", () => {
-    const { onOpenContact, onAddContact } = renderContactsPage();
+    const { onOpenMe, onOpenContact, onAddContact } = renderContactsPage();
 
     expect(screen.getByTestId("contacts-page-layout")).toBeVisible();
     expect(screen.getByTestId("contacts-page-header")).toBeVisible();
@@ -78,7 +93,8 @@ describe("ContactsPage", () => {
     fireEvent.click(screen.getByTestId("contacts-add-contact"));
     fireEvent.click(screen.getByTestId("contacts-add-contact-header"));
 
-    expect(onOpenContact).toHaveBeenCalledWith("contact-me");
+    expect(onOpenMe).toHaveBeenCalledWith("contact-me");
+    expect(onOpenContact).not.toHaveBeenCalled();
     expect(onAddContact).toHaveBeenCalledTimes(2);
   });
 
@@ -160,5 +176,75 @@ describe("ContactsPage", () => {
     fireEvent.click(screen.getByLabelText("components.dialogHeader.closeAriaLabel"));
 
     expect(onDismissIntroduction).toHaveBeenCalledTimes(1);
+  });
+
+  it("updates the search input and delegates query changes", () => {
+    const onSearchInputChange = jest.fn();
+
+    renderContactsPage({ onSearchInputChange });
+
+    fireEvent.change(screen.getByTestId("contacts-list-search"), {
+      target: { value: "Ben" },
+    });
+
+    expect(onSearchInputChange).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders matching search results", () => {
+    const contacts = mockPopulatedContacts();
+    const me = contacts.find(contact => contact.isMe) ?? mockMeContact();
+
+    render(
+      <ContactsPage
+        viewModel={createContactsSearchViewModel(me, contacts, "ben")}
+        labels={labels}
+        meAvatarSrc="https://example.com/black/user.png"
+        onOpenMe={jest.fn()}
+        onOpenContact={jest.fn()}
+        onAddContact={jest.fn()}
+        searchQuery="ben"
+        onSearchInputChange={jest.fn()}
+        ledgerSyncStatus="ready"
+        ledgerSyncIntroduction={{
+          isOpen: false,
+          description: "",
+          dismissLabel: "",
+          onDismiss: jest.fn(),
+        }}
+      />,
+    );
+
+    expect(screen.getByTestId("contacts-saved-row-contact-ben")).toBeVisible();
+    expect(screen.queryByTestId("contacts-saved-row-contact-ada")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("contacts-search-no-results")).not.toBeInTheDocument();
+  });
+
+  it("renders the no-results state when the search query has no match", () => {
+    const contacts = mockPopulatedContacts();
+    const me = contacts.find(contact => contact.isMe) ?? mockMeContact();
+
+    render(
+      <ContactsPage
+        viewModel={createContactsSearchViewModel(me, contacts, "unknown")}
+        labels={labels}
+        meAvatarSrc="https://example.com/black/user.png"
+        onOpenMe={jest.fn()}
+        onOpenContact={jest.fn()}
+        onAddContact={jest.fn()}
+        searchQuery="unknown"
+        onSearchInputChange={jest.fn()}
+        ledgerSyncStatus="ready"
+        ledgerSyncIntroduction={{
+          isOpen: false,
+          description: "",
+          dismissLabel: "",
+          onDismiss: jest.fn(),
+        }}
+      />,
+    );
+
+    expect(screen.getByTestId("contacts-search-no-results")).toBeVisible();
+    expect(screen.getByText("No contact found")).toBeVisible();
+    expect(screen.queryByTestId("contacts-saved-row-contact-ben")).not.toBeInTheDocument();
   });
 });
