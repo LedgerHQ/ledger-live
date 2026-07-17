@@ -31,7 +31,13 @@ export const changes = {
 };
 
 export function notifyChange(change: EnvChange): void {
-  getListeners().forEach(fn => fn(change));
+  getListeners().forEach(fn => {
+    try {
+      fn(change);
+    } catch {
+      // Prevent one listener from blocking others
+    }
+  });
 }
 
 export function injectDefinitions(defs: EnvDefs): void {

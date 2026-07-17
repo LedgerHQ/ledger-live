@@ -1,3 +1,4 @@
+import "@shared/live-env";
 import { setEnv } from "@ledgerhq/live-env";
 import "../src/live-common-set-supported-currencies";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";

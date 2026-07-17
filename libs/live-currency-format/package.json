@@ -31,7 +31,8 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "jest": "catalog:"
+    "jest": "catalog:",
+    "@shared/live-env": "workspace:*"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

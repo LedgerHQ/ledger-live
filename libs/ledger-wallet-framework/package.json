@@ -126,7 +126,8 @@
     "oxlint": "catalog:",
     "timemachine": "^0.3.2",
     "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "@swc/core": "catalog:",
+    "@shared/live-env": "workspace:*"
   },
   "scripts": {
     "clean": "rm -rf lib lib-es",

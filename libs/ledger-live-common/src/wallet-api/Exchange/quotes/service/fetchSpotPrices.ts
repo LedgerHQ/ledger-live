@@ -37,7 +37,7 @@ export async function fetchSpotPrices(args: FetchSpotPricesArgs): Promise<Record
   const currencyIds = dedupeCurrencyIds(args.currencyIds);
   if (currencyIds.length === 0) return {};
 
-  const baseURL = getEnv("LEDGER_COUNTERVALUES_API");
+  const baseURL = getEnv<string>("LEDGER_COUNTERVALUES_API");
   const counterValue = args.counterValue.toLowerCase();
 
   const { cached, missing } = readFromCache(currencyIds, baseURL, counterValue);

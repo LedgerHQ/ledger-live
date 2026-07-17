@@ -230,6 +230,9 @@
     "./features/flow/fear-and-greed": {
       "entry": ["src/index.ts"]
     },
+    "./features/platform/env": {
+      "entry": ["src/index.ts"]
+    },
     "./features/platform/feature-flags": {
       "entry": ["src/index.ts"]
     },

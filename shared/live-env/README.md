@@ -24,7 +24,7 @@ const timeout = getEnv("GET_CALLS_TIMEOUT"); // number
 
 ```ts
 // React hook — separate package for React-only consumers
-import { useEnv } from "@features/platform-env";
+import useEnv from "@features/platform-env";
 const isMock = useEnv("MOCK"); // string (MOCK is a seed string)
 ```
 

@@ -9,7 +9,9 @@
   "main": "./src/index.js",
   "dependencies": {
     "@domain/entity-currency-crypto": "workspace:^",
-    "@ledgerhq/ledger-wallet-framework": "workspace:^"
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "@shared/live-env": "workspace:*"
   },
   "exports": {
     ".": "./src/index.js",

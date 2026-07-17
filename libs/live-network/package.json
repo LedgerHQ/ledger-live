@@ -75,6 +75,7 @@
     "lru-cache": "^7.14.1"
   },
   "devDependencies": {
+    "@shared/live-env": "workspace:*",
     "@types/invariant": "^2.2.35",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",

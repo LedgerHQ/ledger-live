@@ -17,7 +17,7 @@ export function useLazyLedgerCurrency(
   options: LazyLedgerCurrencyOptions,
   currency?: Currency | null,
 ) {
-  const devMode = useEnv("MANAGER_DEV_MODE");
+  const devMode = useEnv<boolean>("MANAGER_DEV_MODE");
 
   const [triggerGetAssetData] = assetsDataApi.useLazyGetAssetDataQuery();
 

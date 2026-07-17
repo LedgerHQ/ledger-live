@@ -17,7 +17,7 @@ export function useAddressPoisoningOperationsFamilies({
     const isFeatureEnabled = addressPoisoningOperationsFilterFeature?.enabled;
 
     if (!isFeatureEnabled)
-      return getEnv("ADDRESS_POISONING_FAMILIES")
+      return getEnv<string>("ADDRESS_POISONING_FAMILIES")
         .split(",")
         .map((s: string) => s.trim());
 

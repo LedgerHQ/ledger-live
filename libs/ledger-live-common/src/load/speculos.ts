@@ -243,9 +243,9 @@ export async function createImplicitSpeculos(query: string): Promise<{
   };
   appCandidate: AppCandidate;
 } | null> {
-  const coinapps = getEnv("COINAPPS");
+  const coinapps = getEnv<string>("COINAPPS");
   invariant(coinapps, "COINAPPS folder is missing!");
-  const seed = getEnv("SEED");
+  const seed = getEnv<string>("SEED");
   invariant(seed, "SEED is missing!");
   const apps = await listAppCandidates(coinapps);
   const match = parseAppSearch(query);

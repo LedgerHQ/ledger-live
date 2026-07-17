@@ -50,7 +50,8 @@ export const isStuckOperation = (operation: Operation): boolean => {
    * threshold are considered as stuck
    */
   return (
-    new Date().getTime() - operation.date.getTime() > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT")
+    new Date().getTime() - operation.date.getTime() >
+    getEnv<number>("ETHEREUM_STUCK_TRANSACTION_TIMEOUT")
   );
 };
 

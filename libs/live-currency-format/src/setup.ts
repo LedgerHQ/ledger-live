@@ -1,3 +1,4 @@
+import "@shared/live-env";
 import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 

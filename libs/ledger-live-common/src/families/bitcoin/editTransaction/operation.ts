@@ -29,7 +29,8 @@ export const isStuckOperation = (operation: Operation): boolean => {
    * threshold are considered as stuck.
    */
   return (
-    new Date().getTime() - operation.date.getTime() > getEnv("BITCOIN_STUCK_TRANSACTION_TIMEOUT")
+    new Date().getTime() - operation.date.getTime() >
+    getEnv<number>("BITCOIN_STUCK_TRANSACTION_TIMEOUT")
   );
 };
 

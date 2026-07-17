@@ -104,7 +104,7 @@ export function RemoteLiveAppProvider({
   // apiVersion renamed without (s) because param
   const apiVersion = apiVersions ? apiVersions : ["1.0.0", "2.0.0"];
 
-  const envProviderURL = useEnv("PLATFORM_MANIFEST_API_URL");
+  const envProviderURL = useEnv<string>("PLATFORM_MANIFEST_API_URL");
 
   const providerURL = provider === "production" ? envProviderURL : provider;
 

@@ -14,6 +14,7 @@
     "**/__tests__/**/*",
     "src/test-helpers/bridge-integration-suite.ts",
     "src/test-helpers/staticTime.ts",
+    "src/setup.ts",
     "**/tests/**/*",
     "**/__mocks__/**/*",
     "**/*.test.js",

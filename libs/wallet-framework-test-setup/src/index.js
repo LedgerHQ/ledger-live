@@ -1,5 +1,9 @@
 "use strict";
 
+// Ensure live-env definitions are injected before any getEnv() call in tests.
+// @shared/live-env calls injectDefinitions(allDefinitions) at module load via sideEffects.
+require("@shared/live-env");
+
 const {
   getCryptoCurrencyById,
   findCryptoCurrencyById,

@@ -32,9 +32,9 @@ export const isSwapOperationPending: (status: string) => boolean = status =>
   !operationStatusList.finishedOK.includes(status) &&
   !operationStatusList.finishedKO.includes(status);
 
-const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
+const getSwapAPIBaseURL: () => string = () => getEnv<string>("SWAP_API_BASE");
 const getSwapUserIP = () => {
-  const SWAP_USER_IP = getEnv("SWAP_USER_IP");
+  const SWAP_USER_IP = getEnv<string>("SWAP_USER_IP");
   if (SWAP_USER_IP) {
     return { "X-Forwarded-For": SWAP_USER_IP };
   }

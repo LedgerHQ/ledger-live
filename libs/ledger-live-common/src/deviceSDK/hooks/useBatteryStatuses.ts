@@ -51,7 +51,7 @@ export const useBatteryStatuses = ({
   // cf. https://react.dev/reference/react/useState#parameters
   const [cancelRequest, setCancelRequest] = useState(() => () => {});
   const [isBatteryLow, setIsBatteryLow] = useState<boolean>(false);
-  const lowBatteryPercentage = useEnv("LOW_BATTERY_PERCENTAGE");
+  const lowBatteryPercentage = useEnv<number>("LOW_BATTERY_PERCENTAGE");
 
   useEffect(() => {
     if (!enabled) return;
