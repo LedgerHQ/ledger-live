@@ -10,10 +10,10 @@ import {
   MenuContent,
   MenuItem,
 } from "@ledgerhq/lumen-ui-react";
-import { Pill } from "../pill/Pill.web";
+import { Pill } from "../pill/Pill";
 import { FilterSort, ArrowUp, ArrowDown, MoreHorizontal } from "@ledgerhq/lumen-ui-react/symbols";
-import { useToolBarViewModel } from "./useToolBarViewModel.web";
-import type { ToolBarInput, ToolBarViewProps } from "./types.web";
+import { useToolBarViewModel } from "./useToolBarViewModel";
+import type { ToolBarInput, ToolBarViewProps } from "./types";
 
 function ToolBarView({
   search,

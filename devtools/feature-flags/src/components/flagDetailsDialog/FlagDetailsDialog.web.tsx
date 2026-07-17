@@ -9,7 +9,7 @@ import {
   Button,
 } from "@ledgerhq/lumen-ui-react";
 import type { FeatureId, Features } from "@shared/feature-flags";
-import { FlagDisplayState } from "../..";
+import type { FlagDisplayState } from "../../types";
 import { FlagJsonEditor } from "../flagJsonEditor/flagJsonEditor";
 import { useJsonEditor } from "../../hooks";
 

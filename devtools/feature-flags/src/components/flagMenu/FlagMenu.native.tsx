@@ -9,7 +9,7 @@ import {
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-rnative";
 import { MoreHorizontal, Share, Download, Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { useFlagMenuViewModel, type FlagMenuViewProps } from "./useFlagMenuViewModel.native";
+import { useFlagMenuViewModel, type FlagMenuViewProps } from "./useFlagMenuViewModel";
 
 function FlagMenuView({ menuRef, openMenu, onExport, onImport, onReset }: FlagMenuViewProps) {
   return (

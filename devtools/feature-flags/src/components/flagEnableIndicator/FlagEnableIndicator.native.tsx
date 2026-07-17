@@ -1,5 +1,5 @@
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
-import { Pill } from "../pill/Pill.native";
+import { Pill } from "../pill/Pill";
 import { memo } from "react";
 
 export interface FlagEnableIndicatorProps {

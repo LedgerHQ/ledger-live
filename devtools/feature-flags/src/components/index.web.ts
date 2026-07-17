@@ -6,5 +6,5 @@ export { FlagEnableIndicator } from "./flagEnableIndicator/FlagEnableIndicator";
 export { FlagListSummary } from "./flagListSummary/FlagListSummary";
 export { FlagDetailsDialog } from "./flagDetailsDialog/FlagDetailsDialog";
 export { FlagJsonEditor } from "./flagJsonEditor/flagJsonEditor";
-export { FlagDiffView } from "./flagDiffView/FlagDiffView.web";
+export { FlagDiffView } from "./flagDiffView/FlagDiffView";
 export { ToolBar } from "./toolBar/ToolBar";

@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import type { BigNumber } from "bignumber.js";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { NativeStackNavigationOptions } from "@react-navigation/native-stack";
@@ -37,6 +38,8 @@ export type AfterAmountInputProps = {
   account: AccountLike;
   transaction: Transaction;
   updateTransaction: (updater: (t: Transaction) => Transaction) => void;
+  /** Bridge-estimated max-spendable value shown in the screen's "Total available" row; `null` until the first estimate resolves (and possibly stale while a new estimate is computing). */
+  maxSpendable: BigNumber | null;
 };
 
 type InitialScreenNavParams = {

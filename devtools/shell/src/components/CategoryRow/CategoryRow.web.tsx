@@ -1,7 +1,7 @@
 import { ChevronDown, ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
 import type { Category, Tool, ToolId, ValueOf } from "@devtools/registry";
 import type { IconComponent } from "../../categoryConfig";
-import { ToolRowItem } from "../ToolRowItem/ToolRowItem.web";
+import { ToolRowItem } from "../ToolRowItem/ToolRowItem";
 
 interface CategoryRowProps {
   category: ValueOf<typeof Category>;

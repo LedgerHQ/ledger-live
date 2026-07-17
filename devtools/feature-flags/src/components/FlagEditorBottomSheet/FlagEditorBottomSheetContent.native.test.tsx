@@ -1,7 +1,7 @@
 import { render, screen, userEvent, BottomSheetWrapper } from "jest/render.native";
 import { useJsonEditor, type JsonEditorPropsState } from "../../hooks/useJsonEditor";
 import type { FlagDisplayState } from "../../types";
-import { FlagEditorBottomSheetContent } from "./FlagEditorBottomSheetContent.native";
+import { FlagEditorBottomSheetContent } from "./FlagEditorBottomSheetContent";
 
 jest.mock("../../hooks/useJsonEditor", () => ({
   useJsonEditor: jest.fn(),

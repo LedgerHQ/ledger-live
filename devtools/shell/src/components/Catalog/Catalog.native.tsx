@@ -1,7 +1,7 @@
 import { ScrollView } from "react-native";
 import { Divider, Box } from "@ledgerhq/lumen-ui-rnative";
-import { CatalogRow } from "../CatalogRow/CatalogRow.native";
-import type { IconComponent } from "../../categoryConfig.native";
+import { CatalogRow } from "../CatalogRow/CatalogRow";
+import type { IconComponent } from "../../categoryConfig";
 
 export interface CatalogItem {
   readonly key: string;

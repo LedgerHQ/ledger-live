@@ -1,7 +1,7 @@
 import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
 import { Category } from "@devtools/registry";
 import type { Tool, ToolId } from "@devtools/registry";
-import { IconSquare } from "../IconSquare/IconSquare.web";
+import { IconSquare } from "../IconSquare/IconSquare";
 
 interface CategoryCardProps {
   category: Category;

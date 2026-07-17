@@ -1,7 +1,7 @@
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
 import { makeTool } from "jest/fixtures";
-import { Sidebar } from "./Sidebar.web";
+import { Sidebar } from "./Sidebar";
 import { Category } from "@devtools/registry";
 
 const categories = [

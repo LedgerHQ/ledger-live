@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import type { DiffLine } from "../../utils";
-import { FlagDiffView } from "./FlagDiffView.web";
+import { FlagDiffView } from "./FlagDiffView";
 
 const lines = (container: HTMLElement) => Array.from(container.querySelectorAll("pre > div"));
 

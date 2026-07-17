@@ -3,6 +3,7 @@
     "compilerOptions": {
         "moduleSuffixes": [".native", ""]
     },
-    "include": ["src/**/*.native.ts", "src/**/*.native.tsx", "**/*.d.ts"],
-    "exclude": ["node_modules"]
+    "include": ["src/**/*", "**/*.d.ts"],
+    "exclude": ["node_modules", "src/**/*.web.*"]
 }
+

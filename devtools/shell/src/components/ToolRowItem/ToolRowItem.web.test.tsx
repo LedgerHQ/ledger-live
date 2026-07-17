@@ -1,5 +1,5 @@
 import { render, screen } from "jest/render";
-import { ToolRowItem } from "./ToolRowItem.web";
+import { ToolRowItem } from "./ToolRowItem";
 import { makeTool } from "jest/fixtures";
 import { Category } from "@devtools/registry";
 
