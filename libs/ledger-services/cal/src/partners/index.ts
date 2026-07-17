@@ -2,7 +2,13 @@ import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import { AdditionalProviderConfig, SWAP_DATA_CDN } from "./default";
 
-const CAL_BASE_URL = getEnv<string>("CAL_SERVICE_URL");
+const CAL_BASE_URL = (() => {
+  try {
+    return String(getEnv("CAL_SERVICE_URL") ?? "");
+  } catch {
+    return "";
+  }
+})();
 
 export type PartnerType = {
   continuesInProviderLiveApp: boolean;
