@@ -1,5 +1,3 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
-import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { formatTransactionStatus } from "@ledgerhq/ledger-wallet-framework/formatters";
 import {
   fromTransactionCommonRaw,
@@ -7,23 +5,12 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/ledger-wallet-framework/serialization/transaction";
-import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 
-export const formatTransaction = (
-  { amount, recipient, useAllAmount }: Transaction,
-  account: Account,
-): string => `
-SEND ${
-  useAllAmount
-    ? "MAX"
-    : formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
-        showCode: true,
-        disableRounding: true,
-      })
-}
-TO ${recipient}`;
+// HyperCore has no send flow on Ledger Wallet; transactions only exist for (de)serialization and are
+// never broadcast. Keep the formatted output neutral so debug/CLI logs don't imply a "SEND … TO …".
+export const formatTransaction = (): string => "HyperCore transaction (no send flow)";
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);

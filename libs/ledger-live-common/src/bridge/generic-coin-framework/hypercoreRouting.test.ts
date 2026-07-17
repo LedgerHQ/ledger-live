@@ -1,5 +1,5 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import type { Account } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import BigNumber from "bignumber.js";
 import { coinModuleLoaders } from "../../coin-modules/loaders";
 import { createTransaction } from "./createTransaction";
@@ -28,13 +28,21 @@ describe("hypercore generic coin framework routing", () => {
     expect(loader?.loadLocalApi).toBeDefined();
     expect(loader?.loadSigner).toBeDefined();
     expect(loader?.loadTransaction).toBeDefined();
+    expect(loader?.loadSetup).toBeDefined();
+  });
+
+  it("exposes a resolver via loadSetup so hw address derivation works", async () => {
+    const loader = coinModuleLoaders.find(l => l.family === "hypercore");
+    const setup = await loader?.loadSetup?.();
+    // Reuses the EVM setup (HyperCore shares the Ethereum address); an empty setup would break
+    // scanAccounts / hw getAddress, which relies on setup.resolver.
+    expect(setup?.resolver).toBeDefined();
   });
 
   it("builds a minimal default transaction (no send flow)", () => {
-    const account = {
-      type: "Account",
+    const account = genAccount("hypercore-test", {
       currency: getCryptoCurrencyById("hypercore"),
-    } as unknown as Account;
+    });
 
     expect(createTransaction(account)).toEqual({
       family: "hypercore",

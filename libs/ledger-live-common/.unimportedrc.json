@@ -551,6 +551,10 @@
     "src/families/hedera/react.ts",
     "src/families/hedera/setup.ts",
     "src/families/hedera/utils.ts",
+    "src/families/hypercore/coinModuleApi.ts",
+    "src/families/hypercore/config.ts",
+    "src/families/hypercore/transaction.ts",
+    "src/families/hypercore/types.ts",
     "src/families/icon/descriptor/index.ts",
     "src/families/icon/setup.ts",
     "src/families/icon/types.ts",
@@ -800,6 +804,7 @@
   "ignoreUnused": [
     "@cardano-foundation/ledgerjs-hw-app-cardano",
     "@ledgerhq/asset-aggregation",
+    "@ledgerhq/coin-hypercore",
     "@ledgerhq/hw-app-algorand",
     "@ledgerhq/hw-app-aptos",
     "@ledgerhq/hw-app-eth",
