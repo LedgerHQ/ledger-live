@@ -29,7 +29,12 @@ import reducer, {
   counterValueCurrencySelector,
   counterValueIdOf,
   migrateLegacyCryptoCounterValue,
+  getsupportedCountervalues,
+  supportedCounterValuesSelector,
+  possibleIntermediaries,
 } from "./settings";
+import { FiatCurrencySchema } from "@domain/entity-currency-fiat";
+import type { FiatCurrency } from "@domain/entity-currency-fiat";
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
 
@@ -901,5 +906,85 @@ describe("canPushDeviceIdsSelector", () => {
 
   it("returns true only when FF is on and user has opted in", () => {
     expect(canPushDeviceIdsSelector(mockStateWithSettings(optedInSettings))).toBe(true);
+  });
+});
+
+describe("getsupportedCountervalues", () => {
+  const mockFiat = (ticker: string, name: string): FiatCurrency =>
+    FiatCurrencySchema.parse({
+      type: "FiatCurrency",
+      id: ticker.toLowerCase(),
+      ticker,
+      name,
+      symbol: ticker,
+      units: [{ code: ticker, name, magnitude: 2, showAllDigits: false, prefixCode: false }],
+    });
+
+  it("appends BTC and ETH (possibleIntermediaries) to the fiat list", () => {
+    const fiats = [mockFiat("USD", "US Dollar")];
+    const result = getsupportedCountervalues(fiats);
+    const tickers = result.map(r => r.value);
+    expect(tickers).toContain("USD");
+    expect(tickers).toContain(possibleIntermediaries[0].ticker); // BTC
+    expect(tickers).toContain(possibleIntermediaries[1].ticker); // ETH
+  });
+
+  it("returns items sorted alphabetically by currency name", () => {
+    const fiats = [mockFiat("ZAR", "Zzz Currency"), mockFiat("AAA", "Aaa Currency")];
+    const result = getsupportedCountervalues(fiats);
+    const names = result.map(r => r.currency.name);
+    expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b)));
+  });
+
+  it("produces items with value, label, and currency fields", () => {
+    const fiats = [mockFiat("EUR", "Euro")];
+    const [item] = getsupportedCountervalues(fiats).filter(r => r.value === "EUR");
+    expect(item.value).toBe("EUR");
+    expect(item.label).toBe("Euro - EUR");
+    expect(item.currency.ticker).toBe("EUR");
+  });
+});
+
+describe("supportedCounterValuesSelector", () => {
+  const mockFiat = (ticker: string, name: string): FiatCurrency =>
+    FiatCurrencySchema.parse({
+      type: "FiatCurrency",
+      id: ticker.toLowerCase(),
+      ticker,
+      name,
+      symbol: ticker,
+      units: [{ code: ticker, name, magnitude: 2, showAllDigits: false, prefixCode: false }],
+    });
+
+  const buildStateWithFiats = (fiats: FiatCurrency[]): State => ({
+    ...({} as State),
+    supportedFiats: { fiats, fiatsReady: true },
+  });
+
+  it("derives the list from supportedFiats slice (not from settings)", () => {
+    const fiats = [mockFiat("USD", "US Dollar"), mockFiat("EUR", "Euro")];
+    const result = supportedCounterValuesSelector(buildStateWithFiats(fiats));
+    const tickers = result.map(r => r.value);
+    expect(tickers).toContain("USD");
+    expect(tickers).toContain("EUR");
+    expect(tickers).toContain(possibleIntermediaries[0].ticker);
+    expect(tickers).toContain(possibleIntermediaries[1].ticker);
+  });
+
+  it("returns only BTC+ETH when no fiats are provided", () => {
+    const result = supportedCounterValuesSelector(buildStateWithFiats([]));
+    expect(result.map(r => r.value)).toEqual(getsupportedCountervalues([]).map(r => r.value));
+  });
+});
+
+describe("filterValidSettings strips obsolete supportedCounterValues", () => {
+  it("filters out the now-obsolete supportedCounterValues field", () => {
+    const importedSettings = {
+      counterValue: "USD",
+      supportedCounterValues: [{ value: "USD", label: "US Dollar - USD", currency: {} }],
+    };
+    const filtered = filterValidSettings(importedSettings as Partial<SettingsState>);
+    expect(filtered.counterValue).toBe("USD");
+    expect("supportedCounterValues" in filtered).toBe(false);
   });
 });

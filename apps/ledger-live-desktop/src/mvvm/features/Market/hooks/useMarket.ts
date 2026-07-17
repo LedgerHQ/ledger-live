@@ -9,7 +9,6 @@ import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setMarketCurrentPage, setMarketOptions } from "~/renderer/actions/market";
-import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
 import { marketCurrentPageSelector, marketParamsSelector } from "~/renderer/reducers/market";
 import {
   counterValueCurrencySelector,
@@ -98,8 +97,6 @@ export function useMarket() {
   const { range, starred = [], liveCompatible, order, search = "" } = marketParams;
 
   const categories = useMarketCategories();
-
-  useInitSupportedCounterValues();
 
   const {
     requestCounterCurrency: resolvedRequestCounterCurrency,
