@@ -37,6 +37,8 @@ export type NetworkFeesViewModel = Readonly<{
   label: string;
   value: string;
   strategyLabel: string;
+  /** When true, `value` already includes the native fee-currency amount (with fiat when a rate exists); the row omits the strategy label. */
+  showFeeCurrencyAmount: boolean;
   showFeePresets: boolean;
   selectedFeeStrategy: string | null;
   feePresetLabelsOptions: FeePresetLabelOption[];

@@ -17,6 +17,12 @@ const status = (fields: {
   bandwidthAvailable: new BigNumber(fields.bandwidthAvailable ?? 0),
 });
 
+describe("tron descriptor", () => {
+  it("opts into showing the fee-currency amount on the fee row", () => {
+    expect(descriptor.send.fees.showFeeCurrencyAmount).toBe(true);
+  });
+});
+
 describe("tron descriptor - getNetworkFeesInfo", () => {
   it("is exposed on the tron fee descriptor", () => {
     expect(typeof getNetworkFeesInfo).toBe("function");
@@ -84,5 +90,24 @@ describe("tron descriptor - getNetworkFeesInfo", () => {
   it("returns null when status is null/undefined", () => {
     expect(getNetworkFeesInfo?.({ transaction: {}, status: null })).toBeNull();
     expect(getNetworkFeesInfo?.({ transaction: {}, status: undefined })).toBeNull();
+  });
+
+  it("returns null when a breakdown field is non-finite (unknown, matches the fee row)", () => {
+    const info = getNetworkFeesInfo?.({
+      transaction: {},
+      status: status({ estimatedFees: NaN, energyRequired: 0, bandwidthRequired: 0 }),
+    });
+    expect(info).toBeNull();
+  });
+
+  it("returns null for a zero fee while the transaction has errors (unknown, not covered)", () => {
+    const info = getNetworkFeesInfo?.({
+      transaction: {},
+      status: {
+        ...status({ estimatedFees: 0, energyRequired: 0, bandwidthRequired: 0 }),
+        errors: { recipient: new Error("bad") },
+      },
+    });
+    expect(info).toBeNull();
   });
 });

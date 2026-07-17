@@ -95,6 +95,7 @@ export function useNetworkFees({
       label: t("send.fees.title"),
       value: core.displayFeesValue,
       strategyLabel: getFeeStrategyLabel(core.selectedFeeStrategy),
+      showFeeCurrencyAmount: core.showFeeCurrencyAmount,
       showFeePresets: core.showFeePresets,
       selectedFeeStrategy: core.selectedFeeStrategy,
       feePresetLabelsOptions: feePresetOptionsMapped,
@@ -110,6 +111,7 @@ export function useNetworkFees({
     [
       core.displayFeesValue,
       core.selectedFeeStrategy,
+      core.showFeeCurrencyAmount,
       core.showFeePresets,
       core.onSelectFeeStrategy,
       feePresetOptionsMapped,

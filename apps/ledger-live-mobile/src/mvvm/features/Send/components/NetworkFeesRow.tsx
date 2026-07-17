@@ -158,12 +158,16 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
             <Text typography="body3" lx={{ color: "base" }}>
               {viewModel.value}
             </Text>
-            <Text typography="body3" lx={{ color: "muted" }}>
-              •
-            </Text>
-            <Text typography="body3" lx={{ color: "muted" }}>
-              {viewModel.strategyLabel}
-            </Text>
+            {viewModel.showFeeCurrencyAmount ? null : (
+              <>
+                <Text typography="body3" lx={{ color: "muted" }}>
+                  •
+                </Text>
+                <Text typography="body3" lx={{ color: "muted" }}>
+                  {viewModel.strategyLabel}
+                </Text>
+              </>
+            )}
           </View>
           {canOpenFeeSelector ? <ChevronDown size={16} /> : null}
         </Pressable>

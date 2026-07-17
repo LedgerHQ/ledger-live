@@ -44,12 +44,40 @@ const baseViewModel: NetworkFeesViewModel = {
   label: "Network fees",
   value: "0 TRX",
   strategyLabel: "",
+  showFeeCurrencyAmount: false,
   showFeePresets: false,
   selectedFeeStrategy: null,
   feePresetLabelsOptions: [],
   onSelectFeeStrategy: jest.fn(),
   networkFeesInfo: null,
 };
+
+describe("NetworkFeesRow fee value", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("shows the value followed by the strategy label by default", () => {
+    render(
+      <NetworkFeesRow viewModel={{ ...baseViewModel, value: "$0.12", strategyLabel: "Medium" }} />,
+    );
+    expect(screen.getByText("$0.12")).toBeOnTheScreen();
+    expect(screen.getByText("Medium")).toBeOnTheScreen();
+  });
+
+  it("shows the fiat • crypto value alone (no strategy label) when showFeeCurrencyAmount is set", () => {
+    render(
+      <NetworkFeesRow
+        viewModel={{
+          ...baseViewModel,
+          value: "$0.00 • 0 TRX",
+          strategyLabel: "Medium",
+          showFeeCurrencyAmount: true,
+        }}
+      />,
+    );
+    expect(screen.getByText("$0.00 • 0 TRX")).toBeOnTheScreen();
+    expect(screen.queryByText("Medium")).toBeNull();
+  });
+});
 
 describe("NetworkFeesRow info drawer", () => {
   beforeEach(() => jest.clearAllMocks());

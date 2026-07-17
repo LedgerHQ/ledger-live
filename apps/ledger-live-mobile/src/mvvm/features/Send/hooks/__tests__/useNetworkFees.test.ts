@@ -113,6 +113,7 @@ describe("useNetworkFees", () => {
       onSelectFeeStrategy: jest.fn(),
       displayFeesValue: "-",
       showFeePresets: false,
+      showFeeCurrencyAmount: false,
     });
   });
 
@@ -194,6 +195,7 @@ describe("useNetworkFees", () => {
       onSelectFeeStrategy: jest.fn(),
       displayFeesValue: "$15.00 USD",
       showFeePresets: true,
+      showFeeCurrencyAmount: false,
     });
 
     const { result } = renderHook(() =>
@@ -226,6 +228,7 @@ describe("useNetworkFees", () => {
       onSelectFeeStrategy,
       displayFeesValue: "-",
       showFeePresets: false,
+      showFeeCurrencyAmount: false,
     });
 
     const { result } = renderHook(() => useNetworkFees(buildParams()));

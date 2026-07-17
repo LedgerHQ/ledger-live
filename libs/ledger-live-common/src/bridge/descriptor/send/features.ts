@@ -50,6 +50,7 @@ export const sendFeatures = {
   getCustomAssetsConfig: fromDescriptor(d => d.fees.customAssets, noFeeAssetsConfig),
   hasCoinControl: fromDescriptor(d => d.fees.hasCoinControl, false),
   getCoinControlConfig: fromDescriptor(d => d.fees.coinControl, noCoinControlConfig),
+  showFeeCurrencyAmount: fromDescriptor(d => d.fees.showFeeCurrencyAmount, false),
   getFeePresetOptions: (
     currency: CryptoOrTokenCurrency | undefined,
     transaction: unknown,
