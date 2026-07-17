@@ -1,13 +1,14 @@
 /**
  * Fields common to tzkt account types that own a manager key (`user` and `delegate`):
- * these types carry manager-key metadata — a public key, its on-chain reveal state
- * (`revealed`), a counter, a balance, and (un)staked balances. The key is not necessarily
- * published yet: an unrevealed account still has these fields but reports `revealed: false`.
+ * these types carry manager-key metadata — an on-chain reveal state (`revealed`), a counter,
+ * a balance, and (un)staked balances, plus the public key once it has been revealed.
+ * `publicKey` is optional: an unrevealed account (`revealed: false`) has not published one yet.
  * See https://api.tzkt.io/#operation/Accounts_GetByAddress (schemas `User` / `Delegate`).
  */
 type APIManagerAccountBase = {
   address: string;
-  publicKey: string;
+  /** Absent until the account is revealed (`revealed: false` → no public key on-chain yet). */
+  publicKey?: string;
   revealed: boolean;
   balance: number;
   stakedBalance?: number;
