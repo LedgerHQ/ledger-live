@@ -2,7 +2,11 @@ import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { useFeature } from "@features/platform-feature-flags";
-import { retriesUpsellModalSelector } from "@domain/entity-large-screen-upsell-modal";
+import {
+  markBlockedByCompeting,
+  retriesUpsellModalSelector,
+  sessionSelector,
+} from "@domain/entity-large-screen-upsell-modal";
 import {
   LargeScreenUpsellModal,
   mapDevicesModelListToUpsellInputs,
@@ -11,7 +15,7 @@ import {
   type LargeScreenUpsellModalViewedContext,
   type NanoDeviceModelId,
 } from "@features/flow-large-screen-upsell";
-import { useSelector } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { themeSelector } from "~/renderer/actions/general";
 import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
 import { selectIsGenericAwarenessModalOpen } from "LLD/features/GenericAwarenessModal/genericAwarenessModalDialog";
@@ -50,24 +54,25 @@ function buildSharedAnalyticsProps({
 }
 
 export function LargeScreenUpsellModalMount() {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const devicesModelList = useSelector(devicesModelListSelector);
   const onboardingDate = useSelector(onboardingDateSelector);
   const theme = useSelector(themeSelector);
   const personalizedRecommendationsEnabled = useSelector(sharePersonalizedRecommendationsSelector);
   const retries = useSelector(retriesUpsellModalSelector);
+  const session = useSelector(sessionSelector);
   const feature = useFeature("largeScreenUpsell");
   const shouldShowDeferredModals = useShouldShowDeferredModals();
   const isGenericAwarenessModalOpen = useSelector(selectIsGenericAwarenessModalOpen);
 
   const hasCompetingAppStartModal = !shouldShowDeferredModals || isGenericAwarenessModalOpen;
-  const hasSeenCompetingAppStartModalRef = useRef(false);
 
   useEffect(() => {
-    if (hasCompetingAppStartModal) {
-      hasSeenCompetingAppStartModalRef.current = true;
+    if (hasCompetingAppStartModal && session === "ready") {
+      dispatch(markBlockedByCompeting());
     }
-  }, [hasCompetingAppStartModal]);
+  }, [dispatch, hasCompetingAppStartModal, session]);
 
   const currentModalAnalyticsPropsRef = useRef<LargeScreenUpsellSharedAnalyticsProps | null>(null);
 
@@ -110,7 +115,8 @@ export function LargeScreenUpsellModalMount() {
     [getAnalyticsPropsForDevice],
   );
 
-  if (hasCompetingAppStartModal || hasSeenCompetingAppStartModalRef.current) {
+  // session becomes "dismissed" on close — while visible it stays "ready" so Mount stays mounted.
+  if (session !== "ready" || hasCompetingAppStartModal) {
     return null;
   }
 
