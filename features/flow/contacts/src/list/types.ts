@@ -30,3 +30,17 @@ export type PopulatedContactsListViewModel = Readonly<{
   me: ContactsListItem;
   savedContacts: readonly ContactsListItem[];
 }>;
+
+export type ContactsSearchResultsViewModel = PopulatedContactsListViewModel &
+  Readonly<{
+    status: "results";
+  }>;
+
+export type ContactsSearchNoResultsViewModel = EmptyContactsListViewModel &
+  Readonly<{
+    status: "no-results";
+  }>;
+
+export type ContactsSearchViewModel =
+  | ContactsSearchResultsViewModel
+  | ContactsSearchNoResultsViewModel;
