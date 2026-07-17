@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Config from "react-native-config";
 import storage from "LLM/storage";
-import { concatMap } from "rxjs/operators";
 import { setEnvUnsafe, isEnvDefault, changes } from "@shared/live-env";
 import type { EnvName } from "@shared/live-env";
 
@@ -174,7 +173,9 @@ export const enabledExperimentalFeatures = (): string[] =>
     }
   };
 
-  changes.pipe(concatMap(({ name, value }) => saveEnvs(name, value))).subscribe();
+  changes.subscribe(({ name, value }) => {
+    saveEnvs(name, value).catch(console.error);
+  });
 })();
 
 export function useExperimental(): boolean {

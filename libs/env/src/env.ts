@@ -1,5 +1,5 @@
 // set and get environment & config variables
-import { configured, changes, injectDefinitions } from "./state";
+import { configured, changes, notifyChange, injectDefinitions } from "./state";
 import type { EnvDef } from "./state";
 export type { EnvDef, EnvDefs } from "./state";
 export { injectDefinitions, changes };
@@ -67,7 +67,7 @@ export const setEnv = (name: string, value: unknown): void => {
   const oldValue = env[name];
   if (oldValue !== value) {
     env[name] = value;
-    changes.next({ name, value, oldValue });
+    notifyChange({ name, value, oldValue });
   }
 };
 

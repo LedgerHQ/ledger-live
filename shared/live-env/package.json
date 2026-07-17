@@ -18,8 +18,7 @@
     "unimported": "pnpm knip --directory ../.. -W shared/live-env"
   },
   "dependencies": {
-    "@ledgerhq/live-env": "workspace:*",
-    "rxjs": "catalog:"
+    "@ledgerhq/live-env": "workspace:*"
   },
   "devDependencies": {
     "@jest/globals": "catalog:",
