@@ -16,7 +16,6 @@ import Quicksilver from "./Quicksilver";
 import SecretNetwork from "./SecretNetwork";
 import Stargaze from "./Stargaze";
 import Stride from "./Stride";
-import Umee from "./Umee";
 import Xion from "./Xion";
 import Zenrock from "./Zenrock";
 import CosmosBase from "./cosmosBase";
@@ -68,9 +67,6 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
         break;
       case "stride":
         chain = new Stride();
-        break;
-      case "umee":
-        chain = new Umee();
         break;
       case "coreum":
         chain = new Coreum();

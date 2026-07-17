@@ -106,7 +106,6 @@ export type CurrencyFeatures = {
   currencySecretNetwork: DefaultFeature;
   currencyDesmos: DefaultFeature;
   currencyDydx: DefaultFeature;
-  currencyUmee: DefaultFeature;
   currencyStargaze: DefaultFeature;
   currencyPersistence: DefaultFeature;
   currencyQuicksilver: DefaultFeature;
