@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
 
-export type EnvDef<T> = { def: T; parser: (v: unknown) => T; desc: string };
+export type EnvDef<T> = { def: T; parser: (v: unknown) => T | undefined; desc: string };
 export type EnvDefs = Record<string, EnvDef<any>>;
 
 type State = {

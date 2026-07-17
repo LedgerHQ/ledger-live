@@ -36,7 +36,7 @@ export type SpeculosDeviceInternal =
     };
 
 // FIXME we need to figure out a better system, using a filesystem file?
-const isSpeculosWebsocket = getEnv("SPECULOS_USE_WEBSOCKET");
+const isSpeculosWebsocket = getEnv("SPECULOS_USE_WEBSOCKET") as boolean | undefined;
 const data: Record<string, SpeculosDeviceInternal | undefined> = {};
 
 export function getMemorySpeculosDeviceInternal(id: string): SpeculosDeviceInternal | undefined {

@@ -13,6 +13,9 @@
   "peerDependencies": {
     "react": "catalog:"
   },
+  "peerDependenciesMeta": {
+    "react": { "optional": true }
+  },
   "sideEffects": ["./src/index.ts"],
   "scripts": {
     "typecheck": "tsc --noEmit",

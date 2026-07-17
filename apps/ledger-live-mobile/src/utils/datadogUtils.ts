@@ -41,7 +41,7 @@ export const buildFeatureFlagTags = () => {
   // if there are experimental on, we will add them in tags
   enabledExperimentalFeatures().forEach(key => {
     const v = getEnv(key as EnvName);
-    if (typeof v !== "object" || !Array.isArray(v)) {
+    if (typeof v !== "object" && !Array.isArray(v)) {
       tags[parseSafeKey(key)] = v as Primitive;
     }
   });
