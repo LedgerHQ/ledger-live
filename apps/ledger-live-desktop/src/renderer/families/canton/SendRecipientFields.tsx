@@ -38,12 +38,9 @@ const Root = (props: {
   const cantonAccount = account as CantonAccount;
   const mainAccount = getMainAccount(account, parentAccount);
 
-  const tooManyUtxosCritical =
-    (status?.warnings?.tooManyUtxos as Error).name === "TooManyUtxosCritical";
-  const tooManyUtxosWarning =
-    (status?.warnings?.tooManyUtxos as Error).name === "TooManyUtxosWarning";
-  const topologyChangeError =
-    (status?.errors?.topologyChange as Error).name === "TopologyChangeError";
+  const tooManyUtxosCritical = status?.warnings?.tooManyUtxos?.name === "TooManyUtxosCritical";
+  const tooManyUtxosWarning = status?.warnings?.tooManyUtxos?.name === "TooManyUtxosWarning";
+  const topologyChangeError = status?.errors?.topologyChange?.name === "TopologyChangeError";
 
   useEffect(() => {
     if (topologyChangeError) {

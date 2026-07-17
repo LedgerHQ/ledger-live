@@ -74,7 +74,7 @@ export default function StepAmount({
   );
   const amount = useMemo(() => (validator ? validator.amount : BigNumber(0)), [validator]);
   const crypto = cryptoFactory(account.currency.id);
-  const notEnoughFundsError = (status.errors?.amount as Error).name === "NotEnoughBalance";
+  const notEnoughFundsError = status.errors?.amount?.name === "NotEnoughBalance";
 
   return (
     <Box flow={1}>

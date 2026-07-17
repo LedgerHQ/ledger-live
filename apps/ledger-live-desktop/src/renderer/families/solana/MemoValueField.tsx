@@ -43,8 +43,7 @@ const MemoValueField = ({ onChange, account, transaction, status, autoFocus }: P
   );
 
   const InputField = lldMemoTag?.enabled ? MemoTagField : Input;
-  const isRecipientMemoRequired =
-    (status?.errors?.memo as Error).name === "SolanaRecipientMemoIsRequired";
+  const isRecipientMemoRequired = status?.errors?.memo?.name === "SolanaRecipientMemoIsRequired";
 
   return transaction.model.kind === "transfer" || transaction.model.kind === "token.transfer" ? (
     <InputField

@@ -28,6 +28,9 @@
       "lib-es/*": [
         "lib-es/*"
       ],
+      "errors": [
+        "src/types/errors.ts"
+      ],
       "*": [
         "lib/*",
         "lib/test/*",

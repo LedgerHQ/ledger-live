@@ -28,6 +28,9 @@
       "lib-es/*": [
         "lib-es/*"
       ],
+      "errors": [
+        "src/errors.ts"
+      ],
       "*": [
         "lib/*"
       ]
@@ -43,6 +46,11 @@
       "import": "./lib-es/chain-adapters/zcash/ZCash.js",
       "require": "./lib/chain-adapters/zcash/ZCash.js",
       "default": "./lib-es/chain-adapters/zcash/ZCash.js"
+    },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
     },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",

@@ -35,12 +35,9 @@ function StepRecipientCustomAlert({
   const route = useRoute<ScreenRoute>();
   const llmModularDrawer = useFeature("llmModularDrawer");
 
-  const tooManyUtxosCritical =
-    (status?.warnings?.tooManyUtxos as Error).name === "TooManyUtxosCritical";
-  const tooManyUtxosWarning =
-    (status?.warnings?.tooManyUtxos as Error).name === "TooManyUtxosWarning";
-  const topologyChangeError =
-    (status?.errors?.topologyChange as Error).name === "TopologyChangeError";
+  const tooManyUtxosCritical = status?.warnings?.tooManyUtxos?.name === "TooManyUtxosCritical";
+  const tooManyUtxosWarning = status?.warnings?.tooManyUtxos?.name === "TooManyUtxosWarning";
+  const topologyChangeError = status?.errors?.topologyChange?.name === "TopologyChangeError";
 
   const redirectToReonboarding = useCallback(() => {
     if (!account) return;

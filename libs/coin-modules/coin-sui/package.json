@@ -32,6 +32,9 @@
       "logic": [
         "lib/logic/index"
       ],
+      "errors": [
+        "src/errors.ts"
+      ],
       "*": [
         "lib/*",
         "lib/api/*",
@@ -124,6 +127,11 @@
     "./uiConfig": {
       "require": "./lib/uiConfig.js",
       "default": "./lib-es/uiConfig.js"
+    },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
     },
     ".": {
       "@ledgerhq/source": "./src/index.ts",

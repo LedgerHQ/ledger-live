@@ -112,7 +112,7 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
 
   // User-rejection / wrong-app / locked via legacy SW codes.
   if ((error as Error).name === "TransportStatusError") {
-    const state = classifyTransportStatusError(error, ctx);
+    const state = classifyTransportStatusError(error as TransportStatusError, ctx);
     if (state) {
       return state;
     }

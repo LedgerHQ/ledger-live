@@ -39,6 +39,9 @@
       "types": [
         "lib/types/index"
       ],
+      "errors": [
+        "src/errors.ts"
+      ],
       "*": [
         "lib/*",
         "lib/bridge/*",
@@ -95,6 +98,11 @@
       "@ledgerhq/source": "./src/test/bot-specs.ts",
       "require": "./lib/test/bot-specs.js",
       "default": "./lib-es/test/bot-specs.js"
+    },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
     },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",

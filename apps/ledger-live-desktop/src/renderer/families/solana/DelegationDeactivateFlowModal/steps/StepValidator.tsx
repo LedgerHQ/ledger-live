@@ -44,7 +44,7 @@ export default function StepValidator({
   if (validator === undefined) {
     return null;
   }
-  const notEnoughFundsError = (status.errors?.fee as Error).name === "NotEnoughBalance";
+  const notEnoughFundsError = status.errors?.fee?.name === "NotEnoughBalance";
 
   return (
     <Box flow={1}>

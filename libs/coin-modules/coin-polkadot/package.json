@@ -37,6 +37,9 @@
       "specs": [
         "lib/test/bot-specs"
       ],
+      "errors": [
+        "src/types/errors.ts"
+      ],
       "*": [
         "lib/*",
         "lib/api/*",

@@ -31,6 +31,9 @@
       "specs": [
         "lib/test/bot-specs"
       ],
+      "errors": [
+        "src/errors.ts"
+      ],
       "*": [
         "lib/*",
         "lib/api/*",
@@ -79,6 +82,11 @@
       "@ledgerhq/source": "./src/utils/index.ts",
       "require": "./lib/utils/index.js",
       "default": "./lib-es/utils/index.js"
+    },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
     },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",

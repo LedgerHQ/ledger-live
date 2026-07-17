@@ -22,6 +22,7 @@ import {
 } from "./helpers";
 
 export { serializeError, deserializeError, createCustomErrorClass, addCustomErrorDeserializer };
+export type { LedgerErrorConstructor };
 
 export const AccountNameRequiredError = createCustomErrorClass("AccountNameRequired");
 export const AccountNotSupported = createCustomErrorClass("AccountNotSupported");

@@ -31,6 +31,9 @@
       "bridge": [
         "lib/bridge/index"
       ],
+      "errors": [
+        "src/errors.ts"
+      ],
       "*": [
         "lib/*"
       ]
@@ -43,6 +46,11 @@
       "@ledgerhq/source": "./src/bridge/index.ts",
       "require": "./lib/bridge/index.js",
       "default": "./lib-es/bridge/index.js"
+    },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
     },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",

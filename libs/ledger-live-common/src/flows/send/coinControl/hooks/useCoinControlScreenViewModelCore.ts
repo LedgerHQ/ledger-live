@@ -154,8 +154,7 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
       rows != null &&
       rows.length > 0 &&
       utxoData.totalExcludedUTXOS === rows.length;
-    const isInsufficientFundsBridgeError =
-      (status.errors?.amount as Error).name === "NotEnoughBalance";
+    const isInsufficientFundsBridgeError = status.errors?.amount?.name === "NotEnoughBalance";
 
     return isInsufficientFundsBridgeError || hasNoSelectedUtxo;
   }, [customStrategyValue, status, transaction, utxoDisplayData]);
@@ -225,8 +224,7 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     const hasFilledAmount = transaction.useAllAmount || transaction.amount?.gt(0);
     if (isCustomStrategy && !hasFilledAmount) return undefined;
 
-    const isInsufficientFundsBridgeError =
-      (status.errors?.amount as Error).name === "NotEnoughBalance";
+    const isInsufficientFundsBridgeError = status.errors?.amount?.name === "NotEnoughBalance";
     // Transaction patches (e.g. toggling custom exclusions) apply before the next bridge sync;
     // status can briefly still reflect the previous pick and show a stale NotEnoughBalance.
     if (isCustomStrategy && hasFilledAmount && bridgePending && isInsufficientFundsBridgeError) {

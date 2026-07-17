@@ -68,6 +68,12 @@ export class DeviceNotOnboarded extends Error {
 
 export class DeviceAlreadySetup extends Error {
   override name = "DeviceAlreadySetup";
+  device?: string;
+  constructor(message?: string, options?: ErrorOptions & { device?: string }) {
+    const { device, ...rest } = options ?? {};
+    super(message, rest);
+    this.device = device;
+  }
 }
 
 export class SourceHasMultiSign extends Error {
@@ -639,6 +645,13 @@ export class ExpertModeRequired extends Error {
 
 export class DeviceNameInvalid extends Error {
   override name = "DeviceNameInvalid";
+  invalidCharacters?: string;
+
+  constructor(message?: string, options?: ErrorOptions & { invalidCharacters?: string }) {
+    const { invalidCharacters, ...rest } = options ?? {};
+    super(message, rest);
+    this.invalidCharacters = invalidCharacters;
+  }
 }
 
 export class NanoSNotSupported extends Error {

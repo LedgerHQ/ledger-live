@@ -8,13 +8,11 @@ import {
 import { Observable } from "rxjs";
 import { useCallback, useMemo, useEffect, useState } from "react";
 import { DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
-import { CustomErrorClassType } from "@ledgerhq/errors";
 import {
   CantOpenDevice,
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
   LockedDeviceError,
-  TransportStatusErrorClassType,
 } from "@ledgerhq/hw-transport/errors";
 import {
   ConnectManagerTimeout,
@@ -36,9 +34,7 @@ import {
 import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 // Errors related to the device connection
-export const reconnectDeviceErrorClasses: Array<
-  CustomErrorClassType | TransportStatusErrorClassType
-> = [
+export const reconnectDeviceErrorClasses: Array<new (...args: never) => Error> = [
   CantOpenDevice,
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
@@ -48,17 +44,16 @@ export const reconnectDeviceErrorClasses: Array<
 ];
 
 // Errors that could be solved by the user: either on their phone or on their device
-export const userSolvableErrorClasses: Array<CustomErrorClassType | TransportStatusErrorClassType> =
-  [
-    ...reconnectDeviceErrorClasses,
-    WebsocketConnectionError,
-    UserRefusedAllowManager,
-    LanguageInstallRefusedOnDevice,
-    ImageCommitRefusedOnDevice,
-    ImageLoadRefusedOnDevice,
-    WebsocketConnectionFailed,
-    DisconnectedDeviceDuringOperation,
-  ];
+export const userSolvableErrorClasses: Array<new (...args: never) => Error> = [
+  ...reconnectDeviceErrorClasses,
+  WebsocketConnectionError,
+  UserRefusedAllowManager,
+  LanguageInstallRefusedOnDevice,
+  ImageCommitRefusedOnDevice,
+  ImageLoadRefusedOnDevice,
+  WebsocketConnectionFailed,
+  DisconnectedDeviceDuringOperation,
+];
 
 export type FirmwareUpdateParams = {
   device: Device;

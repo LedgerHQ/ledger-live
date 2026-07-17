@@ -139,7 +139,7 @@ export function useAddressValidation({
   });
 
   const hasInvalidBridgeRecipient =
-    (bridgeValidation.errors.recipient as Error).name === "InvalidAddress" && !ensResolution;
+    bridgeValidation.errors.recipient?.name === "InvalidAddress" && !ensResolution;
   const canMatchValidatedRecipient = Boolean(searchValue) && !hasInvalidBridgeRecipient;
 
   const userAccountsForCurrency = useMemo(() => {
@@ -306,7 +306,7 @@ export function useAddressValidation({
     }));
 
     const filteredBridgeErrors: BridgeValidationErrors = { ...bridgeValidation.errors };
-    if (ensResolution && (filteredBridgeErrors.recipient as Error).name === "InvalidAddress") {
+    if (ensResolution && filteredBridgeErrors.recipient?.name === "InvalidAddress") {
       delete filteredBridgeErrors.recipient;
     }
 

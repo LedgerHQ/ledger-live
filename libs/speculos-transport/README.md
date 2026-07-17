@@ -28,11 +28,12 @@ Close all speculos devices
 
 ### createSpeculosDevice
 
-instanciate a speculos device that runs through docker
+instantiate a speculos device that runs through docker
 
 #### Parameters
 
-*   `arg` **{model: DeviceModelId, firmware: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), appName: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), appVersion: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), dependency: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, seed: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), coinapps: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), overridesAppPath: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, onSpeculosDeviceCreated: function (device: SpeculosDevice): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>?}**&#x20;
+*   `arg` **DeviceParams**&#x20;
 *   `maxRetry`   (optional, default `3`)
+*   `wantedApiPort` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**&#x20;
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<SpeculosDevice>**&#x20;

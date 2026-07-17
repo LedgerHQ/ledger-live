@@ -65,7 +65,7 @@ export default function StepAmount({
     };
   }, [transaction]);
   const amount = useMemo(() => (validator ? validator.amount : new BigNumber(0)), [validator]);
-  const notEnoughFundsError = (status.errors?.amount as Error).name === "NotEnoughBalance";
+  const notEnoughFundsError = status.errors?.amount?.name === "NotEnoughBalance";
 
   return (
     <Box flow={1}>

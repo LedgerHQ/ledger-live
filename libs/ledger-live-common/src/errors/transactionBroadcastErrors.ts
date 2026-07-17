@@ -1,13 +1,13 @@
 export class TransactionBroadcastError extends Error {
   override name = "TransactionBroadcastError";
+  coin?: string;
+  network?: string;
+  url?: string;
+
   constructor(message?: string, fields?: Record<string, unknown>) {
     super(message);
     if (fields) Object.assign(this, fields);
   }
-}
-
-export interface TransactionBroadcastError extends Error, TxData {
-  url?: string;
 }
 
 export const createTransactionBroadcastError = (

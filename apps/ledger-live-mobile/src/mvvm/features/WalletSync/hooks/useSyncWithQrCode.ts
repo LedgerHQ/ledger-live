@@ -83,7 +83,7 @@ export const useSyncWithQrCode = () => {
           setCurrentStep(Steps.UnbackedError);
           return;
         } else if ((e as Error).name === "TrustchainAlreadyInitialized") {
-          if (e.message === trustchain?.rootId) {
+          if ((e as Error).message === trustchain?.rootId) {
             setCurrentStep(Steps.AlreadyBacked);
           } else {
             setCurrentStep(Steps.BackedWithDifferentSeeds);

@@ -66,6 +66,9 @@
       "types/index": [
         "lib/types/index"
       ],
+      "errors": [
+        "src/errors.ts"
+      ],
       "*": [
         "lib/*",
         "lib/bridge/*",
@@ -157,6 +160,11 @@
       "@ledgerhq/source": "./src/network/walletConnect.ts",
       "require": "./lib/network/walletConnect.js",
       "default": "./lib-es/network/walletConnect.js"
+    },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
     },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
