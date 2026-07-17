@@ -91,7 +91,7 @@ describe("getDerivationModesForCurrency", () => {
 
   let envBackup: boolean;
   beforeAll(() => {
-    envBackup = getEnv("SCAN_FOR_INVALID_PATHS");
+    envBackup = getEnv<boolean>("SCAN_FOR_INVALID_PATHS");
   });
 
   afterEach(() => {

@@ -14,7 +14,7 @@ export const shouldShowNewAccount = (
   // legacy is only available with flag SHOW_LEGACY_NEW_ACCOUNT
   if (
     derivationMode === "" &&
-    (!!getEnv("SHOW_LEGACY_NEW_ACCOUNT") || currency.family === "bitcoin")
+    (!!getEnv<boolean>("SHOW_LEGACY_NEW_ACCOUNT") || currency.family === "bitcoin")
   )
     return true;
   // native segwit being not yet supported everywhere, segwit is always available for creation

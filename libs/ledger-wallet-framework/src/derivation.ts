@@ -520,7 +520,7 @@ export const getDerivationModesForCurrency = (currency: CryptoCurrency): Derivat
     all.push("");
   }
 
-  if (!getEnv("SCAN_FOR_INVALID_PATHS")) {
+  if (!getEnv<boolean>("SCAN_FOR_INVALID_PATHS")) {
     return all.filter(a => !isInvalidDerivationMode(a));
   }
 

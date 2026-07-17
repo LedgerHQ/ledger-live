@@ -8,7 +8,7 @@ const cache = makeLRUCache(fetchSanctionedAddresses, () => "all_sanctioned_addre
 
 async function fetchSanctionedAddresses(): Promise<Record<string, string[]>> {
   try {
-    const url = getEnv("SANCTIONED_ADDRESSES_URL");
+    const url = getEnv<string>("SANCTIONED_ADDRESSES_URL");
     const { data } = await axios.get(url);
     return data;
   } catch {
@@ -25,7 +25,7 @@ export async function isAddressSanctioned(
     return false;
   }
 
-  const data: Record<string, string[]> = getEnv("MOCK")
+  const data: Record<string, string[]> = getEnv<boolean>("MOCK")
     ? await fetchSanctionedAddresses()
     : await cache();
   const addresses = data["bannedAddresses"] || [];

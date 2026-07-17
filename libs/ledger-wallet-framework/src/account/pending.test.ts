@@ -137,7 +137,7 @@ describe("shouldRetainPendingOperation", () => {
   it("should not retain the operation if last operation has no matching sender", () => {
     // Given
     const account = createAccount("12");
-    const date = new Date(getEnv("OPERATION_OPTIMISTIC_RETENTION") + 1);
+    const date = new Date(getEnv<number>("OPERATION_OPTIMISTIC_RETENTION") + 1);
     account.operations = [createOperation("12", [], BigInt(1), date)];
     const op = createOperation("12", [account.freshAddress], BigInt(3), date);
 
@@ -151,7 +151,7 @@ describe("shouldRetainPendingOperation", () => {
   it("should not retain the operation if delay exceeds the optimistic retention threshold", () => {
     // Given
     const account = createAccount("12");
-    const retentionThreshold = getEnv("OPERATION_OPTIMISTIC_RETENTION");
+    const retentionThreshold = getEnv<number>("OPERATION_OPTIMISTIC_RETENTION");
     const date = new Date(Date.now() - retentionThreshold - 1); // Exceeds threshold
     const op = createOperation("12", [account.freshAddress], BigInt(1), date);
 
@@ -166,7 +166,7 @@ describe("shouldRetainPendingOperation", () => {
   it("should retain the operation if delay is within the optimistic retention threshold", () => {
     // Given
     const account = createAccount("12");
-    const retentionThreshold = getEnv("OPERATION_OPTIMISTIC_RETENTION");
+    const retentionThreshold = getEnv<number>("OPERATION_OPTIMISTIC_RETENTION");
     const date = new Date(Date.now() - retentionThreshold + 1000); // Within threshold (1s buffer)
     const op = createOperation("12", [account.freshAddress], BigInt(1), date);
 

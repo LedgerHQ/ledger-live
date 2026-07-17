@@ -265,7 +265,7 @@ export const isAddressPoisoningOperation = (
   }
 
   // Fallback to environment variable if no families are provided to be retro-compatible
-  const impactedFamilies = getEnv("ADDRESS_POISONING_FAMILIES")
+  const impactedFamilies = getEnv<string>("ADDRESS_POISONING_FAMILIES")
     .split(",")
     .map(s => s.trim());
 

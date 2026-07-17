@@ -19,7 +19,7 @@ export function shouldRetainPendingOperation(account: Account, op: Operation): b
     return false;
   }
 
-  return delay < getEnv("OPERATION_OPTIMISTIC_RETENTION");
+  return delay < getEnv<number>("OPERATION_OPTIMISTIC_RETENTION");
 }
 
 /**

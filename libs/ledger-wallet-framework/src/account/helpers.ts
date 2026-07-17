@@ -98,7 +98,7 @@ export function findSubAccountById(account: Account, id: string): TokenAccount |
 export function listSubAccounts(account: Account): TokenAccount[] {
   const accounts = account.subAccounts || [];
 
-  if (getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS")) {
+  if (getEnv<boolean>("HIDE_EMPTY_TOKEN_ACCOUNTS")) {
     return accounts.filter(a => !a.balance.isZero());
   }
 
@@ -151,7 +151,7 @@ export const isUpToDateAccount = (account: Account | null | undefined) => {
   if (!blockAvgTime) return true;
   const outdated =
     Date.now() - lastSyncDate.getTime() >
-    blockAvgTime * 1000 + getEnv("SYNC_OUTDATED_CONSIDERED_DELAY");
+    blockAvgTime * 1000 + getEnv<number>("SYNC_OUTDATED_CONSIDERED_DELAY");
   return !outdated;
 };
 
