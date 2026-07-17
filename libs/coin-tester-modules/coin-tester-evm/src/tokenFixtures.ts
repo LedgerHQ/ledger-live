@@ -1,4 +1,4 @@
-import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies";
+import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
