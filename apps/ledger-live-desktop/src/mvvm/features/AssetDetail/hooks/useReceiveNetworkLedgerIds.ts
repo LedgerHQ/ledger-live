@@ -1,6 +1,6 @@
 import { useReceiveNetworkLedgerIds as useSharedReceiveNetworkLedgerIds } from "@ledgerhq/asset-detail";
 import type { ReceiveNetworkLedgerIdsInput } from "@ledgerhq/asset-detail";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@shared/live-env/hooks";
 import { useFeature } from "@features/platform-feature-flags";
 
 type Params = Omit<

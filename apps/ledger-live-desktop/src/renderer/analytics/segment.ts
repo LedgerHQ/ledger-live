@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/live-common/earn/stakePrograms/index";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { idsToLanguage } from "@ledgerhq/types-live";

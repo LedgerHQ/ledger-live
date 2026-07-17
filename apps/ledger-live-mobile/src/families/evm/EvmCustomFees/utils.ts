@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { inferDynamicRange, Range } from "@ledgerhq/live-common/range";
 import { GasOptions } from "@ledgerhq/coin-evm/types/index";
 import invariant from "invariant";

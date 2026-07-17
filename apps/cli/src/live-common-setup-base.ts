@@ -1,4 +1,4 @@
-import { EnvName, setEnv, setEnvUnsafe, getEnv } from "@ledgerhq/live-env";
+import { EnvName, setEnv, setEnvUnsafe, getEnv } from "@shared/live-env";
 import { listen } from "@ledgerhq/logs";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";

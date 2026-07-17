@@ -24,7 +24,7 @@ import { LaunchArguments } from "react-native-launch-arguments";
 import logReport from "~/log-report";
 import { webviewLogStore } from "~/e2e/webviewLogStore";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
-import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
+import { getAllEnvs, setEnv } from "@shared/live-env";
 import Config from "react-native-config";
 import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
 import { bleDevicesSelector } from "~/reducers/ble";

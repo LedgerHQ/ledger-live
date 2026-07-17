@@ -1,5 +1,5 @@
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { setEnv } from "@ledgerhq/live-env";
+import useEnv from "@shared/live-env/hooks";
+import { setEnv } from "@shared/live-env";
 import React, { useCallback } from "react";
 import { Switch } from "@ledgerhq/lumen-ui-react";
 

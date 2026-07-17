@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Platform } from "react-native";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@shared/live-env/hooks";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useFeature } from "@features/platform-feature-flags";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";

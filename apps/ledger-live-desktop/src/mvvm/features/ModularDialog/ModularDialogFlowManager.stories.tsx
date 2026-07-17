@@ -17,7 +17,7 @@ import ModularDialogFlowManager from "./ModularDialogFlowManager";
 import { ModularDialogFlowManagerProps } from "./types";
 import modularDialogReducer, { openDialog } from "~/renderer/reducers/modularDialog";
 import { useDispatch } from "LLD/hooks/redux";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/live-env";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 
 setEnv("MOCK", "true");

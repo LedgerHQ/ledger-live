@@ -12,7 +12,7 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { AptosFamily } from "./types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,

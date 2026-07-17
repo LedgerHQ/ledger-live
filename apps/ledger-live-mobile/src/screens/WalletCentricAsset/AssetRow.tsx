@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@shared/live-env/hooks";
 import { BigNumber } from "bignumber.js";
 import isEqual from "lodash/isEqual";
 import { GestureResponderEvent } from "react-native";

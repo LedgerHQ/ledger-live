@@ -1,4 +1,4 @@
-import { getAllEnvs } from "@ledgerhq/live-env";
+import { getAllEnvs } from "@shared/live-env";
 import { userIdSelector } from "@domain/entity-client-identity";
 import { webFrame, ipcRenderer } from "electron";
 import { useCallback, useState } from "react";

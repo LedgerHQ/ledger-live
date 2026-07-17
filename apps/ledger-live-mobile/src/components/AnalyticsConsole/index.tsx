@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { StyleSheet, Pressable } from "react-native";
 import { Flex, IconsLegacy, Divider, Alert, Text } from "@ledgerhq/native-ui";
 import Switch from "~/components/Switch";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@shared/live-env/hooks";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeOut, LinearTransition } from "react-native-reanimated";
 import Slider from "@react-native-community/slider";

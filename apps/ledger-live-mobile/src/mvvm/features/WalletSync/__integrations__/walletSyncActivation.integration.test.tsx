@@ -4,7 +4,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { render, withFlagOverrides } from "@tests/test-renderer";
 import { INITIAL_TEST, WalletSyncSharedNavigator } from "./shared";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/live-env";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
 const mockSelectedDevice: Device = {

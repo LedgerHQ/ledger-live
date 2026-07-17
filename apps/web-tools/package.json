@@ -24,6 +24,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/feature-flags": "workspace:*",
+    "@shared/live-env": "workspace:*",
     "@devtools/bindings": "workspace:*",
     "@features/platform-currencies": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",

@@ -1,5 +1,5 @@
 import React from "react";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { server, HttpResponse, http } from "tests/server";
 import { waitFor, render, screen, cleanup } from "tests/testSetup";
 import createStore from "~/state-manager/configureStore";

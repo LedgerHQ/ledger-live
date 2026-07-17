@@ -10,7 +10,7 @@ import customLockScreenFetch, {
   FetchImageEvent,
 } from "@ledgerhq/live-common/hw/customLockScreenFetch";
 import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import TrackPage from "~/renderer/analytics/TrackPage";

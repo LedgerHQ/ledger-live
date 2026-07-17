@@ -1,6 +1,6 @@
 import React from "react";
 import Lottie from "react-lottie";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { Flex } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useTheme } from "styled-components";

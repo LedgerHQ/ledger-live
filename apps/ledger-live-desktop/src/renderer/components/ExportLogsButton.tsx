@@ -3,7 +3,7 @@ import React, { useContext, useState, useCallback } from "react";
 import { ReactReduxContext } from "react-redux";
 import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
-import { getAllEnvs, getEnv } from "@ledgerhq/live-env";
+import { getAllEnvs, getEnv } from "@shared/live-env";
 import { Account } from "@ledgerhq/types-live";
 import KeyHandler from "react-key-handler";
 import { type UserId, userIdSelector } from "@domain/entity-client-identity";

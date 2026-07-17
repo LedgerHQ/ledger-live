@@ -7,7 +7,7 @@ import {
   findCryptoCurrencyById,
   OFAC_CURRENCIES,
 } from "@ledgerhq/live-common/currencies/index";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { selectSupportedFiats, type FiatCurrency } from "@domain/entity-currency-fiat";
 import {

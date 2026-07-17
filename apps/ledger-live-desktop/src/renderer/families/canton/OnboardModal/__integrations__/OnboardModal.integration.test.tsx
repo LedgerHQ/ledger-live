@@ -9,7 +9,7 @@ import cantonHandlers, {
   MOCK_CANTON_PUBLIC_KEY_HEX,
 } from "./cantonHandlers";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@shared/live-env";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";
 import coinConfig from "@ledgerhq/coin-canton/config";

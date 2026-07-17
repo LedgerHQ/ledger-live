@@ -27,7 +27,7 @@ import { useLocation } from "react-router";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useTechnicalDateFn } from "~/renderer/hooks/useDateFormatter";
 import { useAutoOpenSwapDialog } from "./useAutoOpenSwapDialog";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 
 const Head = styled(Box)`
   border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};

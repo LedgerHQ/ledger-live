@@ -55,7 +55,7 @@ import { accountsSelector } from "./reducers/accounts";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { hasCompletedOnboardingSelector, areSettingsLoaded } from "~/renderer/reducers/settings";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@shared/live-env/hooks";
 import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage";
 import { useSuppressQ2TourForNewUsers } from "LLD/features/Q2Tour/hooks/useSuppressQ2TourForNewUsers";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";

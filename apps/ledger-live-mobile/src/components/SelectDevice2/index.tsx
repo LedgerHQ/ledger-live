@@ -8,7 +8,7 @@ import { CompositeScreenProps, useNavigation, useIsFocused } from "@react-naviga
 import { Text, Flex, IconsLegacy, ScrollContainer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { TrackScreen, track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { bleDevicesSelector } from "~/reducers/ble";

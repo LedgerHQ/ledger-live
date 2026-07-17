@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/feature-flags";
 import { cryptoAssetsApi, calApiExtra } from "@domain/api-currency-token";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 
 export const store = configureStore({
   reducer: {

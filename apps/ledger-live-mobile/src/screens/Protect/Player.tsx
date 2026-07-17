@@ -23,7 +23,7 @@ import {
   localeSelector,
 } from "~/reducers/settings";
 import { useSelector } from "~/context/hooks";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@shared/live-env/hooks";
 
 export type Props = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Recover>

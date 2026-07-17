@@ -20,7 +20,7 @@ import {
 import { createAction as createTransactionAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { createAction as createRawTransactionAction } from "@ledgerhq/live-common/hw/actions/rawTransaction";
 import { createAction as createStartExchangeAction } from "@ledgerhq/live-common/hw/actions/startExchange";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { useFeature } from "@features/platform-feature-flags";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";

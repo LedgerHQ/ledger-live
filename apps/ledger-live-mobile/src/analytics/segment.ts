@@ -25,7 +25,7 @@ import {
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/earn/stakePrograms/index";
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
 import { userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
 import {

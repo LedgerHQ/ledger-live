@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { ipcRenderer } from "electron";
-import { EnvName, getEnv } from "@ledgerhq/live-env";
+import { EnvName, getEnv } from "@shared/live-env";
 import { FEATURE_FLAGS_DEFAULTS, type FeatureId } from "@shared/feature-flags";
 import { useFeatureFlags } from "@features/platform-feature-flags";
 import { enabledExperimentalFeatures } from "../experimental";

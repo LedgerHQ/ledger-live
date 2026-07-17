@@ -13,7 +13,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import FirmwareUpdate from "./FirmwareUpdate";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { context as drawerContext } from "~/renderer/drawers/Provider";
 import { useFeature } from "@features/platform-feature-flags";
 import { useAppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";

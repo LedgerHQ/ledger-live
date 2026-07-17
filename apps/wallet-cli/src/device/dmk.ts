@@ -7,7 +7,7 @@ import {
 import { nodeWebUsbTransportFactory, type NodeWebUsbTransport } from "./node-webusb";
 import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared/services/LedgerLiveLogger";
 import { UserHashService } from "@ledgerhq/live-dmk-shared/services/UserHashService";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 
 export type WalletCliDmk = {
   dmk: DeviceManagementKit;

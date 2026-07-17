@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@shared/live-env/hooks";
 import { useFocusEffect } from "@react-navigation/native";
 import { GestureResponderEvent } from "react-native";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";

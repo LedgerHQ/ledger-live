@@ -1,0 +1,8 @@
+{
+  "name": "@shared/live-env",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

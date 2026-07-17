@@ -24,7 +24,7 @@ import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { INTERNAL_APP_IDS, WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { walletSelector } from "~/reducers/wallet";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@shared/live-env/hooks";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
 import { ProviderInterstitial } from "LLM/components/ProviderInterstitial";

@@ -6,7 +6,7 @@ import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/type
 import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@shared/live-env/hooks";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import {
   isAvailableOnBuy,

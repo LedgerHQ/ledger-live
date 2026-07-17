@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@shared/live-env/hooks";
 import { useStablecoinTickers } from "@ledgerhq/live-common/dada-client/hooks/useStablecoinTickers";
 import { useStockAssetIds } from "@ledgerhq/live-common/dada-client/hooks/useStockAssetIds";
 import {

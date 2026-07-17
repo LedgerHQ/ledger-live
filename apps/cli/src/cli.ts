@@ -1,3 +1,4 @@
+import "@shared/live-env";
 import { deserializeError } from "@ledgerhq/errors";
 import { from } from "rxjs";
 import commandLineArgs from "command-line-args";

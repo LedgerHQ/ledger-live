@@ -20,7 +20,7 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import "./config/configInit";
 import "./config/bridge-setup";
 import Config from "react-native-config";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@shared/live-env/hooks";
 import { init } from "~/e2e/bridge/client";
 import logger from "./logger";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";

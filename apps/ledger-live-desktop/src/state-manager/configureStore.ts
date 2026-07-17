@@ -1,6 +1,6 @@
 import { configureStore, Middleware, ThunkDispatch } from "@reduxjs/toolkit";
 import { UnknownAction } from "redux";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { calApiExtra } from "@domain/api-currency-token";
 import { cvsApiExtra } from "@domain/api-currency-fiat";
 import { marketSentimentApiExtra } from "@domain/api-market-sentiment";

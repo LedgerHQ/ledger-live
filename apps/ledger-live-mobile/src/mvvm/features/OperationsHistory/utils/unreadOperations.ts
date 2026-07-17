@@ -8,7 +8,7 @@ import {
   flattenOperationWithInternalsAndNfts,
   isAddressPoisoningOperation,
 } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "../constants";
 
 /**

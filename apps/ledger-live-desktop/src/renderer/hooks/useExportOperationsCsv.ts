@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { useSelector } from "LLD/hooks/redux";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { useBridgeSync, useBridgeSyncState } from "@ledgerhq/live-common/bridge/react/index";

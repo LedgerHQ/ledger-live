@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { EnvName, getEnvDefault } from "@ledgerhq/live-env";
+import { EnvName, getEnvDefault } from "@shared/live-env";
 import Track from "~/renderer/analytics/Track";
 import Switch from "~/renderer/components/Switch";
 import Input from "~/renderer/components/Input";

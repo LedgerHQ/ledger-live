@@ -1,12 +1,12 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { Trans } from "react-i18next";
-import { EnvName, isEnvDefault } from "@ledgerhq/live-env";
+import { EnvName, isEnvDefault } from "@shared/live-env";
 import { experimentalFeatures, isReadOnlyEnv, Feature } from "~/renderer/experimental";
 import { useDispatch } from "LLD/hooks/redux";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import { openModal } from "~/renderer/actions/modals";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@shared/live-env/hooks";
 import Alert from "~/renderer/components/Alert";
 import Button from "~/renderer/components/Button";
 import { setShowClearCacheBanner } from "~/renderer/actions/settings";

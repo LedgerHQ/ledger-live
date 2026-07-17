@@ -1,5 +1,5 @@
 import React from "react";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { Box } from "@ledgerhq/react-ui";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 

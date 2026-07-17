@@ -1,4 +1,4 @@
-import { EnvName, getEnv } from "@ledgerhq/live-env";
+import { EnvName, getEnv } from "@shared/live-env";
 import {
   FEATURE_FLAGS_DEFAULTS,
   selectFeature,
@@ -42,7 +42,7 @@ export const buildFeatureFlagTags = () => {
   enabledExperimentalFeatures().forEach(key => {
     const v = getEnv(key as EnvName);
     if (typeof v !== "object" || !Array.isArray(v)) {
-      tags[parseSafeKey(key)] = v;
+      tags[parseSafeKey(key)] = v as Primitive;
     }
   });
   // if there are features on, we will add them in tags

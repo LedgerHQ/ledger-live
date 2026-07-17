@@ -1,4 +1,4 @@
-import { isEnvDefault } from "@ledgerhq/live-env";
+import { isEnvDefault } from "@shared/live-env";
 import React from "react";
 import { ScrollView } from "react-native";
 import { useTranslation } from "~/context/Locale";
