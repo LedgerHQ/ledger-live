@@ -10,7 +10,7 @@ const sharedConfig = {
       },
     ],
   },
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integ.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", "\\.integ\\.test\\.ts"],
 };
 
 // Two projects: `unit` runs with @ledgerhq/disable-network-setup (nock blocks all net connect),
@@ -38,7 +38,7 @@ module.exports = {
     {
       ...sharedConfig,
       displayName: "unit",
-      testPathIgnorePatterns: [...sharedConfig.testPathIgnorePatterns, ".msw.test.ts"],
+      testPathIgnorePatterns: [...sharedConfig.testPathIgnorePatterns, "\\.msw\\.test\\.ts"],
       setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
     },
     {

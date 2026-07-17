@@ -47,19 +47,12 @@ describe("craftTransaction (integration)", () => {
       expect(Number(crafted.details?.fee)).toBeGreaterThan(0);
     });
 
-    // api.mdx: "Send max tx => crafted tx with max amount" (single output, no change).
-    // Uses a Schnorr recipient (a self-send to the Schnorr sender). Kaspa/Ledger addresses are
-    // Schnorr, which is the max-send path the wallet actually exercises. NOTE: a max-send to an
-    // *ECDSA*-format recipient currently throws "UTXOs can't be determined" — a pre-existing
-    // fee-calc mismatch between `calcMaxSpendableAmount` and `selectUtxos` (logic/utxos, shared
-    // with the legacy bridge) that only bites when the extra ECDSA mass zeroes out the margin.
-    // Tracked separately; the Schnorr path below is the supported one.
     it("crafts a send-max transaction sweeping the funded UTXOs", async () => {
       const crafted = await craftTransaction({
         intentType: "transaction",
         type: "send",
         sender: FUNDED_SENDER,
-        recipient: FUNDED_SENDER, // Schnorr (self-send); avoids the ECDSA-recipient edge noted above
+        recipient: FUNDED_SENDER, // Schnorr self-send — Kaspa/Ledger addresses are Schnorr
         amount: 0n,
         useAllAmount: true,
         asset: { type: "native" },

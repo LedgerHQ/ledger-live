@@ -18,6 +18,7 @@ const kaspa: CurrenciesData<Transaction> = {
   ],
   accounts: [
     {
+      // stale fixture: account received a new on-chain tx (now 2 ops); refresh dataset to re-enable
       FIXME_tests: [
         "pendingOperations are cleaned up",
         "existing operations object refs are preserved",
