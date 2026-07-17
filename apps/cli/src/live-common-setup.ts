@@ -12,6 +12,7 @@ import {
 import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
 import { getEnv } from "@ledgerhq/live-env";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 const NON_SPECULOS_DEVICE_ERROR =
   "This CLI only supports Speculos devices (set SPECULOS_API_PORT or SPECULOS_APDU_PORT). " +
@@ -79,3 +80,7 @@ setFrameworkCryptoAssetsStore(
     ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION") || "cli",
   }),
 );
+
+// setupCalClientStore is required by the liveData CLI command which uses
+// getReduxStore() to extract the RTK Query token cache for E2E fixtures.
+setupCalClientStore();
