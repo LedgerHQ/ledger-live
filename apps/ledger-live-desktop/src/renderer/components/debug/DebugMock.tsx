@@ -5,7 +5,6 @@ import React, { useCallback, useState } from "react";
 import { getEnv, getAllEnvs } from "@ledgerhq/live-env";
 import Text from "~/renderer/components/Text";
 import { ReplaySubject } from "rxjs";
-import { deserializeError } from "@ledgerhq/errors";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import {
   deviceInfo155,
@@ -265,7 +264,11 @@ if (getEnv("MOCK")) {
         return (rawEvents: RawEvents | RawEvents[], maybeKey?: string): unknown => {
           if (rawEvents && typeof rawEvents === "object") {
             if (maybeKey === "error") {
-              return deserializeError(rawEvents) as Error;
+              const obj = rawEvents as Record<string, unknown>;
+              const error = new Error(typeof obj.message === "string" ? obj.message : "unknown");
+              if (typeof obj.name === "string") error.name = obj.name;
+              if (typeof obj.stack === "string") error.stack = obj.stack;
+              return error;
             }
             if (Array.isArray(rawEvents)) return rawEvents.map(rE => this.parseRawEvents(rE));
             const event: Record<string, unknown> = {};

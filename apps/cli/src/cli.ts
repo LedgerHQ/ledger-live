@@ -1,4 +1,3 @@
-import { deserializeError } from "@ledgerhq/errors";
 import { from } from "rxjs";
 import commandLineArgs from "command-line-args";
 import { closeAllDevices } from "./live-common-setup";
@@ -93,7 +92,12 @@ process.on("SIGINT", () => {
       if (log !== undefined) console.log(log);
     },
     error: error => {
-      const e = error instanceof Error ? error : deserializeError(error);
+      const e: Error =
+        error instanceof Error
+          ? error
+          : Object.assign(new Error(error?.message ?? String(error)), {
+              name: error?.name ?? "Error",
+            });
       if (process.env.VERBOSE || process.env.VERBOSE_FILE) console.error(e);
       else console.error(String((e && e.message) || e));
       process.exit(1);

@@ -1,4 +1,3 @@
-import { deserializeError, serializeError } from "@ledgerhq/errors";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
@@ -51,10 +50,22 @@ export const toTransactionCommonRaw = (raw: TransactionCommon): TransactionCommo
 };
 
 const fromErrorRaw = (raw: string): Error => {
-  return deserializeError(JSON.parse(raw)) || new Error("unknown reason");
+  try {
+    const obj = JSON.parse(raw);
+    const error = new Error(typeof obj.message === "string" ? obj.message : String(obj));
+    if (typeof obj.name === "string") error.name = obj.name;
+    if (typeof obj.stack === "string") error.stack = obj.stack;
+    return error;
+  } catch {
+    return new Error("unknown reason");
+  }
 };
 
-export const toErrorRaw = (raw: Error): string => JSON.stringify(serializeError(raw)) || "{}";
+export const toErrorRaw = (raw: Error): string => {
+  const obj: Record<string, unknown> = { name: raw.name, message: raw.message };
+  if (raw.stack) obj.stack = raw.stack;
+  return JSON.stringify(obj) || "{}";
+};
 
 export const fromTransactionStatusRawCommon = (
   ts: TransactionStatusCommonRaw,
