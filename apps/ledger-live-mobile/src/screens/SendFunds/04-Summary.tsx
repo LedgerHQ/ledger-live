@@ -6,7 +6,6 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "~/context/Locale";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
-import { NotEnoughBalance, NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import invariant from "invariant";
@@ -137,6 +136,7 @@ function SendSummary({ navigation, route }: Props) {
   const { amount, totalSpent, errors, warnings } = status;
   const { transaction: transactionError } = errors;
   const error = errors[Object.keys(errors)[0]];
+  const hasErrors = Object.keys(errors).length > 0;
   const { tooManyUtxos } = warnings || {};
   const mainAccount = getMainAccount(account, parentAccount);
   const currencyOrToken = getAccountCurrency(account);
@@ -366,13 +366,7 @@ function SendSummary({ navigation, route }: Props) {
           title={<Trans i18nKey="common.continue" />}
           containerStyle={styles.continueButton}
           onPress={() => setContinuing(true)}
-          disabled={
-            bridgePending ||
-            !!transactionError ||
-            (!!error && error instanceof NotEnoughGas) ||
-            (!!error && error instanceof NotEnoughBalance) ||
-            !!displayedError
-          }
+          disabled={bridgePending || hasErrors}
           pending={bridgePending}
         />
       </View>

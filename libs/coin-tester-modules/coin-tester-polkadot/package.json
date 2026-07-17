@@ -71,15 +71,16 @@
     "msw": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@polkadot/rpc-provider": "catalog:",
     "@polkadot/util": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "jest": "catalog:",
-    "typescript": "catalog:",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "oxfmt": "catalog:"
+    "typescript": "catalog:"
   }
 }

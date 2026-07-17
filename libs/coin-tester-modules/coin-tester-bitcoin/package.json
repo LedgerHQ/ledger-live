@@ -78,14 +78,15 @@
     "msw": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "jest": "catalog:",
-    "tsx": "^4.19.3",
-    "typescript": "catalog:",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "oxfmt": "catalog:"
+    "tsx": "^4.19.3",
+    "typescript": "catalog:"
   }
 }

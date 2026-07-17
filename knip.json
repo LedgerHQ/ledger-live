@@ -222,7 +222,7 @@
       "entry": ["src/index.ts"]
     },
     "./features/flow/contacts": {
-      "entry": ["src/index.ts", "src/index.native.ts"]
+      "entry": ["src/index.ts", "src/index.native.ts", "src/jest.native.ts"]
     },
     "./features/flow/fear-and-greed": {
       "entry": ["src/index.ts"]

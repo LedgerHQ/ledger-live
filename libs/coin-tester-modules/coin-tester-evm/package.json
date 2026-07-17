@@ -74,14 +74,15 @@
     "msw": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
-    "@types/jest": "catalog:",
-    "jest": "catalog:",
-    "rimraf": "^5.0.5",
-    "@swc/jest": "catalog:",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
-    "typescript": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "oxfmt": "catalog:"
+    "rimraf": "^5.0.5",
+    "typescript": "catalog:"
   }
 }

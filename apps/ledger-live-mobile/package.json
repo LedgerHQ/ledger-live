@@ -111,6 +111,7 @@
     "@ledgerhq/coin-stacks": "workspace:^",
     "@domain/api-currency-fiat": "workspace:^",
     "@domain/entity-currency-fiat": "workspace:^",
+    "@domain/entity-contact": "workspace:*",
     "@domain/api-market-sentiment": "workspace:^",
     "@domain/entity-market-sentiment": "workspace:^",
     "@domain/api-altcoins-sentiment": "workspace:^",

@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@datadog/datadog-api-client": "^1.40",
+    "@domain/entity-currency-crypto": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
