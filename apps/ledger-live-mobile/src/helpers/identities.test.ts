@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import type { Store } from "redux";
-import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import { identitiesSlice } from "@domain/entity-client-identity";
 import { initIdentities } from "./identities";
 import { saveIdentities, deleteUser } from "../db";
 import type { State } from "../reducers/types";

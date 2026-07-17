@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/electron/renderer";
-import { datadogIdSelector, isDummyDatadogId } from "@ledgerhq/client-ids/store";
+import { datadogIdSelector, isDummyDatadogId } from "@domain/entity-client-identity";
 import { init, setShouldSendCallback } from "./install";
 import { Primitive } from "@sentry/types";
 import type { Store } from "redux";

@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import Clipboard from "@react-native-clipboard/clipboard";
 import SettingsRow from "~/components/SettingsRow";
 import { useSelector } from "~/context/hooks";
-import { userIdSelector } from "@ledgerhq/client-ids/store";
+import { userIdSelector } from "@domain/entity-client-identity";
 
 const EquipmentIdRow = () => {
   const userId = useSelector(userIdSelector);

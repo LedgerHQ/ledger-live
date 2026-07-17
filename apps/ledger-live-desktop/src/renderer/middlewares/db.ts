@@ -31,7 +31,7 @@ import {
   largeScreenUpsellModalSelector,
 } from "@domain/entity-large-screen-upsell-modal";
 import { knownDevicesStoreSelector } from "../reducers/knownDevices";
-import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
+import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
 import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 
 let DB_MIDDLEWARE_ENABLED = true;

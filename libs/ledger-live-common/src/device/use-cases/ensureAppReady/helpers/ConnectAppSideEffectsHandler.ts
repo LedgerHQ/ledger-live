@@ -1,4 +1,4 @@
-import { DeviceId } from "@ledgerhq/client-ids/ids";
+import { DeviceId } from "@domain/entity-client-identity";
 import {
   DeviceActionStatus,
   FirmwareUpdateContext as DmkFirmwareUpdateContext,

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { userIdSelector } from "@ledgerhq/client-ids/store";
+import { userIdSelector } from "@domain/entity-client-identity";
 import { useSelector } from "~/context/hooks";
 import { notificationsSelector, trackingEnabledSelector } from "../reducers/settings";
 import { start, updateUserPreferences } from "./braze";

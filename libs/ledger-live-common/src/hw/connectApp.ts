@@ -38,7 +38,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";
 import { ConnectAppEventMapper } from "./connectAppEventMapper";
-import { DeviceId } from "@ledgerhq/client-ids/ids";
+import { DeviceId } from "@domain/entity-client-identity";
 import { DeviceModelId as LLDeviceModelId } from "@ledgerhq/types-devices";
 import { isDmkTransport } from "./dmkUtils";
 /**

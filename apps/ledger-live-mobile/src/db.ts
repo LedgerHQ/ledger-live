@@ -30,7 +30,7 @@ import type { FeatureFlagsState } from "@shared/feature-flags";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 import { type PersistedCAL } from "@domain/api-currency-token";
-import { PersistedIdentities } from "@ledgerhq/client-ids/store";
+import type { PersistedIdentities } from "@domain/entity-client-identity";
 
 const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";

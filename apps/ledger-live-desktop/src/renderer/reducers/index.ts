@@ -23,7 +23,7 @@ import modularDialog, { ModularDialogState } from "./modularDialog";
 import sendFlow, { SendFlowState } from "./sendFlow";
 import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
-import { identitiesSlice, IdentitiesState } from "@ledgerhq/client-ids/store";
+import { identitiesSlice, type IdentitiesState } from "@domain/entity-client-identity";
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
 import {
