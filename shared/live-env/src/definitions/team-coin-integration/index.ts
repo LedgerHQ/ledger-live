@@ -19,7 +19,7 @@ const teamCoinIntegration = {
   },
   COSMOS_GAS_AMPLIFIER: {
     def: 1.3, // Same as Keplr
-    parser: intParser,
+    parser: floatParser,
     desc: "Cosmos gas estimate multiplier",
   },
   API_POLKADOT_INDEXER: {
