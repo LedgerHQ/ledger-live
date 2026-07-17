@@ -233,9 +233,9 @@ describe("staking/validators", () => {
   });
 
   describe("explorer & unbonding helpers", () => {
-    it("getValidatorExplorerUrl substitutes the validator address", () => {
+    it("getValidatorExplorerUrl substitutes the validator address after turning it to lowercase", () => {
       expect(getValidatorExplorerUrl("sei_evm", "ADDR")).toBe(
-        "https://seistream.app/validators/ADDR",
+        "https://seistream.app/validators/addr",
       );
     });
 
