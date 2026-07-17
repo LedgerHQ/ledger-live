@@ -410,6 +410,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@features/platform-currencies": "workspace:^",
     "@ledgerhq/device-react": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import aleoConfig from "../config";
@@ -8,7 +8,12 @@ import { mockFeeByTransactionType } from "../__tests__/fixtures/config.fixture";
 import { testnetViewKey, testnetPrivateRecord } from "../__tests__/fixtures/api.fixture";
 import { getPrivateBalance } from "./getPrivateBalance";
 
-setCryptoAssetsStore(setupCalClientStore());
+setCryptoAssetsStore(
+  buildStandaloneCryptoAssetsStore({
+    calServiceUrl: process.env.CAL_SERVICE_URL ?? "https://global.api.prd.ledger.com/cal",
+    ledgerClientVersion: process.env.LEDGER_CLIENT_VERSION || "coin-aleo-integration-test",
+  }),
+);
 
 describe("getPrivateBalance", () => {
   const currency = getCryptoCurrencyById("aleo");

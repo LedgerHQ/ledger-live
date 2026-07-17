@@ -1,4 +1,4 @@
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
 import {
   getCryptoAssetsStore,
   setCryptoAssetsStore,
@@ -26,7 +26,12 @@ describe("utils", () => {
   const mockedAccount = getMockedAccount();
 
   beforeAll(() => {
-    setCryptoAssetsStore(setupCalClientStore());
+    setCryptoAssetsStore(
+      buildStandaloneCryptoAssetsStore({
+        calServiceUrl: process.env.CAL_SERVICE_URL ?? "https://global.api.prd.ledger.com/cal",
+        ledgerClientVersion: process.env.LEDGER_CLIENT_VERSION || "coin-hedera-integration-test",
+      }),
+    );
   });
 
   beforeEach(() => {

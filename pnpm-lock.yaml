@@ -4898,9 +4898,9 @@ importers:
         specifier: 'catalog:'
         version: 7.8.2
     devDependencies:
-      '@ledgerhq/cryptoassets':
+      '@features/platform-currencies':
         specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
+        version: link:../../../features/platform/currencies
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
@@ -6062,6 +6062,9 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:^
         version: link:../../../domain/entity/currency-crypto
+      '@features/platform-currencies':
+        specifier: workspace:^
+        version: link:../../../features/platform/currencies
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
@@ -9380,6 +9383,9 @@ importers:
         specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
+      '@features/platform-currencies':
+        specifier: workspace:^
+        version: link:../../features/platform/currencies
       '@ledgerhq/device-react':
         specifier: workspace:^
         version: link:../device-react
