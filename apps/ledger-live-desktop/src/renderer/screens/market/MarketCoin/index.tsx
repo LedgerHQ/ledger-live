@@ -165,7 +165,6 @@ export default function MarketCoinScreen() {
       />
       <MarketInfo
         locale={locale}
-        counterCurrency={counterCurrency}
         counterValueUnit={counterValueUnit}
         loading={isLoadingCurrency}
         range={range}

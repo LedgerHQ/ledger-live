@@ -93,7 +93,6 @@ type Props = {
   athDate?: string | Date;
   atl?: number;
   atlDate?: string | Date;
-  counterCurrency: string;
   counterValueUnit: Unit;
   loading: boolean;
   locale: string;
