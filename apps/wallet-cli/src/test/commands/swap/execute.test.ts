@@ -5,14 +5,19 @@ import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { GetQuotesArgs, Quote } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/types";
+import type {
+  GetQuotesArgs,
+  GetQuotesResponse,
+  Quote,
+} from "@ledgerhq/live-common/wallet-api/Exchange/quotes/types";
 import type { getAccountBridge as getLiveAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { installOutputCapture } from "../../../shared/ui";
 import { CliProcessExitError } from "../../../cli-process-exit-error";
 import type { AccountDescriptor } from "../../../wallet/models";
 import { MOCK_ETH_DESCRIPTOR } from "../../../test/helpers/constants";
 import { USDT_CONTRACT } from "../../helpers/cal-fixtures";
-import type { SwapExecuteFlags } from "../../../commands/swap/execute";
+import { executeSwapCommand, type SwapExecuteFlags } from "../../../commands/swap/execute";
+
 import type { FullSwapPipelineInput } from "../../../commands/swap/cli-swap-pipeline";
 import type {
   CliSwapDieInput,
@@ -104,16 +109,14 @@ const mockDiePipelineResult = {
   },
 };
 
-const getQuotesMock = mock(async (_args: GetQuotesArgs) => ({
-  quotes: [mockDieQuote],
-  providerErrors: [] as { provider: string; message: string }[],
-}));
-
-mock.module("@ledgerhq/live-common/wallet-api/Exchange/quotes/getQuotes", () => ({
-  getQuotes: getQuotesMock,
-}));
-
-const { executeSwapCommand } = await import("../../../commands/swap/execute");
+const getQuotesMock = mock(
+  async (_args: GetQuotesArgs): Promise<GetQuotesResponse> => ({
+    quotes: [mockDieQuote],
+    providerErrors: [],
+    warnings: [],
+    errors: [],
+  }),
+);
 
 function makeAccount(descriptor: AccountDescriptor): Account {
   const family =
@@ -193,6 +196,7 @@ async function runExecuteSwapCommand(flags: SwapExecuteFlags = baseFlags) {
       runFullSwapPipeline: runFullSwapPipelineMock,
       runCliSwapDiePipeline: runCliSwapDiePipelineMock,
       findTokenById: findTokenByIdMock,
+      getQuotes: getQuotesMock,
     });
   } finally {
     restoreCapture();
@@ -214,6 +218,8 @@ describe("swap execute command", () => {
     getQuotesMock.mockImplementation(async () => ({
       quotes: [mockDieQuote],
       providerErrors: [],
+      warnings: [],
+      errors: [],
     }));
     runCliSwapDiePipelineMock.mockImplementation(async (_input: CliSwapDieInput) => ({
       plan: mockDiePipelineResult.plan,
@@ -398,6 +404,8 @@ describe("swap execute command", () => {
       getQuotesMock.mockImplementationOnce(async () => ({
         quotes: [oneInchQuote],
         providerErrors: [],
+        warnings: [],
+        errors: [],
       }));
 
       const data = await runExecuteSwapCommand({ ...dieBaseFlags, provider: "1inch" });
@@ -429,7 +437,17 @@ describe("swap execute command", () => {
     it("should reject when no DIE quote is returned", async () => {
       getQuotesMock.mockImplementationOnce(async () => ({
         quotes: [],
-        providerErrors: [{ provider: "uniswap", message: "rate unavailable" }],
+        providerErrors: [
+          {
+            provider: "uniswap",
+            message: "rate unavailable",
+            code: "rate_unavailable",
+            type: "fixed",
+            parameter: { rate: "rate" },
+          },
+        ],
+        warnings: [],
+        errors: [],
       }));
 
       const writes: string[] = [];
@@ -448,6 +466,7 @@ describe("swap execute command", () => {
             runFullSwapPipeline: runFullSwapPipelineMock,
             runCliSwapDiePipeline: runCliSwapDiePipelineMock,
             findTokenById: findTokenByIdMock,
+            getQuotes: getQuotesMock,
           }),
         ).rejects.toThrow(CliProcessExitError);
       } finally {

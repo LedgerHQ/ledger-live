@@ -145,6 +145,15 @@ const getBackupHubAttributes = () => {
   };
 };
 
+const getProductTourAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return {};
+  const productTour = analyticsFeatureFlagMethod("lwdProductTour");
+
+  return {
+    lwdProductTour: !!productTour?.enabled,
+  };
+};
+
 const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
@@ -259,6 +268,7 @@ const extraProperties = (store: ReduxStore) => {
   const madAttributes = getMADAttributes();
   const addAccountAttributes = getAddAccountAttributes();
   const backupHubAttributes = getBackupHubAttributes();
+  const productTourAttributes = getProductTourAttributes();
 
   const deviceInfo = device
     ? {
@@ -329,6 +339,7 @@ const extraProperties = (store: ReduxStore) => {
     ...mevProtectionAttributes,
     ...addAccountAttributes,
     ...backupHubAttributes,
+    ...productTourAttributes,
     madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
