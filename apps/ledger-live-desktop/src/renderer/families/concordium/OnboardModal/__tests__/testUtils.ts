@@ -20,7 +20,9 @@ export { createMockAccount, createMockConcordiumCurrency };
 // STEP_TRANSITION_TIMEOUT in OnboardModal
 export const T = 1500;
 export const SESSION_TOPIC = "ABCDsession-topic-rest";
-export const WAIT_OPTS = { timeout: 2 * T + 500 };
+// Terminal states settle after ~2*T (mock emit + the component's transition debounce);
+// budget generously above that to absorb real-timer drift on loaded CI.
+export const WAIT_OPTS = { timeout: 3 * T + 500 };
 
 export const defaultConcordiumResources: ConcordiumResources = {
   isOnboarded: false,
