@@ -1,5 +1,5 @@
 import { getAllEnvs } from "@ledgerhq/live-env";
-import { userIdSelector } from "@ledgerhq/client-ids/store";
+import { userIdSelector } from "@domain/entity-client-identity";
 import { webFrame, ipcRenderer } from "electron";
 import { useCallback, useState } from "react";
 import { useTechnicalDateTimeFn } from "~/renderer/hooks/useDateFormatter";

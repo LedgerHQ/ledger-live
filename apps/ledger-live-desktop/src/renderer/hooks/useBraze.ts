@@ -7,7 +7,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
-import { userIdSelector } from "@ledgerhq/client-ids/store";
+import { userIdSelector } from "@domain/entity-client-identity";
 import { getBrazeConfig } from "~/braze-setup";
 import {
   ActionContentCard,

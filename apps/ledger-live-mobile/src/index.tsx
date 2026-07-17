@@ -97,7 +97,7 @@ import {
   customLogEventMapper,
   initializeDatadogProvider,
 } from "./datadog";
-import { datadogIdSelector, isDummyDatadogId } from "@ledgerhq/client-ids/store";
+import { datadogIdSelector, isDummyDatadogId } from "@domain/entity-client-identity";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 import HookDevTools from "./devTools/useDevTools";

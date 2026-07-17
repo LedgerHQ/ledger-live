@@ -14,7 +14,7 @@ import type { Device, Action } from "./types";
 import { shouldUpgrade } from "../../apps";
 import { AppOp, SkippedAppOp } from "../../apps/types";
 import type { Account, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import { DeviceId } from "@ledgerhq/client-ids/ids";
+import { DeviceId } from "@domain/entity-client-identity";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getImplementation, ImplementationType } from "./implementations";
 import {

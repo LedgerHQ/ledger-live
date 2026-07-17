@@ -33,7 +33,7 @@ jest.mock("@datadog/browser-rum", () => ({
 
 const mockDatadogIdSelector = jest.fn();
 const mockIsDummyDatadogId = jest.fn();
-jest.mock("@ledgerhq/client-ids/store", () => ({
+jest.mock("@domain/entity-client-identity", () => ({
   datadogIdSelector: (state: unknown) => mockDatadogIdSelector(state),
   isDummyDatadogId: (id: unknown) => mockIsDummyDatadogId(id),
 }));
