@@ -103,6 +103,7 @@
   },
   "devDependencies": {
     "@domain/entity-currency-crypto": "workspace:^",
+    "@features/platform-currencies": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",

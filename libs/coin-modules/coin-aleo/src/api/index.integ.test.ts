@@ -1,5 +1,6 @@
 import invariant from "invariant";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies";
+import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { getEnv } from "@ledgerhq/live-env";
 import { createApi } from "../api";
 import { TRANSACTION_TYPE } from "../constants";
@@ -22,7 +23,12 @@ describe("createApi", () => {
   );
 
   beforeAll(() => {
-    setupCalClientStore();
+    setCryptoAssetsStore(
+      buildStandaloneCryptoAssetsStore({
+        calServiceUrl: getEnv("CAL_SERVICE_URL"),
+        ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+      }),
+    );
   });
 
   describe("estimateFees", () => {

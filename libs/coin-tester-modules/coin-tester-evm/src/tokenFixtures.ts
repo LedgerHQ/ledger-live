@@ -1,5 +1,6 @@
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 
@@ -102,5 +103,8 @@ export const STCORE_ON_CORE: TokenCurrency = {
   units: [{ name: "stCORE", code: "stCORE", magnitude: 18 }],
 } as TokenCurrency;
 
-const cryptoAssetsStore = setupCalClientStore();
+const cryptoAssetsStore = buildStandaloneCryptoAssetsStore({
+  calServiceUrl: getEnv("CAL_SERVICE_URL"),
+  ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+});
 setCryptoAssetsStore(cryptoAssetsStore);

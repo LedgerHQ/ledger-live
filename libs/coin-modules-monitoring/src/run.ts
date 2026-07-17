@@ -1,6 +1,6 @@
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountBridgeByFamily } from "@ledgerhq/live-common/bridge/impl";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies";
 import {
   type CryptoCurrency,
   getCryptoCurrencyById,
@@ -9,7 +9,8 @@ import {
   listCryptoCurrencies,
   hasCryptoCurrencyId,
 } from "@domain/entity-currency-crypto";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore, setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getEnv } from "@ledgerhq/live-env";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { firstValueFrom, reduce } from "rxjs";
@@ -158,8 +159,13 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
 
   LiveConfig.setConfig(liveConfig);
 
-  // Setup CAL client store for monitoring (automatically set as global store)
-  setupCalClientStore();
+  // Build the CAL store and set it as the cryptoassets global store for monitoring
+  setCryptoAssetsStore(
+    buildStandaloneCryptoAssetsStore({
+      calServiceUrl: getEnv("CAL_SERVICE_URL"),
+      ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+    }),
+  );
 
   // Wire wallet-framework ports to the same cryptoassets global store
   setFrameworkCryptoAssetsStore({

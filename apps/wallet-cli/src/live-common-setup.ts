@@ -1,13 +1,14 @@
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client";
+import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies";
 import { walletCliConfig } from "./config";
 import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry";
 import type { CoinModuleLoader } from "@ledgerhq/live-common/coin-modules/types";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { registerWalletCliDmkTransport } from "./device/register-dmk-transport";
 import { setCryptoCurrenciesStore, setFiatCurrenciesStore } from "@ledgerhq/cryptoassets";
+import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
   CRYPTO_CURRENCIES_REGISTRY,
   CRYPTO_CURRENCY_ALIASES,
@@ -123,7 +124,10 @@ setCurrenciesResolver({
 setWalletAPIVersion(WALLET_API_VERSION);
 registerCoinModules(walletCliLoaders);
 LiveConfig.setConfig(walletCliConfig);
-// TODO: wallet-cli should own its Redux store setup (createRtkCryptoAssetsStore + RTK middleware)
-// instead of relying on setupCalClientStore from @ledgerhq/cryptoassets/cal-client (test-helpers).
-setFrameworkCryptoAssetsStore(setupCalClientStore());
+const cryptoAssetsStore = buildStandaloneCryptoAssetsStore({
+  calServiceUrl: getEnv("CAL_SERVICE_URL"),
+  ledgerClientVersion,
+});
+setCryptoAssetsStore(cryptoAssetsStore);
+setFrameworkCryptoAssetsStore(cryptoAssetsStore);
 registerWalletCliDmkTransport();
