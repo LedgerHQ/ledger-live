@@ -1,7 +1,7 @@
 import React from "react";
 import { AppState } from "react-native";
 import { render, act } from "@tests/test-renderer";
-import useEnv from "@shared/live-env/hooks";
+import useEnv from "@features/platform-env";
 import { JsThreadMonitor } from "../index";
 
 const mockRemove = jest.fn();

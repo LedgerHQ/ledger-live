@@ -6,7 +6,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import { openModal } from "~/renderer/actions/modals";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import useEnv from "@shared/live-env/hooks";
+import useEnv from "@features/platform-env";
 import Alert from "~/renderer/components/Alert";
 import Button from "~/renderer/components/Button";
 import { setShowClearCacheBanner } from "~/renderer/actions/settings";

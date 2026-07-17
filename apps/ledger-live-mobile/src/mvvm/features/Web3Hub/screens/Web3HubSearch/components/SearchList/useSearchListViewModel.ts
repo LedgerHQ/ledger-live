@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import useEnv from "@shared/live-env/hooks";
+import useEnv from "@features/platform-env";
 import {
   fetchManifests,
   selectManifests,

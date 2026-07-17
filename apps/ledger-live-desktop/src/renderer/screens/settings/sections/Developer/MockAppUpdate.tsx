@@ -1,4 +1,4 @@
-import useEnv from "@shared/live-env/hooks";
+import useEnv from "@features/platform-env";
 import { setEnv } from "@shared/live-env";
 import React, { useCallback } from "react";
 

@@ -6,7 +6,7 @@ import VersionNumber from "react-native-version-number";
 import { useFeature } from "@features/platform-feature-flags";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
-import useEnv from "@shared/live-env/hooks";
+import useEnv from "@features/platform-env";
 
 interface AssetsProps {
   currencyIds?: string[];

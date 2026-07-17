@@ -3,7 +3,7 @@ import VersionNumber from "react-native-version-number";
 import { RemoteLiveAppProvider } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import useEnv from "@shared/live-env/hooks";
+import useEnv from "@features/platform-env";
 import { Platform } from "react-native";
 import { useLocale } from "~/context/Locale";
 import {

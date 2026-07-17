@@ -1,4 +1,4 @@
-import useEnv from "@shared/live-env/hooks";
+import useEnv from "@features/platform-env";
 import React, { useCallback } from "react";
 import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";

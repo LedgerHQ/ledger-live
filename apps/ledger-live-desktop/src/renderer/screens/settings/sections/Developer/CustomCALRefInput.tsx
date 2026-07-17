@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import useEnv from "@shared/live-env/hooks";
+import useEnv from "@features/platform-env";
 import { setEnv } from "@shared/live-env";
 import Track from "~/renderer/analytics/Track";
 import Input from "~/renderer/components/Input";

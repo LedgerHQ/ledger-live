@@ -147,6 +147,7 @@
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/live-engagement": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
+    "@features/platform-env": "workspace:*",
     "@shared/live-env": "workspace:*",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",

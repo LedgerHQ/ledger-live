@@ -25,7 +25,7 @@ import {
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
-import useEnv from "@shared/live-env/hooks";
+import useEnv from "@features/platform-env";
 import { openModal } from "../../actions/modals";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";

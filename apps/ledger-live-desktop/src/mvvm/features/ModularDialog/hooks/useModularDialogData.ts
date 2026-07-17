@@ -11,7 +11,7 @@ import {
 import { useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@features/platform-feature-flags";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
-import useEnv from "@shared/live-env/hooks";
+import useEnv from "@features/platform-env";
 
 export function useModularDialogData() {
   const modularDrawerFeature = useFeature("lldModularDrawer");

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useDispatch } from "~/context/hooks";
-import useEnv from "@shared/live-env/hooks";
+import useEnv from "@features/platform-env";
 import { setEnv } from "@shared/live-env";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { setTheme } from "~/actions/settings";

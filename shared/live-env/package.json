@@ -7,14 +7,7 @@
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./hooks": "./src/hooks.ts",
     "./package.json": "./package.json"
-  },
-  "peerDependencies": {
-    "react": "catalog:"
-  },
-  "peerDependenciesMeta": {
-    "react": { "optional": true }
   },
   "sideEffects": ["./src/index.ts"],
   "scripts": {

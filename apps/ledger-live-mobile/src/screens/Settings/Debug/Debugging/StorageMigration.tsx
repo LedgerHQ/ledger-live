@@ -10,7 +10,7 @@ import storage from "LLM/storage";
 import type { StorageState } from "LLM/storage/types";
 import { MIGRATION_STATUS, ROLLBACK_STATUS } from "LLM/storage/utils/migrations/constants";
 import type { MigrationStatus, RollbackStatus } from "LLM/storage/utils/migrations/types";
-import useEnv from "@shared/live-env/hooks";
+import useEnv from "@features/platform-env";
 import { setEnv } from "@shared/live-env";
 import { rejectWithError } from "LLM/utils/rejectWithError";
 

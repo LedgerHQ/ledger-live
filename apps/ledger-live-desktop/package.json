@@ -116,6 +116,7 @@
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
+    "@features/platform-env": "workspace:*",
     "@shared/live-env": "workspace:*",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
