@@ -34,6 +34,8 @@ export function trackAddressResolved(p: { network: string; deviceRequired: boole
   });
 }
 
+// Exception: balance_viewed / operation_viewed are kept as track events (not Page events) because they
+// are in-context impressions rather than new screen loads. Documented exception to the *_viewed convention.
 export function trackBalanceViewed(p: { network: string }): void {
   track("balance_viewed", {
     page: BALANCES,
