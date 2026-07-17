@@ -6,8 +6,10 @@ import { ScreenName } from "~/const";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { isCurrencySupported } from "@ledgerhq/live-common/coin-modules/registry";
-import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import {
+  setCryptoAssetsStore,
+  getCryptoAssetsStore,
+} from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const Stack = createNativeStackNavigator();

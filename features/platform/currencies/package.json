@@ -6,6 +6,9 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
     "./legacy": {
       "default": "./src/legacy/index.ts"
     }
