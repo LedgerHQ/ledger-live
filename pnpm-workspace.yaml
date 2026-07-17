@@ -215,3 +215,5 @@ overrides:
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
+  # Renovate security update: protobufjs@7.5.5
+  - protobufjs@7.5.5
