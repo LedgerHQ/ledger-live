@@ -10,8 +10,9 @@ portable modal UI (Lumen Dialog) and content helpers.
 - `buildLargeScreenUpsellCtaLink` / `buildLargeScreenUpsellContent` — pure helpers
 - `LargeScreenUpsellModal` — Lumen Dialog (web) with mobile-matched copy/assets
 - `LARGE_SCREEN_UPSELL_IMAGES` — light/dark hero webps
+- `LargeScreenUpsellModalAnalyticsPorts` — optional viewed / CTA / dismiss callbacks for app-owned Segment
 
-Apps wire theme + i18n + `openUrl` into the ViewModel.
+Apps wire theme + i18n + `openUrl` + analytics into the ViewModel.
 
 Nothing inside `internal/` is exported.
 

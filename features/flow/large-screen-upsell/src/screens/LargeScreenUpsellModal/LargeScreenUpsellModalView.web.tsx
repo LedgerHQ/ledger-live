@@ -9,7 +9,7 @@ export function LargeScreenUpsellModalView({
   title,
   subtitle,
   primaryButtonLabel,
-  onClose,
+  onDismiss,
   onCtaPress,
 }: LargeScreenUpsellModalViewModel) {
   return (
@@ -17,17 +17,17 @@ export function LargeScreenUpsellModalView({
       open={isOpen}
       onOpenChange={open => {
         if (!open) {
-          onClose();
+          onDismiss("close button");
         }
       }}
     >
       <DialogContent
         className="max-h-[90vh] rounded-xl"
         data-testid="large-screen-upsell-modal"
-        onPointerDownOutside={onClose}
-        onEscapeKeyDown={onClose}
+        onPointerDownOutside={() => onDismiss("outside tap")}
+        onEscapeKeyDown={() => onDismiss("escape key down")}
       >
-        <DialogHeader density="expanded" onClose={onClose} />
+        <DialogHeader density="expanded" onClose={() => onDismiss("close button")} />
         <DialogBody className="flex min-h-0 flex-1 flex-col gap-24 overflow-hidden">
           <LargeScreenUpsellModalContent
             imageSrc={imageSrc}
