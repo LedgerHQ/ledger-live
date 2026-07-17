@@ -682,6 +682,9 @@ importers:
 
   apps/cli:
     dependencies:
+      '@domain/api-currency-token':
+        specifier: workspace:^
+        version: link:../../domain/api/currency-token
       '@domain/entity-currency-crypto':
         specifier: workspace:^
         version: link:../../domain/entity/currency-crypto
@@ -727,6 +730,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
       bigint-buffer:
         specifier: '*'
         version: 1.1.5(patch_hash=8b68e3a6ff85b08428e730e15c185b6ef716497a858ca1f30f6e628828bac536)

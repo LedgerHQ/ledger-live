@@ -9,10 +9,11 @@ import {
   DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/live-dmk-speculos";
-import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
+import { configureStore } from "@reduxjs/toolkit";
+import { calApiExtra, cryptoAssetsApi } from "@domain/api-currency-token";
+import { buildCryptoAssetsStore } from "@features/platform-currencies/legacy";
 import { getEnv } from "@ledgerhq/live-env";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 const NON_SPECULOS_DEVICE_ERROR =
   "This CLI only supports Speculos devices (set SPECULOS_API_PORT or SPECULOS_APDU_PORT). " +
@@ -74,13 +75,18 @@ export function closeAllDevices() {
   closeAllSpeculosDevices();
 }
 
-setFrameworkCryptoAssetsStore(
-  buildStandaloneCryptoAssetsStore({
-    calServiceUrl: getEnv("CAL_SERVICE_URL"),
-    ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION") || "cli",
-  }),
-);
+export const calStore = configureStore({
+  reducer: { [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer },
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+      thunk: {
+        extraArgument: calApiExtra({
+          calServiceUrl: getEnv("CAL_SERVICE_URL"),
+          ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION") || "cli",
+        }),
+      },
+    }).concat(cryptoAssetsApi.middleware),
+});
 
-// setupCalClientStore is required by the liveData CLI command which uses
-// getReduxStore() to extract the RTK Query token cache for E2E fixtures.
-setupCalClientStore();
+setFrameworkCryptoAssetsStore(buildCryptoAssetsStore({ dispatch: calStore.dispatch }));
