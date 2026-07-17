@@ -2,6 +2,7 @@ import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/
 import {
   getCryptoAssetsStore,
   setCryptoAssetsStore,
+  type FrameworkCryptoAssetsStore,
 } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import BigNumber from "bignumber.js";
@@ -30,7 +31,7 @@ describe("utils", () => {
       buildStandaloneCryptoAssetsStore({
         calServiceUrl: process.env.CAL_SERVICE_URL ?? "https://global.api.prd.ledger.com/cal",
         ledgerClientVersion: process.env.LEDGER_CLIENT_VERSION || "coin-hedera-integration-test",
-      }),
+      }) as unknown as FrameworkCryptoAssetsStore,
     );
   });
 

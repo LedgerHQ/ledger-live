@@ -1,6 +1,9 @@
 import invariant from "invariant";
 import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
-import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import {
+  setCryptoAssetsStore,
+  type FrameworkCryptoAssetsStore,
+} from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getEnv } from "@ledgerhq/live-env";
 import { createApi } from "../api";
 import { TRANSACTION_TYPE } from "../constants";
@@ -27,7 +30,7 @@ describe("createApi", () => {
       buildStandaloneCryptoAssetsStore({
         calServiceUrl: process.env.CAL_SERVICE_URL ?? "https://global.api.prd.ledger.com/cal",
         ledgerClientVersion: process.env.LEDGER_CLIENT_VERSION || "coin-aleo-integration-test",
-      }),
+      }) as unknown as FrameworkCryptoAssetsStore,
     );
   });
 

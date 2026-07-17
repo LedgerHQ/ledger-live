@@ -1,7 +1,10 @@
 import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
-import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import {
+  setCryptoAssetsStore,
+  type FrameworkCryptoAssetsStore,
+} from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import aleoConfig from "../config";
 import { mockFeeByTransactionType } from "../__tests__/fixtures/config.fixture";
@@ -12,7 +15,7 @@ setCryptoAssetsStore(
   buildStandaloneCryptoAssetsStore({
     calServiceUrl: process.env.CAL_SERVICE_URL ?? "https://global.api.prd.ledger.com/cal",
     ledgerClientVersion: process.env.LEDGER_CLIENT_VERSION || "coin-aleo-integration-test",
-  }),
+  }) as unknown as FrameworkCryptoAssetsStore,
 );
 
 describe("getPrivateBalance", () => {
