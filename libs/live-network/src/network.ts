@@ -108,7 +108,13 @@ axios.interceptors.response.use(responseInterceptor, errorInterceptor);
  * We only allow HTTPS agent on platforms other than LLM because
  * https library is not compatible with react native
  */
-const NETWORK_USE_HTTPS_KEEP_ALIVE = !getEnv<string>("LEDGER_CLIENT_VERSION").startsWith("llm-");
+const NETWORK_USE_HTTPS_KEEP_ALIVE = (() => {
+  try {
+    return !String(getEnv("LEDGER_CLIENT_VERSION") ?? "").startsWith("llm-");
+  } catch {
+    return true; // injectDefinitions not yet called; default to keepAlive
+  }
+})();
 if (NETWORK_USE_HTTPS_KEEP_ALIVE) {
   // the keepAlive is necessary when we make a lot of request in in parallel, especially for bitcoin sync. Otherwise, it may raise "connect ETIMEDOUT" error
   // this should only be needed in Windows as UNIX systems reuse TCP packets by default
