@@ -4552,10 +4552,10 @@ importers:
       '@features/platform-feature-flags':
         specifier: workspace:^
         version: link:../feature-flags
-    devDependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+    devDependencies:
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../../shared/feature-flags
