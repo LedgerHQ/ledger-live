@@ -18,8 +18,8 @@ setupMockCryptoAssetsStore();
 // setupMockCryptoAssetsStore() in individual tests automatically propagates.
 setCryptoAssetsStore({
   findTokenById: id => getCryptoAssetsStore().findTokenById(id),
-  findTokenByAddressInCurrency: (addr, currencyId) =>
-    getCryptoAssetsStore().findTokenByAddressInCurrency(addr, currencyId),
+  findTokenByAddressInCurrency: (addr, currencyId, tokenIdentifier) =>
+    getCryptoAssetsStore().findTokenByAddressInCurrency(addr, currencyId, tokenIdentifier),
   getTokensSyncHash: currencyId => getCryptoAssetsStore().getTokensSyncHash(currencyId),
 });
 

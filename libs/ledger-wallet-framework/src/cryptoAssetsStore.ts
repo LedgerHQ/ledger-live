@@ -5,6 +5,7 @@ export type FrameworkCryptoAssetsStore = {
   findTokenByAddressInCurrency(
     address: string,
     currencyId: string,
+    tokenIdentifier?: string,
   ): Promise<TokenCurrency | undefined>;
   getTokensSyncHash(currencyId: string): Promise<string>;
 };
