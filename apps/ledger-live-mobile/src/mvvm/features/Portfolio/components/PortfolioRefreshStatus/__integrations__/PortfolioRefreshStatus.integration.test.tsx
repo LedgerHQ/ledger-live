@@ -19,6 +19,11 @@ jest.mock("react-native-reanimated", () => {
     withSpring: (toValue: unknown) => toValue,
     cancelAnimation: () => {},
     useReducedMotion: () => false,
+    ReduceMotion: {
+      System: "system",
+      Always: "always",
+      Never: "never",
+    },
     default: {
       View: RN.View,
       Text: RN.Text,
