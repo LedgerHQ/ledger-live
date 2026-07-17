@@ -46,10 +46,12 @@
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "clsx": "catalog:",
     "jest": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-redux": "catalog:",
+    "tailwind-merge": "catalog:",
     "typescript": "catalog:"
   }
 }
