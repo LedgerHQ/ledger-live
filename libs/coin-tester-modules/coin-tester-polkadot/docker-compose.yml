@@ -3,7 +3,7 @@ services:
     container_name: chopsticks
     platform: linux/x86_64
     environment:
-      CHOPSTICKS_CONFIG: ${CHOPSTICKS_CONFIG:-/coin-tester-polkadot/coin-tester-chopsticks/polkadot.yml}
+      CHOPSTICKS_CONFIG: ${CHOPSTICKS_CONFIG}
     build:
       context: .
       dockerfile: chopsticks.Dockerfile
