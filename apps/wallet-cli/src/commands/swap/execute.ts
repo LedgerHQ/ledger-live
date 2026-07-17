@@ -34,6 +34,7 @@ import { getErrorDetails } from "@ledgerhq/live-common/exchange/error";
 
 type RunFullSwapPipeline = typeof runFullSwapPipelineDefault;
 type RunCliSwapDiePipeline = typeof runCliSwapDiePipelineDefault;
+type GetQuotes = typeof getQuotes;
 
 type CryptoOrTokenCurrency = CryptoCurrency | TokenCurrency;
 type FindTokenById = (id: string) => Promise<TokenCurrency | null | undefined>;
@@ -100,17 +101,21 @@ export type SwapExecuteDependencies = {
   getAccountBridge?: typeof getAccountBridge;
   makeBridgeCacheSystem?: typeof makeBridgeCacheSystem;
   findTokenById?: FindTokenById;
+  getQuotes?: GetQuotes;
 };
 
-async function selectDieQuote(args: {
-  provider: string;
-  from: string;
-  to: string;
-  amount: string;
-  sendAddress: string;
-  receiveAddress: string;
-}): Promise<Quote> {
-  const { quotes, providerErrors } = await getQuotes(
+async function selectDieQuote(
+  getQuotesFn: GetQuotes,
+  args: {
+    provider: string;
+    from: string;
+    to: string;
+    amount: string;
+    sendAddress: string;
+    receiveAddress: string;
+  },
+): Promise<Quote> {
+  const { quotes, providerErrors } = await getQuotesFn(
     {
       providers: [args.provider],
       data: {
@@ -148,6 +153,7 @@ export async function executeSwapCommand({
   getAccountBridge: getBridge = getAccountBridge,
   makeBridgeCacheSystem: makeCacheSystem = makeBridgeCacheSystem,
   findTokenById = id => getCryptoAssetsStore().findTokenById(id),
+  getQuotes: getQuotesFn = getQuotes,
 }: {
   flags: SwapExecuteFlags;
   positional: readonly string[];
@@ -248,7 +254,7 @@ export async function executeSwapCommand({
       const mainToAccount: Account = getMainAccount(toAccount, toParent);
       const receiveAddress = mainToAccount.freshAddress;
 
-      const quote = await selectDieQuote({
+      const quote = await selectDieQuote(getQuotesFn, {
         provider,
         from: flags.from,
         to: flags.to,
