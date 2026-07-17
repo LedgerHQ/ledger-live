@@ -46765,6 +46765,7 @@ snapshots:
     dependencies:
       '@ledgerhq/lumen-design-core': 0.1.19
       '@ledgerhq/lumen-utils-shared': 0.1.7(react@19.1.4)
+      clsx: 2.1.1
       i18next: 23.10.1
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
