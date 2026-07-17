@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   createEmptyContactsListViewModel,
@@ -14,8 +14,8 @@ export type ContactsViewModel = ContactsViewProps;
 export function useContactsViewModel(): ContactsViewModel {
   const { t } = useTranslation();
   const meContact = useContactsMeContact();
-  const [isIntroductionOpen, setIsIntroductionOpen] = useState(false);
-  const ledgerSyncStatus: ContactsLedgerSyncStatus = "checking";
+  const [isIntroductionDismissed, setIsIntroductionDismissed] = useState(false);
+  const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
   const labels = useMemo<ContactsPageLabels>(
     () => ({
       title: t("contacts.title"),
@@ -27,7 +27,15 @@ export function useContactsViewModel(): ContactsViewModel {
   );
   const onOpenMe = useCallback<ContactsViewProps["onOpenMe"]>(_contactId => undefined, []);
   const onAddContact = useCallback(() => undefined, []);
-  const onDismissIntroduction = useCallback(() => setIsIntroductionOpen(false), []);
+  const onDismissIntroduction = useCallback(() => setIsIntroductionDismissed(true), []);
+
+  useEffect(() => {
+    if (ledgerSyncStatus !== "inactive") {
+      setIsIntroductionDismissed(false);
+    }
+  }, [ledgerSyncStatus]);
+
+  const isIntroductionOpen = ledgerSyncStatus === "inactive" && !isIntroductionDismissed;
 
   return {
     viewModel: createEmptyContactsListViewModel(meContact),

@@ -78,7 +78,12 @@ describe("ContactsPage", () => {
 
     expect(screen.getByTestId("contacts-page-layout")).toBeVisible();
     expect(screen.getByTestId("contacts-list")).toBeVisible();
-    expect(screen.getByTestId("contacts-ledger-sync-loading-overlay")).toHaveAttribute(
+    expect(screen.getByTestId("contacts-detail-pane")).toBeVisible();
+    expect(screen.getByTestId("contacts-ledger-sync-list-loading")).toHaveAttribute(
+      "aria-busy",
+      "true",
+    );
+    expect(screen.getByTestId("contacts-ledger-sync-detail-loading")).toHaveAttribute(
       "aria-busy",
       "true",
     );
