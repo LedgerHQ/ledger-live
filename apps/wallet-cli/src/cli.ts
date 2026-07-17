@@ -24,6 +24,7 @@ import SwapGroup from "./commands/swap/index";
 import EarnGroup from "./commands/earn/index";
 import GenuineCheckCommand from "./commands/genuine-check";
 import RingGroup from "./commands/ring/index";
+import SkillGroup from "./commands/skill/index";
 
 emitTestingBuildBannerIfNeeded();
 
@@ -47,6 +48,7 @@ export async function runMain(argv: string[] = process.argv.slice(2)): Promise<n
   cli.command(EarnGroup);
   cli.command(GenuineCheckCommand);
   cli.command(RingGroup);
+  cli.command(SkillGroup);
   const code = await cli.run(normalizeNegatedFlags(argv), { noExit: true });
   return code ?? 0;
 }
