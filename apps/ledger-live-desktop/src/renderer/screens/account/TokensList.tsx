@@ -2,6 +2,7 @@ import React, { useCallback, useState, memo } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/helpers";
+import { isReceiveDisabledForFamily } from "@ledgerhq/live-common/account/index";
 import styled from "styled-components";
 import { useNavigate } from "react-router";
 import { getAccountUrl } from "~/renderer/utils";
@@ -78,6 +79,7 @@ function TokensList({ account }: Props) {
     : null;
   const hasSpecificTokenWording = specific?.hasSpecificTokenWording;
   const ReceiveButtonComponent = specific?.ReceiveButton || ReceiveButton;
+  const receiveDisabled = isReceiveDisabledForFamily(family);
   const titleLabel = t(hasSpecificTokenWording ? `tokensList.${family}.title` : "tokensList.title");
   const placeholderLabel = t(
     hasSpecificTokenWording ? `tokensList.${family}.placeholder` : "tokensList.placeholder",
@@ -97,7 +99,7 @@ function TokensList({ account }: Props) {
   return (
     <TableContainer id="tokens-list" mb={50}>
       <TableHeader title={isTokenAccount ? titleLabel : t("subAccounts.title")}>
-        {!isEmpty && isTokenAccount && (
+        {!isEmpty && isTokenAccount && !receiveDisabled && (
           <ReceiveButtonComponent onClick={onReceiveClick} account={account} />
         )}
       </TableHeader>
@@ -122,7 +124,9 @@ function TokensList({ account }: Props) {
               </Text>
             ) : null}
           </Placeholder>
-          <ReceiveButtonComponent onClick={onReceiveClick} account={account} />
+          {!receiveDisabled && (
+            <ReceiveButtonComponent onClick={onReceiveClick} account={account} />
+          )}
         </EmptyState>
       )}
       {subAccounts.slice(0, shouldSliceList && collapsed ? 3 : subAccounts.length).map(token => (

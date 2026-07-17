@@ -1,4 +1,10 @@
-import { canSend, getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import {
+  canSend,
+  getAccountCurrency,
+  getMainAccount,
+  isReceiveDisabledForFamily,
+  isSendDisabledForFamily,
+} from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 
@@ -395,10 +401,12 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       {availableOnSwap ? swapHeader : null}
       {availableOnBuy ? buyHeader : null}
       {availableOnSell && sellHeader}
-      {canSendResult ? (
+      {canSendResult && !isSendDisabledForFamily(mainAccount.currency.family) ? (
         <SendAction account={account} parentAccount={parentAccount} onClick={onSend} />
       ) : null}
-      <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
+      {!isReceiveDisabledForFamily(mainAccount.currency.family) ? (
+        <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
+      ) : null}
     </FadeInButtonsContainer>
   );
 

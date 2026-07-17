@@ -4,6 +4,7 @@ import { checkAccountSupported as checkAccountDerivationSupported } from "@ledge
 import { isCoinModuleRegistered } from "../coin-modules/registry";
 import { getAccountBridge } from "../bridge";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export { getReceiveFlowError } from "@ledgerhq/ledger-wallet-framework/account/support";
 
@@ -31,3 +32,14 @@ export async function canSend(
     return false;
   }
 }
+
+// Families with no on-chain Send/Receive on Ledger Wallet (e.g. HyperCore: no send, and a plain
+// receive is misleading since deposits go through bridging rather than a normal receive address).
+const FAMILIES_WITHOUT_SEND: CryptoCurrency["family"][] = ["hypercore"];
+const FAMILIES_WITHOUT_RECEIVE: CryptoCurrency["family"][] = ["hypercore"];
+
+export const isSendDisabledForFamily = (family: CryptoCurrency["family"]): boolean =>
+  FAMILIES_WITHOUT_SEND.includes(family);
+
+export const isReceiveDisabledForFamily = (family: CryptoCurrency["family"]): boolean =>
+  FAMILIES_WITHOUT_RECEIVE.includes(family);

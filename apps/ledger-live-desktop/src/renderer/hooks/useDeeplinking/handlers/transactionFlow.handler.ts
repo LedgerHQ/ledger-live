@@ -3,6 +3,10 @@ import {
   parseCurrencyUnit,
 } from "@ledgerhq/live-common/currencies/index";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import {
+  isReceiveDisabledForFamily,
+  isSendDisabledForFamily,
+} from "@ledgerhq/live-common/account/index";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { closeAllModal, openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -115,6 +119,19 @@ async function handleTransactionFlow(
 
   if (!foundCurrency) {
     openAssetFlow();
+    return;
+  }
+
+  // Some families expose no Send/Receive on Ledger Wallet (e.g. HyperCore); don't reopen the flow
+  // via deeplink for them, otherwise it would bypass the hidden UI buttons.
+  const currencyFamily =
+    foundCurrency.type === "TokenCurrency"
+      ? foundCurrency.parentCurrency.family
+      : foundCurrency.family;
+  if (
+    (flowType === "send" && isSendDisabledForFamily(currencyFamily)) ||
+    (flowType === "receive" && isReceiveDisabledForFamily(currencyFamily))
+  ) {
     return;
   }
 

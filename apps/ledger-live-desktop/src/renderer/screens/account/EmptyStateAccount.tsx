@@ -5,7 +5,7 @@ import { withTranslation, Trans } from "react-i18next";
 import { TFunction } from "i18next";
 import { openModal } from "~/renderer/actions/modals";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, isReceiveDisabledForFamily } from "@ledgerhq/live-common/account/index";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import IconReceive from "~/renderer/icons/Receive";
 import IconExchange from "~/renderer/icons/Exchange";
@@ -113,22 +113,24 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
               </Box>
             </Button>
           ) : null}
-          <Button
-            mt={5}
-            primary
-            onClick={() =>
-              openModal("MODAL_RECEIVE", {
-                account,
-                parentAccount,
-                sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
-              })
-            }
-          >
-            <Box horizontal flow={1} alignItems="center">
-              <IconReceive size={12} />
-              <Box>{t("account.emptyState.buttons.receiveFunds")}</Box>
-            </Box>
-          </Button>
+          {!isReceiveDisabledForFamily(mainAccount.currency.family) ? (
+            <Button
+              mt={5}
+              primary
+              onClick={() =>
+                openModal("MODAL_RECEIVE", {
+                  account,
+                  parentAccount,
+                  sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
+                })
+              }
+            >
+              <Box horizontal flow={1} alignItems="center">
+                <IconReceive size={12} />
+                <Box>{t("account.emptyState.buttons.receiveFunds")}</Box>
+              </Box>
+            </Button>
+          ) : null}
         </Box>
       </Box>
     </Box>
