@@ -5,21 +5,14 @@ import { AssetSuggestionRow } from "LLD/features/SearchAssets/components/AssetSu
 
 type SearchResultRowProps = {
   currency: MarketCurrencyData;
-  counterCurrency: string;
   locale: string;
   onClick: (currencyId: string, marketState?: AssetNavigationMarketState) => void;
 };
 
-export function SearchResultRow({
-  currency,
-  counterCurrency,
-  locale,
-  onClick,
-}: Readonly<SearchResultRowProps>) {
+export function SearchResultRow({ currency, locale, onClick }: Readonly<SearchResultRowProps>) {
   return (
     <AssetSuggestionRow
       currency={currency}
-      counterCurrency={counterCurrency}
       locale={locale}
       testIdPrefix="search-result"
       onClick={onClick}

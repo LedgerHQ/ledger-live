@@ -25,7 +25,6 @@ const ICON_SIZE = {
 
 type AssetSuggestionRowProps = {
   currency: MarketCurrencyData;
-  counterCurrency: string;
   locale: string;
   testIdPrefix: string;
   onClick: (currencyId: string, marketState?: AssetNavigationMarketState) => void;

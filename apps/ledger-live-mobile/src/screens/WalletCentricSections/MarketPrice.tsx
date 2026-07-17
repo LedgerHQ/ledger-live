@@ -2,7 +2,7 @@ import React, { memo, useCallback } from "react";
 import { Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
-import { CryptoOrTokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import Touchable from "~/components/Touchable";

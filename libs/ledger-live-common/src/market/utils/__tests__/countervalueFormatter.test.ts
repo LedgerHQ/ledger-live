@@ -4,8 +4,7 @@ import { counterValueFormatter } from "../countervalueFormatter";
 const usd = findFiatCurrencyByTicker("USD")!.units[0];
 const cad = findFiatCurrencyByTicker("CAD")!.units[0];
 const eur = findFiatCurrencyByTicker("EUR")!.units[0];
-// BTC and ETH exist in the fiat list (with Ledger-pinned signs ₿ / ETH),
-// mirroring what the formatter's old fiat-first lookup returned.
+// BTC is defined as a FiatCurrency (₿) in our registry; ETH is a CryptoCurrency.
 const btc = findFiatCurrencyByTicker("BTC")!.units[0];
 const eth = findCryptoCurrencyByTicker("ETH")!.units[0];
 

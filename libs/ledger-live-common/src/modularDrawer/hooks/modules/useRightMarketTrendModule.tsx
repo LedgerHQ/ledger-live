@@ -61,7 +61,7 @@ export const useRightMarketTrendModule = (
     marketByCurrencies,
     status,
     rate,
-    counterValueCurrency.units,
+    counterValueCurrency.units[0],
     locale,
     MarketPriceIndicator,
   ]);
