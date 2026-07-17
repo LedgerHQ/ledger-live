@@ -10166,7 +10166,9 @@
         }
       },
       "summary": {
-        "proofGenerationNotice": "Aleo transaction requires proof generation. This may take some time."
+        "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time.",
+        "recordsUsed": "Records used",
+        "signingTime": "Signing time"
       }
     },
     "balancesSection": "Balances",
