@@ -1,7 +1,7 @@
 import { validateAddress } from "./validateAddress";
-import { isValidAddress } from "./wallet-btc/utils";
+import { isValidAddress } from "@ledgerhq/wallet-btc/utils";
 
-jest.mock("./wallet-btc/utils");
+jest.mock("@ledgerhq/wallet-btc/utils");
 
 describe("validateAddress", () => {
   const mockedIsValidAddress = jest.mocked(isValidAddress);

@@ -1,7 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import { Transaction as BitcoinTransaction, address as bitcoinAddress } from "bitcoinjs-lib";
 import { getAmountAndRecipient, getRbfContext } from "./rbfContext";
-import wallet, { getWalletAccount } from "./wallet-btc";
+import wallet from "@ledgerhq/wallet-btc/index";
+import { getWalletAccount } from "./getWalletAccount";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import { getMinReplacementFeeRateSatVb } from "./rbfFees";
 
@@ -14,11 +15,14 @@ jest.mock("bitcoinjs-lib", () => ({
   },
 }));
 
-jest.mock("./wallet-btc", () => ({
+jest.mock("@ledgerhq/wallet-btc/index", () => ({
   __esModule: true,
   default: {
     getAccountUnspentUtxos: jest.fn(),
   },
+}));
+
+jest.mock("./getWalletAccount", () => ({
   getWalletAccount: jest.fn(),
 }));
 

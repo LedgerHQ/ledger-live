@@ -1,4 +1,4 @@
-jest.mock("./wallet-btc", () => {
+jest.mock("@ledgerhq/wallet-btc/index", () => {
   const { BigNumber } = require("bignumber.js");
   const mock = {
     generateAccount: jest.fn(),
@@ -478,7 +478,7 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
   };
 
   beforeAll(() => {
-    wallet = require("./wallet-btc").default;
+    wallet = require("@ledgerhq/wallet-btc/index").default;
   });
 
   beforeEach(() => {

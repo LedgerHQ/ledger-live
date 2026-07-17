@@ -7,7 +7,7 @@ import { parsePsbt } from "@ledgerhq/psbtv2";
 import type { Transaction } from "./types";
 import { getNetworkParameters } from "./networks";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { getWalletAccount } from "./wallet-btc";
+import { getWalletAccount } from "./getWalletAccount";
 import { AddressFormat, SignerContext } from "./signer";
 import { feeFromPsbt } from "./psbtFees";
 import { fromAsyncOperation } from "./observable";

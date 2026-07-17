@@ -19,7 +19,7 @@ import { AccountPublicKeyUnavailable } from "../errors";
 import { createFixtureAccount, createFixtureTokenAccount } from "../mock/fixtures/cryptoCurrencies";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { OperationType, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
-import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import { getWalletAccount } from "@ledgerhq/coin-bitcoin/getWalletAccount";
 import BigNumber from "bignumber.js";
 
 import * as converters from "./converters";
@@ -716,8 +716,7 @@ describe("signMessageLogic", () => {
   });
 });
 
-jest.mock("@ledgerhq/coin-bitcoin/lib/wallet-btc/index", () => ({
-  ...jest.requireActual("@ledgerhq/coin-bitcoin/lib/wallet-btc/index"),
+jest.mock("@ledgerhq/coin-bitcoin/getWalletAccount", () => ({
   getWalletAccount: jest.fn().mockReturnValue({
     params: { path: "84'/0'", index: 0 },
     xpub: {

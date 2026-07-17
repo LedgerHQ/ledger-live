@@ -8,7 +8,8 @@ import { getNetworkParameters } from "./networks";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
 import { calculateFees } from "./cache";
-import wallet, { getWalletAccount } from "./wallet-btc";
+import { signAccountTx } from "./buildAndSign";
+import { getWalletAccount } from "./getWalletAccount";
 import { perCoinLogic } from "./logic";
 import { SignerContext } from "./signer";
 import { fromAsyncOperation } from "./observable";
@@ -110,7 +111,7 @@ async function executeSignOperation(
   const inputs = inputRefs.map(r => `${r.hash}-${r.outputIndex}`);
 
   const signature: string = await signerContext(deviceId, currency, signer =>
-    wallet.signAccountTx({
+    signAccountTx({
       btc: signer,
       fromAccount: walletAccount,
       txInfo,

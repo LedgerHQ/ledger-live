@@ -4,7 +4,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import type { BitcoinAccount, Transaction } from "./types";
 import { inferFeePerByte } from "./logic";
-import { getWalletAccount } from "./wallet-btc";
+import { getWalletAccount } from "./getWalletAccount";
 import { getChainAdapter } from "./chain-adapters/registry";
 /**
  * Build a list of UTXOs to exclude because their transactions can't be fetched.
