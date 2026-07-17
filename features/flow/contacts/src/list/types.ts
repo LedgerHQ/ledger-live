@@ -1,3 +1,4 @@
+import type { ChangeEvent } from "react";
 import type { ContactId } from "@domain/entity-contact";
 
 export type ContactsListItem = Readonly<{
@@ -26,9 +27,26 @@ export type PopulatedContactsListViewModel = Readonly<{
 
 export type ContactsListViewModel = EmptyContactsListViewModel | PopulatedContactsListViewModel;
 
+export type ContactsSearchResultsViewModel = PopulatedContactsListViewModel &
+  Readonly<{
+    status: "results";
+  }>;
+
+export type ContactsSearchNoResultsViewModel = EmptyContactsListViewModel &
+  Readonly<{
+    status: "no-results";
+  }>;
+
+export type ContactsSearchViewModel =
+  | ContactsSearchResultsViewModel
+  | ContactsSearchNoResultsViewModel;
+
+export type ContactsPageViewModel = ContactsListViewModel | ContactsSearchViewModel;
+
 export type ContactsPageLabels = Readonly<{
   title: string;
   searchPlaceholder: string;
+  searchNoResults: string;
   addContact: string;
   ledgerSyncCheckingAccessibilityLabel?: string;
   formatAddressCount: (count: number) => string;
@@ -44,9 +62,12 @@ export type ContactsLedgerSyncIntroduction = Readonly<{
 }>;
 
 export type ContactsPageProps = Readonly<{
-  viewModel: ContactsListViewModel;
+  viewModel: ContactsPageViewModel;
   labels: ContactsPageLabels;
+  searchQuery: string;
   meAvatarSrc: string;
+  onSearchInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onOpenMe: (contactId: ContactId) => void;
   onOpenContact: (contactId: ContactId) => void;
   onAddContact: () => void;
   ledgerSyncStatus: ContactsLedgerSyncStatus;
@@ -54,21 +75,13 @@ export type ContactsPageProps = Readonly<{
 }>;
 
 export function isPopulatedContactsListViewModel(
-  viewModel: ContactsListViewModel,
-): viewModel is PopulatedContactsListViewModel {
+  viewModel: ContactsPageViewModel,
+): viewModel is PopulatedContactsListViewModel | ContactsSearchResultsViewModel {
   return viewModel.displayMode === "populated";
 }
 
-export type ContactsSearchResultsViewModel = PopulatedContactsListViewModel &
-  Readonly<{
-    status: "results";
-  }>;
-
-export type ContactsSearchNoResultsViewModel = EmptyContactsListViewModel &
-  Readonly<{
-    status: "no-results";
-  }>;
-
-export type ContactsSearchViewModel =
-  | ContactsSearchResultsViewModel
-  | ContactsSearchNoResultsViewModel;
+export function isContactsSearchNoResultsViewModel(
+  viewModel: ContactsPageViewModel,
+): viewModel is ContactsSearchNoResultsViewModel {
+  return "status" in viewModel && viewModel.status === "no-results";
+}

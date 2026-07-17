@@ -1,7 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  useContactsListViewModel,
+  createContactsListViewModel,
+  createContactsSearchViewModel,
+  useContacts,
+  useContactsMeContact,
   type ContactsLedgerSyncStatus,
   type ContactsPageLabels,
 } from "@features/flow-contacts";
@@ -12,18 +15,32 @@ export type ContactsViewModel = ContactsViewProps;
 
 export function useContactsViewModel(): ContactsViewModel {
   const { t } = useTranslation();
-  const viewModel = useContactsListViewModel();
+  const [searchQuery, setSearchQuery] = useState("");
+  const meContact = useContactsMeContact();
+  const contacts = useContacts();
   const [isIntroductionDismissed, setIsIntroductionDismissed] = useState(false);
   const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
   const labels = useMemo<ContactsPageLabels>(
     () => ({
       title: t("contacts.title"),
       searchPlaceholder: t("contacts.searchPlaceholder"),
+      searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
       formatAddressCount: count => t("contacts.me.addressCount", { count }),
     }),
     [t],
   );
+  const viewModel = useMemo(() => {
+    if (searchQuery.trim().length > 0) {
+      return createContactsSearchViewModel(meContact, contacts, searchQuery);
+    }
+
+    return createContactsListViewModel(meContact, contacts);
+  }, [contacts, meContact, searchQuery]);
+  const onSearchInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  }, []);
+  const onOpenMe = useCallback<ContactsViewProps["onOpenMe"]>(_contactId => undefined, []);
   const onOpenContact = useCallback<ContactsViewProps["onOpenContact"]>(
     _contactId => undefined,
     [],
@@ -42,7 +59,10 @@ export function useContactsViewModel(): ContactsViewModel {
   return {
     viewModel,
     labels,
+    searchQuery,
     meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
+    onSearchInputChange,
+    onOpenMe,
     onOpenContact,
     onAddContact,
     ledgerSyncStatus,
