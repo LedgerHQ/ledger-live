@@ -5,6 +5,7 @@
 import { CliProcessExitError } from "../../cli-process-exit-error";
 import { makeEnvelope } from "../../shared/response";
 import { writeStdout, writeStderr } from "../../shared/ui";
+import { HumanFormatter } from "../../wallet/formatter/human";
 
 export type SkillOutputFormat = "human" | "json";
 
@@ -21,7 +22,8 @@ export function skillEnvelope(
 
 /** Uniform error handling: JSON error envelope or stderr line, then exit non-zero. */
 export function failSkill(format: SkillOutputFormat, command: string, error: unknown): never {
-  const message = error instanceof Error ? error.message : String(error);
+  // formatError, not String(error), so non-Error throwables don't become "[object Object]".
+  const message = HumanFormatter.formatError(error);
   if (format === "json") {
     emitJson({ ok: false, error: { command, message } });
   } else {

@@ -112,6 +112,22 @@ describe("skill install", () => {
     expect(err.error.message).toMatch(/agents/);
   });
 
+  it("rejects a prototype-key --agent with the same friendly error (no proto bypass)", async () => {
+    const { stdout, exitCode } = await runCli([
+      "skill",
+      "install",
+      "ledger-wallet-cli",
+      "--agent",
+      "__proto__",
+      "--output",
+      "json",
+    ]);
+    expect(exitCode).toBe(1);
+    const err = JSON.parse(stdout);
+    expect(err.ok).toBe(false);
+    expect(err.error.message).toMatch(/Unknown agent "__proto__"/);
+  });
+
   it("supports --agent agents, writing under .agents/skills of the cwd", async () => {
     tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
     // No --dir: resolveInstallRoot uses process.cwd(), so run from the tmp dir.

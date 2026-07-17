@@ -48,7 +48,9 @@ export function getSoleSkill(): SkillManifest | undefined {
  * Throws if the requested file does not exist.
  */
 export function renderSkillMarkdown(skill: SkillManifest, file = "SKILL.md"): string {
-  const match = skill.files.find(f => f.path === file);
+  // Normalize to POSIX so a Windows `--file references\foo.md` matches the manifest.
+  const normalized = file.replace(/\\/g, "/").replace(/^\.\//, "");
+  const match = skill.files.find(f => f.path === normalized);
   if (!match) {
     const available = skill.files.map(f => f.path).join(", ");
     throw new Error(
@@ -78,6 +80,19 @@ export async function writeSkill(
   { force = false }: { force?: boolean } = {},
 ): Promise<string[]> {
   const skillRoot = path.join(destRoot, skill.name);
+
+  // Defense in depth: file paths come from our own generated manifest, but since
+  // this writes to disk from data embedded in a published binary, refuse any
+  // path that would escape the skill directory (absolute or `..` segments).
+  const rootPrefix = path.resolve(skillRoot) + path.sep;
+  for (const file of skill.files) {
+    const resolved = path.resolve(skillRoot, file.path);
+    if (resolved !== path.resolve(skillRoot) && !resolved.startsWith(rootPrefix)) {
+      throw new Error(
+        `Refusing to write "${file.path}" outside the skill directory "${skillRoot}".`,
+      );
+    }
+  }
 
   if (!force) {
     const clashes: string[] = [];
@@ -120,13 +135,15 @@ export function resolveInstallRoot({ agent, global, dir }: ResolveInstallRootOpt
     return path.resolve(dir);
   }
 
-  const agentName = (agent ?? DEFAULT_AGENT) as SupportedAgent;
-  const subdir = AGENT_DIRS[agentName];
-  if (!subdir) {
+  const agentName = agent ?? DEFAULT_AGENT;
+  // Own-property check, not truthiness: prototype keys ("__proto__", "constructor")
+  // index to truthy inherited values and would otherwise bypass this guard.
+  if (!Object.hasOwn(AGENT_DIRS, agentName)) {
     throw new Error(
       `Unknown agent "${agent}". Supported agents: ${SUPPORTED_AGENTS.join(", ")}. Or pass --dir <path> to choose an explicit destination.`,
     );
   }
+  const subdir = AGENT_DIRS[agentName as SupportedAgent];
 
   const base = global ? os.homedir() : process.cwd();
   return path.join(base, subdir);

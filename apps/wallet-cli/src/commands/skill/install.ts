@@ -53,7 +53,7 @@ export default defineCommand({
         const name = positional[0] ?? getSoleSkill()?.name;
         if (!name) {
           throw new Error(
-            "Missing skill name. Usage: skill install <name> [--agent claude|cursor|codex] [--dir <path>]. Or use --all.",
+            `Missing skill name. Usage: skill install <name> [--agent ${SUPPORTED_AGENTS.join("|")}] [--global] [--dir <path>]. Or use --all.`,
           );
         }
         const skill = getSkill(name);

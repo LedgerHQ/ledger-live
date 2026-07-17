@@ -17,8 +17,10 @@
   ],
   "type": "module",
   "scripts": {
+    "prestart": "pnpm generate && pnpm generate:skills",
     "start": "bun run ./src/cli.ts",
     "apdu-proxy": "bun run ./src/apdu-proxy.ts",
+    "predev": "node ./scripts/generate-skills-manifest.mjs",
     "dev": "bunli dev",
     "generate": "bunli generate",
     "generate:skills": "node ./scripts/generate-skills-manifest.mjs",
