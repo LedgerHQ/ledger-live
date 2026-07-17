@@ -13,7 +13,7 @@ export class AssetsTable {
   }
 
   private getCurrencyTestIdSuffix(currency: Currency): string {
-    return sanitizeAssetNameForTestId(`${currency.name}-${currency.id}`);
+    return sanitizeAssetNameForTestId(`${currency.name}-${currency.portfolioAssetId ?? currency.id}`);
   }
 
   assetByCurrency(currency: Currency): Locator {

@@ -13,6 +13,7 @@ export class Currency {
     public readonly contractAddress?: string,
     public readonly aggregatedName?: string,
     public readonly market?: { readonly id: string; readonly name: string },
+    public readonly portfolioAssetId?: string,
   ) {}
 
   toString(): string {
@@ -73,9 +74,17 @@ export class Currency {
   );
   static readonly SOL = new Currency("Solana", "SOL", "solana", AppInfos.SOLANA, [Network.SOLANA]);
 
-  static readonly DOT = new Currency("Polkadot", "DOT", "polkadot", AppInfos.POLKADOT, [
-    Network.POLKADOT,
-  ]);
+  static readonly DOT = new Currency(
+    "Polkadot",
+    "DOT",
+    "assethub_polkadot",
+    AppInfos.POLKADOT,
+    [Network.POLKADOT],
+    undefined,
+    undefined,
+    undefined,
+    "polkadot",
+  );
   static readonly TRX = new Currency("Tron", "TRX", "tron", AppInfos.TRON, [Network.TRON]);
   static readonly XRP = new Currency("XRP", "XRP", "ripple", AppInfos.RIPPLE, [Network.XRP]);
   static readonly ADA = new Currency("Cardano", "ADA", "cardano", AppInfos.CARDANO, [
