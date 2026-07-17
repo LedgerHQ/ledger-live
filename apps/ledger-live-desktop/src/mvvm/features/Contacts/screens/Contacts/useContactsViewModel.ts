@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  createEmptyContactsListViewModel,
-  useContactsMeContact,
+  useContactsListViewModel,
   type ContactsLedgerSyncStatus,
   type ContactsPageLabels,
 } from "@features/flow-contacts";
@@ -13,7 +12,7 @@ export type ContactsViewModel = ContactsViewProps;
 
 export function useContactsViewModel(): ContactsViewModel {
   const { t } = useTranslation();
-  const meContact = useContactsMeContact();
+  const viewModel = useContactsListViewModel();
   const [isIntroductionDismissed, setIsIntroductionDismissed] = useState(false);
   const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
   const labels = useMemo<ContactsPageLabels>(
@@ -41,7 +40,7 @@ export function useContactsViewModel(): ContactsViewModel {
   const isIntroductionOpen = ledgerSyncStatus === "inactive" && !isIntroductionDismissed;
 
   return {
-    viewModel: createEmptyContactsListViewModel(meContact),
+    viewModel,
     labels,
     meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
     onOpenContact,

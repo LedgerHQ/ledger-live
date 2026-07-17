@@ -18,3 +18,4 @@ export type {
   EmptyContactsListViewModel,
   PopulatedContactsListViewModel,
 } from "./types";
+export { isPopulatedContactsListViewModel } from "./types";
