@@ -10,14 +10,14 @@ export function transformTokensResponse(
   response: ApiTokenResponse[],
   meta?: FetchBaseQueryMeta,
 ): TokensDataWithPagination {
-  const nextCursor = meta?.response?.headers.get(HEADER_X_LEDGER_NEXT) || undefined;
+  const nextCursor = meta?.response?.headers.get(HEADER_X_LEDGER_NEXT) ?? undefined;
 
   return {
     tokens: response.flatMap(token => {
       const result = transformApiTokenToTokenCurrency(token);
       return result ? [result] : [];
     }),
-    pagination: { nextCursor },
+    pagination: nextCursor ? { nextCursor } : {},
   };
 }
 
@@ -32,9 +32,9 @@ export function transformApiTokenToTokenCurrency(
     ticker: token.ticker,
     units: token.units,
     standard: token.standard,
-    tokenIdentifier: token.token_identifier,
     delisted: token.delisted,
-    ledgerSignature: token.live_signature,
+    ...(token.token_identifier !== undefined ? { tokenIdentifier: token.token_identifier } : {}),
+    ...(token.live_signature !== undefined ? { ledgerSignature: token.live_signature } : {}),
   });
 }
 
@@ -54,8 +54,10 @@ export function validateAndTransformSingleTokenResponse(
     ticker: apiToken.ticker,
     units: apiToken.units,
     standard: apiToken.standard,
-    tokenIdentifier: apiToken.token_identifier,
     delisted: apiToken.delisted,
-    ledgerSignature: apiToken.live_signature,
+    ...(apiToken.token_identifier !== undefined
+      ? { tokenIdentifier: apiToken.token_identifier }
+      : {}),
+    ...(apiToken.live_signature !== undefined ? { ledgerSignature: apiToken.live_signature } : {}),
   });
 }
