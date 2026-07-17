@@ -274,6 +274,30 @@ describe("validateIntent", () => {
       expect(mockEstimateFees).not.toHaveBeenCalled();
     });
 
+    it("does not return MustDelegateBeforeStaking for a registered baker (delegate account)", async () => {
+      // A baker is self-delegated: tzkt returns type "delegate" with no `delegate` field, but it
+      // must still be allowed to stake. Regression for LIVE-34256.
+      mockGetAccountByAddress.mockResolvedValue({
+        type: "delegate",
+        address: senderAddress,
+        publicKey: "edpk...",
+        balance: 5000000,
+        revealed: true,
+        counter: 0,
+      });
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "stake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 1000n,
+      });
+
+      expect(result.errors.amount).not.toBeInstanceOf(MustDelegateBeforeStaking);
+    });
+
     it("should return AmountRequired when stake amount is zero", async () => {
       mockGetAccountByAddress.mockResolvedValue(
         makeUserAccount({

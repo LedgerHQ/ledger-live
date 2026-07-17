@@ -38,6 +38,7 @@ import { CoreAccountInfo, CoreTransactionInfo, EstimatedFees } from "../logic/es
 import { getTezosToolkit } from "../logic/tezosToolkit";
 import { validateAddress } from "../logic/validateAddress";
 import api from "../network/tzkt";
+import { hasManagerKey } from "../network/types";
 import {
   DUST_MARGIN_MUTEZ,
   hasEmptyBalance,
@@ -73,13 +74,14 @@ export function createApi(config: TezosConfig): TezosApi {
     validateIntent,
     getNextSequence: async (address: string) => {
       const accountInfo = await api.getAccountByAddress(address);
-      return accountInfo.type === "user" ? BigInt(accountInfo.counter + 1) : 0n;
+      return hasManagerKey(accountInfo) ? BigInt(accountInfo.counter + 1) : 0n;
     },
     getAccountInfo: async (address: string): Promise<TezosAccountInfo> => {
       const account = await api.getAccountByAddress(address);
-      // Only "user" accounts carry a reveal state; empty / non-existent accounts are
-      // treated as unrevealed (no public key published on-chain yet).
-      return { type: "tezos", revealed: account.type === "user" ? account.revealed : false };
+      // Manager-key accounts (plain wallets "user" and registered bakers "delegate") carry a
+      // reveal state; empty / non-existent accounts are treated as unrevealed (no public key
+      // published on-chain yet).
+      return { type: "tezos", revealed: hasManagerKey(account) ? account.revealed : false };
     },
     getBlock,
     getBlockInfo,
@@ -124,7 +126,7 @@ async function craft(
   let amountToUse = tezosMode === "finalize_unstake" ? 0n : transactionIntent.amount;
   if (tezosMode === "send" && transactionIntent.useAllAmount) {
     const senderInfo = await api.getAccountByAddress(transactionIntent.sender);
-    if (senderInfo.type === "user") {
+    if (hasManagerKey(senderInfo)) {
       // Use the amount calculated by the estimation which includes proper buffers and adjustments
       if (estimation.parameters?.amount !== undefined) {
         amountToUse = estimation.parameters.amount;
@@ -145,7 +147,7 @@ async function craft(
     address: transactionIntent.sender,
   };
   const senderApiAcc = await api.getAccountByAddress(transactionIntent.sender);
-  const needsReveal = senderApiAcc.type === "user" && !senderApiAcc.revealed;
+  const needsReveal = hasManagerKey(senderApiAcc) && !senderApiAcc.revealed;
   const totalFee = Number(fee.fees || "0");
 
   const feesConfig = coinConfig.getCoinConfig().fees;
@@ -227,8 +229,8 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
     };
   }
   const senderAccountInfo = await api.getAccountByAddress(transactionIntent.sender);
-  // If the sender is not a user account, return default estimation values
-  if (senderAccountInfo.type !== "user") {
+  // If the sender is not a manager-key account (user or delegate), return default estimation values
+  if (!hasManagerKey(senderAccountInfo)) {
     return {
       value: BigInt(DUST_MARGIN_MUTEZ),
       parameters: {
@@ -265,8 +267,8 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
   };
 
   async function logicEstimate(xpub?: string): Promise<EstimatedFees> {
-    // needed by the compiler (it can assume it's a "user" account with respective fields)
-    if (senderAccountInfo.type !== "user") throw new Error("unexpected account type");
+    // needed by the compiler (it can assume it's a manager-key account with respective fields)
+    if (!hasManagerKey(senderAccountInfo)) throw new Error("unexpected account type");
     const account = xpub ? { ...accountBase, xpub } : accountBase;
     return await estimateFees({ account, transaction });
   }
@@ -318,7 +320,7 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
 
       // Check if account needs reveal for proper fee calculation
       const senderApiAcc = await api.getAccountByAddress(transactionIntent.sender);
-      const needsReveal = senderApiAcc.type === "user" && !senderApiAcc.revealed;
+      const needsReveal = hasManagerKey(senderApiAcc) && !senderApiAcc.revealed;
 
       let baseTxFee: bigint;
       let txGasLimit: bigint;

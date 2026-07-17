@@ -1000,6 +1000,25 @@ describe("getAccountInfo", () => {
     expect(networkApi.getAccountByAddress).toHaveBeenCalledWith("tz2unrevealed");
   });
 
+  it("returns revealed:true for a registered baker (delegate) account", async () => {
+    // tzkt reports bakers with type "delegate" (not "user"), still carrying revealed:true.
+    // Regression test for LIVE-34256: bakers must not be reported as unrevealed.
+    (networkApi.getAccountByAddress as jest.Mock).mockResolvedValueOnce({
+      type: "delegate",
+      balance: 616109,
+      revealed: true,
+      address: "tz3RDC3Jdn4j15J7bBHZd29EUee9gVB1CxD9",
+      publicKey: "p2pktest",
+      counter: 18,
+    } as APIAccount);
+
+    await expect(api.getAccountInfo("tz3RDC3Jdn4j15J7bBHZd29EUee9gVB1CxD9")).resolves.toEqual({
+      type: "tezos",
+      revealed: true,
+    });
+    expect(networkApi.getAccountByAddress).toHaveBeenCalledWith("tz3RDC3Jdn4j15J7bBHZd29EUee9gVB1CxD9");
+  });
+
   it("returns revealed:false for an empty / non-existent account", async () => {
     (networkApi.getAccountByAddress as jest.Mock).mockResolvedValueOnce({
       type: "empty",
