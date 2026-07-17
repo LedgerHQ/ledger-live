@@ -1,6 +1,6 @@
 import { render, screen } from "jest/render.native";
 import { Text } from "react-native";
-import { Pill } from "./Pill.native";
+import { Pill } from "./Pill";
 
 describe("Pill (native)", () => {
   it("renders string children", () => {

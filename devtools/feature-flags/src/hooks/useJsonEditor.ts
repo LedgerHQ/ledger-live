@@ -1,7 +1,7 @@
 import { Features, FeatureId, FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { useState } from "react";
 import { diffJsonLines } from "../utils";
-import type { DiffLine } from "../utils/diff";
+import type { DiffLine } from "../utils";
 
 const JSON_INDENT = 2;
 

@@ -1,5 +1,5 @@
 import { render, screen } from "jest/render.native";
-import { FlagCountIndicator } from "./FlagCountIndicator.native";
+import { FlagCountIndicator } from "./FlagCountIndicator";
 
 describe("FlagCountIndicator (native)", () => {
   it("shows the filtered count out of the total", () => {

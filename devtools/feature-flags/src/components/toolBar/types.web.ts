@@ -1,6 +1,6 @@
 import type { ChangeEventHandler } from "react";
 import type { FlagFilter } from "../../types";
-import type { SortCategory, SortDirection } from "../../hooks/useSortFlag";
+import type { SortCategory, SortDirection } from "../../hooks";
 
 export interface ToolBarFilters {
   search: string;

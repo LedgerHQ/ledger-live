@@ -1,7 +1,7 @@
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
 import { makeTool } from "jest/fixtures";
-import { Overview } from "./Overview.web";
+import { Overview } from "./Overview";
 import { Category } from "@devtools/registry";
 
 const categories = [

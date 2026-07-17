@@ -1,4 +1,4 @@
-import { Pill } from "../pill/Pill.web";
+import { Pill } from "../pill/Pill";
 
 export interface FlagListSummaryProps {
   readonly overrideCount: number;

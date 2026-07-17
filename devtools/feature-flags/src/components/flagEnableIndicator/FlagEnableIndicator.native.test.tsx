@@ -1,5 +1,5 @@
 import { render, screen } from "jest/render.native";
-import { FlagEnableIndicator } from "./FlagEnableIndicator.native";
+import { FlagEnableIndicator } from "./FlagEnableIndicator";
 
 describe("FlagEnableIndicator (native)", () => {
   it("shows 'On' when enabled", () => {

@@ -1,6 +1,7 @@
 export { useFeatureFlagsState, type FeatureFlagsToolState } from "./useFeatureFlagsState";
 export {
   useFeatureFlagsFilters,
+  FILTERS,
   type FeatureFlagsFiltersState,
   type FeatureFlagsFiltersInput,
 } from "./useFeatureFlagsFilters";

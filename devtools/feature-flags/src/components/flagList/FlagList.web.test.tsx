@@ -4,7 +4,7 @@ import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { ALL_FLAG_IDS } from "../../constants";
 import type { FeatureFlagsToolProps } from "../../types";
-import { FlagList } from "./FlagList.web";
+import { FlagList } from "./FlagList";
 
 const { resolved } = FEATURE_FLAGS_INITIAL_STATE;
 

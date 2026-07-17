@@ -2,7 +2,7 @@ import { Divider, Button } from "@ledgerhq/lumen-ui-react";
 import { cn } from "@ledgerhq/lumen-utils-shared";
 import { useState } from "react";
 import { DiffLine } from "../../utils";
-import { FlagDiffView } from "../flagDiffView/FlagDiffView.web";
+import { FlagDiffView } from "../flagDiffView/FlagDiffView";
 import type { DiffBaseline } from "../../hooks";
 
 export interface FlagJsonEditorProps {

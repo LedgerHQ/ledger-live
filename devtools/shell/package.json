@@ -17,7 +17,7 @@
   "scripts": {
     "format": "oxfmt src jest",
     "format:check": "oxfmt src jest --check",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "pnpm run test:web && pnpm run test:native",
     "test:native": "jest --config jest.native.config.js",
     "test:web": "jest --config jest.config.js",

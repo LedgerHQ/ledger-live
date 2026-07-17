@@ -1,6 +1,6 @@
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { FlagFilter } from "../../types";
-import { Pill } from "../pill/Pill.native";
+import { Pill } from "../pill/Pill";
 
 export interface FlagCountIndicatorProps {
   readonly filteredCount: number;

@@ -1,5 +1,5 @@
 import { SearchInput, Box } from "@ledgerhq/lumen-ui-rnative";
-import { FlagMenu } from "../flagMenu/FlagMenu.native";
+import { FlagMenu } from "../flagMenu/FlagMenu";
 
 export interface SearchFlagProps {
   readonly search: string;

@@ -1,10 +1,10 @@
 import { Box, Divider } from "@ledgerhq/lumen-ui-rnative";
 import type { FlagFilter } from "../../types";
 import type { SortCategory, SortDirection } from "../../hooks";
-import { SearchFlag } from "../searchFlag/SearchFlag.native";
-import { FilterFlagControl } from "../filterFlagControl/FilterFlagControl.native";
-import { FlagCountIndicator } from "../flagCountIndicator/FlagCountIndicator.native";
-import { SortButton } from "../SortButton/SortButton.native";
+import { SearchFlag } from "../searchFlag/SearchFlag";
+import { FilterFlagControl } from "../filterFlagControl/FilterFlagControl";
+import { FlagCountIndicator } from "../flagCountIndicator/FlagCountIndicator";
+import { SortButton } from "../SortButton/SortButton";
 
 export interface ToolBarProps {
   readonly search: string;

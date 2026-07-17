@@ -9,11 +9,13 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "moduleSuffixes": [".web", ""],
     "jsx": "react-jsx",
     "noEmit": true,
     "types": ["jest"]
   },
-  "include": ["src/**/*", "jest.setup.ts", "jest/**/*", "**/*.d.ts"],
-  "exclude": ["node_modules", "jest/setup.native.ts"]
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.web.json" },
+    { "path": "./tsconfig.native.json" }
+  ]
 }

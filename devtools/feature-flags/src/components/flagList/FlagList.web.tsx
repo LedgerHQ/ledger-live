@@ -1,11 +1,11 @@
 import { Fragment } from "react";
 import type { FeatureFlagsToolProps } from "../../types";
-import { FlagRow } from "../flagRow/FlagRow.web";
+import { FlagRow } from "../flagRow/FlagRow";
 import { FlagListSummary } from "../flagListSummary/FlagListSummary";
 import { Divider } from "@ledgerhq/lumen-ui-react";
 import { FlagDetailsDialog } from "../flagDetailsDialog/FlagDetailsDialog";
 import { ToolBar } from "../toolBar/ToolBar";
-import { useFlagListViewModel, type FlagListViewProps } from "./useFlagListViewModel.web";
+import { useFlagListViewModel, type FlagListViewProps } from "./useFlagListViewModel";
 
 function FlagListView({
   toolBarProps,

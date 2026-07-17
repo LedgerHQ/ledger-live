@@ -1,6 +1,6 @@
 import { render, screen, userEvent } from "jest/render.native";
 import type { DiffLine } from "../../utils";
-import { FlagJsonEditor, type FlagJsonEditorProps } from "./flagJsonEditor.native";
+import { FlagJsonEditor, type FlagJsonEditorProps } from "./flagJsonEditor";
 
 const diffJson: DiffLine[] = [
   { state: "none", text: "{" },

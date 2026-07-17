@@ -4,7 +4,7 @@ import type { Category, Tool, ToolId } from "@devtools/registry";
 import { useAccordion } from "../../hooks";
 import type { IconComponent } from "../../categoryConfig";
 import { CATEGORY_ICONS } from "../../categoryConfig";
-import { filterToolsByQuery, findCategoryForToolId } from "../../utils/toolsUtils";
+import { filterToolsByQuery, findCategoryForToolId } from "../../utils";
 
 interface SidebarInput {
   categories: Array<{ category: Category; tools: Tool[] }>;

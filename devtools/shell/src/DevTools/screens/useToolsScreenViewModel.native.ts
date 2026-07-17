@@ -1,8 +1,8 @@
 import { useLayoutEffect, useMemo } from "react";
-import { type CatalogItem } from "../../components/Catalog/Catalog.native";
+import { type CatalogItem } from "../../components";
 import { useDevToolsShell } from "../../context";
-import { filterTools, toolsForCategory } from "../../utils/toolsUtils";
-import type { ToolsScreenProps } from "../navigation.native";
+import { filterTools, toolsForCategory } from "../../utils";
+import type { ToolsScreenProps } from "../navigation";
 
 export interface ToolsScreenViewProps {
   items: CatalogItem[];

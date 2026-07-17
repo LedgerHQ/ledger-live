@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { Tool } from "@devtools/registry";
 import { useToolProps } from "../../context";
-import { Loading } from "../Loading/Loading.native";
+import { Loading } from "../Loading/Loading";
 
 interface ToolShellProps {
   readonly tool: Tool;

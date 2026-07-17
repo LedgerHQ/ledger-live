@@ -2,9 +2,9 @@ import { SearchInput } from "@ledgerhq/lumen-ui-react";
 import { ArrowLeft } from "@ledgerhq/lumen-ui-react/symbols";
 import { Category, ValueOf } from "@devtools/registry";
 import type { Tool, ToolId } from "@devtools/registry";
-import { CategoryRow } from "../CategoryRow/CategoryRow.web";
-import { IconSquare } from "../IconSquare/IconSquare.web";
-import { useSidebarViewModel, type SidebarViewProps } from "./useSidebarViewModel.web";
+import { CategoryRow } from "../CategoryRow/CategoryRow";
+import { IconSquare } from "../IconSquare/IconSquare";
+import { useSidebarViewModel, type SidebarViewProps } from "./useSidebarViewModel";
 
 function SidebarView({
   query,
