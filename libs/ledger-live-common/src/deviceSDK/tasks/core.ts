@@ -71,7 +71,7 @@ export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
   };
 }
 
-type ErrorClass = new (...args: any[]) => Error;
+type ErrorClass = new (...args: unknown[]) => Error;
 
 // To be able to retry a command, the command needs to take an object containing a transport as its argument
 type CommandTransportArgs = { transport: Transport };

@@ -33,7 +33,7 @@ import {
 } from "../../hooks/deviceActions";
 import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
-type ErrorConstructor = new (...args: any[]) => Error;
+type ErrorConstructor = new (...args: unknown[]) => Error;
 
 // Errors related to the device connection
 export const reconnectDeviceErrorClasses: Array<ErrorConstructor> = [
