@@ -56,7 +56,7 @@ export class Application extends PageHolder {
   public analytics = new AnalyticsPage(this.page);
   public addAccount = new AddAccountModal(this.page);
   public assetDrawer = new AssetDrawer(this.page);
-  public assetDetail = new AssetDetailPage(this.page);
+  public assetDetail = (assetId: string) => new AssetDetailPage(this.page, assetId);
   public assetPage = new AssetPage(this.page);
   public buyAndSell = new BuyAndSellPage(this.page, this.electronApp);
   public delegate = new DelegateModal(this.page);
