@@ -1,5 +1,8 @@
 # @domain/entity-contact
 
+> [!CAUTION]
+> **Status: UNSTABLE** — In active development as part of the Contacts feature.
+
 Domain entity for Contacts. It contains the Zod-first model, Redux slice, selectors, and mock factories required by the first Contacts flows.
 
 ## Scope

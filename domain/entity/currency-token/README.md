@@ -1,5 +1,8 @@
 # @domain/entity-currency-token
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Domain entity for token currencies: Zod-first schema with FK-based parent currency reference.
 
 ## Key Design

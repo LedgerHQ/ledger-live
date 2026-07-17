@@ -1,5 +1,8 @@
 # @domain/entity-currency
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Currency union types and single entry-point for all currency entity packages.
 
 ## Responsibility

@@ -1,5 +1,8 @@
 ## @ledgerhq/hw-app-icon
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Hardware Wallet Icon JavaScript bindings.
 
 ## API

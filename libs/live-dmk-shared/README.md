@@ -1,5 +1,8 @@
 # live-dmk-shared
 
+> [!CAUTION]
+> **Status: UNSTABLE** — Active Device Management Kit (DMK) migration in progress; API may change.
+
 Platform-agnostic shared logic for the Ledger Device Management Kit (DMK) integration in Ledger Live. Contains device discovery interfaces, device-action orchestration, transport abstractions, and cross-platform services used by both the desktop and mobile DMK adapters.
 
 ## What it does

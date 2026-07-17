@@ -1,5 +1,8 @@
 # @domain/entity-client-identity
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Privacy-protected identity value objects and Redux slice for the three client identities managed by Ledger Live: **UserId**, **DatadogId**, and **DeviceId**.
 
 ## Responsibility

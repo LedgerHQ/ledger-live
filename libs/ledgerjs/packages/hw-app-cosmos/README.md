@@ -6,6 +6,9 @@
 
 ## @ledgerhq/hw-app-cosmos
 
+> [!WARNING]
+> **Status: DEPRECATED** — Replaced by the Device Management Kit (DMK). Migrate to `@ledgerhq/device-signer-kit-cosmos`.
+
 Ledger Hardware Wallet Cosmos JavaScript bindings.
 
 ***

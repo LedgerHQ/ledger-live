@@ -6,6 +6,9 @@
 
 ## @ledgerhq/hw-app-trx
 
+> [!WARNING]
+> **Status: DEPRECATED** — Replaced by the Device Management Kit (DMK). Migrate to `@ledgerhq/device-signer-kit-tron`.
+
 Ledger Hardware Wallet TRX JavaScript bindings.
 
 ***

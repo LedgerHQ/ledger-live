@@ -6,6 +6,9 @@
 
 ## @ledgerhq/hw-app-aptos
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Hardware Wallet Aptos JavaScript bindings.
 
 ***

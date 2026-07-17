@@ -1,5 +1,8 @@
 # `@ledgerhq/native-ui`
 
+> [!WARNING]
+> **Status: DEPRECATED** — Deprecated. Migrate to `@ledgerhq/lumen-ui-rnative`.
+
 [![npm](https://img.shields.io/npm/v/@ledgerhq/native-ui)](https://www.npmjs.com/package/@ledgerhq/native-ui)
 [![storybook](https://img.shields.io/badge/Storybook-📚-61DBFB)](https://native-ui-storybook.vercel.app)
 

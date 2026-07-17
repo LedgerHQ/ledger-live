@@ -1,6 +1,9 @@
 
 # @ledgerhq/cryptoassets
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger's material for crypto currencies, tokens and fiats. Also includes signatures required by Nano devices for these tokens.
 
 This library provides dynamic RTK Query-based token lookup capabilities through the **CAL (Crypto Assets List) Client**. Static token data has been removed in favor of the async API.

@@ -6,4 +6,7 @@
 
 ## @ledgerhq/live-signer-aleo
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Hardware Wallet Aleo JavaScript bindings via DMK.

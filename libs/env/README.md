@@ -1,5 +1,8 @@
 # live-env
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/live-env` centralizes all runtime environment variables and configuration flags for Ledger Live. It defines every env key with a typed default value and a description, and exposes a reactive API to read and override them at runtime — useful for debugging, testing, and feature toggling without a full rebuild.
 
 ## What it does

@@ -6,6 +6,9 @@
 
 ## @ledgerhq/hw-app-btc
 
+> [!WARNING]
+> **Status: DEPRECATED** — Replaced by the Device Management Kit (DMK). Migrate to `@ledgerhq/device-signer-kit-bitcoin`.
+
 Ledger Hardware Wallet BTC JavaScript bindings. Also supports many altcoins.
 
 ***

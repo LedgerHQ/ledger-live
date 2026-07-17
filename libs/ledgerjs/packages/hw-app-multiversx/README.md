@@ -6,6 +6,9 @@
 
 ## @ledgerhq/hw-app-multiversx
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Hardware Wallet Multiversx JavaScript bindings.
 
 ***
