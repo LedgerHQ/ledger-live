@@ -1,5 +1,9 @@
 import React from "react";
-import { SearchInput } from "@ledgerhq/lumen-ui-react";
+import {
+  SearchInput,
+  SectionHeader,
+  SectionHeaderTitle,
+} from "@ledgerhq/lumen-ui-react";
 import { isPopulatedContactsListViewModel, type ContactsPageProps } from "../../types";
 import { ContactsAddContactListItem } from "./ContactsAddContactListItem.web";
 import { ContactsMeListItem } from "./ContactsMeListItem.web";
@@ -46,7 +50,9 @@ export function ContactsList({
               className="flex flex-col gap-8"
               data-testid={`contacts-section-${section.title}`}
             >
-              <p className="body-4-semi-bold text-muted-subtle uppercase">{section.title}</p>
+              <SectionHeader appearance="plain">
+                <SectionHeaderTitle>{section.title}</SectionHeaderTitle>
+              </SectionHeader>
               <div className="flex flex-col">
                 {section.data.map(contact => (
                   <ContactsSavedListItem

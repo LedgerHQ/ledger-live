@@ -1,5 +1,6 @@
 import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
+import { mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
 import { render, screen, withFlagOverrides, waitFor } from "tests/testSetup";
 import ContactsScreen, { ContactsButton } from "LLD/features/Contacts";
 import ContextMenuContext from "LLD/features/MyWallet/components/ContextMenuContext";
@@ -161,5 +162,36 @@ describe("Contacts integration", () => {
 
     expect(screen.getByTestId("contacts-page")).toBeVisible();
     expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("Me");
+  });
+
+  it("should render saved contacts in alphabetical order when contacts exist", () => {
+    render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: {
+          ...withFlagOverrides({
+            lwdContacts: { enabled: true, params: { newBadge: false } },
+          }),
+          contacts: { contacts: mockPopulatedContacts() },
+        },
+      },
+    );
+
+    expect(screen.getByTestId("contacts-page")).toBeVisible();
+    expect(screen.getByTestId("contacts-add-contact")).toBeVisible();
+    expect(screen.getByTestId("contacts-add-contact-header")).toBeVisible();
+    expect(screen.getByTestId("contacts-section-A")).toBeVisible();
+    expect(screen.getByTestId("contacts-section-B")).toBeVisible();
+    expect(screen.getByTestId("contacts-section-O")).toBeVisible();
+
+    expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("Me");
+    expect(screen.getByTestId("contacts-saved-row-contact-ada")).toHaveTextContent("Ada");
+    expect(screen.getByTestId("contacts-saved-row-contact-ben")).toHaveTextContent("Ben");
+    expect(screen.getByTestId("contacts-saved-row-contact-olive")).toHaveTextContent("Olive");
   });
 });

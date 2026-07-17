@@ -37,7 +37,9 @@ export function ContactsSavedListItem({
         </div>
         <ListItemContent>
           <ListItemTitle>{contact.name}</ListItemTitle>
-          <ListItemDescription>{formatAddressCount(contact.addressCount)}</ListItemDescription>
+          <ListItemDescription>
+            {formatAddressCount(contact.addressCount)}
+          </ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
     </ListItem>

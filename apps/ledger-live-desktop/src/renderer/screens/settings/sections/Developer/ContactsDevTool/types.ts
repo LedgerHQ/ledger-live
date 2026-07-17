@@ -14,5 +14,7 @@ export interface ContactsDevToolViewModel {
   readonly handleSetEligibleAddressFamilies: (families: readonly string[]) => void;
   readonly setCustomFamiliesInput: (value: string) => void;
   readonly handleApplyCustomFamilies: () => void;
+  readonly handleLoadPopulatedContacts: () => void;
+  readonly handleResetContacts: () => void;
   readonly handleResetOverride: () => void;
 }

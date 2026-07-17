@@ -160,4 +160,36 @@ describe("useContactsDevToolViewModel", () => {
 
     expect(store.getState().featureFlags.overrides.lwdContacts).toBeUndefined();
   });
+
+  it("should load populated contacts into the contacts slice", () => {
+    const { result, store } = renderHook(() => useContactsDevToolViewModel());
+
+    act(() => {
+      result.current.handleLoadPopulatedContacts();
+    });
+
+    expect(store.getState().contacts.contacts).toHaveLength(4);
+    expect(store.getState().contacts.contacts.map(contact => contact.name)).toEqual([
+      "Me",
+      "Ada",
+      "Ben",
+      "Olive",
+    ]);
+  });
+
+  it("should reset contacts to the default Me contact", () => {
+    const { result, store } = renderHook(() => useContactsDevToolViewModel());
+
+    act(() => {
+      result.current.handleLoadPopulatedContacts();
+    });
+
+    act(() => {
+      result.current.handleResetContacts();
+    });
+
+    expect(store.getState().contacts.contacts).toEqual([
+      expect.objectContaining({ id: "contact-me", isMe: true, name: "Me", addresses: [] }),
+    ]);
+  });
 });

@@ -11,7 +11,7 @@ export function groupSavedContactsByInitial(
   const sections: { initial: string; contacts: ContactsListItem[] }[] = [];
 
   for (const contact of savedContacts) {
-    const lastSection = sections[sections.length - 1];
+    const lastSection = sections.at(-1);
 
     if (lastSection?.initial === contact.initial) {
       lastSection.contacts.push(contact);

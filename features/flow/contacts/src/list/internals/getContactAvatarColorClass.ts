@@ -10,8 +10,8 @@ export function getContactAvatarColorClass(contactId: string): string {
   let hash = 0;
 
   for (const char of contactId) {
-    hash = (hash + char.charCodeAt(0)) % ContactAvatarColorClasses.length;
+    hash = (hash + (char.codePointAt(0) ?? 0)) % ContactAvatarColorClasses.length;
   }
 
-  return ContactAvatarColorClasses[hash] ?? ContactAvatarColorClasses[0];
+  return ContactAvatarColorClasses[hash];
 }

@@ -1,5 +1,6 @@
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import {
+  createContactsListViewModel,
   createContactsSearchViewModel,
   createEmptyContactsListViewModel,
   createPopulatedContactsListViewModel,
@@ -31,6 +32,26 @@ describe("createEmptyContactsListViewModel", () => {
         addressCount: 1,
       },
     });
+  });
+});
+
+describe("createContactsListViewModel", () => {
+  it("returns an empty list when only Me is present", () => {
+    const me = mockMeContact();
+
+    expect(createContactsListViewModel(me, [me])).toEqual(createEmptyContactsListViewModel(me));
+  });
+
+  it("returns a populated list when saved contacts exist", () => {
+    const me = mockMeContact();
+    const contacts = [
+      me,
+      mockContact({ id: "contact-ada", name: "Ada" }),
+    ];
+
+    expect(createContactsListViewModel(me, contacts)).toEqual(
+      createPopulatedContactsListViewModel(me, contacts),
+    );
   });
 });
 

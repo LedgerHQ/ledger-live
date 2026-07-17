@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useDispatch } from "LLD/hooks/redux";
+import { setContacts } from "@domain/entity-contact";
+import { mockEmptyContacts, mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   parseEligibleAddressFamiliesInput,
@@ -8,6 +9,7 @@ import {
   type ContactsFeatureValuePatch,
 } from "@features/flow-contacts";
 import { setOverride } from "@shared/feature-flags";
+import { useDispatch } from "LLD/hooks/redux";
 import { CONTACTS_FLAG } from "../constants";
 import { ContactsDevToolViewModel } from "../types";
 
@@ -57,6 +59,14 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
     handleSetEligibleAddressFamilies(parseEligibleAddressFamiliesInput(customFamiliesInput));
   }, [customFamiliesInput, handleSetEligibleAddressFamilies]);
 
+  const handleLoadPopulatedContacts = useCallback(() => {
+    dispatch(setContacts(mockPopulatedContacts()));
+  }, [dispatch]);
+
+  const handleResetContacts = useCallback(() => {
+    dispatch(setContacts(mockEmptyContacts()));
+  }, [dispatch]);
+
   const handleResetOverride = useCallback(() => {
     dispatch(setOverride({ key: CONTACTS_FLAG, value: undefined }));
   }, [dispatch]);
@@ -71,6 +81,8 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
     handleSetEligibleAddressFamilies,
     setCustomFamiliesInput,
     handleApplyCustomFamilies,
+    handleLoadPopulatedContacts,
+    handleResetContacts,
     handleResetOverride,
   };
 };
