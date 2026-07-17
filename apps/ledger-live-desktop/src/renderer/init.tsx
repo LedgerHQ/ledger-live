@@ -8,6 +8,10 @@ import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { backfillOnboardingDate } from "~/renderer/components/PostOnboardingHub/logic/backfillOnboardingDate";
+import {
+  LARGE_SCREEN_UPSELL_MODAL,
+  restoreLargeScreenUpsellModalState,
+} from "@domain/entity-large-screen-upsell-modal";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import each from "lodash/each";
@@ -336,6 +340,11 @@ async function init() {
   }
 
   backfillOnboardingDate(store);
+
+  const largeScreenUpsellModalState = await getKey("app", LARGE_SCREEN_UPSELL_MODAL);
+  if (largeScreenUpsellModalState !== undefined) {
+    store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
+  }
 
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
 

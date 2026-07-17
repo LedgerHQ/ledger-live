@@ -9,6 +9,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { NoDBPathGiven, DBWrongPassword } from "@ledgerhq/errors";
 import { INITIAL_STATE as trustchainInitialState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { exportWalletState, initialState as walletInitialState } from "@ledgerhq/live-wallet/store";
+import { LARGE_SCREEN_UPSELL_MODAL } from "@domain/entity-large-screen-upsell-modal";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";
 
@@ -58,6 +59,7 @@ const APP_NAMESPACE_ALLOWED_KEY_PATHS: ReadonlySet<string> = new Set([
   "wallet",
   "market",
   "marketBanner",
+  LARGE_SCREEN_UPSELL_MODAL,
   "knownDevices",
   "cryptoAssets",
   "identities",

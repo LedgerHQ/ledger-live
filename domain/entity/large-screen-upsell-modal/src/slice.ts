@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { LARGE_SCREEN_UPSELL_MODAL } from "./constants";
 import {
   defaultLargeScreenUpsellModalState,
   RestorableLargeScreenUpsellModalStateSchema,
@@ -8,7 +9,7 @@ import type { LargeScreenUpsellModalState } from "./types";
 export const initialState: LargeScreenUpsellModalState = defaultLargeScreenUpsellModalState;
 
 export const largeScreenUpsellModalSlice = createSlice({
-  name: "largeScreenUpsellModal",
+  name: LARGE_SCREEN_UPSELL_MODAL,
   initialState,
   reducers: {
     restoreLargeScreenUpsellModalState: (
