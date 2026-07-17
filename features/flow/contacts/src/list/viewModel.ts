@@ -16,6 +16,17 @@ function createContactsListItem(contact: Contact): ContactsListItem {
   };
 }
 
+function createSavedContactsListItems(contacts: readonly Contact[], normalizedQuery = "") {
+  return contacts
+    .filter(
+      contact =>
+        !contact.isMe &&
+        (normalizedQuery.length === 0 || contact.name.toLowerCase().includes(normalizedQuery)),
+    )
+    .sort((left, right) => left.name.localeCompare(right.name))
+    .map(createContactsListItem);
+}
+
 export function createEmptyContactsListViewModel(me: Contact): EmptyContactsListViewModel {
   return {
     me: createContactsListItem(me),
@@ -28,10 +39,7 @@ export function createPopulatedContactsListViewModel(
 ): PopulatedContactsListViewModel {
   return {
     me: createContactsListItem(me),
-    savedContacts: contacts
-      .filter(contact => !contact.isMe)
-      .sort((left, right) => left.name.localeCompare(right.name))
-      .map(createContactsListItem),
+    savedContacts: createSavedContactsListItems(contacts),
   };
 }
 
@@ -40,24 +48,27 @@ export function createContactsSearchViewModel(
   contacts: readonly Contact[],
   query: string,
 ): ContactsSearchViewModel {
-  const populatedList = createPopulatedContactsListViewModel(me, contacts);
   const normalizedQuery = query.trim().toLowerCase();
-  const savedContacts = normalizedQuery
-    ? populatedList.savedContacts.filter(contact =>
-        contact.name.toLowerCase().includes(normalizedQuery),
-      )
-    : populatedList.savedContacts;
 
-  if (normalizedQuery && savedContacts.length === 0) {
+  if (normalizedQuery.length === 0) {
+    return {
+      status: "results",
+      ...createPopulatedContactsListViewModel(me, contacts),
+    };
+  }
+
+  const savedContacts = createSavedContactsListItems(contacts, normalizedQuery);
+
+  if (savedContacts.length === 0) {
     return {
       status: "no-results",
-      me: populatedList.me,
+      ...createEmptyContactsListViewModel(me),
     };
   }
 
   return {
     status: "results",
-    me: populatedList.me,
+    me: createContactsListItem(me),
     savedContacts,
   };
 }
