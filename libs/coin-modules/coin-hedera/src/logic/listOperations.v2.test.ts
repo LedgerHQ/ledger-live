@@ -1,4 +1,4 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
@@ -23,7 +23,11 @@ import type { StakingAnalysis, SyntheticBlock } from "../types";
 import { listOperationsV2 as listOperations } from "./listOperations.v2";
 import * as utils from "./utils";
 
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 
 jest.mock("@ledgerhq/ledger-wallet-framework/account/accountId", () => ({
   ...jest.requireActual("@ledgerhq/ledger-wallet-framework/account/accountId"),
@@ -206,8 +210,10 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenHTS),
+      getTokensSyncHash: async () => "",
     });
 
     const result = await listOperations({
@@ -297,8 +303,10 @@ describe("listOperationsV2", () => {
       new BigNumber(sharedTimestamp),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+      getTokensSyncHash: async () => "",
     });
 
     const result = await listOperations({
@@ -388,8 +396,10 @@ describe("listOperationsV2", () => {
       new BigNumber(sharedTimestamp),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+      getTokensSyncHash: async () => "",
     });
 
     const result = await listOperations({
@@ -452,8 +462,10 @@ describe("listOperationsV2", () => {
       new BigNumber(sharedTimestamp),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+      getTokensSyncHash: async () => "",
     });
 
     const result = await listOperations({
@@ -880,8 +892,10 @@ describe("listOperationsV2", () => {
       new BigNumber(mockMirrorTransaction.consensus_timestamp),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+      getTokensSyncHash: async () => "",
     });
 
     const result = await listOperations({
@@ -1056,8 +1070,10 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenHTS),
+      getTokensSyncHash: async () => "",
     });
 
     const result = await listOperations({
@@ -1099,8 +1115,10 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenHTS),
+      getTokensSyncHash: async () => "",
     });
 
     const result = await listOperations({
@@ -1163,8 +1181,10 @@ describe("listOperationsV2", () => {
       new BigNumber(sharedTimestamp),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+      getTokensSyncHash: async () => "",
     });
 
     const result = await listOperations({
@@ -1229,11 +1249,13 @@ describe("listOperationsV2", () => {
       new BigNumber("1625097600.000000000"),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest
         .fn()
         .mockResolvedValueOnce(mockTokenA) // for transfer out
         .mockResolvedValueOnce(mockTokenB), // for transfer in
+      getTokensSyncHash: async () => "",
     });
 
     const result = await listOperations({
@@ -1282,8 +1304,10 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenHTS),
+      getTokensSyncHash: async () => "",
     });
 
     const result = await listOperations({
@@ -1432,8 +1456,10 @@ describe("listOperationsV2", () => {
       new BigNumber(sharedTimestamp),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+      getTokensSyncHash: async () => "",
     });
 
     const result = await listOperations({
@@ -1502,8 +1528,10 @@ describe("listOperationsV2", () => {
       new BigNumber(sharedTimestamp),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+      getTokensSyncHash: async () => "",
     });
 
     const result = await listOperations({
@@ -1634,8 +1662,10 @@ describe("listOperationsV2", () => {
       new BigNumber("1625097600.000000003"),
     );
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenERC20),
+      getTokensSyncHash: async () => "",
     });
 
     const result = await listOperations({

@@ -16,6 +16,7 @@
 "@ledgerhq/coin-ton": minor
 "@ledgerhq/coin-tron": minor
 "@ledgerhq/coin-vechain": minor
+"@ledgerhq/ledger-wallet-framework": minor
 "@ledgerhq/live-cli": minor
 ---
 

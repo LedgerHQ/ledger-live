@@ -4,7 +4,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import coinConfig from "@ledgerhq/coin-tezos/config";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { makeAccount, ALICE_BAKER_ADDRESS, RECIPIENT, TEZOS, TZKT_MOCK_URL } from "../fixtures";
 import { buildTz1Signer, buildTz2Signer } from "../signer";
 import { getBridges } from "../helpers";
@@ -116,7 +116,11 @@ export const scenarioTezosTz1: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Tezos — Full scenario (tz1 / ed25519)",
 
   setup: async () => {
-    setupMockCryptoAssetsStore();
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
+      findTokenByAddressInCurrency: async () => undefined,
+      getTokensSyncHash: async () => "",
+    });
 
     await spawnFlextesa();
 
@@ -206,7 +210,11 @@ export const scenarioTezosTz2: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Tezos — Full scenario (tz2 / secp256k1)",
 
   setup: async () => {
-    setupMockCryptoAssetsStore();
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
+      findTokenByAddressInCurrency: async () => undefined,
+      getTokensSyncHash: async () => "",
+    });
 
     await spawnFlextesa();
     const signer = await buildTz2Signer();

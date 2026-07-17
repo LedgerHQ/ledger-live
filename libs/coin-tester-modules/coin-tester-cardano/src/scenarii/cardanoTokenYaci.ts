@@ -1,4 +1,4 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { Scenario } from "@ledgerhq/coin-tester/main";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
@@ -71,11 +71,12 @@ export const scenarioCardanoTokenYaci: Scenario<GenericTransaction, Account> = {
       ticker: "CTT",
       units: [{ name: "Coin Tester Token", code: "CTT", magnitude: 0 }],
     };
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
       // Match by asset reference only — buildSubAccounts queries with the bridge's currency.id, which
       // can be the parent "cardano" rather than "cardano_testnet"; the single test token is unambiguous.
       findTokenByAddressInCurrency: async addr => (addr === assetReference ? token : undefined),
       findTokenById: async id => (id === token.id ? token : undefined),
+      getTokensSyncHash: async () => "",
     });
 
     await topup(address, FUNDING_ADA);

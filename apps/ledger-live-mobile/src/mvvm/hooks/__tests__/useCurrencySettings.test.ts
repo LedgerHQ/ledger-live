@@ -2,9 +2,13 @@
 import { renderHook } from "@tests/test-renderer";
 import { useCurrencySettings } from "LLM/hooks/useCurrencySettings";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 
 describe("useCurrencySettings", () => {
   describe("for ethereum currency", () => {

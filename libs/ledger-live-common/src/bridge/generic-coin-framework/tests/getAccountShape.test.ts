@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { genericGetAccountShape } from "../getAccountShape";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 const getSyncHashMock = jest.fn();
 jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
@@ -67,7 +67,11 @@ const chains = [
   { currency: { id: "tezos", name: "Tezos" }, network: "mainnet" },
 ];
 
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 
 describe("genericGetAccountShape", () => {
   beforeEach(() => {

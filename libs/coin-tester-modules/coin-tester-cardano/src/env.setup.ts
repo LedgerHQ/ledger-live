@@ -1,7 +1,7 @@
 // Wire the framework currencies resolver before `./fixtures` is imported below: this file runs in
 // `setupFiles` (before `setupFilesAfterEnv`), and fixtures.ts resolves currencies at module-eval.
 import "@ledgerhq/wallet-framework-test-setup";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { setEnv } from "@ledgerhq/live-env";
 import { MOCK_API, TEST_TOKEN } from "./fixtures";
 
@@ -18,8 +18,9 @@ setEnv("CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT", `${MOCK_API}/epoch-params`);
 // The sync path resolves token sub-accounts through the crypto-assets store: getTokenFromAsset
 // looks up by assetReference (contractAddress), and decodeTokenAccountId looks up by id. Only the
 // single TEST_TOKEN resolves; everything else is undefined (native-only).
-setupMockCryptoAssetsStore({
+setCryptoAssetsStore({
   findTokenByAddressInCurrency: async (address, currencyId) =>
     currencyId === "cardano" && address === TEST_TOKEN.contractAddress ? TEST_TOKEN : undefined,
   findTokenById: async id => (id === TEST_TOKEN.id ? TEST_TOKEN : undefined),
+  getTokensSyncHash: async () => "",
 });

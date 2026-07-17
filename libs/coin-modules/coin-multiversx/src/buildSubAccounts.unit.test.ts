@@ -1,4 +1,4 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import network from "@ledgerhq/live-network";
@@ -54,8 +54,10 @@ describe("MultiversXBuildESDTTokenAccounts", () => {
   });
 
   it("discovers ESDT via findTokenByAddressInCurrency", async () => {
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue(undefined),
+      getTokensSyncHash: async () => "",
     });
 
     const result = await MultiversXBuildESDTTokenAccounts({
@@ -75,11 +77,13 @@ describe("MultiversXBuildESDTTokenAccounts", () => {
   });
 
   it("skips blacklisted CAL tokens", async () => {
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue({
         id: `elrond/esdt/${Buffer.from("USDC-c76f1f").toString("hex")}`,
         ticker: "USDC",
       } as TokenCurrency),
+      getTokensSyncHash: async () => "",
     });
 
     const result = await MultiversXBuildESDTTokenAccounts({
@@ -102,11 +106,13 @@ describe("MultiversXBuildESDTTokenAccounts", () => {
   });
 
   it("builds a token account when CAL returns a token", async () => {
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockResolvedValue({
         id: `elrond/esdt/${Buffer.from("USDC-c76f1f").toString("hex")}`,
         ticker: "USDC",
       } as TokenCurrency),
+      getTokensSyncHash: async () => "",
     });
 
     const result = await MultiversXBuildESDTTokenAccounts({

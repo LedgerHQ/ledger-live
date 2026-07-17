@@ -6,7 +6,7 @@ import { ScreenName } from "~/const";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { isCurrencySupported } from "@ledgerhq/live-common/coin-modules/registry";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -21,7 +21,7 @@ let usdcCurrency: TokenCurrency;
 let usdtCurrency: TokenCurrency;
 
 beforeAll(async () => {
-  setupMockCryptoAssetsStore({
+  setCryptoAssetsStore({
     findTokenById: async (id: string) => {
       if (id === "ethereum/erc20/usd__coin") {
         return {
@@ -53,6 +53,8 @@ beforeAll(async () => {
       }
       return undefined;
     },
+    findTokenByAddressInCurrency: async () => undefined,
+    getTokensSyncHash: async () => "",
   });
 
   const usdc = await getCryptoAssetsStore().findTokenById("ethereum/erc20/usd__coin");

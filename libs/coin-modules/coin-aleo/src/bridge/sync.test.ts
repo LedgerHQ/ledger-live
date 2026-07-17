@@ -11,7 +11,7 @@ import {
   getMockedTokenCurrency,
   MOCK_TOKEN_PROGRAM_ID,
 } from "../__tests__/fixtures/currency.fixture";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { EXPLORER_TRANSFER_TYPES, TOKEN_RECORD_NAME } from "../constants";
 import { sdkClient } from "../network/sdk";
 import {
@@ -1434,13 +1434,15 @@ describe("sync.ts", () => {
 
     beforeEach(() => {
       coinConfig.setCoinConfig(() => mockConfigWithTokens);
-      setupMockCryptoAssetsStore({
+      setCryptoAssetsStore({
+        findTokenById: async () => undefined,
         findTokenByAddressInCurrency: jest.fn().mockImplementation(async (programName: string) => {
           if (programName === MOCK_TOKEN_PROGRAM_ID) {
             return mockTokenCurrency;
           }
           return undefined;
         }),
+        getTokensSyncHash: async () => "",
       });
       mockDecryptRecord.mockResolvedValue({
         owner: "owner.private",

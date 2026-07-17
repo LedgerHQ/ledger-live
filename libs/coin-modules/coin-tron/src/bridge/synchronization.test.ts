@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { makeScanAccounts } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
@@ -76,7 +76,7 @@ const mockTokens: Record<string, TokenCurrency> = {
 };
 
 function installCryptoAssetsStore() {
-  setupMockCryptoAssetsStore({
+  setCryptoAssetsStore({
     findTokenById: async (id: string) => mockTokens[id],
     findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
       if (currencyId !== "tron") return undefined;
@@ -84,6 +84,7 @@ function installCryptoAssetsStore() {
         token => token.contractAddress.toLowerCase() === address.toLowerCase(),
       );
     },
+    getTokensSyncHash: async () => "",
   });
 }
 

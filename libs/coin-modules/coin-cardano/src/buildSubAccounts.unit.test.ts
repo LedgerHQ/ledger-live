@@ -1,4 +1,4 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 
@@ -141,9 +141,10 @@ describe("buildSubAccounts", () => {
         return undefined;
       });
 
-    setupMockCryptoAssetsStore({
-      findTokenByAddressInCurrency,
+    setCryptoAssetsStore({
       findTokenById: async (id: string) => (id === TOKEN_CURRENCY_ID ? tokenCurrency : undefined),
+      findTokenByAddressInCurrency,
+      getTokensSyncHash: async () => "",
     });
   });
 

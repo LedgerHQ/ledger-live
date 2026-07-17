@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@domain/entity-currency-crypto": "workspace:^",
+    "@features/platform-currencies": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/live-currency-format": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
