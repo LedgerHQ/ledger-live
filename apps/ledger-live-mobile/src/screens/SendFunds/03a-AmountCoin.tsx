@@ -161,8 +161,7 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
       ? transaction.model.commandDescriptor.command.extensions?.transferFee
       : undefined;
 
-  // Guards AmountInput's height when a family widget below it (e.g. aleo's
-  // quick-amount tiles) See: LIVE-30496
+  // Guards AmountInput's height when a family widget renders below it.
   const AmountInputWrapper = familySendFlow?.AfterAmountInput ? AmountInputHeightGuard : Fragment;
 
   return (
@@ -334,7 +333,6 @@ const styles = StyleSheet.create({
   },
   // Keeps AmountInput's content from clipping when the keyboard shrinks this column;
   // no flexGrow so it stays at its natural compact height instead of expanding.
-  // See: LIVE-30496
   amountInputHeightGuard: {
     flexShrink: 1,
     minHeight: 160,

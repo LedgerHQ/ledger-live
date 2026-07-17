@@ -1,6 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { Linking, Text } from "react-native";
+import type { AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AleoAccount, AleoUnspentRecord } from "@ledgerhq/live-common/families/aleo/types";
 import { render, screen } from "@tests/test-renderer";
@@ -12,6 +13,10 @@ const openURLSpy = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
 
 jest.mock("LLM/hooks/useAccountUnit", () => ({
   useAccountUnit: jest.fn(() => ({ name: "ALEO", code: "ALEO", magnitude: 6 })),
+}));
+
+jest.mock("LLM/hooks/useLocalizedUrls", () => ({
+  useLocalizedUrl: (url: string) => url,
 }));
 
 jest.mock("~/components/CurrencyUnitValue", () => ({
@@ -58,13 +63,13 @@ const manyRecords = Array.from({ length: 16 }, (_, i) => makeRecord(`${(20 - i) 
 const sixRecords = Array.from({ length: 6 }, (_, i) => makeRecord(`${(6 - i) * 100000}`));
 
 function renderSelector(
-  account: unknown,
+  account: AccountLike,
   transaction: Transaction,
   maxSpendable: BigNumber | null = null,
 ) {
   return render(
     <QuickAmountSelector
-      account={account as never}
+      account={account}
       transaction={transaction}
       updateTransaction={mockUpdateTransaction}
       maxSpendable={maxSpendable}

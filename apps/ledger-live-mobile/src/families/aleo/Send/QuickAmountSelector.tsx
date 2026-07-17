@@ -14,6 +14,7 @@ import {
 import type { SigningStrategy } from "@ledgerhq/live-common/families/aleo/types";
 import { useAleoQuickAmountSelector } from "@ledgerhq/live-common/families/aleo/react";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { useTranslation } from "~/context/Locale";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import InfoIcon from "~/icons/Info";
@@ -49,15 +50,16 @@ export function QuickAmountSelector({
     updateTransaction,
   });
   const [infoOpen, setInfoOpen] = useState(false);
+  const maxSpendableUrl = useLocalizedUrl(urls.maxSpendable);
   const onLearnMore = useCallback(
     () =>
-      Linking.openURL(urls.maxSpendable).catch(error => {
+      Linking.openURL(maxSpendableUrl).catch(error => {
         log("aleo-quick-amount-selector", "Failed to open max spendable URL", {
           error,
-          url: urls.maxSpendable,
+          url: maxSpendableUrl,
         });
       }),
-    [],
+    [maxSpendableUrl],
   );
   const { isKeyboardVisible } = useKeyboardVisible();
 
@@ -277,8 +279,8 @@ export function QuickAmountSelector({
             title={t("aleo.send.quickAmountSelector.title")}
             description={t("aleo.send.quickAmountSelector.tooltip.desc", { max: maxRecords })}
           />
-          <Box lx={{ paddingVertical: "s24" }}>
-            <Link appearance="accent" size="md" isExternal onPress={onLearnMore}>
+          <Box lx={{ paddingVertical: "s24", alignItems: "center" }}>
+            <Link appearance="base" size="md" underline={false} isExternal onPress={onLearnMore}>
               {t("common.learnMore")}
             </Link>
           </Box>
