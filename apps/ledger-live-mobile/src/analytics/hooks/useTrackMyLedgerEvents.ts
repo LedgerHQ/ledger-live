@@ -69,10 +69,10 @@ export const useTrackMyLedgerSectionEvents = ({
       track("Custom Lock Screen Image removed", defaultPayload);
     }
 
-    if ((error as Error).name === "UserRefusedAllowManager") {
+    if (error?.name === "UserRefusedAllowManager") {
       // user refused secure channel
       track("Secure Channel denied", defaultPayload);
-    } else if ((error as Error).name === "UserRefusedDeviceNameChange") {
+    } else if (error?.name === "UserRefusedDeviceNameChange") {
       // user refused device name change
       track("Renamed Device cancelled", { ...defaultPayload, page: "Manager RenamedDevice" });
     }

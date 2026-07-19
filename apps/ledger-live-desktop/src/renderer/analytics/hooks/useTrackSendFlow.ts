@@ -58,27 +58,27 @@ export const useTrackSendFlow = ({
       track("Wrong device association", defaultPayload, isTrackingEnabled);
     }
 
-    if ((error as Error).name === "UserRefusedOnDevice") {
+    if (error?.name === "UserRefusedOnDevice") {
       // user refused to open app
       track("Open app denied", defaultPayload, isTrackingEnabled);
     }
 
-    if ((error as Error).name === "CantOpenDevice") {
+    if (error?.name === "CantOpenDevice") {
       // device disconnected during send flow
       track("Connection failed", defaultPayload, isTrackingEnabled);
     }
 
-    if (isLocked || (error as Error).name === "LockedDeviceError") {
+    if (isLocked || error?.name === "LockedDeviceError") {
       // device locked during send flow
       track("Device locked", defaultPayload, isTrackingEnabled);
     }
 
-    if ((error as Error).name === "TransportError") {
+    if (error?.name === "TransportError") {
       // transport error during send flow
       track("Transport error", defaultPayload, isTrackingEnabled);
     }
 
-    if ((error as Error).name === "TransportRaceCondition") {
+    if (error?.name === "TransportRaceCondition") {
       // transport race condition
       track("Transport race condition", defaultPayload, isTrackingEnabled);
     }

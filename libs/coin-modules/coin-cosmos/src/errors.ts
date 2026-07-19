@@ -29,7 +29,7 @@ export class CosmosTooManyRedelegations extends Error {
 export class SequenceNumberError extends Error {
   override name = "SequenceNumberError";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message);
+    super(message ?? "SequenceNumberError");
     if (fields) Object.assign(this, fields);
   }
 }

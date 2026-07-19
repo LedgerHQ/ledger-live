@@ -49,8 +49,9 @@ export function isLockedDevicePolling(
         }
 
         if (
-          (error as Error).name === "TransportStatusError" &&
-          (error as TransportStatusError).statusCode === StatusCodes.LOCKED_DEVICE
+          (error as Error).name === "LockedDeviceError" ||
+          ((error as Error).name === "TransportStatusError" &&
+            (error as TransportStatusError).statusCode === StatusCodes.LOCKED_DEVICE)
         ) {
           return of<IsDeviceLockedResult>({ type: IsDeviceLockedResultType.locked });
         }

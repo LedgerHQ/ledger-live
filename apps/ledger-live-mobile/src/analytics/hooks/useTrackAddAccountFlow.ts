@@ -45,12 +45,12 @@ export const useTrackAddAccountFlow = ({
       page: "Add account",
     };
 
-    if ((error as Error).name === "TransportRaceCondition") {
+    if (error?.name === "TransportRaceCondition") {
       // transport race condition
       track("Transport race condition", defaultPayload);
     }
 
-    if ((error as Error).name === "TransportError") {
+    if (error?.name === "TransportError") {
       // transport error during add account flow
       track("Transport error", defaultPayload);
     }
@@ -58,7 +58,7 @@ export const useTrackAddAccountFlow = ({
     if (
       previousRequestOpenApp.current &&
       !requestOpenApp &&
-      (error as Error).name === "UserRefusedOnDevice"
+      error?.name === "UserRefusedOnDevice"
     ) {
       // user refused to open app
       track("Open app denied", defaultPayload);
@@ -67,23 +67,23 @@ export const useTrackAddAccountFlow = ({
     if (
       previousAllowOpeningGranted.current &&
       !allowOpeningGranted &&
-      (error as Error).name === "CantOpenDevice"
+      error?.name === "CantOpenDevice"
     ) {
       // user lost connection after opening app
       track("Device connection lost", defaultPayload);
       previousAllowOpeningGranted.current = undefined;
     }
 
-    if (previousAllowOpeningGranted.current && (error as Error).name === "LockedDeviceError") {
+    if (previousAllowOpeningGranted.current && error?.name === "LockedDeviceError") {
       // device is locked while scanning for new accounts
       track("Device locked", defaultPayload);
       previousAllowOpeningGranted.current = undefined;
     }
 
-    if (isScanningForNewAccounts && (error as Error).name === "CantOpenDevice") {
+    if (isScanningForNewAccounts && error?.name === "CantOpenDevice") {
       // user lost connection while scanning for new accounts
       track("Device connection lost", defaultPayload);
-    } else if ((error as Error).name === "CantOpenDevice") {
+    } else if (error?.name === "CantOpenDevice") {
       // device is detected but connection failed
       track("Connection failed", defaultPayload);
     }

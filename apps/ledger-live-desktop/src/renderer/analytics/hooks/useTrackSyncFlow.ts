@@ -80,27 +80,27 @@ export const useTrackSyncFlow = ({
       track("Wrong device association", defaultPayload, isTrackingEnabled);
     }
 
-    if ((error as Error).name === "UserRefusedAllowManager") {
+    if (error?.name === "UserRefusedAllowManager") {
       // user refused secure channel
       track("Secure Channel refused", defaultPayload, isTrackingEnabled);
     }
 
-    if ((error as Error).name === "CantOpenDevice") {
+    if (error?.name === "CantOpenDevice") {
       // device disconnected during ledger synch
       track("Connection failed", defaultPayload, isTrackingEnabled);
     }
 
-    if ((error as Error).name === "TransportError") {
+    if (error?.name === "TransportError") {
       // transport error during ledger synch
       track("Transport error", defaultPayload, isTrackingEnabled);
     }
 
-    if (isLocked || (error as Error).name === "LockedDeviceError") {
+    if (isLocked || error?.name === "LockedDeviceError") {
       // device locked during ledger synch
       track("Device locked", defaultPayload, isTrackingEnabled);
     }
 
-    if (previousOpenAppRequested && (error as Error).name === "UserRefusedOnDevice") {
+    if (previousOpenAppRequested && error?.name === "UserRefusedOnDevice") {
       // user refused to open Ledger Sync app
       track("User refused to open Ledger Sync app", defaultPayload, isTrackingEnabled);
     }

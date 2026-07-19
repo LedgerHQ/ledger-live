@@ -53,33 +53,33 @@ export const useTrackReceiveFlow = ({
     if (
       previousRequestOpenApp.current &&
       !requestOpenApp &&
-      (error as Error).name === "UserRefusedOnDevice"
+      error?.name === "UserRefusedOnDevice"
     ) {
       // user refused to open app
       track("Open app denied", defaultPayload);
     }
 
-    if ((error as Error).name === "UserRefusedAddress") {
+    if (error?.name === "UserRefusedAddress") {
       // user refused to verify address
       track("Address confirmation rejected", defaultPayload);
     }
 
-    if ((error as Error).name === "TransportRaceCondition") {
+    if (error?.name === "TransportRaceCondition") {
       // transport race condition
       track("Transport race condition", defaultPayload);
     }
 
-    if ((error as Error).name === "CantOpenDevice") {
+    if (error?.name === "CantOpenDevice") {
       // device disconnected during receive flow
       track("Connection failed", defaultPayload);
     }
 
-    if ((error as Error).name === "TransportError") {
+    if (error?.name === "TransportError") {
       // transport error during receive flow
       track("Transport error", defaultPayload);
     }
 
-    if (isLocked || (error as Error).name === "LockedDeviceError") {
+    if (isLocked || error?.name === "LockedDeviceError") {
       // device locked during receive flow
       track("Device locked", defaultPayload);
     }

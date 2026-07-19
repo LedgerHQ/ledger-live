@@ -63,30 +63,30 @@ export const useTrackExchangeFlow = ({
       track("Wrong device association", defaultPayload, isTrackingEnabled);
     }
 
-    if ((error as Error).name === "UserRefusedOnDevice") {
+    if (error?.name === "UserRefusedOnDevice") {
       // user refused to open exchange app
       track("Open app denied", defaultPayload, isTrackingEnabled);
-    } else if ((error as Error).name === "UserRefusedAllowManager") {
+    } else if (error?.name === "UserRefusedAllowManager") {
       // user refused secure channel
       track("Secure Channel denied", defaultPayload, isTrackingEnabled);
     }
 
-    if ((error as Error).name === "CantOpenDevice") {
+    if (error?.name === "CantOpenDevice") {
       // device disconnected during swap
       track("Connection failed", defaultPayload, isTrackingEnabled);
     }
 
-    if ((error as Error).name === "TransportError") {
+    if (error?.name === "TransportError") {
       // transport error during swap
       track("Transport error", defaultPayload, isTrackingEnabled);
     }
 
-    if ((error as Error).name === "TransportRaceCondition") {
+    if (error?.name === "TransportRaceCondition") {
       // transport race condition
       track("Transport race condition", defaultPayload, isTrackingEnabled);
     }
 
-    if (isLocked || (error as Error).name === "LockedDeviceError") {
+    if (isLocked || error?.name === "LockedDeviceError") {
       // device locked during swap
       track("Device locked", defaultPayload, isTrackingEnabled);
     }
