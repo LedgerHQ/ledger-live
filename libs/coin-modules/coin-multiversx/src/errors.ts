@@ -1,14 +1,14 @@
 export class MultiversXDecimalsLimitReached extends Error {
   override name = "MultiversXDecimalsLimitReached";
   constructor(message?: string) {
-    super(message ?? "MultiversXDecimalsLimitReached");
+    super(message || "MultiversXDecimalsLimitReached");
   }
 }
 
 export class MultiversXMinDelegatedAmountError extends Error {
   override name = "MultiversXMinDelegatedAmountError";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "MultiversXMinDelegatedAmountError");
+    super(message || "MultiversXMinDelegatedAmountError");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -16,7 +16,7 @@ export class MultiversXMinDelegatedAmountError extends Error {
 export class MultiversXMinUndelegatedAmountError extends Error {
   override name = "MultiversXMinUndelegatedAmountError";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "MultiversXMinUndelegatedAmountError");
+    super(message || "MultiversXMinUndelegatedAmountError");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -24,7 +24,7 @@ export class MultiversXMinUndelegatedAmountError extends Error {
 export class MultiversXDelegationBelowMinimumError extends Error {
   override name = "MultiversXDelegationBelowMinimumError";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "MultiversXDelegationBelowMinimumError");
+    super(message || "MultiversXDelegationBelowMinimumError");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -32,6 +32,6 @@ export class MultiversXDelegationBelowMinimumError extends Error {
 export class NotEnoughEGLDForFees extends Error {
   override name = "NotEnoughEGLDForFees";
   constructor(message?: string) {
-    super(message ?? "NotEnoughEGLDForFees");
+    super(message || "NotEnoughEGLDForFees");
   }
 }

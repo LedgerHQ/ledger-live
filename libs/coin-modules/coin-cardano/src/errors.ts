@@ -2,7 +2,7 @@
 export class CardanoMinAmountError extends Error {
   override name = "CardanoMinAmountError";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "CardanoMinAmountError");
+    super(message || "CardanoMinAmountError");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -11,7 +11,7 @@ export class CardanoMinAmountError extends Error {
 export class CardanoStakeKeyDepositError extends Error {
   override name = "CardanoStakeKeyDepositError";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "CardanoStakeKeyDepositError");
+    super(message || "CardanoStakeKeyDepositError");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -20,14 +20,14 @@ export class CardanoStakeKeyDepositError extends Error {
 export class CardanoNotEnoughFunds extends Error {
   override name = "CardanoNotEnoughFunds";
   constructor(message?: string) {
-    super(message ?? "CardanoNotEnoughFunds");
+    super(message || "CardanoNotEnoughFunds");
   }
 }
 
 export class CardanoInvalidPoolId extends Error {
   override name = "CardanoInvalidPoolId";
   constructor(message?: string) {
-    super(message ?? "CardanoInvalidPoolId");
+    super(message || "CardanoInvalidPoolId");
   }
 }
 
@@ -35,35 +35,35 @@ export class CardanoInvalidPoolId extends Error {
 export class CardanoFeeHigh extends Error {
   override name = "CardanoFeeHigh";
   constructor(message?: string) {
-    super(message ?? "CardanoFeeHigh");
+    super(message || "CardanoFeeHigh");
   }
 }
 
 export class CardanoFeeTooHigh extends Error {
   override name = "CardanoFeeTooHigh";
   constructor(message?: string) {
-    super(message ?? "CardanoFeeTooHigh");
+    super(message || "CardanoFeeTooHigh");
   }
 }
 
 export class CardanoInvalidProtoParams extends Error {
   override name = "CardanoInvalidProtoParams";
   constructor(message?: string) {
-    super(message ?? "CardanoInvalidProtoParams");
+    super(message || "CardanoInvalidProtoParams");
   }
 }
 
 export class CardanoMemoExceededSizeError extends Error {
   override name = "CardanoMemoExceededSizeError";
   constructor(message?: string) {
-    super(message ?? "CardanoMemoExceededSizeError");
+    super(message || "CardanoMemoExceededSizeError");
   }
 }
 
 export class ValAddressRequired extends Error {
   override name = "ValAddressRequired";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "ValAddressRequired");
+    super(message || "ValAddressRequired");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -71,6 +71,6 @@ export class ValAddressRequired extends Error {
 export class AccountAwaitingSendPendingOperations extends Error {
   override name = "AccountAwaitingSendPendingOperations";
   constructor(message?: string) {
-    super(message ?? "AccountAwaitingSendPendingOperations");
+    super(message || "AccountAwaitingSendPendingOperations");
   }
 }

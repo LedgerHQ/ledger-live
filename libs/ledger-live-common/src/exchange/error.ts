@@ -40,7 +40,7 @@ export function convertTransportError(
   step: CompleteExchangeStep,
   err: unknown,
 ): CompleteExchangeError | unknown {
-  if ((err as { name?: string }).name === "TransportStatusError") {
+  if ((err as { name?: string })?.name === "TransportStatusError") {
     const tse = err as { statusCode?: number | null };
     const errorCode =
       step === "CHECK_REFUND_ADDRESS" && tse.statusCode == null

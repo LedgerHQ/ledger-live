@@ -1,7 +1,7 @@
 export class UnsupportedDerivation extends Error {
   override name = "UnsupportedDerivation";
   constructor(message?: string) {
-    super(message ?? "UnsupportedDerivation");
+    super(message || "UnsupportedDerivation");
   }
 }
 
@@ -9,14 +9,14 @@ export class UnsupportedDerivation extends Error {
 export class MissingCoinConfig extends Error {
   override name = "MissingCoinConfig";
   constructor(message?: string) {
-    super(message ?? "MissingCoinConfig");
+    super(message || "MissingCoinConfig");
   }
 }
 
 export class DustLimit extends Error {
   override name = "DustLimit";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "DustLimit");
+    super(message || "DustLimit");
     if (fields) Object.assign(this, fields);
   }
 }

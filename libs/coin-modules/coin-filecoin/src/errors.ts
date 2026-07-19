@@ -4,7 +4,7 @@
 export class InvalidRecipientForTokenTransfer extends Error {
   override name = "InvalidRecipientForTokenTransfer";
   constructor(message?: string) {
-    super(message ?? "InvalidRecipientForTokenTransfer");
+    super(message || "InvalidRecipientForTokenTransfer");
   }
 }
 
@@ -14,6 +14,6 @@ export class InvalidRecipientForTokenTransfer extends Error {
 export class FilecoinFeeEstimationFailed extends Error {
   override name = "FilecoinFeeEstimationFailed";
   constructor(message?: string) {
-    super(message ?? "FilecoinFeeEstimationFailed");
+    super(message || "FilecoinFeeEstimationFailed");
   }
 }

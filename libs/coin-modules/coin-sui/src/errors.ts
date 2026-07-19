@@ -4,7 +4,7 @@
 export class OneSuiMinForStake extends Error {
   override name = "OneSuiMinForStake";
   constructor(message?: string) {
-    super(message ?? "OneSuiMinForStake");
+    super(message || "OneSuiMinForStake");
   }
 }
 
@@ -14,7 +14,7 @@ export class OneSuiMinForStake extends Error {
 export class OneSuiMinForUnstake extends Error {
   override name = "OneSuiMinForUnstake";
   constructor(message?: string) {
-    super(message ?? "OneSuiMinForUnstake");
+    super(message || "OneSuiMinForUnstake");
   }
 }
 
@@ -24,7 +24,7 @@ export class OneSuiMinForUnstake extends Error {
 export class OneSuiMinForUnstakeToBeLeft extends Error {
   override name = "OneSuiMinForUnstakeToBeLeft";
   constructor(message?: string) {
-    super(message ?? "OneSuiMinForUnstakeToBeLeft");
+    super(message || "OneSuiMinForUnstakeToBeLeft");
   }
 }
 
@@ -34,6 +34,6 @@ export class OneSuiMinForUnstakeToBeLeft extends Error {
 export class SomeSuiForUnstake extends Error {
   override name = "SomeSuiForUnstake";
   constructor(message?: string) {
-    super(message ?? "SomeSuiForUnstake");
+    super(message || "SomeSuiForUnstake");
   }
 }

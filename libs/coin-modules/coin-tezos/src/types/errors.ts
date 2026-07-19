@@ -1,33 +1,33 @@
 export class InvalidAddressBecauseAlreadyDelegated extends Error {
   override name = "InvalidAddressBecauseAlreadyDelegated";
   constructor(message?: string) {
-    super(message ?? "InvalidAddressBecauseAlreadyDelegated");
+    super(message || "InvalidAddressBecauseAlreadyDelegated");
   }
 }
 export class UnsupportedTransactionMode extends Error {
   override name = "UnsupportedTransactionMode";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "UnsupportedTransactionMode");
+    super(message || "UnsupportedTransactionMode");
     if (fields) Object.assign(this, fields);
   }
 }
 export class UnsupportedOperationKind extends Error {
   override name = "UnsupportedOperationKind";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "UnsupportedOperationKind");
+    super(message || "UnsupportedOperationKind");
     if (fields) Object.assign(this, fields);
   }
 }
 export class MustDelegateBeforeStaking extends Error {
   override name = "MustDelegateBeforeStaking";
   constructor(message?: string) {
-    super(message ?? "MustDelegateBeforeStaking");
+    super(message || "MustDelegateBeforeStaking");
   }
 }
 export class TezosNotEnoughStaked extends Error {
   override name = "TezosNotEnoughStaked";
   constructor(message?: string) {
-    super(message ?? "TezosNotEnoughStaked");
+    super(message || "TezosNotEnoughStaked");
   }
 }
 

@@ -1,21 +1,21 @@
 export class TronNoFrozenForBandwidth extends Error {
   override name = "TronNoFrozenForBandwidth";
   constructor(message?: string) {
-    super(message ?? "TronNoFrozenForBandwidth");
+    super(message || "TronNoFrozenForBandwidth");
   }
 }
 
 export class TronNoFrozenForEnergy extends Error {
   override name = "TronNoFrozenForEnergy";
   constructor(message?: string) {
-    super(message ?? "TronNoFrozenForEnergy");
+    super(message || "TronNoFrozenForEnergy");
   }
 }
 
 export class TronUnfreezeNotExpired extends Error {
   override name = "TronUnfreezeNotExpired";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "TronUnfreezeNotExpired");
+    super(message || "TronUnfreezeNotExpired");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -23,28 +23,28 @@ export class TronUnfreezeNotExpired extends Error {
 export class TronLegacyUnfreezeNotExpired extends Error {
   override name = "TronLegacyUnfreezeNotExpired";
   constructor(message?: string) {
-    super(message ?? "TronLegacyUnfreezeNotExpired");
+    super(message || "TronLegacyUnfreezeNotExpired");
   }
 }
 
 export class TronVoteRequired extends Error {
   override name = "TronVoteRequired";
   constructor(message?: string) {
-    super(message ?? "TronVoteRequired");
+    super(message || "TronVoteRequired");
   }
 }
 
 export class TronInvalidVoteCount extends Error {
   override name = "TronInvalidVoteCount";
   constructor(message?: string) {
-    super(message ?? "TronInvalidVoteCount");
+    super(message || "TronInvalidVoteCount");
   }
 }
 
 export class TronRewardNotAvailable extends Error {
   override name = "TronRewardNotAvailable";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "TronRewardNotAvailable");
+    super(message || "TronRewardNotAvailable");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -52,28 +52,28 @@ export class TronRewardNotAvailable extends Error {
 export class TronNoReward extends Error {
   override name = "TronNoReward";
   constructor(message?: string) {
-    super(message ?? "TronNoReward");
+    super(message || "TronNoReward");
   }
 }
 
 export class TronInvalidFreezeAmount extends Error {
   override name = "TronInvalidFreezeAmount";
   constructor(message?: string) {
-    super(message ?? "TronInvalidFreezeAmount");
+    super(message || "TronInvalidFreezeAmount");
   }
 }
 
 export class TronSendTrc20ToNewAccountForbidden extends Error {
   override name = "TronSendTrc20ToNewAccountForbidden";
   constructor(message?: string) {
-    super(message ?? "TronSendTrc20ToNewAccountForbidden");
+    super(message || "TronSendTrc20ToNewAccountForbidden");
   }
 }
 
 export class TronUnexpectedFees extends Error {
   override name = "TronUnexpectedFees";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "TronUnexpectedFees");
+    super(message || "TronUnexpectedFees");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -81,42 +81,42 @@ export class TronUnexpectedFees extends Error {
 export class TronNotEnoughTronPower extends Error {
   override name = "TronNotEnoughTronPower";
   constructor(message?: string) {
-    super(message ?? "TronNotEnoughTronPower");
+    super(message || "TronNotEnoughTronPower");
   }
 }
 
 export class TronTransactionExpired extends Error {
   override name = "TronTransactionExpired";
   constructor(message?: string) {
-    super(message ?? "TronTransactionExpired");
+    super(message || "TronTransactionExpired");
   }
 }
 
 export class TronNotEnoughEnergy extends Error {
   override name = "TronNotEnoughEnergy";
   constructor(message?: string) {
-    super(message ?? "TronNotEnoughEnergy");
+    super(message || "TronNotEnoughEnergy");
   }
 }
 
 export class TronNoUnfrozenResource extends Error {
   override name = "TronNoUnfrozenResource";
   constructor(message?: string) {
-    super(message ?? "TronNoUnfrozenResource");
+    super(message || "TronNoUnfrozenResource");
   }
 }
 
 export class TronInvalidUnDelegateResourceAmount extends Error {
   override name = "TronInvalidUnDelegateResourceAmount";
   constructor(message?: string) {
-    super(message ?? "TronInvalidUnDelegateResourceAmount");
+    super(message || "TronInvalidUnDelegateResourceAmount");
   }
 }
 
 export class TronEmptyPage extends Error {
   override name = "TronEmptyPage";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "TronEmptyPage");
+    super(message || "TronEmptyPage");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -124,21 +124,21 @@ export class TronEmptyPage extends Error {
 export class TronEmptyAccount extends Error {
   override name = "TronEmptyAccount";
   constructor(message?: string) {
-    super(message ?? "TronEmptyAccount");
+    super(message || "TronEmptyAccount");
   }
 }
 
 export class MaybeKeepTronAccountAlive extends Error {
   override name = "MaybeKeepTronAccountAlive";
   constructor(message?: string) {
-    super(message ?? "MaybeKeepTronAccountAlive");
+    super(message || "MaybeKeepTronAccountAlive");
   }
 }
 
 export class NotEnoughGas extends Error {
   override name = "NotEnoughGas";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "NotEnoughGas");
+    super(message || "NotEnoughGas");
     if (fields) Object.assign(this, fields);
   }
 }

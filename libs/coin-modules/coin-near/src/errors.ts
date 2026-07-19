@@ -4,7 +4,7 @@
 export class NearNewAccountWarning extends Error {
   override name = "NearNewAccountWarning";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "NearNewAccountWarning");
+    super(message || "NearNewAccountWarning");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -15,7 +15,7 @@ export class NearNewAccountWarning extends Error {
 export class NearNewNamedAccountError extends Error {
   override name = "NearNewNamedAccountError";
   constructor(message?: string) {
-    super(message ?? "NearNewNamedAccountError");
+    super(message || "NearNewNamedAccountError");
   }
 }
 
@@ -25,7 +25,7 @@ export class NearNewNamedAccountError extends Error {
 export class NearActivationFeeNotCovered extends Error {
   override name = "NearActivationFeeNotCovered";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "NearActivationFeeNotCovered");
+    super(message || "NearActivationFeeNotCovered");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -36,7 +36,7 @@ export class NearActivationFeeNotCovered extends Error {
 export class NearProtocolConfigNotLoaded extends Error {
   override name = "NearProtocolConfigNotLoaded";
   constructor(message?: string) {
-    super(message ?? "NearProtocolConfigNotLoaded");
+    super(message || "NearProtocolConfigNotLoaded");
   }
 }
 
@@ -46,7 +46,7 @@ export class NearProtocolConfigNotLoaded extends Error {
 export class NearUseAllAmountStakeWarning extends Error {
   override name = "NearUseAllAmountStakeWarning";
   constructor(message?: string) {
-    super(message ?? "NearUseAllAmountStakeWarning");
+    super(message || "NearUseAllAmountStakeWarning");
   }
 }
 
@@ -56,7 +56,7 @@ export class NearUseAllAmountStakeWarning extends Error {
 export class NearNotEnoughStaked extends Error {
   override name = "NearNotEnoughStaked";
   constructor(message?: string) {
-    super(message ?? "NearNotEnoughStaked");
+    super(message || "NearNotEnoughStaked");
   }
 }
 
@@ -66,7 +66,7 @@ export class NearNotEnoughStaked extends Error {
 export class NearNotEnoughAvailable extends Error {
   override name = "NearNotEnoughAvailable";
   constructor(message?: string) {
-    super(message ?? "NearNotEnoughAvailable");
+    super(message || "NearNotEnoughAvailable");
   }
 }
 
@@ -76,7 +76,7 @@ export class NearNotEnoughAvailable extends Error {
 export class NearRecommendUnstake extends Error {
   override name = "NearRecommendUnstake";
   constructor(message?: string) {
-    super(message ?? "NearRecommendUnstake");
+    super(message || "NearRecommendUnstake");
   }
 }
 
@@ -86,7 +86,7 @@ export class NearRecommendUnstake extends Error {
 export class NearStakingThresholdNotMet extends Error {
   override name = "NearStakingThresholdNotMet";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "NearStakingThresholdNotMet");
+    super(message || "NearStakingThresholdNotMet");
     if (fields) Object.assign(this, fields);
   }
 }

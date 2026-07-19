@@ -1,14 +1,14 @@
 export class ConnectAppTimeout extends Error {
   override name = "ConnectAppTimeout";
   constructor(message?: string) {
-    super(message ?? "ConnectAppTimeout");
+    super(message || "ConnectAppTimeout");
   }
 }
 
 export class ConnectManagerTimeout extends Error {
   override name = "ConnectManagerTimeout";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "ConnectManagerTimeout");
+    super(message || "ConnectManagerTimeout");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -16,14 +16,14 @@ export class ConnectManagerTimeout extends Error {
 export class GetAppAndVersionUnsupportedFormat extends Error {
   override name = "GetAppAndVersionUnsupportedFormat";
   constructor(message?: string) {
-    super(message ?? "GetAppAndVersionUnsupportedFormat");
+    super(message || "GetAppAndVersionUnsupportedFormat");
   }
 }
 
 export class FeeEstimationFailed extends Error {
   override name = "FeeEstimationFailed";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "FeeEstimationFailed");
+    super(message || "FeeEstimationFailed");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -31,21 +31,21 @@ export class FeeEstimationFailed extends Error {
 export class TransactionRefusedOnDevice extends Error {
   override name = "TransactionRefusedOnDevice";
   constructor(message?: string) {
-    super(message ?? "TransactionRefusedOnDevice");
+    super(message || "TransactionRefusedOnDevice");
   }
 }
 
 export class LanguageInstallRefusedOnDevice extends Error {
   override name = "LanguageInstallRefusedOnDevice";
   constructor(message?: string) {
-    super(message ?? "LanguageInstallRefusedOnDevice");
+    super(message || "LanguageInstallRefusedOnDevice");
   }
 }
 
 export class ImageLoadRefusedOnDevice extends Error {
   override name = "ImageLoadRefusedOnDevice";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "ImageLoadRefusedOnDevice");
+    super(message || "ImageLoadRefusedOnDevice");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -53,7 +53,7 @@ export class ImageLoadRefusedOnDevice extends Error {
 export class ImageDoesNotExistOnDevice extends Error {
   override name = "ImageDoesNotExistOnDevice";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "ImageDoesNotExistOnDevice");
+    super(message || "ImageDoesNotExistOnDevice");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -61,7 +61,7 @@ export class ImageDoesNotExistOnDevice extends Error {
 export class ImageCommitRefusedOnDevice extends Error {
   override name = "ImageCommitRefusedOnDevice";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "ImageCommitRefusedOnDevice");
+    super(message || "ImageCommitRefusedOnDevice");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -69,21 +69,21 @@ export class ImageCommitRefusedOnDevice extends Error {
 export class LanguageInstallTimeout extends Error {
   override name = "LanguageInstallTimeout";
   constructor(message?: string) {
-    super(message ?? "LanguageInstallTimeout");
+    super(message || "LanguageInstallTimeout");
   }
 }
 
 export class DeviceOnboarded extends Error {
   override name = "DeviceOnboarded";
   constructor(message?: string) {
-    super(message ?? "DeviceOnboarded");
+    super(message || "DeviceOnboarded");
   }
 }
 
 export class DeviceNotOnboarded extends Error {
   override name = "DeviceNotOnboarded";
   constructor(message?: string) {
-    super(message ?? "DeviceNotOnboarded");
+    super(message || "DeviceNotOnboarded");
   }
 }
 
@@ -92,7 +92,7 @@ export class DeviceAlreadySetup extends Error {
   device?: string;
   constructor(message?: string, options?: ErrorOptions & { device?: string }) {
     const { device, ...rest } = options ?? {};
-    super(message ?? "DeviceAlreadySetup", rest);
+    super(message || "DeviceAlreadySetup", rest);
     this.device = device;
   }
 }
@@ -100,7 +100,7 @@ export class DeviceAlreadySetup extends Error {
 export class SourceHasMultiSign extends Error {
   override name = "SourceHasMultiSign";
   constructor(message?: string) {
-    super(message ?? "SourceHasMultiSign");
+    super(message || "SourceHasMultiSign");
   }
 }
 
@@ -109,217 +109,217 @@ export class SourceHasMultiSign extends Error {
 class CosmosBroadcastCodeInternal extends Error {
   override name = "CosmosBroadcastCodeInternal";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeInternal");
+    super(message || "CosmosBroadcastCodeInternal");
   }
 }
 class CosmosBroadcastCodeTxDecode extends Error {
   override name = "CosmosBroadcastCodeTxDecode";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeTxDecode");
+    super(message || "CosmosBroadcastCodeTxDecode");
   }
 }
 class CosmosBroadcastCodeInvalidSequence extends Error {
   override name = "CosmosBroadcastCodeInvalidSequence";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeInvalidSequence");
+    super(message || "CosmosBroadcastCodeInvalidSequence");
   }
 }
 class CosmosBroadcastCodeUnauthorized extends Error {
   override name = "CosmosBroadcastCodeUnauthorized";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeUnauthorized");
+    super(message || "CosmosBroadcastCodeUnauthorized");
   }
 }
 class CosmosBroadcastCodeInsufficientFunds extends Error {
   override name = "CosmosBroadcastCodeInsufficientFunds";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeInsufficientFunds");
+    super(message || "CosmosBroadcastCodeInsufficientFunds");
   }
 }
 class CosmosBroadcastCodeUnknownRequest extends Error {
   override name = "CosmosBroadcastCodeUnknownRequest";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeUnknownRequest");
+    super(message || "CosmosBroadcastCodeUnknownRequest");
   }
 }
 class CosmosBroadcastCodeInvalidAddress extends Error {
   override name = "CosmosBroadcastCodeInvalidAddress";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeInvalidAddress");
+    super(message || "CosmosBroadcastCodeInvalidAddress");
   }
 }
 class CosmosBroadcastCodeInvalidPubKey extends Error {
   override name = "CosmosBroadcastCodeInvalidPubKey";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeInvalidPubKey");
+    super(message || "CosmosBroadcastCodeInvalidPubKey");
   }
 }
 class CosmosBroadcastCodeUnknownAddress extends Error {
   override name = "CosmosBroadcastCodeUnknownAddress";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeUnknownAddress");
+    super(message || "CosmosBroadcastCodeUnknownAddress");
   }
 }
 class CosmosBroadcastCodeInvalidCoins extends Error {
   override name = "CosmosBroadcastCodeInvalidCoins";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeInvalidCoins");
+    super(message || "CosmosBroadcastCodeInvalidCoins");
   }
 }
 class CosmosBroadcastCodeOutOfGas extends Error {
   override name = "CosmosBroadcastCodeOutOfGas";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeOutOfGas");
+    super(message || "CosmosBroadcastCodeOutOfGas");
   }
 }
 class CosmosBroadcastCodeMemoTooLarge extends Error {
   override name = "CosmosBroadcastCodeMemoTooLarge";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeMemoTooLarge");
+    super(message || "CosmosBroadcastCodeMemoTooLarge");
   }
 }
 class CosmosBroadcastCodeInsufficientFee extends Error {
   override name = "CosmosBroadcastCodeInsufficientFee";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeInsufficientFee");
+    super(message || "CosmosBroadcastCodeInsufficientFee");
   }
 }
 class CosmosBroadcastCodeTooManySignatures extends Error {
   override name = "CosmosBroadcastCodeTooManySignatures";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeTooManySignatures");
+    super(message || "CosmosBroadcastCodeTooManySignatures");
   }
 }
 class CosmosBroadcastCodeNoSignatures extends Error {
   override name = "CosmosBroadcastCodeNoSignatures";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeNoSignatures");
+    super(message || "CosmosBroadcastCodeNoSignatures");
   }
 }
 class CosmosBroadcastCodeJSONMarshal extends Error {
   override name = "CosmosBroadcastCodeJSONMarshal";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeJSONMarshal");
+    super(message || "CosmosBroadcastCodeJSONMarshal");
   }
 }
 class CosmosBroadcastCodeJSONUnmarshal extends Error {
   override name = "CosmosBroadcastCodeJSONUnmarshal";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeJSONUnmarshal");
+    super(message || "CosmosBroadcastCodeJSONUnmarshal");
   }
 }
 class CosmosBroadcastCodeInvalidRequest extends Error {
   override name = "CosmosBroadcastCodeInvalidRequest";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeInvalidRequest");
+    super(message || "CosmosBroadcastCodeInvalidRequest");
   }
 }
 class CosmosBroadcastCodeTxInMempoolCache extends Error {
   override name = "CosmosBroadcastCodeTxInMempoolCache";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeTxInMempoolCache");
+    super(message || "CosmosBroadcastCodeTxInMempoolCache");
   }
 }
 class CosmosBroadcastCodeMempoolIsFull extends Error {
   override name = "CosmosBroadcastCodeMempoolIsFull";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastCodeMempoolIsFull");
+    super(message || "CosmosBroadcastCodeMempoolIsFull");
   }
 }
 class CosmosBroadcastTxTooLarge extends Error {
   override name = "CosmosBroadcastTxTooLarge";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastTxTooLarge");
+    super(message || "CosmosBroadcastTxTooLarge");
   }
 }
 class CosmosBroadcastKeyNotFound extends Error {
   override name = "CosmosBroadcastKeyNotFound";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastKeyNotFound");
+    super(message || "CosmosBroadcastKeyNotFound");
   }
 }
 class CosmosBroadcastWrongPassword extends Error {
   override name = "CosmosBroadcastWrongPassword";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastWrongPassword");
+    super(message || "CosmosBroadcastWrongPassword");
   }
 }
 class CosmosBroadcastInvalidSigner extends Error {
   override name = "CosmosBroadcastInvalidSigner";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastInvalidSigner");
+    super(message || "CosmosBroadcastInvalidSigner");
   }
 }
 class CosmosBroadcastInvalidGasAdjustment extends Error {
   override name = "CosmosBroadcastInvalidGasAdjustment";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastInvalidGasAdjustment");
+    super(message || "CosmosBroadcastInvalidGasAdjustment");
   }
 }
 class CosmosBroadcastInvalidHeight extends Error {
   override name = "CosmosBroadcastInvalidHeight";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastInvalidHeight");
+    super(message || "CosmosBroadcastInvalidHeight");
   }
 }
 class CosmosBroadcastInvalidVersion extends Error {
   override name = "CosmosBroadcastInvalidVersion";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastInvalidVersion");
+    super(message || "CosmosBroadcastInvalidVersion");
   }
 }
 class CosmosBroadcastInvalidChainID extends Error {
   override name = "CosmosBroadcastInvalidChainID";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastInvalidChainID");
+    super(message || "CosmosBroadcastInvalidChainID");
   }
 }
 class CosmosBroadcastInvalidType extends Error {
   override name = "CosmosBroadcastInvalidType";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastInvalidType");
+    super(message || "CosmosBroadcastInvalidType");
   }
 }
 class CosmosBroadcastTimeoutHeight extends Error {
   override name = "CosmosBroadcastTimeoutHeight";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastTimeoutHeight");
+    super(message || "CosmosBroadcastTimeoutHeight");
   }
 }
 class CosmosBroadcastUnknownExtensionOptions extends Error {
   override name = "CosmosBroadcastUnknownExtensionOptions";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastUnknownExtensionOptions");
+    super(message || "CosmosBroadcastUnknownExtensionOptions");
   }
 }
 class CosmosBroadcastWrongSequence extends Error {
   override name = "CosmosBroadcastWrongSequence";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastWrongSequence");
+    super(message || "CosmosBroadcastWrongSequence");
   }
 }
 class CosmosBroadcastPackAny extends Error {
   override name = "CosmosBroadcastPackAny";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastPackAny");
+    super(message || "CosmosBroadcastPackAny");
   }
 }
 class CosmosBroadcastUnpackAny extends Error {
   override name = "CosmosBroadcastUnpackAny";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastUnpackAny");
+    super(message || "CosmosBroadcastUnpackAny");
   }
 }
 class CosmosBroadcastLogic extends Error {
   override name = "CosmosBroadcastLogic";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastLogic");
+    super(message || "CosmosBroadcastLogic");
   }
 }
 class CosmosBroadcastConflict extends Error {
   override name = "CosmosBroadcastConflict";
   constructor(message?: string) {
-    super(message ?? "CosmosBroadcastConflict");
+    super(message || "CosmosBroadcastConflict");
   }
 }
 
@@ -365,14 +365,14 @@ export const CosmosBroadcastError: Record<string, new (message?: string) => Erro
 export class SwapNoAvailableProviders extends Error {
   override name = "SwapNoAvailableProviders";
   constructor(message?: string) {
-    super(message ?? "SwapNoAvailableProviders");
+    super(message || "SwapNoAvailableProviders");
   }
 }
 
 export class NoSuchAppOnProvider extends Error {
   override name = "NoSuchAppOnProvider";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "NoSuchAppOnProvider");
+    super(message || "NoSuchAppOnProvider");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -380,7 +380,7 @@ export class NoSuchAppOnProvider extends Error {
 export class SwapExchangeRateAmountTooLow extends Error {
   override name = "SwapExchangeRateAmountTooLow";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "SwapExchangeRateAmountTooLow");
+    super(message || "SwapExchangeRateAmountTooLow");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -388,7 +388,7 @@ export class SwapExchangeRateAmountTooLow extends Error {
 export class SwapExchangeRateAmountTooHigh extends Error {
   override name = "SwapExchangeRateAmountTooHigh";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "SwapExchangeRateAmountTooHigh");
+    super(message || "SwapExchangeRateAmountTooHigh");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -396,7 +396,7 @@ export class SwapExchangeRateAmountTooHigh extends Error {
 export class SwapExchangeRateAmountTooLowOrTooHigh extends Error {
   override name = "SwapExchangeRateAmountTooLowOrTooHigh";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "SwapExchangeRateAmountTooLowOrTooHigh");
+    super(message || "SwapExchangeRateAmountTooLowOrTooHigh");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -404,91 +404,91 @@ export class SwapExchangeRateAmountTooLowOrTooHigh extends Error {
 export class SwapGenericAPIError extends Error {
   override name = "SwapGenericAPIError";
   constructor(message?: string) {
-    super(message ?? "SwapGenericAPIError");
+    super(message || "SwapGenericAPIError");
   }
 }
 
 export class SwapRateExpiredError extends Error {
   override name = "SwapRateExpiredError";
   constructor(message?: string) {
-    super(message ?? "SwapRateExpiredError");
+    super(message || "SwapRateExpiredError");
   }
 }
 
 export class JSONRPCResponseError extends Error {
   override name = "JSONRPCResponseError";
   constructor(message?: string) {
-    super(message ?? "JSONRPCResponseError");
+    super(message || "JSONRPCResponseError");
   }
 }
 
 export class JSONDecodeError extends Error {
   override name = "JSONDecodeError";
   constructor(message?: string) {
-    super(message ?? "JSONDecodeError");
+    super(message || "JSONDecodeError");
   }
 }
 
 export class NoIPHeaderError extends Error {
   override name = "NoIPHeaderError";
   constructor(message?: string) {
-    super(message ?? "NoIPHeaderError");
+    super(message || "NoIPHeaderError");
   }
 }
 
 export class CurrencyNotSupportedError extends Error {
   override name = "CurrencyNotSupportedError";
   constructor(message?: string) {
-    super(message ?? "CurrencyNotSupportedError");
+    super(message || "CurrencyNotSupportedError");
   }
 }
 
 export class CurrencyDisabledError extends Error {
   override name = "CurrencyDisabledError";
   constructor(message?: string) {
-    super(message ?? "CurrencyDisabledError");
+    super(message || "CurrencyDisabledError");
   }
 }
 
 export class CurrencyDisabledAsInputError extends Error {
   override name = "CurrencyDisabledAsInputError";
   constructor(message?: string) {
-    super(message ?? "CurrencyDisabledAsInputError");
+    super(message || "CurrencyDisabledAsInputError");
   }
 }
 
 export class CurrencyDisabledAsOutputError extends Error {
   override name = "CurrencyDisabledAsOutputError";
   constructor(message?: string) {
-    super(message ?? "CurrencyDisabledAsOutputError");
+    super(message || "CurrencyDisabledAsOutputError");
   }
 }
 
 export class CurrencyNotSupportedByProviderError extends Error {
   override name = "CurrencyNotSupportedByProviderError";
   constructor(message?: string) {
-    super(message ?? "CurrencyNotSupportedByProviderError");
+    super(message || "CurrencyNotSupportedByProviderError");
   }
 }
 
 export class TradeMethodNotSupportedError extends Error {
   override name = "TradeMethodNotSupportedError";
   constructor(message?: string) {
-    super(message ?? "TradeMethodNotSupportedError");
+    super(message || "TradeMethodNotSupportedError");
   }
 }
 
 export class UnexpectedError extends Error {
   override name = "UnexpectedError";
   constructor(message?: string) {
-    super(message ?? "UnexpectedError");
+    super(message || "UnexpectedError");
   }
 }
 
 export class NotImplementedError extends Error {
   override name = "NotImplementedError";
   constructor(message?: string) {
-    super(message ?? "NotImplementedError");
+    super(message || "NotImplementedError");
   }
 }
 
@@ -498,98 +498,98 @@ export class NotImplementedError extends Error {
 export class AccountPublicKeyUnavailable extends Error {
   override name = "AccountPublicKeyUnavailable";
   constructor(message?: string) {
-    super(message ?? "AccountPublicKeyUnavailable");
+    super(message || "AccountPublicKeyUnavailable");
   }
 }
 
 export class ValidationError extends Error {
   override name = "ValidationError";
   constructor(message?: string) {
-    super(message ?? "ValidationError");
+    super(message || "ValidationError");
   }
 }
 
 export class AccessDeniedError extends Error {
   override name = "AccessDeniedError";
   constructor(message?: string) {
-    super(message ?? "AccessDeniedError");
+    super(message || "AccessDeniedError");
   }
 }
 
 export class OutdatedApp extends Error {
   override name = "OutdatedApp";
   constructor(message?: string) {
-    super(message ?? "OutdatedApp");
+    super(message || "OutdatedApp");
   }
 }
 
 export class BluetoothNotSupportedError extends Error {
   override name = "FwUpdateBluetoothNotSupported";
   constructor(message?: string) {
-    super(message ?? "BluetoothNotSupportedError");
+    super(message || "BluetoothNotSupportedError");
   }
 }
 
 export class EConnResetError extends Error {
   override name = "EConnReset";
   constructor(message?: string) {
-    super(message ?? "EConnResetError");
+    super(message || "EConnResetError");
   }
 }
 
 export class PasswordsDontMatchError extends Error {
   override name = "PasswordsDontMatch";
   constructor(message?: string) {
-    super(message ?? "PasswordsDontMatchError");
+    super(message || "PasswordsDontMatchError");
   }
 }
 
 export class PasswordIncorrectError extends Error {
   override name = "PasswordIncorrect";
   constructor(message?: string) {
-    super(message ?? "PasswordIncorrectError");
+    super(message || "PasswordIncorrectError");
   }
 }
 
 export class NotSupportedLegacyAddress extends Error {
   override name = "NotSupportedLegacyAddress";
   constructor(message?: string) {
-    super(message ?? "NotSupportedLegacyAddress");
+    super(message || "NotSupportedLegacyAddress");
   }
 }
 
 export class DeviceOnDashboardExpected extends Error {
   override name = "DeviceOnDashboardExpected";
   constructor(message?: string) {
-    super(message ?? "DeviceOnDashboardExpected");
+    super(message || "DeviceOnDashboardExpected");
   }
 }
 
 export class DeviceOnDashboardUnexpected extends Error {
   override name = "DeviceOnDashboardUnexpected";
   constructor(message?: string) {
-    super(message ?? "DeviceOnDashboardUnexpected");
+    super(message || "DeviceOnDashboardUnexpected");
   }
 }
 
 export class DeviceInOSUExpected extends Error {
   override name = "DeviceInOSUExpected";
   constructor(message?: string) {
-    super(message ?? "DeviceInOSUExpected");
+    super(message || "DeviceInOSUExpected");
   }
 }
 
 export class DeviceHalted extends Error {
   override name = "DeviceHalted";
   constructor(message?: string) {
-    super(message ?? "DeviceHalted");
+    super(message || "DeviceHalted");
   }
 }
 
 export class DeviceSocketFail extends Error {
   override name = "DeviceSocketFail";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "DeviceSocketFail");
+    super(message || "DeviceSocketFail");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -597,35 +597,35 @@ export class DeviceSocketFail extends Error {
 export class DeviceOnboardingStatePollingError extends Error {
   override name = "DeviceOnboardingStatePollingError";
   constructor(message?: string) {
-    super(message ?? "DeviceOnboardingStatePollingError");
+    super(message || "DeviceOnboardingStatePollingError");
   }
 }
 
 export class DeviceExtractOnboardingStateError extends Error {
   override name = "DeviceExtractOnboardingStateError";
   constructor(message?: string) {
-    super(message ?? "DeviceExtractOnboardingStateError");
+    super(message || "DeviceExtractOnboardingStateError");
   }
 }
 
 export class DeviceAppVerifyNotSupported extends Error {
   override name = "DeviceAppVerifyNotSupported";
   constructor(message?: string) {
-    super(message ?? "DeviceAppVerifyNotSupported");
+    super(message || "DeviceAppVerifyNotSupported");
   }
 }
 
 export class UnresponsiveDeviceError extends Error {
   override name = "UnresponsiveDeviceError";
   constructor(message?: string) {
-    super(message ?? "UnresponsiveDeviceError");
+    super(message || "UnresponsiveDeviceError");
   }
 }
 
 export class WebsocketConnectionError extends Error {
   override name = "WebsocketConnectionError";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "WebsocketConnectionError");
+    super(message || "WebsocketConnectionError");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -633,21 +633,21 @@ export class WebsocketConnectionError extends Error {
 export class ManagerAppAlreadyInstalledError extends Error {
   override name = "ManagerAppAlreadyInstalled";
   constructor(message?: string) {
-    super(message ?? "ManagerAppAlreadyInstalledError");
+    super(message || "ManagerAppAlreadyInstalledError");
   }
 }
 
 export class ManagerAppRelyOnBTCError extends Error {
   override name = "ManagerAppRelyOnBTC";
   constructor(message?: string) {
-    super(message ?? "ManagerAppRelyOnBTCError");
+    super(message || "ManagerAppRelyOnBTCError");
   }
 }
 
 export class ManagerAppDepInstallRequired extends Error {
   override name = "ManagerAppDepInstallRequired";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "ManagerAppDepInstallRequired");
+    super(message || "ManagerAppDepInstallRequired");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -655,7 +655,7 @@ export class ManagerAppDepInstallRequired extends Error {
 export class ManagerAppDepUninstallRequired extends Error {
   override name = "ManagerAppDepUninstallRequired";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "ManagerAppDepUninstallRequired");
+    super(message || "ManagerAppDepUninstallRequired");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -663,28 +663,28 @@ export class ManagerAppDepUninstallRequired extends Error {
 export class ManagerDeviceLockedError extends Error {
   override name = "ManagerDeviceLocked";
   constructor(message?: string) {
-    super(message ?? "ManagerDeviceLockedError");
+    super(message || "ManagerDeviceLockedError");
   }
 }
 
 export class ManagerFirmwareNotEnoughSpaceError extends Error {
   override name = "ManagerFirmwareNotEnoughSpace";
   constructor(message?: string) {
-    super(message ?? "ManagerFirmwareNotEnoughSpaceError");
+    super(message || "ManagerFirmwareNotEnoughSpaceError");
   }
 }
 
 export class ManagerNotEnoughSpaceError extends Error {
   override name = "ManagerNotEnoughSpace";
   constructor(message?: string) {
-    super(message ?? "ManagerNotEnoughSpaceError");
+    super(message || "ManagerNotEnoughSpaceError");
   }
 }
 
 export class UnsupportedFeatureError extends Error {
   override name = "UnsupportedFeatureError";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "UnsupportedFeatureError");
+    super(message || "UnsupportedFeatureError");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -692,14 +692,14 @@ export class UnsupportedFeatureError extends Error {
 export class LanguageNotFound extends Error {
   override name = "LanguageNotFound";
   constructor(message?: string) {
-    super(message ?? "LanguageNotFound");
+    super(message || "LanguageNotFound");
   }
 }
 
 export class FirmwareNotRecognized extends Error {
   override name = "FirmwareNotRecognized";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "FirmwareNotRecognized");
+    super(message || "FirmwareNotRecognized");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -707,14 +707,14 @@ export class FirmwareNotRecognized extends Error {
 export class FirmwareOrAppUpdateRequired extends Error {
   override name = "FirmwareOrAppUpdateRequired";
   constructor(message?: string) {
-    super(message ?? "FirmwareOrAppUpdateRequired");
+    super(message || "FirmwareOrAppUpdateRequired");
   }
 }
 
 export class LatestFirmwareVersionRequired extends Error {
   override name = "LatestFirmwareVersionRequired";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "LatestFirmwareVersionRequired");
+    super(message || "LatestFirmwareVersionRequired");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -722,42 +722,42 @@ export class LatestFirmwareVersionRequired extends Error {
 export class UnexpectedBootloader extends Error {
   override name = "UnexpectedBootloader";
   constructor(message?: string) {
-    super(message ?? "UnexpectedBootloader");
+    super(message || "UnexpectedBootloader");
   }
 }
 
 export class MCUNotGenuineToDashboard extends Error {
   override name = "MCUNotGenuineToDashboard";
   constructor(message?: string) {
-    super(message ?? "MCUNotGenuineToDashboard");
+    super(message || "MCUNotGenuineToDashboard");
   }
 }
 
 export class AccountNotSupported extends Error {
   override name = "AccountNotSupported";
   constructor(message?: string) {
-    super(message ?? "AccountNotSupported");
+    super(message || "AccountNotSupported");
   }
 }
 
 export class AccountAwaitingSendPendingOperations extends Error {
   override name = "AccountAwaitingSendPendingOperations";
   constructor(message?: string) {
-    super(message ?? "AccountAwaitingSendPendingOperations");
+    super(message || "AccountAwaitingSendPendingOperations");
   }
 }
 
 export class NoAddressesFound extends Error {
   override name = "NoAddressesFound";
   constructor(message?: string) {
-    super(message ?? "NoAddressesFound");
+    super(message || "NoAddressesFound");
   }
 }
 
 export class CurrencyNotSupported extends Error {
   override name = "CurrencyNotSupported";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "CurrencyNotSupported");
+    super(message || "CurrencyNotSupported");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -767,63 +767,63 @@ export { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/live-network/
 export class NetworkError extends Error {
   override name = "NetworkError";
   constructor(message?: string) {
-    super(message ?? "NetworkError");
+    super(message || "NetworkError");
   }
 }
 
 export class LedgerAPIError extends Error {
   override name = "LedgerAPIError";
   constructor(message?: string) {
-    super(message ?? "LedgerAPIError");
+    super(message || "LedgerAPIError");
   }
 }
 
 export class LedgerAPIErrorWithMessage extends Error {
   override name = "LedgerAPIErrorWithMessage";
   constructor(message?: string) {
-    super(message ?? "LedgerAPIErrorWithMessage");
+    super(message || "LedgerAPIErrorWithMessage");
   }
 }
 
 export class LedgerAPINotAvailable extends Error {
   override name = "LedgerAPINotAvailable";
   constructor(message?: string) {
-    super(message ?? "LedgerAPINotAvailable");
+    super(message || "LedgerAPINotAvailable");
   }
 }
 
 export class RecommendSubAccountsToEmpty extends Error {
   override name = "RecommendSubAccountsToEmpty";
   constructor(message?: string) {
-    super(message ?? "RecommendSubAccountsToEmpty");
+    super(message || "RecommendSubAccountsToEmpty");
   }
 }
 
 export class RecommendUndelegation extends Error {
   override name = "RecommendUndelegation";
   constructor(message?: string) {
-    super(message ?? "RecommendUndelegation");
+    super(message || "RecommendUndelegation");
   }
 }
 
 export class ReplacementTransactionUnderpriced extends Error {
   override name = "ReplacementTransactionUnderpriced";
   constructor(message?: string) {
-    super(message ?? "ReplacementTransactionUnderpriced");
+    super(message || "ReplacementTransactionUnderpriced");
   }
 }
 
 export class NotEnoughBalanceSwap extends Error {
   override name = "NotEnoughBalanceSwap";
   constructor(message?: string) {
-    super(message ?? "NotEnoughBalanceSwap");
+    super(message || "NotEnoughBalanceSwap");
   }
 }
 
 export class NotEnoughGasSwap extends Error {
   override name = "NotEnoughGasSwap";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "NotEnoughGasSwap");
+    super(message || "NotEnoughGasSwap");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -831,21 +831,21 @@ export class NotEnoughGasSwap extends Error {
 export class FeeNotLoadedSwap extends Error {
   override name = "FeeNotLoadedSwap";
   constructor(message?: string) {
-    super(message ?? "FeeNotLoadedSwap");
+    super(message || "FeeNotLoadedSwap");
   }
 }
 
 export class MissingSwapPayloadParamaters extends Error {
   override name = "MissingSwapPayloadParamaters";
   constructor(message?: string) {
-    super(message ?? "MissingSwapPayloadParamaters");
+    super(message || "MissingSwapPayloadParamaters");
   }
 }
 
 export class UserRefusedDeviceNameChange extends Error {
   override name = "UserRefusedDeviceNameChange";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "UserRefusedDeviceNameChange");
+    super(message || "UserRefusedDeviceNameChange");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -853,28 +853,28 @@ export class UserRefusedDeviceNameChange extends Error {
 export class UserRefusedAddress extends Error {
   override name = "UserRefusedAddress";
   constructor(message?: string) {
-    super(message ?? "UserRefusedAddress");
+    super(message || "UserRefusedAddress");
   }
 }
 
 export class UserRefusedFirmwareUpdate extends Error {
   override name = "UserRefusedFirmwareUpdate";
   constructor(message?: string) {
-    super(message ?? "UserRefusedFirmwareUpdate");
+    super(message || "UserRefusedFirmwareUpdate");
   }
 }
 
 export class UserRefusedAllowManager extends Error {
   override name = "UserRefusedAllowManager";
   constructor(message?: string) {
-    super(message ?? "UserRefusedAllowManager");
+    super(message || "UserRefusedAllowManager");
   }
 }
 
 export class WrongDeviceForAccountPayout extends Error {
   override name = "WrongDeviceForAccountPayout";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "WrongDeviceForAccountPayout");
+    super(message || "WrongDeviceForAccountPayout");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -882,7 +882,7 @@ export class WrongDeviceForAccountPayout extends Error {
 export class WrongDeviceForAccountRefund extends Error {
   override name = "WrongDeviceForAccountRefund";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "WrongDeviceForAccountRefund");
+    super(message || "WrongDeviceForAccountRefund");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -890,21 +890,21 @@ export class WrongDeviceForAccountRefund extends Error {
 export class PairingFailed extends Error {
   override name = "PairingFailed";
   constructor(message?: string) {
-    super(message ?? "PairingFailed");
+    super(message || "PairingFailed");
   }
 }
 
 export class PeerRemovedPairing extends Error {
   override name = "PeerRemovedPairing";
   constructor(message?: string) {
-    super(message ?? "PeerRemovedPairing");
+    super(message || "PeerRemovedPairing");
   }
 }
 
 export class GenuineCheckFailed extends Error {
   override name = "GenuineCheckFailed";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "GenuineCheckFailed");
+    super(message || "GenuineCheckFailed");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -912,70 +912,70 @@ export class GenuineCheckFailed extends Error {
 export class DisabledTransactionBroadcastError extends Error {
   override name = "DisabledTransactionBroadcastError";
   constructor(message?: string) {
-    super(message ?? "DisabledTransactionBroadcastError");
+    super(message || "DisabledTransactionBroadcastError");
   }
 }
 
 export class SyncError extends Error {
   override name = "SyncError";
   constructor(message?: string) {
-    super(message ?? "SyncError");
+    super(message || "SyncError");
   }
 }
 
 export class PendingOperation extends Error {
   override name = "PendingOperation";
   constructor(message?: string) {
-    super(message ?? "PendingOperation");
+    super(message || "PendingOperation");
   }
 }
 
 export class TimeoutTagged extends Error {
   override name = "TimeoutTagged";
   constructor(message?: string) {
-    super(message ?? "TimeoutTagged");
+    super(message || "TimeoutTagged");
   }
 }
 
 export class InvalidParameterError extends Error {
   override name = "InvalidParameterError";
   constructor(message?: string) {
-    super(message ?? "InvalidParameterError");
+    super(message || "InvalidParameterError");
   }
 }
 
 export class DeviceNotGenuineError extends Error {
   override name = "DeviceNotGenuine";
   constructor(message?: string) {
-    super(message ?? "DeviceNotGenuineError");
+    super(message || "DeviceNotGenuineError");
   }
 }
 
 export class DeviceGenuineSocketEarlyClose extends Error {
   override name = "DeviceGenuineSocketEarlyClose";
   constructor(message?: string) {
-    super(message ?? "DeviceGenuineSocketEarlyClose");
+    super(message || "DeviceGenuineSocketEarlyClose");
   }
 }
 
 export class UnknownMCU extends Error {
   override name = "UnknownMCU";
   constructor(message?: string) {
-    super(message ?? "UnknownMCU");
+    super(message || "UnknownMCU");
   }
 }
 
 export class PinNotSet extends Error {
   override name = "PinNotSet";
   constructor(message?: string) {
-    super(message ?? "PinNotSet");
+    super(message || "PinNotSet");
   }
 }
 
 export class ExpertModeRequired extends Error {
   override name = "ExpertModeRequired";
   constructor(message?: string) {
-    super(message ?? "ExpertModeRequired");
+    super(message || "ExpertModeRequired");
   }
 }
 
@@ -985,7 +985,7 @@ export class DeviceNameInvalid extends Error {
 
   constructor(message?: string, options?: ErrorOptions & { invalidCharacters?: string }) {
     const { invalidCharacters, ...rest } = options ?? {};
-    super(message ?? "DeviceNameInvalid", rest);
+    super(message || "DeviceNameInvalid", rest);
     this.invalidCharacters = invalidCharacters;
   }
 }
@@ -993,35 +993,35 @@ export class DeviceNameInvalid extends Error {
 export class NanoSNotSupported extends Error {
   override name = "NanoSNotSupported";
   constructor(message?: string) {
-    super(message ?? "NanoSNotSupported");
+    super(message || "NanoSNotSupported");
   }
 }
 
 export class HardResetFail extends Error {
   override name = "HardResetFail";
   constructor(message?: string) {
-    super(message ?? "HardResetFail");
+    super(message || "HardResetFail");
   }
 }
 
 export class LatestMCUInstalledError extends Error {
   override name = "LatestMCUInstalledError";
   constructor(message?: string) {
-    super(message ?? "LatestMCUInstalledError");
+    super(message || "LatestMCUInstalledError");
   }
 }
 
 export class DeviceSocketNoBulkStatus extends Error {
   override name = "DeviceSocketNoBulkStatus";
   constructor(message?: string) {
-    super(message ?? "DeviceSocketNoBulkStatus");
+    super(message || "DeviceSocketNoBulkStatus");
   }
 }
 
 export class UpdateYourApp extends Error {
   override name = "UpdateYourApp";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "UpdateYourApp");
+    super(message || "UpdateYourApp");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -1029,42 +1029,42 @@ export class UpdateYourApp extends Error {
 export class NoAccessToCamera extends Error {
   override name = "NoAccessToCamera";
   constructor(message?: string) {
-    super(message ?? "NoAccessToCamera");
+    super(message || "NoAccessToCamera");
   }
 }
 
 export class TransactionHasBeenValidatedError extends Error {
   override name = "TransactionHasBeenValidatedError";
   constructor(message?: string) {
-    super(message ?? "TransactionHasBeenValidatedError");
+    super(message || "TransactionHasBeenValidatedError");
   }
 }
 
 export class CantScanQRCode extends Error {
   override name = "CantScanQRCode";
   constructor(message?: string) {
-    super(message ?? "CantScanQRCode");
+    super(message || "CantScanQRCode");
   }
 }
 
 export class WrongAppForCurrency extends Error {
   override name = "WrongAppForCurrency";
   constructor(message?: string) {
-    super(message ?? "WrongAppForCurrency");
+    super(message || "WrongAppForCurrency");
   }
 }
 
 export class BtcUnmatchedApp extends Error {
   override name = "BtcUnmatchedApp";
   constructor(message?: string) {
-    super(message ?? "BtcUnmatchedApp");
+    super(message || "BtcUnmatchedApp");
   }
 }
 
 export class WebsocketConnectionFailed extends Error {
   override name = "WebsocketConnectionFailed";
   constructor(message?: string) {
-    super(message ?? "WebsocketConnectionFailed");
+    super(message || "WebsocketConnectionFailed");
   }
 }
 

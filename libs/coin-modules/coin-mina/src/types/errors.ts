@@ -4,7 +4,7 @@
 export class InvalidMemoMina extends Error {
   override name = "InvalidMemoMina";
   constructor(message?: string) {
-    super(message ?? "InvalidMemoMina");
+    super(message || "InvalidMemoMina");
   }
 }
 
@@ -14,7 +14,7 @@ export class InvalidMemoMina extends Error {
 export class AccountCreationFeeWarning extends Error {
   override name = "AccountCreationFeeWarning";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "AccountCreationFeeWarning");
+    super(message || "AccountCreationFeeWarning");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -25,7 +25,7 @@ export class AccountCreationFeeWarning extends Error {
 export class AmountTooSmall extends Error {
   override name = "AmountTooSmall";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "AmountTooSmall");
+    super(message || "AmountTooSmall");
     if (fields) Object.assign(this, fields);
   }
 }

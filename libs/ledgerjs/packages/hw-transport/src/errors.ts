@@ -9,7 +9,7 @@ export class HwTransportError extends Error {
   type: HwTransportErrorType;
 
   constructor(type: HwTransportErrorType, message: string) {
-    super(message ?? "HwTransportError");
+    super(message || "HwTransportError");
     this.name = "HwTransportError";
     this.type = type;
     Object.setPrototypeOf(this, HwTransportError.prototype);
@@ -122,7 +122,7 @@ export class TransportStatusError extends Error {
     const statusCodeStr = statusCode.toString(16);
     const message = `Ledger device: ${smsg} (0x${statusCodeStr})`;
 
-    super(message ?? "TransportStatusError");
+    super(message || "TransportStatusError");
     this.name = "TransportStatusError";
 
     this.statusCode = statusCode;
@@ -149,7 +149,7 @@ export class LockedDeviceError extends TransportStatusError {
 
 export class DeviceMangementKitError extends Error {
   constructor(name: string, message: string) {
-    super(message ?? "DeviceMangementKitError");
+    super(message || "DeviceMangementKitError");
     this.name = name;
     Object.setPrototypeOf(this, DeviceMangementKitError.prototype);
   }
@@ -160,76 +160,76 @@ export type TransportStatusErrorClassType = typeof TransportStatusError | typeof
 export class BluetoothRequired extends Error {
   override name = "BluetoothRequired";
   constructor(message?: string) {
-    super(message ?? "BluetoothRequired");
+    super(message || "BluetoothRequired");
   }
 }
 
 export class CantOpenDevice extends Error {
   override name = "CantOpenDevice";
   constructor(message?: string) {
-    super(message ?? "CantOpenDevice");
+    super(message || "CantOpenDevice");
   }
 }
 
 export class DisconnectedDevice extends Error {
   override name = "DisconnectedDevice";
   constructor(message?: string) {
-    super(message ?? "DisconnectedDevice");
+    super(message || "DisconnectedDevice");
   }
 }
 
 export class DisconnectedDeviceDuringOperation extends Error {
   override name = "DisconnectedDeviceDuringOperation";
   constructor(message?: string) {
-    super(message ?? "DisconnectedDeviceDuringOperation");
+    super(message || "DisconnectedDeviceDuringOperation");
   }
 }
 
 export class TransportOpenUserCancelled extends Error {
   override name = "TransportOpenUserCancelled";
   constructor(message?: string) {
-    super(message ?? "TransportOpenUserCancelled");
+    super(message || "TransportOpenUserCancelled");
   }
 }
 
 export class TransportInterfaceNotAvailable extends Error {
   override name = "TransportInterfaceNotAvailable";
   constructor(message?: string) {
-    super(message ?? "TransportInterfaceNotAvailable");
+    super(message || "TransportInterfaceNotAvailable");
   }
 }
 
 export class TransportRaceCondition extends Error {
   override name = "TransportRaceCondition";
   constructor(message?: string) {
-    super(message ?? "TransportRaceCondition");
+    super(message || "TransportRaceCondition");
   }
 }
 
 export class TransportWebUSBGestureRequired extends Error {
   override name = "TransportWebUSBGestureRequired";
   constructor(message?: string) {
-    super(message ?? "TransportWebUSBGestureRequired");
+    super(message || "TransportWebUSBGestureRequired");
   }
 }
 
 export class TransportExchangeTimeoutError extends Error {
   override name = "TransportExchangeTimeoutError";
   constructor(message?: string) {
-    super(message ?? "TransportExchangeTimeoutError");
+    super(message || "TransportExchangeTimeoutError");
   }
 }
 
 export class UserRefusedOnDevice extends Error {
   override name = "UserRefusedOnDevice";
   constructor(message?: string) {
-    super(message ?? "UserRefusedOnDevice");
+    super(message || "UserRefusedOnDevice");
   }
 }
 
 export class UserRefusedAddress extends Error {
   override name = "UserRefusedAddress";
   constructor(message?: string) {
-    super(message ?? "UserRefusedAddress");
+    super(message || "UserRefusedAddress");
   }
 }

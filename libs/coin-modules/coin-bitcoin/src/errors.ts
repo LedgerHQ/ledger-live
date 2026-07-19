@@ -1,49 +1,49 @@
 export class AccountNeedResync extends Error {
   override name = "AccountNeedResync";
   constructor(message?: string) {
-    super(message ?? "AccountNeedResync");
+    super(message || "AccountNeedResync");
   }
 }
 
 export class TaprootNotActivated extends Error {
   override name = "TaprootNotActivated";
   constructor(message?: string) {
-    super(message ?? "TaprootNotActivated");
+    super(message || "TaprootNotActivated");
   }
 }
 
 export class BitcoinInfrastructureError extends Error {
   override name = "InfrastructureError";
   constructor(message?: string) {
-    super(message ?? "BitcoinInfrastructureError");
+    super(message || "BitcoinInfrastructureError");
   }
 }
 
 export class RbfBuildError extends Error {
   override name = "RbfBuildError";
   constructor(message?: string) {
-    super(message ?? "RbfBuildError");
+    super(message || "RbfBuildError");
   }
 }
 
 export class FeeTooLow extends Error {
   override name = "FeeTooLow";
   constructor(message?: string) {
-    super(message ?? "FeeTooLow");
+    super(message || "FeeTooLow");
   }
 }
 
 export class ZcashSaplingRecipientNotSupported extends Error {
   override name = "ZcashSaplingRecipientNotSupported";
   constructor(message?: string) {
-    super(message ?? "ZcashSaplingRecipientNotSupported");
+    super(message || "ZcashSaplingRecipientNotSupported");
   }
 }
 
 export class ZcashSignerNotSupported extends Error {
   override name = "ZcashSignerNotSupported";
   constructor(message?: string) {
-    super(message ?? "ZcashSignerNotSupported");
+    super(message || "ZcashSignerNotSupported");
   }
 }
 
@@ -51,7 +51,7 @@ export class ZcashSignerNotSupported extends Error {
 export class ZcashSigningCancelled extends Error {
   override name = "ZcashSigningCancelled";
   constructor(message?: string) {
-    super(message ?? "ZcashSigningCancelled");
+    super(message || "ZcashSigningCancelled");
   }
 }
 
@@ -62,7 +62,7 @@ export class ZcashSigningCancelled extends Error {
 export class ZcashUtxoNotInAccount extends Error {
   override name = "ZcashUtxoNotInAccount";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "ZcashUtxoNotInAccount");
+    super(message || "ZcashUtxoNotInAccount");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -70,7 +70,7 @@ export class ZcashUtxoNotInAccount extends Error {
 export class DustLimit extends Error {
   override name = "DustLimit";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message ?? "DustLimit");
+    super(message || "DustLimit");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -78,6 +78,6 @@ export class DustLimit extends Error {
 export class OpReturnDataSizeLimit extends Error {
   override name = "OpReturnSizeLimit";
   constructor(message?: string) {
-    super(message ?? "OpReturnDataSizeLimit");
+    super(message || "OpReturnDataSizeLimit");
   }
 }

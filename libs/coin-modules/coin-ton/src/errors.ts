@@ -4,7 +4,7 @@
 export class TonCommentInvalid extends Error {
   override name = "TonCommentInvalid";
   constructor(message?: string) {
-    super(message ?? "TonCommentInvalid");
+    super(message || "TonCommentInvalid");
   }
 }
 
@@ -14,7 +14,7 @@ export class TonCommentInvalid extends Error {
 export class TonMinimumRequired extends Error {
   override name = "TonMinimumRequired";
   constructor(message?: string) {
-    super(message ?? "TonMinimumRequired");
+    super(message || "TonMinimumRequired");
   }
 }
 
@@ -24,7 +24,7 @@ export class TonMinimumRequired extends Error {
 export class TonExcessFee extends Error {
   override name = "TonExcessFee";
   constructor(message?: string) {
-    super(message ?? "TonExcessFee");
+    super(message || "TonExcessFee");
   }
 }
 
@@ -34,6 +34,6 @@ export class TonExcessFee extends Error {
 export class TonNotEnoughBalanceInParentAccount extends Error {
   override name = "TonNotEnoughBalanceInParentAccount";
   constructor(message?: string) {
-    super(message ?? "TonNotEnoughBalanceInParentAccount");
+    super(message || "TonNotEnoughBalanceInParentAccount");
   }
 }
