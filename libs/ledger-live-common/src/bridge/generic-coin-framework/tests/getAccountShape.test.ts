@@ -1125,6 +1125,79 @@ describe("genericGetAccountShape", () => {
       ]);
     });
 
+    test("propagates stake.details.shares to delegation.shares as BigNumber, omits when absent", async () => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 200n, locked: 0n });
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 200n },
+        {
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "s-shares",
+            address: "0xabc",
+            delegate: "0xvalidator",
+            state: "active",
+            asset: { type: "native" },
+            amount: 100n,
+            details: { shares: 999n },
+          },
+        },
+        {
+          asset: { type: "native" },
+          value: 50n,
+          stake: {
+            uid: "s-noshares",
+            address: "0xabc",
+            delegate: "0xvalidator2",
+            state: "active",
+            asset: { type: "native" },
+            amount: 50n,
+          },
+        },
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: unknown[], newOps: unknown[]) => newOps);
+      cleanedOperationMock.mockImplementation((op: unknown) => op);
+      chainSpecificGetAccountShapeMock.mockImplementation(() => {});
+
+      const getShape = genericGetAccountShape("mainnet", "zero_gravity");
+      const result = await getShape(
+        {
+          address: "0xtest",
+          initialAccount: undefined,
+          currency: { id: "zero_gravity", name: "0G", family: "evm" },
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          stakingResources: expect.objectContaining({
+            delegations: [
+              {
+                validatorAddress: "0xvalidator",
+                amount: new BigNumber(100),
+                pendingRewards: new BigNumber(0),
+                status: "bonded",
+                shares: new BigNumber(999),
+              },
+              {
+                validatorAddress: "0xvalidator2",
+                amount: new BigNumber(50),
+                pendingRewards: new BigNumber(0),
+                status: "bonded",
+              },
+            ],
+          }),
+        }),
+      );
+    });
+
     test("usesStakingPositions: surfaces raw Stake[] preserving uid prefixes; no stakingResources", async () => {
       getSyncHashMock.mockReturnValue("sync-hash");
       extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
