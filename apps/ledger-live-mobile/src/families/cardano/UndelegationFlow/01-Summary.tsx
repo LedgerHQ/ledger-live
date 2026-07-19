@@ -103,7 +103,7 @@ export default function UndelegationSummary({ navigation, route }: Props) {
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, bridge, transaction]);
 
-  const hasNotEnoughtBalanceError = (bridgeError as Error).name === "CardanoNotEnoughFunds";
+  const hasNotEnoughtBalanceError = bridgeError?.name === "CardanoNotEnoughFunds";
 
   return (
     <SafeAreaView
