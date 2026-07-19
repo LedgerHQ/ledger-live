@@ -1,25 +1,34 @@
 export class InvalidAddressBecauseAlreadyDelegated extends Error {
   override name = "InvalidAddressBecauseAlreadyDelegated";
+  constructor(message?: string) {
+    super(message ?? "InvalidAddressBecauseAlreadyDelegated");
+  }
 }
 export class UnsupportedTransactionMode extends Error {
   override name = "UnsupportedTransactionMode";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message);
+    super(message ?? "UnsupportedTransactionMode");
     if (fields) Object.assign(this, fields);
   }
 }
 export class UnsupportedOperationKind extends Error {
   override name = "UnsupportedOperationKind";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message);
+    super(message ?? "UnsupportedOperationKind");
     if (fields) Object.assign(this, fields);
   }
 }
 export class MustDelegateBeforeStaking extends Error {
   override name = "MustDelegateBeforeStaking";
+  constructor(message?: string) {
+    super(message ?? "MustDelegateBeforeStaking");
+  }
 }
 export class TezosNotEnoughStaked extends Error {
   override name = "TezosNotEnoughStaked";
+  constructor(message?: string) {
+    super(message ?? "TezosNotEnoughStaked");
+  }
 }
 
 // Staking with a new delegate is rejected by the protocol while an unfinalizable unstake request

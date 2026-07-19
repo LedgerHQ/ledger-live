@@ -4,7 +4,7 @@
 export class StellarHashSigningNotEnabledError extends Error {
   override name = "StellarHashSigningNotEnabledError";
   constructor(message?: string, fields?: Record<string, unknown>, options?: { cause?: unknown }) {
-    super(message);
+    super(message ?? "StellarHashSigningNotEnabledError");
     if (fields) Object.assign(this, fields);
     if (options?.cause !== undefined) Object.assign(this, { cause: options.cause });
   }
@@ -18,7 +18,7 @@ export class StellarHashSigningNotEnabledError extends Error {
 export class StellarDataParsingFailedError extends Error {
   override name = "StellarDataParsingFailedError";
   constructor(message?: string, fields?: Record<string, unknown>, options?: { cause?: unknown }) {
-    super(message);
+    super(message ?? "StellarDataParsingFailedError");
     if (fields) Object.assign(this, fields);
     if (options?.cause !== undefined) Object.assign(this, { cause: options.cause });
   }
@@ -30,7 +30,7 @@ export class StellarDataParsingFailedError extends Error {
 export class StellarUserRefusedError extends Error {
   override name = "StellarUserRefusedError";
   constructor(message?: string, fields?: Record<string, unknown>, options?: { cause?: unknown }) {
-    super(message);
+    super(message ?? "StellarUserRefusedError");
     if (fields) Object.assign(this, fields);
     if (options?.cause !== undefined) Object.assign(this, { cause: options.cause });
   }
@@ -42,7 +42,7 @@ export class StellarUserRefusedError extends Error {
 export class StellarDataTooLargeError extends Error {
   override name = "StellarDataTooLargeError";
   constructor(message?: string, fields?: Record<string, unknown>, options?: { cause?: unknown }) {
-    super(message);
+    super(message ?? "StellarDataTooLargeError");
     if (fields) Object.assign(this, fields);
     if (options?.cause !== undefined) Object.assign(this, { cause: options.cause });
   }

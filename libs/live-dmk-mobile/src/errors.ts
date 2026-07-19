@@ -1,7 +1,7 @@
 export class PairingFailed extends Error {
   override name = "PairingFailed";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message);
+    super(message ?? "PairingFailed");
     if (fields) Object.assign(this, fields);
   }
 }
@@ -9,7 +9,7 @@ export class PairingFailed extends Error {
 export class PeerRemovedPairing extends Error {
   override name = "PeerRemovedPairing";
   constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message);
+    super(message ?? "PeerRemovedPairing");
     if (fields) Object.assign(this, fields);
   }
 }

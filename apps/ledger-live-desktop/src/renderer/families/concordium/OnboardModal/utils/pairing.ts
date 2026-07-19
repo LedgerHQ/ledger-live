@@ -22,7 +22,7 @@ export function shouldRetryPairing(error: unknown, retryCount: number): boolean 
     return false;
   }
 
-  return error?.name === "ConcordiumPairingExpiredError";
+  return (error as { name?: string })?.name === "ConcordiumPairingExpiredError";
 }
 
 export type PairingStateUpdate = {

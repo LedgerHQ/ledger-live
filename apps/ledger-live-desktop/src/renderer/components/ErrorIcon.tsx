@@ -13,28 +13,31 @@ export type ErrorIconProps = {
 const ErrorIcon = ({ error, size = 44 }: ErrorIconProps) => {
   if (!error) return null;
 
-  if (error?.name === "DeviceNotOnboarded") {
+  if ((error as { name?: string })?.name === "DeviceNotOnboarded") {
     return <InfoCircle size={size} />;
   }
 
   if (
-    error?.name === "UserRefusedFirmwareUpdate" ||
-    error?.name === "UserRefusedAllowManager" ||
-    error?.name === "UserRefusedOnDevice" ||
-    error?.name === "UserRefusedAddress" ||
-    error?.name === "LanguageInstallRefusedOnDevice" ||
-    error?.name === "ImageDoesNotExistOnDevice" ||
-    error?.name === "ImageLoadRefusedOnDevice" ||
-    error?.name === "UserRefusedDeviceNameChange"
+    (error as { name?: string })?.name === "UserRefusedFirmwareUpdate" ||
+    (error as { name?: string })?.name === "UserRefusedAllowManager" ||
+    (error as { name?: string })?.name === "UserRefusedOnDevice" ||
+    (error as { name?: string })?.name === "UserRefusedAddress" ||
+    (error as { name?: string })?.name === "LanguageInstallRefusedOnDevice" ||
+    (error as { name?: string })?.name === "ImageDoesNotExistOnDevice" ||
+    (error as { name?: string })?.name === "ImageLoadRefusedOnDevice" ||
+    (error as { name?: string })?.name === "UserRefusedDeviceNameChange"
   ) {
     return <IconsLegacy.InfoMedium size={size} color="primary.c80" />;
   }
 
-  if (error?.name === "SwapGenericAPIError" || error?.name === "NoSuchAppOnProvider") {
+  if (
+    (error as { name?: string })?.name === "SwapGenericAPIError" ||
+    (error as { name?: string })?.name === "NoSuchAppOnProvider"
+  ) {
     return <CrossCircle size={size} />;
   }
 
-  if (error?.name === "ManagerDeviceLockedError") {
+  if ((error as { name?: string })?.name === "ManagerDeviceLockedError") {
     return <Lock size={size} />;
   }
 

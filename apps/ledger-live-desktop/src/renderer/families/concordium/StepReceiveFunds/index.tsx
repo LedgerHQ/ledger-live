@@ -147,7 +147,7 @@ const StepReceiveFunds = ({
     } catch (err) {
       // Trusted-metadata-service failures (network/5xx) are transient — route
       // to the fallback UI instead of the hard error screen.
-      if (err?.name === "ConcordiumTrustedMetadataServiceError") {
+      if ((err as { name?: string })?.name === "ConcordiumTrustedMetadataServiceError") {
         onChangeAddressVerified(false, null);
       } else if (err instanceof Error) {
         onChangeAddressVerified(false, err);

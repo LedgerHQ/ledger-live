@@ -1,5 +1,8 @@
 export class WalletAuthError extends Error {
   override name = "WalletAuthError";
+  constructor(message?: string) {
+    super(message ?? "WalletAuthError");
+  }
 }
 
 export class WalletAuthNoCredentialsError extends WalletAuthError {

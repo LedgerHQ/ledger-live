@@ -17,7 +17,10 @@ export default function OnboardError({ error, context }: Props) {
 }
 
 function resolveMessageKey(error: Error | null, context: "onboard" | "create"): string {
-  if (error?.name === "UserRefusedOnDevice" || error?.name === "LockedDeviceError") {
+  if (
+    (error as { name?: string })?.name === "UserRefusedOnDevice" ||
+    (error as { name?: string })?.name === "LockedDeviceError"
+  ) {
     return error?.message ?? "";
   }
 
