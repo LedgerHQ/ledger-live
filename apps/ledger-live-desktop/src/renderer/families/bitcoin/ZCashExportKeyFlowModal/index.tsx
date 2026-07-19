@@ -61,7 +61,7 @@ const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
   };
 
   const handleUfvkChanged = (ufvk: string, error?: Error | undefined | null) => {
-    if ((error as Error).name === "UserRefusedOnDevice") {
+    if (error?.name === "UserRefusedOnDevice") {
       logger.critical(error);
     }
     setUfvkExportError(error);

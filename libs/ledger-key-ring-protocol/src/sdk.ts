@@ -26,7 +26,6 @@ import getApi from "./api";
 import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-ledger-key-ring-protocol/Crypto";
 import { log } from "@ledgerhq/logs";
 import {
-  LedgerAPI4xx,
   TrustchainAlreadyInitialized,
   TrustchainAlreadyInitializedWithOtherSeed,
   TrustchainEjected,
@@ -450,11 +449,11 @@ export class SDK implements TrustchainSDK {
       })
       .catch(e => {
         if (
-          e instanceof LedgerAPI4xx &&
-          (e.message.includes("Not a member of trustchain") ||
-            e.message.includes("You are not member"))
+          (e as { name?: string }).name === "LedgerAPI4xx" &&
+          ((e as Error).message.includes("Not a member of trustchain") ||
+            (e as Error).message.includes("You are not member"))
         ) {
-          throw new TrustchainEjected(e.message);
+          throw new TrustchainEjected((e as Error).message);
         }
         throw e;
       });
