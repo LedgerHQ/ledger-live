@@ -28,10 +28,9 @@ export const DeviceLockedCheckDrawer = ({ isOpen, device, onDeviceUnlocked, onCl
   const isLocked = isLockedResult.type === IsDeviceLockedResultType.locked;
   const isUnlocked = isLockedResult.type === IsDeviceLockedResultType.unlocked;
   const isError = isLockedResult.type === IsDeviceLockedResultType.error;
-  const isPeerRemovedPairingError =
-    isError && (isLockedResult.error as Error).name === "PeerRemovedPairing";
+  const isPeerRemovedPairingError = isError && isLockedResult.error?.name === "PeerRemovedPairing";
   const isAlreadySendingApduError =
-    isError && (isLockedResult.error as Error).name === "AlreadySendingApduError";
+    isError && isLockedResult.error?.name === "AlreadySendingApduError";
   const isOtherError = isError && !isPeerRemovedPairingError && !isAlreadySendingApduError;
   const isLockedStateCannotBeDetermined =
     isLockedResult.type === IsDeviceLockedResultType.lockedStateCannotBeDetermined;

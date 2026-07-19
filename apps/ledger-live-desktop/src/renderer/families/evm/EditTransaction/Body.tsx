@@ -171,7 +171,7 @@ const Body = ({
   }, []);
 
   const handleTransactionError = useCallback((error: Error) => {
-    if ((error as Error).name !== "UserRefusedOnDevice") {
+    if (error?.name !== "UserRefusedOnDevice") {
       logger.critical(error);
     }
     setTransactionError(error);

@@ -57,7 +57,7 @@ const StepAmount = ({
 }: StepProps) => {
   invariant(account && transaction, "account and transaction required");
   const notEnoughFundsError =
-    status.errors.amount && (status.errors.amount as Error).name === "NotEnoughBalance";
+    status.errors.amount && status.errors.amount?.name === "NotEnoughBalance";
 
   return (
     <Box flow={1}>

@@ -47,10 +47,7 @@ function ConnectDevice({ navigation, route }: SignRawTransactionConnectDevicePro
         navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
       } catch (error) {
         if (
-          !(
-            (error as Error).name === "UserRefusedOnDevice" ||
-            (error as Error).name === "TransactionRefusedOnDevice"
-          )
+          !(error?.name === "UserRefusedOnDevice" || error?.name === "TransactionRefusedOnDevice")
         ) {
           logger.critical(error as Error);
         }

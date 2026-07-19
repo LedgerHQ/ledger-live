@@ -22,7 +22,7 @@ export function useOnTrustchainRefreshNeeded(
         const newTrustchain = await trustchainSdk.restoreTrustchain(trustchain, memberCredentials);
         dispatch(setTrustchain(newTrustchain));
       } catch (e) {
-        if ((e as Error).name === "TrustchainEjected") {
+        if (e?.name === "TrustchainEjected") {
           dispatch(resetTrustchainStore());
           track("ledgersync_deactivated");
         }

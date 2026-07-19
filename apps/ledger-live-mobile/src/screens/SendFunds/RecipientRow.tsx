@@ -47,7 +47,7 @@ const RecipientRow = ({
           >
             <TranslatedError error={error || warning} />
           </LText>
-          {(error as Error).name === "AddressesSanctionedError" && (
+          {error?.name === "AddressesSanctionedError" && (
             <LText style={[styles.warningBox]} color="alert">
               <TranslatedError error={error} field="description" />
             </LText>

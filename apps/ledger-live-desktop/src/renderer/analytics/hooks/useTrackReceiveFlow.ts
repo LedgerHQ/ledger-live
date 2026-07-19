@@ -86,7 +86,7 @@ export const useTrackReceiveFlow = ({
       track("Device locked", defaultPayload, isTrackingEnabled);
     }
 
-    if ((verifyAddressError as Error).name === "UserRefusedAddress") {
+    if (verifyAddressError?.name === "UserRefusedAddress") {
       // user refused to confirm address
       track("Address confirmation rejected", defaultPayload, isTrackingEnabled);
     }

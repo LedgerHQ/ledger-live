@@ -55,8 +55,7 @@ const DomainServiceRecipientInput = ({
   );
   const domainErrorHandled = useMemo(
     () =>
-      (domainError?.error as Error).name === "InvalidDomain" ||
-      (domainError?.error as Error).name === "NoResolution",
+      domainError?.error?.name === "InvalidDomain" || domainError?.error?.name === "NoResolution",
     [domainError],
   );
 
@@ -124,9 +123,9 @@ const DomainServiceRecipientInput = ({
         domainError={domainError}
         domainErrorHandled={domainErrorHandled}
         isForwardResolution={isForwardResolution}
-        noLink={(error as Error).name === "AddressesSanctionedError"}
+        noLink={error?.name === "AddressesSanctionedError"}
       />
-      {(error as Error).name === "AddressesSanctionedError" ? (
+      {error?.name === "AddressesSanctionedError" ? (
         <>
           <LText
             testID="send-recipient-error-description"

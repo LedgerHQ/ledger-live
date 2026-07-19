@@ -48,11 +48,7 @@ const RecipientFieldBase = ({
         autoFocus={autoFocus}
         withQrCode={!status.recipientIsReadOnly}
         readOnly={status.recipientIsReadOnly}
-        error={
-          hideError || (recipientError as Error).name === "RecipientRequired"
-            ? null
-            : recipientError
-        }
+        error={hideError || recipientError?.name === "RecipientRequired" ? null : recipientError}
         warning={recipientWarning}
         value={value}
         onChange={onChange}

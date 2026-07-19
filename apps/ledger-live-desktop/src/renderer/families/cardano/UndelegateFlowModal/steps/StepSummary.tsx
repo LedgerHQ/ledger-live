@@ -29,7 +29,7 @@ function StepSummary(props: StepProps) {
   const { estimatedFees, errors, warnings } = status;
   const { feeTooHigh } = warnings;
   const displayError = errors.amount?.message ? errors.amount : "";
-  const notEnoughFundsError = error && (error as Error).name === "CardanoNotEnoughFunds";
+  const notEnoughFundsError = error && error?.name === "CardanoNotEnoughFunds";
 
   const accountUnit = useMaybeAccountUnit(account);
   if (!account || !transaction || !account.cardanoResources.delegation) return null;

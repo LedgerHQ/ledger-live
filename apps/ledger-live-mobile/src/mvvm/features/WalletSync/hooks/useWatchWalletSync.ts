@@ -145,8 +145,8 @@ export function useWatchWalletSync(): WalletSyncUserState {
 
   useEffect(() => {
     if (walletSyncError) {
-      if ((walletSyncError as Error).name === "TrustchainNotAllowed") resetLedgerSync();
-      if ((walletSyncError as Error).name === "TrustchainEjected") resetLedgerSync();
+      if (walletSyncError?.name === "TrustchainNotAllowed") resetLedgerSync();
+      if (walletSyncError?.name === "TrustchainEjected") resetLedgerSync();
     }
   }, [dispatch, resetLedgerSync, walletSyncError]);
 

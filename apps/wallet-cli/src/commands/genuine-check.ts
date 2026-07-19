@@ -27,7 +27,7 @@ function mapGenuineCheckError(error: unknown): unknown {
   if (isCounterfeitError(error)) {
     return new NonGenuineDeviceError();
   }
-  if ((error as Error).name === "UserRefusedAllowManager") {
+  if (error?.name === "UserRefusedAllowManager") {
     return new WalletCliDeviceError({ code: "rejected", context: "open_app" }, { cause: error });
   }
   if (error instanceof DeviceOnDashboardExpected) {

@@ -140,7 +140,7 @@ const WalletSyncManage = () => {
               key={index}
               disabled={
                 props.id === "manageKey"
-                  ? hasError && (error as Error).name === "TrustchainNotFound"
+                  ? hasError && error?.name === "TrustchainNotFound"
                     ? false
                     : hasError
                   : hasError

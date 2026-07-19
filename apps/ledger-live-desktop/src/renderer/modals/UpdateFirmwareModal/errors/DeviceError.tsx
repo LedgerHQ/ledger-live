@@ -27,21 +27,18 @@ const DeviceCancel = ({
   const onCloseReload = useCallback(() => {
     onDrawerClose();
 
-    if (
-      (error as Error).name === "UserRefusedFirmwareUpdate" &&
-      shouldReloadManagerOnCloseIfUpdateRefused
-    ) {
+    if (error?.name === "UserRefusedFirmwareUpdate" && shouldReloadManagerOnCloseIfUpdateRefused) {
       navigate("/manager/reload");
       setDrawer();
     }
   }, [error, navigate, onDrawerClose, setDrawer, shouldReloadManagerOnCloseIfUpdateRefused]);
 
-  const isUserRefusedFirmwareUpdate = (error as Error).name === "UserRefusedFirmwareUpdate";
-  const isDeviceLockedError = (error as Error).name === "LockedDeviceError";
+  const isUserRefusedFirmwareUpdate = error?.name === "UserRefusedFirmwareUpdate";
+  const isDeviceLockedError = error?.name === "LockedDeviceError";
   const isRestoreStepRefusedOnDevice =
-    (error as Error).name === "ImageLoadRefusedOnDevice" ||
-    (error as Error).name === "ImageCommitRefusedOnDevice" ||
-    (error as Error).name === "LanguageInstallRefusedOnDevice";
+    error?.name === "ImageLoadRefusedOnDevice" ||
+    error?.name === "ImageCommitRefusedOnDevice" ||
+    error?.name === "LanguageInstallRefusedOnDevice";
   const isRetryableError =
     isUserRefusedFirmwareUpdate || isDeviceLockedError || isRestoreStepRefusedOnDevice;
 

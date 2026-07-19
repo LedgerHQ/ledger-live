@@ -58,9 +58,9 @@ const UpdateModal = ({
   const withFinal = useMemo(() => hasFinalFirmware(firmware.final), [firmware]);
   const [cancel, setCancel] = useState<boolean>(false);
 
-  const isDisconnectedDeviceError = (err as Error).name === "DisconnectedDevice";
+  const isDisconnectedDeviceError = err?.name === "DisconnectedDevice";
   const isDisconnectedDeviceDuringOperationError =
-    (err as Error).name === "DisconnectedDeviceDuringOperation";
+    err?.name === "DisconnectedDeviceDuringOperation";
   const isDeviceDisconnected =
     isDisconnectedDeviceError ||
     isDisconnectedDeviceDuringOperationError ||

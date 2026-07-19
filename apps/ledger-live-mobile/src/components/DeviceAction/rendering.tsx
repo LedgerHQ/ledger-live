@@ -597,9 +597,9 @@ export function renderError({
   currencyName?: string;
   hasExportLogButton?: boolean;
 }) {
-  if ((error as Error).name === "LockedDeviceError") {
+  if (error?.name === "LockedDeviceError") {
     return renderLockedDeviceError({ t, onRetry, device });
-  } else if ((error as Error).name === "PeerRemovedPairing") {
+  } else if (error?.name === "PeerRemovedPairing") {
     // User needs to forget the device on their phone settings
     const productName = device ? getDeviceModel(device?.modelId).productName : "Ledger Device";
     return (
@@ -623,10 +623,10 @@ export function renderError({
       const getCTA = (error: Error, hasRetry: boolean): CTA => {
         if (
           isInvalidGetFirmwareMetadataResponseError(error) ||
-          (error as Error).name === "FirmwareNotRecognized"
+          error?.name === "FirmwareNotRecognized"
         ) {
           return "OpenExperimentalSettings";
-        } else if ((error as Error).name !== "PeerRemovedPairing" && hasRetry) {
+        } else if (error?.name !== "PeerRemovedPairing" && hasRetry) {
           return "Retry";
         }
         return "None";
@@ -682,11 +682,7 @@ export function renderError({
             }
           };
           return (
-            <Flex
-              alignSelf="stretch"
-              mb={0}
-              mt={(error as Error).name === "BluetoothRequired" ? 0 : 8}
-            >
+            <Flex alignSelf="stretch" mb={0} mt={error?.name === "BluetoothRequired" ? 0 : 8}>
               <StyledButton
                 event="DeviceActionErrorRetry"
                 type="main"
@@ -704,7 +700,7 @@ export function renderError({
     };
     return (
       <Wrapper>
-        {(error as Error).name === "UnsupportedFeatureError" ? (
+        {error?.name === "UnsupportedFeatureError" ? (
           <TrackScreen category="Unsupported Feature" name="Error: App Unavailable" />
         ) : null}
         <GenericErrorView

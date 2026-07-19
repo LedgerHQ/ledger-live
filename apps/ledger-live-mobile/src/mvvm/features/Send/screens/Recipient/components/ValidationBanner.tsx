@@ -52,7 +52,7 @@ export function ValidationBanner(props: ValidationBannerProps) {
 
   if (!error) return null;
 
-  if (excludeRecipientRequired && (error as Error).name === "RecipientRequired") return null;
+  if (excludeRecipientRequired && error?.name === "RecipientRequired") return null;
 
   if (!translatedError) return null;
 

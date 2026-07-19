@@ -521,8 +521,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   // level instead of being an exception here.
   if (imageRemoveRequested) {
     if (error) {
-      const refused = (error as Error).name === "UserRefusedOnDevice";
-      const noImage = (error as Error).name === "ImageDoesNotExistOnDevice";
+      const refused = error?.name === "UserRefusedOnDevice";
+      const noImage = error?.name === "ImageDoesNotExistOnDevice";
       if (refused || noImage) {
         return renderError({
           t,
@@ -640,33 +640,30 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     // into another handled case.
     if (
       device &&
-      ((error as Error).name === "DeviceNotOnboarded" ||
-        ((error as Error).name === "TransportStatusError" &&
+      (error?.name === "DeviceNotOnboarded" ||
+        (error?.name === "TransportStatusError" &&
           ((error as Error).message.includes("0x6d06") ||
             (error as Error).message.includes("0x6d07"))))
     ) {
       return renderDeviceNotOnboarded({ t, device, navigation });
     }
 
-    if ((error as Error).name === "LatestFirmwareVersionRequired") {
+    if (error?.name === "LatestFirmwareVersionRequired") {
       return <RequiredFirmwareUpdate navigation={navigation} device={selectedDevice} />;
     }
 
-    if ((error as Error).name === "UnsupportedFeatureError") {
+    if (error?.name === "UnsupportedFeatureError") {
       return <UnsupportedFeatureComponent error={error} />;
     }
 
-    if (
-      (error as Error).name === "NoSuchAppOnProvider" &&
-      device?.modelId === DeviceModelId.nanoS
-    ) {
+    if (error?.name === "NoSuchAppOnProvider" && device?.modelId === DeviceModelId.nanoS) {
       // This should be only happening for Nano S devices, but in order to make sure we don't miss any
       // use case for other devices we keep the check and will consider to remove it later after complete
       // checks.
       return <NanoSNotSupportedComponent />;
     }
 
-    if ((error as Error).name === "UserRefusedDeviceNameChange") {
+    if (error?.name === "UserRefusedDeviceNameChange") {
       return renderError({
         t,
         navigation,

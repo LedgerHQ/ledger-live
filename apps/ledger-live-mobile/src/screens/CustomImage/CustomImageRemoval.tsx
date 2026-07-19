@@ -46,7 +46,7 @@ export function CustomImageRemoval({ route }: NavigationProps) {
 
   const onError = useCallback(
     (error: Error) => {
-      if ((error as Error).name === "ImageDoesNotExistOnDevice") {
+      if (error?.name === "ImageDoesNotExistOnDevice") {
         setDeviceHasImage?.(false);
       }
       setError(error);
@@ -75,7 +75,7 @@ export function CustomImageRemoval({ route }: NavigationProps) {
             <Flex flex={1} justifyContent="center">
               <GenericErrorView error={error} hasExportLogButton={false} />
             </Flex>
-            {(error as Error).name !== "ImageDoesNotExistOnDevice" && (
+            {error?.name !== "ImageDoesNotExistOnDevice" && (
               <Button type="main" size="large" onPress={handleTryAgain} my={4}>
                 {t("common.tryAgain")}
               </Button>

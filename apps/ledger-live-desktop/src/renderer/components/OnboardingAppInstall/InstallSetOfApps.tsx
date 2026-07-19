@@ -58,7 +58,7 @@ const InstallSetOfApps = ({
   } = status;
 
   useEffect(() => {
-    if ((error as Error).name === "UserRefusedAllowManager") {
+    if (error?.name === "UserRefusedAllowManager") {
       onCancel();
     } else if (onError && error) {
       onError(error);

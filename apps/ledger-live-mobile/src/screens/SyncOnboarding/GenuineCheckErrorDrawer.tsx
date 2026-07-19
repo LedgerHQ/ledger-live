@@ -64,7 +64,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   // Depending from where the device was not recognized we can a FirmwareNotRecognized or a simple Error
   const isNotFoundEntity =
     error &&
-    ((error as Error).name === "FirmwareNotRecognized" ||
+    (error?.name === "FirmwareNotRecognized" ||
       (error instanceof Error && error.message === "not found entity"));
 
   const onGoToSettings = useCallback(() => {
@@ -85,7 +85,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   const screenName = isNotFoundEntity
     ? "Error: Device OS version not recognized"
     : error
-      ? `Error: ${isDmkError(error) ? error._tag : (error as Error).name}`
+      ? `Error: ${isDmkError(error) ? error._tag : error?.name}`
       : "Error: unknown error";
 
   const handleRetry = () => {
@@ -140,7 +140,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
         />
         <Button
           type="main"
-          mt={(error as Error).name === "BluetoothRequired" ? 6 : 8}
+          mt={error?.name === "BluetoothRequired" ? 6 : 8}
           mb={7}
           size={"large"}
           onPress={handleRetry}

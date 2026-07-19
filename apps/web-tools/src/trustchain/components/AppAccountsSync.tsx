@@ -148,7 +148,7 @@ export default function AppAccountsSync({
         const newTrustchain = await trustchainSdk.restoreTrustchain(trustchain, memberCredentials);
         setTrustchain(newTrustchain);
       } catch (e) {
-        if ((e as Error).name === "TrustchainEjected") {
+        if (e?.name === "TrustchainEjected") {
           setTrustchain(null);
         }
       }

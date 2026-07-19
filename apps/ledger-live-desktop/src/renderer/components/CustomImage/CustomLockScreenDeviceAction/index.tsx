@@ -42,10 +42,7 @@ const action = createAction(getEnv("MOCK") ? mockedEventEmitter : customLockScre
 const mockedDevice = { deviceId: "", modelId: DeviceModelId.stax, wired: true };
 
 function checkIfIsRefusedOnStaxError(e: unknown): boolean {
-  return (
-    (e as Error).name === "ImageLoadRefusedOnDevice" ||
-    (e as Error).name === "ImageCommitRefusedOnDevice"
-  );
+  return e?.name === "ImageLoadRefusedOnDevice" || e?.name === "ImageCommitRefusedOnDevice";
 }
 
 const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props => {

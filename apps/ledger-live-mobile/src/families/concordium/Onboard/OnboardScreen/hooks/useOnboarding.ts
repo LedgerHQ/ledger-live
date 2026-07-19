@@ -85,11 +85,11 @@ export function useOnboarding(
             message: error instanceof Error ? error.message : String(error),
           });
           unsubscribe();
-          if ((error as Error).name === "LockedDeviceError") {
+          if (error?.name === "LockedDeviceError") {
             setCreateStatus(CreateStatus.DEVICE_LOCKED);
           } else if (
-            (error as Error).name === "ConcordiumSessionExpiredError" ||
-            (error as Error).name === "ConcordiumPairingExpiredError"
+            error?.name === "ConcordiumSessionExpiredError" ||
+            error?.name === "ConcordiumPairingExpiredError"
           ) {
             onSessionExpired();
           } else {

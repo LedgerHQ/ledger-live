@@ -136,7 +136,7 @@ export const useDeviceSectionViewModel = (): DeviceSectionViewModel => {
   }, []);
 
   const onDeviceActionError = useCallback((error: Error) => {
-    if ((error as Error).name === "BluetoothRequired") {
+    if (error?.name === "BluetoothRequired") {
       setSelectedDevice(null);
     }
   }, []);

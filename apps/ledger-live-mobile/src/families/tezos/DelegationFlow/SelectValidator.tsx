@@ -171,7 +171,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   invariant(transaction, "transaction is undefined");
   let error: Error | null = bridgeError || status.errors.recipient;
 
-  if ((error as Error).name === "RecipientRequired") {
+  if (error?.name === "RecipientRequired") {
     error = null;
   }
 

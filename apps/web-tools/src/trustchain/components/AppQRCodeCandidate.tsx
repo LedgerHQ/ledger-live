@@ -53,7 +53,7 @@ export function AppQRCodeCandidate({
           return true;
         })
         .catch(e => {
-          if ((e as Error).name === "InvalidDigitsError") {
+          if (e?.name === "InvalidDigitsError") {
             alert("Invalid digits");
             return;
           }

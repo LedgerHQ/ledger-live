@@ -94,7 +94,7 @@ export default function VoteAmount({ navigation, route }: Props) {
   const error = amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
 
-  const isRevokingWithFeesError = (error as Error).name === "NotEnoughBalance";
+  const isRevokingWithFeesError = error?.name === "NotEnoughBalance";
 
   return (
     <>

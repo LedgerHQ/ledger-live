@@ -36,7 +36,7 @@ export const DmkBleDevicePairing = ({
   let content;
 
   const needsToForgetDevice = useMemo(() => {
-    return (pairingError as Error).name === "PeerRemovedPairing";
+    return pairingError?.name === "PeerRemovedPairing";
   }, [pairingError]);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export const DmkBleDevicePairing = ({
 
   if (isPaired) {
     content = <BleDevicePaired device={device} productName={productName} />;
-  } else if ((pairingError as Error).name === "PeerRemovedPairing") {
+  } else if (pairingError?.name === "PeerRemovedPairing") {
     content = (
       <BleForgetDeviceDrawer
         isOpen={needsToForgetDevice}
@@ -55,7 +55,7 @@ export const DmkBleDevicePairing = ({
         onRetry={onRetry}
       />
     );
-  } else if (pairingError && (pairingError as Error).name !== "LockedDeviceError") {
+  } else if (pairingError && pairingError?.name !== "LockedDeviceError") {
     content = (
       <BleFailedPairing productName={productName} onRetry={onRetry} onOpenHelp={onOpenHelp} />
     );

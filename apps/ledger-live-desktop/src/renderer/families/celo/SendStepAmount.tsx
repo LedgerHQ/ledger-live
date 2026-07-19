@@ -8,8 +8,7 @@ export const FEES_BANNER_TESTID = "celo-send-fees-error-banner";
 const SendStepAmount = (props: StepProps) => {
   const { status, error, bridgePending } = props;
   const feesError = status.errors.fees;
-  const showFeesBanner =
-    !error && !bridgePending && (feesError as Error).name === "NotEnoughBalanceFees";
+  const showFeesBanner = !error && !bridgePending && feesError?.name === "NotEnoughBalanceFees";
 
   return (
     <>

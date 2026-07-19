@@ -491,8 +491,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     return renderAllowLanguageInstallation({ modelId, type, t });
   }
   if (imageRemoveRequested) {
-    const refused = (error as Error).name === "UserRefusedOnDevice";
-    const noImage = (error as Error).name === "ImageDoesNotExistOnDevice";
+    const refused = error?.name === "UserRefusedOnDevice";
+    const noImage = error?.name === "ImageDoesNotExistOnDevice";
     if (error) {
       if (refused || noImage) {
         return renderError({
@@ -594,9 +594,9 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   if (!isLoading && error) {
     const e = error as unknown;
     if (
-      (e as Error).name === "ManagerNotEnoughSpaceError" ||
-      (e as Error).name === "OutdatedApp" ||
-      (e as Error).name === "UpdateYourApp"
+      e?.name === "ManagerNotEnoughSpaceError" ||
+      e?.name === "OutdatedApp" ||
+      e?.name === "UpdateYourApp"
     ) {
       return renderError({
         t,
@@ -605,7 +605,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       });
     }
 
-    if ((e as Error).name === "LatestFirmwareVersionRequired") {
+    if (e?.name === "LatestFirmwareVersionRequired") {
       return renderError({
         t,
         error,
@@ -619,7 +619,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       return <DeviceNotOnboardedErrorComponent t={t} device={device} location={location} />;
     }
 
-    if ((e as Error).name === "NoSuchAppOnProvider") {
+    if (e?.name === "NoSuchAppOnProvider") {
       return renderError({
         t,
         error,
@@ -647,18 +647,18 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     // All the error rendering needs to be unified, the same way we do for ErrorIcon
     // not handled here.
     if (
-      (error as Error).name === "UserRefusedFirmwareUpdate" ||
-      (error as Error).name === "UserRefusedAllowManager" ||
-      (error as Error).name === "UserRefusedOnDevice" ||
-      (error as Error).name === "UserRefusedAddress" ||
-      (error as Error).name === "UserRefusedDeviceNameChange" ||
-      (error as Error).name === "LanguageInstallRefusedOnDevice"
+      error?.name === "UserRefusedFirmwareUpdate" ||
+      error?.name === "UserRefusedAllowManager" ||
+      error?.name === "UserRefusedOnDevice" ||
+      error?.name === "UserRefusedAddress" ||
+      error?.name === "UserRefusedDeviceNameChange" ||
+      error?.name === "LanguageInstallRefusedOnDevice"
     ) {
       withExportLogs = false;
       warning = true;
     }
 
-    if ((error as Error).name === "UserRefusedDeviceNameChange") {
+    if (error?.name === "UserRefusedDeviceNameChange") {
       withDescription = false;
     }
     return renderError({

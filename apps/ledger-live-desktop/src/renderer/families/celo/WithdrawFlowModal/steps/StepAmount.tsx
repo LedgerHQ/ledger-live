@@ -50,9 +50,7 @@ export const StepAmountFooter = ({
 
 const isTransactionRefuse = (error: unknown) => {
   return (
-    error &&
-    ((error as Error).name === "UserRefusedOnDevice" ||
-      (error as Error).name === "TransactionRefusedOnDevice")
+    error && (error?.name === "UserRefusedOnDevice" || error?.name === "TransactionRefusedOnDevice")
   );
 };
 

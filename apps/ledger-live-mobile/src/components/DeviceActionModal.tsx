@@ -73,7 +73,7 @@ export default function DeviceActionModal<Req, Stt, Res>({
 
   const onDeviceActionError = useCallback(
     (e: Error) => {
-      if ((e as Error).name === "PeerRemovedPairing" || isCounterfeitError(e)) {
+      if (e?.name === "PeerRemovedPairing" || isCounterfeitError(e)) {
         setShowInfo(false);
       }
       onError?.(e);

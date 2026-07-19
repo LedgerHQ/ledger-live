@@ -67,15 +67,15 @@ const RecipientFieldDomainService = <T extends Transaction, TS extends Transacti
 
   const domainErrorHandled = useMemo(() => {
     if (domainError) {
-      if (!isForwardResolution && (domainError.error as Error).name === "NoResolution") {
+      if (!isForwardResolution && domainError.error?.name === "NoResolution") {
         return false;
       }
 
       if (
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        (domainError.error as Error).name === "NoResolution" ||
+        domainError.error?.name === "NoResolution" ||
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        (domainError.error as Error).name === "InvalidDomain"
+        domainError.error?.name === "InvalidDomain"
       ) {
         return true;
       }

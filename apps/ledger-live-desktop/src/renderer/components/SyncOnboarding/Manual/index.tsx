@@ -200,7 +200,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
 
   // A fatal error during polling triggers directly an error message
   useEffect(() => {
-    if ((fatalError as Error).name === "UnexpectedBootloader") {
+    if (fatalError?.name === "UnexpectedBootloader") {
       setIsBootloader(true);
     } else if (fatalError) {
       setIsPollingOn(false);
@@ -212,7 +212,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
 
-    if (allowedError && (allowedError as Error).name !== "LockedDeviceError") {
+    if (allowedError && allowedError?.name !== "LockedDeviceError") {
       timeout = setTimeout(() => {
         setIsPollingOn(false);
         setTroubleshootingDrawerOpen(true);

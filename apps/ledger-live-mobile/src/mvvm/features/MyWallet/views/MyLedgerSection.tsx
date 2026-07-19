@@ -85,7 +85,7 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
   };
 
   const onError = (error: Error) => {
-    if ((error as Error).name === "BluetoothRequired") {
+    if (error?.name === "BluetoothRequired") {
       setDevice(undefined);
     }
   };

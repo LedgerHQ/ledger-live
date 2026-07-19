@@ -24,8 +24,7 @@ function ValidateError({ error, onClose, onRetry }: Props) {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const managerAppName =
-    (error as Error).name === "UpdateYourApp" ? error.managerAppName : undefined;
+  const managerAppName = error?.name === "UpdateYourApp" ? error.managerAppName : undefined;
 
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
 
@@ -60,7 +59,7 @@ function ValidateError({ error, onClose, onRetry }: Props) {
       ]}
     >
       <View style={styles.container}>
-        {(error as Error).name === "LatestFirmwareVersionRequired" && lastConnectedDevice ? (
+        {error?.name === "LatestFirmwareVersionRequired" && lastConnectedDevice ? (
           <RequiredFirmwareUpdate navigation={navigation} device={lastConnectedDevice} />
         ) : (
           <>

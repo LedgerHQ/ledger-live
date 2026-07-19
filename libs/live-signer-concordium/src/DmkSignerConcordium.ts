@@ -20,7 +20,8 @@ import {
   ConcordiumInvalidMaxFeeError,
   ConcordiumTrustedMetadataServiceError,
 } from "@ledgerhq/coin-concordium/types";
-import { LockedDeviceError, UserRefusedOnDevice } from "./errors";
+import { LockedDeviceError } from "@ledgerhq/hw-transport/errors";
+import { UserRefusedOnDevice } from "./errors";
 import {
   type SignerConcordium,
   SignerConcordiumBuilder,

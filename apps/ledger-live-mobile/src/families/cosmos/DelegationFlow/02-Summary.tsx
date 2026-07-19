@@ -222,8 +222,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         </View>
       </View>
       <View style={styles.footer}>
-        {status.errors.sender &&
-        (status.errors.sender as Error).name === "AddressesSanctionedError" ? (
+        {status.errors.sender && status.errors.sender?.name === "AddressesSanctionedError" ? (
           <>
             <Text color="alert">
               <TranslatedError error={status.errors.sender} />

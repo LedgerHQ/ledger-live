@@ -104,7 +104,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
   const error = amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
   const hasErrors = hasStatusError(status);
-  const hasErrorDuringUnbonding = (error as Error).name === "NotEnoughBalance";
+  const hasErrorDuringUnbonding = error?.name === "NotEnoughBalance";
 
   return (
     <>

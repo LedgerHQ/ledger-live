@@ -168,9 +168,7 @@ const RepairModal = ({
 
   const onClose = !cancellable && isLoading ? undefined : onReject;
   const disableRepair =
-    isLoading ||
-    !selectedOption ||
-    !!(error && (error as Error).name === "MCUNotGenuineToDashboard");
+    isLoading || !selectedOption || !!(error && error?.name === "MCUNotGenuineToDashboard");
 
   return (
     <Modal

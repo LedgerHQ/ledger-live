@@ -161,7 +161,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
       <View style={styles.footer}>
         <View style={styles.errors}>
           {!!(error && error instanceof Error) && <ErrorAndWarning error={error} />}
-          {error && (error as Error).name === "AddressesSanctionedError" && (
+          {error && error?.name === "AddressesSanctionedError" && (
             <SupportLinkError error={error} type="alert" />
           )}
           {!!(warning && warning instanceof Error) && <ErrorAndWarning warning={warning} />}

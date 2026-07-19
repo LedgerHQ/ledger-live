@@ -49,9 +49,9 @@ const StepTransfer: React.FC<Props> = props => {
 
   // User refused loading the image OR committing the image
   const userRefusedOnDevice =
-    (error as Error).name === "ImageLoadRefusedOnDevice" ||
+    error?.name === "ImageLoadRefusedOnDevice" ||
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    (error as Error).name === "ImageCommitRefusedOnDevice";
+    error?.name === "ImageCommitRefusedOnDevice";
 
   return (
     <StepContainer

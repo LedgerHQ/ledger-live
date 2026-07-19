@@ -113,7 +113,7 @@ export function usePendingTransferProposalsViewModel(
           reason: "canton-pending-transaction-action",
         });
       } catch (error) {
-        if ((error as Error).name === "TopologyChangeError") {
+        if (error?.name === "TopologyChangeError") {
           setModal(prev => ({ ...prev, isOpen: false }));
           if (device) {
             handleTopologyChangeError(dispatch, {

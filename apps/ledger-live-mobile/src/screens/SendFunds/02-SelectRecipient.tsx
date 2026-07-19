@@ -50,7 +50,7 @@ import LText from "~/components/LText";
 import SupportLinkError from "~/components/SupportLinkError";
 
 const withoutHiddenError = (error: Error): Error | null =>
-  (error as Error).name === "RecipientRequired" ? null : error;
+  error?.name === "RecipientRequired" ? null : error;
 
 type Navigation = BaseComposite<
   StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSelectRecipient>

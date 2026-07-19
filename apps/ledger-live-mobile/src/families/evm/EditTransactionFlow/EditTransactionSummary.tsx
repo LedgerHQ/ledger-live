@@ -105,7 +105,7 @@ function EditTransactionSummaryContent({ navigation, route, transactionToUpdate 
   const firstError = errors[Object.keys(errors)[0]] ?? bridgeError ?? undefined;
 
   let footerAction;
-  if (firstError && (firstError as Error).name === "NotEnoughGas") {
+  if (firstError && firstError?.name === "NotEnoughGas") {
     footerAction = isCurrencySupported(currencyOrToken as CryptoCurrency) ? (
       <Button
         event="SummaryBuyEth"

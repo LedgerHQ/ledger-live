@@ -137,8 +137,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const error = Object.values(status.errors)[0];
   const feeError = status.errors.fee;
   const isUndelagating = transaction.model.kind === "stake.undelegate";
-  const hasErrorWhileDesactivating =
-    isUndelagating && (feeError as Error).name === "NotEnoughBalance";
+  const hasErrorWhileDesactivating = isUndelagating && feeError?.name === "NotEnoughBalance";
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>

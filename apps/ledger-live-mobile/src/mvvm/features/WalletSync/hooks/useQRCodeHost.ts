@@ -88,14 +88,14 @@ export function useQRCodeHost({ currentOption }: Props) {
 
     // Don't use retry here because it always uses a delay despite setting it to 0
     onError: e => {
-      if ((e as Error).name === "QRCodeWSClosed") {
+      if (e?.name === "QRCodeWSClosed") {
         const { time } = e as unknown as { time: number };
         if (time >= MIN_TIME_TO_REFRESH) startQRCodeProcessing();
       }
-      if ((e as Error).name === "InvalidDigitsError") {
+      if (e?.name === "InvalidDigitsError") {
         setCurrentStep(Steps.SyncError);
       }
-      if ((e as Error).name === "NoTrustchainInitialized") {
+      if (e?.name === "NoTrustchainInitialized") {
         setCurrentStep(Steps.UnbackedError);
       }
     },

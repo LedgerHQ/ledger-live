@@ -461,7 +461,7 @@ export async function runFullSwapPipeline(
     const errorMessageWithCause = rawErrorMessage + causeSuffix;
 
     const completeExchangeError: CompleteExchangeError =
-      (error as Error).name === "CompleteExchangeError"
+      error?.name === "CompleteExchangeError"
         ? (error as CompleteExchangeError)
         : new CompleteExchangeError("INIT", rawErrorName, errorMessageWithCause);
 

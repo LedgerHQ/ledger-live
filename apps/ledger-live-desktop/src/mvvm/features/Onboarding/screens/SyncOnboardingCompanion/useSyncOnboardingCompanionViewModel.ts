@@ -412,7 +412,7 @@ const useSyncOnboardingCompanionViewModel = ({
   useEffect(() => {
     let desyncTimer: NodeJS.Timeout | null = null;
 
-    if (allowedError && (allowedError as Error).name !== "LockedDeviceError") {
+    if (allowedError && allowedError?.name !== "LockedDeviceError") {
       setIsDesyncOverlayOpen(true);
       desyncTimer = setTimeout(handleDesyncTimerRunsOut, desyncTimeout);
     } else {

@@ -52,7 +52,7 @@ const GenericErrorView = ({
   const subtitleError = outerError ? error : null;
 
   // In case bluetooth was necessary but the `RequiresBle` component could not be used directly
-  if ((error as Error).name === "BluetoothRequired") {
+  if (error?.name === "BluetoothRequired") {
     return (
       <>
         <BluetoothDisabled />

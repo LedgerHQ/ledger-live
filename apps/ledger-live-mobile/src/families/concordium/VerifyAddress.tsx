@@ -122,7 +122,7 @@ export default function ConcordiumReceiveVerifyAddress({ navigation, route }: Pr
           // malformed response). Route to Confirmation with verified: false —
           // the native "skipped verification" path that shows the cached
           // address with the security modal prompt.
-          if ((error as Error).name === "ConcordiumTrustedMetadataServiceError") {
+          if (error?.name === "ConcordiumTrustedMetadataServiceError") {
             navigation.navigate(ScreenName.ReceiveConfirmation, {
               ...route.params,
               verified: false,
@@ -178,7 +178,7 @@ export default function ConcordiumReceiveVerifyAddress({ navigation, route }: Pr
 
   // Retrying a terminal address-verification refusal would just hit the same
   // 4xx again — hide the button for that class of error.
-  const canRetry = (error as Error).name !== "ConcordiumAddressVerificationFailedError";
+  const canRetry = error?.name !== "ConcordiumAddressVerificationFailedError";
 
   return (
     <SafeAreaViewFixed isFlex edges={["left", "right", "bottom"]}>

@@ -178,7 +178,7 @@ const InstallSetOfApps = ({
         onClose={onWrappedError}
         onModalHide={onWrappedError}
       >
-        {(error as Error).name === "UserRefusedAllowManager" ? (
+        {error?.name === "UserRefusedAllowManager" ? (
           <TrackScreen
             category="App restoration cancelled on device"
             refreshSource={false}

@@ -60,7 +60,7 @@ export function useRemoveMember({ device, member }: Props): DrawerProps {
 
         transitionToNextScreen(newTrustchain);
       } catch (error) {
-        if ((error as Error).name === "TrustchainNotAllowed") {
+        if (error?.name === "TrustchainNotAllowed") {
           setScene({ kind: SceneKind.KeyError });
         } else if (error instanceof Error) {
           setScene({ kind: SceneKind.GenericError, error });

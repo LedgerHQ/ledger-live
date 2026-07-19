@@ -95,7 +95,7 @@ function StakingAmount({ navigation, route }: Props) {
   }
 
   const errorDuringUnstaking =
-    (error as Error).name === "NotEnoughBalance" && transaction.mode === "undelegate";
+    error?.name === "NotEnoughBalance" && transaction.mode === "undelegate";
 
   return (
     <View

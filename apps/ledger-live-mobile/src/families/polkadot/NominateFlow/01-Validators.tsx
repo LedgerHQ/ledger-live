@@ -244,8 +244,8 @@ function NominateSelectValidator({ navigation, route }: Props) {
   const error = getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
   const maxSelected = validators.length === MAX_NOMINATIONS;
-  const maybeChill = (error as Error).name === "PolkadotValidatorsRequired";
-  const ignoreError = (error as Error).name === "PolkadotValidatorsRequired" && !nominations.length;
+  const maybeChill = error?.name === "PolkadotValidatorsRequired";
+  const ignoreError = error?.name === "PolkadotValidatorsRequired" && !nominations.length;
   // Do not show error on first nominate
   return (
     <SafeAreaView

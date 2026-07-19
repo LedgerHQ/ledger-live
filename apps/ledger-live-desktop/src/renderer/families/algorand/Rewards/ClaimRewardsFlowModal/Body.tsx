@@ -107,7 +107,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     onChangeStepId("connectDevice");
   }, [onChangeStepId]);
   const handleTransactionError = useCallback((error: Error) => {
-    if ((error as Error).name !== "UserRefusedOnDevice") {
+    if (error?.name !== "UserRefusedOnDevice") {
       logger.critical(error);
     }
     setTransactionError(error);

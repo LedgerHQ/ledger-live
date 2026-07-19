@@ -408,7 +408,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     if (
       updateStep === "languageRestore" &&
       installLanguageState.error &&
-      (installLanguageState.error as Error).name === "LanguageInstallRefusedOnDevice"
+      installLanguageState.error?.name === "LanguageInstallRefusedOnDevice"
     ) {
       return installLanguageState.error;
     }
@@ -416,8 +416,8 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     if (
       updateStep === "imageRestore" &&
       loadImageState.error &&
-      ((loadImageState.error as Error).name === "ImageLoadRefusedOnDevice" ||
-        (loadImageState.error as Error).name === "ImageCommitRefusedOnDevice")
+      (loadImageState.error?.name === "ImageLoadRefusedOnDevice" ||
+        loadImageState.error?.name === "ImageCommitRefusedOnDevice")
     ) {
       return loadImageState.error;
     }
@@ -425,7 +425,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     if (
       updateStep === "appsRestore" &&
       restoreAppsState.error &&
-      (restoreAppsState.error as Error).name === "UserRefusedAllowManager"
+      restoreAppsState.error?.name === "UserRefusedAllowManager"
     ) {
       return restoreAppsState.error;
     }

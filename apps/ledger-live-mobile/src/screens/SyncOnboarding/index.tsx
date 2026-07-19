@@ -231,7 +231,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   // A fatal error during polling triggers directly an error message (or the auto repair)
   useEffect(() => {
     if (isFocused && fatalError) {
-      if ((fatalError as Error).name === "UnexpectedBootloader") {
+      if (fatalError?.name === "UnexpectedBootloader") {
         log("SyncOnboardingIndex", "Device in bootloader mode. Trying to auto repair", {
           fatalError,
         });
@@ -249,7 +249,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
 
-    if (isFocused && allowedError && (allowedError as Error).name !== "LockedDeviceError") {
+    if (isFocused && allowedError && allowedError?.name !== "LockedDeviceError") {
       log("SyncOnboardingIndex", "Polling allowed error", { allowedError });
 
       timeout = setTimeout(() => {

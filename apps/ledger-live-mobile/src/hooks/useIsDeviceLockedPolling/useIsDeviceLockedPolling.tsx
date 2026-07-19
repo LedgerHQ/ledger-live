@@ -32,7 +32,7 @@ export function isLockedDevicePolling(
       map<unknown, IsDeviceLockedResult>(() => ({ type: IsDeviceLockedResultType.unlocked })),
       catchError((error: Error) => {
         if (
-          (error as Error).name === "TransportStatusError" &&
+          error?.name === "TransportStatusError" &&
           [
             StatusCodes.CLA_NOT_SUPPORTED,
             StatusCodes.CLA_NOT_SUPPORTED_BOOTLOADER,
@@ -49,8 +49,8 @@ export function isLockedDevicePolling(
         }
 
         if (
-          (error as Error).name === "LockedDeviceError" ||
-          ((error as Error).name === "TransportStatusError" &&
+          error?.name === "LockedDeviceError" ||
+          (error?.name === "TransportStatusError" &&
             (error as TransportStatusError).statusCode === StatusCodes.LOCKED_DEVICE)
         ) {
           return of<IsDeviceLockedResult>({ type: IsDeviceLockedResultType.locked });

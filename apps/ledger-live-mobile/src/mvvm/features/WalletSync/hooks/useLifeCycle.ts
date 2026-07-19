@@ -29,10 +29,10 @@ export const useLifeCycle = () => {
   };
 
   function handleError(error: Error) {
-    if ((error as Error).name === "TrustchainEjected") reset();
-    if ((error as Error).name === "TrustchainNotAllowed") reset();
+    if (error?.name === "TrustchainEjected") reset();
+    if (error?.name === "TrustchainNotAllowed") reset();
 
-    if ((error as Error).name === "TrustchainOutdated") restoreTrustchain();
+    if (error?.name === "TrustchainOutdated") restoreTrustchain();
 
     const errorToHandle = Object.entries(includesErrorActions).find(([err, _action]) =>
       error.message.includes(err),

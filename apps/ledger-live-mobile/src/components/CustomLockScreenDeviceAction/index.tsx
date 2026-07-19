@@ -116,12 +116,11 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   }, [CLSError]);
   const isError = !!error;
   const refusedOnDevice =
-    (error as Error).name === "ImageLoadRefusedOnDevice" ||
-    (error as Error).name === "ImageCommitRefusedOnDevice";
+    error?.name === "ImageLoadRefusedOnDevice" || error?.name === "ImageCommitRefusedOnDevice";
 
   useEffect(() => {
     // Once transferred the old image is wiped, we need to clear it from the data.
-    if ((error as Error).name === "ImageCommitRefusedOnDevice") {
+    if (error?.name === "ImageCommitRefusedOnDevice") {
       dispatch(clearLastSeenCustomImage());
     }
   }, [dispatch, error]);

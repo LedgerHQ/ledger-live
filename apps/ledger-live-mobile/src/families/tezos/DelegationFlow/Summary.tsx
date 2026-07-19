@@ -190,7 +190,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
     });
   }, [navigation, route.params, account.id, transaction, status]);
 
-  const notEnoughBalance = (status.errors.amount as Error).name === "NotEnoughBalanceToDelegate";
+  const notEnoughBalance = status.errors.amount?.name === "NotEnoughBalanceToDelegate";
   const isUndelagating = route.params?.mode === "undelegate";
   const hasNotEnoughBalanceWhenUndelegating = notEnoughBalance && isUndelagating;
 

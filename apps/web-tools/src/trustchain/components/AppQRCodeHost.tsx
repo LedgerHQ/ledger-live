@@ -41,7 +41,7 @@ export function AppQRCodeHost({
       initialTrustchainId: trustchain.rootId,
     })
       .catch(e => {
-        if ((e as Error).name === "InvalidDigitsError") {
+        if (e?.name === "InvalidDigitsError") {
           return;
         }
         setError(e);

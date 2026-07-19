@@ -21,14 +21,14 @@ export const RestoreStepDenied = ({
   stepDeniedError: Error;
 }) => {
   const analyticsDrawerName =
-    (stepDeniedError as Error).name === "LanguageInstallRefusedOnDevice"
+    stepDeniedError?.name === "LanguageInstallRefusedOnDevice"
       ? `Error: the language change was cancelled on the device`
-      : (stepDeniedError as Error).name === "ImageLoadRefusedOnDevice" ||
-          (stepDeniedError as Error).name === "ImageCommitRefusedOnDevice"
+      : stepDeniedError?.name === "ImageLoadRefusedOnDevice" ||
+          stepDeniedError?.name === "ImageCommitRefusedOnDevice"
         ? `Error: the restoration of lock screen picture was cancelled on the device`
-        : (stepDeniedError as Error).name === "UserRefusedAllowManager"
+        : stepDeniedError?.name === "UserRefusedAllowManager"
           ? `Error: the restoration of apps was cancelled on the device`
-          : `Error: ${(stepDeniedError as Error).name}`;
+          : `Error: ${stepDeniedError?.name}`;
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
       <TrackScreen category={analyticsDrawerName} refreshSource={false} />

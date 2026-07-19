@@ -34,8 +34,7 @@ export function SigningBody({ device, action, request, onResult, onClose }: Sign
 
   if (signError) {
     const isUserRefused =
-      (signError as Error).name === "UserRefusedOnDevice" ||
-      (signError as Error).name === "TransactionRefusedOnDevice";
+      signError?.name === "UserRefusedOnDevice" || signError?.name === "TransactionRefusedOnDevice";
 
     return isUserRefused ? (
       <SignatureCancelledState onClose={onClose} onRetry={status.onRetry} />

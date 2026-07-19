@@ -56,15 +56,15 @@ function getErrorCode(error: unknown): string | undefined {
 function isDisconnectedError(error: unknown): boolean {
   return (
     error instanceof EmptyError ||
-    (error as Error).name === "DisconnectedDevice" ||
-    (error as Error).name === "DisconnectedDeviceDuringOperation"
+    error?.name === "DisconnectedDevice" ||
+    error?.name === "DisconnectedDeviceDuringOperation"
   );
 }
 
 function isLockedError(error: unknown): boolean {
   return (
-    (error as Error).name === "ManagerDeviceLocked" ||
-    (error as Error).name === "LockedDeviceError" ||
+    error?.name === "ManagerDeviceLocked" ||
+    error?.name === "LockedDeviceError" ||
     hasTag(error, "DeviceLockedError")
   );
 }
@@ -111,7 +111,7 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
   }
 
   // User-rejection / wrong-app / locked via legacy SW codes.
-  if ((error as Error).name === "TransportStatusError") {
+  if (error?.name === "TransportStatusError") {
     const state = classifyTransportStatusError(error as TransportStatusError, ctx);
     if (state) {
       return state;

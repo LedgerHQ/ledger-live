@@ -188,8 +188,8 @@ const ValidatorField = ({
   if (!status) return null;
   const error = getStatusError(status, "errors");
   const warning = getStatusError(status, "warnings");
-  const maybeChill = (error as Error).name === "PolkadotValidatorsRequired";
-  const ignoreError = (error as Error).name === "PolkadotValidatorsRequired" && !nominations.length; // Do not show error on first nominate
+  const maybeChill = error?.name === "PolkadotValidatorsRequired";
+  const ignoreError = error?.name === "PolkadotValidatorsRequired" && !nominations.length; // Do not show error on first nominate
 
   return (
     <>

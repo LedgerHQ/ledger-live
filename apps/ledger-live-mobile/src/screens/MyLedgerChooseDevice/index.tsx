@@ -87,7 +87,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
     // By setting back the device to `undefined` it gives back the responsibilities to those select components to check for the bluetooth requirements
     // and avoids a duplicated error drawers/messages.
     // The only drawback: the user has to select again their device once the bluetooth requirements are respected.
-    if ((error as Error).name === "BluetoothRequired") {
+    if (error?.name === "BluetoothRequired") {
       setDevice(undefined);
     }
   };

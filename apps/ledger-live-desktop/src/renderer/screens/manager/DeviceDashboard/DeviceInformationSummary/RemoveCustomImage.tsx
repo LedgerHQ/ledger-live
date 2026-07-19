@@ -39,14 +39,14 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose, onRemoved }) => {
   const onError = useCallback(
     (error: Error) => {
       setError(error);
-      if ((error as Error).name === "ImageDoesNotExistOnDevice") {
+      if (error?.name === "ImageDoesNotExistOnDevice") {
         dispatch(clearLastSeenCustomImage());
       }
     },
     [dispatch],
   );
 
-  const showRetry = error && (error as Error).name !== "ImageDoesNotExistOnDevice";
+  const showRetry = error && error?.name !== "ImageDoesNotExistOnDevice";
 
   return (
     <Flex

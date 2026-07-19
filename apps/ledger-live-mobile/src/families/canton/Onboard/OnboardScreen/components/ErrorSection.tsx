@@ -43,7 +43,7 @@ function getErrorInfo(error: Error | null): ErrorInfo {
     };
   }
 
-  if ((error as Error).name === "UserRefusedOnDevice") {
+  if (error?.name === "UserRefusedOnDevice") {
     return {
       titleKey: `errors.${error.name}.title`,
       descriptionKey: `errors.${error.name}.description`,
@@ -52,7 +52,7 @@ function getErrorInfo(error: Error | null): ErrorInfo {
     };
   }
 
-  if ((error as Error).name === "LockedDeviceError") {
+  if (error?.name === "LockedDeviceError") {
     return {
       titleKey: `errors.${error.name}.title`,
       descriptionKey: `errors.${error.name}.description`,

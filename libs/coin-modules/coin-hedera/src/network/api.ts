@@ -1,5 +1,6 @@
-import { HederaAddAccountError, LedgerAPI4xx } from "../errors";
+import { HederaAddAccountError } from "../errors";
 import network from "@ledgerhq/live-network";
+import { LedgerAPI4xx } from "@ledgerhq/live-network/errors";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
 import BigNumber from "bignumber.js";
 import { encodeFunctionData, erc20Abi } from "viem";

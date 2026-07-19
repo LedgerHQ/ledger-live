@@ -95,8 +95,7 @@ function StakingAmount({ navigation, route }: Props) {
     behaviorParam = "padding";
   }
 
-  const errorDuringUnstaking =
-    (error as Error).name === "NotEnoughBalance" && transaction.mode === "unstake";
+  const errorDuringUnstaking = error?.name === "NotEnoughBalance" && transaction.mode === "unstake";
 
   return (
     <View

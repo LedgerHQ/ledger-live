@@ -49,12 +49,3 @@ export class ClaimRewardsFeesWarning extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
-
-export class LedgerAPI4xx extends Error {
-  override name = "LedgerAPI4xx";
-  status?: number;
-  constructor(message?: string, fields?: Record<string, unknown>) {
-    super(message);
-    if (fields) Object.assign(this, fields);
-  }
-}

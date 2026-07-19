@@ -73,16 +73,16 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
           transitionToNextScreen(trustchainResult);
         }
       } catch (error) {
-        if ((error as Error).name === "TrustchainNotAllowed") {
+        if (error?.name === "TrustchainNotAllowed") {
           setScene({ kind: SceneKind.KeyError });
-        } else if ((error as Error).name === "TrustchainAlreadyInitialized") {
+        } else if (error?.name === "TrustchainAlreadyInitialized") {
           setScene({ kind: SceneKind.AlreadySecuredSameSeed });
-        } else if ((error as Error).name === "TrustchainAlreadyInitializedWithOtherSeed") {
+        } else if (error?.name === "TrustchainAlreadyInitializedWithOtherSeed") {
           setScene({ kind: SceneKind.AlreadySecuredOtherSeed });
-        } else if ((error as Error).name === "NoTrustchainInitialized") {
+        } else if (error?.name === "NoTrustchainInitialized") {
           setScene({ kind: SceneKind.UnbackedError });
         } else if (error instanceof Error) {
-          if ((error as Error).name === "UserRefusedOnDevice") {
+          if (error?.name === "UserRefusedOnDevice") {
             track(AnalyticsEvents.LedgerSyncRejectedOnDevice, {
               page: "Ledger Sync",
               modelId: device?.modelId,

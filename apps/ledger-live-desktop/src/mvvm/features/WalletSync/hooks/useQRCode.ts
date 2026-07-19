@@ -66,17 +66,17 @@ export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
 
     // Don't use retry here because it always uses a delay despite setting it to 0
     onError(e) {
-      if ((e as Error).name === "QRCodeWSClosed") {
+      if (e?.name === "QRCodeWSClosed") {
         const { time } = e as unknown as { time: number };
         if (time >= MIN_TIME_TO_REFRESH) startQRCodeProcessing();
       }
-      if ((e as Error).name === "InvalidDigitsError") {
+      if (e?.name === "InvalidDigitsError") {
         dispatch(setFlow({ flow: Flow.Synchronize, step: Step.PinCodeError }));
       }
-      if ((e as Error).name === "NoTrustchainInitialized") {
+      if (e?.name === "NoTrustchainInitialized") {
         dispatch(setFlow({ flow: Flow.Synchronize, step: Step.UnbackedError }));
       }
-      if ((e as Error).name === "TrustchainAlreadyInitialized") {
+      if (e?.name === "TrustchainAlreadyInitialized") {
         dispatch(setFlow({ flow: Flow.Synchronize, step: Step.SynchronizeWithQRCode }));
       }
     },

@@ -13,7 +13,7 @@ export const TransactionErrorBanner = ({
     return <ErrorBanner error={new TransactionHasBeenValidatedError()} />;
   }
 
-  if ((errors.gasPrice as Error).name === "NotEnoughGas") {
+  if (errors.gasPrice?.name === "NotEnoughGas") {
     return <ErrorBanner error={errors.gasPrice} fallback={{ description: <></> }} />;
   }
 
