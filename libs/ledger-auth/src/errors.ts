@@ -25,7 +25,8 @@ export class WalletAuthSignatureError extends WalletAuthError {
   override name = "WalletAuthSignatureError";
 
   constructor(cause: unknown) {
-    super("Failed to sign auth challenge", { cause });
+    super("Failed to sign auth challenge");
+    this.cause = cause;
   }
 }
 
