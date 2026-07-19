@@ -25,7 +25,8 @@
   "ignoreUnimported": [
     "src/network/index.ts",
     "src/signer/signMessage.ts",
-    "src/supportedFeatures.ts"
+    "src/supportedFeatures.ts",
+    "src/errors.ts"
   ],
   "ignoreUnused": [
     "ripple-address-codec",

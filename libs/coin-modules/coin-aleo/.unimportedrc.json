@@ -22,7 +22,8 @@
   ],
   "ignoreUnimported": [
     "src/bridge/transaction.ts",
-    "src/bridge/buildOptimisticOperation.ts"
+    "src/bridge/buildOptimisticOperation.ts",
+    "src/errors.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",

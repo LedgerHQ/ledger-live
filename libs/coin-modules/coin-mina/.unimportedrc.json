@@ -20,7 +20,8 @@
     "src/test/helpers/msw-setup.ts",
     "src/supportedFeatures.ts",
     "src/logic/index.ts",
-    "src/test/testUtils.ts"
+    "src/test/testUtils.ts",
+    "src/errors.ts"
   ],
   "ignoreUnresolved": [
     "@jest/expect-utils",

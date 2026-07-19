@@ -182,7 +182,6 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/concordium-core": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
@@ -209,7 +208,8 @@
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@ledgerhq/hw-transport": "workspace:*"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

@@ -9,6 +9,9 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"],
-  "ignoreUnimported": []
+    "jest-util"
+  ],
+  "ignoreUnimported": [
+    "src/errors.ts"
+  ]
 }

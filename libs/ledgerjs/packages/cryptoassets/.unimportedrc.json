@@ -13,7 +13,8 @@
     "src/data/**",
     "src/**/*.test.ts",
     "src/cal-client/**",
-    "src/legacy/legacy-data.ts"
+    "src/legacy/legacy-data.ts",
+    "src/errors.ts"
   ],
   "ignoreUnused": [
     "zod",

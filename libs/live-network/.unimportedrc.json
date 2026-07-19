@@ -6,9 +6,12 @@
     "src/index.ts",
     "src/network.ts"
   ],
-  "ignoreUnimported": [],
+  "ignoreUnimported": [
+    "src/errors.ts"
+  ],
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"]
+    "jest-util"
+  ]
 }
