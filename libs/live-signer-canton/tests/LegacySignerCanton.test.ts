@@ -1,6 +1,6 @@
 import Canton from "@ledgerhq/hw-app-canton";
 import { LegacySignerCanton } from "../src/LegacySignerCanton";
-import { UpdateYourApp } from "@ledgerhq/live-common/errors";
+import { UpdateYourApp } from "../src/errors";
 import Transport from "@ledgerhq/hw-transport";
 
 const PATH = "44'/6767'/0'/0'/0'";

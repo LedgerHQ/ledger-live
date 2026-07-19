@@ -3,7 +3,7 @@ import type {
   BalanceOptions,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/live-common/errors";
+import { InvalidParameterError } from "@ledgerhq/errors";
 import { TypeRegistry, type GenericExtrinsic } from "@polkadot/types";
 import type { AnyTuple } from "@polkadot/types/types";
 import type { PolkadotConfig } from "../config";

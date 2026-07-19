@@ -3,7 +3,7 @@ import type {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/live-common/errors";
+import { InvalidParameterError } from "@ledgerhq/errors";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedCoinFrameworkOperation } from "../__tests__/fixtures/operation.fixture";
 import coinConfig from "../config";

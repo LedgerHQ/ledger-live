@@ -2,7 +2,7 @@
 import { BigNumber } from "bignumber.js";
 import { renderHook } from "tests/testSetup";
 import { FeeTooHigh } from "@ledgerhq/ledger-wallet-framework/errors";
-import { DustLimit } from "@ledgerhq/coin-bitcoin/errors";
+import { DustLimit } from "@ledgerhq/errors";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { useAmountScreenMessage } from "../useAmountScreenMessage";
 import { useTranslatedBridgeError } from "../../../Recipient/hooks/useTranslatedBridgeError";

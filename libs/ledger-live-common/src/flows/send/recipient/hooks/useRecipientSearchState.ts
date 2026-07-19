@@ -26,9 +26,9 @@ export function useRecipientSearchState({
   const bridgeSenderError = result.bridgeErrors?.sender;
 
   const isSelfTransferError =
-    (bridgeRecipientError as Error).name === "InvalidAddressBecauseDestinationIsAlsoSource";
+    bridgeRecipientError?.name === "InvalidAddressBecauseDestinationIsAlsoSource";
   const isBridgeInvalidAddress =
-    (bridgeRecipientError as Error).name === "InvalidAddress" && !isSelfTransferError;
+    bridgeRecipientError?.name === "InvalidAddress" && !isSelfTransferError;
 
   const hasValidatedAddress =
     result.status === "valid" || result.status === "ens_resolved" || result.status === "sanctioned";

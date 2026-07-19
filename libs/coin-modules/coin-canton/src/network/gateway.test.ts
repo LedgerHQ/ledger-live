@@ -1,4 +1,4 @@
-import { LedgerAPI4xx } from "@ledgerhq/live-common/errors";
+import { LedgerAPI4xx } from "@ledgerhq/live-network/errors";
 import network from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import coinConfig from "../config";

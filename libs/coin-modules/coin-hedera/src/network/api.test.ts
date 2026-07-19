@@ -1,4 +1,4 @@
-import { LedgerAPI4xx } from "@ledgerhq/live-common/errors";
+import { LedgerAPI4xx } from "@ledgerhq/live-network/errors";
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import { resolveConfig } from "../logic/utils";

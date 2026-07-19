@@ -44,7 +44,7 @@ export function isLockedDevicePolling(
           });
         }
 
-        if ((error as Error).name === "SendApduTimeoutError") {
+        if (error instanceof SendApduTimeoutError) {
           return of<IsDeviceLockedResult>({ type: IsDeviceLockedResultType.locked });
         }
 

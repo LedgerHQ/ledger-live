@@ -1,7 +1,7 @@
 import { AminoMsg, makeSignDoc, serializeSignDoc } from "@cosmjs/amino";
 import { Secp256k1, Secp256k1Signature, sha256 } from "@cosmjs/crypto";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import { ExpertModeRequired } from "@ledgerhq/live-common/errors";
+import { ExpertModeRequired } from "../errors";
 import { firstValueFrom, toArray } from "rxjs";
 import { buildSignRawOperation } from "./signRawOperation";
 import { CosmosAccount, RETURN_CODES } from "./types";

@@ -14,7 +14,7 @@ import type {
   Page,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { InvalidParameterError } from "@ledgerhq/live-common/errors";
+import { InvalidParameterError } from "@ledgerhq/errors";
 import { createApi } from "./index";
 import coinConfig, { type MultiversXCoinConfig } from "../config";
 import type { MultiversXNetworkApi } from "../network/api";

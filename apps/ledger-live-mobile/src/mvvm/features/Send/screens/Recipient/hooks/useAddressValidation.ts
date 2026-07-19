@@ -285,7 +285,7 @@ export function useAddressValidation({
     }));
 
     const filteredBridgeErrors: BridgeValidationErrors = { ...bridgeValidation.errors };
-    if (ensResolution && (filteredBridgeErrors.recipient as Error).name === "InvalidAddress") {
+    if (ensResolution && filteredBridgeErrors.recipient?.name === "InvalidAddress") {
       delete filteredBridgeErrors.recipient;
     }
 

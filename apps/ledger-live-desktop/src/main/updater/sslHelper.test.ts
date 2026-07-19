@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { UpdateIncorrectSig } from "@ledgerhq/live-common/errors";
+import { UpdateIncorrectSig } from "../../errors";
 import * as sslHelper from "./sslHelper";
 
 // Test keys and data for consistent testing

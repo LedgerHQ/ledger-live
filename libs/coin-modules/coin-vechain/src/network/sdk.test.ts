@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Operation } from "@ledgerhq/types-live";
-import { LedgerAPI4xx } from "@ledgerhq/live-common/errors";
+import { LedgerAPI4xx } from "@ledgerhq/live-network/errors";
 import {
   getAccount,
   getBlockRef,

@@ -1,4 +1,4 @@
-import { NetworkError } from "@ledgerhq/live-common/errors";
+import { NetworkError } from "../../errors";
 import { Config, getChainAPI } from ".";
 import { Connection, SendTransactionError } from "@solana/web3.js";
 
