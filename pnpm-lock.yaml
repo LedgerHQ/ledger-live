@@ -5587,13 +5587,10 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 3.6.0
       '@ledgerhq/concordium-core':
         specifier: workspace:^
         version: link:../../concordium-core
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/hw-transport
@@ -8319,9 +8316,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -8517,9 +8511,6 @@ importers:
 
   libs/domain-service:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
@@ -8825,9 +8816,6 @@ importers:
 
   libs/ledger-key-ring-protocol:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:*
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-ledger-key-ring-protocol':
         specifier: workspace:*
         version: link:../hw-ledger-key-ring-protocol
@@ -9750,9 +9738,6 @@ importers:
 
   libs/ledgerjs/packages/cryptoassets:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../../env
@@ -9896,9 +9881,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-algorand:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -9948,9 +9930,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-aptos:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10067,9 +10046,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-canton:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10174,9 +10150,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-cosmos:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10229,9 +10202,6 @@ importers:
       '@ledgerhq/domain-service':
         specifier: workspace:^
         version: link:../../../domain-service
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/evm-tools':
         specifier: workspace:^
         version: link:../../../evm-tools
@@ -10302,9 +10272,6 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.7.1
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10357,9 +10324,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-hedera:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10639,9 +10603,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-polkadot:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10685,9 +10646,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-solana:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10731,9 +10689,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-str:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10777,9 +10732,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@mysten/ledgerjs-hw-app-sui':
         specifier: ^0.8.0
         version: 0.8.0
@@ -11026,9 +10978,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../logs
@@ -11149,9 +11098,6 @@ importers:
 
   libs/ledgerjs/packages/hw-transport-node-speculos:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -11192,9 +11138,6 @@ importers:
 
   libs/ledgerjs/packages/hw-transport-node-speculos-http:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -11989,9 +11932,6 @@ importers:
 
   libs/live-network:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
