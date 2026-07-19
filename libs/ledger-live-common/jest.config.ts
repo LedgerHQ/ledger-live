@@ -125,6 +125,7 @@ const defaultConfig = {
 };
 
 export default {
+  forceExit: true,
   coverageProvider: "babel",
   globalSetup: process.env.UPDATE_BACKEND_MOCKS
     ? "<rootDir>/src/__tests__/test-helpers/bridgeSetupUpdateMocks.ts"
