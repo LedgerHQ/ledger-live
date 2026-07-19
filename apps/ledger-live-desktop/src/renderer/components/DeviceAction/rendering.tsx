@@ -25,6 +25,7 @@ import { WrongDeviceForAccount } from "@ledgerhq/ledger-wallet-framework/errors"
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { getNoticeType, getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
 import { useFeature } from "@features/platform-feature-flags";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -937,7 +938,7 @@ export const renderError = ({
   ) {
     return <FirmwareNotRecognizedErrorComponent onRetry={onRetry} />;
   } else if ((tmpError as Error).name === "CompleteExchangeError") {
-    if (tmpError.title === "userRefused") {
+    if ((tmpError as CompleteExchangeError).title === "userRefused") {
       tmpError = new TransactionRefusedOnDevice();
     }
   } else if (isDmkError(error) && error._tag === "DeviceDeprecationError") {
@@ -951,7 +952,7 @@ export const renderError = ({
   } else if ((tmpError as Error).name === "NoSuchAppOnProvider") {
     return (
       <NoSuchAppOnProviderErrorComponent
-        error={tmpError}
+        error={tmpError as Error}
         productName={getDeviceModel(device?.modelId as DeviceModelId)?.productName}
         learnMoreLink={learnMoreLink}
         learnMoreTextKey={learnMoreTextKey}

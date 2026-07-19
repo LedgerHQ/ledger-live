@@ -112,7 +112,7 @@ export function useGenuineCheckAction(): Action<ManagerRequest, ManagerState, Ma
           if (isCounterfeitError(error)) return throwError(() => error);
           if (isDeviceNotOnboardedError(error)) return throwError(() => error);
 
-          return throwError(() => new GenuineCheckFailed("", undefined, { cause: error }));
+          return throwError(() => new GenuineCheckFailed("", { cause: error }));
         }),
       );
     return createManagerAction(task);

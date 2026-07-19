@@ -8,6 +8,11 @@ type Props = {
 };
 class ServiceStatusWarning extends Error {
   override name = "ServiceStatusWarning";
+  description?: string;
+  constructor(message?: string, options?: ErrorOptions & { description?: string }) {
+    super(message, options);
+    this.description = options?.description;
+  }
 }
 const CurrencyDownStatusAlert = ({ currencies, hideStatusIncidents }: Props) => {
   const errors: Error[] = [];

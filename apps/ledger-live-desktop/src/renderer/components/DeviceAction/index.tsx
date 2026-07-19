@@ -582,7 +582,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     return renderInWrongAppForAccount({ t, onRetry });
   }
 
-  if (unresponsive || (error as Error).name === "TransportRaceCondition") {
+  if (unresponsive || error?.name === "TransportRaceCondition") {
     return renderError({
       t,
       error: new UnresponsiveDeviceError(),

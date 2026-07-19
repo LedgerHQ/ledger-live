@@ -17,11 +17,8 @@ export default function OnboardError({ error, context }: Props) {
 }
 
 function resolveMessageKey(error: Error | null, context: "onboard" | "create"): string {
-  if (
-    (error as Error).name === "UserRefusedOnDevice" ||
-    (error as Error).name === "LockedDeviceError"
-  ) {
-    return error.message;
+  if (error?.name === "UserRefusedOnDevice" || error?.name === "LockedDeviceError") {
+    return error?.message ?? "";
   }
 
   if (context === "create" && isAxiosError(error) && error.status === 429) {

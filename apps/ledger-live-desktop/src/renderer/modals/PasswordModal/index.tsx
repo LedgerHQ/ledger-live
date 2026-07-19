@@ -10,7 +10,7 @@ import PasswordForm from "./PasswordForm";
 import { setEncryptionKey, removeEncryptionKey, isEncryptionKeyCorrect } from "~/renderer/storage";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
 import { setHasPassword } from "~/renderer/actions/application";
-type MaybePasswordIncorrectError = ReturnType<typeof PasswordIncorrectError> | undefined | null;
+type MaybePasswordIncorrectError = PasswordIncorrectError | undefined | null;
 const PasswordModal = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();

@@ -111,11 +111,8 @@ const getStatusMessage = (status?: OnboardStatus): string => {
 };
 
 const getErrorMessage = (error: Error | null) => {
-  if (
-    (error as Error).name === "UserRefusedOnDevice" ||
-    (error as Error).name === "LockedDeviceError"
-  ) {
-    return <Trans i18nKey={error.message} />;
+  if (error?.name === "UserRefusedOnDevice" || error?.name === "LockedDeviceError") {
+    return <Trans i18nKey={error?.message} />;
   }
   return <Trans i18nKey="families.canton.addAccount.onboard.error" />;
 };
