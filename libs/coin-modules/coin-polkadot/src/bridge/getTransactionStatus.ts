@@ -77,7 +77,7 @@ const getSendTransactionStatus: AccountBridge<
     errors.amount = new AmountRequired();
   }
 
-  if ((errors.amount as Error).name !== "AmountRequired") {
+  if (errors.amount?.name !== "AmountRequired") {
     if (
       (!transaction.useAllAmount && account.spendableBalance.isZero()) ||
       totalSpent.gt(account.spendableBalance)
