@@ -60,7 +60,7 @@ export const useFromAmountStatusMessage = (
     const [relevantStatus] = statusEntries
       .filter(maybeError => maybeError instanceof Error)
       .filter(errorOrWarning => (errorOrWarning as Error).name !== "AmountRequired");
-    const isRelevantStatus = (relevantStatus as Error).name === "NotEnoughGas";
+    const isRelevantStatus = (relevantStatus as Error)?.name === "NotEnoughGas";
 
     // Skip gas validation for sponsored transactions since gas fees are covered by sponsor
 
@@ -80,7 +80,7 @@ export const useFromAmountStatusMessage = (
     }
 
     // convert to swap variation of error to display correct message to frontend.
-    if ((relevantStatus as Error).name === "FeeNotLoaded") {
+    if ((relevantStatus as Error)?.name === "FeeNotLoaded") {
       return new NotEnoughBalanceSwap();
     }
 
