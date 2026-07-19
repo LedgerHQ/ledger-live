@@ -107,7 +107,10 @@ const defaultConfig = {
       },
     ],
   },
-  transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],
+  transformIgnorePatterns: [
+    "/node_modules/(?!|@babel/runtime/helpers/esm/)",
+    "/node_modules/cross-sha256/",
+  ],
   moduleDirectories: ["node_modules", "cli/node_modules"],
   moduleNameMapper: {
     "^buffer$": "<rootDir>/jest.buffer-shim.js",
