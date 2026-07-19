@@ -23,7 +23,10 @@ export function useOnTrustchainRefreshNeeded(
         const newTrustchain = await trustchainSdk.restoreTrustchain(trustchain, memberCredentials);
         dispatch(setTrustchain(newTrustchain));
       } catch (e) {
-        if (e?.name === "TrustchainEjected" || e?.name === "TrustchainNotAllowed") {
+        if (
+          (e as { name?: string })?.name === "TrustchainEjected" ||
+          (e as { name?: string })?.name === "TrustchainNotAllowed"
+        ) {
           dispatch(resetTrustchainStore());
           track(AnalyticsEvents.LedgerSyncDeactivated);
         }

@@ -197,6 +197,7 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

@@ -70,7 +70,7 @@ export function useRemoveMember({ device, member }: Props) {
         transitionToNextScreen(newTrustchain);
       } catch (error) {
         if (error instanceof Error) setError(error);
-        if (error?.name === "TrustchainNotAllowed") {
+        if ((error as { name?: string })?.name === "TrustchainNotAllowed") {
           dispatch(setFlow({ flow: Flow.ManageInstances, step: Step.UnsecuredLedger }));
         }
       }

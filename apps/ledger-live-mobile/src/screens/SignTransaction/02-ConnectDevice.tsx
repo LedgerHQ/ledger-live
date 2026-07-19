@@ -55,7 +55,10 @@ function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps)
         navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
       } catch (error) {
         if (
-          !(error?.name === "UserRefusedOnDevice" || error?.name === "TransactionRefusedOnDevice")
+          !(
+            (error as { name?: string })?.name === "UserRefusedOnDevice" ||
+            (error as { name?: string })?.name === "TransactionRefusedOnDevice"
+          )
         ) {
           logger.critical(error as Error);
         }

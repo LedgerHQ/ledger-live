@@ -594,9 +594,9 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   if (!isLoading && error) {
     const e = error as unknown;
     if (
-      e?.name === "ManagerNotEnoughSpaceError" ||
-      e?.name === "OutdatedApp" ||
-      e?.name === "UpdateYourApp"
+      (e as { name?: string })?.name === "ManagerNotEnoughSpaceError" ||
+      (e as { name?: string })?.name === "OutdatedApp" ||
+      (e as { name?: string })?.name === "UpdateYourApp"
     ) {
       return renderError({
         t,
@@ -605,7 +605,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       });
     }
 
-    if (e?.name === "LatestFirmwareVersionRequired") {
+    if ((e as { name?: string })?.name === "LatestFirmwareVersionRequired") {
       return renderError({
         t,
         error,
@@ -619,7 +619,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       return <DeviceNotOnboardedErrorComponent t={t} device={device} location={location} />;
     }
 
-    if (e?.name === "NoSuchAppOnProvider") {
+    if ((e as { name?: string })?.name === "NoSuchAppOnProvider") {
       return renderError({
         t,
         error,

@@ -104,9 +104,11 @@ export function useAddMember({
 
         transitionToNextScreen(trustchainResult);
       } catch (error) {
-        if (error?.name === "TrustchainAlreadyInitialized") {
+        if ((error as { name?: string })?.name === "TrustchainAlreadyInitialized") {
           dispatch(setFlow({ flow: Flow.Synchronize, step: Step.AlreadySecuredSameSeed }));
-        } else if (error?.name === "TrustchainAlreadyInitializedWithOtherSeed") {
+        } else if (
+          (error as { name?: string })?.name === "TrustchainAlreadyInitializedWithOtherSeed"
+        ) {
           dispatch(setFlow({ flow: Flow.Synchronize, step: Step.AlreadySecuredOtherSeed }));
         } else {
           setError(error as Error);

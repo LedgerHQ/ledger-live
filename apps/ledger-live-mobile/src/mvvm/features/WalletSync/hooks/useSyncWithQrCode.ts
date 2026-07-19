@@ -70,26 +70,26 @@ export const useSyncWithQrCode = () => {
         onSyncFinished();
         return true;
       } catch (e) {
-        if (e?.name === "ScannedOldImportQrCode") {
+        if ((e as { name?: string })?.name === "ScannedOldImportQrCode") {
           setCurrentStep(Steps.ScannedOldImportQrCode);
           return;
-        } else if (e?.name === "ScannedInvalidQrCode") {
+        } else if ((e as { name?: string })?.name === "ScannedInvalidQrCode") {
           setCurrentStep(Steps.ScannedInvalidQrCode);
           return;
-        } else if (e?.name === "InvalidDigitsError") {
+        } else if ((e as { name?: string })?.name === "InvalidDigitsError") {
           setCurrentStep(Steps.SyncError);
           return;
-        } else if (e?.name === "NoTrustchainInitialized") {
+        } else if ((e as { name?: string })?.name === "NoTrustchainInitialized") {
           setCurrentStep(Steps.UnbackedError);
           return;
-        } else if (e?.name === "TrustchainAlreadyInitialized") {
+        } else if ((e as { name?: string })?.name === "TrustchainAlreadyInitialized") {
           if ((e as Error).message === trustchain?.rootId) {
             setCurrentStep(Steps.AlreadyBacked);
           } else {
             setCurrentStep(Steps.BackedWithDifferentSeeds);
           }
           return;
-        } else if (e?.name === "TrustchainAlreadyInitializedWithOtherSeed") {
+        } else if ((e as { name?: string })?.name === "TrustchainAlreadyInitializedWithOtherSeed") {
           setCurrentStep(Steps.BackedWithDifferentSeeds);
           return;
         }

@@ -368,13 +368,16 @@ export function useSignedTxHandler({
         });
       } catch (error) {
         if (
-          !(error?.name === "UserRefusedOnDevice" || error?.name === "TransactionRefusedOnDevice")
+          !(
+            (error as { name?: string })?.name === "UserRefusedOnDevice" ||
+            (error as { name?: string })?.name === "TransactionRefusedOnDevice"
+          )
         ) {
           logger.critical(error as Error);
         }
 
         if (
-          error?.name === "TransactionBroadcastError" &&
+          (error as { name?: string })?.name === "TransactionBroadcastError" &&
           route.name === ScreenName.SendConnectDevice
         ) {
           return (navigation as NativeStackNavigationProp<{ [key: string]: object }>).replace(

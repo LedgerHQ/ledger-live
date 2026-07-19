@@ -24,9 +24,9 @@ const ErrorDisplay = ({
   const { t } = useTranslation();
 
   const managerAppName =
-    error?.name === "ManagerNotEnoughSpaceError" ||
-    error?.name === "OutdatedApp" ||
-    error?.name === "UpdateYourApp"
+    (error as { name?: string })?.name === "ManagerNotEnoughSpaceError" ||
+    (error as { name?: string })?.name === "OutdatedApp" ||
+    (error as { name?: string })?.name === "UpdateYourApp"
       ? (error as unknown as { managerAppName: string }).managerAppName
       : undefined;
 
@@ -35,7 +35,7 @@ const ErrorDisplay = ({
     error,
     onRetry,
     managerAppName,
-    requireFirmwareUpdate: error?.name === "LatestFirmwareVersionRequired",
+    requireFirmwareUpdate: (error as { name?: string })?.name === "LatestFirmwareVersionRequired",
     withExportLogs,
     list,
     supportLink,

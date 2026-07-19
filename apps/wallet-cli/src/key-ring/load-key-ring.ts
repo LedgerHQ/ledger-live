@@ -56,7 +56,7 @@ export async function loadDomainKey(
     // The wallet-cli application stream was closed (deactivated from another device, or this member
     // was removed): restoreTrustchain rejects a closed stream with TrustchainEjected. Point the user
     // at the recovery path rather than surfacing the raw protocol error.
-    if (e?.name === "TrustchainEjected") {
+    if ((e as { name?: string })?.name === "TrustchainEjected") {
       throw new Error(
         "The wallet-cli application is no longer active on this Ledger Key Ring (deactivated " +
           "elsewhere, or this member was removed). Run `wallet-cli ring destroy` then " +

@@ -5587,7 +5587,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 3.6.0
+        version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/concordium-core':
         specifier: workspace:^
         version: link:../../concordium-core
@@ -5631,6 +5631,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup

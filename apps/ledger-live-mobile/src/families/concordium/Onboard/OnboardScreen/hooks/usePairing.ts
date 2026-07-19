@@ -72,7 +72,7 @@ export function usePairing(currency: CryptoCurrency, onPaired: (sessionTopic: st
         },
         error: (error: unknown) => {
           if (
-            error?.name === "ConcordiumPairingExpiredError" &&
+            (error as { name?: string })?.name === "ConcordiumPairingExpiredError" &&
             retryCountRef.current < MAX_EXPIRED_RETRIES
           ) {
             retryCountRef.current++;
