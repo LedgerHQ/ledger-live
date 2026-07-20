@@ -49,7 +49,6 @@ export function runSwapCrossAccountTest(
       const errorMessage =
         "Cross-account swaps are not currently supported. Please ensure your sending and receiving accounts are the same.";
       await performSwapUntilQuoteSelectionStep(fromAccount, toAccount, minAmount, true, true);
-      await app.swapLiveApp.selectSpecificProvider("failure on purpose");
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
       await app.swapLiveApp.verifySwapCrossAccountErrorMessageIsCorrect(errorMessage);
     });
