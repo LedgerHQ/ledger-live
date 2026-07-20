@@ -153,6 +153,7 @@ describe("identitiesSlice", () => {
       expect(state.userId.exportUserIdForPersistence()).toBe("legacy-user-1");
       expect(state.datadogId.exportDatadogIdForPersistence()).not.toBe(DUMMY_ID_STR);
       expect(state.datadogId).toBeInstanceOf(DatadogId);
+      expect(state.deviceIds).toEqual([]);
     });
   });
 
