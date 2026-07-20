@@ -2,6 +2,9 @@
 
 ## @ledgerhq/logs
 
+> \[!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Utility library that is used by all Ledger libraries to dispatch logs so we can deal with them in a unified way.
 
 ## API

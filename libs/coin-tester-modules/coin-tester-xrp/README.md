@@ -1,5 +1,8 @@
 # @ledgerhq/coin-tester-xrp
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Deterministic integration tester for the XRP family. Spins up a local rippled
 node in standalone mode via Docker and runs a single scenario through the
 coin-framework bridge that ships in production.

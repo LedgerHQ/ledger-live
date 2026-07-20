@@ -1,5 +1,8 @@
 # @features/platform-jest-config
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Shared jest configuration for `features/flow/*` packages.
 
 `createFlowJestConfig()` returns a dual-project jest config:

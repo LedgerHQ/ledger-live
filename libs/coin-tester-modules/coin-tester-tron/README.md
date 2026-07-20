@@ -1,5 +1,8 @@
 # @ledgerhq/coin-tester-tron
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Deterministic integration tester for `@ledgerhq/coin-tron`. Spins up a local
 `tronbox/tre` node in Docker and runs scenarios through both the legacy bridge
 (`@ledgerhq/coin-tron/bridge`) — the bridge that ships in production — and the

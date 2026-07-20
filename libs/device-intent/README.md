@@ -1,5 +1,8 @@
 # @ledgerhq/device-intent
 
+> [!CAUTION]
+> **Status: UNSTABLE** — The Device Intent Executor (DIE) pattern is actively rolling out across wallet flows; API may change.
+
 Shared types, helpers and the **Device Intent Executor** component for Ledger Wallet.
 
 See the [ADR: Device Intent Executor component](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6852083917) for the full design rationale.

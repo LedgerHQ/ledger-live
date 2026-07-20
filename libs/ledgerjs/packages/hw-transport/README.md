@@ -6,6 +6,9 @@
 
 ## @ledgerhq/hw-transport
 
+> \[!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/hw-transport` implements the generic interface of a Ledger Hardware Wallet transport.
 
 ## API

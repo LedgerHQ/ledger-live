@@ -1,5 +1,8 @@
 # @shared/schema-primitives
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Branded Zod value objects shared across the `domain/` layer. Provides common types so entity packages don't define them locally.
 
 ## Design constraints

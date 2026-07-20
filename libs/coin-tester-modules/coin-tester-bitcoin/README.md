@@ -1,5 +1,8 @@
 # @ledgerhq/coin-tester-bitcoin
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 This package contains the deterministic testing infrastructure for Bitcoin in Ledger Live.
 
 ## Features

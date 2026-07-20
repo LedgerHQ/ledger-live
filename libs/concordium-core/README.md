@@ -1,5 +1,8 @@
 # @ledgerhq/concordium-core
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Shared Concordium protocol types, serialization, and utilities used by `@ledgerhq/coin-concordium` and `@ledgerhq/live-signer-concordium`.
 
 ## Purpose

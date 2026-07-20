@@ -1,5 +1,8 @@
 # @features/flow-contacts
 
+> [!CAUTION]
+> **Status: UNSTABLE** — In active development as part of the Contacts feature.
+
 Shared Contacts flow package for Desktop and Mobile.
 
 ## Scope
