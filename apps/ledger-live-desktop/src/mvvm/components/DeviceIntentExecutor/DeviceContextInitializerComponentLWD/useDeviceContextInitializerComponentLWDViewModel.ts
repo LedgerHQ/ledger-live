@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { DeviceConnectionResult, DeviceExtractedContext } from "@ledgerhq/device-intent";
-import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import { identitiesSlice } from "@domain/entity-client-identity";
 import {
   ensureAppReadyUseCase,
   type EnsureAppReadyUseCaseDependencies,
