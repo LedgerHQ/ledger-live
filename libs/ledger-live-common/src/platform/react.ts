@@ -4,11 +4,8 @@ import { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { InfiniteData } from "@reduxjs/toolkit/query/react";
 import { AccountLike } from "@ledgerhq/types-live";
 import { makeRe } from "minimatch";
-import type {
-  TokensDataWithPagination,
-  PageParam,
-} from "@ledgerhq/cryptoassets/cal-client/state-manager/types";
-import { endpoints as calEndpoints } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
+import type { TokensDataWithPagination, PageParam } from "@domain/api-currency-token";
+import { cryptoAssetsApi } from "@domain/api-currency-token";
 import { accountToPlatformAccount, currencyToPlatformCurrency } from "./converters";
 import { filterPlatformAccounts, AccountFilters, CurrencyFilters } from "./filters";
 import { isPlatformSupportedCurrency } from "./helpers";
@@ -126,7 +123,10 @@ export function useListPlatformCurrencies(
 
         while (hasNextPage) {
           const querySub = dispatch(
-            calEndpoints.getTokensData.initiate(args, data ? { direction: "forward" } : undefined),
+            cryptoAssetsApi.endpoints.getTokensData.initiate(
+              args,
+              data ? { direction: "forward" } : undefined,
+            ),
           );
 
           try {

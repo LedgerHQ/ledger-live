@@ -1,5 +1,5 @@
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { createFixtureAccount } from "../../../mock/fixtures/cryptoCurrencies";
 import { buildExpectedAccountIdentity, validateDerivedAddress } from "./wrongDeviceValidation";
 

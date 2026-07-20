@@ -1,5 +1,5 @@
 import { CurrencyNotSupported } from "@ledgerhq/errors";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   registerCoinModules,
   getRegisteredFamilies,

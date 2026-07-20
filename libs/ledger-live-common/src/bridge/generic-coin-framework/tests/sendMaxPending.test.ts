@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions -- test fixtures use partial shapes */
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { extractBalance, extractBalances, transactionToIntent } from "../utils";
 import type { GenericTransaction } from "../types";
