@@ -399,7 +399,6 @@ export class CosmosAPI {
           validatorAddress,
           amount: new BigNumber(initialBalance),
           completionDate: new Date(completionTime),
-          // a non-numeric height is omitted so the re-anchor is skipped (avoids an Invalid Date)
           ...(Number.isFinite(parsedCreationHeight)
             ? { creationHeight: parsedCreationHeight }
             : {}),
