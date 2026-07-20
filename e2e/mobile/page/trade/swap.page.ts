@@ -150,6 +150,14 @@ export default class SwapPage extends CommonPage {
     await tapById(app.common.proceedButtonId);
   }
 
+  @Step("Wait for swap success and close")
+  async waitForSuccessAndClose() {
+    await waitForElementById(this.swapSuccessTitleId, 120000, {
+      errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
+    });
+    await app.common.closePage();
+  }
+
   @Step("Selected provider: $0")
   async logSelectedProvider(providerName: string) {
     jestExpect(providerName).toBeDefined();
