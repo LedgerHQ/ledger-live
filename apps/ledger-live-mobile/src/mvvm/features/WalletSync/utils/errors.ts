@@ -1,4 +1,4 @@
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { LedgerAPI4xx } from "@ledgerhq/live-common/errors";
 import { ErrorType } from "../hooks/type.hooks";
 
 export const isNoTrustchainError = (error: Error) =>

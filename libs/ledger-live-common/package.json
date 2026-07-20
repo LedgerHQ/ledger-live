@@ -52,6 +52,9 @@
       "exchange/swapTransactionStatus/transactionStatus": [
         "lib-es/exchange/swapTransactionStatus/transactionStatus"
       ],
+      "errors": [
+        "src/errors.ts"
+      ],
       "*": [
         "lib-es/*"
       ],
@@ -66,6 +69,10 @@
   "exports": {
     "./lib-es/*": "./lib-es/*.js",
     "./lib-es/*.js": "./lib-es/*.js",
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "default": "./lib-es/errors.js"
+    },
     "./*": {
       "@ledgerhq/source": [
         "./src/*.ts",
