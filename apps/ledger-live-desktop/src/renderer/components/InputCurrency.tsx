@@ -145,7 +145,7 @@ function InputCurrency(props: Props) {
   // Synchronously reformat display when value/unit change while not focused
   useLayoutEffect(() => {
     setState(prev => {
-      if (prev.isFocused && !disabled) return prev;
+      if (prev.isFocused && prev.rawValue && !disabled) return prev;
       const displayValue =
         !value || value.isNaN() || value.isZero()
           ? ""

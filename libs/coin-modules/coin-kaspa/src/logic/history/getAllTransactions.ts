@@ -1,5 +1,5 @@
-import { getTransactions } from "../network";
-import { ApiResponseTransaction } from "../types";
+import { getTransactions } from "../../network";
+import { ApiResponseTransaction } from "../../types";
 
 export const getAllTransactions = async (
   addr: string,

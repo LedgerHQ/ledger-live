@@ -182,7 +182,6 @@ export * from "./tomo";
 export * from "./ton";
 export * from "./tron";
 export * from "./ubiq";
-export * from "./umee";
 export * from "./unichain";
 export * from "./unichain_sepolia";
 export * from "./vechain";

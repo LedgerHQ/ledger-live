@@ -18,7 +18,7 @@ export const calcMaxSpendableAmount = (
   );
 
   if (isEcdsaRecipient) {
-    maxSpendableAmount = maxSpendableAmount.minus(BigNumber(11));
+    maxSpendableAmount = maxSpendableAmount.minus(BigNumber(11).times(feerate));
   }
 
   return maxSpendableAmount.lt(0) ? BigNumber(0) : maxSpendableAmount;

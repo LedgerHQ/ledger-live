@@ -73,6 +73,26 @@ describe("InputCurrency — caret preservation", () => {
     expect(input.selectionStart).toBe(11); // caret stays at the end, no jump
   });
 
+  it("reflects an external value update when the input is focused but the user has not typed", async () => {
+    const firstValue = new BigNumber("1000000000"); // 1 Gwei
+    const secondValue = new BigNumber("5000000000"); // 5 Gwei
+
+    const { rerender } = render(
+      <InputCurrency defaultUnit={gweiUnit} value={firstValue} onChange={() => {}} />,
+    );
+
+    const input = screen.getByRole("textbox") as HTMLInputElement;
+    expect(input.value).toBe("1");
+
+    // Simulate the Input container's handleClick focusing the field without the user typing.
+    input.focus();
+
+    rerender(<InputCurrency defaultUnit={gweiUnit} value={secondValue} onChange={() => {}} />);
+
+    // The display must update immediately — no second click required.
+    expect(input.value).toBe("5");
+  });
+
   it("forwards a ref to the underlying input element", () => {
     const ref = React.createRef<HTMLInputElement>();
     render(

@@ -6,14 +6,14 @@ import { ContactsMeListItem } from "./ContactsMeListItem.web";
 
 type ContactsListProps = Pick<
   ContactsPageProps,
-  "viewModel" | "labels" | "meAvatarSrc" | "onOpenMe" | "onAddContact"
+  "viewModel" | "labels" | "meAvatarSrc" | "onOpenContact" | "onAddContact"
 >;
 
 export function ContactsList({
   viewModel,
   labels,
   meAvatarSrc,
-  onOpenMe,
+  onOpenContact,
   onAddContact,
 }: ContactsListProps): React.ReactNode {
   return (
@@ -30,7 +30,7 @@ export function ContactsList({
           contact={viewModel.me}
           avatarSrc={meAvatarSrc}
           formatAddressCount={labels.formatAddressCount}
-          onOpen={onOpenMe}
+          onOpen={onOpenContact}
         />
       </div>
       <ContactsAddContactListItem label={labels.addContact} onAddContact={onAddContact} />

@@ -25,7 +25,10 @@ export function useContactsViewModel(): ContactsViewModel {
     }),
     [t],
   );
-  const onOpenMe = useCallback<ContactsViewProps["onOpenMe"]>(_contactId => undefined, []);
+  const onOpenContact = useCallback<ContactsViewProps["onOpenContact"]>(
+    _contactId => undefined,
+    [],
+  );
   const onAddContact = useCallback(() => undefined, []);
   const onDismissIntroduction = useCallback(() => setIsIntroductionDismissed(true), []);
 
@@ -41,7 +44,7 @@ export function useContactsViewModel(): ContactsViewModel {
     viewModel: createEmptyContactsListViewModel(meContact),
     labels,
     meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
-    onOpenMe,
+    onOpenContact,
     onAddContact,
     ledgerSyncStatus,
     ledgerSyncIntroduction: {

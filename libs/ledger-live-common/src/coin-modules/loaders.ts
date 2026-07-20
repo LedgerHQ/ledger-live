@@ -117,7 +117,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "axelar",
       "stargaze",
       "secret_network",
-      "umee",
       "desmos",
       "dydx",
       "quicksilver",
@@ -271,6 +270,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadTransaction: () => import("@ledgerhq/coin-kaspa/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-kaspa/deviceTransactionConfig").then(m => m.default),
+    loadLocalApi: () => import("../families/kaspa/coinModuleApi").then(m => m.createLocalKaspaApi),
   },
   {
     family: "mina",

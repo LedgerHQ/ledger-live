@@ -15,7 +15,6 @@ export function useCurrenciesUnderFeatureFlag() {
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
   const secretNetwork = useFeature("currencySecretNetwork");
-  const umee = useFeature("currencyUmee");
   const desmos = useFeature("currencyDesmos");
   const dydx = useFeature("currencyDydx");
   const quicksilver = useFeature("currencyQuicksilver");
@@ -111,7 +110,6 @@ export function useCurrenciesUnderFeatureFlag() {
       axelar,
       stargaze,
       secret_network: secretNetwork,
-      umee,
       desmos,
       dydx,
       quicksilver,
@@ -206,7 +204,6 @@ export function useCurrenciesUnderFeatureFlag() {
       axelar,
       stargaze,
       secretNetwork,
-      umee,
       desmos,
       dydx,
       quicksilver,

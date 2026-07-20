@@ -83,7 +83,6 @@ export * from "./suiGraphqlTransport";
 export * from "./currencySyscoin";
 export * from "./currencyTelosEvm";
 export * from "./currencyTon";
-export * from "./currencyUmee";
 export * from "./currencyUnichain";
 export * from "./currencyUnichainSepolia";
 export * from "./currencyVechain";

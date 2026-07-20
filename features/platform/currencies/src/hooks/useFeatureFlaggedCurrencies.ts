@@ -35,7 +35,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
   const secretNetwork = useFeature("currencySecretNetwork");
-  const umee = useFeature("currencyUmee");
   const desmos = useFeature("currencyDesmos");
   const dydx = useFeature("currencyDydx");
   const quicksilver = useFeature("currencyQuicksilver");
@@ -131,7 +130,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       axelar,
       stargaze,
       secret_network: secretNetwork,
-      umee,
       desmos,
       dydx,
       quicksilver,
@@ -226,7 +224,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       axelar,
       stargaze,
       secretNetwork,
-      umee,
       desmos,
       dydx,
       quicksilver,
