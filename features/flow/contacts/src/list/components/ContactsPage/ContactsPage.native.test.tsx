@@ -1,6 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
+import type { ContactsPageProps } from "../../types";
 import { createPopulatedContactsListViewModel } from "../../viewModel";
 import { ContactsPage } from "./ContactsPage.native";
 
@@ -10,6 +11,16 @@ const labels = {
   addContact: "Add contact",
   formatAddressCount: (count: number) => `${count} address${count === 1 ? "" : "es"}`,
 };
+
+const ledgerSyncProps = {
+  ledgerSyncStatus: "ready",
+  ledgerSyncIntroduction: {
+    isOpen: false,
+    description: "",
+    dismissLabel: "",
+    onDismiss: jest.fn(),
+  },
+} satisfies Pick<ContactsPageProps, "ledgerSyncStatus" | "ledgerSyncIntroduction">;
 
 describe("ContactsPage (Native)", () => {
   it("renders the populated Contacts list and delegates saved-contact actions", () => {
@@ -27,6 +38,7 @@ describe("ContactsPage (Native)", () => {
         meAvatarSrc="https://example.com/avatar.png"
         onOpenContact={onOpenContact}
         onAddContact={jest.fn()}
+        {...ledgerSyncProps}
       />,
     );
 
@@ -62,6 +74,7 @@ describe("ContactsPage (Native)", () => {
         meAvatarSrc="https://example.com/avatar.png"
         onOpenContact={jest.fn()}
         onAddContact={onAddContact}
+        {...ledgerSyncProps}
       />,
     );
 
