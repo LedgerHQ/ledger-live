@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "~/context/Locale";
 import { connect } from "react-redux";
 import { TextInput as NativeTextInput } from "react-native";
-import { DeviceNameInvalid } from "@ledgerhq/errors";
+import { DeviceNameInvalid } from "@ledgerhq/live-common/errors";
 import { Button, Text, IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import getDeviceNameMaxLength from "@ledgerhq/live-common/hw/getDeviceNameMaxLength";
 import { TrackScreen } from "~/analytics";

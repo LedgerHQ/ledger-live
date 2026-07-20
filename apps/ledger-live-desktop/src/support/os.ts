@@ -1,19 +1,19 @@
 import os from "os";
 import semverSatisfies from "semver/functions/satisfies";
 import { getEnv } from "@ledgerhq/live-env";
-import { createCustomErrorClass } from "@ledgerhq/errors";
-import { LedgerErrorConstructor } from "@ledgerhq/errors/helpers";
-
 type OperatingSystemOutdatedInfos = {
   type: string;
   release: string;
   criteria: string;
 };
 
-export const OperatingSystemOutdated = createCustomErrorClass<
-  OperatingSystemOutdatedInfos,
-  LedgerErrorConstructor<OperatingSystemOutdatedInfos>
->("OperatingSystemOutdated");
+export class OperatingSystemOutdated extends Error {
+  override name = "OperatingSystemOutdated";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
+}
 
 export type SupportStatus =
   | {

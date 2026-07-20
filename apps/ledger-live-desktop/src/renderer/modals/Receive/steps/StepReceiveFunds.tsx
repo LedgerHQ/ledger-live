@@ -5,7 +5,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import { DisconnectedDevice } from "@ledgerhq/errors";
+import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import useTheme from "~/renderer/hooks/useTheme";

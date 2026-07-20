@@ -31,7 +31,7 @@ export const BasicErrorsView = memo(
     if (!error && !warning) return null;
 
     const hasNoResolutionButIsReverseResolution =
-      domainErrorHandled && domainError?.error instanceof NoResolution && !isForwardResolution;
+      domainErrorHandled && domainError?.error?.name === "NoResolution" && !isForwardResolution;
 
     if (!domainErrorHandled || hasNoResolutionButIsReverseResolution) {
       return (
@@ -69,7 +69,7 @@ type DomainErrorsProps = {
 export const DomainErrorsView = memo(({ domainError, isForwardResolution }: DomainErrorsProps) => {
   const { t } = useTranslation();
 
-  if ((domainError.error as Error) instanceof InvalidDomain) {
+  if (domainError.error?.name === "InvalidDomain") {
     return (
       <Alert
         title={t("send.recipient.domainService.invalidDomain.title")}
@@ -82,7 +82,7 @@ export const DomainErrorsView = memo(({ domainError, isForwardResolution }: Doma
     );
   }
 
-  if ((domainError.error as Error) instanceof NoResolution && isForwardResolution) {
+  if (domainError.error?.name === "NoResolution" && isForwardResolution) {
     return <Alert title={t("send.recipient.domainService.noResolution.title")} type="secondary" />;
   }
 

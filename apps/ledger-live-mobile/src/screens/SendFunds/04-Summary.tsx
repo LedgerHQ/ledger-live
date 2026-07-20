@@ -153,7 +153,7 @@ function SendSummary({ navigation, route }: Props) {
 
     if (
       senderError?.name === recipientError?.name &&
-      senderError instanceof AddressesSanctionedError
+      senderError?.name === "AddressesSanctionedError"
     ) {
       return new AddressesSanctionedError("AddressesSanctionedError", {
         addresses: [

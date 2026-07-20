@@ -3,22 +3,6 @@ import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import CrossCircle from "~/renderer/icons/CrossCircle";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import Lock from "~/renderer/icons/LockCircle";
-import {
-  UserRefusedAllowManager,
-  UserRefusedFirmwareUpdate,
-  UserRefusedOnDevice,
-  UserRefusedAddress,
-  ManagerDeviceLockedError,
-  UserRefusedDeviceNameChange,
-} from "@ledgerhq/errors";
-import {
-  SwapGenericAPIError,
-  DeviceNotOnboarded,
-  NoSuchAppOnProvider,
-  LanguageInstallRefusedOnDevice,
-  ImageDoesNotExistOnDevice,
-  ImageLoadRefusedOnDevice,
-} from "@ledgerhq/live-common/errors";
 import { IconsLegacy } from "@ledgerhq/react-ui";
 
 export type ErrorIconProps = {
@@ -29,28 +13,31 @@ export type ErrorIconProps = {
 const ErrorIcon = ({ error, size = 44 }: ErrorIconProps) => {
   if (!error) return null;
 
-  if (error instanceof DeviceNotOnboarded) {
+  if ((error as { name?: string })?.name === "DeviceNotOnboarded") {
     return <InfoCircle size={size} />;
   }
 
   if (
-    error instanceof UserRefusedFirmwareUpdate ||
-    error instanceof UserRefusedAllowManager ||
-    error instanceof UserRefusedOnDevice ||
-    error instanceof UserRefusedAddress ||
-    error instanceof LanguageInstallRefusedOnDevice ||
-    error instanceof ImageDoesNotExistOnDevice ||
-    error instanceof ImageLoadRefusedOnDevice ||
-    error instanceof UserRefusedDeviceNameChange
+    (error as { name?: string })?.name === "UserRefusedFirmwareUpdate" ||
+    (error as { name?: string })?.name === "UserRefusedAllowManager" ||
+    (error as { name?: string })?.name === "UserRefusedOnDevice" ||
+    (error as { name?: string })?.name === "UserRefusedAddress" ||
+    (error as { name?: string })?.name === "LanguageInstallRefusedOnDevice" ||
+    (error as { name?: string })?.name === "ImageDoesNotExistOnDevice" ||
+    (error as { name?: string })?.name === "ImageLoadRefusedOnDevice" ||
+    (error as { name?: string })?.name === "UserRefusedDeviceNameChange"
   ) {
     return <IconsLegacy.InfoMedium size={size} color="primary.c80" />;
   }
 
-  if (error instanceof SwapGenericAPIError || error instanceof NoSuchAppOnProvider) {
+  if (
+    (error as { name?: string })?.name === "SwapGenericAPIError" ||
+    (error as { name?: string })?.name === "NoSuchAppOnProvider"
+  ) {
     return <CrossCircle size={size} />;
   }
 
-  if (error instanceof ManagerDeviceLockedError) {
+  if ((error as { name?: string })?.name === "ManagerDeviceLockedError") {
     return <Lock size={size} />;
   }
 
