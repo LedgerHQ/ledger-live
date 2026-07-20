@@ -129,8 +129,8 @@ export class PageLogCollector {
   }
 
   getFormattedNetworkLogs(): string {
-    if (this.requestsMap.size === 0) return "";
-
+    // Always return valid JSON: an empty map serializes to "[]", which keeps the
+    // application/json attachment parseable instead of an empty (invalid) body.
     const logEntriesArray = Array.from(this.requestsMap.values());
     return JSON.stringify(logEntriesArray, null, 2);
   }
