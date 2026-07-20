@@ -19,7 +19,7 @@ import {
 } from "./store";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 const ETHEREUM_ACCOUNT = "js:2:ethereum:0x23304541225D9b0BA2368B55ERTYF:";
 const POLKADOT_ACCOUNT =

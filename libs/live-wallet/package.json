@@ -19,7 +19,7 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/cryptoassets": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:*",
     "@ledgerhq/live-network": "workspace:*",

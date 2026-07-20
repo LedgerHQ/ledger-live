@@ -25,7 +25,8 @@
     "@ledgerhq/types-live": "workspace:*"
   },
   "devDependencies": {
-    "@ledgerhq/cryptoassets": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-currency-fiat": "workspace:*",
     "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "@swc/core": "catalog:",
