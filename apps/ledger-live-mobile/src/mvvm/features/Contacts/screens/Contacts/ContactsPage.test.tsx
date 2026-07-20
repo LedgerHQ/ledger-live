@@ -20,8 +20,7 @@ function renderContactsPage(ledgerSyncStatus: "ready" | "checking") {
       }}
       meAvatarSrc="https://example.com/avatar.png"
       searchQuery=""
-      onSearchInputChange={jest.fn()}
-      onOpenMe={jest.fn()}
+      onSearchQueryChange={jest.fn()}
       onOpenContact={onOpenContact}
       onAddContact={onAddContact}
       ledgerSyncStatus={ledgerSyncStatus}

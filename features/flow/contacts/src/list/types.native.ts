@@ -10,7 +10,10 @@ export type ContactsPageNativeLabels = ContactsPageLabels &
     searchNoResults: string;
   }>;
 
-export type ContactsPageNativeProps = Omit<ContactsPageProps, "viewModel" | "labels"> &
+export type ContactsPageNativeProps = Omit<
+  ContactsPageProps,
+  "viewModel" | "labels" | "searchQuery" | "onSearchInputChange" | "onOpenMe"
+> &
   Readonly<{
     viewModel: ContactsListViewModel | ContactsSearchViewModel;
     labels: ContactsPageNativeLabels;
