@@ -1,0 +1,109 @@
+# Local Kaspa test stack.
+# Image sources:
+#   kaspad       — supertypo/rusty-kaspad (pre-built rusty-kaspa v2.0.1)
+#   kaspa-db     — PostgreSQL (required by indexer and REST server)
+#   kaspa-indexer — supertypo/simply-kaspa-indexer (kaspad → postgres)
+#   kaspa-rest   — kaspanet/kaspa-rest-server (api.kaspa.org-compatible REST)
+#   kaspa-miner  — built locally; downloads kaspa WASM SDK and mines simnet blocks
+#
+# rusty-kaspa v2.0.1 has no built-in miner in kaspad — mining is a separate binary.
+# The kaspa-miner sidecar uses the official WASM SDK's PoW class to solve blocks and
+# submit them via wRPC, funded to KASPA_MINING_ADDRESS (kaspasim: prefix for simnet).
+#
+# NETWORK_TYPE=mainnet makes the REST server accept coin-kaspa's hardcoded "kaspa:" prefix.
+
+services:
+  kaspad:
+    image: supertypo/rusty-kaspad:latest
+    platform: linux/amd64
+    command: >
+      kaspad
+      --yes
+      --simnet
+      --enable-unsynced-mining
+      --utxoindex
+      --nologfiles
+      --disable-upnp
+      --rpclisten=0.0.0.0:16110
+      --rpclisten-borsh=0.0.0.0:17110
+    healthcheck:
+      # busybox nc in this image is broken for TCP (-z always returns 1 even when port is open).
+      # netstat is available and reliably shows the bound port.
+      test: ["CMD-SHELL", "netstat -tlnp 2>/dev/null | grep -q ':16110' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  kaspa-db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: kaspa
+      POSTGRES_PASSWORD: kaspa
+      POSTGRES_DB: kaspa
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kaspa"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  kaspa-indexer:
+    image: supertypo/simply-kaspa-indexer:latest
+    platform: linux/amd64
+    # -c initialises DB schema (creates composite types kaspa-rest needs at import time)
+    # -u auto-upgrades schema if a newer indexer version is pulled
+    command: >
+      -c
+      -u
+      -s ws://kaspad:17110
+      -n simnet
+      -d postgresql://kaspa:kaspa@kaspa-db:5432/kaspa
+      --exclude-fields tx_out_script_public_key_address
+    depends_on:
+      kaspad:
+        condition: service_healthy
+      kaspa-db:
+        condition: service_healthy
+
+  kaspa-rest:
+    image: kaspanet/kaspa-rest-server:latest
+    platform: linux/amd64
+    environment:
+      KASPAD_WRPC_URL: ws://kaspad:17110
+      SQL_URI: postgresql+psycopg://kaspa:kaspa@kaspa-db:5432/kaspa
+      # mainnet so REGEX_KASPA_ADDRESS accepts coin-kaspa's hardcoded "kaspa:" prefix.
+      # USE_SCRIPT_FOR_ADDRESS=true makes lookups use scripts_transactions (populated by the
+      # indexer when tx_out_script_public_key_address is excluded) instead of
+      # addresses_transactions (which has kaspasim: addresses the kaspa: queries never match).
+      NETWORK_TYPE: mainnet
+      USE_SCRIPT_FOR_ADDRESS: "true"
+      DISABLE_PRICE: "true"
+    ports:
+      - "8080:8000"
+    depends_on:
+      kaspad:
+        condition: service_healthy
+      kaspa-db:
+        condition: service_healthy
+      kaspa-indexer:
+        condition: service_started
+    # Restarts until kaspa-indexer has created the postgres composite types
+    # (transactions_inputs, transactions_outputs) that dbsession.py fetches at import time.
+    restart: on-failure
+    healthcheck:
+      # curl is not present in this image; python3 is always available (it is a Python app).
+      test: ["CMD-SHELL", "python3 -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:8000/info/blockdag\")' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  kaspa-miner:
+    build:
+      context: ./miner
+    platform: linux/amd64
+    environment:
+      KASPAD_WRPC_URL: ws://kaspad:17110
+      MINING_ADDRESS: ${KASPA_MINING_ADDRESS}
+    depends_on:
+      kaspad:
+        condition: service_healthy
+    restart: on-failure
