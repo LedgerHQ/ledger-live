@@ -206,6 +206,12 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       getStakedBalance: "getDelegationInfo",
       claimReward: "claimDelegatorRewards",
     },
+    // Display names live off-chain at /api/validator-names on the official
+    // dashboard — it's a flat { [address]: name } JSON map maintained by Somnia.
+    // Treat it as a display overlay; the on-chain set remains authoritative.
+    validatorNameSource: {
+      baseUrl: "https://staking.somnia.network/api/validator-names",
+    },
     value: ({ mode, amount }) => (mode === "delegate" ? amount : 0n),
     resolveValidatorAddress: async parameters => {
       return typeof parameters[0] === "string" ? parameters[0] : null;

@@ -217,6 +217,57 @@ describe("buildTransactionParams", () => {
     });
   });
 
+  describe("Somnia", () => {
+    const currencyId = "somnia";
+    const somniaValidatorAddress = "0x1234567890abcdef1234567890abcdef12345678";
+
+    it("builds params for delegate operation", () => {
+      const params = buildTransactionParams(currencyId, "delegate" as StakingOperation, {
+        valAddress: somniaValidatorAddress,
+        amount,
+      });
+
+      expect(params).toEqual([somniaValidatorAddress, amount]);
+    });
+
+    it("builds params for undelegate operation", () => {
+      const params = buildTransactionParams(currencyId, "undelegate" as StakingOperation, {
+        valAddress: somniaValidatorAddress,
+        amount,
+      });
+
+      expect(params).toEqual([somniaValidatorAddress, amount]);
+    });
+
+    it("builds params for claimReward operation", () => {
+      const params = buildTransactionParams(currencyId, "claimReward" as StakingOperation, {
+        valAddress: somniaValidatorAddress,
+        amount: 0n,
+      });
+
+      expect(params).toEqual([somniaValidatorAddress]);
+    });
+
+    it("builds params for getStakedBalance operation", () => {
+      const params = buildTransactionParams(currencyId, "getStakedBalance" as StakingOperation, {
+        valAddress: somniaValidatorAddress,
+        amount: 0n,
+        delegator: delegatorAddress,
+      });
+
+      expect(params).toEqual([delegatorAddress, somniaValidatorAddress]);
+    });
+
+    it("throws when getStakedBalance is missing delegator", () => {
+      expect(() => {
+        buildTransactionParams(currencyId, "getStakedBalance" as StakingOperation, {
+          valAddress: somniaValidatorAddress,
+          amount: 0n,
+        });
+      }).toThrow("Somnia needs a delegator to retrieve staked balance");
+    });
+  });
+
   describe("Error handling", () => {
     it("should throw error for unsupported currency", () => {
       expect(() => {
@@ -236,10 +287,13 @@ describe("buildTransactionParams", () => {
       }).toThrow("Unsupported transaction type for sei_evm: invalidOperation");
     });
 
-    it.each(["sei_evm", "celo"])("throws when %s staking is missing valAddress", currencyId => {
-      expect(() => {
-        buildTransactionParams(currencyId, "delegate" as StakingOperation, { amount });
-      }).toThrow(`${currencyId} staking requires valAddress`);
-    });
+    it.each(["sei_evm", "celo", "somnia"])(
+      "throws when %s staking is missing valAddress",
+      currencyId => {
+        expect(() => {
+          buildTransactionParams(currencyId, "delegate" as StakingOperation, { amount });
+        }).toThrow(`${currencyId} staking requires valAddress`);
+      },
+    );
   });
 });
