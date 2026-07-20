@@ -258,25 +258,4 @@ describe("LegacySignerCelo", () => {
       expect(celoMock.setLoadConfig).toHaveBeenCalledWith(config);
     });
   });
-
-  describe("getAppConfiguration", () => {
-    it("should forward to the underlying signer", async () => {
-      // GIVEN
-      const config = {
-        arbitraryDataEnabled: 1,
-        erc20ProvisioningNecessary: 0,
-        starkEnabled: 0,
-        starkv2Supported: 0,
-        version: "1.3.2",
-      };
-      celoMock.getAppConfiguration.mockResolvedValue(config);
-
-      // WHEN
-      const result = await signer.getAppConfiguration();
-
-      // THEN
-      expect(celoMock.getAppConfiguration).toHaveBeenCalledWith();
-      expect(result).toEqual(config);
-    });
-  });
 });

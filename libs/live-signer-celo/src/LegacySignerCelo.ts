@@ -44,10 +44,6 @@ export class LegacySignerCelo implements CeloSigner {
     }
   }
 
-  getAppConfiguration() {
-    return this.signer.getAppConfiguration();
-  }
-
   signTransaction(path: string, rawTxHex: string) {
     return this.signer.signTransaction(path, rawTxHex);
   }
