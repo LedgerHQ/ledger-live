@@ -1,7 +1,7 @@
 import React from "react";
 import { renderWithReactQuery, withFlagOverrides } from "@tests/test-renderer";
 import { MarketQuickActions } from "./";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { ScreenName } from "~/const";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";

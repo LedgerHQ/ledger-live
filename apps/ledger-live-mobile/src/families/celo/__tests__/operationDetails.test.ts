@@ -14,7 +14,7 @@ jest.mock("@tanstack/react-query", () => ({
   useQuery: (...args: unknown[]) => mockUseQuery(...args),
 }));
 
-jest.mock("@ledgerhq/cryptoassets/hooks", () => ({
+jest.mock("@features/platform-currencies", () => ({
   useTokenByAddressInCurrency: (...args: unknown[]) => mockUseTokenByAddressInCurrency(...args),
 }));
 

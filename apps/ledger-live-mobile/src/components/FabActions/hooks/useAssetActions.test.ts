@@ -1,5 +1,5 @@
 import { renderHook } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { State } from "~/reducers/types";
 import { ScreenName } from "~/const";
