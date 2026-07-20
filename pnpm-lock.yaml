@@ -4253,6 +4253,9 @@ importers:
         specifier: workspace:^
         version: link:../../../shared/feature-flags
     devDependencies:
+      '@features/platform-jest-config':
+        specifier: workspace:*
+        version: link:../../platform/jest-config
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.21
@@ -4298,6 +4301,9 @@ importers:
       '@testing-library/react':
         specifier: 'catalog:'
         version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@testing-library/react-native':
+        specifier: 'catalog:'
+        version: 13.3.3(patch_hash=4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76)(jest@30.2.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react-test-renderer@19.1.4(react@19.1.4))(react@19.1.4)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
@@ -4340,6 +4346,9 @@ importers:
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
+      react-test-renderer:
+        specifier: 'catalog:'
+        version: 19.1.4(react@19.1.4)
       tailwind-merge:
         specifier: 'catalog:'
         version: 3.4.0

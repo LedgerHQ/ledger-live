@@ -19,9 +19,19 @@ const nativeMocks = {
   // Mapped here (not jest.mock in a setup file) so it also intercepts react-native imports
   // from inside @testing-library/react-native.
   "^react-native$": path.join(__dirname, "mocks/react-native.js"),
-  "^@ledgerhq/lumen-ui-rnative$": path.join(__dirname, "mocks/passthrough-native.js"),
+  "^@ledgerhq/lumen-ui-rnative(/.*)?$": path.join(__dirname, "mocks/passthrough-native.js"),
   "^@ledgerhq/crypto-icons$": path.join(__dirname, "mocks/passthrough-native.js"),
 };
+
+function createFlowNativeJestProject(overrides = {}) {
+  return {
+    displayName: "native",
+    testEnvironment: "node",
+    testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
+    moduleNameMapper: { ...nativeMocks },
+    ...overrides,
+  };
+}
 
 /**
  * Dual-project jest config for a features/flow package.
@@ -67,14 +77,11 @@ function createFlowJestConfig(overrides = {}) {
       },
       {
         ...base,
-        displayName: "native",
-        testEnvironment: "node",
-        testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
-        moduleNameMapper: { ...nativeMocks },
+        ...createFlowNativeJestProject(),
       },
     ],
     ...overrides,
   };
 }
 
-module.exports = { createFlowJestConfig };
+module.exports = { createFlowJestConfig, createFlowNativeJestProject };
