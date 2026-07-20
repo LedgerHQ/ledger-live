@@ -1,14 +1,13 @@
-import { selectContacts } from "@domain/entity-contact";
 import { useMemo } from "react";
-import { useSelector } from "react-redux";
 import { createContactsListViewModel, createContactsSearchViewModel } from "../list/viewModel";
 import type { ContactsListViewModel, ContactsSearchViewModel } from "../list/types";
+import { useContacts } from "./useContacts";
 import { useContactsMeContact } from "./useContactsMeContact";
 
 export function useContactsSearchViewModel(
   query: string,
 ): ContactsListViewModel | ContactsSearchViewModel {
-  const contacts = useSelector(selectContacts);
+  const contacts = useContacts();
   const meContact = useContactsMeContact();
 
   return useMemo(() => {
