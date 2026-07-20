@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-evm
 
+## 0.21.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@7.8.10-next.0
+
 ## 0.21.0
 
 ### Minor Changes

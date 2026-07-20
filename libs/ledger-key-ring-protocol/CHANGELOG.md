@@ -1,5 +1,22 @@
 # @ledgerhq/live-wallet
 
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#19477](https://github.com/LedgerHQ/ledger-live/pull/19477) [`2ee5ac1`](https://github.com/LedgerHQ/ledger-live/commit/2ee5ac15540a462143b61f2d546063ed9c8cfe40) Thanks [@Justkant](https://github.com/Justkant)! - Mock SDK: make `walletSyncEncryptionKey` a valid 64-char hex string (distinct per application index). The value is contractually hex (the real SDK feeds it to `crypto.from_hex`), so consumers deriving keys from it now work against the mock.
+
+- [#19432](https://github.com/LedgerHQ/ledger-live/pull/19432) [`d9dc6e6`](https://github.com/LedgerHQ/ledger-live/commit/d9dc6e621df877b13148688adec0b038983574e0) Thanks [@thesan](https://github.com/thesan)! - Make the attestation optional for the oidc flow
+
+### Patch Changes
+
+- Updated dependencies [[`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`84cc6e9`](https://github.com/LedgerHQ/ledger-live/commit/84cc6e9b7a70ffe2780f4b3ef32c10fa8bf9a909), [`189a0d6`](https://github.com/LedgerHQ/ledger-live/commit/189a0d60928e458407c85dcefe954e905bd0ba59), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003)]:
+  - @ledgerhq/live-env@2.42.0-next.0
+  - @ledgerhq/ledger-auth@0.3.0-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.11.1-next.0
+  - @ledgerhq/live-network@2.6.8-next.0
+  - @ledgerhq/speculos-transport@0.10.8-next.0
+
 ## 0.16.0
 
 ### Minor Changes

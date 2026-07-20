@@ -1,5 +1,30 @@
 # @ledgerhq/coin-tezos
 
+## 7.9.0-next.0
+
+### Minor Changes
+
+- [#19372](https://github.com/LedgerHQ/ledger-live/pull/19372) [`cf45a7d`](https://github.com/LedgerHQ/ledger-live/commit/cf45a7d1d247596a2fbaf872ae3c981e685082fc) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - fix: emit getBlock operations for zero-amount fee-bearing transactions and include all FA2 token IDs
+
+- [#19407](https://github.com/LedgerHQ/ledger-live/pull/19407) [`dd89180`](https://github.com/LedgerHQ/ledger-live/commit/dd891801f1829506b004c383fa230cf9507ff283) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - Fix: batch id.in lookups in getAccountTokenTransfers into chunks of 100 to avoid oversized URLs that caused HTTP 520 errors on the Cloudflare proxy
+
+- [#19440](https://github.com/LedgerHQ/ledger-live/pull/19440) [`417f23f`](https://github.com/LedgerHQ/ledger-live/commit/417f23f6f2933182a4466764b71c6f3443688ca9) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - tezos getblock: move stakedAmount and ledgerOpType at top level
+
+- [#19536](https://github.com/LedgerHQ/ledger-live/pull/19536) [`f854c29`](https://github.com/LedgerHQ/ledger-live/commit/f854c29bf164948ff2a38c01a1dc88e8fb297bc1) Thanks [@amaslakov](https://github.com/amaslakov)! - Warn and explain when Tezos staking is blocked by an unfinalizable unstake to another validator: translate the raw fee-estimation error into a clear message, and show an inline warning on the change-validator summary while a pending unstake is still unfinalizable
+
+- [#19510](https://github.com/LedgerHQ/ledger-live/pull/19510) [`c052fc7`](https://github.com/LedgerHQ/ledger-live/commit/c052fc707a359fefbda3acc6bea7200ede805f45) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - Tezos getBlock: align OtherBlockOperation fields with listOperations path
+
+- [#19228](https://github.com/LedgerHQ/ledger-live/pull/19228) [`3fc5836`](https://github.com/LedgerHQ/ledger-live/commit/3fc583609116bcf40956ccafeaadc733e11040b0) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Fix Tezos `account.getPublicKey` (Wallet API): resolve the account public key from `xpub` instead of `seedIdentifier`, which is derived from a different path (`44'/1729'/0'`) and returned the same wrong address for every Tezos account. When `xpub` does not contain a valid base58 Tezos public key (edpk/sppk/p2pk), the request is rejected with a dedicated `AccountPublicKeyUnavailable` error and Ledger Live surfaces it natively (error modal on desktop, bottom modal on mobile), prompting the user to re-add the account instead of failing silently. The per-family resolver map is retained for chains that need bespoke retrieval. Also stop seeding `xpub` with the address on Tezos QR import.
+
+- [#19035](https://github.com/LedgerHQ/ledger-live/pull/19035) [`07bfc2c`](https://github.com/LedgerHQ/ledger-live/commit/07bfc2cbcf3c63b55224dec2aef1818d22c2315c) Thanks [@YazhuEth](https://github.com/YazhuEth)! - generic coin-framework bridge: compute the send-max (`useAllAmount`) amount once in `prepareTransaction` and reuse it in `signOperation`, instead of recomputing it via `validateIntent` in `prepareTransaction`, `signOperation` and `estimateMaxSpendable`. The amount is `parameters.amount` when the coin exposes it (Tezos), the token sub-account balance for token sends, otherwise `spendableBalance - max(reserve, fees)` (coin-evm now exposes `reserve`/`amountScale` for delegate). Pending operations are subtracted so the amount stays consistent with `getTransactionStatus` (LIVE-22227, LIVE-22228, LIVE-22229).
+
+- [#19600](https://github.com/LedgerHQ/ledger-live/pull/19600) [`457d12c`](https://github.com/LedgerHQ/ledger-live/commit/457d12c949c317d495ba7c391a80fa4b8ee956ee) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(tezos): use same node url for integration tests and app
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.6.8-next.0
+
 ## 7.8.0
 
 ### Minor Changes
