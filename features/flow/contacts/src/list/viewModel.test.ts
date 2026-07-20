@@ -165,7 +165,9 @@ describe("createContactsSearchViewModel", () => {
   });
 
   it("should return case-insensitive saved contact matches", () => {
-    expect(createContactsSearchViewModel(me, contacts, "bEn")).toMatchObject({
+    const viewModel = createContactsSearchViewModel(me, contacts, "bEn");
+
+    expect(viewModel).toMatchObject({
       status: "results",
       savedContacts: [
         {
@@ -176,6 +178,7 @@ describe("createContactsSearchViewModel", () => {
         },
       ],
     });
+    expect("me" in viewModel).toBe(false);
   });
 
   it("should return Me when its name matches the query", () => {
