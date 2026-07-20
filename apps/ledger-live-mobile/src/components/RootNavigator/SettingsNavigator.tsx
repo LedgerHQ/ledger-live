@@ -28,8 +28,6 @@ import DebugInstallSetOfApps from "~/screens/Settings/Debug/Features/InstallSetO
 import DebugPerformance from "~/screens/Settings/Debug/Performance";
 import DebugLogs from "~/screens/Settings/Debug/Debugging/Logs";
 import DebugLottie from "~/screens/Settings/Debug/Features/Lottie";
-import DebugLumen from "~/screens/Settings/Debug/Debugging/Lumen";
-import DebugLumenVisualization from "~/screens/Settings/Debug/Debugging/LumenVisualization";
 import DebugWallet40 from "~/screens/Settings/Debug/Debugging/Wallet40";
 import DebugContacts from "~/screens/Settings/Debug/Debugging/Contacts";
 import DebugDevTools from "LLM/features/DevTools/screens/DevToolsScreen";
@@ -400,20 +398,6 @@ export default function SettingsNavigator() {
         component={DebugPlayground}
         options={{
           title: "Playground",
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.DebugLumen}
-        component={DebugLumen}
-        options={{
-          title: "Lumen Debug",
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.DebugLumenVisualization}
-        component={DebugLumenVisualization}
-        options={{
-          title: "Lumen Visualization",
         }}
       />
       <Stack.Screen
