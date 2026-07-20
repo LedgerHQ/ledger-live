@@ -6,7 +6,7 @@ import { ScreenName } from "~/const";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { getCustomSendFlow } from "~/screens/SendFunds/utils/customSendFlow";
-import { ALEO_ACCOUNT_1 } from "~/families/aleo/__mocks__/account.mock";
+import { ALEO_ACCOUNT_1, ALEO_TOKEN_ACCOUNT_1 } from "~/families/aleo/__mocks__/account.mock";
 import SendAmountCoin from "./03a-AmountCoin";
 
 jest.mock("LLM/hooks/useAccountScreen", () => ({
@@ -86,6 +86,22 @@ describe("SendAmountCoin — custom send flow", () => {
 
     render(<SendAmountCoin navigation={mockNavigation as never} route={mockRoute as never} />);
 
+    expect(screen.getByTestId("after-amount-input")).toBeOnTheScreen();
+  });
+
+  it("resolves the custom send flow from the parent chain's family when sending a token", () => {
+    mockUseAccountScreen.mockReturnValue({
+      account: ALEO_TOKEN_ACCOUNT_1,
+      parentAccount: ALEO_ACCOUNT_1,
+    });
+    mockGetCustomSendFlow.mockReturnValue({
+      screens: [],
+      AfterAmountInput: () => <View testID="after-amount-input" />,
+    });
+
+    render(<SendAmountCoin navigation={mockNavigation as never} route={mockRoute as never} />);
+
+    expect(mockGetCustomSendFlow).toHaveBeenCalledWith("aleo");
     expect(screen.getByTestId("after-amount-input")).toBeOnTheScreen();
   });
 });
