@@ -1,17 +1,19 @@
-import type {
+import {
   ApplicationDependency,
+  DeviceActionStatus,
+  GetDeviceStatusDeviceAction,
+  type GetDeviceStatusDAInput,
   GetDeviceMetadataDAOutput,
   InstallOrUpdateAppsDAIntermediateValue,
   OpenAppWithDependenciesDAIntermediateValue,
   DeviceSessionState,
-} from "@ledgerhq/device-management-kit";
-import {
-  DeviceActionStatus,
   DeviceModelId,
   UnknownDAError,
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
 import { DeviceModelId as LLDeviceModelId } from "@ledgerhq/types-devices";
+import { Right } from "purify-ts";
+import { setup } from "xstate";
 
 import { makeDeviceActionInternalApiMock } from "../__test-utils__/makeInternalApi";
 import {
@@ -134,6 +136,83 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       deviceModelId: DeviceModelId.NANO_X,
     } as unknown as DeviceSessionState);
   });
+
+  it.each([
+    {
+      description: "a strict onboarding policy",
+      configuredValue: false,
+      expectedValue: false,
+    },
+    {
+      description: "no explicit onboarding policy",
+      configuredValue: undefined,
+      expectedValue: true,
+    },
+  ])(
+    "GIVEN $description WHEN checking device status THEN it applies the expected onboarding policy",
+    ({ configuredValue, expectedValue }) =>
+      new Promise<void>((resolve, reject) => {
+        // GIVEN
+        let receivedStatusInput: GetDeviceStatusDAInput | undefined;
+        (GetDeviceStatusDeviceAction as jest.Mock).mockImplementation(
+          ({ input }: { input: GetDeviceStatusDAInput }) => ({
+            makeStateMachine: jest.fn(() =>
+              setup({
+                types: {
+                  input: {} as GetDeviceStatusDAInput,
+                },
+              }).createMachine({
+                context: ({ input: invokedInput }) => {
+                  receivedStatusInput = invokedInput;
+                  return {
+                    intermediateValue: {
+                      requiredUserInteraction: UserInteractionRequired.None,
+                    },
+                  };
+                },
+                initial: "done",
+                states: {
+                  done: {
+                    type: "final",
+                  },
+                },
+                output: () => Right(DEVICE_STATUS_ETHEREUM),
+              }),
+            ),
+            input,
+          }),
+        );
+        const deviceAction = new ConnectAppDeviceAction({
+          input: {
+            application: { name: "Ethereum" },
+            dependencies: [],
+            requireLatestFirmware: false,
+            allowMissingApplication: false,
+            allowNonOnboardedDevice: configuredValue,
+          },
+        });
+
+        // WHEN
+        const { observable } = deviceAction._execute(apiMock);
+
+        // THEN
+        observable.subscribe({
+          complete: () => {
+            try {
+              expect(receivedStatusInput).toEqual(
+                expect.objectContaining({
+                  allowNonOnboardedDevice: expectedValue,
+                }),
+              );
+              resolve();
+            } catch (error) {
+              reject(error);
+            }
+          },
+          error: reject,
+        });
+      }),
+  );
 
   describe("success cases", () => {
     it("Connect app from dashboard", () =>

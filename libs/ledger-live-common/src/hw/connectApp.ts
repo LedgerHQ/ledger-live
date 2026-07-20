@@ -554,8 +554,10 @@ const appNameToDependency = (appName: string): ApplicationDependency => {
 export default function connectAppFactory(
   {
     isLdmkConnectAppEnabled,
+    allowNonOnboardedDevice = false,
   }: {
     isLdmkConnectAppEnabled: boolean;
+    allowNonOnboardedDevice?: boolean;
   } = { isLdmkConnectAppEnabled: false },
 ) {
   if (!isLdmkConnectAppEnabled) {
@@ -587,6 +589,7 @@ export default function connectAppFactory(
           dependencies: dependencies ? dependencies.map(name => appNameToDependency(name)) : [],
           requireLatestFirmware,
           allowMissingApplication: allowPartialDependencies,
+          allowNonOnboardedDevice,
           unlockTimeout: 0, // Expect to fail immediately when device is locked
           requiredDerivation: requiresDerivation
             ? async () => {

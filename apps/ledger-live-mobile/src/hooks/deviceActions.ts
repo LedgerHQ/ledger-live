@@ -35,15 +35,23 @@ import {
 } from "~/e2e/bridge/types";
 import { useFeature } from "@features/platform-feature-flags";
 
-export function useAppDeviceAction() {
+export function useAppDeviceAction({
+  allowNonOnboardedDevice = false,
+}: {
+  allowNonOnboardedDevice?: boolean;
+} = {}) {
   const envMock = useEnv("MOCK");
   const deviceProxy = useEnv("DEVICE_PROXY_URL");
   const mock = envMock && !deviceProxy;
   const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   return useMemo(
     () =>
-      appCreateAction(mock ? connectAppExecMock : connectAppFactory({ isLdmkConnectAppEnabled })),
-    [isLdmkConnectAppEnabled, mock],
+      appCreateAction(
+        mock
+          ? connectAppExecMock
+          : connectAppFactory({ isLdmkConnectAppEnabled, allowNonOnboardedDevice }),
+      ),
+    [allowNonOnboardedDevice, isLdmkConnectAppEnabled, mock],
   );
 }
 

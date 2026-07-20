@@ -99,6 +99,7 @@ describe("buildConnectAppDeviceActionInput", () => {
       ],
       requireLatestFirmware: true,
       allowMissingApplication: false,
+      allowNonOnboardedDevice: false,
       unlockTimeout: 0,
       deprecationConfig: [{ deviceModelId: "nanoS" }],
     });
