@@ -25,7 +25,10 @@ export function useContactsViewModel(): ContactsViewModel {
     }),
     [t],
   );
-  const onOpenContact = useCallback<ContactsViewProps["onOpenContact"]>(_contactId => undefined, []);
+  const onOpenContact = useCallback<ContactsViewProps["onOpenContact"]>(
+    _contactId => undefined,
+    [],
+  );
   const onAddContact = useCallback(() => undefined, []);
   const onDismissIntroduction = useCallback(() => setIsIntroductionDismissed(true), []);
 
