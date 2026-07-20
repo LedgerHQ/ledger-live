@@ -241,7 +241,7 @@ export class BorrowPage extends WebViewAppPage {
       .getByText(this.executionErrorTitle, { exact: true })
       .or(webview.getByText(this.onChainFailedMessage));
 
-    await expect(stepDone.or(completionCard).or(viewLoan).or(error).first()).toBeVisible({
+    await expect(stepDone.or(completionCard).or(viewLoan).or(error)).toBeVisible({
       timeout: this.executionStepTimeoutMs,
     });
 
@@ -276,10 +276,8 @@ export class BorrowPage extends WebViewAppPage {
     const loansDashboard = webview.getByText(this.yourLoansTitle, { exact: true });
     const getNewLoan = webview.getByRole("button", { name: this.getNewLoanButton });
 
-    await expect(completionCard.or(viewLoan).or(loansDashboard).or(getNewLoan).first()).toBeVisible(
-      {
-        timeout: 60_000,
-      },
-    );
+    await expect(completionCard.or(viewLoan).or(loansDashboard).or(getNewLoan)).toBeVisible({
+      timeout: 60_000,
+    });
   }
 }
