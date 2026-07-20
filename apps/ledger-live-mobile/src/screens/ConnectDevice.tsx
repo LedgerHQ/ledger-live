@@ -1,7 +1,8 @@
 import invariant from "invariant";
 import React, { useCallback, useMemo, useRef } from "react";
 import { StyleSheet } from "react-native";
-import { Edge, SafeAreaView } from "react-native-safe-area-context";
+import { Edge } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";

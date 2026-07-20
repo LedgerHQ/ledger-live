@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Device } from "@ledgerhq/types-devices";
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 

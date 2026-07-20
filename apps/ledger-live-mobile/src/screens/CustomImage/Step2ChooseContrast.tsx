@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Image, ImageErrorEventData, NativeSyntheticEvent, Pressable } from "react-native";
 import { useSharedValue, withTiming } from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import {
   getScreenSpecs,

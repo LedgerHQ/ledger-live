@@ -11,7 +11,7 @@ import {
   useFocusEffect,
 } from "@react-navigation/native";
 import { NativeStackNavigationEventMap } from "@react-navigation/native-stack";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
 import {

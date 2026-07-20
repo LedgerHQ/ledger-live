@@ -3,7 +3,7 @@ import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import { NativeSyntheticEvent, ImageErrorEventData } from "react-native";
 import { useTranslation } from "~/context/Locale";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import Button from "~/components/wrappedUi/Button";
 
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";

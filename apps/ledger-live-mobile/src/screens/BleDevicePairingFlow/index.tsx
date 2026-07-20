@@ -2,7 +2,7 @@ import { Device, DeviceModelId, DevicesWithTouchScreen } from "@ledgerhq/types-d
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import React, { useCallback } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { NavigatorName, ScreenName } from "~/const";
 import BleDevicePairingFlowComponent, {
   SetHeaderOptionsRequest,

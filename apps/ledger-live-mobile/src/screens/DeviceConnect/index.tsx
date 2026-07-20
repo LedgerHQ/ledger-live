@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import type { TFunction } from "i18next";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";

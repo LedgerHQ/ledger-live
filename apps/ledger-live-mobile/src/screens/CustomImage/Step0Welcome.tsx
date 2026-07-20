@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/core";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { getDeviceModel } from "@ledgerhq/devices";

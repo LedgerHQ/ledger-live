@@ -10,7 +10,7 @@ import DeviceAction from "~/components/DeviceAction";
 import { Button, Flex, Icons } from "@ledgerhq/native-ui";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
 import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import GenericErrorView from "~/components/GenericErrorView";
 
 type NavigationProps = BaseComposite<
