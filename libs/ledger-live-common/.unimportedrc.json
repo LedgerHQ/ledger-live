@@ -463,6 +463,7 @@
     "src/e2e/enum/TransactionStatus.ts",
     "src/e2e/models/BuySell.ts",
     "src/exchange/swap/const/blockchain.ts",
+    "src/families/aleo/bridgeExtensions.ts",
     "src/families/aleo/constants.ts",
     "src/families/aleo/errors.ts",
     "src/families/aleo/hw/getViewKey/index.ts",
