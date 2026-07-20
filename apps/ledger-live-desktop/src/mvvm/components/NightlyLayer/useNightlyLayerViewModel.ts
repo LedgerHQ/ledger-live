@@ -1,16 +1,14 @@
 import { useMemo } from "react";
 import type { NightlyLayerViewModelResult } from "./types";
 import { getWatermarkPositions } from "./utils/getWatermarkPositions";
-
-function shouldShowNightlyLayer(): boolean {
-  return __PRERELEASE__ && __CHANNEL__ !== "next" && !__CHANNEL__.includes("sha");
-}
+import { shouldShowNightlyLayer } from "./utils/shouldShowNightlyLayer";
 
 export function useNightlyLayerViewModel(): NightlyLayerViewModelResult {
-  const watermarks = useMemo(() => getWatermarkPositions(), []);
+  const isVisible = shouldShowNightlyLayer(__PRERELEASE__, __CHANNEL__);
+  const watermarks = useMemo(() => (isVisible ? getWatermarkPositions() : []), [isVisible]);
 
   return {
-    isVisible: shouldShowNightlyLayer(),
+    isVisible,
     appVersion: __APP_VERSION__,
     watermarks,
   };

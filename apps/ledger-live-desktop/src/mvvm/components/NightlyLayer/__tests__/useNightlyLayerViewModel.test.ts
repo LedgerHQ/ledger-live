@@ -1,21 +1,17 @@
-import { renderHook } from "@testing-library/react";
+import { renderHook } from "tests/testSetup";
 import { useNightlyLayerViewModel } from "../useNightlyLayerViewModel";
-import { getWatermarkPositions } from "../utils/getWatermarkPositions";
 
 describe("useNightlyLayerViewModel", () => {
-  it("returns the app version and watermark grid", () => {
+  it("returns the app version", () => {
     const { result } = renderHook(() => useNightlyLayerViewModel());
 
     expect(result.current.appVersion).toBe(__APP_VERSION__);
-    expect(result.current.watermarks).toEqual(getWatermarkPositions());
-    expect(result.current.watermarks).toHaveLength(400);
   });
 
-  it("reflects prerelease visibility from build constants", () => {
+  it("does not compute watermarks when the layer is hidden in test env", () => {
     const { result } = renderHook(() => useNightlyLayerViewModel());
-    const expectedVisibility =
-      __PRERELEASE__ && __CHANNEL__ !== "next" && !__CHANNEL__.includes("sha");
 
-    expect(result.current.isVisible).toBe(expectedVisibility);
+    expect(result.current.isVisible).toBe(false);
+    expect(result.current.watermarks).toEqual([]);
   });
 });
