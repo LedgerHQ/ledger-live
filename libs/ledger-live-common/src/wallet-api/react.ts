@@ -7,7 +7,7 @@ import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-
 import { Transport, Permission } from "@ledgerhq/wallet-api-core";
 import { first } from "rxjs/operators";
 import { getEnv } from "@ledgerhq/live-env";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { endpoints as calEndpoints } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
 import { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";

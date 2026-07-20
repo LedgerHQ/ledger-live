@@ -10,7 +10,9 @@
     "@ledgerhq/live-common",
     "react-dom"
   ],
-  "ignoreUnimported": [],
+  "ignoreUnimported": [
+    "src/errors.ts"
+  ],
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",

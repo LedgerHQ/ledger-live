@@ -2,10 +2,8 @@ import {
   CantOpenDevice,
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
-  UnresponsiveDeviceError,
-  UserRefusedAllowManager,
-  UserRefusedFirmwareUpdate,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/hw-transport/errors";
+import { UnresponsiveDeviceError } from "../../errors";
 import { LocalTracer } from "@ledgerhq/logs";
 import type {
   DeviceId,
@@ -167,9 +165,9 @@ function internalUpdateFirmwareTask({
       error: error => {
         tracer.trace(`Error: ${error}`, { error });
 
-        if (error instanceof UserRefusedFirmwareUpdate) {
+        if ((error as Error).name === "UserRefusedFirmwareUpdate") {
           subscriber.next({ type: "installOsuDevicePermissionDenied" });
-        } else if (error instanceof UserRefusedAllowManager) {
+        } else if ((error as Error).name === "UserRefusedAllowManager") {
           subscriber.next({ type: "allowSecureChannelDenied" });
         } else {
           subscriber.next({ type: "error", error, retrying: false });

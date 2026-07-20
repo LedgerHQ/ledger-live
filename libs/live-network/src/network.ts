@@ -5,7 +5,7 @@ import axios, {
   type AxiosError,
   type AxiosRequestConfig,
 } from "axios";
-import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
+import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "./errors";
 import { changes, getEnv } from "@ledgerhq/live-env";
 import { retry } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";

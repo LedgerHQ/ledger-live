@@ -7,7 +7,7 @@ import {
   toggleOnboardingEarlyCheckCmd,
   ToggleTypeP2,
 } from "../commands/toggleOnboardingEarlyCheck";
-import { StatusCodes, TransportStatusError } from "@ledgerhq/errors";
+import { StatusCodes } from "@ledgerhq/hw-transport/errors";
 
 export type ToggleOnboardingEarlyCheckTaskError =
   | "DeviceInInvalidState"
@@ -55,16 +55,17 @@ function internalToggleOnboardingEarlyCheckTask({
     ).subscribe({
       next: _ => subscriber.next({ type: "success" }),
       error: (error: unknown) => {
-        if (error instanceof TransportStatusError) {
+        if ((error as Error).name === "TransportStatusError") {
           tracer.trace("A TransportStatusError error occurred", { error });
+          const statusCode = (error as { statusCode?: number }).statusCode;
 
-          if (error.statusCode === StatusCodes.SECURITY_STATUS_NOT_SATISFIED) {
+          if (statusCode === StatusCodes.SECURITY_STATUS_NOT_SATISFIED) {
             subscriber.next({
               type: "taskError",
               error: "DeviceInInvalidState",
             });
             return;
-          } else if (error.statusCode === StatusCodes.INCORRECT_LENGTH) {
+          } else if (statusCode === StatusCodes.INCORRECT_LENGTH) {
             subscriber.next({
               type: "taskError",
               error: "InternalError",

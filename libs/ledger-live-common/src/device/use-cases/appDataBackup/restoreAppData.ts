@@ -67,7 +67,7 @@ export function restoreAppData(
           }
 
           // User refused on device
-          if (e instanceof UserRefusedOnDevice) {
+          if ((e as Error).name === "UserRefusedOnDevice") {
             // NOTE: Display a message to the user to retry the restore process
             // If he does not, we should delete the app data (in another flow)
             subscriber.next({

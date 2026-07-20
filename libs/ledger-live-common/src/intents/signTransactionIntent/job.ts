@@ -1,4 +1,5 @@
-import { TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getMainAccount } from "../../account/index";
@@ -25,9 +26,10 @@ function buildSigningDevice(connectionResult: DeviceConnectionResult): SigningDe
 function isUserRefusalError(error: unknown, currency: CryptoOrTokenCurrency | undefined): boolean {
   return (
     sendFeatures.isUserRefusedTransactionError(currency, error) ||
-    error instanceof TransactionRefusedOnDevice ||
-    error instanceof UserRefusedOnDevice ||
-    (error instanceof TransportStatusError && error.statusCode === 0x6985)
+    (error as Error).name === "TransactionRefusedOnDevice" ||
+    (error as Error).name === "UserRefusedOnDevice" ||
+    ((error as { name?: string; statusCode?: number }).name === "TransportStatusError" &&
+      (error as { statusCode?: number }).statusCode === 0x6985)
   );
 }
 

@@ -122,7 +122,7 @@ async function performRemoteDestroy(
     destroySpin?.stop();
     return { remoteSucceeded: true, trustchainDestroyed, memberEjected: false };
   } catch (e) {
-    if (e instanceof TrustchainEjected) {
+    if ((e as { name?: string })?.name === "TrustchainEjected") {
       // destroyApplication is idempotent on an already-closed stream (returns without throwing), so
       // TrustchainEjected means this member is no longer on the ring: it was removed by another
       // owner, or the trustchain was destroyed remotely. Either way there's nothing left for us to

@@ -7,9 +7,8 @@ import {
   ManagerFirmwareNotEnoughSpaceError,
   ManagerNotEnoughSpaceError,
   NetworkDown,
-  TransportStatusError,
   UserRefusedFirmwareUpdate,
-} from "@ledgerhq/errors";
+} from "../errors";
 import Transport from "@ledgerhq/hw-transport";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
@@ -61,8 +60,8 @@ const remapSocketError = (context?: string) =>
     }
 
     const status =
-      e instanceof TransportStatusError
-        ? e.statusCode.toString(16)
+      (e as Error).name === "TransportStatusError"
+        ? (e as unknown as { statusCode: number }).statusCode.toString(16)
         : (e as Error).message.slice((e as Error).message.length - 4);
 
     // TODO use StatusCode instead of this.
