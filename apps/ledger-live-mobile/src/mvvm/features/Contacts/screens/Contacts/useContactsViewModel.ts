@@ -1,8 +1,8 @@
 import {
   type ContactsLedgerSyncStatus,
-  type ContactsPageLabels,
-  type ContactsPageProps,
-  useContactsListViewModel,
+  type ContactsPageNativeLabels,
+  type ContactsPageNativeProps,
+  useContactsSearchViewModel,
 } from "@features/flow-contacts";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
@@ -14,17 +14,18 @@ type ContactsLedgerSyncIntroductionSheetProps = Readonly<{
   onActivate: () => void;
 }>;
 
-export type ContactsViewModel = ContactsPageProps &
+export type ContactsViewModel = ContactsPageNativeProps &
   Readonly<{
     ledgerSyncIntroductionSheet: ContactsLedgerSyncIntroductionSheetProps;
   }>;
 
 export function useContactsViewModel(): ContactsViewModel {
   const { t } = useTranslation();
-  const labels = useMemo<ContactsPageLabels>(
+  const labels = useMemo<ContactsPageNativeLabels>(
     () => ({
       title: t("contacts.title"),
       searchPlaceholder: t("contacts.searchPlaceholder"),
+      searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
       ledgerSyncCheckingAccessibilityLabel: t(
         "contacts.ledgerSyncIntroduction.checkingAccessibilityLabel",
@@ -35,8 +36,10 @@ export function useContactsViewModel(): ContactsViewModel {
   );
   const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
   const [isIntroductionDismissed, setIsIntroductionDismissed] = useState(false);
-  const viewModel = useContactsListViewModel();
-  const onOpenContact = useCallback<ContactsPageProps["onOpenContact"]>(() => undefined, []);
+  const [searchQuery, setSearchQuery] = useState("");
+  const viewModel = useContactsSearchViewModel(searchQuery);
+  const onSearchQueryChange = useCallback((query: string) => setSearchQuery(query), []);
+  const onOpenContact = useCallback<ContactsPageNativeProps["onOpenContact"]>(() => undefined, []);
   const onAddContact = useCallback(() => undefined, []);
   const onDismissIntroduction = useCallback(() => setIsIntroductionDismissed(true), []);
   const onActivateIntroduction = useCallback(() => undefined, []);
@@ -50,6 +53,8 @@ export function useContactsViewModel(): ContactsViewModel {
   return {
     viewModel,
     labels,
+    searchQuery,
+    onSearchQueryChange,
     meAvatarSrc: USER_AVATAR_URL,
     onOpenContact,
     onAddContact,
