@@ -26,7 +26,7 @@ jest.mock("../common-logic/account/getBalance");
 const mockFindTokenByAddressInCurrency = jest.fn().mockResolvedValue(undefined);
 const mockFindTokenById = jest.fn().mockResolvedValue(undefined);
 
-jest.mock("@ledgerhq/cryptoassets/state", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
   getCryptoAssetsStore: jest.fn(() => ({
     findTokenByAddressInCurrency: mockFindTokenByAddressInCurrency,
     findTokenById: mockFindTokenById,

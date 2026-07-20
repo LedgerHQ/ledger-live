@@ -9,7 +9,10 @@ import {
   DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/live-dmk-speculos";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { configureStore } from "@reduxjs/toolkit";
+import { calApiExtra, cryptoAssetsApi } from "@domain/api-currency-token";
+import { buildCryptoAssetsStore } from "@features/platform-currencies/legacy";
+import { getEnv } from "@ledgerhq/live-env";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 const NON_SPECULOS_DEVICE_ERROR =
@@ -72,5 +75,18 @@ export function closeAllDevices() {
   closeAllSpeculosDevices();
 }
 
-// Setup CAL client store for CLI (automatically set as global store)
-setFrameworkCryptoAssetsStore(setupCalClientStore());
+export const calStore = configureStore({
+  reducer: { [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer },
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+      thunk: {
+        extraArgument: calApiExtra({
+          calServiceUrl: getEnv("CAL_SERVICE_URL"),
+          ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION") || "cli",
+        }),
+      },
+    }).concat(cryptoAssetsApi.middleware),
+});
+
+setFrameworkCryptoAssetsStore(buildCryptoAssetsStore({ dispatch: calStore.dispatch }));

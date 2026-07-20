@@ -952,6 +952,7 @@
     "./local/tezos.js",
     "./local/tron.js",
     "./local/xrp.js",
+    "@features/platform-currencies/legacy",
     "@jest/expect-utils",
     "@jest/get-type",
     "@noble/curves/ed25519",

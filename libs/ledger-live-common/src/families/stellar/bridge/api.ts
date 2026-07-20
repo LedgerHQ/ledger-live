@@ -1,7 +1,7 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { BridgeApi, ChainSpecificRules } from "@ledgerhq/ledger-wallet-framework/api/types";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { StellarBurnAddressError } from "@ledgerhq/coin-stellar/types";
 import { STELLAR_BURN_ADDRESS } from "@ledgerhq/coin-stellar/logic";
 

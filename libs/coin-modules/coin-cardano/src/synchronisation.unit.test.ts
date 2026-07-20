@@ -1,4 +1,4 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   AccountShapeInfo,
   GetAccountShape,
@@ -69,7 +69,9 @@ describe("makeGetAccountShape", () => {
 
   describe("balance", () => {
     beforeAll(() => {
-      setupMockCryptoAssetsStore({
+      setCryptoAssetsStore({
+        findTokenById: async () => undefined,
+        findTokenByAddressInCurrency: async () => undefined,
         getTokensSyncHash: jest.fn().mockResolvedValue("some_random_hash"),
       });
     });

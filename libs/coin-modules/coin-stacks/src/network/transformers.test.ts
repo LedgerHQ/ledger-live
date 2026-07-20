@@ -1,4 +1,4 @@
-import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { TransactionResponse } from "../types/api";
 import {
   extractTokenTransferTransactions,
@@ -7,7 +7,7 @@ import {
 } from "./transformers";
 
 // Mock the CryptoAssets module
-jest.mock("@ledgerhq/cryptoassets/state");
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
 describe("Stacks API Transformers", () => {
   const mockTransactions: TransactionResponse[] = [
@@ -159,7 +159,7 @@ describe("Stacks API Transformers", () => {
       jest.clearAllMocks();
 
       // Mock CryptoAssetsStore
-      (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
+      (getCryptoAssetsStore as jest.Mock).mockReturnValue({
         findTokenById: jest.fn().mockResolvedValue(null),
         findTokenByAddressInCurrency: jest.fn().mockResolvedValue(null),
       });

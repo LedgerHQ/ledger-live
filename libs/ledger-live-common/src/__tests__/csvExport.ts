@@ -4,10 +4,14 @@ import { genAccount } from "../mock/account";
 import { getCryptoCurrencyById, getFiatCurrencyByTicker } from "../currencies";
 import { accountsOpToCSV } from "../csvExport";
 import { initialState, loadCountervalues } from "@ledgerhq/live-countervalues/logic";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 // Setup mock store for unit tests
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 setEnv("MOCK", "1");
 setEnv("MOCK_COUNTERVALUES", "1");
 test("export CSV", async () => {

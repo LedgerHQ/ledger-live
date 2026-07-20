@@ -1,4 +1,4 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
@@ -39,7 +39,7 @@ const VIBECODOOR_TOKEN: TokenCurrency = {
   units: [{ name: "Vibecodoor", code: "Vibecodoor", magnitude: 6 }],
 };
 
-setupMockCryptoAssetsStore({
+setCryptoAssetsStore({
   findTokenByAddressInCurrency: async (address: string) =>
     address.toLowerCase() === VIBECODOOR_MINT.toLowerCase() ? VIBECODOOR_TOKEN : undefined,
   findTokenById: async (id: string) => (id === VIBECODOOR_TOKEN.id ? VIBECODOOR_TOKEN : undefined),

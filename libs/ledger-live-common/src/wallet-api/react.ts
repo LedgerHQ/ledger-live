@@ -37,7 +37,7 @@ import {
 } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { listSupportedCurrencies } from "../currencies";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { TrackingAPI } from "./tracking";
 import {
   bitcoinFamilyAccountGetXPubLogic,

@@ -4,7 +4,7 @@ import type { AccountRaw } from "@ledgerhq/types-live";
 import { sortAccountsComparatorFromOrder } from "./ordering";
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
 import { WalletState, accountRawToAccountUserData } from "./store";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 const raws: AccountRaw[] = [
   <AccountRaw>{
@@ -84,7 +84,9 @@ const raws: AccountRaw[] = [
   },
 ];
 
-setupMockCryptoAssetsStore({
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
   getTokensSyncHash: async () => "0",
 });
 

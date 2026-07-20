@@ -1,5 +1,5 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";

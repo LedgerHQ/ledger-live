@@ -39,10 +39,14 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrackingAPI } from "./tracking";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { initialState as walletState } from "@ledgerhq/live-wallet/store";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 // Setup mock store for unit tests
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 
 // Global mocked functions
 const mockedGetAccountIdFromWalletAccountId = jest.mocked(

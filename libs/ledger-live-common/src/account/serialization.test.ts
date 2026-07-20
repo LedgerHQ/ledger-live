@@ -3,7 +3,7 @@ import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/m
 import { toAccountRaw, fromAccountRaw } from "./serialization";
 import { setWalletAPIVersion } from "../wallet-api/version";
 import { WALLET_API_VERSION } from "../wallet-api/constants";
-import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import solanaSplTokenData from "../__fixtures__/solana-spl-epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v.json";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";

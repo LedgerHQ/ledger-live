@@ -5,7 +5,7 @@ import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getAssetFromToken, getTokenFromAsset, computeIntentType } from "./api";
 
-jest.mock("@ledgerhq/cryptoassets/state");
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
 const mockToken = {
   id: "elrond/esdt/555344432d633736663166",
@@ -45,7 +45,9 @@ describe("multiversx bridge", () => {
     >;
 
     (
-      jest.requireMock("@ledgerhq/cryptoassets/state") as { getCryptoAssetsStore: jest.Mock }
+      jest.requireMock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore") as {
+        getCryptoAssetsStore: jest.Mock;
+      }
     ).getCryptoAssetsStore.mockReturnValue({
       findTokenByAddressInCurrency: mockFindTokenByAddressInCurrency,
     });

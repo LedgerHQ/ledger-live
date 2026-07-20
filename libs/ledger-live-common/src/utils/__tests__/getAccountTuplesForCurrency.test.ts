@@ -3,10 +3,14 @@ import { genAccount } from "../../mock/account";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountTuplesForCurrency } from "../getAccountTuplesForCurrency";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 // Setup mock store for unit tests
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 
 function* accountGenerator(currency: CryptoCurrency): Generator<Account> {
   let id = 0;

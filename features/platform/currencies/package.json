@@ -5,6 +5,14 @@
   "description": "App-facing currency runtime: crypto-assets store builder, currency/token hooks, supported-set feature-flag gating",
   "main": "src/index.ts",
   "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./legacy": {
+      "default": "./src/legacy/index.ts"
+    }
+  },
   "sideEffects": false,
   "scripts": {
     "typecheck": "tsc --noEmit",

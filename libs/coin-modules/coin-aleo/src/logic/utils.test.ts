@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { log } from "@ledgerhq/logs";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import aleoConfig from "../config";
 import {
@@ -2605,13 +2605,15 @@ describe("isAleoAccount", () => {
 describe("getCalTokens", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockImplementation(async (programName: string) => {
         if (programName === MOCK_TOKEN_PROGRAM_ID) {
           return mockTokenCurrency;
         }
         return undefined;
       }),
+      getTokensSyncHash: async () => "",
     });
   });
 

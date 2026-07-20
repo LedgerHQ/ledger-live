@@ -1,5 +1,5 @@
 import { defineCommand } from "@bunli/core";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { createCommandOutput } from "../../output";
 import { walletCliDebug } from "../../shared/log";
 import { toTokenInfo } from "../../wallet/models";

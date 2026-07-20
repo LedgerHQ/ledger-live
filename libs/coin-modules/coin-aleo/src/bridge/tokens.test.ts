@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
@@ -102,13 +102,15 @@ function assertAleoTokenAccount(subAccount: TokenAccount): asserts subAccount is
 describe("tokens utils", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockImplementation(async (programName: string) => {
         if (programName === MOCK_TOKEN_PROGRAM_ID) {
           return mockTokenCurrency;
         }
         return undefined;
       }),
+      getTokensSyncHash: async () => "",
     });
     mockGetTokenBalance.mockResolvedValue("250000u128");
   });

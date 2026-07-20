@@ -1,5 +1,9 @@
 import invariant from "invariant";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
+import {
+  setCryptoAssetsStore,
+  type FrameworkCryptoAssetsStore,
+} from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getEnv } from "@ledgerhq/live-env";
 import { createApi } from "../api";
 import { TRANSACTION_TYPE } from "../constants";
@@ -22,7 +26,12 @@ describe("createApi", () => {
   );
 
   beforeAll(() => {
-    setupCalClientStore();
+    setCryptoAssetsStore(
+      buildStandaloneCryptoAssetsStore({
+        calServiceUrl: process.env.CAL_SERVICE_URL ?? "https://global.api.prd.ledger.com/cal",
+        ledgerClientVersion: process.env.LEDGER_CLIENT_VERSION || "coin-aleo-integration-test",
+      }) as unknown as FrameworkCryptoAssetsStore,
+    );
   });
 
   describe("estimateFees", () => {

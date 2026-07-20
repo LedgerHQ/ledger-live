@@ -6,7 +6,7 @@ import type {
   StakingResources,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { InvalidTransactionError } from "@ledgerhq/errors";
 import eip55 from "eip55";
 import BigNumber from "bignumber.js";
