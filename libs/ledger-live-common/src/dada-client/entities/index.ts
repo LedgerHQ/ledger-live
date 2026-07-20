@@ -1,6 +1,41 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { ApiAsset } from "@ledgerhq/cryptoassets";
 import { PartialMarketItemResponse } from "../../market/utils/types";
+
+// Raw DADA API wire-format shapes for currency assets
+export interface ApiTokenCurrency {
+  type: "token_currency";
+  id: string;
+  contractAddress: string;
+  name: string;
+  ticker: string;
+  units: Array<{ code: string; name: string; magnitude: number }>;
+  standard: string;
+  parentCurrency?: string | null;
+  tokenIdentifier?: string;
+  symbol?: string;
+  delisted?: boolean;
+  disableCountervalue?: boolean;
+  descriptor?: unknown;
+}
+
+export interface ApiCryptoCurrency {
+  type: "crypto_currency";
+  id: string;
+  name: string;
+  ticker: string;
+  units: Array<{ code: string; name: string; magnitude: number }>;
+  chainId?: string | null;
+  confirmationsNeeded?: number;
+  symbol?: string;
+  coinType?: number;
+  family?: string;
+  hasSegwit?: boolean;
+  hasTokens?: boolean;
+  hrp?: string | null;
+  disableCountervalue?: boolean;
+}
+
+export type ApiAsset = ApiTokenCurrency | ApiCryptoCurrency;
 
 // Types for crypto asset metadata
 export interface CryptoAssetMeta {

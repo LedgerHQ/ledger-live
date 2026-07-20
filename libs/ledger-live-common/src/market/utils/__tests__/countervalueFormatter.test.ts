@@ -1,4 +1,5 @@
-import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
+import { findCryptoCurrencyByTicker } from "@domain/entity-currency-crypto";
+import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { counterValueFormatter } from "../countervalueFormatter";
 
 const usd = findFiatCurrencyByTicker("USD")!.units[0];

@@ -7,17 +7,13 @@ import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setEnv, getEnv } from "@ledgerhq/live-env";
 import { registerWalletCliDmkTransport } from "./device/register-dmk-transport";
-import { setCryptoCurrenciesStore, setFiatCurrenciesStore } from "@ledgerhq/cryptoassets";
 import {
-  CRYPTO_CURRENCIES_REGISTRY,
-  CRYPTO_CURRENCY_ALIASES,
   getCryptoCurrencyById,
   findCryptoCurrencyById,
   findCryptoCurrencyByScheme,
   listCryptoCurrencies,
   hasCryptoCurrencyId,
 } from "@domain/entity-currency-crypto";
-import { FIAT_CURRENCIES_REGISTRY } from "@domain/entity-currency-fiat";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import pkg from "../package.json" with { type: "json" };
@@ -110,9 +106,6 @@ export const WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS: readonly CryptoCurrencyId
   "solana",
 ];
 
-// The domain registries are the runtime source of truth for currency data.
-setCryptoCurrenciesStore(Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES);
-setFiatCurrenciesStore(Object.values(FIAT_CURRENCIES_REGISTRY));
 setCurrenciesResolver({
   getCryptoCurrencyById,
   findCryptoCurrencyById,

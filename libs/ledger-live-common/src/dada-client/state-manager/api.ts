@@ -5,7 +5,7 @@ import {
   FetchBaseQueryMeta,
   QueryReturnValue,
 } from "@reduxjs/toolkit/query/react";
-import type { ApiAsset } from "@ledgerhq/cryptoassets";
+import type { ApiAsset } from "../entities";
 import type { CryptoOrTokenCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { convertApiToken } from "@domain/api-currency-token";
