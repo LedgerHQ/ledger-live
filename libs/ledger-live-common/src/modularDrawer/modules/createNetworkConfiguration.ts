@@ -1,5 +1,5 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { ReactElement } from "react";
 import { useLeftAccountsModule } from "../hooks/useLeftAccounts";
 import { useLeftAccountsApyModule } from "../hooks/useLeftAccountsApy";

@@ -3,7 +3,7 @@
  */
 import "../../../__tests__/test-helpers/dom-polyfill";
 import React from "react";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 import { renderHook, act } from "@testing-library/react";
 import BigNumber from "bignumber.js";

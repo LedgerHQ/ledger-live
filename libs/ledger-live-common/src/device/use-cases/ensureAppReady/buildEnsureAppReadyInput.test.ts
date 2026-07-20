@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import {
   createFixtureAccount,

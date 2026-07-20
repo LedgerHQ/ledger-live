@@ -11,7 +11,7 @@ jest.mock("@ledgerhq/wallet-api-server", () => ({
   customWrapper: jest.fn(handler => handler),
 }));
 
-jest.mock("@ledgerhq/cryptoassets", () => ({
+jest.mock("@domain/entity-currency-crypto", () => ({
   getCryptoCurrencyById: jest.fn(),
 }));
 

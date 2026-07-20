@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__tests__/test-helpers/dom-polyfill";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { act, renderHook } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import { checkAccountSupported } from "../../../account/index";

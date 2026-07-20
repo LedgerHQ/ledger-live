@@ -8929,6 +8929,9 @@ importers:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
         specifier: ^7.1.2
         version: 7.1.2
+      '@domain/api-currency-token':
+        specifier: workspace:^
+        version: link:../../domain/api/currency-token
       '@domain/entity-client-identity':
         specifier: workspace:^
         version: link:../../domain/entity/client-identity

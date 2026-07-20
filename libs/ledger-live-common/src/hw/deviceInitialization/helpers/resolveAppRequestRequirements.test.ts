@@ -3,7 +3,7 @@ import {
   toEnsureAppReadyInput,
   toConnectAppRequest,
 } from "./resolveAppRequestRequirements";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { createFixtureAccount } from "../../../mock/fixtures/cryptoCurrencies";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/derivation", () => ({

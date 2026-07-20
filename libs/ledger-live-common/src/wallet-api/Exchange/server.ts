@@ -5,7 +5,7 @@ import {
   makeEmptyTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { decodeSwapPayload } from "@ledgerhq/hw-app-exchange";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, getCurrencyForAccount, TokenAccount } from "@ledgerhq/types-live";
