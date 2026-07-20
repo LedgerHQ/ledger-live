@@ -110,8 +110,7 @@ const labels = {
   formatAddressCount: (count: number) => `${count} address`,
 };
 
-function renderContactsPage(query: string) {
-  const me = mockMeContact();
+function renderContactsPage(query: string, me = mockMeContact()) {
   const viewModel = createContactsSearchViewModel(
     me,
     [
@@ -152,6 +151,7 @@ describe("ContactsPage native", () => {
     expect(screen.getByTestId("contacts-search-input")).toHaveValue("Ada");
     expect(screen.getByText("Ada")).toBeVisible();
     expect(screen.queryByText("Ben")).toBeNull();
+    expect(screen.queryByText("Me")).toBeNull();
     expect(screen.getByTestId("contacts-list")).toHaveAttribute(
       "data-keyboard-dismiss-mode",
       "on-drag",
@@ -174,5 +174,12 @@ describe("ContactsPage native", () => {
     expect(screen.getByTestId("contacts-search-no-results")).toBeVisible();
     expect(screen.getByText("No contact found")).toBeVisible();
     expect(screen.queryByTestId("contacts-add-contact-row")).toBeNull();
+  });
+
+  it("renders Me only when its renamed value matches the query", () => {
+    renderContactsPage("toto", mockMeContact({ name: "Toto" }));
+
+    expect(screen.getByText("Toto")).toBeVisible();
+    expect(screen.queryByTestId("contacts-search-no-results")).toBeNull();
   });
 });

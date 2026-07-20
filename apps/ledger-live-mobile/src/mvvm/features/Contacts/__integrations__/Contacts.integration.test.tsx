@@ -55,7 +55,7 @@ jest.mock("@features/flow-contacts", () => {
       onAddContact,
     }: {
       viewModel: {
-        me: { contactId: string; name: string; addressCount: number };
+        me?: { contactId: string; name: string; addressCount: number };
         status?: "results" | "no-results";
       };
       labels: {
@@ -68,28 +68,34 @@ jest.mock("@features/flow-contacts", () => {
       onSearchQueryChange: (query: string) => void;
       onOpenContact: (contactId: string) => void;
       onAddContact: () => void;
-    }) => (
-      <View testID="contacts-screen">
-        <TextInput
-          testID="contacts-search-input"
-          value={searchQuery}
-          onChangeText={onSearchQueryChange}
-          placeholder={labels.searchPlaceholder}
-        />
-        {viewModel.status === "no-results" ? (
-          <Text testID="contacts-search-no-results">{labels.searchNoResults}</Text>
-        ) : null}
-        <Pressable testID="contacts-me-item" onPress={() => onOpenContact(viewModel.me.contactId)}>
-          <Text>{viewModel.me.name}</Text>
-          <Text>{labels.formatAddressCount(viewModel.me.addressCount)}</Text>
-        </Pressable>
-        {viewModel.status === "no-results" ? null : (
-          <Pressable testID="contacts-add-contact-row" onPress={onAddContact}>
-            <Text>{labels.addContact}</Text>
-          </Pressable>
-        )}
-      </View>
-    ),
+    }) => {
+      const me = viewModel.me;
+
+      return (
+        <View testID="contacts-screen">
+          <TextInput
+            testID="contacts-search-input"
+            value={searchQuery}
+            onChangeText={onSearchQueryChange}
+            placeholder={labels.searchPlaceholder}
+          />
+          {viewModel.status === "no-results" ? (
+            <Text testID="contacts-search-no-results">{labels.searchNoResults}</Text>
+          ) : null}
+          {me ? (
+            <Pressable testID="contacts-me-item" onPress={() => onOpenContact(me.contactId)}>
+              <Text>{me.name}</Text>
+              <Text>{labels.formatAddressCount(me.addressCount)}</Text>
+            </Pressable>
+          ) : null}
+          {viewModel.status ? null : (
+            <Pressable testID="contacts-add-contact-row" onPress={onAddContact}>
+              <Text>{labels.addContact}</Text>
+            </Pressable>
+          )}
+        </View>
+      );
+    },
   };
 });
 
@@ -228,6 +234,7 @@ describe("Contacts integration", () => {
       expect(screen.getByTestId("contacts-search-no-results")).toHaveTextContent(
         "No contact found",
       );
+      expect(screen.queryByTestId("contacts-me-item")).toBeNull();
       expect(screen.queryByTestId("contacts-add-contact-row")).toBeNull();
     });
 
@@ -236,6 +243,13 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-search-no-results")).toBeNull();
       expect(screen.getByTestId("contacts-add-contact-row")).toBeVisible();
+    });
+
+    await user.type(input, "Me");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-me-item")).toHaveTextContent(/Me/);
+      expect(screen.queryByTestId("contacts-search-no-results")).toBeNull();
     });
   });
 });
