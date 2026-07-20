@@ -3,7 +3,7 @@ import { formatCurrencyUnit, formatCurrencyUnitFragment } from "./formatCurrency
 import { BigNumber } from "bignumber.js";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 
-const testCases: { name: string; unit: Unit }[] = listCryptoCurrencies().map(currency => ({
+const testCases: { name: string; unit: Unit }[] = listCryptoCurrencies(true).map(currency => ({
   name: currency.name,
   unit: currency.units[0],
 }));
