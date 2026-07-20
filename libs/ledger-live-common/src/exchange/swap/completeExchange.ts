@@ -1,10 +1,10 @@
 import type { Account } from "@ledgerhq/types-live";
+import { DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
 import {
-  DisconnectedDeviceDuringOperation,
-  TransportStatusError,
+  TransactionRefusedOnDevice,
   WrongDeviceForAccountPayout,
   WrongDeviceForAccountRefund,
-} from "@ledgerhq/errors";
+} from "../../errors";
 import {
   createExchange,
   ExchangeTypes,
@@ -20,7 +20,6 @@ import { secp256k1 } from "@noble/curves/secp256k1";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
-import { TransactionRefusedOnDevice } from "../../errors";
 import { handleHederaTrustedFlow } from "../../families/hedera/exchange";
 import { withDevicePromise } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
@@ -252,9 +251,10 @@ const completeExchange = (
             payoutAddressParameters,
           );
         } catch (e) {
-          if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
+          const tse1 = e as { name?: string; statusCode?: number };
+          if (tse1.name === "TransportStatusError" && tse1.statusCode === 0x6a83) {
             throw new WrongDeviceForAccountPayout(
-              getExchangeErrorMessage(e.statusCode, currentStep).errorMessage,
+              getExchangeErrorMessage(tse1.statusCode, currentStep).errorMessage,
               {
                 accountName: getDefaultAccountName(payoutAccount),
               },
@@ -293,10 +293,11 @@ const completeExchange = (
           );
           log(COMPLETE_EXCHANGE_LOG, "checkrefund address");
         } catch (e) {
-          if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
+          const tse2 = e as { name?: string; statusCode?: number };
+          if (tse2.name === "TransportStatusError" && tse2.statusCode === 0x6a83) {
             log(COMPLETE_EXCHANGE_LOG, "transport error");
             throw new WrongDeviceForAccountRefund(
-              getExchangeErrorMessage(e.statusCode, currentStep).errorMessage,
+              getExchangeErrorMessage(tse2.statusCode, currentStep).errorMessage,
               {
                 accountName: getDefaultAccountName(refundAccount),
               },
@@ -316,9 +317,10 @@ const completeExchange = (
         // During signature delegation, Exchange does not remap refusal errors from the coin app/OS.
         // 0x6a84: user refused the proposal for an owned destination address.
         // 0x5501: BOLOS/OS-level refusal (not an Exchange app error code).
+        const tse3 = e as { name?: string; statusCode?: number };
         if (
-          e instanceof TransportStatusError &&
-          (e.statusCode === 0x6a84 || e.statusCode === 0x5501)
+          tse3.name === "TransportStatusError" &&
+          (tse3.statusCode === 0x6a84 || tse3.statusCode === 0x5501)
         ) {
           throw new TransactionRefusedOnDevice();
         }

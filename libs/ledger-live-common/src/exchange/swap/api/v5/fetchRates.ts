@@ -1,10 +1,9 @@
 import network from "@ledgerhq/live-network";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { LedgerAPI4xx, SwapGenericAPIError } from "../../../../errors";
 import { ExchangeRate, ExchangeRateErrorDefault, ExchangeRateResponseRaw } from "../../types";
 import { Unit } from "@ledgerhq/live-app-sdk";
-import { SwapGenericAPIError } from "../../../../errors";
 import { enrichRatesResponse } from "../../utils/enrichRatesResponse";
 import { isIntegrationTestEnv } from "../../utils/isIntegrationTestEnv";
 import { fetchRatesMock } from "./__mocks__/fetchRates.mocks";
