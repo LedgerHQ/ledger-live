@@ -52,6 +52,12 @@ export type ContactsPageProps = Readonly<{
   ledgerSyncIntroduction: ContactsLedgerSyncIntroduction;
 }>;
 
+export function isPopulatedContactsListViewModel(
+  viewModel: ContactsListViewModel,
+): viewModel is PopulatedContactsListViewModel {
+  return viewModel.displayMode === "populated";
+}
+
 export type ContactsSearchResultsViewModel = PopulatedContactsListViewModel &
   Readonly<{
     status: "results";

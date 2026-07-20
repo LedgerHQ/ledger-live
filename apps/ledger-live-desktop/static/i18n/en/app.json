@@ -5265,6 +5265,9 @@
         "customFamiliesHint": "Comma-separated families for custom multi-family testing.",
         "customFamiliesPlaceholder": "evm, stellar, aptos",
         "applyFamilies": "Apply",
+        "contactsData": "Contacts data",
+        "loadPopulatedContacts": "Load populated contacts",
+        "resetContacts": "Reset contacts",
         "resetOverride": "Reset override"
       },
       "cryptoAssetsList": {

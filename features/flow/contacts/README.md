@@ -5,7 +5,7 @@ Shared Contacts flow package for Desktop and Mobile.
 ## Scope
 
 - Feature-flag configuration (`useContactsFeature`, resolvers)
-- `useContactsMeContact` hook (`@domain/entity-contact`)
+- `useContacts` and `useContactsMeContact` hooks (`@domain/entity-contact`)
 - Shared UI components (`.web.tsx` / `.native.tsx`)
 - Empty, populated, and search Contacts list view models and their Desktop and Mobile page shells
 
