@@ -83,6 +83,13 @@ export const FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT = {
   analyticsOptIn: { enabled: false },
 } satisfies OptionalFeatureMap;
 
+export const FF_BORROW_DESKTOP = {
+  ptxBorrowLiveApp: {
+    enabled: true,
+    params: { manifest_id: "borrow" },
+  },
+} satisfies OptionalFeatureMap;
+
 export const FF_EARN_V2_DESKTOP = {
   ...(useLocalEarnManifest && {
     ptxEarnLiveApp: {
