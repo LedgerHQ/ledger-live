@@ -7,7 +7,6 @@ import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { counterValueFormatter } from "./index";
 
 interface MapOptions {
-  counterCurrency: string;
   counterValueUnit: Unit;
   range: KeysPriceChange;
   locale: string;
@@ -16,7 +15,7 @@ interface MapOptions {
 
 export function mapMarketCurrencyToDisplayData(
   item: MarketCurrencyData,
-  { counterCurrency, counterValueUnit, range, locale, t }: MapOptions,
+  { counterValueUnit, range, locale, t }: MapOptions,
 ): MarketAssetDisplayData {
   const change = item.priceChangePercentage[range];
   const priceChangePercentage = typeof change === "number" && Number.isFinite(change) ? change : 0;
@@ -33,7 +32,7 @@ export function mapMarketCurrencyToDisplayData(
       item.marketcap == null
         ? "-"
         : counterValueFormatter({
-            currency: counterCurrency,
+            unit: counterValueUnit,
             value: item.marketcap,
             shorten: true,
             locale,

@@ -171,7 +171,6 @@ describe("search results integration", () => {
       render(
         <AssetSuggestionRow
           currency={currency}
-          counterCurrency="USD"
           locale="en"
           testIdPrefix="search-result"
           onClick={jest.fn()}

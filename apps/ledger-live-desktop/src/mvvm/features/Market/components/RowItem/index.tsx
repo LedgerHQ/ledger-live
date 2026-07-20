@@ -18,14 +18,5 @@ export const RowItem = memo<RowItemContainerProps>(function RowItem({
     range,
   });
 
-  return (
-    <RowItemView
-      style={style}
-      currency={currency}
-      counterCurrency={counterCurrency}
-      locale={locale}
-      isStarred={isStarred}
-      {...viewModel}
-    />
-  );
+  return <RowItemView style={style} currency={currency} isStarred={isStarred} {...viewModel} />;
 });

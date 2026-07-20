@@ -4,9 +4,7 @@ import { useAssetSuggestionsSectionViewModel } from "./hooks/useAssetSuggestions
 import { AssetSuggestionsSectionProps } from "./types";
 
 export function AssetSuggestionsSection(props: Readonly<AssetSuggestionsSectionProps>) {
-  const { locale, counterCurrency } = useAssetSuggestionsSectionViewModel();
+  const { locale } = useAssetSuggestionsSectionViewModel();
 
-  return (
-    <AssetSuggestionsSectionView {...props} locale={locale} counterCurrency={counterCurrency} />
-  );
+  return <AssetSuggestionsSectionView {...props} locale={locale} />;
 }

@@ -7,6 +7,7 @@ import LoadingPlaceholder from "~/renderer/components/LoadingPlaceholder";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { dayAndHourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 const Title = styled(Text).attrs({ variant: "h5", color: "neutral.c100", mb: 2 })`
   font-size: 20px;
@@ -92,7 +93,7 @@ type Props = {
   athDate?: string | Date;
   atl?: number;
   atlDate?: string | Date;
-  counterCurrency: string;
+  counterValueUnit: Unit;
   loading: boolean;
   locale: string;
   range: string;
@@ -114,7 +115,7 @@ function MarketInfo({
   athDate,
   atl,
   atlDate,
-  counterCurrency,
+  counterValueUnit,
   loading,
   locale,
   range,
@@ -137,7 +138,7 @@ function MarketInfo({
           <Label>{t("market.marketList.price")}</Label>
           <ColumnRight>
             <LoadingLabel loading={loading} data-testid="market-price-stats-price">
-              {counterValueFormatter({ value: price, currency: counterCurrency, locale })}
+              {counterValueFormatter({ value: price, unit: counterValueUnit, locale })}
             </LoadingLabel>
             <LoadingLabel loading={loading} data-testid="market-price-stats-variation">
               {currentPriceChangePercentage ? (
@@ -156,22 +157,22 @@ function MarketInfo({
         <Line>
           <Label>{t("market.detailsPage.tradingVolume")}</Label>
           <LoadingLabel loading={loading} data-testid="market-price-stats-trading-volume">
-            {counterValueFormatter({ value: totalVolume, currency: counterCurrency, locale })}
+            {counterValueFormatter({ value: totalVolume, unit: counterValueUnit, locale })}
           </LoadingLabel>
         </Line>
         <Line>
           <Label>{t("market.detailsPage.24hLowHight")}</Label>
           <LoadingLabel loading={loading} data-testid="market-price-stats-low-hight">
-            {counterValueFormatter({ value: low24h, currency: counterCurrency, locale })}
+            {counterValueFormatter({ value: low24h, unit: counterValueUnit, locale })}
             {" / "}
-            {counterValueFormatter({ value: high24h, currency: counterCurrency, locale })}
+            {counterValueFormatter({ value: high24h, unit: counterValueUnit, locale })}
           </LoadingLabel>
         </Line>
         <Line>
           <Label>{t("market.detailsPage.allTimeHigh")}</Label>
           <ColumnRight>
             <LoadingLabel loading={loading} data-testid="market-price-stats-ath">
-              {counterValueFormatter({ value: ath, currency: counterCurrency, locale })}
+              {counterValueFormatter({ value: ath, unit: counterValueUnit, locale })}
             </LoadingLabel>
             <LoadingLabel
               color="neutral.c80"
@@ -186,7 +187,7 @@ function MarketInfo({
           <Label>{t("market.detailsPage.allTimeLow")}</Label>
           <ColumnRight>
             <LoadingLabel loading={loading} data-testid="market-price-stats-atl">
-              {counterValueFormatter({ value: atl, currency: counterCurrency, locale })}
+              {counterValueFormatter({ value: atl, unit: counterValueUnit, locale })}
             </LoadingLabel>
             <LoadingLabel
               color="neutral.c80"
@@ -206,7 +207,7 @@ function MarketInfo({
             <LoadingLabel loading={loading} data-testid="market-cap">
               {counterValueFormatter({
                 value: marketcap,
-                currency: counterCurrency,
+                unit: counterValueUnit,
                 locale,
                 shorten: true,
               })}
