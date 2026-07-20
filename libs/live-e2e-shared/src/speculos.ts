@@ -699,6 +699,14 @@ export function containsSubstringInEvent(targetString: string, events: string[])
   return result;
 }
 
+/** Asserts memo/tag appears on Speculos screens when the tx includes one. */
+export function expectMemoTagInEvents(tx: Transaction, events: string[]) {
+  if (!tx.memoTag || tx.memoTag === "noTag") {
+    return;
+  }
+  expect(containsSubstringInEvent(tx.memoTag, events)).toBeTruthy();
+}
+
 export async function takeScreenshot(port?: number): Promise<Buffer | undefined> {
   const speculosAddress = getSpeculosAddress();
   const speculosApiPort = port ?? getEnv("SPECULOS_API_PORT");

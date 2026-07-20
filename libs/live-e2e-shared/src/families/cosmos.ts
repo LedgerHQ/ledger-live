@@ -1,7 +1,12 @@
 import expect from "expect";
 import { Delegate } from "../models/Delegate";
 import { Transaction } from "../models/Transaction";
-import { containsSubstringInEvent, getDelegateEvents, getSendEvents } from "../speculos";
+import {
+  containsSubstringInEvent,
+  expectMemoTagInEvents,
+  getDelegateEvents,
+  getSendEvents,
+} from "../speculos";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { isTouchDevice } from "../speculosAppVersion";
 import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
@@ -38,6 +43,7 @@ export const sendCosmos = withDeviceController(
       }
       const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
       expect(isAddressCorrect).toBeTruthy();
+      expectMemoTagInEvents(tx, events);
 
       if (isTouchDevice()) {
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
