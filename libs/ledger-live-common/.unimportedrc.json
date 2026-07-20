@@ -654,6 +654,7 @@
     "src/flows/send/utils/feePresetLegends.ts",
     "src/flows/send/utils/feesStrategy.ts",
     "src/flows/send/utils/gas.ts",
+    "src/flows/send/utils/memoFamilyCurrencyId.ts",
     "src/flows/send/utils/networkFeesDisplay.ts",
     "src/flows/send/utils.ts",
     "src/flows/wizard/types.ts",
