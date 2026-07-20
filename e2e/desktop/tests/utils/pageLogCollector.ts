@@ -18,11 +18,11 @@ interface NetworkLog {
   failureText?: string;
 }
 
-export class WebviewLogCollector {
+export class PageLogCollector {
   private readonly consoleLogs: ConsoleLog[] = [];
   private readonly requestsMap: Map<Request, NetworkLog> = new Map();
 
-  private webviewPage: Page | null = null;
+  private targetPage: Page | null = null;
 
   private readonly onConsole = (msg: ConsoleMessage) => {
     this.consoleLogs.push({
@@ -33,12 +33,16 @@ export class WebviewLogCollector {
   };
 
   private readonly onRequest = (request: Request) => {
-    this.requestsMap.set(request, {
-      timestamp: new Date().toISOString(),
-      method: request.method(),
-      url: request.url(),
-      pending: true,
-    });
+    const requestUrl = request.url();
+    // skip file://, data:, devtools:, ...
+    if (/^https?:\/\//.test(requestUrl)) {
+      this.requestsMap.set(request, {
+        timestamp: new Date().toISOString(),
+        method: request.method(),
+        url: requestUrl,
+        pending: true,
+      });
+    }
   };
 
   private readonly onResponse = async (response: Response) => {
@@ -93,8 +97,8 @@ export class WebviewLogCollector {
     }
   };
 
-  private attachToWebview(page: Page): void {
-    this.webviewPage = page;
+  attach(page: Page): void {
+    this.targetPage = page;
     page.on("console", this.onConsole);
     page.on("request", this.onRequest);
     page.on("response", this.onResponse);
@@ -102,18 +106,15 @@ export class WebviewLogCollector {
     page.on("requestfailed", this.onRequestFailed);
   }
 
-  start(electronApp: ElectronApplication): void {
+  attachWebview(electronApp: ElectronApplication): void {
     electronApp.on("window", (page: Page) => {
-      // Exit early if we've already attached to a webview
-      if (this.webviewPage) return;
+      if (this.targetPage) return;
 
-      // In the current implementation, the webview is the second window opened by the app.
-      // If this changes in the future, we may need a more robust way to identify the webview.
+      // The webview is the second window the app opens; revisit this if that assumption changes.
       const windows = electronApp.windows();
       if (windows.length <= 1) return;
 
-      // Attach to the webview page
-      this.attachToWebview(page);
+      this.attach(page);
     });
   }
 
@@ -126,8 +127,8 @@ export class WebviewLogCollector {
   }
 
   getFormattedNetworkLogs(): string {
-    if (this.requestsMap.size === 0) return "";
-
+    // Always return valid JSON: an empty map serializes to "[]", which keeps the
+    // application/json attachment parseable instead of an empty (invalid) body.
     const logEntriesArray = Array.from(this.requestsMap.values());
     return JSON.stringify(logEntriesArray, null, 2);
   }
