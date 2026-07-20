@@ -113,7 +113,7 @@ const fetchStakeForValidator = async (
     asset,
     amount,
     actions: [],
-    details: { contractAddress: validatorAddress, validator: validatorAddress },
+    details: { contractAddress: validatorAddress, validator: validatorAddress, shares },
   };
 };
 

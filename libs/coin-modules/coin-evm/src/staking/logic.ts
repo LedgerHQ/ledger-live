@@ -143,11 +143,9 @@ export const getMaxEstimatedBalance = (a: StakingAccount, estimatedFees: BigNumb
 };
 
 export function canUndelegate(account: StakingAccount, delegation?: StakingDelegation): boolean {
-  const { stakingResources } = account;
-  invariant(stakingResources, "stakingResources should exist");
+  invariant(account.stakingResources, "stakingResources should exist");
   // An activating stake is not yet in the active set, so it cannot be undelegated.
-  if (delegation?.status === "activating") return false;
-  return !!stakingResources?.unbondings;
+  return delegation?.status !== "activating";
 }
 
 /**

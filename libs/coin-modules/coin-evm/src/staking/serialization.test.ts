@@ -217,6 +217,25 @@ describe("coin-evm/staking/serialization", () => {
       expect(raw.unbondings[0]).not.toHaveProperty("validatorId");
       expect(raw.unbondings[0]).not.toHaveProperty("validatorName");
     });
+
+    it("roundtrips a 0G delegation `shares` (BigNumber ↔ string), omitting it when absent", () => {
+      const resources: StakingResources = {
+        ...sampleResources,
+        delegations: [
+          { ...sampleResources.delegations[0], shares: new BigNumber("999000000000000000000") },
+        ],
+      };
+
+      const raw = toStakingResourcesRaw(resources);
+      expect(raw.delegations[0]).toHaveProperty("shares", "999000000000000000000");
+
+      const back = fromStakingResourcesRaw(raw);
+      expect(back.delegations[0].shares).toEqual(new BigNumber("999000000000000000000"));
+
+      const rawNoShares = toStakingResourcesRaw(sampleResources);
+      expect(rawNoShares.delegations[0]).not.toHaveProperty("shares");
+      expect(fromStakingResourcesRaw(rawNoShares).delegations[0]).not.toHaveProperty("shares");
+    });
   });
 
   describe("assignToAccountRaw / assignFromAccountRaw", () => {
