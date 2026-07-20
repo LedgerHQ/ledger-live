@@ -6,7 +6,7 @@ import { useFeature } from "@features/platform-feature-flags";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useAdjustedSafeAreaInsets } from "LLM/hooks/useNavigationBarHeights";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useSettings } from "~/hooks";
 import {
@@ -58,7 +58,7 @@ export function useSwapWebviewProps({ manifest, params, resetWebview }: UseSwapW
 
   const isLlmModularDrawer = llmModularDrawerFF?.enabled && llmModularDrawerFF?.params?.live_app;
 
-  const insets = useSafeAreaInsets();
+  const insets = useAdjustedSafeAreaInsets();
 
   // Capture the initial source to prevent webview refreshes.
   // currentRouteNameRef.current updates when going back and forth inside the navigation stack and returning to the webview
