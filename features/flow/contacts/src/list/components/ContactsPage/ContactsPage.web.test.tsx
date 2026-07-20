@@ -13,6 +13,7 @@ const labels = {
   title: "Contacts",
   searchPlaceholder: "Search contact",
   addContact: "Add contact",
+  ledgerSyncCheckingAccessibilityLabel: "Checking Ledger Sync status",
   formatAddressCount: (count: number) => `${count} address`,
 };
 

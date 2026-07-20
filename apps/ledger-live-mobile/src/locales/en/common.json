@@ -10214,8 +10214,11 @@
       "addressCount_other": "{{count}} addresses"
     },
     "ledgerSyncIntroduction": {
+      "title": "Turn on Ledger Sync to save contacts",
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
-      "dismiss": "Got it"
+      "activate": "Turn on Ledger Sync",
+      "dismiss": "Got it",
+      "checkingAccessibilityLabel": "Checking Ledger Sync status"
     }
   }
 }
