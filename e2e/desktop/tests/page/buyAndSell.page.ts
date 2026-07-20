@@ -5,6 +5,7 @@ import { BuySell, Fiat } from "@ledgerhq/live-e2e-shared/models/BuySell";
 import { expect } from "@playwright/test";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/buySell";
 import { OperationType } from "@ledgerhq/live-e2e-shared/enum/OperationType";
 import { doubleDecodeGoToURL } from "../utils/urlUtils";
 import { getAccountAddressesFromAppJson } from "../utils/getAccountAddressesUtils";
@@ -226,22 +227,18 @@ export class BuyAndSellPage extends WebViewAppPage {
     return titles.map(title => title.trim());
   }
 
-  @step("Select random provider")
-  async selectRandomProvider(operation: string): Promise<BuySellProvider> {
-    const uiNamesFromQuotes = await this.getAvailableProviders();
-    const testedProviders = uiNamesFromQuotes
-      .map(uiName => BuySellProvider.getByUiName(uiName))
-      .filter((p): p is BuySellProvider => Boolean(p?.isTested));
-
-    if (testedProviders.length === 0) {
-      throw new Error(
-        `No known tested providers in quotes. UI listed: ${uiNamesFromQuotes.join(", ") || "(none)"}`,
-      );
-    }
-
-    const selected = testedProviders[Math.floor(Math.random() * testedProviders.length)];
+  @step("Select rotating provider")
+  async selectRotatingProvider(operation: string): Promise<BuySellProvider> {
+    const availableProviders = await this.getAvailableProviders();
+    const selected = pickRotatingProvider(availableProviders);
+    await this.logSelectedProvider(selected.uiName);
     await this.selectProviderQuote(operation, selected);
     return selected;
+  }
+
+  @step("Selected provider: $0")
+  async logSelectedProvider(providerName: string) {
+    expect(providerName).toBeDefined();
   }
 
   @step("Select quote")

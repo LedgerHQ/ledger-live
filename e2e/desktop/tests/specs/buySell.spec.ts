@@ -148,7 +148,7 @@ for (const asset of assets) {
         await app.buyAndSell.verifyBuyInfoBox();
         await app.buyAndSell.verifyProviderInfoIsNotVisible();
         await app.buyAndSell.setAmountToPay(amount, operation);
-        const provider = await app.buyAndSell.selectRandomProvider(operation);
+        const provider = await app.buyAndSell.selectRotatingProvider(operation);
         await app.buyAndSell.selectQuote();
         await app.buyAndSell.verifyProviderUrl(provider, asset.buySell, userdataDestinationPath);
       },
@@ -184,7 +184,7 @@ const sellAssets: Array<{ buySell: Omit<BuySell, "amount">; xrayTicket: string }
 ];
 
 for (const sellAsset of sellAssets) {
-  test.describe("Sell flow - ", () => {
+  test.describe(`Sell flow - [${sellAsset.buySell.crypto.currency.name}]`, () => {
     setupEnv(true);
 
     const { crypto, fiat, operation } = sellAsset.buySell;
@@ -219,7 +219,7 @@ for (const sellAsset of sellAssets) {
         const amount = await getMinimumSellAmount(crypto.currency.id);
         const buySell = { ...sellAsset.buySell, amount };
         await app.buyAndSell.setAmountToPay(amount, operation);
-        const provider = await app.buyAndSell.selectRandomProvider(operation);
+        const provider = await app.buyAndSell.selectRotatingProvider(operation);
         await app.buyAndSell.selectQuote();
         await app.buyAndSell.verifyProviderUrl(provider, buySell, userdataDestinationPath);
       },
