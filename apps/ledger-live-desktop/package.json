@@ -64,6 +64,7 @@
     "@braze/web-sdk": "6.4.0",
     "@datadog/browser-logs": "6.30.1",
     "@datadog/browser-rum": "6.30.1",
+    "@datadog/electron-sdk": "0.6.0",
     "@domain/api-pay-card": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
     "@domain/entity-contact": "workspace:*",

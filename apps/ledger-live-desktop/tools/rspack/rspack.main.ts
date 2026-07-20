@@ -1,5 +1,6 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
+import { DatadogWebpackPlugin } from "@datadog/electron-sdk/webpack-plugin";
 import { commonConfig, rootFolder, outputFolder } from "./rspack.common";
 import {
   buildMainEnv,
@@ -7,6 +8,7 @@ import {
   DOTENV_FILE,
   getRsdoctorPlugin,
   isRsdoctorEnabled,
+  isDatadogConfigured,
 } from "./utils";
 
 /**
@@ -39,6 +41,7 @@ export function createMainConfig(
       mainFields: ["main", "module"],
     },
     plugins: [
+      ...(isDatadogConfigured() ? [new DatadogWebpackPlugin()] : []),
       ...getRsdoctorPlugin("main"),
       new rspack.DefinePlugin({
         ...buildMainEnv(mode, argv),

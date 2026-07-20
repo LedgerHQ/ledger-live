@@ -16,6 +16,7 @@ import db from "./db";
 import { UserDataCleanup } from "./cleanupUserData";
 import debounce from "lodash/debounce";
 import sentry, { setTags } from "~/sentry/main";
+import { initDatadogMain, captureExceptionMain } from "~/datadog/main";
 import type { SettingsState } from "~/renderer/reducers/settings";
 import {
   installExtension,
@@ -112,7 +113,9 @@ app.on("ready", async () => {
   // Measure database initialization and first reads
   console.time("T-db");
   const settings = (await db.getKey("app", "settings")) as SettingsState;
-  const identities = (await db.getKey("app", "identities")) as { userId?: string } | undefined;
+  const identities = (await db.getKey("app", "identities")) as
+    | { userId?: string; datadogId?: string }
+    | undefined;
   const user = (await db.getKey("app", "user")) as { id?: string } | undefined;
   console.timeEnd("T-db");
   const userId = identities?.userId ?? user?.id;
@@ -126,9 +129,24 @@ app.on("ready", async () => {
     sentry(() => settings?.sentryLogs === true && !lldDatadogEnabled, userId);
   }
   // The main process can't resolve the flag itself, so the renderer mirrors it over IPC; this mutes the
-  // main-process Sentry once the flag resolves. Datadog has no main-process integration (renderer only).
+  // main-process Sentry once the flag resolves.
   ipcMain.on("lldDatadogChanged", (_event, enabled: boolean) => {
     lldDatadogEnabled = enabled === true;
+  });
+  const shouldSendDatadog = () => settings?.sentryLogs === true;
+  initDatadogMain(shouldSendDatadog, {
+    ...(identities?.datadogId ? { usr_id: identities.datadogId } : {}),
+  }).then(ok => {
+    if (!ok) return;
+    process.on("uncaughtException", e => captureExceptionMain(e));
+    process.on("unhandledRejection", e => captureExceptionMain(e));
+    app.on("render-process-gone", (_event, _webContents, details) => {
+      if (details.reason === "clean-exit") return;
+      captureExceptionMain(new Error(`render-process-gone: ${details.reason}`), {
+        reason: details.reason,
+        exitCode: details.exitCode,
+      });
+    });
   });
 
   // Set up transport handlers for Speculos and HTTP proxy in main process

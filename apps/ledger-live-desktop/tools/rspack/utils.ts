@@ -43,6 +43,10 @@ dotenv.config({ path: path.resolve(lldRoot, DOTENV_FILE) });
 const SENTRY_URL = process.env.SENTRY_URL;
 const DATADOG_APPLICATION_ID = process.env.DATADOG_APPLICATION_ID;
 const DATADOG_CLIENT_TOKEN = process.env.DATADOG_CLIENT_TOKEN;
+
+export function isDatadogConfigured(): boolean {
+  return !!(DATADOG_APPLICATION_ID && DATADOG_CLIENT_TOKEN);
+}
 const DATADOG_SITE = process.env.DATADOG_SITE ?? "datadoghq.eu";
 const DATADOG_ENV = process.env.DATADOG_ENV;
 
