@@ -1,7 +1,7 @@
 # live-dmk-mobile
 
-> [!CAUTION]
-> **Status: UNSTABLE** — Active Device Management Kit (DMK) migration in progress; API may change.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 Mobile-specific integration of the Ledger Device Management Kit (DMK) for Ledger Live Mobile. Provides React Native BLE and USB-C transport adapters, device discovery flows, and React hooks for hardware wallet communication on iOS and Android.
 
