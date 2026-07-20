@@ -41,11 +41,11 @@ const TransactionsAlerts = () => {
       (!notifications.transactionsAlertsCategory && refNotifSettings.current)
     ) {
       refReconciliationKey.current = undefined;
-      void deleteUserChainwatchAccounts(
+      deleteUserChainwatchAccounts(
         userId.exportUserIdForChainwatch(),
         chainwatchBaseUrl,
         supportedChains,
-      );
+      ).catch(() => undefined);
     }
     refFeatureEnabled.current = featureTransactionsAlerts?.enabled;
     refNotifSettings.current = notifications.transactionsAlertsCategory;
@@ -63,7 +63,7 @@ const TransactionsAlerts = () => {
     if (refReconciliationKey.current === reconciliationKey) return;
 
     refReconciliationKey.current = reconciliationKey;
-    void reconcileTransactionsAlertsAddresses(
+    reconcileTransactionsAlertsAddresses(
       userId.exportUserIdForChainwatch(),
       chainwatchBaseUrl,
       supportedChains,
