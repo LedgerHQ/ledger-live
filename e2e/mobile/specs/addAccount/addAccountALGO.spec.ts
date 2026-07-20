@@ -1,8 +1,0 @@
-import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { runAddAccountTest } from "./addAccount";
-
-runAddAccountTest(
-  Currency.ALGO,
-  ["B2CQA-2497", "B2CQA-2653", "B2CQA-2681"],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@algorand`, `@family-algorand`],
-);

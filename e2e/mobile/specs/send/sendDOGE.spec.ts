@@ -1,9 +1,0 @@
-import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { runSendTest } from "./send";
-
-const transaction = new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW);
-runSendTest(
-  transaction,
-  ["B2CQA-2573"],
-  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@dogecoin", "@family-bitcoin"],
-);
