@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@domain/entity-currency-crypto": "workspace:*",
+    "@shared/live-env": "workspace:*",
     "@types/node": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

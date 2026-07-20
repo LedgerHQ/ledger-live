@@ -42,6 +42,8 @@
     "lint:fix": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
     "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
+    "test": "jest",
+    "coverage": "jest --coverage",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "pnpm knip --directory ../.. -W libs/env"
   },

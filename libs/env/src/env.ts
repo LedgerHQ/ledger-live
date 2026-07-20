@@ -1,33 +1,36 @@
 // set and get environment & config variables
 import { Subject } from "rxjs";
 import { $ElementType } from "utility-types";
+export { injectDefinitions } from "./state";
+import type { EnvDef as EnvDefRecord } from "./state";
 // type ExtractEnvValue = <V>(arg0: EnvDef<V>) => V;
 type EnvDefs = typeof envDefinitions;
 type Env = typeof env;
 
-type EnvDef<T extends string> = T extends EnvName ? EnvDefs[T] : undefined;
-
 export type EnvName = keyof EnvDefs;
 export type EnvValue<Name extends EnvName> = $ElementType<Env, Name>;
 
-const intParser = (v: any): number | undefined => {
-  if (!Number.isNaN(v)) return parseInt(v, 10);
+export const intParser = (v: any): number | undefined => {
+  const n = parseInt(v, 10);
+  if (!Number.isNaN(n)) return n;
 };
 
-const floatParser = (v: any): number | undefined => {
-  if (!Number.isNaN(v)) return parseFloat(v);
+export const floatParser = (v: any): number | undefined => {
+  const n = parseFloat(v);
+  if (!Number.isNaN(n)) return n;
 };
 
-const boolParser = (v: unknown): boolean | undefined => {
+export const boolParser = (v: unknown): boolean | undefined => {
   if (typeof v === "boolean") return v;
   return !(v === "0" || v === "false");
 };
 
-const stringParser = (v: unknown): string | undefined => (typeof v === "string" ? v : undefined);
+export const stringParser = (v: unknown): string | undefined =>
+  typeof v === "string" ? v : undefined;
 
 type JSONValue = string | number | boolean | { [x: string]: JSONValue } | Array<JSONValue>;
 
-const jsonParser = (v: unknown): JSONValue | undefined => {
+export const jsonParser = (v: unknown): JSONValue | undefined => {
   try {
     if (typeof v !== "string") throw new Error();
     return JSON.parse(v);
@@ -36,7 +39,7 @@ const jsonParser = (v: unknown): JSONValue | undefined => {
   }
 };
 
-const stringArrayParser = (v: unknown): string[] | undefined => {
+export const stringArrayParser = (v: unknown): string[] | undefined => {
   const v_array = typeof v === "string" ? v.split(",") : null;
   if (Array.isArray(v_array) && v_array.length > 0) return v_array;
 };
@@ -971,7 +974,7 @@ const envDefinitions = {
   FEATURE_FLAGS: {
     def: "{}",
     parser: jsonParser,
-    desc: "key value map for feature flags: {[key in FeatureId]?: Feature]}",
+    desc: "key value map for feature flags: {[key in FeatureId]?: Feature}",
   },
   PERFORMANCE_CONSOLE: {
     def: false,
@@ -1055,7 +1058,7 @@ const envDefinitions = {
   },
 };
 
-export const getDefinition = (name: string): EnvDef<any> | undefined => {
+export const getDefinition = (name: string): EnvDefRecord<unknown> | undefined => {
   if (name in envDefinitions) {
     return envDefinitions[name as EnvName];
   }
@@ -1076,31 +1079,43 @@ const defaults = Object.keys(envDefinitions).reduce<{ [Key in EnvName]: EnvDefs[
 const env = { ...defaults };
 export const getAllEnvNames = (): EnvName[] => Object.keys(envDefinitions) as EnvName[];
 export const getAllEnvs = (): Env => ({ ...env });
-// Usage: you must use getEnv at runtime because the env might be settled over time. typically will allow us to dynamically change them on the interface (e.g. some sort of experimental flags system)
-export const getEnv = <Name extends EnvName>(name: Name): EnvValue<Name> => env[name];
-export const getEnvDefault = <Name extends EnvName>(name: Name): EnvValue<Name> => defaults[name];
-export const isEnvDefault = <Name extends EnvName>(name: Name): boolean =>
-  env[name] === defaults[name];
-export const getEnvDesc = <Name extends EnvName>(name: Name): string => envDefinitions[name].desc;
+
+export function getEnv<Name extends EnvName>(name: Name): EnvValue<Name>;
+export function getEnv(name: string): unknown;
+export function getEnv(name: string): unknown {
+  return (env as Record<string, unknown>)[name];
+}
+
+export function getEnvDefault<Name extends EnvName>(name: Name): EnvValue<Name>;
+export function getEnvDefault(name: string): unknown;
+export function getEnvDefault(name: string): unknown {
+  return (defaults as Record<string, unknown>)[name];
+}
+
+export const isEnvDefault = (name: string): boolean =>
+  (env as Record<string, unknown>)[name] === (defaults as Record<string, unknown>)[name];
+export const getEnvDesc = (name: string): string =>
+  (envDefinitions as Record<string, { desc: string }>)[name]?.desc ?? "";
 type ChangeValue<T extends EnvName> = {
   name: EnvName;
   value: EnvValue<T>;
   oldValue: EnvValue<T>;
 };
 export const changes: Subject<ChangeValue<any>> = new Subject();
-// change one environment
-export const setEnv = <Name extends EnvName>(name: Name, value: EnvValue<Name>): void => {
-  const oldValue = env[name];
 
+export function setEnv<Name extends EnvName>(name: Name, value: EnvValue<Name>): void;
+export function setEnv(name: string, value: unknown): void;
+export function setEnv(name: string, value: unknown): void {
+  const oldValue = (env as Record<string, unknown>)[name];
   if (oldValue !== value) {
-    env[name] = value;
+    (env as Record<string, unknown>)[name] = value;
     changes.next({
-      name,
+      name: name as EnvName,
       value,
       oldValue,
-    });
+    } as ChangeValue<any>);
   }
-};
+}
 // change one environment with safety. returns true if it succeed
 export const setEnvUnsafe = (name: string, unsafeValue: unknown): boolean => {
   const definition = getDefinition(name);
@@ -1113,6 +1128,6 @@ export const setEnvUnsafe = (name: string, unsafeValue: unknown): boolean => {
     return false;
   }
 
-  setEnv(name as EnvName, value);
+  setEnv(name, value);
   return true;
 };

@@ -8749,6 +8749,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
+      '@shared/live-env':
+        specifier: workspace:*
+        version: link:../../shared/live-env
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -9460,6 +9463,9 @@ importers:
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../wallet-framework-test-setup
+      '@shared/live-env':
+        specifier: workspace:*
+        version: link:../../shared/live-env
       '@solana/web3.js':
         specifier: 'catalog:'
         version: 1.98.4(@typescript/typescript6@6.0.2)
@@ -11643,6 +11649,9 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
+      '@shared/live-env':
+        specifier: workspace:*
+        version: link:../../shared/live-env
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -11965,9 +11974,6 @@ importers:
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../ledger-live-common
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../env
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
@@ -12104,6 +12110,9 @@ importers:
         specifier: ^7.14.1
         version: 7.18.3
     devDependencies:
+      '@shared/live-env':
+        specifier: workspace:*
+        version: link:../../shared/live-env
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -12620,6 +12629,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-live
+      '@shared/live-env':
+        specifier: workspace:*
+        version: link:../../shared/live-env
       base64-js:
         specifier: '1'
         version: 1.5.1
@@ -12755,15 +12767,15 @@ importers:
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:*
         version: link:../live-dmk-speculos
-      '@ledgerhq/live-env':
-        specifier: workspace:*
-        version: link:../env
       '@ledgerhq/live-promise':
         specifier: workspace:*
         version: link:../promise
       '@ledgerhq/logs':
         specifier: workspace:*
         version: link:../ledgerjs/packages/logs
+      '@shared/live-env':
+        specifier: workspace:*
+        version: link:../../shared/live-env
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -13672,6 +13684,9 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
     devDependencies:
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13804,15 +13819,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-      utility-types:
-        specifier: ^3.10.0
-        version: 3.11.0
 
   shared/schema-primitives:
     dependencies:

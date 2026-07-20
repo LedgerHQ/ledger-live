@@ -1,7 +1,7 @@
 import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { DEFAULT_OPTION, getCALDomain, type ServiceOption } from "./common";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 
 const OUTPUT_FILTER =
   "id,name,network,network_family,network_type,exchange_app_config_serialized,live_signature,ticker,decimals,blockchain_name,chain_id,contract_address,descriptor,descriptor_exchange_app,units,symbol";

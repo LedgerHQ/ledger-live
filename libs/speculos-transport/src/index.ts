@@ -5,7 +5,7 @@ import { log } from "@ledgerhq/logs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import SpeculosTransportWebsocket from "@ledgerhq/hw-transport-node-speculos";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { delay } from "@ledgerhq/live-promise";
 
 export type SpeculosDevice = {

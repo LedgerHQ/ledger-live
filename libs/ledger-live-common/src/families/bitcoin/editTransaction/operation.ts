@@ -1,5 +1,5 @@
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import invariant from "invariant";
 

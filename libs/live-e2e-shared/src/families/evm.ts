@@ -17,7 +17,7 @@ import { Device } from "../enum/Device";
 import { Currency } from "../enum/Currency";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { withDeviceController } from "../deviceInteraction/DeviceController";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { getDeviceCoordinates } from "../deviceCoordinates";
 
 function formatEventsForError(events: string[], maxLength = 1000): string {

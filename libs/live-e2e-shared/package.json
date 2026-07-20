@@ -21,7 +21,6 @@
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:^",

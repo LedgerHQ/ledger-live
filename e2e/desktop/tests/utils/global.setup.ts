@@ -1,3 +1,4 @@
+import "@shared/live-env";
 import { parseExtraFeatureFlags } from "@ledgerhq/live-e2e-shared/featureFlagsJsonUtils";
 import { FullConfig } from "@playwright/test";
 import { execFileSync } from "node:child_process";

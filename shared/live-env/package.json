@@ -26,8 +26,6 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
-    "rxjs": "catalog:",
-    "typescript": "catalog:",
-    "utility-types": "^3.10.0"
+    "typescript": "catalog:"
   }
 }

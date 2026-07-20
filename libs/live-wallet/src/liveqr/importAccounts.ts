@@ -5,7 +5,7 @@ import type {
   TransactionCommon,
 } from "@ledgerhq/types-live";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { Observable, firstValueFrom } from "rxjs";
 import { reduce } from "rxjs/operators";
 

@@ -1,6 +1,6 @@
 import { getSpeculosAddress, getDeviceLabelCoordinates } from "../speculos";
 import axios from "axios";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { retryAxiosRequest } from "./retryAxiosRequest";
 
 function getSpeculosInfo(): {

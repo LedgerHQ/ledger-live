@@ -22,6 +22,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:*",
+    "@shared/live-env": "workspace:*",
     "@ledgerhq/live-network": "workspace:*",
     "@ledgerhq/live-promise": "workspace:*",
     "@ledgerhq/logs": "workspace:*",

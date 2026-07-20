@@ -36,6 +36,7 @@
     }
   },
   "devDependencies": {
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",

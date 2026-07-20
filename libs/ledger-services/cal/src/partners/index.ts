@@ -1,8 +1,6 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import network from "@ledgerhq/live-network";
 import { AdditionalProviderConfig, SWAP_DATA_CDN } from "./default";
-
-const CAL_BASE_URL = getEnv("CAL_SERVICE_URL");
 
 export type PartnerType = {
   continuesInProviderLiveApp: boolean;
@@ -75,9 +73,10 @@ export async function getProvidersData({
   partnerSignatureEnv?: "test" | "prod";
   ledgerSignatureEnv?: "test" | "prod";
 }): Promise<Record<string, ExchangeProvider>> {
+  const baseUrl = getEnv("CAL_SERVICE_URL");
   const { data: providersData } = await network<ProvidersDataResponse>({
     method: "GET",
-    url: `${CAL_BASE_URL}/v1/partners`,
+    url: `${baseUrl}/v1/partners`,
     params: {
       output: "name,public_key,public_key_curve,service_app_version,descriptor,partner_id,env",
       service_name: type,

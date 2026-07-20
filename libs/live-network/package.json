@@ -76,6 +76,7 @@
     "axios": "catalog:"
   },
   "devDependencies": {
+    "@shared/live-env": "workspace:*",
     "@types/invariant": "^2.2.35",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",

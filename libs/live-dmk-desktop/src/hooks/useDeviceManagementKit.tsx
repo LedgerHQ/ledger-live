@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { webHidTransportFactory } from "@ledgerhq/device-transport-kit-web-hid";
 import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { LocalTracer } from "@ledgerhq/logs";
 
 const tracer = new LocalTracer("live-dmk-tracer", { function: "useDeviceManagementKit" });

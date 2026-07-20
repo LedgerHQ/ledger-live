@@ -1,7 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 
-// @ts-expect-error – @ledgerhq/live-env is typed in PR1; becomes type-lossy in PR2
-getEnv("yolo");
+getEnv("yolo"); // type-lossy: any string key is accepted
 
 test("typecheck env", () => {
   expect(true).toBe(true);
