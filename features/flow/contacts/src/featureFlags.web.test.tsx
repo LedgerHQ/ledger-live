@@ -1,4 +1,4 @@
-import { type FC, type ReactNode } from "react";
+import React, { type FC, type ReactNode } from "react";
 import { configureStore } from "@reduxjs/toolkit";
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";

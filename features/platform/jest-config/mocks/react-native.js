@@ -1,7 +1,13 @@
 const React = require("react");
 
+const separators = {
+  highlight: () => undefined,
+  unhighlight: () => undefined,
+  updateProps: () => undefined,
+};
+
 function SectionList({
-  sections,
+  sections = [],
   ListHeaderComponent,
   keyExtractor,
   renderItem,
@@ -17,16 +23,16 @@ function SectionList({
     "SectionList",
     props,
     header,
-    sections.map(section =>
+    sections.map((section, sectionIndex) =>
       React.createElement(
         React.Fragment,
-        { key: section.title },
+        { key: `${section.title ?? "section"}-${sectionIndex}` },
         renderSectionHeader?.({ section }),
-        section.data.map((item, index) =>
+        (section.data ?? []).map((item, index) =>
           React.createElement(
             React.Fragment,
             { key: keyExtractor?.(item, index) ?? index },
-            renderItem({ item, index, section, separators: {} }),
+            renderItem?.({ item, index, section, separators }),
           ),
         ),
       ),
@@ -38,7 +44,7 @@ function SectionList({
 // runtime (whose index.js is Flow-typed ESM). Mapped via moduleNameMapper so it intercepts
 // every `react-native` import, including from @testing-library/react-native.
 module.exports = {
-  Platform: { OS: "ios", select: obj => obj.ios },
+  Platform: { OS: "ios", select: obj => obj?.ios ?? obj?.default },
   StyleSheet: {
     create: styles => styles,
     flatten: style => (Array.isArray(style) ? Object.assign({}, ...style) : style || {}),

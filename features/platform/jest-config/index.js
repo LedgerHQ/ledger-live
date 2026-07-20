@@ -10,8 +10,8 @@ const swcTransform = {
 // Redirect the heavy Lumen/crypto-icons ESM barrels to a generic passthrough stub so tests
 // don't need to transform them or install their peer graph. See mocks/*.js.
 const webMocks = {
-  "^@ledgerhq/lumen-ui-react$": path.join(__dirname, "mocks/passthrough-web.js"),
-  "^@ledgerhq/crypto-icons$": path.join(__dirname, "mocks/passthrough-web.js"),
+  "^@ledgerhq/lumen-ui-react(/.*)?$": path.join(__dirname, "mocks/passthrough-web.js"),
+  "^@ledgerhq/crypto-icons(/.*)?$": path.join(__dirname, "mocks/passthrough-web.js"),
 };
 
 const nativeMocks = {
@@ -22,16 +22,6 @@ const nativeMocks = {
   "^@ledgerhq/lumen-ui-rnative(/.*)?$": path.join(__dirname, "mocks/passthrough-native.js"),
   "^@ledgerhq/crypto-icons$": path.join(__dirname, "mocks/passthrough-native.js"),
 };
-
-function createFlowNativeJestProject(overrides = {}) {
-  return {
-    displayName: "native",
-    testEnvironment: "node",
-    testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
-    moduleNameMapper: { ...nativeMocks },
-    ...overrides,
-  };
-}
 
 /**
  * Dual-project jest config for a features/flow package.
@@ -77,11 +67,14 @@ function createFlowJestConfig(overrides = {}) {
       },
       {
         ...base,
-        ...createFlowNativeJestProject(),
+        displayName: "native",
+        testEnvironment: "node",
+        testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
+        moduleNameMapper: { ...nativeMocks },
       },
     ],
     ...overrides,
   };
 }
 
-module.exports = { createFlowJestConfig, createFlowNativeJestProject };
+module.exports = { createFlowJestConfig };
