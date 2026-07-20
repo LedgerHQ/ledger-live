@@ -1,11 +1,15 @@
-import React, { useCallback } from "react";
-import { SectionList, type SectionListRenderItemInfo } from "react-native";
+import React, { useCallback, useRef, useState } from "react";
+import { SectionList, type LayoutChangeEvent, type SectionListRenderItemInfo } from "react-native";
 import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
-import type { ContactsListItem, ContactsPageNativeProps } from "../../types";
+import type { ContactsListItem, ContactsListSection, ContactsPageNativeProps } from "../../types";
 import { ContactsListHeader } from "./ContactsListHeader.native";
 import { ContactsSearchNoResults } from "./ContactsSearchNoResults.native";
 import { ContactsSavedContactListItem } from "./ContactsSavedContactListItem.native";
+import { ContactsSectionIndex } from "./ContactsSectionIndex.native";
 import { ContactsSectionHeader } from "./ContactsSectionHeader.native";
+import { useContactsSectionIndex } from "../../internals/useContactsSectionIndex.native";
+
+const noContactsListSections: readonly never[] = [];
 
 export function ContactsPage({
   viewModel,
@@ -21,8 +25,20 @@ export function ContactsPage({
   const hasNoResults = "status" in viewModel && viewModel.status === "no-results";
   const isLedgerSyncChecking = ledgerSyncStatus === "checking";
   const me = "me" in viewModel ? viewModel.me : undefined;
+  const listRef = useRef<SectionList<ContactsListItem, ContactsListSection> | null>(null);
+  const [listHeight, setListHeight] = useState(0);
+  const {
+    activeSectionTitle,
+    sectionIndexEntries,
+    onSelectSection,
+    onViewableItemsChanged,
+    viewabilityConfig,
+  } = useContactsSectionIndex({
+    sections: isPopulated ? viewModel.sections : noContactsListSections,
+    listRef,
+  });
   const renderContact = useCallback(
-    ({ item }: SectionListRenderItemInfo<ContactsListItem>) => (
+    ({ item }: SectionListRenderItemInfo<ContactsListItem, ContactsListSection>) => (
       <ContactsSavedContactListItem
         contact={item}
         addressCountLabel={labels.formatAddressCount(item.addressCount)}
@@ -44,19 +60,28 @@ export function ContactsPage({
       onAddContact={onAddContact}
     />
   );
+  const onListLayout = useCallback((event: LayoutChangeEvent) => {
+    const nextHeight = event.nativeEvent.layout.height;
+
+    setListHeight(currentHeight => (currentHeight === nextHeight ? currentHeight : nextHeight));
+  }, []);
+  const sectionIndexVerticalCenter = listHeight / 2;
 
   let content: React.JSX.Element;
 
   if (isPopulated) {
     content = (
-      <Box lx={{ flex: 1 }}>
+      <Box lx={{ flex: 1 }} onLayout={onListLayout}>
         <SectionList
+          ref={listRef}
           testID="contacts-list"
           sections={viewModel.sections}
           keyExtractor={contact => contact.contactId}
           renderItem={renderContact}
           renderSectionHeader={({ section }) => <ContactsSectionHeader title={section.title} />}
           ListHeaderComponent={listHeader}
+          onViewableItemsChanged={onViewableItemsChanged}
+          viewabilityConfig={viewabilityConfig}
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingTop: 8,
@@ -66,6 +91,14 @@ export function ContactsPage({
           keyboardDismissMode="on-drag"
           keyboardShouldPersistTaps="handled"
         />
+        {listHeight > 0 ? (
+          <ContactsSectionIndex
+            sections={sectionIndexEntries}
+            activeSectionTitle={activeSectionTitle}
+            onSelectSection={onSelectSection}
+            verticalCenterOffset={sectionIndexVerticalCenter}
+          />
+        ) : null}
       </Box>
     );
   } else if (hasNoResults) {
