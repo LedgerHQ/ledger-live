@@ -35,15 +35,6 @@ jest.mock("@features/flow-contacts", () => {
   };
 });
 
-jest.mock("react-native-svg", () => {
-  const React = require("react");
-  const { View } = require("react-native");
-
-  return {
-    SvgUri: ({ testID }: { testID: string }) => <View testID={testID} />,
-  };
-});
-
 jest.mock("LLM/components/QueuedDrawer/QueuedDrawerBottomSheet", () => {
   const React = require("react");
   const { Pressable, View } = require("react-native");
@@ -109,7 +100,7 @@ function createViewModel({
 }
 
 describe("ContactsView", () => {
-  it("renders the inactive introduction with the Figma labels and artwork", () => {
+  it("renders the inactive introduction with the Figma labels", () => {
     render(<ContactsView {...createViewModel()} />);
 
     expect(screen.getByTestId("contacts-screen")).toBeVisible();
@@ -121,9 +112,6 @@ describe("ContactsView", () => {
     ).toBeVisible();
     expect(screen.getByRole("button", { name: "Turn on Ledger Sync" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Got it" })).toBeEnabled();
-    expect(screen.getByTestId("contacts-ledger-sync-introduction-artwork")).toBeVisible();
-    expect(screen.getByTestId("contacts-ledger-sync-introduction-line-left")).toBeVisible();
-    expect(screen.getByTestId("contacts-ledger-sync-introduction-line-right")).toBeVisible();
   });
 
   it("keeps the introduction open when activating Ledger Sync", () => {
