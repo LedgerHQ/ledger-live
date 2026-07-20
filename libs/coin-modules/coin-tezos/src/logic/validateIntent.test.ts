@@ -1229,7 +1229,16 @@ describe("validateIntent", () => {
       // Regression for LIVE-28506: a staking account (necessarily delegated, since you must
       // delegate before staking) doing Send Max used to report max spendable = 0 — a soft
       // "don't empty a delegated account" error short-circuited the amount computation. Send Max
-      // must now surface the liquid balance (total minus staked) minus fees, never 0.
+      // must now surface the liquid balance (total minus staked) minus fees: a positive amount
+      // whenever that liquid balance exceeds fees (as it does here), instead of short-circuiting
+      // to 0. (It can still be 0 when fees exceed the liquid balance — not the case tested here.)
+      mockEstimateFees.mockResolvedValue({
+        fees: 1000n,
+        gasLimit: 10000n,
+        storageLimit: 0n,
+        estimatedFees: 1000n,
+        amount: 0n,
+      });
       mockGetAccountByAddress.mockResolvedValue(
         makeUserAccount({
           balance: 5_000_000,
