@@ -14,7 +14,6 @@ import { APTOS_COIN_CHANGE, OP_TYPE } from "../../constants";
 import { normalizeTransactionOptions } from "../../logic/normalizeTransactionOptions";
 import type { AptosTransaction, TransactionOptions } from "../../types";
 
-jest.mock("@ledgerhq/cryptoassets");
 jest.mock("@ledgerhq/ledger-wallet-framework/account/index");
 
 setCryptoAssetsStore({
