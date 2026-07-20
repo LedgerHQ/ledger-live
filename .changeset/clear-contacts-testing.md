@@ -2,4 +2,4 @@
 "@features/flow-contacts": patch
 ---
 
-Add native Contacts list test coverage.
+Add Contacts list view-model and helper test coverage.

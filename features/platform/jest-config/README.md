@@ -18,7 +18,7 @@ The Lumen barrels (`@ledgerhq/lumen-ui-react`, `@ledgerhq/lumen-ui-rnative`) and
 `@ledgerhq/crypto-icons` are heavy ESM packages with large peer graphs. Instead of
 transforming them and installing every peer, this package redirects them (via
 `moduleNameMapper`) to a generic **Proxy passthrough stub**: every named export becomes
-a simple element that renders its children, respects `as`, and forwards DOM-facing props.
+a component that just renders its children.
 
 As a result:
 

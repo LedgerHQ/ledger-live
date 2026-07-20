@@ -10,8 +10,8 @@ const swcTransform = {
 // Redirect the heavy Lumen/crypto-icons ESM barrels to a generic passthrough stub so tests
 // don't need to transform them or install their peer graph. See mocks/*.js.
 const webMocks = {
-  "^@ledgerhq/lumen-ui-react(/.*)?$": path.join(__dirname, "mocks/passthrough-web.js"),
-  "^@ledgerhq/crypto-icons(/.*)?$": path.join(__dirname, "mocks/passthrough-web.js"),
+  "^@ledgerhq/lumen-ui-react$": path.join(__dirname, "mocks/passthrough-web.js"),
+  "^@ledgerhq/crypto-icons$": path.join(__dirname, "mocks/passthrough-web.js"),
 };
 
 const nativeMocks = {
@@ -19,7 +19,7 @@ const nativeMocks = {
   // Mapped here (not jest.mock in a setup file) so it also intercepts react-native imports
   // from inside @testing-library/react-native.
   "^react-native$": path.join(__dirname, "mocks/react-native.js"),
-  "^@ledgerhq/lumen-ui-rnative(/.*)?$": path.join(__dirname, "mocks/passthrough-native.js"),
+  "^@ledgerhq/lumen-ui-rnative$": path.join(__dirname, "mocks/passthrough-native.js"),
   "^@ledgerhq/crypto-icons$": path.join(__dirname, "mocks/passthrough-native.js"),
 };
 

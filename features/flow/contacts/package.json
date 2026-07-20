@@ -49,7 +49,6 @@
     }
   },
   "devDependencies": {
-    "@features/platform-jest-config": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
@@ -65,7 +64,6 @@
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
-    "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
@@ -79,7 +77,6 @@
     "react-native-reanimated": "catalog:",
     "react-native-safe-area-context": "catalog:",
     "react-native-svg": "catalog:",
-    "react-test-renderer": "catalog:",
     "react-redux": "catalog:",
     "tailwind-merge": "catalog:",
     "typescript": "catalog:"
