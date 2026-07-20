@@ -4,6 +4,17 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "~/context/hooks";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import { TAB_BAR_HEIGHT } from "~/components/TabBar/shared";
+import { useIsExperimentalHeaderVisible } from "~/screens/Settings/Experimental/ExperimentalHeader";
+
+/**
+ * Returns safe area insets with `top` zeroed when the experimental header is
+ * visible, because the header already occupies that space.
+ */
+export function useAdjustedSafeAreaInsets() {
+  const insets = useSafeAreaInsets();
+  const isExperimentalHeaderVisible = useIsExperimentalHeaderVisible();
+  return isExperimentalHeaderVisible ? { ...insets, top: 0 } : insets;
+}
 
 export const TOP_BAR_CONTENT_HEIGHT = 48;
 export const TOP_BAR_WRAPPER_PADDING_TOP = 8;
@@ -46,7 +57,7 @@ export interface NavigationBarHeights {
  * @returns `bottomBarHeight` - The height of the bottom bar
  */
 export function useNavigationBarHeights(): NavigationBarHeights {
-  const insets = useSafeAreaInsets();
+  const insets = useAdjustedSafeAreaInsets();
   const isTabBarVisible = useSelector(isMainNavigatorVisibleSelector);
 
   const topBarHeightWithBlur =
