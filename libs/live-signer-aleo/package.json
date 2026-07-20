@@ -32,6 +32,7 @@
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-aleo": "catalog:",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
     "rxjs": "catalog:"
   },
   "scripts": {
@@ -65,6 +66,12 @@
     },
     "./lib-es/*": "./lib-es/*.js",
     "./lib/*": "./lib/*.js",
+    "./errors": {
+        "@ledgerhq/source": "./src/errors.ts",
+        "import": "./lib-es/errors.js",
+        "require": "./lib/errors.js",
+        "default": "./lib/errors.js"
+    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "import": "./lib-es/*.js",

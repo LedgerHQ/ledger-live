@@ -1,23 +1,144 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class TronNoFrozenForBandwidth extends Error {
+  override name = "TronNoFrozenForBandwidth";
+  constructor(message?: string) {
+    super(message || "TronNoFrozenForBandwidth");
+  }
+}
 
-export const TronNoFrozenForBandwidth = createCustomErrorClass("TronNoFrozenForBandwidth");
-export const TronNoFrozenForEnergy = createCustomErrorClass("TronNoFrozenForEnergy");
-export const TronUnfreezeNotExpired = createCustomErrorClass("TronUnfreezeNotExpired");
-export const TronLegacyUnfreezeNotExpired = createCustomErrorClass("TronLegacyUnfreezeNotExpired");
-export const TronVoteRequired = createCustomErrorClass("TronVoteRequired");
-export const TronInvalidVoteCount = createCustomErrorClass("TronInvalidVoteCount");
-export const TronRewardNotAvailable = createCustomErrorClass("TronRewardNotAvailable");
-export const TronNoReward = createCustomErrorClass("TronNoReward");
-export const TronInvalidFreezeAmount = createCustomErrorClass("TronInvalidFreezeAmount");
-export const TronSendTrc20ToNewAccountForbidden = createCustomErrorClass(
-  "TronSendTrc20ToNewAccountForbidden",
-);
-export const TronUnexpectedFees = createCustomErrorClass("TronUnexpectedFees");
-export const TronNotEnoughTronPower = createCustomErrorClass("TronNotEnoughTronPower");
-export const TronTransactionExpired = createCustomErrorClass("TronTransactionExpired");
-export const TronNotEnoughEnergy = createCustomErrorClass("TronNotEnoughEnergy");
-export const TronNoUnfrozenResource = createCustomErrorClass("TronNoUnfrozenResource");
-export const TronInvalidUnDelegateResourceAmount = createCustomErrorClass(
-  "TronInvalidUnDelegateResourceAmount",
-);
-export const TronEmptyPage = createCustomErrorClass("TronEmptyPage");
+export class TronNoFrozenForEnergy extends Error {
+  override name = "TronNoFrozenForEnergy";
+  constructor(message?: string) {
+    super(message || "TronNoFrozenForEnergy");
+  }
+}
+
+export class TronUnfreezeNotExpired extends Error {
+  override name = "TronUnfreezeNotExpired";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "TronUnfreezeNotExpired");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class TronLegacyUnfreezeNotExpired extends Error {
+  override name = "TronLegacyUnfreezeNotExpired";
+  constructor(message?: string) {
+    super(message || "TronLegacyUnfreezeNotExpired");
+  }
+}
+
+export class TronVoteRequired extends Error {
+  override name = "TronVoteRequired";
+  constructor(message?: string) {
+    super(message || "TronVoteRequired");
+  }
+}
+
+export class TronInvalidVoteCount extends Error {
+  override name = "TronInvalidVoteCount";
+  constructor(message?: string) {
+    super(message || "TronInvalidVoteCount");
+  }
+}
+
+export class TronRewardNotAvailable extends Error {
+  override name = "TronRewardNotAvailable";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "TronRewardNotAvailable");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class TronNoReward extends Error {
+  override name = "TronNoReward";
+  constructor(message?: string) {
+    super(message || "TronNoReward");
+  }
+}
+
+export class TronInvalidFreezeAmount extends Error {
+  override name = "TronInvalidFreezeAmount";
+  constructor(message?: string) {
+    super(message || "TronInvalidFreezeAmount");
+  }
+}
+
+export class TronSendTrc20ToNewAccountForbidden extends Error {
+  override name = "TronSendTrc20ToNewAccountForbidden";
+  constructor(message?: string) {
+    super(message || "TronSendTrc20ToNewAccountForbidden");
+  }
+}
+
+export class TronUnexpectedFees extends Error {
+  override name = "TronUnexpectedFees";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "TronUnexpectedFees");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class TronNotEnoughTronPower extends Error {
+  override name = "TronNotEnoughTronPower";
+  constructor(message?: string) {
+    super(message || "TronNotEnoughTronPower");
+  }
+}
+
+export class TronTransactionExpired extends Error {
+  override name = "TronTransactionExpired";
+  constructor(message?: string) {
+    super(message || "TronTransactionExpired");
+  }
+}
+
+export class TronNotEnoughEnergy extends Error {
+  override name = "TronNotEnoughEnergy";
+  constructor(message?: string) {
+    super(message || "TronNotEnoughEnergy");
+  }
+}
+
+export class TronNoUnfrozenResource extends Error {
+  override name = "TronNoUnfrozenResource";
+  constructor(message?: string) {
+    super(message || "TronNoUnfrozenResource");
+  }
+}
+
+export class TronInvalidUnDelegateResourceAmount extends Error {
+  override name = "TronInvalidUnDelegateResourceAmount";
+  constructor(message?: string) {
+    super(message || "TronInvalidUnDelegateResourceAmount");
+  }
+}
+
+export class TronEmptyPage extends Error {
+  override name = "TronEmptyPage";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "TronEmptyPage");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class TronEmptyAccount extends Error {
+  override name = "TronEmptyAccount";
+  constructor(message?: string) {
+    super(message || "TronEmptyAccount");
+  }
+}
+
+export class MaybeKeepTronAccountAlive extends Error {
+  override name = "MaybeKeepTronAccountAlive";
+  constructor(message?: string) {
+    super(message || "MaybeKeepTronAccountAlive");
+  }
+}
+
+export class NotEnoughGas extends Error {
+  override name = "NotEnoughGas";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "NotEnoughGas");
+    if (fields) Object.assign(this, fields);
+  }
+}

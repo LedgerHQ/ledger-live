@@ -28,6 +28,9 @@
       "lib-es/*": [
         "lib-es/*"
       ],
+      "errors": [
+        "src/types/errors.ts"
+      ],
       "*": [
         "lib/*",
         "lib/test/*",
@@ -54,6 +57,7 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@taquito/ledger-signer": "^23.0.0-RC.0",

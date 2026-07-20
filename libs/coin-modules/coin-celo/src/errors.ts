@@ -1,5 +1,18 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
-export const CeloAllFundsWarning = createCustomErrorClass("CeloAllFundsWarning");
-export const CeloGroupNotVotable = createCustomErrorClass("CeloGroupNotVotable");
-export const CeloGroupNotVoted = createCustomErrorClass("CeloGroupNotVoted");
+export class CeloAllFundsWarning extends Error {
+  override name = "CeloAllFundsWarning";
+  constructor(message?: string) {
+    super(message || "CeloAllFundsWarning");
+  }
+}
+export class CeloGroupNotVotable extends Error {
+  override name = "CeloGroupNotVotable";
+  constructor(message?: string) {
+    super(message || "CeloGroupNotVotable");
+  }
+}
+export class CeloGroupNotVoted extends Error {
+  override name = "CeloGroupNotVoted";
+  constructor(message?: string) {
+    super(message || "CeloGroupNotVoted");
+  }
+}

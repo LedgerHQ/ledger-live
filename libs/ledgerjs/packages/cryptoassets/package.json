@@ -37,7 +37,6 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/errors": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
     "zod": "catalog:",
     "lodash": "^4.17.21"

@@ -26,7 +26,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.2",

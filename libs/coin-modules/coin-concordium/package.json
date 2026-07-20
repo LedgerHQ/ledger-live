@@ -66,6 +66,9 @@
       "types/index": [
         "lib/types/index"
       ],
+      "errors": [
+        "src/errors.ts"
+      ],
       "*": [
         "lib/*",
         "lib/bridge/*",
@@ -158,6 +161,11 @@
       "require": "./lib/network/walletConnect.js",
       "default": "./lib-es/network/walletConnect.js"
     },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
+    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
@@ -173,7 +181,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/concordium-core": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
@@ -189,6 +196,7 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
@@ -200,7 +208,8 @@
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@ledgerhq/hw-transport": "workspace:*"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

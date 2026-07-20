@@ -1,5 +1,6 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
-export const VechainAppPleaseEnableContractDataAndMultiClause = createCustomErrorClass(
-  "VechainAppPleaseEnableContractDataAndMultiClause",
-);
+export class VechainAppPleaseEnableContractDataAndMultiClause extends Error {
+  override name = "VechainAppPleaseEnableContractDataAndMultiClause";
+  constructor(message?: string) {
+    super(message || "VechainAppPleaseEnableContractDataAndMultiClause");
+  }
+}

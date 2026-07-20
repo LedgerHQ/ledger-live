@@ -27,6 +27,9 @@
       "lib-es/*": [
         "lib-es/*"
       ],
+      "errors": [
+        "src/errors.ts"
+      ],
       "*": [
         "lib/*"
       ]
@@ -39,6 +42,11 @@
       "@ledgerhq/source": "./src/api/index.ts",
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"
+    },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
     },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",

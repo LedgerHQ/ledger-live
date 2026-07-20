@@ -38,6 +38,9 @@
       "serialization": [
         "lib/serialization/index"
       ],
+      "errors": [
+        "src/errors.ts"
+      ],
       "*": [
         "lib/*"
       ]
@@ -77,6 +80,11 @@
       "@ledgerhq/source": "./src/transaction/*.ts",
       "require": "./lib/transaction/*.js",
       "default": "./lib-es/transaction/*.js"
+    },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
     },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",

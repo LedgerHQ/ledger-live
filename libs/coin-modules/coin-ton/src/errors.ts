@@ -1,23 +1,39 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
 /*
  * When the comment is invalid.
  */
-export const TonCommentInvalid = createCustomErrorClass("TonCommentInvalid");
+export class TonCommentInvalid extends Error {
+  override name = "TonCommentInvalid";
+  constructor(message?: string) {
+    super(message || "TonCommentInvalid");
+  }
+}
 
 /*
  * When the transaction is a jetton transfer.
  */
-export const TonMinimumRequired = createCustomErrorClass("TonMinimumRequired");
+export class TonMinimumRequired extends Error {
+  override name = "TonMinimumRequired";
+  constructor(message?: string) {
+    super(message || "TonMinimumRequired");
+  }
+}
 
 /*
  * When the transaction is a jetton transfer.
  */
-export const TonExcessFee = createCustomErrorClass("TonExcessFee");
+export class TonExcessFee extends Error {
+  override name = "TonExcessFee";
+  constructor(message?: string) {
+    super(message || "TonExcessFee");
+  }
+}
 
 /*
  * When the transaction is a jetton transfer.
  */
-export const TonNotEnoughBalanceInParentAccount = createCustomErrorClass(
-  "TonNotEnoughBalanceInParentAccount",
-);
+export class TonNotEnoughBalanceInParentAccount extends Error {
+  override name = "TonNotEnoughBalanceInParentAccount";
+  constructor(message?: string) {
+    super(message || "TonNotEnoughBalanceInParentAccount");
+  }
+}
