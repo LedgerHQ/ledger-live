@@ -10,10 +10,6 @@ export function isCantonAccount(account: Account): account is CantonAccount {
   return "cantonResources" in account;
 }
 
-function isCantonAccountRaw(accountRaw: AccountRaw): accountRaw is CantonAccountRaw {
-  return "cantonResources" in accountRaw;
-}
-
 function toResourcesRaw(r: CantonResources): CantonResourcesRaw {
   const { isOnboarded, instrumentUtxoCounts, pendingTransferProposals, publicKey, xpub } = r;
   return {
@@ -35,18 +31,17 @@ function fromResourcesRaw(r: CantonResourcesRaw): CantonResources {
   };
 }
 
+// Guard on the source only: the serializer passes a freshly-built destination
+// with no cantonResources yet, so a destination guard would drop the block. LIVE-34585
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): void {
-  if (isCantonAccount(account) && isCantonAccountRaw(accountRaw)) {
-    if (account.cantonResources) {
-      accountRaw.cantonResources = toResourcesRaw(account.cantonResources);
-    }
+  if (isCantonAccount(account) && account.cantonResources) {
+    (accountRaw as CantonAccountRaw).cantonResources = toResourcesRaw(account.cantonResources);
   }
 }
 
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
-  if (isCantonAccountRaw(accountRaw) && isCantonAccount(account)) {
-    if (accountRaw.cantonResources) {
-      account.cantonResources = fromResourcesRaw(accountRaw.cantonResources);
-    }
+  const { cantonResources } = accountRaw as CantonAccountRaw;
+  if (cantonResources) {
+    (account as CantonAccount).cantonResources = fromResourcesRaw(cantonResources);
   }
 }
