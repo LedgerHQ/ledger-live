@@ -7,6 +7,7 @@ import { cryptoAssetsApi } from "@domain/api-currency-token";
 import { currencyFiatApi } from "@domain/api-currency-fiat";
 import { marketSentimentApi } from "@domain/api-market-sentiment";
 import { altcoinsSentimentApi } from "@domain/api-altcoins-sentiment";
+import { payCardApi } from "@domain/api-pay-card";
 import { pushDevicesApi } from "@domain/api-push-devices";
 import { counterValuesApi } from "@ledgerhq/live-common/counterValues/state-manager/api";
 
@@ -20,6 +21,7 @@ const APIs = {
   [currencyFiatApi.reducerPath]: currencyFiatApi,
   [marketApi.reducerPath]: marketApi,
   [cgApi.reducerPath]: cgApi,
+  [payCardApi.reducerPath]: payCardApi,
   [ofacGeoBlockApi.reducerPath]: ofacGeoBlockApi,
   [pushDevicesApi.reducerPath]: pushDevicesApi,
 };

@@ -1,5 +1,4 @@
-import type { PayCardParams } from "./schema";
-import type { PayCardState } from "./types";
+import type { PayCardParams, PayCardState } from "./types";
 
 type PayCardStateRoot = {
   payCard: PayCardState;

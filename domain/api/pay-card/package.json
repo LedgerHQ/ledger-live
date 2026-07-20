@@ -1,8 +1,8 @@
 {
-  "name": "@domain/entity-pay-card",
+  "name": "@domain/api-pay-card",
   "version": "0.1.0",
   "private": true,
-  "description": "Domain entity for Ledger Pay Card data and Redux state",
+  "description": "Domain API client for the Ledger Pay Card authentication and session endpoints",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -15,18 +15,26 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/entity/pay-card"
+    "unimported": "pnpm knip --directory ../../.. -W domain/api/pay-card"
   },
   "dependencies": {
+    "@domain/entity-pay-card": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-redux": ">=9.0.0"
   },
   "devDependencies": {
     "@jest/globals": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "jest": "catalog:",
+    "react": "catalog:",
+    "react-redux": "catalog:",
     "typescript": "catalog:"
   }
 }

@@ -7,6 +7,7 @@ import { cryptoAssetsApi } from "@domain/api-currency-token";
 import { currencyFiatApi } from "@domain/api-currency-fiat";
 import { marketSentimentApi } from "@domain/api-market-sentiment";
 import { altcoinsSentimentApi } from "@domain/api-altcoins-sentiment";
+import { payCardApi } from "@domain/api-pay-card";
 import { pushDevicesApi } from "@domain/api-push-devices";
 import { counterValuesApi } from "@ledgerhq/live-common/counterValues/state-manager/api";
 // Add new RTK Query API here:
@@ -19,6 +20,7 @@ const APIs = {
   [currencyFiatApi.reducerPath]: currencyFiatApi,
   [cgApi.reducerPath]: cgApi,
   [marketApi.reducerPath]: marketApi,
+  [payCardApi.reducerPath]: payCardApi,
   [ofacGeoBlockApi.reducerPath]: ofacGeoBlockApi,
   [pushDevicesApi.reducerPath]: pushDevicesApi,
 };
