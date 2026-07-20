@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { Transaction } from "../types";
+import { Transaction } from "../../types";
 
 export const getFeeRate = (transaction: Transaction | null | undefined): BigNumber => {
   if (!transaction) {
