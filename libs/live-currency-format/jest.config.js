@@ -11,7 +11,7 @@ module.exports = {
     ],
   },
   testPathIgnorePatterns: ["lib/", "lib-es/"],
-  setupFilesAfterEnv: ["<rootDir>/src/setup.ts"],
+  setupFilesAfterEnv: ["<rootDir>/src/setup.ts", "<rootDir>/jest-setup.ts"],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
   reporters: [
     "default",

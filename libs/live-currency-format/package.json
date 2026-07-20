@@ -26,7 +26,8 @@
     "bignumber.js": "^9.1.2"
   },
   "devDependencies": {
-    "@ledgerhq/cryptoassets": "workspace:^",
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@ledgerhq/ledger-wallet-framework": "workspace:*",
     "@types/node": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
