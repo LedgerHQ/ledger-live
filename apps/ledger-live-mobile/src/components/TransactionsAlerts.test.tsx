@@ -17,7 +17,6 @@ import { render, waitFor } from "@testing-library/react-native";
 import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
 import { notificationsSelector } from "~/reducers/settings";
-import { userIdSelector } from "@ledgerhq/client-ids/store";
 import TransactionsAlerts from "./TransactionsAlerts";
 
 jest.mock("@ledgerhq/live-common/transactionsAlerts/index", () => {
@@ -33,6 +32,9 @@ jest.mock("@ledgerhq/live-common/transactionsAlerts/index", () => {
     ),
     reconcileTransactionsAlertsAddresses: jest.fn(),
   };
+});
+jest.mock("@ledgerhq/client-ids/store", () => ({ userIdSelector: jest.fn() }), {
+  virtual: true,
 });
 jest.mock("~/context/hooks", () => ({ useSelector: jest.fn() }));
 
@@ -97,8 +99,7 @@ describe("TransactionsAlerts", () => {
       if (selector === notificationsSelector) {
         return { transactionsAlertsCategory: transactionsAlertsEnabled };
       }
-      if (selector === userIdSelector) return userId;
-      throw new Error("Unexpected selector");
+      return userId;
     });
   });
 
