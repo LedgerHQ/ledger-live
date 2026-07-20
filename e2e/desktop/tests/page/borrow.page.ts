@@ -54,6 +54,13 @@ export class BorrowPage extends WebViewAppPage {
     return this.hostSignModal().getByRole("button", { name: this.continueButton });
   }
 
+  /** Visible host modal overlay (opacity/scale), not just DOM presence. */
+  private visibleModalContainer() {
+    return this.page.locator(
+      '[data-testid=modal-container][style*="opacity: 1"][style*="transform: scale(1)"]',
+    );
+  }
+
   private loanAmountInput(webview: Page) {
     return webview
       .getByText(this.enterLoanAmountLabel, { exact: true })
@@ -194,7 +201,7 @@ export class BorrowPage extends WebViewAppPage {
 
   @step("Wait for host sign modal to close")
   async waitForHostSignModalClosed() {
-    await expect(this.hostSignModal()).toBeHidden({ timeout: 120_000 });
+    await expect(this.visibleModalContainer()).toBeHidden({ timeout: 120_000 });
   }
 
   private async expectExecutionStepOutcome(webview: Page, doneSummary: string) {
