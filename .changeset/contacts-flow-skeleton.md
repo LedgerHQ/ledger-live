@@ -1,5 +1,5 @@
 ---
-"@features/flow-contacts": patch
+"@features/flow-contacts": minor
 ---
 
 Create the Contacts flow package.

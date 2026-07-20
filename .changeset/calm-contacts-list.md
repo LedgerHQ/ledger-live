@@ -1,5 +1,5 @@
 ---
-"@domain/entity-contact": patch
+"@domain/entity-contact": minor
 "@features/flow-contacts": minor
 ---
 

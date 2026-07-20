@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 chore(llc): isolate flaky network-dependent integration tests into a weekly CI run

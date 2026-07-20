@@ -1,6 +1,6 @@
 ---
-"@shared/feature-flags": patch
-"@features/flow-contacts": patch
+"@shared/feature-flags": minor
+"@features/flow-contacts": minor
 ---
 
 Add eligible address family configuration to Contacts feature flags.

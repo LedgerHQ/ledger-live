@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-e2e-shared": patch
+"@ledgerhq/live-e2e-shared": minor
 ---
 
 fix(e2e): serialize token approve/revoke broadcasts per EOA and retry transient nonce failures

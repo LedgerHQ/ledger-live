@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-hedera": patch
+"@ledgerhq/coin-hedera": minor
 ---
 
 listOperations: drop zero-value `NONE` operations
