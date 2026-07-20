@@ -20,6 +20,7 @@ export interface CeloSigner {
     boolChaincode?: boolean,
     chainId?: string,
   ) => Promise<CeloAddress>;
+  getAppConfiguration: () => Promise<{ version: string }>;
   signTransaction: (path: string, rawTxHex: string) => Promise<CeloSignature>;
   signPersonalMessage: (path: string, messageHex: string) => Promise<CeloSignature>;
   signEIP712Message(

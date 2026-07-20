@@ -1,8 +1,15 @@
 import Celo from "@ledgerhq/hw-app-celo";
 import type Transport from "@ledgerhq/hw-transport";
+import { UpdateYourApp } from "@ledgerhq/errors";
 import { CeloSigner } from "@ledgerhq/coin-celo/signer";
 import { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/services/types";
 import { EIP712Message } from "@ledgerhq/types-live";
+import {
+  CELO_MANAGER_APP_NAME,
+  CELO_MULTIPATH_MIN_VERSION,
+  isUnauthorizedPathError,
+  isVersionBelow,
+} from "./deviceAuthorization";
 
 export class LegacySignerCelo implements CeloSigner {
   private readonly signer: Celo;
@@ -15,8 +22,30 @@ export class LegacySignerCelo implements CeloSigner {
     this.signer.setLoadConfig(loadConfig);
   }
 
-  getAddress(path: string, boolDisplay?: boolean, boolChaincode?: boolean, chainId?: string) {
-    return this.signer.getAddress(path, boolDisplay, boolChaincode, chainId);
+  async getAddress(path: string, boolDisplay?: boolean, boolChaincode?: boolean, chainId?: string) {
+    try {
+      return await this.signer.getAddress(path, boolDisplay, boolChaincode, chainId);
+    } catch (e) {
+      // Path rejected by an app too old to authorize it → surface a semantic
+      // "update your app" instead of the raw 0x6a15. The version read is
+      // best-effort on the same open transport: if it fails we fall through and
+      // rethrow the original error, never masking it (and a 0x6a15 from a
+      // current app also passes through unchanged).
+      if (isUnauthorizedPathError(e)) {
+        const version = await this.signer
+          .getAppConfiguration()
+          .then(config => config.version)
+          .catch(() => undefined);
+        if (version !== undefined && isVersionBelow(version, CELO_MULTIPATH_MIN_VERSION)) {
+          throw new UpdateYourApp(undefined, { managerAppName: CELO_MANAGER_APP_NAME });
+        }
+      }
+      throw e;
+    }
+  }
+
+  getAppConfiguration() {
+    return this.signer.getAppConfiguration();
   }
 
   signTransaction(path: string, rawTxHex: string) {
