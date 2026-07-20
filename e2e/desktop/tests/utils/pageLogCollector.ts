@@ -33,15 +33,16 @@ export class PageLogCollector {
   };
 
   private readonly onRequest = (request: Request) => {
-    const url = request.url();
+    const requestUrl = request.url();
     // skip file://, data:, devtools:, ...
-    if (!/^https?:\/\//.test(url)) return;
-    this.requestsMap.set(request, {
-      timestamp: new Date().toISOString(),
-      method: request.method(),
-      url,
-      pending: true,
-    });
+    if (/^https?:\/\//.test(requestUrl)) {
+      this.requestsMap.set(request, {
+        timestamp: new Date().toISOString(),
+        method: request.method(),
+        url: requestUrl,
+        pending: true,
+      });
+    }
   };
 
   private readonly onResponse = async (response: Response) => {
