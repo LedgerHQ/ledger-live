@@ -4,7 +4,6 @@ import { Flex } from "@ledgerhq/native-ui";
 import { useBleDevicePairing } from "@ledgerhq/live-dmk-mobile";
 import { Device } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
 import { BleFailedPairing } from "~/components/BleDevicePairingFlow/BleDevicePairingContent/BleFailedPairing";
 import { BleDevicePairingProgress } from "./BleDevicePairingContent/BleDevicePairingProgress";
 import { BleDevicePaired } from "./BleDevicePairingContent/BleDevicePaired";
@@ -37,7 +36,7 @@ export const DmkBleDevicePairing = ({
   let content;
 
   const needsToForgetDevice = useMemo(() => {
-    return pairingError instanceof PeerRemovedPairing;
+    return (pairingError as { name?: string })?.name === "PeerRemovedPairing";
   }, [pairingError]);
 
   useEffect(() => {
@@ -48,7 +47,7 @@ export const DmkBleDevicePairing = ({
 
   if (isPaired) {
     content = <BleDevicePaired device={device} productName={productName} />;
-  } else if (pairingError instanceof PeerRemovedPairing) {
+  } else if ((pairingError as { name?: string })?.name === "PeerRemovedPairing") {
     content = (
       <BleForgetDeviceDrawer
         isOpen={needsToForgetDevice}
@@ -56,7 +55,7 @@ export const DmkBleDevicePairing = ({
         onRetry={onRetry}
       />
     );
-  } else if (pairingError && !(pairingError instanceof LockedDeviceError)) {
+  } else if (pairingError && (pairingError as { name?: string })?.name !== "LockedDeviceError") {
     content = (
       <BleFailedPairing productName={productName} onRetry={onRetry} onOpenHelp={onOpenHelp} />
     );

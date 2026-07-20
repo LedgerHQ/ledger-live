@@ -2,7 +2,7 @@ import { useCallback, useRef } from "react";
 import { AppState, Platform, Vibration } from "react-native";
 import type { Privacy } from "~/reducers/types";
 import * as Keychain from "react-native-keychain";
-import { PasswordIncorrectError } from "@ledgerhq/errors";
+import { PasswordIncorrectError } from "@ledgerhq/live-common/errors";
 import { VIBRATION_PATTERN_ERROR } from "~/utils/constants";
 
 interface UsePrivacyInitializationProps {

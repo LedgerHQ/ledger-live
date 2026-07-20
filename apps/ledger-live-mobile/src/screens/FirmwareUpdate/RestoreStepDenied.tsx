@@ -6,12 +6,6 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import Button from "~/components/wrappedUi/Button";
 import Link from "~/components/wrappedUi/Link";
 import { TrackScreen } from "~/analytics";
-import { UserRefusedAllowManager } from "@ledgerhq/errors";
-import {
-  LanguageInstallRefusedOnDevice,
-  ImageLoadRefusedOnDevice,
-  ImageCommitRefusedOnDevice,
-} from "@ledgerhq/live-common/errors";
 
 export const RestoreStepDenied = ({
   t,
@@ -27,14 +21,14 @@ export const RestoreStepDenied = ({
   stepDeniedError: Error;
 }) => {
   const analyticsDrawerName =
-    stepDeniedError instanceof LanguageInstallRefusedOnDevice
+    stepDeniedError?.name === "LanguageInstallRefusedOnDevice"
       ? `Error: the language change was cancelled on the device`
-      : (stepDeniedError as Error) instanceof ImageLoadRefusedOnDevice ||
-          (stepDeniedError as Error) instanceof ImageCommitRefusedOnDevice
+      : stepDeniedError?.name === "ImageLoadRefusedOnDevice" ||
+          stepDeniedError?.name === "ImageCommitRefusedOnDevice"
         ? `Error: the restoration of lock screen picture was cancelled on the device`
-        : (stepDeniedError as Error) instanceof UserRefusedAllowManager
+        : stepDeniedError?.name === "UserRefusedAllowManager"
           ? `Error: the restoration of apps was cancelled on the device`
-          : `Error: ${(stepDeniedError as Error).name}`;
+          : `Error: ${stepDeniedError?.name}`;
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
       <TrackScreen category={analyticsDrawerName} refreshSource={false} />
