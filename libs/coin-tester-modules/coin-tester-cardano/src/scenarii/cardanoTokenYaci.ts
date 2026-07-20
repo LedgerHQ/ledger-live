@@ -43,7 +43,6 @@ export const scenarioCardanoTokenYaci: Scenario<GenericTransaction, Account> = {
     });
 
     await resetDevnet();
-    closeIndexer = initYaciIndexer();
 
     const signer = await buildSigner();
     const { accountBridge, currencyBridge, getAddress } = await getBridges(signer, TESTNET);
@@ -93,6 +92,11 @@ export const scenarioCardanoTokenYaci: Scenario<GenericTransaction, Account> = {
       amount: MINT_AMOUNT,
     });
     await pollUtxos(address, u => u.some(x => x.amount.some(a => a.unit === assetReference)));
+
+    // Start MSW only after the devnet admin/faucet/store setup calls (topup, pollUtxos, mintToken): its
+    // passthrough of :10000/:8080 drops the request AbortSignal, so those routed through it can hang.
+    // MSW mocks the Strica sync API used by the sync that follows this setup.
+    closeIndexer = initYaciIndexer();
 
     const account = makeAccount(address, CARDANO_TESTNET);
     tokenSubAccountId = encodeTokenAccountId(account.id, token);

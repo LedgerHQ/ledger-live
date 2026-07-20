@@ -23,6 +23,10 @@ const base = {
 
 const config: Config = {
   reporters: ["default", ...(process.env.CI ? ["github-actions"] : [])],
+  // The `devnet` project shares one Yaci backend (:8080), so its suites must run serially — concurrent
+  // resetDevnet/topup would corrupt state. jest has no per-project worker cap, so pin the whole run to a
+  // single worker (independent of `--runInBand`); the unit suites are trivial, so this costs nothing.
+  maxWorkers: 1,
   projects: [
     {
       ...base,

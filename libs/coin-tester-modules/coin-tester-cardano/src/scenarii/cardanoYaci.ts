@@ -46,7 +46,6 @@ export const scenarioCardanoYaci: Scenario<GenericTransaction, Account> = {
     });
 
     await resetDevnet();
-    closeIndexer = initYaciIndexer();
 
     const signer = await buildSigner();
     const { accountBridge, currencyBridge, getAddress } = await getBridges(signer, TESTNET);
@@ -60,6 +59,11 @@ export const scenarioCardanoYaci: Scenario<GenericTransaction, Account> = {
 
     registerAddress(address, TESTNET.networkId);
     await topup(address, FUNDING_ADA);
+
+    // Start MSW only after the devnet admin/faucet calls: its passthrough of :10000/:8080 drops the
+    // request AbortSignal, so topup routed through it can hang the faucet POST. MSW mocks the Strica
+    // sync API used by the sync that follows this setup.
+    closeIndexer = initYaciIndexer();
 
     return {
       accountBridge,

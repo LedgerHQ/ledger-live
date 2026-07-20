@@ -21,7 +21,10 @@ async function isStoreUp(): Promise<boolean> {
     const res = await fetch(`${YACI_STORE_API}/blocks/latest`, {
       signal: AbortSignal.timeout(2_000),
     });
-    if (!res.ok) return false;
+    if (!res.ok) {
+      await res.body?.cancel(); // release the socket — undici won't reuse a connection with an unread body
+      return false;
+    }
     const block = (await res.json()) as { height?: number };
     // height -1 at genesis; require a produced block.
     return typeof block.height === "number" && block.height >= 0;
@@ -51,7 +54,10 @@ function runDevkit(args: string[], capture?: string[]): ReturnType<typeof spawn>
 // socket) counts as still-in-use so killYaci's loop can't stall.
 async function isPortFree(): Promise<boolean> {
   try {
-    await fetch(`${YACI_STORE_API}/blocks/latest`, { signal: AbortSignal.timeout(2_000) });
+    const res = await fetch(`${YACI_STORE_API}/blocks/latest`, {
+      signal: AbortSignal.timeout(2_000),
+    });
+    await res.body?.cancel(); // reachable = in use; release the socket (undici stalls on unread bodies)
     return false;
   } catch (e) {
     return (e as { cause?: { code?: string } })?.cause?.code === "ECONNREFUSED";
@@ -73,6 +79,14 @@ export async function spawnYaci(): Promise<void> {
   console.log("Starting Yaci DevKit...");
   // Clean slate: a leaked devnet still holding :8080 would make this `up` fail to bind (the CI flake).
   await killYaci();
+  // killYaci is best-effort (it only warns if :8080 stays bound). Assert the port is actually free
+  // before `up`: otherwise `up` fails to bind while isStoreUp() polls green against the *leaked* store,
+  // so spawnYaci would declare readiness on a stale devnet. Fail fast instead.
+  if (!(await isPortFree())) {
+    throw new Error(
+      "Yaci DevKit: :8080 still in use after teardown; refusing to start on a leaked devnet",
+    );
+  }
 
   let spawnError: Error | undefined;
   const output: string[] = [];
@@ -98,6 +112,9 @@ export async function spawnYaci(): Promise<void> {
   while (Date.now() < deadline) {
     if (spawnError) throw spawnError;
     if (await isStoreUp()) {
+      // `up` may have exited non-zero during the poll; re-check so a stale store response can't mask the
+      // failure (fail-fast intent).
+      if (spawnError) throw spawnError;
       console.log(" -  YACI DEVKIT READY ✅  - ");
       return;
     }
@@ -130,21 +147,40 @@ export async function killYaci(): Promise<void> {
 }
 
 // The faucet/admin API can transiently 5xx right after boot. Retry transient failures (5xx / network);
-// fail fast on 4xx. AbortSignal bounds each attempt.
+// fail fast on 4xx.
 const ADMIN_RETRY_LIMIT = 5;
 const ADMIN_RETRY_DELAY_MS = 1_000;
+const ADMIN_TIMEOUT_MS = 10_000;
+
+// Wall-clock bound independent of AbortSignal: MSW's passthrough can silently swallow a request's
+// AbortSignal, so a stalled admin POST would otherwise hang forever. Race the fetch against a timer that
+// rejects regardless (the abandoned fetch settles on its own); the signal still cancels the socket when
+// it does fire.
+function adminFetch(path: string, init: RequestInit): Promise<Response> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(
+      () => reject(new Error(`Yaci admin POST ${path} timed out after ${ADMIN_TIMEOUT_MS}ms`)),
+      ADMIN_TIMEOUT_MS,
+    );
+  });
+  return Promise.race([fetch(`${YACI_ADMIN_API}${path}`, init), timeout]).finally(() =>
+    clearTimeout(timer),
+  );
+}
 
 async function adminPost(path: string, body?: unknown): Promise<void> {
   for (let attempt = 1; ; attempt++) {
     let retryable = false;
     let error: Error;
     try {
-      const res = await fetch(`${YACI_ADMIN_API}${path}`, {
+      const res = await adminFetch(path, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: body === undefined ? undefined : JSON.stringify(body),
-        signal: AbortSignal.timeout(10_000),
+        signal: AbortSignal.timeout(ADMIN_TIMEOUT_MS),
       });
+      await res.body?.cancel(); // body is unused on every path; release the socket for reuse (undici)
       if (res.ok) return;
       error = new Error(`Yaci admin POST ${path} failed: ${res.status} ${res.statusText}`);
       retryable = res.status >= 500;
