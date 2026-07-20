@@ -38,6 +38,9 @@ export function createApi(config: PolkadotConfig): CoinModuleApi {
   return {
     broadcast: (transaction: string, _broadcastConfig?: BroadcastConfig) =>
       broadcast(transaction, "polkadot"),
+    async call() {
+      throw new Error("call is not supported");
+    },
     combine: () => {
       throw new Error("UnsupportedMethod");
     },

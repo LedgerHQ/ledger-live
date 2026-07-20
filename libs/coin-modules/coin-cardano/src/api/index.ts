@@ -39,6 +39,9 @@ export function createApi(config: CardanoConfig, currencyId: string): CoinModule
   const currency = getCryptoCurrencyById(currencyId);
 
   return {
+    async call() {
+      throw new Error("call is not supported");
+    },
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     getBlockInfo: (_height: number): Promise<BlockInfo> => {
       throw new Error("getBlockInfo is not supported");

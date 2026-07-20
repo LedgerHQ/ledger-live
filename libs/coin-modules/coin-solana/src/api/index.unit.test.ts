@@ -118,6 +118,7 @@ describe("createApi", () => {
     expect(api).toEqual(
       expect.objectContaining({
         broadcast: expect.any(Function),
+        call: expect.any(Function),
         combine: expect.any(Function),
         craftTransaction: expect.any(Function),
         craftRawTransaction: expect.any(Function),

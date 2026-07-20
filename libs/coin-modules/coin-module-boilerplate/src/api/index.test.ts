@@ -7,6 +7,7 @@ describe("createApi", () => {
   it("should return every api methods", () => {
     expect(createApi({} as BoilerplateConfig)).toEqual({
       broadcast: expect.any(Function),
+      call: expect.any(Function),
       combine: expect.any(Function),
       craftRawTransaction: expect.any(Function),
       craftTransaction: expect.any(Function),

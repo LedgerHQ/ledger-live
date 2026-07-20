@@ -39,6 +39,10 @@ export function createApi(config: TronConfig): CoinModuleApi<TronMemo> {
 
   return {
     broadcast,
+    // Tron contract reads (triggerconstantcontract) are intentionally not supported yet.
+    async call() {
+      throw new Error("call is not supported");
+    },
     combine,
     craftTransaction,
     craftRawTransaction: (

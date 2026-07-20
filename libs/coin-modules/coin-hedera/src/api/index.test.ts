@@ -62,6 +62,7 @@ describe("createApi", () => {
 
   it("should return an API object with coin module api methods", () => {
     expect(api.broadcast).toBeInstanceOf(Function);
+    expect(api.call).toBeInstanceOf(Function);
     expect(api.combine).toBeInstanceOf(Function);
     expect(api.craftTransaction).toBeInstanceOf(Function);
     expect(api.estimateFees).toBeInstanceOf(Function);

@@ -31,6 +31,9 @@ export function createApi(config: SuiConfig): CoinModuleApi {
 
   return {
     broadcast: (tx: string) => broadcast(tx),
+    async call() {
+      throw new Error("call is not supported");
+    },
     combine,
     craftTransaction: craft,
     craftRawTransaction: (
