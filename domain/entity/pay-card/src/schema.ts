@@ -24,9 +24,3 @@ export const PayCardUserSchema = z.object({
 export const PayCardLogoutResultSchema = z.object({
   success: z.boolean(),
 });
-
-export const PayCardParamsSchema = z.object({
-  platform: z.string(),
-  name: z.string(),
-  path: z.string().optional(),
-});

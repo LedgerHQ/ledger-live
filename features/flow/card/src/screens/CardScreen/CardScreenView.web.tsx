@@ -1,15 +1,25 @@
 import React from "react";
-import { CardPlayground } from "../../components/CardPlayground";
+import { Subheader, SubheaderDescription, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
+import { CardLogin } from "../../components/CardLogin/CardLogin.web";
+import type { CardLoginViewProps } from "../../components/CardLogin/types";
 import type { CardScreenViewModel } from "./useCardScreenViewModel";
 
-type CardScreenViewProps = CardScreenViewModel;
+type CardScreenViewProps = CardScreenViewModel & {
+  readonly cardLogin: CardLoginViewProps;
+};
 
-export function CardScreenView({ description, title }: CardScreenViewProps) {
+export function CardScreenView({ cardLogin, description, title }: CardScreenViewProps) {
   return (
-    <div className="flex flex-col gap-4 rounded-lg bg-muted p-16">
-      <span className="body-2-semi-bold text-base">{title}</span>
-      <span className="body-3 text-muted">{description}</span>
-      <CardPlayground />
-    </div>
+    <Subheader>
+      <div className="flex w-full items-center gap-16">
+        <div className="flex min-w-0 flex-1 flex-col gap-4">
+          <SubheaderTitle as="h2" className="heading-5-semi-bold">
+            {title}
+          </SubheaderTitle>
+          <SubheaderDescription className="body-2 text-muted">{description}</SubheaderDescription>
+        </div>
+        <CardLogin {...cardLogin} />
+      </div>
+    </Subheader>
   );
 }

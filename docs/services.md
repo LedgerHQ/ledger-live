@@ -153,6 +153,8 @@ Services **not** operated by Ledger, including domains baked into SDKs we ship. 
 | 0G validators (ExploreMe) | `api.0g.exploreme.pro` | [code](/libs/coin-modules/coin-evm/src/staking/contracts.ts) | prod |
 | Somnia validator names | `staking.somnia.network`<br>_display-name overlay for on-chain validators (`/api/validator-names`)_ | [code](/libs/coin-modules/coin-evm/src/staking/contracts.ts) | prod |
 | ICP gateway | `ic0.app` | [code](/libs/coin-modules/coin-internet_computer/src/consts.ts) | prod |
+| **PTX** | | | |
+| Pay Card hosted login | `card.withcl.com`<br>_Web3Hub manifest (`cl-card`); login URL is returned by `/card/v1/pre-auth` and opened as the player `goToURL`_ | [code](/apps/ledger-live-mobile/src/mvvm/features/PayTab/screens/PayTab/usePayTabScreenViewModel.ts) | prod |
 | **Engagement** | | | |
 | Segment | `api.segment.io`, `cdn.segment.com`<br>_[@segment/analytics-next](https://www.npmjs.com/package/@segment/analytics-next) / [-react-native](https://www.npmjs.com/package/@segment/analytics-react-native)_ | [code](/apps/ledger-live-desktop/src/renderer/analytics/segment.ts) | prod |
 | Braze | `sdk.fra-02.braze.eu`<br>_[@braze/web-sdk](https://www.npmjs.com/package/@braze/web-sdk) / [@braze/react-native-sdk](https://www.npmjs.com/package/@braze/react-native-sdk); SDK package only (Braze API not used)_ | [code](/apps/ledger-live-desktop/src/braze-setup.ts) | prod |

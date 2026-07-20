@@ -1,17 +1,9 @@
-import type { PayCardParams, PayCardState } from "./types";
+import type { PayCardState } from "./types";
 
 type PayCardStateRoot = {
   payCard: PayCardState;
 };
 
-export function selectPayCard(state: PayCardStateRoot): PayCardState {
-  return state.payCard;
-}
-
-export function selectPayCardIsOpen(state: PayCardStateRoot): boolean {
-  return state.payCard.isOpen;
-}
-
-export function selectPayCardParams(state: PayCardStateRoot): PayCardParams | null {
-  return state.payCard.params;
+export function selectPayCardLoginUrl(state: PayCardStateRoot): string | null {
+  return state.payCard.loginUrl;
 }

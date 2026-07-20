@@ -1,39 +1,29 @@
 import { payCardSlice, payCardInitialState, openPayCard, closePayCard } from "./slice";
-import { selectPayCard, selectPayCardIsOpen, selectPayCardParams } from "./selectors";
+import { selectPayCardLoginUrl } from "./selectors";
 
 const reducer = payCardSlice.reducer;
-const params = { platform: "cl-card", name: "CL Card" };
+const loginUrl = "https://card.withcl.com/login";
 const root = (state = payCardInitialState) => ({ payCard: state });
 
 describe("payCard slice", () => {
-  it("initializes closed with no params", () => {
+  it("initializes with no login URL", () => {
     expect(reducer(undefined, { type: "unknown" })).toEqual(payCardInitialState);
   });
 
-  it("opens with the given params", () => {
-    const state = reducer(undefined, openPayCard(params));
-    expect(state).toEqual({ isOpen: true, params });
+  it("opens with the given login URL", () => {
+    const state = reducer(undefined, openPayCard(loginUrl));
+    expect(state).toEqual({ loginUrl });
   });
 
-  it("closes and clears params", () => {
-    const opened = reducer(undefined, openPayCard(params));
+  it("closes and clears the login URL", () => {
+    const opened = reducer(undefined, openPayCard(loginUrl));
     expect(reducer(opened, closePayCard())).toEqual(payCardInitialState);
   });
 });
 
 describe("payCard selectors", () => {
-  it("selectPayCard returns the full slice state", () => {
-    const state = reducer(undefined, openPayCard(params));
-    expect(selectPayCard(root(state))).toEqual(state);
-  });
-
-  it("selectPayCardIsOpen reflects open/close", () => {
-    expect(selectPayCardIsOpen(root())).toBe(false);
-    expect(selectPayCardIsOpen(root(reducer(undefined, openPayCard(params))))).toBe(true);
-  });
-
-  it("selectPayCardParams returns params when open, null when closed", () => {
-    expect(selectPayCardParams(root())).toBeNull();
-    expect(selectPayCardParams(root(reducer(undefined, openPayCard(params))))).toEqual(params);
+  it("selectPayCardLoginUrl returns the login URL", () => {
+    expect(selectPayCardLoginUrl(root())).toBeNull();
+    expect(selectPayCardLoginUrl(root(reducer(undefined, openPayCard(loginUrl))))).toBe(loginUrl);
   });
 });

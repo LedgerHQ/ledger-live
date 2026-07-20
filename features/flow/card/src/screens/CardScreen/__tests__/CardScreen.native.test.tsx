@@ -1,6 +1,6 @@
 import React from "react";
 import { configureStore } from "@reduxjs/toolkit";
-import { cleanup, render, screen } from "@testing-library/react-native";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react-native";
 import { payCardApi, payCardApiExtra } from "@domain/api-pay-card";
 import { payCardSlice } from "@domain/entity-pay-card";
 import { Provider } from "react-redux";
@@ -21,9 +21,9 @@ function makeCardStore() {
   });
 }
 
-function renderCardScreen() {
+function renderCardScreen(store = makeCardStore()) {
   return render(
-    <Provider store={makeCardStore()}>
+    <Provider store={store}>
       <CardScreen />
     </Provider>,
   );
@@ -34,15 +34,24 @@ describe("CardScreen (Native)", () => {
     cleanup();
   });
 
-  it("renders the card title", () => {
+  it("renders the card login entry", () => {
     renderCardScreen();
 
-    expect(screen.getByText("Card playground")).toBeTruthy();
+    expect(screen.getByText("Card")).toBeTruthy();
+    expect(screen.getByText("Login to access your card")).toBeTruthy();
+    expect(screen.getByLabelText("Login")).toBeTruthy();
   });
 
-  it("renders the card description", () => {
-    renderCardScreen();
+  it("hands the pre-auth login URL to the Shell through the pay card slice", async () => {
+    const store = makeCardStore();
+    renderCardScreen(store);
 
-    expect(screen.getByText("Card flow scaffold by design system")).toBeTruthy();
+    fireEvent.press(screen.getByLabelText("Login"));
+
+    await waitFor(() => {
+      expect(store.getState().payCard).toEqual({
+        loginUrl: "https://card.withcl.com/",
+      });
+    });
   });
 });

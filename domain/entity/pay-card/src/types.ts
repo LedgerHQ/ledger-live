@@ -1,7 +1,6 @@
 import type { z } from "zod";
 import {
   PayCardLogoutResultSchema,
-  PayCardParamsSchema,
   PayCardPhaseSchema,
   PayCardPreAuthSchema,
   PayCardProviderSchema,
@@ -24,9 +23,6 @@ export type PayCardUser = z.infer<typeof PayCardUserSchema>;
 
 export type PayCardLogoutResult = z.infer<typeof PayCardLogoutResultSchema>;
 
-export type PayCardParams = z.infer<typeof PayCardParamsSchema>;
-
 export type PayCardState = Readonly<{
-  isOpen: boolean;
-  params: PayCardParams | null;
+  loginUrl: string | null;
 }>;

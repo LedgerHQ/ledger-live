@@ -14,7 +14,7 @@ export const payCardApiMockDatabase: Readonly<
   Record<string, PayCardApiMockHandler>
 > = {
   "POST /card/v1/pre-auth": (): PayCardPreAuthResponse => ({
-    login_url: "https://card-mock.ledger-test.com/hosted-ui",
+    login_url: "https://card.withcl.com/",
   }),
   "POST /card/v1/auth": (): PayCardAuthResponse => ({
     app_session_token: "cs_mock_card_session_token",

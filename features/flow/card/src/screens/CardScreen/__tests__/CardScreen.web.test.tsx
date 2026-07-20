@@ -25,7 +25,7 @@ function makeCardStore() {
 function renderCardScreen() {
   return render(
     <Provider store={makeCardStore()}>
-      <StyleProvider colorScheme="light">
+      <StyleProvider colorScheme="dark">
         <CardScreen />
       </StyleProvider>
     </Provider>,
@@ -33,15 +33,11 @@ function renderCardScreen() {
 }
 
 describe("CardScreen (Web)", () => {
-  it("renders the card title", () => {
-    const { getByText } = renderCardScreen();
+  it("renders the card login entry", () => {
+    const { container } = renderCardScreen();
 
-    expect(getByText("Card playground")).toBeVisible();
-  });
-
-  it("renders the card description", () => {
-    const { getByText } = renderCardScreen();
-
-    expect(getByText("Card flow scaffold by design system")).toBeVisible();
+    expect(container).toHaveTextContent("Card");
+    expect(container).toHaveTextContent("Login to access your card");
+    expect(container).toHaveTextContent("Login");
   });
 });
