@@ -7,9 +7,24 @@ export type ContactsListItem = Readonly<{
   addressCount: number;
 }>;
 
+export type ContactsListSection = Readonly<{
+  title: string;
+  data: readonly ContactsListItem[];
+}>;
+
 export type EmptyContactsListViewModel = Readonly<{
+  displayMode: "empty";
   me: ContactsListItem;
 }>;
+
+export type PopulatedContactsListViewModel = Readonly<{
+  displayMode: "populated";
+  me: ContactsListItem;
+  savedContacts: readonly ContactsListItem[];
+  sections: readonly ContactsListSection[];
+}>;
+
+export type ContactsListViewModel = EmptyContactsListViewModel | PopulatedContactsListViewModel;
 
 export type ContactsPageLabels = Readonly<{
   title: string;
@@ -28,18 +43,13 @@ export type ContactsLedgerSyncIntroduction = Readonly<{
 }>;
 
 export type ContactsPageProps = Readonly<{
-  viewModel: EmptyContactsListViewModel;
+  viewModel: ContactsListViewModel;
   labels: ContactsPageLabels;
   meAvatarSrc: string;
-  onOpenMe: (contactId: ContactId) => void;
+  onOpenContact: (contactId: ContactId) => void;
   onAddContact: () => void;
   ledgerSyncStatus: ContactsLedgerSyncStatus;
   ledgerSyncIntroduction: ContactsLedgerSyncIntroduction;
-}>;
-
-export type PopulatedContactsListViewModel = Readonly<{
-  me: ContactsListItem;
-  savedContacts: readonly ContactsListItem[];
 }>;
 
 export type ContactsSearchResultsViewModel = PopulatedContactsListViewModel &
