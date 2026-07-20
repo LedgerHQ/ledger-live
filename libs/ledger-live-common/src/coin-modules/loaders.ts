@@ -117,7 +117,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "axelar",
       "stargaze",
       "secret_network",
-      "umee",
       "desmos",
       "dydx",
       "quicksilver",

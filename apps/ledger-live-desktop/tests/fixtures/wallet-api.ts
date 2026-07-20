@@ -377,15 +377,6 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
-    id: "umee",
-    ticker: "UMEE",
-    name: "Umee",
-    family: "cosmos",
-    color: "#bb90f8",
-    decimals: 6,
-  },
-  {
-    type: "CryptoCurrency",
     id: "desmos",
     ticker: "DSM",
     name: "Desmos",
