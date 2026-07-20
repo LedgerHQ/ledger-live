@@ -11581,9 +11581,6 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
-      '@ledgerhq/ledger-wallet-framework':
-        specifier: workspace:*
-        version: link:../ledger-wallet-framework
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11

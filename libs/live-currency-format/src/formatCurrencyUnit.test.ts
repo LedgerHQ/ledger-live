@@ -1,4 +1,4 @@
-import { listCryptoCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
 import { formatCurrencyUnit, formatCurrencyUnitFragment } from "./formatCurrencyUnit";
 import { BigNumber } from "bignumber.js";
 import { Unit } from "@ledgerhq/types-cryptoassets";

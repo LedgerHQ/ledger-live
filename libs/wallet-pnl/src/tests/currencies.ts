@@ -1,9 +1,6 @@
 import { CoinType } from "@ledgerhq/types-cryptoassets";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-// Minimal currency fixtures so tests don't depend on @ledgerhq/cryptoassets.
-// Only the fields consumed by wallet-pnl scenarios and test mocks are populated.
-
 const bitcoin: CryptoCurrency = {
   type: "CryptoCurrency",
   id: "bitcoin",
