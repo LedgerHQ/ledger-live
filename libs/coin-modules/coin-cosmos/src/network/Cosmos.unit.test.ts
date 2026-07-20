@@ -632,7 +632,6 @@ describe("CosmosApi", () => {
       msg_type: "cosmos.staking.v1beta1.MsgDelegate",
       msg: `delegator_address:"bbn1someoneelse" validator_address:"bbnvaloper1pending" amount:<denom:"ubbn" amount:"99" >`,
     };
-    // x/staking returns the standard 21-day completion_time; Babylon's real release is ~2 days
     const processedUnbonding = {
       validator_address: "bbnvaloper1active",
       entries: [
