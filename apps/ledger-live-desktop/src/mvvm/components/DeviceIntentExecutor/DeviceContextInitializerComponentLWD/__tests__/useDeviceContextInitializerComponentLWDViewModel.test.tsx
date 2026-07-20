@@ -3,7 +3,7 @@ import { Observable, Subject } from "rxjs";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
 import { act, renderHook } from "@testing-library/react";
-import { DeviceId } from "@ledgerhq/client-ids/ids";
+import { DeviceId } from "@domain/entity-client-identity";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import {
