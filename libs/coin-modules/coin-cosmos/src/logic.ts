@@ -1,5 +1,5 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import * as bech32 from "bech32";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";

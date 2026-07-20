@@ -197,8 +197,8 @@ export function createTestConcordiumAccountRaw(
  * Create minimal CryptoCurrency for testing
  */
 export function createTestCryptoCurrency(
-  overrides?: Partial<import("@ledgerhq/types-cryptoassets").CryptoCurrency>,
-): import("@ledgerhq/types-cryptoassets").CryptoCurrency {
+  overrides?: Partial<import("@ledgerhq/ledger-wallet-framework/types").CryptoCurrency>,
+): import("@ledgerhq/ledger-wallet-framework/types").CryptoCurrency {
   return {
     type: "CryptoCurrency",
     id: "concordium_testnet",

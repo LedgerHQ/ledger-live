@@ -30,6 +30,7 @@ import {
   largeScreenUpsellModalSlice,
   type LargeScreenUpsellModalState,
 } from "@domain/entity-large-screen-upsell-modal";
+import { payCardSlice, type PayCardState } from "@domain/entity-pay-card";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 import dialogs, { DialogsState } from "./dialogs";
 import dialogsWithData, { DialogsWithDataState } from "./dialogsWithData";
@@ -86,6 +87,7 @@ export type State = LLDRTKApiState & {
   supportedFiats: SupportedFiatsState;
   contacts: ContactsState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
+  payCard: PayCardState;
 };
 
 const appReducer = combineReducers({
@@ -124,8 +126,11 @@ const appReducer = combineReducers({
   supportedFiats: supportedFiatsSlice.reducer,
   contacts: contactsSlice.reducer,
   largeScreenUpsellModal: largeScreenUpsellModalSlice.reducer,
+  payCard: payCardSlice.reducer,
   ...lldRTKApiReducers,
-  ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_: unknown, action: PayloadAction) => action }),
+  ...(getEnv("PLAYWRIGHT_RUN") && {
+    lastAction: (_: unknown, action: PayloadAction) => action,
+  }),
 });
 
 const rootReducer = (state: State | undefined, action: UnknownAction) => {

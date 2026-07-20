@@ -8,7 +8,7 @@ import { BtcOperation, BitcoinAccount } from "../../../types";
 import type { ZcashAccount } from "../types";
 import BigNumber from "bignumber.js";
 import type { ShieldedTransaction, ShieldedSyncResult } from "../types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import { firstValueFrom, from, Observable, of } from "rxjs";
 import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";

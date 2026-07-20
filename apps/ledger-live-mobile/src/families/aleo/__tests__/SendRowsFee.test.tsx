@@ -25,7 +25,7 @@ const baseTransaction = {
 
 const renderFeeRow = (
   statusOverrides: Record<string, unknown> | undefined,
-  transaction = baseTransaction,
+  transaction: Record<string, unknown> = baseTransaction,
 ) =>
   render(
     <AleoSendRowsFee
@@ -84,5 +84,33 @@ describe("AleoSendRowsFee", () => {
 
     expect(screen.queryByText("Sponsored by Provable")).toBeNull();
     expect(screen.getByText("fees:7")).toBeTruthy();
+  });
+
+  it("hides the records/signing rows for a public transaction", () => {
+    renderFeeRow(undefined, { ...baseTransaction, mode: "transfer_public" });
+
+    expect(screen.queryByText("Records used")).toBeNull();
+    expect(screen.queryByText("Signing time")).toBeNull();
+  });
+
+  it("shows the records/signing rows for a private transaction", () => {
+    const properties = {
+      amountRecordCommitments: ["r1", "r2"],
+      feeRecordCommitment: "r3",
+    };
+    renderFeeRow(undefined, { ...baseTransaction, mode: "transfer_private", properties });
+    const expectedRecordCount =
+      properties.amountRecordCommitments.length + (properties.feeRecordCommitment ? 1 : 0);
+
+    expect(screen.getByText("Records used")).toBeTruthy();
+    expect(screen.getByText(String(expectedRecordCount))).toBeTruthy();
+    expect(screen.getByText("Signing time")).toBeTruthy();
+  });
+
+  it("hides the records/signing rows when transaction.properties is missing", () => {
+    renderFeeRow(undefined, { ...baseTransaction, mode: "transfer_private" });
+
+    expect(screen.queryByText("Records used")).toBeNull();
+    expect(screen.queryByText("Signing time")).toBeNull();
   });
 });

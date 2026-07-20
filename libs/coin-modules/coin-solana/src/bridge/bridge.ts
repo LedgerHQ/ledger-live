@@ -11,7 +11,7 @@ import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operat
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { minutes, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
 import { BlockhashWithExpiryBlockHeight } from "@solana/web3.js";
 import { SOLANA_DUMMY_ADDRESS } from "../constants";

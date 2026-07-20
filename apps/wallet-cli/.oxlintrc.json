@@ -5,7 +5,15 @@
     "node": true
   },
   "plugins": ["eslint", "import", "oxc", "unicorn", "typescript"],
-  "ignorePatterns": ["*.js", "*.cjs", "*.mjs", "node_modules", "dist/**", ".bunli/commands.gen.ts"],
+  "ignorePatterns": [
+    "*.js",
+    "*.cjs",
+    "*.mjs",
+    "node_modules",
+    "dist/**",
+    ".bunli/commands.gen.ts",
+    "src/skills/manifest.gen.ts"
+  ],
   "categories": {
     "correctness": "error",
     "suspicious": "warn",

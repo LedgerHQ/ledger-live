@@ -1,5 +1,5 @@
 import { Balance } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import coinConfig from "../../config";
 import { isGatewayEnabled } from "../../network/gateway";
 import { getBalance as gatewayGetBalance } from "../../network/gateway";

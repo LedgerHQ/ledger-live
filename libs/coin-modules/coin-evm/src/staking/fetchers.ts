@@ -1,5 +1,5 @@
 import { Stake } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { delay } from "@ledgerhq/live-promise";
 import { getCoinConfig } from "../config";
 import { withApi } from "../network/node/rpc.common";

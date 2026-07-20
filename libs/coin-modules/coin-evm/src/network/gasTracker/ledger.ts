@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency, LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, LedgerExplorerId } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
 import { EvmConfigInfo, getCoinConfig } from "../../config";
 import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../errors";

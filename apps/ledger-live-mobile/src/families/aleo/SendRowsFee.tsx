@@ -8,6 +8,10 @@ import type {
   Transaction as AleoTransaction,
   TransactionStatus as AleoTransactionStatus,
 } from "@ledgerhq/live-common/families/aleo/types";
+import {
+  getEstimatedSigningTime,
+  isPrivateTransaction,
+} from "@ledgerhq/live-common/families/aleo/utils";
 import type { Account, AccountLike, TransactionStatusCommon } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { Trans, useTranslation } from "~/context/Locale";
@@ -50,6 +54,14 @@ export default function AleoSendRowsFee({ account, parentAccount, transaction, s
   const isSponsored = fees.isZero();
   const learnMoreUrl = useLocalizedUrl(urls.aleo.learnMore);
 
+  const isPrivate = isPrivateTransaction(aleoTransaction);
+  const showRecordRows = isPrivate && !!aleoTransaction.properties;
+  const recordCount =
+    isPrivate && aleoTransaction.properties
+      ? aleoTransaction.properties.amountRecordCommitments.length +
+        (aleoTransaction.properties.feeRecordCommitment === null ? 0 : 1)
+      : 0;
+
   return (
     <>
       <SectionSeparator lineColor={colors.lightFog} />
@@ -69,11 +81,27 @@ export default function AleoSendRowsFee({ account, parentAccount, transaction, s
           </Box>
         )}
       </SummaryRow>
+      {showRecordRows && (
+        <>
+          <SectionSeparator lineColor={colors.lightFog} />
+          <SummaryRow title={t("aleo.send.summary.recordsUsed")}>
+            <Text typography="body2SemiBold" lx={{ color: "base" }}>
+              {recordCount}
+            </Text>
+          </SummaryRow>
+          <SectionSeparator lineColor={colors.lightFog} />
+          <SummaryRow title={t("aleo.send.summary.signingTime")}>
+            <Text typography="body2SemiBold" lx={{ color: "base" }}>
+              {getEstimatedSigningTime(recordCount, t("time.second_short"), t("time.minute_short"))}
+            </Text>
+          </SummaryRow>
+        </>
+      )}
       <SectionSeparator lineColor={colors.lightFog} />
       <SummaryTotalSection account={account} parentAccount={parentAccount} amount={totalSpent} />
       <Alert
         type="secondary"
-        title={t("aleo.send.summary.proofGenerationNotice")}
+        title={t("aleo.send.summary.proofGenerationWarning")}
         learnMoreUrl={learnMoreUrl}
       />
     </>

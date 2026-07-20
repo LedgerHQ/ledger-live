@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { type QueryableConsts } from "@polkadot/api/types";
 import getApiPromise from "./apiPromise";
 

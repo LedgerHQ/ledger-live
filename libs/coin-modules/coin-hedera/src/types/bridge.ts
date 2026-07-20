@@ -1,4 +1,4 @@
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type {
   Account,
   AccountRaw,

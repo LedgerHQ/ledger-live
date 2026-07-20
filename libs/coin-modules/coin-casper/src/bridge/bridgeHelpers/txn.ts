@@ -1,8 +1,8 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { CasperNetwork, PublicKey, Transaction } from "casper-js-sdk";
 import invariant from "invariant";

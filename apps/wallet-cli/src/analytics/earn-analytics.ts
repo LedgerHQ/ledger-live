@@ -3,14 +3,14 @@ import { track } from "./segment";
 const EARN = "Earn";
 
 export function trackEarnYieldsRequested(p: { network: string }): void {
-  track("earn_yields_requested", {
+  track("earnyields_requested", {
     page: EARN,
     network: p.network,
   });
 }
 
 export function trackEarnYieldsReturned(p: { network: string; rowsCount: number }): void {
-  track("earn_yields_returned", {
+  track("earnyields_returned", {
     page: EARN,
     network: p.network,
     rowsCount: p.rowsCount,
@@ -18,14 +18,14 @@ export function trackEarnYieldsReturned(p: { network: string; rowsCount: number 
 }
 
 export function trackEarnPositionsRequested(p: { network: string }): void {
-  track("earn_positions_requested", {
+  track("earnpositions_requested", {
     page: EARN,
     network: p.network,
   });
 }
 
 export function trackEarnPositionsReturned(p: { network: string; positionsCount: number }): void {
-  track("earn_positions_returned", {
+  track("earnpositions_returned", {
     page: EARN,
     network: p.network,
     positionsCount: p.positionsCount,
@@ -39,7 +39,7 @@ export function trackEarnDepositStarted(p: {
   amount: string;
   dryRun: boolean;
 }): void {
-  track("earn_deposit_started", {
+  track("earndeposit_started", {
     page: EARN,
     family: p.family,
     network: p.network,
@@ -56,7 +56,7 @@ export function trackEarnDepositCompleted(p: {
   status: string;
   transactionsCount: number;
 }): void {
-  track("earn_deposit_completed", {
+  track("earndeposit_completed", {
     page: EARN,
     family: p.family,
     network: p.network,
@@ -67,7 +67,7 @@ export function trackEarnDepositCompleted(p: {
 }
 
 export function trackEarnDepositRejected(p: { network: string; device?: string }): void {
-  track("earn_deposit_rejected", {
+  track("earndeposit_rejected", {
     page: EARN,
     network: p.network,
     device: p.device,
@@ -75,7 +75,7 @@ export function trackEarnDepositRejected(p: { network: string; device?: string }
 }
 
 export function trackEarnDepositFailed(p: { errorCode: string; errorMessage: string }): void {
-  track("earn_deposit_failed", {
+  track("earndeposit_failed", {
     page: EARN,
     errorCode: p.errorCode,
     errorMessage: p.errorMessage,
@@ -94,7 +94,7 @@ export function trackEarnWithdrawStarted(p: {
   finalize: boolean;
   dryRun: boolean;
 }): void {
-  track("earn_withdraw_started", {
+  track("earnwithdraw_started", {
     page: EARN,
     family: p.family,
     network: p.network,
@@ -112,7 +112,7 @@ export function trackEarnWithdrawCompleted(p: {
   status: string;
   transactionsCount: number;
 }): void {
-  track("earn_withdraw_completed", {
+  track("earnwithdraw_completed", {
     page: EARN,
     family: p.family,
     network: p.network,
@@ -122,7 +122,7 @@ export function trackEarnWithdrawCompleted(p: {
 }
 
 export function trackEarnWithdrawRejected(p: { network: string; device?: string }): void {
-  track("earn_withdraw_rejected", {
+  track("earnwithdraw_rejected", {
     page: EARN,
     network: p.network,
     device: p.device,
@@ -130,7 +130,7 @@ export function trackEarnWithdrawRejected(p: { network: string; device?: string 
 }
 
 export function trackEarnWithdrawFailed(p: { errorCode: string; errorMessage: string }): void {
-  track("earn_withdraw_failed", {
+  track("earnwithdraw_failed", {
     page: EARN,
     errorCode: p.errorCode,
     errorMessage: p.errorMessage,

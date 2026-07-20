@@ -1,6 +1,6 @@
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,

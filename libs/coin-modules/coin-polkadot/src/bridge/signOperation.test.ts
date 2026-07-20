@@ -1,5 +1,5 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
 import { u8aConcat } from "@polkadot/util";
 import BigNumber from "bignumber.js";

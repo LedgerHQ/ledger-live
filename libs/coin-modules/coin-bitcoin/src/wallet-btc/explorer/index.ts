@@ -2,7 +2,7 @@ import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types"
 import { Address, Block, TX } from "../storage/types";
 import network from "@ledgerhq/live-network/network";
 import type { IExplorer, NetworkInfoResponse, UtxoTx } from "./types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { blockchainBaseURL } from "../../explorer";
 
 type ExplorerParams = {

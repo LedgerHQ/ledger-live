@@ -1,5 +1,21 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.33.0
+
+### Minor Changes
+
+- [#17552](https://github.com/LedgerHQ/ledger-live/pull/17552) [`20efcc6`](https://github.com/LedgerHQ/ledger-live/commit/20efcc67fd38bbba793e23abc1f62a14e29a1104) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - sort wallet-api swap quotes by net countervalue
+
+- [#18013](https://github.com/LedgerHQ/ledger-live/pull/18013) [`57a48a5`](https://github.com/LedgerHQ/ledger-live/commit/57a48a5fb17e47c6ce686fe297344c2a580d84d7) Thanks [@CremaFR](https://github.com/CremaFR)! - Add `customSwap` to the wallet-api exchange SDK and expose the matching `CustomSwapParams` / `CustomSwapResult` types (also re-exported from `@ledgerhq/live-common/wallet-api/Exchange/swapFlow/types`). This is the live-app entry point for the new device-intent-based swap flow on mobile, which currently runs the EVM token-approval step (sign on device, broadcast, wait for the receipt). Submit-swap and broadcast-swap will follow on the wallet side, reusing this same wire shape.
+
+## 0.33.0-next.0
+
+### Minor Changes
+
+- [#17552](https://github.com/LedgerHQ/ledger-live/pull/17552) [`20efcc6`](https://github.com/LedgerHQ/ledger-live/commit/20efcc67fd38bbba793e23abc1f62a14e29a1104) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - sort wallet-api swap quotes by net countervalue
+
+- [#18013](https://github.com/LedgerHQ/ledger-live/pull/18013) [`57a48a5`](https://github.com/LedgerHQ/ledger-live/commit/57a48a5fb17e47c6ce686fe297344c2a580d84d7) Thanks [@CremaFR](https://github.com/CremaFR)! - Add `customSwap` to the wallet-api exchange SDK and expose the matching `CustomSwapParams` / `CustomSwapResult` types (also re-exported from `@ledgerhq/live-common/wallet-api/Exchange/swapFlow/types`). This is the live-app entry point for the new device-intent-based swap flow on mobile, which currently runs the EVM token-approval step (sign on device, broadcast, wait for the receipt). Submit-swap and broadcast-swap will follow on the wallet side, reusing this same wire shape.
+
 ## 0.32.0
 
 ### Minor Changes

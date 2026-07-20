@@ -21,6 +21,7 @@ module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.[tj]s"],
   setupFilesAfterEnv: [
+    "@ledgerhq/wallet-framework-test-setup",
     "jest-expect-message",
     "dotenv/config",
     // "@ledgerhq/disable-network-setup"

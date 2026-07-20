@@ -1,6 +1,6 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import cryptoFactory from "../chain/chain";

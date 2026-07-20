@@ -13,7 +13,7 @@ import {
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { AccountBridge, CurrencyBridge, DerivationMode } from "@ledgerhq/types-live";
 
 import { KASPA_DUMMY_ADDRESS } from "../constants";

@@ -1,5 +1,5 @@
 import type { Stake } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 
 export type StakingOperation =
   | "delegate"

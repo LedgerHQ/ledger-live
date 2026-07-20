@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BitcoinLikeExplorer from "../explorer";
 import network from "@ledgerhq/live-network/network";
 

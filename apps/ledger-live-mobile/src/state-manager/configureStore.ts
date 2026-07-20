@@ -18,6 +18,7 @@ import { calApiExtra } from "@domain/api-currency-token";
 import { cvsApiExtra } from "@domain/api-currency-fiat";
 import { marketSentimentApiExtra } from "@domain/api-market-sentiment";
 import { altcoinsSentimentApiExtra } from "@domain/api-altcoins-sentiment";
+import { payCardApiExtra } from "@domain/api-pay-card";
 import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags } from "~/firebase/remoteConfig";
 
@@ -47,6 +48,10 @@ export const store = configureStore({
             ...pushDevicesApiExtra({
               pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+            }),
+            ...payCardApiExtra({
+              // LIVE-33829: force mocks until Pay Card API base URL is wired.
+              payCardApiMocksEnabled: true,
             }),
           },
         },

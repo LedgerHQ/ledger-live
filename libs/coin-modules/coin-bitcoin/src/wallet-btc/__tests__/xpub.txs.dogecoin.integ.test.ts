@@ -8,7 +8,7 @@ import BitcoinLikeStorage from "../storage";
 import { Merge } from "../pickingstrategies/Merge";
 import BitcoinLikeWallet from "../wallet";
 import { MockBtcSigner } from "./fixtures/common.fixtures";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 
 describe("testing dogecoin transactions", () => {
   const wallet = new BitcoinLikeWallet();

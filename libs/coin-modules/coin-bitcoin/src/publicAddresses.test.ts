@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { ESTIMATION_RECIPIENTS } from "./constants";
 
 // Mirrors the bitcoin loader's supportedCoins (coin-bitcoin can't read the live-common registry).

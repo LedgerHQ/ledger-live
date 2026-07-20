@@ -1,5 +1,21 @@
 # @ledgerhq/hw-app-vet
 
+## 0.13.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.6
+  - @ledgerhq/hw-transport-mocker@6.34.6
+
+## 0.13.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.6-next.0
+  - @ledgerhq/hw-transport-mocker@6.34.6-next.0
+
 ## 0.13.1
 
 ### Patch Changes

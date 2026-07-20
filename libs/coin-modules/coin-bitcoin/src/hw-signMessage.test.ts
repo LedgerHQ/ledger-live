@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { signMessage } from "./hw-signMessage";
 import { BitcoinSigner } from "./signer";
 import { createFixtureAccount } from "./fixtures/common.fixtures";

@@ -1,5 +1,5 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { apiClient } from "../network/api";
 import { parseMicrocredits } from "./utils";
 

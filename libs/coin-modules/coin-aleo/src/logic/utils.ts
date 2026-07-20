@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type {
   Account,
   AccountLike,

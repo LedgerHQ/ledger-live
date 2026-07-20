@@ -6,7 +6,7 @@ import type {
   StringMemo,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import {
   Transaction as TyphonTransaction,
   address as TyphonAddress,

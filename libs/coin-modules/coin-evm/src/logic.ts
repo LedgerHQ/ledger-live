@@ -1,6 +1,6 @@
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { AnyMessage, MessageProperties } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getNodeApi } from "./network/node/index";

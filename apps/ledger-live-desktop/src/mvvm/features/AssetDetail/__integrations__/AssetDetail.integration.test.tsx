@@ -62,12 +62,17 @@ const TEST_ID = {
 const mockGetCanStakeCurrency = jest.fn().mockReturnValue(false);
 const mockUseInterestRatesByCurrencies = jest.fn().mockReturnValue({});
 const mockStartStakeFlow = jest.fn();
+const mockOpenSendFlow = jest.fn();
 
 jest.mock("LLD/hooks/useStake", () => ({
   useStake: () => ({ getCanStakeCurrency: mockGetCanStakeCurrency }),
 }));
 
 jest.mock("~/renderer/screens/stake", () => () => mockStartStakeFlow);
+
+jest.mock("LLD/features/Send/hooks/useOpenSendFlow", () => ({
+  useOpenSendFlow: () => mockOpenSendFlow,
+}));
 
 jest.mock("@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies", () => ({
   useInterestRatesByCurrencies: (...args: unknown[]) => mockUseInterestRatesByCurrencies(...args),
@@ -984,6 +989,28 @@ describe("AssetDetail integration", () => {
       });
 
       expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
+    });
+
+    it("opens send account selection filtered to the asset instead of preselecting an account", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount("asset-detail-send-account-selection", { currency: btc });
+      account.balance = new BigNumber(10);
+      account.spendableBalance = new BigNumber(10);
+      const item = buildDistributionItem({ accounts: [account] });
+      setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeEnabled();
+      });
+
+      fireEvent.click(screen.getByTestId(TEST_ID.ACTION_SEND));
+
+      expect(mockOpenSendFlow).toHaveBeenCalledWith({
+        source: "Asset",
+        currencyIds: ["bitcoin"],
+      });
     });
 
     it("enables buy, sell and send when the address has an earn deposit", async () => {

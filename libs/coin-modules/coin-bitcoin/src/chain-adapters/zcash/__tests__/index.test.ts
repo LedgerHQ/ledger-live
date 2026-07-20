@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { BitcoinAccountRaw } from "../../../types";
 import type { BitcoinSigner, SignerContext } from "../../../signer";
 import type { ZcashAccount, ZcashAccountRaw, ZcashPrivateInfo } from "../types";

@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "4.10.0",
+  "version": "4.11.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -85,6 +85,7 @@
     "@braze/react-native-sdk": "18.0.0",
     "@datadog/mobile-react-native": "2.8.2",
     "@datadog/mobile-react-navigation": "2.8.2",
+    "@domain/api-pay-card": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:*",
     "@features/flow-card": "workspace:^",

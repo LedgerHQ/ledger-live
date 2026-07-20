@@ -1,6 +1,6 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { PolkadotAccount, PolkadotOperation, PolkadotResources } from "../types";

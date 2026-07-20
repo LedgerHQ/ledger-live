@@ -3,7 +3,7 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { Scenario } from "@ledgerhq/coin-tester/main";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CARDANO_TESTNET, FRESH_ADDRESS_PATH, makeAccount } from "../fixtures";

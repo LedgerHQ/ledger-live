@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
 import BigNumber from "bignumber.js";
 

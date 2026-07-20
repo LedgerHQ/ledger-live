@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import network from "@ledgerhq/live-network";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import monadAbi from "../../abis/monad.abi.json";
 import { getCoinConfig } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
@@ -16,8 +16,9 @@ jest.mock("../../network/node/rpc.common", () => ({
   __esModule: true,
   withApi: jest.fn(),
 }));
-jest.mock("@ledgerhq/cryptoassets", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/currencies", () => ({
   __esModule: true,
+  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/currencies"),
   getCryptoCurrencyById: jest.fn(),
 }));
 jest.mock("@ledgerhq/live-network", () => ({

@@ -3,7 +3,7 @@ import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operat
 import { EnvName, EnvValue } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { AxiosError } from "axios";
 import BigNumber from "bignumber.js";

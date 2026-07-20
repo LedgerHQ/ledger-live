@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { type CardanoConfig } from "../config";
 import { getValidators } from "../logic/getValidators";
 import { createApi } from ".";

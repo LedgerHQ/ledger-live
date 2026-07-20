@@ -1,6 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { PayCardParams } from "./schema";
-import type { PayCardState } from "./types";
+import type { PayCardParams, PayCardState } from "./types";
 
 export const payCardInitialState: PayCardState = {
   isOpen: false,

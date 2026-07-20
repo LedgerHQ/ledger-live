@@ -46,10 +46,10 @@ describe("ring analytics", () => {
     trackSpy.mockRestore();
   });
 
-  it("ring_init_started carries only non-PII booleans", () => {
+  it("ringinit_started carries only non-PII booleans", () => {
     trackRingInitStarted({ passwordProtected: true, usedCustomName: false });
     expect(calls()).toHaveLength(1);
-    expect(calls()[0][0]).toBe("ring_init_started");
+    expect(calls()[0][0]).toBe("ringinit_started");
     expect(calls()[0][1]).toEqual({
       page: "Ring - Init",
       passwordProtected: true,
@@ -57,18 +57,18 @@ describe("ring analytics", () => {
     });
   });
 
-  it("ring_init_completed carries only the passwordProtected flag", () => {
+  it("ringinit_completed carries only the passwordProtected flag", () => {
     trackRingInitCompleted({ passwordProtected: false });
-    expect(calls()[0][0]).toBe("ring_init_completed");
+    expect(calls()[0][0]).toBe("ringinit_completed");
     expect(calls()[0][1]).toEqual({
       page: "Ring - Init",
       passwordProtected: false,
     });
   });
 
-  it("ring_encrypt carries only io enums and the newKey flag", () => {
+  it("ring_encrypted carries only io enums and the newKey flag", () => {
     trackRingEncrypt({ inputSource: "file", outputDest: "stdout", newKey: true });
-    expect(calls()[0][0]).toBe("ring_encrypt");
+    expect(calls()[0][0]).toBe("ring_encrypted");
     expect(calls()[0][1]).toEqual({
       page: "Ring - Encrypt",
       inputSource: "file",
@@ -77,9 +77,9 @@ describe("ring analytics", () => {
     });
   });
 
-  it("ring_decrypt carries only io enums", () => {
+  it("ring_decrypted carries only io enums", () => {
     trackRingDecrypt({ inputSource: "stdin", outputDest: "file" });
-    expect(calls()[0][0]).toBe("ring_decrypt");
+    expect(calls()[0][0]).toBe("ring_decrypted");
     expect(calls()[0][1]).toEqual({
       page: "Ring - Decrypt",
       inputSource: "stdin",
@@ -87,32 +87,32 @@ describe("ring analytics", () => {
     });
   });
 
-  it("ring_keys_viewed carries only the key count, never key names", () => {
+  it("ringkeys_viewed carries only the key count, never key names", () => {
     trackRingKeysViewed({ keysCount: 3 });
-    expect(calls()[0][0]).toBe("ring_keys_viewed");
+    expect(calls()[0][0]).toBe("ringkeys_viewed");
     expect(calls()[0][1]).toEqual({
       page: "Ring - Keys",
       keysCount: 3,
     });
   });
 
-  it("ring_destroy_started carries only the passwordProtected flag", () => {
+  it("ringdestroy_started carries only the passwordProtected flag", () => {
     trackRingDestroyStarted({ passwordProtected: true });
-    expect(calls()[0][0]).toBe("ring_destroy_started");
+    expect(calls()[0][0]).toBe("ringdestroy_started");
     expect(calls()[0][1]).toEqual({
       page: "Ring - Destroy",
       passwordProtected: true,
     });
   });
 
-  it("ring_destroy_completed carries only outcome booleans", () => {
+  it("ringdestroy_completed carries only outcome booleans", () => {
     trackRingDestroyCompleted({
       remoteSucceeded: true,
       trustchainDestroyed: true,
       localWiped: true,
       recoveryWipe: false,
     });
-    expect(calls()[0][0]).toBe("ring_destroy_completed");
+    expect(calls()[0][0]).toBe("ringdestroy_completed");
     expect(calls()[0][1]).toEqual({
       page: "Ring - Destroy",
       remoteSucceeded: true,
@@ -122,9 +122,9 @@ describe("ring analytics", () => {
     });
   });
 
-  it("ring_destroy_cancelled carries only the page", () => {
+  it("ringdestroy_cancelled carries only the page", () => {
     trackRingDestroyCancelled();
-    expect(calls()[0][0]).toBe("ring_destroy_cancelled");
+    expect(calls()[0][0]).toBe("ringdestroy_cancelled");
     expect(calls()[0][1]).toEqual({ page: "Ring - Destroy" });
   });
 

@@ -68,6 +68,7 @@ import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import GlobalDialogs from "LLD/features/GlobalDialogs";
 import GenericAwarenessModalAppStart from "LLD/features/GenericAwarenessModal/GenericAwarenessModalAppStart";
+import { LargeScreenUpsellModalMount } from "LLD/features/LargeScreenUpsell";
 import GlobalDrawers from "LLD/features/GlobalDrawers";
 import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
 import {
@@ -362,6 +363,7 @@ export const MainAppLayout = () => {
         </>
       )}
       <GenericAwarenessModalAppStart />
+      <LargeScreenUpsellModalMount />
       <SyncNewAccounts priority={2} />
 
       <div

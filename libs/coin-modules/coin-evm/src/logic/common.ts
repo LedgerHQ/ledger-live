@@ -8,7 +8,7 @@ import {
   isSendTransactionIntent,
   isStakingTransactionIntent,
 } from "@ledgerhq/coin-module-framework/utils";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { getNodeApi } from "../network/node";

@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getCoinConfig } from "../../config";
 import ledgerGasTracker from "./ledger";
 import { GasTrackerApi } from "./types";

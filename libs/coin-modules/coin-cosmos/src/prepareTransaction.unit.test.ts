@@ -1,6 +1,6 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrencyId } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import cosmosCoinConfig, { cosmosConfig } from "./config";
 import { calculateFees, getEstimatedFees } from "./prepareTransaction";

@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { craftTransaction, type CreateExtrinsicArg } from "../logic";
 import type { PolkadotAccount, Transaction } from "../types";
 import { isFirstBond, getNonce } from "./utils";

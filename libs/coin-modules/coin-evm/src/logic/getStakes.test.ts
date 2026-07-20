@@ -1,5 +1,5 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { JsonRpcProvider } from "ethers";
 import { getCoinConfig } from "../config";
 import { withApi } from "../network/node/rpc.common";

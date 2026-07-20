@@ -163,6 +163,15 @@ export function useActionBarViewModel({
     ledgerCurrency?.id ?? distributionItem?.currency.id ?? rampActiveLedgerIds[0];
   const rampNavigationCurrencyIds =
     rampActiveLedgerIds.length > 1 ? rampActiveLedgerIds : undefined;
+  const sendCurrencyIds = useMemo(
+    () =>
+      ledgerIds && ledgerIds.length > 0
+        ? ledgerIds
+        : trackingCurrencyId
+          ? [trackingCurrencyId]
+          : undefined,
+    [ledgerIds, trackingCurrencyId],
+  );
 
   const onBuy = useCallback(() => {
     track("button_clicked", {
@@ -190,16 +199,11 @@ export function useActionBarViewModel({
       currency: trackingCurrencyId,
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
-    if (primaryAccount) {
-      openSendFlow({
-        source: ASSET_DETAIL_TRACKING_PAGE_NAME,
-        account: primaryAccount,
-        parentAccount: primaryParentAccount,
-      });
-    } else {
-      openSendFlow({ source: ASSET_DETAIL_TRACKING_PAGE_NAME });
-    }
-  }, [openSendFlow, primaryAccount, primaryParentAccount, trackingCurrencyId]);
+    openSendFlow({
+      source: ASSET_DETAIL_TRACKING_PAGE_NAME,
+      currencyIds: sendCurrencyIds,
+    });
+  }, [openSendFlow, sendCurrencyIds, trackingCurrencyId]);
 
   const onReceive = useCallback(() => {
     track("button_clicked", {

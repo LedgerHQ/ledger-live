@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-icon
 
+## 1.7.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.6
+
+## 1.7.6-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.6-next.0
+
 ## 1.7.5
 
 ### Patch Changes

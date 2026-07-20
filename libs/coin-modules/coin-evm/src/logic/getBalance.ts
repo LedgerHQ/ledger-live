@@ -5,7 +5,7 @@ import type {
   MemoNotSupported,
   Operation,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 
 import { getCoinConfig } from "../config";
 import { getExplorerApi } from "../network/explorer";

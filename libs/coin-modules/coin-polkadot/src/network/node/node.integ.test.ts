@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { ApiPromise, HttpProvider } from "@polkadot/api";
 import getApiPromise from "./apiPromise";
 import { fetchValidators } from "./validators";

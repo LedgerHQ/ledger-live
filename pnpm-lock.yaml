@@ -46,8 +46,8 @@ catalogs:
       specifier: 1.1.0
       version: 1.1.0
     '@ledgerhq/device-signer-kit-solana':
-      specifier: 1.9.1
-      version: 1.9.1
+      specifier: 1.10.0
+      version: 1.10.0
     '@ledgerhq/device-transport-kit-react-native-ble':
       specifier: 1.3.2
       version: 1.3.2
@@ -503,7 +503,7 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
   '@ledgerhq/devices': workspace:*
   '@ledgerhq/hw-transport': workspace:*
-  '@ledgerhq/context-module': 2.1.0
+  '@ledgerhq/context-module': 2.2.0
   tslib: 2.6.2
   '@ethersproject/providers>ws': 7.5.10
   elliptic: 6.6.1
@@ -817,6 +817,9 @@ importers:
       '@domain/api-market-sentiment':
         specifier: workspace:^
         version: link:../../domain/api/market-sentiment
+      '@domain/api-pay-card':
+        specifier: workspace:^
+        version: link:../../domain/api/pay-card
       '@domain/api-push-devices':
         specifier: workspace:*
         version: link:../../domain/api/push-devices
@@ -838,6 +841,9 @@ importers:
       '@domain/entity-market-sentiment':
         specifier: workspace:^
         version: link:../../domain/entity/market-sentiment
+      '@domain/entity-pay-card':
+        specifier: workspace:^
+        version: link:../../domain/entity/pay-card
       '@electron/fuses':
         specifier: 2.0.0
         version: 2.0.0
@@ -850,6 +856,9 @@ importers:
       '@features/flow-fear-and-greed':
         specifier: workspace:^
         version: link:../../features/flow/fear-and-greed
+      '@features/flow-large-screen-upsell':
+        specifier: workspace:^
+        version: link:../../features/flow/large-screen-upsell
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
@@ -1533,6 +1542,9 @@ importers:
       '@domain/api-market-sentiment':
         specifier: workspace:^
         version: link:../../domain/api/market-sentiment
+      '@domain/api-pay-card':
+        specifier: workspace:^
+        version: link:../../domain/api/pay-card
       '@domain/api-push-devices':
         specifier: workspace:*
         version: link:../../domain/api/push-devices
@@ -1618,8 +1630,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-stacks
       '@ledgerhq/context-module':
-        specifier: 2.1.0
-        version: 2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        specifier: 2.2.0
+        version: 2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.21)(@ledgerhq/lumen-ui-rnative@0.1.50(8de93d77a1661d10290685e23e19ccb7))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -1634,7 +1646,7 @@ importers:
         version: 1.7.1(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.16.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        version: 1.16.0(@ledgerhq/context-module@2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/device-transport-kit-react-native-hid':
         specifier: 'catalog:'
         version: 1.0.4(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(rxjs@7.8.2)
@@ -2148,7 +2160,7 @@ importers:
         version: 18.0.1
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6(@babel/core@7.28.5)
+        version: 0.81.6
       '@react-native/codegen':
         specifier: 'catalog:'
         version: 0.81.6(@babel/core@7.28.5)
@@ -2357,8 +2369,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-solana
       '@ledgerhq/context-module':
-        specifier: 2.1.0
-        version: 2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        specifier: 2.2.0
+        version: 2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/cryptoassets
@@ -2370,7 +2382,7 @@ importers:
         version: 1.7.1(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.16.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        version: 1.16.0(@ledgerhq/context-module@2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/errors
@@ -3415,6 +3427,46 @@ importers:
         specifier: 'catalog:'
         version: 6.0.2
 
+  domain/api/pay-card:
+    dependencies:
+      '@domain/entity-pay-card':
+        specifier: workspace:*
+        version: link:../../entity/pay-card
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+
   domain/api/push-devices:
     dependencies:
       '@domain/entity-client-identity':
@@ -4054,6 +4106,9 @@ importers:
 
   features/flow/card:
     dependencies:
+      '@domain/api-pay-card':
+        specifier: workspace:*
+        version: link:../../../domain/api/pay-card
       '@domain/entity-pay-card':
         specifier: workspace:^
         version: link:../../../domain/entity/pay-card
@@ -4079,6 +4134,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.50(2812f392da264d034b5b92f00c4afea1)
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4310,6 +4368,12 @@ importers:
         specifier: workspace:^
         version: link:../../../shared/feature-flags
     devDependencies:
+      '@ledgerhq/lumen-design-core':
+        specifier: 'catalog:'
+        version: 0.1.21
+      '@ledgerhq/lumen-ui-react':
+        specifier: 'catalog:'
+        version: 0.1.47(@ledgerhq/lumen-design-core@0.1.21)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4331,6 +4395,9 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 19.0.0(@types/react@19.0.14)
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -4343,6 +4410,9 @@ importers:
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
+      tailwind-merge:
+        specifier: 'catalog:'
+        version: 3.4.0
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
@@ -4749,12 +4819,12 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../wallet-framework-test-setup
       '@rslib/core':
         specifier: 'catalog:'
         version: 0.22.0(typescript@6.0.2)
@@ -4812,9 +4882,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -4885,9 +4952,6 @@ importers:
       '@ledgerhq/live-promise':
         specifier: workspace:^
         version: link:../../promise
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -5004,9 +5068,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -5052,9 +5113,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -5076,9 +5134,6 @@ importers:
       '@ledgerhq/psbtv2':
         specifier: workspace:^
         version: link:../../psbtv2
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -5264,9 +5319,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -5330,9 +5382,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -5403,9 +5452,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -5440,9 +5486,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
+      '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5549,9 +5595,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -5603,9 +5646,6 @@ importers:
       '@ledgerhq/concordium-core':
         specifier: workspace:^
         version: link:../../concordium-core
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -5646,9 +5686,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
+      '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5700,9 +5740,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -5721,9 +5758,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -5755,6 +5789,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5794,9 +5831,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -5840,12 +5874,12 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5909,9 +5943,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -6037,9 +6068,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -6076,9 +6104,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -6097,9 +6122,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -6119,6 +6141,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6149,9 +6174,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -6192,6 +6214,9 @@ importers:
       '@dfinity/principal':
         specifier: 2.4.1
         version: 2.4.1
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6255,9 +6280,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -6295,6 +6317,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-transport-node-speculos
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6340,9 +6365,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -6355,9 +6377,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -6380,6 +6399,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6422,9 +6444,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -6456,9 +6475,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
+      '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6522,9 +6541,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -6598,9 +6614,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -6613,9 +6626,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -6632,6 +6642,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -6665,9 +6678,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 3.6.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -6680,9 +6690,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -6723,6 +6730,9 @@ importers:
       '@ledgerhq/hw-app-polkadot':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-polkadot
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@polkadot/rpc-provider':
         specifier: 'catalog:'
         version: 16.5.4
@@ -6795,9 +6805,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7010,9 +7017,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7108,6 +7112,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -7168,9 +7175,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7281,9 +7285,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -7372,9 +7373,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7469,9 +7467,6 @@ importers:
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/hw-app-btc':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-btc
@@ -7487,9 +7482,6 @@ importers:
       '@ledgerhq/psbtv2':
         specifier: workspace:^
         version: link:../../psbtv2
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7572,9 +7564,6 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7651,15 +7640,9 @@ importers:
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7730,9 +7713,6 @@ importers:
       '@ledgerhq/live-signer-evm':
         specifier: workspace:^
         version: link:../../live-signer-evm
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7803,9 +7783,6 @@ importers:
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../live-config
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7870,15 +7847,9 @@ importers:
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -7961,9 +7932,6 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -8049,9 +8017,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -8207,9 +8172,6 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -9109,8 +9071,8 @@ importers:
         specifier: 'catalog:'
         version: 7.25.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
       '@ledgerhq/context-module':
-        specifier: 2.1.0
-        version: 2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        specifier: 2.2.0
+        version: 2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../ledgerjs/packages/cryptoassets
@@ -9125,7 +9087,7 @@ importers:
         version: 1.7.1(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.16.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        version: 1.16.0(@ledgerhq/context-module@2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -11811,8 +11773,8 @@ importers:
   libs/live-dmk-shared:
     dependencies:
       '@ledgerhq/context-module':
-        specifier: 2.1.0
-        version: 2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        specifier: 2.2.0
+        version: 2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -12126,14 +12088,14 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-aleo
       '@ledgerhq/context-module':
-        specifier: 2.1.0
-        version: 2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        specifier: 2.2.0
+        version: 2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.7.1(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-aleo':
         specifier: 'catalog:'
-        version: 0.4.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        version: 0.4.0(@ledgerhq/context-module@2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -12270,14 +12232,14 @@ importers:
         specifier: workspace:^
         version: link:../concordium-core
       '@ledgerhq/context-module':
-        specifier: 2.1.0
-        version: 2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        specifier: 2.2.0
+        version: 2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.7.1(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-concordium':
         specifier: 'catalog:'
-        version: 0.4.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        version: 0.4.0(@ledgerhq/context-module@2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -12368,14 +12330,14 @@ importers:
   libs/live-signer-evm:
     dependencies:
       '@ledgerhq/context-module':
-        specifier: 2.1.0
-        version: 2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        specifier: 2.2.0
+        version: 2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.7.1(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.16.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+        version: 1.16.0(@ledgerhq/context-module@2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -12473,7 +12435,7 @@ importers:
         version: 1.7.1(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-solana':
         specifier: 'catalog:'
-        version: 1.9.1(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))(typescript@6.0.2)
+        version: 1.10.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))(typescript@6.0.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -12949,7 +12911,7 @@ importers:
         version: 0.81.6
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6(@babel/core@7.28.5)
+        version: 0.81.6
       '@rsbuild/core':
         specifier: 'catalog:'
         version: 2.0.9
@@ -12973,7 +12935,7 @@ importers:
         version: 10.4.4(@storybook/react@10.4.1(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(storybook@10.4.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(typescript@6.0.2))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)(storybook@10.4.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))
       '@storybook/addon-react-native-web':
         specifier: 'catalog:'
-        version: 0.0.29(@react-native/babel-preset@0.81.6(@babel/core@7.28.5))(babel-plugin-react-native-web@0.19.10)(metro-react-native-babel-preset@0.77.0(@babel/core@7.28.5))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 0.0.29(@react-native/babel-preset@0.81.6)(babel-plugin-react-native-web@0.19.10)(metro-react-native-babel-preset@0.77.0(@babel/core@7.28.5))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@storybook/jest':
         specifier: 'catalog:'
         version: 0.2.3
@@ -18197,10 +18159,10 @@ packages:
       '@ledgerhq/live-network': ^2.4.0
       '@ledgerhq/logs': ^6.17.0
 
-  '@ledgerhq/context-module@2.1.0':
-    resolution: {integrity: sha512-t5mIA6DcxGafYF1xEHwAj6RyxvmTY5ZfnC/qxVf3PEF65+3J11qcw5Xs3pYWz49mSXQxjTiGKWs0JINiZagGWA==}
+  '@ledgerhq/context-module@2.2.0':
+    resolution: {integrity: sha512-nRJqEhsA83v4MSsBTCUwpiswdzc9wj+oKv57o7CMF7DeQzdGlITlKhDV1SixLXp7YxoVH7ovAMkCYcTdB4sZeA==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.5.1
+      '@ledgerhq/device-management-kit': ^1.7.1
 
   '@ledgerhq/crypto-icons@2.0.4':
     resolution: {integrity: sha512-PbUs85RtyGaq4R/KBcscHxbeSb7s6E69JbISJkBH9q7V7pmKtsABu31Yaq7UmOodiulidQKrYo7lKcZ7UxXO9w==}
@@ -18231,13 +18193,13 @@ packages:
   '@ledgerhq/device-signer-kit-aleo@0.4.0':
     resolution: {integrity: sha512-GeWvln9TY/EAVxnxmMTPITxOstZLD5tiwupFih2avIayoeYa3Q8Gh8gkW77wd/Sd9oQLmwLQByHdcwRmMcSLrQ==}
     peerDependencies:
-      '@ledgerhq/context-module': 2.1.0
+      '@ledgerhq/context-module': 2.2.0
       '@ledgerhq/device-management-kit': ^1.6.0
 
   '@ledgerhq/device-signer-kit-concordium@0.4.0':
     resolution: {integrity: sha512-jqVp8232dkI34ZVbsQOcGpjK9J+g8BzGD9+/0Ezy7nGtMUfX8c6AhEmn79kj3w96kJ0z1YkakaClCHxicFWtKQ==}
     peerDependencies:
-      '@ledgerhq/context-module': 2.1.0
+      '@ledgerhq/context-module': 2.2.0
       '@ledgerhq/device-management-kit': ^1.5.0
 
   '@ledgerhq/device-signer-kit-cosmos@1.0.1':
@@ -18248,7 +18210,7 @@ packages:
   '@ledgerhq/device-signer-kit-ethereum@1.16.0':
     resolution: {integrity: sha512-lRXCAHlNcZObazX4sQrD2fiVssolzJYjcyzH+9b2AKnV1bfxN5JCY4coIge/L+23LjDVhqibVK6jg8ioUJ4znQ==}
     peerDependencies:
-      '@ledgerhq/context-module': 2.1.0
+      '@ledgerhq/context-module': 2.2.0
       '@ledgerhq/device-management-kit': ^1.5.0
 
   '@ledgerhq/device-signer-kit-hyperliquid@1.1.0':
@@ -18256,10 +18218,10 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.5.0
 
-  '@ledgerhq/device-signer-kit-solana@1.9.1':
-    resolution: {integrity: sha512-/30PBWzwo52aOHbtsOaAiqY4c3sm1EECBFGMKris5ddPydOq41HxBKqNKJVq9tOuOIIP5huvr2iBwOy2//isUw==}
+  '@ledgerhq/device-signer-kit-solana@1.10.0':
+    resolution: {integrity: sha512-re2EundpA6vqroXIZMs9uWOqmAYeODOiKkYT9WsNE/mbDHfX2ketFOqqh/1MD0sjtE3dq3YHMZTDj+bTHV22Mg==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.5.1
+      '@ledgerhq/device-management-kit': ^1.7.1
 
   '@ledgerhq/device-signer-kit-zcash@0.4.1':
     resolution: {integrity: sha512-5syzQIqjsv8zMget2nJfVLJG6FpwebnVaV4Vk8TbaDQeZpN0O49KlKVXcxG5t6NqGh+uOP/8z6RpJdGm39obog==}
@@ -20511,8 +20473,6 @@ packages:
   '@react-native/babel-preset@0.81.6':
     resolution: {integrity: sha512-RtIr82ccPoyMLmIC3/vCG96MzRmIT+IzQkjCgTS5b93uAxiER9BS7+d1l7+zD00VanClt6CTBM4K4n6RCnAykg==}
     engines: {node: '>= 20.19.4'}
-    peerDependencies:
-      '@babel/core': '*'
 
   '@react-native/codegen@0.77.3':
     resolution: {integrity: sha512-Q6ZJCE7h6Z3v3DiEZUnqzHbgwF3ZILN+ACTx6qu/x2X1cL96AatKwdX92e0+7J9RFg6gdoFYJgRrW8Q6VnWZsQ==}
@@ -40326,16 +40286,6 @@ snapshots:
       regexpu-core: 6.2.0
       semver: 6.3.1
 
-  '@babel/helper-define-polyfill-provider@0.6.5':
-    dependencies:
-      '@babel/helper-compilation-targets': 7.27.2
-      '@babel/helper-plugin-utils': 7.27.1
-      debug: 4.4.3
-      lodash.debounce: 4.0.8
-      resolve: 1.22.12
-    transitivePeerDependencies:
-      - supports-color
-
   '@babel/helper-define-polyfill-provider@0.6.5(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -40410,14 +40360,6 @@ snapshots:
       '@babel/types': 7.29.0
 
   '@babel/helper-plugin-utils@7.27.1': {}
-
-  '@babel/helper-remap-async-to-generator@7.27.1':
-    dependencies:
-      '@babel/helper-annotate-as-pure': 7.27.3
-      '@babel/helper-wrap-function': 7.27.1
-      '@babel/traverse': 7.29.0
-    transitivePeerDependencies:
-      - supports-color
 
   '@babel/helper-remap-async-to-generator@7.27.1(@babel/core@7.28.5)':
     dependencies:
@@ -40566,10 +40508,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/plugin-proposal-export-default-from@7.25.9':
-    dependencies:
-      '@babel/helper-plugin-utils': 7.27.1
-
   '@babel/plugin-proposal-export-default-from@7.25.9(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -40656,17 +40594,9 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-syntax-dynamic-import@7.8.3':
-    dependencies:
-      '@babel/helper-plugin-utils': 7.27.1
-
   '@babel/plugin-syntax-dynamic-import@7.8.3(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/helper-plugin-utils': 7.27.1
-
-  '@babel/plugin-syntax-export-default-from@7.25.9':
-    dependencies:
       '@babel/helper-plugin-utils': 7.27.1
 
   '@babel/plugin-syntax-export-default-from@7.25.9(@babel/core@7.28.5)':
@@ -40677,10 +40607,6 @@ snapshots:
   '@babel/plugin-syntax-flow@7.26.0(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/helper-plugin-utils': 7.27.1
-
-  '@babel/plugin-syntax-flow@7.27.1':
-    dependencies:
       '@babel/helper-plugin-utils': 7.27.1
 
   '@babel/plugin-syntax-flow@7.27.1(@babel/core@7.28.5)':
@@ -40825,14 +40751,6 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-transform-async-generator-functions@7.28.0':
-    dependencies:
-      '@babel/helper-plugin-utils': 7.27.1
-      '@babel/helper-remap-async-to-generator': 7.27.1
-      '@babel/traverse': 7.29.0
-    transitivePeerDependencies:
-      - supports-color
-
   '@babel/plugin-transform-async-generator-functions@7.28.0(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -40848,14 +40766,6 @@ snapshots:
       '@babel/helper-module-imports': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-remap-async-to-generator': 7.27.1(@babel/core@7.28.5)
-    transitivePeerDependencies:
-      - supports-color
-
-  '@babel/plugin-transform-async-to-generator@7.27.1':
-    dependencies:
-      '@babel/helper-module-imports': 7.27.1
-      '@babel/helper-plugin-utils': 7.27.1
-      '@babel/helper-remap-async-to-generator': 7.27.1
     transitivePeerDependencies:
       - supports-color
 
@@ -40876,10 +40786,6 @@ snapshots:
   '@babel/plugin-transform-block-scoping@7.25.9(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/helper-plugin-utils': 7.27.1
-
-  '@babel/plugin-transform-block-scoping@7.28.5':
-    dependencies:
       '@babel/helper-plugin-utils': 7.27.1
 
   '@babel/plugin-transform-block-scoping@7.28.5(@babel/core@7.28.5)':
@@ -40951,11 +40857,6 @@ snapshots:
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/template': 7.28.6
 
-  '@babel/plugin-transform-computed-properties@7.27.1':
-    dependencies:
-      '@babel/helper-plugin-utils': 7.27.1
-      '@babel/template': 7.28.6
-
   '@babel/plugin-transform-computed-properties@7.27.1(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -40966,13 +40867,6 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
-
-  '@babel/plugin-transform-destructuring@7.28.5':
-    dependencies:
-      '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.29.0
-    transitivePeerDependencies:
-      - supports-color
 
   '@babel/plugin-transform-destructuring@7.28.5(@babel/core@7.28.5)':
     dependencies:
@@ -41030,23 +40924,11 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-transform-flow-strip-types@7.27.1':
-    dependencies:
-      '@babel/helper-plugin-utils': 7.27.1
-      '@babel/plugin-syntax-flow': 7.27.1
-
   '@babel/plugin-transform-flow-strip-types@7.27.1(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-syntax-flow': 7.27.1(@babel/core@7.28.5)
-
-  '@babel/plugin-transform-for-of@7.27.1':
-    dependencies:
-      '@babel/helper-plugin-utils': 7.27.1
-      '@babel/helper-skip-transparent-expression-wrappers': 7.27.1
-    transitivePeerDependencies:
-      - supports-color
 
   '@babel/plugin-transform-for-of@7.27.1(@babel/core@7.28.5)':
     dependencies:
@@ -41059,14 +40941,6 @@ snapshots:
   '@babel/plugin-transform-function-name@7.25.9(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/helper-compilation-targets': 7.27.2
-      '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.29.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@babel/plugin-transform-function-name@7.27.1':
-    dependencies:
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/traverse': 7.29.0
@@ -41092,17 +40966,9 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-transform-literals@7.27.1':
-    dependencies:
-      '@babel/helper-plugin-utils': 7.27.1
-
   '@babel/plugin-transform-literals@7.27.1(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/helper-plugin-utils': 7.27.1
-
-  '@babel/plugin-transform-logical-assignment-operators@7.28.5':
-    dependencies:
       '@babel/helper-plugin-utils': 7.27.1
 
   '@babel/plugin-transform-logical-assignment-operators@7.28.5(@babel/core@7.28.5)':
@@ -41156,11 +41022,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/plugin-transform-named-capturing-groups-regex@7.27.1':
-    dependencies:
-      '@babel/helper-create-regexp-features-plugin': 7.27.1
-      '@babel/helper-plugin-utils': 7.27.1
-
   '@babel/plugin-transform-named-capturing-groups-regex@7.27.1(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -41181,10 +41042,6 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-transform-numeric-separator@7.27.1':
-    dependencies:
-      '@babel/helper-plugin-utils': 7.27.1
-
   '@babel/plugin-transform-numeric-separator@7.27.1(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -41196,16 +41053,6 @@ snapshots:
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-transform-parameters': 7.27.7(@babel/core@7.28.5)
-
-  '@babel/plugin-transform-object-rest-spread@7.28.4':
-    dependencies:
-      '@babel/helper-compilation-targets': 7.27.2
-      '@babel/helper-plugin-utils': 7.27.1
-      '@babel/plugin-transform-destructuring': 7.28.5
-      '@babel/plugin-transform-parameters': 7.27.7
-      '@babel/traverse': 7.29.0
-    transitivePeerDependencies:
-      - supports-color
 
   '@babel/plugin-transform-object-rest-spread@7.28.4(@babel/core@7.28.5)':
     dependencies:
@@ -41225,10 +41072,6 @@ snapshots:
       '@babel/helper-replace-supers': 7.27.1(@babel/core@7.28.5)
     transitivePeerDependencies:
       - supports-color
-
-  '@babel/plugin-transform-optional-catch-binding@7.27.1':
-    dependencies:
-      '@babel/helper-plugin-utils': 7.27.1
 
   '@babel/plugin-transform-optional-catch-binding@7.27.1(@babel/core@7.28.5)':
     dependencies:
@@ -41255,10 +41098,6 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-transform-parameters@7.27.7':
-    dependencies:
-      '@babel/helper-plugin-utils': 7.27.1
-
   '@babel/plugin-transform-parameters@7.27.7(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -41268,13 +41107,6 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-create-class-features-plugin': 7.28.5(@babel/core@7.28.5)
-      '@babel/helper-plugin-utils': 7.27.1
-    transitivePeerDependencies:
-      - supports-color
-
-  '@babel/plugin-transform-private-methods@7.27.1':
-    dependencies:
-      '@babel/helper-create-class-features-plugin': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
     transitivePeerDependencies:
       - supports-color
@@ -41292,14 +41124,6 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-create-class-features-plugin': 7.28.5(@babel/core@7.28.5)
-      '@babel/helper-plugin-utils': 7.27.1
-    transitivePeerDependencies:
-      - supports-color
-
-  '@babel/plugin-transform-private-property-in-object@7.27.1':
-    dependencies:
-      '@babel/helper-annotate-as-pure': 7.27.3
-      '@babel/helper-create-class-features-plugin': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
     transitivePeerDependencies:
       - supports-color
@@ -41323,10 +41147,6 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-transform-react-display-name@7.28.0':
-    dependencies:
-      '@babel/helper-plugin-utils': 7.27.1
-
   '@babel/plugin-transform-react-display-name@7.28.0(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -41339,17 +41159,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/plugin-transform-react-jsx-self@7.25.9':
-    dependencies:
-      '@babel/helper-plugin-utils': 7.27.1
-
   '@babel/plugin-transform-react-jsx-self@7.25.9(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/helper-plugin-utils': 7.27.1
-
-  '@babel/plugin-transform-react-jsx-source@7.25.9':
-    dependencies:
       '@babel/helper-plugin-utils': 7.27.1
 
   '@babel/plugin-transform-react-jsx-source@7.25.9(@babel/core@7.28.5)':
@@ -41364,16 +41176,6 @@ snapshots:
       '@babel/helper-module-imports': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.5)
-      '@babel/types': 7.29.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@babel/plugin-transform-react-jsx@7.27.1':
-    dependencies:
-      '@babel/helper-annotate-as-pure': 7.27.3
-      '@babel/helper-module-imports': 7.27.1
-      '@babel/helper-plugin-utils': 7.27.1
-      '@babel/plugin-syntax-jsx': 7.27.1
       '@babel/types': 7.29.0
     transitivePeerDependencies:
       - supports-color
@@ -41395,10 +41197,6 @@ snapshots:
       '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-transform-regenerator@7.28.4':
-    dependencies:
-      '@babel/helper-plugin-utils': 7.27.1
-
   '@babel/plugin-transform-regenerator@7.28.4(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -41414,17 +41212,6 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
-
-  '@babel/plugin-transform-runtime@7.25.9':
-    dependencies:
-      '@babel/helper-module-imports': 7.27.1
-      '@babel/helper-plugin-utils': 7.27.1
-      babel-plugin-polyfill-corejs2: 0.4.14
-      babel-plugin-polyfill-corejs3: 0.10.6
-      babel-plugin-polyfill-regenerator: 0.6.5
-      semver: 6.3.1
-    transitivePeerDependencies:
-      - supports-color
 
   '@babel/plugin-transform-runtime@7.25.9(@babel/core@7.28.5)':
     dependencies:
@@ -41455,13 +41242,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/plugin-transform-spread@7.27.1':
-    dependencies:
-      '@babel/helper-plugin-utils': 7.27.1
-      '@babel/helper-skip-transparent-expression-wrappers': 7.27.1
-    transitivePeerDependencies:
-      - supports-color
-
   '@babel/plugin-transform-spread@7.27.1(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -41473,10 +41253,6 @@ snapshots:
   '@babel/plugin-transform-sticky-regex@7.25.9(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/helper-plugin-utils': 7.27.1
-
-  '@babel/plugin-transform-sticky-regex@7.27.1':
-    dependencies:
       '@babel/helper-plugin-utils': 7.27.1
 
   '@babel/plugin-transform-sticky-regex@7.27.1(@babel/core@7.28.5)':
@@ -46429,7 +46205,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
+  '@ledgerhq/context-module@2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
       bs58: 6.0.0
@@ -46527,9 +46303,9 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-aleo@0.4.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-aleo@0.4.0(@ledgerhq/context-module@2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+      '@ledgerhq/context-module': 2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
       '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
@@ -46537,9 +46313,9 @@ snapshots:
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-concordium@0.4.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-concordium@0.4.0(@ledgerhq/context-module@2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+      '@ledgerhq/context-module': 2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
       '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
@@ -46556,9 +46332,9 @@ snapshots:
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-ethereum@1.16.0(@ledgerhq/context-module@2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-ethereum@1.16.0(@ledgerhq/context-module@2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+      '@ledgerhq/context-module': 2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
       '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       ethers: 6.15.0
@@ -46573,7 +46349,7 @@ snapshots:
 
   '@ledgerhq/device-signer-kit-hyperliquid@1.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+      '@ledgerhq/context-module': 2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
       '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
@@ -46584,12 +46360,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-solana@1.9.1(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))(typescript@6.0.2)':
+  '@ledgerhq/device-signer-kit-solana@1.10.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))(typescript@6.0.2)':
     dependencies:
-      '@ledgerhq/context-module': 2.1.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+      '@ledgerhq/context-module': 2.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 1.7.1(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
-      '@solana/spl-token': 0.4.14(@solana/web3.js@1.98.4(typescript@6.0.2))(typescript@6.0.2)
+      '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
       '@solana/web3.js': 1.98.4(typescript@6.0.2)
       bs58: 6.0.0
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
@@ -46601,7 +46376,6 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - encoding
-      - fastestsmallesttextencoderdecoder
       - typescript
       - utf-8-validate
 
@@ -49770,55 +49544,6 @@ snapshots:
       - supports-color
 
   '@react-native/babel-preset@0.81.6':
-    dependencies:
-      '@babel/plugin-proposal-export-default-from': 7.25.9
-      '@babel/plugin-syntax-dynamic-import': 7.8.3
-      '@babel/plugin-syntax-export-default-from': 7.25.9
-      '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3
-      '@babel/plugin-syntax-optional-chaining': 7.8.3
-      '@babel/plugin-transform-arrow-functions': 7.27.1
-      '@babel/plugin-transform-async-generator-functions': 7.28.0
-      '@babel/plugin-transform-async-to-generator': 7.27.1
-      '@babel/plugin-transform-block-scoping': 7.28.5
-      '@babel/plugin-transform-class-properties': 7.27.1
-      '@babel/plugin-transform-classes': 7.28.4
-      '@babel/plugin-transform-computed-properties': 7.27.1
-      '@babel/plugin-transform-destructuring': 7.28.5
-      '@babel/plugin-transform-flow-strip-types': 7.27.1
-      '@babel/plugin-transform-for-of': 7.27.1
-      '@babel/plugin-transform-function-name': 7.27.1
-      '@babel/plugin-transform-literals': 7.27.1
-      '@babel/plugin-transform-logical-assignment-operators': 7.28.5
-      '@babel/plugin-transform-modules-commonjs': 7.27.1
-      '@babel/plugin-transform-named-capturing-groups-regex': 7.27.1
-      '@babel/plugin-transform-nullish-coalescing-operator': 7.27.1
-      '@babel/plugin-transform-numeric-separator': 7.27.1
-      '@babel/plugin-transform-object-rest-spread': 7.28.4
-      '@babel/plugin-transform-optional-catch-binding': 7.27.1
-      '@babel/plugin-transform-optional-chaining': 7.28.5
-      '@babel/plugin-transform-parameters': 7.27.7
-      '@babel/plugin-transform-private-methods': 7.27.1
-      '@babel/plugin-transform-private-property-in-object': 7.27.1
-      '@babel/plugin-transform-react-display-name': 7.28.0
-      '@babel/plugin-transform-react-jsx': 7.27.1
-      '@babel/plugin-transform-react-jsx-self': 7.25.9
-      '@babel/plugin-transform-react-jsx-source': 7.25.9
-      '@babel/plugin-transform-regenerator': 7.28.4
-      '@babel/plugin-transform-runtime': 7.25.9
-      '@babel/plugin-transform-shorthand-properties': 7.27.1
-      '@babel/plugin-transform-spread': 7.27.1
-      '@babel/plugin-transform-sticky-regex': 7.27.1
-      '@babel/plugin-transform-typescript': 7.28.5
-      '@babel/plugin-transform-unicode-regex': 7.27.1
-      '@babel/template': 7.28.6
-      '@react-native/babel-plugin-codegen': 0.81.6
-      babel-plugin-syntax-hermes-parser: 0.29.1
-      babel-plugin-transform-flow-enums: 0.0.2
-      react-refresh: 0.14.2
-    transitivePeerDependencies:
-      - supports-color
-
-  '@react-native/babel-preset@0.81.6(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
       '@babel/plugin-proposal-export-default-from': 7.25.9(@babel/core@7.28.5)
@@ -53442,11 +53167,11 @@ snapshots:
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4)
       storybook: 10.4.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
 
-  '@storybook/addon-react-native-web@0.0.29(@react-native/babel-preset@0.81.6(@babel/core@7.28.5))(babel-plugin-react-native-web@0.19.10)(metro-react-native-babel-preset@0.77.0(@babel/core@7.28.5))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
+  '@storybook/addon-react-native-web@0.0.29(@react-native/babel-preset@0.81.6)(babel-plugin-react-native-web@0.19.10)(metro-react-native-babel-preset@0.77.0(@babel/core@7.28.5))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
     dependencies:
       babel-plugin-react-native-web: 0.19.10
     optionalDependencies:
-      '@react-native/babel-preset': 0.81.6(@babel/core@7.28.5)
+      '@react-native/babel-preset': 0.81.6
       metro-react-native-babel-preset: 0.77.0(@babel/core@7.28.5)
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
@@ -57053,27 +56778,12 @@ snapshots:
       reselect: 4.1.8
       resolve: 1.22.8
 
-  babel-plugin-polyfill-corejs2@0.4.14:
-    dependencies:
-      '@babel/compat-data': 7.28.5
-      '@babel/helper-define-polyfill-provider': 0.6.5
-      semver: 6.3.1
-    transitivePeerDependencies:
-      - supports-color
-
   babel-plugin-polyfill-corejs2@0.4.14(@babel/core@7.28.5):
     dependencies:
       '@babel/compat-data': 7.28.5
       '@babel/core': 7.28.5
       '@babel/helper-define-polyfill-provider': 0.6.5(@babel/core@7.28.5)
       semver: 6.3.1
-    transitivePeerDependencies:
-      - supports-color
-
-  babel-plugin-polyfill-corejs3@0.10.6:
-    dependencies:
-      '@babel/helper-define-polyfill-provider': 0.6.5
-      core-js-compat: 3.43.0
     transitivePeerDependencies:
       - supports-color
 
@@ -57090,12 +56800,6 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-define-polyfill-provider': 0.6.5(@babel/core@7.28.5)
       core-js-compat: 3.43.0
-    transitivePeerDependencies:
-      - supports-color
-
-  babel-plugin-polyfill-regenerator@0.6.5:
-    dependencies:
-      '@babel/helper-define-polyfill-provider': 0.6.5
     transitivePeerDependencies:
       - supports-color
 
@@ -57144,12 +56848,6 @@ snapshots:
       hermes-parser: 0.29.1
 
   babel-plugin-syntax-trailing-function-commas@7.0.0-beta.0: {}
-
-  babel-plugin-transform-flow-enums@0.0.2:
-    dependencies:
-      '@babel/plugin-syntax-flow': 7.27.1
-    transitivePeerDependencies:
-      - '@babel/core'
 
   babel-plugin-transform-flow-enums@0.0.2(@babel/core@7.28.5):
     dependencies:
