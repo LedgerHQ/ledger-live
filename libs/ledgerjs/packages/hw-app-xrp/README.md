@@ -6,7 +6,7 @@
 
 ## @ledgerhq/hw-app-xrp
 
-> [!NOTE]
+> \[!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
 Ledger Hardware Wallet XRP JavaScript bindings.

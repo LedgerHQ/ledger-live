@@ -6,7 +6,7 @@
 
 ## @ledgerhq/hw-app-eth
 
-> [!WARNING]
+> \[!WARNING]
 > **Status: DEPRECATED** — Replaced by the Device Management Kit (DMK). Migrate to `@ledgerhq/device-signer-kit-ethereum`.
 
 Ledger Hardware Wallet ETH JavaScript bindings.

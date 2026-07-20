@@ -6,7 +6,7 @@
 
 ## @ledgerhq/hw-app-str
 
-> [!NOTE]
+> \[!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
 Ledger Hardware Wallet Stellar JavaScript bindings.

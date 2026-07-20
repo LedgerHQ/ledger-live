@@ -6,7 +6,7 @@
 
 ## @ledgerhq/hw-app-multiversx
 
-> [!NOTE]
+> \[!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
 Ledger Hardware Wallet Multiversx JavaScript bindings.

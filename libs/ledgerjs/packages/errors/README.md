@@ -2,7 +2,7 @@
 
 ## @ledgerhq/errors
 
-> [!WARNING]
+> \[!WARNING]
 > **Status: DEPRECATED** — Frozen; do not add new errors here. Define errors as plain `class extends Error` in your own package's `src/errors.ts`.
 
 > ⚠️ **Deprecated and frozen.** Do not add new errors here and do not use

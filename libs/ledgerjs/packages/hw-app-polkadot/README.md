@@ -6,7 +6,7 @@
 
 ## @ledgerhq/hw-app-polkadot
 
-> [!WARNING]
+> \[!WARNING]
 > **Status: DEPRECATED** — Replaced by the Device Management Kit (DMK). Migrate to `@ledgerhq/device-signer-kit-polkadot`.
 
 Ledger Hardware Wallet Polkadot JavaScript bindings.

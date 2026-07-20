@@ -2,7 +2,7 @@
 
 ## @ledgerhq/types-devices
 
-> [!NOTE]
+> \[!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
 Ledger types for devices and transport.

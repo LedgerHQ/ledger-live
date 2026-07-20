@@ -5,7 +5,7 @@
 
 ## @ledgerhq/hw-app-near
 
-> [!NOTE]
+> \[!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
 Ledger Hardware Wallet NEAR JavaScript bindings.

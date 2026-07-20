@@ -2,7 +2,7 @@
 
 ## @ledgerhq/hw-transport-node-speculos-http
 
-> [!NOTE]
+> \[!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
 A transport for <https://github.com/LedgerHQ/speculos> Nano simulator using its HTTP API.

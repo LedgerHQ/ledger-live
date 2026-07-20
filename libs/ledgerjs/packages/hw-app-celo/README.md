@@ -6,7 +6,7 @@
 
 ## @ledgerhq/hw-app-celo
 
-> [!NOTE]
+> \[!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
 Ledger Hardware Wallet Celo JavaScript bindings.

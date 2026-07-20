@@ -6,7 +6,7 @@
 
 ## @ledgerhq/hw-app-exchange
 
-> [!NOTE]
+> \[!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
 Ledger Hardware Wallet Exchange app.

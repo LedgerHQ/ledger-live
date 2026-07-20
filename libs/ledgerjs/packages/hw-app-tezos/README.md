@@ -6,7 +6,7 @@
 
 ## @ledgerhq/hw-app-tezos
 
-> [!NOTE]
+> \[!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
 Ledger Hardware Wallet Tezos JavaScript bindings.

@@ -6,7 +6,7 @@
 
 ## @ledgerhq/hw-app-helium
 
-> [!NOTE]
+> \[!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
 Ledger Hardware Wallet Helium JavaScript bindings.

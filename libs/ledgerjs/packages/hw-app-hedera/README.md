@@ -4,7 +4,7 @@
 
 ## @ledgerhq/hw-app-hedera
 
-> [!NOTE]
+> \[!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
 Ledger Hardware Wallet Hedera JavaScript bindings.

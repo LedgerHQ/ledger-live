@@ -6,7 +6,7 @@
 
 ## @ledgerhq/hw-app-solana
 
-> [!WARNING]
+> \[!WARNING]
 > **Status: DEPRECATED** — Replaced by the Device Management Kit (DMK). Migrate to `@ledgerhq/device-signer-kit-solana`.
 
 Ledger Hardware Wallet Solana JavaScript bindings.
