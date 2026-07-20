@@ -132,6 +132,7 @@ export type ConnectDeviceStateMachineInput<
   deviceDiscoveryService: DeviceDiscoveryService<TDiscoveryError>;
   observer: Observer<ConnectDeviceUIState<TDiscoveryError, TConnectionError>>;
   onConnected: (result: DeviceConnectionResult) => void;
+  buildCompatDeviceId?: (device: ConnectedDevice) => string;
   matchDiscoveredDevices: ConnectDeviceMatchDiscoveredDevices;
   mapConnectionError: ConnectDeviceMapConnectionError<TConnectionError>;
 };

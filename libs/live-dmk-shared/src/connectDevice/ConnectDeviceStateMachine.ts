@@ -181,7 +181,7 @@ const createConnectDeviceStateMachine = <
           devices: buildDisplayedDevices(context.knownDevices, context.matchedDevices, self.send),
         });
       },
-      emitWaitingForSelectedDevice: ({ context, self }) => {
+      emitWaitingForSelectedDevice: ({ context }) => {
         context.observer.next({
           type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice,
           device: context.selectedKnownDevice!,
@@ -228,7 +228,7 @@ const createConnectDeviceStateMachine = <
           sessionId: context.sessionId!,
           connectedDevice,
           dmk: context.dmk,
-          compatDeviceId: connectedDevice.id,
+          compatDeviceId: context.buildCompatDeviceId?.(connectedDevice) ?? connectedDevice.id,
           compatDeviceModelId: dmkToLedgerDeviceIdMap[connectedDevice.modelId],
           compatDeviceName: connectedDevice.name,
           compatDeviceWired: connectedDevice.type === "USB",

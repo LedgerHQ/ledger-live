@@ -32,6 +32,7 @@ export type ConnectDeviceUseCaseInput<
   matchDiscoveredDevices: ConnectDeviceMatchDiscoveredDevices;
   mapConnectionError: ConnectDeviceMapConnectionError<TConnectionError>;
   onConnected: (result: DeviceConnectionResult) => void;
+  buildCompatDeviceId?: (device: DeviceConnectionResult["connectedDevice"]) => string;
 };
 
 export function connectDeviceUseCase<

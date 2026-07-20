@@ -6,11 +6,12 @@ import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { useDeviceManagementKit } from "./useDeviceManagementKit";
 import { HIDDiscoveredDevice } from "./HIDDiscoveredDevice";
 import { log } from "@ledgerhq/logs";
+import { buildUsbCompatDeviceId } from "../transport/usbCompatDeviceId";
 
 export const mapDiscoveredDeviceToHIDDiscoveredDevice = (
   device: DiscoveredDevice,
 ): HIDDiscoveredDevice => ({
-  deviceId: `usb|${device.id}`,
+  deviceId: buildUsbCompatDeviceId(device.id),
   deviceName: device.deviceModel.name,
   wired: true,
   modelId: dmkToLedgerDeviceIdMap[device.deviceModel.model],

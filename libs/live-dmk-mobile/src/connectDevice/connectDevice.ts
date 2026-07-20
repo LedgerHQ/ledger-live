@@ -12,7 +12,7 @@ import type { Observable } from "rxjs";
 import { type MobileConnectDeviceUIState, type MobileDiscoveryError } from "./types";
 import { RnBleDeviceDiscoverySource } from "./discoveryService/sources/RnBleDeviceDiscoverySource";
 import { RnHidDeviceDiscoverySource } from "./discoveryService/sources/RnHidDeviceDiscoverySource";
-import { createConnectionError, filterMatchedDevices } from "./utils";
+import { buildMobileCompatDeviceId, createConnectionError, filterMatchedDevices } from "./utils";
 
 export type ConnectDeviceInput = {
   knownDevices: Array<KnownDevice>;
@@ -38,5 +38,6 @@ export function connectDevice(input: ConnectDeviceInput): Observable<MobileConne
     ),
     matchDiscoveredDevices: filterMatchedDevices,
     mapConnectionError: createConnectionError,
+    buildCompatDeviceId: buildMobileCompatDeviceId,
   });
 }
