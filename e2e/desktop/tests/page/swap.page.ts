@@ -35,6 +35,7 @@ export class SwapPage extends WebViewAppPage {
   // Swap Amount and Currency components
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
   private fromAccountCoinSelector = "from-account-coin-selector";
+  private readonly fromAccountAccountNameTag = "from-account-account-name-tag";
   private fromAccountAmountInput = "from-account-amount-input";
   private readonly fromAccountError = "from-account-error";
   private readonly noQuotesPlaceholder = "quotes-error-state";
@@ -372,6 +373,12 @@ export class SwapPage extends WebViewAppPage {
     this._webviewPage = undefined;
     const webview = await this.getWebView();
     await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(expected);
+  }
+
+  @step("Check currency to swap from account name contains $0")
+  async checkAssetFromAccountNameContains(expected: string) {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.fromAccountAccountNameTag)).toContainText(expected);
   }
 
   @step("Expect asset or account selected $0 to be displayed")

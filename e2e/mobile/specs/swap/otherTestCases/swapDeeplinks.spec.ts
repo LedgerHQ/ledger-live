@@ -1,5 +1,5 @@
-import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
+import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { swapSetup } from "../../../bridge/server";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 
@@ -183,9 +183,7 @@ describe("[B2CQA-4152] Swap deeplinks — LWM", () => {
     await reset();
 
     // C3: USDT+fromAccountId only — receive defaults, no drawer
-    await app.swap.openViaDeeplink(
-      `fromToken=${USDT_TOKEN_ID}&fromAccountId=${USDT_ACCOUNT_ID}`,
-    );
+    await app.swap.openViaDeeplink(`fromToken=${USDT_TOKEN_ID}&fromAccountId=${USDT_ACCOUNT_ID}`);
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromMatchesAccount(usdtAccount);
     await app.swapLiveApp.checkAssetToContains(DEFAULT_TO);
