@@ -30,6 +30,7 @@ export type ContactsPageLabels = Readonly<{
   title: string;
   searchPlaceholder: string;
   addContact: string;
+  ledgerSyncCheckingAccessibilityLabel?: string;
   formatAddressCount: (count: number) => string;
 }>;
 

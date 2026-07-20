@@ -4,11 +4,20 @@ import {
   type ContactsPageProps,
   useContactsListViewModel,
 } from "@features/flow-contacts";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import { useTranslation } from "~/context/Locale";
 
-export type ContactsViewModel = ContactsPageProps;
+type ContactsLedgerSyncIntroductionSheetProps = Readonly<{
+  title: string;
+  activateLabel: string;
+  onActivate: () => void;
+}>;
+
+export type ContactsViewModel = ContactsPageProps &
+  Readonly<{
+    ledgerSyncIntroductionSheet: ContactsLedgerSyncIntroductionSheetProps;
+  }>;
 
 export function useContactsViewModel(): ContactsViewModel {
   const { t } = useTranslation();
@@ -17,6 +26,9 @@ export function useContactsViewModel(): ContactsViewModel {
       title: t("contacts.title"),
       searchPlaceholder: t("contacts.searchPlaceholder"),
       addContact: t("contacts.addContact"),
+      ledgerSyncCheckingAccessibilityLabel: t(
+        "contacts.ledgerSyncIntroduction.checkingAccessibilityLabel",
+      ),
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
     [t],
@@ -27,6 +39,13 @@ export function useContactsViewModel(): ContactsViewModel {
   const onOpenContact = useCallback<ContactsPageProps["onOpenContact"]>(() => undefined, []);
   const onAddContact = useCallback(() => undefined, []);
   const onDismissIntroduction = useCallback(() => setIsIntroductionDismissed(true), []);
+  const onActivateIntroduction = useCallback(() => undefined, []);
+
+  useEffect(() => {
+    if (ledgerSyncStatus !== "inactive") {
+      setIsIntroductionDismissed(false);
+    }
+  }, [ledgerSyncStatus]);
 
   return {
     viewModel,
@@ -40,6 +59,11 @@ export function useContactsViewModel(): ContactsViewModel {
       description: t("contacts.ledgerSyncIntroduction.description"),
       dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
       onDismiss: onDismissIntroduction,
+    },
+    ledgerSyncIntroductionSheet: {
+      title: t("contacts.ledgerSyncIntroduction.title"),
+      activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
+      onActivate: onActivateIntroduction,
     },
   };
 }
