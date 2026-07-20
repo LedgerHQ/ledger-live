@@ -1,6 +1,6 @@
 import React from "react";
-import { render, screen, withFlagOverrides } from "tests/testSetup";
-import { ABTestingVariants } from "@ledgerhq/types-live";
+import { render, screen } from "tests/testSetup";
+import { useRefreshAccountsOrderingEffect } from "~/renderer/actions/general";
 import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
 import { ActionContentCard, LocationContentCard } from "~/types/dynamicContent";
 
@@ -10,6 +10,13 @@ jest.mock("@braze/web-sdk", () =>
     .getBrazeWebSdkJestMock(),
 );
 
+jest.mock("~/renderer/actions/general", () => ({
+  ...jest.requireActual("~/renderer/actions/general"),
+  useRefreshAccountsOrderingEffect: jest.fn(),
+}));
+
+const mockedUseRefreshAccountsOrderingEffect = jest.mocked(useRefreshAccountsOrderingEffect);
+
 const trackingSettings = {
   shareAnalytics: true,
   sharePersonalizedRecommandations: true,
@@ -17,10 +24,6 @@ const trackingSettings = {
   privacyPolicyVersion: 1,
   orderAccounts: "balance|desc",
 };
-
-const carouselEnabledA = withFlagOverrides({
-  lldActionCarousel: { enabled: true, params: { variant: "A" } },
-});
 
 const emptyDynamicContent = {
   desktopCards: [] as unknown[],
@@ -31,7 +34,6 @@ const emptyDynamicContent = {
 
 function initialStateWithActionCards(actionCards: ActionContentCard[]) {
   return {
-    ...carouselEnabledA,
     dynamicContent: {
       ...emptyDynamicContent,
       actionCards,
@@ -41,80 +43,61 @@ function initialStateWithActionCards(actionCards: ActionContentCard[]) {
 }
 
 describe("ActionContentCards", () => {
-  describe("with lldActionCarousel enabled (variant A)", () => {
-    it("renders dismiss link when action cards include secondaryCta", async () => {
-      const actionCards: ActionContentCard[] = [
-        {
-          id: "ac-1",
-          title: "Campaign",
-          description: "Body",
-          mainCta: "Open",
-          secondaryCta: "Not interested",
-          link: "https://example.com",
-          created: null,
-          isMock: true,
-          location: LocationContentCard.Action,
-        },
-      ];
-
-      render(<ActionContentCards variant={ABTestingVariants.variantA} />, {
-        initialState: initialStateWithActionCards(actionCards),
-      });
-
-      expect(await screen.findByText(/not interested/i)).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: "Open" })).toBeInTheDocument();
-    });
-
-    it("omits dismiss link when action cards have no secondaryCta", async () => {
-      const actionCards: ActionContentCard[] = [
-        {
-          id: "ac-2",
-          title: "No secondary",
-          description: "Body",
-          mainCta: "Open only",
-          link: "",
-          created: null,
-          isMock: true,
-          location: LocationContentCard.Action,
-        },
-      ];
-
-      render(<ActionContentCards variant={ABTestingVariants.variantA} />, {
-        initialState: initialStateWithActionCards(actionCards),
-      });
-
-      expect(await screen.findByRole("button", { name: "Open only" })).toBeInTheDocument();
-      expect(screen.queryByText(/not interested/i)).not.toBeInTheDocument();
-    });
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  describe("with lldActionCarousel disabled", () => {
-    it("renders nothing when carousel feature is off", () => {
-      const actionCards: ActionContentCard[] = [
-        {
-          id: "ac-3",
-          title: "T",
-          description: "D",
-          mainCta: "M",
-          secondaryCta: "S",
-          created: null,
-          isMock: true,
-          location: LocationContentCard.Action,
-        },
-      ];
+  it("renders dismiss link when action cards include secondaryCta", async () => {
+    const actionCards: ActionContentCard[] = [
+      {
+        id: "ac-1",
+        title: "Campaign",
+        description: "Body",
+        mainCta: "Open",
+        secondaryCta: "Not interested",
+        link: "https://example.com",
+        created: null,
+        isMock: true,
+        location: LocationContentCard.Action,
+      },
+    ];
 
-      const { container } = render(<ActionContentCards variant={ABTestingVariants.variantA} />, {
-        initialState: {
-          ...withFlagOverrides({ lldActionCarousel: { enabled: false } }),
-          dynamicContent: {
-            ...emptyDynamicContent,
-            actionCards,
-          },
-          settings: trackingSettings,
-        },
-      });
-
-      expect(container.firstChild).toBeNull();
+    render(<ActionContentCards />, {
+      initialState: initialStateWithActionCards(actionCards),
     });
+
+    expect(await screen.findByText(/not interested/i)).toBeVisible();
+    expect(screen.getByRole("button", { name: "Open" })).toBeVisible();
+    expect(mockedUseRefreshAccountsOrderingEffect).toHaveBeenCalledWith({ onMount: true });
+  });
+
+  it("omits dismiss link when action cards have no secondaryCta", async () => {
+    const actionCards: ActionContentCard[] = [
+      {
+        id: "ac-2",
+        title: "No secondary",
+        description: "Body",
+        mainCta: "Open only",
+        link: "",
+        created: null,
+        isMock: true,
+        location: LocationContentCard.Action,
+      },
+    ];
+
+    render(<ActionContentCards />, {
+      initialState: initialStateWithActionCards(actionCards),
+    });
+
+    expect(await screen.findByRole("button", { name: "Open only" })).toBeVisible();
+    expect(screen.queryByText(/not interested/i)).not.toBeInTheDocument();
+  });
+
+  it("renders nothing when there are no action cards", () => {
+    const { container } = render(<ActionContentCards />, {
+      initialState: initialStateWithActionCards([]),
+    });
+
+    expect(container.firstChild).toBeNull();
   });
 });
