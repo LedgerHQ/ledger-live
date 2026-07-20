@@ -154,21 +154,37 @@ export class BorrowPage extends WebViewAppPage {
   async clickSignSummaryContinue() {
     await expect(this.hostSignModal()).toBeVisible();
 
-    if (await this.signAmountContinueBtn.isVisible()) {
-      await this.signAmountContinueBtn.click();
-    } else if (await this.hostSignModalContinueButton().isVisible()) {
-      await this.hostSignModalContinueButton().click();
-    }
+    for (let step = 0; step < 2; step++) {
+      if (await this.signSummaryContinueBtn.isVisible()) {
+        await expect(this.signSummaryContinueBtn).toBeEnabled();
+        await this.signSummaryContinueBtn.click();
+        return;
+      }
 
-    if (await this.signSummaryContinueBtn.isVisible()) {
-      await this.signSummaryContinueBtn.click();
+      if (step === 0 && (await this.signAmountContinueBtn.isVisible())) {
+        await expect(this.signAmountContinueBtn).toBeEnabled();
+        await this.signAmountContinueBtn.click();
+        await expect(
+          this.signSummaryContinueBtn.or(this.hostSignModalContinueButton()),
+        ).toBeVisible();
+        continue;
+      }
+
+      const modalContinue = this.hostSignModalContinueButton();
+      await expect(modalContinue).toBeVisible();
+      await expect(modalContinue).toBeEnabled();
+      await modalContinue.click();
+
+      if (step === 0) {
+        await expect(
+          this.signSummaryContinueBtn
+            .or(this.hostSignModalContinueButton())
+            .or(this.deviceTransactionConfirm),
+        ).toBeVisible();
+        continue;
+      }
       return;
     }
-
-    const reviewContinue = this.hostSignModalContinueButton();
-    await expect(reviewContinue).toBeVisible();
-    await expect(reviewContinue).toBeEnabled();
-    await reviewContinue.click();
   }
 
   @step("Wait for host device validation screen")
