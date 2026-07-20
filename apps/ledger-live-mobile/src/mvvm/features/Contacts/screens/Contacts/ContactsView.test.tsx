@@ -66,6 +66,7 @@ function createViewModel({
 } = {}): ContactsViewModel {
   return {
     viewModel: {
+      displayMode: "empty",
       me: {
         contactId: "contact-me" as never,
         name: "Me",
@@ -81,7 +82,7 @@ function createViewModel({
       formatAddressCount: count => `${count} address`,
     },
     meAvatarSrc: "https://example.com/black/user.png",
-    onOpenMe: jest.fn(),
+    onOpenContact: jest.fn(),
     onAddContact: jest.fn(),
     ledgerSyncStatus,
     ledgerSyncIntroduction: {
