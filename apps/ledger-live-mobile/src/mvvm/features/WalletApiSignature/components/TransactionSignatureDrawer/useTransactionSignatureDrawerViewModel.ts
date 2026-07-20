@@ -109,9 +109,13 @@ export function useTransactionSignatureDrawerViewModel({ request, onClose }: Pro
     [onSuccess, onClose],
   );
 
-  // On a signing failure the executor keeps the sheet open and renders its native
-  // IntentError screen (Retry / Close). We deliberately do not reject here so the
-  // user can retry; the explicit dismiss path (onUserCancel) rejects the promise.
+  // Dismiss semantics mirror the Send flow's DIE integration (Send's useSignatureViewModel):
+  // a dismiss is intentionally treated as a user cancellation. onIntentJobError is a
+  // deliberate no-op so a non-refusal signing failure keeps the executor's generic
+  // IntentError screen open (Retry / Close) with the real, translated error visible to the
+  // user — exactly what Send does. Send can simply close the overlay on dismiss, but a
+  // wallet-api request must settle its promise; since transaction.sign has no cancel
+  // channel, UserRefusedOnDevice is the conventional "user backed out" signal.
   const onIntentJobError = useCallback(() => {}, []);
 
   const onUserCancel = useCallback(() => {

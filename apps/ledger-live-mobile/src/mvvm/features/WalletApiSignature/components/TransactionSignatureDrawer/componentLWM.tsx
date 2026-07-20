@@ -59,7 +59,6 @@ export function SignTransactionIntentComponentLWM({
           preset="info"
           size="hug"
           title={t("walletApiSignTransaction.sign.cancelled.title")}
-          description={t("walletApiSignTransaction.sign.cancelled.description")}
           primaryCta={{
             label: t("walletApiSignTransaction.sign.cancelled.close"),
             onPress: onClose,

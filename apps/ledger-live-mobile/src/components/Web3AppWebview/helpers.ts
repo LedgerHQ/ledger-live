@@ -530,11 +530,14 @@ export function useUiHook({
   const { createDrawerConfiguration } = useDrawerConfiguration();
   const { openDrawer: openModularDrawer } = useModularDrawerController();
   const deviceIntentSignFlag = useFeature("llmWalletApiDeviceIntentSign");
+  const enabledManifestIds = useMemo(
+    () => new Set(deviceIntentSignFlag?.params?.enabledManifestIds ?? []),
+    [deviceIntentSignFlag?.params?.enabledManifestIds],
+  );
   // The device-intent sign flow is opt-in per live-app: only enabled when the flag is on
   // and the current manifest id is in the configured allowlist.
   const deviceIntentSignEnabled =
-    (deviceIntentSignFlag?.enabled ?? false) &&
-    (deviceIntentSignFlag?.params?.enabledManifestIds?.includes(manifest.id) ?? false);
+    (deviceIntentSignFlag?.enabled ?? false) && enabledManifestIds.has(manifest.id);
 
   const source =
     currentRouteNameRef.current === "Platform Catalog"

@@ -4502,24 +4502,22 @@
   "walletApiSignMessage": {
     "sign": {
       "title": "Continue on your {{productName}}",
-      "description": "Verify and sign the message on your device.",
+      "description": "Follow the instructions displayed on your Secure Screen",
       "cancelled": {
-        "title": "Message signing canceled",
-        "description": "You rejected the message signature.",
+        "title": "Operation rejected on device",
         "close": "Close",
-        "retry": "Try again"
+        "retry": "Retry"
       }
     }
   },
   "walletApiSignTransaction": {
     "sign": {
       "title": "Continue on your {{productName}}",
-      "description": "Verify and sign the transaction on your device.",
+      "description": "Follow the instructions displayed on your Secure Screen",
       "cancelled": {
-        "title": "Transaction signing canceled",
-        "description": "You rejected the transaction signature.",
+        "title": "Operation rejected on device",
         "close": "Close",
-        "retry": "Try again"
+        "retry": "Retry"
       }
     }
   },

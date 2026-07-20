@@ -158,6 +158,9 @@ module.exports = {
     "^react-redux": "<rootDir>/node_modules/react-redux",
     "^@tanstack/react-query$": "<rootDir>/node_modules/@tanstack/react-query",
     "^react-native-mmkv$": "<rootDir>/__mocks__/react-native-mmkv.ts",
+    // expo-keep-awake resolves to its ESM TS source under the react-native
+    // export condition, which Jest can't parse; redirect to a stub.
+    "^expo-keep-awake$": "<rootDir>/__mocks__/expo-keep-awake.ts",
     // Redirect to mock for pre-compiled dependencies (like @ledgerhq/native-ui)
     "^react-native-worklets$": "<rootDir>/__mocks__/react-native-worklets.js",
     // Global mock for .lottie (dotLottie) files
