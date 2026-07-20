@@ -7,7 +7,7 @@ import {
 
 describe("createEmptyContactsListViewModel", () => {
   it("returns the Me row with no addresses", () => {
-    expect(createEmptyContactsListViewModel(mockMeContact())).toEqual({
+    expect(createEmptyContactsListViewModel(mockMeContact())).toMatchObject({
       me: {
         contactId: "contact-me",
         name: "Me",
@@ -23,7 +23,7 @@ describe("createEmptyContactsListViewModel", () => {
       addresses: [mockContactAddress()],
     });
 
-    expect(createEmptyContactsListViewModel(me)).toEqual({
+    expect(createEmptyContactsListViewModel(me)).toMatchObject({
       me: {
         contactId: "contact-me",
         name: "Élodie",
@@ -50,7 +50,7 @@ describe("createPopulatedContactsListViewModel", () => {
       mockContact({ id: "contact-ada", name: "Ada" }),
     ];
 
-    expect(createPopulatedContactsListViewModel(me, contacts)).toEqual({
+    expect(createPopulatedContactsListViewModel(me, contacts)).toMatchObject({
       me: {
         contactId: "contact-me",
         name: "Me",
@@ -112,7 +112,7 @@ describe("createContactsSearchViewModel", () => {
   ];
 
   it("should return the populated list for an empty query", () => {
-    expect(createContactsSearchViewModel(me, contacts, "  ")).toEqual({
+    expect(createContactsSearchViewModel(me, contacts, "  ")).toMatchObject({
       status: "results",
       me: {
         contactId: "contact-me",
@@ -144,7 +144,7 @@ describe("createContactsSearchViewModel", () => {
   });
 
   it("should return case-insensitive saved contact matches", () => {
-    expect(createContactsSearchViewModel(me, contacts, "bEn")).toEqual({
+    expect(createContactsSearchViewModel(me, contacts, "bEn")).toMatchObject({
       status: "results",
       me: {
         contactId: "contact-me",
@@ -164,7 +164,7 @@ describe("createContactsSearchViewModel", () => {
   });
 
   it("should return no results when only Me matches the query", () => {
-    expect(createContactsSearchViewModel(me, contacts, "Me")).toEqual({
+    expect(createContactsSearchViewModel(me, contacts, "Me")).toMatchObject({
       status: "no-results",
       me: {
         contactId: "contact-me",

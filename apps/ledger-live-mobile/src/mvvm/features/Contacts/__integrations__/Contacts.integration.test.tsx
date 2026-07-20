@@ -49,7 +49,7 @@ jest.mock("@features/flow-contacts", () => {
     ContactsPage: ({
       viewModel,
       labels,
-      onOpenMe,
+      onOpenContact,
       onAddContact,
     }: {
       viewModel: { me: { contactId: string; name: string; addressCount: number } };
@@ -58,12 +58,12 @@ jest.mock("@features/flow-contacts", () => {
         addContact: string;
         formatAddressCount: (count: number) => string;
       };
-      onOpenMe: (contactId: string) => void;
+      onOpenContact: (contactId: string) => void;
       onAddContact: () => void;
     }) => (
       <View testID="contacts-screen">
         <Text testID="contacts-search-input">{labels.searchPlaceholder}</Text>
-        <Pressable testID="contacts-me-item" onPress={() => onOpenMe(viewModel.me.contactId)}>
+        <Pressable testID="contacts-me-item" onPress={() => onOpenContact(viewModel.me.contactId)}>
           <Text>{viewModel.me.name}</Text>
           <Text>{labels.formatAddressCount(viewModel.me.addressCount)}</Text>
         </Pressable>

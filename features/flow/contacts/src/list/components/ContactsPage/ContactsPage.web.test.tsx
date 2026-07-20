@@ -1,5 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
+import type { ContactId } from "@domain/entity-contact";
 import { mockMeContact } from "@domain/entity-contact/schema.mock";
 import type { ContactsLedgerSyncStatus } from "../../types";
 import { createEmptyContactsListViewModel } from "../../viewModel";
@@ -9,7 +10,7 @@ type RenderContactsPageOptions = Readonly<{
   ledgerSyncStatus?: ContactsLedgerSyncStatus;
   isIntroductionOpen?: boolean;
   onDismissIntroduction?: () => void;
-  onOpenMe?: (contactId: string) => void;
+  onOpenContact?: (contactId: ContactId) => void;
   onAddContact?: () => void;
 }>;
 
@@ -17,7 +18,7 @@ function renderContactsPage({
   ledgerSyncStatus = "ready",
   isIntroductionOpen = false,
   onDismissIntroduction = jest.fn(),
-  onOpenMe = jest.fn(),
+  onOpenContact = jest.fn(),
   onAddContact = jest.fn(),
 }: RenderContactsPageOptions = {}) {
   render(
@@ -30,7 +31,7 @@ function renderContactsPage({
         formatAddressCount: count => `${count} address`,
       }}
       meAvatarSrc="https://example.com/black/user.png"
-      onOpenMe={onOpenMe}
+      onOpenContact={onOpenContact}
       onAddContact={onAddContact}
       ledgerSyncStatus={ledgerSyncStatus}
       ledgerSyncIntroduction={{
@@ -43,12 +44,12 @@ function renderContactsPage({
     />,
   );
 
-  return { onDismissIntroduction, onOpenMe, onAddContact };
+  return { onDismissIntroduction, onOpenContact, onAddContact };
 }
 
 describe("ContactsPage", () => {
   it("renders the empty contacts list inside the page and delegates row actions", () => {
-    const { onOpenMe, onAddContact } = renderContactsPage();
+    const { onOpenContact, onAddContact } = renderContactsPage();
 
     expect(screen.getByTestId("contacts-page-layout")).toBeVisible();
     expect(screen.getByTestId("contacts-page-header")).toBeVisible();
@@ -69,7 +70,7 @@ describe("ContactsPage", () => {
     fireEvent.click(screen.getByTestId("contacts-add-contact"));
     fireEvent.click(screen.getByTestId("contacts-add-contact-header"));
 
-    expect(onOpenMe).toHaveBeenCalledWith("contact-me");
+    expect(onOpenContact).toHaveBeenCalledWith("contact-me");
     expect(onAddContact).toHaveBeenCalledTimes(2);
   });
 
