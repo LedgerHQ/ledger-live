@@ -107,7 +107,10 @@ const defaultConfig = {
       },
     ],
   },
-  transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],
+  transformIgnorePatterns: [
+    "/node_modules/(?!|@babel/runtime/helpers/esm/)",
+    "/node_modules/cross-sha256/",
+  ],
   moduleDirectories: ["node_modules", "cli/node_modules"],
   moduleNameMapper: {
     "^buffer$": "<rootDir>/jest.buffer-shim.js",
@@ -125,6 +128,8 @@ const defaultConfig = {
 };
 
 export default {
+  forceExit: true,
+  coverageProvider: "babel",
   globalSetup: process.env.UPDATE_BACKEND_MOCKS
     ? "<rootDir>/src/__tests__/test-helpers/bridgeSetupUpdateMocks.ts"
     : process.env.USE_BACKEND_MOCKS
