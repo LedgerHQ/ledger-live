@@ -2,7 +2,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account, ChainwatchNetwork } from "@ledgerhq/types-live";
 import ChainwatchAccountManager from "./ChainwatchAccountManager";
-import { reconcileTransactionsAlertsAddresses } from ".";
+import { getTransactionsAlertsAddressKey, reconcileTransactionsAlertsAddresses } from ".";
 
 jest.mock("./ChainwatchAccountManager");
 
@@ -17,6 +17,16 @@ const network: ChainwatchNetwork = {
 const makeAccount = (id: string, freshAddress: string): Account => ({
   ...genAccount(id, { currency: avalanche }),
   freshAddress,
+});
+
+describe("getTransactionsAlertsAddressKey", () => {
+  it("should lowercase hexadecimal addresses", () => {
+    expect(getTransactionsAlertsAddressKey("ethereum", "0xAbCd")).toBe("ethereum:0xabcd");
+  });
+
+  it("should preserve case-sensitive addresses", () => {
+    expect(getTransactionsAlertsAddressKey("solana", "AbCd")).toBe("solana:AbCd");
+  });
 });
 
 describe("reconcileTransactionsAlertsAddresses", () => {

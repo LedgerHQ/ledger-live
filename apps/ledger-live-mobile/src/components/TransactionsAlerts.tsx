@@ -6,6 +6,7 @@ import { useFeature } from "@features/platform-feature-flags";
 import {
   reconcileTransactionsAlertsAddresses,
   deleteUserChainwatchAccounts,
+  getTransactionsAlertsAddressKey,
 } from "@ledgerhq/live-common/transactionsAlerts/index";
 import type { ChainwatchNetwork, Account } from "@ledgerhq/types-live";
 import { notificationsSelector } from "~/reducers/settings";
@@ -53,7 +54,7 @@ const TransactionsAlerts = () => {
 
     const reconciliationKey = JSON.stringify({
       accounts: accountsFilteredBySupportedChains
-        .map(account => `${account.currency.id}:${account.freshAddress.toLowerCase()}`)
+        .map(account => getTransactionsAlertsAddressKey(account.currency.id, account.freshAddress))
         .sort(),
       chainwatchBaseUrl,
       supportedChains,

@@ -1,6 +1,11 @@
 import type { ChainwatchNetwork, Account } from "@ledgerhq/types-live";
 import ChainwatchAccountManager from "./ChainwatchAccountManager";
 
+const hexAddressPattern = /^0x[0-9a-f]+$/i;
+
+export const getTransactionsAlertsAddressKey = (currencyId: string, address: string) =>
+  `${currencyId}:${hexAddressPattern.test(address) ? address.toLowerCase() : address}`;
+
 const formatAccountsByCurrencies = (newAccounts: Account[], removedAccounts: Account[]) => {
   const accountsByCurrencies: Record<
     string,
@@ -24,7 +29,7 @@ const formatAccountsByCurrencies = (newAccounts: Account[], removedAccounts: Acc
 };
 
 const getAccountAddressKey = (account: Account) =>
-  `${account.currency.id}:${account.freshAddress.toLowerCase()}`;
+  getTransactionsAlertsAddressKey(account.currency.id, account.freshAddress);
 
 const deduplicateAccountsByAddress = (accounts: Account[]) =>
   Array.from(new Map(accounts.map(account => [getAccountAddressKey(account), account])).values());
