@@ -80,7 +80,7 @@ describe("largeScreenUpsellModal", () => {
       {
         description: "a lastSeenAt above the JS Date range",
         payload: { retries: 2, lastSeenAt: Number.MAX_SAFE_INTEGER },
-        expected: withSession({ retries: 2, lastSeenAt: Number.MAX_SAFE_INTEGER }),
+        expected: withSession({ retries: 2, lastSeenAt: null }),
       },
       {
         description: "an unsafe integer lastSeenAt",

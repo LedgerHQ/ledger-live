@@ -51,7 +51,7 @@ import DeviceActionContentDevScreen from "./DeviceActionContentDevTool/screens/D
 import DeviceIntentExecutorDevTool from "./DeviceIntentExecutorDevTool";
 import DeviceIntentExecutorDevScreen from "./DeviceIntentExecutorDevTool/screens/DeviceIntentExecutorDevScreen";
 import LargeScreenUpsellDevTool from "./LargeScreenUpsellDevTool";
-import LargeScreenUpsellQa from "LLD/features/LargeScreenUpsell/screens/LargeScreenUpsellQa";
+import { LargeScreenUpsellQa } from "LLD/features/LargeScreenUpsell";
 
 const Default = () => {
   const { t } = useTranslation();

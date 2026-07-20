@@ -1,6 +1,7 @@
 import {
   defaultLargeScreenUpsellModalState,
   LargeScreenUpsellModalStateSchema,
+  MAX_DATE_MS,
   RestorableLargeScreenUpsellModalStateSchema,
 } from "./schema";
 
@@ -19,7 +20,7 @@ describe("LargeScreenUpsellModalStateSchema", () => {
     },
     {
       retries: Number.MAX_SAFE_INTEGER,
-      lastSeenAt: Number.MAX_SAFE_INTEGER,
+      lastSeenAt: MAX_DATE_MS,
       session: "blockedByCompeting" as const,
     },
   ])("accepts $retries retries with lastSeenAt $lastSeenAt", state => {
@@ -33,6 +34,8 @@ describe("LargeScreenUpsellModalStateSchema", () => {
     { field: "retries", value: "2" },
     { field: "lastSeenAt", value: -1 },
     { field: "lastSeenAt", value: 1.5 },
+    { field: "lastSeenAt", value: MAX_DATE_MS + 1 },
+    { field: "lastSeenAt", value: Number.MAX_SAFE_INTEGER },
     { field: "lastSeenAt", value: Number.MAX_SAFE_INTEGER + 1 },
     { field: "lastSeenAt", value: "2026-07-01" },
     { field: "session", value: "pending" },

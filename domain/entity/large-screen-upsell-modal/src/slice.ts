@@ -2,15 +2,13 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { LARGE_SCREEN_UPSELL_MODAL } from "./constants";
 import {
   defaultLargeScreenUpsellModalState,
+  MAX_DATE_MS,
   RestorableLargeScreenUpsellModalStateSchema,
   type RestorableLargeScreenUpsellModalState,
 } from "./schema";
 import type { LargeScreenUpsellModalState } from "./types";
 
 export const initialState: LargeScreenUpsellModalState = defaultLargeScreenUpsellModalState;
-
-// Max JS Date timestamp (ECMA-262): ±8.64e15 ms. Values above this yield an Invalid Date.
-const MAX_DATE_MS = 8_640_000_000_000_000;
 
 export const isStorableTimestamp = (value: number): boolean =>
   Number.isSafeInteger(value) && value >= 0 && value <= MAX_DATE_MS;

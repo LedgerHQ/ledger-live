@@ -24,7 +24,7 @@ export type LargeScreenUpsellUserState = {
   seenNanoModelIds: NanoDeviceModelId[];
   hasSeenTouchscreenDevice: boolean;
   onboardingDate: Date | null;
-  frequency: LargeScreenUpsellModalState;
+  frequency: Pick<LargeScreenUpsellModalState, "retries" | "lastSeenAt">;
 };
 
 export type LargeScreenUpsellContext = {

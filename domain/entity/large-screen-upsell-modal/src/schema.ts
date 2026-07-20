@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+// Max JS Date timestamp (ECMA-262): +/-8.64e15 ms. Values above this yield an Invalid Date.
+export const MAX_DATE_MS = 8_640_000_000_000_000;
+
 export const LargeScreenUpsellModalSessionSchema = z.enum([
   "ready",
   "dismissed",
@@ -10,7 +13,7 @@ export type LargeScreenUpsellModalSession = z.infer<typeof LargeScreenUpsellModa
 
 export const LargeScreenUpsellModalStateSchema = z.object({
   retries: z.number().int().nonnegative().safe(),
-  lastSeenAt: z.number().int().nonnegative().safe().nullable(),
+  lastSeenAt: z.number().int().nonnegative().max(MAX_DATE_MS).safe().nullable(),
   session: LargeScreenUpsellModalSessionSchema,
 });
 
