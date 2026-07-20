@@ -357,6 +357,75 @@ describe("CosmosApi", () => {
     });
   });
 
+  describe("getTransactionsPage", () => {
+    it("fetches one bounded page per stream and reports hasMore=true", async () => {
+      // @ts-expect-error method is mocked
+      network.mockImplementation((networkOptions: { url: string }) => {
+        if (networkOptions.url.includes("node_info")) {
+          return Promise.resolve({
+            data: { application_version: { cosmos_sdk_version: "0.44.0" } },
+          });
+        }
+        const limit = Number(networkOptions.url.split("pagination.limit=")[1].split("&")[0]);
+        return Promise.resolve({
+          data: {
+            pagination: { total: 500 },
+            tx_responses: Array(limit)
+              .fill({})
+              .map((_, i) => ({ txhash: `h${i}` })),
+          },
+        });
+      });
+
+      const { txs, hasMore } = await cosmosApi.getTransactionsPage("address", 10);
+      expect(txs.length).toEqual(20);
+      expect(hasMore).toBe(true);
+    });
+
+    it("reports hasMore=false when both streams fit within count", async () => {
+      // @ts-expect-error method is mocked
+      network.mockImplementation((networkOptions: { url: string }) => {
+        if (networkOptions.url.includes("node_info")) {
+          return Promise.resolve({
+            data: { application_version: { cosmos_sdk_version: "0.44.0" } },
+          });
+        }
+        return Promise.resolve({
+          data: { pagination: { total: 2 }, tx_responses: [{ txhash: "a" }, { txhash: "b" }] },
+        });
+      });
+
+      const { txs, hasMore } = await cosmosApi.getTransactionsPage("address", 10);
+      expect(txs.length).toEqual(4);
+      expect(hasMore).toBe(false);
+    });
+
+    it("falls back to legacy params when the node version is unparseable", async () => {
+      // @ts-expect-error method is mocked
+      network.mockImplementation((networkOptions: { url: string }) => {
+        if (networkOptions.url.includes("node_info")) {
+          return Promise.resolve({
+            data: { application_version: { cosmos_sdk_version: "unknown" } },
+          });
+        }
+        // Only the legacy path carries pagination.limit; if modern params were chosen this throws.
+        const limit = Number(networkOptions.url.split("pagination.limit=")[1].split("&")[0]);
+        return Promise.resolve({
+          data: {
+            pagination: { total: 2 },
+            tx_responses: Array(limit)
+              .fill({})
+              .map((_, i) => ({ txhash: `h${i}` })),
+          },
+        });
+      });
+
+      // Old behaviour: semver.gte throws on "unknown" → catch → empty page. Fixed: legacy params.
+      const { txs } = await cosmosApi.getTransactionsPage("address", 5);
+      expect(txs.length).toEqual(10);
+    });
+  });
+
   describe("fetchTransactions", () => {
     const sender = "cosmos1mzuuwf9djp25vkcjwc08g3tjsv64d94zj3txfp";
     const pagination = {

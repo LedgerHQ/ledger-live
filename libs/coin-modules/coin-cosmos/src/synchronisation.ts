@@ -300,3 +300,5 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
 
   return ops;
 };
+
+export { txToOps };
