@@ -3,8 +3,6 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/celo/types";
-import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -52,7 +50,9 @@ export const StepAmountFooter = ({
 
 const isTransactionRefuse = (error: unknown) => {
   return (
-    error && (error instanceof UserRefusedOnDevice || error instanceof TransactionRefusedOnDevice)
+    error &&
+    ((error as { name?: string })?.name === "UserRefusedOnDevice" ||
+      (error as { name?: string })?.name === "TransactionRefusedOnDevice")
   );
 };
 

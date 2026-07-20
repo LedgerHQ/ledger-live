@@ -12,7 +12,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import calService from "@ledgerhq/ledger-cal-service";
 import trustService from "@ledgerhq/ledger-trust-service";
 import { loadPKI } from "@ledgerhq/hw-bolos";
-import { LatestFirmwareVersionRequired, UpdateYourApp } from "@ledgerhq/errors";
+import { LatestFirmwareVersionRequired, UpdateYourApp } from "./errors";
 
 /**
  * Required minimum version of App Solana for non NanoS devices.
@@ -26,7 +26,9 @@ const MIN_VERSION = "1.9.2";
 const MANAGER_APP_NAME = "Solana";
 
 function isPKIUnsupportedError(err: unknown): err is TransportStatusError {
-  return err instanceof TransportStatusError && err.message.includes("0x6a81");
+  return (
+    (err as Error).name === "TransportStatusError" && (err as Error).message.includes("0x6a81")
+  );
 }
 
 async function tryLoadPKI(...args: Parameters<typeof loadPKI>) {

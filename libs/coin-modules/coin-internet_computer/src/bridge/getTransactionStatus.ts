@@ -4,7 +4,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { validateAddress } from "@zondax/ledger-live-icp/utils";
 import BigNumber from "bignumber.js";

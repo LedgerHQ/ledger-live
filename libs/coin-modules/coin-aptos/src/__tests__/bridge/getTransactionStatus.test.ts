@@ -5,11 +5,9 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   NotEnoughBalanceFees,
-  NotEnoughToRestake,
-  NotEnoughToStake,
-  NotEnoughToUnstake,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
+import { NotEnoughToRestake, NotEnoughToStake, NotEnoughToUnstake } from "../../errors";
 import BigNumber from "bignumber.js";
 import {
   createFixtureAccount,

@@ -3,7 +3,7 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { AccountRaw, CurrenciesData, TransactionStatusCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import TransactionModule from "../bridge/transaction";

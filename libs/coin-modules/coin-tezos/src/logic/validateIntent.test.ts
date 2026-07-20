@@ -6,7 +6,7 @@ import {
   AmountRequired,
   NotEnoughBalance,
   NotEnoughBalanceToDelegate,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import coinConfig from "../config";
 import {
   InvalidAddressBecauseAlreadyDelegated,

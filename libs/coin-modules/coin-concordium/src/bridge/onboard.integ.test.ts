@@ -1,4 +1,4 @@
-import { ConcordiumSessionExpiredError } from "@ledgerhq/errors";
+import { ConcordiumSessionExpiredError } from "../types";
 import { firstValueFrom, toArray } from "rxjs";
 import coinConfig from "../config";
 import { submitCredential } from "../network/proxyClient";

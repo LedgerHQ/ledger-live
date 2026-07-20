@@ -1,6 +1,7 @@
 import { Observable, from, of, throwError, EMPTY } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
-import { DeviceOnDashboardExpected, TransportStatusError } from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
+import { DeviceOnDashboardExpected } from "../errors";
 
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
@@ -81,10 +82,12 @@ export default function unistallLanguage({
             }),
             catchError((e: unknown) => {
               if (
-                e instanceof DeviceOnDashboardExpected ||
+                (e as Error).name === "DeviceOnDashboardExpected" ||
                 (e &&
-                  e instanceof TransportStatusError &&
-                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(e.statusCode))
+                  (e as Error).name === "TransportStatusError" &&
+                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(
+                    (e as { statusCode: number }).statusCode,
+                  ))
               ) {
                 const quitAppObservable = from(getAppAndVersion(transport)).pipe(
                   concatMap(appAndVersion => {

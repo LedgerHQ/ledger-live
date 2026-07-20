@@ -1,6 +1,6 @@
 import { concat, defer, from, Observable, of, throwError } from "rxjs";
 import { catchError, concatMap } from "rxjs/operators";
-import { DisconnectedDevice } from "@ledgerhq/errors";
+import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
 import { withDevice } from "./deviceAccess";
 import editDeviceName from "./editDeviceName";
 import getAppAndVersion from "./getAppAndVersion";
@@ -92,7 +92,10 @@ export default function renameDevice({ deviceId, request }: Input): Observable<R
             /**
              * If the error is that the device is not on the dashboard, we retry the innerSub
              */
-            if (error.message === "not on dashboard" || error instanceof DisconnectedDevice) {
+            if (
+              error.message === "not on dashboard" ||
+              (error as Error).name === "DisconnectedDevice"
+            ) {
               return innerSub;
             }
 
@@ -117,7 +120,7 @@ export default function renameDevice({ deviceId, request }: Input): Observable<R
        * We do have a global timeout so that we are not in a infinite loop
        *
        */
-      if (error.message === "not on dashboard" || error instanceof DisconnectedDevice) {
+      if (error.message === "not on dashboard" || (error as Error).name === "DisconnectedDevice") {
         return of<RenameDeviceEvent>({
           type: "disconnected",
           expected: true,

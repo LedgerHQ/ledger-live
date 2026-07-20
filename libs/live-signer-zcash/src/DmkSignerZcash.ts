@@ -11,7 +11,7 @@ import type {
   SignPcztTransactionResult,
 } from "./types";
 import { lastValueFrom, type Observable } from "rxjs";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "./errors";
 import {
   DeviceActionStatus,
   type DeviceActionState,

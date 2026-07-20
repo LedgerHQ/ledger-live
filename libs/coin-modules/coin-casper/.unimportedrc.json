@@ -26,6 +26,7 @@
   "ignoreUnused": [],
   "ignoreUnimported": [
     "src/hw-signMessage.ts",
-    "src/supportedFeatures.ts"
+    "src/supportedFeatures.ts",
+    "src/errors.ts"
   ]
 }

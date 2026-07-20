@@ -40,7 +40,6 @@ import type { TezosDelegationFlowParamList } from "./types";
 import { useAccountName } from "~/reducers/wallet";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
-import { NotEnoughBalanceToDelegate } from "@ledgerhq/errors";
 import NotEnoughFundFeesAlert from "~/families/shared/StakingErrors/NotEnoughFundFeesAlert";
 import { useChangeValidatorRotateAnim } from "../../shared/useChangeValidatorRotateAnim";
 import TranslatedError from "~/components/TranslatedError";
@@ -191,7 +190,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
     });
   }, [navigation, route.params, account.id, transaction, status]);
 
-  const notEnoughBalance = status.errors.amount instanceof NotEnoughBalanceToDelegate;
+  const notEnoughBalance = status.errors.amount?.name === "NotEnoughBalanceToDelegate";
   const isUndelagating = route.params?.mode === "undelegate";
   const hasNotEnoughBalanceWhenUndelegating = notEnoughBalance && isUndelagating;
 

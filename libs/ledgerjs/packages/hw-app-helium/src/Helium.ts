@@ -1,5 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import { StatusCodes } from "@ledgerhq/errors";
+import { StatusCodes } from "@ledgerhq/hw-transport/errors";
 import Address from "@helium/address";
 import {
   PaymentV2,

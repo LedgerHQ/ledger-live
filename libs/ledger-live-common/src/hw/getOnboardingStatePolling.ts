@@ -2,19 +2,12 @@ import { defer, from, of, throwError, Observable, TimeoutError, timer } from "rx
 import { map, catchError, first, timeout, repeat, switchMap } from "rxjs/operators";
 import { getVersion } from "../device/use-cases/getVersionUseCase";
 import { withDevice } from "./deviceAccess";
+import { StatusCodes } from "@ledgerhq/hw-transport/errors";
 import {
-  TransportStatusError,
-  StatusCodes,
   DeviceOnboardingStatePollingError,
   DeviceExtractOnboardingStateError,
-  DisconnectedDevice,
-  CantOpenDevice,
-  TransportRaceCondition,
-  LockedDeviceError,
   UnexpectedBootloader,
-  TransportExchangeTimeoutError,
-  DisconnectedDeviceDuringOperation,
-} from "@ledgerhq/errors";
+} from "../errors";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import { extractOnboardingState, OnboardingState } from "./extractOnboardingState";
 import { DeviceDisconnectedWhileSendingError } from "@ledgerhq/device-management-kit";
@@ -74,9 +67,9 @@ export const getOnboardingStatePolling = ({
       return getVersionObs.pipe(
         catchError((error: unknown) => {
           const isApduNotSupported =
-            error instanceof TransportStatusError &&
+            (error as Error).name === "TransportStatusError" &&
             [StatusCodes.CLA_NOT_SUPPORTED, StatusCodes.INS_NOT_SUPPORTED].includes(
-              (error as TransportStatusError).statusCode,
+              (error as { statusCode: number }).statusCode,
             );
 
           if (isApduNotSupported && !hasQuitAppAlreadyRun) {
@@ -113,10 +106,10 @@ export const getOnboardingStatePolling = ({
           try {
             onboardingState = extractOnboardingState(firmwareInfo.flags, firmwareInfo.charonState);
           } catch (error: unknown) {
-            if (error instanceof DeviceExtractOnboardingStateError) {
+            if ((error as Error).name === "DeviceExtractOnboardingStateError") {
               return {
                 onboardingState: null,
-                allowedError: error,
+                allowedError: error as Error,
                 lockedDevice: false,
               };
             } else {
@@ -149,7 +142,7 @@ export const getOnboardingStatePolling = ({
           return {
             onboardingState: null,
             allowedError: allowedError,
-            lockedDevice: allowedError instanceof LockedDeviceError,
+            lockedDevice: (allowedError as Error).name === "LockedDeviceError",
           };
         }
       }),
@@ -167,16 +160,16 @@ export const isAllowedOnboardingStatePollingError = (error: unknown): boolean =>
   if (
     error &&
     // Timeout error is thrown by rxjs's timeout
-    (error instanceof TimeoutError ||
-      error instanceof TransportExchangeTimeoutError ||
-      error instanceof DisconnectedDevice ||
-      error instanceof DisconnectedDeviceDuringOperation ||
+    ((error as Error).name === "TimeoutError" ||
+      (error as Error).name === "TransportExchangeTimeoutError" ||
+      (error as Error).name === "DisconnectedDevice" ||
+      (error as Error).name === "DisconnectedDeviceDuringOperation" ||
       error instanceof DeviceDisconnectedWhileSendingError ||
-      error instanceof CantOpenDevice ||
-      error instanceof TransportRaceCondition ||
-      error instanceof TransportStatusError ||
+      (error as Error).name === "CantOpenDevice" ||
+      (error as Error).name === "TransportRaceCondition" ||
+      (error as Error).name === "TransportStatusError" ||
       // A locked device is handled as an allowed error
-      error instanceof LockedDeviceError)
+      (error as Error).name === "LockedDeviceError")
   ) {
     return true;
   }
