@@ -194,6 +194,9 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     resolveValidatorAddress: async (_, contractAddress) => {
       return contractAddress ? ethers.getAddress(contractAddress) : null;
     },
+    canUndelegate: delegation => {
+      return delegation.shares?.gt(0) ?? true;
+    },
   },
   somnia: {
     contractAddress: () => "0xBe367d410D96E1cAeF68C0632251072CDf1b8250",

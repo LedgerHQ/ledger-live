@@ -1,5 +1,6 @@
 import type { Stake } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { StakingDelegation } from "@ledgerhq/types-live";
 
 export type StakingOperation =
   | "delegate"
@@ -156,6 +157,8 @@ export type StakingContractConfig = {
     decoded: readonly unknown[],
     contractAddress: string | undefined,
   ) => Promise<string | null>;
+  /** Chain-specific guard called after cross-cutting checks. Returns true when the delegation can be undelegated. */
+  canUndelegate?: (delegation: StakingDelegation) => boolean;
 };
 
 export type StakeCreate = {
