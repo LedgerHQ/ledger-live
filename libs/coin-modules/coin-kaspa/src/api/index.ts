@@ -97,6 +97,9 @@ export function createApi(config: KaspaCoinConfig, _currencyId: string): CoinMod
     },
 
     // --- Not supported: no native staking, no in-module token standard (blockchain_txs: ["send"]) ---
+    call: async () => {
+      throw new Error("call is not supported");
+    },
     getStakes: (_address: string, _cursor?: Cursor): Promise<Page<Stake>> => {
       throw new Error("getStakes is not supported");
     },

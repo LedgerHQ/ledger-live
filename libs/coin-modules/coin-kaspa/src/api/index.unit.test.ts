@@ -224,4 +224,9 @@ describe("createApi", () => {
     expect(() => api.getRewards(SENDER)).toThrow("getRewards is not supported");
     expect(() => api.getValidators()).toThrow("getValidators is not supported");
   });
+
+  it("rejects for call (not supported)", async () => {
+    const api = createApi(config, "kaspa");
+    await expect(api.call({})).rejects.toThrow("call is not supported");
+  });
 });
