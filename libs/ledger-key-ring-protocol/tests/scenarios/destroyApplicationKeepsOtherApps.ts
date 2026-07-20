@@ -1,4 +1,4 @@
-import { TrustchainEjected, TrustchainNotAllowed } from "../../src/errors";
+import { TrustchainEjected } from "../../src/errors";
 import { ScenarioOptions } from "../test-helpers/types";
 
 // Deactivating one application (Ledger Sync, app 16) must close only that
@@ -59,8 +59,8 @@ export async function scenario(deviceId: string, { sdkForName }: ScenarioOptions
       (e: unknown) => e,
     );
   expect(
-    sync2RestoreError instanceof TrustchainNotAllowed ||
-      sync2RestoreError instanceof TrustchainEjected,
+    (sync2RestoreError as Error).name === "TrustchainNotAllowed" ||
+      (sync2RestoreError as Error).name === "TrustchainEjected",
   ).toBe(true);
 
   // cleanup

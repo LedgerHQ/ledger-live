@@ -1,6 +1,6 @@
 import { DefaultBodyType, http, HttpResponse, PathParams, StrictRequest } from "msw";
 import { setupServer } from "msw/node";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { LedgerAPI4xx } from "../../errors";
 import {
   CommandBlock,
   crypto,

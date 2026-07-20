@@ -1,6 +1,6 @@
 import { of, throwError } from "rxjs";
 import { retryOnErrorsCommandWrapper, sharedLogicTaskWrapper, isDmkError } from "./core";
-import { DisconnectedDevice, LockedDeviceError } from "@ledgerhq/errors";
+import { DisconnectedDevice, LockedDeviceError } from "@ledgerhq/hw-transport/errors";
 import { DeviceBusyError } from "@ledgerhq/device-management-kit";
 import { concatMap } from "rxjs/operators";
 import { TransportRef } from "../transports/core";

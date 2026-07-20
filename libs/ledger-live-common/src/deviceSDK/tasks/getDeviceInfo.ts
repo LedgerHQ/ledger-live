@@ -1,4 +1,5 @@
-import { DisconnectedDevice, UnresponsiveDeviceError } from "@ledgerhq/errors";
+import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
+import { UnresponsiveDeviceError } from "../../errors";
 import { log } from "@ledgerhq/logs";
 import type { DeviceId, DeviceInfo, FirmwareInfo } from "@ledgerhq/types-live";
 

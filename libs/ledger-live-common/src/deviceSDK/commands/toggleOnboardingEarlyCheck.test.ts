@@ -1,6 +1,6 @@
 import { MockTransport } from "@ledgerhq/hw-transport-mocker";
 import { ToggleTypeP2, toggleOnboardingEarlyCheckCmd } from "./toggleOnboardingEarlyCheck";
-import { StatusCodes, TransportStatusError } from "@ledgerhq/errors";
+import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport/errors";
 
 describe("@deviceSDK/commands/toggleOnboardingEarlyCheckCmd", () => {
   describe("When the device is neither in the WELCOME and WELCOME_STEP2 onboarding state, and it returns 0x6982", () => {

@@ -1,4 +1,4 @@
-import { CurrencyNotSupported } from "@ledgerhq/errors";
+import { CurrencyNotSupported } from "../errors";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import {
   registerCoinModules,

@@ -1,4 +1,4 @@
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import { RecorderConfig, ScenarioOptions, recorderConfigDefaults } from "../test-helpers/types";
 
 export async function scenario(deviceId: string, { sdkForName }: ScenarioOptions) {

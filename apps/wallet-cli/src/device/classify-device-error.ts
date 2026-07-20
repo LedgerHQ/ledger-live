@@ -11,8 +11,8 @@ import {
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
   LockedDeviceError,
-  ManagerDeviceLockedError,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/hw-transport/errors";
+import { ManagerDeviceLockedError } from "@ledgerhq/live-common/errors";
 import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { EmptyError } from "rxjs";
 import type { DeviceState, RejectedContext } from "./device-state";
@@ -56,15 +56,15 @@ function getErrorCode(error: unknown): string | undefined {
 function isDisconnectedError(error: unknown): boolean {
   return (
     error instanceof EmptyError ||
-    error instanceof DisconnectedDevice ||
-    error instanceof DisconnectedDeviceDuringOperation
+    (error as { name?: string })?.name === "DisconnectedDevice" ||
+    (error as { name?: string })?.name === "DisconnectedDeviceDuringOperation"
   );
 }
 
 function isLockedError(error: unknown): boolean {
   return (
-    error instanceof ManagerDeviceLockedError ||
-    error instanceof LockedDeviceError ||
+    (error as { name?: string })?.name === "ManagerDeviceLocked" ||
+    (error as { name?: string })?.name === "LockedDeviceError" ||
     hasTag(error, "DeviceLockedError")
   );
 }
@@ -96,6 +96,9 @@ function classifyTransportStatusError(
 }
 
 export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): DeviceState {
+  // Null/undefined can't be classified by name; fall through to unknown.
+  if (error == null) return { code: "unknown", cause: error };
+
   // Device-not-detected: rxjs EmptyError is thrown when lastValueFrom sees no emission,
   // @ledgerhq/errors Disconnected* covers USB unplug / transport close.
   if (isDisconnectedError(error)) {
@@ -108,8 +111,8 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
   }
 
   // User-rejection / wrong-app / locked via legacy SW codes.
-  if (error instanceof TransportStatusError) {
-    const state = classifyTransportStatusError(error, ctx);
+  if ((error as { name?: string })?.name === "TransportStatusError") {
+    const state = classifyTransportStatusError(error as TransportStatusError, ctx);
     if (state) {
       return state;
     }
