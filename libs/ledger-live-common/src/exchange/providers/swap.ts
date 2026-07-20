@@ -287,7 +287,7 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
     type: "DEX",
     needsKYC: false,
     needsBearerToken: false,
-    termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
+    termsOfUseUrl: "https://www.velora.xyz/terms/terms-of-use",
     supportUrl: "https://help.paraswap.io/en/",
     mainUrl: "https://www.velora.xyz/",
   },
@@ -318,6 +318,7 @@ export const termsOfUse: { [key: string]: string } = {
 
 export const privacyPolicy: { [key: string]: string } = {
   Uniswap: "https://uniswap.org/privacy-policy",
+  velora: "https://www.velora.xyz/terms/privacy-policy",
 };
 
 type CurrencyData = {
