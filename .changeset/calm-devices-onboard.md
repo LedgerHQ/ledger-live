@@ -5,4 +5,4 @@
 "live-mobile": minor
 ---
 
-Handle non-onboarded devices according to the requirements of each connection flow
+Handle non-onboarded devices according to the requirements of each Connect App flow
