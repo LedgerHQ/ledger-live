@@ -6,7 +6,7 @@ import { ContactsAddContactListItem } from "./ContactsAddContactListItem.native"
 import { ContactsMeListItem } from "./ContactsMeListItem.native";
 
 type ContactsListHeaderProps = Readonly<{
-  me: ContactsListItem;
+  me?: ContactsListItem;
   labels: ContactsPageNativeLabels;
   meAvatarSrc: string;
   showAddContact: boolean;
@@ -39,12 +39,14 @@ export function ContactsListHeader({
         autoCorrect={false}
         autoCapitalize="none"
       />
-      <ContactsMeListItem
-        contact={me}
-        avatarSrc={meAvatarSrc}
-        addressCountLabel={labels.formatAddressCount(me.addressCount)}
-        onOpen={onOpenContact}
-      />
+      {me ? (
+        <ContactsMeListItem
+          contact={me}
+          avatarSrc={meAvatarSrc}
+          addressCountLabel={labels.formatAddressCount(me.addressCount)}
+          onOpen={onOpenContact}
+        />
+      ) : null}
       {showAddContact ? (
         <ContactsAddContactListItem label={labels.addContact} onPress={onAddContact} />
       ) : null}

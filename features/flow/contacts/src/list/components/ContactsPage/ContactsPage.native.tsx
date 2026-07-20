@@ -21,6 +21,7 @@ export function ContactsPage({
   const isPopulated = viewModel.displayMode === "populated";
   const hasNoResults = "status" in viewModel && viewModel.status === "no-results";
   const isLedgerSyncChecking = ledgerSyncStatus === "checking";
+  const me = "me" in viewModel ? viewModel.me : undefined;
   const renderContact = useCallback(
     ({ item }: SectionListRenderItemInfo<ContactsListItem>) => (
       <ContactsSavedContactListItem
@@ -34,7 +35,7 @@ export function ContactsPage({
 
   const listHeader = (
     <ContactsListHeader
-      me={viewModel.me}
+      me={me}
       labels={labels}
       meAvatarSrc={meAvatarSrc}
       showAddContact={!isPopulated && !hasNoResults}

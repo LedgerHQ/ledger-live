@@ -36,6 +36,7 @@ describe("useContactsSearchViewModel", () => {
       displayMode: "populated",
       savedContacts: [{ name: "Ada" }],
     });
+    expect("me" in result.current).toBe(false);
 
     rerender({ query: "" });
 
@@ -55,7 +56,7 @@ describe("useContactsSearchViewModel", () => {
     expect(result.current).toMatchObject({
       status: "no-results",
       displayMode: "empty",
-      me: { name: "Me" },
     });
+    expect("me" in result.current).toBe(false);
   });
 });
