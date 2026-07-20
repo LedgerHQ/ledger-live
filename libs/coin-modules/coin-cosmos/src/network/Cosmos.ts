@@ -18,7 +18,11 @@ import {
   CosmosUnbonding,
   CosmosValidatorItem,
 } from "../types";
-import { fetchQueuedStakingMessages, mergeQueuedMessages } from "./babylonEpoching";
+import {
+  estimateEpochedUnbondingCompletion,
+  fetchQueuedStakingMessages,
+  mergeQueuedMessages,
+} from "./babylonEpoching";
 import * as CosmosSDKTypes from "./types";
 
 const USDC_DENOM = "ibc/8E27BA2D5493AF5636760E354E46004562C46AB7EC0CC4C1CA14E9E20E2545B5";
@@ -82,6 +86,19 @@ export class CosmosAPI {
       let staking = { delegations, redelegations, unbondings };
 
       if (this.chainInstance.epochedStaking) {
+        staking.unbondings = staking.unbondings.map(u =>
+          u.creationHeight === undefined
+            ? u
+            : {
+                ...u,
+                completionDate: estimateEpochedUnbondingCompletion(
+                  u.creationHeight,
+                  blockHeight,
+                  this.chainInstance.unbondingPeriod,
+                ),
+              },
+        );
+
         const queued = await fetchQueuedStakingMessages(
           this.defaultEndpoint,
           address,
@@ -372,11 +389,16 @@ export class CosmosAPI {
     });
 
     for (const { validator_address: validatorAddress, entries } of unbondingResponses) {
-      for (const { initial_balance: initialBalance, completion_time: completionTime } of entries) {
+      for (const {
+        initial_balance: initialBalance,
+        completion_time: completionTime,
+        creation_height: creationHeight,
+      } of entries) {
         unbondings.push({
           validatorAddress,
           amount: new BigNumber(initialBalance),
           completionDate: new Date(completionTime),
+          creationHeight: Number(creationHeight),
         });
       }
     }

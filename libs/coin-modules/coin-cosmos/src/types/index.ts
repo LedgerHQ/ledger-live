@@ -33,6 +33,9 @@ export type CosmosUnbonding = {
   validatorAddress: string;
   amount: BigNumber;
   completionDate: Date;
+  // Set only for on-chain unbondings; drives the completion re-anchor on epoched fast-unbonding
+  // chains (see estimateEpochedUnbondingCompletion).
+  creationHeight?: number;
 };
 
 export type CosmosTx = {

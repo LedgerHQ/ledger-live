@@ -110,6 +110,19 @@ const EPOCH_MSGS_PAGE_LIMIT = 200;
 const EPOCH_MSGS_MAX_PAGES = 10;
 const BABYLON_BLOCK_TIME_MS = 10_000;
 
+// The chain reports x/staking's standard 21-day completion_time for unbondings, ignoring Babylon's
+// ~2-day BTC-checkpoint fast unbonding. Re-anchor to the on-chain start (creation_height) + the
+// effective unbonding period so the displayed date reflects the real release.
+// https://docs.babylonlabs.io/stakers/baby_stakers/staking_mechanism/
+export const estimateEpochedUnbondingCompletion = (
+  creationHeight: number,
+  currentBlockHeight: number,
+  unbondingPeriodDays: number,
+): Date => {
+  const elapsedMs = Math.max(0, currentBlockHeight - creationHeight) * BABYLON_BLOCK_TIME_MS;
+  return new Date(Date.now() - elapsedMs + unbondingPeriodDays * 86_400_000);
+};
+
 export const fetchQueuedStakingMessages = async (
   endpoint: string,
   address: string,
