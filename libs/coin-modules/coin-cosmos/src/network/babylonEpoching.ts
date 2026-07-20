@@ -119,7 +119,8 @@ export const estimateEpochedUnbondingCompletion = (
   unbondingPeriodDays: number,
 ): Date => {
   const elapsedMs = Math.max(0, currentBlockHeight - creationHeight) * BABYLON_BLOCK_TIME_MS;
-  return new Date(Date.now() - elapsedMs + unbondingPeriodDays * 86_400_000);
+  const remainingMs = Math.max(0, unbondingPeriodDays * 86_400_000 - elapsedMs);
+  return new Date(Date.now() + remainingMs);
 };
 
 export const fetchQueuedStakingMessages = async (

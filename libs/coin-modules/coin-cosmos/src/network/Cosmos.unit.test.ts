@@ -652,7 +652,7 @@ describe("CosmosApi", () => {
       epochingError?: boolean;
       unbondings?: {
         validator_address: string;
-        entries: { initial_balance: string; completion_time: string; creation_height: string }[];
+        entries: { initial_balance: string; completion_time: string; creation_height?: string }[];
       }[];
     }) => {
       const {
@@ -846,7 +846,7 @@ describe("CosmosApi", () => {
         validator_address: "bbnvaloper1active",
         entries: [{ initial_balance: "500000", completion_time: "2026-08-10T07:10:27.684611546Z" }],
       };
-      mockAccountInfoRoutes({ height: 4_016_182, unbondings: [malformed as never] });
+      mockAccountInfoRoutes({ height: 4_016_182, unbondings: [malformed] });
       const babylonApi = new CosmosAPI("babylon");
 
       const [unbonding] = (await babylonApi.getAccountInfo(babylonAddress, babylonCurrency))

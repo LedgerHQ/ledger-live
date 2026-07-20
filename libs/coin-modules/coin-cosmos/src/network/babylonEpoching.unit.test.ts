@@ -407,4 +407,13 @@ describe("estimateEpochedUnbondingCompletion", () => {
     expect(completion.getTime()).toBeGreaterThanOrEqual(before + 2 * DAY_MS);
     expect(completion.getTime()).toBeLessThanOrEqual(after + 2 * DAY_MS);
   });
+
+  it("never returns a completion in the past once elapsed exceeds the unbonding period", () => {
+    const elapsedBlocks = 5 * 24 * 60 * 6; // ~5 days at 10s/block, well past the 2-day period
+    const before = Date.now();
+    const completion = estimateEpochedUnbondingCompletion(1_000, 1_000 + elapsedBlocks, 2);
+    const after = Date.now();
+    expect(completion.getTime()).toBeGreaterThanOrEqual(before);
+    expect(completion.getTime()).toBeLessThanOrEqual(after);
+  });
 });
