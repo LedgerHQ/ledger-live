@@ -14,6 +14,7 @@ import {
   setLastSeenUpsellModal,
   setUpsellModalRetries,
 } from "./slice";
+import { MAX_DATE_MS } from "./schema";
 import type { LargeScreenUpsellModalState } from "./types";
 
 const reducer = largeScreenUpsellModalSlice.reducer;
@@ -190,8 +191,6 @@ describe("largeScreenUpsellModal", () => {
   });
 
   it("accepts only non-negative timestamps within the JS Date range", () => {
-    const MAX_DATE_MS = 8.64e15;
-
     expect(isStorableTimestamp(0)).toBe(true);
     expect(isStorableTimestamp(lastSeenAt)).toBe(true);
     expect(isStorableTimestamp(MAX_DATE_MS)).toBe(true);

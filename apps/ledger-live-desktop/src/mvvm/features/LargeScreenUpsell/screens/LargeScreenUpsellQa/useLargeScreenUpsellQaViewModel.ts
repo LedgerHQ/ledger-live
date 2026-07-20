@@ -21,10 +21,7 @@ import {
   mapDevicesModelListToUpsellInputs,
 } from "@features/flow-large-screen-upsell";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import {
-  DANGEROUSLY_setDevicesModelListForQa,
-  setSharePersonalizedRecommendations,
-} from "~/renderer/actions/settings";
+import { saveSettings, setSharePersonalizedRecommendations } from "~/renderer/actions/settings";
 import {
   devicesModelListSelector,
   sharePersonalizedRecommendationsSelector,
@@ -54,6 +51,10 @@ export const QA_TOUCHSCREEN_MODELS = [
   { id: DeviceModelId.europa, labelKey: "europa" },
   { id: DeviceModelId.apex, labelKey: "apex" },
 ] as const;
+
+function handleReload() {
+  window.api?.reloadRenderer();
+}
 
 export function useLargeScreenUpsellQaViewModel() {
   const navigate = useNavigate();
@@ -171,12 +172,15 @@ export function useLargeScreenUpsellQaViewModel() {
 
   const deviceModelIdForCooldown =
     "deviceModelId" in decision ? decision.deviceModelId : enabledSeenNanoModelIds[0];
-  const resolvedCooldownDays =
-    params == null
-      ? undefined
-      : deviceModelIdForCooldown != null
-        ? (params.cooldownDays[deviceModelIdForCooldown] ?? params.cooldownDays.default)
-        : params.cooldownDays.default;
+  let resolvedCooldownDays: number | undefined;
+  if (params == null) {
+    resolvedCooldownDays = undefined;
+  } else if (deviceModelIdForCooldown != null) {
+    resolvedCooldownDays =
+      params.cooldownDays[deviceModelIdForCooldown] ?? params.cooldownDays.default;
+  } else {
+    resolvedCooldownDays = params.cooldownDays.default;
+  }
 
   const cooldownPassed =
     resolvedCooldownDays != null &&
@@ -231,10 +235,6 @@ export function useLargeScreenUpsellQaViewModel() {
     navigate("/settings/developer");
   }
 
-  function handleReload() {
-    window.api?.reloadRenderer();
-  }
-
   function handleToggleFeature(enabled: boolean) {
     if (!feature) return;
     overrideFeature({ ...feature, enabled });
@@ -257,11 +257,15 @@ export function useLargeScreenUpsellQaViewModel() {
       const next = devicesModelList.includes(modelId)
         ? devicesModelList
         : [...devicesModelList, modelId];
-      dispatch(DANGEROUSLY_setDevicesModelListForQa(next));
+      dispatch(saveSettings({ devicesModelList: next }));
       return;
     }
 
-    dispatch(DANGEROUSLY_setDevicesModelListForQa(devicesModelList.filter(id => id !== modelId)));
+    dispatch(
+      saveSettings({
+        devicesModelList: devicesModelList.filter(id => id !== modelId),
+      }),
+    );
   }
 
   function handleSetOnboardingDaysAgo(days: number) {

@@ -1,5 +1,7 @@
 const MS_PER_DAY = 86_400_000;
 
+type DisplayParamValue = string | number | boolean | null | undefined;
+
 /** Noon UTC N calendar days ago. Stable QA presets (matches canvas / FF cooldown demos). */
 export function daysAgoDate(days: number): Date {
   const date = new Date();
@@ -22,13 +24,13 @@ export const ONBOARDING_DATE_PRESETS = [
   { id: "sevenDaysAgo", days: 7, labelKey: "onboardingSevenDaysAgo" },
 ] as const;
 
-function displayParamValue(value: string | number | boolean | null | undefined): string {
+function displayParamValue(value: DisplayParamValue): string {
   if (value === undefined || value === null || value === "") return "-";
   if (typeof value === "boolean") return value ? "on" : "off";
   return String(value);
 }
 
-export function resolveParamBaseline<T extends string | number | boolean | null | undefined>({
+export function resolveParamBaseline<T extends DisplayParamValue>({
   effective,
   schemaDefault,
   hasLocalOverride,
@@ -51,10 +53,7 @@ export function resolveParamBaseline<T extends string | number | boolean | null 
   };
 }
 
-export function draftDisplayFromEffective(
-  effective: string | number | boolean | null | undefined,
-  baseline: string,
-): string {
+export function draftDisplayFromEffective(effective: DisplayParamValue, baseline: string): string {
   const effStr = displayParamValue(effective);
   if (effStr === "-" || effStr === baseline) return "";
   return effStr;
@@ -106,6 +105,11 @@ export type UpsellGateRow = {
   isBlocking: boolean;
 };
 
+type UpsellGateCandidateRow = {
+  reason: UpsellGateReason;
+  passes: boolean;
+};
+
 /** High retries alone do not fail this gate when lastSeenAt is null. */
 export function isThrottleGatePassed({
   retries,
@@ -139,7 +143,7 @@ export function buildUpsellGateRows(input: {
   throttlePassed: boolean;
   blockingReason?: UpsellGateReason;
 }): UpsellGateRow[] {
-  const rows: Array<{ reason: UpsellGateReason; passes: boolean }> = [
+  const rows: UpsellGateCandidateRow[] = [
     { reason: "feature_disabled", passes: input.isFeatureEnabled },
     { reason: "modal_disabled", passes: input.isModalEnabled },
     { reason: "touchscreen_seen", passes: !input.hasSeenTouchscreenDevice },

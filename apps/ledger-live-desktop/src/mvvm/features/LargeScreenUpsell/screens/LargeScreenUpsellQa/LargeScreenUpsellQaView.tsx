@@ -6,21 +6,30 @@ import { COPY } from "./copy";
 import { ONBOARDING_DATE_PRESETS } from "./utils";
 import type { LargeScreenUpsellQaViewModel } from "./useLargeScreenUpsellQaViewModel";
 
-type Props = LargeScreenUpsellQaViewModel;
+type Props = Readonly<LargeScreenUpsellQaViewModel>;
 
-function ToggleRow({
-  label,
-  selected,
-  onChange,
-  name,
-  explanation,
-}: {
+type ToggleRowProps = Readonly<{
   label: string;
   selected: boolean;
   onChange: (selected: boolean) => void;
   name: string;
   explanation?: string;
-}) {
+}>;
+
+type ParamRowProps = Readonly<{
+  label: string;
+  value: string;
+  placeholder: string;
+  onChange: (value: string) => void;
+  onApply: () => void;
+  onReset: () => void;
+  disabled: boolean;
+  testId: string;
+  explanation: string;
+  isOverridden: boolean;
+}>;
+
+function ToggleRow({ label, selected, onChange, name, explanation }: ToggleRowProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-16">
@@ -43,18 +52,7 @@ function ParamRow({
   testId,
   explanation,
   isOverridden,
-}: {
-  label: string;
-  value: string;
-  placeholder: string;
-  onChange: (value: string) => void;
-  onApply: () => void;
-  onReset: () => void;
-  disabled: boolean;
-  testId: string;
-  explanation: string;
-  isOverridden: boolean;
-}) {
+}: ParamRowProps) {
   return (
     <div className="flex flex-col gap-4">
       <span className="body-2 font-medium text-base">{label}</span>
@@ -192,25 +190,26 @@ export function LargeScreenUpsellQaView({
 
             <p className="body-3 mb-6 text-muted">{COPY.gatesTitle}</p>
             <ul className="mb-14 flex flex-col gap-4" data-testid="large-screen-upsell-qa-gates">
-              {gateRows.map(gate => (
-                <li key={gate.reason} className="body-2 flex items-start gap-6">
-                  <span className={gate.passes ? "text-success" : "text-error"} aria-hidden>
-                    {gate.passes ? "✓" : "✗"}
-                  </span>
-                  <span
-                    className={
-                      gate.passes
-                        ? "text-muted"
-                        : gate.isBlocking
-                          ? "font-medium text-error"
-                          : "text-error"
-                    }
-                  >
-                    {gate.label}
-                    {gate.isBlocking ? ` ${COPY.blockingNow}` : ""}
-                  </span>
-                </li>
-              ))}
+              {gateRows.map(gate => {
+                let labelColorClass = "text-error";
+                if (gate.passes) {
+                  labelColorClass = "text-muted";
+                } else if (gate.isBlocking) {
+                  labelColorClass = "font-medium text-error";
+                }
+
+                return (
+                  <li key={gate.reason} className="body-2 flex items-start gap-6">
+                    <span className={gate.passes ? "text-success" : "text-error"} aria-hidden>
+                      {gate.passes ? "✓" : "✗"}
+                    </span>
+                    <span className={labelColorClass}>
+                      {gate.label}
+                      {gate.isBlocking ? ` ${COPY.blockingNow}` : ""}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
 
             <p
@@ -260,9 +259,9 @@ export function LargeScreenUpsellQaView({
               <span className="body-2 font-medium text-base">{COPY.seenNanos}</span>
               <div className="flex flex-wrap items-center gap-12">
                 {nanoModelRows.map(row => (
-                  <div
+                  <label
                     key={row.id}
-                    className="flex items-center gap-8"
+                    className="flex cursor-pointer items-center gap-8"
                     data-testid={`large-screen-upsell-qa-nano-${row.id}`}
                   >
                     <Checkbox
@@ -271,7 +270,7 @@ export function LargeScreenUpsellQaView({
                       onCheckedChange={checked => handleToggleDeviceModel(row.id, checked === true)}
                     />
                     <span className="body-2 text-base">{row.label}</span>
-                  </div>
+                  </label>
                 ))}
               </div>
             </div>
@@ -281,9 +280,9 @@ export function LargeScreenUpsellQaView({
               <p className="body-3 text-muted">{COPY.seenTouchscreensHint}</p>
               <div className="flex flex-wrap items-center gap-12">
                 {touchscreenModelRows.map(row => (
-                  <div
+                  <label
                     key={row.id}
-                    className="flex items-center gap-8"
+                    className="flex cursor-pointer items-center gap-8"
                     data-testid={`large-screen-upsell-qa-touchscreen-${row.id}`}
                   >
                     <Checkbox
@@ -292,7 +291,7 @@ export function LargeScreenUpsellQaView({
                       onCheckedChange={checked => handleToggleDeviceModel(row.id, checked === true)}
                     />
                     <span className="body-2 text-base">{row.label}</span>
-                  </div>
+                  </label>
                 ))}
               </div>
             </div>
