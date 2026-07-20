@@ -1,14 +1,17 @@
 import React from "react";
 import { Box, SearchInput } from "@ledgerhq/lumen-ui-rnative";
-import type { ContactsListItem, ContactsPageLabels } from "../..";
+import type { ContactsListItem } from "../../types";
+import type { ContactsPageNativeLabels } from "../../types.native";
 import { ContactsAddContactListItem } from "./ContactsAddContactListItem.native";
 import { ContactsMeListItem } from "./ContactsMeListItem.native";
 
 type ContactsListHeaderProps = Readonly<{
   me: ContactsListItem;
-  labels: ContactsPageLabels;
+  labels: ContactsPageNativeLabels;
   meAvatarSrc: string;
   showAddContact: boolean;
+  searchQuery: string;
+  onSearchQueryChange: (query: string) => void;
   onOpenContact: (contactId: ContactsListItem["contactId"]) => void;
   onAddContact: () => void;
 }>;
@@ -18,6 +21,8 @@ export function ContactsListHeader({
   labels,
   meAvatarSrc,
   showAddContact,
+  searchQuery,
+  onSearchQueryChange,
   onOpenContact,
   onAddContact,
 }: ContactsListHeaderProps): React.JSX.Element {
@@ -25,10 +30,14 @@ export function ContactsListHeader({
     <Box lx={{ gap: "s8" }}>
       <SearchInput
         testID="contacts-search-input"
-        value=""
-        editable={false}
+        value={searchQuery}
+        onChangeText={onSearchQueryChange}
+        onClear={() => onSearchQueryChange("")}
+        hideClearButton={false}
         placeholder={labels.searchPlaceholder}
         accessibilityLabel={labels.searchPlaceholder}
+        autoCorrect={false}
+        autoCapitalize="none"
       />
       <ContactsMeListItem
         contact={me}

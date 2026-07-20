@@ -1,21 +1,22 @@
 import {
   type ContactsLedgerSyncStatus,
-  type ContactsPageLabels,
-  type ContactsPageProps,
-  useContactsListViewModel,
+  type ContactsPageNativeLabels,
+  type ContactsPageNativeProps,
+  useContactsSearchViewModel,
 } from "@features/flow-contacts";
 import { useCallback, useMemo, useState } from "react";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import { useTranslation } from "~/context/Locale";
 
-export type ContactsViewModel = ContactsPageProps;
+export type ContactsViewModel = ContactsPageNativeProps;
 
 export function useContactsViewModel(): ContactsViewModel {
   const { t } = useTranslation();
-  const labels = useMemo<ContactsPageLabels>(
+  const labels = useMemo<ContactsPageNativeLabels>(
     () => ({
       title: t("contacts.title"),
       searchPlaceholder: t("contacts.searchPlaceholder"),
+      searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
@@ -23,14 +24,18 @@ export function useContactsViewModel(): ContactsViewModel {
   );
   const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
   const [isIntroductionDismissed, setIsIntroductionDismissed] = useState(false);
-  const viewModel = useContactsListViewModel();
-  const onOpenContact = useCallback<ContactsPageProps["onOpenContact"]>(() => undefined, []);
+  const [searchQuery, setSearchQuery] = useState("");
+  const viewModel = useContactsSearchViewModel(searchQuery);
+  const onSearchQueryChange = useCallback((query: string) => setSearchQuery(query), []);
+  const onOpenContact = useCallback<ContactsPageNativeProps["onOpenContact"]>(() => undefined, []);
   const onAddContact = useCallback(() => undefined, []);
   const onDismissIntroduction = useCallback(() => setIsIntroductionDismissed(true), []);
 
   return {
     viewModel,
     labels,
+    searchQuery,
+    onSearchQueryChange,
     meAvatarSrc: USER_AVATAR_URL,
     onOpenContact,
     onAddContact,
