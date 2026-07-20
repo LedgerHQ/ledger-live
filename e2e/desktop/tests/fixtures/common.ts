@@ -292,7 +292,7 @@ export const test = base.extend<TestFixtures>({
 
     // capture webview console and network logs for debugging (e.g. swap live app)
     const webviewCollector = new PageLogCollector();
-    webviewCollector.start(electronApp);
+    webviewCollector.attachWebview(electronApp);
 
     // app is loaded
     await page.waitForLoadState("domcontentloaded");

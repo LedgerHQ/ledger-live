@@ -106,17 +106,14 @@ export class PageLogCollector {
     page.on("requestfailed", this.onRequestFailed);
   }
 
-  start(electronApp: ElectronApplication): void {
+  attachWebview(electronApp: ElectronApplication): void {
     electronApp.on("window", (page: Page) => {
-      // Exit early if we've already attached to a webview
       if (this.targetPage) return;
 
-      // In the current implementation, the webview is the second window opened by the app.
-      // If this changes in the future, we may need a more robust way to identify the webview.
+      // The webview is the second window the app opens; revisit this if that assumption changes.
       const windows = electronApp.windows();
       if (windows.length <= 1) return;
 
-      // Attach to the webview page
       this.attach(page);
     });
   }
