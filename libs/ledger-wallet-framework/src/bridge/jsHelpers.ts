@@ -15,7 +15,7 @@ import {
   takeUntil,
 } from "rxjs";
 import { log } from "@ledgerhq/logs";
-import { WrongDeviceForAccount } from "@ledgerhq/errors";
+import { UnsupportedDerivation, WrongDeviceForAccount } from "../errors";
 import {
   getSeedIdentifierDerivation,
   getDerivationModesForCurrency,
@@ -39,7 +39,6 @@ import {
 } from "../account/balanceHistoryCache";
 import { shouldRetainPendingOperation } from "../account/pending";
 import { shouldShowNewAccount } from "../account/support";
-import { UnsupportedDerivation } from "../errors";
 import getAddressWrapper, { GetAddressFn } from "./getAddressWrapper";
 import type { GetAddressResult } from "../derivation";
 import type { CryptoCurrency } from "../types";
@@ -536,7 +535,7 @@ export const makeScanAccounts =
 
                 derivationsCache[seedCacheKey] = result;
               } catch (e) {
-                if (e instanceof UnsupportedDerivation) {
+                if ((e as Error).name === "UnsupportedDerivation") {
                   log("scanAccounts", "ignore derivationMode=" + derivationMode);
                   continue;
                 }

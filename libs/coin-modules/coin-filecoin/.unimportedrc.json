@@ -18,7 +18,8 @@
     "src/test/bridgeDatasetTest.ts",
     "src/test/fixtures.ts",
     "src/test/index.ts",
-    "src/supportedFeatures.ts"
+    "src/supportedFeatures.ts",
+    "src/errors.ts"
   ],
   "entry": [
     "src/index.ts"

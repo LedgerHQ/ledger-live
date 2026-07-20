@@ -13,11 +13,10 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  NotEnoughGas,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { formatAPIValueWithCode } from "../common";
-import { SolanaStakeAccountAmountTooLow } from "../errors";
+import { NotEnoughGas, SolanaStakeAccountAmountTooLow } from "../errors";
 import { isValidBase58Address, isSolanaStakingTransactionIntent } from "../logic";
 import { getAtaDataLengthForMint } from "../helpers/token";
 import {

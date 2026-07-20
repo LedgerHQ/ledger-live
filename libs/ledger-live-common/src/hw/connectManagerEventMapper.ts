@@ -14,7 +14,7 @@ import type {
   PrepareConnectManagerDAError,
   PrepareConnectManagerDAIntermediateValue,
 } from "@ledgerhq/live-dmk-shared";
-import { DisconnectedDevice } from "@ledgerhq/errors";
+import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
 
 import { LockedDeviceEvent } from "./actions/types";
 

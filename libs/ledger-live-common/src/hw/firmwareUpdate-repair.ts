@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import { MCUNotGenuineToDashboard } from "@ledgerhq/errors";
+import { MCUNotGenuineToDashboard } from "../errors";
 import { Observable, from, of, EMPTY, concat, throwError } from "rxjs";
 import type { DeviceVersion, FinalFirmware, McuVersion } from "@ledgerhq/types-live";
 import { concatMap, delay, filter, map, mergeMap, throttleTime } from "rxjs/operators";

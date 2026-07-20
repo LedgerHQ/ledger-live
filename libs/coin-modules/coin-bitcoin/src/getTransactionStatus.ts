@@ -2,12 +2,17 @@ import {
   AmountRequired,
   NotEnoughBalance,
   FeeNotLoaded,
-  DustLimit,
   FeeTooHigh,
   FeeRequired,
-  OpReturnDataSizeLimit,
   InvalidAddress,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
+import {
+  DustLimit,
+  FeeTooLow,
+  OpReturnDataSizeLimit,
+  TaprootNotActivated,
+  ZcashSaplingRecipientNotSupported,
+} from "./errors";
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
@@ -22,7 +27,6 @@ import { calculateFees, validateRecipient, isTaprootRecipient } from "./cache";
 import { OP_RETURN_DATA_SIZE_LIMIT } from "./wallet-btc/crypto/base";
 import cryptoFactory from "./wallet-btc/crypto/factory";
 import { computeDustAmount } from "./wallet-btc/utils";
-import { TaprootNotActivated, FeeTooLow, ZcashSaplingRecipientNotSupported } from "./errors";
 import { classifyZcashRecipient } from "./chain-adapters/zcash/address";
 import { Currency } from "./wallet-btc";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";

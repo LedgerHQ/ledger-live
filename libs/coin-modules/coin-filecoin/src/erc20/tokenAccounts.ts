@@ -1,5 +1,5 @@
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { RecipientRequired } from "@ledgerhq/errors";
+import { RecipientRequired } from "@ledgerhq/ledger-wallet-framework/errors";
 import {
   emptyHistoryCache,
   encodeTokenAccountId,

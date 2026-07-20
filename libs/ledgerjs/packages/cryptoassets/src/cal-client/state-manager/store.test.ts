@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 import { RtkCryptoAssetsStore, createRtkCryptoAssetsStore } from "./store";
 import { CryptoAssetsApi } from "./api";
-import { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
+import { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "../../errors";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 // Mock the API

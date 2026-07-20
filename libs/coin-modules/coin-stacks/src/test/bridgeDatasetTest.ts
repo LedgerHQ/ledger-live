@@ -3,7 +3,7 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { CurrenciesData } from "@ledgerhq/types-live";
 import type { DatasetTest } from "@ledgerhq/types-live";
 import { AnchorMode } from "@stacks/transactions";

@@ -22,19 +22,19 @@ import type {
   ConnectAppDAIntermediateValue,
 } from "@ledgerhq/live-dmk-shared";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import {
-  UserRefusedAllowManager,
-  UserRefusedOnDevice,
   LatestFirmwareVersionRequired,
+  NoSuchAppOnProvider,
   UnsupportedFeatureError,
-} from "@ledgerhq/errors";
+  UserRefusedAllowManager,
+} from "../errors";
 import { DeviceId } from "@domain/entity-client-identity";
 
 import type { SkippedAppOp } from "../apps/types";
 import { SkipReason } from "../apps/types";
 import { parseDeviceInfo } from "../deviceSDK/tasks/getDeviceInfo";
 import { ConnectAppEvent } from "./connectApp";
-import { NoSuchAppOnProvider } from "../errors";
 
 export class ConnectAppEventMapper {
   private openAppRequested: boolean = false;

@@ -1,11 +1,7 @@
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import {
-  ConcordiumPairingExpiredError,
-  ConcordiumSessionExpiredError,
-  LockedDeviceError,
-  TransportStatusError,
-  UserRefusedOnDevice,
-} from "@ledgerhq/errors";
+import { LockedDeviceError } from "../errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { ConcordiumPairingExpiredError, ConcordiumSessionExpiredError } from "../types";
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
@@ -158,13 +154,14 @@ export const buildOnboardAccount =
       main().then(
         () => o.complete(),
         error => {
-          if (error instanceof TransportStatusError) {
-            if (error.statusCode === 0x6985) {
+          if ((error as Error).name === "TransportStatusError") {
+            const statusCode = (error as { statusCode?: number }).statusCode;
+            if (statusCode === 0x6985) {
               o.error(new UserRefusedOnDevice("errors.UserRefusedOnDevice.description"));
               return;
             }
 
-            if (error.statusCode === 0x5515) {
+            if (statusCode === 0x5515) {
               o.error(new LockedDeviceError("errors.LockedDeviceError.description"));
               return;
             }

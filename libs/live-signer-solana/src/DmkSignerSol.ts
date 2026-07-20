@@ -18,7 +18,7 @@ import {
 } from "@ledgerhq/device-signer-kit-solana";
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import bs58 from "bs58";
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 
 export type DAError =
   | GetAddressDAError

@@ -5,7 +5,7 @@ import {
   RecipientRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
 import { CASPER_DUMMY_ADDRESS } from "@ledgerhq/coin-casper/constants";
 import type { Transaction, TransactionStatus } from "../types";

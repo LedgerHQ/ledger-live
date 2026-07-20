@@ -1,4 +1,4 @@
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";

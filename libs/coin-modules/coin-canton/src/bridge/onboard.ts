@@ -1,4 +1,5 @@
-import { TransportStatusError, UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
+import { LockedDeviceError } from "../errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { log } from "@ledgerhq/logs";
@@ -240,12 +241,13 @@ export const buildAuthorizePreapproval =
  * Check if an error is a LockedDeviceError or UserRefusedOnDevice and create user-friendly error messages
  */
 const handleDeviceErrors = (error: Error): Error | null => {
-  if (error instanceof TransportStatusError) {
-    if (error.statusCode === 0x6985) {
+  if (error.name === "TransportStatusError") {
+    const statusCode = (error as { statusCode?: number }).statusCode;
+    if (statusCode === 0x6985) {
       const userRefusedError = new UserRefusedOnDevice("errors.UserRefusedOnDevice.description");
       return userRefusedError;
     }
-    if (error.statusCode === 0x5515) {
+    if (statusCode === 0x5515) {
       const lockedDeviceError = new LockedDeviceError("errors.LockedDeviceError.description");
       return lockedDeviceError;
     }

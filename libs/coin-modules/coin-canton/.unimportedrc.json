@@ -28,7 +28,8 @@
     "src/network/types.ts",
     "src/test/cantonTestUtils.ts",
     "src/test/fixtures.ts",
-    "src/supportedFeatures.ts"
+    "src/supportedFeatures.ts",
+    "src/errors.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",

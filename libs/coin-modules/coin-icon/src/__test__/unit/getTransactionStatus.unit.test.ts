@@ -6,7 +6,7 @@ import {
   FeeNotLoaded,
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
 import { IconDoMaxSendInstead } from "../../errors";

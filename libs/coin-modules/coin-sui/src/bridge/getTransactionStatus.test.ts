@@ -6,7 +6,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
   FeeNotLoaded,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 
 import BigNumber from "bignumber.js";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";

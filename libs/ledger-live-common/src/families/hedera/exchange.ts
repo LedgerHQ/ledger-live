@@ -1,4 +1,5 @@
-import { LatestFirmwareVersionRequired, TransportStatusError } from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
+import { LatestFirmwareVersionRequired } from "../../errors";
 import Exchange from "@ledgerhq/hw-app-exchange";
 import { loadPKI } from "@ledgerhq/hw-bolos";
 import calService from "@ledgerhq/ledger-cal-service";
@@ -8,7 +9,9 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Account } from "@ledgerhq/types-live";
 
 function isPKIUnsupportedError(err: unknown): err is TransportStatusError {
-  return err instanceof TransportStatusError && err.message.includes("0x6a81");
+  return (
+    (err as Error).name === "TransportStatusError" && (err as Error).message.includes("0x6a81")
+  );
 }
 
 export async function handleHederaTrustedFlow({

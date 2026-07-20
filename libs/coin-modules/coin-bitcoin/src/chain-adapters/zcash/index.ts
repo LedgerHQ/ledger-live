@@ -46,7 +46,11 @@ import {
   ZcashSigningCancelled,
   ZcashUtxoNotInAccount,
 } from "../../errors";
-import { InvalidAddress, NotEnoughBalance, RecipientRequired } from "@ledgerhq/errors";
+import {
+  InvalidAddress,
+  NotEnoughBalance,
+  RecipientRequired,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { toZcashPrivateInfoRaw, fromZcashPrivateInfoRaw } from "./serialization";
 import { buildExtraSyncObservable } from "./sync";
 import { collectSpendableNotes } from "./operations";

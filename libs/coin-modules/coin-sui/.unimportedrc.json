@@ -28,7 +28,8 @@
     "src/network/graphql/graphql-env.d.ts",
     "src/supportedFeatures.ts",
     "src/test/bridge.dataset.ts",
-    "src/test/testUtils.ts"
+    "src/test/testUtils.ts",
+    "src/errors.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/live-env",

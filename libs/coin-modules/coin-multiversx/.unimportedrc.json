@@ -16,7 +16,8 @@
     "src/helpers/randomizeProviders.ts",
     "src/transaction.ts",
     "src/test/bridge.dataset.ts",
-    "src/supportedFeatures.ts"
+    "src/supportedFeatures.ts",
+    "src/errors.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",

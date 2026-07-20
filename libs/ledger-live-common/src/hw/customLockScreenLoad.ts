@@ -1,17 +1,15 @@
 import { Observable, from, of, throwError } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
+import { StatusCodes, TransportError, DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
 import {
   DeviceOnDashboardExpected,
+  ImageCommitRefusedOnDevice,
+  ImageLoadRefusedOnDevice,
   ManagerNotEnoughSpaceError,
-  StatusCodes,
-  TransportError,
-  TransportStatusError,
-  DisconnectedDevice,
-} from "@ledgerhq/errors";
+} from "../errors";
 import { getDeviceModel } from "@ledgerhq/devices";
 
 import getDeviceInfo from "./getDeviceInfo";
-import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "../errors";
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
@@ -201,10 +199,12 @@ export default function loadImage({
             }),
             catchError((e: unknown) => {
               if (
-                e instanceof DeviceOnDashboardExpected ||
+                (e as Error).name === "DeviceOnDashboardExpected" ||
                 (e &&
-                  e instanceof TransportStatusError &&
-                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(e.statusCode))
+                  (e as Error).name === "TransportStatusError" &&
+                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(
+                    (e as { statusCode: number }).statusCode,
+                  ))
               ) {
                 return from(getAppAndVersion(transportRef.current)).pipe(
                   concatMap(appAndVersion => {

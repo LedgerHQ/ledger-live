@@ -16,7 +16,7 @@
  ********************************************************************************/
 import type Transport from "@ledgerhq/hw-transport";
 import BIPPath from "bip32-path";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import { encodeAddress } from "./utils";
 const CHUNK_SIZE = 250;
 // const P1_FIRST = 0x00;

@@ -4,7 +4,7 @@ import { firstValueFrom } from "rxjs";
 import { reduce, filter, map, catchError } from "rxjs/operators";
 import flatMap from "lodash/flatMap";
 import omit from "lodash/omit";
-import { InvalidAddress, RecipientRequired, AmountRequired } from "@ledgerhq/errors";
+import { InvalidAddress, RecipientRequired, AmountRequired } from "../errors";
 import type {
   Account,
   AccountBridge,

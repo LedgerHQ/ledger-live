@@ -1,4 +1,4 @@
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { LedgerAPI4xx } from "../../../errors";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import type { AccountLike } from "@ledgerhq/types-live";
 

@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { isValidRecipient } from "../../logic";
-import { InvalidAddress } from "@ledgerhq/errors";
+import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 
 describe("Test isValidRecipient", () => {
   function t(address: string, currencyId: string, expectValid: boolean) {

@@ -1,7 +1,7 @@
 import type { SocketEvent } from "@ledgerhq/types-live";
 import { from, Observable } from "rxjs";
 import { mergeMap, retryWhen } from "rxjs/operators";
-import { LockedDeviceError } from "@ledgerhq/errors";
+import { LockedDeviceError } from "@ledgerhq/hw-transport/errors";
 import getDeviceInfo from "./getDeviceInfo";
 import { retryWhileErrors, withDevice } from "./deviceAccess";
 import genuineCheck from "./genuineCheck";
@@ -63,7 +63,7 @@ export const getGenuineCheckFromDeviceId = ({
               // Cancels the locked-device unresponsive/timeout strategy if received any response/error
               clearTimeout(lockedDeviceTimeout);
 
-              if (e instanceof LockedDeviceError) {
+              if ((e as Error).name === "LockedDeviceError") {
                 subscriber.next({ socketEvent: null, lockedDevice: true });
                 return true;
               }
