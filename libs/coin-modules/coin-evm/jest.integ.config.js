@@ -5,6 +5,7 @@ module.exports = {
   testPathIgnorePatterns: ["lib/", "lib-es/"],
   testTimeout: 90_000,
   forceExit: true,
+  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",

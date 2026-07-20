@@ -399,12 +399,14 @@ apps/ledger-live-desktop/src/renderer/reducers/dynamicContent.ts                
 apps/ledger-live-desktop/src/mvvm/features/DynamicContent/                                     @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/GenericAwarenessModal/                              @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/LNSUpsell/                                          @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/features/LargeScreenUpsell/                               @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsOptInPrompt/                               @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsConsentDialog/                             @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsOptInScreenV2/                             @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/FinishOnboarding/                                   @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/AnalyticsConsentOptInDevTool/  @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/GenericAwarenessModalDevTool/  @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/LargeScreenUpsellDevTool/  @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/WalletV4Tour/                                       @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/Q2Tour/                                      @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/ProductTour/                                        @ledgerhq/engagement

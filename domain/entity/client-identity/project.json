@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    },
+    "check-export-rules": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/check-export-rules.mjs",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

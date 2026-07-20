@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network/network";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { APIEpochParams } from "./api-types";
 import { fetchEpochInfo } from "./getEpochInfo";
 

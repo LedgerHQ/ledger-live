@@ -1,5 +1,17 @@
 # @ledgerhq/devices
 
+## 8.17.0
+
+### Minor Changes
+
+- [#18906](https://github.com/LedgerHQ/ledger-live/pull/18906) [`df96477`](https://github.com/LedgerHQ/ledger-live/commit/df964774bdaccd897e5e7414c172e9c26ff21f67) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add `getProductName` to `@ledgerhq/devices` returning the plain, canonical device product name (e.g. "Ledger Flex"), and deprecate the app-level `getProductName` utils that strip the "Ledger" prefix.
+
+## 8.17.0-next.0
+
+### Minor Changes
+
+- [#18906](https://github.com/LedgerHQ/ledger-live/pull/18906) [`df96477`](https://github.com/LedgerHQ/ledger-live/commit/df964774bdaccd897e5e7414c172e9c26ff21f67) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add `getProductName` to `@ledgerhq/devices` returning the plain, canonical device product name (e.g. "Ledger Flex"), and deprecate the app-level `getProductName` utils that strip the "Ledger" prefix.
+
 ## 8.16.0
 
 ### Minor Changes

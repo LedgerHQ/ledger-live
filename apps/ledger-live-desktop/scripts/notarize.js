@@ -1,5 +1,7 @@
 import { spawnSync } from "node:child_process";
-import { platform } from "node:os";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir, platform } from "node:os";
+import { join } from "node:path";
 import { notarize } from "@electron/notarize";
 import chalk from "chalk";
 import dotenv from "dotenv";
@@ -28,24 +30,30 @@ async function notarizeApp(context) {
     "Don't mind electron-builder error 'Cannot find module 'scripts/notarize.js', it definitively found me",
   );
 
-  const { APPLEID, APPLEID_PASSWORD, DEVELOPER_TEAM_ID } = process.env;
+  const { APPLECONNECT_API_KEY_ID, APPLECONNECT_API_ISSUER_ID, APPLECONNECT_API_KEY_CONTENT } =
+    process.env;
 
-  if (!APPLEID || !APPLEID_PASSWORD || !DEVELOPER_TEAM_ID) {
+  if (!APPLECONNECT_API_KEY_ID || !APPLECONNECT_API_ISSUER_ID || !APPLECONNECT_API_KEY_CONTENT) {
     throw new Error(
-      "APPLEID and APPLEID_PASSWORD and DEVELOPER_TEAM_ID env variable are required for notarization.",
+      "APPLECONNECT_API_KEY_ID, APPLECONNECT_API_ISSUER_ID and APPLECONNECT_API_KEY_CONTENT env variables are required for notarization.",
     );
   }
+
+  // notarytool authenticates with an App Store Connect API key. @electron/notarize
+  // expects appleApiKey to be a path to the .p8 file, so decode the base64 secret
+  // (stored the same way fastlane consumes it) into a temp file for the duration.
+  const keyDir = mkdtempSync(join(tmpdir(), "asc-api-key-"));
+  const keyPath = join(keyDir, `AuthKey_${APPLECONNECT_API_KEY_ID}.p8`);
+  writeFileSync(keyPath, Buffer.from(APPLECONNECT_API_KEY_CONTENT, "base64"));
 
   async function attemptNotarize(retries, path) {
     try {
       await notarize({
-        tool: "notarytool",
         appBundleId: "com.ledger.live",
         appPath: path,
-        ascProvider: "EpicDreamSAS",
-        appleId: APPLEID,
-        teamId: DEVELOPER_TEAM_ID,
-        appleIdPassword: APPLEID_PASSWORD,
+        appleApiKey: keyPath,
+        appleApiKeyId: APPLECONNECT_API_KEY_ID,
+        appleApiIssuer: APPLECONNECT_API_ISSUER_ID,
       });
     } catch (e) {
       if (retries > 0) {
@@ -73,6 +81,8 @@ async function notarizeApp(context) {
     } else {
       throw error;
     }
+  } finally {
+    rmSync(keyDir, { recursive: true, force: true });
   }
 }
 

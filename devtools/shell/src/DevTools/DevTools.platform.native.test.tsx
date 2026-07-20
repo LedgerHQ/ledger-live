@@ -1,6 +1,6 @@
 import { renderWithNavigation, screen, userEvent } from "jest/render.native";
 
-import { DevTools } from "./DevTools.native";
+import { DevTools } from "./DevTools";
 import { mockDevToolsConfig } from "jest/test-utils";
 
 jest.mock("@devtools/registry", () => {

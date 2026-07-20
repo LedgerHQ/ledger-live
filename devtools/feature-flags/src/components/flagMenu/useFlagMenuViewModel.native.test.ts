@@ -5,21 +5,21 @@ import {
   type FeatureFlagsToolContextActions,
   useFeatureFlagsToolState,
   type FeatureFlagsToolContextState,
-} from "../../context/FeatureFlagsToolContext.native";
+} from "../../context/FeatureFlagsToolContext";
 import { buildOverridesExport } from "../../utils/exportOverrides";
 import { parseOverridesImport } from "../../utils/importOverrides";
-import { saveFile } from "../../utils/saveFile.native";
-import { readFile } from "../../utils/readFile.native";
-import { useFlagMenuViewModel } from "./useFlagMenuViewModel.native";
+import { saveFile } from "../../utils/saveFile";
+import { readFile } from "../../utils/readFile";
+import { useFlagMenuViewModel } from "./useFlagMenuViewModel";
 
-jest.mock("../../context/FeatureFlagsToolContext.native", () => ({
+jest.mock("../../context/FeatureFlagsToolContext", () => ({
   useFeatureFlagsToolActions: jest.fn(),
   useFeatureFlagsToolState: jest.fn(),
 }));
 jest.mock("../../utils/exportOverrides", () => ({ buildOverridesExport: jest.fn() }));
 jest.mock("../../utils/importOverrides", () => ({ parseOverridesImport: jest.fn() }));
-jest.mock("../../utils/saveFile.native", () => ({ saveFile: jest.fn() }));
-jest.mock("../../utils/readFile.native", () => ({ readFile: jest.fn() }));
+jest.mock("../../utils/saveFile", () => ({ saveFile: jest.fn() }));
+jest.mock("../../utils/readFile", () => ({ readFile: jest.fn() }));
 
 const mockedUseToolActions = jest.mocked(useFeatureFlagsToolActions);
 const mockedUseToolState = jest.mocked(useFeatureFlagsToolState);

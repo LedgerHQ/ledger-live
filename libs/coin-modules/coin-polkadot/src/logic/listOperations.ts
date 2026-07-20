@@ -1,5 +1,5 @@
 import { Operation } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import network from "../network";
 import { PolkadotOperation } from "../types";
 

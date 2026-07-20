@@ -11,11 +11,14 @@ import { readFile } from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
+import { expectAmountCloseTo } from "tests/utils/amountUtils";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
 const APPROVAL_PROCESSING_TIMEOUT = 300_000;
 type SwapSurface = "full" | "embedded";
+
+type PercentageKey = "25%" | "50%" | "75%";
 
 export class SwapPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "swap";
@@ -34,7 +37,6 @@ export class SwapPage extends WebViewAppPage {
   private fromAccountAmountInput = "from-account-amount-input";
   private readonly fromAccountError = "from-account-error";
   private readonly noQuotesPlaceholder = "quotes-error-state";
-  private fromAccountBalance = "from-account-balance";
   private toAccountCoinSelector = "to-account-coin-selector";
   private readonly toAccountAccountNameTag = "to-account-account-name-tag";
   private quoteCardProviderName = "compact-quote-card-provider-";
@@ -47,6 +49,12 @@ export class SwapPage extends WebViewAppPage {
   private bestValueInfoIcon = "best-value-info-icon";
   private switchButton = "to-account-switch-accounts";
   private swapMaxToggle = "from-account-max-toggle";
+  private readonly fromAccountWrapper = "from-account-wrapper";
+  private readonly fromAccountBalance = "from-account-balance";
+  private readonly percentageButtonTestId = (key: PercentageKey) =>
+    `from-account-percentage-${key}`;
+  private readonly openTooltipSelector =
+    '[data-slot="tooltip-content"]:not([data-state="closed"]) [role="tooltip"]';
   private quotesCountdown = "quotes-countdown";
   private networkFeesInfoIcon = "quoteCardTestId-networkFees-infoIcon";
   private rateInfoIcon = "QuoteCard-rate-infoIcon";
@@ -566,6 +574,104 @@ export class SwapPage extends WebViewAppPage {
   async clickSwapMax() {
     const webview = await this.getWebView();
     await webview.getByTestId(this.swapMaxToggle).click();
+  }
+
+  @step("Get from-account balance text")
+  async getFromAccountBalanceText() {
+    const webview = await this.getWebView();
+    return await webview.getByTestId(this.fromAccountBalance).textContent();
+  }
+
+  @step("Hover from-account amount field to reveal quick-fill buttons")
+  async hoverAmountField() {
+    const webview = await this.getWebView();
+    const wrapper = webview.getByTestId(this.fromAccountWrapper);
+    const anyPercentageButton = webview.getByTestId(this.percentageButtonTestId("25%"));
+    // hover() on the wrapper can occasionally fail to stick the CSS :hover
+    // state (seen with Electron's out-of-process webview), leaving the
+    // group-hover-revealed row invisible; re-hovering until it's confirmed
+    // revealed is more reliable than waiting longer on a single attempt.
+    await expect(async () => {
+      await wrapper.hover();
+      await expect(anyPercentageButton).toBeVisible({ timeout: 2_000 });
+    }).toPass({ timeout: 20_000 });
+  }
+
+  // Max/% are Lumen `Tag` components rendered as plain <div>s: `disabled` only
+  // drives styling (never a real disabled/aria-disabled attribute), so
+  // enabled state must be read from the `cursor-not-allowed` class.
+  private async isEnabledByCursorClass(testId: string) {
+    const webview = await this.getWebView();
+    const classAttr = await webview.getByTestId(testId).getAttribute("class");
+    return classAttr !== null && !classAttr.includes("cursor-not-allowed");
+  }
+
+  // Hovers a trigger and asserts the tooltip text. Radix keeps a just-left
+  // trigger's tooltip open (data-state !== "closed") until the newly-hovered
+  // trigger's tooltip finishes its open delay, so "read whichever tooltip is
+  // open" returns the stale one when moving between the 25/50/75 buttons.
+  // Polling allTextContents (which never throws strict-mode on multiple matches)
+  // until the expected text appears waits that transition out. openTooltipSelector
+  // scopes to the visually-hidden [role="tooltip"] node(s) that mirror the content,
+  // so the text comes back once (the visible wrapper's own textContent would be doubled).
+  private async checkTooltipText(hoverTrigger: () => Promise<void>, expected: string) {
+    const webview = await this.getWebView();
+    await hoverTrigger();
+    const tooltips = webview.locator(this.openTooltipSelector);
+    await expect
+      .poll(async () => (await tooltips.allTextContents()).map(text => text.trim()), {
+        timeout: 15_000,
+      })
+      .toContain(expected);
+  }
+
+  @step("Check if Max button is enabled")
+  async isMaxToggleEnabled() {
+    return this.isEnabledByCursorClass(this.swapMaxToggle);
+  }
+
+  @step("Check Max button tooltip text: $0")
+  async checkMaxTooltip(expected: string) {
+    const webview = await this.getWebView();
+    await this.checkTooltipText(() => webview.getByTestId(this.swapMaxToggle).hover(), expected);
+  }
+
+  @step("Check percentage button $0 tooltip text: $1")
+  async checkPercentageTooltip(key: PercentageKey, expected: string) {
+    const webview = await this.getWebView();
+    await this.checkTooltipText(async () => {
+      await this.hoverAmountField();
+      await webview.getByTestId(this.percentageButtonTestId(key)).hover();
+    }, expected);
+  }
+
+  @step("Click quick percentage button: $0")
+  async clickPercentage(key: PercentageKey) {
+    const webview = await this.getWebView();
+    await this.hoverAmountField();
+    await webview.getByTestId(this.percentageButtonTestId(key)).click();
+  }
+
+  @step("Check if quick percentage button $0 is enabled")
+  async isPercentageEnabled(key: PercentageKey) {
+    await this.hoverAmountField();
+    return this.isEnabledByCursorClass(this.percentageButtonTestId(key));
+  }
+
+  @step("Check percentage buttons enabled: $0")
+  async checkPercentageButtonsEnabled(expected: boolean) {
+    await this.hoverAmountField();
+    for (const key of ["25%", "50%", "75%"] as const) {
+      expect(await this.isEnabledByCursorClass(this.percentageButtonTestId(key))).toBe(expected);
+    }
+  }
+
+  @step("Check percentage button $0 fills the correct amount")
+  async checkPercentageFillsBalance(key: PercentageKey, balance: number) {
+    await this.clickPercentage(key);
+    const amountToSend = Number(await this.getAmountToSend());
+    const expectedAmount = (balance * parseFloat(key)) / 100;
+    expectAmountCloseTo(amountToSend, expectedAmount);
   }
 
   @step("Expect reset allowance screen to be displayed")

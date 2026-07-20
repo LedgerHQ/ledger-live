@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { tools as registry, type DevToolsConfig, type ToolPlatform } from "@devtools/registry";
-import { filterToolsByPlatform } from "../utils/toolsUtils";
-import { lazyComponentsById } from "../DevTools/LazyComponents";
+import { filterToolsByPlatform } from "../utils";
+import { lazyComponentsById } from "../DevTools";
 import { useDevToolsNavigation } from "./useDevToolsNavigation";
 
 /**

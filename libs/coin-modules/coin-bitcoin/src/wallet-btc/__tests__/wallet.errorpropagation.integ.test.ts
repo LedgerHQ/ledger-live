@@ -1,7 +1,7 @@
 import { DerivationModes } from "../types";
 import BitcoinLikeWallet from "../wallet";
 import { getSecp256k1Instance, setSecp256k1Instance } from "../crypto/secp256k1";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 
 jest.setTimeout(180000);
 

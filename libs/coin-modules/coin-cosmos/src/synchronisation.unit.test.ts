@@ -1,6 +1,6 @@
 import * as jsHelpers from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Operation, SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CosmosAPI } from "./network/Cosmos";

@@ -19,6 +19,7 @@ module.exports = {
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts", "\\.integ\\.test\\.ts$"],
+  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
   reporters: [
     "default",
     ...(process.env.CI ? ["github-actions"] : []),

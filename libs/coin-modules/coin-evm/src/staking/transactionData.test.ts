@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { MemoNotSupported } from "@ledgerhq/coin-module-framework/api/index";
 import { TransactionIntent, BufferTxData } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getStakingABI } from "./abis";
 import { buildStakingTransactionParams } from "./transactionData";
 import { STAKING_CONTRACTS } from "./contracts";

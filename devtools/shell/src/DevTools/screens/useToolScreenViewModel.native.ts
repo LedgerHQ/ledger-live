@@ -1,7 +1,7 @@
 import { useLayoutEffect, useMemo } from "react";
 import { useDevToolsShell } from "../../context";
 import type { Tool } from "@devtools/registry";
-import type { ToolScreenProps } from "../navigation.native";
+import type { ToolScreenProps } from "../navigation";
 
 export interface ToolScreenViewProps {
   tool: Tool | null;

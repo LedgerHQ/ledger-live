@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-canton
 
+## 0.12.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.6
+
+## 0.12.5-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.6-next.0
+
 ## 0.12.4
 
 ### Patch Changes

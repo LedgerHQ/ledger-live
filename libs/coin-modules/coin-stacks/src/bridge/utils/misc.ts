@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   encodeOperationId,

@@ -5,7 +5,7 @@ import BitcoinLikeWallet from "../wallet";
 import { Account } from "../account";
 import { Merge } from "../pickingstrategies/Merge";
 import { MockBtcSigner } from "./fixtures/common.fixtures";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 
 jest.setTimeout(180000);
 

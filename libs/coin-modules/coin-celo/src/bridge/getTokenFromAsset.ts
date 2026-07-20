@@ -1,6 +1,6 @@
 import { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import eip55 from "eip55";
 
 export async function getTokenFromAsset(

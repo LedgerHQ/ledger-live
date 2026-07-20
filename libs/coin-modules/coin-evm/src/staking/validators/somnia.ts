@@ -1,4 +1,4 @@
-import { type CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { type CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { type StakingContractConfig } from "../../types";
 import { type Stake } from "@ledgerhq/coin-module-framework/api/types";
 

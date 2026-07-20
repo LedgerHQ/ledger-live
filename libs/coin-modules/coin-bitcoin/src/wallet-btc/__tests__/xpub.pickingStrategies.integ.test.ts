@@ -12,7 +12,7 @@ import BitcoinLikeStorage from "../storage";
 import { Merge } from "../pickingstrategies/Merge";
 import { DeepFirst } from "../pickingstrategies/DeepFirst";
 import { CoinSelect } from "../pickingstrategies/CoinSelect";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import * as utils from "../utils";
 
 const bip32 = BIP32Factory(ecc);

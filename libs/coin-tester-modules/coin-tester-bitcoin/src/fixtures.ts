@@ -5,7 +5,7 @@ import {
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { DerivationMode } from "@ledgerhq/types-live";
 import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
 

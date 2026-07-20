@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-kaspa",
-  "version": "1.17.0",
+  "version": "1.18.0",
   "description": "Ledger Kaspa Coin integration",
   "keywords": [
     "Ledger",
@@ -96,7 +96,6 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "bip32": "4.0.0",
@@ -111,6 +110,7 @@
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",

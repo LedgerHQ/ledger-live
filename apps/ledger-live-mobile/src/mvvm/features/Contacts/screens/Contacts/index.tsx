@@ -21,7 +21,7 @@ function ContactsScreenRedirect() {
 function ContactsScreenContent() {
   const viewModel = useContactsViewModel();
 
-  useContactsScreenViewModel(viewModel.addContactLabel);
+  useContactsScreenViewModel(viewModel.labels.addContact, viewModel.onAddContact);
 
   return <ContactsView {...viewModel} />;
 }

@@ -1,4 +1,4 @@
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation, ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { AleoOperation } from "../types/bridge";
 import { fetchAccountTransactionsFromHeight } from "../network/utils";

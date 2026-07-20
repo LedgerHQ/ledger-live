@@ -3,7 +3,7 @@ import type { DeviceModel, DeviceModelId } from "@ledgerhq/devices";
 import { App, DeviceInfo, FinalFirmware, LanguagePackage } from "@ledgerhq/types-live";
 import type { Observable, Subject } from "rxjs";
 import { AppStorageType, StorageProvider } from "../device/use-cases/appDataBackup/types";
-import type { DeviceId } from "@ledgerhq/client-ids/ids";
+import type { DeviceId } from "@domain/entity-client-identity";
 
 /**
  * ExecArgs

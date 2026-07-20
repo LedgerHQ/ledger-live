@@ -10150,10 +10150,25 @@
         "errorDesc": "Something went wrong, please try again"
       },
       "quickAmountSelector": {
-        "mockTitle": "Quick amount selector mock"
+        "title": "Quick select",
+        "strategies": {
+          "fast": "Fast",
+          "balanced": "Balanced",
+          "full": "Full"
+        },
+        "recordCount_one": "{{count}} record",
+        "recordCount_other": "{{count}} records",
+        "unavailable": "Unavailable",
+        "noValue": "—",
+        "spendableBalance": "Max Spendable Balance:",
+        "tooltip": {
+          "desc": "Sender, amount and recipient hidden on-chain. Up to {{max}} records per send."
+        }
       },
       "summary": {
-        "proofGenerationNotice": "Aleo transaction requires proof generation. This may take some time."
+        "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time.",
+        "recordsUsed": "Records used",
+        "signingTime": "Signing time"
       }
     },
     "balancesSection": "Balances",

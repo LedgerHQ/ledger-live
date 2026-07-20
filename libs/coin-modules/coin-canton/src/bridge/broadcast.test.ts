@@ -1,5 +1,5 @@
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account, BroadcastArg } from "@ledgerhq/types-live";
 import { broadcast as broadcastLogic } from "../common-logic";
 import { broadcast } from "./broadcast";

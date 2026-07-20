@@ -4,7 +4,7 @@ import type {
   Operation,
   Page,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { CardanoConfig } from "../config";
 import { listOperations } from "../logic/listOperations";
 import { createApi } from ".";

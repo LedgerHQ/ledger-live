@@ -4,7 +4,7 @@ import type {
   Operation,
   ListOperationsOptions,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getExplorerApi } from "../network/explorer";
 
 // the sort parameter has a double meaning:
@@ -131,20 +131,23 @@ export async function listOperations(
 
   const tokenOperations = [...lastTokenOperations, ...lastNftOperations].map(enrichTokenWithParent);
 
-  // Some explorers (e.g. Blockscout on Somnia) report the top-level call trace as an
-  // internal transaction, duplicating the native transfer already present in txlist.
-  // When an internal tx and its parent coin tx both have the queried address as sender,
-  // the native value is already accounted for in the coin operation — drop the internal one.
-  // Analogous to the traceAddress.length === 0 check in getBlock's traceBlockItemsToOperationsByHash,
-  // but using sender matching since txlistinternal does not expose traceAddress.
-  // The `getBlock` path uses a richer `(address, peer, amount)` key in `rootTraceDedup.ts`;
-  // the two should be unified once listOperations moves to the `BlockOperation` shape.
+  // Some Blockscout explorers (0G, Somnia) report the root call as an internal tx, duplicating
+  // the native transfer already in txlist. Drop it using sender-match (outgoing) or
+  // (recipient, peer, amount) triple (incoming), since traceAddress is not exposed by txlistinternal.
   const isRootTrace = (op: Operation<MemoNotSupported>): boolean => {
     const parent = parents[op.tx.hash];
     if (!parent) return false;
+
     const internalSenderMatch = op.senders.some(s => s.toLowerCase() === addressLower);
     const parentSenderMatch = parent.senders.some(s => s.toLowerCase() === addressLower);
-    return internalSenderMatch && parentSenderMatch;
+    if (internalSenderMatch && parentSenderMatch) return true;
+
+    const internalRecipientMatch = op.recipients.some(r => r.toLowerCase() === addressLower);
+    const parentRecipientMatch = parent.recipients.some(r => r.toLowerCase() === addressLower);
+    const peerMatch = op.senders.some(s =>
+      parent.senders.some(ps => ps.toLowerCase() === s.toLowerCase()),
+    );
+    return internalRecipientMatch && parentRecipientMatch && op.value === parent.value && peerMatch;
   };
 
   // For internal ops, override block.hash and fees from parent (etherscan sets block.hash = ""),

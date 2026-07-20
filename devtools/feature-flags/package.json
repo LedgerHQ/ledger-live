@@ -1,6 +1,6 @@
 {
   "name": "@devtools/feature-flags",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "private": true,
   "description": "Ledger Live feature flags' Devtools",
   "main": "src/index.ts",
@@ -10,7 +10,7 @@
   "scripts": {
     "format": "oxfmt src jest",
     "format:check": "oxfmt src jest --check",
-    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.native.json",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "pnpm run test:web && pnpm run test:native",
     "test:web": "jest --config jest.config.js",
     "test:native": "jest --config jest.native.config.js",

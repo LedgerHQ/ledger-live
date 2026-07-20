@@ -1,4 +1,4 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { generateMockKeyPair, verifySignature } from "../test/cantonTestUtils";
 import { createMockCantonCurrency, setupMockCoinConfig } from "../test/fixtures";
 import type { OnboardingPrepareResponse, Party } from "../types/gateway";

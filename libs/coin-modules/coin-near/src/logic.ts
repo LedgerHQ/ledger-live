@@ -1,6 +1,6 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
 import { utils } from "near-api-js";
 import { FRACTIONAL_DIGITS, STAKING_GAS_BASE, YOCTO_THRESHOLD_VARIATION } from "./constants";

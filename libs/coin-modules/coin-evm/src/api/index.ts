@@ -20,7 +20,7 @@ import type {
   Validator,
   BalanceOptions,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { EvmCoinConfig, setCoinConfig, type EvmConfig } from "../config";
 import { craftTransactionData } from "../logic/craftTransactionData";
 import {

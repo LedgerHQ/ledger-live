@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import * as bech32 from "bech32";
 import BigNumber from "bignumber.js";
 import getTransactionStatus from "./getTransactionStatus";

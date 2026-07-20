@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { firstValueFrom } from "rxjs";
 import { makeGetAccountShape } from "../../synchronisation";
 

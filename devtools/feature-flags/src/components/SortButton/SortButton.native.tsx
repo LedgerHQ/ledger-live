@@ -10,7 +10,7 @@ import {
   ListItemTrailing,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Check, FilterSort } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { useSortButtonViewModel, type SortButtonInput } from "./useSortButtonViewModel.native";
+import { useSortButtonViewModel, type SortButtonInput } from "./useSortButtonViewModel";
 
 export function SortButton(props: SortButtonInput) {
   const { sheetRef, openSheet, activeLabel, options, select } = useSortButtonViewModel(props);

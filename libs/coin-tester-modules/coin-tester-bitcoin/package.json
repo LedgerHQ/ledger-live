@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-bitcoin",
-  "version": "1.10.7",
+  "version": "1.10.8",
   "private": true,
   "description": "Ledger BTC Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -60,13 +60,11 @@
   "dependencies": {
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-tester": "workspace:^",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/psbtv2": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@noble/curves": "1.9.7",
     "bignumber.js": "^9.1.2",

@@ -107,3 +107,16 @@ This package is DMK-focused and is separate from `@ledgerhq/live-cli` ([`apps/cl
 ## Agent guidance
 
 AI agents should read the [ledger-wallet-cli agent skill](../../.claude/skills/ledger-wallet-cli/SKILL.md) before running wallet-cli commands. It maps informal user requests to commands and documents hardware-wallet safety rules, session labels, USB sandbox requirements, and device-contention constraints.
+
+The skill also **ships inside the compiled binary**, so it is available even from an installed npm package with no repo checkout, via the `skill` command group:
+
+```bash
+wallet-cli skill list                       # list embedded skills
+wallet-cli skill retrieve ledger-wallet-cli # print SKILL.md (or --file references/business-logic.md)
+wallet-cli skill install --agent claude     # write into ./.claude/skills (also: cursor, codex, agents)
+wallet-cli skill install --dir ./my-skills  # write into an explicit directory
+```
+
+`skill install` maps `--agent` (`claude`, `cursor`, `codex`, `agents`) to the matching `.<agent>/skills` directory (`agents` → `.agents/skills`) under the current working directory, or the user home directory with `--global`. `--dir` overrides both. Existing files are preserved unless `--force` is passed.
+
+The embedded content is generated from the canonical `.agents/skills/` directory (`.claude/skills` is just a symlink to it) into `src/skills/manifest.gen.ts` by `pnpm generate:skills`. That file is **generated, not committed** (gitignored like `.bunli/commands.gen.ts`) and is regenerated automatically before `typecheck`, `test`, and `build` via the `pretypecheck` / `pretest` / `prebuild` npm hooks. `pnpm check:skills` validates that generation succeeds (every shipped skill is found in the sources).

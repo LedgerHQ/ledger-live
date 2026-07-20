@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account, BroadcastConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { BlockFinalizationTag, EvmConfigInfo } from "../../config";

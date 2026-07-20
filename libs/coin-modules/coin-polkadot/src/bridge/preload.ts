@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto"; //FIXME: Polkadot SDK should not be used in bridge
 import polkadotAPI from "../network";

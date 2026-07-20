@@ -3,7 +3,7 @@ import type {
   StringMemo,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { types as TyphonTypes } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
 import { APITransaction } from "../api/api-types";

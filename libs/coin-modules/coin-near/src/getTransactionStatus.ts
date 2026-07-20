@@ -1,5 +1,5 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import {
   NotEnoughBalance,
   RecipientRequired,

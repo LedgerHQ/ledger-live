@@ -4,3 +4,4 @@ export {
   type BuildCryptoAssetsStoreConfig,
   type CryptoAssetsStoreDispatch,
 } from "./buildCryptoAssetsStore";
+export { buildStandaloneCryptoAssetsStore } from "./buildStandaloneCryptoAssetsStore";

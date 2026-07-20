@@ -1,12 +1,12 @@
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { MultiversXAccount } from "@ledgerhq/coin-multiversx/types";
 
 export const ELROND = getCryptoCurrencyById("elrond");

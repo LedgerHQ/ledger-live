@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BitcoinLikeExplorer from "../explorer";
 
 describe("Integration tests for bitcoin v4 explorer api", () => {

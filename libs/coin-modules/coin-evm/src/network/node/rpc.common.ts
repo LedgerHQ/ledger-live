@@ -2,7 +2,7 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ethers, FetchRequest, JsonRpcProvider } from "ethers";

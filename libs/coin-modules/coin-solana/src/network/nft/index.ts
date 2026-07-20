@@ -4,7 +4,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/nft/types";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { NFTCollectionMetadataResponse, NFTMetadataResponse } from "@ledgerhq/types-live";
 
 export type NftMetdataParams = { chainId: number };

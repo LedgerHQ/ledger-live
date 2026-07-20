@@ -1,4 +1,4 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { setSuiPreloadData } from "../network/preload-data";
 import { getValidators } from "../network/sdk";
 import type { SuiPreloadData } from "../types";

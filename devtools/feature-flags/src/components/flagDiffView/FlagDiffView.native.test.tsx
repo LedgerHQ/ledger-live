@@ -1,6 +1,6 @@
 import { render, screen } from "jest/render.native";
 import type { DiffLine } from "../../utils";
-import { FlagDiffView } from "./FlagDiffView.native";
+import { FlagDiffView } from "./FlagDiffView";
 
 const exactText = (value: string) =>
   screen.getByText(value, { exact: true, normalizer: text => text });

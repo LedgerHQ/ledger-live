@@ -4,7 +4,7 @@ import {
   encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { ESDT_CONTRACT_ADDRESS_HEX } from "@multiversx/sdk-core/out/constants";
 import BigNumber from "bignumber.js";

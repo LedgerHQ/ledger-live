@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import polkadotAPI from "../network";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 

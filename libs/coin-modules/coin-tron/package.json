@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tron",
-  "version": "6.4.0",
+  "version": "6.5.0",
   "description": "Ledger Tron Coin integration",
   "keywords": [
     "Ledger",
@@ -114,7 +114,6 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

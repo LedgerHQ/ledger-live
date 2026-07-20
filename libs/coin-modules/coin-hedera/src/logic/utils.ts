@@ -9,7 +9,7 @@ import {
 import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
-import type { ExplorerView, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { ExplorerView, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { AccountLike, Operation as LiveOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";

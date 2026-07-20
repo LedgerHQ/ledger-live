@@ -1,5 +1,5 @@
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import { signTransaction } from "../common-logic/transaction/sign";
 import { prepareTransferInstruction, submitTransferInstruction } from "../network/gateway";

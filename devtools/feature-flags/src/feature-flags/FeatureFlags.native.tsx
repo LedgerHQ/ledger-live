@@ -1,7 +1,6 @@
 import type { FeatureFlagsToolProps } from "../types";
-import { FeatureFlagsToolProvider } from "../context/FeatureFlagsToolContext.native";
-import { FlagSelectionProvider } from "../context/FlagSelectionContext.native";
-import { FlagList } from "../components/flagList/FlagList.native";
+import { FeatureFlagsToolProvider, FlagSelectionProvider } from "../context";
+import { FlagList } from "../components";
 import { BottomSheetModalProvider } from "@ledgerhq/lumen-ui-rnative";
 
 export function FeatureFlags(props: Readonly<FeatureFlagsToolProps>) {

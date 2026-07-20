@@ -1,4 +1,4 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { log } from "@ledgerhq/logs";
 import type { SignerContext } from "./signer";
 import { getChainAdapter } from "./chain-adapters/registry";

@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { CARDANO_EPOCH_PARAMS_ENDPOINT, CARDANO_TESTNET_EPOCH_PARAMS_ENDPOINT } from "../constants";
 import { isTestnet } from "../logic";
 import { APIEpochParams, EpochInfo } from "./api-types";

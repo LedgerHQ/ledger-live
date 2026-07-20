@@ -15,7 +15,7 @@ import { cancelDeviceAction } from "../hw/deviceAccess";
 import { getEnv } from "@ledgerhq/live-env";
 import type { SocketEvent } from "@ledgerhq/types-live";
 import { sha3_256 } from "@noble/hashes/sha3";
-import { DeviceId } from "@ledgerhq/client-ids/ids";
+import { DeviceId } from "@domain/entity-client-identity";
 
 const LOG_TYPE = "socket";
 const ALLOW_SECURE_CHANNEL_DELAY = 500;

@@ -11,4 +11,8 @@ const dataset: DatasetTest<Transaction> = {
   },
 };
 
-testBridge(dataset);
+// FIXME: Disabled — dead LCD endpoint (getaddrinfo ENOTFOUND umee-api.polkachu.com).
+// Umee never shipped in prod (currencyUmee flag never enabled 3+ yrs); pending full removal.
+describe.skip("umee integration", () => {
+  testBridge(dataset);
+});

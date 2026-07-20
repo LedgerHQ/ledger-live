@@ -1,5 +1,19 @@
 # @ledgerhq/hw-transport
 
+## 6.35.6
+
+### Patch Changes
+
+- Updated dependencies [[`df96477`](https://github.com/LedgerHQ/ledger-live/commit/df964774bdaccd897e5e7414c172e9c26ff21f67)]:
+  - @ledgerhq/devices@8.17.0
+
+## 6.35.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`df96477`](https://github.com/LedgerHQ/ledger-live/commit/df964774bdaccd897e5e7414c172e9c26ff21f67)]:
+  - @ledgerhq/devices@8.17.0-next.0
+
 ## 6.35.5
 
 ### Patch Changes

@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { prepareTransferRequest } from "../../network/gateway";
 import type { PrepareTransferRequest, PrepareTransferResponse } from "../../types/gateway";

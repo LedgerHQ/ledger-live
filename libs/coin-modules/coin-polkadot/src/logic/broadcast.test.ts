@@ -1,5 +1,5 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { broadcast } from "./broadcast";
 
 const submitExtrinsicMock = jest.fn();

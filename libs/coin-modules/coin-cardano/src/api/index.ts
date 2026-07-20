@@ -21,7 +21,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import coinConfig, { type CardanoConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
