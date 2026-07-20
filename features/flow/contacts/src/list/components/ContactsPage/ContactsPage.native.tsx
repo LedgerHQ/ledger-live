@@ -46,6 +46,40 @@ export function ContactsPage({
     />
   );
 
+  let content: React.JSX.Element;
+
+  if (isPopulated) {
+    content = (
+      <Box lx={{ flex: 1 }}>
+        <SectionList
+          testID="contacts-list"
+          sections={viewModel.sections}
+          keyExtractor={contact => contact.contactId}
+          renderItem={renderContact}
+          renderSectionHeader={({ section }) => <ContactsSectionHeader title={section.title} />}
+          ListHeaderComponent={listHeader}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingTop: 8,
+            paddingBottom: 24,
+          }}
+          showsVerticalScrollIndicator={false}
+          keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps="handled"
+        />
+      </Box>
+    );
+  } else if (hasNoResults) {
+    content = (
+      <Box lx={{ flex: 1, paddingHorizontal: "s16", paddingTop: "s8" }}>
+        {listHeader}
+        <ContactsSearchNoResults message={labels.searchNoResults} />
+      </Box>
+    );
+  } else {
+    content = <Box lx={{ paddingHorizontal: "s16", paddingTop: "s8" }}>{listHeader}</Box>;
+  }
+
   return (
     <Box testID="contacts-screen" lx={{ flex: 1, backgroundColor: "base" }}>
       <Box
@@ -55,33 +89,7 @@ export function ContactsPage({
         importantForAccessibility={isLedgerSyncChecking ? "no-hide-descendants" : "auto"}
         accessibilityElementsHidden={isLedgerSyncChecking}
       >
-        {isPopulated ? (
-          <Box lx={{ flex: 1 }}>
-            <SectionList
-              testID="contacts-list"
-              sections={viewModel.sections}
-              keyExtractor={contact => contact.contactId}
-              renderItem={renderContact}
-              renderSectionHeader={({ section }) => <ContactsSectionHeader title={section.title} />}
-              ListHeaderComponent={listHeader}
-              contentContainerStyle={{
-                paddingHorizontal: 16,
-                paddingTop: 8,
-                paddingBottom: 24,
-              }}
-              showsVerticalScrollIndicator={false}
-              keyboardDismissMode="on-drag"
-              keyboardShouldPersistTaps="handled"
-            />
-          </Box>
-        ) : hasNoResults ? (
-          <Box lx={{ flex: 1, paddingHorizontal: "s16", paddingTop: "s8" }}>
-            {listHeader}
-            <ContactsSearchNoResults message={labels.searchNoResults} />
-          </Box>
-        ) : (
-          <Box lx={{ paddingHorizontal: "s16", paddingTop: "s8" }}>{listHeader}</Box>
-        )}
+        {content}
       </Box>
       {isLedgerSyncChecking ? (
         <Box
