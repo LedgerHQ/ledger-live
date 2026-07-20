@@ -394,11 +394,15 @@ export class CosmosAPI {
         completion_time: completionTime,
         creation_height: creationHeight,
       } of entries) {
+        const parsedCreationHeight = Number(creationHeight);
         unbondings.push({
           validatorAddress,
           amount: new BigNumber(initialBalance),
           completionDate: new Date(completionTime),
-          creationHeight: Number(creationHeight),
+          // a non-numeric height is omitted so the re-anchor is skipped (avoids an Invalid Date)
+          ...(Number.isFinite(parsedCreationHeight)
+            ? { creationHeight: parsedCreationHeight }
+            : {}),
         });
       }
     }

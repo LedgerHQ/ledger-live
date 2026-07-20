@@ -840,5 +840,19 @@ describe("CosmosApi", () => {
         }),
       ]);
     });
+
+    it("skips the re-anchor and keeps completion_time when creation_height is missing/non-numeric", async () => {
+      const malformed = {
+        validator_address: "bbnvaloper1active",
+        entries: [{ initial_balance: "500000", completion_time: "2026-08-10T07:10:27.684611546Z" }],
+      };
+      mockAccountInfoRoutes({ height: 4_016_182, unbondings: [malformed as never] });
+      const babylonApi = new CosmosAPI("babylon");
+
+      const [unbonding] = (await babylonApi.getAccountInfo(babylonAddress, babylonCurrency))
+        .unbondings;
+      expect(unbonding.completionDate).toEqual(new Date("2026-08-10T07:10:27.684611546Z"));
+      expect(Number.isNaN(unbonding.completionDate.getTime())).toBe(false);
+    });
   });
 });
