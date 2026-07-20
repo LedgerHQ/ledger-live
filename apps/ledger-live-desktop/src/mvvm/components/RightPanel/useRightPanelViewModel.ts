@@ -43,10 +43,11 @@ export const useRightPanelRouteCurrency = (
   return useMemo(() => {
     if (!routeAssetId) return undefined;
     const decodedAssetId = decodeRouteParam(routeAssetId).toLowerCase();
-    // Prefer portfolio distribution (optionally widened by market-state), then fall back to the currency registry.
+    const fallbackId = (marketState?.ledgerIds?.[0] ?? decodedAssetId).toLowerCase();
+    // Prefer portfolio distribution (optionally widened by market-state), then fall back to the crypto currency registry.
     return (
       resolveDistributionItem({ routeAssetId, decodedAssetId, marketState, distribution })
-        ?.currency ?? findCryptoCurrencyById(marketState?.ledgerIds?.[0] ?? decodedAssetId)
+        ?.currency ?? findCryptoCurrencyById(fallbackId)
     );
   }, [routeAssetId, marketState, distribution]);
 };
