@@ -5,6 +5,10 @@ import type { ContactsLedgerSyncStatus } from "../../types";
 import { createEmptyContactsListViewModel } from "../../viewModel";
 import { ContactsPage } from "./ContactsPage.native";
 
+jest.mock("react-native", () => ({
+  SectionList: () => null,
+}));
+
 jest.mock("@ledgerhq/lumen-ui-rnative", () => ({
   Box: ({
     children,
@@ -40,30 +44,41 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => ({
       {children}
     </div>
   ),
+  SearchInput: ({
+    testID,
+    value,
+    placeholder,
+    accessibilityLabel,
+  }: {
+    testID: string;
+    value: string;
+    placeholder: string;
+    accessibilityLabel: string;
+  }) => (
+    <input
+      data-testid={testID}
+      value={value}
+      placeholder={placeholder}
+      aria-label={accessibilityLabel}
+      readOnly
+    />
+  ),
   Spinner: ({ testID }: { testID: string }) => <div data-testid={testID} />,
 }));
 
-jest.mock("./ContactsListHeader.native", () => ({
-  ContactsListHeader: ({
-    onOpenContact,
-    onAddContact,
-  }: {
-    onOpenContact: (contactId: string) => void;
-    onAddContact: () => void;
-  }) => (
-    <>
-      <input data-testid="contacts-search-input" readOnly />
-      <button
-        type="button"
-        data-testid="contacts-me-item"
-        onClick={() => onOpenContact("contact-me")}
-      >
-        Me
-      </button>
-      <button type="button" data-testid="contacts-add-contact-row" onClick={onAddContact}>
-        Add contact
-      </button>
-    </>
+jest.mock("./ContactsMeListItem.native", () => ({
+  ContactsMeListItem: ({ onOpen }: { onOpen: (contactId: string) => void }) => (
+    <button type="button" data-testid="contacts-me-item" onClick={() => onOpen("contact-me")}>
+      Me
+    </button>
+  ),
+}));
+
+jest.mock("./ContactsAddContactListItem.native", () => ({
+  ContactsAddContactListItem: ({ label, onPress }: { label: string; onPress: () => void }) => (
+    <button type="button" data-testid="contacts-add-contact-row" onClick={onPress}>
+      {label}
+    </button>
   ),
 }));
 
