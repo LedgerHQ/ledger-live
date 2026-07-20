@@ -632,6 +632,16 @@ describe("CosmosApi", () => {
       msg_type: "cosmos.staking.v1beta1.MsgDelegate",
       msg: `delegator_address:"bbn1someoneelse" validator_address:"bbnvaloper1pending" amount:<denom:"ubbn" amount:"99" >`,
     };
+    const processedUnbonding = {
+      validator_address: "bbnvaloper1active",
+      entries: [
+        {
+          initial_balance: "500000",
+          completion_time: "2026-08-10T07:10:27.684611546Z",
+          creation_height: "4016160",
+        },
+      ],
+    };
 
     const mockAccountInfoRoutes = (opts: {
       height?: number;
@@ -639,6 +649,10 @@ describe("CosmosApi", () => {
       epochBoundary?: string;
       msgs?: { msg: string; msg_type: string }[];
       epochingError?: boolean;
+      unbondings?: {
+        validator_address: string;
+        entries: { initial_balance: string; completion_time: string; creation_height?: string }[];
+      }[];
     }) => {
       const {
         height = 100,
@@ -646,6 +660,7 @@ describe("CosmosApi", () => {
         epochBoundary = "360",
         msgs = [],
         epochingError = false,
+        unbondings = [],
       } = opts;
       let currentEpochCalls = 0;
       // @ts-expect-error method is mocked
@@ -687,7 +702,7 @@ describe("CosmosApi", () => {
           return respond({ redelegation_responses: [] });
         }
         if (url.includes("/unbonding_delegations")) {
-          return respond({ unbonding_responses: [] });
+          return respond({ unbonding_responses: unbondings });
         }
         if (url.includes("/withdraw_address")) {
           return respond({ withdraw_address: babylonAddress });
@@ -789,6 +804,54 @@ describe("CosmosApi", () => {
       const requestedUrls = mockedNetwork.mock.calls.map(([options]) => options.url);
       expect(requestedUrls.length).toBeGreaterThan(0);
       expect(requestedUrls.some(url => url?.includes("epoching"))).toBe(false);
+    });
+
+    it("re-anchors a processed babylon unbonding to the fast-unbonding period, not the chain's 21-day completion_time", async () => {
+      const height = 4_016_182; // 22 blocks past the unbonding's creation_height (4016160)
+      mockAccountInfoRoutes({ height, unbondings: [processedUnbonding] });
+      const babylonApi = new CosmosAPI("babylon");
+
+      const before = Date.now();
+      const result = await babylonApi.getAccountInfo(babylonAddress, babylonCurrency);
+      const after = Date.now();
+
+      const DAY_MS = 86_400_000;
+      const offsetMs = 2 * DAY_MS - (height - 4_016_160) * 10_000;
+      const [unbonding] = result.unbondings;
+      expect(unbonding.completionDate.getTime()).toBeGreaterThanOrEqual(before + offsetMs);
+      expect(unbonding.completionDate.getTime()).toBeLessThanOrEqual(after + offsetMs);
+      // definitely not the raw ~21-day chain value
+      expect(unbonding.completionDate.toISOString()).not.toBe("2026-08-10T07:10:27.684Z");
+    });
+
+    it("keeps the chain completion_time on non-epoched chains (no re-anchor)", async () => {
+      mockAccountInfoRoutes({ unbondings: [processedUnbonding] });
+
+      const result = await cosmosApi.getAccountInfo("cosmos1myaddress", {
+        id: "cosmos",
+        units: [{}, { code: "uatom" }],
+      } as CryptoCurrency);
+
+      expect(result.unbondings).toEqual([
+        expect.objectContaining({
+          validatorAddress: "bbnvaloper1active",
+          completionDate: new Date("2026-08-10T07:10:27.684611546Z"),
+        }),
+      ]);
+    });
+
+    it("skips the re-anchor and keeps completion_time when creation_height is missing/non-numeric", async () => {
+      const malformed = {
+        validator_address: "bbnvaloper1active",
+        entries: [{ initial_balance: "500000", completion_time: "2026-08-10T07:10:27.684611546Z" }],
+      };
+      mockAccountInfoRoutes({ height: 4_016_182, unbondings: [malformed] });
+      const babylonApi = new CosmosAPI("babylon");
+
+      const [unbonding] = (await babylonApi.getAccountInfo(babylonAddress, babylonCurrency))
+        .unbondings;
+      expect(unbonding.completionDate).toEqual(new Date("2026-08-10T07:10:27.684611546Z"));
+      expect(Number.isNaN(unbonding.completionDate.getTime())).toBe(false);
     });
   });
 });
