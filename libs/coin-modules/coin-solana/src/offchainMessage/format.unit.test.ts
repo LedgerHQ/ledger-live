@@ -1,5 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
-import { toOffChainMessage } from "./format";
+import { toOffChainMessage, toOffChainMessageV1 } from "./format";
 
 type MessageCase = {
   value: string;
@@ -78,8 +78,9 @@ Issued At: now`,
   const addressHex = new PublicKey(address).toBuffer().toString("hex");
   const emptyApplicationDomain = "0000000000000000000000000000000000000000000000000000000000000000";
 
+  // V0 layout: header(32) + version(2) + appDomain(64) + format(2) + signerCount(2) + signer(64) + length(4) + body
   it.each(cases)(
-    'should format message "$value" correctly for off-chain signing on Solana',
+    'should format message "$value" correctly for off-chain signing on Solana (V0)',
     ({ value, hexadecimal, messageFormat, messageLength }) => {
       const result = toOffChainMessage(value, address, false).toString("hex");
 
@@ -106,8 +107,53 @@ Issued At: now`,
       const length = result.substring(SOLANA_HEADER.length + 134, SOLANA_HEADER.length + 138);
       expect(length).toEqual(messageLength);
 
-      // message should end with message parameter
       expect(result.substring(SOLANA_HEADER.length + 138)).toEqual(hexadecimal);
+    },
+  );
+
+  // V1 layout (no length): header(32) + version(2) + signerCount(2) + signer(64) + body
+  it.each(cases)(
+    'should format message "$value" correctly for off-chain signing on Solana (V1, no length)',
+    ({ value, hexadecimal, messageLength: _ignored }) => {
+      const result = toOffChainMessageV1(value, address).toString("hex");
+
+      expect(result.startsWith(SOLANA_HEADER)).toBe(true);
+
+      const version = result.substring(SOLANA_HEADER.length, SOLANA_HEADER.length + 2);
+      expect(version).toEqual("01");
+
+      const signerCount = result.substring(SOLANA_HEADER.length + 2, SOLANA_HEADER.length + 4);
+      expect(signerCount).toEqual("01");
+
+      const signerAddress = result.substring(SOLANA_HEADER.length + 4, SOLANA_HEADER.length + 68);
+      expect(signerAddress).toEqual(addressHex);
+
+      // no length field — message body starts immediately after signer
+      expect(result.substring(SOLANA_HEADER.length + 68)).toEqual(hexadecimal);
+    },
+  );
+
+  // V1 layout (with length): header(32) + version(2) + signerCount(2) + signer(64) + length(4) + body
+  it.each(cases)(
+    'should format message "$value" correctly for off-chain signing on Solana (V1, with length prefix)',
+    ({ value, hexadecimal, messageLength }) => {
+      const result = toOffChainMessageV1(value, address, true).toString("hex");
+
+      expect(result.startsWith(SOLANA_HEADER)).toBe(true);
+
+      const version = result.substring(SOLANA_HEADER.length, SOLANA_HEADER.length + 2);
+      expect(version).toEqual("01");
+
+      const signerCount = result.substring(SOLANA_HEADER.length + 2, SOLANA_HEADER.length + 4);
+      expect(signerCount).toEqual("01");
+
+      const signerAddress = result.substring(SOLANA_HEADER.length + 4, SOLANA_HEADER.length + 68);
+      expect(signerAddress).toEqual(addressHex);
+
+      const length = result.substring(SOLANA_HEADER.length + 68, SOLANA_HEADER.length + 72);
+      expect(length).toEqual(messageLength);
+
+      expect(result.substring(SOLANA_HEADER.length + 72)).toEqual(hexadecimal);
     },
   );
 

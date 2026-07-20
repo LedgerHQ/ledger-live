@@ -49,6 +49,7 @@
     "transactionDate" : "Datum der Transaktion:",
     "outdated" : "Veraltet",
     "satPerByte" : "Sat/Bytes",
+    "satPerVByte" : "Sat/vByte",
     "sompiPerByte" : "Sompi/Bytes",
     "notAvailable" : "Nicht verfügbar",
     "import" : "Importieren",
@@ -477,6 +478,9 @@
     },
     "FeeRequired" : {
       "title" : "Gebühren sind erforderlich"
+    },
+    "FeeTooLow" : {
+      "title" : "Die Gebühren sind zu niedrig, um vom Netzwerk akzeptiert zu werden. Bitte erhöhe diese"
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "Firmware- oder App-Update erforderlich",
@@ -910,9 +914,6 @@
     "DustLimit" : {
       "title" : "Die Menge ist niedriger als das Staub (dust) -Limit"
     },
-    "StratisDown2021Warning" : {
-      "description" : "Die Stratis-Blockchain hat sich weiterentwickelt und funktioniert möglicherweise nicht mehr korrekt. Die Unterstützung für die ursprüngliche Stratis-Blockchain wird bis zum 16. Oktober 2021 aufrechterhalten."
-    },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "Betrag muss höher als {{minAmountFromFormatted}} sein"
     },
@@ -1006,6 +1007,9 @@
     },
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "Stelle sicher, dass dein Guthaben zur Deckung künftiger Transaktionsgebühren ausreicht"
+    },
+    "SolanaStakeAccountAmountTooLow" : {
+      "title" : "Betrag ist zu niedrig für Staking. Der Mindestbetrag ist {{minimumAmount}}"
     },
     "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "Deine vorherige Transaktion wurde noch nicht verarbeitet. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
@@ -1173,6 +1177,9 @@
     "XrpInvalidMemo" : {
       "title" : "Das Memo-Format ist ungültig; das Memo muss kleiner als 4294967296 sein."
     },
+    "XrpDestinationTagRequired" : {
+      "title" : "Für diesen Empfänger ist ein Destination-Tag erforderlich."
+    },
     "HederaMemoExceededSizeError" : {
       "title" : "Ungültige Memolänge; zulässig sind maximal 100 Zeichen."
     },
@@ -1187,6 +1194,9 @@
     },
     "MaxFeeTooLow" : {
       "title" : "Die maximale Gebühr ist niedriger als der empfohlene Wert"
+    },
+    "GasPriceTooLow" : {
+      "title" : "Der Gaspreis ist niedriger als das Netzwerkminimum"
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "Die maximale Prioritätsgebühr kann nicht höher sein als die maximale Gebühr"
@@ -1864,12 +1874,6 @@
     "postWelcomeStep" : {
       "title" : "Los geht's!",
       "noLedgerYet" : "Ich habe noch kein Ledger-Gerät",
-      "noLedgerYetModal" : {
-        "title" : "Millionen Nutzer. Kein erfolgreicher Angriff. Also wirklich gar keiner.",
-        "desc" : "Genieße die Sicherheit eines Ledger-Geräts, das deine digitalen Vermögenswerte zuverlässig schützt.",
-        "buy" : "Ledger-Gerät kaufen",
-        "explore" : "Diese App erkunden"
-      },
       "setupLedger" : {
         "title" : "Dein Ledger-Gerät einrichten",
         "subtitle" : "Gib an, ob dein Ledger-Gerät neu ist oder zurückgesetzt wurde."
@@ -1877,18 +1881,6 @@
       "accessWallet" : {
         "title" : "Auf deine Wallet zugreifen",
         "subtitle" : "Gib an, ob dein Ledger-Gerät bereits eingerichtet ist."
-      },
-      "buyNano" : {
-        "title" : "Ledger Nano X kaufen",
-        "subtitle" : "Ein Ledger-Gerät ist die einzige Garantie für die Sicherheit deiner Assets. "
-      },
-      "discoverLedger" : {
-        "title" : "Ledger Wallet kennenlernen",
-        "subtitle" : "Erkunde die App und erfahre mehr über ihre Vorteile "
-      },
-      "desktopSync" : {
-        "title" : "Mit der Desktop-App synchronisieren",
-        "subtitle" : "Synchronisiere deine Vermögenswerte in Ledger Wallet Desktop mit deinem Mobilgerät."
       }
     },
     "welcomeBackStep" : {
@@ -2791,13 +2783,6 @@
         "cta" : "Verstanden"
       }
     },
-    "appsStep" : {
-      "title" : "Apps auf {{productName}}-Gerät installieren"
-    },
-    "readyStep" : {
-      "title" : "Einrichtung beendet",
-      "doneTitle" : "{{productName}} ist bereit"
-    },
     "completion" : {
       "title" : "Jetzt hast du alles unter Kontrolle"
     },
@@ -2811,7 +2796,6 @@
     }
   },
   "tabs" : {
-    "portfolio" : "Wallet",
     "accounts" : "Konten",
     "transfer" : "Übertragen",
     "manager" : "My Ledger",
@@ -2849,10 +2833,7 @@
         "addAccounts" : "Wert hinzufügen",
         "title" : "Erste Schritte",
         "description" : "Du kannst wahlweise Kryptos bei unseren Partnern kaufen oder deine eigene Wallet einrichten"
-      },
-      "title" : "Füge zu Beginn deine Assets zu deiner Wallet hinzu",
-      "subtitle" : "Ledger unterstützt mehr als 6.000 Coins und Token",
-      "addAccount" : "oder füge ein Konto hinzu"
+      }
     },
     "noOpState" : {
       "title" : "Noch keine Aktionen?",
@@ -2866,9 +2847,9 @@
       "description" : "Traden mit Hebelwirkung"
     },
     "borrowEntry" : {
-      "title" : "Darlehen",
-      "cardTitle" : "Stablecoin leihen",
-      "cardDescription" : "Liquidität freisetzen",
+      "title" : "Krypto-Darlehen",
+      "cardTitle" : "Stablecoins ausleihen",
+      "cardDescription" : "Zu konkurrenzfähigen Kursen ausleihen",
       "cta" : "Entdecken"
     },
     "recommended" : {
@@ -3056,7 +3037,13 @@
   "operationsList" : {
     "to" : "An",
     "from" : "Von",
-    "pending" : "Ausstehend"
+    "pending" : "Ausstehend",
+    "options" : {
+      "more" : "Optionen für den Transaktionsverlauf",
+      "hideDustTransactions" : "Blende Staub (Dust)-Transaktionen aus",
+      "showDustTransactions" : "Zeige Staub (Dust)-Transaktionen an",
+      "dustTransactionsDescription" : "Transaktionen unter {{threshold}} in deiner Hauptwährung werden ausgeblendet."
+    }
   },
   "operationDetails" : {
     "title" : "Transaktionsdetails",
@@ -3129,7 +3116,8 @@
       "targetStakingNodeId" : "ID des Zielknotens",
       "previousStakingNodeId" : "ID des vorherigen Knotens",
       "gasConsumed" : "Verbrauchtes Gas",
-      "gasUsed" : "Genutztes Gas"
+      "gasUsed" : "Genutztes Gas",
+      "functionId" : "Funktions-ID"
     },
     "multipleAddresses" : "Warum mehrere Adressen?"
   },
@@ -3798,10 +3786,8 @@
   },
   "notifications" : {
     "prompt" : {
-      "title" : "Benachrichtigungen aktivieren",
-      "titleVariantB" : "Verpasse nichts Wichtiges",
-      "desc" : "Erhalte die neuesten Updates zu Ledger Wallet, Ledger-Produkten, dem Markt und personalisierte Empfehlungen. Du kannst dich jederzeit in den Einstellungen wieder abmelden",
-      "descVariantB" : "Erhalte Echtzeit-Benachrichtigungen zu neuen Token, Ertragschancen und Marktbewegungen. Abmeldung jederzeit möglich.",
+      "title" : "Verpasse nichts Wichtiges",
+      "desc" : "Erhalte Echtzeit-Benachrichtigungen zu neuen Token, Ertragschancen und Marktbewegungen. Abmeldung jederzeit möglich.",
       "allow" : "Benachrichtigungen zulassen",
       "later" : "Vielleicht später",
       "transactionsAlerts" : {
@@ -4196,6 +4182,42 @@
       "history" : {
         "title" : "Swap-Verlauf"
       },
+      "modals" : {
+        "transactionStatus" : {
+          "title" : "Swap {{sendTicker}} → {{receiveTicker}}",
+          "sections" : {
+            "status" : {
+              "heading" : "Status",
+              "sendPending" : "Sende {{ticker}}",
+              "sendCompleted" : "Gesendet {{ticker}}",
+              "receivePending" : "{{ticker}} empfangen",
+              "receiveCompleted" : "Erhalte {{ticker}}"
+            },
+            "details" : {
+              "networkFees" : "Netzgebühren",
+              "receiveAccount" : "Empfangskonto",
+              "provider" : "Anbieter",
+              "swapId" : "Swap-ID"
+            }
+          },
+          "statusLabels" : {
+            "pending" : "Fortlaufend",
+            "onhold" : "Zurückgestellt",
+            "expired" : "Abgelaufen",
+            "finished" : "Abgeschlossen",
+            "refunded" : "Zurückerstattet",
+            "cancelled" : "Storniert",
+            "unknown" : "Unbekannt"
+          },
+          "actions" : {
+            "viewInExplorer" : "Im Explorer ansehen",
+            "copied" : "Kopiert"
+          },
+          "accessibility" : {
+            "copySwapId" : "Swap-ID kopieren"
+          }
+        }
+      },
       "wrongDevice" : {
         "title" : "Ledger Nano S™ ist nicht mit {{provider}} kompatibel",
         "description" : "Ledger Nano S™ ist nicht mit {{provider}} kompatibel. Du kannst Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ oder Ledger Flex™ verwenden, um blockchainübergreifende Swaps bei {{provider}} über Ledger Wallet durchzuführen.",
@@ -4455,6 +4477,7 @@
     "newSendFlow" : {
       "title" : "{{currency}} senden",
       "available" : "{{amount}} verfügbar",
+      "to" : "An:",
       "placeholder" : "Adresse oder ENS eingeben",
       "placeholderNoENS" : "Adresse eingeben",
       "pasteFromClipboard" : {
@@ -4462,15 +4485,12 @@
         "cta" : "Einfügen"
       },
       "editRecipientAccessibilityLabel" : "Empfänger bearbeiten",
-      "recent" : "Neulich",
-      "recentDetail" : "Aktuelles Detail",
-      "myAccounts" : "Meine Konten",
-      "account" : "Konto",
       "sendTo" : "An {{address}} senden",
       "addressMatched" : "Adressen passen",
       "addressNotFound" : "Adresse nicht gefunden",
+      "account" : "Konto",
       "alreadyUsed" : "Bereits genutzt · {{date}}",
-      "recentSendWillAppear" : "Deine letzten Transfers erscheinen hier",
+      "notInRecentHistory" : "Nicht in deinem aktuellen Verlauf",
       "relativeDate" : {
         "justNow" : "Jetzt gerade",
         "minutesAgo_one" : "vor 1 Min.",
@@ -4480,12 +4500,13 @@
         "daysAgo_one" : "Vor 1 Tag",
         "daysAgo_other" : "vor {{count}} Tagen"
       },
-      "remove" : "Entfernen",
-      "enterTag" : "{{tag}} eingeben",
       "firstInteraction" : {
-        "title" : "Du sendest an eine neue Adresse",
-        "description" : "Bestätige, das die Adresse korrekt ist. Im Zweifelsfall sende vorab einen kleinen Betrag."
+        "description" : "Diese Adresse ist nicht in deinem aktuellen Verlauf enthalten. Im Zweifelsfall sende vorab einen kleinen Betrag.",
+        "learnMore" : "Weitere Informationen",
+        "helpTitle" : "Jüngster Sendeverlauf",
+        "helpDescription" : "In deinem aktuellen Verlauf kannst du sofort erkennen, ob du bereits an eine bestimmte Adresse gesendet hast oder nicht. Dies könnte mögliche Fehler beim Kopieren und Einfügen oder das Hacken verhindern. Dein Verlauf enthält die letzten 12 Adressen, an die du über Ledger Wallet Krypto gesendet hast."
       },
+      "enterTag" : "{{tag}} eingeben",
       "sanctioned" : {
         "title" : "Gemeldete Adresse",
         "description" : "Diese Adresse wurde gemeldet und Ledger erlaubt keine Transfers an sie",
@@ -4537,7 +4558,7 @@
       "transactionSigned" : "Transaktion signiert",
       "processingTransaction" : "Deine Transaktion wird verarbeitet",
       "sign" : {
-        "title" : "Vorgang fortsetzen auf deinem Ledger {{wording}}",
+        "title" : "Weiter auf deinem {{wording}}",
         "description" : "Befolge die Anweisungen, die auf deinem Secure Touchscreen angezeigt werden.",
         "cancelled" : {
           "title" : "Transaktion abgebrochen",
@@ -8986,8 +9007,7 @@
     "setPreferencesCTA" : "Einstellungen festlegen",
     "refuseCTA" : "Alle ablehnen",
     "acceptCTA" : "Alle annehmen",
-    "privacyPolicy" : "Du kannst deine Einwilligung jederzeit in den Einstellungen widerrufen.",
-    "privacyPolicyCTA" : "Datenschutzrichtlinie",
+    "privacyPolicy" : "Du kannst deine Einwilligung jederzeit in den Einstellungen widerrufen. <PrivacyPolicy>Datenschutzrichtlinie</PrivacyPolicy>",
     "setPreferences" : {
       "title" : "Einstellungen festlegen",
       "performance" : "App-Leistung",
@@ -9404,6 +9424,9 @@
     "fallbackBanner" : {
       "title" : "Swappen und Kaufen werden für dieses Asset nicht unterstützt."
     },
+    "stockDisclaimerBanner" : {
+      "title" : "Der Gesamtkontostand enthält keine Dividenden oder Aktiensplits."
+    },
     "hiddenAssetBanner" : {
       "title" : "Dieses Assets ist in deinem Portfolio ausgeblendet.",
       "showAsset" : "Asset anzeigen"
@@ -9781,29 +9804,21 @@
     }
   },
   "concordium" : {
-    "receive" : {
-      "messageIfSkipped" : "Deine Concordium-Adresse kann zurzeit nicht verifiziert werden. Bitte überprüfe dies, indem du deine Adresse in den Concordium-Explorer einfügst.",
-      "verifyLink" : "Bestätigen"
-    },
     "onboard" : {
       "title" : "Concordium-Einführung",
       "acknowledge" : {
         "title" : "Bestätigung",
         "description" : "Concordium verlangt eine externe Identitätsprüfung. Bitte beachte die folgenden wichtigen Sicherheitshinweise:",
         "list" : {
-          "1" : {
-            "title" : "Keine Adressverifizierung",
-            "description" : "Dein Ledger-Gerät kann Concordium-Empfangsadressen nicht verifizieren. Bitte verifiziere Adressen manuell, bevor du Guthaben empfängst."
-          },
-          "2" : {
+          "separateSeed" : {
             "title" : "Die Concordium ID App verwendet einen separaten Seed",
             "description" : "Du wirst in der Concordium-App 24 NEUE Wörter erstellen. Verwende KEINESFALLS deine Ledger-Seedphrase."
           },
-          "3" : {
+          "outsideLedgerLive" : {
             "title" : "Du wirst außerhalb von Ledger Wallet weitergeleitet",
             "description" : "Die Identitätsverifizierung erfolgt in der externen Concordium Wallet-App. Dies ist gemäß dem Blockchain-Protokoll von Concordium zwingend."
           },
-          "4" : {
+          "signingSecure" : {
             "title" : "Die Transaktionssignierung bleibt sicher",
             "description" : "Nur dein Ledger-Gerät kann Transaktionen signieren und Konten erstellen."
           }
@@ -10016,6 +10031,45 @@
       "available" : "Verfügbar",
       "unavailable" : "Nicht verbunden",
       "menuAccessibilityLabel" : "Geräteoptionen"
+    }
+  },
+  "aleo" : {
+    "addAccount" : {
+      "stepViewKeyWarning" : {
+        "title" : "Aleo-Privatguthaben einrichten",
+        "description" : "Ledger Wallet speichert deinen Viewkey, um dein privates Guthaben anzuzeigen, und nutzt Drittanbieterservices zur Verarbeitung privater Transaktionen. <0>Weitere Informationen</0>",
+        "bullets" : ["Schreibgeschützter Zugriff zum Entschlüsseln deines privaten Guthabens", "Ledger kann deine Assets weder senden noch ausgeben", "Nur du kannst deine Assets signieren und ausgeben", "Die Nachweiserstellung wird von externen Prüfdiensten abgewickelt, um eine schnelle Verarbeitung zu gewährleisten", "Die Prüfer können nicht auf deine Assets zugreifen oder sie ausgeben"],
+        "cta" : {
+          "allow" : "Erlauben",
+          "cancel" : "Abbrechen"
+        }
+      },
+      "stepViewKeyApprove" : {
+        "title" : "Auf deinem Ledger-Gerät genehmigen",
+        "description" : "Bestätige die Offenlegung des Viewkeys auf deinem Gerät",
+        "cancelAlert" : "Du kannst einzelne Konten auf deinem Gerät ablehnen. Wenn du alle Konten stornierst, werden keine weiteren Konten zu deinem Portfolio hinzugefügt.",
+        "cancelAllBtn_one" : "Abbrechen",
+        "cancelAllBtn_other" : "Alle stornieren"
+      },
+      "stepScanAccounts" : {
+        "cta" : {
+          "shareViewKeys" : "Viewkeys teilen"
+        }
+      }
+    },
+    "accountActions" : {
+      "publicToPrivate" : "Selbstüberweisung"
+    },
+    "balancesSection" : "Kontostand",
+    "info" : {
+      "transparent" : {
+        "title" : "Transparenter Saldo",
+        "description" : "Der öffentlich sichtbare Kontostand im Aleo-Netzwerk. Dieser Betrag kann direkt gesendet oder empfangen werden und ist für jeden sichtbar."
+      },
+      "private" : {
+        "title" : "Privater Saldo",
+        "description" : "Der abgeschirmte Kontostand im Aleo-Netzwerk. Dieser Kontostand ist nur für dich sichtbar und erfordert die Erstellung eines Nachweises für private Transaktionen."
+      }
     }
   }
 }

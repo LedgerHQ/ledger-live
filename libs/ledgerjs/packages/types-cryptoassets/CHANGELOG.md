@@ -1,5 +1,21 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.39.0
+
+### Minor Changes
+
+- [#19007](https://github.com/LedgerHQ/ledger-live/pull/19007) [`f495213`](https://github.com/LedgerHQ/ledger-live/commit/f495213e811477c99d62f0d93cc7c513b951a303) Thanks [@ysitbon](https://github.com/ysitbon)! - Loosen `LedgerExplorerId` to `string` and mark `CryptoCurrency.explorerId` as `@deprecated` (kept only for backward compatibility; the explorer-id concept is being phased out). The domain crypto registry stays assignable to the legacy `CryptoCurrency` type, so it injects via `setCryptoCurrenciesStore` with no cast.
+
+- [#18829](https://github.com/LedgerHQ/ledger-live/pull/18829) [`b3ffa2f`](https://github.com/LedgerHQ/ledger-live/commit/b3ffa2f4bf735f2cfeed2a8028ea92d4bc3588e3) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Sunset the `CryptoCurrency.terminated` field: remove it from the type/schema, delete the 5 currencies it marked (clubcoin, hcash, poswallet, stakenet, stratis), drop the now-unused `withTerminated` parameter from `listCryptoCurrencies`, and clean up the dead code orphaned by those deletions.
+
+## 7.39.0-next.0
+
+### Minor Changes
+
+- [#19007](https://github.com/LedgerHQ/ledger-live/pull/19007) [`f495213`](https://github.com/LedgerHQ/ledger-live/commit/f495213e811477c99d62f0d93cc7c513b951a303) Thanks [@ysitbon](https://github.com/ysitbon)! - Loosen `LedgerExplorerId` to `string` and mark `CryptoCurrency.explorerId` as `@deprecated` (kept only for backward compatibility; the explorer-id concept is being phased out). The domain crypto registry stays assignable to the legacy `CryptoCurrency` type, so it injects via `setCryptoCurrenciesStore` with no cast.
+
+- [#18829](https://github.com/LedgerHQ/ledger-live/pull/18829) [`b3ffa2f`](https://github.com/LedgerHQ/ledger-live/commit/b3ffa2f4bf735f2cfeed2a8028ea92d4bc3588e3) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Sunset the `CryptoCurrency.terminated` field: remove it from the type/schema, delete the 5 currencies it marked (clubcoin, hcash, poswallet, stakenet, stratis), drop the now-unused `withTerminated` parameter from `listCryptoCurrencies`, and clean up the dead code orphaned by those deletions.
+
 ## 7.38.0
 
 ### Minor Changes

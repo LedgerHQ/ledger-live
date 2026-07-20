@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-currencies",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "App-facing currency runtime: crypto-assets store builder, currency/token hooks, supported-set feature-flag gating",
   "main": "src/index.ts",

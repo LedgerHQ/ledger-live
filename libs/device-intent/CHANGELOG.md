@@ -1,5 +1,19 @@
 # @ledgerhq/device-intent
 
+## 4.0.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.11.1
+
+## 4.0.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.11.1-next.0
+
 ## 4.0.0
 
 ### Minor Changes
