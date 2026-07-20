@@ -11,7 +11,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { ErrorBody } from "~/renderer/components/ErrorBody";
-import { FirmwareNotRecognized } from "@ledgerhq/errors";
+import { FirmwareNotRecognized } from "@ledgerhq/live-common/errors";
 import { DmkError } from "@ledgerhq/live-dmk-desktop";
 
 export type Props = {
