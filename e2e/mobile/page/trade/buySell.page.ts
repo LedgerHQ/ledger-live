@@ -2,6 +2,7 @@ import { Step } from "jest-allure2-reporter/api";
 import { AccountType, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { BuySell, Fiat } from "@ledgerhq/live-e2e-shared/models/BuySell";
 import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/buySell";
 import { openDeeplink, normalizeText } from "../../helpers/commonHelpers";
 import { checkForErrorElement, ERROR_MODAL_SELECTORS } from "../../helpers/errorHelpers";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
@@ -157,25 +158,14 @@ export default class BuySellPage {
     return providerNames;
   }
 
-  @Step("Select random provider")
-  async selectRandomProvider(): Promise<string> {
-    const uiNamesFromQuotes = await this.getAvailableProviders();
-    const testedProviders = uiNamesFromQuotes
-      .map(uiName => BuySellProvider.getByUiName(uiName))
-      .filter((p): p is BuySellProvider => Boolean(p?.isTested));
+  @Step("Select rotating provider")
+  async selectRotatingProvider(): Promise<BuySellProvider> {
+    const availableProviders = await this.getAvailableProviders();
+    const selected = pickRotatingProvider(availableProviders);
 
-    if (testedProviders.length === 0) {
-      throw new Error(
-        `No known tested providers in quotes. UI listed: ${uiNamesFromQuotes.join(", ") || "(none)"}`,
-      );
-    }
-
-    const selected = testedProviders[Math.floor(Math.random() * testedProviders.length)];
-    const testIdName = selected.name;
-
-    await scrollToWebElement(getWebElementByTestId(this.provider(testIdName)));
-    await tapWebElementByTestId(this.provider(testIdName));
-    return selected.uiName;
+    await scrollToWebElement(getWebElementByTestId(this.provider(selected.name)));
+    await tapWebElementByTestId(this.provider(selected.name));
+    return selected;
   }
 
   @Step("Select provider")
@@ -233,10 +223,10 @@ export default class BuySellPage {
     await this.chooseCountryIfNotSelected(buySell.fiat);
     await this.tapSeeQuotes();
     await this.selectPaymentMethod(paymentMethod);
-    const selectedProvider = await this.selectRandomProvider();
-    await this.tapBuySellWithCta(selectedProvider, buySell.operation);
-    await this.verifyProviderPageLoadedWithCorrectUrl(selectedProvider);
-    await this.verifyProviderPageIsNotBlank(selectedProvider);
+    const selectedProvider = await this.selectRotatingProvider();
+    await this.tapBuySellWithCta(selectedProvider.uiName, buySell.operation);
+    await this.verifyProviderPageLoadedWithCorrectUrl(selectedProvider.uiName);
+    await this.verifyProviderPageIsNotBlank(selectedProvider.uiName);
   }
 
   @Step("Handle sell flow")
