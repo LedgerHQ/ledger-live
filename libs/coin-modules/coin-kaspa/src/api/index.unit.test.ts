@@ -227,6 +227,6 @@ describe("createApi", () => {
 
   it("rejects for call (not supported)", async () => {
     const api = createApi(config, "kaspa");
-    await expect(api.call()).rejects.toThrow("call is not supported");
+    await expect(api.call({})).rejects.toThrow("call is not supported");
   });
 });
