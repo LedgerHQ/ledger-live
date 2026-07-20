@@ -4,6 +4,8 @@ export {
   createPopulatedContactsListViewModel,
 } from "./viewModel";
 export type {
+  ContactsLedgerSyncIntroduction,
+  ContactsLedgerSyncStatus,
   ContactsPageLabels,
   ContactsPageProps,
   ContactsSearchNoResultsViewModel,

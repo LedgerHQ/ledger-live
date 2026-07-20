@@ -127,6 +127,9 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-page-header")).toBeVisible();
     expect(screen.getByTestId("contacts-list-pane")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-pane")).toBeEmptyDOMElement();
+    expect(screen.queryByTestId("contacts-ledger-sync-list-loading")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("contacts-ledger-sync-detail-loading")).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Contacts" })).toBeVisible();
     expect(screen.getByPlaceholderText("Search contact")).toBeVisible();
     expect(screen.getByTestId("contacts-add-contact")).toBeVisible();
