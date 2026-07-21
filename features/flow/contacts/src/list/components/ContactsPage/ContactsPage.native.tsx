@@ -4,6 +4,7 @@ import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
 import type { ContactsListItem, ContactsListSection, ContactsPageNativeProps } from "../../types";
 import { ContactsListHeader } from "./ContactsListHeader.native";
 import { ContactsSearchNoResults } from "./ContactsSearchNoResults.native";
+import { ContactsSearchInput } from "./ContactsSearchInput.native";
 import { ContactsSavedContactListItem } from "./ContactsSavedContactListItem.native";
 import { ContactsSectionIndex } from "./ContactsSectionIndex.native";
 import { ContactsSectionHeader } from "./ContactsSectionHeader.native";
@@ -54,8 +55,6 @@ export function ContactsPage({
       labels={labels}
       meAvatarSrc={meAvatarSrc}
       showAddContact={!isPopulated && !hasNoResults}
-      searchQuery={searchQuery}
-      onSearchQueryChange={onSearchQueryChange}
       onOpenContact={onOpenContact}
       onAddContact={onAddContact}
     />
@@ -121,6 +120,13 @@ export function ContactsPage({
         importantForAccessibility={isLedgerSyncChecking ? "no-hide-descendants" : "auto"}
         accessibilityElementsHidden={isLedgerSyncChecking}
       >
+        <Box testID="contacts-fixed-search" lx={{ paddingHorizontal: "s16", paddingTop: "s8" }}>
+          <ContactsSearchInput
+            placeholder={labels.searchPlaceholder}
+            value={searchQuery}
+            onSearchQueryChange={onSearchQueryChange}
+          />
+        </Box>
         {content}
       </Box>
       {isLedgerSyncChecking ? (
