@@ -1,7 +1,6 @@
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { AleoApiConfigurationResetError } from "../errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import {
@@ -250,7 +249,10 @@ export async function accessProvableApi({
   try {
     status = await apiClient.getRecordScannerStatus(currency, uuid);
   } catch (error) {
-    if (error instanceof LedgerAPI4xx && error.status === 422) {
+    if (
+      (error as { name?: string; status?: number }).name === "LedgerAPI4xx" &&
+      (error as { status?: number }).status === 422
+    ) {
       throw new AleoApiConfigurationResetError();
     }
     throw error;

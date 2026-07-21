@@ -1,6 +1,6 @@
 import { secp256k1 } from "@noble/curves/secp256k1";
 import { firstValueFrom, from, Observable } from "rxjs";
-import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
+import { WrongDeviceForAccount } from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
 import {
@@ -149,7 +149,8 @@ const completeExchange = (
             payoutAddressParameters,
           );
         } catch (e) {
-          if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
+          const tse1 = e as { name?: string; statusCode?: number };
+          if (tse1?.name === "TransportStatusError" && tse1?.statusCode === 0x6a83) {
             throw new WrongDeviceForAccount();
           }
 
@@ -163,16 +164,18 @@ const completeExchange = (
       }).catch(e => {
         if (ignoreTransportError) return;
 
+        const tse2 = e as { name?: string; statusCode?: number };
         if (
-          e instanceof TransportStatusError &&
-          (e.statusCode === 0x6a84 || e.statusCode === 0x5501)
+          tse2?.name === "TransportStatusError" &&
+          (tse2?.statusCode === 0x6a84 || tse2?.statusCode === 0x5501)
         ) {
           throw new TransactionRefusedOnDevice();
         }
 
-        // Preserve known error types checked by instanceof downstream
-        if (e instanceof CompleteExchangeError) throw e;
-        if (e instanceof WrongDeviceForAccount || e instanceof TransactionRefusedOnDevice) throw e;
+        // Preserve known error types checked by .name downstream
+        const eName = (e as { name?: string })?.name;
+        if (eName === "CompleteExchangeError") throw e;
+        if (eName === "WrongDeviceForAccount" || eName === "TransactionRefusedOnDevice") throw e;
         // Wrap any remaining unknown errors with the current step context
         throw new CompleteExchangeError(
           currentStep,

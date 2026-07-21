@@ -11,8 +11,8 @@ import BigNumber from "bignumber.js";
 import { Observable, firstValueFrom, lastValueFrom, toArray } from "rxjs";
 import type { Account, SignOperationEvent } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { setZcashShieldedEnabled } from "../constants";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { ZcashUtxoNotInAccount } from "../../../errors";
 // Transaction lives in src/types.ts (coin-bitcoin), not in chain-adapters/types.ts
 import type { Transaction } from "../../../types";

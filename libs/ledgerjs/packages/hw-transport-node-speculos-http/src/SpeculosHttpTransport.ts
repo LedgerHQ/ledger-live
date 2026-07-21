@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
-import { DisconnectedDevice } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
+import { DisconnectedDevice } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { Subject } from "rxjs";
 

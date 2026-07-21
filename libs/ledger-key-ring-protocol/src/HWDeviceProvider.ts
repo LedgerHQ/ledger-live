@@ -1,7 +1,7 @@
 import { from, lastValueFrom } from "rxjs";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { ApduDevice } from "@ledgerhq/hw-ledger-key-ring-protocol/ApduDevice";
-import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
+import { StatusCodes } from "@ledgerhq/hw-transport";
 import { crypto, device } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import getApi from "./api";
 import { genericWithJWT } from "./auth";
@@ -57,10 +57,10 @@ export class HWDeviceProvider {
     try {
       return await lastValueFrom(runWithDevice(transport => from(job(device.apdu(transport)))));
     } catch (error) {
-      if (!(error instanceof TransportStatusError)) {
+      if ((error as { name?: string })?.name !== "TransportStatusError") {
         throw error;
       }
-      switch (error.statusCode) {
+      switch ((error as { statusCode?: number })?.statusCode) {
         case StatusCodes.USER_REFUSED_ON_DEVICE:
         case StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED:
           throw new UserRefusedOnDevice();

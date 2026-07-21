@@ -38,7 +38,6 @@ import { bridgeCache } from "~/bridge/cache";
 import { replaceAccounts } from "~/actions/accounts";
 import { useFeature } from "@features/platform-feature-flags";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
-import { TrustchainNotAllowed, TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
 
 const latestWalletStateSelector = (s: State): WSState => walletSyncStateSelector(walletSelector(s));
 
@@ -146,8 +145,8 @@ export function useWatchWalletSync(): WalletSyncUserState {
 
   useEffect(() => {
     if (walletSyncError) {
-      if (walletSyncError instanceof TrustchainNotAllowed) resetLedgerSync();
-      if (walletSyncError instanceof TrustchainEjected) resetLedgerSync();
+      if (walletSyncError?.name === "TrustchainNotAllowed") resetLedgerSync();
+      if (walletSyncError?.name === "TrustchainEjected") resetLedgerSync();
     }
   }, [dispatch, resetLedgerSync, walletSyncError]);
 

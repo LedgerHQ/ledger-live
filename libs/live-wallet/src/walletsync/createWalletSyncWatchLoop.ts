@@ -3,7 +3,6 @@ import { CloudSyncSDKInterface } from "../cloudsync";
 import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { WalletSyncDataManager } from "./types";
 import { log } from "@ledgerhq/logs";
-import { TrustchainEjected, TrustchainOutdated } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { Subscription } from "rxjs";
 
 export type WatchConfig = {
@@ -152,7 +151,8 @@ export function createWalletSyncWatchLoop<UserState, LocalState, Update, Schema 
         await walletSyncSdk.push(trustchain, memberCredentials, diff.nextState);
       }
     } catch (e) {
-      const shouldRefresh = e instanceof TrustchainEjected || e instanceof TrustchainOutdated;
+      const eName = (e as { name?: string })?.name;
+      const shouldRefresh = eName === "TrustchainEjected" || eName === "TrustchainOutdated";
       if (shouldRefresh) {
         await onTrustchainRefreshNeeded(trustchain);
         return;

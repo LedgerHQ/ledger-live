@@ -1,11 +1,6 @@
 import { Observable, throwError, timer } from "rxjs";
 import { throttleTime, filter, map, catchError, retry, switchMap } from "rxjs/operators";
-import {
-  LockedDeviceError,
-  ManagerAppDepInstallRequired,
-  ManagerDeviceLockedError,
-  UnresponsiveDeviceError,
-} from "@ledgerhq/errors";
+import { ManagerAppDepInstallRequired } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
 import type { ApplicationVersion, App } from "@ledgerhq/types-live";
 import ManagerAPI from "../manager/api";
@@ -68,11 +63,12 @@ export default function installApp(
         retry({
           count: retryLimit,
           delay: (error: unknown, retryCount: number) => {
+            const eName = (error as { name?: string })?.name;
             // Not retrying on locked device errors
             if (
-              error instanceof LockedDeviceError ||
-              error instanceof ManagerDeviceLockedError ||
-              error instanceof UnresponsiveDeviceError
+              eName === "LockedDeviceError" ||
+              eName === "ManagerDeviceLocked" ||
+              eName === "UnresponsiveDeviceError"
             ) {
               tracer.trace(`Not retrying on error: ${error}`, {
                 error,

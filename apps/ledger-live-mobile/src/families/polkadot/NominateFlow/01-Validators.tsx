@@ -26,7 +26,6 @@ import {
   MAX_NOMINATIONS,
   hasMinimumBondBalance,
 } from "@ledgerhq/live-common/families/polkadot/logic";
-import * as PolkadotErrors from "@ledgerhq/live-common/families/polkadot/errors";
 import {
   usePolkadotPreloadData,
   useSortedValidators,
@@ -245,9 +244,8 @@ function NominateSelectValidator({ navigation, route }: Props) {
   const error = getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
   const maxSelected = validators.length === MAX_NOMINATIONS;
-  const maybeChill = error instanceof PolkadotErrors.PolkadotValidatorsRequired;
-  const ignoreError =
-    error instanceof PolkadotErrors.PolkadotValidatorsRequired && !nominations.length;
+  const maybeChill = error?.name === "PolkadotValidatorsRequired";
+  const ignoreError = error?.name === "PolkadotValidatorsRequired" && !nominations.length;
   // Do not show error on first nominate
   return (
     <SafeAreaView
