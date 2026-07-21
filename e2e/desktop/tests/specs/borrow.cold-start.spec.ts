@@ -3,14 +3,13 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
   FF_BORROW_DESKTOP,
   FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
 } from "tests/utils/featureFlagUtils";
 
-const account = Account.ETH_4;
+const account = Account.ETH_1;
 const family = getFamilyByCurrencyId(account.currency.id);
 
 const tags = [
@@ -27,10 +26,7 @@ const tags = [
 test.describe("Borrow cold start", () => {
   test.use({
     teamOwner: Team.EARN,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account)],
-    speculosForSetupOnly: true,
+    userdata: "speculos-x-other-account",
     featureFlags: {
       ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
       ...FF_BORROW_DESKTOP,
