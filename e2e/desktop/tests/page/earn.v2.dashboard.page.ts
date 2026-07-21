@@ -14,7 +14,11 @@ export class EarnV2Page extends EarnBasePage {
   private readonly footerDisclaimer = "footer-disclaimer";
   private readonly assetItemTicker = (ticker: string) =>
     `asset-item-ticker-${ticker.toLowerCase()}`;
-  private readonly iceColdStartEarnCta = "ice-cold-start-earn-cta";
+  private readonly simulateInvestmentCta = "simulate-investment-cta";
+  private readonly earnSimulatorTestId = "earn-simulator";
+  private readonly earnSimulatorCta = "earn-simulator-cta";
+  private readonly accountSelectorInput = "account-selector-input";
+  private readonly v1TextButtonCta = "text-button-cta";
   private readonly modalContainer = this.page.getByTestId("modal-container");
 
   // Ice Cold Start
@@ -26,10 +30,34 @@ export class EarnV2Page extends EarnBasePage {
     await this.verifyElementIsNotVisible(this.walletHeaderAmount);
   }
 
-  @step("Click ice cold start earn CTA")
-  async clickIceColdStartEarnCTA() {
+  @step("Click simulate investment CTA")
+  async clickSimulateInvestmentCta() {
     const webview = await this.getWebView();
-    await webview.getByTestId(this.iceColdStartEarnCta).click();
+    await webview.getByTestId(this.simulateInvestmentCta).click();
+  }
+
+  @step("Verify earn simulator is visible")
+  async verifyEarnSimulatorVisible() {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.earnSimulatorTestId)).toBeVisible();
+  }
+
+  @step("Click earn simulator CTA")
+  async clickEarnSimulatorCta() {
+    const webview = await this.getWebView();
+    await webview.getByTestId(this.earnSimulatorCta).click();
+  }
+
+  @step("Click account selector input in deposit screen")
+  async clickAccountSelectorInput() {
+    const webview = await this.getWebView();
+    await webview.getByTestId(this.accountSelectorInput).click();
+  }
+
+  @step("Verify v1 deposit text-button-cta is visible")
+  async verifyV1TextButtonCtaVisible() {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.v1TextButtonCta)).toBeVisible();
   }
 
   // Cold Start
@@ -155,6 +183,10 @@ export class EarnV2Page extends EarnBasePage {
     const selector = await getModularSelector(app, "ASSET");
     expect(selector, "Expected ASSET modular selector to be visible").not.toBeNull();
     await selector!.selectAsset(currency);
+    // Multi-network assets (e.g. ETH) trigger a network chooser after asset selection.
+    if (await app.modularDialog.waitForNetworkDialogVisible(5000)) {
+      await app.modularDialog.selectNetwork(currency);
+    }
   }
 
   @step("Add existing account via modular selector")
