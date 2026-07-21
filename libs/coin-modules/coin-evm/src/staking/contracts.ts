@@ -1,6 +1,10 @@
+import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import type { StakingContractConfig, StakingOperation } from "../types/staking";
 import { USEI_TO_EVM_SCALE } from "../utils";
+import { getCoinConfig } from "../config";
+import { withApi } from "../network/node/rpc.common";
+import { isExternalNodeConfig } from "../network/node/types";
 import { getValidatorAddressById } from "./validators/monadResolver";
 
 export function getStakingContractAddress(
@@ -87,6 +91,18 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     resolveValidatorAddress: async d => {
       return typeof d[0] === "string" ? d[0] : null;
     },
+    resolveOperationAmount: async (decoded, operationType) => {
+      switch (operationType) {
+        case "undelegate": {
+          const raw = decoded[1];
+          return typeof raw === "bigint"
+            ? new BigNumber((raw * USEI_TO_EVM_SCALE).toString())
+            : null;
+        }
+        default:
+          return null;
+      }
+    },
   },
 
   // Celo staking
@@ -102,6 +118,16 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     },
     resolveValidatorAddress: async d => {
       return typeof d[0] === "string" ? d[0] : null;
+    },
+    resolveOperationAmount: async (decoded, operationType) => {
+      switch (operationType) {
+        case "undelegate": {
+          const raw = decoded[1];
+          return typeof raw === "bigint" ? new BigNumber(raw.toString()) : null;
+        }
+        default:
+          return null;
+      }
     },
   },
 
@@ -161,6 +187,16 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
         ? getValidatorAddressById("monad", d[0])
         : Promise.resolve(null);
     },
+    resolveOperationAmount: async (decoded, operationType) => {
+      switch (operationType) {
+        case "undelegate": {
+          const raw = decoded[1];
+          return typeof raw === "bigint" ? new BigNumber(raw.toString()) : null;
+        }
+        default:
+          return null;
+      }
+    },
   },
 
   // 0G staking - factory-per-validator model.
@@ -194,6 +230,36 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     resolveValidatorAddress: async (_, contractAddress) => {
       return contractAddress ? ethers.getAddress(contractAddress) : null;
     },
+    resolveOperationAmount: async (decoded, operationType, currency, contractAddress) => {
+      switch (operationType) {
+        case "undelegate": {
+          const shares = decoded[1];
+          if (typeof shares !== "bigint") return null;
+          const node = getCoinConfig(currency.id).info.node;
+          if (!isExternalNodeConfig(node)) return null;
+          try {
+            return await withApi(
+              currency,
+              async provider => {
+                const iface = new ethers.Interface([
+                  "function convertToTokens(uint256 shares) view returns (uint256)",
+                ]);
+                const data = iface.encodeFunctionData("convertToTokens", [shares]);
+                const raw = await provider.call({ to: contractAddress, data });
+                const result = iface.decodeFunctionResult("convertToTokens", raw);
+                if (!Array.isArray(result) || typeof result[0] !== "bigint") return null;
+                return new BigNumber(result[0].toString());
+              },
+              node,
+            );
+          } catch {
+            return null;
+          }
+        }
+        default:
+          return null;
+      }
+    },
     canUndelegate: delegation => {
       return delegation.shares?.gt(0) ?? true;
     },
@@ -215,6 +281,16 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     value: ({ mode, amount }) => (mode === "delegate" ? amount : 0n),
     resolveValidatorAddress: async parameters => {
       return typeof parameters[0] === "string" ? parameters[0] : null;
+    },
+    resolveOperationAmount: async (decoded, operationType) => {
+      switch (operationType) {
+        case "undelegate": {
+          const raw = decoded[1];
+          return typeof raw === "bigint" ? new BigNumber(raw.toString()) : null;
+        }
+        default:
+          return null;
+      }
     },
   },
 };

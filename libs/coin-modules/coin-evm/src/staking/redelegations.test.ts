@@ -354,6 +354,46 @@ describe("redelegations", () => {
       });
     });
 
+    describe("undelegate (0G, convertToTokens)", () => {
+      it("calls convertToTokens on the validator contract to resolve the display amount", async () => {
+        const zgIface = new ethers.Interface(getStakingABI("zero_gravity")!);
+        const convertIface = new ethers.Interface([
+          "function convertToTokens(uint256 shares) view returns (uint256)",
+        ]);
+        const op = makeOperation({
+          type: "UNDELEGATE",
+          recipients: ["0x3333333333333333333333333333333333333333"],
+          extra: {
+            contractPayload: zgIface.encodeFunctionData("undelegate", [
+              "0x4444444444444444444444444444444444444444",
+              1_284_193_000_000_000n,
+            ]),
+          },
+        });
+
+        const mockNode = { type: "external", uri: "https://0g.rpc" };
+        mockGetCoinConfig.mockReturnValue({ info: { node: mockNode } });
+        mockIsExternalNodeConfig.mockImplementation((node: unknown) => node === mockNode);
+        mockWithApi.mockImplementation((_currency: unknown, fn: (p: unknown) => unknown) =>
+          fn({
+            call: async () =>
+              convertIface.encodeFunctionResult("convertToTokens", [13_000_000_000_000_000n]),
+          }),
+        );
+
+        const result = await resolveStakingValidator(
+          { id: "zero_gravity" } as CryptoCurrency,
+          op,
+          "undelegate",
+        );
+
+        expect(result).toEqual({
+          validatorAddress: "0x3333333333333333333333333333333333333333",
+          amount: new BigNumber("13000000000000000"),
+        });
+      });
+    });
+
     describe("delegate", () => {
       it("should decode validator from cached contractPayload", async () => {
         const op = makeOperation({
