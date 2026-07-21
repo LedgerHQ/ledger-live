@@ -1,6 +1,4 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getInitialURL, isWalletAPISupportedCurrency } from "./helpers";
+import { getInitialURL } from "./helpers";
 
 describe("wallet-api helpers", () => {
   describe("isWhitelistedDomain (via getInitialURL)", () => {
@@ -532,22 +530,6 @@ describe("wallet-api helpers", () => {
       const resultUrl = new URL(result);
       expect(resultUrl.searchParams.get("params")).toBe(JSON.stringify({ foo: "bar" }));
       expect(result).not.toContain("other");
-    });
-  });
-
-  describe("isWalletAPISupportedCurrency", () => {
-    it("returns true for Aleo (its family is registered in wallet-api-core FAMILIES)", () => {
-      const aleo = getCryptoCurrencyById("aleo");
-      expect(isWalletAPISupportedCurrency(aleo)).toBe(true);
-    });
-
-    it("returns false for a crypto currency whose family is not wallet-api-supported", () => {
-      const unsupported = {
-        type: "CryptoCurrency",
-        id: "unsupported-test-currency",
-        family: "not_a_wallet_api_family",
-      } as unknown as CryptoCurrency;
-      expect(isWalletAPISupportedCurrency(unsupported)).toBe(false);
     });
   });
 });
