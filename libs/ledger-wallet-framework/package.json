@@ -111,7 +111,6 @@
   },
   "devDependencies": {
     "@domain/entity-currency-crypto": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@types/imurmurhash": "^0.1.4",

@@ -9687,9 +9687,6 @@ importers:
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:^
         version: link:../live-dmk-speculos
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../wallet-framework-test-setup
