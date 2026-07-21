@@ -1,5 +1,4 @@
 import {
-  AppNotFound,
   restoreAppStorage,
   restoreAppStorageCommit,
   restoreAppStorageInit,
@@ -57,7 +56,7 @@ export function restoreAppData(
         }),
         catchError(e => {
           // No app data found on the app or the app does not support it
-          if (e instanceof AppNotFound) {
+          if ((e as { name?: string })?.name === "AppNotFound") {
             subscriber.next({
               type: RestoreAppDataEventType.NoAppDataToRestore,
             });
