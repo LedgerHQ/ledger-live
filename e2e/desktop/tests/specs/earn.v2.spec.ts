@@ -202,6 +202,7 @@ test.describe("Earn [v2]", () => {
 
   test.describe("Earn v2 simulator CTA → v1 deposit", () => {
     const account = Account.ETH_1;
+    const xrayTicket = "B2CQA-6136";
 
     test.use({
       userdata: "skip-onboarding",
@@ -218,7 +219,10 @@ test.describe("Earn [v2]", () => {
 
     test(
       "Earn v2 simulator CTA routes to v1 deposit when swapToEarn is disabled",
-      { tag: buildTags({ currencyId: account.currency.id }) },
+      {
+        tag: buildTags({ currencyId: account.currency.id }),
+        annotation: { type: "TMS", description: xrayTicket },
+      },
       async ({ app }) => {
         await navigateToEarn(app);
         await app.earnV2Dashboard.clickSimulateInvestmentCta();
