@@ -75,8 +75,9 @@ export default function ViewKeyApproveScreen() {
   // transport subscription off selectedAccounts by reference, not content — recomputing it
   // mid-approval would tear down the subscription without restarting it.
   const [accountsToAdd] = useState(() => {
-    const existingAddresses = new Set(existingAccounts.map(a => a.freshAddress));
-    return allAccountsToAdd.filter(a => !existingAddresses.has(a.freshAddress));
+    const accountKey = (a: Account) => `${a.currency.id}:${a.freshAddress}`;
+    const existingKeys = new Set(existingAccounts.map(accountKey));
+    return allAccountsToAdd.filter(a => !existingKeys.has(accountKey(a)));
   });
 
   const hasAccountsToAdd = accountsToAdd.length > 0;
