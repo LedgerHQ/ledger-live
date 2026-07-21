@@ -28,6 +28,7 @@ type UseAmountScreenViewModelParams = Readonly<{
   bridgeError: Error | null;
   uiConfig: SendFlowUiConfig;
   transactionActions: SendFlowTransactionActions;
+  onSelectCoinControl: () => void;
 }>;
 
 export function useAmountScreenViewModel({
@@ -39,6 +40,7 @@ export function useAmountScreenViewModel({
   bridgeError: _bridgeError,
   uiConfig,
   transactionActions,
+  onSelectCoinControl,
 }: UseAmountScreenViewModelParams): AmountScreenViewModel {
   const { t } = useTranslation();
   const { navigation } = useFlowWizard();
@@ -130,27 +132,6 @@ export function useAmountScreenViewModel({
     hasRawAmount: amountReviewCore.hasRawAmount,
   });
 
-  const networkFees = useNetworkFees({
-    account,
-    parentAccount,
-    transaction,
-    status,
-    uiConfig,
-    transactionActions,
-  });
-
-  const onSelectFeeStrategyWithTracking = useCallback(
-    (strategy: string) => {
-      track("button_clicked", {
-        button: `fee ${strategy}`,
-        page: "step amount",
-        ...sendFlowTrackingProperties,
-      });
-      networkFees.onSelectFeeStrategy(strategy);
-    },
-    [networkFees, sendFlowTrackingProperties],
-  );
-
   const onOpenCustomFees = useCallback(() => {
     track("button_clicked", {
       button: "fee custom",
@@ -160,9 +141,38 @@ export function useAmountScreenViewModel({
     navigation.goToStep(SEND_FLOW_STEP.CUSTOM_FEES);
   }, [navigation, sendFlowTrackingProperties]);
 
-  const onSelectCoinControl = useCallback(() => {
-    navigation.goToStep(SEND_FLOW_STEP.COIN_CONTROL);
-  }, [navigation]);
+  const networkFees = useNetworkFees({
+    account,
+    parentAccount,
+    transaction,
+    status,
+    uiConfig,
+    transactionActions,
+    onSelectCustomFees: onOpenCustomFees,
+    onSelectCoinControl,
+  });
+
+  const trackedFeeSelectorOptions = useMemo(
+    () =>
+      networkFees.feeSelector.options.map(option => {
+        // Only preset/default strategy picks were tracked here previously (the "fee <id>"
+        // button event); custom/coinControl already carry their own tracking (onOpenCustomFees)
+        // or never had tracking (onSelectCoinControl) — preserve that exactly.
+        if (option.kind !== "preset" && option.kind !== "default") return option;
+        return {
+          ...option,
+          onSelect: () => {
+            track("button_clicked", {
+              button: `fee ${option.id}`,
+              page: "step amount",
+              ...sendFlowTrackingProperties,
+            });
+            option.onSelect();
+          },
+        };
+      }),
+    [networkFees.feeSelector.options, sendFlowTrackingProperties],
+  );
 
   const trackedQuickActions = useMemo(
     () =>
@@ -199,9 +209,10 @@ export function useAmountScreenViewModel({
     reviewShowIcon,
     reviewDisabled,
     reviewLoading: amountComputationPending,
-    onOpenCustomFees,
-    onSelectCoinControl,
     ...networkFees,
-    onSelectFeeStrategy: onSelectFeeStrategyWithTracking,
+    feeSelector: {
+      ...networkFees.feeSelector,
+      options: trackedFeeSelectorOptions,
+    },
   };
 }

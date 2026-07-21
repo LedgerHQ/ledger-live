@@ -77,6 +77,7 @@ const mockUiConfig: SendFlowUiConfig = {
   hasFeePresets: true,
   hasCustomFees: false,
   hasCoinControl: false,
+  hasDefaultStrategy: false,
 };
 
 describe("useNetworkFeesCore", () => {
@@ -102,6 +103,10 @@ describe("useNetworkFeesCore", () => {
     mockedSendFeatures.getFeePresetFallbackIds.mockReturnValue([]);
     mockedSendFeatures.canEstimateFeePresetsWithZeroAmount.mockReturnValue(false);
     mockedSendFeatures.getFeeCurrencyAccountId.mockReturnValue(null);
+    mockedSendFeatures.getDefaultStrategyPatch.mockReturnValue({
+      feesStrategy: undefined,
+      fees: undefined,
+    });
     mockCalculateCountervalue.mockImplementation((_currency, value) => value.dividedBy(100));
     mockedFormatCurrencyUnit.mockImplementation((_unit, value) => `FORMATTED_${value.toString()}`);
     mockUpdateTransaction.mockImplementation((fn: (tx: Transaction) => Transaction) =>
@@ -193,15 +198,54 @@ describe("useNetworkFeesCore", () => {
     expect(result.current.displayFeesValue).toBe("-");
   });
 
-  it("calls updateTransaction when selecting a fee strategy", () => {
+  it("calls updateTransaction when selecting a preset fee strategy id", () => {
     const { result } = renderCore();
 
     act(() => {
-      result.current.onSelectFeeStrategy("fast");
+      result.current.onSelectFeeStrategyId("fast");
     });
 
     expect(mockUpdateTransaction).toHaveBeenCalled();
     expect(bridgeUpdateTransaction).toHaveBeenCalledWith(mockTransaction, { feesStrategy: "fast" });
+  });
+
+  it("calls updateTransaction with the descriptor's default-strategy patch when selecting the default id", () => {
+    mockedSendFeatures.getDefaultStrategyPatch.mockReturnValue({
+      feesStrategy: undefined,
+      fees: undefined,
+    });
+
+    const { result } = renderCore({
+      uiConfig: { hasFeePresets: false, hasCustomFees: true, hasDefaultStrategy: true },
+      transaction: { feesStrategy: "custom" },
+    });
+
+    act(() => {
+      result.current.onSelectFeeStrategyId("default");
+    });
+
+    expect(mockUpdateTransaction).toHaveBeenCalled();
+    expect(mockedSendFeatures.getDefaultStrategyPatch).toHaveBeenCalledWith(mockCurrency);
+    expect(bridgeUpdateTransaction).toHaveBeenCalledWith(mockTransaction, {
+      feesStrategy: undefined,
+      fees: undefined,
+    });
+  });
+
+  it("falls back to a no-op patch when the descriptor returns no default-strategy patch", () => {
+    mockedSendFeatures.getDefaultStrategyPatch.mockReturnValue(null);
+
+    const { result } = renderCore({
+      uiConfig: { hasFeePresets: false, hasCustomFees: true, hasDefaultStrategy: true },
+      transaction: { feesStrategy: "custom" },
+    });
+
+    act(() => {
+      result.current.onSelectFeeStrategyId("default");
+    });
+
+    expect(mockUpdateTransaction).toHaveBeenCalled();
+    expect(bridgeUpdateTransaction).toHaveBeenCalledWith(mockTransaction, {});
   });
 
   it("passes fallback preset ids to fee preset estimation when options are empty", () => {
@@ -227,5 +271,138 @@ describe("useNetworkFeesCore", () => {
         enabled: false,
       }),
     );
+  });
+
+  describe("hasCustomFees / hasCoinControl mirror uiConfig", () => {
+    it("mirrors true values", () => {
+      const { result } = renderCore({ uiConfig: { hasCustomFees: true, hasCoinControl: true } });
+
+      expect(result.current.hasCustomFees).toBe(true);
+      expect(result.current.hasCoinControl).toBe(true);
+    });
+
+    it("mirrors false values", () => {
+      const { result } = renderCore({ uiConfig: { hasCustomFees: false, hasCoinControl: false } });
+
+      expect(result.current.hasCustomFees).toBe(false);
+      expect(result.current.hasCoinControl).toBe(false);
+    });
+  });
+
+  describe("feeStrategyOptions", () => {
+    it("builds preset options preserving order with fiat + legend sublabels", () => {
+      const { result } = renderCore({ uiConfig: { hasFeePresets: true } });
+
+      expect(result.current.feeStrategyOptions.map(o => o.id)).toEqual(["slow", "medium", "fast"]);
+      expect(result.current.feeStrategyOptions.every(o => o.kind === "preset")).toBe(true);
+      expect(result.current.feeStrategyOptions[1].sublabelFiat).toBe("$2.00");
+    });
+
+    it("falls back to fallbackPresetIds when feePresetOptions is empty", () => {
+      mockedSendFeatures.getFeePresetOptions.mockReturnValue([]);
+      mockedSendFeatures.getFeePresetFallbackIds.mockReturnValue(["slow", "medium", "fast"]);
+      mockedSendFeatures.shouldEstimateFeePresetsWithBridge.mockReturnValue(true);
+
+      const { result } = renderCore({ uiConfig: { hasFeePresets: true } });
+
+      expect(result.current.feeStrategyOptions.map(o => o.id)).toEqual(["slow", "medium", "fast"]);
+    });
+
+    it("builds a single default option when the descriptor declares hasDefaultStrategy", () => {
+      const { result } = renderCore({
+        uiConfig: { hasFeePresets: false, hasCustomFees: true, hasDefaultStrategy: true },
+      });
+
+      expect(result.current.feeStrategyOptions).toEqual([
+        { id: "default", kind: "default", sublabelFiat: null, sublabelLegend: null },
+      ]);
+    });
+
+    it("is empty when there are no presets and the descriptor has no default strategy", () => {
+      const { result } = renderCore({
+        uiConfig: { hasFeePresets: false, hasCustomFees: false, hasDefaultStrategy: false },
+      });
+
+      expect(result.current.feeStrategyOptions).toEqual([]);
+    });
+
+    it("is empty when custom fees exist but the descriptor has no default strategy", () => {
+      const { result } = renderCore({
+        uiConfig: { hasFeePresets: false, hasCustomFees: true, hasDefaultStrategy: false },
+      });
+
+      expect(result.current.feeStrategyOptions).toEqual([]);
+    });
+
+    it("never includes custom or coinControl entries", () => {
+      const { result } = renderCore({
+        uiConfig: { hasFeePresets: true, hasCustomFees: true, hasCoinControl: true },
+      });
+
+      expect(result.current.feeStrategyOptions.some(o => (o.kind as string) === "custom")).toBe(
+        false,
+      );
+      expect(
+        result.current.feeStrategyOptions.some(o => (o.kind as string) === "coinControl"),
+      ).toBe(false);
+    });
+  });
+
+  describe("state matrix: (hasFeePresets, hasCustomFees, hasCoinControl, hasDefaultStrategy) x feesStrategy", () => {
+    const boolCombos: ReadonlyArray<{
+      hasFeePresets: boolean;
+      hasCustomFees: boolean;
+      hasDefaultStrategy: boolean;
+    }> = [
+      { hasFeePresets: true, hasCustomFees: true, hasDefaultStrategy: false },
+      { hasFeePresets: true, hasCustomFees: false, hasDefaultStrategy: false },
+      { hasFeePresets: false, hasCustomFees: true, hasDefaultStrategy: true },
+      { hasFeePresets: false, hasCustomFees: true, hasDefaultStrategy: false },
+      { hasFeePresets: false, hasCustomFees: false, hasDefaultStrategy: true },
+      { hasFeePresets: false, hasCustomFees: false, hasDefaultStrategy: false },
+    ];
+    const coinControlCombos = [true, false];
+    const feesStrategies: ReadonlyArray<"medium" | "custom" | undefined> = [
+      "medium",
+      "custom",
+      undefined,
+    ];
+
+    for (const { hasFeePresets, hasCustomFees, hasDefaultStrategy } of boolCombos) {
+      for (const hasCoinControl of coinControlCombos) {
+        for (const feesStrategy of feesStrategies) {
+          const label = `hasFeePresets=${hasFeePresets} hasCustomFees=${hasCustomFees} hasCoinControl=${hasCoinControl} hasDefaultStrategy=${hasDefaultStrategy} feesStrategy=${feesStrategy ?? "undefined"}`;
+
+          it(`[${label}] satisfies the selection + presence invariants`, () => {
+            const { result } = renderCore({
+              uiConfig: { hasFeePresets, hasCustomFees, hasCoinControl, hasDefaultStrategy },
+              transaction: { feesStrategy },
+            });
+
+            const { feeStrategyOptions, selectedFeeStrategyId } = result.current;
+            const achievableIds = feeStrategyOptions.map(o => o.id);
+
+            // Exactly-one-or-zero-selected invariant.
+            const isEmpty = selectedFeeStrategyId === "";
+            const isAchievablePreset = achievableIds.includes(selectedFeeStrategyId);
+            const isAchievableCustom = selectedFeeStrategyId === "custom" && hasCustomFees;
+            expect(isEmpty || isAchievablePreset || isAchievableCustom).toBe(true);
+
+            // default option present iff hasDefaultStrategy AND there are no presets — the preset and
+            // default-strategy paths are mutually exclusive in feeStrategyOptions.
+            const hasDefaultOption = feeStrategyOptions.some(o => o.kind === "default");
+            expect(hasDefaultOption).toBe(hasDefaultStrategy && !hasFeePresets);
+
+            // preset options present iff hasFeePresets (given ≥1 preset/fallback is always mocked).
+            const hasPresetOption = feeStrategyOptions.some(o => o.kind === "preset");
+            expect(hasPresetOption).toBe(hasFeePresets);
+
+            // hasCustomFees / hasCoinControl mirror uiConfig.
+            expect(result.current.hasCustomFees).toBe(hasCustomFees);
+            expect(result.current.hasCoinControl).toBe(hasCoinControl);
+          });
+        }
+      }
+    }
   });
 });

@@ -7,11 +7,10 @@ import {
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { sendFeatures } from "../../../bridge/descriptor/send/features";
-import type { FeePresetOption } from "../../../bridge/descriptor/types";
 import { useAccountBridge } from "../../../bridge/useAccountBridge";
 import type { Transaction, TransactionStatus } from "../../../coin-modules/transaction-types";
 import type { SendFlowTransactionActions, SendFlowUiConfig } from "../types";
-import { buildFeePresetLegendMap, type FeePresetLegendMap } from "../utils/feePresetLegends";
+import { buildFeePresetLegendMap } from "../utils/feePresetLegends";
 import { asFeesStrategy } from "../utils/feesStrategy";
 import {
   formatCombinedFeesValue,
@@ -20,9 +19,17 @@ import {
   getSelectedPresetFiatValue,
   resolveFeeDisplayContext,
 } from "../utils/networkFeesDisplay";
-import { useFeePresetFiatValuesCore, type FeeFiatMap } from "./useFeePresetFiatValuesCore";
+import { useFeePresetFiatValuesCore } from "./useFeePresetFiatValuesCore";
 
-export type { FeeFiatMap, FeePresetLegendMap };
+export type { FeeFiatMap } from "./useFeePresetFiatValuesCore";
+export type { FeePresetLegendMap } from "../utils/feePresetLegends";
+
+export type FeeStrategyOption = Readonly<{
+  id: string;
+  kind: "preset" | "default";
+  sublabelFiat: string | null;
+  sublabelLegend: string | null;
+}>;
 
 export type UseNetworkFeesCoreParams = Readonly<{
   account: AccountLike;
@@ -40,15 +47,15 @@ export type UseNetworkFeesCoreParams = Readonly<{
 export type UseNetworkFeesCoreResult = Readonly<{
   mainAccount: Account;
   accountCurrency: ReturnType<typeof getAccountCurrency>;
-  feePresetOptions: readonly FeePresetOption[];
-  fiatByPreset: FeeFiatMap;
-  legendByPreset: FeePresetLegendMap;
   selectedFeeStrategy: string | null;
   selectedPresetFiatValue: string | null;
-  onSelectFeeStrategy: (strategy: string) => void;
   displayFeesValue: string;
   formattedEstimatedFeesFiat: string | null;
-  showFeePresets: boolean;
+  selectedFeeStrategyId: string;
+  feeStrategyOptions: readonly FeeStrategyOption[];
+  onSelectFeeStrategyId: (id: string) => void;
+  hasCustomFees: boolean;
+  hasCoinControl: boolean;
   showFeeCurrencyAmount: boolean;
 }>;
 
@@ -146,25 +153,68 @@ export function useNetworkFeesCore({
   const selectedFeeStrategy = transaction.feesStrategy ?? null;
   const selectedPresetFiatValue = getSelectedPresetFiatValue(selectedFeeStrategy, fiatByPreset);
 
-  const onSelectFeeStrategy = useCallback(
-    (strategy: string) => {
-      updateTransactionWithPatch({ feesStrategy: asFeesStrategy(strategy) });
+  const feeStrategyOptions = useMemo<readonly FeeStrategyOption[]>(() => {
+    if (!uiConfig.hasFeePresets) {
+      return uiConfig.hasDefaultStrategy
+        ? [{ id: "default", kind: "default", sublabelFiat: null, sublabelLegend: null }]
+        : [];
+    }
+
+    const presetIds =
+      presetEstimation.feePresetOptions.length > 0
+        ? presetEstimation.feePresetOptions.map(option => option.id)
+        : (presetEstimation.fallbackPresetIds ?? []);
+
+    return presetIds.map(id => ({
+      id,
+      kind: "preset" as const,
+      sublabelFiat: fiatByPreset[id] ?? null,
+      sublabelLegend: legendByPreset[id] ?? null,
+    }));
+  }, [
+    fiatByPreset,
+    legendByPreset,
+    presetEstimation.fallbackPresetIds,
+    presetEstimation.feePresetOptions,
+    uiConfig.hasDefaultStrategy,
+    uiConfig.hasFeePresets,
+  ]);
+
+  const selectedFeeStrategyId = useMemo(() => {
+    const presetIds = feeStrategyOptions.filter(o => o.kind === "preset").map(o => o.id);
+    const hasDefault = feeStrategyOptions.some(o => o.kind === "default");
+
+    if (selectedFeeStrategy === "custom" && uiConfig.hasCustomFees) return "custom";
+    if (selectedFeeStrategy && presetIds.includes(selectedFeeStrategy)) return selectedFeeStrategy;
+    if (presetIds.length > 0) return presetIds.includes("medium") ? "medium" : presetIds[0];
+    if (hasDefault) return "default";
+    return "";
+  }, [feeStrategyOptions, selectedFeeStrategy, uiConfig.hasCustomFees]);
+
+  const onSelectFeeStrategyId = useCallback(
+    (id: string) => {
+      if (id === "default") {
+        const patch = sendFeatures.getDefaultStrategyPatch(accountCurrency);
+        updateTransactionWithPatch((patch ?? {}) as Partial<Transaction>);
+      } else {
+        updateTransactionWithPatch({ feesStrategy: asFeesStrategy(id) });
+      }
     },
-    [updateTransactionWithPatch],
+    [accountCurrency, updateTransactionWithPatch],
   );
 
   return {
     mainAccount,
     accountCurrency,
-    feePresetOptions: presetEstimation.feePresetOptions,
-    fiatByPreset,
-    legendByPreset,
     selectedFeeStrategy,
     selectedPresetFiatValue,
-    onSelectFeeStrategy,
     displayFeesValue,
     formattedEstimatedFeesFiat,
-    showFeePresets: uiConfig.hasFeePresets,
+    selectedFeeStrategyId,
+    feeStrategyOptions,
+    onSelectFeeStrategyId,
+    hasCustomFees: uiConfig.hasCustomFees,
+    hasCoinControl: uiConfig.hasCoinControl,
     showFeeCurrencyAmount,
   };
 }

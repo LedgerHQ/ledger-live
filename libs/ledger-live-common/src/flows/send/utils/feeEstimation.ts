@@ -32,22 +32,33 @@ export function getFeesStrategyForPreset(presetId: string): Transaction["feesStr
   return null;
 }
 
+/**
+ * Superset of transaction fields that carry a user-entered fee override across
+ * families (EVM gas fields, UTXO fee rate, generic `fees`/`customFees`, ...).
+ * Clearing all of them reverts a transaction to network-estimated fees.
+ * Does NOT include any `feeCurrency*` field: the fee-paying asset is a
+ * separate axis and is preserved across this clear.
+ */
+export function clearFeeOverridesPatch(): Partial<Transaction> {
+  return {
+    customGasLimit: undefined,
+    gasPrice: undefined,
+    maxFeePerGas: undefined,
+    maxPriorityFeePerGas: undefined,
+    feePerByte: undefined,
+    customFeeRate: undefined,
+    fees: undefined,
+    customFees: undefined,
+  } as Partial<Transaction>;
+}
+
 export function buildPresetEstimationPatch(
   feesStrategy: Transaction["feesStrategy"],
 ): Partial<Transaction> {
   const patch: Partial<Transaction> = { feesStrategy };
 
   if (feesStrategy && feesStrategy !== "custom") {
-    Object.assign(patch, {
-      customGasLimit: undefined,
-      gasPrice: undefined,
-      maxFeePerGas: undefined,
-      maxPriorityFeePerGas: undefined,
-      feePerByte: undefined,
-      customFeeRate: undefined,
-      fees: undefined,
-      customFees: undefined,
-    } as Partial<Transaction>);
+    Object.assign(patch, clearFeeOverridesPatch());
   }
 
   return patch;
