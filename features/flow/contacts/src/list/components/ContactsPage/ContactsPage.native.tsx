@@ -1,8 +1,9 @@
 import React, { useCallback } from "react";
 import { SectionList, type SectionListRenderItemInfo } from "react-native";
 import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
-import type { ContactsListItem, ContactsPageProps } from "../..";
+import type { ContactsListItem, ContactsPageNativeProps } from "../../types";
 import { ContactsListHeader } from "./ContactsListHeader.native";
+import { ContactsSearchNoResults } from "./ContactsSearchNoResults.native";
 import { ContactsSavedContactListItem } from "./ContactsSavedContactListItem.native";
 import { ContactsSectionHeader } from "./ContactsSectionHeader.native";
 
@@ -13,9 +14,13 @@ export function ContactsPage({
   onOpenContact,
   onAddContact,
   ledgerSyncStatus,
-}: ContactsPageProps): React.JSX.Element {
+  searchQuery,
+  onSearchQueryChange,
+}: ContactsPageNativeProps): React.JSX.Element {
   const isPopulated = viewModel.displayMode === "populated";
+  const hasNoResults = "status" in viewModel && viewModel.status === "no-results";
   const isLedgerSyncChecking = ledgerSyncStatus === "checking";
+  const me = "me" in viewModel ? viewModel.me : undefined;
   const renderContact = useCallback(
     ({ item }: SectionListRenderItemInfo<ContactsListItem>) => (
       <ContactsSavedContactListItem
@@ -29,14 +34,50 @@ export function ContactsPage({
 
   const listHeader = (
     <ContactsListHeader
-      me={viewModel.me}
+      me={me}
       labels={labels}
       meAvatarSrc={meAvatarSrc}
-      showAddContact={!isPopulated}
+      showAddContact={!isPopulated && !hasNoResults}
+      searchQuery={searchQuery}
+      onSearchQueryChange={onSearchQueryChange}
       onOpenContact={onOpenContact}
       onAddContact={onAddContact}
     />
   );
+
+  let content: React.JSX.Element;
+
+  if (isPopulated) {
+    content = (
+      <Box lx={{ flex: 1 }}>
+        <SectionList
+          testID="contacts-list"
+          sections={viewModel.sections}
+          keyExtractor={contact => contact.contactId}
+          renderItem={renderContact}
+          renderSectionHeader={({ section }) => <ContactsSectionHeader title={section.title} />}
+          ListHeaderComponent={listHeader}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingTop: 8,
+            paddingBottom: 24,
+          }}
+          showsVerticalScrollIndicator={false}
+          keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps="handled"
+        />
+      </Box>
+    );
+  } else if (hasNoResults) {
+    content = (
+      <Box lx={{ flex: 1, paddingHorizontal: "s16", paddingTop: "s8" }}>
+        {listHeader}
+        <ContactsSearchNoResults message={labels.searchNoResults} />
+      </Box>
+    );
+  } else {
+    content = <Box lx={{ paddingHorizontal: "s16", paddingTop: "s8" }}>{listHeader}</Box>;
+  }
 
   return (
     <Box testID="contacts-screen" lx={{ flex: 1, backgroundColor: "base" }}>
@@ -47,26 +88,7 @@ export function ContactsPage({
         importantForAccessibility={isLedgerSyncChecking ? "no-hide-descendants" : "auto"}
         accessibilityElementsHidden={isLedgerSyncChecking}
       >
-        {isPopulated ? (
-          <Box lx={{ flex: 1 }}>
-            <SectionList
-              testID="contacts-list"
-              sections={viewModel.sections}
-              keyExtractor={contact => contact.contactId}
-              renderItem={renderContact}
-              renderSectionHeader={({ section }) => <ContactsSectionHeader title={section.title} />}
-              ListHeaderComponent={listHeader}
-              contentContainerStyle={{
-                paddingHorizontal: 16,
-                paddingTop: 8,
-                paddingBottom: 24,
-              }}
-              showsVerticalScrollIndicator={false}
-            />
-          </Box>
-        ) : (
-          <Box lx={{ paddingHorizontal: "s16", paddingTop: "s8" }}>{listHeader}</Box>
-        )}
+        {content}
       </Box>
       {isLedgerSyncChecking ? (
         <Box

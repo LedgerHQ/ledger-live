@@ -165,14 +165,10 @@ describe("createContactsSearchViewModel", () => {
   });
 
   it("should return case-insensitive saved contact matches", () => {
-    expect(createContactsSearchViewModel(me, contacts, "bEn")).toMatchObject({
+    const viewModel = createContactsSearchViewModel(me, contacts, "bEn");
+
+    expect(viewModel).toMatchObject({
       status: "results",
-      me: {
-        contactId: "contact-me",
-        name: "Me",
-        initial: "M",
-        addressCount: 0,
-      },
       savedContacts: [
         {
           contactId: "contact-ben",
@@ -182,17 +178,34 @@ describe("createContactsSearchViewModel", () => {
         },
       ],
     });
+    expect("me" in viewModel).toBe(false);
   });
 
-  it("should return no results when only Me matches the query", () => {
+  it("should return Me when its name matches the query", () => {
     expect(createContactsSearchViewModel(me, contacts, "Me")).toMatchObject({
-      status: "no-results",
+      status: "results",
       me: {
         contactId: "contact-me",
         name: "Me",
         initial: "M",
         addressCount: 0,
       },
+      savedContacts: [],
+    });
+  });
+
+  it("should match Me using its renamed value", () => {
+    const renamedMe = mockMeContact({ name: "Toto" });
+
+    expect(createContactsSearchViewModel(renamedMe, [renamedMe], "tOtO")).toMatchObject({
+      status: "results",
+      me: {
+        contactId: "contact-me",
+        name: "Toto",
+        initial: "T",
+        addressCount: 0,
+      },
+      savedContacts: [],
     });
   });
 });

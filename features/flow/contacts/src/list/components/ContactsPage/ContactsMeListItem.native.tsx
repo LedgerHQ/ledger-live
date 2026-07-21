@@ -30,7 +30,7 @@ export function ContactsMeListItem({
       lx={{ marginHorizontal: "-s8" }}
     >
       <ListItemLeading>
-        <Avatar size="md" appearance="gray" src={avatarSrc} alt={contact.name} />
+        <Avatar size="sm" appearance="gray" src={avatarSrc} alt={contact.name} />
         <ListItemContent>
           <ListItemTitle>{contact.name}</ListItemTitle>
           <ListItemDescription>{addressCountLabel}</ListItemDescription>

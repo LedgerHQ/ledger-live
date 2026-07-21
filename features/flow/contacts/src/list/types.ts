@@ -27,15 +27,18 @@ export type PopulatedContactsListViewModel = Readonly<{
 
 export type ContactsListViewModel = EmptyContactsListViewModel | PopulatedContactsListViewModel;
 
-export type ContactsSearchResultsViewModel = PopulatedContactsListViewModel &
-  Readonly<{
-    status: "results";
-  }>;
+export type ContactsSearchResultsViewModel = Readonly<{
+  displayMode: "populated";
+  status: "results";
+  me?: ContactsListItem;
+  savedContacts: readonly ContactsListItem[];
+  sections: readonly ContactsListSection[];
+}>;
 
-export type ContactsSearchNoResultsViewModel = EmptyContactsListViewModel &
-  Readonly<{
-    status: "no-results";
-  }>;
+export type ContactsSearchNoResultsViewModel = Readonly<{
+  displayMode: "empty";
+  status: "no-results";
+}>;
 
 export type ContactsSearchViewModel =
   | ContactsSearchResultsViewModel
@@ -61,18 +64,27 @@ export type ContactsLedgerSyncIntroduction = Readonly<{
   onDismiss: () => void;
 }>;
 
-export type ContactsPageProps = Readonly<{
+export type ContactsPageSharedProps = Readonly<{
   viewModel: ContactsPageViewModel;
   labels: ContactsPageLabels;
   searchQuery: string;
   meAvatarSrc: string;
-  onSearchInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  onOpenMe: (contactId: ContactId) => void;
   onOpenContact: (contactId: ContactId) => void;
   onAddContact: () => void;
   ledgerSyncStatus: ContactsLedgerSyncStatus;
   ledgerSyncIntroduction: ContactsLedgerSyncIntroduction;
 }>;
+
+export type ContactsPageProps = ContactsPageSharedProps &
+  Readonly<{
+    onSearchInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    onOpenMe: (contactId: ContactId) => void;
+  }>;
+
+export type ContactsPageNativeProps = ContactsPageSharedProps &
+  Readonly<{
+    onSearchQueryChange: (query: string) => void;
+  }>;
 
 export function isPopulatedContactsListViewModel(
   viewModel: ContactsPageViewModel,
