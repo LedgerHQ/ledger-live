@@ -252,4 +252,53 @@ export default class SendPage {
       await tapByElement(feeBtn);
     }
   }
+
+  @Step("Set recipient in new send flow and confirm address")
+  async setRecipientAndContinueNewFlow(address: string | undefined, memoTag?: string) {
+    if (!address) throw new Error("Recipient address is not set");
+    await typeTextById("recipient-input", address);
+
+    if (memoTag === "noTag") {
+      // Some currencies show a memo field that must be skipped; others don't have one at all
+      if (await IsIdVisible("new-send-flow-skip-memo-link")) {
+        await tapById("new-send-flow-skip-memo-link");
+        await tapById("new-send-flow-skip-memo-confirm");
+      } else {
+        await tapById("new-send-flow-address-confirm");
+      }
+    } else if (memoTag) {
+      // fill the memo value, then address confirm will appear
+      await waitForElementById("send-memo-input");
+      await typeTextById("send-memo-input", memoTag);
+      await tapById("new-send-flow-address-confirm");
+    } else {
+      // no memo — address confirm appears directly
+      await tapById("new-send-flow-address-confirm");
+    }
+  }
+
+  @Step("Set amount using number keyboard in new send flow")
+  async setAmountNewFlow(amount: string) {
+    for (const char of amount) {
+      const keyId = char === "." ? "keyboard-key-decimal" : `keyboard-key-${char}`;
+      await tapById(keyId);
+    }
+  }
+
+  @Step("Set amount and tap Review in new send flow")
+  async setAmountAndReviewNewFlow(amount: string) {
+    await this.setAmountNewFlow(amount);
+    await tapById("enabled-amount-continue-button");
+  }
+
+  @Step("Wait for device signature prompt in new send flow")
+  async waitForSignaturePrompt() {
+    await waitForElementById("send-signature-prompt");
+  }
+
+  @Step("Wait for success screen and tap view transaction in new send flow")
+  async successViewDetails() {
+    await waitForElementById("send-confirmation-success-view-transaction");
+    await tapById("send-confirmation-success-view-transaction");
+  }
 }

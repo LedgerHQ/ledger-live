@@ -94,6 +94,7 @@ export function AddressMatchedSection({
               onSelect={() => onSelect(account.freshAddress)}
               showSendTo
               disabled={isSanctioned || hasBridgeError}
+              testID="new-send-flow-address-confirm"
             />
           ))}
 
@@ -106,6 +107,7 @@ export function AddressMatchedSection({
             onSelect={() => onSelect(resolvedAddress ?? searchValue, ensName)}
             showSendTo
             disabled={isSanctioned || hasBridgeError}
+            testID="new-send-flow-address-confirm"
           />
         )}
 
@@ -123,6 +125,7 @@ export function AddressMatchedSection({
             }
             showSendTo
             disabled={isSanctioned || hasBridgeError}
+            testID="new-send-flow-address-confirm"
           />
         )}
 
@@ -135,6 +138,7 @@ export function AddressMatchedSection({
             onSelect={() => onSelect(searchValue)}
             showSendTo
             disabled={false}
+            testID="new-send-flow-address-confirm"
           />
         )}
 

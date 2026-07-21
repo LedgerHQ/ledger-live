@@ -43,6 +43,17 @@ export const FF_LWM_WALLET_40_Q2 = {
   },
 } satisfies OptionalFeatureMap;
 
+export const FF_NEW_SEND_FLOW_ENABLED = {
+  newSendFlow: {
+    enabled: true,
+    params: {
+      families: ["cosmos", "polkadot"],
+      excludedCurrencyIds: [],
+    },
+  },
+  useDeviceActionSignatureSend: { enabled: true }, // Note: Prevent usage of DIE, which is not Speculos ready yet.
+} satisfies OptionalFeatureMap;
+
 export const getMergedFeatureFlags = ({
   testFlags,
 }: { testFlags?: OptionalFeatureMap } = {}): OptionalFeatureMap => {

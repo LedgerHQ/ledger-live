@@ -16,6 +16,7 @@ export type SendTestOptions = {
   featureFlags?: InitOptions["featureFlags"];
   userdata?: InitOptions["userdata"];
   liveDataOptions?: LiveDataCommandOptions;
+  newSendFlow?: boolean;
 };
 
 const beforeAllFunction = async (transaction: TransactionType, options?: SendTestOptions) => {
@@ -114,12 +115,24 @@ export function runSendTest(
 
     it(`Send from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName}`, async () => {
       const addressToCredit = transaction.accountToCredit.address;
-      await app.send.navigateToSendScreen(transaction.accountToDebit.accountName);
-      await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
-      await app.send.setAmountAndContinue(transaction.amount);
-
       const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
-      await verifySendAndOperationDetails(transaction, amountWithCode);
+      await app.send.navigateToSendScreen(transaction.accountToDebit.accountName);
+
+      if (options?.newSendFlow) {
+        await app.send.setRecipientAndContinueNewFlow(addressToCredit, transaction.memoTag);
+        await app.send.setAmountAndReviewNewFlow(transaction.amount);
+        await app.send.waitForSignaturePrompt();
+        await app.speculos.signSendTransaction(transaction);
+        await app.send.successViewDetails();
+        await app.operationDetails.waitForOperationDetails();
+        await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
+        await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
+        await app.operationDetails.checkTransactionType("OUT");
+      } else {
+        await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
+        await app.send.setAmountAndContinue(transaction.amount);
+        await verifySendAndOperationDetails(transaction, amountWithCode);
+      }
     });
   });
 }
