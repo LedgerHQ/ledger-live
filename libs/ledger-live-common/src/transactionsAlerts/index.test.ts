@@ -120,4 +120,21 @@ describe("reconcileTransactionsAlertsAddresses", () => {
     expect(accountsToRemove).toHaveLength(1);
     expect(accountsToRemove[0].freshAddress).toBe("0x01");
   });
+
+  it("should reject when an address cannot be registered", async () => {
+    const error = new Error("Chainwatch unavailable");
+    jest
+      .mocked(MockedChainwatchAccountManager.prototype.registerNewAccountsAddresses)
+      .mockRejectedValueOnce(error);
+
+    await expect(
+      reconcileTransactionsAlertsAddresses(
+        "user-id",
+        "https://chainwatch",
+        [network],
+        [makeAccount("account", "0x01")],
+        [],
+      ),
+    ).rejects.toBe(error);
+  });
 });

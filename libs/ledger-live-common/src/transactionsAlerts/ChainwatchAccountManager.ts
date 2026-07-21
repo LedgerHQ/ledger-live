@@ -1,4 +1,5 @@
 import network from "@ledgerhq/live-network/network";
+import { LedgerAPI4xx } from "@ledgerhq/errors";
 import type {
   ChainwatchNetwork,
   ChainwatchAccount,
@@ -13,10 +14,10 @@ class ChainwatchAccountManager {
   network: ChainwatchNetwork;
   suffixes: string[];
 
-  constructor(chainwatchBaseUrl: string, userId: string, network: ChainwatchNetwork) {
+  constructor(chainwatchBaseUrl: string, userId: string, chainwatchNetwork: ChainwatchNetwork) {
     this.chainwatchBaseUrl = chainwatchBaseUrl;
     this.userId = userId;
-    this.network = network;
+    this.network = chainwatchNetwork;
     this.suffixes = [];
   }
 
@@ -27,32 +28,25 @@ class ChainwatchAccountManager {
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
       });
       return data;
-    } catch {
-      return;
+    } catch (error: unknown) {
+      if (error instanceof LedgerAPI4xx && error.status === 404) return;
+      throw error;
     }
   }
 
   async removeChainwatchAccount() {
-    try {
-      await network({
-        method: "DELETE",
-        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
-      });
-    } catch {
-      return;
-    }
+    await network({
+      method: "DELETE",
+      url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
+    });
   }
 
   async registerNewChainwatchAccount() {
-    try {
-      const { data } = await network({
-        method: "PUT",
-        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
-      });
-      return data;
-    } catch {
-      return;
-    }
+    const { data } = await network({
+      method: "PUT",
+      url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
+    });
+    return data;
   }
 
   getAccountAddress(account: Account) {
@@ -68,71 +62,51 @@ class ChainwatchAccountManager {
   }
 
   async registerNewAccountsAddresses(accountsToRegister: Account[]) {
-    try {
-      const addresses = accountsToRegister
-        .filter(
-          account => this.getAccountAddress(account) && !this.accountAlreadySubscribed(account),
-        )
-        .map(account => this.getAccountAddress(account));
-      if (addresses.length > 0) {
-        await network({
-          method: "PUT",
-          url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
-          data: addresses,
-        });
-      }
-    } catch {
-      return;
+    const addresses = accountsToRegister
+      .filter(account => this.getAccountAddress(account) && !this.accountAlreadySubscribed(account))
+      .map(account => this.getAccountAddress(account));
+    if (addresses.length > 0) {
+      await network({
+        method: "PUT",
+        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
+        data: addresses,
+      });
     }
   }
 
   async removeAccountsAddresses(accountsToRemove: Account[]) {
-    try {
-      const addresses = accountsToRemove
-        .filter(
-          account => this.getAccountAddress(account) && this.accountAlreadySubscribed(account),
-        )
-        .map(account => this.getAccountAddress(account));
-      if (addresses.length > 0) {
-        await network({
-          method: "DELETE",
-          url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
-          data: addresses,
-        });
-      }
-    } catch {
-      return;
+    const addresses = accountsToRemove
+      .filter(account => this.getAccountAddress(account) && this.accountAlreadySubscribed(account))
+      .map(account => this.getAccountAddress(account));
+    if (addresses.length > 0) {
+      await network({
+        method: "DELETE",
+        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
+        data: addresses,
+      });
     }
   }
 
   async registerNewMonitor(monitor: ChainwatchMonitorType) {
-    try {
-      await network({
-        method: "PUT",
-        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/monitor/`,
-        data: {
-          confirmations: this.network.nbConfirmations,
-          type: monitor,
-        },
-      });
-    } catch {
-      return;
-    }
+    await network({
+      method: "PUT",
+      url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/monitor/`,
+      data: {
+        confirmations: this.network.nbConfirmations,
+        type: monitor,
+      },
+    });
   }
 
   async registerNewTarget(target: ChainwatchTargetType) {
-    try {
-      await network({
-        method: "PUT",
-        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/target/`,
-        data: {
-          equipment: this.userId,
-          type: target,
-        },
-      });
-    } catch {
-      return;
-    }
+    await network({
+      method: "PUT",
+      url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/target/`,
+      data: {
+        equipment: this.userId,
+        type: target,
+      },
+    });
   }
 
   async setupChainwatchAccount() {
