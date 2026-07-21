@@ -77,8 +77,9 @@ function extractErrorDetails(value: unknown): {
   message: string;
   cause?: SwapErrorCauseDetails;
 } {
-  if (value instanceof SwapError) {
-    return { message: value.message, cause: value.cause };
+  if ((value as { name?: string })?.name === "SwapError") {
+    const swapVal = value as { message: string; cause?: SwapErrorCauseDetails };
+    return { message: swapVal.message, cause: swapVal.cause };
   }
 
   if (value instanceof Error) {
@@ -132,10 +133,10 @@ export function handleErrors(error: unknown, options: ErrorHandlerOptions = {}):
   }
 
   // Display error to user if handler provided
-  if (error instanceof SwapError && onDisplayError) {
+  if ((error as { name?: string })?.name === "SwapError" && onDisplayError) {
     // Skip displaying "swap003Ignored" errors
     if (cause?.swapCode !== "swap003Ignored") {
-      void onDisplayError(error);
+      void onDisplayError(error as SwapError);
     }
   }
 
@@ -154,8 +155,8 @@ export function isHandledError(error: unknown): boolean {
  * Extracts swap code from error if available
  */
 export function getSwapCode(error: unknown): string | undefined {
-  if (error instanceof SwapError) {
-    return error.cause.swapCode;
+  if ((error as { name?: string })?.name === "SwapError") {
+    return (error as SwapError).cause.swapCode;
   }
   return undefined;
 }

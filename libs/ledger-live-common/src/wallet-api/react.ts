@@ -24,7 +24,6 @@ import {
   setWalletApiIdForAccountId,
   resolveWalletApiSpendableBalance,
 } from "./converters";
-import { AccountPublicKeyUnavailable } from "../errors";
 import { isWalletAPISupportedCurrency } from "./helpers";
 import {
   WalletAPICurrency,
@@ -1261,10 +1260,7 @@ export function useWalletAPIServer({
         // instanceof, per createCustomErrorClass) so it holds even if the error loses its
         // prototype (e.g. serialized to a plain object across a transport).
         const isPublicKeyUnavailable =
-          error instanceof AccountPublicKeyUnavailable ||
-          (typeof error === "object" &&
-            error !== null &&
-            (error as { name?: unknown }).name === "AccountPublicKeyUnavailable");
+          (error as { name?: string } | null | undefined)?.name === "AccountPublicKeyUnavailable";
         if (isPublicKeyUnavailable && uiAccountPublicKeyUnavailable) {
           try {
             const localAccountId = getAccountIdFromWalletAccountId(accountId);
