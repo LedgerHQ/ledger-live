@@ -120,7 +120,16 @@ export function ContactsPage({
         importantForAccessibility={isLedgerSyncChecking ? "no-hide-descendants" : "auto"}
         accessibilityElementsHidden={isLedgerSyncChecking}
       >
-        <Box testID="contacts-fixed-search" lx={{ paddingHorizontal: "s16", paddingTop: "s8" }}>
+        <Box
+          testID="contacts-fixed-search"
+          lx={{
+            zIndex: 1,
+            paddingHorizontal: "s16",
+            paddingTop: "s8",
+            paddingBottom: "s8",
+            backgroundColor: "base",
+          }}
+        >
           <ContactsSearchInput
             placeholder={labels.searchPlaceholder}
             value={searchQuery}

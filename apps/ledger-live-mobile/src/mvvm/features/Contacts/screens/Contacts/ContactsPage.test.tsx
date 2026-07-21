@@ -85,8 +85,10 @@ describe("ContactsPage", () => {
     renderContactsPage("ready", viewModel);
 
     const searchInput = screen.getByTestId("contacts-search-input");
+    const fixedSearch = screen.getByTestId("contacts-fixed-search");
 
-    expect(screen.getByTestId("contacts-fixed-search")).toBeVisible();
+    expect(fixedSearch).toBeVisible();
+    expect(fixedSearch).toHaveStyle({ paddingBottom: 8, zIndex: 1 });
     expect(searchInput).toBeVisible();
     expect(screen.getByTestId("contacts-list")).toBeVisible();
     expect(screen.getByTestId("contacts-list-header")).not.toContainElement(searchInput);
