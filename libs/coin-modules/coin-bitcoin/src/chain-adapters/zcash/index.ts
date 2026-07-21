@@ -435,7 +435,28 @@ const zcashChainAdapter: ChainAdapter = {
     // type: flag ON ⇒ every Zcash send (including Public→Public / transparent
     // t→t) is built and signed as a V5 PCZT here; flag OFF ⇒ fall through to the
     // legacy Bitcoin PSBT path for every send.
-    if (!isZcashShieldedEnabled()) return undefined;
+    //
+    // Exception: shielded-input types ("shielded", "shielded-to-transparent")
+    // spend Orchard notes and have NO transparent inputs. The legacy path cannot
+    // represent note spends at all — it would emit a transparent-only transaction
+    // with a wrong ZIP-244 txid and the network would reject it with "Missing
+    // inputs". Fail immediately with a clear error rather than silently producing
+    // an invalid transaction.
+    if (!isZcashShieldedEnabled()) {
+      if (isZcashTransaction(transaction)) {
+        const { transferType } = transaction;
+        if (transferType === "shielded" || transferType === "shielded-to-transparent") {
+          return new Observable(sub =>
+            sub.error(
+              new Error(
+                `Zcash ${transferType} transactions require the zcashShielded feature to be enabled`,
+              ),
+            ),
+          );
+        }
+      }
+      return undefined;
+    }
 
     // createTransaction() returns a base Bitcoin-family Transaction with no
     // Zcash-specific fields. Until the UI populates the Zcash shape (transferType
@@ -858,7 +879,31 @@ const zcashChainAdapter: ChainAdapter = {
     // signer via createPaymentTransaction; the remaining BitcoinSigner methods
     // (e.g. splitTransaction) continue to come from Btc.
     const dmk = new DmkSignerZcash(transport.dmk, transport.sessionId);
+
+    // Wrap splitTransaction to carry the original raw hex on the returned
+    // object. wallet.signAccountTx discards i.txHex after calling splitTransaction
+    // and only forwards the parsed structure to createPaymentTransaction.
+    // Without the raw bytes, DmkSignerZcash cannot populate
+    // serializedPreviousTransactionOverride, so the device receives a truncated
+    // transaction (Orchard bundle stripped by serializeTransaction) and computes
+    // a wrong ZIP-244 txid — causing "Missing inputs" on broadcast.
+    const baseSplitTransaction = defaultSigner.splitTransaction.bind(defaultSigner);
+
     return Object.assign(defaultSigner, {
+      splitTransaction: (
+        transactionHex: string,
+        isSegwitSupported: boolean | null | undefined,
+        hasExtraData: boolean | null | undefined,
+        additionals: Array<string> | null | undefined,
+      ) => {
+        const result = baseSplitTransaction(
+          transactionHex,
+          isSegwitSupported,
+          hasExtraData,
+          additionals,
+        );
+        return { ...result, rawTxHex: transactionHex };
+      },
       getAddress: dmk.getAddress.bind(dmk),
       getFullViewingKey: dmk.getFullViewingKey.bind(dmk),
       createPaymentTransaction: dmk.createPaymentTransaction.bind(dmk),
