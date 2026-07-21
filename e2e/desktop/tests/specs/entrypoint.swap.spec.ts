@@ -64,13 +64,10 @@ test.describe("Swap flow from different entry point", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.clickAsset(swapEntryPoint.swap.accountToDebit.currency);
-      if (await isAggregatedAssetsEnabled(app.getPage())) {
-        await app
-          .assetDetail(swapEntryPoint.swap.accountToDebit.currency.id)
-          .swapContainer.expectSwapContainerVisible();
-      } else {
-        await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow());
-      }
+      // aggregatedAssets ON opens swap as the AssetDetail embedded rail; otherwise the legacy
+      // asset page's Swap CTA navigates to the full /swap page.
+      const swapSurface = (await isAggregatedAssetsEnabled(app.getPage())) ? "embedded" : "full";
+      await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow(), swapSurface);
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
     },
   );
@@ -111,9 +108,7 @@ test.describe("Swap flow from different entry point", () => {
       await app.marketBanner.clickExploreMarketHeader();
       await app.market.clickCoinRow(swapEntryPoint.swap.accountToDebit.currency.ticker);
       if (await isAggregatedAssetsEnabled(app.getPage())) {
-        await app
-          .assetDetail(swapEntryPoint.swap.accountToDebit.currency.id)
-          .swapContainer.expectSwapContainerVisible();
+        await app.assetDetail.expectMarketInfoVisible();
       } else {
         await app.marketCoin.expectMarketCoinPageToBeVisible(
           swapEntryPoint.swap.accountToDebit.currency.id,
