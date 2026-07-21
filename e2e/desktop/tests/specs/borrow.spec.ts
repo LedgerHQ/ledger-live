@@ -1,4 +1,4 @@
-import { test } from "tests/fixtures/common";
+import test from "tests/fixtures/common";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
