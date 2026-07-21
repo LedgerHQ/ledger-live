@@ -16,8 +16,8 @@ const LOG_TYPE = "hw";
 const initialErrorRemapping = (error: unknown, context?: TraceContext) => {
   let mappedError = error;
 
-  const tse = error as { name?: string; statusCode?: number; message?: string };
-  if (tse.name === "TransportStatusError") {
+  const tse = error as { name?: string; statusCode?: number; message?: string } | null | undefined;
+  if (tse?.name === "TransportStatusError") {
     if (tse.statusCode === 0x6faa) {
       mappedError = new DeviceHalted(tse.message);
     } else if (tse.statusCode === 0x6b00) {
