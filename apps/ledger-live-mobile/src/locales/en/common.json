@@ -10227,6 +10227,11 @@
     "addContact": "Add contact",
     "searchPlaceholder": "Search contact",
     "searchNoResults": "No contact found",
+    "addContactDrawer": {
+      "namePlaceholder": "Contact name",
+      "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
+      "confirmName": "Confirm name"
+    },
     "addressCount_zero": "0 address",
     "addressCount_one": "{{count}} address",
     "addressCount_other": "{{count}} addresses",

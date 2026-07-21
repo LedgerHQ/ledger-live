@@ -50,6 +50,22 @@ function createViewModel({
       activateLabel: "Turn on Ledger Sync",
       onActivate,
     },
+    addContactDrawer: {
+      isOpen: false,
+      isConfirmEnabled: false,
+      isSaving: false,
+      draftName: "",
+      labels: {
+        title: "Add contact",
+        namePlaceholder: "Contact name",
+        namingDisclaimer: "Use a nickname.",
+        confirmName: "Confirm name",
+      },
+      onOpen: jest.fn(),
+      onClose: jest.fn(),
+      onDraftNameChange: jest.fn(),
+      onConfirm: jest.fn(),
+    },
   };
 }
 

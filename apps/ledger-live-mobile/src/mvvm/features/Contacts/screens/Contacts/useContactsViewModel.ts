@@ -7,6 +7,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import { useTranslation } from "~/context/Locale";
+import type { ContactsAddContactDrawerViewModel } from "./ContactsAddContactDrawer/types";
 
 type ContactsLedgerSyncIntroductionSheetProps = Readonly<{
   title: string;
@@ -14,12 +15,18 @@ type ContactsLedgerSyncIntroductionSheetProps = Readonly<{
   onActivate: () => void;
 }>;
 
-export type ContactsViewModel = ContactsPageNativeProps &
+type ContactsPageViewModel = Omit<ContactsPageNativeProps, "onAddContact"> &
   Readonly<{
     ledgerSyncIntroductionSheet: ContactsLedgerSyncIntroductionSheetProps;
   }>;
 
-export function useContactsViewModel(): ContactsViewModel {
+export type ContactsViewModel = ContactsPageViewModel &
+  Pick<ContactsPageNativeProps, "onAddContact"> &
+  Readonly<{
+    addContactDrawer: ContactsAddContactDrawerViewModel;
+  }>;
+
+export function useContactsViewModel(): ContactsPageViewModel {
   const { t } = useTranslation();
   const labels = useMemo<ContactsPageLabels>(
     () => ({
@@ -40,7 +47,6 @@ export function useContactsViewModel(): ContactsViewModel {
   const viewModel = useContactsSearchViewModel(searchQuery);
   const onSearchQueryChange = useCallback((query: string) => setSearchQuery(query), []);
   const onOpenContact = useCallback<ContactsPageNativeProps["onOpenContact"]>(() => undefined, []);
-  const onAddContact = useCallback(() => undefined, []);
   const onDismissIntroduction = useCallback(() => setIsIntroductionDismissed(true), []);
   const onActivateIntroduction = useCallback(() => undefined, []);
 
@@ -57,7 +63,6 @@ export function useContactsViewModel(): ContactsViewModel {
     onSearchQueryChange,
     meAvatarSrc: USER_AVATAR_URL,
     onOpenContact,
-    onAddContact,
     ledgerSyncStatus,
     ledgerSyncIntroduction: {
       isOpen: ledgerSyncStatus === "inactive" && !isIntroductionDismissed,
