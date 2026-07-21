@@ -8,16 +8,13 @@ import { useRightPanelSwapAvailability } from "LLD/components/RightPanel/useRigh
 
 export interface PageViewModelResult {
   readonly pageScrollerRef: (node: HTMLDivElement | null) => void;
-  readonly shouldDisplayBrazePlacement: boolean;
-  readonly pathname: string;
   readonly shouldRenderRightPanel: boolean;
 }
 
 export const usePageViewModel = (): PageViewModelResult => {
   const [scrollerElement, setScrollerElement] = useState<HTMLDivElement | null>(null);
   const { pathname } = useLocation();
-  const { shouldDisplayBrazePlacement, shouldDisplayAggregatedAssets } =
-    useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const isRightPanelEnabled = useRightPanelVisibility();
   const isSwapAvailableForRoute = useRightPanelSwapAvailability(pathname);
 
@@ -57,8 +54,6 @@ export const usePageViewModel = (): PageViewModelResult => {
 
   return {
     pageScrollerRef,
-    shouldDisplayBrazePlacement,
-    pathname,
     shouldRenderRightPanel,
   };
 };
