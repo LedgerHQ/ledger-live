@@ -4,6 +4,7 @@ import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { retryUntilTimeout } from "../../utils/retry";
 import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
+import { DEFAULT_WEB_ELEMENT_INTERVAL } from "../../helpers/elementHelpers";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button (Step 2) appears (the app shows a "1-5 mins" estimate).
@@ -380,7 +381,7 @@ export default class SwapLiveAppPage {
         throw new Error(`Web Element "${this.toAmountInput}" has no quote yet (amount is "${text}")`);
       }
       return text;
-    }, 10000);
+    }, 10000, DEFAULT_WEB_ELEMENT_INTERVAL);
   }
 
   @Step("Retrieve send currency amount value")

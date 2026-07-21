@@ -34,7 +34,7 @@ export const DEFAULT_TIMEOUT = 60000;
 export const VISIBILITY_PROBE_TIMEOUT = 1000;
 export const QUICK_VISIBILITY_PROBE_TIMEOUT = 500;
 
-const DEFAULT_WEB_ELEMENT_INTERVAL = 2000;
+export const DEFAULT_WEB_ELEMENT_INTERVAL = 2000;
 
 export type WaitForElementOptions = {
   errorCheckTimeout?: number;
