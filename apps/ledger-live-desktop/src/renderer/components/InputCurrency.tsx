@@ -143,7 +143,7 @@ function InputCurrency(props: Props) {
     [unit, locale, showAllDigits, subMagnitude, allowZero, value],
   );
 
-  // Synchronously reformat display when value/unit change while not focused
+  // Reformat the display when the value/unit prop changes.
   useLayoutEffect(() => {
     setState(prev => {
       // An external value change (ratio preset, "send max") must win even while

@@ -9,8 +9,8 @@ const gweiUnit = { name: "Gwei", code: "Gwei", magnitude: 9 };
 // Babylon-like unit (magnitude 6) for the percentage-preset scenarios.
 const babyUnit = { name: "Baby", code: "BABY", magnitude: 6 };
 
-// Mirrors the cosmos Amount field: presets live in renderRight and drive the
-// value through onChange, which flows back down as the value prop.
+// Mirrors the cosmos Amount field: presets live in renderRight and set the
+// amount directly (an external change), which flows back in as the value prop.
 function PresetHarness({ delegated }: { delegated: BigNumber }) {
   const [value, setValue] = useState<BigNumber>(delegated);
   const presets = [
