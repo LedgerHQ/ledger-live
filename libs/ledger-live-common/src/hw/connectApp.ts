@@ -207,8 +207,8 @@ export const openAppFromDashboard = (
               }),
             ),
             catchError(e => {
-              const tse = e as { name?: string; statusCode?: number };
-              if (tse.name === "TransportStatusError") {
+              const tse = e as { name?: string; statusCode?: number } | null | undefined;
+              if (tse?.name === "TransportStatusError") {
                 switch (tse.statusCode) {
                   case 0x6984: // No StatusCodes definition
                   case 0x6807: // No StatusCodes definition
@@ -221,7 +221,7 @@ export const openAppFromDashboard = (
                   case 0x5501: // No StatusCodes definition
                     return throwError(() => new UserRefusedOnDevice());
                 }
-              } else if (tse.name === "LockedDeviceError") {
+              } else if (tse?.name === "LockedDeviceError") {
                 // openAppFromDashboard is exported, so LockedDeviceError should be handled here too
                 return of({
                   type: "lockedDevice",
@@ -281,15 +281,15 @@ const derivationLogic = (
     catchError(e => {
       if (!e) return throwError(() => e);
 
-      const tse = e as { name?: string; statusCode?: number };
-      if (tse.name === "BtcUnmatchedApp") {
+      const tse = e as { name?: string; statusCode?: number } | null | undefined;
+      if (tse?.name === "BtcUnmatchedApp") {
         return of<ConnectAppEvent>({
           type: "ask-open-app",
           appName,
         });
       }
 
-      if (tse.name === "TransportStatusError") {
+      if (tse?.name === "TransportStatusError") {
         const statusCode = tse.statusCode;
 
         if (
@@ -310,7 +310,7 @@ const derivationLogic = (
             // this is likely because it's the wrong app (LNS 1.3.1)
             return attemptToQuitApp(transport, appAndVersion);
         }
-      } else if (tse.name === "LockedDeviceError") {
+      } else if (tse?.name === "LockedDeviceError") {
         // derivationLogic is also called inside the catchError of cmd below
         // so it needs to handle LockedDeviceError too
         return of({
@@ -490,8 +490,8 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectAppEve
             });
           }
 
-          const tse2 = e as { name?: string; statusCode?: number };
-          if (tse2.name === "TransportStatusError") {
+          const tse2 = e as { name?: string; statusCode?: number } | null | undefined;
+          if (tse2?.name === "TransportStatusError") {
             switch (tse2.statusCode) {
               case StatusCodes.CLA_NOT_SUPPORTED: // in 1.3.1 dashboard
               case StatusCodes.INS_NOT_SUPPORTED: // in 1.3.1 and bitcoin app
