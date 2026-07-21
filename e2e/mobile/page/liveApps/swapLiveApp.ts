@@ -375,13 +375,19 @@ export default class SwapLiveAppPage {
   @Step("Click on swap max")
   async clickSwapMax() {
     await tapWebElementByTestId(this.swapMaxToggle);
-    await retryUntilTimeout(async () => {
-      const text = await getWebElementText(this.toAmountInput);
-      if (!floatNumberRegex.test(text) || Number(text) === 0) {
-        throw new Error(`Web Element "${this.toAmountInput}" has no quote yet (amount is "${text}")`);
-      }
-      return text;
-    }, 10000, DEFAULT_WEB_ELEMENT_INTERVAL);
+    await retryUntilTimeout(
+      async () => {
+        const text = await getWebElementText(this.toAmountInput);
+        if (!floatNumberRegex.test(text) || Number(text) === 0) {
+          throw new Error(
+            `Web Element "${this.toAmountInput}" has no quote yet (amount is "${text}")`,
+          );
+        }
+        return text;
+      },
+      10000,
+      DEFAULT_WEB_ELEMENT_INTERVAL,
+    );
   }
 
   @Step("Retrieve send currency amount value")
