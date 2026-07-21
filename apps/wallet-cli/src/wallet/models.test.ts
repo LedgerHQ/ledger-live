@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency";
 import { parseShortAccountDescriptor, parseAccountDescriptor, toTokenInfo } from "./models";
 import { XPUB } from "../shared/accountDescriptor/test-fixtures";
 

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { Currency, FiatCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Currency, FiatCurrency } from "@domain/entity-currency";
 import { pnlPercentage, type AssetPnL, type PortfolioPnL } from "@ledgerhq/wallet-pnl";
 
 export const ZERO = new BigNumber(0);

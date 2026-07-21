@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
-import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Currency, TokenCurrency } from "@domain/entity-currency";
 import {
   Button,
   SegmentedControl,

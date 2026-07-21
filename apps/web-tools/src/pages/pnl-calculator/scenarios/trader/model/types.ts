@@ -1,5 +1,5 @@
 import type BigNumber from "bignumber.js";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 
 export type TraderMode = "single" | "multi";
 

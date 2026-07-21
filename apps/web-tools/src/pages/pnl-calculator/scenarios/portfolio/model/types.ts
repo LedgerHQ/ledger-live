@@ -1,6 +1,6 @@
 import type BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import type { AssetPnL, PortfolioPnL } from "@ledgerhq/wallet-pnl";
 
 export type PortfolioErrorKind =

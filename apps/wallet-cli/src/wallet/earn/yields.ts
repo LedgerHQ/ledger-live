@@ -1,6 +1,6 @@
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getWalletApiIdFromAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency";
 import { getCurrencyProviders, getDefiProducts, getGrow, getSolanaValidators } from "./api";
 import type { CurrencyProvider, DefiProduct, GrowItem } from "./api.types";
 import { currencyIdFromNetwork, parseV1, toV0, type Network } from "../../shared/accountDescriptor";

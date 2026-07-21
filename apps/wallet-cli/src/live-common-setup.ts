@@ -17,7 +17,6 @@ import {
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import pkg from "../package.json" with { type: "json" };
-import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 /**
  * Ensure USER_ID is set so DMK firmware distribution salt is stable for this CLI.
@@ -100,7 +99,7 @@ const walletCliLoaders: CoinModuleLoader[] = [
   },
 ];
 
-export const WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS: readonly CryptoCurrencyId[] = [
+export const WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS: readonly string[] = [
   "bitcoin",
   "ethereum",
   "solana",

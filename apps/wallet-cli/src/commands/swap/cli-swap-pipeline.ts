@@ -3,7 +3,7 @@ import type { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
 import { getMainAccount, getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { Account, AccountLike, SignOperationEvent } from "@ledgerhq/types-live";
 import { getCurrencyForAccount } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { BigNumber } from "bignumber.js";
 import { firstValueFrom } from "rxjs";
