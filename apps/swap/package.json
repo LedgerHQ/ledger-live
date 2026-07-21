@@ -23,6 +23,7 @@
     "@callstack/repack": "5.2.5",
     "@react-native/babel-plugin-codegen": "catalog:",
     "@react-native/babel-preset": "catalog:",
+    "babel-plugin-syntax-hermes-parser": "0.29.1",
     "@module-federation/enhanced": "2.5.0",
     "@react-native/community-cli-plugin": "0.79.7",
     "@react-native-community/cli": "catalog:",
