@@ -12,7 +12,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import type { CantonAccount } from "@ledgerhq/coin-canton/types";
 import type { Account } from "@ledgerhq/types-live";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";

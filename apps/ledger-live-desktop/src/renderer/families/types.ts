@@ -9,7 +9,7 @@ import type {
   Currency,
   TokenCurrency,
   ExplorerView,
-} from "@ledgerhq/ledger-wallet-framework/types";
+} from "@domain/entity-currency";
 import {
   Account,
   AnyMessage,

@@ -2,7 +2,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { getValidatorExplorerUrl } from "@ledgerhq/live-common/families/evm/staking/logic";
 import type { StakingValidatorItem } from "@ledgerhq/live-common/families/evm/staking/types";
-import type { CryptoCurrency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency, Unit } from "@domain/entity-currency";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";

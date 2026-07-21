@@ -1,7 +1,7 @@
 import { TFunction } from "i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import type { NavigationSnapshot } from "../hooks/topologyChangeError";
 

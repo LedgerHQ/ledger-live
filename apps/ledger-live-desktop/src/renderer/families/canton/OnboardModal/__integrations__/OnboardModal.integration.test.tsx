@@ -10,7 +10,7 @@ import cantonHandlers, {
 } from "./cantonHandlers";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";
 import coinConfig from "@ledgerhq/coin-canton/config";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/settings";

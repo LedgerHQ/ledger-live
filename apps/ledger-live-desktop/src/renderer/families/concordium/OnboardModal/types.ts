@@ -1,5 +1,5 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import { Account } from "@ledgerhq/types-live";
 import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
 import { TFunction } from "i18next";

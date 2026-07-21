@@ -1,7 +1,7 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { AptosValidator } from "@ledgerhq/live-common/families/aptos/types";
-import type { CryptoCurrency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency, Unit } from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";

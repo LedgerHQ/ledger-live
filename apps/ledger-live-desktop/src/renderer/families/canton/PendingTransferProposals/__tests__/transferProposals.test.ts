@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
+import type { Unit } from "@domain/entity-currency";
 import { BigNumber } from "bignumber.js";
 import type { ProcessedProposal, RawTransferProposal } from "../types";
 import {

@@ -1,4 +1,4 @@
-import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
+import type { Unit } from "@domain/entity-currency";
 import { renderHook, act } from "tests/testSetup";
 import { BigNumber } from "bignumber.js";
 import { useProposalRowViewModel } from "../components/useProposalRowViewModel";

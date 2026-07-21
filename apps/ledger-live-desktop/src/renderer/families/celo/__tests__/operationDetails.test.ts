@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { NATIVE_FEE_CURRENCY_MARKER } from "@ledgerhq/live-common/families/celo/constants";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import type { CeloAccount, CeloOperation } from "@ledgerhq/live-common/families/celo/types";
 

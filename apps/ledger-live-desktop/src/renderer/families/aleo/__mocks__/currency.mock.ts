@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { TokenCurrency } from "@domain/entity-currency";
 
 export const aleoCurrency = getCryptoCurrencyById("aleo");
 

@@ -7,7 +7,7 @@ import { fallbackValidatorGroup } from "@ledgerhq/live-common/families/celo/logi
 import { getCeloTransactionFeeCurrency } from "@ledgerhq/live-common/families/celo/network";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import { CeloAccount, CeloOperation } from "@ledgerhq/live-common/families/celo/types";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { useFindTokenByAddressInCurrencyQuery } from "@domain/api-currency-token";
 import { useQuery } from "@tanstack/react-query";
 import BigNumber from "bignumber.js";

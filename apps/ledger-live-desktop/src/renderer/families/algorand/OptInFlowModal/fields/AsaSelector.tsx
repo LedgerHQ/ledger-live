@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { TFunction } from "i18next";
 import { Trans } from "react-i18next";
-import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { TokenCurrency } from "@domain/entity-currency";
 import { useTokensData } from "@features/platform-currencies";
 import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";
 import Box from "~/renderer/components/Box";

@@ -3,7 +3,7 @@ import {
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 

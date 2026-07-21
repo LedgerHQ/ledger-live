@@ -1,4 +1,4 @@
-import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
+import type { Unit } from "@domain/entity-currency";
 import React from "react";
 import { fireEvent, render, screen } from "tests/testSetup";
 import { View } from "../index";

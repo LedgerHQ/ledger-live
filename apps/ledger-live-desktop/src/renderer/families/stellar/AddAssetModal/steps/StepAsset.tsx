@@ -12,7 +12,7 @@ import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import Alert from "~/renderer/components/Alert";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import AssetSelector, { getAssetObject } from "../fields/AssetSelector";
-import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { TokenCurrency } from "@domain/entity-currency";
 export default function StepAsset({
   account,
   parentAccount,

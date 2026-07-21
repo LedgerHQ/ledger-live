@@ -12,7 +12,7 @@ import { isDefaultValidatorGroup } from "@ledgerhq/live-common/families/celo/log
 import { Trans } from "react-i18next";
 import * as S from "./RevokeVoteRow.styles";
 import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
-import type { CryptoCurrency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency, Unit } from "@domain/entity-currency";
 
 type Props = {
   currency: CryptoCurrency;

@@ -2,7 +2,7 @@
 import React, { useCallback } from "react";
 import { BigNumber } from "bignumber.js";
 import { Operation } from "@ledgerhq/types-live";
-import type { Currency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
+import type { Currency, Unit } from "@domain/entity-currency";
 import { TronAccount, TronOperation, Vote } from "@ledgerhq/live-common/families/tron/types";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { openURL } from "~/renderer/linking";

@@ -1,7 +1,6 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeature } from "@features/platform-feature-flags";
-import type { CryptoCurrencyId } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React, { memo } from "react";
@@ -19,7 +18,7 @@ const EditStuckTransactionPanelBodyHeader = ({ account, parentAccount }: Props) 
   const mainAccount = getMainAccount(account, parentAccount);
   const { enabled: isEditEvmTxEnabled, params } = useFeature("editEvmTx") ?? {};
   const isCurrencySupported =
-    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
+    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as string) || false;
 
   if (!isEditEvmTxEnabled || !isCurrencySupported) {
     return null;
