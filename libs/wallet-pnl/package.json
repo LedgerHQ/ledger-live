@@ -19,7 +19,8 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/ledger-wallet-framework": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-currency-fiat": "workspace:*",
     "@ledgerhq/types-live": "workspace:*",
     "@ledgerhq/types-cryptoassets": "workspace:*",
     "@ledgerhq/live-countervalues": "workspace:*",

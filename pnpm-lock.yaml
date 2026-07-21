@@ -13449,9 +13449,12 @@ importers:
 
   libs/wallet-pnl:
     dependencies:
-      '@ledgerhq/ledger-wallet-framework':
+      '@domain/entity-currency-crypto':
         specifier: workspace:*
-        version: link:../ledger-wallet-framework
+        version: link:../../domain/entity/currency-crypto
+      '@domain/entity-currency-fiat':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency-fiat
       '@ledgerhq/live-countervalues':
         specifier: workspace:*
         version: link:../live-countervalues
