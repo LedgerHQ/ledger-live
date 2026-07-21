@@ -4765,6 +4765,7 @@
       "slow": "Slow",
       "custom": "Custom",
       "customFees": "Custom fees",
+      "defaultNetworkFee": "Default network fee",
       "coinControl": "Coin control",
       "edit": {
         "title": "Choose unit"

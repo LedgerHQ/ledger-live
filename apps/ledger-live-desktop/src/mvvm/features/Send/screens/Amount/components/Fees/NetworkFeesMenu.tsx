@@ -1,35 +1,22 @@
-import React, { useMemo } from "react";
+import React from "react";
 import {
   Menu,
   MenuTrigger,
   MenuContent,
   MenuGroup,
   MenuLabel,
+  MenuRadioGroup,
+  MenuRadioItem,
+  MenuSeparator,
+  MenuItem,
   TooltipTrigger,
   TooltipContent,
   Tooltip,
 } from "@ledgerhq/lumen-ui-react";
-import { ChevronUpDown, Information } from "@ledgerhq/lumen-ui-react/symbols";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import {
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { ChevronUpDown, Information, Check } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "react-i18next";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
-import type { FeePresetOption } from "../../../../hooks/useFeePresetOptions";
-import type { FeeFiatMap } from "../../../../hooks/useFeePresetFiatValues";
-import type { FeePresetLegendMap } from "../../../../hooks/useFeePresetLegends";
-import { FeePresetMenuItems } from "./FeePresetMenuItems";
-import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
-import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
-
-type FeeOptionDisplay = Readonly<{
-  id: string;
-  fiatValue: string | null;
-  legendValue: string | null;
-  disabled?: boolean;
-}>;
+import type { FeeSelectorOption } from "../../types";
 
 type FeesDisplay = Readonly<{
   label: string;
@@ -37,96 +24,34 @@ type FeesDisplay = Readonly<{
   strategyLabel: string;
 }>;
 
-type FeesSelection = Readonly<{
-  selectedStrategy: string | null;
-  onSelectStrategy: (strategy: string) => void;
-}>;
-
-type FeesPresetsData = Readonly<{
-  options: readonly FeePresetOption[];
-  fiatByPreset: FeeFiatMap;
-  legendByPreset: FeePresetLegendMap;
-}>;
-
-type FeesActions = Readonly<{
-  onSelectCustomFees?: () => void;
-  onSelectCoinControl?: () => void;
+type FeesSelector = Readonly<{
+  options: readonly FeeSelectorOption[];
+  selectedId: string;
+  canOpen: boolean;
 }>;
 
 type NetworkFeesMenuProps = Readonly<{
   display: FeesDisplay;
-  selection: FeesSelection;
-  presets: FeesPresetsData;
-  actions?: FeesActions;
+  feeSelector: FeesSelector;
 }>;
 
-export function NetworkFeesMenu({ display, selection, presets, actions }: NetworkFeesMenuProps) {
+export function NetworkFeesMenu({ display, feeSelector }: NetworkFeesMenuProps) {
   const { label: feesLabel, value: feesValue, strategyLabel: feesStrategyLabel } = display;
-  const { selectedStrategy, onSelectStrategy } = selection;
-  const { options: feePresetOptions = [], fiatByPreset = {}, legendByPreset = {} } = presets;
-  const { onSelectCustomFees, onSelectCoinControl } = actions ?? {};
+  const { options, selectedId, canOpen } = feeSelector;
   const { t } = useTranslation();
   const { state } = useSendFlowData();
-  const { account, parentAccount } = state.account;
+  const { account } = state.account;
   const { transaction } = state.transaction;
-  const { currentStep } = useFlowWizard();
 
-  const mainAccount = useMemo(
-    () => (account ? getMainAccount(account, parentAccount ?? undefined) : null),
-    [account, parentAccount],
-  );
-  const currency = useMemo(
-    () => (mainAccount ? getAccountCurrency(mainAccount) : null),
-    [mainAccount],
-  );
-
-  const hasPresetsForCurrency = useMemo(
-    () => (currency ? sendFeatures.hasFeePresets(currency) : false),
-    [currency],
-  );
-  const fallbackPresetIds = useMemo(
-    () =>
-      currency && transaction ? sendFeatures.getFeePresetFallbackIds(currency, transaction) : [],
-    [currency, transaction],
-  );
-
-  const feeOptionsWithFiat = useMemo(() => {
-    const options = feePresetOptions ?? [];
-    if (options.length > 0) {
-      return options.map(option => {
-        return {
-          ...option,
-          fiatValue: fiatByPreset[option.id] ?? null,
-          legendValue: legendByPreset[option.id] ?? null,
-        };
-      });
-    }
-
-    if (hasPresetsForCurrency && fallbackPresetIds.length > 0) {
-      return fallbackPresetIds.map(presetId => {
-        return {
-          id: presetId,
-          fiatValue: fiatByPreset[presetId] ?? null,
-          legendValue: legendByPreset[presetId] ?? null,
-        } satisfies FeeOptionDisplay;
-      });
-    }
-
-    return [];
-  }, [feePresetOptions, fiatByPreset, legendByPreset, hasPresetsForCurrency, fallbackPresetIds]);
-
-  if (!account || !transaction || !mainAccount || !currency) {
+  if (!account || !transaction) {
     return null;
   }
 
-  const hasPresets = sendFeatures.hasFeePresets(currency);
-  const hasCustom =
-    sendFeatures.hasCustomFees(currency) && !!sendFeatures.getCustomFeeConfig(currency);
-  const hasCoinControl = sendFeatures.hasCoinControl(currency);
-  const showCoinControlMenuItem = hasCoinControl && currentStep !== SEND_FLOW_STEP.COIN_CONTROL;
-  const shouldShowFeeRateLegend = sendFeatures.hasFeeRateLegend(currency);
-
-  const hasMenuOptions = hasPresets || hasCustom || hasCoinControl;
+  const strategyOptions = options.filter(
+    option => option.kind === "preset" || option.kind === "default",
+  );
+  const customOption = options.find(option => option.kind === "custom");
+  const coinControlOption = options.find(option => option.kind === "coinControl");
 
   const informationIcon = (
     <Tooltip>
@@ -139,7 +64,7 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
     </Tooltip>
   );
 
-  if (!hasMenuOptions) {
+  if (!canOpen) {
     return (
       <div
         className="flex w-full items-center justify-between mt-8 mb-12"
@@ -181,17 +106,60 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
         <MenuContent className="pointer-events-auto w-256" side="top">
           <MenuGroup>
             <MenuLabel>{feesLabel}</MenuLabel>
-            <FeePresetMenuItems
-              hasPresets={hasPresets}
-              hasCustom={hasCustom}
-              hasCoinControl={showCoinControlMenuItem}
-              selectedStrategy={selectedStrategy}
-              onSelectStrategy={onSelectStrategy}
-              onSelectCustomFees={onSelectCustomFees}
-              onSelectCoinControl={onSelectCoinControl}
-              feeOptionsWithFiat={feeOptionsWithFiat}
-              shouldShowFeeRateLegend={shouldShowFeeRateLegend}
-            />
+            {strategyOptions.length > 0 ? (
+              <MenuRadioGroup
+                value={selectedId}
+                onValueChange={id => {
+                  const option = options.find(o => o.id === id);
+                  option?.onSelect();
+                }}
+              >
+                {strategyOptions.map(option => (
+                  <MenuRadioItem
+                    key={option.id}
+                    value={option.id}
+                    closeOnClick
+                    className="cursor-pointer"
+                    data-testid={`send-fees-preset-${option.id}`}
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-base">{option.label}</span>
+                      {option.sublabel ? (
+                        <span className="body-3 text-muted">{option.sublabel}</span>
+                      ) : null}
+                    </div>
+                  </MenuRadioItem>
+                ))}
+              </MenuRadioGroup>
+            ) : null}
+            {strategyOptions.length > 0 && (customOption || coinControlOption) ? (
+              <MenuSeparator />
+            ) : null}
+            {customOption ? (
+              <MenuItem
+                className="cursor-pointer"
+                data-testid="send-custom-fees-menu-item"
+                onClick={() => {
+                  customOption.onSelect();
+                }}
+              >
+                <div className="flex w-full items-center justify-between">
+                  <span className="text-base">{customOption.label}</span>
+                  {customOption.selected ? <Check size={16} /> : null}
+                </div>
+              </MenuItem>
+            ) : null}
+            {coinControlOption ? (
+              <MenuItem
+                className="cursor-pointer"
+                data-testid="send-coin-control-fees-menu-item"
+                onClick={() => {
+                  coinControlOption.onSelect();
+                }}
+              >
+                {coinControlOption.label}
+              </MenuItem>
+            ) : null}
           </MenuGroup>
         </MenuContent>
       </Menu>

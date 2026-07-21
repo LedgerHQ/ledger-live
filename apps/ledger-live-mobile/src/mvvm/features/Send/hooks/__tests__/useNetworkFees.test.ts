@@ -67,6 +67,7 @@ function buildParams(overrides?: {
     hasFeePresets: false,
     hasCustomFees: false,
     hasCoinControl: false,
+    hasDefaultStrategy: false,
     ...overrides?.uiConfig,
   };
   const transactionActions: SendFlowTransactionActions = {
@@ -88,6 +89,37 @@ function buildParams(overrides?: {
   };
 }
 
+function mockCore(overrides?: {
+  feeStrategyOptions?: ReadonlyArray<{
+    id: string;
+    kind: "preset" | "default";
+    sublabelFiat: string | null;
+    sublabelLegend: string | null;
+  }>;
+  selectedFeeStrategyId?: string;
+  selectedFeeStrategy?: string | null;
+  displayFeesValue?: string;
+  hasCustomFees?: boolean;
+  hasCoinControl?: boolean;
+  onSelectFeeStrategyId?: jest.Mock;
+}) {
+  mockUseNetworkFeesCore.mockReturnValue({
+    feeStrategyOptions: overrides?.feeStrategyOptions ?? [
+      { id: "slow", kind: "preset", sublabelFiat: "$1.00", sublabelLegend: null },
+      { id: "medium", kind: "preset", sublabelFiat: "$2.00", sublabelLegend: null },
+      { id: "fast", kind: "preset", sublabelFiat: "$3.00", sublabelLegend: null },
+    ],
+    selectedFeeStrategyId: overrides?.selectedFeeStrategyId ?? "",
+    selectedFeeStrategy: overrides?.selectedFeeStrategy ?? null,
+    selectedPresetFiatValue: null,
+    onSelectFeeStrategyId: overrides?.onSelectFeeStrategyId ?? jest.fn(),
+    displayFeesValue: overrides?.displayFeesValue ?? "-",
+    formattedEstimatedFeesFiat: null,
+    hasCustomFees: overrides?.hasCustomFees ?? false,
+    hasCoinControl: overrides?.hasCoinControl ?? false,
+  });
+}
+
 describe("useNetworkFees", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -96,23 +128,7 @@ describe("useNetworkFees", () => {
       ticker: "USD",
       units: [{ name: "US Dollar", code: "USD", magnitude: 2 }],
     });
-    mockUseNetworkFeesCore.mockReturnValue({
-      feePresetOptions: [
-        { id: "slow", amount: new BigNumber(1000) },
-        { id: "medium", amount: new BigNumber(2000) },
-        { id: "fast", amount: new BigNumber(3000) },
-      ],
-      fiatByPreset: {
-        slow: "$1.00",
-        medium: "$2.00",
-        fast: "$3.00",
-      },
-      selectedFeeStrategy: null,
-      selectedPresetFiatValue: null,
-      onSelectFeeStrategy: jest.fn(),
-      displayFeesValue: "-",
-      showFeePresets: false,
-    });
+    mockCore();
   });
 
   it("returns the expected mobile view model shape", () => {
@@ -122,34 +138,45 @@ describe("useNetworkFees", () => {
       label: "send.fees.title",
       value: "-",
       strategyLabel: "send.fees.medium",
-      showFeePresets: false,
       selectedFeeStrategy: null,
-      feePresetLabelsOptions: expect.any(Array),
-      uiConfig: { hasCustomFees: false, hasCoinControl: false },
+      displayOptions: expect.any(Array),
+      canOpenSelector: true,
     });
-    expect(result.current.feePresetLabelsOptions).toHaveLength(3);
+    expect(result.current.displayOptions).toHaveLength(3);
   });
 
-  it("maps fee preset options with translated labels and fiat values", () => {
+  it("maps fee strategy options with translated labels and fiat sublabels", () => {
     const { result } = renderHook(() => useNetworkFees(buildParams()));
 
-    expect(result.current.feePresetLabelsOptions[0]).toEqual({
+    expect(result.current.displayOptions[0]).toEqual({
       id: "slow",
+      kind: "preset",
       label: "send.fees.slow",
-      fiatValue: "$1.00",
-      legendValue: null,
+      sublabel: "$1.00",
+      selected: false,
+      onSelect: expect.any(Function),
     });
+  });
+
+  it("marks the option matching selectedFeeStrategyId as selected", () => {
+    mockCore({ selectedFeeStrategyId: "fast", selectedFeeStrategy: "fast" });
+
+    const { result } = renderHook(() =>
+      useNetworkFees(buildParams({ uiConfig: { hasFeePresets: true } })),
+    );
+
+    const fast = result.current.displayOptions.find(o => o.id === "fast");
+    const slow = result.current.displayOptions.find(o => o.id === "slow");
+    expect(fast?.selected).toBe(true);
+    expect(slow?.selected).toBe(false);
   });
 
   it("uses core displayFeesValue and selected strategy label", () => {
-    mockUseNetworkFeesCore.mockReturnValue({
-      feePresetOptions: [],
-      fiatByPreset: {},
+    mockCore({
+      feeStrategyOptions: [],
+      selectedFeeStrategyId: "fast",
       selectedFeeStrategy: "fast",
-      selectedPresetFiatValue: "$3.00",
-      onSelectFeeStrategy: jest.fn(),
       displayFeesValue: "$15.00 USD",
-      showFeePresets: true,
     });
 
     const { result } = renderHook(() =>
@@ -158,38 +185,85 @@ describe("useNetworkFees", () => {
 
     expect(result.current.value).toBe("$15.00 USD");
     expect(result.current.strategyLabel).toBe("send.fees.fast");
-    expect(result.current.showFeePresets).toBe(true);
   });
 
-  it("forwards onSelectCoinControl and onSelectCustomFees", () => {
-    const onSelectCoinControl = jest.fn();
-    const onSelectCustomFees = jest.fn();
+  it("uses the default-network-fee label when selectedFeeStrategyId is 'default' (preset-less coin)", () => {
+    mockCore({
+      feeStrategyOptions: [
+        { id: "default", kind: "default", sublabelFiat: null, sublabelLegend: null },
+      ],
+      selectedFeeStrategyId: "default",
+      selectedFeeStrategy: null,
+    });
+
     const { result } = renderHook(() =>
-      useNetworkFees(buildParams({ onSelectCoinControl, onSelectCustomFees })),
+      useNetworkFees(buildParams({ uiConfig: { hasFeePresets: false, hasCustomFees: true } })),
     );
 
-    expect(result.current.onSelectCoinControl).toBe(onSelectCoinControl);
-    expect(result.current.onSelectCustomFees).toBe(onSelectCustomFees);
+    expect(result.current.strategyLabel).toBe("send.fees.defaultNetworkFee");
   });
 
-  it("delegates onSelectFeeStrategy to the core hook", () => {
-    const onSelectFeeStrategy = jest.fn();
-    mockUseNetworkFeesCore.mockReturnValue({
-      feePresetOptions: [],
-      fiatByPreset: {},
-      selectedFeeStrategy: null,
-      selectedPresetFiatValue: null,
-      onSelectFeeStrategy,
-      displayFeesValue: "-",
-      showFeePresets: false,
-    });
+  it("appends a custom option only when hasCustomFees and onSelectCustomFees are both set", () => {
+    const onSelectCustomFees = jest.fn();
+    mockCore({ hasCustomFees: true });
+
+    const { result } = renderHook(() =>
+      useNetworkFees(buildParams({ onSelectCustomFees, uiConfig: { hasCustomFees: true } })),
+    );
+
+    const custom = result.current.displayOptions.find(o => o.id === "custom");
+    expect(custom).toBeDefined();
+    expect(custom?.kind).toBe("custom");
+
+    custom?.onSelect();
+    expect(onSelectCustomFees).toHaveBeenCalled();
+  });
+
+  it("omits the custom option when onSelectCustomFees is not provided even if hasCustomFees", () => {
+    mockCore({ hasCustomFees: true });
+
+    const { result } = renderHook(() =>
+      useNetworkFees(buildParams({ uiConfig: { hasCustomFees: true } })),
+    );
+
+    expect(result.current.displayOptions.some(o => o.id === "custom")).toBe(false);
+  });
+
+  it("appends a coinControl option only when hasCoinControl and onSelectCoinControl are both set", () => {
+    const onSelectCoinControl = jest.fn();
+    mockCore({ hasCoinControl: true });
+
+    const { result } = renderHook(() =>
+      useNetworkFees(buildParams({ onSelectCoinControl, uiConfig: { hasCoinControl: true } })),
+    );
+
+    const coinControl = result.current.displayOptions.find(o => o.id === "coinControl");
+    expect(coinControl).toBeDefined();
+    expect(coinControl?.selected).toBe(false);
+
+    coinControl?.onSelect();
+    expect(onSelectCoinControl).toHaveBeenCalled();
+  });
+
+  it("canOpenSelector is false when there are no options at all", () => {
+    mockCore({ feeStrategyOptions: [], hasCustomFees: false, hasCoinControl: false });
+
+    const { result } = renderHook(() => useNetworkFees(buildParams()));
+
+    expect(result.current.canOpenSelector).toBe(false);
+    expect(result.current.displayOptions).toHaveLength(0);
+  });
+
+  it("delegates onSelect to the core onSelectFeeStrategyId", () => {
+    const onSelectFeeStrategyId = jest.fn();
+    mockCore({ onSelectFeeStrategyId });
 
     const { result } = renderHook(() => useNetworkFees(buildParams()));
 
     act(() => {
-      result.current.onSelectFeeStrategy("fast");
+      result.current.displayOptions[2].onSelect();
     });
 
-    expect(onSelectFeeStrategy).toHaveBeenCalledWith("fast");
+    expect(onSelectFeeStrategyId).toHaveBeenCalledWith("fast");
   });
 });
