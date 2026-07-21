@@ -5,12 +5,14 @@ import {
   retriesUpsellModalSelector,
 } from "@domain/entity-large-screen-upsell-modal";
 import { getLargeScreenUpsellDecision } from "../decision/getLargeScreenUpsellDecision";
+import type { LargeScreenUpsellVariant } from "../utils/upsellContent";
 import type { LargeScreenUpsellDecision, NanoDeviceModelId } from "../types";
 
 export type UseLargeScreenUpsellDecisionInput = {
   seenNanoModelIds: NanoDeviceModelId[];
   hasSeenTouchscreenDevice: boolean;
   onboardingDate: Date | null;
+  variant: LargeScreenUpsellVariant;
   now?: Date;
 };
 
@@ -30,7 +32,7 @@ export function useLargeScreenUpsellDecision(
       frequency: { retries, lastSeenAt },
     },
     {
-      isFeatureEnabled: Boolean(feature?.enabled) && params !== undefined,
+      isFeatureEnabled: Boolean(feature?.enabled && params?.[input.variant].enabled),
       isModalEnabled: Boolean(params?.modal.enabled),
       audienceModels: params?.audience.models ?? { nanoS: false, nanoSP: false, nanoX: false },
       cooldownDays: params?.cooldownDays ?? { default: Infinity },
