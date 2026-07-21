@@ -558,3 +558,6 @@ libs/ledger-live-common/package.json
 **/generated/
 **/live-common-set*.ts
 docs/services.md
+
+# No owner assigned — opt out from automatic review requests
+/features/platform/currencies/src/hooks/useFeatureFlaggedCurrencies.ts
