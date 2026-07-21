@@ -54,14 +54,8 @@ export class BorrowPage extends WebViewAppPage {
     return this.hostSignModal().getByRole("button", { name: this.continueButton });
   }
 
-  /** Visible host sign modal overlay (opacity/scale + sign-step copy). */
-  private visibleHostSignModal() {
-    return this.page
-      .locator('[data-testid=modal-container][style*="opacity: 1"][style*="transform: scale(1)"]')
-      .filter({
-        has: this.page.getByText(/Approve token|Sign transaction/i),
-      });
-  }
+  private readonly mainnetFundingHint =
+    "Ensure the test account holds enough wBTC collateral and ETH for mainnet gas.";
 
   private loanAmountInput(webview: Page) {
     return webview
@@ -218,7 +212,8 @@ export class BorrowPage extends WebViewAppPage {
 
   @step("Wait for host sign modal to close")
   async waitForHostSignModalClosed() {
-    await expect(this.visibleHostSignModal()).toBeHidden({ timeout: 120_000 });
+    await expect(this.hostSignModal()).toBeHidden({ timeout: 120_000 });
+    await expect(this.page.getByTestId("modal-backdrop")).toBeHidden({ timeout: 120_000 });
   }
 
   private async expectExecutionStepOutcome(webview: Page, doneSummary: string) {
@@ -231,8 +226,7 @@ export class BorrowPage extends WebViewAppPage {
 
     if (await error.isVisible()) {
       throw new Error(
-        `Borrow execution step failed in webview (${doneSummary}). ` +
-          "Ensure ETH_4 (index 3) holds enough wBTC collateral and ETH for mainnet gas.",
+        `Borrow execution step failed in webview (${doneSummary}). ${this.mainnetFundingHint}`,
       );
     }
   }
@@ -270,9 +264,7 @@ export class BorrowPage extends WebViewAppPage {
     });
 
     if (await error.isVisible()) {
-      throw new Error(
-        "Borrow Step 3 failed in webview. Ensure ETH_4 holds enough collateral and ETH for mainnet gas.",
-      );
+      throw new Error(`Borrow Step 3 failed in webview. ${this.mainnetFundingHint}`);
     }
   }
 
