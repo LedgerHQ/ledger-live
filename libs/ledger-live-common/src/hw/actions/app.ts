@@ -15,7 +15,7 @@ import { shouldUpgrade } from "../../apps";
 import { AppOp, SkippedAppOp } from "../../apps/types";
 import type { Account, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { DeviceId } from "@domain/entity-client-identity";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { getImplementation, ImplementationType } from "./implementations";
 import {
   resolveAppRequestRequirements,

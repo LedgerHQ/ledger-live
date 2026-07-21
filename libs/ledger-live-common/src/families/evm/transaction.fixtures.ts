@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { TokenCurrency } from "@domain/entity-currency";
 import type {
   EvmTransactionEIP1559,
   EvmTransactionEIP1559Raw,

@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeNftId } from "@ledgerhq/ledger-wallet-framework/nft/nftId";
-import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { TokenCurrency } from "@domain/entity-currency";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

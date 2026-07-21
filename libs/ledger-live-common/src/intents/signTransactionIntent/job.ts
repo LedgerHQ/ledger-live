@@ -1,6 +1,6 @@
 import { TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getMainAccount } from "../../account/index";
 import { getAccountBridge } from "../../bridge/index";
 import { sendFeatures } from "../../bridge/descriptor/send/features";

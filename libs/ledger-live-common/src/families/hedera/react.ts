@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import { useMemo } from "react";
 import {
   getCurrentHederaPreloadData,

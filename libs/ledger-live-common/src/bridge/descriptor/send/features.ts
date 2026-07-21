@@ -1,4 +1,4 @@
-import type { CryptoOrTokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getSendDescriptor } from "../registry";
 import type {
   CoinControlConfig,

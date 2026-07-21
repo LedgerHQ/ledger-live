@@ -10,7 +10,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import type { SyncAction, SyncState, BridgeSyncState } from "./types";
 import { BridgeSyncContext, BridgeSyncStateContext } from "./context";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import { createSyncSessionManager } from "../syncSessionManager";
 
 export type Props = {

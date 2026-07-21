@@ -9,7 +9,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { Subject } from "rxjs";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Transaction } from "../../generated/types";

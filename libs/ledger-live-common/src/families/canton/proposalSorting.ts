@@ -1,4 +1,4 @@
-import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
+import type { Unit } from "@domain/entity-currency";
 import type { Account } from "@ledgerhq/types-live";
 
 /**

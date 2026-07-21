@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef } from "react";
 import type { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { TokenCurrency } from "@domain/entity-currency";
 import { getMainAccount } from "../../../account/index";
 import { sendFeatures } from "../../../bridge/descriptor/send/features";
 import type { Transaction, TransactionStatus } from "../../../coin-modules/transaction-types";

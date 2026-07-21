@@ -6,7 +6,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getGasTracker } from "@ledgerhq/coin-evm/network/gasTracker/index";
 import type { GasTrackerApi } from "@ledgerhq/coin-evm/network/gasTracker/types";
-import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import { useGasOptions } from "./react";
 
 jest.useFakeTimers();
@@ -18,7 +18,7 @@ const mockedGetGasTracker = jest.mocked(getGasTracker);
 const mockedGetGasOptions = jest.fn();
 
 const fakeCurrency: Partial<CryptoCurrency> = {
-  id: "my_new_chain" as CryptoCurrencyId,
+  id: "my_new_chain" as CryptoCurrency["id"],
   ethereumLikeInfo: {
     chainId: 1,
   },

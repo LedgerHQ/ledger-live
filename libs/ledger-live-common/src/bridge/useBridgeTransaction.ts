@@ -7,7 +7,7 @@ import { getMainAccount } from "../account";
 import { delay } from "../promise";
 import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../coin-modules/transaction-types";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { CryptoCurrency } from "@domain/entity-currency";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 export type State<T extends Transaction = Transaction> = {
