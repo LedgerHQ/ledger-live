@@ -2,6 +2,7 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { colors, writeStdout } from "../../shared/ui";
 import {
+  CLI_VERSION,
   DEFAULT_AGENT,
   SUPPORTED_AGENTS,
   getAllSkills,
@@ -77,7 +78,9 @@ export default defineCommand({
         emitJson(
           skillEnvelope("skill install", {
             root,
+            cliVersion: CLI_VERSION,
             skills: skillsToInstall.map(s => s.name),
+            contentHashes: Object.fromEntries(skillsToInstall.map(s => [s.name, s.contentHash])),
             installed,
           }),
         );
