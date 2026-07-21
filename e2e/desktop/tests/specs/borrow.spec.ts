@@ -2,7 +2,11 @@ import { test } from "tests/fixtures/common";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import {
+  liveDataCommand,
+  liveDataWithAddressCommand,
+} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
   FF_BORROW_DESKTOP,
@@ -10,8 +14,55 @@ import {
 } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
-const account = Account.ETH_4;
+const coldStartAccount = Account.ETH_1;
+const openLoanAccount = Account.ETH_4;
 const LOAN_AMOUNT = "1";
+
+const coldStartFamily = getFamilyByCurrencyId(coldStartAccount.currency.id);
+const coldStartTags = [
+  "@NanoSP",
+  "@LNS",
+  "@NanoX",
+  "@Stax",
+  "@Flex",
+  "@NanoGen5",
+  `@${coldStartAccount.currency.id}`,
+  ...(coldStartFamily ? [`@family-${coldStartFamily}`] : []),
+];
+
+test.describe("Borrow cold start", () => {
+  test.use({
+    teamOwner: Team.EARN,
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: coldStartAccount.currency.speculosApp,
+    cliCommands: [liveDataCommand(coldStartAccount)],
+    speculosForSetupOnly: true,
+    featureFlags: {
+      ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
+      ...FF_BORROW_DESKTOP,
+    },
+  });
+
+  test(
+    "Portfolio entry point opens borrow and shows Introducing Crypto Loan modal",
+    {
+      tag: coldStartTags,
+      annotation: { type: "TMS", description: "B2CQA-6062" },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.mainNavigation.openTargetFromMainNavigation("home");
+      await app.portfolio.expectBorrowEntryPointVisible();
+
+      await app.borrow.goAndWaitForBorrowColdStart(async () =>
+        app.portfolio.clickBorrowEntryPoint(),
+      );
+
+      await app.borrow.verifyIntroModalVisible();
+    },
+  );
+});
 
 test.describe("Borrow open loan", () => {
   test.skip(
@@ -26,12 +77,12 @@ test.describe("Borrow open loan", () => {
       SWAP_DISABLE_APPS_INSTALL: "true",
     },
     userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: account.currency.speculosApp,
+    speculosApp: openLoanAccount.currency.speculosApp,
     cliCommandsOnApp: [
       [
         {
-          app: account.currency.speculosApp,
-          cmd: liveDataWithAddressCommand(account),
+          app: openLoanAccount.currency.speculosApp,
+          cmd: liveDataWithAddressCommand(openLoanAccount),
         },
       ],
       { scope: "test" },
@@ -45,7 +96,7 @@ test.describe("Borrow open loan", () => {
   test(
     "Portfolio entry point opens borrow, simulates loan, and completes open-loan execution",
     {
-      tag: buildTags({ currencyId: account.currency.id }),
+      tag: buildTags({ currencyId: openLoanAccount.currency.id }),
       annotation: { type: "TMS", description: "B2CQA-6065" },
     },
     async ({ app }) => {
