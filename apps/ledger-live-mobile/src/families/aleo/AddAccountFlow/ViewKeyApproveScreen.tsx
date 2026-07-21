@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { BackHandler, ScrollView, StyleSheet } from "react-native";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Box, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
@@ -95,6 +95,13 @@ export default function ViewKeyApproveScreen() {
       onCloseNavigation?.();
     }
   }, [hasAccountsToAdd, onCloseNavigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const subscription = BackHandler.addEventListener("hardwareBackPress", () => true);
+      return () => subscription.remove();
+    }, []),
+  );
 
   const quitConfirmation = useQuitConfirmation({
     onCloseNavigation,
