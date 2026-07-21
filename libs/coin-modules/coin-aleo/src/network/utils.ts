@@ -249,10 +249,8 @@ export async function accessProvableApi({
   try {
     status = await apiClient.getRecordScannerStatus(currency, uuid);
   } catch (error) {
-    if (
-      (error as { name?: string; status?: number }).name === "LedgerAPI4xx" &&
-      (error as { status?: number }).status === 422
-    ) {
+    const err = error as { name?: string; status?: number } | null | undefined;
+    if (err?.name === "LedgerAPI4xx" && err?.status === 422) {
       throw new AleoApiConfigurationResetError();
     }
     throw error;
