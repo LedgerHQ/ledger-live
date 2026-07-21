@@ -89,6 +89,17 @@ export class SwapPage extends WebViewAppPage {
     this.page.getByTestId(`swap-history-to-amount-${swapId}`);
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
 
+  private async waitForSelectorPopulated(webview: Page, testId: string, timeout: number) {
+    await webview.waitForFunction(
+      selectorTestId => {
+        const el = document.querySelector(`[data-testid='${selectorTestId}']`);
+        return Boolean(el?.textContent && el.textContent.trim().toLowerCase() !== "choose asset");
+      },
+      testId,
+      { timeout },
+    );
+  }
+
   async sendMax() {
     await this.maxSpendableToggle.click();
   }
@@ -368,17 +379,6 @@ export class SwapPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(asset);
   }
 
-  private async waitForSelectorPopulated(webview: Page, testId: string, timeout: number) {
-    await webview.waitForFunction(
-      selectorTestId => {
-        const el = document.querySelector(`[data-testid='${selectorTestId}']`);
-        return Boolean(el?.textContent && el.textContent.trim() !== "Choose asset");
-      },
-      testId,
-      { timeout },
-    );
-  }
-
   @step("Check if $0 asset is already selected")
   async checkIfFromAssetIsAlreadySelected(asset: string): Promise<boolean> {
     const webview = await this.getWebView();
@@ -481,7 +481,7 @@ export class SwapPage extends WebViewAppPage {
 
   @step("Check currency to swap to contains $0")
   async checkAssetToContains(expected: string) {
-    if (expected !== "Choose asset") {
+    if (expected.toLowerCase() !== "choose asset") {
       await this.waitForToAssetSelectorReady();
     }
     const webview = await this.getWebView();
