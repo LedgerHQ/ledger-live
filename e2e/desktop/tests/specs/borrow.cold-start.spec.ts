@@ -10,7 +10,7 @@ import {
   FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
 } from "tests/utils/featureFlagUtils";
 
-const account = Account.ETH_4;
+const account = Account.ETH_1;
 const family = getFamilyByCurrencyId(account.currency.id);
 
 const tags = [
@@ -49,7 +49,7 @@ test.describe("Borrow cold start", () => {
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.expectBorrowEntryPointVisible();
 
-      await app.borrow.goAndWaitForBorrowToBeReady(async () =>
+      await app.borrow.goAndWaitForBorrowColdStart(async () =>
         app.portfolio.clickBorrowEntryPoint(),
       );
 

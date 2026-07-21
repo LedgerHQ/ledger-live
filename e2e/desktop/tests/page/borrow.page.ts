@@ -54,11 +54,13 @@ export class BorrowPage extends WebViewAppPage {
     return this.hostSignModal().getByRole("button", { name: this.continueButton });
   }
 
-  /** Visible host modal overlay (opacity/scale), not just DOM presence. */
-  private visibleModalContainer() {
-    return this.page.locator(
-      '[data-testid=modal-container][style*="opacity: 1"][style*="transform: scale(1)"]',
-    );
+  /** Visible host sign modal overlay (opacity/scale + sign-step copy). */
+  private visibleHostSignModal() {
+    return this.page
+      .locator('[data-testid=modal-container][style*="opacity: 1"][style*="transform: scale(1)"]')
+      .filter({
+        has: this.page.getByText(/Approve token|Sign transaction/i),
+      });
   }
 
   private loanAmountInput(webview: Page) {
@@ -68,7 +70,15 @@ export class BorrowPage extends WebViewAppPage {
       .getByRole("textbox", { disabled: false });
   }
 
-  @step("Go and wait for Borrow app to be ready")
+  @step("Go and wait for Borrow cold-start entry")
+  async goAndWaitForBorrowColdStart(entryFn: () => Promise<void>) {
+    this._webviewPage = undefined;
+    await entryFn();
+    await expect(this.page).toHaveURL(this.borrowRoutePattern);
+    await this.getWebView();
+  }
+
+  @step("Go and wait for Borrow app simulate-loan screen")
   async goAndWaitForBorrowToBeReady(entryFn: () => Promise<void>) {
     this._webviewPage = undefined;
     await entryFn();
@@ -144,10 +154,15 @@ export class BorrowPage extends WebViewAppPage {
     ).toBeVisible();
   }
 
-  @step("Check if Give approval step is visible")
-  async isGiveApprovalVisible() {
+  @step("Check if Give approval step is required")
+  async isGiveApprovalRequired() {
     const webview = await this.getWebView();
-    return webview.getByRole("button", { name: this.giveApprovalButton }).isVisible();
+    const giveApproval = webview.getByRole("button", { name: this.giveApprovalButton });
+    const authorizeDepositing = webview.getByRole("button", {
+      name: this.authorizeDepositingButton,
+    });
+    await expect(giveApproval.or(authorizeDepositing)).toBeVisible({ timeout: 60_000 });
+    return giveApproval.isVisible();
   }
 
   @step("Click Give approval")
@@ -192,6 +207,8 @@ export class BorrowPage extends WebViewAppPage {
       }
       return;
     }
+
+    throw new Error("Host sign modal Continue button not found after fee/review steps");
   }
 
   @step("Wait for host device validation screen")
@@ -201,7 +218,7 @@ export class BorrowPage extends WebViewAppPage {
 
   @step("Wait for host sign modal to close")
   async waitForHostSignModalClosed() {
-    await expect(this.visibleModalContainer()).toBeHidden({ timeout: 120_000 });
+    await expect(this.visibleHostSignModal()).toBeHidden({ timeout: 120_000 });
   }
 
   private async expectExecutionStepOutcome(webview: Page, doneSummary: string) {

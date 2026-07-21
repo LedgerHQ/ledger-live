@@ -64,7 +64,7 @@ test.describe("Borrow open loan", () => {
       await app.borrow.clickContinue();
       await app.borrow.expectExecutionFlowVisible();
 
-      if (await app.borrow.isGiveApprovalVisible()) {
+      if (await app.borrow.isGiveApprovalRequired()) {
         await app.borrow.clickGiveApproval();
         await app.borrow.clickSignSummaryContinue();
         await app.borrow.waitForHostDeviceValidation();
