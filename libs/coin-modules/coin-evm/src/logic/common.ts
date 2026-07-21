@@ -112,8 +112,14 @@ export async function prepareUnsignedTxParams(
   const transactionType = getTransactionType(type);
   const node = getNodeApi(currency);
 
+  const isSend = isSendTransactionIntent(transactionIntent);
+
+  // Prepare staking intents once (can require async on-chain lookups). See: LIVE-32750
+  const preparedStakingIntent = isSend
+    ? undefined
+    : await prepareStakingIntent(currency, transactionIntent);
   // Build transaction parameters based on type
-  const { to, data, value } = isSendTransactionIntent(transactionIntent)
+  const { to, data, value } = isSend
     ? ((): { to: string; data: Buffer; value: bigint } => {
         const { amount, asset, recipient } = transactionIntent;
         return {
@@ -122,10 +128,7 @@ export async function prepareUnsignedTxParams(
           value: isNative(asset) ? amount : 0n,
         };
       })()
-    : buildStakingTransactionParams(
-        currency,
-        await prepareStakingIntent(currency, transactionIntent),
-      );
+    : buildStakingTransactionParams(currency, preparedStakingIntent ?? transactionIntent);
   const gasLimit =
     typeof customFeesParameters?.gasLimit === "bigint"
       ? BigNumber(customFeesParameters.gasLimit.toString())
@@ -139,14 +142,23 @@ export async function prepareUnsignedTxParams(
           )
           .catch(async () => {
             if (isStakingTransactionIntent(transactionIntent)) {
-              // Staking precompiles may reject the initial amount (e.g. 0 or rounded value).
-              // Retry with the minimum meaningful calldata unit for this chain so the node
-              // can at least estimate the gas overhead of the contract call itself.
+              // Retry staking gas estimation with the chain min calldata unit (LIVE-32750).
+              // Rebuild calldata + value to keep `msg.value` consistent with calldata-encoded amounts (e.g. Somnia).
               const minUnit = STAKING_CONTRACTS[currency.id]?.calldataAmountScale ?? 1n;
+              // Reuse the already-prepared staking intent (enrichment done above) and only
+              // override the amount, so we don't repeat the async on-chain lookups.
+              const retry = buildStakingTransactionParams(currency, {
+                ...(preparedStakingIntent ?? transactionIntent),
+                amount: minUnit,
+              });
               return node
                 .getGasEstimation(
                   { currency, freshAddress: sender },
-                  { amount: new BigNumber(minUnit.toString()), recipient: to, data },
+                  {
+                    amount: new BigNumber(retry.value.toString()),
+                    recipient: retry.to,
+                    data: retry.data,
+                  },
                 )
                 .catch(() => {
                   return new BigNumber(0);

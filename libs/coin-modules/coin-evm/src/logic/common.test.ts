@@ -177,11 +177,13 @@ describe("common", () => {
     it("retries with the chain calldataAmountScale (USEI_TO_EVM_SCALE for SEI) when initial gas estimation fails for a payable staking call (value > 0)", async () => {
       const spendableBalance = 1_000_000_000_000_000_000n; // 1 SEI
 
-      mockBuildStakingTransactionParams.mockReturnValue({
+      // Payable delegate: msg.value = amount. Amount-aware so the retry (which rebuilds the
+      // params from the min calldata unit) reflects the real value it would send.
+      mockBuildStakingTransactionParams.mockImplementation((_currency, intent) => ({
         to: stakingContractAddress,
         data: stakingData,
-        value: spendableBalance, // payable: amount goes into msg.value
-      });
+        value: intent.amount,
+      }));
 
       // First call (full balance) fails, retry (1 usei) succeeds
       nodeApiMock.getGasEstimation
@@ -218,11 +220,12 @@ describe("common", () => {
     });
 
     it("retries with the chain calldataAmountScale (USEI_TO_EVM_SCALE for SEI) when initial gas estimation fails for a staking call with amount=0 (delegation form freshly opened)", async () => {
-      mockBuildStakingTransactionParams.mockReturnValue({
+      // amount=0 → precompile rejects; retry rebuilds params from the min calldata unit.
+      mockBuildStakingTransactionParams.mockImplementation((_currency, intent) => ({
         to: stakingContractAddress,
         data: stakingData,
-        value: 0n, // amount=0 → 0 usei → precompile rejects
-      });
+        value: intent.amount,
+      }));
 
       nodeApiMock.getGasEstimation
         .mockRejectedValueOnce(GAS_ESTIMATION_ERROR)
@@ -256,6 +259,44 @@ describe("common", () => {
 
       expect(nodeApiMock.getGasEstimation).toHaveBeenCalledTimes(2);
       expect(result.gasLimit).toEqual(new BigNumber(0));
+    });
+
+    it("rebuilds calldata and value from the min amount on retry (amount-in-calldata chains e.g. Somnia)", async () => {
+      // Uses the sei_evm mockCurrency as a stand-in fixture (hence USEI_TO_EVM_SCALE as the
+      // min unit); it stands in for any amount-in-calldata chain such as Somnia.
+      // Simulate a contract that encodes the amount in the calldata AND requires
+      // msg.value === amount (e.g. Somnia delegateStake). Both data and value derive from
+      // the intent amount, so a retry that only swapped the value would be inconsistent.
+      mockBuildStakingTransactionParams.mockImplementation((_currency, intent) => {
+        const { amount } = intent;
+        return {
+          to: stakingContractAddress,
+          data: Buffer.from(`delegate:${amount.toString()}`),
+          value: amount,
+        };
+      });
+
+      nodeApiMock.getGasEstimation
+        .mockRejectedValueOnce(GAS_ESTIMATION_ERROR)
+        .mockResolvedValueOnce(new BigNumber(1_412_179));
+
+      const result = await prepareUnsignedTxParams(mockCurrency, makeStakingIntent(0n));
+
+      expect(nodeApiMock.getGasEstimation).toHaveBeenCalledTimes(2);
+      // Retry rebuilds BOTH calldata and value from the min unit (USEI_TO_EVM_SCALE), so the
+      // calldata-encoded amount matches msg.value — otherwise the contract would revert.
+      expect(nodeApiMock.getGasEstimation).toHaveBeenNthCalledWith(
+        2,
+        { currency: mockCurrency, freshAddress: "0xSender" },
+        {
+          amount: new BigNumber(USEI_TO_EVM_SCALE.toString()),
+          recipient: stakingContractAddress,
+          data: Buffer.from(`delegate:${USEI_TO_EVM_SCALE.toString()}`),
+        },
+      );
+      // The returned params keep the ORIGINAL intent (amount=0) — only the estimate is retried.
+      expect(result.data).toEqual("0x" + Buffer.from("delegate:0").toString("hex"));
+      expect(result.gasLimit).toEqual(new BigNumber(1_412_179));
     });
 
     it("does not retry for send transactions — falls back to gasLimit=0 on first failure without a second call", async () => {
