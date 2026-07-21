@@ -53,6 +53,8 @@ const transformIncludePatterns = [
   "d3-.*",
   "internmap",
   "react-native-mmkv",
+  "intl-messageformat",
+  "@formatjs/.*",
 ];
 
 /** @type {import('@swc/jest').JestConfigWithTsJest} */

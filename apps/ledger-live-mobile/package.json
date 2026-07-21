@@ -204,6 +204,8 @@
     "expo-modules-core": "catalog:",
     "fuse.js": "6.6.2",
     "i18next": "catalog:",
+    "i18next-icu": "catalog:",
+    "intl-messageformat": "catalog:",
     "invariant": "2.2.4",
     "jotai": "2.17.0",
     "json-rpc-2.0": "0.2.19",

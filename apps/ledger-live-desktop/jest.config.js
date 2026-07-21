@@ -61,6 +61,8 @@ const transformIncludePatterns = [
   "@mysten\\+",
   "@scure\\+",
   "@noble\\+",
+  "intl-messageformat",
+  "@formatjs\\+",
 ];
 
 const commonConfig = {

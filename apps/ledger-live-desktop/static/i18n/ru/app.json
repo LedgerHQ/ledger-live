@@ -60,7 +60,7 @@
       "warnings" : {
         "notFound" : "Ничего нет",
         "retrySearchKeyword" : "Повторите поиск по другому запросу.",
-        "retrySearchKeywordAndUrl" : "Повторите поиск с другим запросом или откройте <Link>{{search}}</Link> вне приложения Ledger Wallet."
+        "retrySearchKeywordAndUrl" : "Повторите поиск с другим запросом или откройте <Link>{search}</Link> вне приложения Ledger Wallet."
       }
     },
     "disclaimer" : {
@@ -92,17 +92,17 @@
     "needHelp" : "Требуется помощь?",
     "areYouSure" : "Вы уверены?",
     "selectAccount" : "Выберите счёт",
-    "selectAccountNoOption" : "Счета с «{{accountName}}» в названии не найдены.",
+    "selectAccountNoOption" : "Счета с «{accountName}» в названии не найдены.",
     "selectCurrency" : "Выберите криптоактив",
-    "selectCurrencyNoOption" : "Криптоактив «{{currencyName}}» не найден",
+    "selectCurrencyNoOption" : "Криптоактив «{currencyName}» не найден",
     "selectCurrencyEmptyOption" : "Криптоактив не найден",
-    "selectValidatorNoOption" : "Валидатор с «{{accountName}}» в названии не найден",
-    "selectNoResults" : "Ничего не найдено по запросу «{{query}}»",
+    "selectValidatorNoOption" : "Валидатор с «{accountName}» в названии не найден",
+    "selectNoResults" : "Ничего не найдено по запросу «{query}»",
     "sortBy" : "Сортировка",
     "save" : "Сохранить",
     "lock" : "Заблокировать",
     "showMore" : "Показать больше",
-    "backToMatchingURL" : "Вернуться в {{appName}}",
+    "backToMatchingURL" : "Вернуться в {appName}",
     "back" : "Назад",
     "adjustFees" : "Изменить комиссию",
     "reset" : "Сбросить",
@@ -141,8 +141,7 @@
       "error" : "Ошибка синхронизации",
       "refresh" : "Обновить",
       "devTools" : "Разработчикам",
-      "failingSync_one" : "Счёт, который не удаётся синхронизировать:",
-      "failingSync_other" : "Счета, которые не удаётся синхронизировать:"
+      "failingSync" : "{count, plural, one {Счёт, который не удаётся синхронизировать:} other {Счета, которые не удаётся синхронизировать:}}"
     },
     "exchange" : "Обмен",
     "info" : "Информация",
@@ -224,10 +223,10 @@
       "stuckDescription" : "Ваша транзакция застряла. Ускорьте её за счёт увеличения комиссии или отмените.",
       "previousFeesInfo" : {
         "pendingTransactionFeesInfo" : "Детали комиссии неподтверждённой транзакции:",
-        "networkfee" : "Комиссия сети = {{amount}}",
-        "maxFee" : "Макс. комиссия = {{amount}}",
-        "maxPriorityFee" : "Макс. комиссия за приоритет = {{amount}}",
-        "gasPrice" : "Цена Газа = {{amount}}"
+        "networkfee" : "Комиссия сети = {amount}",
+        "maxFee" : "Макс. комиссия = {amount}",
+        "maxPriorityFee" : "Макс. комиссия за приоритет = {amount}",
+        "gasPrice" : "Цена Газа = {amount}"
       },
       "learnMore" : "Подробнее...",
       "panel" : {
@@ -240,7 +239,7 @@
       },
       "cancel" : {
         "title" : "Отменить",
-        "description" : "Отправьте 0 {{ticker}} на собственный адрес. Отмена не гарантируется. Если сеть обработает первоначальную транзакцию до запроса на отмену, средства всё равно будут отправлены получателю."
+        "description" : "Отправьте 0 {ticker} на собственный адрес. Отмена не гарантируется. Если сеть обработает первоначальную транзакцию до запроса на отмену, средства всё равно будут отправлены получателю."
       },
       "steps" : {
         "method" : {
@@ -267,19 +266,16 @@
     }
   },
   "byteSize" : {
-    "bytes" : "{{size}} байт",
-    "kbUnit" : "{{size}} Кб",
-    "mbUnit" : "{{size}} Мб"
+    "bytes" : "{size} байт",
+    "kbUnit" : "{size} Кб",
+    "mbUnit" : "{size} Мб"
   },
   "time" : {
-    "minute" : "мин.",
-    "minute_other" : "мин.",
+    "minute" : "{count, plural, one {мин.} other {мин.}}",
     "minute_short" : "мин.",
-    "second" : "Секунда",
-    "second_other" : "Секунды",
+    "second" : "{count, plural, one {Секунда} other {Секунды}}",
     "second_short" : "сек.",
-    "hour" : "ч.",
-    "hour_other" : "ч.",
+    "hour" : "{count, plural, one {ч.} other {ч.}}",
     "range" : {
       "day" : "1Д",
       "week" : "1Н",
@@ -373,7 +369,7 @@
           "rate" : "Курс",
           "fees" : "Комиссия"
         },
-        "noAccount" : "Создайте счёт, чтобы получить {{name}}",
+        "noAccount" : "Создайте счёт, чтобы получить {name}",
         "noAccountCTA" : "Добавить счёт"
       },
       "from" : {
@@ -412,14 +408,14 @@
     },
     "modals" : {
       "transactionStatus" : {
-        "title" : "Обмен {{sendTicker}} → {{receiveTicker}}",
+        "title" : "Обмен {sendTicker} → {receiveTicker}",
         "sections" : {
           "status" : {
             "heading" : "Состояние",
-            "sendPending" : "Отправка {{ticker}}",
-            "sendCompleted" : "Отправлены {{ticker}}",
-            "receivePending" : "Получение {{ticker}}",
-            "receiveCompleted" : "Получены {{ticker}}"
+            "sendPending" : "Отправка {ticker}",
+            "sendCompleted" : "Отправлены {ticker}",
+            "receivePending" : "Получение {ticker}",
+            "receiveCompleted" : "Получены {ticker}"
           },
           "details" : {
             "networkFees" : "Комиссия сети",
@@ -450,8 +446,8 @@
       "title" : "Подтвердите обмен",
       "completed" : {
         "title" : "Транзакция успешно транслирована",
-        "description" : "Транзакция в рамках обмена была отправлена и ожидает подтверждения в сети. Дождитесь подтверждения транзакции, после чего оператор вышлет вам {{targetCurrency}}.",
-        "disclaimer" : "Сохраните ID обмена на случай, если в дальнейшем потребуется помощь от <0>поддержки  <0>{{provider}}</0></0>.",
+        "description" : "Транзакция в рамках обмена была отправлена и ожидает подтверждения в сети. Дождитесь подтверждения транзакции, после чего оператор вышлет вам {targetCurrency}.",
+        "disclaimer" : "Сохраните ID обмена на случай, если в дальнейшем потребуется помощь от <0>поддержки  <0>{provider}</0></0>.",
         "tellAboutYourExperience" : "Поделитесь своим мнением",
         "seeDetails" : "Подробности"
       }
@@ -465,7 +461,7 @@
   },
   "swap" : {
     "title" : "Обмен",
-    "titleCrypto" : "Обменять {{currency}}",
+    "titleCrypto" : "Обменять {currency}",
     "whatIsSwap" : "Что такое Swap (обмен криптоактивов)",
     "decentralizedSwapAvailable" : "Для некоторых транзакций может подойти процедура децентрализованного обмена криптовалют или так называемого своппинга. Познакомьтесь с <0>ParaSwap</0> и <1>1inch</1>.",
     "paraswap" : {
@@ -489,18 +485,18 @@
       "sorry" : "Услуга временно недоступна или не предоставляется в вашей стране"
     },
     "missingApp" : {
-      "title" : "Пожалуйста, установите {{appName}} на устройство",
-      "subtitle" : "Чтобы обменивать криптоактивы, перейдите во вкладку «Мой Ledger» и установите приложение {{appName}}.",
+      "title" : "Пожалуйста, установите {appName} на устройство",
+      "subtitle" : "Чтобы обменивать криптоактивы, перейдите во вкладку «Мой Ledger» и установите приложение {appName}.",
       "cta" : "Перейти в «Мой Ledger»"
     },
     "outdatedApp" : {
-      "title" : "Пожалуйста, обновите приложение {{appName}} на устройстве",
-      "subtitle" : "Чтобы обменивать активы, перейдите в «Мой Ledger» и обновите приложение {{appName}}.",
+      "title" : "Пожалуйста, обновите приложение {appName} на устройстве",
+      "subtitle" : "Чтобы обменивать активы, перейдите в «Мой Ledger» и обновите приложение {appName}.",
       "cta" : "Перейти в «Мой Ledger»"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™ не поддерживает {{provider}}.",
-      "description" : "Ledger Nano S™ не поддерживает {{provider}}. Для проведения кроссчейн-обмена через {{provider}} внутри Ledger Wallet используйте Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ или Ledger Flex™.",
+      "title" : "Ledger Nano S™ не поддерживает {provider}.",
+      "description" : "Ledger Nano S™ не поддерживает {provider}. Для проведения кроссчейн-обмена через {provider} внутри Ledger Wallet используйте Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ или Ledger Flex™.",
       "cta" : "Совместимые устройства",
       "changeProvider" : "Поменять оператора"
     },
@@ -584,9 +580,9 @@
       "exchange" : "Обмен",
       "helpCTA" : "Что такое Swap (обмен криптоактивов)?",
       "bubble" : "Мы используем фиксированный курс. Это точная сумма, которую вы получите.",
-      "noAccounts" : "У вас нет счетов {{currencyName}} с доступным балансом",
-      "noApp" : "Приложение {{currencyName}} не установлено.",
-      "outdatedApp" : "Доступно обновление приложения {{currencyName}}.",
+      "noAccounts" : "У вас нет счетов {currencyName} с доступным балансом",
+      "noApp" : "Приложение {currencyName} не установлено.",
+      "outdatedApp" : "Доступно обновление приложения {currencyName}.",
       "loadingRates" : "Загружаем котировки..."
     },
     "modal" : {
@@ -600,8 +596,8 @@
           "toReceive" : "Сумма к получению",
           "terms" : "Условия и положения",
           "disclaimer" : {
-            "description" : "Нажимая кнопку «Подтвердить», я подтверждаю и соглашаюсь с тем, что эта услуга оказывается исключительно в рамках следующего договора <0>{{provider}}</0> –",
-            "acceptedDescription" : "Эта услуга оказывается исключительно в рамках следующего договора <0>{{provider}}</0> –"
+            "description" : "Нажимая кнопку «Подтвердить», я подтверждаю и соглашаюсь с тем, что эта услуга оказывается исключительно в рамках следующего договора <0>{provider}</0> –",
+            "acceptedDescription" : "Эта услуга оказывается исключительно в рамках следующего договора <0>{provider}</0> –"
           },
           "details" : {
             "provider" : "Оператор",
@@ -624,8 +620,8 @@
           "subtitle" : "Обмен успешно транслирован в сеть ",
           "swap" : "ID обмена:",
           "seeDetails" : "Подробности",
-          "disclaimer" : "Сохраните ID обмена на случай, если в дальнейшем потребуется помощь от <0>поддержки  <0>{{provider}}</0></0>.",
-          "description" : "Операция обмена отправлена в сеть для подтверждения. Может пройти около часа, прежде чем вы получите ваши {{targetCurrency}}."
+          "disclaimer" : "Сохраните ID обмена на случай, если в дальнейшем потребуется помощь от <0>поддержки  <0>{provider}</0></0>.",
+          "description" : "Операция обмена отправлена в сеть для подтверждения. Может пройти около часа, прежде чем вы получите ваши {targetCurrency}."
         }
       }
     },
@@ -644,8 +640,7 @@
       },
       "date" : "Дата",
       "from" : "Откуда",
-      "fromAddress" : "Адрес отправителя",
-      "fromAddress_other" : "Адреса отправителя(-ей)",
+      "fromAddress" : "{count, plural, one {Адрес отправителя} other {Адреса отправителя(-ей)}}",
       "to" : "Куда",
       "toProvider" : "Адрес поставщика услуг",
       "initialAmount" : "Начальная сумма",
@@ -654,8 +649,8 @@
   },
   "stake" : {
     "noFundsModal" : {
-      "title" : "{{actions, list(type: disjunction)}}",
-      "text" : "У вас не хватает {{coin}} для стейкинга",
+      "title" : "{actions}",
+      "text" : "У вас не хватает {coin} для стейкинга",
       "description" : "Не хватает монет? Ничего страшного. Купить, обменять или получить криптоактивы можно безопасно прямо в Ledger Wallet.",
       "options" : {
         "buy" : {
@@ -674,7 +669,7 @@
       }
     },
     "getFundsModal" : {
-      "text" : "Получить {{coin}} для стейкинга",
+      "text" : "Получить {coin} для стейкинга",
       "description" : "Покупайте, обменивайте или получайте крипту сразу на счёт в Ledger Wallet."
     }
   },
@@ -707,22 +702,22 @@
   "account" : {
     "subHeader" : {
       "moreInfo" : "Подробнее...",
-      "cardTitle" : "Powered by {{team}}",
+      "cardTitle" : "Powered by {team}",
       "drawer" : {
-        "title" : "Интеграция c {{family}}",
-        "subTitle" : "Интеграция c {{family}} выполнена командой {{team}}",
+        "title" : "Интеграция c {family}",
+        "subTitle" : "Интеграция c {family} выполнена командой {team}",
         "description" : "Ledger Wallet – это платформа с открытым исходным кодом.",
         "description2" : "Разработчики из любой точки мира могут интегрировать своё приложение в Ledger Wallet.",
-        "description3" : "Эта интеграция проведена {{team}} в сотрудничестве с Ledger.",
-        "description3Link" : "Эта интеграция проведена <1><0>{{team}}</0></1> в сотрудничестве с Ledger."
+        "description3" : "Эта интеграция проведена {team} в сотрудничестве с Ledger.",
+        "description3Link" : "Эта интеграция проведена <1><0>{team}</0></1> в сотрудничестве с Ledger."
       }
     },
     "migrationBanner" : {
-      "title" : "{{from}} становится {{to}}. Перейдите по <0>ссылке</0>, чтобы узнать больше или связаться с Поддержкой при необходимости.",
+      "title" : "{from} становится {to}. Перейдите по <0>ссылке</0>, чтобы узнать больше или связаться с Поддержкой при необходимости.",
       "contactSupport" : "Написать в Поддержку"
     },
     "featureUnavailable" : {
-      "title" : "В данный момент недоступна эта функция: {{feature}}. Обратитесь в {{support}} за подробностями.",
+      "title" : "В данный момент недоступна эта функция: {feature}. Обратитесь в {support} за подробностями.",
       "feature" : {
         "history" : "История",
         "swap" : "Обменять",
@@ -738,7 +733,7 @@
       "support" : "Поддержку"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "В целях оптимизации {{currencyName}} не будет поддерживаться в Ledger Wallet с {{deprecatedDate}}. При этом поддежка на устройствах Ledger останется. Обратитесь в Поддержку Ledger, если понадобится помощь по данному вопросу.",
+      "title" : "В целях оптимизации {currencyName} не будет поддерживаться в Ledger Wallet с {deprecatedDate}. При этом поддежка на устройствах Ledger останется. Обратитесь в Поддержку Ledger, если понадобится помощь по данному вопросу.",
       "contactSupport" : "Написать в Поддержку"
     },
     "lastOperations" : "Последние операции",
@@ -746,8 +741,8 @@
     "openInExplorer" : "Просмотреть в Обозревателе",
     "emptyState" : {
       "title" : "Ещё нет криптоактивов?",
-      "desc" : "Убедитесь, что приложение <1><0>{{managerAppName}}</0></1> установлено на устройстве, чтобы вы могли получать этот актив",
-      "descToken" : "Убедитесь, что приложение <1><0>{{managerAppName}}</0></1> установлено на устройстве, чтобы вы могли получать <3><0>{{ticker}}</0></3>, а также <5><0>{{tokenList}}</0></5>",
+      "desc" : "Убедитесь, что приложение <1><0>{managerAppName}</0></1> установлено на устройстве, чтобы вы могли получать этот актив",
+      "descToken" : "Убедитесь, что приложение <1><0>{managerAppName}</0></1> установлено на устройстве, чтобы вы могли получать <3><0>{ticker}</0></3>, а также <5><0>{tokenList}</0></5>",
       "buttons" : {
         "receiveFunds" : "Получить",
         "buy" : "Купить"
@@ -756,7 +751,7 @@
     "settings" : {
       "title" : "Редактирование счёта",
       "advancedLogs" : "Дополнительно",
-      "advancedTips" : "Это xpub-ключ {{tag}}. Выберите тот же режим вывода при его импорте в сторонний кошелёк.",
+      "advancedTips" : "Это xpub-ключ {tag}. Выберите тот же режим вывода при его импорте в сторонний кошелёк.",
       "accountName" : {
         "title" : "Название счёта",
         "desc" : "Введите описание для счёта."
@@ -778,7 +773,7 @@
     "bandwidthTooltip" : "Замораживайте активы для наращивания очков Пропускной способности",
     "energyTooltip" : "Замораживайте активы для наращивания очков Энергии",
     "delegatedTooltip" : "Делегированные активы используются в процессе голосования. От них зависит количество ваших голосов.",
-    "undelegatingTooltip" : "Отозванные средства блокируются на {{timelockInDays}} дн., прежде чем вы сможете их получить.",
+    "undelegatingTooltip" : "Отозванные средства блокируются на {timelockInDays} дн., прежде чем вы сможете их получить.",
     "claimableRewards" : "Доступное вознаграждение",
     "claimableRewardsTooltip" : "Сейчас запросить вознаграждение в USDC невозможно. Используйте для этого сторонние кошельки",
     "banner" : {
@@ -802,7 +797,7 @@
       },
       "delegation" : {
         "title" : "Если вы не знали...",
-        "description" : "Валидатор Ledger может застейкать ваши {{asset}} с комиссией в {{commission}}%.",
+        "description" : "Валидатор Ledger может застейкать ваши {asset} с комиссией в {commission}%.",
         "cta" : "Застейкать в Ledger",
         "linkText" : "Подробнее",
         "ethereum" : {
@@ -831,12 +826,12 @@
   },
   "exchange" : {
     "pageHeader" : "Покупка/Продажа",
-    "chooseProvider" : "Выберите из {{providerCount}} оператора",
-    "chooseProviders" : "Выберите из {{providerCount}} операторов",
+    "chooseProvider" : "Выберите из {providerCount} оператора",
+    "chooseProviders" : "Выберите из {providerCount} операторов",
     "title" : "Покупайте и продавайте криптовалюты",
     "reset" : "Сбросить",
     "verifyAddress" : "Убедитесь, что показанный адрес в точности совпадает с адресом на экране устройства.",
-    "connectingTo" : "Подключаем вас к {{provider}}",
+    "connectingTo" : "Подключаем вас к {provider}",
     "buy" : {
       "header" : "Покупайте криптовалюты через наших партнёров",
       "title" : "Выберите оператора для покупки криптовалюты",
@@ -845,8 +840,8 @@
       "payWith" : "Оплата картой или SEPA",
       "tab" : "Покупка",
       "coinify" : {
-        "header" : "Покупайте криптовалюты через {{provider}}",
-        "title" : "Покупка криптовалюты через <0>{{provider}}</0>",
+        "header" : "Покупайте криптовалюты через {provider}",
+        "title" : "Покупка криптовалюты через <0>{provider}</0>",
         "selectCrypto" : "Выберите криптовалюту",
         "selectAccount" : "Выберите счёт",
         "continue" : "Продолжить",
@@ -855,7 +850,7 @@
     },
     "sell" : {
       "header" : "Продавайте криптовалюты через наших партнёров",
-      "title" : "Продажа криптовалюты через <0>{{provider}}</0>",
+      "title" : "Продажа криптовалюты через <0>{provider}</0>",
       "tab" : "Продажа",
       "selectCrypto" : "Выберите криптовалюту",
       "selectAccount" : "Выберите счёт",
@@ -897,9 +892,9 @@
       "closedLoans" : "Закрытые займы",
       "amountRedeemed" : "Выведенная сумма",
       "date" : "Дата",
-      "info" : "Вы можете одалживать активы напрямую со счёта {{currency}} и получать доход.",
+      "info" : "Вы можете одалживать активы напрямую со счёта {currency} и получать доход.",
       "howCompoundWorks" : "Как работает кредитование на Compound?",
-      "lend" : "Депонировать {{currency}}"
+      "lend" : "Депонировать {currency}"
     },
     "emptyState" : {
       "active" : {
@@ -971,9 +966,9 @@
         "approve" : "Утвердить",
         "manageLimit" : "Изменить лимит",
         "viewDetails" : "Подробнее",
-        "info" : "Вы утвердили <0>{{amount}}</0> для данного счёта. Эту сумму можно уменьшить только с дополнительной комиссией.",
+        "info" : "Вы утвердили <0>{amount}</0> для данного счёта. Эту сумму можно уменьшить только с дополнительной комиссией.",
         "infoNoLimit" : "Этот счёт полностью утверждён. Сумму можно уменьшить с дополнительной комиссией.",
-        "approvedWithLimit" : "Вы утвердили <0>{{value}}</0> для данного счёта.",
+        "approvedWithLimit" : "Вы утвердили <0>{value}</0> для данного счёта.",
         "enabling" : "Активы можно депонировать после того, как счёт будет утверждён.",
         "notEnabled" : "Чтобы предоставлять этот актив взаймы, необходимо утвердить счёт.",
         "notEnoughApproved" : "Необходимо увеличить утверждённый лимит для счёта."
@@ -998,10 +993,10 @@
         },
         "amount" : {
           "title" : "Сумма",
-          "summary" : "Я предоставляю смарт-контракту <0>{{contractName}}</0> доступ к сумме <0>{{amount}}</0> на моём счёте <0>{{accountName}}</0>",
-          "limit" : "Лимит: {{amount}}",
-          "noLimit" : "{{assetName}} без лимита",
-          "contractName" : "{{currencyName}} в Compound",
+          "summary" : "Я предоставляю смарт-контракту <0>{contractName}</0> доступ к сумме <0>{amount}</0> на моём счёте <0>{accountName}</0>",
+          "limit" : "Лимит: {amount}",
+          "noLimit" : "{assetName} без лимита",
+          "contractName" : "{currencyName} в Compound",
           "advanced" : "Дополнительно",
           "amountLabel" : "Сумма для утверждения",
           "amountLabelTooltip" : "Эта опция ограничивает сумму, доступную для смарт-контракта."
@@ -1045,7 +1040,7 @@
           },
           "broadcastError" : "Вероятно, транзакция не удалась. Прежде чем повторить попытку, пожалуйста, подождите немного, а затем проверьте историю транзакций.",
           "tooltip" : {
-            "amountWithdrawn" : "Выведенная сумма отображается в {{ tokenName }}. {{ tokenName }} — это токены ERC-20, которые вы получаете, давая свои активы взаймы."
+            "amountWithdrawn" : "Выведенная сумма отображается в {tokenName}. {tokenName} — это токены ERC-20, которые вы получаете, давая свои активы взаймы."
           }
         }
       }
@@ -1058,7 +1053,7 @@
         "switchLabel" : "<1>Я прочитал(-а) и принимаю </1><0>Условия использования</0><1>.</1>"
       },
       "steps" : {
-        "title" : "Шаг <0>{{step}} / {{total}}</0>",
+        "title" : "Шаг <0>{step} / {total}</0>",
         "1" : {
           "subtitle" : "Подтвердите счёт, чтобы позволить протоколу",
           "subtitle2" : "обрабатывать займы в будущем.",
@@ -1099,14 +1094,14 @@
     },
     "noEthAccount" : {
       "title" : "Пожалуйста, создайте счёт ETH",
-      "description" : "<0>{{ asset }} ({{ ticker }})</0> — это токен ERC-20. Чтобы выдавать займы в {{ ticker }}, установите приложение Ethereum и создайте счёт Ethereum",
+      "description" : "<0>{asset} ({ticker})</0> — это токен ERC-20. Чтобы выдавать займы в {ticker}, установите приложение Ethereum и создайте счёт Ethereum",
       "cta" : "Добавить счёт"
     },
     "emptyAccountDeposit" : {
-      "title" : "У вас нет счёта {{ asset }}.",
-      "description" : "Чтобы внести деньги и предоставить заём в криптовалюте, потребуется счёт {{ asset }}. Получите средства на свой Ethereum-счёт.",
-      "ctaBuy" : "Купить {{ asset }}",
-      "ctaReceive" : "Получить {{ asset }}"
+      "title" : "У вас нет счёта {asset}.",
+      "description" : "Чтобы внести деньги и предоставить заём в криптовалюте, потребуется счёт {asset}. Получите средства на свой Ethereum-счёт.",
+      "ctaBuy" : "Купить {asset}",
+      "ctaReceive" : "Получить {asset}"
     }
   },
   "accounts" : {
@@ -1178,38 +1173,38 @@
   },
   "blacklistToken" : {
     "title" : "Скрыть токен",
-    "desc" : "Это действие скроет все токены <1><0>{{tokenName}}</0></1>. Вы можете снова отобразить их в <3>Настройках</3>",
+    "desc" : "Это действие скроет все токены <1><0>{tokenName}</0></1>. Вы можете снова отобразить их в <3>Настройках</3>",
     "hideCTA" : "Скрыть токен"
   },
   "syncOnboarding" : {
     "exitCTA" : "Выйти",
     "connection" : {
       "searching" : {
-        "title" : "Подключите {{deviceModelName}} к ПК с помощью USB-кабеля",
+        "title" : "Подключите {deviceModelName} к ПК с помощью USB-кабеля",
         "connectionTrouble" : "Не удаётся подключить Ledger?"
       },
       "success" : {
-        "title" : "Подключено к {{ deviceName }}"
+        "title" : "Подключено к {deviceName}"
       }
     },
     "manual" : {
-      "title" : "Давайте настроим {{deviceName}}",
+      "title" : "Давайте настроим {deviceName}",
       "titleTwoStep" : "Давайте приступим",
-      "titleFirstStepDone" : "Устройство {{deviceName}} готово",
-      "successStepTitle" : "Устройство {{deviceName}} готово оберегать вашу криптовалюту",
+      "titleFirstStepDone" : "Устройство {deviceName} готово",
+      "successStepTitle" : "Устройство {deviceName} готово оберегать вашу криптовалюту",
       "secureCryptoTitle" : "Обезопасьте свои криптоактивы",
       "secureCryptoDoneTitle" : "Приложения установлены.",
-      "continueOnDevice" : "Выполните это действие на {{productName}}",
+      "continueOnDevice" : "Выполните это действие на {productName}",
       "pairedContent" : {
-        "title" : "Устройство {{deviceName}} подлинное",
-        "description" : "Этим {{productName}} пользоваться безопасно. Можно приступать к настройке.",
-        "continueOnDevice" : "Коснитесь {{productName}} для начала настройки"
+        "title" : "Устройство {deviceName} подлинное",
+        "description" : "Этим {productName} пользоваться безопасно. Можно приступать к настройке.",
+        "continueOnDevice" : "Коснитесь {productName} для начала настройки"
       },
       "pinContent" : {
         "title" : "ПИН-код",
         "titleCompleted" : "ПИН установлен",
-        "description" : "ПИН-код позволяет разблокировать {{productName}} и защитить его от посторонних, что в целом актуально для любых паролей.",
-        "continueOnDevice" : "Установите ПИН-код на {{productName}}"
+        "description" : "ПИН-код позволяет разблокировать {productName} и защитить его от посторонних, что в целом актуально для любых паролей.",
+        "continueOnDevice" : "Установите ПИН-код на {productName}"
       },
       "seedContent" : {
         "title" : "Настройка и резервная копия",
@@ -1218,31 +1213,31 @@
         "restoreSeed" : "Следуйте инструкции на Защищённом экране устройства Ledger.",
         "restoreCharonTitle" : "Восстановить с помощью Запасного ключа",
         "restoreCharonDescription" : "Следуйте инструкции на Защищённом экране устройства Ledger.",
-        "restoreCharonContinueOnDevice" : "Следуйте инструкции на {{productName}}",
+        "restoreCharonContinueOnDevice" : "Следуйте инструкции на {productName}",
         "selection" : "Выберите подходящий вариант настройки:",
         "selectionNewLedgerTitle" : "Настроить новое устройство Ledger",
         "selectionNewLedgerDescription" : "Будет создана новая секретная фраза восстановления.",
         "selectionRestoreTitle" : "Восстановить доступ к активам",
         "selectionRestoreDescription" : "Функция позволяет добраться до монет с помощью резервной копии — секретной фразы восстановления или Ledger Recover.",
         "selectionRestoreDescriptionWithCharon" : "Функция позволяет добраться до монет с помощью резервной копии — секретной фразы восстановления, Ledger Recover или Запасного ключа Ledger.",
-        "selectionContinueOnDevice" : "Выберите подходящую опцию на {{productName}}",
+        "selectionContinueOnDevice" : "Выберите подходящую опцию на {productName}",
         "selectionNewSeedTitle" : "Секретная фраза восстановления",
         "selectionNewSeedSubtitle" : "Держите комбинацию в надёжном месте",
         "selectionNewSeedDescription" : "Cекретная фраза обеспечивает доступ к криптоактивам, причём её нельзя восстановить. Любой человек с вашей сид-фразой может распоряжаться вашими активами. Если комбинация потеряется, Ledger ничем не сможет вам помочь.",
-        "selectionNewSeedContinueOnDevice" : "Следуйте инструкции на {{productName}}.",
+        "selectionNewSeedContinueOnDevice" : "Следуйте инструкции на {productName}.",
         "restoreDescription" : "Выберите резервную копию для восстановления:",
-        "restoreChoiceContinueOnDevice" : "Выберите подходящую опцию на {{productName}}",
+        "restoreChoiceContinueOnDevice" : "Выберите подходящую опцию на {productName}",
         "restoreChoiceSRPTitle" : "Секретная фраза восстановления",
         "restoreChoiceSRPDescription" : "Для безопасности криптоактивов используйте секретную фразу восстановления, которая была создана устройством Ledger.",
         "restoreChoiceCharonTitle" : "Запасной ключ Ledger",
         "restoreChoiceCharonDescription" : "Используйте Запасной ключ, чтобы восстановить доступ к криптоактивам.",
         "restoreChoiceRecoverTitle" : "Подписка на Ledger Recover",
         "restoreChoiceRecoverDescription" : "Используйте подписку, чтобы восстановить доступ к криптоактивам через подтверждение личности.",
-        "followInstructions" : "Следуйте инструкции на {{productName}}.",
+        "followInstructions" : "Следуйте инструкции на {productName}.",
         "backupCharonTitle" : "Запасной ключ Ledger",
         "backupCharonDescription" : "Создайте новую резервную копию с помощью защищённого ПИН-кодом брелока, со встроенным чипом Secure Element. Восстановить доступ к активам можно в несколько касаний.",
         "backupCharonCta" : "Узнать больше или купить",
-        "backupCharonContinueOnDevice" : "Следуйте инструкции на {{productName}}"
+        "backupCharonContinueOnDevice" : "Следуйте инструкции на {productName}"
       },
       "secureCrypto" : {
         "description" : "Для максимальной безопасности выведите криптовалюты с любой биржи или кошелька на Ledger Wallet.",
@@ -1285,7 +1280,7 @@
         },
         "exitWarningDrawer" : {
           "title" : "Отменить Проверку подлинности Ledger и актуальности ОС?",
-          "description" : "Проверка подлинности Ledger обязательна для настройки {{productName}} через Ledger Wallet.",
+          "description" : "Проверка подлинности Ledger обязательна для настройки {productName} через Ledger Wallet.",
           "cancelCheckCTA" : "Отменить проверки",
           "resumeCheckCTA" : "Продолжить проверку"
         },
@@ -1296,25 +1291,25 @@
           "contactSupportCTA" : "Связаться с Поддержкой",
           "notFoundEntityError" : {
             "title" : "Перезапустить Проверку подлинности Ledger",
-            "description" : "Сначала нужно отключить Поставщика приложений ({{providerNumber}}) в «Мой Ledger». Для этого откройте «Настройки» в Ledger Wallet, выберите «Экспериментальные функции» и отключите опцию «Поставщик приложений «Мой Ledger»»."
+            "description" : "Сначала нужно отключить Поставщика приложений ({providerNumber}) в «Мой Ledger». Для этого откройте «Настройки» в Ledger Wallet, выберите «Экспериментальные функции» и отключите опцию «Поставщик приложений «Мой Ledger»»."
           },
           "deviceNotGenuineError" : {
-            "title" : "Сбой проверки подлинности {{productName}}",
+            "title" : "Сбой проверки подлинности {productName}",
             "description" : "Использовать это устройство Ledger небезопасно.\nОбратитесь в Поддержку Ledger."
           }
         },
         "whyPerformChecksLink" : "Подробнее о Проверке подлинности Ledger",
-        "startChecksCTA" : "Проверить {{modelName}}",
+        "startChecksCTA" : "Проверить {modelName}",
         "continueCTA" : "Продолжить настройку",
         "genuineCheck" : {
           "title" : {
             "active" : "Проверка подлинности Ledger",
-            "completed" : "Устройство {{modelName}} подлинное",
+            "completed" : "Устройство {modelName} подлинное",
             "cancelled" : "Проверка подлинности Ledger отменена"
           },
           "subtitle" : {
-            "active" : "Она поможет подтвердить, что у вас оригинальное устройство {{modelName}}.",
-            "cancelled" : "Проверка подлинности обязательна при настройке {{modelName}} через Ledger Wallet."
+            "active" : "Она поможет подтвердить, что у вас оригинальное устройство {modelName}.",
+            "cancelled" : "Проверка подлинности обязательна при настройке {modelName} через Ledger Wallet."
           },
           "resumeCTA" : "Продолжить Проверку подлинности Ledger"
         },
@@ -1322,13 +1317,13 @@
           "title" : {
             "active" : "Проверка Ledger OS",
             "completed" : "Версия Ledger OS актуальна",
-            "updateAvailable" : "Доступно обновление Ledger OS – {{firmwareVersion}}"
+            "updateAvailable" : "Доступно обновление Ledger OS – {firmwareVersion}"
           },
           "subtitle" : {
-            "active" : "Эта проверка позволяет убедиться в актуальности ОС вашего {{modelName}}.",
+            "active" : "Эта проверка позволяет убедиться в актуальности ОС вашего {modelName}.",
             "updateAvailable" : "Обновление обеспечивает оптимальную защиту криптоактивов и доступ к последним функциям."
           },
-          "viewUpdateCTA" : "Обновить ОС {{modelName}}",
+          "viewUpdateCTA" : "Обновить ОС {modelName}",
           "resumeUpdateCTA" : "Продолжить обновление",
           "skipUpdateCTA" : "Пропустить обновление",
           "retryUpdateCTA" : "Повторить",
@@ -1337,15 +1332,15 @@
         }
       },
       "installApplications" : {
-        "title" : "Установка приложений на {{productName}}",
-        "titleCompleted" : "Приложения установлены на {{productName}}",
+        "title" : "Установка приложений на {productName}",
+        "titleCompleted" : "Приложения установлены на {productName}",
         "install" : "Установить",
         "skip" : "Отложить",
-        "info" : "Приложения в {{deviceName}} нужны для подтверждения транзакций. Добавить или удалить их можно в любое время."
+        "info" : "Приложения в {deviceName} нужны для подтверждения транзакций. Добавить или удалить их можно в любое время."
       },
       "endOfSetup" : {
         "title" : "Завершение настройки",
-        "titleCompleted" : "Устройство {{deviceName}} готово"
+        "titleCompleted" : "Устройство {deviceName} готово"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "Одобрите Проверку подлинности на устройстве Ledger"
@@ -1366,7 +1361,7 @@
         "closeButton" : "Закрыть"
       },
       "desyncOverlay" : {
-        "errorMessage" : "Подключение к {{deviceName}} прервано. Подключаемся к устройству повторно."
+        "errorMessage" : "Подключение к {deviceName} прервано. Подключаемся к устройству повторно."
       },
       "header" : {
         "helpButton" : "Требуется помощь?"
@@ -1418,7 +1413,7 @@
       "skipLink" : "Отложить"
     },
     "postOnboardingBanner" : {
-      "title" : "Что делать с {{productName}} дальше?",
+      "title" : "Что делать с {productName} дальше?",
       "description" : "Обезопасьте криптоактивы и продолжайте путешествие.",
       "link" : "Посмотреть варианты",
       "dismiss" : "Не сейчас"
@@ -1463,7 +1458,7 @@
       "cta" : "Очистить кэш"
     },
     "migrate" : "Доступно обновление счетов в Ledger Wallet",
-    "genericTerminatedCrypto" : "{{coinName}} больше не поддерживается",
+    "genericTerminatedCrypto" : "{coinName} больше не поддерживается",
     "valentine" : {
       "title" : "День святого Валентина",
       "description" : "В знак нашей любви Ledger снижает комиссию за покупку и продажу внутри Ledger Wallet"
@@ -1587,17 +1582,17 @@
   },
   "deviceDeprecation" : {
     "warning" : {
-      "title" : "{{device}}™ не поддерживает прозрачную подпись для этой транзакции",
+      "title" : "{device}™ не поддерживает прозрачную подпись для этой транзакции",
       "subtitle" : "Используйте любое другое устройство Ledger, чтобы подтвердить данные транзакции перед её подписанием. Отсутствие прозрачной подписи может привести к потере всех криптоактивов.",
       "continue" : "Я принимаю риск"
     },
     "info" : {
-      "title" : "{{date}} поддержка {{coinName}} на {{device}}™ через Ledger Live™ будет прекращена",
+      "title" : "{date} поддержка {coinName} на {device}™ через Ledger Live™ будет прекращена",
       "subtitle" : "Перейдите на более свежее устройство Ledger сегодня, чтобы гарантировать доступ ко всем операторам услуг внутри Ledger Live и оптимальную поддержку",
       "reminder" : "Больше не напоминать"
     },
     "error" : {
-      "title" : "{{device}}™ не поддерживает эту функцию",
+      "title" : "{device}™ не поддерживает эту функцию",
       "subtitle" : "Перейдите на более свежее устройство Ledger сегодня, чтобы гарантировать доступ ко всем актуальным функциям внутри Ledger Live."
     },
     "update" : "Изучить варианты обновления",
@@ -1606,9 +1601,9 @@
   },
   "currentAddress" : {
     "title" : "Текущий адрес",
-    "for" : "Адрес для <1><0>{{name}}</0></1>",
+    "for" : "Адрес для <1><0>{name}</0></1>",
     "messageIfUnverified" : "Убедитесь, что показанный адрес в точности совпадает с адресом на экране устройства.",
-    "messageIfSkipped" : "Адрес {{name}} не подтверждён на устройстве Ledger. В целях безопасности вам нужно подтвердить его.",
+    "messageIfSkipped" : "Адрес {name} не подтверждён на устройстве Ledger. В целях безопасности вам нужно подтвердить его.",
     "showQrCode" : "Показать QR-код",
     "taprootWarning" : "Убедитесь, что у отправителя есть поддержка Taproot",
     "dashStakingWarning" : "Не используйте этот адрес для получения вознаграждений за стейкинг",
@@ -1756,7 +1751,7 @@
       "checkInternetAndReload" : "Проверьте подключение к Интернету и обновите страницу.",
       "reload" : "Обновить",
       "noCryptosFound" : "Не нашли монету :(",
-      "noSearchResultsFor" : "К сожалению, монеты по запросу <0>{{search}}</0> не найдены. Повторите поиск по другому запросу.",
+      "noSearchResultsFor" : "К сожалению, монеты по запросу <0>{search}</0> не найдены. Повторите поиск по другому запросу.",
       "noSearchResults" : "К сожалению, не удалось ничего найти.",
       "retrySearchKeyword" : "Повторите поиск по другому запросу.",
       "retrySearchParams" : "Повторите поиск с другими параметрами.",
@@ -1768,35 +1763,33 @@
   "tokensList" : {
     "title" : "Токены",
     "cta" : "Добавить токен",
-    "placeholder" : "Чтобы добавить токены, отправьте их на ваш адрес {{currencyName}}.",
+    "placeholder" : "Чтобы добавить токены, отправьте их на ваш адрес {currencyName}.",
     "link" : "Подробнее",
-    "seeTokens" : "Показать токены ({{tokenCount}})",
-    "hideTokens" : "Скрыть токены ({{tokenCount}})",
-    "countTooltip" : "1 токен",
-    "countTooltip_other" : "Токенов: {{nbCount}}",
+    "seeTokens" : "Показать токены ({tokenCount})",
+    "hideTokens" : "Скрыть токены ({tokenCount})",
+    "countTooltip" : "{count, plural, one {1 токен} other {Токенов: {nbCount}}}",
     "algorand" : {
       "title" : "ASA (Активы)",
       "cta" : "Добавить ASA",
-      "placeholder" : "Вы можете добавить активы на свой счёт {{currencyName}}.",
+      "placeholder" : "Вы можете добавить активы на свой счёт {currencyName}.",
       "link" : "Как работают ASA (Активы)?",
-      "seeTokens" : "Показать ASA ({{tokenCount}})",
-      "hideTokens" : "Скрыть ASA ({{tokenCount}})"
+      "seeTokens" : "Показать ASA ({tokenCount})",
+      "hideTokens" : "Скрыть ASA ({tokenCount})"
     },
     "stellar" : {
       "title" : "Активы",
       "cta" : "Добавить актив",
-      "placeholder" : "Вы можете добавить активы на счёт {{currencyName}}.",
+      "placeholder" : "Вы можете добавить активы на счёт {currencyName}.",
       "link" : "Узнайте больше о Stellar",
-      "seeTokens" : "Показать активы ({{tokenCount}})",
-      "hideTokens" : "Скрыть активы ({{tokenCount}})"
+      "seeTokens" : "Показать активы ({tokenCount})",
+      "hideTokens" : "Скрыть активы ({tokenCount})"
     }
   },
   "subAccounts" : {
     "title" : "Субсчета",
-    "seeSubAccounts" : "Показать субсчета ({{tokenCount}})",
-    "hideSubAccounts" : "Скрыть субсчета ({{tokenCount}})",
-    "countTooltip" : "1 субсчёт",
-    "countTooltip_other" : "Субсчетов: {{nbCount}}"
+    "seeSubAccounts" : "Показать субсчета ({tokenCount})",
+    "hideSubAccounts" : "Скрыть субсчета ({tokenCount})",
+    "countTooltip" : "{count, plural, one {1 субсчёт} other {Субсчетов: {nbCount}}}"
   },
   "addAccounts" : {
     "title" : "Добавить счёт",
@@ -1806,29 +1799,26 @@
       "import" : "Счета",
       "finish" : "Подтверждение"
     },
-    "tokensTip" : "{{token}} ({{ticker}}) – это токен {{tokenType}}. Вы можете получать их непосредственно на счёт {{currency}}.",
-    "accountToImportSubtitle_other" : "Добавить существующие счета",
-    "selectAll" : "Выбрать все ({{count}})",
-    "unselectAll" : "Отменить все ({{count}})",
-    "noAccountToImport" : "Нет существующих счетов {{currencyName}} для добавления",
-    "success" : "Счёт добавлен",
-    "success_other" : "Счета добавлены",
-    "successDescription" : "Добавьте другие счета или вернитесь в Портфель",
-    "successDescription_other" : "Добавьте ещё счета или вернитесь в Портфель",
+    "tokensTip" : "{token} ({ticker}) – это токен {tokenType}. Вы можете получать их непосредственно на счёт {currency}.",
+    "accountToImportSubtitle" : "{count, plural, other {Добавить существующие счета}}",
+    "selectAll" : "Выбрать все ({count})",
+    "unselectAll" : "Отменить все ({count})",
+    "noAccountToImport" : "Нет существующих счетов {currencyName} для добавления",
+    "success" : "{count, plural, one {Счёт добавлен} other {Счета добавлены}}",
+    "successDescription" : "{count, plural, one {Добавьте другие счета или вернитесь в Портфель} other {Добавьте ещё счета или вернитесь в Портфель}}",
     "createNewAccount" : {
-      "noOperationOnLastAccount" : "Невозможно добавить новый счёт, пока вы не получили средства на <1><0>{{accountName}}</0></1>",
-      "noAccountToCreate" : "Счета <1><0>{{currencyName}}</0></1> не найдены",
+      "noOperationOnLastAccount" : "Невозможно добавить новый счёт, пока вы не получили средства на <1><0>{accountName}</0></1>",
+      "noAccountToCreate" : "Счета <1><0>{currencyName}</0></1> не найдены",
       "showAllAddressTypes" : "Показать все типы адресов",
-      "showAllAddressTypesTooltip" : "Изменяйте тип адреса только в том случае, если вам нужно получать {{family}} с использованием других форматов адреса."
+      "showAllAddressTypesTooltip" : "Изменяйте тип адреса только в том случае, если вам нужно получать {family} с использованием других форматов адреса."
     },
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit или Native SegWit?"
     },
     "cta" : {
       "addMore" : "Добавить ещё",
-      "add" : "Добавить счёт",
-      "add_other" : "Добавить счета",
-      "addAccountName" : "Добавить счёт {{currencyName}}",
+      "add" : "{count, plural, one {Добавить счёт} other {Добавить счета}}",
+      "addAccountName" : "Добавить счёт {currencyName}",
       "receive" : "Получить"
     },
     "sections" : {
@@ -1839,7 +1829,7 @@
         "title" : "Добавить новый счёт"
       },
       "imported" : {
-        "title" : "Счетов в Портфеле: {{count}}"
+        "title" : "Счетов в Портфеле: {count}"
       },
       "migrate" : {
         "title" : "Счета, которые будут обновлены"
@@ -1864,7 +1854,7 @@
     "to" : "Куда",
     "identifier" : "ID транзакции",
     "viewOperation" : "Посмотреть в Обозревателе",
-    "showMore" : "Показать ещё {{recipients}}",
+    "showMore" : "Показать ещё {recipients}",
     "showLess" : "Показать меньше",
     "tokenOperations" : "Операции с токеном",
     "subAccountOperations" : "Операции с субсчетами",
@@ -1872,13 +1862,13 @@
     "subAccountTooltip" : "Эта операция относится к операциям по субсчёту",
     "internalOperations" : "Внутренние операции",
     "internalOpTooltip" : "Эта операция включает внутренние операции",
-    "details" : "{{ currency }} – сведения",
+    "details" : "{currency} – сведения",
     "multipleAddresses" : "Почему несколько адресов?",
     "extra" : {
       "frozenAmount" : "Замороженная сумма",
       "unfreezeAmount" : "Разморозить сумму",
-      "votes" : "Голоса ({{number}})",
-      "votesAddress" : "<0>{{votes}}</0> – <2>{{name}}</2>",
+      "votes" : "Голоса ({number})",
+      "votesAddress" : "<0>{votes}</0> – <2>{name}</2>",
       "validators" : "Валидаторы",
       "redelegated" : "Переделегировано",
       "delegatedTo" : "Делегировано кому:",
@@ -1901,7 +1891,7 @@
       "withdrawUnbondedAmount" : "Выведенная сумма",
       "palletMethod" : "Метод",
       "transferAmount" : "Сумма",
-      "validatorsCount" : "Валидаторов: {{number}}",
+      "validatorsCount" : "Валидаторов: {number}",
       "version" : "Версия приложения",
       "accountCreationFee" : "Комиссия за создание счёта",
       "associatedTokenId" : "ID привязанного токена",
@@ -1917,32 +1907,30 @@
     "noMoreOperations" : "Больше ничего нет"
   },
   "DeviceAction" : {
-    "allowAppPermission" : "Откройте приложение {{wording}} на устройстве",
-    "allowAppPermissionSubtitleToken" : "для управления {{token}}",
+    "allowAppPermission" : "Откройте приложение {wording} на устройстве",
+    "allowAppPermissionSubtitleToken" : "для управления {token}",
     "allowManagerPermission" : "Одобрите безопасное подключение",
     "allowRenaming" : "Одобрите переименование на устройстве",
     "loading" : "Загружаем...",
     "connectAndUnlockDevice" : "Подключите и разблокируйте устройство",
     "unlockDevice" : "Разблокируйте устройство",
-    "unlockDeviceAfterFirmwareUpdateStep1" : "Дождитесь завершения установки на {{productName}}.",
-    "unlockDeviceAfterFirmwareUpdateStep2" : "Разблокируйте {{productName}} ПИН-кодом, чтобы завершить обновление.",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "Дождитесь завершения установки на {productName}.",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "Разблокируйте {productName} ПИН-кодом, чтобы завершить обновление.",
     "quitApp" : "Выйдите из приложения на устройстве",
-    "appNotInstalledTitle" : "Отсутствует необходимое приложение",
-    "appNotInstalledTitle_other" : "Отсутствуют необходимые приложения",
-    "appNotInstalled" : "Для этого действия необходимо приложение {{appName}}. Пожалуйста, перейдите в «Мой Ledger» и установите его на устройство",
-    "appNotInstalled_other" : "Для этого действия необходимы приложения {{appName}}. Пожалуйста, перейдите в «Мой Ledger» и установите их на устройство",
+    "appNotInstalledTitle" : "{count, plural, one {Отсутствует необходимое приложение} other {Отсутствуют необходимые приложения}}",
+    "appNotInstalled" : "{count, plural, one {Для этого действия необходимо приложение {appName}. Пожалуйста, перейдите в «Мой Ledger» и установите его на устройство} other {Для этого действия необходимы приложения {appName}. Пожалуйста, перейдите в «Мой Ledger» и установите их на устройство}}",
     "openManager" : "Открыть «Мой Ledger»",
     "openOnboarding" : "Настроить устройство",
     "outdated" : "Версия приложения устарела",
-    "outdatedDesc" : "Для приложения {{appName}} появилось важное обновление. Чтобы установить его, перейдите в «Мой Ledger».",
-    "installApp" : "Устанавливаем приложение {{appName}}",
+    "outdatedDesc" : "Для приложения {appName} появилось важное обновление. Чтобы установить его, перейдите в «Мой Ledger».",
+    "installApp" : "Устанавливаем приложение {appName}",
     "installAppDescription" : "Дождитесь завершения установки",
     "listApps" : "Проверяем зависимости приложения...",
     "listAppsDescription" : "Проверяем наличие всех необходимых приложений. Пожалуйста, подождите...",
     "swap" : {
       "notice" : {
         "default" : "Перед отправкой проверьте сведения об обмене на устройстве. Обмен адресами осуществляется безопасно и не требует проверки.",
-        "provider" : "Перед отправкой проверьте детали обмена на устройстве. {{providerName}} может дополнительно проверять некоторые транзакции, что приведёт к задержкам."
+        "provider" : "Перед отправкой проверьте детали обмена на устройстве. {providerName} может дополнительно проверять некоторые транзакции, что приведёт к задержкам."
       },
       "simpleViewNotice" : {
         "default" : "Перед отправкой проверьте детали обмена на устройстве Ledger.",
@@ -1957,7 +1945,7 @@
       "provider" : "Оператор",
       "payoutNetworkFees" : "Комиссия за выплату",
       "payoutNetworkFeesTooltip" : "Эта сумма не будет отражена на устройстве",
-      "acceptTerms" : "Подтверждая эту транзакцию, я принимаю\n<0>Условия использования {{provider}}</0>",
+      "acceptTerms" : "Подтверждая эту транзакцию, я принимаю\n<0>Условия использования {provider}</0>",
       "nearIntentsAcceptTerms" : "Подтверждая эту транзакцию,\n я принимаю <0>Условия использования SwapKit</0>, технологии в основе NEAR Intents",
       "acceptTermsSponsored" : "Чтобы воспользоваться нулевыми комиссиями сети, вы также соглашаетесь передавать данные вашей транзакции (включая адрес кошелька) компании Blinklabs.",
       "exodusAcceptTerms" : "Exodus полагается на третьи стороны для проведения обменов.\nПодтверждая эту транзакцию, я принимаю <0>Условия использования Exodus</0>",
@@ -1996,7 +1984,7 @@
       "ctaPortfolio" : "Вернуться к Портфелю"
     },
     "deviceStorage" : {
-      "freeSpace" : "Свободно <0>{{space}}</0>",
+      "freeSpace" : "Свободно <0>{space}</0>",
       "noFreeSpace" : "Не хватает свободного места",
       "installed" : "Приложения",
       "capacity" : "Ёмкость",
@@ -2025,20 +2013,17 @@
         "marketcap_desc" : "Капитализация"
       },
       "installSuccess" : {
-        "title" : "Приложение успешно установлено. Теперь вы можете создавать {{app}}-счета",
-        "title_other" : "Приложения установлены. Теперь можно добавлять счета",
+        "title" : "{count, plural, one {Приложение успешно установлено. Теперь вы можете создавать {app}-счета} other {Приложения установлены. Теперь можно добавлять счета}}",
         "manageAccount" : "Управление счетами"
       },
       "updatable" : {
-        "title" : "Доступно обновление",
-        "title_other" : "Доступны обновления",
-        "progressTitle" : "Обновление приложений: {{number}}",
-        "progressTitle_other" : "Обновления приложений: {{number}}",
+        "title" : "{count, plural, one {Доступно обновление} other {Доступны обновления}}",
+        "progressTitle" : "{count, plural, one {Обновление приложений: {number}} other {Обновления приложений: {number}}}",
         "progressWarning" : "Не закрывайте «Мой Ledger», пока идёт обновление.",
         "progress" : "Выполняется массовое обновление..."
       },
       "item" : {
-        "version" : "Версия {{version}}",
+        "version" : "Версия {version}",
         "installing" : "Устанавливаем...",
         "uninstalling" : "Удаляем...",
         "updating" : "Обновляем...",
@@ -2054,16 +2039,16 @@
         "supported" : "Поддерживается в Ledger Wallet.",
         "not_supported" : "Требуется сторонний кошелёк",
         "addAccount" : "Добавить счёт",
-        "addAccountTooltip" : "Добавить счёт {{appName}}",
+        "addAccountTooltip" : "Добавить счёт {appName}",
         "addAccountWarn" : "Дождитесь завершения обработки",
         "learnMore" : "Подробнее",
-        "learnMoreTooltip" : "Подробнее о {{appName}}",
-        "removeTooltip" : "Удалить {{appName}}",
-        "useAppForToken" : "Хотите управлять токенами {{tokenType}}?",
-        "tokenAppDisclaimer" : "Чтобы управлять токенами {{tokenName}} {{tokenType}}, <1>установите приложение {{appName}}</1>, и перед отправкой средств на <3>счёт {{appName}}</3> убедитесь, что поставили именно <1>версию приложения {{tokenType}}</1>.",
-        "tokenAppDisclaimerInstalled" : "Чтобы управлять токенами <1>{{tokenName}} {{tokenType}}</1>, перед отправкой средств на <1>счёт {{appName}}</1> убедитесь, что поставили именно <1>версию приложения {{tokenType}}</1>.",
+        "learnMoreTooltip" : "Подробнее о {appName}",
+        "removeTooltip" : "Удалить {appName}",
+        "useAppForToken" : "Хотите управлять токенами {tokenType}?",
+        "tokenAppDisclaimer" : "Чтобы управлять токенами {tokenName} {tokenType}, <1>установите приложение {appName}</1>, и перед отправкой средств на <3>счёт {appName}</3> убедитесь, что поставили именно <1>версию приложения {tokenType}</1>.",
+        "tokenAppDisclaimerInstalled" : "Чтобы управлять токенами <1>{tokenName} {tokenType}</1>, перед отправкой средств на <1>счёт {appName}</1> убедитесь, что поставили именно <1>версию приложения {tokenType}</1>.",
         "goToAccounts" : "Перейти к Счетам",
-        "intallParentApp" : "Установить приложение {{appName}}",
+        "intallParentApp" : "Установить приложение {appName}",
         "plugin" : "Перейти в приложение",
         "swap" : "Обмен",
         "tool" : "Подробнее",
@@ -2077,15 +2062,15 @@
     },
     "apps" : {
       "dependencyInstall" : {
-        "title" : "Требуется приложение {{dependency}}",
-        "description" : "Также будет установлено приложение {{dependency}}, – оно необходимо для работы {{app}}.",
+        "title" : "Требуется приложение {dependency}",
+        "description" : "Также будет установлено приложение {dependency}, – оно необходимо для работы {app}.",
         "confirm" : "Установить приложения"
       },
       "dependencyUninstall" : {
-        "title" : " Удалить {{app}} и связанные с ним приложения?",
+        "title" : " Удалить {app} и связанные с ним приложения?",
         "showAll" : "Показать приложения для удаления",
-        "description" : "Некоторые из установленных приложений связаны с {{app}}. Они также будут удалены.",
-        "confirm" : "Удалить {{app}} и другие приложения"
+        "description" : "Некоторые из установленных приложений связаны с {app}. Они также будут удалены.",
+        "confirm" : "Удалить {app} и другие приложения"
       }
     },
     "firmware" : {
@@ -2094,7 +2079,7 @@
       "dontHaveSeed" : "У вас нет фразы восстановления? ",
       "followTheGuide" : "Поможет пошаговая инструкция по обновлению",
       "removeApps" : "Перед обновлением удалите все приложения",
-      "update" : "Обновление ОС {{productName}}",
+      "update" : "Обновление ОС {productName}",
       "updateBtn" : "Обновить ОС",
       "installUpdate" : "Установить",
       "banner" : {
@@ -2106,7 +2091,7 @@
           "cta" : "Обновить"
         },
         "warning" : "Доступно обновление ОС",
-        "version" : "Версия {{latestFirmware}}",
+        "version" : "Версия {latestFirmware}",
         "cta" : "Перейти в «Мой Ledger»",
         "old" : {
           "warning" : "ОС устройства устарела и не может быть обновлена. Обратитесь в Поддержку Ledger для решения этого вопроса.",
@@ -2114,12 +2099,12 @@
         },
         "cta2" : "Обновить ОС"
       },
-      "latest" : "Доступна новая ОС ({{version}})",
+      "latest" : "Доступна новая ОС ({version})",
       "contactSupport" : "Связаться с Поддержкой",
       "deprecated" : "ОС устройства устарела и не может быть обновлена. Обратитесь в Поддержку Ledger для решения этого вопроса.",
       "prepareSeed" : "Запишите фразу восстановления из 24 слов на специальный лист. Убедитесь, что в случае необходимости к нему будет доступ.",
       "prepareSeedRecover" : "Также используйте услугу Ledger Recover для сохранения доступа к криптокошельку, который всегда будет под рукой.",
-      "disclaimerTitle" : "Вы собираетесь установить <1>прошивку версии {{version}}</1>.",
+      "disclaimerTitle" : "Вы собираетесь установить <1>прошивку версии {version}</1>.",
       "cancelUpdate" : "Отменить обновление",
       "continueUpdate" : "Продолжить",
       "restartUpdate" : "Перезапустить обновление ОС",
@@ -2128,10 +2113,10 @@
       "updateInProgress" : "Идёт обновление прошивки"
     },
     "modal" : {
-      "title" : "Обновление ОС {{productName}}",
+      "title" : "Обновление ОС {productName}",
       "steps" : {
         "preparingUpdate" : "Сохраняем настройки\nи приложения...",
-        "transferringUpdate" : "Переносим обновление на {{productName}}...",
+        "transferringUpdate" : "Переносим обновление на {productName}...",
         "prepare" : "Подготовка обновления",
         "prepareDone" : "Обновление готово\nк установке",
         "install" : "Установка",
@@ -2146,41 +2131,41 @@
         "flash-mcu" : "Обновление микроконтроллера...",
         "flash-bootloader" : "Обновляем Bootloader...",
         "progress" : "Устанавливаем обновление...",
-        "progressStep" : "Устанавливаем: {{current}}/{{total}}",
+        "progressStep" : "Устанавливаем: {current}/{total}",
         "firmware" : "Обновляем ОС...",
         "flash" : "Готовим ваше устройство..."
       },
       "confirmIdentifier" : "Проверка идентификатора",
       "confirmIdentifierText" : "Подтвердите обновление\nОС на устройстве",
       "identifier" : "Идентификатор",
-      "newFirmware" : "Новая версия прошивки {{version}}",
+      "newFirmware" : "Новая версия прошивки {version}",
       "confirmUpdate" : "Пожалуйста, подтвердите обновление на устройстве",
       "mcuTitle" : "Завершение обновления",
       "mcuFirst" : "Отсоедините USB-кабель от устройства",
-      "mcuSecond" : "Нажмите и удерживайте левую кнопку во время повторного подключения USB-кабеля до тех пор, пока на экране не появится <1><0>{{repairProcessing}}</0></1>",
+      "mcuSecond" : "Нажмите и удерживайте левую кнопку во время повторного подключения USB-кабеля до тех пор, пока на экране не появится <1><0>{repairProcessing}</0></1>",
       "mcuPin" : "Дождитесь завершения обновления",
-      "mcuRestart" : "{{device}} может перезагрузиться несколько раз.",
-      "mcuSecondNanoX" : "Нажмите и удерживайте левую кнопку, пока не появится <1><0>{{bootloaderOption}}</0></1>. Нажмите обе кнопки, чтобы подтвердить и повторно подключить устройство.",
+      "mcuRestart" : "{device} может перезагрузиться несколько раз.",
+      "mcuSecondNanoX" : "Нажмите и удерживайте левую кнопку, пока не появится <1><0>{bootloaderOption}</0></1>. Нажмите обе кнопки, чтобы подтвердить и повторно подключить устройство.",
       "mcuBlueFirst" : "Чтобы отключить устройство, нажмите и удерживайте боковую кнопку в течение 10 секунд. Затем отпустите кнопку.",
       "mcuBlueSecond" : "Нажмите и удерживайте кнопку в течение нескольких секунд, пока не увидите опции загрузки. Выберите режим Bootloader",
-      "successTitle" : "ОС {{deviceName}}\nактуальна",
-      "successTitleApps" : "ОС {{deviceName}} актуальна.\n Осталось ещё кое-что...",
-      "successSubtitleApps" : "Нажмите «Переустановить приложения»,\nчтобы восстановить их на {{deviceName}}.",
+      "successTitle" : "ОС {deviceName}\nактуальна",
+      "successTitleApps" : "ОС {deviceName} актуальна.\n Осталось ещё кое-что...",
+      "successSubtitleApps" : "Нажмите «Переустановить приложения»,\nчтобы восстановить их на {deviceName}.",
       "sucessCTAApps" : "Переустановить приложения",
       "SuccessCTANoApps" : "Завершить",
       "resetSteps" : {
         "first" : "1. Сбросьте устройство",
-        "connect" : "Подключите {{deviceName}} к ПК с помощью USB-кабеля.",
+        "connect" : "Подключите {deviceName} к ПК с помощью USB-кабеля.",
         "turnOn" : "Нажмите кнопку на устройстве, чтобы включить его.",
         "falsePin" : "Устройство будет сброшено, если трижды неправильно ввести ПИН-код.",
-        "turnOff" : "Нажмите и удерживайте боковую кнопку, пока не увидите {{action}}.",
-        "confirmTurnOff" : "Нажмите {{action}} для подтверждения.",
-        "second" : "2. Загрузитесь в режиме {{mode}}",
-        "boot" : "Нажмите и удерживайте боковую кнопку, пока не увидите {{option}}",
-        "recoveryMode" : "Выберите режим {{mode}}. Дождитесь, пока не появится Консоль.",
+        "turnOff" : "Нажмите и удерживайте боковую кнопку, пока не увидите {action}.",
+        "confirmTurnOff" : "Нажмите {action} для подтверждения.",
+        "second" : "2. Загрузитесь в режиме {mode}",
+        "boot" : "Нажмите и удерживайте боковую кнопку, пока не увидите {option}",
+        "recoveryMode" : "Выберите режим {mode}. Дождитесь, пока не появится Консоль.",
         "third" : "3. Удалите все приложения",
         "openLive" : "Откройте «Мой Ledger» в Ledger Wallet.",
-        "uninstall" : "Нажимайте на значок корзины рядом с приложениями, установленными на {{deviceName}}. Это позволит освободить место для установки прошивки.",
+        "uninstall" : "Нажимайте на значок корзины рядом с приложениями, установленными на {deviceName}. Это позволит освободить место для установки прошивки.",
         "disclaimer" : "Примечание: эта операция не затрагивает средства. Приватные ключи для доступа к криптоактивам в блокчейне будут в безопасности, а секретную фразу вы записали на листе восстановления."
       }
     }
@@ -2190,7 +2175,7 @@
     "steps" : {
       "rewards" : {
         "title" : "Вознаграждение",
-        "description" : "Поздравляем! Вы заработали <1>{{amount}}</1>, проголосовав за валидаторов.",
+        "description" : "Поздравляем! Вы заработали <1>{amount}</1>, проголосовав за валидаторов.",
         "info" : "Вознаграждения можно получать раз в 24 часа."
       },
       "connectDevice" : {
@@ -2217,7 +2202,7 @@
         "bandwidthDescription" : "Для совершения транзакций в сети TRX вместо комиссии используются очки Пропускной способности (Bandwidth). Чтобы увеличить количество ежедневных бесплатных транзакций, укажите Пропускную способность.",
         "energyDescription" : "Для исполнения смарт-контрактов необходимы очки Энергии (Energy). Если вы не используете смарт-контракты, то нет нужды получать вознаграждения в очках Энергии.",
         "amountLabel" : "Сумма для заморозки",
-        "available" : "Доступно: {{amountAvailable}}",
+        "available" : "Доступно: {amountAvailable}",
         "info" : "Разморозка активов может быть инициирована в любое время. Активы станут доступны после 14-дневного периода разморозки."
       },
       "connectDevice" : {
@@ -2233,7 +2218,7 @@
           "title" : "",
           "textNRG" : "Начисление бочков Энергии начнётся после подтверждения заморозки сетью. Скоро вы сможете голосовать за Суперпредставителей и получать вознаграждения.",
           "text" : "Начисление очков Пропускной способности начнётся после подтверждения заморозки сетью. Скоро вы сможете голосовать за Суперпредставителей и получать вознаграждения.",
-          "votePending" : "Проголосовать через {{time}}",
+          "votePending" : "Проголосовать через {time}",
           "vote" : "Голосовать",
           "later" : "Проголосовать позже"
         },
@@ -2246,7 +2231,7 @@
     "steps" : {
       "amount" : {
         "title" : "Разморозить",
-        "info" : "Разморозка приведёт к уменьшению {{resource}} и аннулированию голосов."
+        "info" : "Разморозка приведёт к уменьшению {resource} и аннулированию голосов."
       },
       "connectDevice" : {
         "title" : "Устройство"
@@ -2255,7 +2240,7 @@
         "title" : "Подтверждение",
         "success" : {
           "title" : "",
-          "text" : "Ваши активы успешно разморожены. Ваши очки {{resource}} сократятся, а голоса будут аннулированы.",
+          "text" : "Ваши активы успешно разморожены. Ваши очки {resource} сократятся, а голоса будут аннулированы.",
           "continue" : "Продолжить"
         },
         "broadcastError" : "Вероятно, транзакция не удалась. Прежде чем повторить попытку, подождите немного, а затем проверьте историю транзакций."
@@ -2270,14 +2255,14 @@
         "max" : "МАКС.",
         "title" : "Голосовать",
         "search" : "Введите название или адрес монеты",
-        "totalVotes" : "Всего голосов: {{total}}",
-        "selected" : "Выбрано: {{total}}",
-        "maxSelected" : "Выбрано макс.: {{total}}",
+        "totalVotes" : "Всего голосов: {total}",
+        "selected" : "Выбрано: {total}",
+        "maxSelected" : "Выбрано макс.: {total}",
         "allVotesAreUsed" : "Использованы все голоса",
         "maxUsed" : "Недостаточно средств",
-        "validators" : "Валидаторов: {{total}}",
-        "votes" : "Доступные активы: {{total}}",
-        "noResults" : "Валидатор по запросу «<0>{{search}}</0>» не найден."
+        "validators" : "Валидаторов: {total}",
+        "votes" : "Доступные активы: {total}",
+        "noResults" : "Валидатор по запросу «<0>{search}</0>» не найден."
       },
       "connectDevice" : {
         "title" : "Устройство"
@@ -2295,15 +2280,15 @@
   },
   "buy" : {
     "title" : "Покупка",
-    "titleCrypto" : "Купить {{currency}}",
-    "buyCTA" : "Купить {{currencyTicker}}",
+    "titleCrypto" : "Купить {currency}",
+    "buyCTA" : "Купить {currencyTicker}",
     "withoutDevice" : "Продолжить без устройства",
     "connectWithoutDevice" : "Для оптимальной безопасности лучше использовать устройство.",
     "skipConnect" : "Продолжить без устройства"
   },
   "sell" : {
     "title" : "Продажа",
-    "titleCrypto" : "Продать {{currency}}",
+    "titleCrypto" : "Продать {currency}",
     "exchangeDrawer" : {
       "completed" : {
         "title" : "Транзакция успешно транслирована",
@@ -2331,7 +2316,7 @@
   },
   "fund" : {
     "title" : "Пополнить",
-    "titleCrypto" : "Пополнить {{currency}}",
+    "titleCrypto" : "Пополнить {currency}",
     "exchangeDrawer" : {
       "completed" : {
         "title" : "Транзакция успешно транслирована",
@@ -2357,11 +2342,11 @@
       "chooseAccount" : {
         "title" : "Счёт",
         "label" : "Счёт для зачисления",
-        "parentAccount" : "1. Выберите счёт {{currencyName}}",
+        "parentAccount" : "1. Выберите счёт {currencyName}",
         "token" : "2. Выберите токен",
         "errorLoadingTokens" : "Ошибка загрузки токенов",
-        "verifyTokenType" : "Проверьте, чтобы <0>{{token}}</0> был токеном <0>{{tokenType}}</0>. Любой другой криптоактив, отправленный на счёт {{currency}}, может быть потерян.",
-        "warningTokenType" : "Отправляйте только <0>{{ticker}}</0> или токены сети <0>{{tokenType}}</0> на счета {{currency}}. Любые другие криптоактивы могут быть потеряны.",
+        "verifyTokenType" : "Проверьте, чтобы <0>{token}</0> был токеном <0>{tokenType}</0>. Любой другой криптоактив, отправленный на счёт {currency}, может быть потерян.",
+        "warningTokenType" : "Отправляйте только <0>{ticker}</0> или токены сети <0>{tokenType}</0> на счета {currency}. Любые другие криптоактивы могут быть потеряны.",
         "depositFromCexBannerTitle" : "Перенести активы с Coinbase"
       },
       "connectDevice" : {
@@ -2377,12 +2362,12 @@
         }
       },
       "staking" : {
-        "title" : "Приумножайте {{currencyName}}",
+        "title" : "Приумножайте {currencyName}",
         "link" : "Подробнее",
         "notShow" : "Больше не показывать",
         "footer" : {
           "dismiss" : "Позже",
-          "stake" : "Стейкать с {{provider}}"
+          "stake" : "Стейкать с {provider}"
         },
         "cosmos" : {
           "title" : "Приумножайте ATOM. Стейкайте с помощью валидатора Ledger.",
@@ -2430,7 +2415,7 @@
         "domainService" : {
           "resolve" : "Это актуальный ENS, связанный со следующим адресом:",
           "supportLink" : "Что такое Ethereum Name Service?",
-          "reverse" : "Этот адрес привязан к {{domain}}",
+          "reverse" : "Этот адрес привязан к {domain}",
           "invalidDomain" : {
             "title" : "Домен не поддерживается",
             "description" : "Сейчас поддерживаются исключительно ENS-домены длиной меньше 30 символов."
@@ -2474,7 +2459,7 @@
           "description" : "Невозможно проверить данные транзакции на устройстве Ledger. Её подписание может привести к потере криптоактивов. Одобряйте транзакцию только в том случае, если доверяете сайту."
         },
         "utxoLag" : "Подтверждение и подписание операции может занять много времени ввиду большого количества монет на счету.",
-        "subaccountsWarning" : "Чтобы отправлять токены с этого счёта, вам нужно пополнить его за {{ currency }}",
+        "subaccountsWarning" : "Чтобы отправлять токены с этого счёта, вам нужно пополнить его за {currency}",
         "from" : "Откуда",
         "to" : "Куда",
         "selectAccountDebit" : "Счёт для списания",
@@ -2490,17 +2475,17 @@
         "edit" : "Редактировать",
         "ethereumGasLimit" : "Лимит Газа",
         "ethereumGasPrice" : "Цена Газа",
-        "ethereumMaxFee" : "Макс. комиссия ({{unitName}})",
-        "ethereumPriorityFee" : "Макс. комиссия за приоритет ({{unitName}})",
+        "ethereumMaxFee" : "Макс. комиссия ({unitName})",
+        "ethereumPriorityFee" : "Макс. комиссия за приоритет ({unitName})",
         "nextBlock" : "Следующий блок",
         "suggested" : "Рекомендовано",
-        "unitVByte" : "{{unit}}/вБайт",
-        "unitPerByte" : "{{unit}}/байт",
+        "unitVByte" : "{unit}/вБайт",
+        "unitPerByte" : "{unit}/байт",
         "splExtensionsWarning" : "Вы взаимодействуете с токеном, который является составляющей программы Token-2022 или «Расширения токенов». Это несёт определённые риски. <0>Нажмите здесь</0> для подробностей."
       },
       "verification" : {
         "streaming" : {
-          "accurate" : "Загружаем... ({{percentage}})",
+          "accurate" : "Загружаем... ({percentage})",
           "inaccurate" : "Загружаем..."
         }
       },
@@ -2536,16 +2521,16 @@
     }
   },
   "newSendFlow" : {
-    "title" : "Отправить {{currency}}",
-    "available" : "Доступно: {{amount}}",
+    "title" : "Отправить {currency}",
+    "available" : "Доступно: {amount}",
     "placeholder" : "Введите адрес или ENS",
     "placeholderNoENS" : "Ввести адрес",
     "recent" : "Недавние",
     "myAccounts" : "Мои счета",
-    "sendTo" : "Отправить на {{address}}",
+    "sendTo" : "Отправить на {address}",
     "addressMatched" : "Адрес совпадает",
     "addressNotFound" : "Адрес не найден",
-    "alreadyUsed" : "Уже используется · {{date}}",
+    "alreadyUsed" : "Уже используется · {date}",
     "recentSendWillAppear" : "Здесь отобразятся ваши отправления",
     "securityInfo" : {
       "title" : "Как отправить безопасно?",
@@ -2567,15 +2552,12 @@
     },
     "relativeDate" : {
       "justNow" : "Только что",
-      "minutesAgo_one" : "1 мин. назад",
-      "minutesAgo_other" : "{{count}} мин. назад",
-      "hoursAgo_one" : "час назад",
-      "hoursAgo_other" : "{{count}} ч. назад",
-      "daysAgo_one" : "день назад",
-      "daysAgo_other" : "{{count}} дн. назад"
+      "minutesAgo" : "{count, plural, one {1 мин. назад} other {{count} мин. назад}}",
+      "hoursAgo" : "{count, plural, one {час назад} other {{count} ч. назад}}",
+      "daysAgo" : "{count, plural, one {день назад} other {{count} дн. назад}}"
     },
     "remove" : "Удалить",
-    "enterTag" : "Введите {{tag}}",
+    "enterTag" : "Введите {tag}",
     "firstInteraction" : {
       "title" : "Вы отправляете на новый адрес",
       "description" : "Подтвердите правильность адреса. Если не уверены, сначала отправьте небольшую сумму."
@@ -2591,22 +2573,22 @@
       "walletNotExist" : "Кошелёк не существует"
     },
     "skipMemo" : {
-      "title" : "Не добавлять {{memoLabel}}?",
-      "description" : "Средства могут потеряться, если платформа получателя требует указывать {{memoLabel}}.",
-      "notRequired" : "Получатель не требует {{memoLabel}}?",
+      "title" : "Не добавлять {memoLabel}?",
+      "description" : "Средства могут потеряться, если платформа получателя требует указывать {memoLabel}.",
+      "notRequired" : "Получатель не требует {memoLabel}?",
       "confirm" : "Да, пропустить",
       "neverAskAgain" : "Больше не показывать предупреждение"
     },
     "tagHelp" : {
-      "inputLabel" : "Введите {{memoLabel}}",
-      "description" : "{{memoLabel}} обязательно указывать при отправке {{currency}} на криптобиржу. Он используется для идентификации получателя транзакции. Криптоактивы без указанного {{memoLabel}} могут быть потеряны."
+      "inputLabel" : "Введите {memoLabel}",
+      "description" : "{memoLabel} обязательно указывать при отправке {currency} на криптобиржу. Он используется для идентификации получателя транзакции. Криптоактивы без указанного {memoLabel} могут быть потеряны."
     },
-    "networkFeesInFiat" : "Комиссия сети в {{currency}}",
-    "feesAmount" : "Сумма комиссии ({{unit}})",
-    "gasLimit" : "Лимит Газа ({{unit}})",
+    "networkFeesInFiat" : "Комиссия сети в {currency}",
+    "feesAmount" : "Сумма комиссии ({unit})",
+    "gasLimit" : "Лимит Газа ({unit})",
     "feesPaid" : "Комиссия сети за обработку вашей транзакции",
     "insufficientBalanceFees" : "Недостаточный баланс для покрытия комиссии сети",
-    "amountToSend" : "Сумма к отправке в ({{currency}})",
+    "amountToSend" : "Сумма к отправке в ({currency})",
     "coinToSend" : "Монета для отправки",
     "coinControlCustom" : "Ручной выбор монет",
     "quickActions" : {
@@ -2616,13 +2598,13 @@
       "max" : "Макс."
     },
     "reviewCta" : "Просмотреть",
-    "getCta" : "Получить {{currency}}",
+    "getCta" : "Получить {currency}",
     "switchInputMode" : "Переключить режим ввода суммы",
     "aboveMaximum" : "Больше максимального баланса",
     "transactionSigned" : "Транзакция подписана",
     "processingTransaction" : "Ваша транзакция обрабатывается",
     "sign" : {
-      "title" : "Продолжите на вашем Ledger {{wording}}",
+      "title" : "Продолжите на вашем Ledger {wording}",
       "description" : "Следуйте инструкции на Защищённом экране устройства Ledger."
     },
     "gasOptionsSync" : {
@@ -2632,17 +2614,17 @@
     "customFees" : {
       "title" : "Пользовательская комиссия",
       "confirm" : "Подтвердить",
-      "maxFee" : "Макс. комиссия ({{unit}})",
-      "maxPriorityFee" : "Макс. комиссия за приоритет ({{unit}})",
-      "feePerByte" : "Сумма комиссии ({{unit}})",
+      "maxFee" : "Макс. комиссия ({unit})",
+      "maxPriorityFee" : "Макс. комиссия за приоритет ({unit})",
+      "feePerByte" : "Сумма комиссии ({unit})",
       "suggested" : "Рекомендовано",
       "nextBlock" : "Следующий блок",
-      "networkFeesInFiat" : "Комиссия сети в {{currency}}",
+      "networkFeesInFiat" : "Комиссия сети в {currency}",
       "invalidValue" : "Введите корректное число",
-      "belowMinimum" : "Минимальная сумма — {{min}}",
+      "belowMinimum" : "Минимальная сумма — {min}",
       "maxFeeBelowPriorityFee" : "Максимальная комиссия должна быть больше или равна максимальной комиссии за приоритет",
       "feeAsset" : "Актив для комиссий",
-      "feesAmount" : "Сумма комиссии ({{unit}})",
+      "feesAmount" : "Сумма комиссии ({unit})",
       "payFeesIn" : "Платить комиссию в"
     },
     "coinControl" : {
@@ -2653,13 +2635,13 @@
       "changeToReturn" : "Сдача на возврат",
       "enterAmount" : "Ввод суммы",
       "selectSufficientCoins" : "Укажите достаточное количество монет",
-      "amountToSendInCurrency" : "Сумма к отправке в {{ticker}}",
+      "amountToSendInCurrency" : "Сумма к отправке в {ticker}",
       "amountInputLabel" : "Сумма к отправке"
     }
   },
   "releaseNotes" : {
     "title" : "Сведения о версии",
-    "version" : "Ledger Wallet {{versionNb}}",
+    "version" : "Ledger Wallet {versionNb}",
     "gotIt" : "Понятно"
   },
   "troubleshootNetwork" : {
@@ -2676,23 +2658,23 @@
   "systemLanguageAvailable" : {
     "title" : "Поменять язык в приложении?",
     "description" : {
-      "newSupport" : "Отличные новости! Наша команда усердно трудилась, и теперь Ledger Wallet поддерживает {{language}}.",
+      "newSupport" : "Отличные новости! Наша команда усердно трудилась, и теперь Ledger Wallet поддерживает {language}.",
       "advice" : "Вы в любой момент можете изменить язык в Настройках."
     },
-    "switchButton" : "Переключиться на {{language}}",
+    "switchButton" : "Переключиться на {language}",
     "no" : "Мне не хочется"
   },
   "deviceRename" : {
-    "title" : "Переименовать {{ productName }}",
+    "title" : "Переименовать {productName}",
     "chooseName" : "Укажите название",
     "placeholder" : "Stax Олега",
-    "remainingCharacters" : "Осталось символов: {{ remainingCharacters }}",
-    "renamed" : "Название {{ productName }} изменено на\n«{{ name }}» "
+    "remainingCharacters" : "Осталось символов: {remainingCharacters}",
+    "renamed" : "Название {productName} изменено на\n«{name}» "
   },
   "removeCustomLockscreen" : {
     "title" : "Удаление картинки экрана блокировки",
     "cta" : "Удалить",
-    "confirmation" : "Подтвердите удаление изображения на {{productName}}",
+    "confirmation" : "Подтвердите удаление изображения на {productName}",
     "success" : "Картинка удалена"
   },
   "changeCustomLockscreen" : {
@@ -2709,15 +2691,15 @@
     "dontChangeLanguage" : "Не менять",
     "changeDeviceLanguage" : "Поменять язык устройства?",
     "changeDeviceLanguagePrompt" : {
-      "title" : "Поменять язык {{deviceName}} на {{language}}?",
-      "description" : "Использовать один и тот же язык на {{deviceName}} и в приложении Ledger Wallet?"
+      "title" : "Поменять язык {deviceName} на {language}?",
+      "description" : "Использовать один и тот же язык на {deviceName} и в приложении Ledger Wallet?"
     },
     "firmwareUpdatePrompt" : {
-      "title" : "Добавить {{language}} язык на устройство {{deviceName}}?",
-      "description" : "Теперь {{language}} язык доступен для {{deviceName}}. Можно установить его сейчас или позже, в разделе «Мой Ledger»."
+      "title" : "Добавить {language} язык на устройство {deviceName}?",
+      "description" : "Теперь {language} язык доступен для {deviceName}. Можно установить его сейчас или позже, в разделе «Мой Ledger»."
     },
     "allowLanguageInstallation" : "Нажмите «Install» (Установить),\nчтобы установить язык",
-    "languageInstalled" : "Новый язык устройства — {{language}}",
+    "languageInstalled" : "Новый язык устройства — {language}",
     "installingLanguage" : "Установка языка",
     "languages" : {
       "english" : "English",
@@ -2737,14 +2719,14 @@
     "value" : "Ценность",
     "showAll" : "Показать больше",
     "showLess" : "Показать меньше",
-    "header" : "Распределение активов ({{count}})"
+    "header" : "Распределение активов ({count})"
   },
   "accountDistribution" : {
     "account" : "Счёт",
     "distribution" : "Распределение",
     "amount" : "Сумма",
     "value" : "Ценность",
-    "header" : "Распределение счёта ({{count}})"
+    "header" : "Распределение счёта ({count})"
   },
   "elrond" : {
     "guardedAccountWarning" : "Если для этого счёта установлен «страж» (guardian), провести транзакцию с помощью Ledger Wallet не получится.",
@@ -2780,11 +2762,11 @@
       "noRewards" : "Вознаграждений нет",
       "delegate" : "Делегировать",
       "undelegate" : "Отозвать",
-      "redelegateDisabledTooltip" : "Вы можете переделегировать через <0>{{days}}</0> дн",
+      "redelegateDisabledTooltip" : "Вы можете переделегировать через <0>{days}</0> дн",
       "redelegateMaxDisabledTooltip" : "Вы не можете перевыбрать более <0>7</0> валидаторов за раз",
       "undelegateDisabledTooltip" : "Вы не можете отозвать более <0>7</0> валидаторов за раз",
       "reward" : "Запросить вознаграждение",
-      "currentDelegation" : "Делегировано: <0>{{amount}}</0>",
+      "currentDelegation" : "Делегировано: <0>{amount}</0>",
       "apr" : "Годовая доходность",
       "totalStake" : "Общий пул",
       "activeTooltip" : "Делегирование приносит вознаграждения",
@@ -2840,8 +2822,8 @@
             "compoundOrClaim" : "Капитализировать вознаграждения или получить их",
             "compoundDescription" : "Вознаграждения будут добавлены к делегированной сумме.",
             "claimDescription" : "Вознаграждения будут зачислены на баланс.",
-            "compoundInfo" : "Вы заработали <0>{{amount}}</0>. После нажатия кнопки «Продолжить» вознаграждения будут получены и автоматически добавлены к стейкингу с тем же валидатором.",
-            "claimInfo" : "Вы заработали <0>{{amount}}</0> от валидатора ниже. После нажатия кнопки «Продолжить» вознаграждения будут получены и автоматически зачислены на ваш баланс.",
+            "compoundInfo" : "Вы заработали <0>{amount}</0>. После нажатия кнопки «Продолжить» вознаграждения будут получены и автоматически добавлены к стейкингу с тем же валидатором.",
+            "claimInfo" : "Вы заработали <0>{amount}</0> от валидатора ниже. После нажатия кнопки «Продолжить» вознаграждения будут получены и автоматически зачислены на ваш баланс.",
             "selectLabel" : "Выберите делегирование"
           },
           "connectDevice" : {
@@ -2854,7 +2836,7 @@
               "title" : "Вознаграждение успешно получено",
               "titleCompound" : "Вознаграждение успешно капитализировано",
               "text" : "Сумма вознаграждений была зачислена на ваш баланс",
-              "textCompound" : "Вы успешно добавили <0>{{amount}}</0> EGLD вознаграждений к стейку валидатора <0>{{validator}}</0>.",
+              "textCompound" : "Вы успешно добавили <0>{amount}</0> EGLD вознаграждений к стейку валидатора <0>{validator}</0>.",
               "cta" : "Подробнее"
             },
             "pending" : {
@@ -2891,7 +2873,7 @@
             "title" : "Подтверждение",
             "success" : {
               "title" : "Вы успешно отозвали делегированные активы",
-              "description" : "<0>{{amount}}</0> отозвано из стейка валидатора <0>{{validator}}</0>.",
+              "description" : "<0>{amount}</0> отозвано из стейка валидатора <0>{validator}</0>.",
               "cta" : "Подробнее"
             },
             "broadcastError" : "Возможно, ваша транзакция не прошла. Пожалуйста, подождите немного, а затем проверьте историю транзакций, прежде чем повторить попытку."
@@ -2905,7 +2887,7 @@
         "steps" : {
           "withdraw" : {
             "title" : "Подтверждение вывода",
-            "description" : "Вы вывели <0>{{amount}}</0> EGLD из стейка валидатора <0>{{validator}}</0>. После нажатия кнопки «Продолжить» активы будут получены и автоматически зачислены на ваш баланс.",
+            "description" : "Вы вывели <0>{amount}</0> EGLD из стейка валидатора <0>{validator}</0>. После нажатия кнопки «Продолжить» активы будут получены и автоматически зачислены на ваш баланс.",
             "selectLabel" : "Отмена делегирования"
           },
           "connectDevice" : {
@@ -2916,7 +2898,7 @@
             "label" : "Подтверждение",
             "success" : {
               "title" : "Активы успешно выведены",
-              "text" : "На ваш баланс было зачислено <0>{{amount}}</0>.",
+              "text" : "На ваш баланс было зачислено <0>{amount}</0>.",
               "cta" : "Подробнее"
             },
             "pending" : {
@@ -3018,17 +3000,17 @@
         "voteExisting" : "Управление голосами"
       },
       "manageTP" : "Управление активами",
-      "warnEarnRewards" : "У вас должно быть не менее {{amount}}, чтобы получать вознаграждения",
+      "warnEarnRewards" : "У вас должно быть не менее {amount}, чтобы получать вознаграждения",
       "warnDisableStaking" : "Недоступно",
       "warnDisableStakingMessage" : "В настоящий момент функция стейкинга Tron недоступна",
       "claimRewards" : "Получить вознаграждения",
-      "nextRewardsDate" : "Вознаграждения можно получить {{date}}",
-      "claimAvailableRewards" : "Получить {{amount}}",
+      "nextRewardsDate" : "Вознаграждения можно получить {date}",
+      "claimAvailableRewards" : "Получить {amount}",
       "header" : "Голоса",
       "percentageTP" : "% отданных голосов",
       "noRewards" : "Нет доступных вознаграждений",
       "remainingVotes" : {
-        "title" : "Голосов в распоряжении: {{amount}}",
+        "title" : "Голосов в распоряжении: {amount}",
         "description" : "Чтобы увеличить вознаграждение, используйте оставшиеся голоса",
         "button" : "Голосовать"
       },
@@ -3175,7 +3157,7 @@
       "vote" : {
         "title" : "Голосовать",
         "description" : "Голосуйте за группы валидаторов. Также обязательно активируйте голоса для получения вознаграждений.",
-        "descriptionMaxVotes" : "Максимальное количество групп валидаторов, доступных для голосования — {{maxVotes}}. Вы можете отозвать голос, чтобы проголосовать за новую группу"
+        "descriptionMaxVotes" : "Максимальное количество групп валидаторов, доступных для голосования — {maxVotes}. Вы можете отозвать голос, чтобы проголосовать за новую группу"
       },
       "activate" : {
         "title" : "Активировать голоса",
@@ -3382,7 +3364,7 @@
   "cosmos" : {
     "delegation" : {
       "emptyState" : {
-        "description" : "Вы можете получать вознаграждения в {{currencyTicker}}, делегируя активы.",
+        "description" : "Вы можете получать вознаграждения в {currencyTicker}, делегируя активы.",
         "info" : "Как работает делегирование",
         "delegation" : "Получайте вознаграждения"
       },
@@ -3394,11 +3376,11 @@
       "delegate" : "Дополнить",
       "undelegate" : "Отозвать",
       "redelegate" : "Переделегировать",
-      "redelegateDisabledTooltip" : "Вы можете переделегировать через <0>{{days}}</0>",
+      "redelegateDisabledTooltip" : "Вы можете переделегировать через <0>{days}</0>",
       "redelegateMaxDisabledTooltip" : "Вы не можете перевыбрать более <0>7</0> валидаторов за раз",
       "undelegateDisabledTooltip" : "Вы не можете перевыбрать более <0>7</0> валидаторов за раз",
       "reward" : "Получить вознаграждения",
-      "currentDelegation" : "Делегировано: <0>{{amount}}</0>",
+      "currentDelegation" : "Делегировано: <0>{amount}</0>",
       "estYield" : "ориент. доход",
       "activeTooltip" : "Делегирование приносит вознаграждения",
       "inactiveTooltip" : "Без делегирования средства не приносят вознаграждения",
@@ -3407,8 +3389,12 @@
         "title" : "Делегирование",
         "steps" : {
           "starter" : {
-            "description" : "Вы можете получать вознаграждения, делегируя активы {{currencyTicker}} валидатору.",
-            "bullet" : ["Делегированные активы остаются в вашей собственности", "Делегируйте прямо на устройстве Ledger", "Активы станут доступны через {{numberOfDays}} дн. после отмены делегирования"],
+            "description" : "Вы можете получать вознаграждения, делегируя активы {currencyTicker} валидатору.",
+            "bullet" : [
+              "Делегированные активы остаются в вашей собственности",
+              "Делегируйте прямо на устройстве Ledger",
+              "Активы станут доступны через {numberOfDays} дн. после отмены делегирования"
+            ],
             "warning" : {
               "description" : "Выбирайте валидатора с умом. Часть делегированных активов может быть безвозвратно утеряна, если валидатор поведёт себя недобросовестно."
             }
@@ -3445,8 +3431,8 @@
             "compoundOrClaim" : "Капитализировать или снять вознаграждение?",
             "compoundDescription" : "Вознаграждения будут добавлены к делегированной сумме",
             "claimDescription" : "Вознаграждения будут зачислены на доступный баланс",
-            "compoundInfo" : "Вы заработали <0>{{amount}}</0>. После нажатия «Продолжить» вознаграждения будут получены и автоматически делегированы тому же валидатору.",
-            "claimInfo" : "Вы заработали <0>{{amount}}</0> от валидатора. После нажатия кнопки «Продолжить» вознаграждения будут получены и автоматически зачислены на ваш баланс.",
+            "compoundInfo" : "Вы заработали <0>{amount}</0>. После нажатия «Продолжить» вознаграждения будут получены и автоматически делегированы тому же валидатору.",
+            "claimInfo" : "Вы заработали <0>{amount}</0> от валидатора. После нажатия кнопки «Продолжить» вознаграждения будут получены и автоматически зачислены на ваш баланс.",
             "selectLabel" : "Выберите делегирование"
           },
           "connectDevice" : {
@@ -3459,7 +3445,7 @@
               "title" : "Вы успешно сняли вознаграждение",
               "titleCompound" : "Вознаграждения успешно капитализированы",
               "text" : "Вознаграждение зачислено на ваш баланс",
-              "textCompound" : "Ваше вознаграждение (<0>{{amount}}</0>) автоматически делегировано <0>{{validator}}</0>",
+              "textCompound" : "Ваше вознаграждение (<0>{amount}</0>) автоматически делегировано <0>{validator}</0>",
               "cta" : "Подробности"
             },
             "pending" : {
@@ -3476,7 +3462,7 @@
         "steps" : {
           "starter" : {
             "title" : "Повторное делегирование",
-            "description" : "Используйте повторное делегирование для смены валидатора. Но если вы передумаете, то придётся подождать, потому что повторное делегирование инициирует блокировку средств на {{ numberOfDays }} дн.",
+            "description" : "Используйте повторное делегирование для смены валидатора. Но если вы передумаете, то придётся подождать, потому что повторное делегирование инициирует блокировку средств на {numberOfDays} дн.",
             "warning" : "Выбирайте валидатора с умом. Часть заблокированных активов может быть безвозвратно утеряна, если валидатор поведёт себя недобросовестно. У вас может быть не более <0>7 повторных делегирований в очереди</0>.",
             "howDelegationWorks" : "Как работает делегирование?"
           },
@@ -3485,7 +3471,7 @@
             "currentDelegation" : "Активное делегирование",
             "newDelegation" : "Новое делегирование",
             "chooseValidator" : "Выберите валидатора",
-            "warning" : "Если вы передумаете, то придётся подождать <0>{{numberOfDays}} дней (дня)</0>, чтобы переделегировать средства новому валидатору",
+            "warning" : "Если вы передумаете, то придётся подождать <0>{numberOfDays} дней (дня)</0>, чтобы переделегировать средства новому валидатору",
             "amountLabel" : "Сумма повторного делегирования"
           },
           "device" : {
@@ -3505,15 +3491,15 @@
     },
     "undelegation" : {
       "header" : "Отозванные средства",
-      "headerTooltip" : "Будут доступны после {{numberOfDays}} дн. блокировки",
+      "headerTooltip" : "Будут доступны после {numberOfDays} дн. блокировки",
       "inactiveTooltip" : "Без делегирования средства не приносят вознаграждения.",
       "flow" : {
         "title" : "Отзыв делегирования",
         "steps" : {
           "amount" : {
             "title" : "Сумма",
-            "subtitle" : "Процедура отзыва делегирования занимает <0>{{numberOfDays}} дней (дня)</0>.",
-            "warning" : "Вознаграждения будут немедленно сняты. Отозванная сумма вернётся на баланс по истечении <0>{{numberOfDays}} дней блокировки</0>.",
+            "subtitle" : "Процедура отзыва делегирования занимает <0>{numberOfDays} дней (дня)</0>.",
+            "warning" : "Вознаграждения будут немедленно сняты. Отозванная сумма вернётся на баланс по истечении <0>{numberOfDays} дней блокировки</0>.",
             "fields" : {
               "validator" : "Валидатор",
               "amount" : "Отзываемая сумма"
@@ -3526,7 +3512,7 @@
             "title" : "Подтверждение",
             "success" : {
               "title" : "Вы успешно отозвали делегированные активы",
-              "description" : "<0>{{amount}}</0> автоматически делегировано <0>{{validator}}</0>",
+              "description" : "<0>{amount}</0> автоматически делегировано <0>{validator}</0>",
               "cta" : "Подробности"
             },
             "broadcastError" : "Вероятно, транзакция не удалась. Прежде чем повторить попытку, подождите немного, а затем проверьте историю транзакций."
@@ -3537,8 +3523,8 @@
   },
   "algorand" : {
     "operationHasRewards" : "Полученное вознаграждение",
-    "operationEarnedRewards" : "Вы заработали <0>{{amount}}</0>.",
-    "operationDetailsAmountBreakDown" : "{{initialAmount}} (+вознаграждение <0>{{reward}}</0>)",
+    "operationEarnedRewards" : "Вы заработали <0>{amount}</0>.",
+    "operationDetailsAmountBreakDown" : "{initialAmount} (+вознаграждение <0>{reward}</0>)",
     "optIn" : {
       "flow" : {
         "title" : "Добавить активы ASA",
@@ -3555,8 +3541,8 @@
           "confirmation" : {
             "title" : "Подтверждение",
             "success" : {
-              "title" : "Актив {{token}} добавлен",
-              "text" : "Теперь вы можете получать и отправлять <0>{{token}}</0> на счёт Algorand.",
+              "title" : "Актив {token} добавлен",
+              "text" : "Теперь вы можете получать и отправлять <0>{token}</0> на счёт Algorand.",
               "cta" : "Подробности"
             },
             "broadcastError" : "Вероятно, транзакция не удалась. Прежде чем повторить попытку, подождите немного, а затем проверьте историю транзакций."
@@ -3586,7 +3572,7 @@
           },
           "info" : {
             "title" : "Вознаграждение",
-            "description" : "Поздравляем! Вы заработали {{amount}}. Нажмите «Продолжить», чтобы получить вознаграждения",
+            "description" : "Поздравляем! Вы заработали {amount}. Нажмите «Продолжить», чтобы получить вознаграждения",
             "info" : "Вам будет предложено отправить пустую транзакцию на ваш же счёт. Так вознаграждения будут зачислены на ваш баланс с минимальной комиссией."
           },
           "connectDevice" : {
@@ -3613,7 +3599,7 @@
     "unlockedBalance" : "Не заблокировано",
     "unlockedTooltip" : "Теперь разблокированные средства можно вывести.",
     "networkFees" : "Поскольку комиссия устанавливается протоколом Polkadot автоматически, её невозможно будет просмотреть на устройстве",
-    "bondedBalanceBelowMinimum" : "Номинатор может делать назначения при минимальном балансе в {{minimumBondBalance}}",
+    "bondedBalanceBelowMinimum" : "Номинатор может делать назначения при минимальном балансе в {minimumBondBalance}",
     "nomination" : {
       "emptyState" : {
         "description" : "Вы можете получать вознаграждения, блокируя активы и назначая валидаторов.",
@@ -3635,27 +3621,27 @@
       "notValidator" : "Это не валидатор",
       "notValidatorTooltip" : "Этот адрес больше не является валидатором",
       "elected" : "Избирается",
-      "nominatorsCount" : "Номинаторов: {{nominatorsCount}}",
-      "nominatorsTooltip" : "Этого валидатора уже выбрали {{count}} номинатора(-ов).",
-      "oversubscribed" : "Превышен лимит голосов ({{nominatorsCount}})",
-      "oversubscribedTooltip" : "Вознаграждения получают только ТОП-{{maxNominatorRewardedPerValidator}} номинаторов с наибольшей заблокированной суммой",
+      "nominatorsCount" : "Номинаторов: {nominatorsCount}",
+      "nominatorsTooltip" : "Этого валидатора уже выбрали {count} номинатора(-ов).",
+      "oversubscribed" : "Превышен лимит голосов ({nominatorsCount})",
+      "oversubscribedTooltip" : "Вознаграждения получают только ТОП-{maxNominatorRewardedPerValidator} номинаторов с наибольшей заблокированной суммой",
       "hasPendingBondOperation" : "Блокировка средств ожидает подтверждения",
       "electionOpen" : "Идёт подбор новых валидаторов. Следовательно, операции стейкинга будут недоступны в течение 15 минут.",
       "electionOpenTooltip" : "Эта операция отключена во время подбора валидаторов",
       "externalControllerTooltip" : "Этот счёт контролируется другим счётом.",
-      "externalControllerUnsupported" : "<0>Этот stash-счёт контролируется отдельным счётом с адресом <0>{{controllerAddress}}</0>.</0> Чтобы стейкать средства в Ledger Wallet, вам нужно назначить stash-счёт в качестве самостоятельного контролёра.</1>",
+      "externalControllerUnsupported" : "<0>Этот stash-счёт контролируется отдельным счётом с адресом <0>{controllerAddress}</0>.</0> Чтобы стейкать средства в Ledger Wallet, вам нужно назначить stash-счёт в качестве самостоятельного контролёра.</1>",
       "externalStashTooltip" : "Этот счёт контролирует другой счёт.",
-      "externalStashUnsupported" : "<0>Этот счёт контролируется отдельным счётом с адресом <0>{{stashAddress}}</0>.</0> Чтобы стейкать средства в Ledger Wallet, вам нужно назначить stash-счёт в качестве самостоятельного контролёра.</1>",
-      "showInactiveNominations" : "Показать все назначения ({{count}})",
+      "externalStashUnsupported" : "<0>Этот счёт контролируется отдельным счётом с адресом <0>{stashAddress}</0>.</0> Чтобы стейкать средства в Ledger Wallet, вам нужно назначить stash-счёт в качестве самостоятельного контролёра.</1>",
+      "showInactiveNominations" : "Показать все назначения ({count})",
       "hideInactiveNominations" : "Показать только активных номинаторов",
       "noActiveNominations" : "Нет активных назначений.",
-      "showAllUnlockings" : "Показать все разблокируемые средства ({{count}})",
+      "showAllUnlockings" : "Показать все разблокируемые средства ({count})",
       "hideAllUnlockings" : "Скрыть разблокируемые средства"
     },
     "unlockings" : {
       "header" : "Разблокировано",
       "headerTooltip" : "Будут доступны спустя 28 дней после разблокировки",
-      "withdrawUnbonded" : "Вывести ({{amount}})",
+      "withdrawUnbonded" : "Вывести ({amount})",
       "withdrawTooltip" : "Разблокированная сумма будет зачислена на ваш баланс.",
       "noUnlockedWarning" : "У вас пока нет разблокированных средств, которые можно вывести.",
       "rebond" : "Повторно заблокировать",
@@ -3874,8 +3860,8 @@
         "confirmation" : {
           "title" : "Подтверждение",
           "success" : {
-            "title" : "Актив {{token}} добавлен",
-            "text" : "Теперь вы можете получать и отправлять активы <0>{{token}}</0> на счёт Stellar.",
+            "title" : "Актив {token} добавлен",
+            "text" : "Теперь вы можете получать и отправлять активы <0>{token}</0> на счёт Stellar.",
             "cta" : "Подробнее"
           },
           "broadcastError" : "Возможно, ваша транзакция не прошла. Пожалуйста, подождите немного, а затем проверьте историю транзакций, прежде чем повторить попытку."
@@ -3940,7 +3926,7 @@
           },
           "amount" : {
             "title" : "Сумма",
-            "reserveWarning" : "Убедитесь в наличии как минимум {{amount}} SOL на вашем кошельке. Криптовалюта понадобится для оплаты комиссий сети при деактивации и выводе стейка в дальнейшем"
+            "reserveWarning" : "Убедитесь в наличии как минимум {amount} SOL на вашем кошельке. Криптовалюта понадобится для оплаты комиссий сети при деактивации и выводе стейка в дальнейшем"
           },
           "confirmation" : {
             "success" : {
@@ -4006,8 +3992,8 @@
       "frozenStateWarning" : "Активы на счету заморожены",
       "transferWarning" : "<0>Используйте это руководство</0>, чтобы подтвердить адрес получения токенов Solana с помощью Ledger Nano S™.",
       "transferFees" : {
-        "feesHint" : "Комиссия за перевод токена: {{transferFee}}",
-        "notice" : "Комиссия за перевод — {{fee}}%",
+        "feesHint" : "Комиссия за перевод токена: {transferFee}",
+        "notice" : "Комиссия за перевод — {fee}%",
         "tooltipHint" : "Процент от суммы перевода, который получает создатель токена",
         "transferFeesLabel" : "Комиссии за перевод"
       },
@@ -4015,7 +4001,7 @@
         "notice" : "Токен непередаваемый"
       },
       "interestRate" : {
-        "notice" : "Процентная ставка — {{rate}}%",
+        "notice" : "Процентная ставка — {rate}%",
         "tooltipHint" : "Новые монеты не создаются с учётом ставки, то есть происходящее носит исключительно косметический характер"
       },
       "permanentDelegate" : {
@@ -4030,14 +4016,14 @@
       "transferHook" : {
         "notice" : "Transfer Hook активирована",
         "initializationNotice" : "Transfer Hook запущена, но не активирована",
-        "tooltipHint" : "У токена есть дополнительная функциональность, которая управляется программой {{programAddress}}"
+        "tooltipHint" : "У токена есть дополнительная функциональность, которая управляется программой {programAddress}"
       },
       "extensionsInfo" : {
         "title" : "Расширения токенов Solana",
         "commonInfo" : "Расширения токенов — новое поколение стандарта токенов в сети Solana. Они наделяют привычную функциональность токена дополнительными возможностями. Например, это могут быть конфиденциальные переводы, постоянные делегаты, нестандартная логика перемещения, расширенные метаданные и многое другое.",
         "permanentDelegate" : {
           "title" : "Постоянный делегат",
-          "permanentDelegateAddress" : "Сейчас полномочия делегата принадлежат {{address}}",
+          "permanentDelegateAddress" : "Сейчас полномочия делегата принадлежат {address}",
           "permanentDelegateNotSetup" : "Актуальные полномочия делегата не указаны.",
           "description" : "Постоянный делегат — это сторона с неограниченными полномочиями на любой счёт в пределах конкретного минтинга. Делегат может сжигать или перемещать любое количество токенов в любое время на своё усмотрение."
         },
@@ -4047,19 +4033,19 @@
         },
         "transferHook" : {
           "title" : "Transfer Hook",
-          "transferHookAddress" : "Актуальная программа для Transfer Hook — {{address}}",
+          "transferHookAddress" : "Актуальная программа для Transfer Hook — {address}",
           "transferHookNotSetup" : "Актуальная программа для Transfer Hook не указана.",
           "description" : "Transfer Hook позволяет эмитенту токена определять условия взаимодействия пользователей с токенами. Вместо обычного перевода эмитент может добавить произвольную логику в программу, которая будет использоваться с расширением Transfer Hook."
         },
         "transferFee" : {
           "title" : "Комиссия за перевод",
-          "currentTransferFee" : "Актуальная комиссия за перевод составляет {{feePercent}}% ({{feeBps}} bps). Она не превысит {{maxFee}}.",
+          "currentTransferFee" : "Актуальная комиссия за перевод составляет {feePercent}% ({feeBps} bps). Она не превысит {maxFee}.",
           "description" : "Комиссии взимаются за каждый перевод токена и удерживаются на счету получателя. Причём последний не может их использовать."
         },
         "interestBearing" : {
           "title" : "Процентные токены",
-          "currentInterestRate" : "Актуальная процентная ставка составляет {{rate}}%.",
-          "accruedDelta" : "Начислено {{delta}}.",
+          "currentInterestRate" : "Актуальная процентная ставка составляет {rate}%.",
+          "accruedDelta" : "Начислено {delta}.",
           "interestRateNotSetup" : "Актуальная процентная ставка составляет 0%.",
           "description" : "Токены, чья стоимость растёт или снижается в соответствии с процентной ставкой. Новые монеты здесь не создаются, то есть эта функция носит исключительно косметический характер."
         }
@@ -4115,7 +4101,7 @@
       "commission" : "Комиссия",
       "totalStake" : "Общий пул",
       "minSafeWarning" : "Недостаточно средств",
-      "reserveWarning" : "У вас на балансе должно быть как минимум {{amount}} APT. Эта сумма понадобится для оплаты комиссии сети при деактивации и выводе стейка",
+      "reserveWarning" : "У вас на балансе должно быть как минимум {amount} APT. Эта сумма понадобится для оплаты комиссии сети при деактивации и выводе стейка",
       "flow" : {
         "title" : "Стейкать",
         "steps" : {
@@ -4169,7 +4155,7 @@
             "title" : "Подтверждение",
             "success" : {
               "title" : "Вы успешно застейкали криптоактивы повторно.",
-              "description" : "{{amount}} повторно застейкано {{validator}}",
+              "description" : "{amount} повторно застейкано {validator}",
               "cta" : "Подробнее"
             },
             "broadcastError" : "Возможно, ваша транзакция не прошла. Пожалуйста, подождите немного и проверьте историю транзакций, прежде чем повторить попытку."
@@ -4184,7 +4170,7 @@
         "steps" : {
           "amount" : {
             "title" : "Количество",
-            "subtitle" : "Процедура отмены стейкинга занимает {{timeToUnlock}}.",
+            "subtitle" : "Процедура отмены стейкинга занимает {timeToUnlock}.",
             "subtitle2" : "Процедура отмены стейкинга может занять до 30 дней.",
             "warning" : "Вознаграждения будут немедленно сняты. Сумма после отмены стейкинга будет доступна для вывода после периода разблокировки.",
             "fields" : {
@@ -4199,7 +4185,7 @@
             "title" : "Подтверждение",
             "success" : {
               "title" : "Вы успешно вывели активы из стейкинга.",
-              "description" : "{{amount}} выведено из стейка {{validator}}",
+              "description" : "{amount} выведено из стейка {validator}",
               "cta" : "Подробнее"
             },
             "broadcastError" : "Возможно, ваша транзакция не прошла. Пожалуйста, подождите немного и проверьте историю транзакций, прежде чем повторить попытку."
@@ -4226,7 +4212,7 @@
             "title" : "Подтверждение",
             "success" : {
               "title" : "Вы успешно вывели средства.",
-              "description" : "{{amount}} выведено от {{validator}}",
+              "description" : "{amount} выведено от {validator}",
               "cta" : "Подробнее"
             },
             "broadcastError" : "Возможно, ваша транзакция не прошла. Пожалуйста, подождите немного и проверьте историю транзакций, прежде чем повторить попытку."
@@ -4239,7 +4225,7 @@
     "stake_deprecated" : {
       "title" : "Приумножайте ETH",
       "subTitle" : "Стейкайте ETH и приумножайте их за счёт ежедневных вознаграждений прямо в Ledger Wallet.",
-      "tagMinimum" : "От {{min}} ETH",
+      "tagMinimum" : "От {min} ETH",
       "kiln_pooling" : {
         "title" : "Стейкинг-пул Kiln",
         "description" : "Стейкайте любую сумму. Получайте вознаграждения с автоматической капитализацией без блокировки.",
@@ -4325,7 +4311,7 @@
         }
       },
       "readAbout" : "Узнайте больше о стейкинге ETH и актуальных стратегиях",
-      "requiredMinimum" : "От {{min}} ETH",
+      "requiredMinimum" : "От {min} ETH",
       "rewardsStrategy" : {
         "auto-compounded" : "Автоматическая капитализация",
         "basic" : "Вознаграждение",
@@ -4337,7 +4323,7 @@
     "evmStaking" : {
       "delegation" : {
         "emptyState" : {
-          "description" : "Вы можете получать вознаграждения в {{currencyTicker}}, делегируя активы.",
+          "description" : "Вы можете получать вознаграждения в {currencyTicker}, делегируя активы.",
           "delegation" : "Получить вознаграждения"
         },
         "claimRewards" : "Запросить вознаграждение",
@@ -4346,7 +4332,7 @@
         "delegate" : "Дополнить",
         "undelegate" : "Отозвать",
         "redelegate" : "Переделегировать",
-        "redelegateDisabledTooltip" : "Вы можете переделегировать через <0>{{days}}</0> дн",
+        "redelegateDisabledTooltip" : "Вы можете переделегировать через <0>{days}</0> дн",
         "redelegateMaxDisabledTooltip" : "Вы не можете перевыбрать более <0>7</0> валидаторов за раз",
         "undelegateDisabledTooltip" : "Вы не можете перевыбрать более <0>7</0> валидаторов за раз",
         "undelegateActivatingTooltip" : "Вы не можете отозвать стейк, который ещё активируется.",
@@ -4361,7 +4347,7 @@
           "title" : "Делегировать",
           "steps" : {
             "starter" : {
-              "description" : "Вы можете получать вознаграждения, делегируя активы {{currencyTicker}} валидатору.",
+              "description" : "Вы можете получать вознаграждения, делегируя активы {currencyTicker} валидатору.",
               "bullet" : ["Делегированные активы остаются в вашей собственности", "Делегируйте прямо на устройстве Ledger", "Активы станут доступны после отмены делегирования"],
               "warning" : {
                 "description" : "Выбирайте валидатора с умом. Часть делегированных активов может быть безвозвратно утеряна, если валидатор поведёт себя недобросовестно.",
@@ -4400,8 +4386,8 @@
           "steps" : {
             "starter" : {
               "title" : "Повторное делегирование",
-              "description" : "Используйте повторное делегирование для смены валидатора. Но если вы передумаете, то придётся подождать, потому что повторное делегирование инициирует блокировку средств на {{ numberOfDays }} дн.",
-              "warning" : "Выбирайте валидатора с умом. Часть заблокированных активов может быть безвозвратно утеряна, если валидатор поведёт себя недобросовестно. У вас может быть не более <0>{{maxRedelegations}} повторных делегирований</0> в очереди.",
+              "description" : "Используйте повторное делегирование для смены валидатора. Но если вы передумаете, то придётся подождать, потому что повторное делегирование инициирует блокировку средств на {numberOfDays} дн.",
+              "warning" : "Выбирайте валидатора с умом. Часть заблокированных активов может быть безвозвратно утеряна, если валидатор поведёт себя недобросовестно. У вас может быть не более <0>{maxRedelegations} повторных делегирований</0> в очереди.",
               "howDelegationWorks" : "Как работает делегирование?"
             },
             "validators" : {
@@ -4409,7 +4395,7 @@
               "currentDelegation" : "Активное делегирование",
               "newDelegation" : "Новое делегирование",
               "chooseValidator" : "Выберите валидатора",
-              "warning" : "Если вы передумаете, то придётся подождать <0>{{numberOfDays}} дней (дня)</0>, чтобы переделегировать средства новому валидатору",
+              "warning" : "Если вы передумаете, то придётся подождать <0>{numberOfDays} дней (дня)</0>, чтобы переделегировать средства новому валидатору",
               "amountLabel" : "Сумма повторного делегирования"
             },
             "connectDevice" : {
@@ -4429,7 +4415,7 @@
       },
       "undelegation" : {
         "header" : "Отозванные средства",
-        "headerTooltip" : "Будут доступны после {{numberOfDays}} дн. блокировки",
+        "headerTooltip" : "Будут доступны после {numberOfDays} дн. блокировки",
         "inactiveTooltip" : "Без делегирования средства не приносят вознаграждения.",
         "timelockTooltip" : "Всё ещё в пределах таймлока. Эти средства ещё недоступны для вывода.",
         "readyTooltip" : "Таймлок закончился. Эти средства готовы к выводу.",
@@ -4438,8 +4424,8 @@
           "steps" : {
             "amount" : {
               "title" : "Количество",
-              "subtitle" : "Процедура отзыва делегирования занимает <0>{{numberOfDays}} дней (дня)</0>.",
-              "warningWithTimelock" : "Вознаграждения будут получены автоматически. Отозванная сумма вернётся на баланс по истечении <0>{{numberOfDays}} дн. блокировки</0>.",
+              "subtitle" : "Процедура отзыва делегирования занимает <0>{numberOfDays} дней (дня)</0>.",
+              "warningWithTimelock" : "Вознаграждения будут получены автоматически. Отозванная сумма вернётся на баланс по истечении <0>{numberOfDays} дн. блокировки</0>.",
               "warningInstant" : "Вознаграждения будут получены автоматически. Разделегированная сумма будет доступна на вашем балансе сразу же.",
               "fields" : {
                 "validator" : "Валидатор",
@@ -4453,7 +4439,7 @@
               "title" : "Подтверждение",
               "success" : {
                 "title" : "Вы успешно отозвали делегированные активы",
-                "description" : "<0>{{amount}}</0> автоматически делегировано <0>{{validator}}</0>",
+                "description" : "<0>{amount}</0> автоматически делегировано <0>{validator}</0>",
                 "cta" : "Подробнее"
               },
               "broadcastError" : "Вероятно, транзакция не удалась. Прежде чем повторить попытку, пожалуйста, подождите минуту, а затем проверьте историю транзакций."
@@ -4480,7 +4466,7 @@
               "title" : "Подтверждение",
               "success" : {
                 "title" : "Вы успешно вывели средства.",
-                "description" : "<0>{{amount}}</0> выведено от <0>{{validator}}</0>",
+                "description" : "<0>{amount}</0> выведено от <0>{validator}</0>",
                 "cta" : "Подробности"
               },
               "broadcastError" : "Вероятно, транзакция не удалась. Прежде чем повторить попытку, пожалуйста, подождите минуту, а затем проверьте историю транзакций."
@@ -4605,7 +4591,7 @@
             "title" : "Подтверждение",
             "success" : {
               "title" : "Вы успешно вывели активы из стейкинга.",
-              "description" : "<0>{{amount}}</0> было выведено из стейкинга <0>{{validator}}</0>",
+              "description" : "<0>{amount}</0> было выведено из стейкинга <0>{validator}</0>",
               "cta" : "Подробнее"
             },
             "broadcastError" : "Возможно, ваша транзакция не прошла. Пожалуйста, подождите немного, а затем проверьте историю транзакций, прежде чем повторить попытку."
@@ -4632,7 +4618,7 @@
             "title" : "Подтверждение",
             "success" : {
               "title" : "Вы успешно вывели средства.",
-              "description" : "<0>{{amount}}</0> было выведено от <0>{{validator}}</0>",
+              "description" : "<0>{amount}</0> было выведено от <0>{validator}</0>",
               "cta" : "Подробнее"
             },
             "broadcastError" : "Возможно, ваша транзакция не прошла. Пожалуйста, подождите немного, а затем проверьте историю транзакций, прежде чем повторить попытку."
@@ -4734,7 +4720,7 @@
             "title" : "Подтверждение",
             "success" : {
               "title" : "Вы успешно отозвали делегированные активы",
-              "description" : "<0>{{amount}}</0> автоматически делегировано <0>{{validator}}</0>",
+              "description" : "<0>{amount}</0> автоматически делегировано <0>{validator}</0>",
               "cta" : "Подробнее"
             },
             "broadcastError" : "Вероятно, транзакция не удалась. Прежде чем повторить попытку, пожалуйста, подождите минуту, а затем проверьте историю транзакций."
@@ -4825,7 +4811,7 @@
             "title" : "Подтверждение",
             "success" : {
               "title" : "Вы успешно застейкали активы",
-              "text" : "Вы застейкали {{amount}}. Баланс обновится после подтверждения транзакции в блокчейне.",
+              "text" : "Вы застейкали {amount}. Баланс обновится после подтверждения транзакции в блокчейне.",
               "cta" : "Перейти в консоль счёта"
             },
             "broadcastError" : "Вероятно, транзакция не удалась. Прежде чем повторить попытку, пожалуйста, подождите минуту, а затем проверьте историю транзакций.",
@@ -4894,10 +4880,9 @@
     "destinationValidator" : "Валидатор назначения",
     "duration" : "Продолжительность",
     "durationJustStarted" : "Только началось",
-    "durationDays" : "{{count}} дн.",
-    "durationDays_other" : "{{count}} дн.",
+    "durationDays" : "{count, plural, one {{count} дн.} other {{count} дн.}}",
     "howItWorks" : "Как работает делегирование",
-    "delegationEarn" : "Теперь вы можете получать вознаграждение за стейкинг {{name}}, делегировав счёт.",
+    "delegationEarn" : "Теперь вы можете получать вознаграждение за стейкинг {name}, делегировав счёт.",
     "earnRewards" : "Получить вознаграждения",
     "overdelegated" : "Превышен лимит делегирования",
     "status" : "Статус",
@@ -4927,7 +4912,7 @@
           "toUndelegate" : "Счёт для отзыва делегирования",
           "validator" : "Валидатор",
           "select" : "Выбрать",
-          "yield" : "Прим. доход: {{amount}}",
+          "yield" : "Прим. доход: {amount}",
           "randomly" : "Случайный валидатор",
           "termsAndPrivacy" : "Делегирование ваших голосов не гарантирует вознаграждения от выбранного валидатора."
         },
@@ -4935,7 +4920,7 @@
           "title" : "Выбор валидатора",
           "description" : "Вы можете выбрать валидатора путём сравнения ориентировочной доходности",
           "customValidator" : "Пользовательский валидатор",
-          "providedBy" : "Ставки доходности предоставлены <1><0>{{name}}</0></1>"
+          "providedBy" : "Ставки доходности предоставлены <1><0>{name}</0></1>"
         },
         "custom" : {
           "title" : "Пользовательский валидатор",
@@ -4965,7 +4950,7 @@
     }
   },
   "asset" : {
-    "notice" : "Баланс всех счетов {{currency}}"
+    "notice" : "Баланс всех счетов {currency}"
   },
   "carousel" : {
     "hidden" : {
@@ -5094,9 +5079,8 @@
         "desc" : "Перетащите файл app.json, чтобы импортировать счета и настройки",
         "dropOrBrowse" : "Перетащите файл app.json сюда или нажмите для выбора",
         "importing" : "Импортируем...",
-        "success" : "Успешно добавили {{count}} счёт.",
-        "success_other" : "Импортировали счета ({{count}}).",
-        "lastDeviceSeen" : "Последнее устройство: {{device}}",
+        "success" : "{count, plural, one {Успешно добавили {count} счёт.} other {Импортировали счета ({count}).}}",
+        "lastDeviceSeen" : "Последнее устройство: {device}",
         "invalidFileType" : "Неправильный тип файла. Ожидаемый .json-файл.",
         "missingDataField" : "Некорректный app.json: отсутствует поле данных верхнего уровня.",
         "encryptedAccounts" : "Обнаружены зашифрованные счета. Сначала расшифруйте файл.",
@@ -5104,10 +5088,9 @@
         "appJsonFile" : "Файл app.json",
         "accountsImported" : "Счета импортированы",
         "accountsFailed" : "Не удалось импортировать счета",
-        "importFailed" : "Не удалось имрортировать: {{message}}",
+        "importFailed" : "Не удалось имрортировать: {message}",
         "unknownError" : "Неизвестная ошибка при импорте.",
-        "failedCount" : "Не удалось загрузить {{count}} счёт.",
-        "failedCount_other" : "Не удалось загрузить {{count}} счёта(ов)."
+        "failedCount" : "{count, plural, one {Не удалось загрузить {count} счёт.} other {Не удалось загрузить {count} счёта(ов).}}"
       },
       "mockAccounts" : {
         "title" : "Фиктивные счета",
@@ -5137,22 +5120,18 @@
           "searchPlaceholder" : "Поиск...",
           "noCurrenciesFound" : "Валюты не найдены",
           "noCurrenciesAvailable" : "Валюты недоступны",
-          "selectedCount" : "Выбрана валюта {{count}}",
-          "selectedCount_other" : "Выбраны валюты: {{count}}"
+          "selectedCount" : "{count, plural, one {Выбрана валюта {count}} other {Выбраны валюты: {count}}}"
         },
         "tokenIds" : {
           "label" : "ID токена (опционально)",
           "placeholder" : "токен1, токен2, токен3"
         },
         "buttons" : {
-          "generateAccounts" : "Сгенерировать {{count}} счёт",
-          "generateAccounts_other" : "Сгенерировать счета ({{count}})",
-          "generateAccountsQuick" : "Сгенерировать счета: ({{count}})",
+          "generateAccounts" : "{count, plural, one {Сгенерировать {count} счёт} other {Сгенерировать счета ({count})}}",
+          "generateAccountsQuick" : "Сгенерировать счета: ({count})",
           "generateEmptyAccount" : "Сгенерировать",
-          "generateStablecoinAccounts" : "Сгенерировать {{count}} стейблкойн-счёт",
-          "generateStablecoinAccounts_other" : "Сгенерировать {{count}} стейблкойн-счета(ов)",
-          "generateStockAccounts" : "Сгенерировать {{count}} фондовый счёт",
-          "generateStockAccounts_other" : "Сгенерировать фондовые счета ({{count}})",
+          "generateStablecoinAccounts" : "{count, plural, one {Сгенерировать {count} стейблкойн-счёт} other {Сгенерировать {count} стейблкойн-счета(ов)}}",
+          "generateStockAccounts" : "{count, plural, one {Сгенерировать {count} фондовый счёт} other {Сгенерировать фондовые счета ({count})}}",
           "loadingStocks" : "Загрузка данных об акциях…"
         },
         "alerts" : {
@@ -5244,8 +5223,8 @@
           "refresh" : "Обновить",
           "loading" : "Загружаем...",
           "close" : "Закрыть",
-          "availableTokens" : "Доступные токены ({{count}})",
-          "noTokens" : "Не найдены токены из {{family}}",
+          "availableTokens" : "Доступные токены ({count})",
+          "noTokens" : "Не найдены токены из {family}",
           "error" : "Не удалось загрузить токены",
           "tokenId" : "ID",
           "contractAddress" : "Адрес контракта",
@@ -5268,7 +5247,7 @@
           "selectNone" : "Ничего",
           "reset" : "Сбросить",
           "tokens" : "Токены",
-          "resultsCount" : "Результатов: {{count}}",
+          "resultsCount" : "Результатов: {count}",
           "collapseAll" : "Скрыть все",
           "noTokensFound" : "Токены не найдены",
           "hide" : "Скрыть",
@@ -5381,8 +5360,8 @@
     },
     "experimental" : {
       "disclaimer" : "Это Экспериментальные функции, предоставляемые на условиях «как есть» для нашего сообщества технических энтузиастов. Эти функции могут быть изменены, заблокированы или удалены в любое время. Активируя их, вы принимаете на себя все риски использования.",
-      "provider" : "Экспериментальная настройка «Мой поставщик Ledger ({{forcedProvider}})» может отображать невыпущенные версии ОС и приложений, что приводит к неполадкам совместимости. Отключить её можно в Настройках.",
-      "providerDevMode" : "Экспериментальные настройки «Оператор в Мой Ledger ({{forcedProvider}})» и «Режим разработчика» могут отображать невыпущенные версии ОС и приложений, что приводит к неполадкам совместимости. Отключить их можно в Настройках.",
+      "provider" : "Экспериментальная настройка «Мой поставщик Ledger ({forcedProvider})» может отображать невыпущенные версии ОС и приложений, что приводит к неполадкам совместимости. Отключить её можно в Настройках.",
+      "providerDevMode" : "Экспериментальные настройки «Оператор в Мой Ledger ({forcedProvider})» и «Режим разработчика» могут отображать невыпущенные версии ОС и приложений, что приводит к неполадкам совместимости. Отключить их можно в Настройках.",
       "devMode" : "Экспериментальная настройка «Режим разработчика» может отображать невыпущенные версии ОС и приложений, что приводит к неполадкам совместимости. Отключить её можно в Настройках.",
       "providerCTA" : "Перейти в Настройки",
       "features" : {
@@ -5514,8 +5493,7 @@
       "tokenBlacklist" : {
         "title" : "Скрытые токены",
         "desc" : "Чтобы скрыть токены, перейдите к списку токенов, нажмите по названию и удерживайте, а затем выберите «Скрыть токен».",
-        "count" : "1 токен",
-        "count_other" : "Токенов: {{count}}"
+        "count" : "{count, plural, one {1 токен} other {Токенов: {count}}}"
       },
       "filterTokenOperationsZeroAmount" : {
         "title" : "Скрывать нулевые транзакции",
@@ -5555,11 +5533,11 @@
   },
   "update" : {
     "downloadInProgress" : "Скачиваем обновления...",
-    "downloadProgress" : "Уже {{progress}}%",
+    "downloadProgress" : "Уже {progress}%",
     "checking" : "Проверяем обновления...",
     "checkSuccess" : "Вышло обновление Ledger Wallet. Закройте приложение, и оно автоматически обновится и перезагрузится",
     "quitAndInstall" : "Обновить и перезапустить",
-    "updateAvailable" : "Вышло обновление Ledger Wallet {{version}}",
+    "updateAvailable" : "Вышло обновление Ledger Wallet {version}",
     "error" : "Во время обновления произошла ошибка. Попробуйте ещё раз",
     "reDownload" : "Скачать ещё раз",
     "nightlyWarning" : "Эта версия не может быть установлена автоматически. Установите её вручную"
@@ -5576,7 +5554,7 @@
     "description" : "Одобрите токен на устройстве Ledger",
     "unlimited" : "Вы предоставляете оператору услуги доступ к неограниченному объёму выбранного токена на вашем кошельке. Внимательно проверьте детали транзакции на устройстве Ledger, прежде чем подписывать её.",
     "limited" : "Вы предоставляете оператору услуги доступ к токену на вашем кошельке. Внимательно проверьте детали транзакции на устройстве Ledger, прежде чем подписать её.",
-    "termsAndConditions" : "Подписывая эту транзакцию, я принимаю <0>Условия использования {{appName}}</0>."
+    "termsAndConditions" : "Подписывая эту транзакцию, я принимаю <0>Условия использования {appName}</0>."
   },
   "sign" : {
     "title" : "Подписание операции",
@@ -5590,8 +5568,7 @@
     "cta" : "Сохранить",
     "ctaSuccess" : "Готово",
     "noAccounts" : "Нет счетов для экспорта",
-    "selectedAccounts" : "Счета для экспорта",
-    "selectedAccounts_other" : "Счета для экспорта ({{count}})",
+    "selectedAccounts" : "{count, plural, one {Счета для экспорта} other {Счета для экспорта ({count})}}",
     "disclaimer" : "Контрольные значения в экспорте предоставлены только в информационных целях. Не полагайтесь на такие данные в бухгалтерских, налоговых, нормативных или юридических целях, поскольку они представляют собой лишь оценочную стоимость активов на момент совершения транзакций и экспорта в рамках методов оценки нашего поставщика услуг – Kaiko"
   },
   "language" : {
@@ -5622,19 +5599,18 @@
       "achievement" : "Открыто Достижение"
     },
     "groupedToast" : {
-      "text" : "Новых уведомлений: {{count}}",
+      "text" : "Новых уведомлений: {count}",
       "cta" : "Подробности"
     }
   },
   "informationCenter" : {
     "tooltip" : "Центр уведомлений",
-    "ongoingIncidentsTooltip" : "Текущих событий: {{count}}",
-    "ongoingIncidentsTooltip_other" : "Текущих событий: {{count}}",
+    "ongoingIncidentsTooltip" : "{count, plural, one {Текущих событий: {count}} other {Текущих событий: {count}}}",
     "tabs" : {
       "announcements" : "Новости",
-      "announcementsUnseen" : "Новости ({{unseenCount}})",
+      "announcementsUnseen" : "Новости ({unseenCount})",
       "serviceStatus" : "События",
-      "serviceStatusIncidentsOngoing" : "События ({{incidentCount}})"
+      "serviceStatusIncidentsOngoing" : "События ({incidentCount})"
     },
     "serviceStatus" : {
       "statusOk" : {
@@ -5699,7 +5675,7 @@
         "contactSupportCTA" : "Связаться с Поддержкой",
         "continueCTA" : "Продолжить",
         "title" : "Проверьте содержимое упаковки",
-        "description" : "Если {{device}} при включении запрашивает ПИН и/или на нём уже была создана фраза восстановления, то использовать такое устройство небезопасно. Свяжитесь с Поддержкой.",
+        "description" : "Если {device} при включении запрашивает ПИН и/или на нём уже была создана фраза восстановления, то использовать такое устройство небезопасно. Свяжитесь с Поддержкой.",
         "alert" : "Используйте фразу восстановления, которая была сгенерирована вашим устройством Ledger."
       }
     },
@@ -5768,15 +5744,15 @@
         "selectLabel" : "Выбрать"
       },
       "selectUseCase" : {
-        "hasNoRecovery" : "Впервые подключаете {{deviceName}}?",
+        "hasNoRecovery" : "Впервые подключаете {deviceName}?",
         "hasRecovery" : "Есть фраза восстановления?",
         "options" : {
           "1" : {
-            "title" : "Настройка нового {{deviceName}}",
+            "title" : "Настройка нового {deviceName}",
             "description" : "Давайте приступим к настройке вашего устройства."
           },
           "2" : {
-            "title" : "Подключение вашего {{deviceName}}",
+            "title" : "Подключение вашего {deviceName}",
             "description" : "Уже активировали устройство? Добавьте его в приложение."
           },
           "3" : {
@@ -6054,7 +6030,7 @@
           "genuineCheck" : {
             "success" : {
               "title" : "Отлично!",
-              "desc" : "Ваше устройство {{deviceName}} проверено и готово к использованию в Ledger Wallet."
+              "desc" : "Ваше устройство {deviceName} проверено и готово к использованию в Ledger Wallet."
             },
             "buttons" : {
               "next" : "Продолжить",
@@ -6218,7 +6194,7 @@
   "connectTroubleshooting" : {
     "desc" : "Не удаётся подключить устройство?",
     "cta" : "Исправить",
-    "solution" : "Решение #{{number}}",
+    "solution" : "Решение #{number}",
     "applesInstructions" : "Инструкция для Apple",
     "nextSolution" : "Следующее решение",
     "previousSolution" : "Предыдущее решение",
@@ -6290,7 +6266,7 @@
         "anotherComputer" : {
           "title" : "Воспользуйтесь другим компьютером",
           "bullets" : {
-            "0" : "Перейдите по ссылке (<0>{{link}}</0>) на другом ПК, чтобы загрузить и установить Ledger Wallet.",
+            "0" : "Перейдите по ссылке (<0>{link}</0>) на другом ПК, чтобы загрузить и установить Ledger Wallet.",
             "1" : "Подключите и разблокируйте устройство, чтобы убедиться, что оно обнаружено."
           }
         }
@@ -6299,7 +6275,7 @@
         "windows" : {
           "title" : "Обновите USB-драйверы",
           "bullets" : {
-            "0" : "Перейдите на <0>{{link}}</0>",
+            "0" : "Перейдите на <0>{link}</0>",
             "1" : "Следуйте инструкциям для обновления USB-драйверов.",
             "2" : "Подключите и разблокируйте устройство, чтобы убедиться, что оно обнаружено."
           }
@@ -6319,7 +6295,7 @@
             "title" : "Сбросьте NVRAM",
             "link" : "Инструкция для Apple",
             "bullets" : {
-              "0" : "Если у вас Mac на процессоре Intel, то сбросить NVRAM поможет эта статья (<0>{{link}}</0>).",
+              "0" : "Если у вас Mac на процессоре Intel, то сбросить NVRAM поможет эта статья (<0>{link}</0>).",
               "1" : "Подключите и разблокируйте устройство, чтобы убедиться, что оно обнаружено."
             }
           }
@@ -6354,17 +6330,17 @@
     "domainHash" : "Хэш домена",
     "messageHash" : "Хэш сообщения",
     "message" : "Сообщение",
-    "title" : "Продолжите на устройстве Ledger {{wording}}",
+    "title" : "Продолжите на устройстве Ledger {wording}",
     "description" : "Следуйте инструкции на Защищённом экране."
   },
   "TransactionConfirm" : {
     "title" : "Подтвердите операцию на устройстве для её завершения",
-    "warning" : "Всегда проверяйте, чтобы адрес на экране вашего устройства точно совпадал с адресом, который вам предоставил {{recipientWording}}",
+    "warning" : "Всегда проверяйте, чтобы адрес на экране вашего устройства точно совпадал с адресом, который вам предоставил {recipientWording}",
     "secureContract" : "Перед отправкой проверьте детали о депозите на устройстве. Обмен адресами контрактов осуществляется безопасно и не требует подтверждения.",
     "verifyData" : "Всегда проверяйте детали операции на вашем устройстве.",
     "doubleCheck" : "Внимательно проверьте детали транзакции на устройстве Ledger, прежде чем подписать её.",
-    "termsAndConditions" : "Подписывая эту транзакцию, я принимаю <0>Условия использования {{appName}}</0>.",
-    "termsAndConditionsWithPrivacy" : "Подписывая эту транзакцию, вы принимаете <0>Условия использования {{appName}}</0> и <1>Политику конфиденциальности</1>.",
+    "termsAndConditions" : "Подписывая эту транзакцию, я принимаю <0>Условия использования {appName}</0>.",
+    "termsAndConditionsWithPrivacy" : "Подписывая эту транзакцию, вы принимаете <0>Условия использования {appName}</0> и <1>Политику конфиденциальности</1>.",
     "warningWording" : {
     },
     "titleWording" : {
@@ -6415,11 +6391,11 @@
         "transfer" : "получатель"
       }
     },
-    "votes" : "Голоса ({{count}})"
+    "votes" : "Голоса ({count})"
   },
   "RecipientField" : {
-    "placeholder" : "Введите адрес {{currencyName}}",
-    "placeholderEns" : "Введите адрес {{currencyName}} или ENS"
+    "placeholder" : "Введите адрес {currencyName}",
+    "placeholderEns" : "Введите адрес {currencyName} или ENS"
   },
   "Terms" : {
     "title" : "Условия использования",
@@ -6556,13 +6532,13 @@
         "consolidate" : "Консолидировать"
       },
       "pendingTransactions" : {
-        "title" : "Неподтверждённые транзакции: ({{count}})",
+        "title" : "Неподтверждённые транзакции: ({count})",
         "incoming" : {
-          "title" : "Входящий перевод на проверку ({{count}})",
+          "title" : "Входящий перевод на проверку ({count})",
           "detailsTitle" : "Данные о входящем переводе"
         },
         "outgoing" : {
-          "title" : "Исходящие предложения: ({{count}})",
+          "title" : "Исходящие предложения: ({count})",
           "detailsTitle" : "Данные об исходящем переводе"
         },
         "pending" : "В ожидании",
@@ -6588,15 +6564,15 @@
         "withdraw" : "Вывод средств",
         "reject" : "Отклонить",
         "deviceAppModal" : {
-          "title" : "{{action}} предложение",
-          "description" : "Пожалуйста, откройте приложение Canton на устройстве Ledger, чтобы {{action}} это предложение.",
+          "title" : "{action} предложение",
+          "description" : "Пожалуйста, откройте приложение Canton на устройстве Ledger, чтобы {action} это предложение.",
           "contractId" : "ID контракта",
           "cancel" : "Отменить",
           "openApp" : "Запустите приложение Canton",
           "opening" : "Запуск...",
           "noDevice" : "Устройство не подключено",
           "appOpenError" : "Не удалось запустить приложение Canton. Повторите попытку.",
-          "processing" : "{{action}}: обработка...",
+          "processing" : "{action}: обработка...",
           "success" : {
             "accept" : {
               "title" : "Предложение принято",
@@ -6654,7 +6630,7 @@
           "prepare" : {
             "title" : "Чтобы создать счёт, введите указанный ниже код в приложении Concordium ID.",
             "resendButton" : "Отправить подтверждение повторно",
-            "resendDescription" : "Повторная отправка подтверждения будет доступна через <0>{{count}}</0> {{unit}}"
+            "resendDescription" : "Повторная отправка подтверждения будет доступна через <0>{count}</0> {unit}"
           },
           "success" : "Счёт Concordium успешно создан.",
           "error" : "Не удалось создать новый счёт. Повторите попытку.",
@@ -6718,8 +6694,8 @@
       "description" : "Комиссия сети слишком низкая. Попробуйте увеличить"
     },
     "NoSuchAppOnProvider" : {
-      "title" : "{{appName}} не поддерживается {{productName}}.",
-      "titleOld" : "Приложение {{appName}} не найдено",
+      "title" : "{appName} не поддерживается {productName}.",
+      "titleOld" : "Приложение {appName} не найдено",
       "description" : "<0>Получите больше с нашими аппаратными кошельками.</0> Для использования данной функции приобретите одно из подходящих устройств. Выберите лучший вариант для ваших потребностей и насладитесь защитой монет.",
       "exploreCTA" : "Совместимые устройства",
       "learnMoreCTA" : "Подробнее о Ledger Sync"
@@ -6731,7 +6707,7 @@
       "title" : "В данный момент мы не можем предоставить эквивалент для этого актива"
     },
     "generic" : {
-      "title" : "{{message}}",
+      "title" : "{message}",
       "description" : "Что-то пошло не так. Повторите попытку или свяжитесь с Поддержкой Ledger."
     },
     "AccountAwaitingSendPendingOperations" : {
@@ -6748,7 +6724,7 @@
     },
     "AccountNotSupported" : {
       "title" : "Счёт не поддерживается.",
-      "description" : "Повторите попытку или свяжитесь с Поддержкой ({{reason}})"
+      "description" : "Повторите попытку или свяжитесь с Поддержкой ({reason})"
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "В указанном ASA не выбран счёт получателя."
@@ -6842,11 +6818,11 @@
       "title" : "Убедитесь, что вашего баланса достаточно, чтобы покрыть потенциальные комиссии"
     },
     "CurrencyNotSupported" : {
-      "title" : "{{currencyName}} не поддерживается",
+      "title" : "{currencyName} не поддерживается",
       "description" : "Этот криптоактив пока не поддерживается. Обратитесь в Поддержку."
     },
     "DeviceAlreadySetup" : {
-      "title" : "В этом {{device}} уже создана секретная фраза восстановления",
+      "title" : "В этом {device} уже создана секретная фраза восстановления",
       "description" : "Подключите ещё не настроенное устройство Ledger."
     },
     "DeviceNotGenuine" : {
@@ -6871,10 +6847,10 @@
     },
     "DeviceSocketFail" : {
       "title" : "Пожалуйста, перезагрузите устройство Ledger и повторите попытку",
-      "description" : "Произошла непредвиденная ошибка. Повторите попытку ({{message}})"
+      "description" : "Произошла непредвиденная ошибка. Повторите попытку ({message})"
     },
     "CounterfeitDevice" : {
-      "title" : "Сбой проверки подлинности {{productName}}",
+      "title" : "Сбой проверки подлинности {productName}",
       "description" : "Использовать это устройство Ledger небезопасно. Обратитесь в Поддержку Ledger.",
       "contactSupportCTA" : "Связаться с Поддержкой"
     },
@@ -6896,7 +6872,7 @@
     },
     "FeeEstimationFailed" : {
       "title" : "К сожалению, при расчёте комиссии произошла ошибка",
-      "description" : "Попробуйте указать комиссию вручную (статус: {{status}})."
+      "description" : "Попробуйте указать комиссию вручную (статус: {status})."
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "Необходимо обновить ОС или приложение",
@@ -6933,15 +6909,15 @@
       "description" : "Свяжитесь с Поддержкой, если у вас не получается использовать устройство."
     },
     "LedgerAPI4xx" : {
-      "title" : "{{message}}",
+      "title" : "{message}",
       "description" : "Пожалуйста, проверьте подключение и повторите попытку или обратитесь в Поддержку Ledger."
     },
     "LedgerAPI5xx" : {
       "title" : "Попробуйте ещё раз.",
-      "description" : "Сервер не может обработать ваш запрос. Повторите попытку позже или обратитесь в Поддержку Ledger. {{message}}"
+      "description" : "Сервер не может обработать ваш запрос. Повторите попытку позже или обратитесь в Поддержку Ledger. {message}"
     },
     "LedgerAPINotAvailable" : {
-      "title" : "К сожалению, услуги для {{currencyName}} недоступны",
+      "title" : "К сожалению, услуги для {currencyName} недоступны",
       "description" : "Повторите попытку или свяжитесь с Поддержкой"
     },
     "ManagerAppAlreadyInstalled" : {
@@ -6949,12 +6925,12 @@
       "description" : "Пожалуйста, проверьте, какие приложения уже установлены на вашем устройстве."
     },
     "ManagerAppDepInstallRequired" : {
-      "title" : "Требуется приложение {{dependency}}",
-      "description" : "Если приложение {{dependency}} уже установлено, то переустановите его последнюю версию"
+      "title" : "Требуется приложение {dependency}",
+      "description" : "Если приложение {dependency} уже установлено, то переустановите его последнюю версию"
     },
     "ManagerAppDepUninstallRequired" : {
       "title" : "Это приложение является обязательным",
-      "description" : "Сначала придётся удалить все приложения, зависимые от {{appName}}"
+      "description" : "Сначала придётся удалить все приложения, зависимые от {appName}"
     },
     "ManagerDeviceLocked" : {
       "title" : "Устройство заблокировано",
@@ -7007,13 +6983,13 @@
       "description" : "Убедитесь, что в указанной сумме до 18 десятичных знаков."
     },
     "MultiversXMinDelegatedAmountError" : {
-      "title" : "Делегированная сумма должна быть не менее {{formattedAmount}}"
+      "title" : "Делегированная сумма должна быть не менее {formattedAmount}"
     },
     "MultiversXMinUndelegatedAmountError" : {
-      "title" : "Неделегированных средств должно быть как минимум {{formattedAmount}}"
+      "title" : "Неделегированных средств должно быть как минимум {formattedAmount}"
     },
     "MultiversXDelegationBelowMinimumError" : {
-      "title" : "Остаток делегированных средств должен быть не менее {{formattedAmount}}"
+      "title" : "Остаток делегированных средств должен быть не менее {formattedAmount}"
     },
     "NotEnoughEGLDForFees" : {
       "title" : "Недостаточно EGLD для оплаты комиссии за транзакцию",
@@ -7039,28 +7015,28 @@
       "description" : "Не удалось рассчитать ориентировочную комиссию сети. Проверьте входные данные. Скорее всего, транзакция завершится неудачей."
     },
     "NotEnoughToStake" : {
-      "title" : "Невозможно застейкать меньше {{minStake}} {{currency}}",
-      "description" : "Для стейкинга требуется минимальная сумма в {{minStake}} {{currency}}."
+      "title" : "Невозможно застейкать меньше {minStake} {currency}",
+      "description" : "Для стейкинга требуется минимальная сумма в {minStake} {currency}."
     },
     "NotEnoughBalance" : {
       "title" : "Кажется, у вас недостаточно средств",
       "description" : "Пожалуйста, убедитесь, что на счёте достаточно средств."
     },
     "UnstakeNotEnoughStakedBalanceLeft" : {
-      "title" : "Если вывести из стейкинга больше {{maxAmount}}, будет выведен весь стейк на {{totalAmount}}.",
-      "description" : "Если вывести из стейкинга больше {{maxAmount}}, будет выведен весь стейк на {{totalAmount}}."
+      "title" : "Если вывести из стейкинга больше {maxAmount}, будет выведен весь стейк на {totalAmount}.",
+      "description" : "Если вывести из стейкинга больше {maxAmount}, будет выведен весь стейк на {totalAmount}."
     },
     "RestakeNotEnoughStakedBalanceLeft" : {
-      "title" : "Если рестейкать больше {{maxAmount}}, повторно застейканы будут все {{totalAmount}}.",
-      "description" : "Если рестейкать больше {{maxAmount}}, повторно застейканы будут все {{totalAmount}}."
+      "title" : "Если рестейкать больше {maxAmount}, повторно застейканы будут все {totalAmount}.",
+      "description" : "Если рестейкать больше {maxAmount}, повторно застейканы будут все {totalAmount}."
     },
     "NotEnoughToRestake" : {
-      "title" : "Невозможно рестейкать меньше {{minAmount}}",
-      "description" : "Невозможно рестейкать меньше {{minAmount}}."
+      "title" : "Невозможно рестейкать меньше {minAmount}",
+      "description" : "Невозможно рестейкать меньше {minAmount}."
     },
     "NotEnoughToUnstake" : {
-      "title" : "Невозможно вывести из стейкинга меньше {{minAmount}}",
-      "description" : "Невозможно вывести из стейкинга меньше {{minAmount}}."
+      "title" : "Невозможно вывести из стейкинга меньше {minAmount}",
+      "description" : "Невозможно вывести из стейкинга меньше {minAmount}."
     },
     "NotEnoughBalanceFees" : {
       "title" : "Кажется, у вас недостаточно средств для покрытия комиссии",
@@ -7071,13 +7047,13 @@
       "description" : "Пожалуйста, убедитесь, что на счёте достаточно средств."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
-      "title" : "Адрес получения неактивен. Для активации отправьте на него не менее {{minimalAmount}}"
+      "title" : "Адрес получения неактивен. Для активации отправьте на него не менее {minimalAmount}"
     },
     "NotEnoughGas" : {
-      "title" : "Для оплаты комиссий за проведение транзакций в сети {{cryptoName}} на счету должно быть {{fees}}{{ticker}}.  <link0>Купите {{ticker}}</link0> или отправьте криптоактив на ваш счёт."
+      "title" : "Для оплаты комиссий за проведение транзакций в сети {cryptoName} на счету должно быть {fees}{ticker}.  <link0>Купите {ticker}</link0> или отправьте криптоактив на ваш счёт."
     },
     "NotEnoughGasSwap" : {
-      "title" : "Для обмена нужно оплатить комиссию {{fees}} {{ticker}}, поскольку операция проводится в сети {{cryptoName}}. <link0>Купить {{ticker}}</link0>"
+      "title" : "Для обмена нужно оплатить комиссию {fees} {ticker}, поскольку операция проводится в сети {cryptoName}. <link0>Купить {ticker}</link0>"
     },
     "TronEmptyAccount" : {
       "title" : "Чтобы активировать получение TRC20-токенов, отправьте на новый счёт не менее 0,1 TRX. <link0>Подробнее</link0>"
@@ -7125,7 +7101,7 @@
     },
     "TransactionCannotBeCreated" : {
       "title" : "Ошибка обработки",
-      "description" : "Оператор обмена не может обработать эту транзакцию. Код ошибки — 8HBB-{{randomCode}}"
+      "description" : "Оператор обмена не может обработать эту транзакцию. Код ошибки — 8HBB-{randomCode}"
     },
     "SwapQuoteLowLiquidity" : {
       "title" : "Оператор недоступен",
@@ -7136,12 +7112,12 @@
       "description" : "Пожалуйста, попробуйте ещё раз."
     },
     "TimeoutTagged" : {
-      "title" : "Извините, время ожидания ответа сервера истекло ({{tag}})",
+      "title" : "Извините, время ожидания ответа сервера истекло ({tag})",
       "description" : "Время ожидания истекло."
     },
     "TransportError" : {
       "title" : "Что-то пошло не так. Подключите устройство заново",
-      "description" : "{{message}}"
+      "description" : "{message}"
     },
     "TransportRaceCondition" : {
       "title" : "Что-то пошло не так. Подключите устройство заново",
@@ -7153,7 +7129,7 @@
     },
     "TransportStatusError" : {
       "title" : "Что-то пошло не так. Подключите устройство заново",
-      "description" : "{{message}}"
+      "description" : "{message}"
     },
     "TrustchainEjected" : {
       "title" : "Больше не синхронизировано"
@@ -7167,8 +7143,8 @@
       "description" : "Повторите попытку или обратитесь в Поддержку Ledger."
     },
     "DeviceShouldStayInApp" : {
-      "title" : "Откройте приложение {{appName}}",
-      "description" : "Не закрывайте {{appName}}, пока мы ищем ваши счета"
+      "title" : "Откройте приложение {appName}",
+      "description" : "Не закрывайте {appName}, пока мы ищем ваши счета"
     },
     "UnexpectedBootloader" : {
       "title" : "Устройство не должно быть в режиме Bootloader",
@@ -7199,7 +7175,7 @@
     },
     "UpdateYourApp" : {
       "title" : "Необходимо обновить приложение",
-      "description" : "Удалите и повторно установите приложение {{managerAppName}} через вкладку «Мой Ledger»"
+      "description" : "Удалите и повторно установите приложение {managerAppName} через вкладку «Мой Ledger»"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "Вернитесь в Консоль",
@@ -7231,10 +7207,10 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Необходимо обновить приложение",
-      "description" : "Удалите и повторно установите приложение {{managerAppName}} через вкладку «Мой Ledger»"
+      "description" : "Удалите и повторно установите приложение {managerAppName} через вкладку «Мой Ledger»"
     },
     "InvalidAddress" : {
-      "title" : "Некорректный адрес {{currencyName}}"
+      "title" : "Некорректный адрес {currencyName}"
     },
     "InvalidNonce" : {
       "title" : "Требуется нонс"
@@ -7253,13 +7229,13 @@
       "description" : "Устройство обнаружено, но подключиться не удалось. Повторите попытку или обратите в Поддержку, если проблема не решена."
     },
     "CasperInvalidTransferId" : {
-      "title" : "ID перевода должен быть положительным числом до {{maxTransferId}}"
+      "title" : "ID перевода должен быть положительным числом до {maxTransferId}"
     },
     "InvalidMinimumAmount" : {
-      "title" : "Минимальная сумма перевода — {{minAmount}}"
+      "title" : "Минимальная сумма перевода — {minAmount}"
     },
     "MayBlockAccount" : {
-      "title" : "На вашем счету останется меньше суммы в {{minAmount}}, необходимой для отправки"
+      "title" : "На вашем счету останется меньше суммы в {minAmount}, необходимой для отправки"
     },
     "ETHAddressNonEIP" : {
       "title" : "Автопроверка недоступна: внимательно проверьте адрес",
@@ -7348,13 +7324,13 @@
     },
     "BtcUnmatchedApp" : {
       "title" : "Это не то приложение",
-      "description" : "Откройте {{managerAppName}} на устройстве"
+      "description" : "Откройте {managerAppName} на устройстве"
     },
     "DeviceNameInvalid" : {
-      "title" : "Пожалуйста, используйте название без '{{invalidCharacters}}'"
+      "title" : "Пожалуйста, используйте название без ''{invalidCharacters}''"
     },
     "LedgerAPIErrorWithMessage" : {
-      "title" : "{{message}}",
+      "title" : "{message}",
       "description" : "Повторите попытку или обратитесь в Поддержку."
     },
     "ManagerAppRelyOnBTC" : {
@@ -7422,7 +7398,7 @@
     },
     "TronUnfreezeNotExpired" : {
       "title" : "Активы ещё не разморожены",
-      "description" : "Вывод будет доступен {{time}}"
+      "description" : "Вывод будет доступен {time}"
     },
     "PairingFailed" : {
       "title" : "Не удалось подключить устройство",
@@ -7442,7 +7418,7 @@
       "title" : "Неправильный тег назначения XRP"
     },
     "InvalidExplorerResponse" : {
-      "title" : "Некорректный ответ от обозревателя {{currencyName}}"
+      "title" : "Некорректный ответ от обозревателя {currencyName}"
     },
     "NotEnoughBalanceToDelegate" : {
       "title" : "Недостаточный баланс для делегирования"
@@ -7457,10 +7433,10 @@
       "title" : "Количество должно быть не менее 1"
     },
     "NotEnoughSpendableBalance" : {
-      "title" : "Баланс не может быть ниже {{minimumAmount}}"
+      "title" : "Баланс не может быть ниже {minimumAmount}"
     },
     "WrongAppForCurrency" : {
-      "title" : "Откройте приложение {{expected}}"
+      "title" : "Откройте приложение {expected}"
     },
     "FeeTooHigh" : {
       "title" : "Комиссия составляет 10% от суммы"
@@ -7469,13 +7445,13 @@
       "title" : "Сумма ниже лимита пыли"
     },
     "SourceHasMultiSign" : {
-      "title" : "Пожалуйста, отключите мультиподписи, чтобы отправить {{currencyName}}"
+      "title" : "Пожалуйста, отключите мультиподписи, чтобы отправить {currencyName}"
     },
     "SwapExchangeRateAmountTooLow" : {
-      "title" : "Сумма должна быть не менее {{minAmountFromFormatted}}"
+      "title" : "Сумма должна быть не менее {minAmountFromFormatted}"
     },
     "SwapExchangeRateAmountTooHigh" : {
-      "title" : "Сумма должна быть меньше {{maxAmountFromFormatted}}"
+      "title" : "Сумма должна быть меньше {maxAmountFromFormatted}"
     },
     "SwapExchangeRateAmountTooLowOrTooHigh" : {
       "title" : "Сумма недоступна. Попробуйте её изменить."
@@ -7499,10 +7475,10 @@
       "title" : "Не забудьте оставить немного средств на потенциальные комиссии."
     },
     "PolkadotBondMinimumAmount" : {
-      "title" : "Вы должны заблокировать не менее {{minimumBondAmount}}."
+      "title" : "Вы должны заблокировать не менее {minimumBondAmount}."
     },
     "PolkadotBondMinimumAmountWarning" : {
-      "title" : "Заблокированных средств должно быть не менее {{minimumBondBalance}}."
+      "title" : "Заблокированных средств должно быть не менее {minimumBondBalance}."
     },
     "PolkadotMaxUnbonding" : {
       "title" : "Вы превысили лимит по разблокировке"
@@ -7511,8 +7487,8 @@
       "title" : "Необходимо выбрать хотя бы одного валидатора"
     },
     "ServiceStatusWarning" : {
-      "title" : "{{message}}",
-      "description" : "{{description}}"
+      "title" : "{message}",
+      "description" : "{description}"
     },
     "TaprootNotActivated" : {
       "title" : "До активации мейннета отправлять монеты на Taproot-адрес небезопасно"
@@ -7525,7 +7501,7 @@
       "title" : "Счёт не пополнен"
     },
     "SolanaRecipientAccountNotFunded" : {
-      "title" : "Маленькая сумма. Отправляйте от {{minimumAmount}}."
+      "title" : "Маленькая сумма. Отправляйте от {minimumAmount}."
     },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "На связанном с этим токеном счёте есть другой токен"
@@ -7552,7 +7528,7 @@
       "title" : "Адрес получателя совпадает с адресом отправителя токена"
     },
     "SolanaMemoIsTooLong" : {
-      "title" : "Слишком длинное Memo. Макс. длина {{maxLength}}"
+      "title" : "Слишком длинное Memo. Макс. длина {maxLength}"
     },
     "SolanaAddressOfEd25519" : {
       "title" : "Адрес за пределами кривой ed25519"
@@ -7574,13 +7550,13 @@
       "description" : "Такие криптоактивы называются Soulbound-токенами и не могут быть перемещены"
     },
     "CardanoMinAmountError" : {
-      "title" : "Минимальная сумма для отправки — {{amount}} ADA"
+      "title" : "Минимальная сумма для отправки — {amount} ADA"
     },
     "CardanoNotEnoughFunds" : {
       "title" : "Также убедитесь, что у вас достаточно средств для оплаты комиссий"
     },
     "CardanoStakeKeyDepositError" : {
-      "title" : "Убедитесь, что у вас есть {{depositAmount}} ADA для пополнения"
+      "title" : "Убедитесь, что у вас есть {depositAmount} ADA для пополнения"
     },
     "CardanoFeeHigh" : {
       "title" : "Очень высокая комиссия сети",
@@ -7600,7 +7576,7 @@
     },
     "ConcordiumMemoTooLong" : {
       "title" : "Тег примечания (Memo) слишком длинный",
-      "description" : "Ваше примечание занимает {{memoLength}} байт, тогда как максимально допустимый размер — {{maxLength}} байт. Уменьшите размер тега."
+      "description" : "Ваше примечание занимает {memoLength} байт, тогда как максимально допустимый размер — {maxLength} байт. Уменьшите размер тега."
     },
     "ConcordiumInsufficientFunds" : {
       "title" : "Кажется, у вас недостаточно средств"
@@ -7626,7 +7602,7 @@
       "title" : "При отправке этому получателю может потребоваться Memo"
     },
     "StellarAssetNotAccepted" : {
-      "title" : "У получателя ещё не открыт трастлайн для {{assetCode}}"
+      "title" : "У получателя ещё не открыт трастлайн для {assetCode}"
     },
     "StellarAssetRequired" : {
       "title" : "Перед пополнением трастлайна необходимо выбрать актив Stellar"
@@ -7666,7 +7642,7 @@
     },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Недостаточный баланс",
-      "description" : "Недостаточно HBAR для оплаты привязки токена. Требуется не меньше {{requiredWorthInUSD}}$ в HBAR."
+      "description" : "Недостаточно HBAR для оплаты привязки токена. Требуется не меньше {requiredWorthInUSD}$ в HBAR."
     },
     "HederaRecipientTokenAssociationRequired" : {
       "title" : "Необходимо привязать токен",
@@ -7726,11 +7702,11 @@
       "description" : "Попробуйте другое изображение"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Картинка экрана блокировки удалена на\n{{productName}}",
+      "title" : "Картинка экрана блокировки удалена на\n{productName}",
       "description" : "Если это произошло случайно, повторите попытку."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Картинка экрана блокировки отменена на\n{{productName}}",
+      "title" : "Картинка экрана блокировки отменена на\n{productName}",
       "description" : "Если это произошло случайно, повторите попытку."
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7738,13 +7714,13 @@
       "description" : "Это изображение было удалено раньше."
     },
     "NearNewAccountWarning" : {
-      "title" : "Адрес получателя ещё не создан. Для его создания протокол требует перевод {{formattedNewAccountStorageCost}}."
+      "title" : "Адрес получателя ещё не создан. Для его создания протокол требует перевод {formattedNewAccountStorageCost}."
     },
     "NearNewNamedAccountError" : {
       "title" : "Адрес получателя ещё не создан. Его нужно создать в кошельке NEAR."
     },
     "NearActivationFeeNotCovered" : {
-      "title" : "Данная сумма не покрывает стоимость хранения {{formattedNewAccountStorageCost}}."
+      "title" : "Данная сумма не покрывает стоимость хранения {formattedNewAccountStorageCost}."
     },
     "NearUseAllAmountStakeWarning" : {
       "title" : "Убедитесь, что баланса хватит на комиссию"
@@ -7759,18 +7735,18 @@
       "title" : "Пожалуйста, выведите средства из стейкинга и снимите их со счёта перед тем, как вывести с него все активы"
     },
     "NearStakingThresholdNotMet" : {
-      "title" : "Сумма должна быть не менее {{threshold}}"
+      "title" : "Сумма должна быть не менее {threshold}"
     },
     "LockedDeviceError" : {
       "title" : "Устройство заблокировано",
       "description" : "Разблокируйте устройство и повторите попытку.",
-      "descriptionWithProductName" : "Разблокируйте {{ productName }} и повторите попытку."
+      "descriptionWithProductName" : "Разблокируйте {productName} и повторите попытку."
     },
     "DeviceNotOnboardedDAError" : {
       "title" : "Ваше устройство Ledger ещё не настроено",
       "description" : "Сделайте это, чтобы взаимодействовать с ним.\n Мы вам поможем.",
       "goToOnboardingButton" : "Настроить моё устройство",
-      "goToOnboardingButtonWithProductName" : "Настроить {{ productName }}"
+      "goToOnboardingButtonWithProductName" : "Настроить {productName}"
     },
     "EtherscanAPIError" : {
       "title" : "Сбой при загрузке транзакций",
@@ -7807,7 +7783,7 @@
     },
     "AleoTooManyRecordsSelected" : {
       "title" : "Выбрано слишком много личных записей.",
-      "description" : "В одной транзакции можно использовать не более {{count}} приватных записей."
+      "description" : "В одной транзакции можно использовать не более {count} приватных записей."
     },
     "AleoAmountTooLargeForTransaction" : {
       "title" : "Сумма слишком велика для одной транзакции.",
@@ -7842,7 +7818,7 @@
     },
     "TransactionBroadcastError" : {
       "title" : "Сбой трансляции транзакции",
-      "description" : "Не удалось транслировать вашу транзакцию в сеть {{networkName}}. {{currencyName}} не были отправлены и остались у вас.",
+      "description" : "Не удалось транслировать вашу транзакцию в сеть {networkName}. {currencyName} не были отправлены и остались у вас.",
       "helpCenterTitle" : "Информация: ",
       "helpCenterDesc" : "Переходите в Справочный центр или свяжитесь с нами через кнопку помощи.",
       "needHelp" : "Требуется помощь?",
@@ -7863,10 +7839,10 @@
       "title" : "Убедитесь в наличии как минимум 0,1 SUI на вашем кошельке. Они понадобятся для оплаты комиссий сети и вывода стейка в дальнейшем."
     },
     "NotEnoughBalanceForUnstaking" : {
-      "message" : "Ваш доступный баланс без учёта монет в стейкинге – {{currentBalance}}. Этого не хватит на оплату комиссии сети за вывод {{assetName}} из стейкинга.",
-      "oneCta" : "Для начала <cta1>{{cta1Label}}</cta1> {{assetName}}.",
-      "twoCtas" : "Для начала <cta1>{{cta1Label}}</cta1> или <cta2>{{cta2Label}}</cta2> {{assetName}}.",
-      "threeCtas" : "Для начала <cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2> или <cta3>{{cta3Label}}</cta3> {{assetName}}.",
+      "message" : "Ваш доступный баланс без учёта монет в стейкинге – {currentBalance}. Этого не хватит на оплату комиссии сети за вывод {assetName} из стейкинга.",
+      "oneCta" : "Для начала <cta1>{cta1Label}</cta1> {assetName}.",
+      "twoCtas" : "Для начала <cta1>{cta1Label}</cta1> или <cta2>{cta2Label}</cta2> {assetName}.",
+      "threeCtas" : "Для начала <cta1>{cta1Label}</cta1>, <cta2>{cta2Label}</cta2> или <cta3>{cta3Label}</cta3> {assetName}.",
       "ctas" : {
         "buy" : "Купите",
         "swap" : "Обменяйте",
@@ -7877,14 +7853,14 @@
       "title" : "Содержимое Memo не может быть длиннее 32 символов"
     },
     "AccountCreationFeeWarning" : {
-      "title" : "Эта транзакция предполагает списание комиссии за создание счёта в {{fee}}"
+      "title" : "Эта транзакция предполагает списание комиссии за создание счёта в {fee}"
     },
     "AmountTooSmall" : {
-      "title" : "Минимальная необходимая сумма для этой транзакции — {{amount}}"
+      "title" : "Минимальная необходимая сумма для этой транзакции — {amount}"
     },
     "AddressesSanctionedError" : {
       "title" : "Ради вашей безопасности",
-      "description" : "Эта транзакция использует адрес кошелька из санкционных списков и не может быть проведена.\n{{addresses}}"
+      "description" : "Эта транзакция использует адрес кошелька из санкционных списков и не может быть проведена.\n{addresses}"
     },
     "DisconnectedDeviceDuringOperation" : {
       "title" : "Сбой подключения устройства",
@@ -8017,7 +7993,7 @@
       "link" : "для создания счёта Hedera"
     },
     "currentAddress" : {
-      "messageIfVirtual" : "Адрес {{name}} не может быть подтверждён на устройстве Ledger. Вы принимаете на себя все риски пользования."
+      "messageIfVirtual" : "Адрес {name} не может быть подтверждён на устройстве Ledger. Вы принимаете на себя все риски пользования."
     },
     "receive" : {
       "warnings" : {
@@ -8090,8 +8066,8 @@
         "steps" : {
           "validator" : {
             "title" : "Валидаторы",
-            "rowTitle" : "Нода {{index}}: {{name}}",
-            "rowSubtitlePercentage" : "В стейкинге: {{percentage}}% от максимума",
+            "rowTitle" : "Нода {index}: {name}",
+            "rowSubtitlePercentage" : "В стейкинге: {percentage}% от максимума",
             "rowSubtitleOverstaked" : "Для ноды превышена норма стейкинга"
           },
           "amount" : {
@@ -8150,7 +8126,7 @@
             "newValidatorLabel" : "Новое делегирование",
             "newValidatorSelectPlaceholder" : "Выбор валидатора",
             "removedValidatorSelectPlaceholder" : "Выбранный ранее валидатор недоступен",
-            "newValidatorSelectNoOption" : "Валидатора с «{{validatorName}}» в названии не найдено",
+            "newValidatorSelectNoOption" : "Валидатора с «{validatorName}» в названии не найдено",
             "amountLabel" : "Сумма повторного делегирования",
             "alert" : "При стейкинге в сети Hedera весь ваш баланс оказывается застейканным. Он остаётся ликвидным и не подвержен рискам, связанным с периодом блокировки или слэшингом. Для начисления вознаграждений за стейкинг может понадобиться до 48 часов.",
             "learnMore" : "Подробнее"
@@ -8176,7 +8152,7 @@
         "steps" : {
           "rewards" : {
             "title" : "Вознаграждение",
-            "description" : "Вы получили <0>{{formattedClaimableRewards}}</0> от валидатора. После нажатия кнопки «Продолжить» вознаграждения будут получены и автоматически зачислены на ваш баланс.",
+            "description" : "Вы получили <0>{formattedClaimableRewards}</0> от валидатора. После нажатия кнопки «Продолжить» вознаграждения будут получены и автоматически зачислены на ваш баланс.",
             "currentValidatorLabel" : "Делегирование"
           },
           "connectDevice" : {
@@ -8197,7 +8173,7 @@
     "send" : {
       "memo" : {
         "label" : "Memo (необязательно)",
-        "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+        "characterCount" : "{memoLength} / {memoMaxLength}"
       },
       "warnings" : {
         "missingAssociation" : {
@@ -8221,7 +8197,7 @@
   },
   "dialogs" : {
     "selectAccount" : {
-      "description" : "У вас ещё нет счетов {{network}}. Добавьте счёт, чтобы продолжить",
+      "description" : "У вас ещё нет счетов {network}. Добавьте счёт, чтобы продолжить",
       "addAccount" : "Добавить счёт"
     }
   },
@@ -8244,7 +8220,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "Выбор изображения",
-        "description" : "Выберите картинку или фото.\nУкрасьте {{productName}}.\nСделайте его личным.",
+        "description" : "Выберите картинку или фото.\nУкрасьте {productName}.\nСделайте его личным.",
         "upload" : "Выбрать из галереи",
         "remove" : "Удалить изображение"
       },
@@ -8264,7 +8240,7 @@
         "allowConfirmPreview" : "Нажмите «Загрузить» на экране\nустройства для восстановления",
         "loadingPicture" : "Загружаем...",
         "voila" : "Вот и всё!",
-        "imageLoaded" : "Изображение загружено в {{productName}}",
+        "imageLoaded" : "Изображение загружено в {productName}",
         "confirmPicture" : "Ну как, нравится?\nТогда так и оставьте!",
         "confirmRestorePicture" : "Нажмите «Оставить», чтобы сохранить\nкартинку экрана блокировки",
         "doThisLater" : "Не сейчас"
@@ -8280,15 +8256,15 @@
   },
   "onboardingAppInstall" : {
     "restore" : {
-      "title" : "Установить те же приложения, что и на {{deviceName}}?",
+      "title" : "Установить те же приложения, что и на {deviceName}?",
       "titleNoDeviceName" : "Установить те же приложения, что и на предыдущем устройстве Ledger?",
       "subtitle" : "Установить или удалить приложения можно в любое время.",
       "installCTA" : "Установить",
       "skipCTA" : "Отложить"
     },
     "default" : {
-      "title" : "На {{ productName }} есть приложения. Они нужны для совершения транзакций.",
-      "subtitle" : "К примеру, приложение Bitcoin на {{productName}} необходимо для подписания Биткойн-транзакций.\n\nУстановите базовые приложения, чтобы отправлять транзакции с {{productName}}.",
+      "title" : "На {productName} есть приложения. Они нужны для совершения транзакций.",
+      "subtitle" : "К примеру, приложение Bitcoin на {productName} необходимо для подписания Биткойн-транзакций.\n\nУстановите базовые приложения, чтобы отправлять транзакции с {productName}.",
       "installCTA" : "Установить",
       "skipCTA" : "Отложить"
     },
@@ -8296,19 +8272,19 @@
       "loading" : "Загружаем...",
       "progress" : "Не закрывайте Ledger Wallet во время установки.",
       "disclaimer" : "Добавляйте или удаляйте приложения в любое время с помощью Ledger Wallet.",
-      "skippedInfo" : "Некоторые приложения сейчас недоступны. Пока нет версии для {{ productName }}.",
-      "skipped" : "Пока недоступно для {{ productName }}",
-      "app" : "Приложение {{appName}}"
+      "skippedInfo" : "Некоторые приложения сейчас недоступны. Пока нет версии для {productName}.",
+      "skipped" : "Пока недоступно для {productName}",
+      "app" : "Приложение {appName}"
     },
     "cancelled" : {
-      "title" : "Установка приложения на {{productName}} отменена",
-      "subtitle" : "{{productName}} нужны блокчейн-приложения для одобрения транзакций и операций с NFT.",
+      "title" : "Установка приложения на {productName} отменена",
+      "subtitle" : "{productName} нужны блокчейн-приложения для одобрения транзакций и операций с NFT.",
       "installCTA" : "Установить",
       "skipCTA" : "Отложить"
     },
     "locked" : {
-      "title" : "Устройство {{productName}} заблокировано",
-      "subtitle" : "Разблокируйте {{productName}} и повторите попытку установки.",
+      "title" : "Устройство {productName} заблокировано",
+      "subtitle" : "Разблокируйте {productName} и повторите попытку установки.",
       "installCTA" : "Повторить установку"
     }
   },
@@ -8471,8 +8447,7 @@
         "description" : "Ваши криптосчета, синхронизированные между разными приложениями Ledger Wallet, больше не будут связаны."
       },
       "instance" : {
-        "label" : "Синхронизировано 1 приложение Ledger Wallet",
-        "label_other" : "Синхронизированных приложений Ledger Wallet: {{count}}",
+        "label" : "{count, plural, one {Синхронизировано 1 приложение Ledger Wallet} other {Синхронизированных приложений Ledger Wallet: {count}}}",
         "cta" : "Настроить"
       }
     },
@@ -8596,18 +8571,18 @@
     "manageInstances" : {
       "title" : "Ledger Wallet синхронизировано между:",
       "remove" : "Удалить",
-      "deleteInstanceSuccess" : "Ваше приложение Ledger Wallet на {{instanceName}} больше не подключено к Ledger Sync",
-      "deleteInstanceError" : "Что-то пошло не так при удалении {{instanceName}}"
+      "deleteInstanceSuccess" : "Ваше приложение Ledger Wallet на {instanceName} больше не подключено к Ledger Sync",
+      "deleteInstanceError" : "Что-то пошло не так при удалении {instanceName}"
     },
     "deviceAction" : {
-      "title" : "Продолжите операцию на вашем Ledger {{wording}}",
+      "title" : "Продолжите операцию на вашем Ledger {wording}",
       "description" : "Следуйте инструкции на Защищённом экране устройства Ledger."
     }
   },
   "lnsUpsell" : {
     "opted_in" : {
       "title" : "Ограниченная память — ограниченные впечатления",
-      "description" : "Перейдите с вашего Ledger Nano S на новое устройство – например, Ledger Flex. Вы получите бóльший объём памяти, актуальные улучшения безопасности, самые новые функции и <0>эксклюзивную скидку {{discount}}%</>.",
+      "description" : "Перейдите с вашего Ledger Nano S на новое устройство – например, Ledger Flex. Вы получите бóльший объём памяти, актуальные улучшения безопасности, самые новые функции и <0>эксклюзивную скидку {discount}%</>.",
       "cta" : "Обновиться"
     },
     "opted_out" : {
@@ -8659,25 +8634,23 @@
         "stopScanning" : "Остановить сканирование"
       },
       "warning" : {
-        "title" : "Не удалось добавить новый счёт {{currency}}",
-        "description" : "Нельзя добавить новый счёт до получения криптоактивов на {{account}}.",
+        "title" : "Не удалось добавить новый счёт {currency}",
+        "description" : "Нельзя добавить новый счёт до получения криптоактивов на {account}.",
         "cta" : "Добавить монеты на счёт",
         "close" : "Закрыть",
         "noAssociatedAccounts" : {
-          "description" : "В экосистеме {{currency}} пока не так много сервисов, которые позволяют создавать новые счета. Ledger ещё тоже не поддерживает опцию создания счетов, однако это можно сделать посредством альтернатив. Вы сможете добавить счёт {{currency}} в Ledger Wallet после его создания.",
-          "cta" : "Как создать счёт {{currency}}?",
+          "description" : "В экосистеме {currency} пока не так много сервисов, которые позволяют создавать новые счета. Ledger ещё тоже не поддерживает опцию создания счетов, однако это можно сделать посредством альтернатив. Вы сможете добавить счёт {currency} в Ledger Wallet после его создания.",
+          "cta" : "Как создать счёт {currency}?",
           "close" : "Закрыть"
         },
         "noAccountsAddedWarning" : {
-          "title" : "Не добавлены счета {{currency}}",
+          "title" : "Не добавлены счета {currency}",
           "description" : "Вы не завершили необходимую настройку для одного или нескольких выбранных счетов.",
           "close" : "Закрыть"
         }
       },
       "status" : {
-        "foundAccounts_zero" : "Тут пока ничего нет.",
-        "foundAccounts" : "Нашли счета ({{count}})",
-        "foundAccounts_other" : "Нашли счета ({{count}})",
+        "foundAccounts" : "{count, plural, =0 {Тут пока ничего нет.} one {Нашли счета ({count})} other {Нашли счета ({count})}}",
         "scanning" : "Сканируем счета..."
       },
       "title" : "Проверяем блокчейн..."
@@ -8690,11 +8663,9 @@
     "selectAsset" : "Выберите криптоактив",
     "selectNetwork" : "Выберите сеть",
     "selectAccount" : "Выберите счёт",
-    "accountCount_one" : "Счёт: {{count}}",
-    "accountCount_other" : "Счета: {{count}}",
+    "accountCount" : "{count, plural, one {Счёт: {count}} other {Счета: {count}}}",
     "accountsAdded" : {
-      "title" : "Добавили в Портфель!",
-      "title_other" : "Добавлено счетов в Портфель: {{count}}",
+      "title" : "{count, plural, one {Добавили в Портфель!} other {Добавлено счетов в Портфель: {count}}}",
       "cta" : {
         "addFunds" : "Добавить монеты на счёт",
         "selectAccount" : "Продолжить",
@@ -8797,8 +8768,7 @@
     "stablecoins" : "Стейблкойны",
     "stocks" : "Акции",
     "cryptoAccounts" : "Криптосчета",
-    "accountsCount_one" : "Счёт: {{count}}",
-    "accountsCount_other" : "Счета: {{count}}",
+    "accountsCount" : "{count, plural, one {Счёт: {count}} other {Счета: {count}}}",
     "noCryptoAccounts" : "Счетов пока нет",
     "add" : "Дополнить",
     "columns" : {
@@ -8831,8 +8801,8 @@
       "title" : "Изменить название адреса",
       "input" : "Название адреса",
       "suggestions" : {
-        "trading" : "{{asset}} для трейдинга",
-        "savings" : "Копилка {{asset}}"
+        "trading" : "{asset} для трейдинга",
+        "savings" : "Копилка {asset}"
       },
       "cta" : "Подтвердить",
       "syncingTooltip" : "Синхронизируем... ещё немного..."
@@ -8869,10 +8839,10 @@
       "cta" : "Транзакции"
     },
     "activityIndicator" : {
-      "errorToolTip" : "Ваши криптоактивы в безопасности. Это временная проблема синхронизации.\n Затронутые счета: {{accounts}}. Нажмите, чтобы обновить.",
+      "errorToolTip" : "Ваши криптоактивы в безопасности. Это временная проблема синхронизации.\n Затронутые счета: {accounts}. Нажмите, чтобы обновить.",
       "emptyErrorToolTip" : "Ваши криптоактивы в безопасности. Это временная проблема синхронизации.\n Нажмите, чтобы обновить.",
       "upToDate" : "Портфель актуален",
-      "lastSync" : "Последняя синхронизация: {{timeAgo}} Нажмите, чтобы обновить",
+      "lastSync" : "Последняя синхронизация: {timeAgo} Нажмите, чтобы обновить",
       "refreshing" : "Обновляем..."
     },
     "notificationIndicator" : {
@@ -8894,7 +8864,7 @@
     "description" : "Эта версия Ledger Wallet не поддерживает актуальную версию ОС устройства. Обновите приложение, чтобы нормализовать подключение.",
     "restart" : "Перезагрузить",
     "downloadOnLedger" : "Загрузить с Ledger.com",
-    "downloadProgress" : "Скачиваем... {{ progress }}%"
+    "downloadProgress" : "Скачиваем... {progress}%"
   },
   "zcash" : {
     "account" : {
@@ -8925,8 +8895,8 @@
         "startSync" : "Начать синхронизацию",
         "stopSync" : "Остановить синхронизацию",
         "upToDate" : "Последняя версия",
-        "lastSync" : "Последняя синхронизация: {{date}}",
-        "estimatedTimeRemaining" : "Оставшееся время: {{hours}}:{{minutes}}"
+        "lastSync" : "Последняя синхронизация: {date}",
+        "estimatedTimeRemaining" : "Оставшееся время: {hours}:{minutes}"
       },
       "datepicker" : {
         "label" : "Высота рождения",
@@ -8993,13 +8963,11 @@
         "title" : "Одобрите на устройстве Ledger",
         "description" : "Подтвердите экспорт ключа просмотра на устройстве",
         "cancelAlert" : "Вы можете отклонять отдельные счета на устройстве. Если отклонить все счета, новые счета не будут добавляться в ваш портфель.",
-        "cancelAllBtn_one" : "Отменить",
-        "cancelAllBtn_other" : "Отменить всё"
+        "cancelAllBtn" : "{count, plural, one {Отменить} other {Отменить всё}}"
       },
       "stepScanAccounts" : {
         "cta" : {
-          "shareKey_one" : "Поделиться ключом просмотра",
-          "shareKey_other" : "Поделиться ключами просмотра"
+          "shareKey" : "{count, plural, one {Поделиться ключом просмотра} other {Поделиться ключами просмотра}}"
         }
       },
       "warnings" : {
@@ -9025,20 +8993,19 @@
           "balanced" : "Баланс",
           "full" : "Целиком"
         },
-        "recordCount_one" : "{{count}} запись",
-        "recordCount_other" : "{{count}} записи(ей)",
+        "recordCount" : "{count, plural, one {{count} запись} other {{count} записи(ей)}}",
         "unavailable" : "Недоступно",
         "spendableBalance" : "Макс. доступный баланс:"
       },
       "infoBanner" : {
         "descPartOne" : "Отправитель, сумма и получатель скрыты в блокчейне.",
-        "descPartTwo" : "До {{max}} записей за отправку."
+        "descPartTwo" : "До {max} записей за отправку."
       },
       "sponsoredByProvable" : "Спонсируется Provable",
       "balanceSelector" : {
         "private" : "Конфиденциальный баланс",
         "public" : "Публичный баланс",
-        "lastUpdate" : "Последнее обновление: {{label}}",
+        "lastUpdate" : "Последнее обновление: {label}",
         "recently" : "недавно",
         "switchBalance" : "Поменять источник баланса"
       },
@@ -9047,7 +9014,7 @@
         "noRecords" : "Нет доступных записей",
         "noRecordsAlert" : "У вас нет записей. Чтобы начать, сделайте перевод себе или получите частный перевод.",
         "alert" : "Максимальная сумма для траты зависит от максимальной ценности выбранной записи. Комиссии спонсируются компанией Provable для пользователей Ledger.",
-        "recordsLimit" : "Максимальное количество записей: {{max}}"
+        "recordsLimit" : "Максимальное количество записей: {max}"
       }
     },
     "account" : {
@@ -9061,7 +9028,7 @@
         "startSync" : "Начать синхронизацию",
         "stopSync" : "Остановить синхронизацию",
         "syncAgain" : "Синхронизировать повторно",
-        "lastSync" : "Последняя синхронизация: {{date}}"
+        "lastSync" : "Последняя синхронизация: {date}"
       }
     },
     "operations" : {
@@ -9080,7 +9047,7 @@
         "signingTime" : "Время входа"
       },
       "mandatoryPrivateSync" : {
-        "title" : "Синхронизируем ваш приватный баланс ({{percentage}}%)",
+        "title" : "Синхронизируем ваш приватный баланс ({percentage}%)",
         "desc" : "Пожалуйста, подождите",
         "errorTitle" : "Сбой приватной синхронизации",
         "errorDesc" : "Что-то пошло не так. Попробуйте ещё раз."
@@ -9089,7 +9056,7 @@
   },
   "updater" : {
     "newUpdateAvailable" : "Доступно обновление",
-    "downloadProgress" : "{{progress}}%",
+    "downloadProgress" : "{progress}%",
     "errorTryAgain" : "Ошибка обновления. Повторить?",
     "installAndRelaunch" : "Вышло обновление. Установить и перезапустить?"
   },
@@ -9177,8 +9144,7 @@
   },
   "history" : {
     "title" : "История транзакций",
-    "pending" : "Неподтверждённая транзакция",
-    "pending_other" : "Неподтверждённые транзакции",
+    "pending" : "{count, plural, one {Неподтверждённая транзакция} other {Неподтверждённые транзакции}}",
     "columns" : {
       "type" : "Тип",
       "address" : "Адрес",
@@ -9200,8 +9166,8 @@
       "title" : "Экспорт истории транзакций",
       "disclaimer" : "Это ориентировочные значения и данные. Эквиваленты предоставлены Kaiko в информационных целях. Не используйте их для налогов, бухгалтерии и юридических целей.",
       "accountsToInclude" : "Счета для экспорта",
-      "selectAll" : "Выбрать все ({{count}})",
-      "deselectAll" : "Отменить выбор всех ({{count}})",
+      "selectAll" : "Выбрать все ({count})",
+      "deselectAll" : "Отменить выбор всех ({count})",
       "export" : "Экспортировать историю",
       "successTitle" : "История транзакций успешно сохранена",
       "successDescription" : "CSV-файл с историей успешно сохранён в указанной папке",
@@ -9215,8 +9181,7 @@
     "title" : "Мой кошелёк",
     "avatar" : {
       "label" : "Аватар",
-      "labelWithNotifications_one" : "Аватар, {{count}} новое уведомление",
-      "labelWithNotifications_other" : "Аватар, Новые уведомления ({{count}})"
+      "labelWithNotifications" : "{count, plural, one {Аватар, {count} новое уведомление} other {Аватар, Новые уведомления ({count})}}"
     },
     "actionsList" : {
       "help" : "Помощь",
@@ -9276,7 +9241,7 @@
     "addresses" : "Счета",
     "addressesDialog" : {
       "title" : "Счета",
-      "description" : "Все ваши счета {{ticker}}."
+      "description" : "Все ваши счета {ticker}."
     },
     "add" : "Дополнить",
     "notFound" : "Элемент распределения активов не найден.",
@@ -9303,13 +9268,13 @@
     "chart" : {
       "received" : "Получение",
       "sent" : "Отправка",
-      "transactionsCount" : "Транзакций: {{count}}"
+      "transactionsCount" : "Транзакций: {count}"
     },
     "staking" : {
       "availableBalance" : "Доступно",
       "availableBalanceTooltip" : "Часть ваших сбережений, которую вы можете использовать прямо сейчас. Её можно в любой момент отправить, обменять или вывести.",
       "earnDeposit" : "В стейкинге",
-      "earnBanner" : "Получите до {{apy}}% {{type}}",
+      "earnBanner" : "Получите до {apy}% {type}",
       "earnBannerDefault" : "Приумножайте этот актив",
       "earnBannerSubtitle" : "Ходлите и приумножайте этот актив",
       "earnBannerAction" : "Перейти в раздел «Приумножить»"

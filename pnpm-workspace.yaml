@@ -150,6 +150,8 @@ catalog:
   "@polkadot/util-crypto": 14.0.1
   expect: 30.2.0
   i18next: 25.7.3
+  i18next-icu: 2.4.4
+  intl-messageformat: 11.2.12
   isomorphic-ws: 5.0.0
   msw: ^2.7.3
   jest: 30.2.0

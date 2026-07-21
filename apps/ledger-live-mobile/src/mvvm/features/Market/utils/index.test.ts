@@ -9,17 +9,22 @@ import {
 } from ".";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 import en from "~/locales/en/common.json";
+import { ICU, icuI18nFormat } from "~/context/icu";
 
 beforeAll(async () => {
-  await i18next.use(initReactI18next).init({
-    lng: "en",
-    fallbackLng: "en",
-    resources: {
-      en: {
-        translation: en,
+  await i18next
+    .use(ICU)
+    .use(initReactI18next)
+    .init({
+      lng: "en",
+      fallbackLng: "en",
+      i18nFormat: icuI18nFormat,
+      resources: {
+        en: {
+          translation: en,
+        },
       },
-    },
-  });
+    });
 });
 
 describe("counterValueFormatter", () => {

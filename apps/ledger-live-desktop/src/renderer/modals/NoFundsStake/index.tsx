@@ -45,7 +45,7 @@ interface NoFundsStakeModalProps {
 }
 
 const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeModalProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -152,9 +152,10 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
     <Modal name={modalName} centered>
       <ModalBody
         title={t("stake.noFundsModal.title", {
-          actions: availableActionsFormatted,
-          style: "long",
-          type: "disjunction",
+          actions: new Intl.ListFormat(i18n.language, {
+            style: "long",
+            type: "disjunction",
+          }).format(availableActionsFormatted),
         })}
         onClose={onClose}
         render={() => (
