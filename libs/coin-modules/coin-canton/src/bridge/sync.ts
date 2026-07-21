@@ -16,6 +16,7 @@ import {
   getKey,
   getLedgerEnd,
   getOperations,
+  getPartyById,
   getPendingTransferProposals,
   SEPARATOR,
   type OperationInfo,
@@ -166,6 +167,15 @@ export function makeGetAccountShape(
       if (isOnboarded && result.partyId) {
         xpubOrAddress = result.partyId;
       }
+    }
+
+    // Backfill publicKey for an already-onboarded account (xpub present but no
+    // publicKey — e.g. synced before publicKey was captured). Deviceless: the
+    // gateway party lookup returns it. Without publicKey, validateTopology can't
+    // run and the topology-change prompt never shows. LIVE-34585
+    if (xpubOrAddress && !publicKey) {
+      const { public_key } = await getPartyById(currency, xpubOrAddress);
+      if (public_key) publicKey = public_key;
     }
 
     const accountId = encodeAccountId({
