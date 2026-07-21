@@ -9,6 +9,7 @@ Shared Contacts flow package for Desktop and Mobile.
 
 - Feature-flag configuration (`useContactsFeature`, resolvers)
 - `useContacts` and `useContactsMeContact` hooks (`@domain/entity-contact`)
+- `useAddContactViewModel` hook (this package; app wiring injects `ContactCreationPort`)
 - Shared UI components (`.web.tsx` / `.native.tsx`)
 - Empty, populated, and search Contacts list view models and their Desktop and Mobile page shells
 
@@ -35,6 +36,7 @@ entry point. The native entry also exports `ContactsAddContactHeaderButton` via 
 src/
 ├── components/
 │   └── ContactsButton/   # My Wallet entry
+├── add/                  # Shared add-contact scenario state
 ├── hooks/
 ├── list/                 # Shared list view models and page shells
 │   ├── components/
