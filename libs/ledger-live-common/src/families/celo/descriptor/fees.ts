@@ -90,4 +90,7 @@ export const fees: FeeDescriptor = {
   },
   getFeeCurrencyAccountId: transaction =>
     (transaction as CeloTransaction).feeCurrencyAccountId ?? null,
+  defaultStrategy: {
+    buildTransactionPatch: () => ({ feesStrategy: undefined, fees: undefined }),
+  },
 };

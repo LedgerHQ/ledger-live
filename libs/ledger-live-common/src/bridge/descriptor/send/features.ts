@@ -10,6 +10,7 @@ import type {
   NetworkFeesInfo,
   SelfTransferPolicy,
   SendDescriptor,
+  TransactionPatch,
 } from "../types";
 
 export function resolveFeeUnitLabel(
@@ -103,6 +104,12 @@ export const sendFeatures = {
   ): NetworkFeesInfo | null => {
     const d = getSendDescriptor(currency);
     return d?.fees.getNetworkFeesInfo?.(ctx) ?? null;
+  },
+  hasDefaultStrategy: fromDescriptor(d => d.fees.defaultStrategy != null, false),
+  getDefaultStrategyPatch: (
+    currency: CryptoOrTokenCurrency | undefined,
+  ): TransactionPatch | null => {
+    return getSendDescriptor(currency)?.fees.defaultStrategy?.buildTransactionPatch() ?? null;
   },
   getMemoType: fromDescriptor(d => d.inputs.memo?.type, undefined),
   getMemoMaxLength: fromDescriptor(d => d.inputs.memo?.maxLength, undefined),

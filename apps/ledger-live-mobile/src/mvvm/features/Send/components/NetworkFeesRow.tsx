@@ -12,7 +12,7 @@ import {
 import { Information, ChevronDown, Check } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
-import type { NetworkFeesViewModel } from "../types";
+import type { FeeSelectorOptionKind, NetworkFeesViewModel } from "../types";
 import { useSendFlowData } from "../context/SendFlowContext";
 import { useAnalytics } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
@@ -20,6 +20,8 @@ import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework
 type NetworkFeesRowProps = Readonly<{
   viewModel: NetworkFeesViewModel;
 }>;
+
+const isStrategyKind = (kind: FeeSelectorOptionKind) => kind === "preset" || kind === "default";
 
 export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
   const { t } = useTranslation();
@@ -98,10 +100,7 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
     infoBottomSheetRef.current?.present();
   }, [infoBottomSheetRef]);
 
-  const canOpenFeeSelector =
-    viewModel.showFeePresets ||
-    !!viewModel.uiConfig?.hasCustomFees ||
-    !!viewModel.uiConfig?.hasCoinControl;
+  const canOpenFeeSelector = viewModel.canOpenSelector;
 
   const handleOpenSelector = useCallback(() => {
     if (canOpenFeeSelector) {
@@ -109,32 +108,20 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
     }
   }, [canOpenFeeSelector, selectorBottomSheetRef]);
 
-  const handleSelectStrategy = useCallback(
-    (strategy: string) => {
-      track("button_clicked", {
-        ...trackingProperties,
-        button: strategy,
-      });
+  const handleSelectOption = useCallback(
+    (option: (typeof viewModel.displayOptions)[number]) => {
+      if (option.kind !== "coinControl") {
+        track("button_clicked", {
+          ...trackingProperties,
+          button: option.id,
+        });
+      }
 
-      viewModel.onSelectFeeStrategy(strategy);
+      option.onSelect();
       selectorBottomSheetRef.current?.dismiss();
     },
-    [viewModel, selectorBottomSheetRef, track, trackingProperties],
+    [selectorBottomSheetRef, track, trackingProperties],
   );
-
-  const handleSelectCoinControl = useCallback(() => {
-    viewModel.onSelectCoinControl?.();
-    selectorBottomSheetRef.current?.dismiss();
-  }, [viewModel, selectorBottomSheetRef]);
-
-  const handleSelectCustomFees = useCallback(() => {
-    track("button_clicked", {
-      ...trackingProperties,
-      button: "custom",
-    });
-    viewModel.onSelectCustomFees?.();
-    selectorBottomSheetRef.current?.dismiss();
-  }, [viewModel, selectorBottomSheetRef, track, trackingProperties]);
 
   const handleCloseInfo = useCallback(() => {
     infoBottomSheetRef.current?.dismiss();
@@ -203,68 +190,46 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
         <BottomSheetView>
           <BottomSheetHeader title={viewModel.label} density="compact" />
 
-          {viewModel.feePresetLabelsOptions.map(option => {
-            const isSelected = viewModel.selectedFeeStrategy === option.id;
+          {viewModel.displayOptions.map((option, index) => {
+            const previousOption = viewModel.displayOptions[index - 1];
+            // One divider between the strategy group (presets + default) and the extra actions
+            // (custom / coin control)
+            const needsSeparator =
+              !!previousOption &&
+              isStrategyKind(previousOption.kind) &&
+              !isStrategyKind(option.kind);
 
             return (
-              <Pressable
-                key={option.id}
-                style={styles.presetOption}
-                onPress={() => handleSelectStrategy(option.id)}
-              >
-                <View style={styles.presetLeft}>
-                  <Text
-                    typography="body2SemiBold"
-                    lx={{ color: "base" }}
-                    style={styles.presetLabel}
-                  >
-                    {option.label}
-                  </Text>
-                  {option.fiatValue ? (
-                    <Text typography="body3" lx={{ color: "muted" }}>
-                      {option.fiatValue}
-                    </Text>
-                  ) : null}
-                </View>
-                {isSelected ? (
-                  <View style={styles.checkIcon}>
-                    <Check size={20} />
+              <React.Fragment key={option.id}>
+                {needsSeparator ? (
+                  <View style={styles.separator}>
+                    <Divider />
                   </View>
                 ) : null}
-              </Pressable>
+                <Pressable style={styles.presetOption} onPress={() => handleSelectOption(option)}>
+                  <View style={styles.presetLeft}>
+                    <Text
+                      typography="body2SemiBold"
+                      lx={{ color: "base" }}
+                      style={styles.presetLabel}
+                    >
+                      {option.label}
+                    </Text>
+                    {option.sublabel ? (
+                      <Text typography="body3" lx={{ color: "muted" }}>
+                        {option.sublabel}
+                      </Text>
+                    ) : null}
+                  </View>
+                  {option.selected ? (
+                    <View style={styles.checkIcon}>
+                      <Check size={20} />
+                    </View>
+                  ) : null}
+                </Pressable>
+              </React.Fragment>
             );
           })}
-
-          {viewModel.uiConfig?.hasCustomFees || viewModel.uiConfig?.hasCoinControl ? (
-            <View style={styles.separator}>
-              <Divider />
-            </View>
-          ) : null}
-
-          {viewModel.uiConfig?.hasCustomFees ? (
-            <Pressable style={styles.presetOption} onPress={handleSelectCustomFees}>
-              <View style={styles.presetLeft}>
-                <Text typography="body2SemiBold" lx={{ color: "base" }}>
-                  {t("send.fees.customFees")}
-                </Text>
-              </View>
-              {viewModel.selectedFeeStrategy === "custom" ? (
-                <View style={styles.checkIcon}>
-                  <Check size={20} />
-                </View>
-              ) : null}
-            </Pressable>
-          ) : null}
-
-          {viewModel.uiConfig?.hasCoinControl && viewModel.onSelectCoinControl ? (
-            <Pressable style={styles.presetOption} onPress={handleSelectCoinControl}>
-              <View style={styles.presetLeft}>
-                <Text typography="body2SemiBold" lx={{ color: "base" }}>
-                  {t("send.fees.coinControl")}
-                </Text>
-              </View>
-            </Pressable>
-          ) : null}
         </BottomSheetView>
       </BottomSheet>
     </>

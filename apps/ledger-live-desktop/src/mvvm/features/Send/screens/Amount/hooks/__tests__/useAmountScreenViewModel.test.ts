@@ -31,7 +31,7 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   },
 }));
 
-const onSelectFeeStrategy = jest.fn();
+const onSelectFeeStrategyId = jest.fn();
 
 jest.mock("../../../../hooks/useNetworkFees", () => ({
   useNetworkFees: () => ({
@@ -39,12 +39,29 @@ jest.mock("../../../../hooks/useNetworkFees", () => ({
     feesRowValue: "--",
     feesRowStrategyLabel: "Medium",
     showNetworkFees: true,
-    showFeePresets: false,
     selectedFeeStrategy: null,
-    onSelectFeeStrategy,
-    feePresetOptions: [],
-    fiatByPreset: {},
-    legendByPreset: {},
+    feeSelector: {
+      options: [
+        {
+          id: "medium",
+          kind: "preset",
+          label: "Medium",
+          sublabel: null,
+          selected: true,
+          onSelect: () => onSelectFeeStrategyId("medium"),
+        },
+        {
+          id: "custom",
+          kind: "custom",
+          label: "Custom",
+          sublabel: null,
+          selected: false,
+          onSelect: () => onSelectFeeStrategyId("custom"),
+        },
+      ],
+      selectedId: "medium",
+      canOpen: true,
+    },
   }),
 }));
 
@@ -152,6 +169,7 @@ describe("useAmountScreenViewModel", () => {
           bridgeError: null,
           uiConfig: { hasFeePresets: true } as never,
           transactionActions: { updateTransaction: jest.fn() } as never,
+          onSelectCoinControl: jest.fn(),
         }),
       {
         initialState: {
@@ -171,7 +189,7 @@ describe("useAmountScreenViewModel", () => {
     });
   });
 
-  describe("onSelectFeeStrategy", () => {
+  describe("feeSelector option onSelect", () => {
     function buildBaseParams(currency = getCryptoCurrencyById("bitcoin")) {
       mockedGetAccountCurrency.mockReturnValue(currency);
       const account = createMockAccount({ id: "acc", currency });
@@ -209,13 +227,16 @@ describe("useAmountScreenViewModel", () => {
             bridgeError: null,
             uiConfig: { hasFeePresets: true } as never,
             transactionActions: { updateTransaction } as never,
+            onSelectCoinControl: jest.fn(),
           }),
         { initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } } },
       );
 
-      result.current.onSelectFeeStrategy("medium");
+      const mediumOption = result.current.feeSelector.options.find(o => o.id === "medium");
+      mediumOption?.onSelect();
 
-      expect(onSelectFeeStrategy).toHaveBeenCalledTimes(1);
+      expect(onSelectFeeStrategyId).toHaveBeenCalledTimes(1);
+      expect(onSelectFeeStrategyId).toHaveBeenCalledWith("medium");
     });
 
     it("does not clear custom fee overrides when selecting the custom strategy", () => {
@@ -238,13 +259,16 @@ describe("useAmountScreenViewModel", () => {
             bridgeError: null,
             uiConfig: { hasFeePresets: true } as never,
             transactionActions: { updateTransaction } as never,
+            onSelectCoinControl: jest.fn(),
           }),
         { initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } } },
       );
 
-      result.current.onSelectFeeStrategy("custom");
+      const customOption = result.current.feeSelector.options.find(o => o.id === "custom");
+      customOption?.onSelect();
 
-      expect(onSelectFeeStrategy).toHaveBeenCalledTimes(1);
+      expect(onSelectFeeStrategyId).toHaveBeenCalledTimes(1);
+      expect(onSelectFeeStrategyId).toHaveBeenCalledWith("custom");
     });
   });
 
@@ -282,6 +306,7 @@ describe("useAmountScreenViewModel", () => {
           bridgeError: null,
           uiConfig: { hasFeePresets: true } as never,
           transactionActions: { updateTransaction: jest.fn() } as never,
+          onSelectCoinControl: jest.fn(),
         }),
       {
         initialState: {

@@ -30,6 +30,7 @@ type UseCoinControlScreenViewModelParams = Readonly<{
   bridgeError: Error | null;
   uiConfig: SendFlowUiConfig;
   transactionActions: SendFlowTransactionActions;
+  onSelectCustomFees?: () => void;
 }>;
 
 export function useCoinControlScreenViewModel({
@@ -41,6 +42,7 @@ export function useCoinControlScreenViewModel({
   bridgeError: _bridgeError,
   uiConfig,
   transactionActions,
+  onSelectCustomFees,
 }: UseCoinControlScreenViewModelParams) {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
@@ -71,6 +73,9 @@ export function useCoinControlScreenViewModel({
     status,
     uiConfig,
     transactionActions,
+    onSelectCustomFees,
+    // onSelectCoinControl intentionally omitted: coin control is not offered from the
+    // coin-control screen itself (mirrors mobile's useCoinControlScreenViewModel).
   });
 
   const amountErrorTranslated = useTranslatedBridgeError(
