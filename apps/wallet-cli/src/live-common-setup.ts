@@ -6,6 +6,7 @@ import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setEnv, getEnv } from "@ledgerhq/live-env";
+import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { registerWalletCliDmkTransport } from "./device/register-dmk-transport";
 import {
   getCryptoCurrencyById,
@@ -29,6 +30,7 @@ if (!process.env.USER_ID) {
 const ledgerClientVersion = `wallet-cli/${pkg.version}`;
 setEnv("LEDGER_CLIENT_VERSION", ledgerClientVersion);
 process.env.LEDGER_CLIENT_VERSION = ledgerClientVersion;
+bridgeEnvToNetworkState();
 
 /**
  * Wallet-cli-specific coin-module loaders (bitcoin, evm, solana only).

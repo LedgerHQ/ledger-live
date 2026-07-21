@@ -1,6 +1,6 @@
 import axios, { AxiosHeaders } from "axios";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
-import network, { requestInterceptor, responseInterceptor } from "./network";
+import { getNetworkState } from "./state";
+import network, { requestInterceptor, responseInterceptor, setNetworkState } from "./network";
 import * as logs from "@ledgerhq/logs";
 
 jest.mock("axios");
@@ -8,22 +8,21 @@ jest.mock("axios");
 const mockedAxios = jest.mocked(axios);
 
 describe("network", () => {
-  const DEFAULT_ENABLE_NETWORK_LOGS = getEnv("ENABLE_NETWORK_LOGS");
-  const DEFAULT_GET_CALLS_RETRY = getEnv("GET_CALLS_RETRY");
-  const DEFAULT_LEDGER_CLIENT_VERSION = getEnv("LEDGER_CLIENT_VERSION");
+  const DEFAULT_STATE = {
+    enableNetworkLogs: getNetworkState().enableNetworkLogs,
+    debugHttpResponse: getNetworkState().debugHttpResponse,
+    ledgerClientVersion: getNetworkState().ledgerClientVersion,
+    getCallsTimeout: getNetworkState().getCallsTimeout,
+    getCallsRetry: getNetworkState().getCallsRetry,
+  };
 
   afterEach(() => {
-    // restore the spy created with spyOn
-    jest.restoreAllMocks();
     jest.clearAllMocks();
-
-    // Restore DEFAULT_ENABLE_NETWORK_LOGS
-    setEnv("ENABLE_NETWORK_LOGS", DEFAULT_ENABLE_NETWORK_LOGS);
-    setEnv("LEDGER_CLIENT_VERSION", DEFAULT_LEDGER_CLIENT_VERSION);
+    setNetworkState(DEFAULT_STATE);
   });
 
   describe("requestInterceptor", () => {
-    test("should return provided request when ENABLE_NETWORK_LOGS is false", () => {
+    test("should return provided request unchanged when network logs are disabled", () => {
       const request = {
         baseURL: "baseURL",
         url: "url",
@@ -34,8 +33,8 @@ describe("network", () => {
       expect(req).toEqual(request);
     });
 
-    test("should return provided request with metadata when ENABLE_NETWORK_LOGS is true", () => {
-      setEnv("ENABLE_NETWORK_LOGS", true);
+    test("should attach request metadata when network logs are enabled", () => {
+      setNetworkState({ enableNetworkLogs: true });
 
       const request = {
         baseURL: "baseURL",
@@ -50,10 +49,10 @@ describe("network", () => {
       });
     });
 
-    test("should call log when ENABLE_NETWORK_LOGS is true", () => {
+    test("should call log when network logs are enabled", () => {
       const spy = jest.spyOn(logs, "log");
 
-      setEnv("ENABLE_NETWORK_LOGS", true);
+      setNetworkState({ enableNetworkLogs: true });
 
       const request = {
         baseURL: "baseURL",
@@ -68,7 +67,7 @@ describe("network", () => {
   });
 
   describe("responseInterceptor", () => {
-    test("should return provided response when ENABLE_NETWORK_LOGS is false", () => {
+    test("should return provided response unchanged when network logs are disabled", () => {
       const response = {
         config: {
           baseURL: "baseURL",
@@ -85,8 +84,8 @@ describe("network", () => {
       expect(res).toEqual(response);
     });
 
-    test("should return provided response when ENABLE_NETWORK_LOGS is true", () => {
-      setEnv("ENABLE_NETWORK_LOGS", true);
+    test("should return provided response when network logs are enabled", () => {
+      setNetworkState({ enableNetworkLogs: true });
 
       const response = {
         config: {
@@ -104,10 +103,10 @@ describe("network", () => {
       expect(res).toEqual(response);
     });
 
-    test("should call log when ENABLE_NETWORK_LOGS is true", () => {
+    test("should call log when network logs are enabled", () => {
       const spy = jest.spyOn(logs, "log");
 
-      setEnv("ENABLE_NETWORK_LOGS", true);
+      setNetworkState({ enableNetworkLogs: true });
 
       const response = {
         config: {
@@ -148,7 +147,7 @@ describe("network", () => {
         });
         // eslint-disable-next-line no-empty
       } catch {}
-      expect(mockedAxios).toHaveBeenCalledTimes(DEFAULT_GET_CALLS_RETRY + 1);
+      expect(mockedAxios).toHaveBeenCalledTimes(DEFAULT_STATE.getCallsRetry + 1);
     });
 
     test("should not retry request when response status is 422", async () => {
@@ -178,15 +177,15 @@ describe("network", () => {
 
   describe("ledger client version headers", () => {
     test("should set ledger client version as axios client headers", () => {
-      setEnv("LEDGER_CLIENT_VERSION", "wallet-cli/0.1.1");
+      setNetworkState({ ledgerClientVersion: "wallet-cli/0.1.1" });
 
       expect(axios.defaults.headers.common["X-Ledger-Client-Version"]).toBe("wallet-cli/0.1.1");
       expect(axios.defaults.headers.common["User-Agent"]).toBe("wallet-cli/0.1.1");
     });
 
-    test("should clear ledger client version headers when env is empty", () => {
-      setEnv("LEDGER_CLIENT_VERSION", "wallet-cli/0.1.1");
-      setEnv("LEDGER_CLIENT_VERSION", "");
+    test("should clear ledger client version headers when ledgerClientVersion is empty", () => {
+      setNetworkState({ ledgerClientVersion: "wallet-cli/0.1.1" });
+      setNetworkState({ ledgerClientVersion: "" });
 
       expect(axios.defaults.headers.common["X-Ledger-Client-Version"]).toBeUndefined();
       expect(axios.defaults.headers.common["User-Agent"]).toBeUndefined();
