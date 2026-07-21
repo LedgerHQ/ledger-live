@@ -123,18 +123,6 @@ export function ContactsPage({
         <Box testID="contacts-fixed-search-spacer" lx={{ height: "s64" }} />
         {content}
         <Box
-          pointerEvents="none"
-          lx={{
-            position: "absolute",
-            top: "s0",
-            right: "s0",
-            left: "s0",
-            zIndex: 1,
-            height: "s64",
-            backgroundColor: "base",
-          }}
-        />
-        <Box
           testID="contacts-fixed-search"
           lx={{
             position: "absolute",
