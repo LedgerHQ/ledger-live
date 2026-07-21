@@ -123,7 +123,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         with:
           skip-pod-cache: "true"
           skip-pnpm-cache: "false"
@@ -137,7 +137,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@support/skip-coverage-on-push
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -151,21 +151,21 @@ jobs:
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm && pnpm nx:write-cache-config --cache-key-prefix "${{ steps.setup-caches.outputs.nx-cache-key-prefix }}"
 
       - name: Flake alert - ArgumentError
-        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@support/skip-coverage-on-push
         if: failure() && steps.install-dependencies.outputs.error == 'ArgumentError - pathname contains null byte'
         with:
           live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
           halt_runner: true
 
       - name: Flake alert - Reruns
-        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@support/skip-coverage-on-push
         if: success() && steps.install-dependencies.outputs.total_attempts == 2
         with:
           live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
           custom_message: "${{ steps.install-dependencies.outputs.total_attempts }} attempts happened on install dependencies and it was eventually successful :face_with_raised_eyebrow:"
 
       - name: Build iOS app for Detox test run
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@support/skip-coverage-on-push
         env:
           SKIP_JS_BUNDLING: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
@@ -174,7 +174,7 @@ jobs:
           disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Upload Detox Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/skip-coverage-on-push
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           path: ${{ github.workspace }}/${{ env.IOS_NATIVE_PATH }}
@@ -213,7 +213,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -236,7 +236,7 @@ jobs:
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
 
       - name: Build JS bundle and minify for size analysis
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@support/skip-coverage-on-push
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- -p ios --bundle --bundle-size
           disable_cache: ${{ inputs.disable-nx-cache || false }}
@@ -248,7 +248,7 @@ jobs:
           echo size=`ls -l ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle.minified | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/skip-coverage-on-push
         with:
           path: apps/ledger-live-mobile/main.jsbundle
           key: ${{ inputs.ios-js-cache-key }}

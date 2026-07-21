@@ -61,7 +61,7 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         id: setup-caches
         with:
           use-mise: true
@@ -73,7 +73,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@support/skip-coverage-on-push
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -111,7 +111,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         id: setup-caches
         with:
           use-mise: true

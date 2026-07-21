@@ -58,7 +58,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -86,13 +86,13 @@ jobs:
         run: pnpm changeset version
 
       - name: Get desktop version
-        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/skip-coverage-on-push
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
 
       - name: Get mobile version
-        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/skip-coverage-on-push
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile

@@ -39,10 +39,10 @@ jobs:
         shell: bash
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@support/skip-coverage-on-push
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         id: setup-caches
         with:
           use-mise: true
@@ -64,7 +64,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version --snapshot nightly
 
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/skip-coverage-on-push
         id: post-wallet-cli-version
         with:
           path: ${{ github.workspace }}/apps/wallet-cli
@@ -79,18 +79,18 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/skip-coverage-on-push
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
 
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/skip-coverage-on-push
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
 
       - name: tag nightly ref
-        uses: LedgerHQ/ledger-live/tools/actions/composites/create-or-update-tag@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/create-or-update-tag@support/skip-coverage-on-push
         with:
           ref: ${{ steps.get-sha.outputs.sha }}
           tagName: nightly

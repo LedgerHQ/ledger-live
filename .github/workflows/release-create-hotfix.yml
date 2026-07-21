@@ -29,7 +29,7 @@ jobs:
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Generate ref/tag version to use during main checkout
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@support/skip-coverage-on-push
         id: format-app-tag
         with:
           tag_version: ${{ github.event.inputs.tag_version }}
@@ -41,13 +41,13 @@ jobs:
           ref: ${{ steps.format-app-tag.outputs.main_ref }}
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@support/skip-coverage-on-push
       - name: create hotfix branch
         run: |
           git checkout -b hotfix
           git push -u origin hotfix
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         id: setup-caches
         with:
           use-mise: true
@@ -59,7 +59,7 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@support/skip-coverage-on-push
         with:
           from_level: minor
           to_level: patch
@@ -67,7 +67,7 @@ jobs:
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@support/skip-coverage-on-push
         with:
           from_level: major
           to_level: patch

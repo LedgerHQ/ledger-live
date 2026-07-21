@@ -103,7 +103,7 @@ jobs:
 
       - name: Get affected packages and paths
         id: nx-affected
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-affected-packages@support/skip-coverage-on-push
         with:
           base: ${{ steps.clean-refs.outputs.base_ref }}
           head: HEAD

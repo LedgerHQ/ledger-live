@@ -71,7 +71,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         id: setup-caches
         with:
           use-mise: true
@@ -85,7 +85,7 @@ jobs:
 
       - name: Build and Deploy
         id: build-deploy
-        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@support/skip-coverage-on-push
         with:
           vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
@@ -95,13 +95,13 @@ jobs:
 
       - name: Check formatting web-tools
         if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch'
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@support/skip-coverage-on-push
         with:
           command: pnpm exec nx run @ledgerhq/web-tools:format:check
           disable_cache: false
 
       - name: Typecheck web-tools
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@support/skip-coverage-on-push
         with:
           command: pnpm exec nx run @ledgerhq/web-tools:typecheck
           disable_cache: false
@@ -118,7 +118,7 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         id: setup-caches
         with:
           use-mise: true
@@ -132,7 +132,7 @@ jobs:
 
       - name: Build and Deploy
         id: build-deploy
-        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@support/skip-coverage-on-push
         with:
           vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
@@ -150,7 +150,7 @@ jobs:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         id: setup-caches
         with:
           use-mise: true
@@ -164,7 +164,7 @@ jobs:
 
       - name: Build and Deploy
         id: build-deploy
-        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@support/skip-coverage-on-push
         with:
           vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}

@@ -46,7 +46,7 @@ jobs:
         run: git checkout $GITHUB_SHA
 
       - name: Run live-common-affected
-        uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@develop
+        uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@support/skip-coverage-on-push
         id: affected
         with:
           ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
@@ -114,7 +114,7 @@ jobs:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -138,9 +138,9 @@ jobs:
           password: ${{ steps.jfrog-login.outputs.oidc-token }}
 
       - name: Setup environment
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@support/skip-coverage-on-push
 
       - name: Run Coin Tester
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-coin-tester@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-coin-tester@support/skip-coverage-on-push
         with:
           chain: ${{ matrix.chain }}

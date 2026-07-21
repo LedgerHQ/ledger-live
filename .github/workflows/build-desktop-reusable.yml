@@ -52,10 +52,10 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@support/skip-coverage-on-push
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         id: setup-caches
         with:
           use-mise: true
@@ -69,7 +69,7 @@ jobs:
 
       - name: Build desktop
         id: build-desktop
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@support/skip-coverage-on-push
         with:
           os: ${{ matrix.config.output-name }}
 
@@ -145,7 +145,7 @@ jobs:
             }
             return JSON.stringify(obj);
 
-      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@support/skip-coverage-on-push
         if: ${{ !cancelled() && github.event.number != '' }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
@@ -153,7 +153,7 @@ jobs:
           prNumber: ${{ github.event.number}}
           mode: desktop
 
-      - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@support/skip-coverage-on-push
         name: Report summary
         with:
           token: ${{ steps.generate-token.outputs.token }}

@@ -32,9 +32,9 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@support/skip-coverage-on-push
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         id: setup-caches
         with:
           use-mise: true
@@ -53,12 +53,12 @@ jobs:
         uses: android-actions/setup-android@v2.0.10
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/skip-coverage-on-push
         id: version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: set beta name
-        uses: LedgerHQ/ledger-live/tools/actions/change-product-name@develop
+        uses: LedgerHQ/ledger-live/tools/actions/change-product-name@support/skip-coverage-on-push
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: Get short SHA
@@ -76,7 +76,7 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
         run: pnpm exec nx run live-mobile:android:apk:local
-      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/skip-coverage-on-push
         id: post-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -99,9 +99,9 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@support/skip-coverage-on-push
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         id: setup-caches
         with:
           use-mise: true

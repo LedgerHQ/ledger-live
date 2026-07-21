@@ -243,7 +243,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         id: setup-caches
         with:
           use-mise: true
@@ -375,7 +375,7 @@ jobs:
 
       - name: Generate shards matrix and test files
         id: generate-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@support/skip-coverage-on-push
         with:
           test_directory: e2e/mobile
           test_filter: ${{ steps.test-filter.outputs.filter }}
@@ -448,7 +448,7 @@ jobs:
       - name: Check if Android AVD cache exists
         id: check-avd
         if: ${{ inputs.tests_type != 'iOS Only' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@support/skip-coverage-on-push
         with:
           key: ${{ steps.cache-keys.outputs.avd_cache_key }}
           accessKey: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -461,7 +461,7 @@ jobs:
     name: "iOS Build"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@support/skip-coverage-on-push
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: "general-pool"
@@ -477,7 +477,7 @@ jobs:
     name: "Android Build"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@support/skip-coverage-on-push
     with:
       ref: ${{ inputs.ref || github.sha }}
       disable-nx-cache: false
@@ -495,7 +495,7 @@ jobs:
     runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
     steps:
       - name: Setup Android AVDs
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@support/skip-coverage-on-push
         with:
           ref: ${{ inputs.ref || github.sha }}
           avd_api: ${{ env.AVD_API }}
@@ -551,7 +551,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -572,7 +572,7 @@ jobs:
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
       - name: JFrog npm auth
-        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@support/skip-coverage-on-push
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
@@ -586,7 +586,7 @@ jobs:
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Boot iOS Simulator in Background
-        uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@support/skip-coverage-on-push
         with:
           worker_count: 3
           artifacts_root: ${{ env.MOBILE_ARTIFACTS_ROOT }}
@@ -596,7 +596,7 @@ jobs:
         working-directory: apps/ledger-live-mobile
 
       - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/skip-coverage-on-push
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ needs.determine-builds.outputs.ios_native_key }}
@@ -607,7 +607,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/skip-coverage-on-push
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ needs.determine-builds.outputs.ios_js_key }}
@@ -623,13 +623,13 @@ jobs:
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
 
       - name: Build e2e dependencies (CLI + libs)
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@support/skip-coverage-on-push
         with:
           command: pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
           disable_cache: false
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@support/skip-coverage-on-push
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
@@ -742,7 +742,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/skip-coverage-on-push
         id: setup-caches
         with:
           use-mise: true
@@ -780,10 +780,10 @@ jobs:
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
       - name: Setup Android Environment
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@support/skip-coverage-on-push
 
       - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/skip-coverage-on-push
         with:
           key: ${{ needs.determine-builds.outputs.android_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -793,7 +793,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Bundle
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/skip-coverage-on-push
         with:
           key: ${{ needs.determine-builds.outputs.android_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -822,7 +822,7 @@ jobs:
 
       - name: Download android emulator
         timeout-minutes: 10
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/skip-coverage-on-push
         id: detox-avd
         with:
           key: ${{ needs.determine-builds.outputs.avd_cache_key }}
@@ -834,7 +834,7 @@ jobs:
           destination: /
 
       - name: Duplicate AVDs for parallel testing
-        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@support/skip-coverage-on-push
         with:
           source_avd_name: ${{ env.AVD_NAME }}
           target_suffixes: "_2,_3"
@@ -855,7 +855,7 @@ jobs:
 
       - name: Setup Speculos image and Coin Apps
         id: setup-speculos
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@support/skip-coverage-on-push
         timeout-minutes: 20
         with:
           coinapps_path: ${{ env.COINAPPS }}
@@ -863,13 +863,13 @@ jobs:
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Build e2e dependencies (CLI + libs)
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@support/skip-coverage-on-push
         with:
           command: pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
           disable_cache: false
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@support/skip-coverage-on-push
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
@@ -962,11 +962,11 @@ jobs:
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@support/skip-coverage-on-push
         with:
           allure-results-path: ios-test-artifacts
           platform: iOS
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/skip-coverage-on-push
         if: ${{ !cancelled() }}
         id: upload
         with:
@@ -978,14 +978,14 @@ jobs:
           summary_message: ${{ steps.summary.outputs.summary_message }}
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@support/skip-coverage-on-push
         with:
           results-path: ios-test-artifacts
           runner: detox
       - name: Aggregate test results
         if: ${{ !cancelled() }}
         id: aggregate
-        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@support/skip-coverage-on-push
         with:
           total_shards: ${{ fromJSON(needs.determine-builds.outputs.matrix_ios)[0].total }}
           status_1: ${{ needs.detox-tests-ios.outputs.status_1 }}
@@ -1042,11 +1042,11 @@ jobs:
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@support/skip-coverage-on-push
         with:
           allure-results-path: android-test-artifacts
           platform: android
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/skip-coverage-on-push
         id: upload
         if: ${{ !cancelled() }}
         with:
@@ -1058,14 +1058,14 @@ jobs:
           summary_message: ${{ steps.summary.outputs.summary_message }}
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@support/skip-coverage-on-push
         with:
           results-path: android-test-artifacts
           runner: detox
       - name: Aggregate test results
         if: ${{ !cancelled() }}
         id: aggregate
-        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@support/skip-coverage-on-push
         with:
           total_shards: ${{ fromJSON(needs.determine-builds.outputs.matrix_android)[0].total }}
           status_1: ${{ needs.detox-tests-android.outputs.status_1 }}
@@ -1117,7 +1117,7 @@ jobs:
           pattern: ios-test-artifacts*
           merge-multiple: true
       - name: Upload to qaa-allure (sandbox)
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@support/skip-coverage-on-push
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ios-test-artifacts
@@ -1140,7 +1140,7 @@ jobs:
           pattern: android-test-artifacts*
           merge-multiple: true
       - name: Upload to qaa-allure (sandbox)
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@support/skip-coverage-on-push
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: android-test-artifacts
@@ -1375,7 +1375,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@support/skip-coverage-on-push
         with:
           artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.ios_timing_cache_key }}
@@ -1404,7 +1404,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@support/skip-coverage-on-push
         with:
           artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.android_timing_cache_key }}
