@@ -26,10 +26,6 @@ const transactionsAlertsFlag = {
   },
 };
 
-type CapturedRequest = {
-  body?: unknown;
-};
-
 const makeAccount = (id: string, freshAddress: string): Account => ({
   ...genAccount(id, { currency: avalanche }),
   freshAddress,
@@ -70,15 +66,22 @@ const withTransactionsAlertsState =
       },
     });
 
-const installChainwatchHandlers = (initialRemote?: { exists: boolean; suffixes: string[] }) => {
-  const addressPuts: CapturedRequest[] = [];
-  const addressDeletes: CapturedRequest[] = [];
-  const accountPuts: CapturedRequest[] = [];
-  const accountDeletes: CapturedRequest[] = [];
+const installChainwatchHandlers = (
+  initialRemote?: { exists: boolean; suffixes: string[] },
+  options?: {
+    failAddressPuts?: number;
+    delayAddressPut?: (putIndex: number) => Promise<void>;
+  },
+) => {
+  const addressPuts: { body?: unknown }[] = [];
+  const addressDeletes: { body?: unknown }[] = [];
+  const accountPuts: { body?: unknown }[] = [];
+  const accountDeletes: { body?: unknown }[] = [];
   const state = {
     suffixes: [...(initialRemote?.suffixes ?? [])],
     exists: initialRemote?.exists ?? false,
   };
+  let remainingAddressPutFailures = options?.failAddressPuts ?? 0;
 
   server.use(
     http.get(accountUrl, () => {
@@ -101,6 +104,13 @@ const installChainwatchHandlers = (initialRemote?: { exists: boolean; suffixes: 
     http.put(addressesUrl, async ({ request }) => {
       const body = await request.json();
       addressPuts.push({ body });
+      if (options?.delayAddressPut) {
+        await options.delayAddressPut(addressPuts.length - 1);
+      }
+      if (remainingAddressPutFailures > 0) {
+        remainingAddressPutFailures -= 1;
+        return new HttpResponse(null, { status: 500 });
+      }
       if (Array.isArray(body)) {
         state.suffixes = [...new Set([...state.suffixes, ...body.map(String)])];
       }
@@ -122,6 +132,7 @@ const installChainwatchHandlers = (initialRemote?: { exists: boolean; suffixes: 
     addressDeletes,
     accountPuts,
     accountDeletes,
+    getRemote: () => ({ exists: state.exists, suffixes: [...state.suffixes] }),
   };
 };
 
@@ -185,9 +196,6 @@ describe("TransactionsAlerts", () => {
     expect(chainwatch.addressPuts).toHaveLength(1);
   });
 
-  // Cannot test retry after a failed sync here: ChainwatchAccountManager hides network
-  // errors, so the sync always looks successful and the component never retries.
-  // Cover that path in a unit test that stubs the sync, or once the manager surfaces errors.
   it("should delete the Chainwatch account when transaction alerts are turned off", async () => {
     const chainwatch = installChainwatchHandlers();
     const { store } = render(<TransactionsAlerts />, {
@@ -201,5 +209,28 @@ describe("TransactionsAlerts", () => {
     });
 
     await waitFor(() => expect(chainwatch.accountDeletes).toHaveLength(1));
+  });
+
+  it("should register addresses again after a failed Chainwatch request", async () => {
+    const chainwatch = installChainwatchHandlers(
+      { exists: true, suffixes: [] },
+      { failAddressPuts: 1 },
+    );
+    const { rerender } = render(<TransactionsAlerts />, {
+      overrideInitialState: withTransactionsAlertsState([account01]),
+    });
+
+    await waitFor(() => expect(chainwatch.addressPuts).toHaveLength(1));
+    expect(chainwatch.addressPuts[0].body).toEqual(["0x01"]);
+    expect(chainwatch.getRemote().suffixes).toEqual([]);
+
+    // Failed PUT was treated as success; retry with same accounts.
+    await act(async () => {});
+    rerender(<TransactionsAlerts />);
+    await act(async () => {});
+
+    await waitFor(() => expect(chainwatch.addressPuts).toHaveLength(2));
+    expect(chainwatch.addressPuts[1].body).toEqual(["0x01"]);
+    expect(chainwatch.getRemote().suffixes).toEqual(["0x01"]);
   });
 });
