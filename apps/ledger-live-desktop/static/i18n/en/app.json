@@ -6754,6 +6754,10 @@
     "AlgorandASANotOptInInRecipient": {
       "title": "Recipient account has not opted in the selected ASA."
     },
+    "AlgorandMemoExceededSizeError": {
+      "title": "Memo is too long",
+      "description": "Algorand memos cannot exceed 1024 bytes. Please shorten your memo."
+    },
     "AmountRequired": {
       "title": "Amount required"
     },
