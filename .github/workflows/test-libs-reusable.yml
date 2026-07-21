@@ -2,12 +2,23 @@ name: "[Libraries] - Test - Called"
 
 on:
   workflow_call:
+    inputs:
+      coverage:
+        description: "Run tests with coverage instrumentation (for Sonar). Disabled on push, where no Sonar scan runs."
+        type: boolean
+        required: false
+        default: true
     outputs:
       coverage_generated:
         value: ${{ jobs.test-libraries.outputs.coverage_generated }}
 
   workflow_dispatch:
     inputs:
+      coverage:
+        description: "Run tests with coverage instrumentation (for Sonar)."
+        type: boolean
+        required: false
+        default: true
       since_branch:
         description: The branch that Nx will check when diffing.
         default: "develop"
@@ -57,6 +68,7 @@ jobs:
         run: pnpm i --filter="{./libs/**}..."
 
       - name: Run coverage on appropriate libraries
+        if: ${{ inputs.coverage != false }}
         run: |
 
           mkdir -p ${{ github.workspace }}/coverage
@@ -65,8 +77,15 @@ jobs:
 
           pnpm exec nx run-many -t coverage --projects=tag:scope:libs-non-ui --parallel=6 -- --runInBand=1
 
+      - name: Test libraries (no coverage)
+        id: test-libs-no-coverage
+        if: ${{ inputs.coverage == false }}
+        run: pnpm exec nx run-many -t test --projects=tag:scope:libs-non-ui --parallel=6
+        shell: bash
+
       - name: Test libraries without coverage script & Process coverage files
         id: test-libs
+        if: ${{ inputs.coverage != false }}
         run: |
 
           echo "::group::Processing coverage files"
@@ -124,7 +143,7 @@ jobs:
             fs.writeFileSync("summary-tests.txt", "${{ steps.test-libs.outcome }}", "utf-8");
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        if: ${{ !cancelled() }}
+        if: ${{ inputs.coverage != false && !cancelled() }}
         id: generate_coverage
         with:
           name: coverage-libs

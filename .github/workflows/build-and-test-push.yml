@@ -28,11 +28,15 @@ jobs:
     name: "Desktop Lint & Unit Tests"
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@develop
     secrets: inherit
+    with:
+      coverage: false
 
   test-mobile:
     name: "Test Mobile"
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
     secrets: inherit
+    with:
+      coverage: false
 
   build-test-mobile:
     name: "Build & Test Mobile"
@@ -49,16 +53,22 @@ jobs:
     name: "Test Libraries"
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
+    with:
+      coverage: false
 
   test-features:
     name: "Test Features"
     uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
     secrets: inherit
+    with:
+      coverage: false
 
   test-design-system:
     name: "Test UI Libs"
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
     secrets: inherit
+    with:
+      coverage: false
 
   build-web-tools:
     name: "Build Web Tools"

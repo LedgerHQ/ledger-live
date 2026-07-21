@@ -2,12 +2,23 @@ name: "[Features] - Test - Called"
 
 on:
   workflow_call:
+    inputs:
+      coverage:
+        description: "Run tests with coverage instrumentation (for Sonar). Disabled on push, where no Sonar scan runs."
+        type: boolean
+        required: false
+        default: true
     outputs:
       coverage_generated:
         value: ${{ jobs.test-features.outputs.coverage_generated }}
 
   workflow_dispatch:
     inputs:
+      coverage:
+        description: "Run tests with coverage instrumentation (for Sonar)."
+        type: boolean
+        required: false
+        default: true
       ref:
         description: |
           If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
@@ -53,6 +64,7 @@ jobs:
         run: pnpm i --filter="./features/**" --filter="./shared/**" --filter="./domain/**"
 
       - name: Run coverage on feature packages
+        if: ${{ inputs.coverage != false }}
         run: |
           mkdir -p ${{ github.workspace }}/coverage
           touch ${{ github.workspace }}/coverage/lcov.info
@@ -60,8 +72,14 @@ jobs:
 
           pnpm exec nx run-many -t coverage --projects=tag:scope:features --parallel=4 -- --runInBand=1
 
+      - name: Test feature packages (no coverage)
+        if: ${{ inputs.coverage == false }}
+        run: pnpm exec nx run-many -t test --projects=tag:scope:features --parallel=4 -- --runInBand=1
+        shell: bash
+
       - name: Process coverage files
         id: process-coverage
+        if: ${{ inputs.coverage != false }}
         run: |
           for package_json in $(find ./features -name "package.json" -not -path "*/node_modules/*"); do
             pkg=$(dirname "$package_json")
@@ -79,7 +97,7 @@ jobs:
         shell: bash
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        if: ${{ !cancelled() }}
+        if: ${{ inputs.coverage != false && !cancelled() }}
         id: generate_coverage
         with:
           name: coverage-features
