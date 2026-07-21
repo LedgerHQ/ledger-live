@@ -115,18 +115,37 @@ export function ContactsPage({
     <Box testID="contacts-screen" lx={{ flex: 1, backgroundColor: "base" }}>
       <Box
         testID="contacts-content"
-        lx={{ flex: 1 }}
+        lx={{ flex: 1, position: "relative" }}
         pointerEvents={isLedgerSyncChecking ? "none" : "auto"}
         importantForAccessibility={isLedgerSyncChecking ? "no-hide-descendants" : "auto"}
         accessibilityElementsHidden={isLedgerSyncChecking}
       >
+        <Box testID="contacts-fixed-search-spacer" lx={{ height: "s64" }} />
+        {content}
+        <Box
+          testID="contacts-fixed-search-mask"
+          pointerEvents="none"
+          lx={{
+            position: "absolute",
+            top: "s0",
+            right: "s0",
+            left: "s0",
+            zIndex: 1,
+            height: "s64",
+            backgroundColor: "base",
+          }}
+        />
         <Box
           testID="contacts-fixed-search"
           lx={{
-            zIndex: 1,
+            position: "absolute",
+            top: "s0",
+            right: "s0",
+            left: "s0",
+            zIndex: 2,
             paddingHorizontal: "s16",
             paddingTop: "s8",
-            paddingBottom: "s8",
+            paddingBottom: "s16",
             backgroundColor: "base",
           }}
         >
@@ -136,7 +155,6 @@ export function ContactsPage({
             onSearchQueryChange={onSearchQueryChange}
           />
         </Box>
-        {content}
       </Box>
       {isLedgerSyncChecking ? (
         <Box
