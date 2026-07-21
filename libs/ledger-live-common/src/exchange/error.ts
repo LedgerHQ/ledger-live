@@ -1,4 +1,3 @@
-import { TransportStatusError } from "@ledgerhq/errors";
 import { getExchangeErrorMessage } from "@ledgerhq/hw-app-exchange";
 import { ErrorStatus } from "@ledgerhq/hw-app-exchange/ReturnCode";
 import get from "lodash/get";
@@ -41,11 +40,12 @@ export function convertTransportError(
   step: CompleteExchangeStep,
   err: unknown,
 ): CompleteExchangeError | unknown {
-  if (err instanceof TransportStatusError) {
-    const errorCode =
-      step === "CHECK_REFUND_ADDRESS" && err.statusCode == null
+  if ((err as { name?: string })?.name === "TransportStatusError") {
+    const tse = err as { statusCode?: number | null };
+    const errorCode: number =
+      step === "CHECK_REFUND_ADDRESS" && tse.statusCode == null
         ? ErrorStatus.INVALID_ADDRESS
-        : err.statusCode;
+        : (tse.statusCode ?? ErrorStatus.INVALID_ADDRESS);
 
     const { errorName, errorMessage } = getExchangeErrorMessage(errorCode, step);
     return new CompleteExchangeError(step, errorName, errorMessage);

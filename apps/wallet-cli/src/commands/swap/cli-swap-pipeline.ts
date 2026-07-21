@@ -460,9 +460,9 @@ export async function runFullSwapPipeline(
     const causeSuffix = rawErrorCause ? `, ${JSON.stringify(rawErrorCause)}` : "";
     const errorMessageWithCause = rawErrorMessage + causeSuffix;
 
-    const completeExchangeError =
-      error instanceof CompleteExchangeError
-        ? error
+    const completeExchangeError: CompleteExchangeError =
+      (error as { name?: string })?.name === "CompleteExchangeError"
+        ? (error as CompleteExchangeError)
         : new CompleteExchangeError("INIT", rawErrorName, errorMessageWithCause);
 
     if (swapId) {
