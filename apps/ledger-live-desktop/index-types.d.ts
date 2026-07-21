@@ -43,6 +43,14 @@ interface RawEvents {
   [key: string]: unknown;
 }
 
+declare namespace NodeJS {
+  interface Process {
+    // Set by the Electron binary: true only in Mac App Store / Windows Store variants.
+    mas?: boolean;
+    windowsStore?: boolean;
+  }
+}
+
 declare namespace Electron {
   interface BrowserWindow {
     name?: string;

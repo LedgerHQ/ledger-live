@@ -1,6 +1,7 @@
 import { datadogRum } from "@datadog/browser-rum";
 import { datadogIdSelector, isDummyDatadogId } from "@domain/entity-client-identity";
 import { getOperatingSystemSupportStatus } from "~/support/os";
+import { getDistributionChannel } from "~/helpers/distributionChannel";
 import { getDatadogBuildConfig, buildBeforeSend } from "./config";
 import type { Store } from "redux";
 import type { State } from "~/renderer/reducers";
@@ -120,6 +121,7 @@ export async function initDatadog(
     datadogRum.setGlobalContext({
       git_commit: __GIT_REVISION__,
       process: globalThis.window === undefined ? "main" : "renderer",
+      distributionChannel: getDistributionChannel(),
     });
 
     initialized = true;
