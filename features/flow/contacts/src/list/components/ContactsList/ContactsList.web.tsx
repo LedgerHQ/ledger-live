@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  SearchInput,
-  SectionHeader,
-  SectionHeaderTitle,
-} from "@ledgerhq/lumen-ui-react";
+import { SearchInput, SectionHeader, SectionHeaderTitle } from "@ledgerhq/lumen-ui-react";
 import {
   isContactsSearchNoResultsViewModel,
   isPopulatedContactsListViewModel,
@@ -40,12 +36,11 @@ export function ContactsList({
     ? viewModel.sections
     : [];
   const showNoResults = isContactsSearchNoResultsViewModel(viewModel);
+  const me = "me" in viewModel ? viewModel.me : undefined;
 
   let savedContactsContent: React.ReactNode = null;
   if (showNoResults) {
-    savedContactsContent = (
-      <ContactsSearchNoResults message={labels.searchNoResults} />
-    );
+    savedContactsContent = <ContactsSearchNoResults message={labels.searchNoResults} />;
   } else if (savedContactSections.length > 0) {
     savedContactsContent = (
       <div className="flex flex-col gap-16">
@@ -84,12 +79,14 @@ export function ContactsList({
           data-testid="contacts-list-search"
           onChange={onSearchInputChange}
         />
-        <ContactsMeListItem
-          contact={viewModel.me}
-          avatarSrc={meAvatarSrc}
-          formatAddressCount={labels.formatAddressCount}
-          onOpen={onOpenMe}
-        />
+        {me ? (
+          <ContactsMeListItem
+            contact={me}
+            avatarSrc={meAvatarSrc}
+            formatAddressCount={labels.formatAddressCount}
+            onOpen={onOpenMe}
+          />
+        ) : null}
       </div>
       {savedContactsContent}
       <ContactsAddContactListItem label={labels.addContact} onAddContact={onAddContact} />
