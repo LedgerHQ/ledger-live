@@ -478,7 +478,9 @@ export class SwapPage extends WebViewAppPage {
 
   @step("Check currency to swap to contains $0")
   async checkAssetToContains(expected: string) {
-    await this.waitForToAssetSelectorReady();
+    if (expected !== "Choose asset") {
+      await this.waitForToAssetSelectorReady();
+    }
     const webview = await this.getWebView();
     await expect(webview.getByTestId(this.toAccountCoinSelector)).toContainText(expected);
   }
