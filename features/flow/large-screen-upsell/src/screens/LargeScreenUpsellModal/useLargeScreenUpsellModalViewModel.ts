@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useFeature } from "@features/platform-feature-flags";
 import {
+  markDismissed,
   recordUpsellModalDisplay,
   resetUpsellModalRetries,
 } from "@domain/entity-large-screen-upsell-modal";
@@ -99,9 +100,10 @@ export function useLargeScreenUpsellModalViewModel({
 
       hasHandledCurrentModalInteractionRef.current = true;
       analytics?.onDismissed(method);
+      dispatch(markDismissed());
       setIsOpen(false);
     },
-    [analytics],
+    [analytics, dispatch],
   );
 
   const onCtaPress = useCallback(() => {
@@ -118,6 +120,7 @@ export function useLargeScreenUpsellModalViewModel({
       openUrl(link);
     }
     dispatch(resetUpsellModalRetries());
+    dispatch(markDismissed());
     setIsOpen(false);
   }, [analytics, content?.primaryButtonLink, dispatch, openUrl]);
 

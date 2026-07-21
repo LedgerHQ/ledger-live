@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   act,
@@ -14,6 +14,23 @@ import { closeDialog, openDialog } from "~/renderer/reducers/dialogs";
 import { openURL } from "~/renderer/linking";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { LargeScreenUpsellModalMount } from "..";
+
+/** Mimics Portfolio scoping: Mount unmounts when leaving portfolio. */
+function LargeScreenUpsellModalMountOnPortfolio() {
+  const [onPortfolio, setOnPortfolio] = useState(true);
+
+  return (
+    <>
+      <button type="button" onClick={() => setOnPortfolio(true)}>
+        go-portfolio
+      </button>
+      <button type="button" onClick={() => setOnPortfolio(false)}>
+        go-qa
+      </button>
+      {onPortfolio ? <LargeScreenUpsellModalMount /> : null}
+    </>
+  );
+}
 
 jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
@@ -56,6 +73,7 @@ function eligibleState(settingsOverrides: Partial<State["settings"]> = {}): Deep
     largeScreenUpsellModal: {
       retries: 0,
       lastSeenAt: null,
+      session: "ready",
     },
     dialogs: {
       GENERIC_AWARENESS_MODAL: false,
@@ -87,9 +105,14 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     jest.useRealTimers();
   });
 
-  const renderMount = (initialState: DeepPartial<State> = eligibleState()) =>
-    render(<LargeScreenUpsellModalMount />, {
+  const renderMount = (
+    initialState: DeepPartial<State> = eligibleState(),
+    initialRoute?: string,
+    ui: React.ReactElement = <LargeScreenUpsellModalMount />,
+  ) =>
+    render(ui, {
       initialState,
+      initialRoute,
       userEventOptions: {
         advanceTimers: jest.advanceTimersByTime,
       },
@@ -102,6 +125,37 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     });
     expect(screen.queryByTestId("large-screen-upsell-modal")).not.toBeInTheDocument();
   };
+
+  it("should not re-open after dismiss when remounting on portfolio return", async () => {
+    const { user, store } = renderMount(
+      eligibleState(),
+      "/",
+      <LargeScreenUpsellModalMountOnPortfolio />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("large-screen-upsell-modal")).toBeVisible();
+    });
+
+    await user.click(screen.getByLabelText("components.dialogHeader.closeAriaLabel"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("large-screen-upsell-modal")).not.toBeInTheDocument();
+    });
+    expect(store.getState().largeScreenUpsellModal.session).toBe("dismissed");
+
+    await user.click(screen.getByRole("button", { name: "go-qa" }));
+
+    expect(screen.queryByTestId("large-screen-upsell-modal")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "go-portfolio" }));
+
+    await expectModalNotOpen();
+
+    expect(
+      jest.mocked(trackPage).mock.calls.filter(([page]) => page === "Modal - Upgrade"),
+    ).toHaveLength(1);
+  });
 
   it("should open with opted-out copy when personalized recommendations are off", async () => {
     renderMount();
@@ -248,7 +302,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     });
   });
 
-  it("should increment retries and set lastSeenAt when the modal opens", async () => {
+  it("should increment retries and set lastSeenAt when the modal opens without dismissing session", async () => {
     const { store } = renderMount();
 
     await waitFor(() => {
@@ -259,6 +313,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
       expect(store.getState().largeScreenUpsellModal.retries).toBe(1);
       expect(store.getState().largeScreenUpsellModal.lastSeenAt).not.toBeNull();
     });
+    expect(store.getState().largeScreenUpsellModal.session).toBe("ready");
   });
 
   it("should close when the header close control is pressed and stay closed", async () => {
@@ -271,6 +326,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     await waitFor(() => {
       expect(store.getState().largeScreenUpsellModal.retries).toBe(1);
     });
+    expect(store.getState().largeScreenUpsellModal.session).toBe("ready");
 
     await user.click(screen.getByLabelText(i18n.t("components.dialogHeader.closeAriaLabel")));
 
@@ -280,6 +336,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
 
     expect(openURL).not.toHaveBeenCalled();
     expect(store.getState().largeScreenUpsellModal.retries).toBe(1);
+    expect(store.getState().largeScreenUpsellModal.session).toBe("dismissed");
     expect(screen.queryByTestId("large-screen-upsell-modal")).not.toBeInTheDocument();
     expect(track).toHaveBeenCalledWith("modal_dismissed", {
       modal: "upgrade modal",
@@ -354,6 +411,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
       largeScreenUpsellModal: {
         retries: 2,
         lastSeenAt: Date.parse("2026-07-14T12:00:00.000Z"),
+        session: "ready",
       },
     });
 
@@ -511,6 +569,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
       largeScreenUpsellModal: {
         retries: 3,
         lastSeenAt: Date.parse("2026-07-14T12:00:00.000Z"),
+        session: "ready",
       },
     });
 
@@ -532,6 +591,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
       largeScreenUpsellModal: {
         retries: 3,
         lastSeenAt: Date.parse("2026-05-01T12:00:00.000Z"),
+        session: "ready",
       },
     });
 
@@ -570,6 +630,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
       largeScreenUpsellModal: {
         retries: 0,
         lastSeenAt: null,
+        session: "ready",
       },
     });
 
@@ -595,6 +656,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
       largeScreenUpsellModal: {
         retries: 0,
         lastSeenAt: null,
+        session: "ready",
       },
     });
 
@@ -647,8 +709,8 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     expect(store.getState().largeScreenUpsellModal.retries).toBe(1);
   });
 
-  it("should dismiss via Escape and outside tap with the matching dismissMethod", async () => {
-    const { unmount: unmountEscape } = renderMount();
+  it("should dismiss via Escape with dismissMethod escape key down", async () => {
+    renderMount();
 
     await waitFor(() => {
       expect(screen.getByTestId("large-screen-upsell-modal")).toBeVisible();
@@ -670,11 +732,9 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
       ...NANO_S_OPTED_OUT_ANALYTICS_PROPS,
     });
     expect(track).not.toHaveBeenCalledWith("button_clicked", expect.anything());
+  });
 
-    unmountEscape();
-    jest.mocked(track).mockClear();
-    jest.mocked(trackPage).mockClear();
-
+  it("should dismiss via outside tap with dismissMethod outside tap", async () => {
     renderMount();
 
     await waitFor(() => {
