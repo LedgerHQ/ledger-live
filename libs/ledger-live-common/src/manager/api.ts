@@ -7,7 +7,6 @@ import {
   ManagerFirmwareNotEnoughSpaceError,
   ManagerNotEnoughSpaceError,
   NetworkDown,
-  TransportStatusError,
   UserRefusedFirmwareUpdate,
 } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
@@ -60,10 +59,11 @@ const remapSocketError = (context?: string) =>
       return throwError(() => new DeviceOnDashboardExpected());
     }
 
+    const statusCode = (e as { statusCode?: number }).statusCode;
     const status =
-      e instanceof TransportStatusError
-        ? e.statusCode.toString(16)
-        : (e as Error).message.slice((e as Error).message.length - 4);
+      (e as { name?: string })?.name === "TransportStatusError" && statusCode !== undefined
+        ? statusCode.toString(16)
+        : (e as { message?: string })?.message?.slice(-4);
 
     // TODO use StatusCode instead of this.
     switch (status) {

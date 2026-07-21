@@ -10,10 +10,8 @@ import { useStuckDeviceActionHint } from "../StuckDeviceActionHint/useStuckDevic
 import QueuedDrawer from "../QueuedDrawer";
 import { useIsDeviceLockedPolling } from "~/hooks/useIsDeviceLockedPolling/useIsDeviceLockedPolling";
 import { IsDeviceLockedResultType } from "~/hooks/useIsDeviceLockedPolling/types";
-import { PeerRemovedPairing } from "@ledgerhq/errors";
 import { BleForgetDeviceIllustration } from "../BleDevicePairingFlow/BleDevicePairingContent/BleForgetDeviceIllustration";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { AlreadySendingApduError } from "@ledgerhq/device-management-kit";
 
 type Props = {
   isOpen: boolean;
@@ -29,9 +27,9 @@ export const DeviceLockedCheckDrawer = ({ isOpen, device, onDeviceUnlocked, onCl
   const isLocked = isLockedResult.type === IsDeviceLockedResultType.locked;
   const isUnlocked = isLockedResult.type === IsDeviceLockedResultType.unlocked;
   const isError = isLockedResult.type === IsDeviceLockedResultType.error;
-  const isPeerRemovedPairingError = isError && isLockedResult.error instanceof PeerRemovedPairing;
+  const isPeerRemovedPairingError = isError && isLockedResult.error?.name === "PeerRemovedPairing";
   const isAlreadySendingApduError =
-    isError && isLockedResult.error instanceof AlreadySendingApduError;
+    isError && isLockedResult.error?.name === "AlreadySendingApduError";
   const isOtherError = isError && !isPeerRemovedPairingError && !isAlreadySendingApduError;
   const isLockedStateCannotBeDetermined =
     isLockedResult.type === IsDeviceLockedResultType.lockedStateCannotBeDetermined;

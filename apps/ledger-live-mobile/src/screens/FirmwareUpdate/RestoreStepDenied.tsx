@@ -6,12 +6,6 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import Button from "~/components/wrappedUi/Button";
 import Link from "~/components/wrappedUi/Link";
 import { TrackScreen } from "~/analytics";
-import { UserRefusedAllowManager } from "@ledgerhq/errors";
-import {
-  LanguageInstallRefusedOnDevice,
-  ImageLoadRefusedOnDevice,
-  ImageCommitRefusedOnDevice,
-} from "@ledgerhq/live-common/errors";
 
 export const RestoreStepDenied = ({
   t,
@@ -26,15 +20,20 @@ export const RestoreStepDenied = ({
   onPressSkip: () => void;
   stepDeniedError: Error;
 }) => {
-  const analyticsDrawerName =
-    stepDeniedError instanceof LanguageInstallRefusedOnDevice
-      ? `Error: the language change was cancelled on the device`
-      : (stepDeniedError as Error) instanceof ImageLoadRefusedOnDevice ||
-          (stepDeniedError as Error) instanceof ImageCommitRefusedOnDevice
-        ? `Error: the restoration of lock screen picture was cancelled on the device`
-        : (stepDeniedError as Error) instanceof UserRefusedAllowManager
-          ? `Error: the restoration of apps was cancelled on the device`
-          : `Error: ${(stepDeniedError as Error).name}`;
+  const errorName = stepDeniedError?.name;
+  let analyticsDrawerName: string;
+  if (errorName === "LanguageInstallRefusedOnDevice") {
+    analyticsDrawerName = `Error: the language change was cancelled on the device`;
+  } else if (
+    errorName === "ImageLoadRefusedOnDevice" ||
+    errorName === "ImageCommitRefusedOnDevice"
+  ) {
+    analyticsDrawerName = `Error: the restoration of lock screen picture was cancelled on the device`;
+  } else if (errorName === "UserRefusedAllowManager") {
+    analyticsDrawerName = `Error: the restoration of apps was cancelled on the device`;
+  } else {
+    analyticsDrawerName = `Error: ${errorName}`;
+  }
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
       <TrackScreen category={analyticsDrawerName} refreshSource={false} />

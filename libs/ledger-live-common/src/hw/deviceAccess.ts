@@ -2,18 +2,10 @@ import { firstValueFrom, from, Observable, throwError, timer } from "rxjs";
 import { retryWhen, mergeMap, catchError } from "rxjs/operators";
 import Transport from "@ledgerhq/hw-transport";
 import {
-  WrongDeviceForAccount,
-  WrongAppForCurrency,
   CantOpenDevice,
-  UpdateYourApp,
-  BluetoothRequired,
-  TransportWebUSBGestureRequired,
-  TransportInterfaceNotAvailable,
   FirmwareOrAppUpdateRequired,
   TransportStatusError,
   DeviceHalted,
-  PeerRemovedPairing,
-  PairingFailed,
 } from "@ledgerhq/errors";
 import { LocalTracer, TraceContext, trace } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
@@ -24,11 +16,12 @@ const LOG_TYPE = "hw";
 const initialErrorRemapping = (error: unknown, context?: TraceContext) => {
   let mappedError = error;
 
-  if (error && error instanceof TransportStatusError) {
-    if (error.statusCode === 0x6faa) {
-      mappedError = new DeviceHalted(error.message);
-    } else if (error.statusCode === 0x6b00) {
-      mappedError = new FirmwareOrAppUpdateRequired(error.message);
+  const tse = error as { name?: string; statusCode?: number; message?: string };
+  if (tse.name === "TransportStatusError") {
+    if (tse.statusCode === 0x6faa) {
+      mappedError = new DeviceHalted(tse.message);
+    } else if (tse.statusCode === 0x6b00) {
+      mappedError = new FirmwareOrAppUpdateRequired(tse.message);
     }
   }
 
@@ -153,13 +146,14 @@ export const withDevice =
         // This catch is here only for errors that might happen at open or at clean up of the transport before doing the job
         .catch(e => {
           tracer.trace(`Error while opening Transport: ${e}`, { error: e });
-          if (e instanceof BluetoothRequired) throw e;
-          if (e instanceof TransportWebUSBGestureRequired) throw e;
-          if (e instanceof TransportInterfaceNotAvailable) throw e;
-          if (e instanceof PeerRemovedPairing) throw e;
-          if (e instanceof PairingFailed) throw e;
+          const eName = (e as { name?: string })?.name;
+          if (eName === "BluetoothRequired") throw e;
+          if (eName === "TransportWebUSBGestureRequired") throw e;
+          if (eName === "TransportInterfaceNotAvailable") throw e;
+          if (eName === "PeerRemovedPairing") throw e;
+          if (eName === "PairingFailed") throw e;
           console.error(e);
-          throw new CantOpenDevice(e.message);
+          throw new CantOpenDevice((e as { message?: string })?.message);
         })
         // Executes the job
         .then(transport => {
@@ -222,15 +216,16 @@ export const withDevicePromise = <T>(deviceId: string, fn: (Transport) => Promis
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 export const genericCanRetryOnError = (err: unknown): boolean => {
-  if (err instanceof WrongAppForCurrency) return false;
-  if (err instanceof WrongDeviceForAccount) return false;
-  if (err instanceof CantOpenDevice) return false;
-  if (err instanceof BluetoothRequired) return false;
-  if (err instanceof UpdateYourApp) return false;
-  if (err instanceof FirmwareOrAppUpdateRequired) return false;
-  if (err instanceof DeviceHalted) return false;
-  if (err instanceof TransportWebUSBGestureRequired) return false;
-  if (err instanceof TransportInterfaceNotAvailable) return false;
+  const errName = (err as { name?: string })?.name;
+  if (errName === "WrongAppForCurrency") return false;
+  if (errName === "WrongDeviceForAccount") return false;
+  if (errName === "CantOpenDevice") return false;
+  if (errName === "BluetoothRequired") return false;
+  if (errName === "UpdateYourApp") return false;
+  if (errName === "FirmwareOrAppUpdateRequired") return false;
+  if (errName === "DeviceHalted") return false;
+  if (errName === "TransportWebUSBGestureRequired") return false;
+  if (errName === "TransportInterfaceNotAvailable") return false;
   return true;
 };
 

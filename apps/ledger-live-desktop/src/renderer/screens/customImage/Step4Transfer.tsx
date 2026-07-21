@@ -3,7 +3,6 @@ import { ProcessorResult } from "~/renderer/components/CustomImage/dithering/typ
 import { Step, StepProps } from "./types";
 import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/react-ui";
-import { ImageCommitRefusedOnDevice, ImageLoadRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import StepFooter from "./StepFooter";
 import StepContainer from "./StepContainer";
@@ -50,9 +49,9 @@ const StepTransfer: React.FC<Props> = props => {
 
   // User refused loading the image OR committing the image
   const userRefusedOnDevice =
-    error instanceof ImageLoadRefusedOnDevice ||
+    error?.name === "ImageLoadRefusedOnDevice" ||
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    (error as unknown) instanceof ImageCommitRefusedOnDevice;
+    error?.name === "ImageCommitRefusedOnDevice";
 
   return (
     <StepContainer

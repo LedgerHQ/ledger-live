@@ -2,15 +2,10 @@ import semver from "semver";
 import { Observable, concat, from, of, throwError, defer, merge } from "rxjs";
 import { mergeMap, concatMap, map, catchError, delay } from "rxjs/operators";
 import {
-  TransportStatusError,
   FirmwareOrAppUpdateRequired,
   UserRefusedOnDevice,
-  BtcUnmatchedApp,
   UpdateYourApp,
-  DisconnectedDeviceDuringOperation,
-  DisconnectedDevice,
   StatusCodes,
-  LockedDeviceError,
   LatestFirmwareVersionRequired,
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
@@ -212,8 +207,9 @@ export const openAppFromDashboard = (
               }),
             ),
             catchError(e => {
-              if (e && e instanceof TransportStatusError) {
-                switch (e.statusCode) {
+              const tse = e as { name?: string; statusCode?: number };
+              if (tse.name === "TransportStatusError") {
+                switch (tse.statusCode) {
                   case 0x6984: // No StatusCodes definition
                   case 0x6807: // No StatusCodes definition
                     return inlineAppInstall({
@@ -225,7 +221,7 @@ export const openAppFromDashboard = (
                   case 0x5501: // No StatusCodes definition
                     return throwError(() => new UserRefusedOnDevice());
                 }
-              } else if (e instanceof LockedDeviceError) {
+              } else if (tse.name === "LockedDeviceError") {
                 // openAppFromDashboard is exported, so LockedDeviceError should be handled here too
                 return of({
                   type: "lockedDevice",
@@ -285,20 +281,21 @@ const derivationLogic = (
     catchError(e => {
       if (!e) return throwError(() => e);
 
-      if (e instanceof BtcUnmatchedApp) {
+      const tse = e as { name?: string; statusCode?: number };
+      if (tse.name === "BtcUnmatchedApp") {
         return of<ConnectAppEvent>({
           type: "ask-open-app",
           appName,
         });
       }
 
-      if (e instanceof TransportStatusError) {
-        const { statusCode } = e;
+      if (tse.name === "TransportStatusError") {
+        const statusCode = tse.statusCode;
 
         if (
           statusCode === StatusCodes.SECURITY_STATUS_NOT_SATISFIED ||
           statusCode === StatusCodes.INCORRECT_LENGTH ||
-          (0x6600 <= statusCode && statusCode <= 0x67ff)
+          (statusCode !== undefined && 0x6600 <= statusCode && statusCode <= 0x67ff)
         ) {
           return of<ConnectAppEvent>({
             type: "ask-open-app",
@@ -313,7 +310,7 @@ const derivationLogic = (
             // this is likely because it's the wrong app (LNS 1.3.1)
             return attemptToQuitApp(transport, appAndVersion);
         }
-      } else if (e instanceof LockedDeviceError) {
+      } else if (tse.name === "LockedDeviceError") {
         // derivationLogic is also called inside the catchError of cmd below
         // so it needs to handle LockedDeviceError too
         return of({
@@ -479,21 +476,23 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectAppEve
           }
         }),
         catchError((e: unknown) => {
+          const eName = (e as { name?: string })?.name;
           if (
             (typeof e === "object" &&
               e !== null &&
               "_tag" in e &&
               e._tag === "DeviceDisconnectedWhileSendingError") ||
-            e instanceof DisconnectedDeviceDuringOperation ||
-            e instanceof DisconnectedDevice
+            eName === "DisconnectedDeviceDuringOperation" ||
+            eName === "DisconnectedDevice"
           ) {
             return of(<ConnectAppEvent>{
               type: "disconnected",
             });
           }
 
-          if (e && e instanceof TransportStatusError) {
-            switch (e.statusCode) {
+          const tse2 = e as { name?: string; statusCode?: number };
+          if (tse2.name === "TransportStatusError") {
+            switch (tse2.statusCode) {
               case StatusCodes.CLA_NOT_SUPPORTED: // in 1.3.1 dashboard
               case StatusCodes.INS_NOT_SUPPORTED: // in 1.3.1 and bitcoin app
                 // fallback on "old way" because device does not support getAppAndVersion
@@ -507,7 +506,7 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectAppEve
                   appName,
                 });
             }
-          } else if (e instanceof LockedDeviceError) {
+          } else if (eName === "LockedDeviceError") {
             return of({
               type: "lockedDevice",
             } as ConnectAppEvent);
