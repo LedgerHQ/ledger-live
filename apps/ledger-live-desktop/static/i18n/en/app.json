@@ -4364,7 +4364,10 @@
         "redelegate": "Redelegate",
         "redelegateDisabledTooltip": "You can redelegate again <0>{{days}}</0>",
         "redelegateMaxDisabledTooltip": "You cannot redelegate more than <0>7</0> validators at a time",
-        "undelegateDisabledTooltip": "You cannot undelegate more than <0>7</0> validators at a time",
+        "undelegateDisabledTooltip": {
+          "sei_evm": "You cannot undelegate more than <0>7</0> validators at a time",
+          "zero_gravity": "You need at least 1 Gwei of shares delegated to undelegate"
+        },
         "undelegateActivatingTooltip": "You cannot undelegate a stake that is still activating",
         "reward": "Claim rewards",
         "activeTooltip": "Delegated amounts generate rewards",
