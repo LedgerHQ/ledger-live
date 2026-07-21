@@ -52,14 +52,8 @@ jest.mock("@features/flow-contacts", () => {
     ),
     ContactsPage: (props: ContactsPageNativeProps) => {
       mockContactsPage(props);
-      const {
-        viewModel,
-        labels,
-        searchQuery,
-        onSearchQueryChange,
-        onOpenContact,
-        onAddContact,
-      } = props;
+      const { viewModel, labels, searchQuery, onSearchQueryChange, onOpenContact, onAddContact } =
+        props;
       const me = "me" in viewModel ? viewModel.me : undefined;
       const isSearchViewModel = "status" in viewModel;
       const isNoResults = isSearchViewModel && viewModel.status === "no-results";
