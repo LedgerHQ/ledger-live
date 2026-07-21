@@ -1,6 +1,6 @@
 import {
   type ContactsLedgerSyncStatus,
-  type ContactsPageNativeLabels,
+  type ContactsPageLabels,
   type ContactsPageNativeProps,
   useContactsSearchViewModel,
 } from "@features/flow-contacts";
@@ -21,7 +21,7 @@ export type ContactsViewModel = ContactsPageNativeProps &
 
 export function useContactsViewModel(): ContactsViewModel {
   const { t } = useTranslation();
-  const labels = useMemo<ContactsPageNativeLabels>(
+  const labels = useMemo<ContactsPageLabels>(
     () => ({
       title: t("contacts.title"),
       searchPlaceholder: t("contacts.searchPlaceholder"),

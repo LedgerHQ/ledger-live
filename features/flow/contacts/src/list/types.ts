@@ -64,18 +64,27 @@ export type ContactsLedgerSyncIntroduction = Readonly<{
   onDismiss: () => void;
 }>;
 
-export type ContactsPageProps = Readonly<{
+export type ContactsPageSharedProps = Readonly<{
   viewModel: ContactsPageViewModel;
   labels: ContactsPageLabels;
   searchQuery: string;
   meAvatarSrc: string;
-  onSearchInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  onOpenMe: (contactId: ContactId) => void;
   onOpenContact: (contactId: ContactId) => void;
   onAddContact: () => void;
   ledgerSyncStatus: ContactsLedgerSyncStatus;
   ledgerSyncIntroduction: ContactsLedgerSyncIntroduction;
 }>;
+
+export type ContactsPageProps = ContactsPageSharedProps &
+  Readonly<{
+    onSearchInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    onOpenMe: (contactId: ContactId) => void;
+  }>;
+
+export type ContactsPageNativeProps = ContactsPageSharedProps &
+  Readonly<{
+    onSearchQueryChange: (query: string) => void;
+  }>;
 
 export function isPopulatedContactsListViewModel(
   viewModel: ContactsPageViewModel,

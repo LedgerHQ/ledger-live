@@ -1,8 +1,7 @@
 import React, { useCallback } from "react";
 import { SectionList, type SectionListRenderItemInfo } from "react-native";
 import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
-import type { ContactsListItem } from "../../types";
-import type { ContactsPageNativeProps } from "../../types.native";
+import type { ContactsListItem, ContactsPageNativeProps } from "../../types";
 import { ContactsListHeader } from "./ContactsListHeader.native";
 import { ContactsSearchNoResults } from "./ContactsSearchNoResults.native";
 import { ContactsSavedContactListItem } from "./ContactsSavedContactListItem.native";

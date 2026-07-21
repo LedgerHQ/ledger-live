@@ -1,13 +1,12 @@
 import React from "react";
 import { Box, SearchInput } from "@ledgerhq/lumen-ui-rnative";
-import type { ContactsListItem } from "../../types";
-import type { ContactsPageNativeLabels } from "../../types.native";
+import type { ContactsListItem, ContactsPageLabels } from "../../types";
 import { ContactsAddContactListItem } from "./ContactsAddContactListItem.native";
 import { ContactsMeListItem } from "./ContactsMeListItem.native";
 
 type ContactsListHeaderProps = Readonly<{
   me?: ContactsListItem;
-  labels: ContactsPageNativeLabels;
+  labels: ContactsPageLabels;
   meAvatarSrc: string;
   showAddContact: boolean;
   searchQuery: string;
