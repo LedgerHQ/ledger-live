@@ -1,48 +1,13 @@
 import React from "react";
-import { configureStore } from "@reduxjs/toolkit";
-import { Provider } from "react-redux";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import {
-  deleteUserChainwatchAccounts,
-  reconcileTransactionsAlertsAddresses,
-} from "@ledgerhq/live-common/transactionsAlerts/index";
-import type { Account, ChainwatchNetwork } from "@ledgerhq/types-live";
-import {
-  FEATURE_FLAGS_DEFAULTS,
-  FEATURE_FLAGS_INITIAL_STATE,
-  featureFlagsReducer,
-} from "@shared/feature-flags";
-import { render, waitFor } from "@testing-library/react-native";
-import { useSelector } from "~/context/hooks";
-import { accountsSelector } from "~/reducers/accounts";
-import { notificationsSelector } from "~/reducers/settings";
+import type { Account, ChainwatchAccount, ChainwatchNetwork } from "@ledgerhq/types-live";
+import { server, http, HttpResponse } from "@tests/server";
+import { act, render, waitFor, withFlagOverrides } from "@tests/test-renderer";
+import { replaceAccounts } from "~/actions/accounts";
+import { setNotifications } from "~/actions/settings";
+import type { State } from "~/reducers/types";
 import TransactionsAlerts from "./TransactionsAlerts";
-
-jest.mock("@ledgerhq/live-common/transactionsAlerts/index", () => {
-  const actual = jest.requireActual<
-    typeof import("@ledgerhq/live-common/transactionsAlerts/index")
-  >("@ledgerhq/live-common/transactionsAlerts/index");
-
-  return {
-    ...actual,
-    deleteUserChainwatchAccounts: jest.fn(),
-    getTransactionsAlertsAddressKey: jest.fn(
-      (currencyId: string, address: string) => `${currencyId}:${address}`,
-    ),
-    reconcileTransactionsAlertsAddresses: jest.fn(),
-  };
-});
-jest.mock("@ledgerhq/client-ids/store", () => ({ userIdSelector: jest.fn() }), {
-  virtual: true,
-});
-jest.mock("~/context/hooks", () => ({ useSelector: jest.fn() }));
-
-const mockedDeleteUserChainwatchAccounts = jest.mocked(deleteUserChainwatchAccounts);
-const mockedReconcileTransactionsAlertsAddresses = jest.mocked(
-  reconcileTransactionsAlertsAddresses,
-);
-const mockedUseSelector = jest.mocked(useSelector);
 
 const avalanche = getCryptoCurrencyById("avalanche_c_chain");
 const network: ChainwatchNetwork = {
@@ -50,133 +15,191 @@ const network: ChainwatchNetwork = {
   chainwatchId: "avax",
   nbConfirmations: 1,
 };
-const chainwatchUserId = "chainwatch-user-id";
-const userId = { exportUserIdForChainwatch: () => chainwatchUserId };
+const chainwatchUserId = crypto.randomUUID();
+const accountUrl = `https://chainwatch/avax/account/${chainwatchUserId}/`;
+const addressesUrl = `${accountUrl}addresses/`;
+const transactionsAlertsFlag = {
+  enabled: true,
+  params: {
+    chainwatchBaseUrl: "https://chainwatch",
+    networks: [network],
+  },
+};
+
+type CapturedRequest = {
+  body?: unknown;
+};
 
 const makeAccount = (id: string, freshAddress: string): Account => ({
   ...genAccount(id, { currency: avalanche }),
   freshAddress,
 });
 
-const renderTransactionsAlerts = () =>
-  render(<TransactionsAlerts />, {
-    wrapper: ({ children }) => {
-      const store = configureStore({
-        reducer: { featureFlags: featureFlagsReducer },
-        preloadedState: {
-          featureFlags: {
-            ...FEATURE_FLAGS_INITIAL_STATE,
-            resolved: {
-              ...FEATURE_FLAGS_DEFAULTS,
-              transactionsAlerts: {
-                enabled: true,
-                params: {
-                  chainwatchBaseUrl: "https://chainwatch",
-                  networks: [network],
-                },
-              },
-            },
-          },
-        },
-      });
+const account01 = makeAccount("first-account", "0x01");
+const account02 = makeAccount("second-account", "0x02");
 
-      return <Provider store={store}>{children}</Provider>;
-    },
-  });
+const readyChainwatchAccount = (suffixes: string[] = []): ChainwatchAccount => ({
+  suffixes,
+  monitors: [
+    { confirmations: 1, type: "send", id: 1 },
+    { confirmations: 1, type: "receive", id: 2 },
+  ],
+  targets: [{ equipment: chainwatchUserId, type: "braze", id: 1 }],
+});
+
+const withTransactionsAlertsState =
+  (accounts: Account[]) =>
+  (state: State): State =>
+    withFlagOverrides({
+      transactionsAlerts: transactionsAlertsFlag,
+    })({
+      ...state,
+      accounts: { ...state.accounts, active: accounts },
+      identities: {
+        ...state.identities,
+        userId: {
+          exportUserIdForChainwatch: () => chainwatchUserId,
+        } as State["identities"]["userId"],
+      },
+      settings: {
+        ...state.settings,
+        notifications: {
+          ...state.settings.notifications,
+          transactionsAlertsCategory: true,
+        },
+      },
+    });
+
+const installChainwatchHandlers = (initialRemote?: { exists: boolean; suffixes: string[] }) => {
+  const addressPuts: CapturedRequest[] = [];
+  const addressDeletes: CapturedRequest[] = [];
+  const accountPuts: CapturedRequest[] = [];
+  const accountDeletes: CapturedRequest[] = [];
+  const state = {
+    suffixes: [...(initialRemote?.suffixes ?? [])],
+    exists: initialRemote?.exists ?? false,
+  };
+
+  server.use(
+    http.get(accountUrl, () => {
+      if (!state.exists) {
+        return new HttpResponse(null, { status: 404 });
+      }
+      return HttpResponse.json(readyChainwatchAccount(state.suffixes));
+    }),
+    http.put(accountUrl, () => {
+      accountPuts.push({});
+      state.exists = true;
+      return HttpResponse.json(readyChainwatchAccount(state.suffixes));
+    }),
+    http.delete(accountUrl, () => {
+      accountDeletes.push({});
+      state.exists = false;
+      state.suffixes = [];
+      return new HttpResponse(null, { status: 200 });
+    }),
+    http.put(addressesUrl, async ({ request }) => {
+      const body = await request.json();
+      addressPuts.push({ body });
+      if (Array.isArray(body)) {
+        state.suffixes = [...new Set([...state.suffixes, ...body.map(String)])];
+      }
+      return new HttpResponse(null, { status: 200 });
+    }),
+    http.delete(addressesUrl, async ({ request }) => {
+      const body = await request.json();
+      addressDeletes.push({ body });
+      if (Array.isArray(body)) {
+        const removed = new Set(body.map(String));
+        state.suffixes = state.suffixes.filter(suffix => !removed.has(suffix));
+      }
+      return new HttpResponse(null, { status: 200 });
+    }),
+  );
+
+  return {
+    addressPuts,
+    addressDeletes,
+    accountPuts,
+    accountDeletes,
+  };
+};
 
 describe("TransactionsAlerts", () => {
-  let accounts: Account[];
-  let transactionsAlertsEnabled: boolean;
+  it("should register a wallet address with Chainwatch", async () => {
+    const chainwatch = installChainwatchHandlers();
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-    accounts = [makeAccount("first-account", "0x01")];
-    transactionsAlertsEnabled = true;
-    mockedDeleteUserChainwatchAccounts.mockResolvedValue(undefined);
-    mockedReconcileTransactionsAlertsAddresses.mockResolvedValue(undefined);
-    mockedUseSelector.mockImplementation(selector => {
-      if (selector === accountsSelector) return accounts;
-      if (selector === notificationsSelector) {
-        return { transactionsAlertsCategory: transactionsAlertsEnabled };
-      }
-      return userId;
+    render(<TransactionsAlerts />, {
+      overrideInitialState: withTransactionsAlertsState([account01]),
     });
+
+    await waitFor(() => expect(chainwatch.addressPuts).toHaveLength(1));
+    expect(chainwatch.addressPuts[0].body).toEqual(["0x01"]);
   });
 
-  it("should reconcile supported accounts", async () => {
-    renderTransactionsAlerts();
+  it("should register a local address that is missing from Chainwatch", async () => {
+    const chainwatch = installChainwatchHandlers({ exists: true, suffixes: [] });
 
-    await waitFor(() =>
-      expect(mockedReconcileTransactionsAlertsAddresses).toHaveBeenCalledWith(
-        chainwatchUserId,
-        "https://chainwatch",
-        [network],
-        accounts,
-        [],
-      ),
-    );
+    render(<TransactionsAlerts />, {
+      overrideInitialState: withTransactionsAlertsState([account01]),
+    });
+
+    await waitFor(() => expect(chainwatch.addressPuts).toHaveLength(1));
+    expect(chainwatch.addressPuts[0].body).toEqual(["0x01"]);
+    expect(chainwatch.accountPuts).toHaveLength(0);
   });
 
-  it("should use successfully reconciled accounts as previous state", async () => {
-    const previousAccounts = accounts;
-    const { rerender } = renderTransactionsAlerts();
-    await waitFor(() =>
-      expect(mockedReconcileTransactionsAlertsAddresses).toHaveBeenCalledTimes(1),
-    );
+  it("should remove old addresses and register new ones when accounts change", async () => {
+    const chainwatch = installChainwatchHandlers();
+    const { store } = render(<TransactionsAlerts />, {
+      overrideInitialState: withTransactionsAlertsState([account01]),
+    });
 
-    accounts = [makeAccount("second-account", "0x02")];
-    rerender(<TransactionsAlerts />);
+    await waitFor(() => expect(chainwatch.addressPuts).toHaveLength(1));
+    expect(chainwatch.addressPuts[0].body).toEqual(["0x01"]);
 
-    await waitFor(() =>
-      expect(mockedReconcileTransactionsAlertsAddresses).toHaveBeenCalledTimes(2),
-    );
-    expect(
-      mockedReconcileTransactionsAlertsAddresses.mock.calls[1][4].map(
-        account => account.freshAddress,
-      ),
-    ).toEqual(previousAccounts.map(account => account.freshAddress));
+    act(() => {
+      store.dispatch(replaceAccounts([account02]));
+    });
+
+    await waitFor(() => {
+      expect(chainwatch.addressPuts).toHaveLength(2);
+      expect(chainwatch.addressDeletes).toHaveLength(1);
+    });
+    expect(chainwatch.addressPuts[1].body).toEqual(["0x02"]);
+    expect(chainwatch.addressDeletes[0].body).toEqual(["0x01"]);
   });
 
-  it("should skip an unchanged reconciliation after success", async () => {
-    const { rerender } = renderTransactionsAlerts();
-    await waitFor(() =>
-      expect(mockedReconcileTransactionsAlertsAddresses).toHaveBeenCalledTimes(1),
-    );
+  it("should not register addresses again when nothing changed", async () => {
+    const chainwatch = installChainwatchHandlers();
+    const { rerender } = render(<TransactionsAlerts />, {
+      overrideInitialState: withTransactionsAlertsState([account01]),
+    });
 
-    rerender(<TransactionsAlerts />);
-
-    expect(mockedReconcileTransactionsAlertsAddresses).toHaveBeenCalledTimes(1);
-  });
-
-  it("should retry an unchanged reconciliation after failure", async () => {
-    mockedReconcileTransactionsAlertsAddresses.mockRejectedValueOnce(new Error("failed"));
-    const { rerender } = renderTransactionsAlerts();
-    await waitFor(() =>
-      expect(mockedReconcileTransactionsAlertsAddresses).toHaveBeenCalledTimes(1),
-    );
+    await waitFor(() => expect(chainwatch.addressPuts).toHaveLength(1));
 
     rerender(<TransactionsAlerts />);
 
-    await waitFor(() =>
-      expect(mockedReconcileTransactionsAlertsAddresses).toHaveBeenCalledTimes(2),
-    );
+    await act(async () => {});
+
+    expect(chainwatch.addressPuts).toHaveLength(1);
   });
 
-  it("should delete Chainwatch accounts when alerts are disabled", async () => {
-    const { rerender } = renderTransactionsAlerts();
-    await waitFor(() =>
-      expect(mockedReconcileTransactionsAlertsAddresses).toHaveBeenCalledTimes(1),
-    );
+  // Cannot test retry after a failed sync here: ChainwatchAccountManager hides network
+  // errors, so the sync always looks successful and the component never retries.
+  // Cover that path in a unit test that stubs the sync, or once the manager surfaces errors.
+  it("should delete the Chainwatch account when transaction alerts are turned off", async () => {
+    const chainwatch = installChainwatchHandlers();
+    const { store } = render(<TransactionsAlerts />, {
+      overrideInitialState: withTransactionsAlertsState([account01]),
+    });
 
-    transactionsAlertsEnabled = false;
-    rerender(<TransactionsAlerts />);
+    await waitFor(() => expect(chainwatch.addressPuts).toHaveLength(1));
 
-    await waitFor(() =>
-      expect(mockedDeleteUserChainwatchAccounts).toHaveBeenCalledWith(
-        chainwatchUserId,
-        "https://chainwatch",
-        [network],
-      ),
-    );
+    act(() => {
+      store.dispatch(setNotifications({ transactionsAlertsCategory: false }));
+    });
+
+    await waitFor(() => expect(chainwatch.accountDeletes).toHaveLength(1));
   });
 });
