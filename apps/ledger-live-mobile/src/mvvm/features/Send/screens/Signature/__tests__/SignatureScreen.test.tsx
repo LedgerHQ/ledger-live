@@ -28,7 +28,6 @@ const mockDeviceInitializationInput = {
   appName: "Bitcoin",
   dependencies: [],
   requireLatestFirmware: false,
-  allowPartialDependencies: false,
 } satisfies InitializationInput;
 const mockSignatureIntent = {
   uuid: "signature-intent",
