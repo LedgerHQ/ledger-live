@@ -2,7 +2,7 @@ import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/t
 import { getClientHeaders, getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react/safeGetRefValue";
-import { ExchangeType, UiHook } from "@ledgerhq/live-common/wallet-api/handlers/types";
+import { ExchangeType, type UiHook } from "@ledgerhq/live-common/wallet-api/handlers/types";
 import { SetCurrentAccountHistDb } from "@ledgerhq/live-common/wallet-api/react/types";
 import { useConfig } from "@ledgerhq/live-common/wallet-api/react/useConfig";
 import { useWalletAPIServer } from "@ledgerhq/live-common/wallet-api/react/useWalletAPIServer";
