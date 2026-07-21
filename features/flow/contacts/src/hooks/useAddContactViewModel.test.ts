@@ -1,5 +1,5 @@
 import { renderHook, act } from "@testing-library/react";
-import { contact } from "@domain/entity-contact";
+import { INVALID_CONTACT_NAME_ERROR_NAME, contact } from "@domain/entity-contact";
 import type { ContactCreationPort } from "../add/ports";
 import { useAddContactViewModel } from "./useAddContactViewModel";
 
@@ -20,8 +20,23 @@ describe("useAddContactViewModel", () => {
     expect(result.current).toMatchObject({
       draftName: "Ben",
       avatarInitial: "B",
+      invalidNameError: null,
       isSaveEnabled: true,
     });
+  });
+
+  it("exposes the stable invalid name error when the draft name is invalid", () => {
+    const contactCreation: ContactCreationPort = {
+      createContact: jest.fn(),
+    };
+    const { result } = renderHook(() => useAddContactViewModel(contactCreation));
+
+    act(() => {
+      result.current.setDraftName("Olive2");
+    });
+
+    expect(result.current.invalidNameError).toBe(INVALID_CONTACT_NAME_ERROR_NAME);
+    expect(result.current.isSaveEnabled).toBe(false);
   });
 
   it("delegates save to the injected creation port", async () => {

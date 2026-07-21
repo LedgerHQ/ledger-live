@@ -18,6 +18,15 @@ describe("createAddContactController", () => {
     expect(controller.getViewModel("Ben").isSaveEnabled).toBe(true);
   });
 
+  it("exposes the stable invalid name error while the draft name is invalid", () => {
+    const controller = createAddContactController(createContactCreationPort(jest.fn()));
+
+    expect(controller.getViewModel("Olive2")).toMatchObject({
+      invalidNameError: "InvalidContactNameError",
+      isSaveEnabled: false,
+    });
+  });
+
   it("rejects save when the draft name is empty", async () => {
     const controller = createAddContactController(createContactCreationPort(jest.fn()));
 
