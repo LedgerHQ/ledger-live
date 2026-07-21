@@ -1,10 +1,8 @@
-import { TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getMainAccount } from "../../account/index";
 import { getAccountBridge } from "../../bridge/index";
 import { sendFeatures } from "../../bridge/descriptor/send/features";
-import { TransactionRefusedOnDevice } from "../../errors";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
 import { Observable, type Subscription } from "rxjs";
@@ -25,9 +23,10 @@ function buildSigningDevice(connectionResult: DeviceConnectionResult): SigningDe
 function isUserRefusalError(error: unknown, currency: CryptoOrTokenCurrency | undefined): boolean {
   return (
     sendFeatures.isUserRefusedTransactionError(currency, error) ||
-    error instanceof TransactionRefusedOnDevice ||
-    error instanceof UserRefusedOnDevice ||
-    (error instanceof TransportStatusError && error.statusCode === 0x6985)
+    (error as { name?: string })?.name === "TransactionRefusedOnDevice" ||
+    (error as { name?: string })?.name === "UserRefusedOnDevice" ||
+    ((error as { name?: string; statusCode?: number })?.name === "TransportStatusError" &&
+      (error as { statusCode?: number })?.statusCode === 0x6985)
   );
 }
 

@@ -1,6 +1,5 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { InvalidDomain, NoResolution } from "@ledgerhq/domain-service/errors/index";
 import { getRegistriesForDomain } from "@ledgerhq/domain-service/registries/index";
 import { isLoaded, isError } from "@ledgerhq/domain-service/hooks/logic";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
@@ -67,15 +66,15 @@ const RecipientFieldDomainService = <T extends Transaction, TS extends Transacti
 
   const domainErrorHandled = useMemo(() => {
     if (domainError) {
-      if (!isForwardResolution && domainError.error instanceof NoResolution) {
+      if (!isForwardResolution && domainError.error?.name === "NoResolution") {
         return false;
       }
 
       if (
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        (domainError.error as Error) instanceof NoResolution ||
+        domainError.error?.name === "NoResolution" ||
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        (domainError.error as Error) instanceof InvalidDomain
+        domainError.error?.name === "InvalidDomain"
       ) {
         return true;
       }

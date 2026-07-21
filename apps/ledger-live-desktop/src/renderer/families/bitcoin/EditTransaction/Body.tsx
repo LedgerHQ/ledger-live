@@ -1,7 +1,6 @@
 import { getOriginalTxFeeRateSatVb } from "@ledgerhq/live-common/families/bitcoin/editTransaction/rbfValidation";
 import { fromTransactionRaw } from "@ledgerhq/coin-bitcoin/transaction";
 import { Transaction, TransactionRaw, TransactionStatus } from "@ledgerhq/coin-bitcoin/types";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -190,7 +189,7 @@ const Body = ({
   }, []);
 
   const handleTransactionError = useCallback((error: Error) => {
-    if (!(error instanceof UserRefusedOnDevice)) {
+    if (error?.name !== "UserRefusedOnDevice") {
       logger.critical(error);
     }
     setTransactionError(error);
