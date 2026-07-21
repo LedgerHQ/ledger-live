@@ -8,7 +8,8 @@ import {
 
 describe("createEmptyContactsListViewModel", () => {
   it("returns the Me row with no addresses", () => {
-    expect(createEmptyContactsListViewModel(mockMeContact())).toMatchObject({
+    expect(createEmptyContactsListViewModel(mockMeContact())).toEqual({
+      displayMode: "empty",
       me: {
         contactId: "contact-me",
         name: "Me",
@@ -24,7 +25,8 @@ describe("createEmptyContactsListViewModel", () => {
       addresses: [mockContactAddress()],
     });
 
-    expect(createEmptyContactsListViewModel(me)).toMatchObject({
+    expect(createEmptyContactsListViewModel(me)).toEqual({
+      displayMode: "empty",
       me: {
         contactId: "contact-me",
         name: "Élodie",
@@ -44,10 +46,7 @@ describe("createContactsListViewModel", () => {
 
   it("returns a populated list when saved contacts exist", () => {
     const me = mockMeContact();
-    const contacts = [
-      me,
-      mockContact({ id: "contact-ada", name: "Ada" }),
-    ];
+    const contacts = [me, mockContact({ id: "contact-ada", name: "Ada" })];
 
     expect(createContactsListViewModel(me, contacts)).toEqual(
       createPopulatedContactsListViewModel(me, contacts),
@@ -71,7 +70,8 @@ describe("createPopulatedContactsListViewModel", () => {
       mockContact({ id: "contact-ada", name: "Ada" }),
     ];
 
-    expect(createPopulatedContactsListViewModel(me, contacts)).toMatchObject({
+    expect(createPopulatedContactsListViewModel(me, contacts)).toEqual({
+      displayMode: "populated",
       me: {
         contactId: "contact-me",
         name: "Me",
@@ -96,6 +96,41 @@ describe("createPopulatedContactsListViewModel", () => {
           name: "Olive",
           initial: "O",
           addressCount: 0,
+        },
+      ],
+      sections: [
+        {
+          title: "A",
+          data: [
+            {
+              contactId: "contact-ada",
+              name: "Ada",
+              initial: "A",
+              addressCount: 0,
+            },
+          ],
+        },
+        {
+          title: "B",
+          data: [
+            {
+              contactId: "contact-ben",
+              name: "Ben",
+              initial: "B",
+              addressCount: 1,
+            },
+          ],
+        },
+        {
+          title: "O",
+          data: [
+            {
+              contactId: "contact-olive",
+              name: "Olive",
+              initial: "O",
+              addressCount: 0,
+            },
+          ],
         },
       ],
     });
@@ -135,6 +170,7 @@ describe("createContactsSearchViewModel", () => {
   it("should return the populated list for an empty query", () => {
     expect(createContactsSearchViewModel(me, contacts, "  ")).toMatchObject({
       status: "results",
+      displayMode: "populated",
       me: {
         contactId: "contact-me",
         name: "Me",

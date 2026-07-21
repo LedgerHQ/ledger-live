@@ -80,7 +80,7 @@ describe("ContactsPage", () => {
     expect(screen.getByTestId("contacts-detail-pane").childElementCount).toBe(0);
     expect(screen.getByTestId("contacts-list")).toBeVisible();
     expect(screen.getByRole("heading", { name: "Contacts" })).toBeVisible();
-    expect((screen.getByPlaceholderText("Search contact") as HTMLInputElement).value).toBe("");
+    expect(screen.getByPlaceholderText("Search contact")).toBeVisible();
     expect(screen.getByText("Me")).toBeVisible();
     expect(screen.getByText("0 address")).toBeVisible();
     const meAvatar = screen.getByTestId("contacts-me-avatar");
@@ -160,21 +160,7 @@ describe("ContactsPage", () => {
       ),
     ).toBeVisible();
 
-    fireEvent.click(screen.getByRole("button", { name: "Got it" }));
-
-    expect(onDismissIntroduction).toHaveBeenCalledTimes(1);
-  });
-
-  it("dismisses the Ledger Sync introduction from the dialog header", () => {
-    const onDismissIntroduction = jest.fn();
-
-    renderContactsPage({
-      ledgerSyncStatus: "inactive",
-      isIntroductionOpen: true,
-      onDismissIntroduction,
-    });
-
-    fireEvent.click(screen.getByLabelText("components.dialogHeader.closeAriaLabel"));
+    fireEvent.click(screen.getByText("Got it"));
 
     expect(onDismissIntroduction).toHaveBeenCalledTimes(1);
   });

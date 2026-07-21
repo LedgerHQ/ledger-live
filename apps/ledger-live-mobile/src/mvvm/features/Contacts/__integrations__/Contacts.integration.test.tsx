@@ -2,10 +2,14 @@ import React from "react";
 import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { render, screen, withFlagOverrides, waitFor } from "@tests/test-renderer";
+import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
+import type { ContactsPageNativeProps } from "@features/flow-contacts";
 import { ScreenName } from "~/const";
 import { ContactsButton, ContactsScreen } from "LLM/features/Contacts";
 import MyWalletNavigator from "LLM/features/MyWallet/Navigator";
 import { useMyWalletHeaderViewModel } from "LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel";
+
+const mockContactsPage = jest.fn<void, [ContactsPageNativeProps]>();
 
 jest.mock("@features/flow-contacts", () => {
   const flowContacts = jest.requireActual("@features/flow-contacts");
@@ -46,30 +50,13 @@ jest.mock("@features/flow-contacts", () => {
         <Text>{addContactLabel}</Text>
       </Pressable>
     ),
-    ContactsPage: ({
-      viewModel,
-      labels,
-      searchQuery,
-      onSearchQueryChange,
-      onOpenContact,
-      onAddContact,
-    }: {
-      viewModel: {
-        me?: { contactId: string; name: string; addressCount: number };
-        status?: "results" | "no-results";
-      };
-      labels: {
-        searchPlaceholder: string;
-        searchNoResults: string;
-        addContact: string;
-        formatAddressCount: (count: number) => string;
-      };
-      searchQuery: string;
-      onSearchQueryChange: (query: string) => void;
-      onOpenContact: (contactId: string) => void;
-      onAddContact: () => void;
-    }) => {
-      const me = viewModel.me;
+    ContactsPage: (props: ContactsPageNativeProps) => {
+      mockContactsPage(props);
+      const { viewModel, labels, searchQuery, onSearchQueryChange, onOpenContact, onAddContact } =
+        props;
+      const me = "me" in viewModel ? viewModel.me : undefined;
+      const isSearchViewModel = "status" in viewModel;
+      const isNoResults = isSearchViewModel && viewModel.status === "no-results";
 
       return (
         <View testID="contacts-screen">
@@ -79,7 +66,7 @@ jest.mock("@features/flow-contacts", () => {
             onChangeText={onSearchQueryChange}
             placeholder={labels.searchPlaceholder}
           />
-          {viewModel.status === "no-results" ? (
+          {isNoResults ? (
             <Text testID="contacts-search-no-results">{labels.searchNoResults}</Text>
           ) : null}
           {me ? (
@@ -88,7 +75,7 @@ jest.mock("@features/flow-contacts", () => {
               <Text>{labels.formatAddressCount(me.addressCount)}</Text>
             </Pressable>
           ) : null}
-          {viewModel.status ? null : (
+          {isSearchViewModel ? null : (
             <Pressable testID="contacts-add-contact-row" onPress={onAddContact}>
               <Text>{labels.addContact}</Text>
             </Pressable>
@@ -215,6 +202,43 @@ describe("Contacts integration", () => {
       expect(screen.getByTestId("contacts-me-item")).toHaveTextContent(/Me/);
       expect(screen.getByTestId("contacts-me-item")).toHaveTextContent(/0 address/);
       expect(screen.getByTestId("contacts-add-contact-row")).toBeVisible();
+    });
+  });
+
+  it("should provide grouped saved contacts from the Contacts slice", async () => {
+    const me = mockMeContact();
+    const contacts = [
+      me,
+      mockContact({ id: "contact-zahra", name: "Zahra" }),
+      mockContact({
+        id: "contact-anna",
+        name: "Anna",
+        addresses: [mockContactAddress(), mockContactAddress({ id: "address-polygon" })],
+      }),
+      mockContact({ id: "contact-zhanna", name: "Жанна" }),
+    ];
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withFlagOverrides(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+
+    await waitFor(() => {
+      expect(mockContactsPage).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          viewModel: expect.objectContaining({
+            displayMode: "populated",
+            savedContacts: expect.arrayContaining([
+              expect.objectContaining({ contactId: "contact-anna", addressCount: 2 }),
+              expect.objectContaining({ contactId: "contact-zahra" }),
+              expect.objectContaining({ contactId: "contact-zhanna" }),
+            ]),
+          }),
+        }),
+      );
     });
   });
 

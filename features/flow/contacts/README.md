@@ -26,7 +26,7 @@ entry point. The native entry also exports `ContactsAddContactHeaderButton` via 
 ## Testing
 
 - **Component behavior**: test in this package (see `features/flow/README.md` for the cross-flow testing strategy).
-- **Mobile Jest stub**: `src/jest.native.ts` re-exports logic only (feature flags, hooks, list view models). Mobile Jest maps `@features/flow-contacts` to this entry via `moduleNameMapper`.
+- **Mobile Jest entry**: `src/jest.native.ts` re-exports the native Flow API used by Mobile integration tests. Mobile Jest maps `@features/flow-contacts` to this entry via `moduleNameMapper`.
 - **App wiring**: mobile `__integrations__` tests spread `jest.requireActual("@features/flow-contacts")` and overlay lightweight UI stubs for Lumen RN components.
 
 ## Structure
