@@ -46,10 +46,7 @@ describe("createContactsListViewModel", () => {
 
   it("returns a populated list when saved contacts exist", () => {
     const me = mockMeContact();
-    const contacts = [
-      me,
-      mockContact({ id: "contact-ada", name: "Ada" }),
-    ];
+    const contacts = [me, mockContact({ id: "contact-ada", name: "Ada" })];
 
     expect(createContactsListViewModel(me, contacts)).toEqual(
       createPopulatedContactsListViewModel(me, contacts),
