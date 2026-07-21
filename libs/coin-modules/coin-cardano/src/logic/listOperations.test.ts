@@ -826,6 +826,36 @@ describe("listOperations", () => {
     expect(items[1].id).toBe("cardano-older");
   });
 
+  it("orders same-transaction token operations deterministically, independent of token order in the tx", async () => {
+    const higher = { policyId: POLICY_ID_2, assetName: "bb", value: "20" };
+    const lower = { policyId: POLICY_ID, assetName: "aa", value: "10" };
+    mockResponse([
+      makeTx({
+        inputs: [
+          {
+            txId: "in-0",
+            index: 0,
+            address: COUNTERPARTY_ADDRESS,
+            value: "10000000",
+            paymentKey: OTHER_PAYMENT_HASH,
+            tokens: [],
+          },
+        ],
+        outputs: [
+          { address: ADDRESS, value: "5000000", paymentKey: PAYMENT_HASH, tokens: [higher, lower] },
+        ],
+      }),
+    ]);
+
+    const { items } = await listOperations(currency, ADDRESS, options);
+    const refs = items
+      .filter(op => op.asset.type === "token")
+      .map(op => (op.asset as { assetReference: string }).assetReference);
+
+    expect(refs).toEqual([`${POLICY_ID}aa`, `${POLICY_ID_2}bb`]);
+    expect(refs).toEqual([...refs].sort());
+  });
+
   it("rejects ascending order (cannot be honored across pages on a newest-first backend)", async () => {
     await expect(listOperations(currency, ADDRESS, { ...options, order: "asc" })).rejects.toThrow(
       "ascending order is not supported",

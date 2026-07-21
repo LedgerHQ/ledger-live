@@ -10,7 +10,7 @@ import { CARDANO_TESTNET, FRESH_ADDRESS_PATH, makeAccount } from "../fixtures";
 import { getBridges, TESTNET } from "../helpers";
 import { computePolicyId, mintToken } from "../mintToken";
 import { buildSigner } from "../signer";
-import { killYaci, pollUtxos, spawnYaci, topup } from "../yaci";
+import { pollUtxos, resetDevnet, topup } from "../yaci";
 import { initYaciIndexer, registerAddress, resetRegisteredAddresses } from "../yaciIndexer";
 
 const FUNDING_ADA = 10_000;
@@ -42,8 +42,7 @@ export const scenarioCardanoTokenYaci: Scenario<GenericTransaction, Account> = {
       },
     });
 
-    await spawnYaci();
-    closeIndexer = initYaciIndexer();
+    await resetDevnet();
 
     const signer = await buildSigner();
     const { accountBridge, currencyBridge, getAddress } = await getBridges(signer, TESTNET);
@@ -93,6 +92,11 @@ export const scenarioCardanoTokenYaci: Scenario<GenericTransaction, Account> = {
       amount: MINT_AMOUNT,
     });
     await pollUtxos(address, u => u.some(x => x.amount.some(a => a.unit === assetReference)));
+
+    // Start MSW only after the devnet admin/faucet/store setup calls (topup, pollUtxos, mintToken): its
+    // passthrough of :10000/:8080 drops the request AbortSignal, so those routed through it can hang.
+    // MSW mocks the Strica sync API used by the sync that follows this setup.
+    closeIndexer = initYaciIndexer();
 
     const account = makeAccount(address, CARDANO_TESTNET);
     tokenSubAccountId = encodeTokenAccountId(account.id, token);
@@ -148,9 +152,8 @@ export const scenarioCardanoTokenYaci: Scenario<GenericTransaction, Account> = {
     },
   ],
 
-  teardown: async () => {
+  teardown: () => {
     closeIndexer?.();
     resetRegisteredAddresses();
-    await killYaci();
   },
 };

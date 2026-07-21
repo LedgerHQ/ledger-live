@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { EpochInfo, StakePool } from "../api/api-types";
+import { CARDANO_MAX_SUPPLY } from "../constants";
 
 // Optimal number of pools (protocol constant k); saturation point z0 = 1/k.
 const OPTIMAL_POOL_COUNT = 500;
@@ -16,8 +17,9 @@ const EPOCHS_PER_YEAR = 365.25 / 5;
  *   member share  = max(0, optimalReward − fixedCost) × (1 − margin)
  *   APY           = (1 + memberShare/poolStake)^epochsPerYear − 1
  *
- * where σ' = min(poolStake/totalStake, z0) and s' = min(pledge/totalStake, z0). All amounts are
- * lovelace. Returns 0 for a retired pool, a pool with no stake, or one whose expected reward does
+ * where σ' = min(poolStake/totalStake, z0) and s' = min(pledge/totalStake, z0), and totalStake is
+ * circulation = maxLovelaceSupply − reserves — NOT active stake. All amounts are lovelace. Returns 0
+ * for a retired pool, a pool with no stake, or one whose expected reward does
  * not cover its fixed cost — and 0 when reserves/activeStake aren't available (the endpoint does
  * not expose them yet, LIVE-18622), so APY stays omitted until the data lands.
  */
@@ -25,7 +27,13 @@ export function computePoolApy(pool: StakePool, epoch: EpochInfo): number {
   if (!epoch.reserves || !epoch.activeStake) return 0;
   if (pool.retiredEpoch !== undefined && pool.retiredEpoch <= epoch.number) return 0;
 
-  const totalStake = new BigNumber(epoch.activeStake);
+  // σ and pledge are relative to total circulating supply — maxLovelaceSupply − reserves (Shelley
+  // reward spec: totalStake = circulation), NOT the active/delegated stake. Dividing by activeStake
+  // over-estimates APY (activeStake ≪ circulation): mild on mainnet, ~190% on a testnet where reserves
+  // dwarf active stake. activeStake is the input for the apparent-performance factor, which this
+  // estimate omits; it stays in the guard above only as the signal that the epoch endpoint is serving
+  // the APY data (reserves + activeStake land together, LIVE-18622).
+  const totalStake = new BigNumber(CARDANO_MAX_SUPPLY).times(1e6).minus(epoch.reserves);
   const poolStake = new BigNumber(pool.liveStake);
   if (totalStake.lte(0) || poolStake.lte(0)) return 0;
 

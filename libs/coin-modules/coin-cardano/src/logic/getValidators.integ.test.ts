@@ -20,12 +20,14 @@ describe("getValidators (integration)", () => {
     expect(validator.balance).toBeGreaterThanOrEqual(0n);
     expect(typeof validator.commissionRate).toBe("string");
 
-    // APY is gated on the epoch-params endpoint exposing reserves + active stake (LIVE-18622).
-    // Until then it stays omitted; when present it must be a sane fraction in (0, 1).
+    // APY is gated on the epoch-params endpoint exposing reserves + active stake (LIVE-18622); when
+    // present it must be a positive, finite number. No upper bound: this hits a live testnet whose
+    // economics (large reserves vs. thin active stake) legitimately push APY well above 100%, so a
+    // numeric ceiling would flake. Exact-value correctness lives in computePoolApy.unit.test.ts.
     for (const v of items) {
       if (v.apy !== undefined) {
         expect(v.apy).toBeGreaterThan(0);
-        expect(v.apy).toBeLessThan(1);
+        expect(Number.isFinite(v.apy)).toBe(true);
       }
     }
   });
