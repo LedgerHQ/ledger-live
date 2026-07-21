@@ -1,15 +1,23 @@
 import React from "react";
-import { mockMeContact } from "@domain/entity-contact/schema.mock";
-import { ContactsPage, createEmptyContactsListViewModel } from "@features/flow-contacts";
+import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
+import {
+  ContactsPage,
+  createEmptyContactsListViewModel,
+  createPopulatedContactsListViewModel,
+  type ContactsListViewModel,
+} from "@features/flow-contacts";
 import { render, screen } from "@tests/test-renderer";
 
-function renderContactsPage(ledgerSyncStatus: "ready" | "checking") {
+function renderContactsPage(
+  ledgerSyncStatus: "ready" | "checking",
+  viewModel?: ContactsListViewModel,
+) {
   const me = mockMeContact();
   const onOpenContact = jest.fn();
   const onAddContact = jest.fn();
   const result = render(
     <ContactsPage
-      viewModel={createEmptyContactsListViewModel(me)}
+      viewModel={viewModel ?? createEmptyContactsListViewModel(me)}
       labels={{
         title: "Contacts",
         searchPlaceholder: "Search contact",
@@ -65,5 +73,25 @@ describe("ContactsPage", () => {
       busy: true,
     });
     expect(screen.getByTestId("contacts-ledger-sync-spinner")).toBeVisible();
+  });
+
+  it("should keep the search input outside the populated Contacts list", () => {
+    const me = mockMeContact();
+    const viewModel = createPopulatedContactsListViewModel(me, [
+      me,
+      mockContact({ id: "contact-ada", name: "Ada" }),
+    ]);
+
+    renderContactsPage("ready", viewModel);
+
+    const searchInput = screen.getByTestId("contacts-search-input");
+    const fixedSearch = screen.getByTestId("contacts-fixed-search");
+
+    expect(fixedSearch).toBeVisible();
+    expect(fixedSearch).toHaveStyle({ paddingBottom: 16, position: "absolute", zIndex: 2 });
+    expect(screen.getByTestId("contacts-fixed-search-spacer")).toHaveStyle({ height: 64 });
+    expect(searchInput).toBeVisible();
+    expect(screen.getByTestId("contacts-list")).toBeVisible();
+    expect(screen.getByTestId("contacts-list-header")).not.toContainElement(searchInput);
   });
 });

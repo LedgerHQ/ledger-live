@@ -4,6 +4,7 @@ import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
 import type { ContactsListItem, ContactsListSection, ContactsPageNativeProps } from "../../types";
 import { ContactsListHeader } from "./ContactsListHeader.native";
 import { ContactsSearchNoResults } from "./ContactsSearchNoResults.native";
+import { ContactsSearchInput } from "./ContactsSearchInput.native";
 import { ContactsSavedContactListItem } from "./ContactsSavedContactListItem.native";
 import { ContactsSectionIndex } from "./ContactsSectionIndex.native";
 import { ContactsSectionHeader } from "./ContactsSectionHeader.native";
@@ -54,8 +55,6 @@ export function ContactsPage({
       labels={labels}
       meAvatarSrc={meAvatarSrc}
       showAddContact={!isPopulated && !hasNoResults}
-      searchQuery={searchQuery}
-      onSearchQueryChange={onSearchQueryChange}
       onOpenContact={onOpenContact}
       onAddContact={onAddContact}
     />
@@ -116,12 +115,33 @@ export function ContactsPage({
     <Box testID="contacts-screen" lx={{ flex: 1, backgroundColor: "base" }}>
       <Box
         testID="contacts-content"
-        lx={{ flex: 1 }}
+        lx={{ flex: 1, position: "relative" }}
         pointerEvents={isLedgerSyncChecking ? "none" : "auto"}
         importantForAccessibility={isLedgerSyncChecking ? "no-hide-descendants" : "auto"}
         accessibilityElementsHidden={isLedgerSyncChecking}
       >
+        <Box testID="contacts-fixed-search-spacer" lx={{ height: "s64" }} />
         {content}
+        <Box
+          testID="contacts-fixed-search"
+          lx={{
+            position: "absolute",
+            top: "s0",
+            right: "s0",
+            left: "s0",
+            zIndex: 2,
+            paddingHorizontal: "s16",
+            paddingTop: "s8",
+            paddingBottom: "s16",
+            backgroundColor: "base",
+          }}
+        >
+          <ContactsSearchInput
+            placeholder={labels.searchPlaceholder}
+            value={searchQuery}
+            onSearchQueryChange={onSearchQueryChange}
+          />
+        </Box>
       </Box>
       {isLedgerSyncChecking ? (
         <Box

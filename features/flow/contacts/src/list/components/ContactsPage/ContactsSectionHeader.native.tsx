@@ -1,5 +1,5 @@
 import React from "react";
-import { SectionHeader, SectionHeaderTitle } from "@ledgerhq/lumen-ui-rnative";
+import { Box, SectionHeader, SectionHeaderTitle } from "@ledgerhq/lumen-ui-rnative";
 
 type ContactsSectionHeaderProps = Readonly<{
   title: string;
@@ -7,12 +7,13 @@ type ContactsSectionHeaderProps = Readonly<{
 
 export function ContactsSectionHeader({ title }: ContactsSectionHeaderProps): React.JSX.Element {
   return (
-    <SectionHeader
-      appearance="plain"
-      testID={`contacts-section-${title}`}
-      lx={{ width: "full", marginTop: "s8" }}
+    <Box
+      testID={`contacts-section-${title}-background`}
+      lx={{ width: "full", marginTop: "s8", backgroundColor: "base" }}
     >
-      <SectionHeaderTitle>{title}</SectionHeaderTitle>
-    </SectionHeader>
+      <SectionHeader appearance="plain" testID={`contacts-section-${title}`} lx={{ width: "full" }}>
+        <SectionHeaderTitle>{title}</SectionHeaderTitle>
+      </SectionHeader>
+    </Box>
   );
 }

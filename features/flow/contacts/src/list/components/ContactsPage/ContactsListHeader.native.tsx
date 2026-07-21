@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, SearchInput } from "@ledgerhq/lumen-ui-rnative";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { ContactsListItem, ContactsPageLabels } from "../../types";
 import { ContactsAddContactListItem } from "./ContactsAddContactListItem.native";
 import { ContactsMeListItem } from "./ContactsMeListItem.native";
@@ -9,8 +9,6 @@ type ContactsListHeaderProps = Readonly<{
   labels: ContactsPageLabels;
   meAvatarSrc: string;
   showAddContact: boolean;
-  searchQuery: string;
-  onSearchQueryChange: (query: string) => void;
   onOpenContact: (contactId: ContactsListItem["contactId"]) => void;
   onAddContact: () => void;
 }>;
@@ -20,24 +18,11 @@ export function ContactsListHeader({
   labels,
   meAvatarSrc,
   showAddContact,
-  searchQuery,
-  onSearchQueryChange,
   onOpenContact,
   onAddContact,
 }: ContactsListHeaderProps): React.JSX.Element {
   return (
-    <Box lx={{ gap: "s8" }}>
-      <SearchInput
-        testID="contacts-search-input"
-        value={searchQuery}
-        onChangeText={onSearchQueryChange}
-        onClear={() => onSearchQueryChange("")}
-        hideClearButton={false}
-        placeholder={labels.searchPlaceholder}
-        accessibilityLabel={labels.searchPlaceholder}
-        autoCorrect={false}
-        autoCapitalize="none"
-      />
+    <Box testID="contacts-list-header" lx={{ gap: "s8" }}>
       {me ? (
         <ContactsMeListItem
           contact={me}
