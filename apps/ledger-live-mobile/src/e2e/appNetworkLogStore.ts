@@ -72,7 +72,9 @@ export function initAppNetworkLogging(): void {
         appNetworkLogStore.addNetworkLog(
           toNetworkLog(response.config as WithMetadata, response.status),
         );
-      } catch { }
+      } catch {
+        // Ignore logging errors: the interceptor must never fail the network call
+      }
       return response;
     },
     (error: AxiosError) => {
@@ -80,7 +82,9 @@ export function initAppNetworkLogging(): void {
         appNetworkLogStore.addNetworkLog(
           toNetworkLog(error.config as WithMetadata, error.response?.status, error.message),
         );
-      } catch { }
+      } catch {
+        // Ignore logging errors: the interceptor must never fail the network call
+      }
       return Promise.reject(error);
     },
   );
