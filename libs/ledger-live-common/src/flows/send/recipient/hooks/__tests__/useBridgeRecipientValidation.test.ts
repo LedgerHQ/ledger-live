@@ -59,6 +59,7 @@ const mockBridge = {
   hasMinimumFundsToSpeedUp: jest.fn(),
   isStrategyDisabled: jest.fn(),
   isTransactionConfirmed: jest.fn(),
+  getWalletApiSpendableBalance: jest.fn(),
 };
 
 describe("useBridgeRecipientValidation", () => {
