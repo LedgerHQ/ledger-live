@@ -30,6 +30,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.CustomCALRefInput]: undefined;
   [ScreenName.DebugSettings]: undefined;
   [ScreenName.DebugAnalyticsConsentQA]: undefined;
+  [ScreenName.DebugNotificationsPromptQA]: undefined;
   [ScreenName.DebugFeatureFlags]: undefined;
   [ScreenName.DebugLargeScreenUpsell]: undefined;
   [ScreenName.DebugInformation]: undefined;
