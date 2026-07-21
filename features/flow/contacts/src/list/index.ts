@@ -9,6 +9,7 @@ export type {
   ContactsLedgerSyncStatus,
   ContactsPageLabels,
   ContactsPageProps,
+  ContactsPageViewModel,
   ContactsSearchNoResultsViewModel,
   ContactsSearchResultsViewModel,
   ContactsSearchViewModel,
@@ -18,4 +19,4 @@ export type {
   EmptyContactsListViewModel,
   PopulatedContactsListViewModel,
 } from "./types";
-export { isPopulatedContactsListViewModel } from "./types";
+export { isContactsSearchNoResultsViewModel, isPopulatedContactsListViewModel } from "./types";

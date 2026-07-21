@@ -13,11 +13,15 @@ function renderContactsPage(ledgerSyncStatus: "ready" | "checking") {
       labels={{
         title: "Contacts",
         searchPlaceholder: "Search contact",
+        searchNoResults: "No contact found",
         addContact: "Add contact",
         ledgerSyncCheckingAccessibilityLabel: "Checking Ledger Sync status",
         formatAddressCount: count => `${count} address`,
       }}
       meAvatarSrc="https://example.com/avatar.png"
+      searchQuery=""
+      onSearchInputChange={jest.fn()}
+      onOpenMe={jest.fn()}
       onOpenContact={onOpenContact}
       onAddContact={onAddContact}
       ledgerSyncStatus={ledgerSyncStatus}

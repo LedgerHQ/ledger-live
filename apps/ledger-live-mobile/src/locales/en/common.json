@@ -10204,6 +10204,7 @@
     "title": "Contacts",
     "addContact": "Add contact",
     "searchPlaceholder": "Search contact",
+    "searchNoResults": "No contact found",
     "addressCount_zero": "0 address",
     "addressCount_one": "{{count}} address",
     "addressCount_other": "{{count}} addresses",

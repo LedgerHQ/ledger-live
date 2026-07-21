@@ -194,4 +194,54 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-saved-row-contact-ben")).toHaveTextContent("Ben");
     expect(screen.getByTestId("contacts-saved-row-contact-olive")).toHaveTextContent("Olive");
   });
+
+  it("should filter saved contacts when searching", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: {
+          ...withFlagOverrides({
+            lwdContacts: { enabled: true, params: { newBadge: false } },
+          }),
+          contacts: { contacts: mockPopulatedContacts() },
+        },
+      },
+    );
+
+    await user.type(screen.getByTestId("contacts-list-search"), "Ben");
+
+    expect(screen.getByTestId("contacts-saved-row-contact-ben")).toBeVisible();
+    expect(screen.queryByTestId("contacts-saved-row-contact-ada")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("contacts-saved-row-contact-olive")).not.toBeInTheDocument();
+  });
+
+  it("should render the no-results state when the search query has no match", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: {
+          ...withFlagOverrides({
+            lwdContacts: { enabled: true, params: { newBadge: false } },
+          }),
+          contacts: { contacts: mockPopulatedContacts() },
+        },
+      },
+    );
+
+    await user.type(screen.getByTestId("contacts-list-search"), "unknown");
+
+    expect(screen.getByTestId("contacts-search-no-results")).toBeVisible();
+    expect(screen.getByText("No contact found")).toBeVisible();
+    expect(screen.queryByTestId("contacts-saved-row-contact-ben")).not.toBeInTheDocument();
+  });
 });
