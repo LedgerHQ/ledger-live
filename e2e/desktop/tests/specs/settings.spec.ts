@@ -3,7 +3,6 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { FileUtils } from "tests/utils/fileUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 
@@ -140,37 +139,6 @@ test.describe("Ledger Support (web link)", () => {
       await app.settings.goToHelpTab();
 
       await app.settings.expectLedgerSupportUrlToBeCorrect();
-    },
-  );
-});
-
-test.describe("Reset app", () => {
-  test.use({
-    teamOwner: Team.WALLET_XP,
-    userdata: "1AccountBTC1AccountETH",
-  });
-
-  test(
-    "Verify that user can Reset app",
-    {
-      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-821",
-      },
-    },
-    async ({ app, userdataFile }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
-      await app.mainNavigation.openSettings();
-      const appJsonBefore = await FileUtils.getAppJsonSize(userdataFile);
-      await app.settings.goToHelpTab();
-      await app.settings.resetApp();
-      await app.settingsModal.checkResetModal();
-      await app.settingsModal.clickOnConfirmButton();
-      await app.onboarding.clickGetStartedButton();
-      const appJsonAfter = await FileUtils.getAppJsonSize(userdataFile);
-      await FileUtils.compareAppJsonSize(appJsonBefore, appJsonAfter);
     },
   );
 });

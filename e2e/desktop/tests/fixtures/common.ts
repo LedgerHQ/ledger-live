@@ -54,6 +54,14 @@ type TestFixtures = {
   featureFlags: OptionalFeatureMap;
   simulateCamera: string;
   app: Application;
+  /**
+   * Gracefully closes the running Electron instance and launches a fresh one
+   * against the same userdata directory, returning a new {@link Application}.
+   * Mirrors a real app restart while keeping Playwright in control of the process
+   * (the self-relaunch triggered by a hard reset must be neutralised first, see
+   * the reset spec).
+   */
+  relaunchApp: () => Promise<Application>;
   cliCommands?: CliCommand[];
   cliCommandsOnApp?: {
     app: AppInfos;
@@ -78,6 +86,43 @@ async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: stri
   });
 }
 
+/** Builds the environment variables used to launch the Electron app. */
+function buildAppEnv({
+  env,
+  mergedFeatureFlags,
+  speculos,
+  testId,
+}: {
+  env: Record<string, string> | undefined;
+  mergedFeatureFlags: OptionalFeatureMap;
+  speculos: SpeculosFixtureHandle;
+  testId: string;
+}): Record<string, string> {
+  return Object.assign(
+    {
+      ...process.env,
+      VERBOSE: true,
+      MOCK: undefined,
+      MOCK_COUNTERVALUES: undefined,
+      HIDE_DEBUG_MOCK: true,
+      CI: process.env.CI || undefined,
+      PLAYWRIGHT_RUN: true,
+      // Make CSV export filename unique per test (parallel-safe + traceable to a test id).
+      PLAYWRIGHT_EXPORT_CSV_PATH: `./ledgerwallet-operations-${testId}.csv`,
+      CRASH_ON_INTERNAL_CRASH: true,
+      LEDGER_MIN_HEIGHT: 768,
+      FEATURE_FLAGS: JSON.stringify(mergedFeatureFlags),
+      MANAGER_DEV_MODE: true,
+      SPECULOS_API_PORT: speculos.device ? String(speculos.device.port) : undefined,
+      SPECULOS_ADDRESS: speculos.device ? getSpeculosAddress() : undefined,
+      DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1",
+    },
+    env,
+  );
+}
+
+const WINDOW_SIZE = { width: 1024, height: 768 };
+
 export const test = base.extend<TestFixtures>({
   env: undefined,
   lang: "en-US",
@@ -97,6 +142,70 @@ export const test = base.extend<TestFixtures>({
   app: async ({ page, electronApp }, use) => {
     const app = new Application(page, electronApp);
     await use(app);
+  },
+
+  relaunchApp: async (
+    {
+      electronApp,
+      lang,
+      theme,
+      userdataDestinationPath,
+      simulateCamera,
+      speculos,
+      featureFlags,
+      env,
+    },
+    use,
+    testInfo,
+  ) => {
+    const created: ElectronApplication[] = [];
+
+    const relaunch = async (): Promise<Application> => {
+      // Gracefully close whatever instance is currently open so it releases the
+      // single-instance lock on the userdata dir before we launch the next one.
+      const previous = created.at(-1) ?? electronApp;
+      try {
+        await previous.close();
+      } catch {
+        // Already gone (e.g. the app quit itself as part of a reset).
+      }
+
+      const mergedFeatureFlags = getMergedFeatureFlags({ testFlags: featureFlags });
+      const appEnv = buildAppEnv({
+        env,
+        mergedFeatureFlags,
+        speculos,
+        testId: testInfo.testId,
+      });
+
+      const newApp = await launchApp({
+        env: appEnv,
+        lang,
+        theme,
+        userdataDestinationPath,
+        simulateCamera,
+        windowSize: WINDOW_SIZE,
+        recordVideo: false,
+      });
+      created.push(newApp);
+
+      const newPage = await newApp.firstWindow();
+      newPage.setDefaultTimeout(120000);
+      await newPage.waitForLoadState("domcontentloaded");
+      await newPage.waitForSelector("#loader-container", { state: "hidden" });
+
+      return new Application(newPage, newApp);
+    };
+
+    await use(relaunch);
+
+    for (const app of created) {
+      try {
+        await app.close();
+      } catch {
+        // ignore teardown errors on an already-closed app
+      }
+    }
   },
 
   userdataDestinationPath: async (
@@ -211,30 +320,7 @@ export const test = base.extend<TestFixtures>({
     await attachMergedFeatureFlags(testInfo, mergedFeatureFlags);
 
     // default environment variables
-    env = Object.assign(
-      {
-        ...process.env,
-        VERBOSE: true,
-        MOCK: undefined,
-        MOCK_COUNTERVALUES: undefined,
-        HIDE_DEBUG_MOCK: true,
-        CI: process.env.CI || undefined,
-        PLAYWRIGHT_RUN: true,
-        // Make CSV export filename unique per test (parallel-safe + traceable to a test id).
-        PLAYWRIGHT_EXPORT_CSV_PATH: `./ledgerwallet-operations-${testInfo.testId}.csv`,
-        CRASH_ON_INTERNAL_CRASH: true,
-        LEDGER_MIN_HEIGHT: 768,
-        FEATURE_FLAGS: JSON.stringify(mergedFeatureFlags),
-        MANAGER_DEV_MODE: true,
-        SPECULOS_API_PORT: speculos.device ? String(speculos.device.port) : undefined,
-        SPECULOS_ADDRESS: speculos.device ? getSpeculosAddress() : undefined,
-        DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1",
-      },
-      env,
-    );
-
-    // launch app
-    const windowSize = { width: 1024, height: 768 };
+    env = buildAppEnv({ env, mergedFeatureFlags, speculos, testId: testInfo.testId });
 
     const electronApp: ElectronApplication = await launchApp({
       env,
@@ -242,7 +328,7 @@ export const test = base.extend<TestFixtures>({
       theme,
       userdataDestinationPath,
       simulateCamera,
-      windowSize,
+      windowSize: WINDOW_SIZE,
       recordVideo: isLastRetry(testInfo),
     });
 
