@@ -35,9 +35,9 @@ export function ContactsAddContactDrawer({
     >
       <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
         {isOpen ? (
-          <Box lx={{ gap: "s24", paddingHorizontal: "s16" }}>
+          <Box lx={{ gap: "s24" }}>
             <BottomSheetHeader />
-            <Box lx={{ gap: "s16" }}>
+            <Box lx={{ gap: "s16", paddingHorizontal: "s16" }}>
               <Text typography="heading3SemiBold" lx={{ color: "base" }}>
                 {labels.title}
               </Text>
