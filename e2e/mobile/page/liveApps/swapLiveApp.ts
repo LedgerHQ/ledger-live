@@ -3,7 +3,7 @@ import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { retryUntilTimeout } from "../../utils/retry";
-import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
+import { positiveFloatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button (Step 2) appears (the app shows a "1-5 mins" estimate).
@@ -374,7 +374,7 @@ export default class SwapLiveAppPage {
   @Step("Click on swap max")
   async clickSwapMax() {
     await tapWebElementByTestId(this.swapMaxToggle);
-    await waitForWebElementToMatchRegex(app.swapLiveApp.toAmountInput, floatNumberRegex);
+    await waitForWebElementToMatchRegex(app.swapLiveApp.toAmountInput, positiveFloatNumberRegex);
   }
 
   @Step("Retrieve send currency amount value")
