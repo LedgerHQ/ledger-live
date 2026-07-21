@@ -97,6 +97,7 @@ import { ConfigureDBSaveEffects } from "./components/DBSave";
 import HookDevTools from "./devTools/useDevTools";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
+import { setInternetComputerLdmkEnabled } from "@ledgerhq/live-common/families/internet_computer/setup";
 import { setSuiGraphqlEnabled } from "@ledgerhq/live-common/families/sui/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
 import { useAutoFinishPostOnboarding } from "LLM/features/PostOnboarding/hooks/useAutoFinishPostOnboarding";
@@ -144,6 +145,7 @@ function App() {
   const datadogId = useSelector(datadogIdSelector);
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
   const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
+  const ldmkInternetComputerSignerFeatureFlag = useFeature("ldmkInternetComputerSigner");
   const suiGraphqlTransportFeatureFlag = useFeature("suiGraphqlTransport");
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
@@ -174,6 +176,12 @@ function App() {
       setCosmosLdmkEnabled(ldmkCosmosSignerFeatureFlag.enabled);
     }
   }, [ldmkCosmosSignerFeatureFlag]);
+
+  useEffect(() => {
+    if (typeof ldmkInternetComputerSignerFeatureFlag?.enabled === "boolean") {
+      setInternetComputerLdmkEnabled(ldmkInternetComputerSignerFeatureFlag.enabled);
+    }
+  }, [ldmkInternetComputerSignerFeatureFlag]);
 
   useEffect(() => {
     setSuiGraphqlEnabled(suiGraphqlTransportFeatureFlag?.enabled === true);

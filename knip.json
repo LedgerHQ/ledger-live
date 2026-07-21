@@ -108,6 +108,9 @@
     "./libs/live-engagement": {
       "entry": ["src/index.ts", "src/largeScreenUpsellModal.ts"]
     },
+    "./libs/live-signer-icp": {
+      "entry": ["src/index.ts"]
+    },
     "./libs/live-wallet": {
       "entry": [
         "src/walletsync/index.ts",

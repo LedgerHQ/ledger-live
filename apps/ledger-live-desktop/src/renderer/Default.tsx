@@ -64,6 +64,7 @@ import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
+import { setInternetComputerLdmkEnabled } from "@ledgerhq/live-common/families/internet_computer/setup";
 import { setSuiGraphqlEnabled } from "@ledgerhq/live-common/families/sui/setup";
 import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
@@ -374,6 +375,7 @@ export default function Default() {
   const providerNumber = useEnv("FORCE_PROVIDER");
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
   const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
+  const ldmkInternetComputerSignerFeatureFlag = useFeature("ldmkInternetComputerSigner");
   const suiGraphqlTransportFeatureFlag = useFeature("suiGraphqlTransport");
 
   const dmk = useDeviceManagementKit();
@@ -402,6 +404,12 @@ export default function Default() {
       setCosmosLdmkEnabled(ldmkCosmosSignerFeatureFlag.enabled);
     }
   }, [ldmkCosmosSignerFeatureFlag]);
+
+  useEffect(() => {
+    if (typeof ldmkInternetComputerSignerFeatureFlag?.enabled === "boolean") {
+      setInternetComputerLdmkEnabled(ldmkInternetComputerSignerFeatureFlag.enabled);
+    }
+  }, [ldmkInternetComputerSignerFeatureFlag]);
 
   useEffect(() => {
     setSuiGraphqlEnabled(suiGraphqlTransportFeatureFlag?.enabled === true);
