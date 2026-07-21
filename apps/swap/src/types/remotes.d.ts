@@ -1,11 +1,12 @@
 /**
- * Type declarations for RemoteApp federated module
+ * Type declarations for the `swap` federated remote.
  *
- * Add this declaration to your host app's types to get
- * proper TypeScript support when consuming this module.
+ * The host imports this module as `swap/HelloWorld` (the MF container name is `swap`, see
+ * `rspack.config.cjs`). Kept here as an explicit, reviewable contract; the MF toolchain also
+ * emits `@mf-types` (producer `generateAPITypes`, host `consumeTypes.consumeAPITypes`).
  */
 
-declare module "RemoteApp/HelloWorld" {
+declare module "swap/HelloWorld" {
   import { FC } from "react";
 
   interface HelloWorldProps {
@@ -18,9 +19,4 @@ declare module "RemoteApp/HelloWorld" {
 
   const HelloWorld: FC<HelloWorldProps>;
   export default HelloWorld;
-}
-
-// Re-export for convenience
-declare module "RemoteApp" {
-  export * from "RemoteApp/HelloWorld";
 }

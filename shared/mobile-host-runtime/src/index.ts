@@ -7,3 +7,4 @@ export {
   SLICE_REGISTERED_ACTION,
 } from "./reducerRegistry";
 export type { RegisterSliceOptions, ExtendedState } from "./types";
+export * from "./bridge";

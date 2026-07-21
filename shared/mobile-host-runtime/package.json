@@ -13,11 +13,16 @@
     "@reduxjs/toolkit": "catalog:",
     "redux": "catalog:"
   },
+  "peerDependencies": {
+    "react": "catalog:"
+  },
   "devDependencies": {
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@types/react": "catalog:",
     "jest": "catalog:",
+    "react": "catalog:",
     "typescript": "catalog:"
   }
 }
