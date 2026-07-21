@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React, { memo, useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";

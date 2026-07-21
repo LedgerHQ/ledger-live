@@ -7,7 +7,7 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useState } from "react";
 import { Keyboard, StyleSheet, Switch, TouchableWithoutFeedback, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";

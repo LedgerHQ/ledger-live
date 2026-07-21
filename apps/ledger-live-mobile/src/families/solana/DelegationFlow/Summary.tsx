@@ -20,7 +20,7 @@ import { capitalize } from "lodash/fp";
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { Trans } from "~/context/Locale";
 import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import Button from "~/components/Button";

@@ -9,7 +9,7 @@ import {
   Linking,
   SectionListRenderItem,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Trans, useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import type {

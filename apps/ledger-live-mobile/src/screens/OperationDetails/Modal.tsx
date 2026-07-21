@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "~/context/Locale";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "@react-navigation/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import QueuedDrawer from "~/components/QueuedDrawer";
