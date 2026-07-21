@@ -47,7 +47,7 @@ function toNetworkLog(
   return {
     timestamp: new Date().toISOString(),
     method: (config?.method ?? "").toUpperCase(),
-    url: `${config?.baseURL ?? ""}${config?.url ?? ""}`,
+    url: `${config?.baseURL ?? ""}${config?.url ?? ""}`.split(/[?#]/)[0],
     status,
     duration: Date.now() - startTime,
     failureText,
