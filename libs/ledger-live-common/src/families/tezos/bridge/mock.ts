@@ -145,7 +145,7 @@ const getTransactionStatus = (a: Account, t: Transaction) => {
     }
   } else {
     // delegation case, we remap NotEnoughBalance to a more precise error
-    if (errors.amount instanceof NotEnoughBalance) {
+    if (errors.amount?.name === "NotEnoughBalance") {
       errors.amount = new NotEnoughBalanceToDelegate();
     }
   }

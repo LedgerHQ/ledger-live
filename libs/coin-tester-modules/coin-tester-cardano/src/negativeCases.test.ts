@@ -83,6 +83,8 @@ describe("Cardano negative cases (Yaci devnet)", () => {
 
   it("rejects a below-min-UTXO amount at craft", async () => {
     const tx = build({ recipient, amount: new BigNumber(100), nonce: 0 });
-    await expect(accountBridge.prepareTransaction(account, tx)).rejects.toThrow(/minimum/i);
+    await expect(accountBridge.prepareTransaction(account, tx)).rejects.toMatchObject({
+      name: "CardanoMinAmountError",
+    });
   });
 });

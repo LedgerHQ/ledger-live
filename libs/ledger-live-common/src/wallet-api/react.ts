@@ -7,7 +7,6 @@ import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-
 import { Transport, Permission } from "@ledgerhq/wallet-api-core";
 import { first } from "rxjs/operators";
 import { getEnv } from "@ledgerhq/live-env";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { cryptoAssetsApi } from "@domain/api-currency-token";
 import { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
@@ -22,9 +21,9 @@ import {
   currencyToWalletAPICurrency,
   getAccountIdFromWalletAccountId,
   setWalletApiIdForAccountId,
-  resolveWalletApiSpendableBalance,
 } from "./converters";
 import { AccountPublicKeyUnavailable } from "../errors";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { isWalletAPISupportedCurrency } from "./helpers";
 import {
   WalletAPICurrency,
@@ -508,7 +507,7 @@ export function useWalletAPIServer({
   }, [walletState, manifest, server, tracking, dispatch, deactivatedCurrencyIds]);
 
   useEffect(() => {
-    server.setHandler("account.list", async ({ currencyIds }) => {
+    server.setHandler("account.list", ({ currencyIds }) => {
       // 1. Parse manifest currency patterns to determine what to include
       const manifestCurrencyIds = manifest.currencies === "*" ? ["**"] : manifest.currencies;
 
@@ -555,31 +554,25 @@ export function useWalletAPIServer({
       }
 
       // 4. Filter accounts based on effective currency IDs
-      const filteredAccounts = accounts.filter(account => {
+      const wapiAccounts = accounts.reduce<WalletAPIAccount[]>((acc, account) => {
+        const parentAccount = getParentAccount(account, accounts);
         const accountCurrencyId =
           account.type === "TokenAccount" ? account.token.id : account.currency.id;
         const parentCurrencyId =
           account.type === "TokenAccount" ? account.token.parentCurrencyId : account.currency.id;
 
         // Check if account currency ID matches the effective patterns
-        return (
+        const isAllowed =
           includeAllCurrencies ||
           allowedCurrencyIds.has(accountCurrencyId) ||
-          tokenFamilyPrefixes.has(parentCurrencyId)
-        );
-      });
+          tokenFamilyPrefixes.has(parentCurrencyId);
 
-      const wapiAccounts = await Promise.all(
-        filteredAccounts.map(async (account): Promise<WalletAPIAccount> => {
-          const parentAccount = getParentAccount(account, accounts);
-          const spendableBalance = await resolveWalletApiSpendableBalance(account, parentAccount);
+        if (isAllowed) {
+          acc.push(accountToWalletAPIAccount(walletState, account, parentAccount));
+        }
 
-          return {
-            ...accountToWalletAPIAccount(walletState, account, parentAccount),
-            spendableBalance,
-          };
-        }),
-      );
+        return acc;
+      }, []);
 
       return wapiAccounts;
     });
@@ -601,24 +594,11 @@ export function useWalletAPIServer({
               areCurrenciesFiltered,
               useCase,
               uiUseCase,
-              onSuccess: async (account: AccountLike, parentAccount: Account | undefined) => {
+              onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
                 if (done) return;
                 done = true;
-                try {
-                  const spendableBalance = await resolveWalletApiSpendableBalance(
-                    account,
-                    parentAccount,
-                  );
-
-                  tracking.requestAccountSuccess(manifest);
-                  resolve({
-                    ...accountToWalletAPIAccount(walletState, account, parentAccount),
-                    spendableBalance,
-                  });
-                } catch (error) {
-                  tracking.requestAccountFail(manifest);
-                  reject(error);
-                }
+                tracking.requestAccountSuccess(manifest);
+                resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
               },
               onCancel: () => {
                 if (done) return;
