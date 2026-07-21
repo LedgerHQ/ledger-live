@@ -1,5 +1,5 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import React, { useCallback, useMemo, useRef } from "react";
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../context/SendFlowContext";

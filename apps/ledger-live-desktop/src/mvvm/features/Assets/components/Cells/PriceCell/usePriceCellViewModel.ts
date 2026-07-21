@@ -1,4 +1,4 @@
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 import { usePrice } from "~/renderer/hooks/usePrice";
 import { formatPrice } from "@ledgerhq/live-currency-format";

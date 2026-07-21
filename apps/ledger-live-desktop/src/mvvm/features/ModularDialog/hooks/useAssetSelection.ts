@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 
 export function useAssetSelection(sortedCryptoCurrencies: CryptoOrTokenCurrency[]) {

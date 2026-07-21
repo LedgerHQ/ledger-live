@@ -2,7 +2,7 @@
 
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { renderHook } from "tests/testSetup";

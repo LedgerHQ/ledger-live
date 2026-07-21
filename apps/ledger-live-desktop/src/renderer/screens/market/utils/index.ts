@@ -1,6 +1,6 @@
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { listItemHeight } from "../components/Table";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency";
 
 export const REFETCH_TIME_ONE_MINUTE = 60 * 1000;
 

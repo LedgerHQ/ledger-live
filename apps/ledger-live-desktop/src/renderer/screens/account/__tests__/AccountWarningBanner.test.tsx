@@ -4,7 +4,7 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
 import { AccountWarningBanner, AccountWarningCustomBanner } from "../AccountWarningBanner";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
 jest.mock("@ledgerhq/live-common/config/index", () => ({

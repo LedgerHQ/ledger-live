@@ -1,5 +1,5 @@
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import uniqBy from "lodash/uniqBy";
 
 export const getTestnetCurrencies = (

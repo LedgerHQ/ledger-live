@@ -1,5 +1,5 @@
 import { useSelector } from "LLD/hooks/redux";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency";
 import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import type { AssetMarketData } from "@ledgerhq/asset-detail";

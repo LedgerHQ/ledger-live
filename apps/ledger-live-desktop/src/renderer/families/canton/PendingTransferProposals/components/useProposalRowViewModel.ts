@@ -1,4 +1,4 @@
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { useTimeRemaining } from "@ledgerhq/live-common/families/canton/react";
 import { BigNumber } from "bignumber.js";
 import { useCallback } from "react";

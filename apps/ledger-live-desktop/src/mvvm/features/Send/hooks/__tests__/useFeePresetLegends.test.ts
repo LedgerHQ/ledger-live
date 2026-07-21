@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { BigNumber } from "bignumber.js";
 import { renderHook } from "tests/testSetup";
-import type { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor/registry";
 import type { SendDescriptor } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { useFeePresetLegends } from "../useFeePresetLegends";

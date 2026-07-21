@@ -8,7 +8,7 @@ import {
   ListItemTrailing,
 } from "@ledgerhq/lumen-ui-react";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { ReactElement, ReactNode } from "react";
 
 export type NetworkListItemData = {

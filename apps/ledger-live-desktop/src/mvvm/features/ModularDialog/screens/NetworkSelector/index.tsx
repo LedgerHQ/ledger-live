@@ -1,5 +1,5 @@
 import React from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { NetworkSelectorContent } from "./components/NetworkSelectorContent";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import TrackDialogScreen from "../../analytics/TrackDialogScreen";

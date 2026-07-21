@@ -19,7 +19,7 @@ import {
 } from "@ledgerhq/live-common/operation";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import { Account, AccountLike, Operation, OperationType } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import uniq from "lodash/uniq";
@@ -266,14 +266,14 @@ const OperationD = (props: Props) => {
       const isEditable = bridge.isEditableOperation(mainAccount, operation);
       if (
         !isEditable ||
-        !bitcoinParams?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId)
+        !bitcoinParams?.supportedCurrencyIds?.includes(mainAccount.currency.id as string)
       ) {
         return null;
       }
 
       if (
         isEditBitcoinTxEnabled &&
-        bitcoinParams?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId)
+        bitcoinParams?.supportedCurrencyIds?.includes(mainAccount.currency.id as string)
       ) {
         return {
           modalName: "MODAL_BITCOIN_EDIT_TRANSACTION" as const,
@@ -291,8 +291,7 @@ const OperationD = (props: Props) => {
     // Check for EVM support
     if (currencyFamily === "evm") {
       const isCurrencySupported =
-        params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) ||
-        false;
+        params?.supportedCurrencyIds?.includes(mainAccount.currency.id as string) || false;
       const isEditable = bridge.isEditableOperation(mainAccount, operation);
 
       if (isEditEvmTxEnabled && isCurrencySupported && isEditable) {

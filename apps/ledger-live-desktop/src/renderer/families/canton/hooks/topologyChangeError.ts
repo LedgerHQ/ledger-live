@@ -1,6 +1,6 @@
 export { TopologyChangeError } from "@ledgerhq/coin-canton";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import type { Dispatch } from "redux";
 import { closeModal, openModal } from "~/renderer/actions/modals";

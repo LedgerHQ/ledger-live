@@ -1,5 +1,5 @@
 import React from "react";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import { PriceCellView } from "./PriceCellView";
 import { usePriceCellViewModel } from "./usePriceCellViewModel";
 

@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";

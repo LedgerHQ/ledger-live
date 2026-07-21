@@ -6,7 +6,7 @@ import Button from "~/renderer/components/Button";
 import SwapCompleted from "~/renderer/screens/exchange/Swap2/Form/ExchangeDrawer/SwapCompleted";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import SellCompleted from "~/renderer/screens/exchange/Sell/SellCompleted";
 import { ExchangeMode, ExchangeModeEnum } from "./Body";
 import FundCompleted from "~/renderer/screens/exchange/Fund/FundCompleted";

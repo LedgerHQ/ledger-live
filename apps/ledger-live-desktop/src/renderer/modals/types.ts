@@ -1,5 +1,5 @@
 import React from "react";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 
 import { Data as SendData } from "./Send/Body";

@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
-import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency, Unit } from "@domain/entity-currency";
 import { Operation } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import CounterValue from "~/renderer/components/CounterValue";

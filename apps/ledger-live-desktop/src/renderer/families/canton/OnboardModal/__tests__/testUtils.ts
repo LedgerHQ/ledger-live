@@ -1,7 +1,7 @@
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account } from "@ledgerhq/types-live";
 import i18n from "~/renderer/i18n/init";
 import { createMockAccount, createMockCantonCurrency } from "../../__tests__/testUtils";

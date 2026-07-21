@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { getAccountSpendableBalance } from "@ledgerhq/live-common/account/index";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
-import { Currency, CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency, CryptoCurrency, TokenCurrency, Unit } from "@domain/entity-currency";
 
 import { setCountervalueFirst } from "~/renderer/actions/settings";
 import { track } from "~/renderer/analytics/segment";

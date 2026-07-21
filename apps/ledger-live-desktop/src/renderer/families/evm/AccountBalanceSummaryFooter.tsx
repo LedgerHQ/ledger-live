@@ -6,7 +6,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useFeature } from "@features/platform-feature-flags";
 import { useAccountSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
-import { CryptoCurrencyId, Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrencyId, Currency } from "@ledgerhq/ledger-wallet-framework/types";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import Box from "~/renderer/components/Box/Box";

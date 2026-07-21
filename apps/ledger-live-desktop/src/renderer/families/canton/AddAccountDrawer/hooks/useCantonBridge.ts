@@ -5,7 +5,7 @@ import type {
 } from "@ledgerhq/coin-canton/types";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import type { OnboardingResult } from "../types";

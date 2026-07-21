@@ -17,7 +17,7 @@ import type {
   AleoCoinConfig,
   Transaction as AleoTransaction,
 } from "@ledgerhq/live-common/families/aleo/types";
-import type { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 export {

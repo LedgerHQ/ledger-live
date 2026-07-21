@@ -5,7 +5,7 @@ import { Banner } from "@ledgerhq/lumen-ui-react";
 import { AddAccountButton } from "./components/AddAccountButton";
 import { SelectAccountList } from "./components/List";
 import { AccountLike, Account } from "@ledgerhq/types-live";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useDetailedAccounts } from "../../hooks/useDetailedAccounts";
 import TrackDialogScreen from "LLD/features/ModularDialog/analytics/TrackDialogScreen";
 import {

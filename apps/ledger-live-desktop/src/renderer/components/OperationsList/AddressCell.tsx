@@ -1,6 +1,6 @@
 import React from "react";
 import type { Operation } from "@ledgerhq/types-live";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import Box from "~/renderer/components/Box";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { Address, Cell } from "./AddressCellShared";

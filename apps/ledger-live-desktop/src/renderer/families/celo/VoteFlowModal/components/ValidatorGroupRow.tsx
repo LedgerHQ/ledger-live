@@ -12,7 +12,7 @@ import Logo from "~/renderer/icons/Logo";
 import { isDefaultValidatorGroup } from "@ledgerhq/live-common/families/celo/logic";
 import * as S from "./ValidatorGroupRow.styles";
 import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
-import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
 
 type Props = {
   currency: CryptoCurrency;

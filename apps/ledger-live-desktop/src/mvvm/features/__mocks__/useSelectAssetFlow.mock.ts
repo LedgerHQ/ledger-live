@@ -1,6 +1,6 @@
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency";
 import type { AssetType } from "../ModularDialog/types";
 
 export const bitcoinCurrency = getCryptoCurrencyById("bitcoin");

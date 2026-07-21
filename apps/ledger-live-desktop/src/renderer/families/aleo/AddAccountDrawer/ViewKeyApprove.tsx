@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "LLD/hooks/redux";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 import { useAleoViewKeyApproval } from "@ledgerhq/live-common/families/aleo/react";

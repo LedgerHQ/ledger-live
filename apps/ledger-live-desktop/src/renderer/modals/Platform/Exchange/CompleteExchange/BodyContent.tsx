@@ -4,7 +4,7 @@ import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/completeExchange";
 import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
-import { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Currency, TokenCurrency } from "@domain/entity-currency";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";

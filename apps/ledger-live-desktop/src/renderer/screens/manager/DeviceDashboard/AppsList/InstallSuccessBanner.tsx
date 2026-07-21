@@ -10,7 +10,7 @@ import FadeInOutBox from "~/renderer/components/FadeInOutBox";
 import IconCross from "~/renderer/icons/Cross";
 import Button from "~/renderer/components/Button";
 import AccountsIllustration from "~/renderer/icons/AccountsIllustration";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency";
 
 const IconContainer = styled(Box).attrs(() => ({
   horizontal: true,

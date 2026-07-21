@@ -14,7 +14,7 @@ import CoinsIcon from "./assets/CoinsIcon";
 import { trackPage, track } from "~/renderer/analytics/segment";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { isTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 

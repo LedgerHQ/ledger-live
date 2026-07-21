@@ -19,7 +19,7 @@ import Box from "~/renderer/components/Box";
 import { useLLDCoinFamily } from "~/renderer/families";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { getTokenUnit } from "~/renderer/utils";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency";
 import { getProductName } from "LLD/utils/getProductName";
 
 const FieldText = styled(Text).attrs(() => ({

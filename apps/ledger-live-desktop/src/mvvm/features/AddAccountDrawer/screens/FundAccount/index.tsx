@@ -1,6 +1,6 @@
 import { Flex } from "@ledgerhq/react-ui/index";
 import { FormattedAccountItem } from "../../components/FormattedAccountItem";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import { Account } from "@ledgerhq/types-live";
 import React from "react";
 import { TrackAddAccountScreen } from "../../analytics/TrackAddAccountScreen";

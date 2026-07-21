@@ -1,5 +1,5 @@
 import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import { DeeplinkHandler } from "../types";
 import { getAccountsOrSubAccountsByCurrency } from "../utils";
 

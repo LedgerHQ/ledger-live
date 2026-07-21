@@ -67,6 +67,7 @@
     "@domain/api-pay-card": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
     "@domain/entity-contact": "workspace:*",
+    "@domain/entity-currency": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-large-screen-upsell-modal": "workspace:*",
     "@devtools/shell": "workspace:^",

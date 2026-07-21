@@ -7,7 +7,7 @@ import {
   PRIVATE_BALANCE_PLACEHOLDER,
 } from "@ledgerhq/live-common/families/aleo/constants";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { ALEO_ACCOUNT_1, ALEO_TOKEN_ACCOUNT } from "../__mocks__/account.mock";
 import { mockAleoCoinConfig } from "../__mocks__/config.mock";
 import { aleoCurrency } from "../__mocks__/currency.mock";

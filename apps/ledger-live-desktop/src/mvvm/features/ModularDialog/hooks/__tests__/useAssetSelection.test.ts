@@ -1,6 +1,6 @@
 import { renderHook } from "tests/testSetup";
 import { useAssetSelection } from "../useAssetSelection";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 // Mock useAcceptedCurrency to return a function that checks if currency is in supported list
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({

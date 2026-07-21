@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "LLD/hooks/redux";
 import { parseCurrencyUnitFragment } from "LLD/features/AssetDetail/utils/parseCurrencyUnitFragment";

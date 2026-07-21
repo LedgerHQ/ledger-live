@@ -4,7 +4,7 @@ import { useModularDialogFlowState } from "./useModularDialogFlowState";
 import { useModularDialogBackButton } from "./useModularDialogBackButton";
 import { useMemo, useState } from "react";
 import { useAssetSelection } from "./useAssetSelection";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 interface UseModularDialogRemoteDataProps {
   currentStep: ModularDialogStep;

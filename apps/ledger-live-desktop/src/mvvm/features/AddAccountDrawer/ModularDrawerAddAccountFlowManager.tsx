@@ -1,7 +1,7 @@
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Flex, Text } from "@ledgerhq/react-ui/index";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { AnimatePresence } from "framer-motion";
 import React, { useCallback, useState } from "react";

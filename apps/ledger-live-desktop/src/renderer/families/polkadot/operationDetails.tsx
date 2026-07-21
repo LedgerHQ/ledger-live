@@ -2,7 +2,7 @@
 import startCase from "lodash/startCase";
 import React, { useMemo } from "react";
 import { BigNumber } from "bignumber.js";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@ledgerhq/ledger-wallet-framework/types";
 import { OperationType } from "@ledgerhq/types-live";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { openURL } from "~/renderer/linking";

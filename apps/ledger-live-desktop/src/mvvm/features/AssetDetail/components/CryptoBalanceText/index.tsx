@@ -1,5 +1,5 @@
 import React from "react";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency";
 import { CryptoBalanceTextView } from "./CryptoBalanceTextView";
 import { useCryptoBalanceTextViewModel } from "./useCryptoBalanceTextViewModel";
 

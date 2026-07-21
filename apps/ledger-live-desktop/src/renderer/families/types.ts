@@ -3,13 +3,13 @@ import React from "react";
 import { TFunction } from "i18next";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
-import {
+import type {
   Unit,
   CryptoCurrency,
   Currency,
   TokenCurrency,
   ExplorerView,
-} from "@ledgerhq/types-cryptoassets";
+} from "@ledgerhq/ledger-wallet-framework/types";
 import {
   Account,
   AnyMessage,

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { ModularDialogStep } from "../types";
 import { useSelector } from "LLD/hooks/redux";
 import { modularDialogSearchedSelector } from "~/renderer/reducers/modularDialog";

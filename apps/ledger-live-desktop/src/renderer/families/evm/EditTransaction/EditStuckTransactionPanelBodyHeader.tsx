@@ -1,7 +1,7 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeature } from "@features/platform-feature-flags";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrencyId } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React, { memo } from "react";

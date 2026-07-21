@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import Tooltip from "~/renderer/components/Tooltip";
 import CryptoCurrencyIcon from "./CryptoCurrencyIcon";
 import { Flex } from "@ledgerhq/react-ui/index";

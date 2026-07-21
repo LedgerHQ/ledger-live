@@ -3,7 +3,7 @@ import { render, screen } from "tests/testSetup";
 import { BigNumber } from "bignumber.js";
 import { NetworkSelectorContent } from "../NetworkSelectorContent/index";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency, TokenCurrency } from "@domain/entity-currency";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { mockDomMeasurements } from "../../../../../__tests__/shared";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";

@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import type { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
-import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { Flex, Icons } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
 import ValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
