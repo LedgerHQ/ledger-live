@@ -4717,9 +4717,9 @@ importers:
 
   libs/asset-aggregation:
     dependencies:
-      '@ledgerhq/cryptoassets':
+      '@domain/entity-currency-crypto':
         specifier: workspace:*
-        version: link:../ledgerjs/packages/cryptoassets
+        version: link:../../domain/entity/currency-crypto
       '@ledgerhq/live-countervalues':
         specifier: workspace:*
         version: link:../live-countervalues
@@ -12525,9 +12525,9 @@ importers:
 
   libs/live-wallet:
     dependencies:
-      '@ledgerhq/cryptoassets':
+      '@domain/entity-currency-crypto':
         specifier: workspace:*
-        version: link:../ledgerjs/packages/cryptoassets
+        version: link:../../domain/entity/currency-crypto
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:*
         version: link:../ledger-key-ring-protocol
@@ -13391,9 +13391,12 @@ importers:
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-live
     devDependencies:
-      '@ledgerhq/cryptoassets':
+      '@domain/entity-currency-crypto':
         specifier: workspace:*
-        version: link:../ledgerjs/packages/cryptoassets
+        version: link:../../domain/entity/currency-crypto
+      '@domain/entity-currency-fiat':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency-fiat
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
