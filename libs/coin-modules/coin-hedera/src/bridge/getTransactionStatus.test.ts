@@ -12,13 +12,13 @@ import { HEDERA_TRANSACTION_MODES } from "../constants";
 import {
   HederaInsufficientFundsForAssociation,
   HederaInvalidStakingNodeIdError,
+  HederaMemoExceededSizeError,
   HederaNoStakingRewardsError,
   HederaRecipientEvmAddressVerificationRequired,
   HederaRecipientInvalidChecksum,
   HederaRecipientTokenAssociationRequired,
   HederaRecipientTokenAssociationUnverified,
   HederaRedundantStakingNodeIdError,
-  HederaMemoExceededSizeError,
 } from "../errors";
 import * as estimateFees from "../logic/estimateFees";
 import * as logicUtils from "../logic/utils";
