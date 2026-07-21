@@ -3,9 +3,10 @@ import {
   type DeviceIntentExecutorProps,
   type ExecutorPlatformConfiguration,
 } from "@ledgerhq/device-intent";
-import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import React from "react";
+import { Platform, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DeviceDisconnected } from "./components/DeviceDisconnected";
 import { IntentError } from "./components/IntentError";
@@ -55,7 +56,10 @@ const platformConfig: ExecutorPlatformConfiguration<InitializationInput, Initial
 export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,
 ): React.ReactElement {
-  const { bottom: bottomInset } = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
+  const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
+  // Lumen's static preset can force Android dynamic sheets full height, so use the live window cap.
+  const maxDynamicContentSize = Platform.OS === "ios" ? "fullWithOffset" : windowHeight - topInset;
   const {
     sourceFlow,
     wrappedProps,
@@ -73,17 +77,21 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
       onBackdropPress={onBackdropPress}
       hideHandle
       enableDynamicSizing
+      maxDynamicContentSize={maxDynamicContentSize}
     >
       <SourceFlowProvider value={sourceFlow}>
         <DeviceIntentExecutorHeaderContext.Provider value={headerContextValue}>
-          <BottomSheetView style={{ paddingBottom: bottomInset + 16 }}>
+          <BottomSheetScrollView
+            contentContainerStyle={{ paddingBottom: bottomInset + 16 }}
+            showsVerticalScrollIndicator={false}
+          >
             {!hasHeaderOverride && <BottomSheetHeader density="expanded" />}
             <DeviceIntentExecutor
               {...wrappedProps}
               platformConfig={platformConfig}
               initializerConfig={wrappedProps.initializerConfig}
             />
-          </BottomSheetView>
+          </BottomSheetScrollView>
         </DeviceIntentExecutorHeaderContext.Provider>
       </SourceFlowProvider>
     </QueuedDrawerBottomSheet>
