@@ -54,6 +54,7 @@ const withTwoAccounts = (state: State): State => ({
 
 describe("useAssetActions - custom send flow", () => {
   beforeEach(() => {
+    mockGetCustomSendFlow.mockClear();
     mockGetCustomSendFlow.mockReturnValue(null);
   });
 

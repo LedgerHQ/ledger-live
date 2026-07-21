@@ -138,13 +138,23 @@ jest.mock("@ledgerhq/live-wallet/addAccounts", () => ({
   addAccountsAction: jest.fn(() => ({ type: "ADD_ACCOUNTS" })),
 }));
 
-const ACCOUNT_1 = { id: "account1", freshAddress: "addr1", currency: aleoCurrency } as Account;
-const ACCOUNT_2 = { id: "account2", freshAddress: "addr2", currency: aleoCurrency } as Account;
+const ACCOUNT_1 = {
+  id: "account1",
+  freshAddress: "addr1",
+  currency: aleoCurrency,
+} as unknown as Account;
+
+const ACCOUNT_2 = {
+  id: "account2",
+  freshAddress: "addr2",
+  currency: aleoCurrency,
+} as unknown as Account;
+
 const ACCOUNT_TESTNET_1 = {
   id: "accountTestnet1",
   freshAddress: ACCOUNT_1.freshAddress,
   currency: aleoTestnetCurrency,
-} as Account;
+} as unknown as Account;
 
 const mockParentNavigate = jest.fn();
 const mockNavigation = {
@@ -285,7 +295,10 @@ describe("ViewKeyApproveScreen", () => {
 
       renderScreen(
         { hookState: { sharePending: true, shareProgress: { completed: 0, total: 1 } } },
-        { accountsToAdd: [ACCOUNT_TESTNET_1] },
+        {
+          accountsToAdd: [ACCOUNT_TESTNET_1],
+          currency: { type: "CryptoCurrency" as const, id: aleoTestnetCurrency.id },
+        },
       );
 
       expect(screen.getByText("accountTestnet1")).toBeTruthy();
