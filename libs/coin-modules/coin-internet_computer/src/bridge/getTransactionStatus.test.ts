@@ -1,12 +1,12 @@
 import { Account } from "@ledgerhq/types-live";
-import { validateAddress } from "@zondax/ledger-live-icp/utils";
+import { validateAddress } from "../logic/validation";
 import BigNumber from "bignumber.js";
 import { InvalidMemoICP } from "../errors";
 import * as logicValidateMemo from "../logic/validateMemo";
 import { Transaction } from "../types";
 import { getTransactionStatus } from "./getTransactionStatus";
 
-jest.mock("@zondax/ledger-live-icp/utils");
+jest.mock("../logic/validation");
 jest.mock("../logic/validateMemo");
 
 describe("getTransactionStatus", () => {
@@ -17,7 +17,7 @@ describe("getTransactionStatus", () => {
     spiedValidateMemo.mockClear();
     spiedValidateAddress.mockClear();
 
-    spiedValidateAddress.mockResolvedValue({ isValid: true } as never);
+    spiedValidateAddress.mockReturnValue({ isValid: true });
   });
 
   it("should not set error on transaction when memo is validated", async () => {

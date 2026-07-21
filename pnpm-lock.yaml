@@ -6168,6 +6168,24 @@ importers:
 
   libs/coin-modules/coin-internet_computer:
     dependencies:
+      '@dfinity/agent':
+        specifier: 2.4.1
+        version: 2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
+      '@dfinity/candid':
+        specifier: 2.4.1
+        version: 2.4.1(@dfinity/principal@2.4.1)
+      '@dfinity/identity-secp256k1':
+        specifier: 2.4.1
+        version: 2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
+      '@dfinity/ledger-icp':
+        specifier: 2.6.13
+        version: 2.6.13(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)(@dfinity/utils@2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))
+      '@dfinity/principal':
+        specifier: 2.4.1
+        version: 2.4.1
+      '@dfinity/utils':
+        specifier: 2.14.0
+        version: 2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 4.0.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
@@ -6183,12 +6201,15 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
-      '@zondax/ledger-live-icp':
-        specifier: 1.4.2
-        version: 1.4.2
+      '@noble/hashes':
+        specifier: 1.8.0
+        version: 1.8.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
+      cbor:
+        specifier: 10.0.11
+        version: 10.0.11
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -6199,18 +6220,6 @@ importers:
         specifier: 'catalog:'
         version: 7.8.2
     devDependencies:
-      '@dfinity/agent':
-        specifier: 2.4.1
-        version: 2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
-      '@dfinity/candid':
-        specifier: 2.4.1
-        version: 2.4.1(@dfinity/principal@2.4.1)
-      '@dfinity/identity-secp256k1':
-        specifier: 2.4.1
-        version: 2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
-      '@dfinity/principal':
-        specifier: 2.4.1
-        version: 2.4.1
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
@@ -16121,15 +16130,6 @@ packages:
       '@dfinity/principal': ^2.0.0
       '@dfinity/utils': ^2.13.0
 
-  '@dfinity/nns@8.5.0':
-    resolution: {integrity: sha512-d4OAZTX/rqtSjW2fqL+3WtGVgPxEcDRVXBtJOCWAYgWHewBuezxmmwe9o/dBS8qfwblNKuMR8pwd6x0sQR7JVQ==}
-    peerDependencies:
-      '@dfinity/agent': ^2.0.0
-      '@dfinity/candid': ^2.0.0
-      '@dfinity/ledger-icp': ^3
-      '@dfinity/principal': ^2.0.0
-      '@dfinity/utils': ^2.13.0
-
   '@dfinity/principal@2.4.1':
     resolution: {integrity: sha512-Cz6XQVOwq0TXDBClPbcidDd4SqK1lfr1/Kn34ruDD13xVQ4iaP1iCntzS9O97+vGpY/6jwDtKd32Gn5YJ9BQNw==}
     deprecated: 'This package has been deprecated. Use @icp-sdk/core/principal instead. Migration guide: https://js.icp.build/core/latest/upgrading/v5'
@@ -24714,9 +24714,6 @@ packages:
   '@zondax/ledger-js@1.3.1':
     resolution: {integrity: sha512-sDBwsunK2nSzkqJ5xi6QTiVVpAxSy+X1BVcMfKioBsInjktki2SezT7K8Hw6kSlYd3yfOJlw8cs+hqVtxpAGtg==}
 
-  '@zondax/ledger-live-icp@1.4.2':
-    resolution: {integrity: sha512-VKADrTyGtJQxn2oUVTFovbAYL9ozhNVqPvXrRzYm51cJjw6kbZZaRLxb9THCM8HqccWSWDiUOcaz7hTjkwv7pA==}
-
   '@zondax/ledger-mina-js@0.0.2':
     resolution: {integrity: sha512-6tB4voId5NOfn1XzYivyQnjq8A7eoz/2D+Ay0IDCimkF4wX2dWC0KKzatRnJmC80z8b37Hsi5/roSvkZUQ/bgw==}
 
@@ -26018,10 +26015,6 @@ packages:
   cbor@10.0.11:
     resolution: {integrity: sha512-vIwORDd/WyB8Nc23o2zNN5RrtFGlR6Fca61TtjkUXueI3Jf2DOZDl1zsshvBntZ3wZHBM9ztjnkXSmzQDaq3WA==}
     engines: {node: '>=20'}
-
-  cbor@9.0.2:
-    resolution: {integrity: sha512-JPypkxsB10s9QOWwa6zwPzqE1Md3vqpPc+cai4sAecuCsRyAtAl/pMyhPlMbT/xtPnm2dznJZYRLui57qiRhaQ==}
-    engines: {node: '>=16'}
 
   cborg@5.1.1:
     resolution: {integrity: sha512-BDbSRIp6XrQXkTc7g+DN0RB9RrDPTUfals2ecWUlt3juPLjbAvy/V72mJcXY0Ehu0Dq/3WpNCOCT68HUTbW+lw==}
@@ -27983,9 +27976,6 @@ packages:
 
   es6template@1.0.5:
     resolution: {integrity: sha512-WASLwPb/GoVFxESVJqpVpgUhrC3Z4mami74a2d2MsvYwicn8YkGSWGippd+l2ciSoPoymv4KNFYgDi3B4t7RGA==}
-
-  esbuild-plugin-import-pattern@0.1.0:
-    resolution: {integrity: sha512-BEOCNItVUIY1bdOvAed9QjdHpXIWCr8UT9CaBjYbim40A1GD6rxFOjIJj9UFyFv31ui7g/Euwzan+/EdfdfvZw==}
 
   esbuild-register@3.6.0:
     resolution: {integrity: sha512-H2/S7Pm8a9CL1uhp9OvjwrBh5Pvx0H8qVOxNu8Wed9Y7qv56MPtq+GGM8RJpq6glYJn9Wspr8uw7l55uyinNeg==}
@@ -42730,16 +42720,6 @@ snapshots:
       '@dfinity/principal': 2.4.1
       '@dfinity/utils': 2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
 
-  '@dfinity/nns@8.5.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/ledger-icp@2.6.13(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)(@dfinity/utils@2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)))(@dfinity/principal@2.4.1)(@dfinity/utils@2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))':
-    dependencies:
-      '@dfinity/agent': 2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
-      '@dfinity/candid': 2.4.1(@dfinity/principal@2.4.1)
-      '@dfinity/ledger-icp': 2.6.13(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)(@dfinity/utils@2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))
-      '@dfinity/principal': 2.4.1
-      '@dfinity/utils': 2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
-      '@noble/hashes': 1.8.0
-      randombytes: 2.1.0
-
   '@dfinity/principal@2.4.1':
     dependencies:
       '@noble/hashes': 1.8.0
@@ -54340,7 +54320,7 @@ snapshots:
 
   '@types/cbor@6.0.0':
     dependencies:
-      cbor: 9.0.2
+      cbor: 10.0.11
 
   '@types/chai@5.2.3':
     dependencies:
@@ -56245,21 +56225,6 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
 
-  '@zondax/ledger-live-icp@1.4.2':
-    dependencies:
-      '@dfinity/agent': 2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
-      '@dfinity/candid': 2.4.1(@dfinity/principal@2.4.1)
-      '@dfinity/identity-secp256k1': 2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
-      '@dfinity/ledger-icp': 2.6.13(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)(@dfinity/utils@2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))
-      '@dfinity/nns': 8.5.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/ledger-icp@2.6.13(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)(@dfinity/utils@2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)))(@dfinity/principal@2.4.1)(@dfinity/utils@2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))
-      '@dfinity/principal': 2.4.1
-      '@dfinity/utils': 2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
-      '@noble/hashes': 1.8.0
-      bignumber.js: 9.1.2
-      cbor: 10.0.11
-      esbuild-plugin-import-pattern: 0.1.0
-      invariant: 2.2.4
-
   '@zondax/ledger-mina-js@0.0.2':
     dependencies:
       '@zondax/ledger-js': 1.2.0
@@ -58050,10 +58015,6 @@ snapshots:
       lodash: 4.17.21
 
   cbor@10.0.11:
-    dependencies:
-      nofilter: 3.1.0
-
-  cbor@9.0.2:
     dependencies:
       nofilter: 3.1.0
 
@@ -60221,10 +60182,6 @@ snapshots:
       extend-shallow: 2.0.1
       get-value: 2.0.6
       sliced: 1.0.1
-
-  esbuild-plugin-import-pattern@0.1.0:
-    dependencies:
-      fast-glob: 3.3.2
 
   esbuild-register@3.6.0:
     dependencies:
