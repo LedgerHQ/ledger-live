@@ -5,7 +5,7 @@
     "declarationMap": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
-    "lib": ["es2020", "dom"],
+    "lib": ["es2022", "dom"],
     "outDir": "lib",
     "rootDir": "src",
     "types": ["node", "jest"]

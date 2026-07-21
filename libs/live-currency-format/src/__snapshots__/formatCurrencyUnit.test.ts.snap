@@ -168,8 +168,6 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Groestlcoin unit (GRS) 1`] = `"123.456.789,00000000- -GRS"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Groestlcoin unit (GRS) 2`] = `"123.456.789,00000000- -GRS"`;
-
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Hedera unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
@@ -209,8 +207,6 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Kusama unit (KSM) 1`] = `"12.345,678900000000- -KSM"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format LBRY unit (LBRY) 1`] = `"123.456.789,00000000- -LBRY"`;
-
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format LBRY unit (LBRY) 2`] = `"123.456.789,00000000- -LBRY"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -273,8 +269,6 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ontology unit (ONT) 1`] = `"123.456.789,00000000- -ONT"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Osmosis unit (Osmosis) 1`] = `"12.345.678.900,000000- -OSMO"`;
-
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Osmosis unit (Osmosis) 2`] = `"12.345.678.900,000000- -OSMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format POA unit (POA) 1`] = `"123.456.789,00000000- -POA"`;
 
@@ -576,8 +570,6 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Groestlcoin unit (GRS) 1`] = `"123,456,789.00000000- -GRS"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789.00000000- -GRS"`;
-
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Hedera unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
@@ -617,8 +609,6 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Kusama unit (KSM) 1`] = `"12,345.678900000000- -KSM"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format LBRY unit (LBRY) 1`] = `"123,456,789.00000000- -LBRY"`;
-
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format LBRY unit (LBRY) 2`] = `"123,456,789.00000000- -LBRY"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Linea Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -681,8 +671,6 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ontology unit (ONT) 1`] = `"123,456,789.00000000- -ONT"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Osmosis unit (Osmosis) 1`] = `"12,345,678,900.000000- -OSMO"`;
-
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Osmosis unit (Osmosis) 2`] = `"12,345,678,900.000000- -OSMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format POA unit (POA) 1`] = `"123,456,789.00000000- -POA"`;
 
@@ -984,8 +972,6 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Groestlcoin unit (GRS) 1`] = `"123.456.789,00000000- -GRS"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Groestlcoin unit (GRS) 2`] = `"123.456.789,00000000- -GRS"`;
-
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Hedera unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
@@ -1025,8 +1011,6 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Kusama unit (KSM) 1`] = `"12.345,678900000000- -KSM"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format LBRY unit (LBRY) 1`] = `"123.456.789,00000000- -LBRY"`;
-
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format LBRY unit (LBRY) 2`] = `"123.456.789,00000000- -LBRY"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -1089,8 +1073,6 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ontology unit (ONT) 1`] = `"123.456.789,00000000- -ONT"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Osmosis unit (Osmosis) 1`] = `"12.345.678.900,000000- -OSMO"`;
-
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Osmosis unit (Osmosis) 2`] = `"12.345.678.900,000000- -OSMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format POA unit (POA) 1`] = `"123.456.789,00000000- -POA"`;
 
@@ -1392,8 +1374,6 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Groestlcoin unit (GRS) 1`] = `"123 456 789,00000000- -GRS"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Groestlcoin unit (GRS) 2`] = `"123 456 789,00000000- -GRS"`;
-
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123 456 789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Hedera unit (HBAR) 1`] = `"123 456 789,00000000- -HBAR"`;
@@ -1433,8 +1413,6 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Kusama unit (KSM) 1`] = `"12 345,678900000000- -KSM"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format LBRY unit (LBRY) 1`] = `"123 456 789,00000000- -LBRY"`;
-
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format LBRY unit (LBRY) 2`] = `"123 456 789,00000000- -LBRY"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -1497,8 +1475,6 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ontology unit (ONT) 1`] = `"123 456 789,00000000- -ONT"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Osmosis unit (Osmosis) 1`] = `"12 345 678 900,000000- -OSMO"`;
-
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Osmosis unit (Osmosis) 2`] = `"12 345 678 900,000000- -OSMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format POA unit (POA) 1`] = `"123 456 789,00000000- -POA"`;
 
@@ -1800,8 +1776,6 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Groestlcoin unit (GRS) 1`] = `"123,456,789.00000000- -GRS"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789.00000000- -GRS"`;
-
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Hedera unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
@@ -1841,8 +1815,6 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Kusama unit (KSM) 1`] = `"12,345.678900000000- -KSM"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format LBRY unit (LBRY) 1`] = `"123,456,789.00000000- -LBRY"`;
-
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format LBRY unit (LBRY) 2`] = `"123,456,789.00000000- -LBRY"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Linea Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1905,8 +1877,6 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ontology unit (ONT) 1`] = `"123,456,789.00000000- -ONT"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Osmosis unit (Osmosis) 1`] = `"12,345,678,900.000000- -OSMO"`;
-
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Osmosis unit (Osmosis) 2`] = `"12,345,678,900.000000- -OSMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format POA unit (POA) 1`] = `"123,456,789.00000000- -POA"`;
 
@@ -2208,8 +2178,6 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Groestlcoin unit (GRS) 1`] = `"123,456,789.00000000- -GRS"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789.00000000- -GRS"`;
-
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Hedera unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
@@ -2249,8 +2217,6 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Kusama unit (KSM) 1`] = `"12,345.678900000000- -KSM"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format LBRY unit (LBRY) 1`] = `"123,456,789.00000000- -LBRY"`;
-
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format LBRY unit (LBRY) 2`] = `"123,456,789.00000000- -LBRY"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Linea Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -2313,8 +2279,6 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ontology unit (ONT) 1`] = `"123,456,789.00000000- -ONT"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Osmosis unit (Osmosis) 1`] = `"12,345,678,900.000000- -OSMO"`;
-
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Osmosis unit (Osmosis) 2`] = `"12,345,678,900.000000- -OSMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format POA unit (POA) 1`] = `"123,456,789.00000000- -POA"`;
 
@@ -2616,8 +2580,6 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Groestlcoin unit (GRS) 1`] = `"123.456.789,00000000- -GRS"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Groestlcoin unit (GRS) 2`] = `"123.456.789,00000000- -GRS"`;
-
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Hedera unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
@@ -2657,8 +2619,6 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Kusama unit (KSM) 1`] = `"12.345,678900000000- -KSM"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format LBRY unit (LBRY) 1`] = `"123.456.789,00000000- -LBRY"`;
-
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format LBRY unit (LBRY) 2`] = `"123.456.789,00000000- -LBRY"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2721,8 +2681,6 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ontology unit (ONT) 1`] = `"123.456.789,00000000- -ONT"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Osmosis unit (Osmosis) 1`] = `"12.345.678.900,000000- -OSMO"`;
-
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Osmosis unit (Osmosis) 2`] = `"12.345.678.900,000000- -OSMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format POA unit (POA) 1`] = `"123.456.789,00000000- -POA"`;
 
@@ -3024,8 +2982,6 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Groestlcoin unit (GRS) 1`] = `"123 456 789,00000000- -GRS"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Groestlcoin unit (GRS) 2`] = `"123 456 789,00000000- -GRS"`;
-
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123 456 789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Hedera unit (HBAR) 1`] = `"123 456 789,00000000- -HBAR"`;
@@ -3065,8 +3021,6 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Kusama unit (KSM) 1`] = `"12 345,678900000000- -KSM"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format LBRY unit (LBRY) 1`] = `"123 456 789,00000000- -LBRY"`;
-
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format LBRY unit (LBRY) 2`] = `"123 456 789,00000000- -LBRY"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -3129,8 +3083,6 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ontology unit (ONT) 1`] = `"123 456 789,00000000- -ONT"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Osmosis unit (Osmosis) 1`] = `"12 345 678 900,000000- -OSMO"`;
-
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Osmosis unit (Osmosis) 2`] = `"12 345 678 900,000000- -OSMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format POA unit (POA) 1`] = `"123 456 789,00000000- -POA"`;
 
@@ -3432,8 +3384,6 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Groestlcoin unit (GRS) 1`] = `"123.456.789,00000000- -GRS"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Groestlcoin unit (GRS) 2`] = `"123.456.789,00000000- -GRS"`;
-
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Hedera unit (HBAR) 1`] = `"123.456.789,00000000- -HBAR"`;
@@ -3473,8 +3423,6 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Kusama unit (KSM) 1`] = `"12.345,678900000000- -KSM"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format LBRY unit (LBRY) 1`] = `"123.456.789,00000000- -LBRY"`;
-
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format LBRY unit (LBRY) 2`] = `"123.456.789,00000000- -LBRY"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Linea Sepolia unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -3537,8 +3485,6 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ontology unit (ONT) 1`] = `"123.456.789,00000000- -ONT"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Osmosis unit (Osmosis) 1`] = `"12.345.678.900,000000- -OSMO"`;
-
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Osmosis unit (Osmosis) 2`] = `"12.345.678.900,000000- -OSMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format POA unit (POA) 1`] = `"123.456.789,00000000- -POA"`;
 
@@ -3840,8 +3786,6 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Groestlcoin unit (GRS) 1`] = `"123,456,789.00000000- -GRS"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789.00000000- -GRS"`;
-
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Hedera unit (HBAR) 1`] = `"123,456,789.00000000- -HBAR"`;
@@ -3881,8 +3825,6 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Kusama unit (KSM) 1`] = `"12,345.678900000000- -KSM"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format LBRY unit (LBRY) 1`] = `"123,456,789.00000000- -LBRY"`;
-
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format LBRY unit (LBRY) 2`] = `"123,456,789.00000000- -LBRY"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Linea Sepolia unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -3945,8 +3887,6 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ontology unit (ONT) 1`] = `"123,456,789.00000000- -ONT"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Osmosis unit (Osmosis) 1`] = `"12,345,678,900.000000- -OSMO"`;
-
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Osmosis unit (Osmosis) 2`] = `"12,345,678,900.000000- -OSMO"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format POA unit (POA) 1`] = `"123,456,789.00000000- -POA"`;
 
@@ -4248,8 +4188,6 @@ exports[`formatCurrencyUnit with default options should correctly format Gram un
 
 exports[`formatCurrencyUnit with default options should correctly format Groestlcoin unit (GRS) 1`] = `"123,456,789"`;
 
-exports[`formatCurrencyUnit with default options should correctly format Groestlcoin unit (GRS) 2`] = `"123,456,789"`;
-
 exports[`formatCurrencyUnit with default options should correctly format Hedera (Testnet) unit (HBAR) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Hedera unit (HBAR) 1`] = `"123,456,789"`;
@@ -4289,8 +4227,6 @@ exports[`formatCurrencyUnit with default options should correctly format Komodo 
 exports[`formatCurrencyUnit with default options should correctly format Kusama unit (KSM) 1`] = `"12,345.6"`;
 
 exports[`formatCurrencyUnit with default options should correctly format LBRY unit (LBRY) 1`] = `"123,456,789"`;
-
-exports[`formatCurrencyUnit with default options should correctly format LBRY unit (LBRY) 2`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Linea Sepolia unit (ETH) 1`] = `"0.0123456"`;
 
@@ -4353,8 +4289,6 @@ exports[`formatCurrencyUnit with default options should correctly format OP Sepo
 exports[`formatCurrencyUnit with default options should correctly format Ontology unit (ONT) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Osmosis unit (Osmosis) 1`] = `"12,345,678,900"`;
-
-exports[`formatCurrencyUnit with default options should correctly format Osmosis unit (Osmosis) 2`] = `"12,345,678,900"`;
 
 exports[`formatCurrencyUnit with default options should correctly format POA unit (POA) 1`] = `"123,456,789"`;
 
