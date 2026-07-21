@@ -97,10 +97,11 @@ export function runSwapWithDifferentSeedTest(
         swap.accountToDebit,
         swap.accountToCredit,
       );
+      const swapAmount = minAmount ? truncateSwapAmount(minAmount) : minAmount;
       await performSwapUntilQuoteSelectionStep(
         swap.accountToDebit,
         swap.accountToCredit,
-        minAmount,
+        swapAmount,
       );
       const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
@@ -109,7 +110,7 @@ export function runSwapWithDifferentSeedTest(
       if (errorMessage) {
         await app.swapLiveApp.checkErrorMessage(errorMessage);
       } else {
-        await app.swap.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount, errorMessage);
+        await app.swap.verifyAmountsAndAcceptSwapForDifferentSeed(swap, swapAmount, errorMessage);
         await app.swap.waitForSuccessAndContinue();
       }
     });
