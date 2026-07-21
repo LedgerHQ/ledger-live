@@ -61,13 +61,13 @@ export function initAppNetworkLogging(): void {
   if (initialized) return;
   initialized = true;
 
-  axios.interceptors.request.use(config => {
+  axios.interceptors.request.use(function (config) {
     (config as WithMetadata).metadata = { startTime: Date.now() };
     return config;
   });
 
   axios.interceptors.response.use(
-    (response: AxiosResponse) => {
+    function (response: AxiosResponse) {
       try {
         appNetworkLogStore.addNetworkLog(
           toNetworkLog(response.config as WithMetadata, response.status),
@@ -77,10 +77,14 @@ export function initAppNetworkLogging(): void {
       }
       return response;
     },
-    (error: AxiosError) => {
+    function (error: AxiosError) {
       try {
         appNetworkLogStore.addNetworkLog(
-          toNetworkLog(error.config as WithMetadata, error.response?.status, error.message),
+          toNetworkLog(
+            error.config as WithMetadata | undefined,
+            error.response?.status,
+            error.message,
+          ),
         );
       } catch {
         // Ignore logging errors: the interceptor must never fail the network call
