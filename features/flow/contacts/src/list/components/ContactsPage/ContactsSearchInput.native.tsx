@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { SearchInput } from "@ledgerhq/lumen-ui-rnative";
 
 type ContactsSearchInputProps = Readonly<{
@@ -12,12 +12,16 @@ export function ContactsSearchInput({
   value,
   onSearchQueryChange,
 }: ContactsSearchInputProps): React.JSX.Element {
+  const handleClear = useCallback(() => {
+    onSearchQueryChange("");
+  }, [onSearchQueryChange]);
+
   return (
     <SearchInput
       testID="contacts-search-input"
       value={value}
       onChangeText={onSearchQueryChange}
-      onClear={() => onSearchQueryChange("")}
+      onClear={handleClear}
       hideClearButton={false}
       placeholder={placeholder}
       accessibilityLabel={placeholder}
