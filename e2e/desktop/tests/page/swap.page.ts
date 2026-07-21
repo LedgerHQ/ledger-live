@@ -464,16 +464,30 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Wait for the to-account coin selector to be populated")
-  async waitForToAssetSelectorReady() {
-    const webview = await this.getWebView();
-    await webview.waitForFunction(
-      selectorTestId => {
-        const el = document.querySelector(`[data-testid='${selectorTestId}']`);
-        return Boolean(el?.textContent && el.textContent.trim() !== "Choose asset");
-      },
-      this.toAccountCoinSelector,
-      { timeout: 5_000 },
-    );
+  async waitForToAssetSelectorReady(timeout = 40_000) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const webview = await this.getWebView();
+      try {
+        await webview.waitForFunction(
+          selectorTestId => {
+            const el = document.querySelector(`[data-testid='${selectorTestId}']`);
+            return Boolean(el?.textContent && el.textContent.trim() !== "Choose asset");
+          },
+          this.toAccountCoinSelector,
+          { timeout },
+        );
+        return;
+      } catch (error) {
+        // The embedded swap widget can remount (new webview instance) once its default
+        // currency resolves; if that happens mid-poll, retry once against the fresh webview
+        // instead of failing on the now-stale reference.
+        if (attempt === 0 && webview.isClosed()) {
+          this._webviewPage = undefined;
+          continue;
+        }
+        throw error;
+      }
+    }
   }
 
   @step("Check currency to swap to contains $0")
