@@ -80,7 +80,7 @@ jobs:
       - name: Test libraries (no coverage)
         id: test-libs-no-coverage
         if: ${{ inputs.coverage == false }}
-        run: pnpm exec nx run-many -t test --projects=tag:scope:libs-non-ui --parallel=6
+        run: pnpm exec nx run-many -t test --projects=tag:scope:libs-non-ui --parallel=6 -- --runInBand=1
         shell: bash
 
       - name: Test libraries without coverage script & Process coverage files
