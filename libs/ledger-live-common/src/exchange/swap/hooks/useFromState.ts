@@ -48,7 +48,7 @@ export const useFromState = ({
       bridgeTransaction.setAccount(account as AccountLike, parentAccount);
       setFromState({
         ...selectorStateDefaultValues,
-        currency,
+        currency: currency as unknown as SwapSelectorStateType["currency"],
         account,
         parentAccount,
       });

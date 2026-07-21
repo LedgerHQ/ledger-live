@@ -81,7 +81,7 @@ export type CurrentAccountHistIDb = Record<string, string>;
 export type DAppTrackingData = {
   type: string;
   currency: string;
-  network: CryptoCurrency["id"];
+  network: string;
 };
 
 export type BroadcastTrackingData = {
@@ -90,7 +90,7 @@ export type BroadcastTrackingData = {
   partner?: string;
   sourceCurrency?: string;
   targetCurrency?: string;
-  network?: CryptoCurrency["id"];
+  network?: string;
 };
 
 export type AccountIdFormat = "uuid" | "encoded";

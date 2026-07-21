@@ -1,7 +1,7 @@
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import { createAction, getViewKeyExec, Request, State, type ViewKeyProgress } from "./index";
 import { viewKeyResolver } from "../../setup";
 
@@ -22,7 +22,7 @@ describe("getViewKey", () => {
 
   describe("getViewKeyExec", () => {
     const mockTransport = {} as Transport;
-    const mockCurrency = { id: "aleo" } as CryptoCurrency;
+    const mockCurrency = { id: "aleo" } as unknown as CryptoCurrency;
     const mockAccount1 = {
       id: "account1",
       freshAddressPath: "44'/1234'/0'/0/0",

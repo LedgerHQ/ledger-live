@@ -430,8 +430,17 @@ export function useWalletAPIServer({
 
       // 4. Gather all supported parent currencies
       const allCurrencies = listSupportedCurrencies().reduce<WalletAPICurrency[]>((acc, c) => {
-        if (isWalletAPISupportedCurrency(c) && !deactivatedCurrencyIds.has(c.id))
-          acc.push(currencyToWalletAPICurrency(c));
+        if (
+          isWalletAPISupportedCurrency(
+            c as unknown as Parameters<typeof isWalletAPISupportedCurrency>[0],
+          ) &&
+          !deactivatedCurrencyIds.has(c.id)
+        )
+          acc.push(
+            currencyToWalletAPICurrency(
+              c as unknown as Parameters<typeof currencyToWalletAPICurrency>[0],
+            ),
+          );
         return acc;
       }, []);
 
@@ -448,7 +457,11 @@ export function useWalletAPIServer({
       if (specificTokenIds.size > 0) {
         const tokenPromises = [...specificTokenIds].map(async tokenId => {
           const token = await getCryptoAssetsStore().findTokenById(tokenId);
-          return token ? currencyToWalletAPICurrency(token) : null;
+          return token
+            ? currencyToWalletAPICurrency(
+                token as unknown as Parameters<typeof currencyToWalletAPICurrency>[0],
+              )
+            : null;
         });
         const resolvedTokens = await Promise.all(tokenPromises);
         specificTokens.push(...resolvedTokens.filter((t): t is WalletAPICurrency => t !== null));

@@ -95,7 +95,7 @@ describe("swap/utils/getAccountTuplesForCurrency", () => {
       contractAddress: "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
       parentCurrencyId: "ethereum",
       tokenType: "erc20" as const,
-    });
+    }) as unknown as TokenCurrency;
 
     test("returns correct parent accounts including a new subAccount when a TokenCurrency is provided", () => {
       const ethAccounts = [

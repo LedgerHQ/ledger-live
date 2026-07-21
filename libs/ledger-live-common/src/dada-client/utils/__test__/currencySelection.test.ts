@@ -41,7 +41,10 @@ describe("currencySelection", () => {
     });
 
     it("should return exact match when currency.id equals metaCurrencyId", () => {
-      const data = { ...mockBitcoinAssetsData, pagination: {} } as AssetsDataWithPagination;
+      const data = {
+        ...mockBitcoinAssetsData,
+        pagination: {},
+      } as unknown as AssetsDataWithPagination;
       const result = selectCurrencyForMetaId("bitcoin", data);
 
       expect(result).toBeDefined();
@@ -61,7 +64,7 @@ describe("currencySelection", () => {
     });
 
     it("should fall back to first available currency when no CryptoCurrency exists", () => {
-      const data = { ...mockUsdcAssetsData, pagination: {} } as AssetsDataWithPagination;
+      const data = { ...mockUsdcAssetsData, pagination: {} } as unknown as AssetsDataWithPagination;
       const result = selectCurrencyForMetaId("usdc", data);
 
       expect(result).toBeDefined();
@@ -69,7 +72,10 @@ describe("currencySelection", () => {
     });
 
     it("prefers the ERC-20 token over a same-named L2 chain when their tickers differ", () => {
-      const data = { ...mockArbitrumTokenAssetsData, pagination: {} } as AssetsDataWithPagination;
+      const data = {
+        ...mockArbitrumTokenAssetsData,
+        pagination: {},
+      } as unknown as AssetsDataWithPagination;
       const result = selectCurrencyForMetaId("arbitrum", data);
 
       expect(result).toBeDefined();

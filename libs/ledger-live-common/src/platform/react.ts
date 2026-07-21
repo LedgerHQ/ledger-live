@@ -89,8 +89,17 @@ export function useListPlatformCurrencies(
 
       // 1. Gather all supported parent currencies
       const allCurrencies = listSupportedCurrencies().reduce<PlatformCurrency[]>((acc, c) => {
-        if (isPlatformSupportedCurrency(c) && !deactivatedCurrencyIds.has(c.id))
-          acc.push(currencyToPlatformCurrency(c));
+        if (
+          isPlatformSupportedCurrency(
+            c as unknown as Parameters<typeof isPlatformSupportedCurrency>[0],
+          ) &&
+          !deactivatedCurrencyIds.has(c.id)
+        )
+          acc.push(
+            currencyToPlatformCurrency(
+              c as unknown as Parameters<typeof currencyToPlatformCurrency>[0],
+            ),
+          );
         return acc;
       }, []);
 

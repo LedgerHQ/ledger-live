@@ -325,7 +325,7 @@ export const handlers = ({
           exchange = {
             fromAccount,
             fromParentAccount,
-            fromCurrency: getCurrencyForAccount(fromAccount),
+            fromCurrency: getCurrencyForAccount(fromAccount) as unknown as CryptoOrTokenCurrency,
             toAccount: newTokenAccount ? newTokenAccount : toAccount,
             toParentAccount,
             toCurrency,
@@ -334,7 +334,7 @@ export const handlers = ({
           exchange = {
             fromAccount,
             fromParentAccount,
-            fromCurrency: getCurrencyForAccount(fromAccount),
+            fromCurrency: getCurrencyForAccount(fromAccount) as unknown as CryptoOrTokenCurrency,
           };
         }
 
@@ -866,10 +866,12 @@ async function extractSwapStartParam(
     exchange: {
       fromAccount,
       fromParentAccount,
-      fromCurrency: getCurrencyForAccount(fromAccount),
+      fromCurrency: getCurrencyForAccount(fromAccount) as unknown as CryptoOrTokenCurrency,
       toAccount: newTokenAccount ? newTokenAccount : toAccount,
       toParentAccount: toParentAccount,
-      toCurrency: getCurrencyForAccount(newTokenAccount ? newTokenAccount : toAccount),
+      toCurrency: getCurrencyForAccount(
+        newTokenAccount ? newTokenAccount : toAccount,
+      ) as unknown as CryptoOrTokenCurrency,
     },
   };
 }
@@ -970,10 +972,12 @@ async function getToCurrency(
       tokenAddress,
       "solana",
     );
-    if (splTokenCurrency && splTokenCurrency.ticker === currencyTo) return splTokenCurrency;
+    if (splTokenCurrency && splTokenCurrency.ticker === currencyTo)
+      return splTokenCurrency as unknown as CryptoOrTokenCurrency;
   }
 
-  return newTokenAccount?.token ?? getCurrencyForAccount(toAccount);
+  return (newTokenAccount?.token ??
+    getCurrencyForAccount(toAccount)) as unknown as CryptoOrTokenCurrency;
 }
 
 interface StrategyParams {

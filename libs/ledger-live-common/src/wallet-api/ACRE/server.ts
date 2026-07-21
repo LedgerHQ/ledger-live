@@ -122,12 +122,14 @@ async function findAcreToken(
   let foundToken: TokenCurrency | undefined;
   // Try to find token by contract address first (if provided)
   if (tokenContractAddress) {
-    foundToken = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+    foundToken = (await getCryptoAssetsStore().findTokenByAddressInCurrency(
       tokenContractAddress,
       "ethereum",
-    );
+    )) as unknown as TokenCurrency | undefined;
   } else if (tokenTicker) {
-    foundToken = await getCryptoAssetsStore().findTokenById(tokenTicker.toLowerCase());
+    foundToken = (await getCryptoAssetsStore().findTokenById(
+      tokenTicker.toLowerCase(),
+    )) as unknown as TokenCurrency | undefined;
   }
   if (!foundToken) {
     throw new Error(

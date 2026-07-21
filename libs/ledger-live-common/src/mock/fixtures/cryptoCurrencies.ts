@@ -6,8 +6,8 @@ import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
   return {
     type: "CryptoCurrency",
-    id: "testCoinId" as string,
-    coinType: 8008 as number,
+    id: "testCoinId",
+    coinType: 8008,
     name: "MyCoin",
     managerAppName: "MyCoin",
     ticker: "MYC",
@@ -33,11 +33,11 @@ export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
         token: "https://mycoinexplorer.com/token/$contractAddress/?a=$address",
       },
     ],
-  };
+  } as unknown as CryptoCurrency;
 }
 
 const defaultEthCryptoFamily = CRYPTO_CURRENCIES_REGISTRY["ethereum"];
-const defaultERC20USDTToken: TokenCurrency = {
+const defaultERC20USDTToken = {
   type: "TokenCurrency",
   id: "ethereum/erc20/usd_tether__erc20_",
   name: "Tether USD (ERC-20)",
@@ -46,7 +46,7 @@ const defaultERC20USDTToken: TokenCurrency = {
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
   parentCurrencyId: "ethereum",
   tokenType: "erc20",
-};
+} as unknown as TokenCurrency;
 
 export function createFixtureTokenAccount(
   id = "00",

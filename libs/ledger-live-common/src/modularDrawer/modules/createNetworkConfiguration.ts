@@ -80,7 +80,7 @@ export function useNetworkConfiguration(
       ...asset,
       ...rightResults[rightElement]?.[i],
       ...leftResults[leftElement]?.[i],
-    };
+    } as unknown as NetworksWithComponents;
   });
 
   return sortNetworks(merged, leftElement, rightElement);

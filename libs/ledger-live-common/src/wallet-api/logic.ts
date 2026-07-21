@@ -656,7 +656,7 @@ export async function completeExchangeLogic(
   const exchange = {
     fromAccount,
     fromParentAccount: fromAccount !== fromParentAccount ? fromParentAccount : undefined,
-    fromCurrency: getCurrencyForAccount(fromAccount),
+    fromCurrency: getCurrencyForAccount(fromAccount) as unknown as CryptoOrTokenCurrency,
     toAccount: newTokenAccount ? newTokenAccount : toAccount,
     toParentAccount: newTokenAccount ? toAccount : toParentAccount,
     toCurrency: toAccount ? getToCurrency(toAccount, newTokenAccount) : undefined,
@@ -715,7 +715,9 @@ export async function completeExchangeLogic(
 }
 
 function getToCurrency(account: AccountLike, tokenAccount?: TokenAccount): CryptoOrTokenCurrency {
-  return tokenAccount ? getCurrencyForAccount(tokenAccount) : getCurrencyForAccount(account);
+  return (tokenAccount
+    ? getCurrencyForAccount(tokenAccount)
+    : getCurrencyForAccount(account)) as unknown as CryptoOrTokenCurrency;
 }
 
 type StorageGetArgs = {

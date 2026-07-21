@@ -26,7 +26,7 @@ function convertApiAssets(
       } else {
         result[key] = {
           type: "CryptoCurrency" as const,
-          id: asset.id as string,
+          id: asset.id,
           name: asset.name,
           ticker: asset.ticker,
           units: asset.units,
@@ -40,7 +40,7 @@ function convertApiAssets(
           disableCountervalue: asset.disableCountervalue,
           supportsSegwit: asset.hasSegwit,
           ...(asset.chainId ? { ethereumLikeInfo: { chainId: parseInt(asset.chainId, 10) } } : {}),
-        };
+        } as unknown as CryptoOrTokenCurrency;
       }
     }
   }

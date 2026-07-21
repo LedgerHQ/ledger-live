@@ -72,7 +72,7 @@ async function estimateFiatValuesForPresets(params: {
         const estimatedFees = status.estimatedFees ?? new BigNumber(0);
 
         const countervalue = params.calculateCountervalue(
-          params.mainAccount.currency,
+          params.mainAccount.currency as unknown as Currency,
           estimatedFees,
         );
         const fiatValue = formatCountervalueAsFiat(params.fiatUnit, countervalue, params.locale);
@@ -153,7 +153,10 @@ export function useFeePresetFiatValuesCore({
 
     const next: Record<string, string | null> = {};
     for (const option of feePresetOptions) {
-      const countervalue = calculateCountervalue(mainAccount.currency, option.amount);
+      const countervalue = calculateCountervalue(
+        mainAccount.currency as unknown as Currency,
+        option.amount,
+      );
       next[option.id] = formatCountervalueAsFiat(fiatUnit, countervalue, locale);
     }
     return next;

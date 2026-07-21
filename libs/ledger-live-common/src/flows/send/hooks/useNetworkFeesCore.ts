@@ -5,7 +5,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Currency, Unit } from "@domain/entity-currency";
+import type { CryptoOrTokenCurrency, Currency, Unit } from "@domain/entity-currency";
 import { sendFeatures } from "../../../bridge/descriptor/send/features";
 import type { FeePresetOption } from "../../../bridge/descriptor/types";
 import { useAccountBridge } from "../../../bridge/useAccountBridge";
@@ -69,11 +69,12 @@ export function useNetworkFeesCore({
     [account, parentAccount],
   );
   const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
+  const domainAccountCurrency = accountCurrency as unknown as CryptoOrTokenCurrency;
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
 
   const presetEstimation = useMemo(
-    () => getFeePresetEstimationConfig(accountCurrency, transaction),
-    [accountCurrency, transaction],
+    () => getFeePresetEstimationConfig(domainAccountCurrency, transaction),
+    [domainAccountCurrency, transaction],
   );
 
   const fiatByPreset = useFeePresetFiatValuesCore({
@@ -92,20 +93,23 @@ export function useNetworkFeesCore({
   });
 
   const legendByPreset = useMemo(
-    () => buildFeePresetLegendMap(accountCurrency, presetEstimation.feePresetOptions),
-    [accountCurrency, presetEstimation.feePresetOptions],
+    () => buildFeePresetLegendMap(domainAccountCurrency, presetEstimation.feePresetOptions),
+    [domainAccountCurrency, presetEstimation.feePresetOptions],
   );
 
-  const feeCurrencyAccountId = sendFeatures.getFeeCurrencyAccountId(accountCurrency, transaction);
+  const feeCurrencyAccountId = sendFeatures.getFeeCurrencyAccountId(
+    domainAccountCurrency,
+    transaction,
+  );
   const { displayUnit, displayCurrency } = useMemo(
     () =>
       resolveFeeDisplayContext({
         mainAccount,
-        accountCurrency,
+        accountCurrency: domainAccountCurrency,
         accountUnit,
         feeCurrencyAccountId,
       }),
-    [accountCurrency, accountUnit, feeCurrencyAccountId, mainAccount],
+    [domainAccountCurrency, accountUnit, feeCurrencyAccountId, mainAccount],
   );
 
   const estimatedFees = useMemo(

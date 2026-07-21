@@ -1,6 +1,6 @@
 import { handlers } from "./server";
 import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import { CryptoCurrencySchema, TokenCurrencySchema } from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 import { AppPlatform, AppBranch, Visibility } from "../types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
@@ -71,7 +71,7 @@ const mockManifest = {
   },
 };
 
-const mockEthereumCurrency: CryptoCurrency = {
+const mockEthereumCurrency = CryptoCurrencySchema.parse({
   type: "CryptoCurrency",
   id: "ethereum",
   coinType: 60,
@@ -93,9 +93,9 @@ const mockEthereumCurrency: CryptoCurrency = {
   keywords: ["eth", "ethereum"],
   explorerViews: [],
   explorerId: "eth",
-};
+});
 
-const mockTokenCurrency: TokenCurrency = {
+const mockTokenCurrency = TokenCurrencySchema.parse({
   type: "TokenCurrency",
   id: "ethereum/erc20/acre_btc",
   contractAddress: "0x1234567890123456789012345678901234567890",
@@ -110,7 +110,7 @@ const mockTokenCurrency: TokenCurrency = {
       magnitude: 8,
     },
   ],
-};
+});
 
 const mockAccount: Account = {
   type: "Account",

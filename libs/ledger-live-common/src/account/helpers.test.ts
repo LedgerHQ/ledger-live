@@ -11,7 +11,7 @@ const mockGetCryptoAssetsStore = getCryptoAssetsStore as jest.MockedFunction<
   typeof getCryptoAssetsStore
 >;
 
-const mockEthereumCurrency: CryptoCurrency = {
+const mockEthereumCurrency = {
   id: "ethereum",
   name: "Ethereum",
   ticker: "ETH",
@@ -29,9 +29,9 @@ const mockEthereumCurrency: CryptoCurrency = {
       magnitude: 18,
     },
   ],
-};
+} as unknown as CryptoCurrency;
 
-const mockUsdtToken: TokenCurrency = {
+const mockUsdtToken = {
   id: "ethereum/erc20/usdt",
   type: "TokenCurrency",
   name: "Tether USD",
@@ -46,9 +46,9 @@ const mockUsdtToken: TokenCurrency = {
       magnitude: 6,
     },
   ],
-};
+} as unknown as TokenCurrency;
 
-const mockUsdcToken: TokenCurrency = {
+const mockUsdcToken = {
   id: "ethereum/erc20/usdc",
   type: "TokenCurrency",
   name: "USD Coin",
@@ -63,9 +63,9 @@ const mockUsdcToken: TokenCurrency = {
       magnitude: 6,
     },
   ],
-};
+} as unknown as TokenCurrency;
 
-const mockMaticUsdtToken: TokenCurrency = {
+const mockMaticUsdtToken = {
   id: "polygon/erc20/usdt",
   type: "TokenCurrency",
   name: "Tether USD (Polygon)",
@@ -80,7 +80,7 @@ const mockMaticUsdtToken: TokenCurrency = {
       magnitude: 6,
     },
   ],
-};
+} as unknown as TokenCurrency;
 
 describe("filterAccountsExcludingBlacklisted", () => {
   const ethAccount = genAccount("eth", { currency: mockEthereumCurrency });

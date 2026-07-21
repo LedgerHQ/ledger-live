@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrencySchema } from "@domain/entity-currency";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getCryptoCurrencyById } from "../../currencies/index";
 import {
@@ -11,7 +11,7 @@ import {
 
 const eth = getCryptoCurrencyById("ethereum");
 
-const usdt: TokenCurrency = {
+const usdt = TokenCurrencySchema.parse({
   type: "TokenCurrency",
   id: "ethereum/erc20/usd_tether__erc20_",
   parentCurrencyId: eth.id,
@@ -21,7 +21,7 @@ const usdt: TokenCurrency = {
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
   units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
   disableCountervalue: false,
-};
+});
 
 const ethAccountId = "js:2:ethereum:0xabc:";
 const tokenAccountId = `${ethAccountId}+${usdt.id}`;

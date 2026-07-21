@@ -9,7 +9,7 @@ export const mockScrollCryptoCurrency = getCryptoCurrencyById("scroll");
 export const mockInjectiveCryptoCurrency = getCryptoCurrencyById("injective");
 export const mockBscCryptoCurrency = getCryptoCurrencyById("bsc");
 
-export const arbitrumToken: TokenCurrency = {
+export const arbitrumToken = {
   type: "TokenCurrency",
   id: "arbitrum/erc20/arbitrum",
   contractAddress: "0x912CE59144191C1204E64559FE8253a0e49E6548",
@@ -24,8 +24,8 @@ export const arbitrumToken: TokenCurrency = {
       magnitude: 18,
     },
   ],
-};
-export const usdcToken: TokenCurrency = {
+} as unknown as TokenCurrency;
+export const usdcToken = {
   type: "TokenCurrency",
   id: "ethereum/erc20/usd__coin",
   contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
@@ -40,9 +40,9 @@ export const usdcToken: TokenCurrency = {
       magnitude: 6,
     },
   ],
-};
+} as unknown as TokenCurrency;
 
-export const maticEth: TokenCurrency = {
+export const maticEth = {
   type: "TokenCurrency" as const,
   id: "ethereum/erc20/matic",
   ledgerSignature: "",
@@ -60,9 +60,9 @@ export const maticEth: TokenCurrency = {
       magnitude: 18,
     },
   ],
-};
+} as unknown as TokenCurrency;
 
-export const maticBsc: TokenCurrency = {
+export const maticBsc = {
   type: "TokenCurrency" as const,
   id: "bsc/bep20/matic_token",
   ledgerSignature: "",
@@ -80,7 +80,7 @@ export const maticBsc: TokenCurrency = {
       magnitude: 18,
     },
   ],
-};
+} as unknown as TokenCurrency;
 export const findCryptoCurrencyById = (id: string) =>
   [mockBtcCryptoCurrency, mockEthCryptoCurrency, mockArbitrumCryptoCurrency].find(a => a.id === id);
 export const getTokenOrCryptoCurrencyById = async (id: string) =>

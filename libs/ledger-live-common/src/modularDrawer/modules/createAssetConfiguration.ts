@@ -47,11 +47,11 @@ export function useAssetConfiguration(
     marketTrend: useLeftMarketTrendModule(leftElement === "marketTrend" ? assets : [], options),
   };
 
-  const merged = assets.map<AssetWithComponents>((asset, i) => ({
+  const merged = assets.map((asset, i) => ({
     ...asset,
     ...rightResults[rightElement]?.[i],
     ...leftResults[leftElement ?? ""]?.[i],
-  }));
+  })) as AssetWithComponents[];
 
   return sortAssets(merged, rightElement);
 }

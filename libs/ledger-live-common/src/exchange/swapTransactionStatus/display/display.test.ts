@@ -31,7 +31,7 @@ const ethereum = getCryptoCurrencyById("ethereum");
 const polygon = getCryptoCurrencyById("polygon");
 const ton = getCryptoCurrencyById("ton");
 const hedera = getCryptoCurrencyById("hedera");
-const usdcPolygon: TokenCurrency = {
+const usdcPolygon = {
   type: "TokenCurrency",
   id: "polygon/erc20/usd_coin",
   parentCurrencyId: polygon.id,
@@ -46,7 +46,7 @@ const usdcPolygon: TokenCurrency = {
       magnitude: 6,
     },
   ],
-};
+} as unknown as TokenCurrency;
 
 function normalizeSpaces(value: string | undefined): string | undefined {
   return value?.replace(/\u00a0/g, " ");

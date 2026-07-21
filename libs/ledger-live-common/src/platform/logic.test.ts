@@ -735,7 +735,7 @@ function createTokenCurrency(): TokenCurrency {
     name: "",
     ticker: "",
     units: [],
-  };
+  } as unknown as TokenCurrency;
 }
 
 function createRawEtherumTransaction(): RawPlatformTransaction {

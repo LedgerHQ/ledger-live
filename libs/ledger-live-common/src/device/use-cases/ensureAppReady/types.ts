@@ -1,5 +1,5 @@
 import type { DeviceId } from "@domain/entity-client-identity";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Account, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { FlowName } from "../../../device-action/utils";

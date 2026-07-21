@@ -145,7 +145,10 @@ export function useCustomFeesViewModelCore({
     () => getMainAccount(account, parentAccount ?? undefined),
     [account, parentAccount],
   );
-  const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
+  const accountCurrency = useMemo(
+    () => getAccountCurrency(mainAccount) as unknown as CryptoOrTokenCurrency,
+    [mainAccount],
+  );
   const fiatUnit = counterValueCurrency.units[0];
 
   const customFeeConfig = useMemo(() => sendFeatures.getCustomFeeConfig(currency), [currency]);

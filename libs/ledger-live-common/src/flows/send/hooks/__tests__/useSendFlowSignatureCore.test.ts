@@ -62,7 +62,7 @@ const createTokenAccount = (): AccountLike =>
     id: "ethereum-account+usdt",
     token: tokenCurrency,
     parentId: "ethereum-account",
-  }) as AccountLike;
+  }) as unknown as AccountLike;
 
 const createTransaction = (overrides?: Partial<Transaction>): Transaction =>
   ({

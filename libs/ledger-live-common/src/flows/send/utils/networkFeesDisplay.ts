@@ -26,7 +26,9 @@ export function resolveFeeDisplayContext(params: {
 
   return {
     displayUnit: feeCurrencySubAccount?.token.units[0] ?? params.accountUnit,
-    displayCurrency: feeCurrencySubAccount?.token ?? params.accountCurrency,
+    displayCurrency:
+      (feeCurrencySubAccount?.token as unknown as CryptoOrTokenCurrency | undefined) ??
+      params.accountCurrency,
   };
 }
 

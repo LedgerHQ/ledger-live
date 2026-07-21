@@ -11,19 +11,23 @@ export const FIAT_CURRENCY_MAGNITUDE = 2;
 export const ETH_FIAT_CONVERSION = 4589;
 export const BTC_FIAT_CONVERSION = 45000;
 
-export const ethereumCurrency = createFixtureCryptoCurrency("ethereum");
-ethereumCurrency.id = "ethereum";
-ethereumCurrency.name = "Ethereum";
-ethereumCurrency.ticker = "ETH";
+export const ethereumCurrency = {
+  ...createFixtureCryptoCurrency("ethereum"),
+  id: "ethereum",
+  name: "Ethereum",
+  ticker: "ETH",
+} as unknown as CryptoCurrency;
 ethereumCurrency.units[0].magnitude = 18;
 
-export const bitcoinCurrency = createFixtureCryptoCurrency("bitcoin");
-bitcoinCurrency.id = "bitcoin";
-bitcoinCurrency.name = "Bitcoin";
-bitcoinCurrency.ticker = "BTC";
+export const bitcoinCurrency = {
+  ...createFixtureCryptoCurrency("bitcoin"),
+  id: "bitcoin",
+  name: "Bitcoin",
+  ticker: "BTC",
+} as unknown as CryptoCurrency;
 bitcoinCurrency.units[0].magnitude = 8;
 
-export const mockFiatCurrency: FiatCurrency = {
+export const mockFiatCurrency = {
   type: "FiatCurrency",
   ticker: "USD",
   name: "US Dollar",
@@ -37,7 +41,7 @@ export const mockFiatCurrency: FiatCurrency = {
       prefixCode: true,
     },
   ],
-};
+} as unknown as FiatCurrency;
 
 export const makeUsdcToken = (
   parentCurrency: CryptoCurrency,
@@ -56,7 +60,7 @@ export const makeUsdcToken = (
     ticker: "USDC",
     name,
     units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
-  };
+  } as unknown as TokenCurrency;
 };
 
 const counterValuesCacheEntry = (conversion: number) => ({

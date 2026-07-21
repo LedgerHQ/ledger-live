@@ -1,3 +1,5 @@
+import type { AssetsDataWithPagination } from "../state-manager/types";
+
 const mockInjectiveCurrency = {
   type: "CryptoCurrency" as const,
   id: "injective",
@@ -85,7 +87,7 @@ export const mockAssetsDataWithPagination = {
   pagination: {
     nextCursor: "cursor-1",
   },
-};
+} as unknown as AssetsDataWithPagination;
 
 // Bitcoin mock data
 const mockBitcoinCurrency = {

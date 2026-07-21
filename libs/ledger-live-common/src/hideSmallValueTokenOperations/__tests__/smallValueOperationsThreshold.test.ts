@@ -217,9 +217,12 @@ describe("smallValueOperationsThreshold", () => {
       units: [{ magnitude: 10 }],
     } as CryptoCurrency;
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const tokenAccount = { type: "TokenAccount", token: mockToken } as AccountLike;
+    const tokenAccount = { type: "TokenAccount", token: mockToken } as unknown as AccountLike;
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const regularAccount = { type: "Account", currency: mockNativeCurrency } as AccountLike;
+    const regularAccount = {
+      type: "Account",
+      currency: mockNativeCurrency,
+    } as unknown as AccountLike;
 
     const buildOp = (type: string, value: BigNumber): Operation =>
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

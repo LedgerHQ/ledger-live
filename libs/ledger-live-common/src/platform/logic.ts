@@ -19,6 +19,7 @@ import { getAccountBridge } from "../bridge/index";
 import { Transaction } from "../coin-modules/transaction-types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { Exchange } from "../exchange/types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
@@ -202,8 +203,10 @@ export async function completeExchangeLogic(
     fromParentAccount,
     toAccount,
     toParentAccount,
-    fromCurrency: getCurrencyForAccount(fromAccount),
-    toCurrency: toAccount ? getCurrencyForAccount(toAccount) : undefined,
+    fromCurrency: getCurrencyForAccount(fromAccount) as unknown as CryptoOrTokenCurrency,
+    toCurrency: toAccount
+      ? (getCurrencyForAccount(toAccount) as unknown as CryptoOrTokenCurrency)
+      : undefined,
   };
 
   const accountBridge = await getAccountBridge(fromAccount, fromParentAccount);
