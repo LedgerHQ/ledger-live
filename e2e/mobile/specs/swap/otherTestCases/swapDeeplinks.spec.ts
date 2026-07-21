@@ -11,10 +11,11 @@ const USDT_ACCOUNT_ID = "84024965-a385-52d5-90cd-38dfc8bab5e9";
 
 const USDT_TOKEN_ID = "ethereum/erc20/usd_tether__erc20_";
 
-// On a fresh session (no prior swap), the live app defaults to the highest
-// market-cap assets: BTC for send, ETH for receive.
+// On a fresh session (no prior swap), the live app defaults the send field
+// to the highest market-cap asset (BTC); the receive field has no default
+// and shows the "Choose asset" placeholder until a token is selected.
 const DEFAULT_FROM = "BTC";
-const DEFAULT_TO = "ETH";
+const DEFAULT_TO = "";
 
 setTeamOwner(Team.SWAP);
 $TmsLink("B2CQA-4152");
