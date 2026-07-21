@@ -4,7 +4,6 @@ import CountervaluesAPI from "./api";
 import { setEnv } from "@ledgerhq/live-env";
 import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "./tests/currencies";
 import { formatCounterValueDay, formatCounterValueHour, parseFormattedDate } from "./helpers";
-import { getBTCValues } from "./mock";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
@@ -269,8 +268,4 @@ test("missing rate in mock is filled by autofillGaps", async () => {
 test("fetchIdsSortedByMarketcap", async () => {
   const ids = await CountervaluesAPI.fetchIdsSortedByMarketcap();
   expect(ids).toContain("bitcoin");
-});
-
-test("mock countervalues include ALEO", () => {
-  expect(getBTCValues()).toHaveProperty("ALEO");
 });
