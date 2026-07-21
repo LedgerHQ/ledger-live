@@ -170,11 +170,9 @@ export class BorrowPage extends WebViewAppPage {
   @step("Dismiss intro modal if shown and wait for simulate screen")
   async dismissIntroModalIfVisible() {
     const webview = await this.getWebView();
-    const introModal = this.introModal(webview);
-    if (await introModal.isVisible()) {
-      await expect(this.introModalHeading(webview)).toBeVisible();
-      await this.simulateMyLoanBtn(webview).click();
-      await expect(introModal).toBeHidden();
+    if (await this.introModal(webview).isVisible()) {
+      await this.clickSimulateMyLoan();
+      return;
     }
     await expect(this.enterLoanAmountHeading(webview)).toBeVisible();
   }

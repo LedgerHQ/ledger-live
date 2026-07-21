@@ -3,10 +3,7 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-import {
-  liveDataCommand,
-  liveDataWithAddressCommand,
-} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
   FF_BORROW_DESKTOP,
@@ -33,10 +30,8 @@ const coldStartTags = [
 test.describe("Borrow cold start", () => {
   test.use({
     teamOwner: Team.EARN,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: coldStartAccount.currency.speculosApp,
-    cliCommands: [liveDataCommand(coldStartAccount)],
-    speculosForSetupOnly: true,
+    // Isolated seed with a single ETH account — never used for borrow, so cold start is stable in CI.
+    userdata: "speculos-x-other-account",
     featureFlags: {
       ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
       ...FF_BORROW_DESKTOP,
