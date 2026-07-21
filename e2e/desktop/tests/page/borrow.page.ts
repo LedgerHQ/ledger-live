@@ -161,8 +161,15 @@ export class BorrowPage extends WebViewAppPage {
       return;
     }
 
+    const introModal = this.introModal(webview);
     const getNewLoanButton = this.getNewLoanBtn(webview);
-    await expect(getNewLoanButton).toBeVisible();
+    await expect(introModal.or(getNewLoanButton)).toBeVisible({ timeout: 60_000 });
+
+    if (await introModal.isVisible()) {
+      await this.clickSimulateMyLoan();
+      return;
+    }
+
     await getNewLoanButton.click();
     await expect(webview).toHaveURL(this.simulateLoanRoutePattern);
   }

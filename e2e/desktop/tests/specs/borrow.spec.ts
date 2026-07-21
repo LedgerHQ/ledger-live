@@ -2,7 +2,6 @@ import test from "tests/fixtures/common";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
@@ -15,17 +14,7 @@ const coldStartAccount = Account.ETH_1;
 const openLoanAccount = Account.ETH_4;
 const LOAN_AMOUNT = "1";
 
-const coldStartFamily = getFamilyByCurrencyId(coldStartAccount.currency.id);
-const coldStartTags = [
-  "@NanoSP",
-  "@LNS",
-  "@NanoX",
-  "@Stax",
-  "@Flex",
-  "@NanoGen5",
-  `@${coldStartAccount.currency.id}`,
-  ...(coldStartFamily ? [`@family-${coldStartFamily}`] : []),
-];
+const coldStartTags = buildTags({ currencyId: coldStartAccount.currency.id });
 
 test.describe("Borrow cold start", () => {
   test.use({
