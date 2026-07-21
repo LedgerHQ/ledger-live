@@ -8,6 +8,11 @@ type PageViewProps = PageViewModelResult & {
   readonly children: React.ReactNode;
 };
 
+const getPageTestId = (pathname: string): string => {
+  const path = pathname.replace(/^\/+/, "");
+  return `page-view-${path || "dashboard"}`;
+};
+
 /**
  * PageView
  * Main layout component that renders TopBar and content area
@@ -18,7 +23,7 @@ export const PageView = memo(function PageView({
   shouldRenderRightPanel,
 }: PageViewProps) {
   return (
-    <div className="relative flex flex-1 flex-col min-w-0">
+    <div className="relative flex flex-1 flex-col min-w-0" data-testid={getPageTestId(pathname)}>
       <Wallet40TopBar />
 
       <Wallet40Layout
