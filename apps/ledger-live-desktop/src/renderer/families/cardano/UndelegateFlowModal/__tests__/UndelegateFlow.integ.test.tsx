@@ -51,6 +51,7 @@ const getMockAccountData = (
     ticker: "LEDGER",
     name: "Ledger",
     dRepHex,
+    dRepName: undefined,
     deposit: "2000000",
   };
 
