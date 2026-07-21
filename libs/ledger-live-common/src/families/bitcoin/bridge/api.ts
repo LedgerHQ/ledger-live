@@ -1,7 +1,7 @@
 import { FeeEstimationFailed } from "@ledgerhq/errors";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { blockchainBaseURL } from "@ledgerhq/coin-bitcoin/explorer";

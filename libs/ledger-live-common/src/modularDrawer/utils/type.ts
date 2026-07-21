@@ -1,5 +1,5 @@
 import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { CryptoOrTokenCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency, Currency, Unit } from "@domain/entity-currency";
 import { AccountLike } from "@ledgerhq/types-live";
 import type { ComponentType, ReactNode, ReactElement } from "react";
 import { EnhancedModularDrawerConfiguration } from "../../wallet-api/ModularDrawer/types";

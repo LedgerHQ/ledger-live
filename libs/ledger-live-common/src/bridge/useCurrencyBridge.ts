@@ -1,5 +1,5 @@
 import { use } from "react";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { CurrencyBridge } from "@ledgerhq/types-live";
 import { getCurrencyBridge } from "./index";
 

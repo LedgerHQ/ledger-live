@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { ethers } from "ethers";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import { getNextSequence } from "@ledgerhq/coin-evm/logic/index";

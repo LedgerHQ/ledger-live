@@ -1,14 +1,13 @@
 import BigNumber from "bignumber.js";
-import type { CoinType, CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import type { TokenAccount, Account } from "@ledgerhq/types-live";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
   return {
     type: "CryptoCurrency",
-    id: "testCoinId" as CryptoCurrencyId,
-    coinType: 8008 as CoinType,
+    id: "testCoinId" as string,
+    coinType: 8008 as number,
     name: "MyCoin",
     managerAppName: "MyCoin",
     ticker: "MYC",

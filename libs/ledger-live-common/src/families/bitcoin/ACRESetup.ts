@@ -3,7 +3,7 @@
 import { firstValueFrom, from } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
 import { Account, AnyMessage, Bridge } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import Acre from "@blooo/hw-app-acre/lib/index";
 import { createBridges } from "@ledgerhq/coin-bitcoin/bridge/js";
 import type { BitcoinSignature, SignerContext } from "@ledgerhq/coin-bitcoin/signer";

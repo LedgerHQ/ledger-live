@@ -1,4 +1,4 @@
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
@@ -36,8 +36,9 @@ export async function loadBlacklistedTokenSections(
 
   const sections: Array<{ parentCurrency: CryptoCurrency; tokens: TokenCurrency[] }> = [];
 
-  for (const token of tokens) {
-    if (token) {
+  for (const rawToken of tokens) {
+    if (rawToken) {
+      const token = rawToken as unknown as TokenCurrency;
       const parentCurrency = getCryptoCurrencyById(token.parentCurrencyId);
       const index = sections.findIndex(s => s.parentCurrency === parentCurrency);
       if (index < 0) {

@@ -1,4 +1,4 @@
-import { Currency, CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Currency, CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 export function isCryptoCurrency(currency: Currency): currency is CryptoCurrency {

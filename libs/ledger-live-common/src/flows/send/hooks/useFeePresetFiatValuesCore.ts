@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
-import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency, Unit } from "@domain/entity-currency";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { FeePresetOption } from "../../../bridge/descriptor/types";
 import { getAccountBridge } from "../../../bridge/impl";

@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import isEqual from "lodash/isEqual";
 import { selectMarketByCurrency } from "../entities/marketSelectors";
 import { ApiState } from "../entities/selectorUtils";

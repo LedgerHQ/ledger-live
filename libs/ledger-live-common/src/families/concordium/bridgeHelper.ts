@@ -1,7 +1,7 @@
 import { getCurrencyBridge } from "../../bridge/index";
 import type { ConcordiumCurrencyBridge } from "@ledgerhq/coin-concordium";
 import type { CurrencyBridge } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 
 function isConcordiumCurrencyBridge(bridge: CurrencyBridge): bridge is ConcordiumCurrencyBridge {
   return (

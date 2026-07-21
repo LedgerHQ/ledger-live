@@ -24,7 +24,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { getCosmosDummyRecipient } from "@ledgerhq/coin-cosmos/logic";
 import {

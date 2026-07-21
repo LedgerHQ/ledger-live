@@ -10,7 +10,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/f
 import type { Transaction } from "../../../../coin-modules/transaction-types";
 import type { FeePresetOption } from "../../../../bridge/descriptor/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency, Unit } from "@domain/entity-currency";
 
 jest.mock("../../../../bridge/impl");
 jest.mock("@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit");

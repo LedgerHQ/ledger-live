@@ -1,6 +1,6 @@
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "../../../currencies/index";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import {
   findSwapSendOperation,

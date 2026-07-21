@@ -3,7 +3,7 @@ import { useDispatch, useSelector, useStore } from "react-redux";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { useFeature } from "@features/platform-feature-flags";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type Transport from "@ledgerhq/hw-transport";

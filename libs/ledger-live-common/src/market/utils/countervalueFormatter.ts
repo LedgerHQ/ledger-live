@@ -1,4 +1,4 @@
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency";
 
 const MAXIMUM_FRACTION_DIGITS = 8;
 

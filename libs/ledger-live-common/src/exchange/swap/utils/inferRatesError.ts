@@ -8,7 +8,7 @@ import {
 } from "../../../errors";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { ExchangeRateErrors } from "../types";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@domain/entity-currency";
 
 export function inferError(response: ExchangeRateErrors, unitFrom: Unit): Error {
   const isAMinMaxError =

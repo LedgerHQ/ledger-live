@@ -1,4 +1,4 @@
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency";
 import { formatAmountForInput, processRawInput } from "../../amount/utils/amountInput";
 import type { Transaction, TransactionStatus } from "../../../../coin-modules/transaction-types";
 import { BigNumber } from "bignumber.js";

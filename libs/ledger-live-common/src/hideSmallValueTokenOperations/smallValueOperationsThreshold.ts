@@ -3,7 +3,7 @@ import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { getAccountCurrency } from "../account";
 import { formatCurrencyUnit, getFiatCurrencyByTicker } from "../currencies";
-import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency, Unit } from "@domain/entity-currency";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 
 export const MAX_SMALL_VALUE_OPERATIONS_THRESHOLD_USD = 0.5;

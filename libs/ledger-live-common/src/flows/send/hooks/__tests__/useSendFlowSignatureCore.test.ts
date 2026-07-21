@@ -3,7 +3,7 @@
  */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { act, renderHook, waitFor } from "@testing-library/react";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../../../../coin-modules/transaction-types";
 import { getMainAccount } from "../../../../account/index";

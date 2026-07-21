@@ -4,7 +4,7 @@
 import { renderHook } from "@testing-library/react";
 import { useAssetDistribution } from "../useAssetDistribution";
 import type { Account, AssetsDistribution } from "@ledgerhq/types-live";
-import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Currency } from "@domain/entity-currency";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 
 const mockCvState = {} as CounterValuesState;

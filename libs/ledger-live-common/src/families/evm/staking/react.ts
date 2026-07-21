@@ -11,7 +11,7 @@ import { sortLedgerValidatorFirst } from "./ledgerValidator";
 import type { StakingAccount, StakingMappedDelegation } from "./types";
 import { getAccountCurrency } from "../../../account";
 import { GenericTransaction } from "../../../bridge/generic-coin-framework/types";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 
 export type EvmStakingValidatorsState = {
   validators: StakingValidatorItem[];

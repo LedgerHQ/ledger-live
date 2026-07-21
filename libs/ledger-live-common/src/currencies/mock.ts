@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrencySchema } from "@domain/entity-currency";
 
 export const IDS = [
   "bitcoin",
@@ -45,7 +45,7 @@ export const IDS = [
   "babylon",
 ];
 
-export const CURRENCIES_LIST: CryptoCurrency[] = [
+export const CURRENCIES_LIST = CryptoCurrencySchema.array().parse([
   {
     type: "CryptoCurrency",
     id: "axelar",
@@ -626,4 +626,4 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
       },
     ],
   },
-];
+]);

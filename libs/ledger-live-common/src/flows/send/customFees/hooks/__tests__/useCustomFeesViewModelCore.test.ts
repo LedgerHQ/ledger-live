@@ -5,7 +5,7 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Currency } from "@domain/entity-currency";
 import type { Transaction, TransactionStatus } from "../../../../../coin-modules/transaction-types";
 import type { SendFlowTransactionActions } from "../../../types";
 import { useCustomFeesViewModelCore } from "../useCustomFeesViewModelCore";

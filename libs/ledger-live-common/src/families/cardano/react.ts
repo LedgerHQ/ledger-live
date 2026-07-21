@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { fetchPoolList } from "@ledgerhq/coin-cardano/api/getPools";
 import { APIGetPoolList, StakePool } from "@ledgerhq/coin-cardano/api/api-types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 
 export function useCardanoFamilyPools(currency: CryptoCurrency): {
   pools: Array<StakePool>;

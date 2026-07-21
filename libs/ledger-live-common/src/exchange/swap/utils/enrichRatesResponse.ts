@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { ExchangeRate, ExchangeRateResponseRaw } from "../types";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@domain/entity-currency";
 import { inferError } from "./inferRatesError";
 
 export function enrichRatesResponse(

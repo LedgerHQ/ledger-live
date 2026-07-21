@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { setCoinConfig } from "@ledgerhq/coin-evm/config";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import evmBridge, { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./api";
 
 describe("evm bridge", () => {

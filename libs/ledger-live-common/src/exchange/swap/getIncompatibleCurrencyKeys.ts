@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
 import { ExchangeSwap } from "./types";
 
 type Keys = Partial<Record<CryptoCurrency["id"], { title: string; description: string }>>;

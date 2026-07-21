@@ -1,4 +1,4 @@
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getCurrencyBridge } from "../impl";
 import { descriptor as algorandDescriptor } from "../../families/algorand/descriptor";

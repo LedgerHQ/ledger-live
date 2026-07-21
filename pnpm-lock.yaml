@@ -8929,6 +8929,9 @@ importers:
       '@domain/entity-client-identity':
         specifier: workspace:^
         version: link:../../domain/entity/client-identity
+      '@domain/entity-currency':
+        specifier: workspace:^
+        version: link:../../domain/entity/currency
       '@domain/entity-currency-crypto':
         specifier: workspace:^
         version: link:../../domain/entity/currency-crypto
