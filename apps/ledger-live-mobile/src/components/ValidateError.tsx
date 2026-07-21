@@ -8,7 +8,6 @@ import NeedHelp from "./NeedHelp";
 import { BaseNavigation } from "./RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
-import { UpdateYourApp, LatestFirmwareVersionRequired } from "@ledgerhq/errors";
 import { RequiredFirmwareUpdate } from "./DeviceAction/rendering";
 import { useSelector } from "~/context/hooks";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
@@ -25,7 +24,7 @@ function ValidateError({ error, onClose, onRetry }: Props) {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const managerAppName = error instanceof UpdateYourApp ? error.managerAppName : undefined;
+  const managerAppName = error?.name === "UpdateYourApp" ? error.managerAppName : undefined;
 
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
 
@@ -60,7 +59,7 @@ function ValidateError({ error, onClose, onRetry }: Props) {
       ]}
     >
       <View style={styles.container}>
-        {error instanceof LatestFirmwareVersionRequired && lastConnectedDevice ? (
+        {error?.name === "LatestFirmwareVersionRequired" && lastConnectedDevice ? (
           <RequiredFirmwareUpdate navigation={navigation} device={lastConnectedDevice} />
         ) : (
           <>

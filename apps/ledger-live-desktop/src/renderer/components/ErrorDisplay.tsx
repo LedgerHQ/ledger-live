@@ -1,9 +1,3 @@
-import {
-  ManagerNotEnoughSpaceError,
-  UpdateYourApp,
-  LatestFirmwareVersionRequired,
-} from "@ledgerhq/errors";
-import { OutdatedApp } from "@ledgerhq/live-common/errors";
 import { useTranslation } from "react-i18next";
 import { renderError } from "~/renderer/components/DeviceAction/rendering";
 import { DmkError } from "@ledgerhq/live-dmk-desktop";
@@ -29,10 +23,9 @@ const ErrorDisplay = ({
 }: ErrorDisplayProps) => {
   const { t } = useTranslation();
 
+  const eName = (error as { name?: string })?.name;
   const managerAppName =
-    error instanceof ManagerNotEnoughSpaceError ||
-    (error as unknown) instanceof OutdatedApp ||
-    (error as unknown) instanceof UpdateYourApp
+    eName === "ManagerNotEnoughSpace" || eName === "OutdatedApp" || eName === "UpdateYourApp"
       ? (error as unknown as { managerAppName: string }).managerAppName
       : undefined;
 
@@ -41,7 +34,7 @@ const ErrorDisplay = ({
     error,
     onRetry,
     managerAppName,
-    requireFirmwareUpdate: error instanceof LatestFirmwareVersionRequired,
+    requireFirmwareUpdate: eName === "LatestFirmwareVersionRequired",
     withExportLogs,
     list,
     supportLink,
