@@ -8,7 +8,7 @@ import { State } from "~/reducers/types";
 import { AccountRaw } from "@ledgerhq/types-live";
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 const ethereumAccountRaw: AccountRaw = {
   id: "js:2:ethereum:0x01:",

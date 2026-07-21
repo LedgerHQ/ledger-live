@@ -17,7 +17,7 @@ import {
   NATIVE_FEE_CURRENCY_MARKER,
 } from "@ledgerhq/live-common/families/celo/constants";
 import { getCeloTransactionFeeCurrency } from "@ledgerhq/live-common/families/celo/network";
-import { useTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/hooks";
+import { useTokenByAddressInCurrency } from "@features/platform-currencies";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useQuery } from "@tanstack/react-query";
 import { useRoute } from "@react-navigation/native";
