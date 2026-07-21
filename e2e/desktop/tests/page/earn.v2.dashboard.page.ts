@@ -10,7 +10,6 @@ export class EarnV2Page extends EarnBasePage {
   private readonly walletHeaderAmount = "wallet-header-amount";
   private readonly rewardsSummary = "rewards-summary";
   private readonly crowdFavourites = "crowd-favourites";
-  private readonly tokensToEarnBanner = "tokens-to-earn-banner";
   private readonly footerDisclaimer = "footer-disclaimer";
   private readonly assetItemTicker = (ticker: string) =>
     `asset-item-ticker-${ticker.toLowerCase()}`;
@@ -65,11 +64,8 @@ export class EarnV2Page extends EarnBasePage {
   @step("Verify cold start page")
   async verifyColdStartPage() {
     await this.verifyElementIsVisible(this.maxPotentialRewards);
-    // crowd-favourites is shown when earnUpselling (Q2) is on; tokens-to-earn-banner otherwise (Q1)
     const webview = await this.getWebView();
-    await expect(
-      webview.getByTestId(this.crowdFavourites).or(webview.getByTestId(this.tokensToEarnBanner)),
-    ).toBeVisible();
+    await expect(webview.getByTestId(this.crowdFavourites)).toBeVisible();
   }
 
   @step("Verify asset ready to earn: $0")

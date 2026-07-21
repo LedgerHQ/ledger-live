@@ -6,6 +6,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
   FF_EARN_V2_DESKTOP,
   FF_EARN_V2_DESKTOP_WITH_SIMULATOR,
+  FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
   FF_STAKE_PROGRAMS_MODAL,
   useLocalEarnManifest,
 } from "tests/utils/featureFlagUtils";
@@ -81,6 +82,7 @@ test.describe("Earn [v2]", () => {
         speculosApp: account.currency.speculosApp,
         featureFlags: {
           ...FF_EARN_V2_DESKTOP,
+          ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
           ...FF_STAKE_PROGRAMS_MODAL,
         },
         cliCommands: [liveDataCommand(account)],
