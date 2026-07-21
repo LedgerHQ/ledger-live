@@ -21,7 +21,7 @@ packages:
 
 catalog:
   "@jest/globals": 30.2.0
-  "@ledgerhq/context-module": 2.2.0
+  "@ledgerhq/context-module": 2.3.0
   "@ledgerhq/crypto-icons": "2.0.4"
   "@ledgerhq/device-management-kit": 1.7.1
   "@ledgerhq/device-signer-kit-aleo": 0.4.0
