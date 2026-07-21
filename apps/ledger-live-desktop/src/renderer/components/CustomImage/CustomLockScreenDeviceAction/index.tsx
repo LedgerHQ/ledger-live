@@ -3,7 +3,6 @@ import { useDispatch } from "LLD/hooks/redux";
 import { setLastSeenCustomImage } from "~/renderer/actions/settings";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/customLockScreenLoad";
-import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { getEnv } from "@ledgerhq/live-env";
 import { useTranslation } from "react-i18next";
@@ -43,7 +42,8 @@ const action = createAction(getEnv("MOCK") ? mockedEventEmitter : customLockScre
 const mockedDevice = { deviceId: "", modelId: DeviceModelId.stax, wired: true };
 
 function checkIfIsRefusedOnStaxError(e: unknown): boolean {
-  return e instanceof ImageLoadRefusedOnDevice || e instanceof ImageCommitRefusedOnDevice;
+  const eName = (e as { name?: string })?.name;
+  return eName === "ImageLoadRefusedOnDevice" || eName === "ImageCommitRefusedOnDevice";
 }
 
 const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props => {

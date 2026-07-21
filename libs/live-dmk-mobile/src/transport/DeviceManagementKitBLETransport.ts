@@ -5,12 +5,8 @@ import {
   type DeviceSessionState,
   DeviceStatus,
   DiscoveredDevice,
-  OpeningConnectionError,
 } from "@ledgerhq/device-management-kit";
-import {
-  PairingRefusedError,
-  rnBleTransportIdentifier,
-} from "@ledgerhq/device-transport-kit-react-native-ble";
+import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { activeDeviceSessionSubject, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { LocalTracer, TraceContext } from "@ledgerhq/logs";
 import {
@@ -230,13 +226,11 @@ export class DeviceManagementKitBLETransport extends Transport {
             getDeviceManagementKit().stopDiscovering();
 
             tracer.trace("[DMKTransport] [open2] error", error);
-            if (error instanceof PairingRefusedError) {
+            const eName = (error as { name?: string })?.name;
+            if (eName === "PairingRefusedError") {
               // NB: in LLM, we don't have a specific error for pairing refused, so we remap it to PairingFailed
               return throwError(() => new PairingFailed());
-            } else if (
-              error instanceof PeerRemovedPairing ||
-              error instanceof OpeningConnectionError
-            ) {
+            } else if (eName === "PeerRemovedPairing" || eName === "OpeningConnectionError") {
               return throwError(() => error);
             }
 
