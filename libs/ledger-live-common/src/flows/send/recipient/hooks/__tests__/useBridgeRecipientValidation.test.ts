@@ -7,7 +7,7 @@ import { InvalidAddress } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Account } from "@ledgerhq/types-live";
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { BigNumber } from "bignumber.js";
 import { useBridgeRecipientValidation } from "../useBridgeRecipientValidation";
 
@@ -105,7 +105,9 @@ describe("useBridgeRecipientValidation", () => {
 
     expect(result.current.isLoading).toBe(true);
 
-    jest.advanceTimersByTime(300);
+    await act(async () => {
+      jest.advanceTimersByTime(300);
+    });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -132,7 +134,9 @@ describe("useBridgeRecipientValidation", () => {
       }),
     );
 
-    jest.advanceTimersByTime(300);
+    await act(async () => {
+      jest.advanceTimersByTime(300);
+    });
 
     await waitFor(() => {
       expect(mockBridge.updateTransaction).toHaveBeenCalledWith(baseTransaction, {
@@ -157,7 +161,9 @@ describe("useBridgeRecipientValidation", () => {
       }),
     );
 
-    jest.advanceTimersByTime(300);
+    await act(async () => {
+      jest.advanceTimersByTime(300);
+    });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -180,7 +186,9 @@ describe("useBridgeRecipientValidation", () => {
       }),
     );
 
-    jest.advanceTimersByTime(300);
+    await act(async () => {
+      jest.advanceTimersByTime(300);
+    });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -203,7 +211,9 @@ describe("useBridgeRecipientValidation", () => {
       }),
     );
 
-    jest.advanceTimersByTime(300);
+    await act(async () => {
+      jest.advanceTimersByTime(300);
+    });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -221,7 +231,9 @@ describe("useBridgeRecipientValidation", () => {
       }),
     );
 
-    jest.advanceTimersByTime(300);
+    await act(async () => {
+      jest.advanceTimersByTime(300);
+    });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -240,7 +252,9 @@ describe("useBridgeRecipientValidation", () => {
       { initialProps: { recipient: "valid_address" } },
     );
 
-    jest.advanceTimersByTime(300);
+    await act(async () => {
+      jest.advanceTimersByTime(300);
+    });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -266,7 +280,9 @@ describe("useBridgeRecipientValidation", () => {
     rerender({ recipient: "addr2" });
     rerender({ recipient: "addr3" });
 
-    jest.advanceTimersByTime(300);
+    await act(async () => {
+      jest.advanceTimersByTime(300);
+    });
 
     await waitFor(() => {
       expect(mockBridge.createTransaction).toHaveBeenCalledTimes(1);
@@ -284,7 +300,9 @@ describe("useBridgeRecipientValidation", () => {
       }),
     );
 
-    jest.advanceTimersByTime(300);
+    await act(async () => {
+      jest.advanceTimersByTime(300);
+    });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -309,11 +327,15 @@ describe("useBridgeRecipientValidation", () => {
       { initialProps: { recipient: "addr1" } },
     );
 
-    jest.advanceTimersByTime(150);
+    await act(async () => {
+      jest.advanceTimersByTime(150);
+    });
 
     rerender({ recipient: "addr2" });
 
-    jest.advanceTimersByTime(300);
+    await act(async () => {
+      jest.advanceTimersByTime(300);
+    });
 
     await waitFor(() => {
       expect(mockBridge.updateTransaction).toHaveBeenLastCalledWith(expect.anything(), {
@@ -348,7 +370,9 @@ describe("useBridgeRecipientValidation", () => {
       }),
     );
 
-    jest.advanceTimersByTime(300);
+    await act(async () => {
+      jest.advanceTimersByTime(300);
+    });
 
     await waitFor(() => {
       expect(getMainAccount).toHaveBeenCalledWith(mockAccount, parentAccount);
