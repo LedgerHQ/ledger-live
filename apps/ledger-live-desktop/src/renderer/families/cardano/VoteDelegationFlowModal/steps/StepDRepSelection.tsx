@@ -2,7 +2,7 @@ import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -16,6 +16,7 @@ import Alert from "~/renderer/components/Alert";
 
 export default function StepDRep({
   account,
+  transaction,
   onUpdateTransaction,
   status,
   error,
@@ -24,6 +25,7 @@ export default function StepDRep({
   invariant(account, "account and transaction required");
   const { cardanoResources } = account;
   invariant(cardanoResources, "cardanoResources required");
+  const bridge = useAccountBridge<CardanoTransaction>(account);
   const [selectedDRepHex, setSelectedDRepHex] = React.useState<string | null>(null);
   const { errors } = status;
   const displayError = errors.amount?.message ? errors.amount : "";
@@ -31,15 +33,14 @@ export default function StepDRep({
   const selectDRep = (dRep: DRep) => {
     setSelectedDRepHex(dRep.hex);
     setSelectedDRep(dRep);
-    onUpdateTransaction((transaction: CardanoTransaction) => {
-      const bridge = getAccountBridge(account);
-      return bridge.updateTransaction(transaction, {
+    onUpdateTransaction(() =>
+      bridge.updateTransaction(transaction as CardanoTransaction, {
         mode: "voteDelegate",
         dRepHex: dRep.hex,
         dRepNoConfidence: undefined,
         dRepAbstain: undefined,
-      });
-    });
+      }),
+    );
   };
 
   return (

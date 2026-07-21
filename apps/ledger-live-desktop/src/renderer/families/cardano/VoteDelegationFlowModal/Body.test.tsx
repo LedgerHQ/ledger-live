@@ -22,8 +22,8 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
   }),
 }));
 
-jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: () => ({
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: () => ({
     createTransaction: jest.fn().mockReturnValue({}),
     updateTransaction: jest.fn().mockReturnValue({}),
   }),

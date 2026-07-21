@@ -10,10 +10,6 @@ import { DRep } from "@ledgerhq/live-common/families/cardano/DRep";
 import { StepProps } from "../types";
 import BigNumber from "bignumber.js";
 
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/account/index"),
-  getAccountCurrency: jest.fn().mockReturnValue({ name: "Cardano", ticker: "ADA" }),
-}));
 
 jest.mock("~/renderer/hooks/useAccountUnit", () => ({
   useMaybeAccountUnit: jest.fn().mockReturnValue({ code: "ADA", magnitude: 6 }),
@@ -43,7 +39,8 @@ describe("StepSummary", () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockAccount = {
     id: "account-id",
-    currency: { id: "cardano" },
+    type: "Account",
+    currency: { id: "cardano", name: "Cardano", ticker: "ADA", units: [{ code: "ADA", magnitude: 6 }] },
     cardanoResources: { delegation: { status: true } },
   } as CardanoAccount;
 

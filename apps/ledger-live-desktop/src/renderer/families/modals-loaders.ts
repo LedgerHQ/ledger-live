@@ -17,6 +17,8 @@ import type { DelegationModalProps as CardanoDelegateProps } from "./cardano/Del
 import type { UnDelegationModalProps as CardanoUndelegateProps } from "./cardano/UndelegateFlowModal";
 import type { CardanoEarnRewardsInfoModalProps as CardanoRewardsInfoProps } from "./cardano/DelegationFlowModal/Info";
 import type { CardanoUndelegateSelfTxInfoModalProps as CardanoUndelegateSelfTxInfoProps } from "./cardano/UndelegateFlowModal/info";
+import type { VoteDelegationModalProps as CardanoVoteDelegationProps } from "./cardano/VoteDelegationFlowModal";
+import type { VoteDelegationInfoModalProps as CardanoVoteDelegationInfoProps } from "./cardano/VoteDelegationFlowModal/Info";
 import type { Props as CeloRewardsInfoProps } from "./celo/EarnRewardsInfoModal/EarnRewardsInfoModal";
 import type { Props as CeloManageProps } from "./celo/ManageModal/ManageModal";
 import type { Data as CeloLockData } from "./celo/LockFlowModal/Body";
@@ -95,6 +97,8 @@ export type CoinModalsData = {
   MODAL_CARDANO_UNDELEGATE: CardanoUndelegateProps;
   MODAL_CARDANO_REWARDS_INFO: CardanoRewardsInfoProps;
   MODAL_CARDANO_UNDELEGATE_SELF_TX_INFO: CardanoUndelegateSelfTxInfoProps;
+  MODAL_CARDANO_VOTE_DELEGATION: CardanoVoteDelegationProps;
+  MODAL_CARDANO_VOTE_DELEGATION_INFO: CardanoVoteDelegationInfoProps;
   MODAL_CELO_REWARDS_INFO: CeloRewardsInfoProps;
   MODAL_CELO_MANAGE: CeloManageProps;
   MODAL_CELO_LOCK: CeloLockData;
@@ -182,6 +186,8 @@ export const coinModalImports: Record<CoinModalKey, CoinModalImport> = {
   MODAL_CARDANO_UNDELEGATE: () => import("./cardano/UndelegateFlowModal"),
   MODAL_CARDANO_REWARDS_INFO: () => import("./cardano/DelegationFlowModal/Info"),
   MODAL_CARDANO_UNDELEGATE_SELF_TX_INFO: () => import("./cardano/UndelegateFlowModal/info"),
+  MODAL_CARDANO_VOTE_DELEGATION: () => import("./cardano/VoteDelegationFlowModal"),
+  MODAL_CARDANO_VOTE_DELEGATION_INFO: () => import("./cardano/VoteDelegationFlowModal/Info"),
   MODAL_CELO_REWARDS_INFO: () => import("./celo/EarnRewardsInfoModal/EarnRewardsInfoModal"),
   MODAL_CELO_MANAGE: () => import("./celo/ManageModal/ManageModal"),
   MODAL_CELO_LOCK: () => import("./celo/LockFlowModal"),
