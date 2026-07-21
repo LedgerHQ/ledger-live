@@ -17,8 +17,6 @@ import {
   UserRefusedAllowManager,
   WebsocketConnectionError,
   WebsocketConnectionFailed,
-  CustomErrorClassType,
-  TransportStatusErrorClassType,
 } from "@ledgerhq/errors";
 import {
   ConnectManagerTimeout,
@@ -36,9 +34,7 @@ import {
 import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 // Errors related to the device connection
-export const reconnectDeviceErrorClasses: Array<
-  CustomErrorClassType | TransportStatusErrorClassType
-> = [
+export const reconnectDeviceErrorClasses: Array<new (...args: never) => Error> = [
   CantOpenDevice,
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
@@ -48,17 +44,16 @@ export const reconnectDeviceErrorClasses: Array<
 ];
 
 // Errors that could be solved by the user: either on their phone or on their device
-export const userSolvableErrorClasses: Array<CustomErrorClassType | TransportStatusErrorClassType> =
-  [
-    ...reconnectDeviceErrorClasses,
-    WebsocketConnectionError,
-    UserRefusedAllowManager,
-    LanguageInstallRefusedOnDevice,
-    ImageCommitRefusedOnDevice,
-    ImageLoadRefusedOnDevice,
-    WebsocketConnectionFailed,
-    DisconnectedDeviceDuringOperation,
-  ];
+export const userSolvableErrorClasses: Array<new (...args: never) => Error> = [
+  ...reconnectDeviceErrorClasses,
+  WebsocketConnectionError,
+  UserRefusedAllowManager,
+  LanguageInstallRefusedOnDevice,
+  ImageCommitRefusedOnDevice,
+  ImageLoadRefusedOnDevice,
+  WebsocketConnectionFailed,
+  DisconnectedDeviceDuringOperation,
+];
 
 export type FirmwareUpdateParams = {
   device: Device;
@@ -413,7 +408,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     if (
       updateStep === "languageRestore" &&
       installLanguageState.error &&
-      installLanguageState.error instanceof LanguageInstallRefusedOnDevice
+      installLanguageState.error?.name === "LanguageInstallRefusedOnDevice"
     ) {
       return installLanguageState.error;
     }
@@ -421,8 +416,8 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     if (
       updateStep === "imageRestore" &&
       loadImageState.error &&
-      (loadImageState.error instanceof ImageLoadRefusedOnDevice ||
-        (loadImageState.error as unknown) instanceof ImageCommitRefusedOnDevice)
+      (loadImageState.error?.name === "ImageLoadRefusedOnDevice" ||
+        loadImageState.error?.name === "ImageCommitRefusedOnDevice")
     ) {
       return loadImageState.error;
     }
@@ -430,7 +425,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     if (
       updateStep === "appsRestore" &&
       restoreAppsState.error &&
-      restoreAppsState.error instanceof UserRefusedAllowManager
+      restoreAppsState.error?.name === "UserRefusedAllowManager"
     ) {
       return restoreAppsState.error;
     }

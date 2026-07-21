@@ -155,7 +155,7 @@ export const reducer = (state: State, action: Action): State => {
 
         /*
           const error = event.error;
-          if (error instanceof ManagerDeviceLockedError) {
+          if ((error as { name?: string })?.name === "ManagerDeviceLocked") {
             return {
               ...state,
               currentError: {
