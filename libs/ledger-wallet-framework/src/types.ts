@@ -77,4 +77,6 @@ export interface FiatCurrency {
   keywords?: string[];
 }
 
+export type CryptoOrTokenCurrency = CryptoCurrency | TokenCurrency;
+
 export type Currency = FiatCurrency | CryptoCurrency | TokenCurrency;

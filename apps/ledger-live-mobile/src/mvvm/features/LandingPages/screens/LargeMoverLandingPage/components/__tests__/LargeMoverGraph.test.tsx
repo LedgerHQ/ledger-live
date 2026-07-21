@@ -4,7 +4,7 @@ import { KeysPriceChange, MarketCoinDataChart } from "@ledgerhq/live-common/mark
 import Graph from "~/components/Graph";
 import { Flex } from "@ledgerhq/native-ui";
 import { LargeMoverGraph } from "../LargeMoverGraph";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
 
 jest.mock("~/components/Graph", () => {
   return jest.fn(() => {

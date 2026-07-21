@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 
 export const formatAmount = (amount: BigNumber, unit: Unit) => {
   return formatCurrencyUnit(unit, new BigNumber(amount), {

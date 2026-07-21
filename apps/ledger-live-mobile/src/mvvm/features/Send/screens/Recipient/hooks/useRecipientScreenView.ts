@@ -1,7 +1,7 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useSendFlowData } from "../../../context/SendFlowContext";

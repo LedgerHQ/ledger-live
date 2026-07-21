@@ -4,7 +4,7 @@ import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import CounterValue from "~/components/CounterValue";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@domain/entity-currency";
 
 type ViewProps = ReturnType<typeof useAccountItemModel>;
 

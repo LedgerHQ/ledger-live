@@ -14,7 +14,7 @@ import type {
   CryptoCurrency,
   CryptoOrTokenCurrency,
   TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+} from "@domain/entity-currency";
 import isEqual from "lodash/isEqual";
 import {
   flattenAccounts,

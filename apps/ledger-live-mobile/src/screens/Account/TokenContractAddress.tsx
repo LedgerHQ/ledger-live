@@ -4,7 +4,7 @@ import { Trans } from "~/context/Locale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Icons } from "@ledgerhq/native-ui";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/helpers";
 
 import { useTheme } from "@react-navigation/native";

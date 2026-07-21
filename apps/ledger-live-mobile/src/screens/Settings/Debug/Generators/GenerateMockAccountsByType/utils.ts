@@ -2,7 +2,7 @@ import { v4 as uuid } from "uuid";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import sample from "lodash/sample";
 import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { findCurrencyById } from "./constants";
 
 export interface NetworkTokenGroup {

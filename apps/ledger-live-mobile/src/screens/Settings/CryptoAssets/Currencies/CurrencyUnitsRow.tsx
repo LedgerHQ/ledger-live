@@ -4,7 +4,7 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import SettingsRow from "~/components/SettingsRow";
 import LText from "~/components/LText";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
 import { useCurrencySettings } from "LLM/hooks/useCurrencySettings";
 
 type Props = {

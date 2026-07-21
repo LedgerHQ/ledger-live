@@ -11,7 +11,7 @@ import {
   getOperationConfirmationDisplayableNumber,
 } from "@ledgerhq/live-common/operation";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { NavigatorName, ScreenName } from "~/const";
 import LText from "~/components/LText";
 import OperationIcon from "~/components/OperationIcon";

@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
 import type { Account } from "@ledgerhq/types-live";
 import { NavigatorScreenParams } from "@react-navigation/core";
 import { NavigatorName, ScreenName } from "~/const";

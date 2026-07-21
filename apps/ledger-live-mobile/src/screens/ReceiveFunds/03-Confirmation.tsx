@@ -5,7 +5,7 @@ import QRCode from "react-native-qrcode-svg";
 import { useTranslation } from "~/context/Locale";
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency, TokenCurrency } from "@domain/entity-currency";
 import { findCryptoCurrencyById, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   makeEmptyTokenAccount,

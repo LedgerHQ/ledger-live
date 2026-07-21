@@ -5,7 +5,7 @@ import {
   ConcordiumSessionExpiredError,
   LockedDeviceError,
 } from "@ledgerhq/errors";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import { Subscription } from "rxjs";

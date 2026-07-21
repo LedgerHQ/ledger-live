@@ -7,7 +7,7 @@ import type {
   CryptoCurrency,
   CryptoOrTokenCurrency,
   TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+} from "@domain/entity-currency";
 import { useSelector } from "~/context/hooks";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";

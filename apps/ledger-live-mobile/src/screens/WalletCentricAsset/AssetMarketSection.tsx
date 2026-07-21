@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { Flex } from "@ledgerhq/native-ui";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import MarketPriceSection from "../WalletCentricSections/MarketPrice";

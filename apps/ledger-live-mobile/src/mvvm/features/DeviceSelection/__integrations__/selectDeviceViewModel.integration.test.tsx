@@ -6,7 +6,7 @@ import useSelectDeviceViewModel from "../screens/SelectDevice/useSelectDeviceVie
 import { getCustomAddAccountFlow } from "LLM/features/Accounts/utils/customAddAccountFlow";
 import { NavigatorName, ScreenName } from "~/const";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency";
 
 const mockNavigate = jest.fn();
 

@@ -3,7 +3,7 @@ import { useTranslation } from "~/context/Locale";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { HederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/types";
-import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import CounterValue from "~/components/CounterValue";

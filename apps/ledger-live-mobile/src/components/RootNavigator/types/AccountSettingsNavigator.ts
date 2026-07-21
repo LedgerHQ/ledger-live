@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
 import { Account } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 

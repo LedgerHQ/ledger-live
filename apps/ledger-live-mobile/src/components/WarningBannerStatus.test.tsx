@@ -1,7 +1,7 @@
 import React from "react";
 import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import WarningBannerStatus from "./WarningBannerStatus";
 

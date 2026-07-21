@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Alert as Confirm, ScrollView } from "react-native";
 import { Button, Checkbox, Flex, Text, Alert } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import { Account } from "@ledgerhq/types-live";
 import SettingsRow from "~/components/SettingsRow";
 import { reboot } from "~/actions/appstate";
@@ -20,7 +20,7 @@ import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/type
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import TextInput from "~/components/TextInput";
 
-type ID = CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo";
+type ID = string;
 
 type Props = {
   title: string;

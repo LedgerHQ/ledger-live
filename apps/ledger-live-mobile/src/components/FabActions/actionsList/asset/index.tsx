@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { AccountLike, Account } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { QuickActionList } from "@ledgerhq/native-ui";
 
 import useAssetActions from "../../hooks/useAssetActions";

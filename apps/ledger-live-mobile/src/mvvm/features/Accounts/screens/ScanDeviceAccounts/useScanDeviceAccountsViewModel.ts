@@ -7,7 +7,7 @@ import { useTranslation } from "~/context/Locale";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import uniq from "lodash/uniq";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useCurrencyBridge } from "@ledgerhq/live-common/bridge/useCurrencyBridge";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { isCryptoCurrency, isTokenCurrency } from "@ledgerhq/live-common/currencies/index";

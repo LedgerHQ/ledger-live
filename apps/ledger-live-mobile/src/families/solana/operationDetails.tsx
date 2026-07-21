@@ -6,7 +6,7 @@ import { BigNumber } from "bignumber.js";
 import { OperationType } from "@ledgerhq/types-live";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { useSolanaPreloadData } from "@ledgerhq/live-common/families/solana/react";
 import { SolanaAccount, SolanaOperation } from "@ledgerhq/live-common/families/solana/types";
 import Section from "~/screens/OperationDetails/Section";

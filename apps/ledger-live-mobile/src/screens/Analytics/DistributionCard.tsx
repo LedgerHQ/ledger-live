@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import styled, { useTheme } from "styled-components/native";
 import { Text, Flex } from "@ledgerhq/native-ui";

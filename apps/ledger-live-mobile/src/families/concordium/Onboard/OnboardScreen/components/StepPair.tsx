@@ -1,7 +1,7 @@
 import React from "react";
 import { Image, Linking, Platform, ScrollView, TouchableOpacity } from "react-native";
 import { Alert, Button, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import QRCode from "react-native-qrcode-svg";
 import { Trans } from "~/context/Locale";
 import { PairStatus, usePairing } from "../hooks/usePairing";

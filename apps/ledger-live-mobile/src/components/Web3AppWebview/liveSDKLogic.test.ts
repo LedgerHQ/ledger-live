@@ -1,10 +1,5 @@
 import BigNumber from "bignumber.js";
-import {
-  CoinType,
-  CryptoCurrency,
-  CryptoCurrencyId,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { getWalletAPITransactionSignFlowInfos } from "@ledgerhq/live-common/wallet-api/converters";
@@ -120,8 +115,8 @@ function createPlatformTransaction(): PlatformTransaction {
 
 const createCryptoCurrency = (family: string): CryptoCurrency => ({
   type: "CryptoCurrency",
-  id: "testCoinId" as CryptoCurrencyId,
-  coinType: 8008 as CoinType,
+  id: "testCoinId",
+  coinType: 8008,
   name: "ethereum",
   managerAppName: "ethereum",
   ticker: "MYC",

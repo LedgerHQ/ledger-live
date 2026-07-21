@@ -1,6 +1,6 @@
 import { useListHeaderComponents } from "../ListHeaderComponent";
 import { BalanceHistoryWithCountervalue, ValueChange } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
 import { LayoutChangeEvent } from "react-native";
 import { ColorPalette } from "@ledgerhq/native-ui";
 import * as config from "@ledgerhq/live-common/config/index";

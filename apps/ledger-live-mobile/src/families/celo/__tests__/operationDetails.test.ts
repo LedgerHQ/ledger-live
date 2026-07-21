@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react-native";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { NATIVE_FEE_CURRENCY_MARKER } from "@ledgerhq/live-common/families/celo/constants";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 
 const mockUseQuery = jest.fn();

@@ -1,7 +1,7 @@
 import { FC, useMemo, useState } from "react";
 
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
 import perFamily from "~/generated/ExpiryDurationInput";
 import { ExpiryDurationInputProps, TxPatch } from "../types";
 

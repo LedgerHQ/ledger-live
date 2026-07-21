@@ -4,7 +4,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "~/context/Locale";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useAccountsByCryptoCurrency } from "LLM/hooks/useAccountsByCryptoCurrency";
 import { TrackScreen } from "~/analytics";

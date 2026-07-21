@@ -12,7 +12,7 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useFeature } from "@features/platform-feature-flags";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 
 type AddAccountDrawerProps = {
   isOpened: boolean;

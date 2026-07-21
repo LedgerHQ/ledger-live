@@ -2,7 +2,7 @@ import { renderHook, act } from "@tests/test-renderer";
 import BigNumber from "bignumber.js";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency";
 import type { AccountLike, DistributionItem } from "@ledgerhq/types-live";
 import {
   mockBtcCryptoCurrency,

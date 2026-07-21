@@ -1,7 +1,6 @@
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useFeature } from "@features/platform-feature-flags";
 import { SideImageCard } from "@ledgerhq/native-ui";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/core";
 import React, { useCallback } from "react";
@@ -31,9 +30,9 @@ export const EditOperationCard = ({
   const { enabled: isEditBtcTxEnabled, params: bitcoinParams } = useFeature("editBitcoinTx") ?? {};
   const mainAccount = getMainAccount(account, parentAccount);
   const isEvmCurrencySupported =
-    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
+    params?.supportedCurrencyIds?.includes(mainAccount.currency.id) || false;
   const isBitcoinCurrencySupported =
-    bitcoinParams?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) ||
+    bitcoinParams?.supportedCurrencyIds?.includes(mainAccount.currency.id) ||
     false;
 
   const showEvmEdit = isEditEvmTxEnabled && isEvmCurrencySupported;

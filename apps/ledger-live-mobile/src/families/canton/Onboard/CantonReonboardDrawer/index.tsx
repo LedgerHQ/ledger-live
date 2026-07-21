@@ -1,6 +1,6 @@
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { Alert, Button, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import React, { useCallback, useState } from "react";
 import DeviceActionModal from "~/components/DeviceActionModal";

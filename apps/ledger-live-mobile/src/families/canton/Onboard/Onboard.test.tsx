@@ -6,7 +6,7 @@ import { CantonOnboard } from "../index";
 import { ScreenName } from "~/const";
 import type { CantonOnboardAccountParamList } from "./types";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 
 // Mock the OnboardScreen component

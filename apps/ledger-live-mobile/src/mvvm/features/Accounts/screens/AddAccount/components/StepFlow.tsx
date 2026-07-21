@@ -3,7 +3,7 @@ import SelectAddAccountMethod from "./SelectAddAccountMethod";
 import ChooseSyncMethod from "LLM/features/WalletSync/screens/Synchronize/ChooseMethod";
 import QrCodeMethod from "LLM/features/WalletSync/screens/Synchronize/QrCodeMethod";
 import { TrackScreen } from "~/analytics";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { AnalyticsPage } from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import { Options, Steps } from "LLM/features/WalletSync/types/Activation";
 import SyncError from "LLM/features/WalletSync/screens/Synchronize/SyncError";

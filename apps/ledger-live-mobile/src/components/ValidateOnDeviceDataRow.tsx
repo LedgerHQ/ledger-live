@@ -1,5 +1,5 @@
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import React from "react";

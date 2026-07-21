@@ -1,5 +1,5 @@
 import type { TransferInstructionType } from "@ledgerhq/live-common/families/canton/react";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
 import type {
   GroupedProposals,

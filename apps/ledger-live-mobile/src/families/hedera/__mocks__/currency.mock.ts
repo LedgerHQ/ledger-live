@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 
 export const hederaCurrency = getCryptoCurrencyById("hedera");
 

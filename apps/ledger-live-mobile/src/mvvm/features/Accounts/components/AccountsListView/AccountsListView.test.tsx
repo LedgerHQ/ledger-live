@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import React from "react";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import { render, screen } from "@tests/test-renderer";
 import AccountsListView from ".";
 import { Text } from "@ledgerhq/native-ui";

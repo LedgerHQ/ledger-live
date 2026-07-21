@@ -5,7 +5,7 @@ import {
   StakingMappedDelegation,
   StakingMappedUnbonding,
 } from "@ledgerhq/live-common/families/evm/staking/types";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import CounterValue from "~/components/CounterValue";

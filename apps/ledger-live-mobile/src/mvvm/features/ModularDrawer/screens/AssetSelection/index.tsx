@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import {
   AssetItem,
   AssetType,

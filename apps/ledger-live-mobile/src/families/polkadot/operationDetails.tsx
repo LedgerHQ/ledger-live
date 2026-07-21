@@ -8,7 +8,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import { Operation, OperationType } from "@ledgerhq/types-live";
-import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import { Currency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { useSelector } from "~/context/hooks";
 import { Text } from "@ledgerhq/native-ui";
 import {

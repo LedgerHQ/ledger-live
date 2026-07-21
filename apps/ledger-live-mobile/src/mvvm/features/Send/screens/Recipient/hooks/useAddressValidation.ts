@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useSelector } from "~/context/hooks";

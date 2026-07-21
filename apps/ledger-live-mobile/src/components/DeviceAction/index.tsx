@@ -16,7 +16,7 @@ import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppAndVersion, DeviceDeprecationRules } from "@ledgerhq/live-common/hw/connectApp";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@domain/entity-currency";
 import type { AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";

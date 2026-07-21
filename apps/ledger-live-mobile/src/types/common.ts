@@ -1,6 +1,6 @@
 // TODO should drop this file!,
 
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@domain/entity-currency";
 
 export type ConfirmationDefaults = {
   confirmationsNb:

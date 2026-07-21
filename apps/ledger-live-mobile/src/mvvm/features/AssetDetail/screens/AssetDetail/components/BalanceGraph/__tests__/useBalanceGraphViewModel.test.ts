@@ -14,7 +14,7 @@ import {
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 import type { State } from "~/reducers/types";
 import { marketCurrencyData } from "../../../__fixtures__/marketCurrencyData";

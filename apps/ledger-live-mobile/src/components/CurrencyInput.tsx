@@ -1,4 +1,4 @@
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency";
 
 import React, { PureComponent } from "react";
 import { StyleSheet, View, Dimensions, StyleProp, ViewStyle, TextInputProps } from "react-native";

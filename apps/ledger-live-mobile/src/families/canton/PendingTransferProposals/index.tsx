@@ -5,7 +5,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import type { ScreenRoute } from "../utils/navigationSnapshot";
 import CantonReonboardDrawer from "../Onboard/CantonReonboardDrawer";

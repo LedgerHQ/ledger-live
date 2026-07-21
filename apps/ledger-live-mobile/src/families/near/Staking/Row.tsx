@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { NearMappedStakingPosition } from "@ledgerhq/live-common/families/near/types";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@ledgerhq/ledger-wallet-framework/types";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";

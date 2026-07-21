@@ -2,7 +2,7 @@ import React from "react";
 import { render as rntlRender, screen } from "@testing-library/react-native";
 import { ThemeProvider } from "@ledgerhq/lumen-ui-rnative";
 import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import type { FeeAssetUiOption } from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
 import { FeeAssetSelector } from "../FeeAssetSelector";
 

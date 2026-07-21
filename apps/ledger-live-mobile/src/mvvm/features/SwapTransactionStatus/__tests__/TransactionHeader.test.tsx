@@ -1,7 +1,7 @@
 import React from "react";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { formatSwapTransactionStatusCreatedAt } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency";
 import { render, screen } from "@tests/test-renderer";
 import { TransactionHeader } from "../components/TransactionHeader";
 

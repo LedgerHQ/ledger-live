@@ -35,6 +35,9 @@
       "serialization": [
         "lib/serialization/index"
       ],
+      "types": [
+        "lib/types"
+      ],
       "*": [
         "lib/*"
       ]
@@ -67,6 +70,11 @@
       "@ledgerhq/source": "./src/serialization/index.ts",
       "require": "./lib/serialization/index.js",
       "default": "./lib-es/serialization/index.js"
+    },
+    "./types": {
+      "@ledgerhq/source": "./src/types.ts",
+      "require": "./lib/types.js",
+      "default": "./lib-es/types.js"
     },
     "./transaction/*": {
       "@ledgerhq/source": "./src/transaction/*.ts",

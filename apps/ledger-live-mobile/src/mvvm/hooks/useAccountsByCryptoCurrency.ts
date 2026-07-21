@@ -5,7 +5,7 @@ import type {
   CryptoOrTokenCurrency,
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+} from "@domain/entity-currency";
 import {
   accountsByCryptoCurrencyScreenSelector,
   flattenAccountsByCryptoCurrencyScreenSelector,

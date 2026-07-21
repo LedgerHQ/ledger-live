@@ -5,7 +5,7 @@ import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import type { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
 import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/staking";
-import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import { Currency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import CounterValue from "~/components/CounterValue";
 import ArrowRight from "~/icons/ArrowRight";
 import LText from "~/components/LText";

@@ -3,7 +3,7 @@ import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/m
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { TransactionStatusValue } from "@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index";
 import type { Account } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency";
 import { getSwapProvider } from "@ledgerhq/live-common/exchange/providers/swap";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import type { State } from "~/reducers/types";
