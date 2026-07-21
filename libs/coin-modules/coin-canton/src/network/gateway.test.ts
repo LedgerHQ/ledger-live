@@ -1,4 +1,3 @@
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 import network from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import coinConfig from "../config";
@@ -9,6 +8,7 @@ import {
   createMockPendingTransferProposal,
   setupMockCoinConfig,
 } from "../test/fixtures";
+import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { TopologyChangeError } from "../types/errors";
 import type { GetBalanceResponse } from "../types/gateway";
 import { TransactionType } from "../types/gateway";
