@@ -59,7 +59,7 @@ import {
 } from "./coin-selection";
 import { composeXpub } from "./xpub";
 import { computeZcashBalance } from "./balance";
-import { getWalletAccount } from "../../wallet-btc";
+import { getWalletAccount } from "../../getWalletAccount";
 import { getZainoEndpoint, isZcashShieldedEnabled } from "./constants";
 
 // ── Lazy module import (renderer-safe) ────────────────────────────────────

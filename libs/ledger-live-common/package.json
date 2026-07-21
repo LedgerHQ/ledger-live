@@ -270,6 +270,7 @@
     "@ledgerhq/coin-algorand": "workspace:^",
     "@ledgerhq/coin-aptos": "workspace:^",
     "@ledgerhq/coin-bitcoin": "workspace:^",
+    "@ledgerhq/wallet-btc": "workspace:^",
     "@ledgerhq/coin-canton": "workspace:^",
     "@ledgerhq/coin-cardano": "workspace:^",
     "@ledgerhq/coin-casper": "workspace:^",

@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { toWalletBtcCurrency } from "./walletBtcCurrency";
 import type {
   AccountShapeInfo,
   GetAccountShapeStream,
@@ -14,16 +15,16 @@ import {
   isTaprootDerivationMode,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { DerivationMode, SYNC_TYPE_TRANSPARENT, SyncConfig } from "@ledgerhq/types-live";
-import type { Currency, Output as WalletOutput } from "./wallet-btc";
-import wallet, { DerivationModes as WalletDerivationModes } from "./wallet-btc";
+import type { Currency, Output as WalletOutput } from "@ledgerhq/wallet-btc/index";
+import wallet, { DerivationModes as WalletDerivationModes } from "@ledgerhq/wallet-btc/index";
+import { removeReplaced, deduplicateOperations } from "@ledgerhq/wallet-btc/operations";
+// re-exported for backward compatibility (consumers/tests import it from here)
+export { removeReplaced } from "@ledgerhq/wallet-btc/operations";
 import { BitcoinAccount, BitcoinOutput, BtcOperation } from "./types";
 import { perCoinLogic, mapTxToOperations } from "./logic";
 import { BitcoinXPub, SignerContext } from "./signer";
 import { merge, Observable } from "rxjs";
 import { getChainAdapter } from "./chain-adapters/registry";
-
-const TWO_HOUR_MS = 2 * 60 * 60 * 1000;
-const COINBASE_INPUT_PREFIX = "0000000000000000000000000000000000000000000000000000000000000000";
 
 // Map LL's DerivationMode to wallet-btc's
 const toWalletDerivationMode = (mode: DerivationMode): WalletDerivationModes => {
@@ -55,161 +56,6 @@ export const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>)
     rbf: utxo.rbf,
     isChange: changeAddresses.has(utxo.address),
   };
-};
-
-/**
- * Removes replaced Bitcoin transactions based on inputs and RBF logic.
- *
- * This function is used primarily to handle Replace-By-Fee (RBF) transactions.
- * In some situations, we might fetch both the original (unconfirmed) transaction
- * and the one that replaces it (usually with a higher fee). Without deduplication, both can
- * remain displayed, confusing the user—especially when the replaced one never confirms.
- *
- * Key Rules:
- * - A UTXO (input) can only be spent once.
- * - If multiple transactions share an input, we keep the one that is:
- *   1. Confirmed (has a `blockHeight`) over an unconfirmed one.
- *   2. Of higher `blockHeight` if both are confirmed or both are unconfirmed.
- *   3. Of later `date` if both share the same `blockHeight` (or lack thereof).
- * - Coinbase transactions (with input starting with all 0s) are always kept.
- * - Transactions without extra.inputs (usually `OUT` transactions) are always kept.
- *
- * Outcome:
- * The result is a filtered list of operations, cleaned of unconfirmed or superseded
- * transactions that were replaced using RBF logic or similar.
- *
- * @param operations An array of BtcOperation items (e.g. from sync).
- * @returns A filtered array of operations with replaced transactions removed.
- *  The original order of operations is preserved.
- */
-export const removeReplaced = (
-  operations: BtcOperation[],
-  now = Date.now(),
-  preferMostRecentWhenSameHeight = false,
-): BtcOperation[] => {
-  const isConfirmed = (op: BtcOperation): boolean => typeof op.blockHeight === "number";
-  const getInputs = (op: BtcOperation): string[] => op.extra?.inputs ?? [];
-  const isCoinbase = (op: BtcOperation): boolean =>
-    getInputs(op).some((input: string) => input.startsWith(COINBASE_INPUT_PREFIX));
-  const toDateMs = (op: BtcOperation): number => new Date(op.date).getTime();
-
-  const shouldReplaceExistingOperation = (existingOp: BtcOperation, op: BtcOperation): boolean => {
-    const existingConfirmed = isConfirmed(existingOp);
-    const newConfirmed = isConfirmed(op);
-
-    if (existingConfirmed && !newConfirmed) return false;
-    if (!existingConfirmed && newConfirmed) return true;
-
-    const newHeight = op.blockHeight ?? -1;
-    const existingHeight = existingOp.blockHeight ?? -1;
-
-    if (newHeight !== existingHeight) return newHeight > existingHeight;
-    if (!preferMostRecentWhenSameHeight) return false;
-    return toDateMs(op) > toDateMs(existingOp);
-  };
-
-  const shouldKeepBothWhenSameHeight = (existingOp: BtcOperation, op: BtcOperation): boolean => {
-    if (preferMostRecentWhenSameHeight) return false;
-    return (op.blockHeight ?? -1) === (existingOp.blockHeight ?? -1);
-  };
-
-  const isSupersededUnconfirmedOperation = (
-    op: BtcOperation,
-    txByInput: Map<string, BtcOperation>,
-  ) =>
-    !isConfirmed(op) &&
-    getInputs(op).some((input: string) => {
-      const existing = txByInput.get(input);
-      return existing !== undefined && existing.hash !== op.hash && isConfirmed(existing);
-    });
-
-  const isExpiredUnconfirmed = (op: BtcOperation): boolean =>
-    !isConfirmed(op) && now > toDateMs(op) + TWO_HOUR_MS;
-
-  const addOperationForInput = (
-    input: string,
-    op: BtcOperation,
-    txByInput: Map<string, BtcOperation>,
-    uniqueOperations: Map<string, BtcOperation>,
-  ): void => {
-    txByInput.set(input, op);
-    uniqueOperations.set(op.hash, op);
-  };
-
-  const handleInput = (
-    input: string,
-    op: BtcOperation,
-    txByInput: Map<string, BtcOperation>,
-    uniqueOperations: Map<string, BtcOperation>,
-  ): void => {
-    const existingOp = txByInput.get(input);
-
-    if (!existingOp) {
-      if (!isSupersededUnconfirmedOperation(op, txByInput)) {
-        addOperationForInput(input, op, txByInput, uniqueOperations);
-      }
-      return;
-    }
-
-    if (isConfirmed(existingOp) && !isConfirmed(op)) {
-      uniqueOperations.delete(op.hash);
-      return;
-    }
-
-    if (shouldReplaceExistingOperation(existingOp, op)) {
-      uniqueOperations.delete(existingOp.hash);
-      addOperationForInput(input, op, txByInput, uniqueOperations);
-      return;
-    }
-
-    if (shouldKeepBothWhenSameHeight(existingOp, op)) {
-      uniqueOperations.set(op.hash, op);
-    }
-  };
-
-  // used to track the most recent operation for each input.
-  const txByInput = new Map<string, BtcOperation>();
-
-  // ensures we maintain a list of unique transactions by hash.
-  const uniqueOperations = new Map<string, BtcOperation>(); // Keep track of unique transactions
-
-  for (const op of operations) {
-    const inputs = getInputs(op);
-    if (inputs.length === 0) {
-      uniqueOperations.set(op.hash, op);
-      continue;
-    }
-
-    if (isCoinbase(op)) {
-      uniqueOperations.set(op.hash, op);
-      continue;
-    }
-
-    for (const input of inputs) {
-      handleInput(input, op, txByInput, uniqueOperations);
-    }
-  }
-
-  return operations.filter(op => uniqueOperations.has(op.hash) && !isExpiredUnconfirmed(op));
-};
-
-// wallet-btc limitation: returns all transactions twice (for each side of the tx)
-// so we need to deduplicate them...
-const deduplicateOperations = (operations: (BtcOperation | undefined)[]): BtcOperation[] => {
-  const seen = new Set();
-  const out: BtcOperation[] = [];
-  let j = 0;
-
-  for (const operation of operations) {
-    if (operation) {
-      if (!seen.has(operation.id)) {
-        seen.add(operation.id);
-        out[j++] = operation;
-      }
-    }
-  }
-
-  return out;
 };
 
 export async function performTransparentSync(
@@ -255,7 +101,7 @@ export async function performTransparentSync(
         network: walletNetwork,
         derivationMode: walletDerivationMode,
       },
-      currency,
+      toWalletBtcCurrency(currency),
     ));
 
   const oldOperations = (initialAccount?.operations || []) as BtcOperation[];

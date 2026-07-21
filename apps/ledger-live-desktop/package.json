@@ -79,6 +79,7 @@
     "@domain/api-push-devices": "workspace:*",
     "@domain/entity-client-identity": "workspace:*",
     "@ledgerhq/coin-bitcoin": "workspace:^",
+    "@ledgerhq/wallet-btc": "workspace:^",
     "@ledgerhq/coin-canton": "workspace:^",
     "@ledgerhq/coin-cardano": "workspace:^",
     "@ledgerhq/coin-casper": "workspace:^",

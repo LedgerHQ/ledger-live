@@ -18,7 +18,7 @@ import { ZcashUtxoNotInAccount } from "../../../errors";
 import type { Transaction } from "../../../types";
 import type { SignerContext } from "../../../signer";
 // Imported here so jest.mocked() can configure the mock return value in beforeEach.
-import { getWalletAccount } from "../../../wallet-btc";
+import { getWalletAccount } from "../../../getWalletAccount";
 
 jest.mock("@ledgerhq/logs", () => ({ log: jest.fn() }));
 
@@ -62,7 +62,7 @@ jest.mock("@ledgerhq/live-signer-zcash", () => ({
 // above variable declarations, so any outer ref would hit the TDZ. The actual
 // mock return value is configured in beforeEach via jest.mocked(getWalletAccount).
 
-jest.mock("../../../wallet-btc", () => ({
+jest.mock("../../../getWalletAccount", () => ({
   getWalletAccount: jest.fn(),
 }));
 
