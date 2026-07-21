@@ -2389,9 +2389,6 @@ importers:
       '@ledgerhq/context-module':
         specifier: 2.3.0
         version: 2.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/cryptoassets
       '@ledgerhq/device-intent':
         specifier: workspace:^
         version: link:../../libs/device-intent
@@ -9037,9 +9034,6 @@ importers:
       '@ledgerhq/context-module':
         specifier: 2.3.0
         version: 2.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/cryptoassets
       '@ledgerhq/device-core':
         specifier: workspace:^
         version: link:../device-core
