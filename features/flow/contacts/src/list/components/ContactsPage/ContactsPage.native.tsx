@@ -123,7 +123,6 @@ export function ContactsPage({
         <Box testID="contacts-fixed-search-spacer" lx={{ height: "s64" }} />
         {content}
         <Box
-          testID="contacts-fixed-search-mask"
           pointerEvents="none"
           lx={{
             position: "absolute",

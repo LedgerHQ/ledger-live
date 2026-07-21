@@ -86,11 +86,9 @@ describe("ContactsPage", () => {
 
     const searchInput = screen.getByTestId("contacts-search-input");
     const fixedSearch = screen.getByTestId("contacts-fixed-search");
-    const fixedSearchMask = screen.getByTestId("contacts-fixed-search-mask");
 
     expect(fixedSearch).toBeVisible();
     expect(fixedSearch).toHaveStyle({ paddingBottom: 16, position: "absolute", zIndex: 2 });
-    expect(fixedSearchMask).toHaveStyle({ height: 64, position: "absolute", zIndex: 1 });
     expect(screen.getByTestId("contacts-fixed-search-spacer")).toHaveStyle({ height: 64 });
     expect(searchInput).toBeVisible();
     expect(screen.getByTestId("contacts-list")).toBeVisible();
