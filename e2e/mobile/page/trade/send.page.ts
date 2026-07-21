@@ -288,6 +288,7 @@ export default class SendPage {
   @Step("Set amount and tap Review in new send flow")
   async setAmountAndReviewNewFlow(amount: string) {
     await this.setAmountNewFlow(amount);
+    await waitForElementById("enabled-amount-continue-button");
     await tapById("enabled-amount-continue-button");
   }
 
