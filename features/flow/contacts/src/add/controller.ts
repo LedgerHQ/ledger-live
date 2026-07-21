@@ -1,4 +1,4 @@
-import { ContactNameSchema, type Contact } from "@domain/entity-contact";
+import { parseContactName, type Contact } from "@domain/entity-contact";
 import type { ContactCreationPort } from "./ports";
 import { createAddContactViewModel } from "./viewModel";
 import type { AddContactViewModel } from "./types";
@@ -14,9 +14,9 @@ export function createAddContactController(
   return {
     getViewModel: draftName => createAddContactViewModel(draftName),
     save: async draftName => {
-      const parsedName = ContactNameSchema.parse(draftName.trim());
+      const name = parseContactName(draftName);
 
-      return contactCreation.createContact({ name: parsedName });
+      return contactCreation.createContact({ name });
     },
   };
 }

@@ -1,3 +1,4 @@
+import { INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
 import { createAddContactViewModel } from "./viewModel";
 
 describe("createAddContactViewModel", () => {
@@ -5,6 +6,7 @@ describe("createAddContactViewModel", () => {
     expect(createAddContactViewModel("")).toEqual({
       draftName: "",
       avatarInitial: "",
+      invalidNameError: null,
       isSaveEnabled: false,
     });
   });
@@ -13,13 +15,16 @@ describe("createAddContactViewModel", () => {
     expect(createAddContactViewModel("Ben")).toEqual({
       draftName: "Ben",
       avatarInitial: "B",
+      invalidNameError: null,
       isSaveEnabled: true,
     });
   });
 
-  it("disables save for an invalid draft name", () => {
-    expect(createAddContactViewModel("Olive2")).toMatchObject({
+  it("exposes the stable invalid name error for an invalid draft name", () => {
+    expect(createAddContactViewModel("Olive2")).toEqual({
       draftName: "Olive2",
+      avatarInitial: "O",
+      invalidNameError: INVALID_CONTACT_NAME_ERROR_NAME,
       isSaveEnabled: false,
     });
   });
