@@ -239,16 +239,14 @@ export const buildAuthorizePreapproval =
 /**
  * Check if an error is a LockedDeviceError or UserRefusedOnDevice and create user-friendly error messages
  */
-const handleDeviceErrors = (error: Error): Error | null => {
-  if (error.name === "TransportStatusError") {
-    const statusCode = (error as { statusCode?: number }).statusCode;
-    if (statusCode === 0x6985) {
-      const userRefusedError = new UserRefusedOnDevice("errors.UserRefusedOnDevice.description");
-      return userRefusedError;
+const handleDeviceErrors = (error: unknown): Error | null => {
+  const err = error as { name?: string; statusCode?: number } | null | undefined;
+  if (err?.name === "TransportStatusError") {
+    if (err.statusCode === 0x6985) {
+      return new UserRefusedOnDevice("errors.UserRefusedOnDevice.description");
     }
-    if (statusCode === 0x5515) {
-      const lockedDeviceError = new LockedDeviceError("errors.LockedDeviceError.description");
-      return lockedDeviceError;
+    if (err.statusCode === 0x5515) {
+      return new LockedDeviceError("errors.LockedDeviceError.description");
     }
   }
 
