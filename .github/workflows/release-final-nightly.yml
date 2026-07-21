@@ -53,6 +53,11 @@ jobs:
         with:
           ruby-version: 3.3.0
 
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
       - name: install dependencies
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
 
@@ -69,15 +74,33 @@ jobs:
         with:
           path: ${{ github.workspace }}/apps/wallet-cli
 
+        #JFrog publishing - if statements to be removed when all is migrated
+
+      - name: JFrog npm auth (publish registry)
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
+
+      - name: publish nightly (JFrog)
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish --tag nightly --no-git-tag
+
+        #NPM publishing - to be removed when all is migrated
+
       - name: authenticate with npm
         uses: actions/setup-node@v4
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
         with:
           registry-url: "https://registry.npmjs.org"
 
       - name: publish nightly
         run: pnpm changeset publish --tag nightly --no-git-tag
+        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+
+      #NPM publishing - end removal
 
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version
