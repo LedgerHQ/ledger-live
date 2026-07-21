@@ -1,7 +1,7 @@
 import { getSendUiConfig, DEFAULT_SEND_UI_CONFIG } from "../send/uiConfig";
 import { getSendDescriptor } from "../../bridge/descriptor/registry";
 import { sendFeatures } from "../../bridge/descriptor/send/features";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 jest.mock("../../bridge/descriptor/registry", () => ({
   getSendDescriptor: jest.fn(),
@@ -23,29 +23,9 @@ const mockedGetSendDescriptor = getSendDescriptor as jest.MockedFunction<typeof 
 const mockedSendFeatures = sendFeatures as jest.Mocked<typeof sendFeatures>;
 
 // Test fixtures
-const mockBitcoinCurrency: CryptoCurrency = {
-  type: "CryptoCurrency",
-  id: "bitcoin",
-  name: "Bitcoin",
-  ticker: "BTC",
-  family: "bitcoin",
-} as unknown as CryptoCurrency;
-
-const mockEthereumCurrency: CryptoCurrency = {
-  type: "CryptoCurrency",
-  id: "ethereum",
-  name: "Ethereum",
-  ticker: "ETH",
-  family: "evm",
-} as unknown as CryptoCurrency;
-
-const mockSolanaCurrency: CryptoCurrency = {
-  type: "CryptoCurrency",
-  id: "solana",
-  name: "Solana",
-  ticker: "SOL",
-  family: "solana",
-} as unknown as CryptoCurrency;
+const mockBitcoinCurrency = getCryptoCurrencyById("bitcoin");
+const mockEthereumCurrency = getCryptoCurrencyById("ethereum");
+const mockSolanaCurrency = getCryptoCurrencyById("solana");
 
 describe("getSendUiConfig", () => {
   beforeEach(() => {

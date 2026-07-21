@@ -38,7 +38,7 @@ export async function loadBlacklistedTokenSections(
 
   for (const rawToken of tokens) {
     if (rawToken) {
-      const token = rawToken as unknown as TokenCurrency;
+      const token = rawToken as TokenCurrency;
       const parentCurrency = getCryptoCurrencyById(token.parentCurrencyId);
       const index = sections.findIndex(s => s.parentCurrency === parentCurrency);
       if (index < 0) {

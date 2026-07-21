@@ -8,13 +8,16 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
 const ASSET_REFERENCE = "1234567890123456789012345678901234567890123456789012345a4d59544f4b454e";
-const mockToken = {
+const mockToken: TokenCurrency = {
+  type: "TokenCurrency",
   id: `cardano/native/${ASSET_REFERENCE}`,
   tokenType: "native",
   contractAddress: ASSET_REFERENCE,
   name: "Coin Tester Token",
+  ticker: "CTT",
+  parentCurrencyId: "cardano",
   units: [{ name: "Coin Tester Token", code: "CTT", magnitude: 0 }],
-} as unknown as TokenCurrency;
+};
 
 const cardano = getCryptoCurrencyById("cardano");
 

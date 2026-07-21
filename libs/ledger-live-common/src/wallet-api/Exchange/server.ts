@@ -8,7 +8,11 @@ import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { decodeSwapPayload } from "@ledgerhq/hw-app-exchange";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { Account, AccountLike, getCurrencyForAccount, TokenAccount } from "@ledgerhq/types-live";
+import {
+  getDomainCurrencyForAccount,
+  getDomainTokenFromAccount,
+} from "../../currencies/domainAdapters";
+import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import {
   createAccountNotFound,
   createCurrencyNotFound,
@@ -325,7 +329,7 @@ export const handlers = ({
           exchange = {
             fromAccount,
             fromParentAccount,
-            fromCurrency: getCurrencyForAccount(fromAccount) as unknown as CryptoOrTokenCurrency,
+            fromCurrency: getDomainCurrencyForAccount(fromAccount),
             toAccount: newTokenAccount ? newTokenAccount : toAccount,
             toParentAccount,
             toCurrency,
@@ -334,7 +338,7 @@ export const handlers = ({
           exchange = {
             fromAccount,
             fromParentAccount,
-            fromCurrency: getCurrencyForAccount(fromAccount) as unknown as CryptoOrTokenCurrency,
+            fromCurrency: getDomainCurrencyForAccount(fromAccount),
           };
         }
 
@@ -866,12 +870,10 @@ async function extractSwapStartParam(
     exchange: {
       fromAccount,
       fromParentAccount,
-      fromCurrency: getCurrencyForAccount(fromAccount) as unknown as CryptoOrTokenCurrency,
+      fromCurrency: getDomainCurrencyForAccount(fromAccount),
       toAccount: newTokenAccount ? newTokenAccount : toAccount,
       toParentAccount: toParentAccount,
-      toCurrency: getCurrencyForAccount(
-        newTokenAccount ? newTokenAccount : toAccount,
-      ) as unknown as CryptoOrTokenCurrency,
+      toCurrency: getDomainCurrencyForAccount(newTokenAccount ?? toAccount),
     },
   };
 }
@@ -973,11 +975,12 @@ async function getToCurrency(
       "solana",
     );
     if (splTokenCurrency && splTokenCurrency.ticker === currencyTo)
-      return splTokenCurrency as unknown as CryptoOrTokenCurrency;
+      return splTokenCurrency as CryptoOrTokenCurrency;
   }
 
-  return (newTokenAccount?.token ??
-    getCurrencyForAccount(toAccount)) as unknown as CryptoOrTokenCurrency;
+  return newTokenAccount
+    ? getDomainTokenFromAccount(newTokenAccount)
+    : getDomainCurrencyForAccount(toAccount);
 }
 
 interface StrategyParams {

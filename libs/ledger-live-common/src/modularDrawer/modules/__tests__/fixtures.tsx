@@ -2,7 +2,13 @@ import React from "react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { CryptoCurrency, FiatCurrency, TokenCurrency } from "@domain/entity-currency";
+import {
+  CryptoCurrency,
+  CryptoCurrencySchema,
+  FiatCurrencySchema,
+  TokenCurrency,
+  TokenCurrencySchema,
+} from "@domain/entity-currency";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { createFixtureCryptoCurrency } from "../../../mock/fixtures/cryptoCurrencies";
 import { counterValuesApi } from "../../../counterValues/state-manager/api";
@@ -11,24 +17,25 @@ export const FIAT_CURRENCY_MAGNITUDE = 2;
 export const ETH_FIAT_CONVERSION = 4589;
 export const BTC_FIAT_CONVERSION = 45000;
 
-export const ethereumCurrency = {
+export const ethereumCurrency = CryptoCurrencySchema.parse({
   ...createFixtureCryptoCurrency("ethereum"),
   id: "ethereum",
   name: "Ethereum",
   ticker: "ETH",
-} as unknown as CryptoCurrency;
+});
 ethereumCurrency.units[0].magnitude = 18;
 
-export const bitcoinCurrency = {
+export const bitcoinCurrency = CryptoCurrencySchema.parse({
   ...createFixtureCryptoCurrency("bitcoin"),
   id: "bitcoin",
   name: "Bitcoin",
   ticker: "BTC",
-} as unknown as CryptoCurrency;
+});
 bitcoinCurrency.units[0].magnitude = 8;
 
-export const mockFiatCurrency = {
+export const mockFiatCurrency = FiatCurrencySchema.parse({
   type: "FiatCurrency",
+  id: "usd",
   ticker: "USD",
   name: "US Dollar",
   symbol: "$",
@@ -41,7 +48,7 @@ export const mockFiatCurrency = {
       prefixCode: true,
     },
   ],
-} as unknown as FiatCurrency;
+});
 
 export const makeUsdcToken = (
   parentCurrency: CryptoCurrency,
@@ -51,8 +58,8 @@ export const makeUsdcToken = (
   explicitId?: string,
 ): TokenCurrency => {
   const id = explicitId ?? `${parentCurrency.id}/${tokenType}/usdc`;
-  return {
-    type: "TokenCurrency" as const,
+  return TokenCurrencySchema.parse({
+    type: "TokenCurrency",
     parentCurrencyId: parentCurrency.id,
     tokenType,
     id,
@@ -60,7 +67,7 @@ export const makeUsdcToken = (
     ticker: "USDC",
     name,
     units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
-  } as unknown as TokenCurrency;
+  });
 };
 
 const counterValuesCacheEntry = (conversion: number) => ({

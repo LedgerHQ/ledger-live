@@ -7,21 +7,27 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
-const trc20Token = {
+const trc20Token: TokenCurrency = {
+  type: "TokenCurrency",
   id: "tron/trc20/tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
   tokenType: "trc20",
   contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
   name: "Tether USD",
+  ticker: "USDT",
+  parentCurrencyId: "tron",
   units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
-} as unknown as TokenCurrency;
+};
 
-const trc10Token = {
+const trc10Token: TokenCurrency = {
+  type: "TokenCurrency",
   id: "tron/trc10/1002000",
   tokenType: "trc10",
   contractAddress: "1002000",
   name: "BitTorrent",
+  ticker: "BTT",
+  parentCurrencyId: "tron",
   units: [{ name: "BTT", code: "BTT", magnitude: 6 }],
-} as unknown as TokenCurrency;
+};
 
 const tron = getCryptoCurrencyById("tron");
 

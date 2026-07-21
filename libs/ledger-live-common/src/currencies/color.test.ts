@@ -1,6 +1,6 @@
 import { getCurrencyColor } from "./color";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import { CryptoCurrencySchema, TokenCurrencySchema } from "@domain/entity-currency";
 
 const defaultColor = "#999";
 
@@ -11,28 +11,48 @@ describe("getCurrencyColor", () => {
   });
 
   it("falls back to the default color for a crypto currency without a color", () => {
-    const noColor = { type: "CryptoCurrency", id: "x", ticker: "X" } as unknown as CryptoCurrency;
+    const noColor = CryptoCurrencySchema.parse({
+      type: "CryptoCurrency",
+      id: "testcoin",
+      name: "Test Coin",
+      ticker: "X",
+      managerAppName: "TestCoin",
+      coinType: 0,
+      scheme: "testcoin",
+      color: "",
+      family: "testcoin",
+      units: [{ name: "Test", code: "X", magnitude: 0 }],
+      explorerViews: [],
+    });
     expect(getCurrencyColor(noColor)).toBe(defaultColor);
   });
 
   it("resolves a token's color from its parentCurrencyId", () => {
     const eth = getCryptoCurrencyById("ethereum");
-    const token = {
+    const token = TokenCurrencySchema.parse({
       type: "TokenCurrency",
       id: "ethereum/erc20/usdc",
       ticker: "USDC",
       parentCurrencyId: "ethereum",
-    } as unknown as TokenCurrency;
+      contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      tokenType: "erc20",
+      name: "USD Coin",
+      units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
+    });
     expect(getCurrencyColor(token)).toBe(eth.color);
   });
 
   it("falls back to the default color (without throwing) when the parentCurrencyId cannot be resolved", () => {
-    const token = {
+    const token = TokenCurrencySchema.parse({
       type: "TokenCurrency",
       id: "unknown/erc20/x",
       ticker: "X",
       parentCurrencyId: "not_a_real_currency",
-    } as unknown as TokenCurrency;
+      contractAddress: "0x0000000000000000000000000000000000000000",
+      tokenType: "erc20",
+      name: "Unknown Token",
+      units: [{ name: "Unknown", code: "X", magnitude: 0 }],
+    });
     expect(() => getCurrencyColor(token)).not.toThrow();
     expect(getCurrencyColor(token)).toBe(defaultColor);
   });

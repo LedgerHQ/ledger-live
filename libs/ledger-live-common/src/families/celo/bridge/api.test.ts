@@ -7,13 +7,16 @@ import { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./api";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
-const mockToken = {
+const mockToken: TokenCurrency = {
+  type: "TokenCurrency",
   id: "celo/erc20/celo_dollar",
   tokenType: "erc20",
   contractAddress: "0x765DE816845861e75A25fCA122bb6898B8B1282a",
   name: "Celo Dollar",
+  ticker: "cUSD",
+  parentCurrencyId: "celo",
   units: [{ name: "cUSD", code: "cUSD", magnitude: 18 }],
-} as unknown as TokenCurrency;
+};
 
 const celo = getCryptoCurrencyById("celo");
 

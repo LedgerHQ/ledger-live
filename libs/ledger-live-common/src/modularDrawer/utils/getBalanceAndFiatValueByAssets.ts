@@ -51,7 +51,7 @@ const yieldAssetDetails = (
     id: asset.id,
     name: asset.name,
     ticker: asset.ticker,
-    currency: assetDetails as unknown as CryptoOrTokenCurrency,
+    currency: assetDetails as CryptoOrTokenCurrency,
     balance: assetGroup.totalBalance,
     fiatValue: assetGroup.totalFiatValue.toNumber(),
   };

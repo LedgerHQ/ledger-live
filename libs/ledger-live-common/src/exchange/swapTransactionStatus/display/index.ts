@@ -394,15 +394,17 @@ export function useSwapTransactionStatusDisplayViewModel({
     };
   }, [provider]);
 
-  const sendCurrency = (sendResolved
-    ? getAccountCurrency(sendResolved.account)
-    : undefined) as unknown as CryptoOrTokenCurrency | undefined;
-  const receiveCurrency = (receiveResolved
-    ? getAccountCurrency(receiveResolved.account)
-    : undefined) as unknown as CryptoOrTokenCurrency | undefined;
-  const sendMainCurrency = (sendCurrency?.type === "TokenCurrency"
-    ? getCryptoCurrencyById(sendCurrency.parentCurrencyId as string)
-    : sendCurrency) as unknown as CryptoCurrency | undefined;
+  const sendCurrency = (sendResolved ? getAccountCurrency(sendResolved.account) : undefined) as
+    | CryptoOrTokenCurrency
+    | undefined;
+  const receiveCurrency = (
+    receiveResolved ? getAccountCurrency(receiveResolved.account) : undefined
+  ) as CryptoOrTokenCurrency | undefined;
+  const sendMainCurrency = (
+    sendCurrency?.type === "TokenCurrency"
+      ? getCryptoCurrencyById(sendCurrency.parentCurrencyId)
+      : sendCurrency
+  ) as CryptoCurrency | undefined;
   const getTransactionExplorer = useTransactionExplorerBuilder(sendMainCurrency);
   const sentAmount = formatSwapTransactionStatusAmount(sendCurrency, details?.sentAmount, locale);
   const receivedAmount = formatSwapTransactionStatusAmount(
@@ -441,7 +443,7 @@ export function useSwapTransactionStatusDisplayViewModel({
   return {
     sendCurrency,
     receiveCurrency,
-    receiveAccountCurrency: receiveAccount?.currency as unknown as CryptoCurrency | undefined,
+    receiveAccountCurrency: receiveAccount?.currency as CryptoCurrency | undefined,
     createdAt: details?.createdAt,
     locale,
     sendStatus,

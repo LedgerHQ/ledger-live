@@ -1,10 +1,11 @@
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import { CryptoCurrencySchema, TokenCurrencySchema } from "@domain/entity-currency";
 import type { TokenAccount, Account } from "@ledgerhq/types-live";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 
 export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
-  return {
+  return CryptoCurrencySchema.parse({
     type: "CryptoCurrency",
     id: "testCoinId",
     coinType: 8008,
@@ -15,16 +16,8 @@ export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
     color: "#ff0000",
     family,
     units: [
-      {
-        name: "MYC",
-        code: "MYC",
-        magnitude: 8,
-      },
-      {
-        name: "SmallestUnit",
-        code: "SMALLESTUNIT",
-        magnitude: 0,
-      },
+      { name: "MYC", code: "MYC", magnitude: 8 },
+      { name: "SmallestUnit", code: "SMALLESTUNIT", magnitude: 0 },
     ],
     explorerViews: [
       {
@@ -33,11 +26,11 @@ export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
         token: "https://mycoinexplorer.com/token/$contractAddress/?a=$address",
       },
     ],
-  } as unknown as CryptoCurrency;
+  });
 }
 
 const defaultEthCryptoFamily = CRYPTO_CURRENCIES_REGISTRY["ethereum"];
-const defaultERC20USDTToken = {
+const defaultERC20USDTToken = TokenCurrencySchema.parse({
   type: "TokenCurrency",
   id: "ethereum/erc20/usd_tether__erc20_",
   name: "Tether USD (ERC-20)",
@@ -46,7 +39,7 @@ const defaultERC20USDTToken = {
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
   parentCurrencyId: "ethereum",
   tokenType: "erc20",
-} as unknown as TokenCurrency;
+});
 
 export function createFixtureTokenAccount(
   id = "00",

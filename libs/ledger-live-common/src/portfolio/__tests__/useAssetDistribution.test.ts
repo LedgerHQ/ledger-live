@@ -4,7 +4,9 @@
 import { renderHook } from "@testing-library/react";
 import { useAssetDistribution } from "../useAssetDistribution";
 import type { Account, AssetsDistribution } from "@ledgerhq/types-live";
-import type { CryptoCurrency, Currency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency";
+import { FiatCurrencySchema } from "@domain/entity-currency";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 
 const mockCvState = {} as CounterValuesState;
@@ -22,12 +24,6 @@ jest.mock("../../dada-client/hooks/useChunkedAssetsData", () => ({
   useChunkedAssetsData: (...args: unknown[]) => mockUseChunkedAssetsData(...args),
 }));
 
-const makeCryptoCurrency = (id: string, ticker: string) =>
-  ({ type: "CryptoCurrency", id, ticker }) as unknown as CryptoCurrency;
-
-const makeFiatCurrency = (id: string, ticker: string) =>
-  ({ type: "FiatCurrency", id, ticker }) as unknown as Currency;
-
 const makeAccount = (id: string, currency: CryptoCurrency) =>
   ({
     type: "Account",
@@ -37,9 +33,15 @@ const makeAccount = (id: string, currency: CryptoCurrency) =>
     subAccounts: [],
   }) as unknown as Account;
 
-const btc = makeCryptoCurrency("bitcoin", "BTC");
-const eth = makeCryptoCurrency("ethereum", "ETH");
-const usd = makeFiatCurrency("usd", "USD");
+const btc = getCryptoCurrencyById("bitcoin");
+const eth = getCryptoCurrencyById("ethereum");
+const usd = FiatCurrencySchema.parse({
+  type: "FiatCurrency",
+  id: "usd",
+  name: "US Dollar",
+  ticker: "USD",
+  units: [{ name: "US Dollar", code: "USD", magnitude: 2 }],
+});
 
 const accounts = [makeAccount("acc-btc", btc), makeAccount("acc-eth", eth)];
 const baseOpts = { accounts, to: usd, product: "lld" as const, version: "1.0.0" };

@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useReducer } from "react";
-import { getAccountCurrency } from "../../../account/helpers";
+import { getDomainCurrencyForAccount } from "../../../currencies/domainAdapters";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { SendFlowAccountState } from "../types";
@@ -14,7 +14,7 @@ function accountReducer(state: SendFlowAccountState, action: AccountAction): Sen
       return {
         account: action.account,
         parentAccount: action.parentAccount,
-        currency: getAccountCurrency(action.account) as unknown as CryptoOrTokenCurrency,
+        currency: getDomainCurrencyForAccount(action.account),
       };
     case "CLEAR":
       return { account: null, parentAccount: null, currency: null };
@@ -33,7 +33,7 @@ function createInitialState(
   return {
     account: initialAccount,
     parentAccount: initialParentAccount ?? null,
-    currency: getAccountCurrency(initialAccount) as unknown as CryptoOrTokenCurrency,
+    currency: getDomainCurrencyForAccount(initialAccount),
   };
 }
 

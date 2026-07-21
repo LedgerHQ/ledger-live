@@ -41,7 +41,7 @@ export function useRightBalanceAsset(
         grouped,
       );
 
-      const currencyToUse = (referenceCurrency || mainCurrency) as unknown as CryptoOrTokenCurrency;
+      const currencyToUse = (referenceCurrency || mainCurrency) as CryptoOrTokenCurrency;
       const balanceData = formatProviderResult(currencyToUse, totalBalance, totalFiatValue);
 
       balanceMap.set(mainCurrency.id, balanceData);

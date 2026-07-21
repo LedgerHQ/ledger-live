@@ -4,7 +4,8 @@
 import { renderHook, act } from "@testing-library/react";
 import { useSendFlowAccount } from "../send/hooks/useSendFlowAccount";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrencySchema } from "@domain/entity-currency";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 // Mock getAccountCurrency
 jest.mock("../../account/helpers", () => ({
@@ -17,32 +18,18 @@ jest.mock("../../account/helpers", () => ({
 }));
 
 // Test fixtures
-const mockCurrency: CryptoCurrency = {
-  type: "CryptoCurrency",
-  id: "bitcoin",
-  name: "Bitcoin",
-  ticker: "BTC",
-  family: "bitcoin",
-  color: "#ffae35",
-  units: [{ name: "bitcoin", code: "BTC", magnitude: 8 }],
-  managerAppName: "Bitcoin",
-  coinType: 0,
-  scheme: "bitcoin",
-  blockAvgTime: 600,
-  ethereumLikeInfo: undefined,
-  explorerViews: [],
-  keywords: ["btc", "bitcoin"],
-} as unknown as CryptoCurrency;
+const mockCurrency = getCryptoCurrencyById("bitcoin");
 
-const mockTokenCurrency: TokenCurrency = {
+const mockTokenCurrency = TokenCurrencySchema.parse({
   type: "TokenCurrency",
   id: "ethereum/erc20/usd_coin",
   name: "USD Coin",
   ticker: "USDC",
   parentCurrencyId: "ethereum",
   tokenType: "erc20",
+  contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eB48",
   units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
-} as unknown as TokenCurrency;
+});
 
 const mockAccount: Account = {
   type: "Account",
@@ -82,13 +69,7 @@ const mockTokenAccount: TokenAccount = {
 const mockParentAccount: Account = {
   type: "Account",
   id: "eth-account-1",
-  currency: {
-    type: "CryptoCurrency",
-    id: "ethereum",
-    name: "Ethereum",
-    ticker: "ETH",
-    family: "evm",
-  } as unknown as CryptoCurrency,
+  currency: getCryptoCurrencyById("ethereum"),
   balance: BigInt(1000000000000000000),
   spendableBalance: BigInt(1000000000000000000),
   name: "Ethereum Account",

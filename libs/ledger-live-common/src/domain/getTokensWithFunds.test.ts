@@ -1,7 +1,7 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "../currencies/index";
 import { Account } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrencySchema } from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 import { getTokensWithFunds } from "./getTokensWithFunds";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
@@ -16,7 +16,7 @@ setCryptoAssetsStore({
 const ETH = getCryptoCurrencyById("ethereum");
 
 // Create mock tokens for tests
-const ZRX_TOKEN = {
+const ZRX_TOKEN = TokenCurrencySchema.parse({
   type: "TokenCurrency",
   id: "ethereum/erc20/0x_project",
   contractAddress: "0xE41d2489571d322189246DaFA5ebDe1F4699F498",
@@ -27,9 +27,9 @@ const ZRX_TOKEN = {
   delisted: false,
   disableCountervalue: false,
   units: [{ name: "ZRX", code: "ZRX", magnitude: 18 }],
-} as unknown as TokenCurrency;
+});
 
-const REP_TOKEN = {
+const REP_TOKEN = TokenCurrencySchema.parse({
   type: "TokenCurrency",
   id: "ethereum/erc20/augur",
   contractAddress: "0x1985365e9f78359a9B6AD760e32412f4a445E862",
@@ -40,7 +40,7 @@ const REP_TOKEN = {
   delisted: false,
   disableCountervalue: false,
   units: [{ name: "REP", code: "REP", magnitude: 18 }],
-} as unknown as TokenCurrency;
+});
 
 const mockedAccounts: Account[] = [
   genAccount("mocked-account-2", {

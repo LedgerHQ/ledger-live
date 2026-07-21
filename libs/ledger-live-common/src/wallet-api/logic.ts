@@ -2,10 +2,10 @@ import {
   Account,
   AccountLike,
   AnyMessage,
-  getCurrencyForAccount,
   SignedOperation,
   TokenAccount,
 } from "@ledgerhq/types-live";
+import { getDomainCurrencyForAccount } from "../currencies/domainAdapters";
 import { withLiveAppContext } from "./blindSigningContext";
 import {
   accountToWalletAPIAccount,
@@ -656,7 +656,7 @@ export async function completeExchangeLogic(
   const exchange = {
     fromAccount,
     fromParentAccount: fromAccount !== fromParentAccount ? fromParentAccount : undefined,
-    fromCurrency: getCurrencyForAccount(fromAccount) as unknown as CryptoOrTokenCurrency,
+    fromCurrency: getDomainCurrencyForAccount(fromAccount),
     toAccount: newTokenAccount ? newTokenAccount : toAccount,
     toParentAccount: newTokenAccount ? toAccount : toParentAccount,
     toCurrency: toAccount ? getToCurrency(toAccount, newTokenAccount) : undefined,
@@ -715,9 +715,7 @@ export async function completeExchangeLogic(
 }
 
 function getToCurrency(account: AccountLike, tokenAccount?: TokenAccount): CryptoOrTokenCurrency {
-  return (tokenAccount
-    ? getCurrencyForAccount(tokenAccount)
-    : getCurrencyForAccount(account)) as unknown as CryptoOrTokenCurrency;
+  return getDomainCurrencyForAccount(tokenAccount ?? account);
 }
 
 type StorageGetArgs = {

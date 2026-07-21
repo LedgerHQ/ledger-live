@@ -40,7 +40,7 @@ function convertApiAssets(
           disableCountervalue: asset.disableCountervalue,
           supportsSegwit: asset.hasSegwit,
           ...(asset.chainId ? { ethereumLikeInfo: { chainId: parseInt(asset.chainId, 10) } } : {}),
-        } as unknown as CryptoOrTokenCurrency;
+        } as CryptoOrTokenCurrency;
       }
     }
   }

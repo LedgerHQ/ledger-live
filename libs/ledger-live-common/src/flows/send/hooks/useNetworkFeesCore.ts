@@ -69,7 +69,7 @@ export function useNetworkFeesCore({
     [account, parentAccount],
   );
   const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
-  const domainAccountCurrency = accountCurrency as unknown as CryptoOrTokenCurrency;
+  const domainAccountCurrency = accountCurrency as CryptoOrTokenCurrency;
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
 
   const presetEstimation = useMemo(

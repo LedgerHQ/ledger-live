@@ -146,7 +146,7 @@ export function useCustomFeesViewModelCore({
     [account, parentAccount],
   );
   const accountCurrency = useMemo(
-    () => getAccountCurrency(mainAccount) as unknown as CryptoOrTokenCurrency,
+    () => getAccountCurrency(mainAccount) as CryptoOrTokenCurrency,
     [mainAccount],
   );
   const fiatUnit = counterValueCurrency.units[0];

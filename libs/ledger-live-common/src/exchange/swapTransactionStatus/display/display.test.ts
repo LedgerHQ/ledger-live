@@ -1,6 +1,6 @@
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "../../../currencies/index";
-import type { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrencySchema } from "@domain/entity-currency";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import {
   findSwapSendOperation,
@@ -31,7 +31,7 @@ const ethereum = getCryptoCurrencyById("ethereum");
 const polygon = getCryptoCurrencyById("polygon");
 const ton = getCryptoCurrencyById("ton");
 const hedera = getCryptoCurrencyById("hedera");
-const usdcPolygon = {
+const usdcPolygon = TokenCurrencySchema.parse({
   type: "TokenCurrency",
   id: "polygon/erc20/usd_coin",
   parentCurrencyId: polygon.id,
@@ -39,14 +39,8 @@ const usdcPolygon = {
   contractAddress: "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",
   ticker: "USDC",
   name: "USD Coin",
-  units: [
-    {
-      name: "USD Coin",
-      code: "USDC",
-      magnitude: 6,
-    },
-  ],
-} as unknown as TokenCurrency;
+  units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
+});
 
 function normalizeSpaces(value: string | undefined): string | undefined {
   return value?.replace(/\u00a0/g, " ");

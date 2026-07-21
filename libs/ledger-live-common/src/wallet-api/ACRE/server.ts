@@ -125,11 +125,11 @@ async function findAcreToken(
     foundToken = (await getCryptoAssetsStore().findTokenByAddressInCurrency(
       tokenContractAddress,
       "ethereum",
-    )) as unknown as TokenCurrency | undefined;
+    )) as TokenCurrency | undefined;
   } else if (tokenTicker) {
-    foundToken = (await getCryptoAssetsStore().findTokenById(
-      tokenTicker.toLowerCase(),
-    )) as unknown as TokenCurrency | undefined;
+    foundToken = (await getCryptoAssetsStore().findTokenById(tokenTicker.toLowerCase())) as
+      | TokenCurrency
+      | undefined;
   }
   if (!foundToken) {
     throw new Error(

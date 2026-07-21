@@ -1,11 +1,5 @@
-import {
-  Account,
-  AccountLike,
-  AnyMessage,
-  getCurrencyForAccount,
-  Operation,
-  SignedOperation,
-} from "@ledgerhq/types-live";
+import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
+import { getDomainCurrencyForAccount } from "../currencies/domainAdapters";
 import { accountToPlatformAccount, getPlatformTransactionSignFlowInfos } from "./converters";
 import { RawPlatformTransaction, RawPlatformSignedTransaction } from "./rawTypes";
 import {
@@ -203,10 +197,8 @@ export async function completeExchangeLogic(
     fromParentAccount,
     toAccount,
     toParentAccount,
-    fromCurrency: getCurrencyForAccount(fromAccount) as unknown as CryptoOrTokenCurrency,
-    toCurrency: toAccount
-      ? (getCurrencyForAccount(toAccount) as unknown as CryptoOrTokenCurrency)
-      : undefined,
+    fromCurrency: getDomainCurrencyForAccount(fromAccount),
+    toCurrency: toAccount ? getDomainCurrencyForAccount(toAccount) : undefined,
   };
 
   const accountBridge = await getAccountBridge(fromAccount, fromParentAccount);

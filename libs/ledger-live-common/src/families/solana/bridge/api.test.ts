@@ -7,13 +7,16 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
-const mockToken = {
+const mockToken: TokenCurrency = {
+  type: "TokenCurrency",
   id: "solana/spl/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
   tokenType: "spl",
   contractAddress: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
   name: "USD Coin",
+  ticker: "USDC",
+  parentCurrencyId: "solana",
   units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
-} as unknown as TokenCurrency;
+};
 
 const solana = getCryptoCurrencyById("solana");
 

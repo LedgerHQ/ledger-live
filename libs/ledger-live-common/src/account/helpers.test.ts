@@ -3,7 +3,8 @@ import { loadBlacklistedTokenSections } from "./helpers";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { TokenCurrencySchema } from "@domain/entity-currency";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
@@ -11,27 +12,9 @@ const mockGetCryptoAssetsStore = getCryptoAssetsStore as jest.MockedFunction<
   typeof getCryptoAssetsStore
 >;
 
-const mockEthereumCurrency = {
-  id: "ethereum",
-  name: "Ethereum",
-  ticker: "ETH",
-  type: "CryptoCurrency",
-  managerAppName: "Ethereum",
-  coinType: 60,
-  scheme: "ethereum",
-  color: "#0ebdcd",
-  family: "ethereum",
-  explorerViews: [],
-  units: [
-    {
-      name: "ether",
-      code: "ETH",
-      magnitude: 18,
-    },
-  ],
-} as unknown as CryptoCurrency;
+const mockEthereumCurrency = getCryptoCurrencyById("ethereum");
 
-const mockUsdtToken = {
+const mockUsdtToken = TokenCurrencySchema.parse({
   id: "ethereum/erc20/usdt",
   type: "TokenCurrency",
   name: "Tether USD",
@@ -39,16 +22,10 @@ const mockUsdtToken = {
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
   parentCurrencyId: "ethereum",
   tokenType: "erc20",
-  units: [
-    {
-      name: "USDT",
-      code: "USDT",
-      magnitude: 6,
-    },
-  ],
-} as unknown as TokenCurrency;
+  units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
+});
 
-const mockUsdcToken = {
+const mockUsdcToken = TokenCurrencySchema.parse({
   id: "ethereum/erc20/usdc",
   type: "TokenCurrency",
   name: "USD Coin",
@@ -56,16 +33,10 @@ const mockUsdcToken = {
   contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
   parentCurrencyId: "ethereum",
   tokenType: "erc20",
-  units: [
-    {
-      name: "USDC",
-      code: "USDC",
-      magnitude: 6,
-    },
-  ],
-} as unknown as TokenCurrency;
+  units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+});
 
-const mockMaticUsdtToken = {
+const mockMaticUsdtToken = TokenCurrencySchema.parse({
   id: "polygon/erc20/usdt",
   type: "TokenCurrency",
   name: "Tether USD (Polygon)",
@@ -73,26 +44,12 @@ const mockMaticUsdtToken = {
   contractAddress: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
   parentCurrencyId: "polygon",
   tokenType: "erc20",
-  units: [
-    {
-      name: "USDT",
-      code: "USDT",
-      magnitude: 6,
-    },
-  ],
-} as unknown as TokenCurrency;
+  units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
+});
 
 describe("filterAccountsExcludingBlacklisted", () => {
   const ethAccount = genAccount("eth", { currency: mockEthereumCurrency });
-  const btcAccount = genAccount("btc", {
-    currency: {
-      ...mockEthereumCurrency,
-      id: "bitcoin",
-      name: "Bitcoin",
-      ticker: "BTC",
-      type: "CryptoCurrency",
-    },
-  });
+  const btcAccount = genAccount("btc", { currency: getCryptoCurrencyById("bitcoin") });
 
   it("returns the same reference when the blacklist is empty", () => {
     const accounts = [ethAccount, btcAccount];

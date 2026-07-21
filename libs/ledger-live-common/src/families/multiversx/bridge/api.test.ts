@@ -7,13 +7,16 @@ import { getAssetFromToken, getTokenFromAsset, computeIntentType } from "./api";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
-const mockToken = {
+const mockToken: TokenCurrency = {
+  type: "TokenCurrency",
   id: "elrond/esdt/555344432d633736663166",
   tokenType: "esdt",
   contractAddress: "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u",
   name: "WrappedUSDC",
+  ticker: "USDC",
+  parentCurrencyId: "elrond",
   units: [{ name: "WrappedUSDC", code: "USDC", magnitude: 6 }],
-} as unknown as TokenCurrency;
+};
 
 const multiversx = getCryptoCurrencyById("elrond");
 
