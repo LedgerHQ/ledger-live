@@ -9687,9 +9687,6 @@ importers:
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:^
         version: link:../live-dmk-speculos
-      '@ledgerhq/wallet-framework-test-setup':
-        specifier: workspace:^
-        version: link:../wallet-framework-test-setup
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
