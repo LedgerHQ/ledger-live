@@ -466,10 +466,14 @@ export class SwapPage extends WebViewAppPage {
   @step("Wait for the to-account coin selector to be populated")
   async waitForToAssetSelectorReady() {
     const webview = await this.getWebView();
-    await webview.waitForFunction(selectorTestId => {
-      const el = document.querySelector(`[data-testid='${selectorTestId}']`);
-      return Boolean(el?.textContent && el.textContent.trim() !== "Choose asset");
-    }, this.toAccountCoinSelector);
+    await webview.waitForFunction(
+      selectorTestId => {
+        const el = document.querySelector(`[data-testid='${selectorTestId}']`);
+        return Boolean(el?.textContent && el.textContent.trim() !== "Choose asset");
+      },
+      this.toAccountCoinSelector,
+      { timeout: 5_000 },
+    );
   }
 
   @step("Check currency to swap to contains $0")
