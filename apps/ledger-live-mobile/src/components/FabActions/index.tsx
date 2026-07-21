@@ -6,6 +6,7 @@ import { ParamListBase, useNavigation, useRoute } from "@react-navigation/native
 import { Linking, TouchableOpacityProps } from "react-native";
 import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
+import { TextVariants } from "@ledgerhq/native-ui/styles/theme";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import InfoModal from "../InfoModal";
 import { useAnalytics } from "~/analytics";
@@ -63,6 +64,7 @@ export type ActionButtonEvent = ActionButtonEventProps & {
   buttonProps?: ButtonProps;
   disabled?: boolean;
   testId?: string;
+  textVariant?: TextVariants;
   additionalPropertiesByEventType?: Record<string, Record<string, unknown>>;
 };
 
@@ -74,6 +76,7 @@ export type ActionButtonProps = {
   children: React.ReactNode;
   buttonProps?: ButtonProps;
   testId?: string;
+  textVariant?: TextVariants;
 };
 
 export const FabButtonBarProvider = ({
@@ -224,6 +227,7 @@ export const FabButtonBarProvider = ({
         : undefined,
       buttonProps: action.buttonProps,
       testId: action.testId,
+      textVariant: action.textVariant,
     }))
     .sort(a => (a.disabled ? 0 : -1));
 

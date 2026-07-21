@@ -18,6 +18,7 @@ const getMainActions = ({
     id: "public_to_private",
     label: <Trans i18nKey="aleo.accountActions.publicToPrivate" />,
     Icon: IconsLegacy.TransferMedium,
+    textVariant: "small",
     event: "button_clicked",
     eventProperties: {
       button: "public_to_private",
@@ -63,6 +64,7 @@ const getAdditionalAssetActions = ({
     id: "self_transfer",
     label: <Trans i18nKey="aleo.accountActions.publicToPrivate" />,
     Icon: IconsLegacy.TransferMedium,
+    textVariant: "small",
     event: "button_clicked",
     eventProperties: { button: "self_transfer", currency: currency?.ticker },
     navigationParams: [
