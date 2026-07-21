@@ -9212,8 +9212,8 @@ importers:
         specifier: ^1.15.1
         version: 1.15.1(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.34.0
-        version: 1.34.0(@ton/crypto@3.3.0)
+        specifier: ^1.35.0
+        version: 1.35.0(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-exchange-module':
         specifier: workspace:^
         version: link:../exchange-module
@@ -18368,6 +18368,9 @@ packages:
 
   '@ledgerhq/wallet-api-core@1.34.0':
     resolution: {integrity: sha512-bgIegxFBeH6JidOBP9g0TPs0QZ1wlukXAPLBhFhhKJMrwvtLj4Gp7wcfX9S3bfa88/HM2BS6rcPZmboxycV6TQ==}
+
+  '@ledgerhq/wallet-api-core@1.35.0':
+    resolution: {integrity: sha512-HPISSNlIxT4QsSki7eT3kVOijpZsy1JtqWOUERz+UJzmJ/oWwZF8+i39ZNd+Oaxp4yakFknFDlBt8f2FPXvYFA==}
 
   '@ledgerhq/wallet-api-server@3.4.1':
     resolution: {integrity: sha512-+DxIHbu7a91EaXp9cFDqVpwfEbplVv5Ng+CBpJhysPDA9IbOeBHnU6d1sx0xx8EBqzSlNNpPi5d3zmmGZlW5zw==}
@@ -46902,6 +46905,17 @@ snapshots:
       - encoding
 
   '@ledgerhq/wallet-api-core@1.34.0(@ton/crypto@3.3.0)':
+    dependencies:
+      '@ledgerhq/errors': 6.36.0
+      '@stacks/transactions': 6.17.0
+      '@ton/core': 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
+      bignumber.js: 9.1.2
+      zod: 4.4.3
+    transitivePeerDependencies:
+      - '@ton/crypto'
+      - encoding
+
+  '@ledgerhq/wallet-api-core@1.35.0(@ton/crypto@3.3.0)':
     dependencies:
       '@ledgerhq/errors': 6.36.0
       '@stacks/transactions': 6.17.0
