@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "@ledgerhq/types-live": "workspace:*",
-    "@ledgerhq/types-cryptoassets": "workspace:*",
     "@ledgerhq/live-countervalues": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-hooks": "workspace:*",

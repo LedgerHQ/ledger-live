@@ -1,6 +1,8 @@
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { Currency } from "@domain/entity-currency";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import BigNumber from "bignumber.js";

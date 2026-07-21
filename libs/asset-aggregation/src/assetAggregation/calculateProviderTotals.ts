@@ -1,4 +1,4 @@
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 import { GroupedAccount } from "./groupAccountsByAsset";
 

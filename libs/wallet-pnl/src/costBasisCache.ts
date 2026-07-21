@@ -1,5 +1,5 @@
 import type { AccountLike } from "@ledgerhq/types-live";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import { lenseRateMap } from "@ledgerhq/live-countervalues/logic";
 import { formatCounterValueDay, inferCurrencyAPIID } from "@ledgerhq/live-countervalues/helpers";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";

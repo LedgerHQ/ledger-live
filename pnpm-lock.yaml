@@ -4720,15 +4720,15 @@ importers:
 
   libs/asset-aggregation:
     dependencies:
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
       '@ledgerhq/live-countervalues':
         specifier: workspace:*
         version: link:../live-countervalues
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:*
-        version: link:../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-live
@@ -4763,15 +4763,15 @@ importers:
 
   libs/asset-detail:
     dependencies:
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency
       '@ledgerhq/asset-aggregation':
         specifier: workspace:*
         version: link:../asset-aggregation
       '@ledgerhq/live-common':
         specifier: workspace:*
         version: link:../ledger-live-common
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:*
-        version: link:../ledgerjs/packages/types-cryptoassets
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -8546,9 +8546,6 @@ importers:
         specifier: 19.1.4
         version: 19.1.4(react@19.1.4)
     devDependencies:
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/types-cryptoassets
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -11455,6 +11452,9 @@ importers:
 
   libs/live-countervalues:
     dependencies:
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework
@@ -11470,9 +11470,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:*
         version: link:../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:*
-        version: link:../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-live
@@ -11501,6 +11498,9 @@ importers:
 
   libs/live-countervalues-react:
     dependencies:
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework
@@ -11510,9 +11510,6 @@ importers:
       '@ledgerhq/live-hooks':
         specifier: workspace:*
         version: link:../live-hooks
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:*
-        version: link:../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-live
@@ -11556,12 +11553,12 @@ importers:
 
   libs/live-currency-format:
     dependencies:
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/types-cryptoassets
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -11870,6 +11867,9 @@ importers:
 
   libs/live-e2e-shared:
     dependencies:
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency
       '@ledgerhq/device-core':
         specifier: workspace:^
         version: link:../device-core
@@ -11897,9 +11897,6 @@ importers:
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../speculos-transport
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
@@ -12510,6 +12507,9 @@ importers:
 
   libs/live-wallet:
     dependencies:
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
@@ -12531,9 +12531,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:*
         version: link:../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:*
-        version: link:../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-live
@@ -13363,15 +13360,15 @@ importers:
 
   libs/wallet-analytics:
     dependencies:
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:*
         version: link:../ledger-wallet-framework
       '@ledgerhq/live-countervalues':
         specifier: workspace:*
         version: link:../live-countervalues
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:*
-        version: link:../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-live
@@ -13561,6 +13558,9 @@ importers:
 
   libs/wallet-pnl:
     dependencies:
+      '@domain/entity-currency':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
@@ -13573,9 +13573,6 @@ importers:
       '@ledgerhq/live-countervalues':
         specifier: workspace:*
         version: link:../live-countervalues
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:*
-        version: link:../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-live
@@ -22838,7 +22835,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.1.4
       react-dom: 19.1.4
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -25103,7 +25100,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:

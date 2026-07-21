@@ -3,7 +3,7 @@ import { createFixtureAccount, createFixtureTokenAccount } from "./fixtures";
 import { CRYPTO_CURRENCIES_REGISTRY as cryptocurrenciesById } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 
 jest.mock("@ledgerhq/live-countervalues/logic", () => ({

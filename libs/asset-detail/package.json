@@ -2,7 +2,7 @@
   "name": "@ledgerhq/asset-detail",
   "version": "0.8.0",
   "private": true,
-  "description": "Ledger Live asset-detail shared module – market data hook, types and utils",
+  "description": "Ledger Live asset-detail shared module \u2013 market data hook, types and utils",
   "keywords": [
     "Ledger"
   ],
@@ -21,7 +21,7 @@
   "dependencies": {
     "@ledgerhq/asset-aggregation": "workspace:*",
     "@ledgerhq/live-common": "workspace:*",
-    "@ledgerhq/types-cryptoassets": "workspace:*"
+    "@domain/entity-currency": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19"

@@ -25,7 +25,6 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@shared/feature-flags": "workspace:*",
@@ -33,7 +32,8 @@
     "expect": "catalog:",
     "invariant": "^2.2.4",
     "rxjs": "catalog:",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "@domain/entity-currency-crypto": "workspace:*"
   },
   "devDependencies": {
     "@types/invariant": "2.2.37",

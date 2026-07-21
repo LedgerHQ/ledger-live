@@ -1,5 +1,5 @@
 import type { DistributionItem, AccountLike } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { CRYPTO_CURRENCIES_REGISTRY as cryptocurrenciesById } from "@domain/entity-currency-crypto";
 
 export const btc = cryptocurrenciesById["bitcoin"];

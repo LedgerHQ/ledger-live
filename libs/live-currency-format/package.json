@@ -22,7 +22,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/live-env": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "bignumber.js": "^9.1.2"
   },
   "devDependencies": {
