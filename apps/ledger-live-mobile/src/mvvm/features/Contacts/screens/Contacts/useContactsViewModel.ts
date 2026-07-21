@@ -1,5 +1,6 @@
 import {
   type ContactsLedgerSyncStatus,
+  type ContactsAddContactDrawerProps,
   type ContactsPageLabels,
   type ContactsPageNativeProps,
   useContactsSearchViewModel,
@@ -7,7 +8,6 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import { useTranslation } from "~/context/Locale";
-import type { ContactsAddContactDrawerViewModel } from "./ContactsAddContactDrawer/types";
 
 type ContactsLedgerSyncIntroductionSheetProps = Readonly<{
   title: string;
@@ -23,7 +23,7 @@ type ContactsPageViewModel = Omit<ContactsPageNativeProps, "onAddContact"> &
 export type ContactsViewModel = ContactsPageViewModel &
   Pick<ContactsPageNativeProps, "onAddContact"> &
   Readonly<{
-    addContactDrawer: ContactsAddContactDrawerViewModel;
+    addContactDrawer: ContactsAddContactDrawerProps;
   }>;
 
 export function useContactsViewModel(): ContactsPageViewModel {

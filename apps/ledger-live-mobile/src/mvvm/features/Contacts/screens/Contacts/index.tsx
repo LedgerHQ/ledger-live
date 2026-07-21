@@ -4,7 +4,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useContactsFeature } from "@features/flow-contacts";
 import { TrackScreen } from "~/analytics";
 import { ContactsView } from "./ContactsView";
-import { useContactsAddContactDrawerViewModel } from "./ContactsAddContactDrawer/useContactsAddContactDrawerViewModel";
+import { useContactsAddContactDrawerViewModel } from "./useContactsAddContactDrawerViewModel";
 import { useContactsScreenViewModel } from "./useContactsScreenViewModel";
 import { useContactsViewModel } from "./useContactsViewModel";
 

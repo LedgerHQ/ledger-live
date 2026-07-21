@@ -3,7 +3,7 @@ import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq
 import { ContactsPage, type ContactsPageProps } from "@features/flow-contacts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
-import { ContactsAddContactDrawer } from "./ContactsAddContactDrawer";
+import { ContactsAddContactDrawerSheet } from "./ContactsAddContactDrawerSheet";
 import type { ContactsViewModel } from "./useContactsViewModel";
 
 type ContactsLedgerSyncIntroductionSheetProps = Readonly<
@@ -29,7 +29,7 @@ export function ContactsView({
         {...pageProps.ledgerSyncIntroduction}
         {...ledgerSyncIntroductionSheet}
       />
-      <ContactsAddContactDrawer {...addContactDrawer} />
+      <ContactsAddContactDrawerSheet {...addContactDrawer} />
     </>
   );
 }

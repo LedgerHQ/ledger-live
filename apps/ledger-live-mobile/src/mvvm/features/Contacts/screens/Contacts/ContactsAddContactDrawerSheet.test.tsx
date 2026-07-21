@@ -1,11 +1,11 @@
 import React, { useState } from "react";
+import type { ContactsAddContactDrawerProps } from "@features/flow-contacts";
 import { fireEvent, render, screen } from "@tests/test-renderer";
-import { ContactsAddContactDrawer } from ".";
-import type { ContactsAddContactDrawerViewModel } from "./types";
+import { ContactsAddContactDrawerSheet } from "./ContactsAddContactDrawerSheet";
 
 function createViewModel(
-  overrides: Partial<ContactsAddContactDrawerViewModel> = {},
-): ContactsAddContactDrawerViewModel {
+  overrides: Partial<ContactsAddContactDrawerProps> = {},
+): ContactsAddContactDrawerProps {
   return {
     isOpen: true,
     isConfirmEnabled: false,
@@ -26,11 +26,11 @@ function createViewModel(
   };
 }
 
-function ControlledAddContactDrawer() {
+function ControlledAddContactDrawerSheet() {
   const [draftName, setDraftName] = useState("");
 
   return (
-    <ContactsAddContactDrawer
+    <ContactsAddContactDrawerSheet
       {...createViewModel({
         draftName,
         isConfirmEnabled: true,
@@ -40,9 +40,9 @@ function ControlledAddContactDrawer() {
   );
 }
 
-describe("ContactsAddContactDrawer", () => {
+describe("ContactsAddContactDrawerSheet", () => {
   it("should render the name form with the Figma copy and character limit", () => {
-    render(<ContactsAddContactDrawer {...createViewModel()} />);
+    render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
 
     expect(screen.getByText("Add contact")).toBeVisible();
     expect(screen.getByText(/For privacy, avoid full names and surnames/)).toBeVisible();
@@ -52,7 +52,7 @@ describe("ContactsAddContactDrawer", () => {
   });
 
   it("should cap the contact name at 32 characters", async () => {
-    const { user } = render(<ControlledAddContactDrawer />);
+    const { user } = render(<ControlledAddContactDrawerSheet />);
     const name = "a".repeat(33);
 
     await user.type(screen.getByTestId("contacts-add-contact-name-input"), name);
@@ -69,14 +69,16 @@ describe("ContactsAddContactDrawer", () => {
     const onDraftNameChange = jest.fn();
     const onConfirm = jest.fn();
     const { rerender, user } = render(
-      <ContactsAddContactDrawer {...createViewModel({ onClose, onDraftNameChange, onConfirm })} />,
+      <ContactsAddContactDrawerSheet
+        {...createViewModel({ onClose, onDraftNameChange, onConfirm })}
+      />,
     );
 
     fireEvent.changeText(screen.getByTestId("contacts-add-contact-name-input"), "Ada");
     expect(onDraftNameChange).toHaveBeenCalledWith("Ada");
 
     rerender(
-      <ContactsAddContactDrawer
+      <ContactsAddContactDrawerSheet
         {...createViewModel({
           draftName: "Ada",
           isConfirmEnabled: true,

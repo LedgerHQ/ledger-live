@@ -1,0 +1,45 @@
+import { useCallback, useState } from "react";
+import { useAddContactViewModel } from "../hooks/useAddContactViewModel";
+import type { AddContactDrawerViewModel, UseAddContactDrawerViewModelOptions } from "./drawer.types";
+
+export function useAddContactDrawerViewModel({
+  contactCreation,
+  onSaveSuccess,
+}: UseAddContactDrawerViewModelOptions): AddContactDrawerViewModel {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const { draftName, isSaveEnabled, save, setDraftName } = useAddContactViewModel(contactCreation);
+  const onOpen = useCallback(() => setIsOpen(true), []);
+  const onClose = useCallback(() => {
+    setIsOpen(false);
+    setDraftName("");
+  }, [setDraftName]);
+  const onConfirm = useCallback(async () => {
+    if (!isSaveEnabled || isSaving) {
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      await save();
+      onSaveSuccess();
+      onClose();
+    } catch {
+      return;
+    } finally {
+      setIsSaving(false);
+    }
+  }, [isSaveEnabled, isSaving, onClose, onSaveSuccess, save]);
+
+  return {
+    isOpen,
+    isConfirmEnabled: isSaveEnabled && !isSaving,
+    isSaving,
+    draftName,
+    onOpen,
+    onClose,
+    onDraftNameChange: setDraftName,
+    onConfirm,
+  };
+}
