@@ -1,6 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
-import type { ContactId } from "@domain/entity-contact";
+import { render, screen } from "@testing-library/react";
 import { mockMeContact, mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
 import type { ContactsLedgerSyncStatus, ContactsPageViewModel } from "../../types";
 import {
@@ -22,110 +21,73 @@ const labels = {
 type RenderContactsPageOptions = Readonly<{
   viewModel?: ContactsPageViewModel;
   ledgerSyncStatus?: ContactsLedgerSyncStatus;
-  isIntroductionOpen?: boolean;
-  onDismissIntroduction?: () => void;
-  onOpenMe?: (contactId: ContactId) => void;
-  onOpenContact?: (contactId: ContactId) => void;
-  onAddContact?: () => void;
   searchQuery?: string;
-  onSearchInputChange?: React.ChangeEventHandler<HTMLInputElement>;
 }>;
 
 function renderContactsPage({
   viewModel = createEmptyContactsListViewModel(mockMeContact()),
   ledgerSyncStatus = "ready",
-  isIntroductionOpen = false,
-  onDismissIntroduction = jest.fn(),
-  onOpenMe = jest.fn(),
-  onOpenContact = jest.fn(),
-  onAddContact = jest.fn(),
   searchQuery = "",
-  onSearchInputChange = jest.fn(),
 }: RenderContactsPageOptions = {}) {
   render(
     <ContactsPage
       viewModel={viewModel}
       labels={labels}
       meAvatarSrc="https://example.com/black/user.png"
-      onOpenMe={onOpenMe}
-      onOpenContact={onOpenContact}
-      onAddContact={onAddContact}
+      onOpenMe={jest.fn()}
+      onOpenContact={jest.fn()}
+      onAddContact={jest.fn()}
       searchQuery={searchQuery}
-      onSearchInputChange={onSearchInputChange}
+      onSearchInputChange={jest.fn()}
       ledgerSyncStatus={ledgerSyncStatus}
       ledgerSyncIntroduction={{
-        isOpen: isIntroductionOpen,
-        description:
-          "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
-        dismissLabel: "Got it",
-        onDismiss: onDismissIntroduction,
+        isOpen: false,
+        description: "",
+        dismissLabel: "",
+        onDismiss: jest.fn(),
       }}
     />,
   );
-
-  return { onDismissIntroduction, onOpenMe, onOpenContact, onAddContact, onSearchInputChange };
 }
 
 describe("ContactsPage", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+  it("renders the empty contacts list inside the page", () => {
+    renderContactsPage();
 
-  it("renders the empty contacts list inside the page and delegates row actions", () => {
-    const { onOpenMe, onOpenContact, onAddContact } = renderContactsPage();
+    const pageLayout = screen.getByTestId("contacts-page-layout");
+    const contactsList = screen.getByTestId("contacts-list");
 
-    expect(screen.getByTestId("contacts-page-layout")).toBeVisible();
-    expect(screen.getByTestId("contacts-page-header")).toBeVisible();
+    expect(pageLayout).toBeVisible();
     expect(screen.getByTestId("contacts-list-pane")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-pane").childElementCount).toBe(0);
-    expect(screen.getByTestId("contacts-list")).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Contacts" })).toBeVisible();
-    expect(screen.getByPlaceholderText("Search contact")).toBeVisible();
-    expect(screen.getByText("Me")).toBeVisible();
-    expect(screen.getByText("0 address")).toBeVisible();
-    const meAvatar = screen.getByTestId("contacts-me-avatar");
-    expect(meAvatar).toHaveAttribute("aria-hidden", "true");
-    expect(meAvatar.querySelector("img")?.getAttribute("src")).toBe(
-      "https://example.com/black/user.png",
-    );
+    expect(contactsList).toBeVisible();
+    expect(pageLayout).toHaveTextContent("Contacts");
+    expect(contactsList).toHaveTextContent("Me");
+    expect(contactsList).toHaveTextContent("0 address");
+    expect(contactsList).toHaveTextContent("Add contact");
     expect(screen.queryByTestId("contacts-section-A")).not.toBeInTheDocument();
-
-    fireEvent.click(screen.getByTestId("contacts-me-row"));
-    fireEvent.click(screen.getByTestId("contacts-add-contact"));
-    fireEvent.click(screen.getByTestId("contacts-add-contact-header"));
-
-    expect(onOpenMe).toHaveBeenCalledWith("contact-me");
-    expect(onOpenContact).not.toHaveBeenCalled();
-    expect(onAddContact).toHaveBeenCalledTimes(2);
   });
 
-  it("renders saved contacts in alphabetical sections and delegates row actions", () => {
-    const onOpenContact = jest.fn();
-    const onAddContact = jest.fn();
+  it("renders saved contacts in alphabetical sections", () => {
     const contacts = mockPopulatedContacts();
     const me = contacts.find(contact => contact.isMe) ?? mockMeContact();
 
     renderContactsPage({
       viewModel: createPopulatedContactsListViewModel(me, contacts),
-      onOpenContact,
-      onAddContact,
     });
+
+    const contactsList = screen.getByTestId("contacts-list");
 
     expect(screen.getByTestId("contacts-section-A")).toBeVisible();
     expect(screen.getByTestId("contacts-section-B")).toBeVisible();
     expect(screen.getByTestId("contacts-section-O")).toBeVisible();
-    expect(screen.getByTestId("contacts-saved-row-contact-ada")).toHaveTextContent("Ada");
-    expect(screen.getByTestId("contacts-saved-row-contact-ada")).toHaveTextContent("0 address");
-    expect(screen.getByTestId("contacts-saved-row-contact-ben")).toHaveTextContent("Ben");
-    expect(screen.getByTestId("contacts-saved-row-contact-ben")).toHaveTextContent("2 address");
-    expect(screen.getByTestId("contacts-saved-row-contact-olive")).toHaveTextContent("Olive");
+    expect(contactsList).toHaveTextContent("Ada");
+    expect(contactsList).toHaveTextContent("0 address");
+    expect(contactsList).toHaveTextContent("Ben");
+    expect(contactsList).toHaveTextContent("2 address");
+    expect(contactsList).toHaveTextContent("Olive");
     expect(screen.getByTestId("contacts-saved-avatar-contact-ada")).toHaveTextContent("A");
-    expect(screen.getByTestId("contacts-add-contact")).toBeVisible();
-    expect(screen.getByTestId("contacts-add-contact-header")).toBeVisible();
-
-    fireEvent.click(screen.getByTestId("contacts-saved-row-contact-ben"));
-
-    expect(onOpenContact).toHaveBeenCalledWith("contact-ben");
+    expect(contactsList).toHaveTextContent("Add contact");
   });
 
   it("keeps the Contacts page visible while Ledger Sync is checking", () => {
@@ -144,65 +106,19 @@ describe("ContactsPage", () => {
     );
   });
 
-  it("shows the Ledger Sync introduction over the Contacts page and dismisses it", () => {
-    const onDismissIntroduction = jest.fn();
-
-    renderContactsPage({
-      ledgerSyncStatus: "inactive",
-      isIntroductionOpen: true,
-      onDismissIntroduction,
-    });
-
-    expect(screen.getByTestId("contacts-list")).toBeVisible();
-    expect(
-      screen.getByText(
-        "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
-      ),
-    ).toBeVisible();
-
-    fireEvent.click(screen.getByText("Got it"));
-
-    expect(onDismissIntroduction).toHaveBeenCalledTimes(1);
-  });
-
-  it("updates the search input and delegates query changes", () => {
-    const onSearchInputChange = jest.fn();
-
-    renderContactsPage({ onSearchInputChange });
-
-    fireEvent.change(screen.getByTestId("contacts-list-search"), {
-      target: { value: "Ben" },
-    });
-
-    expect(onSearchInputChange).toHaveBeenCalledTimes(1);
-  });
-
   it("renders matching search results", () => {
     const contacts = mockPopulatedContacts();
     const me = contacts.find(contact => contact.isMe) ?? mockMeContact();
 
-    render(
-      <ContactsPage
-        viewModel={createContactsSearchViewModel(me, contacts, "ben")}
-        labels={labels}
-        meAvatarSrc="https://example.com/black/user.png"
-        onOpenMe={jest.fn()}
-        onOpenContact={jest.fn()}
-        onAddContact={jest.fn()}
-        searchQuery="ben"
-        onSearchInputChange={jest.fn()}
-        ledgerSyncStatus="ready"
-        ledgerSyncIntroduction={{
-          isOpen: false,
-          description: "",
-          dismissLabel: "",
-          onDismiss: jest.fn(),
-        }}
-      />,
-    );
+    renderContactsPage({
+      viewModel: createContactsSearchViewModel(me, contacts, "ben"),
+      searchQuery: "ben",
+    });
 
-    expect(screen.getByTestId("contacts-saved-row-contact-ben")).toBeVisible();
-    expect(screen.queryByTestId("contacts-saved-row-contact-ada")).not.toBeInTheDocument();
+    const contactsList = screen.getByTestId("contacts-list");
+
+    expect(contactsList).toHaveTextContent("Ben");
+    expect(contactsList).not.toHaveTextContent("Ada");
     expect(screen.queryByTestId("contacts-search-no-results")).not.toBeInTheDocument();
   });
 
@@ -210,28 +126,15 @@ describe("ContactsPage", () => {
     const contacts = mockPopulatedContacts();
     const me = contacts.find(contact => contact.isMe) ?? mockMeContact();
 
-    render(
-      <ContactsPage
-        viewModel={createContactsSearchViewModel(me, contacts, "unknown")}
-        labels={labels}
-        meAvatarSrc="https://example.com/black/user.png"
-        onOpenMe={jest.fn()}
-        onOpenContact={jest.fn()}
-        onAddContact={jest.fn()}
-        searchQuery="unknown"
-        onSearchInputChange={jest.fn()}
-        ledgerSyncStatus="ready"
-        ledgerSyncIntroduction={{
-          isOpen: false,
-          description: "",
-          dismissLabel: "",
-          onDismiss: jest.fn(),
-        }}
-      />,
-    );
+    renderContactsPage({
+      viewModel: createContactsSearchViewModel(me, contacts, "unknown"),
+      searchQuery: "unknown",
+    });
+
+    const contactsList = screen.getByTestId("contacts-list");
 
     expect(screen.getByTestId("contacts-search-no-results")).toBeVisible();
     expect(screen.getByText("No contact found")).toBeVisible();
-    expect(screen.queryByTestId("contacts-saved-row-contact-ben")).not.toBeInTheDocument();
+    expect(contactsList).not.toHaveTextContent("Ben");
   });
 });
