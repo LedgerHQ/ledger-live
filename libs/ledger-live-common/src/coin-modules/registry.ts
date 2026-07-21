@@ -150,10 +150,6 @@ export function getLoadedMockAccountForFamily(family: string): MockAccountModule
   return resolvedMockAccounts.get(family);
 }
 
-export const loadValidateAddressForFamily = makeLoaderCache(family =>
-  loaders.get(family)?.loadValidateAddress?.(),
-);
-
 export const loadSignerForFamily = makeLoaderCache(family => loaders.get(family)?.loadSigner?.());
 
 export const loadBridgeApiForFamily = makeLoaderCache(family =>

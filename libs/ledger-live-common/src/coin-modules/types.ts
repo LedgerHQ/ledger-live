@@ -146,7 +146,6 @@ export type CoinModuleLoader<
   loadAccount?: () => Promise<AccountModule<A>>;
   loadMockBridge?: () => Promise<MockBridgeModule<T, A, U, O, R>>;
   loadMockAccount?: () => Promise<MockAccountModule<A>>;
-  loadValidateAddress?: () => Promise<ValidateAddressFn>;
   loadSigner?: () => Promise<CoinFrameworkSigner>;
   loadBridgeExtensions?: () => Promise<AccountBridgeExtensions<T>>;
   loadBridgeApi?: () => Promise<BridgeApi | ((currency: CryptoCurrency) => BridgeApi)>;
