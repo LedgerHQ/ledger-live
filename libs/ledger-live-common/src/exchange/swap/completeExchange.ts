@@ -251,8 +251,8 @@ const completeExchange = (
             payoutAddressParameters,
           );
         } catch (e) {
-          const tse1 = e as { name?: string; statusCode?: number };
-          if (tse1.name === "TransportStatusError" && tse1.statusCode === 0x6a83) {
+          const tse1 = e as { name?: string; statusCode?: number } | null | undefined;
+          if (tse1?.name === "TransportStatusError" && tse1?.statusCode === 0x6a83) {
             throw new WrongDeviceForAccountPayout(
               getExchangeErrorMessage(tse1.statusCode, currentStep).errorMessage,
               {
@@ -293,8 +293,8 @@ const completeExchange = (
           );
           log(COMPLETE_EXCHANGE_LOG, "checkrefund address");
         } catch (e) {
-          const tse2 = e as { name?: string; statusCode?: number };
-          if (tse2.name === "TransportStatusError" && tse2.statusCode === 0x6a83) {
+          const tse2 = e as { name?: string; statusCode?: number } | null | undefined;
+          if (tse2?.name === "TransportStatusError" && tse2?.statusCode === 0x6a83) {
             log(COMPLETE_EXCHANGE_LOG, "transport error");
             throw new WrongDeviceForAccountRefund(
               getExchangeErrorMessage(tse2.statusCode, currentStep).errorMessage,
@@ -317,10 +317,10 @@ const completeExchange = (
         // During signature delegation, Exchange does not remap refusal errors from the coin app/OS.
         // 0x6a84: user refused the proposal for an owned destination address.
         // 0x5501: BOLOS/OS-level refusal (not an Exchange app error code).
-        const tse3 = e as { name?: string; statusCode?: number };
+        const tse3 = e as { name?: string; statusCode?: number } | null | undefined;
         if (
-          tse3.name === "TransportStatusError" &&
-          (tse3.statusCode === 0x6a84 || tse3.statusCode === 0x5501)
+          tse3?.name === "TransportStatusError" &&
+          (tse3?.statusCode === 0x6a84 || tse3?.statusCode === 0x5501)
         ) {
           throw new TransactionRefusedOnDevice();
         }
