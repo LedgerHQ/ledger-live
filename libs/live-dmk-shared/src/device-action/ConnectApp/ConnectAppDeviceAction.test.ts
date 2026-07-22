@@ -1,19 +1,18 @@
-import {
+import type {
   ApplicationDependency,
-  DeviceActionStatus,
-  GetDeviceStatusDeviceAction,
-  type GetDeviceStatusDAInput,
   GetDeviceMetadataDAOutput,
   InstallOrUpdateAppsDAIntermediateValue,
   OpenAppWithDependenciesDAIntermediateValue,
   DeviceSessionState,
+} from "@ledgerhq/device-management-kit";
+import {
+  DeviceActionStatus,
   DeviceModelId,
   UnknownDAError,
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
 import { DeviceModelId as LLDeviceModelId } from "@ledgerhq/types-devices";
-import { Right } from "purify-ts";
-import { setup } from "xstate";
+import { lastValueFrom } from "rxjs";
 
 import { makeDeviceActionInternalApiMock } from "../__test-utils__/makeInternalApi";
 import {
@@ -149,69 +148,37 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       expectedValue: true,
     },
   ])(
-    "GIVEN $description WHEN checking device status THEN it applies the expected onboarding policy",
-    ({ configuredValue, expectedValue }) =>
-      new Promise<void>((resolve, reject) => {
-        // GIVEN
-        let receivedStatusInput: GetDeviceStatusDAInput | undefined;
-        (GetDeviceStatusDeviceAction as jest.Mock).mockImplementation(
-          ({ input }: { input: GetDeviceStatusDAInput }) => ({
-            makeStateMachine: jest.fn(() =>
-              setup({
-                types: {
-                  input: {} as GetDeviceStatusDAInput,
-                },
-              }).createMachine({
-                context: ({ input: invokedInput }) => {
-                  receivedStatusInput = invokedInput;
-                  return {
-                    intermediateValue: {
-                      requiredUserInteraction: UserInteractionRequired.None,
-                    },
-                  };
-                },
-                initial: "done",
-                states: {
-                  done: {
-                    type: "final",
-                  },
-                },
-                output: () => Right(DEVICE_STATUS_ETHEREUM),
-              }),
-            ),
-            input,
-          }),
-        );
-        const deviceAction = new ConnectAppDeviceAction({
-          input: {
-            application: { name: "Ethereum" },
-            dependencies: [],
-            requireLatestFirmware: false,
-            allowMissingApplication: false,
-            allowNonOnboardedDevice: configuredValue,
-          },
-        });
+    "GIVEN $description WHEN opening an app THEN initial and refreshed device status checks use the expected onboarding policy",
+    async ({ configuredValue, expectedValue }) => {
+      // GIVEN
+      const statusInputSpy = jest.fn();
+      setupGetDeviceStatusMock(DEVICE_STATUS_ETHEREUM, false, statusInputSpy);
+      setupGetDeviceMetadataMock(DEVICE_METADATA);
+      setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, OPEN_APP_INTERMEDIATE_VALUE);
+      const deviceAction = new ConnectAppDeviceAction({
+        input: {
+          application: { name: "Bitcoin" },
+          dependencies: [],
+          requireLatestFirmware: false,
+          allowMissingApplication: false,
+          allowNonOnboardedDevice: configuredValue,
+        },
+      });
 
-        // WHEN
-        const { observable } = deviceAction._execute(apiMock);
+      // WHEN
+      await lastValueFrom(deviceAction._execute(apiMock).observable);
 
-        // THEN
-        observable.subscribe({
-          complete: () => {
-            try {
-              expect(receivedStatusInput).toEqual(
-                expect.objectContaining({
-                  allowNonOnboardedDevice: expectedValue,
-                }),
-              );
-              resolve();
-            } catch (error) {
-              reject(error);
-            }
-          },
-          error: reject,
-        });
-      }),
+      // THEN
+      expect(statusInputSpy).toHaveBeenCalledTimes(2);
+      expect(statusInputSpy).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ allowNonOnboardedDevice: expectedValue }),
+      );
+      expect(statusInputSpy).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ allowNonOnboardedDevice: expectedValue }),
+      );
+    },
   );
 
   describe("success cases", () => {
