@@ -8,9 +8,8 @@ import {
   Text,
   TextInput,
 } from "@ledgerhq/lumen-ui-rnative";
+import { CONTACT_NAME_MAX_LENGTH } from "../constants";
 import type { ContactsAddContactDrawerProps } from "../drawer.types";
-
-const CONTACT_NAME_MAX_LENGTH = 32;
 
 export function ContactsAddContactDrawer({
   isOpen,

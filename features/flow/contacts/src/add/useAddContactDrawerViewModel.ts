@@ -1,6 +1,9 @@
 import { useCallback, useState } from "react";
 import { useAddContactViewModel } from "../hooks/useAddContactViewModel";
-import type { AddContactDrawerViewModel, UseAddContactDrawerViewModelOptions } from "./drawer.types";
+import type {
+  AddContactDrawerViewModel,
+  UseAddContactDrawerViewModelOptions,
+} from "./drawer.types";
 
 export function useAddContactDrawerViewModel({
   contactCreation,
