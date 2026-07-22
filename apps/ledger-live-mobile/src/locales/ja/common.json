@@ -28,6 +28,7 @@
     "cryptoAsset" : "暗号資産",
     "skip" : "スキップ",
     "next" : "次へ",
+    "new" : "New",
     "noCryptoFound" : "暗号資産が見つかりません",
     "needHelp" : "ヘルプが必要ですか？",
     "edit" : "編集",
@@ -126,6 +127,10 @@
     "AccountNeedResync" : {
       "title" : "もう一度お試しください。",
       "description" : "アカウントが最新の状態ではありません。同期が必要です。"
+    },
+    "AccountPublicKeyUnavailable" : {
+      "title" : "アカウントを再度追加する必要があります",
+      "description" : "Ledger Walletはこのアカウントの公開鍵を取得できませんでした。続けるにはアカウントを削除し、再度追加してください"
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "送付先アカウントは、選択したASAをオプトインしていません。"
@@ -479,6 +484,9 @@
     "FeeRequired" : {
       "title" : "手数料がかかります。"
     },
+    "FeeTooHigh" : {
+      "title" : "ネットワーク手数料が10%を超えています。"
+    },
     "FeeTooLow" : {
       "title" : "手数料が低すぎるため、ネットワークに承認されません。増額してください"
     },
@@ -532,6 +540,10 @@
     },
     "InvalidExplorerResponse" : {
       "title" : "{{currencyName}}エクスプローラーからの応答が無効です"
+    },
+    "InvalidTransactionError" : {
+      "title" : "無効なトランザクション",
+      "description" : "トランザクションは、当該ブロックチェーンの状態と一致していません。最初からやり直してください。"
     },
     "LanguageInstallRefusedOnDevice" : {
       "title" : "言語のインストールがデバイス上で拒否されました",
@@ -902,11 +914,17 @@
     "TezosNotEnoughStaked" : {
       "title" : "ステーキング残高不足"
     },
+    "TezosStakeBlockedByPendingUnstake" : {
+      "title" : "以前のバリデーターからのステーキング解除を先に完了させる必要があります。"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "まず、すべてのサブアカウントを空にしてください。"
     },
     "NotSupportedLegacyAddress" : {
       "title" : "レガシーアドレス形式はサポートを終了しました。"
+    },
+    "RecipientRequired" : {
+      "title" : "受取人アドレスが必要です"
     },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}を送付するにはマルチシグを無効にしてください。"
@@ -1375,6 +1393,17 @@
         }
       }
     }
+  },
+  "largeScreenUpsellModal" : {
+    "optedIn" : {
+      "title" : "詳細を表示。数回のタップで取引。{{discount}}％OFF",
+      "subtitle" : "大画面、スマートなトランザクション、強化された保護を限定{{discount}}％OFFでお楽しみください。"
+    },
+    "optedOut" : {
+      "title" : "詐欺を見抜く。すべての詳細を確認する",
+      "subtitle" : "タッチスクリーン搭載の署名用デバイスで操作をしっかりと確認し、高度なセキュリティチェックで詐欺を検知しましょう。"
+    },
+    "cta" : "タッチスクリーン搭載の署名用デバイスを詳しく見る"
   },
   "earn" : {
     "simulator" : {
@@ -2971,6 +3000,8 @@
     "month" : "1月",
     "year" : "1年",
     "all" : "All",
+    "second_short" : "s",
+    "minute_short" : "分",
     "since" : {
       "day" : "過去1日間",
       "week" : "過去1週間",
@@ -3042,7 +3073,8 @@
       "more" : "取引履歴オプション",
       "hideDustTransactions" : "ダストトランザクションを非表示にする",
       "showDustTransactions" : "ダストトランザクションを表示する",
-      "dustTransactionsDescription" : "メイン通貨で{{threshold}}未満のトランザクションは非表示になります。"
+      "dustTransactionsHiddenDescription" : "{{threshold}}未満のトランザクションは非表示になります。",
+      "dustTransactionsDisplayedDescription" : "{{threshold}}未満のトランザクションは表示されます。"
     }
   },
   "operationDetails" : {
@@ -4191,7 +4223,8 @@
               "sendPending" : "{{ticker}}を送信中",
               "sendCompleted" : "{{ticker}}を送信済み",
               "receivePending" : "{{ticker}}を受け取る",
-              "receiveCompleted" : "{{ticker}}を受け取る"
+              "receiveCompleted" : "{{ticker}}を受け取る",
+              "estimated" : "（推定）"
             },
             "details" : {
               "networkFees" : "ネットワーク手数料",
@@ -4565,6 +4598,10 @@
           "description" : "トランザクションを拒否しました。お客様の資金に影響はありません。",
           "close" : "閉じる",
           "retry" : "再試行"
+        },
+        "error" : {
+          "retry" : "再試行",
+          "close" : "閉じる"
         }
       },
       "confirmation" : {
@@ -4581,6 +4618,7 @@
         "maxPriorityFee" : "最大優先手数料 ({{unit}})",
         "gasLimit" : "ガス制限（{{unit}}）",
         "feePerByte" : "手数料金額 ({{unit}})",
+        "feesAmount" : "手数料金額 ({{unit}})",
         "suggested" : "提案済み",
         "nextBlock" : "次のブロック",
         "networkFeesInFiat" : "{{currency}}のネットワーク手数料",
@@ -6735,7 +6773,8 @@
     },
     "delegation" : {
       "addCustomValidator" : "+ カスタムバリデーターを追加",
-      "sectionLabel" : "デリゲート"
+      "sectionLabel" : "デリゲート",
+      "pendingUnstakeWarning" : "現在バリデーターを変更することは可能ですが、現在のバリデーターからのステーキング解除の保留状態が解消される約4日後まで、新しいバリデーターでステーキングを行うことはできません。"
     },
     "staking" : {
       "sectionLabel" : "ステーキング",
@@ -9453,6 +9492,13 @@
       "openMenuA11yLabel" : "チャートオプション",
       "hideTransactions" : "価格チャート上のアクティビティを非表示にする",
       "showTransactions" : "価格チャートにアクティビティを表示"
+    },
+    "footer" : {
+      "moreOptions" : {
+        "accessibilityLabel" : "その他のオプション",
+        "sell" : "売却",
+        "earn" : "報酬獲得"
+      }
     }
   },
   "assetSelection" : {
@@ -9922,7 +9968,8 @@
     "swap" : "スワップ",
     "earn" : "報酬獲得",
     "yield" : "イールド",
-    "card" : "カード"
+    "card" : "カード",
+    "paytab" : "支払う"
   },
   "syncIndicator" : {
     "accessibilityLabel" : {
@@ -9969,6 +10016,10 @@
       "backup" : "バックアップ",
       "help" : "ヘルプ",
       "referral" : "紹介"
+    },
+    "contacts" : {
+      "title" : "お問い合せ",
+      "description" : "連絡先の管理"
     },
     "backupHub" : {
       "title" : "シークレットリカバリーフレーズのバックアップ",
@@ -10049,16 +10100,64 @@
         "description" : "デバイス上で閲覧キーの共有を確定してください",
         "cancelAlert" : "デバイス上で個別にアカウントを拒否することも可能です。「全てキャンセル」を選択すると、ポートフォリオへのアカウント追加を中止します。",
         "cancelAllBtn_one" : "キャンセル",
-        "cancelAllBtn_other" : "全てキャンセル"
+        "cancelAllBtn_other" : "全てキャンセル",
+        "redirecting" : "リダイレクト中..."
+      },
+      "stepNoAccountsAdded" : {
+        "title" : "{{currency}}アカウントは追加されませんでした",
+        "description" : "選択したアカウントには、閲覧キーが共有されていません。Ledger Walletでプライベート残高を表示するには、閲覧キーが必要です。"
       },
       "stepScanAccounts" : {
         "cta" : {
-          "shareViewKeys" : "閲覧キーを共有"
+          "shareKey_one" : "閲覧キーを共有",
+          "shareKey_other" : "閲覧キーを共有"
         }
       }
     },
     "accountActions" : {
       "publicToPrivate" : "自己送金"
+    },
+    "send" : {
+      "balanceSelection" : {
+        "title" : "残高を選択",
+        "convertToPrivate" : "パブリックからの転送",
+        "convertToPublic" : "プライベートからの転送",
+        "sendPublicly" : "パブリックに送信",
+        "sendPrivately" : "プライベートに送信"
+      },
+      "balanceSelector" : {
+        "public" : "パブリック",
+        "private" : "プライベート",
+        "lastUpdate" : "最終更新日：{{label}}",
+        "recently" : "最近"
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "プライベート残高を同期中（{{percentage}}％）",
+        "desc" : "お待ちください",
+        "errorTitle" : "プライベート同期に失敗しました。",
+        "errorDesc" : "問題が発生しました。もう一度お試しください。"
+      },
+      "quickAmountSelector" : {
+        "title" : "クイック選択",
+        "strategies" : {
+          "fast" : "高速",
+          "balanced" : "残高",
+          "full" : "全て"
+        },
+        "recordCount_one" : "{{count}}件の記録",
+        "recordCount_other" : "{{count}}件の記録",
+        "unavailable" : "使用不可",
+        "noValue" : "—",
+        "spendableBalance" : "最大利用可能残高：",
+        "tooltip" : {
+          "desc" : "送付元、金額、受取人がオンチェーンで非表示になります。1回で最大{{max}}件の記録を送信。"
+        }
+      },
+      "summary" : {
+        "proofGenerationWarning" : "Aleoのトランザクションにはプルーフの生成が必要です。少し時間がかかる場合があります。",
+        "recordsUsed" : "使用された記録",
+        "signingTime" : "署名する時間"
+      }
     },
     "balancesSection" : "残高",
     "info" : {
@@ -10070,6 +10169,34 @@
         "title" : "プライベート残高",
         "description" : "Aleoネットワーク上のシールドされた残高。この残高はあなたにのみ表示され、プライベートトランザクションには証明の生成が必要です。"
       }
+    },
+    "account" : {
+      "syncButton" : {
+        "startSync" : "同期を開始",
+        "stopSync" : "同期を停止",
+        "syncAgain" : "再度同期する",
+        "lastSync" : "最終同期：{{date}}"
+      }
+    },
+    "operations" : {
+      "type" : {
+        "public" : "パブリック",
+        "private" : "プライベート"
+      }
+    },
+    "shared" : {
+      "sponsoredByProvable" : "Provable提供"
+    }
+  },
+  "contacts" : {
+    "title" : "お問い合せ",
+    "addContact" : "連絡先を追加",
+    "searchPlaceholder" : "連絡先を検索",
+    "me" : {
+      "name" : "自分",
+      "addressCount_zero" : "0アドレス",
+      "addressCount_one" : "{{count}}アドレス",
+      "addressCount_other" : "{{count}}アドレス"
     }
   }
 }
