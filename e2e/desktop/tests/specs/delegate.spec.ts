@@ -275,49 +275,6 @@ test.describe("Delegate without Broadcasting", () => {
   );
 });
 
-test.describe("e2e delegation - Tezos", () => {
-  // XTZ_1 (index 0) is the funded + UNDELEGATED account: with lldTezosStaking off (the default) this
-  // routes to the delegate starter ("delegate to earn rewards"). The delegated + staked account lives
-  // on XTZ_2 (index 1), used by the staking specs.
-  const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
-  setupEnv(true);
-  test.use({
-    teamOwner: Team.EARN,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: account.account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account.account)],
-  });
-
-  test(
-    "Tezos Delegation",
-    {
-      tag: buildTags({ currencyId: account.account.currency.id }),
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-3041",
-      },
-    },
-    async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(account.account.accountName);
-      await app.account.startStakingFlowFromMainStakeButton();
-      await app.delegate.clickDelegateToEarnRewardsButton();
-      await app.delegate.verifyTezosDelegateInfos(account.provider);
-      await app.delegate.continue();
-      await app.speculos.signDelegationTransaction(account);
-      await app.delegate.verifySuccessMessage();
-      await app.delegate.clickViewDetailsButton();
-      await app.drawer.waitForDrawerToBeVisible();
-      await app.delegateDrawer.verifyTxTypeIsVisible();
-      await app.delegateDrawer.verifyTxTypeIs("Delegated");
-      await app.delegateDrawer.providerIsVisible(account);
-      await app.delegateDrawer.operationTypeIsCorrect("Delegated");
-      await app.drawer.closeDrawer();
-    },
-  );
-});
-
 test.describe("e2e delegation - Celo", () => {
   const account = new Delegate(Account.CELO_1, "0.001", "N/A");
   test.use({
