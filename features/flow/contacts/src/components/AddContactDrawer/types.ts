@@ -1,4 +1,4 @@
-import type { ContactCreationPort } from "../model/ports";
+import type { ContactCreationPort } from "../../add/model/ports";
 
 export type AddContactDrawerViewModel = Readonly<{
   isOpen: boolean;

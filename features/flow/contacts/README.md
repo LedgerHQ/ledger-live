@@ -36,10 +36,10 @@ entry point. The native entry also exports `ContactsAddContactHeaderButton` via 
 src/
 ├── components/
 │   ├── ContactsButton/                  # My Wallet entry
+│   ├── AddContactDrawer/                 # Native add-contact drawer content and state
 │   └── ContactsLedgerSyncIntroduction/  # Shared Ledger Sync introduction content
 ├── add/
 │   ├── model/            # Contact-name validation and creation contract
-│   └── drawer/           # Native drawer state and presentation
 ├── featureIntroduction/  # One-time feature intro preference + Ledger Sync priority
 ├── hooks/
 ├── list/                 # Shared list view models and page shells
