@@ -52,7 +52,7 @@ Examples:
 - `cli`
 - `coin-evm`
 - `coin-modules`
-- `ddd`
+- `architecture`
 - `desktop`
 - `e2e`
 - `mobile`
