@@ -6,7 +6,8 @@ const LEVEL_WARN = 1;
 module.exports = {
   extends: ["@commitlint/config-conventional"],
   rules: {
-    "scope-enum": [LEVEL_WARN, "always", scopes],
     "header-max-length": [LEVEL_ERROR, "always", 72],
+    "scope-enum": [LEVEL_WARN, "always", scopes],
+    "scope-delimiter-style": [LEVEL_ERROR, "always", ","],
   },
 };
