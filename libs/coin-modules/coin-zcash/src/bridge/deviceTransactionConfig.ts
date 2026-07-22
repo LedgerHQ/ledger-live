@@ -1,0 +1,27 @@
+import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "../types/bridge";
+
+/** Fields reviewed on-device when signing a Zcash send. */
+async function getDeviceTransactionConfig({
+  status: { amount, estimatedFees },
+}: {
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  transaction: Transaction;
+  status: TransactionStatus;
+}): Promise<Array<CommonDeviceTransactionField>> {
+  const fields: Array<CommonDeviceTransactionField> = [];
+
+  if (!amount.isZero()) {
+    fields.push({ type: "amount", label: "Amount" });
+  }
+
+  if (!estimatedFees.isZero()) {
+    fields.push({ type: "fees", label: "Fees" });
+  }
+
+  return fields;
+}
+
+export default getDeviceTransactionConfig;

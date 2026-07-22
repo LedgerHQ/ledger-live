@@ -1,0 +1,173 @@
+{
+  "name": "@ledgerhq/coin-zcash",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Ledger Zcash Coin integration (standalone coin-module)",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "zcash",
+    "Zcash",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-zcash",
+  "typesVersions": {
+    "*": {
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ],
+      "api": [
+        "lib/api/index"
+      ],
+      "deviceTransactionConfig": [
+        "lib/bridge/deviceTransactionConfig"
+      ],
+      "logic": [
+        "lib/logic/index"
+      ],
+      "specs": [
+        "lib/test/bot-specs"
+      ],
+      "transaction": [
+        "lib/bridge/transaction"
+      ],
+      "types": [
+        "lib/types/index"
+      ],
+      "*": [
+        "lib/*",
+        "lib/bridge/*",
+        "lib/logic/*",
+        "lib/signer/*",
+        "lib/test/*",
+        "lib/types/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*": "./lib/*.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./api": {
+      "@ledgerhq/source": "./src/api/index.ts",
+      "require": "./lib/api/index.js",
+      "default": "./lib-es/api/index.js"
+    },
+    "./bridge": {
+      "@ledgerhq/source": "./src/bridge/index.ts",
+      "require": "./lib/bridge/index.js",
+      "default": "./lib-es/bridge/index.js"
+    },
+    "./deviceTransactionConfig": {
+      "@ledgerhq/source": "./src/bridge/deviceTransactionConfig.ts",
+      "require": "./lib/bridge/deviceTransactionConfig.js",
+      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+    },
+    "./logic": {
+      "@ledgerhq/source": "./src/logic/index.ts",
+      "require": "./lib/logic/index.js",
+      "default": "./lib-es/logic/index.js"
+    },
+    "./signer": {
+      "@ledgerhq/source": "./src/signer/index.ts",
+      "require": "./lib/signer/index.js",
+      "default": "./lib-es/signer/index.js"
+    },
+    "./specs": {
+      "@ledgerhq/source": "./src/test/bot-specs.ts",
+      "require": "./lib/test/bot-specs.js",
+      "default": "./lib-es/test/bot-specs.js"
+    },
+    "./transaction": {
+      "@ledgerhq/source": "./src/bridge/transaction.ts",
+      "require": "./lib/bridge/transaction.js",
+      "default": "./lib-es/bridge/transaction.js"
+    },
+    "./types": {
+      "@ledgerhq/source": "./src/types/index.ts",
+      "require": "./lib/types/index.js",
+      "default": "./lib-es/types/index.js"
+    },
+    "./network/ZCash": {
+      "react-native": "./src/network/stubs/ZCash.native.ts",
+      "@ledgerhq/source": "./src/network/ZCash.ts",
+      "types": "./lib/network/ZCash.d.ts",
+      "import": "./lib-es/network/ZCash.js",
+      "require": "./lib/network/ZCash.js",
+      "default": "./lib-es/network/ZCash.js"
+    },
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/coin-module-framework": "catalog:",
+    "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/live-signer-zcash": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/wallet-btc": "workspace:^",
+    "@ledgerhq/zcash-utils": "catalog:",
+    "bignumber.js": "^9.1.2",
+    "bitcoinjs-lib": "^6.1.7",
+    "@noble/hashes": "1.8.0",
+    "bs58": "catalog:",
+    "invariant": "^2.2.4",
+    "lodash": "^4.17.21",
+    "rxjs": "catalog:"
+  },
+  "devDependencies": {
+    "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
+    "@noble/curves": "1.9.7",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/bs58": "catalog:",
+    "@types/invariant": "^2.2.37",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "rimraf": "4.4.1",
+    "typescript": "catalog:"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverage": "jest --coverage",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "oxlint src",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
+    "test": "jest",
+    "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
+    "typecheck": "tsc --noEmit --customConditions node",
+    "unimported": "unimported",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
+  }
+}
