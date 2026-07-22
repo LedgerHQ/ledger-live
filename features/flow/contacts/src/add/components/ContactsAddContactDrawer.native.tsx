@@ -1,4 +1,5 @@
 import React from "react";
+import { Keyboard, Platform } from "react-native";
 import {
   Banner,
   BottomSheetHeader,
@@ -10,6 +11,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { CONTACT_NAME_MAX_LENGTH } from "../constants";
 import type { ContactsAddContactDrawerProps } from "../drawer.types";
+import { shouldAddAddContactKeyboardInset } from "../keyboard";
 
 export function ContactsAddContactDrawer({
   isOpen,
@@ -21,8 +23,10 @@ export function ContactsAddContactDrawer({
   onDraftNameChange,
   onConfirm,
 }: ContactsAddContactDrawerProps): React.JSX.Element {
+  const keyboardInset = useAddContactKeyboardInset();
+
   return (
-    <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
+    <BottomSheetView style={{ paddingBottom: bottomInset + 24 + keyboardInset }}>
       {isOpen ? (
         <Box lx={{ gap: "s24" }}>
           <BottomSheetHeader />
@@ -55,4 +59,34 @@ export function ContactsAddContactDrawer({
       ) : null}
     </BottomSheetView>
   );
+}
+
+function useAddContactKeyboardInset(): number {
+  const [keyboardInset, setKeyboardInset] = React.useState(0);
+  const shouldAddInset = shouldAddAddContactKeyboardInset(Platform.OS, Platform.Version);
+
+  React.useEffect(() => {
+    if (!shouldAddInset) {
+      return undefined;
+    }
+
+    const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+
+    setKeyboardInset(Keyboard.metrics?.()?.height ?? 0);
+
+    const showSubscription = Keyboard.addListener(showEvent, event => {
+      setKeyboardInset(event.endCoordinates.height);
+    });
+    const hideSubscription = Keyboard.addListener(hideEvent, () => {
+      setKeyboardInset(0);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, [shouldAddInset]);
+
+  return shouldAddInset ? keyboardInset : 0;
 }
