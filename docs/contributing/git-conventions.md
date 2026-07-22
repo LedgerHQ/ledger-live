@@ -79,7 +79,7 @@ e.g. `feat/ui-LIVE-1234-add-dark-mode-toggle`
 
 Use kebab-case, keep branch names short and keep each branch focused on one concern.
 
-Rules are not enforced. Following the structure is entirely optional.
+Rules are not enforced on branch names. Following this structure is entirely optional.
 
 ## Commit messages
 
