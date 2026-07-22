@@ -8,6 +8,7 @@ jest.mock("../../converters", () => ({
   accountToWalletAPIAccount: jest.fn((_walletState, account) => ({
     id: `wapi:${account.id}`,
   })),
+  resolveWalletApiSpendableBalance: jest.fn(),
 }));
 
 import { accountToWalletAPIAccount } from "../../converters";
