@@ -11,7 +11,7 @@ The structure below is based on [Conventional Commits](https://www.conventionalc
 ```text
 branch:    <type>/<scope>-<ticket>-<short-description>
 commit:    <type>(<scope>): <description>
-pr title:  <type>(<scope>): <description> (<ticket>)
+PR title:  <type>(<scope>): <description> (<ticket>)
 ```
 
 e.g.
