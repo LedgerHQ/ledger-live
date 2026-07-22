@@ -28,6 +28,7 @@
     "cryptoAsset" : "Криптоактив",
     "skip" : "Пропустить",
     "next" : "Далее",
+    "new" : "Новое",
     "noCryptoFound" : "Криптоактивы не найдены",
     "needHelp" : "Нужна помощь?",
     "edit" : "Редактировать",
@@ -126,6 +127,10 @@
     "AccountNeedResync" : {
       "title" : "Повторите попытку",
       "description" : "Счёт устарел, его необходимо синхронизировать"
+    },
+    "AccountPublicKeyUnavailable" : {
+      "title" : "Счёт необходимо добавить снова",
+      "description" : "Ledger Wallet не удалось получить публичный ключ этого счёта. Удалите счёт и добавьте его снова, чтобы продолжить"
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "В указанном ASA не выбран счёт получателя."
@@ -479,6 +484,9 @@
     "FeeRequired" : {
       "title" : "Необходимо указать комиссию"
     },
+    "FeeTooHigh" : {
+      "title" : "Комиссия составляет 10% от суммы"
+    },
     "FeeTooLow" : {
       "title" : "Комиссия слишком низкая, чтобы сеть её приняла. Попробуйте увеличить её"
     },
@@ -532,6 +540,10 @@
     },
     "InvalidExplorerResponse" : {
       "title" : "Некорректный ответ от обозревателя {{currencyName}}"
+    },
+    "InvalidTransactionError" : {
+      "title" : "Некорректная транзакция",
+      "description" : "Транзакция больше не соответствует состоянию блокчейна. Пожалуйста, запустите поток ещё раз."
     },
     "LanguageInstallRefusedOnDevice" : {
       "title" : "Установка языка на устройстве невозможна",
@@ -902,11 +914,17 @@
     "TezosNotEnoughStaked" : {
       "title" : "Недостаточно баланса в стейкинге"
     },
+    "TezosStakeBlockedByPendingUnstake" : {
+      "title" : "Сначала должен завершиться вывод из стейкинга от вашего предыдущего валидатора"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Пожалуйста, сначала опустошите все субсчета"
     },
     "NotSupportedLegacyAddress" : {
       "title" : "Старый формат адреса больше не поддерживается"
+    },
+    "RecipientRequired" : {
+      "title" : "Адрес получателя обязателен"
     },
     "SourceHasMultiSign" : {
       "title" : "Пожалуйста, отключите мультиподписи, чтобы отправить {{currencyName}}"
@@ -1375,6 +1393,17 @@
         }
       }
     }
+  },
+  "largeScreenUpsellModal" : {
+    "optedIn" : {
+      "title" : "Обзора больше. Действий меньше. Скидка {{discount}}%",
+      "subtitle" : "Оцените увеличенный экран, удобную Проверку транзакций, усиленную защиту и эксклюзивную скидку {{discount}}%."
+    },
+    "optedOut" : {
+      "title" : "Распознавайте скам. Исследуйте каждую деталь",
+      "subtitle" : "Проверяйте всë на сенсорном устройстве подписи и выявляйте скам благодаря передовым функциям проверки безопасности."
+    },
+    "cta" : "Изучить сенсорные устройства подписи"
   },
   "earn" : {
     "simulator" : {
@@ -2850,7 +2879,7 @@
       "title" : "Криптозаймы",
       "cardTitle" : "Займы в стейблкойнах",
       "cardDescription" : "Возьмите заём с привлекательной ставкой",
-      "cta" : "Исследуйте"
+      "cta" : "Попробовать"
     },
     "recommended" : {
       "title" : "Рекомендуем"
@@ -2971,6 +3000,8 @@
     "month" : "1М",
     "year" : "1Г",
     "all" : "Все",
+    "second_short" : "сек.",
+    "minute_short" : "мин.",
     "since" : {
       "day" : "за день",
       "week" : "за неделю",
@@ -3042,7 +3073,8 @@
       "more" : "Параметры истории транзакций",
       "hideDustTransactions" : "Скрыть пылевые транзакции",
       "showDustTransactions" : "Показать пылевые транзакции",
-      "dustTransactionsDescription" : "Транзакции на сумму менее {{threshold}} в вашей основной валюте будут скрыты."
+      "dustTransactionsHiddenDescription" : "Транзакции на сумму менее {{threshold}} будут скрыты.",
+      "dustTransactionsDisplayedDescription" : "Транзакции на сумму менее {{threshold}} будут отображаться."
     }
   },
   "operationDetails" : {
@@ -3407,15 +3439,15 @@
     },
     "facebook" : {
       "title" : "Facebook",
-      "desc" : "Поставьте лайк нашей странице"
+      "desc" : "Поставьте «лайк» нашей странице."
     },
     "twitter" : {
       "title" : "Twitter",
-      "desc" : "Подпишитесь на нас"
+      "desc" : "Подпишитесь на нас."
     },
     "github" : {
       "title" : "GitHub",
-      "desc" : "Изучите наш код"
+      "desc" : "Изучите наш код."
     },
     "status" : {
       "title" : "Состояние Ledger",
@@ -4191,7 +4223,8 @@
               "sendPending" : "Отправка {{ticker}}",
               "sendCompleted" : "Отправка {{ticker}}",
               "receivePending" : "Получение {{ticker}}",
-              "receiveCompleted" : "Получены {{ticker}}"
+              "receiveCompleted" : "Получены {{ticker}}",
+              "estimated" : "(ориентировочно)"
             },
             "details" : {
               "networkFees" : "Комиссия сети",
@@ -4565,6 +4598,10 @@
           "description" : "Вы отклонили транзакцию. Она не затронет ваши средства.",
           "close" : "Закрыть",
           "retry" : "Повторить?"
+        },
+        "error" : {
+          "retry" : "Повторить?",
+          "close" : "Закрыть"
         }
       },
       "confirmation" : {
@@ -4581,6 +4618,7 @@
         "maxPriorityFee" : "Макс. комиссия за приоритет ({{unit}})",
         "gasLimit" : "Лимит Газа ({{unit}})",
         "feePerByte" : "Сумма комиссии ({{unit}})",
+        "feesAmount" : "Сумма комиссии ({{unit}})",
         "suggested" : "Рекомендовано",
         "nextBlock" : "Следующий блок",
         "networkFeesInFiat" : "Комиссия сети в {{currency}}",
@@ -6735,7 +6773,8 @@
     },
     "delegation" : {
       "addCustomValidator" : "+ Пользовательский валидатор",
-      "sectionLabel" : "Делегирование"
+      "sectionLabel" : "Делегирование",
+      "pendingUnstakeWarning" : "Вы можете сменить валидатора сейчас, но не сможете стейкать через нового, пока не завершится период ожидания вывода из стейкинга от вашего текущего валидатора (примерно ~4 дня)."
     },
     "staking" : {
       "sectionLabel" : "Стейкинг",
@@ -9453,6 +9492,13 @@
       "openMenuA11yLabel" : "Параметры графика",
       "hideTransactions" : "Скрыть активность на графике",
       "showTransactions" : "Показать активность на графике"
+    },
+    "footer" : {
+      "moreOptions" : {
+        "accessibilityLabel" : "Больше опций",
+        "sell" : "Продать",
+        "earn" : "Приумножить"
+      }
     }
   },
   "assetSelection" : {
@@ -9922,7 +9968,8 @@
     "swap" : "Обмен",
     "earn" : "Прирост",
     "yield" : "Доходность",
-    "card" : "Карта"
+    "card" : "Карта",
+    "paytab" : "Платежи"
   },
   "syncIndicator" : {
     "accessibilityLabel" : {
@@ -9969,6 +10016,10 @@
       "backup" : "[L] Recover",
       "help" : "Помощь",
       "referral" : "Рефералы"
+    },
+    "contacts" : {
+      "title" : "Контакты",
+      "description" : "Управление списком контактов"
     },
     "backupHub" : {
       "title" : "Копии вашей фразы восстановления",
@@ -10049,16 +10100,64 @@
         "description" : "Подтвердите экспорт ключа просмотра на устройстве",
         "cancelAlert" : "Вы можете отклонять отдельные счета на устройстве. Если отклонить все счета, новые счета не будут добавляться в ваш портфель.",
         "cancelAllBtn_one" : "Отменить",
-        "cancelAllBtn_other" : "Отменить всё"
+        "cancelAllBtn_other" : "Отменить всё",
+        "redirecting" : "Перенаправляем..."
+      },
+      "stepNoAccountsAdded" : {
+        "title" : "Не добавлены счета {{currency}}",
+        "description" : "Вы не поделились ключом просмотра ни с одним из выбранных счетов. Ключи просмотра необходимы для отображения конфиденциального баланса в Ledger Wallet."
       },
       "stepScanAccounts" : {
         "cta" : {
-          "shareViewKeys" : "Поделиться ключами просмотра"
+          "shareKey_one" : "Поделиться ключом просмотра",
+          "shareKey_other" : "Поделиться ключами просмотра"
         }
       }
     },
     "accountActions" : {
       "publicToPrivate" : "Перевод себе"
+    },
+    "send" : {
+      "balanceSelection" : {
+        "title" : "Выберите баланс",
+        "convertToPrivate" : "Перевести с публичного",
+        "convertToPublic" : "Перевести с приватного",
+        "sendPublicly" : "Отправить публично",
+        "sendPrivately" : "Отправить приватно"
+      },
+      "balanceSelector" : {
+        "public" : "Публичный",
+        "private" : "Приватный",
+        "lastUpdate" : "Последнее обновление: {{label}}",
+        "recently" : "недавно"
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "Синхронизируем ваш приватный баланс ({{percentage}}%)",
+        "desc" : "Пожалуйста, подождите",
+        "errorTitle" : "Сбой приватной синхронизации",
+        "errorDesc" : "Что-то пошло не так. Попробуйте ещё раз."
+      },
+      "quickAmountSelector" : {
+        "title" : "Быстрый выбор",
+        "strategies" : {
+          "fast" : "Быстро",
+          "balanced" : "Баланс",
+          "full" : "Целиком"
+        },
+        "recordCount_one" : "{{count}} запись",
+        "recordCount_other" : "Записей ({{count}})",
+        "unavailable" : "Недоступно",
+        "noValue" : "—",
+        "spendableBalance" : "Макс. доступный баланс:",
+        "tooltip" : {
+          "desc" : "Отправитель, сумма и получатель скрыты в блокчейне. До {{max}} записей за отправку."
+        }
+      },
+      "summary" : {
+        "proofGenerationWarning" : "Транзакция Aleo требует создания доказательства. Это может занять некоторое время.",
+        "recordsUsed" : "Использованные записи",
+        "signingTime" : "Время входа"
+      }
     },
     "balancesSection" : "Балансы",
     "info" : {
@@ -10070,6 +10169,34 @@
         "title" : "Скрытый баланс",
         "description" : "Экранированный баланс в сети Aleo. Этот баланс виден только вам и требует генерации доказательства для приватных транзакций."
       }
+    },
+    "account" : {
+      "syncButton" : {
+        "startSync" : "Начать синхронизацию",
+        "stopSync" : "Остановить синхронизацию",
+        "syncAgain" : "Синхронизировать повторно",
+        "lastSync" : "Последняя синхронизация: {{date}}"
+      }
+    },
+    "operations" : {
+      "type" : {
+        "public" : "Публичная",
+        "private" : "Конфиденциальная"
+      }
+    },
+    "shared" : {
+      "sponsoredByProvable" : "Спонсируется Provable"
+    }
+  },
+  "contacts" : {
+    "title" : "Контакты",
+    "addContact" : "Добавить контакт",
+    "searchPlaceholder" : "Поиск контакта...",
+    "me" : {
+      "name" : "Я",
+      "addressCount_zero" : "0 адресов",
+      "addressCount_one" : "{{count}} адрес",
+      "addressCount_other" : "Адресов: {{count}}"
     }
   }
 }

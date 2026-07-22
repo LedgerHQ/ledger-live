@@ -28,6 +28,7 @@
     "cryptoAsset" : "สินทรัพย์คริปโต",
     "skip" : "ข้าม",
     "next" : "ถัดไป",
+    "new" : "ใหม่",
     "noCryptoFound" : "ไม่พบสินทรัพย์คริปโต",
     "needHelp" : "คุณต้องการความช่วยเหลือหรือไม่",
     "edit" : "แก้ไข",
@@ -126,6 +127,10 @@
     "AccountNeedResync" : {
       "title" : "โปรดลองอีกครั้ง",
       "description" : "บัญชีล้าสมัยแล้ว ต้องมีการซิงโครไนซ์"
+    },
+    "AccountPublicKeyUnavailable" : {
+      "title" : "ต้องทำการเพิ่มบัญชีอีกครั้ง",
+      "description" : "แอป Ledger Wallet ไม่สามารถดึงข้อมูล Public Key ของบัญชีนี้ได้ โปรดลบบัญชีแล้วเพิ่มใหม่อีกครั้งเพื่อดำเนินการต่อ"
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "บัญชีผู้รับยังไม่ได้เลือกเข้าร่วม ASA ที่เลือก"
@@ -479,6 +484,9 @@
     "FeeRequired" : {
       "title" : "มีค่าธรรมเนียม"
     },
+    "FeeTooHigh" : {
+      "title" : "ค่าธรรมเนียมเครือข่ายสูงกว่า 10% ของจำนวน"
+    },
     "FeeTooLow" : {
       "title" : "ค่าธรรมเนียมต่ำเกินไปสำหรับเครือข่าย กรุณาเพิ่มค่าธรรมเนียมให้สูงขึ้น"
     },
@@ -532,6 +540,10 @@
     },
     "InvalidExplorerResponse" : {
       "title" : "การตอบสนองที่ไม่ถูกต้องจาก Explorer {{currencyName}}"
+    },
+    "InvalidTransactionError" : {
+      "title" : "ธุรกรรมไม่ถูกต้อง",
+      "description" : "ธุรกรรมไม่สอดคล้องกับสถานะล่าสุดของบล็อกเชนแล้ว โปรดเริ่มกระบวนการใหม่อีกครั้ง"
     },
     "LanguageInstallRefusedOnDevice" : {
       "title" : "การติดตั้งภาษาถูกปฏิเสธบนอุปกรณ์",
@@ -902,11 +914,17 @@
     "TezosNotEnoughStaked" : {
       "title" : "ยอดที่สเตคไว้ไม่เพียงพอ"
     },
+    "TezosStakeBlockedByPendingUnstake" : {
+      "title" : "การยกเลิกการสเตคจากผู้ตรวจสอบก่อนหน้าต้องเสร็จสิ้นก่อน"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "โปรดล้างบัญชีย่อยทั้งหมดก่อน"
     },
     "NotSupportedLegacyAddress" : {
       "title" : "ไม่รองรับรูปแบบ Legacy Address อีกต่อไป"
+    },
+    "RecipientRequired" : {
+      "title" : "จำเป็นต้องระบุที่อยู่คริปโตของผู้รับ"
     },
     "SourceHasMultiSign" : {
       "title" : "โปรดปิดใช้งาน Multisign เพื่อส่ง {{currencyName}}"
@@ -1375,6 +1393,17 @@
         }
       }
     }
+  },
+  "largeScreenUpsellModal" : {
+    "optedIn" : {
+      "title" : "ดูเพิ่มเติม ใช้งานคล่องตัวขึ้น รับส่วนลดถึง {{discount}}%",
+      "subtitle" : "เพลิดเพลินกับหน้าจอที่ใหญ่ขึ้น, การตรวจสอบธุรกรรมที่ฉลาดขึ้น, การปกป้องที่ดียิ่งขึ้น และรับส่วนลดเพิ่ม {{discount}}%"
+    },
+    "optedOut" : {
+      "title" : "ตรวจจับสแกมได้ทันที ดูได้ทุกรายละเอียด",
+      "subtitle" : "ตรวจสอบอย่างชัดเจนบนอุปกรณ์ลงนามหน้าจอสัมผัส และตรวจจับสแกมด้วยการตรวจสอบความปลอดภัยขั้นสูง"
+    },
+    "cta" : "ดูอุปกรณ์ลงนามหน้าจอสัมผัส"
   },
   "earn" : {
     "simulator" : {
@@ -2971,6 +3000,8 @@
     "month" : "1M",
     "year" : "1Y",
     "all" : "ทั้งหมด",
+    "second_short" : "วินาที",
+    "minute_short" : "นาที",
     "since" : {
       "day" : "วันที่ผ่านมา",
       "week" : "สัปดาห์ที่ผ่านมา",
@@ -3042,7 +3073,8 @@
       "more" : "ตัวเลือกประวัติธุรกรรม",
       "hideDustTransactions" : "ซ่อนธุรกรรมที่เป็น Dust",
       "showDustTransactions" : "แสดงธุรกรรมที่เป็น Dust",
-      "dustTransactionsDescription" : "ธุรกรรมที่มีมูลค่าต่ำกว่า {{threshold}} ในสกุลเงินหลักของคุณจะถูกซ่อนไว้"
+      "dustTransactionsHiddenDescription" : "ธุรกรรมที่มีมูลค่าต่ำกว่า {{threshold}} จะถูกซ่อนไว้",
+      "dustTransactionsDisplayedDescription" : "ธุรกรรมที่มีมูลค่าต่ำกว่า {{threshold}} จะปรากฏในรายการ"
     }
   },
   "operationDetails" : {
@@ -4191,7 +4223,8 @@
               "sendPending" : "กำลังส่ง {{ticker}}",
               "sendCompleted" : "ส่ง {{ticker}} แล้ว",
               "receivePending" : "กำลังรับ {{ticker}}",
-              "receiveCompleted" : "รับ {{ticker}} แล้ว"
+              "receiveCompleted" : "รับ {{ticker}} แล้ว",
+              "estimated" : "(โดยประมาณ)"
             },
             "details" : {
               "networkFees" : "ค่าธรรมเนียมเครือข่าย",
@@ -4565,6 +4598,10 @@
           "description" : "คุณได้ยกเลิกธุรกรรมนี้แล้ว ยอดเงินของคุณไม่มีอะไรเปลี่ยนแปลง",
           "close" : "ปิด",
           "retry" : "ลองอีกครั้ง"
+        },
+        "error" : {
+          "retry" : "ลองอีกครั้ง",
+          "close" : "ปิด"
         }
       },
       "confirmation" : {
@@ -4581,6 +4618,7 @@
         "maxPriorityFee" : "Priority Fee สูงสุด ({{unit}})",
         "gasLimit" : "ปริมาณแก๊สสูงสุด ({{unit}}",
         "feePerByte" : "ยอดค่าธรรมเนียม {{unit}}",
+        "feesAmount" : "ยอดค่าธรรมเนียม {{unit}}",
         "suggested" : "แนะนำ",
         "nextBlock" : "บล็อกถัดไป",
         "networkFeesInFiat" : "ค่าธรรมเนียมเครือข่ายในรูปแบบ {{currency}}",
@@ -6735,7 +6773,8 @@
     },
     "delegation" : {
       "addCustomValidator" : "+ เพิ่มผู้ตรวจสอบที่กำหนดเอง",
-      "sectionLabel" : "การ Delegate"
+      "sectionLabel" : "การ Delegate",
+      "pendingUnstakeWarning" : "คุณสามารถเปลี่ยนผู้ตรวจสอบได้ในตอนนี้ แต่คุณจะยังไม่สามารถสเตคกับผู้ตรวจสอบรายใหม่ได้ จนกว่าการยกเลิกการสเตคที่รอนุมัติอยู่จากผู้ตรวจสอบปัจจุบันของคุณจะเสร็จสิ้นในอีกประมาณ 4 วัน"
     },
     "staking" : {
       "sectionLabel" : "กำลัง Stake",
@@ -9453,6 +9492,13 @@
       "openMenuA11yLabel" : "ตัวเลือกกราฟ",
       "hideTransactions" : "ซ่อนการเคลื่อนไหวบนกราฟราคา",
       "showTransactions" : "แสดงการเคลื่อนไหวบนกราฟราคา"
+    },
+    "footer" : {
+      "moreOptions" : {
+        "accessibilityLabel" : "ตัวเลือกเพิ่มเติม",
+        "sell" : "ขาย",
+        "earn" : "สร้างรายได้"
+      }
     }
   },
   "assetSelection" : {
@@ -9922,7 +9968,8 @@
     "swap" : "สวอป",
     "earn" : "สร้างรายได้",
     "yield" : "ผลตอบแทน",
-    "card" : "บัตร"
+    "card" : "บัตร",
+    "paytab" : "จ่าย"
   },
   "syncIndicator" : {
     "accessibilityLabel" : {
@@ -9969,6 +10016,10 @@
       "backup" : "สำรองข้อมูล",
       "help" : "ช่วยเหลือ",
       "referral" : "แนะนำเพื่อน"
+    },
+    "contacts" : {
+      "title" : "รายชื่อ",
+      "description" : "จัดการรายชื่อของคุณ"
     },
     "backupHub" : {
       "title" : "การสำรองข้อมูล Secret Recovery Phrase ของคุณ",
@@ -10049,16 +10100,64 @@
         "description" : "ยืนยันการแชร์ View Key บนอุปกรณ์ของคุณ",
         "cancelAlert" : "คุณสามารถปฏิเสธบัญชีแต่ละบัญชีบนอุปกรณ์ของคุณได้ การยกเลิกทั้งหมดจะหยุดการเพิ่มบัญชีใด ๆ เข้าสู่พอร์ตการลงทุนของคุณ",
         "cancelAllBtn_one" : "ยกเลิก",
-        "cancelAllBtn_other" : "ยกเลิกทั้งหมด"
+        "cancelAllBtn_other" : "ยกเลิกทั้งหมด",
+        "redirecting" : "กำลังพาไปยังหน้าอื่น..."
+      },
+      "stepNoAccountsAdded" : {
+        "title" : "ยังไม่มีการเพิ่มบัญชี {{currency}}",
+        "description" : "คุณยังไม่ได้แชร์ View Key ของบัญชีใด ๆ ที่เลือก จำเป็นต้องใช้ View Key เพื่อแสดงยอดคงเหลือในบัญชีส่วนบุคคลของคุณในแอป Ledger Wallet"
       },
       "stepScanAccounts" : {
         "cta" : {
-          "shareViewKeys" : "แชร์ View Key"
+          "shareKey_one" : "แชร์ View Key",
+          "shareKey_other" : "แชร์ View Key"
         }
       }
     },
     "accountActions" : {
       "publicToPrivate" : "โอนด้วยตัวเอง"
+    },
+    "send" : {
+      "balanceSelection" : {
+        "title" : "เลือกยอดคงเหลือในบัญชี",
+        "convertToPrivate" : "โอนจากบัญชีสาธารณะ",
+        "convertToPublic" : "โอนจากบัญชีส่วนตัว",
+        "sendPublicly" : "ส่งแบบสาธารณะ",
+        "sendPrivately" : "ส่งแบบส่วนตัว"
+      },
+      "balanceSelector" : {
+        "public" : "สาธารณะ",
+        "private" : "ส่วนตัว",
+        "lastUpdate" : "อัปเดตล่าสุด: {{label}}",
+        "recently" : "ล่าสุด"
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "กำลังซิงค์ยอดคงเหลือในบัญชีของคุณ ({{percentage}}%)",
+        "desc" : "โปรดรอสักครู่",
+        "errorTitle" : "การซิงค์ข้อมูลแบบส่วนตัวล้มเหลว",
+        "errorDesc" : "มีบางอย่างผิดพลาด โปรดลองอีกครั้ง"
+      },
+      "quickAmountSelector" : {
+        "title" : "ตัวเลือกแบบรวดเร็ว",
+        "strategies" : {
+          "fast" : "เร็ว",
+          "balanced" : "ปานกลาง",
+          "full" : "ทั้งหมด"
+        },
+        "recordCount_one" : "{{count}} รายการ",
+        "recordCount_other" : "{{count}} รายการ",
+        "unavailable" : "ไม่สามารถใช้ได้",
+        "noValue" : "—",
+        "spendableBalance" : "ยอดคงเหลือที่ใช้ได้สูงสุด:",
+        "tooltip" : {
+          "desc" : "ผู้ส่ง จำนวน และผู้รับที่ถูกซ่อนไว้ในบล็อกเชน ส่งได้สูงสุด {{max}} รายการต่อครั้ง"
+        }
+      },
+      "summary" : {
+        "proofGenerationWarning" : "ธุรกรรม Aleo จำเป็นต้องมีการสร้างหลักฐาน ซึ่งอาจใช้เวลาสักครู่",
+        "recordsUsed" : "บันทึกที่ใช้",
+        "signingTime" : "เวลาลงนาม"
+      }
     },
     "balancesSection" : "ยอดคงเหลือในบัญชี",
     "info" : {
@@ -10070,6 +10169,34 @@
         "title" : "ยอดคงเหลือส่วนตัว",
         "description" : "ยอดคงเหลือในบัญชีที่ได้รับการปกปิดบนเครือข่าย Aleo ยอดคงเหลือในบัญชีนี้จะมองเห็นได้เฉพาะคุณเท่านั้น และต้องมีการยืนยันเพิ่มเติมในการทำธุรกรรม"
       }
+    },
+    "account" : {
+      "syncButton" : {
+        "startSync" : "เริ่มซิงค์",
+        "stopSync" : "หยุดการซิงค์",
+        "syncAgain" : "ซิงค์อีกครั้ง",
+        "lastSync" : "ซิงค์ล่าสุด: {{date}}"
+      }
+    },
+    "operations" : {
+      "type" : {
+        "public" : "สาธารณะ",
+        "private" : "ส่วนตัว"
+      }
+    },
+    "shared" : {
+      "sponsoredByProvable" : "สนับสนุนโดย Provable"
+    }
+  },
+  "contacts" : {
+    "title" : "รายชื่อ",
+    "addContact" : "เพิ่มรายชื่อ",
+    "searchPlaceholder" : "ค้นหารายชื่อ",
+    "me" : {
+      "name" : "ที่อยู่ของฉัน",
+      "addressCount_zero" : "0 ที่อยู่คริปโต",
+      "addressCount_one" : "{{count}} ที่อยู่",
+      "addressCount_other" : "{{count}} ที่อยู่"
     }
   }
 }
