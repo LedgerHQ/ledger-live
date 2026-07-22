@@ -41,8 +41,8 @@ export default class SwapPage extends CommonPage {
 
   @Step("Open swap via deeplink")
   async openViaDeeplink(params?: string) {
-    const path = params ? `${this.baseLink}?${params}` : this.baseLink;
-    await openDeeplink(path);
+    const deeplinkPath = params ? `${this.baseLink}?${params}` : this.baseLink;
+    await openDeeplink(deeplinkPath);
     await waitForElementById(app.common.walletApiWebview);
   }
 

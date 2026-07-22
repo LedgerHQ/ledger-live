@@ -91,13 +91,10 @@ export async function selectAccountMAD(selector: ModularDialog, account: Account
 // Uses a 30s wait for the modular dialog to accommodate cases where it appears
 // after a previous dialog (e.g. invalid-token drawer) was just closed.
 export async function selectAccountFromDeeplinkDrawer(app: Application, account: Account) {
-  const page = app.getPage();
-  try {
-    await page
-      .getByTestId("modular-dialog-screen-ACCOUNT_SELECTION")
-      .waitFor({ state: "visible", timeout: 30_000 });
+  const isModularDialogVisible = await app.modularDialog.waitForAccountSelectionVisible(30_000);
+  if (isModularDialogVisible) {
     await app.modularDialog.selectAccountByName(account);
-  } catch {
+  } else {
     await app.swapDrawer.selectAccountByName(account);
   }
 }
