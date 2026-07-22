@@ -103,7 +103,9 @@ describe("findSwapSendOperation", () => {
       makeAccount("account-1", [], [{ hash: "pending-hash", extra: { transactionId: "tx-p" } }]),
     ];
 
-    expect(findSwapSendOperation(accounts, "pending-hash")?.extra).toEqual({ transactionId: "tx-p" });
+    expect(findSwapSendOperation(accounts, "pending-hash")?.extra).toEqual({
+      transactionId: "tx-p",
+    });
   });
 
   it("should return undefined when the hash is missing or unknown", () => {
