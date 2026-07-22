@@ -265,6 +265,7 @@ describe("TransactionsAlerts", () => {
     expect(chainwatch.addressPuts[0].body).toEqual(["0x01"]);
     expect(chainwatch.getRemote().suffixes).toEqual([]);
 
+    // Rejection clears the reconciliation key, so unchanged accounts can be retried.
     await act(async () => {});
     rerender(<TransactionsAlerts />);
     await act(async () => {});
