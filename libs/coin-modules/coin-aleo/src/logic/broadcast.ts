@@ -1,15 +1,13 @@
 import { apiClient } from "../network/api";
 import { sdkClient } from "../network/sdk";
-import type { AleoAccount, AleoCoinConfig } from "../types";
+import type { AleoCoinConfig } from "../types";
 import { fromHex, resolveConfig } from "./utils";
 
 export async function broadcast({
   configOrCurrencyId,
-  account,
   signedTx,
 }: {
   configOrCurrencyId: AleoCoinConfig | string;
-  account: AleoAccount;
   signedTx: string;
 }): Promise<string> {
   const config = resolveConfig(configOrCurrencyId);
@@ -23,7 +21,7 @@ export async function broadcast({
   // TODO: not used anymore, remove with https://ledgerhq.atlassian.net/browse/LIVE-29982
   if (!config.useEncryptedProve) {
     const res = await apiClient.submitDelegatedProvingRequest({
-      currency: account.currency,
+      config,
       authorization,
       ...(feeAuthorization && { feeAuthorization }),
       broadcast: true,
@@ -33,19 +31,19 @@ export async function broadcast({
   }
 
   const publicKeyResponse = await apiClient.getProvePublicKey({
-    currency: account.currency,
+    config,
   });
 
   const encryptedData = await sdkClient.encryptProvingRequest({
     publicKey: publicKeyResponse.data.public_key,
-    currency: account.currency,
+    config,
     authorization,
     ...(feeAuthorization && { feeAuthorization }),
     broadcast: true,
   });
 
   const res = await apiClient.submitEncryptedDelegatedProvingRequest({
-    currency: account.currency,
+    config,
     keyId: publicKeyResponse.data.key_id,
     encryptedData,
     stickySessionCookie: publicKeyResponse.stickySessionCookie,

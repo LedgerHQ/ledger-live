@@ -1,6 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { getEnv } from "@ledgerhq/live-env";
-import aleoConfig from "../config";
 import { testnetViewKey } from "../__tests__/fixtures/api.fixture";
 import {
   mockTxIntentFeePrivate,
@@ -11,12 +9,25 @@ import {
   mockTxIntentTransferPublic,
 } from "../__tests__/fixtures/transaction.fixture";
 import { mockFeeByTransactionType } from "../__tests__/fixtures/config.fixture";
-import type { FeeConfiguration, PreparedRequestResponse } from "../types";
+import type { AleoCoinConfig, FeeConfiguration, PreparedRequestResponse } from "../types";
 import { craftTransaction } from "./craftTransaction";
 import { fromHex } from "./utils";
 
 describe("craftTransaction", () => {
-  const currency = getCryptoCurrencyById("aleo");
+  const config: AleoCoinConfig = {
+    status: { type: "active" },
+    networkType: "testnet",
+    apiUrls: {
+      node: getEnv("ALEO_NODE_ENDPOINT"),
+      sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
+    },
+    feeByTransactionType: mockFeeByTransactionType,
+    feeSafetyMultiplier: 1,
+    isFeeSponsored: true,
+    enableTokens: false,
+    useEncryptedProve: false,
+    recordPickingStrategy: "manual",
+  };
   const publicFeeConfiguration: FeeConfiguration = {
     function_name: "fee_public",
     max_base_fee: "34060",
@@ -27,23 +38,6 @@ describe("craftTransaction", () => {
     max_base_fee: "2308",
     max_priority_fee: "0",
   };
-
-  beforeAll(() => {
-    aleoConfig.setCoinConfig(() => ({
-      status: { type: "active" },
-      networkType: "testnet",
-      apiUrls: {
-        node: getEnv("ALEO_NODE_ENDPOINT"),
-        sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
-      },
-      feeByTransactionType: mockFeeByTransactionType,
-      feeSafetyMultiplier: 1,
-      isFeeSponsored: true,
-      enableTokens: false,
-      useEncryptedProve: false,
-      recordPickingStrategy: "manual",
-    }));
-  });
 
   it.each([
     {
@@ -89,7 +83,7 @@ describe("craftTransaction", () => {
     "should craft a prepared request for $name",
     async ({ txIntent, expectedFunctionName, feeConfiguration, viewKey }) => {
       const result = await craftTransaction({
-        currency,
+        config,
         txIntent,
         feeConfiguration,
         ...(typeof viewKey === "string" && { viewKey }),

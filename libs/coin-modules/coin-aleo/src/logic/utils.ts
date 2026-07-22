@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
 import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type {
   Account,
   AccountLike,
@@ -78,16 +78,6 @@ export function parseMicrocredits(microcredits: string): string {
 export function parseAmount(raw: string | null): BigNumber {
   if (!raw) return new BigNumber(0);
   return new BigNumber(matchAleoPlaintextAmount(raw) ?? 0);
-}
-
-export function getNetworkConfig(currency: CryptoCurrency) {
-  const config = aleoConfig.getCoinConfig(currency.id);
-
-  return {
-    nodeUrl: config.apiUrls.node,
-    sdkUrl: config.apiUrls.sdk,
-    networkType: config.networkType,
-  };
 }
 
 export function patchAccountWithViewKey(account: Account, viewKey: string): Account {
