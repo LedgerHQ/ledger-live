@@ -9,6 +9,5 @@ module.exports = {
     "header-max-length": [LEVEL_ERROR, "always", 72],
     "scope-empty": [LEVEL_ERROR, "never"],
     "scope-enum": [LEVEL_WARN, "always", scopes],
-    "scope-delimiter-style": [LEVEL_ERROR, "always", ","],
   },
 };
