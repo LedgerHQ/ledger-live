@@ -3865,6 +3865,9 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
+      '@ledgerhq/live-signer-evm':
+        specifier: workspace:^
+        version: link:../../libs/live-signer-evm
       '@ledgerhq/live-wallet':
         specifier: workspace:^
         version: link:../../libs/live-wallet
@@ -3898,6 +3901,9 @@ importers:
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
+      ethers:
+        specifier: 6.15.0
+        version: 6.15.0
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
@@ -22850,7 +22856,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.1.4
       react-dom: 19.1.4
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -25115,7 +25121,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
