@@ -60,9 +60,9 @@ Examples:
 
 Take values from the [scopes file](../../commitlint.scopes.js) – update when necessary.
 
-Multiple scopes can be comma separated `desktop,mobile` but it is better to find a single value that gives more information, e.g. `portfolio`
+Avoid multiple scopes, `desktop,mobile` is no longer valid. Find a single more informative value instead, e.g. `portfolio`
 
-The value `unfocused` has been provided as a fallback but it should only be used as a last resort.
+The value `unfocused` has been provided as a fallback but expect pushback if your PR does not have a clear scope.
 
 Do not use ticket IDs as scopes: `fix(LIVE-1234)` is not valid.
 
@@ -96,8 +96,9 @@ Rules:
 - Never mix refactor, fix and feature work in a single commit.
 - Do not use `--no-verify` when committing or pushing. Fix hook failures; if a hook is broken, surface it.
 
-Use `pnpm commit` to create a valid commit message, or
-`pnpm commitlint --from <target-branch>` to check every commit on the branch.
+Use `pnpm commit` to create a valid commit message, using tab-completion for type and scope.
+
+Use `pnpm commitlint --from <target-branch>` to check every commit on the branch.
 
 ## Pull request and merge titles
 
