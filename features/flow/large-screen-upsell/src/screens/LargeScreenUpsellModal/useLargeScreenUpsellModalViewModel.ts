@@ -51,6 +51,7 @@ export function useLargeScreenUpsellModalViewModel({
     seenNanoModelIds,
     hasSeenTouchscreenDevice,
     onboardingDate,
+    variant,
     now,
   });
   const [isOpen, setIsOpen] = useState(false);

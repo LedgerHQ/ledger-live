@@ -56,7 +56,15 @@ const NOW = new Date("2026-07-15T12:00:00.000Z");
 function eligibleState(settingsOverrides: Partial<State["settings"]> = {}): DeepPartial<State> {
   return {
     ...withFlagOverrides({
-      largeScreenUpsell: { enabled: true },
+      largeScreenUpsell: {
+        enabled: true,
+        params: {
+          opted_out: {
+            enabled: true,
+            link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+          },
+        },
+      },
       lwdWallet40: { enabled: true, params: { tour: false } },
     }),
     settings: {
@@ -223,8 +231,14 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
         largeScreenUpsell: {
           enabled: true,
           params: {
-            opted_in: { link: "https://shop.ledger.com/pages/opted-in-offer" },
-            opted_out: { link: "https://shop.ledger.com/pages/opted-out-offer" },
+            opted_in: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/opted-in-offer",
+            },
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/opted-out-offer",
+            },
           },
         },
         lwdWallet40: { enabled: true, params: { tour: false } },
@@ -268,8 +282,14 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
         largeScreenUpsell: {
           enabled: true,
           params: {
-            opted_in: { link: "https://shop.ledger.com/pages/opted-in-offer" },
-            opted_out: { link: "https://shop.ledger.com/pages/opted-out-offer" },
+            opted_in: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/opted-in-offer",
+            },
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/opted-out-offer",
+            },
           },
         },
         lwdWallet40: { enabled: true, params: { tour: false } },
@@ -356,7 +376,7 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
         largeScreenUpsell: {
           enabled: true,
           params: {
-            opted_out: { link: "   " },
+            opted_out: { enabled: true, link: "   " },
           },
         },
         lwdWallet40: { enabled: true, params: { tour: false } },
@@ -404,6 +424,10 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
           enabled: true,
           params: {
             modal: { enabled: true, killThreshold: 3, cadenceDays: 30 },
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
           },
         },
         lwdWallet40: { enabled: true, params: { tour: false } },
@@ -511,6 +535,52 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     await expectModalNotOpen();
   });
 
+  it("should not open when the opted-out variant is disabled", async () => {
+    const { store } = renderMount({
+      ...eligibleState(),
+      ...withFlagOverrides({
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_out: {
+              enabled: false,
+              link: "https://shop.ledger.com/pages/opted-out-offer",
+            },
+          },
+        },
+        lwdWallet40: { enabled: true, params: { tour: false } },
+      }),
+    });
+
+    await expectModalNotOpen();
+
+    expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
+    expect(trackPage).not.toHaveBeenCalled();
+  });
+
+  it("should not open when the opted-in variant is disabled", async () => {
+    const { store } = renderMount({
+      ...eligibleState({ sharePersonalizedRecommandations: true }),
+      ...withFlagOverrides({
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_in: {
+              enabled: false,
+              link: "https://shop.ledger.com/pages/opted-in-offer",
+            },
+          },
+        },
+        lwdWallet40: { enabled: true, params: { tour: false } },
+      }),
+    });
+
+    await expectModalNotOpen();
+
+    expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
+    expect(trackPage).not.toHaveBeenCalled();
+  });
+
   it("should not open when the seen nano model is disabled for the audience", async () => {
     renderMount({
       ...eligibleState(),
@@ -562,6 +632,10 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
           enabled: true,
           params: {
             modal: { enabled: true, killThreshold: 3, cadenceDays: 30 },
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
           },
         },
         lwdWallet40: { enabled: true, params: { tour: false } },
@@ -584,6 +658,10 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
           enabled: true,
           params: {
             modal: { enabled: true, killThreshold: 3, cadenceDays: 30 },
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
           },
         },
         lwdWallet40: { enabled: true, params: { tour: false } },
