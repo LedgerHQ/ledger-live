@@ -35,7 +35,10 @@ export function reduceFlakes(records: TestRecord[]): FlakeEvent[] {
   const flakes: FlakeEvent[] = [];
 
   for (const list of groups.values()) {
-    const ordered = [...list].sort((a, b) => a.attempt - b.attempt);
+    // recordedAt tiebreak orders Detox's all-attempt-0 reruns fail-before-pass.
+    const ordered = [...list].sort(
+      (a, b) => a.attempt - b.attempt || (a.recordedAt ?? 0) - (b.recordedAt ?? 0),
+    );
 
     let lastFailed: TestRecord | undefined;
     let flakedPassAttempt: number | undefined;

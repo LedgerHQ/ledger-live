@@ -43,6 +43,37 @@ test("flake detected across appended (Detox) records out of order", () => {
   assert.equal(flakes[0].retryCount, 1);
 });
 
+test("Detox: same attempt (0) records are ordered by recordedAt, regardless of merge order", () => {
+  const fail = r({
+    file: "d.spec.ts",
+    title: "t",
+    attempt: 0,
+    recordedAt: 1000,
+    status: "failed",
+    errorMessage: "boom",
+  });
+  const pass = r({ file: "d.spec.ts", title: "t", attempt: 0, recordedAt: 2000, status: "passed" });
+
+  // Whichever order the per-worker NDJSON files merge in, the earlier (failed)
+  // record must be seen before the later (passed) one -> exactly one flake.
+  for (const input of [
+    [fail, pass],
+    [pass, fail],
+  ]) {
+    const flakes = reduceFlakes(input);
+    assert.equal(flakes.length, 1);
+    assert.equal(flakes[0].errorMessage, "boom");
+  }
+});
+
+test("Detox: a later fail after an earlier pass (same attempt) is NOT a flake", () => {
+  const flakes = reduceFlakes([
+    r({ file: "d.spec.ts", title: "t", attempt: 0, recordedAt: 2000, status: "failed" }),
+    r({ file: "d.spec.ts", title: "t", attempt: 0, recordedAt: 1000, status: "passed" }),
+  ]);
+  assert.equal(flakes.length, 0);
+});
+
 test("two distinct tests produce two independent groups", () => {
   const flakes = reduceFlakes([
     r({ title: "a", attempt: 0, status: "failed" }),

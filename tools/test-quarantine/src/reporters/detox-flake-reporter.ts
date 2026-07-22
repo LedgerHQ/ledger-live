@@ -79,6 +79,7 @@ export default class DetoxFlakeReporter {
         file,
         title,
         attempt,
+        recordedAt: Date.now(),
         status,
         ...(status === "failed"
           ? { unexpected: true, errorMessage: message?.split("\n")[0], stack: message }

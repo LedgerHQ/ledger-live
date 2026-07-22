@@ -86,6 +86,8 @@ export interface TestRecord {
   title: string;
   /** Attempt index, 0-based (0 = first run). */
   attempt: number;
+  /** Wall-clock ms; Detox-only ordering tiebreaker (its reruns all carry attempt 0). */
+  recordedAt?: number;
   /** Final outcome of this attempt. */
   status: "passed" | "failed" | "skipped";
   /**

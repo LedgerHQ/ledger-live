@@ -1,9 +1,0 @@
-mode: ignore
-reason: >
-  Verify the ignore-gate absorbs the deliberate QUARANTINE-VERIFY failure
-  (desktop jest). Temporary — paired with the forced-failure edit; remove both.
-owner: "@LedgerHQ/wallet-ci"
-expiry: "2026-12-31"
-filter:
-  file: "apps/ledger-live-desktop/src/firebase/remoteConfig.test.ts"
-  title: "fetchRemoteFlags maps known Firebase keys to FeatureIds, drops unknown keys"
