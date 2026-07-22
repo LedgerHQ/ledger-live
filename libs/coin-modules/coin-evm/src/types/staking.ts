@@ -134,6 +134,13 @@ export type StakingContractConfig = {
   };
   unbondingPeriodDays?: number;
   /**
+   * Delay (in minutes) between broadcasting a delegation and it becoming visible
+   * on the chain's delegation board / staking dashboard. Surfaced to the user on
+   * the delegate amount step so they don't expect the delegation to appear
+   * instantly. When omitted, no such notice is shown.
+   */
+  delegationVisibilityDelayMinutes?: number;
+  /**
    * Maximum number of concurrent active redelegation entries allowed per
    * account, as enforced by the chain's staking module.  When omitted, no cap
    * is applied.

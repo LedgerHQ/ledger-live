@@ -4405,7 +4405,8 @@
               }
             },
             "amount": {
-              "title": "Amount"
+              "title": "Amount",
+              "visibilityDelay": "It can take up to {{numberOfMinutes}} minutes before seeing this delegation on your delegation board."
             },
             "validator": {
               "title": "Validators",
