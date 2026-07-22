@@ -28,6 +28,7 @@
     "cryptoAsset" : "Criptoativo",
     "skip" : "Pular",
     "next" : "Próximo",
+    "new" : "Novo",
     "noCryptoFound" : "Nenhum criptoativo encontrado",
     "needHelp" : "Precisa de ajuda?",
     "edit" : "Editar",
@@ -126,6 +127,10 @@
     "AccountNeedResync" : {
       "title" : "Tente Novamente",
       "description" : "A conta está desatualizada. Sincronização necessária"
+    },
+    "AccountPublicKeyUnavailable" : {
+      "title" : "A conta precisa ser adicionada novamente",
+      "description" : "A Ledger Wallet não conseguiu recuperar a chave pública desta conta. Remova a conta e adicione-a novamente para continuar"
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "A conta do destinatário não aderiu ao ASA selecionado."
@@ -479,6 +484,9 @@
     "FeeRequired" : {
       "title" : "Taxas Necessárias"
     },
+    "FeeTooHigh" : {
+      "title" : "As taxas de rede estão acima de 10% da quantia"
+    },
     "FeeTooLow" : {
       "title" : "As taxas estão muito baixas para serem aceitas pela rede. Por favor, aumente-as"
     },
@@ -532,6 +540,10 @@
     },
     "InvalidExplorerResponse" : {
       "title" : "Resposta inválida do explorador {{currencyName}}"
+    },
+    "InvalidTransactionError" : {
+      "title" : "Transação inválida",
+      "description" : "A transação não corresponde mais ao estado da blockchain. Inicie o fluxo novamente."
     },
     "LanguageInstallRefusedOnDevice" : {
       "title" : "Instalação de idioma recusada no dispositivo",
@@ -902,11 +914,17 @@
     "TezosNotEnoughStaked" : {
       "title" : "Saldo em staking insuficiente"
     },
+    "TezosStakeBlockedByPendingUnstake" : {
+      "title" : "A desaplicação do seu validador anterior deve terminar primeiro"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Esvazie todas as subcontas primeiro"
     },
     "NotSupportedLegacyAddress" : {
       "title" : "O formato de endereço legacy não é mais suportado"
+    },
+    "RecipientRequired" : {
+      "title" : "O endereço do destinatário é obrigatório"
     },
     "SourceHasMultiSign" : {
       "title" : "Desative a assinatura múltipla para enviar {{currencyName}}"
@@ -1375,6 +1393,17 @@
         }
       }
     }
+  },
+  "largeScreenUpsellModal" : {
+    "optedIn" : {
+      "title" : "Veja mais. Clique menos. Economize {{discount}}%",
+      "subtitle" : "Aproveite uma tela maior, um jeito de rever transações mais inteligente, mais proteção e {{discount}}% de desconto exclusivo."
+    },
+    "optedOut" : {
+      "title" : "Identifique golpes. Veja cada detalhe",
+      "subtitle" : "Revise tudo com clareza em um autenticador com tela touch e detecte golpes com verificações de segurança avançadas."
+    },
+    "cta" : "Explore autenticadores com tela touch"
   },
   "earn" : {
     "simulator" : {
@@ -2971,6 +3000,8 @@
     "month" : "1M",
     "year" : "1A",
     "all" : "Tudo",
+    "second_short" : "s",
+    "minute_short" : "min",
     "since" : {
       "day" : "último dia",
       "week" : "semana passada",
@@ -3042,7 +3073,8 @@
       "more" : "Opções do histórico de transações",
       "hideDustTransactions" : "Ocultar transações de pó",
       "showDustTransactions" : "Mostrar transações de pó",
-      "dustTransactionsDescription" : "Transações abaixo de {{threshold}} na sua moeda principal serão ocultadas."
+      "dustTransactionsHiddenDescription" : "Transações abaixo de {{threshold}} serão ocultadas.",
+      "dustTransactionsDisplayedDescription" : "Transações abaixo de {{threshold}} serão exibidas."
     }
   },
   "operationDetails" : {
@@ -4191,7 +4223,8 @@
               "sendPending" : "Enviando {{ticker}}",
               "sendCompleted" : "Enviado {{ticker}}",
               "receivePending" : "Recebendo {{ticker}}",
-              "receiveCompleted" : "Recebido {{ticker}}"
+              "receiveCompleted" : "Recebido {{ticker}}",
+              "estimated" : "(Estimado)"
             },
             "details" : {
               "networkFees" : "Taxas de rede",
@@ -4565,6 +4598,10 @@
           "description" : "Você rejeitou a transação. Seus fundos não serão afetados.",
           "close" : "Fechar",
           "retry" : "Tentar novamente"
+        },
+        "error" : {
+          "retry" : "Tentar novamente",
+          "close" : "Fechar"
         }
       },
       "confirmation" : {
@@ -4581,6 +4618,7 @@
         "maxPriorityFee" : "Taxa de Prioridade Máxima ({{unit}})",
         "gasLimit" : "Limite de gás ({{unit}})",
         "feePerByte" : "Quantia da taxa ({{unit}})",
+        "feesAmount" : "Quantia da taxa ({{unit}})",
         "suggested" : "Sugerido",
         "nextBlock" : "Próximo bloco",
         "networkFeesInFiat" : "Taxas de rede em {{currency}}",
@@ -6735,7 +6773,8 @@
     },
     "delegation" : {
       "addCustomValidator" : "+ Adicionar validador personalizado",
-      "sectionLabel" : "Delegação"
+      "sectionLabel" : "Delegação",
+      "pendingUnstakeWarning" : "Você pode mudar de validador agora, mas não poderá aplicar com o novo até que a sua desaplicação pendente do validador atual seja finalizada, em cerca de 4 dias."
     },
     "staking" : {
       "sectionLabel" : "Staking",
@@ -9453,6 +9492,13 @@
       "openMenuA11yLabel" : "Opções do gráfico",
       "hideTransactions" : "Ocultar atividade no gráfico de preços",
       "showTransactions" : "Mostrar atividade no gráfico de preços"
+    },
+    "footer" : {
+      "moreOptions" : {
+        "accessibilityLabel" : "Mais opções",
+        "sell" : "Vender",
+        "earn" : "Ganhar"
+      }
     }
   },
   "assetSelection" : {
@@ -9922,7 +9968,8 @@
     "swap" : "Trocar",
     "earn" : "Ganhar",
     "yield" : "Rendimento",
-    "card" : "Cartão"
+    "card" : "Cartão",
+    "paytab" : "Pagar"
   },
   "syncIndicator" : {
     "accessibilityLabel" : {
@@ -9969,6 +10016,10 @@
       "backup" : "Backup",
       "help" : "Ajuda",
       "referral" : "Indicação"
+    },
+    "contacts" : {
+      "title" : "Contatos",
+      "description" : "Gerenciar seus contatos"
     },
     "backupHub" : {
       "title" : "Backup para sua Frase de Recuperação Secreta",
@@ -10049,16 +10100,64 @@
         "description" : "Confirme o compartilhamento da chave de visualização no seu dispositivo",
         "cancelAlert" : "Você pode rejeitar contas individuais no seu dispositivo. Cancelar tudo irá interromper a adição de contas ao seu portfólio.",
         "cancelAllBtn_one" : "Cancelar",
-        "cancelAllBtn_other" : "Cancelar tudo"
+        "cancelAllBtn_other" : "Cancelar tudo",
+        "redirecting" : "Redirecionando…"
+      },
+      "stepNoAccountsAdded" : {
+        "title" : "Nenhuma conta {{currency}} foi adicionada",
+        "description" : "Você não compartilhou chaves de visualização para nenhuma das contas selecionadas. As chaves de visualização são necessárias para exibir seu saldo privado na Ledger Wallet."
       },
       "stepScanAccounts" : {
         "cta" : {
-          "shareViewKeys" : "Compartilhar chaves de visualização"
+          "shareKey_one" : "Compartilhar chave de visualização",
+          "shareKey_other" : "Compartilhar chaves de visualização"
         }
       }
     },
     "accountActions" : {
       "publicToPrivate" : "Transferir para si"
+    },
+    "send" : {
+      "balanceSelection" : {
+        "title" : "Selecionar saldo",
+        "convertToPrivate" : "Transferir do público",
+        "convertToPublic" : "Transferir do privado",
+        "sendPublicly" : "Enviar publicamente",
+        "sendPrivately" : "Enviar privadamente"
+      },
+      "balanceSelector" : {
+        "public" : "Pública",
+        "private" : "Privada",
+        "lastUpdate" : "Última atualização: {{label}}",
+        "recently" : "recentemente"
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "Sincronizando seu saldo privado ({{percentage}}%)",
+        "desc" : "Aguarde",
+        "errorTitle" : "Falha na sincronização privada.",
+        "errorDesc" : "Algo deu errado, tente novamente."
+      },
+      "quickAmountSelector" : {
+        "title" : "Seleção rápida",
+        "strategies" : {
+          "fast" : "Rápido",
+          "balanced" : "Equilibrado",
+          "full" : "Completo"
+        },
+        "recordCount_one" : "{{count}} registro",
+        "recordCount_other" : "{{count}} registros",
+        "unavailable" : "Não disponível",
+        "noValue" : "—",
+        "spendableBalance" : "Saldo máximo a ser gasto:",
+        "tooltip" : {
+          "desc" : "Remetente, quantia e destinatário ocultos na cadeia. Até {{max}} registros por envio."
+        }
+      },
+      "summary" : {
+        "proofGenerationWarning" : "A transação Aleo requer gerar uma prova. Isso pode levar algum tempo",
+        "recordsUsed" : "Registros utilizados",
+        "signingTime" : "Tempo da assinatura"
+      }
     },
     "balancesSection" : "Saldos",
     "info" : {
@@ -10070,6 +10169,34 @@
         "title" : "Saldo privado",
         "description" : "O saldo blindado na rede Aleo. Este saldo é visível apenas para você e exige a geração de prova para transações privadas."
       }
+    },
+    "account" : {
+      "syncButton" : {
+        "startSync" : "Iniciar sincronização",
+        "stopSync" : "Parar sincronização",
+        "syncAgain" : "Sincronizar novamente",
+        "lastSync" : "Última sincronização: {{date}}"
+      }
+    },
+    "operations" : {
+      "type" : {
+        "public" : "Pública",
+        "private" : "Privada"
+      }
+    },
+    "shared" : {
+      "sponsoredByProvable" : "Patrocinado por Provable"
+    }
+  },
+  "contacts" : {
+    "title" : "Contatos",
+    "addContact" : "Adicionar contato",
+    "searchPlaceholder" : "Buscar contato",
+    "me" : {
+      "name" : "Eu",
+      "addressCount_zero" : "0 endereço",
+      "addressCount_one" : "{{count}} endereço",
+      "addressCount_other" : "{{count}} endereços"
     }
   }
 }
