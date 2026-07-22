@@ -26,7 +26,7 @@ export const HelpListItem = memo(
         <Icon size={24} />
         <ListItemContent>
           <ListItemTitle>{title}</ListItemTitle>
-          <ListItemDescription>{description}</ListItemDescription>
+          <ListItemDescription numberOfLines={2}>{description}</ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
       <ListItemTrailing>
