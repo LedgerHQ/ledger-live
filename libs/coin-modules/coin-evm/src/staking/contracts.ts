@@ -261,7 +261,7 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       }
     },
     canUndelegate: delegation => {
-      return delegation.shares?.gt(0) ?? true;
+      return delegation.shares?.gte(1e9) ?? true;
     },
   },
   somnia: {

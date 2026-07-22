@@ -166,11 +166,20 @@ describe("evm staking logic", () => {
       expect(canUndelegate(account, delegation)).toBe(false);
     });
 
+    it("returns false for 0G when shares is below the 1e9 minimum", () => {
+      const account = makeAccount("zero_gravity");
+      const delegation = {
+        ...makeDelegation("0xvalidator", "bonded"),
+        shares: new BigNumber(999_999_999),
+      };
+      expect(canUndelegate(account, delegation)).toBe(false);
+    });
+
     it("returns true for 0G when shares is positive", () => {
       const account = makeAccount("zero_gravity");
       const delegation = {
         ...makeDelegation("0xvalidator", "bonded"),
-        shares: new BigNumber(1000),
+        shares: new BigNumber(1_000_000_000),
       };
       expect(canUndelegate(account, delegation)).toBe(true);
     });

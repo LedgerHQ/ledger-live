@@ -152,6 +152,40 @@ describe("0G / zero_gravity delegate", () => {
   });
 });
 
+describe("0G / zero_gravity undelegate", () => {
+  const VAL = "0x0000000000000000000000000000000000000001";
+  const DELEGATOR = "0x0000000000000000000000000000000000000002";
+
+  it("encodes undelegate(withdrawalAddress, shares), routes to valAddress, carries txValue as msg.value", () => {
+    const intent = delegateIntent({
+      mode: "undelegate",
+      valAddress: VAL,
+      sender: DELEGATOR,
+      amount: 1_000_000_000n,
+      shares: 1_500_000_000n,
+      txValue: 50_000_000_000n,
+    });
+
+    const { to, data, value } = buildStakingTransactionParams(asCurrency("zero_gravity"), intent);
+
+    const iface = new ethers.Interface(getStakingABI("zero_gravity") as ethers.InterfaceAbi);
+    expect("0x" + data.toString("hex")).toEqual(
+      iface.encodeFunctionData("undelegate", [DELEGATOR, 1_500_000_000n]),
+    );
+    expect(to).toEqual(VAL);
+    expect(value).toEqual(50_000_000_000n);
+  });
+
+  it("throws when shares is missing", () => {
+    expect(() => {
+      buildStakingTransactionParams(
+        asCurrency("zero_gravity"),
+        delegateIntent({ mode: "undelegate", valAddress: VAL }),
+      );
+    }).toThrow("zero_gravity undelegate requires shares");
+  });
+});
+
 describe("0G / zero_gravity contractAddress resolver", () => {
   const config = STAKING_CONTRACTS["zero_gravity"];
 

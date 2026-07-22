@@ -160,9 +160,7 @@ export async function prepareUnsignedTxParams(
                     data: retry.data,
                   },
                 )
-                .catch(() => {
-                  return new BigNumber(0);
-                });
+                .catch(() => new BigNumber(0));
             }
             return new BigNumber(0);
           });
