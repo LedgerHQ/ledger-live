@@ -13,7 +13,7 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import type { CurrencyId } from "@shared/schema-primitives";
+import type { CryptoCurrencyId } from "@shared/schema-primitives";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
@@ -138,7 +138,7 @@ export type CoinModuleLoader<
 > = {
   family: string;
   /** Currencies this loader supports. */
-  supportedCoins: CurrencyId[];
+  supportedCoins: CryptoCurrencyId[];
   loadSetup: () => Promise<FamilySetup<T, A, U, O, R>>;
   loadTransaction: () => Promise<TransactionModule<T, U, A, TRaw, URaw>>;
   loadDeviceTxConfig?: () => Promise<DeviceTransactionConfigFn<T, any, A>>;

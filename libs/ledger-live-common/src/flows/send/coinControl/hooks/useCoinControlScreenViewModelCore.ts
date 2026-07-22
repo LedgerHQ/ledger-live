@@ -1,4 +1,5 @@
 import type { Unit } from "@domain/entity-currency-unit";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
@@ -111,7 +112,7 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
   });
 
   const coinControlConfig = useMemo(
-    () => sendFeatures.getCoinControlConfig(getAccountCurrency(account)),
+    () => sendFeatures.getCoinControlConfig(getAccountCurrency(account) as CryptoOrTokenCurrency),
     [account],
   );
 

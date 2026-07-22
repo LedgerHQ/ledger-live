@@ -96,7 +96,7 @@ export function useSendFlowSignatureCore({
     }
 
     const tokenCurrency =
-      (account && account.type === "TokenAccount" && account.token) || undefined;
+      (account && account.type === "TokenAccount" && (account.token as TokenCurrency)) || undefined;
 
     return {
       tokenCurrency,

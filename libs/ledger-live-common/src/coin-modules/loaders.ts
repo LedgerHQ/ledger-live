@@ -1,6 +1,6 @@
 import type { CoinModuleLoader, FamilySetup } from "./types";
 
-export const coinModuleLoaders: CoinModuleLoader[] = [
+export const coinModuleLoaders = [
   {
     family: "aleo",
     supportedCoins: ["aleo", "aleo_testnet"],
@@ -419,4 +419,4 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadSigner: () => import("../families/xrp/signer").then(m => m.default),
     loadBridgeExtensions: () => import("../families/xrp/bridgeExtensions").then(m => m.default),
   },
-];
+] as CoinModuleLoader[];

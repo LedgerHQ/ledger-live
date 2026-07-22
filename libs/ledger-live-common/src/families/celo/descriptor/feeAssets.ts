@@ -1,4 +1,5 @@
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { BigNumber } from "bignumber.js";
 import type {
   FeeAssetOption,
@@ -107,7 +108,7 @@ export const celoFeeAssets: FeeAssetsConfig = {
       ticker: FEE_CURRENCY_OPTIONS[0].name,
       label: FEE_CURRENCY_OPTIONS[0].name,
       unitLabel: CELO_FEE_UNIT_LABEL,
-      currency: mainAccount.currency,
+      currency: mainAccount.currency as CryptoOrTokenCurrency,
       balance: mainAccount.spendableBalance,
     };
     if (mainAccount.subAccounts === undefined) {
@@ -122,7 +123,7 @@ export const celoFeeAssets: FeeAssetsConfig = {
       ticker: token.feeCurrencyName,
       label: token.feeCurrencyName,
       customFeeInputValueTransform: feeAssetInputValueTransform,
-      currency: token.token,
+      currency: token.token as CryptoOrTokenCurrency,
       balance: token.spendableBalance,
     }));
     return [native, ...tokens];

@@ -1,6 +1,5 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { BridgeCacheSystem } from "@ledgerhq/types-live";
 import { getCurrencyBridge } from "./";
 
 const defaultCacheStrategy = {
@@ -12,7 +11,7 @@ export function makeBridgeCacheSystem({
 }: {
   saveData: (currency: CryptoCurrency, data: unknown) => Promise<void>;
   getData: (currency: CryptoCurrency) => Promise<unknown | null | undefined>;
-}): BridgeCacheSystem {
+}) {
   const hydrateCurrency = async (currency: CryptoCurrency) => {
     const value = await getData(currency);
     const bridge = await getCurrencyBridge(currency);

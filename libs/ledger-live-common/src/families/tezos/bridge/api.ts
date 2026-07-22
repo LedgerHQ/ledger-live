@@ -1,5 +1,6 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
-import type { TokenCurrency } from "@domain/entity-currency-token";
+// BridgeApi interface uses framework's unbranded TokenCurrency for parameters — match the contract.
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 

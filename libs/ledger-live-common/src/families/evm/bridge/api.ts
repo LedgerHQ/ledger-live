@@ -5,8 +5,7 @@ import type {
   StakingRedelegation,
   StakingResources,
 } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { InvalidTransactionError } from "@ledgerhq/errors";
 import eip55 from "eip55";

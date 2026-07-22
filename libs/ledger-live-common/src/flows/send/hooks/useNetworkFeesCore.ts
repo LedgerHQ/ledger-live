@@ -122,7 +122,7 @@ export function useNetworkFeesCore({
     [calculateCountervalue, displayCurrency, estimatedFees],
   );
   // Coin-declared opt-in: append the fee amount in its own currency next to fiat.
-  const showFeeCurrencyAmount = sendFeatures.showFeeCurrencyAmount(accountCurrency);
+  const showFeeCurrencyAmount = sendFeatures.showFeeCurrencyAmount(domainAccountCurrency);
   // A zero fee only means "covered" once fees are actually estimated. Estimation can be skipped
   // while the transaction has errors, leaving a defaulted 0 — fall back to the default display so
   // an unknown fee is not shown as a confirmed zero. A non-finite estimate is likewise unknown.

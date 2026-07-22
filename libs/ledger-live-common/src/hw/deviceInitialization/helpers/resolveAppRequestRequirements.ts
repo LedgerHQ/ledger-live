@@ -1,4 +1,5 @@
 import invariant from "invariant";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import {
   getDerivationScheme,
   getDerivationModesForCurrency,
@@ -39,7 +40,7 @@ export async function resolveAppRequestRequirements(
   let { appName, currency } = appRequest;
 
   if (!currency && account) {
-    currency = account.currency;
+    currency = account.currency as CryptoCurrency;
   }
 
   if (!appName && currency) {

@@ -4337,12 +4337,12 @@ importers:
       react-native-svg:
         specifier: 'catalog:'
         version: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-      react-test-renderer:
-        specifier: 'catalog:'
-        version: 19.1.4(react@19.1.4)
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
+      react-test-renderer:
+        specifier: 'catalog:'
+        version: 19.1.4(react@19.1.4)
       tailwind-merge:
         specifier: 'catalog:'
         version: 3.4.0
@@ -8938,6 +8938,12 @@ importers:
       '@domain/entity-currency-fiat':
         specifier: workspace:^
         version: link:../../domain/entity/currency-fiat
+      '@domain/entity-currency-token':
+        specifier: workspace:^
+        version: link:../../domain/entity/currency-token
+      '@domain/entity-currency-unit':
+        specifier: workspace:^
+        version: link:../../domain/entity/currency-unit
       '@features/platform-feature-flags':
         specifier: workspace:^
         version: link:../../features/platform/feature-flags
@@ -9226,6 +9232,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../shared/feature-flags
+      '@shared/schema-primitives':
+        specifier: workspace:^
+        version: link:../../shared/schema-primitives
       '@stellar/stellar-sdk':
         specifier: ^14.0.0
         version: 14.0.0
@@ -9383,9 +9392,6 @@ importers:
       '@ledgerhq/device-react':
         specifier: workspace:^
         version: link:../device-react
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices

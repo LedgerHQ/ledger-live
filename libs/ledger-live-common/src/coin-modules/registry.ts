@@ -1,5 +1,5 @@
 import { CurrencyNotSupported } from "@ledgerhq/errors";
-import type { CurrencyId } from "@shared/schema-primitives";
+import type { CryptoCurrencyId } from "@shared/schema-primitives";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { CoinModuleLoader, MockAccountModule } from "./types";
@@ -12,12 +12,12 @@ const loaders = new Map<string, CoinModuleLoader>();
 const loaderCaches: Array<() => void> = [];
 
 // Caches derived from the registered loaders' supportedCoins, invalidated on registry change.
-let supportedIds: Set<CurrencyId> | null = null;
+let supportedIds: Set<CryptoCurrencyId> | null = null;
 let supportedCurrencies: CryptoCurrency[] | null = null;
 
-function getSupportedIds(): Set<CurrencyId> {
+function getSupportedIds(): Set<CryptoCurrencyId> {
   if (!supportedIds) {
-    const ids = new Set<CurrencyId>();
+    const ids = new Set<CryptoCurrencyId>();
     for (const loader of loaders.values()) {
       for (const id of loader.supportedCoins) ids.add(getCryptoCurrencyById(id).id);
     }

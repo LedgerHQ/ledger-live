@@ -41,7 +41,7 @@ export function useHederaEnrichedDelegation(
   account: HederaAccount,
   delegation: HederaDelegation,
 ): HederaEnrichedDelegation {
-  const validators = useHederaValidators(account.currency);
+  const validators = useHederaValidators(account.currency as CryptoCurrency);
   const validatorByNodeId = new Map(validators.map(v => [v.nodeId, v]));
   const validator = validatorByNodeId.get(delegation.nodeId) ?? null;
 

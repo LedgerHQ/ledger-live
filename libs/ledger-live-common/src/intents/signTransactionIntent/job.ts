@@ -94,7 +94,7 @@ export const signTransactionIntentJob: Job<
               // "cancelled" state (info screen + retry) instead of letting the error escape
               // the observable, which would otherwise trigger the executor's generic error screen.
               error: error => {
-                if (isUserRefusalError(error, currency)) {
+                if (isUserRefusalError(error, currency as CryptoOrTokenCurrency)) {
                   subscriber.next({ type: "cancelled", retry: run });
                   return;
                 }

@@ -293,7 +293,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const errorDelay = useRef(INITIAL_ERROR_RETRY_DELAY);
   const statusIsPending = useRef(false); // Stores if status already being processed
-  const shouldSync = mainAccount && shouldSyncBeforeTx(mainAccount.currency);
+  const shouldSync = mainAccount && shouldSyncBeforeTx(mainAccount.currency as CryptoCurrency);
 
   useEffect(() => {
     if (mainAccount === null || synced || syncing) return;

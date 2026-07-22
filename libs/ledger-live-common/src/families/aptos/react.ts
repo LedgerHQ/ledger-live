@@ -48,7 +48,7 @@ export function useAptosValidators(currency: CryptoCurrency, search?: string): A
 export function useAptosMappedStakingPositions(
   account: AptosAccount,
 ): AptosMappedStakingPosition[] {
-  const validators = useAptosValidators(account.currency, "");
+  const validators = useAptosValidators(account.currency as CryptoCurrency, "");
   const stakingPositions = account.aptosResources?.stakingPositions;
 
   const unit = getAccountCurrency(account).units[0];

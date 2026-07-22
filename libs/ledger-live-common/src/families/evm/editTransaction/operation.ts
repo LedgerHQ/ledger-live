@@ -23,7 +23,7 @@ export const isEditableOperation = (
 
   // gasTracker is needed to perform the edit transaction logic,
   // it is used to estimate the fees and let the user choose them
-  if (!hasGasTracker(currency)) {
+  if (!hasGasTracker(currency as CryptoCurrency)) {
     return false;
   }
 

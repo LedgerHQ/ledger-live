@@ -7,6 +7,7 @@ import {
 } from "@reduxjs/toolkit/query/react";
 import type { ApiAsset } from "../entities";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrencyId } from "@shared/schema-primitives";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { convertApiToken } from "@domain/api-currency-token";
 import { RawApiResponse, AssetsData } from "../entities";
@@ -24,9 +25,11 @@ function convertApiAssets(
       if (crypto) {
         result[key] = crypto;
       } else {
+        // API boundary: asset.id arrives as plain string; single `as` brands it.
+        // Remove when DADA API is typed with domain schemas.
         result[key] = {
           type: "CryptoCurrency" as const,
-          id: asset.id,
+          id: asset.id as CryptoCurrencyId,
           name: asset.name,
           ticker: asset.ticker,
           units: asset.units,
@@ -40,7 +43,7 @@ function convertApiAssets(
           disableCountervalue: asset.disableCountervalue,
           supportsSegwit: asset.hasSegwit,
           ...(asset.chainId ? { ethereumLikeInfo: { chainId: parseInt(asset.chainId, 10) } } : {}),
-        } as CryptoOrTokenCurrency;
+        };
       }
     }
   }

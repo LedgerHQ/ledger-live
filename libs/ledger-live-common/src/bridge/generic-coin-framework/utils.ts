@@ -188,7 +188,7 @@ export function extractBalances(
   }
 
   for (const subAccount of account.subAccounts) {
-    const asset = getAssetFromToken(subAccount.token, account.freshAddress);
+    const asset = getAssetFromToken(subAccount.token as TokenCurrency, account.freshAddress);
     const tokenReserve = BigNumber.max(subAccount.balance.minus(subAccount.spendableBalance), 0);
     const tokenPending = getPendingTokenSpent(subAccount.pendingOperations ?? []);
     balances.push({
