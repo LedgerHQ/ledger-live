@@ -1,4 +1,5 @@
 import React from "react";
+import { createClosedContactsFeatureIntroduction } from "@features/flow-contacts";
 import { render, screen } from "@tests/test-renderer";
 import { ContactsView } from "./ContactsView";
 import type { ContactsViewModel } from "./useContactsViewModel";
@@ -38,6 +39,7 @@ function createViewModel({
     onOpenContact: jest.fn(),
     onAddContact: jest.fn(),
     ledgerSyncStatus,
+    featureIntroduction: createClosedContactsFeatureIntroduction(onDismiss),
     ledgerSyncIntroduction: {
       isOpen: isIntroductionOpen,
       description:

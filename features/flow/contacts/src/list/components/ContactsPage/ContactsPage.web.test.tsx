@@ -7,6 +7,7 @@ import {
   createEmptyContactsListViewModel,
   createPopulatedContactsListViewModel,
 } from "../../viewModel";
+import { createClosedContactsFeatureIntroduction } from "../../createClosedContactsFeatureIntroduction";
 import { ContactsPage } from "./ContactsPage.web";
 
 const labels = {
@@ -21,12 +22,26 @@ const labels = {
 type RenderContactsPageOptions = Readonly<{
   viewModel?: ContactsPageViewModel;
   ledgerSyncStatus?: ContactsLedgerSyncStatus;
+  isFeatureIntroductionOpen?: boolean;
+  onDismissFeatureIntroduction?: () => void;
+  isIntroductionOpen?: boolean;
+  onDismissIntroduction?: () => void;
+  onOpenMe?: (contactId: ContactId) => void;
+  onOpenContact?: (contactId: ContactId) => void;
+  onAddContact?: () => void;
   searchQuery?: string;
 }>;
 
 function renderContactsPage({
   viewModel = createEmptyContactsListViewModel(mockMeContact()),
   ledgerSyncStatus = "ready",
+  isFeatureIntroductionOpen = false,
+  onDismissFeatureIntroduction = jest.fn(),
+  isIntroductionOpen = false,
+  onDismissIntroduction = jest.fn(),
+  onOpenMe = jest.fn(),
+  onOpenContact = jest.fn(),
+  onAddContact = jest.fn(),
   searchQuery = "",
 }: RenderContactsPageOptions = {}) {
   render(
@@ -40,6 +55,26 @@ function renderContactsPage({
       searchQuery={searchQuery}
       onSearchInputChange={jest.fn()}
       ledgerSyncStatus={ledgerSyncStatus}
+      featureIntroduction={
+        isFeatureIntroductionOpen
+          ? {
+              isOpen: true,
+              title: "Introducing Contacts",
+              description:
+                "Your address book for crypto — save the wallets you send to, all in one place.",
+              highlights: [
+                {
+                  title: "Save addresses once",
+                  description: "Keep the addresses you send to in one place.",
+                  icon: "Contact",
+                },
+              ],
+              primaryActionLabel: "Try contacts",
+              secondaryActionLabel: "Maybe later",
+              onDismiss: onDismissFeatureIntroduction,
+            }
+          : createClosedContactsFeatureIntroduction()
+      }
       ledgerSyncIntroduction={{
         isOpen: false,
         description: "",
@@ -48,6 +83,15 @@ function renderContactsPage({
       }}
     />,
   );
+
+  return {
+    onDismissFeatureIntroduction,
+    onDismissIntroduction,
+    onOpenMe,
+    onOpenContact,
+    onAddContact,
+    onSearchInputChange,
+  };
 }
 
 describe("ContactsPage", () => {
@@ -106,14 +150,79 @@ describe("ContactsPage", () => {
     );
   });
 
+  it("shows the feature introduction over the Contacts page and dismisses it once", () => {
+    const onDismissFeatureIntroduction = jest.fn();
+
+    renderContactsPage({
+      isFeatureIntroductionOpen: true,
+      onDismissFeatureIntroduction,
+    });
+
+    expect(screen.getByTestId("contacts-list")).toBeVisible();
+    expect(screen.getByText("Introducing Contacts")).toBeVisible();
+
+    fireEvent.click(screen.getByTestId("contacts-feature-introduction-secondary"));
+
+    expect(onDismissFeatureIntroduction).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows the Ledger Sync introduction over the Contacts page and dismisses it", () => {
+    const onDismissIntroduction = jest.fn();
+
+    renderContactsPage({
+      ledgerSyncStatus: "inactive",
+      isIntroductionOpen: true,
+      onDismissIntroduction,
+    });
+
+    expect(screen.getByTestId("contacts-list")).toBeVisible();
+    expect(
+      screen.getByText(
+        "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
+      ),
+    ).toBeVisible();
+
+    fireEvent.click(screen.getByText("Got it"));
+
+    expect(onDismissIntroduction).toHaveBeenCalledTimes(1);
+  });
+
+  it("updates the search input and delegates query changes", () => {
+    const onSearchInputChange = jest.fn();
+
+    renderContactsPage({ onSearchInputChange });
+
+    fireEvent.change(screen.getByTestId("contacts-list-search"), {
+      target: { value: "Ben" },
+    });
+
+    expect(onSearchInputChange).toHaveBeenCalledTimes(1);
+  });
+
   it("renders matching search results", () => {
     const contacts = mockPopulatedContacts();
     const me = contacts.find(contact => contact.isMe) ?? mockMeContact();
 
-    renderContactsPage({
-      viewModel: createContactsSearchViewModel(me, contacts, "ben"),
-      searchQuery: "ben",
-    });
+    render(
+      <ContactsPage
+        viewModel={createContactsSearchViewModel(me, contacts, "ben")}
+        labels={labels}
+        meAvatarSrc="https://example.com/black/user.png"
+        onOpenMe={jest.fn()}
+        onOpenContact={jest.fn()}
+        onAddContact={jest.fn()}
+        searchQuery="ben"
+        onSearchInputChange={jest.fn()}
+        ledgerSyncStatus="ready"
+        featureIntroduction={createClosedContactsFeatureIntroduction()}
+        ledgerSyncIntroduction={{
+          isOpen: false,
+          description: "",
+          dismissLabel: "",
+          onDismiss: jest.fn(),
+        }}
+      />,
+    );
 
     const contactsList = screen.getByTestId("contacts-list");
 
@@ -126,10 +235,26 @@ describe("ContactsPage", () => {
     const contacts = mockPopulatedContacts();
     const me = contacts.find(contact => contact.isMe) ?? mockMeContact();
 
-    renderContactsPage({
-      viewModel: createContactsSearchViewModel(me, contacts, "unknown"),
-      searchQuery: "unknown",
-    });
+    render(
+      <ContactsPage
+        viewModel={createContactsSearchViewModel(me, contacts, "unknown")}
+        labels={labels}
+        meAvatarSrc="https://example.com/black/user.png"
+        onOpenMe={jest.fn()}
+        onOpenContact={jest.fn()}
+        onAddContact={jest.fn()}
+        searchQuery="unknown"
+        onSearchInputChange={jest.fn()}
+        ledgerSyncStatus="ready"
+        featureIntroduction={createClosedContactsFeatureIntroduction()}
+        ledgerSyncIntroduction={{
+          isOpen: false,
+          description: "",
+          dismissLabel: "",
+          onDismiss: jest.fn(),
+        }}
+      />,
+    );
 
     const contactsList = screen.getByTestId("contacts-list");
 

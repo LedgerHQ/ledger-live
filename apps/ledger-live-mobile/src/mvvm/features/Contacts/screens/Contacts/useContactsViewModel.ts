@@ -2,6 +2,7 @@ import {
   type ContactsLedgerSyncStatus,
   type ContactsPageLabels,
   type ContactsPageNativeProps,
+  createClosedContactsFeatureIntroduction,
   useContactsSearchViewModel,
 } from "@features/flow-contacts";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -59,6 +60,7 @@ export function useContactsViewModel(): ContactsViewModel {
     onOpenContact,
     onAddContact,
     ledgerSyncStatus,
+    featureIntroduction: createClosedContactsFeatureIntroduction(),
     ledgerSyncIntroduction: {
       isOpen: ledgerSyncStatus === "inactive" && !isIntroductionDismissed,
       description: t("contacts.ledgerSyncIntroduction.description"),

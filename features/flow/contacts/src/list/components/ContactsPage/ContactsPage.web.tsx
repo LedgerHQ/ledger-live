@@ -1,4 +1,5 @@
 import React from "react";
+import { ContactsFeatureIntroductionDialog } from "../ContactsFeatureIntroduction/ContactsFeatureIntroductionDialog.web";
 import { ContactsLedgerSyncIntroductionDialog } from "../ContactsLedgerSyncIntroduction/ContactsLedgerSyncIntroductionDialog.web";
 import type { ContactsPageProps } from "../../types";
 import { ContactsLedgerSyncLoadingPane } from "./ContactsLedgerSyncLoadingPane.web";
@@ -7,7 +8,7 @@ import { ContactsPageLayout } from "../ContactsPageLayout/ContactsPageLayout.web
 
 export function ContactsPage(props: ContactsPageProps): React.ReactNode {
   const isLedgerSyncChecking = props.ledgerSyncStatus === "checking";
-  const isIntroductionOpen =
+  const isLedgerSyncIntroductionOpen =
     props.ledgerSyncStatus === "inactive" && props.ledgerSyncIntroduction.isOpen;
   const contactsList = <ContactsList {...props} />;
 
@@ -38,8 +39,9 @@ export function ContactsPage(props: ContactsPageProps): React.ReactNode {
           }
         />
       </div>
+      <ContactsFeatureIntroductionDialog {...props.featureIntroduction} />
       <ContactsLedgerSyncIntroductionDialog
-        open={isIntroductionOpen}
+        open={isLedgerSyncIntroductionOpen}
         description={props.ledgerSyncIntroduction.description}
         dismissLabel={props.ledgerSyncIntroduction.dismissLabel}
         onDismiss={props.ledgerSyncIntroduction.onDismiss}

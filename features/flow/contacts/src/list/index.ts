@@ -5,6 +5,9 @@ export {
   createPopulatedContactsListViewModel,
 } from "./viewModel";
 export type {
+  ContactsFeatureIntroduction,
+  ContactsFeatureIntroductionHighlight,
+  ContactsFeatureIntroductionHighlightIcon,
   ContactsLedgerSyncIntroduction,
   ContactsLedgerSyncStatus,
   ContactsPageLabels,
@@ -20,3 +23,4 @@ export type {
   PopulatedContactsListViewModel,
 } from "./types";
 export { isContactsSearchNoResultsViewModel, isPopulatedContactsListViewModel } from "./types";
+export { createClosedContactsFeatureIntroduction } from "./createClosedContactsFeatureIntroduction";

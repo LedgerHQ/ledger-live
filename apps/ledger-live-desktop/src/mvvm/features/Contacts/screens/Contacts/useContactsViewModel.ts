@@ -1,14 +1,18 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
   createContactsListViewModel,
   createContactsSearchViewModel,
+  resolveContactsLedgerSyncIntroductionOpen,
   useContacts,
+  useContactsFeatureIntroductionState,
   useContactsMeContact,
   type ContactsLedgerSyncStatus,
   type ContactsPageLabels,
 } from "@features/flow-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
+import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
 import type { ContactsViewProps } from "./ContactsView";
 
 export type ContactsViewModel = ContactsViewProps;
@@ -18,8 +22,13 @@ export function useContactsViewModel(): ContactsViewModel {
   const [searchQuery, setSearchQuery] = useState("");
   const meContact = useContactsMeContact();
   const contacts = useContacts();
-  const [isIntroductionDismissed, setIsIntroductionDismissed] = useState(false);
+  const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
   const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
+  const preference = useContactsFeatureIntroductionPreference();
+  const featureIntroductionState = useContactsFeatureIntroductionState({
+    isContactsEntryAvailable: true,
+    preference,
+  });
   const labels = useMemo<ContactsPageLabels>(
     () => ({
       title: t("contacts.title"),
@@ -28,6 +37,15 @@ export function useContactsViewModel(): ContactsViewModel {
       addContact: t("contacts.addContact"),
       formatAddressCount: count => t("contacts.me.addressCount", { count }),
     }),
+    [t],
+  );
+  const featureIntroductionHighlights = useMemo(
+    () =>
+      CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS.map(({ icon, translationKey }) => ({
+        icon,
+        title: t(`contacts.featureIntroduction.highlights.${translationKey}.title`),
+        description: t(`contacts.featureIntroduction.highlights.${translationKey}.description`),
+      })),
     [t],
   );
   const viewModel = useMemo(() => {
@@ -46,15 +64,22 @@ export function useContactsViewModel(): ContactsViewModel {
     [],
   );
   const onAddContact = useCallback(() => undefined, []);
-  const onDismissIntroduction = useCallback(() => setIsIntroductionDismissed(true), []);
+  const onDismissLedgerSyncIntroduction = useCallback(
+    () => setIsLedgerSyncIntroductionDismissed(true),
+    [],
+  );
 
   useEffect(() => {
     if (ledgerSyncStatus !== "inactive") {
-      setIsIntroductionDismissed(false);
+      setIsLedgerSyncIntroductionDismissed(false);
     }
   }, [ledgerSyncStatus]);
 
-  const isIntroductionOpen = ledgerSyncStatus === "inactive" && !isIntroductionDismissed;
+  const isLedgerSyncIntroductionOpen = resolveContactsLedgerSyncIntroductionOpen({
+    isFeatureIntroductionRequested: featureIntroductionState.isRequested,
+    ledgerSyncStatus,
+    isLedgerSyncIntroductionDismissed,
+  });
 
   return {
     viewModel,
@@ -66,11 +91,20 @@ export function useContactsViewModel(): ContactsViewModel {
     onOpenContact,
     onAddContact,
     ledgerSyncStatus,
+    featureIntroduction: {
+      isOpen: featureIntroductionState.isRequested,
+      title: t("contacts.featureIntroduction.title"),
+      description: t("contacts.featureIntroduction.description"),
+      highlights: featureIntroductionHighlights,
+      primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
+      secondaryActionLabel: t("contacts.featureIntroduction.secondaryAction"),
+      onDismiss: featureIntroductionState.dismiss,
+    },
     ledgerSyncIntroduction: {
-      isOpen: isIntroductionOpen,
+      isOpen: isLedgerSyncIntroductionOpen,
       description: t("contacts.ledgerSyncIntroduction.description"),
       dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
-      onDismiss: onDismissIntroduction,
+      onDismiss: onDismissLedgerSyncIntroduction,
     },
   };
 }

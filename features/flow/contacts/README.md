@@ -43,6 +43,7 @@ src/
 │   ├── components/
 │   │   ├── ContactsList/         # Web only
 │   │   ├── ContactsPage/         # Web page and Ledger Sync loading variants
+│   │   ├── ContactsFeatureIntroduction/
 │   │   ├── ContactsLedgerSyncIntroduction/
 │   │   └── ContactsPageLayout/   # Web only
 │   ├── web.ts            # Web ContactsPage export

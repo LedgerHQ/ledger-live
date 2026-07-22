@@ -9348,6 +9348,26 @@
     "ledgerSyncIntroduction": {
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
       "dismiss": "Got it"
+    },
+    "featureIntroduction": {
+      "title": "Introducing Contacts",
+      "description": "Your address book for crypto — save the wallets you send to, all in one place.",
+      "primaryAction": "Try contacts",
+      "secondaryAction": "Maybe later",
+      "highlights": {
+        "saveAddresses": {
+          "title": "Save addresses once",
+          "description": "Keep the addresses you send to in one place."
+        },
+        "sendToRightAddress": {
+          "title": "Send to the right address",
+          "description": "Funds reach the right wallet every time."
+        },
+        "privateAcrossDevices": {
+          "title": "Private across your devices",
+          "description": "End-to-end encrypted with Ledger Sync."
+        }
+      }
     }
   },
   "assetDetails": {

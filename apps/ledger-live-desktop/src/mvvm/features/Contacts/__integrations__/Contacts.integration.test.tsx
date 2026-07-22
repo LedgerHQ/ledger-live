@@ -244,4 +244,35 @@ describe("Contacts integration", () => {
     expect(screen.getByText("No contact found")).toBeVisible();
     expect(screen.queryByTestId("contacts-saved-row-contact-ben")).not.toBeInTheDocument();
   });
+
+  it("should show the one-time feature introduction on first visit and persist dismissal", async () => {
+    const { user, store } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: {
+          ...withFlagOverrides({
+            lwdContacts: { enabled: true, params: { newBadge: false } },
+          }),
+          settings: {
+            hasDismissedContactsFeatureIntroduction: false,
+          },
+        },
+      },
+    );
+
+    expect(screen.getByTestId("contacts-page")).toBeVisible();
+    expect(screen.getByTestId("contacts-feature-introduction-dialog")).toBeVisible();
+    expect(screen.getByText("Introducing Contacts")).toBeVisible();
+
+    await user.click(screen.getByTestId("contacts-feature-introduction-secondary"));
+
+    expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(true);
+    expect(screen.queryByTestId("contacts-feature-introduction-dialog")).not.toBeInTheDocument();
+    expect(screen.getByTestId("contacts-list")).toBeVisible();
+  });
 });
