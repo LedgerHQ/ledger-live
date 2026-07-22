@@ -240,7 +240,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
   {
     // HyperCore uses the generic coin framework. Address derivation reuses the EVM setup + signer
     // (same secp256k1/Ethereum address), so scanAccounts / hw getAddress resolve via the EVM
-    // resolver; only getBalance + listOperations are backed by coin-hypercore.
+    // resolver. getBalance, listOperations and validateAddress are backed by coin-hypercore
+    // (validateAddress is consumed from the CoinModuleApi instance, not a loader hook).
     family: "hypercore",
     supportedCoins: ["hypercore"],
     loadSetup: () => import("../families/evm/setup"),
@@ -248,11 +249,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       import("../families/hypercore/coinModuleApi").then(m => m.createLocalHypercoreApi),
     loadTransaction: () => import("../families/hypercore/transaction").then(m => m.default),
     loadSigner: () => import("../families/evm/signer").then(m => m.default),
-    // Reuse the EVM address validation (HyperCore shares the Ethereum address).
-    loadValidateAddress: () =>
-      import("@ledgerhq/coin-evm/logic/validateAddress").then(
-        ({ validateAddress }): ValidateAddressFn => validateAddress,
-      ),
   },
   {
     family: "icon",
