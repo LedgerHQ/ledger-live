@@ -16,12 +16,12 @@ export function runNewSendFlowTest(
   );
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
-  describe("Send from 1 account to another", () => {
+  describe("New Send Flow - Native Send", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction, options);
     });
 
-    it(`Send from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName}`, async () => {
+    it(`Send ${transaction.amount} ${transaction.accountToDebit.currency.ticker} from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName}`, async () => {
       await app.send.navigateToSendScreen(transaction.accountToDebit.accountName);
       await app.send.setRecipientAndContinueNewFlow(
         transaction.accountToCredit.address,
