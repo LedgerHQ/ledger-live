@@ -1,6 +1,7 @@
 import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { getCurrencyForAccount } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 // Bridge legacy→domain — Account getters return unbranded types from packages that cannot import @domain.
 // Single `as` (not `as unknown as`) — TS verifies shape overlap, only brand is coerced.

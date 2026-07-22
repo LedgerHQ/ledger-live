@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { ExchangeRate, ExchangeRateResponseRaw } from "../types";
-import { Unit } from "@domain/entity-currency";
+import { Unit } from "@domain/entity-currency-unit";
 import { inferError } from "./inferRatesError";
 
 export function enrichRatesResponse(

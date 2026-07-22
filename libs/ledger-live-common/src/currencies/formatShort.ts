@@ -1,7 +1,7 @@
 import numeral from "numeral";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 
 /**
  * This will format in a very concise way a valid, typically to be used on axis.

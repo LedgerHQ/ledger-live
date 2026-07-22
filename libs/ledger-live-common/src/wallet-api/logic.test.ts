@@ -35,11 +35,8 @@ jest.mock("../hw/signMessage/index", () => ({
   ...jest.requireActual("../hw/signMessage/index"),
   prepareMessageToSign: jest.fn(),
 }));
-import {
-  type CryptoCurrency,
-  type TokenCurrency,
-  TokenCurrencySchema,
-} from "@domain/entity-currency";
+import { type CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrencySchema, type TokenCurrency } from "@domain/entity-currency-token";
 import { TrackingAPI } from "./tracking";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 import { initialState as walletState } from "@ledgerhq/live-wallet/store";

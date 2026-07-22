@@ -2,7 +2,7 @@
 import semver from "semver";
 import { listCryptoCurrencies, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { AppType, ApplicationV2 } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 const directDep = {};
 const reverseDep = {};
 

@@ -4,7 +4,7 @@
 import "../../../__tests__/test-helpers/dom-polyfill";
 import { renderHook, act } from "@testing-library/react";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { TokenCurrencySchema } from "@domain/entity-currency";
+import { TokenCurrencySchema } from "@domain/entity-currency-token";
 import { selectorStateDefaultValues, useToState } from ".";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { genAccount } from "../../../mock/account";

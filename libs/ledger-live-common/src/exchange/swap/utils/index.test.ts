@@ -1,5 +1,5 @@
-import type { CryptoCurrency } from "@domain/entity-currency";
-import { TokenCurrencySchema } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrencySchema } from "@domain/entity-currency-token";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "../../../currencies";

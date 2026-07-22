@@ -29,7 +29,7 @@ import type {
   TransactionCommon,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { firstValueFrom } from "rxjs";
 
 const warnDev = process.env.CI ? (..._args) => {} : (...msg) => console.warn(...msg);

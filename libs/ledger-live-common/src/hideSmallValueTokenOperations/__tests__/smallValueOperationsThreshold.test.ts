@@ -2,7 +2,8 @@ import BigNumber from "bignumber.js";
 import { getFiatCurrencyByTicker } from "../../currencies";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import {
   clampSmallValueThresholdUsd,
   convertThresholdFromCountervalueMinorUnitToUsd,

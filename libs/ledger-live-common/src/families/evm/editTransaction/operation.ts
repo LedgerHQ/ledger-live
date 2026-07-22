@@ -3,7 +3,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import invariant from "invariant";
 

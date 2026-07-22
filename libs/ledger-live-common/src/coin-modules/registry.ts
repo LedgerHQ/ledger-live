@@ -1,6 +1,6 @@
 import { CurrencyNotSupported } from "@ledgerhq/errors";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { CoinModuleLoader, MockAccountModule } from "./types";
 import type { AccountBridgeExtensions } from "@ledgerhq/types-live";
 

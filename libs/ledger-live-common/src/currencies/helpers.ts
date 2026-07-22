@@ -1,4 +1,6 @@
-import { Currency, CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
+import { Currency } from "@domain/entity-currency";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 export function isCryptoCurrency(currency: Currency): currency is CryptoCurrency {

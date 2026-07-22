@@ -16,7 +16,8 @@ import type {
   TxData,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type {
   FeeData,
   FeeDataRaw,

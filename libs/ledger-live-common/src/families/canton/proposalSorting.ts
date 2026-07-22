@@ -1,4 +1,4 @@
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import type { Account } from "@ledgerhq/types-live";
 
 /**

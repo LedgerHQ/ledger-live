@@ -1,5 +1,5 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { BridgeCacheSystem } from "@ledgerhq/types-live";
 import { getCurrencyBridge } from "./";
 

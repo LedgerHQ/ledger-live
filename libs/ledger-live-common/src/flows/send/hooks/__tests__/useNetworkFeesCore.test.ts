@@ -10,7 +10,7 @@ import { useAccountBridge } from "../../../../bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { Transaction, TransactionStatus } from "../../../../coin-modules/transaction-types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import type { SendFlowUiConfig } from "../../types";
 
 jest.mock("../../../../bridge/descriptor/send/features");

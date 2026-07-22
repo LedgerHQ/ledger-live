@@ -5,7 +5,7 @@ import "../../__tests__/test-helpers/dom-polyfill";
 import React, { useEffect } from "react";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Observable } from "rxjs";
 import type { Observer } from "rxjs";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";

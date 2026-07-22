@@ -1,4 +1,4 @@
-import { CryptoCurrencySchema } from "@domain/entity-currency";
+import { CryptoCurrencySchema } from "@domain/entity-currency-crypto";
 
 export const IDS = [
   "bitcoin",

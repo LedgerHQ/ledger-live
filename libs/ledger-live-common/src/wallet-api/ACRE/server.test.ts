@@ -1,6 +1,7 @@
 import { handlers } from "./server";
 import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrencySchema, TokenCurrencySchema } from "@domain/entity-currency";
+import { CryptoCurrencySchema } from "@domain/entity-currency-crypto";
+import { TokenCurrencySchema } from "@domain/entity-currency-token";
 import BigNumber from "bignumber.js";
 import { AppPlatform, AppBranch, Visibility } from "../types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";

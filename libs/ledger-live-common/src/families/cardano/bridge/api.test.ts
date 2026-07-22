@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
-import type { TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import cardanoBridge, { getAssetFromToken, getTokenFromAsset } from "./api";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";

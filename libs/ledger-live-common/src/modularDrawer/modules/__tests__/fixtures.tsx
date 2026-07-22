@@ -2,13 +2,9 @@ import React from "react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import {
-  CryptoCurrency,
-  CryptoCurrencySchema,
-  FiatCurrencySchema,
-  TokenCurrency,
-  TokenCurrencySchema,
-} from "@domain/entity-currency";
+import { CryptoCurrency, CryptoCurrencySchema } from "@domain/entity-currency-crypto";
+import { TokenCurrency, TokenCurrencySchema } from "@domain/entity-currency-token";
+import { FiatCurrencySchema } from "@domain/entity-currency-fiat";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { createFixtureCryptoCurrency } from "../../../mock/fixtures/cryptoCurrencies";
 import { counterValuesApi } from "../../../counterValues/state-manager/api";

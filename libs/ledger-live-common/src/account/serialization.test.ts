@@ -6,7 +6,7 @@ import { WALLET_API_VERSION } from "../wallet-api/constants";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import solanaSplTokenData from "../__fixtures__/solana-spl-epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v.json";
-import { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrency } from "@domain/entity-currency-token";
 
 setWalletAPIVersion(WALLET_API_VERSION);
 

@@ -10,7 +10,8 @@ import {
   getDefaultExplorerView,
   getTransactionExplorer as getDefaultTransactionExplorer,
 } from "../../../explorers";
-import type { CryptoCurrency, CryptoOrTokenCurrency, ExplorerView } from "@domain/entity-currency";
+import type { CryptoCurrency, ExplorerView } from "@domain/entity-currency-crypto";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type { TransactionStatusValue } from "@ledgerhq/wallet-api-exchange-module";
 

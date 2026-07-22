@@ -1,7 +1,8 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { isTokenAsset } from "@ledgerhq/coin-cardano/logic";
 
 // A Cardano asset is a token iff it carries an assetReference — keyed by `<policyId><assetName>`, the

@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getEnv } from "@ledgerhq/live-env";
 
 type LedgerExplorer = {

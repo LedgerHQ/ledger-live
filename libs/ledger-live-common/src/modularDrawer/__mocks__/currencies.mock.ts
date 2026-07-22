@@ -1,4 +1,4 @@
-import { TokenCurrencySchema } from "@domain/entity-currency";
+import { TokenCurrencySchema } from "@domain/entity-currency-token";
 import { getCryptoCurrencyById } from "../../currencies";
 
 export const mockBtcCryptoCurrency = getCryptoCurrencyById("bitcoin");

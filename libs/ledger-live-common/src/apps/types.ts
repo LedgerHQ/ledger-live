@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { DeviceModel, DeviceModelId } from "@ledgerhq/devices";
 import { App, DeviceInfo, FinalFirmware, LanguagePackage } from "@ledgerhq/types-live";
 import type { Observable, Subject } from "rxjs";

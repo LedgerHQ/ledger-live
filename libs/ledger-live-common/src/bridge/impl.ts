@@ -5,7 +5,7 @@ import {
 import { CurrencyNotSupported } from "@ledgerhq/errors";
 import { decodeAccountId, getMainAccount, checkAccountSupported } from "../account";
 import { getEnv } from "@ledgerhq/live-env";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import {
   Account,
   AccountBridge,

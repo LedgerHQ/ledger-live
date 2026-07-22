@@ -1,5 +1,5 @@
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
-import { TokenCurrency, TokenCurrencySchema } from "@domain/entity-currency";
+import { TokenCurrency, TokenCurrencySchema } from "@domain/entity-currency-token";
 import {
   OperationType,
   SignedOperation,

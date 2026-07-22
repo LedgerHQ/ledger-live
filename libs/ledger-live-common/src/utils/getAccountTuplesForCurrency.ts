@@ -1,5 +1,6 @@
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 
 export type AccountTuple = {

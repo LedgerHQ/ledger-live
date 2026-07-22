@@ -4,7 +4,7 @@
 import { renderHook, act } from "@testing-library/react";
 import { useSendFlowAccount } from "../send/hooks/useSendFlowAccount";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import { TokenCurrencySchema } from "@domain/entity-currency";
+import { TokenCurrencySchema } from "@domain/entity-currency-token";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 // Mock getAccountCurrency

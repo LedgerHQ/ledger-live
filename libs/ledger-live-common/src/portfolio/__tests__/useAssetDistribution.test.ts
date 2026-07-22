@@ -4,8 +4,8 @@
 import { renderHook } from "@testing-library/react";
 import { useAssetDistribution } from "../useAssetDistribution";
 import type { Account, AssetsDistribution } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@domain/entity-currency";
-import { FiatCurrencySchema } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { FiatCurrencySchema } from "@domain/entity-currency-fiat";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 

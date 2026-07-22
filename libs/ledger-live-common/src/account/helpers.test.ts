@@ -4,7 +4,7 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { TokenCurrencySchema } from "@domain/entity-currency";
+import { TokenCurrencySchema } from "@domain/entity-currency-token";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 

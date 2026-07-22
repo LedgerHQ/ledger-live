@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getCurrencyConfiguration } from ".";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 

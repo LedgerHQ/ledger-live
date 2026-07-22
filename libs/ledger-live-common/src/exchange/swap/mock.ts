@@ -12,7 +12,8 @@ import type {
   PostSwapCancelled,
 } from "./types";
 import type { Transaction } from "../../coin-modules/transaction-types";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 
 export const mockGetExchangeRates = async (
   exchange: ExchangeSwap,

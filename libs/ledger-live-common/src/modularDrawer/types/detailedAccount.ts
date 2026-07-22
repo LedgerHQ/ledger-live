@@ -1,4 +1,4 @@
-import { Unit } from "@domain/entity-currency";
+import { Unit } from "@domain/entity-currency-unit";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 

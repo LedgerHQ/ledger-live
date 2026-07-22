@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { celoFeeAssets } from "./feeAssets";
 
 const celoCurrency = {
