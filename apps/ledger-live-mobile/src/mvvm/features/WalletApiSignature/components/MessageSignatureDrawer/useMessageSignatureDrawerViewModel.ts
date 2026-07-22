@@ -9,7 +9,7 @@ import {
   buildDeviceInitializationInput,
   type InitializationInput,
 } from "LLM/components/DeviceIntentExecutor";
-import { signMessageIntentLWMDefinition } from "./intentLWMDefinition";
+import { signMessageIntentPlatformDefinition } from "./intentDefinition";
 import type { WalletApiDeviceIntentSignMessageRequest } from "./types";
 
 type Props = {
@@ -74,7 +74,7 @@ export function useMessageSignatureDrawerViewModel({ request, onClose }: Props) 
 
   const signatureIntent = useMemo(
     () =>
-      createIntent(signMessageIntentLWMDefinition, {
+      createIntent(signMessageIntentPlatformDefinition, {
         account,
         parentAccount: parentAccount ?? undefined,
         message,

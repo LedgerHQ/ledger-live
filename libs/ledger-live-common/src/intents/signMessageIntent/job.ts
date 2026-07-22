@@ -36,9 +36,16 @@ export const signMessageIntentJob: Job<SignMessageIntentJobState, SignMessageInt
   input,
 }) => {
   const device = buildSigningDevice(deviceConnectionResult);
-  const mainAccount = getMainAccount(input.account, input.parentAccount ?? undefined);
 
   return new Observable<SignMessageIntentJobState>(subscriber => {
+    let mainAccount;
+    try {
+      mainAccount = getMainAccount(input.account, input.parentAccount ?? undefined);
+    } catch (error) {
+      subscriber.error(normalizeSignError(error));
+      return;
+    }
+
     let innerSubscription: Subscription | undefined;
     let runRequestId = 0;
 
@@ -49,6 +56,8 @@ export const signMessageIntentJob: Job<SignMessageIntentJobState, SignMessageInt
       // so signing the (already prepared) message just needs the connected device id.
       subscriber.next({ type: "pending", deviceModelId: device.modelId });
 
+      let hasSigned = false;
+
       innerSubscription = signMessageExec({
         request: { account: mainAccount, message: input.message },
         deviceId: device.deviceId,
@@ -58,6 +67,7 @@ export const signMessageIntentJob: Job<SignMessageIntentJobState, SignMessageInt
             return;
           }
           if (result?.signature) {
+            hasSigned = true;
             subscriber.next({ type: "signed", signature: result.signature });
           }
         },
@@ -76,6 +86,13 @@ export const signMessageIntentJob: Job<SignMessageIntentJobState, SignMessageInt
         },
         complete: () => {
           if (subscriber.closed || currentRunRequestId !== runRequestId) {
+            return;
+          }
+          // Defensive guard: signMessageExec always yields a signature before completing,
+          // but if it ever completed without one, no terminal state would reach the drawer
+          // and the wallet-api promise would never settle. Surface an error instead.
+          if (!hasSigned) {
+            subscriber.error(new Error("Signing completed without a signature"));
             return;
           }
           subscriber.complete();

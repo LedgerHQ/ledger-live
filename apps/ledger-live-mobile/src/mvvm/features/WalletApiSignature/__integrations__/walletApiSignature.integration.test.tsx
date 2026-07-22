@@ -59,12 +59,12 @@ jest.mock("@ledgerhq/live-common/hw/actions/app", () => ({
   ),
 }));
 
-jest.mock("../components/TransactionSignatureDrawer/intentLWMDefinition", () => ({
-  signTransactionIntentLWMDefinition: { label: "Sign transaction" },
+jest.mock("../components/TransactionSignatureDrawer/intentDefinition", () => ({
+  signTransactionIntentPlatformDefinition: { label: "Sign transaction" },
 }));
 
-jest.mock("../components/MessageSignatureDrawer/intentLWMDefinition", () => ({
-  signMessageIntentLWMDefinition: { label: "Sign message" },
+jest.mock("../components/MessageSignatureDrawer/intentDefinition", () => ({
+  signMessageIntentPlatformDefinition: { label: "Sign message" },
 }));
 
 const account = { id: "js:2:ethereum:0xabc:", type: "Account", currency: { name: "Ethereum" } };

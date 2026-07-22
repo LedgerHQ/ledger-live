@@ -11,7 +11,7 @@ import {
   buildDeviceInitializationInput,
   type InitializationInput,
 } from "LLM/components/DeviceIntentExecutor";
-import { signTransactionIntentLWMDefinition } from "./intentLWMDefinition";
+import { signTransactionIntentPlatformDefinition } from "./intentDefinition";
 import type { WalletApiDeviceIntentSignRequest } from "./types";
 
 type Props = {
@@ -88,7 +88,7 @@ export function useTransactionSignatureDrawerViewModel({ request, onClose }: Pro
   const signatureIntent = useMemo(
     () =>
       preparedTransaction
-        ? createIntent(signTransactionIntentLWMDefinition, {
+        ? createIntent(signTransactionIntentPlatformDefinition, {
             account,
             parentAccount: parentAccount ?? undefined,
             transaction: preparedTransaction,

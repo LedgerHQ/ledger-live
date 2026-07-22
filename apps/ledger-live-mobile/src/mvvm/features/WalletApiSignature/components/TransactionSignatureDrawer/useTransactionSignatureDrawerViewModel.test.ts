@@ -33,8 +33,8 @@ jest.mock("LLM/components/DeviceIntentExecutor", () => ({
   buildDeviceInitializationInput: jest.fn(() => Promise.resolve({ appName: "Ethereum" })),
 }));
 
-jest.mock("./intentLWMDefinition", () => ({
-  signTransactionIntentLWMDefinition: { label: "Sign transaction" },
+jest.mock("./intentDefinition", () => ({
+  signTransactionIntentPlatformDefinition: { label: "Sign transaction" },
 }));
 
 const mockedBuildInput = jest.mocked(buildDeviceInitializationInput);

@@ -3,20 +3,20 @@ import { View } from "react-native";
 import { getProductName } from "@ledgerhq/devices";
 import { InfoState } from "LLM/components/InfoState";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
-import type { SignMessageIntentJobState } from "@ledgerhq/live-common/intents/signMessageIntent";
+import type { SignTransactionIntentJobState } from "@ledgerhq/live-common/intents/signTransactionIntent";
 import { useTranslation } from "~/context/Locale";
 import InfiniteLoader from "~/components/InfiniteLoader";
 
-type SignMessageIntentComponentLWMProps = Readonly<{
-  jobState: SignMessageIntentJobState | undefined;
+type SignTransactionIntentComponentProps = Readonly<{
+  jobState: SignTransactionIntentJobState | undefined;
   extraProps: undefined;
   onClose: () => void;
 }>;
 
-export function SignMessageIntentComponentLWM({
+export function SignTransactionIntentComponent({
   jobState,
   onClose,
-}: SignMessageIntentComponentLWMProps) {
+}: SignTransactionIntentComponentProps) {
   const { t } = useTranslation();
 
   if (!jobState) {
@@ -25,17 +25,20 @@ export function SignMessageIntentComponentLWM({
 
   switch (jobState.type) {
     case "pending":
+    case "device-signature-requested":
       return (
         <DeviceActionContent
           action="continue"
-          description={t("walletApiSignMessage.sign.description")}
+          description={t("walletApiSignTransaction.sign.description")}
           deviceModelId={jobState.deviceModelId}
-          testID="wallet-api-message-signature-prompt"
-          title={t("walletApiSignMessage.sign.title", {
+          testID="wallet-api-signature-prompt"
+          title={t("walletApiSignTransaction.sign.title", {
             productName: getProductName(jobState.deviceModelId),
           })}
         />
       );
+    case "device-streaming":
+    case "device-signature-granted":
     case "signed":
       return (
         <View
@@ -47,7 +50,7 @@ export function SignMessageIntentComponentLWM({
             justifyContent: "center",
           }}
         >
-          <InfiniteLoader testID="wallet-api-message-signature-loading" />
+          <InfiniteLoader testID="wallet-api-signature-loading" />
         </View>
       );
     case "cancelled":
@@ -55,18 +58,18 @@ export function SignMessageIntentComponentLWM({
         <InfoState
           preset="info"
           size="hug"
-          title={t("walletApiSignMessage.sign.cancelled.title")}
+          title={t("walletApiSignTransaction.sign.cancelled.title")}
           primaryCta={{
-            label: t("walletApiSignMessage.sign.cancelled.close"),
+            label: t("walletApiSignTransaction.sign.cancelled.close"),
             onPress: onClose,
-            testID: "wallet-api-message-signature-cancelled-close",
+            testID: "wallet-api-signature-cancelled-close",
           }}
           secondaryCta={{
-            label: t("walletApiSignMessage.sign.cancelled.retry"),
+            label: t("walletApiSignTransaction.sign.cancelled.retry"),
             onPress: jobState.retry,
-            testID: "wallet-api-message-signature-cancelled-retry",
+            testID: "wallet-api-signature-cancelled-retry",
           }}
-          testID="wallet-api-message-signature-cancelled"
+          testID="wallet-api-signature-cancelled"
         />
       );
     default:
@@ -75,5 +78,5 @@ export function SignMessageIntentComponentLWM({
 }
 
 function assertNever(value: never): never {
-  throw new Error(`Unhandled sign message intent state: ${JSON.stringify(value)}`);
+  throw new Error(`Unhandled sign transaction intent state: ${JSON.stringify(value)}`);
 }
