@@ -3,6 +3,63 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { BST_SEND_CURRENCIES, beforeAllFunction, SendTestOptions } from "./send";
 
+const beforeAllTokenFunction = async (transaction: TransactionType, options?: SendTestOptions) => {
+  await app.init({
+    speculosApp: transaction.accountToDebit.currency.speculosApp,
+    ...(options?.userdata !== undefined ? { userdata: options.userdata } : {}),
+    featureFlags: {
+      ...options?.featureFlags,
+    },
+    cliCommands: [
+      async (userdataPath?: string) => {
+        await liveDataWithAddressCommand(
+          transaction.accountToDebit,
+          options?.liveDataOptions,
+        )(userdataPath);
+        transaction.accountToCredit.address = await getAccountAddress(transaction.accountToCredit);
+        transaction.recipientAddress = transaction.accountToCredit.address;
+      },
+    ],
+  });
+
+  await app.mainNavigation.waitForWallet40Ready();
+};
+
+export function runNewSendFlowTokenTest(
+  transaction: TransactionType,
+  tmsLinks: string[],
+  tags: string[],
+  options?: SendTestOptions,
+) {
+  setTeamOwner(Team.COIN_INTEGRATION);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  describe("New Send Flow - Token Send", () => {
+    beforeAll(async () => {
+      await beforeAllTokenFunction(transaction, options);
+    });
+
+    it(`Send ${transaction.amount} ${transaction.accountToDebit.currency.ticker} from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName}`, async () => {
+      await app.newSend.navigateToTokenSendScreen(
+        transaction.accountToDebit.parentAccount!.accountName,
+        transaction.accountToDebit,
+      );
+      await app.newSend.setRecipientAndContinueNewFlow(
+        transaction.accountToCredit.address,
+        transaction.memoTag,
+      );
+      await app.newSend.setAmountAndReviewNewFlow(transaction.amount);
+      await app.newSend.waitForSignature();
+      await app.speculos.signSendTransaction(transaction);
+      await app.newSend.tapViewTransaction();
+      await app.operationDetails.waitForOperationDetails();
+      await app.operationDetails.checkAccount(transaction.accountToDebit.currency.name);
+      await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
+      await app.operationDetails.checkTransactionType("OUT");
+    });
+  });
+}
+
 export function runNewSendFlowTest(
   transaction: TransactionType,
   tmsLinks: string[],

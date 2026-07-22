@@ -1,0 +1,10 @@
+import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { runNewSendFlowTokenTest } from "../newSendFlow";
+import { FF_NEW_SEND_FLOW_ENABLED } from "../../../utils/featureFlagUtils";
+
+runNewSendFlowTokenTest(
+  new Transaction(TokenAccount.ALGO_USDT_1, TokenAccount.ALGO_USDT_2, "0.01", undefined, "noTag"),
+  [],
+  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@algorand", "@family-algorand"],
+  { featureFlags: { ...FF_NEW_SEND_FLOW_ENABLED } },
+);
