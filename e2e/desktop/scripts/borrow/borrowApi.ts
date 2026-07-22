@@ -83,12 +83,24 @@ export async function submitTransaction(transactionId: string, txHash: string): 
   await post(`/v1/transactions/${transactionId}/submit`, { txHash }).catch(() => {});
 }
 
-/** Polls the action to `success` (throws on `failed` or timeout). */
+/** One poll: the lowercased status, or `undefined` on a transient error (5xx / network) worth retrying. */
+async function pollActionStatus(actionId: string): Promise<string | undefined> {
+  let res: Response;
+  try {
+    res = await fetch(`${BASE_URL}/v1/actions/${actionId}`, { headers: JSON_HEADERS });
+  } catch {
+    return undefined;
+  }
+  if (res.ok) return getString(await res.json(), "status")?.toLowerCase();
+  // Gateway/upstream blips (502/503/504) are transient — keep polling; a 4xx is a real error.
+  if (res.status >= 500) return undefined;
+  throw new Error(`GET /v1/actions/${actionId} failed: ${res.status}`);
+}
+
+/** Polls the action to `success` (throws on `failed` or timeout); transient 5xx/network errors retry. */
 export async function pollAction(actionId: string): Promise<void> {
   for (let attempt = 0; attempt < POLL_MAX_ATTEMPTS; attempt++) {
-    const res = await fetch(`${BASE_URL}/v1/actions/${actionId}`, { headers: JSON_HEADERS });
-    if (!res.ok) throw new Error(`GET /v1/actions/${actionId} failed: ${res.status}`);
-    const status = getString(await res.json(), "status")?.toLowerCase();
+    const status = await pollActionStatus(actionId);
     if (status === "success") return;
     if (status === "failed") throw new Error(`Action ${actionId} failed on-chain`);
     await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL_MS));
