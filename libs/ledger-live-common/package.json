@@ -259,12 +259,8 @@
   },
   "dependencies": {
     "@blooo/hw-app-acre": "^1.1.1",
-<<<<<<< HEAD
-    "@cardano-foundation/ledgerjs-hw-app-cardano": "8.0.0",
-    "@domain/api-currency-token": "workspace:^",
-=======
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^8.0.0",
->>>>>>> d024b95d4fb (fix(cardano): use caret range for hw-app-cardano and restore electron lockfile entry (LIVE-32988))
+    "@domain/api-currency-token": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
     "@domain/entity-currency-fiat": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
