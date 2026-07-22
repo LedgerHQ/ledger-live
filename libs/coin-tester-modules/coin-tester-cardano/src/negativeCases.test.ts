@@ -1,6 +1,5 @@
 import { CardanoMinAmountError } from "@ledgerhq/coin-cardano/errors";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { CardanoMinAmountError } from "@ledgerhq/coin-cardano/errors";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CARDANO_TESTNET, FRESH_ADDRESS_PATH, makeAccount } from "./fixtures";
