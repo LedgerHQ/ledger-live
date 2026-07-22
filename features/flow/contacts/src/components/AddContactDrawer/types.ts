@@ -6,6 +6,7 @@ export type AddContactDrawerViewModel = Readonly<{
   isConfirmEnabled: boolean;
   isSaving: boolean;
   draftName: string;
+  avatarInitial: string;
   invalidNameError: ContactNameValidationErrorName | null;
   onOpen: () => void;
   onClose: () => void;
@@ -31,4 +32,11 @@ export type ContactsAddContactDrawerProps = AddContactDrawerViewModel &
     bottomInset?: number;
     keyboardInset?: number;
     labels: ContactsAddContactDrawerLabels;
+  }>;
+
+export type ContactsAddContactDialogLabels = ContactsAddContactDrawerLabels;
+
+export type ContactsAddContactDialogProps = AddContactDrawerViewModel &
+  Readonly<{
+    labels: ContactsAddContactDialogLabels;
   }>;

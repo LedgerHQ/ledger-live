@@ -11,14 +11,17 @@ import {
   useContactsMeContact,
   type ContactsLedgerSyncStatus,
   type ContactsPageLabels,
+  type ContactsPageProps,
 } from "@features/flow-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
-import type { ContactsViewProps } from "./ContactsView";
 
-export type ContactsViewModel = ContactsViewProps;
+export type ContactsPageViewModel = Omit<ContactsPageProps, "onAddContact"> &
+  Readonly<{
+    onClearSearch: () => void;
+  }>;
 
-export function useContactsViewModel(): ContactsViewModel {
+export function useContactsViewModel(): ContactsPageViewModel {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,12 +63,12 @@ export function useContactsViewModel(): ContactsViewModel {
   const onSearchInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   }, []);
-  const onOpenMe = useCallback<ContactsViewProps["onOpenMe"]>(_contactId => undefined, []);
-  const onOpenContact = useCallback<ContactsViewProps["onOpenContact"]>(
+  const onClearSearch = useCallback(() => setSearchQuery(""), []);
+  const onOpenMe = useCallback<ContactsPageProps["onOpenMe"]>(_contactId => undefined, []);
+  const onOpenContact = useCallback<ContactsPageProps["onOpenContact"]>(
     _contactId => undefined,
     [],
   );
-  const onAddContact = useCallback(() => undefined, []);
   const onDismissLedgerSyncIntroduction = useCallback(
     () => setIsLedgerSyncIntroductionDismissed(true),
     [],
@@ -95,9 +98,9 @@ export function useContactsViewModel(): ContactsViewModel {
     searchQuery,
     meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
     onSearchInputChange,
+    onClearSearch,
     onOpenMe,
     onOpenContact,
-    onAddContact,
     ledgerSyncStatus,
     featureIntroduction: {
       isOpen: featureIntroductionState.isRequested,
