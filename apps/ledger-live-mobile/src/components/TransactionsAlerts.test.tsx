@@ -39,6 +39,7 @@ const makeAccount = (id: string, freshAddress: string): Account => ({
 
 const account01 = makeAccount("first-account", "0x01");
 const account02 = makeAccount("second-account", "0x02");
+const duplicateAccount01 = makeAccount("duplicate-account", "0x01");
 
 const readyChainwatchAccount = (suffixes: string[] = []): ChainwatchAccount => ({
   suffixes,
@@ -206,6 +207,26 @@ describe("TransactionsAlerts", () => {
     await act(async () => {});
 
     expect(chainwatch.addressPuts).toHaveLength(1);
+  });
+
+  it("should not reconcile when only the number of accounts sharing an address changes", async () => {
+    const chainwatch = installChainwatchHandlers();
+    const { store } = render(<TransactionsAlerts />, {
+      overrideInitialState: withTransactionsAlertsState([account01]),
+    });
+
+    await waitFor(() => expect(chainwatch.addressPuts).toHaveLength(1));
+    const accountGetsAfterRegistration = chainwatch.getAccountGets();
+
+    await act(async () => {
+      store.dispatch(replaceAccounts([account01, duplicateAccount01]));
+    });
+    expect(chainwatch.getAccountGets()).toBe(accountGetsAfterRegistration);
+
+    await act(async () => {
+      store.dispatch(replaceAccounts([account01]));
+    });
+    expect(chainwatch.getAccountGets()).toBe(accountGetsAfterRegistration);
   });
 
   it("should not reconcile again when equivalent networks are reordered", async () => {

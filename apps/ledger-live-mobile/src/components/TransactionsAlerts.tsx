@@ -56,9 +56,13 @@ const TransactionsAlerts = () => {
     if (!featureTransactionsAlerts?.enabled || !notifications.transactionsAlertsCategory) return;
 
     const reconciliationKey = JSON.stringify({
-      accounts: accountsFilteredBySupportedChains
-        .map(account => getTransactionsAlertsAddressKey(account.currency.id, account.freshAddress))
-        .sort(),
+      accounts: Array.from(
+        new Set(
+          accountsFilteredBySupportedChains.map(account =>
+            getTransactionsAlertsAddressKey(account.currency.id, account.freshAddress),
+          ),
+        ),
+      ).sort(),
       chainwatchBaseUrl,
       supportedChains: supportedChains
         .map(
