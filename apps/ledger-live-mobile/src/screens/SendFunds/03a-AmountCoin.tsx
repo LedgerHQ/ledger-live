@@ -223,7 +223,12 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
                       </LText>
                       {maxSpendable && (
                         <LText semiBold color="grey">
-                          <CurrencyUnitValue showCode unit={unit} value={maxSpendable} />
+                          <CurrencyUnitValue
+                            showCode
+                            unit={unit}
+                            value={maxSpendable}
+                            showAllDigits={familySendFlow?.showAllDigits}
+                          />
                         </LText>
                       )}
                     </View>
