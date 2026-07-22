@@ -62,14 +62,14 @@ const TransactionsAlerts = () => {
             getTransactionsAlertsAddressKey(account.currency.id, account.freshAddress),
           ),
         ),
-      ).sort(),
+      ).sort((first, second) => first.localeCompare(second)),
       chainwatchBaseUrl,
       supportedChains: supportedChains
         .map(
           ({ ledgerLiveId, chainwatchId, nbConfirmations }) =>
             `${ledgerLiveId}:${chainwatchId}:${nbConfirmations}`,
         )
-        .sort(),
+        .sort((first, second) => first.localeCompare(second)),
       userId: userId.exportUserIdForChainwatch(),
     });
     if (refReconciliationKey.current === reconciliationKey) return;
