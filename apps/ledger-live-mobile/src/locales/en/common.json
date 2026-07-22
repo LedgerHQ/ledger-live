@@ -6771,6 +6771,12 @@
       }
     }
   },
+  "hypercore": {
+    "operationTypes": {
+      "IN": "Deposit",
+      "OUT": "Withdraw"
+    }
+  },
   "tezos": {
     "AccountHeader": {
       "title": "You can earn rewards by delegating your account",

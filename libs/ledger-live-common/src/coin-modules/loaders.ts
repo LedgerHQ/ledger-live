@@ -238,6 +238,19 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       import("@ledgerhq/coin-hedera/deviceTransactionConfig").then(m => m.default),
   },
   {
+    // HyperCore uses the generic coin framework. Address derivation reuses the EVM setup + signer
+    // (same secp256k1/Ethereum address), so scanAccounts / hw getAddress resolve via the EVM
+    // resolver. getBalance, listOperations and validateAddress are backed by coin-hypercore
+    // (validateAddress is consumed from the CoinModuleApi instance, not a loader hook).
+    family: "hypercore",
+    supportedCoins: ["hypercore"],
+    loadSetup: () => import("../families/evm/setup"),
+    loadLocalApi: () =>
+      import("../families/hypercore/coinModuleApi").then(m => m.createLocalHypercoreApi),
+    loadTransaction: () => import("../families/hypercore/transaction").then(m => m.default),
+    loadSigner: () => import("../families/evm/signer").then(m => m.default),
+  },
+  {
     family: "icon",
     supportedCoins: ["icon", "icon_berlin_testnet"],
     loadSetup: () => import("../families/icon/setup"),

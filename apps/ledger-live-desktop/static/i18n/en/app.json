@@ -4778,6 +4778,12 @@
       }
     }
   },
+  "hypercore": {
+    "operationTypes": {
+      "IN": "Deposit",
+      "OUT": "Withdraw"
+    }
+  },
   "tezos": {
     "operationTypes": {
       "UNSTAKE": "Unstaking",

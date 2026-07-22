@@ -90,6 +90,7 @@ export * from "./hedera_testnet";
 export * from "./helium";
 export * from "./hpb";
 export * from "./hycon";
+export * from "./hypercore";
 export * from "./hyperevm";
 export * from "./icon";
 export * from "./icon_berlin_testnet";

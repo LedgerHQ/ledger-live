@@ -37,6 +37,7 @@ export * from "./currencyDydx";
 export * from "./currencyEnergyWeb";
 export * from "./currencyEthereumHoodi";
 export * from "./currencyEtherlink";
+export * from "./currencyHypercore";
 export * from "./currencyHyperevm";
 export * from "./currencyIcon";
 export * from "./currencyInjective";

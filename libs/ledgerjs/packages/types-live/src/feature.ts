@@ -149,6 +149,7 @@ export type CurrencyFeatures = {
   currencySeiNetworkEvm: DefaultFeature;
   currencyBerachain: DefaultFeature;
   currencyHyperevm: DefaultFeature;
+  currencyHypercore: DefaultFeature;
   currencyCantonNetwork: DefaultFeature;
   currencyCantonNetworkDevnet: DefaultFeature;
   currencyCantonNetworkTestnet: DefaultFeature;
