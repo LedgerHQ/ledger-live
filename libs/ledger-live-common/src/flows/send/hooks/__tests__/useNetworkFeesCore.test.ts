@@ -154,6 +154,45 @@ describe("useNetworkFeesCore", () => {
     expect(result.current.displayFeesValue).toBe("-");
   });
 
+  it("shows fiat • crypto (incl. a zero fee) when the coin opts into showFeeCurrencyAmount", () => {
+    mockedSendFeatures.showFeeCurrencyAmount.mockReturnValue(true);
+
+    const { result: nonZero } = renderCore();
+    expect(nonZero.current.showFeeCurrencyAmount).toBe(true);
+    expect(nonZero.current.displayFeesValue).toBe("FORMATTED_10 • FORMATTED_1000");
+
+    const { result: zero } = renderCore({ status: { estimatedFees: new BigNumber(0) } });
+    expect(zero.current.displayFeesValue).toBe("FORMATTED_0 • FORMATTED_0");
+  });
+
+  it("falls back to the default display for a zero fee while the transaction has errors", () => {
+    mockedSendFeatures.showFeeCurrencyAmount.mockReturnValue(true);
+
+    const { result } = renderCore({
+      status: { estimatedFees: new BigNumber(0), errors: { recipient: new Error("bad") } },
+    });
+
+    expect(result.current.displayFeesValue).toBe("-");
+  });
+
+  it("still shows the combined value for a known (non-zero) fee despite a transaction error", () => {
+    mockedSendFeatures.showFeeCurrencyAmount.mockReturnValue(true);
+
+    const { result } = renderCore({
+      status: { estimatedFees: new BigNumber(1_000), errors: { amount: new Error("too much") } },
+    });
+
+    expect(result.current.displayFeesValue).toBe("FORMATTED_10 • FORMATTED_1000");
+  });
+
+  it("falls back to the default display for a non-finite estimate", () => {
+    mockedSendFeatures.showFeeCurrencyAmount.mockReturnValue(true);
+
+    const { result } = renderCore({ status: { estimatedFees: new BigNumber(NaN) } });
+
+    expect(result.current.displayFeesValue).toBe("-");
+  });
+
   it("calls updateTransaction when selecting a fee strategy", () => {
     const { result } = renderCore();
 

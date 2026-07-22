@@ -14,6 +14,7 @@ import type { SendFlowTransactionActions, SendFlowUiConfig } from "../types";
 import { buildFeePresetLegendMap, type FeePresetLegendMap } from "../utils/feePresetLegends";
 import { asFeesStrategy } from "../utils/feesStrategy";
 import {
+  formatCombinedFeesValue,
   formatDisplayFeesValue,
   getFeePresetEstimationConfig,
   getSelectedPresetFiatValue,
@@ -48,6 +49,7 @@ export type UseNetworkFeesCoreResult = Readonly<{
   displayFeesValue: string;
   formattedEstimatedFeesFiat: string | null;
   showFeePresets: boolean;
+  showFeeCurrencyAmount: boolean;
 }>;
 
 export function useNetworkFeesCore({
@@ -114,16 +116,24 @@ export function useNetworkFeesCore({
     () => calculateCountervalue(displayCurrency, estimatedFees),
     [calculateCountervalue, displayCurrency, estimatedFees],
   );
+  // Coin-declared opt-in: append the fee amount in its own currency next to fiat.
+  const showFeeCurrencyAmount = sendFeatures.showFeeCurrencyAmount(accountCurrency);
+  // A zero fee only means "covered" once fees are actually estimated. Estimation can be skipped
+  // while the transaction has errors, leaving a defaulted 0 — fall back to the default display so
+  // an unknown fee is not shown as a confirmed zero. A non-finite estimate is likewise unknown.
+  const hasErrors = Object.keys(status.errors ?? {}).length > 0;
+  const useCombinedFeesValue =
+    showFeeCurrencyAmount && estimatedFees.isFinite() && !(hasErrors && estimatedFees.lte(0));
   const { displayFeesValue, formattedEstimatedFeesFiat } = useMemo(
     () =>
-      formatDisplayFeesValue({
+      (useCombinedFeesValue ? formatCombinedFeesValue : formatDisplayFeesValue)({
         estimatedFees,
         estimatedFeesCountervalue,
         fiatUnit,
         displayUnit,
         locale,
       }),
-    [displayUnit, estimatedFees, estimatedFeesCountervalue, fiatUnit, locale],
+    [displayUnit, estimatedFees, estimatedFeesCountervalue, fiatUnit, locale, useCombinedFeesValue],
   );
 
   const updateTransactionWithPatch = useCallback(
@@ -155,5 +165,6 @@ export function useNetworkFeesCore({
     displayFeesValue,
     formattedEstimatedFeesFiat,
     showFeePresets: uiConfig.hasFeePresets,
+    showFeeCurrencyAmount,
   };
 }

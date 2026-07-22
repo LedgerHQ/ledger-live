@@ -30,42 +30,70 @@ export function resolveFeeDisplayContext(params: {
   };
 }
 
-export function formatDisplayFeesValue(params: {
+function formatFeeAmount(unit: Unit, amount: BigNumber, locale?: string): string {
+  return formatCurrencyUnit(unit, amount, {
+    showCode: true,
+    disableRounding: true,
+    ...(locale ? { locale } : {}),
+  });
+}
+
+export type FormatFeesValueParams = Readonly<{
   estimatedFees: BigNumber;
   estimatedFeesCountervalue: BigNumber | null | undefined;
   fiatUnit: Unit;
   displayUnit: Unit;
   locale?: string;
-}): Readonly<{
+}>;
+
+export type FormattedFeesValue = Readonly<{
   displayFeesValue: string;
   formattedEstimatedFeesFiat: string | null;
-}> {
-  const formatOptions = {
-    showCode: true,
-    disableRounding: true,
-    ...(params.locale ? { locale: params.locale } : {}),
-  };
+}>;
 
-  if (params.estimatedFees.lte(0)) {
+/**
+ * Default fee row value: fiat when a positive countervalue exists, native amount otherwise, `"-"`
+ * when the fee is not a positive finite value (zero, negative, or non-finite).
+ */
+export function formatDisplayFeesValue(params: FormatFeesValueParams): FormattedFeesValue {
+  if (!params.estimatedFees.isFinite() || params.estimatedFees.lte(0)) {
     return { displayFeesValue: "-", formattedEstimatedFeesFiat: null };
   }
 
   const fiatAmount = new BigNumber(params.estimatedFeesCountervalue ?? 0);
   if (fiatAmount.gt(0)) {
-    const formattedEstimatedFeesFiat = formatCurrencyUnit(
-      params.fiatUnit,
-      fiatAmount,
-      formatOptions,
-    );
+    const formattedEstimatedFeesFiat = formatFeeAmount(params.fiatUnit, fiatAmount, params.locale);
     return { displayFeesValue: formattedEstimatedFeesFiat, formattedEstimatedFeesFiat };
   }
 
-  const displayFeesValue = formatCurrencyUnit(
-    params.displayUnit,
-    params.estimatedFees,
-    formatOptions,
-  );
+  const displayFeesValue = formatFeeAmount(params.displayUnit, params.estimatedFees, params.locale);
   return { displayFeesValue, formattedEstimatedFeesFiat: null };
+}
+
+/**
+ * Fee row value for coins that opt into `FeeDescriptor.showFeeCurrencyAmount`: the native fee-currency
+ * amount shown next to the fiat value (`<fiat> • <amount> <code>`). Fiat is prepended when the fee is
+ * zero (0 fiat is accurate) or a positive countervalue exists; with no rate for a non-zero fee the
+ * native amount is shown alone rather than implying a zero fiat rate. A non-finite/negative estimate
+ * is treated as zero.
+ */
+export function formatCombinedFeesValue(params: FormatFeesValueParams): FormattedFeesValue {
+  const isZeroFee = !params.estimatedFees.isFinite() || params.estimatedFees.lte(0);
+  const cryptoAmount = isZeroFee ? new BigNumber(0) : params.estimatedFees;
+  const crypto = formatFeeAmount(params.displayUnit, cryptoAmount, params.locale);
+
+  const fiatAmount = isZeroFee
+    ? new BigNumber(0)
+    : new BigNumber(params.estimatedFeesCountervalue ?? 0);
+  if (isZeroFee || fiatAmount.gt(0)) {
+    const formattedEstimatedFeesFiat = formatFeeAmount(params.fiatUnit, fiatAmount, params.locale);
+    return {
+      displayFeesValue: `${formattedEstimatedFeesFiat} • ${crypto}`,
+      formattedEstimatedFeesFiat,
+    };
+  }
+
+  return { displayFeesValue: crypto, formattedEstimatedFeesFiat: null };
 }
 
 export function getSelectedPresetFiatValue(

@@ -4574,6 +4574,16 @@
       "feesAmount": "Fees amount ({{unit}})",
       "gasLimit": "Gas limit ({{unit}})",
       "feesPaid": "Fees paid to the network to proceed your transaction",
+      "tronFees": {
+        "sufficient": {
+          "title": "TRX network fees",
+          "description": "You'll use {{energy}} energy and {{bandwidth}} bandwidth to pay for the network fees."
+        },
+        "insufficient": {
+          "title": "Network fee breakdown",
+          "description": "You don't have enough energy and bandwidth to cover this transfer. The shortfall will be covered by burning TRX."
+        }
+      },
       "insufficientBalanceFees": "Insufficient balance to cover the network fees",
       "amountToSend": "Amount to send in ({{currency}})",
       "coinToSend": "Coin to send",
