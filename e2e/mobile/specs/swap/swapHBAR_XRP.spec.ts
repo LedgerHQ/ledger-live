@@ -1,4 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { runSwapTest } from "./swap";
 
 runSwapTest(
@@ -17,4 +18,8 @@ runSwapTest(
     "@ripple",
     "@family-xrp",
   ],
+  Fee.MEDIUM,
+  // TODO(LIVE-33611): remove hardcoded amount once the swap "min amount for quotes" bug is fixed
+  // https://ledgerhq.atlassian.net/browse/LIVE-33611
+  "500",
 );
