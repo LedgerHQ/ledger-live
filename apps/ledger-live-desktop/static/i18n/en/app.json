@@ -5285,7 +5285,13 @@
         "contactsData": "Contacts data",
         "loadPopulatedContacts": "Load populated contacts",
         "resetContacts": "Reset contacts",
-        "resetOverride": "Reset override"
+        "resetOverride": "Reset override",
+        "featureIntroduction": {
+          "title": "Feature introduction",
+          "label": "Show Contacts feature introduction",
+          "dismissed": "Dismissed — turn on to show the intro again on Contacts.",
+          "willShow": "Will show on Contacts until dismissed."
+        }
       },
       "cryptoAssetsList": {
         "title": "Crypto Assets List",

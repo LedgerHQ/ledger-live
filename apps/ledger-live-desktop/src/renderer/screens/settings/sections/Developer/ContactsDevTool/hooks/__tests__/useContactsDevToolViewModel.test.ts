@@ -192,4 +192,20 @@ describe("useContactsDevToolViewModel", () => {
       expect.objectContaining({ id: "contact-me", isMe: true, name: "Me", addresses: [] }),
     ]);
   });
+
+  it("should toggle hasDismissedContactsFeatureIntroduction", () => {
+    const { result, store } = renderHook(() => useContactsDevToolViewModel(), {
+      initialState: {
+        settings: { hasDismissedContactsFeatureIntroduction: true },
+      },
+    });
+
+    expect(result.current.hasDismissedFeatureIntroduction).toBe(true);
+
+    act(() => {
+      result.current.handleToggleFeatureIntroductionDismissed();
+    });
+
+    expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(false);
+  });
 });

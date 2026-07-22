@@ -80,7 +80,8 @@ export type ContactsFeatureIntroduction = Readonly<{
   primaryActionLabel: string;
   secondaryActionLabel: string;
   heroImageSrc?: string;
-  onDismiss: () => void;
+  onComplete: () => void;
+  onDefer: () => void;
 }>;
 
 export type ContactsPageSharedProps = Readonly<{

@@ -3,6 +3,7 @@ export {
   type ContactsFeatureIntroductionPreferencePort,
 } from "./ports";
 export { CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS } from "./constants";
+export { createClosedContactsFeatureIntroduction } from "./createClosedContactsFeatureIntroduction";
 export {
   resolveContactsFeatureIntroductionRequested,
   resolveContactsLedgerSyncIntroductionOpen,

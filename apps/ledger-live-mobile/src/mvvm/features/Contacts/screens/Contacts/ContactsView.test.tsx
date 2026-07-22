@@ -39,7 +39,7 @@ function createViewModel({
     onOpenContact: jest.fn(),
     onAddContact: jest.fn(),
     ledgerSyncStatus,
-    featureIntroduction: createClosedContactsFeatureIntroduction(onDismiss),
+    featureIntroduction: createClosedContactsFeatureIntroduction(),
     ledgerSyncIntroduction: {
       isOpen: isIntroductionOpen,
       description:

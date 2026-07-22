@@ -1,7 +1,8 @@
-import type { ContactsFeatureIntroduction } from "./types";
+import type { ContactsFeatureIntroduction } from "../list/types";
 
 export function createClosedContactsFeatureIntroduction(
-  onDismiss: () => void = () => undefined,
+  onComplete: () => void = () => undefined,
+  onDefer: () => void = () => undefined,
 ): ContactsFeatureIntroduction {
   return {
     isOpen: false,
@@ -10,6 +11,7 @@ export function createClosedContactsFeatureIntroduction(
     highlights: [],
     primaryActionLabel: "",
     secondaryActionLabel: "",
-    onDismiss,
+    onComplete,
+    onDefer,
   };
 }

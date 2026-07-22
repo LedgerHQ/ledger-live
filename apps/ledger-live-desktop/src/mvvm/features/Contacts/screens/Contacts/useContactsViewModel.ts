@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import {
   CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
   createContactsListViewModel,
@@ -19,6 +20,7 @@ export type ContactsViewModel = ContactsViewProps;
 
 export function useContactsViewModel(): ContactsViewModel {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const meContact = useContactsMeContact();
   const contacts = useContacts();
@@ -80,6 +82,12 @@ export function useContactsViewModel(): ContactsViewModel {
     ledgerSyncStatus,
     isLedgerSyncIntroductionDismissed,
   });
+  const onCompleteFeatureIntroduction = useCallback(() => {
+    featureIntroductionState.dismiss();
+  }, [featureIntroductionState]);
+  const onDeferFeatureIntroduction = useCallback(() => {
+    navigate(-1);
+  }, [navigate]);
 
   return {
     viewModel,
@@ -98,7 +106,8 @@ export function useContactsViewModel(): ContactsViewModel {
       highlights: featureIntroductionHighlights,
       primaryActionLabel: t("contacts.featureIntroduction.primaryAction"),
       secondaryActionLabel: t("contacts.featureIntroduction.secondaryAction"),
-      onDismiss: featureIntroductionState.dismiss,
+      onComplete: onCompleteFeatureIntroduction,
+      onDefer: onDeferFeatureIntroduction,
     },
     ledgerSyncIntroduction: {
       isOpen: isLedgerSyncIntroductionOpen,
