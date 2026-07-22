@@ -132,9 +132,9 @@ export function findSwapSendOperation(
   if (!operationHash) return undefined;
 
   for (const account of accounts) {
-    const operation = [...(account.operations ?? []), ...(account.pendingOperations ?? [])].find(
-      op => op.hash === operationHash,
-    );
+    const operation =
+      account.operations?.find(op => op.hash === operationHash) ??
+      account.pendingOperations?.find(op => op.hash === operationHash);
     if (operation) return operation;
   }
 
