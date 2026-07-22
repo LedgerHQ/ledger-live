@@ -1,4 +1,4 @@
-import { runBorrow, type BorrowFlowOptions, type Flow } from "./borrowFlow";
+import { DEFAULT_RPC_URL, runBorrow, type BorrowFlowOptions, type Flow } from "./borrowFlow";
 
 const FLOWS: Flow[] = ["open", "close", "repay", "withdraw"];
 function isFlow(v: string | undefined): v is Flow {
@@ -7,7 +7,8 @@ function isFlow(v: string | undefined): v is Flow {
 
 function parseArgs(argv: string[]): BorrowFlowOptions {
   const flow = argv[0];
-  if (!isFlow(flow)) throw new Error("Usage: borrow <open|close|repay|withdraw> [options]");
+  if (!isFlow(flow))
+    throw new Error("Usage: pnpm e2e borrow <open|close|repay|withdraw> [options]");
 
   const get = (name: string): string | undefined => {
     const i = argv.indexOf(`--${name}`);
@@ -15,8 +16,7 @@ function parseArgs(argv: string[]): BorrowFlowOptions {
   };
   const has = (name: string): boolean => argv.includes(`--${name}`);
 
-  const rpcUrl = get("rpc") ?? process.env.EVM_RPC_URL;
-  if (!rpcUrl) throw new Error("Missing --rpc <url> (or EVM_RPC_URL)");
+  const rpcUrl = get("rpc") ?? process.env.EVM_RPC_URL ?? DEFAULT_RPC_URL;
 
   return {
     flow,
@@ -33,9 +33,6 @@ function parseArgs(argv: string[]): BorrowFlowOptions {
   };
 }
 
-runBorrow(parseArgs(process.argv.slice(2)))
-  .then(() => process.exit(process.exitCode ?? 0))
-  .catch(error => {
-    console.error(error instanceof Error ? error.message : String(error));
-    process.exit(1);
-  });
+export async function runBorrowCommand(argv: string[]): Promise<void> {
+  await runBorrow(parseArgs(argv));
+}

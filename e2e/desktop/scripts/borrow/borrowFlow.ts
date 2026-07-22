@@ -21,6 +21,9 @@ import {
 import { EvmSpeculosExecutor } from "./evmSpeculos";
 import type { EvmSignablePayload, OpenLoan } from "./types";
 
+// Public, keyless Ethereum mainnet RPC used when neither --rpc nor EVM_RPC_URL is set.
+export const DEFAULT_RPC_URL = "https://ethereum-rpc.publicnode.com";
+
 export type Flow = "open" | "close" | "repay" | "withdraw";
 
 export interface BorrowFlowOptions {

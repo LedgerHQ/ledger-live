@@ -1,13 +1,10 @@
 # Borrow driver (Borrow API + Speculos)
 
-Headless driver for the Borrow (partner) API that signs on **Speculos** (emulated
-Ledger, no physical device) — used to create/tear down on-chain loan state so the
-repay/withdraw E2E tests (B2CQA-6073 / B2CQA-6080) are unblocked. See
-[QAA-1401](https://ledgerhq.atlassian.net/browse/QAA-1401).
+Headless driver for the Borrow API that signs on **Speculos** — used to create/tear down on-chain loan state for the
+repay/withdraw E2E tests.
 
 It reuses the maintained EVM signing libraries directly — `@ledgerhq/live-signer-evm`
-with the Speculos transport from `@ledgerhq/live-dmk-speculos` — and **not** the
-deprecated `apps/cli`.
+with the Speculos transport from `@ledgerhq/live-dmk-speculos`.
 
 ## Flows
 
@@ -21,38 +18,27 @@ deprecated `apps/cli`.
 ## Usage
 
 ```bash
-pnpm --filter ledger-live-desktop-e2e-tests borrow <open|close|repay|withdraw> [options]
+# from e2e/desktop
+pnpm e2e borrow <open|close|repay|withdraw> [options]
 ```
 
-Runs against the **staging** Borrow API (keyless), which builds **real Ethereum
-mainnet** transactions. Options: `--account ETH_4`, `--rpc <url>` (an Ethereum RPC),
+Runs against the **staging** Borrow API, which builds **real Ethereum
+mainnet** transactions. Options: `--account ETH_4`, `--rpc <url>` (an Ethereum RPC —
+defaults to `https://ethereum-rpc.publicnode.com`; override via `--rpc` or `EVM_RPC_URL`),
 `--dry-run` (sign but do not broadcast), `--force` (open despite an existing position),
 `--all` (act on every position), and per-flow args `--market-id`, `--collateral-amount`,
 `--loan-amount`, `--repay-amount`, `--withdraw-amount`.
 
-`SEED` comes from the environment — see [Secrets](#secrets) below. Never pass it on the
-command line. `--rpc` is not a secret.
+`SEED` comes from the environment.
 
 ```bash
 # Close (repay + withdraw) whatever is open for ETH_4; no-op if nothing open
-pnpm --filter ledger-live-desktop-e2e-tests borrow close --rpc "$EVM_RPC_URL"
+pnpm e2e borrow close --rpc "$EVM_RPC_URL"
 
 # Open a USDT loan (WBTC collateral) — the default market; always borrows USDT
-pnpm --filter ledger-live-desktop-e2e-tests borrow open --force \
+pnpm e2e borrow open --force \
   --collateral-amount 0.0002 --loan-amount 1 --rpc "$EVM_RPC_URL"
 ```
-
-## Secrets
-
-`SEED` is read from the **environment only** — never a CLI flag, never logged, never
-committed. Keep it out of the command line (and thus out of shell history / CI logs):
-
-- **Locally:** put it in your shell profile, or a **gitignored** `.env` at the repo
-  root (`.env` is already in `.gitignore`) — never a tracked file.
-- **CI:** set it as a **masked repository secret** and expose it as an env var for the
-  step that runs the driver. Do not `echo` it.
-
-(The staging API needs no key, so there is no `BORROW_API_KEY`.)
 
 ## Use in E2E before/after hooks
 
@@ -85,13 +71,61 @@ test.afterAll(async () => {
 `openBorrowPosition` / `closeBorrowPosition` are thin wrappers. All options mirror the
 CLI flags.
 
+### `tests/utils/borrowSetup.ts` helper
+
+For specs, prefer the ready-made wrappers in `tests/utils/borrowSetup.ts` — they default the
+account to `ETH_4`, read the RPC from `EVM_RPC_URL`, and **no-op when broadcast is disabled**
+(`DISABLE_TRANSACTION_BROADCAST !== "0"`), so a hook can't try to broadcast in a run where the
+test itself is skipped:
+
+- `ensureLoanOpen()` — `beforeAll` precondition for **withdraw / close-loan** specs (signs a real
+  open so the UI has a position to act on). Idempotent: no-op if a loan is already open.
+- `resetLoanState()` — `before` / `after` reset for the **open-loan** spec (repays + withdraws
+  everything → account back to zero). Idempotent: no-op if nothing is open.
+
+Per-test roles:
+
+| Spec             | Hook                        | Why                                          |
+| ---------------- | --------------------------- | -------------------------------------------- |
+| open-loan        | `beforeAll(resetLoanState)` | start from zero so the UI opens a fresh loan |
+| withdraw / close | `beforeAll(ensureLoanOpen)` | precondition a loan for the UI to act on     |
+
+```ts
+import { resetLoanState } from "tests/utils/borrowSetup";
+
+test.beforeAll(async () => {
+  test.setTimeout(600_000); // an open is 3 mainnet txs (~6 min)
+  await resetLoanState(); // ETH_4, EVM_RPC_URL; no-op if broadcast is off
+});
+```
+
+### Collision risks & serialization (shared ETH_4)
+
+All borrow on-chain flows share the single funded account **ETH_4**, so they must **never run
+against it in parallel**. `playwright.config.ts` is `fullyParallel: true`, `workers: "100%"`, and
+`test.describe.configure({ mode: "serial" })` only serializes tests **within one file**. Therefore:
+
+- **Keep all borrow on-chain flows (open / withdraw / close) in the single `borrow.spec.ts`**, under
+  one top-level `test.describe.configure({ mode: "serial" })`. Two specs touching ETH_4 at once →
+  nonce + on-chain state races (flaky, failed real-fund txs). (Scalable alternative if they must be
+  separate files: a dedicated Playwright project with `fullyParallel: false`, `workers: 1`,
+  `testMatch: /borrow\..*\.spec\.ts/`.)
+- **Same-SEED = same address.** The helper signs on a Speculos seeded from `SEED`, the same env the
+  desktop harness uses — so within one run the setup loan lands on exactly the ETH_4 the UI shows.
+  Running the tool with a different `SEED` than the app would open on a different, invisible address.
+- **Real funds, slow.** Each open is 3 mainnet txs (~6 min); raise the hook timeout with
+  `test.setTimeout(...)` **inside** the hook. Manual/nightly `enable_broadcast` lane only.
+- **Funding.** ETH_4 must hold wBTC collateral + ETH for gas **plus a small USDT/USDC buffer** —
+  `resetLoanState` repays debt **+ accrued interest**, and an exactly-principal balance reverts with
+  `transferFrom reverted`. Runner also needs `COINAPPS` + Docker (Speculos).
+
 ## Required environment
 
 | Var                     | Purpose                                                                                |
 | ----------------------- | -------------------------------------------------------------------------------------- |
 | `SEED`                  | BIP39 mnemonic Speculos signs with (its derived EVM address must hold the loan + gas). |
 | `COINAPPS`              | Folder of Speculos app ELFs (`LedgerHQ/coin-apps` layout).                             |
-| `EVM_RPC_URL` / `--rpc` | Ethereum RPC used to build (gas/nonce) and broadcast the signed tx.                    |
+| `EVM_RPC_URL` / `--rpc` | Ethereum RPC to build (gas/nonce) + broadcast. Optional; defaults to publicnode.       |
 | `SPECULOS_DEVICE`       | Device model (default nanoSP). Optional.                                               |
 | `BORROW_MANUAL_APPROVE` | Set to skip auto-approval and confirm on the device by hand (via VNC).                 |
 
