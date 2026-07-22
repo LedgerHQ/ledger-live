@@ -19,6 +19,8 @@ import { isRobinhoodExclusiveAsset } from "./utils/isRobinhoodExclusiveAsset";
 
 type Route = StackNavigatorProps<AssetDetailNavigatorParamsList, ScreenName.AssetDetail>["route"];
 
+const ASSET_DETAIL_DEEPLINK_SOURCES = new Set(["deeplink_asset", "deeplink_market"]);
+
 export function useAssetDetailViewModel() {
   const route = useRoute<Route>();
   const { currencyId, source, marketState } = route.params;
@@ -35,8 +37,18 @@ export function useAssetDetailViewModel() {
   );
 
   const ledgerIdFallback = marketState?.ledgerIds?.[0] ?? currencyId;
-  const { currency: ledgerCurrencyById } = useCurrencyById(ledgerIdFallback);
+  const {
+    currency: ledgerCurrencyById,
+    loading: isCurrencyLoading,
+    error: currencyError,
+  } = useCurrencyById(ledgerIdFallback);
   const currency = distributionItem?.currency ?? ledgerCurrencyById;
+  const shouldRedirectToMarket =
+    ASSET_DETAIL_DEEPLINK_SOURCES.has(source ?? "") &&
+    !distribution.isLoading &&
+    !isCurrencyLoading &&
+    !currencyError &&
+    !currency;
 
   const { marketApiId, knownLedgerIds, knownMarketId } = useMemo(
     () =>
@@ -107,5 +119,6 @@ export function useAssetDetailViewModel() {
     coinOptions,
     isLoading,
     ledgerIds: receiveLedgerIds,
+    shouldRedirectToMarket,
   };
 }
