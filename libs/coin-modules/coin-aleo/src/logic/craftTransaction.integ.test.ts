@@ -1,4 +1,5 @@
 import { getEnv } from "@ledgerhq/live-env";
+import aleoConfig from "../config";
 import { testnetViewKey } from "../__tests__/fixtures/api.fixture";
 import {
   mockTxIntentFeePrivate,
@@ -10,6 +11,7 @@ import {
 } from "../__tests__/fixtures/transaction.fixture";
 import { mockFeeByTransactionType } from "../__tests__/fixtures/config.fixture";
 import type { AleoCoinConfig, FeeConfiguration, PreparedRequestResponse } from "../types";
+import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
 import { craftTransaction } from "./craftTransaction";
 import { fromHex } from "./utils";
 
@@ -38,6 +40,10 @@ describe("craftTransaction", () => {
     max_base_fee: "2308",
     max_priority_fee: "0",
   };
+
+  beforeAll(() => {
+    aleoConfig.setCoinConfig(() => getTestnetIntegConfig());
+  });
 
   it.each([
     {
