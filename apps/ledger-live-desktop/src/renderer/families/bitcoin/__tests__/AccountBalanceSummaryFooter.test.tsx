@@ -4,7 +4,7 @@ import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-bitcoin/chain-adapter
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import AccountBalanceSummaryFooter from "../AccountBalanceSummaryFooter";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";

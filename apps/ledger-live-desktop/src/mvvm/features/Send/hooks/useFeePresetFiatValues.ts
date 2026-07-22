@@ -1,6 +1,7 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { Currency, Unit } from "@domain/entity-currency";
+import type { Currency } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
 import {
   useFeePresetFiatValuesCore,

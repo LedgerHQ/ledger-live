@@ -5,7 +5,7 @@ import { renderHook, act } from "tests/testSetup";
 import { ipcRenderer } from "electron";
 import { BigNumber } from "bignumber.js";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
-import type { TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { useExportOperationsCsv } from "./useExportOperationsCsv";
 import type { BridgeSyncState } from "@ledgerhq/live-common/bridge/react/types";

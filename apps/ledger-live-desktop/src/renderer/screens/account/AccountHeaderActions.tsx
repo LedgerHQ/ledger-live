@@ -38,7 +38,8 @@ import {
   StakeActionDefault,
 } from "./AccountActionsDefault";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { ManageAction } from "~/renderer/families/types";
 import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";

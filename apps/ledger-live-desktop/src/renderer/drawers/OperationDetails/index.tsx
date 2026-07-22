@@ -19,7 +19,7 @@ import {
 } from "@ledgerhq/live-common/operation";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getEnv } from "@ledgerhq/live-env";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Account, AccountLike, Operation, OperationType } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import uniq from "lodash/uniq";

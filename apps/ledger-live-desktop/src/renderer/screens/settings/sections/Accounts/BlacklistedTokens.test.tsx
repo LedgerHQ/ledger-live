@@ -5,7 +5,7 @@ import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import { fireEvent } from "@testing-library/react";
 import BlacklistedTokens from "./BlacklistedTokens";
-import type { TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 
 const mockSync = jest.fn();
 const mockFindTokenById = jest.fn();

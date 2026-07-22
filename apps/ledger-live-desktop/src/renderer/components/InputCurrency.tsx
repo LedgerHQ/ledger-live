@@ -9,7 +9,7 @@ import noop from "lodash/noop";
 import Box from "~/renderer/components/Box";
 import Input, { Props as InputProps } from "~/renderer/components/Input";
 import Select from "~/renderer/components/Select";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import type { ReactNode } from "react";
 
 const unitGetOptionValue = (unit: Unit) => String(unit.magnitude);

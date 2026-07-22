@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import type { TokenCurrency, CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useTokensData } from "@features/platform-currencies";
 import { supportLinkByTokenType } from "~/config/urls";

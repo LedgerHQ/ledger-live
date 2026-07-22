@@ -8,7 +8,8 @@ import { TFunction } from "i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { Account, ABTestingVariants } from "@ledgerhq/types-live";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import {

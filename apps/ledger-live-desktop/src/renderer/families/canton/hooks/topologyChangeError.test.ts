@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import CantonReonboardDrawer from "../AddAccountDrawer/CantonReonboardDrawer";

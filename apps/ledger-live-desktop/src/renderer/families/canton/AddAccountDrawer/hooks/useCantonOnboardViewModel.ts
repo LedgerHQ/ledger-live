@@ -3,7 +3,7 @@ import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
 import { useCurrencyBridge } from "@ledgerhq/live-common/bridge/useCurrencyBridge";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo } from "react";
 import { useTheme } from "styled-components";

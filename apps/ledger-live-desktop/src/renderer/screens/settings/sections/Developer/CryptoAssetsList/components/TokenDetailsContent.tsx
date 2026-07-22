@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/react-ui/index";
-import type { TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TokenDetails, DetailRow } from "../styles";
 

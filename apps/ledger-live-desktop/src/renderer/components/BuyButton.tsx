@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router";
 import { closeAllModal } from "~/renderer/actions/modals";
 import { useDispatch } from "LLD/hooks/redux";
 import { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 

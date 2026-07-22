@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Flex, Icons } from "@ledgerhq/react-ui";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import {
   InfoContainer,
   SideInfo,

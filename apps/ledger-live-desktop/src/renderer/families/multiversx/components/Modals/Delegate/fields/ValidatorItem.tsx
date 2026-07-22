@@ -16,7 +16,7 @@ import {
   MULTIVERSX_EXPLORER_URL,
   MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/multiversx/constants";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import {
   MultiversXAccount,
   MultiversXProvider,

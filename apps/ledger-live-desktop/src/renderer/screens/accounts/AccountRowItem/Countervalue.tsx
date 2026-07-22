@@ -1,6 +1,7 @@
 import React from "react";
 import { AccountLike, PortfolioRange } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { useBalanceHistoryWithCountervalue } from "~/renderer/actions/portfolio";
 import Box from "~/renderer/components/Box";
 import CounterValue from "~/renderer/components/CounterValue";

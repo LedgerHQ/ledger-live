@@ -1,5 +1,6 @@
 import { addTestnetCurrencies, getTestnetCurrencies } from "../testnetCurrencies";
-import type { CryptoCurrency, CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/coin-modules/registry";
 
 jest.mock("@ledgerhq/live-common/coin-modules/registry", () => ({

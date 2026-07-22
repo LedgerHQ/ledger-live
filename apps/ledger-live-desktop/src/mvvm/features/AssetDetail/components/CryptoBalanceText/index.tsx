@@ -1,5 +1,5 @@
 import React from "react";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import { CryptoBalanceTextView } from "./CryptoBalanceTextView";
 import { useCryptoBalanceTextViewModel } from "./useCryptoBalanceTextViewModel";
 

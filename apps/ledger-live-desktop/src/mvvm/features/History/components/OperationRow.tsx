@@ -10,7 +10,8 @@ import { CounterValueCell } from "LLD/components/Cells/CounterValueCell";
 import { getOperationTypeI18nKey } from "~/renderer/helpers/operationTypeI18nKey";
 import { getAddressDirection } from "../utils/getOperationCounterpartyAddress";
 import { OperationCounterpartyLabel } from "./OperationCounterpartyLabel";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { OperationRow as OperationRowType } from "../types";
 
 type OperationRowProps = {

@@ -1,7 +1,8 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
-import type { Currency, Unit } from "@domain/entity-currency";
+import type { Currency } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { colors } from "~/renderer/styles/theme";
 import useTheme from "~/renderer/hooks/useTheme";

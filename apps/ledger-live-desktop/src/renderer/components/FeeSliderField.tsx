@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import { Range, reverseRangeIndex, projectRangeIndex } from "@ledgerhq/live-common/range";
 import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import Box from "./Box";

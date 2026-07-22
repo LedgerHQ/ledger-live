@@ -1,7 +1,9 @@
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
-import type { CryptoCurrency, TokenCurrency, CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { cryptoCurrenciesSelector } from "~/renderer/reducers/accounts";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import SelectCurrency from "~/renderer/components/SelectCurrency";

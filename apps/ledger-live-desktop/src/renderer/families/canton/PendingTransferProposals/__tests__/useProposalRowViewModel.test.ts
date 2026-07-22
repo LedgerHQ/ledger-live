@@ -1,4 +1,4 @@
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import { renderHook, act } from "tests/testSetup";
 import { BigNumber } from "bignumber.js";
 import { useProposalRowViewModel } from "../components/useProposalRowViewModel";

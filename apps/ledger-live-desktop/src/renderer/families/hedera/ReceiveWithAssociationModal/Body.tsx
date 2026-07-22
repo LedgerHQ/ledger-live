@@ -12,7 +12,7 @@ import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/
 import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { isTokenAssociationRequired } from "@ledgerhq/live-common/families/hedera/utils";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import Track from "~/renderer/analytics/Track";
 import { getCurrentDevice } from "~/renderer/reducers/devices";

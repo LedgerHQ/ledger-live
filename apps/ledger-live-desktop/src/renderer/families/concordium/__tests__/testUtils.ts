@@ -4,7 +4,7 @@ import {
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { ConcordiumAccount, ConcordiumResources } from "@ledgerhq/coin-concordium/types";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
 
 export const createMockConcordiumCurrency = (): CryptoCurrency => {

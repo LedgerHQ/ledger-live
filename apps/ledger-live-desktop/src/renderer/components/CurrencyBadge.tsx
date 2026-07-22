@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { rgba } from "~/renderer/styles/helpers";
 import IconCheckFull from "~/renderer/icons/CheckFull";
 import Box from "~/renderer/components/Box";

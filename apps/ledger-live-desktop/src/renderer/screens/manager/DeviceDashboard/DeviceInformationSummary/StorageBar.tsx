@@ -6,7 +6,7 @@ import { DeviceModel } from "@ledgerhq/devices";
 import ByteSize from "~/renderer/components/ByteSize";
 import { Text } from "@ledgerhq/react-ui";
 import styled, { css, keyframes } from "styled-components";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { rgba } from "~/renderer/styles/helpers";
 import Tooltip from "~/renderer/components/Tooltip";
 

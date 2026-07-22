@@ -15,7 +15,8 @@ import type {
   RecentAddress,
 } from "@ledgerhq/live-common/flows/send/recipient/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
 import { useCallback, useMemo, useRef, useState } from "react";

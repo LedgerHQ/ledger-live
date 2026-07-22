@@ -2,7 +2,7 @@ import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
-import type { TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/algorand/types";
 import TrackPage from "~/renderer/analytics/TrackPage";

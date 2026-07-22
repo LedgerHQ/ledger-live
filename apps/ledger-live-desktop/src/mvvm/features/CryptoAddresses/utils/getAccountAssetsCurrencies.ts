@@ -1,5 +1,6 @@
 import { listSubAccounts } from "@ledgerhq/live-common/account/helpers";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { AccountLike } from "@ledgerhq/types-live";
 
 export type AccountAssetCurrency = CryptoCurrency | TokenCurrency;

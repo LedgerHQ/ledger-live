@@ -5,7 +5,8 @@ import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/m
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency, CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 
 const mockNavigate = jest.fn();
 const mockOpenAssetAndAccount = jest.fn();

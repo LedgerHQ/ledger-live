@@ -1,6 +1,6 @@
 import { getTagDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";

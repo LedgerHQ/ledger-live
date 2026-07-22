@@ -7,7 +7,7 @@ import LoadingPlaceholder from "~/renderer/components/LoadingPlaceholder";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { dayAndHourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 
 const Title = styled(Text).attrs({ variant: "h5", color: "neutral.c100", mb: 2 })`
   font-size: 20px;

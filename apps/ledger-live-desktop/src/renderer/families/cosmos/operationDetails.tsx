@@ -11,7 +11,8 @@ import {
   CosmosDelegationInfo,
   CosmosValidatorItem,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import type { CryptoCurrency, Unit } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { Unit } from "@domain/entity-currency-unit";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useMemo } from "react";

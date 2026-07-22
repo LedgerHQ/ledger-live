@@ -1,5 +1,5 @@
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import BigNumber from "bignumber.js";
 
 type FormatFiatBalanceOptions = Readonly<{

@@ -12,7 +12,8 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { Separator, Item, TextLink, AngleDown, Check } from "./common";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { DistributionItem } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { hideEmptyTokenAccountsSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
 

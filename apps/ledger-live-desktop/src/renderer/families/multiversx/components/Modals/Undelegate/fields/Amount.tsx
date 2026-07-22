@@ -5,7 +5,7 @@ import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
 import TranslatedError from "~/renderer/components/TranslatedError";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import {
   MultiversXAccount,
   TransactionStatus,
