@@ -2,6 +2,7 @@ import React from "react";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account, ChainwatchAccount, ChainwatchNetwork } from "@ledgerhq/types-live";
+import { setOverride } from "@shared/feature-flags";
 import { server, http, HttpResponse } from "@tests/server";
 import { act, render, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { replaceAccounts } from "~/actions/accounts";
@@ -14,6 +15,11 @@ const network: ChainwatchNetwork = {
   ledgerLiveId: avalanche.id,
   chainwatchId: "avax",
   nbConfirmations: 1,
+};
+const secondNetwork: ChainwatchNetwork = {
+  ledgerLiveId: "bitcoin",
+  chainwatchId: "btc",
+  nbConfirmations: 2,
 };
 const chainwatchUserId = crypto.randomUUID();
 const accountUrl = `https://chainwatch/avax/account/${chainwatchUserId}/`;
@@ -44,10 +50,13 @@ const readyChainwatchAccount = (suffixes: string[] = []): ChainwatchAccount => (
 });
 
 const withTransactionsAlertsState =
-  (accounts: Account[]) =>
+  (accounts: Account[], networks: ChainwatchNetwork[] = [network]) =>
   (state: State): State =>
     withFlagOverrides({
-      transactionsAlerts: transactionsAlertsFlag,
+      transactionsAlerts: {
+        ...transactionsAlertsFlag,
+        params: { ...transactionsAlertsFlag.params, networks },
+      },
     })({
       ...state,
       accounts: { ...state.accounts, active: accounts },
@@ -77,6 +86,7 @@ const installChainwatchHandlers = (
   const addressDeletes: { body?: unknown }[] = [];
   const accountPuts: { body?: unknown }[] = [];
   const accountDeletes: { body?: unknown }[] = [];
+  let accountGets = 0;
   const state = {
     suffixes: [...(initialRemote?.suffixes ?? [])],
     exists: initialRemote?.exists ?? false,
@@ -85,6 +95,7 @@ const installChainwatchHandlers = (
 
   server.use(
     http.get(accountUrl, () => {
+      accountGets += 1;
       if (!state.exists) {
         return new HttpResponse(null, { status: 404 });
       }
@@ -132,6 +143,7 @@ const installChainwatchHandlers = (
     addressDeletes,
     accountPuts,
     accountDeletes,
+    getAccountGets: () => accountGets,
     getRemote: () => ({ exists: state.exists, suffixes: [...state.suffixes] }),
   };
 };
@@ -196,6 +208,35 @@ describe("TransactionsAlerts", () => {
     expect(chainwatch.addressPuts).toHaveLength(1);
   });
 
+  it("should not reconcile again when equivalent networks are reordered", async () => {
+    const chainwatch = installChainwatchHandlers();
+    const { store } = render(<TransactionsAlerts />, {
+      overrideInitialState: withTransactionsAlertsState([account01], [network, secondNetwork]),
+    });
+
+    await waitFor(() => expect(chainwatch.addressPuts).toHaveLength(1));
+    await act(async () => {});
+    const accountGetsBeforeReorder = chainwatch.getAccountGets();
+
+    act(() => {
+      store.dispatch(
+        setOverride({
+          key: "transactionsAlerts",
+          value: {
+            ...transactionsAlertsFlag,
+            params: {
+              ...transactionsAlertsFlag.params,
+              networks: [{ ...secondNetwork }, { ...network }],
+            },
+          },
+        }),
+      );
+    });
+    await act(async () => {});
+
+    expect(chainwatch.getAccountGets()).toBe(accountGetsBeforeReorder);
+  });
+
   it("should delete the Chainwatch account when transaction alerts are turned off", async () => {
     const chainwatch = installChainwatchHandlers();
     const { store } = render(<TransactionsAlerts />, {
@@ -224,7 +265,6 @@ describe("TransactionsAlerts", () => {
     expect(chainwatch.addressPuts[0].body).toEqual(["0x01"]);
     expect(chainwatch.getRemote().suffixes).toEqual([]);
 
-    // Failed PUT was treated as success; retry with same accounts.
     await act(async () => {});
     rerender(<TransactionsAlerts />);
     await act(async () => {});

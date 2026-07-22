@@ -57,7 +57,12 @@ const TransactionsAlerts = () => {
         .map(account => getTransactionsAlertsAddressKey(account.currency.id, account.freshAddress))
         .sort(),
       chainwatchBaseUrl,
-      supportedChains,
+      supportedChains: supportedChains
+        .map(
+          ({ ledgerLiveId, chainwatchId, nbConfirmations }) =>
+            `${ledgerLiveId}:${chainwatchId}:${nbConfirmations}`,
+        )
+        .sort(),
       userId: userId.exportUserIdForChainwatch(),
     });
     if (refReconciliationKey.current === reconciliationKey) return;
