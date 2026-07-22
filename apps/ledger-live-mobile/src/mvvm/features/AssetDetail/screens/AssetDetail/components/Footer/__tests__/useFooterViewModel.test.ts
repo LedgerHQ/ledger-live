@@ -12,7 +12,6 @@ let mockAccounts: Account[] = [];
 jest.mock("~/reducers/accounts", () => ({
   ...jest.requireActual("~/reducers/accounts"),
   flattenAccountsSelector: () => mockAccounts,
-  shallowAccountsSelector: () => mockAccounts,
 }));
 
 const mockHandleOpenBuySell = jest.fn();
