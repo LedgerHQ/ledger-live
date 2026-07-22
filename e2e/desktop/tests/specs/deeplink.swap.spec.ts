@@ -11,14 +11,12 @@ import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { setupEnv, selectAccountFromDeeplinkDrawer } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-
-// Account UUIDs derived from the E2E test seed via uuidv5 (namespace c3c78073-…).
-// Must match the accounts loaded by cliCommandsOnApp below.
-const BTC_ACCOUNT_ID = "62d8d0c0-3550-5f0c-9755-c6fb7866828b";
-const ETH_ACCOUNT_ID = "1258dc17-fbc6-5a99-ba85-2969da766f65";
-const USDT_ACCOUNT_ID = "84024965-a385-52d5-90cd-38dfc8bab5e9";
-
-const USDT_TOKEN_ID = "ethereum/erc20/usd_tether__erc20_";
+import {
+  BTC_ACCOUNT_ID,
+  ETH_ACCOUNT_ID,
+  USDT_ACCOUNT_ID,
+  USDT_TOKEN_ID,
+} from "@ledgerhq/live-e2e-shared/swapDeeplinkFixtures";
 
 // On a fresh session (no prior swap), the live app defaults to the highest
 // market-cap assets: BTC for the send field, ETH for the receive field.

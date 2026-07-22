@@ -1,15 +1,13 @@
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import {
+  BTC_ACCOUNT_ID,
+  ETH_ACCOUNT_ID,
+  USDT_ACCOUNT_ID,
+  USDT_TOKEN_ID,
+} from "@ledgerhq/live-e2e-shared/swapDeeplinkFixtures";
 import { swapSetup } from "../../../bridge/server";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
-
-// Account UUIDs derived from the E2E test seed via uuidv5 (namespace c3c78073-…).
-// Must match the accounts in e2e/mobile/userdata/swap-deeplinks.json.
-const BTC_ACCOUNT_ID = "62d8d0c0-3550-5f0c-9755-c6fb7866828b";
-const ETH_ACCOUNT_ID = "1258dc17-fbc6-5a99-ba85-2969da766f65";
-const USDT_ACCOUNT_ID = "84024965-a385-52d5-90cd-38dfc8bab5e9";
-
-const USDT_TOKEN_ID = "ethereum/erc20/usd_tether__erc20_";
 
 // On a fresh session (no prior swap), the live app defaults the send field
 // to the highest market-cap asset (BTC); the receive field has no default
