@@ -48,14 +48,13 @@ Scopes give context around the changes. They name the related app, feature or in
 
 Examples:
 
+- `architecture`
 - `ci`
-- `cli`
 - `coin-evm`
 - `coin-modules`
-- `architecture`
 - `desktop`
 - `e2e`
-- `mobile`
+- `portfolio`
 - `swap`
 
 Take values from the [scopes file](../../commitlint.scopes.js) – update when necessary.
