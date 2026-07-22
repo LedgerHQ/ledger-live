@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CurrencyIdSchema } from "@shared/schema-primitives";
+import { FiatCurrencyIdSchema } from "@shared/schema-primitives";
 import { UnitSchema } from "@domain/entity-currency-unit";
 
 /**
@@ -14,7 +14,7 @@ export const FiatCurrencySchema = z.object({
   /** Discriminant for the currency union — always `"FiatCurrency"`. */
   type: z.literal("FiatCurrency"),
   /** Unique opaque id (e.g. `"usd"`, `"eur"`). */
-  id: CurrencyIdSchema,
+  id: FiatCurrencyIdSchema,
   /** Human-readable display name (e.g. `"US Dollar"`). */
   name: z.string(),
   /** ISO 4217 ticker (e.g. `"USD"`, `"EUR"`). */

@@ -1,9 +1,13 @@
-import { CurrencyIdSchema, NonEmptyStringSchema, TokenIdSchema } from "@shared/schema-primitives";
+import {
+  CryptoCurrencyIdSchema,
+  NonEmptyStringSchema,
+  TokenCurrencyIdSchema,
+} from "@shared/schema-primitives";
 import { z } from "zod";
 
 export const ContactIdSchema = NonEmptyStringSchema;
 export const ContactAddressIdSchema = NonEmptyStringSchema;
-export const ContactCurrencyIdSchema = z.union([CurrencyIdSchema, TokenIdSchema]);
+export const ContactCurrencyIdSchema = z.union([CryptoCurrencyIdSchema, TokenCurrencyIdSchema]);
 
 const ContactNamePattern =
   /^\p{L}[\p{L}\p{Mn}\p{Mc}]*(?:[\p{Zs}'\u2019-]\p{L}[\p{L}\p{Mn}\p{Mc}]*)*$/u;
