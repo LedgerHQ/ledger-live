@@ -1,7 +1,18 @@
 import React, { useState } from "react";
+import { Platform } from "react-native";
+import { BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import type { ContactsAddContactDrawerProps } from "@features/flow-contacts";
 import { fireEvent, render, screen } from "@tests/test-renderer";
-import { ContactsAddContactDrawerSheet } from "./ContactsAddContactDrawerSheet";
+import { ContactsAddContactDrawerSheet } from ".";
+
+const mockUseKeyboardVisible = jest.fn();
+const mockShouldUseKeyboardAvoidance = jest.fn();
+const originalPlatform = Platform.OS;
+
+jest.mock("~/logic/keyboardVisible", () => ({
+  useKeyboardVisible: (...args: unknown[]) => mockUseKeyboardVisible(...args),
+  shouldUseKeyboardAvoidance: (...args: unknown[]) => mockShouldUseKeyboardAvoidance(...args),
+}));
 
 function createViewModel(
   overrides: Partial<ContactsAddContactDrawerProps> = {},
@@ -41,6 +52,16 @@ function ControlledAddContactDrawerSheet() {
 }
 
 describe("ContactsAddContactDrawerSheet", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockUseKeyboardVisible.mockReturnValue({ isKeyboardVisible: false, keyboardHeight: 0 });
+    mockShouldUseKeyboardAvoidance.mockReturnValue(true);
+  });
+
+  afterEach(() => {
+    Platform.OS = originalPlatform;
+  });
+
   it("should render the name form with the Figma copy and character limit", () => {
     render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
 
@@ -94,5 +115,38 @@ describe("ContactsAddContactDrawerSheet", () => {
 
     await user.press(screen.getByTestId("bottom-sheet-header-close-button"));
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("should pass the shared keyboard inset to the dynamic drawer", () => {
+    mockUseKeyboardVisible.mockReturnValue({ isKeyboardVisible: true, keyboardHeight: 300 });
+
+    render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
+
+    expect(screen.UNSAFE_getByType(BottomSheetView).props.style).toEqual({ paddingBottom: 324 });
+  });
+
+  it("should omit the keyboard inset when native resize handles the keyboard", () => {
+    mockUseKeyboardVisible.mockReturnValue({ isKeyboardVisible: true, keyboardHeight: 300 });
+    mockShouldUseKeyboardAvoidance.mockReturnValue(false);
+
+    render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
+
+    expect(screen.UNSAFE_getByType(BottomSheetView).props.style).toEqual({ paddingBottom: 24 });
+  });
+
+  it("should use will events on iOS", () => {
+    Platform.OS = "ios";
+
+    render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
+
+    expect(mockUseKeyboardVisible).toHaveBeenCalledWith({ eventTiming: "will" });
+  });
+
+  it("should use did events on Android", () => {
+    Platform.OS = "android";
+
+    render(<ContactsAddContactDrawerSheet {...createViewModel()} />);
+
+    expect(mockUseKeyboardVisible).toHaveBeenCalledWith({ eventTiming: "did" });
   });
 });

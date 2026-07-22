@@ -26,5 +26,6 @@ export type ContactsAddContactDrawerLabels = Readonly<{
 export type ContactsAddContactDrawerProps = AddContactDrawerViewModel &
   Readonly<{
     bottomInset?: number;
+    keyboardInset?: number;
     labels: ContactsAddContactDrawerLabels;
   }>;

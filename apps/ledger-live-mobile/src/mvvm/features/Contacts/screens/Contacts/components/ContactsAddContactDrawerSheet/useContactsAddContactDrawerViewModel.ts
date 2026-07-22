@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+import { v4 as uuid } from "uuid";
 import { addContact, contact } from "@domain/entity-contact";
 import {
   type ContactCreationPort,
@@ -5,8 +7,6 @@ import {
   type ContactsAddContactDrawerProps,
   useAddContactDrawerViewModel,
 } from "@features/flow-contacts";
-import { useMemo } from "react";
-import { v4 as uuid } from "uuid";
 import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 

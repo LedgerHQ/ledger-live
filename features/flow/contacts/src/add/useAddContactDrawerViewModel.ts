@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { CONTACT_NAME_MAX_LENGTH } from "./constants";
 import { useAddContactViewModel } from "../hooks/useAddContactViewModel";
 import type {
   AddContactDrawerViewModel,
@@ -17,6 +18,10 @@ export function useAddContactDrawerViewModel({
     setIsOpen(false);
     setDraftName("");
   }, [setDraftName]);
+  const onDraftNameChange = useCallback(
+    (name: string) => setDraftName(name.slice(0, CONTACT_NAME_MAX_LENGTH)),
+    [setDraftName],
+  );
   const onConfirm = useCallback(async () => {
     if (!isSaveEnabled || isSaving) {
       return;
@@ -42,7 +47,7 @@ export function useAddContactDrawerViewModel({
     draftName,
     onOpen,
     onClose,
-    onDraftNameChange: setDraftName,
+    onDraftNameChange,
     onConfirm,
   };
 }
