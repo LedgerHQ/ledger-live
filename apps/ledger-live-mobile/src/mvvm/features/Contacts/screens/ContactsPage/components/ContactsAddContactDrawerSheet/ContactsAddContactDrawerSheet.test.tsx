@@ -101,7 +101,7 @@ describe("ContactsAddContactDrawerSheet", () => {
       />,
     );
 
-    expect(screen.getByText("Contact name")).toBeVisible();
+    expect(screen.getByPlaceholderText("Contact name")).toBeVisible();
     expect(screen.getByText("Special characters are not allowed.")).toBeVisible();
     expect(screen.getByTestId("contacts-add-contact-name-error")).toHaveProp(
       "accessibilityLiveRegion",

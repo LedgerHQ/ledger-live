@@ -41,7 +41,7 @@ export function ContactsAddContactDrawer({
               <TextInput
                 testID="contacts-add-contact-name-input"
                 autoFocus
-                label={labels.namePlaceholder}
+                placeholder={labels.namePlaceholder}
                 value={draftName}
                 onChangeText={onDraftNameChange}
                 maxLength={CONTACT_NAME_MAX_LENGTH}
