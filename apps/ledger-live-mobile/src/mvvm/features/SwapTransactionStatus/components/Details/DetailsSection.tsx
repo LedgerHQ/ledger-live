@@ -2,7 +2,7 @@ import React from "react";
 import { log } from "@ledgerhq/logs";
 import { Linking } from "react-native";
 import type { AdditionalProviderConfig } from "@ledgerhq/live-common/exchange/providers/swap";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Box, Pressable, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { useDetailsSectionViewModel } from "../../hooks/useDetailsSectionViewModel";

@@ -1,7 +1,7 @@
 import React from "react";
 import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
-import { CryptoCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import WarningBannerStatus from "./WarningBannerStatus";
 
@@ -18,7 +18,7 @@ describe("WarningBannerStatus", () => {
     family: "mock-family",
     explorerViews: [],
     units: [],
-  };
+  } as CryptoCurrency;
 
   it("renders nothing if currencyConfig is not provided", () => {
     render(<WarningBannerStatus currency={mockCurrency} />);

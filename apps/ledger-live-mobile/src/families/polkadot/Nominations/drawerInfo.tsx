@@ -14,7 +14,7 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
 import ExternalLink from "~/icons/ExternalLink";
 import NominationDrawer from "../components/NominationDrawer";
-import { Unit } from "@ledgerhq/ledger-wallet-framework/types";
+import { Unit } from "@domain/entity-currency-unit";
 
 type NominationDrawerData = React.ComponentProps<typeof NominationDrawer>["data"];
 

@@ -1,5 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Device } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";
 import type { AddAccountContextType } from "LLM/features/Accounts/screens/AddAccount/types";

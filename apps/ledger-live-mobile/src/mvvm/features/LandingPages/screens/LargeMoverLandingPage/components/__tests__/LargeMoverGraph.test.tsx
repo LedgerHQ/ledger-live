@@ -4,7 +4,7 @@ import { KeysPriceChange, MarketCoinDataChart } from "@ledgerhq/live-common/mark
 import Graph from "~/components/Graph";
 import { Flex } from "@ledgerhq/native-ui";
 import { LargeMoverGraph } from "../LargeMoverGraph";
-import { CryptoCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 
 jest.mock("~/components/Graph", () => {
   return jest.fn(() => {
@@ -53,7 +53,7 @@ const mockBitcoinCurrency: CryptoCurrency = {
   keywords: ["btc", "bitcoin"],
   explorerViews: [],
   explorerId: "btc",
-};
+} as CryptoCurrency;
 
 describe("LargeMoverGraph", () => {
   beforeEach(() => {

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { StyleSheet } from "react-native";
 import { useSelector } from "~/context/hooks";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { broadcastLogger } from "~/datadog";
 import DeviceActionModal from "~/components/DeviceActionModal";

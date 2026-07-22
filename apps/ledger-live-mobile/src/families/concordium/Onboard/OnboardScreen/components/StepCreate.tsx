@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollView } from "react-native";
 import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "~/context/Locale";

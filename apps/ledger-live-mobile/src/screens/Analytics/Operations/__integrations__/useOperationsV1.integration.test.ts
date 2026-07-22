@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
@@ -27,7 +27,7 @@ const EVM_TOKEN: TokenCurrency = {
   delisted: false,
   disableCountervalue: false,
   units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
-};
+} as TokenCurrency;
 
 const ZERO_VALUE_TOKEN_OP_ID = "zero-value-token-op-id";
 const ZERO_VALUE_NATIVE_OP_ID = "zero-value-native-op-id";

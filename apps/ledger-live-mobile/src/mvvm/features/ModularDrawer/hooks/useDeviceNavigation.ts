@@ -3,11 +3,9 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
-import type {
-  CryptoCurrency,
-  CryptoOrTokenCurrency,
-  TokenCurrency,
-} from "@domain/entity-currency";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { useSelector } from "~/context/hooks";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";

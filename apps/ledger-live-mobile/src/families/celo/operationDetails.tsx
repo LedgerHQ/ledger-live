@@ -11,7 +11,8 @@ import {
   CeloOperation,
   isCeloOperationExtra,
 } from "@ledgerhq/live-common/families/celo/types";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import {
   FEE_CURRENCY_BY_ADAPTER,
   NATIVE_FEE_CURRENCY_MARKER,

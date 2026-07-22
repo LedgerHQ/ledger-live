@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTranslation } from "~/context/Locale";
-import { Currency } from "@ledgerhq/ledger-wallet-framework/types";
+import { Currency } from "@domain/entity-currency";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import { isDefaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";

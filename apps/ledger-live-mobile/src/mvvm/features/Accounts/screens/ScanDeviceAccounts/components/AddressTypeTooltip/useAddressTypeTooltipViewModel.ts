@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import { track } from "~/analytics";
-import { CryptoCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
 

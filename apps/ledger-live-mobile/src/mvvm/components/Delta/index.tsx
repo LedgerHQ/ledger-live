@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Unit } from "@domain/entity-currency";
+import { Unit } from "@domain/entity-currency-unit";
 import { PortfolioRange, ValueChange } from "@ledgerhq/types-live";
 import { Text, Box } from "@ledgerhq/lumen-ui-rnative";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";

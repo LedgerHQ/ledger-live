@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { render, screen } from "@tests/test-renderer";
 import React from "react";
 import OnboardScreen from "../index";

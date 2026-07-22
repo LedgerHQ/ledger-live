@@ -10,7 +10,7 @@ import {
   setCryptoAssetsStore,
   getCryptoAssetsStore,
 } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrency } from "@domain/entity-currency-token";
 
 const Stack = createNativeStackNavigator();
 

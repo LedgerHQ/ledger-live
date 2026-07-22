@@ -6,7 +6,7 @@ import { CantonOnboard } from "../index";
 import { ScreenName } from "~/const";
 import type { CantonOnboardAccountParamList } from "./types";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 
 // Mock the OnboardScreen component
@@ -104,7 +104,7 @@ describe("Canton Onboard Component", () => {
     supportsSegwit: false,
     supportsNativeSegwit: false,
     explorerViews: [],
-  };
+  } as CryptoOrTokenCurrency;
 
   const mockRoute = {
     params: {

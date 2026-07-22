@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 
 export const hederaCurrency = getCryptoCurrencyById("hedera");
 
@@ -12,7 +12,7 @@ export const htsToken: TokenCurrency = {
   contractAddress: "0.0.123456",
   parentCurrencyId: hederaCurrency.id,
   tokenType: "hts",
-};
+} as TokenCurrency;
 
 export const erc20Token: TokenCurrency = {
   type: "TokenCurrency",
@@ -23,4 +23,4 @@ export const erc20Token: TokenCurrency = {
   contractAddress: "0x1234",
   parentCurrencyId: hederaCurrency.id,
   tokenType: "erc20",
-};
+} as TokenCurrency;

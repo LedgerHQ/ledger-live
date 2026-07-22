@@ -7,7 +7,7 @@ import {
   overrideStateWithFunds,
 } from "LLM/features/QuickActions/__integrations__/shared";
 import { State } from "~/reducers/types";
-import { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 
@@ -19,7 +19,7 @@ const mockUsdc = {
   type: "TokenCurrency",
   id: USDC_CURRENCY_ID,
   parentCurrencyId: "ethereum",
-} as unknown as TokenCurrency;
+} as TokenCurrency;
 
 const withOpenDrawer =
   (noahEnabled: boolean, activeCurrencyIds: string[] = []) =>

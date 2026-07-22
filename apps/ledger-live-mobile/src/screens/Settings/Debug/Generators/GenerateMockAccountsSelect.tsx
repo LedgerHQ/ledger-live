@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Alert as Confirm, ScrollView } from "react-native";
 import { Button, Checkbox, Flex, Text, Alert } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 import SettingsRow from "~/components/SettingsRow";
 import { reboot } from "~/actions/appstate";

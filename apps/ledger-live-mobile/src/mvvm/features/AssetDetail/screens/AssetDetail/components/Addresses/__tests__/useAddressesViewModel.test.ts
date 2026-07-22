@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { Account, DistributionItem } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import {
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
@@ -59,7 +59,7 @@ const usdtEthToken: TokenCurrency = {
   name: "Tether USD",
   ticker: "USDT",
   units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
-};
+} as TokenCurrency;
 const usdtAlgoToken: TokenCurrency = {
   type: "TokenCurrency",
   id: "algorand/asa/312769",
@@ -69,7 +69,7 @@ const usdtAlgoToken: TokenCurrency = {
   name: "Tether USDt",
   ticker: "USDT",
   units: [{ name: "Tether USDt", code: "USDT", magnitude: 6 }],
-};
+} as TokenCurrency;
 
 describe("useAddressesViewModel", () => {
   beforeEach(() => {

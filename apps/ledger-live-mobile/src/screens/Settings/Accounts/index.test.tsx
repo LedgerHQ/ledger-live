@@ -2,7 +2,7 @@ import React from "react";
 import { screen, waitFor } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import AccountsSettings from "./index";
-import { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { ScreenName } from "~/const";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -32,7 +32,7 @@ const mockUsdtToken: TokenCurrency = {
       magnitude: 6,
     },
   ],
-};
+} as TokenCurrency;
 
 const mockUsdcToken: TokenCurrency = {
   id: "ethereum/erc20/usdc",
@@ -49,7 +49,7 @@ const mockUsdcToken: TokenCurrency = {
       magnitude: 6,
     },
   ],
-};
+} as TokenCurrency;
 
 const mockPolygonUsdcToken: TokenCurrency = {
   id: "polygon/erc20/usdc",
@@ -66,7 +66,7 @@ const mockPolygonUsdcToken: TokenCurrency = {
       magnitude: 6,
     },
   ],
-};
+} as TokenCurrency;
 
 const mockNavigation = {
   navigate: mockNavigate,

@@ -3,7 +3,7 @@ import { render } from "@tests/test-renderer";
 import { Card } from "../Card";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { mockCurrencyData, mockChartData } from "../../fixtures/currency";
-import { CryptoCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 
 jest.mock("~/logic/getWindowDimensions", () => () => ({
   width: 400,
@@ -45,7 +45,7 @@ const mockEthereumCurrency: CryptoCurrency = {
   keywords: ["eth", "ethereum"],
   explorerViews: [],
   explorerId: "eth",
-};
+} as CryptoCurrency;
 
 describe("Card", () => {
   beforeEach(() => {

@@ -4,7 +4,7 @@ import { View, Pressable, Text } from "react-native";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { render, screen } from "@tests/test-renderer";
 import SelectAccount from "../SelectAccount";
 import type { State } from "~/reducers/types";
@@ -58,15 +58,15 @@ jest.mock("LLM/features/Send/hooks/useNewSendFlowFeature", () => ({
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const polygon = getCryptoCurrencyById("polygon");
-const usdc = { parentCurrencyId: ethereum.id } as unknown as TokenCurrency;
+const usdc = { parentCurrencyId: ethereum.id } as TokenCurrency;
 const usdtEth = {
   id: "ethereum/erc20/usdt",
   parentCurrencyId: ethereum.id,
-} as unknown as TokenCurrency;
+} as TokenCurrency;
 const usdtPoly = {
   id: "polygon/erc20/usdt",
   parentCurrencyId: polygon.id,
-} as unknown as TokenCurrency;
+} as TokenCurrency;
 
 const EMPTY_ETH = genAccount("sa-empty-eth", {
   currency: ethereum,

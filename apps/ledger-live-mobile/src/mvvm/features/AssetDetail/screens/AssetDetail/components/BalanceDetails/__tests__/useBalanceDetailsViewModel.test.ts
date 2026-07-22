@@ -2,7 +2,7 @@ import { renderHook, act } from "@tests/test-renderer";
 import BigNumber from "bignumber.js";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import type { TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { AccountLike, DistributionItem } from "@ledgerhq/types-live";
 import {
   mockBtcCryptoCurrency,
@@ -106,7 +106,7 @@ describe("useBalanceDetailsViewModel", () => {
       name: "Tether USD",
       ticker: "USDT",
       units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
-    };
+    } as TokenCurrency;
     const usdtAlgoToken: TokenCurrency = {
       type: "TokenCurrency",
       id: "algorand/asa/312769",
@@ -116,7 +116,7 @@ describe("useBalanceDetailsViewModel", () => {
       name: "Tether USDt",
       ticker: "USDT",
       units: [{ name: "Tether USDt", code: "USDT", magnitude: 6 }],
-    };
+    } as TokenCurrency;
 
     const ethAccount = genAccount("usdt-eth", {
       currency: mockEthCryptoCurrency,

@@ -1,7 +1,8 @@
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";

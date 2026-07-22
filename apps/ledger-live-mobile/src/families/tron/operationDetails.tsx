@@ -10,7 +10,8 @@ import {
 } from "@ledgerhq/live-common/families/tron/react";
 import type { TronOperation, Vote } from "@ledgerhq/live-common/families/tron/types";
 import type { Account, Operation } from "@ledgerhq/types-live";
-import type { Currency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
+import type { Currency } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import { useSelector } from "~/context/hooks";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";

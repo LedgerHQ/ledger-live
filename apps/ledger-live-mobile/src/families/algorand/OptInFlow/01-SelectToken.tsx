@@ -8,7 +8,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useTokensData } from "@features/platform-currencies";
 import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";
-import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import {

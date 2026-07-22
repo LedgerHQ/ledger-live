@@ -3,7 +3,8 @@ import { renderHook } from "@testing-library/react-native";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { NATIVE_FEE_CURRENCY_MARKER } from "@ledgerhq/live-common/families/celo/constants";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 
 const mockUseQuery = jest.fn();
@@ -64,7 +65,7 @@ const buildToken = (
   name: "Test Token",
   ticker: "TST",
   units: [{ name: "Test Token", code: "TST", magnitude }],
-});
+} as TokenCurrency);
 
 const buildTokenAccount = (token: TokenCurrency): TokenAccount => ({
   type: "TokenAccount",
@@ -124,7 +125,7 @@ describe("celo mobile operationDetails.getDisplayFee", () => {
   });
 
   it("returns undefined when the token magnitude is missing", () => {
-    const token: TokenCurrency = { ...buildToken("0xc0ffee"), units: [] };
+    const token: TokenCurrency = { ...buildToken("0xc0ffee"), units: [] } as TokenCurrency;
     expect(
       getDisplayFee(buildOperation({ fee: new BigNumber("1000000000000000000") }), account, token),
     ).toBeUndefined();

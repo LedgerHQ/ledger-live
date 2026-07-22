@@ -5,7 +5,7 @@ import {
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import { CryptoOrTokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";

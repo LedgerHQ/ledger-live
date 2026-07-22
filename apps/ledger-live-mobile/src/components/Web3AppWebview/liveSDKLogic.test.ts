@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { getWalletAPITransactionSignFlowInfos } from "@ledgerhq/live-common/wallet-api/converters";
@@ -142,7 +143,7 @@ const createCryptoCurrency = (family: string): CryptoCurrency => ({
       token: "https://mycoinexplorer.com/token/$contractAddress/?a=$address",
     },
   ],
-});
+} as CryptoCurrency);
 
 const defaultEthCryptoFamily = createCryptoCurrency("evm");
 const createAccount = (id: string, crypto: CryptoCurrency = defaultEthCryptoFamily): Account => ({
@@ -212,5 +213,5 @@ function createTokenCurrency(): TokenCurrency {
     name: "",
     ticker: "",
     units: [],
-  };
+  } as TokenCurrency;
 }

@@ -1,4 +1,5 @@
-import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { shouldShowNoahMenu, NoahParams } from "../shouldShowNoahMenu";
 
 const ACTIVE_CURRENCY_IDS = ["ethereum/erc20/usd__coin"];
@@ -28,7 +29,7 @@ describe("shouldShowNoahMenu", () => {
       type: "TokenCurrency",
       id: "ethereum/erc20/usd__coin",
       parentCurrencyId: "ethereum",
-    } as unknown as TokenCurrency;
+    } as TokenCurrency;
 
     const param = makeParams({ currency: token });
     expect(shouldShowNoahMenu(param, true, ACTIVE_CURRENCY_IDS)).toBe(true);
@@ -41,7 +42,7 @@ describe("shouldShowNoahMenu", () => {
 
   it("returns false if currency or token id does NOT match the active currency ids", () => {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const currency = { id: "bitcoin", family: "evm" } as unknown as CryptoCurrency;
+    const currency = { id: "bitcoin", family: "evm" } as CryptoCurrency;
     const param = makeParams({ currency });
     expect(shouldShowNoahMenu(param, true, ACTIVE_CURRENCY_IDS)).toBe(false);
   });

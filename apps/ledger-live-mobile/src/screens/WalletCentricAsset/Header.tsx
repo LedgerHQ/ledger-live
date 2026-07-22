@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { CryptoOrTokenCurrency, Currency, FiatCurrency } from "@domain/entity-currency";
+import { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
+import { FiatCurrency } from "@domain/entity-currency-fiat";
 import { useSelector } from "~/context/hooks";
 import { ArrowLeftMedium, SettingsMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";

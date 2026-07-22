@@ -1,6 +1,6 @@
 import { ScreenName } from "~/const";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 export type ConcordiumOnboardAccountParamList = {
   [ScreenName.ConcordiumOnboardAccount]: {

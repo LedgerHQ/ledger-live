@@ -6,7 +6,7 @@ import useSelectDeviceViewModel from "../screens/SelectDevice/useSelectDeviceVie
 import { getCustomAddAccountFlow } from "LLM/features/Accounts/utils/customAddAccountFlow";
 import { NavigatorName, ScreenName } from "~/const";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 
 const mockNavigate = jest.fn();
 
@@ -58,7 +58,7 @@ describe("useSelectDeviceViewModel — onResult navigation", () => {
     managerAppName: "Aleo",
     units: [],
     explorerViews: [],
-  };
+  } as CryptoCurrency;
 
   const bitcoinCurrency: CryptoCurrency = {
     type: "CryptoCurrency",
@@ -72,7 +72,7 @@ describe("useSelectDeviceViewModel — onResult navigation", () => {
     managerAppName: "Bitcoin",
     units: [],
     explorerViews: [],
-  };
+  } as CryptoCurrency;
 
   const mockMeta = {} as AppResult;
 

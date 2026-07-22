@@ -1,7 +1,7 @@
 import type { Device } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";
 import { FilterByDeviceModelId } from "../../BleDevicePairingFlow/BleDevicesScanning";
-import { CryptoCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { LargeMoverLandingPageParams } from "./LandingPagesNavigator";
 
 export type SettingsNavigatorStackParamList = {

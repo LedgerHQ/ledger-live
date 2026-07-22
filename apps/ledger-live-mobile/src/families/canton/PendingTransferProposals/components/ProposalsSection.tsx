@@ -1,5 +1,5 @@
 import { Flex } from "@ledgerhq/native-ui";
-import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
+import type { Unit } from "@domain/entity-currency-unit";
 import { Account } from "@ledgerhq/types-live";
 import React from "react";
 import SectionHeader from "~/components/SectionHeader";

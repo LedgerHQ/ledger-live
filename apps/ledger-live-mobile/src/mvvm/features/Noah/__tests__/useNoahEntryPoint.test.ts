@@ -1,7 +1,8 @@
 import { renderHook } from "@tests/test-renderer";
 import { useReceiveNoahEntry } from "../useNoahEntryPoint";
 import { State } from "~/reducers/types";
-import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 
 describe("useReceiveNoahEntry", () => {
   beforeEach(() => {
@@ -51,7 +52,7 @@ describe("useReceiveNoahEntry", () => {
             type: "TokenCurrency",
             id: "ethereum/erc20/usd__coin",
             parentCurrencyId: "ethereum",
-          } as unknown as TokenCurrency,
+          } as TokenCurrency,
         }),
       {
         overrideInitialState: (state: State) => ({

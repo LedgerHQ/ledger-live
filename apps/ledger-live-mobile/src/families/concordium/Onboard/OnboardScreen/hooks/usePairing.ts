@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { ConcordiumPairingProgress } from "@ledgerhq/coin-concordium/types";
 import { ConcordiumPairingStatus } from "@ledgerhq/coin-concordium/types";
 import { ConcordiumPairingExpiredError } from "@ledgerhq/errors";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { log } from "@ledgerhq/logs";
 import { Subscription } from "rxjs";
 import { getConcordiumBridge } from "@ledgerhq/live-common/families/concordium/bridgeHelper";

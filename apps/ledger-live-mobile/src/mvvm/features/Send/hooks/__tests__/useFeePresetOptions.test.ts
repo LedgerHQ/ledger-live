@@ -7,7 +7,7 @@ import BigNumber from "bignumber.js";
 
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 
-const mockCurrency = { id: "bitcoin", family: "bitcoin" } as unknown as CryptoOrTokenCurrency;
+const mockCurrency = { id: "bitcoin", family: "bitcoin" } as CryptoOrTokenCurrency;
 
 const mockPresets = [
   { id: "slow", amount: new BigNumber(1000), estimatedMs: undefined, disabled: undefined },
@@ -68,7 +68,7 @@ describe("useFeePresetOptions", () => {
   });
 
   it("recomputes when currency changes", () => {
-    const otherCurrency = { id: "ethereum", family: "evm" } as unknown as CryptoOrTokenCurrency;
+    const otherCurrency = { id: "ethereum", family: "evm" } as CryptoOrTokenCurrency;
 
     const { rerender } = renderHook<
       ReturnType<typeof useFeePresetOptions>,

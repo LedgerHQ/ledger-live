@@ -1,7 +1,7 @@
 import React from "react";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { formatSwapTransactionStatusCreatedAt } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
-import type { TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { render, screen } from "@tests/test-renderer";
 import { TransactionHeader } from "../components/TransactionHeader";
 
@@ -22,7 +22,7 @@ const usdtEthereum = {
       magnitude: 6,
     },
   ],
-} as unknown as TokenCurrency;
+} as TokenCurrency;
 
 describe("TransactionHeader", () => {
   it("should render the swap title and creation date when currencies are available", () => {

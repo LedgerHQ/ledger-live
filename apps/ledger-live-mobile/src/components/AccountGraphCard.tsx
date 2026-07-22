@@ -7,7 +7,8 @@ import {
   PortfolioRange,
   BalanceHistoryWithCountervalue,
 } from "@ledgerhq/types-live";
-import { Unit, Currency } from "@domain/entity-currency";
+import { Currency } from "@domain/entity-currency";
+import { Unit } from "@domain/entity-currency-unit";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Box, Flex, Text, Transitions, InfiniteLoader, GraphTabs, Tag } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";

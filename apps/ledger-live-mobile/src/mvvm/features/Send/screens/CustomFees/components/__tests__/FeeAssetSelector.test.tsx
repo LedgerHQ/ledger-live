@@ -2,7 +2,8 @@ import React from "react";
 import { render as rntlRender, screen } from "@testing-library/react-native";
 import { ThemeProvider } from "@ledgerhq/lumen-ui-rnative";
 import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { FeeAssetUiOption } from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
 import { FeeAssetSelector } from "../FeeAssetSelector";
 
@@ -42,7 +43,7 @@ const usdtCurrency: TokenCurrency = {
   name: "Tether USD",
   ticker: "USDT",
   units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
-};
+} as TokenCurrency;
 
 const optionsWithIconsAndBalances: readonly FeeAssetUiOption[] = [
   {

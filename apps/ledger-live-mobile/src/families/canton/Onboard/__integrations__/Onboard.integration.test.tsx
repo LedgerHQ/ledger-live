@@ -1,6 +1,6 @@
 import React from "react";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";

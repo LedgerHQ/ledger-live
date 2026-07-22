@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useDispatch } from "~/context/hooks";
-import { Unit } from "@domain/entity-currency";
+import { Unit } from "@domain/entity-currency-unit";
 import SettingsRow from "~/components/SettingsRow";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";

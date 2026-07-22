@@ -10,7 +10,7 @@ import { NotEnoughGas } from "@ledgerhq/errors";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { useFromTransactionRaw } from "~/hooks/useFromTransactionRaw";

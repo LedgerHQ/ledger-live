@@ -3,7 +3,7 @@ import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/m
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { TransactionStatusValue } from "@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index";
 import type { Account } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getSwapProvider } from "@ledgerhq/live-common/exchange/providers/swap";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import type { State } from "~/reducers/types";
@@ -39,7 +39,7 @@ const usdtEthereum: TokenCurrency = {
       magnitude: 6,
     },
   ],
-};
+} as TokenCurrency;
 const sendAccount = genAccount("bitcoin-account", { currency: bitcoin });
 const receiveAccount = genAccount("ethereum-account", { currency: ethereum });
 const mockedUseMaybeAccountName = jest.mocked(useMaybeAccountName);

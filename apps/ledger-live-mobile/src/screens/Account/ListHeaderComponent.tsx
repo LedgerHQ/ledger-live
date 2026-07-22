@@ -9,7 +9,8 @@ import {
   PortfolioRange,
   BalanceHistoryWithCountervalue,
 } from "@ledgerhq/types-live";
-import { CryptoCurrency, Currency } from "@domain/entity-currency";
+import { Currency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
 import type { TFunction } from "i18next";
 import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";

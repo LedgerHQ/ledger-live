@@ -2,7 +2,7 @@ import React from "react";
 import { render, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import AccountBalanceFooter from "./AccountBalanceSummaryFooter";
 
@@ -27,7 +27,7 @@ const usdt = {
   ],
   tokenType: "erc20",
   parentCurrencyId: ethereum.id,
-} as unknown as TokenCurrency;
+} as TokenCurrency;
 
 const ethAccount = genAccount("test-eth", { currency: ethereum, subAccountsCount: 0 });
 const usdtAccount: TokenAccount = genTokenAccount(0, ethAccount, usdt);

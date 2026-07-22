@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Linking, TouchableOpacity } from "react-native";
 import { getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { ExplorerView } from "@ledgerhq/ledger-wallet-framework/types";
+import { ExplorerView } from "@domain/entity-currency-crypto";
 import { Box, BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { MedalMedium, TrophyMedium } from "@ledgerhq/native-ui/assets/icons";
