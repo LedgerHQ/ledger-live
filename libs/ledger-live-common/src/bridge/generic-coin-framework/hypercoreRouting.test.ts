@@ -21,7 +21,7 @@ describe("hypercore generic coin framework routing", () => {
     expect(currency.units[0].magnitude).toBe(6);
   });
 
-  it("registers a coin-module loader that reuses the EVM signer", () => {
+  it("registers a coin-module loader with setup, signer, transaction and local api", () => {
     const loader = coinModuleLoaders.find(l => l.family === "hypercore");
     expect(loader).toBeDefined();
     expect(loader?.supportedCoins).toEqual(["hypercore"]);
@@ -34,8 +34,7 @@ describe("hypercore generic coin framework routing", () => {
   it("exposes a resolver via loadSetup so hw address derivation works", async () => {
     const loader = coinModuleLoaders.find(l => l.family === "hypercore");
     const setup = await loader?.loadSetup?.();
-    // Reuses the EVM setup (HyperCore shares the Ethereum address); an empty setup would break
-    // scanAccounts / hw getAddress, which relies on setup.resolver.
+    // scanAccounts / hw getAddress rely on setup.resolver; an empty setup would break them.
     expect(setup?.resolver).toBeDefined();
   });
 
