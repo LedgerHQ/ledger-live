@@ -28,6 +28,7 @@
     "cryptoAsset" : "加密资产",
     "skip" : "跳过",
     "next" : "下一步",
+    "new" : "新",
     "noCryptoFound" : "未找到加密资产",
     "needHelp" : "您是否需要帮助？",
     "edit" : "编辑",
@@ -49,6 +50,7 @@
     "transactionDate" : "交易日期",
     "outdated" : "已过期",
     "satPerByte" : "聪/字节",
+    "satPerVByte" : "聪/虚拟字节",
     "sompiPerByte" : "sompi/字节",
     "notAvailable" : "缺货",
     "import" : "导入",
@@ -125,6 +127,10 @@
     "AccountNeedResync" : {
       "title" : "请重试",
       "description" : "账户已过期。需要同步"
+    },
+    "AccountPublicKeyUnavailable" : {
+      "title" : "需要重新添加账户",
+      "description" : "Ledger Wallet 无法获取此账户的公钥。请移除账户并重新添加以继续"
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "收币人账户没有选择加入所选的 ASA。"
@@ -478,6 +484,12 @@
     "FeeRequired" : {
       "title" : "需要费用"
     },
+    "FeeTooHigh" : {
+      "title" : "网络费用超过数额的10%"
+    },
+    "FeeTooLow" : {
+      "title" : "费用过低，无法被网络接受。请增加费用"
+    },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "需要更新固件或应用程序",
       "description" : "请使用“我的 Ledger”卸载所有应用程序，然后检查是否有固件更新，再重新安装应用程序。"
@@ -528,6 +540,10 @@
     },
     "InvalidExplorerResponse" : {
       "title" : "{{currencyName}} 浏览器的响应无效"
+    },
+    "InvalidTransactionError" : {
+      "title" : "无效交易",
+      "description" : "该交易不再与区块链状态相匹配。请重新开始流程。"
     },
     "LanguageInstallRefusedOnDevice" : {
       "title" : "语言安装被设备端拒绝",
@@ -898,20 +914,23 @@
     "TezosNotEnoughStaked" : {
       "title" : "质押余额不足"
     },
+    "TezosStakeBlockedByPendingUnstake" : {
+      "title" : "必须先完成从上一个验证者处的解除质押"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "请先清空所有子账户"
     },
     "NotSupportedLegacyAddress" : {
       "title" : "不再支持这种传统地址格式"
     },
+    "RecipientRequired" : {
+      "title" : "接收者地址为必填项"
+    },
     "SourceHasMultiSign" : {
       "title" : "请禁用多重签名以发送 {{currencyName}}"
     },
     "DustLimit" : {
       "title" : "金额低于小额资产下限"
-    },
-    "StratisDown2021Warning" : {
-      "description" : "Stratis 区块链已经进化，可能无法正确工作。对原有 Stratis 区块链的技术支持，将会持续到 2021 年 10 月 16 日。"
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "数额必须高于 {{minAmountFromFormatted}}"
@@ -1006,6 +1025,9 @@
     },
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "确保您有足够的剩余余额以用作未来的交易费"
+    },
+    "SolanaStakeAccountAmountTooLow" : {
+      "title" : "数额太低，无法质押。最小值为 {{minimumAmount}}"
     },
     "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "您之前的交易尚未处理。请稍等片刻后检查交易记录，然后重试。"
@@ -1173,6 +1195,9 @@
     "XrpInvalidMemo" : {
       "title" : "备忘标签格式错误，数值应小于 4294967296"
     },
+    "XrpDestinationTagRequired" : {
+      "title" : "此接收方需要填写目标标签"
+    },
     "HederaMemoExceededSizeError" : {
       "title" : "备忘标签长度无效，最大允许 100 个字符"
     },
@@ -1187,6 +1212,9 @@
     },
     "MaxFeeTooLow" : {
       "title" : "最高费用低于推荐值"
+    },
+    "GasPriceTooLow" : {
+      "title" : "Gas 价格低于网络最低要求"
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "最高优先费用不能高于最高费用"
@@ -1365,6 +1393,17 @@
         }
       }
     }
+  },
+  "largeScreenUpsellModal" : {
+    "optedIn" : {
+      "title" : "查看更多。减少点击。节省 {{discount}}%",
+      "subtitle" : "尽享更大的屏幕、更智能的交易审核、更强的保护，以及专属的 {{discount}}% 优惠。"
+    },
+    "optedOut" : {
+      "title" : "识别骗局。查看所有详情",
+      "subtitle" : "在触摸屏签署设备上清晰审核，并通过高级安全检查发现骗局。"
+    },
+    "cta" : "探索触摸屏签署设备"
   },
   "earn" : {
     "simulator" : {
@@ -1864,12 +1903,6 @@
     "postWelcomeStep" : {
       "title" : "开始操作",
       "noLedgerYet" : "我还没有 Ledger 设备",
-      "noLedgerYetModal" : {
-        "title" : "数百万用户。0 次黑客入侵。",
-        "desc" : "使用 Ledger 设备保护您的数字资产，让您安心无忧。",
-        "buy" : "购买 Ledger 设备",
-        "explore" : "探索此应用程序"
-      },
       "setupLedger" : {
         "title" : "设置 Ledger 设备",
         "subtitle" : "选择您的 Ledger 设备是新的还是经过重置。"
@@ -1877,18 +1910,6 @@
       "accessWallet" : {
         "title" : "访问您的钱包",
         "subtitle" : "选择您的 Ledger 设备是否已设置完毕。"
-      },
-      "buyNano" : {
-        "title" : "购买 Ledger Nano X",
-        "subtitle" : "Ledger 设备是确保您资产安全的唯一途径 "
-      },
-      "discoverLedger" : {
-        "title" : "浏览 Ledger Wallet ",
-        "subtitle" : "浏览应用程序并了解其优势 "
-      },
-      "desktopSync" : {
-        "title" : "通过桌面应用程序同步",
-        "subtitle" : "在 Ledger Wallet 桌面版中与您的手机同步资产。"
       }
     },
     "welcomeBackStep" : {
@@ -2791,13 +2812,6 @@
         "cta" : "我了解"
       }
     },
-    "appsStep" : {
-      "title" : "在 {{productName}} 上安装应用程序"
-    },
-    "readyStep" : {
-      "title" : "设置结束",
-      "doneTitle" : "{{productName}} 已经就绪"
-    },
     "completion" : {
       "title" : "现在一切尽在您的掌控。"
     },
@@ -2811,7 +2825,6 @@
     }
   },
   "tabs" : {
-    "portfolio" : "钱包",
     "accounts" : "账户",
     "transfer" : "转移",
     "manager" : "我的 Ledger",
@@ -2849,10 +2862,7 @@
         "addAccounts" : "添加资产",
         "title" : "开始",
         "description" : "您可以通过我们的合作伙伴购买加密货币或设置您的钱包"
-      },
-      "title" : "首先将您喜欢的资产添加至钱包",
-      "subtitle" : "Ledger 支持 6000 多种加密货币和代币",
-      "addAccount" : "或添加账户"
+      }
     },
     "noOpState" : {
       "title" : "尚无操作？",
@@ -2866,9 +2876,9 @@
       "description" : "杠杆交易"
     },
     "borrowEntry" : {
-      "title" : "贷款",
+      "title" : "加密货币贷款",
       "cardTitle" : "借入稳定币",
-      "cardDescription" : "释放流动性",
+      "cardDescription" : "以极具竞争力的费率借入",
       "cta" : "探索"
     },
     "recommended" : {
@@ -2990,6 +3000,8 @@
     "month" : "1 月",
     "year" : "1 年",
     "all" : "全部",
+    "second_short" : "s",
+    "minute_short" : "分钟",
     "since" : {
       "day" : "昨天",
       "week" : "过去一周",
@@ -3056,7 +3068,14 @@
   "operationsList" : {
     "to" : "到",
     "from" : "从",
-    "pending" : "待处理"
+    "pending" : "待处理",
+    "options" : {
+      "more" : "交易历史选项",
+      "hideDustTransactions" : "隐藏尘埃代币交易",
+      "showDustTransactions" : "显示尘埃代币交易",
+      "dustTransactionsHiddenDescription" : "低于 {{threshold}} 的交易将被隐藏。",
+      "dustTransactionsDisplayedDescription" : "低于 {{threshold}} 的交易将被显示。"
+    }
   },
   "operationDetails" : {
     "title" : "交易详情",
@@ -3129,7 +3148,8 @@
       "targetStakingNodeId" : "目标节点 ID",
       "previousStakingNodeId" : "前一节点 ID",
       "gasConsumed" : "Gas 消耗量",
-      "gasUsed" : "Gas 使用量"
+      "gasUsed" : "Gas 使用量",
+      "functionId" : "函数标识"
     },
     "multipleAddresses" : "为什么有多个地址？"
   },
@@ -3798,10 +3818,8 @@
   },
   "notifications" : {
     "prompt" : {
-      "title" : "打开通知",
-      "titleVariantB" : "不要错过重要信息",
-      "desc" : "获取关于 Ledger Wallet、Ledger 产品、市场的最新资讯以及个性化推荐。在设置中随时选择停用",
-      "descVariantB" : "获取有关新代币、收益机会和市场变动的实时提醒。您可随时决定退出。",
+      "title" : "不要错过重要信息",
+      "desc" : "获取有关新代币、收益机会和市场变动的实时提醒。您可随时决定退出。",
       "allow" : "允许通知",
       "later" : "以后再说",
       "transactionsAlerts" : {
@@ -4196,6 +4214,43 @@
       "history" : {
         "title" : "互换历史记录"
       },
+      "modals" : {
+        "transactionStatus" : {
+          "title" : "互换 {{sendTicker}} → {{receiveTicker}}",
+          "sections" : {
+            "status" : {
+              "heading" : "状态",
+              "sendPending" : "正在发送 {{ticker}}",
+              "sendCompleted" : "已发送 {{ticker}}",
+              "receivePending" : "正在接收 {{ticker}}",
+              "receiveCompleted" : "已接收 {{ticker}}",
+              "estimated" : "（预估）"
+            },
+            "details" : {
+              "networkFees" : "网络费用",
+              "receiveAccount" : "接收账户",
+              "provider" : "提供方",
+              "swapId" : "互换代码"
+            }
+          },
+          "statusLabels" : {
+            "pending" : "进行中",
+            "onhold" : "已暂停",
+            "expired" : "已逾期",
+            "finished" : "已完成",
+            "refunded" : "已退款",
+            "cancelled" : "已取消",
+            "unknown" : "未知"
+          },
+          "actions" : {
+            "viewInExplorer" : "在浏览器中查看",
+            "copied" : "已复制"
+          },
+          "accessibility" : {
+            "copySwapId" : "复制互换 ID"
+          }
+        }
+      },
       "wrongDevice" : {
         "title" : "Ledger Nano S™ 与 {{provider}} 不兼容",
         "description" : "Ledger Nano S™ 与 {{provider}} 不兼容。您可以使用 Ledger Nano S Plus™、Ledger Nano X™、Ledger Stax™ 或 Ledger Flex™ 通过 Ledger Wallet 体验 {{provider}} 的跨链互换",
@@ -4455,6 +4510,7 @@
     "newSendFlow" : {
       "title" : "发送 {{currency}}",
       "available" : "可用 {{amount}}",
+      "to" : "至：",
       "placeholder" : "请输入地址或 ENS",
       "placeholderNoENS" : "输入地址",
       "pasteFromClipboard" : {
@@ -4462,15 +4518,12 @@
         "cta" : "粘贴"
       },
       "editRecipientAccessibilityLabel" : "编辑接收方",
-      "recent" : "最近",
-      "recentDetail" : "最近详情",
-      "myAccounts" : "我的账户",
-      "account" : "账户",
       "sendTo" : "发送到 {{address}}",
       "addressMatched" : "已匹配地址",
       "addressNotFound" : "未找到地址",
+      "account" : "账户",
       "alreadyUsed" : "已使用 · {{date}}",
-      "recentSendWillAppear" : "您最近的发送会显示在此处",
+      "notInRecentHistory" : "不在您的近期历史记录中",
       "relativeDate" : {
         "justNow" : "刚刚",
         "minutesAgo_one" : "1 分钟前",
@@ -4480,12 +4533,13 @@
         "daysAgo_one" : "1 天前",
         "daysAgo_other" : "{{count}} 天前"
       },
-      "remove" : "删除",
-      "enterTag" : "输入备忘标签 {{tag}}",
       "firstInteraction" : {
-        "title" : "您正在发送至新地址",
-        "description" : "核实地址是否正确。如有疑问，请先发送小额资金。"
+        "description" : "此地址不在您的近期历史记录中。如有疑问，请先发送小额资金。",
+        "learnMore" : "了解更多",
+        "helpTitle" : "最近发送历史记录",
+        "helpDescription" : "最近记录允许您即时查看自己是否已向特定地址发送过。这可以防止潜在的复制/粘贴错误或黑客攻击。您的历史记录中包含您最近 12 个使用 Ledger Wallet 发送加密货币的地址。"
       },
+      "enterTag" : "输入备忘标签 {{tag}}",
       "sanctioned" : {
         "title" : "已标记地址",
         "description" : "该地址已被标记，Ledger 不允许向其发送。",
@@ -4537,13 +4591,17 @@
       "transactionSigned" : "交易已签署",
       "processingTransaction" : "您的交易正在处理中",
       "sign" : {
-        "title" : "在您的 Ledger {{wording}} 上继续操作",
+        "title" : "继续在您的 {{wording}} 上操作",
         "description" : "按照安全触摸屏上的指示进行操作。",
         "cancelled" : {
           "title" : "交易已取消",
           "description" : "您拒绝了该交易。您的资金不会受到影响。",
           "close" : "关闭",
           "retry" : "请重试"
+        },
+        "error" : {
+          "retry" : "请重试",
+          "close" : "关闭"
         }
       },
       "confirmation" : {
@@ -4560,6 +4618,7 @@
         "maxPriorityFee" : "最高优先费用 ({{unit}})",
         "gasLimit" : "Gas 限值 ({{unit}})",
         "feePerByte" : "费用数额 ({{unit}})",
+        "feesAmount" : "费用数额 ({{unit}})",
         "suggested" : "建议",
         "nextBlock" : "下一个区块",
         "networkFeesInFiat" : "网络费用为 {{currency}}",
@@ -6714,7 +6773,8 @@
     },
     "delegation" : {
       "addCustomValidator" : "+ 添加自定义验证者",
-      "sectionLabel" : "委托"
+      "sectionLabel" : "委托",
+      "pendingUnstakeWarning" : "您现在可以更改验证者，但在当前验证者待处理的解除质押完成（约需 4 天）之前，您将无法在新的验证者处进行质押。"
     },
     "staking" : {
       "sectionLabel" : "质押",
@@ -8986,8 +9046,7 @@
     "setPreferencesCTA" : "设置偏好",
     "refuseCTA" : "全部拒绝",
     "acceptCTA" : "全部接受",
-    "privacyPolicy" : "您可以随时在设置中撤回您的同意。",
-    "privacyPolicyCTA" : "隐私政策",
+    "privacyPolicy" : "您可以随时在设置中撤回您的同意。<PrivacyPolicy>隐私政策</PrivacyPolicy>",
     "setPreferences" : {
       "title" : "设置偏好",
       "performance" : "应用性能",
@@ -9404,6 +9463,9 @@
     "fallbackBanner" : {
       "title" : "不支持对此资产的互换和买入。"
     },
+    "stockDisclaimerBanner" : {
+      "title" : "总余额不包括股息或股票拆分。"
+    },
     "hiddenAssetBanner" : {
       "title" : "此资产已从您的资产组合中隐藏。",
       "showAsset" : "显示资产"
@@ -9430,6 +9492,13 @@
       "openMenuA11yLabel" : "图表选项",
       "hideTransactions" : "隐藏价格图表上的活动",
       "showTransactions" : "显示价格图表上的活动"
+    },
+    "footer" : {
+      "moreOptions" : {
+        "accessibilityLabel" : "更多选项",
+        "sell" : "卖出",
+        "earn" : "赚取"
+      }
     }
   },
   "assetSelection" : {
@@ -9781,29 +9850,21 @@
     }
   },
   "concordium" : {
-    "receive" : {
-      "messageIfSkipped" : "目前无法核实您的 Concordium 地址。请务必将地址粘贴到 Concordium 浏览器中进行仔细核对。",
-      "verifyLink" : "验证"
-    },
     "onboard" : {
       "title" : "Concordium 引导流程",
       "acknowledge" : {
         "title" : "确认声明",
         "description" : "Concordium 需要进行外部身份验证。请阅读以下重要安全提示：",
         "list" : {
-          "1" : {
-            "title" : "无地址核实",
-            "description" : "Ledger 设备无法核实 Concordium 接收地址。接收资金之前，请人工核实地址。"
-          },
-          "2" : {
+          "separateSeed" : {
             "title" : "Concordium ID 应用程序使用单独的种子助记词",
             "description" : "您将在 Concordium 应用程序中创建新的 24 个助记词。切勿使用您的 Ledger 助记词。"
           },
-          "3" : {
+          "outsideLedgerLive" : {
             "title" : "您将被重定向到 Ledger Wallet 之外",
             "description" : "身份验证将在外部 Concordium Wallet 应用程序中完成。这是 Concordium 区块链协议的要求。"
           },
-          "4" : {
+          "signingSecure" : {
             "title" : "交易签署安全无虞",
             "description" : "只有您的 Ledger 设备可以签署交易和创建账户。"
           }
@@ -9907,7 +9968,8 @@
     "swap" : "互换",
     "earn" : "赚取",
     "yield" : "收益率",
-    "card" : "卡"
+    "card" : "卡",
+    "paytab" : "付款"
   },
   "syncIndicator" : {
     "accessibilityLabel" : {
@@ -9954,6 +10016,10 @@
       "backup" : "备份",
       "help" : "帮助",
       "referral" : "推荐"
+    },
+    "contacts" : {
+      "title" : "联系人",
+      "description" : "管理您的联系人"
     },
     "backupHub" : {
       "title" : "秘密恢复短语备份",
@@ -10016,6 +10082,121 @@
       "available" : "可用",
       "unavailable" : "未连接",
       "menuAccessibilityLabel" : "设备选项"
+    }
+  },
+  "aleo" : {
+    "addAccount" : {
+      "stepViewKeyWarning" : {
+        "title" : "设置 Aleo 私密余额",
+        "description" : "Ledger Wallet 存储您的查看密钥以显示您的私密余额，并使用第三方服务来处理私密交易。<0>了解更多</0>",
+        "bullets" : ["只读权限，旨在解密您的私密余额", "Ledger 无法发送或使用您的资金", "只有您本人可以签署和使用您的资金", "为确保快速处理，证明生成由第三方证明者服务处理", "证明者无法访问或使用您的资金"],
+        "cta" : {
+          "allow" : "允许",
+          "cancel" : "取消"
+        }
+      },
+      "stepViewKeyApprove" : {
+        "title" : "在您的 Ledger 设备上批准",
+        "description" : "在您的设备上确认分享查看密钥",
+        "cancelAlert" : "您可以在设备上拒绝单个账户。全部取消将停止向您的资产组合中添加任何账户。",
+        "cancelAllBtn_one" : "取消",
+        "cancelAllBtn_other" : "全部取消",
+        "redirecting" : "正在重定向…"
+      },
+      "stepNoAccountsAdded" : {
+        "title" : "未添加 {{currency}} 账户",
+        "description" : "您未为任何所选账户分享查看密钥。在 Ledger Wallet 中显示您的私密余额需要查看密钥。"
+      },
+      "stepScanAccounts" : {
+        "cta" : {
+          "shareKey_one" : "分享查看密钥",
+          "shareKey_other" : "分享查看密钥"
+        }
+      }
+    },
+    "accountActions" : {
+      "publicToPrivate" : "自助转账"
+    },
+    "send" : {
+      "balanceSelection" : {
+        "title" : "选择余额",
+        "convertToPrivate" : "从公开转账",
+        "convertToPublic" : "从私密转账",
+        "sendPublicly" : "公开发送",
+        "sendPrivately" : "私密发送"
+      },
+      "balanceSelector" : {
+        "public" : "公开",
+        "private" : "私密",
+        "lastUpdate" : "最新更新：{{label}}",
+        "recently" : "最近"
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "正在同步您的私密余额 ({{percentage}}%)",
+        "desc" : "请稍候",
+        "errorTitle" : "私密同步失败",
+        "errorDesc" : "出了点问题，请重试"
+      },
+      "quickAmountSelector" : {
+        "title" : "快速选择",
+        "strategies" : {
+          "fast" : "快速",
+          "balanced" : "均衡",
+          "full" : "完整"
+        },
+        "recordCount_one" : "{{count}} 条记录",
+        "recordCount_other" : "{{count}} 条记录",
+        "unavailable" : "不可用",
+        "noValue" : "—",
+        "spendableBalance" : "最大可支出余额：",
+        "tooltip" : {
+          "desc" : "发送方、数额和接收方信息均在链上隐藏。每次发送最多 {{max}} 条记录。"
+        }
+      },
+      "summary" : {
+        "proofGenerationWarning" : "Aleo 交易需要生成证明。这可能需要一些时间。",
+        "recordsUsed" : "已使用的记录",
+        "signingTime" : "签署时间"
+      }
+    },
+    "balancesSection" : "余额类型",
+    "info" : {
+      "transparent" : {
+        "title" : "透明余额",
+        "description" : "Aleo 网络上公开可见的余额。该数额可以直接发送或接收，且对任何人可见。"
+      },
+      "private" : {
+        "title" : "私密余额",
+        "description" : "Aleo 网络上屏蔽隐藏的余额。此余额仅对您可见，并且需要为隐私交易生成证明。"
+      }
+    },
+    "account" : {
+      "syncButton" : {
+        "startSync" : "开始同步",
+        "stopSync" : "停止同步",
+        "syncAgain" : "再次同步",
+        "lastSync" : "上次同步：{{date}}"
+      }
+    },
+    "operations" : {
+      "type" : {
+        "public" : "公开",
+        "private" : "私密"
+      }
+    },
+    "shared" : {
+      "sponsoredByProvable" : "由 Provable 赞助"
+    }
+  },
+  "contacts" : {
+    "title" : "联系人",
+    "addContact" : "添加联系人",
+    "searchPlaceholder" : "搜索联系人",
+    "me" : {
+      "name" : "我",
+      "addressCount_zero" : "0 个地址",
+      "addressCount_one" : "{{count}} 个地址",
+      "addressCount_other" : "{{count}} 个地址"
     }
   }
 }
