@@ -33,7 +33,7 @@ export function ContactNameInput({
         lx={{
           alignItems: "center",
           flexDirection: "row",
-          justifyContent: "space-between",
+          justifyContent: errorMessage ? "space-between" : "flex-end",
         }}
       >
         {errorMessage ? (
@@ -55,9 +55,7 @@ export function ContactNameInput({
               {errorMessage}
             </Text>
           </Box>
-        ) : (
-          <Box lx={{ flex: 1 }} />
-        )}
+        ) : null}
         <Text
           testID="contacts-add-contact-name-count"
           typography="body3"
