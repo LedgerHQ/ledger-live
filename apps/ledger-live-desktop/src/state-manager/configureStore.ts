@@ -19,7 +19,11 @@ import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware, pushDevicesApiExtra } from "@domain/api-push-devices";
 import { canPushDeviceIdsSelector, languageSelector } from "~/renderer/reducers/settings";
-import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
+import {
+  createFeatureFlagsMiddleware,
+  selectFeature,
+  type PartialFeatures,
+} from "@shared/feature-flags";
 import { fetchRemoteFlags as defaultFetchRemoteFlags } from "~/firebase/remoteConfig";
 type Props = {
   state?: State;
@@ -38,13 +42,33 @@ const customCreateStore = ({
   analyticsMiddleware,
   fetchRemoteFlags = defaultFetchRemoteFlags,
 }: Props) => {
+  const listenerMiddleware = createListenerMiddleware();
+
   const lkrpIdentityProvider = new LkrpIdentityProvider();
-  const lkrpListenerMiddleware = createListenerMiddleware();
-  lkrpListenerMiddleware.startListening({
+  listenerMiddleware.startListening({
     predicate: action => action.type.startsWith(trustchainStoreActionTypePrefix),
     effect(_action, listenerApi) {
       const { trustchain } = listenerApi.getState() as State;
       lkrpIdentityProvider.setTrustchainStore(trustchain);
+    },
+  });
+
+  const authSDKRef: { current?: AuthSDK } = {};
+  const authSDK = new AuthSDK(
+    {
+      clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
+      keycloakBaseUrl: getEnv("LEDGER_AUTH_KEYCLOAK_BASE_URL_PROD"),
+      keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
+    },
+    { provider: lkrpIdentityProvider },
+  );
+  const syncAuthSDK = (currentState: State) => {
+    authSDKRef.current = selectFeature(currentState, "lwdAuth").enabled ? authSDK : undefined;
+  };
+  listenerMiddleware.startListening({
+    predicate: action => action.type.startsWith("featureFlags/"),
+    effect(_action, listenerApi) {
+      syncAuthSDK(listenerApi.getState() as State);
     },
   });
 
@@ -79,17 +103,12 @@ const customCreateStore = ({
                 // LIVE-33829: force mocks until Pay Card API base URL is wired.
                 payCardApiMocksEnabled: true,
               }),
-              authSDK: new AuthSDK(
-                {
-                  clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
-                  keycloakBaseUrl: getEnv("LEDGER_AUTH_KEYCLOAK_BASE_URL_PROD"),
-                  keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
-                },
-                { provider: lkrpIdentityProvider },
-              ),
+              get authSDK() {
+                return authSDKRef.current;
+              },
             },
           },
-        }).prepend(lkrpListenerMiddleware.middleware),
+        }).prepend(listenerMiddleware.middleware),
       )
         .concat(logger)
         .concat(analyticsMiddleware ? [analyticsMiddleware] : [])
@@ -114,6 +133,7 @@ const customCreateStore = ({
         ),
     devTools: __DEV__,
   });
+  syncAuthSDK(store.getState());
   return store;
 };
 

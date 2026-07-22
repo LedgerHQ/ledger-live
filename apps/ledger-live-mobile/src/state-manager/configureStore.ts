@@ -23,16 +23,43 @@ import { cvsApiExtra } from "@domain/api-currency-fiat";
 import { marketSentimentApiExtra } from "@domain/api-market-sentiment";
 import { altcoinsSentimentApiExtra } from "@domain/api-altcoins-sentiment";
 import { payCardApiExtra } from "@domain/api-pay-card";
-import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
+import {
+  createFeatureFlagsMiddleware,
+  selectFeature,
+  type PartialFeatures,
+} from "@shared/feature-flags";
 import { fetchRemoteFlags } from "~/firebase/remoteConfig";
 
+const listenerMiddleware = createListenerMiddleware();
+
 const lkrpIdentityProvider = new LkrpIdentityProvider();
-const lkrpListenerMiddleware = createListenerMiddleware();
-lkrpListenerMiddleware.startListening({
+listenerMiddleware.startListening({
   predicate: action => action.type.startsWith(trustchainStoreActionTypePrefix),
   effect(_action, listenerApi) {
     const { trustchain } = listenerApi.getState() as State;
     lkrpIdentityProvider.setTrustchainStore(trustchain);
+  },
+});
+
+const authSDKRef: { current?: AuthSDK } = {};
+const authSDK = new AuthSDK(
+  {
+    clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
+    keycloakBaseUrl: getEnv("LEDGER_AUTH_KEYCLOAK_BASE_URL_PROD"),
+    keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
+  },
+  {
+    provider: lkrpIdentityProvider,
+    createPkcePair: createPkcePairWithExpoCrypto,
+  },
+);
+const syncAuthSDK = (currentState: State) => {
+  authSDKRef.current = selectFeature(currentState, "lwmAuth").enabled ? authSDK : undefined;
+};
+listenerMiddleware.startListening({
+  predicate: action => action.type.startsWith("featureFlags/"),
+  effect(_action, listenerApi) {
+    syncAuthSDK(listenerApi.getState() as State);
   },
 });
 
@@ -67,20 +94,12 @@ export const store = configureStore({
               // LIVE-33829: force mocks until Pay Card API base URL is wired.
               payCardApiMocksEnabled: true,
             }),
-            authSDK: new AuthSDK(
-              {
-                clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
-                keycloakBaseUrl: getEnv("LEDGER_AUTH_KEYCLOAK_BASE_URL_PROD"),
-                keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
-              },
-              {
-                provider: lkrpIdentityProvider,
-                createPkcePair: createPkcePairWithExpoCrypto,
-              },
-            ),
+            get authSDK() {
+              return authSDKRef.current;
+            },
           },
         },
-      }).prepend(lkrpListenerMiddleware.middleware),
+      }).prepend(listenerMiddleware.middleware),
     )
       .concat(rebootMiddleware)
       .concat(
@@ -109,6 +128,8 @@ export const store = configureStore({
     return enhancers.concat(rozeniteDevToolsEnhancer() as StoreEnhancer);
   },
 });
+
+syncAuthSDK(store.getState());
 
 export type StoreType = typeof store;
 export type AppDispatch = typeof store.dispatch;

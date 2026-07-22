@@ -6,6 +6,7 @@ import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/s
 import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
+import { setOverride } from "@shared/feature-flags";
 
 let expoCrypto: typeof import("expo-crypto");
 
@@ -109,6 +110,29 @@ describe("mobile store", () => {
       server.close();
     });
 
+    it("should keep AuthSDK undefined when ledger auth is disabled by default", async () => {
+      const { store } = require("./configureStore");
+
+      await dispatchThunk(store, async (_dispatch, _getState, extra) => {
+        expect(extra.authSDK).toBeUndefined();
+      });
+    });
+
+    it("should clear AuthSDK when ledger auth is disabled at runtime", async () => {
+      const { store } = require("./configureStore");
+      store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
+
+      await dispatchThunk(store, async (_dispatch, _getState, extra) => {
+        expect(extra.authSDK).toBeDefined();
+      });
+
+      store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: false } }));
+
+      await dispatchThunk(store, async (_dispatch, _getState, extra) => {
+        expect(extra.authSDK).toBeUndefined();
+      });
+    });
+
     it("should authenticate with attestation when trustchain store has a root id", async () => {
       endpoints.keycloakAuth.mockImplementation(() =>
         HttpResponse.json({ tlv: CHALLENGE.tlv, json: CHALLENGE.json }),
@@ -122,6 +146,7 @@ describe("mobile store", () => {
       );
 
       const { store } = require("./configureStore");
+      store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
       store.dispatch(
         importTrustchainStoreState({
           trustchain: {
@@ -185,6 +210,7 @@ describe("mobile store", () => {
       );
 
       const { store } = require("./configureStore");
+      store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
       store.dispatch(
         importTrustchainStoreState({
           trustchain: null,
