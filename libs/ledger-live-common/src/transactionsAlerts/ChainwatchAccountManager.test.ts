@@ -1,4 +1,4 @@
-import { LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
+import { LedgerAPI5xx } from "@ledgerhq/errors";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import network from "@ledgerhq/live-network/network";
@@ -13,23 +13,39 @@ const chainwatchNetwork: ChainwatchNetwork = {
   chainwatchId: "avax",
   nbConfirmations: 1,
 };
-const accountManager = new ChainwatchAccountManager(
-  "https://chainwatch",
-  "user-id",
-  chainwatchNetwork,
-);
+let accountManager: ChainwatchAccountManager;
 
 describe("ChainwatchAccountManager", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    accountManager = new ChainwatchAccountManager(
+      "https://chainwatch",
+      "user-id",
+      chainwatchNetwork,
+    );
   });
 
   it("should treat a missing Chainwatch account as absent", async () => {
-    mockedNetwork.mockRejectedValueOnce(
-      new LedgerAPI4xx("not found", { status: 404, url: undefined, method: "GET" }),
-    );
+    mockedNetwork.mockRejectedValueOnce({ status: 404 });
 
     await expect(accountManager.getChainwatchAccount()).resolves.toBeUndefined();
+  });
+
+  it("should ignore a missing Chainwatch account during removal", async () => {
+    mockedNetwork.mockRejectedValueOnce({ status: 404 });
+
+    await expect(accountManager.removeChainwatchAccount()).resolves.toBeUndefined();
+  });
+
+  it("should propagate a Chainwatch account removal failure", async () => {
+    const error = new LedgerAPI5xx("unavailable", {
+      status: 500,
+      url: undefined,
+      method: "DELETE",
+    });
+    mockedNetwork.mockRejectedValueOnce(error);
+
+    await expect(accountManager.removeChainwatchAccount()).rejects.toBe(error);
   });
 
   it("should propagate a Chainwatch account request failure", async () => {

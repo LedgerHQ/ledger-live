@@ -1,5 +1,4 @@
 import network from "@ledgerhq/live-network/network";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 import type {
   ChainwatchNetwork,
   ChainwatchAccount,
@@ -7,6 +6,9 @@ import type {
   ChainwatchMonitorType,
   Account,
 } from "@ledgerhq/types-live";
+
+const isNotFoundError = (error: unknown) =>
+  typeof error === "object" && error !== null && "status" in error && error.status === 404;
 
 class ChainwatchAccountManager {
   chainwatchBaseUrl: string;
@@ -29,16 +31,21 @@ class ChainwatchAccountManager {
       });
       return data;
     } catch (error: unknown) {
-      if (error instanceof LedgerAPI4xx && error.status === 404) return;
+      if (isNotFoundError(error)) return;
       throw error;
     }
   }
 
   async removeChainwatchAccount() {
-    await network({
-      method: "DELETE",
-      url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
-    });
+    try {
+      await network({
+        method: "DELETE",
+        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
+      });
+    } catch (error: unknown) {
+      if (isNotFoundError(error)) return;
+      throw error;
+    }
   }
 
   async registerNewChainwatchAccount() {
