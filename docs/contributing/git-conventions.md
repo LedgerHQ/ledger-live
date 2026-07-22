@@ -71,7 +71,7 @@ The Jira ticket is optional. Include it when one exists.
 
 ## Description
 
-A short description of the change adding to the scope and type.
+A short description of the changes. This should adds to the information provided by type and scope.
 
 ## Branch names
 
