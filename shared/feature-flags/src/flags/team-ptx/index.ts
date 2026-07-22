@@ -23,6 +23,7 @@ export * from "./ptxSwapLiveAppKycWarning";
 export * from "./ptxSwapLiveAppMobile";
 export * from "./ptxSwapLiveAppOnPortfolio";
 export * from "./ptxSwapLiveAppOnAsset";
+export * from "./ptxSwapMfe";
 export * from "./ptxSwapMoonpayProvider";
 export * from "./ptxSwapReceiveTRC20WithoutTrx";
 export * from "./receiveStakingFlowConfigDesktop";

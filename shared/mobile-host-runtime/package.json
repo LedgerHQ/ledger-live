@@ -5,9 +5,14 @@
   "description": "Mobile host runtime shared with federated remotes — exposes a Redux reducer registry singleton",
   "main": "src/index.ts",
   "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",

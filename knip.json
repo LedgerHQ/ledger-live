@@ -218,6 +218,9 @@
     "./shared/feature-flags": {
       "entry": ["src/index.ts"]
     },
+    "./shared/mobile-host-runtime": {
+      "entry": ["src/index.ts"]
+    },
     "./features/flow/market-banner": {
       "entry": ["src/index.ts", "src/components/MarketBanner/index.native.ts"]
     },

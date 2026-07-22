@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
-import { ActivityIndicator, Platform, Text } from "react-native";
-import { createRemoteComponent } from "@shared/mobile-host-runtime";
+import { Platform } from "react-native";
 import Animated from "react-native-reanimated";
 import { ProductTourPortfolioMount } from "LLM/features/ProductTour";
 import { useQ2WalletV4TourDrawer, Q2WalletV4TourDrawer } from "LLM/features/Q2WalletV4Tour/Drawer";
@@ -23,6 +22,7 @@ import {
 import { getProgressViewOffset } from "../../utils/getProgressViewOffset";
 import usePortfolioViewModel from "./usePortfolioViewModel";
 import { useScrollToTop } from "./useScrollToTop";
+import { SwapMfe } from "./SwapMfe";
 
 import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
 import MarketBanner from "LLM/features/MarketBanner";
@@ -41,12 +41,6 @@ import {
   PortfolioPerpsEntryPoint,
 } from "../../components";
 import { Box } from "@ledgerhq/native-ui";
-
-const HelloWorld = createRemoteComponent<{ name?: string }>({
-  loader: () => import("swap/HelloWorld"),
-  loading: <ActivityIndicator />,
-  fallback: () => <Text>Couldn't load swap module</Text>,
-});
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
@@ -138,7 +132,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
 
     sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
 
-    sections.push(<HelloWorld key="swapHelloWorld" name="test" />);
+    sections.push(<SwapMfe key="swapMfe" name="test" />);
     if (shouldDisplayAssetSection) {
       sections.push(<WalletAssetsView key="categorizedAssets" />);
     } else {

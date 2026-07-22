@@ -304,7 +304,7 @@ export default withRozeniteUrlFix(
             name: "HostApp",
             filename: "HostApp.container.js.bundle",
             remotes: {
-              swap: `swap@http://localhost:9000/${platform}/mf-manifest.json`,
+              swap: `swap@https://TBD.ledger.com/swap/${platform}/mf-manifest.json`,
             },
             dts: {
               consumeTypes: {

@@ -42,6 +42,7 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 # Platform — shared
 shared/feature-flags                                     @ledgerhq/platform
 shared/schema-primitives                                 @ledgerhq/platform
+shared/mobile-host-runtime                               @ledgerhq/platform
 
 # Platform — mobile
 apps/ledger-live-mobile/android/                         @ledgerhq/platform
