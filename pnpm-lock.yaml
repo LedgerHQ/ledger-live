@@ -1009,9 +1009,6 @@ importers:
       '@ledgerhq/react-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/react
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-devices
