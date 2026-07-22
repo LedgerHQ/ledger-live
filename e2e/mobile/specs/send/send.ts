@@ -9,17 +9,19 @@ import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import type { LiveDataCommandOptions } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import type { InitOptions } from "../../utils/initUtil";
 
-const BST_SEND_CURRENCIES = new Set(["aptos", "sui", "cardano"]);
+export const BST_SEND_CURRENCIES = new Set(["aptos", "sui", "cardano"]);
 const BST_SEND_INVALID_ADDRESS_CURRENCIES = new Set(["hedera"]);
 
 export type SendTestOptions = {
   featureFlags?: InitOptions["featureFlags"];
   userdata?: InitOptions["userdata"];
   liveDataOptions?: LiveDataCommandOptions;
-  newSendFlow?: boolean;
 };
 
-const beforeAllFunction = async (transaction: TransactionType, options?: SendTestOptions) => {
+export const beforeAllFunction = async (
+  transaction: TransactionType,
+  options?: SendTestOptions,
+) => {
   await app.init({
     speculosApp: transaction.accountToDebit.currency.speculosApp,
     ...(options?.userdata !== undefined ? { userdata: options.userdata } : {}),
@@ -117,22 +119,9 @@ export function runSendTest(
       const addressToCredit = transaction.accountToCredit.address;
       const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
       await app.send.navigateToSendScreen(transaction.accountToDebit.accountName);
-
-      if (options?.newSendFlow) {
-        await app.send.setRecipientAndContinueNewFlow(addressToCredit, transaction.memoTag);
-        await app.send.setAmountAndReviewNewFlow(transaction.amount);
-        await app.send.waitForSignaturePrompt();
-        await app.speculos.signSendTransaction(transaction);
-        await app.send.successViewDetails();
-        await app.operationDetails.waitForOperationDetails();
-        await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
-        await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
-        await app.operationDetails.checkTransactionType("OUT");
-      } else {
-        await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
-        await app.send.setAmountAndContinue(transaction.amount);
-        await verifySendAndOperationDetails(transaction, amountWithCode);
-      }
+      await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
+      await app.send.setAmountAndContinue(transaction.amount);
+      await verifySendAndOperationDetails(transaction, amountWithCode);
     });
   });
 }

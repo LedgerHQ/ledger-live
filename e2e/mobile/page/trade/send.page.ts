@@ -253,7 +253,7 @@ export default class SendPage {
     }
   }
 
-  @Step("Set recipient in new send flow and confirm address")
+  @Step("Type address in search input: $0")
   async setRecipientAndContinueNewFlow(address: string | undefined, memoTag?: string) {
     if (!address) throw new Error("Recipient address is not set");
     await typeTextById("recipient-input", address);
@@ -277,7 +277,7 @@ export default class SendPage {
     }
   }
 
-  @Step("Set amount using number keyboard in new send flow")
+  @Step("Fill crypto amount: $0")
   async setAmountNewFlow(amount: string) {
     for (const char of amount) {
       const keyId = char === "." ? "keyboard-key-decimal" : `keyboard-key-${char}`;
@@ -285,20 +285,20 @@ export default class SendPage {
     }
   }
 
-  @Step("Set amount and tap Review in new send flow")
+  @Step("Click review to proceed to signature")
   async setAmountAndReviewNewFlow(amount: string) {
     await this.setAmountNewFlow(amount);
     await waitForElementById("enabled-amount-continue-button");
     await tapById("enabled-amount-continue-button");
   }
 
-  @Step("Wait for device signature prompt in new send flow")
-  async waitForSignaturePrompt() {
+  @Step("Wait for signature screen or device action loader")
+  async waitForSignature() {
     await waitForElementById("send-signature-prompt");
   }
 
-  @Step("Wait for success screen and tap view transaction in new send flow")
-  async successViewDetails() {
+  @Step("Wait success confirmation screen")
+  async waitForSuccessConfirmation() {
     await waitForElementById("send-confirmation-success-view-transaction");
     await tapById("send-confirmation-success-view-transaction");
   }
