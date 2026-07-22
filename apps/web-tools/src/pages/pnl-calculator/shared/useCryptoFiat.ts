@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
-import type { FiatCurrency } from "@domain/entity-currency";
+import type { FiatCurrency } from "@domain/entity-currency-fiat";
 
 const cache = new Map<string, FiatCurrency>();
 

@@ -2,7 +2,9 @@ import React, { useState, useCallback } from "react";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
-import type { CryptoCurrency, Currency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { Currency } from "@domain/entity-currency";
 import {
   Button,
   SegmentedControl,
@@ -52,7 +54,7 @@ const App = () => {
       .findTokenById(currencyId)
       .catch(() => null);
     if (token) {
-      return token;
+      return token as Currency;
     }
 
     // If not found as token, try as crypto currency
@@ -63,7 +65,7 @@ const App = () => {
   const findTokenByAddress = useCallback(
     async (address: string, networkId: string): Promise<Currency | null> => {
       const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(address, networkId);
-      return token || null;
+      return (token as Currency) || null;
     },
     [],
   );

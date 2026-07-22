@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import type { FiatCurrency } from "@domain/entity-currency";
+import type { FiatCurrency } from "@domain/entity-currency-fiat";
 import { formatCryptoAmount, formatFiat, formatPnlPct } from "../../../shared/formatting";
 import { pnlToneCss } from "../../../shared/toneCss";
 import { getAsset } from "../model/assets";

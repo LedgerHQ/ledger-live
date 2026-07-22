@@ -1,5 +1,6 @@
 import { defineCommand } from "@bunli/core";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { createCommandOutput } from "../../output";
 import { walletCliDebug } from "../../shared/log";
 import { toTokenInfo } from "../../wallet/models";
@@ -32,7 +33,7 @@ export default defineCommand({
         throw new Error(`Token not found: id=${id}.`);
       }
       ctx.network = token.parentCurrencyId;
-      out.token(toTokenInfo(token));
+      out.token(toTokenInfo(token as TokenCurrency));
     });
   },
 });

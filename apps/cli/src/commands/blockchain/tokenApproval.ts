@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { firstValueFrom } from "rxjs";
 import { concatMap, filter, map } from "rxjs/operators";
-import type { TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { SignedOperation, SignOperationEvent } from "@ledgerhq/types-live";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getErc20ApproveData } from "@ledgerhq/live-common/families/evm/getErc20ApproveData";

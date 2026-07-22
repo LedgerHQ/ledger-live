@@ -1,11 +1,12 @@
 import { BTC, ETH, SAT, WEI } from "@ledgerhq/wallet-pnl/scenarios";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { AssetDescriptor, TraderAssetId, TraderOpKind } from "./types";
 
 const ASSETS: Record<TraderAssetId, AssetDescriptor> = {
   BTC: {
     id: "BTC",
     ticker: "BTC",
-    currency: BTC,
+    currency: BTC as CryptoCurrency,
     defaultLatestPrice: "65000",
     defaultAmount: "0.05",
     defaultPrice: "60000",
@@ -15,7 +16,7 @@ const ASSETS: Record<TraderAssetId, AssetDescriptor> = {
   ETH: {
     id: "ETH",
     ticker: "ETH",
-    currency: ETH,
+    currency: ETH as CryptoCurrency,
     defaultLatestPrice: "3000",
     defaultAmount: "1",
     defaultPrice: "2500",

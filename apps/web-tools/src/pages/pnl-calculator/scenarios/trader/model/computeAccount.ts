@@ -9,6 +9,7 @@ import {
   USD,
 } from "@ledgerhq/wallet-pnl/scenarios";
 import { computeAssetPnL, invalidatePnLCache } from "@ledgerhq/wallet-pnl";
+import type { FiatCurrency } from "@domain/entity-currency-fiat";
 import { parseBn, toMajor, ZERO_ASSET_PNL } from "../../../shared/formatting";
 import { getAsset } from "./assets";
 import {
@@ -114,7 +115,11 @@ export function computeTraderAccount(state: TraderAccountState): TraderResult {
     latest: prepared.latestUsd.isPositive() ? prepared.latestUsd.toNumber() : undefined,
   });
 
-  const pnl = toMajor(computeAssetPnL(prepared.account, cv, USD), USD, ZERO_ASSET_PNL);
+  const pnl = toMajor(
+    computeAssetPnL(prepared.account, cv, USD as FiatCurrency),
+    USD as FiatCurrency,
+    ZERO_ASSET_PNL,
+  );
 
   return {
     ...prepared.counts,

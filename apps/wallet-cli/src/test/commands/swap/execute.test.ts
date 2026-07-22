@@ -4,7 +4,7 @@ import "../../../live-common-setup";
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type {
   GetQuotesArgs,
   GetQuotesResponse,

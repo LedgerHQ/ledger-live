@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
-import type { FiatCurrency } from "@domain/entity-currency";
+import type { FiatCurrency } from "@domain/entity-currency-fiat";
 import {
   buildCV,
   buy,

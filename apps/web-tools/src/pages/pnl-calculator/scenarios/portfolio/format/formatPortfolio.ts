@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import type BigNumber from "bignumber.js";
-import type { FiatCurrency } from "@domain/entity-currency";
+import type { FiatCurrency } from "@domain/entity-currency-fiat";
 import {
   formatCryptoAmount,
   formatFiat,

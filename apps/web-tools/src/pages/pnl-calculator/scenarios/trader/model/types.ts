@@ -1,5 +1,6 @@
 import type BigNumber from "bignumber.js";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 
 export type TraderMode = "single" | "multi";
 

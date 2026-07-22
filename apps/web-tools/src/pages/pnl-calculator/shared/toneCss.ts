@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import BigNumber from "bignumber.js";
-import type { FiatCurrency } from "@domain/entity-currency";
+import type { FiatCurrency } from "@domain/entity-currency-fiat";
 import { DEFAULT_FIAT_DISPLAY_MAGNITUDE } from "./formatting";
 
 type Tone = "success" | "error" | "muted";

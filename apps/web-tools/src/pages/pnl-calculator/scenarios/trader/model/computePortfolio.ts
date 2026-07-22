@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { buildMultiCV, resetOperationIdCounter, USD } from "@ledgerhq/wallet-pnl/scenarios";
 import { computeAssetPnL, computePortfolioPnL, invalidatePnLCache } from "@ledgerhq/wallet-pnl";
+import type { FiatCurrency } from "@domain/entity-currency-fiat";
 import { toMajor, ZERO_ASSET_PNL, ZERO_PORTFOLIO_PNL } from "../../../shared/formatting";
 import {
   prepareAccount,
@@ -82,7 +83,11 @@ export function computeTraderPortfolio(accounts: TraderAccountState[]): TraderPo
   );
 
   for (const p of prepared) {
-    const pnl = toMajor(computeAssetPnL(p.account, cv, USD), USD, ZERO_ASSET_PNL);
+    const pnl = toMajor(
+      computeAssetPnL(p.account, cv, USD as FiatCurrency),
+      USD as FiatCurrency,
+      ZERO_ASSET_PNL,
+    );
     perAccount.set(p.state.id, {
       ...p.counts,
       finalBalanceAtomic: p.finalBalanceAtomic,
@@ -96,8 +101,8 @@ export function computeTraderPortfolio(accounts: TraderAccountState[]): TraderPo
   invalidatePnLCache();
   const portfolioAccounts: AccountLike[] = prepared.map(p => p.account);
   const portfolio = toMajor(
-    computePortfolioPnL(portfolioAccounts, cv, USD),
-    USD,
+    computePortfolioPnL(portfolioAccounts, cv, USD as FiatCurrency),
+    USD as FiatCurrency,
     ZERO_PORTFOLIO_PNL,
   );
 

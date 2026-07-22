@@ -29,7 +29,7 @@ import {
 } from "@ledgerhq/lumen-ui-react/symbols";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { Account, AccountRaw, Operation } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import {
   decodeAccountId,
   shortAddressPreview,

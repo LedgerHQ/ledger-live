@@ -1,6 +1,8 @@
 import BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { FiatCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { FiatCurrency } from "@domain/entity-currency-fiat";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import {
   flattenAccounts,
@@ -52,7 +54,7 @@ function toAssetRow(
     label: accountLabel(account, namesById),
     isTokenAccount: account.type === "TokenAccount",
     balance: account.balance,
-    currency,
+    currency: currency as CryptoCurrency | TokenCurrency,
     pnl,
   };
 }

@@ -294,8 +294,8 @@ export async function runFullSwapPipeline(
   );
   const fromParentAccount = getParentAccount(fromAccount, accounts);
   const toParentAccount = getParentAccount(toAccount, accounts);
-  const fromCurrency = getCurrencyForAccount(fromAccount);
-  const toCurrency = getCurrencyForAccount(toAccount);
+  const fromCurrency = getCurrencyForAccount(fromAccount) as CryptoOrTokenCurrency;
+  const toCurrency = getCurrencyForAccount(toAccount) as CryptoOrTokenCurrency;
 
   const fromAccountAddress = fromParentAccount
     ? fromParentAccount.freshAddress

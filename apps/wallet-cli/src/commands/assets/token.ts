@@ -2,6 +2,7 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { createCommandOutput } from "../../output";
 import { walletCliDebug } from "../../shared/log";
 import { toTokenInfo } from "../../wallet/models";
@@ -55,7 +56,7 @@ export default defineCommand({
           `Token not found: network=${network}, address=${address}${flags.identifier ? `, identifier=${flags.identifier}` : ""}.`,
         );
       }
-      out.token(toTokenInfo(token));
+      out.token(toTokenInfo(token as TokenCurrency));
     });
   },
 });

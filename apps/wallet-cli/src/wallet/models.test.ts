@@ -1,5 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import type { TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { Unit } from "@domain/entity-currency-unit";
 import { parseShortAccountDescriptor, parseAccountDescriptor, toTokenInfo } from "./models";
 import { XPUB } from "../shared/accountDescriptor/test-fixtures";
 
@@ -56,8 +57,8 @@ describe("parseAccountDescriptor", () => {
 });
 
 describe("toTokenInfo", () => {
-  const usdtFixture: TokenCurrency = {
-    type: "TokenCurrency",
+  const usdtFixture = {
+    type: "TokenCurrency" as const,
     id: "ethereum/erc20/usd_tether__erc20_",
     name: "Tether USD",
     ticker: "USDT",
@@ -71,7 +72,7 @@ describe("toTokenInfo", () => {
   };
 
   it("maps id, ticker, name, contract, tokenType verbatim", () => {
-    const info = toTokenInfo(usdtFixture);
+    const info = toTokenInfo(usdtFixture as TokenCurrency);
     expect(info.id).toBe("ethereum/erc20/usd_tether__erc20_");
     expect(info.ticker).toBe("USDT");
     expect(info.name).toBe("Tether USD");
@@ -80,23 +81,25 @@ describe("toTokenInfo", () => {
   });
 
   it("pulls decimals from units[0].magnitude", () => {
-    expect(toTokenInfo(usdtFixture).decimals).toBe(6);
+    expect(toTokenInfo(usdtFixture as TokenCurrency).decimals).toBe(6);
   });
 
   it("maps parentCurrencyId verbatim", () => {
-    expect(toTokenInfo(usdtFixture).parentCurrencyId).toBe("ethereum");
+    expect(toTokenInfo(usdtFixture as TokenCurrency).parentCurrencyId).toBe("ethereum");
   });
 
   it("omits delisted when not set on the source", () => {
-    const info = toTokenInfo(usdtFixture);
+    const info = toTokenInfo(usdtFixture as TokenCurrency);
     expect("delisted" in info).toBe(false);
   });
 
   it("preserves delisted=true when flagged on the source", () => {
-    expect(toTokenInfo({ ...usdtFixture, delisted: true }).delisted).toBe(true);
+    expect(toTokenInfo({ ...usdtFixture, delisted: true } as TokenCurrency).delisted).toBe(true);
   });
 
   it("throws when the token has no units", () => {
-    expect(() => toTokenInfo({ ...usdtFixture, units: [] })).toThrow(/no units/);
+    expect(() => toTokenInfo({ ...usdtFixture, units: [] as Unit[] } as TokenCurrency)).toThrow(
+      /no units/,
+    );
   });
 });
