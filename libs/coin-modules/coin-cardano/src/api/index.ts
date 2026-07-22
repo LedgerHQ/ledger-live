@@ -17,7 +17,6 @@ import type {
   TransactionIntent,
   TransactionValidation,
   Validator,
-  AddressValidationCurrencyParameters,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
@@ -32,6 +31,7 @@ import { getStakes } from "../logic/getStakes";
 import { getValidators } from "../logic/getValidators";
 import { lastBlock } from "../logic/lastBlock";
 import { listOperations } from "../logic/listOperations";
+import { validateAddress } from "../logic/validateAddress";
 import { validateIntent } from "../logic/validateIntent";
 
 export function createApi(config: CardanoConfig, currencyId: string): CoinModuleApi<StringMemo> {
@@ -89,12 +89,7 @@ export function createApi(config: CardanoConfig, currencyId: string): CoinModule
     getNextSequence: (_address: string): Promise<bigint> => {
       throw new Error("getNextSequence is not applicable for Cardano");
     },
-    validateAddress: (
-      _address: string,
-      _parameters: Partial<AddressValidationCurrencyParameters>,
-    ): Promise<boolean> => {
-      throw new Error("validateAddress is not supported");
-    },
+    validateAddress,
     craftTransactionData,
   };
 }

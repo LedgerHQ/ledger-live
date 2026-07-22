@@ -64,8 +64,6 @@ const walletCliLoaders: CoinModuleLoader[] = [
       import("@ledgerhq/live-common/families/evm/walletApiAdapter").then(m => m.default),
     loadPlatformAdapter: () =>
       import("@ledgerhq/live-common/families/evm/platformAdapter").then(m => m.default),
-    loadValidateAddress: () =>
-      import("@ledgerhq/coin-evm/logic/validateAddress").then(m => m.validateAddress),
     loadSigner: () => import("@ledgerhq/live-common/families/evm/signer").then(m => m.default),
     loadBridgeApi: () =>
       import("@ledgerhq/live-common/families/evm/bridge/api").then(m => m.default),

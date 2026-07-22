@@ -16,7 +16,6 @@ import {
   loadMockBridgeForFamily,
   loadMockAccountForFamily,
   getLoadedMockAccountForFamily,
-  loadValidateAddressForFamily,
   loadSignerForFamily,
   loadBridgeExtensionsForFamily,
 } from "./registry";
@@ -120,7 +119,6 @@ const allLoaders: LoaderEntry[] = [
   { loaderKey: "loadAccount", fn: loadAccountModuleForFamily },
   { loaderKey: "loadMockBridge", fn: loadMockBridgeForFamily },
   { loaderKey: "loadMockAccount", fn: loadMockAccountForFamily },
-  { loaderKey: "loadValidateAddress", fn: loadValidateAddressForFamily },
   { loaderKey: "loadSigner", fn: loadSignerForFamily },
 ];
 
