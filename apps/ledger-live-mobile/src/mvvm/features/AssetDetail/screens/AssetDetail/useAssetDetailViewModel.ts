@@ -1,10 +1,13 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useCurrencyById } from "@features/platform-currencies";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useFeature } from "@features/platform-feature-flags";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import type { CompositeNavigationProp } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { ScreenName } from "~/const";
+import { BASE_NAVIGATOR_ID, ScreenName } from "~/const";
 import { useDistribution } from "~/actions/general";
 import {
   resolveAssetMarketInputs,
@@ -19,9 +22,21 @@ import { isRobinhoodExclusiveAsset } from "./utils/isRobinhoodExclusiveAsset";
 
 type Route = StackNavigatorProps<AssetDetailNavigatorParamsList, ScreenName.AssetDetail>["route"];
 
+type BaseNavigatorNavigation = NativeStackNavigationProp<
+  BaseNavigatorStackParamList,
+  keyof BaseNavigatorStackParamList,
+  typeof BASE_NAVIGATOR_ID
+>;
+
+type Navigation = CompositeNavigationProp<
+  NativeStackNavigationProp<AssetDetailNavigatorParamsList, ScreenName.AssetDetail>,
+  BaseNavigatorNavigation
+>;
+
 const ASSET_DETAIL_DEEPLINK_SOURCES = new Set(["deeplink_asset", "deeplink_market"]);
 
 export function useAssetDetailViewModel() {
+  const navigation = useNavigation<Navigation>();
   const route = useRoute<Route>();
   const { currencyId, source, marketState } = route.params;
 
@@ -49,6 +64,18 @@ export function useAssetDetailViewModel() {
     !isCurrencyLoading &&
     !currencyError &&
     !currency;
+
+  useEffect(() => {
+    if (!shouldRedirectToMarket) return;
+
+    const baseNavigation = navigation.getParent<BaseNavigatorNavigation>(BASE_NAVIGATOR_ID);
+    if (baseNavigation) {
+      baseNavigation.replace(ScreenName.MarketList);
+      return;
+    }
+
+    navigation.navigate(ScreenName.MarketList);
+  }, [navigation, shouldRedirectToMarket]);
 
   const { marketApiId, knownLedgerIds, knownMarketId } = useMemo(
     () =>
