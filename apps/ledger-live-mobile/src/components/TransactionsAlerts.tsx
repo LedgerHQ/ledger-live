@@ -18,13 +18,16 @@ const TransactionsAlerts = () => {
     () => featureTransactionsAlerts?.params?.networks || [],
     [featureTransactionsAlerts?.params],
   );
-  const supportedChainsIds = supportedChains.map((chain: ChainwatchNetwork) => chain.ledgerLiveId);
+  const supportedChainsIds = useMemo(
+    () => new Set(supportedChains.map((chain: ChainwatchNetwork) => chain.ledgerLiveId)),
+    [supportedChains],
+  );
 
   const notifications = useSelector(notificationsSelector);
   const accounts = useSelector(accountsSelector);
   const userId = useSelector(userIdSelector);
   const accountsFilteredBySupportedChains = useMemo(
-    () => accounts.filter(account => supportedChainsIds.includes(account?.currency?.id)),
+    () => accounts.filter(account => supportedChainsIds.has(account?.currency?.id)),
     [accounts, supportedChainsIds],
   );
   const refAccounts = useRef<Account[]>([]);

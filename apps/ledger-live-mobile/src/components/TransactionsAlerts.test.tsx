@@ -21,7 +21,7 @@ const secondNetwork: ChainwatchNetwork = {
   chainwatchId: "btc",
   nbConfirmations: 2,
 };
-const chainwatchUserId = crypto.randomUUID();
+const chainwatchUserId = "chainwatch-user-id";
 const accountUrl = `https://chainwatch/avax/account/${chainwatchUserId}/`;
 const addressesUrl = `${accountUrl}addresses/`;
 const transactionsAlertsFlag = {
@@ -257,7 +257,7 @@ describe("TransactionsAlerts", () => {
       { exists: true, suffixes: [] },
       { failAddressPuts: 1 },
     );
-    const { rerender } = render(<TransactionsAlerts />, {
+    const { store } = render(<TransactionsAlerts />, {
       overrideInitialState: withTransactionsAlertsState([account01]),
     });
 
@@ -265,10 +265,13 @@ describe("TransactionsAlerts", () => {
     expect(chainwatch.addressPuts[0].body).toEqual(["0x01"]);
     expect(chainwatch.getRemote().suffixes).toEqual([]);
 
-    // Rejection clears the reconciliation key, so unchanged accounts can be retried.
-    await act(async () => {});
-    rerender(<TransactionsAlerts />);
-    await act(async () => {});
+    // Rejection clears the reconciliation key, so the next account refresh can retry it.
+    await act(async () => {
+      await jest.runOnlyPendingTimersAsync();
+    });
+    act(() => {
+      store.dispatch(replaceAccounts([account01]));
+    });
 
     await waitFor(() => expect(chainwatch.addressPuts).toHaveLength(2));
     expect(chainwatch.addressPuts[1].body).toEqual(["0x01"]);
