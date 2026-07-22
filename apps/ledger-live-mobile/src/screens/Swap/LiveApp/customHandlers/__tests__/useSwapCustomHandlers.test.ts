@@ -215,6 +215,7 @@ describe("useSwapCustomHandlers", () => {
       const { result } = render();
 
       const handler = (result.current as Record<string, unknown>)["custom.swapRedirectToHistory"];
+      expect(typeof handler).toBe("function");
 
       (handler as () => void)();
 
