@@ -177,7 +177,10 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await liveAppWebview.accountList();
 
     const res = await liveAppWebview.getResOutput();
-    expect(res).toMatchObject(mockedAccountList);
+    expect(res).toHaveLength(mockedAccountList.length);
+    expect(res).toEqual(
+      expect.arrayContaining(mockedAccountList.map(account => expect.objectContaining(account))),
+    );
 
     await resetWebview();
   });

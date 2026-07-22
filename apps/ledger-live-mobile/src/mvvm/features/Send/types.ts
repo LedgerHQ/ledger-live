@@ -1,6 +1,7 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { ReactNativeFlowStepConfig, ReactNativeFlowConfig } from "../FlowWizard/types";
 import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
+import type { NetworkFeesInfo } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { ScreenName } from "~/const";
 
 export type SendStepConfig = ReactNativeFlowStepConfig<SendFlowStep> &
@@ -36,6 +37,8 @@ export type NetworkFeesViewModel = Readonly<{
   label: string;
   value: string;
   strategyLabel: string;
+  /** When true, `value` already includes the native fee-currency amount (with fiat when a rate exists); the row omits the strategy label. */
+  showFeeCurrencyAmount: boolean;
   showFeePresets: boolean;
   selectedFeeStrategy: string | null;
   feePresetLabelsOptions: FeePresetLabelOption[];
@@ -46,4 +49,5 @@ export type NetworkFeesViewModel = Readonly<{
     hasCustomFees: boolean;
     hasCoinControl: boolean;
   }>;
+  networkFeesInfo: NetworkFeesInfo | null;
 }>;

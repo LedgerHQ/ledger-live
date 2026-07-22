@@ -28,7 +28,7 @@ jest.mock("../../networks", () => ({
 
 // Wallet account mock includes address methods so tests that exercise the real
 // buildKnownAddressDerivationsMap implementation can use it without extra setup.
-jest.mock("../../wallet-btc", () => ({
+jest.mock("../../getWalletAccount", () => ({
   getWalletAccount: jest.fn().mockReturnValue({
     params: { path: "m/84'/0'/0'", index: 0 },
     xpub: {
@@ -43,7 +43,6 @@ jest.mock("../../wallet-btc", () => ({
       },
     },
   }),
-  default: {},
 }));
 
 jest.mock("@ledgerhq/ledger-wallet-framework/derivation", () => {
@@ -194,7 +193,7 @@ describe("signRawOperation (PSBT path)", () => {
     ]);
 
     // Override wallet account for this test so getNewAddress returns our fixture.
-    (jest.requireMock("../../wallet-btc") as any).getWalletAccount.mockReturnValueOnce({
+    (jest.requireMock("../../getWalletAccount") as any).getWalletAccount.mockReturnValueOnce({
       params: { path: "m/84'/0'/0'", index: 0 },
       xpub: {
         xpub: "xpub_test",

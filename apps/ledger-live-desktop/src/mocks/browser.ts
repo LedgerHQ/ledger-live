@@ -6,6 +6,7 @@ import { mockStocksResponse } from "@ledgerhq/live-common/dada-client/mocks/stoc
 import { mockLedgerStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/mocks/ledgerStatus";
 import { mockFearAndGreedLatest } from "@domain/api-market-sentiment/mock";
 import countervaluesHandlers from "../../tests/handlers/countervalues";
+import marketHandlers from "../../tests/handlers/market";
 
 const assetsHandler = ({ request }: { request: Request }) => {
   const category = new URL(request.url).searchParams.get("categories");
@@ -23,6 +24,7 @@ const handlers = [
   http.get("https://proxycmc.api.live.ledger.com/v3/fear-and-greed/latest", () => {
     return HttpResponse.json(mockFearAndGreedLatest);
   }),
+  ...marketHandlers,
   ...countervaluesHandlers,
 ];
 

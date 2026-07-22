@@ -1,6 +1,6 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getDerivationModesForCurrency } from "@ledgerhq/ledger-wallet-framework/derivation";
-import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/index";
+import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
 import { accountDataToAccount, accountToAccountData } from "./cross";
 import { accountUserDataExportSelector, initialState } from "../store";
 

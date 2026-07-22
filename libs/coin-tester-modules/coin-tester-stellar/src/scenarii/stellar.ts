@@ -228,10 +228,8 @@ export const scenarioStellar: Scenario<GenericTransaction, Account> = {
 
     const stellarSigner = await buildSigner();
     const { currencyBridge, accountBridge, getAddress } = await getBridges(stellarSigner);
-    // Configure coin-stellar to talk to the local Horizon. Must happen before
-    // any local-tx helper (createTrustline / sendIssuerPayment) runs, because
-    // those go through coin-stellar's craft / combine / broadcast pipeline and
-    // read the explorer URL from coinConfig.
+    // Configure coin-stellar to talk to the local Horizon: the bridge reads
+    // the explorer URL from coinConfig.
     const localConfig = {
       status: { type: "active" as const },
       explorer: { url: HORIZON_URL, fetchLimit: 100 },
@@ -257,12 +255,9 @@ export const scenarioStellar: Scenario<GenericTransaction, Account> = {
     await fundViaFriendbot(RECIPIENT_ADDRESS);
     await fundViaFriendbot(ISSUER_ADDRESS);
     // Pre-create the recipient's USDC trustline so the bridge-side payment
-    // doesn't fail with op_no_trust. Driven through coin-stellar's own
-    // craft/combine/broadcast pipeline so the helper exercises the same
-    // code paths as the bridge — divergence between fixtures and production
-    // would hide regressions in coin-stellar itself.
+    // doesn't fail with op_no_trust. This is test scaffolding, so it goes
+    // straight to Horizon via stellar-sdk rather than through coin-stellar.
     await createTrustline({
-      accountAddress: RECIPIENT_ADDRESS,
       accountSeed: RECIPIENT_SEED,
       assetCode: USDC_ASSET_CODE,
       assetIssuer: ISSUER_ADDRESS,

@@ -17,7 +17,7 @@ import Spinner from "~/renderer/components/Spinner";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { openModal } from "~/renderer/actions/modals";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import type { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import type { Currency } from "@ledgerhq/wallet-btc/index";
 import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";

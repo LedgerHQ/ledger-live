@@ -77,6 +77,7 @@ export function useCurrenciesUnderFeatureFlag() {
   const seiNetworkEvm = useFeature("currencySeiNetworkEvm");
   const berachain = useFeature("currencyBerachain");
   const hyperevm = useFeature("currencyHyperevm");
+  const hypercore = useFeature("currencyHypercore");
   const canton = useFeature("currencyCantonNetwork");
   const cantonDevnet = useFeature("currencyCantonNetworkDevnet");
   const cantonTestnet = useFeature("currencyCantonNetworkTestnet");
@@ -137,6 +138,7 @@ export function useCurrenciesUnderFeatureFlag() {
       sei_evm: seiNetworkEvm,
       berachain: berachain,
       hyperevm: hyperevm,
+      hypercore: hypercore,
       coreum,
       polygon_amoy: polygonAmoy,
       polygon_zk_evm: polygonZkEvm,
@@ -231,6 +233,7 @@ export function useCurrenciesUnderFeatureFlag() {
       seiNetworkEvm,
       berachain,
       hyperevm,
+      hypercore,
       coreum,
       polygonAmoy,
       polygonZkEvm,

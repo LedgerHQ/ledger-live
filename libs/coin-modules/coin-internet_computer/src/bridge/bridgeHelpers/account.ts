@@ -1,18 +1,16 @@
+import type { TransactionWithId } from "@dfinity/ledger-icp";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Account, OperationType } from "@ledgerhq/types-live";
-import {
-  deriveAddressFromPubkey,
-  hashTransaction,
-  TransactionWithId,
-} from "@zondax/ledger-live-icp";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { fetchBalance, fetchBlockHeight, fetchTxns } from "../../api";
 import { normalizeEpochTimestamp } from "../../common-logic/utils";
 import { ICP_FEES } from "../../consts";
+import { deriveAddressFromPubkey } from "../../logic/crypto";
+import { hashTransaction } from "../../logic/hashTransaction";
 import { InternetComputerOperation } from "../../types";
 
 export const getAccountShape: GetAccountShape = async info => {

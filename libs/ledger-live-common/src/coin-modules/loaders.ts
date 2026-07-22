@@ -1,4 +1,4 @@
-import type { CoinModuleLoader, FamilySetup, ValidateAddressFn } from "./types";
+import type { CoinModuleLoader, FamilySetup } from "./types";
 
 export const coinModuleLoaders: CoinModuleLoader[] = [
   {
@@ -8,6 +8,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadTransaction: () => import("@ledgerhq/coin-aleo/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-aleo/deviceTransactionConfig").then(m => m.default),
+    loadBridgeExtensions: () => import("../families/aleo/bridgeExtensions").then(m => m.default),
   },
   {
     family: "algorand",
@@ -79,10 +80,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadAccount: () => import("@ledgerhq/coin-cardano/account").then(m => m.default),
     loadMockBridge: () => import("../families/cardano/bridge/mock").then(m => m.default),
     loadBridgeApi: () => import("../families/cardano/bridge/api").then(m => m.default),
-    loadValidateAddress: () =>
-      import("@ledgerhq/coin-cardano/logic/validateAddress").then(
-        ({ validateAddress }): ValidateAddressFn => validateAddress,
-      ),
   },
   {
     family: "casper",
@@ -219,10 +216,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadWalletApiAdapter: () => import("../families/evm/walletApiAdapter").then(m => m.default),
     loadPlatformAdapter: () => import("../families/evm/platformAdapter").then(m => m.default),
     loadMockBridge: () => import("../families/evm/bridge/mock").then(m => m.default),
-    loadValidateAddress: () =>
-      import("@ledgerhq/coin-evm/logic/validateAddress").then(
-        ({ validateAddress }): ValidateAddressFn => validateAddress,
-      ),
     loadSigner: () => import("../families/evm/signer").then(m => m.default),
     loadBridgeApi: () => import("../families/evm/bridge/api").then(m => m.default),
     loadAccountRawAssign: () => import("../families/evm/accountRawAssign").then(m => m.default),
@@ -243,6 +236,19 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadTransaction: () => import("@ledgerhq/coin-hedera/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-hedera/deviceTransactionConfig").then(m => m.default),
+  },
+  {
+    // HyperCore uses the generic coin framework. Address derivation reuses the EVM setup + signer
+    // (same secp256k1/Ethereum address), so scanAccounts / hw getAddress resolve via the EVM
+    // resolver. getBalance, listOperations and validateAddress are backed by coin-hypercore
+    // (validateAddress is consumed from the CoinModuleApi instance, not a loader hook).
+    family: "hypercore",
+    supportedCoins: ["hypercore"],
+    loadSetup: () => import("../families/evm/setup"),
+    loadLocalApi: () =>
+      import("../families/hypercore/coinModuleApi").then(m => m.createLocalHypercoreApi),
+    loadTransaction: () => import("../families/hypercore/transaction").then(m => m.default),
+    loadSigner: () => import("../families/evm/signer").then(m => m.default),
   },
   {
     family: "icon",
@@ -290,10 +296,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-multiversx/deviceTransactionConfig").then(m => m.default),
     loadMockBridge: () => import("../families/multiversx/bridge/mock").then(m => m.default),
-    loadValidateAddress: () =>
-      import("@ledgerhq/coin-multiversx/validateAddress").then(
-        ({ validateAddress }): ValidateAddressFn => validateAddress,
-      ),
     loadBridgeApi: () => import("../families/multiversx/bridge/api").then(m => m.default),
   },
   {
@@ -328,10 +330,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       import("@ledgerhq/coin-solana/deviceTransactionConfig").then(m => m.default),
     loadWalletApiAdapter: () => import("../families/solana/walletApiAdapter").then(m => m.default),
     loadMockBridge: () => import("../families/solana/bridge/mock").then(m => m.default),
-    loadValidateAddress: () =>
-      import("@ledgerhq/coin-solana/logic/validateAddress").then(
-        ({ validateAddress }): ValidateAddressFn => validateAddress,
-      ),
     loadSigner: () => import("../families/solana/signer").then(m => m.default),
     loadBridgeApi: () => import("../families/solana/bridge/api").then(m => m.default),
   },
@@ -353,10 +351,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () =>
       import("../families/stellar/deviceTransactionConfig").then(m => m.default),
     loadMockBridge: () => import("../families/stellar/bridge/mock").then(m => m.default),
-    loadValidateAddress: () =>
-      import("@ledgerhq/coin-stellar/logic/validateAddress").then(
-        ({ validateAddress }): ValidateAddressFn => validateAddress,
-      ),
     loadSigner: () => import("../families/stellar/signer").then(m => m.default),
     loadBridgeApi: () => import("../families/stellar/bridge/api").then(m => m.default),
     loadBridgeExtensions: () => import("../families/stellar/bridgeExtensions").then(m => m.default),
@@ -377,10 +371,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () =>
       import("../families/tezos/deviceTransactionConfig").then(m => m.default),
     loadMockBridge: () => import("../families/tezos/bridge/mock").then(m => m.default),
-    loadValidateAddress: () =>
-      import("@ledgerhq/coin-tezos/logic/validateAddress").then(
-        ({ validateAddress }): ValidateAddressFn => validateAddress,
-      ),
     loadSigner: () => import("../families/tezos/signer").then(m => m.default),
     loadBridgeApi: () => import("../families/tezos/bridge/api").then(m => m.default),
     loadAccountRawAssign: () => import("../families/tezos/accountRawAssign").then(m => m.default),
@@ -403,6 +393,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-tron/deviceTransactionConfig").then(m => m.default),
     loadMockBridge: () => import("../families/tron/bridge/mock").then(m => m.default),
+    loadBridgeApi: () => import("../families/tron/bridge/api").then(m => m.default),
     loadBridgeExtensions: () => import("../families/tron/bridgeExtensions").then(m => m.default),
   },
   {
@@ -426,10 +417,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadWalletApiAdapter: () => import("../families/xrp/walletApiAdapter").then(m => m.default),
     loadPlatformAdapter: () => import("../families/xrp/platformAdapter").then(m => m.default),
     loadMockBridge: () => import("../families/xrp/bridge/mock").then(m => m.default),
-    loadValidateAddress: () =>
-      import("@ledgerhq/coin-xrp/api/validateAddress").then(
-        ({ validateAddress }): ValidateAddressFn => validateAddress,
-      ),
     loadSigner: () => import("../families/xrp/signer").then(m => m.default),
     loadBridgeExtensions: () => import("../families/xrp/bridgeExtensions").then(m => m.default),
   },

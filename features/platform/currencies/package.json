@@ -24,14 +24,14 @@
     "@domain/api-currency-token": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
     "@domain/entity-currency-token": "workspace:^",
-    "@features/platform-feature-flags": "workspace:^"
+    "@features/platform-feature-flags": "workspace:^",
+    "@reduxjs/toolkit": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
-    "@reduxjs/toolkit": "catalog:",
     "@shared/feature-flags": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

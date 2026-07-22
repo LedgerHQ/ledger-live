@@ -1,5 +1,8 @@
 # @domain/entity-currency-fiat
 
+> [!CAUTION]
+> **Status: UNSTABLE** — Part of the emerging DDD layer; under active development.
+
 Zod-first canonical schema and static registry for the `FiatCurrency` domain entity.
 
 ## Responsibility

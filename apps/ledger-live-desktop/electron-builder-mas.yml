@@ -1,0 +1,63 @@
+# Mac App Store packaging, shared by all channels. Re-uses the CDN .webpack via
+# `tools/dist --mas --dirty`; per-channel deltas (appId, resources, icon) + signing
+# values are injected as -c overrides. appId below is an intentionally invalid
+# fail-safe: a missing override fails signing instead of defaulting to prod.
+appId: invalid.mas.appid.override-required
+
+protocols:
+  name: Ledger Wallet
+  schemes:
+    - ledgerlive
+    - ledgerwallet
+
+# No afterSign/notarize: App Store submissions are reviewed by Apple, not notarized.
+afterPack: scripts/afterPack.js
+
+mac:
+  artifactName: ${name}-${version}-mac-${arch}.${ext}
+  category: public.app-category.finance
+  hardenedRuntime: true
+  target:
+    - target: mas
+      arch:
+        - universal
+  extendInfo:
+    # Auto-clears App Store export compliance (only exempt encryption); mirrors mobile.
+#    ITSAppUsesNonExemptEncryption: false
+
+mas:
+  type: distribution
+  entitlements: ./build/mac/entitlements.mas.plist
+  entitlementsInherit: ./build/mac/entitlements.mas.inherit.plist
+
+files:
+  - .webpack/**/*
+  - "!.webpack/**/*.js.map"
+  - "node_modules/@ledgerhq/zcash-utils/**/*"
+  - from: "dist/node_modules"
+    to: "node_modules"
+    filter:
+      - "**/*"
+      - "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}"
+      - "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}"
+      - "!**/node_modules/*.d.ts"
+      - "!**/node_modules/.bin"
+      - "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}"
+      - "!.editorconfig"
+      - "!**/._*"
+      - "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}"
+      - "!**/{__pycache__,thumbs.db,.idea,.vs,.nyc_output}"
+      - "!**/{appveyor.yml,.travis.yml,circle.yml}"
+      - "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
+      - "!**/Makefile"
+      - "!**/*.{gyp,gypi,mk,Makefile}"
+      - "!**/build/**/*"
+      - "**/build/**/*.{js,cjs,mjs}"
+      - "**/*.node"
+  - "!node_modules"
+
+buildDependenciesFromSource: false
+npmRebuild: false
+
+asarUnpack:
+  - "node_modules/@ledgerhq/zcash-utils/**/*"

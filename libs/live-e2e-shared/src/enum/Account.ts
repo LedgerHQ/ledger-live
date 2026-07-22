@@ -20,7 +20,6 @@ export class Account {
 
   static readonly ALGO_1 = new Account(Currency.ALGO, "Algorand 1", 0, "44'/283'/0'/0/0");
   static readonly ALGO_2 = new Account(Currency.ALGO, "Algorand 2", 1, "44'/283'/1'/0/0");
-
   // Algorand account without ASA (tokens) for specific scenarios
   static readonly ALGO_3 = new Account(Currency.ALGO, "Algorand 3", 2, "44'/283'/2'/0/0");
 
@@ -249,6 +248,7 @@ export class Account {
 
   static readonly XLM_1 = new Account(Currency.XLM, "Stellar 1", 0, "44'/148'/0'");
   static readonly XLM_2 = new Account(Currency.XLM, "Stellar 2", 1, "44'/148'/1'");
+  static readonly XLM_3 = new Account(Currency.XLM, "Stellar 3", 2, "44'/148'/2'");
 
   static readonly XRP_1 = new Account(Currency.XRP, "XRP 1", 0, "44'/144'/0'/0/0");
   static readonly XRP_2 = new Account(Currency.XRP, "XRP 2", 1, "44'/144'/1'/0/0");
@@ -360,7 +360,7 @@ export class TokenAccount extends Account {
 
   static readonly ETH_USDT_1 = new TokenAccount(
     Currency.ETH_USDT,
-    "Tether USD 1",
+    "(Ethereum) Tether USD 1",
     0,
     Account.ETH_1.accountPath,
     TokenType.ERC20,
@@ -369,7 +369,7 @@ export class TokenAccount extends Account {
 
   static readonly ETH_USDT_2 = new TokenAccount(
     Currency.ETH_USDT,
-    "Tether USD 2",
+    "(Ethereum) Tether USD 2",
     1,
     Account.ETH_2.accountPath,
     TokenType.ERC20,
@@ -387,7 +387,7 @@ export class TokenAccount extends Account {
 
   static readonly SOL_GIGA_1 = new TokenAccount(
     Currency.SOL_GIGA,
-    "GIGACHAD 1",
+    "(Solana) GIGACHAD 1",
     0,
     Account.SOL_1.accountPath,
     TokenType.SPL,
@@ -398,7 +398,7 @@ export class TokenAccount extends Account {
   );
   static readonly SOL_GIGA_2 = new TokenAccount(
     Currency.SOL_GIGA,
-    "GIGACHAD 2",
+    "(Solana) GIGACHAD 2",
     1,
     Account.SOL_2.accountPath,
     TokenType.SPL,
@@ -479,7 +479,7 @@ export class TokenAccount extends Account {
   );
   static readonly ALGO_USDT_1 = new TokenAccount(
     Currency.ALGO_USDT,
-    "Tether USDt 1",
+    "(Algorand) Tether USDt 1",
     0,
     Account.ALGO_1.accountPath,
     TokenType.ERC20,
@@ -487,7 +487,7 @@ export class TokenAccount extends Account {
   );
   static readonly ALGO_USDT_2 = new TokenAccount(
     Currency.ALGO_USDT,
-    "Tether USDt 2",
+    "(Algorand) Tether USDt 2",
     1,
     Account.ALGO_2.accountPath,
     TokenType.ERC20,
@@ -496,11 +496,20 @@ export class TokenAccount extends Account {
 
   static readonly XLM_USDC = new TokenAccount(
     Currency.XLM_USDC,
-    "USDC 1",
+    "(Stellar) USDC 1",
     0,
     Account.XLM_1.accountPath,
     TokenType.ERC20,
     Account.XLM_1,
+  );
+
+  static readonly XLM_USDC_3 = new TokenAccount(
+    Currency.XLM_USDC,
+    "(Stellar) USDC 3",
+    2,
+    Account.XLM_3.accountPath,
+    TokenType.ERC20,
+    Account.XLM_3,
   );
 
   static readonly POL_DAI_1 = new TokenAccount(
@@ -521,11 +530,35 @@ export class TokenAccount extends Account {
   );
   static readonly TRX_USDT = new TokenAccount(
     Currency.TRX_USDT,
-    "Tron 1",
+    "(Tron) USDT 1",
     0,
     "44'/195'/0'/0/0",
     TokenType.TRC20,
     Account.TRX_1,
+  );
+  static readonly TRX_USDT_2 = new TokenAccount(
+    Currency.TRX_USDT,
+    "(Tron) USDT 2",
+    1,
+    "44'/195'/1'/0/0",
+    TokenType.TRC20,
+    Account.TRX_2,
+  );
+  static readonly BASE_AERODROME_1 = new TokenAccount(
+    Currency.BASE_AERODROME,
+    "(Base) Aerodrome 1",
+    0,
+    Account.BASE_1.accountPath,
+    TokenType.ERC20,
+    Account.BASE_1,
+  );
+  static readonly BASE_AERODROME_2 = new TokenAccount(
+    Currency.BASE_AERODROME,
+    "(Base) Aerodrome 2",
+    1,
+    Account.BASE_2.accountPath,
+    TokenType.ERC20,
+    Account.BASE_2,
   );
 }
 

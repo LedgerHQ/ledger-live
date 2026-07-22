@@ -1,7 +1,7 @@
 import { act } from "@testing-library/react-native";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { usdcToken, maticEth } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { Account } from "@ledgerhq/types-live";

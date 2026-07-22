@@ -1,5 +1,4 @@
 import { defineCommand } from "@bunli/core";
-import { DeviceOnDashboardExpected, UserRefusedAllowManager } from "@ledgerhq/errors";
 import { getGenuineCheckFromDeviceId } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
 import type { GetGenuineCheckFromDeviceIdResult } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
 import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError";
@@ -27,10 +26,10 @@ function mapGenuineCheckError(error: unknown): unknown {
   if (isCounterfeitError(error)) {
     return new NonGenuineDeviceError();
   }
-  if (error instanceof UserRefusedAllowManager) {
+  if ((error as { name?: string })?.name === "UserRefusedAllowManager") {
     return new WalletCliDeviceError({ code: "rejected", context: "open_app" }, { cause: error });
   }
-  if (error instanceof DeviceOnDashboardExpected) {
+  if ((error as { name?: string })?.name === "DeviceOnDashboardExpected") {
     return new WalletCliDeviceError(
       { code: "wrong_app", expected: "Ledger dashboard" },
       { cause: error },

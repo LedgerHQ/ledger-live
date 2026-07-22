@@ -1,5 +1,5 @@
 import { AccountBridge } from "@ledgerhq/types-live";
-import { validateAddress } from "@zondax/ledger-live-icp";
+import { validateAddress } from "../logic/validation";
 import { Transaction } from "../types";
 import { getAddress } from "./bridgeHelpers/addresses";
 
@@ -16,7 +16,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   if (recipient && address) {
     // log("debug", "[prepareTransaction] fetching estimated fees");
 
-    if ((await validateAddress(recipient)).isValid && (await validateAddress(address)).isValid) {
+    if (validateAddress(recipient).isValid && validateAddress(address).isValid) {
       if (transaction.useAllAmount) {
         amount = account.spendableBalance.minus(transaction.fees);
         return { ...transaction, amount };

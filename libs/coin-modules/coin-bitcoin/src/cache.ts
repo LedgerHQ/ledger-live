@@ -5,7 +5,7 @@ import type { Account } from "@ledgerhq/types-live";
 import getFeesForTransaction from "./getFeesForTransaction";
 import { isValidRecipient } from "./logic";
 import type { Transaction } from "./types";
-import { Currency, isTaprootAddress } from "./wallet-btc";
+import { Currency, isTaprootAddress } from "@ledgerhq/wallet-btc/index";
 
 const getCacheKeyForCalculateFees = ({
   account,

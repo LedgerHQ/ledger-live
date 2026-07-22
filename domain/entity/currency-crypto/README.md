@@ -1,5 +1,8 @@
 # @domain/entity-currency-crypto
 
+> [!CAUTION]
+> **Status: UNSTABLE** — Part of the emerging DDD layer; under active development.
+
 Zod-first canonical schema and static registry for the `CryptoCurrency` domain entity.
 
 ## Responsibility

@@ -1,5 +1,5 @@
 import { act, renderHook } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { DistributionResult } from "@ledgerhq/live-common/portfolio/useAssetDistribution";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";

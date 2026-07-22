@@ -108,10 +108,10 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Install dependencies
-        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="./libs/**" --no-frozen-lockfile --unsafe-perm
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --unsafe-perm
 
       - name: Build dependencies
-        run: pnpm exec nx run-many -t build --projects=tag:scope:libs
+        run: pnpm exec nx run live-mobile:build-lib-deps
 
       - name: Run unit tests
         shell: bash

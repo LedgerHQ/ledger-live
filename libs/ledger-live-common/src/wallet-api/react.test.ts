@@ -2,13 +2,15 @@
  * @jest-environment jsdom
  */
 import { renderHook, act, cleanup } from "@testing-library/react";
+import BigNumber from "bignumber.js";
+import type { WalletHandlers } from "@ledgerhq/wallet-api-server";
 import { initialState as walletState } from "@ledgerhq/live-wallet/store";
 import { createFixtureAccount } from "../mock/fixtures/cryptoCurrencies";
 import type { TrackingAPI } from "./tracking";
 import type { useWalletAPIServerOptions } from "./react";
 import { AccountPublicKeyUnavailable } from "../errors";
 import { accountGetPublicKeyLogic } from "./logic";
-import { getAccountIdFromWalletAccountId } from "./converters";
+import { getAccountIdFromWalletAccountId, resolveWalletApiSpendableBalance } from "./converters";
 
 const mockSetHandler = jest.fn();
 const mockSetConfig = jest.fn();
@@ -47,6 +49,7 @@ jest.mock("./converters", () => ({
   ...jest.requireActual("./converters"),
   setWalletApiIdForAccountId: jest.fn(),
   getAccountIdFromWalletAccountId: jest.fn(),
+  resolveWalletApiSpendableBalance: jest.fn(),
 }));
 
 jest.mock("./logic", () => ({
@@ -59,9 +62,11 @@ jest.mock("../hw/openTransportAsSubject", () => ({
   default: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/cryptoassets/cal-client/state-manager/api", () => ({
-  endpoints: {
-    getTokensData: { initiate: jest.fn() },
+jest.mock("@domain/api-currency-token", () => ({
+  cryptoAssetsApi: {
+    endpoints: {
+      getTokensData: { initiate: jest.fn() },
+    },
   },
 }));
 
@@ -77,6 +82,11 @@ jest.mock("../currencies", () => ({
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { useWalletAPIServer } = require("./react");
+
+function getRegisteredHandler<Name extends keyof WalletHandlers>(name: Name): WalletHandlers[Name] {
+  const calls = mockSetHandler.mock.calls.filter(([handlerName]) => handlerName === name);
+  return calls[calls.length - 1]?.[1];
+}
 
 function createDefaultOptions(
   overrides?: Partial<useWalletAPIServerOptions>,
@@ -270,11 +280,69 @@ describe("useWalletAPIServer", () => {
   });
 });
 
+describe("account.list handler", () => {
+  const getHandler = () => getRegisteredHandler("account.list");
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("resolves accounts with the spendableBalance from resolveWalletApiSpendableBalance", async () => {
+    const account = createFixtureAccount("01");
+    const spendableBalance = new BigNumber(999);
+    const options = createDefaultOptions({ accounts: [account] });
+
+    jest.mocked(resolveWalletApiSpendableBalance).mockResolvedValue(spendableBalance);
+
+    renderHook(() => useWalletAPIServer(options));
+    const result = await getHandler()({});
+
+    expect(result).toEqual([expect.objectContaining({ spendableBalance })]);
+    expect(resolveWalletApiSpendableBalance).toHaveBeenCalledTimes(1);
+    expect(resolveWalletApiSpendableBalance).toHaveBeenCalledWith(account, account);
+  });
+});
+
+describe("account.request handler", () => {
+  const getHandler = () => getRegisteredHandler("account.request");
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("resolves with the spendableBalance from resolveWalletApiSpendableBalance", async () => {
+    const account = createFixtureAccount("01");
+    const spendableBalance = new BigNumber(777);
+
+    jest.mocked(resolveWalletApiSpendableBalance).mockResolvedValue(spendableBalance);
+    const uiAccountRequest = jest.fn(({ onSuccess }) => {
+      onSuccess(account, undefined);
+    });
+
+    const options = createDefaultOptions({
+      accounts: [account],
+      uiHook: { "account.request": uiAccountRequest },
+    });
+
+    renderHook(() => useWalletAPIServer(options));
+    const result = await getHandler()({});
+
+    expect(result).toEqual(expect.objectContaining({ spendableBalance }));
+    expect(resolveWalletApiSpendableBalance).toHaveBeenCalledTimes(1);
+    expect(resolveWalletApiSpendableBalance).toHaveBeenCalledWith(account, undefined);
+  });
+});
+
 describe("account.getPublicKey handler", () => {
-  const getHandler = () => {
-    const calls = mockSetHandler.mock.calls.filter(([name]) => name === "account.getPublicKey");
-    return calls[calls.length - 1]?.[1] as (arg: { accountId: string }) => Promise<string>;
-  };
+  const getHandler = () => getRegisteredHandler("account.getPublicKey");
 
   beforeEach(() => {
     jest.clearAllMocks();

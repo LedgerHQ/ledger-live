@@ -1,5 +1,8 @@
 ## speculos-transport
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Live speculos transport test helper
 
 ## API

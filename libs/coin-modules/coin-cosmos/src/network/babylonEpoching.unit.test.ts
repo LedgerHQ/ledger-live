@@ -3,6 +3,7 @@ import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { CosmosDelegation } from "../types";
 import {
+  estimateEpochedUnbondingCompletion,
   fetchQueuedStakingMessages,
   mergeQueuedMessages,
   parseQueuedMessage,
@@ -374,5 +375,45 @@ describe("fetchQueuedStakingMessages", () => {
     const result = await fetchQueuedStakingMessages(endpoint, address, "ubbn");
 
     expect(result).toBeNull();
+  });
+});
+
+describe("estimateEpochedUnbondingCompletion", () => {
+  const DAY_MS = 86_400_000;
+  const BLOCK_MS = 10_000;
+
+  it("anchors a just-created unbonding at now + the effective unbonding period", () => {
+    const before = Date.now();
+    const completion = estimateEpochedUnbondingCompletion(4_016_160, 4_016_160, 2);
+    const after = Date.now();
+    expect(completion.getTime()).toBeGreaterThanOrEqual(before + 2 * DAY_MS);
+    expect(completion.getTime()).toBeLessThanOrEqual(after + 2 * DAY_MS);
+  });
+
+  it("subtracts elapsed block time so the completion counts down from the on-chain start", () => {
+    const elapsedBlocks = 4_320; // ~12h at 10s/block
+    const before = Date.now();
+    const completion = estimateEpochedUnbondingCompletion(4_016_160, 4_016_160 + elapsedBlocks, 2);
+    const after = Date.now();
+    const offsetMs = 2 * DAY_MS - elapsedBlocks * BLOCK_MS;
+    expect(completion.getTime()).toBeGreaterThanOrEqual(before + offsetMs);
+    expect(completion.getTime()).toBeLessThanOrEqual(after + offsetMs);
+  });
+
+  it("clamps elapsed time to zero when the current height is behind the creation height", () => {
+    const before = Date.now();
+    const completion = estimateEpochedUnbondingCompletion(4_016_200, 4_016_160, 2);
+    const after = Date.now();
+    expect(completion.getTime()).toBeGreaterThanOrEqual(before + 2 * DAY_MS);
+    expect(completion.getTime()).toBeLessThanOrEqual(after + 2 * DAY_MS);
+  });
+
+  it("never returns a completion in the past once elapsed exceeds the unbonding period", () => {
+    const elapsedBlocks = 5 * 24 * 60 * 6; // ~5 days at 10s/block, well past the 2-day period
+    const before = Date.now();
+    const completion = estimateEpochedUnbondingCompletion(1_000, 1_000 + elapsedBlocks, 2);
+    const after = Date.now();
+    expect(completion.getTime()).toBeGreaterThanOrEqual(before);
+    expect(completion.getTime()).toBeLessThanOrEqual(after);
   });
 });

@@ -9,7 +9,7 @@ import {
   decodeAccountId,
   emptyHistoryCache,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account, AccountUserData } from "@ledgerhq/types-live";
 
 export type AccountData = {

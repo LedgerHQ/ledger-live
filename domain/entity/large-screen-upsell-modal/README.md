@@ -1,5 +1,8 @@
 # @domain/entity-large-screen-upsell-modal
 
+> [!CAUTION]
+> **Status: UNSTABLE** — In active development as part of the large-screen upsell feature.
+
 Domain entity for the large-screen upsell modal's display-frequency state: how many times it has
 been shown (`retries`) and when it was last shown (`lastSeenAt`).
 

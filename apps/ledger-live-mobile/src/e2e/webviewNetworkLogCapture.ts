@@ -1,6 +1,6 @@
 /**
  * Injected script to capture fetch/XHR network traffic inside WebViews during e2e tests.
- * Posts log entries to React Native via postMessage for attachment to Allure (like desktop WebviewLogCollector).
+ * Posts log entries to React Native via postMessage for attachment to Allure (like desktop PageLogCollector).
  * No outer IIFE (RN WebView injects the source as-is); locals are block-scoped with let/const. Ends with `true` for RN WebView.
  */
 

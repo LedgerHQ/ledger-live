@@ -4,9 +4,14 @@ type ContactsDetailPaneProps = Readonly<{
   children?: ReactNode;
 }>;
 
-export function ContactsDetailPane({ children }: ContactsDetailPaneProps): React.ReactNode {
+export function ContactsDetailPane({
+  children,
+}: ContactsDetailPaneProps): React.ReactNode {
   return (
-    <div className="min-w-0 flex-1 rounded-lg bg-surface" data-testid="contacts-detail-pane">
+    <div
+      className="min-w-0 flex-1 rounded-lg bg-section"
+      data-testid="contacts-detail-pane"
+    >
       {children}
     </div>
   );

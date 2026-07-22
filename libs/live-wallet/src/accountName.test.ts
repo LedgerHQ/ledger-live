@@ -1,6 +1,6 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getDefaultAccountName, normalizeName, MAX_ACCOUNT_NAME_LENGTH } from "./accountName";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 const mockAccount = genAccount("mockAccount", {
   currency: getCryptoCurrencyById("ethereum"),

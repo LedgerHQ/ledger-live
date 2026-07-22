@@ -7,6 +7,7 @@ const emptyData = () => ({
   pagination: { nextCursor: "" },
 });
 
+/** @deprecated Use @features/platform-currencies. */
 export function useTokensData(params: GetTokensDataParams) {
   const {
     data,

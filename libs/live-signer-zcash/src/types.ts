@@ -58,6 +58,12 @@ export type SignerTransactionLike = {
   nVersionGroupId?: Uint8Array;
   nExpiryHeight?: Uint8Array;
   extraData?: Uint8Array;
+  // Raw hex of the source transaction. Set by the Zcash createSigner wrapper
+  // around splitTransaction so toLegacyTransaction can populate
+  // serializedPreviousTransactionOverride — required for any source tx that
+  // carries a shielded bundle (Orchard), whose bytes are stripped by
+  // serializeTransaction, causing the device to compute a wrong ZIP-244 txid.
+  rawTxHex?: string;
 };
 
 /**

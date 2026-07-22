@@ -1,5 +1,5 @@
 import cashaddr from "cashaddrjs";
-import { Currency, isValidAddress } from "./wallet-btc";
+import { Currency, isValidAddress } from "@ledgerhq/wallet-btc/index";
 import { RecipientRequired, InvalidAddress } from "@ledgerhq/errors";
 import type {
   BitcoinOutput,
@@ -10,7 +10,7 @@ import type {
   BtcOperation,
 } from "./types";
 import { $Shape } from "utility-types";
-import type { TX, Input as WalletInput, Output as WalletOutput } from "./wallet-btc";
+import type { TX, Input as WalletInput, Output as WalletOutput } from "@ledgerhq/wallet-btc/index";
 import { BigNumber } from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/ledger-wallet-framework/types";

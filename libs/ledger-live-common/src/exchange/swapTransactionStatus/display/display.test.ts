@@ -1,7 +1,9 @@
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "../../../currencies/index";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import {
+  findSwapSendOperation,
   formatSwapTransactionStatusAmount,
   formatSwapTransactionStatusCreatedAt,
   formatSwapTransactionStatusFeesAmount,
@@ -28,6 +30,7 @@ const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
 const polygon = getCryptoCurrencyById("polygon");
 const ton = getCryptoCurrencyById("ton");
+const hedera = getCryptoCurrencyById("hedera");
 const usdcPolygon: TokenCurrency = {
   type: "TokenCurrency",
   id: "polygon/erc20/usd_coin",
@@ -71,6 +74,46 @@ describe("resolveSwapTransactionStatusAccountLike", () => {
   it("should return undefined when the account cannot be resolved", () => {
     expect(resolveSwapTransactionStatusAccountLike([], "missing-account")).toBeUndefined();
     expect(resolveSwapTransactionStatusAccountLike([], undefined)).toBeUndefined();
+  });
+});
+
+describe("findSwapSendOperation", () => {
+  const makeAccount = (
+    id: string,
+    operations: Partial<Operation>[],
+    pendingOperations: Partial<Operation>[] = [],
+  ): AccountLike =>
+    ({
+      id,
+      operations: operations as Operation[],
+      pendingOperations: pendingOperations as Operation[],
+    }) as AccountLike;
+
+  it("should find a confirmed operation matching the hash", () => {
+    const accounts = [
+      makeAccount("account-1", [{ hash: "hash-a", extra: { transactionId: "tx-a" } }]),
+      makeAccount("account-2", [{ hash: "hash-b", extra: { transactionId: "tx-b" } }]),
+    ];
+
+    expect(findSwapSendOperation(accounts, "hash-b")?.extra).toEqual({ transactionId: "tx-b" });
+  });
+
+  it("should find a pending operation matching the hash", () => {
+    const accounts = [
+      makeAccount("account-1", [], [{ hash: "pending-hash", extra: { transactionId: "tx-p" } }]),
+    ];
+
+    expect(findSwapSendOperation(accounts, "pending-hash")?.extra).toEqual({
+      transactionId: "tx-p",
+    });
+  });
+
+  it("should return undefined when the hash is missing or unknown", () => {
+    const accounts = [makeAccount("account-1", [{ hash: "hash-a" }])];
+
+    expect(findSwapSendOperation(accounts, undefined)).toBeUndefined();
+    expect(findSwapSendOperation(accounts, "unknown")).toBeUndefined();
+    expect(findSwapSendOperation([], "hash-a")).toBeUndefined();
   });
 });
 
@@ -231,6 +274,52 @@ describe("getSwapTransactionStatusExplorerUrl", () => {
           `https://tonviewer.com/transaction/by-msg-hash/${operation.hash}`,
       }),
     ).toBe("https://tonviewer.com/transaction/by-msg-hash/ton-hash-1");
+  });
+
+  it("should pass the resolved operation (with its extra) to the family transaction explorer", () => {
+    // Simulates Hedera: the explorer URL is derived from `operation.extra`, not the hash.
+    const hederaGetTransactionExplorer = (_explorerView: unknown, operation: Operation) =>
+      `https://hashscan.io/mainnet/transaction/${
+        (operation.extra as { consensusTimestamp?: string; transactionId?: string })
+          ?.consensusTimestamp ??
+        (operation.extra as { transactionId?: string })?.transactionId ??
+        "0"
+      }`;
+
+    const operation = {
+      hash: "base64-tx-hash",
+      extra: { transactionId: "0.0.1234567-123-123" },
+    } as unknown as Operation;
+
+    expect(
+      getSwapTransactionStatusExplorerUrl({
+        provider: "custom-provider",
+        swapId: "swap-1",
+        operationHash: "base64-tx-hash",
+        operation,
+        fromCurrency: hedera,
+        getTransactionExplorer: hederaGetTransactionExplorer,
+      }),
+    ).toBe("https://hashscan.io/mainnet/transaction/0.0.1234567-123-123");
+  });
+
+  it("should fall back to a synthetic operation when no operation is resolved", () => {
+    const captured: Operation[] = [];
+    getSwapTransactionStatusExplorerUrl({
+      provider: "custom-provider",
+      swapId: "swap-1",
+      operationHash: "base64-tx-hash",
+      operation: undefined,
+      fromCurrency: hedera,
+      getTransactionExplorer: (_explorerView, operation) => {
+        captured.push(operation);
+        return `https://explorer.test/tx/${operation.hash}`;
+      },
+    });
+
+    expect(captured).toHaveLength(1);
+    expect(captured[0].hash).toBe("base64-tx-hash");
+    expect(captured[0].extra).toEqual({});
   });
 
   it("should not build provider hash URLs when the operation hash is missing", () => {

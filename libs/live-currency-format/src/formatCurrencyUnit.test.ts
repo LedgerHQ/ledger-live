@@ -1,16 +1,12 @@
-import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
+import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
 import { formatCurrencyUnit, formatCurrencyUnitFragment } from "./formatCurrencyUnit";
 import { BigNumber } from "bignumber.js";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 
-const testCases: { name: string; unit: Unit }[] = Object.values(cryptocurrenciesById).map(
-  currency => {
-    return {
-      name: currency.name,
-      unit: currency.units[0],
-    };
-  },
-);
+const testCases: { name: string; unit: Unit }[] = listCryptoCurrencies(true).map(currency => ({
+  name: currency.name,
+  unit: currency.units[0],
+}));
 
 const localeTestCases = [
   "en-US",

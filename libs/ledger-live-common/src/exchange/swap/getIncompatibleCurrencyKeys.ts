@@ -95,6 +95,10 @@ const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
     title: "swap.incompatibility.zcash_title",
     description: "swap.incompatibility.zcash_description",
   },
+  aleo: {
+    title: "swap.incompatibility.aleo_title",
+    description: "swap.incompatibility.aleo_description",
+  },
 };
 
 export const getIncompatibleCurrencyKeys = (exchange: ExchangeSwap) => {

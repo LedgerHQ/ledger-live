@@ -110,7 +110,15 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
   it("should auto-open the upsell modal when eligible and unblocked", async () => {
     const overrideInitialState = withFlagOverrides(
       {
-        largeScreenUpsell: { enabled: true },
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
+          },
+        },
         lwmProductTour: { enabled: false },
         lwmGenericAwarenessModal: { enabled: false },
         analyticsOptIn: { enabled: false },
@@ -131,7 +139,15 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
   it("should track the modal view with shared analytics properties when it auto-opens", async () => {
     const overrideInitialState = withFlagOverrides(
       {
-        largeScreenUpsell: { enabled: true },
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
+          },
+        },
         lwmProductTour: { enabled: false },
         lwmGenericAwarenessModal: { enabled: false },
         analyticsOptIn: { enabled: false },
@@ -156,7 +172,15 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
   it("should track opted-in offer properties when personalized recommendations are enabled", async () => {
     const overrideInitialState = withFlagOverrides(
       {
-        largeScreenUpsell: { enabled: true },
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_in: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
+          },
+        },
         lwmProductTour: { enabled: false },
         lwmGenericAwarenessModal: { enabled: false },
         analyticsOptIn: { enabled: false },
@@ -180,10 +204,76 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
     });
   });
 
+  it("should not open when the opted-out variant is disabled", async () => {
+    const overrideInitialState = withFlagOverrides(
+      {
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_out: {
+              enabled: false,
+              link: "https://shop.ledger.com/pages/opted-out-offer",
+            },
+          },
+        },
+        lwmProductTour: { enabled: false },
+        lwmGenericAwarenessModal: { enabled: false },
+        analyticsOptIn: { enabled: false },
+      },
+      withKnownDeviceModels([DeviceModelId.nanoS]),
+    );
+
+    const { store } = render(<IntegrationNavigator />, { overrideInitialState });
+
+    expect(await screen.findByTestId("large-screen-upsell-integration-portfolio")).toBeVisible();
+    act(() => jest.runOnlyPendingTimers());
+    expect(screen.queryByTestId("large-screen-upsell-modal-drawer")).toBeNull();
+    expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
+    expect(jest.mocked(analyticsScreen)).not.toHaveBeenCalled();
+  });
+
+  it("should not open when the opted-in variant is disabled", async () => {
+    const overrideInitialState = withFlagOverrides(
+      {
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_in: {
+              enabled: false,
+              link: "https://shop.ledger.com/pages/opted-in-offer",
+            },
+          },
+        },
+        lwmProductTour: { enabled: false },
+        lwmGenericAwarenessModal: { enabled: false },
+        analyticsOptIn: { enabled: false },
+      },
+      withKnownDeviceModels([DeviceModelId.nanoS], {
+        personalizedRecommendationsEnabled: true,
+      }),
+    );
+
+    const { store } = render(<IntegrationNavigator />, { overrideInitialState });
+
+    expect(await screen.findByTestId("large-screen-upsell-integration-portfolio")).toBeVisible();
+    act(() => jest.runOnlyPendingTimers());
+    expect(screen.queryByTestId("large-screen-upsell-modal-drawer")).toBeNull();
+    expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
+    expect(jest.mocked(analyticsScreen)).not.toHaveBeenCalled();
+  });
+
   it("should track button_clicked with shared analytics properties when the CTA is pressed", async () => {
     const overrideInitialState = withFlagOverrides(
       {
-        largeScreenUpsell: { enabled: true },
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
+          },
+        },
         lwmProductTour: { enabled: false },
         lwmGenericAwarenessModal: { enabled: false },
         analyticsOptIn: { enabled: false },
@@ -210,7 +300,15 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
   it("should track modal_dismissed with dismissMethod close button exactly once when the header close button is pressed", async () => {
     const overrideInitialState = withFlagOverrides(
       {
-        largeScreenUpsell: { enabled: true },
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
+          },
+        },
         lwmProductTour: { enabled: false },
         lwmGenericAwarenessModal: { enabled: false },
         analyticsOptIn: { enabled: false },
@@ -243,7 +341,15 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
   it("should auto-open the upsell modal when product tour is enabled but onboarding is not completed", async () => {
     const overrideInitialState = withFlagOverrides(
       {
-        largeScreenUpsell: { enabled: true },
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
+          },
+        },
         lwmProductTour: { enabled: true },
         lwmGenericAwarenessModal: { enabled: false },
         analyticsOptIn: { enabled: false },
@@ -267,7 +373,15 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
   it("should not auto-open the upsell modal when a competing app-start modal opens after mount", async () => {
     const overrideInitialState = withFlagOverrides(
       {
-        largeScreenUpsell: { enabled: true },
+        largeScreenUpsell: {
+          enabled: true,
+          params: {
+            opted_out: {
+              enabled: true,
+              link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+            },
+          },
+        },
         lwmProductTour: { enabled: false },
         lwmGenericAwarenessModal: { enabled: false },
         analyticsOptIn: { enabled: false },

@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, IconButton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { type LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
@@ -9,6 +8,7 @@ import { useTranslation } from "~/context/Locale";
 import {
   TOP_BAR_CONTENT_HEIGHT,
   TOP_BAR_WRAPPER_PADDING_TOP,
+  useAdjustedSafeAreaInsets,
 } from "LLM/hooks/useNavigationBarHeights";
 
 type SwapOpaqueHeaderProps = {
@@ -28,7 +28,7 @@ export function SwapOpaqueHeader({
   showBackButton = true,
   titleKey,
 }: Readonly<SwapOpaqueHeaderProps>) {
-  const insets = useSafeAreaInsets();
+  const insets = useAdjustedSafeAreaInsets();
   const { theme: lumenTheme } = useLumenTheme();
   const { t } = useTranslation();
   const containerStyle = useMemo(

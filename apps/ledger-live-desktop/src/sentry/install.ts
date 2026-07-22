@@ -4,6 +4,7 @@ import { ElectronMainOptions } from "@sentry/electron/main";
 import pname from "./pname";
 import anonymizer from "./anonymizer";
 import { getOperatingSystemSupportStatus } from "~/support/os";
+import { getDistributionChannel } from "~/helpers/distributionChannel";
 
 /* eslint-disable no-continue */
 
@@ -128,6 +129,7 @@ export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMai
         osType: os.type(),
         osRelease: os.release(),
         process: process?.title || "",
+        distributionChannel: getDistributionChannel(),
       },
       user: {
         ip_address: undefined,

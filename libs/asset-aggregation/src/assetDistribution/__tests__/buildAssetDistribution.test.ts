@@ -7,7 +7,7 @@ import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 
 const mockFindCryptoCurrencyById = jest.fn();
 
-jest.mock("@ledgerhq/cryptoassets", () => ({
+jest.mock("@domain/entity-currency-crypto", () => ({
   findCryptoCurrencyById: (...args: unknown[]) => mockFindCryptoCurrencyById(...args),
 }));
 

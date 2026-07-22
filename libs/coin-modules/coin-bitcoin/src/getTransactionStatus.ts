@@ -19,12 +19,12 @@ import type {
   TransactionStatus,
 } from "./types";
 import { calculateFees, validateRecipient, isTaprootRecipient } from "./cache";
-import { OP_RETURN_DATA_SIZE_LIMIT } from "./wallet-btc/crypto/base";
-import cryptoFactory from "./wallet-btc/crypto/factory";
-import { computeDustAmount } from "./wallet-btc/utils";
+import { OP_RETURN_DATA_SIZE_LIMIT } from "@ledgerhq/wallet-btc/crypto/base";
+import cryptoFactory from "@ledgerhq/wallet-btc/crypto/factory";
+import { computeDustAmount } from "@ledgerhq/wallet-btc/utils";
 import { TaprootNotActivated, FeeTooLow, ZcashSaplingRecipientNotSupported } from "./errors";
 import { classifyZcashRecipient } from "./chain-adapters/zcash/address";
-import { Currency } from "./wallet-btc";
+import { Currency } from "@ledgerhq/wallet-btc/index";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import { getChainAdapter } from "./chain-adapters/registry";

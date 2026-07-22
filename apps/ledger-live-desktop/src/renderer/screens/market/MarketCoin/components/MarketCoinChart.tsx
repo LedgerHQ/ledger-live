@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
 import { formatPercentage } from "../../utils";
 import { roundFiatPrice } from "@ledgerhq/live-currency-format";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 const Title = styled(Text).attrs({ variant: "h3", color: "neutral.c100", mt: 1, mb: 5 })`
   font-size: 28px;
@@ -52,19 +53,19 @@ const ranges = Object.keys(rangeDataTable)
 
 type TooltipProps = {
   data: { date: Date; value: number };
-  counterCurrency: string;
+  counterValueUnit: Unit;
   locale: string;
   formatDay: (date: Date) => string;
   formatHour: (date: Date) => string;
 };
 
-function Tooltip({ data, counterCurrency, locale, formatDay, formatHour }: TooltipProps) {
+function Tooltip({ data, counterValueUnit, locale, formatDay, formatHour }: TooltipProps) {
   return (
     <Flex flexDirection="column" p={1}>
       <TooltipText variant="large">
         {counterValueFormatter({
           shorten: String(data.value).length > 7,
-          currency: counterCurrency,
+          unit: counterValueUnit,
           value: data.value,
           locale,
         })}
@@ -81,6 +82,7 @@ type Props = {
   chartData?: MarketCoinDataChart;
   range: string;
   counterCurrency: string;
+  counterValueUnit: Unit;
   refreshChart: (range: string) => void;
   color?: string;
   locale: string;
@@ -95,6 +97,7 @@ function MarkeCoinChartComponent({
   priceChangePercentage,
   range,
   counterCurrency,
+  counterValueUnit,
   refreshChart,
   color,
   locale,
@@ -135,17 +138,16 @@ function MarkeCoinChartComponent({
 
   const renderTooltip = useCallback(
     (data: { value: number; date: Date }) =>
-      !loading &&
-      counterCurrency && (
+      !loading && (
         <Tooltip
           data={data}
-          counterCurrency={counterCurrency.toUpperCase()}
+          counterValueUnit={counterValueUnit}
           locale={locale}
           formatDay={formatDay}
           formatHour={formatHour}
         />
       ),
-    [counterCurrency, loading, locale, formatDay, formatHour],
+    [counterValueUnit, loading, locale, formatDay, formatHour],
   );
 
   return (
@@ -155,7 +157,7 @@ function MarkeCoinChartComponent({
           <SubTitle>{t("market.marketList.price")}</SubTitle>
           <Title data-testid={"market-price"}>
             {counterValueFormatter({
-              currency: counterCurrency,
+              unit: counterValueUnit,
               value: roundFiatPrice(price ?? 0),
               locale,
             })}

@@ -90,7 +90,7 @@ describe("useNavigateToPostOnboardingHubCallback", () => {
     const { result, store } = renderNavigateHook({
       ...featureFlagsWithRecover(),
       postOnboarding: postOnboardingState(),
-      settings: { hasBeenRedirectedToPostOnboarding: false },
+      settings: { hasBeenRedirectedToPostOnboarding: false, hasBeenUpsoldRecover: false },
     });
 
     act(() => {
@@ -116,14 +116,14 @@ describe("useNavigateToPostOnboardingHubCallback", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith("/", { replace: true });
     expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(true);
-    expect(mockNavigate).not.toHaveBeenCalledWith(RECOVER_LANDING_PATH);
+    expect(mockNavigate).not.toHaveBeenCalledWith(RECOVER_LANDING_PATH, expect.anything());
   });
 
   it("should not reopen finish dialog when already redirected with Wallet40 enabled", () => {
     const { result, store } = renderNavigateHook({
       ...featureFlagsWithRecover(),
       postOnboarding: postOnboardingState(),
-      settings: { hasBeenRedirectedToPostOnboarding: true },
+      settings: { hasBeenRedirectedToPostOnboarding: true, hasBeenUpsoldRecover: false },
       dialogs: { FINISH_POST_ONBOARDING: false },
     });
 
@@ -139,7 +139,7 @@ describe("useNavigateToPostOnboardingHubCallback", () => {
     const { result } = renderNavigateHook({
       ...featureFlagsWithRecover(),
       postOnboarding: postOnboardingState(),
-      settings: { hasBeenRedirectedToPostOnboarding: false },
+      settings: { hasBeenRedirectedToPostOnboarding: false, hasBeenUpsoldRecover: false },
     });
 
     act(() => {
@@ -147,6 +147,22 @@ describe("useNavigateToPostOnboardingHubCallback", () => {
     });
 
     expect(mockNavigate).toHaveBeenCalledWith(RECOVER_LANDING_PATH, { replace: false });
+  });
+
+  it("should navigate to portfolio and open finish dialog when recover was already upsold", () => {
+    const { result, store } = renderNavigateHook({
+      ...featureFlagsWithRecover(),
+      postOnboarding: postOnboardingState(),
+      settings: { hasBeenRedirectedToPostOnboarding: false, hasBeenUpsoldRecover: true },
+    });
+
+    act(() => {
+      result.current();
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith("/", { replace: true });
+    expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(true);
+    expect(mockNavigate).not.toHaveBeenCalledWith(RECOVER_LANDING_PATH, expect.anything());
   });
 
   it("should navigate to post-onboarding hub when finish widget is disabled", () => {

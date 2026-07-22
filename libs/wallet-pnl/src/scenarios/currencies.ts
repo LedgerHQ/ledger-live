@@ -1,12 +1,13 @@
 import BigNumber from "bignumber.js";
-import { cryptocurrenciesById, getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { FIAT_CURRENCIES_BY_TICKER } from "@domain/entity-currency-fiat";
 import type { CryptoCurrency, FiatCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-export const BTC: CryptoCurrency = cryptocurrenciesById["bitcoin"];
-export const ETH: CryptoCurrency = cryptocurrenciesById["ethereum"];
+export const BTC: CryptoCurrency = getCryptoCurrencyById("bitcoin");
+export const ETH: CryptoCurrency = getCryptoCurrencyById("ethereum");
 
-export const USD: FiatCurrency = getFiatCurrencyByTicker("USD");
-export const EUR: FiatCurrency = getFiatCurrencyByTicker("EUR");
+export const USD: FiatCurrency = FIAT_CURRENCIES_BY_TICKER["USD"];
+export const EUR: FiatCurrency = FIAT_CURRENCIES_BY_TICKER["EUR"];
 
 export const USDC: TokenCurrency = {
   type: "TokenCurrency",

@@ -1,5 +1,8 @@
 ## live-wallet
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 > This library is the top layer of **Ledger Sync** (Cloud Sync SDK, WalletSyncDataManager,
 > watch loop). See the full technical documentation: [`docs/ledger-sync`](../../docs/ledger-sync/README.md).
 

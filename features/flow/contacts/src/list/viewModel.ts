@@ -21,10 +21,14 @@ function createSavedContactsListItems(contacts: readonly Contact[], normalizedQu
     .filter(
       contact =>
         !contact.isMe &&
-        (normalizedQuery.length === 0 || contact.name.toLowerCase().includes(normalizedQuery)),
+        (normalizedQuery.length === 0 || isContactNameMatching(contact, normalizedQuery)),
     )
     .sort((left, right) => left.name.localeCompare(right.name))
     .map(createContactsListItem);
+}
+
+function isContactNameMatching(contact: Contact, normalizedQuery: string): boolean {
+  return contact.name.toLowerCase().includes(normalizedQuery);
 }
 
 export function createEmptyContactsListViewModel(me: Contact): EmptyContactsListViewModel {
@@ -84,16 +88,22 @@ export function createContactsSearchViewModel(
   }
 
   const savedContacts = createSavedContactsListItems(contacts, normalizedQuery);
+  const matchingMe = isContactNameMatching(me, normalizedQuery)
+    ? createContactsListItem(me)
+    : undefined;
 
-  if (savedContacts.length === 0) {
+  if (savedContacts.length === 0 && !matchingMe) {
     return {
       status: "no-results",
-      ...createEmptyContactsListViewModel(me),
+      displayMode: "empty",
     };
   }
 
   return {
     status: "results",
-    ...createPopulatedContactsListViewModelFromSavedContacts(me, savedContacts),
+    displayMode: "populated",
+    ...(matchingMe ? { me: matchingMe } : {}),
+    savedContacts,
+    sections: createContactsListSections(savedContacts),
   };
 }

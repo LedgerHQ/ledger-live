@@ -149,6 +149,7 @@ export type CurrencyFeatures = {
   currencySeiNetworkEvm: DefaultFeature;
   currencyBerachain: DefaultFeature;
   currencyHyperevm: DefaultFeature;
+  currencyHypercore: DefaultFeature;
   currencyCantonNetwork: DefaultFeature;
   currencyCantonNetworkDevnet: DefaultFeature;
   currencyCantonNetworkTestnet: DefaultFeature;
@@ -240,7 +241,6 @@ export type Features = CurrencyFeatures & {
   lldChatbotSupport: Feature_LldChatbotSupport;
   llmChatbotSupport: Feature_LlmChatbotSupport;
   myLedgerDisplayAppDeveloperName: Feature_MyLedgerDisplayAppDeveloperName;
-  lldActionCarousel: Feature_lldActionCarousel;
   lldRefreshMarketData: Feature_LldRefreshMarketData;
   llmRefreshMarketData: Feature_LlmRefreshMarketData;
   lldWalletSync: Feature_LldWalletSync;
@@ -726,11 +726,6 @@ export type Feature_FetchAdditionalCoins = Feature<{
 export type Feature_LldAnalyticsOptInPrompt = Feature<{
   variant: ABTestingVariants;
   entryPoints: Array<string>;
-}>;
-
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldActionCarousel"]` from `@shared/feature-flags` instead. */
-export type Feature_lldActionCarousel = Feature<{
-  variant: ABTestingVariants;
 }>;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldRefreshMarketData"]` from `@shared/feature-flags` instead. */

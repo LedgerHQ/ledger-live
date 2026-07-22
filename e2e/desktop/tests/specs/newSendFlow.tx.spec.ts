@@ -1,52 +1,13 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
-import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
-import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { buildTags } from "tests/utils/tagsUtils";
+import { NewSendFlowEntry, registerNewSendFlowTests } from "tests/utils/newSendFlowUtils";
 
-function getRequiredFamily(currencyId: string): string {
-  const family = getFamilyByCurrencyId(currencyId);
-  if (!family) {
-    throw new Error(`Missing family for currency ${currencyId}`);
-  }
-  return family;
-}
-
-const NEW_SEND_FLOW_FAMILIES = Array.from(
-  new Set(
-    [
-      Currency.XTZ,
-      Currency.TRX,
-      Currency.ETH,
-      Currency.NEAR,
-      Currency.SOL,
-      Currency.ALGO,
-      Currency.XLM,
-      Currency.XRP,
-      Currency.BTC,
-      Currency.KAS,
-    ].map(currency => getRequiredFamily(currency.id)),
-  ),
-);
-
-const MEMO_STEP_FAMILIES = new Set(
-  [Currency.XLM, Currency.XRP, Currency.SOL].map(currency => getRequiredFamily(currency.id)),
-);
-
-const transactionsNewSendFlow = [
+const nativeSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
     xrayTicket: "B2CQA-2574",
-  },
-  {
-    transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
-    xrayTicket: "B2CQA-2807",
   },
   {
     transaction: new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
@@ -61,7 +22,7 @@ const transactionsNewSendFlow = [
     xrayTicket: "B2CQA-2810",
   },
   {
-    transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001", undefined, "noTag"),
+    transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001"),
     xrayTicket: "B2CQA-2811",
   },
   {
@@ -69,12 +30,12 @@ const transactionsNewSendFlow = [
     xrayTicket: "B2CQA-2812",
   },
   {
-    transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag"),
+    transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001"),
     xrayTicket: "B2CQA-2813",
     bugTicket: "LIVE-29554",
   },
   {
-    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", undefined, "noTag"),
+    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001"),
     xrayTicket: "B2CQA-2816",
   },
   {
@@ -84,89 +45,85 @@ const transactionsNewSendFlow = [
       "0.00001",
       Fee.MEDIUM,
     ),
-    xrayTicket: "B2CQA-3925",
-  },
-  {
-    transaction: new Transaction(Account.ETH_1, Account.ETH_3, "0.0001", Fee.SLOW),
-    xrayTicket: "B2CQA-3924",
+    xrayTicket: "B2CQA-3925, B2CQA-2724",
   },
   {
     transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "0.2"),
     xrayTicket: "B2CQA-3840",
   },
   {
+    transaction: new Transaction(Account.ETH_1, Account.ETH_3, "0.00001", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2714",
+  },
+  {
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.0001"),
+    xrayTicket: "B2CQA-2721",
+  },
+  {
+    transaction: new Transaction(Account.BTC_LEGACY_1, Account.BTC_LEGACY_2, "0.00001", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2722",
+  },
+  {
+    transaction: new Transaction(Account.BTC_SEGWIT_1, Account.BTC_SEGWIT_2, "0.00001", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2723",
+  },
+  {
+    transaction: new Transaction(
+      Account.BTC_TAPROOT_1,
+      Account.BTC_TAPROOT_2,
+      "0.00001",
+      Fee.MEDIUM,
+    ),
+    xrayTicket: "B2CQA-2725",
+  },
+  {
+    transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
+    xrayTicket: "B2CQA-2807",
+    bugTicket: "LIVE-28070",
+  },
+  {
+    transaction: new Transaction(Account.DOT_1, Account.DOT_2, "0.0001"),
+    xrayTicket: "B2CQA-2809",
+  },
+  {
+    transaction: new Transaction(Account.ADA_1, Account.ADA_2, "1"),
+    xrayTicket: "B2CQA-2815",
+  },
+  {
+    transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
+    xrayTicket: "B2CQA-2920",
+  },
+  {
+    transaction: new Transaction(Account.SUI_1, Account.SUI_2, "0.0001"),
+    xrayTicket: "B2CQA-3802",
+  },
+  {
     transaction: new Transaction(Account.BASE_1, Account.BASE_2, "0.000001"),
     xrayTicket: "B2CQA-4225",
+    bugTicket: "LIVE-28070",
+  },
+  {
+    transaction: new Transaction(Account.VET_1, Account.VET_2, "0.1"),
+    xrayTicket: "B2CQA-4247",
+  },
+  {
+    transaction: new Transaction(Account.ZEC_1, Account.ZEC_2, "0.001"),
+    xrayTicket: "B2CQA-4299",
+  },
+  {
+    transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "0.00001"),
+    xrayTicket: "B2CQA-4284",
+  },
+  {
+    transaction: new Transaction(Account.ICP_1, Account.ICP_2, "0.001"),
+    xrayTicket: "B2CQA-4742",
+  },
+  {
+    transaction: new Transaction(Account.OSMO_1, Account.OSMO_2, "0.00001"),
+    xrayTicket: "B2CQA-6112",
   },
 ];
 
-test.describe("New Send Flow", () => {
-  for (const entry of transactionsNewSendFlow) {
-    const tx = entry.transaction;
-    const family = getFamilyByCurrencyId(tx.accountToDebit.currency.id);
-
-    test.describe(tx.accountToDebit.accountName, () => {
-      test.use({
-        teamOwner: Team.COIN_INTEGRATION,
-        userdata: "skip-onboarding-with-last-seen-device",
-        speculosApp: tx.accountToDebit.currency.speculosApp,
-        cliCommands: [liveDataWithRecipientAddressCommand(tx)],
-        featureFlags: {
-          newSendFlow: {
-            enabled: true,
-            params: { families: NEW_SEND_FLOW_FAMILIES },
-          },
-        },
-      });
-
-      test(
-        `Send ${tx.amount} ${tx.accountToDebit.currency.ticker} from ${tx.accountToDebit.accountName} to ${tx.accountToCredit.accountName}`,
-        {
-          tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
-          annotation: { type: "TMS", description: entry.xrayTicket },
-        },
-        async ({ app }) => {
-          const requiresMemoStep = family ? MEMO_STEP_FAMILIES.has(family) : false;
-
-          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-          if (entry.bugTicket) {
-            await addBugLink([entry.bugTicket]);
-          }
-
-          await app.mainNavigation.openTargetFromMainNavigation("accounts");
-          await app.accounts.navigateToAccountByName(tx.accountToDebit.accountName);
-
-          await app.account.clickSend();
-          await app.newSendFlow.waitForDialog();
-
-          const recipientAddress = tx.accountToCredit.address;
-          if (!recipientAddress) {
-            throw new Error(
-              `Missing recipient address for ${tx.accountToCredit.accountName}. ` +
-                `Ensure the CLI setup populates the address.`,
-            );
-          }
-          await app.newSendFlow.typeAddress(recipientAddress);
-
-          if (requiresMemoStep) {
-            await app.newSendFlow.skipMemo();
-          } else {
-            await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
-          }
-
-          await app.newSendFlow.fillCryptoAmount(tx.amount);
-
-          if (tx.speed) {
-            await app.newSendFlow.selectFeePreset(tx.speed);
-          }
-
-          await app.newSendFlow.clickReview();
-
-          await app.newSendFlow.waitForSignature();
-          await app.speculos.signSendTransaction(tx);
-          await app.newSendFlow.waitForSuccessConfirmation();
-        },
-      );
-    });
-  }
+test.describe("New Send Flow - Native Send", () => {
+  registerNewSendFlowTests(nativeSendTransactions);
 });

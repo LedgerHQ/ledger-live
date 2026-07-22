@@ -1,39 +1,13 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import invariant from "invariant";
-import { getEnv } from "@ledgerhq/live-env";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { blockchainBaseURL as walletBtcBaseURL } from "@ledgerhq/wallet-btc/explorer/baseUrl";
+import { toWalletBtcCurrency } from "./walletBtcCurrency";
 
-type LedgerExplorer = {
-  version: string;
-  id: string;
-  endpoint: string;
-};
-
-const findCurrencyExplorer = (currency: CryptoCurrency): LedgerExplorer | null | undefined => {
-  if (!currency.explorerId) {
-    console.warn("no explorerId for", currency.id);
-  }
-
-  if (currency.id === "bitcoin_regtest") {
-    return {
-      endpoint: getEnv("EXPLORER_REGTEST"),
-      id: "btc_regtest",
-      version: "v4",
-    };
-  }
-  return {
-    endpoint: getEnv("EXPLORER"),
-    id: currency.explorerId ?? currency.id,
-    version: "v4",
-  };
-};
-
-export const getCurrencyExplorer = (currency: CryptoCurrency): LedgerExplorer => {
-  const res = findCurrencyExplorer(currency);
-  invariant(res, `no Ledger explorer for ${currency.id}`);
-  return res;
-};
-
-export const blockchainBaseURL = (currency: CryptoCurrency): string => {
-  const { id, version, endpoint } = getCurrencyExplorer(currency);
-  return `${endpoint}/blockchain/${version}/${id}`;
-};
+/**
+ * CryptoCurrency-friendly adapter over wallet-btc's blockchainBaseURL.
+ *
+ * Kept here so existing consumers (e.g. ledger-live-common) can keep importing
+ * `@ledgerhq/coin-bitcoin/explorer` with a CryptoCurrency, while wallet-btc stays
+ * dependency-inverted (it only knows the injected WalletBtcCurrency).
+ */
+export const blockchainBaseURL = (currency: CryptoCurrency): string =>
+  walletBtcBaseURL(toWalletBtcCurrency(currency));

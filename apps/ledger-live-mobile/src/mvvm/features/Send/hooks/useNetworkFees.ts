@@ -16,6 +16,7 @@ import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
 import { asFeesStrategy } from "@ledgerhq/live-common/flows/send/utils/feesStrategy";
 import { useNetworkFeesCore } from "@ledgerhq/live-common/flows/send/hooks/useNetworkFeesCore";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { NetworkFeesViewModel } from "../types";
 
 type UseNetworkFeesParams = Readonly<{
@@ -73,6 +74,11 @@ export function useNetworkFees({
     [t],
   );
 
+  const networkFeesInfo = useMemo(
+    () => sendFeatures.getNetworkFeesInfo(accountCurrency, { transaction, status }),
+    [accountCurrency, transaction, status],
+  );
+
   const feePresetOptionsMapped = useMemo(
     () =>
       core.feePresetOptions.map(opt => ({
@@ -89,6 +95,7 @@ export function useNetworkFees({
       label: t("send.fees.title"),
       value: core.displayFeesValue,
       strategyLabel: getFeeStrategyLabel(core.selectedFeeStrategy),
+      showFeeCurrencyAmount: core.showFeeCurrencyAmount,
       showFeePresets: core.showFeePresets,
       selectedFeeStrategy: core.selectedFeeStrategy,
       feePresetLabelsOptions: feePresetOptionsMapped,
@@ -99,10 +106,12 @@ export function useNetworkFees({
         hasCustomFees: uiConfig.hasCustomFees,
         hasCoinControl: uiConfig.hasCoinControl,
       },
+      networkFeesInfo,
     }),
     [
       core.displayFeesValue,
       core.selectedFeeStrategy,
+      core.showFeeCurrencyAmount,
       core.showFeePresets,
       core.onSelectFeeStrategy,
       feePresetOptionsMapped,
@@ -112,6 +121,7 @@ export function useNetworkFees({
       t,
       uiConfig.hasCoinControl,
       uiConfig.hasCustomFees,
+      networkFeesInfo,
     ],
   );
 }

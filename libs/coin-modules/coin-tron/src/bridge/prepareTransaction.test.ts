@@ -111,4 +111,16 @@ describe("prepareTransaction", () => {
 
     expect(mockAccountNamesCache).not.toHaveBeenCalled();
   });
+
+  it("should not crash when votes is undefined (e.g. wallet-api sell flow)", async () => {
+    const account = createAccount();
+    const transaction = createTransaction({
+      networkInfo: baseNetworkInfo,
+      votes: undefined as unknown as Transaction["votes"],
+    });
+
+    const result = await prepareTransaction(account, transaction);
+    expect(result.votes).toEqual(undefined);
+    expect(mockAccountNamesCache).not.toHaveBeenCalled();
+  });
 });

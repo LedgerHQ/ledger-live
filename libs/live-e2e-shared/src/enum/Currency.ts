@@ -206,6 +206,15 @@ export class Currency {
 
   static readonly BASE = new Currency("Base", "ETH", "base", AppInfos.BASE, [Network.BASE]);
 
+  static readonly BASE_AERODROME = new Currency(
+    "Aerodrome",
+    "AERO",
+    "base/erc20/aerodrome",
+    AppInfos.BASE,
+    [Network.BASE],
+    "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+  );
+
   static readonly VET = new Currency("Vechain", "VET", "vechain", AppInfos.VECHAIN, [
     Network.VECHAIN,
   ]);

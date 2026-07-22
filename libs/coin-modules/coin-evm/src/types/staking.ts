@@ -1,3 +1,4 @@
+import type { BigNumber } from "bignumber.js";
 import type { Stake } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { StakingDelegation } from "@ledgerhq/types-live";
@@ -157,6 +158,13 @@ export type StakingContractConfig = {
     decoded: readonly unknown[],
     contractAddress: string | undefined,
   ) => Promise<string | null>;
+  /** Derive the display amount from the decoded calldata args. Return `null` when the amount is not representable from calldata alone (e.g. msg.value-based delegates, vault-share undelegates). */
+  resolveOperationAmount: (
+    decoded: readonly unknown[],
+    operationType: "delegate" | "undelegate" | "withdraw",
+    currency: CryptoCurrency,
+    contractAddress: string,
+  ) => Promise<BigNumber | null>;
   /** Chain-specific guard called after cross-cutting checks. Returns true when the delegation can be undelegated. */
   canUndelegate?: (delegation: StakingDelegation) => boolean;
 };

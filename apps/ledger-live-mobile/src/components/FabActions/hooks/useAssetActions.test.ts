@@ -1,10 +1,11 @@
 import { renderHook } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { State } from "~/reducers/types";
 import { ScreenName } from "~/const";
 import useAssetActions from "./useAssetActions";
 import { getCustomSendFlow } from "~/screens/SendFunds/utils/customSendFlow";
+import { aleoTokenCurrency } from "~/families/aleo/__mocks__/currency.mock";
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
@@ -53,6 +54,7 @@ const withTwoAccounts = (state: State): State => ({
 
 describe("useAssetActions - custom send flow", () => {
   beforeEach(() => {
+    mockGetCustomSendFlow.mockClear();
     mockGetCustomSendFlow.mockReturnValue(null);
   });
 
@@ -103,6 +105,14 @@ describe("useAssetActions - custom send flow", () => {
       screen: ScreenName.SendCoin,
       params: expect.objectContaining({ selectedCurrency: currencyAleo }),
     });
+  });
+
+  it("resolves family from the parent currency when currency is a token", () => {
+    renderHook(() => useAssetActions({ currency: aleoTokenCurrency, accounts: [ALEO_ACCOUNT_1] }), {
+      overrideInitialState: withSingleAccount,
+    });
+
+    expect(mockGetCustomSendFlow).toHaveBeenCalledWith("aleo");
   });
 
   it("includes additional family actions from getAdditionalAssetActions", () => {

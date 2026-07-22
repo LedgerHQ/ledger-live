@@ -2,4 +2,7 @@
 
 ## @ledgerhq/types-cryptoassets
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger types for crypto assets and tokens.

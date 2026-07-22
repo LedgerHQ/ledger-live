@@ -1,6 +1,6 @@
 import { calculateProviderTotals } from "../calculateProviderTotals";
 import { createFixtureAccount } from "./fixtures";
-import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
+import { CRYPTO_CURRENCIES_REGISTRY as cryptocurrenciesById } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 

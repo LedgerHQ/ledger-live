@@ -1,5 +1,8 @@
 # @ledgerhq/hw-ledger-key-ring-protocol
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Hardware integration layer for Ledger Key Ring Protocol flows.
 
 Use it with the protocol package in

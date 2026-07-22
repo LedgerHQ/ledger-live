@@ -20,10 +20,7 @@ import {
   formatOperation,
   formatAccount,
 } from "@ledgerhq/live-common/account/index";
-import {
-  createTransactionBroadcastError,
-  TransactionBroadcastError,
-} from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
+import { createTransactionBroadcastError } from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
 import { formatTransaction } from "@ledgerhq/live-common/transaction/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -32,7 +29,6 @@ import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { broadcastLogger } from "~/datadog";
 import { getEnv } from "@ledgerhq/live-env";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import logger from "../logger";
@@ -368,16 +364,12 @@ export function useSignedTxHandler({
           dispatch,
         });
       } catch (error) {
-        if (
-          !(error instanceof UserRefusedOnDevice || error instanceof TransactionRefusedOnDevice)
-        ) {
+        const eName = (error as { name?: string })?.name;
+        if (!(eName === "UserRefusedOnDevice" || eName === "TransactionRefusedOnDevice")) {
           logger.critical(error as Error);
         }
 
-        if (
-          error instanceof TransactionBroadcastError &&
-          route.name === ScreenName.SendConnectDevice
-        ) {
+        if (eName === "TransactionBroadcastError" && route.name === ScreenName.SendConnectDevice) {
           return (navigation as NativeStackNavigationProp<{ [key: string]: object }>).replace(
             ScreenName.SendBroadcastError,
             { ...route.params, error },

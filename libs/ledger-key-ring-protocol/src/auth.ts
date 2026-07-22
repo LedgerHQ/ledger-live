@@ -1,4 +1,3 @@
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { AuthCachePolicy, JWT } from "./types";
 import { TrustchainNotAllowed, TrustchainOutdated } from "./errors";
@@ -81,13 +80,14 @@ function networkCheckJwtExpiration(error: unknown): JwtExpirationCheck {
   let isTrustchainOutdated = false;
   let isUncaughtClientError = false;
   // this assume live-network is used and we adapt to its error's format
-  if (error instanceof LedgerAPI4xx) {
-    if (error.message.includes("JWT is expired")) {
+  if ((error as { name?: string })?.name === "LedgerAPI4xx") {
+    const message = (error as Error)?.message ?? "";
+    if (message.includes("JWT is expired")) {
       hasExpired = true;
-      canBeRefreshed = error.message.includes("/refresh");
-    } else if (error.message.includes("JWT contains no permission")) {
+      canBeRefreshed = message.includes("/refresh");
+    } else if (message.includes("JWT contains no permission")) {
       isNotPermitted = true;
-    } else if (error.message.includes("path does not match")) {
+    } else if (message.includes("path does not match")) {
       isTrustchainOutdated = true;
     } else {
       isUncaughtClientError = true;

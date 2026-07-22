@@ -225,7 +225,7 @@ async function getERC20TransfersByTimestampRange({
       method: "POST",
       data: {
         query: `
-          query GetAccountTransfers($startTimestamp: bigint!, $endTimestamp: bigint!, $cursor: bigint, $limit: Int!) {
+          query GetAccountTransfers(${cursor ? "$cursor: bigint!" : "$startTimestamp: bigint!"}, $endTimestamp: bigint!, $limit: Int!) {
             erc_token_transfer(
                 where: {
                     transfer_type: { _in: ["transfer", "mint", "burn"] }
@@ -253,10 +253,9 @@ async function getERC20TransfersByTimestampRange({
           }
         `,
         variables: {
-          startTimestamp: normalizedStartTimestamp,
           endTimestamp: normalizedEndTimestamp,
           limit,
-          ...(cursor && { cursor }),
+          ...(cursor ? { cursor } : { startTimestamp: normalizedStartTimestamp }),
         },
       },
     });

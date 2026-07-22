@@ -19,7 +19,6 @@ import { Steps } from "../../types/Activation";
 import { TrackScreen } from "~/analytics";
 import { AlertLedgerSyncDown } from "../../components/AlertLedgerSyncDown";
 import { useLedgerSyncStatus } from "../../hooks/useLedgerSyncStatus";
-import { TrustchainNotFound } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { useCustomTimeOut } from "../../hooks/useCustomTimeOut";
 import { useDispatch } from "~/context/hooks";
 import { blockPasswordLock } from "~/actions/appstate";
@@ -141,9 +140,7 @@ const WalletSyncManage = () => {
               key={index}
               disabled={
                 props.id === "manageKey"
-                  ? hasError && error instanceof TrustchainNotFound
-                    ? false
-                    : hasError
+                  ? hasError && error?.name !== "TrustchainNotFound"
                   : hasError
               }
             />

@@ -505,8 +505,12 @@ export async function listOperations(
     });
   }
 
-  // Descending (newest first) — ascending is rejected above.
-  allOperations.sort((a, b) => b.tx.date.getTime() - a.tx.date.getTime());
+  // Descending (newest first) — ascending is rejected above. Tiebreak by id so operations sharing a
+  // date (same tx: native + one per token) have a deterministic total order regardless of the backend's
+  // input/output ordering — re-fetching a cursor then returns a stable order.
+  allOperations.sort(
+    (a, b) => b.tx.date.getTime() - a.tx.date.getTime() || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0),
+  );
 
   // Page fullness is decided on the raw transaction count, not the derived
   // operation count: a full page filtered out by minHeight still has more pages.

@@ -21,12 +21,12 @@ export type RowItemContainerProps = {
 export type RowItemViewProps = {
   style: React.CSSProperties;
   currency: MarketCurrencyData;
-  counterCurrency?: string;
-  locale: string;
   isStarred: boolean;
   hasActions: boolean;
   actions: MarketAction[];
   currentPriceChangePercentage: number | undefined;
+  formattedPrice: string;
+  formattedMarketCap: string;
   onCurrencyClick: () => void;
   onStarClick: (e: React.MouseEvent<HTMLDivElement>) => void;
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import { Observable, EMPTY } from "rxjs";
 import type { Account, ScanAccountEvent } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 type Mocks = {
   replace: jest.Mock;

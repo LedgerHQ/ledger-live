@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { parseAmountWithTicker } from "./parse-amount";
 

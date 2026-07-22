@@ -6,6 +6,7 @@ import { buildAssetDetailChartSeries } from "../utils/buildAssetDetailChartSerie
 type UseAssetDetailChartSeriesParams = Readonly<{
   id?: string;
   counterCurrency: string;
+  isCryptoCountervalue: boolean;
   selectedRange: LineChartRange;
   ath?: number;
   atl?: number;
@@ -17,6 +18,7 @@ type UseAssetDetailChartSeriesParams = Readonly<{
 export function useAssetDetailChartSeries({
   id,
   counterCurrency,
+  isCryptoCountervalue,
   selectedRange,
   ath,
   atl,
@@ -33,7 +35,7 @@ export function useAssetDetailChartSeries({
     isFetching,
     isError,
   } = useAssetChartDataInCounterValue(
-    { id: id ?? "", counterCurrency, range: selectedRange },
+    { id: id ?? "", counterCurrency, range: selectedRange, isCryptoCountervalue },
     { skip: !id || skip },
   );
 

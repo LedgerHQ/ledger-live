@@ -7,7 +7,6 @@ export * from "./lwmAnalyticsConsentOnboarding";
 export * from "./lwmBackupHub";
 export * from "./lwmGenericAwarenessModal";
 export * from "./lwmOnboardingCounterfeitWarning";
-export * from "./lldActionCarousel";
 export * from "./lldAnalyticsOptInPrompt";
 export * from "./lwdAnalyticsOptInScreenV2";
 export * from "./lldNanoSUpsellBanners";

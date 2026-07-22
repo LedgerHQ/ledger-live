@@ -21,7 +21,7 @@ packages:
 
 catalog:
   "@jest/globals": 30.2.0
-  "@ledgerhq/context-module": 2.2.0
+  "@ledgerhq/context-module": 2.3.0
   "@ledgerhq/crypto-icons": "2.0.4"
   "@ledgerhq/device-management-kit": 1.7.1
   "@ledgerhq/device-signer-kit-aleo": 0.4.0
@@ -204,7 +204,8 @@ catalog:
   oxlint: 1.51.0
   oxfmt: 0.36.0
   # Modules published by coin-modules
-  "@ledgerhq/coin-module-framework": 4.0.0
+  "@ledgerhq/coin-hypercore": 0.4.3
+  "@ledgerhq/coin-module-framework": 4.0.2
   "@ledgerhq/coin-stellar": 6.26.3
   "@ledgerhq/coin-xrp": 7.25.2
   detox: 20.51.3
