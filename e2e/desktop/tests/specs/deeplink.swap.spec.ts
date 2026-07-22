@@ -23,7 +23,7 @@ const USDT_TOKEN_ID = "ethereum/erc20/usd_tether__erc20_";
 // On a fresh session (no prior swap), the live app defaults to the highest
 // market-cap assets: BTC for the send field, ETH for the receive field.
 const DEFAULT_FROM = "BTC";
-const DEFAULT_TO = "";
+const DEFAULT_TO = "Choose asset";
 
 const TMS = "B2CQA-4152";
 const TAGS = [
