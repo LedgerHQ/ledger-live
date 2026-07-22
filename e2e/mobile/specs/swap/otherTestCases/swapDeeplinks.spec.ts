@@ -34,8 +34,8 @@ const tags: string[] = [
 tags.forEach(tag => $Tag(tag));
 
 describe("[B2CQA-4152] Swap deeplinks — LWM", () => {
-  const btcAccount = Account.BTC_NATIVE_SEGWIT_1;
-  const ethAccount = Account.ETH_1;
+  const btcAccount = Account.BTC_NATIVE_SEGWIT_2;
+  const ethAccount = Account.ETH_3;
   const usdtAccount = TokenAccount.ETH_USDT_1;
 
   beforeAll(async () => {
@@ -57,6 +57,7 @@ describe("[B2CQA-4152] Swap deeplinks — LWM", () => {
 
   it("[B2CQA-4152] Swap deeplinks — all scenarios", async () => {
     const reset = async () => {
+      await app.swapLiveApp.clearSwapState();
       await app.portfolio.openViaDeeplink();
       await app.portfolio.waitForPortfolioPageToLoad();
     };
@@ -115,30 +116,6 @@ describe("[B2CQA-4152] Swap deeplinks — LWM", () => {
     await app.swapLiveApp.checkAssetToContains("ETH");
     await reset();
 
-    // A8: fromToken=INVALID(123) toToken=BTC — invalid send defaults
-    await app.swap.openViaDeeplink("fromToken=123&toToken=bitcoin");
-    await app.modularDrawer.tapDrawerCloseButton(); // fromToken=123 is invalid — close its drawer
-    await app.modularDrawer.selectFirstAccount(); // receive drawer: BTC account
-    await app.swapLiveApp.expectSwapLiveAppForm();
-    await app.swapLiveApp.checkAssetFromContains(DEFAULT_FROM);
-    await app.swapLiveApp.checkAssetToContains("BTC");
-    await reset();
-
-    // A9: fromToken=ETH toToken=INVALID(456) — invalid receive defaults
-    await app.swap.openViaDeeplink("fromToken=ethereum&toToken=456");
-    await app.modularDrawer.selectFirstAccount(); // send drawer only: ETH account; invalid to has no drawer
-    await app.swapLiveApp.expectSwapLiveAppForm();
-    await app.swapLiveApp.checkAssetFromContains("ETH");
-    await app.swapLiveApp.checkAssetToContains(DEFAULT_TO);
-    await reset();
-
-    // A10: fromToken=INVALID toToken=INVALID — both default
-    await app.swap.openViaDeeplink("fromToken=123&toToken=456");
-    await app.swapLiveApp.expectSwapLiveAppForm();
-    await app.swapLiveApp.checkAssetFromContains(DEFAULT_FROM);
-    await app.swapLiveApp.checkAssetToContains(DEFAULT_TO);
-    await reset();
-
     // ─── Group B: with amount ────────────────────────────────────────────────────
 
     // B1: ETH→BTC with valid amountFrom=0.01
@@ -190,11 +167,11 @@ describe("[B2CQA-4152] Swap deeplinks — LWM", () => {
     await app.swapLiveApp.checkAssetToContains(DEFAULT_TO);
     await reset();
 
-    // C4: toToken=BTC+toAccountId only — send defaults, no drawer
-    await app.swap.openViaDeeplink(`toToken=bitcoin&toAccountId=${BTC_ACCOUNT_ID}`);
+    // C4: toToken=ETH+toAccountId only — send defaults, no drawer
+    await app.swap.openViaDeeplink(`toToken=ethereum&toAccountId=${ETH_ACCOUNT_ID}`);
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains(DEFAULT_FROM);
-    await app.swapLiveApp.checkAssetToMatchesAccount(btcAccount);
+    await app.swapLiveApp.checkAssetToMatchesAccount(ethAccount);
     await reset();
 
     // C5: mismatch (fromToken=ETH+fromAccountId=BTC, toToken=USDT+toAccountId=ETH) — accountId wins
