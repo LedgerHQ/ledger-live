@@ -45,7 +45,7 @@ export default class EarnV2DashboardPage {
 
   @Step("Verify cold start page")
   async verifyColdStartPage() {
-    await detoxExpect(getWebElementByTestId(this.tokensToEarnBanner)).toExist();
+    await waitWebElementByTestId(this.tokensToEarnBanner);
   }
 
   @Step("Verify asset ready to earn")
