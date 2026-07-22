@@ -11,6 +11,7 @@ import type {
   SignPcztTransactionResult,
 } from "./types";
 import { lastValueFrom, type Observable } from "rxjs";
+import { log } from "@ledgerhq/logs";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import {
   DeviceActionStatus,
@@ -28,6 +29,67 @@ import {
   type SignTransactionDAError,
   type SignTransactionDAOutput,
 } from "@ledgerhq/device-signer-kit-zcash";
+
+const hex = (b: Uint8Array): string => Buffer.from(b).toString("hex");
+
+function pcztToDebug(pczt: PcztTransaction): object {
+  return {
+    global: pczt.global,
+    transparentInputs: pczt.transparentInputs.map(i => ({
+      prevoutTxid: hex(i.prevoutTxid),
+      prevoutIndex: i.prevoutIndex,
+      sequence: i.sequence,
+      value: i.value.toString(),
+      scriptPubKey: hex(i.scriptPubKey),
+      sighashType: i.sighashType,
+      derivation: {
+        signingPath: i.derivation.signingPath,
+        pubkey: hex(i.derivation.pubkey),
+        ...(i.derivation.seedFingerprint ? { seedFingerprint: hex(i.derivation.seedFingerprint) } : {}),
+      },
+    })),
+    transparentOutputs: pczt.transparentOutputs.map(o => ({
+      value: o.value.toString(),
+      scriptPubKey: hex(o.scriptPubKey),
+      ...(o.derivation
+        ? {
+            derivation: {
+              signingPath: o.derivation.signingPath,
+              pubkey: hex(o.derivation.pubkey),
+              ...(o.derivation.seedFingerprint ? { seedFingerprint: hex(o.derivation.seedFingerprint) } : {}),
+            },
+          }
+        : {}),
+    })),
+    orchardBundle: pczt.orchardBundle
+      ? {
+          flags: pczt.orchardBundle.flags,
+          valueBalance: pczt.orchardBundle.valueBalance.toString(),
+          anchor: hex(pczt.orchardBundle.anchor),
+          actions: pczt.orchardBundle.actions.map(a => ({
+            cvNet: hex(a.cvNet),
+            nullifier: hex(a.nullifier),
+            rk: hex(a.rk),
+            spendRecipient: hex(a.spendRecipient),
+            spendValue: a.spendValue.toString(),
+            spendRho: hex(a.spendRho),
+            spendRseed: hex(a.spendRseed),
+            alpha: hex(a.alpha),
+            signingPath: a.signingPath,
+            ...(a.seedFingerprint ? { seedFingerprint: hex(a.seedFingerprint) } : {}),
+            cmx: hex(a.cmx),
+            ephemeralKey: hex(a.ephemeralKey),
+            encCiphertext: hex(a.encCiphertext),
+            outCiphertext: hex(a.outCiphertext),
+            recipient: hex(a.recipient),
+            value: a.value.toString(),
+            rseed: hex(a.rseed),
+            rcv: hex(a.rcv),
+          })),
+        }
+      : null,
+  };
+}
 
 type ZcashGetAddressResult = {
   publicKey: Uint8Array;
@@ -232,6 +294,9 @@ export class DmkSignerZcash implements ZcashSigner {
    * (signOperation orchestration) is responsible for ensuring the Zcash app is open.
    */
   async signPcztTransaction(pczt: PcztTransaction): Promise<SignPcztTransactionResult> {
+    const structured = pcztToDebug(pczt);
+    const hex = Buffer.from(JSON.stringify(structured)).toString("hex");
+    log("zcash-pczt", "signPcztTransaction", { structured, hex });
     const { observable } = this.signer.signPcztTransaction(pczt, { skipOpenApp: true });
     return this.resolveDeviceAction<SignPcztTransactionResult, SignPcztTransactionDAError>(
       observable,
