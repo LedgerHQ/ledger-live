@@ -43,23 +43,15 @@ const mockSignatureIntent = {
 const mockDeviceIntentExecutorLWM = jest.fn();
 const mockSignatureDeviceActionView = jest.fn();
 
-jest.mock(
-  "@ledgerhq/live-common/firebase/featureFlags",
-  () => ({
-    getFeature: jest.fn(),
-  }),
-  { virtual: true },
-);
+jest.mock("@ledgerhq/live-common/firebase/featureFlags", () => ({
+  getFeature: jest.fn(),
+}));
 
-jest.mock(
-  "@features/platform-feature-flags",
-  () => ({
-    formatToFirebaseFeatureId: (featureId: string) => featureId,
-    useFeature: jest.fn(),
-    useFeatureFlags: jest.fn(() => ({})),
-  }),
-  { virtual: true },
-);
+jest.mock("@features/platform-feature-flags", () => ({
+  formatToFirebaseFeatureId: (featureId: string) => featureId,
+  useFeature: jest.fn(),
+  useFeatureFlags: jest.fn(() => ({})),
+}));
 
 jest.mock("LLM/components/DeviceIntentExecutor", () => ({
   __esModule: true,
