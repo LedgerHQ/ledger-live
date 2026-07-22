@@ -1,6 +1,5 @@
 import {
   type ContactsLedgerSyncStatus,
-  type ContactsAddContactDrawerProps,
   type ContactsPageLabels,
   type ContactsPageNativeProps,
   useContactsSearchViewModel,
@@ -8,25 +7,9 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import { useTranslation } from "~/context/Locale";
+import type { ContactsPageViewModel } from "../types";
 
-type ContactsLedgerSyncIntroductionSheetProps = Readonly<{
-  title: string;
-  activateLabel: string;
-  onActivate: () => void;
-}>;
-
-type ContactsPageViewModel = Omit<ContactsPageNativeProps, "onAddContact"> &
-  Readonly<{
-    ledgerSyncIntroductionSheet: ContactsLedgerSyncIntroductionSheetProps;
-  }>;
-
-export type ContactsViewModel = ContactsPageViewModel &
-  Pick<ContactsPageNativeProps, "onAddContact"> &
-  Readonly<{
-    addContactDrawer: ContactsAddContactDrawerProps;
-  }>;
-
-export function useContactsViewModel(): ContactsPageViewModel {
+export function useContactsPageViewModel(): ContactsPageViewModel {
   const { t } = useTranslation();
   const labels = useMemo<ContactsPageLabels>(
     () => ({
@@ -70,7 +53,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
       onDismiss: onDismissIntroduction,
     },
-    ledgerSyncIntroductionSheet: {
+    ledgerSyncIntroductionContent: {
       title: t("contacts.ledgerSyncIntroduction.title"),
       activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
       onActivate: onActivateIntroduction,

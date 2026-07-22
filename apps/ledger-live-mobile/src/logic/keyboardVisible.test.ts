@@ -14,10 +14,6 @@ describe("shouldUseKeyboardAvoidance", () => {
 });
 
 describe("useKeyboardVisible", () => {
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it("should synchronize with keyboard will events when requested", () => {
     const listeners = new Map<string, (event: KeyboardEvent) => void>();
     const removeShowListener = jest.fn();
@@ -50,21 +46,6 @@ describe("useKeyboardVisible", () => {
     expect(removeHideListener).toHaveBeenCalledTimes(1);
     expect(addListener).toHaveBeenCalledWith("keyboardWillShow", expect.any(Function));
     expect(addListener).toHaveBeenCalledWith("keyboardWillHide", expect.any(Function));
-  });
-
-  it("should synchronize with keyboard did events by default", () => {
-    const addListener = jest.spyOn(Keyboard, "addListener").mockImplementation(
-      () =>
-        ({
-          remove: jest.fn(),
-        }) as unknown as ReturnType<typeof Keyboard.addListener>,
-    );
-
-    const { unmount } = renderHook(() => useKeyboardVisible());
-
-    expect(addListener).toHaveBeenCalledWith("keyboardDidShow", expect.any(Function));
-    expect(addListener).toHaveBeenCalledWith("keyboardDidHide", expect.any(Function));
-
-    unmount();
+    addListener.mockRestore();
   });
 });

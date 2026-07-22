@@ -10,7 +10,7 @@ import {
 import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 
-export function useContactsAddContactDrawerViewModel(
+export function useContactsAddContactDrawerAdapter(
   onSaveSuccess: () => void,
 ): ContactsAddContactDrawerProps {
   const dispatch = useDispatch();

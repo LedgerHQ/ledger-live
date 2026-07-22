@@ -3,10 +3,10 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useContactsFeature } from "@features/flow-contacts";
 import { TrackScreen } from "~/analytics";
-import { ContactsView } from "./ContactsView";
-import { useContactsAddContactDrawerViewModel } from "./components/ContactsAddContactDrawerSheet/useContactsAddContactDrawerViewModel";
-import { useContactsScreenViewModel } from "./useContactsScreenViewModel";
-import { useContactsViewModel } from "./useContactsViewModel";
+import { ContactsPageContent } from "./components/ContactsPageContent";
+import { useContactsAddContactDrawerAdapter } from "./hooks/useContactsAddContactDrawerAdapter";
+import { useContactsPageNavigationViewModel } from "./hooks/useContactsPageNavigationViewModel";
+import { useContactsPageViewModel } from "./hooks/useContactsPageViewModel";
 
 function ContactsScreenRedirect() {
   const navigation =
@@ -20,21 +20,21 @@ function ContactsScreenRedirect() {
 }
 
 function ContactsScreenContent() {
-  const pageViewModel = useContactsViewModel();
+  const pageViewModel = useContactsPageViewModel();
   const { onSearchQueryChange } = pageViewModel;
   const onSaveSuccess = useCallback(() => {
     onSearchQueryChange("");
   }, [onSearchQueryChange]);
-  const addContactDrawer = useContactsAddContactDrawerViewModel(onSaveSuccess);
+  const addContactDrawer = useContactsAddContactDrawerAdapter(onSaveSuccess);
   const viewModel = {
     ...pageViewModel,
     onAddContact: addContactDrawer.onOpen,
     addContactDrawer,
   };
 
-  useContactsScreenViewModel(pageViewModel.labels.addContact, addContactDrawer.onOpen);
+  useContactsPageNavigationViewModel(pageViewModel.labels.addContact, addContactDrawer.onOpen);
 
-  return <ContactsView {...viewModel} />;
+  return <ContactsPageContent {...viewModel} />;
 }
 
 export function ContactsScreen() {

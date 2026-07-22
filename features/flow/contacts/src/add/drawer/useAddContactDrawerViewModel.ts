@@ -1,10 +1,7 @@
 import { useCallback, useState } from "react";
-import { CONTACT_NAME_MAX_LENGTH } from "./constants";
-import { useAddContactViewModel } from "../hooks/useAddContactViewModel";
-import type {
-  AddContactDrawerViewModel,
-  UseAddContactDrawerViewModelOptions,
-} from "./drawer.types";
+import { CONTACT_NAME_MAX_LENGTH } from "../model/constants";
+import { useAddContactViewModel } from "../../hooks/useAddContactViewModel";
+import type { AddContactDrawerViewModel, UseAddContactDrawerViewModelOptions } from "./types";
 
 export function useAddContactDrawerViewModel({
   contactCreation,

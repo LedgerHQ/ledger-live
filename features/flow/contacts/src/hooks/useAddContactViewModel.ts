@@ -1,8 +1,8 @@
 import type { Contact } from "@domain/entity-contact";
 import { useCallback, useMemo, useState } from "react";
-import { createAddContactController } from "../add/controller";
-import type { ContactCreationPort } from "../add/ports";
-import type { AddContactViewModel } from "../add/types";
+import { createAddContactController } from "../add/model/controller";
+import type { ContactCreationPort } from "../add/model/ports";
+import type { AddContactViewModel } from "../add/model/types";
 
 export type UseAddContactViewModelResult = AddContactViewModel &
   Readonly<{
@@ -18,14 +18,8 @@ export function useAddContactViewModel(
   contactCreation: ContactCreationPort,
 ): UseAddContactViewModelResult {
   const [draftName, setDraftName] = useState("");
-  const controller = useMemo(
-    () => createAddContactController(contactCreation),
-    [contactCreation],
-  );
-  const viewModel = useMemo(
-    () => controller.getViewModel(draftName),
-    [controller, draftName],
-  );
+  const controller = useMemo(() => createAddContactController(contactCreation), [contactCreation]);
+  const viewModel = useMemo(() => controller.getViewModel(draftName), [controller, draftName]);
   const save = useCallback(() => controller.save(draftName), [controller, draftName]);
 
   return {

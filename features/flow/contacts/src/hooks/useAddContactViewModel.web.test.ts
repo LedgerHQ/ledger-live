@@ -1,6 +1,6 @@
 import { renderHook, act } from "@testing-library/react";
 import { INVALID_CONTACT_NAME_ERROR_NAME, contact } from "@domain/entity-contact";
-import type { ContactCreationPort } from "../add/ports";
+import type { ContactCreationPort } from "../add/model/ports";
 import { useAddContactViewModel } from "./useAddContactViewModel";
 
 describe("useAddContactViewModel", () => {

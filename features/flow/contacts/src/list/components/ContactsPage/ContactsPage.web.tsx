@@ -1,5 +1,5 @@
 import React from "react";
-import { ContactsLedgerSyncIntroductionDialog } from "../ContactsLedgerSyncIntroduction/ContactsLedgerSyncIntroductionDialog.web";
+import { ContactsLedgerSyncIntroductionDialog } from "../../../components/ContactsLedgerSyncIntroduction/ContactsLedgerSyncIntroductionDialog.web";
 import type { ContactsPageProps } from "../../types";
 import { ContactsLedgerSyncLoadingPane } from "./ContactsLedgerSyncLoadingPane.web";
 import { ContactsList } from "../ContactsList/ContactsList.web";

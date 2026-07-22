@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { contact } from "@domain/entity-contact";
-import type { ContactCreationPort } from "./ports";
+import type { ContactCreationPort } from "../model/ports";
 import { useAddContactDrawerViewModel } from "./useAddContactDrawerViewModel";
 
 describe("useAddContactDrawerViewModel", () => {

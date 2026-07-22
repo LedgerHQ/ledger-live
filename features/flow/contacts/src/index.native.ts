@@ -6,4 +6,6 @@ export * from "./hooks";
 export * from "./list";
 export { ContactsButton } from "./components/ContactsButton/index.native";
 export type { ContactsButtonProps } from "./components/ContactsButton/index.native";
+export { ContactsLedgerSyncIntroductionContent } from "./components/ContactsLedgerSyncIntroduction/index.native";
+export type { ContactsLedgerSyncIntroductionContentProps } from "./components/ContactsLedgerSyncIntroduction/index.native";
 export * from "./list/native";

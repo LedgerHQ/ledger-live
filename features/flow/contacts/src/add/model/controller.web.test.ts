@@ -10,9 +10,7 @@ function createContactCreationPort(
 
 describe("createAddContactController", () => {
   it("keeps save disabled until the draft name is valid", () => {
-    const controller = createAddContactController(
-      createContactCreationPort(jest.fn()),
-    );
+    const controller = createAddContactController(createContactCreationPort(jest.fn()));
 
     expect(controller.getViewModel("").isSaveEnabled).toBe(false);
     expect(controller.getViewModel("Ben").isSaveEnabled).toBe(true);
