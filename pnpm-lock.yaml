@@ -16,8 +16,8 @@ catalogs:
       specifier: 30.2.0
       version: 30.2.0
     '@ledgerhq/coin-hypercore':
-      specifier: 0.4.2
-      version: 0.4.2
+      specifier: 0.4.3
+      version: 0.4.3
     '@ledgerhq/coin-module-framework':
       specifier: 4.0.2
       version: 4.0.2
@@ -8973,7 +8973,7 @@ importers:
         version: link:../coin-modules/coin-hedera
       '@ledgerhq/coin-hypercore':
         specifier: 'catalog:'
-        version: 0.4.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
+        version: 0.4.3(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
       '@ledgerhq/coin-icon':
         specifier: workspace:^
         version: link:../coin-modules/coin-icon
@@ -18216,8 +18216,8 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@ledgerhq/coin-hypercore@0.4.2':
-    resolution: {integrity: sha512-aIAvRbyRLbQjjWGkWIARvUenirhDZW7KgMEYbUeNTpm8aVVrc+PbA3At0XtqNs2WvaE7fdVPFgQacOhLOp87YQ==}
+  '@ledgerhq/coin-hypercore@0.4.3':
+    resolution: {integrity: sha512-da1KB1ul/hJS+joTxLrTVab9mn3Gs1ZFSyOaFqPEypBFUHsgyWrQqHs6CH4uzailNhNeLyNY/uIV5SifVErBvw==}
     peerDependencies:
       '@ledgerhq/errors': ^6.33.0
       '@ledgerhq/live-network': ^2.4.0
@@ -46417,7 +46417,7 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/coin-hypercore@0.4.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
+  '@ledgerhq/coin-hypercore@0.4.3(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
     dependencies:
       '@ledgerhq/coin-module-framework': 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
