@@ -7,19 +7,9 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import { useTranslation } from "~/context/Locale";
+import type { ContactsPageViewModel } from "../types";
 
-type ContactsLedgerSyncIntroductionSheetProps = Readonly<{
-  title: string;
-  activateLabel: string;
-  onActivate: () => void;
-}>;
-
-export type ContactsViewModel = ContactsPageNativeProps &
-  Readonly<{
-    ledgerSyncIntroductionSheet: ContactsLedgerSyncIntroductionSheetProps;
-  }>;
-
-export function useContactsViewModel(): ContactsViewModel {
+export function useContactsPageViewModel(): ContactsPageViewModel {
   const { t } = useTranslation();
   const labels = useMemo<ContactsPageLabels>(
     () => ({
@@ -40,7 +30,6 @@ export function useContactsViewModel(): ContactsViewModel {
   const viewModel = useContactsSearchViewModel(searchQuery);
   const onSearchQueryChange = useCallback((query: string) => setSearchQuery(query), []);
   const onOpenContact = useCallback<ContactsPageNativeProps["onOpenContact"]>(() => undefined, []);
-  const onAddContact = useCallback(() => undefined, []);
   const onDismissIntroduction = useCallback(() => setIsIntroductionDismissed(true), []);
   const onActivateIntroduction = useCallback(() => undefined, []);
 
@@ -57,7 +46,6 @@ export function useContactsViewModel(): ContactsViewModel {
     onSearchQueryChange,
     meAvatarSrc: USER_AVATAR_URL,
     onOpenContact,
-    onAddContact,
     ledgerSyncStatus,
     ledgerSyncIntroduction: {
       isOpen: ledgerSyncStatus === "inactive" && !isIntroductionDismissed,
@@ -65,7 +53,7 @@ export function useContactsViewModel(): ContactsViewModel {
       dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
       onDismiss: onDismissIntroduction,
     },
-    ledgerSyncIntroductionSheet: {
+    ledgerSyncIntroductionContent: {
       title: t("contacts.ledgerSyncIntroduction.title"),
       activateLabel: t("contacts.ledgerSyncIntroduction.activate"),
       onActivate: onActivateIntroduction,

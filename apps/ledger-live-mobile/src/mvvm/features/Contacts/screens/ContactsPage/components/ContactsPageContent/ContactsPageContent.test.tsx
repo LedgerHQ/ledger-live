@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import { ContactsView } from "./ContactsView";
-import type { ContactsViewModel } from "./useContactsViewModel";
+import { ContactsPageContent } from ".";
+import type { ContactsPageContentProps } from "../../types";
 
 function createViewModel({
   ledgerSyncStatus = "inactive",
@@ -13,7 +13,7 @@ function createViewModel({
   isIntroductionOpen?: boolean;
   onDismiss?: jest.Mock;
   onActivate?: jest.Mock;
-} = {}): ContactsViewModel {
+} = {}): ContactsPageContentProps {
   return {
     viewModel: {
       displayMode: "empty",
@@ -45,17 +45,33 @@ function createViewModel({
       dismissLabel: "Got it",
       onDismiss,
     },
-    ledgerSyncIntroductionSheet: {
+    ledgerSyncIntroductionContent: {
       title: "Turn on Ledger Sync to save contacts",
       activateLabel: "Turn on Ledger Sync",
       onActivate,
     },
+    addContactDrawer: {
+      isOpen: false,
+      isConfirmEnabled: false,
+      isSaving: false,
+      draftName: "",
+      labels: {
+        title: "Add contact",
+        namePlaceholder: "Contact name",
+        namingDisclaimer: "Use a nickname.",
+        confirmName: "Confirm name",
+      },
+      onOpen: jest.fn(),
+      onClose: jest.fn(),
+      onDraftNameChange: jest.fn(),
+      onConfirm: jest.fn(),
+    },
   };
 }
 
-describe("ContactsView", () => {
+describe("ContactsPageContent", () => {
   it("should render the inactive introduction with the Figma labels", () => {
-    render(<ContactsView {...createViewModel()} />);
+    render(<ContactsPageContent {...createViewModel()} />);
 
     expect(screen.getByTestId("contacts-screen")).toBeVisible();
     expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
@@ -71,7 +87,9 @@ describe("ContactsView", () => {
   it("should keep the introduction open when activating Ledger Sync", async () => {
     const onActivate = jest.fn();
     const onDismiss = jest.fn();
-    const { user } = render(<ContactsView {...createViewModel({ onActivate, onDismiss })} />);
+    const { user } = render(
+      <ContactsPageContent {...createViewModel({ onActivate, onDismiss })} />,
+    );
 
     await user.press(screen.getByRole("button", { name: "Turn on Ledger Sync" }));
 
@@ -82,7 +100,7 @@ describe("ContactsView", () => {
 
   it("should dismiss the introduction from the secondary action", async () => {
     const onDismiss = jest.fn();
-    const { user } = render(<ContactsView {...createViewModel({ onDismiss })} />);
+    const { user } = render(<ContactsPageContent {...createViewModel({ onDismiss })} />);
 
     await user.press(screen.getByRole("button", { name: "Got it" }));
 
@@ -91,7 +109,7 @@ describe("ContactsView", () => {
 
   it("should render the introduction when the status returns to inactive", () => {
     const { rerender } = render(
-      <ContactsView
+      <ContactsPageContent
         {...createViewModel({ ledgerSyncStatus: "inactive", isIntroductionOpen: false })}
       />,
     );
@@ -99,11 +117,11 @@ describe("ContactsView", () => {
     expect(screen.queryByText("Turn on Ledger Sync to save contacts")).toBeNull();
 
     rerender(
-      <ContactsView
+      <ContactsPageContent
         {...createViewModel({ ledgerSyncStatus: "ready", isIntroductionOpen: false })}
       />,
     );
-    rerender(<ContactsView {...createViewModel({ ledgerSyncStatus: "inactive" })} />);
+    rerender(<ContactsPageContent {...createViewModel({ ledgerSyncStatus: "inactive" })} />);
 
     expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
   });
