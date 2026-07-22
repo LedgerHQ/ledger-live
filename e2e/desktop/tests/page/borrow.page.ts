@@ -321,7 +321,8 @@ export class BorrowPage extends WebViewAppPage {
   @step("Wait for Step 3 borrow to complete")
   async expectBorrowStepCompleted() {
     const webview = await this.getWebView();
-    await expect(this.borrowStepCompleteIndicator(webview)).toBeVisible({
+    // Success screen can show several indicators at once; .first() avoids Playwright strict mode.
+    await expect(this.borrowStepCompleteIndicator(webview).first()).toBeVisible({
       timeout: this.executionStepTimeoutMs,
     });
 
@@ -349,7 +350,7 @@ export class BorrowPage extends WebViewAppPage {
   @step("Verify loan success screen")
   async expectLoanSuccess() {
     const webview = await this.getWebView();
-    await expect(this.loanSuccessIndicator(webview)).toBeVisible({
+    await expect(this.loanSuccessIndicator(webview).first()).toBeVisible({
       timeout: 60_000,
     });
   }
