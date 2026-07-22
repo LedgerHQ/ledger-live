@@ -43,7 +43,20 @@ describe("Contacts add contact drawer integration", () => {
     });
 
     await user.press(screen.getByTestId("contacts-add-contact-row"));
-    await user.type(screen.getByTestId("contacts-add-contact-name-input"), "Ada");
+    const input = screen.getByTestId("contacts-add-contact-name-input");
+
+    await user.type(input, "Ada1");
+
+    expect(screen.getByText("Special characters are not allowed.")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Confirm name" })).toBeDisabled();
+
+    fireEvent.changeText(input, "Ada");
+
+    await waitFor(() => {
+      expect(screen.queryByText("Special characters are not allowed.")).toBeNull();
+      expect(screen.getByRole("button", { name: "Confirm name" })).toBeEnabled();
+    });
+
     await user.press(screen.getByRole("button", { name: "Confirm name" }));
 
     await waitFor(() => {

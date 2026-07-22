@@ -22,12 +22,16 @@ function createViewModel(
     isConfirmEnabled: false,
     isSaving: false,
     draftName: "",
+    invalidNameError: null,
     labels: {
       title: "Add contact",
       namePlaceholder: "Contact name",
       namingDisclaimer:
         "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
       confirmName: "Confirm name",
+      nameValidationErrors: {
+        InvalidContactNameError: "Special characters are not allowed.",
+      },
     },
     onOpen: jest.fn(),
     onClose: jest.fn(),
@@ -83,6 +87,27 @@ describe("ContactsAddContactDrawerSheet", () => {
       "a".repeat(32),
     );
     expect(screen.getByText("32/32")).toBeVisible();
+    expect(screen.getByTestId("contacts-add-contact-name-count")).toHaveProp(
+      "accessibilityLiveRegion",
+      "polite",
+    );
+    expect(screen.getByRole("button", { name: "Confirm name" })).toBeEnabled();
+  });
+
+  it("should render the shared validation error and disable confirmation", () => {
+    render(
+      <ContactsAddContactDrawerSheet
+        {...createViewModel({ draftName: "Ada1", invalidNameError: "InvalidContactNameError" })}
+      />,
+    );
+
+    expect(screen.getByText("Contact name")).toBeVisible();
+    expect(screen.getByText("Special characters are not allowed.")).toBeVisible();
+    expect(screen.getByTestId("contacts-add-contact-name-error")).toHaveProp(
+      "accessibilityLiveRegion",
+      "polite",
+    );
+    expect(screen.getByRole("button", { name: "Confirm name" })).toBeDisabled();
   });
 
   it("should expose the edited name, enable confirmation, and close the drawer", async () => {

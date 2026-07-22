@@ -1,3 +1,4 @@
+import type { ContactNameValidationErrorName } from "@domain/entity-contact";
 import type { ContactCreationPort } from "../../add/model/ports";
 
 export type AddContactDrawerViewModel = Readonly<{
@@ -5,6 +6,7 @@ export type AddContactDrawerViewModel = Readonly<{
   isConfirmEnabled: boolean;
   isSaving: boolean;
   draftName: string;
+  invalidNameError: ContactNameValidationErrorName | null;
   onOpen: () => void;
   onClose: () => void;
   onDraftNameChange: (name: string) => void;
@@ -21,6 +23,7 @@ export type ContactsAddContactDrawerLabels = Readonly<{
   namePlaceholder: string;
   namingDisclaimer: string;
   confirmName: string;
+  nameValidationErrors: Readonly<Record<ContactNameValidationErrorName, string>>;
 }>;
 
 export type ContactsAddContactDrawerProps = AddContactDrawerViewModel &
