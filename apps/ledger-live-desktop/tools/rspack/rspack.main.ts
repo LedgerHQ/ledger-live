@@ -8,7 +8,6 @@ import {
   DOTENV_FILE,
   getRsdoctorPlugin,
   isRsdoctorEnabled,
-  isDatadogConfigured,
 } from "./utils";
 
 /**
@@ -40,8 +39,14 @@ export function createMainConfig(
       ...commonConfig.resolve,
       mainFields: ["main", "module"],
     },
+    // @datadog/electron-sdk ships dd-trace + WASM files that cannot be bundled by Rspack.
+    // DatadogWebpackPlugin copies the runtime tree into .webpack/node_modules; we just need
+    // to tell Rspack to leave the require() as-is so it resolves at runtime.
+    externals: {
+      "@datadog/electron-sdk": "commonjs @datadog/electron-sdk",
+    },
     plugins: [
-      ...(isDatadogConfigured() ? [new DatadogWebpackPlugin()] : []),
+      new DatadogWebpackPlugin(),
       ...getRsdoctorPlugin("main"),
       new rspack.DefinePlugin({
         ...buildMainEnv(mode, argv),
