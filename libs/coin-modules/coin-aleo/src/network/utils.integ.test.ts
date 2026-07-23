@@ -1,6 +1,5 @@
 import invariant from "invariant";
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import aleoConfig from "../config";
 import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
 import {
@@ -26,16 +25,16 @@ import {
   patchPublicOperations,
 } from "./utils";
 
-const currency = getCryptoCurrencyById("aleo_testnet");
+const config = getTestnetIntegConfig();
 
 beforeAll(() => {
-  aleoConfig.setCoinConfig(() => getTestnetIntegConfig());
+  aleoConfig.setCoinConfig(() => config);
 });
 
 describe("accessProvableApi", () => {
   it("registers a new scanner account when no uuid is known and returns its status", async () => {
     const result = await accessProvableApi({
-      currency,
+      config,
       viewKey: testnetViewKey,
       provableApi: null,
     });
@@ -48,12 +47,12 @@ describe("accessProvableApi", () => {
 
   it("registering the same view key twice returns the same scanner uuid", async () => {
     const first = await accessProvableApi({
-      currency,
+      config,
       viewKey: testnetViewKey,
       provableApi: null,
     });
     const second = await accessProvableApi({
-      currency,
+      config,
       viewKey: testnetViewKey,
       provableApi: null,
     });
@@ -63,14 +62,14 @@ describe("accessProvableApi", () => {
 
   it("reuses a known uuid without re-registering and refreshes its scanner status", async () => {
     const { uuid } = await accessProvableApi({
-      currency,
+      config,
       viewKey: testnetViewKey,
       provableApi: null,
     });
     invariant(uuid, "guard: missing uuid");
 
     const result = await accessProvableApi({
-      currency,
+      config,
       viewKey: testnetViewKey,
       provableApi: { uuid, scannerStatus: { synced: false, percentage: 0 } },
     });
@@ -85,7 +84,7 @@ describe("accessProvableApi", () => {
   it("throws AleoApiConfigurationResetError for an unknown scanner uuid", async () => {
     await expect(
       accessProvableApi({
-        currency,
+        config,
         viewKey: testnetViewKey,
         provableApi: { uuid: "00000000-0000-0000-0000-000000000000" },
       }),
@@ -98,7 +97,7 @@ describe("fetchAllOwnedRecords", () => {
 
   beforeAll(async () => {
     const provableApi = await accessProvableApi({
-      currency,
+      config,
       viewKey: testnetViewKey,
       provableApi: null,
     });
@@ -110,14 +109,14 @@ describe("fetchAllOwnedRecords", () => {
     const pristineAccount = await getPristineAccount();
 
     const freshProvableApi = await accessProvableApi({
-      currency,
+      config,
       viewKey: pristineAccount.viewKey,
       provableApi: null,
     });
     invariant(freshProvableApi.uuid, "guard: missing uuid");
 
     const records = await fetchAllOwnedRecords({
-      currency,
+      config,
       uuid: freshProvableApi.uuid,
     });
 
@@ -125,9 +124,9 @@ describe("fetchAllOwnedRecords", () => {
   });
 
   it("paginates across multiple pages without gaps or duplicates", async () => {
-    const fullFetch = await fetchAllOwnedRecords({ currency, uuid });
+    const fullFetch = await fetchAllOwnedRecords({ config, uuid });
     const pagedFetch = await fetchAllOwnedRecords({
-      currency,
+      config,
       uuid,
       resultsPerPage: 2,
     });
@@ -142,8 +141,8 @@ describe("fetchAllOwnedRecords", () => {
 
   it("returns only unspent records when unspent is true", async () => {
     const [fullFetch, unspentFetch] = await Promise.all([
-      fetchAllOwnedRecords({ currency, uuid }),
-      fetchAllOwnedRecords({ currency, uuid, unspent: true }),
+      fetchAllOwnedRecords({ config, uuid }),
+      fetchAllOwnedRecords({ config, uuid, unspent: true }),
     ]);
 
     expect(unspentFetch.length).toBeGreaterThan(0);
@@ -153,7 +152,7 @@ describe("fetchAllOwnedRecords", () => {
 
   it("filters records by function name", async () => {
     const records = await fetchAllOwnedRecords({
-      currency,
+      config,
       uuid,
       functions: ["transfer_private"],
     });
@@ -168,7 +167,7 @@ describe("patchPublicOperations", () => {
     const op = toBridgeOperation(testnetLedgerAccountId, testnetSelfConversionTx, testnetAddress);
 
     const result = await patchPublicOperations({
-      currency,
+      config,
       publicOperations: [op],
       privateRecords: [testnetMatchingPrivateRecord],
       address: testnetAddress,
@@ -213,7 +212,7 @@ describe("patchPublicOperations", () => {
     };
 
     const result = await patchPublicOperations({
-      currency,
+      config,
       publicOperations: [op],
       privateRecords: [caughtUpPrivateRecord],
       address: testnetAddress,
@@ -239,7 +238,7 @@ describe("patchPublicOperations", () => {
     );
 
     const result = await patchPublicOperations({
-      currency,
+      config,
       publicOperations: [op],
       privateRecords: [],
       address: testnetAddress,
@@ -264,7 +263,7 @@ describe("patchPublicOperations", () => {
     );
 
     const result = await patchPublicOperations({
-      currency,
+      config,
       publicOperations: [op],
       privateRecords: [],
       address: testnetAddress,
@@ -280,7 +279,7 @@ describe("patchPublicOperations", () => {
     const alreadyPatched = { ...op, extra: { ...op.extra, patched: true } };
 
     const result = await patchPublicOperations({
-      currency,
+      config,
       publicOperations: [alreadyPatched],
       privateRecords: [],
       address: testnetAddress,
@@ -311,7 +310,7 @@ describe("patchPublicOperations", () => {
     const op = toBridgeOperation(testnetLedgerAccountId, fullyPublicTx, testnetAddress);
 
     const result = await patchPublicOperations({
-      currency,
+      config,
       publicOperations: [op],
       privateRecords: [],
       address: testnetAddress,
@@ -326,7 +325,7 @@ describe("patchPublicOperations", () => {
 describe("getTokenOutDetails", () => {
   it("decrypts amount and recipient for a fully private outgoing token transfer", async () => {
     const result = await getTokenOutDetails({
-      currency,
+      config,
       record: testnetOutgoingPrivateTokenRecord,
       viewKey: testnetViewKey,
     });
@@ -340,7 +339,7 @@ describe("getTokenOutDetails", () => {
 
   it("reads amount and recipient directly for a private-to-public conversion sent to a third party", async () => {
     const result = await getTokenOutDetails({
-      currency,
+      config,
       record: testnetOutgoingPrivateToPublicRecord,
       viewKey: testnetViewKey,
     });
@@ -354,7 +353,7 @@ describe("getTokenOutDetails", () => {
 
   it("falls back to null amount and recipient when the transition index is out of range", async () => {
     const result = await getTokenOutDetails({
-      currency,
+      config,
       record: {
         ...testnetOutgoingPrivateToPublicRecord,
         transition_index: 999,

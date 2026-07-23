@@ -1,4 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import aleoConfig from "../config";
 import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
 import {
@@ -9,18 +8,18 @@ import {
 import { getPristineAccount } from "../__tests__/helpers/account";
 import { apiClient } from "./api";
 
-const currency = getCryptoCurrencyById("aleo_testnet");
+const config = getTestnetIntegConfig();
 let emptyAddress: string;
 
 beforeAll(async () => {
-  aleoConfig.setCoinConfig(() => getTestnetIntegConfig());
+  aleoConfig.setCoinConfig(() => config);
   const pristineAccount = await getPristineAccount();
   emptyAddress = pristineAccount.address;
 });
 
 describe("getLatestBlock", () => {
   it("returns a block with a positive height and valid hashes", async () => {
-    const block = await apiClient.getLatestBlock(currency);
+    const block = await apiClient.getLatestBlock(config);
 
     expect(block.header.metadata.height).toBeGreaterThan(0);
     expect(typeof block.header.metadata.timestamp).toBe("number");
@@ -31,14 +30,14 @@ describe("getLatestBlock", () => {
 
 describe("getAccountBalance", () => {
   it("returns a u64 balance string for an account with public funds", async () => {
-    const balance = await apiClient.getAccountBalance(currency, testnetAddress);
+    const balance = await apiClient.getAccountBalance(config, testnetAddress);
 
     expect(typeof balance).toBe("string");
     expect(balance).toMatch(/^\d+u64$/);
   });
 
   it("returns null for an account with no public credits balance", async () => {
-    const balance = await apiClient.getAccountBalance(currency, emptyAddress);
+    const balance = await apiClient.getAccountBalance(config, emptyAddress);
 
     expect(balance).toBeNull();
   });
@@ -46,25 +45,21 @@ describe("getAccountBalance", () => {
 
 describe("getTokenBalance", () => {
   it("returns the raw balance string for a known account holding the token", async () => {
-    const balance = await apiClient.getTokenBalance(
-      currency,
-      TEST_TOKEN_PROGRAM_ID,
-      testnetAddress,
-    );
+    const balance = await apiClient.getTokenBalance(config, TEST_TOKEN_PROGRAM_ID, testnetAddress);
 
     expect(typeof balance).toBe("string");
     expect(balance).toMatch(/^\d+u128$/);
   });
 
   it("returns null for an account with no balance for that token", async () => {
-    const balance = await apiClient.getTokenBalance(currency, TEST_TOKEN_PROGRAM_ID, emptyAddress);
+    const balance = await apiClient.getTokenBalance(config, TEST_TOKEN_PROGRAM_ID, emptyAddress);
 
     expect(balance).toBeNull();
   });
 
   it("returns null for a program that doesn't exist", async () => {
     const balance = await apiClient.getTokenBalance(
-      currency,
+      config,
       "totally_unknown_program_xyz.aleo",
       testnetAddress,
     );
@@ -74,14 +69,14 @@ describe("getTokenBalance", () => {
 
   it("throws for a malformed address", async () => {
     await expect(
-      apiClient.getTokenBalance(currency, TEST_TOKEN_PROGRAM_ID, "invalid_address"),
+      apiClient.getTokenBalance(config, TEST_TOKEN_PROGRAM_ID, "invalid_address"),
     ).rejects.toMatchObject({ name: "LedgerAPI4xx", status: 404 });
   });
 });
 
 describe("getTransactionById", () => {
   it("returns full details for a known accepted transaction", async () => {
-    const tx = await apiClient.getTransactionById(currency, referenceTransferPublicTx.id);
+    const tx = await apiClient.getTransactionById(config, referenceTransferPublicTx.id);
 
     expect(tx.id).toBe(referenceTransferPublicTx.id);
     expect(tx.status).toBe("Accepted");
@@ -95,7 +90,7 @@ describe("getTransactionById", () => {
   it("throws for an unknown transaction id", async () => {
     await expect(
       apiClient.getTransactionById(
-        currency,
+        config,
         "at1unknowntransactionidthatdoesnotexistonthechain0000000000000000",
       ),
     ).rejects.toMatchObject({ name: "LedgerAPI4xx", status: 404 });
@@ -105,7 +100,7 @@ describe("getTransactionById", () => {
 describe("getAccountPublicTransactions", () => {
   it("returns transactions list and address for an active account", async () => {
     const result = await apiClient.getAccountPublicTransactions({
-      currency,
+      config,
       address: testnetAddress,
     });
 
@@ -122,7 +117,7 @@ describe("getAccountPublicTransactions", () => {
 
   it("returns transactions in descending block order when order=desc", async () => {
     const result = await apiClient.getAccountPublicTransactions({
-      currency,
+      config,
       address: testnetAddress,
       order: "desc",
       limit: 10,
@@ -138,7 +133,7 @@ describe("getAccountPublicTransactions", () => {
 
   it("respects the limit parameter", async () => {
     const result = await apiClient.getAccountPublicTransactions({
-      currency,
+      config,
       address: testnetAddress,
       limit: 3,
     });
@@ -148,7 +143,7 @@ describe("getAccountPublicTransactions", () => {
 
   it("returns a next_cursor for pagination when limit is smaller than total", async () => {
     const result = await apiClient.getAccountPublicTransactions({
-      currency,
+      config,
       address: testnetAddress,
       limit: 3,
       order: "asc",
@@ -160,7 +155,7 @@ describe("getAccountPublicTransactions", () => {
 
   it("returns empty transactions list for an account with no activity", async () => {
     const result = await apiClient.getAccountPublicTransactions({
-      currency,
+      config,
       address: emptyAddress,
     });
 
@@ -171,7 +166,7 @@ describe("getAccountPublicTransactions", () => {
 
 describe("getScannerPublicKey", () => {
   it("returns a non-empty key_id and public_key", async () => {
-    const result = await apiClient.getScannerPublicKey(currency);
+    const result = await apiClient.getScannerPublicKey(config);
 
     expect(typeof result.key_id).toBe("string");
     expect(result.key_id.length).toBeGreaterThan(0);
@@ -182,7 +177,7 @@ describe("getScannerPublicKey", () => {
 
 describe("getProvePublicKey", () => {
   it("returns a non-empty key_id and public_key", async () => {
-    const { data } = await apiClient.getProvePublicKey({ currency });
+    const { data } = await apiClient.getProvePublicKey({ config });
 
     expect(typeof data.key_id).toBe("string");
     expect(data.key_id.length).toBeGreaterThan(0);
@@ -191,7 +186,7 @@ describe("getProvePublicKey", () => {
   });
 
   it("returns stickySessionCookie as an array or null", async () => {
-    const { stickySessionCookie } = await apiClient.getProvePublicKey({ currency });
+    const { stickySessionCookie } = await apiClient.getProvePublicKey({ config });
 
     expect(stickySessionCookie === null || Array.isArray(stickySessionCookie)).toBe(true);
   });

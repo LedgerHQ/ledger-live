@@ -1,7 +1,4 @@
 import BigNumber from "bignumber.js";
-import { getEnv } from "@ledgerhq/live-env";
-import { mockFeeByTransactionType } from "../__tests__/fixtures/config.fixture";
-import type { AleoCoinConfig } from "../types";
 import aleoConfig from "../config";
 import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
 import {
@@ -13,25 +10,12 @@ import { setupCalStore } from "../__tests__/helpers/cal";
 import { getPrivateBalance } from "./getPrivateBalance";
 
 describe("getPrivateBalance", () => {
+  const config = getTestnetIntegConfig();
+
   beforeAll(() => {
     setupCalStore();
-    aleoConfig.setCoinConfig(() => getTestnetIntegConfig());
+    aleoConfig.setCoinConfig(() => config);
   });
-
-  const config: AleoCoinConfig = {
-    status: { type: "active" },
-    networkType: "testnet",
-    apiUrls: {
-      node: getEnv("ALEO_NODE_ENDPOINT"),
-      sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
-    },
-    feeByTransactionType: mockFeeByTransactionType,
-    feeSafetyMultiplier: 1,
-    isFeeSponsored: true,
-    enableTokens: false,
-    useEncryptedProve: false,
-    recordPickingStrategy: "manual",
-  };
 
   it("should sum microcredits across all unspent credits records", async () => {
     const { balance, unspentRecords } = await getPrivateBalance({

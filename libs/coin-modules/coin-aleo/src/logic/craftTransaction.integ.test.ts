@@ -1,4 +1,3 @@
-import { getEnv } from "@ledgerhq/live-env";
 import aleoConfig from "../config";
 import { testnetViewKey } from "../__tests__/fixtures/api.fixture";
 import {
@@ -9,27 +8,14 @@ import {
   mockTxIntentTransferPrivate,
   mockTxIntentTransferPublic,
 } from "../__tests__/fixtures/transaction.fixture";
-import { mockFeeByTransactionType } from "../__tests__/fixtures/config.fixture";
-import type { AleoCoinConfig, FeeConfiguration, PreparedRequestResponse } from "../types";
+import type { FeeConfiguration, PreparedRequestResponse } from "../types";
 import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
 import { craftTransaction } from "./craftTransaction";
 import { fromHex } from "./utils";
 
 describe("craftTransaction", () => {
-  const config: AleoCoinConfig = {
-    status: { type: "active" },
-    networkType: "testnet",
-    apiUrls: {
-      node: getEnv("ALEO_NODE_ENDPOINT"),
-      sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
-    },
-    feeByTransactionType: mockFeeByTransactionType,
-    feeSafetyMultiplier: 1,
-    isFeeSponsored: true,
-    enableTokens: false,
-    useEncryptedProve: false,
-    recordPickingStrategy: "manual",
-  };
+  const config = getTestnetIntegConfig();
+
   const publicFeeConfiguration: FeeConfiguration = {
     function_name: "fee_public",
     max_base_fee: "34060",
@@ -42,7 +28,7 @@ describe("craftTransaction", () => {
   };
 
   beforeAll(() => {
-    aleoConfig.setCoinConfig(() => getTestnetIntegConfig());
+    aleoConfig.setCoinConfig(() => config);
   });
 
   it.each([

@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import aleoConfig from "../config";
 import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
 import {
@@ -12,7 +11,6 @@ import { setupCalStore } from "../__tests__/helpers/cal";
 import { listOperations } from "./listOperations";
 
 describe("listOperations (bridge mode)", () => {
-  const currency = getCryptoCurrencyById("aleo_testnet");
   const config = getTestnetIntegConfig();
 
   beforeAll(() => {
@@ -23,7 +21,7 @@ describe("listOperations (bridge mode)", () => {
   it("returns AleoOperation-shaped results with correct metadata for a known transaction", async () => {
     const result = await listOperations({
       config,
-      currency,
+      currencyId: "aleo_testnet",
       address: testnetAddress,
       ledgerAccountId: testnetLedgerAccountId,
       mode: "bridge",
@@ -51,7 +49,7 @@ describe("listOperations (bridge mode)", () => {
     const [smallPageSize, largePageSize] = await Promise.all([
       listOperations({
         config,
-        currency,
+        currencyId: "aleo_testnet",
         address: testnetAddress,
         ledgerAccountId: testnetLedgerAccountId,
         mode: "bridge",
@@ -59,7 +57,7 @@ describe("listOperations (bridge mode)", () => {
       }),
       listOperations({
         config,
-        currency,
+        currencyId: "aleo_testnet",
         address: testnetAddress,
         ledgerAccountId: testnetLedgerAccountId,
         mode: "bridge",
@@ -81,7 +79,7 @@ describe("listOperations (bridge mode)", () => {
   it("resolves CAL tokens and token operations for a testnet token program", async () => {
     const result = await listOperations({
       config: { ...config, enableTokens: true },
-      currency,
+      currencyId: "aleo_testnet",
       address: testnetAddress,
       ledgerAccountId: testnetLedgerAccountId,
       mode: "bridge",

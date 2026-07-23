@@ -42,7 +42,7 @@ describe("resolveTokenSubAccounts", () => {
   beforeAll(async () => {
     listOperationsResult = await listOperations({
       config,
-      currency,
+      currencyId: currency.id,
       address: testnetAddress,
       ledgerAccountId: testnetLedgerAccountId,
       mode: "bridge",
@@ -53,7 +53,7 @@ describe("resolveTokenSubAccounts", () => {
   const resolve = (enableTokens: boolean) =>
     resolveTokenSubAccounts({
       enableTokens,
-      currency,
+      config,
       address: testnetAddress,
       ledgerAccountId: testnetLedgerAccountId,
       publicOperations: listOperationsResult.operations,
@@ -91,7 +91,7 @@ describe("resolveTokenSubAccounts", () => {
 describe("buildSubAccountsFromPrivateRecords", () => {
   const build = (calTokensOverride?: Map<string, TokenCurrency>) =>
     buildSubAccountsFromPrivateRecords({
-      currency,
+      config,
       ledgerAccountId: testnetLedgerAccountId,
       allPrivateRecords: [testnetIncomingPrivateRecord1, testnetOutgoingPrivateTokenRecord],
       unspentPrivateRecords: [testnetOutgoingPrivateTokenRecord],

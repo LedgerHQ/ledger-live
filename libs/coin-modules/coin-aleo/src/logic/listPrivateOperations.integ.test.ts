@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import aleoConfig from "../config";
 import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
 import {
@@ -15,18 +14,18 @@ import { getPristineAccount } from "../__tests__/helpers/account";
 import { listPrivateOperations } from "./listPrivateOperations";
 
 describe("listPrivateOperations", () => {
-  const currency = getCryptoCurrencyById("aleo_testnet");
+  const config = getTestnetIntegConfig();
   let emptyAddress: string;
 
   beforeAll(async () => {
-    aleoConfig.setCoinConfig(() => getTestnetIntegConfig());
+    aleoConfig.setCoinConfig(() => config);
     const pristineAccount = await getPristineAccount();
     emptyAddress = pristineAccount.address;
   });
 
   it("returns private operations for a known testnet account with private records", async () => {
     const { operations } = await listPrivateOperations({
-      currency,
+      config,
       viewKey: testnetViewKey,
       address: testnetAddress,
       ledgerAccountId: testnetLedgerAccountId,
@@ -58,7 +57,7 @@ describe("listPrivateOperations", () => {
 
   it("returns an empty result for an account with no private records", async () => {
     const result = await listPrivateOperations({
-      currency,
+      config,
       viewKey: testnetViewKey,
       address: emptyAddress,
       ledgerAccountId: `js:2:aleo_testnet:${emptyAddress}:`,
@@ -71,7 +70,7 @@ describe("listPrivateOperations", () => {
 
   it("marks a record consumed as input in an outgoing transaction as a consumed record tag", async () => {
     const { operations, consumedRecordTags } = await listPrivateOperations({
-      currency,
+      config,
       viewKey: testnetViewKey,
       address: testnetAddress,
       ledgerAccountId: testnetLedgerAccountId,
