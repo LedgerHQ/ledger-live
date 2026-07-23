@@ -78,5 +78,3 @@ export interface FiatCurrency {
 }
 
 export type Currency = FiatCurrency | CryptoCurrency | TokenCurrency;
-
-export type CryptoOrTokenCurrency = CryptoCurrency | TokenCurrency;
