@@ -392,7 +392,9 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-tron/deviceTransactionConfig").then(m => m.default),
     loadMockBridge: () => import("../families/tron/bridge/mock").then(m => m.default),
+    loadSigner: () => import("../families/tron/signer").then(m => m.default),
     loadBridgeApi: () => import("../families/tron/bridge/api").then(m => m.default),
+    loadAccountRawAssign: () => import("../families/tron/accountRawAssign").then(m => m.default),
     loadBridgeExtensions: () => import("../families/tron/bridgeExtensions").then(m => m.default),
   },
   {

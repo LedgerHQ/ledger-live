@@ -331,8 +331,11 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const bridgeApi = await getBridgeApi(currency, network);
 
     const chainSpecificValidation = bridgeApi.getChainSpecificRules;
+    // TODO: replace with coinModuleApi.getAccountInfo() once that method is added to CoinModuleApi
+    let chainSpecificAccountData: Record<string, unknown> | undefined;
     if (chainSpecificValidation) {
-      chainSpecificValidation.getAccountShape(address);
+      chainSpecificAccountData =
+        (await chainSpecificValidation.getAccountShape(address)) ?? undefined;
     }
     const accountId = encodeAccountId({
       type: "js",
@@ -558,6 +561,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       operationsCount: operations.length,
       syncHash,
       ...stakingShape,
+      ...chainSpecificAccountData,
     };
     return res;
   };

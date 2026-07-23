@@ -3,7 +3,12 @@ import type { CryptoCurrency, TokenCurrency } from "../types";
 import type { Operation as LiveOperation, StakingResources } from "@ledgerhq/types-live";
 
 export type ChainSpecificRules = {
-  getAccountShape: (address: string) => void;
+  /**
+   * Called during getAccountShape for chain-specific enrichment. May return an object whose
+   * properties are merged into the account shape (e.g. tronResources for Tron).
+   * Returning undefined / void leaves the account shape unchanged.
+   */
+  getAccountShape: (address: string) => Promise<Record<string, unknown> | undefined> | void;
   getTransactionStatus: {
     throwIfPendingOperation?: boolean;
   };

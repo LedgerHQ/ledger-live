@@ -1,13 +1,9 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
-import { createBridges } from "@ledgerhq/coin-tron/bridge";
-import { TronCoinConfig } from "@ledgerhq/coin-tron/config";
 import tronResolver from "@ledgerhq/coin-tron/signer";
-import type { Transaction, TronAccount, TronSigner } from "@ledgerhq/coin-tron/types/index";
+import type { TronSigner } from "@ledgerhq/coin-tron/types/index";
 import Trx from "@ledgerhq/hw-app-trx";
 import Transport from "@ledgerhq/hw-transport";
-import type { Bridge } from "@ledgerhq/types-live";
-import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
-import { getCurrencyConfiguration } from "../../config";
+import { CreateSigner, createResolver } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 
 const createSigner: CreateSigner<TronSigner> = (transport: Transport) => {
@@ -20,13 +16,6 @@ const createSigner: CreateSigner<TronSigner> = (transport: Transport) => {
   };
 };
 
-const getCurrencyConfig = (): TronCoinConfig => getCurrencyConfiguration<TronCoinConfig>("tron");
-
-const bridge: Bridge<Transaction, TronAccount> = createBridges(
-  executeWithSigner(createSigner),
-  getCurrencyConfig,
-);
-
 const resolver: Resolver = createResolver(createSigner, tronResolver);
 
-export { bridge, resolver };
+export { resolver };

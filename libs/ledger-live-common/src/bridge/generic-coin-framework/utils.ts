@@ -524,8 +524,30 @@ export function transactionToIntent(
     res.data = { type: "buffer", value: transaction.data };
   }
 
+  // Forward family-specific fields not defined in GenericTransaction so that coin modules
+  // (e.g. Tron's `resource` and `votes`) can access them inside craftTransaction /
+  // validateIntent / estimateFees without requiring changes to the generic types.
+  for (const [key, value] of Object.entries(transaction)) {
+    if (value !== undefined && !(key in GENERIC_TRANSACTION_FIELDS) && !(key in res)) {
+      (res as Record<string, unknown>)[key] = value;
+    }
+  }
+
   return res;
 }
+
+// All fields defined on TransactionCommon + GenericTransaction. Any field NOT in this set
+// that appears on a family-specific transaction will be forwarded to the intent as-is.
+const GENERIC_TRANSACTION_FIELDS = new Set<string>([
+  // TransactionCommon
+  "amount", "recipient", "useAllAmount", "subAccountId", "feesStrategy", "familySpecificData",
+  // GenericTransaction
+  "family", "fees", "storageLimit", "customFees", "tag", "nonce", "memoType", "memoValue",
+  "data", "mode", "type", "assetReference", "assetOwner", "networkInfo", "chainId",
+  "gasLimit", "customGasLimit", "gasPrice", "maxFeePerGas", "maxPriorityFeePerGas",
+  "additionalFees", "gasOptions", "sponsored", "valAddress", "valId", "withdrawId",
+  "dstValAddress",
+]);
 
 function toFeeDataRaw(data: FeeData): FeeDataRaw {
   return {

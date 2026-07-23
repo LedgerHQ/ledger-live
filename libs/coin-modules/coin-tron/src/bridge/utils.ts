@@ -269,5 +269,8 @@ export async function getTronResources(
 }
 
 export function isAccountEmpty({ tronResources }: Pick<TronAccount, "tronResources">) {
+  // tronResources may be absent on accounts synced via the generic adapter before enrichment.
+  // Treat as non-empty so the account is not silently dropped from scan results.
+  if (!tronResources) return false;
   return tronResources.bandwidth.freeLimit.eq(0);
 }

@@ -212,6 +212,41 @@ export async function getDelegatedResource(
   return new BigNumber(amount);
 }
 
+export async function getDelegatedResourceByAddress(
+  fromAddress: string,
+  toAddress: string,
+  resource: TronResource,
+): Promise<BigNumber> {
+  const {
+    delegatedResource = [],
+  }: {
+    delegatedResource?: {
+      frozen_balance_for_bandwidth: number;
+      frozen_balance_for_energy: number;
+    }[];
+  } = await post(`/wallet/getdelegatedresourcev2`, {
+    fromAddress: decode58Check(fromAddress),
+    toAddress: decode58Check(toAddress),
+  });
+
+  const { frozen_balance_for_bandwidth, frozen_balance_for_energy } = delegatedResource.reduce(
+    (accum, cur) => {
+      if (cur.frozen_balance_for_bandwidth) {
+        accum.frozen_balance_for_bandwidth += cur.frozen_balance_for_bandwidth;
+      }
+      if (cur.frozen_balance_for_energy) {
+        accum.frozen_balance_for_energy += cur.frozen_balance_for_energy;
+      }
+      return accum;
+    },
+    { frozen_balance_for_bandwidth: 0, frozen_balance_for_energy: 0 },
+  );
+
+  return new BigNumber(
+    resource === "BANDWIDTH" ? frozen_balance_for_bandwidth : frozen_balance_for_energy,
+  );
+}
+
 export const DEFAULT_TRC20_FEES_LIMIT = 50000000;
 
 export async function triggerConstantContract({
