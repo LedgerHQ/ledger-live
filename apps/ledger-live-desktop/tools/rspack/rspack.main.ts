@@ -44,6 +44,7 @@ export function createMainConfig(
     // to tell Rspack to leave the require() as-is so it resolves at runtime.
     externals: {
       "@datadog/electron-sdk": "commonjs @datadog/electron-sdk",
+      "@datadog/electron-sdk/instrument": "commonjs @datadog/electron-sdk/instrument",
     },
     plugins: [
       new DatadogWebpackPlugin(),

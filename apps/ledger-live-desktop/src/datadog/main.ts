@@ -1,4 +1,5 @@
-import { addError, init } from "@datadog/electron-sdk";
+import "@datadog/electron-sdk/instrument";
+import { init } from "@datadog/electron-sdk";
 import anonymizer from "~/sentry/anonymizer";
 import { getOperatingSystemSupportStatus } from "~/support/os";
 import { getDatadogBuildConfig, rewriteAsarUrls, type ShouldSendCallback } from "./config";
@@ -34,11 +35,20 @@ export async function initDatadogMain(
   context: Context = {},
 ): Promise<boolean> {
   if (initialized) return true;
-  if (!shouldSend()) return false;
+  if (!shouldSend()) {
+    console.log("[datadog/main] skipped: shouldSend() is false");
+    return false;
+  }
 
   const { applicationId, clientToken, site, service, env } = getDatadogBuildConfig();
-  if (!applicationId || !clientToken) return false;
-  if (!getOperatingSystemSupportStatus().supported) return false;
+  if (!applicationId || !clientToken) {
+    console.log("[datadog/main] skipped: missing applicationId or clientToken");
+    return false;
+  }
+  if (!getOperatingSystemSupportStatus().supported) {
+    console.log("[datadog/main] skipped: OS not supported");
+    return false;
+  }
 
   try {
     const ok = await init({
@@ -49,7 +59,10 @@ export async function initDatadogMain(
       env,
       version: __APP_VERSION__,
     });
-    if (!ok) return false;
+    if (!ok) {
+      console.log("[datadog/main] init() returned false");
+      return false;
+    }
 
     shouldSendCallback = shouldSend;
     globalContext = {
@@ -58,9 +71,10 @@ export async function initDatadogMain(
       ...context,
     };
     initialized = true;
+    console.log("[datadog/main] initialized ✓");
     return true;
   } catch (e) {
-    console.warn("Datadog Electron SDK init failed", e);
+    console.warn("[datadog/main] init threw:", e);
     return false;
   }
 }
@@ -82,18 +96,12 @@ function anonymizeError(err: unknown): Error {
   return clone;
 }
 
-export function captureExceptionMain(err: unknown, context?: Context): void {
+// dd-trace auto-captures console.error() calls and forwards them to Datadog
+export function captureExceptionMain(err: unknown): void {
   if (!initialized) return;
   if (!shouldSendCallback()) return;
   if (shouldIgnoreErrorMessage(errorMessage(err))) return;
-
-  try {
-    const merged: Context = { ...globalContext, ...context };
-    anonymizer.filepathRecursiveReplacer(merged);
-    addError(anonymizeError(err), { context: merged });
-  } catch {
-    // no-op
-  }
+  console.error(anonymizeError(err));
 }
 
 export function setGlobalContextMain(context: Context): void {

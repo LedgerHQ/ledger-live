@@ -28,6 +28,7 @@
     "**/__mocks__/**",
     "**/e2e/**",
     "**/*.config.*",
+    "**/jest.setup.*",
     "**/scripts/**",
     "**/tools/**",
     "**/*.mock.*",

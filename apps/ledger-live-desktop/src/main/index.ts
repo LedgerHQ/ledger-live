@@ -138,14 +138,12 @@ app.on("ready", async () => {
     ...(identities?.datadogId ? { usr_id: identities.datadogId } : {}),
   }).then(ok => {
     if (!ok) return;
-    process.on("uncaughtException", e => captureExceptionMain(e));
-    process.on("unhandledRejection", e => captureExceptionMain(e));
+    // uncaughtException/unhandledRejection are captured automatically by dd-trace
     app.on("render-process-gone", (_event, _webContents, details) => {
       if (details.reason === "clean-exit") return;
-      captureExceptionMain(new Error(`render-process-gone: ${details.reason}`), {
-        reason: details.reason,
-        exitCode: details.exitCode,
-      });
+      captureExceptionMain(
+        new Error(`render-process-gone: ${details.reason} (exit ${details.exitCode})`),
+      );
     });
   });
 

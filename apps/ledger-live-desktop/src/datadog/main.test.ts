@@ -3,12 +3,10 @@ import {
   captureExceptionMain,
   initDatadogMain,
   isDatadogMainAvailable,
-  setGlobalContextMain,
 } from "./main";
 
 jest.mock("@datadog/electron-sdk", () => ({
   init: jest.fn(),
-  addError: jest.fn(),
 }));
 
 jest.mock("./config", () => ({
@@ -28,11 +26,10 @@ jest.mock("~/sentry/anonymizer", () => ({
   __esModule: true,
   default: {
     filepath: jest.fn((s: string) => s.replaceAll("/Users/john", "$HOME")),
-    filepathRecursiveReplacer: jest.fn(),
   },
 }));
 
-const { init, addError } = jest.requireMock("@datadog/electron-sdk");
+const { init } = jest.requireMock("@datadog/electron-sdk");
 const getDatadogBuildConfig = jest.mocked(jest.requireMock("./config").getDatadogBuildConfig);
 const shouldIgnoreErrorMessage = jest.mocked(
   jest.requireMock("./ignoreErrors").shouldIgnoreErrorMessage,
@@ -40,8 +37,6 @@ const shouldIgnoreErrorMessage = jest.mocked(
 const getOperatingSystemSupportStatus = jest.mocked(
   jest.requireMock("~/support/os").getOperatingSystemSupportStatus,
 );
-const anonymizer = jest.requireMock("~/sentry/anonymizer").default;
-
 const fullConfig = {
   applicationId: "app",
   clientToken: "token",
@@ -139,22 +134,29 @@ describe("datadog main", () => {
   });
 
   describe("captureExceptionMain", () => {
+    let consoleErrorSpy: jest.SpyInstance;
+
     beforeEach(async () => {
       getDatadogBuildConfig.mockReturnValue(fullConfig);
       await initDatadogMain(() => true);
+      consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+    });
+
+    afterEach(() => {
+      consoleErrorSpy.mockRestore();
     });
 
     it("does nothing when not initialized", () => {
       __resetDatadogMainForTesting();
       captureExceptionMain(new Error("boom"));
-      expect(addError).not.toHaveBeenCalled();
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
 
     it("does nothing when shouldSend() is false", async () => {
       __resetDatadogMainForTesting();
       await initDatadogMain(() => false);
       captureExceptionMain(new Error("boom"));
-      expect(addError).not.toHaveBeenCalled();
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
 
     it("skips capture when shouldSend() flips to false after init", async () => {
@@ -163,13 +165,13 @@ describe("datadog main", () => {
       await initDatadogMain(() => shouldSend);
       shouldSend = false;
       captureExceptionMain(new Error("boom"));
-      expect(addError).not.toHaveBeenCalled();
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
 
     it("skips ignored error messages", () => {
       shouldIgnoreErrorMessage.mockReturnValue(true);
       captureExceptionMain(new Error("ignored"));
-      expect(addError).not.toHaveBeenCalled();
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
 
     it("anonymizes the error message and stack before forwarding without mutating the original", () => {
@@ -177,25 +179,15 @@ describe("datadog main", () => {
       err.stack = "Error: failure\n  at /Users/john/app/index.js:1:1";
       captureExceptionMain(err);
       expect(err.message).toBe("failure at /Users/john/app");
-      expect(addError).toHaveBeenCalledWith(
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.objectContaining({ message: "failure at $HOME/app" }),
-        expect.objectContaining({ context: expect.any(Object) }),
       );
     });
 
-    it("normalizes non-Error unhandledRejection reasons to Error before forwarding", () => {
+    it("normalizes non-Error rejection reasons to Error before forwarding", () => {
       captureExceptionMain("raw string error at /Users/john/app");
-      expect(addError).toHaveBeenCalledWith(
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.objectContaining({ message: "raw string error at $HOME/app" }),
-        expect.objectContaining({ context: expect.any(Object) }),
-      );
-    });
-
-    it("anonymizes and merges the context", () => {
-      setGlobalContextMain({ process: "main" });
-      captureExceptionMain(new Error("boom"), { extra: "value" });
-      expect(anonymizer.filepathRecursiveReplacer).toHaveBeenCalledWith(
-        expect.objectContaining({ process: "main", extra: "value" }),
       );
     });
   });
