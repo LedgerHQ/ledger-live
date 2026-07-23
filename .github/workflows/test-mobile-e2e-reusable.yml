@@ -523,6 +523,9 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       SPECULOS_DEVICE: ${{ needs.determine-builds.outputs.ios_device }}
+      # True when both platform jobs run this workflow. Broadcast swap flows use it to pin each flow to one platform per run and avoid the shared-EOA race
+      # Single-platform runs keep full coverage.
+      E2E_BOTH_PLATFORMS: ${{ inputs.tests_type != 'iOS Only' && inputs.tests_type != 'Android Only' }}
     outputs:
       status: ${{ steps.run-ios.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -715,6 +718,9 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       SPECULOS_DEVICE: ${{ needs.determine-builds.outputs.android_device }}
+      # True when both platform jobs run this workflow. Broadcast swap flows use it to pin each flow to one platform per run and avoid the shared-EOA race
+      # Single-platform runs keep full coverage.
+      E2E_BOTH_PLATFORMS: ${{ inputs.tests_type != 'iOS Only' && inputs.tests_type != 'Android Only' }}
     outputs:
       status: ${{ steps.run-android.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
