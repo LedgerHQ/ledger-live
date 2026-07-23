@@ -1,13 +1,11 @@
 import { ContactIdSchema } from "@domain/entity-contact";
-import { getContactInitialAvatarBackground } from "./getContactInitialAvatarBackground";
+import { resolveAvatarColor } from "./resolveAvatarColor";
 
 const contactId = ContactIdSchema.parse("contact-ada");
 
-describe("getContactInitialAvatarBackground", () => {
+describe("resolveAvatarColor", () => {
   it("returns a stable Lumen background token for a contact", () => {
-    expect(getContactInitialAvatarBackground(contactId)).toBe(
-      getContactInitialAvatarBackground(contactId),
-    );
+    expect(resolveAvatarColor(contactId)).toBe(resolveAvatarColor(contactId));
   });
 
   it("returns one of the supported avatar colors", () => {
@@ -20,6 +18,6 @@ describe("getContactInitialAvatarBackground", () => {
       "avatarPurple",
       "avatarPink",
       "avatarTurquoise",
-    ]).toContain(getContactInitialAvatarBackground(contactId));
+    ]).toContain(resolveAvatarColor(contactId));
   });
 });

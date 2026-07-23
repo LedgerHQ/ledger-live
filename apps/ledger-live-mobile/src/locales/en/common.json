@@ -10225,6 +10225,7 @@
   "contacts": {
     "title": "Contacts",
     "addContact": "Add contact",
+    "addAddress": "Add address",
     "searchPlaceholder": "Search contact",
     "searchNoResults": "No contact found",
     "addContactDrawer": {
@@ -10241,6 +10242,13 @@
       "addressCount_zero": "0 address",
       "addressCount_one": "{{count}} address",
       "addressCount_other": "{{count}} addresses"
+    },
+    "detail": {
+      "emptyState": {
+        "title": "No address yet",
+        "meDescription": "Save a wallet address to receive crypto.",
+        "contactDescription": "Save a wallet address to send to {{name}}"
+      }
     },
     "ledgerSyncIntroduction": {
       "title": "Turn on Ledger Sync to save contacts",

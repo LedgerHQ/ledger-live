@@ -1,6 +1,6 @@
 import type { ContactId } from "@domain/entity-contact";
 
-const CONTACT_INITIAL_AVATAR_BACKGROUNDS = [
+const CONTACT_AVATAR_COLORS = [
   "avatarRed",
   "avatarOrange",
   "avatarYellow",
@@ -11,12 +11,12 @@ const CONTACT_INITIAL_AVATAR_BACKGROUNDS = [
   "avatarTurquoise",
 ] as const;
 
-export function getContactInitialAvatarBackground(contactId: ContactId) {
+export function resolveAvatarColor(contactId: ContactId) {
   let hash = 0;
 
   for (const character of contactId) {
     hash = (hash * 31 + character.codePointAt(0)!) >>> 0;
   }
 
-  return CONTACT_INITIAL_AVATAR_BACKGROUNDS[hash % CONTACT_INITIAL_AVATAR_BACKGROUNDS.length];
+  return CONTACT_AVATAR_COLORS[hash % CONTACT_AVATAR_COLORS.length];
 }

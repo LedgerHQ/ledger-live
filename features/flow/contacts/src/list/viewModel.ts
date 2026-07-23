@@ -5,7 +5,8 @@ import type {
   EmptyContactsListViewModel,
   PopulatedContactsListViewModel,
 } from "./types";
-import { createContactsListSections, getContactInitial } from "./internals";
+import { getContactInitial } from "../internals";
+import { createContactsListSections } from "./internals";
 
 function createContactsListItem(contact: Contact): ContactsListItem {
   return {

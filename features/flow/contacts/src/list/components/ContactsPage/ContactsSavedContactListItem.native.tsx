@@ -6,8 +6,8 @@ import {
   ListItemLeading,
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-rnative";
+import { ContactAvatar } from "../../../components/ContactAvatar/ContactAvatar.native";
 import type { ContactsListItem } from "../..";
-import { ContactsInitialAvatar } from "./ContactsInitialAvatar.native";
 
 type ContactsSavedContactListItemProps = Readonly<{
   contact: ContactsListItem;
@@ -28,7 +28,7 @@ export function ContactsSavedContactListItem({
       lx={{ marginHorizontal: "-s8" }}
     >
       <ListItemLeading>
-        <ContactsInitialAvatar contact={contact} />
+        <ContactAvatar contactId={contact.contactId} name={contact.name} />
         <ListItemContent>
           <ListItemTitle>{contact.name}</ListItemTitle>
           <ListItemDescription>{addressCountLabel}</ListItemDescription>
