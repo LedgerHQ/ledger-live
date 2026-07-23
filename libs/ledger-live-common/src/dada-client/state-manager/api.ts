@@ -5,11 +5,27 @@ import {
   FetchBaseQueryMeta,
   QueryReturnValue,
 } from "@reduxjs/toolkit/query/react";
-import type { ApiAsset } from "../entities";
-import type { CryptoOrTokenCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import type { ApiAsset, ApiExplorerURLs } from "../entities";
+import type {
+  CryptoOrTokenCurrency,
+  CryptoCurrencyId,
+  ExplorerView,
+} from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { convertApiToken } from "@domain/api-currency-token";
 import { RawApiResponse, AssetsData } from "../entities";
+
+// DADA serves explorer templates as `explorersURLs` with a `transaction` key;
+// map them to the ledger-live `ExplorerView` shape (which uses `tx`).
+function toExplorerViews(explorersURLs?: ApiExplorerURLs[] | null): ExplorerView[] {
+  if (!explorersURLs) return [];
+  return explorersURLs.map(({ address, transaction, token, stakePool }) => ({
+    ...(address ? { address } : {}),
+    ...(transaction ? { tx: transaction } : {}),
+    ...(token ? { token } : {}),
+    ...(stakePool ? { stakePool } : {}),
+  }));
+}
 
 function convertApiAssets(
   apiAssets: Record<string, ApiAsset>,
@@ -33,9 +49,9 @@ function convertApiAssets(
           managerAppName: asset.name,
           coinType: asset.coinType ?? 0,
           scheme: asset.id.toLowerCase(),
-          color: "#999999",
+          color: asset.color ?? "#999999",
           family: asset.family ?? asset.id,
-          explorerViews: [],
+          explorerViews: toExplorerViews(asset.explorersURLs),
           symbol: asset.symbol,
           disableCountervalue: asset.disableCountervalue,
           supportsSegwit: asset.hasSegwit,

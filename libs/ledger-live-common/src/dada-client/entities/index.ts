@@ -18,6 +18,14 @@ export interface ApiTokenCurrency {
   descriptor?: unknown;
 }
 
+// DADA explorer URL templates (mirrors the backend `ExplorerURLs` shape).
+export interface ApiExplorerURLs {
+  address?: string | null;
+  transaction?: string | null;
+  token?: string | null;
+  stakePool?: string | null;
+}
+
 export interface ApiCryptoCurrency {
   type: "crypto_currency";
   id: string;
@@ -33,6 +41,8 @@ export interface ApiCryptoCurrency {
   hasTokens?: boolean;
   hrp?: string | null;
   disableCountervalue?: boolean;
+  color?: string | null;
+  explorersURLs?: ApiExplorerURLs[] | null;
 }
 
 export type ApiAsset = ApiTokenCurrency | ApiCryptoCurrency;
