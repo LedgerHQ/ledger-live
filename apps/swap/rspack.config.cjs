@@ -40,6 +40,9 @@ module.exports = env => {
     entry: "./index.js",
     resolve: {
       ...Repack.getResolveOptions(platform, { enablePackageExports: true }),
+      alias: {
+        "@react-native-masked-view/masked-view": false,
+      },
     },
     output: {
       path: "[context]/build/swap/[platform]",
@@ -101,6 +104,7 @@ module.exports = env => {
         filename: "swap.container.js.bundle",
         exposes: {
           "./HelloWorld": "./src/HelloWorld",
+          "./SwapNavigator": "./src/navigation/SwapNavigator",
         },
         dts: {
           generateTypes: {
@@ -124,6 +128,27 @@ module.exports = env => {
           "react-redux": { singleton: true, requiredVersion: "^9.0.0" },
           "@reduxjs/toolkit": { singleton: true, requiredVersion: "^2.0.0" },
           "@shared/mobile-host-runtime": { singleton: true, requiredVersion: "*" },
+          "@react-navigation/native": {
+            singleton: true,
+            requiredVersion: "^7.1.0",
+            version: "7.1.17",
+          },
+          "@react-navigation/core": {
+            singleton: true,
+            requiredVersion: "^7.12.0",
+            version: "7.12.4",
+          },
+          "@react-navigation/native-stack": {
+            singleton: true,
+            requiredVersion: "^7.3.0",
+            version: "7.3.26",
+          },
+          "react-native-screens": { singleton: true, requiredVersion: "*", version: "4.15.4" },
+          "react-native-safe-area-context": {
+            singleton: true,
+            requiredVersion: "*",
+            version: "5.6.1",
+          },
         },
       }),
     ],

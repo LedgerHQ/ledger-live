@@ -183,6 +183,7 @@ export enum ScreenName {
   SwapSelectFees = "SelectFees",
   SwapSelectProvider = "SelectProvider",
   SwapTab = "SwapTab",
+  SwapMfe = "SwapMfe",
   PerpsTab = "PerpsTab",
   GlobalSearch = "GlobalSearch",
   Earn = "Earn",

@@ -113,6 +113,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.Main]?: NavigatorScreenParams<MainNavigatorParamList> & {
     hideTabNavigation?: boolean;
   };
+  [ScreenName.SwapMfe]: undefined;
   [NavigatorName.MyLedger]?: NavigatorScreenParams<MyLedgerNavigatorStackParamList>;
   [NavigatorName.Discover]?: NavigatorScreenParams<DiscoverNavigatorStackParamList>;
   [NavigatorName.Web3HubTab]?: NavigatorScreenParams<Web3HubTabStackParamList>;

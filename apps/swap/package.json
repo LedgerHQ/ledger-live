@@ -9,11 +9,16 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@react-navigation/core": "7.12.4",
+    "@react-navigation/native": "catalog:",
+    "@react-navigation/native-stack": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "@shared/mobile-host-runtime": "workspace:*",
     "@swc/helpers": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
+    "react-native-safe-area-context": "catalog:",
+    "react-native-screens": "catalog:",
     "react-redux": "catalog:"
   },
   "devDependencies": {

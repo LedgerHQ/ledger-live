@@ -313,10 +313,6 @@ export default withRozeniteUrlFix(
               },
               generateTypes: false,
             },
-            // The dynamic-remote-type-hints runtime plugin opens a WebSocket via
-            // `isomorphic-ws`, which under Hermes/RN resolves to a value whose
-            // `prototype` is undefined and crashes the host bundle at init.
-            // `dev` is a top-level MF option, sibling of `dts`.
             dev: {
               disableDynamicRemoteTypeHints: true,
               disableHotTypesReload: true,
@@ -328,6 +324,36 @@ export default withRozeniteUrlFix(
               "react-redux": { singleton: true, eager: true, requiredVersion: "^9.0.0" },
               "@reduxjs/toolkit": { singleton: true, eager: true, requiredVersion: "^2.0.0" },
               "@shared/mobile-host-runtime": { singleton: true, eager: true, requiredVersion: "*" },
+              "@react-navigation/native": {
+                singleton: true,
+                eager: true,
+                requiredVersion: "^7.1.0",
+                version: "7.1.17",
+              },
+              "@react-navigation/core": {
+                singleton: true,
+                eager: true,
+                requiredVersion: "^7.12.0",
+                version: "7.12.4",
+              },
+              "@react-navigation/native-stack": {
+                singleton: true,
+                eager: true,
+                requiredVersion: "^7.3.0",
+                version: "7.3.26",
+              },
+              "react-native-screens": {
+                singleton: true,
+                eager: true,
+                requiredVersion: "*",
+                version: "4.15.4",
+              },
+              "react-native-safe-area-context": {
+                singleton: true,
+                eager: true,
+                requiredVersion: "*",
+                version: "5.6.1",
+              },
             },
           }),
           new ExpoModulesPlugin(),

@@ -107,6 +107,7 @@ import FeesNavigator from "./FeesNavigator";
 import { getEarnScreenOptions } from "./getEarnScreenOptions";
 import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
 import LiveAppModalScreen from "LLM/features/LiveAppModal";
+import { SwapMfeScreen } from "~/mvvm/features/Portfolio/screens/Portfolio/SwapMfeScreen";
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList, typeof BASE_NAVIGATOR_ID>();
 
@@ -198,6 +199,11 @@ export default function BaseNavigator() {
       <RootDrawer drawer={route.params?.drawer} />
       <Stack.Navigator id={BASE_NAVIGATOR_ID} screenOptions={nativeStackScreenOptions}>
         <Stack.Screen name={NavigatorName.Main} component={Main} options={{ headerShown: false }} />
+        <Stack.Screen
+          name={ScreenName.SwapMfe}
+          component={SwapMfeScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name={NavigatorName.MyLedger}
           component={MyLedgerNavigator}

@@ -20,3 +20,10 @@ declare module "swap/HelloWorld" {
   const HelloWorld: FC<HelloWorldProps>;
   export default HelloWorld;
 }
+
+declare module "swap/SwapNavigator" {
+  import { FC } from "react";
+
+  const SwapNavigator: FC;
+  export default SwapNavigator;
+}

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Platform } from "react-native";
+import { Platform, Pressable } from "react-native";
 import Animated from "react-native-reanimated";
 import { ProductTourPortfolioMount } from "LLM/features/ProductTour";
 import { useQ2WalletV4TourDrawer, Q2WalletV4TourDrawer } from "LLM/features/Q2WalletV4Tour/Drawer";
@@ -132,7 +132,11 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
 
     sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
 
-    sections.push(<SwapMfe key="swapMfe" name="test" />);
+    sections.push(
+      <Pressable key="swapMfe" onPress={() => navigation.navigate(ScreenName.SwapMfe)}>
+        <SwapMfe name="test" />
+      </Pressable>,
+    );
     if (shouldDisplayAssetSection) {
       sections.push(<WalletAssetsView key="categorizedAssets" />);
     } else {
@@ -170,6 +174,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     backgroundColor,
     shouldDisplayOperationsList,
     shouldAddBottomPaddingForLegacyAssets,
+    navigation,
   ]);
 
   return (
