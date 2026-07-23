@@ -158,8 +158,7 @@ export default class SwapPage extends CommonPage {
     await waitForElementById(this.swapSuccessTitleId, 120000, {
       errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
     });
-    await app.common.closePage();
-    jestExpect(await waitForElementNotVisible(this.swapSuccessTitleId)).toBeTruthy();
+    await tapByIdAndExpectToDisappear("NavigationHeaderCloseButton", { timeout: 60000 });
   }
 
   @Step("Selected provider: $0")
