@@ -12,7 +12,7 @@ jest.mock("@ledgerhq/live-common/wallet-api/manifestDomainUtils", () => ({
   isUrlAllowedByManifestDomains: jest.fn(() => true),
 }));
 
-jest.mock("@ledgerhq/live-common/wallet-api/react", () => ({
+jest.mock("@ledgerhq/live-common/wallet-api/react/safeGetRefValue", () => ({
   safeGetRefValue: jest.fn(),
 }));
 

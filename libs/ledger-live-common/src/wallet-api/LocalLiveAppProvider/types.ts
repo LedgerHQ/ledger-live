@@ -1,5 +1,5 @@
 import { LiveAppManifest } from "../../platform/types";
-import { LocalLiveAppDB } from "../react";
+import { LocalLiveAppDB } from "../react/types";
 
 export type LiveAppProviderProps = {
   children: React.ReactNode;

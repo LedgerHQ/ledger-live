@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Grid, InfiniteLoader } from "@ledgerhq/react-ui";
-import { DisclaimerRaw } from "@ledgerhq/live-common/wallet-api/react";
+import { DisclaimerRaw } from "@ledgerhq/live-common/wallet-api/react/types";
 import { FullCard } from "../../Card";
 import { NoResult } from "./NoResult";
 import { Search } from "../../../hooks";

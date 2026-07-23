@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
 import { usePerpsHandlers } from "LLD/features/Perps/hooks/usePerpsHandlers";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
+import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react/types";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { Web3AppWebview } from "../Web3AppWebview";
 import { TopBar, TopBarConfig } from "./TopBar";

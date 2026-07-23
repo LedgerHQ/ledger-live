@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from "react";
 import { Flex, SearchInput, Text, SelectInput } from "@ledgerhq/react-ui";
 import { Search as SearchType } from "../../hooks";
-import { Categories } from "@ledgerhq/live-common/wallet-api/react";
+import { Categories } from "@ledgerhq/live-common/wallet-api/react/types";
 import { useTranslation } from "react-i18next";
 
 export interface Props {

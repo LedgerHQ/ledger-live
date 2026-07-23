@@ -1,6 +1,6 @@
 import React from "react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { SetCurrentAccountHistDb } from "@ledgerhq/live-common/wallet-api/react";
+import { SetCurrentAccountHistDb } from "@ledgerhq/live-common/wallet-api/react/types";
 import { NoAccountOverlay } from "./NoAccountOverlay";
 import { WebviewLoader } from "./types";
 

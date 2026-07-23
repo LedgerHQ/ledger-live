@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import type { RefObject } from "react";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react/safeGetRefValue";
 import type { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import type { WebviewAPI } from "~/components/Web3AppWebview/types";
 
