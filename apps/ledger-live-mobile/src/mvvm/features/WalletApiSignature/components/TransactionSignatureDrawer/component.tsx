@@ -1,11 +1,11 @@
 import React from "react";
 import { View } from "react-native";
 import { getProductName } from "@ledgerhq/devices";
+import { Spinner } from "@ledgerhq/lumen-ui-rnative";
 import { InfoState } from "LLM/components/InfoState";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 import type { SignTransactionIntentJobState } from "@ledgerhq/live-common/intents/signTransactionIntent";
 import { useTranslation } from "~/context/Locale";
-import InfiniteLoader from "~/components/InfiniteLoader";
 
 type SignTransactionIntentComponentProps = Readonly<{
   jobState: SignTransactionIntentJobState | undefined;
@@ -50,7 +50,7 @@ export function SignTransactionIntentComponent({
             justifyContent: "center",
           }}
         >
-          <InfiniteLoader testID="wallet-api-signature-loading" />
+          <Spinner size={32} testID="wallet-api-signature-loading" />
         </View>
       );
     case "cancelled":

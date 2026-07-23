@@ -1,5 +1,5 @@
 import React from "react";
-import { render, waitFor, act } from "@testing-library/react-native";
+import { render, waitFor, act } from "@tests/test-renderer";
 import TransactionSignatureDrawer from "../components/TransactionSignatureDrawer";
 import MessageSignatureDrawer from "../components/MessageSignatureDrawer";
 import type { WalletApiDeviceIntentSignRequest } from "../components/TransactionSignatureDrawer";
@@ -38,10 +38,6 @@ jest.mock("@ledgerhq/device-intent", () => ({
     definition,
     input,
   })),
-}));
-
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  getMainAccount: jest.fn((account: unknown) => account),
 }));
 
 const mockPrepareTransaction = jest.fn((_account: unknown, tx: unknown) => Promise.resolve(tx));

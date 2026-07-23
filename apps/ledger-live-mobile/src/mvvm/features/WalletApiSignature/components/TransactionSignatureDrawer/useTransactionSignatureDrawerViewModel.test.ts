@@ -1,4 +1,4 @@
-import { act, renderHook, waitFor } from "@testing-library/react-native";
+import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import { createIntent } from "@ledgerhq/device-intent";
@@ -8,10 +8,6 @@ import type { WalletApiDeviceIntentSignRequest } from "./types";
 
 jest.mock("@ledgerhq/device-intent", () => ({
   createIntent: jest.fn(() => ({ uuid: "intent-1" })),
-}));
-
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  getMainAccount: jest.fn((account: unknown) => account),
 }));
 
 const mockPrepareTransaction = jest.fn((_account: unknown, tx: unknown) => Promise.resolve(tx));

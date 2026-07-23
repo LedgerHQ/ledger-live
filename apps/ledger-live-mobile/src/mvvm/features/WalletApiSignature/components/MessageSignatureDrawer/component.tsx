@@ -1,11 +1,11 @@
 import React from "react";
 import { View } from "react-native";
 import { getProductName } from "@ledgerhq/devices";
+import { Spinner } from "@ledgerhq/lumen-ui-rnative";
 import { InfoState } from "LLM/components/InfoState";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 import type { SignMessageIntentJobState } from "@ledgerhq/live-common/intents/signMessageIntent";
 import { useTranslation } from "~/context/Locale";
-import InfiniteLoader from "~/components/InfiniteLoader";
 
 type SignMessageIntentComponentProps = Readonly<{
   jobState: SignMessageIntentJobState | undefined;
@@ -13,10 +13,7 @@ type SignMessageIntentComponentProps = Readonly<{
   onClose: () => void;
 }>;
 
-export function SignMessageIntentComponent({
-  jobState,
-  onClose,
-}: SignMessageIntentComponentProps) {
+export function SignMessageIntentComponent({ jobState, onClose }: SignMessageIntentComponentProps) {
   const { t } = useTranslation();
 
   if (!jobState) {
@@ -47,7 +44,7 @@ export function SignMessageIntentComponent({
             justifyContent: "center",
           }}
         >
-          <InfiniteLoader testID="wallet-api-message-signature-loading" />
+          <Spinner size={32} testID="wallet-api-message-signature-loading" />
         </View>
       );
     case "cancelled":

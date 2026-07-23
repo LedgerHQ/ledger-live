@@ -1,4 +1,4 @@
-import { act, renderHook, waitFor } from "@testing-library/react-native";
+import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { createIntent } from "@ledgerhq/device-intent";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { useMessageSignatureDrawerViewModel } from "./useMessageSignatureDrawerViewModel";
@@ -6,10 +6,6 @@ import type { WalletApiDeviceIntentSignMessageRequest } from "./types";
 
 jest.mock("@ledgerhq/device-intent", () => ({
   createIntent: jest.fn(() => ({ uuid: "intent-1" })),
-}));
-
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  getMainAccount: jest.fn((account: unknown) => account),
 }));
 
 jest.mock("@ledgerhq/live-common/device-action/utils", () => ({
