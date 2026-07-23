@@ -1,20 +1,27 @@
-# EVM Address Book Device Intents
+# Contacts Device Intents
 
 ## Purpose
 
-This document defines the EVM Address Book device intents that Ledger Wallet
+This document defines the cross-app Contacts device intents that Ledger Wallet
 should expose to Wallet Experience teams through the Device Intent Executor.
 
 It is a WXP-facing contract, not an APDU reference. The lower-level device
-protocol remains defined by the firmware Address Book specifications:
+protocol remains defined by the firmware Contacts specifications:
 
-- [Address Book Final Specifications](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications)
-- [Address Book - Device API](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7295107160/Address+Book+-+Device+API)
+- [Contacts Final Specifications](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications)
+- [Contacts - Device API](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7295107160/Address+Book+-+Device+API)
 
-All intents in this document are EVM-specific. They should open the Ethereum
-app, use the EVM Address Book APDUs, set `BLOCKCHAIN_FAMILY = Ethereum`, and
-serialize EVM identifiers as 20-byte addresses. Intents that register, verify,
-or update an address/account proof also require `chainId`.
+The intents are **cross-app**: all commands except external-contact rename run
+in the target coin app, from the minimum Contacts-supported version of that app.
+External-contact rename runs on the device dashboard. The Contacts kit performs
+the corresponding explicit device action — `openApp(appName)` for a coin app or
+`goToDashboard()` for the rename — before issuing the command.
+
+The contract is blockchain-family agnostic. Callers provide the target
+`blockchainFamily`, the chain reference, and a family-serialized identifier.
+For example, an EVM caller supplies `blockchainFamily = Ethereum`, a numeric
+`chainId`, and a 20-byte account address; these are examples, not restrictions
+of the Contacts intents.
 
 ## Table of Contents
 
@@ -30,20 +37,20 @@ or update an address/account proof also require `chainId`.
 - [Intents](#intents)
   - [Intent List](#intent-list)
   - [TypeScript Conventions](#typescript-conventions)
-  - [External Address Registration](#external-address-registration)
-    - [`registerAddressBookExternalAddressEvmIntentDefinition`](#registeraddressbookexternaladdressevmintentdefinition)
-  - [External Contact Rename](#external-contact-rename)
-    - [`renameAddressBookContactEvmIntentDefinition`](#renameaddressbookcontactevmintentdefinition)
-  - [External Address Identifier Edit](#external-address-identifier-edit)
-    - [`editAddressBookExternalAddressIdentifierEvmIntentDefinition`](#editaddressbookexternaladdressidentifierevmintentdefinition)
-  - [External Address Scope Edit](#external-address-scope-edit)
-    - [`editAddressBookExternalAddressScopeEvmIntentDefinition`](#editaddressbookexternaladdressscopeevmintentdefinition)
-  - [External Address Convenience Edit](#external-address-convenience-edit)
-    - [`editAddressBookExternalAddressEvmIntentDefinition`](#editaddressbookexternaladdressevmintentdefinition)
-  - [Ledger Account Registration](#ledger-account-registration)
-    - [`registerAddressBookLedgerAccountEvmIntentDefinition`](#registeraddressbookledgeraccountevmintentdefinition)
-  - [Ledger Account Rename](#ledger-account-rename)
-    - [`renameAddressBookLedgerAccountEvmIntentDefinition`](#renameaddressbookledgeraccountevmintentdefinition)
+  - [Register External Address](#register-external-address)
+    - [`registerExternalAddressIntentDefinition`](#registerexternaladdressintentdefinition)
+  - [Rename External Contact](#rename-external-contact)
+    - [`renameExternalContactIntentDefinition`](#renameexternalcontactintentdefinition)
+  - [Edit External Address Identifier](#edit-external-address-identifier)
+    - [`editExternalAddressIdentifierIntentDefinition`](#editexternaladdressidentifierintentdefinition)
+  - [Edit External Address Scope](#edit-external-address-scope)
+    - [`editExternalAddressScopeIntentDefinition`](#editexternaladdressscopeintentdefinition)
+  - [Edit External Address](#edit-external-address)
+    - [`editExternalAddressIntentDefinition`](#editexternaladdressintentdefinition)
+  - [Register Ledger Account](#register-ledger-account)
+    - [`registerLedgerAccountIntentDefinition`](#registerledgeraccountintentdefinition)
+  - [Rename Ledger Account](#rename-ledger-account)
+    - [`renameLedgerAccountIntentDefinition`](#renameledgeraccountintentdefinition)
 - [Open Decisions](#open-decisions)
 
 ## Terminology
@@ -51,10 +58,11 @@ or update an address/account proof also require `chainId`.
 ### Common terms
 
 - **Contact**: human-readable entity, for example `Alice`.
-- **`chainId`**: EVM chain id bound into external address records and Ledger
-  account contacts. It must be provided whenever the device verifies or computes
-  `hmacRest` or a Ledger account `hmacProof`. External contact rename is the
-  exception because it only verifies and recomputes the name proof.
+- **Chain reference**: family-specific chain information bound into external
+  address records and Ledger account contacts. It must be provided whenever the
+  device verifies or computes `hmacRest` or a Ledger account `hmacProof`.
+  External contact rename is the exception because it only verifies and
+  recomputes the name proof. An EVM caller uses a numeric `chainId`.
 
 ### External contact terms
 
@@ -62,12 +70,14 @@ These apply only to third-party (external) contacts.
 
 - **Contact group**: device-authenticated group for one contact name. It is
   represented by `groupHandle` and `hmacProof`.
-- **External address record**: one registered `(scope, identifier, chainId)`
-  attached to a contact group. For EVM, `identifier` is an Ethereum address.
+- **External address record**: one registered `(scope, identifier, chain)`
+  attached to a contact group. The identifier and chain are serialized according
+  to the target blockchain family.
 - **Scope**: context string bound to an external address record. In product
   wording it can be called a label, but technically it is part of the proof.
-- **Identifier**: blockchain identifier. For EVM this is the 20-byte account
-  address, usually represented in Ledger Wallet as an EIP-55 hex address.
+- **Identifier**: blockchain-family-specific account identifier. For example,
+  an EVM identifier is a 20-byte account address, usually represented in Ledger
+  Wallet as an EIP-55 hex address.
 - **`gid` / Group ID**: random 32-byte identifier generated by the device when
   creating a new external contact group, during the first address registration
   for that group. Ledger Wallet does not receive or store it directly; it is
@@ -191,7 +201,7 @@ However, it accurately captures everything that must be persisted, so any
 alternative shape must be able to hold the same fields.
 
 ```ts
-type EvmAddressBookContactGroup = {
+type ContactGroup = {
   /**
    * Ledger Wallet local identifier for the contact group.
    * Generated by Ledger Wallet when the contact group is created in storage.
@@ -204,9 +214,10 @@ type EvmAddressBookContactGroup = {
    */
   contactName: string;
   /**
-   * BIP32 path used by the device to derive the Address Book proof key.
+   * BIP32 path used by the device to derive the contact proof key.
    * The firmware spec requires a DERIVATION_PATH for external contact commands,
-   * but this may be an Address Book constant rather than a user account path.
+   * but this may be a contact derivation-path constant rather than a user
+   * account path.
    * Its final source is still open and may be chosen inside DMK.
    */
   derivationPath: string;
@@ -226,7 +237,7 @@ type EvmAddressBookContactGroup = {
   hmacProof: string;
 };
 
-type EvmAddressBookExternalAddress = {
+type ExternalAddress = {
   /**
    * Ledger Wallet local identifier for this external address record.
    * Generated by Ledger Wallet when the address record is created in storage.
@@ -234,38 +245,38 @@ type EvmAddressBookExternalAddress = {
   id: string;
   /**
    * Link to the Ledger Wallet contact group that owns this address record.
-   * Generated by Ledger Wallet from EvmAddressBookContactGroup.id.
+   * Generated by Ledger Wallet from ContactGroup.id.
    */
   contactGroupId: string;
   /**
-   * Context label for this address record, for example "Ethereum Mainnet",
-   * "Base", "Kraken", or "Binance account". Entered or selected by the user in
-   * Ledger Wallet and confirmed on the device during registration or scope
-   * edit.
+   * Context label for this address record, for example "Mainnet", "Kraken",
+   * or "Binance account". Entered or selected by the user in Ledger Wallet and
+   * confirmed on the device during registration or scope edit.
    */
   scope: string;
   /**
-   * EVM account address attached to the contact group for this scope and chain.
-   * Entered or selected in Ledger Wallet, validated by the Ethereum app, and
-   * confirmed on the device during registration or identifier edit.
+   * Blockchain-family-specific identifier attached to the contact group for
+   * this scope and chain. Entered or selected in Ledger Wallet and confirmed on
+   * the device during registration or identifier edit.
    */
-  address: `0x${string}`;
+  address: string;
   /**
-   * EVM chain id that disambiguates the network for this address record.
-   * Selected by Ledger Wallet from the network/account context and sent to the
-   * device in Address Book commands.
+   * Chain reference that disambiguates the network for this address record.
+   * Its representation is family-specific (for example, an EVM caller uses a
+   * numeric chain id). It is selected by Ledger Wallet from the network/account
+   * context and sent to the device in Contacts commands.
    */
-  chainId: number;
+  chainId: string | number;
   /**
-   * Opaque proof binding scope, address, Ethereum family, and chain id to the
-   * contact group. Generated by the device during REGISTER IDENTITY, then
-   * regenerated by the device during EDIT IDENTIFIER or EDIT SCOPE; Ledger
+   * Opaque proof binding scope, address, blockchain family, and chain reference
+   * to the contact group. Generated by the device during REGISTER IDENTITY,
+   * then regenerated by the device during EDIT IDENTIFIER or EDIT SCOPE; Ledger
    * Wallet stores the latest value for this address record.
    */
   hmacRest: string;
 };
 
-type EvmAddressBookLedgerAccount = {
+type LedgerAccount = {
   /**
    * Ledger Wallet local identifier for the Ledger-owned account contact.
    * Generated by Ledger Wallet when the account contact is created in storage.
@@ -280,15 +291,15 @@ type EvmAddressBookLedgerAccount = {
   /**
    * BIP32 path of the Ledger-owned account being named.
    * Selected by Ledger Wallet from the account context and sent to the device in
-   * Ledger account Address Book commands.
+   * Ledger account Contacts commands.
    */
   derivationPath: string;
   /**
-   * EVM chain id for the Ledger-owned account name.
+   * Family-specific chain reference for the Ledger-owned account name.
    * Selected by Ledger Wallet from the network/account context and sent to the
-   * device in Ledger account Address Book commands.
+   * device in Ledger account Contacts commands.
    */
-  chainId: number;
+  chainId: string | number;
   /**
    * Opaque proof binding accountName to the Ledger account context.
    * Generated by the device during REGISTER LEDGER ACCOUNT, then regenerated by
@@ -315,13 +326,13 @@ that seed and performs a separate device registration.
 
 | Intent                                                        | Device command                        | Purpose                                |
 | ------------------------------------------------------------- | ------------------------------------- | -------------------------------------- |
-| `registerAddressBookExternalAddressEvmIntentDefinition`       | `REGISTER IDENTITY`                   | Register a new external address record |
-| `renameAddressBookContactEvmIntentDefinition`                 | `EDIT CONTACT NAME`                   | Rename an external contact group       |
-| `editAddressBookExternalAddressIdentifierEvmIntentDefinition` | `EDIT IDENTIFIER`                     | Change only the address                |
-| `editAddressBookExternalAddressScopeEvmIntentDefinition`      | `EDIT SCOPE`                          | Change only the scope                  |
-| `editAddressBookExternalAddressEvmIntentDefinition`           | `EDIT IDENTIFIER` and/or `EDIT SCOPE` | Convenience edit intent                |
-| `registerAddressBookLedgerAccountEvmIntentDefinition`         | `REGISTER LEDGER ACCOUNT`             | Register a Ledger-owned account name   |
-| `renameAddressBookLedgerAccountEvmIntentDefinition`           | `EDIT LEDGER ACCOUNT`                 | Rename a Ledger-owned account          |
+| `registerExternalAddressIntentDefinition`       | `REGISTER IDENTITY`                   | Register a new external address record |
+| `renameExternalContactIntentDefinition`                 | `EDIT CONTACT NAME`                   | Rename an external contact group       |
+| `editExternalAddressIdentifierIntentDefinition` | `EDIT IDENTIFIER`                     | Change only the address                |
+| `editExternalAddressScopeIntentDefinition`      | `EDIT SCOPE`                          | Change only the scope                  |
+| `editExternalAddressIntentDefinition`           | `EDIT IDENTIFIER` and/or `EDIT SCOPE` | Convenience edit intent                |
+| `registerLedgerAccountIntentDefinition`         | `REGISTER LEDGER ACCOUNT`             | Register a Ledger-owned account name   |
+| `renameLedgerAccountIntentDefinition`           | `EDIT LEDGER ACCOUNT`                 | Rename a Ledger-owned account          |
 
 Each intent section uses the same contract vocabulary:
 
@@ -334,14 +345,14 @@ Each intent section uses the same contract vocabulary:
 - **Ledger Wallet persistence after success** is the storage mutation Ledger
   Wallet must perform only after a `JobState` carrying a result is observed.
   Device proof values carried by the result replace the previous stored values
-  for future Address Book operations.
+  for future Contacts operations.
 
-For EVM, `chainId` is required by every management intent that verifies or
-updates an external address record or Ledger account contact. The only intent in
-this document that does not require `chainId` is
-`renameAddressBookContactEvmIntentDefinition`, because it only touches the
-external contact name proof (`hmacProof`) and does not touch any address record
-proof (`hmacRest`).
+For every blockchain family, the chain reference is required by each management
+intent that verifies or updates an external address record or Ledger account
+contact. The only intent in this document that does not require a chain
+reference is `renameExternalContactIntentDefinition`, because it only touches
+the external contact name proof (`hmacProof`) and does not touch any address
+record proof (`hmacRest`). EVM examples use a numeric `chainId`.
 
 ### TypeScript Conventions
 
@@ -363,56 +374,56 @@ the suggested storage model types. This keeps WXP free to choose its own storage
 shape while still receiving every value needed to persist safely.
 
 ```ts
-type EvmAddress = `0x${string}`;
-type EvmChainId = number;
+type ContactIdentifier = string;
+type ChainId = string | number;
 type GroupHandle = string;
-type AddressBookProof = string;
+type Proof = string;
 
 // This is subject to changing, but any change there won't impact the integration of the intents.
-type AddressBookEvmJobStateBase =
+type JobStateBase =
   | { type: "pending" }
   | { type: "awaiting-device-confirmation" }
   | { type: "failed"; error: Error };
 ```
 
-### External Address Registration
+### Register External Address
 
-#### `registerAddressBookExternalAddressEvmIntentDefinition`
+#### `registerExternalAddressIntentDefinition`
 
 Registers one `(contactName, scope, address, chainId)` tuple on the device.
 
 TypeScript contract:
 
 ```ts
-type RegisterAddressBookExternalAddressEvmIntentInput = {
+type RegisterExternalAddressIntentInput = {
   contactName: string;
   scope: string;
-  address: EvmAddress;
-  chainId: EvmChainId;
+  address: ContactIdentifier;
+  chainId: ChainId;
   derivationPath: string;
   existingContactGroup?: {
     groupHandle: GroupHandle;
-    hmacProof: AddressBookProof;
+    hmacProof: Proof;
   };
 };
 
-type RegisterAddressBookExternalAddressEvmResult = {
+type RegisterExternalAddressResult = {
   mode: "newContactGroup" | "existingContactGroup";
   contactName: string;
   scope: string;
-  address: EvmAddress;
-  chainId: EvmChainId;
+  address: ContactIdentifier;
+  chainId: ChainId;
   derivationPath: string;
   groupHandle: GroupHandle;
-  hmacProof: AddressBookProof;
-  hmacRest: AddressBookProof;
+  hmacProof: Proof;
+  hmacRest: Proof;
 };
 
-type RegisterAddressBookExternalAddressEvmJobState =
-  | AddressBookEvmJobStateBase
+type RegisterExternalAddressJobState =
+  | JobStateBase
   | {
       type: "completed";
-      result: RegisterAddressBookExternalAddressEvmResult;
+      result: RegisterExternalAddressResult;
     };
 ```
 
@@ -422,13 +433,13 @@ already-registered contact group.
 Ledger Wallet persistence after success:
 
 - If the input did not include `groupHandle + hmacProof`, this registration
-  created a new contact group. Create the `EvmAddressBookContactGroup` with the
+  created a new contact group. Create the `ContactGroup` with the
   returned `groupHandle` and `hmacProof`, then create the
-  `EvmAddressBookExternalAddress` with the returned `hmacRest`.
+  `ExternalAddress` with the returned `hmacRest`.
 - If the input included an existing `groupHandle + hmacProof`, this registration
   only added a new address record to that group. Keep the existing contact group
   unchanged, optionally assert that the returned `groupHandle` and `hmacProof`
-  match the input values, then create the new `EvmAddressBookExternalAddress`
+  match the input values, then create the new `ExternalAddress`
   with the returned `hmacRest`.
 
 ```mermaid
@@ -450,9 +461,9 @@ flowchart LR
     style After fill:#2e7d32,color:#fff,text-align:left
 ```
 
-### External Contact Rename
+### Rename External Contact
 
-#### `renameAddressBookContactEvmIntentDefinition`
+#### `renameExternalContactIntentDefinition`
 
 Renames the contact group. This changes the group-level proof but does not
 change any address record. It does not need `scope`, `address`, or `chainId`
@@ -461,37 +472,37 @@ because those fields are only bound into `hmacRest`, which remains unchanged.
 TypeScript contract:
 
 ```ts
-type RenameAddressBookContactEvmIntentInput = {
+type RenameContactIntentInput = {
   previousContactName: string;
   newContactName: string;
   derivationPath: string;
   groupHandle: GroupHandle;
-  hmacProof: AddressBookProof;
+  hmacProof: Proof;
 };
 
-type RenameAddressBookContactEvmResult = {
+type RenameContactResult = {
   previousContactName: string;
   contactName: string;
   derivationPath: string;
   groupHandle: GroupHandle;
-  hmacProof: AddressBookProof;
+  hmacProof: Proof;
 };
 
-type RenameAddressBookContactEvmJobState =
-  | AddressBookEvmJobStateBase
+type RenameContactJobState =
+  | JobStateBase
   | {
       type: "completed";
-      result: RenameAddressBookContactEvmResult;
+      result: RenameContactResult;
     };
 ```
 
 Ledger Wallet persistence after success:
 
-- Update `EvmAddressBookContactGroup.contactName` from `previousContactName` to
+- Update `ContactGroup.contactName` from `previousContactName` to
   `newContactName`.
-- Replace `EvmAddressBookContactGroup.hmacProof` with the returned
+- Replace `ContactGroup.hmacProof` with the returned
   `hmacProof`.
-- Leave every `EvmAddressBookExternalAddress.hmacRest` for this contact group
+- Leave every `ExternalAddress.hmacRest` for this contact group
   unchanged.
 
 ```mermaid
@@ -511,55 +522,55 @@ flowchart LR
     style After fill:#2e7d32,color:#fff,text-align:left
 ```
 
-### External Address Identifier Edit
+### Edit External Address Identifier
 
-#### `editAddressBookExternalAddressIdentifierEvmIntentDefinition`
+#### `editExternalAddressIdentifierIntentDefinition`
 
-Changes only the EVM address for one external address record. The contact name
-and scope stay unchanged.
+Changes only the blockchain identifier for one external address record. The
+contact name and scope stay unchanged.
 
 TypeScript contract:
 
 ```ts
-type EditAddressBookExternalAddressIdentifierEvmIntentInput = {
+type EditExternalAddressIdentifierIntentInput = {
   contactName: string;
   scope: string;
-  previousAddress: EvmAddress;
-  newAddress: EvmAddress;
-  chainId: EvmChainId;
+  previousAddress: ContactIdentifier;
+  newAddress: ContactIdentifier;
+  chainId: ChainId;
   derivationPath: string;
   groupHandle: GroupHandle;
-  hmacProof: AddressBookProof;
-  hmacRest: AddressBookProof;
+  hmacProof: Proof;
+  hmacRest: Proof;
 };
 
-type EditAddressBookExternalAddressIdentifierEvmResult = {
+type EditExternalAddressIdentifierResult = {
   contactName: string;
   scope: string;
-  previousAddress: EvmAddress;
-  address: EvmAddress;
-  chainId: EvmChainId;
+  previousAddress: ContactIdentifier;
+  address: ContactIdentifier;
+  chainId: ChainId;
   derivationPath: string;
   groupHandle: GroupHandle;
-  hmacProof: AddressBookProof;
-  hmacRest: AddressBookProof;
+  hmacProof: Proof;
+  hmacRest: Proof;
 };
 
-type EditAddressBookExternalAddressIdentifierEvmJobState =
-  | AddressBookEvmJobStateBase
+type EditExternalAddressIdentifierJobState =
+  | JobStateBase
   | {
       type: "completed";
-      result: EditAddressBookExternalAddressIdentifierEvmResult;
+      result: EditExternalAddressIdentifierResult;
     };
 ```
 
 Ledger Wallet persistence after success:
 
-- Update the target `EvmAddressBookExternalAddress.address` from
+- Update the target `ExternalAddress.address` from
   `previousAddress` to `newAddress`.
-- Replace only that `EvmAddressBookExternalAddress.hmacRest` with the returned
+- Replace only that `ExternalAddress.hmacRest` with the returned
   `hmacRest`.
-- Leave `EvmAddressBookContactGroup.contactName`, `groupHandle`, and
+- Leave `ContactGroup.contactName`, `groupHandle`, and
   `hmacProof` unchanged.
 
 ```mermaid
@@ -579,9 +590,9 @@ flowchart LR
     style After fill:#2e7d32,color:#fff,text-align:left
 ```
 
-### External Address Scope Edit
+### Edit External Address Scope
 
-#### `editAddressBookExternalAddressScopeEvmIntentDefinition`
+#### `editExternalAddressScopeIntentDefinition`
 
 Changes only the scope for one external address record. The contact name and
 address stay unchanged.
@@ -589,46 +600,46 @@ address stay unchanged.
 TypeScript contract:
 
 ```ts
-type EditAddressBookExternalAddressScopeEvmIntentInput = {
+type EditExternalAddressScopeIntentInput = {
   contactName: string;
   previousScope: string;
   newScope: string;
-  address: EvmAddress;
-  chainId: EvmChainId;
+  address: ContactIdentifier;
+  chainId: ChainId;
   derivationPath: string;
   groupHandle: GroupHandle;
-  hmacProof: AddressBookProof;
-  hmacRest: AddressBookProof;
+  hmacProof: Proof;
+  hmacRest: Proof;
 };
 
-type EditAddressBookExternalAddressScopeEvmResult = {
+type EditExternalAddressScopeResult = {
   contactName: string;
   previousScope: string;
   scope: string;
-  address: EvmAddress;
-  chainId: EvmChainId;
+  address: ContactIdentifier;
+  chainId: ChainId;
   derivationPath: string;
   groupHandle: GroupHandle;
-  hmacProof: AddressBookProof;
-  hmacRest: AddressBookProof;
+  hmacProof: Proof;
+  hmacRest: Proof;
 };
 
-type EditAddressBookExternalAddressScopeEvmJobState =
-  | AddressBookEvmJobStateBase
+type EditExternalAddressScopeJobState =
+  | JobStateBase
   | {
       type: "completed";
-      result: EditAddressBookExternalAddressScopeEvmResult;
+      result: EditExternalAddressScopeResult;
     };
 ```
 
 Ledger Wallet persistence after success:
 
-- Update the target `EvmAddressBookExternalAddress.scope` from `previousScope`
+- Update the target `ExternalAddress.scope` from `previousScope`
   to `newScope`.
-- Replace only that `EvmAddressBookExternalAddress.hmacRest` with the returned
+- Replace only that `ExternalAddress.hmacRest` with the returned
   `hmacRest`.
 - Leave the address record's `address` unchanged.
-- Leave `EvmAddressBookContactGroup.contactName`, `groupHandle`, and
+- Leave `ContactGroup.contactName`, `groupHandle`, and
   `hmacProof` unchanged.
 
 ```mermaid
@@ -648,9 +659,9 @@ flowchart LR
     style After fill:#2e7d32,color:#fff,text-align:left
 ```
 
-### External Address Convenience Edit
+### Edit External Address
 
-#### `editAddressBookExternalAddressEvmIntentDefinition`
+#### `editExternalAddressIntentDefinition`
 
 Convenience intent for WXP when a user edits an external address form and may
 change the identifier, the scope, or both.
@@ -658,51 +669,51 @@ change the identifier, the scope, or both.
 TypeScript contract:
 
 ```ts
-type EditAddressBookExternalAddressEvmStep = "identifier" | "scope";
+type EditExternalAddressStep = "identifier" | "scope";
 
-type EditAddressBookExternalAddressEvmIntentInput = {
+type EditExternalAddressIntentInput = {
   contactName: string;
   previousScope: string;
   newScope: string;
-  previousAddress: EvmAddress;
-  newAddress: EvmAddress;
-  chainId: EvmChainId;
+  previousAddress: ContactIdentifier;
+  newAddress: ContactIdentifier;
+  chainId: ChainId;
   derivationPath: string;
   groupHandle: GroupHandle;
-  hmacProof: AddressBookProof;
-  hmacRest: AddressBookProof;
+  hmacProof: Proof;
+  hmacRest: Proof;
 };
 
-type EditAddressBookExternalAddressEvmResult = {
-  appliedStep: EditAddressBookExternalAddressEvmStep;
+type EditExternalAddressResult = {
+  appliedStep: EditExternalAddressStep;
   contactName: string;
   scope: string;
-  address: EvmAddress;
-  chainId: EvmChainId;
+  address: ContactIdentifier;
+  chainId: ChainId;
   derivationPath: string;
   groupHandle: GroupHandle;
-  hmacProof: AddressBookProof;
-  hmacRest: AddressBookProof;
+  hmacProof: Proof;
+  hmacRest: Proof;
 };
 
-type EditAddressBookExternalAddressEvmJobState =
+type EditExternalAddressJobState =
   | { type: "pending" }
   | {
       type: "awaiting-device-confirmation";
-      step: EditAddressBookExternalAddressEvmStep;
+      step: EditExternalAddressStep;
     }
   | {
       type: "partial-result";
-      result: EditAddressBookExternalAddressEvmResult;
+      result: EditExternalAddressResult;
     }
   | {
       type: "completed";
-      appliedSteps: EditAddressBookExternalAddressEvmStep[];
-      result: EditAddressBookExternalAddressEvmResult;
+      appliedSteps: EditExternalAddressStep[];
+      result: EditExternalAddressResult;
     }
   | {
       type: "failed";
-      failedStep?: EditAddressBookExternalAddressEvmStep;
+      failedStep?: EditExternalAddressStep;
       error: Error;
     };
 ```
@@ -711,7 +722,7 @@ The DIE caller should persist both `partial-result` and `completed` results:
 
 ```ts
 function onIntentJobStateChanged(
-  jobState: EditAddressBookExternalAddressEvmJobState
+  jobState: EditExternalAddressJobState
 ) {
   if (jobState.type === "partial-result" || jobState.type === "completed") {
     persistExternalAddressEdit(jobState.result);
@@ -722,9 +733,9 @@ function onIntentJobStateChanged(
 Ledger Wallet persistence after success:
 
 - If only `address` changed, apply the same persistence rules as
-  `editAddressBookExternalAddressIdentifierEvmIntentDefinition`.
+  `editExternalAddressIdentifierIntentDefinition`.
 - If only `scope` changed, apply the same persistence rules as
-  `editAddressBookExternalAddressScopeEvmIntentDefinition`.
+  `editExternalAddressScopeIntentDefinition`.
 - If both changed, persist the final `newScope`, `newAddress`, and final
   `hmacRest`. If the first granular device command succeeded before the second
   one failed, persist or recover from the intermediate state as described below.
@@ -775,9 +786,9 @@ flowchart LR
     style After fill:#2e7d32,color:#fff,text-align:left
 ```
 
-### Ledger Account Registration
+### Register Ledger Account
 
-#### `registerAddressBookLedgerAccountEvmIntentDefinition`
+#### `registerLedgerAccountIntentDefinition`
 
 Registers a name for an account controlled by the attached Ledger device seed.
 The account is identified by `derivationPath + chainId`.
@@ -785,30 +796,30 @@ The account is identified by `derivationPath + chainId`.
 TypeScript contract:
 
 ```ts
-type RegisterAddressBookLedgerAccountEvmIntentInput = {
+type RegisterLedgerAccountIntentInput = {
   accountName: string;
   derivationPath: string;
-  chainId: EvmChainId;
+  chainId: ChainId;
 };
 
-type RegisterAddressBookLedgerAccountEvmResult = {
+type RegisterLedgerAccountResult = {
   accountName: string;
   derivationPath: string;
-  chainId: EvmChainId;
-  hmacProof: AddressBookProof;
+  chainId: ChainId;
+  hmacProof: Proof;
 };
 
-type RegisterAddressBookLedgerAccountEvmJobState =
-  | AddressBookEvmJobStateBase
+type RegisterLedgerAccountJobState =
+  | JobStateBase
   | {
       type: "completed";
-      result: RegisterAddressBookLedgerAccountEvmResult;
+      result: RegisterLedgerAccountResult;
     };
 ```
 
 Ledger Wallet persistence after success:
 
-- Create the `EvmAddressBookLedgerAccount` record for `accountName`,
+- Create the `LedgerAccount` record for `accountName`,
   `derivationPath`, and `chainId`.
 - Store the returned `hmacProof` on that Ledger account contact.
 - Do not store `groupHandle` or `hmacRest` for Ledger account contacts; those
@@ -831,44 +842,44 @@ flowchart LR
     style After fill:#2e7d32,color:#fff,text-align:left
 ```
 
-### Ledger Account Rename
+### Rename Ledger Account
 
-#### `renameAddressBookLedgerAccountEvmIntentDefinition`
+#### `renameLedgerAccountIntentDefinition`
 
 Renames a registered Ledger-owned account.
 
 TypeScript contract:
 
 ```ts
-type RenameAddressBookLedgerAccountEvmIntentInput = {
+type RenameLedgerAccountIntentInput = {
   previousAccountName: string;
   newAccountName: string;
   derivationPath: string;
-  chainId: EvmChainId;
-  hmacProof: AddressBookProof;
+  chainId: ChainId;
+  hmacProof: Proof;
 };
 
-type RenameAddressBookLedgerAccountEvmResult = {
+type RenameLedgerAccountResult = {
   previousAccountName: string;
   accountName: string;
   derivationPath: string;
-  chainId: EvmChainId;
-  hmacProof: AddressBookProof;
+  chainId: ChainId;
+  hmacProof: Proof;
 };
 
-type RenameAddressBookLedgerAccountEvmJobState =
-  | AddressBookEvmJobStateBase
+type RenameLedgerAccountJobState =
+  | JobStateBase
   | {
       type: "completed";
-      result: RenameAddressBookLedgerAccountEvmResult;
+      result: RenameLedgerAccountResult;
     };
 ```
 
 Ledger Wallet persistence after success:
 
-- Update `EvmAddressBookLedgerAccount.accountName` from `previousAccountName` to
+- Update `LedgerAccount.accountName` from `previousAccountName` to
   `newAccountName`.
-- Replace `EvmAddressBookLedgerAccount.hmacProof` with the returned
+- Replace `LedgerAccount.hmacProof` with the returned
   `hmacProof`.
 
 ```mermaid
@@ -891,7 +902,7 @@ flowchart LR
 ## Open Decisions
 
 - Clarify the source of `derivationPath` for external contact commands. It may
-  be an arbitrary Address Book derivation path left open by the embedded spec,
+  be an arbitrary contact derivation path left open by the embedded spec,
   and the final implementation may use a fixed constant chosen inside DMK.
 - Confirm whether firmware will add an atomic "edit scope and identifier"
   command. If not, the convenience edit intent must keep the non-atomic behavior
@@ -902,5 +913,5 @@ flowchart LR
     -> this will impact if we have 1 set of intents for ALL APPS or 1 set PER-APP
   - Chain ID: is number relevant ? cf. Cosmos
   - Blockchain ID should be in contact ? OR just use common derivation path in contact object (regardless of the app/blockchain)
-  -> Depending on the answer, we can maybe remove "evm" specific wording and make those intents and types more generic.
+  -> Depending on the answer, we can maybe remove "" specific wording and make those intents and types more generic.
   -> In that case, we might have to expose something to derive the "initialization context" required by the DIE (app name, min app version) from the contact data
