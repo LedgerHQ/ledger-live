@@ -1,5 +1,4 @@
 import { isCantonAccount } from "@ledgerhq/coin-canton";
-import { TopologyChangeError } from "@ledgerhq/coin-canton/types/errors";
 import type { Sync } from "@ledgerhq/live-common/bridge/react/types";
 import { useFeature } from "@features/platform-feature-flags";
 import {
@@ -190,7 +189,7 @@ export function usePendingTransferProposalsViewModel({
           reason: "canton-pending-transaction-action",
         });
       } catch (error) {
-        if (error instanceof TopologyChangeError) {
+        if ((error as { name?: string })?.name === "TopologyChangeError") {
           setModal(prev => ({ ...prev, isOpen: false }));
           redirectToReonboarding(action, contractId);
           return;

@@ -1,4 +1,3 @@
-import { TooManyUtxosCritical, TooManyUtxosWarning } from "@ledgerhq/coin-canton";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   CantonAccount,
@@ -15,7 +14,7 @@ import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { modalsStateSelector } from "~/renderer/reducers/modals";
-import { handleTopologyChangeError, TopologyChangeError } from "./hooks/topologyChangeError";
+import { handleTopologyChangeError } from "./hooks/topologyChangeError";
 import CommentField from "./CommentField";
 import ExpiryDurationField from "./ExpiryDurationField";
 
@@ -38,9 +37,9 @@ const Root = (props: {
   const cantonAccount = account as CantonAccount;
   const mainAccount = getMainAccount(account, parentAccount);
 
-  const tooManyUtxosCritical = status?.warnings?.tooManyUtxos instanceof TooManyUtxosCritical;
-  const tooManyUtxosWarning = status?.warnings?.tooManyUtxos instanceof TooManyUtxosWarning;
-  const topologyChangeError = status?.errors?.topologyChange instanceof TopologyChangeError;
+  const tooManyUtxosCritical = status?.warnings?.tooManyUtxos?.name === "TooManyUtxosCritical";
+  const tooManyUtxosWarning = status?.warnings?.tooManyUtxos?.name === "TooManyUtxosWarning";
+  const topologyChangeError = status?.errors?.topologyChange?.name === "TopologyChangeError";
 
   useEffect(() => {
     if (topologyChangeError) {
