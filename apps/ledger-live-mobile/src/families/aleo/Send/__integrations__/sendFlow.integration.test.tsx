@@ -103,13 +103,15 @@ const mockAccountBridge = {
   estimateMaxSpendable: async () => new BigNumber(100_000_000),
   getStuckAccountAndOperation: () => null,
   isAccountEmpty: () => false,
-  signOperation: () =>
-    new Observable<SignOperationEvent>(subscriber => {
-      subscriber.next({ type: "device-signature-requested" });
-      subscriber.next({ type: "device-signature-granted" });
-      subscriber.next({ type: "signed", signedOperation: mockSignedOperation as never });
-      subscriber.complete();
-    }),
+  signOperation: jest.fn(
+    () =>
+      new Observable<SignOperationEvent>(subscriber => {
+        subscriber.next({ type: "device-signature-requested" });
+        subscriber.next({ type: "device-signature-granted" });
+        subscriber.next({ type: "signed", signedOperation: mockSignedOperation as never });
+        subscriber.complete();
+      }),
+  ),
   broadcast: async ({ signedOperation }: { signedOperation: typeof mockSignedOperation }) =>
     signedOperation.operation,
 };
@@ -198,6 +200,7 @@ describe("Aleo send flow (integration)", () => {
     setPrivateSyncState = null;
     mockAccountBridge.createTransaction.mockClear();
     mockAccountBridge.updateTransaction.mockClear();
+    mockAccountBridge.signOperation.mockClear();
   });
 
   describe("native coin", () => {
@@ -322,6 +325,42 @@ describe("Aleo send flow (integration)", () => {
       await waitFor(() => expect(screen.getByTestId("amount-input")).toBeVisible());
       expect(screen.queryByTestId("recipient-input")).toBeNull();
     });
+
+    it("shows the error screen with a Retry button when the device rejects during signing", async () => {
+      mockAccountBridge.signOperation.mockImplementationOnce(
+        () =>
+          new Observable<SignOperationEvent>(subscriber => {
+            subscriber.next({ type: "device-signature-requested" });
+            subscriber.error(new Error("UserRefusedOnDevice"));
+          }),
+      );
+
+      const { user } = renderSendFlow(false);
+
+      await user.press(await screen.findByText("Public"));
+      await user.press(screen.getByText("Send publicly"));
+
+      const recipientInput = await screen.findByTestId("recipient-input");
+      await user.type(recipientInput, RECIPIENT);
+      await waitFor(() =>
+        expect(screen.getByTestId("enabled-recipient-continue-button")).toBeVisible(),
+      );
+      await user.press(screen.getByTestId("enabled-recipient-continue-button"));
+
+      await waitFor(() =>
+        expect(screen.getByTestId(/^enabled-amount-continue-button/)).toBeVisible(),
+      );
+      await user.press(screen.getByTestId(/^enabled-amount-continue-button/));
+
+      await waitFor(() => expect(screen.getByTestId(/summary-continue-button$/)).toBeVisible());
+      await user.press(screen.getByTestId(/summary-continue-button$/));
+
+      const deviceItem = await screen.findByTestId("device-item-mock");
+      await user.press(deviceItem);
+
+      await waitFor(() => expect(screen.getByText("Retry")).toBeVisible(), { timeout: 10000 });
+      expect(screen.queryByTestId("validate-success-screen")).toBeNull();
+    }, 30_000);
   });
 
   describe("token account", () => {
