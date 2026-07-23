@@ -4371,12 +4371,12 @@ importers:
       react-native-svg:
         specifier: 'catalog:'
         version: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-      react-test-renderer:
-        specifier: 'catalog:'
-        version: 19.1.4(react@19.1.4)
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
+      react-test-renderer:
+        specifier: 'catalog:'
+        version: 19.1.4(react@19.1.4)
       tailwind-merge:
         specifier: 'catalog:'
         version: 3.4.0
@@ -12045,18 +12045,12 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../env
       '@ledgerhq/live-promise':
         specifier: workspace:^
         version: link:../promise
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
-      axios:
-        specifier: 'catalog:'
-        version: 1.13.5
       lru-cache:
         specifier: ^7.14.1
         version: 7.18.3
@@ -12076,6 +12070,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      axios:
+        specifier: 'catalog:'
+        version: 1.13.5
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)

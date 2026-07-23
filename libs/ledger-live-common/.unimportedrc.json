@@ -263,6 +263,7 @@
     "src/mock/account.ts",
     "src/mock/helpers.ts",
     "src/network-troubleshooting/index.ts",
+    "src/network/setup.ts",
     "src/notifications/ServiceStatusProvider/index.tsx",
     "src/notifications/ServiceStatusProvider/types.ts",
     "src/notifications/ToastProvider/index.tsx",
