@@ -31,6 +31,7 @@ import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 import { type PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@domain/entity-client-identity";
+import type { PayCardPersistedState } from "@domain/entity-pay-card";
 
 const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";
@@ -283,6 +284,14 @@ export async function saveLargeScreenUpsellModalState(
   largeScreenUpsellModalState: LargeScreenUpsellModalState,
 ): Promise<void> {
   await storage.save("largeScreenUpsellModal", largeScreenUpsellModalState);
+}
+
+export function getPayCardState(): Promise<PayCardPersistedState | null> {
+  return storage.get("payCard") as Promise<PayCardPersistedState | null>;
+}
+
+export async function savePayCardState(payCardState: PayCardPersistedState): Promise<void> {
+  await storage.save("payCard", payCardState);
 }
 
 export function getMarketState(): Promise<MarketState> {

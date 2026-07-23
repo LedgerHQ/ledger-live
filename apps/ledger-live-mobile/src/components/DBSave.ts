@@ -1,5 +1,6 @@
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { largeScreenUpsellModalSelector } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
+import { payCardPersistedSelector } from "@domain/entity-pay-card";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
 import isEqual from "lodash/isEqual";
@@ -22,6 +23,7 @@ import {
   saveMarketState,
   saveMarketListConfig,
   saveMarketBannerState,
+  savePayCardState,
   savePostOnboardingState,
   saveSettings,
   saveTrustchainState,
@@ -262,6 +264,14 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: getLargeScreenUpsellModalStateChanged,
     lense: largeScreenUpsellModalSelector,
+  });
+
+  useDBSaveEffect({
+    stateSelector: (state: State) => state.payCard,
+    save: savePayCardState,
+    throttle: 500,
+    getChangesStats: (a: State, b: State) => a.payCard !== b.payCard,
+    lense: payCardPersistedSelector,
   });
 
   useDBSaveEffect({

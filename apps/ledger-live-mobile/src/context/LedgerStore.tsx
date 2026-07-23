@@ -3,6 +3,7 @@ import { Provider } from "react-redux";
 import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
+import { restorePayCardPersistedState } from "@domain/entity-pay-card";
 import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -24,6 +25,7 @@ import {
   getHistory,
   getKnownDevices,
   getLargeScreenUpsellModalState,
+  getPayCardState,
   getPostOnboardingState,
   getProtect,
   getMarketState,
@@ -116,6 +118,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         persistedFeatureFlags,
         legacyUser,
         historyState,
+        payCardState,
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getKnownDevices, MAX_RETRIES, RETRY_DELAY),
@@ -136,6 +139,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getFeatureFlagsState, MAX_RETRIES, RETRY_DELAY),
         retry(getUser, MAX_RETRIES, RETRY_DELAY),
         retry(getHistory, MAX_RETRIES, RETRY_DELAY),
+        retry(getPayCardState, MAX_RETRIES, RETRY_DELAY),
       ]).finally(() => {
         logStartupEvent<StoreStorageData>(STARTUP_EVENTS.STORE_STORAGE_READ, {
           readTime: Date.now() - readStorageStart,
@@ -188,6 +192,10 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       if (largeScreenUpsellModalState) {
         store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
+      }
+
+      if (payCardState) {
+        store.dispatch(restorePayCardPersistedState(payCardState));
       }
 
       if (marketState) {
