@@ -8982,6 +8982,12 @@
     },
     "shielded": {
       "send": {
+        "modalTitle": {
+          "transparent": "Public Send",
+          "transparentToShielded": "Public to Private Send",
+          "shieldedToTransparent": "Private to Public Send",
+          "shielded": "Private Send"
+        },
         "transferFrom": {
           "label": "Transfer from",
           "public": {

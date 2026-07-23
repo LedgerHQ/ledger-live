@@ -16,6 +16,11 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
+import type {
+  ZcashTransaction,
+  ZcashTransferType,
+} from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
+import { useFeature } from "@features/platform-feature-flags";
 import logger from "~/renderer/logger";
 import Stepper from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -66,6 +71,14 @@ type StateProps = {
   updateAccountWithUpdater: (b: string, a: (a: Account) => Account) => void;
 };
 type Props = {} & OwnProps & StateProps;
+
+const ZCASH_SEND_TITLE_KEY: Record<ZcashTransferType, string> = {
+  transparent: "zcash.shielded.send.modalTitle.transparent",
+  "transparent-to-shielded": "zcash.shielded.send.modalTitle.transparentToShielded",
+  "shielded-to-transparent": "zcash.shielded.send.modalTitle.shieldedToTransparent",
+  shielded: "zcash.shielded.send.modalTitle.shielded",
+};
+
 const defaultCreateSteps = (disableBacks: string[] = []): St[] => {
   const steps: Array<St | undefined> = [
     {
@@ -229,6 +242,15 @@ const Body = ({
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const specific = useLLDCoinFamily(mainAccount?.currency.family);
 
+  const zcashShieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
+  const zcashSendTitle = useMemo(() => {
+    if (!zcashShieldedEnabled) return null;
+    if (mainAccount?.currency.id !== "zcash") return null;
+    const transferType = (transaction as ZcashTransaction | undefined)?.transferType;
+    if (!transferType) return null;
+    return t(ZCASH_SEND_TITLE_KEY[transferType]);
+  }, [zcashShieldedEnabled, mainAccount?.currency.id, transaction, t]);
+
   const [defaultSteps] = useState(() => defaultCreateSteps(params.disableBacks));
   const customSteps = useMemo(() => {
     return specific?.createSendSteps?.(params.disableBacks) ?? null;
@@ -290,7 +312,10 @@ const Body = ({
   }
   const error = transactionError || bridgeError;
   const stepperProps = {
-    title: stepId === "warning" ? t("common.information") : (title ?? t("send.title")),
+    title:
+      stepId === "warning"
+        ? t("common.information")
+        : (zcashSendTitle ?? title ?? t("send.title")),
     modalName,
     stepId,
     steps,
