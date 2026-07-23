@@ -51,8 +51,8 @@ export default class NewSendFlowPage {
     await waitForElementById(this.signaturePromptId);
   }
 
-  @Step("Wait success confirmation screen")
-  async waitForSuccessConfirmation() {
+  @Step("Wait for and tap success confirmation screen")
+  async tapViewTransaction() {
     await waitForElementById(this.successViewTransactionId);
     await tapById(this.successViewTransactionId);
   }

@@ -30,7 +30,7 @@ export function runNewSendFlowTest(
       await app.newSend.setAmountAndReviewNewFlow(transaction.amount);
       await app.newSend.waitForSignature();
       await app.speculos.signSendTransaction(transaction);
-      await app.newSend.waitForSuccessConfirmation();
+      await app.newSend.tapViewTransaction();
       await app.operationDetails.waitForOperationDetails();
       await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
       await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
