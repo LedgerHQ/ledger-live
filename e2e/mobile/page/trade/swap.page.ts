@@ -25,9 +25,7 @@ export default class SwapPage extends CommonPage {
   topBarSwapHistoryButton = "topbar-swap-history";
   exportOperationsButton = "enabled-export-swap-operations-link";
   swapHistoryFeedbackLink = "swap-history-feedback-link";
-  swapFormTabId = "swap-form-tab";
 
-  swapFormTab = () => getElementById(this.swapFormTabId);
   operationRows = () => getElementById(this.operationRow.rowRegexp);
   getSpecificOperation = (swapId: string) =>
     getElementById(`${this.operationRow.rowBaseId}${swapId}`);
@@ -50,12 +48,7 @@ export default class SwapPage extends CommonPage {
 
   @Step("Expect swap page")
   async expectSwapPage() {
-    if (await IsIdVisible(this.swapFormTabId, 5000)) {
-      await detoxExpect(this.swapFormTab()).toBeVisible();
-    } else {
-      // Wallet 4.0 swap screen does not expose `swap-form-tab`; rely on shared webview readiness.
-      await detoxExpect(getElementById(app.common.walletApiWebview)).toBeVisible();
-    }
+    await detoxExpect(getElementById(app.common.walletApiWebview)).toBeVisible();
   }
 
   @Step("Go to swap history")
